@@ -88,7 +88,11 @@ def getMarker(markerId, args=None):
     added to the string, so there is a potential difference in width that matters.
     For that reason markers should not be changed after slizing (which would theoretically
     alter the flow of the FormattedString in an box) and the markerId and amount/length 
-    of args should be kept as small as possible."""
+    of args should be kept as small as possible.
+    Note that there is a potential problem of slicing through the argument string at 
+    the end of a textBox. That is another reason to keep the length of the arguments short.
+    And not to use any spaces, etc. inside the markerId.
+    Possible slicing through line-endings is not a problem, as the raw string ignores them."""
     marker = '==%s--%s==' % (markerId, args or '') 
     return FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)  
 
@@ -945,29 +949,37 @@ class Composer(object):
                         
     def node_h1(self, node, page, tb, fs):
         u"""Collect the page-node-pageNumber connection."""
-        fs = fs + '\n' # Add line break to whatever style/content there was before.
+        # Add line break to whatever style/content there was before. 
+        # Add invisible h2-marker in the string, to be retrieved by the composer.
+        fs = fs + '\n' + getMarker(node.tag) 
         self.document.addToc(node, page, fs, 'h1')
         page, fb, fs = self.typesetNode(node, page, tb, fs)
         return page, tb, fs + '\n' # Add line break to end of head.
 
     def node_h2(self, node, page, tb, fs):
         u"""Collect the page-node-pageNumber connection."""
-        fs = fs+'\n' # Add line break to whatever style/content there was before.
-        self.document.addToc(node, page, fs, 'h2')
+        # Add line break to whatever style/content there was before. 
+        # Add invisible h2-marker in the string, to be retrieved by the composer.
+        fs = fs + '\n' + getMarker(node.tag) 
+        self.document.addToc(node, page, fs, node.tag)
         page, fb, fs = self.typesetNode(node, page, tb, fs)
         return page, tb, fs + '\n' # Add line break to end of head.
 
     def node_h3(self, node, page, tb, fs):
         u"""Collect the page-node-pageNumber connection."""
-        fs = fs+'\n' # Add line break to whatever style/content there was before.
-        self.document.addToc(node, page, fs, 'h3')
+        # Add line break to whatever style/content there was before. 
+        # Add invisible h3-marker in the string, to be retrieved by the composer.
+        fs = fs + '\n' + getMarker(node.tag) 
+        self.document.addToc(node, page, fs, node.tag)
         page, fb, fs = self.typesetNode(node, page, tb, fs)
         return page, tb, fs + '\n' # Add line break to end of head.
         
     def node_h4(self, node, page, tb, fs, f):
         u"""Collect the page-node-pageNumber connection."""
-        fs = fs+'\n' # Add line break to whatever style/content there was before.
-        self.document.addToc(node, page, fs, 'h4')
+        # Add line break to whatever style/content there was before. 
+        # Add invisible h3-marker in the string, to be retrieved by the composer.
+        fs = fs + '\n' + getMarker(node.tag) 
+        self.document.addToc(node, page, fs, node.tag)
         page, fb, fs = self.typesetNode(node, page, tb, fs)
         return page, tb, fs + '\n' # Add line break to end of head.
 
@@ -1037,8 +1049,11 @@ class Composer(object):
                 captionStyle = self.pushStyle(page.getStyle('caption'))
                 imageElement.caption = getFormattedString(caption+'\n', captionStyle)
                 self.popStyle() # captionStyle
+            # Add invisible marker to the FormattedString, to indicate where the image
+            # reference went in a textBox after slicing the string.
+            fs += getMarker(node.tag, src) 
         else:
-            fs += FormattedString('\n[Could on find space for image %s]\n' % src, fill=(1, 0, 0))
+            fs += FormattedString('\n[Could not find space for image %s]\n' % src, fill=(1, 0, 0))
         return page, tb, fs
                                     
     def pushStyle(self, style):
