@@ -21,8 +21,8 @@ G = U # Generic gutter.
 CH = 6*BASELINE_GRID - G # Approx. square. Fit with baseline.
 Utab = U*0.8 # Indent for bullet lists
 # Display option
-SHOW_GRID = False
-SHOW_BASELINEGRID = False
+SHOW_GRID = True
+SHOW_BASELINEGRID = True
 # Text measures
 LEADING = BASELINE_GRID
 BODYTEXT_SIZE = 10

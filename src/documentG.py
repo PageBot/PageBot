@@ -941,11 +941,11 @@ class Document(object):
             page.draw() 
         saveImage(fileName)
 
-class Actor(object);
+class Actor(object):
     pass
     
 class TypeSetter(Actor):
-    def __init__(self, document, galley);
+    def __init__(self, document, galley):
         self.document = document # For storing document info, such as TOC-building.
         self.galley = galley # Current Galley to paste Elements on. No vertical boundary while typesetting.
         self.gState = [document.getRootStyle()] # Stack of styles with current state of (font, fontSize, ...)
@@ -968,6 +968,7 @@ class TypeSetter(Actor):
         return nextStyle
         
     def popStyle(self):
+        u"""Pop the stack of graphic states (styles) and answer the current one."""
         self.gState.pop()
         return self.gState[-1]
  
@@ -984,8 +985,6 @@ class TypeSetter(Actor):
         if overflow: # Any overflow from typesetting in the text box, then find new from page/flow
             page, tb = page.getNextFlowBox(tb)
             assert tb is not None # If happes, its a mistake in one of the templates.
-            #print u'++++%s++++' % fs
-            #print u'====%s====' % overflow
             fs = overflow
         return page, tb, fs
     
