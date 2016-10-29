@@ -4,9 +4,9 @@ import fontTools
 import copy
 import xml.etree.ElementTree as ET
 
-import document
-reload(document)
-from document import Document, Page, Composer, Template, Galley
+import documentG # Temp different from document, while developing Galley
+reload(documentG)
+from documentG import Document, Page, Composer, Template, Galley
 
 
 # Basic layout measures 
@@ -156,6 +156,6 @@ def makeDocument():
     return doc
         
 d = makeDocument()
-d.export('examples/AutomaticLayout.pdf') 
+d.export('export/AutomaticLayout.pdf') 
 
     
