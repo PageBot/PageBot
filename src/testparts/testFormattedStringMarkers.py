@@ -25,4 +25,4 @@ def findMarkers(fs):
 fs = FormattedString('AAAAA', fontSize=40) + getMarker('MultipleMarkers', 'a,b,c,d') + FormattedString('CCCC', fontSize=40) + getMarker('AnImageReference', '/filePath') + getMarker('MultipleMarkers', 'xyz') + FormattedString('DDDDD', fontSize=40) + getMarker('MarkerWithoutArguments') + FormattedString('EEEEE', fontSize=40)
 
 textBox(fs, (10, 10, 300, 300))
-print getMarkers(fs)
+print findMarkers(fs)
