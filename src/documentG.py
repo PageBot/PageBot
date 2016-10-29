@@ -940,8 +940,155 @@ class Document(object):
             # Let the page draw itself on the current Drawbot view port. pIndex can be used on output.
             page.draw() 
         saveImage(fileName)
+
+class Actor(object);
+    pass
+    
+class TypeSetter(Actor):
+    def __init__(self, document, galley);
+        self.document = document # For storing document info, such as TOC-building.
+        self.galley = galley # Current Galley to paste Elements on. No vertical boundary while typesetting.
+        self.gState = [document.getRootStyle()] # Stack of styles with current state of (font, fontSize, ...)
+        self.formatted = FormattedString() # Building formatted string, while rendering tags.
+
+    def pushStyle(self, style):
+        u"""As we want cascading font and fontSize in the galley elements, we need to keep track
+        of the stacking of XML-hiearchy of the tag styles, while generating the sequence of elements.
+        The styles may omit the font or fontSize, and still we need to be able to set the element
+        attributes rightly, inheriting from the current settings. Copy the current style and add 
+        overwrite the attributes in style. This way the current style always contains all attributes 
+        of the root style."""
+        nextStyle = copy.copy(self.gState[-1])
+        if style is not None:
+            for name, value in style.__dict__.items():
+                if name.startswith('_'):
+                    continue
+                setattr(nextStyle, name, value)
+        self.gState.append(nextStyle)
+        return nextStyle
+        
+    def popStyle(self):
+        self.gState.pop()
+        return self.gState[-1]
  
-class Composer(object):
+    def typeset(self, page, tb, fs):
+        u"""Typeset the text in the textbox copied from flow. If the text is if running over the edge
+        of the textbox, then create a new page. This shows the collission between purely
+        top-down hierarchy of information and the local layout decisions of columns, lines and
+        words. In this case, the low level typeset( ) needs to have all info accessable to create
+        a new page. The line                             
+            page, tb, fs = self.typeset(page, tb, fs)
+        is doing that, where the current (page, tb) is replaced by another set and then typesetting
+        continues at the point where it left on the previous."""
+        overflow = tb.typeset(page, fs)
+        if overflow: # Any overflow from typesetting in the text box, then find new from page/flow
+            page, tb = page.getNextFlowBox(tb)
+            assert tb is not None # If happes, its a mistake in one of the templates.
+            #print u'++++%s++++' % fs
+            #print u'====%s====' % overflow
+            fs = overflow
+        return page, tb, fs
+    
+    def typesetNode(self, node, page, tb=None, fs=None, style=None):
+
+        if style is None:
+            style = page.getStyle(node.tag)
+        style = self.pushStyle(style)
+
+        if fs is None:
+            fs = getFormattedString('', style)
+        
+        nodeText = node.text
+        if nodeText is not None:
+            if style.stripWhiteSpace:
+                nodeText = nodeText.strip() #+ style.stripWhiteSpace
+            if nodeText: # Anythong left to add?
+                #print node.tag, `node.text`
+                fs += getFormattedString(nodeText, style)
+            # Handle the block text of the tag, check if it runs over the box height.
+            page, tb, fs = self.typeset(page, tb, fs)
+            
+        # Type set all child node in the current node, by recursive call.
+        for child in node:
+            hook = 'node_'+child.tag
+            # Method will handle the styled body of the element, but not the tail.
+            if hasattr(self, hook): 
+                page, tb, fs = getattr(self, hook)(child, page, tb, fs)
+                childTail = child.tail
+                if childTail is not None:
+                    if style.stripWhiteSpace:
+                        childTail = childTail.strip() #+ style.stripWhiteSpace
+                    if childTail: # Anything left to add?
+                        #print child.tag, `child.tail`
+                        fs += getFormattedString(childTail, style)
+                # Handle the tail text of the tag.
+                page, tb, fs = self.typeset(page, tb, fs)
+                
+            else: # If no method hook defined, then just solve recursively.
+                page, tb, fs = self.typesetNode(child, page, tb, fs)
+
+        # XML-nodes are organized as: node - node.text - node.children - node.tail
+        # If there is no text or if the node does not have tail text, these are None.
+        # Restore the graphic state at the end of the element content processing to the 
+        # style of the parent in order to process the tail text.
+        style = self.popStyle()
+        nodeTail = node.tail
+        if nodeTail is not None:
+            if style.stripWhiteSpace:
+                nodeTail = nodeTail.strip() + style.stripWhiteSpace
+            if nodeTail: # Anython left to add?
+                #print node.tag, `node.tail`
+                fs += getFormattedString(nodeTail, style)
+        page, tb, fs = self.typeset(page, tb, fs)
+        return page, tb, fs
+                         
+    def typesetFile(self, fileName, page, flowId='main'):
+        u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
+        start at page pageNumber and find the name of the flow in the page template."""
+
+        self.fileName = fileName
+        fileExtension = fileName.split('.')[-1]
+        if fileExtension == 'md':
+            # If we have MarkDown content, conver to HTNK/XML
+            f = codecs.open(fileName, mode="r", encoding="utf-8")
+            mdText = f.read()
+            f.close()
+            mdExtensions = [FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
+            xml = '<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
+            xmlName = fileName + '.xml'
+            f = codecs.open(xmlName, mode="w", encoding="utf-8")
+            f.write(xml)
+            f.close()
+            fileName = xmlName
+
+        tree = ET.parse(fileName)
+        root = tree.getroot() # Get the root element of the tree.
+        # Get the root style that all other styles will be merged with.
+        rootStyle = self.document.getRootStyle()
+        # Build the formatted string at the same time as filling the flow columns.
+        # This way we can keep track where the elemenets go, e.g. for foot note and image references.
+        tb = page.findElement(flowId) # Find the named TextBox in the page/template.
+        assert tb is not None # Make sure if it is. Otherwise there is a mistage in the template.
+        # Collect all flowing text in one formatted string, while simulating the page/flow, because
+        # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
+        # reference, image index and footnote placement.   
+        self.typesetNode(root, page, tb)
+        # Now run through the footnotes and typeset them on the pages where the reference is located.
+        # There are other options to place footnotes (e.g. at the end of a chapter). Either subclass
+        # and rewite self.typesetFootnotes() or implement optional behavior to be selected from the outside.
+        #self.typesetFootnotes()
+        
+    def typesetFootnotes(self):
+        footnotes = self.document.footnotes
+        for index, (page, e, p) in footnotes.items():
+            style = page.getStyle('footnote')
+            fs = getFormattedString('%d ' % index, style)
+            tb = page.findElement('footnote')
+            if tb is not None:
+                page, tb, fs = self.typesetNode(p, page, tb, fs, style)
+
+ 
+class Composer(Actor):
     def __init__(self, document):
         self.document = document
         self.gState = [document.getRootStyle()] # State of current state of (font, fontSize)
