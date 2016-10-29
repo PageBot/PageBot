@@ -106,7 +106,7 @@ def makeDocument():
     doc.newStyle(name='title', fontSize=32, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=16, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=16, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=20, font=SEMIBOLD, fill=0.1, stroke=None,
+    doc.newStyle(name='h1', fontSize=24.2, font=SEMIBOLD, fill=0.1, stroke=None,
         leading=20, rLeading=0, tracking=H1_TRACK, needsBelow=LEADING*3)
     doc.newStyle(name='h2', fontSize=16, font=SEMIBOLD, fill=0.2, stroke=None, 
         leading=20, rLeading=0, tracking=H2_TRACK, needsBelow=LEADING*3)

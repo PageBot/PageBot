@@ -1,11 +1,20 @@
 
-##Variable Font Design
-TypeNetwork
-#Designing for n-dimesional space
-###Finding the possibilities and ultimate challenges
 
-#Introduction
-###This note higlights the desig and production of OpenType 1.8 Variable Fonts.
+a
+a
+a
+a
+a
+a
+a
+a
+##Variable Font Design
+
+#Designing for n-dimensional space
+##Introduction
+###This note highlights the design and production of OpenType 1.8 Variable Fonts.
+
+###Finding the possibilities and ultimate challenges
 
 Where in the traditional way of working with layout software such as Quark XPress and InDesign always a human decision determines the final layout of a page, there are more and more situations where that is not an option. As more and more pages are generated with content coming from a database - or an online source - and where the selection of the information is directly determined by properties of the reader, the layout of the pages to be automatically calculated.
 There is at the moment strangely no digital tools on the one hand is sufficiently flexible to be used in all possible techniques and types of layouts, link is to be made with a wide variety of information sources, and also meets the typographical demands on manual formatting.
