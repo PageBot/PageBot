@@ -1,9 +1,16 @@
-<document><h2>Variable Font Design</h2>
-<p>TypeNetwork</p>
-<h1>Designing for n-dimesional space</h1>
+<document><p>a<br />
+a<br />
+a<br />
+a<br />
+a<br />
+a<br />
+a<br />
+a</p>
+<h2>Variable Font Design</h2>
+<h1>Designing for n-dimensional space</h1>
+<h2>Introduction</h2>
+<h3>This note highlights the design and production of OpenType 1.8 Variable Fonts.</h3>
 <h3>Finding the possibilities and ultimate challenges</h3>
-<h1>Introduction</h1>
-<h3>This note higlights the desig and production of OpenType 1.8 Variable Fonts.</h3>
 <p>Where in the traditional way of working with layout software such as Quark XPress and InDesign always a human decision determines the final layout of a page, there are more and more situations where that is not an option. As more and more pages are generated with content coming from a database - or an online source - and where the selection of the information is directly determined by properties of the reader, the layout of the pages to be automatically calculated.<br />
 There is at the moment strangely no digital tools on the one hand is sufficiently flexible to be used in all possible techniques and types of layouts, link is to be made with a wide variety of information sources, and also meets the typographical demands on manual formatting.</p>
 <p><img alt="AutoPager" src="images/variablefontdesign/cubeUI1.png" title="With an XML description of the text transformation is performed to a consistent test is created. It takes into account the typographical features of the Markdown or XML tags, such as font, corps, weights, italic variations of axles, spacing, line width, line feed, alignment, indentation, tabulation, color, and breaking into the desired language." /></p>
