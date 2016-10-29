@@ -437,8 +437,8 @@ class Image(Element):
     def _drawCaption(self, page, x, y, w, h):
         if self.caption:
             captionW, captionH = self.getCaptionSize(page)
-            fill(0.8, 0.8, 0.8, 0.5)
-            rect(x, y, w, captionH)
+            #fill(0.8, 0.8, 0.8, 0.5)
+            #rect(x, y, w, captionH)
             hyphenation(self.hyphenation)
             textBox(self.caption, (x, y, w, captionH))
           
@@ -1097,7 +1097,7 @@ class Composer(Actor):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h2-marker in the string, to be retrieved by the composer.
-        fs = fs + '\n' + getMarker(node.tag) 
+        fs = fs + '\n'# + getMarker(node.tag) 
         self.document.addToc(node, page, fs, 'h1')
         page, fb, fs = self.typesetNode(node, page, tb, fs)
         return page, tb, fs + '\n' # Add line break to end of head.
@@ -1106,7 +1106,7 @@ class Composer(Actor):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h2-marker in the string, to be retrieved by the composer.
-        fs = fs + '\n' + getMarker(node.tag) 
+        fs = fs + '\n'# + getMarker(node.tag) 
         self.document.addToc(node, page, fs, node.tag)
         page, fb, fs = self.typesetNode(node, page, tb, fs)
         return page, tb, fs + '\n' # Add line break to end of head.
@@ -1115,7 +1115,7 @@ class Composer(Actor):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h3-marker in the string, to be retrieved by the composer.
-        fs = fs + '\n' + getMarker(node.tag) 
+        fs = fs + '\n'# + getMarker(node.tag) 
         self.document.addToc(node, page, fs, node.tag)
         page, fb, fs = self.typesetNode(node, page, tb, fs)
         return page, tb, fs + '\n' # Add line break to end of head.
@@ -1124,7 +1124,7 @@ class Composer(Actor):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h3-marker in the string, to be retrieved by the composer.
-        fs = fs + '\n' + getMarker(node.tag) 
+        fs = fs + '\n'# + getMarker(node.tag) 
         self.document.addToc(node, page, fs, node.tag)
         page, fb, fs = self.typesetNode(node, page, tb, fs)
         return page, tb, fs + '\n' # Add line break to end of head.
