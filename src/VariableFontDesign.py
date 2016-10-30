@@ -68,9 +68,11 @@ def makeDocument():
     if SHOW_BASELINEGRID: # Enable to show baseline grid.
         template1.baselineGrid()
     # Create empty image place holders. To be filled by running content on the page.
-    template1.cImage(None, 1.62, 1.8, 4.75, 5) 
-    template1.cImage(None, 2, 7, 2, 1) 
-    template1.cImage(None, 4, 7, 2, 1) 
+    # Future nerdy enhancement: automatic compensate for OSX-screenshort window shadow :)
+    #template1.cImage(None, 1.62, 1.8, 4.75, 5) 
+    template1.cImage(None, 2, 2, 4, 4) 
+    template1.cImage(None, 2, 6, 2, 2) 
+    template1.cImage(None, 4, 6, 2, 2) 
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
     template1.cTextBox('', 0, 0, 4, 2, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox('', 0, 2, 2, 6, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
@@ -142,7 +144,7 @@ def makeDocument():
         fill=0.2, leading=BASELINE_GRID*0.8, fontSize=BODYTEXT_SIZE*0.8,
         font=BOOK_ITALIC, indent=U/2, tailIndent=-U/2, hyphenation=True)
     doc.newStyle(name='caption', stripWhiteSpace=False, tracking=P_TRACK, 
-        language=LANGUAGE,
+        language=LANGUAGE, baselineShift=0.5*U,
         fill=0, leading=BASELINE_GRID*0.8, fontSize=BODYTEXT_SIZE*0.8,
         font=BOOK_ITALIC, indent=32, tailIndent=-32, hyphenation=True)
 
