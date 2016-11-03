@@ -34,7 +34,9 @@ class Style(object):
         # Overwite default values from user arguments.
         for name, value in kwargs.items():
             setattr(self, name, value)
- 
+        # Mark the difference with an expanded cascading style and simples ones.
+        self.expanded = False
+
     def __repr__(self):
         return '[%s=%s]' % (self.__class__.__name__, self.name)
            
@@ -71,6 +73,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
 
         # Basic page/template measures
         name = 'root', # Name of the style, key in document.getRootstyle( )
+        expanded = True, # The default value in a Style is False. Get True if expanded by cascading.
         u = u, # Base unit for Dutch/Swiss typography :)
         w = 595, # Page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = 11 * 72, # Page height, basic size of the document. 11", international generic fit.

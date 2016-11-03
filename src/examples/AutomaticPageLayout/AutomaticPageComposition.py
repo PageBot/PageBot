@@ -54,7 +54,7 @@ rs.g = U # Generic gutter.
 # 11 is a the best in that respect for column calculation.
 rs.cw = 11*U 
 rs.ch = 6*rs.baselineGrid - rs.g # Approx. square and fitting with baseline.
-rs.listIndent = 0.8*U # Indent for bullet lists
+rs.listIndent = U # Indent for bullet lists
 rs.listTabs = [(rs.listIndent, rs.LEFT_ALIGN)] # Match bullet+tab with left indent.
 # Display option during design and testing
 rs.showGrid = False

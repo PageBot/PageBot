@@ -51,7 +51,7 @@ class Typesetter(object):
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         tb = self.getTextBox(style)
         tb.append('\n')# + getMarker(node.tag) 
-        self.typesetNode(node, style)
+        self.typesetNode(node)
 
     def node_h2(self, node, style):
         u"""Collect the page-node-pageNumber connection."""
@@ -59,7 +59,7 @@ class Typesetter(object):
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         tb = self.getTextBox(style)
         tb.append('\n')# + getMarker(node.tag) 
-        self.typesetNode(node, style)
+        self.typesetNode(node)
 
     def node_h3(self, node, style):
         u"""Collect the page-node-pageNumber connection."""
@@ -67,7 +67,7 @@ class Typesetter(object):
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         tb = self.getTextBox(style)
         tb.append('\n')# + getMarker(node.tag) 
-        self.typesetNode(node, style)
+        self.typesetNode(node)
         
     def node_h4(self, node, style):
         u"""Collect the page-node-pageNumber connection."""
@@ -75,7 +75,7 @@ class Typesetter(object):
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         tb = self.getTextBox(style)
         tb.append('\n')# + getMarker(node.tag) 
-        self.typesetNode(node, style)
+        self.typesetNode(node)
 
     def node_br(self, node, style):
         u"""Add line break to the formatted string."""
@@ -89,7 +89,7 @@ class Typesetter(object):
 
     def node_a(self, node, style):
         u"""Ignore links, but process the block"""
-        return self.typesetNode(node, style)
+        return self.typesetNode(node)
         
     def node_sup(self, node, style):
         u"""Collect footnote references on their page number.
@@ -98,11 +98,11 @@ class Typesetter(object):
         if nodeId.startswith('fnref'): # This is a footnote reference.
             footnotes = self.document.footnotes
             footnotes[len(footnotes)+1] = [node, style]      
-        return self.typesetNode(node, style)
+        return self.typesetNode(node)
  
     def node_literatureref(self, node, style):
         u"""Collect literature references."""
-        return self.typesetNode(node, style)
+        return self.typesetNode(node)
          
     def node_div(self, node, style):
         u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
@@ -118,13 +118,13 @@ class Typesetter(object):
             #for index, p in enumerate(node.findall('./ol/li/p')):
             #    self.document.footnotes[index+1].append(p)
             return
-        return self.typesetNode(node, style)
+        return self.typesetNode(node)
                     
     def node_li(self, node, style):
         # Bullet/Numbered list item
         tb = self.getTextBox(style)
         tb.append(getFormattedString(u'\n•\t', style))
-        self.typesetNode(node, style)
+        self.typesetNode(node)
                   
     def node_img(self, node, style):
         u"""Process the image. Find empty space on the page to place it,
@@ -132,15 +132,16 @@ class Typesetter(object):
         src = node.attrib.get('src')
         g = Galley()
         imageElement = Image(src) # Set path, image w/h and image scale.
-        imgStyle = self.pushStyle(self.document.getStyle(node.tag))
-        imageElement.fill = imgStyle.fill
-        imageElement.stroke = imgStyle.stroke
-        imageElement.strokeWidth = imgStyle.strokeWidth
-        imageElement.hyphenation = imgStyle.hyphenation
+        imageElement.fill = style.fill
+        imageElement.stroke = style.stroke
+        imageElement.strokeWidth = style.strokeWidth
+        imageElement.hyphenation = style.hyphenation
         g.append(imageElement)
         caption = node.attrib.get('title')
         if caption is not None:
-            captionStyle = self.pushStyle(self.document.getStyle('caption'))
+            captionStyle = self.document.getStyle('caption')
+            captionStyle = self.getExpandedStyle(captionStyle)
+            self.pushStyle(captionStyle)
             tb = g.getTextBox(captionStyle)
             caption = node.attrib.get('title')
             # Add invisible marker to the FormattedString, to indicate where the image
@@ -149,31 +150,37 @@ class Typesetter(object):
             tb.append(getMarker(node.tag, src))
             self.popStyle() # captionStyle
         self.galley.append(g)
-                                    
-    def pushStyle(self, style):
+
+    def getExpandedStyle(self, style):
         u"""As we want cascading font and fontSize in the page elements, we need to keep track
         of the stacking of XML-hierarchy of the tag styles.
         The styles can omit the font or fontSize, and still we need to be able to set the element
         attributes. Copy the current style and add overwrite the attributes in style. This way
         the current style always contains all attributes of the root style."""
-        nextStyle = copy.copy(self.gState[-1])
-        if style is not None:
+        expandedStyle = copy.copy(self.gState[-1]) # Take the top of the stack as source.
+        if style is not None: # Style may be None. In that case answer just copy of current gState top.
             for name, value in style.__dict__.items():
-                if name.startswith('_'):
+                if name.startswith('_'): # Don't copy private style attributes.
                     continue
-                setattr(nextStyle, name, value)
-        self.gState.append(nextStyle)
-        return nextStyle
+                setattr(expandedStyle, name, value) # Overwrite the style value.
+            style.expanded = True # Mark that this is an expanded style, to distinguish from plain styles.
+        return expandedStyle
+
+    def pushStyle(self, style):
+        self.gState.append(style)
+        return style
         
     def popStyle(self):
         self.gState.pop()
         return self.gState[-1]
 
-    def typesetNode(self, node, style):
+    def typesetNode(self, node):
         u"""Recursively typeset the node, using style. Style can be None, in which case it should be not
         pushed and popped. If there is a valid style, push it on the graphics state and answer a merged
         style with the one that was on top before. This way automatic cascading values are in the style
         answered by the push."""
+        style = self.document.getStyle(node.tag)
+        style = self.getExpandedStyle(style)
         if style is not None:
             style = self.pushStyle(style)
             print('PUSHED', node, style)
@@ -190,10 +197,10 @@ class Typesetter(object):
         # Type set all child node in the current node, by recursive call.
         for child in node:
             hook = 'node_'+child.tag
-            style = self.document.getStyle(child.tag)
-            if style is not None: # Only push if we found a valid style for this tag.
-                print('PUSH-R', child, style)
-                style = self.pushStyle(style)
+            #style = self.document.getStyle(child.tag)
+            #if style is not None: # Only push if we found a valid style for this tag.
+            #    print('PUSH-R', child, style)
+            #    style = self.pushStyle(style)
             # Method will handle the styled body of the element, but not the tail.
             if hasattr(self, hook):
                 getattr(self, hook)(child, style) # Style can be None.
@@ -206,16 +213,16 @@ class Typesetter(object):
                         tb.append(getFormattedString(childTail, style))  # If style is None, just add plain string.
 
             else: # If no method hook defined, then just solve recursively.
-                self.typesetNode(child, style)
-            if style is not None: # Pop style only if it was pushed before.
-                style = self.popStyle()
-                print('POPPED-R', child, style)
+                self.typesetNode(child)
+            #if style is not None: # Pop style only if it was pushed before.
+            #    style = self.popStyle()
+            #    print('POPPED-R', child, style)
 
         # Restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text.
         if style is not None: # Only pop if there was a pushed style.
             style = self.popStyle()
-            print('POPPED', node, style)
+            #print('POPPED', node, style)
 
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
@@ -225,7 +232,7 @@ class Typesetter(object):
                 # If there is a style and if the replacement is not None.
                 nodeTail = nodeTail.strip() #+ style.stripWhiteSpace
             if nodeTail: # Any text left to add after stripping and optionally adding white space?
-                tb.append(getFormattedString(nodeTail, style)) # If style is None, just add plain string.
+                tb.append(getFormattedString(nodeTail)) # If style is None, just add plain string.
 
     def typesetFile(self, fileName):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
@@ -252,7 +259,7 @@ class Typesetter(object):
         # Collect all flowing text in one formatted string, while simulating the page/flow, because
         # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
         # reference, image index and footnote placement.   
-        self.typesetNode(root, rootStyle)
+        self.typesetNode(root)#, rootStyle)
         
     def typesetFootnotes(self):
         footnotes = self.document.footnotes
