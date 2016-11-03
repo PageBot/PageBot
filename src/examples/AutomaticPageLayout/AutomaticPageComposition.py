@@ -40,22 +40,24 @@ import pagebot.gxtools.gxmutator
 reload(pagebot.gxtools.gxmutator)
 from pagebot.gxtools.gxmutator import generateInstance
 
+FONT_PATH = '../../fonts/'
+
 FONT_LOCATIONS = {
-    #'Promise-BoldCondensed': {"wght": 750, "wdth": 0},
+    'Promise-BoldCondensed': {"wght": 750, "wdth": 0},
     'Promise-LightCondensed': {"wght": 0, "wdth": 0},
-    #'Promise-Light': {"wght": 0, "wdth": 0},
-    #'Promise-Book': {"wght": 250, "wdth": 0},
-    #'Promise-Regular': {"wght": 400, "wdth": 0},    
-    #'Promise-Medium': {"wght": 600, "wdth": 0},    
-    #'Promise-Semibold': {"wght": 750, "wdth": 0},    
-    #'Promise-Bold': {"wght": 1000, "wdth": 0},
+    'Promise-Light': {"wght": 0, "wdth": 0},
+    'Promise-Book': {"wght": 250, "wdth": 0},
+    'Promise-Regular': {"wght": 400, "wdth": 0},    
+    'Promise-Medium': {"wght": 600, "wdth": 0},    
+    'Promise-Semibold': {"wght": 750, "wdth": 0},    
+    'Promise-Bold': {"wght": 1000, "wdth": 0},
 }
 FONTS = {}
 # Install the test V-font
 if not 'Promise-Bold' in installedFonts():
-    installFont('fonts/Promise-GX.ttf')
+    installFont(FONT_PATH + 'Promise-GX.ttf')
 for name, location in FONT_LOCATIONS.items():
-    FONTS[name] = generateInstance('fonts/Promise-GX.ttf', location, targetDirectory='fonts/instances')
+    FONTS[name] = generateInstance(FONT_PATH + 'Promise-GX.ttf', location, targetDirectory=FONT_PATH + 'instances')
 
 # Get the default root stule.
 rs = getRootStyle()
@@ -88,10 +90,12 @@ rs.fontSize = 10
 
 # LANGUAGE-SWITCH Language settings
 if 0: # EN version of the article.
-    FILENAME = 'automaticLayout_en.md'
+    MD_PATH = 'automaticPageComposition_en.md'
+    EXPORT_PATH = 'export/AutomaticPageComposition.pdf'
 else: # NL version of the article.
     rs.language = 'nl-be' # Make Dutch hyphenation.
-    FILENAME = 'automaticLayout_nl.md'
+    MD_PATH = 'automatischePaginaCompositie_nl.md'
+    EXPORT_PATH = 'export/AutomatischePaginaOpmaak.pdf'
 
 MAIN_FLOW = 'main' # ELement id of the text box on pages the hold the main text flow.
 
@@ -188,15 +192,14 @@ def makeDocument():
     doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, fontSize=14*0.65)
     doc.newStyle(name='li', fontSize=rs.fontSize, font=BOOK, 
         tracking=P_TRACK, leading=rs.leading, hyphenation=True, 
-        tabs=[(rs.listIndent, rs.LEFT_ALIGN)], indent=rs.listIndent, firstLineIndent=1, #tailIndent=U,
+        tabs=[(rs.listIndent, rs.LEFT_ALIGN)], indent=rs.listIndent, firstLineIndent=1,
         stripWhiteSpace=' ')
     doc.newStyle(name='ul', stripWhiteSpace=' ',)
     doc.newStyle(name='literatureref', stripWhiteSpace=False,
         fill=0.5, rBaselineShift=0.2, fontSize=14*0.8)
     doc.newStyle(name='footnote', stripWhiteSpace=False,
         fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
-    doc.newStyle(name='caption', stripWhiteSpace=False, tracking=P_TRACK, 
-        language=rs.language, 
+    doc.newStyle(name='caption', stripWhiteSpace=False, tracking=P_TRACK, language=rs.language, 
         fill=0.2, leading=rs.leading*0.8, fontSize=rs.fontSize*0.8,
         font=BOOK_ITALIC, indent=U/2, tailIndent=-U/2, hyphenation=True)
 
@@ -206,7 +209,7 @@ def makeDocument():
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
     t = Typesetter(doc, g)
-    t.typesetFile(FILENAME)
+    t.typesetFile(MD_PATH)
     
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
@@ -215,5 +218,5 @@ def makeDocument():
     return doc
         
 d = makeDocument()
-d.export('export/AutomaticLayout.pdf') 
+d.export(EXPORT_PATH) 
 
