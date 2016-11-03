@@ -48,6 +48,19 @@ def generateInstance(varFileName, location, targetDirectory):
     # print("Loading GX font")
     varfont = TTFont(varFileName)
 
+    # Get the family name
+    familyName = varfont['name'].getName(1, platformID=3, platEncID=1, langID=0x409) or "Family" # 1 Font Family name
+    # Set the instance name IDs in the name table
+    styleName = unicode(instanceName) # ensure it's correctly encoded
+    fullFontName = " ".join([unicode(familyName), unicode(styleName)])
+    postscriptName = fullFontName.replace(" ", "-")
+    varfont['name'].setName(styleName, nameID=2, platformID=3, platEncID=1, langID=0x409) # 2 Font Subfamily name
+    varfont['name'].setName(fullFontName, nameID=4, platformID=3, platEncID=1, langID=0x409) # 4 Full font name
+    varfont['name'].setName(postscriptName, nameID=6, platformID=3, platEncID=1, langID=0x409) # 6 Postscript name for the font
+    # Other important name IDs
+    # 3 Unique font identifier (e.g. Version 0.000;NONE;Promise Bold Regular)
+    # 25 Variations PostScript Name Prefix
+
     fvar = varfont['fvar']
     axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in fvar.axes}
     # TODO Round to F2Dot14?
