@@ -83,6 +83,11 @@ class Typesetter(object):
         tb = self.getTextBox(style)
         tb.append('\n')# + getMarker(node.tag) 
 
+    def node_hr(self, node, style):
+        u"""Draw horizontal ruler in the text."""
+        tb = self.getTextBox(style)
+        tb.append('------------') # TODO: How to draw this on line fitting in column?
+
     def node_a(self, node, style):
         u"""Ignore links, but process the block"""
         return self.typesetNode(node, style)
