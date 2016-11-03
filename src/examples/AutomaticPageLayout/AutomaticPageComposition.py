@@ -36,9 +36,9 @@ import pagebot.elements
 reload(pagebot.elements)
 from pagebot.elements import Galley
 
-import pagebot.gxtools.gxmutator
-reload(pagebot.gxtools.gxmutator)
-from pagebot.gxtools.gxmutator import generateInstance
+import pagebot.fonttoolbox.variationbuilder
+reload(pagebot.fonttoolbox.variationbuilder)
+from pagebot.fonttoolbox.variationbuilder import generateInstance
 
 # Get the default root stule.
 rs = getRootStyle()
@@ -54,11 +54,11 @@ rs.g = U # Generic gutter.
 # 11 is a the best in that respect for column calculation.
 rs.cw = 11*U 
 rs.ch = 6*rs.baselineGrid - rs.g # Approx. square and fitting with baseline.
-rs.listIndent = U*0.8 # Indent for bullet lists
+rs.listIndent = 0.8*U # Indent for bullet lists
 rs.listTabs = [(rs.listIndent, rs.LEFT_ALIGN)] # Match bullet+tab with left indent.
 # Display option during design and testing
 rs.showGrid = False
-rs.showGridColumns = True
+rs.showGridColumns = False
 rs.showBaselineGrid = False
 rs.showFlowConnections = False
 if rs.showGrid: # Only show text boxes when showing grid.
@@ -86,20 +86,20 @@ H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-VARS = False
+VARS = True
 
 if VARS:
     FONT_PATH = '../../fonts/'
 
     FONT_LOCATIONS = {
-        'Promise-BoldCondensed': {"wght": 750, "wdth": 0, 'aaaa': 400  },
-        'Promise-LightCondensed': {"wght": 0, "wdth": 0},
-        'Promise-Light': {"wght": 0, "wdth": 0},
-        'Promise-Book': {"wght": 250, "wdth": 0},
-        'Promise-Regular': {"wght": 400, "wdth": 0},    
-        'Promise-Medium': {"wght": 600, "wdth": 0},    
-        'Promise-Semibold': {"wght": 750, "wdth": 0},    
-        'Promise-Bold': {"wght": 1000, "wdth": 0},
+        'Promise-BoldCondensed': {"wght": 750, "wdth": 1000, },
+        'Promise-LightCondensed': {"wght": 0, "wdth": 1000},
+        'Promise-Light': {"wght": 0, "wdth": 1000},
+        'Promise-Book': {"wght": 250, "wdth": 1000},
+        'Promise-Regular': {"wght": 400, "wdth": 1000},    
+        'Promise-Medium': {"wght": 600, "wdth": 1000},    
+        'Promise-Semibold': {"wght": 750, "wdth": 1000},    
+        'Promise-Bold': {"wght": 1000, "wdth": 1000},
     }
     FONTS = {}
     # Install the test V-font
@@ -115,6 +115,7 @@ if VARS:
         SEMIBOLD = FONTS['Promise-LightCondensed']
         BOLD = FONTS['Promise-LightCondensed']
     else:
+        LIGHT = FONTS['Promise-Light']
         BOOK = FONTS['Promise-Book']
         BOOK_ITALIC = FONTS['Promise-Book']
         MEDIUM = FONTS['Promise-Medium']
@@ -187,7 +188,7 @@ def makeDocument():
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=rs.fontSize, font=BOOK, fill=0.1, 
-        tracking=P_TRACK, align=rs.LEFT_ALIGN, hyphenation=True)
+        rTracking=P_TRACK, align=rs.LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='img', leading=rs.leading, fontSize=rs.fontSize, font=BOOK,)

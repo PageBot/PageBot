@@ -36,8 +36,7 @@ class Style(object):
             setattr(self, name, value)
  
     def __repr__(self):
-        return '[%s=%s font=%s fontSize=%s fill=%s]' % (self.__class__.__name__, 
-            self.name, self.font, self.fontSize, self.fill)
+        return '[%s=%s]' % (self.__class__.__name__, self.name)
            
     def __getitem__(self, name):
         if hasattr(self, name):
@@ -63,7 +62,9 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
     """
     # Some calculations to show dependencies.
     baselineGrid = 2*u
-    listIndent = 0.8*u # Indent of lists. Needs to be the same as tab, to position right after bullets
+    # Indent of lists. Needs to be the same as in tabs, to position rightly after bullets
+    listIndent = 0.8*u
+    # Default the gutter is equal to the page unit.
     gutter = u
 
     return Style( # Answer the default root style.
@@ -83,10 +84,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         g = gutter, # Main gutter of pages. Based on U.
         # Column width for column2point and column2rect calculations.
         # Column width, based on multiples of gutter. If uneven, this allows the column to be interpreted
-        # as two smaller columns of 5 +1+ 5 or even 2+1+2 +1+ 2+1+2, e.g. for micro-layouts in tables.
+        # as two smaller columns of [5 +1+ 5] or even [2+1+2 +1+ 2+1+2], e.g. for micro-layouts in tables.
         # Column width for column2point and column2rect calculations.
-        # Column width, based on multiples of gutter. If uneven, this allows the column
-        # to be interpreted as two smaller columns of 5 +1+ 5 or even 2+1+2 +1+ 2+1+2,
         # e.g. for micro-layouts in tables.
         # 11*gutter is one of the best values, as the smallest micro-column is 2 instead  of scaling back to 1.
         cw = 11*gutter,
@@ -97,7 +96,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         showGridColumns = showGridColumns, # Show the colums as filled (cw, ch) squares.
         gridFill = (200/255.0, 230/255.0, 245/255.0, 0.9), # Fill color for (cw, ch) squares.
         gridStroke = (0.8, 0.8, 0.8), # Stroke of grid lines in part of a template.
-        gridStrokeWidth = 1, # Line thickness of the grid.
+        gridStrokeWidth = 0.5, # Line thickness of the grid.
         # Baseline grid
         showBaselineGrid = showBaselineGrid, # Flag to show baseline grid in output
         baselineGridStroke = 1, # Line thickness of baselines grid.
@@ -105,8 +104,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         showFlowConnections = showFlowConnection, # Flag to draw arrows between the flows for debugging.
         flowConnectionStroke1 = (0.2, 0.5, 0.1, 1), # Stroke color of flow lines inside column,
         flowConnectionStroke2 = (1, 0, 0, 1), # Stroke color of flow lines between columns.
-        flowConnectionStrokeWidth = 2, # Line width of curved flow lines.
-        flowMarkerFill = (0.8, 0.8, 0.8, 0.5), # Fill of flow curve marker.
+        flowConnectionStrokeWidth = 1.5, # Line width of curved flow lines.
+        flowMarkerFill = (0.8, 0.8, 0.8, 0.5), # Fill of flow curve marker circle.
         flowMarkerSize = 8, # Size of flow marker circle.
         flowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
 
