@@ -40,25 +40,6 @@ import pagebot.gxtools.gxmutator
 reload(pagebot.gxtools.gxmutator)
 from pagebot.gxtools.gxmutator import generateInstance
 
-FONT_PATH = '../../fonts/'
-
-FONT_LOCATIONS = {
-    'Promise-BoldCondensed': {"wght": 750, "wdth": 0},
-    'Promise-LightCondensed': {"wght": 0, "wdth": 0},
-    'Promise-Light': {"wght": 0, "wdth": 0},
-    'Promise-Book': {"wght": 250, "wdth": 0},
-    'Promise-Regular': {"wght": 400, "wdth": 0},    
-    'Promise-Medium': {"wght": 600, "wdth": 0},    
-    'Promise-Semibold': {"wght": 750, "wdth": 0},    
-    'Promise-Bold': {"wght": 1000, "wdth": 0},
-}
-FONTS = {}
-# Install the test V-font
-if not 'Promise-Bold' in installedFonts():
-    installFont(FONT_PATH + 'Promise-GX.ttf')
-for name, location in FONT_LOCATIONS.items():
-    FONTS[name] = generateInstance(FONT_PATH + 'Promise-GX.ttf', location, targetDirectory=FONT_PATH + 'instances')
-
 # Get the default root stule.
 rs = getRootStyle()
 
@@ -76,9 +57,10 @@ rs.ch = 6*rs.baselineGrid - rs.g # Approx. square and fitting with baseline.
 rs.listIndent = U*0.8 # Indent for bullet lists
 rs.listTabs = [(rs.listIndent, rs.LEFT_ALIGN)] # Match bullet+tab with left indent.
 # Display option during design and testing
-rs.showGrid = True
-rs.showBaselineGrid = True
-rs.showFlowConnections = True
+rs.showGrid = False
+rs.showGridColumns = True
+rs.showBaselineGrid = False
+rs.showFlowConnections = False
 if rs.showGrid: # Only show text boxes when showing grid.
     BOX_COLOR = (0.8, 0.8, 0.8, 0.4)
 else:
@@ -86,7 +68,7 @@ else:
 # Text measures
 rs.leading = rs.baselineGrid
 rs.rLeading = 0
-rs.fontSize = 10
+rs.fontSize = 9
 
 # LANGUAGE-SWITCH Language settings
 if 0: # EN version of the article.
@@ -104,22 +86,44 @@ H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-if 1:
-    BOOK = FONTS['Promise-LightCondensed']
-    BOOK_ITALIC = FONTS['Promise-LightCondensed']
-    MEDIUM = FONTS['Promise-LightCondensed']
-    SEMIBOLD = FONTS['Promise-LightCondensed']
-    BOLD = FONTS['Promise-LightCondensed']
-elif 0:
-    BOOK = FONTS['Promise-Book']
-    BOOK_ITALIC = FONTS['Promise-Book']
-    MEDIUM = FONTS['Promise-Medium']
-    SEMIBOLD = FONTS['Promise-Semibold']
-    BOLD = FONTS['Promise-Bold']
+VARS = False
+
+if VARS:
+    FONT_PATH = '../../fonts/'
+
+    FONT_LOCATIONS = {
+        'Promise-BoldCondensed': {"wght": 750, "wdth": 0, 'aaaa': 400  },
+        'Promise-LightCondensed': {"wght": 0, "wdth": 0},
+        'Promise-Light': {"wght": 0, "wdth": 0},
+        'Promise-Book': {"wght": 250, "wdth": 0},
+        'Promise-Regular': {"wght": 400, "wdth": 0},    
+        'Promise-Medium': {"wght": 600, "wdth": 0},    
+        'Promise-Semibold': {"wght": 750, "wdth": 0},    
+        'Promise-Bold': {"wght": 1000, "wdth": 0},
+    }
+    FONTS = {}
+    # Install the test V-font
+    if not 'Promise-Bold' in installedFonts():
+        installFont(FONT_PATH + 'Promise-GX.ttf')
+    for name, location in FONT_LOCATIONS.items():
+        FONTS[name] = generateInstance(FONT_PATH + 'Promise-GX.ttf', 
+        location, targetDirectory=FONT_PATH + 'instances')
+    if 0:
+        BOOK = FONTS['Promise-LightCondensed']
+        BOOK_ITALIC = FONTS['Promise-LightCondensed']
+        MEDIUM = FONTS['Promise-LightCondensed']
+        SEMIBOLD = FONTS['Promise-LightCondensed']
+        BOLD = FONTS['Promise-LightCondensed']
+    else:
+        BOOK = FONTS['Promise-Book']
+        BOOK_ITALIC = FONTS['Promise-Book']
+        MEDIUM = FONTS['Promise-Medium']
+        SEMIBOLD = FONTS['Promise-Semibold']
+        BOLD = FONTS['Promise-Bold']
 else:
-    BOOK = MEDIUM = 'Georgia'
-    BOOK_ITALIC = 'Georgia-Italic'
-    BOLD = SEMIBOLD = 'Georgia-Bold'
+    BOOK = MEDIUM = 'Verdana'
+    BOOK_ITALIC = 'Verdana-Italic'
+    BOLD = SEMIBOLD = 'Verdana-Bold'
 # -----------------------------------------------------------------         
 def makeDocument():
     u"""Demo page composer."""
@@ -132,10 +136,10 @@ def makeDocument():
     
     # Template 1
     template1 = Template(rs) # Create template of main size. Front page only.
-    if rs.showGrid: # Enable to show grid columns and margins.
-        template1.grid() 
-    if rs.showBaselineGrid: # Enable to show baseline grid.
-        template1.baselineGrid()
+    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    template1.grid() 
+    # Show baseline grid if rs.showBaselineGrid is True
+    template1.baselineGrid()
     # Create empty image place holders. To be filled by running content on the page.
     template1.cImage(None, 4, 0, 2, 4)  # Empty image element, cx, cy, cw, ch
     template1.cImage(None, 0, 5, 2, 3)
@@ -148,10 +152,10 @@ def makeDocument():
 
     # Template 2
     template2 = Template(rs) # Create second template. This is for the main pages.
-    if rs.showGrid: # Enable to show grid columns and margins.
-        template2.grid() 
-    if rs.showBaselineGrid: # Enable to show baseline grid.
-        template2.baselineGrid()
+    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    template2.grid() 
+    # Show baseline grid if rs.showBaselineGrid is True
+    template2.baselineGrid()
     template2.cImage(None, 4, 0, 2, 3)  # Empty image element, cx, cy, cw, ch
     template2.cImage(None, 0, 5, 2, 3)
     template2.cImage(None, 2, 2, 2, 2)
@@ -173,9 +177,9 @@ def makeDocument():
     doc.newStyle(name='title', fontSize=3*rs.fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2*rs.fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*rs.fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=2*rs.fontSize, font=SEMIBOLD, fill=0.1,
+    doc.newStyle(name='h1', fontSize=2*rs.fontSize, font=SEMIBOLD, fill=(1, 0, 0),
         leading=2*rs.fontSize, tracking=H1_TRACK, stripWhiteSpace='\n')
-    doc.newStyle(name='h2', fontSize=1.5*rs.fontSize, font=SEMIBOLD, fill=0.2,
+    doc.newStyle(name='h2', fontSize=1.5*rs.fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
         leading=1*rs.fontSize, rLeading=0, tracking=H2_TRACK, stripWhiteSpace='\n')
     doc.newStyle(name='h3', fontSize=1.2*rs.fontSize, font=MEDIUM, fill=0, 
         leading=1.5*rs.fontSize, rLeading=0, rNeedsBelow=2*rs.leading, tracking=H3_TRACK,

@@ -60,7 +60,6 @@ class Typesetter(object):
         tb = self.getTextBox(style)
         tb.append('\n')# + getMarker(node.tag) 
         self.typesetNode(node, style)
-        
 
     def node_h3(self, node, style):
         u"""Collect the page-node-pageNumber connection."""
@@ -86,14 +85,14 @@ class Typesetter(object):
     def node_hr(self, node, style):
         u"""Draw horizontal ruler in the text."""
         tb = self.getTextBox(style)
-        tb.append('------------') # TODO: How to draw this on line fitting in column?
+        tb.append(u'________________') # TODO: How to draw this on line fitting in column?
 
     def node_a(self, node, style):
         u"""Ignore links, but process the block"""
         return self.typesetNode(node, style)
         
     def node_sup(self, node, style):
-        u"""Collect footnote refereneces on their page number. 
+        u"""Collect footnote references on their page number.
         And typeset the superior footnote index reference."""
         nodeId = node.attrib.get('id')
         if nodeId.startswith('fnref'): # This is a footnote reference.
@@ -107,7 +106,7 @@ class Typesetter(object):
          
     def node_div(self, node, style):
         u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
-        as output, but we will handle them separetely by looking them up in the XML-tree.
+        as output, but we will handle them separately by looking them up in the XML-tree.
         So we'll skip them in the regular flow process."""
         # TODO: Check specific on the class name. Process otherwise.
         tb = self.getTextBox(style)
@@ -153,7 +152,7 @@ class Typesetter(object):
                                     
     def pushStyle(self, style):
         u"""As we want cascading font and fontSize in the page elements, we need to keep track
-        of the stacking of XML-hiearchy of the tag styles.
+        of the stacking of XML-hierarchy of the tag styles.
         The styles can omit the font or fontSize, and still we need to be able to set the element
         attributes. Copy the current style and add overwrite the attributes in style. This way
         the current style always contains all attributes of the root style."""
@@ -185,7 +184,7 @@ class Typesetter(object):
             if style is not None and style.stripWhiteSpace is not None:
                 # If there is a style and if the replacement is not None.
                 nodeText = nodeText.strip() + style.stripWhiteSpace
-            if nodeText: # Any text left to add?
+            if nodeText: # Any text left to add after stripping and optionally adding white space?
                 tb.append(getFormattedString(nodeText, style)) # If style is None, just add plain string.
             
         # Type set all child node in the current node, by recursive call.
@@ -201,8 +200,8 @@ class Typesetter(object):
                 if childTail is not None:
                     if style is not None and style.stripWhiteSpace is not None:
                         # If there is a style and if the replacement is not None.
-                        childTail = childTail.strip() + style.stripWhiteSpace
-                    if childTail: # Anything left to add?
+                        childTail = childTail.strip() #+ style.stripWhiteSpace
+                    if childTail: # Any text left to add after stripping and optionally adding white space?
                         tb.append(getFormattedString(childTail, style))  # If style is None, just add plain string.
                 
             else: # If no method hook defined, then just solve recursively.
@@ -221,8 +220,8 @@ class Typesetter(object):
         if nodeTail is not None:
             if style is not None and style.stripWhiteSpace is not None:
                 # If there is a style and if the replacement is not None.
-                nodeTail = nodeTail.strip() + style.stripWhiteSpace
-            if nodeTail: # Any text left to add?
+                nodeTail = nodeTail.strip() #+ style.stripWhiteSpace
+            if nodeTail: # Any text left to add after stripping and optionally adding white space?
                 tb.append(getFormattedString(nodeTail, style)) # If style is None, just add plain string.
 
     def typesetFile(self, fileName):

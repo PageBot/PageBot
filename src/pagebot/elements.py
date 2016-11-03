@@ -355,7 +355,7 @@ class Grid(Element):
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         style = page.parent.getRootStyle()
         # Drawing the grid as squares.
-        if style.gridFill is not NO_COLOR:
+        if style.showGridColumns and style.gridFill is not NO_COLOR:
             setFillColor(style.gridFill)
             setStrokeColor(None)
             x = px + style.ml
@@ -366,7 +366,7 @@ class Grid(Element):
                     y -= style.cw + style.g
                 x += style.cw + style.g
         # Drawing the grid as lines.          
-        if style.gridStroke is not NO_COLOR:
+        if style.showGrid and style.gridStroke is not NO_COLOR:
             setFillColor(None)
             setStrokeColor(style.gridStroke, style.gridStrokeWidth)
             # TODO: Drawbot align and fill don't work properly now.
@@ -407,21 +407,22 @@ class BaselineGrid(Element):
         TODO: Make fixed values part of calculation or part of grid style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         style = page.parent.getRootStyle()
-        y = style.h - style.mt - py
-        line = 0
-        M = 16
-        # Format of line numbers.
-        # TODO: Drawbot align and fill don't work properly now.
-        fs = FormattedString('', font='Verdana', align='right', fontSize=M/2, 
-            stroke=None, fill=style.gridStroke)
-        while y > style.mb:
-            setFillColor(None)
-            setStrokeColor(style.gridStroke, style.gridStrokeWidth)
-            newPath()
-            moveTo((M, y))
-            lineTo((page.w - M, y))
-            drawPath() 
-            text(fs + repr(line), (M-2, y-M*0.6))
-            text(fs + repr(line), (page.w - M-4, y-M*0.6))
-            line += 1 # Increment line index.   
-            y -= style.baselineGrid # Next vertical line position of baseline grid.
+        if style.showBaselineGrid:
+            y = style.h - style.mt - py
+            line = 0
+            M = 16
+            # Format of line numbers.
+            # TODO: Drawbot align and fill don't work properly now.
+            fs = FormattedString('', font='Verdana', align='right', fontSize=M/2,
+                stroke=None, fill=style.gridStroke)
+            while y > style.mb:
+                setFillColor(None)
+                setStrokeColor(style.gridStroke, style.gridStrokeWidth)
+                newPath()
+                moveTo((M, y))
+                lineTo((page.w - M, y))
+                drawPath()
+                text(fs + repr(line), (M-2, y-M*0.6))
+                text(fs + repr(line), (page.w - M-4, y-M*0.6))
+                line += 1 # Increment line index.
+                y -= style.baselineGrid # Next vertical line position of baseline grid.
