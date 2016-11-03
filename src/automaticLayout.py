@@ -41,13 +41,14 @@ reload(pagebot.gxtools.gxmutator)
 from pagebot.gxtools.gxmutator import generateInstance
 
 FONT_LOCATIONS = {
-    'Promise-BoldCondensed': {"wght": 750, "wdth": 1000},
-    'Promise-Light': {"wght": 0, "wdth": 1000},
-    'Promise-Book': {"wght": 250, "wdth": 1000},
-    'Promise-Regular': {"wght": 400, "wdth": 1000},    
-    'Promise-Medium': {"wght": 600, "wdth": 1000},    
-    'Promise-Semibold': {"wght": 750, "wdth": 1000},    
-    'Promise-Bold': {"wght": 1000, "wdth": 1000},
+    #'Promise-BoldCondensed': {"wght": 750, "wdth": 0},
+    'Promise-LightCondensed': {"wght": 0, "wdth": 0},
+    #'Promise-Light': {"wght": 0, "wdth": 0},
+    #'Promise-Book': {"wght": 250, "wdth": 0},
+    #'Promise-Regular': {"wght": 400, "wdth": 0},    
+    #'Promise-Medium': {"wght": 600, "wdth": 0},    
+    #'Promise-Semibold': {"wght": 750, "wdth": 0},    
+    #'Promise-Bold': {"wght": 1000, "wdth": 0},
 }
 FONTS = {}
 # Install the test V-font
@@ -100,6 +101,12 @@ H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
 if 1:
+    BOOK = FONTS['Promise-LightCondensed']
+    BOOK_ITALIC = FONTS['Promise-LightCondensed']
+    MEDIUM = FONTS['Promise-LightCondensed']
+    SEMIBOLD = FONTS['Promise-LightCondensed']
+    BOLD = FONTS['Promise-LightCondensed']
+elif 0:
     BOOK = FONTS['Promise-Book']
     BOOK_ITALIC = FONTS['Promise-Book']
     MEDIUM = FONTS['Promise-Medium']
@@ -162,13 +169,13 @@ def makeDocument():
     doc.newStyle(name='title', fontSize=3*rs.fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2*rs.fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*rs.fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=rs.fontSize, font=SEMIBOLD, fill=0.1,
-        leading=3*rs.fontSize, tracking=H1_TRACK, needsBelow=3*rs.leading)
+    doc.newStyle(name='h1', fontSize=2*rs.fontSize, font=SEMIBOLD, fill=0.1,
+        leading=2*rs.fontSize, tracking=H1_TRACK, stripWhiteSpace='\n')
     doc.newStyle(name='h2', fontSize=1.5*rs.fontSize, font=SEMIBOLD, fill=0.2,
-        leading=2*rs.fontSize, tracking=H2_TRACK, needsBelow=3*rs.leading)
+        leading=1*rs.fontSize, rLeading=0, tracking=H2_TRACK, stripWhiteSpace='\n')
     doc.newStyle(name='h3', fontSize=1.2*rs.fontSize, font=MEDIUM, fill=0, 
-        leading=1.5*rs.fontSize, rNeedsBelow=2*rs.leading, tracking=H3_TRACK,
-        paragraphTopSpacing=U, paragraphBottomSpacing=U/2)
+        leading=1.5*rs.fontSize, rLeading=0, rNeedsBelow=2*rs.leading, tracking=H3_TRACK,
+        paragraphTopSpacing=U, paragraphBottomSpacing=U/2, stripWhiteSpace='\n')
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=rs.fontSize, font=BOOK, fill=0.1, 
