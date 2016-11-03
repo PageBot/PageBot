@@ -16,6 +16,7 @@ BASELINE_GRID = 2*U
 
 # Display option
 SHOW_GRID = True
+SHOW_GRID_COLUMNS = True
 SHOW_BASELINE_GRID = True
 SHOW_FLOW_CONNECTIONS = True
 
@@ -51,9 +52,9 @@ class Style(object):
             return getattr(self, name)
         return default
 
-def getRootStyle(u=U, showGrid=SHOW_GRID, showBaselineGrid=SHOW_BASELINE_GRID,
-        showFlowConnection=SHOW_FLOW_CONNECTIONS):
-    u"""Answer the main root style tha contains all default style attributes of Pagebot.
+def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
+        showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS):
+    u"""Answer the main root style tha contains all default style attributes of PageBot.
     To be overwritten when needed by calling applications.
     CAPITALIZED attribute names are for reference only. Not used directly from styles.
     They can be copied on other style attributes.
@@ -93,7 +94,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showBaselineGrid=SHOW_BASELINE_GRID,
 
         # Grid stuff
         showGrid = showGrid, # Flag to show the grid in output.
-        gridFill = (178/255.0, 200/255.0, 230/255.0, 0.9), # Fill color for (cw, ch) squares.
+        showGridColumns = showGridColumns, # Show the colums as filled (cw, ch) squares.
+        gridFill = (200/255.0, 230/255.0, 245/255.0, 0.9), # Fill color for (cw, ch) squares.
         gridStroke = (0.8, 0.8, 0.8), # Stroke of grid lines in part of a template.
         gridStrokeWidth = 1, # Line thickness of the grid.
         # Baseline grid
@@ -112,7 +114,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showBaselineGrid=SHOW_BASELINE_GRID,
         missingImageFill = 0.5, # Background color of missing image rectangles.
 
         # Typographic defaults
-        font = 'Georgia', # Default is to avoid existing font and fontSize in the graphic state.
+        font = 'Verdana', # Default is to avoid existing font and fontSize in the graphic state.
         fallbackFont = 'LucidaGrande',
         fontSize = u * 7/10, # Default font size in points, related to U
 
