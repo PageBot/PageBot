@@ -19,17 +19,17 @@ Er bestaat op het moment vreemd genoeg geen digitaal gereedschap dat enerzijds v
 <h3>XML transformatie</h3>
 <p>Het transformeren van XML documenten naar een informatiestructuur is met standaardgereedschappen zoals Python-Markdown makkelijk uit te voeren.</p>
 <h3>Zetten van de strokenproef</h3>
-<p>Om de software te maken die een strokenproef kan genereren is typografische kennis nodig.<sup id="fnref:typografische kennis"><a class="footnote-ref" href="#fn:typografische kennis" rel="footnote">2</a></sup> In vrijwel alle automatische opmaakprogramma’s is dit een onderbelicht gebied. Dat komt doordat de bouwers van dergelijke software niet of nauwelijks op de hoogte zijn van de relevante parameters en hun onderlinge samenhang. Ook kunnen verschillen in culturele traditiets een rol spelen. USA-typografie is niet hetzelfde als Europese.<br />
-Met name tabellen zijn lastige typografische bouwstenen, als niet duidelijk is welke volume ze zullen bevatten en tot welke marges hun inhoud te schalen is. Veel automatische opmaakprogramma’s lopen hierop vast.</p>
+<p>Om de software te maken die een strokenproef kan genereren is typografische kennis nodig.<sup id="fnref:typografische kennis"><a class="footnote-ref" href="#fn:typografische kennis" rel="footnote">2</a></sup> In vrijwel alle automatische opmaakprogramma’s is dit een onderbelicht gebied. Dat komt doordat de bouwers van dergelijke software niet of nauwelijks op de hoogte zijn van de relevante parameters en hun onderlinge samenhang. Ook kunnen verschillen in culturele tradities een rol spelen. USA-typografie is niet hetzelfde als Europese.<br />
+Met name tabellen zijn lastige typografische bouwstenen, als niet duidelijk is welk volume ze zullen bevatten en tot welke marges de inhoud van hun cellen kan schalen. Veel automatische opmaakprogramma’s lopen hierop vast.</p>
 <h3>Zetten van de strokenproef</h3>
-<p>Om de software te maken die een stroken- proef kan genereren is typogra sche kennis nodig. In vrijwel alle automatische opmaakprogramma’s is dit een onderbelicht gebied. Dat komt doordat de bouwers van dergelijke software niet of nauwelijks op de hoogte zijn van de relevante parameters en hun onderlinge samenhang.<br />
-Daarnaast zijn met name tabellen lastige typogra sche bouwstenen, vooral als niet niet duidelijk welke volume ze moeten bevatten. Veel opmaakprogramma’s lopen hierop vast.</p>
+<p>Om de software te maken die een stroken- proef kan genereren is typografische kennis nodig. In vrijwel alle automatische opmaakprogramma’s is dit een onderbelicht gebied. Dat komt doordat de bouwers van dergelijke software niet of nauwelijks op de hoogte zijn van de relevante parameters en hun onderlinge samenhang.<br />
+Daarnaast zijn met name tabellen lastige typografische bouwstenen, vooral als niet niet duidelijk welke volume ze moeten bevatten. Veel opmaakprogramma’s lopen hierop vast.</p>
 <p><img alt="Galley1" src="images/automaticlayout/im3.png" title="" /></p>
 <p><img alt="Galley1" src="images/automaticlayout/im4.png" title="Om het probleem van eindeloze terugkoppeling tussen tekst en opmaak te voorkomen wordt gebruik gemaakt van Galley’s, een digitale representant van de oude “strokenproef”. Door de breedte en daarmee de lengte van een tekst vast te leggen voordat deze wordt opgemaakt in een layout, kan veel nauwkeuriger van te voren worden worden bepaald welke elementen geplaatst kunnen worden. Elementen met een andere breedte kunnen gewoon in de strokenproef meelopen. Koppen kunnen in meerdere breedten worden gezet of via een v-font op maat worden gemaakt." /></p>
 <p><img alt="Column width overflow" src="images/automaticlayout/im5.png" title="Bij de compositie van pagina’s is het belangrijk te kunnen sorteren op de meeste relevante “vrije ruimte”. Afhankelijk van de te plaatsen regelbreedte kan eenzelfde set van opvolgende vrije ruimtes toch een andere selectie opleveren." /></p>
 <p><img alt="Freespace sorter" src="images/automaticlayout/im6.png" /></p>
 <h3>Compositie van pagina’s</h3>
-<p>De mate van complexiteit van het componeren van één of meerdere pagina’s uit een gegeven volume aan strokenproeven en beelden is direct afhankelijk van de structuur van het de informatie en het medium waarin moet worden afgebeeld.<br />
+<p>De mate van complexiteit van het componeren van één of meerdere pagina’s uit een gegeven volume aan strokenproeven en beelden, is direct afhankelijk van de structuur van het de informatie en het medium waarin moet worden afgebeeld.<br />
 Een tekst met grove structuur (als er beelden of tabellen in de tekst staan of veel hiërarchie in koppen) is moeilijker te plaatsen dan een homogene tekst. Die gedraagt zich meer als een vloeistof.<br />
 Er zijn een aantal strategieën mogelijk om het probleem op te lossen. Niet duidelijk is welke strategie in alle gevallen het beste is of welke strategie past op een bepaalde situatie.<br />
 Het soort van probleem is gerelateerd aan andere gebieden zoals speltheorie en kunstmatige intelligentie. In praktijk komt het er op neer dat een optimale oplossing gezocht moet worden in een snel vertakkende boom. Het aantal vertakkingen neemt exponentieel toe, waardoor het aantoonbaar onmogelijk is om ze allemaal af te lopen. Net als bij het berekenen van de beste zet in een schaakpartij moet daarom externe context informatie worden toegevoegd om te zorgen dat de waarde van takken kan worden berekend zonder dat deze in detail zijn geanalyseerd.</p>
@@ -41,13 +41,15 @@ Het kan in extreme situaties nodig zijn om via backtracking de opmaak aan te pas
 <p>Er zijn veel voorbeelden van derdelijke systemen die niet goed werken of waarbij het eisenpakket zodanig is verminderd dat met eenvoudige algoritmes kan worden volstaan. De layout van een pagina met één kolom, zoals in tekstverwerkers of boeken, is betrekkelijk eenvoudig automatisch te berekenen. Het wordt expontieel complex als er meerdere tekststromen tegelijk lopen, zoals bij een tijdschrift of krant het geval is. Als we de vergelijking met de ontwikkeling van schaak-programma’s trekken, dan is veel verbetering te behalen door het toevoegen van domeinkennis.</p>
 <p><img alt="Galley proof" src="images/automaticlayout/im7.png" title="De pagina wordt verdeeld in gebieden die een vaste of variabele functie kunnen hebben. De vaste elementen worden eerst ingedeeld. Vervolgens worden de strokenproeven van verschillende informatiestromenen gewaardeerd en gesorteerd. De weegfactoren daarvoor zijn zowel van inhoudelijke als typografische aard. De oplossing voor het probleem uit zich in een recursieve benadering waarbij de onderdelen van een pagina als mini-pagina’s worden behandeld." /></p>
 <p><img alt="Overlapping columns" src="images/automaticlayout/im8.png" title="Bij het plaatsen van elementen met een verschillende breedte worden andere kolommen gevuld zonder dat al duidelijk is of in de volgende kolom een splitsing in tekst wel mogelijk is. Dit maakt he nodig dat het systeem kan “backtracken” zodat het mogelijk is om terug te komen op eerdere slissingen in de opmaak van de pagina." /></p>
-<p>Dit is een concept notitie, aanpassingen en uitbreidingen zijn nog nodig. Deze pagina’s werden automatisch opgemaakt met PageComposer, een OpenSourece applicatie voor Drawbot.</p>
+<p>Dit is een concept notitie, aanpassingen en uitbreidingen zijn nog nodig. Deze pagina’s werden automatisch opgemaakt met PageBot (www.pagebot.io), een Open Sourece applicatie voor Drawbot.</p>
 <p>Buro Petr van Blokland + Claudia Mens<br />
 Rietveld 56<br />
 2611 LM Delft<br />
 @petrvanblokland<br />
 buro@petr.com <br />
-typetr.typenetwork.com</p>
+typetr.typenetwork.com<br />
+www.pagebot.io<br />
+www.pagebot.pro</p>
 <div class="footnote">
 <hr />
 <ol>

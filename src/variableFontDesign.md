@@ -1,25 +1,16 @@
-
-
-a
-a
-a
-a
-a
-a
-a
-a
 ##Variable Font Design
 
 #Designing for n-dimensional space
-##Introduction
-###This note highlights the design and production of OpenType 1.8 Variable Fonts.
 
-###Finding the possibilities and ultimate challenges
+Introduction
+This note highlights the design and production of OpenType 1.8 Variable Fonts.
+
+Finding the possibilities and ultimate challenges
 
 Where in the traditional way of working with layout software such as Quark XPress and InDesign always a human decision determines the final layout of a page, there are more and more situations where that is not an option. As more and more pages are generated with content coming from a database - or an online source - and where the selection of the information is directly determined by properties of the reader, the layout of the pages to be automatically calculated.
 There is at the moment strangely no digital tools on the one hand is sufficiently flexible to be used in all possible techniques and types of layouts, link is to be made with a wide variety of information sources, and also meets the typographical demands on manual formatting.
 
-![AutoPager](images/variablefontdesign/cubeUI1.png  "With an XML description of the text transformation is performed to a consistent test is created. It takes into account the typographical features of the Markdown or XML tags, such as font, corps, weights, italic variations of axles, spacing, line width, line feed, alignment, indentation, tabulation, color, and breaking into the desired language.")
+![AutoPager](images/variablefontdesign/cubeUI1.png  "The interactive GN-cube (by Just van Rossum) offers a dynmamic view on the interpolated instances of the Master glyphs.")
 
 ![OpenType Variations Axis Ideas](images/variablefontdesign/axisIdeas.png "")
 
@@ -39,11 +30,9 @@ Formatting a page is divided from the rough copy and meta information in a numbe
 Transforming XML documents to an information structure with standard tools such as Python Markdown perform easy.
 
 ### Putting the test strips
-To make the software can generate a test strip is typographic knowledge. [^typographic knowledge] In almost all automatic layout programs this is a neglected area. This is because the manufacturers of such software hardly aware of the relevant parameters and their interrelationships. Also, differences in cultural traditiets play a role. USA typography is not the same as European.
+To make the software can generate a test strip is typographic knowledge. [^typographic knowledge] In almost all automatic layout programs this is a neglected area. This is because the manufacturers of such software hardly aware of the relevant parameters and their interrelationships. Also, differences in cultural traditiets play a role. USA typography is not the same as European. In particular tables are difficult typographical blocks, if it is not clear what volume they will contain and what margins to scale their content. Many automatic layout programs stuck on it.
 
-In particular tables are difficult typographical blocks, if it is not clear what volume they will contain and what margins to scale their content. Many automatic layout programs stuck on it.
-
-[^typographic knowledge] that knowledge begins to diminish. Formatting a page with static proportions and a solid baseline requires different parameters than typographic formatting responsive pages with HTML and CSS.
+[^typographic knowledge]: That knowledge begins to diminish. Formatting a page with static proportions and a solid baseline requires different parameters than typographic formatting responsive pages with HTML and CSS.
 
 ### Putting the test strips
 To make the software can generate a stroken- trial is typographical cal knowledge necessary. In almost all automatic layout programs this is a neglected area. This is because the manufacturers of such software hardly aware of the relevant parameters and their interrelationships.

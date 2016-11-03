@@ -1,4 +1,10 @@
 # -*- coding: UTF-8 -*-
+#-----------------------------------------------------------------------------
+#
+#     P A G E B O T
+#
+#     Made for usage in Drawbot, www.drawbot.com
+#
 """
 Literature Extension for Python-Markdown
 =======================================
@@ -13,8 +19,9 @@ Copyright The Python Markdown Project
 License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
 
 """
+# -----------------------------------------------------------------------------
 
-from __future__ import absolute_import
+#from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.preprocessors import Preprocessor
