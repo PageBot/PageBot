@@ -173,11 +173,11 @@ class Typesetter(object):
         u"""Recursively typeset the node, using style. Style can be None, in which case it should be not
         pushed and popped. If there is a valid style, push it on the graphics state and answer a merged
         style with the one that was on top before. This way automatic cascading values are in the style
-        resulting the push."""
-
+        answered by the push."""
         if style is not None:
             style = self.pushStyle(style)
-        tb = self.getTextBox(style) # Style van be None
+            print('PUSHED', node, style)
+        tb = self.getTextBox(style) # Get current flow text box from Galley to fill. Style can be None
         
         nodeText = node.text
         if nodeText is not None:
@@ -192,6 +192,7 @@ class Typesetter(object):
             hook = 'node_'+child.tag
             style = self.document.getStyle(child.tag)
             if style is not None: # Only push if we found a valid style for this tag.
+                print('PUSH-R', child, style)
                 style = self.pushStyle(style)
             # Method will handle the styled body of the element, but not the tail.
             if hasattr(self, hook):
@@ -203,16 +204,18 @@ class Typesetter(object):
                         childTail = childTail.strip() #+ style.stripWhiteSpace
                     if childTail: # Any text left to add after stripping and optionally adding white space?
                         tb.append(getFormattedString(childTail, style))  # If style is None, just add plain string.
-                
+
             else: # If no method hook defined, then just solve recursively.
                 self.typesetNode(child, style)
             if style is not None: # Pop style only if it was pushed before.
-                self.popStyle()
+                style = self.popStyle()
+                print('POPPED-R', child, style)
 
         # Restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text.
         if style is not None: # Only pop if there was a pushed style.
             style = self.popStyle()
+            print('POPPED', node, style)
 
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.

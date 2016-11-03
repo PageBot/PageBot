@@ -20,6 +20,8 @@ from fontTools.varLib.models import VariationModel, supportScalar, normalizeLoca
 
 from drawBot import installFont
 
+DEBUG = False
+
 def generateInstance(varFileName, location, targetDirectory):
     u"""
     Instantiate an instance of a variation font at the specified location.
@@ -46,56 +48,58 @@ def generateInstance(varFileName, location, targetDirectory):
     outFile = targetDirectory + targetFileName
 
     # print("Loading GX font")
-    varfont = TTFont(varFileName)
+    varFont = TTFont(varFileName)
 
     # Set the instance name IDs in the name table
     platforms=((1, 0, 0), (3, 1, 0x409)) # Macintosh and Windows
     for platformID, platEncID, langID in platforms:
-        familyName = varfont['name'].getName(1, platformID, platEncID, langID) # 1 Font Family name
+        familyName = varFont['name'].getName(1, platformID, platEncID, langID) # 1 Font Family name
         if not familyName:
             continue
         familyName = familyName.toUnicode() # NameRecord to unicode string
         styleName = unicode(instanceName) # TODO make sure this works in any case
         fullFontName = " ".join([familyName, styleName])
         postscriptName = fullFontName.replace(" ", "-")
-        varfont['name'].setName(styleName, 2, platformID, platEncID, langID) # 2 Font Subfamily name
-        varfont['name'].setName(fullFontName, 4, platformID, platEncID, langID) # 4 Full font name
-        varfont['name'].setName(postscriptName, 6, platformID, platEncID, langID) # 6 Postscript name for the font
+        varFont['name'].setName(styleName, 2, platformID, platEncID, langID) # 2 Font Subfamily name
+        varFont['name'].setName(fullFontName, 4, platformID, platEncID, langID) # 4 Full font name
+        varFont['name'].setName(postscriptName, 6, platformID, platEncID, langID) # 6 Postscript name for the font
         # Other important name IDs
         # 3 Unique font identifier (e.g. Version 0.000;NONE;Promise Bold Regular)
         # 25 Variations PostScript Name Prefix
 
-    fvar = varfont['fvar']
+    fvar = varFont['fvar']
     axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in fvar.axes}
     # TODO Round to F2Dot14?
     normalizedLoc = normalizeLocation(normalizedLoc, axes)
     # Location is normalized now
-    print("Normalized location:", varFileName, normalizedLoc)
+    if DEBUG:
+        print("Normalized location:", varFileName, normalizedLoc)
 
-    gvar = varfont['gvar']
-    for glyphname, variations in gvar.variations.items():
-        coordinates, _ = _GetCoordinates(varfont, glyphname)
+    gvar = varFont['gvar']
+    for glyphName, variations in gvar.variations.items():
+        coordinates, _ = _GetCoordinates(varFont, glyphName)
         for var in variations:
             scalar = supportScalar(normalizedLoc, var.axes)
             if not scalar: continue
             # TODO Do IUP / handle None items
-            varcoords = []
+            varCoords = []
             for coord in var.coordinates:
                 # TODO temp hack to avoid NoneType
                 if coord is None:
-                    varcoords.append((0, 0))
+                    varCoords.append((0, 0))
                 else:
-                    varcoords.append(coord)
-            coordinates += GlyphCoordinates(varcoords) * scalar
+                    varCoords.append(coord)
+            coordinates += GlyphCoordinates(varCoords) * scalar
             # coordinates += GlyphCoordinates(var.coordinates) * scalar
-        _SetCoordinates(varfont, glyphname, coordinates)
+        _SetCoordinates(varFont, glyphName, coordinates)
 
     # print("Removing GX tables")
     for tag in ('fvar', 'avar', 'gvar'):
-        if tag in varfont:
-            del varfont[tag]
+        if tag in varFont:
+            del varFont[tag]
 
-    print("Saving instance font", outFile)
-    varfont.save(outFile)
+    if DEBUG:
+        print("Saving instance font", outFile)
+        varFont.save(outFile)
     # Installing the font in Drawbot
     return installFont(outFile)
