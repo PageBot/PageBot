@@ -49,17 +49,21 @@ def generateInstance(varFileName, location, targetDirectory):
     varfont = TTFont(varFileName)
 
     # Set the instance name IDs in the name table
-    familyName = varfont['name'].getName(1, platformID=3, platEncID=1, langID=0x409) # 1 Font Family name
-    familyName = unicode(familyName) # ensure it's correctly encoded
-    styleName = unicode(instanceName) # ensure it's correctly encoded
-    fullFontName = " ".join([familyName, styleName])
-    postscriptName = fullFontName.replace(" ", "-")
-    varfont['name'].setName(styleName, nameID=2, platformID=3, platEncID=1, langID=0x409) # 2 Font Subfamily name
-    varfont['name'].setName(fullFontName, nameID=4, platformID=3, platEncID=1, langID=0x409) # 4 Full font name
-    varfont['name'].setName(postscriptName, nameID=6, platformID=3, platEncID=1, langID=0x409) # 6 Postscript name for the font
-    # Other important name IDs
-    # 3 Unique font identifier (e.g. Version 0.000;NONE;Promise Bold Regular)
-    # 25 Variations PostScript Name Prefix
+    platforms=((1, 0, 0), (3, 1, 0x409)) # Macintosh and Windows
+    for platformID, platEncID, langID in platforms:
+        familyName = varfont['name'].getName(1, platformID, platEncID, langID) # 1 Font Family name
+        if not familyName:
+            continue
+        familyName = familyName.toUnicode() # NameRecord to unicode string
+        styleName = unicode(instanceName) # TODO make sure this works in any case
+        fullFontName = " ".join([familyName, styleName])
+        postscriptName = fullFontName.replace(" ", "-")
+        varfont['name'].setName(styleName, 2, platformID, platEncID, langID) # 2 Font Subfamily name
+        varfont['name'].setName(fullFontName, 4, platformID, platEncID, langID) # 4 Full font name
+        varfont['name'].setName(postscriptName, 6, platformID, platEncID, langID) # 6 Postscript name for the font
+        # Other important name IDs
+        # 3 Unique font identifier (e.g. Version 0.000;NONE;Promise Bold Regular)
+        # 25 Variations PostScript Name Prefix
 
     fvar = varfont['fvar']
     axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in fvar.axes}
