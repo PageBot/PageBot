@@ -92,8 +92,8 @@ if VARS:
     FONT_PATH = '../../fonts/'
 
     FONT_LOCATIONS = {
-        'Promise-BoldCondensed': {"wght": 750, "wdth": 500, },
-        'Promise-LightCondensed': {"wght": 0, "wdth": 1000},
+        #'Promise-BoldCondensed': {"wght": 750, "wdth": 500, },
+        #'Promise-LightCondensed': {"wght": 0, "wdth": 500},
         'Promise-Light': {"wght": 0, "wdth": 1000},
         'Promise-Book': {"wght": 250, "wdth": 1000},
         'Promise-Regular': {"wght": 400, "wdth": 1000},    
@@ -120,8 +120,7 @@ if VARS:
         BOOK = FONTS['Promise-Book']
         BOOK_ITALIC = FONTS['Promise-Book']
         MEDIUM = FONTS['Promise-Medium']
-        #SEMIBOLD = FONTS['Promise-Semibold']
-        SEMIBOLD = FONTS['Promise-BoldCondensed']
+        SEMIBOLD = FONTS['Promise-Semibold']
         BOLD = FONTS['Promise-Bold']
 else:
     BOOK = MEDIUM = 'Verdana'
@@ -144,8 +143,8 @@ def makeDocument():
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid()
     # Create empty image place holders. To be filled by running content on the page.
-    template1.cImage(None, 4, 0, 2, 4)  # Empty image element, cx, cy, cw, ch
-    template1.cImage(None, 0, 5, 2, 3)
+    template1.cContainer(4, 0, 2, 4)  # Empty image element, cx, cy, cw, ch
+    template1.cContainer(0, 5, 2, 3)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
     template1.cTextBox('', 0, 0, 2, 5, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox('', 2, 0, 2, 8, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
@@ -159,11 +158,11 @@ def makeDocument():
     template2.grid() 
     # Show baseline grid if rs.showBaselineGrid is True
     template2.baselineGrid()
-    template2.cImage(None, 4, 0, 2, 3)  # Empty image element, cx, cy, cw, ch
-    template2.cImage(None, 0, 5, 2, 3)
-    template2.cImage(None, 2, 2, 2, 2)
-    template2.cImage(None, 2, 0, 2, 2)
-    template2.cImage(None, 4, 6, 2, 2)
+    template2.cContainer(4, 0, 2, 3)  # Empty image element, cx, cy, cw, ch
+    template2.cContainer(0, 5, 2, 3)
+    template2.cContainer(2, 2, 2, 2)
+    template2.cContainer(2, 0, 2, 2)
+    template2.cContainer(4, 6, 2, 2)
     template2.cTextBox('', 0, 0, 2, 5, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
     template2.cTextBox('', 2, 4, 2, 4, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     template2.cTextBox('', 4, 3, 2, 3, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
@@ -197,7 +196,7 @@ def makeDocument():
     doc.newStyle(name='img', leading=rs.leading, fontSize=rs.fontSize, font=BOOK,)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, preFix='', postFix=' ',
+    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, preFix='AA', postFix='SS ',
         fontSize=rs.fontSize*0.65)
     doc.newStyle(name='li', fontSize=rs.fontSize, font=BOOK, 
         tracking=P_TRACK, leading=rs.leading, hyphenation=True, 

@@ -26,9 +26,33 @@ class Element(object):
         return '[%s %s]' % (self.__class__.__name__, self.eId)
 
     def getSize(self):
-        u"""Answer the size of the element. This method can be redefined,
-        by inheriting classes, who need to calculate the height,such as galleys."""
-        return self.w, self.h
+        u"""Answer the size of the element by calling self.getWidth() and
+        self.getHeight(). This allows element to dynamically calculate the size
+        if necessary. This method can be redefined, by inheriting classes,
+        who need to calculate their size in a different way."""
+        return self.getWidth(), self.getHeight()
+
+    def setSize(self, w, h):
+        u"""Set the size of the element by calling self.setWidth(w) and self.setHeight(h),
+        allowing inheriting Element classes to calculate internal size changed."""
+        self.setWidth(w)
+        self.setHeight(h)
+
+    def getMinSize(self):
+        u"""Answer the minW and minW of this element. Default behavior is that elements
+        cannot shrink or grow, answering self.getSize()"""
+        return self.getSize()
+
+    def setMinSize(self, minW, minH):
+        self.minW = minW
+        self.minH = minH
+
+    def getMaxSize(self):
+        return self.maxW, self.maxH # No limit if value is None
+
+    def setMaxSize(self, maxW, maxH):
+        self.maxW = maxW # No limit if value is None
+        self.maxH = maxH
 
     def copy(self):
         u"""Answer a copy of self."""
@@ -39,6 +63,12 @@ class Element(object):
         
     def getHeight(self):
         return self.h
+
+    def setWidth(self, w):
+        self.w = w
+
+    def setHeight(self, h):
+        self.h = h
 
     def getElements(self):
         u"""Default is that elements don't contain other elements."""
@@ -56,8 +86,29 @@ class Element(object):
         u"""Default is that elements are not handling text."""
         return False
 
+    def isContainer(self):
+        return False
+
+class Container(Element):
+    u"""A container contains one or more elements that must negotiate for space if size is set fixed."
+    The Galley is an example of it."""
+    def __init__(self, w=None, h=None, eId=None, elements=None):
+        if elements is None:
+            elements = []  # Key is vertical position. Elements are supposed to know their real height.
+        self._elements = elements
+        self.eId = eId  # Optional element id.
+        self.w = w # None, unless forced set by self.setSize(w, h) to be > 0
+        self.h = h
+
+    def isContainer(self):
+        return True
+
+    def draw(self, page, x, y):
+        for element in self._elements:
+            element.draw(page, x, y)
+
 class TextBox(Element):
-    def __init__(self, fs, w, h, eId=None, nextBox=None, nextPage=1, fill=NO_COLOR, stroke=NO_COLOR, 
+    def __init__(self, fs, w, h, eId=None, nextBox=None, nextPage=1, fill=NO_COLOR, stroke=NO_COLOR,
             strokeWidth=None ):
         self.fs = FormattedString()+fs # Make sure it is a formatted  string.
         self.w = w
@@ -111,14 +162,14 @@ class TextBox(Element):
 
     def draw(self, page, x, y):
         if self.fill != NO_COLOR:
+            setStrokeColor(None)
             setFillColor(self.fill)
-            stroke(None)
             rect(x, y, self.w, self.h)
         hyphenation(True)
         textBox(self.fs, (x, y, self.w, self.h))
         if self.stroke != NO_COLOR and self.strokeWidth:
             setStrokeColor(self.stroke, self.strokeWidth)
-            fill(None)
+            setFillColor(None)
             rect(x, y, self.w, self.h)
 
 class Text(Element):
@@ -192,11 +243,15 @@ class Line(Element):
         moveTo((x, y))
         lineTo((x + self.w, y + self.h))
         drawPath()
-        
+
 class Image(Element):
-    def __init__(self, path, w=None, h=None, eId=None, s=None, sx=None, sy=None, fill=None, stroke=None, strokeWidth=None, missingImageFill=NO_COLOR, caption=None, hyphenation=True):
+    def __init__(self, path, w=None, h=None, minW=1, minH=1, eId=None, s=None,
+                 sx=None, sy=None, fill=None, stroke=None, strokeWidth=None,
+                 missingImageFill=NO_COLOR, caption=None, hyphenation=True):
         self.w = w # Target width
         self.h = h # Target height, whichever fits best to original proportions.
+        self.minW = minW # Minimum width of an image. Default is 1 pt.
+        self.minH = minH # Minimum height of the image. Default is 1 pt.
         self.setPath(path) # If omitted, a gray/crossed rectangle will be drawn.
         self.eId = eId # Unique element id
         self.sx = sx or s # In case scale is supplied, instead of target w/h
@@ -218,10 +273,48 @@ class Image(Element):
         else:
             self.iw = self.ih = None
             self.sx = self.sy = 1
-            
-    def setScale(self, w, h):
-        u"""Answer the scale of the image, calculated from it's own width/height and the optional
-        (self.w, self.h)"""
+
+    def setSize(self, w, h):
+        u"""Set the intended size and calculate the new scale."""
+        self.w = max(w, self.minW)
+        self.h = max(h, self.minH)
+        self.setScale()
+
+    def setWidth(self, w):
+        u"""Set the intended width and calculate the new scale, validating the
+        width to the image minimum width."""
+        self.w = max(w, self.minW)
+        self.h = None # Make scale calculation take the ratio of the image.
+        self.setScale()
+
+    def setHeight(self, h):
+        u"""Set the intended height and calculate the new scale, validating the
+        height to the image minimum height."""
+        self.w = None # Make scale calculation take the ratio of the image.
+        self.h = max(h, self.minH)
+        self.setScale()
+
+    def getWidth(self):
+        u"""Answer the intended width self.w or otherwise the image width self.iw
+        if undefined."""
+        return self.w or self.iw
+
+    def getHeight(self):
+        u"""Answer the intended height self.h or otherwise the image height self.ih
+        if undefined."""
+        return self.h or self.ih
+
+    def getMinSize(self):
+        u"""Images can shrink or grow, answering (self.minW, self,minH)."""
+        return self.minW, self.minH
+
+    def setScale(self, w=None, h=None):
+        u"""Answer the scale of the image, calculated from it's own width/height and
+        the optional (self.w, self.h)"""
+        if w is None:
+            w = self.w
+        if h is None:
+            h = self.h
         if not self.iw or not self.ih:
             # Cannot calculate the scale if the image does not exist.
             self.sx = self.sy = 1         
@@ -271,7 +364,7 @@ class Image(Element):
     def _drawCaption(self, page, x, y, w, h):
         if self.caption:
             captionW, captionH = self.getCaptionSize(page)
-            #fill(0.8, 0.8, 0.8, 0.5)
+            #setFillColor(0.8, 0.8, 0.8, 0.5)
             #rect(x, y, w, captionH)
             hyphenation(self.hyphenation)
             textBox(self.caption, (x, y, w, captionH))
@@ -280,31 +373,36 @@ class Image(Element):
         if self.path is None:
             self._drawMissingImage(x, y, self.w, self.h)
         else:
+            if self.sx is None: # Scale is not initiaized yet.
+                self.setScale()
             save()
             scale(self.sx, self.sy)
             image(self.path, (x/self.sx, y/self.sy), self._getAlpha())
             if self.stroke is not None: # In case drawing border.
-                fill(None)
+                setFillColor(None)
                 setStrokeColor(self.stroke, self.strokeWidth * self.sx)
                 rect(x/self.sx, y/self.sy, self.w/self.sx, self.h/self.sy)
             restore()
         self._drawCaption(page, x, page.h - y, self.w, self.h)
 
 class Ruler(Element):
-    def __init__(self, w, eId=None, stroke=None, strokeWidth=None,
+    def __init__(self, w, eId=None, stroke=0, strokeWidth=None,
         indent=0, tailIndent=0):
         self.w = w
         self.eId = eId # Unique element id
         self.stroke = stroke
-        self.strokeWidth = strokeWidth
+        self.strokeWidth = strokeWidth or 1 # Force default height.
         self.indent = indent
         self.tailIndent = tailIndent
 
+    def getHeight(self):
+        return self.strokeWidth or 1 # Force default height.
+
     def draw(self, page, px, py):
-        stroke(self.stroke)
-        strokeWidth(self.strokeWidth)
+        setFillColor(None)
+        setStrokeColor(self.stroke, self.strokeWidth)
         w = self.w - self.indent - self.tailIndent
-        line(px + self.indent, py, px + w, py)
+        line((px + self.indent, py), (px + w, py))
 
 class Grid(Element):
     def __init__(self, eId='grid'):
@@ -387,7 +485,7 @@ class BaselineGrid(Element):
                 line += 1 # Increment line index.
                 y -= style.baselineGrid # Next vertical line position of baseline grid.
 
-class Galley(Element):
+class Galley(Container):
     u"""A Galley is sticky sequential flow of elements, where the parts can have
     different widths (like headlines, images and tables) or responsive width, such as images
     and formatted text volumes. Size is calculated dynamically, since one of the enclosed
@@ -404,6 +502,7 @@ class Galley(Element):
         self._elements = elements
         self._footnotes = []
         self.eId = eId  # Optional element id.
+        self.w = self.h = None # Unless forced set by self.setSize(w, h) to be > 0
 
     def __repr__(self):
         t = '[' + self.__class__.__name__
@@ -417,9 +516,22 @@ class Galley(Element):
         u"""Since this is a recursive element, we can answer a list of elements."""
         return self._elements
 
+    def getMinSize(self):
+        u"""Cumulation of the maximum minSize of all enclosed elements."""
+        minW = minH = 0 # Let's see if we need bigger than this.
+        for e in self._elements:
+            eMinW, eMinH = e.getMinSize()
+            minW = max(minW, eMinW)
+            minH += eMinH
+        return minW, minH
+
     def getSize(self):
         u"""Answer the enclosing rectangle of all elements in the galley."""
-        w = h = 0
+        w = self.w or 0
+        h = self.h or 0
+        if w and h: # Galley has fixed/forced size:
+            return w, h
+        # No fixed size set. Calculate required size from contained elements.
         for e in self._elements:
             ew, eh = e.getSize()
             w = max(w, ew)
@@ -455,7 +567,7 @@ class Galley(Element):
         part of a page. In that case the w/h must have been set by the Composer to fit the
         containing page."""
         gy = y
-        for element in sorted(self._elements.items()):
+        for element in self._elements:
             # @@@ Find space and do more composition
             element.draw(page, x, gy)
             gy += element.getHeight()

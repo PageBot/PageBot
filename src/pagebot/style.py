@@ -79,6 +79,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         u = u, # Base unit for Dutch/Swiss typography :)
         w = 595, # Page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = 11 * 72, # Page height, basic size of the document. 11", international generic fit.
+        # Margins
         ml = 7*u, # Margin top
         mt = 7*u, # Margin left
         mr = 6*u, # Margin right is used as minimum. Actual value is calculated from cw and gutter,
@@ -95,7 +96,11 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # 11*gutter is one of the best values, as the smallest micro-column is 2 instead  of scaling back to 1.
         cw = 11*gutter,
         ch = u*baselineGrid - u, # Approximately square with cw + gutter.
-
+        # Minimum size
+        minW = 5*gutter, # Default is to make minimum width equal to 1/2 column, om 5+1+5 = 11 grid.
+        minH = baselineGrid, # Default is to make minimum height equal to 1 baseline.
+        maxW = None, # None if there is no maximum
+        maxH = None,
         # Grid stuff
         showGrid = showGrid, # Flag to show the grid in output.
         showGridColumns = showGridColumns, # Show the colums as filled (cw, ch) squares.
