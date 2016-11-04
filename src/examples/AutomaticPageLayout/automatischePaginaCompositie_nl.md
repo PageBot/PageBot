@@ -17,7 +17,7 @@ Er bestaat op het moment vreemd genoeg geen digitaal gereedschap dat enerzijds v
 ![The News](images/im2.png "Doel van het project is om automatisch pagina’s op te opmaken met een complexiteit die in anders alleen in boeken, kranten en tijdschriften te vinden is, tegelijk met een minimum aan toegevoegde meta-informatie.")
 
 ###Fasering
-Het opmaken van een pagina vanuit ruwe kopij en meta-informatie is te verdelen in een aantal fasen[phases]:
+Het opmaken van een pagina vanuit ruwe kopij en meta-informatie is te verdelen in een aantal fasen[^phases]:
 
 * Transformatie vanuit Markdown via XML;
 * Zetten van de strokenproef;
@@ -72,7 +72,7 @@ Er zijn veel voorbeelden van derdelijke systemen die niet goed werken of waarbij
 
 ![Overlapping columns](images/im8.png "Bij het plaatsen van elementen met een verschillende breedte worden andere kolommen gevuld zonder dat al duidelijk is of in de volgende kolom een splitsing in tekst wel mogelijk is. Dit maakt he nodig dat het systeem kan “backtracken” zodat het mogelijk is om terug te komen op eerdere slissingen in de opmaak van de pagina.")
 
-Dit is een concept notitie, aanpassingen en uitbreidingen zijn nog nodig. Deze pagina’s werden automatisch opgemaakt met PageBot (www.pagebot.io), een Open Sourece applicatie voor Drawbot.
+Dit is een concept notitie, aanpassingen en uitbreidingen zijn nog nodig. Deze pagina’s werden automatisch opgemaakt met PageBot (www.pagebot.io), een TypeNetwork Open Sourece applicatie voor Drawbot.
 
 Buro Petr van Blokland + Claudia Mens
 Rietveld 56

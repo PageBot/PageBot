@@ -150,26 +150,41 @@ class Document(object):
     def getStyle(self, name):
         u"""Answer the names style. Answer None if it does not exist."""
         return self.styles.get(name)
-        
+
+    def _getDefaultTemplate(self):
+        u"""Answer tje most simple default template (one column, referring to the next page), to be used
+        when everyting else fails and there is no fall-back template defined by the calling application."""
+        boxId = 'DEFAULT'
+        template = self.TEMPLATE_CLASS(self.getRootStyle())
+        template.cTextBox(0, 0, 4, 8, boxId, nextBox=boxId, nextPage=1)  # Simple template with 1 column.
+        return template
+
     def getTemplate(self):
         u"""Answer the best choice of template by answering the document default template, as it is
         defined at Document creation. If it was omitted at that time, a default class template is used."""
         template = self.template # If template undefined, then use defined page template.
         if template is None: # Still None (not defined at Document creation), use to fallback default template.
-            boxId = 'main'
-            template = self.TEMPLATE_CLASS(self.getRootStyle())
-            template.cTextBox(0, 0, 4, 8, boxId, nextBox=boxId, nextPage=1) # Simple template with 1 column.
+            template = self._getDefaultTtemplate()
         return template
 
     def addStyle(self, name, style):
         u"""Add the style to the self.styles dictionary."""
         assert not name in self.styles # Make sure that styles don't get overwritten. Remove them first.
         self.styles[name] = style
+        # Force the name of the style to synchronize with the requested key.
+        style.name = name
       
     def replaceStyle(self, name, style):
+        u"""Set the style by name. Overwrite the style with that name if it already exists."""
         self.styles[name] = style
- 
-    def newStyle(self, **kwargs):  
+        # Force the name of the style to synchronize with the requested key.
+        style.name = name
+        return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
+
+    def newStyle(self, **kwargs):
+        u"""Create a new style with the supplied arguments as attributes. Force the style in self.styles,
+        even if already exists. Forst the name of the style to be the same as the style key.
+        Answer the new style."""
         return self.replaceStyle(kwargs['name'], Style(**kwargs))
          
     def export(self, fileName, pageSelection=None):

@@ -34,8 +34,8 @@ class Style(object):
         # Overwite default values from user arguments.
         for name, value in kwargs.items():
             setattr(self, name, value)
-        # Mark the difference with an expanded cascading style and simples ones.
-        self.expanded = False
+        # Mark the difference with a cascading (expanded) style and simples ones.
+        self.cascaded = False
 
     def __repr__(self):
         return '[%s=%s]' % (self.__class__.__name__, self.name)
@@ -71,9 +71,11 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
 
     return Style( # Answer the default root style.
 
-        # Basic page/template measures
         name = 'root', # Name of the style, key in document.getRootstyle( )
-        expanded = True, # The default value in a Style is False. Get True if expanded by cascading.
+        # The default value in a initial Style is False. Gets True if expanded by cascading.
+        # The root style is – by definition – aways cascaded, as it contains all possible values initialized.
+        cascaded = True,
+        # Basic page/template measures
         u = u, # Base unit for Dutch/Swiss typography :)
         w = 595, # Page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = 11 * 72, # Page height, basic size of the document. 11", international generic fit.
@@ -129,6 +131,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # centered on the specified character.
         listTabs = [(listIndent, LEFT_ALIGN)], # Default indent for bullet lists. Copy onto style.tabs for usage.
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
+        listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
         tabs = None, 
         firstLineIndent = 0, # Indent of first paragraph in a text tag.
         rFirstLineIndent = 0, # First line indent as factor if font size.
@@ -167,9 +170,10 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # Language and hyphenation
         language = 'en', # Language for hyphenation and spelling. Can be altered per style in FormattedString.
         hyphenation = True,
-        # Strip pre/post white space from e.text and e.tail and substitute by single tail space.
-        # Set to None if no stripping should be done. Set to newline or empty string if tags need to glue together.
-        stripWhiteSpace = ' ',
+        # Strip pre/post white space from e.text and e.tail and substitute by respectively preFix and postFix
+        # if they are not None. Set to e.g. newline(s) "\n" or empty string, if tags need to glue together.
+        preFix = '', # Default is to strip of prefix white space from a block.
+        postFix = ' ', # Default is space at tail of XML tag block.
 
         # Paging
         pageNumberMarker = '#??#', # Text pattern that will be replaced by current page number.

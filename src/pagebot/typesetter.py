@@ -42,129 +42,159 @@ class Typesetter(object):
         self.galley = galley
         self.gState = [document.getRootStyle()] # Stack of graphic state as cascading styles.
      
-    def getTextBox(self, style):
+    def getTextBox(self, style=None):
+        u"""Answer the current text box, if the width fits the current style.
+        If style is omitted, then always answer the current latest text box."""
         return self.galley.getTextBox(style)
                         
-    def node_h1(self, node, style):
+    def node_h1(self, node):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h2-marker in the string, to be retrieved by the composer.
-        tb = self.getTextBox(style)
-        tb.append('\n')# + getMarker(node.tag) 
-        self.typesetNode(node)
+        cStyle = self.getCascadedNodeStyle(node.tag)
+        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
+        tb.append('\n', cStyle)# + getMarker(node.tag)
+        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        self.typesetNode(node, cStyle)
 
-    def node_h2(self, node, style):
+    def node_h2(self, node):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h2-marker in the string, to be retrieved by the composer.
-        tb = self.getTextBox(style)
-        tb.append('\n')# + getMarker(node.tag) 
-        self.typesetNode(node)
+        cStyle = self.getCascadedNodeStyle(node.tag)
+        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
+        tb.append('\n', cStyle)# + getMarker(node.tag)
+        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        self.typesetNode(node, cStyle)
 
-    def node_h3(self, node, style):
+    def node_h3(self, node):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h3-marker in the string, to be retrieved by the composer.
-        tb = self.getTextBox(style)
-        tb.append('\n')# + getMarker(node.tag) 
-        self.typesetNode(node)
+        cStyle = self.getCascadedNodeStyle(node.tag)
+        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
+        tb.append('\n', cStyle)# + getMarker(node.tag)
+        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        self.typesetNode(node, cStyle)
         
-    def node_h4(self, node, style):
+    def node_h4(self, node):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h3-marker in the string, to be retrieved by the composer.
-        tb = self.getTextBox(style)
-        tb.append('\n')# + getMarker(node.tag) 
-        self.typesetNode(node)
+        cStyle = self.getCascadedNodeStyle(node.tag)
+        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
+        tb.append('\n', cStyle)# + getMarker(node.tag)
+        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        self.typesetNode(node, cStyle)
 
-    def node_br(self, node, style):
+    def node_br(self, node):
         u"""Add line break to the formatted string."""
-        tb = self.getTextBox(style)
-        tb.append('\n')# + getMarker(node.tag) 
+        cStyle = self.getCascadedNodeStyle(node.tag)
+        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
+        tb.append('\n', cStyle)# + getMarker(node.tag)
 
-    def node_hr(self, node, style):
+    def node_hr(self, node):
         u"""Draw horizontal ruler in the text."""
-        tb = self.getTextBox(style)
+        cStyle = self.getCascadedNodeStyle(node.tag)
+        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
         tb.appendMarker('HLINE')
 
-    def node_a(self, node, style):
+    def node_a(self, node):
         u"""Ignore links, but process the block"""
+        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
         
-    def XXXnode_sup(self, node, style):
+    def node_sup(self, node):
         u"""Collect footnote references on their page number.
         And typeset the superior footnote index reference."""
+        cStyle = self.getCascadedNodeStyle(node.tag)
         nodeId = node.attrib.get('id')
         if nodeId.startswith('fnref'): # This is a footnote reference.
             footnotes = self.document.footnotes
-            footnotes[len(footnotes)+1] = [node, style]      
-        self.typesetNode(node)
+            footnotes[len(footnotes)+1] = [node, cStyle]
+        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        self.typesetNode(node, cStyle)
  
-    def node_literatureref(self, node, style):
+    def node_literatureref(self, node):
         u"""Collect literature references."""
+        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
          
-    def node_div(self, node, style):
+    def node_div(self, node):
         u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
         as output, but we will handle them separately by looking them up in the XML-tree.
         So we'll skip them in the regular flow process."""
         # TODO: Check specific on the class name. Process otherwise.
-        tb = self.getTextBox(style)
         if node.attrib.get('class') == 'literature':
+            cStyle = self.getCascadedNodeStyle(node.tag)
+            tb = self.getTextBox(cStyle)  # Get the latest galley text box. Answer new if width changed.
             return
-        elif node.attrib.get('class') == 'footnote':
+
+        if node.attrib.get('class') == 'footnote':
             # Find the content of the footnotes.
             #node.findall('./ol/li/p')
             #for index, p in enumerate(node.findall('./ol/li/p')):
             #    self.document.footnotes[index+1].append(p)
+            cStyle = self.getCascadedNodeStyle(node.tag)
+            tb = self.getTextBox(cStyle)  # Get the latest galley text box. Answer new if width changed.
             return
+
         return self.typesetNode(node)
-                    
-    def node_li(self, node, style):
-        # Bullet/Numbered list item
-        tb = self.getTextBox(style)
-        tb.append(getFormattedString(u'\n•\t', style))
-        self.typesetNode(node)
-                  
-    def node_img(self, node, style):
+
+    def node_li(self, node):
+        u"""Generate bullet/Numbered list item."""
+        # Make sure this is a cascaded style, expanded from current values in top style in gState.
+        cStyle = self.getCascadedNodeStyle(node.tag)
+        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
+        tb.append(cStyle.listBullet, cStyle) # Append the bullet as defined in the style.
+        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        self.typesetNode(node, cStyle)
+
+    def node_img(self, node):
         u"""Process the image. Find empty space on the page to place it,
         closest related to the w/h ration of the image."""
         src = node.attrib.get('src')
         g = Galley()
+        cStyle = self.getCascadedNodeStyle(node.tag)
         imageElement = Image(src) # Set path, image w/h and image scale.
-        imageElement.fill = style.fill
-        imageElement.stroke = style.stroke
-        imageElement.strokeWidth = style.strokeWidth
-        imageElement.hyphenation = style.hyphenation
+        if cStyle is not None:
+            self.pushStyle(cStyle)
+            imageElement.fill = cStyle.fill
+            imageElement.stroke = cStyle.stroke
+            imageElement.strokeWidth = cStyle.strokeWidth
+            imageElement.hyphenation = cStyle.hyphenation
         g.append(imageElement)
         caption = node.attrib.get('title')
         if caption is not None:
-            captionStyle = self.document.getStyle('caption')
-            captionStyle = self.getExpandedStyle(captionStyle)
-            self.pushStyle(captionStyle)
+            captionStyle = self.getCascadedNodeStyle('caption')
             tb = g.getTextBox(captionStyle)
             caption = node.attrib.get('title')
             # Add invisible marker to the FormattedString, to indicate where the image
             # reference went in a textBox after slicing the string.
-            tb.append(getFormattedString(caption+'\n', captionStyle))
+            tb.append(caption+'\n', captionStyle)
             tb.append(getMarker(node.tag, src))
-            self.popStyle() # captionStyle
         self.galley.append(g)
+        if cStyle is not None:
+            self.popStyle()
 
-    def getExpandedStyle(self, style):
+    def getCascadedStyle(self, style):
         u"""As we want cascading font and fontSize in the page elements, we need to keep track
-        of the stacking of XML-hierarchy of the tag styles.
+        of the stacking of XML-hierarchy of the previous tag styles.
         The styles can omit the font or fontSize, and still we need to be able to set the element
         attributes. Copy the current style and add overwrite the attributes in style. This way
         the current style always contains all attributes of the root style."""
-        expandedStyle = copy.copy(self.gState[-1]) # Take the top of the stack as source.
+        cascadedStyle = copy.copy(self.gState[-1]) # Take the top of the stack as source.
         if style is not None: # Style may be None. In that case answer just copy of current gState top.
             for name, value in style.__dict__.items():
                 if name.startswith('_'): # Don't copy private style attributes.
                     continue
-                setattr(expandedStyle, name, value) # Overwrite the style value.
-            style.expanded = True # Mark that this is an expanded style, to distinguish from plain styles.
-        return expandedStyle
+                setattr(cascadedStyle, name, value) # Overwrite the style value.
+            style.cascaded = True # Mark that this is a cascaded style, to distinguish from plain styles.
+        return cascadedStyle
+
+    def getCascadedNodeStyle(self, name):
+        style = self.document.getStyle(name)
+        return self.getCascadedStyle(style)
 
     def pushStyle(self, style):
         self.gState.append(style)
@@ -174,65 +204,69 @@ class Typesetter(object):
         self.gState.pop()
         return self.gState[-1]
 
-    def typesetNode(self, node):
+    def _strip(self, s, style):
+        u"""Strip the white space from s if style.preFix and/or style.postFix are not None."""
+        if not None in (s, style):
+            if style.preFix is not None: # Strip if prefix is not None. Otherwise don't touch.
+                s = style.preFix + s.lstrip()
+            if style.postFix is not None:
+                s = s.rstrip() + style.postFix
+        return s
+
+    def typesetNode(self, node, style=None):
         u"""Recursively typeset the node, using style. Style can be None, in which case it should be not
         pushed and popped. If there is a valid style, push it on the graphics state and answer a merged
         style with the one that was on top before. This way automatic cascading values are in the style
         answered by the push."""
-        style = self.document.getStyle(node.tag)
-        style = self.getExpandedStyle(style)
-        if style is not None:
+        if style is None:
+            style = self.getCascadedNodeStyle(node.tag)
+        elif not style.cascaded: # For some reason this is a plain style. Make it cascaded.
+            style = self.getCascadedStyle(style)
+        if style is not None: # Do we have a real style?
             style = self.pushStyle(style)
-            print('PUSHED', node, style)
-        tb = self.getTextBox(style) # Get current flow text box from Galley to fill. Style can be None
-        
-        nodeText = node.text
-        if nodeText is not None:
-            if style is not None and style.stripWhiteSpace is not None:
-                # If there is a style and if the replacement is not None.
-                nodeText = nodeText.strip() + style.stripWhiteSpace
-            if nodeText: # Any text left to add after stripping and optionally adding white space?
-                tb.append(getFormattedString(nodeText, style)) # If style is None, just add plain string.
+
+        # Get current flow text box from Galley to fill. Style can be None. If the width of the
+        # latest textBox is not equal to style.w, then create a new textBox in the galley.
+        tb = self.getTextBox(style)
+
+        nodeText = self._strip(node.text, style)
+        if nodeText: # Not None and still with content after stripping?
+            tb.append(nodeText, style)
+            # If style is None, just add plain string to current FormattedString.
             
         # Type set all child node in the current node, by recursive call.
         for child in node:
             hook = 'node_'+child.tag
-            #style = self.document.getStyle(child.tag)
-            #if style is not None: # Only push if we found a valid style for this tag.
-            #    print('PUSH-R', child, style)
-            #    style = self.pushStyle(style)
             # Method will handle the styled body of the element, but not the tail.
             if hasattr(self, hook):
-                getattr(self, hook)(child, style) # Style can be None.
-                childTail = child.tail
-                if childTail is not None:
-                    if style is not None and style.stripWhiteSpace is not None:
-                        # If there is a style and if the replacement is not None.
-                        childTail = childTail.strip() #+ style.stripWhiteSpace
-                    if childTail: # Any text left to add after stripping and optionally adding white space?
-                        tb.append(getFormattedString(childTail, style))  # If style is None, just add plain string.
+                getattr(self, hook)(child) # Hook must be able to derive style from node.
+                # We are on tail mode now, but we don't know what happened in the child block.
+                # So, to be sure, we'll push the current style again.
+                if style is not None:
+                    self.pushStyle(style)
+                childTail = self._strip(child.tail, style)
+                if childTail: # Any tailf left after stripping, then append to the current textBox.
+                    # Get current flow text box from Galley to fill. Style can be None. If the width of the
+                    # latest textBox is not equal to style.w, then create a new textBox in the galley.
+                    tb = self.getTextBox(style)
+                    tb.append(childTail, style)  # In case style is None, just add plain string.
+                if style is not None: # And we pop the style again if it exists, as it was needed for the tail.
+                    self.popStyle()
 
-            else: # If no method hook defined, then just solve recursively.
+            else:
+                # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child)
-            #if style is not None: # Pop style only if it was pushed before.
-            #    style = self.popStyle()
-            #    print('POPPED-R', child, style)
 
         # Restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text.
         if style is not None: # Only pop if there was a pushed style.
             style = self.popStyle()
-            #print('POPPED', node, style)
 
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
-        nodeTail = node.tail
-        if nodeTail is not None:
-            if style is not None and style.stripWhiteSpace is not None:
-                # If there is a style and if the replacement is not None.
-                nodeTail = nodeTail.strip() #+ style.stripWhiteSpace
-            if nodeTail: # Any text left to add after stripping and optionally adding white space?
-                tb.append(getFormattedString(nodeTail)) # If style is None, just add plain string.
+        nodeTail = self._strip(node.tail, style)
+        if nodeTail: # Something of a tail left after stripping?
+            tb.append(nodeTail, style) # If style is None, just add plain string.
 
     def typesetFile(self, fileName):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
