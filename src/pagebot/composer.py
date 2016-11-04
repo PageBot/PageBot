@@ -61,4 +61,11 @@ class Composer(object):
 
     def tryPlacement(self, page, tb, element):
         u"""Try to place the element on page, in relation to the current filling of tb."""
-        print 'TRY TO PLACE', element, 'on page', page.pageNumber
+        container = page.findPlacementFor(element)
+        print 'DSSDSDSDSD', container
+        if container is not None:
+            page.replaceElement(container, element)
+        else:
+            print 'Could not find placement for', element
+        #else:
+        #    print 'TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber

@@ -154,6 +154,7 @@ class Typesetter(object):
         imageElement = Image(src) # Set path, image w/h and image scale.
         if cStyle is not None:
             self.pushStyle(cStyle)
+            imageElement.setMinSize(cStyle.minW, cStyle.minH)
             imageElement.fill = cStyle.fill
             imageElement.stroke = cStyle.stroke
             imageElement.strokeWidth = cStyle.strokeWidth
