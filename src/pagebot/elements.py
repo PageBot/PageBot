@@ -12,10 +12,11 @@
 #
 import os
 import copy
+
 from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
     newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
     textBox, hyphenation, restore, imageSize
-from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
+from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker, findMarkers
 
 from pagebot.style import NO_COLOR
 
@@ -55,67 +56,6 @@ class Element(object):
         u"""Default is that elements are not handling text."""
         return False
 
-class Galley(Element):
-    u"""A Galley is sticky sequential flow of elements, where the parts can have 
-    different widths (like headlines, images and tables) or responsive width, such as images 
-    and formatted text volumes. Size is calculated dynamically, since one of the enclosed
-    elements may change width/height at any time during the composition process.
-    Also the sequence may change by slicing, adding or removing elements by the Composer.
-    Since the Galley is a full compatible Element, it can contain other galley instances
-    recursively."""
-    def __init__(self, eId=None, elements=None):
-        if elements is None:
-            elements = [] # Key is vertical position. Elements are supposed to know their real height.
-        self._elements = elements
-        self._footnotes = []
-        self.eId = eId # Optional element id.
-
-    def __repr__(self):
-        if self.isFlow:
-            return '[%s %s-->(%s,%s)]' % (self.__class__.__name__, self.eId, self.nextBox, self.nextPage)
-        return '[%s %s]' % (self.__class__.__name__, self.eId)
-
-    def getElements(self):
-        u"""Since this is a recursive element, we can answer a list of elements."""
-        return self._elements
-
-    def getSize(self):
-        u"""Answer the enclosing rectangle of all elements in the galley."""
-        w = h = 0
-        for e in self._elements:
-            ew, eh = e.getSize()
-            w = max(w, ew)
-            h += eh
-        return w, h
-
-    def getWidth(self):
-        return self.getSize()[0]
-        
-    def getHeight(self):
-        return self.getSize()[1]
-                
-    def append(self, element):
-        u"""Just add to the sequence. Total size will be calculated dynamically."""
-        self._elements.append(element)
- 
-    def getTextBox(self, style):
-        u"""If the last element is a TextBox, answer it. Otherwise create a new textBos with style.w
-        and answer that.."""
-        if not self._elements or not isinstance(self._elements[-1], TextBox):
-            self._elements.append(TextBox('', style.w, 0)) # Create a new TextBox with style width and empty height.
-        return self._elements[-1]
-        
-    def draw(self, page, x, y):
-        u"""Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep
-        them in tact, instead of select, pick & choose elements, until the are all
-        part of a page. In that case the w/h must have been set by the Composer to fit the 
-        containing page."""
-        gy = y
-        for element in sorted(self._elements.items()):
-            # @@@ Find space and do more composition
-            element.draw(page, x, gy)
-            gy += element.getHeight()
-            
 class TextBox(Element):
     def __init__(self, fs, w, h, eId=None, nextBox=None, nextPage=1, fill=NO_COLOR, stroke=NO_COLOR, 
             strokeWidth=None ):
@@ -349,7 +289,23 @@ class Image(Element):
                 rect(x/self.sx, y/self.sy, self.w/self.sx, self.h/self.sy)
             restore()
         self._drawCaption(page, x, page.h - y, self.w, self.h)
-            
+
+class Ruler(Element):
+    def __init__(self, w, eId=None, stroke=None, strokeWidth=None,
+        indent=0, tailIndent=0):
+        self.w = w
+        self.eId = eId # Unique element id
+        self.stroke = stroke
+        self.strokeWidth = strokeWidth
+        self.indent = indent
+        self.tailIndent = tailIndent
+
+    def draw(self, page, px, py):
+        stroke(self.stroke)
+        strokeWidth(self.strokeWidth)
+        w = self.w - self.indent - self.tailIndent
+        line(px + self.indent, py, px + w, py)
+
 class Grid(Element):
     def __init__(self, eId='grid'):
         self.eId = eId # Unique element id
@@ -430,3 +386,76 @@ class BaselineGrid(Element):
                 text(fs + repr(line), (page.w - M-4, y-M*0.6))
                 line += 1 # Increment line index.
                 y -= style.baselineGrid # Next vertical line position of baseline grid.
+
+class Galley(Element):
+    u"""A Galley is sticky sequential flow of elements, where the parts can have
+    different widths (like headlines, images and tables) or responsive width, such as images
+    and formatted text volumes. Size is calculated dynamically, since one of the enclosed
+    elements may change width/height at any time during the composition process.
+    Also the sequence may change by slicing, adding or removing elements by the Composer.
+    Since the Galley is a full compatible Element, it can contain other galley instances
+    recursively."""
+    TEXTBOX_CLASS = TextBox
+    RULER_CLASS = Ruler
+
+    def __init__(self, eId=None, elements=None):
+        if elements is None:
+            elements = []  # Key is vertical position. Elements are supposed to know their real height.
+        self._elements = elements
+        self._footnotes = []
+        self.eId = eId  # Optional element id.
+
+    def __repr__(self):
+        t = '[' + self.__class__.__name__
+        if self.eId is not None:
+            t += ' ' + self.eId
+        for e in self._elements:
+            t += ' '+e.__class__.__name__
+        return t + ']'
+
+    def getElements(self):
+        u"""Since this is a recursive element, we can answer a list of elements."""
+        return self._elements
+
+    def getSize(self):
+        u"""Answer the enclosing rectangle of all elements in the galley."""
+        w = h = 0
+        for e in self._elements:
+            ew, eh = e.getSize()
+            w = max(w, ew)
+            h += eh
+        return w, h
+
+    def getWidth(self):
+        return self.getSize()[0]
+
+    def getHeight(self):
+        return self.getSize()[1]
+
+    def append(self, element):
+        u"""Just add to the sequence. Total size will be calculated dynamically."""
+        self._elements.append(element)
+
+    def getTextBox(self, style):
+        u"""If the last element is a TextBox, answer it. Otherwise create a new textBos with style.w
+        and answer that.."""
+        if not self._elements or not isinstance(self._elements[-1], self.TEXTBOX_CLASS):
+            self._elements.append(TextBox('', style.w, 0))  # Create a new TextBox with style width and empty height.
+        return self._elements[-1]
+
+    def newRuler(self, style):
+        u"""Add a new Ruler instance, depending on style."""
+        ruler = self.RULER_CLASS(style.w, stroke=style.stroke, strokeWidth=style.strokeWidth,
+            indent=style.indent, tailIndent=style.tailIndent)
+        self._elements.append(ruler)
+
+    def draw(self, page, x, y):
+        u"""Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep
+        them in tact, instead of select, pick & choose elements, until the are all
+        part of a page. In that case the w/h must have been set by the Composer to fit the
+        containing page."""
+        gy = y
+        for element in sorted(self._elements.items()):
+            # @@@ Find space and do more composition
+            element.draw(page, x, gy)
+            gy += element.getHeight()

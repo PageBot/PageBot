@@ -1,21 +1,4 @@
 # -*- coding: UTF-8 -*-
-
-import copy
-import codecs
-import xml.etree.ElementTree as ET
-
-import pagebot
-reload(pagebot)
-from pagebot import getFormattedString, getMarker
-
-from drawBot import textBox
-
-import markdown
-from markdown.extensions.nl2br import Nl2BrExtension
-from markdown.extensions.footnotes import FootnoteExtension
-
-import literature
-# -*- coding: UTF-8 -*-
 #-----------------------------------------------------------------------------
 #
 #     P A G E B O T
@@ -27,6 +10,18 @@ import literature
 #
 #     typesetter.py
 #
+import copy
+import codecs
+import xml.etree.ElementTree as ET
+
+import markdown
+from markdown.extensions.nl2br import Nl2BrExtension
+from markdown.extensions.footnotes import FootnoteExtension
+
+import pagebot
+reload(pagebot)
+from pagebot import getFormattedString, getMarker
+
 import pagebot.literature
 reload(pagebot.literature)
 from pagebot.literature import LiteratureExtension
@@ -46,14 +41,14 @@ class Typesetter(object):
         u"""Answer the current text box, if the width fits the current style.
         If style is omitted, then always answer the current latest text box."""
         return self.galley.getTextBox(style)
-                        
+
     def node_h1(self, node):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append('\n', cStyle)# + getMarker(node.tag)
+        tb.append(getMarker(node.tag, cStyle))
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
@@ -63,7 +58,7 @@ class Typesetter(object):
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append('\n', cStyle)# + getMarker(node.tag)
+        tb.append(getMarker(node.tag, cStyle))
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
@@ -73,7 +68,7 @@ class Typesetter(object):
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append('\n', cStyle)# + getMarker(node.tag)
+        tb.append(getMarker(node.tag, cStyle))
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
         
@@ -83,7 +78,7 @@ class Typesetter(object):
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append('\n', cStyle)# + getMarker(node.tag)
+        tb.append(getMarker(node.tag, cStyle))
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
@@ -94,10 +89,10 @@ class Typesetter(object):
         tb.append('\n', cStyle)# + getMarker(node.tag)
 
     def node_hr(self, node):
-        u"""Draw horizontal ruler in the text."""
+        u"""Add Ruler instance to the Galley.
+        TODO: Need to find a way to address multiple styles here."""
         cStyle = self.getCascadedNodeStyle(node.tag)
-        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.appendMarker('HLINE')
+        self.galley.newRuler(cStyle) # Make a new Ruler instance in the Galley
 
     def node_a(self, node):
         u"""Ignore links, but process the block"""

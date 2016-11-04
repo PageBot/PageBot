@@ -192,7 +192,7 @@ class Page(object):
         x, y, w, h = cr2p(cx, cy, cw, ch, self.getStyle())
         return self.image(path, x, y, w, h, eId, s, sx, sy, fill, stroke, strokeWidth, missingImageFill, 
             caption, hyphenation)
-            
+
     def grid(self, x=0, y=0, eId=None):
         e = Grid(eId)
         self.place(e, x, y)
