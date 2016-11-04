@@ -10,6 +10,8 @@
 #
 #     style.py
 #
+from pagebot import NO_COLOR
+
 # Basic layout measures
 U = 7
 BASELINE_GRID = 2*U
@@ -19,8 +21,6 @@ SHOW_GRID = True
 SHOW_GRID_COLUMNS = True
 SHOW_BASELINE_GRID = True
 SHOW_FLOW_CONNECTIONS = True
-
-NO_COLOR = -1
 
 LEFT_ALIGN = 'left'
 RIGHT_ALIGN = 'right'

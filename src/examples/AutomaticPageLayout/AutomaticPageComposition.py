@@ -92,7 +92,7 @@ if VARS:
     FONT_PATH = '../../fonts/'
 
     FONT_LOCATIONS = {
-        'Promise-BoldCondensed': {"wght": 750, "wdth": 1000, },
+        'Promise-BoldCondensed': {"wght": 750, "wdth": 500, },
         'Promise-LightCondensed': {"wght": 0, "wdth": 1000},
         'Promise-Light': {"wght": 0, "wdth": 1000},
         'Promise-Book': {"wght": 250, "wdth": 1000},
@@ -106,8 +106,9 @@ if VARS:
     if not 'Promise-Bold' in installedFonts():
         installFont(FONT_PATH + 'Promise-GX.ttf')
     for name, location in FONT_LOCATIONS.items():
-        FONTS[name] = generateInstance(FONT_PATH + 'Promise-GX.ttf', 
+        fontName, fontPath = generateInstance(FONT_PATH + 'Promise-GX.ttf', 
         location, targetDirectory=FONT_PATH + 'instances')
+        FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
     if 0:
         BOOK = FONTS['Promise-LightCondensed']
         BOOK_ITALIC = FONTS['Promise-LightCondensed']
@@ -119,7 +120,8 @@ if VARS:
         BOOK = FONTS['Promise-Book']
         BOOK_ITALIC = FONTS['Promise-Book']
         MEDIUM = FONTS['Promise-Medium']
-        SEMIBOLD = FONTS['Promise-Semibold']
+        #SEMIBOLD = FONTS['Promise-Semibold']
+        SEMIBOLD = FONTS['Promise-BoldCondensed']
         BOLD = FONTS['Promise-Bold']
 else:
     BOOK = MEDIUM = 'Verdana'
@@ -187,14 +189,15 @@ def makeDocument():
         paragraphTopSpacing=U, paragraphBottomSpacing=U/2, postFix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=rs.fontSize, font=BOOK, fill=0.1, preFix='',
+    doc.newStyle(name='p', fontSize=rs.fontSize, font=BOOK, fill=0.1, preFix='', postFix='\n',
         rTracking=P_TRACK, align=rs.LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
+    doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
     doc.newStyle(name='img', leading=rs.leading, fontSize=rs.fontSize, font=BOOK,)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, 
+    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, preFix='', postFix=' ',
         fontSize=rs.fontSize*0.65)
     doc.newStyle(name='li', fontSize=rs.fontSize, font=BOOK, 
         tracking=P_TRACK, leading=rs.leading, hyphenation=True, 

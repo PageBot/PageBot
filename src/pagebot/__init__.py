@@ -10,9 +10,14 @@
 #
 #     __init__.py
 #
+import CoreText
+import AppKit
+
 import re
 from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth
-from style import NO_COLOR
+from drawBot.context.baseContext import BaseContext
+
+NO_COLOR = -1
 
 def setFillColor(c, fs=None, cmyk=False):
     u"""Set the color for global or the color of the formatted string."""
@@ -87,6 +92,9 @@ def cr2p(cx, cy, cw, ch, style):
         cw * (style.cw + style.g) - style.g, 
         ch * (style.ch + style.g) - style.g) 
 
+MARKER_PATTERN = '==%s--%s=='
+FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_]*)\-\-([^=]*)\=\=')
+
 def getMarker(markerId, args=None):
     u"""Answer a formatted string with markerId that can be used as non-display marker. 
     This way the Composer can find the position of markers in text boxes, after
@@ -99,20 +107,15 @@ def getMarker(markerId, args=None):
     the end of a textBox. That is another reason to keep the length of the arguments short.
     And not to use any spaces, etc. inside the markerId.
     Possible slicing through line-endings is not a problem, as the raw string ignores them."""
-    marker = '==%s--%s==' % (markerId, args or '') 
-    return FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)  
+    marker = MARKER_PATTERN % (markerId, args or '')
+    return FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)
+    ###return FormattedString(marker, fill=(1, 0, 0), stroke=None, fontSize=10)
 
-FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_]*)\-\-([^=]*)\=\=')
+def findMarkers(fs, w, h, align='left', hyphenation=True):
+    u"""Answer a dictionary of markers with their arguments and their formatted text rectangles
+    that exist in a given FormattedString."""
+    return textSearch(fs, w, h, FIND_FS_MARKERS, align, hyphenation)
 
-def findMarkers(fs):
-    u"""Answer a dictionary of markers with their arguments that exist in a given FormattedString."""
-    markers = {}
-    for markerId, args in FIND_FS_MARKERS.findall(repr(fs)):
-        if not markerId in markers:
-            markers[markerId] = []
-        markers[markerId].append(args)
-    return markers
-              
 def getFormattedString(t, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing,
     so they can inherit from previous style formats."""
@@ -159,3 +162,53 @@ def getFormattedString(t, style=None):
         #fs.hyphenation(style.hyphenation)        
     fs.append(t)
     return fs
+
+def textSearch(fs, w, h, search, align='left', hyphenation=True):
+    u"""
+    """
+    bc = BaseContext()
+    path = CoreText.CGPathCreateMutable()
+    CoreText.CGPathAddRect(path, None, CoreText.CGRectMake(0, 0, w, h))
+
+    attrString = bc.attributedString(fs, align=align)
+    if hyphenation and bc._state.hyphenation:
+        attrString = bc.hyphenateAttributedString(attrString, w)
+
+    txt = attrString.string()
+    searchRE = re.compile(search)
+    locations = []
+    for found in searchRE.finditer(txt):
+        locations.append((found.start(), found.end()))
+
+    setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
+    box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
+
+    ctLines = CoreText.CTFrameGetLines(box)
+    origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+
+    rectangles = []
+    for startLocation, endLocation in locations:
+        minx = miny = maxx = maxy = None
+        for i, (originX, originY) in enumerate(origins):
+            ctLine = ctLines[i]
+            bounds = CoreText.CTLineGetImageBounds(ctLine, None)
+            if bounds.size.width == 0:
+                continue
+            _, ascent, descent, leading = CoreText.CTLineGetTypographicBounds(ctLine, None, None, None)
+            height = ascent + descent
+            lineRange = CoreText.CTLineGetStringRange(ctLine)
+            miny = maxy = originY
+            if AppKit.NSLocationInRange(startLocation, lineRange):
+                minx, _ = CoreText.CTLineGetOffsetForStringIndex(ctLine, startLocation, None)
+
+            if AppKit.NSLocationInRange(endLocation, lineRange):
+                maxx, _ = CoreText.CTLineGetOffsetForStringIndex(ctLine, endLocation, None)
+                rectangles.append((minx, miny - descent, maxx - minx, height))
+
+            if minx and maxx is None:
+                rectangles.append((minx, miny - descent, bounds.size.width - minx, height))
+                minx = 0
+
+    return rectangles
+
+
