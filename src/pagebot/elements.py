@@ -15,7 +15,8 @@ import copy
 from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
     newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
     textBox, hyphenation, restore, imageSize
-from pagebot import getFormattedString, setFillColor, setStrokeColor
+from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
+
 from pagebot.style import NO_COLOR
 
 class Element(object):
@@ -149,6 +150,9 @@ class TextBox(Element):
     def append(self, s, style=None):
         self.fs += getFormattedString(s, style)
         return self.getOverflow()
+
+    def appendMarker(self, markerId, args=None):
+        self.append(getMarker(markerId, args=args))
 
     def getTextSize(self, fs=None):
         """Figure out what the height of the text fs is, with the width of this
