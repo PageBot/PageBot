@@ -54,7 +54,7 @@ rs.g = U # Generic gutter.
 # 11 is a the best in that respect for column calculation.
 rs.cw = 11*U 
 rs.ch = 6*rs.baselineGrid - rs.g # Approx. square and fitting with baseline.
-rs.listIndent = U # Indent for bullet lists
+rs.listIndent = 2*U # Indent for bullet lists
 rs.listTabs = [(rs.listIndent, rs.LEFT_ALIGN)] # Match bullet+tab with left indent.
 # Display option during design and testing
 rs.showGrid = False
@@ -179,34 +179,34 @@ def makeDocument():
     doc.newStyle(name='subtitle', fontSize=2*rs.fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*rs.fontSize, font=BOOK, fill=(1, 0, 0))
     doc.newStyle(name='h1', fontSize=2*rs.fontSize, font=SEMIBOLD, fill=(1, 0, 0),
-        leading=2*rs.fontSize, tracking=H1_TRACK, stripWhiteSpace='\n')
+        leading=2*rs.fontSize, tracking=H1_TRACK, postFix='\n')
     doc.newStyle(name='h2', fontSize=1.5*rs.fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
-        leading=1*rs.fontSize, rLeading=0, tracking=H2_TRACK, stripWhiteSpace='\n')
+        leading=1*rs.fontSize, rLeading=0, tracking=H2_TRACK, postFix='\n')
     doc.newStyle(name='h3', fontSize=1.2*rs.fontSize, font=MEDIUM, fill=0, 
         leading=1.5*rs.fontSize, rLeading=0, rNeedsBelow=2*rs.leading, tracking=H3_TRACK,
-        paragraphTopSpacing=U, paragraphBottomSpacing=U/2, stripWhiteSpace='\n')
+        paragraphTopSpacing=U, paragraphBottomSpacing=U/2, postFix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=rs.fontSize, font=BOOK, fill=0.1, 
+    doc.newStyle(name='p', fontSize=rs.fontSize, font=BOOK, fill=0.1, preFix='',
         rTracking=P_TRACK, align=rs.LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='img', leading=rs.leading, fontSize=rs.fontSize, font=BOOK,)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, fontSize=14*0.65)
+    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, 
+        fontSize=rs.fontSize*0.65)
     doc.newStyle(name='li', fontSize=rs.fontSize, font=BOOK, 
         tracking=P_TRACK, leading=rs.leading, hyphenation=True, 
-        tabs=[(rs.listIndent, rs.LEFT_ALIGN)], indent=rs.listIndent, firstLineIndent=1,
-        stripWhiteSpace=' ')
-    doc.newStyle(name='ul', stripWhiteSpace=' ',)
-    doc.newStyle(name='literatureref', stripWhiteSpace=False,
-        fill=0.5, rBaselineShift=0.2, fontSize=14*0.8)
-    doc.newStyle(name='footnote', stripWhiteSpace=False,
-        fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
-    doc.newStyle(name='caption', stripWhiteSpace=False, tracking=P_TRACK, language=rs.language, 
-        fill=0.2, leading=rs.leading*0.8, fontSize=rs.fontSize*0.8,
-        font=BOOK_ITALIC, indent=U/2, tailIndent=-U/2, hyphenation=True)
+        # Lists need to copy the listIndex over to the regalar style value.
+        tabs=[(rs.listIndent, rs.LEFT_ALIGN)], indent=rs.listIndent, 
+        firstLineIndent=1, postFix='\n')
+    doc.newStyle(name='ul',)
+    doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*rs.fontSize)
+    doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
+    doc.newStyle(name='caption', tracking=P_TRACK, language=rs.language, fill=0.2, 
+        leading=rs.leading*0.8, fontSize=0.8*rs.fontSize, font=BOOK_ITALIC, 
+        indent=U/2, tailIndent=-U/2, hyphenation=True)
 
     # Change template of page 1
     doc[0].setTemplate(template1)
