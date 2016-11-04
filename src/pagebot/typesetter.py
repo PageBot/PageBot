@@ -85,24 +85,24 @@ class Typesetter(object):
     def node_hr(self, node, style):
         u"""Draw horizontal ruler in the text."""
         tb = self.getTextBox(style)
-        tb.append(u'________________') # TODO: How to draw this on line fitting in column?
+        tb.appendMarker('HLINE')
 
     def node_a(self, node, style):
         u"""Ignore links, but process the block"""
-        return self.typesetNode(node)
+        self.typesetNode(node)
         
-    def node_sup(self, node, style):
+    def XXXnode_sup(self, node, style):
         u"""Collect footnote references on their page number.
         And typeset the superior footnote index reference."""
         nodeId = node.attrib.get('id')
         if nodeId.startswith('fnref'): # This is a footnote reference.
             footnotes = self.document.footnotes
             footnotes[len(footnotes)+1] = [node, style]      
-        return self.typesetNode(node)
+        self.typesetNode(node)
  
     def node_literatureref(self, node, style):
         u"""Collect literature references."""
-        return self.typesetNode(node)
+        self.typesetNode(node)
          
     def node_div(self, node, style):
         u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
