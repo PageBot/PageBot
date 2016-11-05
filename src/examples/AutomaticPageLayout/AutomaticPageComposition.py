@@ -184,14 +184,17 @@ def makeDocument():
     # Make number of pages with default document size.
     # Initially make all pages default with template2
     doc = Document(rs, pages=2, template=template2) 
-     
+ 
+    # Cache some values from the root style that we need multiple time to create the tag styles.
     fontSize = rs['fontSize']
     leading = rs['leading']
     rLeading = rs['rLeading']
     listIndent = rs['listIndent']
     language = rs['language']
     
-    # Add styles for whole document and text flows.               
+    # Add styles for whole document and text flows.  
+    # Note that some values are defined here for clarity, even if their default root values
+    # are the same.             
     doc.newStyle(name='chapter', font=BOOK)    
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2*fontSize, font=BOOK_ITALIC)
