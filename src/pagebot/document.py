@@ -178,14 +178,14 @@ class Document(object):
         u"""Set the style by name. Overwrite the style with that name if it already exists."""
         self.styles[name] = style
         # Force the name of the style to synchronize with the requested key.
-        style.name = name
+        style['name'] = name
         return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
 
     def newStyle(self, **kwargs):
         u"""Create a new style with the supplied arguments as attributes. Force the style in self.styles,
         even if already exists. Forst the name of the style to be the same as the style key.
         Answer the new style."""
-        return self.replaceStyle(kwargs['name'], Style(**kwargs))
+        return self.replaceStyle(kwargs['name'], dict(**kwargs))
          
     def export(self, fileName, pageSelection=None):
         u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,

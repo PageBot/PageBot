@@ -223,16 +223,16 @@ class Page(object):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.image(path, x, y, style=style, eId=eId, **kwargs)
 
-    def grid(self, x=0, y=0, style=None, eId=None, **kwargs):
+    def grid(self, style=None, eId=None, x=0, y=0, **kwargs):
         u"""Direct way to add a grid element to a single page, if not done through its template."""
         e = Grid(style=style, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
         
-    def baselineGrid(self, x=0, y=0, style=None, eId=None, **kwargs):
+    def baselineGrid(self, style=None, eId=None, x=0, y=0, **kwargs):
         u"""Direct way to add a baseline grid element to a single page, if not done
         through its template."""
-        e = BaselineGrid(style=None, eId=eId, **kwargs)
+        e = BaselineGrid(style=style, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
 

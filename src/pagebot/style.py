@@ -28,7 +28,7 @@ CENTER = 'center'
 JUSTIFIED = 'justified'
 
 def newStyle(**kwargs):
-    style = Style(**kwargs)
+    style = dict(**kwargs)
     style['cascaded'] = False
     return style
 
