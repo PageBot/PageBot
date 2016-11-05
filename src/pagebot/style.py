@@ -102,8 +102,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         flowMarkerSize = 8, # Size of flow marker circle.
         flowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
 
-        # Image stuff
-        missingImageFill = 0.5, # Background color of missing image rectangles.
+        # Generic element stuff
+        missingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
 
         # Typographic defaults
         font = 'Verdana', # Default is to avoid existing font and fontSize in the graphic state.

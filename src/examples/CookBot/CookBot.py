@@ -100,7 +100,7 @@ def makeDocument():
     doc = Document(PW, PH, ml=ML, mt=MT, cw=CW, ch=CH, g=G, 
         gridStroke=0.8, pages=2, template=template2,
         baselineGrid=BASELINE_GRID, 
-        missingImageFill=MISSING_IMAGE_FILL) 
+        missingElementFill=MISSING_ELEMENT_FILL)
      
     # Add styles for whole document and text flows.               
     doc.newStyle(name='chapter', font=BOOK)    
@@ -158,4 +158,3 @@ def makeDocument():
 d = makeDocument()
 d.export('examples/AutomaticLayout.pdf') 
 
-    
