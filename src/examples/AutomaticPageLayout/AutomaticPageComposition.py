@@ -154,9 +154,19 @@ def makeDocument():
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
     # Create empty image place holders. To be filled by running content on the page.
+<<<<<<< HEAD
     template1.cContainer(4, 0, 2, 4, rs)  # Empty image element, cx, cy, cw, ch
     template1.cContainer(0, 5, 2, 3, rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
+=======
+    # Using the cContainer with column positions, we need to supply teh style, so it knows
+    # column and gutter sizes for the transformation.
+    template1.cContainer(4, 0, 2, 4, rs)  # cx, cy, cw, ch as column positions.
+    template1.cContainer(0, 5, 2, 3, rs)
+    # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
+    # Using the cTextBox with column positions, we need to supply teh style, so it knows
+    # column and gutter sizes for the transformation.
+>>>>>>> master
     template1.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox('', 2, 0, 2, 8, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox('', 4, 4, 2, 4, rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)

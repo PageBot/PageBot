@@ -37,9 +37,19 @@ class Composer(object):
         assert tb is not None # Make sure, otherwise there is a template error.
         fs = FormattedString('')
         # Keeping overflow of text boxes here while iterating.
+<<<<<<< HEAD
         for element in galley.elements:
             if not element.isText: # This is a non-text element. Try to find placement.
+=======
+        assert elements is not None # Otherwise we did not get a galley here.
+        for element in elements:
+            if not element.isText(): # This is a non-text element. Try to find placement.
+<<<<<<< HEAD
+>>>>>>> master
                 self.tryPlacement(page, tb, element)
+=======
+                self.tryPlacement(element, page)
+>>>>>>> galley
                 continue
             fs += element.fs
             # As long as where is text, try to fit into the boxes on the page.
@@ -57,8 +67,10 @@ class Composer(object):
                 else:
                     break
 
+<<<<<<< HEAD
     def tryPlacement(self, page, tb, element):
         u"""Try to place the element on page, in relation to the current filling of tb."""
+<<<<<<< HEAD
         container = page.findPlacementFor(element)
         if container is not None:
             page.replaceElement(container, element)
@@ -66,3 +78,10 @@ class Composer(object):
             print('Could not find placement for', element)
         #else:
         #    print 'TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber
+=======
+        print 'TRY TO PLACE', element, 'on page', page.pageNumber
+=======
+    def tryPlacement(self, element, page):
+        pass # Don't place for now.
+>>>>>>> galley
+>>>>>>> master
