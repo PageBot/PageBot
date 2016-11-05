@@ -78,7 +78,7 @@ class Page(object):
     def findPlacementFor(self, element):
         u"""Find unused image space that closest fits the requested w/h/ratio."""
         for e, (_, _) in self.elements:
-            if e.isContainer():
+            if e.isContainer:
                 return e
         return None
 
@@ -240,7 +240,7 @@ class Page(object):
         u"""Answer the set of flow sequences on the page."""
         flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
         for element, (x, y) in self.elements:
-            if not element.isFlow():
+            if not element.isFlow:
                 continue
             # Now we know that this element has a e.nextBox and e.nextPage
             # There should be a flow with that name in our flows yet
@@ -260,14 +260,14 @@ class Page(object):
         u"""Draw curved arrow marker between the two points.
         TODO: Add drawing of real arrow-heads, rotated in the right direction."""
         style = self.parent.getRootStyle()
-        fms = style.flowMarkerSize
-        fmf = style.flowCurvatureFactor
+        fms = style.get('flowMarkerSize')
+        fmf = style.get('flowCurvatureFactor')
         if onText == 1:
-            c = style.flowConnectionStroke2
+            c = style.get('flowConnectionStroke2', NO_COLOR)
         else:
-            c = style.flowConnectionStroke1
-        setStrokeColor(c, style.flowConnectionStrokeWidth)
-        setFillColor(style.flowMarkerFill)
+            c = style.get('flowConnectionStroke1', NO_COLOR)
+        setStrokeColor(c, style.get('flowConnectionStrokeWidth'))
+        setFillColor(style.get('flowMarkerFill', NO_COLOR))
         oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
         xm = (xt + xs)/2
         ym = (yt + ys)/2
@@ -286,7 +286,7 @@ class Page(object):
         u"""If rootStyle.showFlowConnections is True, then draw the flow connections
         on the page, using their stroke/width settings of the style."""
         style = self.parent.getRootStyle()
-        if not style.showFlowConnections:
+        if not style.get('showFlowConnections'):
             return
         for seq in self.getFlows().values():
             # For all the floq sequences found in the page, draw flow arrows

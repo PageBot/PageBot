@@ -140,15 +140,23 @@ class TextBox(Element):
         self.makeStyle(style, **kwargs) # Combine self.style from
         assert self.w is not None and self.h is not None # Make sure that these are defined.
         # Set class behavior flags.
-        self.isFlow = self.style.get('nextBox') is not None and self.style.get('nextPage') is not None
+        self.isFlow = self.nextBox is not None and self.nextPage is not None
         self.isText = True # This element is capable of handling text.
+
+    def _get_nextBox(self):
+        return self.style.get('nextBox')
+    nextBox = property(_get_nextBox)
+
+    def _get_nextPage(self):
+        return self.style.get('nextPage')
+    nextPage = property(_get_nextPage)
 
     def __len__(self):
         return len(self.fs)
 
     def _get_next(self):
         if self.isFlow:
-            return self.style['nextBox'], self.style['nextPage']
+            return self.nextBox, self.nextPage
         return None
     next = property(_get_next)
 
@@ -249,6 +257,8 @@ class Image(Element):
         self.caption = caption
         self.makeStyle(style, **kwargs)
         assert self.w is not None and self.h is not None
+        self.sx = self.style.get('scaleX') # Calculate in case None
+        self.sy = self.style.get('scaleY')
         self.setPath(path) # If omitted, a gray/crossed rectangle will be drawn.
 
     def setPath(self, path):
@@ -260,12 +270,13 @@ class Image(Element):
             self.setScale(self.w, self.h)
         else:
             self.iw = self.ih = None
-            self.style['scaleX'] = self.style['scaleY'] = 1
+            self.sx = self.sy = 1
 
     def setSize(self, w, h):
         u"""Set the intended size and calculate the new scale."""
         self.w = max(w, self.minW)
         self.h = max(h, self.minH)
+        self.sx = self.sy = None # Force calculation, overwriting any defined style scale.
         self.setScale()
 
     # Set the intended width and calculate the new scale, validating the
@@ -303,8 +314,8 @@ class Image(Element):
             sx = sy = 1.0 * w / self.iw
         else:
             sx = sy = 1.0 * h / self.ih
-        self.style['scaleX'] = sx
-        self.style['scaleY'] = sy
+        self.sx = sx
+        self.sy = sy
 
     def getCaptionSize(self, page):
         """Figure out what the height of the text is, with the width of this text box."""
@@ -353,17 +364,16 @@ class Image(Element):
         if self.path is None:
             self._drawMissingImage(x, y, self.w, self.h)
         else:
-            if self.style.get('scaleX') is None: # Scale is not initialized yet.
+            if self.sx is None: # In case not initialized yet.
                 self.setScale()
-            sx = self.style.get('scaleX')
-            sy = self.style.get('scaleY')
             save()
-            scale(sx, sy)
-            image(self.path, (x/sx, y/sy), self._getAlpha())
-            if self.stroke is not None: # In case drawing border.
+            scale(self.sx, self.sy)
+            image(self.path, (x/self.sx, y/self.sy), self._getAlpha())
+            sStroke = self.style.get('stroke', NO_COLOR)
+            if sStroke is not None: # In case drawing border.
                 setFillColor(None)
-                setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth') * sx)
-                rect(x/sx, y/sy, self.w/sx, self.h/sy)
+                setStrokeColor(sStroke, self.style.get('strokeWidth', 1) * self.sx)
+                rect(x/self.sx, y/self.sy, self.w/self.sx, self.h/self.sy)
             restore()
         self._drawCaption(page, x, page.h - y, self.w, self.h)
 
@@ -415,13 +425,13 @@ class Grid(Element):
                     y -= columnHeight + gutter
                 x += columnWidth + gutter
         # Drawing the grid as lines.          
-        if style.showGrid and style.gridStroke is not NO_COLOR:
+        if self.style.get('showGrid') and self.style.get('gridStroke', NO_COLOR) is not NO_COLOR:
             setFillColor(None)
-            setStrokeColor(style.gridStroke, style.gridStrokeWidth)
+            setStrokeColor(self.style.get('gridStroke', NO_COLOR), self.style.get('gridStrokeWidth'))
             # TODO: Drawbot align and fill don't work properly now.
             M = 16
             fs = FormattedString('', font='Verdana', align='right', fontSize=M/2,
-                stroke=None, fill=style.gridStroke)
+                stroke=None, fill=self.style['gridStroke'])
             x = px + marginLeft
             index = 0
             y = h - marginTop - py
@@ -457,16 +467,15 @@ class BaselineGrid(Element):
         u"""Draw baseline grid if line color is set in the style.
         TODO: Make fixed values part of calculation or part of grid style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
-        style = page.parent.getRootStyle()
-        if style.showBaselineGrid:
-            y = style.h - self.style['mt'] - py
+        if self.style.get('showBaselineGrid'):
+            y = self.h - self.style['mt'] - py
             line = 0
             M = 16
             # Format of line numbers.
             # TODO: Drawbot align and fill don't work properly now.
             fs = FormattedString('', font=self.style.get('fallbackFont','Verdana'), align='right', fontSize=M/2,
                 stroke=None, fill=self.style.get('gridStroke'))
-            while y > style.mb:
+            while y > self.style.get('mb', 0):
                 setFillColor(None)
                 setStrokeColor(self.style.get('gridStroke', NO_COLOR), self.style.get('gridStrokeWidth'))
                 newPath()
