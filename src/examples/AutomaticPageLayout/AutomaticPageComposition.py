@@ -210,7 +210,7 @@ def makeDocument():
         paragraphTopSpacing=U, paragraphBottomSpacing=U/2, postFix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, preFix='', postFix='\n',
+    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
         rTracking=P_TRACK, align=LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)

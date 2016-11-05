@@ -197,12 +197,12 @@ class Typesetter(object):
     def _strip(self, s, style):
         u"""Strip the white space from s if style.preFix and/or style.postFix are not None."""
         if not None in (s, style):
-            preFix = style.get('preFix')
-            if preFix is not None: # Strip if prefix is not None. Otherwise don't touch.
-                s = preFix + s.lstrip()
-                postFix = style.get('postFix')
-            if postFix is not None:
-                s = s.rstrip() + postFix
+            prefix = style.get('prefix')
+            if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
+                s = prefix + s.lstrip()
+                postfix = style.get('postfix')
+            if postfix is not None:
+                s = s.rstrip() + postfix
         return s
 
     def typesetNode(self, node, style=None):
