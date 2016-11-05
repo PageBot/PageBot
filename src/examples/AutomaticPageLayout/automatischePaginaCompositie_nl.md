@@ -7,12 +7,8 @@ Petr van Blokland
 #Introduction
 ###Deze notitie belicht noodzaak en mogelijk aanpak van een actueel probleem waaraan weinig aandacht wordt besteed en dan bijna altijd op basis van foute uitgangspunten.
 
----
-
-Waar in de traditionele manier van werken met opmaakprogrammatuur zoals Quark XPress en InDesign altijd een menselijke beslissing de definitieve opmaak van een pagina bepaalt, zijn er steeds meer situaties waarin dat geen optie is. Doordat steeds meer pagina’s worden gegenereerd met inhoud die uit een database komt – of van een online source – en waar de selectie van de informatie direct wordt bepaald door eigenschappen van de lezer, moet de layout van de pagina’s automatisch worden berekend.
+Waar in de traditionele manier van werken met opmaakprogrammatuur zoals Quark XPress en InDesign altijd een menselijke beslissing de definitieve opmaak van een pagina bepaalt, zijn er steeds meer situaties waarin dat geen optie is. Doordat steeds meer pagina’s worden gegenereerd met inhoud die uit een database komt – of van een online source – en waar de selectie van de informatie direct wordt bepaald door eigenschappen van de lezer, moet de layout van de pagina’s automatisch worden berekend. 
 Er bestaat op het moment vreemd genoeg geen digitaal gereedschap dat enerzijds voldoende flexibel is om in alle mogelijk technieken en soorten layouts te gebruiken, te koppelen is met een grote verscheidenheid aan informatiebronnen, en anderzijds voldoet aan de typografische eisen die aan handmatige opmaak worden gesteld.
-
----
 
 ![AutoPager](images/im1.png "Met een XML beschrijving van de tekst wordt een transformatie uitgevoerd waarmee een strokenproef wordt aangemaakt. Daarbij wordt rekening gehouden met de typografische eigenschappen van de Markdown of XML tags, zoals lettertype, corps, gewichten, cursief, variations assen, spatiëring, regelbreedte, regeltransport, uitlijnen, inspringen, tabulatie, kleur, en afbreken in de gewenste taal.")
 
@@ -28,11 +24,8 @@ Het opmaken van een pagina vanuit ruwe kopij en meta-informatie is te verdelen i
 
 [^phases]: Voorlopig is de indeling van het project hetzelfde als de fasering van de paginaopmaak.
 
----
 ###XML transformatie
 Het transformeren van XML documenten naar een informatiestructuur is met standaardgereedschappen zoals Python-Markdown makkelijk uit te voeren.
-
----
 
 ###Zetten van de strokenproef
 Om de software te maken die een strokenproef kan genereren is typografische kennis nodig.[^typografische kennis] In vrijwel alle automatische opmaakprogramma’s is dit een onderbelicht gebied. Dat komt doordat de bouwers van dergelijke software niet of nauwelijks op de hoogte zijn van de relevante parameters en hun onderlinge samenhang. Ook kunnen verschillen in culturele tradities een rol spelen. USA-typografie is niet hetzelfde als Europese.

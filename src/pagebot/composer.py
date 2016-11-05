@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 #     P A G E B O T
 #
@@ -36,18 +36,12 @@ class Composer(object):
         tb = page.getElement(flowId) # Find the seed flow box on the page, as derived from template.
         assert tb is not None # Make sure, otherwise there is a template error.
         fs = FormattedString('')
-        elements = galley.getElements()
         # Keeping overflow of text boxes here while iterating.
-        assert elements is not None # Otherwise we did not get a galley here.
-        for element in elements:
-            if not element.isText(): # This is a non-text element. Try to find placement.
-<<<<<<< HEAD
+        for element in galley.elements:
+            if not element.isText: # This is a non-text element. Try to find placement.
                 self.tryPlacement(page, tb, element)
-=======
-                self.tryPlacement(element, page)
->>>>>>> galley
                 continue
-            fs += element.getFs()
+            fs += element.fs
             # As long as where is text, try to fit into the boxes on the page.
             # Otherwise go to the next page, following the flow, creating new pages if necessary.
             for n in range(10000): # Safety here, "while fs:" seems to be a dangerous method.
@@ -63,11 +57,12 @@ class Composer(object):
                 else:
                     break
 
-<<<<<<< HEAD
     def tryPlacement(self, page, tb, element):
         u"""Try to place the element on page, in relation to the current filling of tb."""
-        print 'TRY TO PLACE', element, 'on page', page.pageNumber
-=======
-    def tryPlacement(self, element, page):
-        pass # Don't place for now.
->>>>>>> galley
+        container = page.findPlacementFor(element)
+        if container is not None:
+            page.replaceElement(container, element)
+        else:
+            print('Could not find placement for', element)
+        #else:
+        #    print 'TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber
