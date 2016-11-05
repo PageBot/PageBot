@@ -184,6 +184,8 @@ class TextBox(Element):
     next = property(_get_next)
 
     def append(self, s, style=None):
+        u"""Append s to the running formatted string of the self. If the style is defined,
+        then create a new style FormattedString, with all """
         self.fs += getFormattedString(s, style)
         return self.getOverflow()
 
@@ -330,9 +332,10 @@ class Image(Element):
             sx = sy = 1
         elif w is None and h is None:
             sx = sy = 1 # Use default size of the image.
-        elif w is not None and h is not None: # Disproportional scale
+        elif w is not None and h is not None: # Would be disproportional scale
             sx = 1.0 * w / self.iw
             sy = 1.0 * h / self.ih
+            sx = sy = min(sx, sy) # Keep the smallest to make image fit available space.
         elif w is not None:
             sx = sy = 1.0 * w / self.iw
         else:
@@ -373,7 +376,7 @@ class Image(Element):
                 self.setScale()
             save()
             scale(self.sx, self.sy)
-            image(self.path, (x/self.sx, y/self.sy), self._getAlpha())
+            image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), self._getAlpha())
             sStroke = self.style.get('stroke', NO_COLOR)
             if sStroke is not None: # In case drawing border.
                 setFillColor(None)
