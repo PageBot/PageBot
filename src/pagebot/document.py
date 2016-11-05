@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 #     P A G E B O T
 #
@@ -12,7 +12,7 @@
 #
 import copy
 from pagebot.page import Page, Template
-from pagebot.style import Style
+from pagebot.style import newStyle
 from drawBot import newPage, saveImage, installedFonts, installFont
             
 class Document(object):
@@ -25,8 +25,8 @@ class Document(object):
         u"""Contains a set of Page instance and formatting methods. Allows to compose the pages
         without the need to send them directly to the output. This allows "asynchronic" page filling."""
 
-        self.w = rootStyle.w
-        self.h = rootStyle.h
+        self.w = rootStyle['w']
+        self.h = rootStyle['h']
         self.title = title or 'Untitled'
         self.template = template # Store as document master template if undefined in pages.
         self.pages = {} # Key is pageID, often the page number. Value is Page instances.
@@ -52,10 +52,10 @@ class Document(object):
         self.addStyle(name, rootStyle)
         name = 'document'
         if not name in self.styles:
-            self.addStyle(name, Style(name=name, showGrid=True))
+            self.addStyle(name, newStyle(name=name, showGrid=True))
         name = 'page'
         if not name in self.styles:
-            self.addStyle(name, Style(name=name, showGrid=True))
+            self.addStyle(name, newStyle(name=name, showGrid=True))
 
     def fromRootStyle(self, **kwargs):
         u"""Answer a new style as copy from the root style. Overwrite the defined arguments."""
@@ -172,20 +172,20 @@ class Document(object):
         assert not name in self.styles # Make sure that styles don't get overwritten. Remove them first.
         self.styles[name] = style
         # Force the name of the style to synchronize with the requested key.
-        style.name = name
+        style['name'] = name
       
     def replaceStyle(self, name, style):
         u"""Set the style by name. Overwrite the style with that name if it already exists."""
         self.styles[name] = style
         # Force the name of the style to synchronize with the requested key.
-        style.name = name
+        style['name'] = name
         return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
 
     def newStyle(self, **kwargs):
         u"""Create a new style with the supplied arguments as attributes. Force the style in self.styles,
         even if already exists. Forst the name of the style to be the same as the style key.
         Answer the new style."""
-        return self.replaceStyle(kwargs['name'], Style(**kwargs))
+        return self.replaceStyle(kwargs['name'], dict(**kwargs))
          
     def export(self, fileName, pageSelection=None):
         u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,

@@ -41,7 +41,11 @@ class Composer(object):
         assert elements is not None # Otherwise we did not get a galley here.
         for element in elements:
             if not element.isText(): # This is a non-text element. Try to find placement.
+<<<<<<< HEAD
                 self.tryPlacement(page, tb, element)
+=======
+                self.tryPlacement(element, page)
+>>>>>>> galley
                 continue
             fs += element.getFs()
             # As long as where is text, try to fit into the boxes on the page.
@@ -59,6 +63,11 @@ class Composer(object):
                 else:
                     break
 
+<<<<<<< HEAD
     def tryPlacement(self, page, tb, element):
         u"""Try to place the element on page, in relation to the current filling of tb."""
         print 'TRY TO PLACE', element, 'on page', page.pageNumber
+=======
+    def tryPlacement(self, element, page):
+        pass # Don't place for now.
+>>>>>>> galley

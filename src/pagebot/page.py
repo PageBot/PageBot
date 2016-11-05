@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 #     P A G E B O T
 #
@@ -16,7 +16,7 @@ import copy
 from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, fill, curveTo
 from pagebot.style import NO_COLOR
 from pagebot import cr2p, cp2p, setFillColor, setStrokeColor
-from pagebot.elements import Grid, BaselineGrid, Image, TextBox, Text, Rect, Line, Oval
+from pagebot.elements import Grid, BaselineGrid, Image, TextBox, Text, Rect, Line, Oval, Container
 
 class Page(object):
  
@@ -63,7 +63,7 @@ class Page(object):
         if e.eId is not None:
             assert e.eId not in self.elementIds
             self.elementIds[e.eId] = elementPos
-            
+
     def getElementPos(self, eId):
         u"""Answer the (e, (x, y)) element/position. Answer None if the element cannot be found."""
         return self.elementIds.get(eId)
@@ -75,13 +75,34 @@ class Page(object):
             return elementPos[0]
         return None
 
-    def findImageElement(self, w, h):
+    def findPlacementFor(self, element):
         u"""Find unused image space that closest fits the requested w/h/ratio."""
-        for element, (_, _) in self.elements:
-            if isinstance(element, Image) and not element.path:
-                return element
+        for e, (_, _) in self.elements:
+            if e.isContainer:
+                return e
         return None
-                             
+
+    def replaceElement(self, element, replacement):
+        u"""Find this element in the page and replace it at the
+        same element index (layer position) as the original element has.
+        Force the original element size on the replacing element."""
+        w, h = element.getSize()
+        for index, (e, (x, y)) in enumerate(self.elements):
+            if e is element:
+                replacement.setSize(w, h) # Force element to fit in this size.
+                replacementPos = replacement, (x, y)
+                self.elements[index] = replacementPos # Overwriting original element.
+                if (x, y) in self.placed:
+                    placedElements = self.placed[(x, y)]
+                    if element in placedElements:
+                        placedElements[placedElements.index(element)] = replacement
+                if element.eId in self.elementIds: # TODO: Check on multiple placements?
+                    del self.elementIds[element.eId]
+                if replacement.eId is not None: # TODO: Check on multiple placements?
+                    self.elementIds[replacement.eId] = [replacementPos]
+                return True # Successful replacement.
+        return False # Could not replace, probably by missing element in the page.
+
     def _get_parent(self):
         return self._parent()    
     def _set_parent(self, parent):
@@ -130,76 +151,88 @@ class Page(object):
     def getStyles(self):
         return self.parent.styles
 
-    def textBox(self, fs, x, y, w, h, eId=None, nextBox=None, nextPage=1, 
-            fill=NO_COLOR, stroke=NO_COLOR, strokeWidth=None):
-        e = TextBox(fs, w, h, eId, nextBox, nextPage, fill, stroke, strokeWidth)
+    def container(self, x, y, style=None, eId=None, elements=None, **kwargs):
+        u"""Used arguments: """
+        e = Container(style, eId=eId, elements=elements, **kwargs)
+        self.place(e, x, y)  # Append to drawing sequence and store by (x,y) and optional element id.
+        return e
+
+    def cContainer(self, cx, cy, cw, ch, style, eId=None, elements=None, **kwargs):
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        return self.container(x, y, style=style, eId=eId, elements=elements, w=w, h=h, **kwargs)
+
+    def textBox(self, fs, x, y, style=None, eId=None, **kwargs):
+        e = TextBox(fs, style=style, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
 
-    def cTextBox(self, fs, cx, cy, cw, ch, eId=None, nextBox=None, nextPage=1, 
-            fill=NO_COLOR, stroke=NO_COLOR, strokeWidth=None):
-        x, y, w, h = cr2p(cx, cy, cw, ch, self.getStyle())
-        return self.textBox(fs, x, y, w, h, eId, nextBox, nextPage, fill, stroke, strokeWidth)
+    def cTextBox(self, fs, cx, cy, cw, ch, style, eId=None, **kwargs):
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        return self.textBox(fs, x, y, style=style, eId=eId, w=w, h=h, **kwargs)
         
-    def text(self, fs, x, y, eId=None, font=None, fontSize=None, fill=NO_COLOR):
+    def text(self, fs, x, y, style=None, eId=None, **kwargs):
         u"""Draw formatted string.
         We don't need w and h here, as it is made by the text and style combinations."""
-        e = Text(fs, eId, font, fontSize, fill)
+        e = Text(fs, style=style, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
                 
-    def cText(self, fs, cx, cy, eId=None, font=None, fontSize=None, fill=NO_COLOR):
+    def cText(self, fs, cx, cy, style, eId=None, **kwargs):
         u"""Draw formatted string.
         We don't need w and h here, as it is made by the text and style combinations."""
-        x, y = cp2p(cx, cy, self.getStyle())
-        return self.text(fs, x, y, eId, font, fontSize, fill)
+        x, y = cp2p(cx, cy, style)
+        return self.text(fs, x, y, style=style, eId=eId, **kwargs)
                 
-    def rect(self, x, y, w, h, eId=None, fill=0, stroke=None, strokeWidth=None):
-        e = Rect(w, h, eId, fill=fill, stroke=stroke, strokeWidth=strokeWidth)
+    def rect(self, x, y, style=None, eId=None, **kwargs):
+        e = Rect(style=style, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
                 
-    def cRect(self, cx, cy, cw, ch, eId=None, fill=0, stroke=None, strokeWidth=None):
-        x, y, w, h = cr2p(cx, cy, cw, ch, self.getStyle())
-        return self.rect(x, y, w, h, eId, fill, stroke, strokeWidth)
+    def cRect(self, cx, cy, cw, ch, style, eId=None, **kwargs):
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        return self.rect(x, y, style=style, eId=eId, w=w, h=h, **kwargs)
                 
-    def oval(self, x, y, w, h, eId=None, fill=NO_COLOR, stroke=NO_COLOR, strokeWidth=None):
-        e = Oval(x, self.h - y, w, h, eId, fill=fill, stroke=stroke)
+    def oval(self, x, y, style=None, eId=None, **kwargs):
+        e = Oval(x, self.h - y, style=style, eId=eId, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
-               
-    def line(self, x, y, w, h, eId=None, stroke=None, strokeWidth=None):
-        e = Line(x, self.h - y, w, -h, eId, stroke=stroke, strokeWidth=strokeWidth)
+
+    def cOval(self, cx, cy, cw, ch, style, eId=None, **kwargs):
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        return self.oval(x, y, style=style, eId=eId, w=w, h=h, **kwargs)
+
+    def line(self, x, y, style=None, eId=None, **kwargs):
+        e = Line(x, self.h - y, style=style, eId=eId, w=w, h=-h, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
                 
-    def cLine(self, cx, cy, cw, ch, eId=None, stroke=None, strokeWidth=None):
-        x, y, w, h = cr2p(cx, cy, cw, ch, self.getStyle())
-        e = Line(w, h, eId, stroke=stroke, strokeWidth=strokeWidth)
+    def cLine(self, cx, cy, cw, ch, style, eId=None, **kwargs):
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        e = Line(style=style, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
                 
-    def image(self, path, x, y, w=None, h=None, eId=None, s=None, sx=None, sy=None, fill=NO_COLOR, stroke=None, 
-            strokeWidth=None, missingImageFill=NO_COLOR, caption=None, hyphenation=True):
-        e = Image(path, w, h, eId, s, sx, sy, fill, stroke, strokeWidth, missingImageFill, caption, hyphenation)
+    def image(self, path, x, y, style=None, eId=None, **kwargs):
+        e = Image(path, style=style, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
             
-    def cImage(self, path, cx, cy, cw=None, ch=None, eId=None, s=None, sx=None, sy=None, fill=NO_COLOR, stroke=None, 
-            strokeWidth=None, missingImageFill=NO_COLOR, caption=None, hyphenation=True):
+    def cImage(self, path, cx, cy, cw, ch, style, eId=None, **kwargs):
         # Convert the column size into point size, depending on the column settings of the current template,
         # when drawing images "hard-coded" directly on a certain page.
-        x, y, w, h = cr2p(cx, cy, cw, ch, self.getStyle())
-        return self.image(path, x, y, w, h, eId, s, sx, sy, fill, stroke, strokeWidth, missingImageFill, 
-            caption, hyphenation)
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        return self.image(path, x, y, style=style, eId=eId, **kwargs)
 
-    def grid(self, x=0, y=0, eId=None):
-        e = Grid(eId)
+    def grid(self, style=None, eId=None, x=0, y=0, **kwargs):
+        u"""Direct way to add a grid element to a single page, if not done through its template."""
+        e = Grid(style=style, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
         
-    def baselineGrid(self, x=0, y=0, eId=None):
-        e = BaselineGrid(eId)
+    def baselineGrid(self, style=None, eId=None, x=0, y=0, **kwargs):
+        u"""Direct way to add a baseline grid element to a single page, if not done
+        through its template."""
+        e = BaselineGrid(style=style, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
 
@@ -207,7 +240,7 @@ class Page(object):
         u"""Answer the set of flow sequences on the page."""
         flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
         for element, (x, y) in self.elements:
-            if not element.isFlow():
+            if not element.isFlow:
                 continue
             # Now we know that this element has a e.nextBox and e.nextPage
             # There should be a flow with that name in our flows yet
@@ -227,14 +260,14 @@ class Page(object):
         u"""Draw curved arrow marker between the two points.
         TODO: Add drawing of real arrow-heads, rotated in the right direction."""
         style = self.parent.getRootStyle()
-        fms = style.flowMarkerSize
-        fmf = style.flowCurvatureFactor
+        fms = style.get('flowMarkerSize')
+        fmf = style.get('flowCurvatureFactor')
         if onText == 1:
-            c = style.flowConnectionStroke2
+            c = style.get('flowConnectionStroke2', NO_COLOR)
         else:
-            c = style.flowConnectionStroke1
-        setStrokeColor(c, style.flowConnectionStrokeWidth)
-        setFillColor(style.flowMarkerFill)
+            c = style.get('flowConnectionStroke1', NO_COLOR)
+        setStrokeColor(c, style.get('flowConnectionStrokeWidth'))
+        setFillColor(style.get('flowMarkerFill', NO_COLOR))
         oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
         xm = (xt + xs)/2
         ym = (yt + ys)/2
@@ -253,7 +286,7 @@ class Page(object):
         u"""If rootStyle.showFlowConnections is True, then draw the flow connections
         on the page, using their stroke/width settings of the style."""
         style = self.parent.getRootStyle()
-        if not style.showFlowConnections:
+        if not style.get('showFlowConnections'):
             return
         for seq in self.getFlows().values():
             # For all the floq sequences found in the page, draw flow arrows
@@ -278,8 +311,8 @@ class Template(Page):
     the same way. Difference is that templates cannot contain other templates."""
     
     def __init__(self, style):
-        self.w = style.w # Page width
-        self.h = style.h # Page height
+        self.w = style['w'] # Page width
+        self.h = style['h'] # Page height
         self.elements = [] # Sequential drawing order of elementPos (e, (x, y)) tuples.
         # Stored elementPos (e, (x, y)) by their unique id, so they can be altered later,
         # before rendering starts.
