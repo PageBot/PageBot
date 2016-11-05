@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 #     P A G E B O T
 #
@@ -85,7 +85,7 @@ class Typesetter(object):
     def node_br(self, node):
         u"""Add line break to the formatted string."""
         cStyle = self.getCascadedNodeStyle(node.tag)
-        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
+        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new box  if width changed.
         tb.append('\n', cStyle)# + getMarker(node.tag)
 
     def node_hr(self, node):

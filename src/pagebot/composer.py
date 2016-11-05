@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 #     P A G E B O T
 #
@@ -63,6 +63,6 @@ class Composer(object):
         if container is not None:
             page.replaceElement(container, element)
         else:
-            print 'Could not find placement for', element
+            print('Could not find placement for', element)
         #else:
         #    print 'TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber
