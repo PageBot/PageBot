@@ -82,11 +82,7 @@ class Typesetter(object):
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
-    def node_br(self, node):
-        u"""Add line break to the formatted string."""
-        cStyle = self.getCascadedNodeStyle(node.tag)
-        tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new box  if width changed.
-        tb.append('\n', cStyle)# + getMarker(node.tag)
+    # Solve <br/> best by simple style with: doc.newStyle(name='br', postFix='\n')
 
     def node_hr(self, node):
         u"""Add Ruler instance to the Galley.
@@ -146,17 +142,22 @@ class Typesetter(object):
         self.typesetNode(node, cStyle)
 
     def node_img(self, node):
-        u"""Process the image. Find empty space on the page to place it,
-        closest related to the w/h ration of the image."""
+        u"""Process the image. Find nearby empty space on the page to place it,
+        that best fit the w/h ratio of the image and the optional caption.
+        A new child Galley is created to hold the combination if there is a caption."""
         src = node.attrib.get('src')
-        g = Galley()
         imageStyle = self.getCascadedNodeStyle(node.tag)
         if imageStyle is not None:
             self.pushStyle(imageStyle)
         imageElement = Image(src, imageStyle) # Set path, image w/h and image scale from style.
-        g.append(imageElement)
         caption = node.attrib.get('title')
-        if caption is not None:
+        if 1 or caption is None:
+            # If there is no caption, we can add the Image element directly to the main galley.
+            self.galley.append(imageElement)
+        else:
+            # If there is a caption, create a new child Galley to hold image + caption
+            g = Galley()
+            g.append(imageElement)
             captionStyle = self.getCascadedNodeStyle('caption')
             tb = g.getTextBox(captionStyle)
             caption = node.attrib.get('title')
@@ -164,7 +165,7 @@ class Typesetter(object):
             # reference went in a textBox after slicing the string.
             tb.append(caption+'\n', captionStyle)
             tb.append(getMarker(node.tag, src))
-        self.galley.append(g)
+            self.galley.append(g)
         if imageStyle is not None:
             self.popStyle()
 

@@ -113,6 +113,26 @@ class Element(object):
         u"""Answer a copy of self."""
         return copy.copy(self)
 
+    #   Default drawing methods.
+
+    def _drawMissingElementRect(self, x, y, w, h):
+        sMissingElementFill = self.style.get('missingElementFill', NO_COLOR)
+        if self.style.get('showGridColumns'):
+            setFillColor(sMissingElementFill)
+            setStrokeColor(None)
+            rect(x, y, w, h)
+        if self.style.get('showGrid'):
+            # Draw crossed rectangle.
+            setFillColor(None)
+            setStrokeColor(0, 0.5)
+            rect(x, y, w, h)
+            newPath()
+            moveTo((x, y))
+            lineTo((x + w, y + h))
+            moveTo((x + w, y))
+            lineTo((x, y + h))
+            drawPath()
+
 class Container(Element):
     u"""A container contains one or more elements that must negotiate for space if size is set fixed."
     The Galley is an example of it."""
@@ -129,8 +149,11 @@ class Container(Element):
         return len(self.elements)
 
     def draw(self, page, x, y):
-        for element in self.elements:
-            element.draw(page, x, y)
+        if self.elements:
+            for element in self.elements:
+                element.draw(page, x, y)
+        else:
+            self._drawMissingElementRect(x, y, self.w, self.h)
 
 class TextBox(Element):
 
@@ -325,24 +348,6 @@ class Image(Element):
         u"""Answer the w/h pixel size of the real image."""
         return self.iw, self.ih
                 
-    def _drawMissingImage(self, x, y, w, h):
-        sMissingImageFill = self.style.get('missingImageFill', NO_COLOR)
-        if sMissingImageFill is NO_COLOR:
-            # Draw crossed rectangle.
-            setFillColor(None)
-            setStrokeColor(0, 0.5)
-            rect(x, y, w, h)
-            newPath()
-            moveTo((x, y))
-            lineTo((x + w, y + h))
-            moveTo((x + w, y))
-            lineTo((x, y + h))
-            drawPath()
-        else:
-            setFillColor(sMissingImageFill)
-            setStrokeColor(None)
-            rect(x, y, w, h)
-    
     def _getAlpha(self):
         u"""Use alpha channel of the fill color as opacity of the image."""
         sFill = self.style.get('fill', NO_COLOR)
@@ -362,7 +367,7 @@ class Image(Element):
           
     def draw(self, page, x, y):
         if self.path is None:
-            self._drawMissingImage(x, y, self.w, self.h)
+            self._drawMissingElementImage(page, x, y, self.w, self.h)
         else:
             if self.sx is None: # In case not initialized yet.
                 self.setScale()
