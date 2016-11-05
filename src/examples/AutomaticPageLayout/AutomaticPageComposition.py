@@ -267,7 +267,7 @@ def makeDocument():
 tt = time()
 d = makeDocument()
 if SHOW_TIMER:
-    print 'make document %0.3f' % (time()-tt)
+    print 'Make document %0.3f' % (time()-tt)
 
 tt = time()
 d.export(EXPORT_PATH) 
