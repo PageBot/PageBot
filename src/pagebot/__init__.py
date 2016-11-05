@@ -81,21 +81,34 @@ def setStrokeColor(c, w=1, fs=None, cmyk=False):
 
 def cp2p(cx, cy, style):
     u"""Convert columns point to page position."""
-    return (style.ml + cx * (style.cw + style.g),  
-            style.mt + cy * (style.ch + style.g))
+    gutter = style['g']
+    marginLeft = style['ml']
+    marginTop = style['mt']
+    columnWidth = style['cw']
+    columnHeight = style['ch']
+    return (marginLeft + cx * (columnWidth + gutter),
+            marginTop + cy * (columnHeight + gutter))
     
 def cr2p(cx, cy, cw, ch, style):
     u"""Convert columns rect to page position/size."""
+    gutter = style['g']
+    marginLeft = style['ml']
+    marginTop = style['mt']
+    columnWidth = style['cw']
+    columnHeight = style['ch']
+    w = style['w']
+    h = style['h']
+
     return (
-        style.ml + cx * (style.cw + style.g),  
-        style.h - style.mt - (cy + ch) * (style.ch + style.g) + style.g, 
-        cw * (style.cw + style.g) - style.g, 
-        ch * (style.ch + style.g) - style.g) 
+        marginLeft + cx * (columnWidth + gutter),
+        h - marginTop - (cy + ch) * (columnHeight + gutter) + gutter,
+        cw * (columnWidth + gutter) - gutter,
+        ch * (columnHeight + gutter) - gutter)
 
 MARKER_PATTERN = '==%s--%s=='
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_]*)\-\-([^=]*)\=\=')
 
-def getMarker(markerId, args=None):
+def getMarker(markerId, arg=None):
     u"""Answer a formatted string with markerId that can be used as non-display marker. 
     This way the Composer can find the position of markers in text boxes, after
     FS-slicing has been done. Note there is always a very small "white-space"
@@ -107,7 +120,7 @@ def getMarker(markerId, args=None):
     the end of a textBox. That is another reason to keep the length of the arguments short.
     And not to use any spaces, etc. inside the markerId.
     Possible slicing through line-endings is not a problem, as the raw string ignores them."""
-    marker = MARKER_PATTERN % (markerId, args or '')
+    marker = MARKER_PATTERN % (markerId, arg or '')
     return FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)
     ###return FormattedString(marker, fill=(1, 0, 0), stroke=None, fontSize=10)
 
@@ -121,44 +134,72 @@ def getFormattedString(t, style=None):
     so they can inherit from previous style formats."""
     fs = FormattedString()
     if style is not None:
-        if style.font is not None:
-            fs.font(style.font)
-        if style.fontSize is not None:
-            fs.fontSize(style.fontSize)
-        if style.fallbackFont is not None:
-            fs.fallbackFont(style.fallbackFont)
-        if style.fill is not NO_COLOR: # Test on this flag, None is valid value
-            setFillColor(style.fill, fs)
-        if style.cmykFill is not NO_COLOR:
-            setFillColor(style.cmykFill, fs, cmyk=True)
-        if style.stroke is not NO_COLOR:
-            setStrokeColor(style.stroke, style.strokeWidth, fs)
-        if style.cmykStroke is not NO_COLOR:
-            setStrokeColor(style.cmykStroke, style.strokeWidth, fs, cmyk=True)
-        if style.align is not None:
-            fs.align(style.align)
-        if style.leading is not None or style.rLeading is not None:
-            fs.lineHeight((style.leading or 0) + (style.rLeading or 0) * style.fontSize)
-        if style.paragraphTopSpacing is not None or style.rParagraphTopSpacing is not None:
-            fs.paragraphTopSpacing((style.paragraphTopSpacing or 0) + (style.rParagraphTopSpacing or 0) * style.fontSize)
-        if style.paragraphBottomSpacing is not None or style.rParagraphBottomSpacing is not None:
-            fs.paragraphBottomSpacing((style.paragraphBottomSpacing or 0) + (style.rParagraphBottomSpacing or 0) * style.fontSize)
-        if style.tracking is not None:
-            fs.tracking((style.tracking or 0) + (style.rTracking or 0) * style.fontSize)
-        if style.baselineShift is not None or style.rBaselineShift is not None:
-            fs.baselineShift((style.baselineShift or 0) + (style.rBaselineShift or 0) * style.fontSize)
-        if style.openTypeFeatures is not None:
-            fs.openTypeFeatures(style.openTypeFeatures)
-        if style.tabs is not None:
-            fs.tabs(*style.tabs)
-        if style.firstLineIndent is not None:
-            fs.firstLineIndent((style.firstLineIndent or 0) + (style.rFirstLineIndent or 0) * style.fontSize)
-        if style.indent is not None or style.rIndent is not None:
-            fs.indent((style.indent or 0) + (style.rIndent or 0) * style.fontSize)
-        if style.tailIndent is not None or style.rTailIndent is not None:
-            fs.tailIndent((style.tailIndent or 0) + (style.rTailIndent or 0) * style.fontSize)
-        if style.language is not None:
-            fs.language(style.language)
+        sFont = style.get('font')
+        if sFont is not None:
+            fs.font(sFont)
+        sFontSize = style.get('fontSize')
+        if sFontSize is not None:
+            fs.fontSize(sFontSize)
+        sFallbackFont = style('fallbackFont')
+        if sFallbackFont is not None:
+            fs.fallbackFont(sFallbackFont)
+        sFill = style.get('fill', NO_COLOR)
+        if sFill is not NO_COLOR: # Test on this flag, None is valid value
+            setFillColor(sFill, fs)
+        sCmykFill = style.get('cmykFill', NO_COLOR)
+        if sCmykFill is not NO_COLOR:
+            setFillColor(sCmykFill, fs, cmyk=True)
+        sStroke = style.get('stroke', NO_COLOR)
+        sStrokeWidth = style.get('strokeWidth')
+        if sStroke is not NO_COLOR and strokeWidth is not None:
+            setStrokeColor(sStroke, sStrokeWidth, fs)
+        sCmykStroke = style.get('cmykStroke', NO_COLOR)
+        if sCmykStroke is not NO_COLOR:
+            setStrokeColor(sCmykStroke, sStrokeWidth, fs, cmyk=True)
+        sAlign = style.get('align')
+        if sAlign is not None:
+            fs.align(sAlign)
+        sLeading = style.get('leading')
+        rLeading = style.get('rLeading')
+        if sLeading is not None or (rLeading is not None and sFontSize is not None):
+            fs.lineHeight((sLeading or 0) + (rLeading or 0) * (sFontSize or 0))
+        sParagraphTopSpacing = style.get('paragraphTopSpacing')
+        rParagraphTopSpacing = style.get('rParagraphTopSpacing')
+        if sParagraphTopSpacing is not None or (rParagraphTopSpacing is not None and sFontSize is not None):
+            fs.paragraphTopSpacing((sParagraphTopSpacing or 0) + (rParagraphTopSpacing or 0) * (sFontSize or 0))
+        sParagraphBottomSpacing = style.get('paragraphBottomSpacing')
+        rParagraphBottomSpacing = style.get('rParagraphBottomSpacing')
+        if sParagraphBottomSpacing is not None or (rParagraphBottomSpacing is not None and sFontSize is not None):
+            fs.paragraphBottomSpacing((sParagraphBottomSpacing or 0) + (rParagraphBottomSpacing or 0) * (sFontSize or 0))
+        sTracking = style.get('tracking')
+        rTracking = style.get('rTracking')
+        if sTracking is not None or (rTracking is not None and sFontSize is not None):
+            fs.tracking((sTracking or 0) + (rTracking or 0) * (sFontSize or 0))
+        sBaselineShift = style.get('baselineShift')
+        rBaselineShift = style.get('rBaselineShift')
+        if sBaselineShift is not None or (rBaselineShift is not None and sFontSize is not None):
+            fs.baselineShift((sBaselineShift or 0) + (rBaselineShift or 0) * (sFontSize or 0))
+        sOpenTypeFeatures = style.get('openTypeFeatures')
+        if sOpenTypeFeatures is not None:
+            fs.openTypeFeatures(sOpenTypeFeatures)
+        sTabs = style.get('tabs')
+        if sTabs is not None:
+            fs.tabs(*sTabs)
+        sFirstLineIndent = style.get('firstLineIndent')
+        rFirstLineIndent = style.get('rFirstLineIndent')
+        if sFirstLineIndent is not None:
+            fs.firstLineIndent((sFirstLineIndent or 0) + (rFirstLineIndent or 0) * (sFontSize or 0))
+        sIndent = style.get('indent')
+        rIndent = style.get('rIndent')
+        if sIndent is not None or (rIndent is not None and sFontSize is not None):
+            fs.indent((sIndent or 0) + (rIndent or 0) * (sFontSize or 0))
+        sTailIndent = style.get('tailIndent')
+        rTailIndent = style.get('rTaildIndent')
+        if sTailIndent is not None or (rTailIndent is not None and sFontSize is not None):
+            fs.tailIndent((sTailIndent or 0) + (rTailIndent or 0) * (sFontSize or 0))
+        sLanguage = style.get('language')
+        if sLanguage is not None:
+            fs.language(sLanguage)
         #fs.hyphenation(style.hyphenation)        
     fs.append(t)
     return fs

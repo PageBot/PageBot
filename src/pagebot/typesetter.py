@@ -141,7 +141,7 @@ class Typesetter(object):
         # Make sure this is a cascaded style, expanded from current values in top style in gState.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append(cStyle.listBullet, cStyle) # Append the bullet as defined in the style.
+        tb.append(cStyle['listBullet'], cStyle) # Append the bullet as defined in the style.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
@@ -151,14 +151,7 @@ class Typesetter(object):
         src = node.attrib.get('src')
         g = Galley()
         cStyle = self.getCascadedNodeStyle(node.tag)
-        imageElement = Image(src) # Set path, image w/h and image scale.
-        if cStyle is not None:
-            self.pushStyle(cStyle)
-            imageElement.setMinSize(cStyle.minW, cStyle.minH)
-            imageElement.fill = cStyle.fill
-            imageElement.stroke = cStyle.stroke
-            imageElement.strokeWidth = cStyle.strokeWidth
-            imageElement.hyphenation = cStyle.hyphenation
+        imageElement = Image(src, cStyle) # Set path, image w/h and image scale from style.
         g.append(imageElement)
         caption = node.attrib.get('title')
         if caption is not None:
@@ -177,15 +170,13 @@ class Typesetter(object):
         u"""As we want cascading font and fontSize in the page elements, we need to keep track
         of the stacking of XML-hierarchy of the previous tag styles.
         The styles can omit the font or fontSize, and still we need to be able to set the element
-        attributes. Copy the current style and add overwrite the attributes in style. This way
-        the current style always contains all attributes of the root style."""
+        attributes. Copy the current style and add overwrite the values from the new style.
+        This way the current style always contains all attributes of the root style."""
         cascadedStyle = copy.copy(self.gState[-1]) # Take the top of the stack as source.
-        if style is not None: # Style may be None. In that case answer just copy of current gState top.
-            for name, value in style.__dict__.items():
-                if name.startswith('_'): # Don't copy private style attributes.
-                    continue
-                setattr(cascadedStyle, name, value) # Overwrite the style value.
-            style.cascaded = True # Mark that this is a cascaded style, to distinguish from plain styles.
+        if style is not None: # Style may be None. In that case answer just copied of current gState top.
+            for name, value in style.items():
+                cascadedStyle[name] = value # Overwrite the style value.
+            style['cascaded'] = True # Mark that this is a cascaded style, to distinguish from plain styles.
         return cascadedStyle
 
     def getCascadedNodeStyle(self, name):
@@ -203,10 +194,12 @@ class Typesetter(object):
     def _strip(self, s, style):
         u"""Strip the white space from s if style.preFix and/or style.postFix are not None."""
         if not None in (s, style):
-            if style.preFix is not None: # Strip if prefix is not None. Otherwise don't touch.
-                s = style.preFix + s.lstrip()
-            if style.postFix is not None:
-                s = s.rstrip() + style.postFix
+            preFix = style.get('preFix')
+            if preFix is not None: # Strip if prefix is not None. Otherwise don't touch.
+                s = preFix + s.lstrip()
+                postFix = style.get('postFix')
+            if postFix is not None:
+                s = s.rstrip() + postFix
         return s
 
     def typesetNode(self, node, style=None):
@@ -284,12 +277,10 @@ class Typesetter(object):
 
         tree = ET.parse(fileName)
         root = tree.getroot() # Get the root element of the tree.
-        # Get the root style that all other styles will be merged with.
-        rootStyle = self.document.getRootStyle()
         # Collect all flowing text in one formatted string, while simulating the page/flow, because
         # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
         # reference, image index and footnote placement.   
-        self.typesetNode(root)#, rootStyle)
+        self.typesetNode(root)
         
     def typesetFootnotes(self):
         footnotes = self.document.footnotes

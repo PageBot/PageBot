@@ -27,34 +27,13 @@ RIGHT_ALIGN = 'right'
 CENTER = 'center'
 JUSTIFIED = 'justified'
 
-class Style(object):
-    u"""Container for style instances."""
-        
-    def __init__(self, **kwargs):
-        # Overwite default values from user arguments.
-        for name, value in kwargs.items():
-            setattr(self, name, value)
-        # Mark the difference with a cascading (expanded) style and simples ones.
-        self.cascaded = False
-
-    def __repr__(self):
-        return '[%s=%s]' % (self.__class__.__name__, self.name)
-           
-    def __getitem__(self, name):
-        if hasattr(self, name):
-            return getattr(self, name)
-        return None
-
-    def __setitem__(self, name, value):
-        self.name = value
-        
-    def get(self, name, default=None):
-        if hasattr(self, name):
-            return getattr(self, name)
-        return default
+def newStyle(**kwargs):
+    style = Style(**kwargs)
+    style['cascaded'] = False
+    return style
 
 def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
-        showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS):
+        showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS, **kwargs):
     u"""Answer the main root style tha contains all default style attributes of PageBot.
     To be overwritten when needed by calling applications.
     CAPITALIZED attribute names are for reference only. Not used directly from styles.
@@ -69,7 +48,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
     # Default the gutter is equal to the page unit.
     gutter = u
 
-    return Style( # Answer the default root style.
+    rs = dict( # Answer the default root style. Style is a clean dictionary
 
         name = 'root', # Name of the style, key in document.getRootstyle( )
         # The default value in a initial Style is False. Gets True if expanded by cascading.
@@ -101,6 +80,9 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         minH = baselineGrid, # Default is to make minimum height equal to 1 baseline.
         maxW = None, # None if there is no maximum
         maxH = None,
+        # Scale of content
+        scaleX = 1, # In scale of content needs to be defined, as in image.
+        scaleY = 1,
         # Grid stuff
         showGrid = showGrid, # Flag to show the grid in output.
         showGridColumns = showGridColumns, # Show the colums as filled (cw, ch) squares.
@@ -132,12 +114,12 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         rTracking = 0, # Tracking as factor of the fontSize.
         align = LEFT_ALIGN, # Alignment, one if ('left', 'justified', 'center'. 'right')
         # Set tabs,tuples of (float, alignment) Alignment can be “left”, “center”, “right”
-        # or any other character. If a character is provided the alignment will be right and 
+        # or any other character. If a character is provided the alignment will be right and
         # centered on the specified character.
         listTabs = [(listIndent, LEFT_ALIGN)], # Default indent for bullet lists. Copy onto style.tabs for usage.
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
-        tabs = None, 
+        tabs = None,
         firstLineIndent = 0, # Indent of first paragraph in a text tag.
         rFirstLineIndent = 0, # First line indent as factor if font size.
         indent = 0, # Left indent (for left-right based scripts)
@@ -145,9 +127,9 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         tailIndent = 0, # Tail/right indent (for left-right based scripts)
         rTailIndent = 0, # Tail/right Indent as factor of font size
 
-        # List of supported OpenType features. 
-        # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf, 
-        # smcp, ss01, ss02, ss03, ss04, ss05, ss06, ss07, ss08, ss09, ss10, ss11, ss12, ss13, ss14, 
+        # List of supported OpenType features.
+        # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf,
+        # smcp, ss01, ss02, ss03, ss04, ss05, ss06, ss07, ss08, ss09, ss10, ss11, ss12, ss13, ss14,
         # ss15, ss16, ss17, ss18, ss19, ss20, subs, sups, swsh, titl, tnum
         openTypeFeatures = None,
 
@@ -199,6 +181,11 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         RIGHT_ALIGN = RIGHT_ALIGN,
         JUSTIFIED = JUSTIFIED,
         CENTER = CENTER,
-
     )
+    # Assume all the other arguments overwriting the default values of the root style,
+    for name, value in kwargs.items():
+        rs[name] = value
+    return rs
+
+
   

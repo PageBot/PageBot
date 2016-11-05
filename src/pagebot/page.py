@@ -151,93 +151,88 @@ class Page(object):
     def getStyles(self):
         return self.parent.styles
 
-    def container(self, x, y, w, h, eId=None, elements=None):
-        e = Container(w, h, eId, elements)
+    def container(self, x, y, style=None, eId=None, elements=None, **kwargs):
+        u"""Used arguments: """
+        e = Container(style, eId=eId, elements=elements, **kwargs)
         self.place(e, x, y)  # Append to drawing sequence and store by (x,y) and optional element id.
         return e
 
-    def cContainer(self, cx, cy, cw, ch, eId=None, elements=None):
-        x, y, w, h = cr2p(cx, cy, cw, ch, self.getStyle())
-        return self.container(x, y, w, h, eId, elements)
+    def cContainer(self, cx, cy, cw, ch, style, eId=None, elements=None, **kwargs):
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        return self.container(x, y, style=style, eId=eId, elements=elements, w=w, h=h, **kwargs)
 
-    def textBox(self, fs, x, y, w, h, eId=None, nextBox=None, nextPage=1,
-            fill=NO_COLOR, stroke=NO_COLOR, strokeWidth=None):
-        e = TextBox(fs, w, h, eId, nextBox, nextPage, fill, stroke, strokeWidth)
+    def textBox(self, fs, x, y, style=None, eId=None, **kwargs):
+        e = TextBox(fs, style=style, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
 
-    def cTextBox(self, fs, cx, cy, cw, ch, eId=None, nextBox=None, nextPage=1, 
-            fill=NO_COLOR, stroke=NO_COLOR, strokeWidth=None):
-        x, y, w, h = cr2p(cx, cy, cw, ch, self.getStyle())
-        return self.textBox(fs, x, y, w, h, eId, nextBox, nextPage, fill, stroke, strokeWidth)
+    def cTextBox(self, fs, cx, cy, cw, ch, style, eId=None, **kwargs):
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        return self.textBox(fs, x, y, style=style, eId=eId, w=w, h=h, **kwargs)
         
-    def text(self, fs, x, y, eId=None, font=None, fontSize=None, fill=NO_COLOR):
+    def text(self, fs, x, y, style=None, eId=None, **kwargs):
         u"""Draw formatted string.
         We don't need w and h here, as it is made by the text and style combinations."""
-        e = Text(fs, eId, font, fontSize, fill)
+        e = Text(fs, style=style, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
                 
-    def cText(self, fs, cx, cy, eId=None, font=None, fontSize=None, fill=NO_COLOR):
+    def cText(self, fs, cx, cy, style, eId=None, **kwargs):
         u"""Draw formatted string.
         We don't need w and h here, as it is made by the text and style combinations."""
-        x, y = cp2p(cx, cy, self.getStyle())
-        return self.text(fs, x, y, eId, font, fontSize, fill)
+        x, y = cp2p(cx, cy, style)
+        return self.text(fs, x, y, style=style, eId=eId, **kwargs)
                 
-    def rect(self, x, y, w, h, eId=None, fill=0, stroke=None, strokeWidth=None):
-        e = Rect(w, h, eId, fill=fill, stroke=stroke, strokeWidth=strokeWidth)
+    def rect(self, x, y, style=None, eId=None, **kwargs):
+        e = Rect(style=style, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
                 
-    def cRect(self, cx, cy, cw, ch, eId=None, fill=0, stroke=None, strokeWidth=None):
-        x, y, w, h = cr2p(cx, cy, cw, ch, self.getStyle())
-        return self.rect(x, y, w, h, eId, fill, stroke, strokeWidth)
+    def cRect(self, cx, cy, cw, ch, style, eId=None, **kwargs):
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        return self.rect(x, y, style=style, eId=eId, w=w, h=h, **kwargs)
                 
-    def oval(self, x, y, w, h, eId=None, fill=NO_COLOR, stroke=NO_COLOR, strokeWidth=None):
-        e = Oval(x, self.h - y, w, h, eId, fill=fill, stroke=stroke)
+    def oval(self, x, y, style=None, eId=None, **kwargs):
+        e = Oval(x, self.h - y, style=style, eId=eId, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
-               
-    def line(self, x, y, w, h, eId=None, stroke=None, strokeWidth=None):
-        e = Line(x, self.h - y, w, -h, eId, stroke=stroke, strokeWidth=strokeWidth)
+
+    def cOval(self, cx, cy, cw, ch, style, eId=None, **kwargs):
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        return self.oval(x, y, style=style, eId=eId, w=w, h=h, **kwargs)
+
+    def line(self, x, y, style=None, eId=None, **kwargs):
+        e = Line(x, self.h - y, style=style, eId=eId, w=w, h=-h, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
                 
-    def cLine(self, cx, cy, cw, ch, eId=None, stroke=None, strokeWidth=None):
-        x, y, w, h = cr2p(cx, cy, cw, ch, self.getStyle())
-        e = Line(w, h, eId, stroke=stroke, strokeWidth=strokeWidth)
+    def cLine(self, cx, cy, cw, ch, style, eId=None, **kwargs):
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        e = Line(style=style, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
                 
-    def image(self, path, x, y, w=None, h=None, minW=None, minH=None, eId=None, s=None,
-            sx=None, sy=None, fill=NO_COLOR, stroke=None, strokeWidth=None,
-            missingImageFill=NO_COLOR, caption=None, hyphenation=True,
-            # TODO: style=None,
-            ):
-        e = Image(path, w, h, minW, minH, eId, s, sx, sy, fill, stroke, strokeWidth,
-            missingImageFill, caption, hyphenation)
+    def image(self, path, x, y, style=None, eId=None, **kwargs):
+        e = Image(path, style=style, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
             
-    def cImage(self, path, cx, cy, cw=None, ch=None, minW=None, minH=None, eId=None,
-            s=None, sx=None, sy=None, fill=NO_COLOR, stroke=None,
-            strokeWidth=None, missingImageFill=NO_COLOR, caption=None, hyphenation=True):
+    def cImage(self, path, cx, cy, cw, ch, style, eId=None, **kwargs):
         # Convert the column size into point size, depending on the column settings of the current template,
         # when drawing images "hard-coded" directly on a certain page.
-        x, y, w, h = cr2p(cx, cy, cw, ch, self.getStyle())
-        return self.image(path, x, y, w, h, minW, minH, eId, s, sx, sy, fill, stroke, strokeWidth,
-            missingImageFill, caption, hyphenation)
+        x, y, w, h = cr2p(cx, cy, cw, ch, style)
+        return self.image(path, x, y, style=style, eId=eId, **kwargs)
 
-    def grid(self, x=0, y=0, eId=None):
+    def grid(self, x=0, y=0, style=None, eId=None, **kwargs):
         u"""Direct way to add a grid element to a single page, if not done through its template."""
-        e = Grid(eId)
+        e = Grid(style=style, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
         
-    def baselineGrid(self, x=0, y=0, eId=None):
+    def baselineGrid(self, x=0, y=0, style=None, eId=None, **kwargs):
         u"""Direct way to add a baseline grid element to a single page, if not done
         through its template."""
-        e = BaselineGrid(eId)
+        e = BaselineGrid(style=None, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
 
@@ -316,8 +311,8 @@ class Template(Page):
     the same way. Difference is that templates cannot contain other templates."""
     
     def __init__(self, style):
-        self.w = style.w # Page width
-        self.h = style.h # Page height
+        self.w = style['w'] # Page width
+        self.h = style['h'] # Page height
         self.elements = [] # Sequential drawing order of elementPos (e, (x, y)) tuples.
         # Stored elementPos (e, (x, y)) by their unique id, so they can be altered later,
         # before rendering starts.
