@@ -51,6 +51,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
     rs = dict( # Answer the default root style. Style is a clean dictionary
 
         name = 'root', # Name of the style, key in document.getRootstyle( )
+        tag = None, # Optional marker to match the style with the running tag.
         # The default value in a initial Style is False. Gets True if expanded by cascading.
         # The root style is – by definition – aways cascaded, as it contains all possible values initialized.
         cascaded = True,

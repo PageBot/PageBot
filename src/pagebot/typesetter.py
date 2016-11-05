@@ -150,8 +150,10 @@ class Typesetter(object):
         closest related to the w/h ration of the image."""
         src = node.attrib.get('src')
         g = Galley()
-        cStyle = self.getCascadedNodeStyle(node.tag)
-        imageElement = Image(src, cStyle) # Set path, image w/h and image scale from style.
+        imageStyle = self.getCascadedNodeStyle(node.tag)
+        if imageStyle is not None:
+            self.pushStyle(imageStyle)
+        imageElement = Image(src, imageStyle) # Set path, image w/h and image scale from style.
         g.append(imageElement)
         caption = node.attrib.get('title')
         if caption is not None:
@@ -163,7 +165,7 @@ class Typesetter(object):
             tb.append(caption+'\n', captionStyle)
             tb.append(getMarker(node.tag, src))
         self.galley.append(g)
-        if cStyle is not None:
+        if imageStyle is not None:
             self.popStyle()
 
     def getCascadedStyle(self, style):
@@ -214,17 +216,16 @@ class Typesetter(object):
         nodeStyle = style # So we know if we pushed original node style.
         if nodeStyle is not None: # Do we have a real style for this tag, then push on gState stack
             self.pushStyle(nodeStyle)
-            print 'PUSH', node.tag, len(self.gState), node.text
 
         # Get current flow text box from Galley to fill. Style can be None. If the width of the
-        # latest textBox is not equal to style.w, then create a new textBox in the galley.
+        # latest textBox.w is not equal to style['w'], then create a new textBox in the galley.
         tb = self.getTextBox(style)
 
         nodeText = self._strip(node.text, style)
-        if nodeText: # Not None and still with content after stripping?
+        if nodeText: # Not None and still has content after stripping?
+            # In case style is None, just add plain string to current FormattedString of tb.
             tb.append(nodeText, style)
-            # If style is None, just add plain string to current FormattedString.
-            
+
         # Type set all child node in the current node, by recursive call.
         for child in node:
             hook = 'node_'+child.tag
@@ -233,19 +234,12 @@ class Typesetter(object):
                 getattr(self, hook)(child) # Hook must be able to derive style from node.
                 # We are on tail mode now, but we don't know what happened in the child block.
                 # So, to be sure, we'll push the current style again.
-                if style is not None:
-                    self.pushStyle(style)
-                    print 'PUSH TAIL', len(self.gState), child.tail
                 childTail = self._strip(child.tail, style)
-                if childTail: # Any tailf left after stripping, then append to the current textBox.
+                if childTail: # Any tail left after stripping, then append to the current textBox.
                     # Get current flow text box from Galley to fill. Style can be None. If the width of the
                     # latest textBox is not equal to style.w, then create a new textBox in the galley.
                     tb = self.getTextBox(style)
                     tb.append(childTail, style)  # In case style is None, just add plain string.
-                if style is not None: # And we pop the style again if it exists, as it was needed for the tail.
-                    print 'POP TAIL', len(self.gState)
-                    style = self.popStyle()
-
             else:
                 # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child)
@@ -253,7 +247,6 @@ class Typesetter(object):
         # Restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text.
         if nodeStyle is not None: # Only pop if there was originally was a pushed style.
-            print 'POP', node.tag, len(self.gState)
             style = self.popStyle()
 
         # XML-nodes are organized as: node - node.text - node.children - node.tail

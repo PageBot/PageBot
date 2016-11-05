@@ -36,14 +36,12 @@ class Composer(object):
         tb = page.getElement(flowId) # Find the seed flow box on the page, as derived from template.
         assert tb is not None # Make sure, otherwise there is a template error.
         fs = FormattedString('')
-        elements = galley.getElements()
         # Keeping overflow of text boxes here while iterating.
-        assert elements is not None # Otherwise we did not get a galley here.
-        for element in elements:
-            if not element.isText(): # This is a non-text element. Try to find placement.
+        for element in galley.elements:
+            if not element.isText: # This is a non-text element. Try to find placement.
                 self.tryPlacement(page, tb, element)
                 continue
-            fs += element.getFs()
+            fs += element.fs
             # As long as where is text, try to fit into the boxes on the page.
             # Otherwise go to the next page, following the flow, creating new pages if necessary.
             for n in range(10000): # Safety here, "while fs:" seems to be a dangerous method.
