@@ -209,10 +209,12 @@ class Typesetter(object):
         answered by the push."""
         if style is None:
             style = self.getCascadedNodeStyle(node.tag)
-        elif not style.cascaded: # For some reason this is a plain style. Make it cascaded.
+        elif not style['cascaded']: # For some reason this is a plain style. Make it cascaded.
             style = self.getCascadedStyle(style)
-        if style is not None: # Do we have a real style?
-            style = self.pushStyle(style)
+        nodeStyle = style # So we know if we pushed original node style.
+        if nodeStyle is not None: # Do we have a real style for this tag, then push on gState stack
+            self.pushStyle(nodeStyle)
+            print 'PUSH', node.tag, len(self.gState), node.text
 
         # Get current flow text box from Galley to fill. Style can be None. If the width of the
         # latest textBox is not equal to style.w, then create a new textBox in the galley.
@@ -233,6 +235,7 @@ class Typesetter(object):
                 # So, to be sure, we'll push the current style again.
                 if style is not None:
                     self.pushStyle(style)
+                    print 'PUSH TAIL', len(self.gState), child.tail
                 childTail = self._strip(child.tail, style)
                 if childTail: # Any tailf left after stripping, then append to the current textBox.
                     # Get current flow text box from Galley to fill. Style can be None. If the width of the
@@ -240,7 +243,8 @@ class Typesetter(object):
                     tb = self.getTextBox(style)
                     tb.append(childTail, style)  # In case style is None, just add plain string.
                 if style is not None: # And we pop the style again if it exists, as it was needed for the tail.
-                    self.popStyle()
+                    print 'POP TAIL', len(self.gState)
+                    style = self.popStyle()
 
             else:
                 # If no method hook defined, then just solve recursively. Child node will get the style.
@@ -248,7 +252,8 @@ class Typesetter(object):
 
         # Restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text.
-        if style is not None: # Only pop if there was a pushed style.
+        if nodeStyle is not None: # Only pop if there was originally was a pushed style.
+            print 'POP', node.tag, len(self.gState)
             style = self.popStyle()
 
         # XML-nodes are organized as: node - node.text - node.children - node.tail

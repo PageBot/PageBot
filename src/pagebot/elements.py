@@ -16,20 +16,25 @@ import copy
 from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
     newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
     textBox, hyphenation, restore, imageSize
-from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker, findMarkers
-
-from pagebot.style import NO_COLOR, newStyle
+from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
+from pagebot.style import LEFT_ALIGN, NO_COLOR, newStyle
 
 class Element(object):
 
-    def setAttrs(self, style, **kwargs):
-        # Set the attribute values, defined by the class
+    def makeStyle(self, style, **kwargs):
+        u"""Make self.style from a copy of style dict (providing all necessary default values for the
+        element to operate) and then overwrite these values with any specific arguments.
+        If style is None, then create a new style dict. In that case all the element style values need
+        to be defined by argument. The element will test if the minimum set (such as self.w and self.h)
+        are properly defined.
+        Some default class behavior tags are set here too, for the inheriting class to overwrite.
+        """
         if style is None:
             self.style = newStyle(**kwargs) # Copy arguments in new style.
         else:
             self.style = copy.copy(style) # As we are going to alter values, use a copy just to be sure.
             for name, v in kwargs.items():
-                self.style[name]  = v # Overwrite by any arguments if defined.
+                self.style[name]  = v # Overwrite value by any arguments if defined.
         # Initialize the default Element behavior tags.
         self.isContainer = False
         self.isText = False
@@ -112,10 +117,11 @@ class Container(Element):
     u"""A container contains one or more elements that must negotiate for space if size is set fixed."
     The Galley is an example of it."""
     def __init__(self, style=None, eId=None, elements=None, **kwargs):
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs)
         self.eId = eId
         if elements is None: # If not set by caller, create an empty elements list.
-            self.elements = [] # Elements are supposed to know their real height.
+            elements = []
+        self.elements = elements
         # Set class behavior flags.
         self.isContainer = True
 
@@ -129,9 +135,10 @@ class Container(Element):
 class TextBox(Element):
 
     def __init__(self, fs, style=None, eId=None, **kwargs):
-        self.fs = fs # Make sure it is a formatted  string.
+        self.fs = getFormattedString(fs, style) # Make sure it is a formatted  string.
         self.eId = eId
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs) # Combine self.style from
+        assert self.w is not None and self.h is not None # Make sure that these are defined.
         # Set class behavior flags.
         self.isFlow = self.style.get('nextBox') is not None and self.style.get('nextPage') is not None
         self.isText = True # This element is capable of handling text.
@@ -165,7 +172,7 @@ class TextBox(Element):
         if fs is None:
             fs = self.fs
         # Run simulation of text, to see what overflow there is.
-        return textOverflow(fs, (0, 0, self.w, self.h), 'left')
+        return textOverflow(fs, (0, 0, self.w, self.h), LEFT_ALIGN)
 
     def draw(self, page, x, y):
         sFill = self.style.get('fill', NO_COLOR)
@@ -188,7 +195,7 @@ class Text(Element):
     def __init__(self, fs, style=None, eId=None, **kwargs):
         self.fs = fs
         self.eId = eId
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs)
         # Set class behavior flags.
         self.isText = True # This element is capable of handling text.
 
@@ -204,7 +211,8 @@ class Text(Element):
 class Rect(Element):
     def __init__(self, style=None, eId=None, **kwargs):
         self.eId = eId
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs)
+        assert self.w is not None and self.h is not None
 
     def draw(self, page, x, y):
         setFillColor(self.style.get('fill', NO_COLOR))
@@ -214,7 +222,8 @@ class Rect(Element):
 class Oval(Element):
     def __init__(self, style=None, eId=None, **kwargs):
         self.eId = eId
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs)
+        assert self.w is not None and self.h is not None
 
     def draw(self, page, x, y):
         setFillColor(self.style.get('fill', NO_COLOR))
@@ -224,7 +233,8 @@ class Oval(Element):
 class Line(Element):
     def __init__(self, style=None, eId=None, **kwargs):
         self.eId = eId
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs)
+        assert self.w is not None and self.h is not None
 
     def draw(self, page, x, y):
         setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth'))
@@ -237,7 +247,8 @@ class Image(Element):
     def __init__(self, path, style=None, eId=None, caption=None, **kwargs):
         self.eId = eId
         self.caption = caption
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs)
+        assert self.w is not None and self.h is not None
         self.setPath(path) # If omitted, a gray/crossed rectangle will be drawn.
 
     def setPath(self, path):
@@ -359,7 +370,8 @@ class Image(Element):
 class Ruler(Element):
     def __init__(self, style=None, eId=None, **kwargs):
         self.eId = eId
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs)
+        assert self.w is not None and self.h is not None
 
     def getHeight(self):
         return self.style.get('strokeWidth') or 1 # Force default height.
@@ -375,7 +387,8 @@ class Ruler(Element):
 class Grid(Element):
     def __init__(self, style=None, eId='grid', **kwargs):
         self.eId = eId # Unique element id
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs)
+        assert self.w is not None and self.h is not None
 
     def draw(self, page, px, py):
         u"""Draw grid of lines and/or rectangles if colors are set in the style.
@@ -437,7 +450,8 @@ class Grid(Element):
 class BaselineGrid(Element):
     def __init__(self, style=None, eId='grid', **kwargs):
         self.eId = eId # Unique element id
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs)
+        assert self.w is not None and self.h is not None
 
     def draw(self, page, px, py):
         u"""Draw baseline grid if line color is set in the style.
@@ -476,11 +490,13 @@ class Galley(Container):
     RULER_CLASS = Ruler
 
     def __init__(self, style=None, eId=None, elements=None, **kwargs):
+        u"""Allow self.w and self.h to be None or 0, as the paste board roll can have any size.
+        If underfined, the size is calculated from the size contained elements. """
         self.eId = eId  # Optional element id.
-        self.setAttrs(style, **kwargs)
+        self.makeStyle(style, **kwargs)
+        if elements is None:
+            elements = []
         self.elements = elements
-        if self.elements is None:
-            self.elements = []  # Key is vertical position. Elements are supposed to know their real height.
         self._footnotes = []
         self.w = self.h = None  # Unless forced set by self.setSize(w, h) to be > 0
 
@@ -526,9 +542,9 @@ class Galley(Container):
 
     def getTextBox(self, style):
         u"""If the last element is a TextBox, answer it. Otherwise create a new textBos with style.w
-        and answer that.."""
+        and answer that."""
         if not self.elements or not isinstance(self.elements[-1], self.TEXTBOX_CLASS):
-            self.elements.append(TextBox('', self.w, 0))  # Create a new TextBox with style width and empty height.
+            self.elements.append(TextBox('', style))  # Create a new TextBox with style width and empty height.
         return self.elements[-1]
 
     def newRuler(self, style):

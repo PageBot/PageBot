@@ -140,7 +140,7 @@ def getFormattedString(t, style=None):
         sFontSize = style.get('fontSize')
         if sFontSize is not None:
             fs.fontSize(sFontSize)
-        sFallbackFont = style('fallbackFont')
+        sFallbackFont = style.get('fallbackFont')
         if sFallbackFont is not None:
             fs.fallbackFont(sFallbackFont)
         sFill = style.get('fill', NO_COLOR)
