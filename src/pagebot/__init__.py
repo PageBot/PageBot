@@ -161,7 +161,6 @@ def getFormattedString(t, style=None):
             fs.align(sAlign)
         sLeading = style.get('leading')
         rLeading = style.get('rLeading')
-        print u'ASASASSS %s' % t, sLeading, rLeading
         if sLeading is not None or (rLeading is not None and sFontSize is not None):
             fs.lineHeight((sLeading or 0) + (rLeading or 0) * (sFontSize or 0))
         sParagraphTopSpacing = style.get('paragraphTopSpacing')
@@ -201,8 +200,19 @@ def getFormattedString(t, style=None):
         sLanguage = style.get('language')
         if sLanguage is not None:
             fs.language(sLanguage)
-        #fs.hyphenation(style.hyphenation)        
-    fs.append(t)
+        #fs.hyphenation(style.hyphenation)
+
+    sUpperCase = style.get('uppercase')
+    sLowercase = style.get('lowercase')
+    sCapitalized = style.get('capitalized')
+    if sUpperCase:
+        t = t.upper()
+    elif sLowercase:
+        t = t.lower()
+    elif sCapitalized:
+        t = t.capitalize()
+
+    fs += t
     return fs
 
 def textSearch(fs, w, h, search, align='left', hyphenation=True):

@@ -162,24 +162,28 @@ class Page(object):
         return self.container(x, y, style=style, eId=eId, elements=elements, w=w, h=h, **kwargs)
 
     def textBox(self, fs, x, y, style=None, eId=None, **kwargs):
+        u"""Caller must supply formatted string."""
         e = TextBox(fs, style=style, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
 
     def cTextBox(self, fs, cx, cy, cw, ch, style, eId=None, **kwargs):
+        u"""Caller must supply formatted string."""
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.textBox(fs, x, y, style=style, eId=eId, w=w, h=h, **kwargs)
         
     def text(self, fs, x, y, style=None, eId=None, **kwargs):
         u"""Draw formatted string.
-        We don't need w and h here, as it is made by the text and style combinations."""
+        We don't need w and h here, as it is made by the text and style combinations.
+        Caller must supply formatted string."""
         e = Text(fs, style=style, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
                 
     def cText(self, fs, cx, cy, style, eId=None, **kwargs):
         u"""Draw formatted string.
-        We don't need w and h here, as it is made by the text and style combinations."""
+        We don't need w and h here, as it is made by the text and style combinations.
+        Caller must supply formatted string."""
         x, y = cp2p(cx, cy, style)
         return self.text(fs, x, y, style=style, eId=eId, **kwargs)
                 
