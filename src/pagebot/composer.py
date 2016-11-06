@@ -41,10 +41,13 @@ class Composer(object):
             if not element.isText: # This is a non-text element. Try to find placement.
                 self.tryPlacement(page, tb, element)
                 continue
-            fs += element.fs
+            if fs is not None and element.fs:
+                fs += element.fs
             # As long as where is text, try to fit into the boxes on the page.
             # Otherwise go to the next page, following the flow, creating new pages if necessary.
             for n in range(10000): # Safety here, "while fs:" seems to be a dangerous method.
+                if fs is None:
+                    break
                 overflow = tb.append(fs)
                 if fs == overflow:
                     print(u'NOT ABLE TO PLACE %s' % overflow)

@@ -206,7 +206,7 @@ class Document(object):
             pageSelection = range(1, len(self.pages)+1) # [1,2,3,4,...]
         for pIndex in pageSelection:
             # Get the current Page instance, indicated by the page number.
-            page = self.pages[pIndex-1] # Page numbering stars at #1
+            page = self.pages[pIndex] # Page numbering stars at #1
             # Create a new Drawbot viewport page to draw template + page, if not already done.
             # Skip if the first page of the document was already made as graphic state canvas by a Composer instance.
             if pIndex > 0:
