@@ -64,7 +64,8 @@ RS = getRootStyle(
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 11 * 72, # Page height 11", international generic fit.
-    ml = 7*U, # Margin leftrs.mt = 7*U # Margin top
+    ml = 7*U, # Margin leftrs.
+    mt = 7*U, # Margin top
     baselineGrid = 14,#baselineGrid,
     g = U, # Generic gutter.
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
@@ -230,7 +231,7 @@ def makeDocument(rs):
         indent=U/2, tailIndent=-U/2, hyphenation=True)
     
     # Change template of page 1
-    page0 = doc[0]
+    page0 = doc[1]
     page0.setTemplate(template1)
         
     # Create main Galley for this page, for pasting the sequence of elements.    
@@ -240,7 +241,7 @@ def makeDocument(rs):
     
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
-    c.compose(g, doc[0], flowId0)
+    c.compose(g, doc[1], flowId0)
     
     return doc
         
