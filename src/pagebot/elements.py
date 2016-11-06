@@ -115,9 +115,16 @@ class Element(object):
 
     #   Default drawing methods.
 
+    def _drawElementRect(self, x, y, w, h):
+        if self.style.get('showGrid'):
+            # Draw crossed rectangle.
+            setFillColor(None)
+            setStrokeColor(0, 0.5)
+            rect(x, y, w, h)
+
     def _drawMissingElementRect(self, x, y, w, h):
-        sMissingElementFill = self.style.get('missingElementFill', NO_COLOR)
         if self.style.get('showGridColumns'):
+            sMissingElementFill = self.style.get('missingElementFill', NO_COLOR)
             setFillColor(sMissingElementFill)
             setStrokeColor(None)
             rect(x, y, w, h)
@@ -221,6 +228,8 @@ class TextBox(Element):
             setStrokeColor(sStroke, sStrokeWidth)
             setFillColor(None)
             rect(x, y, self.w, self.h)
+        else: # If debugging,then draw the rectangle.
+            self._drawElementRect(x, y, self.w, self.h)
 
 class Text(Element):
     ATTRS = dict(eId=None)

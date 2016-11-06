@@ -160,8 +160,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         hyphenation = True,
         # Strip pre/post white space from e.text and e.tail and substitute by respectively preFix and postFix
         # if they are not None. Set to e.g. newline(s) "\n" or empty string, if tags need to glue together.
-        prefix = '', # Default is to strip of prefix white space from a block.
-        postfix = ' ', # Default is space at tail of XML tag block.
+        prefix = '', # Default is to strip white space from a block. Make None for no stripping.
+        postfix = '', # Default is to strip white space from tail of XML tag block. Make None for no stripping
 
         # Paging
         pageNumberMarker = '#??#', # Text pattern that will be replaced by current page number.
