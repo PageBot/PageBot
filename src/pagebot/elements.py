@@ -27,6 +27,7 @@ class Element(object):
     # instance can operate as a flow.
     isContainer = False
     isText = False
+    isTextBox = False
     isFlow = False
 
     def __repr__(self):
@@ -185,6 +186,7 @@ class TextBox(Element):
             fs = getFormattedString(fs, self.style)
         self.fs = fs
         # Initialize the default Element behavior tags, in case this is a flow.
+        self.isTextBox = True
         self.isFlow = self.eId is not None and self.nextBox is not None and self.nextPage is not None
 
     def _get_nextBox(self):
@@ -207,7 +209,10 @@ class TextBox(Element):
     def append(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
         is already assumed to be styled or can be added as plain string."""
-        self.fs += fs
+        if self.fs is None:
+            self.fs = fs
+        else:
+            self.fs += fs
 
     def appendMarker(self, markerId, arg=None):
         self.append(getMarker(markerId, arg=arg))
@@ -584,12 +589,32 @@ class Galley(Container):
         u"""Just add to the sequence. Total size will be calculated dynamically."""
         self.elements.append(element)
 
-    def getTextBox(self, style):
-        u"""If the last element is a TextBox, answer it. Otherwise create a new textBos with style.w
-        and answer that."""
-        if not self.elements or not isinstance(self.elements[-1], self.TEXTBOX_CLASS):
-            self.elements.append(TextBox('', style))  # Create a new TextBox with style width and empty height.
+    def getLastTextBox(self):
+        u"""Answer the last text box in the sequence, so we can copy that style."""
+        if not self.elements:
+            return None
+        for index in range(1, len(self.elements)-1):
+            if self.elements[-index].isTextBox:
+                return self.elements[-index]
+        return None # Not found
+
+    def getLastElement(self):
+        u"""Answer the last element in the sequence."""
+        if not self.elements:
+            return None
         return self.elements[-1]
+
+    def getTextBox(self, style=None):
+        u"""If the last element is a TextBox, answer it. Otherwise create a new textBox with self.style
+        and answer that."""
+        lastTextBox = self.getLastTextBox()
+        if lastTextBox is not None and style is None:
+            style = lastTextBox.style # If not style supplied, copy from the last textBox.
+        if lastTextBox is None or lastTextBox != self.getLastElement():
+            if style is None: # No last textbox to copy from and no style supplied. Create something here.
+                style = dict(w=200, h=0) # Arbitrary width and height, in case not
+            self.elements.append(TextBox('', style=style))  # Create a new TextBox with style width and empty height.
+        return self.getLastElement() # Which only can be a textBox now.
 
     def newRuler(self, style):
         u"""Add a new Ruler instance, depending on style."""

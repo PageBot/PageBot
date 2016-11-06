@@ -50,7 +50,7 @@ class Composer(object):
                     print(u'NOT ABLE TO PLACE %s' % overflow)
                     break
                 fs = overflow
-                if len(fs):
+                if not fs: # Can be None or empty
                     # Overflow in this text box, find new from (page, tbFlow)
                     page, tb = page.getNextFlowBox(tb)
                     assert tb is not None # If happens, its a mistake in one of the templates.
