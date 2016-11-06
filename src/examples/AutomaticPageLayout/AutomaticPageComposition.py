@@ -46,7 +46,7 @@ SHOW_TIMER = False
 
 SHOW_GRID = True
 SHOW_GRID_COLUMNS = True
-SHOW_BASELINE_GRID = False
+SHOW_BASELINE_GRID = True
 SHOW_FLOW_CONNECTIONS = True
 
 if SHOW_GRID:
@@ -65,7 +65,7 @@ rs = getRootStyle(
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 11 * 72, # Page height 11", international generic fit.
     ml = 7*U, # Margin leftrs.mt = 7*U # Margin top
-    baselineGrid = baselineGrid,
+    baselineGrid = 14,#baselineGrid,
     g = U, # Generic gutter.
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # 11 is a the best in that respect for column calculation.
@@ -80,7 +80,7 @@ rs = getRootStyle(
     showFlowConnections = SHOW_FLOW_CONNECTIONS,
     BOX_COLOR = BOX_COLOR,
     # Text measures
-    leading = baselineGrid,
+    leading = 14,
     rLeading = 0,
     fontSize = 9
 )
@@ -204,21 +204,21 @@ def makeDocument():
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=2*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
+    doc.newStyle(name='h1', fontSize=fontSize, font=SEMIBOLD, fill=(1, 0, 0),
         leading=2*fontSize, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
+    doc.newStyle(name='h2', fontSize=fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
         leading=1*fontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
-    doc.newStyle(name='h3', fontSize=1.2*fontSize, font=MEDIUM, fill=0, 
+    doc.newStyle(name='h3', fontSize=fontSize, font=MEDIUM, fill=0, 
         leading=1*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        paragraphTopSpacing=U, paragraphBottomSpacing=U/2, postfix='\n')
+        postfix='\n')
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
-        rTracking=P_TRACK, leading=leading, align=LEFT_ALIGN, hyphenation=True)
+        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
-    doc.newStyle(name='br', postfix='\n\n') # Simplest way to make <br/> be newline
+    doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> be newline
     doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,)
     
     # Footnote reference index.

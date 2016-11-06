@@ -161,6 +161,7 @@ def getFormattedString(t, style=None):
             fs.align(sAlign)
         sLeading = style.get('leading')
         rLeading = style.get('rLeading')
+        print u'ASASASSS %s' % t, sLeading, rLeading
         if sLeading is not None or (rLeading is not None and sFontSize is not None):
             fs.lineHeight((sLeading or 0) + (rLeading or 0) * (sFontSize or 0))
         sParagraphTopSpacing = style.get('paragraphTopSpacing')
