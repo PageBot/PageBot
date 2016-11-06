@@ -209,6 +209,7 @@ class TextBox(Element):
     def append(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
         is already assumed to be styled or can be added as plain string."""
+        assert fs is not None
         if self.fs is None:
             self.fs = fs
         else:
