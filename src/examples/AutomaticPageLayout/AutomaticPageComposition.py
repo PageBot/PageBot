@@ -46,7 +46,7 @@ SHOW_TIMER = False
 
 SHOW_GRID = True
 SHOW_GRID_COLUMNS = True
-SHOW_BASELINE_GRID = True
+SHOW_BASELINE_GRID = False
 SHOW_FLOW_CONNECTIONS = True
 
 if SHOW_GRID:
@@ -62,8 +62,8 @@ listIndent = 2*U
 rs = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
-    pw = 595, # Page width 210mm, international generic fit.
-    ph = 11 * 72, # Page height 11", international generic fit.
+    w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
+    h = 11 * 72, # Page height 11", international generic fit.
     ml = 7*U, # Margin leftrs.mt = 7*U # Margin top
     baselineGrid = baselineGrid,
     g = U, # Generic gutter.
@@ -76,7 +76,7 @@ rs = getRootStyle(
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
-    showBaselineGrid = False,
+    showBaselineGrid = SHOW_BASELINE_GRID,
     showFlowConnections = SHOW_FLOW_CONNECTIONS,
     BOX_COLOR = BOX_COLOR,
     # Text measures
@@ -209,16 +209,16 @@ def makeDocument():
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
         leading=1*fontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
     doc.newStyle(name='h3', fontSize=1.2*fontSize, font=MEDIUM, fill=0, 
-        leading=1.5*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+        leading=1*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         paragraphTopSpacing=U, paragraphBottomSpacing=U/2, postfix='\n')
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
-        rTracking=P_TRACK, align=LEFT_ALIGN, hyphenation=True)
+        rTracking=P_TRACK, leading=leading, align=LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
-    doc.newStyle(name='br', postfix='\n')
+    doc.newStyle(name='br', postfix='\n\n') # Simplest way to make <br/> be newline
     doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,)
     
     # Footnote reference index.

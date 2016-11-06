@@ -92,7 +92,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         gridStrokeWidth = 0.5, # Line thickness of the grid.
         # Baseline grid
         showBaselineGrid = showBaselineGrid, # Flag to show baseline grid in output
-        baselineGridStroke = 1, # Line thickness of baselines grid.
+        baselineGridStroke = (1, 0, 0), # Line thickness of baselines grid.
         # Draw connection arrows between the flow boxes on a page.
         showFlowConnections = showFlowConnection, # Flag to draw arrows between the flows for debugging.
         flowConnectionStroke1 = (0.2, 0.5, 0.1, 1), # Stroke color of flow lines inside column,
