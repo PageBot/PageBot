@@ -48,7 +48,7 @@ class Typesetter(object):
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append(getMarker(node.tag, cStyle))
+        tb.append(getMarker(node.tag))
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
@@ -58,7 +58,7 @@ class Typesetter(object):
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append(getMarker(node.tag, cStyle))
+        tb.append(getMarker(node.tag))
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
@@ -68,7 +68,7 @@ class Typesetter(object):
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append(getMarker(node.tag, cStyle))
+        tb.append(getMarker(node.tag))
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
         
@@ -78,7 +78,7 @@ class Typesetter(object):
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append(getMarker(node.tag, cStyle))
+        tb.append(getMarker(node.tag))
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
@@ -178,31 +178,43 @@ class Typesetter(object):
         cascadedStyle = copy.copy(self.gState[-1]) # Take the top of the stack as source.
         if style is not None: # Style may be None. In that case answer just copied of current gState top.
             for name, value in style.items():
-                cascadedStyle[name] = value # Overwrite the style value.
-            style['cascaded'] = True # Mark that this is a cascaded style, to distinguish from plain styles.
+                cascadedStyle[name] = value # Overwrite the existing style value.
+            # Mark that this is a cascaded style now, to distinguish from plain styles.
+            # The flag is also used to verify that only cascaded styles get added to the gState stack.
+            cascadedStyle['cascaded'] = True
         return cascadedStyle
 
     def getCascadedNodeStyle(self, name):
+        u"""Answer the cascaded named style, if it exists. Otherwise answer the root style
+        (which is already cascaded by definition)."""
         style = self.document.getStyle(name)
+        if style.get('cascaded'):
+            return style # If already cascaded, then don't change it. Answer as is
+        # Make a copy and cascade the style (filling in the missing values) from the top of the gState stack.
         return self.getCascadedStyle(style)
 
     def pushStyle(self, style):
+        u"""Push the cascaded style on the gState stack."""
+        # Make sure this is a cascaded style, otherwise it cannot be used as source for child styles.
+        assert style.get('cascaded')
         self.gState.append(style)
         return style
         
     def popStyle(self):
+        u"""Pop the style from the gState stack and answer the next style that is not top.
+        Make sure that there is a style to pop still, otherwise raise an error. """
+        assert len(self.gState)
         self.gState.pop()
         return self.gState[-1]
 
     def _strip(self, s, style):
-        u"""Strip the white space from s if style.preFix and/or style.postFix are not None."""
-        #print(u'[IN %s' % (s, ))
+        u"""Strip the white space from string “s” if style.preFix and/or style.postFix are not None."""
         if not None in (s, style):
             prefix = style.get('prefix')
             if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
                 s = prefix + s.lstrip()
             postfix = style.get('postfix')
-            if postfix is not None:
+            if postfix is not None: # Strip if postfix is not None. Otherwise don't touch.
                 s = s.rstrip() + postfix
         return s
 
@@ -212,10 +224,13 @@ class Typesetter(object):
         style with the one that was on top before. This way automatic cascading values are in the style
         answered by the push."""
         if style is None:
-            style = self.getCascadedNodeStyle(node.tag)
-        elif not style['cascaded']: # For some reason this is a plain style. Make it cascaded.
-            style = self.getCascadedStyle(style)
-        nodeStyle = style # So we know if we pushed original node style.
+            nodeStyle = self.getCascadedNodeStyle(node.tag)
+            print 'AAAA', node.tag, self.document.styles.keys()
+            print 'AAAA', nodeStyle.get('name'), nodeStyle.get('cascaded')
+        else: # If for some reason this is am un-cascaded plain style. Make it cascaded. Otherwise don't touch.
+            nodeStyle = self.getCascadedStyle(style)
+            print 'AAAA', node.tag, self.document.styles.keys()
+            print 'AAAA', nodeStyle.get('name'), nodeStyle.get('cascaded')
         if nodeStyle is not None: # Do we have a real style for this tag, then push on gState stack
             self.pushStyle(nodeStyle)
 

@@ -10,6 +10,7 @@
 #
 #     style.py
 #
+import copy
 from pagebot import NO_COLOR
 
 # Basic layout measures
@@ -30,6 +31,21 @@ JUSTIFIED = 'justified'
 def newStyle(**kwargs):
     style = dict(**kwargs)
     style['cascaded'] = False
+    return style
+
+def makeStyle(style, **kwargs):
+    u"""Make style from a copy of style dict (providing all necessary default values for the
+    element to operate) and then overwrite these values with any specific arguments.
+    If style is None, then create a new style dict. In that case all the element style values need
+    to be defined by argument. The calling element must test if its minimum set
+    (such as self.w and self.h) are properly defined.
+    """
+    if style is None:
+        style = newStyle(**kwargs)  # Copy arguments in new style.
+    else:
+        style = copy.copy(style)  # As we are going to alter values, use a copy just to be sure.
+        for name, v in kwargs.items():
+            style[name] = v  # Overwrite value by any arguments, if defined.
     return style
 
 def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
@@ -60,10 +76,15 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         w = 595, # Page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = 11 * 72, # Page height, basic size of the document. 11", international generic fit.
         # Margins
-        ml = 7*u, # Margin top
-        mt = 7*u, # Margin left
+        mt = 7*u, # Margin top
+        ml = 7*u, # Margin left
         mr = 6*u, # Margin right is used as minimum. Actual value is calculated from cw and gutter,
         mb = 6*u, # Margin bottom is used as minimum. Actual value is calculated from baseline grid.
+        # Padding where needed.
+        paddingT = 0, # Padding top
+        paddingL = 0, # Padding left
+        paddingR = 0, # Padding right
+        paddingB = 0, # Padding bottom
         # Gutter is used a standard distance between columns. Note that when not-justifying, the visual
         # gutter on the right side of columns seems to be larger. This can be compensated for in the
         # distance between images.
@@ -109,6 +130,9 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         font = 'Verdana', # Default is to avoid existing font and fontSize in the graphic state.
         fallbackFont = 'LucidaGrande',
         fontSize = u * 7/10, # Default font size in points, related to U
+        uppercase = False, # All text in upper case
+        lowercase = False, # All text in lower case (only if uppercase is False
+        capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase)
 
         # Horizontal spacing for absolute and fontsize-related measures
         tracking = 0, # Absolute tracking value. Note that this is different from standard name definition.
