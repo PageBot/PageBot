@@ -485,7 +485,7 @@ class BaselineGrid(Element):
                 stroke=None, fill=self.style.get('gridStroke'))
             while y > self.style.get('mb', 0):
                 setFillColor(None)
-                setStrokeColor(self.style.get('gridStroke', NO_COLOR), self.style.get('gridStrokeWidth'))
+                setStrokeColor(self.style.get('baselineGridStroke', NO_COLOR), self.style.get('gridStrokeWidth'))
                 newPath()
                 moveTo((M, y))
                 lineTo((page.w - M, y))
@@ -506,7 +506,7 @@ class Galley(Container):
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
 
-    def __init__(self, style=None, eId=None, elements=None, **kwargs):
+    def __init__(self, style=None, eId=None, elements=None, w=None, h=None, **kwargs):
         u"""Allow self.w and self.h to be None or 0, as the paste board roll can have any size.
         If underfined, the size is calculated from the size contained elements. """
         self.eId = eId  # Optional element id.
@@ -515,7 +515,9 @@ class Galley(Container):
             elements = []
         self.elements = elements
         self._footnotes = []
-        self.w = self.h = None  # Unless forced set by self.setSize(w, h) to be > 0
+        # self.w and self.h are None, unless forced set by self.setSize(w, h) to be > 0
+        self.w = w
+        self.h = h
 
     def __repr__(self):
         t = '[' + self.__class__.__name__
