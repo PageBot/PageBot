@@ -193,8 +193,12 @@ class Typesetter(object):
         u"""Answer the cascaded named style, if it exists. Otherwise answer the root style
         (which is already cascaded by definition)."""
         style = self.document.getStyle(name)
-        if style.get('cascaded'):
-            return style # If already cascaded, then don't change it.
+        if style is None:
+            # There is not style with that name. Make it an empty style, dict, so it will follow
+            # all current settings on the gState.
+            style = {}
+        elif style.get('cascaded'):
+            return style # If already happen to be cascaded, then don't change it.
         # Make a copy and cascade the style (filling in the missing values) from the top of the gState stack.
         return self.getCascadedStyle(style)
 
@@ -242,7 +246,7 @@ class Typesetter(object):
         nodeText = self._strip(node.text, style)
         if nodeText: # Not None and still has content after stripping?
             # In case style is None, just add plain string to current FormattedString of tb.
-            tb.append(nodeText, style)
+            tb.append(nodeText)
 
         # Type set all child node in the current node, by recursive call.
         for child in node:
@@ -257,7 +261,7 @@ class Typesetter(object):
                     # Get current flow text box from Galley to fill. Style can be None. If the width of the
                     # latest textBox is not equal to style.w, then create a new textBox in the galley.
                     tb = self.getTextBox(style)
-                    tb.append(childTail, style)  # In case style is None, just add plain string.
+                    tb.append(childTail)  # In case style is None, just add plain string.
             else:
                 # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child)
@@ -271,7 +275,7 @@ class Typesetter(object):
         # If there is no text or if the node does not have tail text, these are None.
         nodeTail = self._strip(node.tail, style)
         if nodeTail: # Something of a tail left after stripping?
-            tb.append(nodeTail, style) # If style is None, just add plain string.
+            tb.append(nodeTail) # If style is None, just add plain string.
 
     def typesetFile(self, fileName):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
