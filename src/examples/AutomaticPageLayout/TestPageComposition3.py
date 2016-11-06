@@ -84,15 +84,9 @@ RS = getRootStyle(
     rLeading = 0,
     fontSize = 9
 )
-    # LANGUAGE-SWITCH Language settings
-if 0: # EN version of the article.
-    RS['langauge'] = 'en'
-    MD_PATH = 'automaticPageComposition_en.md'
-    EXPORT_PATH = 'export/AutomaticPageComposition.pdf'
-else: # NL version of the article.
-    RS['language'] = 'nl-be' # Make Dutch hyphenation.
-    MD_PATH = 'automatischePaginaCompositie_nl.md'
-    EXPORT_PATH = 'export/AutomatischePaginaOpmaak.pdf'
+RS['language'] = 'nl-be' # Make Dutch hyphenation.
+MD_PATH = 'testPaginaCompositie_nl.md'
+EXPORT_PATH = 'export/TestPaginaOpmaak.pdf'
 
 MAIN_FLOW = 'main' # ELement id of the text box on pages the hold the main text flow.
 
@@ -164,8 +158,8 @@ def makeDocument(rs):
     template1.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox('', 2, 0, 2, 8, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox('', 4, 4, 2, 4, rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
-    # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template1.cText(rs['pageNumberMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    # Create page number box. Pattern pageIdMarker is replaced by actual page number.
+    template1.cText(rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
 
     # Template 2
     template2 = Template(rs) # Create second template. This is for the main pages.
@@ -181,8 +175,8 @@ def makeDocument(rs):
     template2.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
     template2.cTextBox('', 2, 4, 2, 4, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     template2.cTextBox('', 4, 3, 2, 3, rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
-    # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template2.cText(rs['pageNumberMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    # Create page number box. Pattern pageIdMarker is replaced by actual page number.
+    template2.cText(rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.

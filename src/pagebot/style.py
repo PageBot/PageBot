@@ -188,10 +188,10 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         postfix = '', # Default is to strip white space from tail of XML tag block. Make None for no stripping
 
         # Paging
-        pageNumberMarker = '#??#', # Text pattern that will be replaced by current page number.
+        pageIdMarker = '#??#', # Text pattern that will be replaced by current page id.
         # First page number of the document. Note that “page numbers” can be string too, as long as pages
         # can define what is “next page”, when referred to by a flow.
-        firstPage = 1,
+        firstPageId = 1, # Needs to be a number.
 
         # Color
         NO_COLOR = NO_COLOR, # Add no-color flag (-1) to make difference with "color" None.

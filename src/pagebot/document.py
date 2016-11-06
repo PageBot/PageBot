@@ -12,7 +12,7 @@
 #
 import copy
 from pagebot.page import Page, Template
-from pagebot.style import newStyle
+from pagebot.style import makeStyle
 from drawBot import newPage, saveImage, installedFonts, installFont
             
 class Document(object):
@@ -21,27 +21,23 @@ class Document(object):
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     TEMPLATE_CLASS = Template # Allow inherited versions of the Template class.
 
-    def __init__(self, rootStyle, styles=None, title=None, pages=1, template=None):
+    def __init__(self, rootStyle, styles=None, title=None, minPageId=1, pages=1, template=None, **kwargs):
         u"""Contains a set of Page instance and formatting methods. Allows to compose the pages
         without the need to send them directly to the output. This allows "asynchronic" page filling."""
 
-        self.w = rootStyle['w']
-        self.h = rootStyle['h']
+        self.rootStyle = makeStyle(rootStyle, **kwargs) # self.w and self.h are available as properties
         self.title = title or 'Untitled'
-        self.template = template # Store as document master template if undefined in pages.
+        self.template = template # Used as document master template if undefined in pages.
         self.pages = {} # Key is pageID, often the page number. Value is Page instances.
         self.initializeStyles(rootStyle, styles)
-        # Before we can do any text format (for which the graphic state needs to be set,
-        # we need to create at least one first page as canvas. Otherwise a default page will be opened
-        # by Drawbot. 
-        self.makePages(max(pages, 1), self.w, self.h, template) # Expand the document to the request anount of pages.
-        # Mark that the first page is already initialized, to avoid rendering a new page on page.export( )         
-        self.needsCanvasPage = False
-        # Storage for collected content, referring to their pages after composition.
+        # Expand the document to the request anount of pages.
+        self.makePages(minPageId=minPageId, pages=pages, w=self.w, h=self.h, templates=template, **kwargs)
+        # Storage for collected content while typesetting and composing, referring to the pages
+        # they where placed on during composition.
         self.footnotes = {} # Keys is sequential order. Value is (page, e)
         self.literatureRefs = {}
         self.toc = {}
-                       
+
     def initializeStyles(self, rootStyle, styles):
         u"""Make sure that the default styles always exist."""
         if styles is None:
@@ -56,6 +52,14 @@ class Document(object):
         name = 'page'
         if not name in self.styles:
             self.addStyle(name, newStyle(name=name, showGrid=True))
+
+    def _get_w(self):
+        return self.rootStyle['w']
+    w = property(_get_w)
+
+    def _get_h(self):
+        return self.rootStyle['h']
+    h = property(_get_h)
 
     def fromRootStyle(self, **kwargs):
         u"""Answer a new style as copy from the root style. Overwrite the defined arguments."""
@@ -104,47 +108,54 @@ class Document(object):
     
     def addToc(self, node, page, fs, tag):
         u"""Add stuff for the Table of Content, connecting the node with the composed page."""
-        if not page.pageNumber in self.toc:
-            self.toc[page.pageNumber] = []
-        self.toc[page.pageNumber].append((node, page, fs, tag))
+        if not page.pageId in self.toc:
+            self.toc[page.pageId] = []
+        self.toc[page.pageId].append((node, page, fs, tag))
 
-    def getPage(self, pageNumber):
+    def getPage(self, pageId):
         u"""Answer the pageNumber, where the first pages #1 is self.pages[1]"""
-        return self[pageNumber]
+        return self[pageId]
   
     def nextPage(self, page, nextPage=1, template=None, makeNew=True):
         u"""Answer the next page of page. If it does not exist, create a new page."""
-        pageNumber = page.pageNumber + nextPage
-        if not pageNumber in self.pages:
-            self.newPage(pageNumber=pageNumber, template=self.getTemplate())
-        return self.getPage(pageNumber)
+        pageId = page.pageId + nextPage # Currently assuming it is a number.
+        if not pageId in self.pages:
+            self.newPage(eId=pageId, template=self.getTemplate())
+        return self.getPage(pageId)
           
-    def makePages(self, count, w=None, h=None, template=None):
-        for n in range(count):
+    def makePages(self, style=None, w=None, h=None, minPageId=1, pages=1, template=None, **kwargs):
+        for pageId in range(minPageId, minPageId+pages):
             if template is None: # If template undefined, then use document master template.
                 template = self.template
-            self.newPage(w, h, n, template=template)
-            if n == 0:
-                # Actually make the first page as current canvas for textbox to calculate on.
-                # Create a new Drawbot viewport page to draw template + page, if not already done.
-                # Skip if the first page of the document was already made as graphic state canvas by a Composer instance.
-                newPage(w, h)
-                 
-    def newPage(self, w=None, h=None, pageNumber=None, template=None):
+            self.newPage(style=style, w=w, h=h, eId=pageId, template=template, **kwargs)
+
+    def lastPage(self):
+        u"""Answer the page with the highest sorted page id. Answer None if there are not pages.
+        """
+        if not self.pages:
+            return None
+        return self.pages[sorted(self.pages.keys())[-1]]
+
+    def newPage(self, style=None, w=None, h=None, pageId=None, template=None, **kwargs):
         u"""Create a new page with the optional (w,h). Use (self.w, self.h) if one of the values is omitted.
-        If pageNumber is omitted, then use the highest page number in self.pages as previous page.
-        If pageNumber already exists, then raise an error."""
+        If pageId is omitted, then use the highest page number in self.pages as previous page.
+        If pageId already exists, then raise an error."""
         if template is None: # If template undefined, then used document master template.
-            template = self.getTemplate
-        if pageNumber is None:
+            template = self.template
+            w = w or template.w
+            h = h or template.h
+        else:
+            w = w or self.w
+            h = h or self.h
+        if pageId is None:
             if not self.pages: # If not pages yet, start with the first page number defined in root style.
                 rs = self.getRootStyle()
-                pageNumber = rs.firstPageNumber
+                pageId = rs['firstPageId']
             else:
-                pageNumber = max(self.pages.keys())+1
-        assert not pageNumber in self.pages # Make sure that we don't accidentally overwite existing pages.
-        page = self.PAGE_CLASS(self, w or self.w, h or self.h, pageNumber=pageNumber, template=template)
-        self.pages[pageNumber] = page
+                pageId = max(self.pages.keys())+1
+        assert not pageId in self.pages # Make sure that we don't accidentally overwrite existing pages.
+        page = self.PAGE_CLASS(parent=self, style=style, w=w, h=h, pageId=pageId, template=template, **kwargs)
+        self.pages[pageId] = page
         return page
   
     def getStyle(self, name):
@@ -153,7 +164,7 @@ class Document(object):
 
     def _getDefaultTemplate(self):
         u"""Answer tje most simple default template (one column, referring to the next page), to be used
-        when everyting else fails and there is no fall-back template defined by the calling application."""
+        when everything else fails and there is no fall-back template defined by the calling application."""
         boxId = 'DEFAULT'
         template = self.TEMPLATE_CLASS(self.getRootStyle())
         template.cTextBox(0, 0, 4, 8, boxId, nextBox=boxId, nextPage=1)  # Simple template with 1 column.

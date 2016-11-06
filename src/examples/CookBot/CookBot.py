@@ -34,10 +34,10 @@ P_TRACK = 0.030
 LANGUAGE = 'nl-be'
 MAIN_FLOW = 'main' # ELement id of the text box on pages the hold the main text flow.
 FILENAME = 'automaticLayout_nl.md' # 'automaticLayout_nl.md'
-PAGENUMBER = '#?#'
+PAGE_ID_MARKER = '#?#' # Placeholder pattern to be substituted by page.eId
 NO_COLOR= -1
 BOX_COLOR = NO_COLOR #0.9 # Debug color for textbox columns.
-MISSING_IMAGE_FILL = 0.5
+MISSING_ELEMENT_FILL = 0.5
 JUSTIFIED = 'justified'
 LEFT = 'left'
 
@@ -75,7 +75,7 @@ def makeDocument():
     template1.cTextBox('', 2, 0, 2, 8, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox('', 4, 4, 2, 4, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern PAGENUMBER is replaced by actual page number.
-    template1.cText(PAGENUMBER, 6, 0, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template1.cText(PAGE_ID_MARKER, 6, 0, font=BOOK, fontSize=12, fill=BOX_COLOR)
 
     # Template 2
     template2 = Template(PW, PH) # Create second template. This is for the main pages.
@@ -92,7 +92,7 @@ def makeDocument():
     template2.cTextBox('', 2, 4, 2, 4, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     template2.cTextBox('', 4, 3, 2, 3, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern PAGENUMBER is replaced by actual page number.
-    template2.cText(PAGENUMBER, 6, 0, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template2.cText(PAGE_ID_MARKER, 6, 0, font=BOOK, fontSize=12, fill=BOX_COLOR)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
