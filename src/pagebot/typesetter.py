@@ -31,7 +31,10 @@ reload(pagebot.elements)
 from pagebot.elements import Galley, Image
 
 class Typesetter(object):
-    
+
+    GALLEY_CLASS = Galley
+    IMAGE_CLASS = Image
+
     def __init__(self, document, galley):
         self.document = document
         self.galley = galley
@@ -149,14 +152,14 @@ class Typesetter(object):
         imageStyle = self.getCascadedNodeStyle(node.tag)
         if imageStyle is not None:
             self.pushStyle(imageStyle)
-        imageElement = Image(src, imageStyle) # Set path, image w/h and image scale from style.
+        imageElement = self.IMAGE_CLASS(src, imageStyle) # Set path, image w/h and image scale from style.
         caption = node.attrib.get('title')
         if 1 or caption is None:
             # If there is no caption, we can add the Image element directly to the main galley.
             self.galley.append(imageElement)
         else:
             # If there is a caption, create a new child Galley to hold image + caption
-            g = Galley()
+            g = self.GALLEY_CLASS()
             g.append(imageElement)
             captionStyle = self.getCascadedNodeStyle('caption')
             tb = g.getTextBox(captionStyle)
@@ -175,11 +178,13 @@ class Typesetter(object):
         The styles can omit the font or fontSize, and still we need to be able to set the element
         attributes. Copy the current style and add overwrite the values from the new style.
         This way the current style always contains all attributes of the root style."""
-        cascadedStyle = copy.copy(self.gState[-1]) # Take the top of the stack as source.
-        if style is not None: # Style may be None. In that case answer just copied of current gState top.
+        cascadedStyle = copy.copy(self.gState[-1]) # Take a copy of the top of the gState stack as source.
+        if style is not None: # Style may be None. In that case answer just copy, which is already.
             for name, value in style.items():
-                cascadedStyle[name] = value # Overwrite the existing style value.
-            # Mark that this is a cascaded style now, to distinguish from plain styles.
+                cascadedStyle[name] = value # Overwrite the value from altering tag style.
+            # Mark that this is a cascaded style now, to distinguish from individual plain tag styles.
+            # Since the style copy is cascaded by definition, we still set the flag just in case
+            # the tag style had it set to False.
             # The flag is also used to verify that only cascaded styles get added to the gState stack.
             cascadedStyle['cascaded'] = True
         return cascadedStyle
@@ -189,20 +194,20 @@ class Typesetter(object):
         (which is already cascaded by definition)."""
         style = self.document.getStyle(name)
         if style.get('cascaded'):
-            return style # If already cascaded, then don't change it. Answer as is
+            return style # If already cascaded, then don't change it.
         # Make a copy and cascade the style (filling in the missing values) from the top of the gState stack.
         return self.getCascadedStyle(style)
 
-    def pushStyle(self, style):
+    def pushStyle(self, cascadedStyle):
         u"""Push the cascaded style on the gState stack."""
         # Make sure this is a cascaded style, otherwise it cannot be used as source for child styles.
-        assert style.get('cascaded')
-        self.gState.append(style)
-        return style
+        assert cascadedStyle.get('cascaded')
+        self.gState.append(cascadedStyle)
+        return cascadedStyle
         
     def popStyle(self):
-        u"""Pop the style from the gState stack and answer the next style that is not top.
-        Make sure that there is a style to pop still, otherwise raise an error. """
+        u"""Pop the cascaded style from the gState stack and answer the next style that is on top.
+        Make sure that there still is a style to pop, otherwise raise an error. """
         assert len(self.gState)
         self.gState.pop()
         return self.gState[-1]
@@ -225,12 +230,8 @@ class Typesetter(object):
         answered by the push."""
         if style is None:
             nodeStyle = self.getCascadedNodeStyle(node.tag)
-            print 'AAAA', node.tag, self.document.styles.keys()
-            print 'AAAA', nodeStyle.get('name'), nodeStyle.get('cascaded')
         else: # If for some reason this is am un-cascaded plain style. Make it cascaded. Otherwise don't touch.
             nodeStyle = self.getCascadedStyle(style)
-            print 'AAAA', node.tag, self.document.styles.keys()
-            print 'AAAA', nodeStyle.get('name'), nodeStyle.get('cascaded')
         if nodeStyle is not None: # Do we have a real style for this tag, then push on gState stack
             self.pushStyle(nodeStyle)
 

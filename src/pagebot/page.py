@@ -14,24 +14,30 @@
 import weakref
 import copy
 from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, fill, curveTo
-from pagebot.style import NO_COLOR
+from pagebot.style import NO_COLOR, makeStyle
 from pagebot import cr2p, cp2p, setFillColor, setStrokeColor
 from pagebot.elements import Grid, BaselineGrid, Image, TextBox, Text, Rect, Line, Oval, Container
 
-class Page(object):
+class Page(Container):
  
     DEFAULT_STYLE = 'page'
 
-    def __init__(self, parent, w, h, pageNumber=None, template=None):
+    def __init__(self, parent=None, style=None, eId=None, template=None, **kwargs):
         self.parent = parent # Resource for self.parent.styles and self.parent.templates dictionaries.
-        self.w = w # Page width
-        self.h = h # Page height
-        self.pageNumber = pageNumber
+        self.style = makeStyle(style, **kwargs)
+        # Each element should check at this point if the minimum set of style values
+        # are set and if their values are valid.
+        assert self.w is not None and self.h is not None # Make sure that page size is defined.
+        self.eId = eId # Also be used as self.pageId
         self.setTemplate(template) # Create storage of elements and copy template elements.
         
     def __repr__(self):
-        return '[%s %d w:%d h:%d elements:%d elementIds:%s]' % (self.__class__.__name__, self.pageNumber, self.w, self.h, len(self.elements), self.elementIds.keys())
-            
+        return '[%s %d w:%d h:%d elements:%d elementIds:%s]' % (self.__class__.__name__, self.pageId, self.w, self.h, len(self.elements), self.elementIds.keys())
+
+    def _get_pageId(self):
+        return self.eId
+    pageId = property(_get_pageId)
+
     def setTemplate(self, template):
         u"""Clear the elements from the page and set the template. Copy the elements."""
         self.elements = [] # Sequential drawing order of Element instances.
@@ -314,16 +320,17 @@ class Template(Page):
     u"""Template is a special kind of Page class. Possible the draw in 
     the same way. Difference is that templates cannot contain other templates."""
     
-    def __init__(self, style):
-        self.w = style['w'] # Page width
-        self.h = style['h'] # Page height
+    def __init__(self, style=None, parent=None, eId=None, w=None, h=None, template=None, **kwargs):
+        self.style = makeStyle(style, **kwargs)
+        # Each element should check at this point if the minimum set of style values
+        # are set and if their values are valid.
+        assert self.w is not None and self.h is not None # Make sure that page size is defined.
         self.elements = [] # Sequential drawing order of elementPos (e, (x, y)) tuples.
         # Stored elementPos (e, (x, y)) by their unique id, so they can be altered later,
         # before rendering starts.
         self.elementIds = {} # Key is eId.
         self.placed = {} # Placement by (x,y) key. Value is a list of elements.
-        self.style = style # In case None, the page should use the document root style.
- 
+
     def getStyle(self, name=None):
         return self.style
             

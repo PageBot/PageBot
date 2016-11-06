@@ -180,6 +180,7 @@ class TextBox(Element):
         # are set and if their values are valid.
         assert self.w is not None and self.h is not None # Make sure that these are defined.
         # Make sure that this is a formatted string. Otherwise create it with the current style.
+        # Note that in case there is potential clash in the double usage of fill and stroke.
         if isinstance(fs, str):
             fs = getFormattedString(fs, self.style)
         self.fs = fs
