@@ -134,6 +134,7 @@ def getFormattedString(t, style=None):
     so they can inherit from previous style formats."""
     fs = FormattedString('')
     if style is not None:
+        print 'fdssffsds', style.get('leading'), style.get('rLeading')
         sFont = style.get('font')
         if sFont is not None:
             fs.font(sFont)
@@ -161,7 +162,9 @@ def getFormattedString(t, style=None):
             fs.align(sAlign)
         sLeading = style.get('leading')
         rLeading = style.get('rLeading')
+        print 'saddasad========', sLeading, rLeading
         if sLeading is not None or (rLeading is not None and sFontSize is not None):
+            print '234923479@#^*@#', (sLeading or 0) + (rLeading or 0) * (sFontSize or 0)
             fs.lineHeight((sLeading or 0) + (rLeading or 0) * (sFontSize or 0))
         sParagraphTopSpacing = style.get('paragraphTopSpacing')
         rParagraphTopSpacing = style.get('rParagraphTopSpacing')
