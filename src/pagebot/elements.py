@@ -539,8 +539,10 @@ class Galley(Container):
 
     def __init__(self, style=None, eId=None, elements=None, w=None, h=None, **kwargs):
         u"""Allow self.w and self.h to be None or 0, as the paste board roll can have any size.
-        If underfined, the size is calculated from the size contained elements. """
+        If undefined, the size is calculated from the size contained elements."""
         self.eId = eId  # Optional element id.
+        if style is None:
+            style = dict(fill=NO_COLOR, stroke=None, w=w, h=h, fontSize=14, leading=14)
         self.style = makeStyle(style, **kwargs)
         if elements is None:
             elements = []
@@ -627,8 +629,12 @@ class Galley(Container):
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the
         containing page."""
+        fill(1, 1, 0)
+        gw, gh = self.getSize()
+        rect(0, 0, gw, gh)
         gy = y
         for element in self.elements:
             # @@@ Find space and do more composition
             element.draw(page, x, gy)
             gy += element.h
+

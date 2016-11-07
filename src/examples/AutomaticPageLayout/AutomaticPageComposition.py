@@ -96,7 +96,7 @@ else: # NL version of the article.
     MD_PATH = 'automatischePaginaCompositie_nl.md'
     EXPORT_PATH = 'export/AutomatischePaginaOpmaak.pdf'
 
-MD_PATH = 'testPaginaCompositie_nl.md'
+#MD_PATH = 'testPaginaCompositie_nl.md'
 
 MAIN_FLOW = 'main' # ELement id of the text box on pages the hold the main text flow.
 
@@ -105,7 +105,7 @@ H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-VARS = True
+VARS = False
 
 if VARS:
     FONT_PATH = '../../fonts/'
@@ -142,9 +142,9 @@ if VARS:
         SEMIBOLD = FONTS['Promise-Semibold']
         BOLD = FONTS['Promise-Bold']
 else:
-    BOOK = MEDIUM = 'Verdana'
-    BOOK_ITALIC = 'Verdana-Italic'
-    BOLD = SEMIBOLD = 'Verdana-Bold'
+    BOOK = MEDIUM = 'Georgia'
+    BOOK_ITALIC = 'Georgia-Italic'
+    BOLD = SEMIBOLD = 'Georgia-Bold'
 
 RS['font'] = BOOK
 
@@ -194,7 +194,7 @@ def makeDocument(rs):
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(rs, pages=2, template=template2) 
+    doc = Document(rs, pages=3, template=template2) 
  
     # Cache some values from the root style that we need multiple time to create the tag styles.
     fontSize = rs['fontSize']
@@ -202,20 +202,20 @@ def makeDocument(rs):
     rLeading = rs['rLeading']
     listIndent = rs['listIndent']
     language = rs['language']
-    
+
     # Add styles for whole document and text flows.  
     # Note that some values are defined here for clarity, even if their default root values
     # are the same.             
     doc.newStyle(name='chapter', font=BOOK)    
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
-    doc.newStyle(name='subtitle', fontSize=2*fontSize, font=BOOK_ITALIC)
+    doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
-        leading=2*fontSize, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=2*fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
-        leading=1*fontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
-    doc.newStyle(name='h3', fontSize=2*fontSize, font=MEDIUM, fill=0, 
-        leading=1*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+    doc.newStyle(name='h1', fontSize=2.6*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
+        leading=3*fontSize, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h2', fontSize=1.7*fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
+        leading=2*fontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
+    doc.newStyle(name='h3', fontSize=1.6*fontSize, font=MEDIUM, fill=0, 
+        leading=2*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         postfix='\n')
     
     # Spaced paragraphs.
@@ -245,26 +245,21 @@ def makeDocument(rs):
     # Change template of page 1
     page1 = doc[1]
     page1.setTemplate(template1)
-
-    tb = page1.getElement(flowId1)
-    tt = """XXXWaar in de tradie van werken met opmaakprogrammatuur zoals Quark XPress en InDesign altijd een menselijke beslissing de definitieve opmaak van een pagina bepaalt, zijn er steeds meer situaties waarin dat geen optie is. Doordat steeds meer pagina’s worden gegenereerd met inhoud die uit een database komt – of van een online source – en waar de selectie van de informatie direct wordt bepaald door eigenschappen van de lezer, van de pagina’s automatisch worden berekend."""
-    fs = getFormattedString('', rs)
-    print('=====', tb.append(tt))
-    #fs = FormattedString('', fill=(1, 0, 0), font=BOOK, lineHeight=14, fontSize=10)
-    fs += tt
-
-    #fs = getFormattedString(tt, RS)
-
-    tb.fs = fs
     
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
     t = Typesetter(doc, g)
     t.typesetFile(MD_PATH)
     
+    gw, gh = g.getSize()
+    previewPage = doc[2]
+    previewPage.w = gw + 60
+    previewPage.h = gh + 40
+    previewPage.place(g, 40, 20)
+
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
-    c = Composer(doc)
-    c.compose(g, page1, flowId1)
+    #c = Composer(doc)
+    #c.compose(g, page1, flowId1)
     
     return doc
         
