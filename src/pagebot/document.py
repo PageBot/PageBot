@@ -201,16 +201,21 @@ class Document(object):
     def export(self, fileName, pageSelection=None):
         u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
         it must be a list with page numbers to export. This allows the order to be changed and pages to
-        be omitted."""
+        be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
+        drawing and export that needs to be done. """
         if pageSelection is None:
             pageSelection = range(1, len(self.pages)+1) # [1,2,3,4,...]
         for pIndex in pageSelection:
             # Get the current Page instance, indicated by the page number.
             page = self.pages[pIndex] # Page numbering stars at #1
             # Create a new Drawbot viewport page to draw template + page, if not already done.
-            # Skip if the first page of the document was already made as graphic state canvas by a Composer instance.
-            if pIndex > 0:
-                newPage(page.w, page.h)
-            # Let the page draw itself on the current Drawbot view port. pIndex can be used on output.
+            newPage(page.w, page.h)
+            # Let the page draw itself on the current Drawbot view port.
             page.draw() 
         saveImage(fileName)
+
+class Website(Document):
+    u"""Place holder for future export as website, writing Angular code, PHP, HTML, CSS, etc. perhaps
+    for different systems and flavors. Basically this would be the replacement of Xierpa3 code."""
+    def export(self, path, pageSelection=None):
+        pass

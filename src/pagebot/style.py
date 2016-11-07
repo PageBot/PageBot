@@ -105,6 +105,17 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # Scale of content
         scaleX = 1, # In scale of content needs to be defined, as in image.
         scaleY = 1,
+        # Shadow, gradient, etc.
+        shadow = NO_COLOR, # ((10, 10), 20, (1, 0, 0))
+        linearGradient = NO_COLOR, # ((10, 210), (10, 310), ([1, 1, 1, 1], [0, 1, 1]))
+        radialGradient = NO_COLOR, #((50, 410), (50, 410), ([1, 0, 1, 0], [1, 1, 0, 0], [0, 1, 1]),
+        radialGradient_startRadius = 0,
+        radialGradient_endRadius = 300,
+        cmykShadow = NO_COLOR, # ((10, 10), 20, (0, 1, 1, 0))
+        cmykLinearGradient = NO_COLOR, # ((10, 210), (10, 310), ([1, 1, 1, 1], [0, 1, 1, 0]))
+        cmykRadialGradient = NO_COLOR, #((50, 410), (50, 410), ([1, 0, 1, 0], [1, 1, 0, 0], [0, 1, 1, 0]),
+        cmykRadialGradient_startRadius = 0,
+        cmykRadialGradient_endRadius = 300,
         # Grid stuff
         showGrid = showGrid, # Flag to show the grid in output.
         showGridColumns = showGridColumns, # Show the colums as filled (cw, ch) squares.
