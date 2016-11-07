@@ -299,7 +299,7 @@ class Page(Container):
         if not style.get('showFlowConnections'):
             return
         for seq in self.getFlows().values():
-            # For all the floq sequences found in the page, draw flow arrows
+            # For all the flow sequences found in the page, draw flow arrows
             tbStart, (startX, startY) = self.getElementPos(seq[0].eId)
             for tbTarget in seq[1:]:
                 tbTarget, (targetX, targetY) = self.getElementPos(tbTarget.eId)
@@ -309,6 +309,11 @@ class Page(Container):
                 startX = targetX
                 startY = targetY
             self.drawArrow(startX, startY + tbStart.h, startX + tbStart.w, startY, -1)
+
+            if self != self.parent.getLastPage():
+                # Finalize with a line to the start, assuming it is on the next page.
+                tbTarget, (targetX, targetY) = self.getElementPos(seq[0].eId)
+                self.drawArrow(startX + tbStart.w, startY, targetX, targetY + tbTarget.h - self.h, 1)
 
     def draw(self):
         for element, (x, y) in self.elements:

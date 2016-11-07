@@ -47,11 +47,11 @@ class Document(object):
         name = 'root'
         self.addStyle(name, rootStyle)
         name = 'document'
-        if not name in self.styles:
-            self.addStyle(name, newStyle(name=name, showGrid=True))
+        if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
+            self.addStyle(name, dict(name=name))
         name = 'page'
-        if not name in self.styles:
-            self.addStyle(name, newStyle(name=name, showGrid=True))
+        if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
+            self.addStyle(name, dict(name=name))
 
     def _get_w(self):
         return self.rootStyle['w']
@@ -129,7 +129,7 @@ class Document(object):
                 template = self.template
             self.newPage(style=style, w=w, h=h, eId=pageId, template=template, **kwargs)
 
-    def lastPage(self):
+    def getLastPage(self):
         u"""Answer the page with the highest sorted page id. Answer None if there are not pages.
         """
         if not self.pages:

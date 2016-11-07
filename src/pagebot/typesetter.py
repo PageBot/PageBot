@@ -140,7 +140,8 @@ class Typesetter(object):
         # Make sure this is a cascaded style, expanded from current values in top style in gState.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append(cStyle['listBullet'], cStyle) # Append the bullet as defined in the style.
+        bulletString = getFormattedString(cStyle['listBullet'], cStyle) # Make styled string with bullet.
+        tb.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
@@ -245,8 +246,7 @@ class Typesetter(object):
 
         nodeText = self._strip(node.text, style)
         if nodeText: # Not None and still has content after stripping?
-            # In case style is None, just add plain string to current FormattedString of tb.
-            tb.append(nodeText)
+            tb.append(nodeText) # Add to the current flow textBox
 
         # Type set all child node in the current node, by recursive call.
         for child in node:
@@ -258,10 +258,13 @@ class Typesetter(object):
                 # So, to be sure, we'll push the current style again.
                 childTail = self._strip(child.tail, style)
                 if childTail: # Any tail left after stripping, then append to the current textBox.
-                    # Get current flow text box from Galley to fill. Style can be None. If the width of the
-                    # latest textBox is not equal to style.w, then create a new textBox in the galley.
+                    # Get current flow text box from Galley to fill. If may have changed, if another
+                    # element was created by the tree of nodes, e.g an image or table. If the latest
+                    # galley element is still a flow, and if the current width of the textBox is
+                    # equal to style['w'] then continue using the same. Otherwise a new textBox
+                    # is created by the galley.
                     tb = self.getTextBox(style)
-                    tb.append(childTail)  # In case style is None, just add plain string.
+                    tb.append(childTail)  # Add to the current flow textBox
             else:
                 # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child)
@@ -275,7 +278,7 @@ class Typesetter(object):
         # If there is no text or if the node does not have tail text, these are None.
         nodeTail = self._strip(node.tail, style)
         if nodeTail: # Something of a tail left after stripping?
-            tb.append(nodeTail) # If style is None, just add plain string.
+            tb.append(nodeTail) # Add to the current flow textBox
 
     def typesetFile(self, fileName):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
@@ -301,7 +304,7 @@ class Typesetter(object):
         # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
         # reference, image index and footnote placement.   
         self.typesetNode(root)
-        
+
     def typesetFootnotes(self):
         footnotes = self.document.footnotes
         for index, (page, e, p) in footnotes.items():
