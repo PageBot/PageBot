@@ -132,7 +132,7 @@ def findMarkers(fs, w, h, align='left', hyphenation=True):
 def getFormattedString(t, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing,
     so they can inherit from previous style formats."""
-    fs = FormattedString()
+    fs = FormattedString('')
     if style is not None:
         sFont = style.get('font')
         if sFont is not None:
@@ -212,7 +212,7 @@ def getFormattedString(t, style=None):
     elif sCapitalized:
         t = t.capitalize()
 
-    fs += t
+    fs.append(t)
     return fs
 
 def textSearch(fs, w, h, search, align='left', hyphenation=True):
