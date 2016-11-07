@@ -145,6 +145,9 @@ else:
     BOOK = MEDIUM = 'Verdana'
     BOOK_ITALIC = 'Verdana-Italic'
     BOLD = SEMIBOLD = 'Verdana-Bold'
+
+RS['font'] = BOOK
+
 # -----------------------------------------------------------------         
 def makeDocument(rs):
     u"""Demo page composer."""
@@ -244,13 +247,13 @@ def makeDocument(rs):
     page1.setTemplate(template1)
 
     tb = page1.getElement(flowId1)
-    tt = """Waar in de tradie van werken met opmaakprogrammatuur zoals Quark XPress en InDesign altijd een menselijke beslissing de definitieve opmaak van een pagina bepaalt, zijn er steeds meer situaties waarin dat geen optie is. Doordat steeds meer pagina’s worden gegenereerd met inhoud die uit een database komt – of van een online source – en waar de selectie van de informatie direct wordt bepaald door eigenschappen van de lezer, van de pagina’s automatisch worden berekend."""
-    fs = getFormattedString(tt, RS)
+    tt = """XXXWaar in de tradie van werken met opmaakprogrammatuur zoals Quark XPress en InDesign altijd een menselijke beslissing de definitieve opmaak van een pagina bepaalt, zijn er steeds meer situaties waarin dat geen optie is. Doordat steeds meer pagina’s worden gegenereerd met inhoud die uit een database komt – of van een online source – en waar de selectie van de informatie direct wordt bepaald door eigenschappen van de lezer, van de pagina’s automatisch worden berekend."""
+    fs = getFormattedString('', rs)
     print('=====', tb.append(tt))
-    fs = FormattedString('', fill=(1, 0, 0), font=BOOK, lineHeight=14, fontSize=10)
+    #fs = FormattedString('', fill=(1, 0, 0), font=BOOK, lineHeight=14, fontSize=10)
     fs += tt
 
-    fs = getFormattedString(tt, RS)
+    #fs = getFormattedString(tt, RS)
 
     tb.fs = fs
     
