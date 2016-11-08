@@ -105,42 +105,44 @@ H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-VARS = False
+VARS = True
 
 if VARS:
     FONT_PATH = '../../fonts/'
 
     FONT_LOCATIONS = {
-        #'Promise-BoldCondensed': {"wght": 750, "wdth": 500, },
-        #'Promise-LightCondensed': {"wght": 0, "wdth": 500},
-        'Promise-Light': {"wght": 0, "wdth": 1000},
-        'Promise-Book': {"wght": 250, "wdth": 1000},
-        'Promise-Regular': {"wght": 400, "wdth": 1000},    
-        'Promise-Medium': {"wght": 600, "wdth": 1000},    
-        'Promise-Semibold': {"wght": 750, "wdth": 1000},    
-        'Promise-Bold': {"wght": 1000, "wdth": 1000},
+        #'PromisePageBot-BoldCondensed': {"wght": 750, "wdth": 500, },
+        #'PromisePageBot-LightCondensed': {"wght": 0, "wdth": 500},
+        'PromisePageBot-Light': {"wght": 0, "wdth": 1000},
+        'PromisePageBot-Book': {"wght": 250, "wdth": 1000},
+        'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
+        'PromisePageBot-Medium': {"wght": 600, "wdth": 1000},    
+        'PromisePageBot-Semibold': {"wght": 750, "wdth": 1000},    
+        'PromisePageBot-Bold': {"wght": 1000, "wdth": 1000},
     }
     FONTS = {}
+    VFONT_PATH = 'PromisePageBot-GX.ttf'
     # Install the test V-font
-    if not 'Promise-Bold' in installedFonts():
-        installFont(FONT_PATH + 'Promise-GX.ttf')
+    if not 'PromisePageBot-Bold' in installedFonts():
+        installFont(FONT_PATH + VFONT_PATH)
     for name, location in FONT_LOCATIONS.items():
-        fontName, fontPath = generateInstance(FONT_PATH + 'Promise-GX.ttf', 
-        location, targetDirectory=FONT_PATH + 'instances')
+        print '===', name, location
+        fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
+            location, targetDirectory=FONT_PATH + 'instances')
         FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
     if 0:
-        BOOK = FONTS['Promise-LightCondensed']
-        BOOK_ITALIC = FONTS['Promise-LightCondensed']
-        MEDIUM = FONTS['Promise-LightCondensed']
-        SEMIBOLD = FONTS['Promise-LightCondensed']
-        BOLD = FONTS['Promise-LightCondensed']
+        BOOK = FONTS['PromisePageBot-LightCondensed']
+        BOOK_ITALIC = FONTS['PromisePageBot-LightCondensed']
+        MEDIUM = FONTS['PromisePageBot-LightCondensed']
+        SEMIBOLD = FONTS['PromisePageBot-LightCondensed']
+        BOLD = FONTS['PromisePageBot-LightCondensed']
     else:
-        LIGHT = FONTS['Promise-Light']
-        BOOK = FONTS['Promise-Book']
-        BOOK_ITALIC = FONTS['Promise-Book']
-        MEDIUM = FONTS['Promise-Medium']
-        SEMIBOLD = FONTS['Promise-Semibold']
-        BOLD = FONTS['Promise-Bold']
+        LIGHT = FONTS['PromisePageBot-Light']
+        BOOK = FONTS['PromisePageBot-Book']
+        BOOK_ITALIC = FONTS['PromisePageBot-Book']
+        MEDIUM = FONTS['PromisePageBot-Medium']
+        SEMIBOLD = FONTS['PromisePageBot-Semibold']
+        BOLD = FONTS['PromisePageBot-Bold']
 else:
     BOOK = MEDIUM = 'Georgia'
     BOOK_ITALIC = 'Georgia-Italic'
