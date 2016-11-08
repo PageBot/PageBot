@@ -226,6 +226,7 @@ class Typesetter(object):
             postfix = style.get('postfix')
             if postfix is not None: # Strip if postfix is not None. Otherwise don't touch.
                 s = s.rstrip() + postfix
+            s = getFormattedString(s, style)
         return s
 
     def typesetNode(self, node, style=None):
@@ -242,6 +243,8 @@ class Typesetter(object):
 
         # Get current flow text box from Galley to fill. Style can be None. If the width of the
         # latest textBox.w is not equal to style['w'], then create a new textBox in the galley.
+        #if style is not None:
+        #    print "+SA+A+S", node.tag, style['w'], style['h'], style['font'], style['fontSize'], style['fill'], node.text
         tb = self.getTextBox(style)
 
         nodeText = self._strip(node.text, style)

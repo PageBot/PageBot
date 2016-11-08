@@ -210,12 +210,12 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=2.6*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
-        leading=3*fontSize, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=1.7*fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
-        leading=2*fontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
-    doc.newStyle(name='h3', fontSize=1.6*fontSize, font=MEDIUM, fill=0, 
-        leading=2*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+    doc.newStyle(name='h1', fontSize=1.8*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
+        leading=2*leading, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h2', font='Verdana', fontSize=1.2*fontSize, #font=SEMIBOLD, 
+        fill=(0, 0.5, 1), leading=1*leading, rLeading=0, tracking=H2_TRACK, postfix='\n')
+    doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
+        leading=1*leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         postfix='\n')
     
     # Spaced paragraphs.
@@ -251,15 +251,16 @@ def makeDocument(rs):
     t = Typesetter(doc, g)
     t.typesetFile(MD_PATH)
     
-    gw, gh = g.getSize()
-    previewPage = doc[2]
-    previewPage.w = gw + 60
-    previewPage.h = gh + 40
-    previewPage.place(g, 40, 20)
+    if 0: # Preview the galley
+        gw, gh = g.getSize()
+        previewPage = doc[2]
+        previewPage.w = gw + 60
+        previewPage.h = gh + 40
+        previewPage.place(g, 40, 20)
 
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
-    #c = Composer(doc)
-    #c.compose(g, page1, flowId1)
+    c = Composer(doc)
+    c.compose(g, page1, flowId1)
     
     return doc
         
