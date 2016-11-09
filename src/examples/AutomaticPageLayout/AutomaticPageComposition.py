@@ -117,7 +117,7 @@ if VARS:
         'PromisePageBot-Book': {"wght": 250, "wdth": 1000},
         'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
         'PromisePageBot-Medium': {"wght": 600, "wdth": 1000},    
-        'PromisePageBot-Semibold': {"wght": 750, "wdth": 1000},    
+        'PromisePageBot-Semibold': {"wght": 750, "wdth": 300},    
         'PromisePageBot-Bold': {"wght": 1000, "wdth": 1000},
     }
     FONTS = {}
@@ -211,14 +211,14 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=1.8*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
-        leading=1.5*leading, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD, fill=0, 
+        leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, 
-        fill=(0, 0.5, 0.5), leading=1*leading, rLeading=0, tracking=H2_TRACK, postfix='')
+        fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
+        prefix='', postfix='')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
-        paragraphTopSpacing=3*leading, paragraphBottomSpacing=2*leading,
-        leading=1*leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        postfix='')
+        leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+        prefix='\n', postfix='\n')
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
@@ -236,7 +236,7 @@ def makeDocument(rs):
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
         tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
-        firstLineIndent=1, postfix='\n')
+        firstLineIndent=1, postfix='')
     doc.newStyle(name='ul',)
     doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
     doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)

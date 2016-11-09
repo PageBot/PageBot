@@ -51,7 +51,6 @@ class Composer(object):
                 if fs is None:
                     break
                 overflow = tb.append(fs)
-                #print '=23=23=23=', overflow
                 if fs == overflow:
                     print(u'NOT ABLE TO PLACE %s' % overflow)
                     break

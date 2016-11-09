@@ -214,6 +214,7 @@ class TextBox(Element):
             self.fs = fs
         else:
             self.fs += fs
+        return self.getOverflow(self.w, self.h)
 
     def appendMarker(self, markerId, arg=None):
         self.append(getMarker(markerId, arg=arg))
