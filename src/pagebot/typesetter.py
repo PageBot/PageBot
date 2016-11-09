@@ -236,18 +236,16 @@ class Typesetter(object):
         answered by the push."""
         if style is None:
             nodeStyle = self.getCascadedNodeStyle(node.tag)
-        else: # If for some reason this is am un-cascaded plain style. Make it cascaded. Otherwise don't touch.
+        else: # If for some reason this is an un-cascaded plain style. Make it cascaded. Otherwise don't touch.
             nodeStyle = self.getCascadedStyle(style)
         if nodeStyle is not None: # Do we have a real style for this tag, then push on gState stack
             self.pushStyle(nodeStyle)
 
         # Get current flow text box from Galley to fill. Style can be None. If the width of the
         # latest textBox.w is not equal to style['w'], then create a new textBox in the galley.
-        #if style is not None:
-        #    print "+SA+A+S", node.tag, style['w'], style['h'], style['font'], style['fontSize'], style['fill'], node.text
         tb = self.getTextBox(style)
 
-        nodeText = self._strip(node.text, style)
+        nodeText = self._strip(node.text, nodeStyle)
         if nodeText: # Not None and still has content after stripping?
             tb.append(nodeText) # Add to the current flow textBox
 

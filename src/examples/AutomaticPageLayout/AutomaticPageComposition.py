@@ -105,7 +105,7 @@ H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-VARS = True
+VARS = False
 
 if VARS:
     FONT_PATH = '../../fonts/'
@@ -126,7 +126,6 @@ if VARS:
     if not 'PromisePageBot-Bold' in installedFonts():
         installFont(FONT_PATH + VFONT_PATH)
     for name, location in FONT_LOCATIONS.items():
-        print '===', name, location
         fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
             location, targetDirectory=FONT_PATH + 'instances')
         FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
@@ -213,9 +212,9 @@ def makeDocument(rs):
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
     doc.newStyle(name='h1', fontSize=1.8*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
-        leading=2*leading, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', font='Verdana', fontSize=1.2*fontSize, #font=SEMIBOLD, 
-        fill=(0, 0.5, 1), leading=1*leading, rLeading=0, tracking=H2_TRACK, postfix='\n')
+        leading=1.5*leading, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, 
+        fill=(0, 0.5, 0.5), leading=1*leading, rLeading=0, tracking=H2_TRACK, postfix='\n')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
         leading=1*leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         postfix='\n')
