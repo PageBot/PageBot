@@ -32,13 +32,11 @@ def generateInstance(varFileName, location, targetDirectory):
     # make a custom file name from the location e.g. VariationFont-wghtXXX-wdthXXX.ttf
     instanceName = ""
 
-    normalizedLoc = {}
     for k, v in location.items():
         # TODO better way to normalize the location name to (0, 1000)
         v = min(v, 1000)
         v = max(v, 0)
         instanceName += "-%s%s" % (k, v)
-        normalizedLoc[k] = (v / 500.0) - 1
     targetFileName = '.'.join(varFileName.split('/')[-1].split('.')[:-1]) + instanceName + '.ttf'
 
     if not targetDirectory.endswith('/'):
@@ -70,7 +68,7 @@ def generateInstance(varFileName, location, targetDirectory):
     fvar = varFont['fvar']
     axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in fvar.axes}
     # TODO Round to F2Dot14?
-    normalizedLoc = normalizeLocation(normalizedLoc, axes)
+    normalizedLoc = normalizeLocation(location, axes)
     # Location is normalized now
     if DEBUG:
         print("Normalized location:", varFileName, normalizedLoc)
