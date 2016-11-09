@@ -63,7 +63,7 @@ RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
-    h = 11 * 72, # Page height 11", international generic fit.
+    h = 311 * 72, # Page height 11", international generic fit.
     ml = 7*U, # Margin leftrs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
     g = U, # Generic gutter.
@@ -169,7 +169,7 @@ def makeDocument(rs):
     template1.cContainer(4, 0, 2, 4, rs)  # Empty image element, cx, cy, cw, ch
     template1.cContainer(0, 5, 2, 3, rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 0, 0, 2, 5, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
+    template1.cTextBox(FS, 0, 0, 2, 45, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox(FS, 2, 0, 2, 8, rs, flowId2, nextBox=flowId3, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox(FS, 4, 4, 2, 4, rs, flowId3, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
@@ -214,10 +214,11 @@ def makeDocument(rs):
     doc.newStyle(name='h1', fontSize=1.8*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
         leading=1.5*leading, tracking=H1_TRACK, postfix='\n')
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, 
-        fill=(0, 0.5, 0.5), leading=1*leading, rLeading=0, tracking=H2_TRACK, postfix='\n')
+        fill=(0, 0.5, 0.5), leading=1*leading, rLeading=0, tracking=H2_TRACK, postfix='')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
+        paragraphTopSpacing=3*leading, paragraphBottomSpacing=2*leading,
         leading=1*leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        postfix='\n')
+        postfix='')
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
