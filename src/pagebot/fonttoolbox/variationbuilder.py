@@ -95,6 +95,9 @@ def generateInstance(varFileName, location, targetDirectory):
     for tag in ('fvar', 'avar', 'gvar'):
         if tag in varFont:
             del varFont[tag]
+    
+    # Fix leading bug in drawbot by setting lineGap to 0
+    varFont['hhea'].lineGap = 0
 
     if DEBUG:
         print("Saving instance font", outFile)
