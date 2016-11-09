@@ -100,6 +100,6 @@ def generateInstance(varFileName, location, targetDirectory):
 
     if DEBUG:
         print("Saving instance font", outFile)
-        varFont.save(outFile)
+    varFont.save(outFile)
     # Installing the font in Drawbot. Answer font name and path.
     return installFont(outFile), outFile
