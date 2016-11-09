@@ -63,7 +63,7 @@ RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
-    h = 311 * 72, # Page height 11", international generic fit.
+    h = 11 * 72, # Page height 11", international generic fit.
     ml = 7*U, # Margin leftrs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
     g = U, # Generic gutter.
@@ -105,7 +105,7 @@ H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-VARS = False
+VARS = True
 
 if VARS:
     FONT_PATH = '../../fonts/'
@@ -169,7 +169,7 @@ def makeDocument(rs):
     template1.cContainer(4, 0, 2, 4, rs)  # Empty image element, cx, cy, cw, ch
     template1.cContainer(0, 5, 2, 3, rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 0, 0, 2, 45, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
+    template1.cTextBox(FS, 0, 0, 2, 5, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox(FS, 2, 0, 2, 8, rs, flowId2, nextBox=flowId3, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox(FS, 4, 4, 2, 4, rs, flowId3, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
