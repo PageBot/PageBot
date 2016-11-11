@@ -42,12 +42,12 @@ import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import generateInstance
 
-SHOW_TIMER = False
+DEBUG = False
 
-SHOW_GRID = True
-SHOW_GRID_COLUMNS = True
-SHOW_BASELINE_GRID = True
-SHOW_FLOW_CONNECTIONS = True
+SHOW_GRID = DEBUG
+SHOW_GRID_COLUMNS = DEBUG
+SHOW_BASELINE_GRID = DEBUG
+SHOW_FLOW_CONNECTIONS = DEBUG
 
 if SHOW_GRID:
     BOX_COLOR = (0.8, 0.8, 0.8, 0.4)
@@ -117,7 +117,8 @@ if VARS:
         'PromisePageBot-Book': {"wght": 250, "wdth": 1000},
         'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
         'PromisePageBot-Medium': {"wght": 600, "wdth": 1000},    
-        'PromisePageBot-Semibold': {"wght": 750, "wdth": 300},    
+        'PromisePageBot-Semibold': {"wght": 750, "wdth": 1000},    
+        'PromisePageBot-SemiboldCondensed': {"wght": 750, "wdth": 300},    
         'PromisePageBot-Bold': {"wght": 1000, "wdth": 1000},
     }
     FONTS = {}
@@ -129,19 +130,13 @@ if VARS:
         fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
             location, targetDirectory=FONT_PATH + 'instances')
         FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
-    if 0:
-        BOOK = FONTS['PromisePageBot-LightCondensed']
-        BOOK_ITALIC = FONTS['PromisePageBot-LightCondensed']
-        MEDIUM = FONTS['PromisePageBot-LightCondensed']
-        SEMIBOLD = FONTS['PromisePageBot-LightCondensed']
-        BOLD = FONTS['PromisePageBot-LightCondensed']
-    else:
-        LIGHT = FONTS['PromisePageBot-Light']
-        BOOK = FONTS['PromisePageBot-Book']
-        BOOK_ITALIC = FONTS['PromisePageBot-Book']
-        MEDIUM = FONTS['PromisePageBot-Medium']
-        SEMIBOLD = FONTS['PromisePageBot-Semibold']
-        BOLD = FONTS['PromisePageBot-Bold']
+    LIGHT = FONTS['PromisePageBot-Light']
+    BOOK = FONTS['PromisePageBot-Book']
+    BOOK_ITALIC = FONTS['PromisePageBot-Book']
+    MEDIUM = FONTS['PromisePageBot-Medium']
+    SEMIBOLD = FONTS['PromisePageBot-Semibold']
+    SEMIBOLD_CONDENSED = FONTS['PromisePageBot-SemiboldCondensed'] 
+    BOLD = FONTS['PromisePageBot-Bold']
 else:
     BOOK = MEDIUM = 'Georgia'
     BOOK_ITALIC = 'Georgia-Italic'
@@ -211,7 +206,7 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD, fill=0, 
+    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD_CONDENSED, fill=0, 
         leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, 
         fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
@@ -219,6 +214,9 @@ def makeDocument(rs):
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         prefix='\n', postfix='\n')
+    doc.newStyle(name='h4', fontSize=1.1*fontSize, font=BOOK, fill=0, 
+        leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+        paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='\n', postfix='\n')
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
@@ -227,17 +225,18 @@ def makeDocument(rs):
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
     doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> show newline
+    doc.newStyle(name='a', prefix='', postfix='')
     doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6,
+    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, prefix='', postfix='',
         fontSize=0.65*fontSize)
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
         tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
-        firstLineIndent=1, postfix='')
-    doc.newStyle(name='ul',)
+        firstLineIndent=1, postfix='\n')
+    doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
     doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
     doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 

@@ -1,6 +1,6 @@
 
 ##Project Proposal
-Petr van Blokland
+####Petr van Blokland
 
 #Automatic Page Layout
 
@@ -24,10 +24,11 @@ Het opmaken van een pagina vanuit ruwe kopij en meta-informatie is te verdelen i
 * Compositie van pagina’s;
 * Toevoegen van document informatie.
 
-[^phases]: Voorlopig is de indeling van het project hetzelfde als de fasering van de paginaopmaak.
-
 ###XML transformatie
 Het transformeren van XML documenten naar een informatiestructuur is met standaardgereedschappen zoals Python-Markdown makkelijk uit te voeren.
+
+[^phases]: Voorlopig is de indeling van het project hetzelfde als de fasering van de paginaopmaak.
+
 
 ###Zetten van de strokenproef
 Om de software te maken die een strokenproef kan genereren is typografische kennis nodig.[^typografische kennis] In vrijwel alle automatische opmaakprogramma’s is dit een onderbelicht gebied. Dat komt doordat de bouwers van dergelijke software niet of nauwelijks op de hoogte zijn van de relevante parameters en hun onderlinge samenhang. Ook kunnen verschillen in culturele tradities een rol spelen. USA-typografie is niet hetzelfde als Europese.

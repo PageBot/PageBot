@@ -22,9 +22,13 @@ import pagebot
 reload(pagebot)
 from pagebot import getFormattedString, getMarker
 
-import pagebot.literature
-reload(pagebot.literature)
-from pagebot.literature import LiteratureExtension
+import pagebot.md.literature
+reload(pagebot.md.literature)
+from pagebot.md.literature import LiteratureExtension
+
+import pagebot.md.footnotes
+reload(pagebot.md.footnotes)
+from pagebot.md.footnotes import FootnoteExtension
 
 import pagebot.elements
 reload(pagebot.elements)
@@ -240,10 +244,12 @@ class Typesetter(object):
             nodeStyle = self.getCascadedStyle(style)
         if nodeStyle is not None: # Do we have a real style for this tag, then push on gState stack
             self.pushStyle(nodeStyle)
+        if node.tag == 'sup':
+            print nodeStyle
 
         # Get current flow text box from Galley to fill. Style can be None. If the width of the
         # latest textBox.w is not equal to style['w'], then create a new textBox in the galley.
-        tb = self.getTextBox(style)
+        tb = self.getTextBox(nodeStyle)
 
         nodeText = self._strip(node.text, nodeStyle)
         if nodeText: # Not None and still has content after stripping?
@@ -257,14 +263,14 @@ class Typesetter(object):
                 getattr(self, hook)(child) # Hook must be able to derive style from node.
                 # We are on tail mode now, but we don't know what happened in the child block.
                 # So, to be sure, we'll push the current style again.
-                childTail = self._strip(child.tail, style)
+                childTail = self._strip(child.tail, nodeStyle)
                 if childTail: # Any tail left after stripping, then append to the current textBox.
                     # Get current flow text box from Galley to fill. If may have changed, if another
                     # element was created by the tree of nodes, e.g an image or table. If the latest
                     # galley element is still a flow, and if the current width of the textBox is
                     # equal to style['w'] then continue using the same. Otherwise a new textBox
                     # is created by the galley.
-                    tb = self.getTextBox(style)
+                    tb = self.getTextBox(nodeStyle)
                     tb.append(childTail)  # Add to the current flow textBox
             else:
                 # If no method hook defined, then just solve recursively. Child node will get the style.
