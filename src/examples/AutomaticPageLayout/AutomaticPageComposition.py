@@ -42,7 +42,7 @@ import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import generateInstance
 
-DEBUG = True
+DEBUG = False
 
 SHOW_GRID = DEBUG
 SHOW_GRID_COLUMNS = DEBUG
@@ -118,7 +118,7 @@ if VARS:
         'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
         'PromisePageBot-Medium': {"wght": 600, "wdth": 1000},    
         'PromisePageBot-Semibold': {"wght": 750, "wdth": 1000},    
-        'PromisePageBot-SemiboldCondensed': {"wght": 750, "wdth": 300},    
+        'PromisePageBot-SemiboldCondensed': {"wght": 250, "wdth": 100},    
         'PromisePageBot-Bold': {"wght": 1000, "wdth": 1000},
     }
     FONTS = {}
@@ -206,7 +206,7 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD_CONDENSED, fill=0, 
+    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD_CONDENSED, fill=(1, 0, 0), 
         leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, 
         fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
@@ -226,7 +226,8 @@ def makeDocument(rs):
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
     doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> show newline
     doc.newStyle(name='a', prefix='', postfix='')
-    doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,)
+    doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,
+        stroke=1, fill=None)
     
     # Footnote reference index.
     doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, prefix='', postfix=' ',
