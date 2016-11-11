@@ -42,7 +42,7 @@ import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import generateInstance
 
-DEBUG = False
+DEBUG = True
 
 SHOW_GRID = DEBUG
 SHOW_GRID_COLUMNS = DEBUG
@@ -229,8 +229,8 @@ def makeDocument(rs):
     doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, prefix='', postfix='',
-        fontSize=0.65*fontSize)
+    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, prefix='', postfix=' ',
+        fontSize=0.6*fontSize)
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.

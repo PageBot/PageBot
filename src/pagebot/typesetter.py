@@ -221,14 +221,16 @@ class Typesetter(object):
         self.gState.pop()
         return self.gState[-1]
 
-    def _strip(self, s, style):
+    def _strip(self, s, style, forceRightStrip=False):
         u"""Strip the white space from string “s” if style.preFix and/or style.postFix are not None."""
         if not None in (s, style):
             prefix = style.get('prefix')
             if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
                 s = prefix + s.lstrip()
             postfix = style.get('postfix')
-            if postfix is not None: # Strip if postfix is not None. Otherwise don't touch.
+            if forceRightStrip:
+                s = s.rstrip()
+            elif postfix is not None: # Strip if postfix is not None. Otherwise don't touch.
                 s = s.rstrip() + postfix
             s = getFormattedString(s, style)
         return s
@@ -244,14 +246,14 @@ class Typesetter(object):
             nodeStyle = self.getCascadedStyle(style)
         if nodeStyle is not None: # Do we have a real style for this tag, then push on gState stack
             self.pushStyle(nodeStyle)
-        if node.tag == 'sup':
-            print nodeStyle
+        #if node.tag == 'sup':
+        #    print "ASASAAAA {%s} {%s} {%s}" % (nodeStyle['name'], nodeStyle['prefix'], nodeStyle['postfix'])
 
         # Get current flow text box from Galley to fill. Style can be None. If the width of the
         # latest textBox.w is not equal to style['w'], then create a new textBox in the galley.
         tb = self.getTextBox(nodeStyle)
 
-        nodeText = self._strip(node.text, nodeStyle)
+        nodeText = self._strip(node.text, nodeStyle, True)
         if nodeText: # Not None and still has content after stripping?
             tb.append(nodeText) # Add to the current flow textBox
 
