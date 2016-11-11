@@ -91,3 +91,5 @@ ENV/
 .DS_Store
 
 .idea/*
+
+src/fonts/instances/*.ttf
