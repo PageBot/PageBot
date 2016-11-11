@@ -3,7 +3,7 @@
 #
 #     P A G E B O T
 #
-#     Made for usage in Drawbot, www.drawbot.com
+#     Made for usage in Pagebot, www.pagebot.pro
 #
 """
 Literature Extension for Python-Markdown
