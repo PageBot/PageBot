@@ -3,6 +3,8 @@
 Petr van Blokland
 
 #Automatic Page Layout
+
+#Hello Libby
 ###Finding the possibilities and ultimate challenges
 
 ##Introduction
@@ -64,7 +66,7 @@ Het kan in extreme situaties nodig zijn om via backtracking de opmaak aan te pas
 
 ###Randvoorwaarden van het systeem
 
-Er zijn veel voorbeelden van dergelijke systemen die niet goed werken of waarbij het eisenpakket zodanig is verminderd dat met eenvoudige algoritmes kan worden volstaan. De layout van een pagina met één kolom, zoals in tekstverwerkers of boeken, is betrekkelijk eenvoudig automatisch te berekenen. Het wordt expontieel complex als er meerdere tekststromen tegelijk lopen, zoals bij een tijdschrift of krant het geval is. Als we de vergelijking met de ontwikkeling van schaak-programma’s trekken, dan is veel verbetering te behalen door het toevoegen van domeinkennis.
+Er zijn veel voorbeelden van dergelijke systemen die niet goed werken of waarbij het eisenpakket zodanig is verminderd, dat met eenvoudige algoritmes kan worden volstaan. De layout van een pagina met één kolom, zoals in tekstverwerkers of boeken, is betrekkelijk eenvoudig automatisch te berekenen. Het wordt expontieel complex als er meerdere tekststromen tegelijk lopen, zoals bij een tijdschrift of krant het geval is. Als we de vergelijking met de ontwikkeling van schaak-programma’s trekken, dan is veel verbetering te behalen door het toevoegen van domeinkennis.
 
 ![Galley proof](images/im7.png "De pagina wordt verdeeld in gebieden die een vaste of variabele functie kunnen hebben. De vaste elementen worden eerst ingedeeld. Vervolgens worden de strokenproeven van verschillende informatiestromenen gewaardeerd en gesorteerd. De weegfactoren daarvoor zijn zowel van inhoudelijke als typografische aard. De oplossing voor het probleem uit zich in een recursieve benadering waarbij de onderdelen van een pagina als mini-pagina’s worden behandeld.")
 

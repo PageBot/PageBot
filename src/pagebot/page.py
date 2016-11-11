@@ -11,8 +11,10 @@
 #     page.py
 #
 
+from AppKit import NSBezierPath
 import weakref
 import copy
+from math import cos, sin, radians, degrees, atan2
 from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, fill, curveTo
 from pagebot.style import NO_COLOR, makeStyle
 from pagebot import cr2p, cp2p, setFillColor, setStrokeColor
@@ -266,7 +268,7 @@ class Page(Container):
                 flows[element.next] = [element]
         return flows
 
-    def drawArrow(self, xs, ys, xt, yt, onText=1):
+    def drawArrow(self, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
         u"""Draw curved arrow marker between the two points.
         TODO: Add drawing of real arrow-heads, rotated in the right direction."""
         style = self.parent.getRootStyle()
@@ -277,20 +279,36 @@ class Page(Container):
         else:
             c = style.get('flowConnectionStroke1', NO_COLOR)
         setStrokeColor(c, style.get('flowConnectionStrokeWidth'))
-        setFillColor(style.get('flowMarkerFill', NO_COLOR))
-        oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
+        if startMarker:
+            setFillColor(style.get('flowMarkerFill', NO_COLOR))
+            oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
         xm = (xt + xs)/2
         ym = (yt + ys)/2
         xb1 = xm + onText * (yt - ys) * fmf
         yb1 = ym - onText * (xt - xs) * fmf
         xb2 = xm - onText * (yt - ys) * fmf
         yb2 = ym + onText * (xt - xs) * fmf
-        setFillColor(None)
         newPath()
+        setFillColor(None)
         moveTo((xs, ys))
         curveTo((xb1, yb1), (xb2, yb2), (xt, yt))
         drawPath()
-        oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
+
+        #  Draw the arrow head.
+        arrowSize = 12
+        arrowAngle = 0.4
+        angle = atan2(xt-xb2, yt-yb2)
+        hookedAngle = radians(degrees(angle)-90)
+        newPath()
+        setFillColor(c)
+        setStrokeColor(None)
+        moveTo((xt, yt))
+        lineTo((xt - cos(hookedAngle+arrowAngle) * arrowSize, yt + sin(hookedAngle+arrowAngle) * arrowSize))
+        lineTo((xt - cos(hookedAngle-arrowAngle) * arrowSize, yt + sin(hookedAngle-arrowAngle) * arrowSize))
+        lineTo((xt, yt))
+        drawPath()
+        if endMarker:
+            oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 
     def drawFlowConnections(self):
         u"""If rootStyle.showFlowConnections is True, then draw the flow connections
