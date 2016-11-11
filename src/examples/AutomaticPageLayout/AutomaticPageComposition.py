@@ -57,7 +57,7 @@ else:
 # Get the default root style and overwrite values for this document.
 U = 7
 baselineGrid = 2*U
-listIndent = 2*U
+listIndent = 1.5*U
 
 RS = getRootStyle(
     u = U, # Page base unit

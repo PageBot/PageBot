@@ -15,7 +15,7 @@ from AppKit import NSBezierPath
 import weakref
 import copy
 from math import cos, sin, radians, degrees, atan2
-from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, fill, curveTo
+from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, fill, curveTo, closePath
 from pagebot.style import NO_COLOR, makeStyle
 from pagebot import cr2p, cp2p, setFillColor, setStrokeColor
 from pagebot.elements import Grid, BaselineGrid, Image, TextBox, Text, Rect, Line, Oval, Container
@@ -288,24 +288,29 @@ class Page(Container):
         yb1 = ym - onText * (xt - xs) * fmf
         xb2 = xm - onText * (yt - ys) * fmf
         yb2 = ym + onText * (xt - xs) * fmf
-        newPath()
-        setFillColor(None)
-        moveTo((xs, ys))
-        curveTo((xb1, yb1), (xb2, yb2), (xt, yt))
-        drawPath()
-
-        #  Draw the arrow head.
+        # Arrow head position
         arrowSize = 12
         arrowAngle = 0.4
         angle = atan2(xt-xb2, yt-yb2)
         hookedAngle = radians(degrees(angle)-90)
+        ax1 = xt - cos(hookedAngle+arrowAngle) * arrowSize
+        ay1 = yt + sin(hookedAngle+arrowAngle) * arrowSize
+        ax2 = xt - cos(hookedAngle-arrowAngle) * arrowSize
+        ay2 = yt + sin(hookedAngle-arrowAngle) * arrowSize
+        newPath()
+        setFillColor(None)
+        moveTo((xs, ys))
+        curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
+        drawPath()
+
+        #  Draw the arrow head.
         newPath()
         setFillColor(c)
         setStrokeColor(None)
         moveTo((xt, yt))
-        lineTo((xt - cos(hookedAngle+arrowAngle) * arrowSize, yt + sin(hookedAngle+arrowAngle) * arrowSize))
-        lineTo((xt - cos(hookedAngle-arrowAngle) * arrowSize, yt + sin(hookedAngle-arrowAngle) * arrowSize))
-        lineTo((xt, yt))
+        lineTo((ax1, ay1))
+        lineTo((ax2, ay2))
+        closePath()
         drawPath()
         if endMarker:
             oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
