@@ -42,7 +42,7 @@ import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import generateInstance
 
-DEBUG = False
+DEBUG = True
 
 SHOW_GRID = DEBUG
 SHOW_GRID_COLUMNS = DEBUG
@@ -156,7 +156,7 @@ def makeDocument(rs):
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
     # Create empty image place holders. To be filled by running content on the page.
-    template1.cContainer(2, 0, 4, 8, rs)  # Empty image element, cx, cy, cw, ch
+    template1.cContainer(2, -0.6, 5, 4, rs)  # Empty image element, cx, cy, cw, ch
     template1.cContainer(0, 5, 2, 3, rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
     template1.cTextBox(FS, 0, 0, 2, 5, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
