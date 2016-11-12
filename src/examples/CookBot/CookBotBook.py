@@ -1,160 +1,265 @@
-import os
-import weakref
-import fontTools
-import copy
-import xml.etree.ElementTree as ET
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     Made for usage in Drawbot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     AutomaticPageComposition.py
+#
+#     This script generates an article in Dustch the apporach to
+#     generate automatic layouts, using Galley, Typesetter and Composer classes.
+#
+from pagebot import getFormattedString
 
-import document
-reload(document)
-from document import Document, Page, Composer, Template, Galley
+import pagebot.style
+reload(pagebot.style)
+from pagebot.style import getRootStyle, LEFT_ALIGN
 
+import pagebot.document 
+reload(pagebot.document)
+from pagebot.document import Document
 
-# Basic layout measures 
+import pagebot.page
+reload(pagebot.page)
+from pagebot.page import Page, Template
+
+import pagebot.composer
+reload(pagebot.composer)
+from pagebot.composer import Composer
+
+import pagebot.typesetter
+reload(pagebot.typesetter)
+from pagebot.typesetter import Typesetter
+
+import pagebot.elements
+reload(pagebot.elements)
+from pagebot.elements import Galley
+
+import pagebot.fonttoolbox.variationbuilder
+reload(pagebot.fonttoolbox.variationbuilder)
+from pagebot.fonttoolbox.variationbuilder import generateInstance
+
+DEBUG = False
+
+SHOW_GRID = DEBUG
+SHOW_GRID_COLUMNS = DEBUG
+SHOW_BASELINE_GRID = DEBUG
+SHOW_FLOW_CONNECTIONS = DEBUG
+
+if SHOW_GRID:
+    BOX_COLOR = (0.8, 0.8, 0.8, 0.4)
+else:
+    BOX_COLOR = None
+    
+# Get the default root style and overwrite values for this document.
 U = 7
-PW = 595 # Page width 210mm, international generic fit.
-PH = 11 * 72 # Page height 11", international generic fit.
-ML = 7*U # Margin left
-MT = 7*U # Margin top
-BASELINE_GRID = 2*U
-CW = 11*U # Column width. 
-G = U # Generic gutter.
-CH = 6*BASELINE_GRID - G # Approx. square. Fit with baseline.
-Utab = U*0.8 # Indent for bullet lists
-# Display option
-SHOW_GRID = False
-SHOW_BASELINEGRID = False
-# Text measures
-LEADING = BASELINE_GRID
-BODYTEXT_SIZE = 10
+baselineGrid = 2*U
+listIndent = 1.5*U
+
+RS = getRootStyle(
+    u = U, # Page base unit
+    # Basic layout measures altering the default rooT STYLE.
+    w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
+    h = 11 * 72, # Page height 11", international generic fit.
+    ml = 7*U, # Margin leftrs.mt = 7*U # Margin top
+    baselineGrid = 14,#baselineGrid,
+    g = U, # Generic gutter.
+    # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
+    # 11 is a the best in that respect for column calculation.
+    cw = 11*U, 
+    ch = 6*baselineGrid - U, # Approx. square and fitting with baseline.
+    listIndent = listIndent, # Indent for bullet lists
+    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    # Display option during design and testing
+    showGrid = SHOW_GRID,
+    showGridColumns = SHOW_GRID_COLUMNS,
+    showBaselineGrid = SHOW_BASELINE_GRID,
+    showFlowConnections = SHOW_FLOW_CONNECTIONS,
+    BOX_COLOR = BOX_COLOR,
+    # Text measures
+    leading = 14,
+    rLeading = 0,
+    fontSize = 9
+)
+FS = getFormattedString(FormattedString(''), RS)
+print FS
+    # LANGUAGE-SWITCH Language settings
+RS['language'] = 'en'
+MD_PATH = 'lemonHerbChicken.md'
+EXPORT_PATH = 'export/CookBotBook.pdf'
+
+#MD_PATH = 'testPaginaCompositie_nl.md'
+
+MAIN_FLOW = 'main' # ELement id of the text box on pages the hold the main text flow.
+
 # Tracking presets
-H1_TRACK = H2_TRACK = 0.015
+H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
-# Language settings
-LANGUAGE = 'nl-be'
-MAIN_FLOW = 'main' # ELement id of the text box on pages the hold the main text flow.
-FILENAME = 'automaticLayout_nl.md' # 'automaticLayout_nl.md'
-PAGE_ID_MARKER = '#?#' # Placeholder pattern to be substituted by page.eId
-NO_COLOR= -1
-BOX_COLOR = NO_COLOR #0.9 # Debug color for textbox columns.
-MISSING_ELEMENT_FILL = 0.5
-JUSTIFIED = 'justified'
-LEFT = 'left'
 
-if 1:
-    BOOK = 'Productus-Book'
-    BOOK_ITALIC = 'Productus-BookItalic'
-    BOLD = 'Productus-Bold'
-    SEMIBOLD = 'Productus-Semibold'
-    MEDIUM = 'Productus-Medium'
+VARS = True
+
+if VARS:
+    FONT_PATH = '../../fonts/'
+
+    FONT_LOCATIONS = {
+        #'PromisePageBot-BoldCondensed': {"wght": 750, "wdth": 500, },
+        #'PromisePageBot-LightCondensed': {"wght": 0, "wdth": 500},
+        'PromisePageBot-Light': {"wght": 0, "wdth": 1000},
+        'PromisePageBot-Book': {"wght": 250, "wdth": 1000},
+        'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
+        'PromisePageBot-Medium': {"wght": 600, "wdth": 1000},    
+        'PromisePageBot-Semibold': {"wght": 750, "wdth": 1000},    
+        'PromisePageBot-SemiboldCondensed': {"wght": 250, "wdth": 100},    
+        'PromisePageBot-Bold': {"wght": 1000, "wdth": 1000},
+    }
+    FONTS = {}
+    VFONT_PATH = 'PromisePageBot-GX.ttf'
+    # Install the test V-font
+    if not 'PromisePageBot-Bold' in installedFonts():
+        installFont(FONT_PATH + VFONT_PATH)
+    for name, location in FONT_LOCATIONS.items():
+        fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
+            location, targetDirectory=FONT_PATH + 'instances')
+        FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
+    LIGHT = FONTS['PromisePageBot-Light']
+    BOOK = FONTS['PromisePageBot-Book']
+    BOOK_ITALIC = FONTS['PromisePageBot-Book']
+    MEDIUM = FONTS['PromisePageBot-Medium']
+    SEMIBOLD = FONTS['PromisePageBot-Semibold']
+    SEMIBOLD_CONDENSED = FONTS['PromisePageBot-SemiboldCondensed'] 
+    BOLD = FONTS['PromisePageBot-Bold']
 else:
     BOOK = MEDIUM = 'Georgia'
     BOOK_ITALIC = 'Georgia-Italic'
     BOLD = SEMIBOLD = 'Georgia-Bold'
+
+RS['font'] = BOOK
+
 # -----------------------------------------------------------------         
-def makeDocument():
+def makeDocument(rs):
     u"""Demo page composer."""
 
     # Set some values of the default template (as already generated by the document).
     # Make squential unique names for the flow boxes inside the templates
-    flowId0 = MAIN_FLOW+'0' 
-    flowId1 = MAIN_FLOW+'1'
+    flowId1 = MAIN_FLOW+'1' 
     flowId2 = MAIN_FLOW+'2'
-    
+    flowId3 = MAIN_FLOW+'3'
+        
     # Template 1
-    template1 = Template(PW, PH) # Create template of main size. Front page only.
-    if SHOW_GRID: # Enable to show grid columns and margins.
-        template1.grid() 
-    if SHOW_BASELINEGRID: # Enable to show baseline grid.
-        template1.baselineGrid()
+    template1 = Template(rs) # Create template of main size. Front page only.
+    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    template1.grid(rs) 
+    # Show baseline grid if rs.showBaselineGrid is True
+    template1.baselineGrid(rs)
     # Create empty image place holders. To be filled by running content on the page.
-    template1.cImage(None, 4, 0, 2, 4) 
-    template1.cImage(None, 0, 5, 2, 3)
+    template1.cContainer(2, 0, 4, 8, rs)  # Empty image element, cx, cy, cw, ch
+    template1.cContainer(0, 5, 2, 3, rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox('', 0, 0, 2, 5, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
-    template1.cTextBox('', 2, 0, 2, 8, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
-    template1.cTextBox('', 4, 4, 2, 4, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
-    # Create page number box. Pattern PAGENUMBER is replaced by actual page number.
-    template1.cText(PAGE_ID_MARKER, 6, 0, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template1.cTextBox(FS, 0, 0, 2, 5, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
+    template1.cTextBox(FS, 2, 3, 2, 5, rs, flowId2, nextBox=flowId3, nextPage=0, fill=BOX_COLOR)
+    template1.cTextBox(FS, 4, 3, 2, 5, rs, flowId3, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
+    # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
+    template1.cText(FS+rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
 
     # Template 2
-    template2 = Template(PW, PH) # Create second template. This is for the main pages.
-    if SHOW_GRID: # Enable to show grid columns and margins.
-        template2.grid() 
-    if SHOW_BASELINEGRID: # Enable to show baseline grid.
-        template2.baselineGrid()
-    template2.cImage(None, 4, 0, 2, 3)
-    template2.cImage(None, 0, 5, 2, 3)
-    template2.cImage(None, 2, 2, 2, 2)
-    template2.cImage(None, 2, 0, 2, 2)
-    template2.cImage(None, 4, 6, 2, 2)
-    template2.cTextBox('', 0, 0, 2, 5, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
-    template2.cTextBox('', 2, 4, 2, 4, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
-    template2.cTextBox('', 4, 3, 2, 3, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
-    # Create page number box. Pattern PAGENUMBER is replaced by actual page number.
-    template2.cText(PAGE_ID_MARKER, 6, 0, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template2 = Template(rs) # Create second template. This is for the main pages.
+    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    template2.grid(rs) 
+    # Show baseline grid if rs.showBaselineGrid is True
+    template2.baselineGrid(rs)
+    template2.cContainer(4, 0, 2, 3, rs)  # Empty image element, cx, cy, cw, ch
+    template2.cContainer(0, 5, 2, 3, rs)
+    template2.cContainer(2, 2, 2, 2, rs)
+    template2.cContainer(2, 0, 2, 2, rs)
+    template2.cContainer(4, 6, 2, 2, rs)
+    template2.cTextBox(FS, 0, 0, 2, 5, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
+    template2.cTextBox(FS, 2, 4, 2, 4, rs, flowId2, nextBox=flowId3, nextPage=0, fill=BOX_COLOR)
+    template2.cTextBox(FS, 4, 3, 2, 3, rs, flowId3, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
+    # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
+    template2.cText(FS+rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(PW, PH, ml=ML, mt=MT, cw=CW, ch=CH, g=G, 
-        gridStroke=0.8, pages=2, template=template2,
-        baselineGrid=BASELINE_GRID, 
-        missingElementFill=MISSING_ELEMENT_FILL)
-     
-    # Add styles for whole document and text flows.               
+    doc = Document(rs, pages=3, template=template2) 
+ 
+    # Cache some values from the root style that we need multiple time to create the tag styles.
+    fontSize = rs['fontSize']
+    leading = rs['leading']
+    rLeading = rs['rLeading']
+    listIndent = rs['listIndent']
+    language = rs['language']
+
+    # Add styles for whole document and text flows.  
+    # Note that some values are defined here for clarity, even if their default root values
+    # are the same.             
     doc.newStyle(name='chapter', font=BOOK)    
-    doc.newStyle(name='title', fontSize=32, font=BOLD)
-    doc.newStyle(name='subtitle', fontSize=16, font=BOOK_ITALIC)
-    doc.newStyle(name='author', fontSize=16, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=20, font=SEMIBOLD, fill=0.1, stroke=None,
-        leading=20, rLeading=0, tracking=H1_TRACK, needsBelow=LEADING*3)
-    doc.newStyle(name='h2', fontSize=16, font=SEMIBOLD, fill=0.2, stroke=None, 
-        leading=20, rLeading=0, tracking=H2_TRACK, needsBelow=LEADING*3)
-    doc.newStyle(name='h3', fontSize=12, font=MEDIUM, fill=0, 
-        leading=15, rLeading=0, needsBelow=LEADING*3,
-        tracking=H3_TRACK,
-        paragraphTopSpacing=U, paragraphBottomSpacing=U/2)
+    doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
+    doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
+    doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
+    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD_CONDENSED, fill=(1, 0, 0), 
+        leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, 
+        fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
+        prefix='', postfix='')
+    doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
+        leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+        prefix='\n', postfix='\n')
+    doc.newStyle(name='h4', fontSize=1.1*fontSize, font=BOOK, fill=0, 
+        leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+        paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='\n', postfix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=BODYTEXT_SIZE, font=BOOK, fill=0.1, 
-        stroke=None, tracking=P_TRACK, language=LANGUAGE, align=LEFT,
-        leading=BASELINE_GRID, rLeading=0, hyphenation=True, 
-        stripWhiteSpace=' ')
-    doc.newStyle(name='b', font=SEMIBOLD, stripWhiteSpace=' ')
-    doc.newStyle(name='em', font=BOOK_ITALIC, stripWhiteSpace=' ')
-    doc.newStyle(name='img', leading=BASELINE_GRID, rLeading=0,
-        fontSize=BODYTEXT_SIZE, font=BOOK,)
+    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
+        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
+    doc.newStyle(name='b', font=SEMIBOLD)
+    doc.newStyle(name='em', font=BOOK_ITALIC)
+    doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
+    doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> show newline
+    doc.newStyle(name='a', prefix='', postfix='')
+    doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, 
-         rBaselineShift=0.6, fontSize=14*0.65, stripWhiteSpace=' ')
-    doc.newStyle(name='li', fontSize=BODYTEXT_SIZE, font=BOOK, 
-        tracking=P_TRACK, leading=BASELINE_GRID, rLeading=0, hyphenation=True, tabs=[(Utab, 'left')], 
-        indent=Utab, firstLineIndent=1, #tailIndent=U, 
-        stripWhiteSpace=' ')
-    doc.newStyle(name='ul', stripWhiteSpace=' ',)
-    doc.newStyle(name='literatureref', stripWhiteSpace=False,
-        fill=0.5, rBaselineShift=0.2, fontSize=14*0.8)
-    doc.newStyle(name='footnote', stripWhiteSpace=False,
-        fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
-    doc.newStyle(name='caption', stripWhiteSpace=False, tracking=P_TRACK, 
-        language=LANGUAGE, 
-        fill=0.2, leading=BASELINE_GRID*0.8, fontSize=BODYTEXT_SIZE*0.8,
-        font=BOOK_ITALIC, indent=U/2, tailIndent=-U/2, hyphenation=True)
-
+    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, prefix='', postfix=' ',
+        fontSize=0.6*fontSize)
+    doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
+        tracking=P_TRACK, leading=leading, hyphenation=True, 
+        # Lists need to copy the listIndex over to the regalar style value.
+        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        firstLineIndent=1, postfix='\n')
+    doc.newStyle(name='ul', prefix='', postfix='')
+    doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
+    doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
+    doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
+        leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
+        indent=U/2, tailIndent=-U/2, hyphenation=True)
+    
+    # Change template of page 1
+    page1 = doc[1]
+    page1.setTemplate(template1)
+    
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
-
-    # Change template of page 1
-    doc[0].setTemplate(template1)
+    t = Typesetter(doc, g)
+    t.typesetFile(MD_PATH)
     
+    if 0: # Preview the galley
+        gw, gh = g.getSize()
+        previewPage = doc[2]
+        previewPage.w = gw + 60
+        previewPage.h = gh + 40
+        previewPage.place(g, 40, 20)
+
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
-    c.typesetFile(FILENAME, doc[0], flowId0)
-     
+    c.compose(g, page1, flowId1)
+    
     return doc
         
-d = makeDocument()
-d.export('examples/AutomaticLayout.pdf') 
+d = makeDocument(RS)
+d.export(EXPORT_PATH) 
 
