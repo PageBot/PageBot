@@ -29,6 +29,8 @@ Combine the pumpkin pie filling, evaporated milk, condensed milk, eggs, 1/2 cup 
 Bake in preheated oven until a knife inserted in the center comes out clean, about 1 hour. Refrigerate for at least 3 hours, or overnight.
 Run a knife along the edge of the loaf pan to loosen the flan. Invert the pan onto a serving plate and tap to release the dessert.
 
+#Arizona: Cran-Turkey Enchiladas
+
 ##Ingredients 
 
 SERVINGS 8 UNITS US
