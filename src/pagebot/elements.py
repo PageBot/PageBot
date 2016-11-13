@@ -410,10 +410,10 @@ class Image(Element):
             scale(self.sx, self.sy)
             image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), self._getAlpha())
             sStroke = self.style.get('stroke', NO_COLOR)
-            if sStroke is not None: # In case drawing border.
-                setFillColor(None)
-                setStrokeColor(sStroke, self.style.get('strokeWidth', 1) * self.sx)
-                rect(x/self.sx, y/self.sy, self.w/self.sx, self.h/self.sy)
+            #if sStroke is not None: # In case drawing border.
+            #    setFillColor(None)
+            #    setStrokeColor(sStroke, self.style.get('strokeWidth', 1) * self.sx)
+            #    rect(x/self.sx, y/self.sy, self.w/self.sx, self.h/self.sy)
             restore()
         self._drawCaption(page, x, page.h - y, self.w, self.h)
 
