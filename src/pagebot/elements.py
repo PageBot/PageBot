@@ -406,15 +406,18 @@ class Image(Element):
         else:
             if self.sx is None: # In case not initialized yet.
                 self.setScale()
-            save()
-            scale(self.sx, self.sy)
-            image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), self._getAlpha())
-            sStroke = self.style.get('stroke', NO_COLOR)
-            #if sStroke is not None: # In case drawing border.
-            #    setFillColor(None)
-            #    setStrokeColor(sStroke, self.style.get('strokeWidth', 1) * self.sx)
-            #    rect(x/self.sx, y/self.sy, self.w/self.sx, self.h/self.sy)
-            restore()
+            if self.sx is not None: # Check is scale was set successfully.
+                save()
+                scale(self.sx, self.sy)
+                image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), self._getAlpha())
+                sStroke = self.style.get('stroke', NO_COLOR)
+                if sStroke is not None: # In case drawing border.
+                    setFillColor(None)
+                    setStrokeColor(sStroke, self.style.get('strokeWidth', 1) * self.sx)
+                    rect(x/self.sx, y/self.sy, self.w/self.sx, self.h/self.sy)
+                restore()
+            else:
+                print('Could not set scale of image "%s"' % self.path)
         self._drawCaption(page, x, page.h - y, self.w, self.h)
 
 class Ruler(Element):
