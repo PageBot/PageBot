@@ -114,12 +114,13 @@ if VARS:
         #'PromisePageBot-BoldCondensed': {"wght": 750, "wdth": 500, },
         #'PromisePageBot-LightCondensed': {"wght": 0, "wdth": 500},
         'PromisePageBot-Light': {"wght": 0, "wdth": 1000},
-        'PromisePageBot-Book': {"wght": 250, "wdth": 1000},
-        'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
-        'PromisePageBot-Medium': {"wght": 600, "wdth": 1000},    
-        'PromisePageBot-Semibold': {"wght": 750, "wdth": 1000},    
-        'PromisePageBot-SemiboldCondensed': {"wght": 250, "wdth": 100},    
-        'PromisePageBot-Bold': {"wght": 1000, "wdth": 1000},
+        'PromisePageBot-Book': {"wght": 200, "wdth": 1000},
+        'PromisePageBot-Regular': {"wght": 300, "wdth": 1000},    
+        'PromisePageBot-Medium': {"wght": 400, "wdth": 1000},    
+        'PromisePageBot-Semibold': {"wght": 500, "wdth": 1000},    
+        'PromisePageBot-SemiboldCondensed': {"wght": 500, "wdth": 100},    
+        'PromisePageBot-Bold': {"wght": 700, "wdth": 1000},
+        'PromisePageBot-UltraBlack': {"wght": 1000, "wdth": 1000},
     }
     FONTS = {}
     VFONT_PATH = 'PromisePageBot-GX.ttf'
@@ -137,6 +138,7 @@ if VARS:
     SEMIBOLD = FONTS['PromisePageBot-Semibold']
     SEMIBOLD_CONDENSED = FONTS['PromisePageBot-SemiboldCondensed'] 
     BOLD = FONTS['PromisePageBot-Bold']
+    BLACK = FONTS['PromisePageBot-UltraBlack']
 else:
     BOOK = MEDIUM = 'Georgia'
     BOOK_ITALIC = 'Georgia-Italic'
@@ -206,9 +208,9 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD_CONDENSED, fill=(1, 0, 0), 
-        leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, 
+    doc.newStyle(name='h1', fontSize=13.85*fontSize, font=BLACK, fill=(1, 0, 0), 
+        leading=12.5*leading, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD_CONDENSED, 
         fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
         prefix='', postfix='')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
