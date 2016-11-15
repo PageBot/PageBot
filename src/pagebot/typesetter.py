@@ -129,12 +129,14 @@ class Typesetter(object):
             return
 
         if node.attrib.get('class') == 'footnote':
-            # Find the content of the footnotes.
-            #node.findall('./ol/li/p')
-            #for index, p in enumerate(node.findall('./ol/li/p')):
-            #    self.document.footnotes[index+1].append(p)
+            # Find the content of the footnotes. Store the content and add marker.
+            node.findall('./ol/li/p')
+            for index, p in enumerate(node.findall('./ol/li/p')):
+                self.document.footnotes[index+1] = p
+                print self.document.footnotes
             cStyle = self.getCascadedNodeStyle(node.tag)
             tb = self.getTextBox(cStyle)  # Get the latest galley text box. Answer new if width changed.
+            tb.append(getMarker('footnote%d' % (index+1)))
             return
 
         return self.typesetNode(node)
