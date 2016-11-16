@@ -89,7 +89,7 @@ print FS
     # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'lemonHerbChicken.md'
-EXPORT_PATH = 'export/CookBotBook.pdf'
+EXPORT_PATH = 'export/CookBotBook.gif'
 
 #MD_PATH = 'testPaginaCompositie_nl.md'
 
