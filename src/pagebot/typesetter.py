@@ -101,7 +101,7 @@ class Typesetter(object):
         u"""Ignore links, but process the block"""
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
-        
+       
     def node_sup(self, node):
         u"""Collect footnote references on their page number.
         And typeset the superior footnote index reference."""
@@ -109,7 +109,12 @@ class Typesetter(object):
         nodeId = node.attrib.get('id')
         if nodeId.startswith('fnref'): # This is a footnote reference.
             footnotes = self.document.footnotes
-            footnotes[len(footnotes)+1] = [node, cStyle]
+            nodeId = nodeId.split(':')[1]
+            index = len(footnotes)+1
+            # Footnode['text'] content will be added if <div class="footnote">...</div> is detected.
+            footnotes[index] = dict(nodeId=nodeId, index=index, node=node, style=cStyle, text=None)
+            tb = self.getTextBox(cStyle)
+            tb.fs += getMarker('footnote', index)
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
  
@@ -128,15 +133,12 @@ class Typesetter(object):
             tb = self.getTextBox(cStyle)  # Get the latest galley text box. Answer new if width changed.
             return
 
-        if node.attrib.get('class') == 'footnote':
+        if 0 and node.attrib.get('class') == 'footnote':
             # Find the content of the footnotes. Store the content and add marker.
             node.findall('./ol/li/p')
             for index, p in enumerate(node.findall('./ol/li/p')):
-                self.document.footnotes[index+1] = p
-                print self.document.footnotes
-            cStyle = self.getCascadedNodeStyle(node.tag)
-            tb = self.getTextBox(cStyle)  # Get the latest galley text box. Answer new if width changed.
-            tb.append(getMarker('footnote%d' % (index+1)))
+                assert (index+1) in self.document.footnotes
+                self.document.footnotes[index+1]['text'] = p
             return
 
         return self.typesetNode(node)
@@ -248,8 +250,6 @@ class Typesetter(object):
             nodeStyle = self.getCascadedStyle(style)
         if nodeStyle is not None: # Do we have a real style for this tag, then push on gState stack
             self.pushStyle(nodeStyle)
-        #if node.tag == 'sup':
-        #    print "ASASAAAA {%s} {%s} {%s}" % (nodeStyle['name'], nodeStyle['prefix'], nodeStyle['postfix'])
 
         # Get current flow text box from Galley to fill. Style can be None. If the width of the
         # latest textBox.w is not equal to style['w'], then create a new textBox in the galley.
