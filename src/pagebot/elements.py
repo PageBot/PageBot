@@ -411,10 +411,10 @@ class Image(Element):
                 scale(self.sx, self.sy)
                 image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), self._getAlpha())
                 sStroke = self.style.get('stroke', NO_COLOR)
-                if sStroke is not None: # In case drawing border.
-                    setFillColor(None)
-                    setStrokeColor(sStroke, self.style.get('strokeWidth', 1) * self.sx)
-                    rect(x/self.sx, y/self.sy, self.w/self.sx, self.h/self.sy)
+                #if sStroke is not None: # In case drawing border.
+                #    setFillColor(None)
+                #    setStrokeColor(sStroke, self.style.get('strokeWidth', 1) * self.sx)
+                #    rect(x/self.sx, y/self.sy, self.w/self.sx, self.h/self.sy)
                 restore()
             else:
                 print('Could not set scale of image "%s"' % self.path)
@@ -431,7 +431,7 @@ class Ruler(Element):
 
     def draw(self, page, px, py):
         setFillColor(None)
-        setStrokeColor(self.style.get('stroke', NO_COLOR), self.style('strokeWidth'))
+        #setStrokeColor(self.style.get('stroke', NO_COLOR), self.style('strokeWidth'))
         sIndent = self.style.get('indent')
         sTailIndent = self.style.get('tailIndent')
         w = self.w - sIndent - sTailIndent

@@ -12,6 +12,7 @@
 Waar in de traditionele manier van werken met opmaakprogrammatuur zoals Quark XPress en InDesign altijd een menselijke beslissing de definitieve opmaak van een pagina bepaalt, zijn er steeds meer situaties waarin dat geen optie is. Doordat steeds meer pagina’s worden gegenereerd met inhoud die uit een database komt – of van een online source – en waar de selectie van de informatie direct wordt bepaald door eigenschappen van de lezer, moet de layout van de pagina’s automatisch worden berekend. 
 Er bestaat op het moment vreemd genoeg geen digitaal gereedschap dat enerzijds voldoende flexibel is om in alle mogelijk technieken en soorten layouts te gebruiken, te koppelen is met een grote verscheidenheid aan informatiebronnen, en anderzijds voldoet aan de typografische kwaliteit die met handmatige opmaak wel kan worden bereikt.
 
+
 ![AutoPager](images/im1.png "Met een XML beschrijving van de tekst wordt een transformatie uitgevoerd waarmee een strokenproef wordt aangemaakt. Daarbij wordt rekening gehouden met de typografische eigenschappen van de Markdown of XML tags, zoals lettertype, corps, gewichten, cursief, variations assen, spatiëring, regelbreedte, regeltransport, uitlijnen, inspringen, tabulatie, kleur, en afbreken in de gewenste taal.")
 
 ![The News](images/im2.png "Doel van het project is om automatisch pagina’s op te opmaken met een complexiteit die in anders alleen in boeken, kranten en tijdschriften te vinden is, tegelijk met een minimum aan toegevoegde meta-informatie.")

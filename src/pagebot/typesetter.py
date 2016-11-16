@@ -133,7 +133,7 @@ class Typesetter(object):
             tb = self.getTextBox(cStyle)  # Get the latest galley text box. Answer new if width changed.
             return
 
-        if node.attrib.get('class') == 'footnote':
+        if 0 and node.attrib.get('class') == 'footnote':
             # Find the content of the footnotes. Store the content and add marker.
             node.findall('./ol/li/p')
             for index, p in enumerate(node.findall('./ol/li/p')):

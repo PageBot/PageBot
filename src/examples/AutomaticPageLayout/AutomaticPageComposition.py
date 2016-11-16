@@ -36,18 +36,18 @@ from pagebot.typesetter import Typesetter
 
 import pagebot.elements
 reload(pagebot.elements)
-from pagebot.elements import Galley
+from pagebot.elements import Galley, Rect
 
 import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import generateInstance
-
-DEBUG = False
+    
+DEBUG = True
 
 SHOW_GRID = DEBUG
 SHOW_GRID_COLUMNS = DEBUG
-SHOW_BASELINE_GRID = DEBUG
-SHOW_FLOW_CONNECTIONS = DEBUG
+SHOW_BASELINE_GRID = False#DEBUG
+SHOW_FLOW_CONNECTIONS = False#DEBUG
 
 if SHOW_GRID:
     BOX_COLOR = (0.8, 0.8, 0.8, 0.4)
@@ -65,7 +65,7 @@ RS = getRootStyle(
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 11 * 72, # Page height 11", international generic fit.
     ml = 7*U, # Margin leftrs.mt = 7*U # Margin top
-    baselineGrid = 14,#baselineGrid,
+    baselineGrid = baselineGrid,
     g = U, # Generic gutter.
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # 11 is a the best in that respect for column calculation.
@@ -80,7 +80,7 @@ RS = getRootStyle(
     showFlowConnections = SHOW_FLOW_CONNECTIONS,
     BOX_COLOR = BOX_COLOR,
     # Text measures
-    leading = 14,
+    leading = baselineGrid,
     rLeading = 0,
     fontSize = 9
 )
@@ -113,6 +113,7 @@ if VARS:
     FONT_LOCATIONS = {
         #'PromisePageBot-BoldCondensed': {"wght": 750, "wdth": 500, },
         #'PromisePageBot-LightCondensed': {"wght": 0, "wdth": 500},
+        'PromisePageBot-LightCondensed': {"wght": 0, "wdth": 200},
         'PromisePageBot-Light': {"wght": 0, "wdth": 1000},
         'PromisePageBot-Book': {"wght": 200, "wdth": 1000},
         'PromisePageBot-Regular': {"wght": 300, "wdth": 1000},    
@@ -131,6 +132,7 @@ if VARS:
         fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
             location, targetDirectory=FONT_PATH + 'instances')
         FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
+    LIGHT_CONDENSED = FONTS['PromisePageBot-LightCondensed']
     LIGHT = FONTS['PromisePageBot-Light']
     BOOK = FONTS['PromisePageBot-Book']
     BOOK_ITALIC = FONTS['PromisePageBot-Book']
@@ -208,9 +210,9 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=13.85*fontSize, font=BLACK, fill=(1, 0, 0), 
-        leading=12.5*leading, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD_CONDENSED, 
+    doc.newStyle(name='h1', fontSize=2*fontSize, font=BLACK, fill=(1, 0, 0), 
+        leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h2', fontSize=5.3*fontSize, font=LIGHT_CONDENSED, 
         fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
         prefix='', postfix='')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
