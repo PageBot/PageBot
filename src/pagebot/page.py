@@ -40,6 +40,12 @@ class Page(Container):
         return self.eId
     pageId = property(_get_pageId)
 
+    def __getitem__(self, eId):
+        return self.elementIds[eId]
+		
+    def get(self, eId):
+        return self.elementsIds.get(eId)
+		
     def setTemplate(self, template):
         u"""Clear the elements from the page and set the template. Copy the elements."""
         self.elements = [] # Sequential drawing order of Element instances.
