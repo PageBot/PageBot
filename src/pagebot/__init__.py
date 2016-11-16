@@ -12,6 +12,7 @@
 #
 import CoreText
 import AppKit
+import Quartz
 
 import re
 from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth
@@ -106,14 +107,14 @@ def cr2p(cx, cy, cw, ch, style):
         ch * (columnHeight + gutter) - gutter)
 
 MARKER_PATTERN = '==%s--%s=='
-FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_]*)\-\-([^=]*)\=\=')
+FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\-\-([^=]*)\=\=')
 
 def getMarker(markerId, arg=None):
     u"""Answer a formatted string with markerId that can be used as non-display marker. 
     This way the Composer can find the position of markers in text boxes, after
     FS-slicing has been done. Note there is always a very small "white-space"
     added to the string, so there is a potential difference in width that matters.
-    For that reason markers should not be changed after slizing (which would theoretically
+    For that reason markers should not be changed after slicing (which would theoretically
     alter the flow of the FormattedString in an box) and the markerId and amount/length 
     of args should be kept as small as possible.
     Note that there is a potential problem of slicing through the argument string at 
@@ -124,10 +125,9 @@ def getMarker(markerId, arg=None):
     return FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)
     ###return FormattedString(marker, fill=(1, 0, 0), stroke=None, fontSize=10)
 
-def findMarkers(fs, w, h, align='left', hyphenation=True):
-    u"""Answer a dictionary of markers with their arguments and their formatted text rectangles
-    that exist in a given FormattedString."""
-    return textSearch(fs, w, h, FIND_FS_MARKERS, align, hyphenation)
+def findMarkers(fs):
+    u"""Answer a dictionary of markers with their arguments in a given FormattedString."""
+    return FIND_FS_MARKERS.findall(u'%s' % fs)
 
 def getFormattedString(t, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing,
@@ -215,7 +215,20 @@ def getFormattedString(t, style=None):
     fs.append(t)
     return fs
 
-def textSearch(fs, w, h, search, align='left', hyphenation=True):
+def textBoxBaseLines(txt, box):
+    u"""Answer a list of (x,y) positions of all line starts in the box. This function may become part
+    of standard DrawBot in the near future."""
+    x, y, w, h = box
+    attrString = txt.getNSObject()
+    setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
+    path = Quartz.CGPathCreateMutable()
+    Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
+    box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
+    ctLines = CoreText.CTFrameGetLines(box)
+    origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+    return [(x + o.x, y + o.y) for o in origins]
+        
+def textPositionSearch(fs, w, h, search, align='left', hyphenation=True):
     u"""
     """
     bc = BaseContext()
@@ -255,10 +268,10 @@ def textSearch(fs, w, h, search, align='left', hyphenation=True):
 
             if AppKit.NSLocationInRange(endLocation, lineRange):
                 maxx, _ = CoreText.CTLineGetOffsetForStringIndex(ctLine, endLocation, None)
-                rectangles.append((minx, miny - descent, maxx - minx, height))
+                rectangles.append((ctLine, (minx, miny - descent, maxx - minx, height)))
 
             if minx and maxx is None:
-                rectangles.append((minx, miny - descent, bounds.size.width - minx, height))
+                rectangles.append((ctLine, (minx, miny - descent, bounds.size.width - minx, height)))
                 minx = 0
 
     return rectangles
