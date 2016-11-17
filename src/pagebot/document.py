@@ -36,7 +36,7 @@ class Document(object):
         # they where placed on during composition.
         self.footnotes = {} # Keys is sequential order. Value is (page, e)
         self.literatureRefs = {}
-        self.toc = {} # Key is pageId. Value is list if header dicts. See self.addToc()
+        self.toc = {} # Keys is header index, value is header node, to connect the header markers with the nodes.
 
     def initializeStyles(self, rootStyle, styles):
         u"""Make sure that the default styles always exist."""
@@ -96,6 +96,13 @@ class Document(object):
         All installed fonts will automatically be uninstalled when the script is done."""
         return installFont(path)
 
+    def addToc(self, node):
+        u"""Add nodes for the Table of Content. This is done during typesetting of the galleys,
+        probably by the header-hook method for headlines."""
+        tocId = 'toc%d' % (len(self.toc)+1)
+        self.toc[tocId] = node
+        return tocId
+
     def __repr__(self):
         return '[Document: %s Pages: %d]' % (self.title, len(self))
         
@@ -105,14 +112,6 @@ class Document(object):
     def __getitem__(self, pIndex):
         u"""Answer page by index, which may be the same a the page number."""
         return self.pages[pIndex]
-    
-    def addToc(self, node, page):
-        u"""Add stuff for the Table of Content, connecting the node with the composed page.
-        This addition is sypically done in composing mode, after all Galley elements are 
-        distributes on pages, scanning through the content for h-markers."""
-        if not page.pageId in self.toc:
-            self.toc[page.pageId] = []
-        self.toc[page.pageId].append((node, page))
 
     def getPage(self, pageId):
         u"""Answer the pageNumber, where the first pages #1 is self.pages[1]"""
