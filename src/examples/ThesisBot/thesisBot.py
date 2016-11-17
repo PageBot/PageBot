@@ -149,6 +149,7 @@ def makeDocument(rs):
     flowId1 = MAIN_FLOW+'1' 
     flowIds = [flowId1] # Names of boxes that contain footnote text in flow.
     footnotesId = 'footnotes' # Id of target textBox containing footnotes per page. 
+    tocId = 'toc' # Id of target textBox, containing the table of content.
     # Template 1
     template1 = Template(rs) # Create template of main size. Front page only.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
@@ -160,6 +161,7 @@ def makeDocument(rs):
     #template1.cContainer(0, 5, 2, 3, rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
     template1.cTextBox(FS, 2, 0, 3, 8, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
+    template1.cTextBox('', 0, 0, 2, 6, rs, tocId, fill=BOX_COLOR) # For now, keep on the first page.
     template1.cTextBox('', 0, 6, 2, 2, rs, footnotesId, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
     template1.cText(FS+rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
@@ -216,7 +218,10 @@ def makeDocument(rs):
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
-    doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
+    doc.newStyle(name='footnote', fill=0, fontSize=0.9*fontSize, font=BOOK,
+        tracking=P_TRACK,
+        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        firstLineIndent=1, postfix='\n')
     doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
         leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
         indent=U/2, tailIndent=-U/2, hyphenation=True)
@@ -240,14 +245,34 @@ def makeDocument(rs):
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
     c.compose(g, page1, flowId1)
-    # Now all text is composed on pages, scan for the pages
-    # that contain footnotes.
+    
+    # Now all text is composed on pages, scan for the pages that contain footnotes.
+    # TODO: This will be implemented a function of composer in a later version.
+    # Get the tocBox as located on the first page.
+    tocBox, (_, _) = page1[tocId]
     for pageId, page in sorted(doc.pages.items()):
+        # Get page box for footnotes
+        fnBox, (_, _) = page[footnotesId]
+        assert fnBox is not None # Otherwise there is a template error. Footnote box needs to exist.
         for flowId in flowIds:
-            for m in findMarkers(page[flowId][0].fs):
-                print m
-    print doc.footnotes
-        
+            # BUG: Need to check if the marker was really found in the textbox area. 
+            # If it is part of the overflow, then it should not be found here.
+            for marker, arguments in findMarkers(page[flowId][0].fs):
+                if marker == 'footnote': 
+                    # Process the foot note.
+                    footnoteId = int(arguments) # Footnode ids are numbers. 
+                    # Process the footnote id and content, usng the “footnote“ content style.
+                    # We are re-using the typesetter here. This may become a separate typesetter, if this code
+                    # becomes a method of the composer.
+                    # TODO: Make this into Galley, in case footnote <p> has child nodes. 
+                    footnoteText = getFormattedString('%d\t%s\n' % (footnoteId, doc.footnotes[footnoteId]['p'].text),
+                        style=t.getCascadedStyle(doc.getStyle('footnote')))
+                    # Add the footnote content to the box (it may not be the first to be added.
+                    fnBox.append(footnoteText)
+                elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all
+                    #doc.addToc(marker, page)
+                    pass
+                    
     return doc
         
 d = makeDocument(RS)

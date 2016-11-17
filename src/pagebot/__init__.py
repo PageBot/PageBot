@@ -125,9 +125,11 @@ def getMarker(markerId, arg=None):
     return FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)
     ###return FormattedString(marker, fill=(1, 0, 0), stroke=None, fontSize=10)
 
-def findMarkers(fs):
+def findMarkers(fs, reCompiled=None):
     u"""Answer a dictionary of markers with their arguments in a given FormattedString."""
-    return FIND_FS_MARKERS.findall(u'%s' % fs)
+    if reCompiled is None:
+        reCompiled= FIND_FS_MARKERS
+    return reCompiled.findall(u'%s' % fs)
 
 def getFormattedString(t, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing,
