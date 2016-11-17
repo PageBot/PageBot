@@ -55,7 +55,8 @@ class Typesetter(object):
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append(getMarker(node.tag))
+        headerId = self.document.addToc(node) # Store the node in the self.document.toc for later TOC composition.
+        tb.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
@@ -65,7 +66,8 @@ class Typesetter(object):
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append(getMarker(node.tag))
+        headerId = self.document.addToc(node) # Store the node in the self.document.toc for later TOC composition.
+        tb.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
@@ -75,7 +77,8 @@ class Typesetter(object):
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append(getMarker(node.tag))
+        headerId = self.document.addToc(node) # Store the node in the self.document.toc for later TOC composition.
+        tb.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
         
@@ -85,7 +88,8 @@ class Typesetter(object):
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        tb.append(getMarker(node.tag))
+        headerId = self.document.addToc(node) # Store the node in the self.document.toc for later TOC composition.
+        tb.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 

@@ -270,7 +270,7 @@ def makeDocument(rs):
                     # Add the footnote content to the box (it may not be the first to be added.
                     fnBox.append(footnoteText)
                 elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all
-                    #doc.addToc(marker, page)
+                    #doc.addToc(marker)
                     pass
                     
     return doc

@@ -3,19 +3,19 @@
 ##Ingredients
 
 SERVINGS 8-10 UNITS US
-1⁄2 cup white sugar
-1 (14 ounce) can pumpkin pie filling
-1 (12 ounce) can evaporated milk
-1 (5 ounce) can sweetened condensed milk
-6 eggs
-1⁄2 cup white sugar
-1 teaspoon vanilla extract
-1 teaspoon allspice
-On Sale Near You
-See what's on sale in recipes and in your Grocery List.
+
+* 1⁄2 cup white sugar
+* 1 (14 ounce) can pumpkin pie filling
+* 1 (12 ounce) can evaporated milk
+* 1 (5 ounce) can sweetened condensed milk
+* 6 eggs
+* 1⁄2 cup white sugar
+* 1 teaspoon vanilla extract
+* 1 teaspoon allspice
+
+On Sale Near You See what's on sale in recipes and in your Grocery List.
 
 Find stores
- Pumpkin Soup, 15 Ways
 Pumpkin Soup, 15 Ways
 
 ##Directions

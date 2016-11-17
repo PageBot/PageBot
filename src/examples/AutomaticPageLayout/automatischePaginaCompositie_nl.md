@@ -6,7 +6,7 @@
 
 ###Finding the possibilities and ultimate challenges
 
-##Introduction
+#Introduction
 
 ###Deze notitie belicht noodzaak en mogelijke aanpak van een actueel probleem waaraan weinig aandacht wordt besteed en dan bijna altijd op basis van foute uitgangspunten.
 Waar in de traditionele manier van werken met opmaakprogrammatuur zoals Quark XPress en InDesign altijd een menselijke beslissing de definitieve opmaak van een pagina bepaalt, zijn er steeds meer situaties waarin dat geen optie is. Doordat steeds meer pagina’s worden gegenereerd met inhoud die uit een database komt – of van een online source – en waar de selectie van de informatie direct wordt bepaald door eigenschappen van de lezer, moet de layout van de pagina’s automatisch worden berekend. 
@@ -18,7 +18,7 @@ Er bestaat op het moment vreemd genoeg geen digitaal gereedschap dat enerzijds v
 ![The News](images/im2.png "Doel van het project is om automatisch pagina’s op te opmaken met een complexiteit die in anders alleen in boeken, kranten en tijdschriften te vinden is, tegelijk met een minimum aan toegevoegde meta-informatie.")
 
 ###Fasering
-Het opmaken van een pagina vanuit ruwe kopij en meta-informatie is te verdelen in een aantal fasen[^phases]:
+Het opmaken van een pagina vanuit ruwe kopij en meta-informatie is te verdelen [^phases] in een aantal fasen:
 
 * Transformatie vanuit Markdown via XML;
 * Zetten van de strokenproef;
@@ -28,8 +28,7 @@ Het opmaken van een pagina vanuit ruwe kopij en meta-informatie is te verdelen i
 ###XML transformatie
 Het transformeren van XML documenten naar een informatiestructuur is met standaardgereedschappen zoals Python-Markdown makkelijk uit te voeren.
 
-[^phases]: Voorlopig is de indeling van het project hetzelfde als de fasering van de paginaopmaak.
-
+[^phases]: Voorlopig is de indeling van het project hetzelfde als de fasering van de paginaopmaak. 
 
 ###Zetten van de strokenproef
 Om de software te maken die een strokenproef kan genereren is typografische kennis nodig.[^typografische kennis] In vrijwel alle automatische opmaakprogramma’s is dit een onderbelicht gebied. Dat komt doordat de bouwers van dergelijke software niet of nauwelijks op de hoogte zijn van de relevante parameters en hun onderlinge samenhang. Ook kunnen verschillen in culturele tradities een rol spelen. USA-typografie is niet hetzelfde als Europese.
