@@ -111,8 +111,8 @@ class Typesetter(object):
             footnotes = self.document.footnotes
             nodeId = nodeId.split(':')[1]
             index = len(footnotes)+1
-            # Footnode['text'] content will be added if <div class="footnote">...</div> is detected.
-            footnotes[index] = dict(nodeId=nodeId, index=index, node=node, style=cStyle, text=None)
+            # Footnode['p'] content node will be added if <div class="footnote">...</div> is detected.
+            footnotes[index] = dict(nodeId=nodeId, index=index, node=node, style=cStyle, p=None)
             tb = self.getTextBox(cStyle)
             tb.fs += getMarker('footnote', index)
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
@@ -133,12 +133,13 @@ class Typesetter(object):
             tb = self.getTextBox(cStyle)  # Get the latest galley text box. Answer new if width changed.
             return
 
-        if 0 and node.attrib.get('class') == 'footnote':
+        if node.attrib.get('class') == 'footnote':
             # Find the content of the footnotes. Store the content and add marker.
             node.findall('./ol/li/p')
             for index, p in enumerate(node.findall('./ol/li/p')):
                 assert (index+1) in self.document.footnotes
-                self.document.footnotes[index+1]['text'] = p
+                # Store the content as node, so we can process it with a Typesetter in case of child nodes.
+                self.document.footnotes[index+1]['p'] = p
             return
 
         return self.typesetNode(node)
