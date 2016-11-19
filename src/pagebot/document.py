@@ -96,9 +96,13 @@ class Document(object):
         All installed fonts will automatically be uninstalled when the script is done."""
         return installFont(path)
 
-    def addToc(self, node):
-        u"""Add nodes for the Table of Content. This is done during typesetting of the galleys,
-        probably by the header-hook method for headlines."""
+    def addTocNode(self, node):
+        u"""Add nodes for the Table of Content assembly. This adding is done during typesetting of the 
+        galleys, typically by the header-hook method for headlines. A unique tocId is created that serves
+        as key for the node to be stored. Then it is answered, to be used by the calling Typesetter
+        in a marker in the text. Since we only can store strings in the attribute field of markers,
+        we can not cache the node itself. Using the tocId as reference, the composer is able to 
+        find back the relation between page-position of the marker and the related header node. """
         tocId = 'toc%d' % (len(self.toc)+1)
         self.toc[tocId] = node
         return tocId
@@ -133,9 +137,9 @@ class Document(object):
     def getLastPage(self):
         u"""Answer the page with the highest sorted page id. Answer None if there are not pages.
         """
-        if not self.pages:
-            return None
-        return self.pages[sorted(self.pages.keys())[-1]]
+        if self.pages:
+            return self.pages[sorted(self.pages.keys())[-1]]
+        return None
 
     def newPage(self, style=None, w=None, h=None, pageId=None, template=None, **kwargs):
         u"""Create a new page with the optional (w,h). Use (self.w, self.h) if one of the values is omitted.

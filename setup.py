@@ -20,7 +20,7 @@ setup(
     name='pagebot',
     version='0.1',
     packages=['pagebot'],
-    package_dir={'': 'src'},
+    package_dir={'': 'pagebot'},
     entry_points={
         'console_scripts': [
             'pagebot = pagebot.__main__:main'
