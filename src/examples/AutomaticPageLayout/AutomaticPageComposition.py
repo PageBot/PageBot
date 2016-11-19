@@ -62,7 +62,7 @@ listIndent = 1.5*U
 RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
-    w = 1595, # Om root level the "w" is the page width 210mm, international generic fit.
+    w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 11 * 72, # Page height 11", international generic fit.
     ml = 7*U, # Margin leftrs.mt = 7*U # Margin top
     baselineGrid = baselineGrid,
@@ -213,15 +213,15 @@ def makeDocument(rs):
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
     doc.newStyle(name='h1', fontSize=2*fontSize, font=BLACK, fill=(1, 0, 0), 
         leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=5.3*fontSize, font=LIGHT_CONDENSED, 
+    doc.newStyle(name='h2', fontSize=5*fontSize, font=LIGHT_CONDENSED, 
         fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
-        prefix='', postfix='')
+        prefix='', postfix='\n')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        prefix='\n', postfix='\n')
+        prefix='', postfix='\n')
     doc.newStyle(name='h4', fontSize=1.1*fontSize, font=BOOK, fill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='\n', postfix='\n')
+        paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='', postfix='\n')
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
