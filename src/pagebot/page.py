@@ -321,34 +321,60 @@ class Page(Container):
         if endMarker:
             oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 
-    def drawFlowConnections(self):
+    def drawFlowConnections(self, ox, oy):
         u"""If rootStyle.showFlowConnections is True, then draw the flow connections
         on the page, using their stroke/width settings of the style."""
         style = self.parent.getRootStyle()
         if not style.get('showFlowConnections'):
             return
         for seq in self.getFlows().values():
-            # For all the flow sequences found in the page, draw flow arrows
+            # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)
+            # This offset is defined by optional 
             tbStart, (startX, startY) = self.getElementPos(seq[0].eId)
             for tbTarget in seq[1:]:
                 tbTarget, (targetX, targetY) = self.getElementPos(tbTarget.eId)
-                self.drawArrow(startX, startY+tbStart.h, startX+tbStart.w, startY, -1)
-                self.drawArrow(startX+tbStart.w, startY, targetX, targetY + tbTarget.h, 1)
+                self.drawArrow(ox+startX, oy+startY+tbStart.h, ox+startX+tbStart.w, oy+startY, -1)
+                self.drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h, 1)
                 tbStart = tbTarget
                 startX = targetX
                 startY = targetY
-            self.drawArrow(startX, startY + tbStart.h, startX + tbStart.w, startY, -1)
+            self.drawArrow(ox+startX, oy+startY+tbStart.h, ox+startX+tbStart.w, oy+startY, -1)
 
             if self != self.parent.getLastPage():
                 # Finalize with a line to the start, assuming it is on the next page.
                 tbTarget, (targetX, targetY) = self.getElementPos(seq[0].eId)
-                self.drawArrow(startX + tbStart.w, startY, targetX, targetY + tbTarget.h - self.h, 1)
+                self.drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h-self.h, 1)
+
+    def drawCropMarks(self, ox, oy):
+        u"""If the show flag is set, then draw the cropmarks or page frame."""
+        style = self.parent.getRootStyle()
+        if style.get('showCropMarks'):
+            pass
+
+    def drawPageFrame(self, ox, oy):
+        u"""If the show flag is set, then draw the cropmarks or page frame."""
+        style = self.parent.getRootStyle()
+        if style.get('showPageFrame'):
+            pass
 
     def draw(self):
+        u"""If the size of the document is larger than the size of hte page, then use the extra space
+        to draw cropmarks and other print-related info. This also will make the bleeding of images 
+        visible."""
+        if self.parent.w > self.w and self.parent.h > self.h:
+            offsetX = (self.parent.w - self.w)/2
+            offsetY = (self.parent.h - self.h)/2
+        else:
+            offsetX = offsetY = 0
+        # Draw all elements with this offset.
         for element, (x, y) in self.elements:
-            element.draw(self, x, y)
+            element.draw(self, offsetX+x, offsetY+y)
+        # If there is an offset and drawing cropmarks (or frame)
+        self.drawCropMarks(offsetX, offsetY)
+        # If there is an offset and drawing cropmarks (or frame)
+        self.drawPageFrame(offsetX, offsetY)
         # Check if we need to draw the flow arrows.
-        self.drawFlowConnections()
+        self.drawFlowConnections(offsetX, offsetY)
 
 class Template(Page):
     u"""Template is a special kind of Page class. Possible the draw in 

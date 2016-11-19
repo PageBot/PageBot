@@ -22,6 +22,8 @@ SHOW_GRID = True
 SHOW_GRID_COLUMNS = True
 SHOW_BASELINE_GRID = True
 SHOW_FLOW_CONNECTIONS = True
+SHOW_CROPMARKS = True
+SHOW_PAGE_FRAME = True
 
 LEFT_ALIGN = 'left'
 RIGHT_ALIGN = 'right'
@@ -49,7 +51,8 @@ def makeStyle(style, **kwargs):
     return style
 
 def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
-        showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS, **kwargs):
+        showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS, 
+        showCropMarks=SHOW_CROPMARKS, showPageFrame=SHOW_PAGE_FRAME, **kwargs):
     u"""Answer the main root style tha contains all default style attributes of PageBot.
     To be overwritten when needed by calling applications.
     CAPITALIZED attribute names are for reference only. Not used directly from styles.
@@ -133,7 +136,10 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         flowMarkerFill = (0.8, 0.8, 0.8, 0.5), # Fill of flow curve marker circle.
         flowMarkerSize = 8, # Size of flow marker circle.
         flowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
-
+        # Draw page crop marks if document (w, h) is larger than page (w, h)
+        showCropMarks = showCropMarks,
+        # Draw page fram if document (w, h) is larger than page (w, h)
+        showPageFrame = showPageFrame,
         # Generic element stuff
         missingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
 
@@ -193,10 +199,11 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # Language and hyphenation
         language = 'en', # Language for hyphenation and spelling. Can be altered per style in FormattedString.
         hyphenation = True,
-        # Strip pre/post white space from e.text and e.tail and substitute by respectively preFix and postFix
+        # Strip pre/post white space from e.text and e.tail and substitute by respectively prefix and postfix
         # if they are not None. Set to e.g. newline(s) "\n" or empty string, if tags need to glue together.
+        # Make None for no stripping
         prefix = '', # Default is to strip white space from a block. Make None for no stripping.
-        postfix = '', # Default is to strip white space from tail of XML tag block. Make None for no stripping
+        postfix = ' ', # Default is to strip white space from tail of XML tag block into a single space. 
 
         # Paging
         pageIdMarker = '#??#', # Text pattern that will be replaced by current page id.

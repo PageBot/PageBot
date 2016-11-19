@@ -55,11 +55,15 @@ class Document(object):
 
     def _get_w(self):
         return self.rootStyle['w']
-    w = property(_get_w)
+    def _set_w(self, w):
+        self.rootStyle['w'] = w
+    w = property(_get_w, _set_w)
 
     def _get_h(self):
         return self.rootStyle['h']
-    h = property(_get_h)
+    def _set_h(self, h):
+        self.rootStyle['h'] = h
+    h = property(_get_h, _set_h)
 
     def fromRootStyle(self, **kwargs):
         u"""Answer a new style as copy from the root style. Overwrite the defined arguments."""
@@ -195,6 +199,7 @@ class Document(object):
         self.styles[name] = style
         # Force the name of the style to synchronize with the requested key.
         style['name'] = name
+        print 'ASAASASA', name, style
         return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
 
     def newStyle(self, **kwargs):

@@ -93,7 +93,7 @@ class Typesetter(object):
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
-    # Solve <br/> best by simple style with: doc.newStyle(name='br', postFix='\n')
+    # Solve <br/> best by simple style with: doc.newStyle(name='br', postfix='\n')
 
     def node_hr(self, node):
         u"""Add Ruler instance to the Galley.
@@ -193,7 +193,7 @@ class Typesetter(object):
         attributes. Copy the current style and add overwrite the values from the new style.
         This way the current style always contains all attributes of the root style."""
         cascadedStyle = copy.copy(self.gState[-1]) # Take a copy of the top of the gState stack as source.
-        if style is not None: # Style may be None. In that case answer just copy, which is already.
+        if style is not None: # Style may be None. In that case answer just the copy, which is already cascaded.
             for name, value in style.items():
                 cascadedStyle[name] = value # Overwrite the value from altering tag style.
             # Mark that this is a cascaded style now, to distinguish from individual plain tag styles.
@@ -207,19 +207,18 @@ class Typesetter(object):
         u"""Answer the cascaded named style, if it exists. Otherwise answer the root style
         (which is already cascaded by definition)."""
         style = self.document.getStyle(name)
-        if style is None:
-            # There is not style with that name. Make it an empty style, dict, so it will follow
-            # all current settings on the gState.
-            style = {}
-        elif style.get('cascaded'):
-            return style # If already happen to be cascaded, then don't change it.
+        if style is not None and style.get('cascaded'):
+            # There is style with that name. Answer it, if already cascaded.
+            return style
         # Make a copy and cascade the style (filling in the missing values) from the top of the gState stack.
-        return self.getCascadedStyle(style)
-
+        sss = self.getCascadedStyle(style)
+        print 'SASSAS__', name, style.get('postfix'), sss['postfix']
+        return sss
+        
     def pushStyle(self, cascadedStyle):
         u"""Push the cascaded style on the gState stack."""
         # Make sure this is a cascaded style, otherwise it cannot be used as source for child styles.
-        assert cascadedStyle.get('cascaded')
+        assert cascadedStyle is not None and cascadedStyle.get('cascaded')
         self.gState.append(cascadedStyle)
         return cascadedStyle
         
@@ -230,18 +229,16 @@ class Typesetter(object):
         self.gState.pop()
         return self.gState[-1]
 
-    def _strip(self, s, style, forceRightStrip=False):
-        u"""Strip the white space from string “s” if style.preFix and/or style.postFix are not None."""
-        if not None in (s, style):
-            prefix = style.get('prefix')
-            if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
-                s = prefix + s.lstrip()
-            postfix = style.get('postfix')
-            if forceRightStrip:
-                s = s.rstrip()
-            elif postfix is not None: # Strip if postfix is not None. Otherwise don't touch.
-                s = s.rstrip() + postfix
-            s = getFormattedString(s, style)
+    def _strip(self, s, style=None, prefix=None, postfix=None, forceRightStrip=False):
+        u"""Strip the white space from string “s” if prefix and/or postfix are not None.
+        Otherwise answer the untouched s."""
+        print 'S_SS_S_', s, style['name'], `prefix`, `postfix`, forceRightStrip
+        if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
+            s = prefix + (s or '').lstrip() # Force s to empty string in case it is None, to add prefix.
+        elif forceRightStrip:
+            s = (s or '').rstrip() # Force s to empty string in case it is None.
+        elif postfix is not None: # Strip if postfix is not None. Otherwise don't touch.
+            s = (s or '').rstrip() + postfix # Force s to empty string in case it is None, to add postfix.
         return s
 
     def typesetNode(self, node, style=None):
@@ -250,19 +247,22 @@ class Typesetter(object):
         style with the one that was on top before. This way automatic cascading values are in the style
         answered by the push."""
         if style is None:
-            nodeStyle = self.getCascadedNodeStyle(node.tag)
+            style = self.getCascadedNodeStyle(node.tag)
         else: # If for some reason this is an un-cascaded plain style. Make it cascaded. Otherwise don't touch.
-            nodeStyle = self.getCascadedStyle(style)
-        if nodeStyle is not None: # Do we have a real style for this tag, then push on gState stack
-            self.pushStyle(nodeStyle)
+            style = self.getCascadedStyle(style)
+        self.pushStyle(style)
 
         # Get current flow text box from Galley to fill. Style can be None. If the width of the
         # latest textBox.w is not equal to style['w'], then create a new textBox in the galley.
-        tb = self.getTextBox(nodeStyle)
+        tb = self.getTextBox(style)
 
-        nodeText = self._strip(node.text, nodeStyle, True)
+        # XML-nodes are organized as: node - node.text - node.children - node.tail
+        # If there is no text or if the node does not have tail text, these are None.
+        # Still we want to be able to add the prefix to the node.text, so then the text is changed to empty string.
+        nodeText = self._strip(node.text, style, prefix=style['prefix'])
         if nodeText: # Not None and still has content after stripping?
-            tb.append(nodeText) # Add to the current flow textBox
+            fs = getFormattedString(nodeText, style)
+            tb.append(fs) # Add the new formatted string to the current flow textBox
 
         # Type set all child node in the current node, by recursive call.
         for child in node:
@@ -272,29 +272,31 @@ class Typesetter(object):
                 getattr(self, hook)(child) # Hook must be able to derive style from node.
                 # We are on tail mode now, but we don't know what happened in the child block.
                 # So, to be sure, we'll push the current style again.
-                childTail = self._strip(child.tail, nodeStyle)
+                childTail = self._strip(child.tail, style, prefix=style['prefix'])
                 if childTail: # Any tail left after stripping, then append to the current textBox.
                     # Get current flow text box from Galley to fill. If may have changed, if another
                     # element was created by the tree of nodes, e.g an image or table. If the latest
                     # galley element is still a flow, and if the current width of the textBox is
                     # equal to style['w'] then continue using the same. Otherwise a new textBox
                     # is created by the galley.
-                    tb = self.getTextBox(nodeStyle)
-                    tb.append(childTail)  # Add to the current flow textBox
+                    fs = getFormattedString(childTail, style)
+                    tb = self.getTextBox(style)
+                    tb.append(fs)  # Add the tail formatted string to the current flow textBox
             else:
                 # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child)
 
         # Restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text.
-        if nodeStyle is not None: # Only pop if there was originally was a pushed style.
-            style = self.popStyle()
+        style = self.popStyle()
 
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
-        nodeTail = self._strip(node.tail, style)
+        # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
+        nodeTail = self._strip(node.tail, style, postfix=style['postfix'])
         if nodeTail: # Something of a tail left after stripping?
-            tb.append(nodeTail) # Add to the current flow textBox
+            fs = getFormattedString(nodeTail, style)
+            tb.append(fs) # Add to the current flow textBox
 
     def typesetFile(self, fileName):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
