@@ -114,7 +114,7 @@ if VARS:
         'PromisePageBot-Semibold': {"wght": 500, "wdth": 1000},    
         'PromisePageBot-SemiboldCondensed': {"wght": 500, "wdth": 100},    
         'PromisePageBot-Bold': {"wght": 700, "wdth": 1000},
-        'PromisePageBot-UltraBlack': {"wght": 1000, "wdth": 1000},
+        'PromisePageBot-UltraBlack': {"wght": 600, "wdth": 1000},
     }
     FONTS = {}
     VFONT_PATH = 'PromisePageBot-GX.ttf'

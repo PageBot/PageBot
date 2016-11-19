@@ -229,6 +229,14 @@ class TextBox(Element):
         (self.w, self.h) of this text box."""
         return textOverflow(self.fs, (0, 0, w or self.w, h or self.h), LEFT_ALIGN)
 
+    def getBaselinePositions(self, y=0, w=None, h=None):
+        u"""Answer the list vertical baseline positions, relative to y (default is 0)
+        for the given width and height. If omitted use (self.w, self.h)"""
+        baselines = []
+        for _, baselineY in textBoxBaseLines(self.fs, (0, y, w or self.w, h or self.h)):
+            baselines.append(baselineY)
+        return baselines
+        
     def draw(self, page, x, y):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
@@ -406,7 +414,7 @@ class Image(Element):
         else:
             if self.sx is None: # In case not initialized yet.
                 self.setScale()
-            if self.sx is not None: # Check is scale was set successfully.
+            if self.sx is not None: # Check again if scale was set successfully.
                 save()
                 scale(self.sx, self.sy)
                 image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), self._getAlpha())

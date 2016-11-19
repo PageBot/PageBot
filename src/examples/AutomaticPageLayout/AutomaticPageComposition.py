@@ -12,7 +12,7 @@
 #     This script generates an article in Dustch the apporach to
 #     generate automatic layouts, using Galley, Typesetter and Composer classes.
 #
-from pagebot import getFormattedString
+from pagebot import getFormattedString, textBoxBaseLines
 
 import pagebot.style
 reload(pagebot.style)
@@ -62,7 +62,7 @@ listIndent = 1.5*U
 RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
-    w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
+    w = 1595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 11 * 72, # Page height 11", international generic fit.
     ml = 7*U, # Margin leftrs.mt = 7*U # Margin top
     baselineGrid = baselineGrid,
@@ -94,7 +94,7 @@ if 0: # EN version of the article.
 else: # NL version of the article.
     RS['language'] = 'nl-be' # Make Dutch hyphenation.
     MD_PATH = 'automatischePaginaCompositie_nl.md'
-    EXPORT_PATH = 'export/AutomatischePaginaOpmaak.pdf'
+    EXPORT_PATH = 'export/AutomatischePaginaOpmaak.gif'
 
 #MD_PATH = 'testPaginaCompositie_nl.md'
 
@@ -121,6 +121,7 @@ if VARS:
         'PromisePageBot-Semibold': {"wght": 500, "wdth": 1000},    
         'PromisePageBot-SemiboldCondensed': {"wght": 500, "wdth": 100},    
         'PromisePageBot-Bold': {"wght": 700, "wdth": 1000},
+        'PromisePageBot-Black': {"wght": 800, "wdth": 800},
         'PromisePageBot-UltraBlack': {"wght": 1000, "wdth": 1000},
     }
     FONTS = {}
@@ -140,7 +141,7 @@ if VARS:
     SEMIBOLD = FONTS['PromisePageBot-Semibold']
     SEMIBOLD_CONDENSED = FONTS['PromisePageBot-SemiboldCondensed'] 
     BOLD = FONTS['PromisePageBot-Bold']
-    BLACK = FONTS['PromisePageBot-UltraBlack']
+    BLACK = FONTS['PromisePageBot-Black']
 else:
     BOOK = MEDIUM = 'Georgia'
     BOOK_ITALIC = 'Georgia-Italic'
@@ -253,20 +254,13 @@ def makeDocument(rs):
     page1.setTemplate(template1)
     
     # Create main Galley for this page, for pasting the sequence of elements.    
-    g = Galley() 
-    t = Typesetter(doc, g)
+    galley = Galley() 
+    t = Typesetter(doc, galley)
     t.typesetFile(MD_PATH)
     
-    if 0: # Preview the galley
-        gw, gh = g.getSize()
-        previewPage = doc[2]
-        previewPage.w = gw + 60
-        previewPage.h = gh + 40
-        previewPage.place(g, 40, 20)
-
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
-    c.compose(g, page1, flowId1)
+    c.compose(galley, page1, flowId1)
     
     return doc
         
