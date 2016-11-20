@@ -92,4 +92,4 @@ ENV/
 
 .idea/*
 
-src/fonts/instances/*.ttf
+fonts/instances/*.ttf

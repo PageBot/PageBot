@@ -69,7 +69,7 @@ There are many examples of non-call systems that do not work well or where the d
 
 ![Overlap columns](images/im8.png "When placing elements with different widths are other columns filled without already clear that in the next column a split is possible in the text. This does he need that the system can "backtrack" so it is possible to return to previous decisions in the layout of the page.")
 
-This is a concept note, modifications and extensions are needed. These pages were made automatically PageComposer a OpenSourece application Drawbot.
+This is a concept note, modifications and extensions are needed. These pages were made automatically PageComposer a OpenSourece application DrawBot.
 
 Buro Petr van Blokland + Claudia Mens
 Rietveld 562611 LM Delft

@@ -8,10 +8,12 @@
 # -----------------------------------------------------------------------------
 #
 #     Pepper+Tom Identity
-#     Stationary.py
+#     SkirtLabel.py
 #
-#     This script generates an article in Dutch the apporach to
-#     generate automatic layouts, using Galley, Typesetter and Composer classes.
+#     This script generates the product labels for skirts in the Pepper+Tom identity.
+#     https://claudia-mens.squarespace.com
+#     Feel free to use as inspiration. 
+#     Don't use exactly like this, an idenity is supposed to be unique. :)
 #
 from pagebot import getFormattedString, textBoxBaseLines
 

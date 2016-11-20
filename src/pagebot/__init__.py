@@ -5,7 +5,7 @@
 #
 #     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in Drawbot, www.drawbot.com
+#     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
 #     __init__.py

@@ -4,13 +4,13 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in Drawbot, www.drawbot.com
+#     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
 #     AutomaticPageComposition.py
 #
-#     This script generates an article in Dustch the apporach to
-#     generate automatic layouts, using Galley, Typesetter and Composer classes.
+#     This script generates an article (in Dutch) of 2009 about the approach to
+#     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
 from pagebot import getFormattedString, textBoxBaseLines
 
