@@ -145,14 +145,14 @@ def getFormattedString(t, style=None):
         sFallbackFont = style.get('fallbackFont')
         if sFallbackFont is not None:
             fs.fallbackFont(sFallbackFont)
-        sFill = style.get('fill', NO_COLOR)
+        sFill = style.get('textFill', NO_COLOR)
         if sFill is not NO_COLOR: # Test on this flag, None is valid value
             setFillColor(sFill, fs)
         sCmykFill = style.get('cmykFill', NO_COLOR)
         if sCmykFill is not NO_COLOR:
             setFillColor(sCmykFill, fs, cmyk=True)
-        sStroke = style.get('stroke', NO_COLOR)
-        sStrokeWidth = style.get('strokeWidth')
+        sStroke = style.get('textStroke', NO_COLOR)
+        sStrokeWidth = style.get('textStrokeWidth')
         if sStroke is not NO_COLOR and strokeWidth is not None:
             setStrokeColor(sStroke, sStrokeWidth, fs)
         sCmykStroke = style.get('cmykStroke', NO_COLOR)

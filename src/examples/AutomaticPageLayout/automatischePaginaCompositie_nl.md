@@ -36,8 +36,8 @@ Met name tabellen zijn lastige typografische bouwstenen, als niet duidelijk is w
 
 [^typografische kennis]: Die kennis begint te verminderen. Het opmaken van een pagina met statische proporties en een vaste basislijn vergt andere typografische parameters dan het opmaken van responsieve pagina’s met HTML en CSS.
 
-###Zetten van de strokenproef
-Om de software te maken die een stroken- proef kan genereren is typografische kennis nodig. In vrijwel alle automatische opmaakprogramma’s is dit een onderbelicht gebied. Dat komt doordat de bouwers van dergelijke software niet of nauwelijks op de hoogte zijn van de relevante parameters en hun onderlinge samenhang.
+###Zetten van de strokenproef (Galley)
+Om de software te maken die een strokenproef kan genereren is typografische kennis nodig. In vrijwel alle automatische opmaakprogramma’s is dit een onderbelicht gebied. Dat komt doordat de bouwers van dergelijke software niet of nauwelijks op de hoogte zijn van de relevante parameters en hun onderlinge samenhang.
 Daarnaast zijn met name tabellen lastige typografische bouwstenen, vooral als niet niet duidelijk welke volume ze moeten bevatten. Veel opmaakprogramma’s lopen hierop vast.
 
 ![Galley1](images/im3.png "")
