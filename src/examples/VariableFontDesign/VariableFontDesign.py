@@ -46,7 +46,7 @@ rs = getRootStyle()
 rs.u = U = 7
 rs.pw = 595  # Page width 210mm, international generic fit.
 rs.ph = 11 * 72  # Page height 11", international generic fit.
-rs.ml = 7 * U  # Margin leftrs.mt = 7*U # Margin top
+rs.ml = 7 * U  # Margin left rs.mt = 7*U # Margin top
 rs.baselineGrid = 2 * U
 rs.g = U  # Generic gutter.
 rs.cw = 11 * U  # Column width.

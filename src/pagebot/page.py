@@ -210,9 +210,9 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.rect(x, y, style=style, eId=eId, w=w, h=h, **kwargs)
                 
-    def oval(self, x, y, style=None, eId=None, **kwargs):
-        e = Oval(x, self.h - y, style=style, eId=eId, **kwargs)
-        self.append(e) # Append to drawing sequence and store by optional element id.
+    def oval(self, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+        e = Oval(style=style, w=w, h=h, eId=eId, **kwargs)
+        self.place(e, x, self.h - y) # Append to drawing sequence and store by optional element id.
         return e
 
     def cOval(self, cx, cy, cw, ch, style, eId=None, **kwargs):
@@ -230,14 +230,19 @@ class Page(Container):
         self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
                 
-    def image(self, path, x, y, style=None, eId=None, **kwargs):
-        e = Image(path, style=style, eId=eId, **kwargs)
+    def image(self, path, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+        u"""Create Image element as position (x, y) and optional width, height (w, h) of which
+        at least one of them should be defined. The path can be None, to be filled later.
+        If the image is drawn with an empty path, a missingImage cross-frame is shown.
+        The Image element is answered for convenience of the caller."""
+        e = Image(path, style=style, w=w, h=h, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
             
     def cImage(self, path, cx, cy, cw, ch, style, eId=None, **kwargs):
-        # Convert the column size into point size, depending on the column settings of the current template,
-        # when drawing images "hard-coded" directly on a certain page.
+        """Convert the column size into point size, depending on the column settings of the 
+        current template, when drawing images "hard-coded" directly on a certain page.
+        The Image element is answered for convenience of the caller"""
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.image(path, x, y, style=style, eId=eId, **kwargs)
 

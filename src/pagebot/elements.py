@@ -321,10 +321,10 @@ class Image(Element):
         self.eId = eId
         self.caption = caption
         self.style = makeStyle(style, **kwargs)
-        assert self.w is not None and self.h is not None
-        self.sx = self.style.get('scaleX') # Calculate in case None
-        self.sy = self.style.get('scaleY')
-        self.setPath(path) # If omitted, a gray/crossed rectangle will be drawn.
+        # Check on the (w, h) in the style. One of the can be undefined for proportional scaling.
+        assert self.w is not None or self.h is not None 
+        # Set all size and scale values.
+        self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn. 
 
     def setPath(self, path):
         u"""Set the path of the image. If the path exists, the get the real
@@ -339,25 +339,24 @@ class Image(Element):
 
     def setSize(self, w, h):
         u"""Set the intended size and calculate the new scale."""
-        self.w = max(w, self.minW)
-        self.h = max(h, self.minH)
+        self.w = max(w or 0, self.minW)
+        self.h = max(h or 0, self.minH)
         self.sx = self.sy = None # Force calculation, overwriting any defined style scale.
         self.setScale()
 
     # Set the intended width and calculate the new scale, validating the
-    # width to the image minimum width."""
+    # width to the image minimum width and the height to the image minimum height.
+    # Also the proportion is calculated, depending on the ratio of """
     def _get_w(self):
         return self.style.get('w')
     def _set_w(self, w):
-        self.style['w'] = w
-        self.setScale()
+        self.setScale(w=w)
     w = property(_get_w, _set_w)
 
     def _get_h(self):
         return self.style.get('h')
     def _set_h(self, h):
-        self.style['h'] = h
-        self.setScale()
+        self.setScale(h=h)
     h = property(_get_h, _set_h)
 
     def setScale(self, w=None, h=None):
@@ -372,14 +371,18 @@ class Image(Element):
             sx = sy = 1
         elif w is None and h is None:
             sx = sy = 1 # Use default size of the image.
-        elif w is not None and h is not None: # Would be disproportional scale
+        elif w is not None and h is not None: # Needs to be disproportional scale
             sx = 1.0 * w / self.iw
             sy = 1.0 * h / self.ih
             sx = sy = min(sx, sy) # Keep the smallest to make image fit available space.
+            self.style['w'] = w # Take over requested (w, h) as target size.
+            self.style['h'] = h
         elif w is not None:
             sx = sy = 1.0 * w / self.iw
+            self.style['h'] = self.ih * sy # Calculate proprtional height for the requested width.
         else:
             sx = sy = 1.0 * h / self.ih
+            self.style['w'] = self.iw * sx # Calculate proportional width for the requested height.
         self.sx = sx
         self.sy = sy
 

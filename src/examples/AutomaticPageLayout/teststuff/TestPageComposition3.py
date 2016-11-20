@@ -64,7 +64,7 @@ RS = getRootStyle(
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 11 * 72, # Page height 11", international generic fit.
-    ml = 7*U, # Margin leftrs.
+    ml = 7*U, # Margin left rs.
     mt = 7*U, # Margin top
     baselineGrid = 14,#baselineGrid,
     g = U, # Generic gutter.
