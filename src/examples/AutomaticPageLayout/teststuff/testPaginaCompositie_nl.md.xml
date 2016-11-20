@@ -26,7 +26,7 @@ Het soort van probleem is gerelateerd aan andere gebieden zoals speltheorie en k
 Het kan in extreme situaties nodig zijn om via backtracking de opmaak aan te passen als blijkt dat de gereserveerde ruimte niet toereikend is geweest.</p>
 <p>Randvoorwaarden van het systeem</p>
 <p>Er zijn veel voorbeelden van derdelijke systemen die niet goed werken of waarbij het eisenpakket zodanig is verminderd dat met eenvoudige algoritmes kan worden volstaan. De layout van een pagina met één kolom, zoals in tekstverwerkers of boeken, is betrekkelijk eenvoudig automatisch te berekenen. Het wordt expontieel complex als er meerdere tekststromen tegelijk lopen, zoals bij een tijdschrift of krant het geval is. Als we de vergelijking met de ontwikkeling van schaak-programma’s trekken, dan is veel verbetering te behalen door het toevoegen van domeinkennis.</p>
-<p>Dit is een concept notitie, aanpassingen en uitbreidingen zijn nog nodig. Deze pagina’s werden automatisch opgemaakt met PageBot (www.pagebot.io), een TypeNetwork Open Sourece applicatie voor Drawbot.</p>
+<p>Dit is een concept notitie, aanpassingen en uitbreidingen zijn nog nodig. Deze pagina’s werden automatisch opgemaakt met PageBot (www.pagebot.io), een TypeNetwork Open Sourece applicatie voor DrawBot.</p>
 <p>Buro Petr van Blokland + Claudia Mens<br />
 Rietveld 56<br />
 2611 LM Delft<br />

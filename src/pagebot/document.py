@@ -5,7 +5,7 @@
 #
 #     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in Drawbot, www.drawbot.com
+#     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
 #     document.py
@@ -217,9 +217,9 @@ class Document(object):
         for pIndex in pageSelection:
             # Get the current Page instance, indicated by the page number.
             page = self.pages[pIndex] # Page numbering stars at #1
-            # Create a new Drawbot viewport page to draw template + page, if not already done.
+            # Create a new DrawBot viewport page to draw template + page, if not already done.
             newPage(page.w, page.h)
-            # Let the page draw itself on the current Drawbot view port.
+            # Let the page draw itself on the current DrawBot view port.
             page.draw() 
         saveImage(fileName)
 

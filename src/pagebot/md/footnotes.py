@@ -3,7 +3,7 @@
 #
 #     P A G E B O T
 #
-#     Made for usage in Pagebot, www.pagebot.pro
+#     Made for usage in PageBot, www.pagebot.pro
 #
 """
 Footnotes Extension for Python-Markdown

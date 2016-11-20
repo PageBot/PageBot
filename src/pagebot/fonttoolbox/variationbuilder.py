@@ -6,7 +6,7 @@
 #     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
 #       from https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/varLib/mutator.py
 #     Licensed under MIT conditions
-#     Made for usage in Drawbot, www.drawbot.com
+#     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
 #     gxmutator.py
@@ -102,5 +102,5 @@ def generateInstance(varFileName, location, targetDirectory):
     if DEBUG:
         print("Saving instance font", outFile)
     varFont.save(outFile)
-    # Installing the font in Drawbot. Answer font name and path.
+    # Installing the font in DrawBot. Answer font name and path.
     return installFont(outFile), outFile

@@ -5,7 +5,7 @@
 #
 #     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in Drawbot, www.drawbot.com
+#     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
 #     elements.py
@@ -479,7 +479,7 @@ class Grid(Element):
         if self.style.get('showGrid') and self.style.get('gridStroke', NO_COLOR) is not NO_COLOR:
             setFillColor(None)
             setStrokeColor(self.style.get('gridStroke', NO_COLOR), self.style.get('gridStrokeWidth'))
-            # TODO: Drawbot align and fill don't work properly now.
+            # TODO: DrawBot align and fill don't work properly now.
             M = 16
             fs = FormattedString('', font='Verdana', align='right', fontSize=M/2,
                 stroke=None, fill=self.style['gridStroke'])
@@ -523,7 +523,7 @@ class BaselineGrid(Element):
             line = 0
             M = 16
             # Format of line numbers.
-            # TODO: Drawbot align and fill don't work properly now.
+            # TODO: DrawBot align and fill don't work properly now.
             fs = FormattedString('', font=self.style.get('fallbackFont','Verdana'), align='right', fontSize=M/2,
                 stroke=None, fill=self.style.get('gridStroke'))
             while y > self.style.get('mb', 0):
