@@ -199,7 +199,6 @@ class Document(object):
         self.styles[name] = style
         # Force the name of the style to synchronize with the requested key.
         style['name'] = name
-        print 'ASAASASA', name, style
         return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
 
     def newStyle(self, **kwargs):

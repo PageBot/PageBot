@@ -211,13 +211,20 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # can define what is “next page”, when referred to by a flow.
         firstPageId = 1, # Needs to be a number.
 
-        # Color
+        # Element color
         NO_COLOR = NO_COLOR, # Add no-color flag (-1) to make difference with "color" None.
         fill = 0, # Default is black
-        stroke = None, # Default is to have no stroke.
+        stroke = None, # Default is to have no stroke on drawing elements. Not for text.
         cmykFill = NO_COLOR, # Flag to ignore, None is valid value for color.
         cmykStroke = NO_COLOR, # Flag to ignore, None is valid value for color.
-        strokeWidth = None, # Stroke thickness
+        strokeWidth = None, # Stroke thickness for drawing element, not text.
+        
+        # Text color
+        textFill = 0, # Separate between the fill of a text box and the color of the text itself.
+        textStroke = None, # Stroke color of text.
+        textCmykFill = NO_COLOR, # Flag to ignore, None is valid value for color.
+        textCmykStroke = NO_COLOR, # Flag to ignore, None is valid value for color.
+        textStrokeWidth = None,
 
         # Constants for standardized usage of alignment in FormattedString
         LEFT_ALIGN = LEFT_ALIGN,
