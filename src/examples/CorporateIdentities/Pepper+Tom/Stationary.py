@@ -10,8 +10,7 @@
 #     Pepper+Tom Identity
 #     Stationary.py
 #
-#     This script generates an article in Dutch the apporach to
-#     generate automatic layouts, using Galley, Typesetter and Composer classes.
+#     
 #
 from pagebot import getFormattedString, textBoxBaseLines
 
@@ -65,7 +64,7 @@ RS = getRootStyle(
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 11 * 72, # Page height 11", international generic fit.
-    ml = 7*U, # Margin leftrs.mt = 7*U # Margin top
+    ml = 7*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = baselineGrid,
     g = U, # Generic gutter.
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
