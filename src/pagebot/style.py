@@ -24,6 +24,7 @@ SHOW_BASELINE_GRID = True
 SHOW_FLOW_CONNECTIONS = True
 SHOW_CROPMARKS = True
 SHOW_PAGE_FRAME = True
+SHOW_PAGE_INFO = True
 
 LEFT_ALIGN = 'left'
 RIGHT_ALIGN = 'right'
@@ -54,7 +55,8 @@ def makeStyle(style, **kwargs):
 
 def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS, 
-        showCropMarks=SHOW_CROPMARKS, showPageFrame=SHOW_PAGE_FRAME, **kwargs):
+        showCropMarks=SHOW_CROPMARKS, showPageFrame=SHOW_PAGE_FRAME, 
+        showPageInfo=SHOW_PAGE_INFO, **kwargs):
     u"""Answer the main root style tha contains all default style attributes of PageBot.
     To be overwritten when needed by calling applications.
     CAPITALIZED attribute names are for reference only. Not used directly from styles.
@@ -98,7 +100,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # gutter on the right side of columns seems to be larger. This can be compensated for in the
         # distance between images.
         g = gutter, # Main gutter of pages. Based on U.
-        # Column width for column2point and column2rect calculations.
+        # Column width for column-point-to-point cp2p() and column-rect-to-point cr2p() calculations.
         # Column width, based on multiples of gutter. If uneven, this allows the column to be interpreted
         # as two smaller columns of [5 +1+ 5] or even [2+1+2 +1+ 2+1+2], e.g. for micro-layouts in tables.
         # Column width for column2point and column2rect calculations.
@@ -144,6 +146,9 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         flowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
         # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
         showCropMarks = showCropMarks,
+        showPageInfo = showPageInfo and showCropMarks, # If True, draw page info outside the frame.
+        bleed = 5, # Bleeding images of page edge and distance of crop-marks from page frame.
+        cropMarkSize = 20, # Length of crop marks.
         # Draw page fram if document (w, h) is larger than page (w, h)
         showPageFrame = showPageFrame,
         # Generic element stuff
