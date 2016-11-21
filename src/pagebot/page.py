@@ -358,6 +358,10 @@ class Page(Container):
                 self.drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h-self.h, 1)
 
 
+    def _drawRegistrationMark(self, ox, oy):
+        u"""Draw standard registration mark, to show registration of CMYK colors.
+        https://en.wikipedia.org/wiki/Printing_registration."""
+        
     def drawPageInfo(self, ox, oy):
         u"""Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks."""
@@ -367,8 +371,9 @@ class Page(Container):
             cms = style['cropMarkSize']
             dt = datetime.now()
             d = dt.strftime("%A, %d. %B %Y %I:%M%p")
-            fs = FormattedString(d, font='Verdana', fill=0, fontSize=6)
-            text(fs, (ox + bleed, oy - cms))
+            s = 'Page %s | %s' % (self.eId, d)
+            fs = FormattedString(s, font='Verdana', fill=0, fontSize=6)
+            text(fs, (ox + bleed, oy - 2*bleed))
 
     def drawCropMarks(self, ox, oy):
         u"""If the show flag is set, then draw the cropmarks or page frame."""
