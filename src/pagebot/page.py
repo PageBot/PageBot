@@ -145,8 +145,8 @@ class Page(Container):
         else:
             page = self # Staying on the same page, flowing into another column.
             tb = self.getElement(tb.nextBox)
-            # Hard check. Make sure that this one is empty, otherwise mistake in template
-            assert not len(tb)
+            # tb can be None, in case there is no next text box defined. It is up to the caller
+            # to test if all text fit in the current textBox tb.
         return page, tb
         
     def getStyle(self, name=None):
@@ -165,9 +165,9 @@ class Page(Container):
     def getStyles(self):
         return self.parent.styles
 
-    def container(self, x, y, style=None, eId=None, elements=None, **kwargs):
-        u"""Used arguments: """
-        e = Container(style, eId=eId, elements=elements, **kwargs)
+    def container(self, x, y, w=None, h=None, style=None, eId=None, elements=None, **kwargs):
+        u"""Draw a generic container. Note that w and h can also be defined in the style."""
+        e = Container(style=style, eId=eId, elements=elements, w=w, h=h, **kwargs)
         self.place(e, x, y)  # Append to drawing sequence and store by (x,y) and optional element id.
         return e
 
@@ -175,9 +175,9 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.container(x, y, style=style, eId=eId, elements=elements, w=w, h=h, **kwargs)
 
-    def textBox(self, fs, x, y, style=None, eId=None, **kwargs):
-        u"""Caller must supply formatted string."""
-        e = TextBox(fs, style=style, eId=eId, **kwargs)
+    def textBox(self, fs, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+        u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
+        e = TextBox(fs, style=style, eId=eId, w=w, h=h, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
 
@@ -186,11 +186,11 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.textBox(fs, x, y, style=style, eId=eId, w=w, h=h, **kwargs)
         
-    def text(self, fs, x, y, style=None, eId=None, **kwargs):
+    def text(self, fs, x, y, w=None, h=None, style=None, eId=None, **kwargs):
         u"""Draw formatted string.
         We don't need w and h here, as it is made by the text and style combinations.
         Caller must supply formatted string."""
-        e = Text(fs, style=style, eId=eId, **kwargs)
+        e = Text(fs, style=style, eId=eId, w=w, h=h, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
                 
@@ -201,8 +201,12 @@ class Page(Container):
         x, y = cp2p(cx, cy, style)
         return self.text(fs, x, y, style=style, eId=eId, **kwargs)
                 
-    def rect(self, x, y, style=None, eId=None, **kwargs):
-        e = Rect(style=style, eId=eId, **kwargs)
+    def rect(self, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+        u"""Draw the rectangle. Note that w and h can also be defined in the style. In case h is omitted,
+        a square is drawn."""
+        if h is None:
+            h = w
+        e = Rect(style=style, w=w, h=h, eId=eId, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
                 
@@ -211,7 +215,11 @@ class Page(Container):
         return self.rect(x, y, style=style, eId=eId, w=w, h=h, **kwargs)
                 
     def oval(self, x, y, w=None, h=None, style=None, eId=None, **kwargs):
-        e = Oval(style=style, w=w, h=h, eId=eId, **kwargs)
+        u"""Draw the oval. Note that w and h can also be defined in the style. In case h is omitted,
+        a circle is drawn."""
+        if h is None:
+            h = w
+        e = Oval(style=style, eId=eId, w=w, h=h, **kwargs)
         self.place(e, x, self.h - y) # Append to drawing sequence and store by optional element id.
         return e
 
