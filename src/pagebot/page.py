@@ -378,6 +378,7 @@ class Page(Container):
             cms = style['cropMarkSize']
             fill(None)
             stroke(0)
+            strokeWidth(0.5)
             newPath()
             # Bottom left
             moveTo((ox - bleed, oy))
