@@ -38,6 +38,10 @@ import pagebot.elements
 reload(pagebot.elements)
 from pagebot.elements import Galley, Rect
 
+import pagebot.fonttoolbox.elements.variationcube
+reload(pagebot.fonttoolbox.elements.variationcube)
+from pagebot.fonttoolbox.elements.variationcube import VariationCube
+
 import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import generateInstance
@@ -97,17 +101,6 @@ def getFontByLocation(weight, width):
         location, targetDirectory=FONT_PATH + 'instances')
     return fontName
     
-def makeMatrix(rs, page, s, steps):
-
-    x = rs['ml']
-    y = rs['mb']
-    for weight in range(0, 1000, int(1000/steps)):
-        for width in range(0, 1000, int(1000/steps)):
-            fontName = getFontByLocation(weight, width)
-            fs = FormattedString(s, font=fontName,  fontSize=72, fill=0)
-            w, h = fs.size()
-            page.text(fs, x+weight/2-w/2, y+width/2)  
-
 # -----------------------------------------------------------------         
 def makeSpecimen(rs):
         
@@ -117,16 +110,13 @@ def makeSpecimen(rs):
     template1.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
+    template1.place(VariationCube(), 50, 50)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
     doc = Document(rs, pages=3, template=template1) 
 
-    steps = 4
-    makeMatrix(rs, doc[1], 'Ha', steps)
-    makeMatrix(rs, doc[2], 'an', steps)
-    makeMatrix(rs, doc[3], 'aé', steps)
     return doc
         
 d = makeSpecimen(RS)
