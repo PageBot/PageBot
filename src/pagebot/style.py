@@ -30,6 +30,8 @@ RIGHT_ALIGN = 'right'
 CENTER = 'center'
 JUSTIFIED = 'justified'
 
+MM = 0.0393701 * 72 # Multiplying factor from mm to points.
+
 def newStyle(**kwargs):
     style = dict(**kwargs)
     style['cascaded'] = False

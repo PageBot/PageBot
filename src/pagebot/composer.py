@@ -58,7 +58,9 @@ class Composer(object):
                 if fs: # Can be None or empty
                     # Overflow in this text box, find new from (page, tbFlow)
                     page, tb = page.getNextFlowBox(tb)
-                    assert tb is not None # If happens, its a mistake in one of the templates.
+                    if tb is None: # In case here is overflow, but no next box defined in the flow.
+                        print 'Overflow in text, but no next column defined for flow', flowId
+                        break
                 else:
                     break
 
