@@ -399,6 +399,19 @@ class Page(Container):
             lineTo((ox + self.w + cms, oy+self.h))
             moveTo((ox + self.w, oy + self.h + bleed))
             lineTo((ox + self.w, oy + self.h + cms))
+            # Any fold lines to draw?
+            if style['folds'] is not None:
+                for x, y in style['folds']:
+                    if x is not None:
+                        moveTo((ox + x, oy - bleed))
+                        lineTo((ox + x, oy - cms))
+                        moveTo((ox + x, oy + self.h + bleed))
+                        lineTo((ox + x, oy + self.h + cms))
+                    if y is not None:
+                        moveTo((ox - bleed, oy + y))
+                        lineTo((ox - cms, oy + y))
+                        moveTo((ox + self.w + bleed, oy + y))
+                        lineTo((ox + self.w + cms, oy + y))
             drawPath()
 
     def drawPageFrame(self, ox, oy):
