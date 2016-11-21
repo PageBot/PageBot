@@ -80,6 +80,10 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         u = u, # Base unit for Dutch/Swiss typography :)
         w = 595, # Page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = 11 * 72, # Page height, basic size of the document. 11", international generic fit.
+        # Document size, if different from the page size. Otherwise keep None to make document.w answer rootStyle['w']
+        # Of the document size is different from the page size (and if showCropMarks and/or showPageFrame is True)
+        docW = None,
+        docH = None,
         # Margins
         mt = 7*u, # Margin top
         ml = 7*u, # Margin left
@@ -138,7 +142,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         flowMarkerFill = (0.8, 0.8, 0.8, 0.5), # Fill of flow curve marker circle.
         flowMarkerSize = 8, # Size of flow marker circle.
         flowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
-        # Draw page crop marks if document (w, h) is larger than page (w, h)
+        # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
         showCropMarks = showCropMarks,
         # Draw page fram if document (w, h) is larger than page (w, h)
         showPageFrame = showPageFrame,

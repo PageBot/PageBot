@@ -286,7 +286,7 @@ class Rect(Element):
     def draw(self, page, x, y):
         setFillColor(self.style.get('fill', NO_COLOR))
         setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth'))
-        rect(x, page.h - y - self.h, self.w, self.h)
+        rect(x, y, self.w, self.h)
 
 class Oval(Element):
     def __init__(self, style=None, eId=None, **kwargs):
@@ -301,7 +301,7 @@ class Oval(Element):
     def draw(self, page, x, y):
         setFillColor(self.style.get('fill', NO_COLOR))
         setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth'))
-        oval(x, page.h - y, self.w, self.h)
+        oval(x, y, self.w, self.h)
               
 class Line(Element):
     def __init__(self, style=None, eId=None, **kwargs):
@@ -489,23 +489,23 @@ class Grid(Element):
             x = px + marginLeft
             index = 0
             y = h - marginTop - py
-            while x < w - marginRight:
+            while x < px + w - marginRight:
                 newPath()
-                moveTo((x, 0))
-                lineTo((x, h))
-                moveTo((x+columnWidth, 0))
-                lineTo((x+columnWidth, h))
+                moveTo((x, py))
+                lineTo((x, py+h))
+                moveTo((x+columnWidth, py))
+                lineTo((x+columnWidth, py+h))
                 drawPath()
                 text(fs+repr(index), (x + M*0.3, y + M/4))
                 index += 1
                 x += columnWidth + gutter
             index = 0
-            while y > 0:
+            while y > py:
                 newPath()
-                moveTo((0, y))
-                lineTo((w, y))
-                moveTo((0, y-columnWidth))
-                lineTo((w, y-columnWidth))
+                moveTo((px, y))
+                lineTo((px+w, y))
+                moveTo((px, y-columnWidth))
+                lineTo((px+w, y-columnWidth))
                 drawPath()        
                 text(fs+repr(index), (marginLeft - M/2, y - M*0.6))
                 index += 1

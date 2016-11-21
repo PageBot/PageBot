@@ -23,15 +23,19 @@ class Document(object):
 
     def __init__(self, rootStyle, styles=None, title=None, minPageId=1, pages=1, template=None, **kwargs):
         u"""Contains a set of Page instance and formatting methods. Allows to compose the pages
-        without the need to send them directly to the output. This allows "asynchronic" page filling."""
+        without the need to send them directly to the output. This allows "asynchronic" page filling.
+        Use (docW, docH) attributes if document size is different from page (w, h) in rootStyle."""
 
         self.rootStyle = makeStyle(rootStyle, **kwargs) # self.w and self.h are available as properties
         self.title = title or 'Untitled'
-        self.template = template # Used as document master template if undefined in pages.
+        self.template = template # Used as default document master template if undefined in pages.
         self.pages = {} # Key is pageID, often the page number. Value is Page instances.
         self.initializeStyles(rootStyle, styles)
-        # Expand the document to the request anount of pages.
-        self.makePages(minPageId=minPageId, pages=pages, w=self.w, h=self.h, templates=template, **kwargs)
+        # Expand the document to the request anount of pages. Make sure to use the size of the rootStyle,
+        # not the style of the document, as it may be different.
+        pageW = self.rootStyle['w']
+        pageH = self.rootStyle['h']
+        self.makePages(minPageId=minPageId, pages=pages, w=pageW, h=pageH, templates=template, **kwargs)
         # Storage for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
         self.footnotes = {} # Keys is sequential order. Value is (page, e)
@@ -53,17 +57,22 @@ class Document(object):
         if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
 
+    # Set the (w, h) from the rootStyle, if not defined as attributes. We keep the document size
+    # separate from the actual page sizes, so the pages can detect if crop-marks should be drawn
+    # and where to position them, depending on the page style settings of style['showCropMarks'] and
+    # style['showPageFrame']. 
+    # For intuitive compatibility doc.docW and doc.w have the same functionality.
     def _get_w(self):
-        return self.rootStyle['w']
+        return self.rootStyle['docW'] or self.rootStyle['w']
     def _set_w(self, w):
-        self.rootStyle['w'] = w
-    w = property(_get_w, _set_w)
+        self.rootStyle['docW'] = w
+    w = docW = property(_get_w, _set_w)
 
     def _get_h(self):
-        return self.rootStyle['h']
+        return self.rootStyle['docH'] or self.rootStyle['h']
     def _set_h(self, h):
-        self.rootStyle['h'] = h
-    h = property(_get_h, _set_h)
+        self.rootStyle['docH'] = h
+    h = docH = property(_get_h, _set_h)
 
     def fromRootStyle(self, **kwargs):
         u"""Answer a new style as copy from the root style. Overwrite the defined arguments."""
@@ -218,7 +227,9 @@ class Document(object):
             # Get the current Page instance, indicated by the page number.
             page = self.pages[pIndex] # Page numbering stars at #1
             # Create a new DrawBot viewport page to draw template + page, if not already done.
-            newPage(page.w, page.h)
+            # In case the document is oversized, then make all pages the size of the document, so the
+            # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
+            newPage(self.w, self.h) #  Same size, make page of this size.
             # Let the page draw itself on the current DrawBot view port.
             page.draw() 
         saveImage(fileName)

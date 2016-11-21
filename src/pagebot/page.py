@@ -15,7 +15,7 @@ from AppKit import NSBezierPath
 import weakref
 import copy
 from math import cos, sin, radians, degrees, atan2
-from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, fill, curveTo, closePath
+from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, rect, fill, curveTo, closePath
 from pagebot.style import NO_COLOR, makeStyle
 from pagebot import cr2p, cp2p, setFillColor, setStrokeColor
 from pagebot.elements import Grid, BaselineGrid, Image, TextBox, Text, Rect, Line, Oval, Container
@@ -220,23 +220,21 @@ class Page(Container):
         if h is None:
             h = w
         e = Oval(style=style, eId=eId, w=w, h=h, **kwargs)
-        self.place(e, x, self.h - y) # Append to drawing sequence and store by optional element id.
+        self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
 
     def cOval(self, cx, cy, cw, ch, style, eId=None, **kwargs):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.oval(x, y, style=style, eId=eId, w=w, h=h, **kwargs)
 
-    def line(self, x, y, style=None, eId=None, **kwargs):
-        e = Line(x, self.h - y, style=style, eId=eId, w=w, h=-h, **kwargs)
-        self.append(e) # Append to drawing sequence and store by optional element id.
+    def line(self, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+        e = Line(style=style, eId=eId, w=w, h=h, **kwargs)
+        self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
                 
     def cLine(self, cx, cy, cw, ch, style, eId=None, **kwargs):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
-        e = Line(style=style, eId=eId, **kwargs)
-        self.place(e, x, y) # Append to drawing sequence and store by optional element id.
-        return e
+        return self.line(x, y, w=w, h=h, style=style, eId=eId, **kwargs)
                 
     def image(self, path, x, y, w=None, h=None, style=None, eId=None, **kwargs):
         u"""Create Image element as position (x, y) and optional width, height (w, h) of which
@@ -358,27 +356,55 @@ class Page(Container):
                 tbTarget, (targetX, targetY) = self.getElementPos(seq[0].eId)
                 self.drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h-self.h, 1)
 
+    BLEED = 5
+
     def drawCropMarks(self, ox, oy):
         u"""If the show flag is set, then draw the cropmarks or page frame."""
         style = self.parent.getRootStyle()
         if style.get('showCropMarks'):
-            pass
+            fill(None)
+            stroke(0)
+            newPath()
+            # Bottom left
+            moveTo((ox-self.BLEED, oy))
+            lineTo((ox-self.BLEED*4, oy))
+            moveTo((ox, oy-self.BLEED))
+            lineTo((ox, oy-self.BLEED*4))
+            # Bottom right
+            moveTo((ox+self.w+self.BLEED, oy))
+            lineTo((ox+self.w+self.BLEED*4, oy))
+            moveTo((ox+self.w, oy-self.BLEED))
+            lineTo((ox+self.w, oy-self.BLEED*4))
+            # Top left
+            moveTo((ox-self.BLEED, oy+self.h))
+            lineTo((ox-self.BLEED*4, oy+self.h))
+            moveTo((ox, oy+self.h+self.BLEED))
+            lineTo((ox, oy+self.h+self.BLEED*4))
+            # Top right
+            moveTo((ox+self.w+self.BLEED, oy+self.h))
+            lineTo((ox+self.w+self.BLEED*4, oy+self.h))
+            moveTo((ox+self.w, oy+self.h+self.BLEED))
+            lineTo((ox+self.w, oy+self.h+self.BLEED*4))
+            drawPath()
 
     def drawPageFrame(self, ox, oy):
         u"""If the show flag is set, then draw the cropmarks or page frame."""
         style = self.parent.getRootStyle()
         if style.get('showPageFrame'):
-            pass
+            fill(None)
+            stroke(0, 0, 1)
+            strokeWidth(0.5)
+            rect(ox, oy, self.w, self.h)
 
     def draw(self):
         u"""If the size of the document is larger than the size of hte page, then use the extra space
         to draw cropmarks and other print-related info. This also will make the bleeding of images 
         visible."""
-        if self.parent.w > self.w and self.parent.h > self.h:
+        offsetX = offsetY = 0 # In case no oversized document.
+        if self.parent.w > self.w:
             offsetX = (self.parent.w - self.w)/2
+        if self.parent.h > self.h:
             offsetY = (self.parent.h - self.h)/2
-        else:
-            offsetX = offsetY = 0
         # Draw all elements with this offset.
         for element, (x, y) in self.elements:
             element.draw(self, offsetX+x, offsetY+y)
