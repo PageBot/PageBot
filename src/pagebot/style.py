@@ -86,6 +86,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # Of the document size is different from the page size (and if showCropMarks and/or showPageFrame is True)
         docW = None,
         docH = None,
+        # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
+        folds = None,
         # Margins
         mt = 7*u, # Margin top
         ml = 7*u, # Margin left
@@ -148,7 +150,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         showCropMarks = showCropMarks,
         showPageInfo = showPageInfo and showCropMarks, # If True, draw page info outside the frame.
         bleed = 5, # Bleeding images of page edge and distance of crop-marks from page frame.
-        cropMarkSize = 20, # Length of crop marks.
+        cropMarkSize = 20, # Length of crop marks, including bleed distance.
         # Draw page fram if document (w, h) is larger than page (w, h)
         showPageFrame = showPageFrame,
         # Generic element stuff
@@ -172,7 +174,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         listTabs = [(listIndent, LEFT_ALIGN)], # Default indent for bullet lists. Copy onto style.tabs for usage.
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
-        tabs = None,
+        tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...]
         firstLineIndent = 0, # Indent of first paragraph in a text tag.
         rFirstLineIndent = 0, # First line indent as factor if font size.
         indent = 0, # Left indent (for left-right based scripts)

@@ -174,7 +174,7 @@ class Document(object):
         assert not pageId in self.pages # Make sure that we don't accidentally overwrite existing pages.
         page = self.PAGE_CLASS(parent=self, style=style, w=w, h=h, pageId=pageId, template=template, **kwargs)
         self.pages[pageId] = page
-        return page
+        return page # Answer the page instance for convenience of the caller.
   
     def getStyle(self, name):
         u"""Answer the names style. Answer None if it does not exist."""
