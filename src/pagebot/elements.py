@@ -492,22 +492,22 @@ class Grid(Element):
             while x < px + w - marginRight:
                 newPath()
                 moveTo((x, py))
-                lineTo((x, py+h))
-                moveTo((x+columnWidth, py))
-                lineTo((x+columnWidth, py+h))
+                lineTo((x, py + h))
+                moveTo((x + columnWidth, py))
+                lineTo((x + columnWidth, py + h))
                 drawPath()
-                text(fs+repr(index), (x + M*0.3, y + M/4))
+                text(fs+repr(index), (x + M * 0.3, y + M / 4))
                 index += 1
                 x += columnWidth + gutter
             index = 0
             while y > py:
                 newPath()
                 moveTo((px, y))
-                lineTo((px+w, y))
-                moveTo((px, y-columnWidth))
-                lineTo((px+w, y-columnWidth))
+                lineTo((px + w, y))
+                moveTo((px, y - columnWidth))
+                lineTo((px+w, y - columnWidth))
                 drawPath()        
-                text(fs+repr(index), (marginLeft - M/2, y - M*0.6))
+                text(fs + repr(index), (px + marginLeft - M / 2, y - M * 0.6))
                 index += 1
                 y -= columnHeight + gutter
 

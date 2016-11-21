@@ -14,8 +14,9 @@
 from AppKit import NSBezierPath
 import weakref
 import copy
+from datetime import datetime
 from math import cos, sin, radians, degrees, atan2
-from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, rect, fill, curveTo, closePath
+from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, closePath, FormattedString
 from pagebot.style import NO_COLOR, makeStyle
 from pagebot import cr2p, cp2p, setFillColor, setStrokeColor
 from pagebot.elements import Grid, BaselineGrid, Image, TextBox, Text, Rect, Line, Oval, Container
@@ -356,35 +357,48 @@ class Page(Container):
                 tbTarget, (targetX, targetY) = self.getElementPos(seq[0].eId)
                 self.drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h-self.h, 1)
 
-    BLEED = 5
+
+    def drawPageInfo(self, ox, oy):
+        u"""Draw additional document information, color markers, page number, date, version, etc.
+        outside the page frame, if drawing crop marks."""
+        style = self.parent.getRootStyle()
+        if style.get('showPageInfo'):
+            bleed = style['bleed']
+            cms = style['cropMarkSize']
+            dt = datetime.now()
+            d = dt.strftime("%A, %d. %B %Y %I:%M%p")
+            fs = FormattedString(d, font='Verdana', fill=0, fontSize=6)
+            text(fs, (ox + bleed, oy - cms))
 
     def drawCropMarks(self, ox, oy):
         u"""If the show flag is set, then draw the cropmarks or page frame."""
         style = self.parent.getRootStyle()
         if style.get('showCropMarks'):
+            bleed = style['bleed']
+            cms = style['cropMarkSize']
             fill(None)
             stroke(0)
             newPath()
             # Bottom left
-            moveTo((ox-self.BLEED, oy))
-            lineTo((ox-self.BLEED*4, oy))
-            moveTo((ox, oy-self.BLEED))
-            lineTo((ox, oy-self.BLEED*4))
+            moveTo((ox - bleed, oy))
+            lineTo((ox - cms, oy))
+            moveTo((ox, oy - bleed))
+            lineTo((ox, oy - cms))
             # Bottom right
-            moveTo((ox+self.w+self.BLEED, oy))
-            lineTo((ox+self.w+self.BLEED*4, oy))
-            moveTo((ox+self.w, oy-self.BLEED))
-            lineTo((ox+self.w, oy-self.BLEED*4))
+            moveTo((ox + self.w + bleed, oy))
+            lineTo((ox + self.w + cms, oy))
+            moveTo((ox + self.w, oy - bleed))
+            lineTo((ox + self.w, oy - cms))
             # Top left
-            moveTo((ox-self.BLEED, oy+self.h))
-            lineTo((ox-self.BLEED*4, oy+self.h))
-            moveTo((ox, oy+self.h+self.BLEED))
-            lineTo((ox, oy+self.h+self.BLEED*4))
+            moveTo((ox - bleed, oy + self.h))
+            lineTo((ox - cms, oy + self.h))
+            moveTo((ox, oy + self.h + bleed))
+            lineTo((ox, oy + self.h + cms))
             # Top right
-            moveTo((ox+self.w+self.BLEED, oy+self.h))
-            lineTo((ox+self.w+self.BLEED*4, oy+self.h))
-            moveTo((ox+self.w, oy+self.h+self.BLEED))
-            lineTo((ox+self.w, oy+self.h+self.BLEED*4))
+            moveTo((ox + self.w + bleed, oy+self.h))
+            lineTo((ox + self.w + cms, oy+self.h))
+            moveTo((ox + self.w, oy + self.h + bleed))
+            lineTo((ox + self.w, oy + self.h + cms))
             drawPath()
 
     def drawPageFrame(self, ox, oy):
@@ -410,6 +424,8 @@ class Page(Container):
             element.draw(self, offsetX+x, offsetY+y)
         # If there is an offset and drawing cropmarks (or frame)
         self.drawCropMarks(offsetX, offsetY)
+        # If there is an offset and drawing cropmarks (or frame):
+        self.drawPageInfo(offsetX, offsetY)
         # If there is an offset and drawing cropmarks (or frame)
         self.drawPageFrame(offsetX, offsetY)
         # Check if we need to draw the flow arrows.
