@@ -97,12 +97,12 @@ def getFontByLocation(weight, width):
         location, targetDirectory=FONT_PATH + 'instances')
     return fontName
     
-def makeMatrix(rs, page, s):
+def makeMatrix(rs, page, s, steps):
 
     x = rs['ml']
     y = rs['mb']
-    for weight in range(0, 1000, 100):
-        for width in range(0, 1000, 100):
+    for weight in range(0, 1000, int(1000/steps)):
+        for width in range(0, 1000, int(1000/steps)):
             fontName = getFontByLocation(weight, width)
             fs = FormattedString(s, font=fontName,  fontSize=72, fill=0)
             w, h = fs.size()
@@ -123,9 +123,10 @@ def makeSpecimen(rs):
     # Initially make all pages default with template2
     doc = Document(rs, pages=3, template=template1) 
 
-    makeMatrix(rs, doc[1], 'Ha')
-    makeMatrix(rs, doc[2], 'an')
-    makeMatrix(rs, doc[3], 'aé')
+    steps = 4
+    makeMatrix(rs, doc[1], 'Ha', steps)
+    makeMatrix(rs, doc[2], 'an', steps)
+    makeMatrix(rs, doc[3], 'aé', steps)
     return doc
         
 d = makeSpecimen(RS)
