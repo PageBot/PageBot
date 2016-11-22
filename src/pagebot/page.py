@@ -188,19 +188,23 @@ class Page(Container):
         return self.textBox(fs, x, y, style=style, eId=eId, w=w, h=h, **kwargs)
         
     def text(self, fs, x, y, w=None, h=None, style=None, eId=None, **kwargs):
-        u"""Draw formatted string.
-        We don't need w and h here, as it is made by the text and style combinations.
+        u"""Draw formatted string. Normally we don't need w and h here, as it is made by the text and 
+        style combinations. But in case the defined font is a Variation Font, then we can use the
+        width and height to interpolate a font that fits the space for the given string and weight.
         Caller must supply formatted string."""
         e = Text(fs, style=style, eId=eId, w=w, h=h, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
                 
-    def cText(self, fs, cx, cy, style, eId=None, **kwargs):
+    def cText(self, fs, cx, cy, cw=None, ch=None, style=None, eId=None, **kwargs):
         u"""Draw formatted string.
         We don't need w and h here, as it is made by the text and style combinations.
         Caller must supply formatted string."""
-        x, y = cp2p(cx, cy, style)
-        return self.text(fs, x, y, style=style, eId=eId, **kwargs)
+        if cw is None or ch is None:
+            x, y, w, h = cr2p(cx, cy, cw or 0, ch or 0, style) # Forced size for interpolation.
+        else:
+            x, y = cp2p(cx, cy, style) # Size defined by text, font and fontSize.
+        return self.text(fs, x, y, style=style, w=w, h=h, eId=eId, **kwargs)
                 
     def rect(self, x, y, w=None, h=None, style=None, eId=None, **kwargs):
         u"""Draw the rectangle. Note that w and h can also be defined in the style. In case h is omitted,

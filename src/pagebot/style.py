@@ -149,7 +149,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
         showCropMarks = showCropMarks,
         showPageInfo = showPageInfo and showCropMarks, # If True, draw page info outside the frame.
-        bleed = 10, # Bleeding images of page edge and distance of crop-marks from page frame.
+        bleed = 8, # Bleeding images of page edge and distance of crop-marks from page frame.
         cropMarkSize = 40, # Length of crop marks, including bleed distance.
         # Draw page fram if document (w, h) is larger than page (w, h)
         showPageFrame = showPageFrame,
