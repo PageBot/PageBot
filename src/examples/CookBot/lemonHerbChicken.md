@@ -48,6 +48,9 @@ nonstick cooking spray
 1⁄2 teaspoon ground black pepper
 8 whole wheat flour tortillas or 8 whole flour tortillas
 1 teaspoon bottled hot pepper sauce
+
+![lemonHerbChicke] (images/cookbot7.jpg "")
+
 On Sale Near You
 See what's on sale in recipes and in your Grocery List.
 
@@ -64,3 +67,6 @@ For filling, in a large bowl stir together turkey, half the cranberry sauce, bea
 
 Spoon about 2/3 cup filling on each tortilla. Roll up tortillas around filling. Place, seam sides down, in prepared dish; set aside.
 For sauce, in bowl stir together remaining cranberry sauce, remaining salsa, and hot pepper sauce. Spoon over filled tortillas. Cover with foil. Bake for 45 minutes. Uncover; top with remaining cheese. Bake 5 to 10 minutes more or until heated through and cheese is melted. Sprinkle with additional cilantro and green onions.
+
+![lemonHerbChicke] (images/cookbot8.jpg "")
+
