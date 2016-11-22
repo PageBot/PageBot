@@ -274,7 +274,6 @@ class Text(Element):
     def draw(self, page, x, y):
         u"""Draw the formatted text. Since this is not a text column, but just a 
         typeset text line, background and stroke of a text column needs to be drawn elsewere."""
-        #s = ('%s' % self._fs).replace('#?#', repr(page.pageNumber+1))
         text(self.fs, (x, y))
                                              
 class Rect(Element):

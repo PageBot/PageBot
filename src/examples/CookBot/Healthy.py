@@ -9,6 +9,7 @@
 #
 #     Healthy.py
 #
+from datetime import datetime # Make date fit today.
 from pagebot import getFormattedString
 
 import pagebot.style
@@ -39,12 +40,12 @@ import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import generateInstance
 
-DEBUG = True
+PREVIEW = False
 
-SHOW_GRID = DEBUG
-SHOW_GRID_COLUMNS = DEBUG
-SHOW_BASELINE_GRID = DEBUG
-SHOW_FLOW_CONNECTIONS = DEBUG
+SHOW_GRID = PREVIEW
+SHOW_GRID_COLUMNS = PREVIEW
+SHOW_BASELINE_GRID = PREVIEW
+SHOW_FLOW_CONNECTIONS = PREVIEW
 
 if SHOW_GRID:
     BOX_COLOR = (0.8, 0.8, 0.8, 0.4)
@@ -55,12 +56,22 @@ else:
 U = 7
 baselineGrid = 2*U
 listIndent = 1.5*U
+W = 595
+H = 11 * 72
 
+if PREVIEW:
+    docW = docH = None # Document same size as pages, don't show crop-marks
+else:
+    docW = W+50
+    docH = H+50
+    
 RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
-    w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
-    h = 11 * 72, # Page height 11", international generic fit.
+    w = W, # On root level the "w" is the page width 595pt ~ 210mm, international generic fit.
+    h = H, # 11 * 72 Page height 11", international generic fit.
+    docW = docW, # Oversize document to shoq crop-marks
+    docH = docH,
     ml = 7*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
     g = U, # Generic gutter.
@@ -82,11 +93,16 @@ RS = getRootStyle(
     fontSize = 9
 )
 FS = getFormattedString(FormattedString(''), RS)
-print FS
-    # LANGUAGE-SWITCH Language settings
+
+# LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'lemonHerbChicken.md'
-EXPORT_PATH = 'export/CookBotBook.gif'
+EXPORT_PATH = 'export/CookBotBook.pdf'
+COVER_IMAGE_PATH1 = 'images/cookbot2.jpg'
+COVER_IMAGE_PATH2 = 'images/cookbot3.jpg'
+COVER_IMAGE_PATH3 = 'images/cookbot4.jpg'
+COVER_IMAGE_PATH4 = 'images/cookbot5.jpg'
+COVER_IMAGE_PATH5 = 'images/cookbot6.jpg'
 
 #MD_PATH = 'testPaginaCompositie_nl.md'
 
@@ -105,8 +121,10 @@ if VARS:
     FONT_LOCATIONS = {
         #'PromisePageBot-BoldCondensed': {"wght": 750, "wdth": 500, },
         #'PromisePageBot-LightCondensed': {"wght": 0, "wdth": 500},
-        'PromisePageBot-Light': {"wght": 0, "wdth": 1000},
+        'PromisePageBot-Thin': {"wght": 0, "wdth": 1000},
+        'PromisePageBot-Light': {"wght": 100, "wdth": 1000},
         'PromisePageBot-Book': {"wght": 250, "wdth": 1000},
+        'PromisePageBot-BookCondensed': {"wght": 250, "wdth": 800},
         'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
         'PromisePageBot-Medium': {"wght": 600, "wdth": 1000},    
         'PromisePageBot-Semibold': {"wght": 750, "wdth": 1000},    
@@ -122,7 +140,9 @@ if VARS:
         fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
             location, targetDirectory=FONT_PATH + 'instances')
         FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
+    THIN = FONTS['PromisePageBot-Thin']
     LIGHT = FONTS['PromisePageBot-Light']
+    BOOK_CONDENSED = FONTS['PromisePageBot-BookCondensed']
     BOOK = FONTS['PromisePageBot-Book']
     BOOK_ITALIC = FONTS['PromisePageBot-Book']
     MEDIUM = FONTS['PromisePageBot-Medium']
@@ -136,6 +156,27 @@ else:
 
 RS['font'] = BOOK
 
+def makeCoverTemplate(imagePath, rs):
+    bleed = rs['bleed']
+    # Cover
+    coverTemplate = Template(rs) # Cover template of the magazine.
+    coverTemplate.image(imagePath, -200, -bleed, h=rs['h'] + 2 * bleed)
+    coverTitle = FormattedString('Healthy', font=LIGHT, fontSize=180, fill=1, tracking=-9)
+    coverTemplate.text(coverTitle, 10, rs['h'] - 148)
+    
+    # Make actual date in top-right with magazine title.
+    dt = datetime.now()
+    d = dt.strftime("%B %Y")
+    fs = FormattedString(d, font=MEDIUM, fontSize=18, fill=1, tracking=0.5)
+    coverTemplate.text(fs, 436, rs['h'] - 26)
+
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('$4.90', font=BOOK, fontSize=12, fill=1, tracking=0.5,
+        lineHeight=12 )
+    coverTemplate.text(fs, 540, rs['h'] - 765)
+  
+    return coverTemplate
+       
 # -----------------------------------------------------------------         
 def makeDocument(rs):
     u"""Demo page composer."""
@@ -145,8 +186,44 @@ def makeDocument(rs):
     flowId1 = MAIN_FLOW+'1' 
     flowId2 = MAIN_FLOW+'2'
     flowId3 = MAIN_FLOW+'3'
+
+    coverTemplate1 = makeCoverTemplate(COVER_IMAGE_PATH1, rs)
+    coverTemplate2 = makeCoverTemplate(COVER_IMAGE_PATH2, rs)
+    coverTemplate3 = makeCoverTemplate(COVER_IMAGE_PATH3, rs)
+    coverTemplate4 = makeCoverTemplate(COVER_IMAGE_PATH4, rs)
+    coverTemplate5 = makeCoverTemplate(COVER_IMAGE_PATH5, rs)
+    
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Lemon Herb\nChicken', font=BOOK_CONDENSED, fontSize=48, fill=1, tracking=0.5,
+        lineHeight=48)
+    coverTemplate1.text(fs, 22, rs['h'] - 270)
+
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Seasonal:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    fs += FormattedString('Hot served dinners', font=BOOK, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    coverTemplate1.text(fs, 22, rs['h'] - 420)
         
-    # Template 1
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Cranberry\nBean Sauce', font=LIGHT, fontSize=60, fill=1, tracking=0.5,
+        lineHeight=52 )
+    coverTemplate1.text(fs, 18, rs['h'] - 690)
+        
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Arizona:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    fs += FormattedString('Cran-Turkey Enchilada', font=BOOK, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    coverTemplate1.text(fs, 22, rs['h'] - 730)
+        
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Fresh', font=MEDIUM, fontSize=60, fill=(1, 1, 1, 0.5), tracking=0.5,
+        lineHeight=52 )
+    coverTemplate1.text(fs, 400, rs['h'] - 270)
+                
+ 
+    # Template 16
     template1 = Template(rs) # Create template of main size. Front page only.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
     template1.grid(rs) 
@@ -160,7 +237,7 @@ def makeDocument(rs):
     template1.cTextBox(FS, 2, 3, 2, 5, rs, flowId2, nextBox=flowId3, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox(FS, 4, 3, 2, 5, rs, flowId3, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template1.cText(FS+rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template1.cText(FS+rs['pageIdMarker'], 6, 0, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
 
     # Template 2
     template2 = Template(rs) # Create second template. This is for the main pages.
@@ -177,12 +254,13 @@ def makeDocument(rs):
     template2.cTextBox(FS, 2, 4, 2, 4, rs, flowId2, nextBox=flowId3, nextPage=0, fill=BOX_COLOR)
     template2.cTextBox(FS, 4, 3, 2, 3, rs, flowId3, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template2.cText(FS+rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template2.cText(FS+rs['pageIdMarker'], 6, 0, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
-    # Initially make all pages default with template2
-    doc = Document(rs, pages=3, template=template2) 
+    # Initially make all pages default with template2.
+    # Oversized document (docW, docH) is defined in the rootStyle.
+    doc = Document(rs, pages=6, template=template2) 
  
     # Cache some values from the root style that we need multiple time to create the tag styles.
     fontSize = rs['fontSize']
@@ -202,7 +280,7 @@ def makeDocument(rs):
         leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, 
         fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
-        prefix='', postfix='')
+        prefix='', postfix='\n')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         prefix='\n', postfix='\n')
@@ -237,23 +315,31 @@ def makeDocument(rs):
     
     # Change template of page 1
     page1 = doc[1]
-    page1.setTemplate(template1)
+    page1.setTemplate(coverTemplate1)
+    
+    page2 = doc[2]
+    page2.setTemplate(coverTemplate2)
+    
+    page3 = doc[3]
+    page3.setTemplate(coverTemplate3)
+    
+    page4 = doc[4]
+    page4.setTemplate(coverTemplate4)
+    
+    page5 = doc[5]
+    page5.setTemplate(coverTemplate5)
+    
+    page6 = doc[6]
+    page6.setTemplate(template1)
     
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
     t = Typesetter(doc, g)
     t.typesetFile(MD_PATH)
     
-    if 0: # Preview the galley
-        gw, gh = g.getSize()
-        previewPage = doc[2]
-        previewPage.w = gw + 60
-        previewPage.h = gh + 40
-        previewPage.place(g, 40, 20)
-
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
-    c.compose(g, page1, flowId1)
+    c.compose(g, page6, flowId1)
     
     return doc
         
