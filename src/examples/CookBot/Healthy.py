@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     CookBotBook.py
+#     Healthy.py
 #
 from pagebot import getFormattedString
 
