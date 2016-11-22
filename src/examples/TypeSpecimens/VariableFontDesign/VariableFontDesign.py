@@ -91,16 +91,7 @@ P_TRACK = 0.030
 
 FONT_PATH = '../../../fonts/'
 
-def getFontByLocation(weight, width):
-    name = 'PromisePageBot-wght%d-wdth%d' % (weight, width)
-    location = dict(wght=weight, wdth=width)
-    
-    VFONT_PATH = 'PromisePageBot-GX.ttf'
-    installFont(FONT_PATH + VFONT_PATH)
-    fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
-        location, targetDirectory=FONT_PATH + 'instances')
-    return fontName
-    
+
 # -----------------------------------------------------------------         
 def makeSpecimen(rs):
         
@@ -110,12 +101,12 @@ def makeSpecimen(rs):
     template1.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
-    template1.place(VariationCube(), 50, 50)
+    template1.place(VariationCube(w=500, h=500, s='ab'), 50, 50)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(rs, pages=3, template=template1) 
+    doc = Document(rs, pages=1, template=template1) 
 
     return doc
         
