@@ -89,7 +89,7 @@ print FS
     # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'lemonHerbChicken.md'
-EXPORT_PATH = 'export/CookBotBook.gif'
+EXPORT_PATH = 'export/CookBotBook.pdf'
 
 #MD_PATH = 'testPaginaCompositie_nl.md'
 
@@ -201,8 +201,8 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD_CONDENSED, fill=(1, 0, 0), 
-        leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h1', fontSize=2.5*fontSize, font=SEMIBOLD_CONDENSED, fill=(1, 0, 0), 
+        leading=1.5*leading, tracking=H1_TRACK, postfix='\n')
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, 
         fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
         prefix='', postfix='')
