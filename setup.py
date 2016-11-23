@@ -12,18 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-from setuptools import setup
-
+from setuptools import setup, find_packages
 
 setup(
     name='pagebot',
+     url="https://github.com/TypeNetwork/PageBot",
     version='0.1',
-    packages=['pagebot'],
-    package_dir={'': 'pagebot'},
-    entry_points={
-        'console_scripts': [
-            'pagebot = pagebot.__main__:main'
-        ]
-    }
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    #entry_points={
+    #    'console_scripts': [
+    #        'pagebot = pagebot.__main__:main'
+    #    ]
+    #}
 )
