@@ -44,7 +44,7 @@ PREVIEW = False
 
 SHOW_GRID = PREVIEW
 SHOW_GRID_COLUMNS = PREVIEW
-SHOW_BASELINE_GRID = False
+SHOW_BASELINE_GRID = True
 SHOW_FLOW_CONNECTIONS = PREVIEW
 
 if SHOW_GRID:
@@ -97,7 +97,7 @@ FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'lemonHerbChicken.md'
-EXPORT_PATH = 'export/CookBotBook.png'
+EXPORT_PATH = 'export/CookBotBook.pdf'
 COVER_IMAGE_PATH1 = 'images/cookbot2.jpg'
 COVER_IMAGE_PATH2 = 'images/cookbot3.jpg'
 COVER_IMAGE_PATH3 = 'images/cookbot4.jpg'
@@ -126,8 +126,8 @@ if VARS:
         'PromisePageBot-Book': {"wght": 250, "wdth": 1000},
         'PromisePageBot-BookCondensed': {"wght": 250, "wdth": 800},
         'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
-        'PromisePageBot-Medium': {"wght": 500, "wdth": 1000},    
-        'PromisePageBot-Semibold': {"wght": 750, "wdth": 1000},    
+        'PromisePageBot-Medium': {"wght": 400, "wdth": 1000},    
+        'PromisePageBot-Semibold': {"wght": 600, "wdth": 1000},    
         'PromisePageBot-SemiboldCondensed': {"wght": 250, "wdth": 100},    
         'PromisePageBot-Bold': {"wght": 1000, "wdth": 1000},
     }
@@ -281,20 +281,20 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD_CONDENSED, fill=(1, 0, 0), 
+    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD_CONDENSED, textFill=(1, 0, 0), 
         leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, 
-        fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
+    doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, textStroke=None,
+        fill=(0, 0, 1), leading=1*leading, rLeading=0, tracking=H2_TRACK, 
         prefix='', postfix='\n')
-    doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
+    doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, textFill=(1, 0, 0), textStroke=None,
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         prefix='\n', postfix='\n')
-    doc.newStyle(name='h4', fontSize=1.1*fontSize, font=BOOK, fill=0, 
+    doc.newStyle(name='h4', fontSize=1.1*fontSize, font=BOOK, textFill=(0, 1, 0), textStroke=None,
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='\n', postfix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
+    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, textFill=0.1, prefix='', postfix='\n',
         rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
