@@ -40,6 +40,7 @@ class Typesetter(object):
     IMAGE_CLASS = Image
 
     def __init__(self, document, galley):
+        # TODO: Maybe Typesetter does not need a document.
         self.document = document
         self.galley = galley
         self.gState = [document.getRootStyle()] # Stack of graphic state as cascading styles.
