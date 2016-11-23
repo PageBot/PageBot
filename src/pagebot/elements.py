@@ -350,10 +350,11 @@ class Polygon(Element):
         drawPath()
 
 class Image(Element):
-    def __init__(self, path, style=None, eId=None, caption=None, mask=None, pageNumber=None, **kwargs):
+    def __init__(self, path, style=None, eId=None, caption=None, mask=None, imo=None, pageNumber=None, **kwargs):
         self.eId = eId
         self.caption = caption
         self.mask = mask # Optional mask element.
+        self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.pageNumber = pageNumber # Optional page number, if referring inside a PDF.
         self.style = makeStyle(style, **kwargs)
         # Check on the (w, h) in the style. One of the can be undefined for proportional scaling.
