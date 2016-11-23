@@ -44,7 +44,7 @@ PREVIEW = False
 
 SHOW_GRID = PREVIEW
 SHOW_GRID_COLUMNS = PREVIEW
-SHOW_BASELINE_GRID = True
+SHOW_BASELINE_GRID = PREVIEW
 SHOW_FLOW_CONNECTIONS = PREVIEW
 
 if SHOW_GRID:
@@ -97,7 +97,7 @@ FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'lemonHerbChicken.md'
-EXPORT_PATH = 'export/CookBotBook.pdf'
+EXPORT_PATH = 'export/CookBotBook.png'
 COVER_IMAGE_PATH1 = 'images/cookbot2.jpg'
 COVER_IMAGE_PATH2 = 'images/cookbot3.jpg'
 COVER_IMAGE_PATH3 = 'images/cookbot4.jpg'

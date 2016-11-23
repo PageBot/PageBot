@@ -132,7 +132,7 @@ class Element(object):
             setStrokeColor(0, 0.5)
             rect(x, y, w, h)
 
-    def _drawMissingElementRect(self, x, y, w, h):
+    def _drawMissingElementRect(self, page, x, y, w, h):
         u"""When designing templates and pages, this will draw a filled rectangle on the element
         bounding box (if self.style.get('missingElementFill' is defined) and a cross, indicating
         that this element has missing content (as in unused image frames).
@@ -182,7 +182,7 @@ class Container(Element):
                 element.draw(page, x, y)
         else:
             # No elements in the container. Draw “missing” indicator, if self.style['showGrid'] is True
-            self._drawMissingElementRect(x, y, self.w, self.h)
+            self._drawMissingElementRect(page, x, y, self.w, self.h)
 
 class TextBox(Element):
 
@@ -410,7 +410,6 @@ class Image(Element):
         elif w is not None and h is not None: # Needs to be disproportional scale
             sx = 1.0 * w / self.iw
             sy = 1.0 * h / self.ih
-            sx = sy = min(sx, sy) # Keep the smallest to make image fit available space.
             self.style['w'] = w # Take over requested (w, h) as target size.
             self.style['h'] = h
         elif w is not None:
@@ -419,6 +418,8 @@ class Image(Element):
         else:
             sx = sy = 1.0 * h / self.ih
             self.style['w'] = self.iw * sx # Calculate proportional width for the requested height.
+        # TODO Add fitting function            
+        #sx = sy = min(sx, sy) # Keep the smallest to make image fit available space.
         self.sx = sx
         self.sy = sy
 
@@ -448,8 +449,9 @@ class Image(Element):
             textBox(self.caption, (x, y, w, captionH))
           
     def draw(self, page, x, y):
-        if self.path is None:
-            self._drawMissingElementImage(page, x, y, self.w, self.h)
+        if self.path is None or not os.path.exists(self.path):
+            # TODO: Also show error, in case the image does not exist, to differ from empty box.
+            self._drawMissingElementRect(page, x, y, self.w, self.h)
         else:
             if self.sx is None: # In case not initialized yet.
                 self.setScale()
