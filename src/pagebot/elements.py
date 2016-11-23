@@ -15,7 +15,7 @@ import copy
 
 from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
     newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
-    textBox, hyphenation, restore, imageSize
+    textBox, hyphenation, restore, imageSize, shadow
 from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
 from pagebot.style import LEFT_ALIGN, NO_COLOR, makeStyle
 
@@ -98,6 +98,21 @@ class Element(object):
     def setMaxSize(self, maxW, maxH):
         self.maxW = maxW # No limit if value is None
         self.maxH = maxH
+
+    def _setShadow(self):
+        u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this
+        method with self._resetShadow()"""
+        shadowOffset = self.style.get('shadowOffset') # Use DrawBot graphic state switch on shadow mode.
+        shadowBlur = self.style.get('shadowBlur') # Should be integer.
+        shadowFill = self.style.get('shadowFill') # Should be color, different from NO_COLOR
+        if shadowOffset is not None:
+            save() # DrawBot graphics state push
+            shadow(shadowOffset, shadowBlur, shadowFill)
+
+    def _resetShadow(self):
+        u"""Restore the shadow mode of DrawBot. Should be paired with call self._setShadow()."""
+        if self.style.get('shadowOffset') is not None:
+            restore() # DrawBot graphics state pop.
 
     def copy(self):
         u"""Answer a copy of self and self.style. Note that any child elements will not be copied,
@@ -274,8 +289,10 @@ class Text(Element):
     def draw(self, page, x, y):
         u"""Draw the formatted text. Since this is not a text column, but just a 
         typeset text line, background and stroke of a text column needs to be drawn elsewere."""
+        self._setShadow()
         text(self.fs, (x, y))
-                                             
+        self._resetShadow()
+
 class Rect(Element):
     def __init__(self, style=None, eId=None, **kwargs):
         self.eId = eId
@@ -316,9 +333,11 @@ class Line(Element):
         drawPath()
 
 class Image(Element):
-    def __init__(self, path, style=None, eId=None, caption=None, **kwargs):
+    def __init__(self, path, style=None, eId=None, caption=None, mask=None, pageNumber=None, **kwargs):
         self.eId = eId
         self.caption = caption
+        self.mask = mask # Optional mask element.
+        self.pageNumber = pageNumber # Optional page number, if referring inside a PDF.
         self.style = makeStyle(style, **kwargs)
         # Check on the (w, h) in the style. One of the can be undefined for proportional scaling.
         assert self.w is not None or self.h is not None 
@@ -419,7 +438,7 @@ class Image(Element):
             if self.sx is not None: # Check again if scale was set successfully.
                 save()
                 scale(self.sx, self.sy)
-                image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), self._getAlpha())
+                image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), pageNumber=self.pageNumber, alpha=self._getAlpha())
                 sStroke = self.style.get('stroke', NO_COLOR)
                 #if sStroke is not None: # In case drawing border.
                 #    setFillColor(None)
@@ -437,7 +456,7 @@ class Ruler(Element):
         assert self.w is not None and self.h is not None
 
     def getHeight(self):
-        return self.style.get('strokeWidth') or 1 # Force default height.
+        return self.style.get('strokeWidth') or 0.5 # Force default height.
 
     def draw(self, page, px, py):
         setFillColor(None)
@@ -532,11 +551,11 @@ class BaselineGrid(Element):
                 setFillColor(None)
                 setStrokeColor(self.style.get('baselineGridStroke', NO_COLOR), self.style.get('gridStrokeWidth'))
                 newPath()
-                moveTo((M, y))
-                lineTo((page.w - M, y))
+                moveTo((px + M, py + y))
+                lineTo((px + page.w - M, py + y))
                 drawPath()
-                text(fs + repr(line), (M-2, y-M*0.6))
-                text(fs + repr(line), (page.w - M-4, y-M*0.6))
+                text(fs + repr(line), (px + M - 2, py + y - M * 0.6))
+                text(fs + repr(line), (px + page.w - M - 8, py + y - M * 0.6))
                 line += 1 # Increment line index.
                 y -= self.style.get('baselineGrid') # Next vertical line position of baseline grid.
 
