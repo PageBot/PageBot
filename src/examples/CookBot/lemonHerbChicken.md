@@ -69,6 +69,9 @@ For filling, in a large bowl stir together turkey, half the cranberry sauce, bea
 ![lemonHerbChicke] (images/cookbot14.jpg "")
 
 Spoon about 2/3 cup filling on each tortilla. Roll up tortillas around filling. Place, seam sides down, in prepared dish; set aside.
+
+![healthy page] (export/CookBotBook_6.png "")
+
 For sauce, in bowl stir together remaining cranberry sauce, remaining salsa, and hot pepper sauce. Spoon over filled tortillas. Cover with foil. Bake for 45 minutes. Uncover; top with remaining cheese. Bake 5 to 10 minutes more or until heated through and cheese is melted. Sprinkle with additional cilantro and green onions.
 
 ![lemonHerbChicke] (images/cookbot8.jpg "")

@@ -21,7 +21,7 @@ from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval
 
 from pagebot import cr2p, cp2p, setFillColor, setStrokeColor
 from pagebot.style import NO_COLOR, makeStyle
-from pagebot.elements import Grid, BaselineGrid, Image, TextBox, Text, Rect, Line, Oval, Container
+from pagebot.elements import Grid, BaselineGrid, Image, TextBox, Text, Rect, Line, Polygon, Oval, Container
 
 import pagebot.toolbox.markers
 reload(pagebot.toolbox.markers)
@@ -246,7 +246,12 @@ class Page(Container):
     def cLine(self, cx, cy, cw, ch, style, eId=None, **kwargs):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.line(x, y, w=w, h=h, style=style, eId=eId, **kwargs)
-                
+    
+    def polygon(self, x, y, points, style=None, eId=None, **kwargs):
+        e = Polygon(points, style=style, eId=None, **kwargs)
+        self.place(e, x, y) # Append to drawing sequence and store by optional element id.
+        return e
+
     def image(self, path, x, y, w=None, h=None, style=None, eId=None, mask=None, pageNumber=0, **kwargs):
         u"""Create Image element as position (x, y) and optional width, height (w, h) of which
         at least one of them should be defined. The path can be None, to be filled later.

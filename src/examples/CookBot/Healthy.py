@@ -265,7 +265,7 @@ def makeDocument(rs):
     # Make number of pages with default document size.
     # Initially make all pages default with template2.
     # Oversized document (docW, docH) is defined in the rootStyle.
-    doc = Document(rs, title=EXPORT_PATH, pages=6, template=template2) 
+    doc = Document(rs, title=EXPORT_PATH, pages=7, template=template2) 
  
     # Cache some values from the root style that we need multiple time to create the tag styles.
     fontSize = rs['fontSize']
@@ -349,5 +349,5 @@ def makeDocument(rs):
     return doc
         
 d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+d.export(EXPORT_PATH, pageSelection=(1, 6)) 
 
