@@ -16,10 +16,16 @@ import weakref
 import copy
 from datetime import datetime
 from math import cos, sin, radians, degrees, atan2
+
 from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, closePath, FormattedString
-from pagebot.style import NO_COLOR, makeStyle
+
 from pagebot import cr2p, cp2p, setFillColor, setStrokeColor
+from pagebot.style import NO_COLOR, makeStyle
 from pagebot.elements import Grid, BaselineGrid, Image, TextBox, Text, Rect, Line, Oval, Container
+
+import pagebot.toolbox.markers
+reload(pagebot.toolbox.markers)
+from pagebot.toolbox.markers import drawCropMarks, drawRegistrationMarks
 
 class Page(Container):
  
@@ -241,21 +247,21 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.line(x, y, w=w, h=h, style=style, eId=eId, **kwargs)
                 
-    def image(self, path, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+    def image(self, path, x, y, w=None, h=None, style=None, eId=None, mask=None, pageNumber=0, **kwargs):
         u"""Create Image element as position (x, y) and optional width, height (w, h) of which
         at least one of them should be defined. The path can be None, to be filled later.
         If the image is drawn with an empty path, a missingImage cross-frame is shown.
         The Image element is answered for convenience of the caller."""
-        e = Image(path, style=style, w=w, h=h, eId=eId, **kwargs)
+        e = Image(path, style=style, w=w, h=h, eId=eId, mask=None, pageNumber=pageNumber, **kwargs)
         self.place(e, x, y)
         return e
             
-    def cImage(self, path, cx, cy, cw, ch, style, eId=None, **kwargs):
+    def cImage(self, path, cx, cy, cw, ch, style, eId=None, mask=None, pageNumber=0, **kwargs):
         """Convert the column size into point size, depending on the column settings of the 
         current template, when drawing images "hard-coded" directly on a certain page.
         The Image element is answered for convenience of the caller"""
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
-        return self.image(path, x, y, style=style, eId=eId, **kwargs)
+        return self.image(path, x, y, style=style, eId=eId, mask=None, pageNumber=pageNumber, **kwargs)
 
     def grid(self, style=None, eId=None, x=0, y=0, **kwargs):
         u"""Direct way to add a grid element to a single page, if not done through its template."""
@@ -290,7 +296,7 @@ class Page(Container):
                 flows[element.next] = [element]
         return flows
 
-    def drawArrow(self, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
+    def _drawArrow(self, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
         u"""Draw curved arrow marker between the two points.
         TODO: Add drawing of real arrow-heads, rotated in the right direction."""
         style = self.parent.getRootStyle()
@@ -337,7 +343,7 @@ class Page(Container):
         if endMarker:
             oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 
-    def drawFlowConnections(self, ox, oy):
+    def _drawFlowConnections(self, ox, oy):
         u"""If rootStyle.showFlowConnections is True, then draw the flow connections
         on the page, using their stroke/width settings of the style."""
         style = self.parent.getRootStyle()
@@ -349,24 +355,20 @@ class Page(Container):
             tbStart, (startX, startY) = self.getElementPos(seq[0].eId)
             for tbTarget in seq[1:]:
                 tbTarget, (targetX, targetY) = self.getElementPos(tbTarget.eId)
-                self.drawArrow(ox+startX, oy+startY+tbStart.h, ox+startX+tbStart.w, oy+startY, -1)
-                self.drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h, 1)
+                self._drawArrow(ox+startX, oy+startY+tbStart.h, ox+startX+tbStart.w, oy+startY, -1)
+                self._drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h, 1)
                 tbStart = tbTarget
                 startX = targetX
                 startY = targetY
-            self.drawArrow(ox+startX, oy+startY+tbStart.h, ox+startX+tbStart.w, oy+startY, -1)
+            self._drawArrow(ox+startX, oy+startY+tbStart.h, ox+startX+tbStart.w, oy+startY, -1)
 
             if self != self.parent.getLastPage():
                 # Finalize with a line to the start, assuming it is on the next page.
                 tbTarget, (targetX, targetY) = self.getElementPos(seq[0].eId)
-                self.drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h-self.h, 1)
+                self._drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h-self.h, 1)
 
 
-    def _drawRegistrationMark(self, ox, oy):
-        u"""Draw standard registration mark, to show registration of CMYK colors.
-        https://en.wikipedia.org/wiki/Printing_registration."""
-        
-    def drawPageInfo(self, ox, oy):
+    def _drawPageInfo(self, ox, oy):
         u"""Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks."""
         style = self.parent.getRootStyle()
@@ -375,56 +377,11 @@ class Page(Container):
             cms = style['cropMarkSize']
             dt = datetime.now()
             d = dt.strftime("%A, %d. %B %Y %I:%M%p")
-            s = 'Page %s | %s' % (self.eId, d)
+            s = 'Page %s | %s | %s' % (self.eId, d, self.parent.title or 'Untitled')
             fs = FormattedString(s, font='Verdana', fill=0, fontSize=6)
-            text(fs, (ox + bleed, oy - 2*bleed))
+            text(fs, (ox + bleed, oy + self.h + cms)) # Draw on top of page.
 
-    def drawCropMarks(self, ox, oy):
-        u"""If the show flag is set, then draw the cropmarks or page frame."""
-        style = self.parent.getRootStyle()
-        if style.get('showCropMarks'):
-            bleed = style['bleed']
-            cms = style['cropMarkSize']
-            fill(None)
-            stroke(0)
-            strokeWidth(0.5)
-            newPath()
-            # Bottom left
-            moveTo((ox - bleed, oy))
-            lineTo((ox - cms, oy))
-            moveTo((ox, oy - bleed))
-            lineTo((ox, oy - cms))
-            # Bottom right
-            moveTo((ox + self.w + bleed, oy))
-            lineTo((ox + self.w + cms, oy))
-            moveTo((ox + self.w, oy - bleed))
-            lineTo((ox + self.w, oy - cms))
-            # Top left
-            moveTo((ox - bleed, oy + self.h))
-            lineTo((ox - cms, oy + self.h))
-            moveTo((ox, oy + self.h + bleed))
-            lineTo((ox, oy + self.h + cms))
-            # Top right
-            moveTo((ox + self.w + bleed, oy+self.h))
-            lineTo((ox + self.w + cms, oy+self.h))
-            moveTo((ox + self.w, oy + self.h + bleed))
-            lineTo((ox + self.w, oy + self.h + cms))
-            # Any fold lines to draw?
-            if style['folds'] is not None:
-                for x, y in style['folds']:
-                    if x is not None:
-                        moveTo((ox + x, oy - bleed))
-                        lineTo((ox + x, oy - cms))
-                        moveTo((ox + x, oy + self.h + bleed))
-                        lineTo((ox + x, oy + self.h + cms))
-                    if y is not None:
-                        moveTo((ox - bleed, oy + y))
-                        lineTo((ox - cms, oy + y))
-                        moveTo((ox + self.w + bleed, oy + y))
-                        lineTo((ox + self.w + cms, oy + y))
-            drawPath()
-
-    def drawPageFrame(self, ox, oy):
+    def _drawPageFrame(self, ox, oy):
         u"""If the show flag is set, then draw the cropmarks or page frame."""
         style = self.parent.getRootStyle()
         if style.get('showPageFrame'):
@@ -433,26 +390,36 @@ class Page(Container):
             strokeWidth(0.5)
             rect(ox, oy, self.w, self.h)
 
+    def _drawPageMetaInfo(self, ox, oy):
+        # If there is an offset and drawing cropmarks (or frame)
+        style = self.parent.getRootStyle()
+        if style.get('showCropMarks'):
+            bleed = style['bleed']
+            cmSize = style['cropMarkSize']
+            cmStrokeWidth = style['cropMarkStrokeWidth']
+            drawCropMarks(ox, oy, self.w, self.h, bleed, cmSize, cmStrokeWidth, style.get('folds'))
+            drawRegistrationMarks(ox, oy, self.w, self.h, cmSize, cmStrokeWidth)
+        # If there is an offset and drawing cropmarks (or frame):
+        self._drawPageInfo(ox, oy)
+        # If there is an offset and drawing cropmarks (or frame)
+        self._drawPageFrame(ox, oy)
+        # Check if we need to draw the flow arrows.
+        self._drawFlowConnections(ox, oy)
+
     def draw(self):
         u"""If the size of the document is larger than the size of hte page, then use the extra space
         to draw cropmarks and other print-related info. This also will make the bleeding of images 
         visible."""
-        offsetX = offsetY = 0 # In case no oversized document.
+        ox = oy = 0 # OffsetX and offsetY, in case no oversized document.
         if self.parent.w > self.w:
-            offsetX = (self.parent.w - self.w)/2
+            ox = (self.parent.w - self.w) / 2
         if self.parent.h > self.h:
-            offsetY = (self.parent.h - self.h)/2
+            oy = (self.parent.h - self.h) / 2
         # Draw all elements with this offset.
         for element, (x, y) in self.elements:
-            element.draw(self, offsetX+x, offsetY+y)
-        # If there is an offset and drawing cropmarks (or frame)
-        self.drawCropMarks(offsetX, offsetY)
-        # If there is an offset and drawing cropmarks (or frame):
-        self.drawPageInfo(offsetX, offsetY)
-        # If there is an offset and drawing cropmarks (or frame)
-        self.drawPageFrame(offsetX, offsetY)
-        # Check if we need to draw the flow arrows.
-        self.drawFlowConnections(offsetX, offsetY)
+            element.draw(self, ox + x, oy + y)
+        # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
+        self._drawPageMetaInfo(ox, oy)
 
 class Template(Page):
     u"""Template is a special kind of Page class. Possible the draw in 

@@ -14,7 +14,7 @@ from pagebot import getFormattedString
 
 import pagebot.style
 reload(pagebot.style)
-from pagebot.style import getRootStyle, LEFT_ALIGN
+from pagebot.style import getRootStyle, LEFT_ALIGN, DOC_OVERSIZE
 
 import pagebot.document 
 reload(pagebot.document)
@@ -62,15 +62,15 @@ H = 11 * 72
 if PREVIEW:
     docW = docH = None # Document same size as pages, don't show crop-marks
 else:
-    docW = W+50
-    docH = H+50
+    docW = W + 2*DOC_OVERSIZE
+    docH = H + 2*DOC_OVERSIZE
     
 RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
     w = W, # On root level the "w" is the page width 595pt ~ 210mm, international generic fit.
     h = H, # 11 * 72 Page height 11", international generic fit.
-    docW = docW, # Oversize document to shoq crop-marks
+    docW = docW, # Oversize document to show crop-marks and registration crosses. Otherwise None
     docH = docH,
     ml = 7*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
@@ -97,7 +97,7 @@ FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'lemonHerbChicken.md'
-EXPORT_PATH = 'export/CookBotBook.pdf'
+EXPORT_PATH = 'export/CookBotBook.png'
 COVER_IMAGE_PATH1 = 'images/cookbot2.jpg'
 COVER_IMAGE_PATH2 = 'images/cookbot3.jpg'
 COVER_IMAGE_PATH3 = 'images/cookbot4.jpg'
@@ -126,7 +126,7 @@ if VARS:
         'PromisePageBot-Book': {"wght": 250, "wdth": 1000},
         'PromisePageBot-BookCondensed': {"wght": 250, "wdth": 800},
         'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
-        'PromisePageBot-Medium': {"wght": 600, "wdth": 1000},    
+        'PromisePageBot-Medium': {"wght": 500, "wdth": 1000},    
         'PromisePageBot-Semibold': {"wght": 750, "wdth": 1000},    
         'PromisePageBot-SemiboldCondensed': {"wght": 250, "wdth": 100},    
         'PromisePageBot-Bold': {"wght": 1000, "wdth": 1000},
@@ -161,19 +161,23 @@ def makeCoverTemplate(imagePath, rs):
     # Cover
     coverTemplate = Template(rs) # Cover template of the magazine.
     coverTemplate.image(imagePath, -200, -bleed, h=rs['h'] + 2 * bleed)
+    # Title of the magazine cover.
     coverTitle = FormattedString('Healthy', font=LIGHT, fontSize=180, fill=1, tracking=-9)
-    coverTemplate.text(coverTitle, 10, rs['h'] - 148)
+    coverTemplate.text(coverTitle, 10, rs['h'] - 148, shadowOffset=(4, -6))
     
-    # Make actual date in top-right with magazine title.
+    # Make actual date in top-right with magazine title. Draw a bit transparant on background photo.
     dt = datetime.now()
     d = dt.strftime("%B %Y")
-    fs = FormattedString(d, font=MEDIUM, fontSize=18, fill=1, tracking=0.5)
+    fs = FormattedString(d, font=MEDIUM, fontSize=18, fill=(1, 1, 1, 0.8), tracking=0.5)
     coverTemplate.text(fs, 436, rs['h'] - 26)
 
     # Titles could come automatic from chapters in the magazine.
     fs = FormattedString('$4.90', font=BOOK, fontSize=12, fill=1, tracking=0.5,
         lineHeight=12 )
     coverTemplate.text(fs, 540, rs['h'] - 765)
+
+    # Show baseline grid if rs.showBaselineGrid is True
+    coverTemplate.baselineGrid(rs)
   
     return coverTemplate
        
@@ -221,6 +225,7 @@ def makeDocument(rs):
     fs = FormattedString('Fresh', font=MEDIUM, fontSize=60, fill=(1, 1, 1, 0.5), tracking=0.5,
         lineHeight=52 )
     coverTemplate1.text(fs, 400, rs['h'] - 270)
+
                 
  
     # Template 16
@@ -260,7 +265,7 @@ def makeDocument(rs):
     # Make number of pages with default document size.
     # Initially make all pages default with template2.
     # Oversized document (docW, docH) is defined in the rootStyle.
-    doc = Document(rs, pages=6, template=template2) 
+    doc = Document(rs, title=EXPORT_PATH, pages=6, template=template2) 
  
     # Cache some values from the root style that we need multiple time to create the tag styles.
     fontSize = rs['fontSize']

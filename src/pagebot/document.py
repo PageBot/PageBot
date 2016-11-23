@@ -232,7 +232,7 @@ class Document(object):
             newPage(self.w, self.h) #  Same size, make page of this size.
             # Let the page draw itself on the current DrawBot view port.
             page.draw() 
-        saveImage(fileName)
+        saveImage(fileName, multipage=True)
 
 class Website(Document):
     u"""Place holder for future export as website, writing Angular code, PHP, HTML, CSS, etc. perhaps

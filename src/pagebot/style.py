@@ -16,6 +16,7 @@ from pagebot import NO_COLOR
 # Basic layout measures
 U = 7
 BASELINE_GRID = 2*U
+DOC_OVERSIZE = 72 # Default oversize margin of a document to show crop-marks and registration crosses.
 
 # Display option
 SHOW_GRID = True
@@ -83,7 +84,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         w = 595, # Page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = 11 * 72, # Page height, basic size of the document. 11", international generic fit.
         # Document size, if different from the page size. Otherwise keep None to make document.w answer rootStyle['w']
-        # Of the document size is different from the page size (and if showCropMarks and/or showPageFrame is True)
+        # If the document size is different from the page size (and if showCropMarks and/or showPageFrame is True)
+        # crop-marks and registration crosses are shown.
         docW = None,
         docH = None,
         # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
@@ -119,7 +121,9 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         scaleX = 1, # In scale of content needs to be defined, as in image.
         scaleY = 1,
         # Shadow, gradient, etc.
-        shadow = NO_COLOR, # ((10, 10), 20, (1, 0, 0))
+        shadowOffset = None, # Point tuple, e.g. (4, -6). If None, shadow drawing is ignored. 
+        shadowBlur = 20, # Integer value for the amount of shadow blur. Make shadowOffset != None to work
+        shadowFill = (0, 0, 0, 0.5), # Default transparant black of blurred shadow.
         linearGradient = NO_COLOR, # ((10, 210), (10, 310), ([1, 1, 1, 1], [0, 1, 1]))
         radialGradient = NO_COLOR, #((50, 410), (50, 410), ([1, 0, 1, 0], [1, 1, 0, 0], [0, 1, 1]),
         radialGradient_startRadius = 0,
@@ -150,7 +154,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         showCropMarks = showCropMarks,
         showPageInfo = showPageInfo and showCropMarks, # If True, draw page info outside the frame.
         bleed = 8, # Bleeding images of page edge and distance of crop-marks from page frame.
-        cropMarkSize = 40, # Length of crop marks, including bleed distance.
+        cropMarkSize = 40, # Length of crop marks, including bleed distance. 
+        cropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
         # Draw page fram if document (w, h) is larger than page (w, h)
         showPageFrame = showPageFrame,
         # Generic element stuff
