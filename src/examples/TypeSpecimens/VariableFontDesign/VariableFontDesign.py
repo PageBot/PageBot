@@ -101,7 +101,8 @@ def makeSpecimen(rs):
     template1.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
-    template1.place(VariationCube(w=500, h=500, s='Ha', dimensions=dict(wght=4, wdth=4)), 50, 160)
+    vCube = VariationCube(w=500, h=500, s='ex', fontSize=18, dimensions=dict(wght=2, wdth=2))
+    template1.place(vCube, 50, 160)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
