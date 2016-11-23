@@ -232,7 +232,17 @@ class Document(object):
             newPage(self.w, self.h) #  Same size, make page of this size.
             # Let the page draw itself on the current DrawBot view port.
             page.draw() 
+
+        # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
+        # then set the global frame duration.
+        rs = self.getRootStyle()
+        if rs['frameDuration'] is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
+            frameDuration(rs['frameDuration'])
+
+        # http://www.drawbot.com/content/canvas/saveImage.html
         saveImage(fileName, multipage=True)
+
+
 
 class Website(Document):
     u"""Place holder for future export as website, writing Angular code, PHP, HTML, CSS, etc. perhaps

@@ -332,6 +332,23 @@ class Line(Element):
         lineTo((x + self.w, y + self.h))
         drawPath()
 
+class Polygon(Element):
+    def __init__(self, points, style=None, eId=None, **kwargs):
+        self.points = points
+        self.eId = eId
+        self.style = makeStyle(style, **kwargs)
+
+    def draw(self, page, x, y):
+        setFillColor(self.style.get('fill'), NO_COLOR)
+        setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth'))
+        newPath()
+        for index, (px, py) in enumerate(self.points):
+            if index == 0:
+                moveTo((x + px, y + py))
+            else:
+                lineTo((x + px, y + py))
+        drawPath()
+
 class Image(Element):
     def __init__(self, path, style=None, eId=None, caption=None, mask=None, pageNumber=None, **kwargs):
         self.eId = eId
