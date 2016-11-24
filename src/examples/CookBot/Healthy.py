@@ -361,7 +361,6 @@ def makeDocument(rs):
     
     page4 = doc[4]
     page4.setTemplate(coverTemplate4)
-    page4.scaleX = page4.scaleY = 0.15
     
     page5 = doc[5]
     page5.setTemplate(coverTemplate5)
@@ -372,8 +371,8 @@ def makeDocument(rs):
     # Show thumbnail of entire paga4 on cover. 
     # TODO: Needs to be masked still.
     # TODO: Scale should not be attribute of style, but part of placement instead.
-    page4.style['scaleX'] = page4.style['scaleY'] = 0.2
-    page1.place(page4, 460, 48)# sx, sy)
+    page3.style['scaleX'] = page3.style['scaleY'] = 0.1
+    #page1.place(page3, 500, 48)# sx, sy)
     
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
