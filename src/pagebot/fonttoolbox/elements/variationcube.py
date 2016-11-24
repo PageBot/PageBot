@@ -44,7 +44,7 @@ class VariationCube(Element):
 
     def installMaster(self):
         if not self.VFONT_NAME in installedFonts():
-            path = self.FONT_PATH + VFONT_PATH
+            path = self.FONT_PATH + self.VFONT_PATH
             installFont(path)
 
     def getFontByLocation(self, weight, width):
