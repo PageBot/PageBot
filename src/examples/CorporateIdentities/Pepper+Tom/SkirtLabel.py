@@ -176,7 +176,7 @@ def makeDocument(rs):
     template1.cTextBox(FS, 2, 0, 2, 8, rs, flowId2, nextBox=flowId3, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox(FS, 4, 4, 2, 4, rs, flowId3, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template1.cText(FS+rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template1.cText(FS+rs['pageIdMarker'], 6, 0, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
 
     # Template 2
     template2 = Template(rs) # Create second template. This is for the main pages.
@@ -193,7 +193,7 @@ def makeDocument(rs):
     template2.cTextBox(FS, 2, 4, 2, 4, rs, flowId2, nextBox=flowId3, nextPage=0, fill=BOX_COLOR)
     template2.cTextBox(FS, 4, 3, 2, 3, rs, flowId3, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template2.cText(FS+rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template2.cText(FS+rs['pageIdMarker'], 6, 0, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.

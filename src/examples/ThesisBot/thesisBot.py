@@ -164,7 +164,7 @@ def makeDocument(rs):
     template1.cTextBox('', 0, 0, 2, 6, rs, tocId, fill=BOX_COLOR) # For now, keep on the first page.
     template1.cTextBox('', 0, 6, 2, 2, rs, footnotesId, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template1.cText(FS+rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template1.cText(FS+rs['pageIdMarker'], 6, 0, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
