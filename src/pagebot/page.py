@@ -423,7 +423,6 @@ class Page(Container):
         visible. Page drawing can have an offset too, in case it is used as placed element on another page.
         If self.scaleX and self.scaleY are not None, then scale the drawing of the entire page,
         keeping the x and y position unscaled."""
-        print self.style
         x, y = self._applyScale(x, y)
         # Now we may be in scaled mode.
         ox = oy = 0 # OffsetX and offsetY, in case no oversized document.
