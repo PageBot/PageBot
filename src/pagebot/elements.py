@@ -98,6 +98,24 @@ class Element(object):
     def setMaxSize(self, maxW, maxH):
         self.maxW = maxW # No limit if value is None
         self.maxH = maxH
+        
+    def _applyScale(self, x, y):
+        u"""Apply the scale, if both self.style['scaleX'] and self.style['scaleY'] as set. Use this
+        method paired with self._restoreScale(). The (x, y) answered as reversed scaled tuple,
+        so drawing elements can still draw on "real size", while the other element is in scaled mode."""
+        sx = self.style.get('scaleX') # May not exist in the un-cascaded style.
+        sy = self.style.get('scaleY')
+        if sx and sy:
+            save()
+            scale(sx, sy)
+            x /= sx
+            y /= sy
+        return x, y
+
+    def _restoreScale(self):
+        u"""Reset graphics state from scale mode."""
+        if self.style.get('scaleX') and self.style.get('scaleY'): # May not exist in the un-cascaded style.
+            restore
 
     def _setShadow(self):
         u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this

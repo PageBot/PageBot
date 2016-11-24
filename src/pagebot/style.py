@@ -118,9 +118,9 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         minH = baselineGrid, # Default is to make minimum height equal to 1 baseline.
         maxW = None, # None if there is no maximum
         maxH = None,
-        # Scale of content
-        scaleX = 1, # In scale of content needs to be defined, as in image.
-        scaleY = 1,
+        # Overall content scaling.
+        scaleX = None, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
+        scaleY = None, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
         # Shadow, gradient, etc.
         shadowOffset = None, # Point tuple, e.g. (4, -6). If None, shadow drawing is ignored. 
         shadowBlur = 20, # Integer value for the amount of shadow blur. Make shadowOffset != None to work

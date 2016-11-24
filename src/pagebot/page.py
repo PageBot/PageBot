@@ -17,7 +17,8 @@ import copy
 from datetime import datetime
 from math import cos, sin, radians, degrees, atan2
 
-from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, closePath, FormattedString
+from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, \
+    closePath, FormattedString
 
 from pagebot import cr2p, cp2p, setFillColor, setStrokeColor
 from pagebot.style import NO_COLOR, makeStyle
@@ -44,7 +45,7 @@ class Page(Container):
         self.setTemplate(template) # Create storage of elements and copy template elements.
         
     def __repr__(self):
-        return '[%s %d w:%d h:%d elements:%d elementIds:%s]' % (self.__class__.__name__, self.pageId, self.w, self.h, len(self.elements), self.elementIds.keys())
+        return '[%s %d w:%d h:%d elements:%d elementIds:%s]' % (self.__class__.__name__, self.pageId or 0, self.w, self.h, len(self.elements), self.elementIds.keys())
 
     def _get_pageId(self):
         return self.eId
@@ -416,20 +417,27 @@ class Page(Container):
         # Check if we need to draw the flow arrows.
         self._drawFlowConnections(ox, oy)
 
-    def draw(self):
+    def draw(self, page=None, x=0, y=0):
         u"""If the size of the document is larger than the size of hte page, then use the extra space
         to draw cropmarks and other print-related info. This also will make the bleeding of images 
-        visible."""
+        visible. Page drawing can have an offset too, in case it is used as placed element on another page.
+        If self.scaleX and self.scaleY are not None, then scale the drawing of the entire page,
+        keeping the x and y position unscaled."""
+        print self.style
+        x, y = self._applyScale(x, y)
+        # Now we may be in scaled mode.
         ox = oy = 0 # OffsetX and offsetY, in case no oversized document.
         if self.parent.w > self.w:
             ox = (self.parent.w - self.w) / 2
         if self.parent.h > self.h:
             oy = (self.parent.h - self.h) / 2
         # Draw all elements with this offset.
-        for element, (x, y) in self.elements:
-            element.draw(self, ox + x, oy + y)
+        for element, (ex, ey) in self.elements:
+            element.draw(self, ex + ox + x, ey + oy + y)
         # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
         self._drawPageMetaInfo(ox, oy)
+        # Check if we are in scaled mode. Then restore.
+        self._restoreScale()
 
 class Template(Page):
     u"""Template is a special kind of Page class. Possible the draw in 
@@ -440,6 +448,7 @@ class Template(Page):
         # Each element should check at this point if the minimum set of style values
         # are set and if their values are valid.
         assert self.w is not None and self.h is not None # Make sure that page size is defined.
+        self.eId = eId
         self.elements = [] # Sequential drawing order of elementPos (e, (x, y)) tuples.
         # Stored elementPos (e, (x, y)) by their unique id, so they can be altered later,
         # before rendering starts.
