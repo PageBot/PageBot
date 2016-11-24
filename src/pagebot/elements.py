@@ -368,6 +368,7 @@ class Polygon(Element):
         drawPath()
 
 class Image(Element):
+    u"""Image element has special attributes self.iw and self.ih for the real image size."""
     def __init__(self, path, style=None, eId=None, caption=None, mask=None, imo=None, pageNumber=None, **kwargs):
         self.eId = eId
         self.caption = caption
