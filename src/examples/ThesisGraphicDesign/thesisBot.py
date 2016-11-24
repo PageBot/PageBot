@@ -27,7 +27,7 @@ from pagebot.typesetter import Typesetter
 from pagebot.composer import Composer
 
 EXPORT_PATH = 'export/MyThesis.gif'
-BOX_COLOR = 0.7
+BOX_COLOR = 0.9
 MD_PATH = 'thesis.md'
 
 rootStyle = getRootStyle()
@@ -57,9 +57,9 @@ def makeThesis():
     doc = Document(rootStyle, pages=2, template=myTemplate) 
     page1 = doc[1] # Get the first page.
     
-    doc.newStyle(name='h1', fontSize=32, fill=(1, 0, 0), leading=40, postfix='\n')
-    doc.newStyle(name='h2', fontSize=24, fill=(0, 0.5, 1), leading=30, postfix='\n')
-    doc.newStyle(name='h3', fontSize=24, fill=(1, 0, 1), leading=30, postfix='\n')
+    doc.newStyle(name='h1', fontSize=32, fill=(1, 0, 0), leading=40, prefix='\n',postfix='\n')
+    doc.newStyle(name='h2', fontSize=24, fill=(0, 0.5, 1), leading=30, prefix='\n', postfix='\n')
+    doc.newStyle(name='h3', fontSize=24, fill=(1, 0, 1), leading=30, prefix='\n', postfix='\n')
 
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 

@@ -189,13 +189,13 @@ def makeDocument(rs):
         leading=4*fontSize, tracking=H1_TRACK, postfix='\n')
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD_CONDENSED, 
         fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
-        prefix='', postfix='')
+        prefix='', postfix='\n')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        prefix='\n', postfix='\n')
+        prefix='', postfix='\n')
     doc.newStyle(name='h4', fontSize=1.1*fontSize, font=BOOK, fill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='\n', postfix='\n')
+        paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='', postfix='\n')
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
