@@ -222,7 +222,7 @@ class Document(object):
         be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
         drawing and export that needs to be done. """
         if pageSelection is None:
-            pageSelection = range(1, len(self.pages)+1) # [1,2,3,4,...]
+            pageSelection = range(1, len(self.pages)+1) # [1,2,3,4,...] inclusive
         for pIndex in pageSelection:
             # Get the current Page instance, indicated by the page number.
             page = self.pages[pIndex] # Page numbering stars at #1
