@@ -97,12 +97,12 @@ FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'lemonHerbChicken.md'
-EXPORT_PATH = 'export/CookBotBook.png'
+EXPORT_PATH = 'export/Healty.png'
 COVER_IMAGE_PATH1 = 'images/cookbot2.jpg'
 COVER_IMAGE_PATH2 = 'images/cookbot3.jpg'
 COVER_IMAGE_PATH3 = 'images/cookbot4.jpg'
 COVER_IMAGE_PATH4 = 'images/cookbot5.jpg'
-COVER_IMAGE_PATH5 = 'images/cookbot6.jpg'
+COVER_IMAGE_PATH5 = 'images/cookbot9.jpg'
 
 #MD_PATH = 'testPaginaCompositie_nl.md'
 
