@@ -45,7 +45,7 @@ PREVIEW = False
 SHOW_GRID = PREVIEW
 SHOW_GRID_COLUMNS = PREVIEW
 SHOW_BASELINE_GRID = PREVIEW
-SHOW_FLOW_CONNECTIONS = PREVIEW
+SHOW_FLOW_CONNECTIONS =PREVIEW
 
 if SHOW_GRID:
     BOX_COLOR = (0.8, 0.8, 0.8, 0.4)
@@ -97,7 +97,7 @@ FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'lemonHerbChicken.md'
-EXPORT_PATH = 'export/CookBotBook.png'
+EXPORT_PATH = 'export/CookBotBook.pdf'
 COVER_IMAGE_PATH1 = 'images/cookbot2.jpg'
 COVER_IMAGE_PATH2 = 'images/cookbot3.jpg'
 COVER_IMAGE_PATH3 = 'images/cookbot4.jpg'
@@ -227,7 +227,38 @@ def makeDocument(rs):
     coverTemplate1.text(fs, 400, rs['h'] - 270)
 
                 
- 
+    # Cover 4
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Lemon Herb\nChicken', font=BOOK_CONDENSED, fontSize=48, fill=1, tracking=0.5,
+        lineHeight=48)
+    coverTemplate4.text(fs, 22, rs['h'] - 270)
+
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Seasonal:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    fs += FormattedString('Hot served dinners', font=BOOK, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    coverTemplate4.text(fs, 22, rs['h'] - 420)
+        
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Cranberry\nBean Sauce', font=LIGHT, fontSize=60, fill=1, tracking=0.5,
+        lineHeight=52 )
+    coverTemplate4.text(fs, 18, rs['h'] - 690)
+        
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Arizona:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    fs += FormattedString('Cran-Turkey Enchilada', font=BOOK, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    coverTemplate4.text(fs, 22, rs['h'] - 730)
+        
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Fresh', font=MEDIUM, fontSize=60, fill=(1, 1, 1, 0.5), tracking=0.5,
+        lineHeight=52 )
+    coverTemplate4.text(fs, 400, rs['h'] - 270)
+
+                
+
     # Template 16
     template1 = Template(rs) # Create template of main size. Front page only.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
@@ -330,12 +361,19 @@ def makeDocument(rs):
     
     page4 = doc[4]
     page4.setTemplate(coverTemplate4)
+    page4.scaleX = page4.scaleY = 0.15
     
     page5 = doc[5]
     page5.setTemplate(coverTemplate5)
     
     page6 = doc[6]
     page6.setTemplate(template1)
+    
+    # Show thumbnail of entire paga4 on cover. 
+    # TODO: Needs to be masked still.
+    # TODO: Scale should not be attribute of style, but part of placement instead.
+    page4.style['scaleX'] = page4.style['scaleY'] = 0.2
+    page1.place(page4, 460, 48)# sx, sy)
     
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
