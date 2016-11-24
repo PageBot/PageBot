@@ -83,10 +83,10 @@ class VariationCube(Element):
         for weight in range(weights+1):
             for width in range(widths+1):
                 fontName = self.getFontByLocation(weight * RANGE / weights, width * RANGE / widths)
-                fs = FormattedString(self.glyphNames, font=fontName, fontSize=60, fill=0)
+                fs = FormattedString(self.glyphNames, font=fontName, fontSize=self.style['fontSize'], fill=0)
                 w, h = fs.size()
                 ox = 40
-                oy = 40
+                oy = 30
                 page.text(fs, ox + x + weight * stepX - w / 2, oy + y + width * stepY)  
                 fs = FormattedString('wght %d\nwdth %d' % (weight * RANGE / weights, width * RANGE / widths), fontSize=6, fill=0)
                 w, h = fs.size()

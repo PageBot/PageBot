@@ -111,7 +111,7 @@ P_TRACK = 0.030
 VARS = True
 
 if VARS:
-    FONT_PATH = '../../fonts/'
+    FONT_PATH = '../../../fonts/'
 
     FONT_LOCATIONS = {
         #'PromisePageBot-BoldCondensed': {"wght": 750, "wdth": 500, },
