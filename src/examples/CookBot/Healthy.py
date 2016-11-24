@@ -97,7 +97,7 @@ FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'lemonHerbChicken.md'
-EXPORT_PATH = 'export/CookBotBook.pdf'
+EXPORT_PATH = 'export/CookBotBook.png'
 COVER_IMAGE_PATH1 = 'images/cookbot2.jpg'
 COVER_IMAGE_PATH2 = 'images/cookbot3.jpg'
 COVER_IMAGE_PATH3 = 'images/cookbot4.jpg'
@@ -128,7 +128,7 @@ if VARS:
         'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
         'PromisePageBot-Medium': {"wght": 400, "wdth": 1000},    
         'PromisePageBot-Semibold': {"wght": 600, "wdth": 1000},    
-        'PromisePageBot-SemiboldCondensed': {"wght": 250, "wdth": 100},    
+        'PromisePageBot-SemiboldCondensed': {"wght": 250, "wdth": 40},    
         'PromisePageBot-Bold': {"wght": 1000, "wdth": 1000},
     }
     FONTS = {}
@@ -179,8 +179,41 @@ def makeCoverTemplate(imagePath, rs):
     # Show baseline grid if rs.showBaselineGrid is True
     coverTemplate.baselineGrid(rs)
   
+    makeCoverTitles(coverTemplate, rs)
+    
     return coverTemplate
-       
+
+def makeCoverTitles(coverTemplate, rs):
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Lemon Herb\nChicken', font=BOOK_CONDENSED, fontSize=48, fill=1, tracking=0.5,
+        lineHeight=48)
+    coverTemplate.text(fs, 22, rs['h'] - 270)
+
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Seasonal:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    fs += FormattedString('Hot served dinners', font=BOOK, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    coverTemplate.text(fs, 22, rs['h'] - 420)
+        
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Cranberry\nBean Sauce', font=LIGHT, fontSize=60, fill=1, tracking=0.5,
+        lineHeight=52 )
+    coverTemplate.text(fs, 18, rs['h'] - 690)
+        
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Arizona:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    fs += FormattedString('Cran-Turkey Enchilada', font=BOOK, fontSize=32, fill=1, tracking=0.5,
+        lineHeight=34)
+    coverTemplate.text(fs, 22, rs['h'] - 730)
+        
+    # Titles could come automatic from chapters in the magazine.
+    fs = FormattedString('Fresh', font=MEDIUM, fontSize=60, fill=(1, 1, 1, 0.5), tracking=0.5,
+        lineHeight=52 )
+    coverTemplate.text(fs, 400, rs['h'] - 270)
+
+        
 # -----------------------------------------------------------------         
 def makeDocument(rs):
     u"""Demo page composer."""
@@ -197,68 +230,7 @@ def makeDocument(rs):
     coverTemplate4 = makeCoverTemplate(COVER_IMAGE_PATH4, rs)
     coverTemplate5 = makeCoverTemplate(COVER_IMAGE_PATH5, rs)
     
-    # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Lemon Herb\nChicken', font=BOOK_CONDENSED, fontSize=48, fill=1, tracking=0.5,
-        lineHeight=48)
-    coverTemplate1.text(fs, 22, rs['h'] - 270)
-
-    # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Seasonal:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
-        lineHeight=34)
-    fs += FormattedString('Hot served dinners', font=BOOK, fontSize=32, fill=1, tracking=0.5,
-        lineHeight=34)
-    coverTemplate1.text(fs, 22, rs['h'] - 420)
-        
-    # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Cranberry\nBean Sauce', font=LIGHT, fontSize=60, fill=1, tracking=0.5,
-        lineHeight=52 )
-    coverTemplate1.text(fs, 18, rs['h'] - 690)
-        
-    # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Arizona:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
-        lineHeight=34)
-    fs += FormattedString('Cran-Turkey Enchilada', font=BOOK, fontSize=32, fill=1, tracking=0.5,
-        lineHeight=34)
-    coverTemplate1.text(fs, 22, rs['h'] - 730)
-        
-    # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Fresh', font=MEDIUM, fontSize=60, fill=(1, 1, 1, 0.5), tracking=0.5,
-        lineHeight=52 )
-    coverTemplate1.text(fs, 400, rs['h'] - 270)
-
                 
-    # Cover 4
-    # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Lemon Herb\nChicken', font=BOOK_CONDENSED, fontSize=48, fill=1, tracking=0.5,
-        lineHeight=48)
-    coverTemplate4.text(fs, 22, rs['h'] - 270)
-
-    # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Seasonal:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
-        lineHeight=34)
-    fs += FormattedString('Hot served dinners', font=BOOK, fontSize=32, fill=1, tracking=0.5,
-        lineHeight=34)
-    coverTemplate4.text(fs, 22, rs['h'] - 420)
-        
-    # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Cranberry\nBean Sauce', font=LIGHT, fontSize=60, fill=1, tracking=0.5,
-        lineHeight=52 )
-    coverTemplate4.text(fs, 18, rs['h'] - 690)
-        
-    # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Arizona:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
-        lineHeight=34)
-    fs += FormattedString('Cran-Turkey Enchilada', font=BOOK, fontSize=32, fill=1, tracking=0.5,
-        lineHeight=34)
-    coverTemplate4.text(fs, 22, rs['h'] - 730)
-        
-    # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Fresh', font=MEDIUM, fontSize=60, fill=(1, 1, 1, 0.5), tracking=0.5,
-        lineHeight=52 )
-    coverTemplate4.text(fs, 400, rs['h'] - 270)
-
-                
-
     # Template 16
     template1 = Template(rs) # Create template of main size. Front page only.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
@@ -371,7 +343,7 @@ def makeDocument(rs):
     # Show thumbnail of entire paga4 on cover. 
     # TODO: Needs to be masked still.
     # TODO: Scale should not be attribute of style, but part of placement instead.
-    page3.style['scaleX'] = page3.style['scaleY'] = 0.1
+    #page3.style['scaleX'] = page3.style['scaleY'] = 0.1
     #page1.place(page3, 500, 48)# sx, sy)
     
     # Create main Galley for this page, for pasting the sequence of elements.    
@@ -386,5 +358,5 @@ def makeDocument(rs):
     return doc
         
 d = makeDocument(RS)
-d.export(EXPORT_PATH, pageSelection=(1, 6)) 
+d.export(EXPORT_PATH, pageSelection=(1,2,3, 4, 5, 6)) 
 
