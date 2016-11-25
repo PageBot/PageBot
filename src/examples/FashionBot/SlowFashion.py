@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     Healthy.py
+#     SlowFashion.py
 #
 from datetime import datetime # Make date fit today.
 from pagebot import getFormattedString
@@ -96,13 +96,9 @@ FS = getFormattedString(FormattedString(''), RS)
 
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
-MD_PATH = 'lemonHerbChicken.md'
-EXPORT_PATH = 'export/Healty.png'
-COVER_IMAGE_PATH1 = 'images/cookbot2.jpg'
-COVER_IMAGE_PATH2 = 'images/cookbot3.jpg'
-COVER_IMAGE_PATH3 = 'images/cookbot4.jpg'
-COVER_IMAGE_PATH4 = 'images/cookbot5.jpg'
-COVER_IMAGE_PATH5 = 'images/cookbot9.jpg'
+MD_PATH = 'slowFashionStories.md'
+EXPORT_PATH = 'export/SlowFashion.png'
+COVER_IMAGE_PATH1 = 'images/IMG_8914.jpg'
 
 #MD_PATH = 'testPaginaCompositie_nl.md'
 
@@ -160,10 +156,10 @@ def makeCoverTemplate(imagePath, rs):
     bleed = rs['bleed']
     # Cover
     coverTemplate = Template(rs) # Cover template of the magazine.
-    coverTemplate.image(imagePath, -200, -bleed, h=rs['h'] + 2 * bleed)
+    coverTemplate.image(imagePath, -bleed/2, -bleed, h=rs['h'] + 2 * bleed)
     # Title of the magazine cover.
-    coverTitle = FormattedString('Healthy', font=LIGHT, fontSize=180, fill=1, tracking=-9)
-    coverTemplate.text(coverTitle, 10, rs['h'] - 148, shadowOffset=(4, -6))
+    coverTitle = FormattedString('Fashion', font=LIGHT, fontSize=180, fill=1, tracking=-9)
+    coverTemplate.text(coverTitle, 10, rs['h'] - 148)#, shadowOffset=(2, -3))
     
     # Make actual date in top-right with magazine title. Draw a bit transparant on background photo.
     dt = datetime.now()
@@ -172,7 +168,7 @@ def makeCoverTemplate(imagePath, rs):
     coverTemplate.text(fs, 436, rs['h'] - 26)
 
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('$4.90', font=BOOK, fontSize=12, fill=1, tracking=0.5,
+    fs = FormattedString('$6.95', font=BOOK, fontSize=12, fill=1, tracking=0.5,
         lineHeight=12 )
     coverTemplate.text(fs, 540, rs['h'] - 765)
 
@@ -185,34 +181,34 @@ def makeCoverTemplate(imagePath, rs):
 
 def makeCoverTitles(coverTemplate, rs):
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Lemon Herb\nChicken', font=BOOK_CONDENSED, fontSize=48, fill=1, tracking=0.5,
+    fs = FormattedString('Skirts &\nScarves', font=BOOK_CONDENSED, fontSize=54, fill=1, tracking=0.5,
         lineHeight=48)
-    coverTemplate.text(fs, 22, rs['h'] - 270)
+    coverTemplate.text(fs, 22, rs['h'] - 280)
 
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Seasonal:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
+    fs = FormattedString('Who’s next?:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
         lineHeight=34)
-    fs += FormattedString('Hot served dinners', font=BOOK, fontSize=32, fill=1, tracking=0.5,
+    fs += FormattedString('The new generation', font=BOOK, fontSize=32, fill=1, tracking=0.5,
         lineHeight=34)
     coverTemplate.text(fs, 22, rs['h'] - 420)
         
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Cranberry\nBean Sauce', font=LIGHT, fontSize=60, fill=1, tracking=0.5,
+    fs = FormattedString('Findings\non the island', font=LIGHT, fontSize=60, fill=1, tracking=0.5,
         lineHeight=52 )
     coverTemplate.text(fs, 18, rs['h'] - 690)
         
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Arizona:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
+    fs = FormattedString('Exclusive:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
         lineHeight=34)
-    fs += FormattedString('Cran-Turkey Enchilada', font=BOOK, fontSize=32, fill=1, tracking=0.5,
+    fs += FormattedString('Interview with Kate Ashley ', font=BOOK, fontSize=32, fill=1, tracking=0.5,
         lineHeight=34)
     coverTemplate.text(fs, 22, rs['h'] - 730)
         
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Fresh', font=MEDIUM, fontSize=60, fill=(1, 1, 1, 0.5), tracking=0.5,
+    fs = FormattedString('Slow', font=MEDIUM, fontSize=60, fill=(1, 1, 1, 0.5), tracking=0.5,
         lineHeight=52 )
-    coverTemplate.text(fs, 400, rs['h'] - 270)
-
+    coverTemplate.text(fs, 430, rs['h'] - 290)
+2
         
 # -----------------------------------------------------------------         
 def makeDocument(rs):
@@ -225,12 +221,7 @@ def makeDocument(rs):
     flowId3 = MAIN_FLOW+'3'
 
     coverTemplate1 = makeCoverTemplate(COVER_IMAGE_PATH1, rs)
-    coverTemplate2 = makeCoverTemplate(COVER_IMAGE_PATH2, rs)
-    coverTemplate3 = makeCoverTemplate(COVER_IMAGE_PATH3, rs)
-    coverTemplate4 = makeCoverTemplate(COVER_IMAGE_PATH4, rs)
-    coverTemplate5 = makeCoverTemplate(COVER_IMAGE_PATH5, rs)
-    
-                
+      
     # Template 16
     template1 = Template(rs) # Create template of main size. Front page only.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
@@ -268,7 +259,7 @@ def makeDocument(rs):
     # Make number of pages with default document size.
     # Initially make all pages default with template2.
     # Oversized document (docW, docH) is defined in the rootStyle.
-    doc = Document(rs, title=EXPORT_PATH, pages=7, template=template2) 
+    doc = Document(rs, title=EXPORT_PATH, pages=2, template=template2) 
  
     # Cache some values from the root style that we need multiple time to create the tag styles.
     fontSize = rs['fontSize']
@@ -325,21 +316,6 @@ def makeDocument(rs):
     page1 = doc[1]
     page1.setTemplate(coverTemplate1)
     
-    page2 = doc[2]
-    page2.setTemplate(coverTemplate2)
-    
-    page3 = doc[3]
-    page3.setTemplate(coverTemplate3)
-    
-    page4 = doc[4]
-    page4.setTemplate(coverTemplate4)
-    
-    page5 = doc[5]
-    page5.setTemplate(coverTemplate5)
-    
-    page6 = doc[6]
-    page6.setTemplate(template1)
-    
     # Show thumbnail of entire paga4 on cover. 
     # TODO: Needs to be masked still.
     # TODO: Scale should not be attribute of style, but part of placement instead.
@@ -352,11 +328,11 @@ def makeDocument(rs):
     t.typesetFile(MD_PATH)
     
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
-    c = Composer(doc)
-    c.compose(g, page6, flowId1)
+    #c = Composer(doc)
+    #c.compose(g, page6, flowId1)
     
     return doc
         
 d = makeDocument(RS)
-d.export(EXPORT_PATH, pageSelection=(1,2,3, 4, 5, 6)) 
+d.export(EXPORT_PATH) 
 
