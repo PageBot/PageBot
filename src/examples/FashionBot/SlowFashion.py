@@ -198,16 +198,17 @@ def makeCoverTitles(coverTemplate, rs):
     coverTemplate.text(fs, 18, rs['h'] - 690)
         
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Exclusive:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
+    c = 1 #(0.2, 0.2, 1, 0.9)
+    fs = FormattedString('Exclusive:\n', font=MEDIUM, fontSize=32, fill=c, tracking=0.5,
         lineHeight=34)
-    fs += FormattedString('Interview with Kate Ashley ', font=BOOK, fontSize=32, fill=1, tracking=0.5,
+    fs += FormattedString('Interview with Kate Ashley ', font=BOOK, fontSize=32, fill=c, tracking=0.5,
         lineHeight=34)
     coverTemplate.text(fs, 22, rs['h'] - 730)
         
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Slow', font=MEDIUM, fontSize=60, fill=(1, 1, 1, 0.5), tracking=0.5,
+    fs = FormattedString('Slow', font=MEDIUM, fontSize=70, fill=(1, 1, 1, 0.15), tracking=0.5,
         lineHeight=52 )
-    coverTemplate.text(fs, 430, rs['h'] - 290)
+    coverTemplate.text(fs, 95, rs['h'] - 65)
 2
         
 # -----------------------------------------------------------------         
