@@ -156,7 +156,7 @@ def makeCoverTemplate(imagePath, rs):
     bleed = rs['bleed']
     # Cover
     coverTemplate = Template(rs) # Cover template of the magazine.
-    coverTemplate.image(imagePath, -bleed/2, -bleed, h=rs['h'] + 2 * bleed)
+    coverTemplate.image(imagePath, -bleed, -bleed, w=rs['w'] + 2 * bleed)
     # Title of the magazine cover.
     coverTitle = FormattedString('Fashion', font=LIGHT, fontSize=180, fill=1, tracking=-9)
     coverTemplate.text(coverTitle, 10, rs['h'] - 148)#, shadowOffset=(2, -3))
@@ -186,9 +186,9 @@ def makeCoverTitles(coverTemplate, rs):
     coverTemplate.text(fs, 22, rs['h'] - 280)
 
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Who’s next?:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
+    fs = FormattedString('Ideal style:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
         lineHeight=34)
-    fs += FormattedString('The new generation', font=BOOK, fontSize=32, fill=1, tracking=0.5,
+    fs += FormattedString('The almost nothing', font=BOOK, fontSize=32, fill=1, tracking=0.5,
         lineHeight=34)
     coverTemplate.text(fs, 22, rs['h'] - 420)
         
