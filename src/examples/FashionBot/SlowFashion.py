@@ -165,7 +165,7 @@ def makeCoverTemplate(imagePath, rs):
     dt = datetime.now()
     d = dt.strftime("%B %Y")
     fs = FormattedString(d, font=MEDIUM, fontSize=18, fill=(1, 1, 1, 0.8), tracking=0.5)
-    coverTemplate.text(fs, 436, rs['h'] - 26)
+    coverTemplate.text(fs, 436, rs['h'] - 28)
 
     # Titles could come automatic from chapters in the magazine.
     fs = FormattedString('$6.95', font=BOOK, fontSize=12, fill=1, tracking=0.5,
@@ -201,7 +201,7 @@ def makeCoverTitles(coverTemplate, rs):
     c = 1 #(0.2, 0.2, 1, 0.9)
     fs = FormattedString('Exclusive:\n', font=MEDIUM, fontSize=32, fill=c, tracking=0.5,
         lineHeight=34)
-    fs += FormattedString('Interview with Kate Ashley ', font=BOOK, fontSize=32, fill=c, tracking=0.5,
+    fs += FormattedString('Interview with Pepper+Tom ', font=BOOK, fontSize=32, fill=c, tracking=0.5,
         lineHeight=34)
     coverTemplate.text(fs, 22, rs['h'] - 730)
         
