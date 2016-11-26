@@ -206,6 +206,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         firstLineGridfit = True,
         baselineShift = 0, # Absolute baseline shift in points. Positive value is upward.
         rBaselineShift = 0, # Relative baseline shift, multiplier to current self.fontSize
+        # Keep all of the lines of the node text block in the same column.
+        keepInColumn = False,
         # Check if this space is available above, to get amount of text lines above headings.
         needsAbove = 0,
         # Check if this relative fontSize space is available above, to get amount of text lines above headings.

@@ -335,6 +335,12 @@ class Oval(Element):
     def draw(self, page, x, y):
         setFillColor(self.style.get('fill', NO_COLOR))
         setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth'))
+        if self.style['align'] == 'right':
+            w, _ = self.fs.getSize()
+            x -= w
+        elif self.style['align'] == 'center':
+            w, _ = self.fs.getSize()
+            x -= w/2
         oval(x, y, self.w, self.h)
               
 class Line(Element):

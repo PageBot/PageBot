@@ -40,7 +40,7 @@ from pagebot.elements import Galley, Rect
 
 import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import generateInstance
+from pagebot.fonttoolbox.variationbuilder import getVariationFont
     
 DEBUG = True
 
@@ -105,47 +105,19 @@ H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-VARS = True
-
-if VARS:
-    FONT_PATH = '../../fonts/'
-
-    FONT_LOCATIONS = {
-        #'PromisePageBot-BoldCondensed': {"wght": 750, "wdth": 500, },
-        #'PromisePageBot-LightCondensed': {"wght": 0, "wdth": 500},
-        'PromisePageBot-LightCondensed': {"wght": 0, "wdth": 200},
-        'PromisePageBot-Light': {"wght": 0, "wdth": 1000},
-        'PromisePageBot-Book': {"wght": 200, "wdth": 1000},
-        'PromisePageBot-Regular': {"wght": 300, "wdth": 1000},    
-        'PromisePageBot-Medium': {"wght": 400, "wdth": 1000},    
-        'PromisePageBot-Semibold': {"wght": 500, "wdth": 1000},    
-        'PromisePageBot-SemiboldCondensed': {"wght": 500, "wdth": 100},    
-        'PromisePageBot-Bold': {"wght": 700, "wdth": 1000},
-        'PromisePageBot-Black': {"wght": 800, "wdth": 800},
-        'PromisePageBot-UltraBlack': {"wght": 1000, "wdth": 1000},
-    }
-    FONTS = {}
-    VFONT_PATH = 'PromisePageBot-GX.ttf'
-    # Install the test V-font
-    if not 'PromisePageBot-Bold' in installedFonts():
-        installFont(FONT_PATH + VFONT_PATH)
-    for name, location in FONT_LOCATIONS.items():
-        fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
-            location, targetDirectory=FONT_PATH + 'instances')
-        FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
-    LIGHT_CONDENSED = FONTS['PromisePageBot-LightCondensed']
-    LIGHT = FONTS['PromisePageBot-Light']
-    BOOK = FONTS['PromisePageBot-Book']
-    BOOK_ITALIC = FONTS['PromisePageBot-Book']
-    MEDIUM = FONTS['PromisePageBot-Medium']
-    SEMIBOLD = FONTS['PromisePageBot-Semibold']
-    SEMIBOLD_CONDENSED = FONTS['PromisePageBot-SemiboldCondensed'] 
-    BOLD = FONTS['PromisePageBot-Bold']
-    BLACK = FONTS['PromisePageBot-Black']
-else:
-    BOOK = MEDIUM = 'Georgia'
-    BOOK_ITALIC = 'Georgia-Italic'
-    BOLD = SEMIBOLD = 'Georgia-Bold'
+FONT_PATH = '../../fonts/PromisePageBot-GX.ttf'
+LIGHT = getVariationFont(FONT_PATH, 'Light', {"wght": 100, "wdth": 1000})
+LIGHT_CONDENSED = getVariationFont(FONT_PATH, 'LightCondensed', {"wght": 100, "wdth": 800})
+BOOK_LIGHT = getVariationFont(FONT_PATH, 'BookLight', {"wght": 175, "wdth": 1000})
+BOOK_CONDENSED = getVariationFont(FONT_PATH, 'BookCondensed', {"wght": 250, "wdth": 800})
+BOOK = getVariationFont(FONT_PATH, 'Book', {"wght": 250, "wdth": 1000})
+BOOK_ITALIC = getVariationFont(FONT_PATH, 'Book', {"wght": 250, "wdth": 1000})
+MEDIUM = getVariationFont(FONT_PATH, 'Medium', {"wght": 400, "wdth": 1000})
+SEMIBOLD = getVariationFont(FONT_PATH, 'SemiBold', {"wght": 400, "wdth": 1000})
+SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, 'SemiBoldCondensed', {"wght": 600, "wdth": 1000})
+BOLD = getVariationFont(FONT_PATH, 'Bold', {"wght": 800, "wdth": 1000})
+BOLD_ITALIC = getVariationFont(FONT_PATH, 'Bold', {"wght": 800, "wdth": 1000})
+BLACK = getVariationFont(FONT_PATH, 'Bold', {"wght": 1000, "wdth": 1000})
 
 RS['font'] = BOOK
 
