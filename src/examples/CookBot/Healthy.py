@@ -38,7 +38,7 @@ from pagebot.elements import Galley
 
 import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import generateInstance
+from pagebot.fonttoolbox.variationbuilder import getVariationFont
 
 PREVIEW = False
 
@@ -113,46 +113,17 @@ H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-VARS = True
-
-if VARS:
-    FONT_PATH = '../../fonts/'
-
-    FONT_LOCATIONS = {
-        #'PromisePageBot-BoldCondensed': {"wght": 750, "wdth": 500, },
-        #'PromisePageBot-LightCondensed': {"wght": 0, "wdth": 500},
-        'PromisePageBot-Thin': {"wght": 0, "wdth": 1000},
-        'PromisePageBot-Light': {"wght": 100, "wdth": 1000},
-        'PromisePageBot-Book': {"wght": 250, "wdth": 1000},
-        'PromisePageBot-BookCondensed': {"wght": 250, "wdth": 800},
-        'PromisePageBot-Regular': {"wght": 400, "wdth": 1000},    
-        'PromisePageBot-Medium': {"wght": 400, "wdth": 1000},    
-        'PromisePageBot-Semibold': {"wght": 600, "wdth": 1000},    
-        'PromisePageBot-SemiboldCondensed': {"wght": 250, "wdth": 40},    
-        'PromisePageBot-Bold': {"wght": 1000, "wdth": 1000},
-    }
-    FONTS = {}
-    VFONT_PATH = 'PromisePageBot-GX.ttf'
-    # Install the test V-font
-    if not 'PromisePageBot-Bold' in installedFonts():
-        installFont(FONT_PATH + VFONT_PATH)
-    for name, location in FONT_LOCATIONS.items():
-        fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
-            location, targetDirectory=FONT_PATH + 'instances')
-        FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
-    THIN = FONTS['PromisePageBot-Thin']
-    LIGHT = FONTS['PromisePageBot-Light']
-    BOOK_CONDENSED = FONTS['PromisePageBot-BookCondensed']
-    BOOK = FONTS['PromisePageBot-Book']
-    BOOK_ITALIC = FONTS['PromisePageBot-Book']
-    MEDIUM = FONTS['PromisePageBot-Medium']
-    SEMIBOLD = FONTS['PromisePageBot-Semibold']
-    SEMIBOLD_CONDENSED = FONTS['PromisePageBot-SemiboldCondensed'] 
-    BOLD = FONTS['PromisePageBot-Bold']
-else:
-    BOOK = MEDIUM = 'Georgia'
-    BOOK_ITALIC = 'Georgia-Italic'
-    BOLD = SEMIBOLD = 'Georgia-Bold'
+FONT_PATH = '../../fonts/PromisePageBot-GX.ttf'
+LIGHT = getVariationFont(FONT_PATH, 'Light', {"wght": 100, "wdth": 1000})
+BOOK_LIGHT = getVariationFont(FONT_PATH, 'BookLight', {"wght": 175, "wdth": 1000})
+BOOK_CONDENSED = getVariationFont(FONT_PATH, 'BookCondensed', {"wght": 250, "wdth": 800})
+BOOK = getVariationFont(FONT_PATH, 'Book', {"wght": 250, "wdth": 1000})
+BOOK_ITALIC = getVariationFont(FONT_PATH, 'Book', {"wght": 250, "wdth": 1000})
+MEDIUM = getVariationFont(FONT_PATH, 'Medium', {"wght": 400, "wdth": 1000})
+SEMIBOLD = getVariationFont(FONT_PATH, 'SemiBold', {"wght": 400, "wdth": 1000})
+SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, 'SemiBoldCondensed', {"wght": 600, "wdth": 1000})
+BOLD = getVariationFont(FONT_PATH, 'Bold', {"wght": 1000, "wdth": 1000})
+BOLD_ITALIC = getVariationFont(FONT_PATH, 'Bold', {"wght": 1000, "wdth": 1000})
 
 RS['font'] = BOOK
 
@@ -284,10 +255,10 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3.85*fontSize, font=SEMIBOLD_CONDENSED, textFill=(1, 0, 0), 
-        leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h1', fontSize=2.8*fontSize, font=SEMIBOLD_CONDENSED, textFill=(1, 0, 0), 
+        leading=2.2*leading, tracking=H1_TRACK, postfix='\n', keepInColumn=True)
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, textStroke=None,
-        fill=(0, 0, 1), leading=1*leading, rLeading=0, tracking=H2_TRACK, 
+        fill=(0, 0, 1), leading=1*leading, rLeading=0, tracking=H2_TRACK, keepInColumn=True
         prefix='', postfix='\n')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, textFill=(1, 0, 0), textStroke=None,
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
