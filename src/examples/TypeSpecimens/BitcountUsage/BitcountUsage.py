@@ -112,10 +112,10 @@ def makeSpecimen(rs):
     vCube = VariationCube(FONT_PATH, w=500, h=500, s='a', fontSize=86, dimensions=dict(wght=4,rnds=4))
     page1.place(vCube, 50, 160)
 
-    font = getVariationFont(FONT_PATH, location=dict(wght=0, rnds=1000))
+    font = getVariationFont(FONT_PATH, location=dict(wght=-0.5, rnds=2,diam=0.5))
     page2 = doc[2]
-    for n in range(50):
-        page2.text(FormattedString('a', font=font, fontSize=800, fill=(random(), random(), random(), 0.5)), 80+random()*50, 200+random()*50)
+    for n in range(600):
+        page2.text(FormattedString('@', font=font, fontSize=800, fill=(random(), random(), random(), 0.8)), 50+random()*100, 200+random()*100)
     return doc
         
 d = makeSpecimen(RS)

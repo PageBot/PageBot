@@ -32,7 +32,7 @@ def getVariationFont(variableFontPath, location):
     fontName, _ = generateInstance(variableFontPath, location, targetDirectory=targetDirectory)
     return fontName
     
-def generateInstance(variableFontPath, location, targetDirectory):
+def generateInstance(variableFontPath, location, targetDirectory, normalize=True):
     u"""
     Instantiate an instance of a variation font at the specified location.
     Keyword arguments:
@@ -81,7 +81,10 @@ def generateInstance(variableFontPath, location, targetDirectory):
         fvar = varFont['fvar']
         axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in fvar.axes}
         # TODO Round to F2Dot14?
-        normalizedLoc = normalizeLocation(location, axes)
+        if normalize:
+            normalizedLoc = normalizeLocation(location, axes)
+        else:
+            normalizedLoc = location
         # Location is normalized now
         if DEBUG:
             print("Normalized location:", varFileName, normalizedLoc)
