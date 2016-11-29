@@ -31,7 +31,7 @@ class Element(object):
     isFlow = False
 
     def __repr__(self):
-        return '[%s %s]' % (self.__class__.__name__, self.eId)
+        return '[%s:%s]' % (self.__class__.__name__, self.eId)
 
     # Most common properties
 
@@ -375,17 +375,19 @@ class Polygon(Element):
 
 class Image(Element):
     u"""Image element has special attributes self.iw and self.ih for the real image size."""
-    def __init__(self, path, style=None, eId=None, caption=None, mask=None, imo=None, pageNumber=None, **kwargs):
+    def __init__(self, path, style=None, eId=None, caption=None, mask=None, imo=None, **kwargs):
         self.eId = eId
         self.caption = caption
         self.mask = mask # Optional mask element.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
-        self.pageNumber = pageNumber # Optional page number, if referring inside a PDF.
         self.style = makeStyle(style, **kwargs)
         # Check on the (w, h) in the style. One of the can be undefined for proportional scaling.
         assert self.w is not None or self.h is not None 
         # Set all size and scale values.
         self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn. 
+
+    def __repr__(self):
+        return '[%s %s]' % (self.__class__.__name__, self.eId or self.path)
 
     def setPath(self, path):
         u"""Set the path of the image. If the path exists, the get the real
@@ -483,7 +485,7 @@ class Image(Element):
             if self.sx is not None: # Check again if scale was set successfully.
                 save()
                 scale(self.sx, self.sy)
-                image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), pageNumber=self.pageNumber, alpha=self._getAlpha())
+                image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), pageNumber=page.eId or 0, alpha=self._getAlpha())
                 sStroke = self.style.get('stroke', NO_COLOR)
                 #if sStroke is not None: # In case drawing border.
                 #    setFillColor(None)
