@@ -72,6 +72,6 @@ class Composer(object):
             element.h = container.h
             page.replaceElement(container, element)
         else:
-            print('Could not find placement for', element)
+            print('Could not find placement for %s' % element)
         #else:
         #    print 'TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber
