@@ -9,6 +9,8 @@
 #
 #     SlowFashion.py
 #
+from __future__ import division
+
 from datetime import datetime # Make date fit today.
 from pagebot import getFormattedString
 
@@ -38,7 +40,7 @@ from pagebot.elements import Galley
 
 import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import getVariationFont
+from pagebot.fonttoolbox.variationbuilder import getVariationFont, getMasterPath
 
 PREVIEW = False
 
@@ -109,23 +111,26 @@ FLOWID1 = MAIN_FLOW+'1'
 FLOWID2 = MAIN_FLOW+'2'
 FLOWID3 = MAIN_FLOW+'3'
 
-
 # Tracking presets
 H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-FONT_PATH = '../../fonts/PromisePageBot-GX.ttf'
-LIGHT = getVariationFont(FONT_PATH, 'Light', {"wght": 100, "wdth": 1000})
-BOOK_LIGHT = getVariationFont(FONT_PATH, 'BookLight', {"wght": 175, "wdth": 1000})
-BOOK_CONDENSED = getVariationFont(FONT_PATH, 'BookCondensed', {"wght": 250, "wdth": 800})
-BOOK = getVariationFont(FONT_PATH, 'Book', {"wght": 250, "wdth": 1000})
-BOOK_ITALIC = getVariationFont(FONT_PATH, 'Book', {"wght": 250, "wdth": 1000})
-MEDIUM = getVariationFont(FONT_PATH, 'Medium', {"wght": 400, "wdth": 1000})
-SEMIBOLD = getVariationFont(FONT_PATH, 'SemiBold', {"wght": 400, "wdth": 1000})
-SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, 'SemiBoldCondensed', {"wght": 600, "wdth": 1000})
-BOLD = getVariationFont(FONT_PATH, 'Bold', {"wght": 1000, "wdth": 1000})
-BOLD_ITALIC = getVariationFont(FONT_PATH, 'Bold', {"wght": 1000, "wdth": 1000})
+FONT_PATH = getMasterPath() + 'PromisePageBot-GX.ttf'
+FACTOR = 1
+#FONT_PATH = getMasterPath() + 'BitcountGrid-GX.ttf'
+#FACTOR = 1000
+
+LIGHT = getVariationFont(FONT_PATH, dict(wght=100/FACTOR, wdth=1000, rnds=500/FACTOR))
+BOOK_LIGHT = getVariationFont(FONT_PATH, dict(wght=240/FACTOR, wdth=1000, rnds=500/FACTOR))
+BOOK_CONDENSED = getVariationFont(FONT_PATH, dict(wght=250/FACTOR, wdth=800, rnds=1000/FACTOR))
+BOOK = getVariationFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
+BOOK_ITALIC = getVariationFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
+MEDIUM = getVariationFont(FONT_PATH, dict(wght=400/FACTOR, wdth=1000))
+SEMIBOLD = getVariationFont(FONT_PATH, dict(wght=400/FACTOR, wdth=1000))
+SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, {"wght": 400/FACTOR, "wdth": 500})
+BOLD = getVariationFont(FONT_PATH, dict(wght=700/FACTOR, wdth=1000))
+BOLD_ITALIC = getVariationFont(FONT_PATH, dict(wght=700/FACTOR, wdth=1000))
 
 RS['font'] = BOOK
 

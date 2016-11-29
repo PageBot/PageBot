@@ -11,28 +11,88 @@
 #
 #     gxmutator.py
 #
+from __future__ import division
 import os
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
-from fontTools.varLib.models import VariationModel, supportScalar, normalizeLocation
+from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLocation
 
 from drawBot import installFont
+import pagebot
 
 DEBUG = False
 
-FONT_PATH = '../../fonts/'
-
-def getVariationFont(variableFontPath, location):
-    u"""The variationsFontPath refers to the file of the source variable font.
-    The location is dictionary axis locations of the instance, e.g.
-    {"wght": 0, "wdth": 1000}"""
-    targetDirectory = FONT_PATH + 'instances'
-    fontName, _ = generateInstance(variableFontPath, location, targetDirectory=targetDirectory)
-    return fontName
+def getMasterPath():
+    u"""Answer the path to read master fonts. Default is at the same level as pagebot module."""
+    return '/'.join(pagebot.__file__.split('/')[:-2])+'/fonts/'
     
-def generateInstance(variableFontPath, location, targetDirectory, normalize=True):
+def getInstancePath():
+    u"""Answer the path to write instance fonts."""
+    return getMasterPath() + 'instances/'
+    
+def getVariationFont(masterStylePath, location):
+    u"""The variationsFontPath refers to the file of the source variable font.
+    The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
+    {"wght": 0, "wdth": 1000}"""
+    fontName, _ = generateInstance(masterStylePath, location, targetDirectory=getInstancePath()) 
+    print '@#@#@#@', fontName
+    return fontName
+   
+
+def normalizeLocation(location, axes):
+    """Normalizes location based on axis min/default/max values from axes.
+    >>> axes = {"wght": (100, 400, 900)}
+    >>> normalizeLocation({"wght": 400}, axes)
+    {'wght': 0}
+    >>> normalizeLocation({"wght": 100}, axes)
+    {'wght': -1.0}
+    >>> normalizeLocation({"wght": 900}, axes)
+    {'wght': 1.0}
+    >>> normalizeLocation({"wght": 650}, axes)
+    {'wght': 0.5}
+    >>> normalizeLocation({"wght": 1000}, axes)
+    {'wght': 1.0}
+    >>> normalizeLocation({"wght": 0}, axes)
+    {'wght': -1.0}
+    >>> axes = {"wght": (0, 0, 1000)}
+    >>> normalizeLocation({"wght": 0}, axes)
+    {'wght': 0}
+    >>> normalizeLocation({"wght": -1}, axes)
+    {'wght': 0}
+    >>> normalizeLocation({"wght": 1000}, axes)
+    {'wght': 1.0}
+    >>> normalizeLocation({"wght": 500}, axes)
+    {'wght': 0.5}
+    >>> normalizeLocation({"wght": 1001}, axes)
+    {'wght': 1.0}
+    >>> axes = {"wght": (0, 1000, 1000)}
+    >>> normalizeLocation({"wght": 0}, axes)
+    {'wght': -1.0}
+    >>> normalizeLocation({"wght": -1}, axes)
+    {'wght': -1.0}
+    >>> normalizeLocation({"wght": 500}, axes)
+    {'wght': -0.5}
+    >>> normalizeLocation({"wght": 1000}, axes)
+    {'wght': 0}
+    >>> normalizeLocation({"wght": 1001}, axes)
+    {'wght': 0}
+    """
+    out = {}
+    for tag,(lower,default,upper) in axes.items():
+        v = location.get(tag, default)
+        v = max(min(v, upper), lower)
+        if v == default:
+            v = 0
+        elif v < default:
+            v = (v - default) / (default - lower)
+        else:
+            v = (v - default) / (upper - default)
+        out[tag] = v
+    return out
+
+def generateInstance(variableFontPath, location, targetDirectory):
     u"""
     Instantiate an instance of a variation font at the specified location.
     Keyword arguments:
@@ -80,11 +140,11 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
 
         fvar = varFont['fvar']
         axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in fvar.axes}
+        print 'saasa', axes
+        print 'loc', location
         # TODO Round to F2Dot14?
-        if normalize:
-            normalizedLoc = normalizeLocation(location, axes)
-        else:
-            normalizedLoc = location
+        normalizedLoc = normalizeLocation(location, axes)
+        print 'NNNN', normalizedLoc
         # Location is normalized now
         if DEBUG:
             print("Normalized location:", varFileName, normalizedLoc)
@@ -120,4 +180,5 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
         varFont.save(outFile)
     
     # Installing the font in DrawBot. Answer font name and path.
+    print 'INSTALL', outFile
     return installFont(outFile), outFile
