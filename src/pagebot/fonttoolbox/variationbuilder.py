@@ -24,7 +24,7 @@ DEBUG = False
 
 FONT_PATH = '../../fonts/'
 
-def getVariationFont(variableFontPath, instanceName, location):
+def getVariationFont(variableFontPath, location):
     u"""The variationsFontPath refers to the file of the source variable font.
     The location is dictionary axis locations of the instance, e.g.
     {"wght": 0, "wdth": 1000}"""
@@ -42,7 +42,7 @@ def generateInstance(variableFontPath, location, targetDirectory):
     # make a custom file name from the location e.g. VariationFont-wghtXXX-wdthXXX.ttf
     instanceName = ""
 
-    for k, v in location.items():
+    for k, v in sorted(location.items()):
         # TODO better way to normalize the location name to (0, 1000)
         v = min(v, 1000)
         v = max(v, 0)

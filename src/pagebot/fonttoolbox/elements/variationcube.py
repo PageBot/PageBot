@@ -24,12 +24,15 @@ class VariationCube(Element):
         'wdth': ('Width',),
         'opsz': ('Optical size',),
     }
-    def __init__(self, s=None, style=None, eId=None, dimensions=None, **kwargs):
+    def __init__(self, path, s=None, style=None, eId=None, dimensions=None, **kwargs):
+        self.fontPath = path
+        self.familyName = path.split('/')[-1].split('-')[0]
+        self.fontDir = '/'.join(path.split('/')[:-1])
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
         # Try to figure out the requested dimensions per axes.
         if dimensions is None:
-            dimensions = dict(wght=6, wdth=6)
+            dimensions = (('wght',4), ('wdth',6))
         self.dimensions = dimensions
         # Each element should check at this point if the minimum set of style values
         # are set and if their values are valid.
@@ -39,25 +42,28 @@ class VariationCube(Element):
         self.glyphNames = s or 'a'
 
     FONT_PATH = '../../../fonts/'
-    VFONT_PATH = 'PromisePageBot-GX.ttf'
-    VFONT_NAME = 'PromisePageBot-Bold'
+    #VFONT_PATH = 'PromisePageBot-GX.ttf'
+    #VFONT_NAME = 'PromisePageBot-Bold'
+    VFONT_NAME = 'BitcountGrid-Double'
 
     def installMaster(self):
         if not self.VFONT_NAME in installedFonts():
-            path = self.FONT_PATH + self.VFONT_PATH
-            installFont(path)
+            installFont(self.fontPath)
 
-    def getFontByLocation(self, weight, width):
-        name = 'PromisePageBot--wght%d-wdth%d' % (weight, width)
-        location = dict(wght=weight, wdth=width)
+    def getFontByLocation(self, location):
+        name = '%s-' % self.familyName
+        for axisName, axisValue in sorted(location.items()):
+            name += '-%s%d' % (axisName, axisValue)
         
         if not name in installedFonts():
-            masterPath= self.FONT_PATH + self.VFONT_PATH
-            targetPath = self.FONT_PATH + 'instances/'
-            instancePath = targetPath + name + '.ttf'
+            masterPath = self.fontPath
+            targetDir = self.fontDir + '/instances/'
+            if not os.path.exists(targetDir):
+                os.makedirs(targetDir)
+            instancePath = targetDir + name + '.ttf'
             if not os.path.exists(instancePath):
-                print targetPath, instancePath
-                fontName, fontPath = generateInstance(masterPath, location, targetDirectory=targetPath)
+                print targetDir, instancePath
+                fontName, fontPath = generateInstance(masterPath, location, targetDirectory=targetDir)
             installFont(fontPath)
         else:
             fontName =  name
@@ -74,22 +80,30 @@ class VariationCube(Element):
         strokeWidth(0.5)
         fill(None)
         rect(x, y, self.w, self.h)
-        weights = self.dimensions['wght']
-        widths = self.dimensions['wdth']
-        stepX = self.w / (weights+1)
-        stepY = self.h / (widths+1)
+        if len(self.dimensions) == 1:
+            raise ValueError('Not supporting 1 axis now')
+        if len(self.dimensions) > 2:
+            raise ValueError('Not supporting >2 axis now')
+        
+        axisNames = sorted(self.dimensions.keys())
+        axisX = axisNames[0]
+        sizeX = self.dimensions[axisX]
+        axisY = axisNames[1]
+        sizeY = self.dimensions[axisY]
+        stepX = self.w / (sizeX+1)
+        stepY = self.h / (sizeY+1)
         """Add more parametric layout behavior here."""
         RANGE = 1000
-        for weight in range(weights+1):
-            for width in range(widths+1):
-                fontName = self.getFontByLocation(weight * RANGE / weights, width * RANGE / widths)
+        for indexX in range(sizeX+1):
+            for indexY in range(sizeY+1):
+                fontName = self.getFontByLocation({axisX:indexX * RANGE / sizeX, axisY:indexY * RANGE / sizeY})
                 fs = FormattedString(self.glyphNames, font=fontName, fontSize=self.style['fontSize'], fill=0)
                 w, h = fs.size()
                 ox = 40
                 oy = 30
-                page.text(fs, ox + x + weight * stepX - w / 2, oy + y + width * stepY)  
-                fs = FormattedString('wght %d\nwdth %d' % (weight * RANGE / weights, width * RANGE / widths), fontSize=6, fill=0)
+                page.text(fs, ox + x + indexX * stepX - w / 2, oy + y + indexY * stepY)  
+                fs = FormattedString('%s %d\n%s %d' % (axisX, indexX * RANGE / sizeX, axisY, indexY * RANGE / sizeY), fontSize=6, fill=0)
                 w, h = fs.size()
-                page.text(fs, ox + x + weight * stepX - w / 2, oy + y + width * stepY - 16)  
+                page.text(fs, ox + x + indexX * stepX - w / 2, oy + y + indexY * stepY - 16)  
 
 		
