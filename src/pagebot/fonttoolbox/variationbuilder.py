@@ -9,7 +9,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     gxmutator.py
+#     variationbuilder.py
 #
 from __future__ import division
 import os
