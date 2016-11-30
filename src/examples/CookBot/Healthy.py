@@ -258,7 +258,7 @@ def makeDocument(rs):
     doc.newStyle(name='h1', fontSize=2.8*fontSize, font=SEMIBOLD_CONDENSED, textFill=(1, 0, 0), 
         leading=2.2*leading, tracking=H1_TRACK, postfix='\n', keepInColumn=True)
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD, textStroke=None,
-        fill=(0, 0, 1), leading=1*leading, rLeading=0, tracking=H2_TRACK, keepInColumn=True
+        fill=(0, 0, 1), leading=1*leading, rLeading=0, tracking=H2_TRACK, keepInColumn=True,
         prefix='', postfix='\n')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, textFill=(1, 0, 0), textStroke=None,
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
