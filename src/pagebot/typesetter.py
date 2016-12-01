@@ -112,6 +112,7 @@ class Typesetter(object):
         And typeset the superior footnote index reference."""
         cStyle = self.getCascadedNodeStyle(node.tag)
         nodeId = node.attrib.get('id')
+        # Check if this is a footnote reference
         if nodeId.startswith('fnref'): # This is a footnote reference.
             footnotes = self.document.footnotes
             nodeId = nodeId.split(':')[1]
@@ -120,32 +121,56 @@ class Typesetter(object):
             footnotes[index] = dict(nodeId=nodeId, index=index, node=node, style=cStyle, p=None)
             tb = self.getTextBox(cStyle)
             tb.fs += getMarker('footnote', index)
+            tb.fs += getFormattedString('', self.peekStyle())
+
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
  
     def node_literatureref(self, node):
         u"""Collect literature references."""
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
-        self.typesetNode(node)
+        # Check if this is a literature reference
+        cStyle = self.getCascadedNodeStyle(node.tag)
+        nodeId = node.attrib.get('id')
+        
+        if nodeId.startswith('litref:'): # It is a literature reference.
+            literatureRefs = self.document.literatureRefs
+            nodeId = nodeId.split(':')[1]
+            index = len(literatureRefs)+1
+            # Warning if the reference id is already used.
+            assert not nodeId in literatureRefs
+            # Make literature reference entry. Content <p> and split fields will be added later.
+            literatureRefs[index] = dict(nodeId=nodeId, node=node, style=cStyle, p=None)
+            tb = self.getTextBox(cStyle)
+            tb.fs += getMarker('literature', index)
+            tb.fs += getFormattedString('', self.peekStyle())
+
+        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        self.typesetNode(node, cStyle)
          
     def node_div(self, node):
         u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
         as output, but we will handle them separately by looking them up in the XML-tree.
         So we'll skip them in the regular flow process."""
-        # TODO: Check specific on the class name. Process otherwise.
-        if node.attrib.get('class') == 'literature':
-            cStyle = self.getCascadedNodeStyle(node.tag)
-            tb = self.getTextBox(cStyle)  # Get the latest galley text box. Answer new if width changed.
-            return
 
         if node.attrib.get('class') == 'footnote':
             # Find the content of the footnotes. Store the content and add marker.
-            node.findall('./ol/li/p')
             for index, p in enumerate(node.findall('./ol/li/p')):
                 assert (index+1) in self.document.footnotes
                 # Store the content as node, so we can process it with a Typesetter in case of child nodes.
                 self.document.footnotes[index+1]['p'] = p
-            return
+            return # Nothing to return, we handled the references
+
+        if node.attrib.get('class') == 'literature':
+            literatureRefs = self.document.literatureRefs
+            for index, p in enumerate(node.findall('./ol/li/p')):
+                if index+1 in literatureRefs:
+                    # Store the content as node, so we can process it with a Typesetter in case of child nodes.
+                    # Spltting fields inside the p content will be done by the calling application or Composer.
+                   literatureRefs[index+1]['p'] = p
+                else: 
+                    print '### Warning: ', index+1, 'literature reference not found.', literatureRefs
+            return # Nothing to return, we handled the references
 
         return self.typesetNode(node)
 
@@ -227,6 +252,10 @@ class Typesetter(object):
         Make sure that there still is a style to pop, otherwise raise an error. """
         assert len(self.gState)
         self.gState.pop()
+        return self.peekStyle() # Answer the current style as convenience for the caller.
+
+    def peekStyle(self):
+        u"""Answer the top cascaded style, without changing the stack."""
         return self.gState[-1]
 
     def _strip(self, s, prefix=None, postfix=None, forceRightStrip=False):
