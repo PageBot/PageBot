@@ -7,7 +7,7 @@
 ###50 ideas to start. Using BageBot.
 
 ##Introduction
-This is course is about Python. If you now think that it’s about snakes and not about programming, you don’t want to continue. But if you are here with the expectation that you will learn about programming techniques and objects and classes dedicated for the design practice, then you are on the right track. By the way, you don’t have to be a designer by profession, in order to follow this course. It’s characteristic [^footnote1] is that we really start from scratch, using daily life examples to visualize the programs. Their structure, their behavior and their usage. That is a different approach from many other programming courses, which often start with a technical solution in search for a problem. [=myAuthor2016]
+This is course is about Python. If you now think that it’s about snakes and not about programming, you don’t want to continue. But if you are here with the expectation that you will learn about programming techniques and objects and *classes dedicated* for the design practice, then you are on the right track. By the way, you don’t have to be a designer by profession, in order to follow this course. It’s characteristic [^footnote1] is that we really start from scratch, using daily life examples to visualize the programs. Their structure, their behavior and their usage. That is a different approach from many other programming courses, which often start with a technical solution in search for a problem. [=myAuthor2016]
 
 [^footnote1]: This is the text of the footnote. Which can be a very long footnote to run over multiple lines with indented left margin.
 
