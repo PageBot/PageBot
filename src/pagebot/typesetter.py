@@ -107,7 +107,7 @@ class Typesetter(object):
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
        
-    def node_sup(self, node):
+    def XXXnode_sup(self, node):
         u"""Collect footnote references on their page number.
         And typeset the superior footnote index reference."""
         cStyle = self.getCascadedNodeStyle(node.tag)
@@ -120,11 +120,12 @@ class Typesetter(object):
             # Footnode['p'] content node will be added if <div class="footnote">...</div> is detected.
             footnotes[index] = dict(nodeId=nodeId, index=index, node=node, style=cStyle, p=None)
             tb = self.getTextBox(cStyle)
-            tb.fs += getMarker('footnote', index)
-            tb.fs += getFormattedString('', self.peekStyle())
+            # Add invisible mark, so we can scan the text after page composition to find
+            # on which page it ended up.
+            tb.fs += getMarker('footnote', index) 
 
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
-        self.typesetNode(node, cStyle)
+        self.typesetNode(node)
  
     def node_literatureref(self, node):
         u"""Collect literature references."""
@@ -143,25 +144,27 @@ class Typesetter(object):
             literatureRefs[index] = dict(nodeId=nodeId, node=node, style=cStyle, p=None)
             tb = self.getTextBox(cStyle)
             tb.fs += getMarker('literature', index)
-            tb.fs += getFormattedString('', self.peekStyle())
 
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
-        self.typesetNode(node, cStyle)
+        self.typesetNode(node)
          
     def node_div(self, node):
         u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
-        as output, but we will handle them separately by looking them up in the XML-tree.
-        So we'll skip them in the regular flow process."""
+        as output at the end of the HTML export. We will handle them separately by looking them up 
+        in the XML-tree. So we'll skip them in the regular flow process."""
 
         if node.attrib.get('class') == 'footnote':
             # Find the content of the footnotes. Store the content and add marker.
+            footnotes = self.document.footnotes
             for index, p in enumerate(node.findall('./ol/li/p')):
-                assert (index+1) in self.document.footnotes
-                # Store the content as node, so we can process it with a Typesetter in case of child nodes.
-                self.document.footnotes[index+1]['p'] = p
-            return # Nothing to return, we handled the references
+                if index+1 in footnotes:
+                    # Store the content as node, so we can process it with a Typesetter in case of child nodes.
+                    footnotes[index+1]['p'] = p
+                else:
+                    print '### Warning: ', index+1, 'footnote reference not found.', footnotes.keys()
+            result = None # Nothing to return, we handled the references
 
-        if node.attrib.get('class') == 'literature':
+        elif node.attrib.get('class') == 'literature':
             literatureRefs = self.document.literatureRefs
             for index, p in enumerate(node.findall('./ol/li/p')):
                 if index+1 in literatureRefs:
@@ -169,10 +172,13 @@ class Typesetter(object):
                     # Spltting fields inside the p content will be done by the calling application or Composer.
                    literatureRefs[index+1]['p'] = p
                 else: 
-                    print '### Warning: ', index+1, 'literature reference not found.', literatureRefs
-            return # Nothing to return, we handled the references
+                    print '### Warning: ', index+1, 'literature reference not found.', literatureRefs.keys()
+            result = None # Nothing to return, we handled the references
 
-        return self.typesetNode(node)
+        else:
+            result = self.typesetNode(node)
+
+        return result
 
     def node_li(self, node):
         u"""Generate bullet/Numbered list item."""

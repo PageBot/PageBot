@@ -207,6 +207,9 @@ def makeDocument(rs):
     doc.newStyle(name='a', prefix='', postfix='')
     doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,
         stroke=1, fill=None)
+
+    # Literature reference.
+    doc.newStyle(name='literatureref', fill=(1, 0, 0), fontSize=16)
     
     # Footnote reference index.
     doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, prefix='', postfix=' ',
@@ -217,11 +220,12 @@ def makeDocument(rs):
         tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul', prefix='', postfix='')
-    doc.newStyle(name='literatureref', fill=(1, 0, 0), rBaselineShift=0.2, fontSize=0.8*fontSize)
     doc.newStyle(name='footnote', fill=0, fontSize=0.9*fontSize, font=BOOK,
         tracking=P_TRACK,
         tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
+        
+    # Image & captions
     doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
         leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
         indent=U/2, tailIndent=-U/2, hyphenation=True)
@@ -263,7 +267,7 @@ def makeDocument(rs):
                     footNoteIsInOverflow = False
                     # Process the foot note.
                     footnoteId = int(arguments) # Footnode ids are numbers. 
-                    # Hack to check if the marker is in the overflow. Then ignore.
+                    # @@@ Hack to check if the marker is in the overflow. Then ignore.
                     for overFlowMarker, overFlowArguments in findMarkers(flow.getOverflow()):
                         # If this marker is a footnote and one that we are looking for,
                         # we can ignore it, because it is in the overflow part of the flow.fs
