@@ -94,6 +94,10 @@ class Typesetter(object):
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
+    def node_em(self, node):
+        cStyle = self.getCascadedNodeStyle(node.tag)
+        self.typesetNode(node, cStyle)
+
     # Solve <br/> best by simple style with: doc.newStyle(name='br', postfix='\n')
 
     def node_hr(self, node):
@@ -330,7 +334,10 @@ class Typesetter(object):
 
         # Restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text.
-        self.popStyle()
+        style = self.popStyle()
+        # Reset the tail of the current tb.fs back to the original style.
+        fs = getFormattedString('AAAAAAA', style)
+        tb.append(fs)
 
     def typesetFile(self, fileName):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter

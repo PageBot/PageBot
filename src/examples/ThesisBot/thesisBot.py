@@ -201,7 +201,7 @@ def makeDocument(rs):
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
         rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
-    doc.newStyle(name='em', font=BOOK_ITALIC)
+    doc.newStyle(name='em', font=BOOK_ITALIC, textFill=(0, 1, 0))
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
     doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> show newline
     doc.newStyle(name='a', prefix='', postfix='')
@@ -209,7 +209,7 @@ def makeDocument(rs):
         stroke=1, fill=None)
 
     # Literature reference.
-    doc.newStyle(name='literatureref', fill=(1, 0, 0), fontSize=16)
+    doc.newStyle(name='literatureref', textFill=(1, 0, 0), fontSize=16)
     
     # Footnote reference index.
     doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, prefix='', postfix=' ',
