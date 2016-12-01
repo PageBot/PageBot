@@ -6,9 +6,11 @@
 ##Introduction
 
 Hello, this is my thesis about graphic design in the world. 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum est nunc, ullamcorper nec risus vel, auctor malesuada erat. Phasellus nec est quis neque bibendum tempor mattis varius lacus. Cras pretium mauris ac consequat elementum. Praesent [^myFootnote1] gravida hendrerit sem, quis rhoncus purus varius ullamcorper. Morbi gravida felis nec sodales ornare. In interdum lectus eu erat maximus tincidunt. Fusce at finibus orci. Donec sollicitudin congue nunc, in tincidunt mi hendrerit semper. In hac habitasse platea dictumst. 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum est nunc, ullamcorper nec risus vel, auctor malesuada erat. Phasellus nec est quis neque bibendum tempor mattis varius lacus. Cras pretium mauris ac consequat elementum. Praesent [^myFootnote1] gravida hendrerit sem, quis rhoncus purus varius ullamcorper. Morbi gravida felis nec sodales ornare. In interdum [^anotherFootnote2] lectus eu erat maximus tincidunt. Fusce at finibus orci. Donec sollicitudin congue nunc, in tincidunt mi hendrerit semper. In hac habitasse platea dictumst. 
 
 [^myFootnote1]: This is the text of the footnote.
+
+[^anotherFootnote2]: This is the text of the footnote.
 
 ![imagedemo] (../CookBot/images/cookbot7.jpg "")
 

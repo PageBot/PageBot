@@ -37,7 +37,6 @@ def getVariationFont(masterStylePath, location):
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     {"wght": 0, "wdth": 1000}"""
     fontName, _ = generateInstance(masterStylePath, location, targetDirectory=getInstancePath()) 
-    print '@#@#@#@', fontName
     return fontName
    
 
@@ -140,11 +139,8 @@ def generateInstance(variableFontPath, location, targetDirectory):
 
         fvar = varFont['fvar']
         axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in fvar.axes}
-        print 'saasa', axes
-        print 'loc', location
         # TODO Round to F2Dot14?
         normalizedLoc = normalizeLocation(location, axes)
-        print 'NNNN', normalizedLoc
         # Location is normalized now
         if DEBUG:
             print("Normalized location:", varFileName, normalizedLoc)
@@ -180,5 +176,4 @@ def generateInstance(variableFontPath, location, targetDirectory):
         varFont.save(outFile)
     
     # Installing the font in DrawBot. Answer font name and path.
-    print 'INSTALL', outFile
     return installFont(outFile), outFile

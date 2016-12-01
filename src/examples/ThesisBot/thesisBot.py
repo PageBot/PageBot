@@ -189,10 +189,10 @@ def makeDocument(rs):
         leading=4*fontSize, tracking=H1_TRACK, postfix='\n')
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD_CONDENSED, 
         fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
-        prefix='', postfix='\n')
+        prefix='\n', postfix='\n', paragraphTopSpacing=U)
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        prefix='', postfix='\n')
+        prefix='\n', postfix='\n')
     doc.newStyle(name='h4', fontSize=1.1*fontSize, font=BOOK, fill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='', postfix='\n')
@@ -217,7 +217,7 @@ def makeDocument(rs):
         tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul', prefix='', postfix='')
-    doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
+    doc.newStyle(name='literatureref', fill=(1, 0, 0), rBaselineShift=0.2, fontSize=0.8*fontSize)
     doc.newStyle(name='footnote', fill=0, fontSize=0.9*fontSize, font=BOOK,
         tracking=P_TRACK,
         tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
@@ -225,6 +225,13 @@ def makeDocument(rs):
     doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
         leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
         indent=U/2, tailIndent=-U/2, hyphenation=True)
+    
+    # Generic document layout
+    # Page 0    Cover
+    # Page 1    Title
+    # Page 2    Table of Content
+    # Page 3+   Content  (footnotes are shown on the page of their reference)
+    # Page -1   Alphabetical literature reference.
     
     # Change template of page 1
     page1 = doc[1]
@@ -235,20 +242,13 @@ def makeDocument(rs):
     t = Typesetter(doc, g)
     t.typesetFile(MD_PATH)
     
-    if 0: # Preview the galley. Needs something generic to proof any volume of galley.
-        gw, gh = g.getSize()
-        previewPage = doc[2]
-        previewPage.w = gw + 60
-        previewPage.h = gh + 40
-        previewPage.place(g, 40, 20)
-
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
     c.compose(g, page1, flowId1)
     
     # Now all text is composed on pages, scan for the pages that contain footnotes.
-    # TODO: This will be implemented a function of composer in a later version.
-    # Get the tocBox as located on the first page.
+    # TODO: This will be implemented a function inside Composer in a later version.
+    # Assume the tocBox (Table of Content) to be available on the first page.
     tocBox, (_, _) = page1[tocId]
     for pageId, page in sorted(doc.pages.items()):
         # Get page box for footnotes
@@ -257,22 +257,35 @@ def makeDocument(rs):
         for flowId in flowIds:
             # BUG: Need to check if the marker was really found in the textbox area. 
             # If it is part of the overflow, then it should not be found here.
-            for marker, arguments in findMarkers(page[flowId][0].fs):
+            flow, _ = page[flowId]
+            for marker, arguments in findMarkers(flow.fs):
                 if marker == 'footnote': 
+                    footNoteIsInOverflow = False
                     # Process the foot note.
                     footnoteId = int(arguments) # Footnode ids are numbers. 
-                    # Process the footnote id and content, usng the “footnote“ content style.
-                    # We are re-using the typesetter here. This may become a separate typesetter, if this code
-                    # becomes a method of the composer.
-                    # TODO: Make this into Galley, in case footnote <p> has child nodes. 
-                    footnoteText = getFormattedString('%d\t%s\n' % (footnoteId, doc.footnotes[footnoteId]['p'].text),
-                        style=t.getCascadedStyle(doc.getStyle('footnote')))
-                    # Add the footnote content to the box (it may not be the first to be added.
-                    fnBox.append(footnoteText)
-                elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all
+                    # Hack to check if the marker is in the overflow. Then ignore.
+                    for overFlowMarker, overFlowArguments in findMarkers(flow.getOverflow()):
+                        # If this marker is a footnote and one that we are looking for,
+                        # we can ignore it, because it is in the overflow part of the flow.fs
+                        if overFlowMarker == 'footnote' and footnoteId == int(overFlowArguments):
+                            footNoteIsInOverflow = True
+                            break 
+                    if not footNoteIsInOverflow:
+                        # We found a footnote that is matching on this page and not in overflow.
+                        # Process the footnote id and content, usng the “footnote“ content style.
+                        # We are re-using the typesetter here. This may become a separate typesetter, if this code
+                        # becomes a method of the composer.
+                        # TODO: Make this into Galley, in case footnote <p> has child nodes. 
+                        footnoteText = getFormattedString('%d\t%s\n' % (footnoteId, doc.footnotes[footnoteId]['p'].text),
+                            style=t.getCascadedStyle(doc.getStyle('footnote')))
+                        # Add the footnote content to the box (it may not be the first to be added.
+                        fnBox.append(footnoteText)
+                elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all in the TOC
                     #doc.addToc(marker)
                     pass
-                    
+    # Build the alphabetical literature reference page.
+    #print '@+@+@+@+', doc.literatureRefs
+    
     return doc
         
 d = makeDocument(RS)

@@ -3,7 +3,7 @@
 <h1>Thesis Graphic Design</h1>
 <h2>Introduction</h2>
 <p>Hello, this is my thesis about graphic design in the world. <br />
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum est nunc, ullamcorper nec risus vel, auctor malesuada erat. Phasellus nec est quis neque bibendum tempor mattis varius lacus. Cras pretium mauris ac consequat elementum. Praesent <sup id="fnref:myFootnote1">1</sup> gravida hendrerit sem, quis rhoncus purus varius ullamcorper. Morbi gravida felis nec sodales ornare. In interdum lectus eu erat maximus tincidunt. Fusce at finibus orci. Donec sollicitudin congue nunc, in tincidunt mi hendrerit semper. In hac habitasse platea dictumst. </p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum est nunc, ullamcorper nec risus vel, auctor malesuada erat. Phasellus nec est quis neque bibendum tempor mattis varius lacus. Cras pretium mauris ac consequat elementum. Praesent <sup id="fnref:myFootnote1">1</sup> gravida hendrerit sem, quis rhoncus purus varius ullamcorper. Morbi gravida felis nec sodales ornare. In interdum <sup id="fnref:anotherFootnote2">2</sup> lectus eu erat maximus tincidunt. Fusce at finibus orci. Donec sollicitudin congue nunc, in tincidunt mi hendrerit semper. In hac habitasse platea dictumst. </p>
 <p><img alt="imagedemo" src="../CookBot/images/cookbot7.jpg" title="" /></p>
 <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed ac arcu consectetur dolor tincidunt tincidunt. Praesent tincidunt tortor a eleifend sagittis. Donec cursus nibh non leo tincidunt tristique. Nullam gravida ligula sit amet lacus viverra, quis fringilla est condimentum. Pellentesque aliquet dictum elit, vitae ornare libero. Cras hendrerit sagittis porttitor.</p>
 <h2>This is a header</h2>
@@ -27,6 +27,9 @@ Maecenas aliquam blandit imperdiet. Cras ut mauris pharetra, placerat nibh et, d
 <ol>
 <li id="fn:myFootnote1">
 <p>This is the text of the footnote.&#160;<a class="footnote-backref" href="#fnref:myFootnote1" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:anotherFootnote2">
+<p>This is the text of the footnote.&#160;<a class="footnote-backref" href="#fnref:anotherFootnote2" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div></document>
