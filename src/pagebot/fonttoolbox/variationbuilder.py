@@ -41,7 +41,12 @@ def getVariationFont(masterStylePath, location):
     fontName, _ = generateInstance(masterStylePath, location, targetDirectory=getInstancePath()) 
     return fontName
    
-def drawGlyphPath(ttFont, glyphName, x, y, location=None, s=0.1, fillColor=None):
+def drawGlyphPath(ttFont, glyphName, x, y, location=None, s=0.1, fillColor=0):
+
+    if isinstance(fillColor, (tuple, list)):
+        rc, gc, bc = fillColor
+    else:
+        rc = gc = bc = fillColor
 
     glyphSet = TTVarFontGlyphSet(ttFont)
     if location is None:
@@ -53,7 +58,7 @@ def drawGlyphPath(ttFont, glyphName, x, y, location=None, s=0.1, fillColor=None)
 
     g.draw(pen)
     save()
-    fill(fillColor)
+    fill(rc, gc, bc)
     transform((1, 0, 0, 1, x - g.width/2*s, y))
     scale(s)
     drawPath(pen)
