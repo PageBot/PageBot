@@ -18,11 +18,13 @@ from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLocation
+from tnbits.toolparts.buildvariations.varfontdesignspace import TTVarFontGlyphSet
 
-from drawBot import installFont
+from drawBot import installFont, BezierPath, save, transform, scale, drawPath, restore, fill
 import pagebot
 
 DEBUG = False
+
 
 def getMasterPath():
     u"""Answer the path to read master fonts. Default is at the same level as pagebot module."""
@@ -39,6 +41,23 @@ def getVariationFont(masterStylePath, location):
     fontName, _ = generateInstance(masterStylePath, location, targetDirectory=getInstancePath()) 
     return fontName
    
+def drawGlyphPath(ttFont, glyphName, x, y, location=None, s=0.1, fillColor=None):
+
+    glyphSet = TTVarFontGlyphSet(ttFont)
+    if location is None:
+        location = {"wght": 540}
+    glyphSet.setLocation(location)
+    g = glyphSet[glyphName]
+
+    pen = BezierPath(glyphSet=glyphSet)
+
+    g.draw(pen)
+    save()
+    fill(fillColor)
+    transform((1, 0, 0, 1, x - g.width/2*s, y))
+    scale(s)
+    drawPath(pen)
+    restore()
 
 def normalizeLocation(location, axes):
     """Normalizes location based on axis min/default/max values from axes.

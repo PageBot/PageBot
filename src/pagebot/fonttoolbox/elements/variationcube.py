@@ -11,20 +11,18 @@
 #	  variationcube.py
 #
 import os
+from copy import copy
+from fontTools.ttLib import TTFont
 from pagebot.elements import Element
 from pagebot.style import makeStyle
+from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
-from pagebot.fonttoolbox.variationbuilder import generateInstance
+
 
 class VariationCube(Element):
     # Initialize the default behavior tags as different from Element.
 
-    LABELS = {
-        'wgth': ('Weight',),
-        'wdth': ('Width',),
-        'opsz': ('Optical size',),
-    }
-    def __init__(self, path, s=None, style=None, eId=None, dimensions=None, **kwargs):
+    def __init__(self, path, s=None, style=None, eId=None, dimensions=None, location=None, **kwargs):
         self.fontPath = path
         self.familyName = path.split('/')[-1].split('-')[0]
         self.fontDir = '/'.join(path.split('/')[:-1])
@@ -39,44 +37,25 @@ class VariationCube(Element):
         assert self.w is not None and self.h is not None # Make sure that these are defined.
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
-        self.glyphNames = s or 'a'
+        self.glyphNames = s or 'e'
+        # Store the external location, to allow other axis values to be set.
+        if location is None:
+            location = {}
+        self.location = copy(location)
 
-    FONT_PATH = '../../../fonts/'
+    FONT_PATH = '../../fonts/'
     #VFONT_PATH = 'PromisePageBot-GX.ttf'
     #VFONT_NAME = 'PromisePageBot-Bold'
-    VFONT_NAME = 'BitcountGrid-Double'
-
-    def installMaster(self):
-        if not self.VFONT_NAME in installedFonts():
-            installFont(self.fontPath)
-
-    def getFontByLocation(self, location):
-        name = '%s-' % self.familyName
-        for axisName, axisValue in sorted(location.items()):
-            name += '-%s%d' % (axisName, axisValue)
-        
-        if not name in installedFonts():
-            masterPath = self.fontPath
-            targetDir = self.fontDir + '/instances/'
-            if not os.path.exists(targetDir):
-                os.makedirs(targetDir)
-            instancePath = targetDir + name + '.ttf'
-            if not os.path.exists(instancePath):
-                print targetDir, instancePath
-                fontName, fontPath = generateInstance(masterPath, location, targetDirectory=targetDir)
-            installFont(fontPath)
-        else:
-            fontName =  name
-        return fontName
-	    
+    VFONT_NAME = 'BitcountGrid-Single'
+    
     def draw(self, page, x, y):
-        self.installMaster()
+        vMasterFont = TTFont(self.fontPath)
         fillColor = self.style.get('fill')
         if fillColor is not None:
             setFillColor(fillColor)
             setStrokColor(None)
 
-        stroke(0)
+        stroke(0.8)
         strokeWidth(0.5)
         fill(None)
         rect(x, y, self.w, self.h)
@@ -96,14 +75,19 @@ class VariationCube(Element):
         RANGE = 1000
         for indexX in range(sizeX+1):
             for indexY in range(sizeY+1):
-                fontName = self.getFontByLocation({axisX:indexX * RANGE / sizeX, axisY:indexY * RANGE / sizeY})
-                fs = FormattedString(self.glyphNames, font=fontName, fontSize=self.style['fontSize'], fill=0)
-                w, h = fs.size()
-                ox = 40
-                oy = 30
-                page.text(fs, ox + x + indexX * stepX - w / 2, oy + y + indexY * stepY)  
+                ox = 30
+                oy = 25
+                px = ox + x + indexX * stepX
+                py = oy + y + indexY * stepY
+                self.location[axisX] = indexX * RANGE / sizeX
+                self.location[axisY] = indexY * RANGE / sizeY
+                drawGlyphPath(vMasterFont, self.glyphNames[0], px, py, self.location, s=0.05, fillColor=0)
+
                 fs = FormattedString('%s %d\n%s %d' % (axisX, indexX * RANGE / sizeX, axisY, indexY * RANGE / sizeY), fontSize=6, fill=0)
                 w, h = fs.size()
-                page.text(fs, ox + x + indexX * stepX - w / 2, oy + y + indexY * stepY - 16)  
+                page.text(fs, px - stepX/4, py - 16) # Bit of hack, we need the width of the glyph here.
+        fs = FormattedString('Other axes: %s' % self.location, fontSize=6, fill=0)
+        w, h = fs.size()
+        page.text(fs, x, y - 16)
 
 		
