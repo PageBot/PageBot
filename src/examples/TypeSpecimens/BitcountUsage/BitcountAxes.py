@@ -121,7 +121,7 @@ def makeSpecimen(rs):
     for (axis1, axis2), location in AXES_LOCATIONS:
         page = doc.newPage()
      
-        vCube = VariationCube(FONT_PATH, w=500, h=500, s='n', fontSize=86, dimensions={axis1:8, axis2:8}, location=location)
+        vCube = VariationCube(FONT_PATH, w=500, h=500, s='a', fontSize=86, dimensions={axis1:8, axis2:8}, location=location)
         page.place(vCube, 50, 160)
 
     return doc
