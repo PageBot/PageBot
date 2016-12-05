@@ -114,16 +114,16 @@ H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
 FONT_PATH = '../../fonts/PromisePageBot-GX.ttf'
-LIGHT = getVariationFont(FONT_PATH, 'Light', {"wght": 100, "wdth": 1000})
-BOOK_LIGHT = getVariationFont(FONT_PATH, 'BookLight', {"wght": 175, "wdth": 1000})
-BOOK_CONDENSED = getVariationFont(FONT_PATH, 'BookCondensed', {"wght": 250, "wdth": 800})
-BOOK = getVariationFont(FONT_PATH, 'Book', {"wght": 250, "wdth": 1000})
-BOOK_ITALIC = getVariationFont(FONT_PATH, 'Book', {"wght": 250, "wdth": 1000})
-MEDIUM = getVariationFont(FONT_PATH, 'Medium', {"wght": 400, "wdth": 1000})
-SEMIBOLD = getVariationFont(FONT_PATH, 'SemiBold', {"wght": 400, "wdth": 1000})
-SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, 'SemiBoldCondensed', {"wght": 600, "wdth": 1000})
-BOLD = getVariationFont(FONT_PATH, 'Bold', {"wght": 1000, "wdth": 1000})
-BOLD_ITALIC = getVariationFont(FONT_PATH, 'Bold', {"wght": 1000, "wdth": 1000})
+LIGHT = getVariationFont(FONT_PATH, {"wght": 100, "wdth": 1000})
+BOOK_LIGHT = getVariationFont(FONT_PATH, {"wght": 175, "wdth": 1000})
+BOOK_CONDENSED = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 800})
+BOOK = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 1000})
+BOOK_ITALIC = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 1000})
+MEDIUM = getVariationFont(FONT_PATH, {"wght": 400, "wdth": 1000})
+SEMIBOLD = getVariationFont(FONT_PATH, {"wght": 400, "wdth": 1000})
+SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, {"wght": 600, "wdth": 1000})
+BOLD = getVariationFont(FONT_PATH, {"wght": 1000, "wdth": 1000})
+BOLD_ITALIC = getVariationFont(FONT_PATH, {"wght": 1000, "wdth": 1000})
 
 RS['font'] = BOOK
 
