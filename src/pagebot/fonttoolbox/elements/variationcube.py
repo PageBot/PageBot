@@ -81,7 +81,7 @@ class VariationCube(Element):
                 py = oy + y + indexY * stepY
                 self.location[axisX] = indexX * RANGE / sizeX
                 self.location[axisY] = indexY * RANGE / sizeY
-                drawGlyphPath(vMasterFont, self.glyphNames[0], px, py, self.location, s=0.05, fillColor=0)
+                drawGlyphPath(vMasterFont, self.glyphNames[0], px, py, self.location, s=0.05, fillColor=(0, 0, 0))
 
                 fs = FormattedString('%s %d\n%s %d' % (axisX, indexX * RANGE / sizeX, axisY, indexY * RANGE / sizeY), fontSize=6, fill=0)
                 w, h = fs.size()

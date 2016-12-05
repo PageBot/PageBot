@@ -12,6 +12,8 @@
 #     This script generates an article (in Dutch) of 2009 about the approach to
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
+from fontTools.ttLib import TTFont
+
 from pagebot import getFormattedString, textBoxBaseLines
 
 import pagebot
@@ -48,7 +50,7 @@ from pagebot.fonttoolbox.elements.variationcube import VariationCube
 
 import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import getVariationFont
+from pagebot.fonttoolbox.variationbuilder import getVariationFont, drawGlyphPath
     
 DEBUG = False
 
@@ -99,10 +101,11 @@ FONT_NAME = 'BitcountGrid-GX.ttf'
 FONT_PATH = FONT_DIR + FONT_NAME
 
 AXES_LOCATIONS = (
+    (('line', 'wght'),  {'line': 0, 'open': 0, 'rndi': 1000, 'rndo': 1000, 'sqri':1000, 'sqro':1000, 'wght':1000}),
     (('line', 'wght'),  {'line': 0, 'open': 0, 'rndi': 500, 'rndo': 0, 'sqri':1000, 'sqro':1000, 'wght':1000}),
     (('line', 'open'),  {'line': 0, 'open': 0, 'rndi': 500, 'rndo': 0, 'sqri':1000, 'sqro':1000, 'wght':1000}),
     (('line', 'wght'),  {'line': 0, 'open': 500, 'rndi': 500, 'rndo': 0, 'sqri':1000, 'sqro':1000, 'wght':1000}),
-    (('sqro', 'wght'),  {'line': 0, 'open': 500, 'rndi': 1000, 'rndo': 1000, 'sqri':0, 'sqro':500, 'wght':1000}),
+    (('line', 'open'),  {'line': 0, 'open': 1000, 'rndi': 1000, 'rndo': 1000, 'sqri':1000, 'sqro':1000, 'wght':500}),
     )
 # -----------------------------------------------------------------         
 def makeSpecimen(rs):
@@ -118,11 +121,20 @@ def makeSpecimen(rs):
     # Make number of pages with default document size.
     # Initially make all pages default with template2
     doc = Document(rs, pages=1, template=template1) 
+    page = doc[1]
+    """
     for (axis1, axis2), location in AXES_LOCATIONS:
-        page = doc.newPage()
-     
         vCube = VariationCube(FONT_PATH, w=500, h=500, s='a', fontSize=86, dimensions={axis1:8, axis2:8}, location=location)
         page.place(vCube, 50, 160)
+        page = doc.newPage()
+    """
+    vMasterFont = TTFont(FONT_PATH)
+    for c in ((0.2, 0, 0.5), (1, 0, 0), (0, 0.1, 0)):
+        for ix in range(15):
+            for iy in range(15):
+                location = {'line': int(random()*1000), 'open': int(random()*1000), 'rndi': int(random()*1000), 'rndo': int(random()*1000), 'sqri': int(random()*1000), 'sqro': int(random()*1000), 'wght': int(random()*1000)}
+                drawGlyphPath(vMasterFont, 'a', 50 + ix * 500/8, 50 + iy * 500/8, location=location, s=0.09, fillColor=c)
+        #page = doc.newPage()
 
     return doc
         
