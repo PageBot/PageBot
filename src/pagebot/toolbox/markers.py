@@ -10,7 +10,7 @@
 #
 #     markers.py
 #
-from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, closePath, FormattedString
+from drawBot import cmykStroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, closePath, FormattedString
 
 def drawRegistrationMark(x, y, cmSize, cmStrokeWidth, vertical):
     u"""Draw registration mark as position x, y."""
@@ -21,7 +21,7 @@ def drawRegistrationMark(x, y, cmSize, cmStrokeWidth, vertical):
         dx = cmSize
         dy = cmSize/2
     fill(None)
-    stroke(0)
+    cmykStroke(1,1,1,1)
     strokeWidth(cmStrokeWidth)
     newPath()
     # Registration circle
@@ -44,7 +44,7 @@ def drawRegistrationMarks(ox, oy, w, h, cmSize, cmStrokeWidth):
 def drawCropMarks(x, y, w, h, bleed, cmSize, cmStrokeWidth, folds=None):
     u"""If the show flag is set, then draw the cropmarks or page frame."""
     fill(None)
-    stroke(0)
+    cmykStroke(1,1,1,1)
     strokeWidth(cmStrokeWidth)
     newPath()
     # Bottom left
