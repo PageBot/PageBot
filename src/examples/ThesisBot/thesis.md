@@ -9,6 +9,9 @@
 ##Introduction
 This is course is about Python. If you now think that it’s about snakes and not about programming, you don’t want to continue. But if you are here with the expectation that you will learn about programming techniques and objects and *classes dedicated* for the design practice, then you are on the right track. By the way, you don’t have to be a designer by profession, in order to follow this course. It’s characteristic [^footnote1] is that we really start from scratch, using daily life examples to visualize the programs. Their structure, their behavior and their usage. That is a different approach from many other programming courses, which often start with a technical solution in search for a problem. [=myAuthor2016]
 
+![The News](images/im1.png "")
+![The News](images/im2.png "")
+
 [^footnote1]: This is the text of the footnote. Which can be a very long footnote to run over multiple lines with indented left margin.
 
 [=myAuthor2016]: This is my book ref.
@@ -23,7 +26,11 @@ This makes the plan for course into an alternative construction of a kickstart p
 
 ###Another H3 header here
 
-Any time you jump on the bandwagon, you will pay the price as it is at that moment, based on the volume of the content at that moment. Relatively low in the beginning, putting your trust in the expectation [^footnote3] we’ll develop the course further. We start with 2 hours of instructions and examples. If you wait for a while, you will pay more for the same content. So, if you are a designer, or you have other reasons to use Python in your professional life or your personal life, you are already using Python or you expect to do that in the future, then joining this growing environment is likely to be profitable for you. There are many good examples around showing the great potential of programming in Python, but most are solutions in search for a problem to be solved. Using programming in your daily practice requires a reversed approach. You want to achieve something and what is the best pattern this can be done. Instead of reading the translation of “Do you know where the station is?” in a tourist guide, you are interested in conversations in this foreign language where you can decide on the topic. This course is trying to do that. And since these patterns are so divers and changing overtime, you need an environment that will adapt and grow, instead of presenting a fixed “how to” course. At the end of the course an overview of possible future topics is given. 
+Any time you jump on the bandwagon, you will pay the price as it is at that moment, based on the volume of the content at that moment. Relatively low in the beginning, putting your trust in the expectation [^footnote3] we’ll develop the course further. We start with 2 hours of instructions and examples. If you wait for a while, you will pay more for the same content. So, if you are a designer, or you have other reasons to use Python in your professional life or your personal life, you are already using Python or you expect to do that in the future, then joining this growing environment is likely to be profitable for you. There are many good examples around showing the great potential of programming in Python, but most are solutions in search for a problem to be solved. Using programming in your daily practice requires a reversed approach. 
+
+![The News](images/im3.png "")
+
+You want to achieve something and what is the best pattern this can be done. Instead of reading the translation of “Do you know where the station is?” in a tourist guide, you are interested in conversations in this foreign language where you can decide on the topic. This course is trying to do that. And since these patterns are so divers and changing overtime, you need an environment that will adapt and grow, instead of presenting a fixed “how to” course. At the end of the course an overview of possible future topics is given. 
 
 [^footnote3]: This is the text of the footnote. Which can be a very long footnote to run over multiple lines with indented left margin.
 
