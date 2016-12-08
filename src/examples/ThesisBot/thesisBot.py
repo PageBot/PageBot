@@ -112,7 +112,7 @@ if VARS:
         'PromisePageBot-Regular': {"wght": 300, "wdth": 1000},    
         'PromisePageBot-Medium': {"wght": 400, "wdth": 1000},    
         'PromisePageBot-Semibold': {"wght": 500, "wdth": 1000},    
-        'PromisePageBot-SemiboldCondensed': {"wght": 500, "wdth": 100},    
+        'PromisePageBot-SemiboldCondensed': {"wght": 500, "wdth": 600},    
         'PromisePageBot-Bold': {"wght": 700, "wdth": 1000},
         'PromisePageBot-UltraBlack': {"wght": 600, "wdth": 1000},
     }
@@ -158,14 +158,15 @@ def makeDocument(rs):
     template1.baselineGrid(rs)
     # Create empty image place holders. To be filled by running content on the page.
     # In this templates the images fill the left column if there is a reference on the page.
-    template1.cContainer(0, 0, 2, 2, rs)  # Empty image element, cx, cy, cw, ch
-    template1.cContainer(0, 2, 2, 2, rs)
-    template1.cContainer(0, 4, 2, 2, rs)
-    template1.cContainer(0, 6, 2, 2, rs) 
+    template1.cContainer(0, 0, 3, 2, rs)  # Empty image element, cx, cy, cw, ch
+    template1.cContainer(0, 2, 3, 2, rs)
+    template1.cContainer(0, 4, 3, 2, rs)
+    template1.cContainer(0, 6, 3, 2, rs) 
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 2, 0, 5, 7, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
+    template1.cTextBox(FS, 3, 0, 4, 7, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
     # In case TOC info on every page. Could also be running chapter title.
-    template1.cTextBox('', 0, -0.5, 2, 1, rs, tocId, fill=BOX_COLOR) # For now, keep on the first page.
+    # For now, keep on the first page.
+    template1.cTextBox('', 0, -0.5, 2, 1, rs, tocId, fill=BOX_COLOR) 
     template1.cTextBox('', 0, 7, 3, 1, rs, footnotesId, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
     template1.cText(FS+rs['pageIdMarker'], 7, 0, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
@@ -189,23 +190,25 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=4*fontSize, font=BLACK, fill=(1, 0, 0), 
-        leading=4*fontSize, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h1', fontSize=3*fontSize, font=BLACK, fill=(1, 0, 0), 
+        leading=4*fontSize, tracking=H1_TRACK, prefix='\n', postfix='\n')
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD_CONDENSED, 
-        fill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
-        prefix='\n', postfix='\n', paragraphTopSpacing=U)
+        fill=0, leading=leading, rLeading=0, tracking=H2_TRACK, 
+        prefix='\n', postfix='\n', paragraphTopSpacing=2*U,
+        paragraphBottomSpacing=0.5*U)
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
+        paragraphTopSpacing=2*U, paragraphBottomSpacing=U,
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         prefix='\n', postfix='\n')
     doc.newStyle(name='h4', fontSize=1.1*fontSize, font=BOOK, fill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='', postfix='\n')
+        paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='\n', postfix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
+    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='\n', postfix='\n',
         rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
-    doc.newStyle(name='em', font=BOOK_ITALIC, textFill=(0, 1, 0))
+    doc.newStyle(name='em', font=BOOK_ITALIC, textFill=0.4)
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
     doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> show newline
     doc.newStyle(name='a', prefix='', postfix='')
@@ -216,8 +219,9 @@ def makeDocument(rs):
     doc.newStyle(name='literatureref', textFill=(1, 0, 0), fontSize=16)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.1, prefix='', postfix=' ',
-        fontSize=1.6*fontSize, textFill=(0, 0, 0, 0.5))
+    doc.newStyle(name='sup', font=MEDIUM, baselineShift=-1, prefix='', postfix=' ',
+        fontSize=1.6*fontSize, textFill=(0, 0, 0, 0.7),
+        fill=0.9)
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.

@@ -1,7 +1,7 @@
 <document><h2>ThesisBot Example</h2>
 <h4>Petr van Blokland</h4>
 <h1>Python for Designers</h1>
-<h3>50 ideas to start. Using BageBot.</h3>
+<h3>50 ideas to start. Using PageBot.</h3>
 <h2>Introduction</h2>
 <p>This is course is about Python. If you now think that it’s about snakes and not about programming, you don’t want to continue. But if you are here with the expectation that you will learn about programming techniques and objects and <em>classes dedicated</em> for the design practice, then you are on the right track. By the way, you don’t have to be a designer by profession, in order to follow this course. It’s characteristic <sup id="fnref:footnote1">1</sup> is that we really start from scratch, using daily life examples to visualize the programs. Their structure, their behavior and their usage. That is a different approach from many other programming courses, which often start with a technical solution in search for a problem. <literatureref id="litref:myAuthor2016"><a class="literature-ref" href="#lit:myAuthor2016" rel="literature">[myAuthor2016]</a></literatureref></p>
 <p><img alt="The News" src="images/im1.png" title="" /><br />
