@@ -114,7 +114,9 @@ class Page(Container):
         w, h = element.getSize()
         for index, (e, (x, y)) in enumerate(self.elements):
             if e is element:
-                replacement.setSize(w, h) # Force element to fit in this size.
+                # Force element to fit in this size. In case of an image element,
+                # by default this is done by proportional scale from the original size.
+                replacement.setSize(w, h) 
                 replacementPos = replacement, (x, y)
                 self.elements[index] = replacementPos # Overwriting original element.
                 if (x, y) in self.placed:
