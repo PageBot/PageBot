@@ -13,6 +13,7 @@
 import copy
 import codecs
 import xml.etree.ElementTree as ET
+from lxml.etree import XPath
 
 import markdown
 from markdown.extensions.nl2br import Nl2BrExtension
@@ -324,6 +325,8 @@ class Typesetter(object):
                 # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child)
 
+        # If the current style has postfix, then add this to output string.
+        XXX = self._strip(node.tail, postfix=style['postfix'])
         # Restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text.
         # Back to the style for the tail of this tag, which is the style of the parent.
@@ -338,10 +341,13 @@ class Typesetter(object):
             tb.append(fs) # Add to the current flow textBox
 
 
-    def typesetFile(self, fileName):
+    def typesetFile(self, fileName, rootStyle=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
-        start at page pageNumber and find the name of the flow in the page template."""
-
+        start at page pageNumber and find the name of the flow in the page template.
+        The optional filter can be a list of tag names that need to be included in the 
+        composition, ignoring the rest.
+        The optional rootStyle can be defined as style for the root tag, cascading force all
+        child elements."""
         fileExtension = fileName.split('.')[-1]
         if fileExtension == 'md':
             # If we have MarkDown content, conver to HTNK/XML
@@ -358,10 +364,17 @@ class Typesetter(object):
 
         tree = ET.parse(fileName)
         root = tree.getroot() # Get the root element of the tree.
-        # Collect all flowing text in one formatted string, while simulating the page/flow, because
-        # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
-        # reference, image index and footnote placement.   
-        self.typesetNode(root)
+        # If there is XSL filtering defined, they get the filtered nodes.
+        if xPath is not None:
+            filteredNodes = root.findall(xPath)
+            if filteredNodes:
+                # How to handle if there is multiple result nodes?
+                self.typesetNode(filteredNodes[0], style=rootStyle)
+        else:
+            # Collect all flowing text in one formatted string, while simulating the page/flow, because
+            # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
+            # reference, image index and footnote placement.   
+            self.typesetNode(root, style=rootStyle)
 
     def typesetFootnotes(self):
         footnotes = self.document.footnotes
