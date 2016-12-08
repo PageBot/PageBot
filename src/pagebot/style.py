@@ -26,6 +26,7 @@ SHOW_FLOW_CONNECTIONS = True
 SHOW_CROPMARKS = True
 SHOW_PAGE_FRAME = True
 SHOW_PAGE_INFO = True
+SHOW_IMAGE_REFERENCE = True # Show [image #] in text, if the images is inside a <p>
 
 LEFT_ALIGN = 'left'
 RIGHT_ALIGN = 'right'
@@ -97,10 +98,10 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         mr = 6*u, # Margin right is used as minimum. Actual value is calculated from cw and gutter,
         mb = 6*u, # Margin bottom is used as minimum. Actual value is calculated from baseline grid.
         # Padding where needed.
-        paddingT = 0, # Padding top
-        paddingL = 0, # Padding left
-        paddingR = 0, # Padding right
-        paddingB = 0, # Padding bottom
+        pt = 0, # Padding top
+        pl = 0, # Padding left
+        pr = 0, # Padding right
+        pb = 0, # Padding bottom
         # Gutter is used a standard distance between columns. Note that when not-justifying, the visual
         # gutter on the right side of columns seems to be larger. This can be compensated for in the
         # distance between images.
@@ -118,9 +119,14 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         minH = baselineGrid, # Default is to make minimum height equal to 1 baseline.
         maxW = None, # None if there is no maximum
         maxH = None,
+        
         # Overall content scaling.
         scaleX = None, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
         scaleY = None, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
+        
+        # Image stuff
+        showImageReference = SHOW_IMAGE_REFERENCE, # If true, show [image #] if inside <p> tag.
+
         # Shadow, gradient, etc.
         shadowOffset = None, # Point tuple, e.g. (4, -6). If None, shadow drawing is ignored. 
         shadowBlur = 20, # Integer value for the amount of shadow blur. Make shadowOffset != None to work
@@ -134,15 +140,18 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         cmykRadialGradient = NO_COLOR, #((50, 410), (50, 410), ([1, 0, 1, 0], [1, 1, 0, 0], [0, 1, 1, 0]),
         cmykRadialGradient_startRadius = 0,
         cmykRadialGradient_endRadius = 300,
+
         # Grid stuff
         showGrid = showGrid, # Flag to show the grid in output.
         showGridColumns = showGridColumns, # Show the colums as filled (cw, ch) squares.
         gridFill = (200/255.0, 230/255.0, 245/255.0, 0.9), # Fill color for (cw, ch) squares.
         gridStroke = (0.8, 0.8, 0.8), # Stroke of grid lines in part of a template.
         gridStrokeWidth = 0.5, # Line thickness of the grid.
+        
         # Baseline grid
         showBaselineGrid = showBaselineGrid, # Flag to show baseline grid in output
         baselineGridStroke = (1, 0, 0), # Line thickness of baselines grid.
+        
         # Draw connection arrows between the flow boxes on a page.
         showFlowConnections = showFlowConnection, # Flag to draw arrows between the flows for debugging.
         flowConnectionStroke1 = (0.2, 0.5, 0.1, 1), # Stroke color of flow lines inside column,
@@ -151,14 +160,17 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         flowMarkerFill = (0.8, 0.8, 0.8, 0.5), # Fill of flow curve marker circle.
         flowMarkerSize = 8, # Size of flow marker circle.
         flowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
+        
         # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
         showCropMarks = showCropMarks,
         showPageInfo = showPageInfo and showCropMarks, # If True, draw page info outside the frame.
         bleed = 8, # Bleeding images of page edge and distance of crop-marks from page frame.
         cropMarkSize = 40, # Length of crop marks, including bleed distance. 
         cropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
+        
         # Draw page fram if document (w, h) is larger than page (w, h)
         showPageFrame = showPageFrame,
+        
         # Generic element stuff
         missingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
 
