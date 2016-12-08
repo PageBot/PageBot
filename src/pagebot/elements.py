@@ -60,14 +60,14 @@ class Element(object):
         self.w = w # Set property
         self.h = h
 
-    def proportionalResize(self, w, h):
-        u"""Resize self to the new w/h, while maintaining the orignal proportions."""
-        if self.h != h:
-            self.h = h
-            self.w = self.w*w/h
-        elif self.w != w:
-            self.w = w
-            self.h = self.h*h/w
+    def getPadded(self, x, y, w, h):
+        u"""Calculate the padded position and padded resized box of the element, after applying the 
+        option style padding."""
+        # TODO: Get this to work. Padding now had problem of scaling images too big for some reason.
+        return x, y, w, h
+        return x + self.style.get('pl', 0), y + self.style.get('pb', 0),\
+            self.w - self.style.get('pl', 0) - self.style.get('pr', 0), \
+            self.h - self.style.get('pt', 0) - self.style.get('pb', 0)
 
     def _get_minW(self):
         return self.style.get('minW')
@@ -335,9 +335,10 @@ class Rect(Element):
         assert self.w is not None and self.h is not None
 
     def draw(self, page, x, y):
+        px, py, pw, ph = self.getPadded(x, y, self.w, self.h)
         setFillColor(self.style.get('fill', NO_COLOR))
         setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth'))
-        rect(x, y, self.w, self.h)
+        rect(px, py, pw, ph)
 
 class Oval(Element):
     def __init__(self, style=None, eId=None, **kwargs):
@@ -442,36 +443,38 @@ class Image(Element):
     def setScale(self, w=None, h=None, proportional=True):
         u"""Answer the scale of the image, calculated from it's own width/height and
         the optional (self.w, self.h)"""
+
         if w is None:
             w = self.w
         if h is None:
             h = self.h
-        print self.path, w, h, self.iw, self.ih
+        _, _, pw, ph = self.getPadded(0, 0, w or 0, h or 0) # Calculate padding, because it will adjust scale.
         if not self.iw or not self.ih:
             # Cannot calculate the scale if the image does not exist.
             sx = sy = 1
         elif w is None and h is None:
             sx = sy = 1 # Use default size of the image.
         elif not proportional and w is not None and h is not None: # Needs to be disproportional scale
-            sx = 1.0 * w / self.iw
-            sy = 1.0 * h / self.ih
-            self.style['w'] = w # Take over requested (w, h) as target size.
-            self.style['h'] = h
-        elif w is not None and h is not None:
-            sx = 1.0 * w / self.iw
-            sy = 1.0 * h / self.ih
-            sx = sy = min(sx, sy)  # Which is the smallest fitting scale
+            sx = 1.0 * pw / self.iw
+            sy = 1.0 * ph / self.ih
+            self.style['w'] = pw # Take over requested (w, h) as target size.
+            self.style['h'] = ph
+        elif w is not None and h is not None: # Calculate proportional size, fitting the largest in w/h
+            sx = 1.0 * pw / self.iw
+            sy = 1.0 * ph / self.ih
+            sx = sy = min(sx, sy)  # Which one is the smallest fitting scale
             self.style['w'] = self.iw * sx # Take over requested (w, h) as target size.
             self.style['h'] = self.ih * sy
         elif w is not None:
-            sx = sy = 1.0 * w / self.iw
+            sx = sy = 1.0 * pw / self.iw
+            self.style['w'] = pw
             self.style['h'] = self.ih * sy # Calculate proprtional height for the requested width.
         else:
-            sx = sy = 1.0 * h / self.ih
+            sx = sy = 1.0 * ph / self.ih
             self.style['w'] = self.iw * sx # Calculate proportional width for the requested height.
+            self.style['h'] = ph
         # TODO Add fitting function            
         #sx = sy = min(sx, sy) # Keep the smallest to make image fit available space.
-        print self.path, sx, sy
         self.sx = sx
         self.sy = sy
 
@@ -501,25 +504,44 @@ class Image(Element):
             textBox(self.caption, (x, y, w, captionH))
           
     def draw(self, page, x, y):
+        u"""Draw the image in the calculated scale. Since we need to use the image
+        by scale transform, all other measure (position, lineWidth) are scaled
+        back to their original proportions.
+        If stroke is defined, then use that to draw a frame around the image.
+        Note that the (sx, sy) is already scaled to fit the padding position and size."""
+        px, py, pw, ph = self.getPadded(x, y, self.w, self.h)
         if self.path is None or not os.path.exists(self.path):
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
-            self._drawMissingElementRect(page, x, y, self.w, self.h)
+            self._drawMissingElementRect(page, px, py, pw, ph)
         else:
             if self.sx is None: # In case not initialized yet.
                 self.setScale()
             if self.sx is not None: # Check again if scale was set successfully.
                 save()
                 scale(self.sx, self.sy)
-                image(self.path, (x/self.sx, (y + self.h)/self.sy - self.ih), pageNumber=page.eId or 0, alpha=self._getAlpha())
-                sStroke = self.style.get('stroke', NO_COLOR)
-                #if sStroke is not None: # In case drawing border.
-                #    setFillColor(None)
-                #    setStrokeColor(sStroke, self.style.get('strokeWidth', 1) * self.sx)
-                #    rect(x/self.sx, y/self.sy, self.w/self.sx, self.h/self.sy)
+
+                # Draw the actual image.
+                image(self.path, (px/self.sx, (py + self.h)/self.sy - self.ih), pageNumber=page.eId or 0, alpha=self._getAlpha())
+ 
+                 # Draw background color if requested.
+                sFill = self.style.get('fill')
+                if not sFill in (None, NO_COLOR): # In case we need to draw the background.
+                    setFillColor(sFill)
+                    setStrokeColor(None)
+                    rect(px/self.sx, py/self.sy, pw/self.sx, ph/self.sy)
+               
+                # Draw the frame around the image, if requested.
+                sStroke = self.style.get('stroke')
+                if not sStroke in (None, NO_COLOR): # In case we need to draw the border.
+                    setFillColor(None)
+                    setStrokeColor(sStroke, self.style.get('strokeWidth', 1)/self.sx )
+                    rect(px/self.sx, py/self.sy, pw/self.sx, ph/self.sy)
+                
+                # TODO: Draw optional (transparant) forground color?
                 restore()
             else:
                 print('Could not set scale of image "%s"' % self.path)
-        self._drawCaption(page, x, page.h - y, self.w, self.h)
+        self._drawCaption(page, px, page.h - py, pw, ph)
 
 class Ruler(Element):
     def __init__(self, style=None, eId=None, **kwargs):
