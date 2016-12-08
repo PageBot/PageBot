@@ -324,6 +324,11 @@ class Typesetter(object):
                 # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child)
 
+        # Restore the graphic state at the end of the element content processing to the
+        # style of the parent in order to process the tail text.
+        # Back to the style for the tail of this tag, which is the style of the parent.
+        style = self.popStyle()
+
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
@@ -332,12 +337,6 @@ class Typesetter(object):
             fs = getFormattedString(nodeTail, style)
             tb.append(fs) # Add to the current flow textBox
 
-        # Restore the graphic state at the end of the element content processing to the
-        # style of the parent in order to process the tail text.
-        style = self.popStyle()
-        # Reset the tail of the current tb.fs back to the original style.
-        fs = getFormattedString('AAAAAAA', style)
-        tb.append(fs)
 
     def typesetFile(self, fileName):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter

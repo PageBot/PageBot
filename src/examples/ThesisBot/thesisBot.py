@@ -43,7 +43,7 @@ import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import generateInstance
 
-DEBUG = True
+DEBUG = False
 
 SHOW_GRID = DEBUG
 SHOW_GRID_COLUMNS = DEBUG
@@ -64,8 +64,8 @@ RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
-    h = 11 * 72, # Page height 11", international generic fit.
-    ml = 12*U, # Margin left rs.mt = 7*U # Margin top
+    h = 842, # 842 = A4 height. Other example: page height 11", international generic fit.
+    ml = 7*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
     g = U, # Generic gutter.
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
@@ -157,14 +157,18 @@ def makeDocument(rs):
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
     # Create empty image place holders. To be filled by running content on the page.
-    #template1.cContainer(4, 0, 2, 4, rs)  # Empty image element, cx, cy, cw, ch
-    #template1.cContainer(0, 5, 2, 3, rs)
+    # In this templates the images fill the left column if there is a reference on the page.
+    template1.cContainer(0, 0, 2, 2, rs)  # Empty image element, cx, cy, cw, ch
+    template1.cContainer(0, 2, 2, 2, rs)
+    template1.cContainer(0, 4, 2, 2, rs)
+    template1.cContainer(0, 6, 2, 2, rs) 
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 2, 0, 3, 8, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
-    template1.cTextBox('', 0, 0, 2, 6, rs, tocId, fill=BOX_COLOR) # For now, keep on the first page.
-    template1.cTextBox('', 0, 6, 2, 2, rs, footnotesId, fill=BOX_COLOR)
+    template1.cTextBox(FS, 2, 0, 5, 7, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
+    # In case TOC info on every page. Could also be running chapter title.
+    template1.cTextBox('', 0, -0.5, 2, 1, rs, tocId, fill=BOX_COLOR) # For now, keep on the first page.
+    template1.cTextBox('', 0, 7, 3, 1, rs, footnotesId, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template1.cText(FS+rs['pageIdMarker'], 6, 0, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template1.cText(FS+rs['pageIdMarker'], 7, 0, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -212,8 +216,8 @@ def makeDocument(rs):
     doc.newStyle(name='literatureref', textFill=(1, 0, 0), fontSize=16)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, prefix='', postfix=' ',
-        fontSize=1.6*fontSize)
+    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.1, prefix='', postfix=' ',
+        fontSize=1.6*fontSize, textFill=(0, 0, 0, 0.5))
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
