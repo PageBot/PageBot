@@ -281,8 +281,8 @@ class LiteraturePattern(Pattern):
             sup.set('id', self.literatures.makeLiteratureRefId(id))
             a.set('href', '#' + self.literatures.makeLiteratureId(id))
             if self.literatures.md.output_format not in ['html5', 'xhtml5']:
-                a.set('rel', 'literatures')  # invalid in HTML5
-            a.set('class', 'literatures-ref')
+                a.set('rel', 'literature')  # invalid in HTML5
+            a.set('class', 'literature-ref')
             a.text = '['+id+']'
             return sup
         else:

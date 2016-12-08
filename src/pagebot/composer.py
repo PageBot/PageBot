@@ -59,19 +59,20 @@ class Composer(object):
                     # Overflow in this text box, find new from (page, tbFlow)
                     page, tb = page.getNextFlowBox(tb)
                     if tb is None: # In case here is overflow, but no next box defined in the flow.
-                        print 'Overflow in text, but no next column defined for flow', flowId
+                        print 'Overflow in text, but no next flow column defined.', flowId
                         break
                 else:
                     break
 
     def tryPlacement(self, page, tb, element):
-        u"""Try to place the element on page, in relation to the current filling of tb."""
+        u"""Try to place the element on page, in relation to the current filling of tb.
+        Try to pass on the template-element w/h by doing a proportional resize of the component."""
         container = page.findPlacementFor(element)
         if container is not None:
-            element.w = container.w
-            element.h = container.h
+            # Replace the component on the page. Don't add to the container, because
+            # that will damage the element that come from the template.
             page.replaceElement(container, element)
         else:
-            print('Could not find placement for %s' % element)
+            print('Could not find placement for element %s.' % element)
         #else:
         #    print 'TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber
