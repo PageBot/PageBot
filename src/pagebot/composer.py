@@ -59,7 +59,7 @@ class Composer(object):
                     # Overflow in this text box, find new from (page, tbFlow)
                     page, tb = page.getNextFlowBox(tb)
                     if tb is None: # In case here is overflow, but no next box defined in the flow.
-                        print 'Overflow in text, but no next column defined for flow', flowId
+                        print 'Overflow in text, but no next flow column defined.', flowId
                         break
                 else:
                     break
@@ -68,10 +68,11 @@ class Composer(object):
         u"""Try to place the element on page, in relation to the current filling of tb."""
         container = page.findPlacementFor(element)
         if container is not None:
-            element.w = container.w
-            element.h = container.h
-            page.replaceElement(container, element)
+            container.append(element)
+            #element.w = container.w
+            #element.h = container.h
+            #page.replaceElement(container, element)
         else:
-            print('Could not find placement for %s' % element)
+            print('Could not find placement for element %s.' % element)
         #else:
         #    print 'TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber

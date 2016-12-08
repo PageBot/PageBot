@@ -186,6 +186,10 @@ class Container(Element):
             elements = []
         self.elements = elements
 
+    def append(self, element):
+        u"""Add element to the list of child elements."""
+        self.elements.append(element)
+
     def __len__(self):
         return len(self.elements)
 
@@ -429,6 +433,7 @@ class Image(Element):
             w = self.w
         if h is None:
             h = self.h
+        print self.path, w, h, self.iw, self.ih
         if not self.iw or not self.ih:
             # Cannot calculate the scale if the image does not exist.
             sx = sy = 1
@@ -447,6 +452,7 @@ class Image(Element):
             self.style['w'] = self.iw * sx # Calculate proportional width for the requested height.
         # TODO Add fitting function            
         #sx = sy = min(sx, sy) # Keep the smallest to make image fit available space.
+        print self.path, sx, sy
         self.sx = sx
         self.sy = sy
 
