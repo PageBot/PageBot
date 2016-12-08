@@ -68,10 +68,10 @@ class Composer(object):
         u"""Try to place the element on page, in relation to the current filling of tb."""
         container = page.findPlacementFor(element)
         if container is not None:
-            container.append(element)
-            #element.w = container.w
-            #element.h = container.h
-            #page.replaceElement(container, element)
+            # Replace the component on the page. Don't add to the container, because
+            # that will damage the element that come from the template.
+            element.proportionalResize(container.w, container.h)
+            page.replaceElement(container, element)
         else:
             print('Could not find placement for element %s.' % element)
         #else:

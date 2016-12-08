@@ -173,10 +173,10 @@ def makeDocument(rs):
     template1.baselineGrid(rs)
     # Create empty image place holders. To be filled by running content on the page.
     # In this templates the images fill the left column if there is a reference on the page.
-    template1.cContainer(0, 0, 3, 2, rs)  # Empty image element, cx, cy, cw, ch
-    template1.cContainer(0, 2, 3, 2, rs)
-    template1.cContainer(0, 4, 3, 2, rs)
-    template1.cContainer(0, 6, 3, 2, rs) 
+    template1.cContainer(0, 0, 3, 3, rs)  # Empty image element, cx, cy, cw, ch
+    template1.cContainer(0, 3, 3, 3, rs)
+    template1.cContainer(0, 6, 3, 3, rs)
+    template1.cContainer(0, 9, 3, 3, rs) 
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
     template1.cTextBox(FS, 3, 0, 4, 7, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
     template1.cTextBox('', 0, 7, 3, 1, rs, footnotesId, fill=BOX_COLOR)
@@ -231,9 +231,8 @@ def makeDocument(rs):
     doc.newStyle(name='literatureref', textFill=(1, 0, 0), fontSize=16)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, baselineShift=-1, prefix='', postfix=' ',
-        fontSize=1.6*fontSize, textFill=(0, 0, 0, 0.7),
-        fill=0.9)
+    doc.newStyle(name='sup', font=MEDIUM, baselineShift=-0.5, prefix='', postfix=' ',
+        fontSize=1.2*fontSize, textFill=(0, 0, 1, 0.7))
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
