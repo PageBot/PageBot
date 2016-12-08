@@ -7,14 +7,14 @@
 ###50 ideas to start. Using PageBot.
 
 ##Introduction
-This is course is about Python. If you now think that it’s about snakes and not about programming, you don’t want to continue. But if you are here with the expectation that you will learn about programming techniques and objects and *classes dedicated* for the design practice, then you are on the right track. By the way, you don’t have to be a designer by profession, in order to follow this course. It’s characteristic [^footnote1] is that we really start from scratch, using daily life examples to visualize the programs. Their structure, their behavior and their usage. That is a different approach from many other programming courses, which often start with a technical solution in search for a problem. [=myAuthor2016]
+This is course is about Python. If you now think that it’s about snakes and not about programming, you don’t want to continue. But if you are here with the expectation that you will learn about *programming techniques* and *objects* and *classes*, dedicated for the design practice, then you are on the right track. By the way, you don’t have to be a designer by profession, in order to follow this course. It’s characteristic [^footnote1] is that we really start from scratch, using daily life examples to visualize the programs. Their structure, their behavior and their usage. That is a different approach from many other programming courses, which often start with a technical solution in search for a problem. [=myAuthor2016]
 
 ![The News](images/im1.png "")
 ![The News](images/im2.png "")
 
-[^footnote1]: This is the text of the footnote. Which can be a very long footnote to run over multiple lines with indented left margin.
-
 [=myAuthor2016]: This is my book ref.
+
+[^footnote1]: This is the text of the footnote. Which can be a very long footnote to run over multiple lines with indented left margin.
 
 ###H3 header here
 
@@ -42,4 +42,5 @@ This course is the twin of Processing for Designers course. Much of text is the 
 
 ## Subhead here
 
-The origin of Processing is more in the processing of images, – focussed on pixels and interaction – than Python. Python can for instance be found inside web servers and as scripting language in desktop applications such as FontLab and RoboFont. In general Processing programs are more linear, smaller and dedicated to a specific task, where Python programs tend to be part of larger systems. In that respect Python should be more compared on the level of Java, the language that Processing is built on top of. Another difference is the amount and type of available libraries of code is another important factor. There a some minor differences in the syntax of the two languages – minor, but for some people they are really annoying, being accustomed to one kind of notation, such as the use of curly brackets to indicate the start and end of blocks of code in Processing (and Java) and the way Python detects the start and end of a block: entirely by the amount indent of a set of code line. In this course the differences between Processing and Python will be mentioned if that is really important, but this course will mainly focus on the use of Processing in the design practice.
+The origin of Processing is more in the processing of images, – focussed on pixels and interaction – than Python. Python can for instance be found inside web servers and as scripting language in desktop applications such as FontLab and RoboFont. In general Processing programs are more linear, smaller and dedicated to a specific task, where Python programs tend to be part of larger systems. In that respect Python should be more compared on the level of Java, the language that Processing is built on top of. Another difference is the amount and type of available libraries. Another important factor. There are some minor differences in the syntax of the two languages – minor, but for some people they are really annoying, being accustomed to one kind of notation, such as the use of curly brackets to indicate the start and end of blocks of code in Processing (and Java) and the way Python detects the start and end of a block: entirely by the amount indent of a set of code line. 
+In this course the differences between Processing and Python will be mentioned if that is really important, but this course will mainly focus on the use of Python in the design practice.
