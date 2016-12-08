@@ -60,6 +60,15 @@ class Element(object):
         self.w = w # Set property
         self.h = h
 
+    def proportionalResize(self, w, h):
+        u"""Resize self to the new w/h, while maintaining the orignal proportions."""
+        if self.h != h:
+            self.h = h
+            self.w = self.w*w/h
+        elif self.w != w:
+            self.w = w
+            self.h = self.h*h/w
+
     def _get_minW(self):
         return self.style.get('minW')
     def _set_minW(self, minW):
@@ -189,6 +198,10 @@ class Container(Element):
     def append(self, element):
         u"""Add element to the list of child elements."""
         self.elements.append(element)
+        # Make element do proportional resize, if one of the sides is larger 
+        # than the size of the self element.
+        # If element is larger than the container, then make it fit.
+        element.proportionalResize(self.w, self.h) 
 
     def __len__(self):
         return len(self.elements)
@@ -426,7 +439,7 @@ class Image(Element):
         self.setScale(h=h)
     h = property(_get_h, _set_h)
 
-    def setScale(self, w=None, h=None):
+    def setScale(self, w=None, h=None, proportional=True):
         u"""Answer the scale of the image, calculated from it's own width/height and
         the optional (self.w, self.h)"""
         if w is None:
@@ -439,11 +452,17 @@ class Image(Element):
             sx = sy = 1
         elif w is None and h is None:
             sx = sy = 1 # Use default size of the image.
-        elif w is not None and h is not None: # Needs to be disproportional scale
+        elif not proportional and w is not None and h is not None: # Needs to be disproportional scale
             sx = 1.0 * w / self.iw
             sy = 1.0 * h / self.ih
             self.style['w'] = w # Take over requested (w, h) as target size.
             self.style['h'] = h
+        elif w is not None and h is not None:
+            sx = 1.0 * w / self.iw
+            sy = 1.0 * h / self.ih
+            sx = sy = min(sx, sy)  # Which is the smallest fitting scale
+            self.style['w'] = self.iw * sx # Take over requested (w, h) as target size.
+            self.style['h'] = self.ih * sy
         elif w is not None:
             sx = sy = 1.0 * w / self.iw
             self.style['h'] = self.ih * sy # Calculate proprtional height for the requested width.
