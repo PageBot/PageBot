@@ -7,10 +7,10 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     TYPETRLogoAnimated.py
+#     AutomaticPageComposition.py
 #
-#     This script generates creates a Typetr logo as animated gif.
-#     (takes around 10 minutes to run).
+#     This script generates an article (in Dutch) of 2009 about the approach to
+#     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
 from fontTools.ttLib import TTFont
 
@@ -25,12 +25,9 @@ FONT_DIR = ROOT_DIR + 'fonts/'
 FONT_NAME = 'BitcountGrid-GX.ttf'
 FONT_PATH = FONT_DIR + FONT_NAME
 
-TEXT = 'Typetr'
-
 F = 1 # Animation speed
 S = 5
-W = 6*50*len(TEXT)-50
-H = S*90
+W = H = S*90
 FRAMES = 200
 MOVE = FRAMES/80.0
 STEP = 1 # 20
@@ -99,8 +96,7 @@ def makeAnimatiom():
                 'sqro': aValue(cIndex, sqroV), 
                 'wght': aValue(cIndex, wghtV)
             }
-            for gIndex, glyph in enumerate(TEXT):
-                drawGlyphPath(vMasterFont, glyph, S*40 + gIndex*6*45, S*22, location=location, s=S*0.09, fillColor=c)
+            drawGlyphPath(vMasterFont, 'a', S*45, S*25, location=location, s=S*0.09, fillColor=c)
 makeAnimatiom()
 saveImage(EXPORT_PATH) 
 

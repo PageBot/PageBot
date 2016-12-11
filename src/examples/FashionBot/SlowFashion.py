@@ -121,14 +121,14 @@ FACTOR = 1
 #FONT_PATH = getMasterPath() + 'BitcountGrid-GX.ttf'
 #FACTOR = 1000
 
-LIGHT = getVariationFont(FONT_PATH, dict(wght=100/FACTOR, wdth=1000, rnds=500/FACTOR))
-BOOK_LIGHT = getVariationFont(FONT_PATH, dict(wght=240/FACTOR, wdth=1000, rnds=500/FACTOR))
-BOOK_CONDENSED = getVariationFont(FONT_PATH, dict(wght=250/FACTOR, wdth=800, rnds=1000/FACTOR))
+LIGHT = getVariationFont(FONT_PATH, dict(wght=100/FACTOR, wdth=1000))
+BOOK_LIGHT = getVariationFont(FONT_PATH, dict(wght=240/FACTOR, wdth=1000))
+BOOK_CONDENSED = getVariationFont(FONT_PATH, dict(wght=250/FACTOR, wdth=800))
 BOOK = getVariationFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
 BOOK_ITALIC = getVariationFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
 MEDIUM = getVariationFont(FONT_PATH, dict(wght=400/FACTOR, wdth=1000))
 SEMIBOLD = getVariationFont(FONT_PATH, dict(wght=400/FACTOR, wdth=1000))
-SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, {"wght": 400/FACTOR, "wdth": 500})
+SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, dict(wght=400/FACTOR, wdth=500))
 BOLD = getVariationFont(FONT_PATH, dict(wght=700/FACTOR, wdth=1000))
 BOLD_ITALIC = getVariationFont(FONT_PATH, dict(wght=700/FACTOR, wdth=1000))
 
