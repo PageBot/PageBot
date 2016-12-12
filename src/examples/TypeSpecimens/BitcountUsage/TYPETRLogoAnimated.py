@@ -28,8 +28,8 @@ FONT_PATH = FONT_DIR + FONT_NAME
 TEXT = 'Typetr'
 
 F = 1 # Animation speed
-S = 5
-W = 6*50*len(TEXT)-50
+S = 3 #5
+W = S*6*10*len(TEXT)-S*10
 H = S*90
 FRAMES = 200
 MOVE = FRAMES/80.0
@@ -70,26 +70,26 @@ def makeAnimatiom():
     sqroV = rnd() 
     wghtV = rnd() 
     
-    c1, c2, c3 = [1, 0, 0], [1, 0, 0.5], [0.5, 0.1, 0.5]
+    c1, c2, c3 = [1, 0, 0], [0, 1, 0], [0, 0, 1]
 
     vMasterFont = TTFont(FONT_PATH)
     for n in range(0, FRAMES, STEP):
         newPage(W, H)
         fill(0)
-        rect(0, 0, W, H)
+        #rect(0, 0, W, H)
         for cIndex, c in enumerate((c1, c2, c3)):
             if cIndex == 0:
-                c[0] = (1+lineV[cIndex][0])/2
-                c[1] = (1+openV[cIndex][0])/2
-                c[2] = (1+wghtV[cIndex][0])/2
+                #c[0] = (1+lineV[cIndex][0])/2
+                c[1] = (1.5+openV[cIndex][0]/2)/2
+                c[2] = (1+wghtV[cIndex][0]/2)/2
             elif cIndex == 1:
-                c[0] = (1+rndoV[cIndex][0])/2
-                c[1] = (1+wghtV[cIndex][0])/2
-                c[2] = (1+sqriV[cIndex][0])/2
+                c[0] = (1+rndoV[cIndex][0]/2)/2
+                #c[1] = (1+wghtV[cIndex][0])/2
+                c[2] = (1.5+sqriV[cIndex][0]/2)/2
             else:
-                c[0] = (1+wghtV[cIndex][0])/2
-                c[1] = (1+sqroV[cIndex][0])/2
-                c[2] = (1+rndiV[cIndex][0])/2
+                c[0] = (1+openV[cIndex][0]/2)/2
+                c[1] = (1.5+lineV[cIndex][0]/2)/2
+                #c[2] = (1+rndiV[cIndex][0])/2
             location = {
                 'line': aValue(cIndex, lineV), 
                 'open': aValue(cIndex, openV), 
@@ -100,7 +100,7 @@ def makeAnimatiom():
                 'wght': aValue(cIndex, wghtV)
             }
             for gIndex, glyph in enumerate(TEXT):
-                drawGlyphPath(vMasterFont, glyph, S*40 + gIndex*6*45, S*22, location=location, s=S*0.09, fillColor=c)
+                drawGlyphPath(vMasterFont, glyph, S*40 + S*gIndex*6*9, S*22, location=location, s=S*0.09, fillColor=c)
 makeAnimatiom()
 saveImage(EXPORT_PATH) 
 
