@@ -65,14 +65,14 @@ RS = getRootStyle(
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 842, # 842 = A4 height. Other example: page height 11", international generic fit.
-    ml = 7*U, # Margin left rs.mt = 7*U # Margin top
+    ml = 8*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
-    g = U, # Generic gutter.
+    g = 2*U, # Generic gutter.
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # Uneven a the best in that respect for column calculation,
     # as it is possible to make micro columsn with the same gutter.
-    cw = 9*U, 
-    ch = 6*baselineGrid - U, # Approx. square and fitting with baseline.
+    cw = 8*U, 
+    ch = 5*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
     listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
     # Display option during design and testing
@@ -181,10 +181,10 @@ def makeDocument(rs):
     template1.cContainer(0, 3, 3, 3, rs)
     template1.cContainer(0, 6, 3, 3, rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 3, 0, 4, 8, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
-    template1.cTextBox('', 3, 8, 3, 1, rs, footnotesId, fill=BOX_COLOR)
+    template1.cTextBox(FS, 3, 0, 4, 9, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
+    template1.cTextBox('', 3, 9, 3, 1, rs, footnotesId, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template1.cText(FS+rs['pageIdMarker'], 7, 0, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template1.cTextBox(FS+rs['pageIdMarker'], 6, 9, 1, 1, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR, align='right', paragraphTopSpacing=3*U)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -268,8 +268,8 @@ def makeDocument(rs):
     # for XPath filter syntax.  
     gTitle = Galley() 
     t = Typesetter(doc, gTitle)
-    t.typesetFile(MD_PATH, rootStyle=dict(textFill=1, fontSize=84, font=MEDIUM,
-        leading=90), 
+    t.typesetFile(MD_PATH, rootStyle=dict(textFill=1, fontSize=80, font=MEDIUM,
+        leading=84), 
         xPath='h1')
 
     gAuthor = Galley() 
