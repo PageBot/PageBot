@@ -70,26 +70,26 @@ def makeAnimatiom():
     sqroV = rnd() 
     wghtV = rnd() 
     
-    c1, c2, c3 = [1, 0, 0], [0, 1, 0], [0, 0, 1]
+    c1, c2, c3 = [1, 0.1, 0, 0.7], [0, 1, 0, 0.7], [0, 0, 1, 0.7]
 
     vMasterFont = TTFont(FONT_PATH)
     for n in range(0, FRAMES, STEP):
         newPage(W, H)
-        fill(0)
+        #fill(0)
         #rect(0, 0, W, H)
         for cIndex, c in enumerate((c1, c2, c3)):
             if cIndex == 0:
-                #c[0] = (1+lineV[cIndex][0])/2
-                c[1] = (1.5+openV[cIndex][0]/2)/2
-                c[2] = (1+wghtV[cIndex][0]/2)/2
+                c[0] = (1.5+openV[cIndex][0]/2)/2
+                #c[1] = (1+lineV[cIndex][0]/16)/2
+                #c[2] = (1+wghtV[cIndex][0]/16)/2
             elif cIndex == 1:
-                c[0] = (1+rndoV[cIndex][0]/2)/2
-                #c[1] = (1+wghtV[cIndex][0])/2
-                c[2] = (1.5+sqriV[cIndex][0]/2)/2
+                #c[0] = (1+rndoV[cIndex][0]/8)/2
+                c[1] = (1.2+rndiV[cIndex][0]/2)/2
+                #c[2] = (1+sqroV[cIndex][0]/8)/2
             else:
-                c[0] = (1+openV[cIndex][0]/2)/2
-                c[1] = (1.5+lineV[cIndex][0]/2)/2
-                #c[2] = (1+rndiV[cIndex][0])/2
+                #c[0] = (1+rndoV[cIndex][0]/16)/2
+                #c[1] = (1+wghtV[cIndex][0]/16)/2
+                c[2] = (1.5+wghtV[cIndex][0]/2)/2
             location = {
                 'line': aValue(cIndex, lineV), 
                 'open': aValue(cIndex, openV), 
