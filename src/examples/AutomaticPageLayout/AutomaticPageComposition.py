@@ -114,7 +114,7 @@ BOOK = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 1000})
 BOOK_ITALIC = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 1000})
 MEDIUM = getVariationFont(FONT_PATH, {"wght": 400, "wdth": 1000})
 SEMIBOLD = getVariationFont(FONT_PATH, {"wght": 400, "wdth": 1000})
-SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, {"wght": 600, "wdth": 1000})
+SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, {"wght": 600, "wdth": 500})
 BOLD = getVariationFont(FONT_PATH, {"wght": 800, "wdth": 1000})
 BOLD_ITALIC = getVariationFont(FONT_PATH, {"wght": 800, "wdth": 1000})
 BLACK = getVariationFont(FONT_PATH, {"wght": 1000, "wdth": 1000})
@@ -183,17 +183,17 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, textFill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=2.1*fontSize, font=BLACK, textFill=(1, 0, 0), 
-        leading=2.5*leading, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=5*fontSize, font=LIGHT_CONDENSED, 
-        textFill=0, leading=1*leading, rLeading=0, tracking=H2_TRACK, 
+    doc.newStyle(name='h1', fontSize=2.6*fontSize, font=SEMIBOLD_CONDENSED, textFill=0.2, 
+        leading=2.6*leading, tracking=H1_TRACK, postfix='\n', prefix='\n')
+    doc.newStyle(name='h2', fontSize=2*fontSize, font=LIGHT_CONDENSED, 
+        textFill=0, leading=2.2*leading, rLeading=0, tracking=H2_TRACK, 
         prefix='', postfix='\n')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, textFill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        prefix='', postfix='\n')
+        prefix='\n', postfix='\n')
     doc.newStyle(name='h4', fontSize=1.1*fontSize, font=BOOK, textFill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='', postfix='\n')
+        paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='\n', postfix='\n')
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, textFill=0.1, prefix='', postfix='\n',
@@ -212,8 +212,8 @@ def makeDocument(rs):
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
-        firstLineIndent=1, postfix='\n')
+        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent,
+        firstLineIndent=1, postfix='\n', prefix='\n')
     doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
     doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)

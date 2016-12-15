@@ -532,9 +532,10 @@ class Image(Element):
                
                 # Draw the frame around the image, if requested.
                 sStroke = self.style.get('stroke')
-                if not sStroke in (None, NO_COLOR): # In case we need to draw the border.
+                sStrokeWidth = self.style.get('strokeWidth')
+                if not sStroke in (None, NO_COLOR) and sStrokeWidth : # In case we need to draw the border.
                     setFillColor(None)
-                    setStrokeColor(sStroke, self.style.get('strokeWidth', 1)/self.sx )
+                    setStrokeColor(sStroke, sStrokeWidth/self.sx )
                     rect(px/self.sx, py/self.sy, pw/self.sx, ph/self.sy)
                 
                 # TODO: Draw optional (transparant) forground color?
