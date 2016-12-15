@@ -498,8 +498,8 @@ class Image(Element):
     def _drawCaption(self, page, x, y, w, h):
         if self.caption:
             captionW, captionH = self.getCaptionSize(page)
-            #setFillColor(0.8, 0.8, 0.8, 0.5)
-            #rect(x, y, w, captionH)
+            setFillColor(0.8, 0.8, 0.8, 0.5)
+            rect(x, y, w, captionH)
             hyphenation(self.style.get('hyphenation', True))
             textBox(self.caption, (x, y, w, captionH))
           
@@ -546,7 +546,7 @@ class Image(Element):
                 restore()
             else:
                 print('Could not set scale of image "%s"' % self.path)
-        self._drawCaption(page, px, page.h - py, pw, ph)
+        self._drawCaption(caption, page, px, page.h - py, pw, ph)
 
 class Ruler(Element):
     def __init__(self, style=None, eId=None, **kwargs):
