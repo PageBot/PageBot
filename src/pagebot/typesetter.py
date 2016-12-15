@@ -204,10 +204,13 @@ class Typesetter(object):
         if imageStyle is not None:
             self.pushStyle(imageStyle)
         imageElement = self.IMAGE_CLASS(src, imageStyle) # Set path, image w/h and image scale from style.
-        caption = node.attrib.get('title')
-        if 1 or caption is None:
+        caption = node.get('title')
+        if caption:
             # If there is no caption, we can add the Image element directly to the main galley.
-            self.galley.append(imageElement)
+            captionStyle = self.getCascadedNodeStyle('caption')
+            imageElement.caption = getFormattedString(caption, captionStyle)
+        self.galley.append(imageElement)
+        """
         else:
             # If there is a caption, create a new child Galley to hold image + caption
             g = self.GALLEY_CLASS()
@@ -220,6 +223,7 @@ class Typesetter(object):
             tb.append(caption+'\n', captionStyle)
             tb.append(getMarker(node.tag, src))
             self.galley.append(g)
+        """
         if imageStyle is not None:
             self.popStyle()
 
