@@ -253,9 +253,9 @@ def makeDocument(rs):
         firstLineIndent=1, postfix='\n')
         
     # Image & captions
-    doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
+    doc.newStyle(name='caption', tracking=P_TRACK, language=language,textFill=0.2, 
         leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
-        indent=U/2, tailIndent=-U/2, hyphenation=True)
+        hyphenation=True, indent=0, firstLineIndent=0)
     # Use style['fill'] = transparant color as overlay on image.
     doc.newStyle(name='img', fill=NO_COLOR, stroke=0.3, strokeWidth=1, 
         pb=2*baselineGrid)
