@@ -112,7 +112,7 @@ class Typesetter(object):
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
        
-    def XXXnode_sup(self, node):
+    def node_sup(self, node):
         u"""Collect footnote references on their page number.
         And typeset the superior footnote index reference."""
         cStyle = self.getCascadedNodeStyle(node.tag)
