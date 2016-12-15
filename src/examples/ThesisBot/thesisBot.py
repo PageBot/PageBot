@@ -182,9 +182,9 @@ def makeDocument(rs):
     template1.cContainer(0, 6, 3, 3, rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
     template1.cTextBox(FS, 3, 0, 4, 9, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
-    template1.cTextBox('', 3, 9, 3, 1, rs, footnotesId, fill=BOX_COLOR)
+    template1.cTextBox('', 3, 9, 3, 2, rs, footnotesId, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template1.cTextBox(FS+rs['pageIdMarker'], 6, 9, 1, 1, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR, align='right', paragraphTopSpacing=3*U)
+    template1.cTextBox(FS+rs['pageIdMarker'], 6, 9, 1, 1, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR, align='right')
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -236,11 +236,11 @@ def makeDocument(rs):
         stroke=1, fill=None)
 
     # Literature reference.
-    doc.newStyle(name='literatureref', textFill=(1, 0, 0), fontSize=16)
+    doc.newStyle(name='literatureref', textFill=0.3, fontSize=fontSize-1)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, baselineShift=-0.5, prefix='', postfix=' ',
-        fontSize=1.2*fontSize, textFill=(0, 0, 1, 0.7))
+    doc.newStyle(name='sup', font=MEDIUM, baselineShift=2, prefix='', postfix=' ',
+        fontSize=fontSize-2)
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
