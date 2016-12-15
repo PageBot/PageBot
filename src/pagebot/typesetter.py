@@ -326,6 +326,16 @@ class Typesetter(object):
                 # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child)
 
+        # If there is a postfix for the current state, then add that to the output.
+        postfix = self._strip('', postfix=style['postfix'])
+        if postfix:
+            fs = getFormattedString(postfix, style)
+            tb.append(fs) # Add to the current flow textBox
+
+        # Now restore the graphic state at the end of the element content processing to the
+        # style of the parent in order to process the tail text. Back to the style of the parent.
+        style = self.popStyle()
+
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
@@ -333,10 +343,6 @@ class Typesetter(object):
         if nodeTail: # Something of a tail left after stripping?
             fs = getFormattedString(nodeTail, style)
             tb.append(fs) # Add to the current flow textBox
-
-        # Restore the graphic state at the end of the element content processing to the
-        # style of the parent in order to process the tail text. Back to the style of the parent.
-        self.popStyle()
 
 
     def typesetFile(self, fileName, rootStyle=None, xPath=None):
