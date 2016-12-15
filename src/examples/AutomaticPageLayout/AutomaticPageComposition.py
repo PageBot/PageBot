@@ -167,7 +167,7 @@ def makeDocument(rs):
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(rs, pages=3, template=template2) 
+    doc = Document(rs, pages=1, template=template2) 
  
     # Cache some values from the root style that we need multiple time to create the tag styles.
     fontSize = rs['fontSize']
@@ -184,19 +184,21 @@ def makeDocument(rs):
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, textFill=(1, 0, 0))
     doc.newStyle(name='h1', fontSize=2.6*fontSize, font=SEMIBOLD_CONDENSED, textFill=0.2, 
-        leading=2.6*leading, tracking=H1_TRACK, postfix='\n', prefix='\n')
-    doc.newStyle(name='h2', fontSize=2*fontSize, font=LIGHT_CONDENSED, 
-        textFill=0, leading=2.2*leading, rLeading=0, tracking=H2_TRACK, 
+        leading=2.6*fontSize, tracking=H1_TRACK, postfix='\n', prefix='\n',
+        paragraphTopSpacing=U, paragraphBottomSpacing=U)
+    doc.newStyle(name='h2', fontSize=2*fontSize, font=LIGHT_CONDENSED, textFill=(1, 0, 0),
+        leading=2.2*leading, rLeading=0, tracking=H2_TRACK, 
         prefix='', postfix='\n')
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, textFill=0, 
-        leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        prefix='\n', postfix='\n')
+        leading=1.4*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+        prefix='', postfix='\n')
+    # paragraphTopSpacing=U, paragraphBottomSpacing=U only work if there is a prefix/postfix
     doc.newStyle(name='h4', fontSize=1.1*fontSize, font=BOOK, textFill=0, 
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='\n', postfix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, textFill=0.1, prefix='', postfix='\n',
+    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, textFill=0.1, prefix='PP', postfix='AA\n',
         rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)

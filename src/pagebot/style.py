@@ -210,10 +210,10 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         baselineGrid = baselineGrid,
         leading = baselineGrid, # Relative factor to fontSize.
         rLeading = 0, # Relative factor to fontSize.
-        paragraphTopSpacing = 0,
-        rParagraphTopSpacing = 0,
-        paragraphBottomSpacing = 0,
-        rParagraphBottomSpacing = 0,
+        paragraphTopSpacing = 0, # Only works if there is a prefix style value != 0
+        rParagraphTopSpacing = 0,  # Only works if there is a prefix style value != 0
+        paragraphBottomSpacing = 0,  # Only works if there is a postfix style value != 0
+        rParagraphBottomSpacing = 0,  # Only works if there is a postfix style value != 0
         baselineGridfit = False,
         firstLineGridfit = True,
         baselineShift = 0, # Absolute baseline shift in points. Positive value is upward.
