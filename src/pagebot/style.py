@@ -32,6 +32,8 @@ LEFT_ALIGN = 'left'
 RIGHT_ALIGN = 'right'
 CENTER = 'center'
 JUSTIFIED = 'justified'
+TOP_ALIGN = 'top'
+BOTTOM_ALIGN = 'bottom'
 
 MM = 0.0393701 * 72 # Multiplying factor from mm to points.
 
@@ -186,6 +188,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         tracking = 0, # Absolute tracking value. Note that this is different from standard name definition.
         rTracking = 0, # Tracking as factor of the fontSize.
         align = LEFT_ALIGN, # Alignment, one if ('left', 'justified', 'center'. 'right')
+        vAlign = TOP_ALIGN, # Alignment for elements like image, that float in their designated space.
         # Set tabs,tuples of (float, alignment) Alignment can be “left”, “center”, “right”
         # or any other character. If a character is provided the alignment will be right and
         # centered on the specified character.
@@ -236,7 +239,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # if they are not None. Set to e.g. newline(s) "\n" or empty string, if tags need to glue together.
         # Make None for no stripping
         prefix = '', # Default is to strip white space from a block. Make None for no stripping.
-        postfix = ' ', # Default is to strip white space from tail of XML tag block into a single space. 
+        postfix = '', # Default is to strip white space from tail of XML tag block into a single space. 
 
         # Paging
         pageIdMarker = '#??#', # Text pattern that will be replaced by current page id.
@@ -264,6 +267,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         RIGHT_ALIGN = RIGHT_ALIGN,
         JUSTIFIED = JUSTIFIED,
         CENTER = CENTER,
+        TOP_ALIGN = TOP_ALIGN,
+        BOTTOM_ALIGN = BOTTOM_ALIGN,
     )
     # Assume all the other arguments overwriting the default values of the root style,
     for name, value in kwargs.items():

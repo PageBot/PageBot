@@ -17,7 +17,7 @@ from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, 
     newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
     textBox, hyphenation, restore, imageSize, shadow
 from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-from pagebot.style import LEFT_ALIGN, NO_COLOR, makeStyle
+from pagebot.style import LEFT_ALIGN, TOP_ALIGN, NO_COLOR, makeStyle
 
 class Element(object):
 
@@ -520,8 +520,12 @@ class Image(Element):
                 save()
                 scale(self.sx, self.sy)
 
-                # Draw the actual image.
-                image(self.path, (px/self.sx, (py + self.h)/self.sy - self.ih), pageNumber=page.eId or 0, alpha=self._getAlpha())
+                # Draw the actual image, vertical aligned.
+                if self.style.get('vAlign') == TOP_ALIGN:
+                    iy = (py + self.h)/self.sy - self.ih # TODO: Solve vertical alignment.
+                else: # Must be bottom align then
+                    iy = (py + self.h)/self.sy - self.ih
+                image(self.path, (px/self.sx, iy), pageNumber=page.eId or 0, alpha=self._getAlpha())
  
                  # Draw background color if requested.
                 sFill = self.style.get('fill')

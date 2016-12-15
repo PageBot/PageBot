@@ -184,7 +184,7 @@ def makeDocument(rs):
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, textFill=(1, 0, 0))
     doc.newStyle(name='h1', fontSize=2.6*fontSize, font=SEMIBOLD_CONDENSED, textFill=0.2, 
-        leading=2.6*fontSize, tracking=H1_TRACK, postfix='\n', prefix='\n',
+        leading=2.6*fontSize, tracking=H1_TRACK, prefix='\n', postfix='\n', 
         paragraphTopSpacing=U, paragraphBottomSpacing=U)
     doc.newStyle(name='h2', fontSize=2*fontSize, font=LIGHT_CONDENSED, textFill=(1, 0, 0),
         leading=2.2*leading, rLeading=0, tracking=H2_TRACK, 
@@ -198,7 +198,8 @@ def makeDocument(rs):
         paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='\n', postfix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, textFill=0.1, prefix='PP', postfix='AA\n',
+    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, textFill=0.1, 
+        prefix='', postfix='\n',
         rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
@@ -215,7 +216,7 @@ def makeDocument(rs):
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
         tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent,
-        firstLineIndent=1, postfix='\n', prefix='\n')
+        firstLineIndent=1, prefix='', postfix='\n'), 
     doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
     doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
