@@ -196,8 +196,10 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
         tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...]
-        firstLineIndent = 0, # Indent of first paragraph in a text tag.
+        firstLineIndent = 0, # Indent of first line of a paragraph in a text tag. 
         rFirstLineIndent = 0, # First line indent as factor if font size.
+        firstParagraphIndent = 0, # Indent of first line of first paragraph in a text tag.
+        rFirstParagraphIndent = 0, # Indent of first line of first paragraph, relative to font size.
         indent = 0, # Left indent (for left-right based scripts)
         rIndent = 0, # Left indent as factor of font size.
         tailIndent = 0, # Tail/right indent (for left-right based scripts)

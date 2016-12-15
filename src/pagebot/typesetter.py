@@ -310,32 +310,39 @@ class Typesetter(object):
             if hasattr(self, hook):
                 # There is a child hook, let this method do the work. 
                 getattr(self, hook)(child) # Hook must be able to derive style from node.
-                # We are on tail mode now, but we don't know what happened in the child block.
-                # So, to be sure, we'll push the current style again.
-                childTail = self._strip(child.tail, postfix=style['postfix'])
-                if childTail: # Any tail left after stripping, then append to the current textBox.
-                    # Get current flow text box from Galley to fill. If may have changed, if another
-                    # element was created by the tree of nodes, e.g an image or table. If the latest
-                    # galley element is still a flow, and if the current width of the textBox is
-                    # equal to style['w'] then continue using the same. Otherwise a new textBox
-                    # is created by the galley.
-                    fs = getFormattedString(childTail, style)
-                    tb = self.getTextBox(style)
-                    tb.append(fs)  # Add the tail formatted string to the current flow textBox
+                # We are in tail mode now, but we don't know what happened in the child block.
             else:
                 # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child)
 
+            # XML-nodes are organized as: node - node.text - node.children - node.tail
+            # If there is no text or if the node does not have tail text, these are None.
+            # Still we want to be able to add the postfix to the tail, so then the tail is changed 
+            # to empty string?
+            childTail = child.tail #self._strip(child.tail, postfix=style['postfix'])
+            if childTail: # Any tail left after stripping, then append to the current textBox.
+                # Get current flow text box from Galley to fill. If may have changed, if another
+                # element was created by the tree of nodes, e.g an image or table. If the latest
+                # galley element is still a flow, and if the current width of the textBox is
+                # equal to style['w'] then continue using the same. Otherwise a new textBox
+                # is created by the galley.
+                fs = getFormattedString(childTail, style)
+                tb = self.getTextBox(style)
+                tb.append(fs)  # Add the tail formatted string to the current flow textBox
+
+        # Now restore the graphic state at the end of the element content processing to the
+        # style of the parent in order to process the tail text. Back to the style of the parent.
+        style = self.popStyle()
+
+        """
         # If there is a postfix for the current state, then add that to the output.
         postfix = self._strip('', postfix=style['postfix'])
         if postfix:
             fs = getFormattedString(postfix, style)
             tb.append(fs) # Add to the current flow textBox
 
-        # Now restore the graphic state at the end of the element content processing to the
-        # style of the parent in order to process the tail text. Back to the style of the parent.
-        style = self.popStyle()
-
+        """
+        """
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
@@ -343,7 +350,7 @@ class Typesetter(object):
         if nodeTail: # Something of a tail left after stripping?
             fs = getFormattedString(nodeTail, style)
             tb.append(fs) # Add to the current flow textBox
-
+        """
 
     def typesetFile(self, fileName, rootStyle=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
