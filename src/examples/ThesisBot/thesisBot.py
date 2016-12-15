@@ -112,7 +112,7 @@ if VARS:
         'PromisePageBot-Regular': {"wght": 300, "wdth": 1000},    
         'PromisePageBot-Medium': {"wght": 400, "wdth": 1000},    
         'PromisePageBot-Semibold': {"wght": 500, "wdth": 1000},    
-        'PromisePageBot-SemiboldCondensed': {"wght": 500, "wdth": 600},    
+        'PromisePageBot-SemiboldCondensed': {"wght": 500, "wdth": 400},    
         'PromisePageBot-Bold': {"wght": 700, "wdth": 1000},
         'PromisePageBot-UltraBlack': {"wght": 600, "wdth": 1000},
     }
@@ -205,12 +205,11 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3*fontSize, font=BLACK, fill=(1, 0, 0), 
-        leading=4*fontSize, tracking=H1_TRACK, prefix='\n', postfix='\n')
+    doc.newStyle(name='h1', fontSize=7*fontSize, font=SEMIBOLD_CONDENSED, fill=(1, 0, 0), 
+        leading=7.2*fontSize, tracking=H1_TRACK, prefix='', postfix='\n')
     doc.newStyle(name='h2', fontSize=1.5*fontSize, font=SEMIBOLD_CONDENSED, 
-        fill=0, leading=leading, rLeading=0, tracking=H2_TRACK, 
-        prefix='\n', postfix='\n', paragraphTopSpacing=2*U,
-        paragraphBottomSpacing=0.5*U)
+        fill=0, leading=1.6*fontSize, rLeading=0, tracking=H2_TRACK, 
+        prefix='\n', postfix='\n',  paragraphTopSpacing=U)
     doc.newStyle(name='h3', fontSize=1.1*fontSize, font=MEDIUM, fill=0, 
         paragraphTopSpacing=2*U, paragraphBottomSpacing=U,
         leading=leading, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
@@ -220,10 +219,16 @@ def makeDocument(rs):
         paragraphTopSpacing=U, paragraphBottomSpacing=U, prefix='\n', postfix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='\n', postfix='\n',
-        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
-    doc.newStyle(name='b', font=SEMIBOLD)
-    doc.newStyle(name='em', font=BOOK_ITALIC, textFill=0.4)
+    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, 
+        prefix='', postfix='\n', rTracking=P_TRACK, leading=14, 
+        rLeading=0, align=LEFT_ALIGN, hyphenation=True, indent=0,
+        firstLineIndent=2*U, 
+        firstParagraphIndent=0) # TODO: Make firstParagraphIndent to work.
+    # Inline tags need to refined prefix and postfix as non-\n, otherwise they
+    # will inherit these attributes from the parent <p>
+    doc.newStyle(name='b', font=SEMIBOLD, prefix='', postfix='')
+    doc.newStyle(name='em', font=BOOK_ITALIC, textFill=(1, 0, 0),
+        prefix='', postfix='')
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
     doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> show newline
     doc.newStyle(name='a', prefix='', postfix='')
