@@ -45,8 +45,8 @@ from pagebot.fonttoolbox.variationbuilder import generateInstance
 
 DEBUG = False
 
-SHOW_GRID = True
-SHOW_GRID_COLUMNS = True
+SHOW_GRID = False
+SHOW_GRID_COLUMNS = False
 SHOW_BASELINE_GRID = DEBUG
 SHOW_FLOW_CONNECTIONS = DEBUG
 

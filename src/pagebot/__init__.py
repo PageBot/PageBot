@@ -191,7 +191,10 @@ def getFormattedString(t, style=None):
         rFirstLineIndent = style.get('rFirstLineIndent')
         # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
         # sFirstParagraphIndent = style.get('firstParagraphIndent')
-        # rFirstParagraphIndent = style.get('fFirstParagraphIndent')
+        # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
+        # TODO: Use this value instead, if currently on top of a new string.
+        # sFirstColumnIndent = style.get('firstColumnIndent')
+        # rFirstColumnIndent = style.get('rFirstColumnIndent')
         if sFirstLineIndent is not None:
             fs.firstLineIndent((sFirstLineIndent or 0) + (rFirstLineIndent or 0) * (sFontSize or 0))
         sIndent = style.get('indent')
