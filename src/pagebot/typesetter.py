@@ -308,6 +308,7 @@ class Typesetter(object):
             hook = 'node_'+child.tag
             # Method will handle the styled body of the element, but not the tail.
             if hasattr(self, hook):
+                # There is a child hook, let this method do the work. 
                 getattr(self, hook)(child) # Hook must be able to derive style from node.
                 # We are on tail mode now, but we don't know what happened in the child block.
                 # So, to be sure, we'll push the current style again.
@@ -325,13 +326,6 @@ class Typesetter(object):
                 # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child)
 
-        # If the current style has postfix, then add this to output string.
-        XXX = self._strip(node.tail, postfix=style['postfix'])
-        # Restore the graphic state at the end of the element content processing to the
-        # style of the parent in order to process the tail text.
-        # Back to the style for the tail of this tag, which is the style of the parent.
-        style = self.popStyle()
-
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
@@ -339,6 +333,10 @@ class Typesetter(object):
         if nodeTail: # Something of a tail left after stripping?
             fs = getFormattedString(nodeTail, style)
             tb.append(fs) # Add to the current flow textBox
+
+        # Restore the graphic state at the end of the element content processing to the
+        # style of the parent in order to process the tail text. Back to the style of the parent.
+        self.popStyle()
 
 
     def typesetFile(self, fileName, rootStyle=None, xPath=None):
