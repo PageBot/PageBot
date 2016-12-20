@@ -17,3 +17,6 @@ class PageBotApp(object):
 
     def __init__(self, window):
         self.window = window
+
+    def initialize(self):
+        pass

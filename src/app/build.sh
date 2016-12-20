@@ -9,5 +9,5 @@
 
 rm -r build dist
 python setup.py py2app
-killall PageBotApp
-./dist/PageBotApp.app/Contents/MacOS/PageBotApp
+killall PageBot
+./dist/PageBot.app/Contents/MacOS/PageBot
