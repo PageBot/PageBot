@@ -9,7 +9,10 @@
 #
 #     pagebotapp.py
 #
-import drawBot
+from drawBot import *
+from drawBot.context.drawBotContext import DrawBotContext
+from drawBot.context import getContextForFileExt
+import pagebot
 
 class PageBotApp(object):
     u"""Wrapper class to bundle all document page typesetter and composition
@@ -19,4 +22,15 @@ class PageBotApp(object):
         self.window = window
 
     def initialize(self):
+        size(500, 500)
+        newDrawing()
+        newPage(500, 500)
+        rect(0, 0, 100, 100)
+        cmykFill(0, 1, 0, 0)
+        context = getContextForFileExt('pdf')
+        pdfDocument = context.getNSPDFDocument()
+        print context, pdfDocument
+        #saveImage('/Users/petr/Desktop/test.pdf')
+
+    def terminate(self):
         pass
