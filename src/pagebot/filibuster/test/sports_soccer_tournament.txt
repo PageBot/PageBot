@@ -1,0 +1,21 @@
+
+
+GoldChampionship
+
+ZFA SunhitaChampionship
+
+GoldCup
+
+GoldCompetition
+
+ICFA PremierCompetition
+
+VFA GoldLeague
+
+IIFA EuroLeague
+
+GFA WesternCup
+
+ChampionsLeague
+
+ISFA HonorLeague

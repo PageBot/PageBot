@@ -1,11 +1,4 @@
 # -*- coding: UTF-8 -*-
-# -----------------------------------------------------------------------------
-#     Contributed by Erik van Blokland and Jonathan Hoefler#     Original from filibuster.#
-#     P A G E B O T
-#
-#     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
-# -----------------------------------------------------------------------------
 #
 """
         history
@@ -191,7 +184,7 @@ content = {
                 ],
         'sports_soccer_roundoff':    [
                 ' is doing very well in the <#sports_soccer_tournament#>.',
-                " didn't too wel in the <#sports_soccer_tournament#> but the new players <#names_last#> and <#names_last#> are working miracles.",
+                " didn't too well in the <#sports_soccer_tournament#> but the new players <#names_last#> and <#names_last#> are working miracles.",
                 ],
         'sports_soccer_tournamentpx':    ['Premier', '<#sports_sponsor#>', 'Honor', 'Gold', 'Euro', 'Champions', 'World', 'Western'],
         'sports_soccer_tournamentsx':    ['League', 'Competition', 'Cup', 'Championship'],
