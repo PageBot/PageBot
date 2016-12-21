@@ -1,11 +1,4 @@
 # -*- coding: UTF-8 -*-
-# -----------------------------------------------------------------------------
-#     Contributed by Erik van Blokland and Jonathan Hoefler#     Original from filibuster.#
-#     P A G E B O T
-#
-#     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
-# -----------------------------------------------------------------------------
 #
 """
         history
@@ -17,6 +10,7 @@ evb        - note: only one dictionary named 'contexnt' allowed per module
         this limitation is to speed up loading
 3.0.1    - changes due to the fact that Content is now a submodule of the
         new ContentWriter package. (jvr)
+4.0     2016 public release
 """
 
 __version__ = '3.0.1'

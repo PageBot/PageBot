@@ -1,20 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -----------------------------------------------------------------------------
-#     Contributed by Erik van Blokland and Jonathan Hoefler#     Original from filibuster.#
-#     P A G E B O T
-#
-#     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
-# -----------------------------------------------------------------------------
-#
-# FILIBUSTER.ORG!
 
 """
         living
 --------------------------------------------------------------------
 """
 
-__version__ = '3.0.0'
+__version__ = '4.0'
 __author__ = "someone"
 
 content = {
@@ -349,10 +340,10 @@ content = {
         'We are devoted to extensive research on the <#j_noun_gerund#> industry. This site goes beyond simple definitions to the heart of what makes things tick.',
     ],
     'search_synopsis': [
-        u'<#_aname=name#><#_aname#>’s Home Page Last updated <#time_months#> 1<#figs#>, 1999. All about <#_aname#>’s work Some links More info E-Mail <#_aname#> Family sites',
+        '<#_aname=name#><#_aname#>’s Home Page Last updated <#time_months#> 1<#figs#>, 1999. All about <#_aname#>’s work Some links More info E-Mail <#_aname#> Family sites',
         'Abstract for <#name#>’s thesis',
-        u'Effect of using <#j_adjective#> <#j_noun_sing#> in <#j_noun_gerund#> solutions',
-        u'Prepared for the postgraduate studies program at U<#state_abbr#>',
+        'Effect of using <#j_adjective#> <#j_noun_sing#> in <#j_noun_gerund#> solutions',
+        'Prepared for the postgraduate studies program at U<#state_abbr#>',
         'Welcome to <#p_events_tech_px#><#p_events_tech_sx#>! This is the OFFICIAL web site of the conference, sponsored by <#company#>.',
         'The Web Site of <#alphabet_caps#><#alphabet_caps#><#alphabet_caps#>99, held in <#city#>, <#time_months#> 23-25, 199<#figs#>. The conference was organized by The <#p_oldbiz_px#> Consortium, and UN<#alphabet_caps#><#alphabet_caps#> (<#city#>)',
         '<#_acity=city#><#acity#> ISP guide. <#search_details#>',
@@ -391,7 +382,7 @@ content = {
         'Re: <#newssource#> - <#name#> (<#eMail_biz_info#>) <#time_usenet#> >This is a multi-part message in MIME format. ------=_NextPart_000_001B_01BDF<#figs_rand_5digit#>.F<#figs_rand_5digit#>B0 Content-Type: text/plain; charset="iso-8859-1" Content-Transfer-Encoding:quoted-printable',
         '<#i_host_edu#>-L archive: In a message dated <#time_usenet#>, <#name#> wrote: "<#search_details#>',
         '<#names_first#>’s Web-Page - Sei mir gegr&amp;uuml;√üt Fremder, der Du es wagtest Dich aus den unendlichen Weiten des Internet Dich hierher in meine bescheidene Web-Page zu begeben.',
-        u'SEXY NAKED TEENS!!! HOLLAND’S BEST COLLECTION OF XXX GIRLS. DOWNLOAD FREE PICS IN NON-MEMBERS AREA. AVI’S. MPEG’S.',
+        'SEXY NAKED TEENS!!! HOLLAND’S BEST COLLECTION OF XXX GIRLS. DOWNLOAD FREE PICS IN NON-MEMBERS AREA. AVI’S. MPEG’S.',
         '<#names_first_female#> Us and Stuff: "Related" Sites: Resumes for: Pages revised as sanity allows...most recently on <#figs#>/<#figs#>/99. Shameless self-absorption by Day Job: <#company#> Title this week: "<#jobs_bullshit#>".',
         '<#name#>’s Homepage  - to my home page Course Links <#_dept=i_host_edu_departments#><#_dept#>2<#figs#><#figs#> <#_dept#>3<#figs#><#figs#> <#_dept#>4<#figs#><#figs#> Independent Studies Teaching Portfolio Philosophy Supplements Psychology Links Teaching Resources',
         '<#name#>,REALTOR,Broker,Internet Real Estate Company,<#town_us#>,<#state_name#>,and all surrounding areas.Listings:<#URL#>',
@@ -400,7 +391,7 @@ content = {
         '<#newspapers#>. <#time_usenet#> <#news_headline#>',
         '<#news_headline#> (<#newssource#>, posted <#time_usenet#>)',
         '<#newssource#> News: <#time_usenet#> <#news_headline#>',
-        u'<#name#>’s web site. <#address#>',
+        '<#name#>’s web site. <#address#>',
         '<#BLURB_IPO#>',
         '<#i_host_mil#> activities report, <#figs#>/98. Records of <#syllables#><#syllables#> division, Col. <#names_last_patrician#> commanding',
         '<#company#> <#navigation#> | <#navigation#> | <#navigation#> | <#navigation#> | <#navigation#> | <#navigation#> | <#navigation#>...',
