@@ -256,6 +256,10 @@ class TextBox(Element):
         return None
     next = property(_get_next)
 
+    def setText(self, s):
+        u"""Set the formatted string to s, using self.style."""
+        self.fs = getFormattedString(s, self.style)
+
     def append(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
         is already assumed to be styled or can be added as plain string."""
