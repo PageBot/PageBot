@@ -45,8 +45,8 @@ from pagebot.fonttoolbox.variationbuilder import generateInstance
 
 DEBUG = False
 
-SHOW_GRID = False
-SHOW_GRID_COLUMNS = False
+SHOW_GRID = True
+SHOW_GRID_COLUMNS = True
 SHOW_BASELINE_GRID = DEBUG
 SHOW_FLOW_CONNECTIONS = DEBUG
 
@@ -232,8 +232,6 @@ def makeDocument(rs):
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
     doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> show newline
     doc.newStyle(name='a', prefix='', postfix='')
-    doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,
-        stroke=1, fill=None)
 
     # Literature reference.
     doc.newStyle(name='literatureref', textFill=0.3, fontSize=fontSize-1)
@@ -253,12 +251,12 @@ def makeDocument(rs):
         firstLineIndent=1, postfix='\n')
         
     # Image & captions
-    doc.newStyle(name='caption', tracking=P_TRACK, language=language,textFill=0.2, 
+    doc.newStyle(name='img', stroke=0.3, fill=None, tracking=P_TRACK,
+        language=language, textFill=0.2, strokeWidth=1, 
         leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
-        hyphenation=True, indent=0, firstLineIndent=0)
+        hyphenation=True, indent=0, firstLineIndent=0,
     # Use style['fill'] = transparant color as overlay on image.
-    doc.newStyle(name='img', fill=NO_COLOR, stroke=0.3, strokeWidth=1, 
-        pb=2*baselineGrid)
+    )
     
     # Generic document layout
     # Page 1    Cover
@@ -322,7 +320,8 @@ def makeDocument(rs):
                     footNoteIsInOverflow = False
                     # Process the foot note.
                     footnoteId = int(arguments) # Footnode ids are numbers. 
-                    # @@@ Hack to check if the marker is in the overflow. Then ignore.
+                    # @@@ Hack to check if the marker is in the overflow text. 
+                    # In that case, ignore it.
                     for overFlowMarker, overFlowArguments in findMarkers(flow.getOverflow()):
                         # If this marker is a footnote and one that we are looking for,
                         # we can ignore it, because it is in the overflow part of the flow.fs
@@ -330,7 +329,8 @@ def makeDocument(rs):
                             footNoteIsInOverflow = True
                             break 
                     if not footNoteIsInOverflow:
-                        # We found a footnote that is matching on this page and not in overflow.
+                        # We found a footnote that is visible on this page and 
+                        # not in one of the overflow texts.
                         # Process the footnote id and content, usng the “footnote“ content style.
                         # We are re-using the typesetter here. This may become a separate typesetter, if this code
                         # becomes a method of the composer.
