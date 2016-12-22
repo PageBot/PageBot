@@ -152,6 +152,7 @@ def makeDocument(rs):
     flowId1 = MAIN_FLOW+'1' 
     flowIds = [flowId1] # Names of boxes that contain footnote text in flow.
     footnotesId = 'footnotes' # Id of target textBox containing footnotes per page. 
+    pageNumberId = 'pageNumberId'
     
     # Template for Cover page
     templateCover = Template(rs) # Create new template
@@ -183,8 +184,10 @@ def makeDocument(rs):
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
     template1.cTextBox(FS, 3, 0, 4, 9, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
     template1.cTextBox('', 3, 9, 3, 2, rs, footnotesId, fill=BOX_COLOR)
-    # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template1.cTextBox(FS+rs['pageIdMarker'], 6, 9, 1, 1, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR, align='right')
+    # Create page number box. Pattern pageNumberMarker is replaced by FormattedString of actual page number.
+    # Mark the text box, so we can find it back later.
+    template1.cTextBox(rs['pageIdMarker'], 6, 9, 1, 1, eId=pageNumberId, style=rs, 
+        font=BOOK, fontSize=12, fill=BOX_COLOR, align='right')
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -342,6 +345,12 @@ def makeDocument(rs):
                 elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all in the TOC
                     #doc.addToc(marker)
                     pass
+    # Set all pagenumbers and other page-based info
+    for pageId, page in sorted(doc.pages.items()):
+        for e, _ in page.elements:
+            if e.eId == pageNumberId:
+                e.setText('%s' % pageId)
+
     # Build the alphabetical literature reference page.
     #print '@+@+@+@+', doc.literatureRefs
     
