@@ -146,7 +146,7 @@ class Typesetter(object):
             # Warning if the reference id is already used.
             assert not nodeId in literatureRefs
             # Make literature reference entry. Content <p> and split fields will be added later.
-            literatureRefs[index] = dict(nodeId=nodeId, node=node, style=cStyle, p=None)
+            literatureRefs[index] = dict(nodeId=nodeId, node=node, style=cStyle, p=None, pageIds=[])
             tb = self.getTextBox(cStyle)
             tb.fs += getMarker('literature', index)
 

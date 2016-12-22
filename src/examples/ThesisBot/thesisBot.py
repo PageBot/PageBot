@@ -45,8 +45,8 @@ from pagebot.fonttoolbox.variationbuilder import generateInstance
 
 DEBUG = False
 
-SHOW_GRID = True
-SHOW_GRID_COLUMNS = True
+SHOW_GRID = False
+SHOW_GRID_COLUMNS = False
 SHOW_BASELINE_GRID = DEBUG
 SHOW_FLOW_CONNECTIONS = DEBUG
 
@@ -152,6 +152,8 @@ def makeDocument(rs):
     flowId1 = MAIN_FLOW+'1' 
     flowIds = [flowId1] # Names of boxes that contain footnote text in flow.
     footnotesId = 'footnotes' # Id of target textBox containing footnotes per page. 
+    literatureIndexId = 'literatureIndex'
+    imageIndexId = 'imageIndex'
     pageNumberId = 'pageNumberId'
     
     # Template for Cover page
@@ -168,7 +170,26 @@ def makeDocument(rs):
     templateToc.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateToc.baselineGrid(rs)
+    templateToc.cTextBox('\nTable of Content', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32)
     templateToc.cTextBox('', 3, 1, 4, 8, rs, tocId, fill=BOX_COLOR)
+    
+    # Template for literature reference index.
+    templateLiteratureIndex = Template(rs) # Create template for Table of Content
+    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    templateLiteratureIndex.grid(rs) 
+    # Show baseline grid if rs.showBaselineGrid is True
+    templateLiteratureIndex.baselineGrid(rs)
+    templateLiteratureIndex.cTextBox('\nLiterature index', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32)
+    templateLiteratureIndex.cTextBox('', 3, 1, 4, 8, rs, literatureIndexId, fill=BOX_COLOR)
+    
+    # Template for image reference index.
+    templateImageIndex = Template(rs) # Create template for Table of Content
+    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    templateImageIndex.grid(rs) 
+    # Show baseline grid if rs.showBaselineGrid is True
+    templateImageIndex.baselineGrid(rs)
+    templateImageIndex.cTextBox('\nImage index', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32)
+    templateImageIndex.cTextBox('', 3, 1, 4, 8, rs, imageIndexId, fill=BOX_COLOR)
     
     # Template 1
     template1 = Template(rs) # Create template of main size. Front page only.
@@ -307,6 +328,7 @@ def makeDocument(rs):
     # Now all text is composed on pages, scan for the pages that contain footnotes.
     # TODO: This will be implemented a function inside Composer in a later version.
     # Assume the tocBox (Table of Content) to be available on the first page.
+    literatureRefs = {}
     tocBox, (_, _) = tocPage[tocId]
     for pageId, page in sorted(doc.pages.items()):
         if page in (tocPage, coverPage): # Skip these for toc collect and footnotes.
@@ -345,14 +367,47 @@ def makeDocument(rs):
                 elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all in the TOC
                     #doc.addToc(marker)
                     pass
+                elif marker == 'literature':
+                    # The "arguments" contains the refId, so we can find it in the collected literature references
+                    # and then add this page number.
+                    # @@@ TODO: check if reference marker is in overflow. Then ignore processing it.
+                    doc.literatureRefs[int(arguments)]['pageIds'].append(pageId)
+                    
+    # Build the alphabetical literature reference page.
+    # Scan the created pages for literature references and build an index on a new page.
+    literatureIndexPage = doc.newPage(template=templateLiteratureIndex)
+    # Make an alfabetic sorted list of name-->(reference, (pageNumber, ...))
+    references = {}  
+    for refIndex, item in doc.literatureRefs.items():
+        references[item['nodeId']] = item
+    literatureRefBox = literatureIndexPage.getElement(literatureIndexId)    
+    for refId, item in sorted(references.items()):
+        # Now we have a sorted list of reference items, we need to make it into a galley.
+        # Several ways of doing it: Create MarkDown, HTML/XML or directly writing FormattedText.
+        pageNumbers = []
+        for pageNumber in item['pageIds']:
+            pageNumbers.append(`pageNumber`)
+        literatureRefBox.append(u'%s – %s\n' % (refId, ', '.join(pageNumbers)))
+        #fs = getFormattedString('', doc.getStyle('p'))
+        
+        print refId, item['nodeId'], item['node'], item['p'], item['pageIds']
+
+    # Build the alphabetical image reference page.
+    # Scan the created pages for image references and build an index on a new page.
+    imageIndexPage = doc.newPage(template=templateImageIndex)
+    # Make an alfabetic sorted list of name-->(reference, (pageNumber, ...))
+    references = {}  
+    for refIndex, item in doc.imageRefs.items():
+        references[item['nodeId']] = item
+    for imageRefId, item in sorted(references.items()):
+        print imageRefId, item['nodeId'], item['node'], item['p'], item['pageIds']
+
     # Set all pagenumbers and other page-based info
     for pageId, page in sorted(doc.pages.items()):
         for e, _ in page.elements:
             if e.eId == pageNumberId:
                 e.setText('%s' % pageId)
-
-    # Build the alphabetical literature reference page.
-    #print '@+@+@+@+', doc.literatureRefs
+                break
     
     return doc
         

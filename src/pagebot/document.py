@@ -39,7 +39,8 @@ class Document(object):
         # Storage for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
         self.footnotes = {} # Keys is sequential order. Value is (page, e)
-        self.literatureRefs = {}
+        self.literatureRefs = {} # Storage for literature references.
+        self.imageRefs = {} # Storage for image references.
         self.toc = {} # Keys is header index, value is header node, to connect the header markers with the nodes.
 
     def initializeStyles(self, rootStyle, styles):
