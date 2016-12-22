@@ -392,14 +392,23 @@ class Polygon(Element):
         drawPath()
 
 class Image(Element):
-    u"""Image element has special attributes self.iw and self.ih for the real image size."""
-    def __init__(self, path, style=None, eId=None, caption=None, mask=None, imo=None, **kwargs):
+    u"""Image element has special attributes self.iw and self.ih for the real image size.
+    If the optional captionStyle is not defined, then use self.style for captions."""
+    def __init__(self, path, style=None, captionStyle=None, eId=None, caption=None, mask=None, imo=None, **kwargs):
         self.eId = eId
-        self.caption = caption
         self.mask = mask # Optional mask element.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.style = makeStyle(style, **kwargs)
-        # Check on the (w, h) in the style. One of the can be undefined for proportional scaling.
+        self.captionStyle = captionStyle or self.style
+        # Take over the style width and height, so we don't damange the original style values.
+        self._w = self.style.get('w')
+        self._h = self.style.get('h')
+        # Check if there is caption content. Tne make the FormattedString, so we know the heigh.
+        if caption:
+            self.caption = getFormattedString(self.captionStyle)
+        else:
+            self.caption = None
+        # Check on one of the (w, h) in the style. One of the can be undefined for proportional scaling.
         assert self.w is not None or self.h is not None 
         # Set all size and scale values.
         self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn. 
@@ -413,15 +422,14 @@ class Image(Element):
         self.path = path
         if self.path is not None and os.path.exists(self.path):
             self.iw, self.ih = imageSize(self.path)
-            self.setScale(self.w, self.h)
+            self.setScale(self.w, self.h) # Calculate scale and scaled self.sw and self.sh
         else:
             self.iw = self.ih = None
-            self.sx = self.sy = 1
 
     def setSize(self, w, h):
         u"""Set the intended size and calculate the new scale."""
-        self.w = max(w or 0, self.minW)
-        self.h = max(h or 0, self.minH)
+        self._w = max(w or 0, self.minW)
+        self._h = max(h or 0, self.minH)
         self.sx = self.sy = None # Force calculation, overwriting any defined style scale.
         self.setScale()
 
@@ -429,14 +437,16 @@ class Image(Element):
     # width to the image minimum width and the height to the image minimum height.
     # Also the proportion is calculated, depending on the ratio of """
     def _get_w(self):
-        return self.style.get('w')
+        return self._w
     def _set_w(self, w):
+        self._w = w
         self.setScale(w=w)
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        return self.style.get('h')
+        return self._h
     def _set_h(self, h):
+        self._h = h
         self.setScale(h=h)
     h = property(_get_h, _set_h)
 
@@ -452,27 +462,31 @@ class Image(Element):
         if not self.iw or not self.ih:
             # Cannot calculate the scale if the image does not exist.
             sx = sy = 1
+            self._w = self.style.get('w') # Copy from original plain style, without scaling.
+            self._h = self.style.get('h')
         elif w is None and h is None:
             sx = sy = 1 # Use default size of the image.
+            self._w = self.style.get('w') # Copy from original plain style, without scaling.
+            self._h = self.style.get('h')
         elif not proportional and w is not None and h is not None: # Needs to be disproportional scale
             sx = 1.0 * pw / self.iw
             sy = 1.0 * ph / self.ih
-            self.style['w'] = pw # Take over requested (w, h) as target size.
-            self.style['h'] = ph
+            self._w = pw # Copy from original plain style, without scaling.
+            self._h = ph
         elif w is not None and h is not None: # Calculate proportional size, fitting the largest in w/h
             sx = 1.0 * pw / self.iw
             sy = 1.0 * ph / self.ih
             sx = sy = min(sx, sy)  # Which one is the smallest fitting scale
-            self.style['w'] = self.iw * sx # Take over requested (w, h) as target size.
-            self.style['h'] = self.ih * sy
+            self._w = self.iw * sx # Take over requested (w, h) as target size, proportionally scaled.
+            self._h = self.ih * sy
         elif w is not None:
             sx = sy = 1.0 * pw / self.iw
-            self.style['w'] = pw
-            self.style['h'] = self.ih * sy # Calculate proprtional height for the requested width.
+            self._w = pw
+            self._h = self.ih * sy # Calculate proprtional height for the requested width.
         else:
             sx = sy = 1.0 * ph / self.ih
-            self.style['w'] = self.iw * sx # Calculate proportional width for the requested height.
-            self.style['h'] = ph
+            self._w = self.iw * sx # Calculate proportional width for the requested height.
+            self._h = ph
         # TODO Add fitting function            
         #sx = sy = min(sx, sy) # Keep the smallest to make image fit available space.
         self.sx = sx
@@ -495,13 +509,15 @@ class Image(Element):
             alpha = 1
         return alpha
 
-    def _drawCaption(self, page, x, y, w, h):
-        if self.caption:
-            captionW, captionH = self.getCaptionSize(page)
-            setFillColor(0.8, 0.8, 0.8, 0.5)
-            rect(x, y, w, captionH)
-            hyphenation(self.style.get('hyphenation', True))
-            textBox(self.caption, (x, y, w, captionH))
+    def _drawCaption(self, caption, x, y, w, h):
+        u"""Draw the caption, if there is one defined. It is assumed that self.caption contains
+        a FormattedString and the (w,h) is already calculated rectangle of the formatted string."""
+        if caption is not None:
+            rectFill = self.captionStyle.get('fill')
+            if rectFill != NO_COLOR:
+                setFillColor(rectFill)
+                rect(x, y, w, h)
+            textBox(caption, (x, y, w, h))
           
     def draw(self, page, x, y):
         u"""Draw the image in the calculated scale. Since we need to use the image
@@ -510,12 +526,25 @@ class Image(Element):
         If stroke is defined, then use that to draw a frame around the image.
         Note that the (sx, sy) is already scaled to fit the padding position and size."""
         px, py, pw, ph = self.getPadded(x, y, self.w, self.h)
+        # Calculate the height of the caption box, soe we can reduce the height of the image.
+        # Draw the caption at the bottom of the image space.
+        if self.caption is not None:
+            # @@@@@@ TODO: need to solve bug with caption width here.
+            capW = pw # Caption on original width of layout, not proportional scaled image width.
+            _, capH = textSize(self.caption, width=capW)
+            self._drawCaption(self.caption, px, py, capW, capH)
+            # Calculate new image size.
+            px, py, pw, ph = self.getPadded(x, y+capH, self.w, self.h - capH)
+            self.setScale(h=ph) # Force recalculation of the image scale on height
+            # Caluclate new width from ratio, in case we need to draw a frame.
+            pw = ph * self.iw / self.ih
+
         if self.path is None or not os.path.exists(self.path):
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
             self._drawMissingElementRect(page, px, py, pw, ph)
         else:
             if self.sx is None: # In case not initialized yet.
-                self.setScale()
+                self.setScale(pw, ph)
             if self.sx is not None: # Check again if scale was set successfully.
                 save()
                 scale(self.sx, self.sy)
@@ -525,6 +554,7 @@ class Image(Element):
                     iy = (py + self.h)/self.sy - self.ih # TODO: Solve vertical alignment.
                 else: # Must be bottom align then
                     iy = (py + self.h)/self.sy - self.ih
+                # Store page element Id in this image, in case we want to make an image index later.
                 image(self.path, (px/self.sx, iy), pageNumber=page.eId or 0, alpha=self._getAlpha())
  
                  # Draw background color if requested.
@@ -546,7 +576,6 @@ class Image(Element):
                 restore()
             else:
                 print('Could not set scale of image "%s"' % self.path)
-        self._drawCaption(caption, page, px, page.h - py, pw, ph)
 
 class Ruler(Element):
     def __init__(self, style=None, eId=None, **kwargs):
