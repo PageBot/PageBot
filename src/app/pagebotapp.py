@@ -9,6 +9,7 @@
 #
 #     pagebotapp.py
 #
+from vanilla import Button
 from drawBot import *
 from drawBot.context.drawBotContext import DrawBotContext
 from drawBot.context import getContextForFileExt
@@ -30,7 +31,12 @@ class PageBotApp(object):
         context = getContextForFileExt('pdf')
         pdfDocument = context.getNSPDFDocument()
         print context, pdfDocument
+        self.window.saveButton = Button((20, 20, 100, 24), 'Save PDF', callback=self.savePDF)
         #saveImage('/Users/petr/Desktop/test.pdf')
 
+    def savePDF(self):
+        print context, pdfDocument
+        #saveImage('/Users/petr/Desktop/test.pdf')
+        
     def terminate(self):
         pass

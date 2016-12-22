@@ -26,7 +26,10 @@ Any time you jump on the bandwagon, you will pay the price as it is at that mome
 
 [^footnote3]: This is the text of the footnote. Which can be a very long footnote to run over multiple lines with indented left margin.
 
-This list will be maintained over time, adding wishes and needs expressed by you, the user of the course. The development of the examples will try to stay in sync with changes in the outside world. To what extent this will succeed is a future promise, but by joining in at early stage, you express the trust that this will happen. As a reward for this trust you get all future content for the current price. 
+This list will be maintained over time, adding wishes and needs expressed by you, the user of the course. The development of the examples will try to stay in sync with changes in the outside world. [=anotherAuthor2016] To what extent this will succeed is a future promise, but by joining in at early stage, you express the trust that this will happen. As a reward for this trust you get all future content for the current price. 
+
+[=anotherAuthor2016]: This is another book reference.
+
 
 ##Subhead here
 
@@ -36,5 +39,8 @@ Processing is based on Java, an industrial strength programming language, where 
 
 ## Subhead here
 
-The origin of Processing is more in the processing of images, – focussed on pixels and interaction – than Python. Python can for instance be found inside web servers and as scripting language in desktop applications such as FontLab and RoboFont. In general Processing programs are more linear, smaller and dedicated to a specific task, where Python programs tend to be part of larger systems. In that respect Python should be more compared on the level of Java, the language that Processing is built on top of. Another difference is the amount and type of available libraries. Another important factor. There are some minor differences in the syntax of the two languages – minor, but for some people they are really annoying, being accustomed to one kind of notation, such as the use of curly brackets to indicate the start and end of blocks of code in Processing (and Java) and the way Python detects the start and end of a block: entirely by the amount indent of a set of code line. 
+The origin of Processing is more in the processing of images, – focussed on pixels and interaction – than Python. Python can for instance be found inside web servers and as scripting language in desktop applications such as FontLab and RoboFont. In general Processing programs are more linear, smaller and dedicated to a specific task, where Python programs tend to be part of larger systems. In that respect Python should be more compared on the level of Java, the language that Processing is built on top of. Another difference is the amount and type of available libraries. Another important factor. [=thisAuthor2014] There are some minor differences in the syntax of the two languages – minor, but for some people they are really annoying, being accustomed to one kind of notation, such as the use of curly brackets to indicate the start and end of blocks of code in Processing (and Java) and the way Python detects the start and end of a block: entirely by the amount indent of a set of code line. 
 In this course the differences between Processing and Python will be mentioned if that is really important, but this course will mainly focus on the use of Python in the design practice.
+
+[=thisAuthor2014]: This is book reference for this author.
+
