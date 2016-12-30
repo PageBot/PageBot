@@ -147,10 +147,14 @@ class Ornament(Element):
         rect(x-M+self.w-S/2, y-M+self.h-S/2, S, S)
         rect(x+M-S/2, y-M+self.h-S/2, S, S)
         newPath()
+        fill(None)
+        stroke(1,0,0)
+        strokeWidth(4)
         moveTo((x+M, y+M))
         lineTo((x-M+self.w, y+M))
         lineTo((x-M+self.w, y-M+self.h))
         lineTo((x+M, y-M+self.h))
+        closePath()
         drawPath()
 def makeCoverTemplate(imagePath, rs):
     bleed = rs['bleed']
