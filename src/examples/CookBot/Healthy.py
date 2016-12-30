@@ -40,7 +40,7 @@ import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import getVariationFont
 
-PREVIEW = False
+PREVIEW = True
 
 SHOW_GRID = PREVIEW
 SHOW_GRID_COLUMNS = PREVIEW
