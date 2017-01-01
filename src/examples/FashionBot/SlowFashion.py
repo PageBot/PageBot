@@ -99,7 +99,7 @@ FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'slowFashionStories.md'
-EXPORT_PATH = 'export/SlowFashion.png'
+EXPORT_PATH = 'export/SlowFashion.pdf'
 COVER_IMAGE_PATH1 = 'images/IMG_8914.jpg'
 
 #MD_PATH = 'testPaginaCompositie_nl.md'
@@ -186,7 +186,7 @@ def makeCoverTitles(coverTemplate, rs):
         lineHeight=34)
     fs += FormattedString('Interview with Pepper+Tom ', font=BOOK, fontSize=32, fill=c, tracking=0.5,
         lineHeight=34)
-    coverTemplate.text(fs, 22, rs['h'] - 730)
+    coverTemplate.text(fs, 22, rs['h'] - 760)
         
     # Titles could come automatic from chapters in the magazine.
     fs = FormattedString('Slow', font=MEDIUM, fontSize=70, fill=(1, 1, 1, 0.15), tracking=0.5,

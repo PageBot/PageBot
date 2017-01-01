@@ -21,7 +21,7 @@ In this course the differences between Processing and Python will be mentioned i
 <hr />
 <ol>
 <li id="lit:myAuthor2016">
-<p>This is my book ref.&#160;<a class="literature-backref" href="#litref:myAuthor2016" rev="literature" title="Jump back to literature 1 in the text">&#8617;</a></p>
+<p>This is my book ref|asasa|aaaa|aasas.&#160;<a class="literature-backref" href="#litref:myAuthor2016" rev="literature" title="Jump back to literature 1 in the text">&#8617;</a></p>
 </li>
 <li id="lit:anotherAuthor2016">
 <p>This is another book reference.&#160;<a class="literature-backref" href="#litref:anotherAuthor2016" rev="literature" title="Jump back to literature 2 in the text">&#8617;</a></p>
