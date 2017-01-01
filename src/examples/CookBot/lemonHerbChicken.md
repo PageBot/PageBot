@@ -27,7 +27,7 @@ Preheat oven to 375 degrees. Melt 1/2 cup sugar in an aluminum loaf pan and heat
 Fill a large pot of water with about 1 inch of water and place over medium heat. Move the aluminum pan into the large pot and set into the water.
 Combine the pumpkin pie filling, evaporated milk, condensed milk, eggs, 1/2 cup sugar, vanilla, and allspice in a blender, blend until smooth. Pour the mixture into the loaf pan.
 
-![healthy page] (export/CookBotBook_1.png "")
+![healthy page] (export/CookBotBook_1.png "Pages are element object too. Or they can be placed as illustration in the document, once they are rendered as an image.")
 
 Bake in preheated oven until a knife inserted in the center comes out clean, about 1 hour. Refrigerate for at least 3 hours, or overnight.
 Run a knife along the edge of the loaf pan to loosen the flan. Invert the pan onto a serving plate and tap to release the dessert.

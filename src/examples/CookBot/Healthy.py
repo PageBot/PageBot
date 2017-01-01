@@ -275,7 +275,9 @@ def makeDocument(rs):
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
     doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> show newline
     doc.newStyle(name='a', prefix='', postfix='')
-    doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK)
+    doc.newStyle(name='img', tracking=P_TRACK, language=language, textFill=0.2, fill=NO_COLOR, 
+        leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
+        indent=U/2, tailIndent=-U/2, hyphenation=True)
     
     # Footnote reference index.
     doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6, prefix='', postfix=' ',
@@ -288,9 +290,6 @@ def makeDocument(rs):
     doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
     doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
-    doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
-        leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
-        indent=U/2, tailIndent=-U/2, hyphenation=True)
     
     # Change template of page 1
     page1 = doc[1]
