@@ -98,7 +98,6 @@ FS = getFormattedString(FormattedString(''), RS)
 
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
-MD_PATH = 'slowFashionStories.md'
 EXPORT_PATH = 'export/SlowFashion.pdf'
 COVER_IMAGE_PATH1 = 'images/IMG_8914.jpg'
 
@@ -310,7 +309,7 @@ def makeDocument(rs):
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
     t = Typesetter(doc, g)
-    t.typesetFile(MD_PATH)
+    t.typesetFilibuster()
     
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)

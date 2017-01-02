@@ -21,10 +21,10 @@ content = {
     'creditarticle' : ['<p class="writer"><#article_writer#></p><#article_content#>'],
     'article' : ['<#article_content#>'],
     'article_ankeiler': [
-        '<#article_p1#>','<#article_p2#>','<#article_p3#>',
-        '<#article_p4#>','<#article_p5#>','<#article_p6#>',
-        '<#article_p7#>','<#article_p8#>','<#article_p9#>',
-        '<#article_p10#>',
+        '<#article_p1#> ','<#article_p2#> ','<#article_p3#> ',
+        '<#article_p4#> ','<#article_p5#> ','<#article_p6#> ',
+        '<#article_p7#> ','<#article_p8#> ','<#article_p9#> ',
+        '<#article_p10#> ',
     ],
     'article_caption': [
         '<#^,article_p1#>', '<#^,article_p2#>', '<#^,article_p3#>', '<#^,article_p4#>', 
@@ -33,10 +33,10 @@ content = {
         '<#^,odd_action#>', '<#^,HEADLINE_market#>', '<#^,politics_headline#>',
     ],
     'article_shortcaption': [
-        '<#^,com_bylines#>', '<#^,odd_action#>', '<#^,sports_section#>',    
-        '<#^,portal_anyname#>', '<#^,university#>', '<#^,j_thing#>', '<#^,i_host_edu#>',
-        '<#^,event_construct#>', '<#^,name#>', '<#^,realestate_shortheadline#>',
-        '<#^,book_headline#>'
+        '<#^,com_bylines#> ', '<#^,odd_action#> ', '<#^,sports_section#> ',    
+        '<#^,portal_anyname#> ', '<#^,university#> ', '<#^,j_thing#> ', '<#^,i_host_edu#> ',
+        '<#^,event_construct#> ', '<#^,name#> ', '<#^,realestate_shortheadline#> ',
+        '<#^,book_headline#> '
     ],
     'article_summary': [
         '<p class="start summary"><#article_start#></p><p><#article_p1#><#article_p3#></p>',
