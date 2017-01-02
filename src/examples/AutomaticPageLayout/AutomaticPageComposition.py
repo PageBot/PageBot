@@ -94,7 +94,7 @@ if 0: # EN version of the article.
 else: # NL version of the article.
     RS['language'] = 'nl-be' # Make Dutch hyphenation.
     MD_PATH = 'automatischePaginaCompositie_nl.md'
-    EXPORT_PATH = 'export/AutomatischePaginaOpmaak.gif'
+    EXPORT_PATH = 'export/AutomatischePaginaOpmaak.pdf'
 
 #MD_PATH = 'testPaginaCompositie_nl.md'
 
@@ -222,7 +222,7 @@ def makeDocument(rs):
     doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
     doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
         leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
-        indent=U/2, tailIndent=-U/2, hyphenation=True)
+        tailIndent=-U/2, hyphenation=True)
     
     # Change template of page 1
     page1 = doc[1]
