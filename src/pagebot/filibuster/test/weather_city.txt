@@ -1,9 +1,0 @@
-
-
-Madrid: thunderstorms, 4ºC
-
-San Francisco: rain, -2ºC
-
-Lille: fog, 2ºC
-
-Rome: snow, 15ºC
