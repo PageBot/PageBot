@@ -370,7 +370,7 @@ class Typesetter(object):
             mdText = f.read()
             f.close()
             mdExtensions = [FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
-            xml = '<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
+            xml = u'<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
             xmlName = fileName + '.xml'
             f = codecs.open(xmlName, mode="w", encoding="utf-8")
             f.write(xml)
@@ -391,7 +391,20 @@ class Typesetter(object):
             # reference, image index and footnote placement.   
             self.typesetNode(root, style=rootStyle)
 
-    def typesetFootnotes(self):
+    def typesetFilibuster(self, rootStyle=None):
+        from pagebot.contributions.filibuster.blurb import Blurb
+        blurb = Blurb()
+        blurbArticle = (
+            blurb.getBlurb('article_ankeiler'),
+            blurb.getBlurb('article_summary'),
+            blurb.getBlurb('article'),
+        )
+        xml = u'<document>%s</document>' % '/n'.join(blurbArticle)
+        tree = ET.parse(fileName)
+        root = tree.getroot() # Get the root element of the tree.
+        self.typesetNode(root, style=rootStyle)
+
+    def XXXtypesetFootnotes(self):
         footnotes = self.document.footnotes
         for index, (page, e, p) in footnotes.items():
             style = page.getStyle('footnote')
