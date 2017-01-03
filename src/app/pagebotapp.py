@@ -11,6 +11,7 @@
 #
 from vanilla import Button
 from drawBot import *
+from drawBot.drawBotDrawingTools import _drawBotDrawingTool, DrawBotDrawingTool
 from drawBot.context.drawBotContext import DrawBotContext
 from drawBot.context import getContextForFileExt
 import pagebot
@@ -23,20 +24,30 @@ class PageBotApp(object):
         self.window = window
 
     def initialize(self):
-        size(500, 500)
-        newDrawing()
-        newPage(500, 500)
-        rect(0, 0, 100, 100)
-        cmykFill(0, 1, 0, 0)
-        context = getContextForFileExt('pdf')
-        pdfDocument = context.getNSPDFDocument()
-        print context, pdfDocument
         self.window.saveButton = Button((20, 20, 100, 24), 'Save PDF', callback=self.savePDF)
-        #saveImage('/Users/petr/Desktop/test.pdf')
+        doc = getPageBotDocument()
+        #self.setDocument(doc)
+        #self.getNSView().setDocument_(document)
 
-    def savePDF(self):
-        print context, pdfDocument
-        #saveImage('/Users/petr/Desktop/test.pdf')
-        
+    def getPageBotDocument(self):
+        u"""
+        Draws template to a document.
+        TODO: automatically run script.
+        """
+        _drawBotDrawingTool.size(500, 500)
+        _drawBotDrawingTool.newDrawing()
+        _drawBotDrawingTool.newPage(500, 500)
+        _drawBotDrawingTool.rect(0, 0, 100, 100)
+        _drawBotDrawingTool.cmykFill(0, 1, 0, 0)
+        context = getContextForFileExt('pdf')
+        _drawBotDrawingTool._drawInContext(context)
+        pdfDocument = _drawBotDrawingTool.pdfImage()
+        return pdfDocument
+
+    def savePDF(self, sender):
+        pass
+        #doc = self.getPageBotDocument()
+        #_drawBotDrawingTool.saveImage('/Users/michiel/Desktop/test.pdf')
+
     def terminate(self):
         pass
