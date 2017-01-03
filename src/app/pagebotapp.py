@@ -24,10 +24,9 @@ class PageBotApp(object):
         self.window = window
 
     def initialize(self):
-        self.window.saveButton = Button((20, 20, 100, 24), 'Save PDF', callback=self.savePDF)
-        doc = getPageBotDocument()
-        #self.setDocument(doc)
-        #self.getNSView().setDocument_(document)
+        self.window.saveButton = Button((4, 4, 100, 24), 'Save PDF', callback=self.savePDF)
+        pdfDocument = self.getPageBotDocument()
+        self.window.drawView.setPDFDocument(pdfDocument)
 
     def getPageBotDocument(self):
         u"""

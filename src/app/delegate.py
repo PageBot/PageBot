@@ -20,6 +20,7 @@ from vanilla import Window
 import objc
 from AppKit import NSObject
 from PyObjCTools import AppHelper
+from drawView import DrawView
 
 from pagebotapp import PageBotApp
 
@@ -35,6 +36,7 @@ class AppDelegate(NSObject):
         u"""
         """
         window = Window(self.windowSize, minSize=(1, 1), closable=True)
+        window.drawView = DrawView((0, 32, -0, -0))
         self.pagebotapp = PageBotApp(window)
         self.pagebotapp.initialize()
         window.open()
