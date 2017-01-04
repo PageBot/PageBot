@@ -23,5 +23,5 @@ setup(
     name="PageBot",
     data_files=['en.lproj'],
     setup_requires=['py2app'],
-    options=dict(py2app=dict(iconfile='en.lproj/pagebot.icns', packages='drawBot'))
+    options=dict(py2app=dict(iconfile='en.lproj/pagebot.icns', packages=['drawBot', 'pagebot', 'lxml', 'markdown', 'robofab', 'mutatorMath', 'fontMath']))
 )
