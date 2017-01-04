@@ -25,22 +25,24 @@ import pagebot
 
 DEBUG = False
 
-
 def getMasterPath():
     u"""Answer the path to read master fonts. Default is at the same level as pagebot module."""
-    return '/'.join(pagebot.__file__.split('/')[:-2])+'/fonts/'
-    
+    #return '/'.join(pagebot.__file__.split('/')[:-2])+'/fonts/'
+    from os.path import expanduser
+    home = expanduser("~")
+    return home + '/fonts/'
+
 def getInstancePath():
     u"""Answer the path to write instance fonts."""
     return getMasterPath() + 'instances/'
-    
+
 def getVariationFont(masterStylePath, location):
     u"""The variationsFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     {"wght": 0, "wdth": 1000}"""
-    fontName, _ = generateInstance(masterStylePath, location, targetDirectory=getInstancePath()) 
+    fontName, _ = generateInstance(masterStylePath, location, targetDirectory=getInstancePath())
     return fontName
-   
+
 def drawGlyphPath(ttFont, glyphName, x, y, location=None, s=0.1, fillColor=0):
 
     if isinstance(fillColor, (tuple, list)):
@@ -56,7 +58,7 @@ def drawGlyphPath(ttFont, glyphName, x, y, location=None, s=0.1, fillColor=0):
     glyphSet = TTVarFontGlyphSet(ttFont)
     if location is None:
         location = {"wght": 500}
-    glyphSet.setLocation(location) 
+    glyphSet.setLocation(location)
     g = glyphSet[glyphName]
 
     pen = BezierPath(glyphSet=glyphSet)
@@ -196,13 +198,13 @@ def generateInstance(variableFontPath, location, targetDirectory):
         for tag in ('fvar', 'avar', 'gvar'):
             if tag in varFont:
                 del varFont[tag]
-        
+
         # Fix leading bug in drawbot by setting lineGap to 0
         varFont['hhea'].lineGap = 0
 
         if DEBUG:
             print("Saving instance font", outFile)
         varFont.save(outFile)
-    
+
     # Installing the font in DrawBot. Answer font name and path.
     return installFont(outFile), outFile
