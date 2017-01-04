@@ -35,10 +35,13 @@ class AppDelegate(NSObject):
     def applicationDidFinishLaunching_(self, notification):
         u"""
         """
+        outputWindow = Window((400, 300), minSize=(1, 1), closable=True)
+        outputWindow.outputView = None
+
         window = Window(self.windowSize, minSize=(1, 1), closable=True)
         window.drawView = DrawView((0, 32, -0, -0))
         window.outputView = None
-        self.pagebotapp = PageBotApp(window)
+        self.pagebotapp = PageBotApp(window, outputWindow)
         self.pagebotapp.initialize()
         window.open()
 
