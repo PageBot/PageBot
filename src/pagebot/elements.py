@@ -61,7 +61,7 @@ class Element(object):
         self.h = h
 
     def getPadded(self, x, y, w, h):
-        u"""Calculate the padded position and padded resized box of the element, after applying the 
+        u"""Calculate the padded position and padded resized box of the element, after applying the
         option style padding."""
         # TODO: Get this to work. Padding now had problem of scaling images too big for some reason.
         return x, y, w, h
@@ -107,7 +107,7 @@ class Element(object):
     def setMaxSize(self, maxW, maxH):
         self.maxW = maxW # No limit if value is None
         self.maxH = maxH
-        
+
     def _applyScale(self, x, y):
         u"""Apply the scale, if both self.style['scaleX'] and self.style['scaleY'] as set. Use this
         method paired with self._restoreScale(). The (x, y) answered as reversed scaled tuple,
@@ -198,10 +198,10 @@ class Container(Element):
     def append(self, element):
         u"""Add element to the list of child elements."""
         self.elements.append(element)
-        # Make element do proportional resize, if one of the sides is larger 
+        # Make element do proportional resize, if one of the sides is larger
         # than the size of the self element.
         # If element is larger than the container, then make it fit.
-        element.proportionalResize(self.w, self.h) 
+        element.proportionalResize(self.w, self.h)
 
     def __len__(self):
         return len(self.elements)
@@ -277,7 +277,7 @@ class TextBox(Element):
         """Figure out what the width/height of the text self.fs is, with or given width or
         the styled width of this text box."""
         return textSize(self.fs, width=w or self.w)
-    
+
     def getOverflow(self, w=None, h=None):
         """Figure out what the overflow of the text is, with the given (w,h) or styled
         (self.w, self.h) of this text box."""
@@ -290,7 +290,7 @@ class TextBox(Element):
         for _, baselineY in textBoxBaseLines(self.fs, (0, y, w or self.w, h or self.h)):
             baselines.append(baselineY)
         return baselines
-        
+
     def draw(self, page, x, y):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
@@ -326,7 +326,7 @@ class Text(Element):
         self.fs += fs
 
     def draw(self, page, x, y):
-        u"""Draw the formatted text. Since this is not a text column, but just a 
+        u"""Draw the formatted text. Since this is not a text column, but just a
         typeset text line, background and stroke of a text column needs to be drawn elsewere."""
         self._setShadow()
         text(self.fs, (x, y))
@@ -364,7 +364,7 @@ class Oval(Element):
             w, _ = self.fs.getSize()
             x -= w/2
         oval(x, y, self.w, self.h)
-              
+
 class Line(Element):
     def __init__(self, style=None, eId=None, **kwargs):
         self.eId = eId
@@ -413,9 +413,10 @@ class Image(Element):
         else:
             self.caption = None
         # Check on one of the (w, h) in the style. One of the can be undefined for proportional scaling.
-        assert self.w is not None or self.h is not None 
+        assert self.w is not None or self.h is not None
         # Set all size and scale values.
-        self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn. 
+        self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn.
+        print self.ih, path
 
     def __repr__(self):
         return '[%s %s]' % (self.__class__.__name__, self.eId or self.path)
@@ -491,7 +492,7 @@ class Image(Element):
             sx = sy = 1.0 * ph / self.ih
             self._w = self.iw * sx # Calculate proportional width for the requested height.
             self._h = ph
-        # TODO Add fitting function            
+        # TODO Add fitting function
         #sx = sy = min(sx, sy) # Keep the smallest to make image fit available space.
         self.sx = sx
         self.sy = sy
@@ -499,11 +500,11 @@ class Image(Element):
     def getCaptionSize(self, page):
         """Figure out what the height of the text is, with the width of this text box."""
         return textSize(self.caption or '', width=self.w)
-    
+
     def getImageSize(self):
         u"""Answer the w/h pixel size of the real image."""
         return self.iw, self.ih
-                
+
     def _getAlpha(self):
         u"""Use alpha channel of the fill color as opacity of the image."""
         sFill = self.style.get('fill', NO_COLOR)
@@ -522,7 +523,7 @@ class Image(Element):
                 setFillColor(rectFill)
                 rect(x, y, w, h)
             textBox(caption, (x, y, w, h))
-          
+
     def draw(self, page, x, y):
         u"""Draw the image in the calculated scale. Since we need to use the image
         by scale transform, all other measure (position, lineWidth) are scaled
@@ -532,7 +533,7 @@ class Image(Element):
         px, py, pw, ph = self.getPadded(x, y, self.w, self.h)
         # Calculate the height of the caption box, soe we can reduce the height of the image.
         # Draw the caption at the bottom of the image space.
-        if self.caption is not None:
+        if self.caption is not None and self.iw is not None and self.ih is not None:
             # @@@@@@ TODO: need to solve bug with caption width here.
             capW = pw # Caption on original width of layout, not proportional scaled image width.
             _, capH = textSize(self.caption, width=capW)
@@ -560,14 +561,14 @@ class Image(Element):
                     iy = (py + self.h)/self.sy - self.ih
                 # Store page element Id in this image, in case we want to make an image index later.
                 image(self.path, (px/self.sx, iy), pageNumber=page.eId or 0, alpha=self._getAlpha())
- 
+
                  # Draw background color if requested.
                 sFill = self.style.get('fill')
                 if not sFill in (None, NO_COLOR): # In case we need to draw the background.
                     setFillColor(sFill)
                     setStrokeColor(None)
                     rect(px/self.sx, py/self.sy, pw/self.sx, ph/self.sy)
-               
+
                 # Draw the frame around the image, if requested.
                 sStroke = self.style.get('stroke')
                 sStrokeWidth = self.style.get('strokeWidth')
@@ -575,7 +576,7 @@ class Image(Element):
                     setFillColor(None)
                     setStrokeColor(sStroke, sStrokeWidth/self.sx )
                     rect(px/self.sx, py/self.sy, pw/self.sx, ph/self.sy)
-                
+
                 # TODO: Draw optional (transparant) forground color?
                 restore()
             else:
@@ -628,7 +629,7 @@ class Grid(Element):
                     rect(x, y+gutter, columnWidth, columnHeight)
                     y -= columnHeight + gutter
                 x += columnWidth + gutter
-        # Drawing the grid as lines.          
+        # Drawing the grid as lines.
         if self.style.get('showGrid') and self.style.get('gridStroke', NO_COLOR) is not NO_COLOR:
             setFillColor(None)
             setStrokeColor(self.style.get('gridStroke', NO_COLOR), self.style.get('gridStrokeWidth'))
@@ -656,7 +657,7 @@ class Grid(Element):
                 lineTo((px + w, y))
                 moveTo((px, y - columnWidth))
                 lineTo((px+w, y - columnWidth))
-                drawPath()        
+                drawPath()
                 text(fs + repr(index), (px + marginLeft - M / 2, y - M * 0.6))
                 index += 1
                 y -= columnHeight + gutter
