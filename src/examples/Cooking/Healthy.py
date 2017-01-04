@@ -10,6 +10,7 @@
 #     Healthy.py
 #
 from datetime import datetime # Make date fit today.
+from drawBot.context.baseContext import FormattedString
 from pagebot import getFormattedString
 
 import pagebot.style
@@ -51,6 +52,8 @@ if SHOW_GRID:
     BOX_COLOR = (0.8, 0.8, 0.8, 0.4)
 else:
     BOX_COLOR = None
+
+NO_COLOR = None
 
 # Get the default root style and overwrite values for this document.
 U = 7

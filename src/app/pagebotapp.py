@@ -45,19 +45,16 @@ class PageBotApp(object):
 
         # Calls DrawBot's ScriptRunner with above parameters.
         ScriptRunner(None, path, namespace=namespace, stdout=self.stdout, stderr=self.stderr)
-        print self.output
+        self.printErrors()
+
+    def printErrors(self):
+        for output in self.output:
+            print output[0]
 
     def getPageBotDocument(self):
         u"""
         Draws template from memory to a document.
         """
-        '''
-        _drawBotDrawingTool.size(500, 500)
-        _drawBotDrawingTool.newDrawing()
-        _drawBotDrawingTool.newPage(500, 500)
-        _drawBotDrawingTool.rect(0, 0, 100, 100)
-        _drawBotDrawingTool.cmykFill(0, 1, 0, 0)
-        '''
         context = getContextForFileExt('pdf')
         _drawBotDrawingTool._drawInContext(context)
         pdfDocument = _drawBotDrawingTool.pdfImage()
