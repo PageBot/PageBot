@@ -37,6 +37,7 @@ class AppDelegate(NSObject):
         """
         window = Window(self.windowSize, minSize=(1, 1), closable=True)
         window.drawView = DrawView((0, 32, -0, -0))
+        window.outputView = None
         self.pagebotapp = PageBotApp(window)
         self.pagebotapp.initialize()
         window.open()
