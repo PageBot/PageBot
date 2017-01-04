@@ -29,11 +29,22 @@ class PageBotApp(object):
         """
         self.window = window
         self.outputWindow = outputWindow
+        self.scriptPath = None
 
     def getPath(self):
-         return '/'.join(pagebot.__file__.split('/')[:-1]) + '/examples/Cooking/Healthy.py'
+        u"""
+        TODO: store in preferences.
+        TODO: add example scripts to menu.
+        """
+        if self.scriptPath is not None:
+            return self.scriptPath
+
+        return '/'.join(pagebot.__file__.split('/')[:-1]) + '/examples/Cooking/Healthy.py'
 
     def initialize(self):
+        u"""
+        Sets up GUI contents.
+        """
         x = 4
         y = 4
         w = 100
@@ -45,7 +56,12 @@ class PageBotApp(object):
         self.window.saveButton = Button((x, y, w, h), 'Save', sizeStyle='small', callback=self.saveCallback)
         x += 110
         self.window.path = TextBox((x, y + 2, -40, h), self.getPath(), sizeStyle='small')
+        self.run()
 
+    def run(self):
+        u"""
+        # Runs the script code and writes PDF contents to drawView.
+        """
         self.runCode()
         pdfDocument = self.getPageBotDocument()
         self.window.drawView.setPDFDocument(pdfDocument)
@@ -86,8 +102,18 @@ class PageBotApp(object):
         _drawBotDrawingTool.saveImage('/Users/michiel/Desktop/test.pdf')
 
     def loadCallback(self, sender):
-        # getFile
-        pass
+        u"""
+        Loads a different script by calling up the get file dialog.
+        """
+        paths = getFile(messageText='Please select your script',
+                        title='Select a script.',
+                        allowsMultipleSelection=False,
+                        fileTypes=('py',))
+
+        if paths is not None:
+            self.scriptPath = paths[0]
+            self.window.path.set(self.scriptPath)
+            self.run()
 
     def terminate(self):
         pass
