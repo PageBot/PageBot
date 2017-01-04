@@ -9,7 +9,9 @@
 #
 #     pagebotapp.py
 #
-from vanilla import Button
+
+from vanilla import Button, TextBox
+from vanilla.dialogs import getFile, putFile
 from drawBot import *
 from drawBot.drawBotDrawingTools import _drawBotDrawingTool, DrawBotDrawingTool
 from drawBot.scriptTools import ScriptRunner, DrawBotNamespace, StdOutput
@@ -21,11 +23,29 @@ class PageBotApp(object):
     u"""Wrapper class to bundle all document page typesetter and composition
     functions, generating export document."""
 
-    def __init__(self, window):
+    def __init__(self, window, outputWindow):
+        u"""
+        Connects main window and output window for errors.
+        """
         self.window = window
+        self.outputWindow = outputWindow
+
+    def getPath(self):
+         return '/'.join(pagebot.__file__.split('/')[:-1]) + '/examples/Cooking/Healthy.py'
 
     def initialize(self):
-        self.window.saveButton = Button((4, 4, 100, 24), 'Save PDF', callback=self.savePDF)
+        x = 4
+        y = 4
+        w = 100
+        h = 24
+        self.window.loadFile = Button((x, y, w, h), 'Load',
+                                sizeStyle='small', callback=self.loadCallback)
+
+        x += 110
+        self.window.saveButton = Button((x, y, w, h), 'Save', sizeStyle='small', callback=self.saveCallback)
+        x += 110
+        self.window.path = TextBox((x, y + 2, -40, h), self.getPath(), sizeStyle='small')
+
         self.runCode()
         pdfDocument = self.getPageBotDocument()
         self.window.drawView.setPDFDocument(pdfDocument)
@@ -34,7 +54,7 @@ class PageBotApp(object):
         u"""
         Runs a PageBot script.
         """
-        path = '/Users/michiel/Code/PageBot/src/examples/Cooking/Healthy.py'
+        path = self.getPath()
         _drawBotDrawingTool.newDrawing()
         namespace = DrawBotNamespace(_drawBotDrawingTool, _drawBotDrawingTool._magicVariables)
 
@@ -60,10 +80,15 @@ class PageBotApp(object):
         pdfDocument = _drawBotDrawingTool.pdfImage()
         return pdfDocument
 
-    def savePDF(self, sender):
+    def saveCallback(self, sender):
+        doc = self.getPageBotDocument()
+        # putFile
+        _drawBotDrawingTool.saveImage('/Users/michiel/Desktop/test.pdf')
+
+    def loadCallback(self, sender):
+        # getFile
         pass
-        #doc = self.getPageBotDocument()
-        #_drawBotDrawingTool.saveImage('/Users/michiel/Desktop/test.pdf')
 
     def terminate(self):
         pass
+
