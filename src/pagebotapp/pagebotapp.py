@@ -35,6 +35,7 @@ class PageBotApp(object):
         u"""
         TODO: store in preferences.
         TODO: add example scripts to menu.
+        TODO: remember name.
         """
         if self.scriptPath is not None:
             return self.scriptPath
@@ -88,23 +89,22 @@ class PageBotApp(object):
             print output[0]
 
     def getPageBotDocument(self):
-        u"""
-        Draws template from memory to a document.
-        """
+        u"""Converts template drawn in memory to a PDF document."""
         context = getContextForFileExt('pdf')
         _drawBotDrawingTool._drawInContext(context)
         pdfDocument = _drawBotDrawingTool.pdfImage()
         return pdfDocument
 
     def saveCallback(self, sender):
+        u"""Saves current template to a PDF file."""
         doc = self.getPageBotDocument()
-        # putFile
-        _drawBotDrawingTool.saveImage('/Users/michiel/Desktop/test.pdf')
+        putFile(messageText='Save template file', title='Save template as...', fileName='template.pdf', parentWindow=self.window, resultCallback=self.saveDoCallback)
+
+    def saveDoCallback(self, path):
+        _drawBotDrawingTool.saveImage(path)
 
     def loadCallback(self, sender):
-        u"""
-        Loads a different script by calling up the get file dialog.
-        """
+        u"""Loads a different script by calling up the get file dialog."""
         paths = getFile(messageText='Please select your script',
                         title='Select a script.',
                         allowsMultipleSelection=False,
