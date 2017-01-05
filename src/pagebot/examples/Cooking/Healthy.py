@@ -10,7 +10,6 @@
 #     Healthy.py
 #
 from datetime import datetime # Make date fit today.
-from drawBot.context.baseContext import FormattedString
 from pagebot import getFormattedString
 
 import pagebot.style

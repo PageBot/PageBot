@@ -13,7 +13,6 @@ from pagebot.style import LEFT_ALIGN, TOP_ALIGN, NO_COLOR, makeStyle
 
 from datetime import datetime # Make date fit today.
 from drawBot.context.baseContext import FormattedString
-from drawBot import *
 from pagebot import getFormattedString
 
 import pagebot.style

@@ -81,6 +81,7 @@ class PageBotApp(object):
         path = self.getPath()
         _drawBotDrawingTool.newDrawing()
         namespace = DrawBotNamespace(_drawBotDrawingTool, _drawBotDrawingTool._magicVariables)
+        _drawBotDrawingTool._addToNamespace(namespace)
 
         # Creates a new standard output, catching all print statements and tracebacks.
         self.output = []
