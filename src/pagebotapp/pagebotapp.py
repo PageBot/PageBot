@@ -46,18 +46,25 @@ class PageBotApp(object):
         u"""
         Sets up GUI contents.
         """
+        self.buildTop()
+        self.run()
+
+    def buildTop(self):
+        u"""Builds buttons at top.
+
+        TODO: put in a group.
+        """
         x = 4
         y = 4
         w = 100
         h = 24
         self.window.loadFile = Button((x, y, w, h), 'Load',
                                 sizeStyle='small', callback=self.loadCallback)
-
         x += 110
-        self.window.saveButton = Button((x, y, w, h), 'Save', sizeStyle='small', callback=self.saveCallback)
+        self.window.saveButton = Button((x, y, w, h), 'Save', sizeStyle='small',
+                callback=self.saveCallback)
         x += 110
         self.window.path = TextBox((x, y + 2, -40, h), self.getPath(), sizeStyle='small')
-        self.run()
 
     def run(self):
         u"""
@@ -77,8 +84,8 @@ class PageBotApp(object):
 
         # Creates a new standard output, catching all print statements and tracebacks.
         self.output = []
-        self.stdout = StdOutput(self.output, outputView=self.window.outputView)
-        self.stderr = StdOutput(self.output, isError=True, outputView=self.window.outputView)
+        self.stdout = StdOutput(self.output, outputView=self.outputWindow.outputView)
+        self.stderr = StdOutput(self.output, isError=True, outputView=self.outputWindow.outputView)
 
         # Calls DrawBot's ScriptRunner with above parameters.
         ScriptRunner(None, path, namespace=namespace, stdout=self.stdout, stderr=self.stderr)
