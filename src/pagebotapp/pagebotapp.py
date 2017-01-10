@@ -10,26 +10,34 @@
 #     pagebotapp.py
 #
 
-from vanilla import Button, TextBox
+from vanilla import Button, TextBox, Window
 from vanilla.dialogs import getFile, putFile
+
 from drawBot import *
 from drawBot.drawBotDrawingTools import _drawBotDrawingTool, DrawBotDrawingTool
 from drawBot.scriptTools import ScriptRunner, DrawBotNamespace, StdOutput
 from drawBot.context.drawBotContext import DrawBotContext
 from drawBot.context import getContextForFileExt
+from drawBot.ui.drawView import DrawView
+from drawBot.ui.codeEditor import OutPutEditor
 import pagebot
 
 class PageBotApp(object):
     u"""Wrapper class to bundle all document page typesetter and composition
     functions, generating export document."""
 
-    def __init__(self, window, outputWindow):
+    def __init__(self):
         u"""
         Connects main window and output window for errors.
         """
-        self.window = window
-        self.outputWindow = outputWindow
+        self.outputWindow = Window((400, 300), minSize=(1, 1), closable=True)
+        self.outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
+        self.window = Window((800, 600), minSize=(1, 1), closable=True)
+        self.window.drawView = DrawView((0, 32, -0, -0))
         self.scriptPath = None
+        self.initialize()
+        self.window.open()
+        self.outputWindow.open()
 
     def getPath(self):
         u"""
