@@ -15,8 +15,8 @@ import AppKit
 import Quartz
 
 import re
-from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth
-from drawBot.context.baseContext import BaseContext
+#from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth
+#from drawBot.context.baseContext import BaseContext
 
 NO_COLOR = -1
 
