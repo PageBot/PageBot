@@ -216,6 +216,8 @@ class Page(Container):
             x, y, w, h = cr2p(cx, cy, cw or 0, ch or 0, style) # Forced size for interpolation.
         else:
             x, y = cp2p(cx, cy, style) # Size defined by text, font and fontSize.
+            w = style['w']
+            h = style['h']
         return self.text(fs, x, y, style=style, w=w, h=h, eId=eId, **kwargs)
                 
     def rect(self, x, y, w=None, h=None, style=None, eId=None, **kwargs):
