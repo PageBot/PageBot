@@ -150,40 +150,36 @@ def makeDocument(rs):
     flowId0 = MAIN_FLOW+'0' 
     flowId1 = MAIN_FLOW+'1'
     flowId2 = MAIN_FLOW+'2'
-        
-    # Template 1
-    template1 = Template(rs) # Create template of main size. Front page only.
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    template1.grid(rs) 
-    # Show baseline grid if rs.showBaselineGrid is True
-    template1.baselineGrid(rs)
-    # Create empty image place holders. To be filled by running content on the page.
-    template1.cContainer(4, 0, 2, 4, rs)  # Empty image element, cx, cy, cw, ch
-    template1.cContainer(0, 5, 2, 3, rs)
-    # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
-    template1.cTextBox('', 2, 0, 2, 8, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
-    template1.cTextBox('', 4, 4, 2, 4, rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
-
+    headlineId = 'headLine'
+    
     # Template 2
-    template2 = Template(rs) # Create second template. This is for the main pages.
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    template2.grid(rs) 
-    # Show baseline grid if rs.showBaselineGrid is True
-    template2.baselineGrid(rs)
-    template2.cContainer(4, 0, 2, 3, rs)  # Empty image element, cx, cy, cw, ch
-    template2.cContainer(0, 5, 2, 3, rs)
-    template2.cContainer(2, 2, 2, 2, rs)
-    template2.cContainer(2, 0, 2, 2, rs)
-    template2.cContainer(4, 6, 2, 2, rs)
-    template2.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
-    template2.cTextBox('', 2, 4, 2, 4, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
-    template2.cTextBox('', 4, 3, 2, 3, rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
+    template = Template(rs) # Create second template. This is for the main pages.
+    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True.
+    # The grid is just a regular element, like all others on the page. Same parameters apply.
+    template.grid(rs) 
+    # Show baseline grid if rs.showBaselineGrid is True.
+    # The baseline grid is just a regular element, like all others on the page. Same parameters apply.
+    template.baselineGrid(rs)
+    # Add image containers to the page, that images + captions, within the defined space.
+    template.cContainer(4, 0, 2, 3, rs)  # Empty image element, cx, cy, cw, ch
+    template.cContainer(0, 5, 2, 3, rs)
+    template.cContainer(2, 2, 2, 2, rs)
+    template.cContainer(4, 6, 2, 2, rs)
+    
+    # In this simple example page, we won't have the headline run in the galley of the main text.
+    # Create separate text box here to accommodate the headline.
+    template.cTextBox('', 0, -0.2, 4, 2+0.2, rs, headlineId, fill=BOX_COLOR)
 
+    # Make linked text box elemnents, where position and size is defined by columns.
+    template.cTextBox('', 0, 2, 2, 3, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
+    template.cTextBox('', 2, 4, 2, 4, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
+    # Final column flow on the page does not link to next page. We want this demo one page only.
+    template.cTextBox('', 4, 3, 2, 3, rs, flowId2, fill=BOX_COLOR)
+    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
-    # Initially make all pages default with template2
-    doc = Document(rs, pages=2, template=template2) 
+    # Initially make all pages default with template
+    doc = Document(rs, pages=2, template=template) 
  
     # Cache some values from the root style that we need multiple time to create the tag styles.
     fontSize = rs['fontSize']
@@ -191,6 +187,8 @@ def makeDocument(rs):
     rLeading = rs['rLeading']
     listIndent = rs['listIndent']
     language = rs['language']
+    h1Size = 4*fontSize
+    h2Size = 3*fontSize
     
     # Add styles for whole document and text flows.  
     # Note that some values are defined here for clarity, even if their default root values
@@ -199,10 +197,10 @@ def makeDocument(rs):
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
-        leading=2*fontSize, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0),
-        leading=1*fontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
+    doc.newStyle(name='h1', fontSize=h1Size, font=SEMIBOLD, fill=(1, 0, 0),
+        leading=1.1*h1Size, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h2', fontSize=h2Size, font=BOOK, fill=(1, 0, 0),
+        leading=1.1*h2Size, rLeading=0, tracking=H2_TRACK, postfix='\n')
     doc.newStyle(name='h3', fontSize=1.2*fontSize, font=MEDIUM, fill=0, 
         leading=1.4*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         postfix='\n')
@@ -236,14 +234,21 @@ def makeDocument(rs):
         
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
-    t = Typesetter(doc, g)
-                
+    t = Typesetter(doc, g)                
+    blurbNames = (('h1', 'news_headline'), ('h2', 'article_ankeiler'))
+    t.typesetFilibuster(blurbNames)
+
+    c = Composer(doc)
+    c.compose(g, onePage, headlineId)
+
+    g = Galley() 
+    t = Typesetter(doc, g)                
     blurbNames = (('h3', 'article_ankeiler'), ('h2', 'article_summary'), ('p', 'article'))
     t.typesetFilibuster(blurbNames)
     
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
-    c.compose(g, doc[1], flowId0)
+    c.compose(g, onePage, flowId0)
     
     return doc
         
