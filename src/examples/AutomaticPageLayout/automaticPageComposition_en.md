@@ -2,13 +2,14 @@
 ##Project
 Petr van Blokland
 #Automatic Page Layout
-###Finding the possibilities and ultimate challenges
+###Finding the possibilities, ultimate challenges and other practical solution.
 
 #Introduction
 ###This note highlights the need for and possible approach to a current problem for which there is little attention and almost always based on false assumptions.
 
-Where in the traditional way of working with layout software such as Quark XPress and InDesign always a human decision determines the final layout of a page, there are more and more situations where that is not an option. As more and more pages are generated with content coming from a database - or an online source - and where the selection of the information is directly determined by properties of the reader, the layout of the pages to be automatically calculated.
-There is at the moment strangely no digital tools on the one hand is sufficiently flexible to be used in all possible techniques and types of layouts, link is to be made with a wide variety of information sources, and also meets the typographical demands on manual formatting.
+Where in the traditional way of working with layout software such as Quark XPress and InDesign, a human designer always make the final decisions for a final page layout, there are more and more situations where this is not an option. If large quantities of pages much be generated in short time with content coming from a database - or an online source - the layout of the pages must be automatically calculated. And even more so when the selection and visualization of the information is directly determined by context of the reader.
+ 
+At the moment there are strangely (still) no digital tools that are sufficiently flexible to be used in all possible techniques and types of layouts, that generate fixed documents, such as PDF for distribution or print. And where links can be made with a wide variety of information sources, and also meets the typographical demands on manual formatting.
 
 ![AutoPager](images/im1.png "With an XML description of the text transformation is performed to a consistent test is created. It takes into account the typographical features of the Markdown or XML tags, such as font, corps, weights, italic variations of axles, spacing, line width, line feed, alignment, indentation, tabulation, color, and breaking into the desired language.")
 
