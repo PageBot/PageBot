@@ -12,8 +12,9 @@
 #
 import copy
 import codecs
+
 import xml.etree.ElementTree as ET
-from lxml.etree import XPath
+from lxml.etree import XPath, fromstring
 
 import markdown
 from markdown.extensions.nl2br import Nl2BrExtension
@@ -400,16 +401,8 @@ class Typesetter(object):
             blurb.getBlurb('article'),
         )
         xml = u'<document>%s</document>' % '/n'.join(blurbArticle)
-        tree = ET.parse(fileName)
-        root = tree.getroot() # Get the root element of the tree.
+        root = fromstring(xml) # Get the root element of the parsed XML tree.
         self.typesetNode(root, style=rootStyle)
 
-    def XXXtypesetFootnotes(self):
-        footnotes = self.document.footnotes
-        for index, (page, e, p) in footnotes.items():
-            style = page.getStyle('footnote')
-            fs = getFormattedString('%d ' % index, style)
-            tb = page.findElement('footnote')
-            if tb is not None:
-                self.typesetNode(p, page, style)
+
 

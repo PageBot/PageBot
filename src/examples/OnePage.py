@@ -1,0 +1,250 @@
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     Made for usage in DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     OnePage.py
+#
+#     This script generates a fake article on a single page, using Filibuster text,
+#     automatic layout template, Galley, Typesetter and Composer classes.
+#
+import pagebot # Import to know the path of non-Python resources.
+from pagebot import getFormattedString, textBoxBaseLines
+
+# Creation of the RootStyle (dictionary) with all available default style parameters filled.
+from pagebot.style import getRootStyle, LEFT_ALIGN
+# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
+from pagebot.document import Document
+# Page and Template instances are holding all elements of a page together.
+from pagebot.page import Page, Template
+# The Typesetter instance takes content from a file (typically MarkDown text) and converts that 
+# into Galley list of elements.
+from pagebot.typesetter import Typesetter
+# The Composer instance distributes the Galley content of the pages, according to the defined Templates.
+from pagebot.composer import Composer
+# Elements that can placed on pages and templates.
+from pagebot.elements import Galley, Rect
+# Get functions to create instances style from Variation fonts.
+from pagebot.fonttoolbox.variationbuilder import getVariationFont, generateInstance
+
+# For clarity, most of the OnePage.py example documenet is setup as a sequential excecution of
+# Python functions. For complex documents this is not the best method. More functions and classes
+# will be used in the real templates, which are available from the OpenSource PageBotTemplates repository.
+
+# Some flags to turn on/off extra debug information on the output pages.    
+DEBUG = True
+
+SHOW_GRID = DEBUG # Show the colums as color squares.
+SHOW_GRID_COLUMNS = DEBUG # Show the column grid in the background as lines
+SHOW_BASELINE_GRID = DEBUG # SHow the baseline grid of body text.
+SHOW_FLOW_CONNECTIONS = DEBUG # Show arrow connections between the column flows.
+
+if SHOW_GRID: # If showing ths grid a square, use this transparant color.
+    BOX_COLOR = (0.8, 0.8, 0.8, 0.4)
+else:
+    BOX_COLOR = None # No square columns showing.
+    
+# Get the default root style and overwrite values for this example one-page document.
+U = 7 # Basic unit in points of all measurements on the page. Simple way to do responsive scaling of all elements.
+baselineGrid = 2*U # Set baseline grid value for body text.
+listIndent = 2*U # Default indent for bullet-list indents.
+
+# The standard PageBot function getRootStyle() answers a standard Python dictionary, 
+# where all PageBot values are filled by their default values. The root style is kept in RS
+# as reference to for all ininitialzaiton of elements. 
+# Each element uses the root style as copy and then modifies the values it needs. 
+# Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
+# that is very similar to what happens in CSS.
+
+RS = getRootStyle(
+    u = U, # Page base unit
+    # Basic layout measures altering the default rooT STYLE.
+    w = 595, # On root level the "w" is the page width 210mm, international generic fit.
+    h = 11 * 72, # Page height 11", international generic fit.
+    ml = 7*U, # Margin left between left side of the page and grid.
+    mt = 7*U, # Margin top between page top and grid.
+    baselineGrid = baselineGrid,
+    g = U, # Generic gutter, identical to the page unit.
+    # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
+    # 11 is a the best in that respect for column calculation.
+    cw = 11*U, 
+    ch = 6*baselineGrid - U, # Approx. square and fitting with baseline.
+    listIndent = listIndent, # Indent for bullet lists
+    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    # Display option during design and testing. Copy them in the root style for elements to check on.
+    showGrid = SHOW_GRID,
+    showGridColumns = SHOW_GRID_COLUMNS,
+    showBaselineGrid = SHOW_BASELINE_GRID,
+    showFlowConnections = SHOW_FLOW_CONNECTIONS,
+    BOX_COLOR = BOX_COLOR, # Overwrite default color for column squares.
+    # Text measures
+    leading = baselineGrid, # Set default dependent on scalable with unit size.
+    rLeading = 0, # In this example, leading is hard-coded as points. Not relative to the point size.
+    fontSize = round(1.3*U) # Arbitrary scalable fontSize -- unit relation.
+)
+RS['language'] = 'en' # Make English hyphenation default.
+
+ROOT_PATH = pagebot.getRootPath()
+EXPORT_PATH = '_export/OnePage.pdf' # Export in folder that does not commit un Git. Force to export PDF.
+
+MAIN_FLOW = 'main' # Element id of the text box on pages the hold the main text flow.
+
+# Common tracking presets for typographic style.
+# Note that – different from CSS – using Python as descriptor language, it is easy to make calculating relations.
+H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
+H3_TRACK = 0.030 # Tracking as relative factor to font size.
+P_TRACK = 0.030
+
+# -----------------------------------------------------------------         
+# PageBot is supporting the use of OpenType Variation fonts. As the OS may not fully support this yet,
+# we'll calculate instances at certain locations and store them as fixed font files.
+# Note that the example fonts supplied with PageBot subsets, to be used inside PageBot examples only,
+# under MIT license. Full license to the complete fonts is available on the typenetwork.com site.
+ 
+FONT_PATH = ROOT_PATH + '/fonts/'
+
+FONT_FILE = 'PromisePageBot-GX.ttf' # Demo Variation font for this OnePage example.
+
+FONT_LOCATIONS = {
+    #'Promise-BoldCondensed': {"wght": 750, "wdth": 500, },
+    #'Promise-LightCondensed': {"wght": 0, "wdth": 500},
+    'Promise-Light': {"wght": 0, "wdth": 1000},
+    'Promise-Book': {"wght": 250, "wdth": 1000},
+    'Promise-Regular': {"wght": 400, "wdth": 1000},    
+    'Promise-Medium': {"wght": 600, "wdth": 1000},    
+    'Promise-Semibold': {"wght": 750, "wdth": 1000},    
+    'Promise-Bold': {"wght": 1000, "wdth": 1000},
+}
+FONTS = {}
+# Install the test V-font
+if not 'Promise-Bold' in installedFonts():
+    installFont(FONT_PATH + FONT_FILE)
+for name, location in FONT_LOCATIONS.items():
+    fontName, fontPath = generateInstance(FONT_PATH + FONT_FILE, 
+    location, targetDirectory=FONT_PATH + 'instances')
+    FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
+if 0:
+    BOOK = FONTS['Promise-LightCondensed']
+    BOOK_ITALIC = FONTS['Promise-LightCondensed']
+    MEDIUM = FONTS['Promise-LightCondensed']
+    SEMIBOLD = FONTS['Promise-LightCondensed']
+    BOLD = FONTS['Promise-LightCondensed']
+else:
+    LIGHT = FONTS['Promise-Light']
+    BOOK = FONTS['Promise-Book']
+    BOOK_ITALIC = FONTS['Promise-Book']
+    MEDIUM = FONTS['Promise-Medium']
+    SEMIBOLD = FONTS['Promise-Semibold']
+    BOLD = FONTS['Promise-Bold']
+
+# -----------------------------------------------------------------         
+def makeDocument(rs):
+    u"""Demo page composer."""
+
+    # Set some values of the default template (as already generated by the document).
+    # Make squential unique names for the flow boxes inside the templates
+    flowId0 = MAIN_FLOW+'0' 
+    flowId1 = MAIN_FLOW+'1'
+    flowId2 = MAIN_FLOW+'2'
+        
+    # Template 1
+    template1 = Template(rs) # Create template of main size. Front page only.
+    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    template1.grid(rs) 
+    # Show baseline grid if rs.showBaselineGrid is True
+    template1.baselineGrid(rs)
+    # Create empty image place holders. To be filled by running content on the page.
+    template1.cContainer(4, 0, 2, 4, rs)  # Empty image element, cx, cy, cw, ch
+    template1.cContainer(0, 5, 2, 3, rs)
+    # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
+    template1.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
+    template1.cTextBox('', 2, 0, 2, 8, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
+    template1.cTextBox('', 4, 4, 2, 4, rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
+
+    # Template 2
+    template2 = Template(rs) # Create second template. This is for the main pages.
+    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    template2.grid(rs) 
+    # Show baseline grid if rs.showBaselineGrid is True
+    template2.baselineGrid(rs)
+    template2.cContainer(4, 0, 2, 3, rs)  # Empty image element, cx, cy, cw, ch
+    template2.cContainer(0, 5, 2, 3, rs)
+    template2.cContainer(2, 2, 2, 2, rs)
+    template2.cContainer(2, 0, 2, 2, rs)
+    template2.cContainer(4, 6, 2, 2, rs)
+    template2.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
+    template2.cTextBox('', 2, 4, 2, 4, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
+    template2.cTextBox('', 4, 3, 2, 3, rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
+
+    # Create new document with (w,h) and fixed amount of pages.
+    # Make number of pages with default document size.
+    # Initially make all pages default with template2
+    doc = Document(rs, pages=2, template=template2) 
+ 
+    # Cache some values from the root style that we need multiple time to create the tag styles.
+    fontSize = rs['fontSize']
+    leading = rs['leading']
+    rLeading = rs['rLeading']
+    listIndent = rs['listIndent']
+    language = rs['language']
+    
+    # Add styles for whole document and text flows.  
+    # Note that some values are defined here for clarity, even if their default root values
+    # are the same.             
+    doc.newStyle(name='chapter', font=BOOK)    
+    doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
+    doc.newStyle(name='subtitle', fontSize=2*fontSize, font=BOOK_ITALIC)
+    doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
+    doc.newStyle(name='h1', fontSize=3*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
+        leading=2*fontSize, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h2', fontSize=2*fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
+        leading=1*fontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
+    doc.newStyle(name='h3', fontSize=2*fontSize, font=MEDIUM, fill=0, 
+        leading=1*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+        postfix='\n')
+    
+    # Spaced paragraphs.
+    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
+        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
+    doc.newStyle(name='b', font=SEMIBOLD)
+    doc.newStyle(name='em', font=BOOK_ITALIC)
+    doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
+    doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> be newline
+    doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,)
+    
+    # Footnote reference index.
+    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6,
+        fontSize=0.65*fontSize)
+    doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
+        tracking=P_TRACK, leading=leading, hyphenation=True, 
+        # Lists need to copy the listIndex over to the regalar style value.
+        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        firstLineIndent=1, postfix='\n')
+    doc.newStyle(name='ul',)
+    doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
+    doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
+    doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
+        leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
+        indent=U/2, tailIndent=-U/2, hyphenation=True)
+    
+    # Change template of page 1
+    onePage = doc[1]
+        
+    # Create main Galley for this page, for pasting the sequence of elements.    
+    g = Galley() 
+    t = Typesetter(doc, g)
+    t.typesetFilibuster()
+    
+    # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
+    c = Composer(doc)
+    c.compose(g, doc[1], flowId0)
+    
+    return doc
+        
+d = makeDocument(RS)
+d.export(EXPORT_PATH) 
+
