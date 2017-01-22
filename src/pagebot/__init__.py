@@ -20,6 +20,10 @@ from drawBot.context.baseContext import BaseContext
 
 NO_COLOR = -1
 
+def getRootPath():
+    u"""Answer the root path of the pagebot module."""
+    return '/'.join(__file__.split('/')[:-2]) # Path of this file with pagebot/__init__.py(c) removed.
+    
 def setFillColor(c, fs=None, cmyk=False):
     u"""Set the color for global or the color of the formatted string."""
     if c is NO_COLOR:
