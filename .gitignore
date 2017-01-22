@@ -94,6 +94,8 @@ ENV/
 
 .idea/*
 
+_export
+
 fonts/instances/*.ttf
 
 src/fonts/instances/PromisePageBot-GX-wdth0-wght1000.ttf

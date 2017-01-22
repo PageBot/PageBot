@@ -83,11 +83,11 @@ FS = getFormattedString(FormattedString(''), RS)
 if 0: # In case an English MarkDown text of this example article is ready.
     RS['language'] = 'en' # Tell RootStyle instance to use Englisch hyphenation.
     MD_PATH = 'automaticPageComposition_en.md' # Path of the MarkDown text in local folder.
-    EXPORT_PATH = 'export/AutomaticPageComposition.pdf' # Export part of generated PDF output document.
+    EXPORT_PATH = '_export/AutomaticPageComposition.pdf' # Export part of generated PDF output document.
 else: # NL version of the article.
     RS['language'] = 'nl-be' # Tell RootStyle instance to use Dutch hyphenation..
     MD_PATH = 'automatischePaginaCompositie_nl.md' # Path of the MarkDown text in local folder.
-    EXPORT_PATH = 'export/AutomatischePaginaOpmaak.pdf' # Export part of generated PDF output document.
+    EXPORT_PATH = '_export/AutomatischePaginaOpmaak.pdf' # Export part of generated PDF output document.
 
 MAIN_FLOW = 'main' # ELement id of the text box on pages the hold the main text flow.
 
