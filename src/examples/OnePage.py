@@ -201,10 +201,10 @@ def makeDocument(rs):
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
     doc.newStyle(name='h1', fontSize=3*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
         leading=2*fontSize, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=2*fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
+    doc.newStyle(name='h2', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0),
         leading=1*fontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
-    doc.newStyle(name='h3', fontSize=2*fontSize, font=MEDIUM, fill=0, 
-        leading=1*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+    doc.newStyle(name='h3', fontSize=1.2*fontSize, font=MEDIUM, fill=0, 
+        leading=1.4*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         postfix='\n')
     
     # Spaced paragraphs.
@@ -237,7 +237,9 @@ def makeDocument(rs):
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
     t = Typesetter(doc, g)
-    t.typesetFilibuster()
+                
+    blurbNames = (('h3', 'article_ankeiler'), ('h2', 'article_summary'), ('p', 'article'))
+    t.typesetFilibuster(blurbNames)
     
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)

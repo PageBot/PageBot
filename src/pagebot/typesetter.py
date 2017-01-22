@@ -392,15 +392,17 @@ class Typesetter(object):
             # reference, image index and footnote placement.   
             self.typesetNode(root, style=rootStyle)
 
-    def typesetFilibuster(self, rootStyle=None):
+    def typesetFilibuster(self, blurbNames=None, rootStyle=None):
+        u"""The typesetFilibuster answers the parsed typeset nodes from a Filibuster blurb. If the blurb
+        instances is not given, then create a default Filibuster article."""
+        if blurbNames is None: # Nothing supplied: at least create some standard content as article to parse.
+            blurbNames = (('h2', 'article_ankeiler'), ('h1', 'article_summary'), ('p', 'article'))
+        blurbArticle = []
         from pagebot.contributions.filibuster.blurb import Blurb
         blurb = Blurb()
-        blurbArticle = (
-            blurb.getBlurb('article_ankeiler'),
-            blurb.getBlurb('article_summary'),
-            blurb.getBlurb('article'),
-        )
-        xml = u'<document>%s</document>' % '/n'.join(blurbArticle)
+        for tag, blurbName in blurbNames:
+            blurbArticle.append('<%s>%s</%s>\n' % (tag, blurb.getBlurb(blurbName), tag))
+        xml = u'<document>%s</document>' % '\n'.join(blurbArticle)
         root = fromstring(xml) # Get the root element of the parsed XML tree.
         self.typesetNode(root, style=rootStyle)
 
