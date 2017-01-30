@@ -47,7 +47,7 @@ class Composer(object):
                 fs += element.fs
             # As long as where is text, try to fit into the boxes on the page.
             # Otherwise go to the next page, following the flow, creating new pages if necessary.
-            for n in range(10000): # Safety here, "while fs:" seems to be a dangerous method.
+            for n in range(1000): # Safety here, "while fs:" seems to be a dangerous method.
                 if fs is None:
                     break
                 overflow = tb.append(fs)

@@ -396,7 +396,7 @@ class Typesetter(object):
         u"""The typesetFilibuster answers the parsed typeset nodes from a Filibuster blurb. If the blurb
         instances is not given, then create a default Filibuster article."""
         if blurbNames is None: # Nothing supplied: at least create some standard content as article to parse.
-            blurbNames = (('h2', 'article_ankeiler'), ('h1', 'article_summary'), ('p', 'article'))
+            blurbNames = (('h3', 'article_ankeiler'), ('h1', 'article_summary'), ('p', 'article'))
         blurbArticle = []
         from pagebot.contributions.filibuster.blurb import Blurb
         blurb = Blurb()
