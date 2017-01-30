@@ -84,8 +84,16 @@ def setStrokeColor(c, w=1, fs=None, cmyk=False):
     if w is not None:
         strokeWidth(w)
 
+def baseline2y(yIndex, style):
+    u"""Convert columns index and line index to page position. Answered (x, y) is point position based on 
+    marginTop + yIndex*baseLine."""
+    marginTop = style['mt']
+    baseline = style['baseline']
+    return marginTop + cy * baseline
+
 def cp2p(cx, cy, style):
-    u"""Convert columns point to page position."""
+    u"""Convert columns index to page position. Answered (x, y) is point position based on 
+    marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter)."""
     gutter = style['g']
     marginLeft = style['ml']
     marginTop = style['mt']
@@ -95,7 +103,8 @@ def cp2p(cx, cy, style):
             marginTop + cy * (columnHeight + gutter))
     
 def cr2p(cx, cy, cw, ch, style):
-    u"""Convert columns rect to page position/size."""
+    u"""Convert columns rect to page position/size.  Answered (x, y, x, h) is point position and size based on
+    marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter)."""
     gutter = style['g']
     marginLeft = style['ml']
     marginTop = style['mt']
@@ -109,6 +118,14 @@ def cr2p(cx, cy, cw, ch, style):
         h - marginTop - (cy + ch) * (columnHeight + gutter) + gutter,
         cw * (columnWidth + gutter) - gutter,
         ch * (columnHeight + gutter) - gutter)
+
+def xy2xy(x, y):
+    u"""In order to allow both (x, y) - compatible with DrawBot, as x, y as separate parameters – compatible
+    with many other functions, this is a conditional conversion."""
+    assert not (isinstance(x, (tuple, list)) and y is not None) or (isinstance(x, (tuple, list)) and y is None), 'xy2xy(%s, %s): Use (x, y) or x, y as position.' % (x, y)
+    if y is None:
+        x, y = x
+    return x, y
 
 MARKER_PATTERN = '==%s--%s=='
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\-\-([^=]*)\=\=')
