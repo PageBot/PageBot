@@ -20,7 +20,7 @@ from math import cos, sin, radians, degrees, atan2
 from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, \
     closePath, FormattedString
 
-from pagebot import cr2p, cp2p, setFillColor, setStrokeColor
+from pagebot import cr2p, cp2p, xy2xy, setFillColor, setStrokeColor
 from pagebot.style import NO_COLOR, makeStyle
 
 import pagebot.elements
@@ -69,10 +69,11 @@ class Page(Container):
             for element, (x, y) in template.elements:
                 self.place(copy.copy(element), x, y)
 
-    def place(self, e, x, y):
+    def place(self, e, x, y=None):
         u"""Place the element on position (x, y). Note that the elements do not know that they
         have a position by themselves. This also allows to place the same element on multiple
         position on the same page or multiple pages (as for template elements)."""
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         # Store the element by position. There can be multiple elements on the same position.
         if not (x,y) in self.placed:
             self.placed[(x,y)] = []
@@ -178,8 +179,9 @@ class Page(Container):
     def getStyles(self):
         return self.parent.styles
 
-    def container(self, x, y, w=None, h=None, style=None, eId=None, elements=None, **kwargs):
+    def container(self, x, y=None, w=None, h=None, style=None, eId=None, elements=None, **kwargs):
         u"""Draw a generic container. Note that w and h can also be defined in the style."""
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         e = Container(style=style, eId=eId, elements=elements, w=w, h=h, **kwargs)
         self.place(e, x, y)  # Append to drawing sequence and store by (x,y) and optional element id.
         return e
@@ -188,8 +190,9 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.container(x, y, style=style, eId=eId, elements=elements, w=w, h=h, **kwargs)
 
-    def textBox(self, fs, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+    def textBox(self, fs, x, y=None, w=None, h=None, style=None, eId=None, **kwargs):
         u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         e = TextBox(fs, style=style, eId=eId, w=w, h=h, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
@@ -199,11 +202,13 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.textBox(fs, x, y, style=style, eId=eId, w=w, h=h, **kwargs)
         
-    def text(self, fs, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+    def text(self, fs, x, y=None, w=None, h=None, style=None, eId=None, **kwargs):
         u"""Draw formatted string. Normally we don't need w and h here, as it is made by the text and 
         style combinations. But in case the defined font is a Variation Font, then we can use the
         width and height to interpolate a font that fits the space for the given string and weight.
-        Caller must supply formatted string."""
+        Caller must supply formatted string.
+        Support both (x, y) and x, y as position."""
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         e = Text(fs, style=style, eId=eId, w=w, h=h, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
@@ -220,9 +225,10 @@ class Page(Container):
             h = style['h']
         return self.text(fs, x, y, style=style, w=w, h=h, eId=eId, **kwargs)
                 
-    def rect(self, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+    def rect(self, x, y=None, w=None, h=None, style=None, eId=None, **kwargs):
         u"""Draw the rectangle. Note that w and h can also be defined in the style. In case h is omitted,
         a square is drawn."""
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         if h is None:
             h = w
         e = Rect(style=style, w=w, h=h, eId=eId, **kwargs)
@@ -233,9 +239,10 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.rect(x, y, style=style, eId=eId, w=w, h=h, **kwargs)
                 
-    def oval(self, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+    def oval(self, x, y=None, w=None, h=None, style=None, eId=None, **kwargs):
         u"""Draw the oval. Note that w and h can also be defined in the style. In case h is omitted,
         a circle is drawn."""
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         if h is None:
             h = w
         e = Oval(style=style, eId=eId, w=w, h=h, **kwargs)
@@ -246,7 +253,8 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.oval(x, y, style=style, eId=eId, w=w, h=h, **kwargs)
 
-    def line(self, x, y, w=None, h=None, style=None, eId=None, **kwargs):
+    def line(self, x, y=None, w=None, h=None, style=None, eId=None, **kwargs):
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         e = Line(style=style, eId=eId, w=w, h=h, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
@@ -255,17 +263,19 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.line(x, y, w=w, h=h, style=style, eId=eId, **kwargs)
     
-    def polygon(self, x, y, points, style=None, eId=None, **kwargs):
-        e = Polygon(points, style=style, eId=None, **kwargs)
+    def polygon(self, x, y=None, points=[], style=None, eId=None, **kwargs):
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
+        e = Polygon([points], style=style, eId=None, **kwargs)
         self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
 
-    def image(self, path, x, y, w=None, h=None, style=None, eId=None, mask=None, imo=None, pageNumber=0, **kwargs):
+    def image(self, path, x, y=None, w=None, h=None, style=None, eId=None, mask=None, imo=None, pageNumber=0, **kwargs):
         u"""Create Image element as position (x, y) and optional width, height (w, h) of which
         at least one of them should be defined. The path can be None, to be filled later.
         If the image is drawn with an empty path, a missingImage cross-frame is shown.
         The optional imo attribute is an ImageObject() with filters in place. 
         The Image element is answered for convenience of the caller."""
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         e = Image(path, style=style, w=w, h=h, eId=eId, mask=None, imo=imo, pageNumber=pageNumber, **kwargs)
         self.place(e, x, y)
         return e
@@ -278,15 +288,17 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.image(path, x, y, style=style, eId=eId, mask=None, imo=imo, pageNumber=pageNumber, **kwargs)
 
-    def grid(self, style=None, eId=None, x=0, y=0, **kwargs):
+    def grid(self, style=None, eId=None, x=(0, 0), y=None, **kwargs):
         u"""Direct way to add a grid element to a single page, if not done through its template."""
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         e = Grid(style=style, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
         
-    def baselineGrid(self, style=None, eId=None, x=0, y=0, **kwargs):
+    def baselineGrid(self, style=None, eId=None, x=(0, 0), y=None, **kwargs):
         u"""Direct way to add a baseline grid element to a single page, if not done
         through its template."""
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         e = BaselineGrid(style=style, eId=eId, **kwargs)
         self.place(e, x, y)
         return e
@@ -421,12 +433,13 @@ class Page(Container):
         # Check if we need to draw the flow arrows.
         self._drawFlowConnections(ox, oy)
 
-    def draw(self, page=None, x=0, y=0):
+    def draw(self, page=None, x=(0, 0), y=None):
         u"""If the size of the document is larger than the size of hte page, then use the extra space
         to draw cropmarks and other print-related info. This also will make the bleeding of images 
         visible. Page drawing can have an offset too, in case it is used as placed element on another page.
         If self.scaleX and self.scaleY are not None, then scale the drawing of the entire page,
         keeping the x and y position unscaled."""
+        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         x, y = self._applyScale(x, y)
         # Now we may be in scaled mode.
         ox = oy = 0 # OffsetX and offsetY, in case no oversized document.
@@ -461,6 +474,6 @@ class Template(Page):
     def getStyle(self, name=None):
         return self.style
             
-    def draw(self, page, x, y):
+    def draw(self, page, x, y=None):
         # Templates are supposed to be copied from by Page, never to be drawing themselves.
         pass 

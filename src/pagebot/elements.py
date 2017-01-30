@@ -108,8 +108,18 @@ class Element(object):
         self.maxW = maxW # No limit if value is None
         self.maxH = maxH
 
+    def _applyRotation(self, mx, my, angle):
+        u"""Apply the rotation for angle, where (mx, my) is the rotation center."""
+        save()
+        # TODO: Working on this.
+
+    def _restoreRotation(self);
+        u"""Reset graphics state from rotation mode."""
+        if self.style.get('rotationX') and self.style.get('rotationY') and self.style'get('rotationAngle'):
+            restore()
+
     def _applyScale(self, x, y):
-        u"""Apply the scale, if both self.style['scaleX'] and self.style['scaleY'] as set. Use this
+        u"""Apply the scale, if both self.style['scaleX'] and self.style['scaleY'] are set. Use this
         method paired with self._restoreScale(). The (x, y) answered as reversed scaled tuple,
         so drawing elements can still draw on "real size", while the other element is in scaled mode."""
         sx = self.style.get('scaleX') # May not exist in the un-cascaded style.
@@ -124,7 +134,7 @@ class Element(object):
     def _restoreScale(self):
         u"""Reset graphics state from scale mode."""
         if self.style.get('scaleX') and self.style.get('scaleY'): # May not exist in the un-cascaded style.
-            restore
+            restore()
 
     def _setShadow(self):
         u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this
@@ -316,9 +326,12 @@ class Text(Element):
     isText = True  # This element is capable of handling text.
 
     def __init__(self, fs, style=None, eId=None, **kwargs):
-        self.fs = fs # Caller must make sure that this is a rightly formatted string.
+        #self.fs = fs # Caller must make sure that this is a rightly formatted string.
         self.eId = eId
         self.style = makeStyle(style, **kwargs)
+        print '@@@', fs
+        self.fs = getFormattedString(fs, style)
+        print '###', self.fs
 
     def append(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string

@@ -42,7 +42,7 @@ def newStyle(**kwargs):
     style['cascaded'] = False
     return style
 
-def makeStyle(style, **kwargs):
+def makeStyle(style=None, **kwargs):
     u"""Make style from a copy of style dict (providing all necessary default values for the
     element to operate) and then overwrite these values with any specific arguments.
     If style is None, then create a new style dict. In that case all the element style values need
@@ -94,6 +94,11 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         frameDuration = None, # In case saving as .mov or .gif, this value defines 1/frames_per_second
         # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
         folds = None,
+        # Position of origin. DrawBot has y on bottom-left. In PageBot it is optional. Default is top-left.
+        # Note that the direcion of display is always upwards. This means that the position of text and elements
+        # goes downward from the top, they are not flipped vertical. It is up to the caller to make sure
+        # there is enough space for elements to show themselves on top of a given position.
+        originTop = True,
         # Margins
         mt = 7*u, # Margin top
         ml = 7*u, # Margin left
