@@ -17,7 +17,7 @@ from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, 
     newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
     textBox, hyphenation, restore, imageSize, shadow
 from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-from pagebot.style import LEFT_ALIGN, TOP_ALIGN, NO_COLOR, makeStyle
+from pagebot.style import LEFT_ALIGN, TOP_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
 
 class Element(object):
 
@@ -304,6 +304,10 @@ class TextBox(Element):
     def draw(self, page, x, y):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
+        if self.style['align'] == RIGHT_ALIGN:
+            x -= self.w
+        elif self.style['align'] == CENTER:
+            x -= self.w/2
         sFill = self.style.get('fill', NO_COLOR)
         if sFill != NO_COLOR:
             setStrokeColor(None)
@@ -341,6 +345,11 @@ class Text(Element):
         u"""Draw the formatted text. Since this is not a text column, but just a
         typeset text line, background and stroke of a text column needs to be drawn elsewere."""
         self._setShadow()
+        w, h = textSize(self.fs)   
+        if self.style['align'] == RIGHT_ALIGN:
+            x -= w
+        elif self.style['align'] == CENTER:
+            x -= w/2
         text(self.fs, (x, y))
         self._resetShadow()
 
@@ -425,7 +434,8 @@ class Image(Element):
         else:
             self.caption = None
         # Check on one of the (w, h) in the style. One of the can be undefined for proportional scaling.
-        assert self.w is not None or self.h is not None
+        # TODO: take over width if image in file, is missing.
+        assert self.w is not None or self.h is not None, ('Image "%s" has missing width of height.' % path)
         # Set all size and scale values.
         self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn.
         print self.ih, path
@@ -568,18 +578,26 @@ class Image(Element):
 
                 # Draw the actual image, vertical aligned.
                 if self.style.get('vAlign') == TOP_ALIGN:
-                    iy = (py + self.h)/self.sy - self.ih # TODO: Solve vertical alignment.
+                    psy = (py + self.h)/self.sy - self.ih # TODO: Solve vertical alignment.
+                elif self.style.get('vAlign') == CENTER:
+                    psy = (py + self.h/2)/self.sy - self.ih/2
                 else: # Must be bottom align then
-                    iy = (py + self.h)/self.sy - self.ih
+                    psy = (py + self.h)/self.sy - self.ih
+                
+                # Calculate horizontal alignment.
+                if self.style.get('align') == RIGHT_ALIGN:
+                    px -= pw
+                elif self.style.get('align') == CENTER:
+                    px -= pw/2
                 # Store page element Id in this image, in case we want to make an image index later.
-                image(self.path, (px/self.sx, iy), pageNumber=page.eId or 0, alpha=self._getAlpha())
+                image(self.path, (px/self.sx, psy), pageNumber=page.eId or 0, alpha=self._getAlpha())
 
                  # Draw background color if requested.
                 sFill = self.style.get('fill')
                 if not sFill in (None, NO_COLOR): # In case we need to draw the background.
                     setFillColor(sFill)
                     setStrokeColor(None)
-                    rect(px/self.sx, py/self.sy, pw/self.sx, ph/self.sy)
+                    rect(px/self.sx, psy, pw/self.sx, ph/self.sy)
 
                 # Draw the frame around the image, if requested.
                 sStroke = self.style.get('stroke')
@@ -587,7 +605,7 @@ class Image(Element):
                 if not sStroke in (None, NO_COLOR) and sStrokeWidth : # In case we need to draw the border.
                     setFillColor(None)
                     setStrokeColor(sStroke, sStrokeWidth/self.sx )
-                    rect(px/self.sx, py/self.sy, pw/self.sx, ph/self.sy)
+                    rect(px/self.sx, psy, pw/self.sx, ph/self.sy)
 
                 # TODO: Draw optional (transparant) forground color?
                 restore()
