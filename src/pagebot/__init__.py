@@ -153,8 +153,8 @@ def findMarkers(fs, reCompiled=None):
     return reCompiled.findall(u'%s' % fs)
 
 def getFormattedString(t, style=None):
-    u"""Answer a formatted string from valid attributes in Style. Set the all values after testing,
-    so they can inherit from previous style formats."""
+    u"""Answer a formatted string from valid attributes in Style. Set the all values after testing
+    their existence, so they can inherit from previous style formats."""
     fs = FormattedString('')
     if style is not None:
         sFont = style.get('font')
@@ -231,15 +231,16 @@ def getFormattedString(t, style=None):
             fs.language(sLanguage)
         #fs.hyphenation(style.hyphenation)
 
-    sUpperCase = style.get('uppercase')
-    sLowercase = style.get('lowercase')
-    sCapitalized = style.get('capitalized')
-    if sUpperCase:
-        t = t.upper()
-    elif sLowercase:
-        t = t.lower()
-    elif sCapitalized:
-        t = t.capitalize()
+    if style is not None:
+        sUpperCase = style.get('uppercase')
+        sLowercase = style.get('lowercase')
+        sCapitalized = style.get('capitalized')
+        if sUpperCase:
+            t = t.upper()
+        elif sLowercase:
+            t = t.lower()
+        elif sCapitalized:
+            t = t.capitalize()
 
     fs.append(t)
     return fs
