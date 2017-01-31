@@ -113,9 +113,9 @@ class Element(object):
         save()
         # TODO: Working on this.
 
-    def _restoreRotation(self);
+    def _restoreRotation(self):
         u"""Reset graphics state from rotation mode."""
-        if self.style.get('rotationX') and self.style.get('rotationY') and self.style'get('rotationAngle'):
+        if self.style.get('rotationX') and self.style.get('rotationY') and self.style.get('rotationAngle'):
             restore()
 
     def _applyScale(self, x, y):
@@ -329,9 +329,8 @@ class Text(Element):
         #self.fs = fs # Caller must make sure that this is a rightly formatted string.
         self.eId = eId
         self.style = makeStyle(style, **kwargs)
-        print '@@@', fs
+        # @@@ TODO: Style working?
         self.fs = getFormattedString(fs, style)
-        print '###', self.fs
 
     def append(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
