@@ -434,7 +434,7 @@ class Page(Container):
         self._drawFlowConnections(ox, oy)
 
     def draw(self, page=None, x=(0, 0), y=None):
-        u"""If the size of the document is larger than the size of hte page, then use the extra space
+        u"""If the size of the document is larger than the size of the page, then use the extra space
         to draw cropmarks and other print-related info. This also will make the bleeding of images 
         visible. Page drawing can have an offset too, in case it is used as placed element on another page.
         If self.scaleX and self.scaleY are not None, then scale the drawing of the entire page,

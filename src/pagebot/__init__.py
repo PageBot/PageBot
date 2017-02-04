@@ -104,7 +104,9 @@ def cp2p(cx, cy, style):
     
 def cr2p(cx, cy, cw, ch, style):
     u"""Convert columns rect to page position/size.  Answered (x, y, x, h) is point position and size based on
-    marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter)."""
+    marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter).
+    Note that the function assumes a number of values to be present in the style, otherwise a KeyError is raised.
+    This works best to inherit the style from the RootStyle and then alter the values."""
     gutter = style['g']
     marginLeft = style['ml']
     marginTop = style['mt']

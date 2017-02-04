@@ -21,13 +21,14 @@ class Document(object):
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     TEMPLATE_CLASS = Template # Allow inherited versions of the Template class.
 
-    def __init__(self, rootStyle, styles=None, title=None, minPageId=1, pages=1, template=None, **kwargs):
+    def __init__(self, rootStyle, styles=None, title=None, minPageId=1, pages=1, template=None, fileName=None, **kwargs):
         u"""Contains a set of Page instance and formatting methods. Allows to compose the pages
         without the need to send them directly to the output. This allows "asynchronic" page filling.
         Use (docW, docH) attributes if document size is different from page (w, h) in rootStyle."""
 
         self.rootStyle = makeStyle(rootStyle, **kwargs) # self.w and self.h are available as properties
         self.title = title or 'Untitled'
+        self.fileName = fileName or (self.title + '.pdf')
         self.template = template # Used as default document master template if undefined in pages.
         self.pages = {} # Key is pageID, often the page number. Value is Page instances.
         self.initializeStyles(rootStyle, styles)

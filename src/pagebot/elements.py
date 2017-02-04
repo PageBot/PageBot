@@ -346,9 +346,9 @@ class Text(Element):
         typeset text line, background and stroke of a text column needs to be drawn elsewere."""
         self._setShadow()
         w, h = textSize(self.fs)   
-        if self.style['align'] == RIGHT_ALIGN:
+        if self.style.get('align') == RIGHT_ALIGN:
             x -= w
-        elif self.style['align'] == CENTER:
+        elif self.style.get('align') == CENTER:
             x -= w/2
         text(self.fs, (x, y))
         self._resetShadow()
@@ -378,10 +378,10 @@ class Oval(Element):
     def draw(self, page, x, y):
         setFillColor(self.style.get('fill', NO_COLOR))
         setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth'))
-        if self.style['align'] == 'right':
+        if self.style.get('align') == 'right':
             w, _ = self.fs.getSize()
             x -= w
-        elif self.style['align'] == 'center':
+        elif self.style.get('align') == 'center':
             w, _ = self.fs.getSize()
             x -= w/2
         oval(x, y, self.w, self.h)
