@@ -90,7 +90,7 @@ FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'thesis.md'
-EXPORT_PATH = 'export/Thesis.pdf'
+EXPORT_PATH = '_export/Thesis.pdf'
 
 MAIN_FLOW = 'main' # ELement id of the text box on pages the hold the main text flow.
 
