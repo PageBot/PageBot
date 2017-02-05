@@ -311,7 +311,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
 
         # Element color
         NO_COLOR = NO_COLOR, # Add no-color flag (-1) to make difference with "color" None.
-        fill = 0, # Default is black
+        fill = NO_COLOR, # Default is no color for filling rectangle. Instead textFill color is set default black.
         stroke = None, # Default is to have no stroke on drawing elements. Not for text.
         cmykFill = NO_COLOR, # Flag to ignore, None is valid value for color.
         cmykStroke = NO_COLOR, # Flag to ignore, None is valid value for color.
