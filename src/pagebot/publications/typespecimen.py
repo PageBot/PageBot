@@ -32,7 +32,15 @@ from pagebot.page import Page, Template
 
 class Style(object):
     # Storage of style information while composing the pages.
-    pass
+    def __init__(self, styleName, path):
+        self.name = styleName # Keep DrawBot name
+        self.path = path # File path, if it exists.
+        try: 
+            self.info = FontInfo(path) # TTFont is available as lazy style.info.font
+        except TTLibError:
+            print 'Cannot open font', path
+            self.info = None # Could not read/create TTFont, skip it. 
+
 
 class Family(object):
     def __init__(self, name):
@@ -45,20 +53,39 @@ class Family(object):
     def addStyle(self, style):
         self.styles.append(style)
         
+    def getRegularStyle(self):
+        # Answer the style that has width/weight closest to 500 and angle is closest to 0
+        targetWeight = targetWidth = 500
+        targetAngle = 0
+        regularStyle = None
+        for style in self.styles:
+            if regularStyle is None:
+                regularStyle = style
+                continue
+            if (abs(targetWeight - style.info.weightClass) < abs(targetWeight - regularStyle.info.weightClass) or
+               abs(targetWidth - style.info.widthClass) < abs(targetWidth - regularStyle.info.widthClass) or
+               abs(targetAngle - style.info.italicAngle) < abs(targetAngle - regularStyle.info.italicAngle)):
+               regularStyle = style
+        return regularStyle 
+            
+        
 class TypeSpecimen(Publication):
     
     MIN_STYLES = 4 # Don't show, if families have fewer amount of style.
     
-    def __init__(self, styleNames=None):
+    def __init__(self, styleNames=None, showGrid=False, showGridColumns=False):
         Publication.__init__(self)
         self.styleNames = styleNames
         # Identifiers of template text box elements.
         self.titleBoxId = 'titleBoxId'
         self.specimenBoxId = 'specimenBoxId'
         self.infoBoxId = 'infoBoxId'
-     
+        # Display flags
+        self.showGrid = showGrid
+        self.showGridColumns = showGridColumns
+        
     def build(self):
-        rs = getRootStyle()
+        rs = getRootStyle(showGrid=self.showGrid, showGridColumns=self.showGridColumns)
         rs['language'] = 'en' # Make English hyphenation default. 
         # Template for the main page.
         template = Template(rs) # Create second template. This is for the main pages.
@@ -69,7 +96,10 @@ class TypeSpecimen(Publication):
         # Add named text box to template for main specimen text.
         template.cTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
         template.cTextBox('', 2, 1, 4, 6, eId=self.specimenBoxId, style=rs)       
-        template.cTextBox('', 0, 1, 2, 6, eId=self.infoBoxId, style=rs)       
+        template.cTextBox('', 0, 1, 2, 6, eId=self.infoBoxId, style=rs)
+        # Some lines
+        template.cLine(0, 1, 6, 1, style=rs, stroke=0, strokeWidth=0.25)       
+        template.cLine(0, 7, 6, 7, style=rs, stroke=0, strokeWidth=0.25)       
         # Create new document with (w,h) and start with a single page.
         self.documents['Specimen'] = doc = Document(rs, title='OS Type Specimen', pages=1, template=template) 
         # Make number of pages with default document size.
@@ -98,11 +128,19 @@ class TypeSpecimen(Publication):
     
     def buildFamilyPage(self, page, family):
         u"""Build the family page. Layout depends on the content of the family and the type of font."""
+        
+        # Get the "most regular style" in the family.
+        style = family.getRegularStyle()
+
         # Get the title box and try to fit the add family name.
         title = page.getElement(self.titleBoxId) 
-        fs = getFormattedString(family.name, dict(fontSize=32, font=family.styles[0].name))
+        fs = getFormattedString(family.name, dict(fontSize=48, font=style.name))
         title.append(fs)
-        print family.name, title.getTextSize()
+        
+        if style.info.description:
+            info = page.getElement(self.infoBoxId)
+            fs = getFormattedString(style.info.description, dict(fontSize=9, leading=15, font=style.name))
+            info.append(fs)
         
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
         # Create the formatted string with the style names shown in their own style.
@@ -111,11 +149,10 @@ class TypeSpecimen(Publication):
         for index, style in enumerate(sorted(family.styles)):
             # We can assume these are defined, otherwise the style is skipped.
             styleName = style.info.styleName
-            fs += getFormattedString('%s %s %d %d %0.2f\n' % (family.name, styleName, style.info.weightClass, style.info.widthClass, style.info.italicAngle), 
+            fs += getFormattedString('%s %s %d %d %0.2f\n' % (family.name, styleName, 
+                style.info.weightClass, style.info.widthClass, style.info.italicAngle), 
                 style=dict(fontSize=16, font=style.name, rLeading=1.4))
-            fs += getFormattedString('%s %s %s %s\n' % (style.info.designer or '', style.info.description or '', style.info.license or '', style.info.trademark or ''), 
-                style=dict(fontSize=12, font=style.name, rLeading=1.4))
-
+            
         column.append(fs)	
                
     def getFamilies(self):
@@ -129,16 +166,10 @@ class TypeSpecimen(Publication):
             if not path.lower().endswith('.ttf') and not path.lower().endswith('.otf'):
                 continue
             # Try to open the font in font tools, so we have access to a lot of information for our proof.
-            try: 
-                # Create Style instance, as storage within our page composition passes.
-                style = Style()
-                style.info = FontInfo(path) # TTFont is available as lazy style.info.font
-                style.name = styleName # Keep DrawBot name
-                style.path = path # File path, if it exists.
-            except TTLibError:
-                print 'Cannot open font', path
-                continue # Could not read/create TTFont, skip it. 
-            
+            # Create Style instance, as storage within our page composition passes.
+            style = Style(styleName, path)
+            if style.info is None:
+                continue # Could not open the font file.            
             # Skip if there is not a clear family name and style name derived from FontInfo    
             if  style.info.familyName and style.info.styleName:
                 # Make a family collection of style names, if not already there.
