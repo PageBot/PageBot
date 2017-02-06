@@ -307,9 +307,9 @@ class TextBox(Element):
     def draw(self, page, x, y):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
-        if self.style['align'] == RIGHT_ALIGN:
+        if self.style.get('align') == RIGHT_ALIGN:
             x -= self.w
-        elif self.style['align'] == CENTER:
+        elif self.style.get('align') == CENTER:
             x -= self.w/2
         sFill = self.style.get('fill', NO_COLOR)
         if sFill != NO_COLOR:
@@ -343,6 +343,14 @@ class Text(Element):
         u"""Append s to the running formatted string of the self. Note that the string
         is already assumed to be styled or can be added as plain string."""
         self.fs += fs
+
+    def getTextSize(self, fs=None, w=None):
+        """Figure out what the width/height of the text self.fs is, with or given width or
+        the styled width of this text box. If fs is defined as external attribute, then the
+        size of the string is answers, as if it was already inside the text box."""
+        if fs is None:
+            fs = self.fs
+        return textSize(self.fs)
 
     def draw(self, page, x, y):
         u"""Draw the formatted text. Since this is not a text column, but just a

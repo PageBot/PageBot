@@ -14,7 +14,7 @@ reload(pagebot.publications.typespecimen)
 from pagebot.publications.typespecimen import TypeSpecimen
 
 # Create a new specimen publications and add the list of system fonts.
-typeSpecimen = TypeSpecimen(installedFonts()) 
+typeSpecimen = TypeSpecimen(installedFonts(), showGrid=False) 
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.
