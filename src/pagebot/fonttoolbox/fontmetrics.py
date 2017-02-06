@@ -26,6 +26,8 @@ def getFontPathOfFont(fontName):
     return None
     
 def getFontMetrics(fontPath):
+    u"""Small collection of font metrics data as dictionary.
+    For a more complete font.info implementation see the FontInfo class."""
     if not os.path.exists(fontPath): # Assume it is a font name instead of path)
         fontPath = getFontPathOfFont(fontPath)
     ttf = TTFont(fontPath)

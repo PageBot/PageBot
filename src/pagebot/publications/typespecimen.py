@@ -9,9 +9,13 @@
 #
 #     typespecimen.py
 #
+
 import pagebot 
 reload(pagebot)
 from pagebot import getFormattedString
+
+from pagebot.fonttoolbox.fontinfo import FontInfo
+from pagebot.fonttoolbox.fontmetrics import getFontPathOfFont
 
 import pagebot.publication
 reload(pagebot.publication)
@@ -26,7 +30,21 @@ from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
 from pagebot.page import Page, Template
 
- 
+class Style(object):
+    # Storage of style information while composing the pages.
+    pass
+
+class Family(object):
+    def __init__(self, name):
+        self.name = name
+        self.styles = []
+
+    def __len__(self):
+        return len(self.styles)
+        
+    def addStyle(self, style):
+        self.styles.append(style)
+        
 class TypeSpecimen(Publication):
     
     MIN_STYLES = 4 # Don't show, if families have fewer amount of style.
@@ -34,8 +52,11 @@ class TypeSpecimen(Publication):
     def __init__(self, styleNames=None):
         Publication.__init__(self)
         self.styleNames = styleNames
-        self.specimenBoxId = 'specimenBox'
-        
+        # Identifiers of template text box elements.
+        self.titleBoxId = 'titleBoxId'
+        self.specimenBoxId = 'specimenBoxId'
+        self.infoBoxId = 'infoBoxId'
+     
     def build(self):
         rs = getRootStyle()
         rs['language'] = 'en' # Make English hyphenation default. 
@@ -46,7 +67,9 @@ class TypeSpecimen(Publication):
         # The grid is just a regular element, like all others on the page. Same parameters apply.
         template.grid(rs)  
         # Add named text box to template for main specimen text.
-        template.cTextBox('', 1, 0, 5, 7, eId=self.specimenBoxId, style=rs)       
+        template.cTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
+        template.cTextBox('', 2, 1, 4, 6, eId=self.specimenBoxId, style=rs)       
+        template.cTextBox('', 0, 1, 2, 6, eId=self.infoBoxId, style=rs)       
         # Create new document with (w,h) and start with a single page.
         self.documents['Specimen'] = doc = Document(rs, title='OS Type Specimen', pages=1, template=template) 
         # Make number of pages with default document size.
@@ -55,33 +78,73 @@ class TypeSpecimen(Publication):
         self.buildPages(doc)
         
     def buildPages(self, doc):
-        # Find the family relation of all fonts in the list.
-        families = {}
+        # Build the pages, one page per family. Compsition 
         # Get the current page of the document, created automatic with template.
         # Using the first page as cover (to be filled...)
         coverPage = doc[1]
         # Fill cover here.
-        for styleName in self.styleNames:
-            if styleName.startswith('.'): # Filter the system fonts that has a name with initial "."
-                continue
-            familyName = styleName.replace(' ', '-').split('-')[0] # Split family name part by space or hyphen.
-            if not familyName in families: # Make a family collection of style names, if not already there.
-                families[familyName] = []
-            families[familyName].append(styleName) # Store the style name in the family collection.
+        
+        # Collect the families, style names and their font paths.
+        families = self.getFamilies()
+        
         # Now we collected a families and styles in the OS, create one page per family.
-        for familyName, styleNames in sorted(families.items()): # For all the sorted family collections...
+        for familyName, family in sorted(families.items()): # For all the sorted family collections...
             # Only show the "serious" families, that have at least MIN_STYLES amout of styles.
-            if len(styleNames) < self.MIN_STYLES:
+            if len(family) < self.MIN_STYLES:
                 continue
             # Create a new page for the this family, using the default template.
             page = doc.newPage()    
-            column = page.getElement(self.specimenBoxId) # Find the column element on the current page.
-            # Create the formatted string with the style names shown in their own style.
-            # The first one in the list is also used to show the family Name.
-            fs = getFormattedString(familyName+'\n\n', dict(fontSize=32, font=styleNames[0]))
-            for styleName in sorted(styleNames):
-                fs += getFormattedString(styleName+'\n', style=dict(fontSize=16, font=styleName, rLeading=1.4))
-            column.append(fs)	
-       
-        
+            self.buildFamilyPage(page, family)
     
+    def buildFamilyPage(self, page, family):
+        u"""Build the family page. Layout depends on the content of the family and the type of font."""
+        # Get the title box and try to fit the add family name.
+        title = page.getElement(self.titleBoxId) 
+        fs = getFormattedString(family.name, dict(fontSize=32, font=family.styles[0].name))
+        title.append(fs)
+        print family.name, title.getTextSize()
+        
+        column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
+        # Create the formatted string with the style names shown in their own style.
+        # The first one in the list is also used to show the family Name.
+        fs = getFormattedString('')
+        for index, style in enumerate(sorted(family.styles)):
+            # We can assume these are defined, otherwise the style is skipped.
+            styleName = style.info.styleName
+            fs += getFormattedString('%s %s %d %d %0.2f\n' % (family.name, styleName, style.info.weightClass, style.info.widthClass, style.info.italicAngle), 
+                style=dict(fontSize=16, font=style.name, rLeading=1.4))
+            fs += getFormattedString('%s %s %s %s\n' % (style.info.designer or '', style.info.description or '', style.info.license or '', style.info.trademark or ''), 
+                style=dict(fontSize=12, font=style.name, rLeading=1.4))
+
+        column.append(fs)	
+               
+    def getFamilies(self):
+        # Find the family relation of all fonts in the list.
+        families = {} # Keys is guessed family name.
+
+        for styleName in self.styleNames:
+            if styleName.startswith('.'): # Filter the system fonts that has a name with initial "."
+                continue
+            path = getFontPathOfFont(styleName)
+            if not path.lower().endswith('.ttf') and not path.lower().endswith('.otf'):
+                continue
+            # Try to open the font in font tools, so we have access to a lot of information for our proof.
+            try: 
+                # Create Style instance, as storage within our page composition passes.
+                style = Style()
+                style.info = FontInfo(path) # TTFont is available as lazy style.info.font
+                style.name = styleName # Keep DrawBot name
+                style.path = path # File path, if it exists.
+            except TTLibError:
+                print 'Cannot open font', path
+                continue # Could not read/create TTFont, skip it. 
+            
+            # Skip if there is not a clear family name and style name derived from FontInfo    
+            if  style.info.familyName and style.info.styleName:
+                # Make a family collection of style names, if not already there.
+                if not style.info.familyName in families: 
+                    families[style.info.familyName] = Family(style.info.familyName)
+                # Store the style name and path in the family collection.
+                families[style.info.familyName].addStyle(style) 
+
+        return families 
