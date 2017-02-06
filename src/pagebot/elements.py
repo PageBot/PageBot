@@ -283,9 +283,12 @@ class TextBox(Element):
     def appendMarker(self, markerId, arg=None):
         self.append(getMarker(markerId, arg=arg))
 
-    def getTextSize(self, w=None):
+    def getTextSize(self, fs=None, w=None):
         """Figure out what the width/height of the text self.fs is, with or given width or
-        the styled width of this text box."""
+        the styled width of this text box. If fs is defined as external attribute, then the
+        size of the string is answers, as if it was already inside the text box."""
+        if fs is None:
+            fs = self.fs
         return textSize(self.fs, width=w or self.w)
 
     def getOverflow(self, w=None, h=None):
