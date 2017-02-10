@@ -212,7 +212,8 @@ def getFormattedString(t, style=None):
             fs.baselineShift((sBaselineShift or 0) + (rBaselineShift or 0) * (sFontSize or 0))
         sOpenTypeFeatures = style.get('openTypeFeatures')
         if sOpenTypeFeatures is not None:
-            fs.openTypeFeatures(sOpenTypeFeatures)
+            print 'AAA', t, sOpenTypeFeatures
+            fs.openTypeFeatures([], **sOpenTypeFeatures)
         sTabs = style.get('tabs')
         if sTabs is not None:
             fs.tabs(*sTabs)
