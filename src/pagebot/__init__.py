@@ -106,7 +106,7 @@ def cr2p(cx, cy, cw, ch, style):
     u"""Convert columns rect to page position/size.  Answered (x, y, x, h) is point position and size based on
     marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter).
     Note that the function assumes a number of values to be present in the style, otherwise a KeyError is raised.
-    This works best to inherit the style from the RootStyle and then alter the values."""
+    This works best to inherit the style from the RootStyle and then alter the value that are different."""
     gutter = style['g']
     marginLeft = style['ml']
     marginTop = style['mt']
@@ -115,11 +115,17 @@ def cr2p(cx, cy, cw, ch, style):
     w = style['w']
     h = style['h']
 
+    columnW = cw * (columnWidth + gutter)
+    if cw:
+        columnW -= gutter
+    columnH = ch * (columnHeight + gutter)
+    if ch:
+        columnH -= gutter
+
     return (
         marginLeft + cx * (columnWidth + gutter),
         h - marginTop - (cy + ch) * (columnHeight + gutter) + gutter,
-        cw * (columnWidth + gutter) - gutter,
-        ch * (columnHeight + gutter) - gutter)
+        columnW, columnH)
 
 def xy2xy(x, y):
     u"""In order to allow both (x, y) - compatible with DrawBot, as x, y as separate parameters – compatible

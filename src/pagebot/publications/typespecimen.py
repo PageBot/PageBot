@@ -16,6 +16,8 @@ from pagebot import getFormattedString
 
 from pagebot.fonttoolbox.fontinfo import FontInfo
 from pagebot.fonttoolbox.fontmetrics import getFontPathOfFont
+from pagebot.fonttoolbox.family import Family
+from pagebot.fonttoolbox.style import Style
 
 import pagebot.publication
 reload(pagebot.publication)
@@ -29,46 +31,7 @@ reload(pagebot.document)
 from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
 from pagebot.page import Page, Template
-
-class Style(object):
-    # Storage of style information while composing the pages.
-    def __init__(self, styleName, path):
-        self.name = styleName # Keep DrawBot name
-        self.path = path # File path, if it exists.
-        try: 
-            self.info = FontInfo(path) # TTFont is available as lazy style.info.font
-        except TTLibError:
-            print 'Cannot open font', path
-            self.info = None # Could not read/create TTFont, skip it. 
-
-
-class Family(object):
-    def __init__(self, name):
-        self.name = name
-        self.styles = []
-
-    def __len__(self):
-        return len(self.styles)
-        
-    def addStyle(self, style):
-        self.styles.append(style)
-        
-    def getRegularStyle(self):
-        # Answer the style that has width/weight closest to 500 and angle is closest to 0
-        targetWeight = targetWidth = 500
-        targetAngle = 0
-        regularStyle = None
-        for style in self.styles:
-            if regularStyle is None:
-                regularStyle = style
-                continue
-            if (abs(targetWeight - style.info.weightClass) < abs(targetWeight - regularStyle.info.weightClass) or
-               abs(targetWidth - style.info.widthClass) < abs(targetWidth - regularStyle.info.widthClass) or
-               abs(targetAngle - style.info.italicAngle) < abs(targetAngle - regularStyle.info.italicAngle)):
-               regularStyle = style
-        return regularStyle 
-            
-        
+      
 class TypeSpecimen(Publication):
     
     MIN_STYLES = 4 # Don't show, if families have fewer amount of style.
@@ -84,9 +47,7 @@ class TypeSpecimen(Publication):
         self.showGrid = showGrid
         self.showGridColumns = showGridColumns
         
-    def build(self):
-        rs = getRootStyle(showGrid=self.showGrid, showGridColumns=self.showGridColumns)
-        rs['language'] = 'en' # Make English hyphenation default. 
+    def makeTemplate(self, rs):
         # Template for the main page.
         template = Template(rs) # Create second template. This is for the main pages.
         # Show grid columns and margins if rootStyle.showGrid or 
@@ -97,9 +58,16 @@ class TypeSpecimen(Publication):
         template.cTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
         template.cTextBox('', 2, 1, 4, 6, eId=self.specimenBoxId, style=rs)       
         template.cTextBox('', 0, 1, 2, 6, eId=self.infoBoxId, style=rs)
-        # Some lines
-        template.cLine(0, 1, 6, 1, style=rs, stroke=0, strokeWidth=0.25)       
-        template.cLine(0, 7, 6, 7, style=rs, stroke=0, strokeWidth=0.25)       
+        # Some lines, positioned by vertical and horizontal column index.
+        template.cLine(0, 0, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
+        template.cLine(0, 1, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
+        template.cLine(0, 7, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
+        return template
+        
+    def build(self):
+        rs = getRootStyle(showGrid=self.showGrid, showGridColumns=self.showGridColumns)
+        rs['language'] = 'en' # Make English hyphenation default. 
+        template = self.makeTemplate(rs)
         # Create new document with (w,h) and start with a single page.
         self.documents['Specimen'] = doc = Document(rs, title='OS Type Specimen', pages=1, template=template) 
         # Make number of pages with default document size.
@@ -146,7 +114,7 @@ class TypeSpecimen(Publication):
         # Create the formatted string with the style names shown in their own style.
         # The first one in the list is also used to show the family Name.
         fs = getFormattedString('')
-        for index, style in enumerate(sorted(family.styles)):
+        for index, (name, style) in enumerate(sorted(family.styles.items())):
             # We can assume these are defined, otherwise the style is skipped.
             styleName = style.info.styleName
             fs += getFormattedString('%s %s %d %d %0.2f\n' % (family.name, styleName, 
@@ -167,7 +135,7 @@ class TypeSpecimen(Publication):
                 continue
             # Try to open the font in font tools, so we have access to a lot of information for our proof.
             # Create Style instance, as storage within our page composition passes.
-            style = Style(styleName, path)
+            style = Style(path, styleName)
             if style.info is None:
                 continue # Could not open the font file.            
             # Skip if there is not a clear family name and style name derived from FontInfo    
