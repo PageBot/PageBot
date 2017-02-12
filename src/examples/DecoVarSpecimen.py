@@ -20,7 +20,7 @@ from pagebot.fonttoolbox.elements.variationcube import VariationCube
 DEBUG = False # Make True to see grid and element frames.
 
 FONT_PATH = pagebot.getFontPath()
-DecovarPath = FONT_PATH + 'fontbureau/Decovar-VF.ttf'
+DecovarPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
 
 decovarName = installFont(DecovarPath)
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789'

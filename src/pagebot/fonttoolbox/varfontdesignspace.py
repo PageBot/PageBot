@@ -1,93 +1,12 @@
-# -*- coding: UTF-8 -*-
-# -----------------------------------------------------------------------------
-#
-#     P A G E B O T
-#
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
-#       from https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/varLib/mutator.py
-#     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
-# -----------------------------------------------------------------------------
-#
-#     varfontdesignspace.py
-#
 from __future__ import division
 
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates
 from fontTools.varLib.models import VariationModel, supportScalar, normalizeLocation
 from fontTools.varLib import _GetCoordinates
+from tnbits.toolparts.buildvariations.designspacemodel import DesignSpaceBase, Axis
+from tnbits.compilers.f5.ttfTools import getBestCmap
 
-# Copied from from tnbits.compilers.f5.ttfTools import getBestCmap
-def getBestCmap(font, cmapPreferences=((3, 10), (3, 1), (0, 3))):
-    """Return a unicode -> glyphName dictionary from the 'best' unicode cmap that the font
-    contains. In order of preference, the font will be searched for cmaps 3,10, 3,1 and 0,3.
-
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("CusterRE-RegularS2.ttf")
-        >>> font = TTFont(path)
-        >>> cmap = getBestCmap(font)
-        >>> len(cmap)
-        248
-        >>> max(cmap)
-        64258
-        >>> path = getFontPath("ProW6.otf")
-        >>> font = TTFont(path)
-        >>> cmap = getBestCmap(font)
-        >>> len(cmap)
-        13641
-        >>> print hex(max(cmap))  # if result > 0xffff then it must have been a 3,10 cmap
-        0x2f9f4
-        >>> getBestCmap(font, cmapPreferences=[(123, 456)])
-        Traceback (most recent call last):
-            ...
-        ValueError: None of the requested cmap subtables were found
-    """
-    cmapTable = font["cmap"]
-    for platformID, platEncID in cmapPreferences:
-        cmapSubtable = cmapTable.getcmap(platformID, platEncID)
-        if cmapSubtable is not None:
-            #print platformID, platEncID
-            return cmapSubtable.cmap
-    raise ValueError("None of the requested cmap subtables were found")
-
-# Copied from tnbits.toolparts.buildvariations.designspacemodel import DesignSpaceBase, Axis
-class DesignSpaceBase(object):
-
-    def __init__(self, axes):
-        assert len(axes) == len(set(a.tag for a in axes)), "Axis tags must be unique"
-        self.axes = axes
-
-    def getOutline(self, glyphName, location, penFactory):
-        """Create an outline for the requested glyph and location, using
-        penFactory to construct a pen. It will be called with a glyphSet argument.
-        Return the path/pen, a centerPt and a size as a 3-tuple.
-        """
-        # XXX it needs to be seen whether the center + size thing actually works.
-        # Maybe a rectangle (not necessarily the bounding box) works better.
-        raise NotImplementedError()
-
-    def getGlyphName(self, charCode):
-        """Return the glyph name associated with charCode (a Unicode code point).
-        Should return '.notdef' if the character is not defined."""
-        raise NotImplementedError()
-
-
-class Axis(object):
-
-    def __init__(self, name, minValue, defaultValue, maxValue, tag=None):
-        self.name = name
-        self.minValue = minValue
-        self.defaultValue = defaultValue
-        self.maxValue = maxValue
-        self.tag = tag or name
-
-    def normalizeValue(self, value):
-        # This normalizes the value to be between 0 and 1, so this is not the
-        # same as the normalized value in a variation font. This is purely to
-        # calculate slider settings.
-        return (value - self.minValue) / (self.maxValue - self.minValue)
 
 def setCoordinates(glyph, coord, glyfTable):
     # Handle phantom points for (left, right, top, bottom) positions.
@@ -156,7 +75,11 @@ class TTVarGlyph(object):
         self._ttFont = ttFont
         self._glyphName = glyphName
         self._location = location
-        self.width, self.lsb = ttFont['hmtx'][glyphName]
+        try:
+            self.width, self.lsb = ttFont['hmtx'][glyphName]
+        except KeyError:
+            self.width = 1000
+            self.lsb = 50
 
     @staticmethod
     def _copyGlyph(glyph, glyfTable):
