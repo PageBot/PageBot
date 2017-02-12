@@ -18,7 +18,7 @@ from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLocation
-from tnbits.toolparts.buildvariations.varfontdesignspace import TTVarFontGlyphSet
+from varfontdesignspace import TTVarFontGlyphSet
 
 from drawBot import installFont, BezierPath, save, transform, scale, drawPath, restore, fill
 import pagebot
