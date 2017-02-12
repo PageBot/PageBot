@@ -14,30 +14,30 @@
 class Family(object):
     def __init__(self, name):
         self.name = name
-        self.styles = {}
+        self.fonts = {} # Key is font name. Value is Font instances.
 
     def __len__(self):
-        return len(self.styles)
+        return len(self.fonts)
         
-    def addStyle(self, style):
-        assert not style.styleName in self.styles
-        self.styles[style.styleName] = style
+    def addFont(self, font):
+        assert not font.info.styleName in self.fonts
+        self.fonts[font.info.styleName] = font
         
-    def getRegularStyle(self):
+    def getRegularFont(self):
         # Answer the style that has width/weight closest to 500 and angle is closest to 0
         targetWeight = targetWidth = 500
         targetAngle = 0
-        regularStyle = None
-        for style in self.styles.values():
-            if regularStyle is None: # Take the first to compare with.
-                regularStyle = style
+        regularFont = None
+        for font in self.fonts.values(): # Scan through all, no particular oder.
+            if font is None: # Take the first to compare with.
+                regularFont = font
                 continue
             # Find style that has width/weight/angle that is closest to the middle 500 value 
             # and closest to angle == 0
-            if (abs(targetWeight - style.info.weightClass) < abs(targetWeight - regularStyle.info.weightClass) or
-               abs(targetWidth - style.info.widthClass) < abs(targetWidth - regularStyle.info.widthClass) or
-               abs(targetAngle - style.info.italicAngle) < abs(targetAngle - regularStyle.info.italicAngle)):
-               regularStyle = style
-        return regularStyle 
+            if (abs(targetWeight - font.info.weightClass) < abs(targetWeight - font.info.weightClass) or
+               abs(targetWidth - font.info.widthClass) < abs(targetWidth - font.info.widthClass) or
+               abs(targetAngle - font.info.italicAngle) < abs(targetAngle - font.info.italicAngle)):
+               regularFont = font
+        return regularFont 
             
   

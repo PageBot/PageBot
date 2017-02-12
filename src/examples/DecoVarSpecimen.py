@@ -12,21 +12,46 @@
 import pagebot
 from pagebot import getFormattedString
 from pagebot.page import Template
-from pagebot.fonttoolbox.style import Style
+from pagebot.fonttoolbox.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
 from pagebot.fonttoolbox.elements.variationcube import VariationCube
+from pagebot.fonttoolbox.elements.variationscatter import VariationScatter
 
 DEBUG = False # Make True to see grid and element frames.
+
+SCATTER_SPECIMENS = False
+MATRIX_SPECIMENS = True
+
+if SCATTER_SPECIMENS:
+    OUTPUT_FILE = 'DecovarRandomSpecimen.pdf'
+else:
+    OUTPUT_FILE = 'DecovarMatrixSpecimen.pdf'
 
 FONT_PATH = pagebot.getFontPath()
 DecovarPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
 
 decovarName = installFont(DecovarPath)
+print decovarName
+
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789'
 
 class VariationTypeSpecimen(TypeSpecimen):
 
+    def getAxisCombinations(self):
+        # Answer specific interesting combinations for axes in Decovar.
+        SKL = ('sklA', 'sklB', 'sklD')
+        BLD = ('bldA', 'bldB')
+        WMX = ('wmx2',)
+        TERMINALS = ('trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmH', 'trmF', 'trmG', 'trmK', 'trmL',)
+        combinations = []
+        for skl in SKL:
+            for bld in BLD:
+                combinations.append((skl, bld))
+            for terminal in TERMINALS:
+                combinations.append((skl, terminal))
+        return combinations
+        
     def makeTemplate(self, rs):
         hyphenation(False)
         # Template for the main page.
@@ -45,11 +70,9 @@ class VariationTypeSpecimen(TypeSpecimen):
         template.cLine(0, 7, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
         return template
  
-    def buildVariationPage(self, page):
-        style = Style(DecovarPath)
-        
+    def buildVariationPage(self, varFont, page):
         title = page.getElement(self.titleBoxId) 
-        fs = getFormattedString(style.info.fullName, dict(fontSize=48, font=style.path))
+        fs = getFormattedString(varFont.info.fullName, dict(fontSize=48, font=varFont.path))
         title.append(fs)
  
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
@@ -65,13 +88,25 @@ class VariationTypeSpecimen(TypeSpecimen):
         # Using the first page as cover (to be filled...)
         coverPage = doc[1]
         # Fill cover here.
+
+        varFont = Font(DecovarPath)
         
         page = doc.newPage()    
-        self.buildVariationPage(page)
-        page = doc.newPage()
-        vCube = VariationCube(path=DecovarPath, w=500, h=500, s='a', 
-            fontSize=86, dimensions=dict(wght=5, wdth=5))
-        page.place(vCube, 50, 160)
+        self.buildVariationPage(varFont, page)
+        
+        if SCATTER_SPECIMENS:
+            for n in range(5):
+                page = doc.newPage()
+                scatter = VariationScatter(varFont, w=500, h=500, s='A', sizeX=5, sizeY=5, fontSize=72)
+                page.place(scatter, 50, 100)
+                
+        elif MATRIX_SPECIMENS:
+            # Build axis combinations on pages
+            for axis1, axis2 in self.getAxisCombinations():
+                page = doc.newPage()
+                vCube = VariationCube(varFont, w=500, h=500, s='A', 
+                    fontSize=72, dimensions={axis1:5, axis2:5})
+                page.place(vCube, 50, 100)
 
     
 # Create a new specimen publications and add the list of system fonts.
@@ -79,4 +114,5 @@ typeSpecimen = VariationTypeSpecimen([decovarName], showGrid=DEBUG)
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.
-typeSpecimen.export('DecovarSpecimen.pdf')
+typeSpecimen.export(OUTPUT_FILE)
+

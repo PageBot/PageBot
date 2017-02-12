@@ -8,9 +8,10 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#	  variationcube.py
+#	  variationscatter.py
 #
 import os
+from random import random
 from copy import copy
 from fontTools.ttLib import TTFont
 from pagebot.elements import Element
@@ -19,28 +20,34 @@ from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
 
 
-class VariationCube(Element):
+class VariationScatter(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, style=None, eId=None, dimensions=None, location=None, **kwargs):
+    def __init__(self, font, s=None, style=None, eId=None, sizeX=5, sizeY=5, showRecipe=False, **kwargs):
         self.font = font
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
-        # Try to figure out the requested dimensions if the element display per axes.
-        if dimensions is None:
-            dimensions = dict(wght=4, wdth=6)
-        self.dimensions = dimensions
+        self.sizeX = sizeX
+        self.sizeY = sizeY
+        self.showRecipe = showRecipe
         # Each element should check at this point if the minimum set of style values
         # are set and if their values are valid.
         assert self.w is not None and self.h is not None # Make sure that these are defined.
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.glyphNames = s or 'e'
-        # Store the external location, to allow other axis values to be set.
-        if location is None:
-            location = {}
-        self.location = copy(location)
     
+    def getRandomLocation(self):
+        RANGE = 1000
+        location = {}
+        recipe = ''
+        for axisName in self.font.axes.keys():
+            value = random() * RANGE
+            location[axisName] = value
+            recipe += '%s %d\n' % (axisName, value)
+
+        return location, recipe
+
     def draw(self, page, x, y):
         fillColor = self.style.get('fill')
         if fillColor is not None:
@@ -51,35 +58,21 @@ class VariationCube(Element):
         strokeWidth(0.5)
         fill(None)
         rect(x, y, self.w, self.h)
-        if len(self.dimensions) == 1:
-            raise ValueError('Not supporting 1 axis now')
-        if len(self.dimensions) > 2:
-            raise ValueError('Not supporting >2 axis now')
         
-        axisNames = sorted(self.dimensions.keys())
-        axisX = axisNames[0]
-        sizeX = self.dimensions[axisX]
-        axisY = axisNames[1]
-        sizeY = self.dimensions[axisY]
-        stepX = self.w / (sizeX+1)
-        stepY = self.h / (sizeY+1)
+        stepX = self.w / (self.sizeX+1)
+        stepY = self.h / (self.sizeY+1)
         """Add more parametric layout behavior here."""
-        RANGE = 1000
-        for indexX in range(sizeX+1):
-            for indexY in range(sizeY+1):
+        for indexX in range(self.sizeX+1):
+            for indexY in range(self.sizeY+1):
                 ox = 30
                 oy = 25
                 px = ox + x + indexX * stepX
                 py = oy + y + indexY * stepY
-                self.location[axisX] = indexX * RANGE / sizeX
-                self.location[axisY] = indexY * RANGE / sizeY
-                drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py, self.location, s=0.05, fillColor=(0, 0, 0))
-
-                fs = FormattedString('%s %d\n%s %d' % (axisX, indexX * RANGE / sizeX, axisY, indexY * RANGE / sizeY), fontSize=6, fill=0)
-                w, h = fs.size()
-                page.text(fs, px - stepX/4, py - 16) # Bit of hack, we need the width of the glyph here.
-        fs = FormattedString('Other axes: %s' % self.location, fontSize=6, fill=0)
-        w, h = fs.size()
-        page.text(fs, x, y - 16)
+                location, recipe = self.getRandomLocation()
+                drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py, location, s=0.04, fillColor=(0, 0, 0))
+                if self.showRecipe:
+                    fs = FormattedString(recipe, fontSize=6, fill=0)
+                    w, h = fs.size()
+                    page.text(fs, px - stepX/4, py - 16) # Bit of hack, we need the width of the glyph here.
 
 		
