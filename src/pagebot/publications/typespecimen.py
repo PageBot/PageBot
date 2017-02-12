@@ -14,10 +14,8 @@ import pagebot
 reload(pagebot)
 from pagebot import getFormattedString
 
-from pagebot.fonttoolbox.fontinfo import FontInfo
-from pagebot.fonttoolbox.fontmetrics import getFontPathOfFont
 from pagebot.fonttoolbox.family import Family
-from pagebot.fonttoolbox.style import Style
+from pagebot.fonttoolbox.font import Font, getFontPathOfFont
 
 import pagebot.publication
 reload(pagebot.publication)

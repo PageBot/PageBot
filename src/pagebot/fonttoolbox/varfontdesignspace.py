@@ -1,11 +1,24 @@
+# -*- coding: UTF-8 -*-
+# -----------------------------------------------------------------------------
+#
+#     P A G E B O T
+#
+#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#       from https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/varLib/mutator.py
+#     Licensed under MIT conditions
+#     Made for usage in DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     varfontdesignscpace.py
+#
 from __future__ import division
 
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates
 from fontTools.varLib.models import VariationModel, supportScalar, normalizeLocation
 from fontTools.varLib import _GetCoordinates
-from tnbits.toolparts.buildvariations.designspacemodel import DesignSpaceBase, Axis
-from tnbits.compilers.f5.ttfTools import getBestCmap
+from designspacemodel import DesignSpaceBase, Axis
+from ttftools import getBestCmap
 
 
 def setCoordinates(glyph, coord, glyfTable):

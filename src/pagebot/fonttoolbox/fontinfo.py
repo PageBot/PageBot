@@ -11,7 +11,7 @@
 #
 #     Implements info functions on font info.
 #
-from tnbits.compilers.f5.ttfTools import getBestCmap
+from ttftools import getBestCmap
 from fontTools.ttLib import TTFont
 
 class cached_property(object):
@@ -39,18 +39,11 @@ class FontInfo(object):
     OpenType features.
     """
 
-    def __init__(self, fontOrPath):
-        if isinstance(fontOrPath, basestring):
-            path = fontOrPath
-            font = TTFont(fontOrPath, lazy=True)
-        else:
-            path = None
-            font = fontOrPath
-        self.path = path
-        self.font = font
+    def __init__(self, ttFont):
+        self.ttFont = ttFont
 
     def _getNameTableEntry(self, nameId):
-        nameTable = self.font["name"]
+        nameTable = self.ttFont["name"]
         nameEntry = nameTable.getName(nameId, 3, 1)
         if nameEntry is not None:
             return nameEntry.toUnicode()
@@ -91,98 +84,98 @@ class FontInfo(object):
 
     @cached_property
     def charSet(self):
-        cmap = getBestCmap(self.font)
+        cmap = getBestCmap(self.ttFont)
         return sorted(cmap.keys())
 
     @cached_property
     def glyphSet(self):
-        return sorted(self.font.getGlyphOrder())
+        return sorted(self.ttFont.getGlyphOrder())
 
     @cached_property
     def typoDescender(self):
-        return self.font["OS/2"].sTypoDescender
+        return self.ttFont["OS/2"].sTypoDescender
 
     @cached_property
     def typoAscender(self):
-        return self.font["OS/2"].sTypoAscender
+        return self.ttFont["OS/2"].sTypoAscender
 
     @cached_property
     def descender(self):
-        return self.font["hhea"].descent
+        return self.ttFont["hhea"].descent
 
     @cached_property
     def ascender(self):
-        return self.font["hhea"].ascent
+        return self.ttFont["hhea"].ascent
 
     @cached_property
     def xHeight(self):
-        return self.font["OS/2"].sxHeight
+        return self.ttFont["OS/2"].sxHeight
 
     @cached_property
     def capHeight(self):
-        return self.font["OS/2"].sCapHeight
+        return self.ttFont["OS/2"].sCapHeight
 
     @cached_property
     def subscriptYOffset(self):
-        return self.font["OS/2"].ySubscriptYOffset
+        return self.ttFont["OS/2"].ySubscriptYOffset
 
     @cached_property
     def lineGap(self):
-        return self.font["OS/2"].sTypoLineGap
+        return self.ttFont["OS/2"].sTypoLineGap
 
     @cached_property
     def superscriptXSize(self):
-        return self.font["OS/2"].ySuperscriptXSize
+        return self.ttFont["OS/2"].ySuperscriptXSize
 
     @cached_property
     def weightClass(self):
-        return self.font["OS/2"].usWeightClass
+        return self.ttFont["OS/2"].usWeightClass
 
     @cached_property
     def widthClass(self):
-        return self.font["OS/2"].usWidthClass
+        return self.ttFont["OS/2"].usWidthClass
 
     @cached_property
     def subscriptXOffset(self):
-        return self.font["OS/2"].ySubscriptXOffset
+        return self.ttFont["OS/2"].ySubscriptXOffset
 
     @cached_property
     def strikeoutPosition(self):
-        return self.font["OS/2"].yStrikeoutPosition
+        return self.ttFont["OS/2"].yStrikeoutPosition
 
     @cached_property
     def subscriptXSize(self):
-        return self.font["OS/2"].ySubscriptXSize
+        return self.ttFont["OS/2"].ySubscriptXSize
 
     @cached_property
     def superscriptYOffset(self):
-        return self.font["OS/2"].ySuperscriptYOffset
+        return self.ttFont["OS/2"].ySuperscriptYOffset
 
     @cached_property
     def strikeoutSize(self):
-        return self.font["OS/2"].yStrikeoutSize
+        return self.ttFont["OS/2"].yStrikeoutSize
 
     @cached_property
     def subscriptYSize(self):
-        return self.font["OS/2"].ySubscriptYSize
+        return self.ttFont["OS/2"].ySubscriptYSize
 
     @cached_property
     def superscriptYSize(self):
-        return self.font["OS/2"].ySuperscriptYSize
+        return self.ttFont["OS/2"].ySuperscriptYSize
 
     @cached_property
     def italicAngle(self):
-        return self.font["post"].italicAngle
+        return self.ttFont["post"].italicAngle
 
     @cached_property
     def unitsPerEm(self):
-        return self.font["head"].unitsPerEm
+        return self.ttFont["head"].unitsPerEm
 
     def _getOTLFeatures(self, tableTag):
         assert tableTag in ("GPOS", "GSUB")
-        if tableTag not in self.font:
+        if tableTag not in self.ttFont:
             return []
-        table = self.font[tableTag].table
+        table = self.ttFont[tableTag].table
         return sorted(set(fr.FeatureTag for fr in table.FeatureList.FeatureRecord))
 
     @cached_property
@@ -193,34 +186,18 @@ class FontInfo(object):
     def gsubFeatures(self):
         return self._getOTLFeatures("GSUB")
 
-
-def _test():
-    r"""
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("Condor-Bold.otf")
-        >>> fontInfo = FontInfo(path)
-        >>> fontInfo.psName
-        u'Condor-Bold'
-        >>> fontInfo.fullName
-        u'Condor Bold Bold'
-        >>> fontInfo.familyName
-        u'Condor Bold'
-        >>> fontInfo.styleName
-        u'Bold'
-        >>> fontInfo.gposFeatures
-        ['kern']
-        >>> fontInfo.gsubFeatures
-        ['case', 'dlig', 'dnom', 'frac', 'lnum', 'locl', 'numr', 'ordn', 'ornm', 'pnum', 'salt', 'sinf', 'ss01', 'ss02', 'ss03', 'ss18', 'ss19', 'sups', 'zero']
-        >>> fontInfo.charSet[:10]
-        [32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
-        >>> fontInfo.glyphSet[:10]
-        ['.notdef', 'A', 'AE', 'Aacute', 'Abreve', 'Acircumflex', 'Adieresis', 'Agrave', 'Amacron', 'Aogonek']
-    """
-
-def _runDocTests():
-    import doctest
-    return doctest.testmod()
+    def _get_metrics(self):
+        u"""Small collection of font metrics info data as dictionary."""        
+        return dict(typoDescender=self.typoDescender, typoAscender=self.typoAscender,
+            descender=hhea.descent, ascender=hhea.ascent,
+            xHeight=os2.sxHeight, capHeight=os2.sCapHeight, subscriptYOffset=os2.ySubscriptYOffset,
+            lineGap=os2.sTypoLineGap, superscriptXSize=os2.ySuperscriptXSize,
+            weightClass=os2.usWeightClass, widthClass=os2.usWidthClass, 
+            subscriptXOffset=os2.ySubscriptXOffset, strikeoutPosition=os2.yStrikeoutPosition,
+            subscriptXSize=os2.ySubscriptXSize, superscriptYOffset=os2.ySuperscriptYOffset,
+            strikeoutSize=os2.yStrikeoutSize, subscriptYSize=os2.ySubscriptYSize,
+            superscriptYSize=os2.ySuperscriptYSize, unitsPerEm=unitsPerEm
+        )
+    metrics = property(_get_metrics) 
 
 
-if __name__ == "__main__":
-    _runDocTests()
