@@ -29,8 +29,8 @@ class Publication(object):
         if not os.path.exists(self.exportPath):
             os.makedirs(self.exportPath)
         for document in self.documents.values():
-            print document
-            print self.exportPath
-            print fileName, document.fileName
+            #print document
+            #print self.exportPath
+            #print fileName, document.fileName
             document.export(self.exportPath + (fileName or document.fileName or 'Document.pdf'))
 
