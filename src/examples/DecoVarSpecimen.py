@@ -14,9 +14,8 @@ from pagebot import getFormattedString
 from pagebot.page import Template
 from pagebot.fonttoolbox.style import Style
 
-import pagebot.publications.typespecimen
-reload(pagebot.publications.typespecimen)
 from pagebot.publications.typespecimen import TypeSpecimen
+from pagebot.fonttoolbox.elements.variationcube import VariationCube
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -69,10 +68,15 @@ class VariationTypeSpecimen(TypeSpecimen):
         
         page = doc.newPage()    
         self.buildVariationPage(page)
+        page = doc.newPage()
+        vCube = VariationCube(path=DecovarPath, w=500, h=500, s='a', 
+            fontSize=86, dimensions=dict(wght=5, wdth=5))
+        page.place(vCube, 50, 160)
+
     
 # Create a new specimen publications and add the list of system fonts.
 typeSpecimen = VariationTypeSpecimen([decovarName], showGrid=DEBUG) 
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.
-typeSpecimen.export('SystemFontSpecimen.pdf')
+typeSpecimen.export('DecovarSpecimen.pdf')
