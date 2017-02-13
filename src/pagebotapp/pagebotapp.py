@@ -48,7 +48,7 @@ class PageBotApp(object):
         if self.scriptPath is not None:
             return self.scriptPath
 
-        return '/'.join(pagebot.__file__.split('/')[:-1]) + '/examples/Cooking/Healthy.py'
+        #return '/'.join(pagebot.__file__.split('/')[:-1]) + '/examples/AmstelVarSpecimen.py'
 
     def initialize(self):
         u"""
@@ -72,7 +72,7 @@ class PageBotApp(object):
         self.window.saveButton = Button((x, y, w, h), 'Save', sizeStyle='small',
                 callback=self.saveCallback)
         x += 110
-        self.window.path = TextBox((x, y + 2, -40, h), self.getPath(), sizeStyle='small')
+        self.window.path = TextBox((x, y + 2, -40, h), '', sizeStyle='small')
 
     def run(self):
         u"""
@@ -87,6 +87,10 @@ class PageBotApp(object):
         Runs a PageBot script.
         """
         path = self.getPath()
+
+        if path is None:
+            return
+
         _drawBotDrawingTool.newDrawing()
         namespace = DrawBotNamespace(_drawBotDrawingTool, _drawBotDrawingTool._magicVariables)
         _drawBotDrawingTool._addToNamespace(namespace)

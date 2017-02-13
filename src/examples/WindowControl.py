@@ -90,6 +90,7 @@ def do(sender):
 def getController():
     document = AppKit.NSDocumentController.sharedDocumentController().currentDocument()
     print document
+    
     if not document:
         raise DrawBotError("There is no document open")
     controller = document.vanillaWindowController
@@ -101,8 +102,6 @@ def getController():
 
     return controller
 
-
-    
 w = Window((978, 388, 400, 400), 'Test Vanilla in DrawBot')
 w.button = Button((10, 10, 150, 30), 'Do', callback=do)
 w.checkbox = CheckBox((10, 150, 150, 30), 'Check', callback=do)
