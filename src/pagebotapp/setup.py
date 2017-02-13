@@ -21,7 +21,7 @@ from setuptools import setup
 setup(
     app=['delegate.py'],
     name="PageBot",
-    data_files=['en.lproj'],
+    data_files=['en.lproj', '../fonts'],
     setup_requires=['py2app'],
     options=dict(py2app=dict(iconfile='en.lproj/pagebot.icns', packages=['drawBot', 'pagebot', 'lxml', 'markdown', 'robofab', 'mutatorMath', 'fontMath']))
 )
