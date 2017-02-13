@@ -9,19 +9,12 @@
 #
 #     poster.py
 #
-import pagebot 
-reload(pagebot)
 from pagebot import getFormattedString
-
-import pagebot.publication
-reload(pagebot.publication)
 from pagebot.publication import Publication
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
 # Document is the main instance holding all information about the document together 
 # (pages, styles, etc.)
-import pagebot.document
-reload(pagebot.document)
 from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
 from pagebot.page import Template

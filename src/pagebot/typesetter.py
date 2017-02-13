@@ -20,20 +20,9 @@ import markdown
 from markdown.extensions.nl2br import Nl2BrExtension
 from markdown.extensions.footnotes import FootnoteExtension
 
-import pagebot
-reload(pagebot)
 from pagebot import getFormattedString, getMarker
-
-import pagebot.md.literature
-reload(pagebot.md.literature)
 from pagebot.md.literature import LiteratureExtension
-
-import pagebot.md.footnotes
-reload(pagebot.md.footnotes)
 from pagebot.md.footnotes import FootnoteExtension
-
-import pagebot.elements
-reload(pagebot.elements)
 from pagebot.elements import Galley, Image
 
 class Typesetter(object):
