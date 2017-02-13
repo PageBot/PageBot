@@ -31,10 +31,10 @@ else:
     OUTPUT_FILE = 'AmstelvarMatrixSpecimen.pdf'
 
 FONT_PATH = pagebot.getFontPath()
-DecovarPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+AmstelVarPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
 #DecovarPath = u"/Users/petr/git/PageBotTYPETR/src/fonts/BitcountVar/BitcountGrid-GX.ttf"
 
-decovarName = installFont(DecovarPath)
+amstelVarName = installFont(AmstelVarPath)
 
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
 
@@ -50,7 +50,7 @@ class VariationTypeSpecimen(TypeSpecimen):
                 combinations.append((skl, terminal))
         return combinations
     
-    STEP = 8
+    STEP = 2
     def normalizedRange(self,  minV, maxV):
         maxV = 1000
         minV = int(round(minV/maxV*1000))
@@ -92,7 +92,7 @@ class VariationTypeSpecimen(TypeSpecimen):
  
     def buildVariationPage(self, varFont, page):
         title = page.getElement(self.titleBoxId) 
-        fs = getFormattedString(varFont.info.fullName.upper(), dict(fontSize=32, font=decovarName))
+        fs = getFormattedString(varFont.info.fullName.upper(), dict(fontSize=32, font=amstelVarName))
         title.append(fs)
  
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
@@ -100,7 +100,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         # The first one in the list is also used to show the family Name.
         for fontSize in (9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24):
             fs = getFormattedString('%dPT %s\n' % (fontSize, s), 
-                style=dict(font=decovarName, fontSize=fontSize, hyphenation=False))
+                style=dict(font=amstelVarName, fontSize=fontSize, hyphenation=False))
             column.append(fs)
         
     def buildPages(self, doc):
@@ -109,7 +109,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         coverPage = doc[1]
         # Fill cover here.
 
-        varFont = Font(DecovarPath)
+        varFont = Font(AmstelVarPath)
         print varFont.axes
         
         page = doc.newPage()    
@@ -118,7 +118,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         if SCATTER_SPECIMENS:
             locations = self.getLocations(varFont)
             print 'Total amount of locations', len(locations)
-            for n in range(30):
+            for n in range(2):
                 page = doc.newPage()
                 glyphName = choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
                 scatter = VariationScatter(varFont, w=500, h=500, s=glyphName, showRecipe=False,
@@ -135,7 +135,7 @@ class VariationTypeSpecimen(TypeSpecimen):
 
     
 # Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariationTypeSpecimen([decovarName], showGrid=DEBUG) 
+typeSpecimen = VariationTypeSpecimen([amstelVarName], showGrid=DEBUG) 
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.
