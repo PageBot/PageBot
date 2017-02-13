@@ -55,8 +55,9 @@ class VariationTypeSpecimen(TypeSpecimen):
                 combinations.append((skl, terminal))
         return combinations
     
-    def getLocations(self):
+    def getLocations(self, font):
         u"""Answer all possible locations."""
+        print font.axes
         locations = []
         # A+B
         for terminal in TERMINALS:
@@ -136,9 +137,9 @@ class VariationTypeSpecimen(TypeSpecimen):
         self.buildVariationPage(varFont, page)
         
         if SCATTER_SPECIMENS:
-            locations = self.getLocations()
+            locations = self.getLocations(varFont)
             print 'Total amount of locations', len(locations)
-            for n in range(30):
+            for n in range(20):
                 page = doc.newPage()
                 glyphName = choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
                 scatter = VariationScatter(varFont, w=500, h=500, s=glyphName, showRecipe=True,

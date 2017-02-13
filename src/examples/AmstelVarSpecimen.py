@@ -50,26 +50,52 @@ class VariationTypeSpecimen(TypeSpecimen):
                 combinations.append((skl, terminal))
         return combinations
     
-    STEP = 2
+    STEP = 10
+       
     def normalizedRange(self,  minV, maxV):
-        maxV = 1000
-        minV = int(round(minV/maxV*1000))
-        return range(minV, maxV+1, int(round((maxV-minV)/self.STEP)))
-        
+        r = []
+        n = minV
+        step = (maxV - minV)/self.STEP
+        while n <= maxV:
+            r.append(n)
+            n += step 
+        return r           
+       
     def getLocations(self, font):
         u"""Answer all possible locations."""
         locations = []
         axes = font.axes
-        axisNames = sorted(axes.keys())
-        for srfr in self.normalizedRange(0, 96):
-            for xhgt in self.normalizedRange(890, 1200): 
-                for wdth in self.normalizedRange(120, 804):
-                    for prwg in self.normalizedRange(10, 1000):
-                        for opsz in self.normalizedRange(10, 72):
-                            for cntr in self.normalizedRange(8, 170):
-                                for wght in self.normalizedRange(75, 500):
-                                    for grad in self.normalizedRange(50, 500):
-                                        locations.append(dict(srfr=srfr, xhgt=xhgt, wdth=wdth, prwg=prwg, opsz=opsz, cntr=cntr, wght=wght, grad=grad)) 
+        
+        for axisName, a in axes.items():
+            print axisName, a, self.normalizedRange(a[0], a[2])
+
+        minV, dV, maxV = axes['srfr']
+        for srfr in self.normalizedRange(minV, maxV):
+            minV, dV, maxV = axes['wdth']
+            for wdth in self.normalizedRange(minV, maxV):
+                minV, dV, maxV = axes['wght']
+                for wght in self.normalizedRange(minV, maxV):
+                    minV, dV, maxV = axes['prwg']
+                    for prwg in [dV]: #self.normalizedRange(minV, maxV):
+                        minV, dV, maxV = axes['prwd']
+                        for prwd in [dV]: #self.normalizedRange(minV, maxV):
+                            minV, dV, maxV = axes['cntr']
+                            for cntr in self.normalizedRange(minV, maxV):
+                                minV, dV, maxV = axes['opsz']
+                                for opsz in [dV]:#self.normalizedRange(minV, maxV):
+                                    minV, dV, maxV = axes['grad']
+                                    for grad in [dV]:#self.normalizedRange(minV, maxV):
+                                        locations.append(dict(
+                                            srfr=srfr, 
+                                            xhgt=axes['xhgt'][1], 
+                                            wdth=wdth, 
+                                            prwg=prwg, 
+                                            prwd=prwd, 
+                                            opsz=opsz, 
+                                            cntr=cntr, 
+                                            wght=wght, 
+                                            grad=grad
+                                        )) 
         return locations
 
     def makeTemplate(self, rs):
@@ -111,19 +137,23 @@ class VariationTypeSpecimen(TypeSpecimen):
 
         varFont = Font(AmstelVarPath)
         print varFont.axes
+        print
         
-        page = doc.newPage()    
-        self.buildVariationPage(varFont, page)
+        if 0:
+            page = doc.newPage()    
+            self.buildVariationPage(varFont, page)
+        
+        page = doc[1]
         
         if SCATTER_SPECIMENS:
             locations = self.getLocations(varFont)
             print 'Total amount of locations', len(locations)
-            for n in range(2):
-                page = doc.newPage()
+            for n in range(10):
                 glyphName = choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
                 scatter = VariationScatter(varFont, w=500, h=500, s=glyphName, showRecipe=False,
-                    sizeX=5, sizeY=5, fontSize=72, locations=locations)
+                    recipeAxes=['srfr', 'wdth', 'wght', 'opsz', 'cntr', 'grad'], sizeX=5, sizeY=5, fontSize=64, locations=locations)
                 page.place(scatter, 50, 100)
+                page = doc.newPage()
                 
         elif MATRIX_SPECIMENS:
             # Build axis combinations on pages
