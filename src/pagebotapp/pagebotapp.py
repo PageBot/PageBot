@@ -76,7 +76,7 @@ class PageBotApp(object):
 
     def run(self):
         u"""
-        # Runs the script code and writes PDF contents to drawView.
+        Runs the script code and writes PDF contents to drawView.
         """
         self.runCode()
         pdfDocument = self.getPageBotDocument()
