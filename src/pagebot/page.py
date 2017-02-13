@@ -23,12 +23,7 @@ from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval
 from pagebot import cr2p, cp2p, xy2xy, setFillColor, setStrokeColor
 from pagebot.style import NO_COLOR, makeStyle
 
-import pagebot.elements
-reload(pagebot.elements)
 from pagebot.elements import Grid, BaselineGrid, Image, TextBox, Text, Rect, Line, Polygon, Oval, Container
-
-import pagebot.toolbox.markers
-reload(pagebot.toolbox.markers)
 from pagebot.toolbox.markers import drawCropMarks, drawRegistrationMarks
 
 class Page(Container):

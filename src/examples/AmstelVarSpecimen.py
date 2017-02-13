@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     DecoVarSpecimen.py
+#     AmstelVarSpecimen.py
 #
 from __future__ import division
 
@@ -26,22 +26,17 @@ SCATTER_SPECIMENS = True
 MATRIX_SPECIMENS = False
 
 if SCATTER_SPECIMENS:
-    OUTPUT_FILE = 'DecovarRandomSpecimen.pdf'
+    OUTPUT_FILE = 'AmstelvarRandomSpecimen.pdf'
 else:
-    OUTPUT_FILE = 'DecovarMatrixSpecimen.pdf'
+    OUTPUT_FILE = 'AmstelvarMatrixSpecimen.pdf'
 
 FONT_PATH = pagebot.getFontPath()
-DecovarPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
+DecovarPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
 #DecovarPath = u"/Users/petr/git/PageBotTYPETR/src/fonts/BitcountVar/BitcountGrid-GX.ttf"
 
 decovarName = installFont(DecovarPath)
 
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
-
-TERMINALS = ('trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmH', 'trmF', 'trmG', 'trmK', 'trmL',)
-SKL = ('sklA', 'sklB', 'sklD')
-BLD = ('bldA', 'bldB')
-WMX = ('wmx2',)
 
 class VariationTypeSpecimen(TypeSpecimen):
 
@@ -55,42 +50,26 @@ class VariationTypeSpecimen(TypeSpecimen):
                 combinations.append((skl, terminal))
         return combinations
     
-    def getLocations(self):
+    STEP = 8
+    def normalizedRange(self,  minV, maxV):
+        maxV = 1000
+        minV = int(round(minV/maxV*1000))
+        return range(minV, maxV+1, int(round((maxV-minV)/self.STEP)))
+        
+    def getLocations(self, font):
         u"""Answer all possible locations."""
         locations = []
-        # A+B
-        for terminal in TERMINALS:
-            for t in (500, 1000):
-                for skeleton in SKL:
-                    for s in (250, 500, 750, 1000):
-                        locations.append({terminal:t, skeleton:s})
-        # A+C
-        for terminal in TERMINALS:
-            for t in (500, 1000):
-                for parametric in WMX:
-                    for p in range(125, 1001, int((1000-125)/8)):
-                        locations.append({terminal:t, parametric:p})
-        # B+C
-        for skeleton in SKL:
-            for s in (250, 500, 750, 1000):
-                for parametric in WMX:
-                    for p in range(125, 1001, int((1000-125)/8)):
-                        locations.append({skeleton:s, parametric:p})
-        # A+B+C
-        for terminal in TERMINALS:
-            for t in (500, 1000):
-                for skeleton in SKL:
-                    for s in (250, 500, 750, 1000):
-                        for parametric in WMX:
-                            for p in range(125, 1001, int((1000-125)/8)):
-                                locations.append({skeleton:s, parametric:p, terminal:t})
-        # C+D
-        for blending in BLD:
-            for b in range(125, 1001, int((1000-125)/8)):
-                for parametric in WMX:
-                    for p in range(125, 1001, int((1000-125)/8)):
-                        locations.append({blending:b, parametric:p})
-        
+        axes = font.axes
+        axisNames = sorted(axes.keys())
+        for srfr in self.normalizedRange(0, 96):
+            for xhgt in self.normalizedRange(890, 1200): 
+                for wdth in self.normalizedRange(120, 804):
+                    for prwg in self.normalizedRange(10, 1000):
+                        for opsz in self.normalizedRange(10, 72):
+                            for cntr in self.normalizedRange(8, 170):
+                                for wght in self.normalizedRange(75, 500):
+                                    for grad in self.normalizedRange(50, 500):
+                                        locations.append(dict(srfr=srfr, xhgt=xhgt, wdth=wdth, prwg=prwg, opsz=opsz, cntr=cntr, wght=wght, grad=grad)) 
         return locations
 
     def makeTemplate(self, rs):
@@ -131,17 +110,18 @@ class VariationTypeSpecimen(TypeSpecimen):
         # Fill cover here.
 
         varFont = Font(DecovarPath)
+        print varFont.axes
         
         page = doc.newPage()    
         self.buildVariationPage(varFont, page)
         
         if SCATTER_SPECIMENS:
-            locations = self.getLocations()
+            locations = self.getLocations(varFont)
             print 'Total amount of locations', len(locations)
             for n in range(30):
                 page = doc.newPage()
                 glyphName = choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-                scatter = VariationScatter(varFont, w=500, h=500, s=glyphName, showRecipe=True,
+                scatter = VariationScatter(varFont, w=500, h=500, s=glyphName, showRecipe=False,
                     sizeX=5, sizeY=5, fontSize=72, locations=locations)
                 page.place(scatter, 50, 100)
                 

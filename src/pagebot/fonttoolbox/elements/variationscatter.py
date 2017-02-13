@@ -10,8 +10,10 @@
 #
 #	  variationscatter.py
 #
+from __future__ import division
+
 import os
-from random import random
+from random import random, choice
 from copy import copy
 from fontTools.ttLib import TTFont
 from pagebot.elements import Element
@@ -23,13 +25,16 @@ from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts
 class VariationScatter(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, style=None, eId=None, sizeX=5, sizeY=5, showRecipe=False, **kwargs):
+    def __init__(self, font, s=None, style=None, eId=None, fontSize=72, sizeX=5, sizeY=5, showRecipe=False, designSpace=None, locations=None, **kwargs):
         self.font = font
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
         self.sizeX = sizeX
         self.sizeY = sizeY
         self.showRecipe = showRecipe
+        self.fontSize = fontSize
+        self.designSpace = designSpace or {}
+        self.locations = locations
         # Each element should check at this point if the minimum set of style values
         # are set and if their values are valid.
         assert self.w is not None and self.h is not None # Make sure that these are defined.
@@ -37,16 +42,25 @@ class VariationScatter(Element):
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.glyphNames = s or 'e'
     
+    def location2Recipe(self, location):
+        recipe = ''
+        for axisName, value in sorted(location.items()):
+            recipe += '%s %d\n' % (axisName, value)
+        return recipe
+
     def getRandomLocation(self):
         RANGE = 1000
         location = {}
-        recipe = ''
         for axisName in self.font.axes.keys():
-            value = random() * RANGE
+            if axisName in self.designSpace:
+                minValue, maxValue = self.designSpace[axisName]
+            else:
+                minValue = 0
+                maxValue = RANGE
+            value = minValue + random() * (maxValue - minValue)
             location[axisName] = value
-            recipe += '%s %d\n' % (axisName, value)
 
-        return location, recipe
+        return location,
 
     def draw(self, page, x, y):
         fillColor = self.style.get('fill')
@@ -68,11 +82,16 @@ class VariationScatter(Element):
                 oy = 25
                 px = ox + x + indexX * stepX
                 py = oy + y + indexY * stepY
-                location, recipe = self.getRandomLocation()
-                drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py, location, s=0.04, fillColor=(0, 0, 0))
+                if self.locations is not None:
+                    location = choice(self.locations)
+                else:
+                    location = self.getRandomLocation()
+                recipe = self.location2Recipe(location)
+                glyphPathScale = self.fontSize/self.font.info.unitsPerEm
+                drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py, location, s=glyphPathScale, fillColor=(0, 0, 0))
                 if self.showRecipe:
                     fs = FormattedString(recipe, fontSize=6, fill=0)
                     w, h = fs.size()
-                    page.text(fs, px - stepX/4, py - 16) # Bit of hack, we need the width of the glyph here.
+                    page.text(fs, px - stepX/4, py - 24) # Bit of hack, we need the width of the glyph here.
 
 		
