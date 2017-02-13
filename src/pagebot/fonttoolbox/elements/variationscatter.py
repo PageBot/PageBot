@@ -25,13 +25,13 @@ from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts
 class VariationScatter(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, style=None, eId=None, fontSize=72, sizeX=5, sizeY=5, showRecipe=False, designSpace=None, locations=None, **kwargs):
+    def __init__(self, font, s=None, style=None, eId=None, fontSize=72, sizeX=5, sizeY=5, recipeAxes=None, designSpace=None, locations=None, **kwargs):
         self.font = font
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
         self.sizeX = sizeX
         self.sizeY = sizeY
-        self.showRecipe = showRecipe
+        self.recipeAxes = recipeAxes # Ordered name list of axes to show in legenda. Ignore if None.
         self.fontSize = fontSize
         self.designSpace = designSpace or {}
         self.locations = locations
@@ -42,10 +42,12 @@ class VariationScatter(Element):
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.glyphNames = s or 'e'
     
-    def location2Recipe(self, location):
+    def location2Recipe(self, location, start=0, end=3):
         recipe = ''
-        for axisName, value in sorted(location.items()):
-            recipe += '%s %d\n' % (axisName, value)
+        if self.recipeAxes:
+            for name in self.recipeAxes[start:end]:
+                if name in location:
+                    recipe += '%s %d\n' % (name, location[name])
         return recipe
 
     def getRandomLocation(self):
@@ -73,6 +75,8 @@ class VariationScatter(Element):
         fill(None)
         rect(x, y, self.w, self.h)
         
+        stroke(None)
+
         stepX = self.w / (self.sizeX+1)
         stepY = self.h / (self.sizeY+1)
         """Add more parametric layout behavior here."""
@@ -86,12 +90,17 @@ class VariationScatter(Element):
                     location = choice(self.locations)
                 else:
                     location = self.getRandomLocation()
-                recipe = self.location2Recipe(location)
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
                 drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py, location, s=glyphPathScale, fillColor=(0, 0, 0))
-                if self.showRecipe:
-                    fs = FormattedString(recipe, fontSize=6, fill=0)
+                if self.recipeAxes:
+                    recipe = self.location2Recipe(location)
+                    fs = FormattedString(recipe, fontSize=4, fill=0)
                     w, h = fs.size()
                     page.text(fs, px - stepX/4, py - 24) # Bit of hack, we need the width of the glyph here.
+                    if len(self.recipeAxes) > 3:
+                        recipe = self.location2Recipe(location, 3, 6)
+                        fs = FormattedString(recipe, fontSize=4, fill=0)
+                        w, h = fs.size()
+                        page.text(fs, px - stepX/4 + 30, py - 24) # Bit of hack, we need the width of the glyph here.
 
 		
