@@ -80,7 +80,7 @@ class VariationTypeSpecimen(TypeSpecimen):
                         minV, dV, maxV = axes['prwd']
                         for prwd in [dV]: #self.normalizedRange(minV, maxV):
                             minV, dV, maxV = axes['cntr']
-                            for cntr in self.normalizedRange(minV, maxV):
+                            for cntr in [dV]:#self.normalizedRange(minV, maxV):
                                 minV, dV, maxV = axes['opsz']
                                 for opsz in [dV]:#self.normalizedRange(minV, maxV):
                                     minV, dV, maxV = axes['grad']
@@ -148,7 +148,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         if SCATTER_SPECIMENS:
             locations = self.getLocations(varFont)
             print 'Total amount of locations', len(locations)
-            for n in range(10):
+            for n in range(30):
                 glyphName = choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
                 scatter = VariationScatter(varFont, w=500, h=500, s=glyphName, showRecipe=False,
                     recipeAxes=['srfr', 'wdth', 'wght', 'opsz', 'cntr', 'grad'], sizeX=5, sizeY=5, fontSize=64, locations=locations)
