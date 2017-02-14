@@ -10,6 +10,8 @@
 #
 #	  variationcube.py
 #
+from __future__ import division
+
 import os
 from copy import copy
 from fontTools.ttLib import TTFont

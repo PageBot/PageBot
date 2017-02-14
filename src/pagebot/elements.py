@@ -15,7 +15,7 @@ import copy
 
 from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
     newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
-    textBox, hyphenation, restore, imageSize, shadow
+    textBox, hyphenation, restore, imageSize, shadow, BezierPath, clipPath, drawPath
 from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
 from pagebot.style import LEFT_ALIGN, TOP_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
 
@@ -430,9 +430,10 @@ class Polygon(Element):
 class Image(Element):
     u"""Image element has special attributes self.iw and self.ih for the real image size.
     If the optional captionStyle is not defined, then use self.style for captions."""
-    def __init__(self, path, style=None, captionStyle=None, eId=None, caption=None, mask=None, imo=None, **kwargs):
+    def __init__(self, path, style=None, captionStyle=None, eId=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
         self.eId = eId
         self.mask = mask # Optional mask element.
+        self.clipRect = clipRect
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.style = makeStyle(style, **kwargs)
         self.captionStyle = captionStyle or self.style
@@ -600,6 +601,29 @@ class Image(Element):
                     px -= pw
                 elif self.style.get('align') == CENTER:
                     px -= pw/2
+                
+                # If there is a clipRect defined, create the bezier path
+                if self.clipRect is not None:
+                    clipRect = BezierPath()
+                    clX, clY, clW, clH = self.clipRect
+                    sclX = clX/self.sx
+                    sclY = clY/self.sx
+                    sclW = clW/self.sx
+                    sclH = clH/self.sy
+                    # move to a point
+                    clipRect.moveTo((sclX, sclY))
+                    # line to a point
+                    clipRect.lineTo((sclX, sclY+sclH))
+                    clipRect.lineTo((sclX+sclW, sclY+sclH))
+                    clipRect.lineTo((sclX+sclW, sclY))
+                    # close the path
+                    clipRect.closePath()
+                    # set the path as a clipping path
+                    clipPath(clipRect)
+                    # the image will be clipped inside the path
+                    fill(1, 0, 0, 0.5)
+                    drawPath(clipRect)
+
                 # Store page element Id in this image, in case we want to make an image index later.
                 image(self.path, (px/self.sx, psy), pageNumber=page.eId or 0, alpha=self._getAlpha())
 

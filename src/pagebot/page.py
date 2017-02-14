@@ -264,24 +264,26 @@ class Page(Container):
         self.place(e, x, y) # Append to drawing sequence and store by optional element id.
         return e
 
-    def image(self, path, x, y=None, w=None, h=None, style=None, eId=None, mask=None, imo=None, pageNumber=0, **kwargs):
+    def image(self, path, x, y=None, w=None, h=None, style=None, eId=None, mask=None, imo=None, pageNumber=0, clipRect=None, **kwargs):
         u"""Create Image element as position (x, y) and optional width, height (w, h) of which
         at least one of them should be defined. The path can be None, to be filled later.
         If the image is drawn with an empty path, a missingImage cross-frame is shown.
         The optional imo attribute is an ImageObject() with filters in place. 
         The Image element is answered for convenience of the caller."""
         x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
-        e = Image(path, style=style, w=w, h=h, eId=eId, mask=None, imo=imo, pageNumber=pageNumber, **kwargs)
+        e = Image(path, style=style, w=w, h=h, eId=eId, mask=None, imo=imo, pageNumber=pageNumber, clipRect=clipRect, **kwargs)
         self.place(e, x, y)
         return e
             
-    def cImage(self, path, cx, cy, cw, ch, style, eId=None, mask=None, imo=None, pageNumber=0, **kwargs):
+    def cImage(self, path, cx, cy, cw, ch, style, eId=None, mask=None, imo=None, pageNumber=0, clipRect=None, **kwargs):
         """Convert the column size into point size, depending on the column settings of the 
         current template, when drawing images "hard-coded" directly on a certain page.
         The optional imo attribute is an ImageObject() with filters in place. 
         The Image element is answered for convenience of the caller"""
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
-        return self.image(path, x, y, style=style, eId=eId, mask=None, imo=imo, pageNumber=pageNumber, **kwargs)
+        if clipRect is not None:
+            clipRect = cr2p(clipRect[0], clipRect[1], clipRect[2], clipRect[3], style)
+        return self.image(path, x, y, w=w, style=style, eId=eId, mask=None, imo=imo, pageNumber=pageNumber, clipRect=clipRect, **kwargs)
 
     def grid(self, style=None, eId=None, x=(0, 0), y=None, **kwargs):
         u"""Direct way to add a grid element to a single page, if not done through its template."""
