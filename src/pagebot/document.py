@@ -218,11 +218,12 @@ class Document(object):
         Answer the new style."""
         return self.replaceStyle(kwargs['name'], dict(**kwargs))
          
-    def export(self, fileName, pageSelection=None):
+    def export(self, fileName, pageSelection=None, multiPage=True):
         u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
         it must be a list with page numbers to export. This allows the order to be changed and pages to
         be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
-        drawing and export that needs to be done. """
+        drawing and export that needs to be done.
+        The multiPage value is passed on to the DrawBot saveImage call.  """
         if pageSelection is None:
             pageSelection = range(1, len(self.pages)+1) # [1,2,3,4,...] inclusive
         for pIndex in pageSelection:
@@ -242,7 +243,7 @@ class Document(object):
             frameDuration(rs['frameDuration'])
 
         # http://www.drawbot.com/content/canvas/saveImage.html
-        saveImage(fileName, multipage=True)
+        saveImage(fileName, multipage=multiPage)
 
 
 
