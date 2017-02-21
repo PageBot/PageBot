@@ -11,7 +11,7 @@
 #
 #     Implements info functions on font info.
 #
-from ttftools import getBestCmap
+from pagebot.fonttoolbox.ttftools import getBestCmap
 from fontTools.ttLib import TTFont
 
 class cached_property(object):
