@@ -11,8 +11,8 @@
 #
 from pagebot import getFormattedString
 
-from pagebot.fonttoolbox.family import Family
-from pagebot.fonttoolbox.font import Font, getFontPathOfFont
+from pagebot.fonttoolbox.objects.family import Family
+from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
 
 from pagebot.publication import Publication
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.

@@ -17,7 +17,7 @@
 #
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
-from pagebot.fonttoolbox.fontinfo import FontInfo
+from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 
 def getFontPathOfFont(fontName):
     font = NSFont.fontWithName_size_(fontName, 25)
@@ -26,7 +26,11 @@ def getFontPathOfFont(fontName):
         url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
         return url.path()
     return None
- 
+
+class Glyph(object):
+    def __init__(self, ttGlyph):
+        self.ttGlyph = ttGlyph
+        
 class Font(object):
     # Storage of font information while composing the pages.
     def __init__(self, path, name=None):
@@ -38,6 +42,9 @@ class Font(object):
         except TTLibError:
             raise OSError('Cannot open font file "%s"' % path)
  
+    def __getitem__(self, glyphName):
+        return Glyph(self.ttFont[glyphName])
+
     def _get_axes(self): # Answer dictionary of axes
         try:
             axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in self.ttFont['fvar'].axes}
