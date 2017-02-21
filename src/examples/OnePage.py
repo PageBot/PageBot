@@ -16,7 +16,7 @@ import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString, textBoxBaseLines
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN
+from pagebot.style import getRootStyle, LEFT_ALIGN, A4
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
@@ -53,6 +53,7 @@ U = 7 # Basic unit in points of all measurements on the page. Simple way to do r
 baselineGrid = 2*U # Set baseline grid value for body text.
 listIndent = 2*U # Default indent for bullet-list indents.
 
+W, H = A4
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot values are filled by their default values. The root style is kept in RS
 # as reference to for all ininitialzaiton of elements. 
@@ -60,19 +61,39 @@ listIndent = 2*U # Default indent for bullet-list indents.
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
+CW = 11*10
+CH = 6*10
+cc = None
+def callback(sender):
+    print sender
+    
+Variable([
+    # create a variable called 'w'
+    # and the related ui is a Slider.
+    dict(name="CW", ui="Slider"),
+    # create a variable called 'h'
+    # and the related ui is a Slider.
+    # create a variable called 'useColor'
+    # and the related ui is a CheckBox.
+    dict(name="CH", ui="Slider"),
+    dict(name="cc", ui="Button", callback=callback),
+    # create a variable called 'c'
+    # and the related ui is a ColorWell.
+    ], globals())
+
 RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
-    w = 595, # On root level the "w" is the page width 210mm, international generic fit.
-    h = 11 * 72, # Page height 11", international generic fit.
+    w = W, # On root level the "w" is the page width 210mm, international generic fit.
+    h = H, # Page height 11", international generic fit.
     ml = 7*U, # Margin left between left side of the page and grid.
     mt = 7*U, # Margin top between page top and grid.
     baselineGrid = baselineGrid,
     g = U, # Generic gutter, identical to the page unit.
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # 11 is a the best in that respect for column calculation.
-    cw = 11*U, 
-    ch = 6*baselineGrid - U, # Approx. square and fitting with baseline.
+    cw = CW/10*U, 
+    ch = CH/10*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
     listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
     # Display option during design and testing. Copy them in the root style for elements to check on.
@@ -105,42 +126,6 @@ P_TRACK = 0.030
 # Note that the example fonts supplied with PageBot subsets, to be used inside PageBot examples only,
 # under MIT license. Full license to the complete fonts is available on the typenetwork.com site.
  
-FONT_PATH = ROOT_PATH + '/fonts/'
-
-FONT_FILE = 'PromisePageBot-GX.ttf' # Demo Variation font for this OnePage example.
-
-FONT_LOCATIONS = {
-    #'Promise-BoldCondensed': {"wght": 750, "wdth": 500, },
-    #'Promise-LightCondensed': {"wght": 0, "wdth": 500},
-    'Promise-Light': {"wght": 0, "wdth": 1000},
-    'Promise-Book': {"wght": 250, "wdth": 1000},
-    'Promise-Regular': {"wght": 400, "wdth": 1000},    
-    'Promise-Medium': {"wght": 600, "wdth": 1000},    
-    'Promise-Semibold': {"wght": 750, "wdth": 1000},    
-    'Promise-Bold': {"wght": 1000, "wdth": 1000},
-}
-FONTS = {}
-# Install the test V-font
-if not 'Promise-Bold' in installedFonts():
-    installFont(FONT_PATH + FONT_FILE)
-for name, location in FONT_LOCATIONS.items():
-    fontName, fontPath = generateInstance(FONT_PATH + FONT_FILE, 
-    location, targetDirectory=FONT_PATH + 'instances')
-    FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
-if 0:
-    BOOK = FONTS['Promise-LightCondensed']
-    BOOK_ITALIC = FONTS['Promise-LightCondensed']
-    MEDIUM = FONTS['Promise-LightCondensed']
-    SEMIBOLD = FONTS['Promise-LightCondensed']
-    BOLD = FONTS['Promise-LightCondensed']
-else:
-    LIGHT = FONTS['Promise-Light']
-    BOOK = FONTS['Promise-Book']
-    BOOK_ITALIC = FONTS['Promise-Book']
-    MEDIUM = FONTS['Promise-Medium']
-    SEMIBOLD = FONTS['Promise-Semibold']
-    BOLD = FONTS['Promise-Bold']
-
 # -----------------------------------------------------------------         
 def makeDocument(rs):
     u"""Demo page composer."""
@@ -193,6 +178,7 @@ def makeDocument(rs):
     # Add styles for whole document and text flows.  
     # Note that some values are defined here for clarity, even if their default root values
     # are the same.             
+    """
     doc.newStyle(name='chapter', font=BOOK)    
     doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2*fontSize, font=BOOK_ITALIC)
@@ -228,7 +214,7 @@ def makeDocument(rs):
     doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
         leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
         indent=U/2, tailIndent=-U/2, hyphenation=True)
-    
+    """
     # Change template of page 1
     onePage = doc[1]
         

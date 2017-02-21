@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     DecoVarSpecimen.py
+#     DecovarSpecimen.py
 #
 from __future__ import division
 

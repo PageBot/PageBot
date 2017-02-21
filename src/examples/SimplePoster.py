@@ -11,8 +11,6 @@
 #
 import pagebot # Import to know the path of non-Python resources.
 
-import pagebot.publications.poster
-reload()
 from pagebot.publications.poster import Poster
 
 # Get templates for the content and design, as expected by the Poster class.
