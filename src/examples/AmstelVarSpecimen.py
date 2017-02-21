@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     AmstelVarSpecimen.py
+#     AmstelvarSpecimen.py
 #
 from __future__ import division
 

@@ -22,7 +22,11 @@ class Publication(object):
         
     def build(self):
         pass
-        
+    
+    def draw(self):
+        for document in self.documents.values():
+            document.draw()
+                
     def export(self, fileName=None):
         if not self.exportPath.endswith('/'):
             self.exportPath += '/'
