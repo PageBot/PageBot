@@ -21,7 +21,7 @@ from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
-from pagebot.contributions.adobe.getKerningPairsFromOTF import OTFKernReader
+from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 
 def getFontPathOfFont(fontName):
     font = NSFont.fontWithName_size_(fontName, 25)
