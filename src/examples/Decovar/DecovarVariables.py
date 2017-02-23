@@ -169,6 +169,10 @@ vMasterFont = Font(FONT_PATH)
 def makeAnimatiom():
     axes = vMasterFont.axes
 
+    print 'Variation A X E S'
+    for axisName, (minValue, defaultValue, maxValue) in vMasterFont.axes.items():
+        print axisName, 'minValue', minValue, 'defaultValue', defaultValue, 'maxValue', maxValue
+
     location = getDefaultLocation(axes)
 
     if TERMINAL_VALUES_S[TerminalValue] != 'None':

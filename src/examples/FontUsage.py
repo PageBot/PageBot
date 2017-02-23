@@ -10,6 +10,8 @@
 #     FontUsage.py
 #
 #     This script shows exampels how to use the Font implementaton of PageBot.
+#     Font is a wrapper class around the fonttools TTFont, implementing functions
+#     more closely to what is expected from RoboFont fonts.
 # 
 from pagebot import getFontPath # Import to know the path of non-Python resources.
 from pagebot.fonttoolbox.objects.font import Font
@@ -42,6 +44,7 @@ if 1:
     print g.width # Gets the value of ttFont['htmx']
     g.width += 10 # We can change the value in the "live" font. f.save() 
     print 'Width of', g.name, g.width
+    
 
 if 0:
     # Info inside the TTGlyph structure.

@@ -19,6 +19,8 @@
 #
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
+from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
+
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
