@@ -20,7 +20,7 @@ class Family(object):
         return len(self.fonts)
         
     def addFont(self, font):
-        assert not font.info.styleName in self.fonts
+        assert not font.info.styleName in self.fonts, ('Font "%s" already in family "%s"' % (font.info.styleName, self.fonts.keys()))
         self.fonts[font.info.styleName] = font
         
     def getRegularFont(self):

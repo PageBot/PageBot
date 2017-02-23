@@ -70,10 +70,10 @@ class VariationScatter(Element):
             setFillColor(fillColor)
             setStrokColor(None)
 
-        stroke(0.8)
-        strokeWidth(0.5)
-        fill(None)
-        rect(x, y, self.w, self.h)
+        #stroke(0.8)
+        #strokeWidth(0.5)
+        #fill(None)
+        #rect(x, y, self.w, self.h)
         
         stroke(None)
 
@@ -91,7 +91,8 @@ class VariationScatter(Element):
                 else:
                     location = self.getRandomLocation()
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
-                drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py, location, s=glyphPathScale, fillColor=(0, 0, 0))
+                fillColor = self.style.get('textFill') or (0, 0, 0)
+                drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py, location, s=glyphPathScale, fillColor=fillColor)
                 if self.recipeAxes:
                     recipe = self.location2Recipe(location)
                     fs = FormattedString(recipe, fontSize=4, fill=0)

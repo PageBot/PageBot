@@ -126,15 +126,15 @@ class TypeSpecimen(Publication):
                 continue
             # Try to open the font in font tools, so we have access to a lot of information for our proof.
             # Create Style instance, as storage within our page composition passes.
-            style = Style(path, styleName)
-            if style.info is None:
+            font = Font(path, styleName)
+            if font.info is None:
                 continue # Could not open the font file.            
             # Skip if there is not a clear family name and style name derived from FontInfo    
-            if  style.info.familyName and style.info.styleName:
+            if  font.info.familyName and font.info.styleName:
                 # Make a family collection of style names, if not already there.
-                if not style.info.familyName in families: 
-                    families[style.info.familyName] = Family(style.info.familyName)
+                if not font.info.familyName in families: 
+                    families[font.info.familyName] = Family(font.info.familyName)
                 # Store the style name and path in the family collection.
-                families[style.info.familyName].addStyle(style) 
+                families[font.info.familyName].addFont(font) 
 
         return families 

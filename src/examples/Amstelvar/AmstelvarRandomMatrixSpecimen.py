@@ -29,19 +29,12 @@ DEBUG = False # Make True to see grid and element frames.
 W, H = A4
 MARGIN = 20*MM
 
-SCATTER_SPECIMENS = True
-MATRIX_SPECIMENS = False
-
 NUM_PAGES = 5 # Number of pages to generate
 
-if SCATTER_SPECIMENS:
-    OUTPUT_FILE = 'AmstelvarRandomSpecimen.pdf'
-else:
-    OUTPUT_FILE = 'AmstelvarMatrixSpecimen.pdf'
+OUTPUT_FILE = 'AmstelvarRandomSpecimen.pdf'
 
-FONT_PATH = pagebot.getFontPath()
+FONT_PATH = pagebot.getFontPath() # Location of PageBot fonts.
 AmstelVarPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
-#DecovarPath = u"/Users/petr/git/PageBotTYPETR/src/fonts/BitcountVar/BitcountGrid-GX.ttf"
 print 'Using font', AmstelVarPath
 
 # Installing the font in DrawBot
@@ -162,29 +155,19 @@ class VariationTypeSpecimen(TypeSpecimen):
             print axisName, 'minValue', minValue, 'defaultValue', defaultValue, 'maxValue', maxValue
 
 
-        if SCATTER_SPECIMENS:
-            locations = self.getLocations(varFont)
+        locations = self.getLocations(varFont)
 
-            # Using the first page as cover (to be filled...)
-            coverPage = doc[1]
-            # Fill cover here.
-            coverPage.rect(0, 0, W, H, fill=(1, 0, 0)) 
-            coverPage.text(amstelVarName, x=MARGIN, y=H-3*MARGIN, style=dict(font=amstelVarName, fontSize=50, textColor=1) )
-            self.buildVariationMatrixPage(varFont, coverPage, locations, textFill=1)
+        # Using the first page as cover (to be filled...)
+        coverPage = doc[1]
+        # Fill cover here.
+        coverPage.rect(0, 0, W, H, fill=(1, 0, 0)) 
+        #coverPage.text(amstelVarName, x=MARGIN, y=H-3*MARGIN, style=dict(font=amstelVarName, fontSize=50, textColor=1) )
+        self.buildVariationMatrixPage(varFont, coverPage, locations, textFill=1)
 
-            print 'Total amount of locations', len(locations)
-            for n in range(NUM_PAGES):
-                page = doc.newPage()
-                self.buildVariationMatrixPage(varFont, page, locations)
-
-        elif MATRIX_SPECIMENS:
-            # Build axis combinations on pages
-            for axis1, axis2 in self.getAxisCombinations():
-                page = doc.newPage()
-                wh = W-2*MARGIN
-                vCube = VariationCube(varFont, w=wh, h=wh, s='A',
-                    fontSize=72, dimensions={axis1:5, axis2:5})
-                page.place(vCube, 50, 100)
+        print 'Total amount of locations', len(locations)
+        for n in range(NUM_PAGES):
+            page = doc.newPage()
+            self.buildVariationMatrixPage(varFont, page, locations)
 
 
 # Create a new specimen publications and add the list of system fonts.
