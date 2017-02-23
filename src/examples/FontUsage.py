@@ -26,7 +26,7 @@ if 0: # Font info stuff.
     # Font Info as in RoboFont objects
     print 'Units per em', f.info.unitsPerEm
     
-if 0: # Variation stuff
+if 1: # Variation stuff
     # Show the axes in this font. Key is axis name. Value is (minValue, defaultValue, maxValue)
     print f.axes
 
