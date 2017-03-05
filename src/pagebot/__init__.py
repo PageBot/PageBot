@@ -8,7 +8,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     __init__.py
+#     toolbox/__init__.py
 #
 import CoreText
 import AppKit
@@ -17,7 +17,6 @@ import Quartz
 import re
 from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth
 from drawBot.context.baseContext import BaseContext
-
 NO_COLOR = -1
 
 def getRootPath():
