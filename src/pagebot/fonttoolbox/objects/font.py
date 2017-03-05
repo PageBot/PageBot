@@ -20,6 +20,7 @@
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
+from drawBot import installFont
 
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
@@ -39,6 +40,7 @@ class Font(object):
 
     def __init__(self, path, name=None):
         self.path = path # File path of the font file.
+        self.installedName = None # Set to DrawBot name, when installed.
         try: 
             self.ttFont = TTFont(path, lazy=True)
             self.info = FontInfo(self.ttFont) # TTFont is available as lazy style.info.font
@@ -73,6 +75,10 @@ class Font(object):
         return self._groups
     groups = property(_get_groups)
 
+    def install(self):
+        self.installedName = installFont(self.path)
+        return self.installedName
+        
     def save(self, path=None):
         u"""Save the font to optional path or to self.path."""
         self.ttFont.save(path or self.path)

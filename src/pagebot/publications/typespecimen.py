@@ -9,9 +9,13 @@
 #
 #     typespecimen.py
 #
+#     Generic Type Specimen Publiction. Use straight, if the default behavior
+#     and templates are hood enough. Inherit the redefine functions otherwise.
+#     Example of an inherited publications is FBFamilySpecimen.py
+#
 from pagebot import getFormattedString
 
-from pagebot.fonttoolbox.objects.family import Family
+from pagebot.fonttoolbox.objects.family import Family, guessFamilies
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
 
 from pagebot.publication import Publication
@@ -27,9 +31,13 @@ class TypeSpecimen(Publication):
     
     MIN_STYLES = 4 # Don't show, if families have fewer amount of style.
     
-    def __init__(self, styleNames=None, showGrid=False, showGridColumns=False):
+    FONT_CLASS = Font
+    FAMILY_CLASS = Family
+    
+    def __init__(self, styleNames=None, pageTitle=None, showGrid=False, showGridColumns=False):
         Publication.__init__(self)
         self.styleNames = styleNames
+        self.pageTitle = pageTitle
         # Identifiers of template text box elements.
         self.titleBoxId = 'titleBoxId'
         self.specimenBoxId = 'specimenBoxId'
@@ -59,8 +67,9 @@ class TypeSpecimen(Publication):
         rs = getRootStyle(showGrid=self.showGrid, showGridColumns=self.showGridColumns)
         rs['language'] = 'en' # Make English hyphenation default. 
         template = self.makeTemplate(rs)
+        pageTitle = self.pageTitle or 'Unnamed Type Specimen'
         # Create new document with (w,h) and start with a single page.
-        self.documents['Specimen'] = doc = Document(rs, title='OS Type Specimen', pages=1, template=template) 
+        self.documents['Specimen'] = doc = Document(rs, title=pageTitle, pages=1, template=template) 
         # Make number of pages with default document size.
         # When building, make all pages default with template.
         # Call with separate method, so inheriting specimen publications classes can redefine.\   
@@ -73,12 +82,12 @@ class TypeSpecimen(Publication):
         coverPage = doc[1]
         # Fill cover here.
         
-        # Collect the families, style names and their font paths.
-        families = self.getFamilies()
+        # Collect the system families, style names and their font paths. Guess their family relation.
+        families = guessFamilies(self.styleNames)
         
         # Now we collected a families and styles in the OS, create one page per family.
         for familyName, family in sorted(families.items()): # For all the sorted family collections...
-            # Only show the "serious" families, that have at least MIN_STYLES amout of styles.
+            # Only show the "serious" families, that have at least MIN_STYLES amount of styles.
             if len(family) < self.MIN_STYLES:
                 continue
             # Create a new page for the this family, using the default template.
@@ -113,28 +122,5 @@ class TypeSpecimen(Publication):
                 style=dict(fontSize=16, font=style.name, rLeading=1.4))
             
         column.append(fs)	
-               
-    def getFamilies(self):
-        # Find the family relation of all fonts in the list.
-        families = {} # Keys is guessed family name.
 
-        for styleName in self.styleNames:
-            if styleName.startswith('.'): # Filter the system fonts that has a name with initial "."
-                continue
-            path = getFontPathOfFont(styleName)
-            if not path.lower().endswith('.ttf') and not path.lower().endswith('.otf'):
-                continue
-            # Try to open the font in font tools, so we have access to a lot of information for our proof.
-            # Create Style instance, as storage within our page composition passes.
-            font = Font(path, styleName)
-            if font.info is None:
-                continue # Could not open the font file.            
-            # Skip if there is not a clear family name and style name derived from FontInfo    
-            if  font.info.familyName and font.info.styleName:
-                # Make a family collection of style names, if not already there.
-                if not font.info.familyName in families: 
-                    families[font.info.familyName] = Family(font.info.familyName)
-                # Store the style name and path in the family collection.
-                families[font.info.familyName].addFont(font) 
-
-        return families 
+          

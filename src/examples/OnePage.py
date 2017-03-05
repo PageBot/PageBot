@@ -92,8 +92,8 @@ RS = getRootStyle(
     g = U, # Generic gutter, identical to the page unit.
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # 11 is a the best in that respect for column calculation.
-    cw = CW/10*U, 
-    ch = CH/10*baselineGrid - U, # Approx. square and fitting with baseline.
+    cw = CW/6*U, 
+    ch = CH/6*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
     listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
     # Display option during design and testing. Copy them in the root style for elements to check on.

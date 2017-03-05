@@ -12,7 +12,8 @@ class Blurb(object):
     the writer installed in the system.
     """
     def __init__(self, content=None):
-        import content
+        if content is None:
+            from pagebot.contributions.filibuster import content
         #from filibuster import content
         self.writer = blurbwriter.BlurbWriter(content.content())
     
@@ -35,12 +36,15 @@ class Blurb(object):
         
         """
         return self.writer.keywords
-    
+
+blurb = Blurb() # Make the single instance of Blurb.
+   
 if __name__ == '__main__':
-    w = Blurb()
+    w = blurb
     for t in w.getBlurbTypes():
         print t, w.getBlurb(t)
 
+    print w.getBlurb('sports_headline')
     print w.getBlurb('filibuster_about')
     print w.getBlurb('aerospace_headline')
     print w.getBlurb('address')
@@ -49,3 +53,4 @@ if __name__ == '__main__':
         print w.getBlurb('politics_euro_headline')
     #print w.getBlurb('aerospace_headline', 3)
     #print w.getBlurbTypes()
+
