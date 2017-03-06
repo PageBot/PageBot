@@ -22,12 +22,12 @@ from pagebot.fonttoolbox.elements.variationcircle import VariationCircle
 
 DEBUG = False # Make True to see grid and element frames.
 
-OUTPUT_FILE = 'DecovarVariationCircle.pdf'
+OUTPUT_FILE = 'AmstelvarVariationCircle.pdf'
 
 FONT_PATH = pagebot.getFontPath()
-fontPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
-decovar = Font(fontPath)
-decovarName = decovar.install() # Do DrawBot font install.
+fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+amstelvar = Font(fontPath)
+amstelvarName = amstelvar.install() # Do DrawBot font install.
 
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
 
@@ -109,12 +109,13 @@ class VariationCircleSpecimen(TypeSpecimen):
         # Build the pages, showing axes, samples, etc.
         # Using the first page as cover (to be filled...)
         page = doc[1]
-        glyphName = 'A'        
-        scatter = VariationCircle(decovar, w=500, h=500, s=glyphName)
+        glyphName = 'A'
+        
+        scatter = VariationCircle(amstelvar, w=500, h=500, s=glyphName)
         page.place(scatter, 50, 100)
                     
 # Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariationCircleSpecimen([decovarName], showGrid=DEBUG) 
+typeSpecimen = VariationCircleSpecimen([amstelvarName], showGrid=DEBUG) 
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.

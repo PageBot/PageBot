@@ -16,6 +16,7 @@
 #
 from __future__ import division
 
+from math import pi, sin, cos
 import os
 from random import random, choice
 from copy import copy
@@ -23,7 +24,7 @@ from fontTools.ttLib import TTFont
 from pagebot.elements import Element
 from pagebot.style import makeStyle
 from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
-from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installedFonts, FormattedString
+from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installedFonts, FormattedString, moveTo, lineTo, newPath, drawPath
 
 
 class VariationCircle(Element):
@@ -51,16 +52,19 @@ class VariationCircle(Element):
                     recipe += '%s %d\n' % (name, location[name])
         return recipe
 
-    def _drawGlyphMarker(self, mx, my, fontSize):
+    def _angle2XY(self, angle, r):
+        u"""Answer the XY position for a given angled (degrees) and r, located on the origin."""
+        return cos(angle/180*pi) * r, sin(angle/180*pi) * r
+
+    def _drawGlyphMarker(self, mx, my, glyphName, fontSize, location, strokeW=2):
         # Middle circle 
         fill(1)
         stroke(0)
-        strokeWidth(2)
+        strokeWidth(strokeW)
         oval(mx-fontSize*self.R, my-fontSize*self.R, fontSize*2*self.R, fontSize*2*self.R)
 
-        defaultLocation = {}
         glyphPathScale = fontSize/self.font.info.unitsPerEm
-        drawGlyphPath(self.font.ttFont, self.glyphNames[0], mx, my-fontSize/4, defaultLocation, s=glyphPathScale, fillColor=0)
+        drawGlyphPath(self.font.ttFont, glyphName, mx, my-fontSize/4, location, s=glyphPathScale, fillColor=0)
 
     def draw(self, page, x, y):
         u"""Draw the circle info-graphic, showing most info about the variation font as can be interpreted from the file."""
@@ -70,12 +74,32 @@ class VariationCircle(Element):
         my = y + self.h/2
         # Gray circle that defines the area of
         oval(x, y, self.w, self.h)
-        # Draw default glyph in middle.
-        fontSize = self.style.get('fontSize', self.DEFAULT_FONT_SIZE)
-        self._drawGlyphMarker(mx, my, fontSize)
+        # Draw axis spikes first, so we can cover them by the circle markers.
+        angle = 0
+        axes = self.font.axes
+        fill(None)
+        stroke(0)
+        strokeWidth(1)
+        newPath()
+        while angle < 360:
+            markerX, markerY = self._angle2XY(angle, self.w/2)
+            moveTo((mx, my))
+            lineTo((mx+markerX, my+markerY))
+            angle += 360/len(axes)
+        drawPath()
 
-        for axisName, (minValue, defaultValue, maxValue) in self.font.axes.items():
-            print axisName
+        # Draw default glyph marker in middle.
+        glyphName = self.glyphNames[0]
+        fontSize = self.style.get('fontSize', self.DEFAULT_FONT_SIZE)
+        defaultLocation = {}
+        self._drawGlyphMarker(mx, my, glyphName, fontSize, defaultLocation, strokeW=3)
+
+        angle = 0
+        for axisName, (minValue, defaultValue, maxValue) in axes.items():
+            location = {axisName: maxValue}
+            markerX, markerY = self._angle2XY(angle, self.w/2)
+            self._drawGlyphMarker(mx+markerX, my+markerY, glyphName, fontSize/2, location)
+            angle += 360/len(axes)
 
 
 
