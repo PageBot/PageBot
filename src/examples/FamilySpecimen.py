@@ -36,8 +36,8 @@ class FBFamilySpecimen(TypeSpecimen):
         # The grid is just a regular element, like all others on the page. Same parameters apply.
         template.grid(rs)  
         # Add named text box to template for main specimen text.
-        template.cTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
-        template.cTextBox('', 0, 1, 6, 6, eId=self.specimenBoxId, style=rs)       
+        template.cTextBox('', 0, -1, 6, 1, eId=self.titleBoxId, style=rs)       
+        template.cTextBox('', 0, 0, 6, 6, eId=self.specimenBoxId, style=rs)       
         # Some lines, positioned by vertical and horizontal column index.
         template.cLine(0, 0, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
         #template.cLine(0, 1, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
@@ -57,14 +57,22 @@ class FBFamilySpecimen(TypeSpecimen):
             # Create a new page for the this family, using the default template.
             page = doc.newPage() 
             print family.fonts.keys()   
-            sportsHeadline = blurb.getBlurb('sports_headline')
-            self.buildFamilySpecimenPage(page, family, sportsHeadline)
+            self.buildFamilySpecimenPage(page, family)
 
-    def buildFamilySpecimenPage(self, page, family, sportsHeadline):
-        fs = getFormattedString(sportsHeadline, style=dict(font=family['Regular'].installedName, fontSize=80, textColor=0))
-        # page[self.specimenBoxId] answers (e, (x, y))
-        page[self.specimenBoxId][0].append(fs)
-        print '###', page, family, sportsHeadline
+    def buildFamilySpecimenPage(self, page, family):
+        box = page[self.specimenBoxId][0]
+        fontSize = 500
+        while not box.getOverflow():
+            sportsHeadline = blurb.getBlurb('news_headline')+'\n'
+            fs = getFormattedString(sportsHeadline, style=dict(font=family['Regular'].installedName, 
+                fontSize=fontSize, textColor=0))
+            fsWidth = fs.size()[0]
+            fittingFontSize = fontSize * box.w / fsWidth
+            # Make new formatted string with fitting font size.
+            fs = getFormattedString(sportsHeadline, style=dict(font=family['Regular'].installedName, 
+                fontSize=fittingFontSize, textColor=0))
+            box.append(fs)
+            print '###', page, family, sportsHeadline
                 
 # Create a new specimen publications and add the list of system fonts.
 familySpecimen = FBFamilySpecimen(showGrid=DEBUG) 
@@ -72,4 +80,4 @@ familySpecimen = FBFamilySpecimen(showGrid=DEBUG)
 familySpecimen.build()
 # Export the document of the publication to PDF in the _export directory.
 # Create the dictionary if it is does not exist. All _export directories are ignored in git.
-familySpecimen.export('FBFamilySpecimen.pdf')
+familySpecimen.export('FamilySpecimen.pdf')

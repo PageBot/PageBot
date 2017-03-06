@@ -25,7 +25,10 @@ SOME_SYSTEM_FONTS = {
 familyName = 'Georgia'
 family = Family(familyName, fontStyles=SOME_SYSTEM_FONTS[familyName])
 # Now there is a family container of Font instances (which are wrappers around opened TTFont objects).
-print family
+print 'print family:', family
+print 'print family.name:', family.name
+print 'len(family):', len(family), 'same as len(family.fonts)', len(family.fonts)
+
 if 1:
     print '-'*LINE
     print 'family.fonts is a dict(fontFilename: Font, ...)'
