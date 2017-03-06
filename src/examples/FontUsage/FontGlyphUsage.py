@@ -23,41 +23,41 @@ LINE = 50 # Separator line.
 
 # Get the variation font.
 decovarPath = getFontPath() + '/fontbureau/Decovar-VF_2017-02-06.ttf'
-f = Font(decovarPath)
+decovar = Font(decovarPath)
 
 if 1: # Font info stuff.
     # Font Info as in RoboFont objects
     print '-'*LINE
-    print 'Family name:', f.info.familyName
-    print 'Style name:', f.info.styleName
-    print 'Path:', f.path
-    print 'Units per em:', f.info.unitsPerEm
+    print 'Family name:', decovar.info.familyName
+    print 'Style name:', decovar.info.styleName
+    print 'Path:', decovar.path
+    print 'Units per em:', decovar.info.unitsPerEm
     
 if 1: # Variation stuff
     # Show the axes in this font. Key is axis name. Value is (minValue, defaultValue, maxValue)
     print '-'*LINE
-    axes = f.axes
+    axes = decovar.axes # Get dictionary of axes in the font.
     print 'Axes (%d) in the font {name: (minValue, defaultValue, maxValue), ...}' % len(axes)
     print '.'*LINE
     print axes
 
 if 1: # Kerning stuff
     print '-'*LINE
-    print 'Kerning (%d pairs) in the font' % len(f.kerning)
+    print 'Kerning (%d pairs) in %s' % (len(decovar.kerning), decovar.info.familyName)
     print '.'*LINE
-    print f.kerning
+    print decovar.kerning
        
 if 1:
     # Show the available tables in the TTFont
     print '-'*LINE
-    print 'Tables in the font'
+    print 'Tables in', decovar.info.familyName
     print '.'*LINE
-    print f.ttFont.keys()
+    print decovar.ttFont.keys()
 
 #   G L Y P H  S T U F F
 
 if 1:
-    g = f['A']
+    g = decovar['A'] # Get the Glyph instance.
     print '-'*LINE
     print 'Glyph width of', g.name, g.width # Gets the value of ttFont['htmx']
     print '.'*LINE

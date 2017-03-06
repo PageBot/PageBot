@@ -24,6 +24,9 @@ class Glyph(object):
         self.name = name
         self.parent = font # Store as weakref
 
+    def __repr__(self):
+        return '<PageBot Glyph %s>' % self.name
+        
     def _get_ttGlyph(self):
         return self.parent.ttFont['glyf'][self.name]
     ttGlyph = property(_get_ttGlyph)
