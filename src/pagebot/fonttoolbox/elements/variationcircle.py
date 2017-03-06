@@ -23,13 +23,16 @@ from fontTools.ttLib import TTFont
 from pagebot.elements import Element
 from pagebot.style import makeStyle
 from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
-from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
+from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installedFonts, FormattedString
 
 
 class VariationCircle(Element):
-    # Initialize the default behavior tags as different from Element.
+    u"""Interpret the content of the self.font variation font and draw a circle info graphic on that info."""
 
-    def __init__(self, font, s=None, style=None, eId=None, fontSize=72, sizeX=5, sizeY=5, recipeAxes=None, designSpace=None, locations=None, **kwargs):
+    DEFAULT_FONT_SIZE = 64
+    R = 2/3 # Fontsize factor to draw glyph markers.
+
+    def __init__(self, font, s=None, style=None, eId=None, **kwargs):
         self.font = font
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
@@ -48,44 +51,32 @@ class VariationCircle(Element):
                     recipe += '%s %d\n' % (name, location[name])
         return recipe
 
+    def _drawGlyphMarker(self, mx, my, fontSize):
+        # Middle circle 
+        fill(1)
+        stroke(0)
+        strokeWidth(2)
+        oval(mx-fontSize*self.R, my-fontSize*self.R, fontSize*2*self.R, fontSize*2*self.R)
+
+        defaultLocation = {}
+        glyphPathScale = fontSize/self.font.info.unitsPerEm
+        drawGlyphPath(self.font.ttFont, self.glyphNames[0], mx, my-fontSize/4, defaultLocation, s=glyphPathScale, fillColor=0)
+
     def draw(self, page, x, y):
-        fillColor = self.style.get('fill')
-        if fillColor is not None:
-            setFillColor(fillColor)
-            setStrokColor(None)
-
-        #stroke(0.8)
-        #strokeWidth(0.5)
-        #fill(None)
-        #rect(x, y, self.w, self.h)
-        
+        u"""Draw the circle info-graphic, showing most info about the variation font as can be interpreted from the file."""
+        fill(0.9)
         stroke(None)
+        mx = x + self.w/2
+        my = y + self.h/2
+        # Gray circle that defines the area of
+        oval(x, y, self.w, self.h)
+        # Draw default glyph in middle.
+        fontSize = self.style.get('fontSize', self.DEFAULT_FONT_SIZE)
+        self._drawGlyphMarker(mx, my, fontSize)
 
-        stepX = self.w / (self.sizeX+1)
-        stepY = self.h / (self.sizeY+1)
-        """Add more parametric layout behavior here."""
-        for indexX in range(self.sizeX+1):
-            for indexY in range(self.sizeY+1):
-                ox = 30
-                oy = 25
-                px = ox + x + indexX * stepX
-                py = oy + y + indexY * stepY
-                if self.locations is not None:
-                    location = choice(self.locations)
-                else:
-                    location = self.getRandomLocation()
-                glyphPathScale = self.fontSize/self.font.info.unitsPerEm
-                fillColor = self.style.get('textFill') or (0, 0, 0)
-                drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py, location, s=glyphPathScale, fillColor=fillColor)
-                if self.recipeAxes:
-                    recipe = self.location2Recipe(location)
-                    fs = FormattedString(recipe, fontSize=4, fill=0)
-                    w, h = fs.size()
-                    page.text(fs, px - stepX/4, py - 24) # Bit of hack, we need the width of the glyph here.
-                    if len(self.recipeAxes) > 3:
-                        recipe = self.location2Recipe(location, 3, 6)
-                        fs = FormattedString(recipe, fontSize=4, fill=0)
-                        w, h = fs.size()
-                        page.text(fs, px - stepX/4 + 30, py - 24) # Bit of hack, we need the width of the glyph here.
+        for axisName, (minValue, defaultValue, maxValue) in self.font.axes.items():
+            print axisName
+
+
 
 		
