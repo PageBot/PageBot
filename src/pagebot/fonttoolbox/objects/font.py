@@ -52,7 +52,7 @@ class Font(object):
             raise OSError('Cannot open font file "%s"' % path)
 
     def __repr__(self):
-        return self.path or self.name
+        return '<PageBot Font %s>' % (self.path or self.name)
 
     def __getitem__(self, glyphName):
         return self.GLYPH_CLASS(self, glyphName)

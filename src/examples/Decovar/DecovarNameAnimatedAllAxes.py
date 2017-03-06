@@ -9,8 +9,10 @@
 #
 #     DecovarNameAnimation.py
 #
-#     This script generates creates a Typetr logo as animated gif.
-#     (takes around 10 minutes to run).
+#     This script generates creates a the DECOVAR name as animated gif.
+#     Note that there is no limitation in design space boundaries, showing
+#     the whole spectrum of locations. This means that most of the generated
+#     instances are "wrong".
 #
 from fontTools.ttLib import TTFont
 from pagebot import getFontPath
@@ -20,7 +22,7 @@ import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import getVariationFont, drawGlyphPath
     
-EXPORT_PATH = '_export/DecovarAnimated002.gif'
+EXPORT_PATH = '_export/DecovarNameAnimatedAllAxes.gif'
   
 FONT_DIR = getFontPath()
 FONT_PATH = FONT_DIR + 'fontbureau/Decovar-VF_2017-02-06.ttf'

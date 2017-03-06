@@ -9,6 +9,13 @@
 #
 #     DecovarAxes.py
 #
+#     Show a page with a single Decovar /A.
+#     Open floating window with sliders for each axis. 
+#     Glyph is updating for each move of a slider.
+#
+#     @@@ TODO: Speed could be optimized if we export a new font with just one glyph.
+#     Now the whole font is interpreted if the variaion location changes.
+#
 from __future__ import division
 
 import pagebot

@@ -13,6 +13,7 @@
 #
 from drawBot import installedFonts
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
+from pagebot.toolbox.transformer import TX
 
 def getFamilies(familyPaths):
     u"""Construct a dictionary of Family instances from dictionary familyPaths. It is assumed that all paths
@@ -74,10 +75,27 @@ def guessFamilies(styleNames):
     return families 
 
 class Family(object):
-    def __init__(self, name):
+    def __init__(self, name, fontPaths=None, fontStyles=None):
+        u"""The Family instance is a container of related Font instances. There are 3 levels of access: file name, style name
+        (either from font.info.styleName or defined in fontStyles attributes) and by DrawBot name if the font is installed.
+        The optional fontPaths is a list of file paths. The optional fontStyles is a dictionary with format 
+        dict(Regular=<fontPath>, Italic=<fontPath>, ...)
+        """
+        assert fontPaths is None or fontStyles is None # If defined, cannot be defined both.
         self.name = name
         self.fonts = {} # Key is font name. Value is Font instances.
+        self.fontStyles = {} # Key is font.info.styleName. Value is list of fonts (there can be overlapping style names).
         self.installedFonts = {} # DrawBot name as key. Value is same Font instance.
+        # If any font paths given, open the fonts.
+        if fontPaths is not None:
+            for fontPath in fontPaths:
+                self.addFont(Font(fontPath)) # Use file name as key
+        elif fontStyles is not None:
+            for fontStyle, fontPath in fontStyles.items():
+                self.addFont(Font(fontPath), fontStyle=fontStyle)
+
+    def __repr__(self):
+        return '<PageBot Family %s>' % self.name
 
     def __len__(self):
         return len(self.fonts)
@@ -87,7 +105,7 @@ class Family(object):
     
     def install(self, fontKeys=None):
         u"""Install all fonts of the family in DrawBot, if not alreadythere."""
-        if fontKeys is None:
+        if fontKeys is None: # fontKey is the font file name.
             fontKeys = self.fonts.keys()
 
         for fontKey in fontKeys:
@@ -96,26 +114,34 @@ class Family(object):
                 fontName = font.install()
             self.installedFonts[fontName] = fontKey
 
-    def addFont(self, font, key=None):
-        if key is None:
-            key = font.info.styleName
-        assert not key in self.fonts, ('Font "%s" already in family "%s"' % (key, self.fonts.keys()))
-        self.fonts[key] = font
+    def addFont(self, font, fontKey=None, fontStyle=None):
+        if fontKey is None:
+            fontKey = TX.path2Name(font.path) # This must be unique in the family, used as key in self.fonts.
+        assert not fontKey in self.fonts, ('Font "%s" already in family "%s"' % (fontKey, self.fonts.keys()))
+        if fontStyle is None:
+            fontStyle = font.info.styleName # It is allowed to have multiple fonts with the same style name.
+        # Store the font under unique fontKey.
+        self.fonts[fontKey] = font
+        # Create list entry for fontStyle, if it does not exist.
+        if not fontStyle in self.fontStyles:
+            self.fontStyles[fontStyle] = [] # Keep list, there may be fonts with the same style name.
+        self.fontStyles[fontStyle].append(font)
         
     def getRegularFont(self):
-        # Answer the style that has width/weight closest to 500 and angle is closest to 0
-        targetWeight = targetWidth = 500
+        u"""Try to find a font that is closest to style "Normal" or "Regular".
+        Otherwise answer the font that has weight/width closest to (400, 5) and angle is closest to 0."""
+        targetWeight = 400
+        targetWidth = 5
         targetAngle = 0
         regularFont = None
-        for font in self.fonts.values(): # Scan through all, no particular oder.
-            if font is None: # Take the first to compare with.
+        for font in self.fonts.values(): # Scan through all fonts, no particular order.
+            if regularFont is None: # Take the first to compare with, best guess
                 regularFont = font
                 continue
-            # Find style that has width/weight/angle that is closest to the middle 500 value 
-            # and closest to angle == 0
-            if (abs(targetWeight - font.info.weightClass) < abs(targetWeight - font.info.weightClass) or
-               abs(targetWidth - font.info.widthClass) < abs(targetWidth - font.info.widthClass) or
-               abs(targetAngle - font.info.italicAngle) < abs(targetAngle - font.info.italicAngle)):
+            # Find style that has weight/width/angle that is closer to the target values.
+            if (abs(targetWeight - font.info.weightClass) < abs(targetWeight - regularFont.info.weightClass) or
+               abs(targetWidth - font.info.widthClass) < abs(targetWidth - regularFont.info.widthClass) or
+               abs(targetAngle - font.info.italicAngle) < abs(targetAngle - regularFont.info.italicAngle)):
                regularFont = font
         return regularFont 
             

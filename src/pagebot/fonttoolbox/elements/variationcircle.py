@@ -8,7 +8,11 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#	  variationscatter.py
+#	  variationcircle.py
+#
+#     Draw a variation space default glyph in the middle and spikes around it fir each axis.
+#     The aim is to derive as much information directly from the font, without the need
+#     for additional parameters.
 #
 from __future__ import division
 
@@ -22,19 +26,13 @@ from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
 
 
-class VariationScatter(Element):
+class VariationCircle(Element):
     # Initialize the default behavior tags as different from Element.
 
     def __init__(self, font, s=None, style=None, eId=None, fontSize=72, sizeX=5, sizeY=5, recipeAxes=None, designSpace=None, locations=None, **kwargs):
         self.font = font
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
-        self.sizeX = sizeX
-        self.sizeY = sizeY
-        self.recipeAxes = recipeAxes # Ordered name list of axes to show in legenda. Ignore if None.
-        self.fontSize = fontSize
-        self.designSpace = designSpace or {}
-        self.locations = locations
         # Each element should check at this point if the minimum set of style values
         # are set and if their values are valid.
         assert self.w is not None and self.h is not None # Make sure that these are defined.
@@ -49,20 +47,6 @@ class VariationScatter(Element):
                 if name in location:
                     recipe += '%s %d\n' % (name, location[name])
         return recipe
-
-    def getRandomLocation(self):
-        RANGE = 1000
-        location = {}
-        for axisName in self.font.axes.keys():
-            if axisName in self.designSpace:
-                minValue, maxValue = self.designSpace[axisName]
-            else:
-                minValue = 0
-                maxValue = RANGE
-            value = minValue + random() * (maxValue - minValue)
-            location[axisName] = value
-
-        return location,
 
     def draw(self, page, x, y):
         fillColor = self.style.get('fill')
