@@ -65,6 +65,14 @@ class Font(object):
         return axes
     axes = property(_get_axes)
 
+    def _get_designSpace(self):
+        try: 
+            designSpace = self.ttFont['gvar']
+        except KeyError:
+            designSpace = {}
+        return designSpace
+    designSpace = property(_get_designSpace)
+    
     def _get_kerning(self):
         if self._kerning is None: # Lazy read.
             self._kerning = OTFKernReader(self.path).kerningPairs
