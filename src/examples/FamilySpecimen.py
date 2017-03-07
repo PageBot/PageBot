@@ -63,14 +63,15 @@ class FBFamilySpecimen(TypeSpecimen):
         box = page[self.specimenBoxId][0]
         fontSize = 500
         while not box.getOverflow():
-            sportsHeadline = blurb.getBlurb('news_headline')+'\n'
-            fs = getFormattedString(sportsHeadline, style=dict(font=family['Regular'].installedName, 
-                fontSize=fontSize, textColor=0))
+            sportsHeadline = ' '.join(blurb.getBlurb('news_headline').split(' ')[:choice((2,2,3,3,4))])+'\n'
+            styleKey = choice(('Regular', 'Bold', 'Italic', 'BoldItalic'))
+            fs = getFormattedString(sportsHeadline, style=dict(font=family[styleKey].installedName, 
+                fontSize=fontSize))
             fsWidth = fs.size()[0]
             fittingFontSize = fontSize * box.w / fsWidth
             # Make new formatted string with fitting font size.
-            fs = getFormattedString(sportsHeadline, style=dict(font=family['Regular'].installedName, 
-                fontSize=fittingFontSize, textColor=0))
+            fs = getFormattedString(sportsHeadline, style=dict(font=family[styleKey].installedName, 
+                leading=0, fontSize=fittingFontSize, textColor=0))
             box.append(fs)
             print '###', page, family, sportsHeadline
                 
