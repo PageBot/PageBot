@@ -29,6 +29,9 @@ fontPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
 decovar = Font(fontPath)
 decovarName = decovar.install() # Do DrawBot font install.
 
+#print decovar.designSpace.variations['A']
+print decovar.designSpace
+
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
 
 TERMINALS = ('trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmH', 'trmF', 'trmG', 'trmK', 'trmL',)

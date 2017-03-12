@@ -67,12 +67,20 @@ class Font(object):
 
     def _get_designSpace(self):
         try: 
-            designSpace = self.ttFont['gvar']
+            designSpace = self.ttFont['cvar']
         except KeyError:
             designSpace = {}
         return designSpace
     designSpace = property(_get_designSpace)
-    
+ 
+    def _get_variations(self):
+        try: 
+            variations = self.ttFont['gvar']
+        except KeyError:
+            variations = {}
+        return variations
+    variations = property(_get_variations)
+
     def _get_kerning(self):
         if self._kerning is None: # Lazy read.
             self._kerning = OTFKernReader(self.path).kerningPairs
