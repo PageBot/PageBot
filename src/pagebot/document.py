@@ -162,9 +162,10 @@ class Document(object):
         If pageId already exists, then raise an error."""
         if template is None: # If template undefined, then used document master template.
             template = self.template
+        if template is not None:
             w = w or template.w
             h = h or template.h
-        else:
+        else: # If no template defined, tben use self.w, self.h from rootStyle.
             w = w or self.w
             h = h or self.h
         if pageId is None:

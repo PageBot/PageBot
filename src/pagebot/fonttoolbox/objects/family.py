@@ -35,10 +35,27 @@ def getFamilies(familyPaths):
         if not familyName in families:
             families[familyName] = Family(familyName)
         for styleName, fontPath in fontPaths.items():
-            print '@@@@', styleName, fontPath
             font = Font(fontPath, styleName)
             families[familyName].addFont(font, styleName) # Force style name from dict, instead of font.info.styleName 
     return families
+
+def getFamilyFontPaths(familyName):
+    # Collect the DrawBot names of all available fonts for the named family, that are installed in the system.
+    fonts = {} # Dictionary, where key is the DrawBot font name, value is the OS path of the font file.
+    for fontName in installedFonts(): # Answers complete list of all installed fonts.
+        if familyName in fontName: # If this is a with with the familyName that we are looking for...
+            fonts[fontName] = getFontPathOfFont(fontName) # Store the name and find the font path name.
+    return fonts #  Answer the dictionary. This is empty, if no Bitcount fonts are installed now.
+
+def getFamilyFonts(familyName):
+    # Collect the DrawBot names of all available fonts for the named family, that are installed in the system.
+    fonts = {} # Dictionary, where key is the DrawBot font name, value is the OS path of the font file.
+    for fontName in installedFonts(): # Answers complete list of all installed fonts.
+        if familyName in fontName: # If this is a with with the familyName that we are looking for...
+            fontPath = getFontPathOfFont(fontName)
+            if fontPath is not None:
+                fonts[fontName] = Font(fontPath) # Store the name and find the font path name.
+    return fonts #  Answer the dictionary. This is empty, if no Bitcount fonts are installed now.
 
 def getSystemFontPaths():
     u"""Answer the cleaned list of installed font names."""
