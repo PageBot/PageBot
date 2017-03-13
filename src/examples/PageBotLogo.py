@@ -34,8 +34,12 @@ def makeLogo():
     doc = Document(rs) 
     for frame in range(FRAMES):
         page = doc.newPage()
-        page.rect(int(round(random()*(W-4*LINE))), int(round(random()*(H-4*LINE))))
-
+        x = int(round(random()*(W-4*LINE)))
+        y = int(round(random()*(H-4*LINE)))
+        w = h = 4*LINE
+        page.rect(x, y, w, h, style=dict(strokeWidth=LINE, stroke=0, fill=None))
+    return doc
+    
 d = makeLogo()    
 d.export(EXPORT_PATH) 
 
