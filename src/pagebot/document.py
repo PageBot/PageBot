@@ -224,18 +224,23 @@ class Document(object):
         it must be a list with page numbers to export. This allows the order to be changed and pages to
         be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
         drawing and export that needs to be done.
-        The multiPage value is passed on to the DrawBot saveImage call.  """
+        The multiPage value is passed on to the DrawBot saveImage call.
+
+        document.export(...) is the most common way to export documents. But in special cases, there is not 
+        straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use 
+        MyWriter.export(document), the writer is responsible to query the document, pages, elements and styles."""
         if pageSelection is None:
             pageSelection = range(1, len(self.pages)+1) # [1,2,3,4,...] inclusive
         for pIndex in pageSelection:
             # Get the current Page instance, indicated by the page number.
             page = self.pages[pIndex] # Page numbering stars at #1
-            # Create a new DrawBot viewport page to draw template + page, if not already done.
-            # In case the document is oversized, then make all pages the size of the document, so the
-            # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
-            newPage(self.w, self.h) #  Same size, make page of this size.
-            # Let the page draw itself on the current DrawBot view port.
-            page.draw() 
+            if writer is None: # No writer, use default DrawBot drawing.
+                # Create a new DrawBot viewport page to draw template + page, if not already done.
+                # In case the document is oversized, then make all pages the size of the document, so the
+                # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
+                newPage(self.w, self.h) #  Same size, make page of this size.
+                # Let the page draw itself on the current DrawBot view port if self.writer is None.
+                page.draw() 
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
         # then set the global frame duration.
@@ -246,10 +251,3 @@ class Document(object):
         # http://www.drawbot.com/content/canvas/saveImage.html
         saveImage(fileName, multipage=multiPage)
 
-
-
-class Website(Document):
-    u"""Place holder for future export as website, writing Angular code, PHP, HTML, CSS, etc. perhaps
-    for different systems and flavors. Basically this would be the replacement of Xierpa3 code."""
-    def export(self, path, pageSelection=None):
-        pass

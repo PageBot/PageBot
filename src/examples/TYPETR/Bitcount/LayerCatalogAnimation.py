@@ -7,13 +7,15 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     Catalog3Layer.py
+#     LayerCatalogAnimation.py
 #
 #     The script assumes one or multiple Bitcount fonts to be installed in the system.
 #     Otherwise the script will stop, opening the browser on the TypeNetwork store.
 #     Purchase Bitcount fonts at https://store.typenetwork.com/foundry/typetr/fonts/bitcount
 #     A single user license of Bitcount is $10.10 per font or $101 for the complete package of 300 styles).
-
+#
+#     TODO: Add Variation selection (color selector, checkbox, color wheel)
+#
 import os
 
 import pagebot
@@ -21,7 +23,7 @@ from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot import getFormattedString, textBoxBaseLines
 
 typetrStoreUrl = 'https://store.typenetwork.com/foundry/typetr'
-EXPORT_PATH = '_export/BitcountLayerCatalog.gif'
+EXPORT_PATH = '_export/BitcountLayerCatalogAnimation.gif'
 
 USE_BITPATH = False
 
@@ -44,9 +46,9 @@ frames = 8
 # Define the family name of fonts that we want to use, 
 # including the type of spacing.
 if monoSpaced:
-    familyName = 'BitcountMono'
+    familyName = 'XBitcountMono'
 else:
-    familyName = 'BitcountProp'
+    familyName = 'XBitcountProp'
 # Just get paths of the fonts, not the Font objects. 
 # We want quick interactive response.
 # Call imported method, to find all installed Bitcount fonts.
@@ -113,11 +115,10 @@ def drawLayers(fss):
         for fs in fss:
             text(fs, (M, 8*M))
      
-# If not Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop the script.
+# If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
 if not fontNamePaths:
     os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
 else:
     for frame in range(frames):                
         drawSample()
-
-saveImage(EXPORT_PATH)
+    saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
