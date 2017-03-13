@@ -228,7 +228,7 @@ class Document(object):
 
         document.export(...) is the most common way to export documents. But in special cases, there is not 
         straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use 
-        MyWriter.export(document), the writer is responsible to query the document, pages, elements and styles."""
+        MyBuilder(document).export(fileName), the builder is responsible to query the document, pages, elements and styles."""
         if pageSelection is None:
             pageSelection = range(1, len(self.pages)+1) # [1,2,3,4,...] inclusive
         for pIndex in pageSelection:
