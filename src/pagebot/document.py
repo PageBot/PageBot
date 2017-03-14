@@ -234,13 +234,12 @@ class Document(object):
         for pIndex in pageSelection:
             # Get the current Page instance, indicated by the page number.
             page = self.pages[pIndex] # Page numbering stars at #1
-            if writer is None: # No writer, use default DrawBot drawing.
-                # Create a new DrawBot viewport page to draw template + page, if not already done.
-                # In case the document is oversized, then make all pages the size of the document, so the
-                # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
-                newPage(self.w, self.h) #  Same size, make page of this size.
-                # Let the page draw itself on the current DrawBot view port if self.writer is None.
-                page.draw() 
+            # Create a new DrawBot viewport page to draw template + page, if not already done.
+            # In case the document is oversized, then make all pages the size of the document, so the
+            # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
+            newPage(self.w, self.h) #  Same size, make page of this size.
+            # Let the page draw itself on the current DrawBot view port if self.writer is None.
+            page.draw() 
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
         # then set the global frame duration.
