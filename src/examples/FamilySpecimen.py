@@ -63,7 +63,7 @@ class FBFamilySpecimen(TypeSpecimen):
         box = page[self.specimenBoxId][0]
         fontSize = 500
         while not box.getOverflow():
-            sportsHeadline = blurb.getBlurb('news_headline')+'\n'
+            sportsHeadline = blurb.getBlurb('sports_headline')+'\n'
             fs = getFormattedString(sportsHeadline, style=dict(font=family['Regular'].installedName, 
                 fontSize=fontSize, textColor=0))
             fsWidth = fs.size()[0]

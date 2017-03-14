@@ -22,7 +22,7 @@ import pagebot.fonttoolbox.variationbuilder
 reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import getVariationFont, drawGlyphPath
     
-EXPORT_PATH = '_export/DecovarNameAnimatedAllAxes.gif'
+EXPORT_PATH = '_export/DecovarNameAnimatedAllAxes.pdf'
   
 FONT_DIR = getFontPath()
 FONT_PATH = FONT_DIR + 'fontbureau/Decovar-VF_2017-02-06.ttf'
