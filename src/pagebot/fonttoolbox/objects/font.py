@@ -20,7 +20,7 @@
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
-from drawBot import installFont
+from drawBot import installFont, listOpenTypeFeatures
 
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
@@ -38,13 +38,19 @@ class Font(object):
     # Storage of font information while composing the pages.
     GLYPH_CLASS = Glyph
 
-    def __init__(self, path, name=None):
+    def __init__(self, path, name=None, install=True):
+        u"""Initialize the TTFont, for which Font is a wrapper. Default is to install the font in DrawBot.
+        self.name is supported, in case the caller wants to use a different name than the DrawBot installing name."""
         self.path = path # File path of the font file.
-        self.installedName = None # Set to DrawBot name, when installed.
+        if install:
+            self.install() # Installs the font in DrawBot from self.path and initializes self.installedName.
+        else:
+            self.installedName = None # Set to DrawBot name, when installed later.
         try: 
             self.ttFont = TTFont(path, lazy=True)
             self.info = FontInfo(self.ttFont) # TTFont is available as lazy style.info.font
-            self.name = name # Keep original DrawBot name. Otherwise use from FontInfo
+            # Store optional custom name, otherwise use original DrawBot name. Otherwise use from FontInfo.fullName
+            self.name = name or self.installedName or self.info.fullName
             self.path = path
             self._kerning = None # Lazy reading.
             self._groups = None # Lazy reading.
@@ -65,6 +71,26 @@ class Font(object):
         return axes
     axes = property(_get_axes)
 
+    def _get_designSpace(self):
+        try: 
+            designSpace = self.ttFont['cvar']
+        except KeyError:
+            designSpace = {}
+        return designSpace
+    designSpace = property(_get_designSpace)
+ 
+    def _get_variations(self):
+        try: 
+            variations = self.ttFont['gvar']
+        except KeyError:
+            variations = {}
+        return variations
+    variations = property(_get_variations)
+
+    def _get_features(self):
+        return listOpenTypeFeatures(self.installedName)
+    features = property(_get_features)
+
     def _get_kerning(self):
         if self._kerning is None: # Lazy read.
             self._kerning = OTFKernReader(self.path).kerningPairs
@@ -75,10 +101,16 @@ class Font(object):
         return self._groups
     groups = property(_get_groups)
 
+    def getFeaturedString(self, s, featureSettings):
+        u"""Compile the string s into glyph names, corresponding to the settings in featureSettings."""
+        return s
+        
     def install(self):
+        u"""Install the font in DrawBot, if not already there. Answer the DrawBot name."""
         self.installedName = installFont(self.path)
         return self.installedName
         
     def save(self, path=None):
         u"""Save the font to optional path or to self.path."""
         self.ttFont.save(path or self.path)
+
