@@ -8,15 +8,15 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     simplehtmlcssbuilder.py
+#     tnblogbuilder.py
 #
 from pagebot.builders.basebuilder import BaseBuilder
 
-class SimpleHmtlCssBuilder(BaseBuilder):
+class TNBlogBuilder(BaseBuilder):
     def __init__(self, document, ):
         self._document = document
 
-    def build(self, fileName, format=None, pageSelection=None, multiPage=True, buildHead=True, buildBody=True, buildCss=True):
+    def build(self, fileName, format=None, pageSelection=None, multiPage=True):
         u"""Build simple HTML/CSS site of static code, interpreting the content of self.document."""
         if buildCss:
             self.builsCss()

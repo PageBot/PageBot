@@ -18,7 +18,7 @@
 """
 
 from bisect import bisect, bisect_left, bisect_right
-from unicodeRangesData import unicodeRanges, otScriptTags
+from pagebot.fonttoolbox.unicodes.unicoderangesdata import unicodeRanges, otScriptTags
 
 
 _rangeMinimums = list(rangeMinimum for bit, name, rangeMinimum, rangeMaximum in unicodeRanges)
