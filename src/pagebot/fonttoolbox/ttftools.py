@@ -11,7 +11,7 @@
 #
 import re
 import otlTools
-import unicodeRanges
+from pagebot.fonttoolbox.unicodes import unicoderanges
 
 
 #
@@ -357,17 +357,17 @@ def setUnicodeRanges(font):
     the cmap defines at least one character for.
     """
     cmap = getBestCmap(font)
-    rangeBits = unicodeRanges.getUnicodeRangeBits(cmap.keys())
+    rangeBits = unicoderanges.getUnicodeRangeBits(cmap.keys())
     os2Table = font["OS/2"]
     if False:
-        oldRangeBits = unicodeRanges.unpackRangeBits(os2Table.ulUnicodeRange1, os2Table.ulUnicodeRange2,
+        oldRangeBits = unicoderanges.unpackRangeBits(os2Table.ulUnicodeRange1, os2Table.ulUnicodeRange2,
                                                      os2Table.ulUnicodeRange3, os2Table.ulUnicodeRange4)
         print sorted(oldRangeBits)
         print sorted(rangeBits)
         print "now but not before:", sorted(rangeBits - oldRangeBits)
         print "before but not now:", sorted(oldRangeBits - rangeBits)
     (os2Table.ulUnicodeRange1, os2Table.ulUnicodeRange2,
-     os2Table.ulUnicodeRange3, os2Table.ulUnicodeRange4) = unicodeRanges.packRangeBits(rangeBits)
+     os2Table.ulUnicodeRange3, os2Table.ulUnicodeRange4) = unicoderanges.packRangeBits(rangeBits)
 
 
 #
@@ -507,12 +507,12 @@ class FontSubsetter(TTFTraverser):
 
         cmap = getBestCmap(self.font)
         unicodes = set(cmap)
-        rangeBits = unicodeRanges.getUnicodeRangeBits(unicodes)
+        rangeBits = unicoderanges.getUnicodeRangeBits(unicodes)
 
         scriptsToDelete = set()
         for scriptTag in allScriptTags:
             try:
-                ranges = unicodeRanges.getUnicodeRangesByScriptTag(scriptTag)
+                ranges = unicoderanges.getUnicodeRangesByScriptTag(scriptTag)
             except KeyError:
                 import sys
                 sys.stderr.write("pruneOTScripts: can't find unicode range for %r script\n" % scriptTag)
