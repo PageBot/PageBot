@@ -201,16 +201,32 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
         fontSize=fontSize, textFill=(r, g, b, opacity), openTypeFeatures=features))
     return fontSize, fs
 
-def explain(layers):
-    for layerIndex, layer in sorted(layers.items()):
-        print layer
-        print layer['font'].features
+S_HEADLINES = [
+    u"""## %(familyName)s %(whatIsIt)s in %(layers)d %(color)s layers.""",   
+    u"""## %(layers)d layers make %(color)s %(whatIsIt)s with %(familyName)s.""",   
+]
+S_WHAT_IS_IT = ['design', 'logo', 'symbol', 'name']
 
+def explain(layers):
+    # Try to compose a real readable MD-text, commenting about the current "design".
+    if Gray_Scale:
+        colorLabel = 'gray scale'
+    elif Layers > 2:
+        colorLabel = 'colorful'
+    elif Layers == 1:
+        colorLabel = 'single color'
+    else:
+        colorLabel = 'color'
+    parms = dict(familyName=familyName, layers=len(layers), whatIsIt=choice(S_WHAT_IS_IT),
+        color=colorLabel)
+    print parms
+    print choice(S_HEADLINES) % parms
+    # MORE HERE
                  
 def drawLayers(layers):
     # Draw this layer in a couple of frame
     # Calculate the pixel size. 100 units on 1000 Em. 
-    pixelSize = 
+    #pixelSize = 
     x = M
     y = M
     _, h = layers[0]['text'].size()
@@ -239,7 +255,9 @@ UI = [
     dict(name='Use_BitPath', ui='CheckBox'), # Optional usage mixture with Bitpath if installed.
     dict(name='Random_Features', ui='CheckBox'), # If random features, omit rest of choices
 ]
-print 1111, myglobals.random_Features, Random_Features
+if not hasattr(myglobals, 'randomFeatures'):
+    myglobals.random_Features = Random_Features
+
 if not myglobals.random_Features:
     UI.append(dict(name='Italic_Shapes', ui='CheckBox')) # [ss08]
     UI.append(dict(name='Condensed', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
@@ -267,7 +285,6 @@ else:
 
 Variable(UI, globals())
 
-print 2222, myglobals.random_Features, Random_Features
 # Store Italics flag, so we can test if it changed.
 myglobals.random_Features = Random_Features
     
