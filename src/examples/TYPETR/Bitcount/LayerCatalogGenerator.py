@@ -20,6 +20,7 @@ import os
 import pagebot
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot import getFormattedString, textBoxBaseLines
+from pagebot.fonttoolbox.objects.font import Font
 
 # Optional using Bitpath family, mixed with Bitcount
 Use_BitPath = True
@@ -33,7 +34,7 @@ Background_Color = NSColor.blackColor()
 Italics = False
 Layers = 3
 Color = True
-Layer_Offset_X = -2
+Layer_Offset_X = -1
 Layer_Offset_Y = 2
 
 familyName = 'Bitcount'
@@ -119,8 +120,14 @@ def getColor(index):
     #if g[label] is None:
     #    g[label] = (random(), random(), random())
     return g[label]
-    
+
+def getFont(fontName):
+    u"""Answer the Font instance, so we can get more information about features, etc."""
+    return Font(fontNamePaths[fontName])
+       
 def getFontName(index):
+    u"""Intelligent random select of a font. Lower layers get Bold or Black.
+    Higher layers get lighter weights. Anser the Font instance."""
     if index < Layers/2: # First half of layers, use bold/black/shadow as background.
         fontName = choice(boldPaths.keys())
     else:
@@ -129,14 +136,19 @@ def getFontName(index):
        
 # Define method to show a random sample
 def drawSample():
-    fss = []
+    layers = {}
     fontSize = None # Calculate from first formatted string size.
     for layerIndex in range(Layers):
-        fontName = getFontName(layerIndex)
+        layers[layerIndex] = layer = dict(offsetX=Layer_Offset_X, offsetY=Layer_Offset_Y)
+        layer['fontName'] = fontName = getFontName(layerIndex)
+        layer['font'] = getFont(fontName)
         fontSize, fs = getFittingString(Sample_Text, fontName, layerIndex, fontSize)
-        fss.append(fs)
-    drawLayers(fss, fontSize) # Draw layers on several identical frames
-            
+        layer['fontSize'] = fontSize
+        layer['text'] = fs
+    drawLayers(layers) # Draw layers on several identical frames
+    # Explain from parameters
+    explain(layers)
+          
 def getFittingString(t, fontName, layerIndex, fontSize=None):
     # Make formatted string of large type. 
     # Then see if it fits and calculate the fitting size.
@@ -161,31 +173,39 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
     fs = getFormattedString(t, style=dict(font=fontName, 
         fontSize=fontSize, textFill=(r, g, b, opacity)))
     return fontSize, fs
-               
-def drawLayers(fss, fontSize):
+
+def explain(layers):
+    for layerIndex, layer in sorted(layers.items()):
+        print layer
+        print listOpenTypeFeatures(fontName=layer['fontName'])
+        #oprint layer['font'].features
+                 
+def drawLayers(layers):
     # Draw this layer in a couple of frame
     x = M
     y = M
-    _, h = fss[0].size()
+    _, h = layers[0]['text'].size()
     h += M/2
     newPage(W, h)
     fill(Background_Color)
     rect(0, 0, W, h)
-    for fs in fss:
-        text(fs, (x, y))
-        x += Layer_Offset_X
-        y += Layer_Offset_Y
-        
-# If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
-fontNamePaths = collectFonts(searchName) # Collect available fonts, filter into characteristics, as weight, italic, etc.
-if not fontNamePaths:
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, familyName.lower()))
-else:
-    drawSample()
+    for layerIndex, layer in sorted(layers.items()):
+        text(layer['text'], (x, y))
+        x += layer['offsetX']
+        y += layer['offsetY']
+
+def export():
     # Find non-existing name
     for n in range(10000):
         filePath = EXPORT_PATH % n
         if not os.path.exists(filePath):
             saveImage(filePath) # Save the sample as png.
             break # Make sure to break, or else 10000 copies are created.
-            
+                    
+# If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
+fontNamePaths = collectFonts(searchName) # Collect available fonts, filter into characteristics, as weight, italic, etc.
+if not fontNamePaths:
+    os.system('open %s/fonts/%s' % (typetrStoreUrl, familyName.lower()))
+else:
+    drawSample()
+    export()
