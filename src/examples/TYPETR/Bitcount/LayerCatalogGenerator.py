@@ -26,17 +26,7 @@ from pagebot.fonttoolbox.objects.font import Font
 # if variables are changed.
 import myglobals
 
-if not hasattr(myglobals, 'initialized'):
-    myglobals.initialized = True
-    # Store Italics flag, so we can test if it changed.
-    myglobals.random_Features = False
-
-if not 'Random_Features' in globals():
-    globals()['Random_Features'] = False
-if Random_Features != myglobals.random_Features:
-    myglobals.random_Features = Random_Features
-#print globals()['Random_Features'], myglobals.random_Features
-    
+Random_Features = False
 # Optional using Bitpath family, mixed with Bitcount
 Use_BitPath = False
 # Initial sample text. Can be altered in the text box of the popup window.
@@ -47,7 +37,6 @@ Sample_Text = u'Typetr' # Initial sample string
 monoSpaced = True #random()<0.5
 Background_Color = NSColor.blackColor()
 Italic = False
-print Italic
 Italic_Shapes = False # [ss08]
 Condensed = False # [ss07] Excludes Double if selected
 Smallcaps = False # [smcp]
@@ -220,6 +209,8 @@ def explain(layers):
                  
 def drawLayers(layers):
     # Draw this layer in a couple of frame
+    # Calculate the pixel size. 100 units on 1000 Em. 
+    pixelSize = 
     x = M
     y = M
     _, h = layers[0]['text'].size()
@@ -248,8 +239,8 @@ UI = [
     dict(name='Use_BitPath', ui='CheckBox'), # Optional usage mixture with Bitpath if installed.
     dict(name='Random_Features', ui='CheckBox'), # If random features, omit rest of choices
 ]
-print '===', myglobals.random_Features
-if myglobals.random_Features:
+print 1111, myglobals.random_Features, Random_Features
+if not myglobals.random_Features:
     UI.append(dict(name='Italic_Shapes', ui='CheckBox')) # [ss08]
     UI.append(dict(name='Condensed', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
     UI.append(dict(name='Slashed_Zero', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
@@ -272,11 +263,15 @@ else:
     Extended_Descenders = random() < 0.7 # [ss03]
     Contrast_Pixel = random() < 0.5 # [ss04]
     Alternative_g = random() < 0.3 # [ss09]
-    LC_Figures = random() < 0.3 # [onum]
+    LC_Figures = random() < 0.3 # [onum]      
 
 Variable(UI, globals())
-       
-                      
+
+print 2222, myglobals.random_Features, Random_Features
+# Store Italics flag, so we can test if it changed.
+myglobals.random_Features = Random_Features
+    
+                     
 # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
 fontNamePaths = collectFonts(searchName) # Collect available fonts, filter into characteristics, as weight, italic, etc.
 if not fontNamePaths:
