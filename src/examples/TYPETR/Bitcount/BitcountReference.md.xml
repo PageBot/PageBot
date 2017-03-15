@@ -1,0 +1,370 @@
+<document><h1>Bitcount</h1>
+<h2>Introduction</h2>
+<p>Bitcount is a family of styles, where the core shape of letters has been reduced to the minimal number of pixels possible. We need at least 5 vertical pixels of x-height to draw “a” and “e”. Adding the minumum of 1 pixel as ascender and 1 pixel as descender, the mininum grid is 5 pixels wide and 7 pixel high. Here the <em>Bitcount Single Regular</em> is shown.</p>
+<p><img alt="ref2" src="images/referenceImages_2.png" title="" /></p>
+<p>The large number of styles in the Bitcount family come from the virtually infinite amount of variations that are possible, even with this small amount of 35+ pixels. The styles vary is articulation of accent shapes, one or two pixel stems, roman or slanted, normal or condensed. And all of this with a range of pixels shapes, such as large/small circles and large/small squares. Here showing respectively <em>Bitcount Single Regular Circle</em>, <em>Bitcount Double Regular Circle</em> and <em>Bitcount Single Regular Square</em>.</p>
+<p><img alt="ref3" src="images/referenceImagesX_3.png" title="" /></p>
+<p>In order to find the best selection of styles for a specific task, this “manual” is available, illustrated with a large number of examples. </p>
+<p>And even Python/DrawBot programs are available for users who want to dive into it to that level of detail. E.g. to create similar animations to the ones shown in this manual.</p>
+<h2>Usage</h2>
+<p>There are many ways to use Bitcount. To name a few from practice:</p>
+<ul>
+<li>As decorative type design, e.g. by combining a number of layers, each with their own pixel shape, color and transparancy.</li>
+<li>Layers can be used to simulate 3-D effects – suggesting shadow and globes with highlights – by not centering them on purpose.</li>
+<li>As type design for usage in hardware devices (such as running led-displays) where there is very limited space, or if there is a fixed grid.</li>
+<li>As display type in very small sizes in very low resolution or as hard-core bitmaps fonts, e.g. to build into low-resolution devices, such as displays and printers.</li>
+<li>As template for physical type, e.g. with lego-bricks, flower-pots or lights behind a grid of windows in a building.</li>
+</ul>
+<h3>Decorative designs</h3>
+<p>Since most of the Bitcount letters within the same variant (<em>Grid</em>, <em>Mono</em>, or <em>Prop</em>) have identical spacing, they can be used in overlapping layers to create colorful decorative type. </p>
+<p><img alt="ref3" src="images/referenceImages2.gif" title="" /></p>
+<p>Multiple layers of Bitcount generate an infinite amount of pixels shape combinations. </p>
+<p>The animated examples give fast overview of possible combination, in plain or transparant colors.</p>
+<p>| Description of the animation |<br />
+--- | --- |<br />
+<img alt="ref3" src="animations/AllPixelsOverlay4.gif" title="" /> | All roman pixels shapes super-imposed. There are three basic shapes <em>Circle</em>, <em>Square</em>, and <em>Plus</em>. The <em>Circle</em> and <em>Square</em> shapes have a solid and an outline variant, where the size of the solid shape end in the middle of the outline. All shapes are available in 5 weights <em>Light</em>, <em>Book</em>, <em>Regular</em>, <em>Medium</em> and <em>Bold</em>. The outside of the outline fits exactly on the inside of the outline of the bolder weight.<br />
+<img alt="ref3" src="animations/AllPixelsOverlayItalic3.gif" title="" /> | Since each Bitcount variant has a <em>Roman</em> and <em>Italic</em> (slanted) version, the <em>Square</em> and <em>Plus</em> pixels have a slanted variant too, to avoid “staircase” stems. The <em>Circle</em> shapes are identical to the <em>Roman</em>, unslanted.<br />
+<img alt="ref3" src="animations/SquarePlusOverlay3.gif" title="" /> | This animation shows just <em>Square</em> and <em>Plus</em> pixels in random ordering. The size of the <em>Plus</em> matches the outside of the corresponding weight outline.<br />
+<img alt="ref3" src="animations/CirclePlusOverlay1.gif" title="" /> | This animation shows just <em>Circle</em> and <em>Plus</em> pixels in random ordering.</p>
+<p>For a whole letter this would look like this:</p>
+<p><img alt="ref3" src="animations/AllPixelsOverlayA_4.gif" title="" /> </p>
+<p>Here is an overview of 3 random layers. Each of these combinations can be used as pixel shape for any layer combination of Bitcount letters.</p>
+<p><img alt="ref3" src="images/AllPixelsOverlay18x18.png" title="" /></p>
+<h4>3-D effects</h4>
+<h3>Running LED-displays</h3>
+<p>Example of <em>Bitcount Grid Double</em> with fixed height in 7 pixel grid display and fixed monospaced width of 6 pixels.<br />
+Note the use of <em>Bitcount Grid Double Italic</em> to simulate the slanted delay of electronics in physical LED-displays with running text.</p>
+<p><img alt="ref3" src="images/runningLeds.gif" title="" /></p>
+<p>Example of <em>Bitcount Prop Single</em> with height of 10 pixels, with extended ascenders and descenders (by OpenType Features) and proportional spacing. Also here, <em>Bitcount Prop Single Italic</em> is used to slant the running text.</p>
+<p><img alt="ref3" src="images/runningLedsPropExtended.gif" title="" /></p>
+<h3>Low resolution screens</h3>
+<p>Weight variations can be made by altering the pixel size (or intensity), instead of adding more pixels. Although the 2-pixel contrast stem of the <em>Double</em> variant in this example could be interpreted as bold, it is compensated by using very small or light pixels.</p>
+<p><img alt="tpa7" src="images/tpPixelPython.png" title="" /></p>
+<h3>Templates for physical type</h3>
+<h2>Future: Bitcount Variations</h2>
+<p>In the animated example, three layers of Bitcount variants – <em>MonoSingle-BoldCircle</em> (bottom), <em>MonoSingle-RegularCircle</em> (middle) and <em>MonoSingle-BookCircle</em> (top) are used in different colors to create interesting patterns. </p>
+<p><img alt="animated_a" src="images/animatedA-blackwhite.gif" title="" /><br />
+<img alt="typetr_logo" src="animations/animatedA-redblack2.gif" title="" /></p>
+<p>With the future introduction of Bitcount OpenType 1.8 Variation fonts, it will be possible to animate through the different axes of variations. In this manual more examples will be shown of this process.</p>
+<h2>Overview of typographic values</h2>
+<h3>Spacing</h3>
+<p>There are three spacing variants in the Bitcount family: <em>Grid</em>, <em>Mono</em> and <em>Prop</em>.<br />
+The variants <em>Grid</em> and <em>Mono</em> are “monospaced”, all letters have the same width of 6 pixels. Since letters as “l” and “i” normally need less spacing, the fixed width is bridged by adding serifs where necessary, althought the basics of Bitcount is sans-serif. <br />
+In the <em>Prop</em> variant all letters have their own widths, dependent on the space they need, but all widths are rounded to whole pixels distances. </p>
+<p><img alt="ref3" src="images/referenceImages_5.png" title="" /></p>
+<h3>Tracking</h3>
+<p>The internal measures of the font is defined in a way that it is easy to measure. Each pixel has a distance of 100 units of the total 1000 units of the Em-square.<br />
+This means that the width of a pixel (and thus of the spacing) if 1/10 of the font size. <br />
+This way tracking can be calculated. For each extra pixel to the spacing of letters, Adobe InDesign needs a tracking of 10. </p>
+<p><img alt="ref3" src="images/referenceImages_4.png" title="" /></p>
+<h3>Kerning</h3>
+<p>Since the <em>Grid</em> and <em>Mono</em> are monospaced variants, by definition they cannot have any kerning. All letters in all combinations have a width of 6 pixels.<br />
+That is different in the <em>Prop</em> variant. Letter combination have their own kerning value, to optimize their spacing. In the design of <em>Bitcount Prop</em> all capital-capital combination have two pixels spacing, where capital-lowercase have a spacing of one pixel. This difference is solved by kerning.</p>
+<p><img alt="ref3" src="images/referenceImages_6.png" title="" /></p>
+<p>As with spacing and tracking, all kerning is rounded to whole pixels. In traditional typographic spacing this may not always be exactly right, in the matrix-grid of Bitcount, the designed spacing is the “best possible”, given the limitations of the grid. </p>
+<h3>Ascenders and descenders</h3>
+<h4><em>Grid</em></h4>
+<p>All letters in the <em>Grid</em> variant have a total height of not more than 7 pixels, one pixels for ascenders and one pixel for descenders.<br />
+As it is impossible to express articulation in the shape of accents, they are all reduced to one or two pixels. The size of accented capitals it reduced to 5 pixels to accommodate the accent on top. This makes the capital shape identical to the small-caps.<br />
+Here showing the accent letters “AÁÃaáã” using <em>Grid</em> and <em>Mono</em> on their grids of respectively 7 pixels and 10 pixel high.</p>
+<p><img alt="ref2" src="images/referenceImagesX_106.png" title="" /></p>
+<h4><em>Mono</em> and <em>Prop</em></h4>
+<p>In the Bitcount <em>Mono</em> and <em>Prop</em> variants capital, ascenders and descender heights can be extended using one or all of the stylistic OpenType Features <strong>Extended capital</strong>, <strong>Extended ascender</strong> and <strong>Extended descender</strong>.</p>
+<p><img alt="ref2" src="images/referenceImagesX_107.png" title="" /></p>
+<p>Extending the capitals is made as a separate OT-feature, so the user can choose to make the capitals the same size as the ascenders (7 pixels), or use the set that is one pixels smaller (6 pixels).</p>
+<p><img alt="ref2" src="images/referenceImagesX_108.png" title="" /></p>
+<h3>x-height and cap-height</h3>
+<p>The standard x-height for all Bitcount variants is 5 pixels. </p>
+<p><img alt="ref2" src="images/referenceImagesX_105.png" title="" /></p>
+<p>The smallest proportions can be found in the <em>Grid</em> variant. Lowercase letters are mostly made with a grid of 5 x 5 pixels. In the standard grid of 5 x 7, that leaves room for one pixel ascender and one pixel descender. </p>
+<h3>Leading</h3>
+<h3>Contrast and weight</h3>
+<p>Due to the nature of pixel letter in such low resolution, there is almost no freedom to express constrast in letterforms. The difference between thick and thin areas come from the distance between close horizontal adjacent pixels (darker) and the larger distance between diagonal pixels (lighter). Often this happens in places there the contrast should be the other way around. </p>
+<p>Within the limitations of what is possible:</p>
+<ul>
+<li><em>Single</em> and <em>Double</em> variants</li>
+<li>OT-Feature <strong>Contrast pixel</strong></li>
+<li>Size and shape of pixels.</li>
+</ul>
+<h4><em>Single</em> and <em>Double</em> variants.</h4>
+<p>Bitcount provides two ways of controlling the contrast. The variants <em>Single</em> and <em>Double</em> respectively have letters with one and two pixel stems. Although this difference can be interpreted and used as “Roman” and “Bold”, it is not necessarily the only usage. The <em>Double</em> (with more expression of the tick-thin relation on the right spot).</p>
+<p><img alt="ref3" src="images/referenceImages_9.png" title="" /></p>
+<h4>OT-Feature <strong>Contrast pixel</strong></h4>
+<p>In <em>Single</em> variant there is an OT-Feature available to add a pixel where contrast is needed, especially in the diagonal connections. Of course this feature only works if there enough space, such as “O” and “C”. </p>
+<p><img alt="ref3" src="images/referenceImages_7.png" title="" /></p>
+<p>In the <em>Double</em> variants is the feature selected by default. There the OT-Feature <strong>No contrast pixel</strong> is necessary to turn the contrast pixel off.</p>
+<p><img alt="ref3" src="images/referenceImages_8.png" title="" /></p>
+<p>In the OT_Feature <strong>Condensed</strong> selection, the extra contrast pixel is not available, due to the restriction of space. </p>
+<h4>Size and shape of pixels</h4>
+<p>The base package of Bitcount includes four sizes/weight for each unique pixel shape. There are five sizes of <em>Circles</em> (<em>Light</em>, <em>Book</em>, <em>Regular</em>, <em>Medium</em> and <em>Bold</em>) and there are five corresponding sizes of <em>Square</em> and <em>Plus</em> pixels. The <em>Regular</em> weight is by definintion the size of pixels that exactly fit the grid of 100 units. Future releases of Bitcount packages will include more weights and shapes. </p>
+<p><img alt="ref3" src="images/referenceImagesX_10.png" title="" /></p>
+<p>Due to the difference area coverage of <em>Circles</em> and <em>Squares</em>, their visual weight is not equal. This can also be used by the designer as an expression for typographic weight difference.</p>
+<p><img alt="ref3" src="images/referenceImagesX_11.png" title="" /></p>
+<p>Within the range of similar pixels shapes the weights are relative. For the sake of consistency, the weight name refers to the size of the pixel, not the optical weight. This is best visible in the pixels where the inside is open. <br />
+Here is an example of the <em>Line Circle</em> pixel variant by weight.</p>
+<p><img alt="ref3" src="images/referenceImagesX_104.png" title="" /></p>
+<p>And here is an example of the <em>Line Square</em> pixel variant by weight.</p>
+<p><img alt="ref3" src="images/referenceImagesX_12.png" title="" /></p>
+<p>Completing the types of pixels shapes in the basic package of <em>Bitcount</em>, this is the weight range of the <em>Plus</em> shape. </p>
+<p><img alt="ref3" src="images/referenceImagesX_109.png" title="" /></p>
+<p>The line width and the size of all <em>Plus</em> pixels is adjust to the size of the <em>Line</em> pixels. This gives the option to “cut” a cross from the other pixels, such as <em>Line Circle</em> and <em>Square</em> in multipe layers. <br />
+Visualized in this animations of layers:</p>
+<p><img alt="ref3" src="animations/AllPixelsOverlayA_8.gif" title="" /> </p>
+<h4>Width</h4>
+<p>The <em>Single</em> variants implement an OT-Feature <strong>Condensed</strong> that does display much of the glyph set as condensed. For the monospaced <em>Grid</em> and <em>Mono</em> variants this means that one pixel is added to the right side of each letter, to keep the same monospaced width of 6 pixels. But the optically wider spacing is not a problem, especially when used is small sizes.</p>
+<p><img alt="ref3" src="images/referenceImages_29.png" title="" /></p>
+<p>For the <em>Prop</em> variant it means that the condensed letters are spaced one pixel more narrow than the monospaced.</p>
+<p><img alt="ref3" src="images/referenceImages_30.png" title="" /></p>
+<h4>Italic</h4>
+<p>In Bitcount a separation is made between the italic (slanted) angle of the stems (defined by the selection of the font style), and the italic shapes of letters (by selecting the OpenType Feature). This means that all 4 combination are available to the user.</p>
+<p>| Upright Circle | Slanted Circle (“Italic” style) |<br />
+--- | --- | ---<br />
+Roman | <img alt="ref3" src="images/referenceImages_32.png" title="" /> |  <img alt="ref3" src="images/referenceImages_33.png" title="" /> <br />
+Italic (Feature) | <img alt="ref3" src="images/referenceImages_34.png" title="" /> |  <img alt="ref3" src="images/referenceImages_35.png" title="" /></p>
+<p>An alternative “g” is available as OT-Feature, but due to the complexity of the shape at low resolution, it is not made default for upright-roman (as it could have been in a regular type design).</p>
+<p>| Upright Circle | Slanted Circle (“Italic” style) |<br />
+--- | --- | ---<br />
+Roman | <img alt="ref3" src="images/referenceImages_40.png" title="" /> |  <img alt="ref3" src="images/referenceImages_41.png" title="" /> <br />
+Alternate (Feature) | <img alt="ref3" src="images/referenceImages_42.png" title="" /> |  <img alt="ref3" src="images/referenceImages_43.png" title="" /></p>
+<p>The <em>Circle</em> pixel shapes are not altered when slanted. But the <em>Square</em> pixels (and others with straight sides) are using slanted versions of the pixel shape to make the stems appear to be slanted.</p>
+<p>| Upright Square | Slanted Square (“Italic” style) |<br />
+--- | --- | ---<br />
+Roman | <img alt="ref3" src="images/referenceImages_36.png" title="" /> |  <img alt="ref3" src="images/referenceImages_37.png" title="" /> <br />
+Italic (Feature) | <img alt="ref3" src="images/referenceImages_38.png" title="" /> |  <img alt="ref3" src="images/referenceImages_39.png" title="" /></p>
+<h2>Glyph set</h2>
+<h4>Letters with accents</h4>
+<h4>Small-caps</h4>
+<p>Both OT-Feature <strong>Lowercase to small-caps</strong> and <strong>Captial to small-caps</strong> are implemented for all Bitcount variants.</p>
+<p>Conversion with <strong>Lowercase to small-caps</strong> looks like this for the <em>Mono Single</em> variant:</p>
+<p><img alt="ref3" src="images/referenceImages_27.png" title="" /></p>
+<p>And like this for the <em>Prop Single</em> variant:</p>
+<p><img alt="ref3" src="images/referenceImages_31.png" title="" /></p>
+<p>Conversion with OT-Feature <strong>Capital to small-caps</strong> looks like this:</p>
+<p><img alt="ref3" src="images/referenceImages_28.png" title="" /></p>
+<h4>Figures in <em>Single</em></h4>
+<p>Bitcount implements seven sets of figures for the <em>Single</em> variant and five sets for the <em>Double</em> variant. In the example image they are showing in order of:</p>
+<p><em>Mono Single</em> figures on fixed width of 6 pixels.</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_2.png" title="" /></p>
+<p><em>Mono Single</em> condensed figures on fixed width of 6 pixels (using the OT-Feature <strong>Condensed</strong>).</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_3.png" title="" /></p>
+<p><em>Mono Single</em> figures width extended height on fixed width of 6 pixels (using the OT-Feature <strong>Extended capitals</strong>).</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_4.png" title="" /></p>
+<p><em>Mono Single</em> condensed figures extended height on fixed width of 6 pixels (using the OT-Feature combination <strong>Extended capitals</strong> and <strong>Condensed</strong>).</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_5.png" title="" /></p>
+<p><em>Mono Single</em> lowercase figures on fixed width of 6 pixels (using the OT-Feature <strong>Lowercase figures</strong>).</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_6.png" title="" /></p>
+<p><em>Mono Single</em> lowercase figures on fixed width of 6 pixels (using the OT-Feature combination <strong>Lowercase figures</strong> and <strong>Condensed</strong>).</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_7.png" title="" /></p>
+<p><em>Mono Single</em> small-cap table figures on fixed width of 6 pixels (using the OT-Feature <strong>Lowercase to small-caps</strong>).</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_8.png" title="" /></p>
+<p><em>Mono Single</em> small-cap table figures on fixed width of 6 pixels (using the OT-Feature combination <strong>Lowercase to small-caps</strong> and <strong>Condensed</strong>).</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_9.png" title="" /></p>
+<p><em>Prop Single</em> with OT-Feature <strong>Fraction</strong> enabled on proportional width.<br />
+The use of fractions is limited in this low resolution of 2x4 pixels (where the only possible design option for the zero is two horizontal lines), but for completeness it is good to have the full characters set available in fonts like this. Also the readabiltiy of fractional figures is very much dependent on the context, the shape and size of the pixels. It is up to the designer to decide if usage is appropriate in a given situation.</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_10.png" title="" /></p>
+<p>Both <em>Prop Single</em> and <em>Prop Double</em> include the OT-feature <strong>tnum</strong> (table numbers), which will force the figures (and some related characters like valuta, period, and comma) to a fixed width of 6 pixels.</p>
+<p>OT-features | Default | Table width |<br />
+--- | --- | --- <br />
+Extended capitals | <img alt="ref3" src="images/referenceImagesX_140.png" title="" /> |<img alt="ref3" src="images/referenceImagesX_141.png" title="" /> <br />
+Default | <img alt="ref3" src="images/referenceImagesX_142.png" title="" />|<img alt="ref3" src="images/referenceImagesX_143.png" title="" /><br />
+Lowercase <strong>onum</strong>|<img alt="ref3" src="images/referenceImagesX_144.png" title="" />|<img alt="ref3" src="images/referenceImagesX_145.png" title="" /><br />
+Extended capitals Condensed|<img alt="ref3" src="images/referenceImagesX_146.png" title="" />|<img alt="ref3" src="images/referenceImagesX_147.png" title="" /><br />
+Condensed|<img alt="ref3" src="images/referenceImagesX_148.png" title="" />|<img alt="ref3" src="images/referenceImagesX_149.png" title="" /><br />
+Lowercase Condensed|<img alt="ref3" src="images/referenceImagesX_150.png" title="" />|<img alt="ref3" src="images/referenceImagesX_151.png" title="" /></p>
+<h4>Figures in <em>Double</em></h4>
+<p>As the <em>Double</em> does not have a <em>Condensed</em> OT-feature, there is only four sets of figures. </p>
+<p><em>Mono Double</em> figures on fixed spacing width of 6 pixels.</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_26.png" title="" /></p>
+<p><em>Mono Double</em> figures width extended height on fixed spacing width of 6 pixels (using the OT-Feature <strong>Extended capitals</strong>.</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_27.png" title="" /></p>
+<p><em>Mono Double</em> small-cap table figures on fixed width of 6 pixels (using the OT-Feature <strong>Lowercase to small-caps</strong>).</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_29.png" title="" /></p>
+<p><em>Prop Double</em> with OT-Feature <strong>Fraction</strong> enabled on proportional width.</p>
+<p><img alt="ref3" src="images/referenceImagesFigures_28.png" title="" /></p>
+<p>In all variant styles there are alternate slashed zero’s available as OT-Feature <strong>zero</strong>.</p>
+<p>| Default | OT Feature Zero | OT Feature<br/>Condensed | OT Features<br/>Zero + Condensed<br />
+--- | --- | --- | --- | --- |<br />
+<strong>Default Single</strong> | <img alt="ref3" src="images/referenceImagesFigures_18.png" title="" /> | <img alt="ref3" src="images/referenceImagesFigures_20.png" title="" /> | <img alt="ref3" src="images/referenceImagesFigures_19.png" title="" /> | <img alt="ref3" src="images/referenceImagesFigures_21.png" title="" /><br />
+<strong>Lowercase figures</strong> | <img alt="ref3" src="images/referenceImagesFigures_14.png" title="" /> | <img alt="ref3" src="images/referenceImagesFigures_16.png" title="" /> | <img alt="ref3" src="images/referenceImagesFigures_15.png" title="" /> | <img alt="ref3" src="images/referenceImagesFigures_17.png" title="" /> <br />
+<strong>Lowercase to small-caps</strong> | <img alt="ref3" src="images/referenceImagesFigures_22.png" title="" /> | <img alt="ref3" src="images/referenceImagesFigures_24.png" title="" /> | <img alt="ref3" src="images/referenceImagesFigures_23.png" title="" /> | <img alt="ref3" src="images/referenceImagesFigures_25.png" title="" /> </p>
+<h3>Matrix</h3>
+<p>In case the full set of pixels is need (e.g. as a background layer with LED’s that are on/off, there are several matrices available when the OT feature <strong>Ligaure</strong> is turned on.<br />
+The availability if the matrix depends on the variant. In the illustration respectively are shown /matrix57, /matrix58, /matrix68, /matrix610. Also the TYPETR logo is available /typetr.</p>
+<p><img alt="ref3" src="images/referenceImagesX_152.png" title="" /></p>
+<h2>OpenType Features</h2>
+<p>Not all OpenType Features are available in every Bitcount variant. See the Reference for more details, specific per style.</p>
+<h2>The Making of Bitcount</h2>
+<p>The Bitcount project started in the late 70’s as an experiment to find the minimum amount of pixels necessary to define a full set of ASCII characters. Mainstream as that may seem today, it wasn’t at that time.</p>
+<p><img alt="tpa1" src="images/tpaaa12.svg" title="" /></p>
+<p>In the seventies, ditigal typefaces for printing where hidden deep inside commercial typesetting machines (starting as scanned photo negatives, not even as digital outline information). Or they were stored as bitmap in terminal screens. Resolution and speed were costly resources, so the bitmap was hardcoded into the screen electronics, often just for one size. </p>
+<p>It was the general convention at that time, that for Latin, at least 9 pixels where necessary to make a clear distinction between ascenders (7), capitals (6), lowercase (5), and descenders (2). Furthermore, all letters needed to be monospaced, because there was no way pixels could be stored as in modern graphic screens. The shapes where generated by hardware during the sweep of scan-lines of the television screen. Proportional spacing would have added a lot more costly hardware.</p>
+<p>The design of these pixel grids was exclusively the domain of engineering: Take a matrix and add pixels until it can be recognized as an “n”.<br />
+The problem with this approach is that “contrast” seems like luxury, not worth considering (if such a thing was considered at all). The stems of such an “n” have a width of one pixel, vertical and horizontal equally spaced. But simple mathematics shows that if the horizontal distance between pixels is 1, the diagonal distance between points is 1.41, showing as a lighter area in the letter. The problem is in the resulting contrast in the diagonals. </p>
+<p><img alt="tpa6" src="images/tpnhnh1234.svg" title="" /></p>
+<p>This is not a problem where bows run in to stems, but on the top-right of the “n” it is a problem, because that is traditionally the darkest part of the letter shape.<br />
+The contrast makes the difference between “n” and “h” 3 pixels, instead of the traditional one pixel. This compensates for the relative small ascender length of only one pixel.</p>
+<p><img alt="tpa5" src="images/tpEarlySketches.png" title="" /></p>
+<p>Early sketches of the 5 x 7 pixel grid show that even in a small design space of 35 pixels, the number of different options is enourmous. Note the various alternatives for the “m”, to make it fit in the impossible width of 5 pixels. It is common understanding in design, that what first seems to be an extreme reduction of design options, in reality still needs a design process to find the best choice. Or to create alternative solutions that work just as well or better. </p>
+<p><img alt="tpa8" src="images/tpPlotrEditor.png" title="" /></p>
+<p>This is an example of an editor for type design, developed im 1980, using Ikarus curves on a 6809 microprocessor. The typeface in the UI was Bitcount (then called “VijfZeven” - “FiveSeven”).</p>
+<p><img alt="tpa4" src="images/tpaWeights1.svg" title="" /></p>
+<p>Weight variations can be made by altering the pixel size (or intensity), instead of adding more pixels. Although the 2-pixel contrast stem could be interpreted as bold, it is compensated by using very small or light pixels.</p>
+<p><img alt="tpa7" src="images/tpPixelPython.png" title="" /></p>
+<p>In a modern Python programming editor, the use of variations can look like this. The shape of the pixel is connected to the function of a specific word in the programming language.<br />
+Nowadays the use of small pixel fonts almost disappeared, due to the increase of screen resolution and the availability of anti-aliased type on screen.</p>
+<p>On the other hand, designers may decide to use the vintage character of low resolution type in a decorative way. Bitcount offers many variations in pixels shape for this. By using overlays, interesting new shapes can be created.</p>
+<p><img alt="tpa2" src="images/tpaColors.svg" title="" /></p>
+<p>Stylistic variations can be made by adding layers that are slightly shifted. Due to the construction of the font, it is easy to vary the shape of the pixels within the drawing of the glyphs. @@@@@@@ CHANGE EXAMPLE: ARROW IS NOT PART OF BASIC PACKAGE NOW.</p>
+<p><img alt="tpa3" src="images/tpaComposite.svg" title="" /></p>
+<p>This example is made from 3 layers, each with its own color and pixel shape (<em>Bold Circle</em>, <em>Medium Line Circle</em> and <em>Light Circle</em>).<br />
+Other examples of Bitcount decorated titles can be found here.<br />
+@@@@@@@ CHANGE EXAMPLE: ARROW IS NOT PART OF BASIC PACKAGE NOW.</p>
+<h1>Reference</h1>
+<h2>Spacing variants</h2>
+<p>The Bitcount family consists of 3 types of spacings.</p>
+<p>Name | Width | Height | Spacing | Description<br />
+---  | ---  | --- | --- | ---<br />
+Grid | 5 px | 7 px | Monospaced<br/><img alt="ref3" src="images/referenceImages_15.png" title="" /> | Fixed grid size of 5x7 pixels (including 1 pixel margin, the actual effective size is 6x8). Space for accents if made by lowering the capHeight and xHeight.<br />
+Mono | 5 px | 10 px | Monospaced<br/><img alt="ref3" src="images/referenceImages_16.png" title="" /> | Horizontal spacing identical to the Bitcount-Grid. Accents get the vertical space that they need.<br />
+Prop | Variable | 10 px | Proportional<br/><img alt="ref3" src="images/referenceImages_17.png" title="" /> | Vertical spacing is identical to the Bitcount-Mono. Accents get the vertical space that they need. Horizontal spacing depends on the glyph, but is always measured in increments of 1 full pixel. Poportional fonts have a kerning defined (in multiples of 1 pixel) where necessary for better spacing.</p>
+<p>As the Bitcount is design on an Em-size of 1000 units, the pixels fit in an exact grid of 100 x 100 units. This means that a Bitcount font used at a point size of 100, will have pixels of 10pt diameter.</p>
+<h2>Single pixel and Double pixel</h2>
+<p>As mentioned above, type in only 35 pixels benefits from the usage of contrast, because thick and thin parts of the letter keep their position. <br />
+However, in certain situation is it better to have an option with single pixel strokes, instead of double pixels. For that reason all spacing types (<em>Grid</em>, <em>Mono</em>, or <em>Prop</em>) are made in a <em>Single</em> and <em>Double</em> variant. </p>
+<p>Additionally to this, all fonts come with a <em>Roman</em> (straight stems) and <em>Slanted</em> (pixels positions are slanted by 14/100 angle).</p>
+<p>This makes the full overview of the 12 base fonts as follows:</p>
+<p>Name | Width | Height | Stem | Angle° | Spacing | Description <br />
+---  | ---  | --- | --- | --- | --- | ---<br />
+GridSingle | 5 px | 7 px | 1 px | 0 | Monospaced<br/><img alt="ref3" src="images/referenceImages_15.png" title="" /> | Single pixel stems, allowing a condensed alternative OT-Feature selection.<br />
+GridSingleItalic | 5 px | 7 px | 1 px | 14/100 | Monospaced<br/><img alt="ref3" src="images/referenceImages_21.png" title="" /> | Single pixel stems, allowing a condensed alternative OT-Feature selection.<br />
+GridDouble | 5 px | 7 px | 2 px | 0 | Monospaced<br/><img alt="ref3" src="images/referenceImages_18.png" title="" /> | Double pixel stems where possible.<br />
+GridDoubleItalic | 5 px | 7 px | 2 px | 14/100 | Monospaced<br/><img alt="ref3" src="images/referenceImages_24.png" title="" /> | Double pixel stems where possible.<br />
+MonoSingle | 5 px | 10 px | 1 px | 0 | Monospaced<br/><img alt="ref3" src="images/referenceImages_16.png" title="" /> | Single pixel stems, allowing a condensed alternative OT-Feature selection.<br />
+MonoSingleItalic | 5 px | 10 px | 1 px | 14/100 | Monospaced<br/><img alt="ref3" src="images/referenceImages_22.png" title="" /> | Single pixel stems, allowing a condensed alternative OT-Feature selection.<br />
+MonoDouble | 5 px | 10 px | 2 px | 0 | Monospaced<br/><img alt="ref3" src="images/referenceImages_19.png" title="" /> | Double pixel stems where possible. Vertical space for accents.<br />
+MonoDoubleItalic | 5 px | 10 px | 2 px | 14/100 | Monospaced<br/><img alt="ref3" src="images/referenceImages_25.png" title="" /> | Double pixel stems where possible. Vertical space for accents.<br />
+PropSingle | Variable | 10 px | 1 px | 0 | Proportional<br/><img alt="ref3" src="images/referenceImages_17.png" title="" /> | Single pixel stems, allowing a condensed alternative OT-Feature selection.<br />
+PropSingleItalic | Variable | 10 px | 1 px | 14/100 | Proportional<br/><img alt="ref3" src="images/referenceImages_23.png" title="" /> | Single pixel stems, allowing a condensed alternative OT-Feature selection.<br />
+PropDouble | Variable | 10 px | 2 px | 0 | Proportional<br/><img alt="ref3" src="images/referenceImages_20.png" title="" /> | Double pixel stems where possible. Vertical spacing is identical to the Bitcount-Mono. Horizontal spacing depends on the glyph, but always in increments of 1 pixel. <br />
+PropDoubleItalic | Variable | 10 px | 2 px | 14/100 | Proportional<br/><img alt="ref3" src="images/referenceImages_26.png" title="" /> | Double pixel stems where possible. Vertical spacing is identical to the Bitcount-Mono. Horizontal spacing depends on the glyph, but always in increments of 1 pixel.</p>
+<p>Since all different pixels variations within the same spacing type are spaced in exactly the same measures, they can be place on top of each other in layers (see Examples).</p>
+<h3>Usage</h3>
+<p>Although these 12 basic fonts seem like a lot, selection which one to use is simple, when technical and practical aspects are considered.<br />
+Here is an overview on charactertics of the different paraemters, regarding their usages. It is best not to mix the usage of the <em>Grid</em>, <em>Mono</em> and <em>Prop</em> sets.</p>
+<p>Aspect | Usage<br />
+--- | ---<br />
+Grid | The absolute 5x7 pixel grid, makes this variant candidate for usage on led-displays, where the vertical amount of pixels is limited. With the cost of some accents being reduced to a single pixel, still the full glyph set is availabe in only 35 pixels, including small-caps and condensed on 4x7 pixels. It is up to the designer to decide to what extend the reduction of accent size is still acceptable for the context in which the type is used. Monospaced variants to <em>not</em> have kerning available.<br />
+Mono | This variant can be used if there is vertical no limit (e.g. if the pixels are made from stickers, flower-pots or other elements) and if accents must be best readable. Basically the <em>Mono</em> glyphs are identical to the <em>Grid</em> in appearance and spacing, but the vertical size of accents expand the required matrix to 10 pixels vertical. This expansion also makes extended ascenders and descenders possible as OT-Feature. Monospaced variants to <em>not</em> have kerning available.<br />
+Prop | This spacing variant contains glyphs as wide as they need to be (e.g. “m” and “M”), including their necessary spacing and kerning. The vertical metrics (accents, ascender, and descenders) is identical to the <em>Mono</em> variant.<br />
+Single | Reduction of the total amount of pixels (e.g. when using physical pixels). Used in case the size of the pixels is fixed, which would make the <em>Double</em> seem to be too bold. Used in case there is no problem in readabilty an if ascenders and descenders can be extended as OT-Feature.<br />
+Double | Used if there is a need for better definintion of the original letter shaped regarding contrast. Used if the amount of pixels on the matrix is not relevant (e.g. when pixels are digital and not physical). Used if the size of the pixels is fixed and a bold appearance is required.<br />
+Roman | The default angle of pixel stems is straight up. Since the shape of italic glyphs can be selected as OT-Feature, it is possible to use the <em>Roman</em> variant in combination with upright italic shapes (such as “a” and “f”).<br />
+Italic | All fonts are available as <em>Italic</em> variant, where the pixels stems have an angle of 14/100. The slanted variant can only be used if the position of rows is independent, such as stickers or flower-pots. It cannot be used if there is a fixed matrix, as in e.g. led-displays, because then the angle would need to be 45°, which is too much for an italic slant.<br/>Exception to this is, when a simulation of running led-displays must be made, where the slant is caused by the “slow” electronics in the display. The chosen angle implies that there is an exact match of the position of pixels rows, necesary for slanted pixels shapes to connect in slanted stems. Since the shape if roman/italic glyphs can be selected as OT-Feature, it is possible to use the <em>Italic</em> variant in combination with slanted roman shapes (such as “a” and “f”).</p>
+<h2>Features</h2>
+<p>All of the Bitcount variations contain a large set of OT-Features to select from, including small-caps, old style figures, condensed, fractions, addition contrast-pixel, extended ascenders and extended descenders. The exact features vary between the types of spacing, e.g. there is no condensed option available for the <em>Double</em> variant.</p>
+<p>Feature | Code | Grid Single | Grid Double | Mono Single | Mono Double | Prop Single | Prop Double<br />
+--- |--- |--- |--- |--- |--- |--- |--- |--- |--- |--- |--- | --- |<br />
+    Capital to small-caps | <strong>c2sc</strong> | X | X | X | X | X | X<br />
+Lowercase to small-caps | <strong>smcp</strong> | X | X | X | X | X | X<br />
+Fractions | <strong>frac</strong>                         | - | - | - | - | X | X<br />
+Ligatures | <strong>liga</strong>                         | X | X | X | X | X | X<br />
+Extended ascenders | <strong>ss01</strong>       | - | - | X | X | X | X<br />
+Extended capitals | <strong>ss02</strong>            | - | - | X | X | X | X<br />
+Extended descenders | <strong>ss03</strong>          | - | - | X | X | X | X<br />
+Contrast pixel | <strong>ss04</strong>               | X | - | X | - | X | -<br />
+No-Contrast pixel | <strong>ss05</strong>            | - | X | - | X | - | X<br />
+Force x-height | <strong>ss06</strong>           | X | - | - | - | - | -<br />
+Condensed | <strong>ss07</strong>                         | X | - | X | - | X | -<br />
+Italic shapes | <strong>ss08</strong>               | X | X | X | X | X | X<br />
+Alternative g | <strong>ss09</strong>                | - | - | X | X | X | X<br />
+Number spacing | <strong>onum</strong>                | X | X | X | X | X | X<br />
+Table figures | <strong>tnum</strong>                | - | - | X | - | - | X<br />
+Slash zero | <strong>zero</strong>                        | X | X | X | X | X | X</p>
+<p>Feature | Source | Result | Description<br />
+--- | --- | --- | --- |<br />
+Capital to small-caps |<img alt="ref3" src="images/referenceImagesX_138.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_139.png" title="" /> | Implemented for all variants, there is an uppercase-to-small-cap <strong>c2sc</strong> conversion.<br />
+Lowercase to small caps | <img alt="ref3" src="images/referenceImagesX_136.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_137.png" title="" />  | Implemented for all variants, there is a lowercase-to-small-cap <strong>smcp</strong> conversion. This also converts figures to a special small-cap version of table figures.<br />
+Ligatures | <img alt="ref3" src="images/referenceImagesX_116.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_117.png" title="" /> | Supporting the common “fi” and “fl” ligatures. Note that for monospaced glyphs, this will alter the total width of the text, possibliy causing reflow.<br />
+Fractions |<img alt="ref3" src="images/referenceImagesX_118.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_119.png" title="" /> | The Bitcount variants include a set of superior and inferior figures on a 2x4 pixel grid. It is up the judgement of the user if the readability of these figures is good enough for usage. This feature allows the creation of fractions based on e.g. 1/4 patterns. Only available for <em>Prop</em> variants.<br />
+Extended ascenders | <img alt="ref3" src="images/referenceImagesX_110.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_111.png" title="" /> | The <strong>ss01</strong> feataure implements extended ascenders to 2 pixels. This also includes letters with an ascender alignment, such as brackets, ampersand, table figures.<br />
+Extended captials |<img alt="ref3" src="images/referenceImagesX_114.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_115.png" title="" /> | The <strong>ss02</strong> feature implements extended capitals to 7 pixels height, instead of the default 6 pixels. This way some capital glyphs get more vertical symmetric, such as B, E and H. This goes best in combination with the <strong>ss01</strong> extended ascender feature.<br />
+Extended descenders | <img alt="ref3" src="images/referenceImagesX_112.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_113.png" title="" /> | The <strong>ss03</strong> feature implements extended descenders to 2 pixels.<br />
+Contrast pixel |<img alt="ref3" src="images/referenceImagesX_120.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_121.png" title="" /> | Add a contrast pixel to certain letters of <em>Single</em>, matching the position of thick areas in “normal” letters | <br />
+No contrast pixel | <img alt="ref3" src="images/referenceImagesX_122.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_123.png" title="" /> | Omit the contrast pixel of certain letters of <em>Double</em>, “un-matching” the position of thick areas in “normal” letters | <br />
+Force x-height | <img alt="ref3" src="images/referenceImagesX_124.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_125.png" title="" /> | Force x-height of certain letters in <em>Grid Single</em> by gluing the dot to the stem. | <br />
+Condensed |<img alt="ref3" src="images/referenceImagesX_126.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_127.png" title="" /> | Where possible, <em>Single</em> letters of 5 pixels width are condensed to 4 pixels width. With <em>Grid</em> and <em>Mono</em> an extra pixel of space is added to the right margin. With <em>Prop</em> the <strong>Condensed</strong> letters are one pixel less width.<br />
+Italic | <img alt="ref3" src="images/referenceImagesX_128.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_129.png" title="" /> | Some <em>Roman</em> letters are replaced by their italic shape | <br />
+Alternative g |<img alt="ref3" src="images/referenceImagesX_130.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_131.png" title="" />| The default “g” shape is replaced by the more classic shape. This is non-default for <em>Roman</em> because of the more complex shape and it adds pixels to the descender | <br />
+Lowercase figures | <img alt="ref3" src="images/referenceImagesX_132.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_133.png" title="" /> | Table figures and old style (hanging) figures are available for all variants.<br />
+Number spacing | <img alt="ref3" src="images/referenceImagesX_140.png" title="" /> |<img alt="ref3" src="images/referenceImagesX_141.png" title="" /> | The <em>Prop</em> styles offer a real visual difference between proportional spacing and fixed width on 6 pixels.<br />
+Slash zero |<img alt="ref3" src="images/referenceImagesX_134.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_135.png" title="" /> | There is a slashed zero alternative for most figure sets (if there is enough space inside the zero) in all Bitcount variants.</p>
+<p>The availability of each feature per Bitcount variant can be seen from the the OSX-feature selection menus.<br />
+All feature options are for Roman and Italic variants the same.</p>
+<p>Bitcount Grid Single Roman + Italic | Bitcount Grid Double Roman + Italic |<br />
+--- | --- |<br />
+<img alt="features2" src="images/FeaturesGridSingle.png" title="" /> | <br/><img alt="features1" src="images/FeaturesGridDouble.png" title="" /></p>
+<p>Bitcount Mono Single Roman+Italic | Bitcount Mono Double Roman+Italic |<br />
+--- | --- |<br />
+<img alt="features4" src="images/FeaturesMonoSingle.png" title="" /> | <img alt="features3" src="images/FeaturesMonoDouble.png" title="" /></p>
+<p>Bitcount Prop Single Roman+Italic | Bitcount Prop Double Roman+Italic<br />
+--- | --- |<br />
+<img alt="features6" src="images/FeaturesPropSingle.png" title="" /> | <img alt="features5" src="images/FeaturesPropDouble.png" title="" /></p>
+<h2>Pixel shapes</h2>
+<p>Although the full Bitcount family will be available as OpenType Variation fonts, this new technology is not yet available in current browsers and applications. For the time being, a selection of pixels shapes is saved as “frozen instances”, still creating practically unlimited design spaces of possible combinations.</p>
+<p>The base package of Bitcount styles implement a number of basic shapes: <em>Circle</em>, <em>Square</em> and <em>Plus</em>, all in weights <em>Light</em>, <em>Book</em>, <em>Regular</em>, <em>Medium</em> and <em>Bold</em>, defined by the size of the pixel. The <em>Book</em> pixels don't touch each other, the <em>Regular</em> pixels fill exactly the matrix of 100 Em units. The <em>Medium</em> is larger, with overlapping outlines and the <em>Bold</em> pixels overlap a considerable amount. Future packages of Bitcount will include more weights for these basic shapes.</p>
+<p>All <em>Circle</em> and <em>Square</em> combinations are available in “closed” and <em>Open</em> variant, leaving a white “Plus” in the middle. In layers this space can be filled by a <em>Plus</em> variant.</p>
+<p>All pixel shapes with a straight line as vertical side, have a separate slanted version. <em>Circles</em> are not changed in the slanted variant.</p>
+<p>Note that some bold pixels shapes produce letters that are not really readable. They are intended to be used as layered backgrounds (e.g. as shadow) or in other combinations.</p>
+<h3>Circle</h3>
+<p>Pixel   | Light | Book | Regular | Medium | Bold |<br />
+--- | --- | --- | --- | --- | --- |<br />
+Circle | <img alt="ref3" src="images/referenceImagesX_54.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_56.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_58.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_60.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_62.png" title="" /> | <br />
+Circle Italic | <img alt="ref3" src="images/referenceImagesX_55.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_57.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_59.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_61.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_63.png" title="" /> | <br />
+Line Circle | <img alt="ref3" src="images/referenceImagesX_64.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_66.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_68.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_70.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_72.png" title="" /> | <br />
+Line Circle Italic | <img alt="ref3" src="images/referenceImagesX_65.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_67.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_69.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_69.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_71.png" title="" /> | </p>
+<h3>Square</h3>
+<p>Pixel   | Light | Book | Regular | Medium | Bold |<br />
+--- | --- | --- | --- | --- | --- |<br />
+Square | <img alt="ref3" src="images/referenceImagesX_74.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_76.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_78.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_80.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_82.png" title="" /> | <br />
+Square Italic | <img alt="ref3" src="images/referenceImagesX_75.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_77.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_79.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_81.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_82.png" title="" /> | <br />
+Line Square | <img alt="ref3" src="images/referenceImagesX_84.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_86.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_88.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_90.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_92.png" title="" /> | <br />
+Line Square Italic | <img alt="ref3" src="images/referenceImagesX_85.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_87.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_89.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_91.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_93.png" title="" /> | </p>
+<h3>Plus</h3>
+<p>Pixel   | Light | Book | Regular | Medium | Bold |<br />
+--- | --- | --- | --- | --- | --- |<br />
+Plus | <img alt="ref3" src="images/referenceImagesX_94.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_96.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_98.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_100.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_102.png" title="" /> | <br />
+Plus Italic | <img alt="ref3" src="images/referenceImagesX_95.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_97.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_99.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_101.png" title="" /> | <img alt="ref3" src="images/referenceImagesX_103.png" title="" /> | </p>
+<h1>Future format: Bitcount OpenType Variations</h1>
+<p>The modular architecture of Bitcount, makes it an ideal design for the new OpenType 1.8 Variations standard. Since the glyphs are constructed from references to the shape of a central pixel, the shape of the pixels can vary by interpolation. And with it, the shape of the glyphs.</p>
+<p>The Bitcount Variations pixels come in a number of themes. The first one to be released is the “CircleSquare” set, covering a wide range of circles, square, diamonds, rings, pluses, and their intermediate shapes. </p>
+<p>*If you buy a license to the Bitcount package now, you will get the Bitcount Variations for free, as soon as it is released and applications are capable of using them. </p>
+<p>The design space of Bitcount Variations is defined by a number of interpolating axes:</p>
+<p>Axis     | Name   | Description<br />
+-------- | ----   | -----------<br />
+wght     | Weight | Size of pixels, between 0 and 1.5 grid size.<br />
+line     | Line thickness | If maximal, all of the pixel is filled. If smaller, it defines the thickness of black line, showing a counter shape inside the pixels. <br />
+rndo     | Outside rounding | Rounding outside of the pixels.<br />
+sqro     | Outside squareness | Squaring the outside of the pixels, between diagonal diamond-shape and square.<br />
+cnco     | Outside concave | Direction of squareness/roundings/diamond. If positive this creates “Plus” shapes. If negative this creates squares and circles.<br />
+rndi     | Inside rounding | Rounding inside of the pixels. This is visible if line thickness is not maximal.<br />
+sqri     | Inside squareness | Squaring the inside of pixels, between diagonal diamond-shape and square.<br />
+cnci     | Inside concave | Direction of squareness/roundings/diamond. If positive this creates “Plus” shapes. If negative this creates squares and circles as inside counters.<br />
+open     | Open in 4 quadrants | Of not zero, this axis will open all pixels shapes into 4 quadrants, leaving a white “Plus” in the middle.<br />
+slnt     | Slanted | The slant axes defined the slanting of the pixels, ranging from 0 to 14/100. Note that this makes slanted glyphs (such as “a” and “f”). Italic shapes can be selected from OpenType Features.</p>
+<h3>Other packages</h3>
+<p>Other Bitcount pixels packages than the basic with <em>Circle</em>, <em>Square</em> and <em>Plus</em> will be released soon.</p>
+<h1>Scripting with DrawBot</h1>
+<p>For generating images and animations with <em>Bitcount</em>, the Python scriptnig platform <em>DrawBot</em> (www.drawbot.com) is ideal. As example: all <em>Bitcount</em> illustrations and animations were created by scripts.<br />
+For advanced users, also <em>PageBot</em> is available, as Open Source, which offers InDesign-like scripting of page layouts.</p>
+<p>Stay tuned for example scripts and online courses how to use <em>Bitcount</em> with <em>DrawBot</em>, and <em>PageBot</em>.</p>
+<h2>Examples</h2>
+<h3>Animations</h3>
+<p>Using DrawBot, it is realitvely easy to create animated-gif files, where the frames are calculated from frozen values of Variations axes.</p>
+<p><img alt="tpa7" src="images/animatedTypetrLogo5.gif" title="" /></p>
+<p>In these examples 3 colored layers of different instances run through a random number of axes.<br />
+Example scripts and a sample version of Bitcount-Grid can be found in the PageBot library (soon to be released as OpenSource).</p>
+<p><img alt="tpa7" src="images/animatedTypetrLogo6.gif" title="" /><br />
+<img alt="tpa7" src="images/animatedTypetrLogo7.gif" title="" /></p>
+<h2>Reference</h2>
+<h3>Tools</h3>
+<p><img alt="TextCenter" src="images/TextCenterScreen.png" title="" /></p></document>
