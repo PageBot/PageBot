@@ -361,6 +361,7 @@ class Typesetter(object):
             f.close()
             mdExtensions = [FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
             xml = u'<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
+            xml = xml.replace('&nbsp;', ' ')
             xmlName = fileName + '.xml'
             f = codecs.open(xmlName, mode="w", encoding="utf-8")
             f.write(xml)
