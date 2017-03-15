@@ -33,7 +33,7 @@ Use_BitPath = False
 W = 500 # Width of the sample image. Heights is calculated from string.
  # Height of the sample image
 M = 32 # Margin between text and image side.
-Sample_Text = u'Typetr' # Initial sample string
+Sample_Text = u'TypeLab' # Initial sample string
 monoSpaced = True #random()<0.5
 Background_Color = NSColor.blackColor()
 Italic = False
@@ -50,8 +50,8 @@ LC_Figures = False # [onum]
 Layers = 2 # Popup list index. Default is 3
 Gray_Scale = True
 Slashed_Zero = True # [zero]
-Layer_Offset_X = -1
-Layer_Offset_Y = 2
+Layer_Offset_X = -3
+Layer_Offset_Y = 3
 
 familyName = 'Bitcount'
 if monoSpaced:
@@ -70,7 +70,7 @@ doubleBoldPaths = {}
 typetrStoreUrl = 'https://store.typenetwork.com/foundry/typetr'
 EXPORT_DIR = '_export/BitcountLayerCatalog/'
 EXPORT_IMAGES = EXPORT_DIR + 'images/'
-EXPORT_PATH = EXPORT_IMAGES + '~TestLayerCatalogImage%04d.png'
+EXPORT_PATH = EXPORT_IMAGES + 'TypeLabLogo%04d.pdf'
 
 # Make sure the export directory exists
 if not os.path.exists(EXPORT_IMAGES):
@@ -175,15 +175,17 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
     # Make formatted string of large type. 
     # Then see if it fits and calculate the fitting size.
     # First guess, to see if constructed formatted string fits.
-    initialFontSize = 500         
+    initialFontSize = 500   
+    c1 = (0x30/256.0, 0xf1/256.0, 0xba/256.0)      
+    c2 = (0xff/256.0, 0x00/256.0, 0x99/256.0)      
     if Gray_Scale:
         r = g = b = 0.5 + 0.5*random()
         opacity = 0.7+0.3*random() # Not totally opaque.
     else:
-        r = random()
-        g = random()
-        b = random()
-        opacity = 0.4+0.6*random() # Not totally opaque.
+        c = choice((c1, c2, (0, 0, 0), (1, 1, 1)))
+        r, g, b = c
+        opacity = 1
+        #opacity = 0.4+0.6*random() # Not totally opaque.
     
     features = dict(zero=Slashed_Zero, smcp=Smallcaps, c2sc=Caps_As_Smallcaps, ss08=Italic_Shapes,
         ss07=Condensed, ss01=Extended_Ascenders, ss02=Extended_Capitals, ss03=Extended_Descenders,
