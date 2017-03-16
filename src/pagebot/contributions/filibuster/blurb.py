@@ -2,6 +2,7 @@
 #
 #    blurb.py
 #
+import re
 import blurbwriter
 
 class Blurb(object):
@@ -17,7 +18,9 @@ class Blurb(object):
         #from filibuster import content
         self.writer = blurbwriter.BlurbWriter(content.content())
     
-    def getBlurb(self, type, cnt=None):
+    reNoTags = re.compile('\<[^\>]*|([^\<\>]*)')
+
+    def getBlurb(self, type, cnt=None, noTags=False):
         u"""
         
         The ``getBlurb`` method answers a random generated blurb of ``type``.
@@ -26,7 +29,10 @@ class Blurb(object):
         """
         if cnt is not None:
             return ' '.join(self.writer.write(type).split(' ')[:cnt])
-        return self.writer.write(type)
+        content = self.writer.write(type)
+        if noTags:
+            content = ''.join(self.reNoTags.findall(content))
+        return content
    
     def getBlurbTypes(self):
         u"""
