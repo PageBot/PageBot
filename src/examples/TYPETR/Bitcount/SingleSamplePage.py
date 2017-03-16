@@ -163,7 +163,7 @@ def makeDocument(rs):
     
     fs = getFormattedString('V.T.TeY.Yjy\n', style=dict(font=BOLD, fontSize=32, rTracking=tracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(blurb.getBlurb('sports_headline', noTags=True)+'\n', style=dict(font=BOLD, fontSize=32, rTracking=tracking, openTypeFeatures = features))
+    fs = getFormattedString(blurb.getBlurb('sports_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=32, rTracking=tracking, openTypeFeatures = features))
     e.append(fs)
     fs = getFormattedString(blurb.getBlurb('aerospace_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=16, rTracking=tracking, openTypeFeatures = features))
     e.append(fs)
