@@ -19,6 +19,7 @@ from pagebot.page import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley
+from pagebot.style import A4
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.contributions.filibuster.blurb import blurb
 
@@ -33,7 +34,11 @@ if SHOW_GRID:
     BOX_COLOR = (0.8, 0.8, 0.8, 0.4)
 else:
     BOX_COLOR = None
-    
+
+# Unpack A4 standard A4 size.
+W, H = A4
+H = W # For now.
+   
 # Get the default root style and overwrite values for this document.
 U = 7
 baselineGrid = 2*U
@@ -42,8 +47,8 @@ listIndent = 1.5*U
 RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
-    w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
-    h = 842, # 842 = A4 height. Other example: page height 11", international generic fit.
+    w = W, # Om root level the "w" is the page width 210mm, international generic fit.
+    h = H, # 842 = A4 height. Other example: page height 11", international generic fit.
     ml = 8*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
     g = 2*U, # Generic gutter.
@@ -71,51 +76,7 @@ FS = getFormattedString(FormattedString(''), RS)
 RS['language'] = 'en'
 
 Monospaced = False
-Slashed_Zero = False
-Smallcaps = False
-Caps_As_Smallcaps = False
-Italic_Shapes = False
-Condensed = False
-Extended_Ascenders = False
-Extended_Capitals = False
-Extended_Descenders = True
-Contrast_Pixel = True
-Alternative_g = False
-LC_Figures = True
-
-RS['openTypeFeatures'] = dict(zero=Slashed_Zero, smcp=Smallcaps, c2sc=Caps_As_Smallcaps, ss08=Italic_Shapes,
-        ss07=Condensed, ss01=Extended_Ascenders, ss02=Extended_Capitals, ss03=Extended_Descenders,
-        ss04=Contrast_Pixel, ss09=Alternative_g, onum=LC_Figures)
-
-EXPORT_PATH = '_export/SingleSamplePage.pdf'
-
-# Tracking presets
-H1_TRACK = H2_TRACK = 10 # 1/1000 of fontSize, multiplier factor.
-H3_TRACK = 0 # Tracking as relative factor to font size.
-P_TRACK = 0
-
-familyName = 'Bitcount'
-BitcountPaths = getFamilyFontPaths(familyName) 
-#print BitcountPaths.keys()
-
-if Monospaced:
-    spacing = 'Mono'
-else:
-    spacing = 'Prop'
-
-BOOK = 'Bitcount%sSingle-BookCircle' % spacing
-MEDIUM = 'Bitcount%sSingle-MediumCircle' % spacing
-BOOK_ITALIC = 'Bitcount%sSingle-BookCircle' % spacing
-BOLD = 'Bitcount%sDouble-MediumCircle' % spacing
-BOLD = 'Bitcount%sSingle-MediumCircle' % spacing
-SEMIBOLD = 'Bit%sPropSingle-BoldCircle' % spacing
-
-print BOOK
-
-SEMIBOLD_CONDENSED = BOOK
-
-RS['font'] = BOOK
-
+Tracking = False
 Ligatures = False # [liga]
 Slashed_Zero = True # [zero]
 Italic = False
@@ -130,12 +91,24 @@ Contrast_Pixel = False # [ss04]
 Alternative_g = False # [ss09]
 LC_Figures = False # [onum]
 
+EXPORT_PATH = '_export/SingleSamplePage.pdf'
+
+# Tracking presets
+H1_TRACK = H2_TRACK = 10 # 1/1000 of fontSize, multiplier factor.
+H3_TRACK = 0 # Tracking as relative factor to font size.
+P_TRACK = 0
+
+familyName = 'Bitcount'
+BitcountPaths = getFamilyFontPaths(familyName) 
+#print BitcountPaths.keys()
+
 #-----------------------------------------------------------------         
 def makeDocument(rs):
     u"""Demo Bitcount Reference composer."""
     mainId = 'mainId'
 
     features = dict(
+        kern = True,
         liga = Ligatures,
         zero = Slashed_Zero,
         smcp = Smallcaps,
@@ -149,13 +122,33 @@ def makeDocument(rs):
         ss09 = Alternative_g,
         onum = LC_Figures,
     )
+    if Tracking:
+        tracking = 0.1
+    else:
+        tracking = 0
     
+    if Monospaced:
+        spacing = 'Mono'
+    else:
+        spacing = 'Prop'
+
+    if Italic:
+        italic = 'Italic'
+    else:
+        italic = ''
+    BOOK = 'Bitcount%sSingle-BookCircle%s' % (spacing, italic)
+    MEDIUM = 'Bitcount%sSingle-MediumCircle%s' % (spacing, italic)
+    BOOK_ITALIC = 'Bitcount%sSingle-BookCircle%s' % (spacing, italic)
+    BOLD = 'Bitcount%sDouble-MediumCircle%s' % (spacing, italic)
+    BOLD = 'Bitcount%sSingle-MediumCircle%s' % (spacing, italic)
+    SEMIBOLD = 'Bit%sPropSingle-BoldCircle%s' % (spacing, italic)
+     
     # Template 1
     template1 = Template(rs) # Create template of main size. Front page only.
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 1, 0, 6, 10, rs, eId=mainId)
+    template1.cTextBox(FS, 1, 0, 6, 6, rs, eId=mainId)
     
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -168,9 +161,13 @@ def makeDocument(rs):
     #page[mainId]
     e = page.getElement(mainId)
     
-    fs = getFormattedString(blurb.getBlurb('sports_headline')+'\n', style=dict(font=BOLD, fontSize=32, rTracking=0.1, openTypeFeatures = features))
+    fs = getFormattedString('V.T.TeY.Yjy\n', style=dict(font=BOLD, fontSize=32, rTracking=tracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(blurb.getBlurb('aerospace_headline')+'\n', style=dict(font=BOOK, fontSize=16, rTracking=0.1, openTypeFeatures = features))
+    fs = getFormattedString(blurb.getBlurb('sports_headline', noTags=True)+'\n', style=dict(font=BOLD, fontSize=32, rTracking=tracking, openTypeFeatures = features))
+    e.append(fs)
+    fs = getFormattedString(blurb.getBlurb('aerospace_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=16, rTracking=tracking, openTypeFeatures = features))
+    e.append(fs)
+    fs = getFormattedString(blurb.getBlurb('article_content', noTags=True)+'\n', style=dict(font=BOOK, fontSize=12, rTracking=0.1, openTypeFeatures = features))
     e.append(fs)
 
     return doc
@@ -178,6 +175,7 @@ def makeDocument(rs):
 UI = [
     dict(name='Sample_Text', ui='EditText', args=dict(text=u'Typetr')),
     dict(name='Monospaced', ui='CheckBox'),
+    dict(name='Tracking', ui='CheckBox'),
     dict(name='Italic', ui='CheckBox'),
 ]
 UI.append(dict(name='Italic_Shapes', ui='CheckBox')) # [ss08]
