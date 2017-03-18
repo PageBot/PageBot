@@ -23,13 +23,6 @@ from pagebot.style import A4
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.contributions.filibuster.blurb import blurb
 
-import myglobals
-if not hasattr(myglobals, 'initialized'):
-    myglobals.initialized = True
-    myglobals.head = blurb.getBlurb('sports_headline', noTags=True)+'\n'
-    myglobals.subhead = blurb.getBlurb('aerospace_headline', noTags=True)+'\n'
-    myglobals.body = blurb.getBlurb('article_content', noTags=True)+'\n'
-    
 DEBUG = False
 
 SHOW_GRID = True
@@ -84,9 +77,9 @@ RS['language'] = 'en'
 
 Monospaced = False
 Headline_Tracking = False
-Body_Tracking = True
+Body_Tracking = False
+Single = False
 Ligatures = False # [liga]
-Single = True
 Slashed_Zero = True # [zero]
 Fraction = True # [frac]
 Italic = False
@@ -108,13 +101,15 @@ H1_TRACK = H2_TRACK = 10 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0 # Tracking as relative factor to font size.
 P_TRACK = 0
 
-familyName = 'Bitcount'
+familyName = 'Bitpath'
 BitcountPaths = getFamilyFontPaths(familyName) 
-#print BitcountPaths.keys()
+for k in BitcountPaths.keys():
+    if 'Line' in k:
+        print k
 
 #-----------------------------------------------------------------         
 def makeDocument(rs):
-    u"""Demo Bitcount Reference composer."""
+    u"""Demo Bitpath Reference composer."""
     mainId = 'mainId'
 
     features = dict(
@@ -143,25 +138,29 @@ def makeDocument(rs):
     else:
         bodyTracking = 0
     
+    if Single:
+        singleDouble = 'Single'
+    else:
+        singleDouble = 'Double'
+    
     if Monospaced:
         spacing = 'Mono'
     else:
         spacing = 'Prop'
 
-    if Single:
-        singleDouble = 'Single'
-    else:
-        singleDouble = 'Double'
-
     if Italic:
         italic = 'Italic'
     else:
         italic = ''
-    BOOK = '%s%s%s-BookCircle%s' % (familyName, spacing, singleDouble, italic)
-    MEDIUM = '%s%s%s-MediumCircle%s' % (familyName, spacing, singleDouble, italic)
-    BOOK_ITALIC = '%s%s%s-BookCircle%s' % (familyName, spacing, singleDouble, italic)
-    BOLD = '%s%s%s-MediumCircle%s' % (familyName, spacing, singleDouble, italic)
-    SEMIBOLD = '%s%sProp%s-BoldCircle%s' % (familyName, spacing, singleDouble, italic)
+        
+    spacing = 'Grid'
+    singleDouble = 'Double'
+    
+    BOOK = '%s%s%s-BlackLineRound%s' % (familyName, spacing, singleDouble, italic)
+    MEDIUM = '%s%s%s-RegularLineRound%s' % (familyName, spacing, singleDouble, italic)
+    BOOK_ITALIC = '%s%s%s-RegularLineRound%s' % (familyName, spacing, singleDouble, italic)
+    BOLD = '%s%s%s-RegularLineRound%s' % (familyName, spacing, singleDouble, italic)
+    SEMIBOLD = '%s%s%s-RegularLineRound%s' % (familyName, spacing, singleDouble, italic)
      
     # Template 1
     template1 = Template(rs) # Create template of main size. Front page only.
@@ -183,18 +182,18 @@ def makeDocument(rs):
     
     fs = getFormattedString(Sample_Text + ' V.T.TeY.Yjy\n', style=dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.head, style=dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = getFormattedString(blurb.getBlurb('sports_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.subhead, style=dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = getFormattedString(blurb.getBlurb('aerospace_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.body, style=dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
+    fs = getFormattedString(blurb.getBlurb('article_content', noTags=True)+'\n', style=dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
     e.append(fs)
 
     return doc
 
 UI = [
     dict(name='Sample_Text', ui='EditText', args=dict(text=u'Typetr')),
-    dict(name='Monospaced', ui='CheckBox', args=dict(value=Monospaced)),
+    dict(name='Monospaced', ui='CheckBox'),
     dict(name='HeadlineTracking', ui='CheckBox'),
     dict(name='BodyTracking', ui='CheckBox'),
     dict(name='Italic', ui='CheckBox'),
