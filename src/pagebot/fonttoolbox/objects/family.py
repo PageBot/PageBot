@@ -41,11 +41,11 @@ def getFamilies(familyPaths):
 
 def getFamilyFontPaths(familyName):
     # Collect the DrawBot names of all available fonts for the named family, that are installed in the system.
-    fonts = {} # Dictionary, where key is the DrawBot font name, value is the OS path of the font file.
+    fontPaths = {} # Dictionary, where key is the DrawBot font name, value is the OS path of the font file.
     for fontName in installedFonts(): # Answers complete list of all installed fonts.
         if familyName in fontName: # If this is a with with the familyName that we are looking for...
-            fonts[fontName] = getFontPathOfFont(fontName) # Store the name and find the font path name.
-    return fonts #  Answer the dictionary. This is empty, if no Bitcount fonts are installed now.
+            fontPaths[fontName] = getFontPathOfFont(fontName) # Store the name and find the font path name.
+    return fontPaths #  Answer the dictionary. This is empty, if no Bitcount fonts are installed now.
 
 def getFamilyFonts(familyName):
     # Collect the DrawBot names of all available fonts for the named family, that are installed in the system.
