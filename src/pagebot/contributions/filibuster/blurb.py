@@ -28,8 +28,9 @@ class Blurb(object):
         
         """
         if cnt is not None:
-            return ' '.join(self.writer.write(type).split(' ')[:cnt])
-        content = self.writer.write(type)
+            content = ' '.join(self.writer.write(type).split(' ')[:cnt])
+        else:
+            content = self.writer.write(type)
         if noTags:
             content = ''.join(self.reNoTags.findall(content))
         return content
