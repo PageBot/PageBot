@@ -66,7 +66,7 @@ class Page(Container):
 
     def place(self, e, x, y=None):
         u"""Place the element on position (x, y). Note that the elements do not know that they
-        have a position by themselves. This also allows to place the same element on multiple
+        have a position by themselves. This also allows to placement of a single element on multiple
         position on the same page or multiple pages (as for template elements)."""
         x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         # Store the element by position. There can be multiple elements on the same position.
