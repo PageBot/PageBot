@@ -1,0 +1,41 @@
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     Made for usage in DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     ScalingAnImage.py
+#
+#     How to scale an image (without being an element) in plain DrawBot?
+#
+import os # Import module that communicates with the file system.
+
+# Define the path where to find the example image.
+path = 'images/cookbot1.jpg'
+# Use the standard DrawBot function to get the width/height of the image from the file.
+w, h = imageSize(path)
+
+# Let's say we want to scale it to 50%. The 0.5 is the multiplication factor.
+newScale = 0.5
+# Make a page with the size of the scaled image, rounded to whole pixels.
+newPage(int(w*newScale), int(h*newScale))
+
+# Save the “graphics state“, just in case the script is extended later, where other
+# operation need to work in 100%.
+save()
+scale(newScale) # Make all drawing scale to 50%
+image(path, (0, 0)) # Draw the scaled image at the bottom-left corner. It fills the whole page.
+# Save the page as png file (and also do conversion from jpg to png this way).
+# Save to _export folder, so the file will not upload into git. Otherwise anyone running this
+# script will update the (same) image.
+if not os.path.exists('_export/'):
+    os.makedirs('_export/')
+# Note that resulting images may look sharper, by has 4.5x the size of the .jpg.
+saveImage('_export/cookbot1-50.png') # 944Kb size
+saveImage('_export/cookbot1-50.jpg') # 168Kb size
+saveImage('_export/cookbot1-50.gif') # 346Kb size
+# Restore the graphics state, so DrawBot scaling is back to 100% after this.
+restore()
