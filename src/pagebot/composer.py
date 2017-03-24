@@ -19,11 +19,14 @@ class Composer(object):
     If necessary elements can be split, new elements can be made on the page and element can be
     reshaped byt width and height, if that results in better placements.
     """
-    def __init__(self, document):
+    def __init__(self, document, validators=None):
         u"""Store the document that this Composer will be operating on. The document inclused
-        the pages that already exist, and it defined the baseStyle for all other cascading styles."""
+        the pages that already exist, and it defined the baseStyle for all other cascading styles.
+        The optional list of Validator instances can be used to evalutate the “quality level” of
+        the page, and – if available – offers transformations to improve the outcome of a condition."""
         self.document = document
-
+        self.validators = validators or []
+        
     def compose(self, galley, page, flowId=None):
         u"""Compose the galley element, starting with the flowId text box on page.
         The composer negotiates between what the galley needs a sequential space

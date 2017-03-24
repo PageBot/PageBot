@@ -10,17 +10,6 @@
 #
 #     transformation.py
 #
-#     (For now) experimental approach. 
-#     Transformation instances can be added to elements to define their intentioal
-#     behavior when rendering pages.
-#     The Composer can try to apply transformations to elements in order to improve
-#     the composition of a page, if there are Conditions related to elements that
-#     don't fully meet the requirements.
-#
-class Condition(objectx):
-    def __init__(self):
-        pass
-
 class Transformation(object):
     def __init__(self):
         pass
