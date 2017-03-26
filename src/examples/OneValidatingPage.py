@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     OnePage.py
+#     OneValidatingPage.py
 #
 #     This script generates a fake article on a single page, using Filibuster text,
 #     automatic layout template, Galley, Typesetter and Composer classes.

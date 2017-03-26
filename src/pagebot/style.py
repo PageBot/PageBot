@@ -309,6 +309,11 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # can define what is “next page”, when referred to by a flow.
         firstPageId = 1, # Needs to be a number.
 
+        # Conditions, evaluation, actions
+        # Each style can optionally hold a list of conditions that define the “quality” of an element.
+        # This can reflect on the layout, the relation to other elements and to the way the content is handled.
+        conditions = []
+
         # Element color
         NO_COLOR = NO_COLOR, # Add no-color flag (-1) to make difference with "color" None.
         fill = NO_COLOR, # Default is no color for filling rectangle. Instead textFill color is set default black.
@@ -331,6 +336,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         CENTER = CENTER,
         TOP_ALIGN = TOP_ALIGN,
         BOTTOM_ALIGN = BOTTOM_ALIGN,
+
     )
     # Assume all the other arguments overwriting the default values of the root style,
     for name, value in kwargs.items():

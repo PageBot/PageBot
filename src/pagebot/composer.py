@@ -22,10 +22,9 @@ class Composer(object):
     def __init__(self, document, validators=None):
         u"""Store the document that this Composer will be operating on. The document inclused
         the pages that already exist, and it defined the baseStyle for all other cascading styles.
-        The optional list of Validator instances can be used to evalutate the “quality level” of
-        the page, and – if available – offers transformations to improve the outcome of a condition."""
+        The style of all document pages and elements may contain conditions that define the weigh
+        value for the quality if their status."""
         self.document = document
-        self.validators = validators or []
         
     def compose(self, galley, page, flowId=None):
         u"""Compose the galley element, starting with the flowId text box on page.
@@ -79,3 +78,14 @@ class Composer(object):
             print('Could not find placement for element %s.' % element)
         #else:
         #    print 'TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber
+
+    #    Validation, evaludating conditions.
+    
+    def evaluate(self, root):
+        u"""Evaluate the “quality level” of the root eleement, according to the optiona list of 
+        conditions, as they exist in element styles."""
+        value = 0
+        for e in root.elements:
+            value += self.evaluate(e)
+        retrn value
+
