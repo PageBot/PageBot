@@ -43,9 +43,11 @@ class Composer(object):
             if not element.isText: # This is a non-text element. Try to find placement.
                 self.tryPlacement(page, tb, element)
                 continue
-            if fs is None:
+            if not fs:
                 fs = element.fs
             else:
+                print 'AAAA', fs
+                print 'ZZZZ', element.fs
                 fs += element.fs
             # As long as where is text, try to fit into the boxes on the page.
             # Otherwise go to the next page, following the flow, creating new pages if necessary.
@@ -61,7 +63,7 @@ class Composer(object):
                     # Overflow in this text box, find new from (page, tbFlow)
                     page, tb = page.getNextFlowBox(tb)
                     if tb is None: # In case here is overflow, but no next box defined in the flow.
-                        print 'Overflow in text, but no next flow column defined.', flowId
+                        print 'Overflow in textBox("%s"), but no next flow column defined.' % flowId
                         break
                 else:
                     break
@@ -88,5 +90,5 @@ class Composer(object):
 
     def solve(self, e):
         e.solve()
-        
+
 

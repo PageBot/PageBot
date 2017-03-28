@@ -15,7 +15,7 @@ import weakref
 from drawBot import rect, newPath, moveTo, lineTo, drawPath
 
 from pagebot import setFillColor, setStrokeColor
-from pagebot.toolbox.transformer import point3D, point2DOr3D, uniqueID
+from pagebot.toolbox.transformer import point3D, point2DOr3D, pointOrigin2D, uniqueID
 from pagebot.style import makeStyle
 
 class Element(object):
@@ -31,11 +31,12 @@ class Element(object):
 
     def __init__(self, point=None, parent=None, eId=None, style=None, **kwargs):  
         u"""Basic initialize for every Element contructor."""  
+        self.point = point # Store optional self._point position property (x, y, None) or (x, y, z), local to parent.
+        self._w = self._h = None # Optionally overwritten from values in self.style.
         self.style = makeStyle(style, **kwargs)
         self.eId = eId or uniqueID(self)
         self.parent = parent # Weak ref to parent element.
-        self.point = point # Store optional self._point position property (x, y, None) or (x, y, z), local to parent.
-        self._w = self._h = None # Optionally overwritten from values in self.style.
+        self.report = [] # Area for conditions and drawing methods to report errors and warnings.
 
     def __repr__(self):
         if self.eId:
