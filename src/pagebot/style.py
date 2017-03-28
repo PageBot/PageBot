@@ -312,7 +312,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # Conditions, evaluation, actions
         # Each style can optionally hold a list of conditions that define the “quality” of an element.
         # This can reflect on the layout, the relation to other elements and to the way the content is handled.
-        conditions = []
+        conditions = [],
 
         # Element color
         NO_COLOR = NO_COLOR, # Add no-color flag (-1) to make difference with "color" None.
