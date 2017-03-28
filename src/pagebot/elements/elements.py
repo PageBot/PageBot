@@ -191,6 +191,10 @@ class Element(object):
             lineTo((x, y + h))
             drawPath()
 
+    def getElements(self):
+        u"""Default element does not have children."""
+        return []
+
 class Container(Element):
     u"""A container contains one or more elements that must negotiate for space if size is set fixed."
     The Galley is an example of it."""
@@ -208,13 +212,9 @@ class Container(Element):
     def append(self, element):
         u"""Add element to the list of child elements."""
         self.elements.append(element)
-        # Make element do proportional resize, if one of the sides is larger
-        # than the size of the self element.
-        # If element is larger than the container, then make it fit.
-        element.proportionalResize(self.w, self.h)
 
     def __len__(self):
-        return len(self.elements)
+        return len(self.getElements())
 
     def draw(self, page, x, y):
         u"""Recursively draw all elements in the container on the same (x, y) position.
@@ -223,11 +223,14 @@ class Container(Element):
         draw a “missing” indicator when in designer mode.
         Elements have access to the page, in case they need additional style and metrics info."""
         if self.elements:
-            for element in self.elements:
+            for element in self.getElements():
                 element.draw(page, x, y)
         else:
             # No elements in the container. Draw “missing” indicator, if self.style['showGrid'] is True
             self._drawMissingElementRect(page, x, y, self.w, self.h)
+
+    def getElements(self):
+        return self.elements
 
 class TextBox(Element):
 

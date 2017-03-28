@@ -8,11 +8,5 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     condition.py
+#     __init__.py
 #
-def centeredX(root, e, t=0.1):
-	return 0
-
-class Condition(object):
-    def __init__(self, transformations=None):
-        self.transformations = transformations or []
