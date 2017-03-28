@@ -39,7 +39,7 @@ class Composer(object):
         assert tb is not None # Make sure, otherwise there is a template error.
         fs = None
         # Keeping overflow of text boxes here while iterating.
-        for element in galley.elements:
+        for element in galley.getElements():
             if not element.isText: # This is a non-text element. Try to find placement.
                 self.tryPlacement(page, tb, element)
                 continue
@@ -81,11 +81,12 @@ class Composer(object):
 
     #    Validation, evaludating conditions.
     
-    def evaluate(self, root):
+    def evaluate(self, e):
         u"""Evaluate the “quality level” of the root eleement, according to the optiona list of 
         conditions, as they exist in element styles."""
-        value = 0
-        for e in root.elements:
-            value += self.evaluate(e)
-        retrn value
+        return e.evaluate()
+
+    def solve(self, e):
+        e.solve()
+        
 

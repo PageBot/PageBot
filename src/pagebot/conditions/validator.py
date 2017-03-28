@@ -20,11 +20,3 @@
 class Validator(object):
     def __init__(self, conditions):
         self.conditions = conditions
-
-    def evaluate(self, root, e):
-        u"""Evaluate the content of element e with the total sum of conditions."""
-        validationLevel = 0
-        for condition in self.conditions:
-            validationLevel += e.evaluate(root, condition)
-        return validationLevel
-         

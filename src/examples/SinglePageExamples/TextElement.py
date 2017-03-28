@@ -7,11 +7,10 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     OneValidatingPage.py
+#     TextElement.py
 #
 #     This script generates a fake article on a single page, using Filibuster text,
 #     automatic layout template, Galley, Typesetter and Composer classes.
-#     Its purpose is to show the use of Validator
 #
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString, textBoxBaseLines
@@ -19,16 +18,17 @@ from pagebot import getFormattedString, textBoxBaseLines
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT_ALIGN, A4
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot.document import Document
+from pagebot.elements.document import Document
 # Page and Template instances are holding all elements of a page together.
-from pagebot.page import Page, Template
+from pagebot.elements.page import Page, Template
 # The Typesetter instance takes content from a file (typically MarkDown text) and converts that 
 # into Galley list of elements.
 from pagebot.typesetter import Typesetter
 # The Composer instance distributes the Galley content of the pages, according to the defined Templates.
 from pagebot.composer import Composer
 # Elements that can placed on pages and templates.
-from pagebot.elements import Galley, Rect
+from pagebot.elements.galley import Galley
+from pagebot.elements.rect import Rect
 # Get functions to create instances style from Variation fonts.
 from pagebot.fonttoolbox.variationbuilder import getVariationFont, generateInstance
 
@@ -111,7 +111,7 @@ RS = getRootStyle(
 RS['language'] = 'en' # Make English hyphenation default.
 
 ROOT_PATH = pagebot.getRootPath()
-EXPORT_PATH = '_export/OnePage.pdf' # Export in folder that does not commit un Git. Force to export PDF.
+EXPORT_PATH = '_export/TextElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
 
 MAIN_FLOW = 'main' # Element id of the text box on pages the hold the main text flow.
 
@@ -139,13 +139,13 @@ def makeDocument(rs):
     headlineId = 'headLine'
     
     # Template 2
-    template = Template(rs) # Create second template. This is for the main pages.
+    template = Template(style=rs) # Create second template. This is for the main pages.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True.
     # The grid is just a regular element, like all others on the page. Same parameters apply.
-    template.grid(rs) 
+    template.grid(style=rs) 
     # Show baseline grid if rs.showBaselineGrid is True.
     # The baseline grid is just a regular element, like all others on the page. Same parameters apply.
-    template.baselineGrid(rs)
+    template.baselineGrid(style=rs)
     # Add image containers to the page, that images + captions, within the defined space.
     template.cContainer(4, 0, 2, 3, rs)  # Empty image element, cx, cy, cw, ch
     template.cContainer(0, 5, 2, 3, rs)

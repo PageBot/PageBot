@@ -12,8 +12,9 @@
 #
 from drawBot import cmykStroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, closePath, FormattedString
 
-def drawRegistrationMark(x, y, cmSize, cmStrokeWidth, vertical):
+def drawRegistrationMark(origin, cmSize, cmStrokeWidth, vertical):
     u"""Draw registration mark as position x, y."""
+    x, y = origin
     if vertical:
         dx = cmSize/2
         dy = cmSize
@@ -33,16 +34,18 @@ def drawRegistrationMark(x, y, cmSize, cmStrokeWidth, vertical):
     lineTo((x, y - dy))
     drawPath()
 
-def drawRegistrationMarks(ox, oy, w, h, cmSize, cmStrokeWidth):
+def drawRegistrationMarks(origin, w, h, cmSize, cmStrokeWidth):
     u"""Draw standard registration mark, to show registration of CMYK colors.
     https://en.wikipedia.org/wiki/Printing_registration."""
-    drawRegistrationMark(ox + w/2, oy - cmSize, cmSize, cmStrokeWidth, False) # Bottom registration mark
-    drawRegistrationMark(ox - cmSize, oy + h/2, cmSize, cmStrokeWidth, True) # Left registration mark
-    drawRegistrationMark(ox + w + cmSize, oy + h/2, cmSize, cmStrokeWidth, True) # Right registration mark
-    drawRegistrationMark(ox + w/2, oy + h + cmSize, cmSize, cmStrokeWidth, False) # Top registration mark
+    x, y = origin
+    drawRegistrationMark((x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
+    drawRegistrationMark((x - cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Left registration mark
+    drawRegistrationMark((x + w + cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Right registration mark
+    drawRegistrationMark((x + w/2, y + h + cmSize), cmSize, cmStrokeWidth, False) # Top registration mark
 
-def drawCropMarks(x, y, w, h, bleed, cmSize, cmStrokeWidth, folds=None):
+def drawCropMarks(origin, w, h, bleed, cmSize, cmStrokeWidth, folds=None):
     u"""If the show flag is set, then draw the cropmarks or page frame."""
+    x, y = origin
     fill(None)
     cmykStroke(1,1,1,1)
     strokeWidth(cmStrokeWidth)

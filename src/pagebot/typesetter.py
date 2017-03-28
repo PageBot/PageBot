@@ -23,7 +23,8 @@ from markdown.extensions.footnotes import FootnoteExtension
 from pagebot import getFormattedString, getMarker
 from pagebot.md.literature import LiteratureExtension
 from pagebot.md.footnotes import FootnoteExtension
-from pagebot.elements import Galley, Image
+from pagebot.elements.galley import Galley
+from pagebot.elements.image import Image
 
 class Typesetter(object):
 

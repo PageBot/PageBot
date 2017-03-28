@@ -11,13 +11,16 @@
 #     document.py
 #
 import copy
-from pagebot.page import Page, Template
-from pagebot.style import makeStyle
+
 from drawBot import newPage, saveImage, installedFonts, installFont
-            
+
+from pagebot.style import makeStyle
+from pagebot.toolbox.transformer import pointOrigin2D
+
 class Document(object):
     u"""Container of Page instance, Style instances and Template instances."""
     
+    from pagebot.elements.page import Page, Template
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     TEMPLATE_CLASS = Template # Allow inherited versions of the Template class.
 
@@ -239,7 +242,7 @@ class Document(object):
             # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
             newPage(self.w, self.h) #  Same size, make page of this size.
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
-            page.draw() 
+            page.draw((0, 0)) 
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
         # then set the global frame duration.
