@@ -10,7 +10,7 @@
 #
 #     textbox.py
 #
-from drawBot import textOverflow, hyphenation, textBox, rect
+from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString
 
 from pagebot.style import LEFT_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
 from pagebot.elements.element import Element
@@ -24,7 +24,6 @@ class TextBox(Element):
 
     def __init__(self, fs, point=None, parent=None, eId=None, style=None, **kwargs):
         Element.__init__(self, point=point, parent=parent, eId=eId, style=style, **kwargs)
-        assert self.w is not None and self.h is not None # Make sure that these are defined.
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         if isinstance(fs, str):
@@ -33,6 +32,19 @@ class TextBox(Element):
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isTextBox = True
         self.isFlow = self.eId is not None and self.nextBox is not None and self.nextPage is not None
+        assert self.w is not None and self.h is not None # Make sure that these are defined.
+
+    def _get_h(self):
+        u"""Answer the height of the textBox. If self.style['vacuumH'] is set, then answer the 
+        vertical space that the text needs. This overwrites the setting of self._h."""
+        if self.style.get('vacuumH'):
+            return self.getTextSize()[1]
+        if self._h is None:
+            return self.style.get('h') # Can be None in case the height is undefined. 
+        return self._h
+    def _set_h(self, h):
+        self._h = h # Overwrite style from here, unless self.style['vacuum'] is True
+    h = property(_get_h, _set_h)
 
     def _get_nextBox(self):
         return self.style.get('nextBox')
@@ -78,7 +90,10 @@ class TextBox(Element):
 
     def getOverflow(self, w=None, h=None):
         """Figure out what the overflow of the text is, with the given (w,h) or styled
-        (self.w, self.h) of this text box."""
+        (self.w, self.h) of this text box. If self.style['vacuumH'] is True, then by
+        definintion overflow will allways be empty."""
+        if self.style['vacuumH']:
+            return ''
         return textOverflow(self.fs, (0, 0, w or self.w, h or self.h), LEFT_ALIGN)
 
     def getBaselinePositions(self, y=0, w=None, h=None):

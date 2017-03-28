@@ -174,6 +174,9 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # 11*gutter is one of the best values, as the smallest micro-column is 2 instead  of scaling back to 1.
         cw = 11*gutter,
         ch = u*baselineGrid - u, # Approximately square with cw + gutter.
+        # Flags to indicate that width is the vacuum form around content (text or elements)
+        vacuumW = False, 
+        vacuumH = False, 
         # Minimum size
         minW = 5*gutter, # Default is to make minimum width equal to 1/2 column, om 5+1+5 = 11 grid.
         minH = baselineGrid, # Default is to make minimum height equal to 1 baseline.
@@ -313,6 +316,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         # Each style can optionally hold a list of conditions that define the “quality” of an element.
         # This can reflect on the layout, the relation to other elements and to the way the content is handled.
         conditions = [],
+        # Flag that indicates if errors and warning should be written to the element.report list.
+        verbose = True,
 
         # Element color
         NO_COLOR = NO_COLOR, # Add no-color flag (-1) to make difference with "color" None.

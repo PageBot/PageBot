@@ -23,7 +23,7 @@ from pagebot.elements.document import Document
 from pagebot.elements.galley import Galley
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
-from pagebot.conditions.condition import Condition, CenterX, LeftAligned, RightAligned
+from pagebot.conditions import Condition, CenterX, LeftAligned, RightAligned, CenterY, TopAligned, BottomAligned
 
 class FontSizeWidthRatio(Condition):
     def evaluate(self, e):
@@ -59,8 +59,6 @@ EXPORT_PATH = '_export/ValidatingElements.pdf' # Export in folder that does not 
 
 def makeDocument(rs):
     u"""Demo page composer."""
-
-    mainBoxId = 'mainBoxId'
     
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -69,46 +67,54 @@ def makeDocument(rs):
  
     w = 400
 
-    conditions1 = [
-        CenterX()
+    colorCondition = [
+        #CenterX(),
+        CenterY(),
+        TopAligned(),
         #LeftAligned(), 
         #RightAligned(),
         #FontSizeWidthRatio(verbose=True)
     ]
-    conditions2 = [
-        #CenterX()
-        LeftAligned(), 
+    textCondition = [ # Center text in middle of the page, independent from size.
+        CenterX(),
+        CenterY(),
+        #LeftAligned(), 
         #RightAligned(),
+        #TopAligned(),
         #FontSizeWidthRatio(verbose=True)
     ]
     #point = (0, 0)
     #point = (W/2-w/2, 0)
     #point = (W-w, 0)
-    point = -300, 0
+    point = (0, 0)
     
     # Change template of page 1
-    onePage = doc[1]
+    page = doc[1]
 
-    onePage.rect(point=point, w=w, h=300, conditions=conditions1, 
+    page.rect(point=point, style=rs, w=w, h=300, conditions=colorCondition, 
+        fill=(1, 0.5, 0.5))
+    page.rect(point=point, style=rs, w=w, h=100, conditions=colorCondition+[BottomAligned()], 
         fill=(1, 1, 0))
-    onePage.textBox('', point=point, w=w, h=300, eId=mainBoxId, 
-        conditions=conditions2)
+    eTextBox = page.textBox('', point=point, style=dict(fontSize=20), w=w, h=300, vacuumH=True, 
+        conditions=textCondition)
       
     g = Galley() 
     t = Typesetter(doc, g)                
     blurbNames = (('h3', 'article_ankeiler'), ('h2', 'article_summary'), ('p', 'article'))
+    blurbNames = (('h3', 'article_ankeiler'), ('p', 'article'))
     t.typesetFilibuster(blurbNames)
     
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
-    c.compose(g, onePage, mainBoxId)
-    
-  
-    pageValue = onePage.evaluate()
-    print 'Page value', pageValue
+    c.compose(g, page, eTextBox.eId) # Use the eTextBox as target for the text.
+        
+    pageValue = page.evaluate()
+    print 'Page value on evaluation:', pageValue
+    # Try to solve the problems if evaluation < 0
     if pageValue < 0:
-        onePage.solve()
-    print onePage.evaluate()
+        page.solve()
+    # Evaluate again, result should now be >= 0
+    print 'Page value after solving the problems:', page.evaluate()
     
     return doc
         
