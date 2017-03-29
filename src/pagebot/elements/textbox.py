@@ -32,7 +32,7 @@ class TextBox(Element):
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isTextBox = True
         self.isFlow = self.eId is not None and self.nextBox is not None and self.nextPage is not None
-        assert self.w is not None and self.h is not None # Make sure that these are defined.
+        assert self.w is not None and self.h is not None # Make sure that at least on of these is defined.
 
     def _get_h(self):
         u"""Answer the height of the textBox. If self.style['vacuumH'] is set, then answer the 

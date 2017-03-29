@@ -87,7 +87,7 @@ class Container(Element):
             e.parent.remove(e)
         self._elements.append(e)
         e.parent = self
-        if e.eId: # Store the elenent by unique element id, if it is defined.
+        if e.eId: # Store the element by unique element id, if it is defined.
             self._eIds[e.eId] = e
 
     def remove(self, e):

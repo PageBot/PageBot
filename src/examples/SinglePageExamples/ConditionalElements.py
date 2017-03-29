@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     ValidatingElements.py
+#     ConditionalElements.py
 #
 #     This script generates a fake article on a single page, using Filibuster text,
 #     automatic layout template, Galley, Typesetter and Composer classes.
@@ -17,13 +17,13 @@ import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString, textBoxBaseLines
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN, A4
+from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A1
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
 from pagebot.elements.galley import Galley
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
-from pagebot.conditions import Condition, CenterX, LeftAligned, RightAligned, CenterY, TopAligned, BottomAligned
+from pagebot.conditions import Condition, CenterX, LeftAligned, RightAligned, CenterY, TopAligned, BottomAligned, MaxWidthByFontSize
 
 class FontSizeWidthRatio(Condition):
     def evaluate(self, e):
@@ -41,7 +41,8 @@ class FontSizeWidthRatio(Condition):
 # Python functions. For complex documents this is not the best method. More functions and classes
 # will be used in the real templates, which are available from the OpenSource PageBotTemplates repository.
     
-W, H = A4
+W, H = A4 # or A1
+
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot values are filled by their default values. The root style is kept in RS
 # as reference to for all ininitialzaiton of elements. 
@@ -50,6 +51,8 @@ W, H = A4
 # that is very similar to what happens in CSS.
 
 RS = getRootStyle(
+    w = W,
+    h = H,
     conditions = [],
     fontSize = 10,
     rLeading = 0,
@@ -57,46 +60,52 @@ RS = getRootStyle(
 
 EXPORT_PATH = '_export/ValidatingElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
 
-def makeDocument(rs):
+def makeDocument(rootStyle):
     u"""Demo page composer."""
     
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(rs, pages=1) 
+    doc = Document(rootStyle, pages=1) 
  
     w = 400
 
-    colorCondition = [
-        #CenterX(),
-        CenterY(),
-        TopAligned(),
-        #LeftAligned(), 
-        #RightAligned(),
-        #FontSizeWidthRatio(verbose=True)
-    ]
-    textCondition = [ # Center text in middle of the page, independent from size.
+    colorCondition = [ # Placement condition(s) for the color rectangle elements.
         CenterX(),
-        CenterY(),
         #LeftAligned(), 
         #RightAligned(),
-        #TopAligned(),
+        #CenterY(),
+        TopAligned(),
+        #BottomAligned(),
         #FontSizeWidthRatio(verbose=True)
     ]
-    #point = (0, 0)
-    #point = (W/2-w/2, 0)
-    #point = (W-w, 0)
-    point = (0, 0)
+    textCondition = [ # Placement condition(s) for the text element..
+        MaxWidthByFontSize(ratio=12), # Constrain the width by amount of size/characters == ratio.
+        CenterX(),
+        #LeftAligned(), 
+        #RightAligned(), # Over-ruling the previous horizontal conditions, if enabled.
+        CenterY(),
+        #TopAligned(),
+        #BottomAligned(),
+    ]
+    # Obvious wrong placement of all elements, to be corrected by solving conditions.
+    # In this example the wrongOrigin still shows the elements in the bottom left corner,
+    # so it is obvious where they are, of not corrected.
+    wrongOrigin = (-300, -300)
     
-    # Change template of page 1
-    page = doc[1]
+    page = doc[1] # Get the first/single page of the document.
 
-    page.rect(point=point, style=rs, w=w, h=300, conditions=colorCondition, 
+    # Add some color elements (same width, different height) at the “wrongOrigin” position.
+    # They will be repositioned by solving the colorConditions.
+    page.rect(point=wrongOrigin, style=rootStyle, w=w, h=300, conditions=colorCondition, 
         fill=(1, 0.5, 0.5))
-    page.rect(point=point, style=rs, w=w, h=100, conditions=colorCondition+[BottomAligned()], 
+    page.rect(point=wrongOrigin, style=rootStyle, w=w, h=100, conditions=colorCondition, 
         fill=(1, 1, 0))
-    eTextBox = page.textBox('', point=point, style=dict(fontSize=20), w=w, h=300, vacuumH=True, 
-        conditions=textCondition)
+    # Make text box at wrong origin. Apply same width a the color rect, which may
+    # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
+    # self.w to the maximum width for this pointSize.
+    eTextBox = page.textBox('', point=wrongOrigin, style=dict(font='Verdana', fontSize=20), w=w, 
+        vacuumH=True, conditions=textCondition)
       
     g = Galley() 
     t = Typesetter(doc, g)                

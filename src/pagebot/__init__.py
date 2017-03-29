@@ -166,7 +166,7 @@ def findMarkers(fs, reCompiled=None):
 def getFormattedString(t, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing
     their existence, so they can inherit from previous style formats."""
-    fs = FormattedString('')
+    fs = FormattedString('AAA')
     if style is not None:
         sFont = style.get('font')
         if sFont is not None:

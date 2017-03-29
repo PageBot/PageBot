@@ -18,4 +18,4 @@ class Condition(object):
         self.verbose = verbose
 
     def __repr__(self):
-    	return '<Condition %s>' % self.transformations
+    	return '<Condition %s>' % self.__class__.__name__
