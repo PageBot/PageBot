@@ -15,7 +15,7 @@ from condition import Condition
 class CenterY(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between 0 and self.value, representing the level 
-		of where the elenent is vertical centered on its parent."""
+		of where the element is vertical centered on its parent."""
 		parent = e.parent
 		if parent is not None:
 			if parent.h/2 - (e.h/2 + e.y) <= self.tolerance:
@@ -33,7 +33,7 @@ class CenterY(Condition):
 class TopAligned(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between 0 and self.value, representing the level 
-		of where the elenent is vertical top aligned on its parent."""
+		of where the element is vertical top aligned on its parent."""
 		parent = e.parent
 		if parent is not None:
 			if parent.h - e.h - e.y <= self.tolerance:
@@ -50,7 +50,7 @@ class TopAligned(Condition):
 class BottomAligned(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between 0 and self.value, representing the level 
-		of where the elenent is vertical bottom aligned on its parent."""
+		of where the element is vertical bottom aligned on its parent."""
 		if abs(e.y) <= self.tolerance:
 			return self.value
 		return self.value * self.errorFactor

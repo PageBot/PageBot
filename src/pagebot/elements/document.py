@@ -33,9 +33,9 @@ class Document(object):
         self.title = title or 'Untitled'
         self.fileName = fileName or (self.title + '.pdf')
         self.template = template # Used as default document master template if undefined in pages.
-        self.pages = {} # Key is pageID, often the page number. Value is Page instances.
+        self.pages = {} # Key is pageID, often the unique page number. Value is Page instances.
         self.initializeStyles(rootStyle, styles)
-        # Expand the document to the request anount of pages. Make sure to use the size of the rootStyle,
+        # Expand the document to the requested amount of pages. Make sure to use the size of the rootStyle,
         # not the style of the document, as it may be different.
         pageW = self.rootStyle['w']
         pageH = self.rootStyle['h']
@@ -240,9 +240,10 @@ class Document(object):
             # Create a new DrawBot viewport page to draw template + page, if not already done.
             # In case the document is oversized, then make all pages the size of the document, so the
             # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
-            newPage(self.w, self.h) #  Same size, make page of this size.
+            newPage(self.w, self.h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
-            page.draw((0, 0)) 
+            # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
+            page.draw(((self.w - page.w)/2, (self.h - page.h)/2)) 
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
         # then set the global frame duration.
