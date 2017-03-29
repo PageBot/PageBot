@@ -15,6 +15,7 @@
 #
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString, textBoxBaseLines
+from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A1
@@ -68,7 +69,7 @@ def makeDocument(rootStyle):
     # Initially make all pages default with template
     doc = Document(rootStyle, pages=1) 
  
-    w = 400
+    w = 300
 
     colorCondition = [ # Placement condition(s) for the color rectangle elements.
         CenterX(),
@@ -76,11 +77,11 @@ def makeDocument(rootStyle):
         #RightAligned(),
         #CenterY(),
         TopAligned(),
-        #BottomAligned(),
+        BottomAligned(),
         #FontSizeWidthRatio(verbose=True)
     ]
     textCondition = [ # Placement condition(s) for the text element..
-        MaxWidthByFontSize(ratio=12), # Constrain the width by amount of size/characters == ratio.
+        MaxWidthByFontSize(ratio=32), # Constrain the width by amount of size/characters == ratio.
         CenterX(),
         #LeftAligned(), 
         #RightAligned(), # Over-ruling the previous horizontal conditions, if enabled.
@@ -104,19 +105,11 @@ def makeDocument(rootStyle):
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
-    eTextBox = page.textBox('', point=wrongOrigin, style=dict(font='Verdana', fontSize=20), w=w, 
+    blurbText = getFormattedString(blurb.getBlurb('article', noTags=True), 
+        style=dict(font='Georgia', fontSize=12, rLeading=1.4, textColor=0))
+    eTextBox = page.textBox(blurbText, point=wrongOrigin, style=rootStyle, w=w, 
         vacuumH=True, conditions=textCondition)
-      
-    g = Galley() 
-    t = Typesetter(doc, g)                
-    blurbNames = (('h3', 'article_ankeiler'), ('h2', 'article_summary'), ('p', 'article'))
-    blurbNames = (('h3', 'article_ankeiler'), ('p', 'article'))
-    t.typesetFilibuster(blurbNames)
-    
-    # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
-    c = Composer(doc)
-    c.compose(g, page, eTextBox.eId) # Use the eTextBox as target for the text.
-        
+             
     pageValue = page.evaluate()
     print 'Page value on evaluation:', pageValue
     # Try to solve the problems if evaluation < 0

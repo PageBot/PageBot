@@ -152,8 +152,6 @@ class Page(Container):
     def textBox(self, fs, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
         e = TextBox(fs, point=point, parent=parent, style=style, eId=eId, **kwargs)
-        print 'AAAA', style
-        print 'VVVV', e.style.get('fontSize')
         self.append(e) # Append to drawing sequence and set parent to self.
         return e
 
