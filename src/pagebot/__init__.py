@@ -166,7 +166,7 @@ def findMarkers(fs, reCompiled=None):
 def getFormattedString(t, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing
     their existence, so they can inherit from previous style formats."""
-    fs = FormattedString('AAA')
+    fs = FormattedString('')
     if style is not None:
         sFont = style.get('font')
         if sFont is not None:
@@ -253,8 +253,7 @@ def getFormattedString(t, style=None):
         elif sCapitalized:
             t = t.capitalize()
 
-    fs.append(t)
-    return fs
+    return fs + t
 
 def textBoxBaseLines(txt, box):
     u"""Answer a list of (x,y) positions of all line starts in the box. This function may become part
