@@ -21,7 +21,10 @@ from pagebot.toolbox.transformer import pointOrigin2D
 class Rect(Element):
     def __init__(self, point=None, parent=None, style=None, eId=None, **kwargs):
         Element.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
-        assert self.w is not None and self.h is not None
+        # Initialize the default Element behavior tags.
+        self.isContainer = False
+        self.isText = False
+        self.isFlow = False
 
     def draw(self, origin):
         p = pointOrigin2D(self.point, origin)

@@ -19,7 +19,6 @@
 from __future__ import division
 
 import pagebot
-from pagebot import getFormattedString
 from pagebot.page import Template
 from pagebot.fonttoolbox.objects.font import Font
 

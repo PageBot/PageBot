@@ -30,11 +30,9 @@ class Text(Element):
     # Initialize the default behavior tags as different from Element.
     isText = True  # This element is capable of handling text.
 
-    def __init__(self, fs, point=None, parent=None, eId=None, style=None, **kwargs):
-        Element.__init__(self, point, parent, eId, style, **kwargs)
-        #self.fs = fs # Caller must make sure that this is a rightly formatted string.
-        # @@@ TODO: Style working?
-        self.fs = getFormattedString(fs, self.style)
+    def __init__(self, fs, point=None, parent=None, style=None, eId=None, **kwargs):
+        Element.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
+        self.fs = getFormattedString(fs, self)
 
     def append(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
@@ -66,14 +64,14 @@ class Text(Element):
         elif self.css('align') == RIGHT_ALIGN:
             px -= w/self.scaleX
         if self.css('originTop'):
-            if self.css('valign') == CENTER:
+            if self.css('vAlign') == CENTER:
                 py += h/2/self.scaleY
-            elif self.css('valign') == TOP_ALIGN:
+            elif self.css('vAlign') == TOP_ALIGN:
                 py += h/self.scaleY
         else:
-            if self.css('valign') == CENTER:
+            if self.css('vAlign') == CENTER:
                 py -= h/2/self.scaleY
-            elif self.css('valign') == TOP_ALIGN:
+            elif self.css('vAlign') == TOP_ALIGN:
                 py -= h/self.scaleY
         return px, py
 

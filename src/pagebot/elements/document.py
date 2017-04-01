@@ -37,8 +37,8 @@ class Document(object):
         self.initializeStyles(rootStyle, styles)
         # Expand the document to the requested amount of pages. Make sure to use the size of the rootStyle,
         # not the style of the document, as it may be different.
-        pageW = self.rootStyle['w']
-        pageH = self.rootStyle['h']
+        pageW = self.css('w')
+        pageH = self.css('h')
         self.makePages(minPageId=minPageId, pages=pages, w=pageW, h=pageH, templates=template, **kwargs)
         # Storage for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
@@ -66,13 +66,58 @@ class Document(object):
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
     def css(self, name, default=None):
+        print "#@#@############", name, self.rootStyle.get(name), default
         return self.rootStyle.get(name, default)
 
+    def getNamedStyle(self, styleName):
+        u"""In case we are looking for a named style (e.g. used by the Typesetter to build a stack
+        of cascading tag style, then query the ancestors for the named style. Default behavior
+        of all elements is that they pass the request on to the root, which is nornally the document."""
+        return self.getStyle(styleName)
+
+    def getStyle(self, name):
+        u"""Answer the names style. If that does not exist, answer the default root style."""
+        self.styles.get(name, self.getRootStyle())
+    
+    def getStyles(self):
+        return self.styles
+
+    def getRootStyle(self):
+        u"""Answer the default root style, used by the composer as default for all other stacked styles."""
+        return self.rootStyle
+
+    def setStyles(self, styles):
+        u"""Set the dictionary of styles for the document. This method can be used to swap in/out a complete
+        set of styles while processing specific pages. It is the responsibility of the caller to save the existing
+        style set."""
+        self.styles = styles
+
+    def addStyle(self, name, style):
+        u"""Add the style to the self.styles dictionary."""
+        assert not name in self.styles # Make sure that styles don't get overwritten. Remove them first.
+        self.styles[name] = style
+        # Force the name of the style to synchronize with the requested key.
+        style['name'] = name
+      
+    def replaceStyle(self, name, style):
+        u"""Set the style by name. Overwrite the style with that name if it already exists."""
+        self.styles[name] = style
+        # Force the name of the style to synchronize with the requested key.
+        style['name'] = name
+        return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
+
+    def newStyle(self, **kwargs):
+        u"""Create a new style with the supplied arguments as attributes. Force the style in self.styles,
+        even if already exists. Forst the name of the style to be the same as the style key.
+        Answer the new style."""
+        return self.replaceStyle(kwargs['name'], dict(**kwargs))
+         
     # Set the (w, h) from the rootStyle, if not defined as attributes. We keep the document size
     # separate from the actual page sizes, so the pages can detect if crop-marks should be drawn
     # and where to position them, depending on the page style settings of style['showCropMarks'] and
     # style['showPageFrame']. 
     # For intuitive compatibility doc.docW and doc.w have the same functionality.
+
     def _get_w(self):
         return self.rootStyle['docW'] or self.rootStyle['w']
     def _set_w(self, w):
@@ -85,29 +130,13 @@ class Document(object):
         self.rootStyle['docH'] = h
     h = docH = property(_get_h, _set_h)
 
-    def fromRootStyle(self, **kwargs):
+    def XXXXfromRootStyle(self, **kwargs):
         u"""Answer a new style as copy from the root style. Overwrite the defined arguments."""
         style = copy.copy(self.styles['root'])
         for name, value in kwargs.items():
             setattr(style, name, value)
         return style
         
-    def getStyles(self):
-        return self.styles
- 
-    def getStyle(self, name):
-        u"""Answer the names style. If that does not exist, answer the default root style."""
-        self.styles.get(name) or self.styles['root']
-        
-    def getRootStyle(self):
-        u"""Answer the default root style, used by the composer as default for all other stacked styles."""
-        return self.styles['root']
-              
-    def setStyles(self, styles):
-        u"""Set the dictionary of styles for the document. This method can be used to swap in/out a complete
-        set of styles while processing specific pages. It is the responsibility of the caller to save the existing
-        style set."""
-        self.styles = styles
 
     def getInstalledFonts(self):
         u"""Answer the list of font names, currently installed in the application."""
@@ -165,7 +194,7 @@ class Document(object):
             return self.pages[sorted(self.pages.keys())[-1]]
         return None
 
-    def newPage(self, style=None, w=None, h=None, pageId=None, template=None, **kwargs):
+    def newPage(self, style=None, pageId=None, template=None, w=None, h=None, **kwargs):
         u"""Create a new page with the optional (w,h). Use (self.w, self.h) if one of the values is omitted.
         If pageId is omitted, then use the highest page number in self.pages as previous page.
         If pageId already exists, then raise an error."""
@@ -208,26 +237,6 @@ class Document(object):
             template = self._getDefaultTtemplate()
         return template
 
-    def addStyle(self, name, style):
-        u"""Add the style to the self.styles dictionary."""
-        assert not name in self.styles # Make sure that styles don't get overwritten. Remove them first.
-        self.styles[name] = style
-        # Force the name of the style to synchronize with the requested key.
-        style['name'] = name
-      
-    def replaceStyle(self, name, style):
-        u"""Set the style by name. Overwrite the style with that name if it already exists."""
-        self.styles[name] = style
-        # Force the name of the style to synchronize with the requested key.
-        style['name'] = name
-        return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
-
-    def newStyle(self, **kwargs):
-        u"""Create a new style with the supplied arguments as attributes. Force the style in self.styles,
-        even if already exists. Forst the name of the style to be the same as the style key.
-        Answer the new style."""
-        return self.replaceStyle(kwargs['name'], dict(**kwargs))
-         
     def export(self, fileName, pageSelection=None, multiPage=True):
         u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
         it must be a list with page numbers to export. This allows the order to be changed and pages to

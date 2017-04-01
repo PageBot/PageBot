@@ -31,18 +31,16 @@ class Typesetter(object):
     GALLEY_CLASS = Galley
     IMAGE_CLASS = Image
 
-    def __init__(self, document, galley):
-        # TODO: Maybe Typesetter does not need a document.
-        self.document = document
+    def __init__(self, galley):
         self.galley = galley
-        self.gState = [document.getRootStyle()] # Stack of graphic state as cascading styles.
+        self.gState = [] # Stack of graphic state as cascading styles.
      
     def getTextBox(self, style=None):
         u"""Answer the current text box, if the width fits the current style.
         If style is omitted, then always answer the current latest text box."""
         return self.galley.getTextBox(style)
 
-    def node_h1(self, node):
+    def node_h1(self, node, e):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h2-marker in the string, to be retrieved by the composer.
@@ -92,18 +90,18 @@ class Typesetter(object):
 
     # Solve <br/> best by simple style with: doc.newStyle(name='br', postfix='\n')
 
-    def node_hr(self, node):
+    def node_hr(self, node, e):
         u"""Add Ruler instance to the Galley.
         TODO: Need to find a way to address multiple styles here."""
         cStyle = self.getCascadedNodeStyle(node.tag)
         self.galley.newRuler(cStyle) # Make a new Ruler instance in the Galley
 
-    def node_a(self, node):
+    def node_a(self, node, e):
         u"""Ignore links, but process the block"""
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
        
-    def node_sup(self, node):
+    def node_sup(self, node, e):
         u"""Collect footnote references on their page number.
         And typeset the superior footnote index reference."""
         cStyle = self.getCascadedNodeStyle(node.tag)
@@ -123,7 +121,7 @@ class Typesetter(object):
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
  
-    def node_literatureref(self, node):
+    def node_literatureref(self, node, e):
         u"""Collect literature references."""
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         # Check if this is a literature reference
@@ -144,7 +142,7 @@ class Typesetter(object):
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
          
-    def node_div(self, node):
+    def node_div(self, node, e):
         u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
         as output at the end of the HTML export. We will handle them separately by looking them up 
         in the XML-tree. So we'll skip them in the regular flow process."""
@@ -176,17 +174,17 @@ class Typesetter(object):
 
         return result
 
-    def node_li(self, node):
+    def node_li(self, node, e):
         u"""Generate bullet/Numbered list item."""
         # Make sure this is a cascaded style, expanded from current values in top style in gState.
         cStyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
-        bulletString = getFormattedString(cStyle['listBullet'], cStyle) # Make styled string with bullet.
+        bulletString = getFormattedString(cStyle['listBullet'], e, cStyle) # Make styled string with bullet.
         tb.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, cStyle)
 
-    def node_img(self, node):
+    def node_img(self, node, e):
         u"""Process the image. Find nearby empty space on the page to place it,
         that best fit the w/h ratio of the image and the optional caption.
         A new child Galley is created to hold the combination if there is a caption."""
@@ -275,7 +273,7 @@ class Typesetter(object):
             s = (s or '').rstrip() + postfix # Force s to empty string in case it is None, to add postfix.
         return s
 
-    def typesetNode(self, node, style=None):
+    def typesetNode(self, node, ):
         u"""Recursively typeset the node, using style. Style can be None, in which case we'll try to
         find if there is a style related to node.tag.
         If there is a valid style, make sure it is cascaded and push it on the graphics state.
@@ -295,7 +293,7 @@ class Typesetter(object):
         # Still we want to be able to add the prefix to the node.text, so then the text is changed to empty string.
         nodeText = self._strip(node.text, prefix=style['prefix'])
         if nodeText: # Not None and still has content after stripping?
-            fs = getFormattedString(nodeText, style)
+            fs = getFormattedString(nodeText, e, style)
             tb.append(fs) # Add the new formatted string to the current flow textBox
 
         # Type set all child node in the current node, by recursive call.
@@ -321,7 +319,7 @@ class Typesetter(object):
                 # galley element is still a flow, and if the current width of the textBox is
                 # equal to style['w'] then continue using the same. Otherwise a new textBox
                 # is created by the galley.
-                fs = getFormattedString(childTail, style)
+                fs = getFormattedString(childTail, e, style)
                 tb = self.getTextBox(style)
                 tb.append(fs)  # Add the tail formatted string to the current flow textBox
 
@@ -333,7 +331,7 @@ class Typesetter(object):
         # If there is a postfix for the current state, then add that to the output.
         postfix = self._strip('', postfix=style['postfix'])
         if postfix:
-            fs = getFormattedString(postfix, style)
+            fs = getFormattedString(postfix, e, style)
             tb.append(fs) # Add to the current flow textBox
 
         """
@@ -343,11 +341,11 @@ class Typesetter(object):
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
         nodeTail = self._strip(node.tail, postfix=style['postfix'])
         if nodeTail: # Something of a tail left after stripping?
-            fs = getFormattedString(nodeTail, style)
+            fs = getFormattedString(nodeTail, e, style)
             tb.append(fs) # Add to the current flow textBox
         """
 
-    def typesetFile(self, fileName, rootStyle=None, xPath=None):
+    def typesetFile(self, fileName, e, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
         start at page pageNumber and find the name of the flow in the page template.
         The optional filter can be a list of tag names that need to be included in the 
@@ -376,14 +374,14 @@ class Typesetter(object):
             filteredNodes = root.findall(xPath)
             if filteredNodes:
                 # How to handle if there is multiple result nodes?
-                self.typesetNode(filteredNodes[0], style=rootStyle)
+                self.typesetNode(filteredNodes[0], e)
         else:
             # Collect all flowing text in one formatted string, while simulating the page/flow, because
             # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
             # reference, image index and footnote placement.   
-            self.typesetNode(root, style=rootStyle)
+            self.typesetNode(root, e)
 
-    def typesetFilibuster(self, blurbNames=None, rootStyle=None):
+    def typesetFilibuster(self, e, blurbNames=None):
         u"""The typesetFilibuster answers the parsed typeset nodes from a Filibuster blurb. If the blurb
         instances is not given, then create a default Filibuster article."""
         if blurbNames is None: # Nothing supplied: at least create some standard content as article to parse.
@@ -395,7 +393,7 @@ class Typesetter(object):
             blurbArticle.append('<%s>%s</%s>\n' % (tag, blurb.getBlurb(blurbName), tag))
         xml = u'<document>%s</document>' % '\n'.join(blurbArticle)
         root = fromstring(xml) # Get the root element of the parsed XML tree.
-        self.typesetNode(root, style=rootStyle)
+        self.typesetNode(root, e)
 
 
 

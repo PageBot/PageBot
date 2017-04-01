@@ -15,19 +15,25 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOrigin2D
 
 class Ruler(Element):
-    def __init__(self, point=None, parent=None, eId=None, style=None, **kwargs):
-        Element.__init__(self, point, parent, eId, style, **kwargs)
-        assert self.w is not None and self.h is not None
 
-    def getHeight(self):
-        return self.style.get('strokeWidth') or 0.5 # Force default height.
+    def _get_h(self):
+        return self.css('strokeWidth', 0)
+    def _set_h(self, h):
+        self.style['h'] = self.style['strokeWidth'] = h # Overwrite style from here.
+    h = property(_get_h, _set_h)
 
     def draw(self, origin):
-        ox, oy = pointOrigin2D(self.point, origin)
-        setFillColor(None)
-        #setStrokeColor(self.style.get('stroke', NO_COLOR), self.style('strokeWidth'))
-        sIndent = self.style.get('indent')
-        sTailIndent = self.style.get('tailIndent')
+        p = pointOrigin2D(self.point, origin)
+        p = self._applyOrigin(p)    
+        p = self._applyScale(p)    
+        px, py = self._applyAlignment(p)
+        sIndent = self.css('indent')
+        sTailIndent = self.css('tailIndent')
         w = self.w - sIndent - sTailIndent
-        line((ox + sIndent, oy), (ox + w, oy))
+        
+        setFillColor(None)
+        setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        line((px + sIndent, py), (px + w, py))
+
+        self._restoreScale()
 

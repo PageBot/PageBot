@@ -65,7 +65,6 @@ RS = getRootStyle(
     rTracking = 0,
     fontSize = 9
 )
-FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 
@@ -330,7 +329,7 @@ def makeDocument(rs):
                         # becomes a method of the composer.
                         # TODO: Make this into Galley, in case footnote <p> has child nodes. 
                         footnoteText = getFormattedString('%d\t%s\n' % (footnoteId, doc.footnotes[footnoteId]['p'].text),
-                            style=t.getCascadedStyle(doc.getStyle('footnote')))
+                            page, t.getCascadedStyle(doc.getStyle('footnote')))
                         # Add the footnote content to the box (it may not be the first to be added.
                         fnBox.append(footnoteText)
                 elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all in the TOC
@@ -357,7 +356,6 @@ def makeDocument(rs):
         for pageNumber in item['pageIds']:
             pageNumbers.append(`pageNumber`)
         literatureRefBox.append(u'%s – %s\n' % (refId, ', '.join(pageNumbers)))
-        #fs = getFormattedString('', doc.getStyle('p'))
         
         print refId, item['nodeId'], item['node'], item['p'], item['pageIds']
 

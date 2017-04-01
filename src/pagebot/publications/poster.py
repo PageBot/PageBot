@@ -10,7 +10,7 @@
 #     poster.py
 #
 from pagebot import getFormattedString
-from pagebot.publication import Publication
+from pagebot.publications.publication import Publication
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
 # Document is the main instance holding all information about the document together 

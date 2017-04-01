@@ -22,8 +22,8 @@ class TextBox(Element):
     # Initialize the default behavior tags as different from Element.
     isText = True  # This element is capable of handling text.
 
-    def __init__(self, fs, point=None, parent=None, eId=None, style=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, eId=eId, style=style, **kwargs)
+    def __init__(self, fs, point=None, parent=None, style=None, eId=None, **kwargs):
+        Element.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         if isinstance(fs, str):
@@ -32,7 +32,6 @@ class TextBox(Element):
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isTextBox = True
         self.isFlow = self.eId is not None and self.nextBox is not None and self.nextPage is not None
-        assert self.w is not None and self.h is not None # Make sure that at least on of these is defined.
 
     def _get_h(self):
         u"""Answer the height of the textBox. If self.style['vacuumH'] is set, then answer the 
@@ -92,7 +91,7 @@ class TextBox(Element):
         """Figure out what the overflow of the text is, with the given (w,h) or styled
         (self.w, self.h) of this text box. If self.style['vacuumH'] is True, then by
         definintion overflow will allways be empty."""
-        if self.style['vacuumH']:
+        if self.css('vacuumH'): # In case vacuumH, box will aways fit the content.
             return ''
         return textOverflow(self.fs, (0, 0, w or self.w, h or self.h), LEFT_ALIGN)
 

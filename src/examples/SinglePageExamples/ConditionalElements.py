@@ -105,7 +105,7 @@ def makeDocument(rootStyle):
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
-    blurbText = getFormattedString(blurb.getBlurb('article', noTags=True), 
+    blurbText = getFormattedString(blurb.getBlurb('article', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, rLeading=1.4, textColor=0))
     eTextBox = page.textBox(blurbText, point=wrongOrigin, style=rootStyle, w=w, 
         vacuumH=True, conditions=textCondition)

@@ -78,7 +78,6 @@ RS = getRootStyle(
     rTracking = 0,
     fontSize = 9
 )
-FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 
@@ -181,13 +180,13 @@ def makeDocument(rs):
     #page[mainId]
     e = page.getElement(mainId)
     
-    fs = getFormattedString(Sample_Text + ' V.T.TeY.Yjy\n', style=dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = getFormattedString(Sample_Text + ' V.T.TeY.Yjy\n', e, dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.head, style=dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = getFormattedString(myglobals.head, e, dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.subhead, style=dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = getFormattedString(myglobals.subhead, e, dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.body, style=dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
+    fs = getFormattedString(myglobals.body, e, dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
     e.append(fs)
 
     return doc

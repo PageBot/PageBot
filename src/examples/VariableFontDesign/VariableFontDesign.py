@@ -13,7 +13,7 @@
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
 import pagebot
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import textBoxBaseLines
 
 from pagebot.style import getRootStyle, LEFT_ALIGN
 

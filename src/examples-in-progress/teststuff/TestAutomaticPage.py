@@ -12,8 +12,6 @@
 #     This script generates an article in Dustch the apporach to
 #     generate automatic layouts, using Galley, Typesetter and Composer classes.
 #
-from pagebot import getFormattedString
-
 import pagebot.style
 reload(pagebot.style)
 from pagebot.style import getRootStyle, LEFT_ALIGN

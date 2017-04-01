@@ -1,4 +1,4 @@
-from pagebot import getFormattedString
+
 from pagebot.fonttoolbox.variationbuilder import generateInstance
 
 FONT_PATH = '../fonts/'

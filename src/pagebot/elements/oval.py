@@ -19,9 +19,8 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOrigin2D
 
 class Oval(Element):
-    def __init__(self, point=None, parent=None, eId=None, style=None, **kwargs):
-        Element.__init__(self, point, parent, eId, style, **kwargs)
-        assert self.w is not None or self.h is not None
+    def __init__(self, point=None, parent=None, style=None, eId=None, **kwargs):
+        Element.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
         # Initialize the default Element behavior tags.
         self.isContainer = False
         self.isText = False

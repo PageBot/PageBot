@@ -49,10 +49,23 @@ class Element(object):
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
     def css(self, name, default=None):
+        u"""In case we are looking for a plain css value, cascading from the main ancestor styles
+        of self, then follow the parent links until document or root, if self does not contain
+        the requested value."""
         if name in self.style:
+            print '@ELELMENT', name, self.style
             return self.style[name]
         if self.parent:
+            print '$$$$PARENT', name
             return self.parent.css(name, default)
+        return None
+
+    def getNamedStyle(self, styleName):
+        u"""In case we are looking for a named style (e.g. used by the Typesetter to build a stack
+        of cascading tag style, then query the ancestors for the named style. Default behavior
+        of all elements is that they pass the request on to the root, which is nornally the document."""
+        if self.parent:
+            return self.parent.getNamedStyle(styleName)
         return None
 
     # Most common properties
@@ -71,7 +84,7 @@ class Element(object):
         return point2DOr3D(self._point) # Answer as 2D or 3D point (where one or more can still be None)
     def _set_point(self, point):
         if point is None:
-            point = [None, None]
+            point = [0, 0] # Default is position on origin
         assert isinstance(point, (tuple, list)) and len(point) in (2, 3)
         self._point = list(point) 
     point = property(_get_point, _set_point)
@@ -80,7 +93,7 @@ class Element(object):
         return point3D(point)
     def _set_point3D(self, point):
         if point is None:
-            point = [None, None, None]
+            point = [0, 0, 0] # Default is position on origin
         assert isinstance(point, (tuple, list)) and len(point) == 3
         self._point = list(point)
     point3D = property(_get_point3D, _set_point3D)
@@ -106,6 +119,61 @@ class Element(object):
         self._point[2] = z
     z = property(_get_z, _set_z)
     
+    # Position by column + gutter size index.
+
+    def _get_cx(self): # Answer the x-position, defined in columns. Can be fractional for elements not on grid.
+        gutter = self.css('g')
+        cw = self.css('cw')
+        if cw + gutter: # Check on division by 0
+            return (self.x - self.css('ml')) / (cw + gutter)
+        return 0
+    def _set_cx(self, cx): # Set the x-position, defined in columns.
+        if cx is not None:
+            self.x = self.css('ml', 0) + cx * (self.css('cw', 0) + self.css('g', 0))
+    cx = property(_get_cx, _set_cx)
+
+    def _get_cy(self): # Answer the x-position, defined in columns. Can be fractional for elements not on grid.
+        gutter = self.css('g')
+        ch = self.css('ch')
+        if ch + gutter: # Check on division by 0
+            if self.css('originTop'):
+                return (self.y - self.css('mt')) / (ch + gutter)
+            return (self.y - self.css('mb')) / (ch + gutter)
+        return 0
+    def _set_cy(self, cy): # Set the x-position, defined in columns.
+        if cy is not None:
+            if self.css('originTop'):
+                self.y = self.css('mt', 0) + cy * (self.css('ch', 0) + self.css('g', 0))
+            else:
+                self.y = self.css('mb', 0) + cy * (self.css('ch', 0) + self.css('g', 0))
+    cy = property(_get_cy, _set_cy)
+
+    def _get_cw(self):
+        gutter = self.css('g')
+        cw = self.css('cw')
+        if cw + gutter:
+            return (self.w + gutter) / (cw + gutter)
+        return 0 # Undefined, not info about column width and gutter
+    def _set_cw(self, cw):
+        if cw is not None:
+            gutter = self.css('g')
+            self.w = cw * (self.css('cw') + gutter) - gutter  # Overwrite style from here.
+    cw = property(_get_cw, _set_cw)
+
+    def _get_ch(self):
+        gutter = self.css('g')
+        ch = self.css('cw')
+        if ch + gutter:
+            return (self.h + gutter) / (ch + gutter)
+        return 0 # Undefined, not info about column width and gutter
+    def _set_ch(self, ch):
+        if ch is not None:
+            gutter = self.css('g')
+            self.h = ch * (self.css('ch') + gutter) - gutter  # Overwrite style from here.
+    ch = property(_get_ch, _set_ch)
+
+    # Absolute posiitons
+
     def _get_absoluteX(self): # Answer the absolute value of local self.x, from tree of ancestors.
         parent = self.parent
         if parent is not None:
@@ -121,19 +189,15 @@ class Element(object):
     absoluteY = property(_get_absoluteY)
 
     def _get_w(self):
-        if self._w is None: # Not defined, use style.
-            return self.css('w') # Can be None in case the width is undefined.
-        return self._w
+        return self.css('w') # Can be None in case the width is undefined.
     def _set_w(self, w):
-        self._w = w # Overwrite style from here.
+        self.style['w'] = w # Overwrite style from here.
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        if self._h is None:
-            return self.css('h') # Can be None in case the height is undefined. 
-        return self._h
+        return self.css('h') # Can be None in case the height is undefined. 
     def _set_h(self, h):
-        self._h = h # Overwrite style from here.
+        self.style['h'] = h # Overwrite style from here.
     h = property(_get_h, _set_h)
 
     def _get_originTop(self):
@@ -226,14 +290,14 @@ class Element(object):
         elif self.css('align') == RIGHT_ALIGN:
             px -= self.w/self.scaleX
         if self.css('originTop'):
-            if self.css('valign') == CENTER:
+            if self.css('vAlign') == CENTER:
                 py += self.h/2/self.scaleY
-            elif self.css('valign') == TOP_ALIGN:
+            elif self.css('vAlign') == TOP_ALIGN:
                 py += self.h/self.scaleY
         else:
-            if self.css('valign') == CENTER:
+            if self.css('vAlign') == CENTER:
                 py -= self.h/2/self.scaleY
-            elif self.css('valign') == TOP_ALIGN:
+            elif self.css('vAlign') == TOP_ALIGN:
                 py -= self.h/self.scaleY
         return px, py
 

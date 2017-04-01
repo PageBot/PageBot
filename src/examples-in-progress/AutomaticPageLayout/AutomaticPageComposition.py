@@ -12,7 +12,7 @@
 #     This script generates an article (in Dutch) of 2009 about the approach to
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import textBoxBaseLines
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT_ALIGN
@@ -77,8 +77,6 @@ RS = getRootStyle(
     rLeading = 0, # Set relative leading (dependent on font size) to 0.
     fontSize = U+2 # Set default font size of body text to U + 2 = 9 pt.
 )
-# Make an empty formatted string with style according to the RootStyle as seed for other strings.
-FS = getFormattedString(FormattedString(''), RS)
 
 if 0: # In case an English MarkDown text of this example article is ready.
     RS['language'] = 'en' # Tell RootStyle instance to use Englisch hyphenation.

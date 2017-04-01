@@ -21,7 +21,7 @@ from AppKit import NSBezierPath
 from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, \
     closePath, FormattedString
 
-from pagebot import cr2p, cp2p, xy2xy, setFillColor, setStrokeColor
+from pagebot import setFillColor, setStrokeColor
 from pagebot.style import NO_COLOR, makeStyle
 
 from pagebot.elements.textbox import TextBox
@@ -41,11 +41,8 @@ class Page(Container):
  
     DEFAULT_STYLE = 'page'
 
-    def __init__(self, point=None, parent=None, eId=None, style=None, template=None, **kwargs):
-        Container.__init__(self, point=point, parent=parent, eId=eId, style=style, **kwargs)
-        # Each element should check at this point if the minimum set of style values
-        # are set and if their values are valid.
-        assert self.w is not None and self.h is not None # Make sure that page size is defined.
+    def __init__(self, point=None, parent=None, style=None, eId=None, template=None, **kwargs):
+        Container.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.setTemplate(template) # Create storage of elements and copy template elements.
         
     def __repr__(self):
@@ -70,8 +67,8 @@ class Page(Container):
         self.template = template # Keep in order to clone pages or if addition info is needed.
         if template is not None:
             # Copy elements from the template and put them in the designated positions.
-            for element, (x, y) in template.getElements():
-                self.place(copy.copy(element), x, y)
+            for element in template.getElements():
+                self.append(copy.copy(element))
 
 
     def replaceElement(self, element, replacement):
@@ -145,9 +142,10 @@ class Page(Container):
         self.append(e)  # Append to drawing sequence and store by (x,y) and optional element id.
         return e
 
-    def cContainer(self, cx, cy, cw, ch, style, parent=None, eId=None, elements=None, **kwargs):
-        x, y, w, h = cr2p(cx, cy, cw, ch, style)
-        return self.container(point=(x, y), parent=parent, style=style, eId=eId, elements=elements, w=w, h=h, **kwargs)
+    def cContainer(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, elements=None, **kwargs):
+        e = self.container(parent=parent, style=style, eId=eId, elements=elements, w=1, **kwargs)
+        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+        return e
 
     def textBox(self, fs, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
@@ -155,11 +153,12 @@ class Page(Container):
         self.append(e) # Append to drawing sequence and set parent to self.
         return e
 
-    def cTextBox(self, fs, cx, cy, cw, ch, style, parent=None, eId=None, **kwargs):
+    def cTextBox(self, fs, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
         u"""Caller must supply formatted string."""
-        x, y, w, h = cr2p(cx, cy, cw, ch, style)
-        return self.textBox(fs, point=(x, y), parent=parent, style=style, eId=eId, w=w, h=h, **kwargs)
-        
+        e = self.textBox(fs, point=None, parent=parent, style=style, eId=eId, w=1, **kwargs)
+        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+        return e
+
     def text(self, fs, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Draw formatted string. Normally we don't need w and h here, as it is made by the text and 
         style combinations. But in case the defined font is a Variation Font, then we can use the
@@ -169,51 +168,50 @@ class Page(Container):
         self.append(e) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
                 
-    def cText(self, fs, cx, cy, cw, ch, style, parent=None, eId=None, **kwargs):
+    def cText(self, fs, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
         u"""Draw formatted string.
         We don't need w and h here, as it is made by the text and style combinations.
         Caller must supply formatted string."""
-        x, y, w, h = cr2p(cx, cy, cw, ch, style)
-        return self.text(fs, point=(x, y), parent=parent, style=style, w=w, h=h, eId=eId, **kwargs)
+        e = self.text(fs, point=None, parent=parent, style=style, w=1, eId=eId, **kwargs)
+        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+        return e
                 
-    def rect(self, point=None, parent=None, style=None, eId=None, w=None, h=None, **kwargs):
+    def rect(self, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Draw the rectangle. Note that w and h can also be defined in the style. In case h is omitted,
         a square is drawn."""
-        if h is None:
-            h = w
-        e = Rect(point=point, parent=parent, style=style, eId=eId, w=w, h=h, **kwargs)
+        e = Rect(point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
                 
-    def cRect(self, cx, cy, cw, ch, style, eId=None, **kwargs):
-        x, y, w, h = cr2p(cx, cy, cw, ch, style)
-        return self.rect(point=(x, y), parent=parent, eId=eId, style=style, **kwargs)
+    def cRect(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
+        e = self.rect(point=None, parent=parent, eId=eId, style=style, **kwargs)
+        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+        return e
                 
-    def oval(self, point=None, parent=None, eId=None, style=None, h=None, w=None, **kwargs):
+    def oval(self, point=None, parent=None, eId=None, style=None, **kwargs):
         u"""Draw the oval. Note that w and h can also be defined in the style. In case h is omitted,
         a circle is drawn."""
-        if h is None:
-            h = w
-        e = Oval(point=point, parent=parent, eId=eId, style=style, w=w, h=h, **kwargs)
+        e = Oval(point=point, parent=parent, eId=eId, style=style, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
 
-    def cOval(self, cx, cy, cw, ch, style, eId=None, **kwargs):
-        x, y, w, h = cr2p(cx, cy, cw, ch, style)
-        return self.oval(point=(x, y), style=style, eId=eId, w=w, h=h, **kwargs)
-
+    def cOval(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
+        e = self.oval(point=None, parent=parent, style=style, eId=eId, **kwargs)
+        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+        return e
+  
     def line(self, point=None, parent=None, style=None, eId=None, **kwargs):
-        x, y = xy2xy(x, y) # Allow both tuple and separate x, y arguments.
         e = Line(point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
                 
-    def cLine(self, cx, cy, cw, ch, parent=None, style=None, eId=None, **kwargs):
-        x, y, w, h = cr2p(cx, cy, cw, ch, style)
-        return self.line(point=(x, y), parent=parent, style=style, eId=eId, w=w, h=h, **kwargs)
-    
-    def polygon(self, point=None, parent=None, eId=None, style=None, points=[], **kwargs):
-        e = Polygon(point=point, parent=parent, eId=eId, style=style, points=points, **kwargs)
+    def cLine(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
+        e = self.line(point=None, parent=parent, style=style, eId=eId, **kwargs)
+        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+        return e
+
+    def polygon(self, point=None, parent=None, style=None, eId=None, points=[], **kwargs):
+        e = Polygon(point=point, parent=parent, style=style, eId=eId, points=points, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
 
@@ -227,47 +225,30 @@ class Page(Container):
         self.append(e)
         return e
             
-    def cImage(self, path, cx, cy, cw, ch, eId=None, style=None, mask=None, imo=None, pageNumber=0, clipRect=None, **kwargs):
+    def cImage(self, path, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, mask=None, imo=None, pageNumber=0, cClipRect=None, **kwargs):
         """Convert the column size into point size, depending on the column settings of the 
         current template, when drawing images "hard-coded" directly on a certain page.
         The optional imo attribute is an ImageObject() with filters in place. 
         The Image element is answered for convenience of the caller"""
-        x, y, w, h = cr2p(cx, cy, cw, ch, style)
-        if clipRect is not None:
-            clipRect = cr2p(clipRect[0], clipRect[1], clipRect[2], clipRect[3], style)
-        return self.image(path, point=(x, y), parent=parent, eId=eId, style=style, mask=None, imo=imo, pageNumber=pageNumber, clipRect=clipRect, w=w, h=h, **kwargs)
+        e = self.image(path, point=None, parent=parent, eId=eId, style=style, mask=None, imo=imo, pageNumber=pageNumber, w=1, **kwargs)
+        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+        if cClipRect is not None:
+            e.cClipRect = cClipRect
+        return e
 
-    def grid(self, point=None, parent=None, eId=None, style=None, **kwargs):
+    def grid(self, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Direct way to add a grid element to a single page, if not done through its template."""
-        e = Grid(point=point, parent=None, eId=eId, style=style, **kwargs)
+        e = Grid(point=point, parent=None, style=style, eId=eId, **kwargs)
         self.append(e)
         return e
         
-    def baselineGrid(self, point=None, parent=None, eId=None, style=None, **kwargs):
+    def baselineGrid(self, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Direct way to add a baseline grid element to a single page, if not done through its template."""
-        e = BaselineGrid(point=point, parent=parent, eId=eId, style=style, **kwargs)
+        e = BaselineGrid(point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.append(e)
         return e
 
-    def getFlows(self):
-        u"""Answer the set of flow sequences on the page."""
-        flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
-        for e in self.getElements():
-            if not e.isFlow:
-                continue
-            # Now we know that this element has a e.nextBox and e.nextPage
-            # There should be a flow with that name in our flows yet
-            found = False
-            for nextId, seq in flows.items():
-                if seq[-1].nextBox == element.eId: # Glue to the end of the sequence.
-                    seq.append(element)
-                    found = True
-                elif e.nextBox == seq[0].eId: # Add at the start of the list.
-                    seq.insert(0, element)
-                    found = True
-            if not found: # New entry
-                flows[e.next] = [e]
-        return flows
+    #   Additional drawing stuff.
 
     def _drawArrow(self, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
         u"""Draw curved arrow marker between the two points.
