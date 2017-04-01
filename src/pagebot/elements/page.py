@@ -165,7 +165,7 @@ class Page(Container):
         style combinations. But in case the defined font is a Variation Font, then we can use the
         width and height to interpolate a font that fits the space for the given string and weight.
         Caller must supply formatted string. Support both (x, y) and x, y as position."""
-        e = Text(fs, point=(x, y), parent=parent, style=style, eId=eId, **kwargs)
+        e = Text(fs, point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.append(e) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
                 
@@ -189,12 +189,12 @@ class Page(Container):
         x, y, w, h = cr2p(cx, cy, cw, ch, style)
         return self.rect(point=(x, y), parent=parent, eId=eId, style=style, **kwargs)
                 
-    def oval(self, point=None, parent=None, eId=None, style=None, **kwargs):
+    def oval(self, point=None, parent=None, eId=None, style=None, h=None, w=None, **kwargs):
         u"""Draw the oval. Note that w and h can also be defined in the style. In case h is omitted,
         a circle is drawn."""
         if h is None:
             h = w
-        e = Oval(point=point, parent=parent, eId=eId, style=style, **kwargs)
+        e = Oval(point=point, parent=parent, eId=eId, style=style, w=w, h=h, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
 

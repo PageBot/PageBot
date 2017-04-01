@@ -18,9 +18,12 @@ from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, 
     newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
     textBox, hyphenation, restore, imageSize, shadow, BezierPath, clipPath, drawPath
 from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-from pagebot.style import LEFT_ALIGN, TOP_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
 """
+from drawBot import textSize, text
+from pagebot import getFormattedString
 from pagebot.elements.element import Element
+from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.style import RIGHT_ALIGN, CENTER, TOP_ALIGN
 
 class Text(Element):
 
@@ -46,15 +49,45 @@ class Text(Element):
             fs = self.fs
         return textSize(self.fs)
 
+    def _applyOrigin(self, p):
+        u"""If self.css('originTop') is False, then the y-value is interpreted as mathemtcs, 
+        starting at the bottom of the parent element, moving up.
+        If the flag is True, then move from top down, where the text still draws upward."""
+        px, py = p
+        if self.css('originTop') and self.parent:
+            py = self.parent.h - py
+        return px, py
+
+    def _applyAlignment(self, p):
+        w, h = textSize(self.fs)   
+        px, py = p
+        if self.css('align') == CENTER:
+            px -= w/2/self.scaleX
+        elif self.css('align') == RIGHT_ALIGN:
+            px -= w/self.scaleX
+        if self.css('originTop'):
+            if self.css('valign') == CENTER:
+                py += h/2/self.scaleY
+            elif self.css('valign') == TOP_ALIGN:
+                py += h/self.scaleY
+        else:
+            if self.css('valign') == CENTER:
+                py -= h/2/self.scaleY
+            elif self.css('valign') == TOP_ALIGN:
+                py -= h/self.scaleY
+        return px, py
+
     def draw(self, origin):
         u"""Draw the formatted text. Since this is not a text column, but just a
         typeset text line, background and stroke of a text column needs to be drawn elsewere."""
+        p = pointOrigin2D(self.point, origin)
+        p = self._applyOrigin(p)    
+        p = self._applyScale(p)    
+        p = self._applyAlignment(p)
         self._setShadow()
-        w, h = textSize(self.fs)   
-        if self.style.get('align') == RIGHT_ALIGN:
-            x -= w
-        elif self.style.get('align') == CENTER:
-            x -= w/2
-        text(self.fs, (x, y))
+
+        text(self.fs, p)
+
         self._resetShadow()
+        self._restoreScale()
 
