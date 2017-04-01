@@ -12,11 +12,11 @@
 #
 import weakref
 
-from drawBot import rect, newPath, moveTo, lineTo, drawPath
+from drawBot import rect, newPath, moveTo, lineTo, drawPath, save, restore, scale
 
 from pagebot import setFillColor, setStrokeColor
 from pagebot.toolbox.transformer import point3D, point2DOr3D, pointOrigin2D, uniqueID
-from pagebot.style import makeStyle
+from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN
 
 class Element(object):
 
@@ -32,7 +32,7 @@ class Element(object):
     def __init__(self, point=None, parent=None, eId=None, style=None, **kwargs):  
         u"""Basic initialize for every Element contructor."""  
         self.point = point # Store optional self._point position property (x, y, None) or (x, y, z), local to parent.
-        self._w = self._h = None # Optionally overwritten from values in self.style.
+        self._w = self._h = None # Optionally overwritten values. Otherwise use values from self.style.
         self.style = makeStyle(style, **kwargs)
         self.eId = eId or uniqueID(self)
         self.parent = parent # Weak ref to parent element.
@@ -44,6 +44,16 @@ class Element(object):
         else:
             eId = ''
         return '%s%s%s' % (self.__class__.__name__, eId, tuple(self.point))
+
+
+    # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
+
+    def css(self, name, default=None):
+        if name in self.style:
+            return self.style[name]
+        if self.parent:
+            return self.parent.css(name, default)
+        return None
 
     # Most common properties
 
@@ -112,7 +122,7 @@ class Element(object):
 
     def _get_w(self):
         if self._w is None: # Not defined, use style.
-            return self.style.get('w') # Can be None in case the width is undefined.
+            return self.css('w') # Can be None in case the width is undefined.
         return self._w
     def _set_w(self, w):
         self._w = w # Overwrite style from here.
@@ -120,11 +130,17 @@ class Element(object):
 
     def _get_h(self):
         if self._h is None:
-            return self.style.get('h') # Can be None in case the height is undefined. 
+            return self.css('h') # Can be None in case the height is undefined. 
         return self._h
     def _set_h(self, h):
         self._h = h # Overwrite style from here.
     h = property(_get_h, _set_h)
+
+    def _get_originTop(self):
+        u"""Answer the style flag if all point y values should measure top-down (typographic page
+        orientation), instead of bottom-up (mathenatical orientation)."""
+        return self.css('originTop')
+    originTop = property(_get_originTop)
 
     def getSize(self):
         u"""Answer the size of the element by calling properties self.w and self.h.
@@ -142,9 +158,9 @@ class Element(object):
         u"""Calculate the padded position and padded resized box of the element, after applying the
         option style padding."""
         # TODO: Get this to work. Padding now had problem of scaling images too big for some reason.
-        return self.x + self.style.get('pl', 0), self.y + self.style.get('pb', 0),\
-            self.w - self.style.get('pl', 0) - self.style.get('pr', 0), \
-            self.h - self.style.get('pt', 0) - self.style.get('pb', 0)
+        return self.x + self.css('pl', 0), self.y + self.css('pb', 0),\
+            self.w - self.css('pl', 0) - self.css('pr', 0), \
+            self.h - self.csss('pt', 0) - self.css('pb', 0)
 
     def _get_boundingBox(self):
         u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties. Default to 0
@@ -153,15 +169,15 @@ class Element(object):
     boundingBox = property(_get_boundingBox)
 
     def _get_minW(self):
-        return self.style.get('minW')
+        return self.css('minW')
     def _set_minW(self, minW):
-        self.style['minW'] = minW
+        self.style['minW'] = minW # Set on local style, shielding parent self.css value.
     minW = property(_get_minW, _set_minW)
 
     def _get_minH(self):
-        return self.style.get('minH')
+        return self.css('minH')
     def _set_minH(self, minH):
-        self.style['minH'] = minH
+        self.style['minH'] = minH # Set on local style, shielding parent self.css value.
     minH = property(_get_minH, _set_minH)
 
     def getMinSize(self):
@@ -173,15 +189,15 @@ class Element(object):
         self.minH = minH
 
     def _get_maxW(self):
-        return self.style.get('maxW')
+        return self.css('maxW')
     def _set_maxW(self, maxW):
-        self.style['maxW'] = maxW
+        self.style['maxW'] = maxW # Set on local style, shielding parent self.css value.
     maxW = property(_get_maxW, _set_maxW)
 
     def _get_maxH(self):
-        return self.style.get('maxH')
+        return self.css('maxH')
     def _set_maxH(self, maxH):
-        self.style['maxH'] = maxH
+        self.style['maxH'] = maxH # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
 
     def getMaxSize(self):
@@ -191,6 +207,46 @@ class Element(object):
         self.maxW = maxW # No limit if value is None
         self.maxH = maxH
 
+    def _get_scaleX(self):
+        return self.css('scaleX', 1)
+    def _set_scaleX(self, scaleX):
+        self.style['scaleX'] = scaleX # Set on local style, shielding parent self.css value.
+    scaleX = property(_get_scaleX, _set_scaleX)
+
+    def _get_scaleY(self):
+        return self.css('scaleX', 1)
+    def _set_scaleY(self, scaleY):
+        self.style['scaleY'] = scaleY # Set on local style, shielding parent self.css value.
+    scaleY = property(_get_scaleY, _set_scaleY)
+
+    def _applyAlignment(self, p):
+        px, py = p
+        if self.css('align') == CENTER:
+            px -= self.w/2/self.scaleX
+        elif self.css('align') == RIGHT_ALIGN:
+            px -= self.w/self.scaleX
+        if self.css('originTop'):
+            if self.css('valign') == CENTER:
+                py += self.h/2/self.scaleY
+            elif self.css('valign') == TOP_ALIGN:
+                py += self.h/self.scaleY
+        else:
+            if self.css('valign') == CENTER:
+                py -= self.h/2/self.scaleY
+            elif self.css('valign') == TOP_ALIGN:
+                py -= self.h/self.scaleY
+        return px, py
+
+    def _applyOrigin(self, p):
+        u"""If self.css('originTop') is False, then the y-value is interpreted as mathemtcs, 
+        starting at the bottom of the parent element, moving up.
+        If the flag is True, then move from top down, where the origin of the element becomes
+        top-left of the bounding box."""
+        px, py = p
+        if self.css('originTop') and self.parent:
+            py = self.parent.h - py - self.h
+        return px, py
+
     def _applyRotation(self, mx, my, angle):
         u"""Apply the rotation for angle, where (mx, my) is the rotation center."""
         save()
@@ -198,40 +254,39 @@ class Element(object):
 
     def _restoreRotation(self):
         u"""Reset graphics state from rotation mode."""
-        if self.style.get('rotationX') and self.style.get('rotationY') and self.style.get('rotationAngle'):
+        if self.css('rotationX') and self.css('rotationY') and self.css('rotationAngle'):
             restore()
 
-    def _applyScale(self, x, y):
+    def _applyScale(self, p):
         u"""Apply the scale, if both self.style['scaleX'] and self.style['scaleY'] are set. Use this
         method paired with self._restoreScale(). The (x, y) answered as reversed scaled tuple,
         so drawing elements can still draw on "real size", while the other element is in scaled mode."""
-        sx = self.style.get('scaleX') # May not exist in the un-cascaded style.
-        sy = self.style.get('scaleY')
+        sx = self.scaleX # May not exist in the un-cascaded style.
+        sy = self.scaleY
         if sx and sy:
             save()
             scale(sx, sy)
-            x /= sx
-            y /= sy
-        return x, y
+            p = (p[0] / sx, p[1] / sy)
+        return p
 
     def _restoreScale(self):
-        u"""Reset graphics state from scale mode."""
-        if self.style.get('scaleX') and self.style.get('scaleY'): # May not exist in the un-cascaded style.
+        u"""Reset graphics state from svaed scale mode. Make sure to match the call."""
+        if self.scaleX and self.scaleY: # May not exist in the un-cascaded style.
             restore()
 
     def _setShadow(self):
         u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this
         method with self._resetShadow()"""
-        shadowOffset = self.style.get('shadowOffset') # Use DrawBot graphic state switch on shadow mode.
-        shadowBlur = self.style.get('shadowBlur') # Should be integer.
-        shadowFill = self.style.get('shadowFill') # Should be color, different from NO_COLOR
+        shadowOffset = self.css('shadowOffset') # Use DrawBot graphic state switch on shadow mode.
         if shadowOffset is not None:
             save() # DrawBot graphics state push
+            shadowBlur = self.css('shadowBlur') # Should be integer.
+            shadowFill = self.css('shadowFill') # Should be color, different from NO_COLOR
             shadow(shadowOffset, shadowBlur, shadowFill)
 
     def _resetShadow(self):
         u"""Restore the shadow mode of DrawBot. Should be paired with call self._setShadow()."""
-        if self.style.get('shadowOffset') is not None:
+        if self.css('shadowOffset') is not None:
             restore() # DrawBot graphics state pop.
 
     def copy(self):
@@ -244,16 +299,22 @@ class Element(object):
 
     #   Default drawing methods.
 
-    def _drawElementRect(self, origin):
+    def _drawElementBox(self, origin):
         u"""When designing templates and pages, this will draw a rectangle on the element
         bounding box if self.style['showGrid'] is True."""
-        if self.style.get('showGrid'):
+        if self.css('showElementBox'):
             # Draw crossed rectangle.
-            ox, oy = pointOrigin2D(self.point, origin)
+            p = pointOrigin2D(self.point, origin)
+            p = self._applyOrigin(p)    
+            p = self._applyScale(p)    
+            px, py = self._applyAlignment(p)
+
             setFillColor(None)
             setStrokeColor(0, 0.5)
             rect(ox, oy, self.w, self.h)
 
+            self._restoreScale()
+       
     def _drawMissingElementRect(self, origin):
         u"""When designing templates and pages, this will draw a filled rectangle on the element
         bounding box (if self.style.get('missingElementFill' is defined) and a cross, indicating

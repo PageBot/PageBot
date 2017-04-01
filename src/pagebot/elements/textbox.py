@@ -125,7 +125,7 @@ class TextBox(Element):
             setStrokeColor(sStroke, sStrokeWidth)
             setFillColor(None)
             rect(ox, oy, self.w, self.h)
-        else: # If debugging,then draw the rectangle.
-            self._drawElementRect(origin)
+        else: # If debugging,then draw the rectangle. Only self.css('showElementBox') is True
+            self._drawElementBox(origin)
 
 

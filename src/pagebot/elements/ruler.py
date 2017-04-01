@@ -10,16 +10,7 @@
 #
 #     ruler.py
 #
-"""
-import os
-import copy
-
-from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
-    newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
-    textBox, hyphenation, restore, imageSize, shadow, BezierPath, clipPath, drawPath
-from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-from pagebot.style import LEFT_ALIGN, TOP_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
-"""
+from pagebot import setFillColor
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOrigin2D
 

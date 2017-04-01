@@ -77,6 +77,7 @@ USPostcardMin = 5*INCH, 3.5*INCH
 SHOW_GRID = True
 SHOW_GRID_COLUMNS = True
 SHOW_BASELINE_GRID = True
+SHOW_ELEMENT_BOX = False
 SHOW_FLOW_CONNECTIONS = True
 SHOW_CROPMARKS = True
 SHOW_PAGE_FRAME = True
@@ -110,7 +111,7 @@ def makeStyle(style=None, **kwargs):
             style[name] = v  # Overwrite value by any arguments, if defined.
     return style
 
-def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
+def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, showElementBox=SHOW_ELEMENT_BOX,
         showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS, 
         showCropMarks=SHOW_CROPMARKS, showPageFrame=SHOW_PAGE_FRAME, 
         showPageInfo=SHOW_PAGE_INFO, **kwargs):
@@ -184,8 +185,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         maxH = None,
         
         # Overall content scaling.
-        scaleX = None, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
-        scaleY = None, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
+        scaleX = 1, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
+        scaleY = 1, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
         
         # Image stuff
         showImageReference = SHOW_IMAGE_REFERENCE, # If true, show [image #] if inside <p> tag.
@@ -231,9 +232,10 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS,
         cropMarkSize = 40, # Length of crop marks, including bleed distance. 
         cropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
         
-        # Draw page fram if document (w, h) is larger than page (w, h)
-        showPageFrame = showPageFrame,
-        
+        # Showing of boxes
+        showPageFrame = showPageFrame, # Draw page frame if document (w, h) is larger than page (w, h)
+        showElementBox = showElementBox, # Show element boxes, e.g. if missing or empty.
+
         # Generic element stuff
         missingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
 

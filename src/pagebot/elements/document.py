@@ -62,6 +62,12 @@ class Document(object):
         if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
 
+
+    # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
+
+    def css(self, name, default=None):
+        return self.rootStyle.get(name, default)
+
     # Set the (w, h) from the rootStyle, if not defined as attributes. We keep the document size
     # separate from the actual page sizes, so the pages can detect if crop-marks should be drawn
     # and where to position them, depending on the page style settings of style['showCropMarks'] and
