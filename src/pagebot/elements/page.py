@@ -138,24 +138,26 @@ class Page(Container):
 
     def container(self, point=None, parent=None, style=None, eId=None, elements=None, **kwargs):
         u"""Draw a generic container. Note that w and h can also be defined in the style."""
+        if parent is None: parent = self # Make style tree availabe.
         e = Container(point=point, parent=parent, style=style, eId=eId, elements=elements, **kwargs)
         self.append(e)  # Append to drawing sequence and store by (x,y) and optional element id.
         return e
 
     def cContainer(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, elements=None, **kwargs):
-        e = self.container(parent=parent, style=style, eId=eId, elements=elements, w=1, **kwargs)
+        e = self.container(parent=parent, style=style, eId=eId, elements=elements, **kwargs)
         e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
         return e
 
     def textBox(self, fs, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
+        if parent is None: parent = self # Make style tree availabe.
         e = TextBox(fs, point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.append(e) # Append to drawing sequence and set parent to self.
         return e
 
     def cTextBox(self, fs, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
         u"""Caller must supply formatted string."""
-        e = self.textBox(fs, point=None, parent=parent, style=style, eId=eId, w=1, **kwargs)
+        e = self.textBox(fs, point=None, parent=parent, style=style, eId=eId, **kwargs)
         e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
         return e
 
@@ -164,6 +166,7 @@ class Page(Container):
         style combinations. But in case the defined font is a Variation Font, then we can use the
         width and height to interpolate a font that fits the space for the given string and weight.
         Caller must supply formatted string. Support both (x, y) and x, y as position."""
+        if parent is None: parent = self # Make style tree availabe.
         e = Text(fs, point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.append(e) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
@@ -179,6 +182,7 @@ class Page(Container):
     def rect(self, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Draw the rectangle. Note that w and h can also be defined in the style. In case h is omitted,
         a square is drawn."""
+        if parent is None: parent = self # Make style tree availabe.
         e = Rect(point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
@@ -191,6 +195,7 @@ class Page(Container):
     def oval(self, point=None, parent=None, eId=None, style=None, **kwargs):
         u"""Draw the oval. Note that w and h can also be defined in the style. In case h is omitted,
         a circle is drawn."""
+        if parent is None: parent = self # Make style tree availabe.
         e = Oval(point=point, parent=parent, eId=eId, style=style, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
@@ -201,6 +206,7 @@ class Page(Container):
         return e
   
     def line(self, point=None, parent=None, style=None, eId=None, **kwargs):
+        if parent is None: parent = self # Make style tree availabe.
         e = Line(point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
@@ -211,6 +217,7 @@ class Page(Container):
         return e
 
     def polygon(self, point=None, parent=None, style=None, eId=None, points=[], **kwargs):
+        if parent is None: parent = self
         e = Polygon(point=point, parent=parent, style=style, eId=eId, points=points, **kwargs)
         self.append(e) # Append to drawing sequence and store by optional element id.
         return e
@@ -221,6 +228,7 @@ class Page(Container):
         If the image is drawn with an empty path, a missingImage cross-frame is shown.
         The optional imo attribute is an ImageObject() with filters in place. 
         The Image element is answered for convenience of the caller."""
+        if parent is None: parent = self # Make style tree availabe.
         e = Image(path, point=point, parent=parent, eId=eId, style=style, mask=None, imo=imo, pageNumber=pageNumber, clipRect=clipRect, **kwargs)
         self.append(e)
         return e
@@ -238,12 +246,14 @@ class Page(Container):
 
     def grid(self, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Direct way to add a grid element to a single page, if not done through its template."""
+        if parent is None: parent = self # Make style tree availabe.
         e = Grid(point=point, parent=None, style=style, eId=eId, **kwargs)
         self.append(e)
         return e
         
     def baselineGrid(self, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Direct way to add a baseline grid element to a single page, if not done through its template."""
+        if parent is None: parent = self # Make style tree availabe.
         e = BaselineGrid(point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.append(e)
         return e

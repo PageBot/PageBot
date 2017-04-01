@@ -20,6 +20,72 @@ from drawBot.context.baseContext import BaseContext
 
 from pagebot.style import NO_COLOR
 
+def x2cx(x, e):
+    gutter = e.css('g', 0)
+    cw = e.css('cw', 0)
+    if cw + gutter: # Check on division by 0
+        return (x - e.css('ml', 0)) / (cw + gutter)
+    return 0
+
+def cx2x(cx, e):
+    if cx is None:
+        x = None
+    else:
+        x = e.css('ml', 0) + cx * (e.css('cw', 0) + e.css('g', 0))
+    return x
+  
+def y2cy(y, e):
+    u"""Transform from y value to column y value, using the e.css for colunn values."""
+    gutter = e.css('g', 0)
+    ch = e.css('ch', 0)
+    cy = 0
+    if ch + gutter: # Check on division by 0
+        if e.css('originTop'):
+            cy = (y - e.css('mt', 0)) / (ch + gutter)
+        else:
+            cy = (y - e.css('mb', 0)) / (ch + gutter)
+    return cy 
+
+def cy2y(cy, e):
+    u"""Transform from column y value to y value, using the e.css for colunn values."""
+    if cy is None:
+        y = None
+    elif e.css('originTop'):
+        y = e.css('mt', 0) + cy * (e.css('ch', 0) + e.css('g', 0))
+    else:
+        y = e.css('mb', 0) + cy * (e.css('ch', 0) + e.css('g', 0))
+    return y
+
+def w2cw(w, e):
+    gutter = e.css('g', 0)
+    cw = e.css('cw', 0)
+    if cw + gutter:
+        return (w + gutter) / (cw + gutter)
+    return 0 # Undefined, not info about column width and gutter
+
+def cw2w(cw, e):
+    if cw is None:
+        w = None
+    else:
+        gutter = e.css('g', 0)
+        w = cw * (e.css('cw', 0) + gutter) - gutter  # Overwrite style from here.
+    return w
+
+def h2ch(h, e):
+    gutter = e.css('g', 0)
+    ch = e.css('ch', 0)
+    if ch + gutter:
+        return (h + gutter) / (ch + gutter)
+    return 0 # Undefined, not info about column width and gutter
+
+def ch2h(ch, e):
+    if ch is None:
+        h = None
+    else:
+        gutter = e.css('g', 0)
+        h = ch * (e.css('ch', 0) + gutter) - gutter  # Overwrite style from here.
+    return h
+
 def getRootPath():
     u"""Answer the root path of the pagebot module."""
     return '/'.join(__file__.split('/')[:-2]) # Path of this file with pagebot/__init__.py(c) removed.
@@ -128,10 +194,8 @@ def css(name, e, styles=None, default=None):
             styles = [styles] # Make stack of styles.
         for style in styles:
             if name in style:
-                print 'STYLE', name, style[name]
                 return style[name]
     if e is not None:
-        print 'CSS', name, e.css(name)
         return e.css(name)
     return default
 

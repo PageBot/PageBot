@@ -15,6 +15,7 @@
 from __future__ import division # Make integer division result in float.
 import pagebot # Import to know the path of non-Python resources.
 
+from pagebot import cx2x, cy2y, cw2w, ch2h
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
@@ -59,7 +60,7 @@ def makeDocument(rs):
 
     page = doc[1] # Get the single page from te document.
     for ix in range(sqx): # Run through the range of (0, 1, ...) number of horizontal squares
-        for iy in range(sqy): # Same with vertical squares
+        for iy in range(1,sqy+1): # Same with vertical squares
             # Place squares in random colors
             color1 = (0.1, random(), 0.6)
             color2 = (0.1, 0.6, random())
@@ -67,10 +68,16 @@ def makeDocument(rs):
             page.cRect(ix, iy, 1, 1, fill=color1, stroke=None) # Create Rect object and place it in the page on position p
             page.cOval(ix, iy, 1, 1, fill=color2, stroke=None) # Create Rect object and place it in the page on position p
             # Mark the coordinate 
-            page.cOval(ix, iy, w=gutter, h=gutter, fill=None, stroke=0, align=CENTER, vAlign=CENTER)
-            ct = page.cText('%d,%d' % (ix, iy), cx=ix, cy=iy, style=rs, textFill=0.5, fontSize=5)
-            ct.x += 6
-            ct.y -= 2
+            page.cOval(ix, iy, w=gutter, h=gutter, fill=None, stroke=0, align=CENTER, vAlign=CENTER,
+                strokeWidth=0.5)
+            ct = page.cText('%d, %d' % (ix, iy), cx=ix, cy=iy, textFill=1, fontSize=5)
+            ct.x += 0
+            ct.y += 0
+            
+            
+            page.rect((cx2x(ix, page), cy2y(iy, page)), 
+                w=cw2w(square, page), h=ch2h(square, page), 
+                fill=None, stroke=0, strokeWidth=0.5)
             page.grid = Grid()
             
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around

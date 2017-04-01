@@ -39,7 +39,9 @@ RS['h'] = H
 # Setting value for demo purpose, it is style default, using the elements origin as top-left. 
 # Change to False will show origin of elements in their bottom-left corner.
 RS['originTop'] = True 
- 
+#for key, value in RS.items():
+#    print key, value
+
 EXPORT_PATH = '_export/ColorSquares.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
 def makeDocument(rs):
@@ -49,25 +51,25 @@ def makeDocument(rs):
     # Hard coded margins, just for simple demo, instead of filling margins an columns in the root style.
     square = SQUARE # Size of a square. Page margins are calculated from the amount that fit on the page.
     gutter = GUTTER
-    sqx = 1#int(W/(square + gutter)) # Whole amount of squares that fit on the page.
-    sqy = 1#int(H/(square + gutter))
+    sqx = int(W/(square + gutter)) # Whole amount of squares that fit on the page.
+    sqy = int(H/(square + gutter))
     # Calculate centered margins for the amount of fitting squares.
     mx = (W - sqx*(square + gutter) + gutter)/2
     my = (H - sqy*(square + gutter) + gutter)/2
 
     page = doc[1] # Get the single page from te document.
     for ix in range(sqx): # Run through the range of (0, 1, ...) number of horizontal squares
-        for iy in range(sqy): # Same with vertical squares
+        for iy in range(1,sqy+1): # Same with vertical squares
             # Place squares in random colors
             color1 = (random(), 0.1, 0.6)
             color2 = (random(), 0.1, 0.6)
             # Calculate the position for each square as combination of margins and (ix, iy)
             p = mx + ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
-            #page.rect(p, w=square, h=square, fill=color1, stroke=None) # Create Rect object and place it in the page on position p
-            #page.oval(p, w=square, h=square, fill=color2, stroke=None) # Create Rect object and place it in the page on position p
+            page.rect(p, w=square, h=square, fill=color1, stroke=None) # Create Rect object and place it in the page on position p
+            page.oval(p, w=square, h=square, fill=color2, stroke=None) # Create Rect object and place it in the page on position p
             # Mark the coordinate 
-            #page.oval(p, w=gutter, h=gutter, fill=None, stroke=0, align=CENTER, vAlign=CENTER)
-            page.text('%d,%d' % p, (p[0]+5, p[1]-2), textFill=0.5, fontSize=6)
+            page.oval(p, w=gutter, h=gutter, fill=None, stroke=0, align=CENTER, vAlign=CENTER)
+            page.text('%d, %d' % p, (p[0], p[1]), textFill=1, fontSize=5)
 
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around
     # added or deleted or moved to other pages.  

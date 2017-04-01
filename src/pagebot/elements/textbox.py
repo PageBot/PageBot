@@ -27,7 +27,7 @@ class TextBox(Element):
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         if isinstance(fs, str):
-            fs = getFormattedString(fs, self.style)
+            fs = getFormattedString(fs, parent, self.style)
         self.fs = fs
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isTextBox = True
