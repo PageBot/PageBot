@@ -19,6 +19,7 @@ import pagebot # Import to know the path of non-Python resources.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
+from pagebot.elements.grid import Grid
     
 W, H = A4 # Get the standard a4 width and height in points.
 #W = H = 500
@@ -36,11 +37,12 @@ SQUARE = 10 * GUTTER # Size of the squares
 RS = getRootStyle()
 RS['w'] = W
 RS['h'] = H
+RS['ch'] = RS['cw']
 # Setting value for demo purpose, it is style default, using the elements origin as top-left. 
 # Change to False will show origin of elements in their bottom-left corner.
 RS['originTop'] = True 
  
-EXPORT_PATH = '_export/ColorSquares.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
+EXPORT_PATH = '_export/ColumnSquares.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
 def makeDocument(rs):
     u"""Make a new document, using the rs as root style."""
@@ -49,8 +51,8 @@ def makeDocument(rs):
     # Hard coded margins, just for simple demo, instead of filling margins an columns in the root style.
     square = SQUARE # Size of a square. Page margins are calculated from the amount that fit on the page.
     gutter = GUTTER
-    sqx = 1#int(W/(square + gutter)) # Whole amount of squares that fit on the page.
-    sqy = 1#int(H/(square + gutter))
+    sqx = int(W/(square + gutter)) # Whole amount of squares that fit on the page.
+    sqy = int(H/(square + gutter))
     # Calculate centered margins for the amount of fitting squares.
     mx = (W - sqx*(square + gutter) + gutter)/2
     my = (H - sqy*(square + gutter) + gutter)/2
@@ -59,16 +61,18 @@ def makeDocument(rs):
     for ix in range(sqx): # Run through the range of (0, 1, ...) number of horizontal squares
         for iy in range(sqy): # Same with vertical squares
             # Place squares in random colors
-            color1 = (random(), 0.1, 0.6)
-            color2 = (random(), 0.1, 0.6)
+            color1 = (0.1, random(), 0.6)
+            color2 = (0.1, 0.6, random())
             # Calculate the position for each square as combination of margins and (ix, iy)
-            p = mx + ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
-            #page.rect(p, w=square, h=square, fill=color1, stroke=None) # Create Rect object and place it in the page on position p
-            #page.oval(p, w=square, h=square, fill=color2, stroke=None) # Create Rect object and place it in the page on position p
+            page.cRect(ix, iy, 1, 1, fill=color1, stroke=None) # Create Rect object and place it in the page on position p
+            page.cOval(ix, iy, 1, 1, fill=color2, stroke=None) # Create Rect object and place it in the page on position p
             # Mark the coordinate 
-            #page.oval(p, w=gutter, h=gutter, fill=None, stroke=0, align=CENTER, vAlign=CENTER)
-            page.text('%d,%d' % p, (p[0]+5, p[1]-2), textFill=0.5, fontSize=6)
-
+            page.cOval(ix, iy, w=gutter, h=gutter, fill=None, stroke=0, align=CENTER, vAlign=CENTER)
+            ct = page.cText('%d,%d' % (ix, iy), cx=ix, cy=iy, style=rs, textFill=0.5, fontSize=5)
+            ct.x += 6
+            ct.y -= 2
+            page.grid = Grid()
+            
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around
     # added or deleted or moved to other pages.  
     return doc # Answer the doc for further doing.

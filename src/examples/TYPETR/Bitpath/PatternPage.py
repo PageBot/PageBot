@@ -22,21 +22,21 @@ from pagebot.contributions.filibuster.blurb import blurb
 F = 50
 
 s = blurb.getBlurb('article_content', noTags=True)
-fs = getFormattedString(s, style=dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(1, 0, 0), rLeading=0.5))
+fs = getFormattedString(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(1, 0, 0), rLeading=0.5))
 textBox(fs, (20, 20, 1000, 900))
 
 s = blurb.getBlurb('article_content', noTags=True)
-fs = getFormattedString(s, style=dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 1, 0), rLeading=0.5))
+fs = getFormattedString(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 1, 0), rLeading=0.5))
 textBox(fs, (20+7, 20+7, 1000, 900))
 
 s = blurb.getBlurb('article_content', noTags=True)
-fs = getFormattedString(s, style=dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 1, 1), rLeading=0.5))
+fs = getFormattedString(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 1, 1), rLeading=0.5))
 textBox(fs, (20, 20+7, 1000, 900))
 
 s = blurb.getBlurb('article_content', noTags=True)
-fs = getFormattedString(s, style=dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(1, 1, 0), rLeading=0.5))
+fs = getFormattedString(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(1, 1, 0), rLeading=0.5))
 textBox(fs, (20+7, 20, 1000, 900))
 
 s = blurb.getBlurb('article_content', noTags=True)
-fs = getFormattedString(s, style=dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 0, 0), rLeading=0.5))
+fs = getFormattedString(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 0, 0), rLeading=0.5))
 textBox(fs, (20, 20, 1000, 900))

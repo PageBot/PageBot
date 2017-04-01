@@ -194,12 +194,12 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
     if fontSize is None:
         # Calculate the size for the given string for the selected font/spacing.
         # Then use the resulting with as source to calculate the fitting fontSize.
-        fs = getFormattedString(Sample_Text, style=dict(font=fontName, 
+        fs = getFormattedString(Sample_Text, None, dict(font=fontName, 
             fontSize=initialFontSize, openTypeFeatures=features))
         fsWidth, fsHeight = fs.size()
         fontSize = int(round(initialFontSize * (W-2*M) / fsWidth))
     # Make new formatted string in fitting fontSize
-    fs = getFormattedString(Sample_Text, style=dict(font=fontName, 
+    fs = getFormattedString(Sample_Text, None, dict(font=fontName, 
         fontSize=fontSize, textFill=(r, g, b, opacity), openTypeFeatures=features))
     return fontSize, fs
 

@@ -17,7 +17,8 @@ import Quartz
 import re
 from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth
 from drawBot.context.baseContext import BaseContext
-NO_COLOR = -1
+
+from pagebot.style import NO_COLOR
 
 def getRootPath():
     u"""Answer the root path of the pagebot module."""
@@ -94,50 +95,6 @@ def baseline2y(yIndex, style):
     baseline = style['baseline']
     return marginTop + cy * baseline
 
-def cp2p(cx, cy, style):
-    u"""Convert columns index to page position. Answered (x, y) is point position based on 
-    marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter)."""
-    gutter = style['g']
-    marginLeft = style['ml']
-    marginTop = style['mt']
-    columnWidth = style['cw']
-    columnHeight = style['ch']
-    return (marginLeft + cx * (columnWidth + gutter),
-            marginTop + cy * (columnHeight + gutter))
-    
-def cr2p(cx, cy, cw, ch, style):
-    u"""Convert columns rect to page position/size.  Answered (x, y, x, h) is point position and size based on
-    marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter).
-    Note that the function assumes a number of values to be present in the style, otherwise a KeyError is raised.
-    This works best to inherit the style from the RootStyle and then alter the value that are different."""
-    gutter = style['g']
-    marginLeft = style['ml']
-    marginTop = style['mt']
-    columnWidth = style['cw']
-    columnHeight = style['ch']
-    w = style['w']
-    h = style['h']
-
-    columnW = cw * (columnWidth + gutter)
-    if cw:
-        columnW -= gutter
-    columnH = ch * (columnHeight + gutter)
-    if ch:
-        columnH -= gutter
-
-    return (
-        marginLeft + cx * (columnWidth + gutter),
-        h - marginTop - (cy + ch) * (columnHeight + gutter) + gutter,
-        columnW, columnH)
-
-def xy2xy(x, y):
-    u"""In order to allow both (x, y) - compatible with DrawBot, as x, y as separate parameters – compatible
-    with many other functions, this is a conditional conversion."""
-    assert not (isinstance(x, (tuple, list)) and y is not None) or (isinstance(x, (tuple, list)) and y is None), 'xy2xy(%s, %s): Use (x, y) or x, y as position.' % (x, y)
-    if y is None:
-        x, y = x
-    return x, y
-
 MARKER_PATTERN = '==%s--%s=='
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\-\-([^=]*)\=\=')
 
@@ -163,95 +120,108 @@ def findMarkers(fs, reCompiled=None):
         reCompiled= FIND_FS_MARKERS
     return reCompiled.findall(u'%s' % fs)
 
-def getFormattedString(t, style=None):
+def css(name, e, styles=None, default=None):
+    u"""Answer the named style values. Search in optional style dict first, otherwise up the 
+    parent tree of styles in element e. Both e and style can be None. In that case None is answered."""
+    if styles is not None: # Can be single style or stack of styles.
+        if not isinstance(styles, (tuple, list)):
+            styles = [styles] # Make stack of styles.
+        for style in styles:
+            if name in style:
+                print 'STYLE', name, style[name]
+                return style[name]
+    if e is not None:
+        print 'CSS', name, e.css(name)
+        return e.css(name)
+    return default
+
+def getFormattedString(t, e, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing
     their existence, so they can inherit from previous style formats."""
     fs = FormattedString('')
-    if style is not None:
-        sFont = style.get('font')
-        if sFont is not None:
-            fs.font(sFont)
-        sFontSize = style.get('fontSize')
-        if sFontSize is not None:
-            fs.fontSize(sFontSize)
-        sFallbackFont = style.get('fallbackFont')
-        if sFallbackFont is not None:
-            fs.fallbackFont(sFallbackFont)
-        sFill = style.get('textFill', NO_COLOR)
-        if sFill is not NO_COLOR: # Test on this flag, None is valid value
-            setFillColor(sFill, fs)
-        sCmykFill = style.get('cmykFill', NO_COLOR)
-        if sCmykFill is not NO_COLOR:
-            setFillColor(sCmykFill, fs, cmyk=True)
-        sStroke = style.get('textStroke', NO_COLOR)
-        sStrokeWidth = style.get('textStrokeWidth')
-        if sStroke is not NO_COLOR and strokeWidth is not None:
-            setStrokeColor(sStroke, sStrokeWidth, fs)
-        sCmykStroke = style.get('cmykStroke', NO_COLOR)
-        if sCmykStroke is not NO_COLOR:
-            setStrokeColor(sCmykStroke, sStrokeWidth, fs, cmyk=True)
-        sAlign = style.get('align')
-        if sAlign is not None:
-            fs.align(sAlign)
-        sLeading = style.get('leading')
-        rLeading = style.get('rLeading')
-        if sLeading is not None or (rLeading is not None and sFontSize is not None):
-            fs.lineHeight((sLeading or 0) + (rLeading or 0) * (sFontSize or 0))
-        sParagraphTopSpacing = style.get('paragraphTopSpacing')
-        rParagraphTopSpacing = style.get('rParagraphTopSpacing')
-        if sParagraphTopSpacing is not None or (rParagraphTopSpacing is not None and sFontSize is not None):
-            fs.paragraphTopSpacing((sParagraphTopSpacing or 0) + (rParagraphTopSpacing or 0) * (sFontSize or 0))
-        sParagraphBottomSpacing = style.get('paragraphBottomSpacing')
-        rParagraphBottomSpacing = style.get('rParagraphBottomSpacing')
-        if sParagraphBottomSpacing is not None or (rParagraphBottomSpacing is not None and sFontSize is not None):
-            fs.paragraphBottomSpacing((sParagraphBottomSpacing or 0) + (rParagraphBottomSpacing or 0) * (sFontSize or 0))
-        sTracking = style.get('tracking')
-        rTracking = style.get('rTracking')
-        if sTracking is not None or (rTracking is not None and sFontSize is not None):
-            fs.tracking((sTracking or 0) + (rTracking or 0) * (sFontSize or 0))
-        sBaselineShift = style.get('baselineShift')
-        rBaselineShift = style.get('rBaselineShift')
-        if sBaselineShift is not None or (rBaselineShift is not None and sFontSize is not None):
-            fs.baselineShift((sBaselineShift or 0) + (rBaselineShift or 0) * (sFontSize or 0))
-        sOpenTypeFeatures = style.get('openTypeFeatures')
-        if sOpenTypeFeatures is not None:
-            fs.openTypeFeatures([], **sOpenTypeFeatures)
-        sTabs = style.get('tabs')
-        if sTabs is not None:
-            fs.tabs(*sTabs)
-        sFirstLineIndent = style.get('firstLineIndent')
-        rFirstLineIndent = style.get('rFirstLineIndent')
-        # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
-        # sFirstParagraphIndent = style.get('firstParagraphIndent')
-        # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
-        # TODO: Use this value instead, if currently on top of a new string.
-        # sFirstColumnIndent = style.get('firstColumnIndent')
-        # rFirstColumnIndent = style.get('rFirstColumnIndent')
-        if sFirstLineIndent is not None:
-            fs.firstLineIndent((sFirstLineIndent or 0) + (rFirstLineIndent or 0) * (sFontSize or 0))
-        sIndent = style.get('indent')
-        rIndent = style.get('rIndent')
-        if sIndent is not None or (rIndent is not None and sFontSize is not None):
-            fs.indent((sIndent or 0) + (rIndent or 0) * (sFontSize or 0))
-        sTailIndent = style.get('tailIndent')
-        rTailIndent = style.get('rTaildIndent')
-        if sTailIndent is not None or (rTailIndent is not None and sFontSize is not None):
-            fs.tailIndent((sTailIndent or 0) + (rTailIndent or 0) * (sFontSize or 0))
-        sLanguage = style.get('language')
-        if sLanguage is not None:
-            fs.language(sLanguage)
-        #fs.hyphenation(style.hyphenation)
+    sFont = css('font', e, style)
+    if sFont is not None:
+        fs.font(sFont)
+    sFontSize = css('fontSize', e, style)
+    if sFontSize is not None:
+        fs.fontSize(sFontSize)
+    sFallbackFont = css('fallbackFont', e, style)
+    if sFallbackFont is not None:
+        fs.fallbackFont(sFallbackFont)
+    sFill = css('textFill', e, style)
+    if sFill is not NO_COLOR: # Test on this flag, None is valid value
+        setFillColor(sFill, fs)
+    sCmykFill = css('cmykFill', e, style, NO_COLOR)
+    if sCmykFill is not NO_COLOR:
+        setFillColor(sCmykFill, fs, cmyk=True)
+    sStroke = css('textStroke', e, style, NO_COLOR)
+    sStrokeWidth = css('textStrokeWidth', e, style)
+    if sStroke is not NO_COLOR and strokeWidth is not None:
+        setStrokeColor(sStroke, sStrokeWidth, fs)
+    sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
+    if sCmykStroke is not NO_COLOR:
+        setStrokeColor(sCmykStroke, sStrokeWidth, fs, cmyk=True)
+    sAlign = css('align', e, style)
+    if sAlign is not None:
+        fs.align(sAlign)
+    sLeading = css('leading', e, style)
+    rLeading = css('rLeading', e, style)
+    if sLeading or (rLeading and sFontSize):
+        fs.lineHeight((sLeading or 0) + (rLeading or 0) * (sFontSize or 0))
+    sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
+    rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
+    if sParagraphTopSpacing or (rParagraphTopSpacing and sFontSize):
+        fs.paragraphTopSpacing((sParagraphTopSpacing or 0) + (rParagraphTopSpacing or 0) * (sFontSize or 0))
+    sParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
+    rParagraphBottomSpacing = css('rParagraphBottomSpacing', e, style)
+    if sParagraphBottomSpacing or (rParagraphBottomSpacing and sFontSize):
+        fs.paragraphBottomSpacing((sParagraphBottomSpacing or 0) + (rParagraphBottomSpacing or 0) * (sFontSize or 0))
+    sTracking = css('tracking', e, style)
+    rTracking = css('rTracking', e, style)
+    if sTracking or (rTracking and sFontSize):
+        fs.tracking((sTracking or 0) + (rTracking or 0) * (sFontSize or 0))
+    sBaselineShift = css('baselineShift', e, style)
+    rBaselineShift = css('rBaselineShift', e, style)
+    if sBaselineShift or (rBaselineShift and sFontSize):
+        fs.baselineShift((sBaselineShift or 0) + (rBaselineShift or 0) * (sFontSize or 0))
+    sOpenTypeFeatures = css('openTypeFeatures', e, style)
+    if sOpenTypeFeatures is not None:
+        fs.openTypeFeatures([], **sOpenTypeFeatures)
+    sTabs = e.css('tabs')
+    if sTabs is not None:
+        fs.tabs(*sTabs)
+    sFirstLineIndent = css('firstLineIndent', e, style)
+    rFirstLineIndent = css('rFirstLineIndent', e, style)
+    # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
+    # sFirstParagraphIndent = style.get('firstParagraphIndent')
+    # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
+    # TODO: Use this value instead, if currently on top of a new string.
+    sFirstColumnIndent = css('firstColumnIndent', e, style)
+    rFirstColumnIndent = css('rFirstColumnIndent', e, style)
+    if sFirstLineIndent or (rFirstLineIndent and sFontSize):
+        fs.firstLineIndent((sFirstLineIndent or 0) + (rFirstLineIndent or 0) * (sFontSize or 0))
+    sIndent = css('indent', e, style)
+    rIndent = css('rIndent', e, style)
+    if sIndent is not None or (rIndent is not None and sFontSize is not None):
+        fs.indent((sIndent or 0) + (rIndent or 0) * (sFontSize or 0))
+    sTailIndent = css('tailIndent', e, style)
+    rTailIndent = css('rTaildIndent', e, style)
+    if sTailIndent or (rTailIndent and sFontSize):
+        fs.tailIndent((sTailIndent or 0) + (rTailIndent or 0) * (sFontSize or 0))
+    sLanguage = css('language', e, style)
+    if sLanguage is not None:
+        fs.language(sLanguage)
+    #fs.hyphenation(style.hyphenation)
 
-    if style is not None:
-        sUpperCase = style.get('uppercase')
-        sLowercase = style.get('lowercase')
-        sCapitalized = style.get('capitalized')
-        if sUpperCase:
-            t = t.upper()
-        elif sLowercase:
-            t = t.lower()
-        elif sCapitalized:
-            t = t.capitalize()
+    sUpperCase = css('uppercase', e, style)
+    sLowercase = css('lowercase', e, style)
+    sCapitalized = css('capitalized', e, style)
+    if sUpperCase:
+        t = t.upper()
+    elif sLowercase:
+        t = t.lower()
+    elif sCapitalized:
+        t = t.capitalize()
 
     return fs + t
 

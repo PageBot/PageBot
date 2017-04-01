@@ -11,7 +11,8 @@
 #     style.py
 #
 import copy
-from pagebot import NO_COLOR
+
+NO_COLOR = -1
 
 # Basic layout measures
 U = 7
@@ -92,9 +93,7 @@ TOP_ALIGN = 'top'
 BOTTOM_ALIGN = 'bottom'
 
 def newStyle(**kwargs):
-    style = dict(**kwargs)
-    style['cascaded'] = False
-    return style
+    return dict(**kwargs)
 
 def makeStyle(style=None, **kwargs):
     u"""Make style from a copy of style dict (providing all necessary default values for the
@@ -133,9 +132,6 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
 
         name = 'root', # Name of the style, key in document.getRootstyle( )
         tag = None, # Optional marker to match the style with the running tag.
-        # The default value in a initial Style is False. Gets True if expanded by cascading.
-        # The root style is – by definition – aways cascaded, as it contains all possible values initialized.
-        cascaded = True,
         # Basic page/template measures
         u = u, # Base unit for Dutch/Swiss typography :)
         w = 595, # Page width, basis size of the document. Point rounding of 210mm, international generic fit.

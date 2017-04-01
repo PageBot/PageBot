@@ -13,7 +13,6 @@
 #     automatic layout template, Galley, Typesetter and Composer classes.
 #
 import pagebot # Import to know the path of non-Python resources.
-from pagebot import getFormattedString, textBoxBaseLines
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT_ALIGN, A4
@@ -147,20 +146,20 @@ def makeDocument(rs):
     # The baseline grid is just a regular element, like all others on the page. Same parameters apply.
     template.baselineGrid(style=rs)
     # Add image containers to the page, that images + captions, within the defined space.
-    template.cContainer(4, 0, 2, 3, rs)  # Empty image element, cx, cy, cw, ch
-    template.cContainer(0, 5, 2, 3, rs)
-    template.cContainer(2, 2, 2, 2, rs)
-    template.cContainer(4, 6, 2, 2, rs)
+    template.cContainer(4, 0, 2, 3)  # Empty image element, cx, cy, cw, ch
+    template.cContainer(0, 5, 2, 3)
+    template.cContainer(2, 2, 2, 2)
+    template.cContainer(4, 6, 2, 2)
     
     # In this simple example page, we won't have the headline run in the galley of the main text.
     # Create separate text box here to accommodate the headline.
-    template.cTextBox('', 0, -0.2, 4, 2+0.2, rs, headlineId, fill=BOX_COLOR)
+    template.cTextBox('', 0, -0.2, 4, 2+0.2, eId=headlineId, fill=BOX_COLOR)
 
     # Make linked text box elemnents, where position and size is defined by columns.
-    template.cTextBox('', 0, 2, 2, 3, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
-    template.cTextBox('', 2, 4, 2, 4, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
+    template.cTextBox('', 0, 2, 2, 3, eId=flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
+    template.cTextBox('', 2, 4, 2, 4, eId=flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     # Final column flow on the page does not link to next page. We want this demo one page only.
-    template.cTextBox('', 4, 3, 2, 3, rs, flowId2, fill=BOX_COLOR)
+    template.cTextBox('', 4, 3, 2, 3, eId=flowId2, fill=BOX_COLOR)
     
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -168,11 +167,11 @@ def makeDocument(rs):
     doc = Document(rs, pages=2, template=template) 
  
     # Cache some values from the root style that we need multiple time to create the tag styles.
-    fontSize = rs['fontSize']
-    leading = rs['leading']
-    rLeading = rs['rLeading']
-    listIndent = rs['listIndent']
-    language = rs['language']
+    fontSize = doc.css('fontSize')
+    leading = doc.css('leading')
+    rLeading = doc.css('rLeading')
+    listIndent = doc.css('listIndent')
+    language = doc.css('language')
     h1Size = 4*fontSize
     h2Size = 3*fontSize
     
@@ -221,7 +220,8 @@ def makeDocument(rs):
         
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
-    t = Typesetter(doc, g)                
+    t = Typesetter(g)                
+    """
     blurbNames = (('h1', 'news_headline'), ('h2', 'article_ankeiler'))
     t.typesetFilibuster(blurbNames)
 
@@ -236,7 +236,7 @@ def makeDocument(rs):
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
     c.compose(g, onePage, flowId0)
-    
+    """
     return doc
         
 d = makeDocument(RS)

@@ -12,7 +12,6 @@
 from __future__ import division
 
 import pagebot
-from pagebot import getFormattedString
 from pagebot.page import Template
 # For Variation Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font

@@ -86,7 +86,6 @@ RS = getRootStyle(
     rLeading = 0,
     fontSize = 9
 )
-FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 MD_PATH = 'thesis.md'

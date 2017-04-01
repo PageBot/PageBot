@@ -98,6 +98,28 @@ class Container(Element):
         if e in self._elements:
             self._elements.remove(e)
 
+    # If the element is part of a flow, then answer the squence.
+    
+    def getFlows(self):
+        u"""Answer the set of flow sequences on the page."""
+        flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
+        for e in self.getElements():
+            if not e.isFlow:
+                continue
+            # Now we know that this element has a e.nextBox and e.nextPage
+            # There should be a flow with that name in our flows yet
+            found = False
+            for nextId, seq in flows.items():
+                if seq[-1].nextBox == element.eId: # Glue to the end of the sequence.
+                    seq.append(element)
+                    found = True
+                elif e.nextBox == seq[0].eId: # Add at the start of the list.
+                    seq.insert(0, element)
+                    found = True
+            if not found: # New entry
+                flows[e.next] = [e]
+        return flows
+
     #   D R A W I N G
 
     def draw(self, origin):

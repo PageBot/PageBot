@@ -12,7 +12,7 @@
 #     This script the PDF document with Bitcount refernce information.
 #
 import pagebot
-from pagebot import getFormattedString, findMarkers, textBoxBaseLines
+from pagebot import findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
 from pagebot.document import Document
 from pagebot.page import Page, Template
