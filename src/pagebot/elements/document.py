@@ -66,7 +66,6 @@ class Document(object):
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
     def css(self, name, default=None):
-        print "#@#@############", name, self.rootStyle.get(name), default
         return self.rootStyle.get(name, default)
 
     def getNamedStyle(self, styleName):

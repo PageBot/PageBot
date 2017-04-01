@@ -35,16 +35,16 @@ class Typesetter(object):
         self.galley = galley
         self.gState = [] # Stack of graphic state as cascading styles.
      
-    def getTextBox(self, style=None):
+    def getTextBox(self, e=None):
         u"""Answer the current text box, if the width fits the current style.
         If style is omitted, then always answer the current latest text box."""
-        return self.galley.getTextBox(style)
+        return self.galley.getTextBox(e)
 
     def node_h1(self, node, e):
         u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before. 
         # Add invisible h2-marker in the string, to be retrieved by the composer.
-        cStyle = self.getCascadedNodeStyle(node.tag)
+        dtyle = self.getCascadedNodeStyle(node.tag)
         tb = self.getTextBox(cStyle) # Get the latest galley text box. Answer new if width changed.
         headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         tb.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.

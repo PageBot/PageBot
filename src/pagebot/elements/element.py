@@ -14,7 +14,7 @@ import weakref
 
 from drawBot import rect, newPath, moveTo, lineTo, drawPath, save, restore, scale
 
-from pagebot import setFillColor, setStrokeColor
+from pagebot import setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, w2cw, cw2w, h2ch, ch2h
 from pagebot.toolbox.transformer import point3D, point2DOr3D, pointOrigin2D, uniqueID
 from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN
 
@@ -53,10 +53,8 @@ class Element(object):
         of self, then follow the parent links until document or root, if self does not contain
         the requested value."""
         if name in self.style:
-            print '@ELELMENT', name, self.style
             return self.style[name]
-        if self.parent:
-            print '$$$$PARENT', name
+        if self.parent is not None:
             return self.parent.css(name, default)
         return None
 
@@ -122,54 +120,35 @@ class Element(object):
     # Position by column + gutter size index.
 
     def _get_cx(self): # Answer the x-position, defined in columns. Can be fractional for elements not on grid.
-        gutter = self.css('g')
-        cw = self.css('cw')
-        if cw + gutter: # Check on division by 0
-            return (self.x - self.css('ml')) / (cw + gutter)
-        return 0
+        return x2cx(self.x, self)
     def _set_cx(self, cx): # Set the x-position, defined in columns.
-        if cx is not None:
-            self.x = self.css('ml', 0) + cx * (self.css('cw', 0) + self.css('g', 0))
+        x = cx2x(cx, self)
+        if x is not None:
+            self.x = x
     cx = property(_get_cx, _set_cx)
 
     def _get_cy(self): # Answer the x-position, defined in columns. Can be fractional for elements not on grid.
-        gutter = self.css('g')
-        ch = self.css('ch')
-        if ch + gutter: # Check on division by 0
-            if self.css('originTop'):
-                return (self.y - self.css('mt')) / (ch + gutter)
-            return (self.y - self.css('mb')) / (ch + gutter)
-        return 0
+        return y2py(self.y, self)
     def _set_cy(self, cy): # Set the x-position, defined in columns.
-        if cy is not None:
-            if self.css('originTop'):
-                self.y = self.css('mt', 0) + cy * (self.css('ch', 0) + self.css('g', 0))
-            else:
-                self.y = self.css('mb', 0) + cy * (self.css('ch', 0) + self.css('g', 0))
+        y = cy2y(cy, self)
+        if y is not None:
+            self.y = y
     cy = property(_get_cy, _set_cy)
 
     def _get_cw(self):
-        gutter = self.css('g')
-        cw = self.css('cw')
-        if cw + gutter:
-            return (self.w + gutter) / (cw + gutter)
-        return 0 # Undefined, not info about column width and gutter
+        return w2cw(self.w, self)
     def _set_cw(self, cw):
-        if cw is not None:
-            gutter = self.css('g')
-            self.w = cw * (self.css('cw') + gutter) - gutter  # Overwrite style from here.
+        w = cw2w(cw, self)
+        if w is not None:
+            self.w = w
     cw = property(_get_cw, _set_cw)
 
     def _get_ch(self):
-        gutter = self.css('g')
-        ch = self.css('cw')
-        if ch + gutter:
-            return (self.h + gutter) / (ch + gutter)
-        return 0 # Undefined, not info about column width and gutter
+        return h2ch(self.h, self)
     def _set_ch(self, ch):
-        if ch is not None:
-            gutter = self.css('g')
-            self.h = ch * (self.css('ch') + gutter) - gutter  # Overwrite style from here.
+        h = ch2h(ch, self)
+        if h is not None:
+            self.h = h
     ch = property(_get_ch, _set_ch)
 
     # Absolute posiitons
