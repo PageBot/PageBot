@@ -10,16 +10,8 @@
 #
 #     image.py
 #
-"""
 import os
-import copy
-
-from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
-    newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
-    textBox, hyphenation, restore, imageSize, shadow, BezierPath, clipPath, drawPath
-from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-from pagebot.style import LEFT_ALIGN, TOP_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
-"""
+from drawBot import imageSize
 from pagebot.elements.element import Element
 
 class Image(Element):
@@ -36,12 +28,13 @@ class Image(Element):
             self.caption = getFormattedString(self.captionStyle)
         else:
             self.caption = None
-        # Check on one of the (w, h) in the style. One of the can be undefined for proportional scaling.
-        # TODO: take over width if image in file, is missing.
-        assert self.w is not None or self.h is not None, ('Image "%s" has missing width of height.' % path)
         # Set all size and scale values.
         self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn.
-        print self.ih, path
+        # Check on one of the (w, h) in the style. One of the can be undefined for proportional scaling.
+        # Set default to 1 column
+        if self.w is not None and self.h is not None:
+            self.w = self.css('cw')
+        #print self.ih, path
 
     def __repr__(self):
         return '[%s %s]' % (self.__class__.__name__, self.eId or self.path)
@@ -50,11 +43,26 @@ class Image(Element):
         u"""Set the path of the image. If the path exists, the get the real
         image size and store as self.iw, self.ih."""
         self.path = path
+        self.initImageSize()
+
+    def initImageSize(self):
         if self.path is not None and os.path.exists(self.path):
-            self.iw, self.ih = imageSize(self.path)
+            self._iw, self._ih = imageSize(self.path)
             self.setScale(self.w, self.h) # Calculate scale and scaled self.sw and self.sh
         else:
-            self.iw = self.ih = None
+            self._iw = self._ih = 0 # Undefined, but calculating.
+
+    def _get_iw(self):
+        if not self._iw:
+            self.initImageSize()
+        return self._iw
+    iw = property(_get_iw)
+
+    def _get_ih(self):
+        if not self._ih:
+            self.initImageSize()
+        return self._ih
+    ih = property(_get_ih)
 
     def setSize(self, w, h):
         u"""Set the intended size and calculate the new scale."""
@@ -88,16 +96,16 @@ class Image(Element):
             w = self.w
         if h is None:
             h = self.h
-        _, _, pw, ph = self.getPadded(0, 0, w or 0, h or 0) # Calculate padding, because it will adjust scale.
+        _, _, pw, ph = self.getPaddedBox() # Calculate padding, because it will adjust scale.
         if not self.iw or not self.ih:
             # Cannot calculate the scale if the image does not exist.
             sx = sy = 1
-            self._w = self.style.get('w') # Copy from original plain style, without scaling.
-            self._h = self.style.get('h')
+            self._w = self.css('w') # Copy from original plain style, without scaling.
+            self._h = self.css('h')
         elif w is None and h is None:
             sx = sy = 1 # Use default size of the image.
-            self._w = self.style.get('w') # Copy from original plain style, without scaling.
-            self._h = self.style.get('h')
+            self._w = self.css('w') # Copy from original plain style, without scaling.
+            self._h = self.css('h')
         elif not proportional and w is not None and h is not None: # Needs to be disproportional scale
             sx = 1.0 * pw / self.iw
             sy = 1.0 * ph / self.ih

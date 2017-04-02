@@ -401,12 +401,8 @@ class Template(Page):
     the same way. Difference is that templates cannot contain other templates."""
     
     def __init__(self, point=None, parent=None, style=None, eId=None, template=None, **kwargs):
-        self._w = self._h = None # Initially make self.w and self.h look into the style.
         Page.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
         # Skip template parameter.
-        # Each element should check at this point if the minimum set of style values
-        # are set and if their values are valid.
-        assert self.w is not None and self.h is not None # Make sure that page size is defined.
 
     def getStyle(self, name=None):
         return self.style
