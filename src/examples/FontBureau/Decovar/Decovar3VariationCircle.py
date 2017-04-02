@@ -127,12 +127,20 @@ class VariationCircle(Element):
         # Draw name of the font
         fill(0)
         text(FormattedString(self.font.info.familyName, font=self.style['labelFont'],
-            fontSize=self.style['axisNameFontSize']), (x-fontSize/2, y+self.h+fontSize/2))
+            fontSize=self.style['titleFontSize']), (x-fontSize/2, y+self.h+fontSize/2))
 
         # Draw spokes
         fill(None)
-        stroke(0)
+        stroke(0.7)
         strokeWidth(1)
+        newPath()
+        for axisName, angle in self.angles.items():
+            markerX, markerY = self._angle2XY(angle, self.w/2)
+            moveTo((mx-markerX, my-markerY))
+            lineTo((mx+markerX, my+markerY))
+        drawPath()
+        
+        stroke(0)
         newPath()
         for axisName, angle in self.angles.items():
             markerX, markerY = self._angle2XY(angle, self.w/2)
@@ -212,8 +220,8 @@ class VariationCircle(Element):
                 fill(0.7, 0.7, 0.7, 0.6)
                 stroke(None)
                 minM = 0.2
-                rect(mx+markerX*minM-tw/2-4, my+markerY*minM+th*0.5-4, tw+8, th)
-                text(fs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5)) 
+                rect(mx+markerX*minM-tw/2-4, my+markerY*minM-8, tw+8, th)
+                text(fs, (mx+markerX*minM-tw/2, my+markerY*minM-4)) 
 
 #====================
 
@@ -245,7 +253,7 @@ def makeDocument(rs):
     glyphName = 'A' 
     angles = {}
     style = dict(fontSize=FONT_SIZE, labelFont='Verdana', axisNameFontSize=14, 
-        valueFontSize=10, axisNameColor=(1, 0, 0))
+        titleFontSize=18, valueFontSize=10, axisNameColor=(1, 0, 0))
     for axisName in axes:
         angles[axisName] = globals()[axisName]
     variationCircle = VariationCircle(varFont, w=W-M*2, h=H-M*2, s=glyphName, angles=angles,
