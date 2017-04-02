@@ -24,15 +24,7 @@ from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval
 from pagebot import setFillColor, setStrokeColor
 from pagebot.style import NO_COLOR, makeStyle
 
-from pagebot.elements.textbox import TextBox
-from pagebot.elements.text import Text
-from pagebot.elements.rect import Rect
-from pagebot.elements.line import Line
-from pagebot.elements.polygon import Polygon
-from pagebot.elements.oval import Oval
-from pagebot.elements.image import Image
-from pagebot.elements.container import Container
-from pagebot.elements.grid import Grid, BaselineGrid
+from pagebot.elements import TextBox, Text, Rect, Line, Polygon, Oval, Image, Container, Grid, BaselineGrid
 
 from pagebot.toolbox.transformer import pointOrigin2D
 from pagebot.toolbox.markers import drawCropMarks, drawRegistrationMarks
@@ -71,17 +63,17 @@ class Page(Container):
                 self.append(copy.copy(element))
 
 
-    def replaceElement(self, element, replacement):
+    def XXXreplaceElement(self, element, replacement):
         u"""Find this element in the page and replace it at the
         same element index (layer position) as the original element has.
         Force the original element size on the replacing element."""
         w, h = element.getSize()
-        for index, (e, (x, y)) in enumerate(self.elements):
+        for index, e in enumerate(self.elements):
             if e is element:
                 # Force element to fit in this size. In case of an image element,
                 # by default this is done by proportional scale from the original size.
                 replacement.setSize(w, h) 
-                replacementPos = replacement, (x, y)
+                replacementPos = replacement
                 self.elements[index] = replacementPos # Overwriting original element.
                 if (x, y) in self.placed:
                     placedElements = self.placed[(x, y)]

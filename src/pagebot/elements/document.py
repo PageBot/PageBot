@@ -208,7 +208,7 @@ class Document(object):
         if pageId is None:
             if not self.pages: # If not pages yet, start with the first page number defined in root style.
                 rs = self.getRootStyle()
-                pageId = rs['firstPageId']
+                pageId = self.css('firstPageId')
             else:
                 pageId = max(self.pages.keys())+1
         assert not pageId in self.pages # Make sure that we don't accidentally overwrite existing pages.
@@ -225,7 +225,7 @@ class Document(object):
         when everything else fails and there is no fall-back template defined by the calling application."""
         boxId = 'DEFAULT'
         template = self.TEMPLATE_CLASS(self.getRootStyle())
-        template.cTextBox(0, 0, 4, 8, boxId, nextBox=boxId, nextPage=1)  # Simple template with 1 column.
+        template.cTextBox(0, 0, 4, 8, eId=boxId, nextBox=boxId, nextPage=1)  # Simple template with 1 column.
         return template
 
     def getTemplate(self):
@@ -261,9 +261,9 @@ class Document(object):
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
         # then set the global frame duration.
-        rs = self.getRootStyle()
-        if rs['frameDuration'] is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
-            frameDuration(rs['frameDuration'])
+        frameDuration = self.css('frameDuration')
+        if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
+            frameDuration(frameDuration)
 
         # http://www.drawbot.com/content/canvas/saveImage.html
         saveImage(fileName, multipage=multiPage)

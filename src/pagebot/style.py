@@ -148,7 +148,10 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
         # Note that the direcion of display is always upwards. This means that the position of text and elements
         # goes downward from the top, they are not flipped vertical. It is up to the caller to make sure
         # there is enough space for elements to show themselves on top of a given position.
+        # originTop often goes with vAlign = TOP_ALIGN.
         originTop = True,
+        align = LEFT_ALIGN, # Alignment, one if ('left', 'justified', 'center'. 'right')
+        vAlign = TOP_ALIGN, # Alignment for elements like image, that float in their designated space.
         # Margins
         mt = 7*u, # Margin top
         ml = 7*u, # Margin left
@@ -246,8 +249,6 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
         # Horizontal spacing for absolute and fontsize-related measures
         tracking = 0, # Absolute tracking value. Note that this is different from standard name definition.
         rTracking = 0, # Tracking as factor of the fontSize.
-        align = LEFT_ALIGN, # Alignment, one if ('left', 'justified', 'center'. 'right')
-        vAlign = TOP_ALIGN, # Alignment for elements like image, that float in their designated space.
         # Set tabs,tuples of (float, alignment) Alignment can be “left”, “center”, “right”
         # or any other character. If a character is provided the alignment will be right and
         # centered on the specified character.
