@@ -31,8 +31,8 @@ class Element(object):
 
     def __init__(self, point=None, parent=None, eId=None, style=None, **kwargs):  
         u"""Basic initialize for every Element contructor."""  
+        self._w = self._h = 0 # Optionally overwritten values. Otherwise use values from self.style.
         self.point = point # Store optional self._point position property (x, y, None) or (x, y, z), local to parent.
-        self._w = self._h = None # Optionally overwritten values. Otherwise use values from self.style.
         self.style = makeStyle(style, **kwargs)
         self.eId = eId or uniqueID(self)
         self.parent = parent # Weak ref to parent element.
@@ -56,7 +56,7 @@ class Element(object):
             return self.style[name]
         if self.parent is not None:
             return self.parent.css(name, default)
-        return None
+        return default
 
     def getNamedStyle(self, styleName):
         u"""In case we are looking for a named style (e.g. used by the Typesetter to build a stack
@@ -201,9 +201,12 @@ class Element(object):
         u"""Calculate the padded position and padded resized box of the element, after applying the
         option style padding."""
         # TODO: Get this to work. Padding now had problem of scaling images too big for some reason.
-        return self.x + self.css('pl', 0), self.y + self.css('pb', 0),\
-            self.w - self.css('pl', 0) - self.css('pr', 0), \
-            self.h - self.csss('pt', 0) - self.css('pb', 0)
+        print self.x,  self.css('pl'), self.y, self.css('pb'),\
+            self.w, self.css('pl'), self.css('pr'), \
+            self.h, self.css('pt'), self.css('pb')
+        return self.x + self.css('pl'), self.y + self.css('pb'),\
+            self.w - self.css('pl') - self.css('pr'), \
+            self.h - self.css('pt') - self.css('pb')
 
     def _get_boundingBox(self):
         u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties. Default to 0
