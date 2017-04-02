@@ -16,7 +16,7 @@ from drawBot import rect, newPath, moveTo, lineTo, drawPath, save, restore, scal
 
 from pagebot import setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, w2cw, cw2w, h2ch, ch2h
 from pagebot.toolbox.transformer import point3D, point2DOr3D, pointOrigin2D, uniqueID
-from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN
+from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN
 
 class Element(object):
 
@@ -128,7 +128,7 @@ class Element(object):
     cx = property(_get_cx, _set_cx)
 
     def _get_cy(self): # Answer the x-position, defined in columns. Can be fractional for elements not on grid.
-        return y2py(self.y, self)
+        return y2cy(self.y, self)
     def _set_cy(self, cy): # Set the x-position, defined in columns.
         y = cy2y(cy, self)
         if y is not None:
@@ -268,26 +268,20 @@ class Element(object):
             px -= self.w/2/self.scaleX
         elif self.css('align') == RIGHT_ALIGN:
             px -= self.w/self.scaleX
-        if self.css('originTop'):
-            if self.css('vAlign') == CENTER:
-                py += self.h/2/self.scaleY
-            elif self.css('vAlign') == TOP_ALIGN:
-                py += self.h/self.scaleY
-        else:
-            if self.css('vAlign') == CENTER:
-                py -= self.h/2/self.scaleY
-            elif self.css('vAlign') == TOP_ALIGN:
-                py -= self.h/self.scaleY
+        if self.css('vAlign') == CENTER:
+            py -= self.h/2/self.scaleY
+        elif self.css('vAlign') == TOP_ALIGN:
+            py -= self.h/self.scaleY
         return px, py
 
     def _applyOrigin(self, p):
         u"""If self.css('originTop') is False, then the y-value is interpreted as mathemtcs, 
         starting at the bottom of the parent element, moving up.
         If the flag is True, then move from top down, where the origin of the element becomes
-        top-left of the bounding box."""
+        top-left of the parent."""
         px, py = p
-        if self.css('originTop') and self.parent:
-            py = self.parent.h - py - self.h
+        if self.originTop and self.parent:
+            py = self.parent.h - py
         return px, py
 
     def _applyRotation(self, mx, my, angle):

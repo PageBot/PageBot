@@ -89,7 +89,6 @@ class Text(Element):
         self._resetShadow()
         self._restoreScale()
 
-        text('%s' % `origin`, origin)
 
 
 
