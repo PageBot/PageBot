@@ -24,7 +24,16 @@ from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval
 from pagebot import setFillColor, setStrokeColor
 from pagebot.style import NO_COLOR, makeStyle
 
-from pagebot.elements import TextBox, Text, Rect, Line, Polygon, Oval, Image, Container, Grid, BaselineGrid
+from pagebot.elements.textbox import TextBox
+from pagebot.elements.text import Text
+from pagebot.elements.rect import Rect
+from pagebot.elements.oval import Oval
+from pagebot.elements.image import Image
+from pagebot.elements.container import Container
+from pagebot.elements.grid import Grid, BaselineGrid
+from pagebot.elements.container import Container
+from pagebot.elements.line import Line
+from pagebot.elements.polygon import Polygon
 
 from pagebot.toolbox.transformer import pointOrigin2D
 from pagebot.toolbox.markers import drawCropMarks, drawRegistrationMarks
