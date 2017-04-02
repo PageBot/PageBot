@@ -65,6 +65,7 @@ def makeDocument(rs):
             color1 = (0.1, random(), 0.6)
             color2 = (0.1, 0.6, random())
             # Calculate the position for each square as combination of margins and (ix, iy)
+            # Conversion of column index to 
             page.cRect(ix, iy, 1, 1, fill=color1, stroke=None) # Create Rect object and place it in the page on position p
             page.cOval(ix, iy, 1, 1, fill=color2, stroke=None) # Create Rect object and place it in the page on position p
             # Mark the coordinate 
@@ -74,9 +75,10 @@ def makeDocument(rs):
             ct.x += 0
             ct.y += 0
             
-            
+            # Check the reverse conversion (column index and width to point position)
+            # Should exactly overlay.
             page.rect((cx2x(ix, page), cy2y(iy, page)), 
-                w=cw2w(square, page), h=ch2h(square, page), 
+                w=cw2w(1, page), h=ch2h(1, page), 
                 fill=None, stroke=0, strokeWidth=0.5)
             page.grid = Grid()
             
