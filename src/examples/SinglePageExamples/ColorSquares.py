@@ -38,7 +38,7 @@ RS['w'] = W
 RS['h'] = H
 # Setting value for demo purpose, it is style default, using the elements origin as top-left. 
 # Change to False will show origin of elements in their bottom-left corner.
-RS['originTop'] = True 
+RS['originTop'] = False 
 #for key, value in RS.items():
 #    print key, value
 
@@ -54,12 +54,15 @@ def makeDocument(rs):
     sqx = int(W/(square + gutter)) # Whole amount of squares that fit on the page.
     sqy = int(H/(square + gutter))
     # Calculate centered margins for the amount of fitting squares.
-    mx = (W - sqx*(square + gutter) + gutter)/2
-    my = (H - sqy*(square + gutter) + gutter)/2
-
+    # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
+    rs['ml'] = mx = (W - sqx*(square + gutter) + gutter)/2
+    rs['mt'] = rs['mb'] = my = (H - sqy*(square + gutter) + gutter)/2
+    rs['cw'] = rs['ch'] = square
+    rs['g'] = gutter
+    
     page = doc[1] # Get the single page from te document.
     for ix in range(sqx): # Run through the range of (0, 1, ...) number of horizontal squares
-        for iy in range(1,sqy+1): # Same with vertical squares
+        for iy in range(sqy): # Same with vertical squares
             # Place squares in random colors
             color1 = (random(), 0.1, 0.6)
             color2 = (random(), 0.1, 0.6)
@@ -67,10 +70,13 @@ def makeDocument(rs):
             p = mx + ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
             page.rect(p, w=square, h=square, fill=color1, stroke=None) # Create Rect object and place it in the page on position p
             page.oval(p, w=square, h=square, fill=color2, stroke=None) # Create Rect object and place it in the page on position p
+            
+            #page.cRect(ix, iy, 1, 1, fill=None, stroke=0, strokeWidth=0.5)
             # Mark the coordinate 
             page.oval(p, w=gutter, h=gutter, fill=None, stroke=0, align=CENTER, vAlign=CENTER)
-            page.text('%d, %d' % p, (p[0], p[1]), textFill=1, fontSize=5)
+            e = page.text('%d, %d' % p, p, textFill=1, fontSize=50, leading=60)
 
+            page.rect((110, 110), w=mx, h=my, fill=(0, 1, 0))
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around
     # added or deleted or moved to other pages.  
     return doc # Answer the doc for further doing.
