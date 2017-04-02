@@ -218,17 +218,8 @@ class Document(object):
         even if already exists. Forst the name of the style to be the same as the style key.
         Answer the new style."""
         return self.replaceStyle(kwargs['name'], dict(**kwargs))
-         
-    def export(self, fileName, pageSelection=None, multiPage=True):
-        u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
-        it must be a list with page numbers to export. This allows the order to be changed and pages to
-        be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
-        drawing and export that needs to be done.
-        The multiPage value is passed on to the DrawBot saveImage call.
-
-        document.export(...) is the most common way to export documents. But in special cases, there is not 
-        straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use 
-        MyBuilder(document).export(fileName), the builder is responsible to query the document, pages, elements and styles."""
+    
+    def drawPages(self, pageSelection=None):
         if pageSelection is None:
             pageSelection = range(1, len(self.pages)+1) # [1,2,3,4,...] inclusive
         for pIndex in pageSelection:
@@ -240,6 +231,18 @@ class Document(object):
             newPage(self.w, self.h) #  Same size, make page of this size.
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
             page.draw() 
+
+    def export(self, fileName, pageSelection=None, multiPage=True):
+        u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
+        it must be a list with page numbers to export. This allows the order to be changed and pages to
+        be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
+        drawing and export that needs to be done.
+        The multiPage value is passed on to the DrawBot saveImage call.
+
+        document.export(...) is the most common way to export documents. But in special cases, there is not 
+        straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use 
+        MyBuilder(document).export(fileName), the builder is responsible to query the document, pages, elements and styles."""
+        self.drawPages(pageSelection)
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
         # then set the global frame duration.

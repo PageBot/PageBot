@@ -81,11 +81,3 @@ class Composer(object):
 
     #    Validation, evaludating conditions.
     
-    def evaluate(self, root):
-        u"""Evaluate the “quality level” of the root eleement, according to the optiona list of 
-        conditions, as they exist in element styles."""
-        value = 0
-        for e in root.elements:
-            value += self.evaluate(e)
-        retrn value
-
