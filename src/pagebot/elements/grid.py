@@ -28,7 +28,6 @@ class Grid(Element):
         p = self._applyScale(p)    
         px, py = self._applyAlignment(p)
 
-
         sGridFill = self.css('gridFill', NO_COLOR)
         gutter = self.css('g') # Gutter
         columnWidth = self.css('cw') # Column width
@@ -56,7 +55,7 @@ class Grid(Element):
             # TODO: DrawBot align and fill don't work properly now.
             M = 16
             fs = getFormattedString('', self, dict(font='Verdana', align='right', fontSize=M/2,
-                stroke=None, fill=self.css('gridStroke')))
+                stroke=None, textFill=self.css('gridStroke')))
             ox = px + marginLeft
             index = 0
             oy = h - marginTop - py
@@ -67,20 +66,20 @@ class Grid(Element):
                 moveTo((ox + columnWidth, py))
                 lineTo((ox + columnWidth, py + h))
                 drawPath()
-                text(fs+repr(index), (x + M * 0.3, y + M / 4))
+                text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
                 index += 1
-                x += columnWidth + gutter
+                ox += columnWidth + gutter
             index = 0
-            while y > py:
+            while oy > py:
                 newPath()
                 moveTo((px, oy))
                 lineTo((px + w, oy))
-                moveTo((px, oy - columnWidth))
-                lineTo((px+w, oy - columnWidth))
+                moveTo((px, oy - columnHeight))
+                lineTo((px+w, oy - columnHeight))
                 drawPath()
                 text(fs + repr(index), (px + marginLeft - M / 2, oy - M * 0.6))
                 index += 1
-                y -= columnHeight + gutter
+                oy -= columnHeight + gutter
 
         self._restoreScale()
 
@@ -102,16 +101,16 @@ class BaselineGrid(Grid):
             # Format of line numbers.
             # TODO: DrawBot align and fill don't work properly now.
             fs = getFormattedString('', self, dict(font=self.css('fallbackFont','Verdana'), align='right', fontSize=M/2,
-                stroke=None, fill=self.css('gridStroke')))
-            while y > self.css('mb', 0):
+                stroke=None, textFill=self.css('gridStroke')))
+            while oy > self.css('mb', 0):
                 setFillColor(None)
                 setStrokeColor(self.css('baselineGridStroke', NO_COLOR), self.css('gridStrokeWidth'))
                 newPath()
-                moveTo((px + M, py + y))
-                lineTo((px + page.w - M, py + y))
+                moveTo((px + M, py + oy))
+                lineTo((px + self.parent.w - M, py + oy))
                 drawPath()
-                text(fs + repr(line), (px + M - 2, py + y - M * 0.6))
-                text(fs + repr(line), (px + page.w - M - 8, py + y - M * 0.6))
+                text(fs + repr(line), (px + M - 2, py + oy - M * 0.6))
+                text(fs + repr(line), (px + self.parent.w - M - 8, py + oy - M * 0.6))
                 line += 1 # Increment line index.
                 oy -= self.css('baselineGrid') # Next vertical line position of baseline grid.
 

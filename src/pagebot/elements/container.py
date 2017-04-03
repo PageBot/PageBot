@@ -110,11 +110,11 @@ class Container(Element):
             # There should be a flow with that name in our flows yet
             found = False
             for nextId, seq in flows.items():
-                if seq[-1].nextBox == element.eId: # Glue to the end of the sequence.
-                    seq.append(element)
+                if seq[-1].nextBox == e.eId: # Glue to the end of the sequence.
+                    seq.append(e)
                     found = True
                 elif e.nextBox == seq[0].eId: # Add at the start of the list.
-                    seq.insert(0, element)
+                    seq.insert(0, e)
                     found = True
             if not found: # New entry
                 flows[e.next] = [e]

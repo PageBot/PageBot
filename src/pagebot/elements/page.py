@@ -318,9 +318,13 @@ class Page(Container):
         for seq in self.getFlows().values():
             # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)
             # This offset is defined by optional 
-            tbStart, (startX, startY) = self.getElementPos(seq[0].eId)
+            tbStart = self.getElement(seq[0].eId)
+            startX = tbStart.x
+            startY = tbStart.y
             for tbTarget in seq[1:]:
-                tbTarget, (targetX, targetY) = self.getElementPos(tbTarget.eId)
+                tbTarget = self.getElement(tbTarget.eId)
+                targetX = tbTarget.x
+                targetY = tbTarget.y
                 self._drawArrow(ox+startX, oy+startY+tbStart.h, ox+startX+tbStart.w, oy+startY, -1)
                 self._drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h, 1)
                 tbStart = tbTarget
@@ -330,8 +334,8 @@ class Page(Container):
 
             if self != self.parent.getLastPage():
                 # Finalize with a line to the start, assuming it is on the next page.
-                tbTarget, (targetX, targetY) = self.getElementPos(seq[0].eId)
-                self._drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h-self.h, 1)
+                tbTarget = self.getElement(seq[0].eId)
+                self._drawArrow(ox+startX+tbStart.w, oy+startY, ox+tbTarget.x, oy+tbTarget.y+tbTarget.h-self.h, 1)
 
 
     def _drawPageInfo(self, origin):

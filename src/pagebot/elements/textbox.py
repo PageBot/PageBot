@@ -106,25 +106,26 @@ class TextBox(Element):
     def draw(self, origin):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
-        ox, oy = pointOrigin2D(self.point, origin)
-        if self.style.get('align') == RIGHT_ALIGN:
-            ox -= self.w
-        elif self.style.get('align') == CENTER:
-            ox -= self.w/2
+        p = pointOrigin2D(self.point, origin)
+        p = self._applyOrigin(p)    
+        p = self._applyScale(p)    
+        px, py = self._applyAlignment(p)
+   
         sFill = self.style.get('fill', NO_COLOR)
         if sFill != NO_COLOR:
             setStrokeColor(None)
             setFillColor(sFill)
-            rect(ox, oy, self.w, self.h)
+            rect(px, py, self.w, self.h)
         hyphenation(True)
-        textBox(self.fs, (ox, oy, self.w, self.h))
+        textBox(self.fs, (px, py, self.w, self.h))
         sStroke = self.style.get('stroke', NO_COLOR)
         sStrokeWidth = self.style.get('strokeWidth')
         if sStroke != NO_COLOR and sStrokeWidth is not None:
             setStrokeColor(sStroke, sStrokeWidth)
             setFillColor(None)
-            rect(ox, oy, self.w, self.h)
+            rect(px, py, self.w, self.h)
         else: # If debugging,then draw the rectangle. Only self.css('showElementBox') is True
             self._drawElementBox(origin)
 
+        self._restoreScale()
 

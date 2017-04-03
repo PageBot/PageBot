@@ -10,27 +10,24 @@
 #
 #     line.py
 #
-"""
-import os
-import copy
-
-from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
-    newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
-    textBox, hyphenation, restore, imageSize, shadow, BezierPath, clipPath, drawPath
-from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-from pagebot.style import LEFT_ALIGN, TOP_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
-"""
+from drawBot import newPath, moveTo, lineTo, drawPath 
+from pagebot.style import NO_COLOR
+from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot import setStrokeColor, setFillColor
 from pagebot.elements.element import Element
 
 class Line(Element):
-    def __init__(self, style=None, eId=None, **kwargs):
-        Element.__init__(self, point, parent, eId, style, **kwargs)
-        assert self.w is not None and self.h is not None
 
     def draw(self, origin):
-        ox, oy = pointOrigin2D(self.point, origin)
+        p = pointOrigin2D(self.point, origin)
+        p = self._applyOrigin(p)    
+        p = self._applyScale(p)    
+        px, py = self._applyAlignment(p)
+ 
         setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth'))
         newPath()
-        moveTo((ox, oy))
-        lineTo((ox + self.w, oy + self.h))
+        moveTo((px, py))
+        lineTo((px + self.w, py + self.h))
         drawPath()
+
+        self._restoreScale()

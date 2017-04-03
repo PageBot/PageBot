@@ -16,16 +16,19 @@
 #
 from __future__ import division
 
-from math import pi, sin, cos
 import os
+from math import pi, sin, cos
 from random import random, choice
 from copy import copy
+
 from fontTools.ttLib import TTFont
-from pagebot.elements import Element
-from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
+
 from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installedFonts, FormattedString, moveTo, lineTo, newPath, drawPath
 
+from pagebot.elements.element import Element
+from pagebot.style import makeStyle
+from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
+from pagebot.toolbox.transformer import pointOrigin2D
 
 class VariationCircle(Element):
     u"""Interpret the content of the self.font variation font and draw a circle info graphic on that info."""
@@ -33,15 +36,13 @@ class VariationCircle(Element):
     DEFAULT_FONT_SIZE = 64
     R = 2/3 # Fontsize factor to draw glyph markers.
 
-    def __init__(self, font, s=None, style=None, eId=None, **kwargs):
+    def __init__(self, font, point=None, parent=None, style=None, eId=None, s=None, **kwargs):
+        Element.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
+        # Initialize the default Element behavior tags.
+        self.isContainer = False
+        self.isText = False
+        self.isFlow = False
         self.font = font
-        self.eId = eId
-        self.style = makeStyle(style, **kwargs) # Combine self.style from
-        # Each element should check at this point if the minimum set of style values
-        # are set and if their values are valid.
-        assert self.w is not None and self.h is not None # Make sure that these are defined.
-        # Make sure that this is a formatted string. Otherwise create it with the current style.
-        # Note that in case there is potential clash in the double usage of fill and stroke.
         self.glyphNames = s or 'e'
     
     def location2Recipe(self, location, start=0, end=3):
@@ -66,14 +67,19 @@ class VariationCircle(Element):
         glyphPathScale = fontSize/self.font.info.unitsPerEm
         drawGlyphPath(self.font.ttFont, glyphName, mx, my-fontSize/4, location, s=glyphPathScale, fillColor=0)
 
-    def draw(self, page, x, y):
+    def draw(self, origin):
         u"""Draw the circle info-graphic, showing most info about the variation font as can be interpreted from the file."""
+        p = pointOrigin2D(self.point, origin)
+        p = self._applyOrigin(p)    
+        p = self._applyScale(p)    
+        px, py = self._applyAlignment(p)
+   
         fill(0.9)
         stroke(None)
-        mx = x + self.w/2
-        my = y + self.h/2
+        mx = px + self.w/2
+        my = py + self.h/2
         # Gray circle that defines the area of
-        oval(x, y, self.w, self.h)
+        oval(px, py, self.w, self.h)
         # Draw axis spikes first, so we can cover them by the circle markers.
         angle = 0
         axes = self.font.axes
@@ -100,6 +106,8 @@ class VariationCircle(Element):
             markerX, markerY = self._angle2XY(angle, self.w/2)
             self._drawGlyphMarker(mx+markerX, my+markerY, glyphName, fontSize/2, location)
             angle += 360/len(axes)
+
+        self._restoreScale()
 
 
 
