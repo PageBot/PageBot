@@ -13,7 +13,7 @@
 #
 from drawBot import installedFonts
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
-from pagebot.toolbox.transformer import TX
+from pagebot.toolbox.transformer import path2Name
 
 def getFamilies(familyPaths):
     u"""Construct a dictionary of Family instances from dictionary familyPaths. It is assumed that all paths
@@ -133,7 +133,7 @@ class Family(object):
 
     def addFont(self, font, fontKey=None, fontStyle=None):
         if fontKey is None:
-            fontKey = TX.path2Name(font.path) # This must be unique in the family, used as key in self.fonts.
+            fontKey = path2Name(font.path) # This must be unique in the family, used as key in self.fonts.
         assert not fontKey in self.fonts, ('Font "%s" already in family "%s"' % (fontKey, self.fonts.keys()))
         if fontStyle is None:
             fontStyle = font.info.styleName # It is allowed to have multiple fonts with the same style name.

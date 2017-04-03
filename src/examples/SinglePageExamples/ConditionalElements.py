@@ -59,7 +59,7 @@ RS = getRootStyle(
     rLeading = 0,
 )
 
-EXPORT_PATH = '_export/ValidatingElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
+EXPORT_PATH = '_export/ConditionalElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
 
 def makeDocument(rootStyle):
     u"""Demo page composer."""
@@ -106,7 +106,7 @@ def makeDocument(rootStyle):
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
     blurbText = getFormattedString(blurb.getBlurb('article', noTags=True), page,
-        style=dict(font='Georgia', fontSize=12, rLeading=1.4, textColor=0))
+        style=dict(font='Georgia', fontSize=12, rLeading=0.5, textColor=0))
     eTextBox = page.textBox(blurbText, point=wrongOrigin, style=rootStyle, w=w, 
         vacuumH=True, conditions=textCondition)
              

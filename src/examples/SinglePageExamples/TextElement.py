@@ -54,6 +54,14 @@ baselineGrid = 2*U # Set baseline grid value for body text.
 listIndent = 2*U # Default indent for bullet-list indents.
 
 W, H = A4
+
+G = U # Gutter
+CW = 12*U # Creates 6 columns width on A4
+CH = 12*U
+
+ML = (W -int(W/(CW+G))*(CW+G)+G)/2
+MT = ML
+
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot values are filled by their default values. The root style is kept in RS
 # as reference to for all ininitialzaiton of elements. 
@@ -61,39 +69,19 @@ W, H = A4
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
-CW = 11*10
-CH = 6*10
-cc = None
-def callback(sender):
-    print sender
-    
-Variable([
-    # create a variable called 'w'
-    # and the related ui is a Slider.
-    dict(name="CW", ui="Slider"),
-    # create a variable called 'h'
-    # and the related ui is a Slider.
-    # create a variable called 'useColor'
-    # and the related ui is a CheckBox.
-    dict(name="CH", ui="Slider"),
-    dict(name="cc", ui="Button", callback=callback),
-    # create a variable called 'c'
-    # and the related ui is a ColorWell.
-    ], globals())
-
 RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
     w = W, # On root level the "w" is the page width 210mm, international generic fit.
     h = H, # Page height 11", international generic fit.
-    ml = 7*U, # Margin left between left side of the page and grid.
-    mt = 7*U, # Margin top between page top and grid.
     baselineGrid = baselineGrid,
-    g = U, # Generic gutter, identical to the page unit.
+    g = G, # Generic gutter, identical to the page unit.
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # 11 is a the best in that respect for column calculation.
-    cw = CW/6*U, 
-    ch = CH/6*baselineGrid - U, # Approx. square and fitting with baseline.
+    cw = CW, 
+    ch = CH, # Approx. square and fitting with baseline.
+    ml = ML, # Margin left between left side of the page and grid, centered.
+    mt = MT, # Margin top between page top and grid.
     listIndent = listIndent, # Indent for bullet lists
     listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
     # Display option during design and testing. Copy them in the root style for elements to check on.
@@ -141,10 +129,10 @@ def makeDocument(rs):
     template = Template(style=rs) # Create second template. This is for the main pages.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True.
     # The grid is just a regular element, like all others on the page. Same parameters apply.
-    template.grid(style=rs) 
+    template.grid() 
     # Show baseline grid if rs.showBaselineGrid is True.
     # The baseline grid is just a regular element, like all others on the page. Same parameters apply.
-    template.baselineGrid(style=rs)
+    template.baselineGrid()
     # Add image containers to the page, that images + captions, within the defined space.
     template.cContainer(4, 0, 2, 3)  # Empty image element, cx, cy, cw, ch
     template.cContainer(0, 5, 2, 3)
@@ -166,55 +154,6 @@ def makeDocument(rs):
     # Initially make all pages default with template
     doc = Document(rs, pages=2, template=template) 
  
-    # Cache some values from the root style that we need multiple time to create the tag styles.
-    fontSize = doc.css('fontSize')
-    leading = doc.css('leading')
-    rLeading = doc.css('rLeading')
-    listIndent = doc.css('listIndent')
-    language = doc.css('language')
-    h1Size = 4*fontSize
-    h2Size = 3*fontSize
-    
-    # Add styles for whole document and text flows.  
-    # Note that some values are defined here for clarity, even if their default root values
-    # are the same.             
-    """
-    doc.newStyle(name='chapter', font=BOOK)    
-    doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
-    doc.newStyle(name='subtitle', fontSize=2*fontSize, font=BOOK_ITALIC)
-    doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=h1Size, font=SEMIBOLD, fill=(1, 0, 0),
-        leading=1.1*h1Size, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=h2Size, font=BOOK, fill=(1, 0, 0),
-        leading=1.1*h2Size, rLeading=0, tracking=H2_TRACK, postfix='\n')
-    doc.newStyle(name='h3', fontSize=1.2*fontSize, font=MEDIUM, fill=0, 
-        leading=1.4*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
-        postfix='\n')
-    
-    # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
-        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
-    doc.newStyle(name='b', font=SEMIBOLD)
-    doc.newStyle(name='em', font=BOOK_ITALIC)
-    doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
-    doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> be newline
-    doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,)
-    
-    # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6,
-        fontSize=0.65*fontSize)
-    doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
-        tracking=P_TRACK, leading=leading, hyphenation=True, 
-        # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
-        firstLineIndent=1, postfix='\n')
-    doc.newStyle(name='ul',)
-    doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
-    doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
-    doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
-        leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
-        indent=U/2, tailIndent=-U/2, hyphenation=True)
-    """
     # Change template of page 1
     onePage = doc[1]
         
