@@ -13,7 +13,11 @@
 from pagebot.style import TOP_ALIGN, BOTTOM_ALIGN, CENTER
 from condition import Condition
 
+#	C E N T E R S
+
 class VCenter(Condition):
+	u"""Vertically center the element bounding box of element e on the position 
+	between top and bottom margins."""
 	def evaluate(self, e):
 		u"""Answer the value between 0 and self.value, representing the level 
 		of where the element is vertical centered on its parent."""
@@ -48,6 +52,35 @@ class VCenterOrigin(Condition):
 		return self.error
 
 class TopAligned(Condition):
+	u"""Align with top margin of the parent."""
+	def evaluate(self, e):
+		u"""Answer the value between 0 and 1 to the level where the element
+		is top aligned with the top-margin of the parent."""
+		if abs(e.top - parent.css('mt')) <= self.tolerance:
+			return self.value
+		return self.value * self.errorFactor
+
+	def solve(self, e):
+		if self.evaluate(e) < 0:
+			e.top = e.css('mt')
+			return self.value
+		return self.value * self.errorFactor
+
+class TopOriginAligned(Condition):
+	def evaluate(self, e):
+		u"""Answer the value between 0 and 1 to the level where the element
+		is left aligned with parent."""
+		if abs(e.y) <= self.tolerance:
+			return self.value
+		return self.value * self.errorFactor
+
+	def solve(self, e):
+		if self.evaluate(e) < 0:
+			e.y = e.css('mt')
+			return self.value
+		return self.value * self.errorFactor
+
+class TopBleedAligned(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between 0 and 1 to the level where the element
 		is top aligned with parent."""
@@ -57,11 +90,11 @@ class TopAligned(Condition):
 
 	def solve(self, e):
 		if self.evaluate(e) < 0:
-			e.top = 0
+			e.top = e.css('bleed') # Set bleed = 0, if element needs to fit
 			return self.value
 		return self.error
 
-class TopOriginAligned(Condition):
+class TopOriginBleedAligned(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between 0 and 1 to the level where the element
 		is left aligned with parent."""
