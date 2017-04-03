@@ -73,29 +73,29 @@ def makeDocument(rootStyle):
     w = 300
 
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
-        Center(),
-        #LeftAligned(), 
-        #Aligned(),
+        LeftAligned(), 
+        #RightAligned(), 
+        #Center(),
         #VCenter(),
-        #TopAligned(),
+        TopAligned(),
         #TopBoxAligned(),
-        BottomAligned(),
+        #BottomAligned(),
         #FontSizeWidthRatio(verbose=True)
     ]
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.
-        Center(),
+        #Center(),
         #LeftAligned(), 
-        #RightAligned(),
-        VCenter(),
+        RightAligned(error=-1000),
+        #VCenter(),
         #TopAligned(),
-        #TopAligned(),
+        BottomAligned(),
         #FontSizeWidthRatio(verbose=True)
     ]
     textCondition = [ # Placement condition(s) for the text element..
         #MaxWidthByFontSize(ratio=32), # Constrain the width by amount of size/characters == ratio.
         #Center(),
-        LeftAligned(), 
-        #RightAligned(), # Over-ruling the previous horizontal conditions, if enabled.
+        #LeftAligned(), 
+        RightAligned(), # Over-ruling the previous horizontal conditions, if enabled.
         VCenter(),
         #TopAligned(),
         #BottomAligned(),
