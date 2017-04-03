@@ -155,15 +155,15 @@ class Element(object):
 
     def _get_right(self):
         if self.css('align') == LEFT_ALIGN:
-            return self.x - self.w
+            return self.x + self.w
         if self.css('align') == CENTER:
-            return self.x - self.w/2
+            return self.x + self.w/2
         return self.x
     def _set_right(self, x):
         if self.css('align') == LEFT_ALIGN:
-            self.x = x + self.w
+            self.x = x - self.w
         elif self.css('align') == CENTER:
-            self.x = x + self.w/2
+            self.x = x - self.w/2
         else:
             self.x = x
     right = property(_get_right, _set_right)
@@ -457,8 +457,8 @@ class Element(object):
         u"""Answer a single string with info about the element. Default is to show the posiiton
         and size (in points and columns). This method can be redefined by inheriting elements
         that want to show additional information."""
-        return 'Position: %s, %s\nSize: %s, %s\nColumn point: %s, %s\nColumn size: %s, %s\nAlign: %s, %s | Conditions: %d' % \
-            (asFormatted(self.x), asFormatted(self.y), asFormatted(self.w), asFormatted(self.h), 
+        return '%s\nPosition: %s, %s\nSize: %s, %s\nColumn point: %s, %s\nColumn size: %s, %s\nAlign: %s, %s | Conditions: %d' % \
+            (self.__class__.__name__, asFormatted(self.x), asFormatted(self.y), asFormatted(self.w), asFormatted(self.h), 
              asFormatted(self.cx), asFormatted(self.cy), asFormatted(self.cw), asFormatted(self.ch),
              self.css('align'), self.css('vAlign'), len(self.css('conditions')))
 
