@@ -128,4 +128,7 @@ class TextBox(Element):
             self._drawElementBox(origin)
 
         self._restoreScale()
+        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
+
+        
 

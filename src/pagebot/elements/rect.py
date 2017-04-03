@@ -37,4 +37,5 @@ class Rect(Element):
         rect(px, py, self.w, self.h)
 
         self._restoreScale()
+        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
 

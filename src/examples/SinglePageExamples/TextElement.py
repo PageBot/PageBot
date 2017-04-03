@@ -15,7 +15,7 @@
 import pagebot # Import to know the path of non-Python resources.
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN, A4
+from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A3, A2
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
 # Page and Template instances are holding all elements of a page together.
@@ -53,13 +53,13 @@ U = 7 # Basic unit in points of all measurements on the page. Simple way to do r
 baselineGrid = 2*U # Set baseline grid value for body text.
 listIndent = 2*U # Default indent for bullet-list indents.
 
-W, H = A4
+W, H = A3
 
 G = U # Gutter
 CW = 12*U # Creates 6 columns width on A4
 CH = 12*U
 
-ML = (W -int(W/(CW+G))*(CW+G)+G)/2
+ML = (W - int((W-CW)/(CW+G))*(CW+G)+G)/2
 MT = ML
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
@@ -89,6 +89,7 @@ RS = getRootStyle(
     showGridColumns = SHOW_GRID_COLUMNS,
     showBaselineGrid = SHOW_BASELINE_GRID,
     showFlowConnections = SHOW_FLOW_CONNECTIONS,
+    showElementInfo = True,
     BOX_COLOR = BOX_COLOR, # Overwrite default color for column squares.
     # Text measures
     leading = baselineGrid, # Set default dependent on scalable with unit size.
@@ -141,7 +142,7 @@ def makeDocument(rs):
     
     # In this simple example page, we won't have the headline run in the galley of the main text.
     # Create separate text box here to accommodate the headline.
-    template.cTextBox('', 0, -0.2, 4, 2+0.2, eId=headlineId, fill=BOX_COLOR)
+    template.cTextBox('', 0, 0, 4, 2, eId=headlineId, fill=BOX_COLOR)
 
     # Make linked text box elemnents, where position and size is defined by columns.
     template.cTextBox('', 0, 2, 2, 3, eId=flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)

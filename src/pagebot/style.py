@@ -79,6 +79,7 @@ SHOW_GRID = True
 SHOW_GRID_COLUMNS = True
 SHOW_BASELINE_GRID = True
 SHOW_ELEMENT_BOX = False
+SHOW_ELEMENT_INFO = False
 SHOW_FLOW_CONNECTIONS = True
 SHOW_CROPMARKS = True
 SHOW_PAGE_FRAME = True
@@ -111,7 +112,7 @@ def makeStyle(style=None, **kwargs):
     return style
 
 def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, showElementBox=SHOW_ELEMENT_BOX,
-        showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS, 
+        showElementInfo=SHOW_ELEMENT_INFO, showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS, 
         showCropMarks=SHOW_CROPMARKS, showPageFrame=SHOW_PAGE_FRAME, 
         showPageInfo=SHOW_PAGE_INFO, **kwargs):
     u"""Answer the main root style tha contains all default style attributes of PageBot.
@@ -234,6 +235,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
         # Showing of boxes
         showPageFrame = showPageFrame, # Draw page frame if document (w, h) is larger than page (w, h)
         showElementBox = showElementBox, # Show element boxes, e.g. if missing or empty.
+        showElementInfo = showElementInfo, # If True, elements show their info for debugging position, size and alignments.
 
         # Generic element stuff
         missingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
