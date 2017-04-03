@@ -82,6 +82,7 @@ class Grid(Element):
                 oy -= columnHeight + gutter
 
         self._restoreScale()
+        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
 
 class BaselineGrid(Grid):
 
@@ -115,4 +116,5 @@ class BaselineGrid(Grid):
                 oy -= self.css('baselineGrid') # Next vertical line position of baseline grid.
 
             self._restoreScale()
+            self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
 

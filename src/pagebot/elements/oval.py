@@ -37,4 +37,4 @@ class Oval(Element):
         oval(px, py, self.w, self.h)
 
         self._restoreScale()
-
+        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'

@@ -199,7 +199,7 @@ def css(name, e, styles=None, default=None):
         return e.css(name)
     return default
 
-def getFormattedString(t, e, style=None):
+def getFormattedString(t, e=None, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing
     their existence, so they can inherit from previous style formats."""
     fs = FormattedString('')
@@ -251,7 +251,7 @@ def getFormattedString(t, e, style=None):
     sOpenTypeFeatures = css('openTypeFeatures', e, style)
     if sOpenTypeFeatures is not None:
         fs.openTypeFeatures([], **sOpenTypeFeatures)
-    sTabs = e.css('tabs')
+    sTabs = css('tabs', e, style)
     if sTabs is not None:
         fs.tabs(*sTabs)
     sFirstLineIndent = css('firstLineIndent', e, style)

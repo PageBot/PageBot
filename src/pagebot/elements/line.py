@@ -31,3 +31,4 @@ class Line(Element):
         drawPath()
 
         self._restoreScale()
+        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'

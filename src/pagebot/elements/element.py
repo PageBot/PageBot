@@ -12,11 +12,12 @@
 #
 import weakref
 
-from drawBot import rect, newPath, moveTo, lineTo, drawPath, save, restore, scale
+from drawBot import rect, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, fill, text, stroke, strokeWidth
 
-from pagebot import setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, w2cw, cw2w, h2ch, ch2h
+from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, w2cw, cw2w, h2ch, ch2h
 from pagebot.toolbox.transformer import point3D, point2DOr3D, pointOrigin2D, uniqueID
-from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN
+from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN
+from pagebot.toolbox.transformer import asFormatted
 
 class Element(object):
 
@@ -96,6 +97,8 @@ class Element(object):
         self._point = list(point)
     point3D = property(_get_point3D, _set_point3D)
 
+    # Plain coordinates
+
     def _get_x(self):
         return self._point[0] # Can be None, if not placed. Caller can default position at (x or 0)
     def _set_x(self, x):
@@ -117,6 +120,101 @@ class Element(object):
         self._point[2] = z
     z = property(_get_z, _set_z)
     
+    # Origin compensated by alignment. This is used for easy solving of conditions,
+    # where the positioning can be compenssaring the element alignment type.
+
+    def _get_left(self):
+        if self.css('align') == CENTER:
+            return self.x - self.w/2
+        if self.css('align') == RIGHT_ALIGN:
+            return self.x - self.w
+        return self.x
+    def _set_left(self, x):
+        if self.css('align') == CENTER:
+            self.x = x + self.w/2
+        elif self.css('align') == RIGHT_ALIGN:
+            self.x = x + self.w
+        else:
+            self.x = x
+    left = property(_get_left, _set_left)
+
+    def _get_center(self):
+        if self.css('align') == LEFT_ALIGN:
+            return self.x + self.w/2
+        if self.css('align') == RIGHT_ALIGN:
+            return self.x + self.w
+        return self.x
+    def _set_center(self, x):
+        if self.css('align') == LEFT_ALIGN:
+            self.x = x - self.w/2
+        elif self.css('align') == RIGHT_ALIGN:
+            self.x = x - self.w
+        else:
+            self.x = x
+    center = property(_get_center, _set_center)
+
+    def _get_right(self):
+        if self.css('align') == LEFT_ALIGN:
+            return self.x - self.w
+        if self.css('align') == CENTER:
+            return self.x - self.w/2
+        return self.x
+    def _set_right(self, x):
+        if self.css('align') == LEFT_ALIGN:
+            self.x = x + self.w
+        elif self.css('align') == CENTER:
+            self.x = x + self.w/2
+        else:
+            self.x = x
+    right = property(_get_right, _set_right)
+
+
+    def _get_top(self):
+        if self.css('vAlign') == CENTER:
+            return self.y - self.h/2
+        if self.css('vAlign') == BOTTOM_ALIGN:
+            return self.y - self.h
+        return self.y
+    def _set_top(self, y):
+        if self.css('vAlign') == CENTER:
+            self.y = y + self.h/2
+        elif self.css('vAlign') == BOTTOM_ALIGN:
+            self.y = y + self.h
+        else:
+            self.y = y
+    top = property(_get_top, _set_top)
+
+    def _get_vCenter(self):
+        if self.css('vAlign') == TOP_ALIGN:
+            return self.y - self.h/2
+        if self.css('vAlign') == BOTTOM_ALIGN:
+            return self.y - self.h
+        return self.y
+    def _set_vCenter(self, y):
+        if self.css('vAlign') == TOP_ALIGN:
+            self.y = y + self.h/2
+        elif self.css('vAlign') == BOTTOM_ALIGN:
+            self.y = y + self.h
+        else:
+            self.y = y
+    vCenter = property(_get_vCenter, _set_vCenter)
+
+    def _get_bottom(self):
+        if self.css('vAlign') == TOP_ALIGN:
+            return self.y + self.h
+        if self.css('vAlign') == CENTER:
+            return self.y + self.h/2
+        return self.y
+    def _set_bottom(self, y):
+        if self.css('vAlign') == TOP_ALIGN:
+            self.y = y - self.h
+        elif self.css('vAlign') == CENTER:
+            self.y = y - self.h/2
+        else:
+            self.y = y
+    bottom = property(_get_bottom, _set_bottom)
+
+
     # Position by column + gutter size index.
 
     def _get_cx(self): # Answer the x-position, defined in columns. Can be fractional for elements not on grid.
@@ -354,7 +452,42 @@ class Element(object):
             rect(ox, oy, self.w, self.h)
 
             self._restoreScale()
-       
+    
+    def _getElementInfoString(self):
+        u"""Answer a single string with info about the element. Default is to show the posiiton
+        and size (in points and columns). This method can be redefined by inheriting elements
+        that want to show additional information."""
+        return 'Position: %s, %s\nSize: %s, %s\nColumn point: %s, %s\nColumn size: %s, %s\nAlign: %s, %s | Conditions: %d' % \
+            (asFormatted(self.x), asFormatted(self.y), asFormatted(self.w), asFormatted(self.h), 
+             asFormatted(self.cx), asFormatted(self.cy), asFormatted(self.cw), asFormatted(self.ch),
+             self.css('align'), self.css('vAlign'), len(self.css('conditions')))
+
+    def _drawElementInfo(self, origin):
+        u"""For debugging this will make the elements show their info."""
+        if self.css('showElementInfo'):
+             # Draw crossed rectangle.
+            p = pointOrigin2D(self.point, origin)
+            p = self._applyOrigin(p)    
+            p = self._applyScale(p)    
+            px, py = self._applyAlignment(p)
+
+            fs = getFormattedString(self._getElementInfoString(), style=dict(font='Verdana', fontSize=7, leading=9, textFill=0.1))
+            tw, th = textSize(fs)
+            M = 4 # Margin in box
+            py += self.h - th - 2*M
+            # Tiny shadow
+            fill(0.2, 0.2, 0.2, 0.3)
+            stroke(None)
+            rect(px+M/2, py-M/2, tw+2*M, th+2*M)
+            # Frame
+            fill(0.8, 0.8, 0.8, 0.9)
+            stroke(0.3)
+            strokeWidth(0.25)
+            rect(px, py, tw+2*M, th+2*M)
+            text(fs, (px+M, py+M))
+
+            self._restoreScale()
+            
     def _drawMissingElementRect(self, origin):
         u"""When designing templates and pages, this will draw a filled rectangle on the element
         bounding box (if self.style.get('missingElementFill' is defined) and a cross, indicating
@@ -364,9 +497,9 @@ class Element(object):
             ox, oy = pointOrigin2D(self.point, origin)
             sMissingElementFill = self.style.get('missingElementFill', NO_COLOR)
             if sMissingElementFill is not NO_COLOR:
-                    setFillColor(sMissingElementFill)
-                    setStrokeColor(None)
-                    rect(ox, oy, self.w, self.h)
+                setFillColor(sMissingElementFill)
+                setStrokeColor(None)
+                rect(ox, oy, self.w, self.h)
             # Draw crossed rectangle.
             setFillColor(None)
             setStrokeColor(0, 0.5)
