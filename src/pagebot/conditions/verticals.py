@@ -21,14 +21,14 @@ class VCenter(Condition):
 		if parent is not None:
 			if abs(parent.h/2 - e.vCenter) <= self.tolerance:
 				return self.value
-		return self.value * self.errorFactor	
+		return self.error
 
 	def solve(self, e):	
 		parent = e.parent
 		if self.evaluate(e) < 0 and parent is not None:
 			e.vCenter = parent.h/2
 			return self.value
-		return self.value * self.errorFactor
+		return self.error
 
 class VCenterOrigin(Condition):
 	def evaluate(self, e):
@@ -38,14 +38,14 @@ class VCenterOrigin(Condition):
 		if parent is not None:
 			if abs(parent.h/2 - e.y) <= self.tolerance:
 				return self.value
-		return self.value * self.errorFactor	
+		return self.error
 
 	def solve(self, e):	
 		parent = e.parent
 		if self.evaluate(e) < 0 and parent is not None:
 			e.y = parent.h/2
 			return self.value
-		return self.value * self.errorFactor
+		return self.error
 
 class TopAligned(Condition):
 	def evaluate(self, e):
@@ -53,13 +53,13 @@ class TopAligned(Condition):
 		is top aligned with parent."""
 		if abs(e.top) <= self.tolerance:
 			return self.value
-		return self.value * self.errorFactor
+		return self.error
 
 	def solve(self, e):
 		if self.evaluate(e) < 0:
 			e.top = 0
 			return self.value
-		return self.value * self.errorFactor
+		return self.error
 
 class TopOriginAligned(Condition):
 	def evaluate(self, e):
@@ -67,13 +67,13 @@ class TopOriginAligned(Condition):
 		is left aligned with parent."""
 		if abs(e.y) <= self.tolerance:
 			return self.value
-		return self.value * self.errorFactor
+		return self.error
 
 	def solve(self, e):
 		if self.evaluate(e) < 0:
 			e.y = 0
 			return self.value
-		return self.value * self.errorFactor
+		return self.error
 
 class BottomAligned(Condition):
 	def evaluate(self, e):
@@ -83,14 +83,14 @@ class BottomAligned(Condition):
 		if parent is not None:
 			if abs(parent.h - e.bottom) <= self.tolerance:
 				return self.value
-		return self.value * self.errorFactor
+		return self.error
 
 	def solve(self, e):
 		parent = e.parent
 		if self.evaluate(e) < 0 and parent is not None:
 			e.bottom = parent.h
 			return self.value
-		return self.value * self.errorFactor
+		return self.error
 
 class BottomOriginAligned(Condition):
 	def evaluate(self, e):
@@ -100,11 +100,11 @@ class BottomOriginAligned(Condition):
 		if parent is not None:
 			if abs(parent.h - e.y) <= self.tolerance:
 				return self.value
-		return self.value * self.errorFactor
+		return self.error
 
 	def solve(self, e):
 		parent = e.parent
 		if self.evaluate(e) < 0 and parent is not None:
 			e.y = parent.h
 			return self.value
-		return self.value * self.errorFactor
+		return self.error
