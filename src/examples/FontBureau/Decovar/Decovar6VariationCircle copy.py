@@ -40,9 +40,9 @@ DEBUG = False # Make True to see grid and element frames.
 
 
 FONT_PATH = pagebot.getFontPath()
-#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
+fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
 #fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
-fontPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
+#fontPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
 #fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
 #fontPath = FONT_PATH + 'PromiseVar.ttf'
 #fontPath = FONT_PATH + 'BitcountGridVar.ttf'
@@ -102,15 +102,15 @@ class VariationCircle(Element):
         u"""Answer the XY position for a given angled (degrees) and r, located on the origin."""
         return cos(angle/180*pi) * r, sin(angle/180*pi) * r
 
-    def _drawGlyphMarker(self, mx, my, glyphName, fontSize, location, strokeW=2):
+    def _drawGlyphMarker(self, mx, my, glyphName, markerSize, location, strokeW=2):
         # Middle circle 
         fill(1)
         stroke(0)
         strokeWidth(strokeW)
-        oval(mx-fontSize*self.R, my-fontSize*self.R, fontSize*2*self.R, fontSize*2*self.R)
+        oval(mx-markerSize/2, my-markerSize/2, markerSize, markerSize)
 
-        glyphPathScale = fontSize/self.font.info.unitsPerEm
-        drawGlyphPath(self.font.ttFont, glyphName, mx, my-fontSize/4, location, s=glyphPathScale, fillColor=0)
+        glyphPathScale = markerSize/self.font.info.unitsPerEm*3/4
+        drawGlyphPath(self.font.ttFont, glyphName, mx, my-markerSize/4, location, s=glyphPathScale, fillColor=0)
            
     def draw(self, page, x, y):
         u"""Draw the circle info-graphic, showing most info about the variation font as can be interpreted from the file."""
@@ -124,7 +124,7 @@ class VariationCircle(Element):
         
         # Draw axis spikes first, so we can cover them by the circle markers.
         axes = self.font.axes
-        fontSize = self.style.get('fontSize', self.DEFAULT_FONT_SIZE)
+        markerSize = self.style.get('fontSize', self.DEFAULT_FONT_SIZE)
         
         # Calculate sorted relative angle pairs.
         xAngles = {} # X-ref, key is angle, value is list of axisName
@@ -145,7 +145,7 @@ class VariationCircle(Element):
         # Draw name of the font
         fill(0)
         text(FormattedString(self.font.info.familyName, font=self.style['labelFont'],
-            fontSize=self.style['titleFontSize']), (x-fontSize/2, y+self.h+fontSize/4))
+            fontSize=self.style['titleFontSize']), (x-markerSize/2, y+self.h+markerSize/4))
 
         # Draw spokes
         fill(None)
@@ -185,20 +185,32 @@ class VariationCircle(Element):
         # Draw default glyph marker in middle.
         glyphName = self.glyphNames[0]
         defaultLocation = {}
-        self._drawGlyphMarker(mx, my, glyphName, fontSize, defaultLocation, strokeW=3)
+        self._drawGlyphMarker(mx, my, glyphName, markerSize, defaultLocation)
 
+        # http://stackoverflow.com/questions/1734745/how-to-create-circle-with-bézier-curves
+        
         # Draw DeltaLocation circles.
         for axisName, (minValue, defaultValue, maxValue) in axes.items():
             angle = self.angles[axisName]
             # Outside maxValue 
             location = {axisName: maxValue}
             markerX, markerY = self._angle2XY(angle, self.w/2)
-            self._drawGlyphMarker(mx+markerX, my+markerY, glyphName, fontSize/2, location)
+            self._drawGlyphMarker(mx+markerX, my+markerY, glyphName, markerSize, location)
             
             # Interpolated DeltaLocation circles.
-            location = {axisName: minValue + (maxValue - minValue)*INTERPOLATION}
+            location = {axisName: defaultValue + (maxValue - defaultValue)*INTERPOLATION}
             markerX, markerY = self._angle2XY(angle, self.w/4)
-            self._drawGlyphMarker(mx+markerX*INTERPOLATION*2, my+markerY*INTERPOLATION*2, glyphName, fontSize/2, location)
+            self._drawGlyphMarker(mx+markerX*INTERPOLATION*2, my+markerY*INTERPOLATION*2, glyphName, markerSize, location)
+
+            # Outside minValue.
+            location = {axisName: minValue}
+            markerX, markerY = self._angle2XY(angle, self.w/2)
+            self._drawGlyphMarker(mx-markerX, my-markerY, glyphName, markerSize, location)
+
+            # Interpolated DeltaLocation circles.
+            location = {axisName: minValue + (defaultValue - minValue)*INTERPOLATION}
+            markerX, markerY = self._angle2XY(angle, self.w/4)
+            self._drawGlyphMarker(mx-markerX*2*INTERPOLATION, my-markerY*2*INTERPOLATION, glyphName, markerSize, location)
 
             # If there are any pairs, draw the interpolation between them
             #if anglePairs:
