@@ -11,10 +11,10 @@
 #     condition.py
 #
 class Condition(object):
-    def __init__(self, value=1, tolerance=1, errorFactor=-10, verbose=False):
+    def __init__(self, value=1, tolerance=1, error=-10, verbose=False):
     	self.value = value # Value to answer if the condition is valid
         self.tolerance = tolerance
-        self.errorFactor = errorFactor
+        self.error = error
         self.verbose = verbose
 
     def __repr__(self):
