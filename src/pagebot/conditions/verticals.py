@@ -16,7 +16,67 @@ from condition import Condition
 #	C E N T E R S
 
 class VCenter(Condition):
-	u"""Vertically center the element bounding box of element e on the position 
+	u"""Vertically center the bounding box of element e on the middle 
+	between top and bottom margins."""
+	def evaluate(self, e):
+		u"""Answer the value between 0 and self.value, representing the level 
+		of where the element is vertical centered on its parent."""
+		parent = e.parent
+		if parent is not None:
+			mt = parent.css('ml')
+			mb = parent.css('mb')
+			if parent.originTop:
+				if abs(mt + (mb - mt)/2 - e.vCenter) <= self.tolerance:
+					return self.value
+			else:
+				if abs(mb + (mt - mb)/2 - c.vCenter) <= self.tolerance:
+					return self.value
+		return self.error
+
+	def solve(self, e):	
+		parent = e.parent
+		if self.evaluate(e) < 0 and parent is not None:
+			mt = parent.css('ml')
+			mb = parent.css('mb')
+			if parent.originTop:			
+				e.vCenter = mt + (mb - mt)/2
+			else:
+				e.vCenter = mb + (mt - mb)/2
+			return self.value
+		return self.error
+
+class VCenterOrigin(Condition):
+	u"""Vertically center the bounding box of element e on the middle 
+	between top and bottom margins."""
+	def evaluate(self, e):
+		u"""Answer the value between 0 and self.value, representing the level 
+		of where the element is vertical centered on its parent."""
+		parent = e.parent
+		if parent is not None:
+			mt = parent.css('ml')
+			mb = parent.css('mb')
+			if parent.originTop:
+				if abs(mt + (mb - mt)/2 - e.y) <= self.tolerance:
+					return self.value
+			else:
+				if abs(mb + (mt - mb)/2 - c.y) <= self.tolerance:
+					return self.value
+		return self.error
+
+	def solve(self, e):	
+		parent = e.parent
+		if self.evaluate(e) < 0 and parent is not None:
+			mt = parent.css('ml')
+			mb = parent.css('mb')
+			if parent.originTop:			
+				e.y = mt + (mb - mt)/2
+			else:
+				e.y = mb + (mt - mb)/2
+			return self.value
+		return self.error
+
+class VCenterSide(Condition):
+	u"""Vertically center the bounding box of element e on the middle 
 	between top and bottom margins."""
 	def evaluate(self, e):
 		u"""Answer the value between 0 and self.value, representing the level 
@@ -27,14 +87,17 @@ class VCenter(Condition):
 				return self.value
 		return self.error
 
+		@@@@@ return evaluated result or self.error?
+		@@@@@ 
 	def solve(self, e):	
 		parent = e.parent
-		if self.evaluate(e) < 0 and parent is not None:
+		if parent is not None andself.evaluate(e) < 0:
 			e.vCenter = parent.h/2
-			return self.value
 		return self.error
 
-class VCenterOrigin(Condition):
+class VCenterOriginSide(Condition):
+	u"""Vertically center the bounding box of element e on the middle 
+	between top and bottom margins."""
 	def evaluate(self, e):
 		u"""Answer the value between 0 and self.value, representing the level 
 		of where the element is vertical centered on its parent."""
@@ -46,19 +109,28 @@ class VCenterOrigin(Condition):
 
 	def solve(self, e):	
 		parent = e.parent
-		if self.evaluate(e) < 0 and parent is not None:
+		if parent is not None and self.evaluate(e) < 0:
 			e.y = parent.h/2
-			return self.value
 		return self.error
+
+#	T O P
 
 class TopAligned(Condition):
 	u"""Align with top margin of the parent."""
 	def evaluate(self, e):
 		u"""Answer the value between 0 and 1 to the level where the element
 		is top aligned with the top-margin of the parent."""
-		if abs(e.top - parent.css('mt')) <= self.tolerance:
-			return self.value
-		return self.value * self.errorFactor
+		parent = e.parent
+		if parent is not None:
+			mt = parent.css('ml')
+			mb = parent.css('mb')
+			if parent.originTop:
+				if abs(mt + (mb - mt)/2 - e.top) <= self.tolerance:
+					return self.value
+			else:
+				if abs(mb + (mt - mb)/2 - e.top) <= self.tolerance:
+					return self.value
+		return self.error
 
 	def solve(self, e):
 		if self.evaluate(e) < 0:
