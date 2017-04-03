@@ -100,14 +100,14 @@ class RightOriginAligned(Condition):
 		is left aligned with parent."""
 		parent = e.parent
 		if parent is not None:
-			if abs(parent.w - e.right) <= self.tolerance:
+			if abs(parent.w - e.x) <= self.tolerance:
 				return self.value
 		return self.value * self.errorFactor
 
 	def solve(self, e):
 		parent = e.parent
 		if self.evaluate(e) < 0 and parent is not None:
-			e.right = parent.w
+			e.x = parent.w
 			return self.value
 		return self.value * self.errorFactor
 
@@ -119,13 +119,13 @@ class MaxWidthByFontSize(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between -10 and 1 to the level where the fontSize/width ratio
 		fits the self.ratio value."""
-		if not e.style.get('fontSize') or abs(e.w/e.style['fontSize'] - self.ratio) <= self.tolerance:
+		if not e.css('fontSize') or abs(e.w/e.css('fontSize') - self.ratio) <= self.tolerance:
 				return self.value
 		return self.value * self.errorFactor
 
 	def solve(self, e):
-		if e.style.get('fontSize'):
-			e.w = e.style['fontSize'] * self.ratio
+		if e.css('fontSize'):
+			e.w = e.css('fontSize') * self.ratio
 		return self.value
 
 
