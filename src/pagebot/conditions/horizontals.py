@@ -13,9 +13,55 @@
 from __future__ import division
 from condition import Condition
 
+#	C E N T E R
+
 class Center(Condition):
 	def evaluate(self, e):
-		u"""Answer the value between self.value * self.errorFactor (negative number) 
+		u"""Answer the value between self.error (negative number) 
+		and self.value to the amount where the element bounding box is horizontally 
+		centered on its parent. This will compensate for the type of alignment of e.
+		"""
+		parent = e.parent
+		if parent is not None:
+			ml = parent.css('ml') # Get parent margin left
+			mr = parent.css('mr')
+			if abs(ml + (mr - ml)/2 - e.center) <= self.tolerance:
+				return self.value
+		return self.error
+
+	def solve(self, e):	
+		parent = e.parent
+		if self.evaluate(e) < 0 and parent is not None:
+			ml = parent.css('ml') # Get parent margin left
+			mr = parent.css('mr')
+			e.center = ml + (mr - ml)/2
+			return self.value
+		return self.error
+
+class CenterOrigin(Condition):
+	def evaluate(self, e):
+		u"""Answer the value between 0 and 1 to the level where the element
+		is horizontally centered on its parent."""
+		parent = e.parent
+		if parent is not None:
+			ml = parent.css('ml') # Get parent margin left
+			mr = parent.css('mr')
+			if abs(ml + (mr - ml)/2 - e.x) <= self.tolerance:
+				return self.value
+		return self.error
+
+	def solve(self, e):	
+		parent = e.parent
+		if self.evaluate(e) < 0 and parent is not None:
+			ml = parent.css('ml') # Get parent margin left
+			mr = parent.css('mr')
+			e.x = ml + (mr - ml)/2
+			return self.value
+		return self.error
+
+class CenterSide(Condition):
+	def evaluate(self, e):
+		u"""Answer the value between self.error (negative number) 
 		and self.value to the amount where the element bounding box is horizontally 
 		centered on its parent. This will compensate for the type of alignment of e.
 		"""
@@ -32,7 +78,7 @@ class Center(Condition):
 			return self.value
 		return self.error
 
-class CenterOrigin(Condition):
+class CenterOriginSide(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between 0 and 1 to the level where the element
 		is horizontally centered on its parent."""
@@ -49,10 +95,40 @@ class CenterOrigin(Condition):
 			return self.value
 		return self.error
 
+#	L E F T
+
 class LeftAligned(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between 0 and 1 to the level where the element
-		is left aligned with parent."""
+		is left aligned with the left margin of the parent."""
+		if abs(parent.css('ml') - e.left) <= self.tolerance:
+			return self.value
+		return self.error
+
+	def solve(self, e):
+		if self.evaluate(e) < 0:
+			e.left = parent.css('ml')
+			return self.value
+		return self.error
+
+class LeftOriginAligned(Condition):
+	def evaluate(self, e):
+		u"""Answer the value between 0 and 1 to the level where the element
+		is left aligned on the left margin with parent."""
+		if abs(parent.css('ml') - e.x) <= self.tolerance:
+			return self.value
+		return self.error
+
+	def solve(self, e):
+		if self.evaluate(e) < 0:
+			e.x = parent.css('ml')
+			return self.value
+		return self.error
+
+class LeftAlignedSide(Condition):
+	def evaluate(self, e):
+		u"""Answer the value between 0 and 1 to the level where the element
+		is left aligned with side of the parent."""
 		if abs(e.left) <= self.tolerance:
 			return self.value
 		return self.error
@@ -63,7 +139,7 @@ class LeftAligned(Condition):
 			return self.value
 		return self.error
 
-class LeftOriginAligned(Condition):
+class LeftOriginAlignedSide(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between 0 and 1 to the level where the element
 		is left aligned with parent."""
@@ -77,7 +153,43 @@ class LeftOriginAligned(Condition):
 			return self.value
 		return self.error
 
+#	R I G H T
+
 class RightAligned(Condition):
+	def evaluate(self, e):
+		u"""Answer the value between 0 and 1 to the level where the element
+		is right aligned with right margin of parent."""
+		parent = e.parent
+		if parent is not None:
+			if abs(parent.w - parent.css('mr') - e.right) <= self.tolerance:
+				return self.value
+		return self.error
+
+	def solve(self, e):
+		parent = e.parent
+		if self.evaluate(e) < 0 and parent is not None:
+			e.right = parent.w - parent.css('mr')
+			return self.value
+		return self.error
+
+class RightOriginAligned(Condition):
+	def evaluate(self, e):
+		u"""Answer the value between 0 and 1 to the level where the element
+		is left aligned with parent."""
+		parent = e.parent
+		if parent is not None:
+			if abs(parent.w - parent.css('mr') - e.x) <= self.tolerance:
+				return self.value
+		return self.error
+
+	def solve(self, e):
+		parent = e.parent
+		if self.evaluate(e) < 0 and parent is not None:
+			e.x = parent.w - parent.css('mr')
+			return self.value
+		return self.error
+
+class RightAlignedSide(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between 0 and 1 to the level where the element
 		is left aligned with parent."""
@@ -94,10 +206,11 @@ class RightAligned(Condition):
 			return self.value
 		return self.error
 
-class RightOriginAligned(Condition):
+
+class RightOriginAlignedSide(Condition):
 	def evaluate(self, e):
 		u"""Answer the value between 0 and 1 to the level where the element
-		is left aligned with parent."""
+		is right aligned with parent."""
 		parent = e.parent
 		if parent is not None:
 			if abs(parent.w - e.x) <= self.tolerance:
