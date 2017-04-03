@@ -24,7 +24,7 @@ from pagebot.elements.document import Document
 from pagebot.elements.galley import Galley
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
-from pagebot.conditions import Condition, CenterX, LeftAligned, RightAligned, CenterY, TopAligned, TopOriginAligned, BottomAligned, MaxWidthByFontSize
+from pagebot.conditions import Condition, Center, LeftAligned, RightAligned, VCenter, TopAligned, TopOriginAligned, BottomAligned, MaxWidthByFontSize
 
 class FontSizeWidthRatio(Condition):
     def evaluate(self, e):
@@ -73,30 +73,30 @@ def makeDocument(rootStyle):
     w = 300
 
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
-        #CenterX(),
+        Center(),
         #LeftAligned(), 
         #Aligned(),
-        #CenterY(),
+        #VCenter(),
         #TopAligned(),
         #TopBoxAligned(),
-        #BottomAligned(),
+        BottomAligned(),
         #FontSizeWidthRatio(verbose=True)
     ]
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.
-        #CenterX(),
+        Center(),
         #LeftAligned(), 
         #RightAligned(),
-        #CenterY(),
+        VCenter(),
         #TopAligned(),
         #TopAligned(),
         #FontSizeWidthRatio(verbose=True)
     ]
     textCondition = [ # Placement condition(s) for the text element..
         #MaxWidthByFontSize(ratio=32), # Constrain the width by amount of size/characters == ratio.
-        #CenterX(),
-        #LeftAligned(), 
+        #Center(),
+        LeftAligned(), 
         #RightAligned(), # Over-ruling the previous horizontal conditions, if enabled.
-        #CenterY(),
+        VCenter(),
         #TopAligned(),
         #BottomAligned(),
     ]
@@ -109,30 +109,23 @@ def makeDocument(rootStyle):
 
     # Add some color elements (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
-    e1 = page.rect(point=wrongOrigin, style=rootStyle, w=w, h=300, conditions=colorCondition1, 
+    e1 = page.rect(point=wrongOrigin, style=rootStyle, w=w*2/3, h=300, conditions=colorCondition1, 
         fill=(1, 0.5, 0.5), align=CENTER, vAlign=CENTER)
     e2 = page.rect(point=wrongOrigin, style=rootStyle, w=w, h=100, conditions=colorCondition2, 
-        fill=(1, 1, 0))
+        fill=(1, 1, 0), align=CENTER, vAlign=CENTER)
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
     blurbText = getFormattedString(blurb.getBlurb('article', noTags=True), page,
         style=dict(font='Georgia', fontSize=9, rLeading=0.2, textColor=0))
-    et = eTextBox = page.textBox(blurbText, point=wrongOrigin, style=rootStyle, w=w/2, 
-        vacuumH=True, conditions=textCondition)
+    et = eTextBox = page.textBox(blurbText, point=wrongOrigin, style=rootStyle, w=w, 
+        vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
 
-    print e1.x, e1.y, e1.center, e1.vCenter
-         
-    e1.center = page.h/2
-    e1.vCenter = page.h/2
-    
-    print e1.x, e1.y, e1.center, e1.vCenter
-        
     pageValue = page.evaluate()
     print 'Page value on evaluation:', pageValue
     # Try to solve the problems if evaluation < 0
-    #if pageValue < 0:
-    #    page.solve()
+    if pageValue < 0:
+        page.solve()
     # Evaluate again, result should now be >= 0
     print 'Page value after solving the problems:', page.evaluate()
     
