@@ -24,28 +24,23 @@ ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5,
 
 def point3D(p):
     if p is None:
-        return (None, None, None) # Undefined 3D point.
-    assert isinstance(p, (list, tuple))
+        return (0, 0, 0) # Undefined 3D point.
     if isinstance(p, tuple):
         p = list(p)
     while len(p) < 3:
-        p.append(None) # Value undefined.
+        p.append(0) # Value undefined.
     return p
 
-def point2DOr3D(p):
-    u"""Answer 2D point of z-axis is None. Otherwise answer 3D point."""
-    if p is None:
-        return (None, None) # Undefined 2D point.
-    assert isinstance(p, (list, tuple))
-    if len(p) == 3 and p[2] is None:
-        p = p[:-1]
-    return p
-
-def pointOrigin2D(p, offset):
+def point2D(p):
     u"""Answer the 2D origin as combination of p and offset."""
-    p = point3D(p)
-    offset = point3D(offset)
-    return (offset[0] or 0) + (p[0] or 0), (offset[1] or 0) + (p[1] or 0)
+    return point3D(p)[:2]
+
+def pointOffset(point, offset):
+    if not len(point) == 3:
+        point = point3D(point)
+    if not len(offset) == 3:
+        offset = point3D(offset)
+    return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
 
 # N U M B E R S
 
@@ -80,7 +75,7 @@ def asId(value, default=0):
     The *asId* method transforms the *value* attribute either to an instance of @
     long@ or to @None@, so it can be used as *id* field in a @Record@
     instance. If the value cannot be converted, then the optional *default* (default value is @0
-    @) is answered.<br/></doc>
+    @) is answered.
     """
     try:
         value = long(value)

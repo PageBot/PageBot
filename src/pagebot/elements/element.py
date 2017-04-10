@@ -14,9 +14,10 @@ import weakref
 
 from drawBot import rect, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, fill, text, stroke, strokeWidth
 
-from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, w2cw, cw2w, h2ch, ch2h
-from pagebot.toolbox.transformer import point3D, point2DOr3D, pointOrigin2D, uniqueID
-from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN
+from pagebot.conditions.score import Score
+from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
+from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
+from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN, ANCHOR_ALIGN
 from pagebot.toolbox.transformer import asFormatted
 
 class Element(object):
@@ -30,14 +31,15 @@ class Element(object):
     isTextBox = False
     isFlow = False
 
-    def __init__(self, point=None, parent=None, eId=None, style=None, **kwargs):  
-        u"""Basic initialize for every Element contructor."""  
-        self._w = self._h = 0 # Optionally overwritten values. Otherwise use values from self.style.
-        self.point = point # Store optional self._point position property (x, y, None) or (x, y, z), local to parent.
+    def __init__(self, point=None, parent=None, eId=None, style=None, anchor=None, **kwargs):  
+        u"""Basic initialize for every Element constructor."""  
+        self._w = self._h = self._d = 0 # Optionally overwritten values. Otherwise use values from self.style.
+        self.point = point # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
         self.style = makeStyle(style, **kwargs)
         self.eId = eId or uniqueID(self)
-        self.parent = parent # Weak ref to parent element.
+        self.parent = parent # Weak ref to parent element or None if it is the root.
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
+        self.anchor = anchor # Optional anchor 3D point for ANCHOR_ALIGN, relative to origin point
 
     def __repr__(self):
         if self.eId:
@@ -80,46 +82,63 @@ class Element(object):
     parent = property(_get_parent, _set_parent)
 
     def _get_point(self):
-        return point2DOr3D(self._point) # Answer as 2D or 3D point (where one or more can still be None)
+        return point2D(self._point) # Answer as 2D
     def _set_point(self, point):
-        if point is None:
-            point = [0, 0] # Default is position on origin
-        assert isinstance(point, (tuple, list)) and len(point) in (2, 3)
-        self._point = list(point) 
+        self._point = point3D(point) # Always store as 3D-point, z = 0 if missing
     point = property(_get_point, _set_point)
 
     def _get_point3D(self):
-        return point3D(point)
+        return self._point
     def _set_point3D(self, point):
-        if point is None:
-            point = [0, 0, 0] # Default is position on origin
-        assert isinstance(point, (tuple, list)) and len(point) == 3
-        self._point = list(point)
+        self._point = point3D(point) # Always store as 3D-point, z = 0 if missing.
     point3D = property(_get_point3D, _set_point3D)
 
     # Plain coordinates
 
     def _get_x(self):
-        return self._point[0] # Can be None, if not placed. Caller can default position at (x or 0)
+        return self._point[0]
     def _set_x(self, x):
         self._point[0] = x
     x = property(_get_x, _set_x)
     
     def _get_y(self):
-        return self._point[1] # Can be None, if not placed. Caller can defailt position at (y or 0)
+        return self._point[1] 
     def _set_y(self, y):
         self._point[1] = y
     y = property(_get_y, _set_y)
     
     def _get_z(self):
-        if len(self._point) < 3:
-            return None # Not placed in y-direction. Caller can defautt position on (z or 0)
-        return self._point[2] # Can be None, if not placed. Caller can default position (z or 0)
+        return self._point[2] # We know that self._point is always 3D
     def _set_z(self, z):
-        self._point = point3D(self._point) # Make sure it is a 3D point
-        self._point[2] = z
+        self._point[2] = z # self._point is always 3D
     z = property(_get_z, _set_z)
     
+    # Position of anchor + origin point.
+
+    def _get_anchor(self):
+        return self._anchor
+    def _set_anchor(self, anchor):
+        self._anchor = point3D(anchor) # self.anchor is always 3D
+    anchor = property(_get_anchor, _set_anchor)
+
+    def _get_ax(self):
+        return self._point[0] + self._anchor[0]
+    def _set_ax(self, ax):
+        self._anchor[0] = ax - self._point[0]
+    ax = property(_get_ax, _set_ax)
+    
+    def _get_ay(self):
+        return self._point[1] + self._anchor[1]
+    def _set_ay(self, ay):
+        self._anchor[1] = ay - point[1]
+    ay = property(_get_ay, _set_ay)
+    
+    def _get_az(self):
+        return self._point[2] + self._anchor[2] # Both self._anchor and self._point are always 3D points.
+    def _set_az(self, az):
+        self._anchor[2] = az - self._point[2] # Both self._anchor and self._point are always 3D points.
+    az = property(_get_az, _set_az)
+
     # Origin compensated by alignment. This is used for easy solving of conditions,
     # where the positioning can be compenssaring the element alignment type.
 
@@ -128,12 +147,16 @@ class Element(object):
             return self.x - self.w/2
         if self.css('align') == RIGHT_ALIGN:
             return self.x - self.w
+        if self.css('align') == ANCHOR_ALIGN:
+            return self.x - self.anchor[0]
         return self.x
     def _set_left(self, x):
         if self.css('align') == CENTER:
             self.x = x + self.w/2
         elif self.css('align') == RIGHT_ALIGN:
             self.x = x + self.w
+        elif self.css('align') == ANCHOR_ALIGN:
+            self.x = x + self.anchor[0]
         else:
             self.x = x
     left = property(_get_left, _set_left)
@@ -143,12 +166,16 @@ class Element(object):
             return self.x + self.w/2
         if self.css('align') == RIGHT_ALIGN:
             return self.x + self.w
+        if self.css('align') == ANCHOR_ALIGN:
+            return self.x + self.anchor[0]
         return self.x
     def _set_center(self, x):
         if self.css('align') == LEFT_ALIGN:
             self.x = x - self.w/2
         elif self.css('align') == RIGHT_ALIGN:
             self.x = x - self.w
+        elif self.css('align') == ANCHOR_ALIGN:
+            self.x = x - self.anchor[0]
         else:
             self.x = x
     center = property(_get_center, _set_center)
@@ -158,62 +185,78 @@ class Element(object):
             return self.x + self.w
         if self.css('align') == CENTER:
             return self.x + self.w/2
+        if self.css('align') == ANCHOR_ALIGN:
+            return self.x + self.anchor[0]
         return self.x
     def _set_right(self, x):
         if self.css('align') == LEFT_ALIGN:
             self.x = x - self.w
         elif self.css('align') == CENTER:
             self.x = x - self.w/2
+        elif self.css('align') == ANCHOR_ALIGN:
+            self.x = x - self.anchor[0]
         else:
             self.x = x
     right = property(_get_right, _set_right)
 
+    # Vertical
 
     def _get_top(self):
         if self.css('vAlign') == CENTER:
             return self.y - self.h/2
         if self.css('vAlign') == BOTTOM_ALIGN:
             return self.y - self.h
+        if self.css('vAlign') == ANCHOR_ALIGN:
+            return self.y - self.anchor[1]
         return self.y
     def _set_top(self, y):
         if self.css('vAlign') == CENTER:
             self.y = y + self.h/2
         elif self.css('vAlign') == BOTTOM_ALIGN:
             self.y = y + self.h
+        elif self.css('vAlign') == ANCHOR_ALIGN:
+            self.y = y + self.anchor[1]
         else:
             self.y = y
     top = property(_get_top, _set_top)
 
-    def _get_vCenter(self):
+    def _get_verticalCenter(self):
         if self.css('vAlign') == TOP_ALIGN:
             return self.y - self.h/2
         if self.css('vAlign') == BOTTOM_ALIGN:
             return self.y - self.h
+        if self.css('vAlign') == ANCHOR_ALIGN:
+            return self.y - self.anchor[1]
         return self.y
-    def _set_vCenter(self, y):
+    def _set_verticalCenter(self, y):
         if self.css('vAlign') == TOP_ALIGN:
             self.y = y + self.h/2
         elif self.css('vAlign') == BOTTOM_ALIGN:
             self.y = y + self.h
+        elif self.css('vAlign') == ANCHOR_ALIGN:
+            self.y = y + self.anchor[1]
         else:
             self.y = y
-    vCenter = property(_get_vCenter, _set_vCenter)
+    verticalCenter = property(_get_verticalCenter, _set_verticalCenter)
 
     def _get_bottom(self):
         if self.css('vAlign') == TOP_ALIGN:
             return self.y + self.h
         if self.css('vAlign') == CENTER:
             return self.y + self.h/2
+        if self.css('vAlign') == ANCHOR_ALIGN:
+            return self.y + self.anchor[1]
         return self.y
     def _set_bottom(self, y):
         if self.css('vAlign') == TOP_ALIGN:
             self.y = y - self.h
         elif self.css('vAlign') == CENTER:
             self.y = y - self.h/2
+        elif self.css('vAlign') == ANCHOR_ALIGN:
+            return self.y + self.anchor[1]
         else:
             self.y = y
     bottom = property(_get_bottom, _set_bottom)
-
 
     # Position by column + gutter size index.
 
@@ -225,13 +268,22 @@ class Element(object):
             self.x = x
     cx = property(_get_cx, _set_cx)
 
-    def _get_cy(self): # Answer the x-position, defined in columns. Can be fractional for elements not on grid.
+    def _get_cy(self): # Answer the y-position, defined in columns. Can be fractional for elements not on grid.
         return y2cy(self.y, self)
     def _set_cy(self, cy): # Set the x-position, defined in columns.
         y = cy2y(cy, self)
         if y is not None:
             self.y = y
     cy = property(_get_cy, _set_cy)
+
+    def _get_cz(self): # Answer the z-position, defined in columns. Can be fractional for elements not on 3D-grid.
+        return z2cz(self.y, self)
+    def _set_cz(self, cz): # Set the z-position, defined in style['cz'] columns.
+        z = cz2z(cz, self)
+        if z is not None:
+            self.z = z
+    cz = property(_get_cz, _set_cz)
+
 
     def _get_cw(self):
         return w2cw(self.w, self)
@@ -279,7 +331,7 @@ class Element(object):
 
     def _get_originTop(self):
         u"""Answer the style flag if all point y values should measure top-down (typographic page
-        orientation), instead of bottom-up (mathenatical orientation)."""
+        orientation), instead of bottom-up (mathematical orientation)."""
         return self.css('originTop')
     originTop = property(_get_originTop)
 
@@ -289,19 +341,21 @@ class Element(object):
         self.w and/or self.h properties."""
         return self.w, self.h
 
-    def setSize(self, w, h):
+    def getSize3D(self):
+        u"""Answer the 3D size of the element."""
+        return self.w, self.h, self.d
+
+    def setSize(self, w, h, d=0):
         u"""Set the size of the element by calling by properties self.w and self.h. 
         If set, then overwrite access from style width and height."""
         self.w = w # Set by property
         self.h = h
+        self.d = d # By definition elements have no depth.
 
     def getPaddedBox(self):
         u"""Calculate the padded position and padded resized box of the element, after applying the
         option style padding."""
         # TODO: Get this to work. Padding now had problem of scaling images too big for some reason.
-        print self.x,  self.css('pl'), self.y, self.css('pb'),\
-            self.w, self.css('pl'), self.css('pr'), \
-            self.h, self.css('pt'), self.css('pb')
         return self.x + self.css('pl'), self.y + self.css('pb'),\
             self.w - self.css('pl') - self.css('pr'), \
             self.h - self.css('pt') - self.css('pb')
@@ -324,13 +378,24 @@ class Element(object):
         self.style['minH'] = minH # Set on local style, shielding parent self.css value.
     minH = property(_get_minH, _set_minH)
 
+    def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
+        return self.css('minD')
+    def _set_minD(self, minD):
+        self.style['minD'] = minD # Set on local style, shielding parent self.css value.
+    minD = property(_get_minD, _set_minD)
+
     def getMinSize(self):
         u"""Answer the minW and minW of this element."""
         return self.minW, self.minH
 
-    def setMinSize(self, minW, minH):
+    def getMinSize3D(self):
+        u"""Answer the minW and minW of this element."""
+        return self.minW, self.minH, self.minD
+
+    def setMinSize(self, minW, minH, minD=0):
         self.minW = minW
         self.minH = minH
+        self.minD = minD # Optional minimum depth of the element.
 
     def _get_maxW(self):
         return self.css('maxW')
@@ -364,26 +429,34 @@ class Element(object):
     scaleY = property(_get_scaleY, _set_scaleY)
 
     def _applyAlignment(self, p):
-        px, py = p
+        u"""Answer the p according to the alignment status nin the css.""" 
+        px, py, pz = point3D(p)
+        # Horizontal
         if self.css('align') == CENTER:
             px -= self.w/2/self.scaleX
         elif self.css('align') == RIGHT_ALIGN:
             px -= self.w/self.scaleX
+        elif self.css('align') == ANCHOR_ALIGN:
+            px -= self.anchor[0]/self.scaleX
+        # Vertical
         if self.css('vAlign') == CENTER:
             py -= self.h/2/self.scaleY
         elif self.css('vAlign') == TOP_ALIGN:
             py -= self.h/self.scaleY
-        return px, py
+        elif self.css('vAlign') == ANCHOR_ALIGN:
+            py -= self.anchor[1]/self.scaleY
+        # Currently no alignment in z-axis implemented
+        return px, py, pz
 
     def _applyOrigin(self, p):
         u"""If self.css('originTop') is False, then the y-value is interpreted as mathemtcs, 
         starting at the bottom of the parent element, moving up.
         If the flag is True, then move from top down, where the origin of the element becomes
         top-left of the parent."""
-        px, py = p
+        px, py, pz = point3D(p)
         if self.originTop and self.parent:
             py = self.parent.h - py
-        return px, py
+        return px, py, pz
 
     def _applyRotation(self, mx, my, angle):
         u"""Apply the rotation for angle, where (mx, my) is the rotation center."""
@@ -401,10 +474,12 @@ class Element(object):
         so drawing elements can still draw on "real size", while the other element is in scaled mode."""
         sx = self.scaleX # May not exist in the un-cascaded style.
         sy = self.scaleY
+        p = point3D(p)
         if sx and sy:
             save()
             scale(sx, sy)
-            p = (p[0] / sx, p[1] / sy)
+            p = (p[0] / sx, p[1] / sy, p[2])
+            # Currently no scaling in z-direction.
         return p
 
     def _restoreScale(self):
@@ -442,14 +517,14 @@ class Element(object):
         bounding box if self.style['showGrid'] is True."""
         if self.css('showElementBox'):
             # Draw crossed rectangle.
-            p = pointOrigin2D(self.point, origin)
+            p = pointOffset(self.point, origin)
             p = self._applyOrigin(p)    
             p = self._applyScale(p)    
-            px, py = self._applyAlignment(p)
+            px, py, _ = self._applyAlignment(p) # Ignore z-axis.
 
             setFillColor(None)
             setStrokeColor(0, 0.5)
-            rect(ox, oy, self.w, self.h)
+            rect(px, py, self.w, self.h)
 
             self._restoreScale()
     
@@ -466,10 +541,10 @@ class Element(object):
         u"""For debugging this will make the elements show their info."""
         if self.css('showElementInfo'):
              # Draw crossed rectangle.
-            p = pointOrigin2D(self.point, origin)
+            p = pointOffset(self.point, origin)
             p = self._applyOrigin(p)    
             p = self._applyScale(p)    
-            px, py = self._applyAlignment(p)
+            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
             fs = getFormattedString(self._getElementInfoString(), style=dict(font='Verdana', fontSize=7, leading=9, textFill=0.1))
             tw, th = textSize(fs)
@@ -494,7 +569,7 @@ class Element(object):
         that this element has missing content (as in unused image frames).
         Only draw if self.style['showGrid'] is True."""
         if self.style.get('showGrid'):
-            ox, oy = pointOrigin2D(self.point, origin)
+            px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
             sMissingElementFill = self.style.get('missingElementFill', NO_COLOR)
             if sMissingElementFill is not NO_COLOR:
                 setFillColor(sMissingElementFill)
@@ -517,23 +592,563 @@ class Element(object):
 
     #   V A L I D A T I O N
 
-    def evaluate(self):
+    def evaluate(self, score=None):
         u"""Evaluate the content of element e with the total sum of conditions."""
-        level = 0
-        for condition in self.style.get('conditions', []): # Skip in case there are no conditions in the style.
-            level += condition.evaluate(self)
+        if score is None:
+            score = Score()
+        for condition in self.css('conditions', []): # Skip in case there are no conditions in the style.
+            condition.evaluate(self, score)
         for e in self.getElements(): # Also works if element is not a container.
-            level += e.evaluate()
-        return level
+            e.evaluate(score)
+        return score
          
-    def solve(self):
+    def solve(self, score=None):
         u"""Evaluate the content of element e with the total sum of conditions."""
-        level = 0
-        for condition in self.style.get('conditions', []): # Skip in case there are no conditions in the style.
-            level += condition.solve(self)
+        if score is None:
+            score = Score()
+        for condition in self.css('conditions', []): # Skip in case there are no conditions in the style.
+            condition.solve(self, score)
         for e in self.getElements(): # Also works if element is not a container.
-            level += e.solve()
-        return level
+            e.solve(score)
+        return score
          
+    #   C O N D I T I O N S
 
+    def isAnchorOnBottom(self, tolerance=0):
+        if self.originTop:
+            return abs(self.parent.h - self.parent.css('mb')) <= tolerance
+        return abs(self.ax - self.parent.css('mb')) <= tolerance
 
+    def isAnchorOnBottomSide(self, tolerance=0):
+        if self.originTop:
+            return abs(self.parent.h) <= tolerance
+        return abs(self.ax) <= tolerance
+
+    def isAnchorOnCenter(self, tolerance=0):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        return abs(ml + (mr - ml)/2 - e.ax) <= tolerance
+    
+    def isAnchorOnCenterSides(self, tolerance=0):
+        return abs(self.parent.w/2 - e.ax) <= tolerance
+   
+    def isAnchorOnLeft(self, tolerance=0):
+        return abs(self.parent.css('ml') - e.ax) <= tolerance
+   
+    def isAnchorOnLeftSide(self, tolerance=0):
+        return abs(e.ax) <= tolerance
+   
+    def isAnchorOnRight(self, tolerance=0):
+        return abs(self.parent.css('mr') - e.ax) <= tolerance
+   
+    def isAnchorOnRightSide(self, tolerance=0):
+        return abs(self.parent.w - e.ax) <= tolerance
+    """
+    
+  
+    isAnchorOnTop
+    isAnchorOnTopSide
+    isAnchorOnVerticalCenter
+    isAnchorOnVerticalCenterSides
+    """
+    def isBottomOnBottom(self, tolerance=0):
+        mb = self.parent.css('mb')
+        if self.originTop:
+            return abs(self.parent.h - mb - self.bottom) <= tolerance
+        return abs(self.parent.css('mb') - mb) <= tolerance
+
+    def isBottomOnBottomSide(self, tolerance=0):
+        if self.originTop:
+            return abs(self.parent.h - self.bottom) <= tolerance
+        return abs(self.bottom) <= tolerance
+        
+    """
+    isBottomOnTop
+    isCenterOnBottomSide
+    """
+
+    def isCenterOnCenter(self, tolerance=0):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        return abs(ml + (mr - ml)/2 - self.center) <= tolerance
+
+    def isCenterOnCenterSides(self, tolerance=0):
+        return abs(self.parent.w/2 - self.center) <= tolerance
+  
+    def isCenterOnLeft(self, tolerance=0):
+        return abs(self.parent.css('ml') - e.center) <= tolerance
+
+    def isCenterOnCenterSides(self, tolerance=0):
+        return abs(self.parent.w/2 - self.center) <= tolerance
+     
+    def isCenterOnRight(self, tolerance=0):
+        return abs(self.parent.w - self.parent.css('mr') - self.center) <= tolerance
+   
+    def isCenterOnRightSide(self, tolerance=0):
+        return abs(self.parent.w - self.center) <= tolerance
+  
+    """
+    isCenterOnTop
+    isCenterOnTopSide
+    isCenterOnVerticalCenter
+    isCenterOnVerticalCenterSides
+    isLeftOnCenter
+    isLeftOnCenterSides
+    """
+    def isLeftOnLeft(self, tolerance=0):
+        return abs(self.parent.css('ml') - self.left) <= tolerance
+
+    def isLeftOnLeftSide(self, tolerance=0):
+        return abs(self.left) <= tolerance
+
+    def isLeftOnRight(self, tolerance=0):
+        return abs(self.parent.w - self.parent.css('mr') - self.left) <= tolerance
+
+    """
+    isTopOnVerticalCenter
+    isTopOnVerticalCenterSides
+    """
+    def isOriginOnBottom(self, tolerance=0):
+        mb = self.parent.css('mb') # Get parent margin left
+        if self.originTop:
+            self.y = self.parent.h - mb
+        else:
+            self.y = mb
+
+    def isOriginOnBottomSide(self, tolerance=0):
+        if self.originTop:
+            self.y = self.parent.h
+        else:
+            self.y = 0
+
+    """
+    isOriginOnCenter
+    """
+    def isOriginOnCenterSides(self, tolerance=0):
+        return abs(self.parent.w/2 - self.x) <= tolerance
+
+    def isOriginOnLeft(self, tolerance=0):
+        return abs(self.parent.css('ml') - self.x) <= tolerance
+
+    def isOriginOnCenterSides(self, tolerance=0):
+        return abs(self.parent.w/2 - self.x) <= tolerance
+
+    def isOriginOnLeftSide(self, tolerance=0):
+        return abs(self.x) <= tolerance
+
+    def isOriginOnRight(self, tolerance=0):
+        return abs(self.parent.w - self.parent.css('mr') - self.x) <= tolerance
+
+    def isOriginOnRightSide(self, tolerance=0):
+        return abs(self.parent.w - self.x) <= tolerance
+
+    def isOriginOnTop(self, tolerance=0):
+        mt = self.parent.css('mt') # Get parent margin left
+        if self.originTop:
+            self.y = mt
+        else:
+            self.y = self.parent.h - mb
+
+    def isOriginOnTopSide(self, tolerance=0):
+        if self.originTop:
+            self.y = 0
+        else:
+            self.y = self.parent.h
+
+    def isOriginOnVerticalCenter(self, tolerance=0):
+        mb = self.parent.css('mb')
+        mt = self.parent.css('mt')
+        if self.originTop:
+            return abs(mt + (mb - mt)/2 - self.y) <= tolerance
+        return abs(mb + (mt - mb)/2 - self.y) <= tolerance
+ 
+    def isOriginOnVerticalCenterSides(self, tolerance=0):
+        if self.originTop:
+            return abs(self.parent.h/2 - self.y) <= tolerance
+        return abs(self.parent.h/2 - self.y) <= tolerance
+ 
+    def isRightOnCenter(self, tolerace=0):
+        return abs(self.parent.w - self.x) <= tolerance
+
+    def isRightOnCenterSides(self, tolerance=0):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        return abs(ml + (mr - ml)/2 - self.right) <= tolerance
+
+    def isRightOnLeft(self, tolerance=0):
+        return abs(self.parent.css('ml') - self.right) <= tolerance
+
+    def isRightOnRight(self, tolerance=0):
+        return abs(self.parent.w - self.parent.css('mr') - self.right) <= tolerance
+
+    def isRightOnRightSide(self, tolerance=0):
+        return abs(self.parent.w - self.right) <= tolerance
+
+    def isBottomOnVerticalCenter(self, tolerance=0):
+        mt = self.parent.css('mt') # Get parent margin left
+        mb = self.parent.css('mb')
+        if self.originTop:
+
+    def isBottomOnVerticalCenterSides(self, tolerance=0):
+
+    def isTopOnBottom(self, tolerance=0):
+        if self.originTop:
+            return abs(self.parent.h - self.parent.css('mb') - self.top) <= tolerance
+        return abs(self.parent.css('mb') - self.top) <= tolerance
+
+    def isTopOnTop(self, tolerance=0):
+        if self.originTop:
+            return abs(self.parent.css('mt') - self.top) <= tolerance
+        return abs(self.parent.h - self.parent.css('mt') - self.top) <= tolerance
+
+    def isTopOnTopSide(self, tolerance=0):
+        if self.originTop:
+            return abs(self.top) <= tolerance
+        return abs(self.parent.h - self.top) <= tolerance
+
+    #   T R A N S F O R M A T I O N S 
+
+    def anchor2Bottom(self):
+        mb = self.parent.css('mb')
+        if self.originTop:
+            self.ay = self.parent.h - mb
+        else:
+            self.ay = mb
+        return True
+
+    def anchor2BottomSide(self):
+        if self.originTop:
+            self.ay = self.parent.h
+        else:
+            self.ay = 0
+        return True
+
+    def anchor2Center(self):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        self.ax = ml + (mr - ml)/2
+        return True
+
+    def anchor2CenterSides(self):
+        self.ax = self.parent.w/2
+        return True
+
+    def anchor2Left(self):
+        self.ax = self.parent.css('ml')
+
+    def anchor2LeftSide(self):
+        self.ax = 0
+
+    def anchor2Right(self):
+        self.ax = self.parent.w - self.parent.css('mr')
+
+    def anchor2RightSide(self):
+        self.ax = self.parent.w
+
+    def anchor2Top(self):
+        if self.originTop:
+            self.ay = self.parent.css('mt')
+        else:
+            self.ay = self.parent.h - self.parent.css('mt')
+        return True
+
+    def anchor2TopSide(self):
+        if self.originTop:
+            self.ay = 0
+        else:
+            self.ay = self.parent.h
+        return True
+
+    def anchor2VerticalCenter(self):
+        mt = self.parent.css('mt') # Get parent margin left
+        mb = self.parent.css('mb')
+        if self.originTop:
+            self.ax = mt + (mb - mt)/2
+        else:
+            self.ax = mb + (mt - mb)/2
+        return True
+
+    def anchor2VerticalCenterSides(self):
+        self.ax = self.parent.h/2
+        return True
+
+    def bottom2Bottom(self):
+        mb = self.parent.css('mb')
+        if self.originTop:
+            self.bottom = self.parent.h - mb
+        else:
+            self.bottom = mb
+        return True
+
+    def bottom2BottomSide(self):
+        if self.originTop:
+            self.bottom = self.parent.h
+        else:
+            self.bottom = 0
+        return True
+
+    def bottom2top(self):
+        mt = self.parent.css('mt') 
+        if self.originTop:
+            self.bottom = mt 
+        else:
+            self.bottom = self.parent.h - mt
+        return True
+    
+    def center2BottomSide(self):
+        if self.originTop:
+            self.centerVertical = self.parent.h
+        else:
+            self.csnterVertical = 0
+        return True
+
+     def center2Center(self):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        self.center = ml + (mr - ml)/2
+        return True
+    
+    def center2CenterSides(self):
+        self.center = self.parent.w/2
+        return True
+    
+    def center2CVerticalCenter(self):
+        mt = self.parent.css('mt') # Get parent margin left
+        mb = self.parent.css('mb')
+        if self.originTop:
+            self.centerVertical = mt + (mb - mt)/2
+        else:
+            self.csnterVertical = mb + (mt - mb)/2
+        return True
+
+    def center2Left(self):
+        e.center = self.parent.css('ml')
+        return True
+
+    def center2LeftSide(self):
+        e.center = 0
+        return True
+
+    def center2Right(self):
+        e.center = self.parent.w - self.parent.css('mr')
+        return True
+
+    def center2RightSide(self):
+        e.center = self.parent.w
+        return True
+
+    def center2Top(self):
+        mt = self.parent.css('mt') # Get parent margin left
+        if self.originTop:
+            self.verticalCenter = mt
+        else:
+            self.verticalCenter = self.parent.h - mt
+
+    def center2TopSide(self):
+        if self.originTop:
+            self.verticalCenter = 0
+        else:
+            self.verticalCenter = self.parent.h
+
+    def center2VerticalCenterSides(self):
+        mt = self.parent.css('mt') # Get parent margin left
+        mb = self.parent.css('mb')
+        if self.originTop:
+            self.verticalCenter = mt + (mb - mt)/2
+        else:
+            self.verticalCenter = mb + (mt - mb)/2
+
+    def fitBottom(self):
+        if self.originTop:
+            self.h += self.parent.h - self.parent.css('mb') - self.bottom
+        else:
+            top = self.top
+            self.bottom = self.parent.css('mb')
+            self.h += top - self.top
+        return True
+
+    def fitBottomSide(self):
+        if self.originTop:
+            self.h += self.parent.h - self.bottom
+        else:
+            top = self.top
+            self.bottom = 0
+            self.h += top - self.top
+        return True
+
+    def fitLeft(self):
+        right = self.right
+        self.left = self.parent.css('ml')
+        self.w += right - self.right
+        return True
+
+    def fitLeftSide(self):
+        right = self.right
+        self.left = 0
+        self.w += right - self.right
+        return True
+
+    def fitRight(self):
+        self.w += self.parent.w - self.parent.css('mr') - self.right
+        return True
+
+    def fitRightSide(self):
+        self.w += self.parent.w - self.right
+        return True
+
+    def fitTop(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = self.parent.css('mt')
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.parent.css('mt') - self.top
+        return True
+
+    def fitTopSide(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = 0
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.top
+        return True
+
+    def left2Center(self):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        e.left = ml + (mr - ml)/2
+
+    def left2CenterSides(self):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        e.left = ml + (mr - ml)/2
+
+    def left2Left(self):
+        self.left = self.parent.css('ml')
+
+    def left2Right(self):
+        self.left = self.parent.w - self.parent.css('mr')
+
+    def left2LeftSide(self):
+        self.left = 0
+
+    def top2VerticalCenter(self):
+        mt = self.parent.css('mt') # Get parent margin left
+        mb = self.parent.css('mb')
+        if self.originTop:
+            self.top = mt + (mb - mt)/2
+        else:
+            self.top = mb + (mt - mb)/2
+
+    def top2VerticalCenterSides(self):
+        self.top = self.parent.h/2
+
+    def origin2Bottom(self):
+        if self.originTop:
+            self.y = self.parent.h - self.parent.css('mb')
+        else:
+            self.y = self.parent.css('mb')
+        return True
+
+    def origin2BottomSide(self):
+        if self.originTop:
+            self.y = self.parent.h
+        else:
+            self.y = 0
+        return True       
+
+    def origin2Center(self):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        e.x = ml + (mr - ml)/2
+
+    def origin2CenterSides(self):
+        e.x = self.parent.w/2
+
+    def origin2Left(self):
+        e.x = self.parent.css('ml')
+
+    def origin2LeftSide(self):
+        e.x = 0
+
+    def origin2Right(self):
+        self.x = self.parent.w - self.parent.css('mr')
+        return True
+
+    def origin2RightSide(self):
+        self.x = self.parent.w
+        return True
+
+    def origin2Top(self):
+        if self.originTop:
+            self.y = self.parent.css('mt')
+        else:
+            self.y = self.parent.h - self.parent.css('mt')
+        return True
+
+    def origin2TopSide(self):
+        if self.originTop:
+            self.y = 0
+        else:
+            self.y = self.parent.h
+        return True
+
+    def origin2VerticalCenter(self):
+        mt = self.parent.css('mt') # Get parent margin left
+        mb = self.parent.css('mb')
+        if self.originTop:
+            self.y = mt + (mb - mt)/2
+        else:
+            self.y = mb + (mt - mb)/2
+ 
+    def origin2VerticalCenterSides(self):
+        self.y = self.parent.h/2
+
+    def right2Center(self):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        self.right = ml + (mr - ml)/2
+
+    def right2CenterSides(self):
+         self.right = self.parent.w/2
+
+    def right2Left(self):
+         self.right = self.parent.css('ml')
+
+    def right2Right(self):
+         self.right = self.parent.w - self.parent.css('mr')
+    
+    def right2RightSide(self):        
+        self.right = self.parent.w
+        return True
+
+    def bottom2VerticalCenterSides(self):
+        mt = self.parent.css('mt') # Get parent margin left
+        mb = self.parent.css('mb')
+        if self.originTop:
+            self.bottom = mt + (mb - mt)/2
+        else:
+            self.bottom = mb + (mt - mb)/2
+
+    def top2Bottom(self):
+        mb = self.parent.css('mb')
+        if self.originTop:
+            self.top = self.parent.h - mb
+        else:
+            self.top = mb
+        return True
+    
+    def top2Top(self):
+        if self.originTop:
+            self.top = self.parent.css('mt')
+        else:
+            self.top = self.parent.h - self.parent.css('mt')
+        return True
+    
+    def top2TopSide(self):
+        if self.originTop:
+            self.top = 0
+        else:
+            self.top = self.parent.h
+        return True

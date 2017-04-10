@@ -118,7 +118,7 @@ class Galley(Container):
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the
         containing page."""
-        ox, oy = pointOrigin2D(self.point, origin)
+        ox, oy = pointOffset(self.point, origin)
         fill(1, 1, 0)
         gw, gh = self.getSize()
         rect(ox, oy, gw, gh)

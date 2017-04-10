@@ -14,10 +14,9 @@
 import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
-from pagebot.document import Document
-from pagebot.page import Page, Template
-from pagebot.composer import Composer
-from pagebot.typesetter import Typesetter
+from pagebot.elements.document import Document
+from pagebot.elements.page import Page, Template
+from pagebot.composition import Composer, Typesetter
 from pagebot.elements import Galley
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 
@@ -45,7 +44,8 @@ RS = getRootStyle(
     h = 842, # 842 = A4 height. Other example: page height 11", international generic fit.
     ml = 8*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
-    g = 2*U, # Generic gutter.
+    gw = 2*U, # Generic gutter, equal for width and height
+    gh = 2*U,
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # Uneven a the best in that respect for column calculation,
     # as it is possible to make micro columsn with the same gutter.

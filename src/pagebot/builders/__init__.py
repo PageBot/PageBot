@@ -97,20 +97,16 @@ def baseline2y(yIndex, style):
 def cp2p(cx, cy, style):
     u"""Convert columns index to page position. Answered (x, y) is point position based on 
     marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter)."""
-    gutter = style['g']
-    marginLeft = style['ml']
-    marginTop = style['mt']
-    columnWidth = style['cw']
-    columnHeight = style['ch']
-    return (marginLeft + cx * (columnWidth + gutter),
-            marginTop + cy * (columnHeight + gutter))
+    return (style['ml'] + cx * (style['cw'] + style['gw']),
+            style['mt'] + cy * (style['ch'] + style['gh']))
     
 def cr2p(cx, cy, cw, ch, style):
     u"""Convert columns rect to page position/size.  Answered (x, y, x, h) is point position and size based on
     marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter).
     Note that the function assumes a number of values to be present in the style, otherwise a KeyError is raised.
     This works best to inherit the style from the RootStyle and then alter the value that are different."""
-    gutter = style['g']
+    gutterW = style['gw']
+    gutterH = style['gh']
     marginLeft = style['ml']
     marginTop = style['mt']
     columnWidth = style['cw']
@@ -118,16 +114,16 @@ def cr2p(cx, cy, cw, ch, style):
     w = style['w']
     h = style['h']
 
-    columnW = cw * (columnWidth + gutter)
+    columnW = cw * (columnWidth + gutterW)
     if cw:
-        columnW -= gutter
-    columnH = ch * (columnHeight + gutter)
+        columnW -= gutterW
+    columnH = ch * (columnHeight + gutterH)
     if ch:
-        columnH -= gutter
+        columnH -= gutterH
 
     return (
-        marginLeft + cx * (columnWidth + gutter),
-        h - marginTop - (cy + ch) * (columnHeight + gutter) + gutter,
+        marginLeft + cx * (columnWidth + gutterW),
+        h - marginTop - (cy + ch) * (columnHeight + gutterH) + gutterH,
         columnW, columnH)
 
 def xy2xy(x, y):

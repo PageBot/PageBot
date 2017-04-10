@@ -64,7 +64,7 @@ def makeDocument(rs):
     rs['ml'] = mx = (W - sqx*(square + gutter) + gutter)/2
     rs['mt'] = rs['mb'] = my = (H - sqy*(square + gutter) + gutter)/2
     rs['cw'] = rs['ch'] = square
-    rs['g'] = gutter
+    rs['gw'] = rs['gh'] = gutter # Gutter width and gutter height
 
     doc = Document(rs, pages=1)
     

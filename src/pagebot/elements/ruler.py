@@ -12,7 +12,7 @@
 #
 from pagebot import setFillColor
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.toolbox.transformer import pointOffset
 
 class Ruler(Element):
 
@@ -23,10 +23,10 @@ class Ruler(Element):
     h = property(_get_h, _set_h)
 
     def draw(self, origin):
-        p = pointOrigin2D(self.point, origin)
+        p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
-        px, py = self._applyAlignment(p)
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         sIndent = self.css('indent')
         sTailIndent = self.css('tailIndent')
         w = self.w - sIndent - sTailIndent

@@ -26,8 +26,7 @@ from pagebot.typesetter import Typesetter
 # The Composer instance distributes the Galley content of the pages, according to the defined Templates.
 from pagebot.composer import Composer
 # Elements that can placed on pages and templates.
-from pagebot.elements.galley import Galley
-from pagebot.elements.rect import Rect
+from pagebot.elements.galley import Galley, Rect
 # Get functions to create instances style from Variation fonts.
 from pagebot.fonttoolbox.variationbuilder import getVariationFont, generateInstance
 

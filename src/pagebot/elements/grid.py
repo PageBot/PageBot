@@ -15,7 +15,7 @@ from drawBot import rect, newPath, moveTo, lineTo, drawPath, text
 from pagebot import getFormattedString, setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.style import LEFT_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
-from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.toolbox.transformer import pointOffset
 
 class Grid(Element):
 
@@ -23,13 +23,14 @@ class Grid(Element):
         u"""Draw grid of lines and/or rectangles if colors are set in the style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         # Drawing the grid as squares.
-        p = pointOrigin2D(self.point, origin)
+        p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
-        px, py = self._applyAlignment(p)
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         sGridFill = self.css('gridFill', NO_COLOR)
-        gutter = self.css('g') # Gutter
+        gutterW = self.css('gw') # Gutter width
+        gutterH = self.css('gh') # Gutter height
         columnWidth = self.css('cw') # Column width
         columnHeight = self.css('ch') # Column height
         marginLeft = self.css('ml') # Margin left
@@ -43,11 +44,11 @@ class Grid(Element):
             setStrokeColor(None)
             ox = px + marginLeft
             while ox < w - marginRight - columnWidth:
-                oy = h - marginTop - columnHeight - gutter
+                oy = h - marginTop - columnHeight - gutterH
                 while oy >= 0:
-                    rect(ox, oy + gutter, columnWidth, columnHeight)
-                    oy -= columnHeight + gutter
-                ox += columnWidth + gutter
+                    rect(ox, oy + gutterH, columnWidth, columnHeight)
+                    oy -= columnHeight + gutterH
+                ox += columnWidth + gutterW
         # Drawing the grid as lines.
         if self.css('showGrid') and self.css('gridStroke', NO_COLOR) is not NO_COLOR:
             setFillColor(None)
@@ -68,7 +69,7 @@ class Grid(Element):
                 drawPath()
                 text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
                 index += 1
-                ox += columnWidth + gutter
+                ox += columnWidth + gutterW
             index = 0
             while oy > py:
                 newPath()
@@ -79,7 +80,7 @@ class Grid(Element):
                 drawPath()
                 text(fs + repr(index), (px + marginLeft - M / 2, oy - M * 0.6))
                 index += 1
-                oy -= columnHeight + gutter
+                oy -= columnHeight + gutterH
 
         self._restoreScale()
         self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'

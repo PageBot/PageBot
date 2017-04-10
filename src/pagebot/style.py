@@ -88,6 +88,7 @@ SHOW_IMAGE_REFERENCE = True # Show [image #] in text, if the images is inside a 
 
 LEFT_ALIGN = 'left'
 RIGHT_ALIGN = 'right'
+ANCHOR_ALIGN = 'anchor'
 CENTER = 'center'
 JUSTIFIED = 'justified'
 TOP_ALIGN = 'top'
@@ -137,36 +138,47 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
         u = u, # Base unit for Dutch/Swiss typography :)
         w = 595, # Page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = 11 * 72, # Page height, basic size of the document. 11", international generic fit.
+        d = 0, # Optional "depth" of an document, page or element.
+
         # Document size, if different from the page size. Otherwise keep None to make document.w answer rootStyle['w']
         # If the document size is different from the page size (and if showCropMarks and/or showPageFrame is True)
         # crop-marks and registration crosses are shown.
         docW = None,
         docH = None,
+        docD = None, # Optional depth of the document, in case using 3D positioned elements.
+
         frameDuration = None, # In case saving as .mov or .gif, this value defines 1/frames_per_second
         # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
         folds = None,
+
         # Position of origin. DrawBot has y on bottom-left. In PageBot it is optional. Default is top-left.
         # Note that the direcion of display is always upwards. This means that the position of text and elements
         # goes downward from the top, they are not flipped vertical. It is up to the caller to make sure
         # there is enough space for elements to show themselves on top of a given position.
         # originTop often goes with vAlign = TOP_ALIGN.
         originTop = True,
-        align = LEFT_ALIGN, # Alignment, one if ('left', 'justified', 'center'. 'right')
+        align = LEFT_ALIGN, # Alignment, one if ('left', 'justified', 'center'. 'right', 'anchor')
         vAlign = TOP_ALIGN, # Alignment for elements like image, that float in their designated space.
+
         # Margins
         mt = 7*u, # Margin top
         ml = 7*u, # Margin left
         mr = 6*u, # Margin right is used as minimum. Actual value is calculated from cw and gutter,
         mb = 6*u, # Margin bottom is used as minimum. Actual value is calculated from baseline grid.
+
         # Padding where needed.
         pt = 0, # Padding top
         pl = 0, # Padding left
         pr = 0, # Padding right
         pb = 0, # Padding bottom
+
         # Gutter is used a standard distance between columns. Note that when not-justifying, the visual
         # gutter on the right side of columns seems to be larger. This can be compensated for in the
         # distance between images.
-        g = gutter, # Main gutter of pages. Based on U.
+        gw = gutter, # Main gutter width of page columns. Based on U.
+        gh = gutter, # Gutter height
+        gd = gutter, # Optional gutter depth, in z-direction
+        
         # Column width for column-point-to-point cp2p() and column-rect-to-point cr2p() calculations.
         # Column width, based on multiples of gutter. If uneven, this allows the column to be interpreted
         # as two smaller columns of [5 +1+ 5] or even [2+1+2 +1+ 2+1+2], e.g. for micro-layouts in tables.
@@ -175,19 +187,25 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
         # 11*gutter is one of the best values, as the smallest micro-column is 2 instead  of scaling back to 1.
         cw = 11*gutter,
         ch = u*baselineGrid - u, # Approximately square with cw + gutter.
+        cd = 0, # Optional columnt "depth"
+
         # Flags to indicate that width is the vacuum form around content (text or elements)
         vacuumW = False, 
         vacuumH = False, 
+        vacuumD = False, # Optional vacuuming in z-direction.
+
         # Minimum size
         minW = 5*gutter, # Default is to make minimum width equal to 1/2 column, om 5+1+5 = 11 grid.
         minH = baselineGrid, # Default is to make minimum height equal to 1 baseline.
+        minD = 0, # Optional minimum depth of the document
         maxW = None, # None if there is no maximum
         maxH = None,
-        
+        maxD = 0, # Optional maximum depth of the document
+
         # Overall content scaling.
         scaleX = 1, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
         scaleY = 1, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
-        
+        scaleZ = 1, # Optional scaling in z-direction, depth.
         # Image stuff
         showImageReference = SHOW_IMAGE_REFERENCE, # If true, show [image #] if inside <p> tag.
 
@@ -214,7 +232,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
         
         # Baseline grid
         showBaselineGrid = showBaselineGrid, # Flag to show baseline grid in output
-        baselineGridStroke = (1, 0, 0), # Line thickness of baselines grid.
+        baselineGridStroke = (1, 0, 0), # Stroke clor of baselines grid.
         
         # Draw connection arrows between the flow boxes on a page.
         showFlowConnections = showFlowConnection, # Flag to draw arrows between the flows for debugging.

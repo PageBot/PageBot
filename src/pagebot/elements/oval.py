@@ -16,7 +16,7 @@ from drawBot import oval
 from pagebot import setStrokeColor, setFillColor
 from pagebot.style import NO_COLOR
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.toolbox.transformer import pointOffset
 
 class Oval(Element):
     def __init__(self, point=None, parent=None, style=None, eId=None, **kwargs):
@@ -27,7 +27,7 @@ class Oval(Element):
         self.isFlow = False
 
     def draw(self, origin):
-        p = pointOrigin2D(self.point, origin)
+        p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
         px, py = self._applyAlignment(p)

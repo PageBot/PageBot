@@ -15,7 +15,7 @@ import copy
 from drawBot import newPage, saveImage, installedFonts, installFont
 
 from pagebot.style import makeStyle
-from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.toolbox.transformer import pointOffset
 
 class Document(object):
     u"""Container of Page instance, Style instances and Template instances."""
