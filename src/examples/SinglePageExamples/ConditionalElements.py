@@ -18,17 +18,21 @@ from pagebot import getFormattedString, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A1, CENTER, RIGHT_ALIGN
+from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A1, CENTER, RIGHT_ALIGN, BOTTOM_ALIGN
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
 from pagebot.elements.galley import Galley
-from pagebot.composer import Composer
+# The Typesetter instance takes content from a file (typically MarkDown text) and converts that 
+# into Galley list of elements.
 from pagebot.typesetter import Typesetter
-from pagebot.conditions import Condition, Center, LeftAligned, RightAligned, VCenter, TopAligned, TopOriginAligned, BottomAligned, MaxWidthByFontSize
+# The Composer instance distributes the Galley content of the pages, according to the defined Templates.
+from pagebot.composer import Composer 
+from pagebot.conditions import Condition, Fit, Center2Center, Center2CenterSides, Left2Left, Left2LeftSide, Right2Right, Right2RightSide, Center2VerticalCenter, Top2Top, Top2TopSide, Origin2Top, Bottom2Bottom, Bottom2BottomSide
+#, MaxWidthByFontSize
 
 class FontSizeWidthRatio(Condition):
     def evaluate(self, e):
-        if abs(e.x) <= self.tolerance and e.style.get('fontSize') < 20:
+        if abs(e.x) <= self.tolerance and e.css('fontSize') < 20:
             return self.value
         return self.value * self.errorFactor
 		
@@ -43,6 +47,7 @@ class FontSizeWidthRatio(Condition):
 # will be used in the real templates, which are available from the OpenSource PageBotTemplates repository.
     
 W, H = A4 # or A1
+H = W
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot values are filled by their default values. The root style is kept in RS
@@ -54,6 +59,10 @@ W, H = A4 # or A1
 RS = getRootStyle(
     w = W,
     h = H,
+    ml = 10,
+    mt = 10,
+    mr = 100,
+    mb = 100,
     conditions = [],
     fontSize = 10,
     rLeading = 0,
@@ -73,32 +82,47 @@ def makeDocument(rootStyle):
     w = 300
 
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
-        LeftAligned(), 
-        #RightAligned(), 
-        #Center(),
-        #VCenter(),
-        TopAligned(),
-        #TopBoxAligned(),
-        #BottomAligned(),
-        #FontSizeWidthRatio(verbose=True)
+        # = Horizontal
+        Fit(),
+        #Center2Center(), 
+        #Center2CenterSides(),
+        #Left2Left(), 
+        #Left2LeftSide(), 
+        #Right2Right(), 
+        #Right2RightSide(), 
+        # = Vertical
+        #Center2VerticalCenter(), 
+        #Top2Top(), 
+        #Top2TopSide(), 
+        #Origin2Top(), 
+        #Bottom2Bottom(), 
+        #Bottom2BottomSide()
     ]
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.
-        #Center(),
-        #LeftAligned(), 
-        RightAligned(error=-1000),
-        #VCenter(),
-        #TopAligned(),
-        BottomAligned(),
-        #FontSizeWidthRatio(verbose=True)
+        Center2Center(), 
+        #Left2Left(), 
+        #Left2LeftSide(), 
+        #Right2Right(), 
+        #Right2RightSide(), 
+        #Center2VerticalCenter(), 
+        Top2Top(), 
+        #Top2TopSide(), 
+        #Origin2Top(), 
+        #Bottom2Bottom(), 
+        #Bottom2BottomSide()
     ]
     textCondition = [ # Placement condition(s) for the text element..
-        #MaxWidthByFontSize(ratio=32), # Constrain the width by amount of size/characters == ratio.
-        #Center(),
-        #LeftAligned(), 
-        RightAligned(), # Over-ruling the previous horizontal conditions, if enabled.
-        VCenter(),
-        #TopAligned(),
-        #BottomAligned(),
+        Center2Center(), 
+        #Left2Left(), 
+        #Left2LeftSide(), 
+        #Right2Right(), 
+        #Right2RightSide(), 
+        #Center2VerticalCenter(), 
+        Top2Top(), 
+        #Top2TopSide(), 
+        #Origin2Top(), 
+        #Bottom2Bottom(), 
+        #Bottom2BottomSide()
     ]
     # Obvious wrong placement of all elements, to be corrected by solving conditions.
     # In this example the wrongOrigin still shows the elements in the bottom left corner,
@@ -106,26 +130,35 @@ def makeDocument(rootStyle):
     wrongOrigin = (-300, -300)
     
     page = doc[1] # Get the first/single page of the document.
-
+    if page.originTop:
+        p = (page.css('ml'), page.css('mt'))
+    else:
+        p = (page.css('ml'), page.css('mb'))
+    page.rect(point=p, style=rootStyle, w=page.w - page.css('ml') - page.css('mr'),
+    h = page.h - page.css('mt') - page.css('mb'),
+    fill=0.9)
     # Add some color elements (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
     e1 = page.rect(point=wrongOrigin, style=rootStyle, w=w*2/3, h=300, conditions=colorCondition1, 
-        fill=(1, 0.5, 0.5), align=CENTER, vAlign=CENTER)
-    e2 = page.rect(point=wrongOrigin, style=rootStyle, w=w, h=100, conditions=colorCondition2, 
-        fill=(1, 1, 0), align=CENTER, vAlign=CENTER)
+        fill=(1, 0.5, 0.5), align=LEFT_ALIGN, vAlign=BOTTOM_ALIGN)
+    #e2 = page.rect(point=wrongOrigin, style=rootStyle, w=w, h=100, conditions=colorCondition2, 
+    #    fill=(1, 1, 0), align=CENTER, vAlign=CENTER)
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
     blurbText = getFormattedString(blurb.getBlurb('article', noTags=True), page,
         style=dict(font='Georgia', fontSize=9, rLeading=0.2, textColor=0))
-    et = eTextBox = page.textBox(blurbText, point=wrongOrigin, style=rootStyle, w=w, 
-        vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
+    #eTextBox = page.textBox(blurbText, point=wrongOrigin, style=rootStyle, w=w, 
+    #    vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
 
-    pageValue = page.evaluate()
-    print 'Page value on evaluation:', pageValue
+    score = page.evaluate()
+    print 'Page value on evaluation:', score
+    print score.fails
     # Try to solve the problems if evaluation < 0
-    if pageValue < 0:
+    if score.result < 0:
+        print 'Solving', score
         page.solve()
+    print score.fails
     # Evaluate again, result should now be >= 0
     print 'Page value after solving the problems:', page.evaluate()
     

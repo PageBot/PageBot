@@ -163,7 +163,7 @@ class Image(Element):
         back to their original proportions.
         If stroke is defined, then use that to draw a frame around the image.
         Note that the (sx, sy) is already scaled to fit the padding position and size."""
-        ox, oy = pointOrigin2D(self.point, origin)
+        ox, oy = pointOffset(self.point, origin)
         px, py, pw, ph = self.getPadded(ox, oy, self.w, self.h)
         # Calculate the height of the caption box, soe we can reduce the height of the image.
         # Draw the caption at the bottom of the image space.

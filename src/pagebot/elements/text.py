@@ -22,7 +22,7 @@ from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
 from drawBot import textSize, text
 from pagebot import getFormattedString
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.toolbox.transformer import pointOffset
 from pagebot.style import RIGHT_ALIGN, CENTER, TOP_ALIGN
 
 class Text(Element):
@@ -78,7 +78,7 @@ class Text(Element):
     def draw(self, origin):
         u"""Draw the formatted text. Since this is not a text column, but just a
         typeset text line, background and stroke of a text column needs to be drawn elsewere."""
-        p = pointOrigin2D(self.point, origin)
+        p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
         p = self._applyAlignment(p)

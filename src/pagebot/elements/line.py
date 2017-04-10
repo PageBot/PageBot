@@ -12,17 +12,17 @@
 #
 from drawBot import newPath, moveTo, lineTo, drawPath 
 from pagebot.style import NO_COLOR
-from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.toolbox.transformer import pointOffset
 from pagebot import setStrokeColor, setFillColor
 from pagebot.elements.element import Element
 
 class Line(Element):
 
     def draw(self, origin):
-        p = pointOrigin2D(self.point, origin)
+        p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
-        px, py = self._applyAlignment(p)
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
  
         setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth'))
         newPath()

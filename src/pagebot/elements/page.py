@@ -35,7 +35,7 @@ from pagebot.elements.container import Container
 from pagebot.elements.line import Line
 from pagebot.elements.polygon import Polygon
 
-from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.toolbox.transformer import pointOffset
 from pagebot.toolbox.markers import drawCropMarks, drawRegistrationMarks
 
 class Page(Container):
@@ -311,7 +311,7 @@ class Page(Container):
     def _drawFlowConnections(self, origin):
         u"""If rootStyle.showFlowConnections is True, then draw the flow connections
         on the page, using their stroke/width settings of the style."""
-        ox, oy = pointOrigin2D(self.point, origin)
+        px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
         style = self.parent.getRootStyle()
         if not style.get('showFlowConnections'):
             return
@@ -325,52 +325,48 @@ class Page(Container):
                 tbTarget = self.getElement(tbTarget.eId)
                 targetX = tbTarget.x
                 targetY = tbTarget.y
-                self._drawArrow(ox+startX, oy+startY+tbStart.h, ox+startX+tbStart.w, oy+startY, -1)
-                self._drawArrow(ox+startX+tbStart.w, oy+startY, ox+targetX, oy+targetY+tbTarget.h, 1)
+                self._drawArrow(px+startX, py+startY+tbStart.h, px+startX+tbStart.w, py+startY, -1)
+                self._drawArrow(px+startX+tbStart.w, py+startY, px+targetX, py+targetY+tbTarget.h, 1)
                 tbStart = tbTarget
                 startX = targetX
                 startY = targetY
-            self._drawArrow(ox+startX, oy+startY+tbStart.h, ox+startX+tbStart.w, oy+startY, -1)
+            self._drawArrow(px+startX, py+startY+tbStart.h, px+startX+tbStart.w, py+startY, -1)
 
             if self != self.parent.getLastPage():
                 # Finalize with a line to the start, assuming it is on the next page.
                 tbTarget = self.getElement(seq[0].eId)
-                self._drawArrow(ox+startX+tbStart.w, oy+startY, ox+tbTarget.x, oy+tbTarget.y+tbTarget.h-self.h, 1)
+                self._drawArrow(px+startX+tbStart.w, py+startY, px+tbTarget.x, py+tbTarget.y+tbTarget.h-self.h, 1)
 
 
     def _drawPageInfo(self, origin):
         u"""Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks."""
-        ox, oy = pointOrigin2D(self.point, origin)
-        style = self.parent.getRootStyle()
-        if style.get('showPageInfo'):
-            bleed = style['bleed']
-            cms = style['cropMarkSize']
+        px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now
+        if self.css('showPageInfo'):
+            bleed = self.css('bleed')
+            cms = self.css('cropMarkSize')
             dt = datetime.now()
             d = dt.strftime("%A, %d. %B %Y %I:%M%p")
             s = 'Page %s | %s | %s' % (self.eId, d, self.parent.title or 'Untitled')
             fs = FormattedString(s, font='Verdana', fill=0, fontSize=6)
-            text(fs, (ox + bleed, oy + self.h + cms)) # Draw on top of page.
+            text(fs, (px + bleed, py + self.h + cms)) # Draw on top of page.
 
     def _drawPageFrame(self, origin):
         u"""If the show flag is set, then draw the cropmarks or page frame."""
-        ox, oy = pointOrigin2D(self.point, origin)
-        style = self.parent.getRootStyle()
-        if style.get('showPageFrame'):
+        px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
+        if self.css('showPageFrame'):
             fill(None)
             stroke(0, 0, 1)
             strokeWidth(0.5)
-            rect(ox, oy, self.w, self.h)
+            rect(px, py, self.w, self.h)
 
     def _drawPageMetaInfo(self, origin):
         # If there is an offset and drawing cropmarks (or frame)
-        ox, oy = pointOrigin2D(self.point, origin)
-        style = self.parent.getRootStyle()
-        if style.get('showCropMarks'):
-            bleed = style['bleed']
-            cmSize = style['cropMarkSize']
-            cmStrokeWidth = style['cropMarkStrokeWidth']
-            drawCropMarks(origin, self.w, self.h, bleed, cmSize, cmStrokeWidth, style.get('folds'))
+        if self.css('showCropMarks'):
+            bleed = self.css('bleed')
+            cmSize = self.css('cropMarkSize')
+            cmStrokeWidth = self.css('cropMarkStrokeWidth')
+            drawCropMarks(origin, self.w, self.h, bleed, cmSize, cmStrokeWidth, self.css('folds'))
             drawRegistrationMarks(origin, self.w, self.h, cmSize, cmStrokeWidth) 
         # If there is an offset and drawing cropmarks (or frame):
         self._drawPageInfo(origin)
@@ -385,16 +381,16 @@ class Page(Container):
         visible. Page drawing can have an offset too, in case it is used as placed element on another page.
         If self.scaleX and self.scaleY are not None, then scale the drawing of the entire page,
         keeping the x and y position unscaled."""
-        ox, oy = pointOrigin2D(self.point, origin)
+        px, py, _ = pointOffset(self.point, origin) # Ignoe z-axis for now.
         #ox, oy = self._applyScale(ox, oy) #@@@@@ WRONG
         # Now we may be in scaled mode.
-        if self.parent.w > self.w:
-            ox = (self.parent.w - self.w) / 2
+        if self.parent.w > self.w: # Document larger than page, center and draw crop-marks
+            px = (self.parent.w - self.w) / 2
         if self.parent.h > self.h:
-            oy = (self.parent.h - self.h) / 2
+            py = (self.parent.h - self.h) / 2
         # Draw all elements with this offset.
         for e in self.getElements():
-            e.draw((ox, oy))
+            e.draw((px, py, 0)) 
         # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
         self._drawPageMetaInfo(origin)
         # Check if we are in scaled mode. Then restore.

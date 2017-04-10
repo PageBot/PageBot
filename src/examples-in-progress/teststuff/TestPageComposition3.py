@@ -65,7 +65,8 @@ RS = getRootStyle(
     ml = 7*U, # Margin left rs.
     mt = 7*U, # Margin top
     baselineGrid = 14,#baselineGrid,
-    g = U, # Generic gutter.
+    gw = 2*U, # Generic gutter, equal for width and height
+    gd = 2*U,
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # 11 is a the best in that respect for column calculation.
     cw = 11*U, 

@@ -21,70 +21,106 @@ from drawBot.context.baseContext import BaseContext
 from pagebot.style import NO_COLOR
 
 def x2cx(x, e):
-    gutter = e.css('g', 0)
+    gutterH = e.css('gw', 0)
     cw = e.css('cw', 0)
-    if cw + gutter: # Check on division by 0
-        return (x - e.css('ml', 0)) / (cw + gutter)
+    if cw + gutterH: # Check on division by 0
+        return (x - e.css('ml', 0)) / (cw + gutterH)
     return 0
 
 def cx2x(cx, e):
     if cx is None:
-        x = None
+        x = 0
     else:
-        x = e.css('ml', 0) + cx * (e.css('cw', 0) + e.css('g', 0))
+        x = e.css('ml', 0) + cx * (e.css('cw', 0) + e.css('gw', 0))
     return x
   
 def y2cy(y, e):
     u"""Transform from y value to column y value, using the e.css for colunn values."""
-    gutter = e.css('g', 0)
+    gutterH = e.css('gh', 0)
     ch = e.css('ch', 0)
     cy = 0
-    if ch + gutter: # Check on division by 0
-        if e.css('originTop'):
-            cy = (y - e.css('mt', 0)) / (ch + gutter)
+    if ch + gutterH: # Check on division by 0
+        if e.originTop:
+            cy = (y - e.css('mt', 0)) / (ch + gutterH)
         else:
-            cy = (y - e.css('mb', 0)) / (ch + gutter)
+            cy = (y - e.css('mb', 0)) / (ch + gutterH)
     return cy 
 
 def cy2y(cy, e):
     u"""Transform from column y value to y value, using the e.css for colunn values."""
     if cy is None:
-        y = None
-    elif e.css('originTop'):
-        y = e.css('mt', 0) + cy * (e.css('ch', 0) + e.css('g', 0))
+        y = 0
+    elif e.originTop:
+        y = e.css('mt', 0) + cy * (e.css('ch', 0) + e.css('gh', 0))
     else:
-        y = e.css('mb', 0) + cy * (e.css('ch', 0) + e.css('g', 0))
+        y = e.css('mb', 0) + cy * (e.css('ch', 0) + e.css('gh', 0))
     return y
 
+def z2cz(y, e):
+    u"""Transform from z value to column z value, using the e.css for colunn values."""
+    gutterD = e.css('gd', 0)
+    cd = e.css('cd', 0)
+    cz = 0
+    if cd + gutterD: # Check on division by 0
+        if e.originTop:
+            cy = (y - e.css('mt', 0)) / (ch + gutterD)
+        else:
+            cy = (y - e.css('mb', 0)) / (ch + gutterD)
+    return cy 
+
+def cz2z(cz, e):
+    if cz is None:
+        z = 0
+    else:
+        z = cz * (e.css('cd', 0) + e.css('gd', 0))
+    return z
+
+# Size
+
 def w2cw(w, e):
-    gutter = e.css('g', 0)
+    gutterW = e.css('gw', 0)
     cw = e.css('cw', 0)
-    if cw + gutter:
-        return (w + gutter) / (cw + gutter)
+    if cw + gutterW:
+        return (w + gutterW) / (cw + gutterW)
     return 0 # Undefined, not info about column width and gutter
 
 def cw2w(cw, e):
     if cw is None:
-        w = None
+        w = 0
     else:
-        gutter = e.css('g', 0)
-        w = cw * (e.css('cw', 0) + gutter) - gutter  # Overwrite style from here.
+        gutterW = e.css('gw', 0)
+        w = cw * (e.css('cw', 0) + gutterW) - gutterW  # Overwrite style from here.
     return w
 
 def h2ch(h, e):
-    gutter = e.css('g', 0)
+    gutterH = e.css('gh', 0)
     ch = e.css('ch', 0)
-    if ch + gutter:
-        return (h + gutter) / (ch + gutter)
-    return 0 # Undefined, not info about column width and gutter
+    if ch + gutterH:
+        return (h + gutterH) / (ch + gutterH)
+    return 0 # Undefined, no info about column height and gutter
 
 def ch2h(ch, e):
     if ch is None:
-        h = None
+        h = 0
     else:
-        gutter = e.css('g', 0)
-        h = ch * (e.css('ch', 0) + gutter) - gutter  # Overwrite style from here.
+        gutterH = e.css('gh', 0)
+        h = ch * (e.css('ch', 0) + gutterH) - gutterH  # Overwrite style from here.
     return h
+
+def d2cd(d, e):
+    gutterD = e.css('gd', 0)
+    cd = e.css('cd', 0)
+    if cd + gutterD:
+        return (d + gutterD) / (cd + gutterD)
+    return 0 # Undefined, no info about column height and gutter
+
+def cd2d(cd, e):
+    if cd is None:
+        d = 0
+    else:
+        gutterHD = e.css('gd', 0)
+        d = cd * (e.css('cd', 0) + gutterD) - gutterD  # Overwrite style from here.
+    return d
 
 def getRootPath():
     u"""Answer the root path of the pagebot module."""

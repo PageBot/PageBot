@@ -59,7 +59,8 @@ RS = getRootStyle(
     h = 11 * 72, # Page height 11", international generic fit.
     ml = 7*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = baselineGrid, # Set the baseline grid, as shown when SHOW_BASELINE_GRID is True.
-    g = U, # Generic gutter for colums.
+    gw = 2*U, # Generic gutter, equal for width and height
+    gh = 2*U,
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # 11 is a the best in that respect for column calculation.
     cw = 11*U, 

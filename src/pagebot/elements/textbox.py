@@ -14,7 +14,7 @@ from drawBot import textOverflow, hyphenation, textBox, rect, textSize, Formatte
 
 from pagebot.style import LEFT_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.toolbox.transformer import pointOffset
 from pagebot import getFormattedString, setStrokeColor, setFillColor
 
 class TextBox(Element):
@@ -106,10 +106,10 @@ class TextBox(Element):
     def draw(self, origin):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
-        p = pointOrigin2D(self.point, origin)
+        p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
-        px, py = self._applyAlignment(p)
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
    
         sFill = self.style.get('fill', NO_COLOR)
         if sFill != NO_COLOR:

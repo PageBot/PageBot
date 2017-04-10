@@ -16,7 +16,7 @@ from drawBot import rect
 from pagebot import setStrokeColor, setFillColor
 from pagebot.style import NO_COLOR, CENTER, RIGHT_ALIGN, TOP_ALIGN
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.toolbox.transformer import pointOffset
 
 class Rect(Element):
     def __init__(self, point=None, parent=None, style=None, eId=None, **kwargs):
@@ -27,10 +27,10 @@ class Rect(Element):
         self.isFlow = False
 
     def draw(self, origin):
-        p = pointOrigin2D(self.point, origin)
+        p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
-        px, py = self._applyAlignment(p)
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         
         setFillColor(self.css('fill', NO_COLOR))
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))

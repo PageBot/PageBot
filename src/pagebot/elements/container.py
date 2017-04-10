@@ -12,7 +12,7 @@
 #
 from pagebot.elements.element import Element
 from pagebot.style import NO_COLOR, makeStyle
-from pagebot.toolbox.transformer import point3D, pointOrigin2D
+from pagebot.toolbox.transformer import point3D, pointOffset
 
 class Container(Element):
     u"""A container contains an ordered list of one or more elements that can negotiate with the Composer 
@@ -130,7 +130,7 @@ class Container(Element):
         If the canvas is None, then draw on default DrawBot output.
         """
         if self._elements:
-            localOrigin = pointOrigin2D(self.point, origin)
+            localOrigin = pointOffset(self.point, origin)
             for element in self._elements:
                 element.draw(localOrigin)
         else:

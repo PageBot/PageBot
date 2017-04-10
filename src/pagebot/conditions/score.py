@@ -8,10 +8,12 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     transformation.py
-#
-#	  N O T  Y E T  W O R K I N G
-#
-class Transformation(object):
+#     score.py
+#       
+class Score(object):
     def __init__(self):
-        pass
+        self.result = 0
+        self.fails = []
+
+    def __repr__(self):
+        return 'Score: %s Fails: %d' % (self.result, len(self.fails))

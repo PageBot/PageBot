@@ -678,7 +678,8 @@ class Grid(Element):
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         # Drawing the grid as squares.
         sGridFill = self.style.get('gridFill', NO_COLOR)
-        gutter = self.style['g'] # Gutter
+        gutterW = self.style['gw'] # Gutter
+        gutterH = self.style['gh'] # Gutter
         columnWidth = self.style['cw'] # Column width
         columnHeight = self.style['ch'] # Column height
         marginLeft = self.style['ml'] # Margin left
@@ -692,11 +693,11 @@ class Grid(Element):
             setStrokeColor(None)
             x = px + marginLeft
             while x < w - marginRight - columnWidth:
-                y = h - marginTop - columnHeight - gutter
+                y = h - marginTop - columnHeight - gutterH
                 while y >= 0:
-                    rect(x, y+gutter, columnWidth, columnHeight)
-                    y -= columnHeight + gutter
-                x += columnWidth + gutter
+                    rect(x, y+gutterH, columnWidth, columnHeight)
+                    y -= columnHeight + gutterH
+                x += columnWidth + gutterW
         # Drawing the grid as lines.
         if self.style.get('showGrid') and self.style.get('gridStroke', NO_COLOR) is not NO_COLOR:
             setFillColor(None)
@@ -717,7 +718,7 @@ class Grid(Element):
                 drawPath()
                 text(fs+repr(index), (x + M * 0.3, y + M / 4))
                 index += 1
-                x += columnWidth + gutter
+                x += columnWidth + gutterW
             index = 0
             while y > py:
                 newPath()
@@ -728,7 +729,7 @@ class Grid(Element):
                 drawPath()
                 text(fs + repr(index), (px + marginLeft - M / 2, y - M * 0.6))
                 index += 1
-                y -= columnHeight + gutter
+                y -= columnHeight + gutterH
 
 class BaselineGrid(Element):
     def __init__(self, style=None, eId='grid', **kwargs):
