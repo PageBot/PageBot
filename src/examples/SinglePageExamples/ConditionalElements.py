@@ -59,9 +59,9 @@ H = W
 RS = getRootStyle(
     w = W,
     h = H,
-    ml = 10,
+    ml = 300,
     mt = 10,
-    mr = 100,
+    mr = 20,
     mb = 100,
     conditions = [],
     fontSize = 10,
@@ -83,8 +83,8 @@ def makeDocument(rootStyle):
 
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
         # = Horizontal
-        Fit(),
-        #Center2Center(), 
+        #Fit(),
+        Center2Center(), 
         #Center2CenterSides(),
         #Left2Left(), 
         #Left2LeftSide(), 
@@ -95,7 +95,7 @@ def makeDocument(rootStyle):
         #Top2Top(), 
         #Top2TopSide(), 
         #Origin2Top(), 
-        #Bottom2Bottom(), 
+        Bottom2Bottom(), 
         #Bottom2BottomSide()
     ]
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.

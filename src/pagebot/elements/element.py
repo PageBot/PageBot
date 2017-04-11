@@ -163,19 +163,19 @@ class Element(object):
 
     def _get_center(self):
         if self.css('align') == LEFT_ALIGN:
-            return self.x + self.w/2
+            return self.x - self.w/2
         if self.css('align') == RIGHT_ALIGN:
-            return self.x + self.w
+            return self.x - self.w
         if self.css('align') == ANCHOR_ALIGN:
-            return self.x + self.anchor[0]
+            return self.x - self.anchor[0]
         return self.x
     def _set_center(self, x):
         if self.css('align') == LEFT_ALIGN:
-            self.x = x - self.w/2
+            self.x = x + self.w/2
         elif self.css('align') == RIGHT_ALIGN:
-            self.x = x - self.w
+            self.x = x + self.w
         elif self.css('align') == ANCHOR_ALIGN:
-            self.x = x - self.anchor[0]
+            self.x = x + self.anchor[0]
         else:
             self.x = x
     center = property(_get_center, _set_center)
@@ -788,8 +788,11 @@ class Element(object):
         mt = self.parent.css('mt') # Get parent margin left
         mb = self.parent.css('mb')
         if self.originTop:
+            return abs(mt + (mb - mt)/2 - self.bottom) <= tolerance
+        return abs(mb + (mt - mb)/2 - self.bottom) <= tolerance
 
     def isBottomOnVerticalCenterSides(self, tolerance=0):
+        return abs(self.parent.h/2 - self.bottom) <= tolerance
 
     def isTopOnBottom(self, tolerance=0):
         if self.originTop:
@@ -902,7 +905,7 @@ class Element(object):
             self.csnterVertical = 0
         return True
 
-     def center2Center(self):
+    def center2Center(self):
         ml = self.parent.css('ml') # Get parent margin left
         mr = self.parent.css('mr')
         self.center = ml + (mr - ml)/2
