@@ -41,4 +41,4 @@ class Condition(object):
     		conditionClass(self.value, self.tolerance, self.error, self.verbose).solve(e, score)
 
     def __repr__(self):
-    	return '<Condition %s>' % self.__class__.__name__
+    	return self.__class__.__name__

@@ -27,7 +27,7 @@ from pagebot.elements.galley import Galley
 from pagebot.typesetter import Typesetter
 # The Composer instance distributes the Galley content of the pages, according to the defined Templates.
 from pagebot.composer import Composer 
-from pagebot.conditions import Condition, Fit, Center2Center, Center2CenterSides, Left2Left, Left2LeftSide, Right2Right, Right2RightSide, Center2VerticalCenter, Top2Top, Top2TopSide, Origin2Top, Bottom2Bottom, Bottom2BottomSide
+from pagebot.conditions import Condition, Fit, Center2Center, Center2CenterSides, Left2Left, Left2LeftSide, Right2Right, Right2RightSide, Center2VerticalCenter, Top2Top, Top2TopSide, Origin2Top, Bottom2Bottom, Bottom2BottomSide, Center2Bottom, Center2Top
 #, MaxWidthByFontSize
 
 class FontSizeWidthRatio(Condition):
@@ -84,8 +84,8 @@ def makeDocument(rootStyle):
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
         # = Horizontal
         #Fit(),
-        Center2Center(), 
-        #Center2CenterSides(),
+        #Center2Center(), 
+        Center2CenterSides(),
         #Left2Left(), 
         #Left2LeftSide(), 
         #Right2Right(), 
@@ -95,7 +95,9 @@ def makeDocument(rootStyle):
         #Top2Top(), 
         #Top2TopSide(), 
         #Origin2Top(), 
-        Bottom2Bottom(), 
+        Center2Top(),
+        #Center2Bottom(), #@@@
+        #Bottom2Bottom(), 
         #Bottom2BottomSide()
     ]
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.
