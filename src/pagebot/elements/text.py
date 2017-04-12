@@ -10,19 +10,10 @@
 #
 #     text.py
 #
-"""
-import os
-import copy
-
-from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
-    newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
-    textBox, hyphenation, restore, imageSize, shadow, BezierPath, clipPath, drawPath
-from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-"""
 from drawBot import textSize, text
 from pagebot import getFormattedString
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.transformer import pointOffset, point3D
 from pagebot.style import RIGHT_ALIGN, CENTER, TOP_ALIGN
 
 class Text(Element):
@@ -48,22 +39,22 @@ class Text(Element):
         return textSize(self.fs)
 
     def _applyOrigin(self, p):
-        u"""If self.css('originTop') is False, then the y-value is interpreted as mathemtcs, 
+        u"""If self.originTop is False, then the y-value is interpreted as mathematics, 
         starting at the bottom of the parent element, moving up.
         If the flag is True, then move from top down, where the text still draws upward."""
-        px, py = p
-        if self.css('originTop') and self.parent:
-            py = self.parent.h - py
-        return px, py
+        if self.originTop and self.parent:
+            p = point3D(p) # We cannot assume here it is a point3D list.
+            p[1] = self.parent.h - p[1] # We assume here it is a point3D list.
+        return p
 
     def _applyAlignment(self, p):
         w, h = textSize(self.fs)   
-        px, py = p
+        px, py, pz = point3D(p) # We cannot assume here it is a point3D list.
         if self.css('align') == CENTER:
             px -= w/2/self.scaleX
         elif self.css('align') == RIGHT_ALIGN:
             px -= w/self.scaleX
-        if self.css('originTop'):
+        if self.originTop:
             if self.css('vAlign') == CENTER:
                 py += h/2/self.scaleY
             elif self.css('vAlign') == TOP_ALIGN:
@@ -73,7 +64,7 @@ class Text(Element):
                 py -= h/2/self.scaleY
             elif self.css('vAlign') == TOP_ALIGN:
                 py -= h/self.scaleY
-        return px, py
+        return px, py, pz
 
     def draw(self, origin):
         u"""Draw the formatted text. Since this is not a text column, but just a
@@ -81,10 +72,10 @@ class Text(Element):
         p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
-        p = self._applyAlignment(p)
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         self._setShadow()
 
-        text(self.fs, p)
+        text(self.fs, (px, py))
 
         self._resetShadow()
         self._restoreScale()

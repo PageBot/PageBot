@@ -98,18 +98,21 @@ class Element(object):
     def _get_x(self):
         return self._point[0]
     def _set_x(self, x):
+        self._point = point3D(self._point) # Make sure it is a 3D list.
         self._point[0] = x
     x = property(_get_x, _set_x)
     
     def _get_y(self):
         return self._point[1] 
     def _set_y(self, y):
+        self._point = point3D(self._point) # Make sure it is a 3D list.
         self._point[1] = y
     y = property(_get_y, _set_y)
     
     def _get_z(self):
         return self._point[2] # We know that self._point is always 3D
     def _set_z(self, z):
+        self._point = point3D(self._point) # Make sure it is a 3D list.
         self._point[2] = z # self._point is always 3D
     z = property(_get_z, _set_z)
     
@@ -585,7 +588,7 @@ class Element(object):
             stroke(0.3)
             strokeWidth(0.25)
             rect(px, py, tw+2*M, th+2*M)
-            text(fs, (px+M, py+M))
+            text(fs, (px+M, py+1.5*M))
 
             self._restoreScale()
             

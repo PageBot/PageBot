@@ -30,7 +30,7 @@ class Oval(Element):
         p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
-        px, py = self._applyAlignment(p)
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         
         setFillColor(self.css('fill', NO_COLOR))
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
