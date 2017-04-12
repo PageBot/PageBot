@@ -143,6 +143,9 @@ class Element(object):
     # where the positioning can be compenssaring the element alignment type.
 
     def _get_left(self):
+        if self.css('vacuumW'): # Get vaccum left from child elements.
+            ex, _, _, _ = self.getElementsBox()
+            return self.x + ex
         if self.css('align') == CENTER:
             return self.x - self.w/2
         if self.css('align') == RIGHT_ALIGN:
@@ -162,6 +165,9 @@ class Element(object):
     left = property(_get_left, _set_left)
 
     def _get_center(self):
+        if self.css('vacuumW'): # Get vaccum left/right from child elements.
+            ex, _, ew, _ = self.getElementsBox()
+            return self.x + ex + ew/2
         if self.css('align') == LEFT_ALIGN:
             return self.x + self.w/2
         if self.css('align') == RIGHT_ALIGN:
@@ -181,6 +187,9 @@ class Element(object):
     center = property(_get_center, _set_center)
 
     def _get_right(self):
+        if self.css('vacuumW'): # Get vaccum left from child elements.
+            ex, _, ew, _ = self.getElementsBox()
+            return self.x + ex + ew
         if self.css('align') == LEFT_ALIGN:
             return self.x + self.w
         if self.css('align') == CENTER:
@@ -318,15 +327,21 @@ class Element(object):
     absoluteY = property(_get_absoluteY)
 
     def _get_w(self):
+        if self.css('vacuumW'): # If vacuum forming, this overwrites css or style width.
+            return self.right - self.left
         return self.css('w') # Can be None in case the width is undefined.
     def _set_w(self, w):
-        self.style['w'] = w # Overwrite style from here.
+        self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
 
     def _get_h(self):
+        if self.css('vacuumH'): # If vacuum forming, this overwrites css or style width.
+            if self.originTop:
+                return self.bottom - self.top
+            return self.top - self.bottom
         return self.css('h') # Can be None in case the height is undefined. 
     def _set_h(self, h):
-        self.style['h'] = h # Overwrite style from here.
+        self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
 
     def _get_originTop(self):
@@ -546,7 +561,8 @@ class Element(object):
             p = self._applyScale(p)    
             px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-            fs = getFormattedString(self._getElementInfoString(), style=dict(font='Verdana', fontSize=7, leading=9, textFill=0.1))
+            fs = getFormattedString(self._getElementInfoString(), style=dict(font=self.css('infoFont'), 
+                fontSize=self.css('infoFontSize'), leading=self.css('infoLeading'), textFill=0.1))
             tw, th = textSize(fs)
             M = 4 # Margin in box
             py += self.h - th - 2*M
@@ -555,7 +571,7 @@ class Element(object):
             stroke(None)
             rect(px+M/2, py-M/2, tw+2*M, th+2*M)
             # Frame
-            fill(0.8, 0.8, 0.8, 0.9)
+            setFillColor(self.css('infoFill'))
             stroke(0.3)
             strokeWidth(0.25)
             rect(px, py, tw+2*M, th+2*M)
@@ -589,6 +605,25 @@ class Element(object):
     def getElements(self):
         u"""Default element does not have children."""
         return []
+
+    def getElementsBox(self):
+        u"""Answer the vacuum bounding box around all child elements."""
+        x1 = y1 = x2 = y2 = None
+        for e in self.getElements():
+            if x1 is None or x1 > e.left:
+                x1 = e.left
+            if e.originTop:
+                if y1 is None or y1 < e.top:
+                    y1 = e.top
+                if y2 is None or y1 > e.bottom:
+                    y2 = e.bottom
+            else:
+                if y1 is None or y1 > e.top:
+                    y1 = e.top
+                if y2 is None or y2 < e.bottom:
+                    y2 = e.bottom
+
+        return x1 y1, x2 - x1, y2 - y1
 
     #   V A L I D A T I O N
 
@@ -888,15 +923,19 @@ class Element(object):
 
     def anchor2Left(self):
         self.ax = self.parent.css('ml')
+        return True       
 
     def anchor2LeftSide(self):
         self.ax = 0
+        return True       
 
     def anchor2Right(self):
         self.ax = self.parent.w - self.parent.css('mr')
+        return True       
 
     def anchor2RightSide(self):
         self.ax = self.parent.w
+        return True       
 
     def anchor2Top(self):
         if self.originTop:
@@ -998,12 +1037,14 @@ class Element(object):
             self.verticalCenter = mt
         else:
             self.verticalCenter = self.parent.h - mt
+        return True       
 
     def center2TopSide(self):
         if self.originTop:
             self.verticalCenter = 0
         else:
             self.verticalCenter = self.parent.h
+        return True       
 
     def center2VerticalCenterSides(self):
         mt = self.parent.css('mt') # Get parent margin left
@@ -1013,6 +1054,7 @@ class Element(object):
             self.verticalCenter = mt + vCenter
         else:
             self.verticalCenter = mb + vCenter
+        return True       
 
     def fitBottom(self):
         if self.originTop:
@@ -1074,20 +1116,25 @@ class Element(object):
         ml = self.parent.css('ml') # Get parent margin left
         mr = self.parent.css('mr')
         self.left = ml + (self.parent.w - mr - ml)/2
+        return True       
 
     def left2CenterSides(self):
         ml = self.parent.css('ml') # Get parent margin left
         mr = self.parent.css('mr')
         self.left = ml + (self.parent.w - mr - ml)/2
+        return True       
 
     def left2Left(self):
         self.left = self.parent.css('ml')
+        return True       
 
     def left2Right(self):
         self.left = self.parent.w - self.parent.css('mr')
+        return True       
 
     def left2LeftSide(self):
         self.left = 0
+        return True       
 
     def top2VerticalCenter(self):
         mt = self.parent.css('mt') # Get parent margin left
@@ -1097,9 +1144,11 @@ class Element(object):
             self.top = mt + vCenter
         else:
             self.top = mb + vCenter
+        return True       
 
     def top2VerticalCenterSides(self):
         self.top = self.parent.h/2
+        return True       
 
     def origin2Bottom(self):
         mb = self.parent.css('mb')
@@ -1120,15 +1169,19 @@ class Element(object):
         ml = self.parent.css('ml') # Get parent margin left
         mr = self.parent.css('mr')
         self.x = ml + (self.parent.w - mr - ml)/2
+        return True       
 
     def origin2CenterSides(self):
         self.x = self.parent.w/2
+        return True       
 
     def origin2Left(self):
         self.x = self.parent.css('ml')
+        return True       
 
     def origin2LeftSide(self):
         self.x = 0
+        return True       
 
     def origin2Right(self):
         self.x = self.parent.w - self.parent.css('mr')

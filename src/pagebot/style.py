@@ -67,6 +67,7 @@ Tabloid = 11*INCH, 17*INCH
 # Hybrid sizes
 # International generic fit for stationary
 A4Letter = A4[0], Letter[1] # 210mm width and 11" height will always fit printer and fax.
+W, H = A4Letter # Default size.
 # International Postcard Size
 IntPostcardMax = 235*MM, 120*MM
 IntPostcardMin = 140*MM, 90*MM
@@ -112,7 +113,7 @@ def makeStyle(style=None, **kwargs):
             style[name] = v  # Overwrite value by any arguments, if defined.
     return style
 
-def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, showElementBox=SHOW_ELEMENT_BOX,
+def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, showElementBox=SHOW_ELEMENT_BOX,
         showElementInfo=SHOW_ELEMENT_INFO, showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS, 
         showCropMarks=SHOW_CROPMARKS, showPageFrame=SHOW_PAGE_FRAME, 
         showPageInfo=SHOW_PAGE_INFO, **kwargs):
@@ -136,9 +137,9 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
         tag = None, # Optional marker to match the style with the running tag.
         # Basic page/template measures
         u = u, # Base unit for Dutch/Swiss typography :)
-        w = 595, # Page width, basis size of the document. Point rounding of 210mm, international generic fit.
-        h = 11 * 72, # Page height, basic size of the document. 11", international generic fit.
-        d = 0, # Optional "depth" of an document, page or element.
+        w = w, # Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
+        h = h, # Default page height, basic size of the document. 11", international generic fit.
+        d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
 
         # Document size, if different from the page size. Otherwise keep None to make document.w answer rootStyle['w']
         # If the document size is different from the page size (and if showCropMarks and/or showPageFrame is True)
@@ -157,8 +158,8 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
         # there is enough space for elements to show themselves on top of a given position.
         # originTop often goes with vAlign = TOP_ALIGN.
         originTop = True,
-        align = LEFT_ALIGN, # Alignment, one if ('left', 'justified', 'center'. 'right', 'anchor')
-        vAlign = TOP_ALIGN, # Alignment for elements like image, that float in their designated space.
+        align = LEFT_ALIGN, # Default alignment, one of ('left', 'justified', 'center'. 'right', 'anchor')
+        vAlign = TOP_ALIGN, # Default alignment for elements like image, that float in their designated space.
 
         # Margins
         mt = 7*u, # Margin top
@@ -189,7 +190,7 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
         ch = u*baselineGrid - u, # Approximately square with cw + gutter.
         cd = 0, # Optional columnt "depth"
 
-        # Flags to indicate that width is the vacuum form around content (text or elements)
+        # Flags to indicate that width is the vacuumed form around content (text or elements)
         vacuumW = False, 
         vacuumH = False, 
         vacuumD = False, # Optional vacuuming in z-direction.
@@ -253,7 +254,14 @@ def getRootStyle(u=U, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, sho
         # Showing of boxes
         showPageFrame = showPageFrame, # Draw page frame if document (w, h) is larger than page (w, h)
         showElementBox = showElementBox, # Show element boxes, e.g. if missing or empty.
+
+        # Element info box
         showElementInfo = showElementInfo, # If True, elements show their info for debugging position, size and alignments.
+        infoFont = 'Verdana', # Font of text in element infoBox.
+        infoFontSize = 7, # Font size of text in element info box.
+        infoLeading = 9, # Leading of text in element info box.
+        infoFill = (0.8, 0.8, 0.8, 0.9), # Color of text in element info box.
+        infoTextFill = 0.1, # Color of text in element info box.
 
         # Generic element stuff
         missingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
