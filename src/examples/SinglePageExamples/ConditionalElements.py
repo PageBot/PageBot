@@ -27,8 +27,7 @@ from pagebot.elements.galley import Galley
 from pagebot.typesetter import Typesetter
 # The Composer instance distributes the Galley content of the pages, according to the defined Templates.
 from pagebot.composer import Composer 
-from pagebot.conditions import Condition, Fit, Center2Center, Center2CenterSides, Left2Left, Left2LeftSide, Right2Right, Right2RightSide, Center2VerticalCenter, Top2Top, Top2TopSide, Origin2Top, Bottom2Bottom, Bottom2BottomSide, Center2Bottom, Center2Top
-#, MaxWidthByFontSize
+from pagebot.conditions import *
 
 class FontSizeWidthRatio(Condition):
     def evaluate(self, e):
@@ -41,7 +40,79 @@ class FontSizeWidthRatio(Condition):
             e.style['fontSize'] = 19
             return self.value
         return self.value * self.errorFactor
-	    
+
+# Make an instance of all conditions add as global in Variations.
+ConditionsV = [
+	Anchor2Bottom(),
+	Anchor2BottomSide(),
+	Anchor2Top(),
+	Anchor2TopSide(),
+	Bottom2Bottom(),
+	Bottom2BottomSide(),
+	Center2Bottom(),
+	Center2BottomSide(),
+	Center2Top(),
+	Center2TopSide(),
+	Center2VerticalCenter(),
+	FitBottom(),
+	FitBottomSide(),
+	FitTop(),
+	FitTopSide(),
+	Left2VerticalCenter(),
+	Origin2Bottom(),
+	Origin2BottomSide(),
+	Origin2Top(),
+	Origin2TopSide(),
+	Origin2VerticalCenter(),
+	Right2VerticalCenter(),
+	Top2Bottom(),
+	Top2Top(),
+	Top2TopSide(),
+]
+ConditionsH = [
+	Anchor2Center(),
+	Anchor2CenterSides(),
+	Anchor2Left(),
+	Anchor2LeftSide(),
+	Anchor2Right(),
+	Anchor2RightSide(),
+	Center2Center(),
+	Center2CenterSides(),
+	Center2Left(),
+	Center2LeftSide(),
+	Center2Right(),
+	Center2RightSide(),
+	Fit(),
+	FitLeft(),
+	FitLeftSide(),
+	FitRight(),
+	FitRightSide(),
+	FitSides(),
+	Left2Center(),
+	Left2CenterSides(),
+	Left2Left(),
+	Left2LeftSide(),
+	Left2Right(),
+	Origin2Center(),
+	Origin2CenterSides(),
+	Origin2Left(),
+	Origin2LeftSide(),
+	Origin2Right(),
+	Origin2RightSide(),
+	Right2Center(),
+	Right2CenterSides(),
+	Right2Left(),
+	Right2Right(),
+	Right2RightSide(),
+]
+ConditionsVDict = {}
+for condition in ConditionsV:
+    ConditionsVDict[condition.__class__.__name__] = condition
+ConditionsHDict = {}
+for condition in ConditionsH:
+    ConditionsHDict[condition.__class__.__name__] = condition
+VARIABLES = {}
+       
 # For clarity, most of the OneValidatingPage.py example documenet is setup as a sequential excecution of
 # Python functions. For complex documents this is not the best method. More functions and classes
 # will be used in the real templates, which are available from the OpenSource PageBotTemplates repository.

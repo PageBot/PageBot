@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     TextElement.py
+#     TextElements.py
 #
 #     This script generates a fake article on a single page, using Filibuster text,
 #     automatic layout template, Galley, Typesetter and Composer classes.
@@ -26,11 +26,11 @@ from pagebot.typesetter import Typesetter
 # The Composer instance distributes the Galley content of the pages, according to the defined Templates.
 from pagebot.composer import Composer
 # Elements that can placed on pages and templates.
-from pagebot.elements.galley import Galley, Rect
+from pagebot.elements import Galley, Rect
 # Get functions to create instances style from Variation fonts.
 from pagebot.fonttoolbox.variationbuilder import getVariationFont, generateInstance
 
-# For clarity, most of the OnePage.py example documenet is setup as a sequential excecution of
+# For clarity, most of the OnePage.py example document is setup as a sequential excecution of
 # Python functions. For complex documents this is not the best method. More functions and classes
 # will be used in the real templates, which are available from the OpenSource PageBotTemplates repository.
 

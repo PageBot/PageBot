@@ -23,12 +23,14 @@ ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5,
 # P O I N T 
 
 def point3D(p):
-    if p is None:
-        return (0, 0, 0) # Undefined 3D point.
+    u"""Answer p as 3D point. If it already is a list of 3 elements, then don't change
+    and answer the original."""
+    if not p: # None or zero.
+        return [0, 0, 0] # Undefined 3D point as list.
     if isinstance(p, tuple):
         p = list(p)
     while len(p) < 3:
-        p.append(0) # Value undefined.
+        p.append(0) # Value undefined, add origin.
     return p
 
 def point2D(p):
@@ -36,6 +38,7 @@ def point2D(p):
     return point3D(p)[:2]
 
 def pointOffset(point, offset):
+    u"""Answer new 3D point, shifted by offset."""
     if not len(point) == 3:
         point = point3D(point)
     if not len(offset) == 3:

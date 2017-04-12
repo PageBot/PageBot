@@ -92,10 +92,10 @@ class BaselineGrid(Grid):
         TODO: Make fixed values part of calculation or part of grid style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         if self.css('showBaselineGrid'):
-            p = pointOrigin2D(self.point, origin)
+            p = pointOffset(self.point, origin)
             p = self._applyOrigin(p)    
             p = self._applyScale(p)    
-            px, py = self._applyAlignment(p)
+            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
             oy = self.h - self.css('mt') - py
             line = 0
