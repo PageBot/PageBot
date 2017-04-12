@@ -15,7 +15,7 @@ from __future__ import division
 import os
 from copy import copy
 from fontTools.ttLib import TTFont
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.style import makeStyle
 from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString

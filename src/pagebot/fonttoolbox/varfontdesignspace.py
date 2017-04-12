@@ -56,9 +56,9 @@ def setCoordinates(glyph, coord, glyfTable):
 
 
 class TTVarFontGlyphSet(object):
-
-    def __init__(self, font):
-        self._ttFont = font
+    # TODO: CHange to PageBot Font wrapper
+    def __init__(self, ttFont):
+        self._ttFont = ttFont
         self._axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in font['fvar'].axes}
         self.setLocation({})
     
