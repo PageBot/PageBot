@@ -12,7 +12,7 @@
 #
 import weakref
 
-from drawBot import rect, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, fill, text, stroke, strokeWidth
+from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, fill, text, stroke, strokeWidth
 
 from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
@@ -133,7 +133,7 @@ class Element(object):
     def _get_ay(self):
         return self._point[1] + self._anchor[1]
     def _set_ay(self, ay):
-        self._anchor[1] = ay - point[1]
+        self._anchor[1] = ay - self._point[1]
     ay = property(_get_ay, _set_ay)
     
     def _get_az(self):
@@ -467,7 +467,7 @@ class Element(object):
         return px, py, pz
 
     def _applyOrigin(self, p):
-        u"""If self.css('originTop') is False, then the y-value is interpreted as mathemtcs, 
+        u"""If self.originTop is False, then the y-value is interpreted as mathemtcs, 
         starting at the bottom of the parent element, moving up.
         If the flag is True, then move from top down, where the origin of the element becomes
         top-left of the parent."""
@@ -569,7 +569,7 @@ class Element(object):
         if self.css('showElementInfo'):
              # Draw crossed rectangle.
             p = pointOffset(self.point, origin)
-            p = self._applyOrigin(p)    
+            p = op = self._applyOrigin(p)    
             p = self._applyScale(p)    
             px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
@@ -577,18 +577,37 @@ class Element(object):
                 fontSize=self.css('infoFontSize'), leading=self.css('infoLeading'), textFill=0.1))
             tw, th = textSize(fs)
             M = 4 # Margin in box and shadow offset.
-            py += self.h - th - M*1.5
-            px -= M/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
+            tpx = px - M/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
+            tpy = py + self.h - th - M*1.5
             # Tiny shadow
             fill(0.2, 0.2, 0.2, 0.3)
             stroke(None)
-            rect(px+M/2, py-M/2, tw+2*M, th+2*M)
+            rect(tpx+M/2, tpy-M/2, tw+2*M, th+2*M)
             # Frame
             setFillColor(self.css('infoFill'))
             stroke(0.3)
             strokeWidth(0.25)
-            rect(px, py, tw+2*M, th+2*M)
-            text(fs, (px+M, py+1.5*M))
+            rect(tpx, tpy, tw+2*M, th+2*M)
+            text(fs, (tpx+M, tpy+1.5*M))
+
+            # Draw origin of the element
+            S = 4
+            fill(None)
+            stroke(0)
+            strokeWidth(0.25)
+            opx, opy, _ = op
+            oval(opx-S, opy-S, 2*S, 2*S)
+            line((opx-S, opy), (opx+S, opy))
+            line((opx, opy-S), (opx, opy+S))
+            # If anchor different from origin, draw anchor marker.
+            if self.x != self.ax and self.y != self.ay:
+                ap = pointOffset(self.anchor, origin)
+                ap = self._applyOrigin(ap)    
+                stroke(1, 0, 0)
+                apx, apy, _ = ap
+                oval(apx-S, apy-S, 2*S, 2*S)
+                line((apx-S, apy), (apx+S, apy))
+                line((apx, apy-S), (apx, apy+S))
 
             self._restoreScale()
             
@@ -694,7 +713,7 @@ class Element(object):
     def isAnchorOnRightSide(self, tolerance=0):
         return abs(self.parent.w - self.ax) <= tolerance
 
-    def isOAnchorOnTop(self, tolerance=0):
+    def isAnchorOnTop(self, tolerance=0):
         mt = self.parent.css('mt') # Get parent margin top
         if self.originTop:
             return abs(mt - self.ay) <= tolerance
@@ -752,6 +771,17 @@ class Element(object):
    
     def isCenterOnRightSide(self, tolerance=0):
         return abs(self.parent.w - self.center) <= tolerance
+
+    def isCenterOnBottom(self, tolerance=0):
+        mb = self.parent.css('mb') # Get parent margin bottom
+        if self.originTop:
+            return abs(self.parent.h - mb - self.verticalCenter) <= tolerance
+        return abs(mb - self.verticalCenter) <= tolerance
+
+    def isCenterOnBottomSide(self, tolerance=0):
+        if self.originTop:
+            return abs(self.verticalCenter) <= tolerance
+        return abs(self.parent.h - self.verticalCenter) <= tolerance
 
     def isCenterOnTop(self, tolerance=0):
         mt = self.parent.css('mt') # Get parent margin top
@@ -856,7 +886,7 @@ class Element(object):
         mb = self.parent.css('mb')
         mt = self.parent.css('mt')
         if self.originTop:
-            return abs(mt + (self.parent,h - mb - mt)/2 - self.y) <= tolerance
+            return abs(mt + (self.parent.h - mb - mt)/2 - self.y) <= tolerance
         return abs(mb + (self.parent.h - mt - mb)/2 - self.y) <= tolerance
  
     def isOriginOnVerticalCenterSides(self, tolerance=0):
