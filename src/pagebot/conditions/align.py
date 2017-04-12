@@ -355,31 +355,31 @@ class Center2VerticalCenter(Condition):
 		return e.isCenterOnVerticalCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2CVerticalenter(), e, score)
+		self.addScore(not self.test(e) and e.center2Verticalenter(), e, score)
 
-class Left2VerticalCenter(Condition):
+class Top2VerticalCenter(Condition):
 	u"""Align left of e bounding box vertical between parent margins."""
 	def test(self, e):
-		return e.isLeftOnVerticalCenter(self.tolerance)
+		return e.isTopOnVerticalCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.left2VerticalCenter(), e, score)
+		self.addScore(not self.test(e) and e.top2VerticalCenter(), e, score)
 
-class Right2VerticalCenter(Condition):
+class Bottom2VerticalCenter(Condition):
 	u"""Align right of e bounding box vertical between parent margins."""
 	def test(self, e):
-		return e.isRightOnVerticalCenter(self.tolerance)
+		return e.isBottomOnVerticalCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.right2Center(), e, score)
+		self.addScore(not self.test(e) and e.bottom2VerticalCenter(), e, score)
 
 class Origin2VerticalCenter(Condition):
 	u"""Align bottom of e bounding box to parent top margin."""
 	def test(self, e):
-		return e.isBottomOnTop(self.tolerance)
+		return e.isOriginOnVerticalCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.bottom2top(), e, score)
+		self.addScore(not self.test(e) and e.origin2VerticalCenter(), e, score)
 
 class Origin2Top(Condition):
 	u"""Align left of e bounding box horizontal between parent margins."""
@@ -428,7 +428,7 @@ class Top2Top(Condition):
 		return e.isTopOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.top2TopSide(), e, score)
+		self.addScore(not self.test(e) and e.top2Top(), e, score)
 
 # Missing on purpose: Bottom2TopSide(Condition). Element is not visible.
 

@@ -18,7 +18,7 @@ from pagebot import getFormattedString, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A1, CENTER, RIGHT_ALIGN, BOTTOM_ALIGN
+from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A1, CENTER, RIGHT_ALIGN, BOTTOM_ALIGN, TOP_ALIGN
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
 from pagebot.elements.galley import Galley
@@ -58,13 +58,13 @@ ConditionsV = [
 	FitBottomSide(),
 	FitTop(),
 	FitTopSide(),
-	Left2VerticalCenter(),
+	Top2VerticalCenter(),
 	Origin2Bottom(),
 	Origin2BottomSide(),
 	Origin2Top(),
 	Origin2TopSide(),
 	Origin2VerticalCenter(),
-	Right2VerticalCenter(),
+	Bottom2VerticalCenter(),
 	Top2Bottom(),
 	Top2Top(),
 	Top2TopSide(),
@@ -111,13 +111,20 @@ for condition in ConditionsV:
 ConditionsHDict = {}
 for condition in ConditionsH:
     ConditionsHDict[condition.__class__.__name__] = condition
-VARIABLES = {}
+ConditionH = 0
+ConditionV = 0
+
+Variable([
+    dict(name='ConditionH', ui='PopUpButton', args=dict(items=sorted(ConditionsHDict.keys()))),
+    dict(name='ConditionV', ui='PopUpButton', args=dict(items=sorted(ConditionsVDict.keys()))),
+], globals())
+
        
 # For clarity, most of the OneValidatingPage.py example documenet is setup as a sequential excecution of
 # Python functions. For complex documents this is not the best method. More functions and classes
 # will be used in the real templates, which are available from the OpenSource PageBotTemplates repository.
     
-W, H = A4 # or A1
+W, H = 400, 400#A4 # or A1
 H = W
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
@@ -130,14 +137,15 @@ H = W
 RS = getRootStyle(
     w = W,
     h = H,
-    ml = 300,
-    mt = 10,
-    mr = 20,
-    mb = 100,
+    ml = 100,
+    mt = 50,
+    mr = 100,
+    mb = 50,
     conditions = [],
     fontSize = 10,
     rLeading = 0,
     showElementInfo = True,
+    originTop = True
 )
 
 EXPORT_PATH = '_export/ConditionalElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
@@ -153,24 +161,10 @@ def makeDocument(rootStyle):
     w = 300
 
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
-        # = Horizontal
-        #Fit(),
-        #Center2Center(), 
-        Center2CenterSides(),
-        #Left2Left(), 
-        #Left2LeftSide(), 
-        #Right2Right(), 
-        #Right2RightSide(), 
-        # = Vertical
-        #Center2VerticalCenter(), 
-        #Top2Top(), 
-        #Top2TopSide(), 
-        #Origin2Top(), 
-        Center2Top(),
-        #Center2Bottom(), #@@@
-        #Bottom2Bottom(), 
-        #Bottom2BottomSide()
+        ConditionsHDict[sorted(ConditionsHDict.keys())[ConditionH]],
+        ConditionsVDict[sorted(ConditionsVDict.keys())[ConditionV]],
     ]
+    print colorCondition1
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.
         Center2Center(), 
         #Left2Left(), 
@@ -213,7 +207,9 @@ def makeDocument(rootStyle):
     # Add some color elements (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
     e1 = page.rect(point=wrongOrigin, style=rootStyle, w=w*2/3, h=300, conditions=colorCondition1, 
-        fill=(1, 0.5, 0.5), align=LEFT_ALIGN, vAlign=BOTTOM_ALIGN)
+        fill=(1, 0.5, 0.5), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+    e1.ax = 0
+    e1.ay = -100
     #e2 = page.rect(point=wrongOrigin, style=rootStyle, w=w, h=100, conditions=colorCondition2, 
     #    fill=(1, 1, 0), align=CENTER, vAlign=CENTER)
     # Make text box at wrong origin. Apply same width a the color rect, which may
