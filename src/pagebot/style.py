@@ -95,6 +95,9 @@ JUSTIFIED = 'justified'
 TOP_ALIGN = 'top'
 BOTTOM_ALIGN = 'bottom'
 
+DEFAULT_FONT = 'Verdana'
+DEFAULT_FALLBACK_FONT = 'LucidaGrande'
+
 def newStyle(**kwargs):
     return dict(**kwargs)
 
@@ -257,9 +260,9 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
 
         # Element info box
         showElementInfo = showElementInfo, # If True, elements show their info for debugging position, size and alignments.
-        infoFont = 'Verdana', # Font of text in element infoBox.
-        infoFontSize = 7, # Font size of text in element info box.
-        infoLeading = 9, # Leading of text in element info box.
+        infoFont = DEFAULT_FONT, # Font of text in element infoBox.
+        infoFontSize = 6, # Font size of text in element info box.
+        infoLeading = 8, # Leading of text in element info box.
         infoFill = (0.8, 0.8, 0.8, 0.9), # Color of text in element info box.
         infoTextFill = 0.1, # Color of text in element info box.
 
@@ -267,8 +270,8 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         missingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
 
         # Typographic defaults
-        font = 'Verdana', # Default is to avoid existing font and fontSize in the graphic state.
-        fallbackFont = 'LucidaGrande',
+        font = DEFAULT_FONT, # Default is to avoid existing font and fontSize in the graphic state.
+        fallbackFont = DEFAULT_FALLBACK_FONT,
         fontSize = u * 7/10, # Default font size in points, related to U
         uppercase = False, # All text in upper case
         lowercase = False, # All text in lower case (only if uppercase is False

@@ -46,7 +46,7 @@ class Element(object):
             eId = ':'+self.eId
         else:
             eId = ''
-        return '%s%s%s' % (self.__class__.__name__, eId, tuple(self.point))
+        return '%s(%d, %d)' % (self.__class__.__name__, int(round(self.point[0])), int(round(self.point[1])))
 
 
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
@@ -547,10 +547,19 @@ class Element(object):
         u"""Answer a single string with info about the element. Default is to show the posiiton
         and size (in points and columns). This method can be redefined by inheriting elements
         that want to show additional information."""
-        return '%s\nPosition: %s, %s\nSize: %s, %s\nColumn point: %s, %s\nColumn size: %s, %s\nAlign: %s, %s | Conditions: %d' % \
+        s = '%s\nPosition: %s, %s\nSize: %s, %s\nColumn point: %s, %s\nColumn size: %s, %s\nAlign: %s, %s' % \
             (self.__class__.__name__, asFormatted(self.x), asFormatted(self.y), asFormatted(self.w), asFormatted(self.h), 
              asFormatted(self.cx), asFormatted(self.cy), asFormatted(self.cw), asFormatted(self.ch),
-             self.css('align'), self.css('vAlign'), len(self.css('conditions')))
+             self.css('align'), self.css('vAlign'))
+        conditions = self.css('conditions')
+        if conditions:
+            score = self.evaluate()
+            s += '\nConditions: %d | Evaluate %d' % (len(conditions), score.result)
+            if score.fails:
+                s += ' Fails: %d' % len(score.fails)
+                for eFail in score.fails:
+                    s += '\n%s %s' % eFail
+        return s
 
     def _drawElementInfo(self, origin):
         u"""For debugging this will make the elements show their info."""
@@ -564,8 +573,9 @@ class Element(object):
             fs = getFormattedString(self._getElementInfoString(), style=dict(font=self.css('infoFont'), 
                 fontSize=self.css('infoFontSize'), leading=self.css('infoLeading'), textFill=0.1))
             tw, th = textSize(fs)
-            M = 4 # Margin in box
-            py += self.h - th - 2*M
+            M = 4 # Margin in box and shadow offset.
+            py += self.h - th - M*1.5
+            px -= M/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
             # Tiny shadow
             fill(0.2, 0.2, 0.2, 0.3)
             stroke(None)
@@ -623,7 +633,7 @@ class Element(object):
                 if y2 is None or y2 < e.bottom:
                     y2 = e.bottom
 
-        return x1 y1, x2 - x1, y2 - y1
+        return x1, y1, x2 - x1, y2 - y1
 
     #   V A L I D A T I O N
 
@@ -1005,7 +1015,7 @@ class Element(object):
         self.center = self.parent.w/2
         return True
     
-    def center2CVerticalCenter(self):
+    def center2VerticalCenter(self):
         mt = self.parent.css('mt') # Get parent margin left
         mb = self.parent.css('mb')
         vCenter = (self.parent.h - mb - mt)/2

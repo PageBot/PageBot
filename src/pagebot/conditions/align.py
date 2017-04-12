@@ -311,7 +311,7 @@ class Anchor2Right(Condition):
 
 #	Left Horizontal Sides
 
-class Center2TightSide(Condition):
+class Center2RightSide(Condition):
 	u"""Move center of e bounding box on parent right side."""
 	def test(self, e):
 		return e.isCenterOnRightSide(self.tolerance)
@@ -397,6 +397,14 @@ class Anchor2Top(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.anchor2Top(), e, score)
 
+
+class Center2Top(Condition):
+	u"""Move center of e bounding box on parent top margin."""
+	def test(self, e):
+		return e.isCenterOnTop(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.center2Top(), e, score)
 
 class Center2TopSide(Condition):
 	u"""Move center of e bounding box on parent left side."""
