@@ -526,16 +526,16 @@ class Element(object):
             tw, th = textSize(fs)
             M = 4 # Margin in box and shadow offset.
             tpx = px - M/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
-            tpy = py + self.h - th - M*1.5
+            tpy = py + self.h - th - M
             # Tiny shadow
             fill(0.3, 0.3, 0.3, 0.5)
             stroke(None)
-            rect(tpx+M/2, tpy-M/2, tw+2*M, th+2*M)
+            rect(tpx+M/2, tpy, tw+2*M, th+1.5*M)
             # Frame
             setFillColor(self.css('infoFill'))
             stroke(0.3)
             strokeWidth(0.25)
-            rect(tpx, tpy, tw+2*M, th+2*M)
+            rect(tpx, tpy, tw+2.5*M, th+1.5*M)
             text(fs, (tpx+M, tpy+1.5*M))
 
             # Draw origin of the element
