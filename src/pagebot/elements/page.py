@@ -42,8 +42,8 @@ class Page(Container):
  
     DEFAULT_STYLE = 'page'
 
-    def __init__(self, point=None, parent=None, style=None, eId=None, template=None, **kwargs):
-        Container.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
+    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, template=None, **kwargs):
+        Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
         self.setTemplate(template) # Create storage of elements and copy template elements.
         
     def __repr__(self):

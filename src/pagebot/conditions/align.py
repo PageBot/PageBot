@@ -140,14 +140,6 @@ class Origin2Center(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2Center(), e, score)
 
-class Anchor2Center(Condition):
-	u"""Align right of e bounding box horizontal between parent margins."""
-	def test(self, e):
-		return e.isAnchorOnCenter(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.anchor2Center(), e, score)
-
 #	Center Horizontal Sides
 
 class Center2CenterSides(Condition):
@@ -181,14 +173,6 @@ class Origin2CenterSides(Condition):
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2CenterSides(), e, score)
-
-class Anchor2CenterSides(Condition):
-	u"""Align right of e bounding box horizontal between parent margins."""
-	def test(self, e):
-		return e.isAnchorOnCenterSides(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.anchor2CenterSides(), e, score)
 
 #   L E F T / R I G H T
 
@@ -224,16 +208,6 @@ class Origin2Left(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2Left(), e, score)
 
-class Anchor2Left(Condition):
-	u"""Align anchor of e bounding box to parent left margins."""
-	def test(self, e):
-		return e.isAnchorOnLeft(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.anchor2Left(), e, score)
-
-
-
 class Center2LeftSide(Condition):
 	u"""Move center of e bounding box on parent left side."""
 	def test(self, e):
@@ -259,15 +233,6 @@ class Origin2LeftSide(Condition):
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2LeftSide(), e, score)
-
-class Anchor2LeftSide(Condition):
-	u"""Align anchor of e bounding box to parent left side."""
-	def test(self, e):
-		return e.isAnchorOnLeftSide(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.anchor2LeftSide(), e, score)
-
 
 class Center2Right(Condition):
 	u"""Move center of e bounding box on parent right margin."""
@@ -301,14 +266,6 @@ class Origin2Right(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2Right(), e, score)
 
-class Anchor2Right(Condition):
-	u"""Align anchor of e bounding box to parent right margins."""
-	def test(self, e):
-		return e.isAnchorOnRight(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.anchor2Right(), e, score)
-
 #	Left Horizontal Sides
 
 class Center2RightSide(Condition):
@@ -337,14 +294,6 @@ class Origin2RightSide(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2RightSide(), e, score)
 
-class Anchor2RightSide(Condition):
-	u"""Align anchor of e bounding box to parent right margins."""
-	def test(self, e):
-		return e.isAnchorOnRightSide(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.anchor2RightSide(), e, score)
-
 #	V E R T I C A L S
 
 #	Center Vertical Margins
@@ -355,7 +304,15 @@ class Center2VerticalCenter(Condition):
 		return e.isCenterOnVerticalCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2Verticalenter(), e, score)
+		self.addScore(not self.test(e) and e.center2VerticalCenter(), e, score)
+
+class Center2VerticalCenterSides(Condition):
+	u"""Center e bounding box vertical between parent vertical sides."""
+	def test(self, e):
+		return e.isCenterOnVerticalCenterSides(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.center2VerticalCenterSides(), e, score)
 
 class Top2VerticalCenter(Condition):
 	u"""Align left of e bounding box vertical between parent margins."""
@@ -365,6 +322,14 @@ class Top2VerticalCenter(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.top2VerticalCenter(), e, score)
 
+class Top2VerticalCenterSides(Condition):
+	u"""Align left of e bounding box vertical between parent sides."""
+	def test(self, e):
+		return e.isTopOnVerticalCenterSides(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.top2VerticalCenterSides(), e, score)
+
 class Bottom2VerticalCenter(Condition):
 	u"""Align right of e bounding box vertical between parent margins."""
 	def test(self, e):
@@ -372,6 +337,14 @@ class Bottom2VerticalCenter(Condition):
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.bottom2VerticalCenter(), e, score)
+
+class Bottom2VerticalCenterSides(Condition):
+	u"""Align right of e bounding box vertical between parent vertical sides."""
+	def test(self, e):
+		return e.isBottomOnVerticalCenterSides(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.bottom2VerticalCenterSides(), e, score)
 
 class Origin2VerticalCenter(Condition):
 	u"""Align bottom of e bounding box to parent top margin."""
@@ -381,6 +354,14 @@ class Origin2VerticalCenter(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2VerticalCenter(), e, score)
 
+class Origin2VerticalCenterSides(Condition):
+	u"""Align bottom of e bounding box to parent vertical sides."""
+	def test(self, e):
+		return e.isOriginOnVerticalCenterSides(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.origin2VerticalCenterSides(), e, score)
+
 class Origin2Top(Condition):
 	u"""Align left of e bounding box horizontal between parent margins."""
 	def test(self, e):
@@ -388,15 +369,6 @@ class Origin2Top(Condition):
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2Top(), e, score)
-
-class Anchor2Top(Condition):
-	u"""Align anchor of e bounding box to parent top margins."""
-	def test(self, e):
-		return e.isAnchorOnTop(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.anchor2Top(), e, score)
-
 
 class Center2Top(Condition):
 	u"""Move center of e bounding box on parent top margin."""
@@ -440,22 +412,13 @@ class Origin2TopSide(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2TopSide(), e, score)
 
-class Anchor2TopSide(Condition):
-	u"""Align anchor of e bounding box to parent top side."""
-	def test(self, e):
-		return e.isAnchorOnTopSide(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.anchor2TopSide(), e, score)
-
-
 class Center2Bottom(Condition):
 	u"""Move center of e bounding box on parent bottom margin."""
 	def test(self, e):
-		return e.isCenterOnRight(self.tolerance)
+		return e.isCenterOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2Right(), e, score)
+		self.addScore(not self.test(e) and e.center2Bottom(), e, score)
 
 class Top2Bottom(Condition):
 	u"""Align top of e bounding box on parent bottom margin."""
@@ -480,14 +443,6 @@ class Origin2Bottom(Condition):
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2Bottom(), e, score)
-
-class Anchor2Bottom(Condition):
-	u"""Align anchor of e bounding box to parent bottom margins."""
-	def test(self, e):
-		return e.isAnchorOnBottom(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.anchor2Bottom(), e, score)
 
 #	Left Horizontal Sides
 
@@ -516,14 +471,6 @@ class Origin2BottomSide(Condition):
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2BottomSide(), e, score)
-
-class Anchor2BottomSide(Condition):
-	u"""Align anchor of e bounding box to parent bottom side."""
-	def test(self, e):
-		return e.isAnchorOnBottomSide(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.anchor2BottomSide(), e, score)
 
 """
 FloatTopLeft

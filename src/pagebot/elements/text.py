@@ -21,8 +21,8 @@ class Text(Element):
     # Initialize the default behavior tags as different from Element.
     isText = True  # This element is capable of handling text.
 
-    def __init__(self, fs, point=None, parent=None, style=None, eId=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
+    def __init__(self, fs, point=None, parent=None, style=None, name=None, eId=None, **kwargs):
+        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
         self.fs = getFormattedString(fs, self)
 
     def append(self, fs):

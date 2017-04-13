@@ -17,8 +17,8 @@ from pagebot.elements.element import Element
 class Image(Element):
     u"""Image element has special attributes self.iw and self.ih for the real image size.
     If the optional captionStyle is not defined, then use self.style for captions."""
-    def __init__(self, path, point=None, parent=None, style=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
-        Element.__init__(self, point, parent, eId, style, **kwargs)
+    def __init__(self, path, point=None, parent=None, style=None, name=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
+        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
         self.mask = mask # Optional mask element.
         self.clipRect = clipRect
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html

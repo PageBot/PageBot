@@ -35,12 +35,12 @@ class Galley(Container):
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
 
-    def __init__(self, point=None, parent=None, style=None, eId=None, elements=None, w=None, h=None, **kwargs):
+    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, elements=None, w=None, h=None, **kwargs):
         u"""Allow self.w and self.h to be None or 0, as the paste board roll can have any size.
         If undefined, the size is calculated from the size contained elements."""
         if style is None:
             style = dict(fill=NO_COLOR, stroke=None, w=w, h=h, fontSize=14, leading=14)
-        Container.__init__(self, point=point, parent=parent, style=style, eId=eId, elements=elements, **kwargs)
+        Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, elements=elements, **kwargs)
         self._footnotes = []
 
     def __repr__(self):

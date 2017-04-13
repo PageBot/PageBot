@@ -23,8 +23,8 @@ class Container(Element):
     # Initialize the default behavior tags as different from Element settings.
     isContainer = True
 
-    def __init__(self, point=None, parent=None, style=None, eId=None, elements=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
+    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, elements=None, **kwargs):
+        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
         if elements is None: # If not set by caller, create an empty ordered elements list.
             elements = []
         self._elements = elements

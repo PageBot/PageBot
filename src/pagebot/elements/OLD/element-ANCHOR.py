@@ -17,7 +17,7 @@ from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, r
 from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
-from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN
+from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN, ANCHOR_ALIGN
 from pagebot.toolbox.transformer import asFormatted
 
 class Element(object):
@@ -31,7 +31,7 @@ class Element(object):
     isTextBox = False
     isFlow = False
 
-    def __init__(self, point=None, parent=None, name=None, eId=None, style=None, **kwargs):  
+    def __init__(self, point=None, parent=None, name=None, eId=None, style=None, anchor=None, **kwargs):  
         u"""Basic initialize for every Element constructor."""  
         self._w = self._h = self._d = 0 # Optionally overwritten values. Otherwise use values from self.style.
         self.point = point # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
@@ -40,6 +40,7 @@ class Element(object):
         self.eId = eId or uniqueID(self)
         self.parent = parent # Weak ref to parent element or None if it is the root.
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
+        self.anchor = anchor # Optional anchor 3D point for ANCHOR_ALIGN, relative to origin point
 
     def __repr__(self):
         if self.name:
@@ -118,6 +119,33 @@ class Element(object):
         self._point[2] = z # self._point is always 3D
     z = property(_get_z, _set_z)
     
+    # Position of anchor + origin point.
+
+    def _get_anchor(self):
+        # Relative distance to self._point
+        return self._anchor
+    def _set_anchor(self, anchor):
+        self._anchor = point3D(anchor) # self.anchor is always 3D, relative to self._point
+    anchor = property(_get_anchor, _set_anchor)
+
+    def _get_ax(self): # Answer relative position of anchor x
+        return self._anchor[0]
+    def _set_ax(self, ax):
+        self._anchor[0] = ax
+    ax = property(_get_ax, _set_ax)
+    
+    def _get_ay(self): # Answer relative position of anchor y
+        return self._anchor[1]
+    def _set_ay(self, ay):
+        self._anchor[1] = ay
+    ay = property(_get_ay, _set_ay)
+    
+    def _get_az(self): # Answer relative position of anchor z
+        return self._anchor[2] # Both self._anchor and self._point are always 3D points.
+    def _set_az(self, az):
+        self._anchor[2] = az # Both self._anchor and self._point are always 3D points.
+    az = property(_get_az, _set_az)
+
     # Origin compensated by alignment. This is used for easy solving of conditions,
     # where the positioning can be compenssaring the element alignment type.
 
@@ -129,12 +157,16 @@ class Element(object):
             return self.x - self.w/2
         if self.css('align') == RIGHT_ALIGN:
             return self.x - self.w
+        if self.css('align') == ANCHOR_ALIGN:
+            return self.x - self.anchor[0]
         return self.x
     def _set_left(self, x):
         if self.css('align') == CENTER:
             self.x = x + self.w/2
         elif self.css('align') == RIGHT_ALIGN:
             self.x = x + self.w
+        elif self.css('align') == ANCHOR_ALIGN:
+            self.x = x + self.anchor[0]
         else:
             self.x = x
     left = property(_get_left, _set_left)
@@ -147,12 +179,16 @@ class Element(object):
             return self.x + self.w/2
         if self.css('align') == RIGHT_ALIGN:
             return self.x + self.w
+        if self.css('align') == ANCHOR_ALIGN:
+            return self.x + self.anchor[0]
         return self.x
     def _set_center(self, x):
         if self.css('align') == LEFT_ALIGN:
             self.x = x - self.w/2
         elif self.css('align') == RIGHT_ALIGN:
             self.x = x - self.w
+        elif self.css('align') == ANCHOR_ALIGN:
+            self.x = x - self.anchor[0]
         else:
             self.x = x
     center = property(_get_center, _set_center)
@@ -165,12 +201,16 @@ class Element(object):
             return self.x + self.w
         if self.css('align') == CENTER:
             return self.x + self.w/2
+        if self.css('align') == ANCHOR_ALIGN:
+            return self.x + self.anchor[0]
         return self.x
     def _set_right(self, x):
         if self.css('align') == LEFT_ALIGN:
             self.x = x - self.w
         elif self.css('align') == CENTER:
             self.x = x - self.w/2
+        elif self.css('align') == ANCHOR_ALIGN:
+            self.x = x - self.anchor[0]
         else:
             self.x = x
     right = property(_get_right, _set_right)
@@ -182,12 +222,16 @@ class Element(object):
             return self.y - self.h/2
         if self.css('vAlign') == BOTTOM_ALIGN:
             return self.y - self.h
+        if self.css('vAlign') == ANCHOR_ALIGN:
+            return self.y - self.anchor[1]
         return self.y
     def _set_top(self, y):
         if self.css('vAlign') == CENTER:
             self.y = y + self.h/2
         elif self.css('vAlign') == BOTTOM_ALIGN:
             self.y = y + self.h
+        elif self.css('vAlign') == ANCHOR_ALIGN:
+            self.y = y + self.anchor[1]
         else:
             self.y = y
     top = property(_get_top, _set_top)
@@ -197,12 +241,16 @@ class Element(object):
             return self.y - self.h/2
         if self.css('vAlign') == BOTTOM_ALIGN:
             return self.y + self.h/2
+        if self.css('vAlign') == ANCHOR_ALIGN:
+            return self.y - self.anchor[1]
         return self.y
     def _set_verticalCenter(self, y):
         if self.css('vAlign') == TOP_ALIGN:
             self.y = y + self.h/2
         elif self.css('vAlign') == BOTTOM_ALIGN:
             self.y = y + self.h
+        elif self.css('vAlign') == ANCHOR_ALIGN:
+            self.y = y + self.anchor[1]
         else:
             self.y = y
     verticalCenter = property(_get_verticalCenter, _set_verticalCenter)
@@ -212,12 +260,16 @@ class Element(object):
             return self.y + self.h
         if self.css('vAlign') == CENTER:
             return self.y + self.h/2
+        if self.css('vAlign') == ANCHOR_ALIGN:
+            return self.y + self.anchor[1]
         return self.y
     def _set_bottom(self, y):
         if self.css('vAlign') == TOP_ALIGN:
             self.y = y - self.h
         elif self.css('vAlign') == CENTER:
             self.y = y - self.h/2
+        elif self.css('vAlign') == ANCHOR_ALIGN:
+            return self.y + self.anchor[1]
         else:
             self.y = y
     bottom = property(_get_bottom, _set_bottom)
@@ -406,11 +458,15 @@ class Element(object):
             px -= self.w/2/self.scaleX
         elif self.css('align') == RIGHT_ALIGN:
             px -= self.w/self.scaleX
+        elif self.css('align') == ANCHOR_ALIGN:
+            px -= self.anchor[0]/self.scaleX
         # Vertical
         if self.css('vAlign') == CENTER:
             py -= self.h/2/self.scaleY
         elif self.css('vAlign') == TOP_ALIGN:
             py -= self.h/self.scaleY
+        elif self.css('vAlign') == ANCHOR_ALIGN:
+            py -= self.anchor[1]/self.scaleY
         # Currently no alignment in z-axis implemented
         return px, py, pz
 
@@ -547,6 +603,23 @@ class Element(object):
             oval(opx-S, opy-S, 2*S, 2*S)
             line((opx-S, opy), (opx+S, opy))
             line((opx, opy-S), (opx, opy+S))
+            # If anchor different from origin, draw anchor marker.
+            if self.ax or self.ay:
+                ax = px + self.ax
+                if self.originTop:
+                    ay = py + self.parent.h - self.ay
+                else:
+                    ay = py - self.ay
+                stroke(0.2, 0.2, 0.6)
+                oval(ax-S, ay-S, 2*S, 2*S)
+                line((ax-S, ay), (ax+S, ay))
+                line((ax, ay-S), (ax, ay+S))
+                if self.name:
+                    stroke(None)
+                    fs = getFormattedString(self.name, style=dict(font=self.css('infoFont'), 
+                        fontSize=self.css('infoFontSize'), leading=self.css('infoLeading'), 
+                        textFill=(0.2, 0.2, 0.5)))
+                    text(fs, (ax+S, ay+S))
 
             self._restoreScale()
             
@@ -620,6 +693,62 @@ class Element(object):
          
     #   C O N D I T I O N S
 
+    def isAnchorOnBottom(self, tolerance=0):
+        mb = self.parent.css('mb')
+        if self.originTop:
+            return abs(self.parent.h - mb - self.ax) <= tolerance
+        return abs(mb - self.ax) <= tolerance
+
+    def isAnchorOnBottomSide(self, tolerance=0):
+        if self.originTop:
+            return abs(self.parent.h - self.ax) <= tolerance
+        return abs(self.ax) <= tolerance
+
+    def isAnchorOnCenter(self, tolerance=0):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        center = (self.parent.w - mr - ml)/2
+        return abs(ml + center - self.ax) <= tolerance
+    
+    def isAnchorOnCenterSides(self, tolerance=0):
+        return abs(self.parent.w/2 - self.ax) <= tolerance
+   
+    def isAnchorOnLeft(self, tolerance=0):
+        return abs(self.parent.css('ml') - self.ax) <= tolerance
+   
+    def isAnchorOnLeftSide(self, tolerance=0):
+        return abs(self.ax) <= tolerance
+   
+    def isAnchorOnRight(self, tolerance=0):
+        return abs(self.parent.css('mr') - self.ax) <= tolerance
+   
+    def isAnchorOnRightSide(self, tolerance=0):
+        return abs(self.parent.w - self.ax) <= tolerance
+
+    def isAnchorOnTop(self, tolerance=0):
+        mt = self.parent.css('mt') # Get parent margin top
+        if self.originTop:
+            return abs(mt - self.ay) <= tolerance
+        return abs(self.parent.h - mt - self.ay) <= tolerance
+
+    def isAnchorOnTopSide(self, tolerance=0):
+        if self.originTop:
+            return abs(self.ay) <= tolerance
+        return abs(self.parent.h - self.ay) <= tolerance
+
+    def isAnchorOnVerticalCenter(self, tolerance=0):
+        mt = self.parent.css('mt') # Get parent margin top
+        mb = self.parent.css('mb') 
+        vCenter = (self.parent.h - mb - mt)/2
+        if self.originTop:
+            return abs(mt + vCenter - self.ay) <= tolerance
+        return abs(mb + vCenter - self.ay) <= tolerance
+
+    def isAnchorOnVerticalCenterSides(self, tolerance=0):
+        if self.originTop:
+            return abs(self.ay) <= tolerance
+        return abs(self.parent.h - self.ay) <= tolerance
+
     def isBottomOnBottom(self, tolerance=0):
         mb = self.parent.css('mb')
         if self.originTop:
@@ -663,19 +792,19 @@ class Element(object):
 
     def isCenterOnBottomSide(self, tolerance=0):
         if self.originTop:
-            return abs(self.parent.h - self.verticalCenter) <= tolerance
-        return abs(self.verticalCenter) <= tolerance
+            return abs(self.verticalCenter) <= tolerance
+        return abs(self.parent.h - self.verticalCenter) <= tolerance
 
     def isCenterOnTop(self, tolerance=0):
         mt = self.parent.css('mt') # Get parent margin top
         if self.originTop:
-            return abs(mt - self.verticalCenter) <= tolerance
-        return abs(self.parent.h - mt - self.verticalCenter) <= tolerance
+            return abs(mt - self.center) <= tolerance
+        return abs(self.parent.h - mt - self.center) <= tolerance
 
     def isCenterOnTopSide(self, tolerance=0):
         if self.originTop:
-            return abs(self.verticalCenter) <= tolerance
-        return abs(self.parent.h - self.verticalCenter) <= tolerance
+            return abs(self.center) <= tolerance
+        return abs(self.parent.h - self.center) <= tolerance
 
     def isCenterOnVerticalCenter(self, tolerance=0):
         mt = self.parent.css('mt') # Get parent margin top
@@ -707,9 +836,6 @@ class Element(object):
 
     def isLeftOnRight(self, tolerance=0):
         return abs(self.parent.w - self.parent.css('mr') - self.left) <= tolerance
-
-    def isCenterOnLeftSide(self, tolerance=0):
-        return abs(self.parent.left - self.center) <= tolerance
 
     def isTopOnVerticalCenter(self, tolerance=0):
         mt = self.parent.css('mt') # Get parent margin top
@@ -822,6 +948,75 @@ class Element(object):
         return abs(self.parent.h - self.top) <= tolerance
 
     #   T R A N S F O R M A T I O N S 
+
+    def anchor2Bottom(self):
+        mb = self.parent.css('mb')
+        if self.originTop:
+            self.ay = self.parent.h - mb
+        else:
+            self.ay = mb
+        return True
+
+    def anchor2BottomSide(self):
+        if self.originTop:
+            self.ay = self.parent.h
+        else:
+            self.ay = 0
+        return True
+
+    def anchor2Center(self):
+        ml = self.parent.css('ml') # Get parent margin left
+        mr = self.parent.css('mr')
+        self.ax = ml + (self.parent.w - mr - ml)/2
+        return True
+
+    def anchor2CenterSides(self):
+        self.ax = self.parent.w/2
+        return True
+
+    def anchor2Left(self):
+        self.ax = self.parent.css('ml')
+        return True       
+
+    def anchor2LeftSide(self):
+        self.ax = 0
+        return True       
+
+    def anchor2Right(self):
+        self.ax = self.parent.w - self.parent.css('mr')
+        return True       
+
+    def anchor2RightSide(self):
+        self.ax = self.parent.w
+        return True       
+
+    def anchor2Top(self):
+        if self.originTop:
+            self.ay = self.parent.css('mt')
+        else:
+            self.ay = self.parent.h - self.parent.css('mt')
+        return True
+
+    def anchor2TopSide(self):
+        if self.originTop:
+            self.ay = 0
+        else:
+            self.ay = self.parent.h
+        return True
+
+    def anchor2VerticalCenter(self):
+        mt = self.parent.css('mt') # Get parent margin left
+        mb = self.parent.css('mb')
+        vCenter = (self.parent.h - mb - mt)/2
+        if self.originTop:
+            self.ax = mt + vCenter
+        else:
+            self.ax = mb + vCenter
+        return True
+
+    def anchor2VerticalCenterSides(self):
+        self.ax = self.x - self.parent.h/2
+        return True
 
     def bottom2Bottom(self):
         mb = self.parent.css('mb')
