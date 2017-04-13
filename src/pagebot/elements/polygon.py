@@ -23,7 +23,8 @@ from pagebot.style import LEFT_ALIGN, TOP_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, 
 from pagebot.elements.element import Element
 
 class Polygon(Element):
-    def __init__(self, points, style=None, eId=None, **kwargs):
+    def __init__(self, points, style=None, name=None, eId=None, **kwargs):
+        self.name = name
         self.points = points
         self.eId = eId
         self.style = makeStyle(style, **kwargs)

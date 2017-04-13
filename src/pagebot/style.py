@@ -89,7 +89,6 @@ SHOW_IMAGE_REFERENCE = True # Show [image #] in text, if the images is inside a 
 
 LEFT_ALIGN = 'left'
 RIGHT_ALIGN = 'right'
-ANCHOR_ALIGN = 'anchor'
 CENTER = 'center'
 JUSTIFIED = 'justified'
 TOP_ALIGN = 'top'

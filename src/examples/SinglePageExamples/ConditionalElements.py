@@ -5,7 +5,7 @@
 #
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
-# -----------------------------------------------------------------------------
+# ---------------- -------------------------------------------------------------
 #
 #     ConditionalElements.py
 #
@@ -43,39 +43,33 @@ class FontSizeWidthRatio(Condition):
 
 # Make an instance of all conditions add as global in Variations.
 ConditionsV = [
-	Anchor2Bottom(),
-	Anchor2BottomSide(),
-	Anchor2Top(),
-	Anchor2TopSide(),
 	Bottom2Bottom(),
 	Bottom2BottomSide(),
+	Bottom2VerticalCenter(),
+	Bottom2VerticalCenterSides(),
 	Center2Bottom(),
 	Center2BottomSide(),
 	Center2Top(),
 	Center2TopSide(),
 	Center2VerticalCenter(),
+	Center2VerticalCenterSides(),
 	FitBottom(),
 	FitBottomSide(),
 	FitTop(),
 	FitTopSide(),
-	Top2VerticalCenter(),
 	Origin2Bottom(),
 	Origin2BottomSide(),
 	Origin2Top(),
 	Origin2TopSide(),
 	Origin2VerticalCenter(),
-	Bottom2VerticalCenter(),
+	Origin2VerticalCenterSides(),
 	Top2Bottom(),
 	Top2Top(),
 	Top2TopSide(),
+	Top2VerticalCenter(),
+	Top2VerticalCenterSides(),
 ]
 ConditionsH = [
-	Anchor2Center(),
-	Anchor2CenterSides(),
-	Anchor2Left(),
-	Anchor2LeftSide(),
-	Anchor2Right(),
-	Anchor2RightSide(),
 	Center2Center(),
 	Center2CenterSides(),
 	Center2Left(),
@@ -139,8 +133,8 @@ RS = getRootStyle(
     h = H,
     ml = 100,
     mt = 50,
-    mr = 100,
-    mb = 50,
+    mr = 50,
+    mb = 100,
     conditions = [],
     fontSize = 10,
     rLeading = 0,
@@ -201,15 +195,14 @@ def makeDocument(rootStyle):
         p = (page.css('ml'), page.css('mt'))
     else:
         p = (page.css('ml'), page.css('mb'))
-    page.rect(point=p, style=rootStyle, w=page.w - page.css('ml') - page.css('mr'),
-    h = page.h - page.css('mt') - page.css('mb'),
-    fill=0.9)
+    e0 = page.rect(point=p, style=rootStyle, name='Page area',
+        w=page.w - page.css('ml') - page.css('mr'),
+        h = page.h - page.css('mt') - page.css('mb'),
+        fill=0.9)
     # Add some color elements (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
-    e1 = page.rect(point=wrongOrigin, style=rootStyle, w=w*2/3, h=300, conditions=colorCondition1, 
-        fill=(1, 0.5, 0.5), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
-    e1.ax = 0
-    e1.ay = -100
+    e1 = page.rect(point=wrongOrigin, style=rootStyle, name='Other element', w=100, h=150, conditions=colorCondition1, 
+        fill=(1, 0.5, 0.5), align=RIGHT_ALIGN, vAlign=TOP_ALIGN)
     #e2 = page.rect(point=wrongOrigin, style=rootStyle, w=w, h=100, conditions=colorCondition2, 
     #    fill=(1, 1, 0), align=CENTER, vAlign=CENTER)
     # Make text box at wrong origin. Apply same width a the color rect, which may
@@ -229,7 +222,10 @@ def makeDocument(rootStyle):
         page.solve()
     print score.fails
     # Evaluate again, result should now be >= 0
-    print 'Page value after solving the problems:', page.evaluate()
+    score = page.evaluate()
+    print 'Page value after solving the problems:', score
+    for fail in score.fails:
+        print fail
     
     return doc
         
