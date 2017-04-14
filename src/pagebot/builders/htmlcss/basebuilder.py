@@ -11,4 +11,9 @@
 #     basebuilder.py
 #
 class BaseBuilder(object):
-    pass
+
+    def __init__(self, document):
+        self._document = document
+        self._css = []
+        self._head = []
+        self._body = []
