@@ -7,3 +7,5 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
+#     Module for global storage by scripts that use Variable UI.
+#
