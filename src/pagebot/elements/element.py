@@ -50,6 +50,12 @@ class Element(object):
             name = ''
         return '%s%s(%d, %d)' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])))
 
+    def _get_elements(self):
+        u"""Default element does not have children."""
+        return []
+    def _set_elements(self, elements):
+        raise KeyError('Only containers can hold other elements.')
+    elements = property(_get_elements, _set_elements)
 
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
@@ -82,6 +88,14 @@ class Element(object):
             parent = weakref.ref(parent)
         self._parent = parent
     parent = property(_get_parent, _set_parent)
+
+    def _get_siblings(self): # Answer all elements that share self.parent, without self.
+        siblings = []
+        for e in self.parent.elements:
+            if not e is self:
+                siblings.append(e)
+        return siblings
+    siblings = property(_get_siblings)
 
     def _get_point(self):
         return point2D(self._point) # Answer as 2D
@@ -265,6 +279,14 @@ class Element(object):
             self.h = h
     ch = property(_get_ch, _set_ch)
 
+    def _get_cd(self):
+        return d2cd(self.d, self)
+    def _set_cd(self, cd):
+        d = cd2d(cd, self)
+        if d is not None:
+            self.d = d
+    cd = property(_get_cd, _set_cd)
+
     # Absolute posiitons
 
     def _get_absoluteX(self): # Answer the absolute value of local self.x, from tree of ancestors.
@@ -281,23 +303,29 @@ class Element(object):
         return self.y
     absoluteY = property(_get_absoluteY)
 
-    def _get_w(self):
+    def _get_w(self): # Width
         if self.css('vacuumW'): # If vacuum forming, this overwrites css or style width.
             return self.right - self.left
-        return self.css('w') # Can be None in case the width is undefined.
+        return self.css('w') 
     def _set_w(self, w):
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
 
-    def _get_h(self):
+    def _get_h(self): # Height
         if self.css('vacuumH'): # If vacuum forming, this overwrites css or style width.
             if self.originTop:
                 return self.bottom - self.top
             return self.top - self.bottom
-        return self.css('h') # Can be None in case the height is undefined. 
+        return self.css('h')  
     def _set_h(self, h):
         self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
+
+    def _get_d(self): # Depth
+        return self.css('d') 
+    def _set_d(self, d):
+        self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
+    d = property(_get_d, _set_d)
 
     def _get_originTop(self):
         u"""Answer the style flag if all point y values should measure top-down (typographic page
@@ -397,6 +425,78 @@ class Element(object):
     def _set_scaleY(self, scaleY):
         self.style['scaleY'] = scaleY # Set on local style, shielding parent self.css value.
     scaleY = property(_get_scaleY, _set_scaleY)
+
+    def getFloatTopSide(self, previousOnly=True):
+        u"""Answer the max y that can float to top, without overlapping previous sibling elements.
+        This means we are just looking at the vertical projection of (self.left, self.right).
+        Note that the y may be outside the parent box."""
+        if self.originTop:
+            y = 0
+        else:
+            y = self.parent.h
+        for e in self.parent.elements: 
+            if previousOnly and e is self: # Only look at sublings that are ealier in the list.
+                break 
+            if e.right < self.left or self.right < e.left:
+                continue # Not in window of vertical projection.
+            if self.originTop:
+                if e.bottom > y:
+                    y = e.bottom
+            else:
+                if e.bottom < y:
+                    y = e.bottom
+        return y
+
+    def getFloatBottomSide(self, previousOnly=True):
+        u"""Answer the max y that can float to bottom, without overlapping previous sibling elements.
+        This means we are just looking at the vertical projection of (self.left, self.right).
+        Note that the y may be outside the parent box."""
+        if self.originTop:
+            y = self.parent.h
+        else:
+            y = 0
+        for e in self.parent.elements: # All elements that share self.parent, except self.
+            if previousOnly and e is self: # Only look at sublings that are ealier in the list.
+                break 
+            if e.right < self.left or self.right < e.left:
+                continue # Not in window of vertical projection.
+            if self.originTop:
+                if e.top < y:
+                    y = e.top
+            else:
+                if e.top > y:
+                    y = e.top
+        return y
+
+    def getFloatLeftSide(self, previousOnly=True):
+        u"""Answer the max x that can float to the left, without overlapping previous sibling elements.
+        This means we are just looking at the horizontal projection of (self.top, self.bottom).
+        Note that the x may be outside the parent box."""
+        x = self.parent.w
+        for e in self.parent.elements: # All elements that share self.parent, except self.
+            if previousOnly and e is self: # Only look at sublings that are ealier in the list.
+                break 
+            if self.originTop:
+                if e.bottom < self.top or self.bottom < e.top:
+                    continue # Not in window of horizontal projection.
+            if e.left < x:
+                x = e.left
+        return x
+
+    def getFloatRightSide(self, previousOnly=True):
+        u"""Answer the max Y that can float to the right, without overlapping previous sibling elements.
+        This means we are just looking at the vertical projection of (self.left, self.right).
+        Note that the y may be outside the parent box."""
+        x = 0
+        for e in self.parent.elements: # All elements that share self.parent, except self.
+            if previousOnly and e is self: # Only look at sublings that are ealier in the list.
+                break 
+            if self.originTop:
+                if e.bottom < self.top or self.bottom < e.top:
+                    continue # Not in window of horizontal projection.
+            if e.right > x:
+                x = e.right
+        return x
 
     def _applyAlignment(self, p):
         u"""Answer the p according to the alignment status nin the css.""" 
@@ -539,7 +639,7 @@ class Element(object):
             text(fs, (tpx+M, tpy+1.5*M))
 
             # Draw origin of the element
-            S = 4
+            S = self.css('infoOriginMarkerSize', 4)
             fill(None)
             stroke(0)
             strokeWidth(0.25)
@@ -573,14 +673,10 @@ class Element(object):
             lineTo((ox, oy + self.h))
             drawPath()
 
-    def getElements(self):
-        u"""Default element does not have children."""
-        return []
-
     def getElementsBox(self):
         u"""Answer the vacuum bounding box around all child elements."""
         x1 = y1 = x2 = y2 = None
-        for e in self.getElements():
+        for e in self.elements:
             if x1 is None or x1 > e.left:
                 x1 = e.left
             if e.originTop:
@@ -604,7 +700,7 @@ class Element(object):
             score = Score()
         for condition in self.css('conditions', []): # Skip in case there are no conditions in the style.
             condition.evaluate(self, score)
-        for e in self.getElements(): # Also works if element is not a container.
+        for e in self.elements: # Also works if element is not a container.
             e.evaluate(score)
         return score
          
@@ -614,7 +710,7 @@ class Element(object):
             score = Score()
         for condition in self.css('conditions', []): # Skip in case there are no conditions in the style.
             condition.solve(self, score)
-        for e in self.getElements(): # Also works if element is not a container.
+        for e in self.elements: # Also works if element is not a container.
             e.solve(score)
         return score
          
@@ -820,6 +916,36 @@ class Element(object):
         if self.originTop:
             return abs(self.top) <= tolerance
         return abs(self.parent.h - self.top) <= tolerance
+
+    def isFloatTop(self, tolerance=0):
+        mt = self.css('mt')
+        if self.originTop:
+            return abs(max(self.getFloatTopSide(), mt) - self.top) <= tolerance
+        return abs(min(self.getFloatTopSide(), self.parent.h - mt) - self.top) <= tolerance
+
+    def isFloatTopSide(self, tolerance=0):
+        return abs(self.getFloatTopSide() - self.top) <= tolerance
+
+    def isFloatBottom(self, tolerance=0):
+        mb = self.css('mb')
+        if self.originTop:
+            return abs(min(self.getFloatBottomSide(), self.parent.h - mb) - self.bottom) <= tolerance
+        return abs(max(self.getFloatTopSide(), mb) - self.bottom) <= tolerance
+
+    def isFloatBottomSide(self, tolerance=0):
+        return abs(self.getFloatBottomSide() - self.bottom) <= tolerance
+
+    def isFloatLeft(self, tolerance=0):
+        return abs(max(self.getFloatLeftSide(), self.css('ml')) - self.left) <= tolerance
+
+    def isFloatLeftSide(self, tolerance=0):
+        return abs(self.getFloatLeftSide() - self.left) <= tolerance
+
+    def isFloatRight(self, tolerance=0):
+        return abs(min(self.getFloatRightSide(), self.parent.w - self.css('mr')) - self.right) <= tolerance
+
+    def isFloatRightSide(self, tolerance=0):
+        return abs(self.getFloatRightSide() - self.right) <= tolerance
 
     #   T R A N S F O R M A T I O N S 
 
@@ -1135,3 +1261,43 @@ class Element(object):
         else:
             self.top = self.parent.h
         return True
+
+    def float2Top(self, tolerance=0):
+        mt = self.css('mt')
+        if self.originTop:
+            self.top = max(self.getFloatTopSide(), mt)
+        else:
+            self.top = min(self.getFloatTopSide(), self.parent.h - mt)
+        return True
+
+    def float2TopSide(self, tolerance=0):
+        self.top = self.getFloatTopSide()
+        return True
+
+    def float2Bottom(self, tolerance=0):
+        mb = self.css('mb')
+        if self.originTop:
+            self.bottom = min(self.getFloatBottomSide(), self.parent.h - mb)
+        else:
+            self.bottom = max(self.getFloatTopSide(), mb)
+        return True
+
+    def float2BottomSide(self, tolerance=0):
+        self.bottom = self.getFloatBottomSide()
+        return True
+
+    def float2Left(self, tolerance=0):
+        self.left = max(self.getFloatLeftSide(), self.css('ml'))
+        return True
+
+    def float2LeftSide(self, tolerance=0):
+        self.left = self.getFloatLeftSide()
+
+    def float2Right(self, tolerance=0):
+        self.right = min(self.getFloatRightSide(), self.parent.w - self.css('mr'))
+
+    def float2RightSide(self, tolerance=0):
+        self.right = self.getFloatRightSide()
+
+
+

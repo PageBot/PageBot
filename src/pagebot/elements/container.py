@@ -27,9 +27,8 @@ class Container(Element):
         Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
         if elements is None: # If not set by caller, create an empty ordered elements list.
             elements = []
-        self._elements = elements
         # Cross reference searching for elements with Ids.
-        self._eIds = {} # Key is unique element id. Value is element.
+        self.elements = elements # Property sets self._eIds dictionary too.
 
     def __len__(self):
         u"""Answer total amount of elements, placed or not."""
@@ -37,11 +36,25 @@ class Container(Element):
 
     def __getitem__(self, eId):
         u"""Answer the element with eId. Raise a KeyError if the element does not exist."""
-        return self._eId2Element[eId]
+        return self._eIds[eId]
 
-    def getElements(self):
-        u"""Answer the list of child elements in sorted order."""
+    def __setitem__(self, eId, e):
+        if not e in self._elements:
+            self._elements.append(e)
+        self._eIds[eId] = e
+
+    def _get_elements(self):
         return self._elements
+    def _set_elements(self, elements):
+        self._elements = elements
+        self._eIds = {}
+        for e in elements:
+            self._eIds[e.eIds] = e
+    elements = property(_get_elements, _set_elements)
+
+    def _get_elementIds(self): # Answer the x-ref dictionary with elements by their e.eIds
+        return self._eIds
+    elementIds = property(_get_elementIds)
 
     def getElement(self, eId):
         u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
@@ -52,7 +65,7 @@ class Container(Element):
         value in the element position. Where None in the element position with not fit any xyz of the point."""
         elements = []
         px, py, pz = point3D(point) 
-        for e in self._elements:
+        for e in self.elements:
             ex, ey, ez = point3D(e.point)
             if (ex == px or px is None) and (ey == py or py is None) and (ez == pz or pz is None):
                 elements.append(e)
@@ -61,7 +74,7 @@ class Container(Element):
     def getElementsPosition(self):
         u"""Answer the dictionary of elements that have eIds and their positions."""
         elements = {}
-        for e in self._elements:
+        for e in self.elements:
             if e.eId:
                 elements[e.eId] = e.point
         return elements
@@ -69,7 +82,7 @@ class Container(Element):
     def getPositions(self):
         u""""Answer the dictionary of positions. Key is the local point of the child element. Value is list of elements."""
         positions = {}
-        for e in self._elements:
+        for e in self.elements:
             point = tuple(e.point)
             if not point in positions:
                 positions[point] = []
@@ -103,7 +116,7 @@ class Container(Element):
     def getFlows(self):
         u"""Answer the set of flow sequences on the page."""
         flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
-        for e in self.getElements():
+        for e in self.elements:
             if not e.isFlow:
                 continue
             # Now we know that this element has a e.nextBox and e.nextPage

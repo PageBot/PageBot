@@ -260,10 +260,11 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # Element info box
         showElementInfo = showElementInfo, # If True, elements show their info for debugging position, size and alignments.
         infoFont = DEFAULT_FONT, # Font of text in element infoBox.
-        infoFontSize = 3, # Font size of text in element info box.
-        infoLeading = 4, # Leading of text in element info box.
+        infoFontSize = 4, # Font size of text in element info box.
+        infoLeading = 5, # Leading of text in element info box.
         infoFill = (0.8, 0.8, 0.8, 0.9), # Color of text in element info box.
         infoTextFill = 0.1, # Color of text in element info box.
+        infoOriginMarkerSize = 4, # Radius of the info origin crosshair marker.
 
         # Generic element stuff
         missingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.

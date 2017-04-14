@@ -47,14 +47,14 @@ class Galley(Container):
         t = '[' + self.__class__.__name__
         if self.eId is not None:
             t += ' ' + self.eId
-        for e in self.getElements():
+        for e in self.elements:
             t += ' '+e.__class__.__name__
         return t + ']'
 
     def getMinSize(self):
         u"""Cumulation of the maximum minSize of all enclosed elements."""
         minW = minH = 0 # Let's see if we need bigger than this.
-        for e in self.getElements():
+        for e in self.elements:
             eMinW, eMinH = e.getMinSize()
             minW = max(minW, eMinW)
             minH += eMinH
@@ -67,7 +67,7 @@ class Galley(Container):
         if w and h: # Galley has fixed/forced size:
             return w, h
         # No fixed size set. Calculate required size from contained elements.
-        for e in self.getElements():
+        for e in self.elements:
             ew, eh = e.getSize()
             w = max(w, ew)
             h += eh
@@ -81,7 +81,7 @@ class Galley(Container):
 
     def getLastTextBox(self):
         u"""Answer the last text box in the sequence, so we can copy that style."""
-        elements = self.getElements()
+        elements = self.elements
         if not elements:
             return None
         for index in range(1, len(elements)-1):
@@ -91,7 +91,7 @@ class Galley(Container):
 
     def getLastElement(self):
         u"""Answer the last element in the sequence."""
-        elements = self.getElements()
+        elements = self.elements
         if not elements:
             return None
         return elements[-1]
