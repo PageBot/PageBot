@@ -15,7 +15,7 @@ import AppKit
 import Quartz
 
 import re
-from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth
+from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth, hyphenation
 from drawBot.context.baseContext import BaseContext
 
 from pagebot.style import NO_COLOR
@@ -238,6 +238,9 @@ def css(name, e, styles=None, default=None):
 def getFormattedString(t, e=None, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing
     their existence, so they can inherit from previous style formats."""
+
+    hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
+
     fs = FormattedString('')
     sFont = css('font', e, style)
     if sFont is not None:
@@ -311,7 +314,6 @@ def getFormattedString(t, e=None, style=None):
     sLanguage = css('language', e, style)
     if sLanguage is not None:
         fs.language(sLanguage)
-    #fs.hyphenation(style.hyphenation)
 
     sUpperCase = css('uppercase', e, style)
     sLowercase = css('lowercase', e, style)

@@ -13,6 +13,7 @@
 #     automatic layout template, Galley, Typesetter and Composer classes.
 #     Its purpose is to show the use of Validator
 #
+import myglobals 
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
@@ -102,14 +103,15 @@ ConditionV = 0
 # Python functions. For complex documents this is not the best method. More functions and classes
 # will be used in the real templates, which are available from the OpenSource PageBotTemplates repository.
     
-W, H = 400, 400#A4 # or A1
-H = W
+W, H = A4 # or A1
+#H = W
 
 W1 = 50
 W2 = 50
 W3 = 50
 W4 = 50
 W5 = 50
+WT = 200
 H1 = 50
 H2 = 50
 H3 = 50
@@ -129,6 +131,7 @@ Variable([
     dict(name='H4', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
     dict(name='W5', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
     dict(name='H5', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    dict(name='WT', ui='Slider', args=dict(minValue=100, value=200, maxValue=W)),
 ], globals())
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
@@ -149,7 +152,8 @@ RS = getRootStyle(
     fontSize = 10,
     rLeading = 0,
     showElementInfo = False,
-    originTop = True
+    originTop = True,
+    hyphenation = False,
 )
 
 EXPORT_PATH = '_export/ConditionalElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
@@ -182,9 +186,8 @@ def makeDocument(rootStyle):
     ]
     print colorCondition2
     textCondition = [ # Placement condition(s) for the text element..
-        Right2Right(),
-        Top2Top(),
-        #FloatRightBottom(),
+        FloatLeft(),
+        FloatTop(),
     ]
     # Obvious wrong placement of all elements, to be corrected by solving conditions.
     # In this example the wrongOrigin still shows the elements in the bottom left corner,
@@ -205,26 +208,28 @@ def makeDocument(rootStyle):
         conditions=colorCondition2, fill=(1, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
     e3 = page.rect(point=wrongOrigin, style=rootStyle, w=W3, h=H3, name='Floating element 3', 
         conditions=colorCondition2, fill=(1, 0, 1), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+    # Make text box at wrong origin. Apply same width a the color rect, which may
+    # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
+    # self.w to the maximum width for this pointSize.
+    if not hasattr(myglobals, 'blurbText'):
+        myglobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
+        style=dict(font='Georgia', fontSize=12, rLeading=0.2, textColor=0))
+    eTextBox = page.textBox(myglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
+        vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
+
     e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 
         conditions=colorCondition2, fill=(0, 1, 1), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
     e5 = page.rect(point=wrongOrigin, style=rootStyle, w=W5, h=H5, name='Floating element 5', 
         conditions=[FloatRightTopSides()], fill=(0, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
-    # Make text box at wrong origin. Apply same width a the color rect, which may
-    # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
-    # self.w to the maximum width for this pointSize.
-    blurbText = getFormattedString(blurb.getBlurb('article', noTags=True), page,
-        style=dict(font='Georgia', fontSize=9, rLeading=0.2, textColor=0))
-    #eTextBox = page.textBox(blurbText, point=wrongOrigin, style=rootStyle, w=w, 
-    #    vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
 
     score = page.evaluate()
-    print 'Page value on evaluation:', score
-    print score.fails
+    #print 'Page value on evaluation:', score
+    #print score.fails
     # Try to solve the problems if evaluation < 0
     if score.result < 0:
         print 'Solving', score
         page.solve()
-    print score.fails
+    #print score.fails
     # Evaluate again, result should now be >= 0
     score = page.evaluate()
     print 'Page value after solving the problems:', score
