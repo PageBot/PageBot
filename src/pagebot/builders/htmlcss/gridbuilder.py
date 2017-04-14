@@ -8,18 +8,18 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     simplehtmlcssbuilder.py
+#     gridbuilder.py
 #
-from pagebot.builders.basebuilder import BaseBuilder
+#     Model after alistapart.com/article/practical-grid
+#
+from pagebot.builders.htmlcss.basebuilder import BaseBuilder
 
-class SimpleHmtlCssBuilder(BaseBuilder):
-    def __init__(self, document, ):
-        self._document = document
+class GridBuilder(BaseBuilder):
 
     def build(self, path, format=None, pageSelection=None, multiPage=True, buildHead=True, buildBody=True, buildCss=True):
         u"""Build simple HTML/CSS site of static code, interpreting the content of self.document."""
         if buildCss:
-            self.builsCss()
+            self.buildCss()
         if buildHead:
             self.buildHead()
         if buildBody:

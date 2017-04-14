@@ -185,18 +185,11 @@ def makeDocument(rootStyle):
         Top2Top(),
         #FloatRightBottom(),
     ]
+    print colorCondition2
     textCondition = [ # Placement condition(s) for the text element..
-        Center2Center(), 
-        #Left2Left(), 
-        #Left2LeftSide(), 
-        #Right2Right(), 
-        #Right2RightSide(), 
-        #Center2VerticalCenter(), 
-        Top2Top(), 
-        #Top2TopSide(), 
-        #Origin2Top(), 
-        #Bottom2Bottom(), 
-        #Bottom2BottomSide()
+        Right2Right(),
+        Top2Top(),
+        #FloatRightBottom(),
     ]
     # Obvious wrong placement of all elements, to be corrected by solving conditions.
     # In this example the wrongOrigin still shows the elements in the bottom left corner,
