@@ -28,7 +28,7 @@ from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installe
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
 from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
-from pagebot.toolbox.transformer import pointOrigin2D
+from pagebot.toolbox.transformer import pointOffset
 
 class VariationCircle(Element):
     u"""Interpret the content of the self.font variation font and draw a circle info graphic on that info."""
@@ -69,10 +69,10 @@ class VariationCircle(Element):
 
     def draw(self, origin):
         u"""Draw the circle info-graphic, showing most info about the variation font as can be interpreted from the file."""
-        p = pointOrigin2D(self.point, origin)
+        p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
-        px, py = self._applyAlignment(p)
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
    
         fill(0.9)
         stroke(None)

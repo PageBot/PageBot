@@ -12,12 +12,12 @@
 from __future__ import division
 
 import pagebot
-from pagebot.page import Template
+from pagebot.elements.page import Template
 # For Variation Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variationcircle import VariationCircle
+from pagebot.elements.variationfonts.variationcircle import VariationCircle
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -93,7 +93,7 @@ class VariationCircleSpecimen(TypeSpecimen):
         # Show grid columns and paddings if rootStyle.showGrid or 
         # rootStyle.showGridColumns are True.
         # The grid is just a regular element, like all others on the page. Same parameters apply.
-        template.grid(rs)  
+        template.grid(style=rs)  
         # Add named text box to template for main specimen text.
         template.cTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
         template.cTextBox('', 1, 1, 5, 6, eId=self.specimenBoxId, style=rs)       
@@ -109,8 +109,8 @@ class VariationCircleSpecimen(TypeSpecimen):
         # Using the first page as cover (to be filled...)
         page = doc[1]
         glyphName = 'A'        
-        scatter = VariationCircle(decovar, w=500, h=500, s=glyphName)
-        page.place(scatter, 50, 100)
+        scatter = VariationCircle(decovar, point=(50, 100), w=500, h=500, s=glyphName)
+        page.append(scatter)
                     
 # Create a new specimen publications and add the list of system fonts.
 typeSpecimen = VariationCircleSpecimen([decovarName], showGrid=DEBUG) 
