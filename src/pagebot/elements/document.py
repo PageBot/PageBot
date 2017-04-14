@@ -237,13 +237,8 @@ class Document(object):
             template = self._getDefaultTtemplate()
         return template
 
-    def export(self, fileName, pageSelection=None, multiPage=True):
-        u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
-        it must be a list with page numbers to export. This allows the order to be changed and pages to
-        be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
-        drawing and export that needs to be done.
-        The multiPage value is passed on to the DrawBot saveImage call.
-
+    def drawPages(self, pageSelection=None):
+        u"""
         document.export(...) is the most common way to export documents. But in special cases, there is not 
         straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use 
         MyBuilder(document).export(fileName), the builder is responsible to query the document, pages, elements and styles."""
@@ -259,6 +254,15 @@ class Document(object):
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             page.draw(((self.w - page.w)/2, (self.h - page.h)/2)) 
+
+    def export(self, fileName, pageSelection=None, multiPage=True):
+        u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
+        it must be a list with page numbers to export. This allows the order to be changed and pages to
+        be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
+        drawing and export that needs to be done.
+        The multiPage value is passed on to the DrawBot saveImage call.
+        """
+        self.drawPages(pageSelection)
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
         # then set the global frame duration.

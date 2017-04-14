@@ -50,8 +50,8 @@ def clearFonts():
 # Kinda hack, storing in empty module, to prevent globals to re-initialized, if variables are changed.
 import myglobals
 
-if not hasattr(myglobals, 'initialized'):
-    myglobals.initialized = True
+if not hasattr(myglobals, 'initializedLayerEditor'):
+    myglobals.initializedLayerEditor = True
     # Store Italics flag, so we can test if it changed.
     myglobals.italics = Italics
     # Store Use_BitPath flag, so we can test if it changed.

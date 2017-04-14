@@ -246,8 +246,14 @@ def getFormattedString(t, e=None, style=None):
     if sFont is not None:
         fs.font(sFont)
     sFontSize = css('fontSize', e, style)
+    sLeading = css('leading', e, style)
+    rLeading = css('rLeading', e, style)
+    if sLeading or (rLeading and sFontSize):
+        lineHeight = (sLeading or 0) + (rLeading or 0) * (sFontSize or 0)
+        if lineHeight:
+            fs.lineHeight(lineHeight)
     if sFontSize is not None:
-        fs.fontSize(sFontSize)
+        fs.fontSize(sFontSize) # For some reason fontSize must be set after leading.
     sFallbackFont = css('fallbackFont', e, style)
     if sFallbackFont is not None:
         fs.fallbackFont(sFallbackFont)
@@ -266,11 +272,7 @@ def getFormattedString(t, e=None, style=None):
         setStrokeColor(sCmykStroke, sStrokeWidth, fs, cmyk=True)
     sAlign = css('align', e, style)
     if sAlign is not None:
-        fs.align(sAlign)
-    sLeading = css('leading', e, style)
-    rLeading = css('rLeading', e, style)
-    if sLeading or (rLeading and sFontSize):
-        fs.lineHeight((sLeading or 0) + (rLeading or 0) * (sFontSize or 0))
+        fs.align(sAlign)    
     sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
     rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
     if sParagraphTopSpacing or (rParagraphTopSpacing and sFontSize):
@@ -324,7 +326,7 @@ def getFormattedString(t, e=None, style=None):
         t = t.lower()
     elif sCapitalized:
         t = t.capitalize()
-
+    
     return fs + t
 
 def textBoxBaseLines(txt, box):

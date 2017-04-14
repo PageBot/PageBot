@@ -58,6 +58,20 @@ class FitRight(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.fitRight(), e, score)
 
+class FitWidth(Condition):
+	def test(self, e):
+		return e.isLeftOnLeft(self.tolerance) and e.isRightOnRight(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.left2Left() and e.fitRight(), e, score)
+		
+class FitHeight(Condition):
+	def test(self, e):
+		return e.isTopOnTop(self.tolerance) and e.isBottomOnBottom(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.top2Top() and e.fitBottom(), e, score)
+		
 class FitTop(Condition):
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance)
