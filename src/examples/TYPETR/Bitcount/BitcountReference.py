@@ -371,7 +371,7 @@ def makeDocument(rs):
 
     # Set all pagenumbers and other page-based info
     for pageId, page in sorted(doc.pages.items()):
-        for e, _ in page.getElements():
+        for e in page.elements:
             if e.eId == pageNumberId:
                 e.setText('%s' % pageId)
                 break

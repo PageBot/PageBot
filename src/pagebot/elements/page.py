@@ -62,15 +62,12 @@ class Page(Container):
     def setTemplate(self, template):
         u"""Clear the elements from the page and set the template. Copy the elements."""
         self.elements = [] # Sequential drawing order of Element instances.
-        # Stored elements by their unique id, so they can be altered later, before rendering starts.
-        self.elementIds = {}
         self.placed = {} # Placement by (x,y) key. Value is a list of elements.
         self.template = template # Keep in order to clone pages or if addition info is needed.
         if template is not None:
             # Copy elements from the template and put them in the designated positions.
-            for element in template.getElements():
+            for element in template.elements:
                 self.append(copy.copy(element))
-
 
     def XXXreplaceElement(self, element, replacement):
         u"""Find this element in the page and replace it at the
@@ -389,7 +386,7 @@ class Page(Container):
         if self.parent.h > self.h:
             py = (self.parent.h - self.h) / 2
         # Draw all elements with this offset.
-        for e in self.getElements():
+        for e in self.elements:
             e.draw((px, py, 0)) 
         # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
         self._drawPageMetaInfo(origin)

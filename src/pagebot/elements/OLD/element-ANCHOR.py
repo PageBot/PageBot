@@ -646,10 +646,6 @@ class Element(object):
             lineTo((ox, oy + self.h))
             drawPath()
 
-    def getElements(self):
-        u"""Default element does not have children."""
-        return []
-
     def getElementsBox(self):
         u"""Answer the vacuum bounding box around all child elements."""
         x1 = y1 = x2 = y2 = None
@@ -677,7 +673,7 @@ class Element(object):
             score = Score()
         for condition in self.css('conditions', []): # Skip in case there are no conditions in the style.
             condition.evaluate(self, score)
-        for e in self.getElements(): # Also works if element is not a container.
+        for e in self.elements: # Also works if element is not a container.
             e.evaluate(score)
         return score
          
@@ -687,7 +683,7 @@ class Element(object):
             score = Score()
         for condition in self.css('conditions', []): # Skip in case there are no conditions in the style.
             condition.solve(self, score)
-        for e in self.getElements(): # Also works if element is not a container.
+        for e in self.elements: # Also works if element is not a container.
             e.solve(score)
         return score
          

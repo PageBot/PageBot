@@ -68,6 +68,17 @@ ConditionsV = [
 	Top2TopSide(),
 	Top2VerticalCenter(),
 	Top2VerticalCenterSides(),
+	FloatTop(),
+	FloatBottom(),
+	FloatTopLeft(),
+	FloatTopRight(),
+	FloatBottomLeft(),
+	FloatBottomRight(),
+	FloatLeftTop(),
+	FloatRightTop(),
+	FloatLeftBottom(),
+	FloatRightBottom(),
+	
 ]
 ConditionsH = [
 	Center2Center(),
@@ -98,6 +109,16 @@ ConditionsH = [
 	Right2Left(),
 	Right2Right(),
 	Right2RightSide(),
+	FloatLeft(),
+	FloatRight(),
+	FloatTopLeft(),
+	FloatTopRight(),
+	FloatBottomLeft(),
+	FloatBottomRight(),
+	FloatLeftTop(),
+	FloatRightTop(),
+	FloatLeftBottom(),
+	FloatRightBottom(),
 ]
 ConditionsVDict = {}
 for condition in ConditionsV:
@@ -160,17 +181,9 @@ def makeDocument(rootStyle):
     ]
     print colorCondition1
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.
-        Center2Center(), 
-        #Left2Left(), 
-        #Left2LeftSide(), 
-        #Right2Right(), 
-        #Right2RightSide(), 
-        #Center2VerticalCenter(), 
-        Top2Top(), 
-        #Top2TopSide(), 
-        #Origin2Top(), 
-        #Bottom2Bottom(), 
-        #Bottom2BottomSide()
+        Right2Right(),
+        Top2Top(),
+        #FloatRightBottom(),
     ]
     textCondition = [ # Placement condition(s) for the text element..
         Center2Center(), 
@@ -201,10 +214,12 @@ def makeDocument(rootStyle):
         fill=0.9)
     # Add some color elements (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
-    e1 = page.rect(point=wrongOrigin, style=rootStyle, name='Other element', w=100, h=150, conditions=colorCondition1, 
-        fill=(1, 0.5, 0.5), align=RIGHT_ALIGN, vAlign=TOP_ALIGN)
-    #e2 = page.rect(point=wrongOrigin, style=rootStyle, w=w, h=100, conditions=colorCondition2, 
-    #    fill=(1, 1, 0), align=CENTER, vAlign=CENTER)
+    #e1 = page.rect(point=wrongOrigin, style=rootStyle, name='Other element', w=100, h=150, conditions=colorCondition1, 
+    #    fill=(1, 0.5, 0.5), align=RIGHT_ALIGN, vAlign=TOP_ALIGN)
+    e2 = page.rect(point=wrongOrigin, style=rootStyle, w=50, h=50, name='Floating element', 
+        conditions=colorCondition2, fill=(1, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+    print e2.getFloatLeftSide()
+    print e2.getFloatRightSide()
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
