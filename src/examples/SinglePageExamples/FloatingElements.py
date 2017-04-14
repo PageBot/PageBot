@@ -144,10 +144,10 @@ Variable([
 RS = getRootStyle(
     w = W,
     h = H,
-    ml = 100,
-    mt = 50,
-    mr = 30,
-    mb = 100,
+    pl = 100, # Padding of page.
+    pt = 50,
+    pr = 30,
+    pb = 100,
     conditions = [],
     fontSize = 10,
     rLeading = 0,
