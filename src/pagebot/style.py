@@ -81,6 +81,7 @@ SHOW_GRID_COLUMNS = True
 SHOW_BASELINE_GRID = True
 SHOW_ELEMENT_BOX = False
 SHOW_ELEMENT_INFO = False
+SHOW_ELEMENT_ORIGIN = False
 SHOW_FLOW_CONNECTIONS = True
 SHOW_CROPMARKS = True
 SHOW_PAGE_FRAME = True
@@ -116,8 +117,8 @@ def makeStyle(style=None, **kwargs):
     return style
 
 def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, showElementBox=SHOW_ELEMENT_BOX,
-        showElementInfo=SHOW_ELEMENT_INFO, showBaselineGrid=SHOW_BASELINE_GRID, showFlowConnection=SHOW_FLOW_CONNECTIONS, 
-        showCropMarks=SHOW_CROPMARKS, showPageFrame=SHOW_PAGE_FRAME, 
+        showElementInfo=SHOW_ELEMENT_INFO, showElementOrigin=SHOW_ELEMENT_ORIGIN, showBaselineGrid=SHOW_BASELINE_GRID, 
+        showFlowConnection=SHOW_FLOW_CONNECTIONS, showCropMarks=SHOW_CROPMARKS, showPageFrame=SHOW_PAGE_FRAME, 
         showPageInfo=SHOW_PAGE_INFO, **kwargs):
     u"""Answer the main root style tha contains all default style attributes of PageBot.
     To be overwritten when needed by calling applications.
@@ -259,6 +260,7 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
 
         # Element info box
         showElementInfo = showElementInfo, # If True, elements show their info for debugging position, size and alignments.
+        showElementOrigin = showElementOrigin, # If True, show position of origin relative to an element.
         infoFont = DEFAULT_FONT, # Font of text in element infoBox.
         infoFontSize = 4, # Font size of text in element info box.
         infoLeading = 5, # Leading of text in element info box.
@@ -306,8 +308,8 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
 
         # Vertical spacing for absolute and fontsize-related measures
         baselineGrid = baselineGrid,
-        leading = baselineGrid, # Relative factor to fontSize.
-        rLeading = 0, # Relative factor to fontSize.
+        leading = 0, # Absolute leading value (can be used complementary to rLeading).
+        rLeading = 1, # Relative factor to fontSize.
         paragraphTopSpacing = 0, # Only works if there is a prefix style value != 0
         rParagraphTopSpacing = 0,  # Only works if there is a prefix style value != 0
         paragraphBottomSpacing = 0,  # Only works if there is a postfix style value != 0

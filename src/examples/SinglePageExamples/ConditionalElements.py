@@ -103,8 +103,8 @@ ConditionV = 0
 # Python functions. For complex documents this is not the best method. More functions and classes
 # will be used in the real templates, which are available from the OpenSource PageBotTemplates repository.
     
-W, H = A4 # or A1
-#H = W
+W, H = A1#A4 or A1
+H = W
 
 W1 = 50
 W2 = 50
@@ -213,7 +213,7 @@ def makeDocument(rootStyle):
     # self.w to the maximum width for this pointSize.
     if not hasattr(myglobals, 'blurbText'):
         myglobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
-        style=dict(font='Georgia', fontSize=12, rLeading=0.2, textColor=0))
+        style=dict(font='Georgia', fontSize=12, leading=16, textColor=0))
     eTextBox = page.textBox(myglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
         vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
 

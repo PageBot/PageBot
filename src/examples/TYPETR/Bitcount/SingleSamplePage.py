@@ -14,9 +14,10 @@
 import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
-from pagebot.document import Document
-from pagebot.page import Page, Template
-from pagebot.composition import Composer, Typesetter
+from pagebot.elements.document import Document
+from pagebot.elements.page import Page, Template
+from pagebot.composer import Composer
+from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley
 from pagebot.style import A4
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
@@ -167,7 +168,7 @@ def makeDocument(rs):
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 1, 0, 6, 6, rs, eId=mainId)
+    template1.cTextBox('', 1, 0, 6, 6, style=rs, eId=mainId)
     
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.

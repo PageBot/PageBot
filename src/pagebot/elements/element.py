@@ -606,7 +606,8 @@ class Element(object):
         return s
 
     def _drawElementInfo(self, origin):
-        u"""For debugging this will make the elements show their info."""
+        u"""For debugging this will make the elements show their info. The css flag "showElementOrigin"
+        defines if the origin marker of an element is drawn."""
         if self.css('showElementInfo'):
              # Draw crossed rectangle.
             p = pointOffset(self.point, origin)
@@ -630,18 +631,20 @@ class Element(object):
             strokeWidth(0.25)
             rect(tpx, tpy, tw+2.5*M, th+1.5*M)
             text(fs, (tpx+M, tpy+1.5*M))
+            self._restoreScale()
 
+        if self.css('showElementOrigin'):
             # Draw origin of the element
+            p = pointOffset(self.point, origin)
+            opx, opy, _ = self._applyOrigin(p)    
             S = self.css('infoOriginMarkerSize', 4)
             fill(None)
             stroke(0)
             strokeWidth(0.25)
-            opx, opy, _ = op
             oval(opx-S, opy-S, 2*S, 2*S)
             line((opx-S, opy), (opx+S, opy))
             line((opx, opy-S), (opx, opy+S))
 
-            self._restoreScale()
             
     def _drawMissingElementRect(self, origin):
         u"""When designing templates and pages, this will draw a filled rectangle on the element
