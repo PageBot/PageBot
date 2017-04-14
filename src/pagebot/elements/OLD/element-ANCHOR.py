@@ -649,7 +649,7 @@ class Element(object):
     def getElementsBox(self):
         u"""Answer the vacuum bounding box around all child elements."""
         x1 = y1 = x2 = y2 = None
-        for e in self.getElements():
+        for e in self.elements:
             if x1 is None or x1 > e.left:
                 x1 = e.left
             if e.originTop:
