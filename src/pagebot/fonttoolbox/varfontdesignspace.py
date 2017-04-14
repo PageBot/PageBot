@@ -59,7 +59,7 @@ class TTVarFontGlyphSet(object):
     # TODO: CHange to PageBot Font wrapper
     def __init__(self, ttFont):
         self._ttFont = ttFont
-        self._axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in font['fvar'].axes}
+        self._axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in ttFont['fvar'].axes}
         self.setLocation({})
     
     def setLocation(self, location):
