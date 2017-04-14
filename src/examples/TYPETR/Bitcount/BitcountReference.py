@@ -42,7 +42,7 @@ RS = getRootStyle(
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 842, # 842 = A4 height. Other example: page height 11", international generic fit.
-    ml = 8*U, # Margin left rs.mt = 7*U # Margin top
+    pl = 8*U, # Padding left rs.mt = 7*U # Padding top
     baselineGrid = 14,#baselineGrid,
     gw = 2*U, # Generic gutter, equal for width and height
     gh = 2*U,
@@ -134,7 +134,7 @@ def makeDocument(rs):
     
     # Template for Table of Content
     templateToc = Template(rs) # Create template for Table of Content
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    # Show grid columns and paddngs if rootStyle.showGrid or rootStyle.showGridColumns are True
     templateToc.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateToc.baselineGrid(rs)
@@ -143,7 +143,7 @@ def makeDocument(rs):
     
     # Template for literature reference index.
     templateLiteratureIndex = Template(rs) # Create template for Table of Content
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    # Show grid columns and paddings if rootStyle.showGrid or rootStyle.showGridColumns are True
     templateLiteratureIndex.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateLiteratureIndex.baselineGrid(rs)
@@ -152,7 +152,7 @@ def makeDocument(rs):
     
     # Template for image reference index.
     templateImageIndex = Template(rs) # Create template for Table of Content
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    # Show grid columns and padding if rootStyle.showGrid or rootStyle.showGridColumns are True
     templateImageIndex.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateImageIndex.baselineGrid(rs)
@@ -161,7 +161,7 @@ def makeDocument(rs):
     
     # Template 1
     template1 = Template(rs) # Create template of main size. Front page only.
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    # Show grid columns and paddings if rootStyle.showGrid or rootStyle.showGridColumns are True
     template1.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)

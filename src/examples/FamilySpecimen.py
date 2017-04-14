@@ -33,7 +33,7 @@ class FBFamilySpecimen(TypeSpecimen):
     def makeTemplate(self, rs):
         # Template for the main page.
         template = Template(style=rs) # Create second template. This is for the main pages.
-        # Show grid columns and margins if rootStyle.showGrid or 
+        # Show grid columns and paddings if rootStyle.showGrid or 
         # rootStyle.showGridColumns are True.
         # The grid is just a regular element, like all others on the page. Same parameters apply.
         template.grid()  

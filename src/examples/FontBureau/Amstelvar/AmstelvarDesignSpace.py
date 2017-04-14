@@ -90,7 +90,7 @@ class VariationCircleSpecimen(TypeSpecimen):
         hyphenation(False)
         # Template for the main page.
         template = Template(style=rs) # Create second template. This is for the main pages.
-        # Show grid columns and margins if rootStyle.showGrid or 
+        # Show grid columns and paddings if rootStyle.showGrid or 
         # rootStyle.showGridColumns are True.
         # The grid is just a regular element, like all others on the page. Same parameters apply.
         template.grid()  
@@ -111,8 +111,8 @@ class VariationCircleSpecimen(TypeSpecimen):
         glyphName = 'A'
         
         
-        p = page.css('ml'), page.css('mt')
-        variationCircle = VariationCircle(varFont, p, w=500, h=500, s=glyphName)
+        p = page.css('pl'), page.css('pt')
+        variationCircle = VariationCircle(varFont, point=p, w=500, h=500, s=glyphName)
         page.append(variationCircle)
                     
 # Create a new specimen publications and add the list of system fonts.

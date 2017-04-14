@@ -33,18 +33,18 @@ class Grid(Element):
         gutterH = self.css('gh') # Gutter height
         columnWidth = self.css('cw') # Column width
         columnHeight = self.css('ch') # Column height
-        marginLeft = self.css('ml') # Margin left
-        marginTop = self.css('mt') # Margin top
-        marginRight = self.css('mr') # Margin right
-        marginBottom = self.css('mb') # Margin bottom
+        padL = self.css('pl') # Padding left
+        padT = self.css('pt') # Padding top
+        padR = self.css('pr') # padding right
+        padB = self.css('pb') # padding bottom
         w = self.w
         h = self.h
         if self.css('showGridColumns') and sGridFill is not NO_COLOR:
             setFillColor(sGridFill)
             setStrokeColor(None)
-            ox = px + marginLeft
-            while ox < w - marginRight - columnWidth:
-                oy = h - marginTop - columnHeight - gutterH
+            ox = px + padL
+            while ox < w - padR - columnWidth:
+                oy = h - padT - columnHeight - gutterH
                 while oy >= 0:
                     rect(ox, oy + gutterH, columnWidth, columnHeight)
                     oy -= columnHeight + gutterH
@@ -57,10 +57,10 @@ class Grid(Element):
             M = 16
             fs = getFormattedString('', self, dict(font='Verdana', align='right', fontSize=M/2,
                 stroke=None, textFill=self.css('gridStroke')))
-            ox = px + marginLeft
+            ox = px + padL
             index = 0
-            oy = h - marginTop - py
-            while ox < px + w - marginRight:
+            oy = h - padT - py
+            while ox < px + w - padR:
                 newPath()
                 moveTo((ox, py))
                 lineTo((ox, py + h))
@@ -78,7 +78,7 @@ class Grid(Element):
                 moveTo((px, oy - columnHeight))
                 lineTo((px+w, oy - columnHeight))
                 drawPath()
-                text(fs + repr(index), (px + marginLeft - M / 2, oy - M * 0.6))
+                text(fs + repr(index), (px + padL - M / 2, oy - M * 0.6))
                 index += 1
                 oy -= columnHeight + gutterH
 
@@ -97,14 +97,14 @@ class BaselineGrid(Grid):
             p = self._applyScale(p)    
             px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-            oy = self.h - self.css('mt') - py
+            oy = self.h - self.css('pt') - py
             line = 0
             M = 16
             # Format of line numbers.
             # TODO: DrawBot align and fill don't work properly now.
             fs = getFormattedString('', self, dict(font=self.css('fallbackFont','Verdana'), align='right', fontSize=M/2,
                 stroke=None, textFill=self.css('gridStroke')))
-            while oy > self.css('mb', 0):
+            while oy > self.css('pb', 0):
                 setFillColor(None)
                 setStrokeColor(self.css('baselineGridStroke', NO_COLOR), self.css('gridStrokeWidth'))
                 newPath()

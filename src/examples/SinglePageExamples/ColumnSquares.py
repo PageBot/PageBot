@@ -34,9 +34,7 @@ SQUARE = 10 * GUTTER # Size of the squares
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
-RS = getRootStyle()
-RS['w'] = W
-RS['h'] = H
+RS = getRootStyle(w=W, h=H)
 
 # Setting value for demo purpose, it is style default, using the elements origin as top-left. 
 # Change to False will show origin of elements in their bottom-left corner.
@@ -61,8 +59,8 @@ def makeDocument(rs):
     sqy = int(H/(square + gutter))
     # Calculate centered margins for the amount of fitting squares.
     # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
-    rs['ml'] = mx = (W - sqx*(square + gutter) + gutter)/2
-    rs['mt'] = rs['mb'] = my = (H - sqy*(square + gutter) + gutter)/2
+    rs['pl'] = padX = (W - sqx*(square + gutter) + gutter)/2
+    rs['pt'] = rs['pb'] = my = (H - sqy*(square + gutter) + gutter)/2
     rs['cw'] = rs['ch'] = square
     rs['gw'] = rs['gh'] = gutter # Gutter width and gutter height
 
@@ -79,7 +77,7 @@ def makeDocument(rs):
             # Create Rect object and place it in the page on position p
             page.cOval(ix, iy, 1, 1, fill=color2, stroke=None)    
             # Now drawing with point coordinates needs to align with the column positions.         
-            p = mx + ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
+            p = padX+ ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
             page.rect(p, w=square, h=square, fill=None, stroke=0, strokeWidth=0.5)
             # Mark the origin coordinate. Size is fraction of column width, converted from gutter.
             cSquare = w2cw(gutter, page)
