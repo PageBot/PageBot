@@ -472,11 +472,4 @@ class Origin2BottomSide(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.origin2BottomSide(), e, score)
 
-"""
-FloatTopLeft
-FloatTopRight
-FloatBottomLeft
-FloatBottomRight
-
-"""
 

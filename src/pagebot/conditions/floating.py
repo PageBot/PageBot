@@ -139,6 +139,64 @@ class FloatBottomRight(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.float2Bottom() and e.float2Right(), e, score)
 
+# Combination sides
+
+class FloatLeftTopSides(Condition):
+	def test(self, e):
+		return e.isFloatLeftSide(self.tolerance) and e.isFloatTopSide(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.float2LeftSide() and e.float2TopSide(), e, score)
+
+class FloatTopLeftSides(Condition):
+	def test(self, e):
+		return e.isFloatTopSide(self.tolerance) and e.isFloatLeftSide(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.float2TopSide() and e.float2LeftSide(), e, score)
+
+class FloatRightTopSides(Condition):
+	def test(self, e):
+		return e.isFloatRightSide(self.tolerance) and e.isFloatTopSide(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.float2RightSide() and e.float2TopSide(), e, score)
+
+class FloatTopRightSides(Condition):
+	def test(self, e):
+		return e.isFloatTopSide(self.tolerance) and e.isFloatRightSide(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.float2TopSide() and e.float2RightSide(), e, score)
+
+class FloatLeftBottomSides(Condition):
+	def test(self, e):
+		return e.isFloatLeftSide(self.tolerance) and e.isFloatBottomSide(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.float2LeftSide() and e.float2BottomSide(), e, score)
+
+class FloatBottomLeftSides(Condition):
+	def test(self, e):
+		return e.isFloatBottomSide(self.tolerance) and e.isFloatLeftSide(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.float2BottomSide() and e.float2LeftSide(), e, score)
+
+class FloatRightBottomSides(Condition):
+	def test(self, e):
+		return e.isFloatRightSide(self.tolerance) and e.isFloatBottomSide(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.float2RightSide() and e.float2BottomSide(), e, score)
+
+class FloatBottomRightSides(Condition):
+	def test(self, e):
+		return e.isFloatBottomSide(self.tolerance) and e.isFloatRightSide(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.float2BottomSide() and e.float2RightSide(), e, score)
+
 
 
 

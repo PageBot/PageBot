@@ -53,10 +53,6 @@ ConditionsV = [
 	Center2TopSide(),
 	Center2VerticalCenter(),
 	Center2VerticalCenterSides(),
-	FitBottom(),
-	FitBottomSide(),
-	FitTop(),
-	FitTopSide(),
 	Origin2Bottom(),
 	Origin2BottomSide(),
 	Origin2Top(),
@@ -67,18 +63,7 @@ ConditionsV = [
 	Top2Top(),
 	Top2TopSide(),
 	Top2VerticalCenter(),
-	Top2VerticalCenterSides(),
-	FloatTop(),
-	FloatBottom(),
-	FloatTopLeft(),
-	FloatTopRight(),
-	FloatBottomLeft(),
-	FloatBottomRight(),
-	FloatLeftTop(),
-	FloatRightTop(),
-	FloatLeftBottom(),
-	FloatRightBottom(),
-	
+	Top2VerticalCenterSides(),	
 ]
 ConditionsH = [
 	Center2Center(),
@@ -87,12 +72,6 @@ ConditionsH = [
 	Center2LeftSide(),
 	Center2Right(),
 	Center2RightSide(),
-	Fit(),
-	FitLeft(),
-	FitLeftSide(),
-	FitRight(),
-	FitRightSide(),
-	FitSides(),
 	Left2Center(),
 	Left2CenterSides(),
 	Left2Left(),
@@ -109,16 +88,6 @@ ConditionsH = [
 	Right2Left(),
 	Right2Right(),
 	Right2RightSide(),
-	FloatLeft(),
-	FloatRight(),
-	FloatTopLeft(),
-	FloatTopRight(),
-	FloatBottomLeft(),
-	FloatBottomRight(),
-	FloatLeftTop(),
-	FloatRightTop(),
-	FloatLeftBottom(),
-	FloatRightBottom(),
 ]
 ConditionsVDict = {}
 for condition in ConditionsV:
@@ -128,12 +97,6 @@ for condition in ConditionsH:
     ConditionsHDict[condition.__class__.__name__] = condition
 ConditionH = 0
 ConditionV = 0
-
-Variable([
-    dict(name='ConditionH', ui='PopUpButton', args=dict(items=sorted(ConditionsHDict.keys()))),
-    dict(name='ConditionV', ui='PopUpButton', args=dict(items=sorted(ConditionsVDict.keys()))),
-], globals())
-
        
 # For clarity, most of the OneValidatingPage.py example documenet is setup as a sequential excecution of
 # Python functions. For complex documents this is not the best method. More functions and classes
@@ -141,6 +104,32 @@ Variable([
     
 W, H = 400, 400#A4 # or A1
 H = W
+
+W1 = 50
+W2 = 50
+W3 = 50
+W4 = 50
+W5 = 50
+H1 = 50
+H2 = 50
+H3 = 50
+H4 = 50
+H5 = 50
+
+Variable([
+    #dict(name='ConditionH', ui='PopUpButton', args=dict(items=sorted(ConditionsHDict.keys()))),
+    #dict(name='ConditionV', ui='PopUpButton', args=dict(items=sorted(ConditionsVDict.keys()))),
+    dict(name='W1', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='H1', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    dict(name='W2', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='H2', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    dict(name='W3', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='H3', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    dict(name='W4', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='H4', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    dict(name='W5', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='H5', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+], globals())
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot values are filled by their default values. The root style is kept in RS
@@ -154,12 +143,12 @@ RS = getRootStyle(
     h = H,
     ml = 100,
     mt = 50,
-    mr = 50,
+    mr = 30,
     mb = 100,
     conditions = [],
     fontSize = 10,
     rLeading = 0,
-    showElementInfo = True,
+    showElementInfo = False,
     originTop = True
 )
 
@@ -180,10 +169,16 @@ def makeDocument(rootStyle):
         ConditionsVDict[sorted(ConditionsVDict.keys())[ConditionV]],
     ]
     print colorCondition1
+    colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
+        Right2Right(),
+        #Right2Right(),
+        Top2Top(),
+    ]
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.
         Right2Right(),
-        Top2Top(),
-        #FloatRightBottom(),
+        #Top2Bottom(),
+        FloatLeft(),
+        FloatTop(),
     ]
     print colorCondition2
     textCondition = [ # Placement condition(s) for the text element..
@@ -197,22 +192,23 @@ def makeDocument(rootStyle):
     wrongOrigin = (-300, -300)
     
     page = doc[1] # Get the first/single page of the document.
-    if page.originTop:
-        p = (page.css('ml'), page.css('mt'))
-    else:
-        p = (page.css('ml'), page.css('mb'))
-    e0 = page.rect(point=p, style=rootStyle, name='Page area',
-        w=page.w - page.css('ml') - page.css('mr'),
-        h = page.h - page.css('mt') - page.css('mb'),
-        fill=0.9)
+
+    e0 = page.rect(name='Page area', conditions=[Fit()], fill=0.9)
+    e0.z = -10 # Other z-layer, makes this element be ignored on floating checks.
+
     # Add some color elements (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
-    #e1 = page.rect(point=wrongOrigin, style=rootStyle, name='Other element', w=100, h=150, conditions=colorCondition1, 
-    #    fill=(1, 0.5, 0.5), align=RIGHT_ALIGN, vAlign=TOP_ALIGN)
-    e2 = page.rect(point=wrongOrigin, style=rootStyle, w=50, h=50, name='Floating element', 
+    e1 = page.rect(point=wrongOrigin, style=rootStyle, name='Other element', 
+        w=W1, h=H1, conditions=colorCondition1, 
+        fill=(1, 0.5, 0.5), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+    e2 = page.rect(point=wrongOrigin, style=rootStyle, w=W2, h=H2, name='Floating element 2', 
         conditions=colorCondition2, fill=(1, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
-    print e2.getFloatLeftSide()
-    print e2.getFloatRightSide()
+    e3 = page.rect(point=wrongOrigin, style=rootStyle, w=W3, h=H3, name='Floating element 3', 
+        conditions=colorCondition2, fill=(1, 0, 1), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+    e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 
+        conditions=colorCondition2, fill=(0, 1, 1), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+    e5 = page.rect(point=wrongOrigin, style=rootStyle, w=W5, h=H5, name='Floating element 5', 
+        conditions=[FloatRightTopSides()], fill=(0, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
