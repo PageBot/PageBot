@@ -24,14 +24,14 @@ def x2cx(x, e):
     gutterH = e.css('gw', 0)
     cw = e.css('cw', 0)
     if cw + gutterH: # Check on division by 0
-        return (x - e.css('ml', 0)) / (cw + gutterH)
+        return (x - e.css('pl', 0)) / (cw + gutterH)
     return 0
 
 def cx2x(cx, e):
     if cx is None:
         x = 0
     else:
-        x = e.css('ml', 0) + cx * (e.css('cw', 0) + e.css('gw', 0))
+        x = e.css('pl', 0) + cx * (e.css('cw', 0) + e.css('gw', 0))
     return x
   
 def y2cy(y, e):
@@ -41,19 +41,19 @@ def y2cy(y, e):
     cy = 0
     if ch + gutterH: # Check on division by 0
         if e.originTop:
-            cy = (y - e.css('mt', 0)) / (ch + gutterH)
+            cy = (y - e.css('pt', 0)) / (ch + gutterH)
         else:
-            cy = (y - e.css('mb', 0)) / (ch + gutterH)
+            cy = (y - e.css('pb', 0)) / (ch + gutterH)
     return cy 
 
 def cy2y(cy, e):
     u"""Transform from column y value to y value, using the e.css for colunn values."""
     if cy is None:
         y = 0
-    elif e.originTop:
-        y = e.css('mt', 0) + cy * (e.css('ch', 0) + e.css('gh', 0))
-    else:
-        y = e.css('mb', 0) + cy * (e.css('ch', 0) + e.css('gh', 0))
+    elif e.originTop: # Padding top
+        y = e.css('pt', 0) + cy * (e.css('ch', 0) + e.css('gh', 0))
+    else: # Padding bottom
+        y = e.css('pb', 0) + cy * (e.css('ch', 0) + e.css('gh', 0))
     return y
 
 def z2cz(y, e):
@@ -62,10 +62,10 @@ def z2cz(y, e):
     cd = e.css('cd', 0)
     cz = 0
     if cd + gutterD: # Check on division by 0
-        if e.originTop:
-            cy = (y - e.css('mt', 0)) / (ch + gutterD)
-        else:
-            cy = (y - e.css('mb', 0)) / (ch + gutterD)
+        if e.originTop: # Padding top
+            cy = (y - e.css('pt', 0)) / (ch + gutterD)
+        else: # Padding bottom
+            cy = (y - e.css('pb', 0)) / (ch + gutterD)
     return cy 
 
 def cz2z(cz, e):
@@ -193,9 +193,9 @@ def setStrokeColor(c, w=1, fs=None, cmyk=False):
 def baseline2y(yIndex, style):
     u"""Convert columns index and line index to page position. Answered (x, y) is point position based on 
     marginTop + yIndex*baseLine."""
-    marginTop = style['mt']
+    padT = style['pt']
     baseline = style['baseline']
-    return marginTop + cy * baseline
+    return padT + cy * baseline
 
 MARKER_PATTERN = '==%s--%s=='
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\-\-([^=]*)\=\=')

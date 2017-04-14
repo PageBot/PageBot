@@ -103,7 +103,7 @@ def XXXnewAxisState(axisName, minValue, defaultValue, maxValue):
     axisState.stepCycle = 1.0*int(MOVE+random()*MOVE)/FRAMES
     return axisState
          
-def XXXnextValue(axisState, margin1=500, margin2=500):
+def XXXnextValue(axisState, padding1=500, padding2=500):
     # Calculate new angle and put back into array for next iteration.
     newAngle = sin(axisState.angle*2*pi)
     axisState.angle += axisState.stepCycle

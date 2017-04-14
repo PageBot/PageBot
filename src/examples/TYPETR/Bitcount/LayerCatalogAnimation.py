@@ -30,7 +30,7 @@ USE_BITPATH = False
 # Initial sample text. Can be altered in the text box of the popup window.
 W = 500 # Width of the sample image
 H = 200 # Height of the sample image
-M = 16 # Margin between text and image side.
+Pd = 16 # Padding between text and image side.
 t = u'π-day' #Typetr' # Initial sample string
 monoSpaced = True
 backgroundColor = (0, 0, 0)#(1, 1, 1) #0.1, 0.2, 0.5
@@ -109,13 +109,13 @@ def getFittingString(t, fontName):
 def drawLayers(fss):
     # Draw this layer in a couple of frame
     _, h = fss[0].size()
-    h += M
+    h += Pd
     for n in range(frameLength):
         newPage(W, h)
         fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
         rect(0, 0, W, h)
         for fs in fss:
-            text(fs, (2*M, 3*M))
+            text(fs, (2*Pd, 3*Pd))
      
 # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
 if not fontNamePaths:

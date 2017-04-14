@@ -27,7 +27,7 @@ from pagebot.fonttoolbox.elements.variationscatter import VariationScatter
 DEBUG = False # Make True to see grid and element frames.
 
 W, H = A4
-MARGIN = 20*MM
+PADDING = 20*MM
 
 NUM_PAGES = 5 # Number of pages to generate
 
@@ -106,7 +106,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         hyphenation(False)
         # Template for the main page.
         template = Template(rs) # Create second template. This is for the main pages.
-        # Show grid columns and margins if rootStyle.showGrid or
+        # Show grid columns and paddings if rootStyle.showGrid or
         # rootStyle.showGridColumns are True.
         # The grid is just a regular element, like all others on the page. Same parameters apply.
         template.grid(rs)
@@ -137,7 +137,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         glyphName = choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
         # Make a random selection of locations. Note that this shows the full range of all axes,
         # not necessarily representing the design space limitation or design preferences.
-        wh = W-2*MARGIN
+        wh = W-2*PADDING
         scatter = VariationScatter(varFont, w=wh, h=wh, s=glyphName, showRecipe=False,
             recipeAxes=['srfr', 'wdth', 'wght', 'opsz', 'cntr', 'grad'], sizeX=5, sizeY=5, fontSize=64, locations=locations,
             textFill=textFill)
@@ -161,7 +161,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         coverPage = doc[1]
         # Fill cover here.
         coverPage.rect(0, 0, W, H, fill=(1, 0, 0)) 
-        #coverPage.text(amstelVarName, x=MARGIN, y=H-3*MARGIN, style=dict(font=amstelVarName, fontSize=50, textColor=1) )
+        #coverPage.text(amstelVarName, x=PADDING, y=H-3*PADDING, style=dict(font=amstelVarName, fontSize=50, textColor=1) )
         self.buildVariationMatrixPage(varFont, coverPage, locations, textFill=1)
 
         print 'Total amount of locations', len(locations)

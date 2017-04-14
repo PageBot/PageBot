@@ -164,17 +164,23 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         align = LEFT_ALIGN, # Default alignment, one of ('left', 'justified', 'center'. 'right', 'anchor')
         vAlign = TOP_ALIGN, # Default alignment for elements like image, that float in their designated space.
 
+        # Although it is common to talk about the "margins" on a page, as the space between elements
+        # and the side of the page, this naming is not conform the current CSS definition.
+        # To guarantee compatibility with CSS export, it seems better to use the same naming.
+        # Margins define the space outside an element (or page) around the object.
+        # Padding defines the space inside the element.
+
         # Margins
-        mt = 7*u, # Margin top
-        ml = 7*u, # Margin left
-        mr = 6*u, # Margin right is used as minimum. Actual value is calculated from cw and gutter,
-        mb = 6*u, # Margin bottom is used as minimum. Actual value is calculated from baseline grid.
+        mt = 0, # Margin top
+        ml = 0, # Margin left
+        mr = 0, # Margin right 
+        mb = 0, # Margin bottom
 
         # Padding where needed.
-        pt = 0, # Padding top
-        pl = 0, # Padding left
-        pr = 0, # Padding right
-        pb = 0, # Padding bottom
+        pt = 7*u, # Padding top
+        pl = 7*u, # Padding left
+        pr = 6*u, # Padding right
+        pb = 6*u, # Padding bottom
 
         # Gutter is used a standard distance between columns. Note that when not-justifying, the visual
         # gutter on the right side of columns seems to be larger. This can be compensated for in the

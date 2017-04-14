@@ -14,7 +14,7 @@ from drawBot import textSize, text, fill, stroke, rect, FormattedString
 from pagebot import getFormattedString, setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset, point3D
-from pagebot.style import RIGHT_ALIGN, CENTER, TOP_ALIGN
+from pagebot.style import RIGHT_ALIGN, CENTER, TOP_ALIGN, NO_COLOR
 
 class Text(Element):
 
@@ -24,8 +24,6 @@ class Text(Element):
     def __init__(self, fs, point=None, parent=None, style=None, eId=None, w=0, h=0, **kwargs):
         Element.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
         self.fs = getFormattedString(fs, self)
-        #print '#$$%%%%%%%%%%', textSize(FormattedString(fs, font=self.css('font'), fontSize=self.css('fontSize')))
-        #print '#@@#@@#@#@#@#', textSize(self.fs)
         self.w = w # If undefined or 0, then answer the current width of the string.
         self.h = h # If Undefined or 0, then ansser the curernt height of the sctring.
 
@@ -123,18 +121,20 @@ class Text(Element):
         p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
-        px, py, _ = p#self._applyAlignment(p) # Ignore z-axis for now.
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         self._setShadow()
-
+        """
         if self.css('fill') or self.css('stroke'):
             setFillColor(self.css('fill'))
             setStrokeColor(self.css('stroke'))
             ascenderDescender = self.fs.fontAscender() - self.fs.fontDescender()
-            print '====', self.h, self.css('fontSize'), self.fs.fontAscender(), self.fs.fontDescender(), ascenderDescender, self.h - ascenderDescender
+            #print '====', self.h, self.css('fontSize'), self.fs.fontAscender(), self.fs.fontDescender(), ascenderDescender, self.h - ascenderDescender
             realDescender = (self.h - ascenderDescender)/2 + self.fs.fontDescender()
-            print realDescender
+            #print realDescender
             rect(px, py + realDescender, self.w, self.h)
-
+        """
+        setFillColor(self.css('textFill'))
+        setStrokeColor(NO_COLOR)
         text(self.fs, (px, py))
 
         self._resetShadow()

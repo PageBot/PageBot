@@ -34,9 +34,7 @@ SQUARE = 10 * GUTTER # Size of the squares
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
-RS = getRootStyle()
-RS['w'] = W
-RS['h'] = H
+RS = getRootStyle(w=W, h=H)
 
 # Setting value for demo purpose, it is style default, using the elements origin as top-left. 
 # Change to False will show origin of elements in their bottom-left corner.
@@ -54,15 +52,15 @@ EXPORT_PATH = '_export/ColorSquares.pdf' # Export in _export folder that does no
 def makeDocument(rs):
     u"""Make a new document, using the rs as root style."""
 
-    # Hard coded margins, just for simple demo, instead of filling margins an columns in the root style.
-    square = SQUARE # Size of a square. Page margins are calculated from the amount that fit on the page.
+    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
+    square = SQUARE # Size of a square. Page paddings are calculated from the amount that fit on the page.
     gutter = GUTTER
     sqx = int(W/(square + gutter)) # Whole amount of squares that fit on the page.
     sqy = int(H/(square + gutter))
-    # Calculate centered margins for the amount of fitting squares.
+    # Calculate centered paddings for the amount of fitting squares.
     # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
-    rs['ml'] = mx = (W - sqx*(square + gutter) + gutter)/2
-    rs['mt'] = rs['mb'] = my = (H - sqy*(square + gutter) + gutter)/2
+    rs['pl'] = padX = (W - sqx*(square + gutter) + gutter)/2
+    rs['pt'] = rs['pb'] = my = (H - sqy*(square + gutter) + gutter)/2
     rs['cw'] = rs['ch'] = square
     rs['gw'] = rs['gh'] = gutter # Gutter width and gutter height.
 
@@ -74,8 +72,8 @@ def makeDocument(rs):
             # Place squares in random colors
             color1 = (random(), 0.1, 0.6)
             color2 = (random(), 0.1, 0.6)
-            # Calculate the position for each square as combination of margins and (ix, iy)
-            p = mx + ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
+            # Calculate the position for each square as combination of paddings and (ix, iy)
+            p = padX + ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
             # Create Rect object and place it in the page on position p
             page.rect(p, w=square, h=square, fill=color1, stroke=None) 
             # Create Rect object and place it in the page on position p

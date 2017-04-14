@@ -103,7 +103,7 @@ ConditionV = 0
 # Python functions. For complex documents this is not the best method. More functions and classes
 # will be used in the real templates, which are available from the OpenSource PageBotTemplates repository.
     
-W, H = A1#A4 or A1
+W, H = A4 #or A1
 H = W
 
 W1 = 50
