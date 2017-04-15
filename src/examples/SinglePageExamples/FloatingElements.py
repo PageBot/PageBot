@@ -42,69 +42,12 @@ class FontSizeWidthRatio(Condition):
             return self.value
         return self.value * self.errorFactor
 
-# Make an instance of all conditions add as global in Variations.
-ConditionsV = [
-	Bottom2Bottom(),
-	Bottom2BottomSide(),
-	Bottom2VerticalCenter(),
-	Bottom2VerticalCenterSides(),
-	Center2Bottom(),
-	Center2BottomSide(),
-	Center2Top(),
-	Center2TopSide(),
-	Center2VerticalCenter(),
-	Center2VerticalCenterSides(),
-	Origin2Bottom(),
-	Origin2BottomSide(),
-	Origin2Top(),
-	Origin2TopSide(),
-	Origin2VerticalCenter(),
-	Origin2VerticalCenterSides(),
-	Top2Bottom(),
-	Top2Top(),
-	Top2TopSide(),
-	Top2VerticalCenter(),
-	Top2VerticalCenterSides(),	
-]
-ConditionsH = [
-	Center2Center(),
-	Center2CenterSides(),
-	Center2Left(),
-	Center2LeftSide(),
-	Center2Right(),
-	Center2RightSide(),
-	Left2Center(),
-	Left2CenterSides(),
-	Left2Left(),
-	Left2LeftSide(),
-	Left2Right(),
-	Origin2Center(),
-	Origin2CenterSides(),
-	Origin2Left(),
-	Origin2LeftSide(),
-	Origin2Right(),
-	Origin2RightSide(),
-	Right2Center(),
-	Right2CenterSides(),
-	Right2Left(),
-	Right2Right(),
-	Right2RightSide(),
-]
-ConditionsVDict = {}
-for condition in ConditionsV:
-    ConditionsVDict[condition.__class__.__name__] = condition
-ConditionsHDict = {}
-for condition in ConditionsH:
-    ConditionsHDict[condition.__class__.__name__] = condition
-ConditionH = 0
-ConditionV = 0
-       
 # For clarity, most of the OneValidatingPage.py example documenet is setup as a sequential excecution of
 # Python functions. For complex documents this is not the best method. More functions and classes
 # will be used in the real templates, which are available from the OpenSource PageBotTemplates repository.
     
 W, H = A4 # or A1
-#H = W
+H = W # Make it square for demo
 
 W1 = 50
 W2 = 50
@@ -118,9 +61,18 @@ H3 = 50
 H4 = 50
 H5 = 50
 
+PT = 50 # Paddings
+PL = 100
+PR = 50
+PB = 100
+
 Variable([
     #dict(name='ConditionH', ui='PopUpButton', args=dict(items=sorted(ConditionsHDict.keys()))),
     #dict(name='ConditionV', ui='PopUpButton', args=dict(items=sorted(ConditionsVDict.keys()))),
+    dict(name='PR', ui='Slider', args=dict(minValue=20, value=50, maxValue=W/2)),
+    dict(name='PT', ui='Slider', args=dict(minValue=20, value=50, maxValue=H/2)),
+    dict(name='PB', ui='Slider', args=dict(minValue=20, value=50, maxValue=W/2)),
+    dict(name='PL', ui='Slider', args=dict(minValue=20, value=50, maxValue=H/2)),
     dict(name='W1', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
     dict(name='H1', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
     dict(name='W2', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
@@ -131,7 +83,6 @@ Variable([
     dict(name='H4', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
     dict(name='W5', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
     dict(name='H5', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='WT', ui='Slider', args=dict(minValue=100, value=200, maxValue=W)),
 ], globals())
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
@@ -144,10 +95,10 @@ Variable([
 RS = getRootStyle(
     w = W,
     h = H,
-    pl = 100, # Padding of page.
-    pt = 50,
-    pr = 30,
-    pb = 100,
+    pl = PL, # Padding of page.
+    pt = PT,
+    pr = PR,
+    pb = PB,
     conditions = [],
     fontSize = 10,
     rLeading = 0,
@@ -169,11 +120,6 @@ def makeDocument(rootStyle):
     w = 300
 
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
-        ConditionsHDict[sorted(ConditionsHDict.keys())[ConditionH]],
-        ConditionsVDict[sorted(ConditionsVDict.keys())[ConditionV]],
-    ]
-    print colorCondition1
-    colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
         Right2Right(),
         #Right2Right(),
         Top2Top(),
@@ -181,11 +127,6 @@ def makeDocument(rootStyle):
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.
         Right2Right(),
         #Top2Bottom(),
-        FloatLeft(),
-        FloatTop(),
-    ]
-    print colorCondition2
-    textCondition = [ # Placement condition(s) for the text element..
         FloatLeft(),
         FloatTop(),
     ]
@@ -208,15 +149,6 @@ def makeDocument(rootStyle):
         conditions=colorCondition2, fill=(1, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
     e3 = page.rect(point=wrongOrigin, style=rootStyle, w=W3, h=H3, name='Floating element 3', 
         conditions=colorCondition2, fill=(1, 0, 1), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
-    # Make text box at wrong origin. Apply same width a the color rect, which may
-    # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
-    # self.w to the maximum width for this pointSize.
-    if not hasattr(myglobals, 'blurbText'):
-        myglobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
-        style=dict(font='Georgia', fontSize=12, rLeading=0.2, textColor=0))
-    eTextBox = page.textBox(myglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
-        vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
-
     e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 
         conditions=colorCondition2, fill=(0, 1, 1), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
     e5 = page.rect(point=wrongOrigin, style=rootStyle, w=W5, h=H5, name='Floating element 5', 

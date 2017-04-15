@@ -17,7 +17,7 @@ from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, r
 from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
-from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN
+from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN, NO_COLOR
 from pagebot.toolbox.transformer import asFormatted
 
 class Element(object):
@@ -674,16 +674,16 @@ class Element(object):
             if sMissingElementFill is not NO_COLOR:
                 setFillColor(sMissingElementFill)
                 setStrokeColor(None)
-                rect(ox, oy, self.w, self.h)
+                rect(px, py, self.w, self.h)
             # Draw crossed rectangle.
             setFillColor(None)
             setStrokeColor(0, 0.5)
-            rect(ox, oy, self.w, self.h)
+            rect(px, py, self.w, self.h)
             newPath()
-            moveTo((ox, oy))
-            lineTo((ox + self.w, oy + self.h))
-            moveTo((ox + self.w, oy))
-            lineTo((ox, oy + self.h))
+            moveTo((px, py))
+            lineTo((px + self.w, py + self.h))
+            moveTo((px + self.w, py))
+            lineTo((px, py + self.h))
             drawPath()
 
     def getElementsBox(self):

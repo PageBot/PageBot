@@ -15,7 +15,7 @@
 import pagebot # Import to know the path of non-Python resources.
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A3, A2
+from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A3, A2, NO_COLOR
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
 # Page and Template instances are holding all elements of a page together.
