@@ -151,9 +151,8 @@ RS = getRootStyle(
     conditions = [],
     fontSize = 10,
     rLeading = 0,
-    showElementInfo = False,
-    originTop = True,
-    hyphenation = False,
+    showElementInfo = True,
+    originTop = False
 )
 
 EXPORT_PATH = '_export/ConditionalElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
