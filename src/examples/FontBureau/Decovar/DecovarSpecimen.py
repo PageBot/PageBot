@@ -13,12 +13,12 @@ from __future__ import division
 
 import pagebot
 from pagebot import getFormattedString
-from pagebot.page import Template
+from pagebot.elements.page import Template
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variationcube import VariationCube
-from pagebot.fonttoolbox.elements.variationscatter import VariationScatter
+from pagebot.elements.variationfonts.variationcube import VariationCube
+from pagebot.elements.variationfonts.variationscatter import VariationScatter
 
 DEBUG = False # Make True to see grid and element frames.
 
