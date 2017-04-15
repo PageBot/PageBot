@@ -16,7 +16,7 @@ import os
 from random import random, choice
 from copy import copy
 from fontTools.ttLib import TTFont
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.style import makeStyle
 from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
@@ -25,9 +25,11 @@ from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts
 class VariationScatter(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, style=None, eId=None, fontSize=72, sizeX=5, sizeY=5, recipeAxes=None, designSpace=None, locations=None, **kwargs):
+    def __init__(self, font, s=None, parent=None, name=None, style=None, eId=None, fontSize=72, sizeX=5, sizeY=5, recipeAxes=None, designSpace=None, locations=None, **kwargs):
         self.font = font
         self.eId = eId
+        self.name =  name
+        self.parent = parent
         self.style = makeStyle(style, **kwargs) # Combine self.style from
         self.sizeX = sizeX
         self.sizeY = sizeY
@@ -102,6 +104,6 @@ class VariationScatter(Element):
                         recipe = self.location2Recipe(location, 3, 6)
                         fs = FormattedString(recipe, fontSize=4, fill=0)
                         w, h = fs.size()
-                        page.text(fs, px - stepX/4 + 30, py - 24) # Bit of hack, we need the width of the glyph here.
+                        page.text(fs, point(px - stepX/4 + 30, py - 24)) # Bit of hack, we need the width of the glyph here.
 
 		
