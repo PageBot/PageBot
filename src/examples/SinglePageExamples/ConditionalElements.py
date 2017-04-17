@@ -152,9 +152,8 @@ RS = getRootStyle(
     fontSize = 10,
     rLeading = 0,
     showElementInfo = False,
-    showElementOrigin = True, # Show origin marker on element, to see their alignments.
-    originTop = True,
-    hyphenation = False,
+    showElementOrigin = True,
+    originTop = True
 )
 
 EXPORT_PATH = '_export/ConditionalElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
