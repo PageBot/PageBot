@@ -674,16 +674,16 @@ class Element(object):
             if sMissingElementFill is not NO_COLOR:
                 setFillColor(sMissingElementFill)
                 setStrokeColor(None)
-                rect(ox, oy, self.w, self.h)
+                rect(px, py, self.w, self.h)
             # Draw crossed rectangle.
             setFillColor(None)
             setStrokeColor(0, 0.5)
-            rect(ox, oy, self.w, self.h)
+            rect(px, py, self.w, self.h)
             newPath()
-            moveTo((ox, oy))
-            lineTo((ox + self.w, oy + self.h))
-            moveTo((ox + self.w, oy))
-            lineTo((ox, oy + self.h))
+            moveTo((px, py))
+            lineTo((px + self.w, py + self.h))
+            moveTo((px + self.w, py))
+            lineTo((px, py + self.h))
             drawPath()
 
     def getElementsBox(self):

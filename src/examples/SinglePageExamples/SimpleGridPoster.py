@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     SimplePoster.py
+#     SimpleGridPoster.py
 #
 import pagebot # Import to know the path of non-Python resources.
 
@@ -21,4 +21,4 @@ poster = Poster(myContent, myDesign)
 # Build the poster, interpreting the content and the directions for the design.
 poster.build()
 # Export the document of the publication to PDF.
-poster.export('SimplePoster.pdf')
+poster.export('SimpleGridPoster.pdf')
