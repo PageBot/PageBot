@@ -34,8 +34,9 @@ SQUARE = 10 * GUTTER # Size of the squares
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
-RS = getRootStyle(w=W, h=H)
-
+RS = getRootStyle(w=W, h=H,
+    showElementOrigin = True, # Show origin marker on element, to see their alignments.
+)
 # Setting value for demo purpose, it is style default, using the elements origin as top-left. 
 # Change to False will show origin of elements in their bottom-left corner.
 if 1: # TOP
@@ -69,25 +70,30 @@ def makeDocument(rs):
     page = doc[1] # Get the single page from te document.
     for ix in range(sqx): # Run through the range of (0, 1, ...) number of horizontal squares
         for iy in range(sqy): # Same with vertical squares
+            # It may seem funny to beginning programmers to have a column/row index as zero
+            # for the first column/row, but that is how counters work in Python.
+            # The first element in a list has index 0.
+            
             # Place squares in random colors
             color1 = (0.1, random(), 0.6)
             color2 = (0.1, random(), 0.6)
-            # Create Rect object and place it in the page on column posiition
+            # Create Rect object and place it in the page on column/row index posiition
             page.cRect(ix, iy, 1, 1, fill=color1, stroke=None) 
-            # Create Rect object and place it in the page on position p
+            # Create Rect object and place it in the page on the same column/row index position.
             page.cOval(ix, iy, 1, 1, fill=color2, stroke=None)    
-            # Now drawing with point coordinates needs to align with the column positions.         
+            # Now drawing with point coordinates needs to align with the column positions. 
+            # Test by drawing a rectangle on the same position.        
+            # No need to draw the origin marker of each element. That is done by the style flag
+            # showElementOrigin = True
             p = padX+ ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
             page.rect(p, w=square, h=square, fill=None, stroke=0, strokeWidth=0.5)
-            # Mark the origin coordinate. Size is fraction of column width, converted from gutter.
-            cSquare = w2cw(gutter, page)
-            page.cOval(ix, iy, cSquare, cSquare, fill=None, strokeWidth=0.5, stroke=0, align=CENTER, vAlign=CENTER)
-            # Show coordinate and column value
-            page.text('%d, %d Column(%d, %d)' % (p[0], p[1], 
+            # Show coordinate and column/row index value. Don't show origin of the text box, by resetting
+            # its style flag showElementOrigin=False 
+            page.text('%d, %d Column: %d, %d' % (p[0], p[1], 
                 x2cx(p[0], page), # Calculate back to column index for checking.
                 y2cy(p[1], page)), 
-                (p[0]+5, p[1]+4), # Position of the coordinate with a bit of offset.
-                textFill=0, fontSize=4, leading=0)
+                (p[0]+5, p[1]+gutter*3/4), # Position of the coordinate with a bit of offset.
+                textFill=0, fontSize=4, leading=0, showElementOrigin=False)
 
             #page.rect((10, 10), w=mx, h=my, fill=(0, 1, 0))
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around
