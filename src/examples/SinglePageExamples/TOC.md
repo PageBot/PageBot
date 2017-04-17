@@ -22,6 +22,7 @@ The values *sqx* and *sqy* are calculated to hold the amount of 5x5 squares.
 The *for-next* loop *for ix in range(sqx)* runs through the range of column indices.
 
 ## Conditional Elements
+
 This script shows the working of conditions with elements. Each element gets an optional list of *Condition* instances that evaluate a score for the amount of fitting the conditions. The conditions are evaluated in the order as defined. They also supporting the *e.solve()* function, which implements a possible solution to improve the current score value, e.g. by moving or resizing elements.
 
 In this example script a number elements has floating conditions to define their positions as a stacked layout, similar to *float* status of *div* elements in CSS.
