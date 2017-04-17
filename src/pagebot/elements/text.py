@@ -10,7 +10,11 @@
 #
 #     text.py
 #
-from drawBot import textSize, text, fill, stroke, rect, FormattedString
+#     Using the DrawBot textBox() instead of text() for better control
+#     of alugnment, position and leading (in case there are "\n" returns
+#     in the string)
+#
+from drawBot import textSize, textBox, fill, stroke, rect, FormattedString
 from pagebot import getFormattedString, setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset, point3D
@@ -133,9 +137,10 @@ class Text(Element):
             #print realDescender
             rect(px, py + realDescender, self.w, self.h)
         """
-        setFillColor(self.css('textFill'))
-        setStrokeColor(NO_COLOR)
-        text(self.fs, (px, py))
+        # In order to better control the alignment and flow of single text string
+        # (they may include "\n" returns, forming multiple lines), we always use
+        # the DrawBot textBox( ), instead of the single text( ) 
+        textBox(self.fs, (px, py, self.w, self.h))
 
         self._resetShadow()
         self._restoreScale()

@@ -152,6 +152,7 @@ RS = getRootStyle(
     fontSize = 10,
     rLeading = 0,
     showElementInfo = False,
+    showElementOrigin = True, # Show origin marker on element, to see their alignments.
     originTop = True,
     hyphenation = False,
 )

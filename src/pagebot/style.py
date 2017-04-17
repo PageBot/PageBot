@@ -10,6 +10,7 @@
 #
 #     style.py
 #
+from drawBot import sizes
 import copy
 
 NO_COLOR = -1
@@ -22,6 +23,7 @@ DOC_OVERSIZE = 72 # Default oversize margin of a document to show crop-marks and
 INCH = 72
 MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
 
+# These sizes are all portrait. For Landscape simply reverse to (H, W) usage.
 # ISO A Sizes
 A0 = 841*MM, 1189*MM
 A1 = 594*MM, 841*MM
@@ -58,12 +60,21 @@ C7 = 81*MM, 114*MM
 C8 = 57*MM, 81*MM
 C9 = 40*MM, 57*MM
 C10 = 28*MM, 40*MM
-# American Sizes
+# American Sizes as non-rounded values
 HalfLetter = 5.5*INCH, 8.5*INCH
 Letter = 8.5*INCH, 11*INCH
 Legal = 8.5*INCH, 14*INCH
 JuniorLegal = 5*INCH, 8*INCH
 Tabloid = 11*INCH, 17*INCH
+# Other rounded definintions compatible to DrawBot
+Screen = sizes('screen') # Current screen size.
+Ledger = sizes('Ledger') # 1224, 792
+Statement = sizes('Statement') # 396, 612 
+Executive = sizes('Executive') # 540, 720
+Folio = sizes('Folio') # 612, 936
+Quarto = sizes('Quarto') # 610, 780
+Size10x14 = sizes('10x14') # 720, 1008
+
 # Hybrid sizes
 # International generic fit for stationary
 A4Letter = A4[0], Letter[1] # 210mm width and 11" height will always fit printer and fax.
