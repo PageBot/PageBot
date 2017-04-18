@@ -45,10 +45,10 @@ else:
 RS = getRootStyle(
     w = W,
     h = H,
-    ml = 64,
-    mt = 64,
-    mr = 64,
-    mb = 80,
+    pl = 64,
+    pt = 64,
+    pr = 64,
+    pb = 80,
     docW = docW,
     docH = docH,
     showElementInfo = False,
@@ -88,10 +88,10 @@ def makeDocument(rootStyle):
     # Add some title (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
     e1 = page.text('Book Cover', style=rootStyle, name='Other element', font='Georgia', fontSize=40,
-        fill=(0.3, 0.3, 0.5), textFill=C2,
-        #conditions=[Center2Center(), Top2Top()], 
-        align=CENTER)#, vAlign=TOP_ALIGN)
-    e1.y = e1.css('mt')
+        fill=(0.3, 0.3, 0.5), textFill=(1, 0, 0),
+        conditions=[Top2VerticalCenter(), Top2Top()], 
+        align=CENTER) #vAlign=TOP_ALIGN)
+    e1.y = e1.css('pt')
     e1.center = page.w/2
     print '@#@#@#', e1.h, e1.getTextSize()
     """

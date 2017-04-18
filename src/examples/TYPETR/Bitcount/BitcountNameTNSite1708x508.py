@@ -24,24 +24,21 @@ from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot import getFormattedString, textBoxBaseLines
 
 typetrStoreUrl = 'https://store.typenetwork.com/foundry/typetr'
-EXPORT_PATH = '_export/BitcountLayerCatalogAnimation.gif'
+EXPORT_PATH = '_export/BitcountLayerCatalogAnimation1708x508.gif'
 
 USE_BITPATH = False
 
 # Initial sample text. Can be altered in the text box of the popup window.
-W = 1020 # Width of the sample image. TypeNetwork preference 2040 x 1020
+W = 1708 # Width of the sample image. TypeNetwork preference 2040 x 1020
 H = 508 # Height of the sample image
-#W = 1360 # Width of the sample image. TypeNetwork preference 2040 x 1020
-#H = 1020 # Height of the sample image
 padding = 16 # Padding between text and image side.
 #t = u'π-day' #Typetr' # Initial sample string
 t = 'Bitcount' # Initial sample string
-monoSpaced = True
+monoSpaced = False
 backgroundColor = (0, 0, 0)#(1, 1, 1) #0.1, 0.2, 0.5
 italics = False
-layers = 4
 color = True
-frames = 4
+frames = 48
 fd = 0.4 # Frame duration
 
 # Bitcount is made from 3 spacing sets: 
@@ -59,7 +56,7 @@ else:
 fontNamePaths = getFamilyFontPaths(familyName) 
 if not italics:
     for fontName in fontNamePaths.keys():
-        if 'Italic' in fontName:
+        if 'Italic' in fontName or 'Double' in fontName:
             del fontNamePaths[fontName]
 
 if USE_BITPATH:
@@ -76,40 +73,47 @@ if USE_BITPATH:
         fontNamePaths[fontName] = fontPath
 
 # Define method to show a random sample
-def drawSample(name, tt):
-    fss1 = []
-    fss2 = []
-    for frame in range(frames):
-        opacity = 0.8+0.2*random() # Not totally opaque.
-        if color:
-            c = choice((
-                (1, 1, 1, 1),
-                (1, 1, 1, 1),
-                (1, 1, 1, 1),
-                (1, 0.9*0.1*random(), 1, opacity),
-                (0.8+0.2*random(), 0.9, 0.9, opacity),
-                (0.8+0.2*random(), 0.8, 1, opacity),
-                (1, 0.5*random(), 0.5*random(), opacity),
-                (1, 0.5*random(), random(), opacity),
-                (1, 0, random(), opacity),
-                (0.3, 0.2, 0.5*random(), opacity),
-                (random(), 0.5, 0, opacity),
-                (0.5, 0.3*random(), 1, opacity)
-            ))
-        else:
-            r = g = b = random()*0.8
-            c = r, g, b, opacity
+def drawSample(name):
+    fss = []
+    for frame in range(frames-1):
+        if frame < frames/2:
+            opacity = 1#0.2*random() # Not totally opaque.
+            if color:
+                c = choice((
+                    (0, 0, 0, 0),
+                    (1, 1, 1, 1),
+                    (1, 1, 1, 1),
+                    (0.8, 0.8, 0.8, 1),
+                    (0.2, 0.3, 0.4, 0.7),
+                    (0.1, 0.2, 0.3, 0.4),
+                    (1, 0.4*0.1*random(), 1, opacity),
+                    (0.2*random(), 0.5, 0.9, opacity),
+                    (0.2*random(), 0.5, 1, opacity),
+                    (1, 0.5*random(), 0.5*random(), opacity),
+                    (0, 0.5*random(), random(), opacity),
+                    (1, 0, random(), opacity),
+                    (1, 0, random(), opacity),
+                    (1, 0, random(), opacity),
+                    (1, 0, random(), opacity),
+                    (0.3, 0.2, 0.5*random(), opacity),
+                    (random(), 0.5, 0, opacity),
+                    (0.5, 0.3*random(), 1, opacity)
+                ))
+            else:
+                r = g = b = random()*0.8
+                c = r, g, b, opacity
         
-        fontName = choice(fontNamePaths.keys())
-        fss1.append(getFittingString(name, fontName, c))
-        fss2.append(getFittingString(tt, fontName, c))
-        if len(fss1) == layers: 
-            drawLayers(fss1, fss2) # Draw layers on several identical frames
-            # Remove first layer
-            fss1 = fss1[1:]
-            fss2 = fss2[1:]
-            
-            
+        
+            fontNameSingle = choice(fontNamePaths.keys())
+            fontNameDouble = fontNameSingle.replace('Single', 'Double')
+            # First half of frames, add
+            fss.append((getFittingString(name, fontNameSingle, c), getFittingString(name, fontNameDouble, c)))
+        else:
+            # Remove last
+            fss = fss[:-1]
+        drawLayers(fss, frame) # Draw layers on several identical frames, using SIngle or Double.
+
+         
 def getFittingString(t, fontName, c):
     # Make formatted string of large type. 
     # Then see if it fits and calculate the fitting size.
@@ -127,32 +131,25 @@ def getFittingString(t, fontName, c):
         fontSize=fontSize, textFill=c))
     return fs
         
-def drawLayers(fss1, fss2):
+def drawLayers(fss, frame):
     # Draw this layer in a couple of frame
     newPage(W, H)
     frameDuration(fd)
-    fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
-    rect(0, 0, W, H)
+    #fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
+    #rect(0, 0, W, H)
     y = 3*padding
-    for fs in fss1:
-        text(fs, (2*padding, y+310))
-    for fs in fss2:
-        text(fs, (2.35*padding, y+5))
+    for fsSingle, fsDouble in fss:
+        if frame < frames/2:
+            fs = fsSingle
+        else:
+            fs = fsDouble
+        text(fs, (2*padding, y+100))
      
 # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
 if not fontNamePaths:
     os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
 else:
-    tts = ('Prop','Mono','Grid')
-    for frame in range(frames): 
-        if frame < frames/3:
-            tt = tts[0]
-        elif frame < frames*2/3:
-            tt = tts[1]
-        else:
-            tt = tts[2]               
-        drawSample(t, tt)
-
+    drawSample(t)
     saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
     
     
