@@ -175,6 +175,7 @@ def makeDocument(rootStyle):
     print colorCondition1
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
         Right2Right(),
+        #Center2Right(),
         #Right2Right(),
         Top2Top(),
     ]
@@ -203,7 +204,7 @@ def makeDocument(rootStyle):
     # They will be repositioned by solving the colorConditions.
     e1 = page.rect(point=wrongOrigin, style=rootStyle, name='Other element', 
         w=W1, h=H1, conditions=colorCondition1, 
-        fill=(1, 0.5, 0.5), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+        fill=(1, 0.5, 0.5), align=RIGHT_ALIGN, vAlign=TOP_ALIGN)
     e2 = page.rect(point=wrongOrigin, style=rootStyle, w=W2, h=H2, name='Floating element 2', 
         conditions=colorCondition2, fill=(1, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
     e3 = page.rect(point=wrongOrigin, style=rootStyle, w=W3, h=H3, name='Floating element 3', 
