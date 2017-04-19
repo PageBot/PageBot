@@ -9,7 +9,6 @@
 #
 #     MakeABookCover.py
 #
-import myglobals 
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString
 

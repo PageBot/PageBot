@@ -13,7 +13,6 @@
 #     automatic layout template, Galley, Typesetter and Composer classes.
 #     Its purpose is to show the use of Validator
 #
-import myglobals 
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb

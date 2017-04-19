@@ -16,12 +16,12 @@ import pagebot
 from pagebot import textBoxBaseLines
 
 from pagebot.style import getRootStyle, LEFT_ALIGN
-from pagebot.document import Document
-from pagebot.page import Page, Template
+from pagebot.elements.document import Document
+from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley, Rect
-from pagebot.fonttoolbox.elements.variationcube import VariationCube
+from pagebot.elements.variationfonts.variationcube import VariationCube
 from pagebot.fonttoolbox.variationbuilder import generateInstance
     
 DEBUG = False
