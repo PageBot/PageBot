@@ -23,12 +23,12 @@ from pagebot.style import A4
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.contributions.filibuster.blurb import blurb
 
-import myglobals
-if not hasattr(myglobals, 'initialized'):
-    myglobals.initialized = True
-    myglobals.head = blurb.getBlurb('sports_headline', noTags=True)+'\n'
-    myglobals.subhead = blurb.getBlurb('aerospace_headline', noTags=True)+'\n'
-    myglobals.body = blurb.getBlurb('article_content', noTags=True)+'\n'
+scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
+if not hasattr(scriptGlobals, 'initialized'):
+    scriptGlobals.initialized = True
+    scriptGlobals.head = blurb.getBlurb('sports_headline', noTags=True)+'\n'
+    scriptGlobals.subhead = blurb.getBlurb('aerospace_headline', noTags=True)+'\n'
+    scriptGlobals.body = blurb.getBlurb('article_content', noTags=True)+'\n'
     
 DEBUG = False
 
@@ -183,11 +183,11 @@ def makeDocument(rs):
     
     fs = getFormattedString(Sample_Text + ' V.T.TeY.Yjy\n', e, dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.head, e, dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = getFormattedString(scriptGlobals.head, e, dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.subhead, e, dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = getFormattedString(scriptGlobals.subhead, e, dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.body, e, dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
+    fs = getFormattedString(scriptGlobals.body, e, dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
     e.append(fs)
 
     return doc

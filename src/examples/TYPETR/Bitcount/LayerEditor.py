@@ -45,29 +45,29 @@ Layer_Color_4 = None
 Layer_Color_5 = None
 
 def clearFonts():
-    myglobals.layerFonts = {0: None, 1:None, 2:None, 3:None, 4:None, 5:None} # 
+    scriptGlobals.layerFonts = {0: None, 1:None, 2:None, 3:None, 4:None, 5:None} # 
  
 # Kinda hack, storing in empty module, to prevent globals to re-initialized, if variables are changed.
-import myglobals
+scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
 
-if not hasattr(myglobals, 'initializedLayerEditor'):
-    myglobals.initializedLayerEditor = True
+if not hasattr(scriptGlobals, 'initializedLayerEditor'):
+    scriptGlobals.initializedLayerEditor = True
     # Store Italics flag, so we can test if it changed.
-    myglobals.italics = Italics
+    scriptGlobals.italics = Italics
     # Store Use_BitPath flag, so we can test if it changed.
-    myglobals.use_BitPath = Use_BitPath
+    scriptGlobals.use_BitPath = Use_BitPath
     # Currently (random) selected fonts per layer
     clearFonts() # Initialize font choice, so new random fonts will be selected.
-    myglobals.layerColors = {0:NSColor.grayColor(), 1:NSColor.grayColor(), 2:NSColor.grayColor(), 
+    scriptGlobals.layerColors = {0:NSColor.grayColor(), 1:NSColor.grayColor(), 2:NSColor.grayColor(), 
         3:NSColor.grayColor(), 4:NSColor.grayColor(), 5:NSColor.grayColor()} # 
     # Collections of avaiable fonts, filtered by weight and stem-pixel 
-    myglobals.fontNamePaths = {}
-    myglobals.lightPaths = {} # Not Bold or Black
-    myglobals.boldPaths = {}
-    myglobals.singleLightPaths = {} # Not Bold or Black
-    myglobals.singleBoldPaths = {}
-    myglobals.doubleLightPaths = {} # Not Bold or Black
-    myglobals.doubleBoldPaths = {}
+    scriptGlobals.fontNamePaths = {}
+    scriptGlobals.lightPaths = {} # Not Bold or Black
+    scriptGlobals.boldPaths = {}
+    scriptGlobals.singleLightPaths = {} # Not Bold or Black
+    scriptGlobals.singleBoldPaths = {}
+    scriptGlobals.doubleLightPaths = {} # Not Bold or Black
+    scriptGlobals.doubleBoldPaths = {}
 
 typetrStoreUrl = 'https://store.typenetwork.com/foundry/typetr'
 EXPORT_DIR = '_export/BitcountLayerCatalog/'
@@ -76,23 +76,22 @@ EXPORT_IMAGES = EXPORT_DIR + 'images'
 if not os.path.exists(EXPORT_IMAGES):
     os.makedirs(EXPORT_IMAGES)
 
-
-if Italics != myglobals.italics: # Did it change?
-    myglobals.italics = Italics
+if Italics != scriptGlobals.italics: # Did it change?
+    scriptGlobals.italics = Italics
     # Force new random selection of fonts.
     clearFonts()
 
-if Use_BitPath != myglobals.use_BitPath: # Did it changed?
-    myglobals.use_BitPath = Use_BitPath
+if Use_BitPath != scriptGlobals.use_BitPath: # Did it changed?
+    scriptGlobals.use_BitPath = Use_BitPath
     # Force new random selection of fonts.
     clearFonts()
 
 # Compare stored colors
 for layerIndex in range(Layers):
     if globals()['Layer_Color_%d' % layerIndex] is None:
-        globals()['Layer_Color_%d' % layerIndex] = myglobals.layerColors[layerIndex]
-    elif myglobals.layerColors[layerIndex] != globals()['Layer_Color_%d' % layerIndex]:
-        myglobals.layerColors[layerIndex] = globals()['Layer_Color_%d' % layerIndex]
+        globals()['Layer_Color_%d' % layerIndex] = scriptGlobals.layerColors[layerIndex]
+    elif scriptGlobals.layerColors[layerIndex] != globals()['Layer_Color_%d' % layerIndex]:
+        scriptGlobals.layerColors[layerIndex] = globals()['Layer_Color_%d' % layerIndex]
           
 def collectFonts():
     # Bitcount is made from 3 spacing sets: 
@@ -100,7 +99,7 @@ def collectFonts():
     #    - Proportional (Prop)
     # Define the family name of fonts that we want to use, 
     # including the type of spacing.
-    if myglobals.fontNamePaths: # Already installed, skip.
+    if scriptGlobals.fontNamePaths: # Already installed, skip.
         return
         
     if monoSpaced:
@@ -111,9 +110,9 @@ def collectFonts():
     # Just get paths of the fonts, not the Font objects. 
     # We want quick interactive response.
     # Call imported method, to find all installed Bitcount fonts.
-    myglobals.fontNamePaths = getFamilyFontPaths(familyName) 
+    scriptGlobals.fontNamePaths = getFamilyFontPaths(familyName) 
         
-    for fontName in myglobals.fontNamePaths:
+    for fontName in scriptGlobals.fontNamePaths:
         if 'Prop' in fontName:
             print fontName
 
@@ -126,32 +125,32 @@ def collectFonts():
 
         bitpathPaths = getFamilyFontPaths(familyName)
         for fontName, fontPath in bitpathPaths.items(): # Merge the dictionaries
-            myglobals.fontNamePaths[fontName] = fontPath
+            scriptGlobals.fontNamePaths[fontName] = fontPath
 
     # Remove all italic or roman, depending on setting of [x] Italics checkbox.
     if not Italics:
-        for fontName in myglobals.fontNamePaths.keys():
+        for fontName in scriptGlobals.fontNamePaths.keys():
             if 'Italic' in fontName:
-                del myglobals.fontNamePaths[fontName]
+                del scriptGlobals.fontNamePaths[fontName]
     elif Italics:
-        for fontName in myglobals.fontNamePaths.keys():
+        for fontName in scriptGlobals.fontNamePaths.keys():
             if not 'Italic' in fontName:
-                del myglobals.fontNamePaths[fontName] # Remove non-italics
+                del scriptGlobals.fontNamePaths[fontName] # Remove non-italics
 
     # Filter types of usage
-    for fontName, fontPath in myglobals.fontNamePaths.items():
+    for fontName, fontPath in scriptGlobals.fontNamePaths.items():
         if 'Bold' in fontName or 'Black' in fontName:
-            myglobals.boldPaths[fontName] = fontPath
+            scriptGlobals.boldPaths[fontName] = fontPath
             if 'Single' in fontName:
-                myglobals.singleBoldPaths[fontName] = fontPath
+                scriptGlobals.singleBoldPaths[fontName] = fontPath
             else:
-                myglobals.doubleBoldPaths[fontName] = fontPath
+                scriptGlobals.doubleBoldPaths[fontName] = fontPath
         else:
-            myglobals.lightPaths[fontName] = fontPath
+            scriptGlobals.lightPaths[fontName] = fontPath
             if 'Single' in fontName:
-                myglobals.singleLightPaths[fontName] = fontPath
+                scriptGlobals.singleLightPaths[fontName] = fontPath
             else:
-                myglobals.doubleLightPaths[fontName] = fontPath
+                scriptGlobals.doubleLightPaths[fontName] = fontPath
 
 def getColor(index):
     g = globals()
@@ -161,14 +160,14 @@ def getColor(index):
     return g[label]
     
 def getFontName(index):
-    if myglobals.layerFonts.get(index) is None:
+    if scriptGlobals.layerFonts.get(index) is None:
         if index < Layers/2: # First half of layers, use bold/black/shadow as background.
-            fontName = choice(myglobals.boldPaths.keys())
+            fontName = choice(scriptGlobals.boldPaths.keys())
         else:
-            fontName = choice(myglobals.lightPaths.keys())
-        myglobals.layerFonts[index] = fontName
+            fontName = choice(scriptGlobals.lightPaths.keys())
+        scriptGlobals.layerFonts[index] = fontName
     else:
-        fontName = myglobals.layerFonts[index]   
+        fontName = scriptGlobals.layerFonts[index]   
     return fontName
        
 # Define method to show a random sample
@@ -249,7 +248,7 @@ Variable(UI, globals())
         
 # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
 collectFonts() # Collect available fonts, filter into characteristics, as weight, italic, etc.
-if not myglobals.fontNamePaths:
+if not scriptGlobals.fontNamePaths:
     os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
 else:
     drawSample()

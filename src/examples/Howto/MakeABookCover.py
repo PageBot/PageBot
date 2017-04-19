@@ -9,7 +9,6 @@
 #
 #     MakeABookCover.py
 #
-import myglobals 
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString
 from pagebot.contributions.filibuster.blurb import blurb # Create random title and names
@@ -102,10 +101,10 @@ def makeDocument(rootStyle):
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
-    if not hasattr(myglobals, 'blurbText'):
-        myglobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
+    if not hasattr(pbglobals, 'blurbText'):
+        pbglobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, rLeading=0.2, textColor=0))
-    eTextBox = page.textBox(myglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
+    eTextBox = page.textBox(pbglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
         vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
 
     e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 

@@ -24,7 +24,8 @@ from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts
 class VariationCube(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, style=None, eId=None, dimensions=None, location=None, **kwargs):
+    def __init__(self, font, s=None, point=point, style=None, eId=None, dimensions=None, location=None, **kwargs):
+        self.__init__
         self.font = font
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from

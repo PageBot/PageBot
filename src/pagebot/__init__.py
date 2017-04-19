@@ -8,7 +8,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     toolbox/__init__.py
+#     pagebot/__init__.py
 #
 import CoreText
 import AppKit
@@ -19,6 +19,25 @@ from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeW
 from drawBot.context.baseContext import BaseContext
 
 from pagebot.style import NO_COLOR
+import pbglobals
+
+class Globals(object):
+    # Allow adding by attribute and key.
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
+
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+def getGlobals(scriptId):
+    u"""In order to let PageBot scripts and/applications exchange information, without the
+    need to save as files, the pbglobals module supports the storage of non-persistent information.
+    This way, applications with Vanilla windows can be used as UI for scripts that perform as batch process.
+    Note that it is up to the responsibilty of individual scripts to create uniqued ids for 
+    attributes. Also they need to know from each other, in case information is exchanges""".
+    if not scriptId in pbglobals.globals:
+        pbglobals[scriptId] = Globals()
+    return pbglobals.globals[scriptId]
 
 def x2cx(x, e):
     gutterH = e.css('gw', 0)

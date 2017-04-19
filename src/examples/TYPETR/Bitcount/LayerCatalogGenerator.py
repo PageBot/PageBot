@@ -18,13 +18,14 @@ from AppKit import NSColor
 import os
 
 import pagebot
+from pagebot import pbglobals # Non-persistent storage between scripts/applications.
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot import textBoxBaseLines
 from pagebot.fonttoolbox.objects.font import Font
 
 # Kinda hack, storing in empty module, to prevent globals to re-initialized, 
 # if variables are changed.
-import myglobals
+scriptGlobals = pbglobals.LayerCatalogGenerator = {}
 
 Random_Features = False
 # Optional using Bitpath family, mixed with Bitcount
@@ -255,10 +256,12 @@ UI = [
     dict(name='Use_BitPath', ui='CheckBox'), # Optional usage mixture with Bitpath if installed.
     dict(name='Random_Features', ui='CheckBox'), # If random features, omit rest of choices
 ]
-if not hasattr(myglobals, 'randomFeatures'):
-    myglobals.random_Features = Random_Features
+if not 'randomFeatures' in scriptGlobals:
+    scriptGlobals['random_Features'] = Random_Features
 
-if not myglobals.random_Features:
+# @@@ BROKEN
+
+if not scriptGlobals['random_Features']:
     UI.append(dict(name='Italic_Shapes', ui='CheckBox')) # [ss08]
     UI.append(dict(name='Condensed', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
     UI.append(dict(name='Slashed_Zero', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
@@ -286,7 +289,7 @@ else:
 Variable(UI, globals())
 
 # Store Italics flag, so we can test if it changed.
-myglobals.random_Features = Random_Features
+scriptGlobals.random_Features = Random_Features
     
                      
 # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.

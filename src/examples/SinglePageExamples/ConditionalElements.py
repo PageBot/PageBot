@@ -13,7 +13,6 @@
 #     automatic layout template, Galley, Typesetter and Composer classes.
 #     Its purpose is to show the use of Validator
 #
-import myglobals 
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
@@ -29,6 +28,9 @@ from pagebot.typesetter import Typesetter
 # The Composer instance distributes the Galley content of the pages, according to the defined Templates.
 from pagebot.composer import Composer 
 from pagebot.conditions import *
+
+from pagebot.toolbox.transformer import path2ScriptId
+scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
 
 class FontSizeWidthRatio(Condition):
     def evaluate(self, e):
@@ -212,10 +214,10 @@ def makeDocument(rootStyle):
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
-    if not hasattr(myglobals, 'blurbText'):
-        myglobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
+    if not hasattr(scriptGlobals, 'blurbText'):
+        scriptGlobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, leading=16, textColor=0))
-    eTextBox = page.textBox(myglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
+    eTextBox = page.textBox(scriptGlobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
         vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
 
     e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 

@@ -415,11 +415,12 @@ def module2Path(module):
 def path2ParentPath(path):
     return '/'.join(path.split('/')[:-1])
 
+def path2ScriptId(path):
+    u"""Answer the scriptId, derived from the __file__ of the main source."""
+    return path.split('pagebot/src/')[-1]
+    
 def path2FormatPath(path, format=None):
-    u"""
-    <doc>Answers the path where the extension is changed to format If format is None, then the extension is removed.
-    </doc>
-    """
+    u"""Answers the path where the extension is changed to format If format is None, then the extension is removed."""
     if path is not None:
         path = '.'.join(path.split('.')[:-1])
         if format is not None:
