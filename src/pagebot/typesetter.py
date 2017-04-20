@@ -14,11 +14,20 @@ import copy
 import codecs
 
 import xml.etree.ElementTree as ET
-from lxml.etree import XPath, fromstring
 
-import markdown
-from markdown.extensions.nl2br import Nl2BrExtension
-from markdown.extensions.footnotes import FootnoteExtension
+try:
+    from lxml.etree import fromstring
+except ImportError:
+    print 'ImportError: Install Python lxml from https://pypi.python.org/pypi/lxml'
+    fromstring = None
+
+try:
+    import markdown
+    from markdown.extensions.nl2br import Nl2BrExtension
+    from markdown.extensions.footnotes import FootnoteExtension
+except ImportError:
+    print 'ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown'
+    markdown = None
 
 from pagebot import getFormattedString, getMarker
 from pagebot.md.literature import LiteratureExtension
@@ -273,7 +282,19 @@ class Typesetter(object):
             s = (s or '').rstrip() + postfix # Force s to empty string in case it is None, to add postfix.
         return s
 
-    def typesetNode(self, node, ):
+    def typesetString(self, s, e):
+        if style is None:
+            style = self.getCascadedNodeStyle(node.tag)
+        else: # If for some reason this is an un-cascaded plain style. Make it cascaded. Otherwise don't touch.
+            style = self.getCascadedStyle(style)
+        self.pushStyle(style)
+
+        # Get current flow text box from Galley to fill. Style can be None. If the width of the
+        # latest textBox.w is not equal to style['w'], then create a new textBox in the galley.
+        tb = self.getTextBox(style)
+        tb.append(s)
+
+    def typesetNode(self, node, e):
         u"""Recursively typeset the node, using style. Style can be None, in which case we'll try to
         find if there is a style related to node.tag.
         If there is a valid style, make sure it is cascaded and push it on the graphics state.
@@ -392,8 +413,10 @@ class Typesetter(object):
         for tag, blurbName in blurbNames:
             blurbArticle.append('<%s>%s</%s>\n' % (tag, blurb.getBlurb(blurbName), tag))
         xml = u'<document>%s</document>' % '\n'.join(blurbArticle)
-        root = fromstring(xml) # Get the root element of the parsed XML tree.
-        self.typesetNode(root, e)
-
+        if fromString is not None:
+            root = fromstring(xml) # Get the root element of the parsed XML tree.
+            self.typesetNode(root, e)
+        else: # Otherwise just show the string.
+            self.typesetString(s, e)
 
 
