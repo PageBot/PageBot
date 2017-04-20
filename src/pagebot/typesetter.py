@@ -18,20 +18,20 @@ import xml.etree.ElementTree as ET
 try:
     from lxml.etree import fromstring
 except ImportError:
-    print 'ImportError: Install Python lxml from https://pypi.python.org/pypi/lxml'
+    print 'Typesetter: Install Python lxml from https://pypi.python.org/pypi/lxml'
     fromstring = None
 
 try:
     import markdown
     from markdown.extensions.nl2br import Nl2BrExtension
     from markdown.extensions.footnotes import FootnoteExtension
+    from pagebot.md.literature import LiteratureExtension
+    from pagebot.md.footnotes import FootnoteExtension
 except ImportError:
-    print 'ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown'
+    print 'Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown'
     markdown = None
 
 from pagebot import getFormattedString, getMarker
-from pagebot.md.literature import LiteratureExtension
-from pagebot.md.footnotes import FootnoteExtension
 from pagebot.elements.galley import Galley
 from pagebot.elements.image import Image
 
