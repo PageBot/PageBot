@@ -41,10 +41,10 @@ RS = getRootStyle(w=W, h=H,
 # Change to False will show origin of elements in their bottom-left corner.
 if 1: # TOP
     RS['originTop'] = True
-    RS['vAlign'] = TOP_ALIGN 
+    RS['yAlign'] = TOP_ALIGN 
 else:
     RS['originTop'] = False 
-    RS['vAlign'] = BOTTOM_ALIGN 
+    RS['yAlign'] = BOTTOM_ALIGN 
 #for key, value in RS.items():
 #    print key, value
 

@@ -153,6 +153,12 @@ class Element(object):
             self.x = x
     left = property(_get_left, _set_left)
 
+    def _get_mLeft(self): # Left, including left margin
+        return self.left - self.css('ml')
+    def _set_mLeft(self, x):
+        self.left = x + self.css('ml')
+    mLeft = property(_get_mLeft, _set_mLeft)
+
     def _get_center(self):
         if self.css('vacuumW'): # Get vaccum left/right from child elements.
             ex, _, ew, _ = self.getElementsBox()
@@ -189,52 +195,188 @@ class Element(object):
             self.x = x
     right = property(_get_right, _set_right)
 
+    def _get_mRight(self): # Right, including right margin
+        return self.right - self.css('mr')
+    def _set_mRight(self, x):
+        self.right = x + self.css('mr')
+    mRight = property(_get_mRight, _set_mRight)
+
     # Vertical
 
     def _get_top(self):
-        if self.css('vAlign') == CENTER:
+        yAlign = self.css('yAlign')
+        if  == CENTER:
             return self.y - self.h/2
-        if self.css('vAlign') == BOTTOM_ALIGN:
-            return self.y - self.h
+        if yAlign == BOTTOM_ALIGN:
+            if self.originTop:
+                return self.y - self.h
+            return self.y + self.h
         return self.y
     def _set_top(self, y):
-        if self.css('vAlign') == CENTER:
+        yAlign = self.css('yAlign')
+        if yAlign == CENTER:
             self.y = y + self.h/2
-        elif self.css('vAlign') == BOTTOM_ALIGN:
-            self.y = y + self.h
+        elif yAlign == BOTTOM_ALIGN:
+            if self.originTop:
+                self.y = y + self.h
+            else:
+                self.y = y - self.h
         else:
             self.y = y
     top = property(_get_top, _set_top)
 
-    def _get_verticalCenter(self):
-        if self.css('vAlign') == TOP_ALIGN:
+    def _get_mTop(self): # Top, including top margin
+        mt = self.css('mt')
+        if self.originTop:
+            return self.top - mt
+        return self.top + mt
+    def _set_mTop(self, y):
+        mt = self.css('mt')
+        if self.originTop:
+            self.top = y + mt
+        else:
+            self.top = y - mt
+    mTop = property(_get_mTop, _set_mTop)
+
+    def _get_verticalCenter(self): # On bounding box, not including margins.
+        yAlign = self.css('yAlign')
+        if yAlign == TOP_ALIGN:
             return self.y - self.h/2
-        if self.css('vAlign') == BOTTOM_ALIGN:
+        if yAlign == BOTTOM_ALIGN:
             return self.y + self.h/2
         return self.y
     def _set_verticalCenter(self, y):
-        if self.css('vAlign') == TOP_ALIGN:
+        yAlign = self.css('yAlign')
+        if yAlign == TOP_ALIGN:
             self.y = y + self.h/2
-        elif self.css('vAlign') == BOTTOM_ALIGN:
+        elif yAlign == BOTTOM_ALIGN:
             self.y = y + self.h
         else:
             self.y = y
     verticalCenter = property(_get_verticalCenter, _set_verticalCenter)
 
     def _get_bottom(self):
-        if self.css('vAlign') == TOP_ALIGN:
-            return self.y + self.h
-        if self.css('vAlign') == CENTER:
+        yAlign = self.css('yAlign')
+        if yAlign == TOP_ALIGN:
+            if self.originTop:
+                return self.y + self.h
+            return self.y - self.h
+        if yAlign == CENTER:
             return self.y + self.h/2
         return self.y
     def _set_bottom(self, y):
-        if self.css('vAlign') == TOP_ALIGN:
-            self.y = y - self.h
-        elif self.css('vAlign') == CENTER:
+        yAlign = self.css('yAlign')
+        if yAlign == TOP_ALIGN:
+            if self.originTop:
+                self.y = y - self.h
+            else:
+                self.y = y + self.h
+        elif yAlign == CENTER:
             self.y = y - self.h/2
         else:
             self.y = y
     bottom = property(_get_bottom, _set_bottom)
+
+    def _get_mBottom(self): # Bottom, including bottom margin
+        mb = self.css('mb')
+        if self.originTop:
+            return self.bottom + mb
+        return self.bottom - mb
+    def _set_mBottom(self, y):
+        mb = self.css('mb')
+        if self.originTop:
+            self.bottom = y - mb
+        else:
+            self.bottom = y + mb
+    mBottom = property(_get_mBottom, _set_mBottom)
+
+    # Depth, running  in vertical z-axis dirction. Viewer is origin, posistive value is perpendicular to the screen.
+    # Besides future usage in real 3D rendering, the z-axis is used to compare conditional status in element layers.
+
+    def _get_near(self):
+        if self.css('dAlign') == CENTER:
+            return self.y - self.h/2
+        if self.css('yAlign') == BOTTOM_ALIGN:
+            if self.originTop:
+                return self.y - self.h
+            return self.y + self.h
+        return self.y
+    def _set_near(self, y):
+        if self.css('yAlign') == CENTER:
+            self.y = y + self.h/2
+        elif self.css('yAlign') == BOTTOM_ALIGN:
+            if self.originTop:
+                self.y = y + self.h
+            else:
+                self.y = y - self.h
+        else:
+            self.y = y
+    near = property(_get_near, _set_near)
+
+    def _get_mTop(self): # Top, including top margin
+        mt = self.css('mt')
+        if self.originTop:
+            return self.top - mt
+        return self.top + mt
+    def _set_mTop(self, y):
+        mt = self.css('mt')
+        if self.originTop:
+            self.top = y + mt
+        else:
+            self.top = y - mt
+    mTop = property(_get_mTop, _set_mTop)
+
+    def _get_verticalCenter(self): # On bounding box, not including margins.
+        yAlign = self.css('yAlign')
+        if yAlign == TOP_ALIGN:
+            return self.y - self.h/2
+        if yAlign == BOTTOM_ALIGN:
+            return self.y + self.h/2
+        return self.y
+    def _set_verticalCenter(self, y):
+        yAlign = self.css('yAlign')
+        if yAlign == TOP_ALIGN:
+            self.y = y + self.h/2
+        elif yAlign == BOTTOM_ALIGN:
+            self.y = y + self.h
+        else:
+            self.y = y
+    verticalCenter = property(_get_verticalCenter, _set_verticalCenter)
+
+    def _get_bottom(self):
+        yAlign = self.css('yAlign')
+        if yAlign == TOP_ALIGN:
+            if self.originTop:
+                return self.y + self.h
+            return self.y - self.h
+        if yAlign == CENTER:
+            return self.y + self.h/2
+        return self.y
+    def _set_bottom(self, y):
+        yAlign = self.css('yAlign')
+        if yAlign == TOP_ALIGN:
+            if self.originTop:
+                self.y = y - self.h
+            else:
+                self.y = y + self.h
+        elif yAlign == CENTER:
+            self.y = y - self.h/2
+        else:
+            self.y = y
+    bottom = property(_get_bottom, _set_bottom)
+
+    def _get_mBottom(self): # Bottom, including bottom margin
+        mb = self.css('mb')
+        if self.originTop:
+            return self.bottom + mb
+        return self.bottom - mb
+    def _set_mBottom(self, y):
+        mb = self.css('mb')
+        if self.originTop:
+            self.bottom = y - mb
+        else:
+            self.bottom = y + mb
+    mBottom = property(_get_mBottom, _set_mBottom)
 
     # Position by column + gutter size index.
 
@@ -311,6 +453,12 @@ class Element(object):
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
 
+    def _get_mw(self): # Width, including margins
+        return self.w + self.css('ml') + self.css('mr') # Add margins to width
+    def _set_mw(self, w):
+        self.style['w'] = max(0, w - self.css('ml') - self.css('mr')) # Cannot become < 0
+    mw = property(_get_mw, _set_mw)
+
     def _get_h(self): # Height
         if self.css('vacuumH'): # If vacuum forming, this overwrites css or style width.
             if self.originTop:
@@ -321,11 +469,23 @@ class Element(object):
         self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
 
+    def _get_mh(self): # Height, including margins
+        return self.h + self.css('mt') + self.css('mb') # Add margins to height
+    def _set_mh(self, h):
+        self.style['h'] = max(0, h - self.css('mt') - self.css('mb')) # Cannot become < 0
+    mh = property(_get_mh, _set_mh)
+
     def _get_d(self): # Depth
         return self.css('d') 
     def _set_d(self, d):
         self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
+
+    def _get_md(self): # Depth, including margin “near” and margin “far” in z-axis.
+        return self.d + self.css('mn') + self.css('mf') # Add margins to height
+    def _set_md(self, d):
+        self.style['d'] = max(0, d - self.css('mn') - self.css('mf')) # Cannot become < 0
+    md = property(_get_md, _set_md)
 
     def _get_originTop(self):
         u"""Answer the style flag if all point y values should measure top-down (typographic page
@@ -516,9 +676,10 @@ class Element(object):
         elif self.css('align') == RIGHT_ALIGN:
             px -= self.w/self.scaleX
         # Vertical
-        if self.css('vAlign') == CENTER:
+        yAlign = self.css('yAlign')
+        if yAlign == CENTER:
             py -= self.h/2/self.scaleY
-        elif self.css('vAlign') == TOP_ALIGN:
+        elif yAlign == TOP_ALIGN:
             py -= self.h/self.scaleY
         # Currently no alignment in z-axis implemented
         return px, py, pz
@@ -611,7 +772,7 @@ class Element(object):
             (self.__class__.__name__ + ' ' + (self.name or ''), asFormatted(self.x), asFormatted(self.y), asFormatted(self.z), 
              asFormatted(self.w), asFormatted(self.h), 
              asFormatted(self.cx), asFormatted(self.cy), asFormatted(self.cw), asFormatted(self.ch),
-             self.css('align'), self.css('vAlign'))
+             self.css('align'), self.css('yAlign'))
         conditions = self.css('conditions')
         if conditions:
             score = self.evaluate()
