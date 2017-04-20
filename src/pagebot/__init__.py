@@ -34,7 +34,7 @@ def getGlobals(scriptId):
     need to save as files, the pbglobals module supports the storage of non-persistent information.
     This way, applications with Vanilla windows can be used as UI for scripts that perform as batch process.
     Note that it is up to the responsibilty of individual scripts to create uniqued ids for 
-    attributes. Also they need to know from each other, in case information is exchanges""".
+    attributes. Also they need to know from each other, in case information is exchanges"""
     if not scriptId in pbglobals.globals:
         pbglobals[scriptId] = Globals()
     return pbglobals.globals[scriptId]

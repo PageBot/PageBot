@@ -189,9 +189,10 @@ class Image(Element):
                 scale(self.sx, self.sy)
 
                 # Draw the actual image, vertical aligned.
-                if self.style.get('vAlign') == TOP_ALIGN:
+                yAlign = self.style.get('yAlign')
+                if yAlign == TOP_ALIGN:
                     psy = (py + self.h)/self.sy - self.ih # TODO: Solve vertical alignment.
-                elif self.style.get('vAlign') == CENTER:
+                elif yAlign == CENTER:
                     psy = (py + self.h/2)/self.sy - self.ih/2
                 else: # Must be bottom align then
                     psy = (py + self.h)/self.sy - self.ih
