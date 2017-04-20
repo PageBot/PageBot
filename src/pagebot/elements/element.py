@@ -205,7 +205,7 @@ class Element(object):
 
     def _get_top(self):
         yAlign = self.css('yAlign')
-        if  == CENTER:
+        if yALign == CENTER:
             return self.y - self.h/2
         if yAlign == BOTTOM_ALIGN:
             if self.originTop:
