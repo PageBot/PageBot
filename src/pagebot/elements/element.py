@@ -238,14 +238,14 @@ class Element(object):
             self.top = y - mt
     mTop = property(_get_mTop, _set_mTop)
 
-    def _get_verticalCenter(self): # On bounding box, not including margins.
+    def _get_yCenter(self): # On bounding box, not including margins.
         yAlign = self.css('yAlign')
         if yAlign == TOP_ALIGN:
             return self.y - self.h/2
         if yAlign == BOTTOM_ALIGN:
             return self.y + self.h/2
         return self.y
-    def _set_verticalCenter(self, y):
+    def _set_yCenter(self, y):
         yAlign = self.css('yAlign')
         if yAlign == TOP_ALIGN:
             self.y = y + self.h/2
@@ -253,7 +253,7 @@ class Element(object):
             self.y = y + self.h
         else:
             self.y = y
-    verticalCenter = property(_get_verticalCenter, _set_verticalCenter)
+    yCenter = property(_get_yCenter, _set_yCenter)
 
     def _get_bottom(self):
         yAlign = self.css('yAlign')
@@ -293,47 +293,37 @@ class Element(object):
     # Depth, running  in vertical z-axis dirction. Viewer is origin, posistive value is perpendicular to the screen.
     # Besides future usage in real 3D rendering, the z-axis is used to compare conditional status in element layers.
 
-    def _get_near(self):
-        if self.css('dAlign') == CENTER:
-            return self.y - self.h/2
-        if self.css('yAlign') == BOTTOM_ALIGN:
-            if self.originTop:
-                return self.y - self.h
-            return self.y + self.h
-        return self.y
-    def _set_near(self, y):
-        if self.css('yAlign') == CENTER:
-            self.y = y + self.h/2
-        elif self.css('yAlign') == BOTTOM_ALIGN:
-            if self.originTop:
-                self.y = y + self.h
-            else:
-                self.y = y - self.h
+    def _get_font(self):
+        zAlign = self.css('zAlign')
+        if zAlign == CENTER:
+            return self.z - self.d/2
+        if zAlign == BACK_ALIGN:
+            return self.z - self.d
+        return self.z
+    def _set_front(self, z):
+        zAlign = self.css('zAlign')
+        if zAlign == CENTER:
+            self.z = z + self.d/2
+        elif zAlign == BACK_ALIGN:
+            self.z = z + self.d
         else:
-            self.y = y
-    near = property(_get_near, _set_near)
+            self.z = z
+    front = property(_get_front, _set_front)
 
-    def _get_mTop(self): # Top, including top margin
-        mt = self.css('mt')
-        if self.originTop:
-            return self.top - mt
-        return self.top + mt
-    def _set_mTop(self, y):
-        mt = self.css('mt')
-        if self.originTop:
-            self.top = y + mt
-        else:
-            self.top = y - mt
-    mTop = property(_get_mTop, _set_mTop)
+    def _get_mFront(self): # Front, including front margin
+        return self.front + self.css('mzf')
+    def _set_mFront(self, z):
+        self.front = z + self.css('mzf')
+    mFront = property(_get_mFront, _set_mFront)
 
-    def _get_verticalCenter(self): # On bounding box, not including margins.
+    def _get_yCenter(self): # On bounding box, not including margins.
         yAlign = self.css('yAlign')
         if yAlign == TOP_ALIGN:
             return self.y - self.h/2
         if yAlign == BOTTOM_ALIGN:
             return self.y + self.h/2
         return self.y
-    def _set_verticalCenter(self, y):
+    def _set_yCenter(self, y):
         yAlign = self.css('yAlign')
         if yAlign == TOP_ALIGN:
             self.y = y + self.h/2
@@ -341,7 +331,7 @@ class Element(object):
             self.y = y + self.h
         else:
             self.y = y
-    verticalCenter = property(_get_verticalCenter, _set_verticalCenter)
+    yCenter = property(_get_yCenter, _set_yCenter)
 
     def _get_bottom(self):
         yAlign = self.css('yAlign')
@@ -431,19 +421,26 @@ class Element(object):
 
     # Absolute posiitons
 
-    def _get_absoluteX(self): # Answer the absolute value of local self.x, from tree of ancestors.
+    def _get_rootX(self): # Answer the root value of local self.x, from whole tree of ancestors.
         parent = self.parent
         if parent is not None:
-            return self.x + parent.absoluteX
+            return self.x + parent.rootX # Add relative self to parents position.
         return self.x
-    absoluteX = property(_get_absoluteX)
+    rootX = property(_get_absoluteX)
 
-    def _get_absoluteY(self): # Answer the absolute value of local self.y, from tree of ancestors.
+    def _get_rootY(self): # Answer the absolute value of local self.y, from whole tree of ancestors.
         parent = self.parent
         if parent is not None:
-            return self.y + parent.absoluteY
+            return self.y + parent.rootY # Add relative self to parents position.
         return self.y
-    absoluteY = property(_get_absoluteY)
+    rootY = property(_get_rootY)
+
+    def _get_rootZ(self): # Answer the absolute value of local self.z, from whole tree of ancestors.
+        parent = self.parent
+        if parent is not None:
+            return self.z + parent.rootZ # Add relative self to parents position.
+        return self.z
+    rootZ = property(_get_rooZ)
 
     def _get_w(self): # Width
         if self.css('vacuumW'): # If vacuum forming, this overwrites css or style width.
@@ -489,7 +486,8 @@ class Element(object):
 
     def _get_originTop(self):
         u"""Answer the style flag if all point y values should measure top-down (typographic page
-        orientation), instead of bottom-up (mathematical orientation)."""
+        orientation), instead of bottom-up (mathematical orientation). For Y-axis only. 
+        The axes in X and Z directions are fixed."""
         return self.css('originTop')
     originTop = property(_get_originTop)
 
@@ -508,11 +506,11 @@ class Element(object):
         If set, then overwrite access from style width and height."""
         self.w = w # Set by property
         self.h = h
-        self.d = d # By definition elements have no depth.
+        self.d = d # By default elements have 0 depth.
 
     def _get_paddedBox(self):
         u"""Calculate the padded position and padded resized box of the element, after applying the
-        option style padding."""
+        style padding. Answered format (x, y, w, h)."""
         if self.originTop:
             y = self.y + self.css('pt')
         else:
@@ -522,6 +520,13 @@ class Element(object):
             self.w - self.css('pl') - self.css('pr'),
             self.h - self.css('pt') - self.css('pb'))
     paddedBox = property(_get_paddedBox)
+
+    def _get_padded3DBox(self):
+        u"""Calculate the padded position and padded resized box in 3D of the lement, after applying
+        the style padding. Answered format (x, y, z, w, h, d)."""
+        x, y, w, h = self.paddedBox
+        return x, y, self.z + self.css('pzf'), w, h, self.d - self.css('pzf') - self.css('pzb')
+    padded3DBox = property(_get_padded3DBox)
 
     def _get_boundingBox(self):
         u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""
@@ -539,7 +544,7 @@ class Element(object):
         return (self.x - self.css('ml'), y,
             self.w + self.css('ml') + self.css('mr'), 
             self.h + self.css('mt') - self.css('mb'))
-    marginBox = property(_get_paddedBox)
+    marginBox = property(_get_marginBox)
 
     def _get_minW(self):
         return self.css('minW')
@@ -602,6 +607,12 @@ class Element(object):
     def _set_scaleY(self, scaleY):
         self.style['scaleY'] = scaleY # Set on local style, shielding parent self.css value.
     scaleY = property(_get_scaleY, _set_scaleY)
+
+    def _get_scaleZ(self):
+        return self.css('scaleZ', 1)
+    def _set_scaleZ(self, scaleY):
+        self.style['scaleZ'] = scaleZ # Set on local style, shielding parent self.css value.
+    scaleZ = property(_get_scaleZ, _set_scaleZ)
 
     def getFloatTopSide(self, previousOnly=True):
         u"""Answer the max y that can float to top, without overlapping previous sibling elements.
@@ -750,7 +761,7 @@ class Element(object):
 
     def _drawElementBox(self, origin):
         u"""When designing templates and pages, this will draw a rectangle on the element
-        bounding box if self.css('showGrid') is True."""
+        bounding box if self.css('showElementBox') is True."""
         if self.css('showElementBox'):
             # Draw crossed rectangle.
             p = pointOffset(self.point, origin)
@@ -930,37 +941,37 @@ class Element(object):
     def isCenterOnBottom(self, tolerance=0):
         padB = self.parent.css('pb') # Get parent padding bottom
         if self.originTop:
-            return abs(self.parent.h - padB - self.verticalCenter) <= tolerance
-        return abs(padB - self.verticalCenter) <= tolerance
+            return abs(self.parent.h - padB - self.yCenter) <= tolerance
+        return abs(padB - self.yCenter) <= tolerance
 
     def isCenterOnBottomSide(self, tolerance=0):
         if self.originTop:
-            return abs(self.parent.h - self.verticalCenter) <= tolerance
-        return abs(self.verticalCenter) <= tolerance
+            return abs(self.parent.h - self.yCenter) <= tolerance
+        return abs(self.yCenter) <= tolerance
 
     def isCenterOnTop(self, tolerance=0):
         padT = self.parent.css('pt') # Get parent padding top
         if self.originTop:
-            return abs(padT - self.verticalCenter) <= tolerance
-        return abs(self.parent.h - padT - self.verticalCenter) <= tolerance
+            return abs(padT - self.yCenter) <= tolerance
+        return abs(self.parent.h - padT - self.yCenter) <= tolerance
 
     def isCenterOnTopSide(self, tolerance=0):
         if self.originTop:
-            return abs(self.verticalCenter) <= tolerance
-        return abs(self.parent.h - self.verticalCenter) <= tolerance
+            return abs(self.yCenter) <= tolerance
+        return abs(self.parent.h - self.yCenter) <= tolerance
 
-    def isCenterOnVerticalCenter(self, tolerance=0):
+    def isCenterOnYCenter(self, tolerance=0):
         padT = self.parent.css('pt') # Get parent padding top
         padB = self.parent.css('pb') 
-        vCenter = (self.parent.h - padT - padB)/2
+        yCenter = (self.parent.h - padT - padB)/2
         if self.originTop:
-            return abs(padT + vCenter - self.verticalCenter) <= tolerance
-        return abs(padB + vCenter - self.verticalCenter) <= tolerance
+            return abs(padT + yCenter - self.yCenter) <= tolerance
+        return abs(padB + yCenter - self.yCenter) <= tolerance
 
-    def isCenterOnVerticalCenterSides(self, tolerance=0):
+    def isCenterOnYCenterSides(self, tolerance=0):
         if self.originTop:
-            return abs(self.verticalCenter) <= tolerance
-        return abs(self.parent.h - self.verticalCenter) <= tolerance
+            return abs(self.yCenter) <= tolerance
+        return abs(self.parent.h - self.yCenter) <= tolerance
   
     def isLeftOnCenter(self, tolerance=0):
         padL = self.parent.css('pl') # Get parent padding left
@@ -985,15 +996,15 @@ class Element(object):
     def isCenterOnLeftSide(self, tolerance=0):
         return abs(self.parent.left - self.center) <= tolerance
 
-    def isTopOnVerticalCenter(self, tolerance=0):
+    def isTopOnYCenter(self, tolerance=0):
         padT = self.parent.css('pt') # Get parent padding top
         padB = self.parent.css('pb') 
-        vCenter = (self.parent.h - padB - padT)/2
+        yCenter = (self.parent.h - padB - padT)/2
         if self.originTop:
-            return abs(padT + vCenter - self.top) <= tolerance
-        return abs(padB + vCenter - self.top) <= tolerance
+            return abs(padT + yCenter - self.top) <= tolerance
+        return abs(padB + yCenter - self.top) <= tolerance
 
-    def isTopOnVerticalCenterSides(self, tolerance=0):
+    def isTopOnYCenterSides(self, tolerance=0):
         return abs(self.parent.h/2 - self.top) <= tolerance
 
     def isOriginOnBottom(self, tolerance=0):
@@ -1044,14 +1055,14 @@ class Element(object):
             return abs(self.y) <= tolerance
         return abs(self.parent.h - self.y) <= tolerance
 
-    def isOriginOnVerticalCenter(self, tolerance=0):
+    def isOriginOnYCenter(self, tolerance=0):
         padB = self.parent.css('pb')
         padT = self.parent.css('pt')
         if self.originTop:
             return abs(mt + (self.parent.h - padB - padT)/2 - self.y) <= tolerance
         return abs(mb + (self.parent.h - padT - padB)/2 - self.y) <= tolerance
  
-    def isOriginOnVerticalCenterSides(self, tolerance=0):
+    def isOriginOnYCenterSides(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h/2 - self.y) <= tolerance
         return abs(self.parent.h/2 - self.y) <= tolerance
@@ -1073,15 +1084,15 @@ class Element(object):
     def isRightOnRightSide(self, tolerance=0):
         return abs(self.parent.w - self.right) <= tolerance
 
-    def isBottomOnVerticalCenter(self, tolerance=0):
+    def isBottomOnYCenter(self, tolerance=0):
         padT = self.parent.css('pt') # Get parent padding top
         padB = self.parent.css('pb')
-        vCenter = (self.parent.h - padB - padT)/2
+        yCenter = (self.parent.h - padB - padT)/2
         if self.originTop:
-            return abs(padT + vCenter - self.bottom) <= tolerance
-        return abs(padB + vCenter - self.bottom) <= tolerance
+            return abs(padT + yCenter - self.bottom) <= tolerance
+        return abs(padB + yCenter - self.bottom) <= tolerance
 
-    def isBottomOnVerticalCenterSides(self, tolerance=0):
+    def isBottomOnYCenterSides(self, tolerance=0):
         return abs(self.parent.h/2 - self.bottom) <= tolerance
 
     def isTopOnBottom(self, tolerance=0):
@@ -1161,16 +1172,16 @@ class Element(object):
     def center2Bottom(self):
         padB = self.parent.css('pb')
         if self.originTop:
-            self.verticalCenter = self.parent.h - padB
+            self.yCenter = self.parent.h - padB
         else:
-            self.verticalCenter = padB
+            self.yCenter = padB
         return True
     
     def center2BottomSide(self):
         if self.originTop:
-            self.verticalCenter = self.parent.h
+            self.yCenter = self.parent.h
         else:
-            self.verticalCenter = 0
+            self.yCenter = 0
         return True
 
     def center2Center(self):
@@ -1203,31 +1214,31 @@ class Element(object):
     def center2Top(self):
         padT = self.parent.css('pt') # Get parent padding left
         if self.originTop:
-            self.verticalCenter = padT
+            self.yCenter = padT
         else:
-            self.verticalCenter = self.parent.h - padT
+            self.yCenter = self.parent.h - padT
         return True       
 
     def center2TopSide(self):
         if self.originTop:
-            self.verticalCenter = 0
+            self.yCenter = 0
         else:
-            self.verticalCenter = self.parent.h
+            self.yCenter = self.parent.h
         return True       
 
     
-    def center2VerticalCenter(self):
+    def center2YCenter(self):
         padT = self.parent.css('pt') # Get parent padding top
         padB = self.parent.css('pb')
-        vCenter = (self.parent.h - padB - padT)/2
+        yCenter = (self.parent.h - padB - padT)/2
         if self.originTop:
-            self.verticalCenter = padT + vCenter
+            self.yCenter = padT + yCenter
         else:
-            self.verticalCenter = padB + vCenter
+            self.yCenter = padB + yCenter
         return True
 
-    def center2VerticalCenterSides(self):
-        self.verticalCenter = self.parent.h/2
+    def center2YCenterSides(self):
+        self.yCenter = self.parent.h/2
 
     def fitBottom(self):
         padB = self.parent.css('pb')
@@ -1311,17 +1322,17 @@ class Element(object):
         self.left = 0
         return True       
 
-    def top2VerticalCenter(self):
+    def top2YCenter(self):
         padT = self.parent.css('pt') # Get parent padding left
         padB = self.parent.css('pb')
-        vCenter = (self.parent.h - padB - padT)/2
+        yCenter = (self.parent.h - padB - padT)/2
         if self.originTop:
-            self.top = padT + vCenter
+            self.top = padT + yCenter
         else:
-            self.top = padB + vCenter
+            self.top = padB + yCenter
         return True       
 
-    def top2VerticalCenterSides(self):
+    def top2YCenterSides(self):
         self.top = self.parent.h/2
         return True       
 
@@ -1382,17 +1393,17 @@ class Element(object):
             self.y = self.parent.h
         return True
 
-    def origin2VerticalCenter(self):
+    def origin2YCenter(self):
         padT = self.parent.css('pt') # Get parent padding top
         padB = self.parent.css('pb')
-        vCenter = (self.parent.h - padB - padT)/2
+        yCenter = (self.parent.h - padB - padT)/2
         if self.originTop:
-            self.y = padT + vCenter
+            self.y = padT + yCenter
         else:
-            self.y = padB + vCenter
+            self.y = padB + yCenter
         return True
  
-    def origin2VerticalCenterSides(self):
+    def origin2YCenterSides(self):
         self.y = self.parent.h/2
         return True
 
@@ -1419,17 +1430,17 @@ class Element(object):
         self.right = self.parent.w
         return True
 
-    def bottom2VerticalCenter(self):
+    def bottom2YCenter(self):
         padT = self.parent.css('pt') # Get parent padding top
         padB = self.parent.css('pb')
-        vCenter = (self.parent.h - padB - padT)/2
+        yCenter = (self.parent.h - padB - padT)/2
         if self.originTop:
-            self.bottom = padT + vCenter
+            self.bottom = padT + yCenter
         else:
-            self.bottom = padB + vCenter
+            self.bottom = padB + yCenter
         return True
 
-    def bottom2VerticalCenterSides(self):
+    def bottom2YCenterSides(self):
         self.bottom = self.parent.h/2
         return True
 

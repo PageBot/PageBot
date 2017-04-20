@@ -189,8 +189,8 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         ml = 0, # Margin left
         mr = 0, # Margin right 
         mb = 0, # Margin bottom
-        mn = 0, # Margin “near” in z-axis direction, closest to viewer.
-        mf = 0, # Margin “far” in z-axis direction.
+        mzf = 0, # Margin “near” front in z-axis direction, closest to viewer.
+        mzb = 0, # Margin “far” back in z-axis direction.
 
         # Padding where needed.
         pt = 7*u, # Padding top
