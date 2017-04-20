@@ -36,7 +36,7 @@ def getGlobals(scriptId):
     Note that it is up to the responsibilty of individual scripts to create uniqued ids for 
     attributes. Also they need to know from each other, in case information is exchanges"""
     if not scriptId in pbglobals.globals:
-        pbglobals[scriptId] = Globals()
+        pbglobals.globals[scriptId] = Globals()
     return pbglobals.globals[scriptId]
 
 def x2cx(x, e):
