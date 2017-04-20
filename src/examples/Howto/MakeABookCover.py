@@ -80,7 +80,7 @@ def makeDocument(rootStyle):
     frame1.solve() # Solve element position, before we can make other elements depend on position and size.
 
     M = 64
-    frame2 = page.rect(name='Frame', conditions=[Center2Center(), Center2VerticalCenter()], fill=C4, stroke=None, 
+    frame2 = page.rect(name='Frame', conditions=[Center2Center(), Center2YCenter()], fill=C4, stroke=None, 
         w=frame1.w-M, h=frame1.h-M, align=CENTER, vAlign=CENTER )
     frame2.z = -10 # Other z-layer, makes this element be ignored on floating checks.
 
@@ -88,7 +88,7 @@ def makeDocument(rootStyle):
     # They will be repositioned by solving the colorConditions.
     e1 = page.text('Book Cover', style=rootStyle, name='Other element', font='Georgia', fontSize=40,
         fill=(0.3, 0.3, 0.5), textFill=(1, 0, 0),
-        conditions=[Top2VerticalCenter(), Top2Top()], 
+        conditions=[Top2YCenter(), Top2Top()], 
         align=CENTER) #vAlign=TOP_ALIGN)
     e1.y = e1.css('pt')
     e1.center = page.w/2
