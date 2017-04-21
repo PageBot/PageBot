@@ -27,8 +27,8 @@ from pagebot.typesetter import Typesetter
 from pagebot.composer import Composer
 # Elements that can placed on pages and templates.
 from pagebot.elements import Galley, Rect
-# Get functions to create instances style from Variation fonts.
-from pagebot.fonttoolbox.variationbuilder import getVariationFont, generateInstance
+# Get functions to create instances style from Variable fonts.
+from pagebot.fonttoolbox.variablebuilder import getVariableFont, generateInstance
 
 # For clarity, most of the OnePage.py example document is setup as a sequential excecution of
 # Python functions. For complex documents this is not the best method. More functions and classes
@@ -109,7 +109,7 @@ H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
 # -----------------------------------------------------------------         
-# PageBot is supporting the use of OpenType Variation fonts. As the OS may not fully support this yet,
+# PageBot is supporting the use of OpenType Variable fonts. As the OS may not fully support this yet,
 # we'll calculate instances at certain locations and store them as fixed font files.
 # Note that the example fonts supplied with PageBot subsets, to be used inside PageBot examples only,
 # under MIT license. Full license to the complete fonts is available on the typenetwork.com site.

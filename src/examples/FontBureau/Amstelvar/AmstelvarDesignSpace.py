@@ -7,24 +7,24 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     DecovarVariationCircle.py
+#     AmsterlvarDesignSpace.py
 #
 from __future__ import division
 
 import pagebot
 from pagebot.elements.page import Template
-# For Variation Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
+# For Variable Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.elements.variationfonts.variationcircle import VariationCircle
+from pagebot.elements.variablefonts.variablecircle import VariableCircle
 
 DEBUG = False # Make True to see grid and element frames.
 
-OUTPUT_FILE = 'AmstelvarVariationCircle.pdf'
+OUTPUT_FILE = 'AmstelvarVariableCircle.pdf'
 
 FONT_PATH = pagebot.getFontPath()
-fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
 varFont = Font(fontPath)
 varFontName = varFont.install() # Do DrawBot font install.
 
@@ -35,7 +35,7 @@ SKL = ('sklA', 'sklB', 'sklD')
 BLD = ('bldA', 'bldB')
 WMX = ('wmx2',)
 
-class VariationCircleSpecimen(TypeSpecimen):
+class VariableCircleSpecimen(TypeSpecimen):
 
     def getAxisCombinations(self):
         # Answer specific interesting combinations for axes in Decovar.
@@ -112,11 +112,11 @@ class VariationCircleSpecimen(TypeSpecimen):
         
         
         p = page.css('pl'), page.css('pt')
-        variationCircle = VariationCircle(varFont, point=p, w=500, h=500, s=glyphName)
-        page.append(variationCircle)
+        variableCircle = VariableCircle(varFont, point=p, w=500, h=500, s=glyphName)
+        page.append(variableCircle)
                     
 # Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariationCircleSpecimen([varFontName], showGrid=DEBUG) 
+typeSpecimen = VariableCircleSpecimen([varFontName], showGrid=DEBUG) 
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.

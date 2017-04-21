@@ -17,8 +17,8 @@ from pagebot.elements.page import Template
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.elements.variationfonts.variationcube import VariationCube
-from pagebot.elements.variationfonts.variationscatter import VariationScatter
+from pagebot.elements.variablefonts.variablecube import VariableCube
+from pagebot.elements.variablefonts.variablescatter import VariableScatter
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -43,7 +43,7 @@ SKL = ('sklA', 'sklB', 'sklD')
 BLD = ('bldA', 'bldB')
 WMX = ('wmx2',)
 
-class VariationTypeSpecimen(TypeSpecimen):
+class VariableTypeSpecimen(TypeSpecimen):
 
     def getAxisCombinations(self):
         # Answer specific interesting combinations for axes in Decovar.
@@ -112,7 +112,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         template.cLine(0, 7, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
         return template
  
-    def buildVariationPage(self, varFont, page):
+    def buildVariablePage(self, varFont, page):
         title = page.getElement(self.titleBoxId) 
         fs = getFormattedString(varFont.info.fullName.upper(), self, dict(fontSize=32, font=decovarName))
         title.append(fs)
@@ -134,7 +134,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         varFont = Font(DecovarPath)
         
         page = doc.newPage()    
-        self.buildVariationPage(varFont, page)
+        self.buildVariablePage(varFont, page)
         
         if SCATTER_SPECIMENS:
             locations = self.getLocations(varFont)
@@ -142,7 +142,7 @@ class VariationTypeSpecimen(TypeSpecimen):
             for n in range(20):
                 page = doc.newPage()
                 glyphName = choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-                scatter = VariationScatter(varFont, w=500, h=500, s=glyphName, showRecipe=True,
+                scatter = VariableScatter(varFont, w=500, h=500, s=glyphName, showRecipe=True,
                     sizeX=5, sizeY=5, fontSize=72, locations=locations)
                 page.place(scatter, 50, 100)
                 
@@ -150,13 +150,13 @@ class VariationTypeSpecimen(TypeSpecimen):
             # Build axis combinations on pages
             for axis1, axis2 in self.getAxisCombinations():
                 page = doc.newPage()
-                vCube = VariationCube(varFont, w=500, h=500, s='A', 
+                vCube = VariableCube(varFont, w=500, h=500, s='A', 
                     fontSize=72, dimensions={axis1:5, axis2:5})
                 page.place(vCube, 50, 100)
 
     
 # Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariationTypeSpecimen([decovarName], showGrid=DEBUG) 
+typeSpecimen = VariableTypeSpecimen([decovarName], showGrid=DEBUG) 
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.

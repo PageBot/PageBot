@@ -9,7 +9,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     variationbuilder.py
+#     variablebuilder.py
 #
 from __future__ import division
 import os
@@ -17,7 +17,7 @@ from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
-from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLocation
+from fontTools.varLib.models import VariableModel, supportScalar #, normalizeLocation
 from varfontdesignspace import TTVarFontGlyphSet
 
 from drawBot import installFont, BezierPath, save, transform, scale, drawPath, restore, fill
@@ -36,8 +36,8 @@ def getInstancePath():
     u"""Answer the path to write instance fonts."""
     return getMasterPath() + 'instances/'
 
-def getVariationFont(masterStylePath, location):
-    u"""The variationsFontPath refers to the file of the source variable font.
+def getVariableFont(masterStylePath, location):
+    u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     {"wght": 0, "wdth": 1000}"""
     fontName, _ = generateInstance(masterStylePath, location, targetDirectory=getInstancePath())
@@ -124,12 +124,12 @@ def normalizeLocation(location, axes):
 
 def generateInstance(variableFontPath, location, targetDirectory):
     u"""
-    Instantiate an instance of a variation font at the specified location.
+    Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
-        varfilename -- a variation font file path
+        varfilename -- a variable font file path
         location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
     """
-    # make a custom file name from the location e.g. VariationFont-wghtXXX-wdthXXX.ttf
+    # make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
     instanceName = ""
 
     for k, v in sorted(location.items()):
@@ -166,7 +166,7 @@ def generateInstance(variableFontPath, location, targetDirectory):
             varFont['name'].setName(postscriptName, 6, platformID, platEncID, langID) # 6 Postscript name for the font
             # Other important name IDs
             # 3 Unique font identifier (e.g. Version 0.000;NONE;Promise Bold Regular)
-            # 25 Variations PostScript Name Prefix
+            # 25 Variables PostScript Name Prefix
 
         fvar = varFont['fvar']
         axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in fvar.axes}
@@ -177,9 +177,9 @@ def generateInstance(variableFontPath, location, targetDirectory):
             print("Normalized location:", varFileName, normalizedLoc)
 
         gvar = varFont['gvar']
-        for glyphName, variations in gvar.variations.items():
+        for glyphName, variables in gvar.variables.items():
             coordinates, _ = _GetCoordinates(varFont, glyphName)
-            for var in variations:
+            for var in variables:
                 scalar = supportScalar(normalizedLoc, var.axes)
                 if not scalar: continue
                 # TODO Do IUP / handle None items

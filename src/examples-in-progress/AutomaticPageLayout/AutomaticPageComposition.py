@@ -27,8 +27,8 @@ from pagebot.typesetter import Typesetter
 from pagebot.composer import Composer
 # Elements that can placed on pages and templates.
 from pagebot.elements import Galley, Rect
-# Get functions to create instances style from Variation fonts.
-from pagebot.fonttoolbox.variationbuilder import getVariationFont
+# Get functions to create instances style from Variable fonts.
+from pagebot.fonttoolbox.variablebuilder import getVariableFont
 
 # Some flags to turn on/off extra debug information on the output pages.    
 DEBUG = True
@@ -97,19 +97,19 @@ P_TRACK = 0.030
 
 # Path to the Variable font source, from which width/weight instances will be created.
 FONT_PATH = '../../fonts/PromisePageBot-GX.ttf'
-# Create instance, depending on the location in the Variation axes.
-LIGHT = getVariationFont(FONT_PATH, {"wght": 100, "wdth": 1000})
-LIGHT_CONDENSED = getVariationFont(FONT_PATH, {"wght": 100, "wdth": 800})
-BOOK_LIGHT = getVariationFont(FONT_PATH, {"wght": 175, "wdth": 1000})
-BOOK_CONDENSED = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 800})
-BOOK = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 1000})
-BOOK_ITALIC = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 1000})
-MEDIUM = getVariationFont(FONT_PATH, {"wght": 400, "wdth": 1000})
-SEMIBOLD = getVariationFont(FONT_PATH, {"wght": 400, "wdth": 1000})
-SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, {"wght": 600, "wdth": 500})
-BOLD = getVariationFont(FONT_PATH, {"wght": 800, "wdth": 1000})
-BOLD_ITALIC = getVariationFont(FONT_PATH, {"wght": 800, "wdth": 1000})
-BLACK = getVariationFont(FONT_PATH, {"wght": 1000, "wdth": 1000})
+# Create instance, depending on the location in the Variable axes.
+LIGHT = getVariableFont(FONT_PATH, {"wght": 100, "wdth": 1000})
+LIGHT_CONDENSED = getVariableFont(FONT_PATH, {"wght": 100, "wdth": 800})
+BOOK_LIGHT = getVariableFont(FONT_PATH, {"wght": 175, "wdth": 1000})
+BOOK_CONDENSED = getVariableFont(FONT_PATH, {"wght": 250, "wdth": 800})
+BOOK = getVariableFont(FONT_PATH, {"wght": 250, "wdth": 1000})
+BOOK_ITALIC = getVariableFont(FONT_PATH, {"wght": 250, "wdth": 1000})
+MEDIUM = getVariableFont(FONT_PATH, {"wght": 400, "wdth": 1000})
+SEMIBOLD = getVariableFont(FONT_PATH, {"wght": 400, "wdth": 1000})
+SEMIBOLD_CONDENSED = getVariableFont(FONT_PATH, {"wght": 600, "wdth": 500})
+BOLD = getVariableFont(FONT_PATH, {"wght": 800, "wdth": 1000})
+BOLD_ITALIC = getVariableFont(FONT_PATH, {"wght": 800, "wdth": 1000})
+BLACK = getVariableFont(FONT_PATH, {"wght": 1000, "wdth": 1000})
 
 RS['font'] = BOOK
 

@@ -161,7 +161,7 @@ class Page(Container):
 
     def text(self, fs, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Draw formatted string. Normally we don't need w and h here, as it is made by the text and 
-        style combinations. But in case the defined font is a Variation Font, then we can use the
+        style combinations. But in case the defined font is a Variable Font, then we can use the
         width and height to interpolate a font that fits the space for the given string and weight.
         Caller must supply formatted string. Support both (x, y) and x, y as position."""
         if parent is None: parent = self # Make style tree availabe.

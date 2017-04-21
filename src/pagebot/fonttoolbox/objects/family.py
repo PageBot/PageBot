@@ -23,7 +23,7 @@ def getFamilies(familyPaths):
     Example format of familyPaths dictionary:
     LIB_PATH = '/Library/Fonts/'
     SOME_SYSTEM_FONTS = {
-    # Let's try some plain OSX system fonts, while they are still there (not variation yet).
+    # Let's try some plain OSX system fonts, while they are still there (not variable yet).
     'Georgia': dict(regular=LIB_PATH+'Georgia.ttf', bold=LIB_PATH+'Georgia Bold.ttf', 
                     italic=LIB_PATH+'Georgia Italic.ttf', boldItalic=LIB_PATH+'Georgia Bold Italic.ttf'),
     'Verdana': dict(regular=LIB_PATH+'Verdana.ttf', bold=LIB_PATH+'Verdana Bold.ttf', 

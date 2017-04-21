@@ -21,8 +21,8 @@ from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley, Rect
-from pagebot.elements.variationfonts.variationcube import VariationCube
-from pagebot.fonttoolbox.variationbuilder import generateInstance
+from pagebot.elements.variablefonts.variablecube import VariableCube
+from pagebot.fonttoolbox.variablebuilder import generateInstance
     
 DEBUG = False
 
@@ -66,7 +66,7 @@ H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
 FONT_PATH = pagebot.getFontPath()
-VAR_FONT_PATH = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+VAR_FONT_PATH = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
 EXPORT_PATH = '_export/AmstelvarAlphaSpecimen.pdf'
 
 
@@ -79,7 +79,7 @@ def makeSpecimen(rs):
     template1.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
-    vCube = VariationCube(path=VAR_FONT_PATH, point=(50, 100), w=500, h=500, s='a', fontSize=86, dimensions=dict(wght=5, wdth=5))
+    vCube = VariableCube(path=VAR_FONT_PATH, point=(50, 100), w=500, h=500, s='a', fontSize=86, dimensions=dict(wght=5, wdth=5))
     template1.append(vCube)
    
     # Create new document with (w,h) and fixed amount of pages.

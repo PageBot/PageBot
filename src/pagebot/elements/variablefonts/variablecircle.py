@@ -8,9 +8,9 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#	  variationcircle.py
+#	  variablecircle.py
 #
-#     Draw a variation space default glyph in the middle and spikes around it fir each axis.
+#     Draw a variable space default glyph in the middle and spikes around it fir each axis.
 #     The aim is to derive as much information directly from the font, without the need
 #     for additional parameters.
 #
@@ -27,11 +27,11 @@ from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installe
 
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
+from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
 from pagebot.toolbox.transformer import pointOffset
 
-class VariationCircle(Element):
-    u"""Interpret the content of the self.font variation font and draw a circle info graphic on that info."""
+class VariableCircle(Element):
+    u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info."""
 
     DEFAULT_FONT_SIZE = 64
     R = 2/3 # Fontsize factor to draw glyph markers.
@@ -68,7 +68,7 @@ class VariationCircle(Element):
         drawGlyphPath(self.font.ttFont, glyphName, mx, my-fontSize/4, location, s=glyphPathScale, fillColor=0)
 
     def draw(self, origin):
-        u"""Draw the circle info-graphic, showing most info about the variation font as can be interpreted from the file."""
+        u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
         p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    

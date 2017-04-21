@@ -15,7 +15,7 @@
 from pagebot import getFontPath
 
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.fonttoolbox.variationbuilder import getVariationFont, drawGlyphPath
+from pagebot.fonttoolbox.variablebuilder import getVariableFont, drawGlyphPath
     
 EXPORT_PATH = '_export/DecovarAnimated_skeletons_terminals.gif'
   
@@ -169,7 +169,7 @@ vMasterFont = Font(FONT_PATH)
 def makeAnimatiom():
     axes = vMasterFont.axes
 
-    print 'Variation A X E S'
+    print 'Variable A X E S'
     for axisName, (minValue, defaultValue, maxValue) in vMasterFont.axes.items():
         print axisName, 'minValue', minValue, 'defaultValue', defaultValue, 'maxValue', maxValue
 

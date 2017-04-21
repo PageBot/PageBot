@@ -12,7 +12,7 @@ There is at the moment strangely no digital tools on the one hand is sufficientl
 
 ![AutoPager](images/variablefontdesign/cubeUI1.png  "The interactive GN-cube (by Just van Rossum) offers a dynmamic view on the interpolated instances of the Master glyphs.")
 
-![OpenType Variations Axis Ideas](images/variablefontdesign/axisIdeas.png "")
+![OpenType Variables Axis Ideas](images/variablefontdesign/axisIdeas.png "")
 
 ![ToshiOmagariGNCubes](images/variablefontdesign/ToshiOmagariGNCubes.png "")
 

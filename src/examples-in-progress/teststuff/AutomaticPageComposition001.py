@@ -40,9 +40,9 @@ import pagebot.elements
 reload(pagebot.elements)
 from pagebot.elements import Galley
 
-import pagebot.fonttoolbox.variationbuilder
-reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import generateInstance
+import pagebot.fonttoolbox.variablebuilder
+reload(pagebot.fonttoolbox.variablebuilder)
+from pagebot.fonttoolbox.variablebuilder import generateInstance
 
 SHOW_TIMER = False
 

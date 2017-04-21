@@ -8,9 +8,9 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     variationglyphs.py
+#     variableglyphs.py
 #
-#     Show a string of variation glyphs, using spacing and kerning of the
+#     Show a string of variable glyphs, using spacing and kerning of the
 #     defined instance locations.
 #
 from __future__ import division
@@ -20,11 +20,11 @@ from copy import copy
 from fontTools.ttLib import TTFont
 from pagebot.elements import Element
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
+from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
 
 
-class VariationGlyphs(Element):
+class VariableGlyphs(Element):
     # Initialize the default behavior tags as different from Element.
 
     def __init__(self, ttFont, s=None, style=None, eId=None, fontSize=50, location=None, **kwargs):

@@ -16,9 +16,9 @@ from fontTools.ttLib import TTFont
 from pagebot import getFontPath
 
 from pagebot.fonttoolbox.objects.ont import Font
-import pagebot.fonttoolbox.variationbuilder
-reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import getVariationFont, drawGlyphPath
+import pagebot.fonttoolbox.variablebuilder
+reload(pagebot.fonttoolbox.variablebuilder)
+from pagebot.fonttoolbox.variablebuilder import getVariableFont, drawGlyphPath
     
 EXPORT_PATH = '_export/DecovarAnimated002.gif'
   

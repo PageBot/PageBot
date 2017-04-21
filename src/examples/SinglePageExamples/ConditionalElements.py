@@ -44,7 +44,7 @@ class FontSizeWidthRatio(Condition):
             return self.value
         return self.value * self.errorFactor
 
-# Make an instance of all conditions add as global in Variations.
+# Make an instance of all conditions add as global in Variables.
 ConditionsV = [
 	Bottom2Bottom(),
 	Bottom2BottomSide(),
