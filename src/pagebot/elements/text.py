@@ -67,35 +67,39 @@ class Text(Element):
 
     def _applyAlignment(self, p): 
         px, py, pz = point3D(p) # We cannot assume here it is a point3D list.
-        if self.css('align') == CENTER:
+        align = self.css('align')
+        if align == CENTER:
             px -= self.w/2/self.scaleX
-        elif self.css('align') == RIGHT_ALIGN:
+        elif align == RIGHT_ALIGN:
             px -= self.w/self.scaleX
+        yAlign = self.css('yAlign')
         if self.originTop:
-            if self.css('vAlign') == CENTER:
+            if yAlign == CENTER:
                 py += self.h/2/self.scaleY + self.h
-            elif self.css('vAlign') == TOP_ALIGN:
+            elif yAlign == TOP_ALIGN:
                 py += self.h/self.scaleY + self.h
         else:
-            if self.css('vAlign') == CENTER:
+            if yAlign == CENTER:
                 py -= self.h/2/self.scaleY - self.h
-            elif self.css('vAlign') == TOP_ALIGN:
+            elif yAlign == TOP_ALIGN:
                 py -= self.h/self.scaleY - self.h
         return px, py, pz
 
 
     def _get_top(self):
         ascenderDescender = self.fs.fontAscender() - self.fs.fontDescender()
-        #if self.css('vAlign') == CENTER:
+        #yAlign = self.css('yAlign')
+        #if yAlign == CENTER:
         #    return self.y - ascenderDescender/2
-        #if self.css('vAlign') == BOTTOM_ALIGN:
+        #if yAlign == BOTTOM_ALIGN:
         #    return self.y - self.h
         return self.y + (self.h - ascenderDescender)/2 + self.fs.fontAscender()
     def _set_top(self, topY):
         ascenderDescender = self.fs.fontAscender() - self.fs.fontDescender()
-        #if self.css('vAlign') == CENTER:
+        #yAlign = self.css('yAlign')
+        #if yAlign == CENTER:
         #    self.y = y + self.h/2
-        #elif self.css('vAlign') == BOTTOM_ALIGN:
+        #elif yAlign == BOTTOM_ALIGN:
         #    self.y = y + self.h
         #else:
         self.y = topY - (self.h - ascenderDescender)/2 + self.fs.fontAscender()
@@ -104,16 +108,18 @@ class Text(Element):
 
     def _get_bottom(self):
         ascenderDescender = self.fs.fontAscender() - self.fs.fontDescender()
-        #if self.css('vAlign') == TOP_ALIGN:
+        #yAlign = self.css('yAlign')
+        #if yAlign == TOP_ALIGN:
         #    return self.y + self.h
-        #if self.css('vAlign') == CENTER:
+        #if yAlign == CENTER:
         #    return self.y + self.h/2
         return self.y + (self.h - ascenderDescender)/2 + self.fs.fontDescender()
     def _set_bottom(self, bottomY):
         ascenderDescender = self.fs.fontAscender() - self.fs.fontDescender()
-        #if self.css('vAlign') == TOP_ALIGN:
+        #yAlign = self.css('yAlign')
+        #if yAlign == TOP_ALIGN:
         #    self.y = y - self.h
-        #elif self.css('vAlign') == CENTER:
+        #elif yAlign == CENTER:
         #    self.y = y - self.h/2
         #else:
         self.y = bottomY - (self.h - ascenderDescender)/2 + self.fs.fontDescender()

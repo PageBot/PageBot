@@ -312,69 +312,69 @@ class Origin2RightSide(Condition):
 
 #	Center Vertical Margins
 
-class Center2VerticalCenter(Condition):
+class Center2YCenter(Condition):
 	u"""Center e bounding box vertical between parent margins."""
 	def test(self, e):
-		return e.isCenterOnVerticalCenter(self.tolerance)
+		return e.isCenterOnYCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2VerticalCenter(), e, score)
+		self.addScore(not self.test(e) and e.center2YCenter(), e, score)
 
-class Center2VerticalCenterSides(Condition):
+class Center2YCenterSides(Condition):
 	u"""Center e bounding box vertical between parent vertical sides."""
 	def test(self, e):
-		return e.isCenterOnVerticalCenterSides(self.tolerance)
+		return e.isCenterOnYCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2VerticalCenterSides(), e, score)
+		self.addScore(not self.test(e) and e.center2YCenterSides(), e, score)
 
-class Top2VerticalCenter(Condition):
+class Top2YCenter(Condition):
 	u"""Align left of e bounding box vertical between parent margins."""
 	def test(self, e):
-		return e.isTopOnVerticalCenter(self.tolerance)
+		return e.isTopOnYCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.top2VerticalCenter(), e, score)
+		self.addScore(not self.test(e) and e.top2YCenter(), e, score)
 
-class Top2VerticalCenterSides(Condition):
+class Top2YCenterSides(Condition):
 	u"""Align left of e bounding box vertical between parent sides."""
 	def test(self, e):
-		return e.isTopOnVerticalCenterSides(self.tolerance)
+		return e.isTopOnYCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.top2VerticalCenterSides(), e, score)
+		self.addScore(not self.test(e) and e.top2YCenterSides(), e, score)
 
-class Bottom2VerticalCenter(Condition):
+class Bottom2YCenter(Condition):
 	u"""Align right of e bounding box vertical between parent margins."""
 	def test(self, e):
-		return e.isBottomOnVerticalCenter(self.tolerance)
+		return e.isBottomOnYCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.bottom2VerticalCenter(), e, score)
+		self.addScore(not self.test(e) and e.bottom2YCenter(), e, score)
 
-class Bottom2VerticalCenterSides(Condition):
+class Bottom2YCenterSides(Condition):
 	u"""Align right of e bounding box vertical between parent vertical sides."""
 	def test(self, e):
-		return e.isBottomOnVerticalCenterSides(self.tolerance)
+		return e.isBottomOnYCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.bottom2VerticalCenterSides(), e, score)
+		self.addScore(not self.test(e) and e.bottom2YCenterSides(), e, score)
 
-class Origin2VerticalCenter(Condition):
+class Origin2YCenter(Condition):
 	u"""Align bottom of e bounding box to parent top margin."""
 	def test(self, e):
-		return e.isOriginOnVerticalCenter(self.tolerance)
+		return e.isOriginOnYCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2VerticalCenter(), e, score)
+		self.addScore(not self.test(e) and e.origin2YCenter(), e, score)
 
-class Origin2VerticalCenterSides(Condition):
+class Origin2YCenterSides(Condition):
 	u"""Align bottom of e bounding box to parent vertical sides."""
 	def test(self, e):
-		return e.isOriginOnVerticalCenterSides(self.tolerance)
+		return e.isOriginOnYCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2VerticalCenterSides(), e, score)
+		self.addScore(not self.test(e) and e.origin2YCenterSides(), e, score)
 
 class Origin2Top(Condition):
 	u"""Align left of e bounding box horizontal between parent margins."""

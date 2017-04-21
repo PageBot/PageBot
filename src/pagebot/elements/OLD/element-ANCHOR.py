@@ -236,7 +236,7 @@ class Element(object):
             self.y = y
     top = property(_get_top, _set_top)
 
-    def _get_verticalCenter(self):
+    def _get_yCenter(self):
         if self.css('vAlign') == TOP_ALIGN:
             return self.y - self.h/2
         if self.css('vAlign') == BOTTOM_ALIGN:
@@ -244,7 +244,7 @@ class Element(object):
         if self.css('vAlign') == ANCHOR_ALIGN:
             return self.y - self.anchor[1]
         return self.y
-    def _set_verticalCenter(self, y):
+    def _set_yCenter(self, y):
         if self.css('vAlign') == TOP_ALIGN:
             self.y = y + self.h/2
         elif self.css('vAlign') == BOTTOM_ALIGN:
@@ -253,7 +253,7 @@ class Element(object):
             self.y = y + self.anchor[1]
         else:
             self.y = y
-    verticalCenter = property(_get_verticalCenter, _set_verticalCenter)
+    yCenter = property(_get_yCenter, _set_yCenter)
 
     def _get_bottom(self):
         if self.css('vAlign') == TOP_ALIGN:
@@ -732,15 +732,15 @@ class Element(object):
             return abs(self.ay) <= tolerance
         return abs(self.parent.h - self.ay) <= tolerance
 
-    def isAnchorOnVerticalCenter(self, tolerance=0):
+    def isAnchorOnYCenter(self, tolerance=0):
         mt = self.parent.css('mt') # Get parent margin top
         mb = self.parent.css('mb') 
-        vCenter = (self.parent.h - mb - mt)/2
+        yCenter = (self.parent.h - mb - mt)/2
         if self.originTop:
-            return abs(mt + vCenter - self.ay) <= tolerance
-        return abs(mb + vCenter - self.ay) <= tolerance
+            return abs(mt + yCenter - self.ay) <= tolerance
+        return abs(mb + yCenter - self.ay) <= tolerance
 
-    def isAnchorOnVerticalCenterSides(self, tolerance=0):
+    def isAnchorOnYCenterSides(self, tolerance=0):
         if self.originTop:
             return abs(self.ay) <= tolerance
         return abs(self.parent.h - self.ay) <= tolerance
@@ -783,13 +783,13 @@ class Element(object):
     def isCenterOnBottom(self, tolerance=0):
         mb = self.parent.css('mb') # Get parent margin bottom
         if self.originTop:
-            return abs(self.parent.h - mb - self.verticalCenter) <= tolerance
-        return abs(mb - self.verticalCenter) <= tolerance
+            return abs(self.parent.h - mb - self.yCenter) <= tolerance
+        return abs(mb - self.yCenter) <= tolerance
 
     def isCenterOnBottomSide(self, tolerance=0):
         if self.originTop:
-            return abs(self.verticalCenter) <= tolerance
-        return abs(self.parent.h - self.verticalCenter) <= tolerance
+            return abs(self.yCenter) <= tolerance
+        return abs(self.parent.h - self.yCenter) <= tolerance
 
     def isCenterOnTop(self, tolerance=0):
         mt = self.parent.css('mt') # Get parent margin top
@@ -802,18 +802,18 @@ class Element(object):
             return abs(self.center) <= tolerance
         return abs(self.parent.h - self.center) <= tolerance
 
-    def isCenterOnVerticalCenter(self, tolerance=0):
+    def isCenterOnYCenter(self, tolerance=0):
         mt = self.parent.css('mt') # Get parent margin top
         mb = self.parent.css('mb') 
-        vCenter = (self.parent.h - mb - mt)/2
+        yCenter = (self.parent.h - mb - mt)/2
         if self.originTop:
-            return abs(mt + vCenter - self.verticalCenter) <= tolerance
-        return abs(mb + vCenter - self.verticalCenter) <= tolerance
+            return abs(mt + yCenter - self.yCenter) <= tolerance
+        return abs(mb + yCenter - self.yCenter) <= tolerance
 
-    def isCenterOnVerticalCenterSides(self, tolerance=0):
+    def isCenterOnYCenterSides(self, tolerance=0):
         if self.originTop:
-            return abs(self.verticalCenter) <= tolerance
-        return abs(self.parent.h - self.verticalCenter) <= tolerance
+            return abs(self.yCenter) <= tolerance
+        return abs(self.parent.h - self.yCenter) <= tolerance
   
     def isLeftOnCenter(self, tolerance=0):
         ml = self.parent.css('ml') # Get parent margin left
@@ -833,15 +833,15 @@ class Element(object):
     def isLeftOnRight(self, tolerance=0):
         return abs(self.parent.w - self.parent.css('mr') - self.left) <= tolerance
 
-    def isTopOnVerticalCenter(self, tolerance=0):
+    def isTopOnYCenter(self, tolerance=0):
         mt = self.parent.css('mt') # Get parent margin top
         mb = self.parent.css('mb') 
-        vCenter = (self.parent.h - mb - mt)/2
+        yCenter = (self.parent.h - mb - mt)/2
         if self.originTop:
-            return abs(mt + vCenter - self.top) <= tolerance
-        return abs(mb + vCenter - self.top) <= tolerance
+            return abs(mt + yCenter - self.top) <= tolerance
+        return abs(mb + yCenter - self.top) <= tolerance
 
-    def isTopOnVerticalCenterSides(self, tolerance=0):
+    def isTopOnYCenterSides(self, tolerance=0):
         return abs(self.parent.h/2 - self.top) <= tolerance
 
     def isOriginOnBottom(self, tolerance=0):
@@ -890,14 +890,14 @@ class Element(object):
             return abs(self.y) <= tolerance
         return abs(self.parent.h - self.y) <= tolerance
 
-    def isOriginOnVerticalCenter(self, tolerance=0):
+    def isOriginOnYCenter(self, tolerance=0):
         mb = self.parent.css('mb')
         mt = self.parent.css('mt')
         if self.originTop:
             return abs(mt + (self.parent.h - mb - mt)/2 - self.y) <= tolerance
         return abs(mb + (self.parent.h - mt - mb)/2 - self.y) <= tolerance
  
-    def isOriginOnVerticalCenterSides(self, tolerance=0):
+    def isOriginOnYCenterSides(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h/2 - self.y) <= tolerance
         return abs(self.parent.h/2 - self.y) <= tolerance
@@ -917,15 +917,15 @@ class Element(object):
     def isRightOnRightSide(self, tolerance=0):
         return abs(self.parent.w - self.right) <= tolerance
 
-    def isBottomOnVerticalCenter(self, tolerance=0):
+    def isBottomOnYCenter(self, tolerance=0):
         mt = self.parent.css('mt') # Get parent margin left
         mb = self.parent.css('mb')
-        vCenter = (self.parent.h - mb - mt)/2
+        yCenter = (self.parent.h - mb - mt)/2
         if self.originTop:
-            return abs(mt + vCenter - self.bottom) <= tolerance
-        return abs(mb + vCenter - self.bottom) <= tolerance
+            return abs(mt + yCenter - self.bottom) <= tolerance
+        return abs(mb + yCenter - self.bottom) <= tolerance
 
-    def isBottomOnVerticalCenterSides(self, tolerance=0):
+    def isBottomOnYCenterSides(self, tolerance=0):
         return abs(self.parent.h/2 - self.bottom) <= tolerance
 
     def isTopOnBottom(self, tolerance=0):
@@ -1000,17 +1000,17 @@ class Element(object):
             self.ay = self.parent.h
         return True
 
-    def anchor2VerticalCenter(self):
+    def anchor2YCenter(self):
         mt = self.parent.css('mt') # Get parent margin left
         mb = self.parent.css('mb')
-        vCenter = (self.parent.h - mb - mt)/2
+        yCenter = (self.parent.h - mb - mt)/2
         if self.originTop:
-            self.ax = mt + vCenter
+            self.ax = mt + yCenter
         else:
-            self.ax = mb + vCenter
+            self.ax = mb + yCenter
         return True
 
-    def anchor2VerticalCenterSides(self):
+    def anchor2YCenterSides(self):
         self.ax = self.x - self.parent.h/2
         return True
 
@@ -1040,16 +1040,16 @@ class Element(object):
     def center2Bottom(self):
         mb = self.parent.css('mb')
         if self.originTop:
-            self.verticalCenter = self.parent.h - mb
+            self.yCenter = self.parent.h - mb
         else:
-            self.verticalCenter = mb
+            self.yCenter = mb
         return True
     
     def center2BottomSide(self):
         if self.originTop:
-            self.verticalCenter = self.parent.h
+            self.yCenter = self.parent.h
         else:
-            self.verticalCenter = 0
+            self.yCenter = 0
         return True
 
     def center2Center(self):
@@ -1081,31 +1081,31 @@ class Element(object):
     def center2Top(self):
         mt = self.parent.css('mt') # Get parent margin left
         if self.originTop:
-            self.verticalCenter = mt
+            self.yCenter = mt
         else:
-            self.verticalCenter = self.parent.h - mt
+            self.yCenter = self.parent.h - mt
         return True       
 
     def center2TopSide(self):
         if self.originTop:
-            self.verticalCenter = 0
+            self.yCenter = 0
         else:
-            self.verticalCenter = self.parent.h
+            self.yCenter = self.parent.h
         return True       
 
     
-    def center2VerticalCenter(self):
+    def center2YCenter(self):
         mt = self.parent.css('mt') # Get parent margin left
         mb = self.parent.css('mb')
-        vCenter = (self.parent.h - mb - mt)/2
+        yCenter = (self.parent.h - mb - mt)/2
         if self.originTop:
-            self.verticalCenter = mt + vCenter
+            self.yCenter = mt + yCenter
         else:
-            self.verticalCenter = mb + vCenter
+            self.yCenter = mb + yCenter
         return True
 
-    def center2VerticalCenterSides(self):
-        self.verticalCenter = self.parent.h/2
+    def center2YCenterSides(self):
+        self.yCenter = self.parent.h/2
 
     def fitBottom(self):
         if self.originTop:
@@ -1185,17 +1185,17 @@ class Element(object):
         self.left = 0
         return True       
 
-    def top2VerticalCenter(self):
+    def top2YCenter(self):
         mt = self.parent.css('mt') # Get parent margin left
         mb = self.parent.css('mb')
-        vCenter = (self.parent.h - mb - mt)/2
+        yCenter = (self.parent.h - mb - mt)/2
         if self.originTop:
-            self.top = mt + vCenter
+            self.top = mt + yCenter
         else:
-            self.top = mb + vCenter
+            self.top = mb + yCenter
         return True       
 
-    def top2VerticalCenterSides(self):
+    def top2YCenterSides(self):
         self.top = self.parent.h/2
         return True       
 
@@ -1255,17 +1255,17 @@ class Element(object):
             self.y = self.parent.h
         return True
 
-    def origin2VerticalCenter(self):
+    def origin2YCenter(self):
         mt = self.parent.css('mt') # Get parent margin left
         mb = self.parent.css('mb')
-        vCenter = (self.parent.h - mb - mt)/2
+        yCenter = (self.parent.h - mb - mt)/2
         if self.originTop:
-            self.y = mt + vCenter
+            self.y = mt + yCenter
         else:
-            self.y = mb + vCenter
+            self.y = mb + yCenter
         return True
  
-    def origin2VerticalCenterSides(self):
+    def origin2YCenterSides(self):
         self.y = self.parent.h/2
         return True
 
@@ -1291,17 +1291,17 @@ class Element(object):
         self.right = self.parent.w
         return True
 
-    def bottom2VerticalCenter(self):
+    def bottom2YCenter(self):
         mt = self.parent.css('mt') # Get parent margin left
         mb = self.parent.css('mb')
-        vCenter = (self.parent.h - mb - mt)/2
+        yCenter = (self.parent.h - mb - mt)/2
         if self.originTop:
-            self.bottom = mt + vCenter
+            self.bottom = mt + yCenter
         else:
-            self.bottom = mb + vCenter
+            self.bottom = mb + yCenter
         return True
 
-    def bottom2VerticalCenterSides(self):
+    def bottom2YCenterSides(self):
         self.bottom = self.parent.h/2
         return True
 
