@@ -12,36 +12,13 @@
 #     This script generates an automatic Thesis composition.
 #
 import pagebot
-reload(pagebot)
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
-
-import pagebot.style
-reload(pagebot.style)
 from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
-
-import pagebot.document 
-reload(pagebot.document)
-from pagebot.document import Document
-
-import pagebot.page
-reload(pagebot.page)
-from pagebot.page import Page, Template
-
-import pagebot.composer
-reload(pagebot.composer)
+from pagebot.elements.document import Document
+from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
-
-import pagebot.typesetter
-reload(pagebot.typesetter)
 from pagebot.typesetter import Typesetter
-
-import pagebot.elements
-reload(pagebot.elements)
 from pagebot.elements import Galley
-
-import pagebot.fonttoolbox.variablebuilder
-reload(pagebot.fonttoolbox.variablebuilder)
-from pagebot.fonttoolbox.variablebuilder import generateInstance
 
 DEBUG = False
 
@@ -99,7 +76,7 @@ H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-VARS = True
+VARS = False
 
 if VARS:
     FONT_PATH = '../../fonts/'
@@ -136,7 +113,7 @@ if VARS:
 else:
     BOOK = MEDIUM = 'Georgia'
     BOOK_ITALIC = 'Georgia-Italic'
-    BOLD = SEMIBOLD = 'Georgia-Bold'
+    BOLD = SEMIBOLD = SEMIBOLD_CONDENSED = 'Georgia-Bold'
 
 RS['font'] = BOOK
 
@@ -157,21 +134,21 @@ def makeDocument(rs):
     pageNumberId = 'pageNumberId'
     
     # Template for Cover page
-    templateCover = Template(rs) # Create new template
-    templateCover.rect(0, 0, rs['w'], rs['h'], fill=(1, 0, 0))
+    templateCover = Template(style=rs) # Create new template
+    templateCover.rect((0, 0), w=rs['w'], h=rs['h'], fill=(1, 0, 0))
     # Placement of first <h1> in the Galley, holding the Thesis title.
-    templateCover.cTextBox(FS, 1, 1, 6, 5, rs, coverTitleId, fill=BOX_COLOR)
+    templateCover.cTextBox('', 1, 1, 6, 5, style=rs, eId=coverTitleId, fill=BOX_COLOR)
     # Placement of first <h4> in the Galley, holding the author name(s)
-    templateCover.cTextBox(FS, 1, 8, 6, 5, rs, coverAuthorId, fill=BOX_COLOR)
+    templateCover.cTextBox('', 1, 8, 6, 5, style=rs, eId=coverAuthorId, fill=BOX_COLOR)
     
     # Template for Table of Content
-    templateToc = Template(rs) # Create template for Table of Content
+    templateToc = Template(style=rs) # Create template for Table of Content
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
     templateToc.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
-    templateToc.baselineGrid(rs)
-    templateToc.cTextBox('\nTable of Content', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32)
-    templateToc.cTextBox('', 3, 1, 4, 8, rs, tocId, fill=BOX_COLOR)
+    templateToc.baselineGrid(style=rs)
+    templateToc.cTextBox('\nTable of Content', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32)
+    templateToc.cTextBox('', 3, 1, 4, 8, style=rs, eId=tocId, fill=BOX_COLOR)
     
     # Template for literature reference index.
     templateLiteratureIndex = Template(rs) # Create template for Table of Content
@@ -179,8 +156,8 @@ def makeDocument(rs):
     templateLiteratureIndex.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateLiteratureIndex.baselineGrid(rs)
-    templateLiteratureIndex.cTextBox('\nLiterature index', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32)
-    templateLiteratureIndex.cTextBox('', 3, 1, 4, 8, rs, literatureIndexId, fill=BOX_COLOR)
+    templateLiteratureIndex.cTextBox('\nLiterature index', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32)
+    templateLiteratureIndex.cTextBox('', 3, 1, 4, 8, style=rs, eId=literatureIndexId, fill=BOX_COLOR)
     
     # Template for image reference index.
     templateImageIndex = Template(rs) # Create template for Table of Content
@@ -188,8 +165,8 @@ def makeDocument(rs):
     templateImageIndex.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateImageIndex.baselineGrid(rs)
-    templateImageIndex.cTextBox('\nImage index', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32)
-    templateImageIndex.cTextBox('', 3, 1, 4, 8, rs, imageIndexId, fill=BOX_COLOR)
+    templateImageIndex.cTextBox('\nImage index', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32)
+    templateImageIndex.cTextBox('', 3, 1, 4, 8, style=rs, eId=imageIndexId, fill=BOX_COLOR)
     
     # Template 1
     template1 = Template(rs) # Create template of main size. Front page only.
@@ -199,12 +176,12 @@ def makeDocument(rs):
     template1.baselineGrid(rs)
     # Create empty image place holders. To be filled by running content on the page.
     # In this templates the images fill the left column if there is a reference on the page.
-    template1.cContainer(0, 0, 3, 3, rs)  # Empty image element, cx, cy, cw, ch
-    template1.cContainer(0, 3, 3, 3, rs)
-    template1.cContainer(0, 6, 3, 3, rs)
+    template1.cContainer(0, 0, 3, 3, style=rs)  # Empty image element, cx, cy, cw, ch
+    template1.cContainer(0, 3, 3, 3, style=rs)
+    template1.cContainer(0, 6, 3, 3, style=rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 3, 0, 4, 9, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
-    template1.cTextBox('', 3, 9, 3, 2, rs, footnotesId, fill=BOX_COLOR)
+    template1.cTextBox('', 3, 0, 4, 9, style=rs, eId=flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
+    template1.cTextBox('', 3, 9, 3, 2, style=rs, eId=footnotesId, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by FormattedString of actual page number.
     # Mark the text box, so we can find it back later.
     template1.cTextBox(rs['pageIdMarker'], 6, 9, 1, 1, eId=pageNumberId, style=rs, 
@@ -294,13 +271,13 @@ def makeDocument(rs):
     # See https://docs.python.org/2/library/xml.etree.elementtree.html#xpath-support
     # for XPath filter syntax.  
     gTitle = Galley() 
-    t = Typesetter(doc, gTitle)
-    t.typesetFile(MD_PATH, rootStyle=dict(textFill=1, fontSize=80, font=MEDIUM,
-        leading=84), 
+    t = Typesetter(gTitle)
+    t.typesetFile(getFormattedString('', None, style=dict(textFill=1, fontSize=80, font=MEDIUM,
+        leading=84)), 
         xPath='h1')
 
     gAuthor = Galley() 
-    t = Typesetter(doc, gAuthor)
+    t = Typesetter(gAuthor)
     t.typesetFile(MD_PATH, rootStyle=dict(textFill=1, fontSize=24, font=MEDIUM), 
         xPath='h4') # First one is the author
 

@@ -26,10 +26,10 @@ class VCenter(Condition):
 			mt = parent.css('ml')
 			mb = parent.css('mb')
 			if parent.originTop:
-				if abs(mt + (mb - mt)/2 - e.vCenter) <= self.tolerance:
+				if abs(mt + (mb - mt)/2 - e.yCenter) <= self.tolerance:
 					return self.value
 			else:
-				if abs(mb + (mt - mb)/2 - c.vCenter) <= self.tolerance:
+				if abs(mb + (mt - mb)/2 - c.yCenter) <= self.tolerance:
 					return self.value
 		return self.error
 
@@ -39,9 +39,9 @@ class VCenter(Condition):
 			mt = parent.css('ml')
 			mb = parent.css('mb')
 			if parent.originTop:			
-				e.vCenter = mt + (mb - mt)/2
+				e.yCenter = mt + (mb - mt)/2
 			else:
-				e.vCenter = mb + (mt - mb)/2
+				e.yCenter = mb + (mt - mb)/2
 			return self.value
 		return self.error
 
@@ -83,14 +83,14 @@ class VCenterSide(Condition):
 		of where the element is vertical centered on its parent."""
 		parent = e.parent
 		if parent is not None:
-			if abs(parent.h/2 - e.vCenter) <= self.tolerance:
+			if abs(parent.h/2 - e.yCenter) <= self.tolerance:
 				return self.value
 		return self.error
 
 	def solve(self, e):	
 		parent = e.parent
 		if parent is not None and self.evaluate(e) < 0:
-			e.vCenter = parent.h/2
+			e.yCenter = parent.h/2
 			return 
 		return self.error
 

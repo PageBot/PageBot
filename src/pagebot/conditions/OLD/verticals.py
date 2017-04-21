@@ -66,15 +66,15 @@ Origin2RightSide
 
 Vertical
 
-Center2VerticalCenter
-Left2VerticalCenter
-Right2VerticalCenter
-Origin2VerticalCenter
+Center2YCenter
+Left2YCenter
+Right2YCenter
+Origin2YCenter
 
-Center2VerticalCenterSides
-Left2VerticalCenterSides
-Right2VerticalCenterSides
-Origin2VerticalCenterSides
+Center2YCenterSides
+Left2YCenterSides
+Right2YCenterSides
+Origin2YCenterSides
 
 Center2Top
 Left2Top
@@ -104,7 +104,7 @@ FloatBottomRight
 
 
 """
-class Center2VerticalCenterMargins(Condition):
+class Center2YCenterMargins(Condition):
 	u"""Center e bounding box between parent vertical margins."""
 	def test(self, e):
 		return e.isCenteredVertical(self.tolerance)

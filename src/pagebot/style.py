@@ -105,6 +105,8 @@ CENTER = 'center'
 JUSTIFIED = 'justified'
 TOP_ALIGN = 'top'
 BOTTOM_ALIGN = 'bottom'
+FRONT_ALIGN = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
+BACK_ALIGH = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
 
 DEFAULT_FONT = 'Verdana'
 DEFAULT_FALLBACK_FONT = 'LucidaGrande'
@@ -173,7 +175,8 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # originTop often goes with vAlign = TOP_ALIGN.
         originTop = True,
         align = LEFT_ALIGN, # Default alignment, one of ('left', 'justified', 'center'. 'right', 'anchor')
-        vAlign = TOP_ALIGN, # Default alignment for elements like image, that float in their designated space.
+        yAlign = TOP_ALIGN, # Default alignment for elements like image, that float in their designated space.
+        zAlign = FRONT_ALIGN, # Default alignment in z-axis is in front, closest to the viewer.
 
         # Although it is common to talk about the "margins" on a page, as the space between elements
         # and the side of the page, this naming is not conform the current CSS definition.
@@ -186,12 +189,16 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         ml = 0, # Margin left
         mr = 0, # Margin right 
         mb = 0, # Margin bottom
+        mzf = 0, # Margin “near” front in z-axis direction, closest to viewer.
+        mzb = 0, # Margin “far” back in z-axis direction.
 
         # Padding where needed.
         pt = 7*u, # Padding top
         pl = 7*u, # Padding left
         pr = 6*u, # Padding right
         pb = 6*u, # Padding bottom
+        pzf = 0, # Padding “near” front in z-axis direction, closest to viewer. 
+        pzb = 0, # Padding ”far” back in z-axis direction.
 
         # Gutter is used a standard distance between columns. Note that when not-justifying, the visual
         # gutter on the right side of columns seems to be larger. This can be compensated for in the
