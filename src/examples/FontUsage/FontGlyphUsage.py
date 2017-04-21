@@ -12,7 +12,7 @@
 #     This script shows examples how to use the Font implementaton of PageBot.
 #     Font is a wrapper class around the fonttools TTFont, implementing functions
 #     more closely to what is expected from RoboFont fonts.
-#     The output is showing several parameters of the Variation Font.
+#     The output is showing several parameters of the Variable Font.
 # 
 from pagebot import getFontPath # Import to know the path of non-Python resources.
 from pagebot.fonttoolbox.objects.font import Font
@@ -21,7 +21,7 @@ LINE = 50 # Separator line.
 
 #    F O N T  S T U F F 
 
-# Get the variation font.
+# Get the variable font.
 decovarPath = getFontPath() + '/fontbureau/Decovar-VF_2017-02-06.ttf'
 decovar = Font(decovarPath)
 
@@ -33,7 +33,7 @@ if 1: # Font info stuff.
     print 'Path:', decovar.path
     print 'Units per em:', decovar.info.unitsPerEm
     
-if 1: # Variation stuff
+if 1: # Variable stuff
     # Show the axes in this font. Key is axis name. Value is (minValue, defaultValue, maxValue)
     print '-'*LINE
     axes = decovar.axes # Get dictionary of axes in the font.

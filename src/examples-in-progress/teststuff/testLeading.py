@@ -1,5 +1,5 @@
 
-from pagebot.fonttoolbox.variationbuilder import generateInstance
+from pagebot.fonttoolbox.variablebuilder import generateInstance
 
 FONT_PATH = '../fonts/'
 

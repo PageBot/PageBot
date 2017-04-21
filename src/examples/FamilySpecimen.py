@@ -21,7 +21,7 @@ DEBUG = False # Make True to see grid and element frames.
 
 LIB_PATH = '/Library/Fonts/'
 SOME_SYSTEM_FONTS = {
-    # Let's try some plain OSX system fonts, while they are still there (not variation yet).
+    # Let's try some plain OSX system fonts, while they are still there (not variable font yet).
     'Georgia': dict(Regular=LIB_PATH+'Georgia.ttf', Bold=LIB_PATH+'Georgia Bold.ttf', 
                     Italic=LIB_PATH+'Georgia Italic.ttf', BoldItalic=LIB_PATH+'Georgia Bold Italic.ttf'),
     'Verdana': dict(Regular=LIB_PATH+'Verdana.ttf', Bold=LIB_PATH+'Verdana Bold.ttf', 

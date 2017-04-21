@@ -7,21 +7,21 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     DecovarVariationCircle.py
+#     DecovarVariableCircle.py
 #
 from __future__ import division
 
 import pagebot
 from pagebot.elements.page import Template
-# For Variation Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
+# For Variable Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.elements.variationfonts.variationcircle import VariationCircle
+from pagebot.elements.variablefonts.variablecircle import VariableCircle
 
 DEBUG = False # Make True to see grid and element frames.
 
-OUTPUT_FILE = 'DecovarVariationCircle.pdf'
+OUTPUT_FILE = 'DecovarVariableCircle.pdf'
 
 FONT_PATH = pagebot.getFontPath()
 fontPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
@@ -35,7 +35,7 @@ SKL = ('sklA', 'sklB', 'sklD')
 BLD = ('bldA', 'bldB')
 WMX = ('wmx2',)
 
-class VariationCircleSpecimen(TypeSpecimen):
+class VariableCircleSpecimen(TypeSpecimen):
 
     def getAxisCombinations(self):
         # Answer specific interesting combinations for axes in Decovar.
@@ -109,11 +109,11 @@ class VariationCircleSpecimen(TypeSpecimen):
         # Using the first page as cover (to be filled...)
         page = doc[1]
         glyphName = 'A'        
-        scatter = VariationCircle(decovar, point=(50, 100), w=500, h=500, s=glyphName)
+        scatter = VariableCircle(decovar, point=(50, 100), w=500, h=500, s=glyphName)
         page.append(scatter)
                     
 # Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariationCircleSpecimen([decovarName], showGrid=DEBUG) 
+typeSpecimen = VariableCircleSpecimen([decovarName], showGrid=DEBUG) 
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.

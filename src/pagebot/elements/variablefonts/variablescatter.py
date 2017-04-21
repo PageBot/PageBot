@@ -8,7 +8,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#	  variationscatter.py
+#	  variablescatter.py
 #
 from __future__ import division
 
@@ -18,11 +18,11 @@ from copy import copy
 from fontTools.ttLib import TTFont
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
+from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
 
 
-class VariationScatter(Element):
+class VariableScatter(Element):
     # Initialize the default behavior tags as different from Element.
 
     def __init__(self, font, s=None, parent=None, name=None, style=None, eId=None, fontSize=72, sizeX=5, sizeY=5, recipeAxes=None, designSpace=None, locations=None, **kwargs):

@@ -79,13 +79,13 @@ class Font(object):
         return designSpace
     designSpace = property(_get_designSpace)
  
-    def _get_variations(self):
+    def _get_variables(self):
         try: 
-            variations = self.ttFont['gvar']
+            variables = self.ttFont['gvar']
         except KeyError:
-            variations = {}
-        return variations
-    variations = property(_get_variations)
+            variables = {}
+        return variables
+    variables = property(_get_variables)
 
     def _get_features(self):
         return listOpenTypeFeatures(self.installedName)

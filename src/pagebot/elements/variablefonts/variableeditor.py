@@ -24,19 +24,19 @@ def getFont(familyName, size=200, location=None):
     descriptor = CoreText.CTFontDescriptorCreateWithAttributes(attributes);
     if location:
         for tag, value in location.items():
-            descriptor = CoreText.CTFontDescriptorCreateCopyWithVariation(descriptor, tagToInt(tag), value)
+            descriptor = CoreText.CTFontDescriptorCreateCopyWithVariable(descriptor, tagToInt(tag), value)
     return CoreText.CTFontCreateWithFontDescriptor(descriptor, size, [1, 0, 0, 1, 0, 0])
 
 def getAxisInfo(fnt):
-    rawAxisInfo = CoreText.CTFontCopyVariationAxes(fnt)
+    rawAxisInfo = CoreText.CTFontCopyVariableAxes(fnt)
     axisInfo = []
     for rawInfo in rawAxisInfo:
         info = dict(
-                tag=intToTag(rawInfo["NSCTVariationAxisIdentifier"]),
-                name=rawInfo["NSCTVariationAxisName"],
-                default=rawInfo["NSCTVariationAxisDefaultValue"],
-                minValue=rawInfo["NSCTVariationAxisMinimumValue"],
-                maxValue=rawInfo["NSCTVariationAxisMaximumValue"],
+                tag=intToTag(rawInfo["NSCTVariableAxisIdentifier"]),
+                name=rawInfo["NSCTVariableAxisName"],
+                default=rawInfo["NSCTVariableAxisDefaultValue"],
+                minValue=rawInfo["NSCTVariableAxisMinimumValue"],
+                maxValue=rawInfo["NSCTVariableAxisMaximumValue"],
         )
         axisInfo.append(info)
     return axisInfo

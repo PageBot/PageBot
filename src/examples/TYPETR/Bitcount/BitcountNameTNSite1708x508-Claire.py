@@ -14,7 +14,7 @@
 #     Purchase Bitcount fonts at https://store.typenetwork.com/foundry/typetr/fonts/bitcount
 #     A single user license of Bitcount is $10.10 per font or $101 for the complete package of 300 styles).
 #
-#     TODO: Add Variation selection (color selector, checkbox, color wheel)
+#     TODO: Add Variable selection (color selector, checkbox, color wheel)
 #
 import os
 from random import choice
