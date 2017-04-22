@@ -16,7 +16,7 @@ from condition import Condition
 # Margins
 
 class FloatLeft(Condition):
-	u"""Center e bounding box horizontal between parent margins."""
+	u"""Align the element.left with max of all placed element.right or parent.left."""
 	def test(self, e):
 		return e.isFloatLeft(self.tolerance)
 
@@ -24,7 +24,7 @@ class FloatLeft(Condition):
 		self.addScore(not self.test(e) and e.float2Left(), e, score)
 
 class FloatRight(Condition):
-	u"""Center e bounding box horizontal between parent margins."""
+	u"""Align the element.right with min of all placed element.left or parent.right."""
 	def test(self, e):
 		return e.isFloatRight(self.tolerance)
 
@@ -32,7 +32,7 @@ class FloatRight(Condition):
 		self.addScore(not self.test(e) and e.float2Right(), e, score)
 
 class FloatTop(Condition):
-	u"""Center e bounding box horizontal between parent margins."""
+	u"""Align the element.top with max of all placed element.bottom or parent.top."""
 	def test(self, e):
 		return e.isFloatTop(self.tolerance)
 
@@ -40,7 +40,7 @@ class FloatTop(Condition):
 		self.addScore(not self.test(e) and e.float2Top(), e, score)
 
 class FloatBottom(Condition):
-	u"""Center e bounding box horizontal between parent margins."""
+	u"""Align the element.bottom with max of all placed element.top or parent.bottom."""
 	def test(self, e):
 		return e.isFloatBottom(self.tolerance)
 
@@ -50,7 +50,7 @@ class FloatBottom(Condition):
 # Sides
 
 class FloatLeftSide(Condition):
-	u"""Center e bounding box horizontal between parent margins."""
+	u"""Align the element.left with max of all placed element.right or parent.leftSide."""
 	def test(self, e):
 		return e.isFloatLeftSide(self.tolerance)
 
@@ -58,7 +58,7 @@ class FloatLeftSide(Condition):
 		self.addScore(not self.test(e) and e.float2LeftSide(), e, score)
 
 class FloatRightSide(Condition):
-	u"""Center e bounding box horizontal between parent margins."""
+	u"""Align the element.right with min of all placed element.left or parent.rightSide."""
 	def test(self, e):
 		return e.isFloatRightSide(self.tolerance)
 
@@ -66,7 +66,7 @@ class FloatRightSide(Condition):
 		self.addScore(not self.test(e) and e.float2RightSide(), e, score)
 
 class FloatTopSide(Condition):
-	u"""Center e bounding box horizontal between parent margins."""
+	u"""Align the element.top with max of all placed element.bottom or parent.topSide."""
 	def test(self, e):
 		return e.isFloatTopSide(self.tolerance)
 
@@ -74,7 +74,7 @@ class FloatTopSide(Condition):
 		self.addScore(not self.test(e) and e.float2TopSide(), e, score)
 
 class FloatBottomSide(Condition):
-	u"""Center e bounding box horizontal between parent margins."""
+	u"""Align the element.bottom with max of all placed element.top or parent.bottomSide."""
 	def test(self, e):
 		return e.isFloatBottomSide(self.tolerance)
 

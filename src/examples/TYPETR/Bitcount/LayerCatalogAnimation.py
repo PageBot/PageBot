@@ -120,7 +120,7 @@ def drawLayers(fss):
      
 # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
 if not fontNamePaths:
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
+    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'bitcount')) #familyName.lower())
 else:
     for frame in range(frames):                
         drawSample()

@@ -51,6 +51,7 @@ RS = getRootStyle(
     docW = docW,
     docH = docH,
     showElementInfo = False,
+    showElementOrigin = True,
     originTop = True,
 )
 
@@ -72,17 +73,16 @@ def makeDocument(rootStyle):
     C4 = darker(C1, 0.5) # Default parameter 50% between background color and white.
     
     # Make background element, filling the page color and bleed.
-    background = page.rect(name='Page area', conditions=[Top2TopSide(), Left2LeftSide(), FitRightSide(), FitBottomSide()], fill=C1)
-    background.z = -10 # Other z-layer, makes this element be ignored on floating checks.
+    pageArea = page.rect(name='Page area', conditions=[Top2TopSide(), Left2LeftSide(), FitRightSide(), FitBottomSide()], fill=C1)
     
-    frame1 = page.rect(name='Frame', conditions=[Top2Top(), Left2Left(), FitRight(), FitBottom()], fill=C3, stroke=None)
-    frame1.z = -10 # Other z-layer, makes this element be ignored on floating checks.
-    frame1.solve() # Solve element position, before we can make other elements depend on position and size.
+    colorRect1 = page.rect(name='Frame 1', conditions=[Top2Top(), Left2Left(), FitRight(), FitBottom()], fill=C3, stroke=None, align=CENTER, vAlign=CENTER)
+    colorRect1.z = -10 # Other z-layer, makes this element be ignored on floating checks.
+    colorRect1.solve() # Solve element position, before we can make other elements depend on position and size.
 
     M = 64
-    frame2 = page.rect(name='Frame', conditions=[Center2Center(), Center2YCenter()], fill=C4, stroke=None, 
-        w=frame1.w-M, h=frame1.h-M, align=CENTER, vAlign=CENTER )
-    frame2.z = -10 # Other z-layer, makes this element be ignored on floating checks.
+    colorRect2 = page.rect(name='Frame 2', conditions=[Center2Center(), Center2YCenter()], fill=C4, stroke=None, 
+        w=colorRect1.w-M, h=colorRect1.h-M, align=CENTER, vAlign=CENTER )
+    colorRect2.z = -10 # Other z-layer, makes this element be ignored on floating checks.
 
     # Add some title (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
@@ -90,9 +90,8 @@ def makeDocument(rootStyle):
         fill=(0.3, 0.3, 0.5), textFill=(1, 0, 0),
         conditions=[Top2YCenter(), Top2Top()], 
         align=CENTER) #vAlign=TOP_ALIGN)
-    e1.y = e1.css('pt')
+    e1.y = e1.pt
     e1.center = page.w/2
-    print '@#@#@#', e1.h, e1.getTextSize()
     """
     e2 = page.rect(point=wrongOrigin, style=rootStyle, w=W2, h=H2, name='Floating element 2', 
         conditions=colorCondition2, fill=(1, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)

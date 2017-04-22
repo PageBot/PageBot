@@ -18,14 +18,18 @@ from AppKit import NSColor
 import os
 
 import pagebot
-from pagebot import pbglobals # Non-persistent storage between scripts/applications.
-from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
-from pagebot import textBoxBaseLines
+from pagebot import getFormattedString
 from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
+from pagebot.toolbox.transformer import path2ScriptId
+from pagebot import textBoxBaseLines
 
 # Kinda hack, storing in empty module, to prevent globals to re-initialized, 
 # if variables are changed.
-scriptGlobals = pbglobals.LayerCatalogGenerator = {}
+print __file__
+print path2ScriptId(__file__)
+scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
+scriptGlobals.LayerCatalogGenerator = {}
 
 Random_Features = False
 # Optional using Bitpath family, mixed with Bitcount
@@ -35,7 +39,7 @@ W = 500 # Width of the sample image. Heights is calculated from string.
  # Height of the sample image
 M = 32 # Margin between text and image side.
 Sample_Text = u'Typetr' # Initial sample string
-monoSpaced = True #random()<0.5
+MonoSpaced = True #random()<0.5
 Background_Color = NSColor.blackColor()
 Italic = False
 Italic_Shapes = False # [ss08]
@@ -55,7 +59,7 @@ Layer_Offset_X = -1
 Layer_Offset_Y = 2
 
 familyName = 'Bitcount'
-if monoSpaced:
+if MonoSpaced:
     searchName = familyName + 'Mono'
 else:
     # Only works in layers, if also Single/Double is selected.
@@ -251,15 +255,14 @@ def export():
 UI = [
     dict(name='Sample_Text', ui='EditText', args=dict(text=u'Typetr')),
     dict(name='Layers', ui='PopUpButton', args=dict(items=('1', '2', '3', '4', '5'))),
+    dict(name='MonoSpaced', ui='CheckBox'),
     dict(name='Italic', ui='CheckBox'),
     dict(name='Gray_Scale', ui='CheckBox'),
-    dict(name='Use_BitPath', ui='CheckBox'), # Optional usage mixture with Bitpath if installed.
+    #dict(name='Use_BitPath', ui='CheckBox'), # Optional usage mixture with Bitpath if installed.
     dict(name='Random_Features', ui='CheckBox'), # If random features, omit rest of choices
 ]
-if not 'randomFeatures' in scriptGlobals:
-    scriptGlobals['random_Features'] = Random_Features
-
-# @@@ BROKEN
+if not hasattr(scriptGlobals, 'random_Features'):
+    scriptGlobals.random_Features = Random_Features
 
 if not scriptGlobals['random_Features']:
     UI.append(dict(name='Italic_Shapes', ui='CheckBox')) # [ss08]
