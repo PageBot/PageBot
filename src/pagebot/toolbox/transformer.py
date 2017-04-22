@@ -417,7 +417,7 @@ def path2ParentPath(path):
 
 def path2ScriptId(path):
     u"""Answer the scriptId, derived from the __file__ of the main source."""
-    return path.split('pagebot/src/')[-1]
+    return path.split('/src/')[-1]
     
 def path2FormatPath(path, format=None):
     u"""Answers the path where the extension is changed to format If format is None, then the extension is removed."""

@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     LayerCatalogGenerator.py
+#     TypeLab2017Logo.py
 #
 #     The script assumes one or multiple Bitcount fonts to be installed in the system.
 #     Otherwise the script will stop, opening the browser on the TypeNetwork store.
@@ -24,7 +24,7 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2ScriptId
 
 # Kinda hack, storing in empty module, to prevent globals to re-initialized, if variables are changed.
-scriptGlobals = pageBot.getGlobals(path2ScriptId(__file__))
+scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
 
 Random_Features = False
 # Optional using Bitpath family, mixed with Bitcount
