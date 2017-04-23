@@ -331,7 +331,7 @@ class Middle2MiddleSides(Condition):
 class Top2Middle(Condition):
 	u"""Align top of e bounding box vertical middle between parent margins."""
 	def test(self, e):
-		return e.isTopOnMiddler(self.tolerance)
+		return e.isTopOnMiddle(self.tolerance)
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.top2Middle(), e, score)

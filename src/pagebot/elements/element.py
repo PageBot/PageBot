@@ -627,7 +627,7 @@ class Element(object):
 
     def setSize(self, w, h, d=0):
         u"""Set the size of the element by calling by properties self.w and self.h. 
-        If set, then overwrite access from style width and height."""
+        If set, then overwrite access from style width and height. self.d is optional attribute."""
         self.w = w # Set by property
         self.h = h
         self.d = d # By default elements have 0 depth.
@@ -926,6 +926,20 @@ class Element(object):
                     s += '\n%s %s' % eFail
         return s
 
+    def _drawBackgroundFrame(self, origin):
+        u"""If parameters defined, draw container background and/or stroke."""
+        if self.css('fill') != NO_COLOR or self.css('stroke') != NO_COLOR:
+            p = pointOffset(self.point, origin)
+            p = op = self._applyOrigin(p)    
+            p = self._applyScale(p)    
+            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
+            setFillColor(self.css('fill', NO_COLOR))
+            setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+            rect(px, py, self.w, self.h)
+
+            self._restoreScale()
+
     def _drawElementInfo(self, origin):
         u"""For debugging this will make the elements show their info. The css flag "showElementOrigin"
         defines if the origin marker of an element is drawn."""
@@ -974,7 +988,13 @@ class Element(object):
         that this element has missing content (as in unused image frames).
         Only draw if self.css('showGrid') is True."""
         if self.css('showGrid'):
-            px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
+
+            p = pointOffset(self.point, origin)
+            p = self._applyOrigin(p)    
+            p = self._applyScale(p)    
+            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+            self._setShadow()
+
             sMissingElementFill = self.css('missingElementFill', NO_COLOR)
             if sMissingElementFill is not NO_COLOR:
                 setFillColor(sMissingElementFill)
@@ -990,6 +1010,9 @@ class Element(object):
             moveTo((px + self.w, py))
             lineTo((px, py + self.h))
             drawPath()
+
+            self._resetShadow()
+            self._restoreScale()
 
     def getElementsBox(self):
         u"""Answer the vacuum bounding box around all child elements."""
@@ -1066,27 +1089,27 @@ class Element(object):
     def isCenterOnRightSide(self, tolerance=0):
         return abs(self.parent.w - self.center) <= tolerance
 
-    def isCenterOnBottom(self, tolerance=0):
+    def isMiddleOnBottom(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.parent.pb - self.middle) <= tolerance
         return abs(self.parent.pb - self.middle) <= tolerance
 
-    def isCenterOnBottomSide(self, tolerance=0):
+    def isMiddleOnBottomSide(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.middle) <= tolerance
         return abs(self.middle) <= tolerance
 
-    def isCenterOnTop(self, tolerance=0):
+    def isMiddleOnTop(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.middle) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.middle) <= tolerance
 
-    def isCenterOnTopSide(self, tolerance=0):
+    def isMiddleOnTopSide(self, tolerance=0):
         if self.originTop:
             return abs(self.middle) <= tolerance
         return abs(self.parent.h - self.middle) <= tolerance
 
-    def isMiddleOnYMiddle(self, tolerance=0):
+    def isMiddleOnMiddle(self, tolerance=0):
         pt = self.parent.pt # Get parent padding top
         pb = self.parent.pb 
         middle = (self.parent.h - pt - pb)/2
@@ -1151,9 +1174,6 @@ class Element(object):
 
     def isOriginOnLeft(self, tolerance=0):
         return abs(self.parent.pl - self.x) <= tolerance
-
-    def isOriginOnCenterSides(self, tolerance=0):
-        return abs(self.parent.w/2 - self.x) <= tolerance
 
     def isOriginOnLeftSide(self, tolerance=0):
         return abs(self.x) <= tolerance

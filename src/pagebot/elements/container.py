@@ -83,7 +83,7 @@ class Container(Element):
         u""""Answer the dictionary of positions. Key is the local point of the child element. Value is list of elements."""
         positions = {}
         for e in self.elements:
-            point = tuple(e.point)
+            point = tuple(e.point) # Point needs to be tuple to be used a key.
             if not point in positions:
                 positions[point] = []
             positions[point].append(e)
@@ -143,10 +143,14 @@ class Container(Element):
         If the canvas is None, then draw on default DrawBot output.
         """
         if self._elements:
-            localOrigin = pointOffset(self.point, origin)
+            self._drawBackgroundFrame(origin)
+            p = pointOffset(self.point, origin)
+            p = self._applyOrigin(p)    
+            # Draw all elements
             for element in self._elements:
-                element.draw(localOrigin)
+               element.draw(p)
         else:
             # No elements in the container. Draw “missing” indicator, if self.style['showGrid'] is True
             self._drawMissingElementRect(origin)
 
+        self._drawElementInfo(origin) # Showing depends on css flags 'showElementInfo' and 'showElementOrigin'
