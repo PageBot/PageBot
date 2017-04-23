@@ -14,7 +14,7 @@
 #     Purchase Bitcount fonts at https://store.typenetwork.com/foundry/typetr/fonts/bitcount
 #     A single user license of Bitcount is $10.10 per font or $101 for the complete package of 300 styles).
 #
-#     TODO: Add Variable selection (color selector, checkbox, color wheel)
+#     TODO: Add Variation selection (color selector, checkbox, color wheel)
 #
 import os
 from random import choice
@@ -61,19 +61,6 @@ if not italics:
     for fontName in fontNamePaths.keys():
         if 'Italic' in fontName:
             del fontNamePaths[fontName]
-
-if USE_BITPATH:
-    # Add Bitpath to selection pool of fonts
-    if monoSpaced:
-        familyName = 'BitpathMono'
-    else:
-        familyName = 'BitpathProp'
-
-    bitpathPaths = getFamilyFontPaths(familyName)
-    for fontName, fontPath in bitpathPaths.items(): # Merge the dictionaries
-        if not italics and 'Italic' in fontName:
-            continue
-        fontNamePaths[fontName] = fontPath
 
 # Define method to show a random sample
 def drawSample(name, tt):
@@ -141,7 +128,7 @@ def drawLayers(fss1, fss2):
      
 # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
 if not fontNamePaths:
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
+    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'bitcount')) #familyName.lower())
 else:
     tts = ('Prop','Mono','Grid')
     for frame in range(frames): 
