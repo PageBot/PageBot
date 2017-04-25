@@ -146,10 +146,9 @@ class Container(Element):
             self._drawBackgroundFrame(origin)
             p = pointOffset(self.point, origin)
             p = self._applyOrigin(p)    
-            # Draw all elements
-            for element in self._elements:
-                print '+#+#+##+', p, element
-                element.draw(p)
+            # Draw all elements relative to this point
+            for e in self._elements:
+                e.draw(p)
         else:
             # No elements in the container. Draw “missing” indicator, if self.style['showGrid'] is True
             self._drawMissingElementRect(origin)

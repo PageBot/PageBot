@@ -19,6 +19,7 @@ from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley
+from pagebot.toolbox.transformer import obj2StyleIds
 
 DEBUG = False
 
@@ -117,7 +118,8 @@ else:
 
 RS['font'] = BOOK
 
-# -----------------------------------------------------------------         
+# ----------------------------------------------------------------- 
+        
 def makeDocument(rs):
     u"""Demo page composer."""
 
@@ -144,18 +146,18 @@ def makeDocument(rs):
     # Template for Table of Content
     templateToc = Template(style=rs) # Create template for Table of Content
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    templateToc.grid(rs) 
+    templateToc.grid(style=rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateToc.baselineGrid(style=rs)
     templateToc.cTextBox('\nTable of Content', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32)
     templateToc.cTextBox('', 3, 1, 4, 8, style=rs, eId=tocId, fill=BOX_COLOR)
     
     # Template for literature reference index.
-    templateLiteratureIndex = Template(rs) # Create template for Table of Content
+    templateLiteratureIndex = Template(style=rs) # Create template for Table of Content
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    templateLiteratureIndex.grid(rs) 
+    templateLiteratureIndex.grid(style=rs) 
     # Show baseline grid if rs.showBaselineGrid is True
-    templateLiteratureIndex.baselineGrid(rs)
+    templateLiteratureIndex.baselineGrid(style=rs)
     templateLiteratureIndex.cTextBox('\nLiterature index', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32)
     templateLiteratureIndex.cTextBox('', 3, 1, 4, 8, style=rs, eId=literatureIndexId, fill=BOX_COLOR)
     

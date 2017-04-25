@@ -32,12 +32,13 @@ except ImportError:
     markdown = None
 
 from pagebot import getFormattedString, getMarker
-from pagebot.elements import Galley, Image, Ruler
+from pagebot.elements import Galley, Image, Ruler, TextBox
 
 class Typesetter(object):
 
     GALLEY_CLASS = Galley
     IMAGE_CLASS = Image
+    TEXTBOX_CLASS = TextBox
 
     def __init__(self, galley):
         self.galley = galley
@@ -185,11 +186,12 @@ class Typesetter(object):
         A new child Galley is created to hold the combination if there is a caption."""
         src = node.attrib.get('src')
         self.pushStyleTag(node.tag)
-        imageElement = self.IMAGE_CLASS(src) # Set path, image w/h and image scale from style.
-        self.galley.appendElement(imageElement)
-        caption = node.get('title')
-        if caption: # If there is no caption, we can add the Image element directly to the main galley.
-            imageElement.addCaption(caption)
+        imageContainer = self.IMAGE_CLASS(src) # Set path, image w/h and image caontainer scale from style.
+        self.galley.appendElement(imageContainer)
+        captionString = node.get('title')
+        if captionString: # If there is no caption, we can add the Image element directly to the main galley.
+            caption = self.TEXTBOX_CLASS(captionString)
+            imageContainer.appendElement(caption)
         """
         else:
             # If there is a caption, create a new child Galley to hold image + caption
