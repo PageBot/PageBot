@@ -160,20 +160,20 @@ def makeDocument(rs):
     templateLiteratureIndex.cTextBox('', 3, 1, 4, 8, style=rs, eId=literatureIndexId, fill=BOX_COLOR)
     
     # Template for image reference index.
-    templateImageIndex = Template(rs) # Create template for Table of Content
+    templateImageIndex = Template(style=rs) # Create template for Table of Content
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    templateImageIndex.grid(rs) 
+    templateImageIndex.grid(style=rs) 
     # Show baseline grid if rs.showBaselineGrid is True
-    templateImageIndex.baselineGrid(rs)
+    templateImageIndex.baselineGrid(style=rs)
     templateImageIndex.cTextBox('\nImage index', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32)
     templateImageIndex.cTextBox('', 3, 1, 4, 8, style=rs, eId=imageIndexId, fill=BOX_COLOR)
     
     # Template 1
-    template1 = Template(rs) # Create template of main size. Front page only.
+    template1 = Template(style=rs) # Create template of main size. Front page only.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    template1.grid(rs) 
+    template1.grid(style=rs) 
     # Show baseline grid if rs.showBaselineGrid is True
-    template1.baselineGrid(rs)
+    template1.baselineGrid(style=rs)
     # Create empty image place holders. To be filled by running content on the page.
     # In this templates the images fill the left column if there is a reference on the page.
     template1.cContainer(0, 0, 3, 3, style=rs)  # Empty image element, cx, cy, cw, ch
@@ -203,7 +203,8 @@ def makeDocument(rs):
     # Note that some values are defined here for clarity, even if their default root values
     # are the same.             
     doc.newStyle(name='chapter', font=BOOK)    
-    doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
+    doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD, fill=0.5)
+    doc.newStyle(name='chapter title', fontSize=3*fontSize, font=BOLD, fill=1)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
     doc.newStyle(name='h1', fontSize=7*fontSize, font=SEMIBOLD_CONDENSED, fill=(1, 0, 0), 
@@ -270,22 +271,25 @@ def makeDocument(rs):
     # Create filtered Galley for cover page.  
     # See https://docs.python.org/2/library/xml.etree.elementtree.html#xpath-support
     # for XPath filter syntax.  
+    
+    # Typeset in the Galley, using doc (or another e.css() ) as style tree.
     gTitle = Galley() 
     t = Typesetter(gTitle)
-    t.typesetFile(getFormattedString('', None, style=dict(textFill=1, fontSize=80, font=MEDIUM,
-        leading=84)), 
-        xPath='h1')
+    t.typesetString('HALLO', doc)
+    #t.typesetFile(MD_PATH, doc, xPath='h1')
 
     gAuthor = Galley() 
     t = Typesetter(gAuthor)
-    t.typesetFile(MD_PATH, rootStyle=dict(textFill=1, fontSize=24, font=MEDIUM), 
-        xPath='h4') # First one is the author
+    t.typesetString('AUTHOR', doc)
+    #t.typesetFile(MD_PATH, doc, xPath='h4') # First one is the author
 
     coverPage = doc[1]
     coverPage.setTemplate(templateCover)
+    """
     c = Composer(doc)
     c.compose(gTitle, coverPage, coverTitleId)
     c.compose(gAuthor, coverPage, coverAuthorId)
+    """
     
     # Change template of Table of Content page
     tocPage = doc[2]
@@ -295,8 +299,8 @@ def makeDocument(rs):
 
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
-    t = Typesetter(doc, g)
-    t.typesetFile(MD_PATH)
+    t = Typesetter(g)
+    t.typesetFile(MD_PATH, doc)
                 
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
@@ -306,17 +310,17 @@ def makeDocument(rs):
     # TODO: This will be implemented a function inside Composer in a later version.
     # Assume the tocBox (Table of Content) to be available on the first page.
     literatureRefs = {}
-    tocBox, (_, _) = tocPage[tocId]
+    tocBox = tocPage[tocId]
     for pageId, page in sorted(doc.pages.items()):
         if page in (tocPage, coverPage): # Skip these for toc collect and footnotes.
             continue
         # Get page box for footnotes
-        fnBox, (_, _) = page[footnotesId]
+        fnBox = page[footnotesId]
         assert fnBox is not None # Otherwise there is a template error. Footnote box needs to exist.
         for flowId in flowIds:
             # BUG: Need to check if the marker was really found in the textbox area. 
             # If it is part of the overflow, then it should not be found here.
-            flow, _ = page[flowId]
+            flow = page[flowId]
             for marker, arguments in findMarkers(flow.fs):
                 if marker == 'footnote': 
                     footNoteIsInOverflow = False
@@ -331,16 +335,18 @@ def makeDocument(rs):
                             footNoteIsInOverflow = True
                             break 
                     if not footNoteIsInOverflow:
+                        footnotes = doc.lib['footnotes']
                         # We found a footnote that is visible on this page and 
                         # not in one of the overflow texts.
                         # Process the footnote id and content, usng the “footnote“ content style.
                         # We are re-using the typesetter here. This may become a separate typesetter, if this code
                         # becomes a method of the composer.
                         # TODO: Make this into Galley, in case footnote <p> has child nodes. 
-                        footnoteText = getFormattedString('%d\t%s\n' % (footnoteId, doc.footnotes[footnoteId]['p'].text),
-                            style=t.getCascadedStyle(doc.getStyle('footnote')))
+                        footnoteStyle = doc.findStyle('footnote')
+                        footnoteText = 'AAAAAA' #getFormattedString('%d\t%s\n' % (footnoteId, footnotes[footnoteId]['p'].text),
+                            #style=t.getCascadedStyle(doc.css('footnote')))
                         # Add the footnote content to the box (it may not be the first to be added.
-                        fnBox.append(footnoteText)
+                        fnBox.appendString(footnoteText)
                 elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all in the TOC
                     #doc.addToc(marker)
                     pass
@@ -348,14 +354,16 @@ def makeDocument(rs):
                     # The "arguments" contains the refId, so we can find it in the collected literature references
                     # and then add this page number.
                     # @@@ TODO: check if reference marker is in overflow. Then ignore processing it.
-                    doc.literatureRefs[int(arguments)]['pageIds'].append(pageId)
+                    literatureRefs = doc.lib.get('literatureRefs')
+                    if literatureRefs is not None:
+                        literatureRefs[int(arguments)]['pageIds'].append(pageId)
                     
     # Build the alphabetical literature reference page.
     # Scan the created pages for literature references and build an index on a new page.
     literatureIndexPage = doc.newPage(template=templateLiteratureIndex)
     # Make an alfabetic sorted list of name-->(reference, (pageNumber, ...))
     references = {}  
-    for refIndex, item in doc.literatureRefs.items():
+    for refIndex, item in doc.lib.get('literatureRefs',{}).items():
         references[item['nodeId']] = item
     literatureRefBox = literatureIndexPage.getElement(literatureIndexId)    
     for refId, item in sorted(references.items()):
@@ -374,7 +382,7 @@ def makeDocument(rs):
     imageIndexPage = doc.newPage(template=templateImageIndex)
     # Make an alfabetic sorted list of name-->(reference, (pageNumber, ...))
     references = {}  
-    for refIndex, item in doc.imageRefs.items():
+    for refIndex, item in doc.lib.get('imageRefs', {}).items():
         references[item['nodeId']] = item
     for imageRefId, item in sorted(references.items()):
         print imageRefId, item['nodeId'], item['node'], item['p'], item['pageIds']

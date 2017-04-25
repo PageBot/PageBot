@@ -38,11 +38,9 @@ class TextBox(Element):
         vertical space that the text needs. This overwrites the setting of self._h."""
         if self.style.get('vacuumH'):
             return self.getTextSize()[1]
-        if self._h is None:
-            return self.style.get('h') # Can be None in case the height is undefined. 
-        return self._h
+        return self.css('h')
     def _set_h(self, h):
-        self._h = h # Overwrite style from here, unless self.style['vacuum'] is True
+        self.style['h'] = h # Overwrite style from here, unless self.style['vacuum'] is True
     h = property(_get_h, _set_h)
 
     def _get_nextBox(self):
@@ -64,9 +62,9 @@ class TextBox(Element):
 
     def setText(self, s):
         u"""Set the formatted string to s, using self.style."""
-        self.fs = getFormattedString(s, self.style)
+        self.fs = getFormattedString(s, self)
 
-    def append(self, fs):
+    def appendString(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
         is already assumed to be styled or can be added as plain string."""
         assert fs is not None
@@ -77,7 +75,7 @@ class TextBox(Element):
         return self.getOverflow(self.w, self.h)
 
     def appendMarker(self, markerId, arg=None):
-        self.append(getMarker(markerId, arg=arg))
+        self.appendString(getMarker(markerId, arg=arg))
 
     def getTextSize(self, fs=None, w=None):
         """Figure out what the width/height of the text self.fs is, with or given width or

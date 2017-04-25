@@ -53,12 +53,6 @@ class Page(Container):
         return self.eId
     pageId = property(_get_pageId)
 
-    def __getitem__(self, eId):
-        return self.elementIds[eId]
-		
-    def get(self, eId):
-        return self.elementsIds.get(eId)
-		
     def setTemplate(self, template):
         u"""Clear the elements from the page and set the template. Copy the elements."""
         self.elements = [] # Sequential drawing order of Element instances.
@@ -67,7 +61,7 @@ class Page(Container):
         if template is not None:
             # Copy elements from the template and put them in the designated positions.
             for element in template.elements:
-                self.append(copy.copy(element))
+                self.appendElement(copy.copy(element))
 
     def XXXreplaceElement(self, element, replacement):
         u"""Find this element in the page and replace it at the
@@ -138,7 +132,7 @@ class Page(Container):
         u"""Draw a generic container. Note that w and h can also be defined in the style."""
         if parent is None: parent = self # Make style tree availabe.
         e = Container(point=point, parent=parent, style=style, eId=eId, elements=elements, **kwargs)
-        self.append(e)  # Append to drawing sequence and store by (x,y) and optional element id.
+        self.appendElement(e)  # Append to drawing sequence and store by (x,y) and optional element id.
         return e
 
     def cContainer(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, elements=None, **kwargs):
@@ -150,7 +144,7 @@ class Page(Container):
         u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
         if parent is None: parent = self # Make style tree availabe.
         e = TextBox(fs, point=point, parent=parent, style=style, eId=eId, **kwargs)
-        self.append(e) # Append to drawing sequence and set parent to self.
+        self.appendElement(e) # Append to drawing sequence and set parent to self.
         return e
 
     def cTextBox(self, fs, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
@@ -166,7 +160,7 @@ class Page(Container):
         Caller must supply formatted string. Support both (x, y) and x, y as position."""
         if parent is None: parent = self # Make style tree availabe.
         e = Text(fs, point=point, parent=parent, style=style, eId=eId, **kwargs)
-        self.append(e) # Append to drawing sequence and store by (x,y) and optional element id.
+        self.appendElement(e) # Append to drawing sequence and store by (x,y) and optional element id.
         return e
                 
     def cText(self, fs, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
@@ -182,7 +176,7 @@ class Page(Container):
         a square is drawn."""
         if parent is None: parent = self # Make style tree availabe.
         e = Rect(point=point, parent=parent, style=style, eId=eId, **kwargs)
-        self.append(e) # Append to drawing sequence and store by optional element id.
+        self.appendElement(e) # Append to drawing sequence and store by optional element id.
         return e
                 
     def cRect(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
@@ -195,7 +189,7 @@ class Page(Container):
         a circle is drawn."""
         if parent is None: parent = self # Make style tree availabe.
         e = Oval(point=point, parent=parent, eId=eId, style=style, **kwargs)
-        self.append(e) # Append to drawing sequence and store by optional element id.
+        self.appendElement(e) # Append to drawing sequence and store by optional element id.
         return e
 
     def cOval(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
@@ -206,7 +200,7 @@ class Page(Container):
     def line(self, point=None, parent=None, style=None, eId=None, **kwargs):
         if parent is None: parent = self # Make style tree availabe.
         e = Line(point=point, parent=parent, style=style, eId=eId, **kwargs)
-        self.append(e) # Append to drawing sequence and store by optional element id.
+        self.appendElement(e) # Append to drawing sequence and store by optional element id.
         return e
                 
     def cLine(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
@@ -217,7 +211,7 @@ class Page(Container):
     def polygon(self, point=None, parent=None, style=None, eId=None, points=[], **kwargs):
         if parent is None: parent = self
         e = Polygon(point=point, parent=parent, style=style, eId=eId, points=points, **kwargs)
-        self.append(e) # Append to drawing sequence and store by optional element id.
+        self.appendElement(e) # Append to drawing sequence and store by optional element id.
         return e
 
     def image(self, path, point=None, parent=None, eId=None, style=None, mask=None, imo=None, pageNumber=0, clipRect=None, **kwargs):
@@ -228,7 +222,7 @@ class Page(Container):
         The Image element is answered for convenience of the caller."""
         if parent is None: parent = self # Make style tree availabe.
         e = Image(path, point=point, parent=parent, eId=eId, style=style, mask=None, imo=imo, pageNumber=pageNumber, clipRect=clipRect, **kwargs)
-        self.append(e)
+        self.appendElement(e)
         return e
             
     def cImage(self, path, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, mask=None, imo=None, pageNumber=0, cClipRect=None, **kwargs):
@@ -246,14 +240,14 @@ class Page(Container):
         u"""Direct way to add a grid element to a single page, if not done through its template."""
         if parent is None: parent = self # Make style tree availabe.
         e = Grid(point=point, parent=None, style=style, eId=eId, **kwargs)
-        self.append(e)
+        self.appendElement(e)
         return e
         
     def baselineGrid(self, point=None, parent=None, style=None, eId=None, **kwargs):
         u"""Direct way to add a baseline grid element to a single page, if not done through its template."""
         if parent is None: parent = self # Make style tree availabe.
         e = BaselineGrid(point=point, parent=parent, style=style, eId=eId, **kwargs)
-        self.append(e)
+        self.appendElement(e)
         return e
 
     #   Additional drawing stuff.

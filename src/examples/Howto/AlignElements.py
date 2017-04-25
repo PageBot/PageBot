@@ -65,13 +65,17 @@ def makeDocument(rs):
     page.rect(w=SQ, h=SQ, conditions=(Right2Right(),Bottom2Bottom()), fill=0.7)
 
     # Make new container for adding elements inside with alignment.
-    cnt = page.container(w=W-6*SQ, h=H-6*SQ, fill=, margin=SQ, vAlign=BOTTOM_ALIGN, stroke=0,
+    cnt = page.container(w=W-6*SQ, h=H-6*SQ, fill=(0.8,0.8,0.8,0.8), margin=SQ, vAlign=BOTTOM_ALIGN, stroke=0,
+        pr=10, pt=10, pb=10, pl=10,
         conditions=(Center2Center(), Top2Top()))
-
+    cnt.solve()
+    
     r = Rect(w=SQ, h=SQ, stroke=None, 
-        conditions=(Top2Top(),Left2Left()), fill=(1, 1, 0))
+        conditions=(Center2Center(),Middle2Middle()), fill=(1, 1, 0))
     cnt.append(r)
-    print r.parent
+    r = Rect(w=SQ, h=SQ, stroke=None, 
+        conditions=(Top2Top(),Left2Left()), fill=(1, 0, 0))
+    cnt.append(r)
     # Solve the layout placement conditions on the page by moving the
     # elements that are not on the right positions (which is all of them,
     # because we did not add point attributes when creating them.

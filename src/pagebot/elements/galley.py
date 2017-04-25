@@ -35,11 +35,7 @@ class Galley(Container):
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
 
-    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, elements=None, w=None, h=None, **kwargs):
-        u"""Allow self.w and self.h to be None or 0, as the paste board roll can have any size.
-        If undefined, the size is calculated from the size contained elements."""
-        if style is None:
-            style = dict(fill=NO_COLOR, stroke=None, w=w, h=h, fontSize=14, leading=14)
+    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, elements=None, **kwargs):
         Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, elements=elements, **kwargs)
         self._footnotes = []
 
@@ -50,6 +46,13 @@ class Galley(Container):
         for e in self.elements:
             t += ' '+e.__class__.__name__
         return t + ']'
+
+    def appendString(self, fs):
+        u"""Add the string to the lsat text box. Create a new textbox if not found."""
+        e = self.getLastTextBox()
+        if e is None:
+            e = self.getTextBox()
+        e.appendString(fs)
 
     def getMinSize(self):
         u"""Cumulation of the maximum minSize of all enclosed elements."""
@@ -105,13 +108,13 @@ class Galley(Container):
         if lastTextBox is None or lastTextBox != self.getLastElement():
             if style is None: # No last textbox to copy from and no style supplied. Create something here.
                 style = dict(w=200, h=0) # Arbitrary width and height, in case not
-            self.append(self.TEXTBOX_CLASS('', point=(0, 0), parent=self, style=style))  # Create a new TextBox with style width and empty height.
+            self.appendElement(self.TEXTBOX_CLASS('', point=(0, 0), parent=self, style=style))  # Create a new TextBox with style width and empty height.
         return self.getLastElement() # Which only can be a textBox now.
 
     def newRuler(self, style):
         u"""Add a new Ruler instance, depending on style."""
         ruler = self.RULER_CLASS(style=style)
-        self.append(ruler)
+        self.appendElement(ruler)
 
     def draw(self, origin):
         u"""Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep

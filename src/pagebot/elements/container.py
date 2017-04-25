@@ -91,19 +91,19 @@ class Container(Element):
 
     #   C H I L D  E L E M E N T  P O S I T I O N S
 
-    def append(self, e):
+    def appendElement(self, e):
         u"""Add element to the list of child elements. Note that elements can be added multiple times.
         If the element is alread placed in another container, then remove it from its current parent.
         This relation and position is lost. The position e is supposed to be filled already in local position."""
         eParent = e.parent
         if not eParent in (None, self): 
-            e.parent.remove(e)
+            e.parent.removeElement(e) # Remove from current parent, if there is one.
         self._elements.append(e)
         e.parent = self
         if e.eId: # Store the element by unique element id, if it is defined.
             self._eIds[e.eId] = e
 
-    def remove(self, e):
+    def removeElement(self, e):
         u"""If the element is placed in self, then remove it. Don't touch the position."""
         assert e.parent is self
         if e.eId in self._eIds:
@@ -148,7 +148,8 @@ class Container(Element):
             p = self._applyOrigin(p)    
             # Draw all elements
             for element in self._elements:
-               element.draw(p)
+                print '+#+#+##+', p, element
+                element.draw(p)
         else:
             # No elements in the container. Draw “missing” indicator, if self.style['showGrid'] is True
             self._drawMissingElementRect(origin)

@@ -15,7 +15,7 @@ import copy
 from drawBot import newPage, saveImage, installedFonts, installFont
 
 from pagebot.style import makeStyle
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.transformer import pointOffset, obj2StyleId
 
 class Document(object):
     u"""Container of Page instance, Style instances and Template instances."""
@@ -41,12 +41,15 @@ class Document(object):
         pageW = self.css('w')
         pageH = self.css('h')
         self.makePages(minPageId=minPageId, pages=pages, w=pageW, h=pageH, templates=template, **kwargs)
-        # Storage for collected content while typesetting and composing, referring to the pages
+        # Storage lib for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
-        self.footnotes = {} # Keys is sequential order. Value is (page, e)
-        self.literatureRefs = {} # Storage for literature references.
-        self.imageRefs = {} # Storage for image references.
-        self.toc = {} # Keys is header index, value is header node, to connect the header markers with the nodes.
+        self._lib = {}
+
+    def _get_lib(self):
+        u"""Answer the global storage dictionary, used by TypeSetter and others to keep track of footnotes,
+        table of content, etc. Some common entries are predefined. """
+        return self._lib 
+    lib = property(_get_lib)
 
     def initializeStyles(self, rootStyle, styles):
         u"""Make sure that the default styles always exist."""
@@ -63,11 +66,28 @@ class Document(object):
         if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
 
-
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
-    def css(self, name, default=None):
-        return self.rootStyle.get(name, default)
+    def css(self, name, default=None, styleId=None):
+        u"""If optional sId is None or style cannot found, then use the root style. 
+        If the style is found from the (cascading) sId, then use that to return the requested attribute."""
+        style = self.findStyle(styleId)
+        if style is None:
+            style = self.rootStyle
+        return style.get(name, default)
+
+    def findStyle(self, styleId):
+        u"""Answer the style that fits the optional sequence naming of styleId.
+        Answer None if no style can be found. styleId can have one of these formats:
+        ('main h1', 'h1 b')"""
+        if styleId is None:
+            return None
+        styleId = obj2StyleId(styleId)
+        while styleId and not ' '.join(styleId) in self.styles:
+            styleId = styleId[1:]
+        if styleId:
+            return self.styles[styleId]
+        return None
 
     def getNamedStyle(self, styleName):
         u"""In case we are looking for a named style (e.g. used by the Typesetter to build a stack

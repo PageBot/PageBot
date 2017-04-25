@@ -17,7 +17,8 @@ from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, r
 from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
-from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN, NO_COLOR
+from pagebot.style import makeStyle, ORIGIN_POINT, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN, NO_COLOR, \
+    DEFAULT_WIDTH, DEFAULT_HEIGHT, DEAULT_DEPTH, XXXL
 from pagebot.toolbox.transformer import asFormatted
 
 class Element(object):
@@ -32,9 +33,9 @@ class Element(object):
     isFlow = False
 
     def __init__(self, point=None, parent=None, name=None, eId=None, style=None, **kwargs):  
-        u"""Basic initialize for every Element constructor."""  
-        self._w = self._h = self._d = 0 # Optionally overwritten values. Otherwise use values from self.style.
-        self.point = point # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
+        u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here."""  
+        assert point is None or isinstance(point, (tuple, list)), point
+        self.point = point3D(point or ORIGIN_POINT) # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
         self.style = makeStyle(style, **kwargs)
         self.name = name
         self.eId = eId or uniqueID(self)
@@ -49,6 +50,7 @@ class Element(object):
         else:
             name = ''
         return '%s%s(%d, %d)' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])))
+
 
     def _get_elements(self):
         u"""Default element does not have children."""
@@ -76,6 +78,13 @@ class Element(object):
         if self.parent:
             return self.parent.getNamedStyle(styleName)
         return None
+
+    def _get_lib(self):
+        u"""Answer the shared document.lib dictionary, used for share global entry by elements."""
+        parent = self.parent
+        if parent is not None:
+            return parent.lib # Either parent element or document.lib.
+        return None # Document cannot be found, there is not document as root.
 
     # Most common properties
 
@@ -139,15 +148,17 @@ class Element(object):
         if self.css('vacuumW'): # Get vaccum left from child elements.
             ex, _, _, _ = self.getElementsBox()
             return self.x + ex
-        if self.css('align') == CENTER:
+        xAlign = self.xAlign
+        if xAlign == CENTER:
             return self.x - self.w/2
-        if self.css('align') == RIGHT_ALIGN:
+        if xAlign == RIGHT_ALIGN:
             return self.x - self.w
         return self.x
     def _set_left(self, x):
-        if self.css('align') == CENTER:
+        xAlign = self.xAlign
+        if xAlign == CENTER:
             self.x = x + self.w/2
-        elif self.css('align') == RIGHT_ALIGN:
+        elif xAlign == RIGHT_ALIGN:
             self.x = x + self.w
         else:
             self.x = x
@@ -163,15 +174,17 @@ class Element(object):
         if self.css('vacuumW'): # Get vaccum left/right from child elements.
             ex, _, ew, _ = self.getElementsBox()
             return self.x + ex + ew/2
-        if self.css('align') == LEFT_ALIGN:
+        xAlign = self.xAlign
+        if xAlign == LEFT_ALIGN:
             return self.x + self.w/2
-        if self.css('align') == RIGHT_ALIGN:
+        if xAlign == RIGHT_ALIGN:
             return self.x + self.w
         return self.x
     def _set_center(self, x):
-        if self.css('align') == LEFT_ALIGN:
+        xAlign = self.xAlign
+        if xAlign == LEFT_ALIGN:
             self.x = x - self.w/2
-        elif self.css('align') == RIGHT_ALIGN:
+        elif xAlign == RIGHT_ALIGN:
             self.x = x - self.w
         else:
             self.x = x
@@ -181,15 +194,17 @@ class Element(object):
         if self.css('vacuumW'): # Get vaccum left from child elements.
             ex, _, ew, _ = self.getElementsBox()
             return self.x + ex + ew
-        if self.css('align') == LEFT_ALIGN:
+        xAlign = self.xAlign
+        if xAlign == LEFT_ALIGN:
             return self.x + self.w
-        if self.css('align') == CENTER:
+        if xAlign == CENTER:
             return self.x + self.w/2
         return self.x
     def _set_right(self, x):
-        if self.css('align') == LEFT_ALIGN:
+        xAlign = self.xAlign
+        if xAlign == LEFT_ALIGN:
             self.x = x - self.w
-        elif self.css('align') == CENTER:
+        elif xAlign == CENTER:
             self.x = x - self.w/2
         else:
             self.x = x
@@ -204,7 +219,7 @@ class Element(object):
     # Vertical
 
     def _get_top(self):
-        yAlign = self.css('yAlign')
+        yAlign = self.yAlign
         if yAlign == CENTER:
             return self.y - self.h/2
         if yAlign == BOTTOM_ALIGN:
@@ -213,7 +228,7 @@ class Element(object):
             return self.y + self.h
         return self.y
     def _set_top(self, y):
-        yAlign = self.css('yAlign')
+        yAlign = self.yAlign
         if yAlign == CENTER:
             self.y = y + self.h/2
         elif yAlign == BOTTOM_ALIGN:
@@ -237,14 +252,14 @@ class Element(object):
     mTop = property(_get_mTop, _set_mTop)
 
     def _get_middle(self): # On bounding box, not including margins.
-        yAlign = self.css('yAlign')
+        yAlign = self.yAlign
         if yAlign == TOP_ALIGN:
             return self.y - self.h/2
         if yAlign == BOTTOM_ALIGN:
             return self.y + self.h/2
         return self.y
     def _set_middle(self, y):
-        yAlign = self.css('yAlign')
+        yAlign = self.yAlign
         if yAlign == TOP_ALIGN:
             self.y = y + self.h/2
         elif yAlign == BOTTOM_ALIGN:
@@ -254,7 +269,7 @@ class Element(object):
     middle = property(_get_middle, _set_middle)
 
     def _get_bottom(self):
-        yAlign = self.css('yAlign')
+        yAlign = self.yAlign
         if yAlign == TOP_ALIGN:
             if self.originTop:
                 return self.y + self.h
@@ -263,7 +278,7 @@ class Element(object):
             return self.y + self.h/2
         return self.y
     def _set_bottom(self, y):
-        yAlign = self.css('yAlign')
+        yAlign = self.yAlign
         if yAlign == TOP_ALIGN:
             if self.originTop:
                 self.y = y - self.h
@@ -313,14 +328,14 @@ class Element(object):
     mFront = property(_get_mFront, _set_mFront)
 
     def _get_middle(self): # On bounding box, not including margins.
-        yAlign = self.css('yAlign')
+        yAlign = self.yAlign
         if yAlign == TOP_ALIGN:
             return self.y - self.h/2
         if yAlign == BOTTOM_ALIGN:
             return self.y + self.h/2
         return self.y
     def _set_middle(self, y):
-        yAlign = self.css('yAlign')
+        yAlign = self.yAlign
         if yAlign == TOP_ALIGN:
             self.y = y + self.h/2
         elif yAlign == BOTTOM_ALIGN:
@@ -330,7 +345,7 @@ class Element(object):
     middle = property(_get_middle, _set_middle)
 
     def _get_bottom(self):
-        yAlign = self.css('yAlign')
+        yAlign = self.Align
         if yAlign == TOP_ALIGN:
             if self.originTop:
                 return self.y + self.h
@@ -339,7 +354,7 @@ class Element(object):
             return self.y + self.h/2
         return self.y
     def _set_bottom(self, y):
-        yAlign = self.css('yAlign')
+        yAlign = self.yAlign
         if yAlign == TOP_ALIGN:
             if self.originTop:
                 self.y = y - self.h
@@ -362,6 +377,26 @@ class Element(object):
             self.bottom = y + self.mb
     mBottom = property(_get_mBottom, _set_mBottom)
 
+    # Alignment types, defines where the origin of the element is located.
+
+    def _get_xAlign(self): # Answer the type of x-alignment. For compatibility allow align and xAlign as equivalents.
+        return self.css('align')
+    def _set_xAlign(self, xAlign):
+        self.style['align'] = xAlign # Save locally, blocking CSS parent scope for this param.
+    align = xAlign = property(_get_xAlign, _set_xAlign)
+     
+    def _get_yAlign(self): # Answer the type of x-alignment.
+        return self.css('ylign')
+    def _set_yAlign(self, align):
+        self.style['yAlign'] = align # Save locally, blocking CSS parent scope for this param.
+    yAlign = property(_get_yAlign, _set_yAlign)
+     
+    def _get_zAlign(self): # Answer the type of x-alignment.
+        return self.css('zAlign')
+    def _set_zAlign(self, align):
+        self.style['zAlign'] = align # Save locally, blocking CSS parent scope for this param.
+    zAlign = property(_get_zAlign, _set_zAlign)
+     
     # Position by column + gutter size index.
 
     def _get_cx(self): # Answer the x-position, defined in columns. Can be fractional for elements not on grid.
@@ -439,7 +474,7 @@ class Element(object):
     def _get_w(self): # Width
         if self.css('vacuumW'): # If vacuum forming, this overwrites css or style width.
             return self.right - self.left
-        return self.css('w') 
+        return self.css('w', DEFAULT_WIDTH) # Should not be 0 or None
     def _set_w(self, w):
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
@@ -455,7 +490,7 @@ class Element(object):
             if self.originTop:
                 return self.bottom - self.top
             return self.top - self.bottom
-        return self.css('h')  
+        return self.css('h', DEFAULT_HEIGHT) # Should not be 0 or None
     def _set_h(self, h):
         self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
@@ -468,6 +503,9 @@ class Element(object):
 
     def _get_d(self): # Depth
         return self.css('d') 
+        if self.css('vacuumD'): # If vacuum forming, this overwrites css or style depth.
+            return self.back - self.front
+        return self.css('d', DEAULT_DEPTH) # Should not be 0 or None
     def _set_d(self, d):
         self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
@@ -571,37 +609,37 @@ class Element(object):
     padding3D = property(_get_padding3D, _set_padding3D)
 
     def _get_pt(self): # Padding top
-        return self.css('pt')
+        return self.css('pt', 0)
     def _set_pt(self, pt):
         self.style['pt'] = pt  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
     
     def _get_pb(self): # Padding bottom
-        return self.css('pb')
+        return self.css('pb', 0)
     def _set_pb(self, pb):
         self.style['pb'] = pb  # Overwrite element local style from here, parent css becomes inaccessable.
     pb = property(_get_pb, _set_pb)
     
     def _get_pzf(self): # Padding z-axis front
-        return self.css('pzf')
+        return self.css('pzf', 0)
     def _set_pzf(self, pzf):
         self.style['pzf'] = pzf  # Overwrite element local style from here, parent css becomes inaccessable.
     pzf = property(_get_pzf, _set_pzf)
     
     def _get_pzb(self): # Padding z-axis back
-        return self.css('mzb')
+        return self.css('pzb', 0)
     def _set_pzb(self, pzb):
-        self.style['mzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)
     
     def _get_pl(self): # Padding left
-        return self.css('pl')
+        return self.css('pl', 0)
     def _set_pl(self, pl):
         self.style['pl'] = pl # Overwrite element local style from here, parent css becomes inaccessable.
     pl = property(_get_pl, _set_pl)
     
     def _get_pr(self): # Margin right
-        return self.css('pr')
+        return self.css('pr', 0)
     def _set_pr(self, pr):
         self.style['pr'] = pr  # Overwrite element local style from here, parent css becomes inaccessable.
     pr = property(_get_pr, _set_pr)
@@ -642,8 +680,7 @@ class Element(object):
             y = self.y + pt
         else:
             y = self.y + pb
-
-        return (self.x + pl, y, self.w - pl - self.css('pr'), self.h - pt - pb)
+        return (self.x + pl, y, self.w - pl - self.pr, self.h - pt - pb)
     paddedBox = property(_get_paddedBox)
 
     def _get_padded3DBox(self):
@@ -651,7 +688,7 @@ class Element(object):
         the style padding. Answered format (x, y, z, w, h, d)."""
         x, y, w, h = self.paddedBox
         pzf = self.pzf
-        return x, y, self.z + pzf, w, h, self.d - pzf - self.css('pzb')
+        return x, y, self.z + pzf, w, h, self.d - pzf - self.pzb
     padded3DBox = property(_get_padded3DBox)
 
     def _get_boundingBox(self):
@@ -675,19 +712,19 @@ class Element(object):
     marginBox = property(_get_marginBox)
 
     def _get_minW(self):
-        return self.css('minW')
+        return self.css('minW', DEFAULT_WIDTH)
     def _set_minW(self, minW):
         self.style['minW'] = minW # Set on local style, shielding parent self.css value.
     minW = property(_get_minW, _set_minW)
 
     def _get_minH(self):
-        return self.css('minH')
+        return self.css('minH', DEFAULT_HEIGHT)
     def _set_minH(self, minH):
         self.style['minH'] = minH # Set on local style, shielding parent self.css value.
     minH = property(_get_minH, _set_minH)
 
     def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
-        return self.css('minD')
+        return self.css('minD', DEFAULT_DEPTH)
     def _set_minD(self, minD):
         self.style['minD'] = minD # Set on local style, shielding parent self.css value.
     minD = property(_get_minD, _set_minD)
@@ -706,16 +743,22 @@ class Element(object):
         self.minD = minD # Optional minimum depth of the element.
 
     def _get_maxW(self):
-        return self.css('maxW')
+        return self.css('maxW', XXXL)
     def _set_maxW(self, maxW):
         self.style['maxW'] = maxW # Set on local style, shielding parent self.css value.
     maxW = property(_get_maxW, _set_maxW)
 
     def _get_maxH(self):
-        return self.css('maxH')
+        return self.css('maxH', XXXL)
     def _set_maxH(self, maxH):
         self.style['maxH'] = maxH # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
+
+    def _get_maxD(self):
+        return self.css('maxD', XXXL)
+    def _set_maxD(self, maxD):
+        self.style['maxD'] = maxD # Set on local style, shielding parent self.css value.
+    maxD = property(_get_maxD, _set_maxD)
 
     def getMaxSize(self):
         return self.maxW, self.maxH # No limit if value is None
@@ -810,12 +853,13 @@ class Element(object):
         u"""Answer the p according to the alignment status nin the css.""" 
         px, py, pz = point3D(p)
         # Horizontal
-        if self.css('align') == CENTER:
+        xAlign = self.xAlign
+        if xAlign == CENTER:
             px -= self.w/2/self.scaleX
-        elif self.css('align') == RIGHT_ALIGN:
+        elif xAlign == RIGHT_ALIGN:
             px -= self.w/self.scaleX
         # Vertical
-        yAlign = self.css('yAlign')
+        yAlign = self.yAlign
         if yAlign == CENTER:
             py -= self.h/2/self.scaleY
         elif yAlign == TOP_ALIGN:
@@ -915,7 +959,7 @@ class Element(object):
             (self.__class__.__name__ + ' ' + (self.name or ''), asFormatted(self.x), asFormatted(self.y), asFormatted(self.z), 
              asFormatted(self.w), asFormatted(self.h), 
              asFormatted(self.cx), asFormatted(self.cy), asFormatted(self.cw), asFormatted(self.ch),
-             self.css('align'), self.css('yAlign'))
+             self.xAlign, self.yAlign)
         conditions = self.css('conditions')
         if conditions:
             score = self.evaluate()
