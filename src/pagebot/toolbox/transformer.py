@@ -35,6 +35,7 @@ def point3D(p):
 
 def point2D(p):
     u"""Answer the 2D origin as combination of p and offset."""
+    print p
     return point3D(p)[:2]
 
 def pointOffset(point, offset):
@@ -405,6 +406,30 @@ def words2WordsKey(words):
         if word:
             k.append(word)
     return '_'.join(k)
+
+# ---------------------------------------------------------------------------------------------------------
+#    S T Y L E
+
+def obj2StyleId(s):
+    u"""Make sure s is styleId format, other recursively transform into string with space separators.
+    Parts can be CSS-like #id and .class identifiers.
+    Note that this may change in the future if more compatibility with CSS is necessary."""
+    styleId = []
+    if isinstance(s, (list, tuple)):
+        for sPart in s:
+            styleId.append(obj2StyleId(sPart))
+        return ' '.join(styleId)
+        
+    if not isinstance(s, basestring):
+        s = u'%s' % s
+    for sPart in s.split(' '):
+        if sPart:
+            styleId.append(sPart)
+    return ' '.join(styleId)
+
+def obj2StyleIds(s):
+    print s
+    return obj2StyleId(s).split(' ')
 
 # ---------------------------------------------------------------------------------------------------------
 #    P A T H

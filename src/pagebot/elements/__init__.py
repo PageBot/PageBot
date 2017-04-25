@@ -14,6 +14,7 @@ from pagebot.elements.textbox import TextBox
 from pagebot.elements.text import Text
 from pagebot.elements.rect import Rect
 from pagebot.elements.line import Line
+from pagebot.elements.ruler import Ruler
 from pagebot.elements.polygon import Polygon
 from pagebot.elements.oval import Oval
 from pagebot.elements.image import Image

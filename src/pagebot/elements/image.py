@@ -12,29 +12,33 @@
 #
 import os
 from drawBot import imageSize
-from pagebot.elements.element import Element
+from pagebot.elements.container import Container
+from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT
+from pagebot.toolbox.transformer import pointOffset
 
-class Image(Element):
+class Image(Container):
     u"""Image element has special attributes self.iw and self.ih for the real image size.
     If the optional captionStyle is not defined, then use self.style for captions."""
+
+    from pagebot.elements.textbox import TextBox
+    CAPTION_CLASS = TextBox
+    
     def __init__(self, path, point=None, parent=None, style=None, name=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+        Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+        # Check on one of the (w, h) in the style. One of the can be undefined for proportional scaling.
+        # Set default to 1 column
+        self._w = DEFAULT_WIDTH # In case there is no valid image path defined, to derive the scale from.
+        self._h = DEFAULT_HEIGHT
+
         self.mask = mask # Optional mask element.
         self.clipRect = clipRect
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.captionStyle = captionStyle or self.style
         # Check if there is caption content. Tne make the FormattedString, so we know the heigh.
         if caption:
-            self.caption = getFormattedString(self.captionStyle)
-        else:
-            self.caption = None
+            self.addCaption(caption)
         # Set all size and scale values.
         self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn.
-        # Check on one of the (w, h) in the style. One of the can be undefined for proportional scaling.
-        # Set default to 1 column
-        if self.w is not None and self.h is not None:
-            self.w = self.css('cw')
-        #print self.ih, path
 
     def __repr__(self):
         return '[%s %s]' % (self.__class__.__name__, self.eId or self.path)
@@ -75,14 +79,14 @@ class Image(Element):
     # width to the image minimum width and the height to the image minimum height.
     # Also the proportion is calculated, depending on the ratio of """
     def _get_w(self):
-        return self._w
+        return self._w or DEFAULT_WIDTH
     def _set_w(self, w):
         self._w = w
         self.setScale(w=w)
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        return self._h
+        return self._h or DEFAULT_HEIGHT
     def _set_h(self, h):
         self._h = h
         self.setScale(h=h)
@@ -96,16 +100,16 @@ class Image(Element):
             w = self.w
         if h is None:
             h = self.h
-        _, _, pw, ph = self.getPaddedBox() # Calculate padding, because it will adjust scale.
+        _, _, pw, ph = self.paddedBox # Calculate padding, because it will adjust scale.
         if not self.iw or not self.ih:
             # Cannot calculate the scale if the image does not exist.
-            sx = sy = 1
-            self._w = self.css('w') # Copy from original plain style, without scaling.
-            self._h = self.css('h')
+            sx = sy = 1 # self.w and self.h un
+            self._w = self.css('w', DEFAULT_WIDTH) # Copy from original plain style, without scaling.
+            self._h = self.css('h', DEFAULT_HEIGHT)
         elif w is None and h is None:
             sx = sy = 1 # Use default size of the image.
-            self._w = self.css('w') # Copy from original plain style, without scaling.
-            self._h = self.css('h')
+            self._w = self.css('w', DEFAULT_WIDTH) # Copy from original plain style, without scaling.
+            self._h = self.css('h', DEFAULT_HEIGHT)
         elif not proportional and w is not None and h is not None: # Needs to be disproportional scale
             sx = 1.0 * pw / self.iw
             sy = 1.0 * ph / self.ih
@@ -130,6 +134,10 @@ class Image(Element):
         self.sx = sx
         self.sy = sy
 
+    def addCaption(self, fs):
+        u"""Add caption to self elements. Future: Add position rules here."""
+        self.appendElement(self.CAPTION_CLASS(fs))
+
     def getCaptionSize(self, page):
         """Figure out what the height of the text is, with the width of this text box."""
         return textSize(self.caption or '', width=self.w)
@@ -140,22 +148,12 @@ class Image(Element):
 
     def _getAlpha(self):
         u"""Use alpha channel of the fill color as opacity of the image."""
-        sFill = self.style.get('fill', NO_COLOR)
+        sFill = self.css('fill', NO_COLOR)
         if isinstance(sFill, (tuple, list)) and len(sFill) == 4:
             _, _, _, alpha = sFill
         else:
             alpha = 1
         return alpha
-
-    def _drawCaption(self, caption, x, y, w, h):
-        u"""Draw the caption, if there is one defined. It is assumed that self.caption contains
-        a FormattedString and the (w,h) is already calculated rectangle of the formatted string."""
-        if caption is not None:
-            rectFill = self.captionStyle.get('fill')
-            if rectFill != NO_COLOR:
-                setFillColor(rectFill)
-                rect(x, y, w, h)
-            textBox(caption, (x, y, w, h))
 
     def draw(self, origin):
         u"""Draw the image in the calculated scale. Since we need to use the image
@@ -163,15 +161,19 @@ class Image(Element):
         back to their original proportions.
         If stroke is defined, then use that to draw a frame around the image.
         Note that the (sx, sy) is already scaled to fit the padding position and size."""
-        ox, oy = pointOffset(self.point, origin)
-        px, py, pw, ph = self.getPadded(ox, oy, self.w, self.h)
+        p = pointOffset(self.point, origin)
+        p = self._applyOrigin(p)    
+        p = self._applyScale(p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
+        px, py, pw, ph = self.getPadded(px, py, self.w, self.h)
         # Calculate the height of the caption box, soe we can reduce the height of the image.
         # Draw the caption at the bottom of the image space.
         if self.caption is not None and self.iw is not None and self.ih is not None:
             # @@@@@@ TODO: need to solve bug with caption width here.
             capW = pw # Caption on original width of layout, not proportional scaled image width.
             _, capH = textSize(self.caption, width=capW)
-            self._drawCaption(self.caption, px, py, capW, capH)
+            self.caption.draw((px, py))
             # Calculate new image size.
             px, py, pw, ph = self.getPadded(x, y+capH, self.w, self.h - capH)
             self.setScale(h=ph) # Force recalculation of the image scale on height
@@ -189,18 +191,18 @@ class Image(Element):
                 scale(self.sx, self.sy)
 
                 # Draw the actual image, vertical aligned.
-                yAlign = self.style.get('yAlign')
+                yAlign = self.yAlign
                 if yAlign == TOP_ALIGN:
                     psy = (py + self.h)/self.sy - self.ih # TODO: Solve vertical alignment.
-                elif yAlign == CENTER:
+                elif yAlign == MIDDLE:
                     psy = (py + self.h/2)/self.sy - self.ih/2
                 else: # Must be bottom align then
                     psy = (py + self.h)/self.sy - self.ih
                 
                 # Calculate horizontal alignment.
-                if self.style.get('align') == RIGHT_ALIGN:
+                if self.align == RIGHT_ALIGN:
                     px -= pw
-                elif self.style.get('align') == CENTER:
+                elif self.align == CENTER:
                     px -= pw/2
                 
                 # If there is a clipRect defined, create the bezier path
@@ -248,3 +250,7 @@ class Image(Element):
             else:
                 print('Could not set scale of image "%s"' % self.path)
 
+        self._restoreScale()
+        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
+
+   

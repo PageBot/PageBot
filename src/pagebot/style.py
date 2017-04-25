@@ -10,6 +10,7 @@
 #
 #     style.py
 #
+import sys
 from drawBot import sizes
 import copy
 
@@ -98,6 +99,12 @@ SHOW_CROPMARKS = True
 SHOW_PAGE_FRAME = True
 SHOW_PAGE_INFO = True
 SHOW_IMAGE_REFERENCE = True # Show [image #] in text, if the images is inside a <p>
+
+# Default initialize point as long as elements don't have a defined position.
+# Actual location depends on value of e.originTop flag.
+ORIGIN_POINT = (0, 0, 0) 
+DEFAULT_WIDTH = DEFAULT_HEIGHT = DEAULT_DEPTH = 100
+XXXL = sys.maxint
 
 LEFT_ALIGN = 'left'
 RIGHT_ALIGN = 'right'
@@ -220,7 +227,7 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # Flags to indicate that width is the vacuumed form around content (text or elements)
         vacuumW = False, 
         vacuumH = False, 
-        vacuumD = False, # Optional vacuuming in z-direction.
+        vacuumD = False, # Optional vacuuming in z-direction: self.back - self.front
 
         # Minimum size
         minW = 5*gutter, # Default is to make minimum width equal to 1/2 column, om 5+1+5 = 11 grid.
