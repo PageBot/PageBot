@@ -15,7 +15,7 @@ from pagebot.contributions.filibuster.blurb import blurb # Create random title a
 from pagebot.toolbox.transformer import lighter, darker, moreBlue, lessRed
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, B4, CENTER, LEFT_ALIGN, TOP_ALIGN
+from pagebot.style import getRootStyle, B4, CENTER, LEFT, TOP
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
 # Import element layout conditions.
@@ -89,14 +89,14 @@ def makeDocument(rootStyle):
     e1 = page.text('Book Cover', style=rootStyle, name='Other element', font='Georgia', fontSize=40,
         fill=(0.3, 0.3, 0.5), textFill=(1, 0, 0),
         conditions=[Top2YCenter(), Top2Top()], 
-        align=CENTER) #vAlign=TOP_ALIGN)
+        align=CENTER) #vAlign=TOP)
     e1.y = e1.pt
     e1.center = page.w/2
     """
     e2 = page.rect(point=wrongOrigin, style=rootStyle, w=W2, h=H2, name='Floating element 2', 
-        conditions=colorCondition2, fill=(1, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+        conditions=colorCondition2, fill=(1, 1, 0), align=LEFT, vAlign=TOP)
     e3 = page.rect(point=wrongOrigin, style=rootStyle, w=W3, h=H3, name='Floating element 3', 
-        conditions=colorCondition2, fill=(1, 0, 1), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+        conditions=colorCondition2, fill=(1, 0, 1), align=LEFT, vAlign=TOP)
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
@@ -107,9 +107,9 @@ def makeDocument(rootStyle):
         vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
 
     e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 
-        conditions=colorCondition2, fill=(0, 1, 1), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+        conditions=colorCondition2, fill=(0, 1, 1), align=LEFT, vAlign=TOP)
     e5 = page.rect(point=wrongOrigin, style=rootStyle, w=W5, h=H5, name='Floating element 5', 
-        conditions=[FloatRightTopSides()], fill=(0, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+        conditions=[FloatRightTopSides()], fill=(0, 1, 0), align=LEFT, vAlign=TOP)
     """
     score = page.evaluate()
     #print 'Page value on evaluation:', score

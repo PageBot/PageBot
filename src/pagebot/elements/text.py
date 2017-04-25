@@ -18,7 +18,7 @@ from drawBot import textSize, textBox, fill, stroke, rect, FormattedString
 from pagebot import getFormattedString, setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset, point3D
-from pagebot.style import RIGHT_ALIGN, CENTER, TOP_ALIGN, NO_COLOR
+from pagebot.style import RIGHT, CENTER, TOP, NO_COLOR
 
 class Text(Element):
 
@@ -70,18 +70,18 @@ class Text(Element):
         align = self.css('align')
         if align == CENTER:
             px -= self.w/2/self.scaleX
-        elif align == RIGHT_ALIGN:
+        elif align == RIGHT:
             px -= self.w/self.scaleX
         yAlign = self.css('yAlign')
         if self.originTop:
             if yAlign == CENTER:
                 py += self.h/2/self.scaleY + self.h
-            elif yAlign == TOP_ALIGN:
+            elif yAlign == TOP:
                 py += self.h/self.scaleY + self.h
         else:
             if yAlign == CENTER:
                 py -= self.h/2/self.scaleY - self.h
-            elif yAlign == TOP_ALIGN:
+            elif yAlign == TOP:
                 py -= self.h/self.scaleY - self.h
         return px, py, pz
 
@@ -91,7 +91,7 @@ class Text(Element):
         #yAlign = self.css('yAlign')
         #if yAlign == CENTER:
         #    return self.y - ascenderDescender/2
-        #if yAlign == BOTTOM_ALIGN:
+        #if yAlign == BOTTOM:
         #    return self.y - self.h
         return self.y + (self.h - ascenderDescender)/2 + self.fs.fontAscender()
     def _set_top(self, topY):
@@ -99,7 +99,7 @@ class Text(Element):
         #yAlign = self.css('yAlign')
         #if yAlign == CENTER:
         #    self.y = y + self.h/2
-        #elif yAlign == BOTTOM_ALIGN:
+        #elif yAlign == BOTTOM:
         #    self.y = y + self.h
         #else:
         self.y = topY - (self.h - ascenderDescender)/2 + self.fs.fontAscender()
@@ -109,7 +109,7 @@ class Text(Element):
     def _get_bottom(self):
         ascenderDescender = self.fs.fontAscender() - self.fs.fontDescender()
         #yAlign = self.css('yAlign')
-        #if yAlign == TOP_ALIGN:
+        #if yAlign == TOP:
         #    return self.y + self.h
         #if yAlign == CENTER:
         #    return self.y + self.h/2
@@ -117,7 +117,7 @@ class Text(Element):
     def _set_bottom(self, bottomY):
         ascenderDescender = self.fs.fontAscender() - self.fs.fontDescender()
         #yAlign = self.css('yAlign')
-        #if yAlign == TOP_ALIGN:
+        #if yAlign == TOP:
         #    self.y = y - self.h
         #elif yAlign == CENTER:
         #    self.y = y - self.h/2

@@ -193,7 +193,7 @@ class PixelImage(Element):
 
                 # Draw the actual image, vertical aligned.
                 yAlign = self.yAlign
-                if yAlign == TOP_ALIGN:
+                if yAlign == TOP:
                     psy = (py + self.h)/self.sy - self.ih # TODO: Solve vertical alignment.
                 elif yAlign == MIDDLE:
                     psy = (py + self.h/2)/self.sy - self.ih/2
@@ -201,7 +201,7 @@ class PixelImage(Element):
                     psy = (py + self.h)/self.sy - self.ih
                 
                 # Calculate horizontal alignment.
-                if self.align == RIGHT_ALIGN:
+                if self.align == RIGHT:
                     px -= pw
                 elif self.align == CENTER:
                     px -= pw/2

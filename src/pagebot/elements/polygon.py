@@ -18,7 +18,7 @@ from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, 
     newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
     textBox, hyphenation, restore, imageSize, shadow, BezierPath, clipPath, drawPath
 from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-from pagebot.style import LEFT_ALIGN, TOP_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
+from pagebot.style import LEFT, TOP, RIGHT, CENTER, NO_COLOR, makeStyle
 """
 from pagebot.elements.element import Element
 

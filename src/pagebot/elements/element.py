@@ -17,7 +17,7 @@ from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, r
 from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
-from pagebot.style import makeStyle, ORIGIN_POINT, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN, NO_COLOR, \
+from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, NO_COLOR, \
     DEFAULT_WIDTH, DEFAULT_HEIGHT, DEAULT_DEPTH, XXXL
 from pagebot.toolbox.transformer import asFormatted
 
@@ -151,14 +151,14 @@ class Element(object):
         xAlign = self.xAlign
         if xAlign == CENTER:
             return self.x - self.w/2
-        if xAlign == RIGHT_ALIGN:
+        if xAlign == RIGHT:
             return self.x - self.w
         return self.x
     def _set_left(self, x):
         xAlign = self.xAlign
         if xAlign == CENTER:
             self.x = x + self.w/2
-        elif xAlign == RIGHT_ALIGN:
+        elif xAlign == RIGHT:
             self.x = x + self.w
         else:
             self.x = x
@@ -175,16 +175,16 @@ class Element(object):
             ex, _, ew, _ = self.getElementsBox()
             return self.x + ex + ew/2
         xAlign = self.xAlign
-        if xAlign == LEFT_ALIGN:
+        if xAlign == LEFT:
             return self.x + self.w/2
-        if xAlign == RIGHT_ALIGN:
+        if xAlign == RIGHT:
             return self.x + self.w
         return self.x
     def _set_center(self, x):
         xAlign = self.xAlign
-        if xAlign == LEFT_ALIGN:
+        if xAlign == LEFT:
             self.x = x - self.w/2
-        elif xAlign == RIGHT_ALIGN:
+        elif xAlign == RIGHT:
             self.x = x - self.w
         else:
             self.x = x
@@ -195,14 +195,14 @@ class Element(object):
             ex, _, ew, _ = self.getElementsBox()
             return self.x + ex + ew
         xAlign = self.xAlign
-        if xAlign == LEFT_ALIGN:
+        if xAlign == LEFT:
             return self.x + self.w
         if xAlign == CENTER:
             return self.x + self.w/2
         return self.x
     def _set_right(self, x):
         xAlign = self.xAlign
-        if xAlign == LEFT_ALIGN:
+        if xAlign == LEFT:
             self.x = x - self.w
         elif xAlign == CENTER:
             self.x = x - self.w/2
@@ -220,18 +220,18 @@ class Element(object):
 
     def _get_top(self):
         yAlign = self.yAlign
-        if yAlign == CENTER:
+        if yAlign == MIDDLE:
             return self.y - self.h/2
-        if yAlign == BOTTOM_ALIGN:
+        if yAlign == BOTTOM:
             if self.originTop:
                 return self.y - self.h
             return self.y + self.h
         return self.y
     def _set_top(self, y):
         yAlign = self.yAlign
-        if yAlign == CENTER:
+        if yAlign == MIDDLE:
             self.y = y + self.h/2
-        elif yAlign == BOTTOM_ALIGN:
+        elif yAlign == BOTTOM:
             if self.originTop:
                 self.y = y + self.h
             else:
@@ -253,38 +253,48 @@ class Element(object):
 
     def _get_middle(self): # On bounding box, not including margins.
         yAlign = self.yAlign
-        if yAlign == TOP_ALIGN:
+        if yAlign == TOP:
+            if self.originTop:
+                return self.y + self.h/2
             return self.y - self.h/2
-        if yAlign == BOTTOM_ALIGN:
+        if yAlign == BOTTOM:
+            if self.originTop:
+                return self.y - self.h/2
             return self.y + self.h/2
         return self.y
     def _set_middle(self, y):
         yAlign = self.yAlign
-        if yAlign == TOP_ALIGN:
-            self.y = y + self.h/2
-        elif yAlign == BOTTOM_ALIGN:
-            self.y = y + self.h
+        if yAlign == TOP:
+            if self.originTop:
+                self.y = y - self.h/2
+            else:
+                self.y = y + self.h/2
+        elif yAlign == BOTTOM:
+            if self.originTop:
+                self.y = y + self.h/2
+            else:
+                self.y = y - self.h/2
         else:
             self.y = y
     middle = property(_get_middle, _set_middle)
 
     def _get_bottom(self):
         yAlign = self.yAlign
-        if yAlign == TOP_ALIGN:
+        if yAlign == TOP:
             if self.originTop:
                 return self.y + self.h
             return self.y - self.h
-        if yAlign == CENTER:
+        if yAlign == MIDDLE:
             return self.y + self.h/2
         return self.y
     def _set_bottom(self, y):
         yAlign = self.yAlign
-        if yAlign == TOP_ALIGN:
+        if yAlign == TOP:
             if self.originTop:
                 self.y = y - self.h
             else:
                 self.y = y + self.h
-        elif yAlign == CENTER:
+        elif yAlign == MIDDLE:
             self.y = y - self.h/2
         else:
             self.y = y
@@ -306,16 +316,16 @@ class Element(object):
 
     def _get_front(self):
         zAlign = self.css('zAlign')
-        if zAlign == CENTER:
+        if zAlign == MIDDLE:
             return self.z - self.d/2
-        if zAlign == BACK_ALIGN:
+        if zAlign == BACK:
             return self.z - self.d
         return self.z
     def _set_front(self, z):
         zAlign = self.css('zAlign')
-        if zAlign == CENTER:
+        if zAlign == MIDDLE:
             self.z = z + self.d/2
-        elif zAlign == BACK_ALIGN:
+        elif zAlign == BACK:
             self.z = z + self.d
         else:
             self.z = z
@@ -329,38 +339,38 @@ class Element(object):
 
     def _get_middle(self): # On bounding box, not including margins.
         yAlign = self.yAlign
-        if yAlign == TOP_ALIGN:
+        if yAlign == TOP:
             return self.y - self.h/2
-        if yAlign == BOTTOM_ALIGN:
+        if yAlign == BOTTOM:
             return self.y + self.h/2
         return self.y
     def _set_middle(self, y):
         yAlign = self.yAlign
-        if yAlign == TOP_ALIGN:
+        if yAlign == TOP:
             self.y = y + self.h/2
-        elif yAlign == BOTTOM_ALIGN:
+        elif yAlign == BOTTOM:
             self.y = y + self.h
         else:
             self.y = y
     middle = property(_get_middle, _set_middle)
 
     def _get_bottom(self):
-        yAlign = self.Align
-        if yAlign == TOP_ALIGN:
+        yAlign = self.yAlign
+        if yAlign == TOP:
             if self.originTop:
                 return self.y + self.h
             return self.y - self.h
-        if yAlign == CENTER:
+        if yAlign == MIDDLE:
             return self.y + self.h/2
         return self.y
     def _set_bottom(self, y):
         yAlign = self.yAlign
-        if yAlign == TOP_ALIGN:
+        if yAlign == TOP:
             if self.originTop:
                 self.y = y - self.h
             else:
                 self.y = y + self.h
-        elif yAlign == CENTER:
+        elif yAlign == MIDDLE:
             self.y = y - self.h/2
         else:
             self.y = y
@@ -386,15 +396,15 @@ class Element(object):
     align = xAlign = property(_get_xAlign, _set_xAlign)
      
     def _get_yAlign(self): # Answer the type of x-alignment.
-        return self.css('ylign')
-    def _set_yAlign(self, align):
-        self.style['yAlign'] = align # Save locally, blocking CSS parent scope for this param.
+        return self.css('yAlign')
+    def _set_yAlign(self, yAlign):
+        self.style['yAlign'] = yAlign # Save locally, blocking CSS parent scope for this param.
     yAlign = property(_get_yAlign, _set_yAlign)
      
     def _get_zAlign(self): # Answer the type of x-alignment.
         return self.css('zAlign')
-    def _set_zAlign(self, align):
-        self.style['zAlign'] = align # Save locally, blocking CSS parent scope for this param.
+    def _set_zAlign(self, zAlign):
+        self.style['zAlign'] = zAlign # Save locally, blocking CSS parent scope for this param.
     zAlign = property(_get_zAlign, _set_zAlign)
      
     # Position by column + gutter size index.
@@ -856,13 +866,13 @@ class Element(object):
         xAlign = self.xAlign
         if xAlign == CENTER:
             px -= self.w/2/self.scaleX
-        elif xAlign == RIGHT_ALIGN:
+        elif xAlign == RIGHT:
             px -= self.w/self.scaleX
         # Vertical
         yAlign = self.yAlign
-        if yAlign == CENTER:
+        if yAlign == MIDDLE:
             py -= self.h/2/self.scaleY
-        elif yAlign == TOP_ALIGN:
+        elif yAlign == TOP:
             py -= self.h/self.scaleY
         # Currently no alignment in z-axis implemented
         return px, py, pz
@@ -1394,7 +1404,6 @@ class Element(object):
             self.middle = self.parent.h
         return True       
 
-    
     def middle2Middle(self): # Vertical center, following CSS naming.
         pt = self.parent.pt # Get parent padding top
         pb = self.parent.pb
