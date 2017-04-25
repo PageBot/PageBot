@@ -35,7 +35,6 @@ def point3D(p):
 
 def point2D(p):
     u"""Answer the 2D origin as combination of p and offset."""
-    print p
     return point3D(p)[:2]
 
 def pointOffset(point, offset):

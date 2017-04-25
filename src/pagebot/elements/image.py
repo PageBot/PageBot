@@ -13,16 +13,21 @@
 import os
 from drawBot import imageSize
 from pagebot.elements.container import Container
+from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT
 from pagebot.toolbox.transformer import pointOffset
 
 class Image(Container):
     u"""Image element has special attributes self.iw and self.ih for the real image size.
     If the optional captionStyle is not defined, then use self.style for captions."""
-
-    from pagebot.elements.textbox import TextBox
-    CAPTION_CLASS = TextBox
     
+    def __init__(self, path, point=None, parent=None, style=None, name=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
+        Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+
+class PixelImage(Element):
+    u"""Image element has special attributes self.iw and self.ih for the real image size.
+    If the optional captionStyle is not defined, then use self.style for captions."""
+   
     def __init__(self, path, point=None, parent=None, style=None, name=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
         Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
         # Check on one of the (w, h) in the style. One of the can be undefined for proportional scaling.
@@ -133,10 +138,6 @@ class Image(Container):
         #sx = sy = min(sx, sy) # Keep the smallest to make image fit available space.
         self.sx = sx
         self.sy = sy
-
-    def addCaption(self, fs):
-        u"""Add caption to self elements. Future: Add position rules here."""
-        self.appendElement(self.CAPTION_CLASS(fs))
 
     def getCaptionSize(self, page):
         """Figure out what the height of the text is, with the width of this text box."""
