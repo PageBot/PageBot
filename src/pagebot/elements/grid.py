@@ -14,7 +14,7 @@ from drawBot import rect, newPath, moveTo, lineTo, drawPath, text
 
 from pagebot import getFormattedString, setFillColor, setStrokeColor
 from pagebot.elements.element import Element
-from pagebot.style import LEFT_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
+from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, makeStyle
 from pagebot.toolbox.transformer import pointOffset
 
 class Grid(Element):

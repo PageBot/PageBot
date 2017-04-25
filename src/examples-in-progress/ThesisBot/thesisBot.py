@@ -13,13 +13,14 @@
 #
 import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
-from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
+from pagebot.style import getRootStyle, LEFT, NO_COLOR, A4, TOP, BOTTOM
 from pagebot.elements.document import Document
 from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley
 from pagebot.toolbox.transformer import obj2StyleIds
+from pagebot.conditions import *
 
 DEBUG = False
 
@@ -37,12 +38,13 @@ else:
 U = 7
 baselineGrid = 2*U
 listIndent = 1.5*U
+W, H = A4
 
 RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
-    w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
-    h = 842, # 842 = A4 height. Other example: page height 11", international generic fit.
+    w = W, # Om root level the "w" is the page width 210mm, international generic fit.
+    h = H, # 842 = A4 height. Other example: page height 11", international generic fit.
     ml = 8*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
     gw = 2*U, # Generic gutter, equal for width and height
@@ -53,12 +55,14 @@ RS = getRootStyle(
     cw = 8*U, 
     ch = 5*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
     showBaselineGrid = SHOW_BASELINE_GRID,
     showFlowConnections = SHOW_FLOW_CONNECTIONS,
+    showElementInfo = True,
+    showElementOrigin = True,
     BOX_COLOR = BOX_COLOR,
     # Text measures
     leading = 14,
@@ -137,11 +141,13 @@ def makeDocument(rs):
     
     # Template for Cover page
     templateCover = Template(style=rs) # Create new template
-    templateCover.rect((0, 0), w=rs['w'], h=rs['h'], fill=(1, 0, 0))
+    e = templateCover.rect(conditions=[FitSides()], fill=(1, 0, 0), eId='Red rectangle', yAlign=TOP)
+    e.solve()
+    
     # Placement of first <h1> in the Galley, holding the Thesis title.
-    templateCover.cTextBox('', 1, 1, 6, 5, style=rs, eId=coverTitleId, fill=BOX_COLOR)
+    templateCover.textBox('', conditions=[FitWidth(), Top2Top()], h=H/3, eId=coverTitleId, fill=BOX_COLOR)
     # Placement of first <h4> in the Galley, holding the author name(s)
-    templateCover.cTextBox('', 1, 8, 6, 5, style=rs, eId=coverAuthorId, fill=BOX_COLOR)
+    templateCover.textBox('', conditions=[FitWidth(), Bottom2Bottom()], h=H/3, eId=coverAuthorId, fill=BOX_COLOR)
     
     # Template for Table of Content
     templateToc = Template(style=rs) # Create template for Table of Content
@@ -159,7 +165,7 @@ def makeDocument(rs):
     # Show baseline grid if rs.showBaselineGrid is True
     templateLiteratureIndex.baselineGrid(style=rs)
     templateLiteratureIndex.cTextBox('\nLiterature index', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32)
-    templateLiteratureIndex.cTextBox('', 3, 1, 4, 8, style=rs, eId=literatureIndexId, fill=BOX_COLOR)
+    templateLiteratureIndex.cTextBox('', 3, 1, 4, 8, style=rs, eId=literatureIndexId, fill=BOX_COLOR, yAlign=BOTTOM)
     
     # Template for image reference index.
     templateImageIndex = Template(style=rs) # Create template for Table of Content
@@ -225,7 +231,7 @@ def makeDocument(rs):
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, 
         prefix='', postfix='\n', rTracking=P_TRACK, leading=14, 
-        rLeading=0, align=LEFT_ALIGN, hyphenation=True, indent=0,
+        rLeading=0, align=LEFT, hyphenation=True, indent=0,
         firstLineIndent=2*U, 
         firstParagraphIndent=0) # TODO: Make firstParagraphIndent to work.
     # Inline tags need to refined prefix and postfix as non-\n, otherwise they
@@ -246,12 +252,12 @@ def makeDocument(rs):
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='footnote', fill=0, fontSize=0.9*fontSize, font=BOOK,
         tracking=P_TRACK,
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
         
     # Image & captions
@@ -287,6 +293,7 @@ def makeDocument(rs):
 
     coverPage = doc[1]
     coverPage.setTemplate(templateCover)
+    print coverPage.elements
     """
     c = Composer(doc)
     c.compose(gTitle, coverPage, coverTitleId)

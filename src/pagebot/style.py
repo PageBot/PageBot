@@ -106,13 +106,14 @@ ORIGIN_POINT = (0, 0, 0)
 DEFAULT_WIDTH = DEFAULT_HEIGHT = DEAULT_DEPTH = 100
 XXXL = sys.maxint
 
-LEFT_ALIGN = 'left'
-RIGHT_ALIGN = 'right'
+LEFT = 'left'
+RIGHT = 'right'
 CENTER = 'center'
+MIDDLE = 'middle'
 JUSTIFIED = 'justified'
-TOP_ALIGN = 'top'
-BOTTOM_ALIGN = 'bottom'
-FRONT_ALIGN = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
+TOP = 'top'
+BOTTOM = 'bottom'
+FRONT = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
 BACK_ALIGH = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
 
 DEFAULT_FONT = 'Verdana'
@@ -179,11 +180,11 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # Note that the direcion of display is always upwards. This means that the position of text and elements
         # goes downward from the top, they are not flipped vertical. It is up to the caller to make sure
         # there is enough space for elements to show themselves on top of a given position.
-        # originTop often goes with vAlign = TOP_ALIGN.
+        # originTop often goes with vAlign = TOP.
         originTop = True,
-        align = LEFT_ALIGN, # Default alignment, one of ('left', 'justified', 'center'. 'right', 'anchor')
-        yAlign = TOP_ALIGN, # Default alignment for elements like image, that float in their designated space.
-        zAlign = FRONT_ALIGN, # Default alignment in z-axis is in front, closest to the viewer.
+        align = LEFT, # Default alignment, one of ('left', 'justified', 'center'. 'right', 'anchor')
+        yAlign = TOP, # Default alignment for elements like image, that float in their designated space.
+        zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
 
         # Although it is common to talk about the "margins" on a page, as the space between elements
         # and the side of the page, this naming is not conform the current CSS definition.
@@ -316,7 +317,7 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # Set tabs,tuples of (float, alignment) Alignment can be “left”, “center”, “right”
         # or any other character. If a character is provided the alignment will be right and
         # centered on the specified character.
-        listTabs = [(listIndent, LEFT_ALIGN)], # Default indent for bullet lists. Copy onto style.tabs for usage.
+        listTabs = [(listIndent, LEFT)], # Default indent for bullet lists. Copy onto style.tabs for usage.
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
         tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...]
@@ -398,12 +399,12 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         textStrokeWidth = None,
 
         # Constants for standardized usage of alignment in FormattedString
-        LEFT_ALIGN = LEFT_ALIGN,
-        RIGHT_ALIGN = RIGHT_ALIGN,
+        LEFT = LEFT,
+        RIGHT = RIGHT,
         JUSTIFIED = JUSTIFIED,
         CENTER = CENTER,
-        TOP_ALIGN = TOP_ALIGN,
-        BOTTOM_ALIGN = BOTTOM_ALIGN,
+        TOP = TOP,
+        BOTTOM = BOTTOM,
 
     )
     # Assume all the other arguments overwriting the default values of the root style,

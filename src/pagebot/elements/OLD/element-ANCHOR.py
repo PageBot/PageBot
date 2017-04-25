@@ -17,7 +17,7 @@ from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, r
 from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
-from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN, ANCHOR_ALIGN
+from pagebot.style import makeStyle, CENTER, RIGHT, TOP, BOTTOM, LEFT, ANCHOR_ALIGN
 from pagebot.toolbox.transformer import asFormatted
 
 class Element(object):
@@ -155,7 +155,7 @@ class Element(object):
             return self.x + ex
         if self.css('align') == CENTER:
             return self.x - self.w/2
-        if self.css('align') == RIGHT_ALIGN:
+        if self.css('align') == RIGHT:
             return self.x - self.w
         if self.css('align') == ANCHOR_ALIGN:
             return self.x - self.anchor[0]
@@ -163,7 +163,7 @@ class Element(object):
     def _set_left(self, x):
         if self.css('align') == CENTER:
             self.x = x + self.w/2
-        elif self.css('align') == RIGHT_ALIGN:
+        elif self.css('align') == RIGHT:
             self.x = x + self.w
         elif self.css('align') == ANCHOR_ALIGN:
             self.x = x + self.anchor[0]
@@ -175,17 +175,17 @@ class Element(object):
         if self.css('vacuumW'): # Get vaccum left/right from child elements.
             ex, _, ew, _ = self.getElementsBox()
             return self.x + ex + ew/2
-        if self.css('align') == LEFT_ALIGN:
+        if self.css('align') == LEFT:
             return self.x + self.w/2
-        if self.css('align') == RIGHT_ALIGN:
+        if self.css('align') == RIGHT:
             return self.x + self.w
         if self.css('align') == ANCHOR_ALIGN:
             return self.x + self.anchor[0]
         return self.x
     def _set_center(self, x):
-        if self.css('align') == LEFT_ALIGN:
+        if self.css('align') == LEFT:
             self.x = x - self.w/2
-        elif self.css('align') == RIGHT_ALIGN:
+        elif self.css('align') == RIGHT:
             self.x = x - self.w
         elif self.css('align') == ANCHOR_ALIGN:
             self.x = x - self.anchor[0]
@@ -197,7 +197,7 @@ class Element(object):
         if self.css('vacuumW'): # Get vaccum left from child elements.
             ex, _, ew, _ = self.getElementsBox()
             return self.x + ex + ew
-        if self.css('align') == LEFT_ALIGN:
+        if self.css('align') == LEFT:
             return self.x + self.w
         if self.css('align') == CENTER:
             return self.x + self.w/2
@@ -205,7 +205,7 @@ class Element(object):
             return self.x + self.anchor[0]
         return self.x
     def _set_right(self, x):
-        if self.css('align') == LEFT_ALIGN:
+        if self.css('align') == LEFT:
             self.x = x - self.w
         elif self.css('align') == CENTER:
             self.x = x - self.w/2
@@ -220,7 +220,7 @@ class Element(object):
     def _get_top(self):
         if self.css('vAlign') == CENTER:
             return self.y - self.h/2
-        if self.css('vAlign') == BOTTOM_ALIGN:
+        if self.css('vAlign') == BOTTOM:
             return self.y - self.h
         if self.css('vAlign') == ANCHOR_ALIGN:
             return self.y - self.anchor[1]
@@ -228,7 +228,7 @@ class Element(object):
     def _set_top(self, y):
         if self.css('vAlign') == CENTER:
             self.y = y + self.h/2
-        elif self.css('vAlign') == BOTTOM_ALIGN:
+        elif self.css('vAlign') == BOTTOM:
             self.y = y + self.h
         elif self.css('vAlign') == ANCHOR_ALIGN:
             self.y = y + self.anchor[1]
@@ -237,17 +237,17 @@ class Element(object):
     top = property(_get_top, _set_top)
 
     def _get_yCenter(self):
-        if self.css('vAlign') == TOP_ALIGN:
+        if self.css('vAlign') == TOP:
             return self.y - self.h/2
-        if self.css('vAlign') == BOTTOM_ALIGN:
+        if self.css('vAlign') == BOTTOM:
             return self.y + self.h/2
         if self.css('vAlign') == ANCHOR_ALIGN:
             return self.y - self.anchor[1]
         return self.y
     def _set_yCenter(self, y):
-        if self.css('vAlign') == TOP_ALIGN:
+        if self.css('vAlign') == TOP:
             self.y = y + self.h/2
-        elif self.css('vAlign') == BOTTOM_ALIGN:
+        elif self.css('vAlign') == BOTTOM:
             self.y = y + self.h
         elif self.css('vAlign') == ANCHOR_ALIGN:
             self.y = y + self.anchor[1]
@@ -256,7 +256,7 @@ class Element(object):
     yCenter = property(_get_yCenter, _set_yCenter)
 
     def _get_bottom(self):
-        if self.css('vAlign') == TOP_ALIGN:
+        if self.css('vAlign') == TOP:
             return self.y + self.h
         if self.css('vAlign') == CENTER:
             return self.y + self.h/2
@@ -264,7 +264,7 @@ class Element(object):
             return self.y + self.anchor[1]
         return self.y
     def _set_bottom(self, y):
-        if self.css('vAlign') == TOP_ALIGN:
+        if self.css('vAlign') == TOP:
             self.y = y - self.h
         elif self.css('vAlign') == CENTER:
             self.y = y - self.h/2
@@ -456,14 +456,14 @@ class Element(object):
         # Horizontal
         if self.css('align') == CENTER:
             px -= self.w/2/self.scaleX
-        elif self.css('align') == RIGHT_ALIGN:
+        elif self.css('align') == RIGHT:
             px -= self.w/self.scaleX
         elif self.css('align') == ANCHOR_ALIGN:
             px -= self.anchor[0]/self.scaleX
         # Vertical
         if self.css('vAlign') == CENTER:
             py -= self.h/2/self.scaleY
-        elif self.css('vAlign') == TOP_ALIGN:
+        elif self.css('vAlign') == TOP:
             py -= self.h/self.scaleY
         elif self.css('vAlign') == ANCHOR_ALIGN:
             py -= self.anchor[1]/self.scaleY

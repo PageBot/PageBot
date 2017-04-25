@@ -13,7 +13,7 @@ import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, B4, CENTER, LEFT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, RIGHT_ALIGN
+from pagebot.style import getRootStyle, B4, CENTER, LEFT, TOP, BOTTOM, RIGHT
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
     
@@ -45,10 +45,10 @@ def makeDocument(rootStyle):
     
     fontSize = 40
     t1 = page.text('Book CoverSSS\nAAAA\nMMMM\nBook CoverSSS\nAAAA\nMMEEEEMM\n', point=p, style=rootStyle, name='Other element', font='Verdana', 
-        fontSize=fontSize, leading=0, rLeading=1, align=RIGHT_ALIGN,
+        fontSize=fontSize, leading=0, rLeading=1, align=RIGHT,
         fill=(0, 1, 0), stroke=(0, 1, 0), textFill=(0, 0, 1))
     # Use text elemennt size as reference.
-    #e1 = page.rect(p, w=t1.w, h=t1.h, fill=(1, 0, 0), align=RIGHT_ALIGN, vAlign=BOTTOM_ALIGN)
+    #e1 = page.rect(p, w=t1.w, h=t1.h, fill=(1, 0, 0), align=RIGHT, vAlign=BOTTOM)
 
     #e1.top = 400
     #t1.top = 400

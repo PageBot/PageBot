@@ -12,7 +12,7 @@
 #
 from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString
 
-from pagebot.style import LEFT_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
+from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, makeStyle
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot import getFormattedString, setStrokeColor, setFillColor
@@ -91,7 +91,7 @@ class TextBox(Element):
         definintion overflow will allways be empty."""
         if self.css('vacuumH'): # In case vacuumH, box will aways fit the content.
             return ''
-        return textOverflow(self.fs, (0, 0, w or self.w, h or self.h), LEFT_ALIGN)
+        return textOverflow(self.fs, (0, 0, w or self.w, h or self.h), LEFT)
 
     def getBaselinePositions(self, y=0, w=None, h=None):
         u"""Answer the list vertical baseline positions, relative to y (default is 0)

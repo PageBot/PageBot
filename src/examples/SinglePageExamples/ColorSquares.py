@@ -17,7 +17,7 @@ import pagebot # Import to know the path of non-Python resources.
 
 from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP_ALIGN, BOTTOM_ALIGN
+from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
     
@@ -41,10 +41,10 @@ RS = getRootStyle(w=W, h=H,
 # Change to False will show origin of elements in their bottom-left corner.
 if 1: # TOP
     RS['originTop'] = True
-    RS['yAlign'] = TOP_ALIGN 
+    RS['yAlign'] = TOP 
 else:
     RS['originTop'] = False 
-    RS['yAlign'] = BOTTOM_ALIGN 
+    RS['yAlign'] = BOTTOM 
 #for key, value in RS.items():
 #    print key, value
 

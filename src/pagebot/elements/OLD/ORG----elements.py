@@ -17,7 +17,7 @@ from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, 
     newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
     textBox, hyphenation, restore, imageSize, shadow, BezierPath, clipPath, drawPath
 from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-from pagebot.style import LEFT_ALIGN, TOP_ALIGN, RIGHT_ALIGN, CENTER, NO_COLOR, makeStyle
+from pagebot.style import LEFT, TOP, RIGHT, CENTER, NO_COLOR, makeStyle
 
 class Element(object):
 
@@ -302,7 +302,7 @@ class TextBox(Element):
     def getOverflow(self, w=None, h=None):
         """Figure out what the overflow of the text is, with the given (w,h) or styled
         (self.w, self.h) of this text box."""
-        return textOverflow(self.fs, (0, 0, w or self.w, h or self.h), LEFT_ALIGN)
+        return textOverflow(self.fs, (0, 0, w or self.w, h or self.h), LEFT)
 
     def getBaselinePositions(self, y=0, w=None, h=None):
         u"""Answer the list vertical baseline positions, relative to y (default is 0)
@@ -315,7 +315,7 @@ class TextBox(Element):
     def draw(self, page, x, y):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
-        if self.style.get('align') == RIGHT_ALIGN:
+        if self.style.get('align') == RIGHT:
             x -= self.w
         elif self.style.get('align') == CENTER:
             x -= self.w/2
@@ -365,7 +365,7 @@ class Text(Element):
         typeset text line, background and stroke of a text column needs to be drawn elsewere."""
         self._setShadow()
         w, h = textSize(self.fs)   
-        if self.style.get('align') == RIGHT_ALIGN:
+        if self.style.get('align') == RIGHT:
             x -= w
         elif self.style.get('align') == CENTER:
             x -= w/2
@@ -597,7 +597,7 @@ class Image(Element):
                 scale(self.sx, self.sy)
 
                 # Draw the actual image, vertical aligned.
-                if self.style.get('vAlign') == TOP_ALIGN:
+                if self.style.get('vAlign') == TOP:
                     psy = (py + self.h)/self.sy - self.ih # TODO: Solve vertical alignment.
                 elif self.style.get('vAlign') == CENTER:
                     psy = (py + self.h/2)/self.sy - self.ih/2
@@ -605,7 +605,7 @@ class Image(Element):
                     psy = (py + self.h)/self.sy - self.ih
                 
                 # Calculate horizontal alignment.
-                if self.style.get('align') == RIGHT_ALIGN:
+                if self.style.get('align') == RIGHT:
                     px -= pw
                 elif self.style.get('align') == CENTER:
                     px -= pw/2

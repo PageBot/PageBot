@@ -14,7 +14,7 @@ from __future__ import division # Make integer division result in float.
 from drawBot import rect
 
 from pagebot import setStrokeColor, setFillColor
-from pagebot.style import NO_COLOR, CENTER, RIGHT_ALIGN, TOP_ALIGN
+from pagebot.style import NO_COLOR, CENTER, RIGHT, TOP
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 

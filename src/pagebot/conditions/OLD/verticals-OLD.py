@@ -10,7 +10,7 @@
 #
 #     verticals.py
 #
-from pagebot.style import TOP_ALIGN, BOTTOM_ALIGN, CENTER
+from pagebot.style import TOP, BOTTOM, CENTER
 from condition import Condition
 
 #	C E N T E R S
