@@ -82,6 +82,9 @@ class Grid(Element):
                 index += 1
                 oy -= columnHeight + gutterH
 
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin)
+
         self._restoreScale()
         self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
 
@@ -115,6 +118,9 @@ class BaselineGrid(Grid):
                 text(fs + repr(line), (px + self.parent.w - M - 8, py + oy - M * 0.6))
                 line += 1 # Increment line index.
                 oy -= self.css('baselineGrid') # Next vertical line position of baseline grid.
+
+            # If there are child elements, draw them over the text.
+            self._drawElements(origin)
 
             self._restoreScale()
             self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'

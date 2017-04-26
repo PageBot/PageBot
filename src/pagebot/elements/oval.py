@@ -22,7 +22,6 @@ class Oval(Element):
     def __init__(self, point=None, parent=None, style=None, name=None, eId=None, **kwargs):
         Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
         # Initialize the default Element behavior tags.
-        self.isContainer = False
         self.isText = False
         self.isFlow = False
 
@@ -35,6 +34,9 @@ class Oval(Element):
         setFillColor(self.css('fill', NO_COLOR))
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         oval(px, py, self.w, self.h)
+
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin)
 
         self._restoreScale()
         self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'

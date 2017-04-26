@@ -11,6 +11,7 @@
 #     element.py
 #
 import weakref
+import copy
 
 from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, fill, text, stroke, strokeWidth
 
@@ -27,12 +28,11 @@ class Element(object):
     # These flags can be overwritten by inheriting classes, or dynamically in instances,
     # e.g. where the settings of TextBox.nextBox and TextBox.nextPage define if a TextBox
     # instance can operate as a flow.
-    isContainer = False
     isText = False
     isTextBox = False
     isFlow = False
 
-    def __init__(self, point=None, parent=None, name=None, eId=None, style=None, conditions=None, **kwargs):  
+    def __init__(self, point=None, parent=None, name=None, eId=None, style=None, conditions=None, elements=None, template=None, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here."""  
         assert point is None or isinstance(point, (tuple, list)), point
         self.point = point3D(point or ORIGIN_POINT) # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
@@ -42,6 +42,8 @@ class Element(object):
         self.parent = parent # Weak ref to parent element or None if it is the root.
         self.conditions = conditions # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
+        # Copy relevant info from template: w, h, elements, style, conditions
+        self._applyTemplate(template, elements) # Initialze self.elements, add template elements and values, copy elements if defined.
 
     def __repr__(self):
         if self.name:
@@ -50,15 +52,141 @@ class Element(object):
             name = ':'+self.eId
         else:
             name = ''
-        return '%s%s(%d, %d)' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])))
+        if self.elements:
+            elements = ' E(%d)' % len(self.elements)
+        else:
+            elements = ''
+        return '%s%s(%d, %d)%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), elements)
 
+    def __len__(self):
+        u"""Answer total amount of elements, placed or not."""
+        return len(self.elements) 
+
+    #   T E M P L A T E
+
+    def _applyTemplate(self, template, elements):
+        u"""Copy relevant info from template: w, h, elements, style, conditions when element is created.
+        Don't call later."""
+        self.elements = []
+        self.template = template # Keep in order to clone pages or if addition info is needed.
+        # Copy optional template stuff
+        if template is not None:
+            # Copy elements from the template and put them in the designated positions.
+            self.w = template.w
+            self.h = template.h
+            for  name, value in template.style.items:
+                self.style[name] = value
+            self.conditions = copy.copy(template.conditions)
+            for element in template.elements:
+                self.appendElement(copy.copy(element))
+        # Add optional list of elements.
+        for e in elements or []: 
+            self.appendElement(e) # Add cross reference searching for eId of elements.
+            
+    #   E L E M E N T S
+    #   Every element is potentioally a container of other elements.
+
+    def __getitem__(self, eId):
+        u"""Answer the element with eId. Raise a KeyError if the element does not exist."""
+        return self._eIds[eId]
+
+    def __setitem__(self, eId, e):
+        if not e in self.elements:
+            self.elements.append(e)
+        self._eIds[eId] = e
 
     def _get_elements(self):
-        u"""Default element does not have children."""
-        return []
+        return self._elements
     def _set_elements(self, elements):
-        raise KeyError('Only containers can hold other elements.')
+        self._elements = elements
+        self._eIds = {}
+        for e in elements:
+            self._eIds[e.eIds] = e
     elements = property(_get_elements, _set_elements)
+
+    def _get_elementIds(self): # Answer the x-ref dictionary with elements by their e.eIds
+        return self._eIds
+    elementIds = property(_get_elementIds)
+
+    def getElement(self, eId):
+        u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
+        return self._eIds.get(eId)
+
+    #   C H I L D  E L E M E N T  P O S I T I O N S
+
+    def getElementsAtPoint(self, point):
+        u"""Answer the list with elements that fit the point. Note None in the point will match any
+        value in the element position. Where None in the element position with not fit any xyz of the point."""
+        elements = []
+        px, py, pz = point3D(point) 
+        for e in self.elements:
+            ex, ey, ez = point3D(e.point)
+            if (ex == px or px is None) and (ey == py or py is None) and (ez == pz or pz is None):
+                elements.append(e)
+        return elements
+
+    def getElementsPosition(self):
+        u"""Answer the dictionary of elements that have eIds and their positions."""
+        elements = {}
+        for e in self.elements:
+            if e.eId:
+                elements[e.eId] = e.point
+        return elements
+
+    def getPositions(self):
+        u""""Answer the dictionary of positions of elements. 
+        Key is the local point of the child element. Value is list of elements."""
+        positions = {}
+        for e in self.elements:
+            point = tuple(e.point) # Point needs to be tuple to be used a key.
+            if not point in positions:
+                positions[point] = []
+            positions[point].append(e)
+        return positions
+
+    def appendElement(self, e):
+        u"""Add element to the list of child elements. Note that elements can be added multiple times.
+        If the element is alread placed in another container, then remove it from its current parent.
+        This relation and position is lost. The position e is supposed to be filled already in local position."""
+        eParent = e.parent
+        if not eParent in (None, self): 
+            e.parent.removeElement(e) # Remove from current parent, if there is one.
+        self._elements.append(e)
+        e.parent = self
+        if e.eId: # Store the element by unique element id, if it is defined.
+            self._eIds[e.eId] = e
+
+    def removeElement(self, e):
+        u"""If the element is placed in self, then remove it. Don't touch the position."""
+        assert e.parent is self
+        if e.eId in self._eIds:
+            del self._eIds[e.eId]
+        if e in self._elements:
+            self._elements.remove(e)
+
+    # If the element is part of a flow, then answer the squence.
+    
+    def getFlows(self):
+        u"""Answer the set of flow sequences on the page."""
+        flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
+        for e in self.elements:
+            if not e.isFlow:
+                continue
+            # Now we know that this element has a e.nextBox and e.nextPage
+            # There should be a flow with that name in our flows yet
+            found = False
+            for nextId, seq in flows.items():
+                if seq[-1].nextBox == e.eId: # Glue to the end of the sequence.
+                    seq.append(e)
+                    found = True
+                elif e.nextBox == seq[0].eId: # Add at the start of the list.
+                    seq.insert(0, e)
+                    found = True
+            if not found: # New entry
+                flows[e.next] = [e]
+        return flows
+
+    #   S T Y L E
 
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
@@ -80,6 +208,8 @@ class Element(object):
             return self.parent.getNamedStyle(styleName)
         return None
 
+    #   L I B --> Document.lib
+
     def _get_lib(self):
         u"""Answer the shared document.lib dictionary, used for share global entry by elements."""
         parent = self.parent
@@ -95,6 +225,7 @@ class Element(object):
         return None
     def _set_parent(self, parent):
         if parent is not None:
+            assert self in parent.ancestors, '[%s.%s] Cannot set one of the children "%s" as parent.' % (self.__class__.__name__, self.eId, parent)
             parent = weakref.ref(parent)
         self._parent = parent
     parent = property(_get_parent, _set_parent)
@@ -106,6 +237,15 @@ class Element(object):
                 siblings.append(e)
         return siblings
     siblings = property(_get_siblings)
+
+    def _get_ancestors(self):
+        ancestors = []
+        parent = self.parent
+        while parent is not None:
+            assert not parent in ancestors, '[%s.%s] Illegal loop in parent->ancestors reference.' % (self.__class__.__name__, self.eId)
+            ancestors.append(parent)
+        return ancestors
+    ancestors = property(_get_ancestors)
 
     def _get_point(self):
         return point2D(self._point) # Answer as 2D
@@ -682,6 +822,25 @@ class Element(object):
             self.h + mt - mb)
     marginBox = property(_get_marginBox)
 
+    def getVacuumElementBox(self):
+        u"""Answer the vacuum bounding box around all child elements."""
+        x1 = y1 = x2 = y2 = None
+        for e in self.elements:
+            if x1 is None or x1 > e.left:
+                x1 = e.left
+            if e.originTop:
+                if y1 is None or y1 < e.top:
+                    y1 = e.top
+                if y2 is None or y1 > e.bottom:
+                    y2 = e.bottom
+            else:
+                if y1 is None or y1 > e.top:
+                    y1 = e.top
+                if y2 is None or y2 < e.bottom:
+                    y2 = e.bottom
+
+        return x1, y1, x2 - x1, y2 - y1
+
     def _get_minW(self):
         return self.css('minW', DEFAULT_WIDTH)
     def _set_minW(self, minW):
@@ -904,6 +1063,8 @@ class Element(object):
         e.eId = None # Must be unique. Caller needs to set it to a new one.
         return e
 
+    #   D R A W I N G  S U P P O R T 
+
     #   Default drawing methods.
 
     def _drawElementBox(self, origin):
@@ -1028,24 +1189,98 @@ class Element(object):
             self._resetShadow()
             self._restoreScale()
 
-    def getElementsBox(self):
-        u"""Answer the vacuum bounding box around all child elements."""
-        x1 = y1 = x2 = y2 = None
-        for e in self.elements:
-            if x1 is None or x1 > e.left:
-                x1 = e.left
-            if e.originTop:
-                if y1 is None or y1 < e.top:
-                    y1 = e.top
-                if y2 is None or y1 > e.bottom:
-                    y2 = e.bottom
-            else:
-                if y1 is None or y1 > e.top:
-                    y1 = e.top
-                if y2 is None or y2 < e.bottom:
-                    y2 = e.bottom
+    #   Additional drawing stuff.
 
-        return x1, y1, x2 - x1, y2 - y1
+    def _drawArrow(self, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
+        u"""Draw curved arrow marker between the two points.
+        TODO: Add drawing of real arrow-heads, rotated in the right direction."""
+        style = self.parent.getRootStyle()
+        fms = style.get('flowMarkerSize')
+        fmf = style.get('flowCurvatureFactor')
+        if onText == 1:
+            c = style.get('flowConnectionStroke2', NO_COLOR)
+        else:
+            c = style.get('flowConnectionStroke1', NO_COLOR)
+        setStrokeColor(c, style.get('flowConnectionStrokeWidth'))
+        if startMarker:
+            setFillColor(style.get('flowMarkerFill', NO_COLOR))
+            oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
+        xm = (xt + xs)/2
+        ym = (yt + ys)/2
+        xb1 = xm + onText * (yt - ys) * fmf
+        yb1 = ym - onText * (xt - xs) * fmf
+        xb2 = xm - onText * (yt - ys) * fmf
+        yb2 = ym + onText * (xt - xs) * fmf
+        # Arrow head position
+        arrowSize = 12
+        arrowAngle = 0.4
+        angle = atan2(xt-xb2, yt-yb2)
+        hookedAngle = radians(degrees(angle)-90)
+        ax1 = xt - cos(hookedAngle+arrowAngle) * arrowSize
+        ay1 = yt + sin(hookedAngle+arrowAngle) * arrowSize
+        ax2 = xt - cos(hookedAngle-arrowAngle) * arrowSize
+        ay2 = yt + sin(hookedAngle-arrowAngle) * arrowSize
+        newPath()
+        setFillColor(None)
+        moveTo((xs, ys))
+        curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
+        drawPath()
+
+        #  Draw the arrow head.
+        newPath()
+        setFillColor(c)
+        setStrokeColor(None)
+        moveTo((xt, yt))
+        lineTo((ax1, ay1))
+        lineTo((ax2, ay2))
+        closePath()
+        drawPath()
+        if endMarker:
+            oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
+
+    def _drawFlowConnections(self, origin):
+        u"""If rootStyle.showFlowConnections is True, then draw the flow connections
+        on the page, using their stroke/width settings of the style."""
+        px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
+        style = self.parent.getRootStyle()
+        if not style.get('showFlowConnections'):
+            return
+        for seq in self.getFlows().values():
+            # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)
+            # This offset is defined by optional 
+            tbStart = self.getElement(seq[0].eId)
+            startX = tbStart.x
+            startY = tbStart.y
+            for tbTarget in seq[1:]:
+                tbTarget = self.getElement(tbTarget.eId)
+                targetX = tbTarget.x
+                targetY = tbTarget.y
+                self._drawArrow(px+startX, py+startY+tbStart.h, px+startX+tbStart.w, py+startY, -1)
+                self._drawArrow(px+startX+tbStart.w, py+startY, px+targetX, py+targetY+tbTarget.h, 1)
+                tbStart = tbTarget
+                startX = targetX
+                startY = targetY
+            self._drawArrow(px+startX, py+startY+tbStart.h, px+startX+tbStart.w, py+startY, -1)
+
+            if self != self.parent.getLastPage():
+                # Finalize with a line to the start, assuming it is on the next page.
+                tbTarget = self.getElement(seq[0].eId)
+                self._drawArrow(px+startX+tbStart.w, py+startY, px+tbTarget.x, py+tbTarget.y+tbTarget.h-self.h, 1)
+
+    def _drawElements(self, origin):
+        u"""Recursively draw all elements of self on their own relative position in the main canvas, 
+        with point as new origin. This is different from the drawing of a Galley instance, where the y-position
+        cascades, depending on the height of each element. If there are no elements,
+        draw a “missing” indicator when in designer mode.
+        If the canvas is None, then draw on default DrawBot output.
+        """
+        if self.elements:
+            self._drawBackgroundFrame(origin)
+            p = pointOffset(self.point, origin)
+            p = self._applyOrigin(p)    
+            # Draw all elements relative to this point
+            for e in self._elements:
+                e.draw(p)
 
     #   V A L I D A T I O N
 

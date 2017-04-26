@@ -10,58 +10,31 @@
 #
 #     page.py
 #
-
-import weakref
-import copy
 from datetime import datetime
-from math import cos, sin, radians, degrees, atan2
+#from math import cos, sin, radians, degrees, atan2
 
-from AppKit import NSBezierPath
+#from AppKit import NSBezierPath
 
-from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, \
-    closePath, FormattedString
+#from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, \
+#    closePath, FormattedString
 
 from pagebot import setFillColor, setStrokeColor
 from pagebot.style import NO_COLOR, makeStyle
-
-from pagebot.elements.textbox import TextBox
-from pagebot.elements.text import Text
-from pagebot.elements.rect import Rect
-from pagebot.elements.oval import Oval
-from pagebot.elements.image import Image
-from pagebot.elements.container import Container
-from pagebot.elements.grid import Grid, BaselineGrid
-from pagebot.elements.container import Container
-from pagebot.elements.line import Line
-from pagebot.elements.polygon import Polygon
-
+from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.toolbox.markers import drawCropMarks, drawRegistrationMarks
 
-class Page(Container):
+class Page(Element):
  
-    DEFAULT_STYLE = 'page'
-
-    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, template=None, **kwargs):
-        Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
-        self.setTemplate(template) # Create storage of elements and copy template elements.
+    def __init__(self, pageId=None, **kwargs):
+        Element.__init__(self, **kwargs)
+        self.pageId = pageId
         
-    def __repr__(self):
-        return '[%s %d w:%d h:%d elements:%d elementIds:%s]' % (self.__class__.__name__, self.pageId or 0, self.w, self.h, len(self), self.elementIds.keys())
-
     def _get_pageId(self):
-        return self.eId
+        return self._pageId or self.eId
+    def _set_pageId(self, pageId):
+        self._pageId = pageId 
     pageId = property(_get_pageId)
-
-    def setTemplate(self, template):
-        u"""Clear the elements from the page and set the template. Copy the elements."""
-        self.elements = [] # Sequential drawing order of Element instances.
-        self.placed = {} # Placement by (x,y) key. Value is a list of elements.
-        self.template = template # Keep in order to clone pages or if addition info is needed.
-        if template is not None:
-            # Copy elements from the template and put them in the designated positions.
-            for element in template.elements:
-                self.appendElement(copy.copy(element))
 
     def XXXreplaceElement(self, element, replacement):
         u"""Find this element in the page and replace it at the
@@ -128,207 +101,6 @@ class Page(Container):
     def getStyles(self):
         return self.parent.styles
 
-    def container(self, point=None, parent=None, style=None, eId=None, elements=None, **kwargs):
-        u"""Draw a generic container. Note that w and h can also be defined in the style."""
-        if parent is None: parent = self # Make style tree availabe.
-        e = Container(point=point, parent=parent, style=style, eId=eId, elements=elements, **kwargs)
-        self.appendElement(e)  # Append to drawing sequence and store by (x,y) and optional element id.
-        return e
-
-    def cContainer(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, elements=None, **kwargs):
-        e = self.container(parent=parent, style=style, eId=eId, elements=elements, **kwargs)
-        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
-        return e
-
-    def textBox(self, fs, point=None, parent=None, style=None, eId=None, **kwargs):
-        u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
-        if parent is None: parent = self # Make style tree availabe.
-        e = TextBox(fs, point=point, parent=parent, style=style, eId=eId, **kwargs)
-        self.appendElement(e) # Append to drawing sequence and set parent to self.
-        return e
-
-    def cTextBox(self, fs, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
-        u"""Caller must supply formatted string."""
-        e = self.textBox(fs, point=None, parent=parent, style=style, eId=eId, **kwargs)
-        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
-        return e
-
-    def text(self, fs, point=None, parent=None, style=None, eId=None, **kwargs):
-        u"""Draw formatted string. Normally we don't need w and h here, as it is made by the text and 
-        style combinations. But in case the defined font is a Variable Font, then we can use the
-        width and height to interpolate a font that fits the space for the given string and weight.
-        Caller must supply formatted string. Support both (x, y) and x, y as position."""
-        if parent is None: parent = self # Make style tree availabe.
-        e = Text(fs, point=point, parent=parent, style=style, eId=eId, **kwargs)
-        self.appendElement(e) # Append to drawing sequence and store by (x,y) and optional element id.
-        return e
-                
-    def cText(self, fs, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
-        u"""Draw formatted string.
-        We don't need w and h here, as it is made by the text and style combinations.
-        Caller must supply formatted string."""
-        e = self.text(fs, point=None, parent=parent, style=style, w=1, eId=eId, **kwargs)
-        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
-        return e
-                
-    def rect(self, point=None, parent=None, style=None, eId=None, **kwargs):
-        u"""Draw the rectangle. Note that w and h can also be defined in the style. In case h is omitted,
-        a square is drawn."""
-        if parent is None: parent = self # Make style tree availabe.
-        e = Rect(point=point, parent=parent, style=style, eId=eId, **kwargs)
-        self.appendElement(e) # Append to drawing sequence and store by optional element id.
-        return e
-                
-    def cRect(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
-        e = self.rect(point=None, parent=parent, eId=eId, style=style, **kwargs)
-        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
-        return e
-                
-    def oval(self, point=None, parent=None, eId=None, style=None, **kwargs):
-        u"""Draw the oval. Note that w and h can also be defined in the style. In case h is omitted,
-        a circle is drawn."""
-        if parent is None: parent = self # Make style tree availabe.
-        e = Oval(point=point, parent=parent, eId=eId, style=style, **kwargs)
-        self.appendElement(e) # Append to drawing sequence and store by optional element id.
-        return e
-
-    def cOval(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
-        e = self.oval(point=None, parent=parent, style=style, eId=eId, **kwargs)
-        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
-        return e
-  
-    def line(self, point=None, parent=None, style=None, eId=None, **kwargs):
-        if parent is None: parent = self # Make style tree availabe.
-        e = Line(point=point, parent=parent, style=style, eId=eId, **kwargs)
-        self.appendElement(e) # Append to drawing sequence and store by optional element id.
-        return e
-                
-    def cLine(self, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, **kwargs):
-        e = self.line(point=None, parent=parent, style=style, eId=eId, **kwargs)
-        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
-        return e
-
-    def polygon(self, point=None, parent=None, style=None, eId=None, points=[], **kwargs):
-        if parent is None: parent = self
-        e = Polygon(point=point, parent=parent, style=style, eId=eId, points=points, **kwargs)
-        self.appendElement(e) # Append to drawing sequence and store by optional element id.
-        return e
-
-    def image(self, path, point=None, parent=None, eId=None, style=None, mask=None, imo=None, pageNumber=0, clipRect=None, **kwargs):
-        u"""Create Image element as position (x, y) and optional width, height (w, h) of which
-        at least one of them should be defined. The path can be None, to be filled later.
-        If the image is drawn with an empty path, a missingImage cross-frame is shown.
-        The optional imo attribute is an ImageObject() with filters in place. 
-        The Image element is answered for convenience of the caller."""
-        if parent is None: parent = self # Make style tree availabe.
-        e = Image(path, point=point, parent=parent, eId=eId, style=style, mask=None, imo=imo, pageNumber=pageNumber, clipRect=clipRect, **kwargs)
-        self.appendElement(e)
-        return e
-            
-    def cImage(self, path, cx=None, cy=None, cw=None, ch=None, parent=None, style=None, eId=None, mask=None, imo=None, pageNumber=0, cClipRect=None, **kwargs):
-        """Convert the column size into point size, depending on the column settings of the 
-        current template, when drawing images "hard-coded" directly on a certain page.
-        The optional imo attribute is an ImageObject() with filters in place. 
-        The Image element is answered for convenience of the caller"""
-        e = self.image(path, point=None, parent=parent, eId=eId, style=style, mask=None, imo=imo, pageNumber=pageNumber, w=1, **kwargs)
-        e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
-        if cClipRect is not None:
-            e.cClipRect = cClipRect
-        return e
-
-    def grid(self, point=None, parent=None, style=None, eId=None, **kwargs):
-        u"""Direct way to add a grid element to a single page, if not done through its template."""
-        if parent is None: parent = self # Make style tree availabe.
-        e = Grid(point=point, parent=None, style=style, eId=eId, **kwargs)
-        self.appendElement(e)
-        return e
-        
-    def baselineGrid(self, point=None, parent=None, style=None, eId=None, **kwargs):
-        u"""Direct way to add a baseline grid element to a single page, if not done through its template."""
-        if parent is None: parent = self # Make style tree availabe.
-        e = BaselineGrid(point=point, parent=parent, style=style, eId=eId, **kwargs)
-        self.appendElement(e)
-        return e
-
-    #   Additional drawing stuff.
-
-    def _drawArrow(self, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
-        u"""Draw curved arrow marker between the two points.
-        TODO: Add drawing of real arrow-heads, rotated in the right direction."""
-        style = self.parent.getRootStyle()
-        fms = style.get('flowMarkerSize')
-        fmf = style.get('flowCurvatureFactor')
-        if onText == 1:
-            c = style.get('flowConnectionStroke2', NO_COLOR)
-        else:
-            c = style.get('flowConnectionStroke1', NO_COLOR)
-        setStrokeColor(c, style.get('flowConnectionStrokeWidth'))
-        if startMarker:
-            setFillColor(style.get('flowMarkerFill', NO_COLOR))
-            oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
-        xm = (xt + xs)/2
-        ym = (yt + ys)/2
-        xb1 = xm + onText * (yt - ys) * fmf
-        yb1 = ym - onText * (xt - xs) * fmf
-        xb2 = xm - onText * (yt - ys) * fmf
-        yb2 = ym + onText * (xt - xs) * fmf
-        # Arrow head position
-        arrowSize = 12
-        arrowAngle = 0.4
-        angle = atan2(xt-xb2, yt-yb2)
-        hookedAngle = radians(degrees(angle)-90)
-        ax1 = xt - cos(hookedAngle+arrowAngle) * arrowSize
-        ay1 = yt + sin(hookedAngle+arrowAngle) * arrowSize
-        ax2 = xt - cos(hookedAngle-arrowAngle) * arrowSize
-        ay2 = yt + sin(hookedAngle-arrowAngle) * arrowSize
-        newPath()
-        setFillColor(None)
-        moveTo((xs, ys))
-        curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
-        drawPath()
-
-        #  Draw the arrow head.
-        newPath()
-        setFillColor(c)
-        setStrokeColor(None)
-        moveTo((xt, yt))
-        lineTo((ax1, ay1))
-        lineTo((ax2, ay2))
-        closePath()
-        drawPath()
-        if endMarker:
-            oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
-
-    def _drawFlowConnections(self, origin):
-        u"""If rootStyle.showFlowConnections is True, then draw the flow connections
-        on the page, using their stroke/width settings of the style."""
-        px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
-        style = self.parent.getRootStyle()
-        if not style.get('showFlowConnections'):
-            return
-        for seq in self.getFlows().values():
-            # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)
-            # This offset is defined by optional 
-            tbStart = self.getElement(seq[0].eId)
-            startX = tbStart.x
-            startY = tbStart.y
-            for tbTarget in seq[1:]:
-                tbTarget = self.getElement(tbTarget.eId)
-                targetX = tbTarget.x
-                targetY = tbTarget.y
-                self._drawArrow(px+startX, py+startY+tbStart.h, px+startX+tbStart.w, py+startY, -1)
-                self._drawArrow(px+startX+tbStart.w, py+startY, px+targetX, py+targetY+tbTarget.h, 1)
-                tbStart = tbTarget
-                startX = targetX
-                startY = targetY
-            self._drawArrow(px+startX, py+startY+tbStart.h, px+startX+tbStart.w, py+startY, -1)
-
-            if self != self.parent.getLastPage():
-                # Finalize with a line to the start, assuming it is on the next page.
-                tbTarget = self.getElement(seq[0].eId)
-                self._drawArrow(px+startX+tbStart.w, py+startY, px+tbTarget.x, py+tbTarget.y+tbTarget.h-self.h, 1)
-
-
     def _drawPageInfo(self, origin):
         u"""Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks."""
@@ -372,16 +144,16 @@ class Page(Container):
         visible. Page drawing can have an offset too, in case it is used as placed element on another page.
         If self.scaleX and self.scaleY are not None, then scale the drawing of the entire page,
         keeping the x and y position unscaled."""
-        px, py, _ = pointOffset(self.point, origin) # Ignoe z-axis for now.
+        px, py, pz = p = pointOffset(self.point, origin) # Ignoe z-axis for now.
         #ox, oy = self._applyScale(ox, oy) #@@@@@ WRONG
         # Now we may be in scaled mode.
         if self.parent.w > self.w: # Document larger than page, center and draw crop-marks
             px = (self.parent.w - self.w) / 2
         if self.parent.h > self.h:
             py = (self.parent.h - self.h) / 2
-        # Draw all elements with this offset.
-        for e in self.elements:
-            e.draw((px, py, 0)) 
+
+        # If there are child elements, draw them over the text.
+        self._drawElements(p)
         # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
         self._drawPageMetaInfo(origin)
         # Check if we are in scaled mode. Then restore.

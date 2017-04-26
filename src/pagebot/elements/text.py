@@ -147,8 +147,11 @@ class Text(Element):
         # (they may include "\n" returns, forming multiple lines), we always use
         # the DrawBot textBox( ), instead of the single text( ) 
         textBox(self.fs, (px, py, self.w, self.h))
-
         self._resetShadow()
+
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin)
+
         self._restoreScale()
         self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
 
