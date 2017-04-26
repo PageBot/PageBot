@@ -25,7 +25,6 @@ class Element(object):
     # These flags can be overwritten by inheriting classes, or dynamically in instances,
     # e.g. where the settings of TextBox.nextBox and TextBox.nextPage define if a TextBox
     # instance can operate as a flow.
-    isContainer = False
     isText = False
     isTextBox = False
     isFlow = False

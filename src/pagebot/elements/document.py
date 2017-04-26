@@ -13,6 +13,7 @@
 import copy
 
 from drawBot import newPage, saveImage, installedFonts, installFont
+from pagebot.elements import newPageBotPage
 
 from pagebot.style import makeStyle
 from pagebot.toolbox.transformer import pointOffset, obj2StyleId
@@ -65,6 +66,10 @@ class Document(object):
         name = 'page'
         if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
+
+    def _get_ancestors(self):
+        return [] # Behave as Element, alsways root, top of tree.
+    ancestors = property(_get_ancestors)
 
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
@@ -198,7 +203,7 @@ class Document(object):
         u"""Answer the next page of page. If it does not exist, create a new page."""
         pageId = page.pageId + nextPage # Currently assuming it is a number.
         if not pageId in self.pages:
-            self.newPage(eId=pageId, template=self.getTemplate())
+            newPageBotPage(eId=pageId, template=self.getTemplate())
         return self.getPage(pageId)
           
     def makePages(self, style=None, w=None, h=None, minPageId=1, pages=1, template=None, **kwargs):
@@ -213,30 +218,7 @@ class Document(object):
         if self.pages:
             return self.pages[sorted(self.pages.keys())[-1]]
         return None
-
-    def newPage(self, style=None, pageId=None, template=None, w=None, h=None, **kwargs):
-        u"""Create a new page with the optional (w,h). Use (self.w, self.h) if one of the values is omitted.
-        If pageId is omitted, then use the highest page number in self.pages as previous page.
-        If pageId already exists, then raise an error."""
-        if template is None: # If template undefined, then used document master template.
-            template = self.template
-        if template is not None:
-            w = w or template.w
-            h = h or template.h
-        else: # If no template defined, tben use self.w, self.h from rootStyle.
-            w = w or self.w
-            h = h or self.h
-        if pageId is None:
-            if not self.pages: # If not pages yet, start with the first page number defined in root style.
-                rs = self.getRootStyle()
-                pageId = self.css('firstPageId')
-            else:
-                pageId = max(self.pages.keys())+1
-        assert not pageId in self.pages # Make sure that we don't accidentally overwrite existing pages.
-        page = self.PAGE_CLASS(parent=self, style=style, w=w, h=h, pageId=pageId, template=template, **kwargs)
-        self.pages[pageId] = page
-        return page # Answer the page instance for convenience of the caller.
-  
+ 
     def getStyle(self, name):
         u"""Answer the names style. Answer None if it does not exist."""
         return self.styles.get(name)

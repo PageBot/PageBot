@@ -22,7 +22,6 @@ class Rect(Element):
     def __init__(self, point=None, parent=None, style=None, name=None, eId=None, **kwargs):
         Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
         # Initialize the default Element behavior tags.
-        self.isContainer = False
         self.isText = False
         self.isFlow = False
 

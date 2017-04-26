@@ -19,6 +19,7 @@ from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
+from pagebot.elements import *
 from pagebot.elements.document import Document
     
 W = H = 120 # Get the standard a4 width and height in points.
@@ -76,22 +77,22 @@ def makeDocument(rs):
             # Calculate the position for each square as combination of paddings and (ix, iy)
             p = padX + ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
             # Create Rect object and place it in the page on position p
-            page.rect(p, w=square, h=square, fill=color1, stroke=None) 
+            newRect(p, w=square, h=square, parent=page, fill=color1, stroke=None) 
             # Create Rect object and place it in the page on position p
-            page.oval(p, w=square, h=square, fill=color2, stroke=None)    
+            newOval(p, w=square, h=square, parent=page, fill=color2, stroke=None)    
             # Now drawing with columns needs to align with the plain coordinate drawing.         
-            e = page.cRect(ix, iy, 1, 1, fill=None, stroke=0, strokeWidth=0.5)
+            newColRect(ix, iy, 1, 1, fill=None, parent=page, stroke=0, strokeWidth=0.5)
             # Show coordinate and column/row index value. Don't show origin of the text box, by resetting
             # its style flag showElementOrigin=False 
             # Show coordinate and column/row index value
             # It may seem funny to beginning programmers to have a column/row index as zero
             # for the first column/row, but that is how counters work in Python.
             # The first element in a list has index 0.
-            page.text('%d, %d Column: %d, %d' % (p[0], p[1], 
+            newText('%d, %d Column: %d, %d' % (p[0], p[1], 
                 x2cx(p[0], page), # Calculate back to column index for checking.
                 y2cy(p[1], page)), 
                 (p[0]+5, p[1]+gutter*3/4), # Position of the coordinate with a bit of offset.
-                textFill=0, fontSize=4, leading=0, showElementOrigin=False)
+                parent=page, textFill=0, fontSize=4, leading=0, showElementOrigin=False)
 
             #page.rect((10, 10), w=mx, h=my, fill=(0, 1, 0))
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around

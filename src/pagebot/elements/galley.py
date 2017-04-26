@@ -10,19 +10,10 @@
 #
 #     galley.py
 #
-"""
-import os
-import copy
-
-from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
-    newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
-    textBox, hyphenation, restore, imageSize, shadow, BezierPath, clipPath, drawPath
-from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-"""
 from pagebot.style import NO_COLOR, makeStyle
-from pagebot.elements.container import Container
+from pagebot.elements.element import Element
 
-class Galley(Container):
+class Galley(Element):
     u"""A Galley is sticky sequential flow of elements, where the parts can have
     different widths (like headlines, images and tables) or responsive width, such as images
     and formatted text volumes. Size is calculated dynamically, since one of the enclosed

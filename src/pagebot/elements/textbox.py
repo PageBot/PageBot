@@ -125,6 +125,9 @@ class TextBox(Element):
         else: # If debugging,then draw the rectangle. Only self.css('showElementBox') is True
             self._drawElementBox(origin)
 
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin)
+
         self._restoreScale()
         self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
 

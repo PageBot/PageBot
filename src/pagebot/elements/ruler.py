@@ -35,5 +35,8 @@ class Ruler(Element):
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         line((px + sIndent, py), (px + w, py))
 
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin)
+
         self._restoreScale()
 

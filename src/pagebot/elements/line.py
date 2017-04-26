@@ -13,7 +13,6 @@
 from drawBot import newPath, moveTo, lineTo, drawPath 
 from pagebot.style import NO_COLOR
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import setStrokeColor, setFillColor
 from pagebot.elements.element import Element
 
 class Line(Element):
@@ -24,11 +23,14 @@ class Line(Element):
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
  
-        setStrokeColor(self.style.get('stroke', NO_COLOR), self.style.get('strokeWidth'))
+        setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         newPath()
         moveTo((px, py))
         lineTo((px + self.w, py + self.h))
         drawPath()
+
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin)
 
         self._restoreScale()
         self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'

@@ -12,12 +12,11 @@
 #
 import os
 from drawBot import imageSize
-from pagebot.elements.container import Container
 from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT
 from pagebot.toolbox.transformer import pointOffset
 
-class Image(Container):
+class Image(Element):
     u"""Image element has special attributes self.iw and self.ih for the real image size.
     If the optional captionStyle is not defined, then use self.style for captions."""
     
@@ -29,7 +28,7 @@ class PixelImage(Element):
     If the optional captionStyle is not defined, then use self.style for captions."""
    
     def __init__(self, path, point=None, parent=None, style=None, name=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
-        Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
         # Check on one of the (w, h) in the style. One of the can be undefined for proportional scaling.
         # Set default to 1 column
         self._w = DEFAULT_WIDTH # In case there is no valid image path defined, to derive the scale from.
@@ -250,6 +249,9 @@ class PixelImage(Element):
                 restore()
             else:
                 print('Could not set scale of image "%s"' % self.path)
+
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin)
 
         self._restoreScale()
         self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
