@@ -337,56 +337,6 @@ class Element(object):
         self.front = z + self.css('mzf')
     mFront = property(_get_mFront, _set_mFront)
 
-    def _get_middle(self): # On bounding box, not including margins.
-        yAlign = self.yAlign
-        if yAlign == TOP:
-            return self.y - self.h/2
-        if yAlign == BOTTOM:
-            return self.y + self.h/2
-        return self.y
-    def _set_middle(self, y):
-        yAlign = self.yAlign
-        if yAlign == TOP:
-            self.y = y + self.h/2
-        elif yAlign == BOTTOM:
-            self.y = y + self.h
-        else:
-            self.y = y
-    middle = property(_get_middle, _set_middle)
-
-    def _get_bottom(self):
-        yAlign = self.yAlign
-        if yAlign == TOP:
-            if self.originTop:
-                return self.y + self.h
-            return self.y - self.h
-        if yAlign == MIDDLE:
-            return self.y + self.h/2
-        return self.y
-    def _set_bottom(self, y):
-        yAlign = self.yAlign
-        if yAlign == TOP:
-            if self.originTop:
-                self.y = y - self.h
-            else:
-                self.y = y + self.h
-        elif yAlign == MIDDLE:
-            self.y = y - self.h/2
-        else:
-            self.y = y
-    bottom = property(_get_bottom, _set_bottom)
-
-    def _get_mBottom(self): # Bottom, including bottom margin
-        if self.originTop:
-            return self.bottom + self.mb
-        return self.bottom - self.mb
-    def _set_mBottom(self, y):
-        if self.originTop:
-            self.bottom = y - self.mb
-        else:
-            self.bottom = y + self.mb
-    mBottom = property(_get_mBottom, _set_mBottom)
-
     # Alignment types, defines where the origin of the element is located.
 
     def _get_xAlign(self): # Answer the type of x-alignment. For compatibility allow align and xAlign as equivalents.

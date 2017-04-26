@@ -429,10 +429,10 @@ class Origin2TopSide(Condition):
 class Middle2Bottom(Condition):
 	u"""Move middle (vertical center) of e bounding box on parent bottom margin."""
 	def test(self, e):
-		return e.isCenterOnBottom(self.tolerance)
+		return e.isMiddleOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2Bottom(), e, score)
+		self.addScore(not self.test(e) and e.middle2Bottom(), e, score)
 
 class Top2Bottom(Condition):
 	u"""Align top of e bounding box on parent bottom margin."""
