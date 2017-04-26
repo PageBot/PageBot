@@ -19,8 +19,9 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 
 class Rect(Element):
-    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+    def __init__(self, **kwargs):
+        print '423234342423', kwargs
+        Element.__init__(self, **kwargs)
         # Initialize the default Element behavior tags.
         self.isText = False
         self.isFlow = False

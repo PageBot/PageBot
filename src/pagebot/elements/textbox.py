@@ -21,17 +21,15 @@ class TextBox(Element):
 
     # Initialize the default behavior tags as different from Element.
     isText = True  # This element is capable of handling text.
+    isTextBox = True
 
-    def __init__(self, fs, point=None, parent=None, style=None, name=None, eId=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+    def __init__(self, fs, **kwargs):
+        Element.__init__(self, **kwargs)
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         if isinstance(fs, str):
             fs = getFormattedString(fs, parent, self.style)
         self.fs = fs
-        # Initialize the default Element behavior tags, in case this is a flow.
-        self.isTextBox = True
-        self.isFlow = self.eId is not None and self.nextBox is not None and self.nextPage is not None
 
     def _get_h(self):
         u"""Answer the height of the textBox. If self.style['vacuumH'] is set, then answer the 
@@ -43,22 +41,8 @@ class TextBox(Element):
         self.style['h'] = h # Overwrite style from here, unless self.style['vacuum'] is True
     h = property(_get_h, _set_h)
 
-    def _get_nextBox(self):
-        return self.style.get('nextBox')
-    nextBox = property(_get_nextBox)
-
-    def _get_nextPage(self):
-        return self.style.get('nextPage')
-    nextPage = property(_get_nextPage)
-
     def __len__(self):
         return len(self.fs)
-
-    def _get_next(self):
-        if self.isFlow:
-            return self.nextBox, self.nextPage
-        return None
-    next = property(_get_next)
 
     def setText(self, s):
         u"""Set the formatted string to s, using self.style."""

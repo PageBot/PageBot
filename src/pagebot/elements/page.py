@@ -15,8 +15,8 @@ from datetime import datetime
 
 #from AppKit import NSBezierPath
 
-#from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, \
-#    closePath, FormattedString
+from drawBot import stroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, \
+    closePath, FormattedString
 
 from pagebot import setFillColor, setStrokeColor
 from pagebot.style import NO_COLOR, makeStyle
@@ -25,82 +25,7 @@ from pagebot.toolbox.transformer import pointOffset
 from pagebot.toolbox.markers import drawCropMarks, drawRegistrationMarks
 
 class Page(Element):
- 
-    def __init__(self, pageId=None, **kwargs):
-        Element.__init__(self, **kwargs)
-        self.pageId = pageId
-        
-    def _get_pageId(self):
-        return self._pageId or self.eId
-    def _set_pageId(self, pageId):
-        self._pageId = pageId 
-    pageId = property(_get_pageId)
-
-    def XXXreplaceElement(self, element, replacement):
-        u"""Find this element in the page and replace it at the
-        same element index (layer position) as the original element has.
-        Force the original element size on the replacing element."""
-        w, h = element.getSize()
-        for index, e in enumerate(self.elements):
-            if e is element:
-                # Force element to fit in this size. In case of an image element,
-                # by default this is done by proportional scale from the original size.
-                replacement.setSize(w, h) 
-                replacementPos = replacement
-                self.elements[index] = replacementPos # Overwriting original element.
-                if (x, y) in self.placed:
-                    placedElements = self.placed[(x, y)]
-                    if element in placedElements:
-                        placedElements[placedElements.index(element)] = replacement
-                if element.eId in self.elementIds: # TODO: Check on multiple placements?
-                    del self.elementIds[element.eId]
-                if replacement.eId is not None: # TODO: Check on multiple placements?
-                    self.elementIds[replacement.eId] = [replacementPos]
-                return True # Successful replacement.
-        return False # Could not replace, probably by missing element in the page.
-
-    def nextPage(self, nextPage=1, makeNew=True):
-        u"""Answer the next page after self in the document."""
-        return self.parent.nextPage(self, nextPage, makeNew)
-
-    def getNextFlowBox(self, tb, makeNew=True):
-        u"""Answer the next textBox that tb is point to. This can be on the same page or a next
-        page, depending how the page (and probably its template) is defined."""
-        if tb.nextPage:
-            # The flow textBox is pointing to another page. Try to get it, and otherwise create one,
-            # if makeNew is set to True.
-            page = self.nextPage(tb.nextPage, makeNew)
-            # Hard check. Otherwise something must be wrong in the template flow definition.
-            # or there is more content than we can handle, while not allowing to create new pages.
-            assert page is not None
-            assert not page is self # Make sure that we got a another page than self.
-            # Get the element on the next page that
-            tb = page.getElement(tb.nextBox)
-            # Hard check. Otherwise something must be wrong in the template flow definition.
-            assert tb is not None and not len(tb)
-        else:
-            page = self # Staying on the same page, flowing into another column.
-            tb = self.getElement(tb.nextBox)
-            # tb can be None, in case there is no next text box defined. It is up to the caller
-            # to test if all text fit in the current textBox tb.
-        return page, tb
-        
-    def getStyle(self, name=None):
-        u"""Get the named style. Otherwise search for default or root style in parent document."""
-        style = None
-        if name is None and self.template is not None:
-            style = self.template.getStyle()
-        if style is None: # No style found, then search in document for named style.
-            style = self.parent.getStyle(name)
-        if style is None: # No style found, then try default style
-            style = self.parent.getStyle(self.DEFAULT_STYLE)
-        if style is None:
-            style = self.parent.getRootStyle()
-        return style
-        
-    def getStyles(self):
-        return self.parent.styles
-
+             
     def _drawPageInfo(self, origin):
         u"""Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks."""
@@ -110,7 +35,7 @@ class Page(Element):
             cms = self.css('cropMarkSize')
             dt = datetime.now()
             d = dt.strftime("%A, %d. %B %Y %I:%M%p")
-            s = 'Page %s | %s | %s' % (self.eId, d, self.parent.title or 'Untitled')
+            s = 'Page %s | %s | %s' % (self.name, d, self.parent.title or 'Untitled')
             fs = FormattedString(s, font='Verdana', fill=0, fontSize=6)
             text(fs, (px + bleed, py + self.h + cms)) # Draw on top of page.
 
@@ -159,17 +84,3 @@ class Page(Element):
         # Check if we are in scaled mode. Then restore.
         #self._restoreScale()
 
-class Template(Page):
-    u"""Template is a special kind of Page class. Possible the draw in 
-    the same way. Difference is that templates cannot contain other templates."""
-    
-    def __init__(self, point=None, parent=None, style=None, eId=None, template=None, **kwargs):
-        Page.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
-        # Skip template parameter.
-
-    def getStyle(self, name=None):
-        return self.style
-            
-    def draw(self, origin):
-        # Templates are supposed to be copied from by Page, never to be drawing themselves.
-        pass 

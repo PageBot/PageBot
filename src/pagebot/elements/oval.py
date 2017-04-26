@@ -19,11 +19,6 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 
 class Oval(Element):
-    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
-        # Initialize the default Element behavior tags.
-        self.isText = False
-        self.isFlow = False
 
     def draw(self, origin):
         p = pointOffset(self.point, origin)
