@@ -16,7 +16,7 @@ from __future__ import division # Make integer division result in float.
 import pagebot # Import to know the path of non-Python resources.
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, RIGHT
+from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, RIGHT, LEFT
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
 from pagebot.elements.rect import Rect
@@ -65,15 +65,14 @@ def makeDocument(rs):
     page.rect(w=SQ, h=SQ, conditions=(Right2Right(),Bottom2Bottom()), fill=0.7)
 
     # Make new container for adding elements inside with alignment.
-    cnt = page.container(w=W-6*SQ, h=H-6*SQ, fill=(0.8,0.8,0.8,0.8), margin=SQ, align=RIGHT, yAlign=MIDDLE, stroke=0,
-        pr=10, pt=10, pb=10, pl=10,
-        conditions=(Center2Center(), Middle2Middle()))
-    print cnt.style.items()
+    cnt = page.container(w=W-6*SQ, h=H-6*SQ, fill=1, margin=SQ, align=RIGHT, yAlign=MIDDLE, stroke=0,
+        pr=10, pt=10, pb=10, pl=30,
+        conditions=(Center2Center(), Middle2Bottom()))
     cnt.solve()
     
-    r = Rect(w=SQ, h=SQ, stroke=None, conditions=(Center2Center(),Middle2Middle()), fill=(1, 1, 0))
+    r = Rect((0,0), w=SQ, h=SQ, stroke=None, ZZconditions=(Center2Center(),Middle2Middle()), fill=(1, 1, 0))
     cnt.appendElement(r)
-    r = Rect(w=SQ, h=SQ, stroke=None, conditions=(Top2Top(),Left2Left()), fill=(1, 0, 0))
+    r = Rect((10, 10), w=SQ, h=SQ, stroke=None, XXconditions=(Top2Top(),Left2Left()), fill=(1, 0, 0))
     cnt.appendElement(r)
     # Solve the layout placement conditions on the page by moving the
     # elements that are not on the right positions (which is all of them,

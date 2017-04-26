@@ -142,7 +142,7 @@ class Container(Element):
         draw a “missing” indicator when in designer mode.
         If the canvas is None, then draw on default DrawBot output.
         """
-        if self._elements:
+        if self.elements:
             self._drawBackgroundFrame(origin)
             p = pointOffset(self.point, origin)
             p = self._applyOrigin(p)    
