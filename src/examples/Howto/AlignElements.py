@@ -59,15 +59,16 @@ def makeDocument(rs):
     
     # Position square in the 4 corners of the page area.
     # Notice that their alignment (left) does not matter for the conditions.
-    page.rect(w=SQ, h=SQ, conditions=(Right2Right(),Top2Top()), fill=0.7)
-    page.rect(w=SQ, h=SQ, conditions=(Left2Left(),Bottom2Bottom()), fill=0.7)
-    page.rect(w=SQ, h=SQ, conditions=(Left2Left(),Top2Top()), fill=0.7)
-    page.rect(w=SQ, h=SQ, conditions=(Right2Right(),Bottom2Bottom()), fill=0.7)
+    for X in (Right2Right(), Left2Right(), Right2Left(), Left2Left()):
+        for Y in (Bottom2Bottom(), Top2Bottom(), Bottom2Top(), Top2Top()):
+            for xAlign in (LEFT, RIGHT):
+                for yAlign in (TOP, BOTTOM):
+                    page.rect(w=SQ, h=SQ, conditions=(X, Y), align=xAlign, yAlign=yAlign, fill=0.7)
 
     # Make new container for adding elements inside with alignment.
     cnt = page.container(w=W-6*SQ, h=H-6*SQ, fill=1, margin=SQ, align=RIGHT, yAlign=MIDDLE, stroke=0,
         pr=10, pt=10, pb=10, pl=30,
-        conditions=(Center2Center(), Middle2Bottom()))
+        conditions=(Right2Left(), Middle2Bottom()))
     cnt.solve()
     
     r = Rect((0,0), w=SQ, h=SQ, stroke=None, ZZconditions=(Center2Center(),Middle2Middle()), fill=(1, 1, 0))
