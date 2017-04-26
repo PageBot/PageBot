@@ -17,7 +17,7 @@ from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, r
 from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
-from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, NO_COLOR, \
+from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
     DEFAULT_WIDTH, DEFAULT_HEIGHT, DEAULT_DEPTH, XXXL
 from pagebot.toolbox.transformer import asFormatted
 
@@ -340,22 +340,32 @@ class Element(object):
 
     # Alignment types, defines where the origin of the element is located.
 
+    def _validateXAlign(self, xAlign): # Check and answer value
+        assert xAlign in XALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, sorted(XALIGNS))
+        return xAlign
+    def _validateYAlign(self, yAlign): # Check and answer value
+        assert yAlign in YALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, sorted(YALIGNS))
+        return yAlign
+    def _validateZAlign(self, zAlign): # Check and answer value
+        assert zAlign in ZALIGNS, '[%s.zAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, zAlign, sorted(ZALIGNS))
+        return zAlign
+
     def _get_xAlign(self): # Answer the type of x-alignment. For compatibility allow align and xAlign as equivalents.
-        return self.css('align')
+        return self._validateXAlign(self.css('align'))
     def _set_xAlign(self, xAlign):
-        self.style['align'] = xAlign # Save locally, blocking CSS parent scope for this param.
+        self.style['align'] = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
     align = xAlign = property(_get_xAlign, _set_xAlign)
      
     def _get_yAlign(self): # Answer the type of x-alignment.
-        return self.css('yAlign')
+        return self._validateYAlign(self.css('yAlign'))
     def _set_yAlign(self, yAlign):
-        self.style['yAlign'] = yAlign # Save locally, blocking CSS parent scope for this param.
+        self.style['yAlign'] = self._validateYAlign(yAlign) # Save locally, blocking CSS parent scope for this param.
     yAlign = property(_get_yAlign, _set_yAlign)
      
     def _get_zAlign(self): # Answer the type of x-alignment.
-        return self.css('zAlign')
+        return self._validateZAlign(self.css('zAlign'))
     def _set_zAlign(self, zAlign):
-        self.style['zAlign'] = zAlign # Save locally, blocking CSS parent scope for this param.
+        self.style['zAlign'] = self._validateZAlign(zAlign) # Save locally, blocking CSS parent scope for this param.
     zAlign = property(_get_zAlign, _set_zAlign)
      
     # Position by column + gutter size index.

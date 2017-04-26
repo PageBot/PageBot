@@ -19,7 +19,7 @@ import pagebot # Import to know the path of non-Python resources.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, RIGHT, LEFT
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
-from pagebot.elements.rect import Rect
+from pagebot.elements import Rect, Oval
 # Import all layout condition classes
 from pagebot.conditions import *
   
@@ -67,22 +67,30 @@ def makeDocument(rs):
                         page.rect(w=SQ, h=SQ, conditions=(X, Y), align=xAlign, yAlign=yAlign, fill=0.7)
 
     # Make new container for adding elements inside with alignment.
-    cnt = page.container(w=W-6*SQ, h=H-6*SQ, fill=1, margin=SQ, align=CENTER, yAlign=MIDDLE, stroke=0,
+    cnt = page.container(w=W-6*SQ, h=H-6*SQ, fill=1, margin=SQ, 
+        align=LEFT, yAlign=TOP, stroke=0,
         pr=10, pt=10, pb=10, pl=30,
-        conditions=(Right2Right(), Middle2Middle()))
+        conditions=(Right2Right(), Top2Top()))
     cnt.solve()
     
-    r1 = Rect((0,0), w=SQ, h=SQ, stroke=None, ZZconditions=(Left2Center(),Middle2Middle()), fill=(1, 1, 0))
+    r1 = cnt.oval((0,0), w=SQ, h=SQ, stroke=None, originTop=False, ZZconditions=(Left2Center(),Middle2Middle()), fill=(1, 1, 0))
     cnt.appendElement(r1)
-    r2 = Rect((10, 10), w=SQ, h=SQ, stroke=None, XXconditions=(Top2Top(),Left2Left()), fill=(1, 0, 0))
-    cnt.appendElement(r2)
-    print '1111', r1.point, r2.point
+    
+    
+    cnt2 = cnt.container((0, 0), w=300, h=300, fill=(0.5, 0.5, 0), margin=SQ, 
+        align=LEFT, yAlign=TOP, stroke=0,
+        pr=10, pt=10, pb=10, pl=30)
+    cnt2.solve()
+
+    r2 = Rect((10, 10), w=SQ, h=SQ, originTop=False, stroke=None, XXconditions=(Top2Top(),Left2Left()), fill=(1, 0, 0))
+    cnt2.appendElement(r2)
+
     # Solve the layout placement conditions on the page by moving the
     # elements that are not on the right positions (which is all of them,
     # because we did not add point attributes when creating them.
     #page.solve() 
-    print '2222', r1.point, r2.point
-    
+    print cnt.elements
+        
     return doc # Answer the doc for further doing.
         
 d = makeDocument(RS)

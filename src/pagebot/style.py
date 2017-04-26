@@ -114,7 +114,10 @@ JUSTIFIED = 'justified'
 TOP = 'top'
 BOTTOM = 'bottom'
 FRONT = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
-BACK_ALIGH = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
+BACK = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
+XALIGNS = set((None, LEFT, RIGHT, CENTER, JUSTIFIED))
+YALIGNS = set((None, TOP, BOTTOM, MIDDLE))
+ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 
 DEFAULT_FONT = 'Verdana'
 DEFAULT_FALLBACK_FONT = 'LucidaGrande'
