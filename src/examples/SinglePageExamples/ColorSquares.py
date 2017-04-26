@@ -66,9 +66,17 @@ def makeDocument(rs):
     rs['cw'] = rs['ch'] = square
     rs['gw'] = rs['gh'] = gutter # Gutter width and gutter height.
 
-    doc = Document(rs, pages=1)
+    doc = Document(rootStyle=rs, autoPages=1)
+    doc.pl = doc.pr = doc.pt = doc.pb = 0
     
-    page = doc[1] # Get the single page from te document.
+    # Get list of pages with equal y, then equal x.    
+    #page = doc[0][0][0] # Get the single page from te document.
+    page = doc.getPage(0)
+    
+    print '@##@44444444#@#@#', page
+    
+    newRect((10, 10), parent=page, fill=(1, 0, 0), w=30, h=40)
+    """
     for ix in range(sqx): # Run through the range of (0, 1, ...) number of horizontal squares
         for iy in range(sqy): # Same with vertical squares  
             # Place squares in random colors
@@ -77,11 +85,11 @@ def makeDocument(rs):
             # Calculate the position for each square as combination of paddings and (ix, iy)
             p = padX + ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
             # Create Rect object and place it in the page on position p
-            newRect(p, w=square, h=square, parent=page, fill=color1, stroke=None) 
+            newRect(point=p, w=square, h=square, parent=page, fill=color1, stroke=None) 
             # Create Rect object and place it in the page on position p
-            newOval(p, w=square, h=square, parent=page, fill=color2, stroke=None)    
+            newOval(point=p, w=square, h=square, parent=page, fill=color2, stroke=None)    
             # Now drawing with columns needs to align with the plain coordinate drawing.         
-            newColRect(ix, iy, 1, 1, fill=None, parent=page, stroke=0, strokeWidth=0.5)
+            newColRect(ix, iy, 1, 1,  fill=None, parent=page, stroke=0, strokeWidth=0.5)
             # Show coordinate and column/row index value. Don't show origin of the text box, by resetting
             # its style flag showElementOrigin=False 
             # Show coordinate and column/row index value
@@ -93,7 +101,7 @@ def makeDocument(rs):
                 y2cy(p[1], page)), 
                 (p[0]+5, p[1]+gutter*3/4), # Position of the coordinate with a bit of offset.
                 parent=page, textFill=0, fontSize=4, leading=0, showElementOrigin=False)
-
+    """
             #page.rect((10, 10), w=mx, h=my, fill=(0, 1, 0))
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around
     # added or deleted or moved to other pages.  

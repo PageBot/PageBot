@@ -26,20 +26,8 @@ class Galley(Element):
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
 
-    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, elements=None, **kwargs):
-        Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, elements=elements, **kwargs)
-        self._footnotes = []
-
-    def __repr__(self):
-        t = '[' + self.__class__.__name__
-        if self.eId is not None:
-            t += ' ' + self.eId
-        for e in self.elements:
-            t += ' '+e.__class__.__name__
-        return t + ']'
-
     def appendString(self, fs):
-        u"""Add the string to the lsat text box. Create a new textbox if not found."""
+        u"""Add the string to the laat text box. Create a new textbox if not found."""
         e = self.getLastTextBox()
         if e is None:
             e = self.getTextBox()

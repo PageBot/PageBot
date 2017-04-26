@@ -13,35 +13,37 @@
 import copy
 
 from drawBot import newPage, saveImage, installedFonts, installFont
-from pagebot.elements import newPageBotPage
 
-from pagebot.style import makeStyle
-from pagebot.toolbox.transformer import pointOffset, obj2StyleId
+from pagebot.elements.page import Page
+from pagebot.elements.element import Element
+from pagebot.style import makeStyle, getRootStyle
+from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D
 
-class Document(object):
-    u"""Container of Page instance, Style instances and Template instances."""
+class Document(Element):
+    u"""A Document is just another kind of container."""
     
-    from pagebot.elements.page import Page, Template
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
-    TEMPLATE_CLASS = Template # Allow inherited versions of the Template class.
 
-    def __init__(self, rootStyle, styles=None, title=None, name=None, minPageId=1, pages=1, template=None, fileName=None, **kwargs):
-        u"""Contains a set of Page instance and formatting methods. Allows to compose the pages
-        without the need to send them directly to the output. This allows "asynchronic" page filling.
-        Use (docW, docH) attributes if document size is different from page (w, h) in rootStyle."""
-
+    def __init__(self, rootStyle=None, styles=None, title=None, name=None, fileName=None, autoPages=1, pageTemplate=None, displayMode=None, **kwargs):
+        u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
+        without the need to send them directly to the output for "asynchronic" page filling."""
+        Element.__init__(self, **kwargs)
+        if rootStyle is None:
+            rootStyle = getRootStyle()
         self.rootStyle = makeStyle(rootStyle, **kwargs) # self.w and self.h are available as properties
+        self.initializeStyles(rootStyle, styles)
+
         self.title = title or 'Untitled'
         self.name = name or self.title
         self.fileName = fileName or (self.title + '.pdf')
-        self.template = template # Used as default document master template if undefined in pages.
-        self.pages = {} # Key is pageID, often the unique page number. Value is Page instances.
-        self.initializeStyles(rootStyle, styles)
-        # Expand the document to the requested amount of pages. Make sure to use the size of the rootStyle,
-        # not the style of the document, as it may be different.
-        pageW = self.css('w')
-        pageH = self.css('h')
-        self.makePages(minPageId=minPageId, pages=pages, w=pageW, h=pageH, templates=template, **kwargs)
+        self.displayMode = displayMode
+
+        # Used as default document master template if undefined in pages.
+        self.pageTemplate = pageTemplate 
+
+        # Document (w, h) size is default from page, but will modified by the type of display mode. 
+        if autoPages:
+            self.makePages(pageCnt=autoPages, **kwargs)
         # Storage lib for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
         self._lib = {}
@@ -51,6 +53,15 @@ class Document(object):
         table of content, etc. Some common entries are predefined. """
         return self._lib 
     lib = property(_get_lib)
+
+    # Document[12] answers a list of pages where page.y == 12
+    # This behaviour is different from regular elements, who want the page.eId as key.
+    def __getitem__(self, pageNumber):
+        u"""Answer the pages with pageNumber equal to page.y. """
+        return self.getPageMatrix()[pageNumber]
+
+    def __setitem__(self, key, value):
+        raise KeyError('Set page.y instead.')
 
     def initializeStyles(self, rootStyle, styles):
         u"""Make sure that the default styles always exist."""
@@ -70,6 +81,18 @@ class Document(object):
     def _get_ancestors(self):
         return [] # Behave as Element, alsways root, top of tree.
     ancestors = property(_get_ancestors)
+
+    def getMaxPageSizes(self, pageSelection=None):
+        u"""Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
+        then only evaluate the selected pages."""
+        w = h = d = 0
+        for e in self.elements:
+            if pageSelection is not None and not e.y in pageSelection:
+                continue
+            w = max(w, e.w)
+            h = max(h, e.h)
+            d = max(d, e.d)
+        return w, h, d
 
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
@@ -104,18 +127,9 @@ class Document(object):
         u"""Answer the names style. If that does not exist, answer the default root style."""
         self.styles.get(name, self.getRootStyle())
     
-    def getStyles(self):
-        return self.styles
-
     def getRootStyle(self):
         u"""Answer the default root style, used by the composer as default for all other stacked styles."""
         return self.rootStyle
-
-    def setStyles(self, styles):
-        u"""Set the dictionary of styles for the document. This method can be used to swap in/out a complete
-        set of styles while processing specific pages. It is the responsibility of the caller to save the existing
-        style set."""
-        self.styles = styles
 
     def addStyle(self, name, style):
         u"""Add the style to the self.styles dictionary."""
@@ -137,32 +151,6 @@ class Document(object):
         Answer the new style."""
         return self.replaceStyle(kwargs['name'], dict(**kwargs))
          
-    # Set the (w, h) from the rootStyle, if not defined as attributes. We keep the document size
-    # separate from the actual page sizes, so the pages can detect if crop-marks should be drawn
-    # and where to position them, depending on the page style settings of style['showCropMarks'] and
-    # style['showPageFrame']. 
-    # For intuitive compatibility doc.docW and doc.w have the same functionality.
-
-    def _get_w(self):
-        return self.rootStyle['docW'] or self.rootStyle['w']
-    def _set_w(self, w):
-        self.rootStyle['docW'] = w
-    w = docW = property(_get_w, _set_w)
-
-    def _get_h(self):
-        return self.rootStyle['docH'] or self.rootStyle['h']
-    def _set_h(self, h):
-        self.rootStyle['docH'] = h
-    h = docH = property(_get_h, _set_h)
-
-    def XXXXfromRootStyle(self, **kwargs):
-        u"""Answer a new style as copy from the root style. Overwrite the defined arguments."""
-        style = copy.copy(self.styles['root'])
-        for name, value in kwargs.items():
-            setattr(style, name, value)
-        return style
-        
-
     def getInstalledFonts(self):
         u"""Answer the list of font names, currently installed in the application."""
         return installedFonts()
@@ -174,88 +162,116 @@ class Document(object):
         All installed fonts will automatically be uninstalled when the script is done."""
         return installFont(path)
 
-    def addTocNode(self, node):
-        u"""Add nodes for the Table of Content assembly. This adding is done during typesetting of the 
-        galleys, typically by the header-hook method for headlines. A unique tocId is created that serves
-        as key for the node to be stored. Then it is answered, to be used by the calling Typesetter
-        in a marker in the text. Since we only can store strings in the attribute field of markers,
-        we can not cache the node itself. Using the tocId as reference, the composer is able to 
-        find back the relation between page-position of the marker and the related header node. """
-        tocId = 'toc%d' % (len(self.toc)+1)
-        self.toc[tocId] = node
-        return tocId
+    def getPage(self, y, x=0, index=0):
+        u"""Answer the page at index, for equal y and x. Raise index errors if it does not exist.
+        Note that this calla=s self.getPageMatrix(), which is an expensive method."""
+        return self.getXPages(y, x)[index]
 
-    def __repr__(self):
-        return '[Document: %s Pages: %d]' % (self.title, len(self))
-        
-    def __len__(self):
-        return len(self.pages)
-    
-    def __getitem__(self, pIndex):
-        u"""Answer page by index, which may be the same a the page number."""
-        return self.pages[pIndex]
+    def getXPages(self, y, x=0):
+        u"""Answer all pages that share the same page.y page number. Raise KeyError if non exist.
+        Note that this calla=s self.getPageMatrix(), which is an expensive method."""
+        return self.getYPages(y)[x]
 
-    def getPage(self, pageId):
-        u"""Answer the pageNumber, where the first pages #1 is self.pages[1]"""
-        return self[pageId]
+    def getYPages(self, y):
+        u"""Answer all pages that share the same page.y page number. Rase KeyError if non exist.
+        Note that this calla=s self.getPageMatrix(), which is an expensive method."""
+        return self[y]
+
+    def getPageByName(self, name):
+        u"""Answer the list of page(s) with this name. Answer None if is does not exist."""
+        return self.find(name)
   
-    def nextPage(self, page, nextPage=1, template=None, makeNew=True):
-        u"""Answer the next page of page. If it does not exist, create a new page."""
-        pageId = page.pageId + nextPage # Currently assuming it is a number.
-        if not pageId in self.pages:
-            newPageBotPage(eId=pageId, template=self.getTemplate())
-        return self.getPage(pageId)
-          
-    def makePages(self, style=None, w=None, h=None, minPageId=1, pages=1, template=None, **kwargs):
-        for pageId in range(minPageId, minPageId+pages):
-            if template is None: # If template undefined, then use document master template.
-                template = self.template
-            self.newPage(style=style, w=w, h=h, eId=pageId, template=template, **kwargs)
+    def newPage(self, parent=None, **kwargs):
+        u"""Use point (x, y) to define the order of pages and spreads. Ignore any parent here, force to self."""
+        page = self.PAGE_CLASS(parent=self, **kwargs)
+        self.appendElement(page)
+    
+    def getPageMatrix(self):
+        u"""Answer the dictionary where key is page.y and value a dictionary of lists of page.x pages."""
+        pageMatrix = {}
+        for page in self.elements:
+            if not page.y in pageMatrix:
+                pageMatrix[page.y] = {}
+            if not page.x in pageMatrix[page.y]:
+                pageMatrix[page.y][page.x] = []
+            pageMatrix[page.y][page.x].append(page)
+        return pageMatrix
 
-    def getLastPage(self):
-        u"""Answer the page with the highest sorted page id. Answer None if there are not pages.
-        """
-        if self.pages:
-            return self.pages[sorted(self.pages.keys())[-1]]
-        return None
+    def makePages(self, pageCnt, point=None, **kwargs):
+        u"""Make a range of pages. (Mis)using the (x,y) position of page elements, as their sorting order.
+        If no "point" is defined as page id, then we'll continue after the maximum value of page.y origin position."""
+        if point is None:
+            pages = self.getLastPages()
+            if pages:
+                x, y = 0, pages[0].y
+            else:
+                x = y = 0
+        else:
+            x, y, _, = point3D(point) # Ignore z-axis of page location in the document for now.
+        for n in range(pageCnt):
+            self.newPage(point=(x, y+n), template=self.pageTemplate, **kwargs) # Parent is forced to self.
+
+    def nextPages(self, page, nextPage=1, makeNew=True):
+        u"""Answer the next page of page. If it does not exist, create a new page."""
+        pageMatrix = self.getPageMatrix()
+        pageNumbers = sorted(pageMatrix.keys())
+        if page.y == max(pageNumbers):
+            y = page.y + nextPage
+        elif page.y in pages:
+            y = pageNumber[min(pageNumbers.index(page.y) + nextPage, len(pageNumber))]
+        return pages[y]
+
+    def getFirstPages(self):
+        u"""Answer the list of pages with the lowest sorted page.y. Answer empty list if there are no pages."""
+        pageMatrix = self.getPageMatrix()
+        if self.pageMatrix:
+            return pageMatrix[min(pageMatrix.keys())]
+        return []
  
+    def getLastPages(self):
+        u"""Answer the list of pages with the highest sorted page.y. Answer empty list if there are no pages."""
+        pageMatrix = self.getPageMatrix()
+        if pageMatrix:
+            return pageMatrix[max(pageMatrix.keys())]
+        return []
+ 
+    def getSortedPages(self):
+        u"""Answer the dynamic list of pages, sorted by y, x and index."""
+        sortedPages = []
+        for y, yPages in sorted(self.getPageMatrix().items()):
+            for x, xPages in sorted(yPages.items()):
+                for page in xPages:
+                    sortedPages.append(page)
+        return sortedPages
+
     def getStyle(self, name):
         u"""Answer the names style. Answer None if it does not exist."""
         return self.styles.get(name)
 
-    def _getDefaultTemplate(self):
-        u"""Answer tje most simple default template (one column, referring to the next page), to be used
-        when everything else fails and there is no fall-back template defined by the calling application."""
-        boxId = 'DEFAULT'
-        template = self.TEMPLATE_CLASS(self.getRootStyle())
-        template.cTextBox(0, 0, 4, 8, eId=boxId, nextBox=boxId, nextPage=1)  # Simple template with 1 column.
-        return template
-
-    def getTemplate(self):
-        u"""Answer the best choice of template by answering the document default template, as it is
-        defined at Document creation. If it was omitted at that time, a default class template is used."""
-        template = self.template # If template undefined, then use defined page template.
-        if template is None: # Still None (not defined at Document creation), use to fallback default template.
-            template = self._getDefaultTtemplate()
-        return template
-
     def drawPages(self, pageSelection=None):
-        u"""
-        document.export(...) is the most common way to export documents. But in special cases, there is not 
-        straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use 
-        MyBuilder(document).export(fileName), the builder is responsible to query the document, pages, elements and styles."""
-        if pageSelection is None:
-            pageSelection = range(1, len(self.pages)+1) # [1,2,3,4,...] inclusive
-        for pIndex in pageSelection:
-            # Get the current Page instance, indicated by the page number.
-            page = self.pages[pIndex] # Page numbering stars at #1
+        u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
+        w, h, _ = self.getMaxPageSizes(pageSelection)
+        paddingX = self.pl + self.pr
+        paddingY = self.pt + self.pb
+        for page in self.getSortedPages():
+            if pageSelection is not None and not page.y in pageSelection:
+                continue
             # Create a new DrawBot viewport page to draw template + page, if not already done.
             # In case the document is oversized, then make all pages the size of the document, so the
             # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
-            newPage(self.w, self.h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
+            # Size depends on the size of the larges pages + optional decument padding.
+            if paddingX or paddingY:
+                w += paddingX
+                h += paddingY
+            else:
+                w = page.w # No padding defined, follow the size of the page.
+                h = page.h
+
+            newPage(w, h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
-            page.draw(((self.w - page.w)/2, (self.h - page.h)/2)) 
+            origin = point3D((self.pl, self.pt, self.pzf))
+            page.draw(origin) 
 
     def export(self, fileName, pageSelection=None, multiPage=True):
         u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
@@ -263,6 +279,9 @@ class Document(object):
         be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
         drawing and export that needs to be done.
         The multiPage value is passed on to the DrawBot saveImage call.
+        document.export(...) is the most common way to export documents. But in special cases, there is not 
+        straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use 
+        MyBuilder(document).export(fileName), the builder is responsible to query the document, pages, elements and styles.
         """
         self.drawPages(pageSelection)
 

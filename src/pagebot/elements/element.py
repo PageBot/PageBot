@@ -30,28 +30,39 @@ class Element(object):
     # instance can operate as a flow.
     isText = False
     isTextBox = False
-    isFlow = False
+    isFlow = False # Value is True if self.next if defined.
 
-    def __init__(self, point=None, parent=None, name=None, eId=None, style=None, conditions=None, elements=None, template=None, **kwargs):  
+    def __init__(self, point=None, parent=None, name=None, title=None, style=None, conditions=None, elements=None, template=None, 
+            next=None, nextPage=None, **kwargs):  
+        print '423234423', parent
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here."""  
-        assert point is None or isinstance(point, (tuple, list)), point
+        assert point is None or isinstance(point, (tuple, list))
         self.point = point3D(point or ORIGIN_POINT) # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
         self.style = makeStyle(style, **kwargs)
         self.name = name
-        self.eId = eId or uniqueID(self)
+        self.title = title or name # Optional to make difference between title name.
+        self._eId = uniqueID(self) # Direct set property with unique persistent value.
+        print 'erwerwrwerwe', parent, parent.__class__
         self.parent = parent # Weak ref to parent element or None if it is the root.
         self.conditions = conditions # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
-        # Copy relevant info from template: w, h, elements, style, conditions
-        self._applyTemplate(template, elements) # Initialze self.elements, add template elements and values, copy elements if defined.
+        # Save flow reference names
+        self.next = next # Name of the next flow element
+        self.nextPage = nextPage # Name of the next page.
+        # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
+        # Initialze self.elements, add template elements and values, copy elements if defined.
+        self._applyTemplate(template, elements) 
+        # Initialize the default Element behavior tags, in case this is a flow.
+        self.isFlow = self.next is not None
 
     def __repr__(self):
-        if self.name:
+        if self.title:
+            name = ':'+self.title
+        elif self.name:
             name = ':'+self.name
-        elif self.eId:
+        else: # No naming, show unique self.eId:
             name = ':'+self.eId
-        else:
-            name = ''
+
         if self.elements:
             elements = ' E(%d)' % len(self.elements)
         else:
@@ -67,18 +78,23 @@ class Element(object):
     def _applyTemplate(self, template, elements):
         u"""Copy relevant info from template: w, h, elements, style, conditions when element is created.
         Don't call later."""
-        self.elements = []
+        self.clearElements()
         self.template = template # Keep in order to clone pages or if addition info is needed.
         # Copy optional template stuff
         if template is not None:
             # Copy elements from the template and put them in the designated positions.
             self.w = template.w
             self.h = template.h
+            self.next = template.next
+            self.prev = template.prev
+            self.nextPage = template.nextPage
+            # Copy style items
             for  name, value in template.style.items:
                 self.style[name] = value
+            # Copy condition list. Does not have to be deepCopy, condition instances are multi-purpose.
             self.conditions = copy.copy(template.conditions)
-            for element in template.elements:
-                self.appendElement(copy.copy(element))
+            for e in template.elements:
+                self.appendElement(e.deepCopy())
         # Add optional list of elements.
         for e in elements or []: 
             self.appendElement(e) # Add cross reference searching for eId of elements.
@@ -94,6 +110,10 @@ class Element(object):
         if not e in self.elements:
             self.elements.append(e)
         self._eIds[eId] = e
+
+    def _get_eId(self):
+        return self._eId
+    eId = property(_get_eId)
 
     def _get_elements(self):
         return self._elements
@@ -111,6 +131,41 @@ class Element(object):
     def getElement(self, eId):
         u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
         return self._eIds.get(eId)
+
+    def clearElements(self):
+        self.elements = []
+
+    def deepCopy(self):
+        e = copy.copy(self)
+        e._eId = uniqueId(e) # Guaranteed unique Id for every element.
+        e.style = copy.copy(self.style)
+        e.clearElements()
+        for child in self.elements:
+            e.appendElement(child.deepCopy())
+        return e
+
+    def deepFind(self, name=None, pattern=None, result=None):
+        u"""Perform a dynamic deep find the for all elements with the name. Don't include self."""
+        assert name or pattern
+        if result is None:
+            result = []
+        for e in self.elements:
+            if pattern is not None and pattern in e.name: # Simple pattern match
+                result.append(e)
+            elif name is not None and name == e.name:
+                result.append(e)
+            e.deepFind(name, pattern, result)
+        return result
+
+    def find(self, name, pattern=None, result=None):
+        u"""Perform a dynamic find the named element(s) in self.elements. Don't include self."""
+        result = []
+        for e in self.elements:
+            if pattern is not None and pattern in e.name: # Simple pattern match
+                result.append(e)
+            elif name is not None and name == e.name:
+                result.append(e)
+        return result
 
     #   C H I L D  E L E M E N T  P O S I T I O N S
 
@@ -164,10 +219,12 @@ class Element(object):
         if e in self._elements:
             self._elements.remove(e)
 
+    #   F L O W
+
     # If the element is part of a flow, then answer the squence.
     
     def getFlows(self):
-        u"""Answer the set of flow sequences on the page."""
+        u"""Answer the set of flow element sequences on the page."""
         flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
         for e in self.elements:
             if not e.isFlow:
@@ -176,15 +233,64 @@ class Element(object):
             # There should be a flow with that name in our flows yet
             found = False
             for nextId, seq in flows.items():
-                if seq[-1].nextBox == e.eId: # Glue to the end of the sequence.
+                if seq[-1].nextBox == e.name: # Glue to the end of the sequence.
                     seq.append(e)
                     found = True
-                elif e.nextBox == seq[0].eId: # Add at the start of the list.
+                elif e.nextBox == seq[0].name: # Add at the start of the list.
                     seq.insert(0, e)
                     found = True
             if not found: # New entry
                 flows[e.next] = [e]
         return flows
+
+    def XXXreplaceElement(self, element, replacement):
+        u"""Find this element in the page and replace it at the
+        same element index (layer position) as the original element has.
+        Force the original element size on the replacing element."""
+        w, h = element.getSize()
+        for index, e in enumerate(self.elements):
+            if e is element:
+                # Force element to fit in this size. In case of an image element,
+                # by default this is done by proportional scale from the original size.
+                replacement.setSize(w, h) 
+                replacementPos = replacement
+                self.elements[index] = replacementPos # Overwriting original element.
+                if (x, y) in self.placed:
+                    placedElements = self.placed[(x, y)]
+                    if element in placedElements:
+                        placedElements[placedElements.index(element)] = replacement
+                if element.eId in self.elementIds: # TODO: Check on multiple placements?
+                    del self.elementIds[element.eId]
+                if replacement.eId is not None: # TODO: Check on multiple placements?
+                    self.elementIds[replacement.eId] = [replacementPos]
+                return True # Successful replacement.
+        return False # Could not replace, probably by missing element in the page.
+
+    def XXXnextPage(self, nextPage=1, makeNew=True):
+        u"""Answer the next page after self in the document."""
+        return self.parent.nextPage(self, nextPage, makeNew)
+
+    def XXXgetNextFlowBox(self, tb, makeNew=True):
+        u"""Answer the next textBox that tb is point to. This can be on the same page or a next
+        page, depending how the page (and probably its template) is defined."""
+        if tb.nextPage:
+            # The flow textBox is pointing to another page. Try to get it, and otherwise create one,
+            # if makeNew is set to True.
+            page = self.nextPage(tb.nextPage, makeNew)
+            # Hard check. Otherwise something must be wrong in the template flow definition.
+            # or there is more content than we can handle, while not allowing to create new pages.
+            assert page is not None
+            assert not page is self # Make sure that we got a another page than self.
+            # Get the element on the next page that
+            tb = page.getElement(tb.nextBox)
+            # Hard check. Otherwise something must be wrong in the template flow definition.
+            assert tb is not None and not len(tb)
+        else:
+            page = self # Staying on the same page, flowing into another column.
+            tb = self.getElement(tb.nextBox)
+            # tb can be None, in case there is no next text box defined. It is up to the caller
+            # to test if all text fit in the current textBox tb.
+        return page, tb
 
     #   S T Y L E
 
@@ -225,7 +331,8 @@ class Element(object):
         return None
     def _set_parent(self, parent):
         if parent is not None:
-            assert self in parent.ancestors, '[%s.%s] Cannot set one of the children "%s" as parent.' % (self.__class__.__name__, self.eId, parent)
+            print '23#@@#@#@#@#', parent.__class__
+            assert not self in parent.ancestors, '[%s.%s] Cannot set one of the children "%s" as parent.' % (self.__class__.__name__, self.name, parent)
             parent = weakref.ref(parent)
         self._parent = parent
     parent = property(_get_parent, _set_parent)
@@ -242,7 +349,7 @@ class Element(object):
         ancestors = []
         parent = self.parent
         while parent is not None:
-            assert not parent in ancestors, '[%s.%s] Illegal loop in parent->ancestors reference.' % (self.__class__.__name__, self.eId)
+            assert not parent in ancestors, '[%s.%s] Illegal loop in parent->ancestors reference.' % (self.__class__.__name__, self.name)
             ancestors.append(parent)
         return ancestors
     ancestors = property(_get_ancestors)
@@ -841,6 +948,20 @@ class Element(object):
 
         return x1, y1, x2 - x1, y2 - y1
 
+    def getVacuumOrigins(self):
+        u"""Answer (minX, minY, maxX, maxY) for all element origins."""
+        minX = minY = maxX = maxY = None
+        for e in self.elements:
+            if minX is None or minX < e.x:
+                minX = e.x
+            if maxX is None or maxX > e.x:
+                maxX = e.x
+            if minY is None or minY < e.y:
+                minY = e.y
+            if maxY is None or maxY > e.y:
+                maxY = e.y
+        return minX, minY, maxX, maxY
+
     def _get_minW(self):
         return self.css('minW', DEFAULT_WIDTH)
     def _set_minW(self, minW):
@@ -1054,14 +1175,6 @@ class Element(object):
         u"""Restore the shadow mode of DrawBot. Should be paired with call self._setShadow()."""
         if self.css('shadowOffset') is not None:
             restore() # DrawBot graphics state pop.
-
-    def copy(self):
-        u"""Answer a copy of self and self.style. Note that any child elements will not be copied,
-        keeping reference to the same instance."""
-        e = copy.copy(self)
-        e.style = copy.copy(self.style)
-        e.eId = None # Must be unique. Caller needs to set it to a new one.
-        return e
 
     #   D R A W I N G  S U P P O R T 
 

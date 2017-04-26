@@ -13,8 +13,9 @@
 from pagebot.elements.element import Element
 
 class Polygon(Element):
-    def __init__(self, fs, point=None, parent=None, style=None, name=None, eId=None, points=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+    
+    def __init__(self, fs, points=None, **kwargs):
+        Element.__init__(self, **kwargs)
         if points is None:
             points = []
         self.points = points

@@ -1,0 +1,286 @@
+# -*- coding: UTF-8 -*-
+# -----------------------------------------------------------------------------
+#
+#     P A G E B O T
+#
+#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Licensed under MIT conditions
+#     Made for usage in DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     document.py
+#
+import copy
+
+from drawBot import newPage, saveImage, installedFonts, installFont
+
+from pagebot.style import makeStyle
+from pagebot.toolbox.transformer import pointOffset, obj2StyleId
+
+class Document(object):
+    u"""Container of Page instance, Style instances and Template instances."""
+    
+    from pagebot.elements.page import Page, Template
+    PAGE_CLASS = Page # Allow inherited versions of the Page class.
+
+    def __init__(self, rootStyle, styles=None, title=None, name=None, minPageId=1, pages=1, template=None, fileName=None, **kwargs):
+        u"""Contains a set of Page instance and formatting methods. Allows to compose the pages
+        without the need to send them directly to the output. This allows "asynchronic" page filling.
+        Use (docW, docH) attributes if document size is different from page (w, h) in rootStyle."""
+
+        self.rootStyle = makeStyle(rootStyle, **kwargs) # self.w and self.h are available as properties
+        self.title = title or 'Untitled'
+        self.name = name or self.title
+        self.fileName = fileName or (self.title + '.pdf')
+        self.template = template # Used as default document master template if undefined in pages.
+        self.pages = {} # Key is pageID, often the unique page number. Value is Page instances.
+        self.pageOrder = [] # Ordered page objects.
+        self.initializeStyles(rootStyle, styles)
+        # Expand the document to the requested amount of pages. Make sure to use the size of the rootStyle,
+        # not the style of the document, as it may be different.
+        pageW = self.css('w')
+        pageH = self.css('h')
+        self.makePages(minPageId=minPageId, pages=pages, w=pageW, h=pageH, templates=template, **kwargs)
+        # Storage lib for collected content while typesetting and composing, referring to the pages
+        # they where placed on during composition.
+        self._lib = {}
+
+    def _get_lib(self):
+        u"""Answer the global storage dictionary, used by TypeSetter and others to keep track of footnotes,
+        table of content, etc. Some common entries are predefined. """
+        return self._lib 
+    lib = property(_get_lib)
+
+    def initializeStyles(self, rootStyle, styles):
+        u"""Make sure that the default styles always exist."""
+        if styles is None:
+            styles = {}
+        self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
+        # Make sure that the default styles for document and page are always there.
+        name = 'root'
+        self.addStyle(name, rootStyle)
+        name = 'document'
+        if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
+            self.addStyle(name, dict(name=name))
+        name = 'page'
+        if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
+            self.addStyle(name, dict(name=name))
+
+    def _get_ancestors(self):
+        return [] # Behave as Element, alsways root, top of tree.
+    ancestors = property(_get_ancestors)
+
+    # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
+
+    def css(self, name, default=None, styleId=None):
+        u"""If optional sId is None or style cannot found, then use the root style. 
+        If the style is found from the (cascading) sId, then use that to return the requested attribute."""
+        style = self.findStyle(styleId)
+        if style is None:
+            style = self.rootStyle
+        return style.get(name, default)
+
+    def findStyle(self, styleId):
+        u"""Answer the style that fits the optional sequence naming of styleId.
+        Answer None if no style can be found. styleId can have one of these formats:
+        ('main h1', 'h1 b')"""
+        if styleId is None:
+            return None
+        styleId = obj2StyleId(styleId)
+        while styleId and not ' '.join(styleId) in self.styles:
+            styleId = styleId[1:]
+        if styleId:
+            return self.styles[styleId]
+        return None
+
+    def getNamedStyle(self, styleName):
+        u"""In case we are looking for a named style (e.g. used by the Typesetter to build a stack
+        of cascading tag style, then query the ancestors for the named style. Default behavior
+        of all elements is that they pass the request on to the root, which is nornally the document."""
+        return self.getStyle(styleName)
+
+    def getStyle(self, name):
+        u"""Answer the names style. If that does not exist, answer the default root style."""
+        self.styles.get(name, self.getRootStyle())
+    
+    def getStyles(self):
+        return self.styles
+
+    def getRootStyle(self):
+        u"""Answer the default root style, used by the composer as default for all other stacked styles."""
+        return self.rootStyle
+
+    def setStyles(self, styles):
+        u"""Set the dictionary of styles for the document. This method can be used to swap in/out a complete
+        set of styles while processing specific pages. It is the responsibility of the caller to save the existing
+        style set."""
+        self.styles = styles
+
+    def addStyle(self, name, style):
+        u"""Add the style to the self.styles dictionary."""
+        assert not name in self.styles # Make sure that styles don't get overwritten. Remove them first.
+        self.styles[name] = style
+        # Force the name of the style to synchronize with the requested key.
+        style['name'] = name
+      
+    def replaceStyle(self, name, style):
+        u"""Set the style by name. Overwrite the style with that name if it already exists."""
+        self.styles[name] = style
+        # Force the name of the style to synchronize with the requested key.
+        style['name'] = name
+        return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
+
+    def newStyle(self, **kwargs):
+        u"""Create a new style with the supplied arguments as attributes. Force the style in self.styles,
+        even if already exists. Forst the name of the style to be the same as the style key.
+        Answer the new style."""
+        return self.replaceStyle(kwargs['name'], dict(**kwargs))
+         
+    # Set the (w, h) from the rootStyle, if not defined as attributes. We keep the document size
+    # separate from the actual page sizes, so the pages can detect if crop-marks should be drawn
+    # and where to position them, depending on the page style settings of style['showCropMarks'] and
+    # style['showPageFrame']. 
+    # For intuitive compatibility doc.docW and doc.w have the same functionality.
+
+    def _get_w(self):
+        return self.rootStyle['docW'] or self.rootStyle['w']
+    def _set_w(self, w):
+        self.rootStyle['docW'] = w
+    w = docW = property(_get_w, _set_w)
+
+    def _get_h(self):
+        return self.rootStyle['docH'] or self.rootStyle['h']
+    def _set_h(self, h):
+        self.rootStyle['docH'] = h
+    h = docH = property(_get_h, _set_h)
+
+    def XXXXfromRootStyle(self, **kwargs):
+        u"""Answer a new style as copy from the root style. Overwrite the defined arguments."""
+        style = copy.copy(self.styles['root'])
+        for name, value in kwargs.items():
+            setattr(style, name, value)
+        return style
+        
+
+    def getInstalledFonts(self):
+        u"""Answer the list of font names, currently installed in the application."""
+        return installedFonts()
+
+    def installFont(self, path):
+        u"""Install a font with a given path and the postscript font name will be returned. The postscript
+        font name can be used to set the font as the active font. Fonts are installed only for the current
+        process. Fonts will not be accessible outside the scope of drawBot.
+        All installed fonts will automatically be uninstalled when the script is done."""
+        return installFont(path)
+
+    def addTocNode(self, node):
+        u"""Add nodes for the Table of Content assembly. This adding is done during typesetting of the 
+        galleys, typically by the header-hook method for headlines. A unique tocId is created that serves
+        as key for the node to be stored. Then it is answered, to be used by the calling Typesetter
+        in a marker in the text. Since we only can store strings in the attribute field of markers,
+        we can not cache the node itself. Using the tocId as reference, the composer is able to 
+        find back the relation between page-position of the marker and the related header node. """
+        tocId = 'toc%d' % (len(self.toc)+1)
+        self.toc[tocId] = node
+        return tocId
+
+    def __repr__(self):
+        return '[Document: %s Pages: %d]' % (self.title, len(self))
+        
+    def __len__(self):
+        return len(self.pages)
+    
+    def __getitem__(self, pIndex):
+        u"""Answer page by index, which may be the same a the page number."""
+        return self.pages[pIndex]
+
+    def __setitem__(self, pIndex, page):
+        self.pages[pIndex, page]
+        if not page in self.pageOrder:
+            self.pageOrder.append(page)
+  
+    def getPage(self, pageId):
+        u"""Answer the page with thie pageId. Answer None if is does not exist."""
+        return self.pages.get(pageId)
+  
+    def newPage(self, pageId, eId=None, **kwargs):
+        assert not pageId in self.pages, '[%s] Page with id "%s" already exists.' % (self.__class__.__name__, pageId)
+        page = self.PAGE_CLASS(pageId=pageId, eId=pageId or eId, **kwargs)
+        self[page.pageId] = page
+
+    def nextPage(self, page, nextPage=1, template=None, makeNew=True):
+        u"""Answer the next page of page. If it does not exist, create a new page."""
+        pageId = page.pageId + nextPage # Currently assuming it is a number.
+        if not pageId in self.pages:
+            self.newPage()
+        return self.getPage(pageId)
+          
+    def makePages(self, style=None, w=None, h=None, minPageId=1, pages=1, template=None, **kwargs):
+        for pageId in range(minPageId, minPageId+pages):
+            if template is None: # If template undefined, then use document master template.
+                template = self.template
+            self.newPage(style=style, w=w, h=h, eId=pageId, template=template, **kwargs)
+
+    def getLastPage(self):
+        u"""Answer the page with the highest sorted page id. Answer None if there are not pages.
+        """
+        if self.pages:
+            return self.pages[sorted(self.pages.keys())[-1]]
+        return None
+ 
+    def getStyle(self, name):
+        u"""Answer the names style. Answer None if it does not exist."""
+        return self.styles.get(name)
+
+    def _getDefaultTemplate(self):
+        u"""Answer tje most simple default template (one column, referring to the next page), to be used
+        when everything else fails and there is no fall-back template defined by the calling application."""
+        boxId = 'DEFAULT'
+        template = self.TEMPLATE_CLASS(self.getRootStyle())
+        template.cTextBox(0, 0, 4, 8, eId=boxId, nextBox=boxId, nextPage=1)  # Simple template with 1 column.
+        return template
+
+    def getTemplate(self):
+        u"""Answer the best choice of template by answering the document default template, as it is
+        defined at Document creation. If it was omitted at that time, a default class template is used."""
+        template = self.template # If template undefined, then use defined page template.
+        if template is None: # Still None (not defined at Document creation), use to fallback default template.
+            template = self._getDefaultTtemplate()
+        return template
+
+    def drawPages(self, pageSelection=None):
+        u"""
+        document.export(...) is the most common way to export documents. But in special cases, there is not 
+        straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use 
+        MyBuilder(document).export(fileName), the builder is responsible to query the document, pages, elements and styles."""
+        if pageSelection is None:
+            pageSelection = range(1, len(self.pages)+1) # [1,2,3,4,...] inclusive
+        for pIndex in pageSelection:
+            # Get the current Page instance, indicated by the page number.
+            page = self.pages[pIndex] # Page numbering stars at #1
+            # Create a new DrawBot viewport page to draw template + page, if not already done.
+            # In case the document is oversized, then make all pages the size of the document, so the
+            # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
+            newPage(self.w, self.h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
+            # Let the page draw itself on the current DrawBot view port if self.writer is None.
+            # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
+            page.draw(((self.w - page.w)/2, (self.h - page.h)/2)) 
+
+    def export(self, fileName, pageSelection=None, multiPage=True):
+        u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
+        it must be a list with page numbers to export. This allows the order to be changed and pages to
+        be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
+        drawing and export that needs to be done.
+        The multiPage value is passed on to the DrawBot saveImage call.
+        """
+        self.drawPages(pageSelection)
+
+        # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
+        # then set the global frame duration.
+        frameDuration = self.css('frameDuration')
+        if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
+            frameDuration(frameDuration)
+
+        # http://www.drawbot.com/content/canvas/saveImage.html
+        saveImage(fileName, multipage=multiPage)
+
