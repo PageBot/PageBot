@@ -57,28 +57,31 @@ def makeDocument(rs):
     
     page = doc[1] # Get the single page from te document.
     
-    # Position square in the 4 corners of the page area.
-    # Notice that their alignment (left) does not matter for the conditions.
-    for X in (Right2Right(), Left2Right(), Right2Left(), Left2Left()):
-        for Y in (Bottom2Bottom(), Top2Bottom(), Bottom2Top(), Top2Top()):
-            for xAlign in (LEFT, RIGHT):
-                for yAlign in (TOP, BOTTOM):
-                    page.rect(w=SQ, h=SQ, conditions=(X, Y), align=xAlign, yAlign=yAlign, fill=0.7)
+    if 0:
+        # Position square in the 4 corners of the page area.
+        # Notice that their alignment (left) does not matter for the conditions.
+        for X in (Right2Right(), Left2Right(), Right2Left(), Left2Left()):
+            for Y in (Bottom2Bottom(), Top2Bottom(), Bottom2Top(), Top2Top()):
+                for xAlign in (LEFT, RIGHT):
+                    for yAlign in (TOP, BOTTOM):
+                        page.rect(w=SQ, h=SQ, conditions=(X, Y), align=xAlign, yAlign=yAlign, fill=0.7)
 
     # Make new container for adding elements inside with alignment.
-    cnt = page.container(w=W-6*SQ, h=H-6*SQ, fill=1, margin=SQ, align=RIGHT, yAlign=MIDDLE, stroke=0,
+    cnt = page.container(w=W-6*SQ, h=H-6*SQ, fill=1, margin=SQ, align=CENTER, yAlign=MIDDLE, stroke=0,
         pr=10, pt=10, pb=10, pl=30,
-        conditions=(Right2Left(), Middle2Bottom()))
+        conditions=(Right2Right(), Middle2Middle()))
     cnt.solve()
     
-    r = Rect((0,0), w=SQ, h=SQ, stroke=None, ZZconditions=(Center2Center(),Middle2Middle()), fill=(1, 1, 0))
-    cnt.appendElement(r)
-    r = Rect((10, 10), w=SQ, h=SQ, stroke=None, XXconditions=(Top2Top(),Left2Left()), fill=(1, 0, 0))
-    cnt.appendElement(r)
+    r1 = Rect((0,0), w=SQ, h=SQ, stroke=None, ZZconditions=(Left2Center(),Middle2Middle()), fill=(1, 1, 0))
+    cnt.appendElement(r1)
+    r2 = Rect((10, 10), w=SQ, h=SQ, stroke=None, XXconditions=(Top2Top(),Left2Left()), fill=(1, 0, 0))
+    cnt.appendElement(r2)
+    print '1111', r1.point, r2.point
     # Solve the layout placement conditions on the page by moving the
     # elements that are not on the right positions (which is all of them,
     # because we did not add point attributes when creating them.
-    page.solve() 
+    #page.solve() 
+    print '2222', r1.point, r2.point
     
     return doc # Answer the doc for further doing.
         

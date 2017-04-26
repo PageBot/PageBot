@@ -32,7 +32,7 @@ class Element(object):
     isTextBox = False
     isFlow = False
 
-    def __init__(self, point=None, parent=None, name=None, eId=None, style=None, **kwargs):  
+    def __init__(self, point=None, parent=None, name=None, eId=None, style=None, conditions=None, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here."""  
         assert point is None or isinstance(point, (tuple, list)), point
         self.point = point3D(point or ORIGIN_POINT) # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
@@ -40,6 +40,7 @@ class Element(object):
         self.name = name
         self.eId = eId or uniqueID(self)
         self.parent = parent # Weak ref to parent element or None if it is the root.
+        self.conditions = conditions # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
 
     def __repr__(self):
@@ -920,10 +921,9 @@ class Element(object):
              asFormatted(self.w), asFormatted(self.h), 
              asFormatted(self.cx), asFormatted(self.cy), asFormatted(self.cw), asFormatted(self.ch),
              self.xAlign, self.yAlign)
-        conditions = self.css('conditions')
-        if conditions:
+        if self.conditions:
             score = self.evaluate()
-            s += '\nConditions: %d | Evaluate %d' % (len(conditions), score.result)
+            s += '\nConditions: %d | Evaluate %d' % (len(self.conditions), score.result)
             if score.fails:
                 s += ' Fails: %d' % len(score.fails)
                 for eFail in score.fails:
@@ -1043,8 +1043,9 @@ class Element(object):
         u"""Evaluate the content of element e with the total sum of conditions."""
         if score is None:
             score = Score()
-        for condition in self.css('conditions', []): # Skip in case there are no conditions in the style.
-            condition.evaluate(self, score)
+        if self.conditions: # Can be None or empty
+            for condition in self.conditions: # Skip in case there are no conditions in the style.
+             condition.evaluate(self, score)
         for e in self.elements: # Also works if element is not a container.
             e.evaluate(score)
         return score
@@ -1053,8 +1054,9 @@ class Element(object):
         u"""Evaluate the content of element e with the total sum of conditions."""
         if score is None:
             score = Score()
-        for condition in self.css('conditions', []): # Skip in case there are no conditions in the style.
-            condition.solve(self, score)
+        if self.conditions: # Can be None or empty
+            for condition in self.conditions: # Skip in case there are no conditions in the style.
+                condition.solve(self, score)
         for e in self.elements: # Also works if element is not a container.
             e.solve(score)
         return score

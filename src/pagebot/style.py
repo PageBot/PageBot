@@ -376,10 +376,6 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # can define what is “next page”, when referred to by a flow.
         firstPageId = 1, # Needs to be a number.
 
-        # Conditions, evaluation, actions
-        # Each style can optionally hold a list of conditions that define the “quality” of an element.
-        # This can reflect on the layout, the relation to other elements and to the way the content is handled.
-        conditions = [],
         # Flag that indicates if errors and warning should be written to the element.report list.
         verbose = True,
 
