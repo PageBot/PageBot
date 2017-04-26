@@ -1294,7 +1294,7 @@ class Element(object):
             self.bottom = 0
         return True
 
-    def bottom2top(self):
+    def bottom2Top(self):
         if self.originTop:
             self.bottom = self.parent.pt 
         else:
