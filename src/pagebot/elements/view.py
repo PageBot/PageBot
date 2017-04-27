@@ -10,7 +10,7 @@
 #
 #     view.py
 #
-import copy
+from drawBot import saveImage, newPage
 
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle
@@ -19,16 +19,14 @@ from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D
 class View(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
     viewId = 'View'
-    
+
     def drawPages(self, document, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
-        print 'Viewer: Draw pages', 
-        return 
 
-        w, h, _ = self.getMaxPageSizes(pageSelection)
+        w, h, _ = document.getMaxPageSizes(pageSelection)
         paddingX = self.pl + self.pr
         paddingY = self.pt + self.pb
-        for page in self.getSortedPages():
+        for page in document.getSortedPages():
             if pageSelection is not None and not page.y in pageSelection:
                 continue
             # Create a new DrawBot viewport page to draw template + page, if not already done.
@@ -58,7 +56,7 @@ class View(Element):
         straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use 
         MyBuilder(document).export(fileName), the builder is responsible to query the document, pages, elements and styles.
         """
-        self.drawPages(pageSelection)
+        self.drawPages(document, pageSelection)
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
         # then set the global frame duration.
