@@ -19,7 +19,6 @@ NO_COLOR = -1
 # Basic layout measures
 U = 7
 BASELINE_GRID = 2*U
-DOC_OVERSIZE = 72 # Default oversize margin of a document to show crop-marks and registration crosses.
 
 INCH = 72
 MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
@@ -136,7 +135,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
     U-based values must be recalculated for proper measures.
     """
     # Some calculations to show dependencies.
-    baselineGrid = 2*u
+    baselineGrid = BASELINE_GRID
     # Indent of lists. Needs to be the same as in tabs, to position rightly after bullets
     listIndent = 0.8*u
     # Default the gutter is equal to the page unit.
@@ -201,8 +200,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Column width for column2point and column2rect calculations.
         # e.g. for micro-layouts in tables.
         # 11*gutter is one of the best values, as the smallest micro-column is 2 instead  of scaling back to 1.
-        colW = 11*gutter,
-        colH = u*baselineGrid - u, # Approximately square with cw + gutter.
+        # Note that element.cw is calculating property. Different from element.css('colW'), which is the column size.
+        colW = 11*gutter, # 77
+        colH = 6*baselineGrid - u, # Approximately square with cw + gutter: 77
         colD = 0, # Optional columnt "depth"
 
         # Flags to indicate that width is the vacuumed form around content (text or elements)
