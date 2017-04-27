@@ -87,19 +87,6 @@ IntPostcardMin = 140*MM, 90*MM
 USPostcardMax = 6*INCH, 4.25*INCH
 USPostcardMin = 5*INCH, 3.5*INCH
 
-# Display option
-SHOW_GRID = True
-SHOW_GRID_COLUMNS = True
-SHOW_BASELINE_GRID = True
-SHOW_ELEMENT_BOX = False
-SHOW_ELEMENT_INFO = False
-SHOW_ELEMENT_ORIGIN = False
-SHOW_FLOW_CONNECTIONS = True
-SHOW_CROPMARKS = True
-SHOW_PAGE_FRAME = True
-SHOW_PAGE_INFO = True
-SHOW_IMAGE_REFERENCE = True # Show [image #] in text, if the images is inside a <p>
-
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
 ORIGIN_POINT = (0, 0, 0) 
@@ -140,10 +127,7 @@ def makeStyle(style=None, **kwargs):
             style[name] = v  # Overwrite value by any arguments, if defined.
     return style
 
-def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, showElementBox=SHOW_ELEMENT_BOX,
-        showElementInfo=SHOW_ELEMENT_INFO, showElementOrigin=SHOW_ELEMENT_ORIGIN, showBaselineGrid=SHOW_BASELINE_GRID, 
-        showFlowConnection=SHOW_FLOW_CONNECTIONS, showCropMarks=SHOW_CROPMARKS, showPageFrame=SHOW_PAGE_FRAME, 
-        showPageInfo=SHOW_PAGE_INFO, **kwargs):
+def getRootStyle(u=U, w=W, h=H, **kwargs):
     u"""Answer the main root style tha contains all default style attributes of PageBot.
     To be overwritten when needed by calling applications.
     CAPITALIZED attribute names are for reference only. Not used directly from styles.
@@ -167,13 +151,6 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         w = w, # Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
-
-        # Document size, if different from the page size. Otherwise keep None to make document.w answer rootStyle['w']
-        # If the document size is different from the page size (and if showCropMarks and/or showPageFrame is True)
-        # crop-marks and registration crosses are shown.
-        docW = None,
-        docH = None,
-        docD = None, # Optional depth of the document, in case using 3D positioned elements.
 
         frameDuration = None, # In case saving as .mov or .gif, this value defines 1/frames_per_second
         # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
@@ -224,9 +201,9 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # Column width for column2point and column2rect calculations.
         # e.g. for micro-layouts in tables.
         # 11*gutter is one of the best values, as the smallest micro-column is 2 instead  of scaling back to 1.
-        cw = 11*gutter,
-        ch = u*baselineGrid - u, # Approximately square with cw + gutter.
-        cd = 0, # Optional columnt "depth"
+        colW = 11*gutter,
+        colH = u*baselineGrid - u, # Approximately square with cw + gutter.
+        colD = 0, # Optional columnt "depth"
 
         # Flags to indicate that width is the vacuumed form around content (text or elements)
         vacuumW = False, 
@@ -245,8 +222,6 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         scaleX = 1, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
         scaleY = 1, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
         scaleZ = 1, # Optional scaling in z-direction, depth.
-        # Image stuff
-        showImageReference = SHOW_IMAGE_REFERENCE, # If true, show [image #] if inside <p> tag.
 
         # Shadow, gradient, etc.
         shadowOffset = None, # Point tuple, e.g. (4, -6). If None, shadow drawing is ignored. 
@@ -263,18 +238,14 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         cmykRadialGradient_endRadius = 300,
 
         # Grid stuff
-        showGrid = showGrid, # Flag to show the grid in output.
-        showGridColumns = showGridColumns, # Show the colums as filled (cw, ch) squares.
         gridFill = (200/255.0, 230/255.0, 245/255.0, 0.9), # Fill color for (cw, ch) squares.
         gridStroke = (0.8, 0.8, 0.8), # Stroke of grid lines in part of a template.
         gridStrokeWidth = 0.5, # Line thickness of the grid.
         
         # Baseline grid
-        showBaselineGrid = showBaselineGrid, # Flag to show baseline grid in output
         baselineGridStroke = (1, 0, 0), # Stroke clor of baselines grid.
         
         # Draw connection arrows between the flow boxes on a page.
-        showFlowConnections = showFlowConnection, # Flag to draw arrows between the flows for debugging.
         flowConnectionStroke1 = (0.2, 0.5, 0.1, 1), # Stroke color of flow lines inside column,
         flowConnectionStroke2 = (1, 0, 0, 1), # Stroke color of flow lines between columns.
         flowConnectionStrokeWidth = 1.5, # Line width of curved flow lines.
@@ -283,19 +254,11 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         flowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
         
         # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
-        showCropMarks = showCropMarks,
-        showPageInfo = showPageInfo and showCropMarks, # If True, draw page info outside the frame.
         bleed = 8, # Bleeding images of page edge and distance of crop-marks from page frame.
         cropMarkSize = 40, # Length of crop marks, including bleed distance. 
         cropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
         
-        # Showing of boxes
-        showPageFrame = showPageFrame, # Draw page frame if document (w, h) is larger than page (w, h)
-        showElementBox = showElementBox, # Show element boxes, e.g. if missing or empty.
-
         # Element info box
-        showElementInfo = showElementInfo, # If True, elements show their info for debugging position, size and alignments.
-        showElementOrigin = showElementOrigin, # If True, show position of origin relative to an element.
         infoFont = DEFAULT_FONT, # Font of text in element infoBox.
         infoFontSize = 4, # Font size of text in element info box.
         infoLeading = 5, # Leading of text in element info box.

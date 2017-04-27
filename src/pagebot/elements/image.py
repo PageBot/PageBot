@@ -155,7 +155,7 @@ class PixelImage(Element):
             alpha = 1
         return alpha
 
-    def draw(self, origin):
+    def draw(self, origin, view):
         u"""Draw the image in the calculated scale. Since we need to use the image
         by scale transform, all other measure (position, lineWidth) are scaled
         back to their original proportions.
@@ -254,6 +254,6 @@ class PixelImage(Element):
         self._drawElements(origin)
 
         self._restoreScale()
-        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
    

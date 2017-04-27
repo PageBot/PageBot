@@ -13,14 +13,14 @@
 from pagebot.elements.element import Element
 
 class Polygon(Element):
-    
+
     def __init__(self, fs, points=None, **kwargs):
         Element.__init__(self, **kwargs)
         if points is None:
             points = []
         self.points = points
 
-    def draw(self, origin):
+    def draw(self, origin, view):
         ox, oy = pointOrigin2D(self.point, origin)
         setFillColor(self.css('fill', NO_COLOR))
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))

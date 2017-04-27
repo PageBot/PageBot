@@ -17,7 +17,7 @@ from pagebot.elements.element import Element
 
 class Line(Element):
 
-    def draw(self, origin):
+    def draw(self, origin, view):
         p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
@@ -33,4 +33,4 @@ class Line(Element):
         self._drawElements(origin)
 
         self._restoreScale()
-        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'

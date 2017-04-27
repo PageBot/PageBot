@@ -27,7 +27,7 @@ from pagebot.elements.page import Page
 
 def newTextBox(fs, point=None, **kwargs):
     u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
-    return TextBox(fs, point=None, **kwargs)
+    return TextBox(fs, point=point, **kwargs)
 
 def newColTextBox(fs, cx=None, cy=None, cw=None, ch=None, **kwargs):
     u"""Caller must supply formatted string."""
@@ -40,7 +40,7 @@ def newText(fs, point=None, **kwargs):
     style combinations. But in case the defined font is a Variable Font, then we can use the
     width and height to interpolate a font that fits the space for the given string and weight.
     Caller must supply formatted string. Support both (x, y) and x, y as position."""
-    return Text(fs, point=None, **kwargs)
+    return Text(fs, point=point, **kwargs)
 
 def newColText(fs, cx=None, cy=None, cw=None, ch=None, **kwargs):
     u"""Draw formatted string.
@@ -53,7 +53,7 @@ def newColText(fs, cx=None, cy=None, cw=None, ch=None, **kwargs):
 def newRect(point=None, **kwargs):
     u"""Draw the rectangle. Note that w and h can also be defined in the style. In case h is omitted,
     a square is drawn."""
-    return Rect(point=None, **kwargs)
+    return Rect(point=point, **kwargs)
            
 def newColRect(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newRect(**kwargs)
@@ -63,7 +63,7 @@ def newColRect(cx=None, cy=None, cw=None, ch=None, **kwargs):
 def newOval(point=None, **kwargs):
     u"""Draw the oval. Note that w and h can also be defined in the style. In case h is omitted,
     a circle is drawn."""
-    return Oval(point=None, **kwargs)
+    return Oval(point=point, **kwargs)
 
 def newColOval(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newOval(**kwargs)
@@ -71,7 +71,7 @@ def newColOval(cx=None, cy=None, cw=None, ch=None, **kwargs):
     return e
 
 def newLine(point=None, **kwargs):
-    return Line(point=None, **kwargs)
+    return Line(point=point, **kwargs)
             
 def newColLine(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newLine(**kwargs)
@@ -79,7 +79,7 @@ def newColLine(cx=None, cy=None, cw=None, ch=None, **kwargs):
     return e
 
 def polygon(point=None, **kwargs):
-    return Polygon(point=None, **kwargs)
+    return Polygon(point=point, **kwargs)
 
 def image(point=None, **kwargs):
     u"""Create Image element as position (x, y) and optional width, height (w, h) of which
@@ -87,7 +87,7 @@ def image(point=None, **kwargs):
     If the image is drawn with an empty path, a missingImage cross-frame is shown.
     The optional imo attribute is an ImageObject() with filters in place. 
     The Image element is answered for convenience of the caller."""
-    return Image(point=None, **kwargs)
+    return Image(point=point, **kwargs)
       
 def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs):
     """Convert the column size into point size, depending on the column settings of the 
@@ -100,7 +100,7 @@ def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs)
 
 def grid(point=None, **kwargs):
     u"""Direct way to add a grid element to a single page, if not done through its template."""
-    return Grid(point=None, **kwargs)
+    return Grid(point=point, **kwargs)
     
 def baselineGrid(point=None, **kwargs):
     u"""Direct way to add a baseline grid element to a single page, if not done through its template."""

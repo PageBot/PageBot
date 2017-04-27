@@ -14,6 +14,8 @@
 #     of alugnment, position and leading (in case there are "\n" returns
 #     in the string)
 #
+from drawBot import textSize
+
 from pagebot.elements.textbox import TextBox
 
 class Text(TextBox):

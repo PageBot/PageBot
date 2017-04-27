@@ -14,19 +14,14 @@ from __future__ import division # Make integer division result in float.
 from drawBot import rect
 
 from pagebot import setStrokeColor, setFillColor
-from pagebot.style import NO_COLOR, CENTER, RIGHT, TOP
+from pagebot.style import NO_COLOR
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 
 class Rect(Element):
-    def __init__(self, **kwargs):
-        print '423234342423', kwargs
-        Element.__init__(self, **kwargs)
-        # Initialize the default Element behavior tags.
-        self.isText = False
-        self.isFlow = False
 
-    def draw(self, origin):
+    def draw(self, origin, view):
+
         p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
@@ -37,5 +32,5 @@ class Rect(Element):
         rect(px, py, self.w, self.h)
 
         self._restoreScale()
-        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 

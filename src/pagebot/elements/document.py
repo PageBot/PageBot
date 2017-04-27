@@ -13,13 +13,14 @@
 from drawBot import newPage, installedFonts, installFont
 
 from pagebot.elements.page import Page
-from pagebot.elements.view import View, DefaultView, SingleView, ThumbView
+from pagebot.elements.views import View, DefaultView, SingleView, ThumbView
 from pagebot.style import makeStyle, getRootStyle
 
 class Document(object):
     u"""A Document is just another kind of container."""
     
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
+    VIEW_CLASS = View
 
     def __init__(self, rootStyle=None, styles=None, views=None, name=None, title=None, autoPages=1, pageTemplate=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
@@ -31,7 +32,7 @@ class Document(object):
 
         self.name = name or 'Untitled'
         self.title = title or self.name
-        
+
         # Used as default document master template if undefined in pages.
         self.pageTemplate = pageTemplate 
 
@@ -157,7 +158,18 @@ class Document(object):
         even if already exists. Forst the name of the style to be the same as the style key.
         Answer the new style."""
         return self.replaceStyle(kwargs['name'], dict(**kwargs))
-     
+    
+    #   D E F A U L T  A T T R I B U T E S 
+
+    # CSS property service to children.
+    def _get_w(self):
+        return self.css('w')
+    w = property(_get_w)
+
+    def _get_h(self):
+        return self.css('h')
+    h = property(_get_h)
+
     #   F O N T S
 
     def getInstalledFonts(self):
@@ -172,6 +184,22 @@ class Document(object):
         return installFont(path)
 
     #   P A G E S
+
+    def appendElement(self, e): 
+        u"""Add page to the document. Called when page.parent is set or view.parent is set. 
+        If Page, add after last page. If View, add to self.views[view.name]"""
+        if isinstance(e, self.PAGE_CLASS):
+            e.parent = self
+            if self._pages.keys():
+                pn = max(self._pages.keys())+1
+            else:
+                pn = 0
+            self[pn] = e
+        elif isinstance(e, self.VIEW_CLASS):
+            e.parent = self
+            self.views[e.name] = e
+        else:
+            raise ValueError('Cannot append elements other that Page or View to Document; "%s"' % e)
 
     def getPage(self, pn, index=0):
         u"""Answer the page at index, for equal y and x. Raise index errors if it does not exist."""
@@ -200,14 +228,10 @@ class Document(object):
         return pages
 
     def newPage(self, pn=None, **kwargs):
-        u"""Use point (x, y) to define the order of pages and spreads. Ignore any parent here, force to self."""
-        page = self.PAGE_CLASS(parent=self, **kwargs)
-        if pn is None and self._pages.keys():
-            pn = max(self._pages.keys())+1
-        else:
-            pn = 0
-        self[pn] = page
-    
+        u"""Use point (x, y) to define the order of pages and spreads. Ignore any parent here, force to self.
+        No need to append, as setting the page.parent will call back on self.appendElement(page)"""
+        self.PAGE_CLASS(parent=self, **kwargs)
+
     def makePages(self, pageCnt, pn=None, **kwargs):
         u"""Make a range of pages. (Mis)using the (x,y) position of page elements, as their sorting order.
         If no "point" is defined as page id, then we'll continue after the maximum value of page.y origin position."""
@@ -227,6 +251,17 @@ class Document(object):
         if makeNew:
             return self.newPage()
         return None
+
+    def getPageNumber(self, page):
+        u"""Answer a string with the page number pn, if the page can be found. If the page has index > 0:
+        then answer page format "pn-index". pn and index are incremented by 1."""
+        for pn, pnPages in sorted(self._pages.items()):
+            for index, pg in enumerate(pnPages):
+                if pg is page:
+                    if index:
+                        return '%d-%d' % (pn+1, index+1)
+                    return '%d' % (pn+1)
+        return ''
 
     def getFirstPage(self):
         u"""Answer the list of pages with the lowest sorted page.y. Answer empty list if there are no pages."""
@@ -269,32 +304,27 @@ class Document(object):
         if views is not None:
             for view in views:
                 assert not view.name in self.views
-                self.appendView(view)
+                self.appendElement(view)
         # Define some default views if not already  there.
         for viewClass in (DefaultView, SingleView, ThumbView):
             if not viewClass.viewId in self.views:
-                self.appendView(viewClass())
+                self.appendElement(viewClass())
 
-    def appendView(self, view):
-        self.views[view.viewId] = view
-        view.parent = self
-
-    def getView(self, viewId):
+    def getView(self, viewId=None):
         u"""Answer the viewer instance with viewId. Answer DefaultView() if it does not exist."""
-        view = self.views.get(viewId)
-        if view is None:
-            view = DefaultView()
-        return view
+        if not viewId in self.views:
+            viewId = DefaultView.viewId
+        return self.views.get(viewId)
 
     #   D R A W I N G
 
-    def drawPages(self, viewName=None, pageSelection=None):
+    def drawPages(self, viewId=None, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
-        view = self.getView(viewName)
-        view.drawPages(self, pageSelection)
+        view = self.getView(viewId) # view.parent is self
+        view.drawPages(pageSelection)
 
-    def export(self, fileName=None, viewName=None, pageSelection=None, multiPage=True):
+    def export(self, fileName=None, viewId=None, pageSelection=None, multiPage=True):
         u"""Let the view do the work."""
-        view = self.getView(viewName)
-        view.export(self, fileName, pageSelection, multiPage)
+        view = self.getView(viewId) # view.parent is self
+        view.export(fileName, pageSelection, multiPage)
 
