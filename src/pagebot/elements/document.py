@@ -10,9 +10,7 @@
 #
 #     document.py
 #
-import copy
-
-from drawBot import newPage, saveImage, installedFonts, installFont
+from drawBot import newPage, installedFonts, installFont
 
 from pagebot.elements.page import Page
 from pagebot.elements.view import View, DefaultView, SingleView, ThumbView
@@ -23,7 +21,7 @@ class Document(object):
     
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
 
-    def __init__(self, rootStyle=None, styles=None, views=None, autoPages=1, pageTemplate=None, **kwargs):
+    def __init__(self, rootStyle=None, styles=None, views=None, name=None, title=None, autoPages=1, pageTemplate=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
         if rootStyle is None:
@@ -31,6 +29,9 @@ class Document(object):
         self.rootStyle = rootStyle
         self.initializeStyles(rootStyle, styles) # Merge CSS for element tree
 
+        self.name = name or 'Untitled'
+        self.title = title or self.name
+        
         # Used as default document master template if undefined in pages.
         self.pageTemplate = pageTemplate 
 
@@ -66,6 +67,10 @@ class Document(object):
     def _get_ancestors(self):
         return []
     ancestors = property(_get_ancestors)
+    
+    def _get_parent(self):
+        return None
+    parent = property(_get_parent)
  
     #   S T Y L E
 
@@ -241,6 +246,21 @@ class Document(object):
         for _, pnPages in sorted(self._pages.items()):
             pages += pnPages
         return pages
+
+    def getMaxPageSizes(self, pageSelection=None):
+        u"""Answer the max (w, h, d) for all pages. If pageSeleciton is defined as list of pageNumbers,
+        then filter on that."""
+        w = 0
+        h = 0
+        d = 0
+        for pn, pnPages in self._pages.items():
+            if not pageSelection is None and not pn in pageSelection:
+                continue
+            for page in pnPages:
+                w = max(page.w, w)
+                h = max(page.h, h)
+                d = max(page.d, d)
+            return w, h, d
 
     #   V I E W S
 

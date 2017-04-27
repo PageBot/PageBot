@@ -69,14 +69,7 @@ class Page(Element):
         visible. Page drawing can have an offset too, in case it is used as placed element on another page.
         If self.scaleX and self.scaleY are not None, then scale the drawing of the entire page,
         keeping the x and y position unscaled."""
-        px, py, pz = p = pointOffset(self.point, origin) # Ignoe z-axis for now.
-        #ox, oy = self._applyScale(ox, oy) #@@@@@ WRONG
-        # Now we may be in scaled mode.
-        if self.parent.w > self.w: # Document larger than page, center and draw crop-marks
-            px = (self.parent.w - self.w) / 2
-        if self.parent.h > self.h:
-            py = (self.parent.h - self.h) / 2
-
+        p = pointOffset(self.point, origin) # Ignoe z-axis for now.
         # If there are child elements, draw them over the text.
         self._drawElements(p)
         # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
