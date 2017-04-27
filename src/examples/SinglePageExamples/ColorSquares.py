@@ -19,6 +19,10 @@ from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
+from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
+
+
+
 from pagebot.elements import *
 from pagebot.elements.document import Document
     
@@ -40,7 +44,7 @@ RS = getRootStyle(w=W, h=H,
 )
 # Setting value for demo purpose, it is style default, using the elements origin as top-left. 
 # Change to False will show origin of elements in their bottom-left corner.
-if 1: # TOP
+if 0: # TOP
     RS['originTop'] = True
     RS['yAlign'] = TOP 
 else:
@@ -50,6 +54,38 @@ else:
 #    print key, value
 
 EXPORT_PATH = '_export/ColorSquares.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
+
+def w2cw(w, e):
+    gutterW = e.css('gw', 0)
+    cw = e.css('cw', 0)
+    if cw + gutterW:
+        return (w + gutterW) / (cw + gutterW)
+    return 0 # Undefined, not info about column width and gutter
+
+def cw2w(cw, e):
+    if cw is None:
+        w = 0
+    else:
+        gutterW = e.css('gw', 0)
+        w = cw * (e.css('cw', 0) + gutterW) - gutterW  # Overwrite style from here.
+    return w
+
+
+CropMarks = False
+RegistrationMarks = False
+PageFrame = True
+PageNameInfo = True
+ViewPadding = 64
+
+Variable([
+    #dict(name='ConditionH', ui='PopUpButton', args=dict(items=sorted(ConditionsHDict.keys()))),
+    #dict(name='ConditionV', ui='PopUpButton', args=dict(items=sorted(ConditionsVDict.keys()))),
+    dict(name='CropMarks', ui='CheckBox'),
+    dict(name='RegistrationMarks', ui='CheckBox'),
+    dict(name='PageFrame', ui='CheckBox'),
+    dict(name='PageNameInfo', ui='CheckBox'),
+    dict(name='ViewPadding', ui='Slider', args=dict(minValue=0, value=64, maxValue=200)),
+], globals())
 
 def makeDocument(rs):
     u"""Make a new document, using the rs as root style."""
@@ -62,16 +98,24 @@ def makeDocument(rs):
     # Calculate centered paddings for the amount of fitting squares.
     # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
 
-    doc = Document(rootStyle=rs, autoPages=1)
+    doc = Document(rootStyle=rs, title='Color Squares', autoPages=1)
     
+    view = doc.getView()
+    view.padding = ViewPadding # Space around the view to accommodate cropmarks and registration marks.
+    view.showPageCropMarks = CropMarks
+    view.showPageRegistrationMarks = RegistrationMarks
+    view.showPageFrame = PageFrame
+    view.showPageNameInfo = PageNameInfo
+
     # Get list of pages with equal y, then equal x.    
     #page = doc[0][0][0] # Get the single page from te document.
     page = doc.getPage(0)
+    page.name = 'This page'
+    
+    padX = (W - sqx*(square + gutter) + gutter)/2
+    my = (H - sqy*(square + gutter) + gutter)/2
 
-    page.pl = padX = (W - sqx*(square + gutter) + gutter)/2
-    page.pt = page.pb = my = (H - sqy*(square + gutter) + gutter)/2
-    page.cw = page.ch = square
-    page.gw = page.gh = gutter # Gutter width and gutter height.
+    #newRect((0, 0), w=square, h=square, parent=page, fill=(1, 0, 0), stroke=None) 
 
     for ix in range(sqx): # Run through the range of (0, 1, ...) number of horizontal squares
         for iy in range(sqy): # Same with vertical squares  
@@ -81,11 +125,16 @@ def makeDocument(rs):
             # Calculate the position for each square as combination of paddings and (ix, iy)
             p = padX + ix * (square + gutter), my + iy * (square + gutter) # Make 2-dimensional point tuple.
             # Create Rect object and place it in the page on position p
-            newRect(point=p, w=square, h=square, parent=page, fill=color1, stroke=None) 
+            e = newRect(p, w=square, h=square, parent=page, fill=color1, stroke=None) 
+            if ix == 0 and iy == 0:
+                print e.w, e.cw, e.h, e.ch, e.x, e.cx, e.y, e.cy
+                print w2cw(80, e), cw2w(1, e)
             # Create Rect object and place it in the page on position p
-            newOval(point=p, w=square, h=square, parent=page, fill=color2, stroke=None)    
+            newOval(p, w=square, h=square, parent=page, fill=color2, stroke=None)    
             # Now drawing with columns needs to align with the plain coordinate drawing.         
-            newColRect(ix, iy, 1, 1,  fill=None, parent=page, stroke=0, strokeWidth=0.5)
+            e = newColRect(ix, iy, 1, 1,  fill=None, parent=page, stroke=0, strokeWidth=0.5)
+            if ix == 0 and iy == 0:
+                print e.w, e.cw, e.h, e.ch, e.x, e.cx, e.y, e.cy
             # Show coordinate and column/row index value. Don't show origin of the text box, by resetting
             # its style flag showElementOrigin=False 
             # Show coordinate and column/row index value
@@ -97,8 +146,7 @@ def makeDocument(rs):
                 y2cy(p[1], page)), 
                 (p[0]+5, p[1]+gutter*3/4), # Position of the coordinate with a bit of offset.
                 parent=page, textFill=0, fontSize=4, leading=0, showElementOrigin=False)
-    
-            #page.rect((10, 10), w=mx, h=my, fill=(0, 1, 0))
+
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around
     # added or deleted or moved to other pages.  
     return doc # Answer the doc for further doing.

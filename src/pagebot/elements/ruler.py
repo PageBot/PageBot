@@ -22,7 +22,7 @@ class Ruler(Element):
         self.style['h'] = self.style['strokeWidth'] = h # Overwrite style from here.
     h = property(_get_h, _set_h)
 
-    def draw(self, origin):
+    def draw(self, origin, view):
         p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    

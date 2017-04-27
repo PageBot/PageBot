@@ -95,7 +95,7 @@ class Galley(Element):
         ruler = self.RULER_CLASS(style=style)
         self.appendElement(ruler)
 
-    def draw(self, origin):
+    def draw(self, origin, view):
         u"""Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the
@@ -107,6 +107,6 @@ class Galley(Element):
         gy = y
         for element in self.elements:
             # @@@ Find space and do more composition
-            element.draw((ox, oy))
+            element.draw((ox, oy), view)
             gy += element.h
 

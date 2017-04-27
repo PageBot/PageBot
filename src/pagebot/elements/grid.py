@@ -19,7 +19,7 @@ from pagebot.toolbox.transformer import pointOffset
 
 class Grid(Element):
 
-    def draw(self, origin):
+    def draw(self, origin, view):
         u"""Draw grid of lines and/or rectangles if colors are set in the style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         # Drawing the grid as squares.
@@ -29,14 +29,14 @@ class Grid(Element):
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         sGridFill = self.css('gridFill', NO_COLOR)
-        gutterW = self.css('gw') # Gutter width
-        gutterH = self.css('gh') # Gutter height
-        columnWidth = self.css('cw') # Column width
-        columnHeight = self.css('ch') # Column height
-        padL = self.css('pl') # Padding left
-        padT = self.css('pt') # Padding top
-        padR = self.css('pr') # padding right
-        padB = self.css('pb') # padding bottom
+        gutterW = self.gw # Gutter width
+        gutterH = self.gh # Gutter height
+        columnWidth = self.cw # Column width
+        columnHeight = self.ch # Column height
+        padL = self.pl # Padding left
+        padT = self.pt # Padding top
+        padR = self.pr # padding right
+        padB = self.pb # padding bottom
         w = self.w
         h = self.h
         if self.css('showGridColumns') and sGridFill is not NO_COLOR:
@@ -86,11 +86,11 @@ class Grid(Element):
         self._drawElements(origin)
 
         self._restoreScale()
-        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
 class BaselineGrid(Grid):
 
-    def draw(self, origin):
+    def draw(self, origin, view):
         u"""Draw baseline grid if line color is set in the style.
         TODO: Make fixed values part of calculation or part of grid style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
@@ -123,5 +123,5 @@ class BaselineGrid(Grid):
             self._drawElements(origin)
 
             self._restoreScale()
-            self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
+            view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 

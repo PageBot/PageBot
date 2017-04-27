@@ -20,7 +20,7 @@ from pagebot.toolbox.transformer import pointOffset
 
 class Oval(Element):
 
-    def draw(self, origin):
+    def draw(self, origin, view):
         p = pointOffset(self.point, origin)
         p = self._applyOrigin(p)    
         p = self._applyScale(p)    
@@ -31,7 +31,7 @@ class Oval(Element):
         oval(px, py, self.w, self.h)
 
         # If there are child elements, draw them over the text.
-        self._drawElements(origin)
+        self._drawElements(origin, view)
 
         self._restoreScale()
-        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
