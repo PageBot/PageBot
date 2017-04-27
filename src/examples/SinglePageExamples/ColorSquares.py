@@ -26,8 +26,13 @@ from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x
 from pagebot.elements import *
 from pagebot.elements.document import Document
     
-W = H = 120 # Get the standard a4 width and height in points.
-W = H = 750
+ElementOrigin = True
+CropMarks = True
+RegistrationMarks = True
+PageFrame = True
+PageNameInfo = True
+ViewPadding = 64
+PageSize = 500
 
 GUTTER = 8 # Distance between the squares.
 SQUARE = 10 * GUTTER # Size of the squares
@@ -39,8 +44,8 @@ SQUARE = 10 * GUTTER # Size of the squares
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
-RS = getRootStyle(w=W, h=H,
-)
+
+RS = getRootStyle(w=PageSize, h=PageSize)
 # Setting value for demo purpose, it is style default, using the elements origin as top-left. 
 # Change to False will show origin of elements in their bottom-left corner.
 if 0: # TOP
@@ -50,30 +55,27 @@ else:
     RS['originTop'] = False 
     RS['yAlign'] = BOTTOM 
   
-
 #for key, value in RS.items():
 #    print key, value
 
 EXPORT_PATH = '_export/ColorSquares.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
-ElementOrigin = True
-CropMarks = True
-RegistrationMarks = True
-PageFrame = True
-PageNameInfo = True
-ViewPadding = 64
 
 Variable([
-    dict(name='ElementOrigin', ui='CheckBox'),
-    dict(name='CropMarks', ui='CheckBox'),
-    dict(name='RegistrationMarks', ui='CheckBox'),
-    dict(name='PageFrame', ui='CheckBox'),
-    dict(name='PageNameInfo', ui='CheckBox'),
+    dict(name='ElementOrigin', ui='CheckBox', args=dict(value=True)),
+    dict(name='CropMarks', ui='CheckBox', args=dict(value=True)),
+    dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
+    dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
+    dict(name='PageNameInfo', ui='CheckBox', args=dict(value=True)),
     dict(name='ViewPadding', ui='Slider', args=dict(minValue=0, value=64, maxValue=200)),
+    dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
 ], globals())
 
 def makeDocument(rs):
     u"""Make a new document, using the rs as root style."""
+
+    #W = H = 120 # Get the standard a4 width and height in points.
+    W = H = PageSize
 
     # Hard coded SQUARE and GUTTE, just for simple demo, instead of filling padding an columns in the root style.
     # Page size decides on the amount squares that is visible.
@@ -83,7 +85,7 @@ def makeDocument(rs):
     # Calculate centered paddings for the amount of fitting squares.
     # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
     rs['colH'] = rs['colW'] = SQUARE  # Make default colW and colH square.
-    
+
     padX = (W - sqx*(SQUARE + GUTTER) + GUTTER)/2
     my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
 
@@ -91,7 +93,7 @@ def makeDocument(rs):
     doc = Document(rootStyle=rs, title='Color Squares', autoPages=1)
     
     view = doc.getView()
-
+    
     view.showElementOrigin = ElementOrigin
     view.showPageCropMarks = CropMarks
     view.showPageRegistrationMarks = RegistrationMarks
@@ -103,7 +105,10 @@ def makeDocument(rs):
     #page = doc[0][0] # Get the single page from te document.
     page = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
     page.name = 'This demo page'
-    
+  
+    page.w = W
+    page.h = H
+ 
     page.padding3D = padX
     page.gutter3D = GUTTER
 
