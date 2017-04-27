@@ -43,25 +43,29 @@ def getGlobals(scriptId):
 
 def x2cx(x, e):
     gutterW = e.gw
-    cw = e.css('colW', 0)
-    if cw + gutterW: # Check on division by 0
-        return x / (cw + gutterW)
+    colW = e.css('colW', 0)
+    if colW + gutterW: # Check on division by 0
+        return (x - e.parent.pl) / (colW + gutterW)
     return 0
 
 def cx2x(cx, e):
     if cx is None:
         x = 0
     else:
-        x = cx * (e.css('colW', 0) + e.gw)
+        x = e.parent.pl + cx * (e.css('colW', 0) + e.gw)
     return x
   
 def y2cy(y, e):
     u"""Transform from y value to column y value, using the e.css for colunn values."""
     gutterH = e.gh
-    ch = e.css('colH', 0)
+    colH = e.css('colH', 0)
     cy = 0
-    if ch + gutterH: # Check on division by 0
-        cy = y / (ch + gutterH)
+    if colH + gutterH: # Check on division by 0
+        if e.originTop:
+            paddingY = e.pt
+        else:
+            paddingY = e.pb
+        cy = (y - paddingY) / (colH + gutterH)
     return cy 
 
 def cy2y(cy, e):
@@ -69,32 +73,36 @@ def cy2y(cy, e):
     if cy is None:
         y = 0
     else:
-        y = cy * (e.css('colH', 0) + e.gh)
+        if e.originTop:
+            paddingY = e.pt
+        else:
+            paddingY = e.pb
+        y = paddingY + cy * (e.css('colH', 0) + e.gh)
     return y
 
-def z2cz(y, e):
+def z2cz(z, e):
     u"""Transform from z value to column z value, using the e.css for colunn values."""
-    gutterD = e.css('gd', 0)
-    cd = e.css('cd', 0)
+    gutterD = e.gd
+    colD = e.css('colD', 0)
     cz = 0
-    if cd + gutterD: # Check on division by 0
-        cy = y / (ch + gutterD)
-    return cy 
+    if colD + gutterD: # Check on division by 0
+        cz = (z - e.parent.pzf) / (colD + gutterD)
+    return cz 
 
 def cz2z(cz, e):
     if cz is None:
         z = 0
     else:
-        z = cz * (e.css('colD', 0) + e.gd)
+        z = e.parent.pzf + cz * (e.css('colD', 0) + e.gd)
     return z
 
 # Size
 
 def w2cw(w, e):
     gutterW = e.gw
-    cw = e.css('colW', 0)
-    if cw + gutterW: # Test for division by 0
-        return (w + gutterW) / (cw + gutterW)
+    colW = e.css('colW', 0)
+    if colW + gutterW: # Test for division by 0
+        return (w + gutterW) / (colW + gutterW)
     return 0 # Undefined, not info about column width and gutter
 
 def cw2w(cw, e):
@@ -107,9 +115,9 @@ def cw2w(cw, e):
 
 def h2ch(h, e):
     gutterH = e.gh
-    ch = e.css('colH', 0)
-    if ch + gutterH: # Test for division by 0
-        return (h + gutterH) / (ch + gutterH)
+    colH = e.css('colH', 0)
+    if colH + gutterH: # Test for division by 0
+        return (h + gutterH) / (colH + gutterH)
     return 0 # Undefined, no info about column height and gutter
 
 def ch2h(ch, e):
@@ -122,9 +130,9 @@ def ch2h(ch, e):
 
 def d2cd(d, e):
     gutterD = e.gd
-    cd = e.css('colD', 0)
-    if cd + gutterD: # Test for division by 0
-        return (d + gutterD) / (cd + gutterD)
+    colD = e.css('colD', 0)
+    if colD + gutterD: # Test for division by 0
+        return (d + gutterD) / (colD + gutterD)
     return 0 # Undefined, no info about column height and gutter
 
 def cd2d(cd, e):

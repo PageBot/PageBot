@@ -619,6 +619,34 @@ class Element(object):
         self.style['gd'] = gd
     gd = property(_get_gd, _set_gd)
 
+    def _get_gutter(self): # Tuple of (w, h) gutters
+        return self.gw, self.gh
+    def _set_gutter(self, gutter):
+        if isinstance(gutter, (long, int, float)):
+            gutter = [gutter]
+        if len(gutter) == 1:
+            gutter = (gutter[0], gutter[0])
+        elif len(margin) == 2:
+            pass
+        else:
+            raise ValueError
+        self.gw, self.gh = gutter
+    gutter = property(_get_gutter, _set_gutter)
+
+    def _get_gutter3D(self): # Tuple of (gw, gh, gd) gutters
+        return self.gw, self.gh, self.gd
+    def _set_gutter3D(self, gutter3D):
+        if isinstance(gutter3D, (long, int, float)):
+            gutter3D = [gutter3D]
+        if len(gutter3D) == 1:
+            gutter3D = (gutter3D[0], gutter3D[0], gutter3D[0])
+        elif len(margin) == 3:
+            pass
+        else:
+            raise ValueError
+        self.gw, self.gh, self.gd = gutter3D
+    gutter3D = property(_get_gutter3D, _set_gutter3D)
+
     # Absolute posiitons
 
     def _get_rootX(self): # Answer the root value of local self.x, from whole tree of ancestors.
