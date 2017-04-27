@@ -17,7 +17,7 @@ import pagebot # Import to know the path of non-Python resources.
 
 from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM
+from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements import *
 from pagebot.elements.document import Document
@@ -61,22 +61,18 @@ def makeDocument(rs):
     sqy = int(H/(square + gutter))
     # Calculate centered paddings for the amount of fitting squares.
     # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
-    rs['pl'] = padX = (W - sqx*(square + gutter) + gutter)/2
-    rs['pt'] = rs['pb'] = my = (H - sqy*(square + gutter) + gutter)/2
-    rs['cw'] = rs['ch'] = square
-    rs['gw'] = rs['gh'] = gutter # Gutter width and gutter height.
 
     doc = Document(rootStyle=rs, autoPages=1)
-    doc.pl = doc.pr = doc.pt = doc.pb = 0
     
     # Get list of pages with equal y, then equal x.    
     #page = doc[0][0][0] # Get the single page from te document.
     page = doc.getPage(0)
-    
-    print '@##@44444444#@#@#', page
-    
-    newRect((10, 10), parent=page, fill=(1, 0, 0), w=30, h=40)
-    """
+
+    page.pl = padX = (W - sqx*(square + gutter) + gutter)/2
+    page.pt = page.pb = my = (H - sqy*(square + gutter) + gutter)/2
+    page.cw = page.ch = square
+    page.gw = page.gh = gutter # Gutter width and gutter height.
+
     for ix in range(sqx): # Run through the range of (0, 1, ...) number of horizontal squares
         for iy in range(sqy): # Same with vertical squares  
             # Place squares in random colors
@@ -101,7 +97,7 @@ def makeDocument(rs):
                 y2cy(p[1], page)), 
                 (p[0]+5, p[1]+gutter*3/4), # Position of the coordinate with a bit of offset.
                 parent=page, textFill=0, fontSize=4, leading=0, showElementOrigin=False)
-    """
+    
             #page.rect((10, 10), w=mx, h=my, fill=(0, 1, 0))
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around
     # added or deleted or moved to other pages.  

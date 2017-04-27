@@ -351,6 +351,7 @@ class Element(object):
         while parent is not None:
             assert not parent in ancestors, '[%s.%s] Illegal loop in parent->ancestors reference.' % (self.__class__.__name__, self.name)
             ancestors.append(parent)
+            parent = parent.parent
         return ancestors
     ancestors = property(_get_ancestors)
 
