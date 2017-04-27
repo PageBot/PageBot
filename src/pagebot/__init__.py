@@ -216,6 +216,35 @@ def baseline2y(yIndex, style):
     baseline = style['baseline']
     return padT + cy * baseline
 
+#   E L E M E N T
+
+def deepFind(elements, name=None, pattern=None, result=None):
+    u"""Perform a dynamic deep find the for all elements with the name. Don't include self.
+    Either name or pattern should be defined."""
+    assert name or pattern
+    if result is None:
+        result = []
+    for e in elements:
+        if pattern is not None and pattern in e.name: # Simple pattern match
+            result.append(e)
+        elif name is not None and name == e.name:
+            result.append(e)
+        deepFind(e.elements, name, pattern, result)
+    return result
+
+def find(elements, name=None, pattern=None, result=None):
+    u"""Perform a dynamic find the named element(s) in self.elements. Don't include self.
+    Either name or pattern should be defined."""
+    result = []
+    for e in elements:
+        if pattern is not None and pattern in e.name: # Simple pattern match
+            result.append(e)
+        elif name is not None and name == e.name:
+            result.append(e)
+    return result
+
+#   M A R K E R
+
 MARKER_PATTERN = '==%s--%s=='
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\-\-([^=]*)\=\=')
 

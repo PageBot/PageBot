@@ -11,6 +11,7 @@
 #     __init__.py
 #
 from pagebot.elements.element import Element
+from pagebot.elements.text import Text
 from pagebot.elements.textbox import TextBox
 from pagebot.elements.rect import Rect
 from pagebot.elements.line import Line
