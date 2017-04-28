@@ -18,8 +18,7 @@ from pagebot.elements.element import Element
 class Line(Element):
 
     def draw(self, origin, view):
-        p = pointOffset(self.point, origin)
-        p = self._applyOrigin(p)    
+        p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
  
@@ -33,4 +32,4 @@ class Line(Element):
         self._drawElements(origin)
 
         self._restoreScale()
-        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementMetaInfo(self, origin)

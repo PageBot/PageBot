@@ -88,8 +88,7 @@ class TextBox(Element):
     def draw(self, origin, view):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
-        p = pointOffset(self.point, origin)
-        #p = self._applyOrigin(p)    
+        p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
    
@@ -113,7 +112,7 @@ class TextBox(Element):
         self._drawElements(origin, view)
 
         self._restoreScale()
-        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
         
 

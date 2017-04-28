@@ -19,12 +19,17 @@ from pagebot.toolbox.transformer import pointOffset
 
 class Grid(Element):
 
+    def __init__(self, horizontal=True, vertical=True, **kwargs):
+        Element.__init__(self, **kwargs)
+        # Store flags to draw horizontal and/or vertical.
+        self.horizontal = horizontal
+        self.vertical = vertical
+
     def draw(self, origin, view):
         u"""Draw grid of lines and/or rectangles if colors are set in the style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         # Drawing the grid as squares.
-        p = pointOffset(self.point, origin)
-        p = self._applyOrigin(p)    
+        p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
@@ -39,7 +44,7 @@ class Grid(Element):
         padB = self.pb # padding bottom
         w = self.w
         h = self.h
-        if self.css('showGridColumns') and sGridFill is not NO_COLOR:
+        if self.vertical and sGridFill is not NO_COLOR:
             setFillColor(sGridFill)
             setStrokeColor(None)
             ox = px + padL
@@ -50,7 +55,7 @@ class Grid(Element):
                     oy -= columnHeight + gutterH
                 ox += columnWidth + gutterW
         # Drawing the grid as lines.
-        if self.css('showGrid') and self.css('gridStroke', NO_COLOR) is not NO_COLOR:
+        if self.horizontal and self.css('gridStroke', NO_COLOR) is not NO_COLOR:
             setFillColor(None)
             setStrokeColor(self.css('gridStroke', NO_COLOR), self.css('gridStrokeWidth'))
             # TODO: DrawBot align and fill don't work properly now.
@@ -94,17 +99,16 @@ class BaselineGrid(Grid):
         u"""Draw baseline grid if line color is set in the style.
         TODO: Make fixed values part of calculation or part of grid style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
-        if self.css('showBaselineGrid'):
-            p = pointOffset(self.point, origin)
-            p = self._applyOrigin(p)    
-            p = self._applyScale(p)    
-            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-            oy = self.h - self.css('pt') - py
-            line = 0
-            M = 16
-            # Format of line numbers.
-            # TODO: DrawBot align and fill don't work properly now.
+        oy = self.h - self.css('pt') - py
+        line = 0
+        M = 16
+        # Format of line numbers.
+        # TODO: DrawBot align and fill don't work properly now.
+        if self.horizontal:
             fs = getFormattedString('', self, dict(font=self.css('fallbackFont','Verdana'), align='right', fontSize=M/2,
                 stroke=None, textFill=self.css('gridStroke')))
             while oy > self.css('pb', 0):
@@ -119,9 +123,9 @@ class BaselineGrid(Grid):
                 line += 1 # Increment line index.
                 oy -= self.css('baselineGrid') # Next vertical line position of baseline grid.
 
-            # If there are child elements, draw them over the text.
-            self._drawElements(origin)
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin)
 
-            self._restoreScale()
-            view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
+        self._restoreScale()
+        view.drawElementMetaInfo(self, origin)
 

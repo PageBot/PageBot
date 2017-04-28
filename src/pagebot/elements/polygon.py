@@ -21,14 +21,19 @@ class Polygon(Element):
         self.points = points
 
     def draw(self, origin, view):
-        ox, oy = pointOrigin2D(self.point, origin)
-        setFillColor(self.css('fill', NO_COLOR))
+
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         newPath()
-        for index, (px, py) in enumerate(self.points):
+        for index, (ppx, ppy) in enumerate(self.points):
             if index == 0:
-                moveTo((ox + px, y + py))
+                moveTo((px + ppx, py + ppy))
             else:
-                lineTo((ox + px, y + py))
+                lineTo((px + ppx, py + ppy))
         drawPath()
+
+        self._restoreScale()
+        view.drawElementMetaInfo(self, origin)
 

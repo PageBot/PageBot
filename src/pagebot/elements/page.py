@@ -17,7 +17,7 @@ class Page(Element):
              
     def draw(self, origin, view):
         u"""Draw all elements this page."""
-        p = pointOffset(self.point, origin) # Ignoe z-axis for now.
+        p = pointOffset(self.oPoint, origin) # Ignoe z-axis for now.
         # If there are child elements, draw them over the text.
         self._drawElements(p, view)
         # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.

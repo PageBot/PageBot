@@ -19,7 +19,7 @@ from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
-    DEFAULT_WIDTH, DEFAULT_HEIGHT, DEAULT_DEPTH, XXXL
+    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH
 from pagebot.toolbox.transformer import asFormatted
 
 class Element(object):
@@ -169,6 +169,12 @@ class Element(object):
         if e in self._elements:
             self._elements.remove(e)
 
+    def _get_show(self): # Set flag for drawing or interpreation with conditional.
+        return self.css('show')
+    def _set_show(self, showFlag):
+        self.style['show'] = showFlag # Hinding rest of css for this value.
+    show = property(_get_show, _set_show)
+
     #   C H I L D  E L E M E N T  P O S I T I O N S
 
     def getElementsAtPoint(self, point):
@@ -299,6 +305,10 @@ class Element(object):
     def _set_point3D(self, point):
         self._point = point3D(point) # Always store as 3D-point, z = 0 if missing.
     point3D = property(_get_point3D, _set_point3D)
+
+    def _get_oPoint(self): # Answer the self._point, y-flipped, depending on the self.originTop flag.
+        return self._applyOrigin(self.point)
+    oPoint3D = oPoint = property(_get_oPoint)
 
     # Plain coordinates
 
@@ -673,7 +683,7 @@ class Element(object):
     def _get_w(self): # Width
         if self.css('vacuumW'): # If vacuum forming, this overwrites css or style width.
             return self.right - self.left
-        return self.css('w', DEFAULT_WIDTH) # Should not be 0 or None
+        return min(self.maxW, max(self.minW, self.css('w', MIN_WIDTH))) # Should not be 0 or None
     def _set_w(self, w):
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
@@ -689,7 +699,7 @@ class Element(object):
             if self.originTop:
                 return self.bottom - self.top
             return self.top - self.bottom
-        return self.css('h', DEFAULT_HEIGHT) # Should not be 0 or None
+        return min(self.maxH, max(self.minH, self.css('h', MIN_HEIGHT))) # Should not be 0 or None
     def _set_h(self, h):
         self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
@@ -704,7 +714,7 @@ class Element(object):
         return self.css('d') 
         if self.css('vacuumD'): # If vacuum forming, this overwrites css or style depth.
             return self.back - self.front
-        return self.css('d', DEAULT_DEPTH) # Should not be 0 or None
+        return min(self.maxD, max(self.minD, self.css('d', MIN_DEPTH))) # Should not be 0 or None
     def _set_d(self, d):
         self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
@@ -965,29 +975,29 @@ class Element(object):
         return minX, minY, maxX, maxY
 
     def _get_minW(self):
-        return self.css('minW', DEFAULT_WIDTH)
-    def _set_minW(self, minW):
-        self.style['minW'] = minW # Set on local style, shielding parent self.css value.
+        return self.css('minW', MIN_WIDTH)
+    def _set_minW(self, minW): # Clip values
+        self.style['minW'] = max(MIN_WIDTH, min(MAX_WIDTH, minW)) # Set on local style, shielding parent self.css value.
     minW = property(_get_minW, _set_minW)
 
     def _get_minH(self):
-        return self.css('minH', DEFAULT_HEIGHT)
+        return self.css('minH', MIN_HEIGHT)
     def _set_minH(self, minH):
-        self.style['minH'] = minH # Set on local style, shielding parent self.css value.
+        self.style['minH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, minH)) # Set on local style, shielding parent self.css value.
     minH = property(_get_minH, _set_minH)
 
     def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
-        return self.css('minD', DEFAULT_DEPTH)
+        return self.css('minD', MIN_DEPTH)
     def _set_minD(self, minD):
-        self.style['minD'] = minD # Set on local style, shielding parent self.css value.
+        self.style['minD'] = max(MIN_DEPTH, min(MAX_DEPTH, minD)) # Set on local style, shielding parent self.css value.
     minD = property(_get_minD, _set_minD)
 
     def getMinSize(self):
-        u"""Answer the minW and minW of this element."""
+        u"""Answer the (minW, minH) of this element."""
         return self.minW, self.minH
 
     def getMinSize3D(self):
-        u"""Answer the minW and minW of this element."""
+        u"""Answer the (minW, minH, minD) of this element."""
         return self.minW, self.minH, self.minD
 
     def setMinSize(self, minW, minH, minD=0):
@@ -996,21 +1006,21 @@ class Element(object):
         self.minD = minD # Optional minimum depth of the element.
 
     def _get_maxW(self):
-        return self.css('maxW', XXXL)
+        return self.css('maxW', MAX_WIDTH)
     def _set_maxW(self, maxW):
-        self.style['maxW'] = maxW # Set on local style, shielding parent self.css value.
+        self.style['maxW'] = max(MIN_WIDTH, min(MAX_WIDTH, maxW)) # Set on local style, shielding parent self.css value.
     maxW = property(_get_maxW, _set_maxW)
 
     def _get_maxH(self):
-        return self.css('maxH', XXXL)
+        return self.css('maxH', MAX_HEIGHT)
     def _set_maxH(self, maxH):
-        self.style['maxH'] = maxH # Set on local style, shielding parent self.css value.
+        self.style['maxH'] = max(MIN_WIDTH, min(MAX_WIDTH, maxH)) # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
 
     def _get_maxD(self):
-        return self.css('maxD', XXXL)
+        return self.css('maxD', MAX_DEPTH)
     def _set_maxD(self, maxD):
-        self.style['maxD'] = maxD # Set on local style, shielding parent self.css value.
+        self.style['maxD'] = max(MIN_WIDTH, min(MAX_WIDTH, maxD)) # Set on local style, shielding parent self.css value.
     maxD = property(_get_maxD, _set_maxD)
 
     def getMaxSize(self):
@@ -1023,18 +1033,21 @@ class Element(object):
     def _get_scaleX(self):
         return self.css('scaleX', 1)
     def _set_scaleX(self, scaleX):
+        assert scaleX != 0
         self.style['scaleX'] = scaleX # Set on local style, shielding parent self.css value.
     scaleX = property(_get_scaleX, _set_scaleX)
 
     def _get_scaleY(self):
         return self.css('scaleX', 1)
     def _set_scaleY(self, scaleY):
+        assert scaleY != 0
         self.style['scaleY'] = scaleY # Set on local style, shielding parent self.css value.
     scaleY = property(_get_scaleY, _set_scaleY)
 
     def _get_scaleZ(self):
         return self.css('scaleZ', 1)
     def _set_scaleZ(self, scaleY):
+        assert scaleZ != 0
         self.style['scaleZ'] = scaleZ # Set on local style, shielding parent self.css value.
     scaleZ = property(_get_scaleZ, _set_scaleZ)
 
@@ -1121,7 +1134,7 @@ class Element(object):
         return px, py, pz
 
     def _applyOrigin(self, p):
-        u"""If self.originTop is False, then the y-value is interpreted as mathemtcs, 
+        u"""If self.originTop is False, then the y-value is interpreted as mathematics, 
         starting at the bottom of the parent element, moving up.
         If the flag is True, then move from top down, where the origin of the element becomes
         top-left of the parent."""
@@ -1170,7 +1183,8 @@ class Element(object):
         p = pointOffset(self.point, origin)
         # Draw all elements relative to this point
         for e in self.elements:
-            e.draw(p, view)
+            if e.show:
+                e.draw(p, view)
 
     def getElementInfoString(self):
         u"""Answer a single string with info about the element. Default is to show the posiiton
@@ -1191,9 +1205,9 @@ class Element(object):
         return s
 
     def drawFrame(self, origin):
-        u"""Used by elements who want to draw their box, independen of the view.showElementFrame flag."""
-        p = pointOffset(self.point, origin)
-        #p = op = self._applyOrigin(p)    
+        u"""Used by elements who want to draw their box, independen of the view.showElementFrame flag.
+        The origin point must already have the right "originTop" flag direction.""" 
+        p = pointOffset(self.oPoint, origin) 
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
@@ -1212,8 +1226,9 @@ class Element(object):
         if self.conditions: # Can be None or empty
             for condition in self.conditions: # Skip in case there are no conditions in the style.
              condition.evaluate(self, score)
-        for e in self.elements: # Also works if element is not a container.
-            e.evaluate(score)
+        for e in self.elements: # Also works if showing element is not a container.
+            if e.show:
+                e.evaluate(score)
         return score
          
     def solve(self, score=None):
@@ -1223,8 +1238,9 @@ class Element(object):
         if self.conditions: # Can be None or empty
             for condition in self.conditions: # Skip in case there are no conditions in the style.
                 condition.solve(self, score)
-        for e in self.elements: # Also works if element is not a container.
-            e.solve(score)
+        for e in self.elements: # Also works if showing element is not a container.
+            if e.show:
+                e.solve(score)
         return score
          
     #   C O N D I T I O N S
