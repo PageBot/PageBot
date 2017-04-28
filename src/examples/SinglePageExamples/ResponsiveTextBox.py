@@ -128,11 +128,13 @@ def makeDocument(rootStyle):
 
     bl = tb.getBaseLines()
     print bl
+    print tb.top, bl[0]
+    yy = tb.top - bl[0]
     for y in bl:
         stroke(1, 0, 0)
         strokeWidth(0.5)
         fill(None)
-        newLine((tb.left, y), parent=page, w=tb.w, h=0, stroke=(1, 0, 0))
+        newLine((tb.left, yy - y), parent=page, w=tb.w, h=0, stroke=(1, 0, 0))
 
     score = page.evaluate()
     #print 'Page value on evaluation:', score
