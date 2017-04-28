@@ -14,6 +14,7 @@ from drawBot import newPath, moveTo, lineTo, drawPath
 from pagebot.style import NO_COLOR
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements.element import Element
+from pagebot import setStrokeColor
 
 class Line(Element):
 
@@ -29,7 +30,7 @@ class Line(Element):
         drawPath()
 
         # If there are child elements, draw them over the text.
-        self._drawElements(origin)
+        self._drawElements(origin, view)
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin)

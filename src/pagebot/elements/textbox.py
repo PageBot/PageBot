@@ -10,9 +10,12 @@
 #
 #     textbox.py
 #
+import CoreText
+import Quartz
+
 from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString
 
-from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, makeStyle
+from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, makeStyle
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot import getFormattedString, setStrokeColor, setFillColor
@@ -23,13 +26,16 @@ class TextBox(Element):
     isText = True  # This element is capable of handling text.
     isTextBox = True
 
-    def __init__(self, fs, **kwargs):
-        Element.__init__(self, **kwargs)
+    TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
+
+    def __init__(self, fs, minW=None, **kwargs):
+        Element.__init__(self,  **kwargs)
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         if isinstance(fs, str):
             fs = getFormattedString(fs, self)
         self.fs = fs
+        self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
 
     def _get_h(self):
         u"""Answer the height of the textBox. If self.style['vacuumH'] is set, then answer the 
@@ -60,6 +66,18 @@ class TextBox(Element):
 
     def appendMarker(self, markerId, arg=None):
         self.appendString(getMarker(markerId, arg=arg))
+
+    def getBaseLines(self):
+        u"""Answer an ordered list of all baseline position, starting at the top."""
+        box = 0, 0, self.w, self.h
+        attrString = self.fs.getNSObject()
+        setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
+        path = Quartz.CGPathCreateMutable()
+        Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
+        box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
+        ctLines = CoreText.CTFrameGetLines(box)
+        origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+        return [o.y for o in origins]
 
     def getTextSize(self, fs=None, w=None):
         """Figure out what the width/height of the text self.fs is, with or given width or
@@ -92,13 +110,15 @@ class TextBox(Element):
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
    
+        # First draw optional fill rectangle.
         sFill = self.css('fill', NO_COLOR)
         if sFill != NO_COLOR:
             setStrokeColor(None)
             setFillColor(sFill)
             rect(px, py, self.w, self.h)
-        hyphenation(True)
+        # Draw the text.    
         textBox(self.fs, (px, py, self.w, self.h))
+        # Draw options stroke rectangle.
         sStroke = self.css('stroke', NO_COLOR)
         sStrokeWidth = self.css('strokeWidth')
         if sStroke != NO_COLOR and sStrokeWidth is not None:
