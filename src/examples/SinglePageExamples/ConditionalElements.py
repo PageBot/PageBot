@@ -238,7 +238,7 @@ def makeDocument(rootStyle):
         scriptGlobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, leading=16, textColor=0))
     eTextBox = newTextBox(scriptGlobals.blurbText, point=outsideOrigin, parent=page, w=Text_W, 
-        vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
+        vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER, stroke=None, fill=None)
 
     e4 = newRect(point=outsideOrigin, parent=page, w=Element4_W, h=Element4_H, name='Floating element 4', 
         conditions=colorCondition3, fill=(0, 1, 1), align=RIGHT, vAlign=TOP, minH=50, maxH=150)
