@@ -124,10 +124,10 @@ Element5_H = 50
 Text_W = 200
 
 Variable([
-    dict(name='Padding_Left', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Padding_Right', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Padding_Top', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+    dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+    dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+    dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
     dict(name='Element1_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
     dict(name='Element1_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
     dict(name='Element2_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
@@ -201,8 +201,10 @@ def makeDocument(rootStyle):
     colorCondition3 = [ # Placement condition(s) for the color rectangle elements.
         Right2Right(),
         #Top2Bottom(),
-        FloatBottom(),
         FloatLeft(),
+        FloatTop(),
+        FitBottom(),
+        #Bottom2Bottom(),
     ]
     textCondition = [ # Placement condition(s) for the text element..
         FloatLeft(),
@@ -239,7 +241,7 @@ def makeDocument(rootStyle):
         vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
 
     e4 = newRect(point=outsideOrigin, parent=page, w=Element4_W, h=Element4_H, name='Floating element 4', 
-        conditions=colorCondition3, fill=(0, 1, 1), align=LEFT, vAlign=TOP)
+        conditions=colorCondition3, fill=(0, 1, 1), align=RIGHT, vAlign=TOP, minH=50, maxH=150)
     e5 = newRect(point=outsideOrigin, parent=page, w=Element5_W, h=Element5_H, name='Floating element 5', 
         conditions=[FloatRightTopSides()], fill=(0, 1, 0), align=LEFT, vAlign=TOP)
 

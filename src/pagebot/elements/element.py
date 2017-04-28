@@ -1555,9 +1555,7 @@ class Element(object):
         if self.originTop:
             self.h += self.parent.h - self.parent.pb - self.bottom
         else:
-            top = self.top
-            self.bottom = self.parent.pb
-            self.h += top - self.top
+            self.h = self.top - self.parent.pb
         return True
 
     def fitBottomSide(self):
