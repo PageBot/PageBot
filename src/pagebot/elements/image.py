@@ -161,8 +161,7 @@ class PixelImage(Element):
         back to their original proportions.
         If stroke is defined, then use that to draw a frame around the image.
         Note that the (sx, sy) is already scaled to fit the padding position and size."""
-        p = pointOffset(self.point, origin)
-        p = self._applyOrigin(p)    
+        p = pointOffset(self.oPoint, origin)   
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
@@ -254,6 +253,6 @@ class PixelImage(Element):
         self._drawElements(origin)
 
         self._restoreScale()
-        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementMetaInfo(self, origin)
 
    

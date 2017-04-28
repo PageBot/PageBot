@@ -22,8 +22,7 @@ class Rect(Element):
 
     def draw(self, origin, view):
 
-        p = pointOffset(self.point, origin)
-        p = self._applyOrigin(p)    
+        p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
@@ -32,5 +31,5 @@ class Rect(Element):
         rect(px, py, self.w, self.h)
 
         self._restoreScale()
-        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementMetaInfo(self, origin)
 

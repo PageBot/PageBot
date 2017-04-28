@@ -62,7 +62,7 @@ EXPORT_PATH = '_export/ColorSquares.pdf' # Export in _export folder that does no
 
 
 Variable([
-    dict(name='ElementOrigin', ui='CheckBox', args=dict(value=True)),
+    dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
     dict(name='CropMarks', ui='CheckBox', args=dict(value=True)),
     dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
     dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
@@ -105,12 +105,12 @@ def makeDocument(rs):
     #page = doc[0][0] # Get the single page from te document.
     page = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
     page.name = 'This demo page'
-  
+    
     page.w = W
     page.h = H
  
-    page.padding3D = padX
-    page.gutter3D = GUTTER
+    page.padding3D = padX # Set all 3 paddings to same value
+    page.gutter3D = GUTTER # Set all 3 gutters to same value
 
     #newRect((0, 0), w=square, h=square, parent=page, fill=(1, 0, 0), stroke=None) 
 
@@ -126,7 +126,7 @@ def makeDocument(rs):
             # Create Rect object and place it in the page on position p
             newOval(p, w=SQUARE, h=SQUARE, parent=page, fill=color2, stroke=None)    
             # Now drawing with columns needs to align with the plain coordinate drawing.         
-            e = newColRect(ix, iy, 1, 1,  fill=None, parent=page, stroke=0, strokeWidth=0.5)
+            newColRect(ix, iy, 1, 1,  fill=None, parent=page, stroke=0, strokeWidth=0.5)
             # Show coordinate and column/row index value. Don't show origin of the text box, by resetting
             # its style flag showElementOrigin=False 
             # Show coordinate and column/row index value

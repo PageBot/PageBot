@@ -48,24 +48,19 @@ class View(Element):
         # Flow stuff
         self.showFlowConnections = False
         # Image stuff
-        self.showImageReference = False
-
-        # Style things
-        self.style['frameFill'] = None
-        self.style['frameStroke'] = (0, 0, 1)
-        self.style['frameStrokeWidth'] = 0.5
+        self.showImageReference = False      
 
     def setControls(self):
         u"""Inheriting views can redefine to alter showing parameters."""
         pass
+
+    MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
 
     def drawPages(self, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
         doc = self.parent
 
         w, h, _ = doc.getMaxPageSizes(pageSelection)
-        paddingX = self.pl + self.pr
-        paddingY = self.pt + self.pb
         for page in doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
@@ -73,9 +68,9 @@ class View(Element):
             # In case the document is oversized, then make all pages the size of the document, so the
             # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
             # Size depends on the size of the larges pages + optional decument padding.
-            if paddingX or paddingY:
-                w += paddingX
-                h += paddingY
+            if self.pl > self.MIN_PADDING and self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING and self.pr > self.MIN_PADDING:
+                w += self.pl + self.pr
+                h += self.pt + self.pb
                 if self.originTop:
                     origin = self.pl, self.pt, 0
                 else:
@@ -120,23 +115,27 @@ class View(Element):
         self.drawPageCropMarks(page, origin)
 
     def drawPageFrame(self, page, origin):
-        if self.showPageFrame:
+        u"""Draw the page frame if the the flag is on and  if there ie padding enough to show other meta info.
+        Otherwise the padding is truncated to 0: no use to draw the frame."""
+        if self.showPageFrame and \
+                self.pl > self.MIN_PADDING and self.pr > self.MIN_PADDING and \
+                self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
             self._drawElementFrame(page, origin)
 
     def drawPageNameInfo(self, page, origin):
         u"""Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks."""
-        px, py, _ = pointOffset(page.point, origin) # Ignore z-axis for now
         if self.showPageNameInfo:
             bleed = self.css('bleed')
-            cms = self.css('cropMarkSize') - bleed
+            cms = self.css('viewCropMarkSize') - bleed
+            fontSize = self.css('viewPageNameFontSize')
             dt = datetime.now()
             d = dt.strftime("%A, %d. %B %Y %I:%M%p")
             s = 'Page %s | %s | %s' % (page.parent.getPageNumber(page), d, page.parent.title or 'Untitled')
             if page.name:
                 s += ' | ' + page.name
-            fs = FormattedString(s, font='Verdana', fill=0, fontSize=6)
-            text(fs, (px + bleed, py + self.h + cms)) # Draw on top of page.
+            fs = FormattedString(s, font=self.css('viewPageNameFont'), fill=0, fontSize=fontSize)
+            text(fs, (self.pl + bleed, self.pb + page.h + cms - fontSize*2)) # Draw on top of page.
 
     #   D R A W I N G  F L O W S
 
@@ -171,15 +170,15 @@ class View(Element):
     def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
         u"""Draw curved arrow marker between the two points.
         TODO: Add drawing of real arrow-heads, rotated in the right direction."""
-        fms = self.css('flowMarkerSize')
-        fmf = self.css('flowCurvatureFactor')
+        fms = self.css('viewFlowMarkerSize')
+        fmf = self.css('viewFlowCurvatureFactor')
         if onText == 1:
-            c = self.css('flowConnectionStroke2', NO_COLOR)
+            c = self.css('viewFlowConnectionStroke2', NO_COLOR)
         else:
-            c = self.css('flowConnectionStroke1', NO_COLOR)
-        setStrokeColor(c, self.css('flowConnectionStrokeWidth'))
+            c = self.css('viewFlowConnectionStroke1', NO_COLOR)
+        setStrokeColor(c, self.css('viewFlowConnectionStrokeWidth'))
         if startMarker:
-            setFillColor(self.css('flowMarkerFill', NO_COLOR))
+            setFillColor(self.css('viewFlowMarkerFill', NO_COLOR))
             oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
         xm = (xt + xs)/2
         ym = (yt + ys)/2
@@ -224,8 +223,8 @@ class View(Element):
         p = self._applyScale(p)    
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        setFillColor(self.css('frameFill', NO_COLOR))
-        setStrokeColor(self.css('frameStroke', NO_COLOR), self.css('frameStrokeWidth'))
+        setFillColor(self.css('viewFrameFill', NO_COLOR))
+        setStrokeColor(self.css('viewFrameStroke', NO_COLOR), self.css('viewFrameStrokeWidth'))
         rect(px, py, e.w, e.h)
 
         self._restoreScale()
@@ -234,18 +233,21 @@ class View(Element):
         if self.showElementFrame:
             self._drawElementFrame(e, origin)
 
+    def drawElementMetaInfo(self, e, origin):
+        self.drawElementInfo(e, origin)
+        self.drawElementOrigin(e, origin)
+        
     def drawElementInfo(self, e, origin):
         u"""For debugging this will make the elements show their info. The css flag "showElementOrigin"
         defines if the origin marker of an element is drawn."""
         if self.showElementInfo:
              # Draw crossed rectangle.
-            p = pointOffset(e.point, origin)
-            p = op = e._applyOrigin(p)    
+            p = pointOffset(e.oPoint, origin)
             p = e._applyScale(p)    
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-            fs = getFormattedString(e._getElementInfoString(), style=dict(font=self.css('infoFont'), 
-                fontSize=self.css('infoFontSize'), leading=self.css('infoLeading'), textFill=0.1))
+            fs = getFormattedString(e._getElementInfoString(), style=dict(font=self.css('viewInfoFont'), 
+                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
             tw, th = textSize(fs)
             Pd = 4 # Padding in box and shadow offset.
             tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
@@ -255,7 +257,7 @@ class View(Element):
             stroke(None)
             rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
             # Frame
-            setFillColor(self.css('infoFill'))
+            setFillColor(self.css('viewInfoFill'))
             stroke(0.3)
             strokeWidth(0.25)
             rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
@@ -265,16 +267,15 @@ class View(Element):
     def drawElementOrigin(self, e, origin):
         if self.showElementOrigin:
             # Draw origin of the element
-            p = pointOffset(self.point, origin)
-            opx, opy, _ = self._applyOrigin(p)    
-            S = self.css('infoOriginMarkerSize', 4)
+            px, py, _ = pointOffset(e.oPoint, origin)
+            S = self.css('viewInfoOriginMarkerSize', 4)
             fill(None)
             stroke(0)
-            fill(0.5,0.5,0.5,0.5) # Transparant fill, so we can see the marker on dark backgrounds.
+            fill(0.5,0.5,0.5,0.1) # Transparant fill, so we can see the marker on dark backgrounds.
             strokeWidth(0.25)
-            oval(opx-S, opy-S, 2*S, 2*S)
-            line((opx-S, opy), (opx+S, opy))
-            line((opx, opy-S), (opx, opy+S))
+            oval(px-S, py-S, 2*S, 2*S)
+            line((px-S, py), (px+S, py))
+            line((px, py-S), (px, py+S))
  
     def drawMissingElementRect(self, e, origin):
         u"""When designing templates and pages, this will draw a filled rectangle on the element
@@ -289,7 +290,7 @@ class View(Element):
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
             self.setShadow()
 
-            sMissingElementFill = self.css('missingElementFill', NO_COLOR)
+            sMissingElementFill = self.css('viewMissingElementFill', NO_COLOR)
             if sMissingElementFill is not NO_COLOR:
                 setFillColor(sMissingElementFill)
                 setStrokeColor(None)
@@ -353,8 +354,8 @@ class View(Element):
         u"""Draw standard registration mark, to show registration of CMYK colors.
         https://en.wikipedia.org/wiki/Printing_registration."""
         if self.showPageRegistrationMarks:
-            cmSize = min(self.pl/2, self.css('cropMarkSize')) # TODO: Make cropmark go closer to page edge and disappear if too small.
-            cmStrokeWidth = self.css('cropMarkStrokeWidth')
+            cmSize = min(self.pl/2, self.css('viewCropMarkSize')) # TODO: Make cropmark go closer to page edge and disappear if too small.
+            cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
             x, y, _ = point3D(origin)
             w, h = page.w, page.h
             self._drawPageRegistrationMark(page, (x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
@@ -369,8 +370,8 @@ class View(Element):
             w, h = e.w, e.h
             folds = self.css('folds')
             bleed = self.css('bleed')
-            cmSize = self.css('cropMarkSize')
-            cmStrokeWidth = self.css('cropMarkStrokeWidth')
+            cmSize = self.css('viewCropMarkSize')
+            cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
 
             fill(None)
             cmykStroke(1,1,1,1)

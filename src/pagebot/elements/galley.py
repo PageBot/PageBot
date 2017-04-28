@@ -100,13 +100,19 @@ class Galley(Element):
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the
         containing page."""
-        ox, oy = pointOffset(self.point, origin)
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
         fill(1, 1, 0)
         gw, gh = self.getSize()
-        rect(ox, oy, gw, gh)
+        rect(px, py, gw, gh)
         gy = y
         for element in self.elements:
             # @@@ Find space and do more composition
-            element.draw((ox, oy), view)
+            element.draw((px, py), view)
             gy += element.h
+
+        self._restoreScale()
+        view.drawElementMetaInfo(self, origin)
 

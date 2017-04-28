@@ -89,8 +89,11 @@ USPostcardMin = 5*INCH, 3.5*INCH
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
 ORIGIN_POINT = (0, 0, 0) 
-DEFAULT_WIDTH = DEFAULT_HEIGHT = DEAULT_DEPTH = 100
+# Min/max values for element sizes. Make sure that elements dimensions never get 0
 XXXL = sys.maxint
+MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
+DEFAULT_WIDTH = DEFAULT_HEIGHT = DEAULT_DEPTH = 100
+MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL
 
 LEFT = 'left'
 RIGHT = 'right'
@@ -145,6 +148,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         name = 'root', # Name of the style, key in document.getRootstyle( )
         tag = None, # Optional marker to match the style with the running tag.
+        show = True, # If set to False, then the element does not evaluate in the self.elements loop.
         # Basic page/template measures
         u = u, # Base unit for Dutch/Swiss typography :)
         w = w, # Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
@@ -211,12 +215,12 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         vacuumD = False, # Optional vacuuming in z-direction: self.back - self.front
 
         # Minimum size
-        minW = 5*gutter, # Default is to make minimum width equal to 1/2 column, om 5+1+5 = 11 grid.
-        minH = baselineGrid, # Default is to make minimum height equal to 1 baseline.
-        minD = 0, # Optional minimum depth of the document
-        maxW = None, # None if there is no maximum
-        maxH = None,
-        maxD = 0, # Optional maximum depth of the document
+        minW = 0, # Default minimal width of elements.
+        minH = 0, # Default minimal height of elements.
+        minD = 0, # Default minimal depth of elements.
+        maxW = XXXL, # No maximum limits, sys.maxint
+        maxH = XXXL,
+        maxD = XXXL,
 
         # Overall content scaling.
         scaleX = 1, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
@@ -236,38 +240,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         cmykRadialGradient = NO_COLOR, #((50, 410), (50, 410), ([1, 0, 1, 0], [1, 1, 0, 0], [0, 1, 1, 0]),
         cmykRadialGradient_startRadius = 0,
         cmykRadialGradient_endRadius = 300,
-
-        # Grid stuff
-        gridFill = (200/255.0, 230/255.0, 245/255.0, 0.9), # Fill color for (cw, ch) squares.
-        gridStroke = (0.8, 0.8, 0.8), # Stroke of grid lines in part of a template.
-        gridStrokeWidth = 0.5, # Line thickness of the grid.
-        
-        # Baseline grid
-        baselineGridStroke = (1, 0, 0), # Stroke clor of baselines grid.
-        
-        # Draw connection arrows between the flow boxes on a page.
-        flowConnectionStroke1 = (0.2, 0.5, 0.1, 1), # Stroke color of flow lines inside column,
-        flowConnectionStroke2 = (1, 0, 0, 1), # Stroke color of flow lines between columns.
-        flowConnectionStrokeWidth = 1.5, # Line width of curved flow lines.
-        flowMarkerFill = (0.8, 0.8, 0.8, 0.5), # Fill of flow curve marker circle.
-        flowMarkerSize = 8, # Size of flow marker circle.
-        flowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
-        
-        # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
-        bleed = 8, # Bleeding images of page edge and distance of crop-marks from page frame.
-        cropMarkSize = 40, # Length of crop marks, including bleed distance. 
-        cropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
-        
-        # Element info box
-        infoFont = DEFAULT_FONT, # Font of text in element infoBox.
-        infoFontSize = 4, # Font size of text in element info box.
-        infoLeading = 5, # Leading of text in element info box.
-        infoFill = (0.8, 0.8, 0.8, 0.9), # Color of text in element info box.
-        infoTextFill = 0.1, # Color of text in element info box.
-        infoOriginMarkerSize = 4, # Radius of the info origin crosshair marker.
-
-        # Generic element stuff
-        missingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
 
         # Typographic defaults
         font = DEFAULT_FONT, # Default is to avoid existing font and fontSize in the graphic state.
@@ -360,13 +332,50 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         textCmykStroke = NO_COLOR, # Flag to ignore, None is valid value for color.
         textStrokeWidth = None,
 
-        # Constants for standardized usage of alignment in FormattedString
-        LEFT = LEFT,
-        RIGHT = RIGHT,
-        JUSTIFIED = JUSTIFIED,
-        CENTER = CENTER,
-        TOP = TOP,
-        BOTTOM = BOTTOM,
+        # V I E W
+        # These parameters are used by viewers, should not part of direct elements.css( ) queries
+        # as view may locally change these values.
+
+        # Grid stuff
+        viewGridFill = (200/255.0, 230/255.0, 245/255.0, 0.9), # Fill color for (cw, ch) squares.
+        viewGridStroke = (0.8, 0.8, 0.8), # Stroke of grid lines in part of a template.
+        viewGridStrokeWidth = 0.5, # Line thickness of the grid.
+        
+        # Baseline grid
+        viewBaselineGridStroke = (1, 0, 0), # Stroke clor of baselines grid.
+        
+        # Draw connection arrows between the flow boxes on a page.
+        viewFlowConnectionStroke1 = (0.2, 0.5, 0.1, 1), # Stroke color of flow lines inside column,
+        viewFlowConnectionStroke2 = (1, 0, 0, 1), # Stroke color of flow lines between columns.
+        viewFlowConnectionStrokeWidth = 1.5, # Line width of curved flow lines.
+        viewFlowMarkerFill = (0.8, 0.8, 0.8, 0.5), # Fill of flow curve marker circle.
+        viewFlowMarkerSize = 8, # Size of flow marker circle.
+        viewFlowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
+        
+        # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
+        bleed = 8, # Bleeding images of page edge and distance of crop-marks from page frame.
+        viewCropMarkSize = 40, # Length of crop marks, including bleed distance. 
+        viewCropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
+ 
+        # Style things
+        viewFrameFill = None,
+        viewFrameStroke = (0, 0, 1), # Ouline page frames
+        viewFrameStrokeWidth = 0.5,
+
+        viewPageNameFont = DEFAULT_FONT, # Name of the page outside frame.
+        viewPageNameFontSize = 6,
+         
+        # Element info box
+        viewInfoFont = DEFAULT_FONT, # Font of text in element infoBox.
+        viewInfoFontSize = 4, # Font size of text in element info box.
+        viewInfoLeading = 5, # Leading of text in element info box.
+        viewInfoFill = (0.8, 0.8, 0.8, 0.9), # Color of text in element info box.
+        viewInfoTextFill = 0.1, # Color of text in element info box.
+        viewInfoOriginMarkerSize = 4, # Radius of the info origin crosshair marker.
+
+        # Generic element stuff
+        viewMissingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
+
 
     )
     # Assume all the other arguments overwriting the default values of the root style,
