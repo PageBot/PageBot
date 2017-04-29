@@ -11,6 +11,7 @@
 #     markers.py
 #
 from drawBot import cmykStroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, closePath, FormattedString
+from pagebot.toolbox.transformer import point3D
 
 def drawRegistrationMark(origin, cmSize, cmStrokeWidth, vertical):
     u"""Draw registration mark as position x, y."""
@@ -37,7 +38,7 @@ def drawRegistrationMark(origin, cmSize, cmStrokeWidth, vertical):
 def drawRegistrationMarks(origin, w, h, cmSize, cmStrokeWidth):
     u"""Draw standard registration mark, to show registration of CMYK colors.
     https://en.wikipedia.org/wiki/Printing_registration."""
-    x, y = origin
+    x, y, _ = point3D(origin)
     drawRegistrationMark((x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
     drawRegistrationMark((x - cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Left registration mark
     drawRegistrationMark((x + w + cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Right registration mark
@@ -45,7 +46,7 @@ def drawRegistrationMarks(origin, w, h, cmSize, cmStrokeWidth):
 
 def drawCropMarks(origin, w, h, bleed, cmSize, cmStrokeWidth, folds=None):
     u"""If the show flag is set, then draw the cropmarks or page frame."""
-    x, y = origin
+    x, y, _ = point3D(origin) # Ignore z-axus for now.
     fill(None)
     cmykStroke(1,1,1,1)
     strokeWidth(cmStrokeWidth)

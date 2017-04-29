@@ -12,7 +12,7 @@
 from pagebot import getFormattedString
 from pagebot.publications.publication import Publication
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
+from pagebot.style import getRootStyle, LEFT, NO_COLOR
 # Document is the main instance holding all information about the document together 
 # (pages, styles, etc.)
 from pagebot.elements.document import Document

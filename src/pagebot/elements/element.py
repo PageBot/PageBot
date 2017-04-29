@@ -11,13 +11,15 @@
 #     element.py
 #
 import weakref
+import copy
 
 from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, fill, text, stroke, strokeWidth
 
 from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
-from pagebot.style import makeStyle, CENTER, RIGHT_ALIGN, TOP_ALIGN, BOTTOM_ALIGN, LEFT_ALIGN, NO_COLOR
+from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
+    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH
 from pagebot.toolbox.transformer import asFormatted
 
 class Element(object):
@@ -26,36 +28,210 @@ class Element(object):
     # These flags can be overwritten by inheriting classes, or dynamically in instances,
     # e.g. where the settings of TextBox.nextBox and TextBox.nextPage define if a TextBox
     # instance can operate as a flow.
-    isContainer = False
     isText = False
     isTextBox = False
-    isFlow = False
+    isFlow = False # Value is True if self.next if defined.
 
-    def __init__(self, point=None, parent=None, name=None, eId=None, style=None, **kwargs):  
-        u"""Basic initialize for every Element constructor."""  
-        self._w = self._h = self._d = 0 # Optionally overwritten values. Otherwise use values from self.style.
-        self.point = point # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
+    def __init__(self, point=None, parent=None, name=None, title=None, style=None, conditions=None, elements=None, template=None, 
+            next=None, nextPage=None, **kwargs):  
+        u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here."""  
+        assert point is None or isinstance(point, (tuple, list))
+        self.point = point3D(point or ORIGIN_POINT) # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
         self.style = makeStyle(style, **kwargs)
         self.name = name
-        self.eId = eId or uniqueID(self)
-        self.parent = parent # Weak ref to parent element or None if it is the root.
+        self.title = title or name # Optional to make difference between title name.
+        self._eId = uniqueID(self) # Direct set property with unique persistent value.
+        self._parent = None # Preset, so it exists for checking when appending parent.
+        if parent is not None:
+            # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
+            parent.appendElement(self) # Set referecnes in both directions.
+        # Conditional placement stuff
+        self.conditions = conditions # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
+        # Save flow reference names
+        self.next = next # Name of the next flow element
+        self.nextPage = nextPage # Name of the next page.
+        # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
+        # Initialze self.elements, add template elements and values, copy elements if defined.
+        self._applyTemplate(template, elements) 
+        # Initialize the default Element behavior tags, in case this is a flow.
+        self.isFlow = self.next is not None
 
     def __repr__(self):
-        if self.name:
+        if self.title:
+            name = ':'+self.title
+        elif self.name:
             name = ':'+self.name
-        elif self.eId:
+        else: # No naming, show unique self.eId:
             name = ':'+self.eId
+
+        if self.elements:
+            elements = ' E(%d)' % len(self.elements)
         else:
-            name = ''
-        return '%s%s(%d, %d)' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])))
+            elements = ''
+        return '%s%s (%d, %d)%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), elements)
+
+    def __len__(self):
+        u"""Answer total amount of elements, placed or not."""
+        return len(self.elements) 
+
+    #   T E M P L A T E
+
+    def _applyTemplate(self, template, elements):
+        u"""Copy relevant info from template: w, h, elements, style, conditions when element is created.
+        Don't call later."""
+        self.clearElements()
+        self.template = template # Keep in order to clone pages or if addition info is needed.
+        # Copy optional template stuff
+        if template is not None:
+            # Copy elements from the template and put them in the designated positions.
+            self.w = template.w
+            self.h = template.h
+            self.next = template.next
+            self.prev = template.prev
+            self.nextPage = template.nextPage
+            # Copy style items
+            for  name, value in template.style.items:
+                self.style[name] = value
+            # Copy condition list. Does not have to be deepCopy, condition instances are multi-purpose.
+            self.conditions = copy.copy(template.conditions)
+            for e in template.elements:
+                self.appendElement(e.deepCopy())
+        # Add optional list of elements.
+        for e in elements or []: 
+            self.appendElement(e) # Add cross reference searching for eId of elements.
+            
+    #   E L E M E N T S
+    #   Every element is potentioally a container of other elements.
+
+    def __getitem__(self, eId):
+        u"""Answer the element with eId. Raise a KeyError if the element does not exist."""
+        return self._eIds[eId]
+
+    def __setitem__(self, eId, e):
+        if not e in self.elements:
+            self.elements.append(e)
+        self._eIds[eId] = e
+
+    def _get_eId(self):
+        return self._eId
+        # Cannot set self._eId through self.eId property. Set self._eId if necessary.
+    eId = property(_get_eId)
 
     def _get_elements(self):
-        u"""Default element does not have children."""
-        return []
+        return self._elements
     def _set_elements(self, elements):
-        raise KeyError('Only containers can hold other elements.')
+        self.clearElements()
+        for e in elements:
+            self.appendElement(e) # Make sure to set all references.
     elements = property(_get_elements, _set_elements)
+
+    def _get_elementIds(self): # Answer the x-ref dictionary with elements by their e.eIds
+        return self._eIds
+    elementIds = property(_get_elementIds)
+
+    def getElement(self, eId):
+        u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
+        return self._eIds.get(eId)
+
+    def clearElements(self):
+        u"""Properly initializes self._elements and self._eIds. 
+        Any existing elements get their parent weakrefs become None and will garbage collect."""
+        self._elements = [] 
+        self._eIds = {}
+
+    def deepCopy(self):
+        e = copy.copy(self)
+        e._eId = uniqueId(e) # Guaranteed unique Id for every element.
+        e.style = copy.copy(self.style)
+        e.clearElements()
+        for child in self.elements:
+            e.appendElement(child.deepCopy())
+        return e
+
+    def appendElement(self, e):
+        u"""Add element to the list of child elements. Note that elements can be added multiple times.
+        If the element is alread placed in another container, then remove it from its current parent.
+        This relation and position is lost. The position e is supposed to be filled already in local position."""
+        eParent = e.parent
+        if not eParent in (None, self): 
+            e.parent.removeElement(e) # Remove from current parent, if there is one.
+        self._elements.append(e)
+        e.parent = self
+        if e.eId: # Store the element by unique element id, if it is defined.
+            self._eIds[e.eId] = e
+
+    def removeElement(self, e):
+        u"""If the element is placed in self, then remove it. Don't touch the position."""
+        assert e.parent is self
+        if e.eId in self._eIds:
+            del self._eIds[e.eId]
+        if e in self._elements:
+            self._elements.remove(e)
+
+    def _get_show(self): # Set flag for drawing or interpreation with conditional.
+        return self.css('show')
+    def _set_show(self, showFlag):
+        self.style['show'] = showFlag # Hinding rest of css for this value.
+    show = property(_get_show, _set_show)
+
+    #   C H I L D  E L E M E N T  P O S I T I O N S
+
+    def getElementsAtPoint(self, point):
+        u"""Answer the list with elements that fit the point. Note None in the point will match any
+        value in the element position. Where None in the element position with not fit any xyz of the point."""
+        elements = []
+        px, py, pz = point3D(point) 
+        for e in self.elements:
+            ex, ey, ez = point3D(e.point)
+            if (ex == px or px is None) and (ey == py or py is None) and (ez == pz or pz is None):
+                elements.append(e)
+        return elements
+
+    def getElementsPosition(self):
+        u"""Answer the dictionary of elements that have eIds and their positions."""
+        elements = {}
+        for e in self.elements:
+            if e.eId:
+                elements[e.eId] = e.point
+        return elements
+
+    def getPositions(self):
+        u""""Answer the dictionary of positions of elements. 
+        Key is the local point of the child element. Value is list of elements."""
+        positions = {}
+        for e in self.elements:
+            point = tuple(e.point) # Point needs to be tuple to be used a key.
+            if not point in positions:
+                positions[point] = []
+            positions[point].append(e)
+        return positions
+
+    #   F L O W
+
+    # If the element is part of a flow, then answer the squence.
+    
+    def getFlows(self):
+        u"""Answer the set of flow element sequences on the page."""
+        flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
+        for e in self.elements:
+            if not e.isFlow:
+                continue
+            # Now we know that this element has a e.nextBox and e.nextPage
+            # There should be a flow with that name in our flows yet
+            found = False
+            for nextId, seq in flows.items():
+                if seq[-1].nextBox == e.name: # Glue to the end of the sequence.
+                    seq.append(e)
+                    found = True
+                elif e.nextBox == seq[0].name: # Add at the start of the list.
+                    seq.insert(0, e)
+                    found = True
+            if not found: # New entry
+                flows[e.next] = [e]
+        return flows
+
+    #   S T Y L E
 
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
@@ -77,6 +253,15 @@ class Element(object):
             return self.parent.getNamedStyle(styleName)
         return None
 
+    #   L I B --> Document.lib
+
+    def _get_lib(self):
+        u"""Answer the shared document.lib dictionary, used for share global entry by elements."""
+        parent = self.parent
+        if parent is not None:
+            return parent.lib # Either parent element or document.lib.
+        return None # Document cannot be found, there is not document as root.
+
     # Most common properties
 
     def _get_parent(self):
@@ -84,7 +269,9 @@ class Element(object):
             return self._parent()
         return None
     def _set_parent(self, parent):
+        # Note that the caller must add self to its elements.
         if parent is not None:
+            assert not self in parent.ancestors, '[%s.%s] Cannot set one of the children "%s" as parent.' % (self.__class__.__name__, self.name, parent)
             parent = weakref.ref(parent)
         self._parent = parent
     parent = property(_get_parent, _set_parent)
@@ -97,6 +284,16 @@ class Element(object):
         return siblings
     siblings = property(_get_siblings)
 
+    def _get_ancestors(self):
+        ancestors = []
+        parent = self.parent
+        while parent is not None:
+            assert not parent in ancestors, '[%s.%s] Illegal loop in parent->ancestors reference.' % (self.__class__.__name__, self.name)
+            ancestors.append(parent)
+            parent = parent.parent
+        return ancestors
+    ancestors = property(_get_ancestors)
+
     def _get_point(self):
         return point2D(self._point) # Answer as 2D
     def _set_point(self, point):
@@ -108,6 +305,10 @@ class Element(object):
     def _set_point3D(self, point):
         self._point = point3D(point) # Always store as 3D-point, z = 0 if missing.
     point3D = property(_get_point3D, _set_point3D)
+
+    def _get_oPoint(self): # Answer the self._point, y-flipped, depending on the self.originTop flag.
+        return self._applyOrigin(self.point)
+    oPoint3D = oPoint = property(_get_oPoint)
 
     # Plain coordinates
 
@@ -139,15 +340,17 @@ class Element(object):
         if self.css('vacuumW'): # Get vaccum left from child elements.
             ex, _, _, _ = self.getElementsBox()
             return self.x + ex
-        if self.css('align') == CENTER:
+        xAlign = self.xAlign
+        if xAlign == CENTER:
             return self.x - self.w/2
-        if self.css('align') == RIGHT_ALIGN:
+        if xAlign == RIGHT:
             return self.x - self.w
         return self.x
     def _set_left(self, x):
-        if self.css('align') == CENTER:
+        xAlign = self.xAlign
+        if xAlign == CENTER:
             self.x = x + self.w/2
-        elif self.css('align') == RIGHT_ALIGN:
+        elif xAlign == RIGHT:
             self.x = x + self.w
         else:
             self.x = x
@@ -163,15 +366,17 @@ class Element(object):
         if self.css('vacuumW'): # Get vaccum left/right from child elements.
             ex, _, ew, _ = self.getElementsBox()
             return self.x + ex + ew/2
-        if self.css('align') == LEFT_ALIGN:
+        xAlign = self.xAlign
+        if xAlign == LEFT:
             return self.x + self.w/2
-        if self.css('align') == RIGHT_ALIGN:
+        if xAlign == RIGHT:
             return self.x + self.w
         return self.x
     def _set_center(self, x):
-        if self.css('align') == LEFT_ALIGN:
+        xAlign = self.xAlign
+        if xAlign == LEFT:
             self.x = x - self.w/2
-        elif self.css('align') == RIGHT_ALIGN:
+        elif xAlign == RIGHT:
             self.x = x - self.w
         else:
             self.x = x
@@ -181,15 +386,17 @@ class Element(object):
         if self.css('vacuumW'): # Get vaccum left from child elements.
             ex, _, ew, _ = self.getElementsBox()
             return self.x + ex + ew
-        if self.css('align') == LEFT_ALIGN:
+        xAlign = self.xAlign
+        if xAlign == LEFT:
             return self.x + self.w
-        if self.css('align') == CENTER:
+        if xAlign == CENTER:
             return self.x + self.w/2
         return self.x
     def _set_right(self, x):
-        if self.css('align') == LEFT_ALIGN:
+        xAlign = self.xAlign
+        if xAlign == LEFT:
             self.x = x - self.w
-        elif self.css('align') == CENTER:
+        elif xAlign == CENTER:
             self.x = x - self.w/2
         else:
             self.x = x
@@ -204,19 +411,19 @@ class Element(object):
     # Vertical
 
     def _get_top(self):
-        yAlign = self.css('yAlign')
-        if yAlign == CENTER:
+        yAlign = self.yAlign
+        if yAlign == MIDDLE:
             return self.y - self.h/2
-        if yAlign == BOTTOM_ALIGN:
+        if yAlign == BOTTOM:
             if self.originTop:
                 return self.y - self.h
             return self.y + self.h
         return self.y
     def _set_top(self, y):
-        yAlign = self.css('yAlign')
-        if yAlign == CENTER:
+        yAlign = self.yAlign
+        if yAlign == MIDDLE:
             self.y = y + self.h/2
-        elif yAlign == BOTTOM_ALIGN:
+        elif yAlign == BOTTOM:
             if self.originTop:
                 self.y = y + self.h
             else:
@@ -237,39 +444,49 @@ class Element(object):
     mTop = property(_get_mTop, _set_mTop)
 
     def _get_middle(self): # On bounding box, not including margins.
-        yAlign = self.css('yAlign')
-        if yAlign == TOP_ALIGN:
+        yAlign = self.yAlign
+        if yAlign == TOP:
+            if self.originTop:
+                return self.y + self.h/2
             return self.y - self.h/2
-        if yAlign == BOTTOM_ALIGN:
+        if yAlign == BOTTOM:
+            if self.originTop:
+                return self.y - self.h/2
             return self.y + self.h/2
         return self.y
     def _set_middle(self, y):
-        yAlign = self.css('yAlign')
-        if yAlign == TOP_ALIGN:
-            self.y = y + self.h/2
-        elif yAlign == BOTTOM_ALIGN:
-            self.y = y + self.h
+        yAlign = self.yAlign
+        if yAlign == TOP:
+            if self.originTop:
+                self.y = y - self.h/2
+            else:
+                self.y = y + self.h/2
+        elif yAlign == BOTTOM:
+            if self.originTop:
+                self.y = y + self.h/2
+            else:
+                self.y = y - self.h/2
         else:
             self.y = y
     middle = property(_get_middle, _set_middle)
 
     def _get_bottom(self):
-        yAlign = self.css('yAlign')
-        if yAlign == TOP_ALIGN:
+        yAlign = self.yAlign
+        if yAlign == TOP:
             if self.originTop:
                 return self.y + self.h
             return self.y - self.h
-        if yAlign == CENTER:
+        if yAlign == MIDDLE:
             return self.y + self.h/2
         return self.y
     def _set_bottom(self, y):
-        yAlign = self.css('yAlign')
-        if yAlign == TOP_ALIGN:
+        yAlign = self.yAlign
+        if yAlign == TOP:
             if self.originTop:
                 self.y = y - self.h
             else:
                 self.y = y + self.h
-        elif yAlign == CENTER:
+        elif yAlign == MIDDLE:
             self.y = y - self.h/2
         else:
             self.y = y
@@ -291,16 +508,16 @@ class Element(object):
 
     def _get_front(self):
         zAlign = self.css('zAlign')
-        if zAlign == CENTER:
+        if zAlign == MIDDLE:
             return self.z - self.d/2
-        if zAlign == BACK_ALIGN:
+        if zAlign == BACK:
             return self.z - self.d
         return self.z
     def _set_front(self, z):
         zAlign = self.css('zAlign')
-        if zAlign == CENTER:
+        if zAlign == MIDDLE:
             self.z = z + self.d/2
-        elif zAlign == BACK_ALIGN:
+        elif zAlign == BACK:
             self.z = z + self.d
         else:
             self.z = z
@@ -312,56 +529,36 @@ class Element(object):
         self.front = z + self.css('mzf')
     mFront = property(_get_mFront, _set_mFront)
 
-    def _get_middle(self): # On bounding box, not including margins.
-        yAlign = self.css('yAlign')
-        if yAlign == TOP_ALIGN:
-            return self.y - self.h/2
-        if yAlign == BOTTOM_ALIGN:
-            return self.y + self.h/2
-        return self.y
-    def _set_middle(self, y):
-        yAlign = self.css('yAlign')
-        if yAlign == TOP_ALIGN:
-            self.y = y + self.h/2
-        elif yAlign == BOTTOM_ALIGN:
-            self.y = y + self.h
-        else:
-            self.y = y
-    middle = property(_get_middle, _set_middle)
+    # Alignment types, defines where the origin of the element is located.
 
-    def _get_bottom(self):
-        yAlign = self.css('yAlign')
-        if yAlign == TOP_ALIGN:
-            if self.originTop:
-                return self.y + self.h
-            return self.y - self.h
-        if yAlign == CENTER:
-            return self.y + self.h/2
-        return self.y
-    def _set_bottom(self, y):
-        yAlign = self.css('yAlign')
-        if yAlign == TOP_ALIGN:
-            if self.originTop:
-                self.y = y - self.h
-            else:
-                self.y = y + self.h
-        elif yAlign == CENTER:
-            self.y = y - self.h/2
-        else:
-            self.y = y
-    bottom = property(_get_bottom, _set_bottom)
+    def _validateXAlign(self, xAlign): # Check and answer value
+        assert xAlign in XALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, sorted(XALIGNS))
+        return xAlign
+    def _validateYAlign(self, yAlign): # Check and answer value
+        assert yAlign in YALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, sorted(YALIGNS))
+        return yAlign
+    def _validateZAlign(self, zAlign): # Check and answer value
+        assert zAlign in ZALIGNS, '[%s.zAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, zAlign, sorted(ZALIGNS))
+        return zAlign
 
-    def _get_mBottom(self): # Bottom, including bottom margin
-        if self.originTop:
-            return self.bottom + self.mb
-        return self.bottom - self.mb
-    def _set_mBottom(self, y):
-        if self.originTop:
-            self.bottom = y - self.mb
-        else:
-            self.bottom = y + self.mb
-    mBottom = property(_get_mBottom, _set_mBottom)
-
+    def _get_xAlign(self): # Answer the type of x-alignment. For compatibility allow align and xAlign as equivalents.
+        return self._validateXAlign(self.css('align'))
+    def _set_xAlign(self, xAlign):
+        self.style['align'] = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
+    align = xAlign = property(_get_xAlign, _set_xAlign)
+     
+    def _get_yAlign(self): # Answer the type of x-alignment.
+        return self._validateYAlign(self.css('yAlign'))
+    def _set_yAlign(self, yAlign):
+        self.style['yAlign'] = self._validateYAlign(yAlign) # Save locally, blocking CSS parent scope for this param.
+    yAlign = property(_get_yAlign, _set_yAlign)
+     
+    def _get_zAlign(self): # Answer the type of x-alignment.
+        return self._validateZAlign(self.css('zAlign'))
+    def _set_zAlign(self, zAlign):
+        self.style['zAlign'] = self._validateZAlign(zAlign) # Save locally, blocking CSS parent scope for this param.
+    zAlign = property(_get_zAlign, _set_zAlign)
+     
     # Position by column + gutter size index.
 
     def _get_cx(self): # Answer the x-position, defined in columns. Can be fractional for elements not on grid.
@@ -390,7 +587,7 @@ class Element(object):
 
 
     def _get_cw(self):
-        return w2cw(self.w, self)
+        return w2cw(self.w, self) # Using self.css('colW') and self.gw
     def _set_cw(self, cw):
         w = cw2w(cw, self)
         if w is not None:
@@ -398,7 +595,7 @@ class Element(object):
     cw = property(_get_cw, _set_cw)
 
     def _get_ch(self):
-        return h2ch(self.h, self)
+        return h2ch(self.h, self) # Using self.css('colH') and self.gw
     def _set_ch(self, ch):
         h = ch2h(ch, self)
         if h is not None:
@@ -406,12 +603,59 @@ class Element(object):
     ch = property(_get_ch, _set_ch)
 
     def _get_cd(self):
-        return d2cd(self.d, self)
+        return d2cd(self.d, self) # Using self.css('colD') and self.gw
     def _set_cd(self, cd):
         d = cd2d(cd, self)
         if d is not None:
             self.d = d
     cd = property(_get_cd, _set_cd)
+
+
+    def _get_gw(self): # Gutter width
+        return self.css('gw', 0)
+    def _set_gw(self, gw):
+        self.style['gw'] = gw # Set local.
+    gw = property(_get_gw, _set_gw)
+
+    def _get_gh(self): # Gutter height
+        return self.css('gh', 0)
+    def _set_gh(self, gh):
+        self.style['gh'] = gh # Set local
+    gh = property(_get_gh, _set_gh)
+
+    def _get_gd(self): # Gutter depth
+        return self.css('gd', 0)
+    def _set_gd(self, gd):
+        self.style['gd'] = gd
+    gd = property(_get_gd, _set_gd)
+
+    def _get_gutter(self): # Tuple of (w, h) gutters
+        return self.gw, self.gh
+    def _set_gutter(self, gutter):
+        if isinstance(gutter, (long, int, float)):
+            gutter = [gutter]
+        if len(gutter) == 1:
+            gutter = (gutter[0], gutter[0])
+        elif len(margin) == 2:
+            pass
+        else:
+            raise ValueError
+        self.gw, self.gh = gutter
+    gutter = property(_get_gutter, _set_gutter)
+
+    def _get_gutter3D(self): # Tuple of (gw, gh, gd) gutters
+        return self.gw, self.gh, self.gd
+    def _set_gutter3D(self, gutter3D):
+        if isinstance(gutter3D, (long, int, float)):
+            gutter3D = [gutter3D]
+        if len(gutter3D) == 1:
+            gutter3D = (gutter3D[0], gutter3D[0], gutter3D[0])
+        elif len(margin) == 3:
+            pass
+        else:
+            raise ValueError
+        self.gw, self.gh, self.gd = gutter3D
+    gutter3D = property(_get_gutter3D, _set_gutter3D)
 
     # Absolute posiitons
 
@@ -439,7 +683,7 @@ class Element(object):
     def _get_w(self): # Width
         if self.css('vacuumW'): # If vacuum forming, this overwrites css or style width.
             return self.right - self.left
-        return self.css('w') 
+        return min(self.maxW, max(self.minW, self.css('w', MIN_WIDTH))) # Should not be 0 or None
     def _set_w(self, w):
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
@@ -455,7 +699,7 @@ class Element(object):
             if self.originTop:
                 return self.bottom - self.top
             return self.top - self.bottom
-        return self.css('h')  
+        return min(self.maxH, max(self.minH, self.css('h', MIN_HEIGHT))) # Should not be 0 or None
     def _set_h(self, h):
         self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
@@ -468,6 +712,9 @@ class Element(object):
 
     def _get_d(self): # Depth
         return self.css('d') 
+        if self.css('vacuumD'): # If vacuum forming, this overwrites css or style depth.
+            return self.back - self.front
+        return min(self.maxD, max(self.minD, self.css('d', MIN_DEPTH))) # Should not be 0 or None
     def _set_d(self, d):
         self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
@@ -485,10 +732,14 @@ class Element(object):
     def _get_margin(self): # Tuple of margins in CSS order, direction of clock
         return self.mt, self.mr, self.mb, self.ml
     def _set_margin(self, margin):
+        if isinstance(margin, (long, int, float)):
+            margin = [margin]
         if len(margin) == 1:
-            margin = (margin, margin, margin, margin)
+            margin = (margin[0], margin[0], margin[0], margin[0])
         elif len(margin) == 2:
             margin = (margin[0], marign[1], margin[0], margin[1])
+        elif len(margin) == 4:
+            pass
         else:
             raise ValueError
         self.mt, self.mr, self.mb, self.ml = margin
@@ -497,10 +748,16 @@ class Element(object):
     def _get_margin3D(self): # Tuple of margins in CSS order + (front, back), direction of clock
         return self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb
     def _set_margin3D(self, margin3D):
+        if isinstance(margin3D, (long, int, float)):
+            margin3D = [margin3D]
         if len(margin3D) == 1:
-            margin3D = (margin3D, margin3D, margin3D, margin3D, margin3D, margin3D)
+            margin3D = (margin3D[0], margin3D[0], margin3D[0], margin3D[0], margin3D[0], margin3D[0])
         elif len(margin3D) == 2:
-            margin3D = (margin[0], marign[1], margin[0], margin[1], margin[0], margin[1])
+            margin3D = (margin3D[0], margin3D[1], margin3D[0], margin3D[1], margin3D[0], margin3D[1])
+        elif len(margin3D) == 3:
+            margin3D = (margin3D[0], margin3D[1], margin3D[2], margin3D[1], margin3D[2], margin3D[3])
+        elif len(margin3D) == 6:
+            pass
         else:
             raise ValueError
         self.mt, self.mr, self.mb, self.ml, self.mzf, self.margin.mzb = margin3D
@@ -549,10 +806,14 @@ class Element(object):
     def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
+        if isinstance(padding, (long, int, float)):
+            padding = [padding]
         if len(padding) == 1:
-            padding = (padding, padding, padding, padding)
+            padding = (padding[0], padding[0], padding[0], padding[0])
         elif len(padding) == 2:
             padding = (padding[0], padding[1], padding[0], padding[1])
+        elif len(padding) == 4:
+            pass
         else:
             raise ValueError
         self.pt, self.pr, self.pb, self.pl = padding
@@ -561,47 +822,54 @@ class Element(object):
     def _get_padding3D(self): # Tuple of padding in CSS order + (front, back), direction of clock
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
     def _set_padding3D(self, padding3D):
+        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
+        if isinstance(padding3D, (long, int, float)):
+            padding3D = [padding3D]
         if len(padding3D) == 1:
-            padding3D = (padding3D, padding3D, padding3D, padding3D, padding3D, padding3D)
+            padding3D = (padding3D[0], padding3D[0], padding3D[0], padding3D[0], padding3D[0], padding3D[0])
         elif len(padding3D) == 2:
-            margin3D = (margin3D[0], margin3D[1], margin3D[0], margin3D[1], margin3D[0], margin3D[1])
+            padding3D = (padding3D[0], padding3D[1], padding3D[0], padding3D[1], padding3D[0], padding3D[1])
+        elif len(padding3D) == 3:
+            padding3D = (padding3D[0], padding3D[1], padding3D[2], padding3D[0], padding3D[1], padding3D[2])
+        elif len(padding3D) == 6:
+            pass
         else:
             raise ValueError
         self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb = padding3D
     padding3D = property(_get_padding3D, _set_padding3D)
 
     def _get_pt(self): # Padding top
-        return self.css('pt')
+        return self.css('pt', 0)
     def _set_pt(self, pt):
         self.style['pt'] = pt  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
     
     def _get_pb(self): # Padding bottom
-        return self.css('pb')
+        return self.css('pb', 0)
     def _set_pb(self, pb):
         self.style['pb'] = pb  # Overwrite element local style from here, parent css becomes inaccessable.
     pb = property(_get_pb, _set_pb)
     
     def _get_pzf(self): # Padding z-axis front
-        return self.css('pzf')
+        return self.css('pzf', 0)
     def _set_pzf(self, pzf):
         self.style['pzf'] = pzf  # Overwrite element local style from here, parent css becomes inaccessable.
     pzf = property(_get_pzf, _set_pzf)
     
     def _get_pzb(self): # Padding z-axis back
-        return self.css('mzb')
+        return self.css('pzb', 0)
     def _set_pzb(self, pzb):
-        self.style['mzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)
     
     def _get_pl(self): # Padding left
-        return self.css('pl')
+        return self.css('pl', 0)
     def _set_pl(self, pl):
         self.style['pl'] = pl # Overwrite element local style from here, parent css becomes inaccessable.
     pl = property(_get_pl, _set_pl)
     
     def _get_pr(self): # Margin right
-        return self.css('pr')
+        return self.css('pr', 0)
     def _set_pr(self, pr):
         self.style['pr'] = pr  # Overwrite element local style from here, parent css becomes inaccessable.
     pr = property(_get_pr, _set_pr)
@@ -642,8 +910,7 @@ class Element(object):
             y = self.y + pt
         else:
             y = self.y + pb
-
-        return (self.x + pl, y, self.w - pl - self.css('pr'), self.h - pt - pb)
+        return (self.x + pl, y, self.w - pl - self.pr, self.h - pt - pb)
     paddedBox = property(_get_paddedBox)
 
     def _get_padded3DBox(self):
@@ -651,7 +918,7 @@ class Element(object):
         the style padding. Answered format (x, y, z, w, h, d)."""
         x, y, w, h = self.paddedBox
         pzf = self.pzf
-        return x, y, self.z + pzf, w, h, self.d - pzf - self.css('pzb')
+        return x, y, self.z + pzf, w, h, self.d - pzf - self.pzb
     padded3DBox = property(_get_padded3DBox)
 
     def _get_boundingBox(self):
@@ -674,30 +941,63 @@ class Element(object):
             self.h + mt - mb)
     marginBox = property(_get_marginBox)
 
+    def getVacuumElementBox(self):
+        u"""Answer the vacuum bounding box around all child elements."""
+        x1 = y1 = x2 = y2 = None
+        for e in self.elements:
+            if x1 is None or x1 > e.left:
+                x1 = e.left
+            if e.originTop:
+                if y1 is None or y1 < e.top:
+                    y1 = e.top
+                if y2 is None or y1 > e.bottom:
+                    y2 = e.bottom
+            else:
+                if y1 is None or y1 > e.top:
+                    y1 = e.top
+                if y2 is None or y2 < e.bottom:
+                    y2 = e.bottom
+
+        return x1, y1, x2 - x1, y2 - y1
+
+    def getVacuumOrigins(self):
+        u"""Answer (minX, minY, maxX, maxY) for all element origins."""
+        minX = minY = maxX = maxY = None
+        for e in self.elements:
+            if minX is None or minX < e.x:
+                minX = e.x
+            if maxX is None or maxX > e.x:
+                maxX = e.x
+            if minY is None or minY < e.y:
+                minY = e.y
+            if maxY is None or maxY > e.y:
+                maxY = e.y
+        return minX, minY, maxX, maxY
+
     def _get_minW(self):
-        return self.css('minW')
-    def _set_minW(self, minW):
-        self.style['minW'] = minW # Set on local style, shielding parent self.css value.
+        return self.css('minW', MIN_WIDTH)
+    def _set_minW(self, minW): # Clip values
+        self.style['minW'] = max(MIN_WIDTH, min(MAX_WIDTH, minW)) # Set on local style, shielding parent self.css value.
     minW = property(_get_minW, _set_minW)
 
     def _get_minH(self):
-        return self.css('minH')
+        return self.css('minH', MIN_HEIGHT)
     def _set_minH(self, minH):
-        self.style['minH'] = minH # Set on local style, shielding parent self.css value.
+        self.style['minH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, minH)) # Set on local style, shielding parent self.css value.
     minH = property(_get_minH, _set_minH)
 
     def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
-        return self.css('minD')
+        return self.css('minD', MIN_DEPTH)
     def _set_minD(self, minD):
-        self.style['minD'] = minD # Set on local style, shielding parent self.css value.
+        self.style['minD'] = max(MIN_DEPTH, min(MAX_DEPTH, minD)) # Set on local style, shielding parent self.css value.
     minD = property(_get_minD, _set_minD)
 
     def getMinSize(self):
-        u"""Answer the minW and minW of this element."""
+        u"""Answer the (minW, minH) of this element."""
         return self.minW, self.minH
 
     def getMinSize3D(self):
-        u"""Answer the minW and minW of this element."""
+        u"""Answer the (minW, minH, minD) of this element."""
         return self.minW, self.minH, self.minD
 
     def setMinSize(self, minW, minH, minD=0):
@@ -706,16 +1006,22 @@ class Element(object):
         self.minD = minD # Optional minimum depth of the element.
 
     def _get_maxW(self):
-        return self.css('maxW')
+        return self.css('maxW', MAX_WIDTH)
     def _set_maxW(self, maxW):
-        self.style['maxW'] = maxW # Set on local style, shielding parent self.css value.
+        self.style['maxW'] = max(MIN_WIDTH, min(MAX_WIDTH, maxW)) # Set on local style, shielding parent self.css value.
     maxW = property(_get_maxW, _set_maxW)
 
     def _get_maxH(self):
-        return self.css('maxH')
+        return self.css('maxH', MAX_HEIGHT)
     def _set_maxH(self, maxH):
-        self.style['maxH'] = maxH # Set on local style, shielding parent self.css value.
+        self.style['maxH'] = max(MIN_WIDTH, min(MAX_WIDTH, maxH)) # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
+
+    def _get_maxD(self):
+        return self.css('maxD', MAX_DEPTH)
+    def _set_maxD(self, maxD):
+        self.style['maxD'] = max(MIN_WIDTH, min(MAX_WIDTH, maxD)) # Set on local style, shielding parent self.css value.
+    maxD = property(_get_maxD, _set_maxD)
 
     def getMaxSize(self):
         return self.maxW, self.maxH # No limit if value is None
@@ -727,18 +1033,21 @@ class Element(object):
     def _get_scaleX(self):
         return self.css('scaleX', 1)
     def _set_scaleX(self, scaleX):
+        assert scaleX != 0
         self.style['scaleX'] = scaleX # Set on local style, shielding parent self.css value.
     scaleX = property(_get_scaleX, _set_scaleX)
 
     def _get_scaleY(self):
         return self.css('scaleX', 1)
     def _set_scaleY(self, scaleY):
+        assert scaleY != 0
         self.style['scaleY'] = scaleY # Set on local style, shielding parent self.css value.
     scaleY = property(_get_scaleY, _set_scaleY)
 
     def _get_scaleZ(self):
         return self.css('scaleZ', 1)
     def _set_scaleZ(self, scaleY):
+        assert scaleZ != 0
         self.style['scaleZ'] = scaleZ # Set on local style, shielding parent self.css value.
     scaleZ = property(_get_scaleZ, _set_scaleZ)
 
@@ -810,21 +1119,22 @@ class Element(object):
         u"""Answer the p according to the alignment status nin the css.""" 
         px, py, pz = point3D(p)
         # Horizontal
-        if self.css('align') == CENTER:
+        xAlign = self.xAlign
+        if xAlign == CENTER:
             px -= self.w/2/self.scaleX
-        elif self.css('align') == RIGHT_ALIGN:
+        elif xAlign == RIGHT:
             px -= self.w/self.scaleX
         # Vertical
-        yAlign = self.css('yAlign')
-        if yAlign == CENTER:
+        yAlign = self.yAlign
+        if yAlign == MIDDLE:
             py -= self.h/2/self.scaleY
-        elif yAlign == TOP_ALIGN:
+        elif yAlign == TOP:
             py -= self.h/self.scaleY
         # Currently no alignment in z-axis implemented
         return px, py, pz
 
     def _applyOrigin(self, p):
-        u"""If self.originTop is False, then the y-value is interpreted as mathemtcs, 
+        u"""If self.originTop is False, then the y-value is interpreted as mathematics, 
         starting at the bottom of the parent element, moving up.
         If the flag is True, then move from top down, where the origin of the element becomes
         top-left of the parent."""
@@ -866,48 +1176,17 @@ class Element(object):
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
             restore()
 
-    def _setShadow(self):
-        u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this
-        method with self._resetShadow()"""
-        shadowOffset = self.css('shadowOffset') # Use DrawBot graphic state switch on shadow mode.
-        if shadowOffset is not None:
-            save() # DrawBot graphics state push
-            shadowBlur = self.css('shadowBlur') # Should be integer.
-            shadowFill = self.css('shadowFill') # Should be color, different from NO_COLOR
-            shadow(shadowOffset, shadowBlur, shadowFill)
+    #   D R A W I N G  S U P P O R T 
 
-    def _resetShadow(self):
-        u"""Restore the shadow mode of DrawBot. Should be paired with call self._setShadow()."""
-        if self.css('shadowOffset') is not None:
-            restore() # DrawBot graphics state pop.
+    def _drawElements(self, origin, view):
+        u"""Recursively draw all elements of self on their own relative position in the main canvas, """
+        p = pointOffset(self.point, origin)
+        # Draw all elements relative to this point
+        for e in self.elements:
+            if e.show:
+                e.draw(p, view)
 
-    def copy(self):
-        u"""Answer a copy of self and self.style. Note that any child elements will not be copied,
-        keeping reference to the same instance."""
-        e = copy.copy(self)
-        e.style = copy.copy(self.style)
-        e.eId = None # Must be unique. Caller needs to set it to a new one.
-        return e
-
-    #   Default drawing methods.
-
-    def _drawElementBox(self, origin):
-        u"""When designing templates and pages, this will draw a rectangle on the element
-        bounding box if self.css('showElementBox') is True."""
-        if self.css('showElementBox'):
-            # Draw crossed rectangle.
-            p = pointOffset(self.point, origin)
-            p = self._applyOrigin(p)    
-            p = self._applyScale(p)    
-            px, py, _ = self._applyAlignment(p) # Ignore z-axis.
-
-            setFillColor(None)
-            setStrokeColor(0, 0.5)
-            rect(px, py, self.w, self.h)
-
-            self._restoreScale()
-    
-    def _getElementInfoString(self):
+    def getElementInfoString(self):
         u"""Answer a single string with info about the element. Default is to show the posiiton
         and size (in points and columns). This method can be redefined by inheriting elements
         that want to show additional information."""
@@ -915,123 +1194,28 @@ class Element(object):
             (self.__class__.__name__ + ' ' + (self.name or ''), asFormatted(self.x), asFormatted(self.y), asFormatted(self.z), 
              asFormatted(self.w), asFormatted(self.h), 
              asFormatted(self.cx), asFormatted(self.cy), asFormatted(self.cw), asFormatted(self.ch),
-             self.css('align'), self.css('yAlign'))
-        conditions = self.css('conditions')
-        if conditions:
+             self.xAlign, self.yAlign)
+        if self.conditions:
             score = self.evaluate()
-            s += '\nConditions: %d | Evaluate %d' % (len(conditions), score.result)
+            s += '\nConditions: %d | Evaluate %d' % (len(self.conditions), score.result)
             if score.fails:
                 s += ' Fails: %d' % len(score.fails)
                 for eFail in score.fails:
                     s += '\n%s %s' % eFail
         return s
 
-    def _drawBackgroundFrame(self, origin):
-        u"""If parameters defined, draw container background and/or stroke."""
-        if self.css('fill') != NO_COLOR or self.css('stroke') != NO_COLOR:
-            p = pointOffset(self.point, origin)
-            p = op = self._applyOrigin(p)    
-            p = self._applyScale(p)    
-            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+    def drawFrame(self, origin):
+        u"""Used by elements who want to draw their box, independen of the view.showElementFrame flag.
+        The origin point must already have the right "originTop" flag direction.""" 
+        p = pointOffset(self.oPoint, origin) 
+        p = self._applyScale(p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-            setFillColor(self.css('fill', NO_COLOR))
-            setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
-            rect(px, py, self.w, self.h)
+        setFillColor(self.css('frameFill', NO_COLOR))
+        setStrokeColor(self.css('frameStroke', NO_COLOR), self.css('frameStrokeWidth'))
+        rect(px, py, self.w, self.h)
 
-            self._restoreScale()
-
-    def _drawElementInfo(self, origin):
-        u"""For debugging this will make the elements show their info. The css flag "showElementOrigin"
-        defines if the origin marker of an element is drawn."""
-        if self.css('showElementInfo'):
-             # Draw crossed rectangle.
-            p = pointOffset(self.point, origin)
-            p = op = self._applyOrigin(p)    
-            p = self._applyScale(p)    
-            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
-
-            fs = getFormattedString(self._getElementInfoString(), style=dict(font=self.css('infoFont'), 
-                fontSize=self.css('infoFontSize'), leading=self.css('infoLeading'), textFill=0.1))
-            tw, th = textSize(fs)
-            Pd = 4 # Padding in box and shadow offset.
-            tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
-            tpy = py + self.h - th - Pd
-            # Tiny shadow
-            fill(0.3, 0.3, 0.3, 0.5)
-            stroke(None)
-            rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
-            # Frame
-            setFillColor(self.css('infoFill'))
-            stroke(0.3)
-            strokeWidth(0.25)
-            rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
-            text(fs, (tpx+Pd, tpy+1.5*Pd))
-            self._restoreScale()
-
-        if self.css('showElementOrigin'):
-            # Draw origin of the element
-            p = pointOffset(self.point, origin)
-            opx, opy, _ = self._applyOrigin(p)    
-            S = self.css('infoOriginMarkerSize', 4)
-            fill(None)
-            stroke(0)
-            fill(0.5,0.5,0.5,0.5) # Transparant fill, so we can see the marker on dark backgrounds.
-            strokeWidth(0.25)
-            oval(opx-S, opy-S, 2*S, 2*S)
-            line((opx-S, opy), (opx+S, opy))
-            line((opx, opy-S), (opx, opy+S))
-
-            
-    def _drawMissingElementRect(self, origin):
-        u"""When designing templates and pages, this will draw a filled rectangle on the element
-        bounding box (if self.css('missingElementFill' is defined) and a cross, indicating
-        that this element has missing content (as in unused image frames).
-        Only draw if self.css('showGrid') is True."""
-        if self.css('showGrid'):
-
-            p = pointOffset(self.point, origin)
-            p = self._applyOrigin(p)    
-            p = self._applyScale(p)    
-            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
-            self._setShadow()
-
-            sMissingElementFill = self.css('missingElementFill', NO_COLOR)
-            if sMissingElementFill is not NO_COLOR:
-                setFillColor(sMissingElementFill)
-                setStrokeColor(None)
-                rect(px, py, self.w, self.h)
-            # Draw crossed rectangle.
-            setFillColor(None)
-            setStrokeColor(0, 0.5)
-            rect(px, py, self.w, self.h)
-            newPath()
-            moveTo((px, py))
-            lineTo((px + self.w, py + self.h))
-            moveTo((px + self.w, py))
-            lineTo((px, py + self.h))
-            drawPath()
-
-            self._resetShadow()
-            self._restoreScale()
-
-    def getElementsBox(self):
-        u"""Answer the vacuum bounding box around all child elements."""
-        x1 = y1 = x2 = y2 = None
-        for e in self.elements:
-            if x1 is None or x1 > e.left:
-                x1 = e.left
-            if e.originTop:
-                if y1 is None or y1 < e.top:
-                    y1 = e.top
-                if y2 is None or y1 > e.bottom:
-                    y2 = e.bottom
-            else:
-                if y1 is None or y1 > e.top:
-                    y1 = e.top
-                if y2 is None or y2 < e.bottom:
-                    y2 = e.bottom
-
-        return x1, y1, x2 - x1, y2 - y1
+        self._restoreScale()
 
     #   V A L I D A T I O N
 
@@ -1039,20 +1223,24 @@ class Element(object):
         u"""Evaluate the content of element e with the total sum of conditions."""
         if score is None:
             score = Score()
-        for condition in self.css('conditions', []): # Skip in case there are no conditions in the style.
-            condition.evaluate(self, score)
-        for e in self.elements: # Also works if element is not a container.
-            e.evaluate(score)
+        if self.conditions: # Can be None or empty
+            for condition in self.conditions: # Skip in case there are no conditions in the style.
+             condition.evaluate(self, score)
+        for e in self.elements: # Also works if showing element is not a container.
+            if e.show:
+                e.evaluate(score)
         return score
          
     def solve(self, score=None):
         u"""Evaluate the content of element e with the total sum of conditions."""
         if score is None:
             score = Score()
-        for condition in self.css('conditions', []): # Skip in case there are no conditions in the style.
-            condition.solve(self, score)
-        for e in self.elements: # Also works if element is not a container.
-            e.solve(score)
+        if self.conditions: # Can be None or empty
+            for condition in self.conditions: # Skip in case there are no conditions in the style.
+                condition.solve(self, score)
+        for e in self.elements: # Also works if showing element is not a container.
+            if e.show:
+                e.solve(score)
         return score
          
     #   C O N D I T I O N S
@@ -1290,7 +1478,7 @@ class Element(object):
             self.bottom = 0
         return True
 
-    def bottom2top(self):
+    def bottom2Top(self):
         if self.originTop:
             self.bottom = self.parent.pt 
         else:
@@ -1350,7 +1538,6 @@ class Element(object):
             self.middle = self.parent.h
         return True       
 
-    
     def middle2Middle(self): # Vertical center, following CSS naming.
         pt = self.parent.pt # Get parent padding top
         pb = self.parent.pb
@@ -1368,9 +1555,7 @@ class Element(object):
         if self.originTop:
             self.h += self.parent.h - self.parent.pb - self.bottom
         else:
-            top = self.top
-            self.bottom = self.parent.pb
-            self.h += top - self.top
+            self.h = self.top - self.parent.pb
         return True
 
     def fitBottomSide(self):

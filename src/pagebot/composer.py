@@ -39,20 +39,23 @@ class Composer(object):
         assert tb is not None # Make sure, otherwise there is a template error.
         fs = None
         # Keeping overflow of text boxes here while iterating.
-        for element in galley.elements:
-            if not element.isText: # This is a non-text element. Try to find placement.
-                self.tryPlacement(page, tb, element)
+        for e in galley.elements:
+            if not e.isText: # This is a non-text element. Try to find placement.
+                page.appendElement(e)
+                e.x = -200
+                e.y = 0
+                #self.tryPlacement(page, tb, element)
                 continue
             if not fs:
-                fs = element.fs
+                fs = e.fs
             else:
-                fs += element.fs
+                fs += e.fs
             # As long as where is text, try to fit into the boxes on the page.
             # Otherwise go to the next page, following the flow, creating new pages if necessary.
             for n in range(1000): # Safety here, "while fs:" seems to be a dangerous method.
                 if fs is None:
                     break
-                overflow = tb.append(fs)
+                overflow = tb.appendString(fs)
                 if fs == overflow:
                     print(u'NOT ABLE TO PLACE %s' % overflow)
                     break

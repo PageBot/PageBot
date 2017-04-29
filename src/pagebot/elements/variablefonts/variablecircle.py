@@ -39,7 +39,6 @@ class VariableCircle(Element):
     def __init__(self, font, point=None, parent=None, style=None, eId=None, s=None, **kwargs):
         Element.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
         # Initialize the default Element behavior tags.
-        self.isContainer = False
         self.isText = False
         self.isFlow = False
         self.font = font

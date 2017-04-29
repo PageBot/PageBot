@@ -10,19 +10,10 @@
 #
 #     galley.py
 #
-"""
-import os
-import copy
-
-from drawBot import FormattedString, textSize, stroke, strokeWidth, fill, font, fontSize, text, \
-    newPath, drawPath, moveTo, lineTo, line, rect, oval, save, scale, image, textOverflow, \
-    textBox, hyphenation, restore, imageSize, shadow, BezierPath, clipPath, drawPath
-from pagebot import getFormattedString, setFillColor, setStrokeColor, getMarker
-"""
 from pagebot.style import NO_COLOR, makeStyle
-from pagebot.elements.container import Container
+from pagebot.elements.element import Element
 
-class Galley(Container):
+class Galley(Element):
     u"""A Galley is sticky sequential flow of elements, where the parts can have
     different widths (like headlines, images and tables) or responsive width, such as images
     and formatted text volumes. Size is calculated dynamically, since one of the enclosed
@@ -35,21 +26,12 @@ class Galley(Container):
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
 
-    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, elements=None, w=None, h=None, **kwargs):
-        u"""Allow self.w and self.h to be None or 0, as the paste board roll can have any size.
-        If undefined, the size is calculated from the size contained elements."""
-        if style is None:
-            style = dict(fill=NO_COLOR, stroke=None, w=w, h=h, fontSize=14, leading=14)
-        Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, elements=elements, **kwargs)
-        self._footnotes = []
-
-    def __repr__(self):
-        t = '[' + self.__class__.__name__
-        if self.eId is not None:
-            t += ' ' + self.eId
-        for e in self.elements:
-            t += ' '+e.__class__.__name__
-        return t + ']'
+    def appendString(self, fs):
+        u"""Add the string to the laat text box. Create a new textbox if not found."""
+        e = self.getLastTextBox()
+        if e is None:
+            e = self.getTextBox()
+        e.appendString(fs)
 
     def getMinSize(self):
         u"""Cumulation of the maximum minSize of all enclosed elements."""
@@ -105,26 +87,32 @@ class Galley(Container):
         if lastTextBox is None or lastTextBox != self.getLastElement():
             if style is None: # No last textbox to copy from and no style supplied. Create something here.
                 style = dict(w=200, h=0) # Arbitrary width and height, in case not
-            self.append(self.TEXTBOX_CLASS('', point=(0, 0), parent=self, style=style))  # Create a new TextBox with style width and empty height.
+            self.appendElement(self.TEXTBOX_CLASS('', point=(0, 0), parent=self, style=style))  # Create a new TextBox with style width and empty height.
         return self.getLastElement() # Which only can be a textBox now.
 
     def newRuler(self, style):
         u"""Add a new Ruler instance, depending on style."""
         ruler = self.RULER_CLASS(style=style)
-        self.append(ruler)
+        self.appendElement(ruler)
 
-    def draw(self, origin):
+    def draw(self, origin, view):
         u"""Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the
         containing page."""
-        ox, oy = pointOffset(self.point, origin)
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
         fill(1, 1, 0)
         gw, gh = self.getSize()
-        rect(ox, oy, gw, gh)
+        rect(px, py, gw, gh)
         gy = y
         for element in self.elements:
             # @@@ Find space and do more composition
-            element.draw((ox, oy))
+            element.draw((px, py), view)
             gy += element.h
+
+        self._restoreScale()
+        view.drawElementMetaInfo(self, origin)
 

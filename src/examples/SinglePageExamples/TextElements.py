@@ -15,7 +15,7 @@
 import pagebot # Import to know the path of non-Python resources.
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A3, A2, NO_COLOR
+from pagebot.style import getRootStyle, LEFT, A4, A3, A2, NO_COLOR
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
 # Page and Template instances are holding all elements of a page together.
@@ -82,7 +82,7 @@ RS = getRootStyle(
     ml = ML, # Margin left between left side of the page and grid, centered.
     mt = MT, # Margin top between page top and grid.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing. Copy them in the root style for elements to check on.
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
