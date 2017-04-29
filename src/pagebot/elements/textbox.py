@@ -69,6 +69,7 @@ class TextBox(Element):
 
     def getBaseLines(self):
         u"""Answer an ordered list of all baseline position, starting at the top."""
+        origins = []
         box = 0, 0, self.w, self.h
         attrString = self.fs.getNSObject()
         setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
@@ -76,8 +77,24 @@ class TextBox(Element):
         Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
         box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
         ctLines = CoreText.CTFrameGetLines(box)
-        origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+        for ctLine in ctLines:
+            print ctLine
+        #origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
         return [o.y for o in origins]
+
+    def getTextLines(self):
+        u"""Answer an ordered list of all baseline position, starting at the top."""
+        box = 0, 0, self.w, self.h
+        attrString = self.fs.getNSObject()
+        setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
+        path = Quartz.CGPathCreateMutable()
+        Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
+        box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
+        textLines = []
+        for ctLine in CoreText.CTFrameGetLines(box)
+            textLine.append(TextLine(ctLine))
+        #origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+        return textLines
 
     def getTextSize(self, fs=None, w=None):
         """Figure out what the width/height of the text self.fs is, with or given width or
