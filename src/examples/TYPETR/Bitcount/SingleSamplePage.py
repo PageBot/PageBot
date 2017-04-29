@@ -13,7 +13,7 @@
 #
 import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
-from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
+from pagebot.style import getRootStyle, LEFT, NO_COLOR
 from pagebot.elements.document import Document
 from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
@@ -66,7 +66,7 @@ RS = getRootStyle(
     cw = 8*U, 
     ch = 5*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,

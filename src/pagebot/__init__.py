@@ -10,6 +10,8 @@
 #
 #     pagebot/__init__.py
 #
+from __future__ import division
+
 import CoreText
 import AppKit
 import Quartz
@@ -40,105 +42,105 @@ def getGlobals(scriptId):
     return pbglobals.globals[scriptId]
 
 def x2cx(x, e):
-    gutterH = e.css('gw', 0)
-    cw = e.css('cw', 0)
-    if cw + gutterH: # Check on division by 0
-        return (x - e.css('pl', 0)) / (cw + gutterH)
+    gutterW = e.gw
+    colW = e.css('colW', 0)
+    if colW + gutterW: # Check on division by 0
+        return (x - e.parent.pl) / (colW + gutterW)
     return 0
 
 def cx2x(cx, e):
     if cx is None:
         x = 0
     else:
-        x = e.css('pl', 0) + cx * (e.css('cw', 0) + e.css('gw', 0))
+        x = e.parent.pl + cx * (e.css('colW', 0) + e.gw)
     return x
   
 def y2cy(y, e):
     u"""Transform from y value to column y value, using the e.css for colunn values."""
-    gutterH = e.css('gh', 0)
-    ch = e.css('ch', 0)
+    gutterH = e.gh
+    colH = e.css('colH', 0)
     cy = 0
-    if ch + gutterH: # Check on division by 0
+    if colH + gutterH: # Check on division by 0
         if e.originTop:
-            cy = (y - e.css('pt', 0)) / (ch + gutterH)
+            paddingY = e.pt
         else:
-            cy = (y - e.css('pb', 0)) / (ch + gutterH)
+            paddingY = e.pb
+        cy = (y - paddingY) / (colH + gutterH)
     return cy 
 
 def cy2y(cy, e):
     u"""Transform from column y value to y value, using the e.css for colunn values."""
     if cy is None:
         y = 0
-    elif e.originTop: # Padding top
-        y = e.css('pt', 0) + cy * (e.css('ch', 0) + e.css('gh', 0))
-    else: # Padding bottom
-        y = e.css('pb', 0) + cy * (e.css('ch', 0) + e.css('gh', 0))
+    else:
+        if e.originTop:
+            paddingY = e.pt
+        else:
+            paddingY = e.pb
+        y = paddingY + cy * (e.css('colH', 0) + e.gh)
     return y
 
-def z2cz(y, e):
+def z2cz(z, e):
     u"""Transform from z value to column z value, using the e.css for colunn values."""
-    gutterD = e.css('gd', 0)
-    cd = e.css('cd', 0)
+    gutterD = e.gd
+    colD = e.css('colD', 0)
     cz = 0
-    if cd + gutterD: # Check on division by 0
-        if e.originTop: # Padding top
-            cy = (y - e.css('pt', 0)) / (ch + gutterD)
-        else: # Padding bottom
-            cy = (y - e.css('pb', 0)) / (ch + gutterD)
-    return cy 
+    if colD + gutterD: # Check on division by 0
+        cz = (z - e.parent.pzf) / (colD + gutterD)
+    return cz 
 
 def cz2z(cz, e):
     if cz is None:
         z = 0
     else:
-        z = cz * (e.css('cd', 0) + e.css('gd', 0))
+        z = e.parent.pzf + cz * (e.css('colD', 0) + e.gd)
     return z
 
 # Size
 
 def w2cw(w, e):
-    gutterW = e.css('gw', 0)
-    cw = e.css('cw', 0)
-    if cw + gutterW:
-        return (w + gutterW) / (cw + gutterW)
+    gutterW = e.gw
+    colW = e.css('colW', 0)
+    if colW + gutterW: # Test for division by 0
+        return (w + gutterW) / (colW + gutterW)
     return 0 # Undefined, not info about column width and gutter
 
 def cw2w(cw, e):
     if cw is None:
         w = 0
     else:
-        gutterW = e.css('gw', 0)
-        w = cw * (e.css('cw', 0) + gutterW) - gutterW  # Overwrite style from here.
+        gutterW = e.gw
+        w = cw * (e.css('colW', 0) + gutterW) - gutterW  # Overwrite style from here.
     return w
 
 def h2ch(h, e):
-    gutterH = e.css('gh', 0)
-    ch = e.css('ch', 0)
-    if ch + gutterH:
-        return (h + gutterH) / (ch + gutterH)
+    gutterH = e.gh
+    colH = e.css('colH', 0)
+    if colH + gutterH: # Test for division by 0
+        return (h + gutterH) / (colH + gutterH)
     return 0 # Undefined, no info about column height and gutter
 
 def ch2h(ch, e):
     if ch is None:
         h = 0
     else:
-        gutterH = e.css('gh', 0)
-        h = ch * (e.css('ch', 0) + gutterH) - gutterH  # Overwrite style from here.
+        gutterH = e.gh
+        h = ch * (e.css('colH', 0) + gutterH) - gutterH  # Overwrite style from here.
     return h
 
 def d2cd(d, e):
-    gutterD = e.css('gd', 0)
-    cd = e.css('cd', 0)
-    if cd + gutterD:
-        return (d + gutterD) / (cd + gutterD)
+    gutterD = e.gd
+    colD = e.css('colD', 0)
+    if colD + gutterD: # Test for division by 0
+        return (d + gutterD) / (colD + gutterD)
     return 0 # Undefined, no info about column height and gutter
 
 def cd2d(cd, e):
     if cd is None:
         d = 0
     else:
-        gutterHD = e.css('gd', 0)
-        d = cd * (e.css('cd', 0) + gutterD) - gutterD  # Overwrite style from here.
+        gutterD = e.gd
+        d = cd * (e.css('colD', 0) + gutterD) - gutterD  # Overwrite style from here.
     return d
 
 def getRootPath():
@@ -209,12 +211,41 @@ def setStrokeColor(c, w=1, fs=None, cmyk=False):
     if w is not None:
         strokeWidth(w)
 
-def baseline2y(yIndex, style):
+def baseline2y(yIndex, e):
     u"""Convert columns index and line index to page position. Answered (x, y) is point position based on 
     marginTop + yIndex*baseLine."""
-    padT = style['pt']
-    baseline = style['baseline']
+    padT = e.pt
+    baseline = e.css('baseline')
     return padT + cy * baseline
+
+#   E L E M E N T
+
+def deepFind(elements, name=None, pattern=None, result=None):
+    u"""Perform a dynamic deep find the for all elements with the name. Don't include self.
+    Either name or pattern should be defined."""
+    assert name or pattern
+    if result is None:
+        result = []
+    for e in elements:
+        if pattern is not None and pattern in e.name: # Simple pattern match
+            result.append(e)
+        elif name is not None and name == e.name:
+            result.append(e)
+        deepFind(e.elements, name, pattern, result)
+    return result
+
+def find(elements, name=None, pattern=None, result=None):
+    u"""Perform a dynamic find the named element(s) in self.elements. Don't include self.
+    Either name or pattern should be defined."""
+    result = []
+    for e in elements:
+        if pattern is not None and pattern in e.name: # Simple pattern match
+            result.append(e)
+        elif name is not None and name == e.name:
+            result.append(e)
+    return result
+
+#   M A R K E R
 
 MARKER_PATTERN = '==%s--%s=='
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\-\-([^=]*)\=\=')

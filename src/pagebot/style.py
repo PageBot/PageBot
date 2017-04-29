@@ -10,6 +10,7 @@
 #
 #     style.py
 #
+import sys
 from drawBot import sizes
 import copy
 
@@ -18,7 +19,6 @@ NO_COLOR = -1
 # Basic layout measures
 U = 7
 BASELINE_GRID = 2*U
-DOC_OVERSIZE = 72 # Default oversize margin of a document to show crop-marks and registration crosses.
 
 INCH = 72
 MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
@@ -86,27 +86,27 @@ IntPostcardMin = 140*MM, 90*MM
 USPostcardMax = 6*INCH, 4.25*INCH
 USPostcardMin = 5*INCH, 3.5*INCH
 
-# Display option
-SHOW_GRID = True
-SHOW_GRID_COLUMNS = True
-SHOW_BASELINE_GRID = True
-SHOW_ELEMENT_BOX = False
-SHOW_ELEMENT_INFO = False
-SHOW_ELEMENT_ORIGIN = False
-SHOW_FLOW_CONNECTIONS = True
-SHOW_CROPMARKS = True
-SHOW_PAGE_FRAME = True
-SHOW_PAGE_INFO = True
-SHOW_IMAGE_REFERENCE = True # Show [image #] in text, if the images is inside a <p>
+# Default initialize point as long as elements don't have a defined position.
+# Actual location depends on value of e.originTop flag.
+ORIGIN_POINT = (0, 0, 0) 
+# Min/max values for element sizes. Make sure that elements dimensions never get 0
+XXXL = sys.maxint
+MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
+DEFAULT_WIDTH = DEFAULT_HEIGHT = DEAULT_DEPTH = 100
+MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL
 
-LEFT_ALIGN = 'left'
-RIGHT_ALIGN = 'right'
+LEFT = 'left'
+RIGHT = 'right'
 CENTER = 'center'
+MIDDLE = 'middle'
 JUSTIFIED = 'justified'
-TOP_ALIGN = 'top'
-BOTTOM_ALIGN = 'bottom'
-FRONT_ALIGN = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
-BACK_ALIGH = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
+TOP = 'top'
+BOTTOM = 'bottom'
+FRONT = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
+BACK = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
+XALIGNS = set((None, LEFT, RIGHT, CENTER, JUSTIFIED))
+YALIGNS = set((None, TOP, BOTTOM, MIDDLE))
+ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 
 DEFAULT_FONT = 'Verdana'
 DEFAULT_FALLBACK_FONT = 'LucidaGrande'
@@ -129,10 +129,7 @@ def makeStyle(style=None, **kwargs):
             style[name] = v  # Overwrite value by any arguments, if defined.
     return style
 
-def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_COLUMNS, showElementBox=SHOW_ELEMENT_BOX,
-        showElementInfo=SHOW_ELEMENT_INFO, showElementOrigin=SHOW_ELEMENT_ORIGIN, showBaselineGrid=SHOW_BASELINE_GRID, 
-        showFlowConnection=SHOW_FLOW_CONNECTIONS, showCropMarks=SHOW_CROPMARKS, showPageFrame=SHOW_PAGE_FRAME, 
-        showPageInfo=SHOW_PAGE_INFO, **kwargs):
+def getRootStyle(u=U, w=W, h=H, **kwargs):
     u"""Answer the main root style tha contains all default style attributes of PageBot.
     To be overwritten when needed by calling applications.
     CAPITALIZED attribute names are for reference only. Not used directly from styles.
@@ -141,7 +138,7 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
     U-based values must be recalculated for proper measures.
     """
     # Some calculations to show dependencies.
-    baselineGrid = 2*u
+    baselineGrid = BASELINE_GRID
     # Indent of lists. Needs to be the same as in tabs, to position rightly after bullets
     listIndent = 0.8*u
     # Default the gutter is equal to the page unit.
@@ -151,18 +148,12 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
 
         name = 'root', # Name of the style, key in document.getRootstyle( )
         tag = None, # Optional marker to match the style with the running tag.
+        show = True, # If set to False, then the element does not evaluate in the self.elements loop.
         # Basic page/template measures
         u = u, # Base unit for Dutch/Swiss typography :)
         w = w, # Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
-
-        # Document size, if different from the page size. Otherwise keep None to make document.w answer rootStyle['w']
-        # If the document size is different from the page size (and if showCropMarks and/or showPageFrame is True)
-        # crop-marks and registration crosses are shown.
-        docW = None,
-        docH = None,
-        docD = None, # Optional depth of the document, in case using 3D positioned elements.
 
         frameDuration = None, # In case saving as .mov or .gif, this value defines 1/frames_per_second
         # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
@@ -172,11 +163,11 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # Note that the direcion of display is always upwards. This means that the position of text and elements
         # goes downward from the top, they are not flipped vertical. It is up to the caller to make sure
         # there is enough space for elements to show themselves on top of a given position.
-        # originTop often goes with vAlign = TOP_ALIGN.
+        # originTop often goes with vAlign = TOP.
         originTop = True,
-        align = LEFT_ALIGN, # Default alignment, one of ('left', 'justified', 'center'. 'right', 'anchor')
-        yAlign = TOP_ALIGN, # Default alignment for elements like image, that float in their designated space.
-        zAlign = FRONT_ALIGN, # Default alignment in z-axis is in front, closest to the viewer.
+        align = LEFT, # Default alignment, one of ('left', 'justified', 'center'. 'right', 'anchor')
+        yAlign = TOP, # Default alignment for elements like image, that float in their designated space.
+        zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
 
         # Although it is common to talk about the "margins" on a page, as the space between elements
         # and the side of the page, this naming is not conform the current CSS definition.
@@ -213,29 +204,28 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # Column width for column2point and column2rect calculations.
         # e.g. for micro-layouts in tables.
         # 11*gutter is one of the best values, as the smallest micro-column is 2 instead  of scaling back to 1.
-        cw = 11*gutter,
-        ch = u*baselineGrid - u, # Approximately square with cw + gutter.
-        cd = 0, # Optional columnt "depth"
+        # Note that element.cw is calculating property. Different from element.css('colW'), which is the column size.
+        colW = 11*gutter, # 77
+        colH = 6*baselineGrid - u, # Approximately square with cw + gutter: 77
+        colD = 0, # Optional columnt "depth"
 
         # Flags to indicate that width is the vacuumed form around content (text or elements)
         vacuumW = False, 
         vacuumH = False, 
-        vacuumD = False, # Optional vacuuming in z-direction.
+        vacuumD = False, # Optional vacuuming in z-direction: self.back - self.front
 
         # Minimum size
-        minW = 5*gutter, # Default is to make minimum width equal to 1/2 column, om 5+1+5 = 11 grid.
-        minH = baselineGrid, # Default is to make minimum height equal to 1 baseline.
-        minD = 0, # Optional minimum depth of the document
-        maxW = None, # None if there is no maximum
-        maxH = None,
-        maxD = 0, # Optional maximum depth of the document
+        minW = 0, # Default minimal width of elements.
+        minH = 0, # Default minimal height of elements.
+        minD = 0, # Default minimal depth of elements.
+        maxW = XXXL, # No maximum limits, sys.maxint
+        maxH = XXXL,
+        maxD = XXXL,
 
         # Overall content scaling.
         scaleX = 1, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
         scaleY = 1, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
         scaleZ = 1, # Optional scaling in z-direction, depth.
-        # Image stuff
-        showImageReference = SHOW_IMAGE_REFERENCE, # If true, show [image #] if inside <p> tag.
 
         # Shadow, gradient, etc.
         shadowOffset = None, # Point tuple, e.g. (4, -6). If None, shadow drawing is ignored. 
@@ -251,50 +241,6 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         cmykRadialGradient_startRadius = 0,
         cmykRadialGradient_endRadius = 300,
 
-        # Grid stuff
-        showGrid = showGrid, # Flag to show the grid in output.
-        showGridColumns = showGridColumns, # Show the colums as filled (cw, ch) squares.
-        gridFill = (200/255.0, 230/255.0, 245/255.0, 0.9), # Fill color for (cw, ch) squares.
-        gridStroke = (0.8, 0.8, 0.8), # Stroke of grid lines in part of a template.
-        gridStrokeWidth = 0.5, # Line thickness of the grid.
-        
-        # Baseline grid
-        showBaselineGrid = showBaselineGrid, # Flag to show baseline grid in output
-        baselineGridStroke = (1, 0, 0), # Stroke clor of baselines grid.
-        
-        # Draw connection arrows between the flow boxes on a page.
-        showFlowConnections = showFlowConnection, # Flag to draw arrows between the flows for debugging.
-        flowConnectionStroke1 = (0.2, 0.5, 0.1, 1), # Stroke color of flow lines inside column,
-        flowConnectionStroke2 = (1, 0, 0, 1), # Stroke color of flow lines between columns.
-        flowConnectionStrokeWidth = 1.5, # Line width of curved flow lines.
-        flowMarkerFill = (0.8, 0.8, 0.8, 0.5), # Fill of flow curve marker circle.
-        flowMarkerSize = 8, # Size of flow marker circle.
-        flowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
-        
-        # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
-        showCropMarks = showCropMarks,
-        showPageInfo = showPageInfo and showCropMarks, # If True, draw page info outside the frame.
-        bleed = 8, # Bleeding images of page edge and distance of crop-marks from page frame.
-        cropMarkSize = 40, # Length of crop marks, including bleed distance. 
-        cropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
-        
-        # Showing of boxes
-        showPageFrame = showPageFrame, # Draw page frame if document (w, h) is larger than page (w, h)
-        showElementBox = showElementBox, # Show element boxes, e.g. if missing or empty.
-
-        # Element info box
-        showElementInfo = showElementInfo, # If True, elements show their info for debugging position, size and alignments.
-        showElementOrigin = showElementOrigin, # If True, show position of origin relative to an element.
-        infoFont = DEFAULT_FONT, # Font of text in element infoBox.
-        infoFontSize = 4, # Font size of text in element info box.
-        infoLeading = 5, # Leading of text in element info box.
-        infoFill = (0.8, 0.8, 0.8, 0.9), # Color of text in element info box.
-        infoTextFill = 0.1, # Color of text in element info box.
-        infoOriginMarkerSize = 4, # Radius of the info origin crosshair marker.
-
-        # Generic element stuff
-        missingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
-
         # Typographic defaults
         font = DEFAULT_FONT, # Default is to avoid existing font and fontSize in the graphic state.
         fallbackFont = DEFAULT_FALLBACK_FONT,
@@ -309,7 +255,7 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # Set tabs,tuples of (float, alignment) Alignment can be “left”, “center”, “right”
         # or any other character. If a character is provided the alignment will be right and
         # centered on the specified character.
-        listTabs = [(listIndent, LEFT_ALIGN)], # Default indent for bullet lists. Copy onto style.tabs for usage.
+        listTabs = [(listIndent, LEFT)], # Default indent for bullet lists. Copy onto style.tabs for usage.
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
         tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...]
@@ -368,10 +314,6 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         # can define what is “next page”, when referred to by a flow.
         firstPageId = 1, # Needs to be a number.
 
-        # Conditions, evaluation, actions
-        # Each style can optionally hold a list of conditions that define the “quality” of an element.
-        # This can reflect on the layout, the relation to other elements and to the way the content is handled.
-        conditions = [],
         # Flag that indicates if errors and warning should be written to the element.report list.
         verbose = True,
 
@@ -390,13 +332,50 @@ def getRootStyle(u=U, w=W, h=H, showGrid=SHOW_GRID, showGridColumns=SHOW_GRID_CO
         textCmykStroke = NO_COLOR, # Flag to ignore, None is valid value for color.
         textStrokeWidth = None,
 
-        # Constants for standardized usage of alignment in FormattedString
-        LEFT_ALIGN = LEFT_ALIGN,
-        RIGHT_ALIGN = RIGHT_ALIGN,
-        JUSTIFIED = JUSTIFIED,
-        CENTER = CENTER,
-        TOP_ALIGN = TOP_ALIGN,
-        BOTTOM_ALIGN = BOTTOM_ALIGN,
+        # V I E W
+        # These parameters are used by viewers, should not part of direct elements.css( ) queries
+        # as view may locally change these values.
+
+        # Grid stuff
+        viewGridFill = (200/255.0, 230/255.0, 245/255.0, 0.9), # Fill color for (cw, ch) squares.
+        viewGridStroke = (0.8, 0.8, 0.8), # Stroke of grid lines in part of a template.
+        viewGridStrokeWidth = 0.5, # Line thickness of the grid.
+        
+        # Baseline grid
+        viewBaselineGridStroke = (1, 0, 0), # Stroke clor of baselines grid.
+        
+        # Draw connection arrows between the flow boxes on a page.
+        viewFlowConnectionStroke1 = (0.2, 0.5, 0.1, 1), # Stroke color of flow lines inside column,
+        viewFlowConnectionStroke2 = (1, 0, 0, 1), # Stroke color of flow lines between columns.
+        viewFlowConnectionStrokeWidth = 1.5, # Line width of curved flow lines.
+        viewFlowMarkerFill = (0.8, 0.8, 0.8, 0.5), # Fill of flow curve marker circle.
+        viewFlowMarkerSize = 8, # Size of flow marker circle.
+        viewFlowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
+        
+        # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
+        bleed = 8, # Bleeding images of page edge and distance of crop-marks from page frame.
+        viewCropMarkSize = 40, # Length of crop marks, including bleed distance. 
+        viewCropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
+ 
+        # Style things
+        viewFrameFill = None,
+        viewFrameStroke = (0, 0, 1), # Ouline page frames
+        viewFrameStrokeWidth = 0.5,
+
+        viewPageNameFont = DEFAULT_FONT, # Name of the page outside frame.
+        viewPageNameFontSize = 6,
+         
+        # Element info box
+        viewInfoFont = DEFAULT_FONT, # Font of text in element infoBox.
+        viewInfoFontSize = 4, # Font size of text in element info box.
+        viewInfoLeading = 5, # Leading of text in element info box.
+        viewInfoFill = (0.8, 0.8, 0.8, 0.9), # Color of text in element info box.
+        viewInfoTextFill = 0.1, # Color of text in element info box.
+        viewInfoOriginMarkerSize = 4, # Radius of the info origin crosshair marker.
+
+        # Generic element stuff
+        viewMissingElementFill = (0.7, 0.7, 0.7, 0.8), # Background color of missing element rectangles.
+
 
     )
     # Assume all the other arguments overwriting the default values of the root style,

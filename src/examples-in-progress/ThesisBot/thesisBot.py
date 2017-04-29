@@ -13,12 +13,14 @@
 #
 import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
-from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
+from pagebot.style import getRootStyle, LEFT, NO_COLOR, A4, TOP, BOTTOM
 from pagebot.elements.document import Document
 from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley
+from pagebot.toolbox.transformer import obj2StyleIds
+from pagebot.conditions import *
 
 DEBUG = False
 
@@ -36,12 +38,13 @@ else:
 U = 7
 baselineGrid = 2*U
 listIndent = 1.5*U
+W, H = A4
 
 RS = getRootStyle(
     u = U, # Page base unit
     # Basic layout measures altering the default rooT STYLE.
-    w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
-    h = 842, # 842 = A4 height. Other example: page height 11", international generic fit.
+    w = W, # Om root level the "w" is the page width 210mm, international generic fit.
+    h = H, # 842 = A4 height. Other example: page height 11", international generic fit.
     ml = 8*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
     gw = 2*U, # Generic gutter, equal for width and height
@@ -52,12 +55,14 @@ RS = getRootStyle(
     cw = 8*U, 
     ch = 5*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
     showBaselineGrid = SHOW_BASELINE_GRID,
     showFlowConnections = SHOW_FLOW_CONNECTIONS,
+    showElementInfo = True,
+    showElementOrigin = True,
     BOX_COLOR = BOX_COLOR,
     # Text measures
     leading = 14,
@@ -117,7 +122,8 @@ else:
 
 RS['font'] = BOOK
 
-# -----------------------------------------------------------------         
+# ----------------------------------------------------------------- 
+        
 def makeDocument(rs):
     u"""Demo page composer."""
 
@@ -135,45 +141,47 @@ def makeDocument(rs):
     
     # Template for Cover page
     templateCover = Template(style=rs) # Create new template
-    templateCover.rect((0, 0), w=rs['w'], h=rs['h'], fill=(1, 0, 0))
+    e = templateCover.rect(conditions=[FitSides()], fill=(1, 0, 0), eId='Red rectangle', yAlign=TOP)
+    e.solve()
+    
     # Placement of first <h1> in the Galley, holding the Thesis title.
-    templateCover.cTextBox('', 1, 1, 6, 5, style=rs, eId=coverTitleId, fill=BOX_COLOR)
+    templateCover.textBox('', conditions=[FitWidth(), Top2Top()], h=H/3, eId=coverTitleId, fill=BOX_COLOR)
     # Placement of first <h4> in the Galley, holding the author name(s)
-    templateCover.cTextBox('', 1, 8, 6, 5, style=rs, eId=coverAuthorId, fill=BOX_COLOR)
+    templateCover.textBox('', conditions=[FitWidth(), Bottom2Bottom()], h=H/3, eId=coverAuthorId, fill=BOX_COLOR)
     
     # Template for Table of Content
     templateToc = Template(style=rs) # Create template for Table of Content
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    templateToc.grid(rs) 
+    templateToc.grid(style=rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateToc.baselineGrid(style=rs)
     templateToc.cTextBox('\nTable of Content', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32)
     templateToc.cTextBox('', 3, 1, 4, 8, style=rs, eId=tocId, fill=BOX_COLOR)
     
     # Template for literature reference index.
-    templateLiteratureIndex = Template(rs) # Create template for Table of Content
+    templateLiteratureIndex = Template(style=rs) # Create template for Table of Content
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    templateLiteratureIndex.grid(rs) 
+    templateLiteratureIndex.grid(style=rs) 
     # Show baseline grid if rs.showBaselineGrid is True
-    templateLiteratureIndex.baselineGrid(rs)
+    templateLiteratureIndex.baselineGrid(style=rs)
     templateLiteratureIndex.cTextBox('\nLiterature index', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32)
-    templateLiteratureIndex.cTextBox('', 3, 1, 4, 8, style=rs, eId=literatureIndexId, fill=BOX_COLOR)
+    templateLiteratureIndex.cTextBox('', 3, 1, 4, 8, style=rs, eId=literatureIndexId, fill=BOX_COLOR, yAlign=BOTTOM)
     
     # Template for image reference index.
-    templateImageIndex = Template(rs) # Create template for Table of Content
+    templateImageIndex = Template(style=rs) # Create template for Table of Content
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    templateImageIndex.grid(rs) 
+    templateImageIndex.grid(style=rs) 
     # Show baseline grid if rs.showBaselineGrid is True
-    templateImageIndex.baselineGrid(rs)
+    templateImageIndex.baselineGrid(style=rs)
     templateImageIndex.cTextBox('\nImage index', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32)
     templateImageIndex.cTextBox('', 3, 1, 4, 8, style=rs, eId=imageIndexId, fill=BOX_COLOR)
     
     # Template 1
-    template1 = Template(rs) # Create template of main size. Front page only.
+    template1 = Template(style=rs) # Create template of main size. Front page only.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    template1.grid(rs) 
+    template1.grid(style=rs) 
     # Show baseline grid if rs.showBaselineGrid is True
-    template1.baselineGrid(rs)
+    template1.baselineGrid(style=rs)
     # Create empty image place holders. To be filled by running content on the page.
     # In this templates the images fill the left column if there is a reference on the page.
     template1.cContainer(0, 0, 3, 3, style=rs)  # Empty image element, cx, cy, cw, ch
@@ -203,7 +211,8 @@ def makeDocument(rs):
     # Note that some values are defined here for clarity, even if their default root values
     # are the same.             
     doc.newStyle(name='chapter', font=BOOK)    
-    doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
+    doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD, fill=0.5)
+    doc.newStyle(name='chapter title', fontSize=3*fontSize, font=BOLD, fill=1)
     doc.newStyle(name='subtitle', fontSize=2.6*fontSize, font=BOOK_ITALIC)
     doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
     doc.newStyle(name='h1', fontSize=7*fontSize, font=SEMIBOLD_CONDENSED, fill=(1, 0, 0), 
@@ -222,7 +231,7 @@ def makeDocument(rs):
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, 
         prefix='', postfix='\n', rTracking=P_TRACK, leading=14, 
-        rLeading=0, align=LEFT_ALIGN, hyphenation=True, indent=0,
+        rLeading=0, align=LEFT, hyphenation=True, indent=0,
         firstLineIndent=2*U, 
         firstParagraphIndent=0) # TODO: Make firstParagraphIndent to work.
     # Inline tags need to refined prefix and postfix as non-\n, otherwise they
@@ -243,12 +252,12 @@ def makeDocument(rs):
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='footnote', fill=0, fontSize=0.9*fontSize, font=BOOK,
         tracking=P_TRACK,
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
         
     # Image & captions
@@ -270,22 +279,26 @@ def makeDocument(rs):
     # Create filtered Galley for cover page.  
     # See https://docs.python.org/2/library/xml.etree.elementtree.html#xpath-support
     # for XPath filter syntax.  
+    
+    # Typeset in the Galley, using doc (or another e.css() ) as style tree.
     gTitle = Galley() 
     t = Typesetter(gTitle)
-    t.typesetFile(getFormattedString('', None, style=dict(textFill=1, fontSize=80, font=MEDIUM,
-        leading=84)), 
-        xPath='h1')
+    t.typesetString('HALLO', doc)
+    #t.typesetFile(MD_PATH, doc, xPath='h1')
 
     gAuthor = Galley() 
     t = Typesetter(gAuthor)
-    t.typesetFile(MD_PATH, rootStyle=dict(textFill=1, fontSize=24, font=MEDIUM), 
-        xPath='h4') # First one is the author
+    t.typesetString('AUTHOR', doc)
+    #t.typesetFile(MD_PATH, doc, xPath='h4') # First one is the author
 
     coverPage = doc[1]
     coverPage.setTemplate(templateCover)
+    print coverPage.elements
+    """
     c = Composer(doc)
     c.compose(gTitle, coverPage, coverTitleId)
     c.compose(gAuthor, coverPage, coverAuthorId)
+    """
     
     # Change template of Table of Content page
     tocPage = doc[2]
@@ -295,8 +308,8 @@ def makeDocument(rs):
 
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
-    t = Typesetter(doc, g)
-    t.typesetFile(MD_PATH)
+    t = Typesetter(g)
+    t.typesetFile(MD_PATH, doc)
                 
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
@@ -306,17 +319,17 @@ def makeDocument(rs):
     # TODO: This will be implemented a function inside Composer in a later version.
     # Assume the tocBox (Table of Content) to be available on the first page.
     literatureRefs = {}
-    tocBox, (_, _) = tocPage[tocId]
+    tocBox = tocPage[tocId]
     for pageId, page in sorted(doc.pages.items()):
         if page in (tocPage, coverPage): # Skip these for toc collect and footnotes.
             continue
         # Get page box for footnotes
-        fnBox, (_, _) = page[footnotesId]
+        fnBox = page[footnotesId]
         assert fnBox is not None # Otherwise there is a template error. Footnote box needs to exist.
         for flowId in flowIds:
             # BUG: Need to check if the marker was really found in the textbox area. 
             # If it is part of the overflow, then it should not be found here.
-            flow, _ = page[flowId]
+            flow = page[flowId]
             for marker, arguments in findMarkers(flow.fs):
                 if marker == 'footnote': 
                     footNoteIsInOverflow = False
@@ -331,16 +344,18 @@ def makeDocument(rs):
                             footNoteIsInOverflow = True
                             break 
                     if not footNoteIsInOverflow:
+                        footnotes = doc.lib['footnotes']
                         # We found a footnote that is visible on this page and 
                         # not in one of the overflow texts.
                         # Process the footnote id and content, usng the “footnote“ content style.
                         # We are re-using the typesetter here. This may become a separate typesetter, if this code
                         # becomes a method of the composer.
                         # TODO: Make this into Galley, in case footnote <p> has child nodes. 
-                        footnoteText = getFormattedString('%d\t%s\n' % (footnoteId, doc.footnotes[footnoteId]['p'].text),
-                            style=t.getCascadedStyle(doc.getStyle('footnote')))
+                        footnoteStyle = doc.findStyle('footnote')
+                        footnoteText = 'AAAAAA' #getFormattedString('%d\t%s\n' % (footnoteId, footnotes[footnoteId]['p'].text),
+                            #style=t.getCascadedStyle(doc.css('footnote')))
                         # Add the footnote content to the box (it may not be the first to be added.
-                        fnBox.append(footnoteText)
+                        fnBox.appendString(footnoteText)
                 elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all in the TOC
                     #doc.addToc(marker)
                     pass
@@ -348,14 +363,16 @@ def makeDocument(rs):
                     # The "arguments" contains the refId, so we can find it in the collected literature references
                     # and then add this page number.
                     # @@@ TODO: check if reference marker is in overflow. Then ignore processing it.
-                    doc.literatureRefs[int(arguments)]['pageIds'].append(pageId)
+                    literatureRefs = doc.lib.get('literatureRefs')
+                    if literatureRefs is not None:
+                        literatureRefs[int(arguments)]['pageIds'].append(pageId)
                     
     # Build the alphabetical literature reference page.
     # Scan the created pages for literature references and build an index on a new page.
     literatureIndexPage = doc.newPage(template=templateLiteratureIndex)
     # Make an alfabetic sorted list of name-->(reference, (pageNumber, ...))
     references = {}  
-    for refIndex, item in doc.literatureRefs.items():
+    for refIndex, item in doc.lib.get('literatureRefs',{}).items():
         references[item['nodeId']] = item
     literatureRefBox = literatureIndexPage.getElement(literatureIndexId)    
     for refId, item in sorted(references.items()):
@@ -374,7 +391,7 @@ def makeDocument(rs):
     imageIndexPage = doc.newPage(template=templateImageIndex)
     # Make an alfabetic sorted list of name-->(reference, (pageNumber, ...))
     references = {}  
-    for refIndex, item in doc.imageRefs.items():
+    for refIndex, item in doc.lib.get('imageRefs', {}).items():
         references[item['nodeId']] = item
     for imageRefId, item in sorted(references.items()):
         print imageRefId, item['nodeId'], item['node'], item['p'], item['pageIds']

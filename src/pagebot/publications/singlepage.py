@@ -14,7 +14,7 @@ import pagebot
 import pagebot.publication
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
+from pagebot.style import getRootStyle, LEFT, NO_COLOR
         
 class RandomPage(Publication):
     

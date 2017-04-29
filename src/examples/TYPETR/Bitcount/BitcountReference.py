@@ -13,7 +13,7 @@
 #
 import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
-from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
+from pagebot.style import getRootStyle, LEFT, NO_COLOR
 from pagebot.elements.document import Document
 from pagebot.elements.page import Page, Template
 from pagebot.composition import Composer, Typesetter
@@ -52,7 +52,7 @@ RS = getRootStyle(
     cw = 8*U, 
     ch = 5*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
@@ -213,7 +213,7 @@ def makeDocument(rs):
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, 
         prefix='', postfix='\n', rTracking=P_TRACK, leading=14, 
-        rLeading=0, align=LEFT_ALIGN, hyphenation=True, indent=0,
+        rLeading=0, align=LEFT, hyphenation=True, indent=0,
         firstLineIndent=2*U, 
         firstParagraphIndent=0) # TODO: Make firstParagraphIndent to work.
     # Inline tags need to refined prefix and postfix as non-\n, otherwise they
@@ -234,12 +234,12 @@ def makeDocument(rs):
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         rTracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='footnote', fill=0, fontSize=0.9*fontSize, font=BOOK,
         rTracking=P_TRACK,
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
         
     # Image & captions

@@ -18,10 +18,10 @@ from pagebot import getFormattedString, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN, A4, A1, CENTER, RIGHT_ALIGN, BOTTOM_ALIGN, TOP_ALIGN
+from pagebot.style import getRootStyle, LEFT, A4, A1, CENTER, RIGHT, BOTTOM, TOP
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements.document import Document
-from pagebot.elements.galley import Galley
+from pagebot.elements import *
 # The Typesetter instance takes content from a file (typically MarkDown text) and converts that 
 # into Galley list of elements.
 from pagebot.typesetter import Typesetter
@@ -48,25 +48,24 @@ class FontSizeWidthRatio(Condition):
 ConditionsV = [
 	Bottom2Bottom(),
 	Bottom2BottomSide(),
-	Bottom2YCenter(),
-	Bottom2YCenterSides(),
-	Center2Bottom(),
-	Center2BottomSide(),
-	Center2Top(),
-	Center2TopSide(),
-	Center2YCenter(),
-	Center2YCenterSides(),
+	Bottom2Middle(),
+	Bottom2MiddleSides(),
+	Middle2Bottom(),
+	Middle2BottomSide(),
+	Middle2Top(),
+	Middle2TopSide(),
+	Middle2Middle(),
+	Middle2MiddleSides(),
 	Origin2Bottom(),
 	Origin2BottomSide(),
 	Origin2Top(),
 	Origin2TopSide(),
-	Origin2YCenter(),
-	Origin2YCenterSides(),
+	Origin2Middle(),
 	Top2Bottom(),
 	Top2Top(),
 	Top2TopSide(),
-	Top2YCenter(),
-	Top2YCenterSides(),	
+	Top2Middle(),
+	Top2MiddleSides(),
 ]
 ConditionsH = [
 	Center2Center(),
@@ -108,32 +107,38 @@ ConditionV = 0
 W, H = A4 #or A1
 H = W
 
-W1 = 50
-W2 = 50
-W3 = 50
-W4 = 50
-W5 = 50
-WT = 200
-H1 = 50
-H2 = 50
-H3 = 50
-H4 = 50
-H5 = 50
+Padding_Left = 50
+Padding_Bottom = 100
+Padding_Right = 50
+Padding_Top = 100
+Element1_W = 50
+Element1_H = 50
+Element2_W = 50
+Element2_H = 50
+Element3_W = 50
+Element3_H = 50
+Element4_W = 50
+Element4_H = 50
+Element5_W = 50
+Element5_H = 50
+Text_W = 200
 
 Variable([
-    #dict(name='ConditionH', ui='PopUpButton', args=dict(items=sorted(ConditionsHDict.keys()))),
-    #dict(name='ConditionV', ui='PopUpButton', args=dict(items=sorted(ConditionsVDict.keys()))),
-    dict(name='W1', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='H1', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='W2', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='H2', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='W3', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='H3', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='W4', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='H4', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='W5', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='H5', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='WT', ui='Slider', args=dict(minValue=100, value=200, maxValue=W)),
+    dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+    dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+    dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+    dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+    dict(name='Element1_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='Element1_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    dict(name='Element2_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='Element2_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    dict(name='Element3_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='Element3_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    dict(name='Element4_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='Element4_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    dict(name='Element5_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+    dict(name='Element5_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    dict(name='Text_W', ui='Slider', args=dict(minValue=100, value=200, maxValue=W)),
 ], globals())
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
@@ -146,16 +151,14 @@ Variable([
 RS = getRootStyle(
     w = W,
     h = H,
-    pl = 100, # Page padding
-    pt = 50,
-    pr = 30,
-    pb = 100,
+    pl = Padding_Left, # Page padding
+    pt = Padding_Top,
+    pr = Padding_Right,
+    pb = Padding_Bottom,
     conditions = [],
     fontSize = 10,
     rLeading = 0,
-    showElementInfo = False,
-    showElementOrigin = True,
-    originTop = True
+    originTop = False
 )
 
 EXPORT_PATH = '_export/ConditionalElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
@@ -167,14 +170,22 @@ def makeDocument(rootStyle):
     # Make number of pages with default document size.
     # Initially make all pages default with template
     doc = Document(rootStyle, pages=1) 
- 
+
+    # Get default view 
+    view = doc.getView()
+    view.padding = 30
+    view.showElementOrigin = True
+    view.showPageCropMarks = True
+    view.showPageRegistrationMarks = True
+    view.showPageFrame = True
+    view.showPageNameInfo = True
+
     w = 300
 
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
         ConditionsHDict[sorted(ConditionsHDict.keys())[ConditionH]],
         ConditionsVDict[sorted(ConditionsVDict.keys())[ConditionV]],
     ]
-    print colorCondition1
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
         Right2Right(),
         #Center2Right(),
@@ -187,7 +198,14 @@ def makeDocument(rootStyle):
         FloatLeft(),
         FloatTop(),
     ]
-    print colorCondition2
+    colorCondition3 = [ # Placement condition(s) for the color rectangle elements.
+        Right2Right(),
+        #Top2Bottom(),
+        FloatLeft(),
+        FloatTop(),
+        FitBottom(),
+        #Bottom2Bottom(),
+    ]
     textCondition = [ # Placement condition(s) for the text element..
         FloatLeft(),
         FloatTop(),
@@ -195,35 +213,37 @@ def makeDocument(rootStyle):
     # Obvious wrong placement of all elements, to be corrected by solving conditions.
     # In this example the wrongOrigin still shows the elements in the bottom left corner,
     # so it is obvious where they are, of not corrected.
-    wrongOrigin = (-300, -300)
+    outsideOrigin = (-300, -300)
     
-    page = doc[1] # Get the first/single page of the document.
+    page = doc.getPage(0) # Get the first/single page of the document.
 
-    e0 = page.rect(name='Page area', conditions=[Fit()], fill=0.9)
+    
+    e0 = newRect(point=outsideOrigin, name='Page area', parent=page, conditions=[Fit()], fill=0.9)
     e0.z = -10 # Other z-layer, makes this element be ignored on floating checks.
-
+    e0.solve()
+    
     # Add some color elements (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
-    e1 = page.rect(point=wrongOrigin, style=rootStyle, name='Other element', 
-        w=W1, h=H1, conditions=colorCondition1, 
-        fill=(1, 0.5, 0.5), align=RIGHT_ALIGN, vAlign=TOP_ALIGN)
-    e2 = page.rect(point=wrongOrigin, style=rootStyle, w=W2, h=H2, name='Floating element 2', 
-        conditions=colorCondition2, fill=(1, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
-    e3 = page.rect(point=wrongOrigin, style=rootStyle, w=W3, h=H3, name='Floating element 3', 
-        conditions=colorCondition2, fill=(1, 0, 1), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+    e1 = newRect(point=outsideOrigin, parent=page, name='Other element', 
+        w=Element1_W, h=Element1_H, conditions=colorCondition1, 
+        fill=(1, 0.5, 0.5), align=RIGHT, vAlign=TOP)
+    e2 = newRect(point=outsideOrigin, parent=page, w=Element2_W, h=Element2_H, name='Floating element 2', 
+        conditions=colorCondition2, fill=(1, 1, 0), align=LEFT, vAlign=TOP)
+    e3 = newRect(point=outsideOrigin, parent=page, w=Element3_W, h=Element3_H, name='Floating element 3', 
+        conditions=colorCondition2, fill=(1, 0, 1), align=LEFT, vAlign=TOP)
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
     if not hasattr(scriptGlobals, 'blurbText'):
         scriptGlobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, leading=16, textColor=0))
-    eTextBox = page.textBox(scriptGlobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
-        vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
+    eTextBox = newTextBox(scriptGlobals.blurbText, point=outsideOrigin, parent=page, w=Text_W, 
+        vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER, stroke=None, fill=None)
 
-    e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 
-        conditions=colorCondition2, fill=(0, 1, 1), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
-    e5 = page.rect(point=wrongOrigin, style=rootStyle, w=W5, h=H5, name='Floating element 5', 
-        conditions=[FloatRightTopSides()], fill=(0, 1, 0), align=LEFT_ALIGN, vAlign=TOP_ALIGN)
+    e4 = newRect(point=outsideOrigin, parent=page, w=Element4_W, h=Element4_H, name='Floating element 4', 
+        conditions=colorCondition3, fill=(0, 1, 1), align=RIGHT, vAlign=TOP, minH=50, maxH=150)
+    e5 = newRect(point=outsideOrigin, parent=page, w=Element5_W, h=Element5_H, name='Floating element 5', 
+        conditions=[FloatRightTopSides()], fill=(0, 1, 0), align=LEFT, vAlign=TOP)
 
     score = page.evaluate()
     #print 'Page value on evaluation:', score

@@ -19,16 +19,10 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 
 class Oval(Element):
-    def __init__(self, point=None, parent=None, style=None, name=None, eId=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
-        # Initialize the default Element behavior tags.
-        self.isContainer = False
-        self.isText = False
-        self.isFlow = False
 
-    def draw(self, origin):
-        p = pointOffset(self.point, origin)
-        p = self._applyOrigin(p)    
+    def draw(self, origin, view):
+
+        p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         
@@ -36,5 +30,8 @@ class Oval(Element):
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         oval(px, py, self.w, self.h)
 
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin, view)
+
         self._restoreScale()
-        self._drawElementInfo(origin) # Depends on css flag 'showElementInfo'
+        view.drawElementMetaInfo(self, origin)

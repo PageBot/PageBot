@@ -22,9 +22,9 @@ class Ruler(Element):
         self.style['h'] = self.style['strokeWidth'] = h # Overwrite style from here.
     h = property(_get_h, _set_h)
 
-    def draw(self, origin):
-        p = pointOffset(self.point, origin)
-        p = self._applyOrigin(p)    
+    def draw(self, origin, view):
+
+        p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         sIndent = self.css('indent')
@@ -35,5 +35,8 @@ class Ruler(Element):
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         line((px + sIndent, py), (px + w, py))
 
-        self._restoreScale()
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin)
 
+        self._restoreScale()
+        view.drawElementMetaInfo(self, origin)
