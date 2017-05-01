@@ -1,11 +1,25 @@
 
 import CoreText
 import Quartz
+import re
 
+class FoundPattern(object):
+    def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
+        self.s = s # Actual found string
+        self.x = x
+        self.ix = ix
+        self.y = y
+        self.w = w
+        self.h = h
+        self.line = line # TextLine instance that this was found in
+        self.run = run # List of  of this strin,g
+    
+    def __repr__(self):
+        return '[Found "%s" @ %d,%d]' % (self.s, self.x, self.y) 
 
 class TextRun(object):
-    def __init__(self, ctRun, string):
-        self.lineString = string
+    def __init__(self, ctRun, runIndex):
+        self.runIndex = runIndex # Index of the run in the TextLine
         self._ctRun = ctRun
         self.glyphCount = gc = CoreText.CTRunGetGlyphCount(ctRun)
 
@@ -16,8 +30,15 @@ class TextRun(object):
         self.nsParagraphStyle = attrs['NSParagraphStyle']
 
 
-        i1, i2 = CoreText.CTRunGetStringRange(ctRun)
-        self.string = self.lineString[i1:i2]
+        self.iStart, self.iEnd = CoreText.CTRunGetStringRange(ctRun)
+        self.string = u''    
+        # Hack for now to find the string in repr-string if self._ctLine.
+        for index, part in enumerate(`ctRun`.split('"')[1].split('\\u')):
+            if index == 0:
+                self.string += part
+            elif len(part) >= 4:
+                self.string += unichr(int(part[0:4], 16))
+                self.string += part[4:]
 
         self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
         #CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
@@ -160,22 +181,18 @@ class TextRun(object):
 
         
 class TextLine(object):
-    def __init__(self, ctLine):
+    def __init__(self, ctLine, lineIndex):
         self._ctLine = ctLine
+        self.lineIndex = lineIndex # Vertical line index in TextBox.
         self.glyphCount = CoreText.CTLineGetGlyphCount(ctLine)
-        # Hack for now to find the string.
-        s = []
-        for index, part in enumerate(`self._ctLine`.split('"')[1].split('\\u')):
-            if index == 0:
-                s.append(part)
-            elif len(part) >= 4:
-                s.append(unichr(int(part[0:4], 16)))
-                s.append(part[4:])
-        self.string = ''.join(s)
 
+
+        self.string = '' 
         self.runs = []
-        for ctRun in CoreText.CTLineGetGlyphRuns(ctLine):
-            self.runs.append(TextRun(ctRun, self.string))
+        for runIndex, ctRun in enumerate(CoreText.CTLineGetGlyphRuns(ctLine)):
+            textRun = TextRun(ctRun, runIndex)
+            self.runs.append(textRun)
+            self.string += textRun.string
 
     def __repr__(self):
         return '[TextLine Glyphs:%d Runs:%d]' % (self.glyphCount, len(self.runs))
@@ -184,39 +201,71 @@ class TextLine(object):
         return self.glyphCount
 
     def getIndexForPosition(self, (x, y)):
-        return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))
+        return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
     
     def getOffsetForStringIndex(self, i):
-        return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)
+        u"""Answer the z position that is closest to glyph string index i. If i is out of bounds,
+        then answer the closest x position (left and right side of the string)."""
+        return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
                 
     def _get_stringIndex(self):
         return CoreText.CTLineGetStringRange(self._ctLine).location
     stringIndex = property(_get_stringIndex)
-       
+ 
+    def getGlyphIndex2Run(self, glyphIndex):
+        for run in self.runs:
+            if run.iStart >= glyphIndex:
+                return run
+        return None
+        
     #def _get_alignment(self):
     #    return CoreText.CTTextAlignment(self._ctLine)
     #alignment = property(_get_alignment)
             
     def _get_imageBounds(self):
-        (x, y), (w, h) = CoreText.CTLineGetImageBounds(self._ctLine,None)
+        u"""Property that answers the bounding box (actual black shape) of the line."""
+        (x, y), (w, h) = CoreText.CTLineGetImageBounds(self._ctLine, None)
         return x, y, w, h
     imageBounds = property(_get_imageBounds)
     
     def _get_bounds(self):
-        return CoreText.CTLineGetTypographicBounds(self._ctLine,None,None,None)
+        u"""Property that returns the EM bounding box of the line."""
+        return CoreText.CTLineGetTypographicBounds(self._ctLine, None, None, None)
     bounds = property(_get_bounds)
     
     def _get_trailingWhiteSpace(self):
         return CoreText.CTLineGetTrailingWhitespaceWidth(self._ctLine)
     trailingWhiteSpace = property(_get_trailingWhiteSpace)
-           
+
+    def findPattern(self, pattern):
+        founds = []
+        if isinstance(pattern, basestring):
+            pattern = re.compile(pattern)
+            #pattern = re.compile('([a-ZA-Z0-9\.\-\_]*])
+        print '3321123123', self.string
+        for iStart, iEnd in [(m.start(0), m.end(0)) for m in re.finditer(pattern, self.string)]:
+            print 'fsdsdffsd', iStart, iEnd
+            xStart = self.getOffsetForStringIndex(iStart)
+            xEnd = self.getOffsetForStringIndex(iEnd)
+            run = self.getGlyphIndex2Run(xStart)
+            print iStart, xStart, iEnd, xEnd, run
+            founds.append(FoundPattern(self.string[iStart:iEnd], xStart, iStart, line=self, run=run))
+        return founds
+                               
 class TextBox(object):
+    u"""A TextBox hold a FormattedString, as well as ordered list of TextLine instances,
+    that hold information about the sequence of TextRun instance (with their unique typographic
+    properties). Also self.baseLines is available, ordered list of baseLine positions, relative
+    to the origin of the TextBox element."""
+    # @@@ This is a stand alone testing class. The real one is implemented as PageBot TextBox Element.
     def __init__(self, fs, x, y, w, h):
         self.x = x
         self.y = y
+        self.z = 0
         self.w = w
         self.h = h
-        self.fs = fs
+        self.d = 0
+        self.fs = fs # Property will initialize the self.textLines upon setting self._fs
     
     def __len__(self):
         return len(self.textLines)
@@ -238,20 +287,39 @@ class TextBox(object):
         ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
         self._ctLines = CoreText.CTFrameGetLines(ctBox)
         self.textLines = []
-        for ctLine in self._ctLines:
-            self.textLines.append(TextLine(ctLine))
+        for lineIndex, ctLine in enumerate(self._ctLines):
+            textLine = TextLine(ctLine, lineIndex)
+            self.textLines.append(textLine)
         self.baseLines = []
         for p in CoreText.CTFrameGetLineOrigins(ctBox, (0, len(self._ctLines)), None):
             self.baseLines.append(p.y+self.y)
     
+    def findPattern(self, pattern):
+        u"""Answer the point locations where this pattern occures in the Formatted String."""
+        foundPatterns = [] # List of FoundPattern instances. 
+        for lineIndex, textLine in enumerate(self.textLines):
+            y = self.baseLines[lineIndex]
+            for foundPattern in textLine.findPattern(pattern):
+                foundPattern.y = y
+                foundPattern.z = self.z
+                foundPatterns.append(foundPattern)
+        return foundPatterns
+                
     def draw(self):
         textBox(self.fs, (self.x, self.y, self.w, self.h))
       
-    def _drawBaseline(self):
+    def _drawBaseline(self, showIndex=False, showY=False):
         # Let's see if we can draw over them in exactly the same position.
         for index in range(len(self)):
             y = self.baseLines[index]
             line((self.x, y), (self.x+self.w, y))
+            if showIndex:
+                text(FormattedString(`index`, align='right', font='Verdana', fontSize=8, 
+                    fill=(0, 0, 1)), (self.x-8, y))
+            if showY:
+                text(FormattedString('%d' % round(self.h - y), align='left', font='Verdana', fontSize=8, 
+                    fill=(0, 0, 1)), (self.x + self.w + 3, y))
+            
 
     def _drawFrame(self):
         stroke(0, 0, 1)
@@ -259,15 +327,15 @@ class TextBox(object):
         rect(self.x, self.y, self.w, self.h)
         
   
-fs = FormattedString(u'This åéöøa hêädliñe rúns over two lines.\n', align='left', font='BitcountMonoDouble-MediumCircleItalic', fontSize=24, openTypeFeatures=dict(ss01=True, ss02=True, ss06=True), lineHeight=28, tracking=1.2)
-fs = fs + FormattedString('This an example of TextLines and TextRuns. ' * 4, font='Verdana', fontSize=14, lineHeight=22)
-fs = fs + FormattedString('This an example of larger TextLines and TextRuns. ' * 4, font='Georgia', fontSize=16, lineHeight=22)
-fs = fs + FormattedString('This an example of TextLines and TextRuns. ' * 4, font='Verdana', fontSize=14, lineHeight=22)
+fs = FormattedString(u'This åéöøa hêädliñe rúns over two lines.\n', align='left', font='BitcountMonoDouble-RegularCircleItalic', fontSize=24, openTypeFeatures=dict(ss01=True, ss02=True, ss06=True), lineHeight=28, tracking=1.2)
+fs = fs + FormattedString('This an example of TextLines and TextRuns and more and more. ', font='Verdana', fontSize=14, lineHeight=22)
+fs = fs + FormattedString('======= Find this. ', font='Georgia-Bold', fontSize=16, lineHeight=22)
+fs = fs + FormattedString('This an example of larger TextLines and TextRuns. ', font='Georgia', fontSize=16, lineHeight=22)
+fs = fs + FormattedString('======= Find this. ', font='Georgia-Bold', fontSize=16, lineHeight=22)
+fs = fs + FormattedString('This an example of TextLines and TextRuns. ', font='Verdana', fontSize=14, lineHeight=22)
 
 W = 350
 H = 500
-X = 20
-Y = 20
 G = 20
 newPage(W*2+G*3, H + G*2)
 myTextBox1 = TextBox(fs, G, G, W, H)
@@ -275,13 +343,13 @@ myTextBox2 = TextBox(fs, G+W+G, G, W, H)
 myTextBox1.draw()
 myTextBox2.draw()
 myTextBox2._drawFrame()
-myTextBox2._drawBaseline()
+myTextBox2._drawBaseline(showIndex=True, showY=True)
+
+print myTextBox1.textLines[0].getOffsetForStringIndex(10)
 
 print 'TextLines in textBox:', len(myTextBox1) # 7 text lines
 for textLine in myTextBox1.textLines:
     print textLine
-textLine = myTextBox1.textLines[0]
-print 'TextLines[0] has %d glyphs and %d textRuns.' % (len(textLine), len(textLine.runs))   
-
+print myTextBox1.findPattern('Find')
 
    
