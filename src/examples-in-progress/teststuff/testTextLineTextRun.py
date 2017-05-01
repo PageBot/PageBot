@@ -183,11 +183,11 @@ class TextRun(object):
 
         
 class TextLine(object):
-    def __init__(self, ctLine, lineIndex):
+    def __init__(self, ctLine, p, lineIndex):
         self._ctLine = ctLine
+        self.x, self.y = p # Relative position from top of TextBox
         self.lineIndex = lineIndex # Vertical line index in TextBox.
         self.glyphCount = CoreText.CTLineGetGlyphCount(ctLine)
-
 
         self.string = '' 
         self.runs = []
@@ -197,7 +197,7 @@ class TextLine(object):
             self.string += textRun.string
 
     def __repr__(self):
-        return '[TextLine Glyphs:%d Runs:%d]' % (self.glyphCount, len(self.runs))
+        return '[TextLine #%d Glyphs:%d Runs:%d]' % (self.lineIndex, self.glyphCount, len(self.runs))
 
     def __len__(self):
         return self.glyphCount
@@ -277,25 +277,27 @@ class TextBox(object):
         return self._fs
     def _set_fs(self, fs):
         self._fs = fs
-        self.initializeLineRuns()
+        self.initializeTextLines()
     fs = property(_get_fs, _set_fs)
        
-    def initializeLineRuns(self):
+    def initializeTextLines(self):
         u"""Answer an ordered list of all baseline position, starting at the top."""
-        self._box = 0, 0, self.w, self.h
+        self._box = self.x, self.y, self.w, self.h
         attrString = fs.getNSObject()
         setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
         path = Quartz.CGPathCreateMutable()
         Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*self._box))
         ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
         self._ctLines = CoreText.CTFrameGetLines(ctBox)
+        self.baseLines = [] # Contain (x, y) start position of line
         self.textLines = []
-        for lineIndex, ctLine in enumerate(self._ctLines):
-            textLine = TextLine(ctLine, lineIndex)
+        for lineIndex, p in enumerate(CoreText.CTFrameGetLineOrigins(ctBox, (0, len(self._ctLines)), None)):
+            x = p.x
+            y = self.h - p.y
+            ctLine = self._ctLines[lineIndex]
+            textLine = TextLine(ctLine, (x, y), lineIndex)
             self.textLines.append(textLine)
-        self.baseLines = []
-        for p in CoreText.CTFrameGetLineOrigins(ctBox, (0, len(self._ctLines)), None):
-            self.baseLines.append(self.y + self.h - p.y)
+            self.baseLines.append((x, y, textLine.string))
     
     def findPattern(self, pattern):
         u"""Answer the point locations where this pattern occures in the Formatted String."""
@@ -311,30 +313,30 @@ class TextBox(object):
     def draw(self):
         textBox(self.fs, (self.x, self.y, self.w, self.h))
       
-    def _drawBaseline(self, showIndex=False, showY=False, showLeading=False):
+    def _drawBaselines(self, showIndex=False, showY=False, showLeading=False):
         # Let's see if we can draw over them in exactly the same position.
+        fontSize = 8
         if showY:
             text(FormattedString(`0`, align='left', 
                 font='Verdana', fontSize=8, 
-                fill=(0, 0, 1)), (self.x + self.w + 3,  self.h))
+                fill=(0, 0, 1)), (self.x + self.w + 3,  self.y + self.h - fontSize/4))
 
         prevY = 0
         for index in range(len(self)):
-            y = self.baseLines[index]
-            fontSize = 8
-            line((self.x, self.h - y), (self.x + self.w, self.h - y))
+            _, y, _ = self.baseLines[index]
+            line((self.x, self.y + self.h - y), (self.x + self.w, self.y + self.h - y))
             if showIndex:
                 text(FormattedString(`index`, align='right', font='Verdana', fontSize=fontSize, 
-                    fill=(0, 0, 1)), (self.x-8, y - fontSize/3))
+                    fill=(0, 0, 1)), (self.x-8, self.y + self.h - y - fontSize/3))
             if showY:
-                text(FormattedString('%d' % round(self.h +self.y - y), align='left', 
+                text(FormattedString('%d' % round(y), align='left', 
                     font='Verdana', fontSize=fontSize, 
-                    fill=(0, 0, 1)), (self.x + self.w + 3, y - fontSize/3))
+                    fill=(0, 0, 1)), (self.x + self.w + 3, self.y + self.h - y - fontSize/4))
             if showLeading:
                 leading = round(abs(y - prevY))
                 text(FormattedString('%d' % leading, align='left', 
                     font='Verdana', fontSize=fontSize, 
-                    fill=(1, 0, 0)), (self.x + self.w + 3, prevY - leading/2 - fontSize/3))
+                    fill=(1, 0, 0)), (self.x + self.w + 3, self.y + self.h - prevY - leading/2 - fontSize/4))
             prevY = y
 
     def _drawFrame(self):
@@ -342,40 +344,56 @@ class TextBox(object):
         fill(None)
         rect(self.x, self.y, self.w, self.h)
         
+
+W = 380
+H = 600
+G = 40
+
+Variable([
+    dict(name='W', ui='Slider', args=dict(minValue=200, value=400, maxValue=1000)),
+    dict(name='H', ui='Slider', args=dict(minValue=200, value=600, maxValue=1000)),
+], globals())
+
   
-fs = FormattedString(u'This åéöøa hêädliñe rúns over two lines.\n', align='left', font='BitcountMonoDouble-RegularCircleItalic', fontSize=24, openTypeFeatures=dict(ss01=True, ss02=True, ss06=True), lineHeight=26, tracking=1.2)
+fs = FormattedString(u'This åéöøa hêädliñe rúns over one or more lines.\n', align='left', font='BitcountMonoDouble-RegularCircleItalic', fontSize=24, openTypeFeatures=dict(ss01=True, ss02=True, ss06=True), lineHeight=26, tracking=1.2)
 fs = fs + FormattedString('This an example of TextLines and TextRuns and more and more. ', font='Verdana', fontSize=14, lineHeight=22)
 fs = fs + FormattedString('=== Find this. === ', font='Georgia-Bold', fontSize=16, lineHeight=22)
 fs = fs + FormattedString('This an example of larger TextLines and TextRuns. ', font='Georgia', fontSize=16, lineHeight=22)
 fs = fs + FormattedString('=== Find this. ===', font='Georgia-Bold', fontSize=16, lineHeight=22)
 fs = fs + FormattedString('This an example of TextLines and TextRuns. ', font='Verdana', fontSize=14, lineHeight=22)
-fs = fs + FormattedString('Word ', font='Georgia', align='left', fontSize=140, lineHeight=150)
-fs = fs + FormattedString('ABC ', font='BitcountMonoDouble-RegularCircle', align='left', fontSize=200, lineHeight=200)
 
-W = 380
-H = 550
-G = 40
-newPage(W*2+G*3, H + G*2)
-myTextBox1 = TextBox(fs, G, G, W, H)
-myTextBox2 = TextBox(fs, G+W+G, G, W, H)
-myTextBox1.draw()
-myTextBox2.draw()
-myTextBox2._drawFrame()
-myTextBox2._drawBaseline(showIndex=True, showY=True, showLeading=True)
+fittingWord = FormattedString('Word\n', font='Georgia', align='left', fontSize=500)
+w, _ = textSize(fittingWord)
+fittingSize = W/w*500
+fittingWord = FormattedString('Word\n', font='Georgia', align='left', fontSize=fittingSize, lineHeight=fittingSize*1.2)
+fs = fs + fittingWord
 
-print myTextBox1.textLines[3].getOffsetForStringIndex(0)
-run = myTextBox1.textLines[3].runs[1]
-print '===', run, run.font, run.fontSize, run.underlineThickness, run.underlinePosition
+fittingWord =  FormattedString('ABC\n', font='BitcountMonoDouble-RegularCircle', align='left', fontSize=500)
+w, _ = textSize(fittingWord)
+fittingSize = W/w*500
+fittingWord = FormattedString('ABC\n', font='BitcountMonoDouble-RegularCircle', align='left', fontSize=fittingSize, lineHeight=fittingSize)
+fs = fs + fittingWord
 
-print 'TextLines in textBox:', len(myTextBox1) # 7 text lines
-for textLine in myTextBox1.textLines:
-    print textLine
-print myTextBox1.findPattern('Find')
+newPage(W+G*2, H + G*2)
+myTextBox = TextBox(fs, G, G, W, H)
+myTextBox.draw()
+myTextBox._drawFrame()
+myTextBox._drawBaselines(showIndex=True, showY=True, showLeading=True)
+
+#print myTextBox.baseLines
+
+#print myTextBox.textLines[3].getOffsetForStringIndex(0)
+#run = myTextBox.textLines[3].runs[1]
+#print '===', run, run.font, run.fontSize, run.underlineThickness, run.underlinePosition
+
+#print 'TextLines in textBox:', len(myTextBox1) # 7 text lines
+#for textLine in myTextBox1.textLines:
+#    print textLine
+print myTextBox.findPattern('Find')
+
 # Bitcount measures, pixels are 1/10 of Em
-print myTextBox1.baseLines
-for yy in range(10):
+for yy in range(-3,10):
     stroke(1, 0, 0)
     fill(None)
-    line((myTextBox1.x, yy*200/10+myTextBox1.baseLines[-1]), (myTextBox1.x + myTextBox1.w, yy*200/10+myTextBox1.baseLines[-1]))
-
-   
+    y = myTextBox.y + myTextBox.h + yy*fittingSize/10- myTextBox.baseLines[-1][1]
+    line((myTextBox.x, y), (myTextBox.x + myTextBox.w, y))
