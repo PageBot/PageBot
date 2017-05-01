@@ -310,14 +310,20 @@ class TextBox(object):
       
     def _drawBaseline(self, showIndex=False, showY=False):
         # Let's see if we can draw over them in exactly the same position.
+        if showY:
+            text(FormattedString(`0`, align='left', 
+                font='Verdana', fontSize=8, 
+                fill=(0, 0, 1)), (self.x + self.w + 3, self.y + self.h))
+
         for index in range(len(self)):
             y = self.baseLines[index]
-            line((self.x, y), (self.x+self.w, y))
+            line((self.x, y), (self.x + self.w, y))
             if showIndex:
                 text(FormattedString(`index`, align='right', font='Verdana', fontSize=8, 
                     fill=(0, 0, 1)), (self.x-8, y))
             if showY:
-                text(FormattedString('%d' % round(self.h - y), align='left', font='Verdana', fontSize=8, 
+                text(FormattedString('%d' % round(self.h +self.y - y), align='left', 
+                    font='Verdana', fontSize=8, 
                     fill=(0, 0, 1)), (self.x + self.w + 3, y))
             
 
@@ -327,7 +333,7 @@ class TextBox(object):
         rect(self.x, self.y, self.w, self.h)
         
   
-fs = FormattedString(u'This åéöøa hêädliñe rúns over two lines.\n', align='left', font='BitcountMonoDouble-RegularCircleItalic', fontSize=24, openTypeFeatures=dict(ss01=True, ss02=True, ss06=True), lineHeight=28, tracking=1.2)
+fs = FormattedString(u'This åéöøa hêädliñe rúns over two lines.\n', align='left', font='BitcountMonoDouble-RegularCircleItalic', fontSize=24, openTypeFeatures=dict(ss01=True, ss02=True, ss06=True), lineHeight=26, tracking=1.2)
 fs = fs + FormattedString('This an example of TextLines and TextRuns and more and more. ', font='Verdana', fontSize=14, lineHeight=22)
 fs = fs + FormattedString('======= Find this. ', font='Georgia-Bold', fontSize=16, lineHeight=22)
 fs = fs + FormattedString('This an example of larger TextLines and TextRuns. ', font='Georgia', fontSize=16, lineHeight=22)
