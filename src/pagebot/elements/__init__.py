@@ -20,10 +20,19 @@ from pagebot.elements.polygon import Polygon
 from pagebot.elements.oval import Oval
 from pagebot.elements.image import Image
 from pagebot.elements.galley import Galley
-from pagebot.elements.grid import Grid, BaselineGrid
 from pagebot.elements.page import Page
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
+
+def newTextBox(fs, point=None, **kwargs):
+    u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
+    return TextBox(fs, point=point, **kwargs)
+
+def newColTextBox(fs, cx=None, cy=None, cw=None, ch=None, **kwargs):
+    u"""Caller must supply formatted string."""
+    e = newTextBox(fs, **kwargs)
+    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index, based on style or parent.css
+    return e
 
 def newTextBox(fs, point=None, **kwargs):
     u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
@@ -97,14 +106,6 @@ def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs)
     e = newImage(path, **kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
     return e
-
-def grid(point=None, **kwargs):
-    u"""Direct way to add a grid element to a single page, if not done through its template."""
-    return Grid(point=point, **kwargs)
-    
-def baselineGrid(point=None, **kwargs):
-    u"""Direct way to add a baseline grid element to a single page, if not done through its template."""
-    return BaselineGrid(point=point, **kwargs)
 
 
 

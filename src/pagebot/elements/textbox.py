@@ -24,13 +24,28 @@ from pagebot import getFormattedString, setStrokeColor, setFillColor
 import CoreText
 import Quartz
 
-#for name in installedFonts():
-#    if 'Bitcount' in name:
-#        print name
-        
+
+import CoreText
+import Quartz
+import re
+
+class FoundPattern(object):
+    def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
+        self.s = s # Actual found string
+        self.x = x
+        self.ix = ix
+        self.y = y
+        self.w = w
+        self.h = h
+        self.line = line # TextLine instance that this was found in
+        self.run = run # List of  of this strin,g
+    
+    def __repr__(self):
+        return '[Found "%s" @ %d,%d]' % (self.s, self.x, self.y) 
+
 class TextRun(object):
-    def __init__(self, ctRun, string):
-        self.lineString = string
+    def __init__(self, ctRun, runIndex):
+        self.runIndex = runIndex # Index of the run in the TextLine
         self._ctRun = ctRun
         self.glyphCount = gc = CoreText.CTRunGetGlyphCount(ctRun)
 
@@ -41,8 +56,15 @@ class TextRun(object):
         self.nsParagraphStyle = attrs['NSParagraphStyle']
 
 
-        i1, i2 = CoreText.CTRunGetStringRange(ctRun)
-        self.string = self.lineString[i1, i2]
+        self.iStart, self.iEnd = CoreText.CTRunGetStringRange(ctRun)
+        self.string = u''    
+        # Hack for now to find the string in repr-string if self._ctLine.
+        for index, part in enumerate(`ctRun`.split('"')[1].split('\\u')):
+            if index == 0:
+                self.string += part
+            elif len(part) >= 4:
+                self.string += unichr(int(part[0:4], 16))
+                self.string += part[4:]
 
         self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
         #CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
@@ -56,6 +78,8 @@ class TextRun(object):
     def __len__(self):
         return self.glyphCount
 
+    def __repr__(self):
+        return '[TextRun #%d "%s"]' % (self.runIndex, self.string) 
     # Font stuff
 
     def _get_displayName(self):
@@ -68,7 +92,7 @@ class TextRun(object):
 
     def _get_fontName(self):
         return self.nsFont.fontName()
-    fontName = property(_get_fontName)
+    fontName = font = property(_get_fontName)
 
     def _get_isVertical(self):
         return self.nsFont.isVertical()
@@ -81,7 +105,7 @@ class TextRun(object):
     def _get_boundingRectForFont(self):
         (x, y), (w, h) = self.nsFont.boundingRectForFont()
         return x, y, w, h
-    boundingRectForFont = propert(_get_boundingRectForFont)
+    boundingRectForFont = property(_get_boundingRectForFont)
 
     def _get_renderingMode(self):
         return self.nsFont.renderingMode()
@@ -110,7 +134,7 @@ class TextRun(object):
     italicAngle = property(_get_italicAngle)
 
     def _get_fontSize(self):
-        return self.nsFont._get_fontSize()
+        return self.nsFont.pointSize()
     fontSize = property(_get_fontSize)
 
     def _get_leading(self):
@@ -185,120 +209,79 @@ class TextRun(object):
 
         
 class TextLine(object):
-    def __init__(self, ctLine):
+    def __init__(self, ctLine, p, lineIndex):
         self._ctLine = ctLine
+        self.x, self.y = p # Relative position from top of TextBox
+        self.lineIndex = lineIndex # Vertical line index in TextBox.
         self.glyphCount = CoreText.CTLineGetGlyphCount(ctLine)
-        # Hack for now to find the string.
-        s = []
-        for index, part in enumerate(`self._ctLine`.split('"')[1].split('\\u')):
-            if index == 0:
-                s.append(part)
-            elif len(part) >= 4:
-                s.append(unichr(int(part[0:4], 16)))
-                s.append(part[4:])
-        self.string = ''.join(s)
 
+        self.string = '' 
         self.runs = []
-        for ctRun in CoreText.CTLineGetGlyphRuns(ctLine):
-            self.runs.append(TextRun(ctRun, self.string))
+        for runIndex, ctRun in enumerate(CoreText.CTLineGetGlyphRuns(ctLine)):
+            textRun = TextRun(ctRun, runIndex)
+            self.runs.append(textRun)
+            self.string += textRun.string
 
     def __repr__(self):
-        print self._ctLine
+        return '[TextLine #%d Glyphs:%d Runs:%d]' % (self.lineIndex, self.glyphCount, len(self.runs))
 
     def __len__(self):
         return self.glyphCount
 
     def getIndexForPosition(self, (x, y)):
-        return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))
+        return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
     
     def getOffsetForStringIndex(self, i):
-        return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)
+        u"""Answer the z position that is closest to glyph string index i. If i is out of bounds,
+        then answer the closest x position (left and right side of the string)."""
+        #print '=====', self._ctLine
+        return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
                 
     def _get_stringIndex(self):
         return CoreText.CTLineGetStringRange(self._ctLine).location
     stringIndex = property(_get_stringIndex)
-       
+ 
+    def getGlyphIndex2Run(self, glyphIndex):
+        for run in self.runs:
+            if run.iStart >= glyphIndex:
+                return run
+        return None
+        
     #def _get_alignment(self):
     #    return CoreText.CTTextAlignment(self._ctLine)
     #alignment = property(_get_alignment)
             
     def _get_imageBounds(self):
-        (x, y), (w, h) = CoreText.CTLineGetImageBounds(self._ctLine,None)
+        u"""Property that answers the bounding box (actual black shape) of the line."""
+        (x, y), (w, h) = CoreText.CTLineGetImageBounds(self._ctLine, None)
         return x, y, w, h
     imageBounds = property(_get_imageBounds)
     
     def _get_bounds(self):
-        return CoreText.CTLineGetTypographicBounds(self._ctLine,None,None,None)
+        u"""Property that returns the EM bounding box of the line."""
+        return CoreText.CTLineGetTypographicBounds(self._ctLine, None, None, None)
     bounds = property(_get_bounds)
     
     def _get_trailingWhiteSpace(self):
         return CoreText.CTLineGetTrailingWhitespaceWidth(self._ctLine)
     trailingWhiteSpace = property(_get_trailingWhiteSpace)
+
+    def findPattern(self, pattern):
+        founds = []
+        if isinstance(pattern, basestring):
+            pattern = re.compile(pattern)
+            #pattern = re.compile('([a-ZA-Z0-9\.\-\_]*])
+        #print '3321123123', self.string
+        for iStart, iEnd in [(m.start(0), m.end(0)) for m in re.finditer(pattern, self.string)]:
+            #print 'fsdsdffsd', iStart, iEnd
+            xStart = self.getOffsetForStringIndex(iStart)
+            xEnd = self.getOffsetForStringIndex(iEnd)
+            print xStart, xEnd
+            run = self.getGlyphIndex2Run(xStart)
+            print iStart, xStart, iEnd, xEnd, run
+            founds.append(FoundPattern(self.string[iStart:iEnd], xStart, iStart, line=self, run=run))
+        return founds
            
-def getTextLines(fs, w, h):
-    u"""Answer an ordered list of all baseline position, starting at the top."""
-    box = 0, 0, w, h
-    attrString = fs.getNSObject()
-    setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
-    path = Quartz.CGPathCreateMutable()
-    Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
-    box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-    ctLines = CoreText.CTFrameGetLines(box)
-    textLines = []
-    for ctLine in ctLines:
-        tl = TextLine(ctLine)
-        textLines.append(tl)
-    origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-    return textLines, origins
-
-fs = FormattedString(u'This åéöøa', font='BitcountMonoDouble-MediumCircleItalic', fontSize=24)
-fs = fs + FormattedString('This an example. ' * 20, font='Verdana', fontSize=16)
-
-textLines, o = getTextLines(fs, 500, 200)
-#print o
-#print
-for tl in textLines:
-    #print 'Bounds:', tl.bounds, tl.imageBounds, tl.trailingWhiteSpace, 'Len:', len(tl), 'Index:', tl.stringIndex, 
-    #tl.alignment
-    #print 'Index at position (100, 10):', tl.getIndexForPosition((100, 10))
-    #print 'Offset at string index (0):', tl.runs
-    print 'Runs:', len(tl.runs)
-    print 'String:', tl.string
-    for textRun in tl.runs:
-        """
-        print CoreText.CTRunGetTextMatrix(ctRun._ctRun)
-        print CoreText.CTRunGetStringRange(ctRun._ctRun)
-        print CoreText.CTRunGetStringIndicesPtr(ctRun._ctRun)[20]
-        print CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
-        print CoreText.CTRunGetAdvances(ctRun._ctRun, CoreText.CFRange(0, 5), None)
-        print CoreText.CTRunGetPositionsPtr(ctRun._ctRun)[20]
-        print CoreText.CTRunGetPositions(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
-        print CoreText.CTRunGetGlyphsPtr(ctRun._ctRun)[20]
-        print CoreText.CTRunGetGlyphs(ctRun._ctRun, CoreText.CFRange(0, 5), None)[0:5]
-        print CoreText.CTRunGetStatus(ctRun._ctRun)
-        print CoreText.CTRunGetAttributes(ctRun._ctRun)['NSColor']
-        print CoreText.CTRunGetAttributes(ctRun._ctRun)['NSParagraphStyle']
-        print CoreText.CTRunGetAttributes(ctRun._ctRun)['NSFont']
-        print ctRun._ctRun
-        """
-        print textRun.nsFont, textRun.glyphFontIndices, textRun.positions
-        print '========'
-        print textRun.displayName
-        print textRun.familyName
-        print textRun.fontName
-        print textRun.glyphCount
-        print textRun.fontDescriptor
-        print textRun.isFixedPitch
-        print textRun.renderingMode
-        print textRun.capHeight
-        print textRun.ascender
-        print textRun.descender
-        print textRun.fontBoundingRect
-        print textRun.italicAngle
-        print
-        #print CoreText.CTLineGetGlyphRuns(tl._ctLine)
-    print #CoreText.CTLineGetStringRange(tl._ctLine)
-    #print tl.string       
 class TextBox(Element):
 
     # Initialize the default behavior tags as different from Element.
@@ -326,9 +309,19 @@ class TextBox(Element):
         self.style['h'] = h # Overwrite style from here, unless self.style['vacuum'] is True
     h = property(_get_h, _set_h)
 
-    def __len__(self):
-        return len(self.fs)
+    def __getitem__(self, lineIndex):
+        return self.textLines[lineIndex]
 
+    def __len__(self):
+        return len(self.textLines)
+            
+    def _get_fs(self):
+        return self._fs
+    def _set_fs(self, fs):
+        self._fs = fs
+        self.initializeTextLines()
+    fs = property(_get_fs, _set_fs)
+  
     def setText(self, s):
         u"""Set the formatted string to s, using self.style."""
         self.fs = getFormattedString(s, self)
@@ -346,35 +339,25 @@ class TextBox(Element):
     def appendMarker(self, markerId, arg=None):
         self.appendString(getMarker(markerId, arg=arg))
 
-    def getBaseLines(self):
+    def initializeTextLines(self):
         u"""Answer an ordered list of all baseline position, starting at the top."""
-        origins = []
-        box = 0, 0, self.w, self.h
-        attrString = self.fs.getNSObject()
+        self._box = self.x, self.y, self.w, self.h
+        attrString = self._fs.getNSObject()
         setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
         path = Quartz.CGPathCreateMutable()
-        Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
-        box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-        ctLines = CoreText.CTFrameGetLines(box)
-        for ctLine in ctLines:
-            print ctLine
-        #origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-        return [o.y for o in origins]
-
-    def getTextLines(self):
-        u"""Answer an ordered list of all baseline position, starting at the top."""
-        box = 0, 0, self.w, self.h
-        attrString = self.fs.getNSObject()
-        setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
-        path = Quartz.CGPathCreateMutable()
-        Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
-        box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-        textLines = []
-        for ctLine in CoreText.CTFrameGetLines(box)
-            textLine.append(TextLine(ctLine))
-        #origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-        return textLines
-
+        Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*self._box))
+        ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
+        self._ctLines = CoreText.CTFrameGetLines(ctBox)
+        self.baseLines = [] # Contain (x, y) start position of line
+        self.textLines = []
+        for lineIndex, p in enumerate(CoreText.CTFrameGetLineOrigins(ctBox, (0, len(self._ctLines)), None)):
+            x = p.x
+            y = self.h - p.y
+            ctLine = self._ctLines[lineIndex]
+            textLine = TextLine(ctLine, (x, y), lineIndex)
+            self.textLines.append(textLine)
+            self.baseLines.append((x, y, textLine.string))
+ 
     def getTextSize(self, fs=None, w=None):
         """Figure out what the width/height of the text self.fs is, with or given width or
         the styled width of this text box. If fs is defined as external attribute, then the
@@ -398,6 +381,8 @@ class TextBox(Element):
         for _, baselineY in textBoxBaseLines(self.fs, (0, y, w or self.w, h or self.h)):
             baselines.append(baselineY)
         return baselines
+
+    #   D R A W 
 
     def draw(self, origin, view):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
@@ -427,8 +412,56 @@ class TextBox(Element):
         # If there are child elements, draw them over the text.
         self._drawElements(origin, view)
 
+        # Draw markers on TextLine and TextRun positions.
+        self._drawFrame(view)
+        self._drawBaselines(view)
+ 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
+    def _drawBaselines(self, view):
+        # Let's see if we can draw over them in exactly the same position.
+        fontSize = 8
+        if view.textBoxShowY:
+            text(FormattedString(`0`, align='left', 
+                font='Verdana', fontSize=8, 
+                fill=(0, 0, 1)), (self.x + self.w + 3,  self.y + self.h - fontSize/4))
+
+        prevY = 0
+        for index in range(len(self)):
+            _, y, _ = self.baseLines[index]
+            line((self.x, self.y + self.h - y), (self.x + self.w, self.y + self.h - y))
+            if view.textBoxShowIndex:
+                text(FormattedString(`index`, align='right', font='Verdana', fontSize=fontSize, 
+                    fill=(0, 0, 1)), (self.x-8, self.y + self.h - y - fontSize/3))
+            if view.textBoxShowY:
+                text(FormattedString('%d' % round(y), align='left', 
+                    font='Verdana', fontSize=fontSize, 
+                    fill=(0, 0, 1)), (self.x + self.w + 3, self.y + self.h - y - fontSize/4))
+            if view.textBoxShowLeading:
+                leading = round(abs(y - prevY))
+                text(FormattedString('%d' % leading, align='left', 
+                    font='Verdana', fontSize=fontSize, 
+                    fill=(1, 0, 0)), (self.x + self.w + 3, self.y + self.h - prevY - leading/2 - fontSize/4))
+            prevY = y
+
+    def _drawFrame(self, view):
+        stroke(0, 0, 1)
+        fill(None)
+        rect(self.x, self.y, self.w, self.h)
         
+    #   F I N D
+
+    def findPattern(self, pattern):
+        u"""Answer the point locations where this pattern occures in the Formatted String."""
+        foundPatterns = [] # List of FoundPattern instances. 
+        for lineIndex, textLine in enumerate(self.textLines):
+            y = self.baseLines[lineIndex]
+            for foundPattern in textLine.findPattern(pattern):
+                foundPattern.y = y
+                foundPattern.z = self.z
+                foundPatterns.append(foundPattern)
+        return foundPatterns
+                
+
 

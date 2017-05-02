@@ -58,7 +58,10 @@ class Document(object):
     # This behaviour is different from regular elements, who want the page.eId as key.
     def __getitem__(self, pnIndex):
         u"""Answer the pages with pageNumber equal to page.y. """
-        pn, index = pnIndex
+        if isinstance(pnIndex, (list, tuple)):
+            pn, index = pnIndex
+        else:
+            pn, index = pnIndex, 0 # Default is left page on pn row.
         return self._pages[pn][index]
     def __setitem__(self, pn, page):
         if not pn in self._pages:
@@ -227,16 +230,18 @@ class Document(object):
                     pages.append(page)
         return pages
 
-    def newPage(self, pn=None, **kwargs):
+    def newPage(self, pn=None, template=None, **kwargs):
         u"""Use point (x, y) to define the order of pages and spreads. Ignore any parent here, force to self.
         No need to append, as setting the page.parent will call back on self.appendElement(page)"""
         self.PAGE_CLASS(parent=self, **kwargs)
 
-    def makePages(self, pageCnt, pn=None, **kwargs):
-        u"""Make a range of pages. (Mis)using the (x,y) position of page elements, as their sorting order.
-        If no "point" is defined as page id, then we'll continue after the maximum value of page.y origin position."""
+    def makePages(self, pageCnt, pn=None, template=None, **kwargs):
+        u"""
+        If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position."""
+        if template is None:
+            template = self.pageTemplate
         for n in range(pageCnt):
-            self.newPage(pn, template=self.pageTemplate, **kwargs) # Parent is forced to self.
+            self.newPage(pn=pn, template=template, **kwargs) # Parent is forced to self.
 
     def nextPage(self, page, nextPage=1, makeNew=True):
         u"""Answer the next page of page. If it does not exist, create a new page."""
