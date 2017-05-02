@@ -250,6 +250,7 @@ class TextLine(object):
             #print 'fsdsdffsd', iStart, iEnd
             xStart = self.getOffsetForStringIndex(iStart)
             xEnd = self.getOffsetForStringIndex(iEnd)
+            print xStart, xEnd
             run = self.getGlyphIndex2Run(xStart)
             print iStart, xStart, iEnd, xEnd, run
             founds.append(FoundPattern(self.string[iStart:iEnd], xStart, iStart, line=self, run=run))
@@ -359,7 +360,7 @@ fs = FormattedString(u'This åéöøa hêädliñe rúns over one or more lines.\
 fs = fs + FormattedString('This an example of TextLines and TextRuns and more and more. ', font='Verdana', fontSize=14, lineHeight=22)
 fs = fs + FormattedString('=== Find this. === ', font='Georgia-Bold', fontSize=16, lineHeight=22)
 fs = fs + FormattedString('This an example of larger TextLines and TextRuns. ', font='Georgia', fontSize=16, lineHeight=22)
-fs = fs + FormattedString('=== Find this. ===', font='Georgia-Bold', fontSize=16, lineHeight=22)
+fs = fs + FormattedString('=== Find this. === ', font='Georgia-Bold', fontSize=16, lineHeight=22)
 fs = fs + FormattedString('This an example of TextLines and TextRuns. ', font='Verdana', fontSize=14, lineHeight=22)
 
 fittingWord = FormattedString('Word\n', font='Georgia', align='left', fontSize=500)
@@ -380,15 +381,6 @@ myTextBox.draw()
 myTextBox._drawFrame()
 myTextBox._drawBaselines(showIndex=True, showY=True, showLeading=True)
 
-#print myTextBox.baseLines
-
-#print myTextBox.textLines[3].getOffsetForStringIndex(0)
-#run = myTextBox.textLines[3].runs[1]
-#print '===', run, run.font, run.fontSize, run.underlineThickness, run.underlinePosition
-
-#print 'TextLines in textBox:', len(myTextBox1) # 7 text lines
-#for textLine in myTextBox1.textLines:
-#    print textLine
 print myTextBox.findPattern('Find')
 
 # Bitcount measures, pixels are 1/10 of Em
