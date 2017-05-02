@@ -36,7 +36,7 @@ class Document(object):
         # Used as default document master template if undefined in pages.
         self.pageTemplate = pageTemplate 
 
-        self._pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
+        self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
 
         # Initialize some basic views.
         self.initializeViews(views)
@@ -62,11 +62,11 @@ class Document(object):
             pn, index = pnIndex
         else:
             pn, index = pnIndex, 0 # Default is left page on pn row.
-        return self._pages[pn][index]
+        return self.pages[pn][index]
     def __setitem__(self, pn, page):
-        if not pn in self._pages:
-            self._pages[pn] = []
-        self._pages[pn].append(page)
+        if not pn in self.pages:
+            self.pages[pn] = []
+        self.pages[pn].append(page)
    
     def _get_ancestors(self):
         return []
@@ -97,7 +97,7 @@ class Document(object):
         u"""Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
         then only evaluate the selected pages."""
         w = h = d = 0
-        for (y, x), page in self._pages.items():
+        for (y, x), page in self.pages.items():
             if pageSelection is not None and not y in pageSelection:
                 continue
             w = max(w, e.w)
@@ -193,8 +193,8 @@ class Document(object):
         If Page, add after last page. If View, add to self.views[view.name]"""
         if isinstance(e, self.PAGE_CLASS):
             e.parent = self
-            if self._pages.keys():
-                pn = max(self._pages.keys())+1
+            if self.pages.keys():
+                pn = max(self.pages.keys())+1
             else:
                 pn = 0
             self[pn] = e
@@ -206,20 +206,20 @@ class Document(object):
 
     def getPage(self, pn, index=0):
         u"""Answer the page at index, for equal y and x. Raise index errors if it does not exist."""
-        if not pn in self._pages:
+        if not pn in self.pages:
             return None
-        if index >= len(self._pages[pn]):
+        if index >= len(self.pages[pn]):
             return None
-        return self._pages[pn][index]
+        return self.pages[pn][index]
 
     def getPages(self, pn):
         u"""Answer all pages that share the same page number. Rase KeyError if non exist."""
-        return self._pages[pn]
+        return self.pages[pn]
 
     def findPages(self, eid=None, name=None, pattern=None, pageSelection=None):
         u"""Various ways to find pages from their attributes."""
         pages = []
-        for pn, pnPages in sorted(self._pages.items()):
+        for pn, pnPages in sorted(self.pages.items()):
             if not pageSelection is None and not pn in pageSelection:
                 continue
             for _, page in sorted(pnPages.items()):
@@ -246,7 +246,7 @@ class Document(object):
     def nextPage(self, page, nextPage=1, makeNew=True):
         u"""Answer the next page of page. If it does not exist, create a new page."""
         found = False
-        for pn, pnPages in sorted(self._pages.items()):
+        for pn, pnPages in sorted(self.pages.items()):
             for index, page in enumerate(pnPages):
                 if found:
                     return page
@@ -260,7 +260,7 @@ class Document(object):
     def getPageNumber(self, page):
         u"""Answer a string with the page number pn, if the page can be found. If the page has index > 0:
         then answer page format "pn-index". pn and index are incremented by 1."""
-        for pn, pnPages in sorted(self._pages.items()):
+        for pn, pnPages in sorted(self.pages.items()):
             for index, pg in enumerate(pnPages):
                 if pg is page:
                     if index:
@@ -270,20 +270,20 @@ class Document(object):
 
     def getFirstPage(self):
         u"""Answer the list of pages with the lowest sorted page.y. Answer empty list if there are no pages."""
-        for pn, pnPages in sorted(self._pages.items()):
+        for pn, pnPages in sorted(self.pages.items()):
             for index, page in enumerate(pnPages):
                 return page
         return None
 
     def getLastPage(self):
         u"""Answer last page with the highest sorted page.y. Answer empty list if there are no pages."""
-        pn = sorted(self._pages.keys())[-1]
-        return self._pages[pn][-1]
+        pn = sorted(self.pages.keys())[-1]
+        return self.pages[pn][-1]
 
     def getSortedPages(self):
         u"""Answer the dynamic list of pages, sorted by y, x and index."""
         pages = []
-        for _, pnPages in sorted(self._pages.items()):
+        for _, pnPages in sorted(self.pages.items()):
             pages += pnPages
         return pages
 
@@ -293,7 +293,7 @@ class Document(object):
         w = 0
         h = 0
         d = 0
-        for pn, pnPages in self._pages.items():
+        for pn, pnPages in self.pages.items():
             if not pageSelection is None and not pn in pageSelection:
                 continue
             for page in pnPages:
