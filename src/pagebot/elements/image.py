@@ -21,7 +21,7 @@ class Image(Element):
     If the optional captionStyle is not defined, then use self.style for captions."""
     
     def __init__(self, path, point=None, parent=None, style=None, name=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
-        Container.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
 
 class PixelImage(Element):
     u"""Image element has special attributes self.iw and self.ih for the real image size.

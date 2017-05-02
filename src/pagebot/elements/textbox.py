@@ -446,8 +446,8 @@ class TextBox(Element):
             prevY = y
 
     def _drawFrame(self, view):
-        stroke(0, 0, 1)
-        fill(None)
+        setStrokeColor(0, 0, 1)
+        setFillColor(None)
         rect(self.x, self.y, self.w, self.h)
         
     #   F I N D
