@@ -1204,7 +1204,18 @@ class Element(object):
                     s += '\n%s %s' % eFail
         return s
 
-    def drawFrame(self, origin):
+    def draw(self, origin, view):
+        u"""Default drawing method. Probably will be redefined by inheriting element classes."""
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
+        self.drawFrame(origin, view)
+
+        self._restoreScale()
+        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+
+    def drawFrame(self, origin, view):
         u"""Used by elements who want to draw their box, independen of the view.showElementFrame flag.
         The origin point must already have the right "originTop" flag direction.""" 
         p = pointOffset(self.oPoint, origin) 
