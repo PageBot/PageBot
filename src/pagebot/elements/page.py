@@ -25,3 +25,6 @@ class Page(Element):
         # Check if we are in scaled mode. Then restore.
         #self._restoreScale()
 
+class Template(Page):
+    def draw(self, origin, view):
+        raise ValueError('Templates cannot draw themselves in a view. Apply to a page first.')

@@ -45,6 +45,10 @@ class View(Element):
         self.showPageFrame = False
         self.showPageNameInfo = False
         self.showPageMetaInfo = False
+        # TextBox stuff
+        self.textBoxShowIndex = False # Show the line index number on the left side.
+        self.textBoxShowY = False # Show the realtic y-position value if text lines on right side. 
+        self.textBoxShowLeading = False # Show distance of leading on the right side.
         # Flow stuff
         self.showFlowConnections = False
         # Image stuff
@@ -113,6 +117,8 @@ class View(Element):
         self.drawPageNameInfo(page, origin)
         self.drawPageRegistrationMarks(page, origin)
         self.drawPageCropMarks(page, origin)
+        self.drawGrid(page, origin)
+        self.drawBaselineGrid(page, origin)
 
     def drawPageFrame(self, page, origin):
         u"""Draw the page frame if the the flag is on and  if there ie padding enough to show other meta info.
@@ -325,6 +331,102 @@ class View(Element):
         u"""Restore the shadow mode of DrawBot. Should be paired with call self._setShadow()."""
         if e.css('shadowOffset') is not None:
             restore() # DrawBot graphics state pop.
+
+    #    G R I D
+
+    def drawGrid(self, e, origin):
+        u"""Draw grid of lines and/or rectangles if colors are set in the style.
+        Normally px and py will be 0, but it's possible to give them a fixed offset."""
+        # Drawing the grid as squares.
+        if not self.showGridColumns or not self.self.showGrid:
+            return
+        p = pointOffset(e.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
+
+        sGridFill = e.css('gridFill', NO_COLOR)
+        gutterW = e.gw # Gutter width
+        gutterH = e.gh # Gutter height
+        columnWidth = e.cw # Column width
+        columnHeight = e.ch # Column height
+        padL = e.pl # Padding left
+        padT = e.pt # Padding top
+        padR = e.pr # padding right
+        padB = e.pb # padding bottom
+        w = e.w
+        h = e.h
+        if self.showGridColumns and sGridFill is not NO_COLOR:
+            setFillColor(sGridFill)
+            setStrokeColor(None)
+            ox = px + padL
+            while ox < w - padR - columnWidth:
+                oy = h - padT - columnHeight - gutterH
+                while oy >= 0:
+                    rect(ox, oy + gutterH, columnWidth, columnHeight)
+                    oy -= columnHeight + gutterH
+                ox += columnWidth + gutterW
+        # Drawing the grid as lines.
+        if self.showGrid and self.css('gridStroke', NO_COLOR) is not NO_COLOR:
+            setFillColor(None)
+            setStrokeColor(self.css('gridStroke', NO_COLOR), self.css('gridStrokeWidth'))
+            # TODO: DrawBot align and fill don't work properly now.
+            M = 16
+            fs = getFormattedString('', self, dict(font='Verdana', align='right', fontSize=M/2,
+                stroke=None, textFill=self.css('gridStroke')))
+            ox = px + padL
+            index = 0
+            oy = h - padT - py
+            while ox < px + w - padR:
+                newPath()
+                moveTo((ox, py))
+                lineTo((ox, py + h))
+                moveTo((ox + columnWidth, py))
+                lineTo((ox + columnWidth, py + h))
+                drawPath()
+                text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
+                index += 1
+                ox += columnWidth + gutterW
+            index = 0
+            while oy > py:
+                newPath()
+                moveTo((px, oy))
+                lineTo((px + w, oy))
+                moveTo((px, oy - columnHeight))
+                lineTo((px+w, oy - columnHeight))
+                drawPath()
+                text(fs + repr(index), (px + padL - M / 2, oy - M * 0.6))
+                index += 1
+                oy -= columnHeight + gutterH
+
+    def drawBaselineGrid(self, e, origin):
+        u"""Draw baseline grid if line color is set in the style.
+        TODO: Make fixed values part of calculation or part of grid style.
+        Normally px and py will be 0, but it's possible to give them a fixed offset."""
+        if not self.showBaselineGrid:
+            return    
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
+        oy = self.h - self.css('pt') - py
+        line = 0
+        M = 16
+        # Format of line numbers.
+        # TODO: DrawBot align and fill don't work properly now.
+        if self.horizontal:
+            fs = getFormattedString('', self, dict(font=self.css('fallbackFont','Verdana'), align='right', fontSize=M/2,
+                stroke=None, textFill=self.css('gridStroke')))
+            while oy > self.css('pb', 0):
+                setFillColor(None)
+                setStrokeColor(self.css('baselineGridStroke', NO_COLOR), self.css('gridStrokeWidth'))
+                newPath()
+                moveTo((px + M, py + oy))
+                lineTo((px + self.parent.w - M, py + oy))
+                drawPath()
+                text(fs + repr(line), (px + M - 2, py + oy - M * 0.6))
+                text(fs + repr(line), (px + self.parent.w - M - 8, py + oy - M * 0.6))
+                line += 1 # Increment line index.
+                oy -= self.css('baselineGrid') # Next vertical line position of baseline grid.
 
     #    M A R K E R S
 
