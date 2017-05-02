@@ -413,7 +413,7 @@ class TextBox(Element):
         self._drawElements(origin, view)
 
         # Draw markers on TextLine and TextRun positions.
-        self._drawFrame(view)
+        self.drawFrame(view)
         self._drawBaselines(view)
  
         self._restoreScale()
@@ -444,12 +444,7 @@ class TextBox(Element):
                     font='Verdana', fontSize=fontSize, 
                     fill=(1, 0, 0)), (self.x + self.w + 3, self.y + self.h - prevY - leading/2 - fontSize/4))
             prevY = y
-
-    def _drawFrame(self, view):
-        setStrokeColor(0, 0, 1)
-        setFillColor(None)
-        rect(self.x, self.y, self.w, self.h)
-        
+  
     #   F I N D
 
     def findPattern(self, pattern):
