@@ -14,12 +14,13 @@ from __future__ import division
 from datetime import datetime
 
 from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, \
-    cmykStroke, fill, text, stroke, strokeWidth, FormattedString
+        FormattedString, cmykStroke, text 
 
 from pagebot import setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR
 from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D
+from pagebot import getFormattedString, setStrokeColor, setFillColor
 
 class View(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
@@ -252,20 +253,19 @@ class View(Element):
             p = e._applyScale(p)    
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-            fs = getFormattedString(e._getElementInfoString(), style=dict(font=self.css('viewInfoFont'), 
+            fs = getFormattedString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'), 
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
             tw, th = textSize(fs)
             Pd = 4 # Padding in box and shadow offset.
             tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
             tpy = py + e.h - th - Pd
             # Tiny shadow
-            fill(0.3, 0.3, 0.3, 0.5)
-            stroke(None)
+            setFillColor((0.3, 0.3, 0.3, 0.5))
+            setStrokeColor(None)
             rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
             # Frame
             setFillColor(self.css('viewInfoFill'))
-            stroke(0.3)
-            strokeWidth(0.25)
+            setStrokeColor(0.3, 0.25)
             rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
             text(fs, (tpx+Pd, tpy+1.5*Pd))
             e._restoreScale()
@@ -275,10 +275,8 @@ class View(Element):
             # Draw origin of the element
             px, py, _ = pointOffset(e.oPoint, origin)
             S = self.css('viewInfoOriginMarkerSize', 4)
-            fill(None)
-            stroke(0)
-            fill(0.5,0.5,0.5,0.1) # Transparant fill, so we can see the marker on dark backgrounds.
-            strokeWidth(0.25)
+            setFillColor((0.5,0.5,0.5,0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
+            setStrokeColor(0, 0.25)
             oval(px-S, py-S, 2*S, 2*S)
             line((px-S, py), (px+S, py))
             line((px, py-S), (px, py+S))

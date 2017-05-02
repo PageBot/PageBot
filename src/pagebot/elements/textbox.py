@@ -406,14 +406,12 @@ class TextBox(Element):
             setStrokeColor(sStroke, sStrokeWidth)
             setFillColor(None)
             rect(px, py, self.w, self.h)
-        else: # If debugging,then draw the rectangle. Only self.css('showElementBox') is True
-            self.drawFrame(origin)
 
         # If there are child elements, draw them over the text.
         self._drawElements(origin, view)
 
         # Draw markers on TextLine and TextRun positions.
-        self.drawFrame(view)
+        self.drawFrame(origin, view)
         self._drawBaselines(view)
  
         self._restoreScale()
