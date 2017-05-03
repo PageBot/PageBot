@@ -1,5 +1,10 @@
 from __future__ import division
 import os # Python library that allows access to the OS file system.
+from random import choice, shuffle
+
+SHOW_FILTERED_AVAILABLE_FONTS = False
+SHOW_GRID = True
+AMOUNT_OF_SKETCHES = 5
 
 def scaledImage(path, (x, y, w, h)):
     imageW, imageH = imageSize(path)
@@ -58,6 +63,11 @@ def drawPoster(bgColor, textColor):
         if not fileName.endswith('jpg'):
             continue
         #x, y = random()*W, random()*H
+        # Randomly shuffle the order of the Lorum Ipsum text pieces.
+        shuffle(LORUM_IPSUMS)
+        # Pick a random (2, 3, 4) pieces selection, starting at index 0 a
+        LORUM_IPSUM = '\n'.join(LORUM_IPSUMS[:choice((2,3))])
+
         imageWidth = CW
         imageW, imageH = scaledImage(imageFolder + fileName, (x, y, imageWidth, 0))
         print imageFolder + fileName, x, y
@@ -93,15 +103,18 @@ def drawPoster(bgColor, textColor):
 
     
 #print installedFonts() # Print all font names installed in the system
-filterAvailableFonts = False
-if filterAvailableFonts:
+if SHOW_FILTERED_AVAILABLE_FONTS:
     for fontName in installedFonts():
         if 'clarendon' in fontName.lower():
             print fontName
 
-LORUM_IPSUM = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce pretium ex lorem, quis volutpat mi mollis ac. Aliquam consequat orci nec tempus venenatis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam quis purus consequat, lacinia tortor in, mattis diam. Suspendisse malesuada eleifend enim vel lacinia. Maecenas pellentesque elit turpis, sed tincidunt lectus placerat eu. Etiam finibus mollis feugiat. Proin mattis lacus venenatis fringilla euismod. Morbi nunc erat, consequat in neque sit amet, posuere maximus purus.
-
-Etiam posuere lacus a tincidunt hendrerit. In feugiat lorem tortor, non rhoncus velit finibus ut. Vivamus iaculis orci id viverra aliquet. Donec enim nibh, pellentesque sed condimentum in, vulputate ut massa. Nunc interdum metus sit amet dapibus sodales. Quisque sed quam ac est facilisis congue. Nulla aliquam condimentum nisi sit amet ultrices."""
+LORUM_IPSUMS = [
+    """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce pretium ex lorem, quis volutpat mi mollis ac. Aliquam consequat orci nec tempus venenatis. """,
+    """Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam quis purus consequat, lacinia tortor in, mattis diam. Suspendisse malesuada eleifend enim vel lacinia. """,
+    """Maecenas pellentesque elit turpis, sed tincidunt lectus placerat eu. Etiam finibus mollis feugiat. Proin mattis lacus venenatis fringilla euismod. Morbi nunc erat, consequat in neque sit amet, posuere maximus purus.
+    """,
+    """Etiam posuere lacus a tincidunt hendrerit. In feugiat lorem tortor, non rhoncus velit finibus ut. Vivamus iaculis orci id viverra aliquet. Donec enim nibh, pellentesque sed condimentum in, vulputate ut massa. Nunc interdum metus sit amet dapibus sodales. Quisque sed quam ac est facilisis congue. Nulla aliquam condimentum nisi sit amet ultrices."""
+]
 
 CAPTION = {
     'pasta1.jpg': 'Red sauce and cream',
@@ -139,17 +152,16 @@ else: # Make columns size dependent on height
 
 # Define color of the background
 # Yelloq version
-AmountOfSketches = 20
-for n in range(AmountOfSketches):
-    if n == 0:
+for n in range(AMOUNT_OF_SKETCHES):
+    if n == 0: # Force fixed color, yellow background               
         bgColor = 0xF5/256, 0xF5/256, 0xDC/256 #   #F5F5DC
         textColor = 0
-    elif n == 1:
+    elif n == 1: # Force fixed color, black background
         bgColor = 0, 0, 0 # In case of black background
         textColor = (1, 1, 1) # Text red, text green, text blue
-    else:
+    else: # Random 
         yellowish = random()
-        bgColor = yellowish, yellowish, yellowish*0.8
+        bgColor = yellowish, yellowish, yellowish*0.95
         tColor = 1-yellowish
         if abs(tColor) < 0.4:
             if yellowish < 0.5:
