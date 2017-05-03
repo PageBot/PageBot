@@ -163,7 +163,7 @@ for n in range(AMOUNT_OF_SKETCHES):
         yellowish = random()
         bgColor = yellowish, yellowish, yellowish*0.95
         tColor = 1-yellowish
-        if abs(tColor) < 0.4:
+        if abs(yellowish - tColor) < 0.3: # Difference in contrast too small, put text in white or black.
             if yellowish < 0.5:
                 tColor = 1
             else:
@@ -172,6 +172,6 @@ for n in range(AMOUNT_OF_SKETCHES):
         
     drawPoster(bgColor, textColor)
       
-saveImage('_export/FoodPosters.pdf')
-saveImage('_export/FoodPosters.png')
-#saveImage('_export/FoodPosters.gif')
+saveImage('_export/DB_FoodPosters.pdf')
+saveImage('_export/DB_FoodPosters.png', multipage=True) # Save images a separate PNG files.
+#saveImage('_export/DB_FoodPosters.gif')

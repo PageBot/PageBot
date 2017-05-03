@@ -11,11 +11,21 @@ def scaledImage(path, (x, y, w, h)):
     return w*s, y*s
     
 #print installedFonts() # Print all font names installed in the system
-filterAvailableFonts = False
-if filterAvailableFonts:
+FILTER_TYPE = 'clarendon'
+FILTER_TYPE = None
+FILTER_TYPE = 'proforma'
+if FILTER_TYPE is not None:
     for fontName in installedFonts():
-        if 'clarendon' in fontName.lower():
+        if FILTER_TYPE in fontName.lower():
             print fontName
+
+# Draw title on the poster using FormattedString
+#fontName = 'Superclarendon-Bold'
+#fontNameItalic = 'Superclarendon-BoldItalic'
+#captionFontName = 'Superclarendon-Regular'
+fontName = 'Proforma-Bold'
+fontNameItalic = 'Proforma-MediumItalic'
+captionFontName = 'Proforma-Book'
 
 LORUM_IPSUM = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce pretium ex lorem, quis volutpat mi mollis ac. Aliquam consequat orci nec tempus venenatis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam quis purus consequat, lacinia tortor in, mattis diam. Suspendisse malesuada eleifend enim vel lacinia. Maecenas pellentesque elit turpis, sed tincidunt lectus placerat eu. Etiam finibus mollis feugiat. Proin mattis lacus venenatis fringilla euismod. Morbi nunc erat, consequat in neque sit amet, posuere maximus purus.
 
@@ -79,11 +89,6 @@ rect(0, 0, W, H)
 #fontSize(titleSize)
 #text('Asian food', (30, H-titleSize))
 
-# Draw title on the poster using FormattedString
-fontName = 'Superclarendon-Bold'
-fontNameItalic = 'Superclarendon-BoldItalic'
-captionFontName = 'Superclarendon-Regular'
-
 titleSize = 140
 fs = FormattedString('Asian', font=fontName, 
         fontSize=titleSize, fill=textColor, lineHeight=titleSize*1.1)
@@ -141,5 +146,5 @@ for cx in range(int(COLUMNS)):
     line((x, 0), (x, H))
     line((x+CW, 0), (x+CW, H))
     
-saveImage('images/sketchPoster.pdf')
-saveImage('images/sketchPoster.png')
+saveImage('gallery/DB_FoodPosterSketch.pdf')
+saveImage('gallery/DB_FoodPosterSketch.png')
