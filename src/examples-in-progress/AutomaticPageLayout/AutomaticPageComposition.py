@@ -12,10 +12,10 @@
 #     This script generates an article (in Dutch) of 2009 about the approach to
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import textBoxBaseLines
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN
+from pagebot.style import getRootStyle, LEFT
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
@@ -27,8 +27,8 @@ from pagebot.typesetter import Typesetter
 from pagebot.composer import Composer
 # Elements that can placed on pages and templates.
 from pagebot.elements import Galley, Rect
-# Get functions to create instances style from Variation fonts.
-from pagebot.fonttoolbox.variationbuilder import getVariationFont
+# Get functions to create instances style from Variable fonts.
+from pagebot.fonttoolbox.variablebuilder import getVariableFont
 
 # Some flags to turn on/off extra debug information on the output pages.    
 DEBUG = True
@@ -59,13 +59,14 @@ RS = getRootStyle(
     h = 11 * 72, # Page height 11", international generic fit.
     ml = 7*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = baselineGrid, # Set the baseline grid, as shown when SHOW_BASELINE_GRID is True.
-    g = U, # Generic gutter for colums.
+    gw = 2*U, # Generic gutter, equal for width and height
+    gh = 2*U,
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # 11 is a the best in that respect for column calculation.
     cw = 11*U, 
     ch = 6*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing. Pass the debug paramers into the root style.
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
@@ -77,8 +78,6 @@ RS = getRootStyle(
     rLeading = 0, # Set relative leading (dependent on font size) to 0.
     fontSize = U+2 # Set default font size of body text to U + 2 = 9 pt.
 )
-# Make an empty formatted string with style according to the RootStyle as seed for other strings.
-FS = getFormattedString(FormattedString(''), RS)
 
 if 0: # In case an English MarkDown text of this example article is ready.
     RS['language'] = 'en' # Tell RootStyle instance to use Englisch hyphenation.
@@ -98,19 +97,19 @@ P_TRACK = 0.030
 
 # Path to the Variable font source, from which width/weight instances will be created.
 FONT_PATH = '../../fonts/PromisePageBot-GX.ttf'
-# Create instance, depending on the location in the Variation axes.
-LIGHT = getVariationFont(FONT_PATH, {"wght": 100, "wdth": 1000})
-LIGHT_CONDENSED = getVariationFont(FONT_PATH, {"wght": 100, "wdth": 800})
-BOOK_LIGHT = getVariationFont(FONT_PATH, {"wght": 175, "wdth": 1000})
-BOOK_CONDENSED = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 800})
-BOOK = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 1000})
-BOOK_ITALIC = getVariationFont(FONT_PATH, {"wght": 250, "wdth": 1000})
-MEDIUM = getVariationFont(FONT_PATH, {"wght": 400, "wdth": 1000})
-SEMIBOLD = getVariationFont(FONT_PATH, {"wght": 400, "wdth": 1000})
-SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, {"wght": 600, "wdth": 500})
-BOLD = getVariationFont(FONT_PATH, {"wght": 800, "wdth": 1000})
-BOLD_ITALIC = getVariationFont(FONT_PATH, {"wght": 800, "wdth": 1000})
-BLACK = getVariationFont(FONT_PATH, {"wght": 1000, "wdth": 1000})
+# Create instance, depending on the location in the Variable axes.
+LIGHT = getVariableFont(FONT_PATH, {"wght": 100, "wdth": 1000})
+LIGHT_CONDENSED = getVariableFont(FONT_PATH, {"wght": 100, "wdth": 800})
+BOOK_LIGHT = getVariableFont(FONT_PATH, {"wght": 175, "wdth": 1000})
+BOOK_CONDENSED = getVariableFont(FONT_PATH, {"wght": 250, "wdth": 800})
+BOOK = getVariableFont(FONT_PATH, {"wght": 250, "wdth": 1000})
+BOOK_ITALIC = getVariableFont(FONT_PATH, {"wght": 250, "wdth": 1000})
+MEDIUM = getVariableFont(FONT_PATH, {"wght": 400, "wdth": 1000})
+SEMIBOLD = getVariableFont(FONT_PATH, {"wght": 400, "wdth": 1000})
+SEMIBOLD_CONDENSED = getVariableFont(FONT_PATH, {"wght": 600, "wdth": 500})
+BOLD = getVariableFont(FONT_PATH, {"wght": 800, "wdth": 1000})
+BOLD_ITALIC = getVariableFont(FONT_PATH, {"wght": 800, "wdth": 1000})
+BLACK = getVariableFont(FONT_PATH, {"wght": 1000, "wdth": 1000})
 
 RS['font'] = BOOK
 
@@ -193,7 +192,7 @@ def makeDocument(rs):
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, textFill=0.1, 
         prefix='', postfix='\n',
-        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
+        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
@@ -208,7 +207,7 @@ def makeDocument(rs):
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent,
+        tabs=[(listIndent, LEFT)], indent=listIndent,
         firstLineIndent=1, prefix='', postfix='\n'), 
     doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)

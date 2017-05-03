@@ -13,7 +13,7 @@ Waar in de traditionele manier van werken met opmaakprogrammatuur zoals Quark XP
 Er bestaat op het moment vreemd genoeg geen digitaal gereedschap dat enerzijds voldoende flexibel is om in alle mogelijk technieken en soorten layouts te gebruiken, te koppelen is met een grote verscheidenheid aan informatiebronnen, en anderzijds voldoet aan de typografische kwaliteit die met handmatige opmaak wel kan worden bereikt.
 
 
-![AutoPager](images/im1.png "Met een XML beschrijving van de tekst wordt een transformatie uitgevoerd waarmee een strokenproef wordt aangemaakt. Daarbij wordt rekening gehouden met de typografische eigenschappen van de Markdown of XML tags, zoals lettertype, corps, gewichten, cursief, variations assen, spatiëring, regelbreedte, regeltransport, uitlijnen, inspringen, tabulatie, kleur, en afbreken in de gewenste taal.")
+![AutoPager](images/im1.png "Met een XML beschrijving van de tekst wordt een transformatie uitgevoerd waarmee een strokenproef wordt aangemaakt. Daarbij wordt rekening gehouden met de typografische eigenschappen van de Markdown of XML tags, zoals lettertype, corps, gewichten, cursief, variables assen, spatiëring, regelbreedte, regeltransport, uitlijnen, inspringen, tabulatie, kleur, en afbreken in de gewenste taal.")
 
 ![The News](images/im2.png "Doel van het project is om automatisch pagina’s op te opmaken met een complexiteit die in anders alleen in boeken, kranten en tijdschriften te vinden is, tegelijk met een minimum aan toegevoegde meta-informatie.")
 

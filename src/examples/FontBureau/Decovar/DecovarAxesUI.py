@@ -19,12 +19,11 @@
 from __future__ import division
 
 import pagebot
-from pagebot import getFormattedString
 from pagebot.page import Template
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variationglyphs import VariationGlyphs
+from pagebot.fonttoolbox.elements.variableglyphs import VariableGlyphs
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -72,7 +71,7 @@ for axisName, (minValue, defaultValue, maxValue) in axes.items():
     globals()[axisName] = defaultValue        
 Variable(VARIABLES, globals())
 
-class VariationTypeSpecimen(TypeSpecimen):
+class VariableTypeSpecimen(TypeSpecimen):
 
     def makeTemplate(self, rs):
         # Template for the main page.
@@ -87,11 +86,11 @@ class VariationTypeSpecimen(TypeSpecimen):
             trmF=trmF, trmG=trmG, trmK=trmK,
             trmL=trmL, sklA=sklA, sklB=sklB, sklD=sklD, bldA=bldA, bldB=bldB,
             wmx2=wmx2)
-        variationGlyphs = VariationGlyphs(varFont, s='A', style=page.style, fontSize=500, location=location) 
-        page.place(variationGlyphs, (250, 100))
+        variableGlyphs = VariableGlyphs(varFont, s='A', style=page.style, fontSize=500, location=location) 
+        page.place(variableGlyphs, (250, 100))
 
 # Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariationTypeSpecimen([decovarName], showGrid=DEBUG) 
+typeSpecimen = VariableTypeSpecimen([decovarName], showGrid=DEBUG) 
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 #typeSpecimen.draw()

@@ -15,7 +15,7 @@ from __future__ import division
 
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates
-from fontTools.varLib.models import VariationModel, supportScalar, normalizeLocation
+from fontTools.varLib.models import VariableModel, supportScalar, normalizeLocation
 from fontTools.varLib import _GetCoordinates
 from designspacemodel import DesignSpaceBase, Axis
 from ttftools import getBestCmap
@@ -56,10 +56,10 @@ def setCoordinates(glyph, coord, glyfTable):
 
 
 class TTVarFontGlyphSet(object):
-
-    def __init__(self, font):
-        self._ttFont = font
-        self._axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in font['fvar'].axes}
+    # TODO: CHange to PageBot Font wrapper
+    def __init__(self, ttFont):
+        self._ttFont = ttFont
+        self._axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in ttFont['fvar'].axes}
         self.setLocation({})
     
     def setLocation(self, location):
@@ -104,9 +104,9 @@ class TTVarGlyph(object):
         glyph = self._ttFont['glyf'][self._glyphName]
         glyph = self._copyGlyph(glyph, self._ttFont['glyf'])
 
-        variations = self._ttFont['gvar'].variations[self._glyphName]
+        variables = self._ttFont['gvar'].variables[self._glyphName]
         coordinates, _ = _GetCoordinates(self._ttFont, self._glyphName)
-        for var in variations:
+        for var in variables:
             scalar = supportScalar(self._location, var.axes)
             if not scalar:
                 continue
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
         def __init__(self, designSpace, previewCharacter="e"):
             from vanilla import Window
-            from tnbits.toolparts.buildvariations.designspaceexplorer import DesignSpaceExplorer
+            from tnbits.toolparts.buildvariables.designspaceexplorer import DesignSpaceExplorer
             self.w = Window((1000, 500), "DesignSpace Explorer", minSize=(600, 300))
             self.w.designSpaceExplorer = DesignSpaceExplorer((0, 0, 0, 0), designSpace,
                 previewCharacter=previewCharacter)

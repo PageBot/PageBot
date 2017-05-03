@@ -13,11 +13,10 @@
 #
 import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
-from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
-from pagebot.document import Document
-from pagebot.page import Page, Template
-from pagebot.composer import Composer
-from pagebot.typesetter import Typesetter
+from pagebot.style import getRootStyle, LEFT, NO_COLOR
+from pagebot.elements.document import Document
+from pagebot.elements.page import Page, Template
+from pagebot.composition import Composer, Typesetter
 from pagebot.elements import Galley
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 
@@ -43,16 +42,17 @@ RS = getRootStyle(
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 842, # 842 = A4 height. Other example: page height 11", international generic fit.
-    ml = 8*U, # Margin left rs.mt = 7*U # Margin top
+    pl = 8*U, # Padding left rs.mt = 7*U # Padding top
     baselineGrid = 14,#baselineGrid,
-    g = 2*U, # Generic gutter.
+    gw = 2*U, # Generic gutter, equal for width and height
+    gh = 2*U,
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # Uneven a the best in that respect for column calculation,
     # as it is possible to make micro columsn with the same gutter.
     cw = 8*U, 
     ch = 5*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
@@ -65,7 +65,6 @@ RS = getRootStyle(
     rTracking = 0,
     fontSize = 9
 )
-FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 
@@ -135,7 +134,7 @@ def makeDocument(rs):
     
     # Template for Table of Content
     templateToc = Template(rs) # Create template for Table of Content
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    # Show grid columns and paddngs if rootStyle.showGrid or rootStyle.showGridColumns are True
     templateToc.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateToc.baselineGrid(rs)
@@ -144,7 +143,7 @@ def makeDocument(rs):
     
     # Template for literature reference index.
     templateLiteratureIndex = Template(rs) # Create template for Table of Content
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    # Show grid columns and paddings if rootStyle.showGrid or rootStyle.showGridColumns are True
     templateLiteratureIndex.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateLiteratureIndex.baselineGrid(rs)
@@ -153,7 +152,7 @@ def makeDocument(rs):
     
     # Template for image reference index.
     templateImageIndex = Template(rs) # Create template for Table of Content
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    # Show grid columns and padding if rootStyle.showGrid or rootStyle.showGridColumns are True
     templateImageIndex.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     templateImageIndex.baselineGrid(rs)
@@ -162,7 +161,7 @@ def makeDocument(rs):
     
     # Template 1
     template1 = Template(rs) # Create template of main size. Front page only.
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    # Show grid columns and paddings if rootStyle.showGrid or rootStyle.showGridColumns are True
     template1.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
@@ -214,7 +213,7 @@ def makeDocument(rs):
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, 
         prefix='', postfix='\n', rTracking=P_TRACK, leading=14, 
-        rLeading=0, align=LEFT_ALIGN, hyphenation=True, indent=0,
+        rLeading=0, align=LEFT, hyphenation=True, indent=0,
         firstLineIndent=2*U, 
         firstParagraphIndent=0) # TODO: Make firstParagraphIndent to work.
     # Inline tags need to refined prefix and postfix as non-\n, otherwise they
@@ -235,12 +234,12 @@ def makeDocument(rs):
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         rTracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='footnote', fill=0, fontSize=0.9*fontSize, font=BOOK,
         rTracking=P_TRACK,
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
         
     # Image & captions
@@ -330,7 +329,7 @@ def makeDocument(rs):
                         # becomes a method of the composer.
                         # TODO: Make this into Galley, in case footnote <p> has child nodes. 
                         footnoteText = getFormattedString('%d\t%s\n' % (footnoteId, doc.footnotes[footnoteId]['p'].text),
-                            style=t.getCascadedStyle(doc.getStyle('footnote')))
+                            page, t.getCascadedStyle(doc.getStyle('footnote')))
                         # Add the footnote content to the box (it may not be the first to be added.
                         fnBox.append(footnoteText)
                 elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all in the TOC
@@ -357,7 +356,6 @@ def makeDocument(rs):
         for pageNumber in item['pageIds']:
             pageNumbers.append(`pageNumber`)
         literatureRefBox.append(u'%s – %s\n' % (refId, ', '.join(pageNumbers)))
-        #fs = getFormattedString('', doc.getStyle('p'))
         
         print refId, item['nodeId'], item['node'], item['p'], item['pageIds']
 
@@ -373,7 +371,7 @@ def makeDocument(rs):
 
     # Set all pagenumbers and other page-based info
     for pageId, page in sorted(doc.pages.items()):
-        for e, _ in page.elements:
+        for e in page.elements:
             if e.eId == pageNumberId:
                 e.setText('%s' % pageId)
                 break

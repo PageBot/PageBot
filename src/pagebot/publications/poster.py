@@ -10,14 +10,14 @@
 #     poster.py
 #
 from pagebot import getFormattedString
-from pagebot.publication import Publication
+from pagebot.publications.publication import Publication
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
+from pagebot.style import getRootStyle, LEFT, NO_COLOR
 # Document is the main instance holding all information about the document together 
 # (pages, styles, etc.)
-from pagebot.document import Document
+from pagebot.elements.document import Document
 # Page and Template instances are holding all elements of a page together.
-from pagebot.page import Template
+from pagebot.elements.page import Template
 
  
 class Poster(Publication):
@@ -45,13 +45,13 @@ class Poster(Publication):
         self.mainContentId = 'mainContentId'
         
         # Template for the main page.
-        template = Template(rs) # Create second template. This is for the main pages.
+        template = Template(style=rs) # Create template, using the root sttle. This is for the main pages.
         # Show grid columns and margins if rootStyle.showGrid or 
         # rootStyle.showGridColumns are True.
         # The grid is just a regular element, like all others on the page. Same parameters apply.
-        template.grid(rs)  
+        template.grid()  
         # Add named text box to template for main specimen text.
-        template.cTextBox('', 1, 0, 5, 7, eId=self.mainContentId, style=rs) 
+        template.cTextBox('', 1, 0, 5, 7, eId=self.mainContentId) 
         
         posterTitle = title or 'Simple Poster Example'      
         # Create new document with (w,h) and start with a single page.

@@ -6,7 +6,7 @@ Bitcount is a family of styles, where the core shape of letters has been reduced
 
 ![ref2] (images/referenceImages_2.png "")
 
-The large number of styles in the Bitcount family come from the virtually infinite amount of variations that are possible, even with this small amount of 35+ pixels. The styles vary is articulation of accent shapes, one or two pixel stems, roman or slanted, normal or condensed. And all of this with a range of pixels shapes, such as large/small circles and large/small squares. Here showing respectively *Bitcount Single Regular Circle*, *Bitcount Double Regular Circle* and *Bitcount Single Regular Square*.
+The large number of styles in the Bitcount family come from the virtually infinite amount of variables that are possible, even with this small amount of 35+ pixels. The styles vary is articulation of accent shapes, one or two pixel stems, roman or slanted, normal or condensed. And all of this with a range of pixels shapes, such as large/small circles and large/small squares. Here showing respectively *Bitcount Single Regular Circle*, *Bitcount Double Regular Circle* and *Bitcount Single Regular Square*.
 
 ![ref3] (images/referenceImagesX_3.png "")
 
@@ -61,20 +61,20 @@ Example of *Bitcount Prop Single* with height of 10 pixels, with extended ascend
 
 ### Low resolution screens
 
-Weight variations can be made by altering the pixel size (or intensity), instead of adding more pixels. Although the 2-pixel contrast stem of the *Double* variant in this example could be interpreted as bold, it is compensated by using very small or light pixels.
+Weight variables can be made by altering the pixel size (or intensity), instead of adding more pixels. Although the 2-pixel contrast stem of the *Double* variant in this example could be interpreted as bold, it is compensated by using very small or light pixels.
 
 ![tpa7] (images/tpPixelPython.png "")
 
 ### Templates for physical type
 
-## Future: Bitcount Variations
+## Future: Bitcount Variables
 
 In the animated example, three layers of Bitcount variants – *MonoSingle-BoldCircle* (bottom), *MonoSingle-RegularCircle* (middle) and *MonoSingle-BookCircle* (top) are used in different colors to create interesting patterns. 
 
 ![animated_a] (images/animatedA-blackwhite.gif "")
 ![typetr_logo] (animations/animatedA-redblack2.gif "")
 
-With the future introduction of Bitcount OpenType 1.8 Variation fonts, it will be possible to animate through the different axes of variations. In this manual more examples will be shown of this process.
+With the future introduction of Bitcount OpenType 1.8 Variable fonts, it will be possible to animate through the different axes of variables. In this manual more examples will be shown of this process.
 
 ## Overview of typographic values
 
@@ -357,18 +357,18 @@ This is an example of an editor for type design, developed im 1980, using Ikarus
 
 ![tpa4] (images/tpaWeights1.svg "")
 
-Weight variations can be made by altering the pixel size (or intensity), instead of adding more pixels. Although the 2-pixel contrast stem could be interpreted as bold, it is compensated by using very small or light pixels.
+Weight variables can be made by altering the pixel size (or intensity), instead of adding more pixels. Although the 2-pixel contrast stem could be interpreted as bold, it is compensated by using very small or light pixels.
 
 ![tpa7] (images/tpPixelPython.png "")
 
-In a modern Python programming editor, the use of variations can look like this. The shape of the pixel is connected to the function of a specific word in the programming language.
+In a modern Python programming editor, the use of variables can look like this. The shape of the pixel is connected to the function of a specific word in the programming language.
 Nowadays the use of small pixel fonts almost disappeared, due to the increase of screen resolution and the availability of anti-aliased type on screen.
 
-On the other hand, designers may decide to use the vintage character of low resolution type in a decorative way. Bitcount offers many variations in pixels shape for this. By using overlays, interesting new shapes can be created.
+On the other hand, designers may decide to use the vintage character of low resolution type in a decorative way. Bitcount offers many variables in pixels shape for this. By using overlays, interesting new shapes can be created.
 
 ![tpa2] (images/tpaColors.svg "")
 
-Stylistic variations can be made by adding layers that are slightly shifted. Due to the construction of the font, it is easy to vary the shape of the pixels within the drawing of the glyphs. @@@@@@@ CHANGE EXAMPLE: ARROW IS NOT PART OF BASIC PACKAGE NOW.
+Stylistic variables can be made by adding layers that are slightly shifted. Due to the construction of the font, it is easy to vary the shape of the pixels within the drawing of the glyphs. @@@@@@@ CHANGE EXAMPLE: ARROW IS NOT PART OF BASIC PACKAGE NOW.
 ![tpa3] (images/tpaComposite.svg "")This example is made from 3 layers, each with its own color and pixel shape (*Bold Circle*, *Medium Line Circle* and *Light Circle*).
 Other examples of Bitcount decorated titles can be found here.
 @@@@@@@ CHANGE EXAMPLE: ARROW IS NOT PART OF BASIC PACKAGE NOW.
@@ -412,7 +412,7 @@ PropSingleItalic | Variable | 10 px | 1 px | 14/100 | Proportional<br/>![ref3] (
 PropDouble | Variable | 10 px | 2 px | 0 | Proportional<br/>![ref3] (images/referenceImages_20.png "") | Double pixel stems where possible. Vertical spacing is identical to the Bitcount-Mono. Horizontal spacing depends on the glyph, but always in increments of 1 pixel. 
 PropDoubleItalic | Variable | 10 px | 2 px | 14/100 | Proportional<br/>![ref3] (images/referenceImages_26.png "") | Double pixel stems where possible. Vertical spacing is identical to the Bitcount-Mono. Horizontal spacing depends on the glyph, but always in increments of 1 pixel.
 
-Since all different pixels variations within the same spacing type are spaced in exactly the same measures, they can be place on top of each other in layers (see Examples).
+Since all different pixels variables within the same spacing type are spaced in exactly the same measures, they can be place on top of each other in layers (see Examples).
 
 ### Usage
 
@@ -431,7 +431,7 @@ Italic | All fonts are available as *Italic* variant, where the pixels stems hav
 
 ## Features
 
-All of the Bitcount variations contain a large set of OT-Features to select from, including small-caps, old style figures, condensed, fractions, addition contrast-pixel, extended ascenders and extended descenders. The exact features vary between the types of spacing, e.g. there is no condensed option available for the *Double* variant.
+All of the Bitcount variables contain a large set of OT-Features to select from, including small-caps, old style figures, condensed, fractions, addition contrast-pixel, extended ascenders and extended descenders. The exact features vary between the types of spacing, e.g. there is no condensed option available for the *Double* variant.
 
 Feature | Code | Grid Single | Grid Double | Mono Single | Mono Double | Prop Single | Prop Double
 --- |--- |--- |--- |--- |--- |--- |--- |--- |--- |--- |--- | --- |
@@ -485,7 +485,7 @@ Bitcount Grid Single Roman + Italic | Bitcount Grid Double Roman + Italic |
 
 ## Pixel shapes
 
-Although the full Bitcount family will be available as OpenType Variation fonts, this new technology is not yet available in current browsers and applications. For the time being, a selection of pixels shapes is saved as “frozen instances”, still creating practically unlimited design spaces of possible combinations.
+Although the full Bitcount family will be available as OpenType Variable fonts, this new technology is not yet available in current browsers and applications. For the time being, a selection of pixels shapes is saved as “frozen instances”, still creating practically unlimited design spaces of possible combinations.
 
 The base package of Bitcount styles implement a number of basic shapes: *Circle*, *Square* and *Plus*, all in weights *Light*, *Book*, *Regular*, *Medium* and *Bold*, defined by the size of the pixel. The *Book* pixels don't touch each other, the *Regular* pixels fill exactly the matrix of 100 Em units. The *Medium* is larger, with overlapping outlines and the *Bold* pixels overlap a considerable amount. Future packages of Bitcount will include more weights for these basic shapes.
 
@@ -521,15 +521,15 @@ Plus | ![ref3] (images/referenceImagesX_94.png "") | ![ref3] (images/referenceIm
 Plus&nbsp;Italic | ![ref3] (images/referenceImagesX_95.png "") | ![ref3] (images/referenceImagesX_97.png "") | ![ref3] (images/referenceImagesX_99.png "") | ![ref3] (images/referenceImagesX_101.png "") | ![ref3] (images/referenceImagesX_103.png "") | 
    
 
-# Future format: Bitcount OpenType Variations
+# Future format: Bitcount OpenType Variables
 
-The modular architecture of Bitcount, makes it an ideal design for the new OpenType 1.8 Variations standard. Since the glyphs are constructed from references to the shape of a central pixel, the shape of the pixels can vary by interpolation. And with it, the shape of the glyphs.
+The modular architecture of Bitcount, makes it an ideal design for the new OpenType 1.8 Variables standard. Since the glyphs are constructed from references to the shape of a central pixel, the shape of the pixels can vary by interpolation. And with it, the shape of the glyphs.
 
-The Bitcount Variations pixels come in a number of themes. The first one to be released is the “CircleSquare” set, covering a wide range of circles, square, diamonds, rings, pluses, and their intermediate shapes. 
+The Bitcount Variables pixels come in a number of themes. The first one to be released is the “CircleSquare” set, covering a wide range of circles, square, diamonds, rings, pluses, and their intermediate shapes. 
 
-*If you buy a license to the Bitcount package now, you will get the Bitcount Variations for free, as soon as it is released and applications are capable of using them. 
+*If you buy a license to the Bitcount package now, you will get the Bitcount Variables for free, as soon as it is released and applications are capable of using them. 
 
-The design space of Bitcount Variations is defined by a number of interpolating axes:
+The design space of Bitcount Variables is defined by a number of interpolating axes:
 
 Axis     | Name   | Description
 -------- | ----   | -----------
@@ -559,7 +559,7 @@ Stay tuned for example scripts and online courses how to use *Bitcount* with *Dr
 
 ### Animations
 
-Using DrawBot, it is realitvely easy to create animated-gif files, where the frames are calculated from frozen values of Variations axes.
+Using DrawBot, it is realitvely easy to create animated-gif files, where the frames are calculated from frozen values of Variables axes.
 
 ![tpa7] (images/animatedTypetrLogo5.gif "")
 

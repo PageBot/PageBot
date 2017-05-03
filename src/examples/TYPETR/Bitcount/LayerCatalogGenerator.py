@@ -18,13 +18,18 @@ from AppKit import NSColor
 import os
 
 import pagebot
-from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import getFormattedString
 from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
+from pagebot.toolbox.transformer import path2ScriptId
+from pagebot import textBoxBaseLines
 
 # Kinda hack, storing in empty module, to prevent globals to re-initialized, 
 # if variables are changed.
-import myglobals
+print __file__
+print path2ScriptId(__file__)
+scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
+scriptGlobals.LayerCatalogGenerator = {}
 
 Random_Features = False
 # Optional using Bitpath family, mixed with Bitcount
@@ -34,7 +39,7 @@ W = 500 # Width of the sample image. Heights is calculated from string.
  # Height of the sample image
 M = 32 # Margin between text and image side.
 Sample_Text = u'Typetr' # Initial sample string
-monoSpaced = True #random()<0.5
+MonoSpaced = True #random()<0.5
 Background_Color = NSColor.blackColor()
 Italic = False
 Italic_Shapes = False # [ss08]
@@ -54,7 +59,7 @@ Layer_Offset_X = -1
 Layer_Offset_Y = 2
 
 familyName = 'Bitcount'
-if monoSpaced:
+if MonoSpaced:
     searchName = familyName + 'Mono'
 else:
     # Only works in layers, if also Single/Double is selected.
@@ -192,12 +197,12 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
     if fontSize is None:
         # Calculate the size for the given string for the selected font/spacing.
         # Then use the resulting with as source to calculate the fitting fontSize.
-        fs = getFormattedString(Sample_Text, style=dict(font=fontName, 
+        fs = getFormattedString(Sample_Text, None, dict(font=fontName, 
             fontSize=initialFontSize, openTypeFeatures=features))
         fsWidth, fsHeight = fs.size()
         fontSize = int(round(initialFontSize * (W-2*M) / fsWidth))
     # Make new formatted string in fitting fontSize
-    fs = getFormattedString(Sample_Text, style=dict(font=fontName, 
+    fs = getFormattedString(Sample_Text, None, dict(font=fontName, 
         fontSize=fontSize, textFill=(r, g, b, opacity), openTypeFeatures=features))
     return fontSize, fs
 
@@ -250,15 +255,16 @@ def export():
 UI = [
     dict(name='Sample_Text', ui='EditText', args=dict(text=u'Typetr')),
     dict(name='Layers', ui='PopUpButton', args=dict(items=('1', '2', '3', '4', '5'))),
+    dict(name='MonoSpaced', ui='CheckBox'),
     dict(name='Italic', ui='CheckBox'),
     dict(name='Gray_Scale', ui='CheckBox'),
-    dict(name='Use_BitPath', ui='CheckBox'), # Optional usage mixture with Bitpath if installed.
+    #dict(name='Use_BitPath', ui='CheckBox'), # Optional usage mixture with Bitpath if installed.
     dict(name='Random_Features', ui='CheckBox'), # If random features, omit rest of choices
 ]
-if not hasattr(myglobals, 'randomFeatures'):
-    myglobals.random_Features = Random_Features
+if not hasattr(scriptGlobals, 'random_Features'):
+    scriptGlobals.random_Features = Random_Features
 
-if not myglobals.random_Features:
+if not scriptGlobals['random_Features']:
     UI.append(dict(name='Italic_Shapes', ui='CheckBox')) # [ss08]
     UI.append(dict(name='Condensed', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
     UI.append(dict(name='Slashed_Zero', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
@@ -286,7 +292,7 @@ else:
 Variable(UI, globals())
 
 # Store Italics flag, so we can test if it changed.
-myglobals.random_Features = Random_Features
+scriptGlobals.random_Features = Random_Features
     
                      
 # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.

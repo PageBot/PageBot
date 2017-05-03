@@ -18,7 +18,7 @@ from pagebot import getFormattedString
 
 import pagebot.style
 reload(pagebot.style)
-from pagebot.style import getRootStyle, LEFT_ALIGN
+from pagebot.style import getRootStyle, LEFT
 
 import pagebot.document 
 reload(pagebot.document)
@@ -40,9 +40,9 @@ import pagebot.elements
 reload(pagebot.elements)
 from pagebot.elements import Galley
 
-import pagebot.fonttoolbox.variationbuilder
-reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import generateInstance
+import pagebot.fonttoolbox.variablebuilder
+reload(pagebot.fonttoolbox.variablebuilder)
+from pagebot.fonttoolbox.variablebuilder import generateInstance
 
 SHOW_TIMER = False
 
@@ -66,15 +66,16 @@ rs = getRootStyle(
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 11 * 72, # Page height 11", international generic fit.
-    ml = 7*U, # Margin left rs.mt = 7*U # Margin top
+    pl = 7*U, # Padding left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
-    g = U, # Generic gutter.
+    gw = 2*U, # Generic gutter, equal for width and height
+    gh = 2*U,
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # 11 is a the best in that respect for column calculation.
     cw = 11*U, 
     ch = 6*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
@@ -176,16 +177,16 @@ def makeDocument():
     template2.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     template2.baselineGrid(rs)
-    template2.cContainer(4, 0, 2, 3, rs)  # Empty image element, cx, cy, cw, ch
-    template2.cContainer(0, 5, 2, 3, rs)
-    template2.cContainer(2, 2, 2, 2, rs)
-    template2.cContainer(2, 0, 2, 2, rs)
-    template2.cContainer(4, 6, 2, 2, rs)
-    template2.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
-    template2.cTextBox('', 2, 4, 2, 4, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
-    template2.cTextBox('', 4, 3, 2, 3, rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
+    template2.cContainer(4, 0, 2, 3, style=rs)  # Empty image element, cx, cy, cw, ch
+    template2.cContainer(0, 5, 2, 3, style=rs)
+    template2.cContainer(2, 2, 2, 2, style=rs)
+    template2.cContainer(2, 0, 2, 2, style=rs)
+    template2.cContainer(4, 6, 2, 2, style=rs)
+    template2.cTextBox('', 0, 0, 2, 5, style=rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
+    template2.cTextBox('', 2, 4, 2, 4, style=rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
+    template2.cTextBox('', 4, 3, 2, 3, style=rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    template2.cText(rs['pageNumberMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    template2.cText(rs['pageNumberMarker'], 6, 0, style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -216,7 +217,7 @@ def makeDocument():
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
-        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
+        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
@@ -229,7 +230,7 @@ def makeDocument():
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul',)
     doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
@@ -250,8 +251,8 @@ def makeDocument():
     for n in range(100):
         ttt += 'abcdefg%d\n' % n
     ttt = getFormattedString(ttt, rs)
-    ttt = page0.textBox(ttt, rs.get('ml'), rs.get('mt'), w=11*14, h=50*14, fill=(0.8, 0.8, 0.8, 0.5))
-    page0.textBox(ttt, rs.get('ml')+11*14+14, rs.get('mt'), w=11*14, h=50*14, fill=(0.8, 0.8, 0.8, 0.5))
+    ttt = page0.textBox(ttt, point(rs.get('pl'), rs.get('pt')), w=11*14, h=50*14, fill=(0.8, 0.8, 0.8, 0.5))
+    page0.textBox(ttt, point=(rs.get('pl')+11*14+14, rs.get('pt')), w=11*14, h=50*14, fill=(0.8, 0.8, 0.8, 0.5))
     
     if SHOW_TIMER:
         print 'Time template %0.3f' % (time()-tt)

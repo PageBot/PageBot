@@ -10,9 +10,9 @@
 #
 #     simplehtmlcssbuilder.py
 #
-from pagebot.builders.basebuilder import BaseBuilder
+from pagebot.builders.basehtmlcssbuilder import BaseHtmlCssBuilder
 
-class SimpleHmtlCssBuilder(BaseBuilder):
+class SimpleHmtlCssBuilder(BaseHtmlCssBuilder):
     def __init__(self, document, ):
         self._document = document
 

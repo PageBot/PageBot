@@ -8,16 +8,140 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     toolbox/__init__.py
+#     pagebot/__init__.py
 #
+from __future__ import division
+
 import CoreText
 import AppKit
 import Quartz
 
 import re
-from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth
+from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth, hyphenation
 from drawBot.context.baseContext import BaseContext
-NO_COLOR = -1
+
+from pagebot.style import NO_COLOR
+import pbglobals
+
+class Globals(object):
+    # Allow adding by attribute and key.
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
+
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+def getGlobals(scriptId):
+    u"""In order to let PageBot scripts and/applications exchange information, without the
+    need to save as files, the pbglobals module supports the storage of non-persistent information.
+    This way, applications with Vanilla windows can be used as UI for scripts that perform as batch process.
+    Note that it is up to the responsibilty of individual scripts to create uniqued ids for 
+    attributes. Also they need to know from each other, in case information is exchanges"""
+    if not scriptId in pbglobals.globals:
+        pbglobals.globals[scriptId] = Globals()
+    return pbglobals.globals[scriptId]
+
+def x2cx(x, e):
+    gutterW = e.gw
+    colW = e.css('colW', 0)
+    if colW + gutterW: # Check on division by 0
+        return (x - e.parent.pl) / (colW + gutterW)
+    return 0
+
+def cx2x(cx, e):
+    if cx is None:
+        x = 0
+    else:
+        x = e.parent.pl + cx * (e.css('colW', 0) + e.gw)
+    return x
+  
+def y2cy(y, e):
+    u"""Transform from y value to column y value, using the e.css for colunn values."""
+    gutterH = e.gh
+    colH = e.css('colH', 0)
+    cy = 0
+    if colH + gutterH: # Check on division by 0
+        if e.originTop:
+            paddingY = e.pt
+        else:
+            paddingY = e.pb
+        cy = (y - paddingY) / (colH + gutterH)
+    return cy 
+
+def cy2y(cy, e):
+    u"""Transform from column y value to y value, using the e.css for colunn values."""
+    if cy is None:
+        y = 0
+    else:
+        if e.originTop:
+            paddingY = e.pt
+        else:
+            paddingY = e.pb
+        y = paddingY + cy * (e.css('colH', 0) + e.gh)
+    return y
+
+def z2cz(z, e):
+    u"""Transform from z value to column z value, using the e.css for colunn values."""
+    gutterD = e.gd
+    colD = e.css('colD', 0)
+    cz = 0
+    if colD + gutterD: # Check on division by 0
+        cz = (z - e.parent.pzf) / (colD + gutterD)
+    return cz 
+
+def cz2z(cz, e):
+    if cz is None:
+        z = 0
+    else:
+        z = e.parent.pzf + cz * (e.css('colD', 0) + e.gd)
+    return z
+
+# Size
+
+def w2cw(w, e):
+    gutterW = e.gw
+    colW = e.css('colW', 0)
+    if colW + gutterW: # Test for division by 0
+        return (w + gutterW) / (colW + gutterW)
+    return 0 # Undefined, not info about column width and gutter
+
+def cw2w(cw, e):
+    if cw is None:
+        w = 0
+    else:
+        gutterW = e.gw
+        w = cw * (e.css('colW', 0) + gutterW) - gutterW  # Overwrite style from here.
+    return w
+
+def h2ch(h, e):
+    gutterH = e.gh
+    colH = e.css('colH', 0)
+    if colH + gutterH: # Test for division by 0
+        return (h + gutterH) / (colH + gutterH)
+    return 0 # Undefined, no info about column height and gutter
+
+def ch2h(ch, e):
+    if ch is None:
+        h = 0
+    else:
+        gutterH = e.gh
+        h = ch * (e.css('colH', 0) + gutterH) - gutterH  # Overwrite style from here.
+    return h
+
+def d2cd(d, e):
+    gutterD = e.gd
+    colD = e.css('colD', 0)
+    if colD + gutterD: # Test for division by 0
+        return (d + gutterD) / (colD + gutterD)
+    return 0 # Undefined, no info about column height and gutter
+
+def cd2d(cd, e):
+    if cd is None:
+        d = 0
+    else:
+        gutterD = e.gd
+        d = cd * (e.css('colD', 0) + gutterD) - gutterD  # Overwrite style from here.
+    return d
 
 def getRootPath():
     u"""Answer the root path of the pagebot module."""
@@ -87,56 +211,41 @@ def setStrokeColor(c, w=1, fs=None, cmyk=False):
     if w is not None:
         strokeWidth(w)
 
-def baseline2y(yIndex, style):
+def baseline2y(yIndex, e):
     u"""Convert columns index and line index to page position. Answered (x, y) is point position based on 
     marginTop + yIndex*baseLine."""
-    marginTop = style['mt']
-    baseline = style['baseline']
-    return marginTop + cy * baseline
+    padT = e.pt
+    baseline = e.css('baseline')
+    return padT + cy * baseline
 
-def cp2p(cx, cy, style):
-    u"""Convert columns index to page position. Answered (x, y) is point position based on 
-    marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter)."""
-    gutter = style['g']
-    marginLeft = style['ml']
-    marginTop = style['mt']
-    columnWidth = style['cw']
-    columnHeight = style['ch']
-    return (marginLeft + cx * (columnWidth + gutter),
-            marginTop + cy * (columnHeight + gutter))
-    
-def cr2p(cx, cy, cw, ch, style):
-    u"""Convert columns rect to page position/size.  Answered (x, y, x, h) is point position and size based on
-    marginLeft + x*(columnWidth + gutter) and marginTop + y*(columnHeight + gutter).
-    Note that the function assumes a number of values to be present in the style, otherwise a KeyError is raised.
-    This works best to inherit the style from the RootStyle and then alter the value that are different."""
-    gutter = style['g']
-    marginLeft = style['ml']
-    marginTop = style['mt']
-    columnWidth = style['cw']
-    columnHeight = style['ch']
-    w = style['w']
-    h = style['h']
+#   E L E M E N T
 
-    columnW = cw * (columnWidth + gutter)
-    if cw:
-        columnW -= gutter
-    columnH = ch * (columnHeight + gutter)
-    if ch:
-        columnH -= gutter
+def deepFind(elements, name=None, pattern=None, result=None):
+    u"""Perform a dynamic deep find the for all elements with the name. Don't include self.
+    Either name or pattern should be defined."""
+    assert name or pattern
+    if result is None:
+        result = []
+    for e in elements:
+        if pattern is not None and pattern in e.name: # Simple pattern match
+            result.append(e)
+        elif name is not None and name == e.name:
+            result.append(e)
+        deepFind(e.elements, name, pattern, result)
+    return result
 
-    return (
-        marginLeft + cx * (columnWidth + gutter),
-        h - marginTop - (cy + ch) * (columnHeight + gutter) + gutter,
-        columnW, columnH)
+def find(elements, name=None, pattern=None, result=None):
+    u"""Perform a dynamic find the named element(s) in self.elements. Don't include self.
+    Either name or pattern should be defined."""
+    result = []
+    for e in elements:
+        if pattern is not None and pattern in e.name: # Simple pattern match
+            result.append(e)
+        elif name is not None and name == e.name:
+            result.append(e)
+    return result
 
-def xy2xy(x, y):
-    u"""In order to allow both (x, y) - compatible with DrawBot, as x, y as separate parameters – compatible
-    with many other functions, this is a conditional conversion."""
-    assert not (isinstance(x, (tuple, list)) and y is not None) or (isinstance(x, (tuple, list)) and y is None), 'xy2xy(%s, %s): Use (x, y) or x, y as position.' % (x, y)
-    if y is None:
-        x, y = x
-    return x, y
+#   M A R K E R
 
 MARKER_PATTERN = '==%s--%s=='
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\-\-([^=]*)\=\=')
@@ -163,98 +272,112 @@ def findMarkers(fs, reCompiled=None):
         reCompiled= FIND_FS_MARKERS
     return reCompiled.findall(u'%s' % fs)
 
-def getFormattedString(t, style=None):
+def css(name, e, styles=None, default=None):
+    u"""Answer the named style values. Search in optional style dict first, otherwise up the 
+    parent tree of styles in element e. Both e and style can be None. In that case None is answered."""
+    if styles is not None: # Can be single style or stack of styles.
+        if not isinstance(styles, (tuple, list)):
+            styles = [styles] # Make stack of styles.
+        for style in styles:
+            if name in style:
+                return style[name]
+    if e is not None:
+        return e.css(name)
+    return default
+
+def getFormattedString(t, e=None, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing
     their existence, so they can inherit from previous style formats."""
+
+    hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
+
     fs = FormattedString('')
-    if style is not None:
-        sFont = style.get('font')
-        if sFont is not None:
-            fs.font(sFont)
-        sFontSize = style.get('fontSize')
-        if sFontSize is not None:
-            fs.fontSize(sFontSize)
-        sFallbackFont = style.get('fallbackFont')
-        if sFallbackFont is not None:
-            fs.fallbackFont(sFallbackFont)
-        sFill = style.get('textFill', NO_COLOR)
-        if sFill is not NO_COLOR: # Test on this flag, None is valid value
-            setFillColor(sFill, fs)
-        sCmykFill = style.get('cmykFill', NO_COLOR)
-        if sCmykFill is not NO_COLOR:
-            setFillColor(sCmykFill, fs, cmyk=True)
-        sStroke = style.get('textStroke', NO_COLOR)
-        sStrokeWidth = style.get('textStrokeWidth')
-        if sStroke is not NO_COLOR and strokeWidth is not None:
-            setStrokeColor(sStroke, sStrokeWidth, fs)
-        sCmykStroke = style.get('cmykStroke', NO_COLOR)
-        if sCmykStroke is not NO_COLOR:
-            setStrokeColor(sCmykStroke, sStrokeWidth, fs, cmyk=True)
-        sAlign = style.get('align')
-        if sAlign is not None:
-            fs.align(sAlign)
-        sLeading = style.get('leading')
-        rLeading = style.get('rLeading')
-        if sLeading is not None or (rLeading is not None and sFontSize is not None):
-            fs.lineHeight((sLeading or 0) + (rLeading or 0) * (sFontSize or 0))
-        sParagraphTopSpacing = style.get('paragraphTopSpacing')
-        rParagraphTopSpacing = style.get('rParagraphTopSpacing')
-        if sParagraphTopSpacing is not None or (rParagraphTopSpacing is not None and sFontSize is not None):
-            fs.paragraphTopSpacing((sParagraphTopSpacing or 0) + (rParagraphTopSpacing or 0) * (sFontSize or 0))
-        sParagraphBottomSpacing = style.get('paragraphBottomSpacing')
-        rParagraphBottomSpacing = style.get('rParagraphBottomSpacing')
-        if sParagraphBottomSpacing is not None or (rParagraphBottomSpacing is not None and sFontSize is not None):
-            fs.paragraphBottomSpacing((sParagraphBottomSpacing or 0) + (rParagraphBottomSpacing or 0) * (sFontSize or 0))
-        sTracking = style.get('tracking')
-        rTracking = style.get('rTracking')
-        if sTracking is not None or (rTracking is not None and sFontSize is not None):
-            fs.tracking((sTracking or 0) + (rTracking or 0) * (sFontSize or 0))
-        sBaselineShift = style.get('baselineShift')
-        rBaselineShift = style.get('rBaselineShift')
-        if sBaselineShift is not None or (rBaselineShift is not None and sFontSize is not None):
-            fs.baselineShift((sBaselineShift or 0) + (rBaselineShift or 0) * (sFontSize or 0))
-        sOpenTypeFeatures = style.get('openTypeFeatures')
-        if sOpenTypeFeatures is not None:
-            fs.openTypeFeatures([], **sOpenTypeFeatures)
-        sTabs = style.get('tabs')
-        if sTabs is not None:
-            fs.tabs(*sTabs)
-        sFirstLineIndent = style.get('firstLineIndent')
-        rFirstLineIndent = style.get('rFirstLineIndent')
-        # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
-        # sFirstParagraphIndent = style.get('firstParagraphIndent')
-        # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
-        # TODO: Use this value instead, if currently on top of a new string.
-        # sFirstColumnIndent = style.get('firstColumnIndent')
-        # rFirstColumnIndent = style.get('rFirstColumnIndent')
-        if sFirstLineIndent is not None:
-            fs.firstLineIndent((sFirstLineIndent or 0) + (rFirstLineIndent or 0) * (sFontSize or 0))
-        sIndent = style.get('indent')
-        rIndent = style.get('rIndent')
-        if sIndent is not None or (rIndent is not None and sFontSize is not None):
-            fs.indent((sIndent or 0) + (rIndent or 0) * (sFontSize or 0))
-        sTailIndent = style.get('tailIndent')
-        rTailIndent = style.get('rTaildIndent')
-        if sTailIndent is not None or (rTailIndent is not None and sFontSize is not None):
-            fs.tailIndent((sTailIndent or 0) + (rTailIndent or 0) * (sFontSize or 0))
-        sLanguage = style.get('language')
-        if sLanguage is not None:
-            fs.language(sLanguage)
-        #fs.hyphenation(style.hyphenation)
+    sFont = css('font', e, style)
+    if sFont is not None:
+        fs.font(sFont)
+    sFontSize = css('fontSize', e, style)
+    sLeading = css('leading', e, style)
+    rLeading = css('rLeading', e, style)
+    if sLeading or (rLeading and sFontSize):
+        lineHeight = (sLeading or 0) + (rLeading or 0) * (sFontSize or 0)
+        if lineHeight:
+            fs.lineHeight(lineHeight)
+    if sFontSize is not None:
+        fs.fontSize(sFontSize) # For some reason fontSize must be set after leading.
+    sFallbackFont = css('fallbackFont', e, style)
+    if sFallbackFont is not None:
+        fs.fallbackFont(sFallbackFont)
+    sFill = css('textFill', e, style)
+    if sFill is not NO_COLOR: # Test on this flag, None is valid value
+        setFillColor(sFill, fs)
+    sCmykFill = css('cmykFill', e, style, NO_COLOR)
+    if sCmykFill is not NO_COLOR:
+        setFillColor(sCmykFill, fs, cmyk=True)
+    sStroke = css('textStroke', e, style, NO_COLOR)
+    sStrokeWidth = css('textStrokeWidth', e, style)
+    if sStroke is not NO_COLOR and strokeWidth is not None:
+        setStrokeColor(sStroke, sStrokeWidth, fs)
+    sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
+    if sCmykStroke is not NO_COLOR:
+        setStrokeColor(sCmykStroke, sStrokeWidth, fs, cmyk=True)
+    sAlign = css('align', e, style)
+    if sAlign is not None:
+        fs.align(sAlign)    
+    sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
+    rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
+    if sParagraphTopSpacing or (rParagraphTopSpacing and sFontSize):
+        fs.paragraphTopSpacing((sParagraphTopSpacing or 0) + (rParagraphTopSpacing or 0) * (sFontSize or 0))
+    sParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
+    rParagraphBottomSpacing = css('rParagraphBottomSpacing', e, style)
+    if sParagraphBottomSpacing or (rParagraphBottomSpacing and sFontSize):
+        fs.paragraphBottomSpacing((sParagraphBottomSpacing or 0) + (rParagraphBottomSpacing or 0) * (sFontSize or 0))
+    sTracking = css('tracking', e, style)
+    rTracking = css('rTracking', e, style)
+    if sTracking or (rTracking and sFontSize):
+        fs.tracking((sTracking or 0) + (rTracking or 0) * (sFontSize or 0))
+    sBaselineShift = css('baselineShift', e, style)
+    rBaselineShift = css('rBaselineShift', e, style)
+    if sBaselineShift or (rBaselineShift and sFontSize):
+        fs.baselineShift((sBaselineShift or 0) + (rBaselineShift or 0) * (sFontSize or 0))
+    sOpenTypeFeatures = css('openTypeFeatures', e, style)
+    if sOpenTypeFeatures is not None:
+        fs.openTypeFeatures([], **sOpenTypeFeatures)
+    sTabs = css('tabs', e, style)
+    if sTabs is not None:
+        fs.tabs(*sTabs)
+    sFirstLineIndent = css('firstLineIndent', e, style)
+    rFirstLineIndent = css('rFirstLineIndent', e, style)
+    # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
+    # sFirstParagraphIndent = style.get('firstParagraphIndent')
+    # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
+    # TODO: Use this value instead, if currently on top of a new string.
+    sFirstColumnIndent = css('firstColumnIndent', e, style)
+    rFirstColumnIndent = css('rFirstColumnIndent', e, style)
+    if sFirstLineIndent or (rFirstLineIndent and sFontSize):
+        fs.firstLineIndent((sFirstLineIndent or 0) + (rFirstLineIndent or 0) * (sFontSize or 0))
+    sIndent = css('indent', e, style)
+    rIndent = css('rIndent', e, style)
+    if sIndent is not None or (rIndent is not None and sFontSize is not None):
+        fs.indent((sIndent or 0) + (rIndent or 0) * (sFontSize or 0))
+    sTailIndent = css('tailIndent', e, style)
+    rTailIndent = css('rTaildIndent', e, style)
+    if sTailIndent or (rTailIndent and sFontSize):
+        fs.tailIndent((sTailIndent or 0) + (rTailIndent or 0) * (sFontSize or 0))
+    sLanguage = css('language', e, style)
+    if sLanguage is not None:
+        fs.language(sLanguage)
 
-    if style is not None:
-        sUpperCase = style.get('uppercase')
-        sLowercase = style.get('lowercase')
-        sCapitalized = style.get('capitalized')
-        if sUpperCase:
-            t = t.upper()
-        elif sLowercase:
-            t = t.lower()
-        elif sCapitalized:
-            t = t.capitalize()
-
-    fs.append(t)
-    return fs
+    sUpperCase = css('uppercase', e, style)
+    sLowercase = css('lowercase', e, style)
+    sCapitalized = css('capitalized', e, style)
+    if sUpperCase:
+        t = t.upper()
+    elif sLowercase:
+        t = t.lower()
+    elif sCapitalized:
+        t = t.capitalize()
+    
+    return fs + t
 
 def textBoxBaseLines(txt, box):
     u"""Answer a list of (x,y) positions of all line starts in the box. This function may become part

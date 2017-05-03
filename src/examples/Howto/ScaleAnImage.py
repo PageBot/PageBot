@@ -10,6 +10,13 @@
 #     ScalingAnImage.py
 #
 #     How to scale an image (without being an element) in plain DrawBot?
+#     Since the core DrawBot does not support w/h attrbiutes for images, 
+#     it needs to be done by using the scale() function.
+#
+#     Unfortunately this also changes to x/y position scale, so when
+#     drawing an image on the canvas, the position must be scaled the
+#     other way around. In this example it doesn't matter, because the
+#     scaled image is positioned at (0, 0).
 #
 import os # Import module that communicates with the file system.
 

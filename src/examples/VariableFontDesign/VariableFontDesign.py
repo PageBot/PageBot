@@ -13,37 +13,16 @@
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
 import pagebot
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import textBoxBaseLines
 
-from pagebot.style import getRootStyle, LEFT_ALIGN
-
-import pagebot.document 
-reload(pagebot.document)
-from pagebot.document import Document
-
-import pagebot.page
-reload(pagebot.page)
-from pagebot.page import Page, Template
-
-import pagebot.composer
-reload(pagebot.composer)
+from pagebot.style import getRootStyle, LEFT
+from pagebot.elements.document import Document
+from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
-
-import pagebot.typesetter
-reload(pagebot.typesetter)
 from pagebot.typesetter import Typesetter
-
-import pagebot.elements
-reload(pagebot.elements)
 from pagebot.elements import Galley, Rect
-
-import pagebot.fonttoolbox.elements.variationcube
-reload(pagebot.fonttoolbox.elements.variationcube)
-from pagebot.fonttoolbox.elements.variationcube import VariationCube
-
-import pagebot.fonttoolbox.variationbuilder
-reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import generateInstance
+from pagebot.elements.variablefonts.variablecube import VariableCube
+from pagebot.fonttoolbox.variablebuilder import generateInstance
     
 DEBUG = False
 
@@ -62,7 +41,7 @@ RS = getRootStyle(
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 11 * 72, # Page height 11", international generic fit.
-    ml = 7*U, # Margin left rs.mt = 7*U # Margin top
+    pl = 7*U, # Padding left rs.pt = 7*U # Padding top
     baselineGrid = baselineGrid,
     g = U, # Generic gutter.
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
@@ -70,7 +49,7 @@ RS = getRootStyle(
     cw = 11*U, 
     ch = 6*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
@@ -87,7 +66,7 @@ H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
 FONT_PATH = pagebot.getFontPath()
-VAR_FONT_PATH = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+VAR_FONT_PATH = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
 EXPORT_PATH = '_export/AmstelvarAlphaSpecimen.pdf'
 
 
@@ -96,12 +75,12 @@ def makeSpecimen(rs):
         
     # Template 1
     template1 = Template(rs) # Create template of main size. Front page only.
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
+    # Show grid columns and paddings if rootStyle.showGrid or rootStyle.showGridColumns are True
     template1.grid(rs) 
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
-    vCube = VariationCube(path=VAR_FONT_PATH, w=500, h=500, s='a', fontSize=86, dimensions=dict(wght=5, wdth=5))
-    template1.place(vCube, 50, 160)
+    vCube = VariableCube(path=VAR_FONT_PATH, point=(50, 100), w=500, h=500, s='a', fontSize=86, dimensions=dict(wght=5, wdth=5))
+    template1.append(vCube)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
