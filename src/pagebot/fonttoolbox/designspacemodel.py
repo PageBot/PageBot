@@ -33,6 +33,6 @@ class Axis(object):
 
     def normalizeValue(self, value):
         # This normalizes the value to be between 0 and 1, so this is not the
-        # same as the normalized value in a variation font. This is purely to
+        # same as the normalized value in a variable font. This is purely to
         # calculate slider settings.
         return (value - self.minValue) / (self.maxValue - self.minValue)

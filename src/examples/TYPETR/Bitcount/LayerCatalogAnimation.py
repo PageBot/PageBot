@@ -14,7 +14,7 @@
 #     Purchase Bitcount fonts at https://store.typenetwork.com/foundry/typetr/fonts/bitcount
 #     A single user license of Bitcount is $10.10 per font or $101 for the complete package of 300 styles).
 #
-#     TODO: Add Variation selection (color selector, checkbox, color wheel)
+#     TODO: Add Variable selection (color selector, checkbox, color wheel)
 #
 import os
 
@@ -28,10 +28,11 @@ EXPORT_PATH = '_export/BitcountLayerCatalogAnimation.gif'
 USE_BITPATH = False
 
 # Initial sample text. Can be altered in the text box of the popup window.
-W = 500 # Width of the sample image
-H = 200 # Height of the sample image
-M = 16 # Margin between text and image side.
-t = u'π-day' #Typetr' # Initial sample string
+W = 1020 # Width of the sample image
+H = 510 # Height of the sample image
+padding = 16 # Padding between text and image side.
+#t = u'π-day' #Typetr' # Initial sample string
+t = 'Bitcount' # Initial sample string
 monoSpaced = True
 backgroundColor = (0, 0, 0)#(1, 1, 1) #0.1, 0.2, 0.5
 italics = False
@@ -97,30 +98,32 @@ def getFittingString(t, fontName):
     
     # Calculate the size for the given string for the selected font/spacing.
     # Then use the resulting with as source to calculate the fitting fontSize.
-    fs = getFormattedString(t, style=dict(font=fontName, 
+    fs = getFormattedString(t, None, dict(font=fontName, 
         fontSize=initialFontSize))
     fsWidth, fsHeight = fs.size()
-    fontSize =  initialFontSize * (W-3*M) / fsWidth
+    fontSize =  initialFontSize * (W-3*padding) / fsWidth
     # Make new formatted string in fitting fontSize
-    fs = getFormattedString(t, style=dict(font=fontName, 
+    fs = getFormattedString(t, None, dict(font=fontName, 
         fontSize=fontSize, textFill=(r, g, b, opacity)))
     return fs
         
 def drawLayers(fss):
     # Draw this layer in a couple of frame
     _, h = fss[0].size()
-    h += M
+    h += padding
     for n in range(frameLength):
         newPage(W, h)
         fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
         rect(0, 0, W, h)
         for fs in fss:
-            text(fs, (2*M, 3*M))
+            text(fs, (2*padding, 3*padding))
      
 # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
 if not fontNamePaths:
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
+    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'bitcount')) #familyName.lower())
 else:
     for frame in range(frames):                
         drawSample()
     saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+    
+    

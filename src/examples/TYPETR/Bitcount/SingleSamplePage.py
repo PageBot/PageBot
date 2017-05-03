@@ -13,9 +13,9 @@
 #
 import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
-from pagebot.style import getRootStyle, LEFT_ALIGN, NO_COLOR
-from pagebot.document import Document
-from pagebot.page import Page, Template
+from pagebot.style import getRootStyle, LEFT, NO_COLOR
+from pagebot.elements.document import Document
+from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley
@@ -23,12 +23,12 @@ from pagebot.style import A4
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.contributions.filibuster.blurb import blurb
 
-import myglobals
-if not hasattr(myglobals, 'initialized'):
-    myglobals.initialized = True
-    myglobals.head = blurb.getBlurb('sports_headline', noTags=True)+'\n'
-    myglobals.subhead = blurb.getBlurb('aerospace_headline', noTags=True)+'\n'
-    myglobals.body = blurb.getBlurb('article_content', noTags=True)+'\n'
+scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
+if not hasattr(scriptGlobals, 'initialized'):
+    scriptGlobals.initialized = True
+    scriptGlobals.head = blurb.getBlurb('sports_headline', noTags=True)+'\n'
+    scriptGlobals.subhead = blurb.getBlurb('aerospace_headline', noTags=True)+'\n'
+    scriptGlobals.body = blurb.getBlurb('article_content', noTags=True)+'\n'
     
 DEBUG = False
 
@@ -58,14 +58,15 @@ RS = getRootStyle(
     h = H, # 842 = A4 height. Other example: page height 11", international generic fit.
     ml = 8*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
-    g = 2*U, # Generic gutter.
+    gw = 2*U, # Generic gutter, equal for width and height
+    gh = 2*U,
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # Uneven a the best in that respect for column calculation,
     # as it is possible to make micro columsn with the same gutter.
     cw = 8*U, 
     ch = 5*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
@@ -78,7 +79,6 @@ RS = getRootStyle(
     rTracking = 0,
     fontSize = 9
 )
-FS = getFormattedString(FormattedString(''), RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 
@@ -168,7 +168,7 @@ def makeDocument(rs):
     # Show baseline grid if rs.showBaselineGrid is True
     template1.baselineGrid(rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 1, 0, 6, 6, rs, eId=mainId)
+    template1.cTextBox('', 1, 0, 6, 6, style=rs, eId=mainId)
     
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -181,13 +181,13 @@ def makeDocument(rs):
     #page[mainId]
     e = page.getElement(mainId)
     
-    fs = getFormattedString(Sample_Text + ' V.T.TeY.Yjy\n', style=dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = getFormattedString(Sample_Text + ' V.T.TeY.Yjy\n', e, dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.head, style=dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = getFormattedString(scriptGlobals.head, e, dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.subhead, style=dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = getFormattedString(scriptGlobals.subhead, e, dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(myglobals.body, style=dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
+    fs = getFormattedString(scriptGlobals.body, e, dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
     e.append(fs)
 
     return doc

@@ -21,27 +21,29 @@ DEBUG = False # Make True to see grid and element frames.
 
 LIB_PATH = '/Library/Fonts/'
 SOME_SYSTEM_FONTS = {
-    # Let's try some plain OSX system fonts, while they are still there (not variation yet).
+    # Let's try some plain OSX system fonts, while they are still there (not variable font yet).
     'Georgia': dict(Regular=LIB_PATH+'Georgia.ttf', Bold=LIB_PATH+'Georgia Bold.ttf', 
-                    Italic=LIB_PATH+'Georgia Italic.ttf', BoldItalic=LIB_PATH+'Georgia Bold Italic.ttf'),    'Verdana': dict(Regular=LIB_PATH+'Verdana.ttf', Bold=LIB_PATH+'Verdana Bold.ttf', 
-                    Italic=LIB_PATH+'Verdana Italic.ttf', BoldItalic=LIB_PATH+'Verdana Bold Italic.ttf'),}
+                    Italic=LIB_PATH+'Georgia Italic.ttf', BoldItalic=LIB_PATH+'Georgia Bold Italic.ttf'),
+    'Verdana': dict(Regular=LIB_PATH+'Verdana.ttf', Bold=LIB_PATH+'Verdana Bold.ttf', 
+                    Italic=LIB_PATH+'Verdana Italic.ttf', BoldItalic=LIB_PATH+'Verdana Bold Italic.ttf'),
+}
 # Inherit all behavior from the generic TypeSpecimen publication class
 class FBFamilySpecimen(TypeSpecimen):
 
     def makeTemplate(self, rs):
         # Template for the main page.
-        template = Template(rs) # Create second template. This is for the main pages.
-        # Show grid columns and margins if rootStyle.showGrid or 
+        template = Template(style=rs) # Create second template. This is for the main pages.
+        # Show grid columns and paddings if rootStyle.showGrid or 
         # rootStyle.showGridColumns are True.
         # The grid is just a regular element, like all others on the page. Same parameters apply.
-        template.grid(rs)  
+        template.grid()  
         # Add named text box to template for main specimen text.
-        template.cTextBox('', 0, -1, 6, 1, eId=self.titleBoxId, style=rs)       
-        template.cTextBox('', 0, 0, 6, 6, eId=self.specimenBoxId, style=rs)       
+        template.cTextBox('', 0, -1, 6, 1, eId=self.titleBoxId)       
+        template.cTextBox('', 0, 0, 6, 6, eId=self.specimenBoxId)       
         # Some lines, positioned by vertical and horizontal column index.
-        template.cLine(0, 0, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
+        template.cLine(0, 0, 6, 0, stroke=0, strokeWidth=0.25)       
         #template.cLine(0, 1, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
-        template.cLine(0, 7, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
+        template.cLine(0, 7, 6, 0, stroke=0, strokeWidth=0.25)       
         return template
         
     def buildPages(self, doc):
@@ -65,12 +67,12 @@ class FBFamilySpecimen(TypeSpecimen):
         while not box.getOverflow():
             sportsHeadline = ' '.join(blurb.getBlurb('news_headline').split(' ')[:choice((2,2,3,3,4))])+'\n'
             styleKey = choice(('Regular', 'Bold', 'Italic', 'BoldItalic'))
-            fs = getFormattedString(sportsHeadline, style=dict(font=family[styleKey].installedName, 
+            fs = getFormattedString(sportsHeadline, self, style=dict(font=family[styleKey].installedName, 
                 fontSize=fontSize))
             fsWidth = fs.size()[0]
             fittingFontSize = fontSize * box.w / fsWidth
             # Make new formatted string with fitting font size.
-            fs = getFormattedString(sportsHeadline, style=dict(font=family[styleKey].installedName, 
+            fs = getFormattedString(sportsHeadline, self, style=dict(font=family[styleKey].installedName, 
                 leading=0, fontSize=fittingFontSize, textColor=0))
             box.append(fs)
             print '###', page, family, sportsHeadline

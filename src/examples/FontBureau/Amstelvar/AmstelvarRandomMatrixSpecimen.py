@@ -21,20 +21,20 @@ from pagebot.style import A4,MM
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variationcube import VariationCube
-from pagebot.fonttoolbox.elements.variationscatter import VariationScatter
+from pagebot.fonttoolbox.elements.variablecube import VariableCube
+from pagebot.fonttoolbox.elements.variablescatter import VariableScatter
 
 DEBUG = False # Make True to see grid and element frames.
 
 W, H = A4
-MARGIN = 20*MM
+PADDING = 20*MM
 
 NUM_PAGES = 5 # Number of pages to generate
 
 OUTPUT_FILE = 'AmstelvarRandomSpecimen.pdf'
 
 FONT_PATH = pagebot.getFontPath() # Location of PageBot fonts.
-AmstelVarPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+AmstelVarPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
 print 'Using font', AmstelVarPath
 
 # Installing the font in DrawBot
@@ -42,7 +42,7 @@ amstelVarName = installFont(AmstelVarPath)
 
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
 
-class VariationTypeSpecimen(TypeSpecimen):
+class VariableTypeSpecimen(TypeSpecimen):
 
     def getAxisCombinations(self):
         # Answer specific interesting combinations for axes in Decovar.
@@ -106,7 +106,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         hyphenation(False)
         # Template for the main page.
         template = Template(rs) # Create second template. This is for the main pages.
-        # Show grid columns and margins if rootStyle.showGrid or
+        # Show grid columns and paddings if rootStyle.showGrid or
         # rootStyle.showGridColumns are True.
         # The grid is just a regular element, like all others on the page. Same parameters apply.
         template.grid(rs)
@@ -120,25 +120,25 @@ class VariationTypeSpecimen(TypeSpecimen):
         template.cLine(0, 7, 6, 0, style=rs, stroke=0, strokeWidth=0.25)
         return template
 
-    def buildVariationPage(self, varFont, page):
+    def buildVariablePage(self, varFont, page):
         title = page.getElement(self.titleBoxId)
-        fs = getFormattedString(varFont.info.fullName.upper(), dict(fontSize=32, font=amstelVarName))
+        fs = getFormattedString(varFont.info.fullName.upper(), self, dict(fontSize=32, font=amstelVarName))
         title.append(fs)
 
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
         # Create the formatted string with the style names shown in their own style.
         # The first one in the list is also used to show the family Name.
         for fontSize in (9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24):
-            fs = getFormattedString('%dPT %s\n' % (fontSize, s),
+            fs = getFormattedString('%dPT %s\n' % (fontSize, s), self,
                 style=dict(font=amstelVarName, fontSize=fontSize, hyphenation=False))
             column.append(fs)
 
-    def buildVariationMatrixPage(self, varFont, page, locations, textFill=0):
+    def buildVariableMatrixPage(self, varFont, page, locations, textFill=0):
         glyphName = choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
         # Make a random selection of locations. Note that this shows the full range of all axes,
         # not necessarily representing the design space limitation or design preferences.
-        wh = W-2*MARGIN
-        scatter = VariationScatter(varFont, w=wh, h=wh, s=glyphName, showRecipe=False,
+        wh = W-2*PADDING
+        scatter = VariableScatter(varFont, w=wh, h=wh, s=glyphName, showRecipe=False,
             recipeAxes=['srfr', 'wdth', 'wght', 'opsz', 'cntr', 'grad'], sizeX=5, sizeY=5, fontSize=64, locations=locations,
             textFill=textFill)
         page.place(scatter, 50, 100)
@@ -150,7 +150,7 @@ class VariationTypeSpecimen(TypeSpecimen):
 
         # Build the pages, showing axes, samples, etc.
 
-        print 'Variation A X E S'
+        print 'Variable A X E S'
         for axisName, (minValue, defaultValue, maxValue) in varFont.axes.items():
             print axisName, 'minValue', minValue, 'defaultValue', defaultValue, 'maxValue', maxValue
 
@@ -161,17 +161,17 @@ class VariationTypeSpecimen(TypeSpecimen):
         coverPage = doc[1]
         # Fill cover here.
         coverPage.rect(0, 0, W, H, fill=(1, 0, 0)) 
-        #coverPage.text(amstelVarName, x=MARGIN, y=H-3*MARGIN, style=dict(font=amstelVarName, fontSize=50, textColor=1) )
-        self.buildVariationMatrixPage(varFont, coverPage, locations, textFill=1)
+        #coverPage.text(amstelVarName, x=PADDING, y=H-3*PADDING, style=dict(font=amstelVarName, fontSize=50, textColor=1) )
+        self.buildVariableMatrixPage(varFont, coverPage, locations, textFill=1)
 
         print 'Total amount of locations', len(locations)
         for n in range(NUM_PAGES):
             page = doc.newPage()
-            self.buildVariationMatrixPage(varFont, page, locations)
+            self.buildVariableMatrixPage(varFont, page, locations)
 
 
 # Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariationTypeSpecimen([amstelVarName], showGrid=DEBUG)
+typeSpecimen = VariableTypeSpecimen([amstelVarName], showGrid=DEBUG)
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.

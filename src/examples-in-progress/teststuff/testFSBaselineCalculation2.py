@@ -1,7 +1,7 @@
 size(200, 200)
 t = "hello world "
 fs = FormattedString(t, font="Times", fontSize=17, lineHeight=28)
-fs.fontLineHeight(28)
+fs.fontLineHeight()
 
 
 font("Times")
@@ -13,7 +13,7 @@ text(fs, (10, 100))
 r = (66, 0, 100, 100 + fontLineHeight()+fontDescender())
 
 fs = FormattedString(t * 10, font="Times", fontSize=17, lineHeight=28)
-fs.fontLineHeight(28)
+fs.fontLineHeight()
 
 textBox(fs, r)
 

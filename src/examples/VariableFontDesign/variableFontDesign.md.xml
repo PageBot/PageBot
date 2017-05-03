@@ -6,7 +6,7 @@ This note highlights the design and production of OpenType 1.8 Variable Fonts.</
 <p>Where in the traditional way of working with layout software such as Quark XPress and InDesign always a human decision determines the final layout of a page, there are more and more situations where that is not an option. As more and more pages are generated with content coming from a database - or an online source - and where the selection of the information is directly determined by properties of the reader, the layout of the pages to be automatically calculated.<br />
 There is at the moment strangely no digital tools on the one hand is sufficiently flexible to be used in all possible techniques and types of layouts, link is to be made with a wide variety of information sources, and also meets the typographical demands on manual formatting.</p>
 <p><img alt="AutoPager" src="images/variablefontdesign/cubeUI1.png" title="The interactive GN-cube (by Just van Rossum) offers a dynmamic view on the interpolated instances of the Master glyphs." /></p>
-<p><img alt="OpenType Variations Axis Ideas" src="images/variablefontdesign/axisIdeas.png" title="" /></p>
+<p><img alt="OpenType Variables Axis Ideas" src="images/variablefontdesign/axisIdeas.png" title="" /></p>
 <p><img alt="ToshiOmagariGNCubes" src="images/variablefontdesign/ToshiOmagariGNCubes.png" title="" /></p>
 <h3>Phasing</h3>
 <p>Formatting a page is divided from the rough copy and meta information in a number of phases <sup id="fnref:phases"><a class="footnote-ref" href="#fn:phases" rel="footnote">1</a></sup></p>

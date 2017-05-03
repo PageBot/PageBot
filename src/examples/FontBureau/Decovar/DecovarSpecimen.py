@@ -13,12 +13,12 @@ from __future__ import division
 
 import pagebot
 from pagebot import getFormattedString
-from pagebot.page import Template
+from pagebot.elements.page import Template
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variationcube import VariationCube
-from pagebot.fonttoolbox.elements.variationscatter import VariationScatter
+from pagebot.elements.variablefonts.variablecube import VariableCube
+from pagebot.elements.variablefonts.variablescatter import VariableScatter
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -43,7 +43,7 @@ SKL = ('sklA', 'sklB', 'sklD')
 BLD = ('bldA', 'bldB')
 WMX = ('wmx2',)
 
-class VariationTypeSpecimen(TypeSpecimen):
+class VariableTypeSpecimen(TypeSpecimen):
 
     def getAxisCombinations(self):
         # Answer specific interesting combinations for axes in Decovar.
@@ -98,7 +98,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         hyphenation(False)
         # Template for the main page.
         template = Template(rs) # Create second template. This is for the main pages.
-        # Show grid columns and margins if rootStyle.showGrid or 
+        # Show grid columns and padding if rootStyle.showGrid or 
         # rootStyle.showGridColumns are True.
         # The grid is just a regular element, like all others on the page. Same parameters apply.
         template.grid(rs)  
@@ -112,16 +112,16 @@ class VariationTypeSpecimen(TypeSpecimen):
         template.cLine(0, 7, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
         return template
  
-    def buildVariationPage(self, varFont, page):
+    def buildVariablePage(self, varFont, page):
         title = page.getElement(self.titleBoxId) 
-        fs = getFormattedString(varFont.info.fullName.upper(), dict(fontSize=32, font=decovarName))
+        fs = getFormattedString(varFont.info.fullName.upper(), self, dict(fontSize=32, font=decovarName))
         title.append(fs)
  
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
         # Create the formatted string with the style names shown in their own style.
         # The first one in the list is also used to show the family Name.
         for fontSize in (9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24):
-            fs = getFormattedString('%dPT %s\n' % (fontSize, s), 
+            fs = getFormattedString('%dPT %s\n' % (fontSize, s), self, 
                 style=dict(font=decovarName, fontSize=fontSize, hyphenation=False))
             column.append(fs)
         
@@ -134,7 +134,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         varFont = Font(DecovarPath)
         
         page = doc.newPage()    
-        self.buildVariationPage(varFont, page)
+        self.buildVariablePage(varFont, page)
         
         if SCATTER_SPECIMENS:
             locations = self.getLocations(varFont)
@@ -142,7 +142,7 @@ class VariationTypeSpecimen(TypeSpecimen):
             for n in range(20):
                 page = doc.newPage()
                 glyphName = choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-                scatter = VariationScatter(varFont, w=500, h=500, s=glyphName, showRecipe=True,
+                scatter = VariableScatter(varFont, w=500, h=500, s=glyphName, showRecipe=True,
                     sizeX=5, sizeY=5, fontSize=72, locations=locations)
                 page.place(scatter, 50, 100)
                 
@@ -150,13 +150,13 @@ class VariationTypeSpecimen(TypeSpecimen):
             # Build axis combinations on pages
             for axis1, axis2 in self.getAxisCombinations():
                 page = doc.newPage()
-                vCube = VariationCube(varFont, w=500, h=500, s='A', 
+                vCube = VariableCube(varFont, w=500, h=500, s='A', 
                     fontSize=72, dimensions={axis1:5, axis2:5})
                 page.place(vCube, 50, 100)
 
     
 # Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariationTypeSpecimen([decovarName], showGrid=DEBUG) 
+typeSpecimen = VariableTypeSpecimen([decovarName], showGrid=DEBUG) 
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.

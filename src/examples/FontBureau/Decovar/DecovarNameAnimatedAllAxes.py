@@ -18,9 +18,9 @@ from fontTools.ttLib import TTFont
 from pagebot import getFontPath
 
 from pagebot.fonttoolbox.objects.font import Font
-import pagebot.fonttoolbox.variationbuilder
-reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import getVariationFont, drawGlyphPath
+import pagebot.fonttoolbox.variablebuilder
+reload(pagebot.fonttoolbox.variablebuilder)
+from pagebot.fonttoolbox.variablebuilder import getVariableFont, drawGlyphPath
     
 EXPORT_PATH = '_export/DecovarNameAnimatedAllAxes.pdf'
   
@@ -92,7 +92,7 @@ def newAxisState(axisName, minValue, defaultValue, maxValue):
     axisState.stepCycle = 1.0*int(MOVE+random()*MOVE)/FRAMES
     return axisState
          
-def nextValue(axisState, margin1=500, margin2=500):
+def nextValue(axisState, padding1=500, padding2=500):
     # Calculate new angle and put back into array for next iteration.
     newAngle = sin(axisState.angle*2*pi)
     axisState.angle += axisState.stepCycle

@@ -11,7 +11,7 @@ Where in the traditional way of working with layout software such as Quark XPres
  
 At the moment there are strangely (still) no digital tools that are sufficiently flexible to be used in all possible techniques and types of layouts, that generate fixed documents, such as PDF for distribution or print. And where links can be made with a wide variety of information sources, and also meets the typographical demands on manual formatting.
 
-![AutoPager](images/im1.png "With an XML description of the text transformation is performed to a consistent test is created. It takes into account the typographical features of the Markdown or XML tags, such as font, corps, weights, italic variations of axles, spacing, line width, line feed, alignment, indentation, tabulation, color, and breaking into the desired language.")
+![AutoPager](images/im1.png "With an XML description of the text transformation is performed to a consistent test is created. It takes into account the typographical features of the Markdown or XML tags, such as font, corps, weights, italic variables of axles, spacing, line width, line feed, alignment, indentation, tabulation, color, and breaking into the desired language.")
 
 ![The News](images/im2.png "The aim of the project is to draw up on pages automatically with a complexity in otherwise found only in books, newspapers and magazines, together with a minimum of additional meta information.")
 

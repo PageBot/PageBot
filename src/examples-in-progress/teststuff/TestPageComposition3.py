@@ -12,11 +12,9 @@
 #     This script generates an article in Dustch the apporach to
 #     generate automatic layouts, using Galley, Typesetter and Composer classes.
 #
-from pagebot import getFormattedString
-
 import pagebot.style
 reload(pagebot.style)
-from pagebot.style import getRootStyle, LEFT_ALIGN
+from pagebot.style import getRootStyle, LEFT
 
 import pagebot.document 
 reload(pagebot.document)
@@ -38,9 +36,9 @@ import pagebot.elements
 reload(pagebot.elements)
 from pagebot.elements import Galley
 
-import pagebot.fonttoolbox.variationbuilder
-reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import generateInstance
+import pagebot.fonttoolbox.variablebuilder
+reload(pagebot.fonttoolbox.variablebuilder)
+from pagebot.fonttoolbox.variablebuilder import generateInstance
 
 SHOW_TIMER = False
 
@@ -67,13 +65,14 @@ RS = getRootStyle(
     ml = 7*U, # Margin left rs.
     mt = 7*U, # Margin top
     baselineGrid = 14,#baselineGrid,
-    g = U, # Generic gutter.
+    gw = 2*U, # Generic gutter, equal for width and height
+    gd = 2*U,
     # Column width. Uneven means possible split in 5+1+5 or even 2+1+2 +1+ 2+1+2
     # 11 is a the best in that respect for column calculation.
     cw = 11*U, 
     ch = 6*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
@@ -208,7 +207,7 @@ def makeDocument(rs):
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
-        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
+        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
@@ -221,7 +220,7 @@ def makeDocument(rs):
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul',)
     doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)

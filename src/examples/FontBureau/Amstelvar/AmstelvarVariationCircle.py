@@ -7,25 +7,24 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     DecovarVariationCircle.py
+#     DecovarVariableCircle.py
 #
 from __future__ import division
 
 import pagebot
-from pagebot import getFormattedString
 from pagebot.page import Template
-# For Variation Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
+# For Variable Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variationcircle import VariationCircle
+from pagebot.fonttoolbox.elements.variablecircle import VariableCircle
 
 DEBUG = False # Make True to see grid and element frames.
 
-OUTPUT_FILE = 'AmstelvarVariationCircle.pdf'
+OUTPUT_FILE = 'AmstelvarVariableCircle.pdf'
 
 FONT_PATH = pagebot.getFontPath()
-fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
 amstelvar = Font(fontPath)
 amstelvarName = amstelvar.install() # Do DrawBot font install.
 
@@ -36,7 +35,7 @@ SKL = ('sklA', 'sklB', 'sklD')
 BLD = ('bldA', 'bldB')
 WMX = ('wmx2',)
 
-class VariationCircleSpecimen(TypeSpecimen):
+class VariableCircleSpecimen(TypeSpecimen):
 
     def getAxisCombinations(self):
         # Answer specific interesting combinations for axes in Decovar.
@@ -91,7 +90,7 @@ class VariationCircleSpecimen(TypeSpecimen):
         hyphenation(False)
         # Template for the main page.
         template = Template(rs) # Create second template. This is for the main pages.
-        # Show grid columns and margins if rootStyle.showGrid or 
+        # Show grid columns and paddings if rootStyle.showGrid or 
         # rootStyle.showGridColumns are True.
         # The grid is just a regular element, like all others on the page. Same parameters apply.
         template.grid(rs)  
@@ -111,11 +110,11 @@ class VariationCircleSpecimen(TypeSpecimen):
         page = doc[1]
         glyphName = 'A'
         
-        scatter = VariationCircle(amstelvar, w=500, h=500, s=glyphName)
+        scatter = VariableCircle(amstelvar, w=500, h=500, s=glyphName)
         page.place(scatter, 50, 100)
                     
 # Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariationCircleSpecimen([amstelvarName], showGrid=DEBUG) 
+typeSpecimen = VariableCircleSpecimen([amstelvarName], showGrid=DEBUG) 
 # Build the pages of the publication, interpreting the font list.
 typeSpecimen.build()
 # Export the document of the publication to PDF.
