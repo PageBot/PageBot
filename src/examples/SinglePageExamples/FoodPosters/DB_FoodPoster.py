@@ -12,21 +12,28 @@ def scaledImage(path, (x, y, w, h)):
     
 #print installedFonts() # Print all font names installed in the system
 FILTER_TYPE = 'clarendon'
-FILTER_TYPE = None
 FILTER_TYPE = 'proforma'
+FILTER_TYPE = 'bitcount'
+FILTER_TYPE = None
 if FILTER_TYPE is not None:
     for fontName in installedFonts():
         if FILTER_TYPE in fontName.lower():
             print fontName
 
 # Draw title on the poster using FormattedString
-#fontName = 'Superclarendon-Bold'
-#fontNameItalic = 'Superclarendon-BoldItalic'
-#captionFontName = 'Superclarendon-Regular'
-fontName = 'Proforma-Bold'
-fontNameItalic = 'Proforma-MediumItalic'
-captionFontName = 'Proforma-Book'
-
+if 0:
+    fontName = 'Superclarendon-Bold'
+    fontNameItalic = 'Superclarendon-BoldItalic'
+    captionFontName = 'Superclarendon-Regular'
+elif 0:
+    fontName = 'Proforma-Bold'
+    fontNameItalic = 'Proforma-MediumItalic'
+    captionFontName = 'Proforma-Book'
+else:
+    fontName = 'BitcountMonoDouble-MediumCircle'
+    fontNameItalic = 'BitcountMonoDouble-RegularCircleItalic'
+    captionFontName = 'Proforma-Book'
+    
 LORUM_IPSUM = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce pretium ex lorem, quis volutpat mi mollis ac. Aliquam consequat orci nec tempus venenatis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam quis purus consequat, lacinia tortor in, mattis diam. Suspendisse malesuada eleifend enim vel lacinia. Maecenas pellentesque elit turpis, sed tincidunt lectus placerat eu. Etiam finibus mollis feugiat. Proin mattis lacus venenatis fringilla euismod. Morbi nunc erat, consequat in neque sit amet, posuere maximus purus.
 
 Etiam posuere lacus a tincidunt hendrerit. In feugiat lorem tortor, non rhoncus velit finibus ut. Vivamus iaculis orci id viverra aliquet. Donec enim nibh, pellentesque sed condimentum in, vulputate ut massa. Nunc interdum metus sit amet dapibus sodales. Quisque sed quam ac est facilisis congue. Nulla aliquam condimentum nisi sit amet ultrices."""
@@ -66,7 +73,7 @@ else: # Make columns size dependent on height
     COLUMNS = (W-ML-MR)/(CW+G)
 
 # Define color of the background
-if 1:
+if False: # Make False for black background
     r, g, b = 0xF5/256, 0xF5/256, 0xDC/256 #   #F5F5DC
     textColor = 0
 else:
@@ -146,5 +153,6 @@ for cx in range(int(COLUMNS)):
     line((x, 0), (x, H))
     line((x+CW, 0), (x+CW, H))
     
-saveImage('gallery/DB_FoodPosterSketch.pdf')
-saveImage('gallery/DB_FoodPosterSketch.png')
+# _export files are not committed into git.
+saveImage('_export/DB_FoodPosterSketch.pdf')
+saveImage('_export/DB_FoodPosterSketch.png')
