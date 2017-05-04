@@ -13,35 +13,36 @@
 import os
 from drawBot import imageSize
 from pagebot.elements.element import Element
-from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT
+from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset
 
 class Image(Element):
-    u"""Image element has special attributes self.iw and self.ih for the real image size.
-    If the optional captionStyle is not defined, then use self.style for captions."""
+    u"""The Image element is a “normal” container, which contains one (or more) PixelMap elements and zero (or more)
+    caption or other elements. This way the user can add mulitple PixelMaps, a title elements, etc. 
+    The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
+    applied (e.g. if the image element changes size), or the child elements can be put on fixed positions."""
     
-    def __init__(self, path, point=None, parent=None, style=None, name=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+    def __init__(self, path=None, pixelMap=None, caption=None, clipRect=None, mask=None, imo=None, eId=None, 
+            w=None, h=None, **kwargs):
+        Element.__init__(self, w=w, h=h, eId=None, **kwargs)
+        assert path is None or image is None
 
-class PixelImage(Element):
-    u"""Image element has special attributes self.iw and self.ih for the real image size.
-    If the optional captionStyle is not defined, then use self.style for captions."""
+        if pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
+            pixelMap = PixelMap(path, clipRect=clipRect, mask=mask, imo=imo, **kwargs) # Default width is leading.
+        self.appendElement(pixelMap) # Add to self.elements and set image.parent to self.
+        if caption is not None: # Caption can be any type of element, but most likely a text box.
+            self.appendElement(caption) # Add to self.elements and set caption.parent to self.
+        self.solve() # Solve the optional conditions defined in pixelMap and caption.
+
+class PixelMap(Element):
+    u"""The PixelMap contains the reference to the actual binary image data. """
    
-    def __init__(self, path, point=None, parent=None, style=None, name=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
-        # Check on one of the (w, h) in the style. One of the can be undefined for proportional scaling.
-        # Set default to 1 column
-        self._w = DEFAULT_WIDTH # In case there is no valid image path defined, to derive the scale from.
-        self._h = DEFAULT_HEIGHT
-
+    def __init__(self, path, clipRect=None, mask=None, imo=None, **kwargs):
+        Element.__init__(self, **kwargs)
+        
         self.mask = mask # Optional mask element.
         self.clipRect = clipRect
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
-        self.captionStyle = captionStyle or self.style
-        # Check if there is caption content. Tne make the FormattedString, so we know the heigh.
-        if caption:
-            self.addCaption(caption)
-        # Set all size and scale values.
         self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn.
 
     def __repr__(self):
@@ -51,45 +52,32 @@ class PixelImage(Element):
         u"""Set the path of the image. If the path exists, the get the real
         image size and store as self.iw, self.ih."""
         self.path = path
-        self.initImageSize()
+        self.initImageSize() # Get real size from the file.
 
     def initImageSize(self):
         if self.path is not None and os.path.exists(self.path):
-            self._iw, self._ih = imageSize(self.path)
-            self.setScale(self.w, self.h) # Calculate scale and scaled self.sw and self.sh
+            self.iw, self.ih = imageSize(self.path)
         else:
-            self._iw = self._ih = 0 # Undefined, but calculating.
-
-    def _get_iw(self):
-        if not self._iw:
-            self.initImageSize()
-        return self._iw
-    iw = property(_get_iw)
-
-    def _get_ih(self):
-        if not self._ih:
-            self.initImageSize()
-        return self._ih
-    ih = property(_get_ih)
-
-    def setSize(self, w, h):
-        u"""Set the intended size and calculate the new scale."""
-        self._w = max(w or 0, self.minW)
-        self._h = max(h or 0, self.minH)
-        self.sx = self.sy = None # Force calculation, overwriting any defined style scale.
-        self.setScale()
+            self.iw = self.ih = 0 # Undefined, there is no image file.
 
     # Set the intended width and calculate the new scale, validating the
     # width to the image minimum width and the height to the image minimum height.
     # Also the proportion is calculated, depending on the ratio of """
     def _get_w(self):
-        return self._w or DEFAULT_WIDTH
+        if not self._w: # Width is undefined
+            if self._w and self._h is not None:
+                return self._proportionalW()  # Height is lead, calculate width.
+            if self.parent: # No size defined, parent width is lead
+                return self.parent.w
+            return DEFAULT_WIDTH # Undefined and without parent.
+        return self._w # Width is lead and defined as not 0.
     def _set_w(self, w):
         self._w = w
-        self.setScale(w=w)
     w = property(_get_w, _set_w)
 
     def _get_h(self):
+        if self._h is None:
+            if self._w is not None:
         return self._h or DEFAULT_HEIGHT
     def _set_h(self, h):
         self._h = h
