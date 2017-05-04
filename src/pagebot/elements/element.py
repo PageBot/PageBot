@@ -1205,7 +1205,8 @@ class Element(object):
         return s
 
     def draw(self, origin, view):
-        u"""Default drawing method. Probably will be redefined by inheriting element classes."""
+        u"""Default drawing method just drawing the frame. 
+        Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
