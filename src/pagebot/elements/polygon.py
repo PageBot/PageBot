@@ -11,7 +11,7 @@
 #     polygon.py
 #
 from pagebot.elements.element import Element
-
+from pagebot.style import
 class Polygon(Element):
 
     def __init__(self, fs, points=None, **kwargs):
@@ -19,7 +19,19 @@ class Polygon(Element):
         if points is None:
             points = []
         self.points = points
+        self._size = None # Cached propertions, will reset by self.points
 
+    def _get_size(self):
+        if self._size is None:
+            w = h = None
+            for point in self.points:
+                if w 
+    def _get_w(self):
+        return self.size()[0]
+    w = property(_get_w)
+
+    def _get_h(self):
+        return self.
     def draw(self, origin, view):
 
         p = pointOffset(self.oPoint, origin)
@@ -34,6 +46,13 @@ class Polygon(Element):
                 lineTo((px + ppx, py + ppy))
         drawPath()
 
+        # If there are child elements, draw them over the text.
+        self._drawElements(origin, view)
+
+        # Draw markers on TextLine and TextRun positions.
+        self.drawFrame(origin, view)
+        self._drawBaselines(view)
+ 
         self._restoreScale()
-        view.drawElementMetaInfo(self, origin)
+        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 

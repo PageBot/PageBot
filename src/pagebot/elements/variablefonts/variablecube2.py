@@ -8,7 +8,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#	  variablecube.py
+#	  variablecube2.py
 #
 from __future__ import division
 
@@ -24,14 +24,23 @@ from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts
 class VariableCube(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, point=point, style=None, eId=None, dimensions=None, location=None, **kwargs):
+    #def __init__(self, font, s=None, point=point, style=None, eId=None, dimensions=None, location=None, **kwargs):
+    def __init__(self, path, point=None, parent=None, style=None, name=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
+        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        
+
+
         self.__init__
         self.font = font
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
         # Try to figure out the requested dimensions if the element display per axes.
         if dimensions is None:
-            dimensions = dict(wght=4, wdth=6)
+            dimensions = dict(wght=5, wdth=5, opsz=5)
         self.dimensions = dimensions
         # Each element should check at this point if the minimum set of style values
         # are set and if their values are valid.
