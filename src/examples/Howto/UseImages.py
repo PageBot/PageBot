@@ -30,6 +30,7 @@ CropMarks = True
 RegistrationMarks = True
 PageFrame = True
 PageNameInfo = True
+PagePadding = 64
 ViewPadding = 64
 PageSize = 500
 
@@ -64,6 +65,7 @@ Variable([
     dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
     dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
     dict(name='PageNameInfo', ui='CheckBox', args=dict(value=True)),
+    dict(name='PagePadding', ui='Slider', args=dict(minValue=-10, value=64, maxValue=200)),
     dict(name='ViewPadding', ui='Slider', args=dict(minValue=0, value=64, maxValue=200)),
     dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
 ], globals())
@@ -84,7 +86,7 @@ def makeDocument(rs):
     # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
     rs['colH'] = rs['colW'] = SQUARE  # Make default colW and colH square.
 
-    padX = (W - sqx*(SQUARE + GUTTER) + GUTTER)/2
+    #padX = (W - sqx*(SQUARE + GUTTER) + GUTTER)/2
     my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
 
     doc = Document(rootStyle=rs, title='Color Squares', autoPages=1)
@@ -102,24 +104,27 @@ def makeDocument(rs):
     #page = doc[0][0] # Get the single page from te document.
     page = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
     page.name = 'This demo page'
+    page.padding = PagePadding
     
     page.w = W
     page.h = H
  
-    page.padding3D = padX # Set all 3 paddings to same value
+    page.padding3D = PagePadding # Set all 3 paddings to same value
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
     im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Bottom2Bottom(), FitWidth()),
-        frameFill=(0, 1, 0, 0.3), 
+        frameFill=(0, 1, 0, 0.3), vacuumW=True, vacuumH=True,
         frameStroke=(1, 0, 0)
     )
-    page.solve()
-    newTextBox('This is the caption', point=(10, 10, 10), w=80, h=200, font='Verdana', conditionals=[Right2Right(), FloatBottom()], 
-        fontSize=12, textFill=0, parent=im,
-        frameFill=(0, 0, 1, 0.3), 
-        frameStroke=(0, 0, 1)
+    # Give parent on creation, to have the css chain working.
+    cap = newTextBox('This is the caption', point=(50, 50, 10), name='Caption', parent=im,
+        h=20, font='Verdana', conditions=[Left2Left(), FitWidth(), Top2Bottom()], 
+        fontSize=10, textFill=0, frameFill=(0, 0, 1, 0.3), frameStroke=(0, 0, 1)
     )
+    print cap.evaluate()
+    print cap.isFloatBottom(1)
     page.solve()
+    print im.x, im.y, im.getVacuumElementsBox()
 
     return doc # Answer the doc for further doing.
         
