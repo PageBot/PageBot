@@ -10,24 +10,16 @@
 #
 #     textbox.py
 #
+import re
 import CoreText
 import Quartz
 
-from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString
+from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString, line
 
 from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, makeStyle
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot import getFormattedString, setStrokeColor, setFillColor
-
-
-import CoreText
-import Quartz
-
-
-import CoreText
-import Quartz
-import re
 
 class FoundPattern(object):
     def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
@@ -419,8 +411,11 @@ class TextBox(Element):
 
     def _drawBaselines(self, view):
         # Let's see if we can draw over them in exactly the same position.
-        fontSize = 8
-        if view.textBoxShowY:
+        if not view.showTextBoxBaselines:
+            return
+
+        fontSize = self.css('baseLineMarkerSize')
+        if view.showTextBoxY:
             text(FormattedString(`0`, align='left', 
                 font='Verdana', fontSize=8, 
                 fill=(0, 0, 1)), (self.x + self.w + 3,  self.y + self.h - fontSize/4))
@@ -429,14 +424,14 @@ class TextBox(Element):
         for index in range(len(self)):
             _, y, _ = self.baseLines[index]
             line((self.x, self.y + self.h - y), (self.x + self.w, self.y + self.h - y))
-            if view.textBoxShowIndex:
+            if view.showTextBoxIndex:
                 text(FormattedString(`index`, align='right', font='Verdana', fontSize=fontSize, 
                     fill=(0, 0, 1)), (self.x-8, self.y + self.h - y - fontSize/3))
-            if view.textBoxShowY:
+            if view.showTextBoxY:
                 text(FormattedString('%d' % round(y), align='left', 
                     font='Verdana', fontSize=fontSize, 
                     fill=(0, 0, 1)), (self.x + self.w + 3, self.y + self.h - y - fontSize/4))
-            if view.textBoxShowLeading:
+            if view.showTextBoxLeading:
                 leading = round(abs(y - prevY))
                 text(FormattedString('%d' % leading, align='left', 
                     font='Verdana', fontSize=fontSize, 

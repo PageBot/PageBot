@@ -87,16 +87,16 @@ def newColLine(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
     return e
 
-def polygon(point=None, **kwargs):
+def newPolygon(point=None, **kwargs):
     return Polygon(point=point, **kwargs)
 
-def image(point=None, **kwargs):
+def newImage(path, point=None, **kwargs):
     u"""Create Image element as position (x, y) and optional width, height (w, h) of which
     at least one of them should be defined. The path can be None, to be filled later.
     If the image is drawn with an empty path, a missingImage cross-frame is shown.
     The optional imo attribute is an ImageObject() with filters in place. 
     The Image element is answered for convenience of the caller."""
-    return Image(point=point, **kwargs)
+    return Image(path, point=point, **kwargs)
       
 def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs):
     """Convert the column size into point size, depending on the column settings of the 

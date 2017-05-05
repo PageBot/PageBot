@@ -15,7 +15,7 @@ from pagebot import getFormattedString
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, B4, CENTER, LEFT, TOP, BOTTOM, RIGHT
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot.elements.document import Document
+from pagebot.document import Document
     
 W, H = B4 
 

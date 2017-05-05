@@ -20,7 +20,7 @@ from pagebot.contributions.filibuster.blurb import blurb
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT, A4, A1, CENTER, RIGHT, BOTTOM, TOP
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot.elements.document import Document
+from pagebot.document import Document
 from pagebot.elements.galley import Galley
 # The Typesetter instance takes content from a file (typically MarkDown text) and converts that 
 # into Galley list of elements.
