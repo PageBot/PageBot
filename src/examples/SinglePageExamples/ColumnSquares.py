@@ -22,7 +22,7 @@ from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 
 from pagebot.elements import *
-from pagebot.elements.document import Document
+from pagebot.document import Document
     
 ElementOrigin = True
 CropMarks = True

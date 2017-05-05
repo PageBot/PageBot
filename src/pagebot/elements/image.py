@@ -35,7 +35,7 @@ class Image(Element):
 
         if pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
             pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, 
-                conditial=(Top2Top(), FitWidth()), **kwargs) # Default width is leading.
+                conditial=(Fit2Width(), Vacuum2Height(), Top2Top()), **kwargs) # Default width is leading.
         self.image = pixelMap # Property to add to self.elements and set pixelMap.parent to self.
         # Title can be any type of element, but most likely a text box.
         self.title = title # Property to add to self.elements and set caption.parent to self.

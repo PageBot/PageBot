@@ -10,6 +10,8 @@
 #
 #     element.py
 #
+from __future__ import division
+
 import weakref
 import copy
 
@@ -1441,33 +1443,44 @@ class Element(object):
             return abs(self.top) <= tolerance
         return abs(self.parent.h - self.top) <= tolerance
 
-    def isFloatTop(self, tolerance=0):
+    def isFloatOnTop(self, tolerance=0):
         if self.originTop:
             return abs(max(self.getFloatTopSide(), self.parent.pt) - self.top) <= tolerance
         return abs(min(self.getFloatTopSide(), self.parent.h - self.parent.pt) - self.top) <= tolerance
 
-    def isFloatTopSide(self, tolerance=0):
+    def isFloatOnTopSide(self, tolerance=0):
         return abs(self.getFloatTopSide() - self.top) <= tolerance
 
-    def isFloatBottom(self, tolerance=0):
+    def isFloatOnBottom(self, tolerance=0):
         if self.originTop:
             return abs(min(self.getFloatBottomSide(), self.parent.h - self.parent.pb) - self.bottom) <= tolerance
         return abs(max(self.getFloatTopSide(), self.parent.pb) - self.bottom) <= tolerance
 
-    def isFloatBottomSide(self, tolerance=0):
+    def isFloatOnBottomSide(self, tolerance=0):
         return abs(self.getFloatBottomSide() - self.bottom) <= tolerance
 
-    def isFloatLeft(self, tolerance=0):
+    def isFloatOnLeft(self, tolerance=0):
         return abs(max(self.getFloatLeftSide(), self.parent.pl) - self.left) <= tolerance
 
-    def isFloatLeftSide(self, tolerance=0):
+    def isFloatOnLeftSide(self, tolerance=0):
         return abs(self.getFloatLeftSide() - self.left) <= tolerance
 
-    def isFloatRight(self, tolerance=0):
+    def isFloatOnRight(self, tolerance=0):
         return abs(min(self.getFloatRightSide(), self.parent.w - self.parent.pr) - self.right) <= tolerance
 
-    def isFloatRightSide(self, tolerance=0):
+    def isFloatOnRightSide(self, tolerance=0):
         return abs(self.getFloatRightSide() - self.right) <= tolerance
+
+    def isVacuumOnSize(self, tolerance=0):
+        return self.isVacuumOnWidth(tolerance) and self.isVacuumOnHeight(tolerance)
+
+    def isVacuumOnWidth(self, tolerance=0):
+        x, _, w, _ = self.getVacuumElementsBox()
+        return abs(x) <= tolerance and abs(w - self.w) <= tolerance
+
+    def isVacuumOnHeight(self, tolerance=0):
+        _, y, _, h = self.getVacuumElementsBox()
+        return abs(y) <= tolerance and abs(h - self.h) <= tolerance
 
     #   T R A N S F O R M A T I O N S 
 
@@ -1558,14 +1571,14 @@ class Element(object):
     def middle2MiddleSides(self):
         self.middle = self.parent.h/2
 
-    def fitBottom(self):
+    def fit2Bottom(self):
         if self.originTop:
             self.h += self.parent.h - self.parent.pb - self.bottom
         else:
             self.h = self.top - self.parent.pb
         return True
 
-    def fitBottomSide(self):
+    def fit2BottomSide(self):
         if self.originTop:
             self.h += self.parent.h - self.bottom
         else:
@@ -1574,27 +1587,27 @@ class Element(object):
             self.h += top - self.top
         return True
 
-    def fitLeft(self):
+    def fit2Left(self):
         right = self.right
         self.left = self.parent.pl # Padding left
         self.w += right - self.right
         return True
 
-    def fitLeftSide(self):
+    def fit2LeftSide(self):
         right = self.right
         self.left = 0
         self.w += right - self.right
         return True
 
-    def fitRight(self):
+    def fit2Right(self):
         self.w += self.parent.w - self.parent.pr - self.right
         return True
 
-    def fitRightSide(self):
+    def fit2RightSide(self):
         self.w += self.parent.w - self.right
         return True
 
-    def fitTop(self):
+    def fit2Top(self):
         if self.originTop:
             bottom = self.bottom
             self.top = self.parent.pt
@@ -1603,7 +1616,7 @@ class Element(object):
             self.h += self.parent.h - self.parent.pt - self.top
         return True
 
-    def fitTopSide(self):
+    def fit2TopSide(self):
         if self.originTop:
             bottom = self.bottom
             self.top = 0
@@ -1807,5 +1820,21 @@ class Element(object):
         self.right = self.getFloatRightSide()
         return True
 
+    def vacuum2Size(self):
+        x, y, w, h = self.getVacuumElementsBox()
+        print 'saassaas'
+        self.x += x
+        self.y += y
+        self.w = w
+        self.h = h
 
+    def vacuum2Width(self):
+        x, _, w, _ = self.getVacuumElementsBox()
+        self.x += x
+        self.w = w
+
+    def vacuum2Height(self):
+        _, y, _, h = self.getVacuumElementsBox()
+        self.y += y
+        self.h = h
 
