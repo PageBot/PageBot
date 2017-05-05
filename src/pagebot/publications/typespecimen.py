@@ -23,7 +23,7 @@ from pagebot.publications.publication import Publication
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
 # Document is the main instance holding all information about the document together 
 # (pages, styles, etc.)
-from pagebot.elements.document import Document
+from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
 from pagebot.elements.page import Page, Template
       

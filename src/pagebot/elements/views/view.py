@@ -14,7 +14,7 @@ from __future__ import division
 from datetime import datetime
 
 from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, \
-        FormattedString, cmykStroke, text 
+        FormattedString, cmykStroke, text, fill, strokeWidth
 
 from pagebot import setFillColor, setStrokeColor
 from pagebot.elements.element import Element
@@ -47,9 +47,10 @@ class View(Element):
         self.showPageNameInfo = False
         self.showPageMetaInfo = False
         # TextBox stuff
-        self.textBoxShowIndex = False # Show the line index number on the left side.
-        self.textBoxShowY = False # Show the realtic y-position value if text lines on right side. 
-        self.textBoxShowLeading = False # Show distance of leading on the right side.
+        self.showTextBoxIndex = False # Show the line index number on the left side.
+        self.showTextBoxY = False # Show the realtic y-position value if text lines on right side. 
+        self.showTextBoxLeading = False # Show distance of leading on the right side.
+        self.showTextBoxBaselines = False
         # Flow stuff
         self.showFlowConnections = False
         # Image stuff

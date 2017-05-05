@@ -14,7 +14,7 @@
 import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT, NO_COLOR, A4, TOP, BOTTOM
-from pagebot.elements.document import Document
+from pagebot.document import Document
 from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
