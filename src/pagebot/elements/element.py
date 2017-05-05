@@ -19,7 +19,7 @@ from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
-    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH
+    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH,  XXXL
 from pagebot.toolbox.transformer import asFormatted
 
 class Element(object):
@@ -33,14 +33,21 @@ class Element(object):
     isFlow = False # Value is True if self.next if defined.
 
     def __init__(self, point=None, parent=None, name=None, title=None, style=None, conditions=None, elements=None, template=None, 
-            next=None, nextPage=None, **kwargs):  
-        u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here."""  
+            next=None, nextPage=None, padding=None, margin=None, **kwargs):  
+        u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
+        Ignore setting of setting eId as attribute, guaranteed to be unique."""  
         assert point is None or isinstance(point, (tuple, list))
         self.point = point3D(point or ORIGIN_POINT) # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
         self.style = makeStyle(style, **kwargs)
+
+        if padding is not None:
+            self.padding = padding # Expand by property
+        if margin is not None:
+            self.margin = margin
+
         self.name = name
         self.title = title or name # Optional to make difference between title name.
-        self._eId = uniqueID(self) # Direct set property with unique persistent value.
+        self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value. 
         self._parent = None # Preset, so it exists for checking when appending parent.
         if parent is not None:
             # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
@@ -338,7 +345,7 @@ class Element(object):
 
     def _get_left(self):
         if self.css('vacuumW'): # Get vaccum left from child elements.
-            ex, _, _, _ = self.getElementsBox()
+            ex, _, _, _ = self.getVacuumElementsBox()
             return self.x + ex
         xAlign = self.xAlign
         if xAlign == CENTER:
@@ -364,7 +371,7 @@ class Element(object):
 
     def _get_center(self):
         if self.css('vacuumW'): # Get vaccum left/right from child elements.
-            ex, _, ew, _ = self.getElementsBox()
+            ex, _, ew, _ = self.getVacuumElementsBox()
             return self.x + ex + ew/2
         xAlign = self.xAlign
         if xAlign == LEFT:
@@ -384,7 +391,7 @@ class Element(object):
 
     def _get_right(self):
         if self.css('vacuumW'): # Get vaccum left from child elements.
-            ex, _, ew, _ = self.getElementsBox()
+            ex, _, ew, _ = self.getVacuumElementsBox()
             return self.x + ex + ew
         xAlign = self.xAlign
         if xAlign == LEFT:
@@ -941,22 +948,21 @@ class Element(object):
             self.h + mt - mb)
     marginBox = property(_get_marginBox)
 
-    def getVacuumElementBox(self):
+    def getVacuumElementsBox(self):
         u"""Answer the vacuum bounding box around all child elements."""
-        x1 = y1 = x2 = y2 = None
+        x1 = y1 = XXXL
+        x2 = y2 = -XXXL
+        if not self.elements:
+            return 0, 0, 0, 0
         for e in self.elements:
-            if x1 is None or x1 > e.left:
-                x1 = e.left
+            x1 = min(x1, e.left)
+            x2 = max(x2, e.right)
             if e.originTop:
-                if y1 is None or y1 < e.top:
-                    y1 = e.top
-                if y2 is None or y1 > e.bottom:
-                    y2 = e.bottom
+                y1 = min(y1, e.top)
+                y2 = max(y2, e.bottom)
             else:
-                if y1 is None or y1 > e.top:
-                    y1 = e.top
-                if y2 is None or y2 < e.bottom:
-                    y2 = e.bottom
+                y1 = min(y1, e.bottom)
+                y2 = max(y2, e.top)
 
         return x1, y1, x2 - x1, y2 - y1
 
@@ -1211,6 +1217,9 @@ class Element(object):
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
+        # If there are child elements, draw them over the pixel image.
+        self._drawElements(origin, view)
+
         self.drawFrame(origin, view)
 
         self._restoreScale()
@@ -1219,15 +1228,19 @@ class Element(object):
     def drawFrame(self, origin, view):
         u"""Used by elements who want to draw their box, independen of the view.showElementFrame flag.
         The origin point must already have the right "originTop" flag direction.""" 
-        p = pointOffset(self.oPoint, origin) 
-        p = self._applyScale(p)    
-        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        frameFill = self.css('frameFill', None)
+        frameStroke = self.css('frameStroke', None)
+        frameStrokeWidth = self.css('frameStrokeWidth')
+        if frameFill or (frameStroke and frameStrokeWidth):
+            p = pointOffset(self.oPoint, origin) 
+            p = self._applyScale(p)    
+            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-        setFillColor(self.css('frameFill', NO_COLOR))
-        setStrokeColor(self.css('frameStroke', NO_COLOR), self.css('frameStrokeWidth'))
-        rect(px, py, self.w, self.h)
+            setFillColor(frameFill)
+            setStrokeColor(frameStroke, frameStrokeWidth)
+            rect(px, py, self.w, self.h)
 
-        self._restoreScale()
+            self._restoreScale()
 
     #   V A L I D A T I O N
 

@@ -278,6 +278,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         # Vertical spacing for absolute and fontsize-related measures
         baselineGrid = baselineGrid,
+        baseLineMarkerSize = 8, # FontSize of markers showing base line grid info.
         leading = 0, # Absolute leading value (can be used complementary to rLeading).
         rLeading = 1, # Relative factor to fontSize.
         paragraphTopSpacing = 0, # Only works if there is a prefix style value != 0

@@ -10,11 +10,14 @@
 #
 #     image.py
 #
+from __future__ import division # Make integer division result in float.
+
 import os
-from drawBot import imageSize
+from drawBot import imageSize, imagePixelColor, save, restore, image, scale
 from pagebot.elements.element import Element
-from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT # In case no image is defined.
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR # In case no image is defined.
+from pagebot.toolbox.transformer import pointOffset, point2D
+from pagebot.conditions import *
 
 class Image(Element):
     u"""The Image element is a “normal” container, which contains one (or more) PixelMap elements and zero (or more)
@@ -22,31 +25,83 @@ class Image(Element):
     The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
     applied (e.g. if the image element changes size), or the child elements can be put on fixed positions."""
     
-    def __init__(self, path=None, pixelMap=None, caption=None, clipRect=None, mask=None, imo=None, eId=None, 
-            w=None, h=None, **kwargs):
-        Element.__init__(self, w=w, h=h, eId=None, **kwargs)
-        assert path is None or image is None
+    def __init__(self, path=None, point=None, style=None, pixelMap=None, title=None, caption=None, clipRect=None, mask=None, 
+            imo=None, w=None, h=None, **kwargs):
+        Element.__init__(self, point=point, **kwargs)
+        assert path is None or pixelMap is None # One or the other or both None.
+
+        self.w = w
+        self.h = h
 
         if pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
-            pixelMap = PixelMap(path, clipRect=clipRect, mask=mask, imo=imo, **kwargs) # Default width is leading.
-        self.appendElement(pixelMap) # Add to self.elements and set image.parent to self.
-        if caption is not None: # Caption can be any type of element, but most likely a text box.
-            self.appendElement(caption) # Add to self.elements and set caption.parent to self.
+            pixelMap = PixelMap(path, clipRect=clipRect, mask=mask, imo=imo, w=w, 
+                conditial=(Top2Top(), FitWidth()), **kwargs) # Default width is leading.
+        self.image = pixelMap # Property to add to self.elements and set pixelMap.parent to self.
+        # Title can be any type of element, but most likely a text box.
+        self.title = title # Property to add to self.elements and set caption.parent to self.
+        # Caption can be any type of element, but most likely a text box.
+        self.caption = caption # Property to add to self.elements and set caption.parent to self.
         self.solve() # Solve the optional conditions defined in pixelMap and caption.
 
+    def _get_image(self):
+        return self._image # Special element, as there normally is only one pixelMap. Use self.elements otherwise.
+    def _set_image(self, pixelMap):
+        self._image = pixelMap # Keep last pixel map as self.image attribute. Otherwise use self.elements.
+        if pixelMap is not None: # Can be None to clear. 
+            self.appendElement(pixelMap) # Add to self.elements and set pixelMap.parent to self.
+    image = property(_get_image, _set_image)
+
+    def _get_title(self):
+        return self._title # Special element, as there normally is only one title. Use self.elements otherwise.
+    def _set_title(self, e):
+        self._title = e # Keep last title element as self.title attribute. Otherwise use self.elements.
+        if e is not None: # Can be None to clear.
+            self.appendElement(e) # Add to self.elements and set e.parent to self.
+    title = property(_get_title, _set_title)
+
+    def _get_caption(self):
+        return self._caption # Special element, as there normally is only one caption. Use self.elements otherwise.
+    def _set_caption(self, e):
+        self._caption = e # Keep last caption element as self.title attribute. Otherwise use self.elements.
+        if e is not None: # Can be None to clear.
+            self.appendElement(e) # Add to self.elements and set e.parent to self.
+    caption = property(_get_caption, _set_caption)
+
+    def _get_w(self):
+        if not self._w:
+            _, _, w, _ = self.getVacuumElementsBox()
+            return w
+        return self._w # Overwrite vacuum width
+    def _set_w(self, w):
+        self._w = w
+    w = property(_get_w, _set_w)
+
+    def _get_h(self):
+        if not self._h:
+            _, _, _, h = self.getVacuumElementsBox()
+            return h
+        return self._h
+    def _set_h(self, h): # Overwrite vacuum height
+        self._h = h
+    h = property(_get_h, _set_h)
+
+
 class PixelMap(Element):
-    u"""The PixelMap contains the reference to the actual binary image data. """
+    u"""The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId."""
    
-    def __init__(self, path, clipRect=None, mask=None, imo=None, **kwargs):
+    def __init__(self, path, w=None, h=None, clipRect=None, mask=None, imo=None, **kwargs):
         Element.__init__(self, **kwargs)
-        
+
+        self.w = w
+        self.h = h
+
         self.mask = mask # Optional mask element.
         self.clipRect = clipRect
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn.
-
+        
     def __repr__(self):
-        return '[%s %s]' % (self.__class__.__name__, self.eId or self.path)
+        return '[%s eId:%s path:%s]' % (self.__class__.__name__, self.eId, self.path)
 
     def setPath(self, path):
         u"""Set the path of the image. If the path exists, the get the real
@@ -60,79 +115,37 @@ class PixelMap(Element):
         else:
             self.iw = self.ih = 0 # Undefined, there is no image file.
 
+    def getPixelColor(self, p, scaled=True):
+        u"""Answer the color in either the scaled point (x, y) or original image size point."""
+        assert self.path is not None
+        x, y = point2D(p)
+        if scaled:
+            x = self.w / self.iw
+            y = self.h / self.ih
+        return imagePixelColor(self.path, (x, y))
+
     # Set the intended width and calculate the new scale, validating the
     # width to the image minimum width and the height to the image minimum height.
     # Also the proportion is calculated, depending on the ratio of """
     def _get_w(self):
         if not self._w: # Width is undefined
-            if self._w and self._h is not None:
-                return self._proportionalW()  # Height is lead, calculate width.
-            if self.parent: # No size defined, parent width is lead
-                return self.parent.w
-            return DEFAULT_WIDTH # Undefined and without parent.
-        return self._w # Width is lead and defined as not 0.
+            if self._h and self.ih:
+                return self.iw * self._h / self.ih  # Height is lead, calculate width.
+            return DEFAULT_WIDTH # Undefined and without parent, answer default width.
+        return self._w # Width is lead and defined as not 0 or None.
     def _set_w(self, w):
-        self._w = w
+        self._w = w # If self._h is set too, do disproportioan sizing. Otherwise set to 0 or None.
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        if self._h is None:
-            if self._w is not None:
-        return self._h or DEFAULT_HEIGHT
+        if not self._h: # Width is undefined
+            if self._w and self.iw:
+                return self.ih * self._w / self.iw  # Width is lead, calculate height.
+            return DEFAULT_HEIGHT # Undefined and without parent, answer default width.
+        return self._h # Height is lead and defined as not 0 or None.
     def _set_h(self, h):
-        self._h = h
-        self.setScale(h=h)
+        self._h = h # If self._w is set too, do disproportioan sizing. Otherwise set to 0 or None.
     h = property(_get_h, _set_h)
-
-    def setScale(self, w=None, h=None, proportional=True):
-        u"""Answer the scale of the image, calculated from it's own width/height and
-        the optional (self.w, self.h)"""
-
-        if w is None:
-            w = self.w
-        if h is None:
-            h = self.h
-        _, _, pw, ph = self.paddedBox # Calculate padding, because it will adjust scale.
-        if not self.iw or not self.ih:
-            # Cannot calculate the scale if the image does not exist.
-            sx = sy = 1 # self.w and self.h un
-            self._w = self.css('w', DEFAULT_WIDTH) # Copy from original plain style, without scaling.
-            self._h = self.css('h', DEFAULT_HEIGHT)
-        elif w is None and h is None:
-            sx = sy = 1 # Use default size of the image.
-            self._w = self.css('w', DEFAULT_WIDTH) # Copy from original plain style, without scaling.
-            self._h = self.css('h', DEFAULT_HEIGHT)
-        elif not proportional and w is not None and h is not None: # Needs to be disproportional scale
-            sx = 1.0 * pw / self.iw
-            sy = 1.0 * ph / self.ih
-            self._w = pw # Copy from original plain style, without scaling.
-            self._h = ph
-        elif w is not None and h is not None: # Calculate proportional size, fitting the largest in w/h
-            sx = 1.0 * pw / self.iw
-            sy = 1.0 * ph / self.ih
-            sx = sy = min(sx, sy)  # Which one is the smallest fitting scale
-            self._w = self.iw * sx # Take over requested (w, h) as target size, proportionally scaled.
-            self._h = self.ih * sy
-        elif w is not None:
-            sx = sy = 1.0 * pw / self.iw
-            self._w = pw
-            self._h = self.ih * sy # Calculate proprtional height for the requested width.
-        else:
-            sx = sy = 1.0 * ph / self.ih
-            self._w = self.iw * sx # Calculate proportional width for the requested height.
-            self._h = ph
-        # TODO Add fitting function
-        #sx = sy = min(sx, sy) # Keep the smallest to make image fit available space.
-        self.sx = sx
-        self.sy = sy
-
-    def getCaptionSize(self, page):
-        """Figure out what the height of the text is, with the width of this text box."""
-        return textSize(self.caption or '', width=self.w)
-
-    def getImageSize(self):
-        u"""Answer the w/h pixel size of the real image."""
-        return self.iw, self.ih
 
     def _getAlpha(self):
         u"""Use alpha channel of the fill color as opacity of the image."""
@@ -153,92 +166,44 @@ class PixelMap(Element):
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-        px, py, pw, ph = self.getPadded(px, py, self.w, self.h)
-        # Calculate the height of the caption box, soe we can reduce the height of the image.
-        # Draw the caption at the bottom of the image space.
-        if self.caption is not None and self.iw is not None and self.ih is not None:
-            # @@@@@@ TODO: need to solve bug with caption width here.
-            capW = pw # Caption on original width of layout, not proportional scaled image width.
-            _, capH = textSize(self.caption, width=capW)
-            self.caption.draw((px, py))
-            # Calculate new image size.
-            px, py, pw, ph = self.getPadded(x, y+capH, self.w, self.h - capH)
-            self.setScale(h=ph) # Force recalculation of the image scale on height
-            # Caluclate new width from ratio, in case we need to draw a frame.
-            pw = ph * self.iw / self.ih
-
-        if self.path is None or not os.path.exists(self.path):
+        if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
-            self._drawMissingElementRect(page, px, py, pw, ph)
+            self._drawMissingElementRect(page, px, py, self.w, self.h)
         else:
-            if self.sx is None: # In case not initialized yet.
-                self.setScale(pw, ph)
-            if self.sx is not None: # Check again if scale was set successfully.
-                save()
-                scale(self.sx, self.sy)
+            save()
+            sx = self.w / self.iw
+            sy = self.h / self.ih
+            scale(sx, sy)
+            
+            # If there is a clipRect defined, create the bezier path
+            if self.clipRect is not None:
+                clipRect = BezierPath()
+                clX, clY, clW, clH = self.clipRect
+                sclX = clX/sx
+                sclY = clY/sx
+                sclW = clW/sx
+                sclH = clH/sy
+                # move to a point
+                clipRect.moveTo((sclX, sclY))
+                # line to a point
+                clipRect.lineTo((sclX, sclY+sclH))
+                clipRect.lineTo((sclX+sclW, sclY+sclH))
+                clipRect.lineTo((sclX+sclW, sclY))
+                # close the path
+                clipRect.closePath()
+                # set the path as a clipping path
+                clipPath(clipRect)
+                # the image will be clipped inside the path
+                #fill(1, 0, 0, 0.5)
+                #drawPath(clipRect)
 
-                # Draw the actual image, vertical aligned.
-                yAlign = self.yAlign
-                if yAlign == TOP:
-                    psy = (py + self.h)/self.sy - self.ih # TODO: Solve vertical alignment.
-                elif yAlign == MIDDLE:
-                    psy = (py + self.h/2)/self.sy - self.ih/2
-                else: # Must be bottom align then
-                    psy = (py + self.h)/self.sy - self.ih
-                
-                # Calculate horizontal alignment.
-                if self.align == RIGHT:
-                    px -= pw
-                elif self.align == CENTER:
-                    px -= pw/2
-                
-                # If there is a clipRect defined, create the bezier path
-                if self.clipRect is not None:
-                    clipRect = BezierPath()
-                    clX, clY, clW, clH = self.clipRect
-                    sclX = clX/self.sx
-                    sclY = clY/self.sx
-                    sclW = clW/self.sx
-                    sclH = clH/self.sy
-                    # move to a point
-                    clipRect.moveTo((sclX, sclY))
-                    # line to a point
-                    clipRect.lineTo((sclX, sclY+sclH))
-                    clipRect.lineTo((sclX+sclW, sclY+sclH))
-                    clipRect.lineTo((sclX+sclW, sclY))
-                    # close the path
-                    clipRect.closePath()
-                    # set the path as a clipping path
-                    clipPath(clipRect)
-                    # the image will be clipped inside the path
-                    fill(1, 0, 0, 0.5)
-                    drawPath(clipRect)
+            # Store page element Id in this image, in case we want to make an image index later.
+            image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
+            # TODO: Draw optional (transparant) forground color?
+            restore()
 
-                # Store page element Id in this image, in case we want to make an image index later.
-                image(self.path, (px/self.sx, psy), pageNumber=page.eId or 0, alpha=self._getAlpha())
-
-                 # Draw background color if requested.
-                sFill = self.style.get('fill')
-                if not sFill in (None, NO_COLOR): # In case we need to draw the background.
-                    setFillColor(sFill)
-                    setStrokeColor(None)
-                    rect(px/self.sx, psy, pw/self.sx, ph/self.sy)
-
-                # Draw the frame around the image, if requested.
-                sStroke = self.style.get('stroke')
-                sStrokeWidth = self.style.get('strokeWidth')
-                if not sStroke in (None, NO_COLOR) and sStrokeWidth : # In case we need to draw the border.
-                    setFillColor(None)
-                    setStrokeColor(sStroke, sStrokeWidth/self.sx )
-                    rect(px/self.sx, psy, pw/self.sx, ph/self.sy)
-
-                # TODO: Draw optional (transparant) forground color?
-                restore()
-            else:
-                print('Could not set scale of image "%s"' % self.path)
-
-        # If there are child elements, draw them over the text.
-        self._drawElements(origin)
+        # If there are child elements, draw them over the pixel image.
+        self._drawElements(origin, view)
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin)
