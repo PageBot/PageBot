@@ -8,13 +8,11 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     simplebuilder.py
+#     simplehtmlcssbuilder.py
 #
-from pagebot.builders.htmlcss.basebuilder import BaseBuilder
+from basehtmlcssbuilder import BaseHtmlCssBuilder
 
-class SimpleBuilder(BaseBuilder):
-    def __init__(self, document, ):
-        self._document = document
+class SimpleHtmlCssBuilder(BaseHtmlCssBuilder):
 
     def build(self, path, format=None, pageSelection=None, multiPage=True, buildHead=True, buildBody=True, buildCss=True):
         u"""Build simple HTML/CSS site of static code, interpreting the content of self.document."""
