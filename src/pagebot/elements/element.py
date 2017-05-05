@@ -19,7 +19,7 @@ from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
-    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH
+    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH,  XXXL
 from pagebot.toolbox.transformer import asFormatted
 
 class Element(object):
@@ -33,14 +33,21 @@ class Element(object):
     isFlow = False # Value is True if self.next if defined.
 
     def __init__(self, point=None, parent=None, name=None, title=None, style=None, conditions=None, elements=None, template=None, 
-            next=None, nextPage=None, **kwargs):  
-        u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here."""  
+            next=None, nextPage=None, padding=None, margin=None, **kwargs):  
+        u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
+        Ignore setting of setting eId as attribute, guaranteed to be unique."""  
         assert point is None or isinstance(point, (tuple, list))
         self.point = point3D(point or ORIGIN_POINT) # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
         self.style = makeStyle(style, **kwargs)
+
+        if padding is not None:
+            self.padding = padding # Expand by property
+        if margin is not None:
+            self.margin = margin
+
         self.name = name
         self.title = title or name # Optional to make difference between title name.
-        self._eId = uniqueID(self) # Direct set property with unique persistent value.
+        self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value. 
         self._parent = None # Preset, so it exists for checking when appending parent.
         if parent is not None:
             # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
@@ -337,9 +344,6 @@ class Element(object):
     # where the positioning can be compenssaring the element alignment type.
 
     def _get_left(self):
-        if self.css('vacuumW'): # Get vaccum left from child elements.
-            ex, _, _, _ = self.getElementsBox()
-            return self.x + ex
         xAlign = self.xAlign
         if xAlign == CENTER:
             return self.x - self.w/2
@@ -363,9 +367,6 @@ class Element(object):
     mLeft = property(_get_mLeft, _set_mLeft)
 
     def _get_center(self):
-        if self.css('vacuumW'): # Get vaccum left/right from child elements.
-            ex, _, ew, _ = self.getElementsBox()
-            return self.x + ex + ew/2
         xAlign = self.xAlign
         if xAlign == LEFT:
             return self.x + self.w/2
@@ -383,9 +384,6 @@ class Element(object):
     center = property(_get_center, _set_center)
 
     def _get_right(self):
-        if self.css('vacuumW'): # Get vaccum left from child elements.
-            ex, _, ew, _ = self.getElementsBox()
-            return self.x + ex + ew
         xAlign = self.xAlign
         if xAlign == LEFT:
             return self.x + self.w
@@ -681,8 +679,6 @@ class Element(object):
     rootZ = property(_get_rootZ)
 
     def _get_w(self): # Width
-        if self.css('vacuumW'): # If vacuum forming, this overwrites css or style width.
-            return self.right - self.left
         return min(self.maxW, max(self.minW, self.css('w', MIN_WIDTH))) # Should not be 0 or None
     def _set_w(self, w):
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
@@ -695,10 +691,6 @@ class Element(object):
     mw = property(_get_mw, _set_mw)
 
     def _get_h(self): # Height
-        if self.css('vacuumH'): # If vacuum forming, this overwrites css or style width.
-            if self.originTop:
-                return self.bottom - self.top
-            return self.top - self.bottom
         return min(self.maxH, max(self.minH, self.css('h', MIN_HEIGHT))) # Should not be 0 or None
     def _set_h(self, h):
         self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
@@ -711,9 +703,6 @@ class Element(object):
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self): # Depth
-        return self.css('d') 
-        if self.css('vacuumD'): # If vacuum forming, this overwrites css or style depth.
-            return self.back - self.front
         return min(self.maxD, max(self.minD, self.css('d', MIN_DEPTH))) # Should not be 0 or None
     def _set_d(self, d):
         self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
@@ -941,22 +930,21 @@ class Element(object):
             self.h + mt - mb)
     marginBox = property(_get_marginBox)
 
-    def getVacuumElementBox(self):
+    def getVacuumElementsBox(self):
         u"""Answer the vacuum bounding box around all child elements."""
-        x1 = y1 = x2 = y2 = None
+        x1 = y1 = XXXL
+        x2 = y2 = -XXXL
+        if not self.elements:
+            return 0, 0, 0, 0
         for e in self.elements:
-            if x1 is None or x1 > e.left:
-                x1 = e.left
+            x1 = min(x1, e.left)
+            x2 = max(x2, e.right)
             if e.originTop:
-                if y1 is None or y1 < e.top:
-                    y1 = e.top
-                if y2 is None or y1 > e.bottom:
-                    y2 = e.bottom
+                y1 = min(y1, e.top)
+                y2 = max(y2, e.bottom)
             else:
-                if y1 is None or y1 > e.top:
-                    y1 = e.top
-                if y2 is None or y2 < e.bottom:
-                    y2 = e.bottom
+                y1 = min(y1, e.bottom)
+                y2 = max(y2, e.top)
 
         return x1, y1, x2 - x1, y2 - y1
 
@@ -1205,10 +1193,14 @@ class Element(object):
         return s
 
     def draw(self, origin, view):
-        u"""Default drawing method. Probably will be redefined by inheriting element classes."""
+        u"""Default drawing method just drawing the frame. 
+        Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
+        # If there are child elements, draw them over the pixel image.
+        self._drawElements(origin, view)
 
         self.drawFrame(origin, view)
 
@@ -1218,15 +1210,19 @@ class Element(object):
     def drawFrame(self, origin, view):
         u"""Used by elements who want to draw their box, independen of the view.showElementFrame flag.
         The origin point must already have the right "originTop" flag direction.""" 
-        p = pointOffset(self.oPoint, origin) 
-        p = self._applyScale(p)    
-        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        frameFill = self.css('frameFill', None)
+        frameStroke = self.css('frameStroke', None)
+        frameStrokeWidth = self.css('frameStrokeWidth')
+        if frameFill or (frameStroke and frameStrokeWidth):
+            p = pointOffset(self.oPoint, origin) 
+            p = self._applyScale(p)    
+            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-        setFillColor(self.css('frameFill', NO_COLOR))
-        setStrokeColor(self.css('frameStroke', NO_COLOR), self.css('frameStrokeWidth'))
-        rect(px, py, self.w, self.h)
+            setFillColor(frameFill)
+            setStrokeColor(frameStroke, frameStrokeWidth)
+            rect(px, py, self.w, self.h)
 
-        self._restoreScale()
+            self._restoreScale()
 
     #   V A L I D A T I O N
 
@@ -1788,7 +1784,7 @@ class Element(object):
         if self.originTop:
             self.bottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
         else:
-            self.bottom = max(self.getFloatTopSide(), self.parent.pb)
+            self.bottom = max(self.getFloatBottomSide(), self.parent.pb)
         return True
 
     def float2BottomSide(self):

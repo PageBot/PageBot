@@ -17,7 +17,7 @@ from pagebot.toolbox.transformer import lighter, darker, moreBlue, lessRed
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, B4, CENTER, LEFT, TOP
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot.elements.document import Document
+from pagebot.document import Document
 # Import element layout conditions.
 from pagebot.conditions import *
    

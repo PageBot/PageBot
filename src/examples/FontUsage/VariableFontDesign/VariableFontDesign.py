@@ -16,7 +16,7 @@ import pagebot
 from pagebot import textBoxBaseLines
 
 from pagebot.style import getRootStyle, LEFT
-from pagebot.elements.document import Document
+from pagebot.document import Document
 from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter

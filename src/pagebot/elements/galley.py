@@ -108,7 +108,7 @@ class Galley(Element):
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-        setFillColor((1, 1, 0))
+        setFillColor((1, 1, 0.3))
         gw, gh = self.getSize()
         rect(px, py, gw, gh)
         gy = 0
