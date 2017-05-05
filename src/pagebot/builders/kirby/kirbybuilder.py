@@ -10,11 +10,9 @@
 #
 #     simplehtmlcssbuilder.py
 #
-from pagebot.builders.basehtmlcssbuilder import BaseHtmlCssBuilder
+from basehtmlcssbuilder import BaseHtmlCssBuilder
 
-class SimpleHmtlCssBuilder(BaseHtmlCssBuilder):
-    def __init__(self, document, ):
-        self._document = document
+class SimpleHtmlCssBuilder(BaseHtmlCssBuilder):
 
     def build(self, path, format=None, pageSelection=None, multiPage=True, buildHead=True, buildBody=True, buildCss=True):
         u"""Build simple HTML/CSS site of static code, interpreting the content of self.document."""

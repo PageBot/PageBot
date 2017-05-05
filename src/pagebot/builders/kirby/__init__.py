@@ -8,11 +8,3 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     basebuilder.py
-#
-class BaseBuilder(object):
-
-    def __init__(self):
-        self._css = []
-        self._head = []
-        self._body = []

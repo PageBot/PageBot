@@ -8,11 +8,10 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     basebuilder.py
+#     htmlcssview.py
 #
-class BaseBuilder(object):
+from view import View
 
-    def __init__(self):
-        self._css = []
-        self._head = []
-        self._body = []
+class HtmlCssView(View):
+    viewId = 'HtmlCss'
+
