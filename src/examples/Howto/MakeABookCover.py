@@ -73,9 +73,9 @@ def makeDocument(rootStyle):
     C4 = darker(C1, 0.5) # Default parameter 50% between background color and white.
     
     # Make background element, filling the page color and bleed.
-    pageArea = page.rect(name='Page area', conditions=[Top2TopSide(), Left2LeftSide(), FitRightSide(), FitBottomSide()], fill=C1)
+    pageArea = page.rect(name='Page area', conditions=[Top2TopSide(), Left2LeftSide(), Fit2RightSide(), Fit2BottomSide()], fill=C1)
     
-    colorRect1 = page.rect(name='Frame 1', conditions=[Top2Top(), Left2Left(), FitRight(), FitBottom()], fill=C3, stroke=None, align=CENTER, vAlign=CENTER)
+    colorRect1 = page.rect(name='Frame 1', conditions=[Top2Top(), Left2Left(), Fit2Right(), Fit2Bottom()], fill=C3, stroke=None, align=CENTER, vAlign=CENTER)
     colorRect1.z = -10 # Other z-layer, makes this element be ignored on floating checks.
     colorRect1.solve() # Solve element position, before we can make other elements depend on position and size.
 

@@ -112,20 +112,22 @@ def makeDocument(rs):
     page.padding3D = PagePadding # Set all 3 paddings to same value
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Bottom2Bottom(), FitWidth()),
-        frameFill=(0, 1, 0, 0.3), vacuumW=True, vacuumH=True,
+    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Vacuum2Size(), Bottom2Bottom(), Fit2Width()),
+        frameFill=(0, 1, 0, 0.3), 
         frameStroke=(1, 0, 0)
     )
     # Give parent on creation, to have the css chain working.
     cap = newTextBox('This is the caption', point=(50, 50, 10), name='Caption', parent=im,
-        h=20, font='Verdana', conditions=[Left2Left(), FitWidth(), Top2Bottom()], 
+        h=20, font='Verdana', conditions=[Left2Left(), Fit2Width(), Top2Bottom()], 
         fontSize=10, textFill=0, frameFill=(0, 0, 1, 0.3), frameStroke=(0, 0, 1)
     )
     print cap.evaluate()
-    print cap.isFloatBottom(1)
+    print cap.isFloatOnBottom(1)
     page.solve()
     print im.x, im.y, im.getVacuumElementsBox()
-
+    print cap.evaluate()
+    print im.x, im.y, im.getVacuumElementsBox()
+    
     return doc # Answer the doc for further doing.
         
 d = makeDocument(RS)

@@ -43,62 +43,6 @@ class FontSizeWidthRatio(Condition):
             e.style['fontSize'] = 19
             return self.value
         return self.value * self.errorFactor
-
-# Make an instance of all conditions add as global in Variables.
-ConditionsV = [
-	Bottom2Bottom(),
-	Bottom2BottomSide(),
-	Bottom2Middle(),
-	Bottom2MiddleSides(),
-	Middle2Bottom(),
-	Middle2BottomSide(),
-	Middle2Top(),
-	Middle2TopSide(),
-	Middle2Middle(),
-	Middle2MiddleSides(),
-	Origin2Bottom(),
-	Origin2BottomSide(),
-	Origin2Top(),
-	Origin2TopSide(),
-	Origin2Middle(),
-	Top2Bottom(),
-	Top2Top(),
-	Top2TopSide(),
-	Top2Middle(),
-	Top2MiddleSides(),
-]
-ConditionsH = [
-	Center2Center(),
-	Center2CenterSides(),
-	Center2Left(),
-	Center2LeftSide(),
-	Center2Right(),
-	Center2RightSide(),
-	Left2Center(),
-	Left2CenterSides(),
-	Left2Left(),
-	Left2LeftSide(),
-	Left2Right(),
-	Origin2Center(),
-	Origin2CenterSides(),
-	Origin2Left(),
-	Origin2LeftSide(),
-	Origin2Right(),
-	Origin2RightSide(),
-	Right2Center(),
-	Right2CenterSides(),
-	Right2Left(),
-	Right2Right(),
-	Right2RightSide(),
-]
-ConditionsVDict = {}
-for condition in ConditionsV:
-    ConditionsVDict[condition.__class__.__name__] = condition
-ConditionsHDict = {}
-for condition in ConditionsH:
-    ConditionsHDict[condition.__class__.__name__] = condition
-ConditionH = 0
-ConditionV = 0
        
 # For clarity, most of the OneValidatingPage.py example documenet is setup as a sequential excecution of
 # Python functions. For complex documents this is not the best method. More functions and classes
@@ -183,10 +127,6 @@ def makeDocument(rootStyle):
     w = 300
 
     colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
-        ConditionsHDict[sorted(ConditionsHDict.keys())[ConditionH]],
-        ConditionsVDict[sorted(ConditionsVDict.keys())[ConditionV]],
-    ]
-    colorCondition1 = [ # Placement condition(s) for the color rectangle elements.
         Right2Right(),
         #Center2Right(),
         #Right2Right(),
@@ -195,20 +135,20 @@ def makeDocument(rootStyle):
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.
         Right2Right(),
         #Top2Bottom(),
-        FloatLeft(),
-        FloatTop(),
+        Float2Left(),
+        Float2Top(),
     ]
     colorCondition3 = [ # Placement condition(s) for the color rectangle elements.
         Right2Right(),
         #Top2Bottom(),
-        FloatLeft(),
-        FloatTop(),
-        FitBottom(),
+        Float2Left(),
+        Float2Top(),
+        Fit2Bottom(),
         #Bottom2Bottom(),
     ]
     textCondition = [ # Placement condition(s) for the text element..
-        FloatLeft(),
-        FloatTop(),
+        Float2Left(),
+        Float2Top(),
     ]
     # Obvious wrong placement of all elements, to be corrected by solving conditions.
     # In this example the wrongOrigin still shows the elements in the bottom left corner,
@@ -243,7 +183,7 @@ def makeDocument(rootStyle):
     e4 = newRect(point=outsideOrigin, parent=page, w=Element4_W, h=Element4_H, name='Floating element 4', 
         conditions=colorCondition3, fill=(0, 1, 1), align=RIGHT, vAlign=TOP, minH=50, maxH=150)
     e5 = newRect(point=outsideOrigin, parent=page, w=Element5_W, h=Element5_H, name='Floating element 5', 
-        conditions=[FloatRightTopSides()], fill=(0, 1, 0), align=LEFT, vAlign=TOP)
+        conditions=[Float2RightTopSides()], fill=(0, 1, 0), align=LEFT, vAlign=TOP)
 
     score = page.evaluate()
     #print 'Page value on evaluation:', score

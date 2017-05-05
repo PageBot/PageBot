@@ -19,7 +19,7 @@ class Fit(Condition):
 	u"""Fit the element on all sides of the parent margins."""
 
 	def _getConditions(self):
-		return [Left2Left, Top2Top, FitRight, FitBottom]
+		return [Left2Left, Top2Top, Fit2Right, Fit2Bottom]
 
 	def evaluate(self, e, score):
 		u"""Fit the element on all margins of the parent. First align left and top,
@@ -30,11 +30,11 @@ class Fit(Condition):
 	def solve(self, e, score):	
 		self.solveAll(e, self._getConditions(), score)
 
-class FitSides(Condition):
+class Fit2Sides(Condition):
 	u"""Fit the element on all sides of the parent sides."""
 
 	def _getConditions(self):
-		return [Left2LeftSide, Top2TopSide, FitRightSide, FitBottomSide]
+		return [Left2LeftSide, Top2TopSide, Fit2RightSide, Fit2BottomSide]
 
 	def evaluate(self, e, score):
 		self.evaluateAll(e, self._getConditions(), score)
@@ -44,79 +44,102 @@ class FitSides(Condition):
 
 # There are no "FitOrigin" condition, as these may result is extremely large scalings.
 
-class FitLeft(Condition):
+class Fit2Left(Condition):
 	def test(self, e):
 		return e.isLeftOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fitLeft(), e, score)
+		self.addScore(not self.test(e) and e.fit2Left(), e, score)
 
-class FitRight(Condition):
+class Fit2Right(Condition):
 	def test(self, e):
 		return e.isRightOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fitRight(), e, score)
+		self.addScore(not self.test(e) and e.fit2Right(), e, score)
 
-class FitWidth(Condition):
+class Fit2Width(Condition):
 	def test(self, e):
 		return e.isLeftOnLeft(self.tolerance) and e.isRightOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.left2Left() and e.fitRight(), e, score)
+		self.addScore(not self.test(e) and e.left2Left() and e.fit2Right(), e, score)
 		
-class FitHeight(Condition):
+class Fit2Height(Condition):
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance) and e.isBottomOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.top2Top() and e.fitBottom(), e, score)
+		self.addScore(not self.test(e) and e.top2Top() and e.fit2Bottom(), e, score)
 		
-class FitTop(Condition):
+class Fit2Top(Condition):
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fitTop(), e, score)
+		self.addScore(not self.test(e) and e.fit2Top(), e, score)
 
-class FitBottom(Condition):
+class Fit2Bottom(Condition):
 	def test(self, e):
 		return e.isBottomOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fitBottom(), e, score)
+		self.addScore(not self.test(e) and e.fit2Bottom(), e, score)
 
 #	F I T T I N G  S I D E S
 
 # There are no "FitOrigin" condition, as these mau result is extremely large scalings.
 
-class FitLeftSide(Condition):
+class Fit2LeftSide(Condition):
 	def test(self, e):
 		return e.isLeftOnLeftSide(self.tolerance)
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.fitLeftSide(), e, score)
 
-class FitRightSide(Condition):
+class Fit2RightSide(Condition):
 	def test(self, e):
 		return e.isRightOnRightSide(self.tolerance)
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.fitRightSide(), e, score)
 
-class FitTopSide(Condition):
+class Fit2TopSide(Condition):
 	def test(self, e):
 		return e.isTopOnTopSide(self.tolerance)
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.fitTopSide(), e, score)
 
-class FitBottomSide(Condition):
+class Fit2BottomSide(Condition):
 	def test(self, e):
 		return e.isBottomOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.fitBottomSide(), e, score)
+
+#	V A C U U M 
+
+class Vacuum2Size(Condition):
+	def test(self, e):
+		return e.isVacuumOnSize(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.vacuum2Size(), e, score)
+
+class Vacuum2Width(Condition):
+	def test(self, e):
+		return e.isVacuumOnWidth(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.vacuum2Width(), e, score)
+
+class Vacuum2Height(Condition):
+	def test(self, e):
+		return e.isVacuumOnHeight(self.tolerance)
+
+	def solve(self, e, score):
+		self.addScore(not self.test(e) and e.vacuum2Height(), e, score)
 
 #	C E N T E R  H O R I Z O N T A L
 
