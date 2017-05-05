@@ -65,7 +65,8 @@ class PixelMap(Element):
     # Also the proportion is calculated, depending on the ratio of """
     def _get_w(self):
         if not self._w: # Width is undefined
-            if self._w and self._h is not None:
+            if self._h and :
+
                 return self._proportionalW()  # Height is lead, calculate width.
             if self.parent: # No size defined, parent width is lead
                 return self.parent.w
@@ -76,12 +77,15 @@ class PixelMap(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        if self._h is None:
-            if self._w is not None:
-        return self._h or DEFAULT_HEIGHT
+        if not self._h: # Height is undefined
+            if self._w and self.iw:
+                return self._w * self.ih / self.iw # Width is lead, calculate height.
+            if self.parent: # No size defined, parent width is lead
+                return self.parent.w
+            return DEFAULT_WIDTH # Undefined and without parent.
+        return self._w # Width is lead and defined as not 0.
     def _set_h(self, h):
         self._h = h
-        self.setScale(h=h)
     h = property(_get_h, _set_h)
 
     def setScale(self, w=None, h=None, proportional=True):
