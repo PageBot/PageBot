@@ -209,11 +209,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         colH = 6*baselineGrid - u, # Approximately square with cw + gutter: 77
         colD = 0, # Optional columnt "depth"
 
-        # Flags to indicate that width is the vacuumed form around content (text or elements)
-        vacuumW = False, 
-        vacuumH = False, 
-        vacuumD = False, # Optional vacuuming in z-direction: self.back - self.front
-
         # Minimum size
         minW = 0, # Default minimal width of elements.
         minH = 0, # Default minimal height of elements.

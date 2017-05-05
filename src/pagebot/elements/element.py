@@ -344,9 +344,6 @@ class Element(object):
     # where the positioning can be compenssaring the element alignment type.
 
     def _get_left(self):
-        if self.css('vacuumW'): # Get vaccum left from child elements.
-            ex, _, _, _ = self.getVacuumElementsBox()
-            return self.x + ex
         xAlign = self.xAlign
         if xAlign == CENTER:
             return self.x - self.w/2
@@ -370,9 +367,6 @@ class Element(object):
     mLeft = property(_get_mLeft, _set_mLeft)
 
     def _get_center(self):
-        if self.css('vacuumW'): # Get vaccum left/right from child elements.
-            ex, _, ew, _ = self.getVacuumElementsBox()
-            return self.x + ex + ew/2
         xAlign = self.xAlign
         if xAlign == LEFT:
             return self.x + self.w/2
@@ -390,9 +384,6 @@ class Element(object):
     center = property(_get_center, _set_center)
 
     def _get_right(self):
-        if self.css('vacuumW'): # Get vaccum left from child elements.
-            ex, _, ew, _ = self.getVacuumElementsBox()
-            return self.x + ex + ew
         xAlign = self.xAlign
         if xAlign == LEFT:
             return self.x + self.w
@@ -688,8 +679,6 @@ class Element(object):
     rootZ = property(_get_rootZ)
 
     def _get_w(self): # Width
-        if self.css('vacuumW'): # If vacuum forming, this overwrites css or style width.
-            return self.right - self.left
         return min(self.maxW, max(self.minW, self.css('w', MIN_WIDTH))) # Should not be 0 or None
     def _set_w(self, w):
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
@@ -702,10 +691,6 @@ class Element(object):
     mw = property(_get_mw, _set_mw)
 
     def _get_h(self): # Height
-        if self.css('vacuumH'): # If vacuum forming, this overwrites css or style width.
-            if self.originTop:
-                return self.bottom - self.top
-            return self.top - self.bottom
         return min(self.maxH, max(self.minH, self.css('h', MIN_HEIGHT))) # Should not be 0 or None
     def _set_h(self, h):
         self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
@@ -718,9 +703,6 @@ class Element(object):
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self): # Depth
-        return self.css('d') 
-        if self.css('vacuumD'): # If vacuum forming, this overwrites css or style depth.
-            return self.back - self.front
         return min(self.maxD, max(self.minD, self.css('d', MIN_DEPTH))) # Should not be 0 or None
     def _set_d(self, d):
         self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
@@ -1802,7 +1784,7 @@ class Element(object):
         if self.originTop:
             self.bottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
         else:
-            self.bottom = max(self.getFloatTopSide(), self.parent.pb)
+            self.bottom = max(self.getFloatBottomSide(), self.parent.pb)
         return True
 
     def float2BottomSide(self):

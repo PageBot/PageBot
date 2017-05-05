@@ -286,9 +286,9 @@ class TextBox(Element):
         Element.__init__(self,  **kwargs)
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
-        if isinstance(fs, str):
+        if isinstance(fs, basestring):
             fs = getFormattedString(fs, self)
-        self.fs = fs
+        self.fs = fs # Keep as plain string, in case parent is not set yet.
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
 
     def _get_h(self):
