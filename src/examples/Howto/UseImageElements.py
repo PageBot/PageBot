@@ -60,7 +60,7 @@ EXPORT_PATH = '_export/UseImages.pdf'
 
 
 Variable([
-    dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
     dict(name='CropMarks', ui='CheckBox', args=dict(value=True)),
     dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
     dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
@@ -112,21 +112,24 @@ def makeDocument(rs):
     page.padding3D = PagePadding # Set all 3 paddings to same value
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Vacuum2Size(), Bottom2Bottom(), Fit2Width()),
+    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Bottom2Bottom(), Fit2Width()), elasticH=True, yAlign=BOTTOM,
         frameFill=(0, 1, 0, 0.3), 
         frameStroke=(1, 0, 0)
     )
+    print im.image.size
     # Give parent on creation, to have the css chain working.
-    cap = newTextBox('This is the caption', point=(50, 50, 10), name='Caption', parent=im,
-        h=20, font='Verdana', conditions=[Left2Left(), Fit2Width(), Top2Bottom()], 
-        fontSize=10, textFill=0, frameFill=(0, 0, 1, 0.3), frameStroke=(0, 0, 1)
+    cap = newTextBox('This is the caption. ' * 50, point=(50, 50, 10), name='Caption', parent=im,
+        h=20, font='Verdana', conditions=[Left2Left(), Fit2Width(), Float2Top()], elasticH=True,
+        fontSize=8, textFill=0, frameFill=(0, 0, 1, 0.3), frameStroke=(0, 0, 1),
     )
-    print cap.evaluate()
-    print cap.isFloatOnBottom(1)
+    print cap.size
+    
+    #print cap.evaluate()
+    #print cap.isFloatOnBottom(1)
     page.solve()
-    print im.x, im.y, im.getVacuumElementsBox()
-    print cap.evaluate()
-    print im.x, im.y, im.getVacuumElementsBox()
+    #print im.x, im.y, im.getVacuumElementsBox(), im.left, im.top, im.right, im.bottom
+    #print cap.evaluate()
+    #print im.x, im.y, im.getVacuumElementsBox()
     
     return doc # Answer the doc for further doing.
         

@@ -55,7 +55,7 @@ class Polygon(Element):
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
-        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        px, py, _ = p, self._applyAlignment(p) # Ignore z-axis for now.
         setFillColor(self.css('fill'))
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         newPath()
@@ -67,7 +67,7 @@ class Polygon(Element):
         drawPath()
 
         # If there are child elements, draw them over the polygon.
-        self._drawElements(origin, view)
+        self._drawElements(p, view)
 
         # Draw optional bouning box.
         self.drawFrame(origin, view)

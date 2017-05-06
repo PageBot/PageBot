@@ -104,7 +104,7 @@ def makeDocument(rootStyle):
         pbglobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, rLeading=0.2, textColor=0))
     eTextBox = page.textBox(pbglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
-        vacuumH=True, conditions=textCondition, xAlign=CENTER, yAlign=CENTER)
+        conditions=textCondition, xAlign=CENTER, yAlign=CENTER)
 
     e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 
         conditions=colorCondition2, fill=(0, 1, 1), xAlign=LEFT, yAlign=TOP)

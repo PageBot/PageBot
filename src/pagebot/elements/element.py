@@ -21,7 +21,7 @@ from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, r
 from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
-from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
+from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
     MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH,  XXXL
 from pagebot.toolbox.transformer import asFormatted
 
@@ -553,6 +553,29 @@ class Element(object):
         self.front = z + self.css('mzf')
     mFront = property(_get_mFront, _set_mFront)
 
+    def _get_back(self):
+        zAlign = self.css('zAlign')
+        if zAlign == MIDDLE:
+            return self.z + self.d/2
+        if zAlign == FRONT:
+            return self.z + self.d
+        return self.z
+    def _set_back(self, z):
+        zAlign = self.css('zAlign')
+        if zAlign == MIDDLE:
+            self.z = z - self.d/2
+        elif zAlign == FRONT:
+            self.z = z - self.d
+        else:
+            self.z = z
+    back = property(_get_back, _set_back)
+
+    def _get_mBack(self): # Front, including front margin
+        return self.back - self.css('mzb')
+    def _set_mBack(self, z):
+        self.back = z - self.css('mzb')
+    mBack = property(_get_mBack, _set_mBack)
+
     # Alignment types, defines where the origin of the element is located.
 
     def _validateXAlign(self, xAlign): # Check and answer value
@@ -704,9 +727,9 @@ class Element(object):
         return self.z
     rootZ = property(_get_rootZ)
 
+    # (w, h, d) size of the element.
+
     def _get_w(self): # Width
-        if self.css('vacuumW'):
-            return self.getVacuumElementsBox3D()[3]
         return min(self.maxW, max(self.minW, self.css('w', MIN_WIDTH))) # Should not be 0 or None
     def _set_w(self, w):
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
@@ -719,8 +742,6 @@ class Element(object):
     mw = property(_get_mw, _set_mw)
 
     def _get_h(self): # Height
-        if self.css('vacuumH'):
-            return self.getVacuumElementsBox3D()[4]
         return min(self.maxH, max(self.minH, self.css('h', MIN_HEIGHT))) # Should not be 0 or None
     def _set_h(self, h):
         self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
@@ -733,8 +754,6 @@ class Element(object):
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self): # Depth
-        if self.css('vacuumH'):
-            return self.getVacuumElementsBox3D()[5]
         return min(self.maxD, max(self.minD, self.css('d', MIN_DEPTH))) # Should not be 0 or None
     def _set_d(self, d):
         self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
@@ -904,6 +923,12 @@ class Element(object):
         self.style['originTop'] = flag # Overwrite element local style from here, parent css becomes inaccessable.
     originTop = property(_get_originTop, _set_originTop)
 
+    def _get_size(self):
+        return self.getSize3D()  
+    def _set_size(self, size):
+        self.setSize(size)
+    size = property(_get_size, _set_size)
+
     def getSize(self):
         u"""Answer the size of the element by calling properties self.w and self.h.
         This allows element to dynamically calculate the size if necessary, by redefining the
@@ -967,7 +992,7 @@ class Element(object):
         x1 = y1 = z1 = XXXL
         x2 = y2 = z2 = -XXXL
         if not self.elements:
-            return 0, 0, 0, 0
+            return 0, 0, 0, 0, 0, 0
         for e in self.elements:
             x1 = min(x1, e.left)
             x2 = max(x2, e.right)
@@ -984,7 +1009,7 @@ class Element(object):
 
     def getVacuumElementsBox(self):
         u"""Answer the vacuum bounding box around all child elements."""
-        x, y, _, w, h, _ = getVacuumElementsBox3D()
+        x, y, _, w, h, _ = self.getVacuumElementsBox3D()
         return x, y, w, h
 
     def getVacuumOrigins3D(self):
@@ -1106,18 +1131,18 @@ class Element(object):
         self.style['scaleZ'] = scaleZ # Set on local style, shielding parent self.css value.
     scaleZ = property(_get_scaleZ, _set_scaleZ)
 
-    def getFloatTopSide(self, previousOnly=True):
+    def getFloatTopSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max y that can float to top, without overlapping previous sibling elements.
-        This means we are just looking at the vertical projection of (self.left, self.right).
+        This means we are just looking at the vertical projection between (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared."""
         if self.originTop:
             y = 0
         else:
             y = self.parent.h
         for e in self.parent.elements: 
-            if previousOnly and e is self: # Only look at sublings that are ealier in the list.
+            if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if e.z != self.z or e.right < self.left or self.right < e.left:
+            if abs(e.z - self.z) > tolerance or e.right < self.left or self.right < e.left:
                 continue # Not equal z-layer or not in window of vertical projection.
             if self.originTop:
                 y = max(y, e.bottom)
@@ -1125,7 +1150,7 @@ class Element(object):
                 y = min(y, e.bottom)
         return y
 
-    def getFloatBottomSide(self, previousOnly=True):
+    def getFloatBottomSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max y that can float to bottom, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared."""
@@ -1134,9 +1159,9 @@ class Element(object):
         else:
             y = 0
         for e in self.parent.elements: # All elements that share self.parent, except self.
-            if previousOnly and e is self: # Only look at sublings that are ealier in the list.
+            if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if e.z != self.z or e.right < self.left or self.right < e.left:
+            if abs(e.z - self.z) > tolerance or e.right < self.left or self.right < e.left:
                 continue # Not equal z-layer or not in window of vertical projection.
             if self.originTop:
                 y = min(y, e.top)
@@ -1144,28 +1169,28 @@ class Element(object):
                 y = max(y, e.top)
         return y
 
-    def getFloatLeftSide(self, previousOnly=True):
+    def getFloatLeftSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max x that can float to the left, without overlapping previous sibling elements.
         This means we are just looking at the horizontal projection of (self.top, self.bottom).
         Note that the x may be outside the parent box. Only elements with identical z-value are compared."""
         x = 0
         for e in self.parent.elements: # All elements that share self.parent, except self.
-            if previousOnly and e is self: # Only look at sublings that are ealier in the list.
+            if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if e.z != self.z or e.bottom < self.top or self.bottom < e.top:
+            if abs(e.z - self.z) > tolerance or e.bottom < self.top or self.bottom < e.top:
                 continue # Not equal z-layer or not in window of horizontal projection.
             x = max(e.right, x)
         return x
 
-    def getFloatRightSide(self, previousOnly=True):
+    def getFloatRightSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max Y that can float to the right, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared."""
         x = self.parent.w
         for e in self.parent.elements: # All elements that share self.parent, except self.
-            if previousOnly and e is self: # Only look at sublings that are ealier in the list.
+            if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if e.z != self.z or e.bottom < self.top or self.bottom < e.top:
+            if abs(e.z - self.z) > tolerance or e.bottom < self.top or self.bottom < e.top:
                 continue # Not equal z-layer or not in window of horizontal projection.
             x = min(e.left, x)
         return x
@@ -1235,11 +1260,11 @@ class Element(object):
 
     def _drawElements(self, origin, view):
         u"""Recursively draw all elements of self on their own relative position in the main canvas, """
-        p = pointOffset(self.point, origin)
+        #p = pointOffset(self.point, origin)
         # Draw all elements relative to this point
         for e in self.elements:
             if e.show:
-                e.draw(p, view)
+                e.draw(origin, view)
 
     def getElementInfoString(self):
         u"""Answer a single string with info about the element. Default is to show the posiiton
@@ -1266,10 +1291,10 @@ class Element(object):
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
-        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        p = self._applyAlignment(p) # Ignore z-axis for now.
 
         # If there are child elements, draw them over the pixel image.
-        self._drawElements(origin, view)
+        self._drawElements(p, view)
 
         self.drawFrame(origin, view)
 
@@ -1537,6 +1562,16 @@ class Element(object):
 
     def isFloatOnRightSide(self, tolerance=0):
         return abs(self.getFloatRightSide() - self.right) <= tolerance
+
+    def isVacuumOnWidth(self, tolerance=0):
+        x, _, _, w, _, _ = self.getVacuumElementsBox3D()
+        return abs(self.left - x) <= tolerance and abs(self.w - w) <= tolerance
+
+    def isVacuumOnHeight(self, tolerance=0):
+        _, y, _, _, h, _ = self.getVacuumElementsBox3D()
+        if self.originTop:
+            return abs(self.top - y) <= tolerance and abs(self.h - h) <= tolerance
+        return abs(self.bottom - y) <= tolerance and abs(self.h - h) <= tolerance
 
     #   T R A N S F O R M A T I O N S 
 
@@ -1840,7 +1875,7 @@ class Element(object):
 
     def float2Top(self):
         if self.originTop:
-            self.top = max(self.getFloatTopSide(), self.parent.pt)
+            self.top = min(self.getFloatTopSide(), self.parent.pt)
         else:
             self.top = min(self.getFloatTopSide(), self.parent.h - self.parent.pt)
         return True
@@ -1853,7 +1888,7 @@ class Element(object):
         if self.originTop:
             self.bottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
         else:
-            self.bottom = max(self.getFloatBottomSide(), self.parent.pb)
+            self.bottom = min(self.getFloatBottomSide(), self.parent.pb)
         return True
 
     def float2BottomSide(self):
@@ -1876,4 +1911,17 @@ class Element(object):
         self.right = self.getFloatRightSide()
         return True
 
+    # Vacuum
 
+    def vacuum2Width(self):
+        x, _, _, w, _, _ = self.getVacuumElementsBox3D()
+        self.left -= x
+        self.w = w
+
+    def vacuum2Height(self):
+        _, y, _, _, h, _ = self.getVacuumElementsBox3D()
+        if self.originTop:
+            self.top += y
+        else:
+            self.bottom -= y
+        self.h = h
