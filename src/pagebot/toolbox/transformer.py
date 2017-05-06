@@ -45,6 +45,13 @@ def pointOffset(point, offset):
         offset = point3D(offset)
     return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
 
+def point2S(p):
+    u"""Answer the point as string of rounded integers. Ignore z value if it is 0."""
+    x, y, z = point3D(p)
+    if z:
+        return '%d %d %d' % (round(x), round(y), round(z))
+    return '%d %d' % (round(x), round(y))
+
 # C O L O R 
 
 def moreRed(c, v=0.5):

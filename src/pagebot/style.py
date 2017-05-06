@@ -155,6 +155,12 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
 
+        # Elastic sizes: if the flag is, then the (w, h, d) is elastic (depending on what is inside),
+        # relative to the origin.
+        elasticW = False,
+        elasticH = False,
+        elasticD = False,
+
         frameDuration = None, # In case saving as .mov or .gif, this value defines 1/frames_per_second
         # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
         folds = None,
@@ -329,6 +335,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         textStrokeWidth = None,
 
         # V I E W
+        
         # These parameters are used by viewers, should not part of direct elements.css( ) queries
         # as view may locally change these values.
 

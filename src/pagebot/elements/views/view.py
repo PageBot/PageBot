@@ -12,14 +12,15 @@
 #
 from __future__ import division
 from datetime import datetime
+from math import atan2, radians, degrees, cos, sin
 
 from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, \
-        FormattedString, cmykStroke, text, fill, strokeWidth
+        FormattedString, cmykStroke, text, fill, strokeWidth, curveTo, closePath
 
 from pagebot import setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
-from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D
+from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D, point2S
 from pagebot import getFormattedString, setStrokeColor, setFillColor
 
 class View(Element):
@@ -35,6 +36,7 @@ class View(Element):
         self.showElementInfo = False
         self.showElementFrame = False
         self.showElementOrigin = False
+        self.showElementDimensions = False
         self.showMissingElementRect = True
         # Grid stuff
         self.showGrid = False
@@ -175,19 +177,30 @@ class View(Element):
                     tbTarget = e.getElement(seq[0].eId)
                     self.drawArrow(e, px+startX+tbStart.w, py+startY, px+tbTarget.x, py+tbTarget.y+tbTarget.h-e.h, 1)
 
-    def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
+    def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False, fms=None, fmf=None, 
+            fill=None, stroke=None, strokeWidth=None):
         u"""Draw curved arrow marker between the two points.
         TODO: Add drawing of real arrow-heads, rotated in the right direction."""
-        fms = self.css('viewFlowMarkerSize')
-        fmf = self.css('viewFlowCurvatureFactor')
-        if onText == 1:
-            c = self.css('viewFlowConnectionStroke2', NO_COLOR)
-        else:
-            c = self.css('viewFlowConnectionStroke1', NO_COLOR)
-        setStrokeColor(c, self.css('viewFlowConnectionStrokeWidth'))
+        if fms is None:
+            fms = self.css('viewFlowMarkerSize')
+        if fmf is None:
+            fmf or self.css('viewFlowCurvatureFactor')
+        
+        if stroke is None:
+            if onText == 1:
+                stroke = self.css('viewFlowConnectionStroke2', NO_COLOR)
+            else:
+                stroke = self.css('viewFlowConnectionStroke1', NO_COLOR)
+        if strokeWidth is None:
+            strokeWidth = self.css('viewFlowConnectionStrokeWidth', 0.5)
+        
+        setStrokeColor(stroke, strokeWidth)
         if startMarker:
-            setFillColor(self.css('viewFlowMarkerFill', NO_COLOR))
+            if fill is None:
+                fill = self.css('viewFlowMarkerFill', NO_COLOR)
+            setFillColor(fill)
             oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
+        
         xm = (xt + xs)/2
         ym = (yt + ys)/2
         xb1 = xm + onText * (yt - ys) * fmf
@@ -211,14 +224,16 @@ class View(Element):
 
         #  Draw the arrow head.
         newPath()
-        setFillColor(c)
+        setFillColor(stroke)
         setStrokeColor(None)
         moveTo((xt, yt))
         lineTo((ax1, ay1))
         lineTo((ax2, ay2))
         closePath()
         drawPath()
+
         if endMarker:
+            setFillColor(self.css('viewFlowMarkerFill', NO_COLOR))
             oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 
     #   D R A W I N G  E L E M E N T  
@@ -248,12 +263,11 @@ class View(Element):
     def drawElementInfo(self, e, origin):
         u"""For debugging this will make the elements show their info. The css flag "showElementOrigin"
         defines if the origin marker of an element is drawn."""
+        p = pointOffset(e.oPoint, origin)
+        p = e._applyScale(p)    
+        px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
         if self.showElementInfo:
-             # Draw crossed rectangle.
-            p = pointOffset(e.oPoint, origin)
-            p = e._applyScale(p)    
-            px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
-
+            # Draw box with element info.
             fs = getFormattedString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'), 
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
             tw, th = textSize(fs)
@@ -271,6 +285,18 @@ class View(Element):
             text(fs, (tpx+Pd, tpy+1.5*Pd))
             e._restoreScale()
 
+        if 0 and self.showElementDimensions:
+            # TODO: Make separate arrow functio and better positions
+            # Draw width and height measures
+            setFillColor(None)
+            setStrokeColor(0, 0.25)
+            S = self.css('viewInfoOriginMarkerSize', 4)
+            opx, opy, _ = p
+            x1, y1, x2, y2 = e.left, e.bottom, e.right, e.top
+            line((opx + x1, opy + y1 - S), (opx + x1, opy + y1 - 3*S))
+            self.drawArrow(e, opx + x1, opy + y1 - 2*S, opx + x2, opy + y1 - 2*S, True, True, fms=2, fmf=0, stroke=0, strokeWidth=0.25, fill=0)
+            line((opx + x2, opy + y1 - S), (opx + x2, opy + y1 - 3*S))
+
     def drawElementOrigin(self, e, origin):
         if self.showElementOrigin:
             # Draw origin of the element
@@ -281,7 +307,13 @@ class View(Element):
             oval(px-S, py-S, 2*S, 2*S)
             line((px-S, py), (px+S, py))
             line((px, py-S), (px, py+S))
- 
+
+        if self.showElementDimensions:
+            fs = getFormattedString(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'), 
+                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+            w, h = textSize(fs)
+            text(fs, (px - w/2, py + S*1.5))
+
     def drawMissingElementRect(self, e, origin):
         u"""When designing templates and pages, this will draw a filled rectangle on the element
         bounding box (if self.css('missingElementFill' is defined) and a cross, indicating

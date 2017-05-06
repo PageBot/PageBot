@@ -12,32 +12,11 @@
 #     This script generates an article in Dustch the apporach to
 #     generate automatic layouts, using Galley, Typesetter and Composer classes.
 #
-import pagebot.style
-reload(pagebot.style)
 from pagebot.style import getRootStyle, LEFT
-
-import pagebot.document 
-reload(pagebot.document)
 from pagebot.document import Document
-
-import pagebot.page
-reload(pagebot.page)
-from pagebot.page import Page, Template
-
-import pagebot.composer
-reload(pagebot.composer)
+from pagebot.elements import *
 from pagebot.composer import Composer
-
-import pagebot.typesetter
-reload(pagebot.typesetter)
 from pagebot.typesetter import Typesetter
-
-import pagebot.elements
-reload(pagebot.elements)
-from pagebot.elements import Galley
-
-import pagebot.fonttoolbox.variablebuilder
-reload(pagebot.fonttoolbox.variablebuilder)
 from pagebot.fonttoolbox.variablebuilder import generateInstance
 
 SHOW_TIMER = False
