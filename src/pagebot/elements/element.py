@@ -14,7 +14,6 @@ from __future__ import division
 
 import weakref
 import copy
-import sys
 
 from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, fill, text, stroke, strokeWidth
 
@@ -24,6 +23,11 @@ from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
     MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH,  XXXL
 from pagebot.toolbox.transformer import asFormatted
+
+class TimeState(object):
+    def __init__(self, t, style):
+        self.t = t
+        self.style = style
 
 class Element(object):
 
@@ -35,19 +39,19 @@ class Element(object):
     isTextBox = False
     isFlow = False # Value is True if self.next if defined.
 
-    def __init__(self, point=None, parent=None, name=None, title=None, style=None, conditions=None, elements=None, template=None, 
+    def __init__(self, point=None, t=0, parent=None, name=None, title=None, style=None, conditions=None, elements=None, template=None, 
             next=None, nextPage=None, padding=None, margin=None, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         Ignore setting of setting eId as attribute, guaranteed to be unique."""  
         assert point is None or isinstance(point, (tuple, list))
-        self.point = point3D(point or ORIGIN_POINT) # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0
+        self.point = point3D(point or ORIGIN_POINT) # Always store self.style('point') position property as 3D-point (x, y, z). Missing values are 0
 
         # Set timer of this element.
         # TODO: Make this to work, transparant to currents functions of self.x, self.style, etc.
         self._t = 0
-        #ts = TimeState(self.point, self.style)
-        #self.timeStates = dict(0: ts, sys.float_info.max: ts) # Default timeState from t == 0 until infinite of time.
+        ts = TimeState(t, self.style)
+        self.timeStates = {t:ts, XXXL:ts} # Default timeState from t == 0 until infinite of time.
 
         if padding is not None:
             self.padding = padding # Expand by property
@@ -55,7 +59,7 @@ class Element(object):
             self.margin = margin
 
         self.name = name
-        self.title = title or name # Optional to make difference between title name.
+        self.title = title or name # Optional to make difference between title name, style property
         self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value. 
         self._parent = None # Preset, so it exists for checking when appending parent.
         if parent is not None:
@@ -311,42 +315,45 @@ class Element(object):
     ancestors = property(_get_ancestors)
 
     def _get_point(self):
-        return point2D(self._point) # Answer as 2D
+        return point2D(self.style['point']) # Answer as 2D
     def _set_point(self, point):
-        self._point = point3D(point) # Always store as 3D-point, z = 0 if missing
+        self.style['point'] = point3D(point) # Always store as 3D-point, z = 0 if missing
     point = property(_get_point, _set_point)
 
     def _get_point3D(self):
-        return self._point
+        return self.style['point']
     def _set_point3D(self, point):
-        self._point = point3D(point) # Always store as 3D-point, z = 0 if missing.
+        self.style['point'] = point3D(point) # Always store as 3D-point, z = 0 if missing.
     point3D = property(_get_point3D, _set_point3D)
 
-    def _get_oPoint(self): # Answer the self._point, y-flipped, depending on the self.originTop flag.
+    def _get_oPoint(self): # Answer the self.style['point'], y-flipped, depending on the self.originTop flag.
         return self._applyOrigin(self.point)
     oPoint3D = oPoint = property(_get_oPoint)
 
     # Plain coordinates
 
     def _get_x(self):
-        return self._point[0]
+        return self.style['point'][0]
     def _set_x(self, x):
-        self._point = point3D(self._point) # Make sure it is a 3D list.
-        self._point[0] = x
+        p = point3D(self.style.get('point', [0, 0, 0])) # Make sure it is a 3D list.
+        p[0] = x
+        self.style['point'] = p
     x = property(_get_x, _set_x)
     
     def _get_y(self):
-        return self._point[1] 
+        return self.style['point'][1] 
     def _set_y(self, y):
-        self._point = point3D(self._point) # Make sure it is a 3D list.
-        self._point[1] = y
+        p = point3D(self.style.get('point', [0, 0, 0])) # Make sure it is a 3D list.
+        p[1] = y
+        self.style['point'] = p
     y = property(_get_y, _set_y)
     
     def _get_z(self):
-        return self._point[2] # We know that self._point is always 3D
+        return self.style['point'][2] # We know that self.style['point'] is always 3D
     def _set_z(self, z):
-        self._point = point3D(self._point) # Make sure it is a 3D list.
-        self._point[2] = z # self._point is always 3D
+        p = point3D(self.style.get('point', [0, 0, 0])) # Make sure it is a 3D list.
+        p[2] = z
+        self.style['point'] = p
     z = property(_get_z, _set_z)
     
     # Time management
@@ -966,6 +973,11 @@ class Element(object):
         pzf = self.pzf
         return x, y, self.z + pzf, w, h, self.d - pzf - self.pzb
     padded3DBox = property(_get_padded3DBox)
+
+    def _get_boundingBox3D(self):
+        u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""
+        return self.x or 0, self.y or 0, self.z or 0, self.w or 0, self.h or 0, self.d or 0
+    boundingBox = property(_get_boundingBox3D)
 
     def _get_boundingBox(self):
         u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""

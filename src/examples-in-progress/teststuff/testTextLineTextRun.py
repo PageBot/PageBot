@@ -15,7 +15,7 @@ class FoundPattern(object):
         self.run = run # List of  of this strin,g
     
     def __repr__(self):
-        return '[Found "%s" @ %d,%d]' % (self.s, self.x, self.y) 
+        return '[Found "%s" @ %s,%s]' % (self.s, self.x, self.y) 
 
 class TextRun(object):
     def __init__(self, ctRun, runIndex):
@@ -389,3 +389,5 @@ for yy in range(-3,10):
     fill(None)
     y = myTextBox.y + myTextBox.h + yy*fittingSize/10- myTextBox.baseLines[-1][1]
     line((myTextBox.x, y), (myTextBox.x + myTextBox.w, y))
+    
+saveImage('_export

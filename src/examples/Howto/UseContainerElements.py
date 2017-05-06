@@ -14,21 +14,18 @@
 #
 import os # Import module that communicates with the file system.
 
-import pagebot.elements.container
-reload(pagebot)
-from pagebot.elements.container import Container
+from pagebot.elements import *
 
-c = Container(name='myContainerElement')
+c = newRect(name='myContainerElement')
 
 print 'Container we made:', c 
 print 'No elements yet:', c.elements # Currently no elements in the container 
 print
-child1 = Container(eId='myId1', name='Child1') # Make child containers with unique Id
-c.append(child1)
-
-child2 = Container(eId='myId2', name='Child2')
-c.append(child2)
-
+child1 = newRect(parent=c, name='Child1') # Make child containers with unique Id
+child2= newRect(parent=c, name='Child2')
+# Get unique element eIds
+eId1 = child1.eId
+eId2 = child2.eId
 print '-- Now the container got 2 named child containers.'
 print 'Elements:', c.elements # Currently no elements in the container 
 print
@@ -39,6 +36,7 @@ print
 print '-- Place the Child1 element on a fixed position (x,y), z is undefined/untouched'
 child1.x = 20
 child1.y = 30
+child1.z = 100
 print child1
 print
 print '-- Place the same Child2 element on another fixed position (x,y,z), a point tuple.'
@@ -46,6 +44,6 @@ child2.point = (120, 30, 20)
 print child2
 print
 print '-- The container behaves as a dictionary of child elements with e.eId as key.'
-print c['myId1']
-print c['myId2']
+print c[eId1]
+print c[eId2]
 

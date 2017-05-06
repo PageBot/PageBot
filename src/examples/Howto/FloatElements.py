@@ -14,14 +14,14 @@
 import pagebot # Import to know the path of non-Python resources.
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM
+from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MIDDLE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 from pagebot.elements import *
 # Import all layout condition classes
 from pagebot.conditions import *
   
-W = H = 500
+PageSize = 500
 
 G = 8 # Distance between the squares.
 SQ = 8 * G # Size of the squares
@@ -33,12 +33,25 @@ SQ = 8 * G # Size of the squares
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
-RS = getRootStyle(w=W, h=H,
+RS = getRootStyle(w=PageSize, h=PageSize,
     originTop = False,
     yAlign = BOTTOM,
 )
 #for key, value in RS.items():
 #    print key, value
+
+ShowOrigin = False
+ShowElementInfo = False
+ShowElementDimensions = False
+
+Variable([
+    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+    dict(name='ShowOrigin', ui='CheckBox', args=dict(value=True)),
+    dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
+    dict(name='ShowElementDimensions', ui='CheckBox', args=dict(value=False)),
+    dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+], globals())
+
 
 EXPORT_PATH = '_export/AlignElements.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
@@ -51,22 +64,25 @@ def makeDocument(rs):
     
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.padding = SQ
-    #page.cw = page.ch = SQ
-    #page.gw = page.gh = G
     
     # Make new container for adding elements inside with alignment.
-    cnt = newRect(w=W-2*SQ, h=H-2*SQ, fill=(0.8, 0.8, 0.8, 0.4), parent=page, margin=SQ, yAlign=BOTTOM, 
+    cnt = newRect(w=PageSize-2*SQ, h=PageSize-2*SQ, fill=(0.8, 0.8, 0.8, 0.4), 
+        parent=page, margin=SQ, yAlign=MIDDLE, 
         xAlign=CENTER, stroke=None, conditions=(Center2Center(), Middle2Middle()))
-
-    page.solve()
-    newRect(w=30, h=30, name='RedRect', parent=cnt, fill=(1, 0, 0), yAlign=TOP,
-        conditions=(Center2Center(), Bottom2Bottom()))
-    print cnt.solve() 
+    
+    print cnt.timeStates
+    newRect(w=SQ/2, h=SQ/2, name='RedRect', parent=cnt, fill=(1, 0, 0), yAlign=TOP,
+        conditions=(Center2Center(), Top2TopSide()))
+    score = cnt.solve() 
+    if score.fails:
+        print 'Unresolved conditions:', score.fails
    
     view = doc.getView()
+    view.w = view.h = PageSize
     view.padding = 0 # Don't show cropmarks and such.
-    view.showElementOrigin = True
-    view.showElementInfo = False
+    view.showElementOrigin = ShowOrigin
+    view.showElementInfo = ShowElementInfo
+    view.showElementDimensions = ShowElementDimensions
        
     return doc # Answer the doc for further doing.
         

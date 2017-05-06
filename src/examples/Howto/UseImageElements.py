@@ -75,7 +75,7 @@ def makeDocument(rs):
 
     #W = H = 120 # Get the standard a4 width and height in points.
     W = PageSize
-    H = PageSize * 1.5
+    H = PageSize
 
     # Hard coded SQUARE and GUTTE, just for simple demo, instead of filling padding an columns in the root style.
     # Page size decides on the amount squares that is visible.
@@ -111,22 +111,25 @@ def makeDocument(rs):
  
     page.padding3D = PagePadding # Set all 3 paddings to same value
     page.gutter3D = GUTTER # Set all 3 gutters to same value
-
-    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Bottom2Bottom(), Fit2Width()), elasticH=True, yAlign=BOTTOM,
+    
+    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Top2Top(), Fit2Width()), elasticH=True, yAlign=BOTTOM,
         frameFill=(0, 1, 0, 0.3), 
         frameStroke=(1, 0, 0)
     )
-    print im.image.size
+    if im.image:
+        print im.image.size
     # Give parent on creation, to have the css chain working.
+    
     cap = newTextBox('This is the caption. ' * 50, point=(50, 50, 10), name='Caption', parent=im,
-        h=20, font='Verdana', conditions=[Left2Left(), Fit2Width(), Float2Top()], elasticH=True,
+        h=20, font='Verdana', conditions=[Left2LeftSide(), Fit2Width(), Float2TopSide()], elasticH=True,
         fontSize=8, textFill=0, frameFill=(0, 0, 1, 0.3), frameStroke=(0, 0, 1),
     )
-    print cap.size
     
     #print cap.evaluate()
     #print cap.isFloatOnBottom(1)
-    page.solve()
+    score = page.solve()
+    if score.fails:
+        print 'Failed solving conditions', score.fails
     #print im.x, im.y, im.getVacuumElementsBox(), im.left, im.top, im.right, im.bottom
     #print cap.evaluate()
     #print im.x, im.y, im.getVacuumElementsBox()
