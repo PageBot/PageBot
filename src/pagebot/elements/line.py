@@ -21,7 +21,7 @@ class Line(Element):
     def draw(self, origin, view):
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
-        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
  
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         newPath()
@@ -29,8 +29,8 @@ class Line(Element):
         lineTo((px + self.w, py + self.h))
         drawPath()
 
-        # If there are child elements, draw them over the text.
-        self._drawElements(origin, view)
+        # If there are child elements, draw them over the line.
+        self._drawElements(p, view)
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin)

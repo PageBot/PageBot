@@ -217,11 +217,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         maxH = XXXL,
         maxD = XXXL,
 
-        # Vacuum is a dynamic condition of width, height and depth, vacumming around the child elements.
-        vacuumW = False,
-        vacuumH = False,
-        vacuumD = False,
-
         # Overall content scaling.
         scaleX = 1, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
         scaleY = 1, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()

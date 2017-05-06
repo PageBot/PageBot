@@ -16,7 +16,7 @@ import Quartz
 
 from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString, line
 
-from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, makeStyle
+from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot import getFormattedString, setStrokeColor, setFillColor
@@ -292,11 +292,13 @@ class TextBox(Element):
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
 
     def _get_h(self):
-        u"""Answer the height of the textBox. If self.style['vacuumH'] is set, then answer the 
+        u"""Answer the height of the textBox. If self.style['elasticH'] is set, then answer the 
         vertical space that the text needs. This overwrites the setting of self._h."""
-        if self.style.get('vacuumH'):
-            return self.getTextSize()[1]
-        return self.css('h')
+        if self.style.get('elasticH'):
+            h = self.getTextSize()[1]
+        else:
+            h = self.css('h', MIN_HEIGHT)
+        return min(self.maxH, max(self.minH, h)) # Should not be 0 or None
     def _set_h(self, h):
         self.style['h'] = h # Overwrite style from here, unless self.style['vacuum'] is True
     h = property(_get_h, _set_h)
@@ -381,7 +383,7 @@ class TextBox(Element):
         fill and/or stroke are defined."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
-        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
    
         # First draw optional fill rectangle.
         sFill = self.css('fill', NO_COLOR)
@@ -400,7 +402,7 @@ class TextBox(Element):
             rect(px, py, self.w, self.h)
 
         # If there are child elements, draw them over the text.
-        self._drawElements(origin, view)
+        self._drawElements(p, view)
 
         # Draw markers on TextLine and TextRun positions.
         self.drawFrame(origin, view)

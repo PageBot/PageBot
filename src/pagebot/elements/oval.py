@@ -24,14 +24,14 @@ class Oval(Element):
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
-        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
         
         setFillColor(self.css('fill', NO_COLOR))
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         oval(px, py, self.w, self.h)
 
         # If there are child elements, draw them over the text.
-        self._drawElements(origin, view)
+        self._drawElements(p, view)
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin)

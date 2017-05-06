@@ -122,10 +122,10 @@ class Fit2BottomSide(Condition):
 
 class Vacuum2Size(Condition):
 	def test(self, e):
-		return e.isVacuumOnSize(self.tolerance)
+		return e.isVacuumOnWidth(self.tolerance) and e.isVacuumOnHeight(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.vacuum2Size(), e, score)
+		self.addScore(not self.test(e) and e.vacuum2Width() and e.vacuum2Height(), e, score)
 
 class Vacuum2Width(Condition):
 	def test(self, e):
