@@ -416,7 +416,7 @@ class TextBox(Element):
 
         fontSize = self.css('baseLineMarkerSize')
         if view.showTextBoxY:
-            text(FormattedString(`0`, align='left', 
+            text(FormattedString(`0`, xAlign=LEFT, 
                 font='Verdana', fontSize=8, 
                 fill=(0, 0, 1)), (self.x + self.w + 3,  self.y + self.h - fontSize/4))
 
@@ -425,15 +425,15 @@ class TextBox(Element):
             _, y, _ = self.baseLines[index]
             line((self.x, self.y + self.h - y), (self.x + self.w, self.y + self.h - y))
             if view.showTextBoxIndex:
-                text(FormattedString(`index`, align='right', font='Verdana', fontSize=fontSize, 
+                text(FormattedString(`index`, xAlign=RIGHT, font='Verdana', fontSize=fontSize, 
                     fill=(0, 0, 1)), (self.x-8, self.y + self.h - y - fontSize/3))
             if view.showTextBoxY:
-                text(FormattedString('%d' % round(y), align='left', 
+                text(FormattedString('%d' % round(y), xlign=LEFT, 
                     font='Verdana', fontSize=fontSize, 
                     fill=(0, 0, 1)), (self.x + self.w + 3, self.y + self.h - y - fontSize/4))
             if view.showTextBoxLeading:
                 leading = round(abs(y - prevY))
-                text(FormattedString('%d' % leading, align='left', 
+                text(FormattedString('%d' % leading, xAlign=LEFT, 
                     font='Verdana', fontSize=fontSize, 
                     fill=(1, 0, 0)), (self.x + self.w + 3, self.y + self.h - prevY - leading/2 - fontSize/4))
             prevY = y

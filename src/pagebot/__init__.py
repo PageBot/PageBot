@@ -20,7 +20,7 @@ import re
 from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth, hyphenation
 from drawBot.context.baseContext import BaseContext
 
-from pagebot.style import NO_COLOR
+from pagebot.style import NO_COLOR, LEFT
 import pbglobals
 
 class Globals(object):
@@ -320,7 +320,7 @@ def getFormattedString(t, e=None, style=None):
     sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
     if sCmykStroke is not NO_COLOR:
         setStrokeColor(sCmykStroke, sStrokeWidth, fs, cmyk=True)
-    sAlign = css('align', e, style)
+    sAlign = css('xAlign', e, style)
     if sAlign is not None:
         fs.align(sAlign)    
     sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
@@ -392,14 +392,14 @@ def textBoxBaseLines(txt, box):
     origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
     return [(x + o.x, y + o.y) for o in origins]
         
-def textPositionSearch(fs, w, h, search, align='left', hyphenation=True):
+def textPositionSearch(fs, w, h, search, xAlign=LEFT, hyphenation=True):
     u"""
     """
     bc = BaseContext()
     path = CoreText.CGPathCreateMutable()
     CoreText.CGPathAddRect(path, None, CoreText.CGRectMake(0, 0, w, h))
 
-    attrString = bc.attributedString(fs, align=align)
+    attrString = bc.attributedString(fs, align=xAlign)
     if hyphenation and bc._state.hyphenation:
         attrString = bc.hyphenateAttributedString(attrString, w)
 

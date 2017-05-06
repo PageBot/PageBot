@@ -18,7 +18,7 @@ from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineT
 
 from pagebot import setFillColor, setStrokeColor
 from pagebot.elements.element import Element
-from pagebot.style import makeStyle, getRootStyle, NO_COLOR
+from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D
 from pagebot import getFormattedString, setStrokeColor, setFillColor
 
@@ -370,7 +370,7 @@ class View(Element):
             setStrokeColor(self.css('gridStroke', NO_COLOR), self.css('gridStrokeWidth'))
             # TODO: DrawBot align and fill don't work properly now.
             M = 16
-            fs = getFormattedString('', self, dict(font='Verdana', align='right', fontSize=M/2,
+            fs = getFormattedString('', self, dict(font='Verdana', xAlign=RIGHT, fontSize=M/2,
                 stroke=None, textFill=self.css('gridStroke')))
             ox = px + padL
             index = 0
@@ -413,8 +413,8 @@ class View(Element):
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
         if self.horizontal:
-            fs = getFormattedString('', self, dict(font=self.css('fallbackFont','Verdana'), align='right', fontSize=M/2,
-                stroke=None, textFill=self.css('gridStroke')))
+            fs = getFormattedString('', self, dict(font=self.css('fallbackFont','Verdana'), xAlign=RIGHT, 
+                fontSize=M/2, stroke=None, textFill=self.css('gridStroke')))
             while oy > self.css('pb', 0):
                 setFillColor(None)
                 setStrokeColor(self.css('baselineGridStroke', NO_COLOR), self.css('gridStrokeWidth'))

@@ -12,22 +12,20 @@
 #     This script generates a page with random color squares, indicating where their position is.
 #     This script is using the style parameters "originTop", making the coordinate system run downwards.
 #
-from __future__ import division # Make integer division result in float.
 import pagebot # Import to know the path of non-Python resources.
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP_ALIGN, BOTTOM_ALIGN
+from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
-from pagebot.elements.rect import Rect
+from pagebot.elements import *
 # Import all layout condition classes
 from pagebot.conditions import *
   
 W = H = 500
 
 G = 8 # Distance between the squares.
-SQ = 4 * G # Size of the squares
-ORIGIN_TOP = True
+SQ = 8 * G # Size of the squares
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot style entries are filled by their default values. The root style is kept in RS
@@ -37,8 +35,8 @@ ORIGIN_TOP = True
 # that is very similar to what happens in CSS.
 
 RS = getRootStyle(w=W, h=H,
-    showElementOrigin = True, # Show origin marker on element, to see their alignments.
-    originTop = ORIGIN_TOP,
+    originTop = False,
+    yAlign = BOTTOM,
 )
 #for key, value in RS.items():
 #    print key, value
@@ -48,35 +46,39 @@ EXPORT_PATH = '_export/AlignElements.pdf' # Export in _export folder that does n
 def makeDocument(rs):
     u"""Make a new document, using the rs as root style."""
 
-    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
-    rs['pl'] = rs['pr'] = rs['pt'] = rs['pb'] = SQ
-    rs['cw'] = rs['ch'] = SQ
-    rs['gw'] = rs['gh'] = G # Gutter width and gutter height.
-
     doc = Document(rs, pages=1)
     
-    page = doc[1] # Get the single page from te document.
+    page = doc[0] # Get the single page from te document.
+    
+    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
+    page.padding = SQ
+    #page.cw = page.ch = SQ
+    #page.gw = page.gh = G
     
     # Position square in the 4 corners of the page area.
     # Notice that their alignment (left) does not matter for the conditions.
-    page.rect(w=SQ, h=SQ, conditions=(Right2Right(),Top2Top()), fill=0.7)
-    page.rect(w=SQ, h=SQ, conditions=(Left2Left(),Bottom2Bottom()), fill=0.7)
-    page.rect(w=SQ, h=SQ, conditions=(Left2Left(),Top2Top()), fill=0.7)
-    page.rect(w=SQ, h=SQ, conditions=(Right2Right(),Bottom2Bottom()), fill=0.7)
+    newRect(w=SQ, h=SQ, parent=page, conditions=(Right2Right(),Top2Top()), fill=0.7)
+    newRect(w=SQ, h=SQ, parent=page, conditions=(Left2Left(),Bottom2Bottom()), fill=0.7)
+    newRect(w=SQ, h=SQ, parent=page, conditions=(Left2Left(),Top2Top()), fill=0.7)
+    newRect(w=SQ, h=SQ, parent=page, conditions=(Right2Right(),Bottom2Bottom()), fill=0.7)
 
     # Make new container for adding elements inside with alignment.
-    cnt = page.container(w=W-6*SQ, h=H-6*SQ, fill=(0.8,0.8,0.8,0.8), margin=SQ, vAlign=BOTTOM_ALIGN, stroke=0,
-        conditions=(Center2Center(), Top2Top()))
+    cnt = newRect(w=W-2*SQ, h=H-2*SQ, fill=(0.8, 0.8, 0.8, 0.4), parent=page, margin=SQ, yAlign=BOTTOM, 
+        xAlign=CENTER, stroke=None, conditions=(Center2Center(), Middle2Middle()))
+    
+    newRect(x=100, y=100, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+        conditions=(Center2Center(),Top2Top()), fill=(1, 1, 0))
 
-    r = Rect(w=SQ, h=SQ, stroke=None, 
-        conditions=(Bottom2BottomSidex(),Left2Left()), fill=(1, 1, 0))
-    cnt.append(r)
-    print r.parent
     # Solve the layout placement conditions on the page by moving the
     # elements that are not on the right positions (which is all of them,
     # because we did not add point attributes when creating them.
-    page.solve() 
+    print page.solve() 
     
+    view = doc.getView()
+    view.padding = 0 # Don't show cropmarks and such.
+    view.showElementOrigin = True
+    view.showElementInfo = True
+       
     return doc # Answer the doc for further doing.
         
 d = makeDocument(RS)

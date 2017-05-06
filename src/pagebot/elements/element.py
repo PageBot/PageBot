@@ -542,10 +542,10 @@ class Element(object):
         return zAlign
 
     def _get_xAlign(self): # Answer the type of x-alignment. For compatibility allow align and xAlign as equivalents.
-        return self._validateXAlign(self.css('align'))
+        return self._validateXAlign(self.css('xAlign'))
     def _set_xAlign(self, xAlign):
-        self.style['align'] = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
-    align = xAlign = property(_get_xAlign, _set_xAlign)
+        self.style['xAlign'] = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
+    xAlign = property(_get_xAlign, _set_xAlign)
      
     def _get_yAlign(self): # Answer the type of x-alignment.
         return self._validateYAlign(self.css('yAlign'))

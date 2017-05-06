@@ -166,11 +166,11 @@ def makeDocument(rootStyle):
     # They will be repositioned by solving the colorConditions.
     e1 = newRect(point=outsideOrigin, parent=page, name='Other element', 
         w=Element1_W, h=Element1_H, conditions=colorCondition1, 
-        fill=(1, 0.5, 0.5), align=RIGHT, vAlign=TOP)
+        fill=(1, 0.5, 0.5), xAlign=RIGHT, yAlign=TOP)
     e2 = newRect(point=outsideOrigin, parent=page, w=Element2_W, h=Element2_H, name='Floating element 2', 
-        conditions=colorCondition2, fill=(1, 1, 0), align=LEFT, vAlign=TOP)
+        conditions=colorCondition2, fill=(1, 1, 0), xAlign=LEFT, yAlign=TOP)
     e3 = newRect(point=outsideOrigin, parent=page, w=Element3_W, h=Element3_H, name='Floating element 3', 
-        conditions=colorCondition2, fill=(1, 0, 1), align=LEFT, vAlign=TOP)
+        conditions=colorCondition2, fill=(1, 0, 1), xAlign=LEFT, yAlign=TOP)
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
@@ -178,12 +178,12 @@ def makeDocument(rootStyle):
         scriptGlobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, leading=16, textColor=0))
     eTextBox = newTextBox(scriptGlobals.blurbText, point=outsideOrigin, parent=page, w=Text_W, 
-        vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER, stroke=None, fill=None)
+        vacuumH=True, conditions=textCondition, xAlign=CENTER, yAlign=CENTER, stroke=None, fill=None)
 
     e4 = newRect(point=outsideOrigin, parent=page, w=Element4_W, h=Element4_H, name='Floating element 4', 
-        conditions=colorCondition3, fill=(0, 1, 1), align=RIGHT, vAlign=TOP, minH=50, maxH=150)
+        conditions=colorCondition3, fill=(0, 1, 1), xAlign=RIGHT, yAlign=TOP, minH=50, maxH=150)
     e5 = newRect(point=outsideOrigin, parent=page, w=Element5_W, h=Element5_H, name='Floating element 5', 
-        conditions=[Float2RightTopSides()], fill=(0, 1, 0), align=LEFT, vAlign=TOP)
+        conditions=[Float2RightTopSides()], fill=(0, 1, 0), xAlign=LEFT, yAlign=TOP)
 
     score = page.evaluate()
     #print 'Page value on evaluation:', score
