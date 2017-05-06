@@ -24,6 +24,11 @@ from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, B
     MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH,  XXXL
 from pagebot.toolbox.transformer import asFormatted
 
+class TimeState(object):
+    def __init__(self, point, style):
+        self.point = point
+        self.style = style
+
 class Element(object):
 
     # Initialize the default Element behavior flags.
@@ -40,7 +45,12 @@ class Element(object):
         Ignore setting of setting eId as attribute, guaranteed to be unique."""  
         assert point is None or isinstance(point, (tuple, list))
         self.point = point3D(point or ORIGIN_POINT) # Always store self._point position property as 3D-point (x, y, z). Missing values are 0
-        self.style = makeStyle(style, **kwargs)
+        self.style = makeStyle(style, **kwargs) # Make default style for t == 0
+
+        # Set timer of this element.
+        self._t = 0
+        ts = TimeState(self.point, self.style)
+        self.timeStates = dict(0: ts, XXXL: ts) # Default timeState from t == 0 until infinite of time.
 
         if padding is not None:
             self.padding = padding # Expand by property
@@ -342,6 +352,23 @@ class Element(object):
         self._point[2] = z # self._point is always 3D
     z = property(_get_z, _set_z)
     
+    # Time management
+
+    def _get_t(self):
+        u"""The self.t status is the time status, interpolating between the values in 
+        self.tStyles[t1] and self.tStyles[t2] where t1 <= t <= t2 and these styles contain
+        the requested parameters."""
+        return self._t
+    def _set_t(self, t):
+        self._t = t
+        # TODO: Make this to work.
+        #self.tPast = [] # All defined tStyles of the past + first one in the future.
+        #for tKey, style in sorted(self.tStyles.items()):
+        #    if tKey > t: # We found next interpolation style. 
+        #        self.tNext = tKey
+        #        break
+        #    self.style = style # Time is beyons this one.
+
     # Origin compensated by alignment. This is used for easy solving of conditions,
     # where the positioning can be compenssaring the element alignment type.
 
@@ -681,6 +708,8 @@ class Element(object):
     rootZ = property(_get_rootZ)
 
     def _get_w(self): # Width
+        if self.css('vacuumW'):
+            return self.getVacuumElementsBox3D()[3]
         return min(self.maxW, max(self.minW, self.css('w', MIN_WIDTH))) # Should not be 0 or None
     def _set_w(self, w):
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
@@ -693,6 +722,8 @@ class Element(object):
     mw = property(_get_mw, _set_mw)
 
     def _get_h(self): # Height
+        if self.css('vacuumH'):
+            return self.getVacuumElementsBox3D()[4]
         return min(self.maxH, max(self.minH, self.css('h', MIN_HEIGHT))) # Should not be 0 or None
     def _set_h(self, h):
         self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
@@ -705,6 +736,8 @@ class Element(object):
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self): # Depth
+        if self.css('vacuumH'):
+            return self.getVacuumElementsBox3D()[5]
         return min(self.maxD, max(self.minD, self.css('d', MIN_DEPTH))) # Should not be 0 or None
     def _set_d(self, d):
         self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
@@ -932,10 +965,10 @@ class Element(object):
             self.h + mt - mb)
     marginBox = property(_get_marginBox)
 
-    def getVacuumElementsBox(self):
-        u"""Answer the vacuum bounding box around all child elements."""
-        x1 = y1 = XXXL
-        x2 = y2 = -XXXL
+    def getVacuumElementsBox3D(self):
+        u"""Answer the vacuum 3D bounding box around all child elements."""
+        x1 = y1 = z1 = XXXL
+        x2 = y2 = z2 = -XXXL
         if not self.elements:
             return 0, 0, 0, 0
         for e in self.elements:
@@ -947,21 +980,31 @@ class Element(object):
             else:
                 y1 = min(y1, e.bottom)
                 y2 = max(y2, e.top)
+            z1 = min(z1, e.front)
+            z2 = min(z2, e.back)
 
-        return x1, y1, x2 - x1, y2 - y1
+        return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
+
+    def getVacuumElementsBox(self):
+        u"""Answer the vacuum bounding box around all child elements."""
+        x, y, _, w, h, _ = getVacuumElementsBox3D()
+        return x, y, w, h
+
+    def getVacuumOrigins3D(self):
+        u"""Answer (minX, minY, maxX, maxY, minZ, maxZ) for all element origins."""
+        minX = minY = XXXL
+        maxX = maxY = -XXXL
+        for e in self.elements:
+            minX = min(minX, e.x)
+            maxX = max(maxX, e.x)
+            minY = min(minY, e.y)
+            maxY = max(maxY, e.y)
+            minZ = min(minZ, e.z)
+            maxZ = max(maxZ, e.z)
+        return minX, minY, minZ, maxX, maxY, maxZ
 
     def getVacuumOrigins(self):
-        u"""Answer (minX, minY, maxX, maxY) for all element origins."""
-        minX = minY = maxX = maxY = None
-        for e in self.elements:
-            if minX is None or minX < e.x:
-                minX = e.x
-            if maxX is None or maxX > e.x:
-                maxX = e.x
-            if minY is None or minY < e.y:
-                minY = e.y
-            if maxY is None or maxY > e.y:
-                maxY = e.y
+        minX, minY, _, maxX, maxY, _ = self.getVacuumOrigins3D()
         return minX, minY, maxX, maxY
 
     def _get_minW(self):
@@ -1498,17 +1541,6 @@ class Element(object):
     def isFloatOnRightSide(self, tolerance=0):
         return abs(self.getFloatRightSide() - self.right) <= tolerance
 
-    def isVacuumOnSize(self, tolerance=0):
-        return self.isVacuumOnWidth(tolerance) and self.isVacuumOnHeight(tolerance)
-
-    def isVacuumOnWidth(self, tolerance=0):
-        x, _, w, _ = self.getVacuumElementsBox()
-        return abs(x) <= tolerance and abs(w - self.w) <= tolerance
-
-    def isVacuumOnHeight(self, tolerance=0):
-        _, y, _, h = self.getVacuumElementsBox()
-        return abs(y) <= tolerance and abs(h - self.h) <= tolerance
-
     #   T R A N S F O R M A T I O N S 
 
     def bottom2Bottom(self):
@@ -1847,21 +1879,4 @@ class Element(object):
         self.right = self.getFloatRightSide()
         return True
 
-    def vacuum2Size(self):
-        x, y, w, h = self.getVacuumElementsBox()
-        print 'saassaas'
-        self.x += x
-        self.y += y
-        self.w = w
-        self.h = h
-
-    def vacuum2Width(self):
-        x, _, w, _ = self.getVacuumElementsBox()
-        self.x += x
-        self.w = w
-
-    def vacuum2Height(self):
-        _, y, _, h = self.getVacuumElementsBox()
-        self.y += y
-        self.h = h
 
