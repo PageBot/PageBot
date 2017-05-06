@@ -1,27 +1,27 @@
+# by Petr van Blokland @petrvanblokland
+# https://twitter.com/petrvanblokland/status/860610270410018817
 
-from __future__ import division
-
-W = H = 600
-def drawSquare(px, py, w):
+def drawSierpinskiSquare(px, py, w, maxW):
     if w < 1:
         return
     for x in range(3):
         for y in range(3):
             if x == 1 and y == 1:
-                fill(max(0, 0.75-w/100))
-                stroke(None)
+                fill(max(0, 0.75 - w/100))
                 rect(px+w, py+w, w, w)
-            #elif x != y:
-            #    continue
-            elif px <= W and py <= H:
-                drawSquare(px+x*w, py+y*w, w/3)
+            elif px <= maxW and py <= maxW:
+                drawSierpinskiSquare(px+x*w, py+y*w, w/3, maxW)
 
-minW = w = 600
-maxW = 1800
-step = 22
-while w < maxW:
-    newPage(W, H)                
-    drawSquare(0, 0, w)    
-    w += step
-    step *= 1.048
-saveImage('_export/SierpinskiSquare.gif')
+canvasSize = 500
+numFrames = 40
+factor = 3 ** (1/numFrames)
+
+for frame in range(numFrames):
+    newPage(canvasSize, canvasSize)
+    frameDuration(1/20)
+    fill(1)
+    rect(0, 0, canvasSize, canvasSize)
+    w = canvasSize * factor ** frame
+    drawSierpinskiSquare(0, 0, w, canvasSize)
+
+saveImage("_export/SierpinskiSquare.gif")

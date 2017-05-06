@@ -73,15 +73,15 @@ def makeDocument(rootStyle):
     C4 = darker(C1, 0.5) # Default parameter 50% between background color and white.
     
     # Make background element, filling the page color and bleed.
-    pageArea = page.rect(name='Page area', conditions=[Top2TopSide(), Left2LeftSide(), Fit2RightSide(), Fit2BottomSide()], fill=C1)
+    pageArea = page.rect(name='Page area', 
+        conditions=[Top2TopSide(), Left2LeftSide(), Fit2RightSide(), Fit2BottomSide()], fill=C1)
     
-    colorRect1 = page.rect(name='Frame 1', conditions=[Top2Top(), Left2Left(), Fit2Right(), Fit2Bottom()], fill=C3, stroke=None, align=CENTER, vAlign=CENTER)
     colorRect1.z = -10 # Other z-layer, makes this element be ignored on floating checks.
     colorRect1.solve() # Solve element position, before we can make other elements depend on position and size.
 
     M = 64
     colorRect2 = page.rect(name='Frame 2', conditions=[Center2Center(), Center2YCenter()], fill=C4, stroke=None, 
-        w=colorRect1.w-M, h=colorRect1.h-M, align=CENTER, vAlign=CENTER )
+        w=colorRect1.w-M, h=colorRect1.h-M, xAlign=CENTER, yAlign=CENTER )
     colorRect2.z = -10 # Other z-layer, makes this element be ignored on floating checks.
 
     # Add some title (same width, different height) at the “wrongOrigin” position.
@@ -89,14 +89,14 @@ def makeDocument(rootStyle):
     e1 = page.text('Book Cover', style=rootStyle, name='Other element', font='Georgia', fontSize=40,
         fill=(0.3, 0.3, 0.5), textFill=(1, 0, 0),
         conditions=[Top2YCenter(), Top2Top()], 
-        align=CENTER) #vAlign=TOP)
+        xAlign=CENTER) #yAlign=TOP)
     e1.y = e1.pt
     e1.center = page.w/2
     """
     e2 = page.rect(point=wrongOrigin, style=rootStyle, w=W2, h=H2, name='Floating element 2', 
-        conditions=colorCondition2, fill=(1, 1, 0), align=LEFT, vAlign=TOP)
+        conditions=colorCondition2, fill=(1, 1, 0), xAlign=LEFT, yAlign=TOP)
     e3 = page.rect(point=wrongOrigin, style=rootStyle, w=W3, h=H3, name='Floating element 3', 
-        conditions=colorCondition2, fill=(1, 0, 1), align=LEFT, vAlign=TOP)
+        conditions=colorCondition2, fill=(1, 0, 1), xAlign=LEFT, yAlign=TOP)
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
@@ -104,12 +104,12 @@ def makeDocument(rootStyle):
         pbglobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, rLeading=0.2, textColor=0))
     eTextBox = page.textBox(pbglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
-        vacuumH=True, conditions=textCondition, align=CENTER, vAlign=CENTER)
+        vacuumH=True, conditions=textCondition, xAlign=CENTER, yAlign=CENTER)
 
     e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 
-        conditions=colorCondition2, fill=(0, 1, 1), align=LEFT, vAlign=TOP)
+        conditions=colorCondition2, fill=(0, 1, 1), xAlign=LEFT, yAlign=TOP)
     e5 = page.rect(point=wrongOrigin, style=rootStyle, w=W5, h=H5, name='Floating element 5', 
-        conditions=[FloatRightTopSides()], fill=(0, 1, 0), align=LEFT, vAlign=TOP)
+        conditions=[FloatRightTopSides()], fill=(0, 1, 0), xAlign=LEFT, yAlign=TOP)
     """
     score = page.evaluate()
     #print 'Page value on evaluation:', score

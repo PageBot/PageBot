@@ -13,7 +13,7 @@
 from drawBot import newPage, installedFonts, installFont
 
 from pagebot.elements.page import Page
-from pagebot.elements.views import View, DefaultView, SingleView, ThumbView, HtmlCssView
+from pagebot.elements.views import View, DefaultView, SingleView, ThumbView
 from pagebot.style import makeStyle, getRootStyle
 
 class Document(object):
@@ -311,7 +311,7 @@ class Document(object):
                 assert not view.name in self.views
                 self.appendElement(view)
         # Define some default views if not already  there.
-        for viewClass in (DefaultView, SingleView, ThumbView, HtmlCssView):
+        for viewClass in (DefaultView, SingleView, ThumbView):
             if not viewClass.viewId in self.views:
                 self.appendElement(viewClass())
 

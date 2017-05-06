@@ -143,15 +143,15 @@ def makeDocument(rootStyle):
     # They will be repositioned by solving the colorConditions.
     e1 = page.rect(point=wrongOrigin, style=rootStyle, name='Other element', 
         w=W1, h=H1, conditions=colorCondition1, 
-        fill=(1, 0.5, 0.5), align=LEFT, vAlign=TOP)
+        fill=(1, 0.5, 0.5), xAlign=LEFT, yAlign=TOP)
     e2 = page.rect(point=wrongOrigin, style=rootStyle, w=W2, h=H2, name='Floating element 2', 
-        conditions=colorCondition2, fill=(1, 1, 0), align=LEFT, vAlign=TOP)
+        conditions=colorCondition2, fill=(1, 1, 0), xAlign=LEFT, yAlign=TOP)
     e3 = page.rect(point=wrongOrigin, style=rootStyle, w=W3, h=H3, name='Floating element 3', 
-        conditions=colorCondition2, fill=(1, 0, 1), align=LEFT, vAlign=TOP)
+        conditions=colorCondition2, fill=(1, 0, 1), xAlign=LEFT, yAlign=TOP)
     e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 
-        conditions=colorCondition2, fill=(0, 1, 1), align=LEFT, vAlign=TOP)
+        conditions=colorCondition2, fill=(0, 1, 1), xAlign=LEFT, yAlign=TOP)
     e5 = page.rect(point=wrongOrigin, style=rootStyle, w=W5, h=H5, name='Floating element 5', 
-        conditions=[FloatRightTopSides()], fill=(0, 1, 0), align=LEFT, vAlign=TOP)
+        conditions=[FloatRightTopSides()], fill=(0, 1, 0), xAlign=LEFT, yAlign=TOP)
 
     score = page.evaluate()
     #print 'Page value on evaluation:', score

@@ -163,9 +163,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Note that the direcion of display is always upwards. This means that the position of text and elements
         # goes downward from the top, they are not flipped vertical. It is up to the caller to make sure
         # there is enough space for elements to show themselves on top of a given position.
-        # originTop often goes with vAlign = TOP.
+        # originTop often goes with yAlign = TOP.
         originTop = True,
-        align = LEFT, # Default alignment, one of ('left', 'justified', 'center'. 'right', 'anchor')
+        xAlign = LEFT, # Default alignment, one of ('left', 'justified', 'center'. 'right', 'anchor')
         yAlign = TOP, # Default alignment for elements like image, that float in their designated space.
         zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
 

@@ -193,7 +193,7 @@ def makeDocument(rs):
     # Create page number box. Pattern pageNumberMarker is replaced by FormattedString of actual page number.
     # Mark the text box, so we can find it back later.
     template1.cTextBox(rs['pageIdMarker'], 6, 9, 1, 1, eId=pageNumberId, style=rs, 
-        font=BOOK, fontSize=12, fill=BOX_COLOR, align='right')
+        font=BOOK, fontSize=12, fill=BOX_COLOR, xAlign=RIGHT)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -231,7 +231,7 @@ def makeDocument(rs):
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, 
         prefix='', postfix='\n', rTracking=P_TRACK, leading=14, 
-        rLeading=0, align=LEFT, hyphenation=True, indent=0,
+        rLeading=0, xAlign=LEFT, hyphenation=True, indent=0,
         firstLineIndent=2*U, 
         firstParagraphIndent=0) # TODO: Make firstParagraphIndent to work.
     # Inline tags need to refined prefix and postfix as non-\n, otherwise they
