@@ -8,11 +8,20 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     kirbybuilder.py
+#     simplebuilder.py
 #
-from pagebot.builders.htmlcss.basehtmlcssbuilder import BaseHtmlCssBuilder
+from basebuilder import BaseBuilder
 
-class KirbyBuilder(BaseHtmlCssBuilder):
+class SimpleBuilder(BaseBuilder):
+
+    def build(self, path, format=None, pageSelection=None, multiPage=True, buildHead=True, buildBody=True, buildCss=True):
+        u"""Build simple HTML/CSS site of static code, interpreting the content of self.document."""
+        if buildCss:
+            self.buildCss()
+        if buildHead:
+            self.buildHead()
+        if buildBody:
+            self.buildBody()
 
     def buildCss(self):
         pass

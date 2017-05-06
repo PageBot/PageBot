@@ -15,3 +15,8 @@ from view import View
 class KirbyView(View):
     viewId = 'Kirby'
 
+    def drawPages(self, pageSelection):
+    	print pageSelection
+
+    def export(self, fileName, pageSelection, multiPage):
+    	print fileName, pageSelection, multiplePage

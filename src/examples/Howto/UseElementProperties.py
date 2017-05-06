@@ -7,60 +7,31 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     MakeABookCover.py
+#     UseElementProperties.py
 #
-import pagebot # Import to know the path of non-Python resources.
-from pagebot import getFormattedString
+from pagebot.elements import *
 
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, B4, CENTER, LEFT, TOP, BOTTOM, RIGHT
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot.document import Document
-    
-W, H = B4 
+W = H = 500
+# Create a new container class (or use other specialized ELements.
+e = Element(name='myElement')
+# Default Element instance has origin on (0,0) and width/height of (1, 1)
+print e
+print 'Position and size:', (e.x, e.y, e.w, e.h)
+# Set the position. (Most) elements own their position and size as properties.
+e.x = 200
+e.y = 100
+e.w = 400
+e.h = 500
+print 'New position and size:', (e.x, e.y, e.w, e.h)
+print 'Uniek element Id (eId) for this element:', e.eId
+# Set minimal and maximal boundary values
+e.setMinSize(10) # Set all 3 min values 
+e.setMaxSize(W, W+100, W+200) # Set max values separate
+print 'Minimal size', e.minW, e.minH, e.minD, e.getMinSize()
+print 'Maximal size', e.maxW, e.maxH, e.maxD, e.getMaxSize()
 
-RS = getRootStyle(
-    w = W,
-    h = H,
-    ml = 64,
-    mt = 64,
-    mr = 64,
-    mb = 80,
-    showElementInfo = False,
-    showElementOrigin = True,
-    originTop = False,
-)
+# Get the element info string, as used in meta info boxes
+print '-'*20
+print e.getElementInfoString()
+print '-'*20
 
-def makeDocument(rootStyle):
-    u"""Demo random book cover generator."""
-    
-    # Create new document with (w,h) and fixed amount of pages.
-    # Make number of pages with default document size.
-    # Initially make all pages default with template
-    doc = Document(rootStyle, pages=1) # One page, just the cover.
- 
-    page = doc[1] # Get the first/single page of the document.
-
-    p = (400, 400, 0)
-    
-    fontSize = 40
-    t1 = page.text('Book CoverSSS\nAAAA\nMMMM\nBook CoverSSS\nAAAA\nMMEEEEMM\n', point=p, style=rootStyle, name='Other element', font='Verdana', 
-        fontSize=fontSize, leading=0, rLeading=1, align=RIGHT,
-        fill=(0, 1, 0), stroke=(0, 1, 0), textFill=(0, 0, 1))
-    # Use text elemennt size as reference.
-    #e1 = page.rect(p, w=t1.w, h=t1.h, fill=(1, 0, 0), align=RIGHT, vAlign=BOTTOM)
-
-    #e1.top = 400
-    #t1.top = 400
-    #e1.top = 400
-    t1.y = 400
-    #print e1.top, t1.top
-    print t1.fs.fontAscender() - t1.fs.fontDescender()
-    print t1.css('fontSize')
-    print t1.w, t1.h
-    print t1.getTextSize()
-    return doc
-        
-d = makeDocument(RS)
-d.drawPages()
-    
