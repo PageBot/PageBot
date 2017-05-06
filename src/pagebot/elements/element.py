@@ -984,16 +984,28 @@ class Element(object):
 
     def getMinSize(self):
         u"""Answer the (minW, minH) of this element."""
-        return self.minW, self.minH
+        return self.minW, self.minH, self.minD
 
     def getMinSize3D(self):
         u"""Answer the (minW, minH, minD) of this element."""
         return self.minW, self.minH, self.minD
 
-    def setMinSize(self, minW, minH, minD=0):
-        self.minW = minW
-        self.minH = minH
-        self.minD = minD # Optional minimum depth of the element.
+    def setMinSize(self, minW, minH=None, minD=None):
+        if minW and minH is None and minD is None:
+            if isinstance(minW, (int, float, long)):
+                self.minW = self.minH = self.minD = minW
+            elif isinstance(minH, (tuple, list)):
+                if len(minH) == 1:
+                    self.minW = self.minH = self.minD = minW
+                elif len(minH) == 2:
+                    self.minW = self.minH = minW
+                    self.minD = 0
+                elif len(minH) == 3:
+                    self.minW, self.minH, self.minD = minW
+        else:
+            self.minW = minW
+            self.minH = minH
+            self.minD = minD or 0 # Optional minimum depth of the element.
 
     def _get_maxW(self):
         return self.css('maxW', MAX_WIDTH)
@@ -1014,11 +1026,24 @@ class Element(object):
     maxD = property(_get_maxD, _set_maxD)
 
     def getMaxSize(self):
-        return self.maxW, self.maxH # No limit if value is None
+        return self.maxW, self.maxH, self.maxD # No limit if value is None
 
-    def setMaxSize(self, maxW, maxH):
-        self.maxW = maxW # No limit if value is None
-        self.maxH = maxH
+    def setMaxSize(self, maxW, maxH=None, maxD=None):
+        if maxW and maxH is None and maxD is None:
+            if isinstance(maxW, (int, float, long)):
+                self.maxW = self.maxH = self.maxD = maxW
+            elif isinstance(maxH, (tuple, list)):
+                if len(maxH) == 1:
+                    self.maxW = self.maxH = self.maxD = maxW
+                elif len(maxH) == 2:
+                    self.maxW = self.maxH = maxW
+                    self.maxD = 0
+                elif len(maxH) == 3:
+                    self.maxW, self.maxH, self.maxD = maxW
+        else:
+            self.maxW = maxW
+            self.maxH = maxH
+            self.maxD = maxD or 0 # Optional maximum depth of the element.
 
     def _get_scaleX(self):
         return self.css('scaleX', 1)
@@ -1180,11 +1205,13 @@ class Element(object):
         u"""Answer a single string with info about the element. Default is to show the posiiton
         and size (in points and columns). This method can be redefined by inheriting elements
         that want to show additional information."""
-        s = '%s\nPosition: %s, %s, %s\nSize: %s, %s\nColumn point: %s, %s\nColumn size: %s, %s\nAlign: %s, %s' % \
+        s = '%s\nPosition: %s, %s, %s\nSize: %s, %s\nColumn point: %s, %s\nColumn size: %s, %s' % \
             (self.__class__.__name__ + ' ' + (self.name or ''), asFormatted(self.x), asFormatted(self.y), asFormatted(self.z), 
              asFormatted(self.w), asFormatted(self.h), 
              asFormatted(self.cx), asFormatted(self.cy), asFormatted(self.cw), asFormatted(self.ch),
-             self.xAlign, self.yAlign)
+            )
+        if self.xAlign or self.yAlign:
+            s += '\nAlign: %s, %s' % (self.xAlign, self.yAlign)
         if self.conditions:
             score = self.evaluate()
             s += '\nConditions: %d | Evaluate %d' % (len(self.conditions), score.result)
