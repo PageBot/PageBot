@@ -14,6 +14,7 @@ from __future__ import division
 
 import weakref
 import copy
+import sys
 
 from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, fill, text, stroke, strokeWidth
 
@@ -23,11 +24,6 @@ from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
     MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH,  XXXL
 from pagebot.toolbox.transformer import asFormatted
-
-class TimeState(object):
-    def __init__(self, point, style):
-        self.point = point
-        self.style = style
 
 class Element(object):
 
@@ -48,9 +44,10 @@ class Element(object):
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0
 
         # Set timer of this element.
+        # TODO: Make this to work, transparant to currents functions of self.x, self.style, etc.
         self._t = 0
-        ts = TimeState(self.point, self.style)
-        self.timeStates = dict(0: ts, XXXL: ts) # Default timeState from t == 0 until infinite of time.
+        #ts = TimeState(self.point, self.style)
+        #self.timeStates = dict(0: ts, sys.float_info.max: ts) # Default timeState from t == 0 until infinite of time.
 
         if padding is not None:
             self.padding = padding # Expand by property
