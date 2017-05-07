@@ -98,6 +98,7 @@ def makeDocument(rs):
     view.showPageRegistrationMarks = RegistrationMarks
     view.showPageFrame = PageFrame
     view.showPageNameInfo = PageNameInfo
+    print view.style
     view.padding = ViewPadding # Space around the view to accommodate cropmarks and registration marks.
 
     # Get list of pages with equal y, then equal x.    
@@ -111,7 +112,7 @@ def makeDocument(rs):
  
     page.padding3D = PagePadding # Set all 3 paddings to same value
     page.gutter3D = GUTTER # Set all 3 gutters to same value
-    
+    """
     im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Top2Top(), Fit2Width()), elasticH=True, yAlign=BOTTOM,
         frameFill=(0, 1, 0, 0.3), 
         frameStroke=(1, 0, 0)
@@ -119,17 +120,20 @@ def makeDocument(rs):
     if im.image:
         print im.image.size
     # Give parent on creation, to have the css chain working.
+    """
+    rr = newRect(fill=(1, 0, 0), w=350, h=50, conditions=(Top2Top(), Fit2Width()), parent=page)
     
-    cap = newTextBox('This is the caption. ' * 50, point=(50, 50, 10), name='Caption', parent=im,
-        h=20, font='Verdana', conditions=[Left2LeftSide(), Fit2Width(), Float2TopSide()], elasticH=True,
+    cap = newTextBox('This is the caption. ' * 50, w=rr.w, name='Caption', parent=rr,
+        font='Verdana', conditions=[Left2LeftSide(), Fit2Width(), Float2TopSide()], elasticH=True,
         fontSize=8, textFill=0, frameFill=(0, 0, 1, 0.3), frameStroke=(0, 0, 1),
     )
+    print rr.elements
     
     #print cap.evaluate()
     #print cap.isFloatOnBottom(1)
-    score = page.solve()
-    if score.fails:
-        print 'Failed solving conditions', score.fails
+    #score = page.solve()
+    #if score.fails:
+    #    print 'Failed solving conditions', score.fails
     #print im.x, im.y, im.getVacuumElementsBox(), im.left, im.top, im.right, im.bottom
     #print cap.evaluate()
     #print im.x, im.y, im.getVacuumElementsBox()

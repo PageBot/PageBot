@@ -33,7 +33,7 @@ class Image(Element):
         self.w = w
         self.h = h
 
-        if 0 and pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
+        if pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
             pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, 
                 conditial=(Fit2Width(), Top2TopSide()), **kwargs) # Default width is leading.
         self.image = pixelMap # Property to add to self.elements and set pixelMap.parent to self.
