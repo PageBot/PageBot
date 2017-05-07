@@ -121,14 +121,15 @@ def makeDocument(rs):
         print im.image.size
     # Give parent on creation, to have the css chain working.
     """
-    rr = newRect(fill=(1, 0, 0), w=350, h=50, conditions=(Top2Top(), Fit2Width()), parent=page)
+    rr = newRect(fill=(1, 0, 0), parent=page) # conditions=(Top2Top(), Fit2Width()), parent=page)
     
-    cap = newTextBox('This is the caption. ' * 50, w=rr.w, name='Caption', parent=rr,
+    cap = newTextBox('This is the caption. ', w=rr.w, name='Caption', parent=rr,
         font='Verdana', conditions=[Left2LeftSide(), Fit2Width(), Float2TopSide()], elasticH=True,
         fontSize=8, textFill=0, frameFill=(0, 0, 1, 0.3), frameStroke=(0, 0, 1),
     )
-    print rr.elements
     
+    print rr.elements
+    rr.solve()
     #print cap.evaluate()
     #print cap.isFloatOnBottom(1)
     #score = page.solve()
