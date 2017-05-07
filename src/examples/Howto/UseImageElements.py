@@ -122,9 +122,15 @@ def makeDocument(rs):
     # Give parent on creation, to have the css chain working.
     """
     rr = newRect(fill=(1, 0, 0), parent=page) # conditions=(Top2Top(), Fit2Width()), parent=page)
+    rr.x = rr.y = 100
+    yr1 = newRect(fill=(1, 1, 0), w=30, h=30, parent=rr, xAlign=CENTER, conditions=(Center2Center(),)) 
+    yr2 = newRect(fill=(1, 1, 0), z=10, w=30, h=30, parent=rr, xAlign=CENTER, 
+        conditions=(Top2TopSide(), Center2Center(),)) 
+    
+    print yr1.point3D, yr2.point3D
     
     cap = newTextBox('This is the caption. ', w=rr.w, name='Caption', parent=rr,
-        font='Verdana', conditions=[Left2LeftSide(), Fit2Width(), Float2TopSide()], elasticH=True,
+        font='Verdana', conditions=[Left2LeftSide(), Fit2Width(), Float2BottomSide()], elasticH=True,
         fontSize=8, textFill=0, frameFill=(0, 0, 1, 0.3), frameStroke=(0, 0, 1),
     )
     

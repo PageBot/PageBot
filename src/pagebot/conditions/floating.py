@@ -79,7 +79,7 @@ class Float2BottomSide(Condition):
 		return e.isFloatOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.float2Side(), e, score)
+		self.addScore(not self.test(e) and e.float2BottomSide(), e, score)
 
 # Combinations
 
