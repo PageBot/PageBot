@@ -36,9 +36,9 @@ class Element(object):
     isTextBox = False
     isFlow = False # Value is True if self.next if defined.
 
-    def __init__(self, point=None, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, z=DEFAULT_DEPTH, t=0, parent=None, name=None, 
+    def __init__(self, point=ORIGIN_POINT, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
             title=None, style=None, conditions=None, elements=None, template=None, next=None, nextPage=None, padding=None, 
-            margin=None, **kwargs):  
+            margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
@@ -47,11 +47,14 @@ class Element(object):
         assert point is None or isinstance(point, (tuple, list))
         
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0
-        # Always store self.style('point') position property as 3D-point (x, y, z). Missing values are 0
-        self.style['point'] = point3D(point or ORIGIN_POINT) 
+        # Initialize style values that are not supposed to inherite from parent styles.
+        # Always store point in style as separate (x, y, z) values. Missing values are 0
+        self.point3D = point
         self.w = w
         self.h = h
         self.d = d
+        self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
+        self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
 
         # Set timer of this element.
         self.timeMarks = [TimeMark(0, self.style), TimeMark(XXXL, self.style)] # Default TimeMarks from t == 0 until infinite of time.
@@ -321,15 +324,16 @@ class Element(object):
     ancestors = property(_get_ancestors)
 
     def _get_point(self):
-        return point2D(self.style['point']) # Answer as 2D
+        return self.x, self.y # Answer as 2D
     def _set_point(self, point):
-        self.style['point'] = point3D(point) # Always store as 3D-point, z = 0 if missing
+        self.x = point[0]
+        self.y = point[1]
     point = property(_get_point, _set_point)
 
     def _get_point3D(self):
-        return self.style['point']
+        return self.x, self.y, self.z
     def _set_point3D(self, point):
-        self.style['point'] = point3D(point) # Always store as 3D-point, z = 0 if missing.
+        self.x, self.y, self.z = point3D(point) # Always store as 3D-point, z = 0 if missing.
     point3D = property(_get_point3D, _set_point3D)
 
     def _get_oPoint(self): # Answer the self.style['point'], y-flipped, depending on the self.originTop flag.
@@ -339,27 +343,21 @@ class Element(object):
     # Plain coordinates
 
     def _get_x(self):
-        return self.style['point'][0]
+        return self.style['x'] # Direct from style. Not CSS lookup.
     def _set_x(self, x):
-        p = point3D(self.style.get('point', [0, 0, 0])) # Make sure it is a 3D list.
-        p[0] = x
-        self.style['point'] = p
+        self.style['x'] = x
     x = property(_get_x, _set_x)
     
     def _get_y(self):
-        return self.style['point'][1] 
+        return self.style['y'] # Direct from style. Not CSS lookup.
     def _set_y(self, y):
-        p = point3D(self.style.get('point', [0, 0, 0])) # Make sure it is a 3D list.
-        p[1] = y
-        self.style['point'] = p
+        self.style['y'] = y
     y = property(_get_y, _set_y)
     
     def _get_z(self):
-        return self.style['point'][2] # We know that self.style['point'] is always 3D
+        return self.style['z'] # Direct from style. Not CSS lookup.
     def _set_z(self, z):
-        p = point3D(self.style.get('point', [0, 0, 0])) # Make sure it is a 3D list.
-        p[2] = z
-        self.style['point'] = p
+        self.style['z'] = z
     z = property(_get_z, _set_z)
     
     # Time management
@@ -765,7 +763,7 @@ class Element(object):
     # (w, h, d) size of the element.
 
     def _get_w(self): # Width
-        return min(self.maxW, max(self.minW, self.css('w', MIN_WIDTH))) # Should not be 0 or None
+        return min(self.maxW, max(self.minW, self.style['w'])) # From self.style, don't inherit.
     def _set_w(self, w):
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
@@ -777,7 +775,7 @@ class Element(object):
     mw = property(_get_mw, _set_mw)
 
     def _get_h(self): # Height
-        return min(self.maxH, max(self.minH, self.css('h', MIN_HEIGHT))) # Should not be 0 or None
+        return min(self.maxH, max(self.minH, self.style['h'])) # From self.style, don't inherit.
     def _set_h(self, h):
         self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
@@ -789,7 +787,7 @@ class Element(object):
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self): # Depth
-        return min(self.maxD, max(self.minD, self.css('d', MIN_DEPTH))) # Should not be 0 or None
+        return min(self.maxD, max(self.minD, self.style['d'])) # From self.style, don't inherit.
     def _set_d(self, d):
         self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
@@ -804,76 +802,67 @@ class Element(object):
 
     # TODO: Add support of "auto" values, doing live centering.
 
-    def _get_margin(self): # Tuple of margins in CSS order, direction of clock
+    def _get_margin(self): # Tuple of paddings in CSS order, direction of clock
         return self.mt, self.mr, self.mb, self.ml
     def _set_margin(self, margin):
+        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
         if isinstance(margin, (long, int, float)):
             margin = [margin]
-        if len(margin) == 1:
-            margin = (margin[0], margin[0], margin[0], margin[0])
-        elif len(margin) == 2:
-            margin = (margin[0], marign[1], margin[0], margin[1])
-        elif len(margin) == 4:
+        if len(margin) == 1: # All same value
+            margin = (padding[0], margin[0], margin[0], margin[0], margin[0], margin[0])
+        elif len(margin) == 2: # mt == mb, ml == mr, mzf == mzb
+            margin = (padding[0], margin[1], margin[0], margin[1], margin[0], margin[1])
+        elif len(margin) == 3: # mt == ml == mzf, mb == mr == mzb
+            margin = (padding[0], margin[1], margin[2], margin[0], margin[1], margin[2])
+        elif len(margin) == 4: # mt, mr, mb, ml, 0, 0
+            margin = (margin[0], margin[1], margin[2], margin[3], 0, 0)
+        elif len(margin) == 6:
             pass
         else:
             raise ValueError
-        self.mt, self.mr, self.mb, self.ml = margin
+        self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb = margin
     margin = property(_get_margin, _set_margin)
 
-    def _get_margin3D(self): # Tuple of margins in CSS order + (front, back), direction of clock
+    def _get_margin3D(self): # Tuple of margin in CSS order + (front, back), direction of clock
         return self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb
-    def _set_margin3D(self, margin3D):
-        if isinstance(margin3D, (long, int, float)):
-            margin3D = [margin3D]
-        if len(margin3D) == 1:
-            margin3D = (margin3D[0], margin3D[0], margin3D[0], margin3D[0], margin3D[0], margin3D[0])
-        elif len(margin3D) == 2:
-            margin3D = (margin3D[0], margin3D[1], margin3D[0], margin3D[1], margin3D[0], margin3D[1])
-        elif len(margin3D) == 3:
-            margin3D = (margin3D[0], margin3D[1], margin3D[2], margin3D[1], margin3D[2], margin3D[3])
-        elif len(margin3D) == 6:
-            pass
-        else:
-            raise ValueError
-        self.mt, self.mr, self.mb, self.ml, self.mzf, self.margin.mzb = margin3D
-    margin3D = property(_get_margin3D, _set_margin3D)
+    margin3D = property(_get_margin3D, _set_margin)
 
     def _get_mt(self): # Margin top
-        return self.css('mt')
+        return self.style['mt'] # Don't inherit
     def _set_mt(self, mt):
         self.style['mt'] = mt  # Overwrite element local style from here, parent css becomes inaccessable.
     mt = property(_get_mt, _set_mt)
     
     def _get_mb(self): # Margin bottom
-        return self.css('mb')
+        return self.style['mb'] # Don't inherit
     def _set_mb(self, mb):
         self.style['mb'] = mb  # Overwrite element local style from here, parent css becomes inaccessable.
     mb = property(_get_mb, _set_mb)
     
-    def _get_mzf(self): # Margin z-axis front
-        return self.css('mzf')
-    def _set_mzf(self, mzf):
-        self.style['mzf'] = mzf  # Overwrite element local style from here, parent css becomes inaccessable.
-    mzf = property(_get_mzf, _set_mzf)
-    
-    def _get_mzb(self): # Margin z-axis back
-        return self.css('mzb')
-    def _set_mzb(self, mzb):
-        self.style['mzb'] = mzb  # Overwrite element local style from here, parent css becomes inaccessable.
-    mzb = property(_get_mzb, _set_mzb)
-    
     def _get_ml(self): # Margin left
-        return self.css('ml')
+        return self.style['ml'] # Don't inherit
     def _set_ml(self, ml):
         self.style['ml'] = ml # Overwrite element local style from here, parent css becomes inaccessable.
     ml = property(_get_ml, _set_ml)
     
     def _get_mr(self): # Margin right
-        return self.css('mr')
+        return self.style['mr'] # Don't inherit
     def _set_mr(self, mr):
         self.style['mr'] = mr  # Overwrite element local style from here, parent css becomes inaccessable.
     mr = property(_get_mr, _set_mr)
 
+    def _get_mzf(self): # Margin z-axis front
+        return self.style['mzf'] # Don't inherit
+    def _set_mzf(self, mzf):
+        self.style['mzf'] = mzf  # Overwrite element local style from here, parent css becomes inaccessable.
+    mzf = property(_get_mzf, _set_mzf)
+    
+    def _get_mzb(self): # Margin z-axis back
+        return self.style['mzb'] # Don't inherit
+    def _set_mzb(self, mzb):
+        self.style['mzb'] = mzb  # Overwrite element local style from here, parent css becomes inaccessable.
+    mzb = property(_get_mzb, _set_mzb)
+    
     # Padding properties
 
     # TODO: Add support of "auto" values, doing live centering.
@@ -881,37 +870,27 @@ class Element(object):
     def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
+        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
         if isinstance(padding, (long, int, float)):
             padding = [padding]
-        if len(padding) == 1:
-            padding = (padding[0], padding[0], padding[0], padding[0])
-        elif len(padding) == 2:
-            padding = (padding[0], padding[1], padding[0], padding[1])
-        elif len(padding) == 4:
+        if len(padding) == 1: # All same value
+            padding = (padding[0], padding[0], padding[0], padding[0], padding[0], padding[0])
+        elif len(padding) == 2: # pt == pb, pl == pr, pzf == pzb
+            padding = (padding[0], padding[1], padding[0], padding[1], padding[0], padding[1])
+        elif len(padding) == 3: # pt == pl == pzf, pb == pr == pzb
+            padding = (padding[0], padding[1], padding[2], padding[0], padding[1], padding[2])
+        elif len(padding) == 4: # pt, pr, pb, pl, 0, 0
+            padding = (padding[0], padding[1], padding[2], padding[3], 0, 0)
+        elif len(padding) == 6:
             pass
         else:
             raise ValueError
-        self.pt, self.pr, self.pb, self.pl = padding
+        self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb = padding
     padding = property(_get_padding, _set_padding)
 
     def _get_padding3D(self): # Tuple of padding in CSS order + (front, back), direction of clock
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
-    def _set_padding3D(self, padding3D):
-        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
-        if isinstance(padding3D, (long, int, float)):
-            padding3D = [padding3D]
-        if len(padding3D) == 1:
-            padding3D = (padding3D[0], padding3D[0], padding3D[0], padding3D[0], padding3D[0], padding3D[0])
-        elif len(padding3D) == 2:
-            padding3D = (padding3D[0], padding3D[1], padding3D[0], padding3D[1], padding3D[0], padding3D[1])
-        elif len(padding3D) == 3:
-            padding3D = (padding3D[0], padding3D[1], padding3D[2], padding3D[0], padding3D[1], padding3D[2])
-        elif len(padding3D) == 6:
-            pass
-        else:
-            raise ValueError
-        self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb = padding3D
-    padding3D = property(_get_padding3D, _set_padding3D)
+    padding3D = property(_get_padding3D, _set_padding)
 
     def _get_pt(self): # Padding top
         return self.css('pt', 0)
@@ -925,18 +904,6 @@ class Element(object):
         self.style['pb'] = pb  # Overwrite element local style from here, parent css becomes inaccessable.
     pb = property(_get_pb, _set_pb)
     
-    def _get_pzf(self): # Padding z-axis front
-        return self.css('pzf', 0)
-    def _set_pzf(self, pzf):
-        self.style['pzf'] = pzf  # Overwrite element local style from here, parent css becomes inaccessable.
-    pzf = property(_get_pzf, _set_pzf)
-    
-    def _get_pzb(self): # Padding z-axis back
-        return self.css('pzb', 0)
-    def _set_pzb(self, pzb):
-        self.style['pzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
-    pzb = property(_get_pzb, _set_pzb)
-    
     def _get_pl(self): # Padding left
         return self.css('pl', 0)
     def _set_pl(self, pl):
@@ -948,7 +915,19 @@ class Element(object):
     def _set_pr(self, pr):
         self.style['pr'] = pr  # Overwrite element local style from here, parent css becomes inaccessable.
     pr = property(_get_pr, _set_pr)
+
+    def _get_pzf(self): # Padding z-axis front
+        return self.css('pzf', 0)
+    def _set_pzf(self, pzf):
+        self.style['pzf'] = pzf  # Overwrite element local style from here, parent css becomes inaccessable.
+    pzf = property(_get_pzf, _set_pzf)
     
+    def _get_pzb(self): # Padding z-axis back
+        return self.css('pzb', 0)
+    def _set_pzb(self, pzb):
+        self.style['pzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
+    pzb = property(_get_pzb, _set_pzb)
+        
     def _get_originTop(self):
         u"""Answer the style flag if all point y values should measure top-down (typographic page
         orientation), instead of bottom-up (mathematical orientation). For Y-axis only. 

@@ -111,7 +111,7 @@ ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 DEFAULT_FONT = 'Verdana'
 DEFAULT_FALLBACK_FONT = 'LucidaGrande'
 
-INTERPOLATING_TIME_KEYS = ('point', 'w', 'h', 'fill', 'stroke', 'strokeWidth', 'textFill',)
+INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'fill', 'stroke', 'strokeWidth', 'textFill',)
 
 def newStyle(**kwargs):
     return dict(**kwargs)
@@ -152,8 +152,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         tag = None, # Optional marker to match the style with the running tag.
         show = True, # If set to False, then the element does not evaluate in the self.elements loop.
         # Basic page/template measures
-        u = u, # Base unit for Dutch/Swiss typography :)
-        point = (0, 0, 0), # Default local origin, relative to parent.
+        x = 0, # Default local origin, relative to parent.
+        y = 0,
+        z = 0, 
         w = w, #ons Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
@@ -191,6 +192,8 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         mb = 0, # Margin bottom
         mzf = 0, # Margin “near” front in z-axis direction, closest to viewer.
         mzb = 0, # Margin “far” back in z-axis direction.
+
+        u = u, # Base unit for Dutch/Swiss typography :)
 
         # Padding where needed.
         pt = 7*u, # Padding top
