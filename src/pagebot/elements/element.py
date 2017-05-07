@@ -21,13 +21,10 @@ from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
-    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH,  XXXL
+    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS
 from pagebot.toolbox.transformer import asFormatted
+from pagebot.toolbox.timemark import TimeMark
 
-class TimeState(object):
-    def __init__(self, t, style):
-        self.t = t
-        self.style = style
 
 class Element(object):
 
@@ -39,19 +36,28 @@ class Element(object):
     isTextBox = False
     isFlow = False # Value is True if self.next if defined.
 
-    def __init__(self, point=None, t=0, parent=None, name=None, title=None, style=None, conditions=None, elements=None, template=None, 
-            next=None, nextPage=None, padding=None, margin=None, **kwargs):  
+    def __init__(self, point=None, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, z=DEFAULT_DEPTH, t=0, parent=None, name=None, 
+            title=None, style=None, conditions=None, elements=None, template=None, next=None, nextPage=None, padding=None, 
+            margin=None, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
-        Ignore setting of setting eId as attribute, guaranteed to be unique."""  
+        If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
+        not inheriting from one of the parent styles.
+        Ignore setting of setting eId as attribute, guaranteed to be unique.
+        """  
         assert point is None or isinstance(point, (tuple, list))
+        
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0
-        self.point = point3D(point or ORIGIN_POINT) # Always store self.style('point') position property as 3D-point (x, y, z). Missing values are 0
+        # Always store self.style('point') position property as 3D-point (x, y, z). Missing values are 0
+        self.style['point'] = point3D(point or ORIGIN_POINT) 
+        self.w = w
+        self.h = h
+        self.d = d
 
         # Set timer of this element.
-        # TODO: Make this to work, transparant to currents functions of self.x, self.style, etc.
-        self._t = 0
-        ts = TimeState(t, self.style)
-        self.timeStates = {t:ts, XXXL:ts} # Default timeState from t == 0 until infinite of time.
+        self.timeMarks = [TimeMark(0, self.style), TimeMark(XXXL, self.style)] # Default TimeMarks from t == 0 until infinite of time.
+        self._t = 0 # Initialize self.style from t = 0
+        self._tm0 = self._tm1 = None # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
+        self.timeKeys = INTERPOLATING_TIME_KEYS # List of names of style entries that can interpolate in time.
 
         if padding is not None:
             self.padding = padding # Expand by property
@@ -365,13 +371,35 @@ class Element(object):
         return self._t
     def _set_t(self, t):
         self._t = t
-        # TODO: Make this to work.
-        #self.tPast = [] # All defined tStyles of the past + first one in the future.
-        #for tKey, style in sorted(self.tStyles.items()):
-        #    if tKey > t: # We found next interpolation style. 
-        #        self.tNext = tKey
-        #        break
-        #    self.style = style # Time is beyons this one.
+        if self._tm0 is None or self._tm1 is None or t < self._tm0.t or self._tm1.t < t:
+            # If not initialized or t outside cached time span, then create new expanded styles.
+            self._tm0, self._tm1 = self.getExpandedTimeMarks(t)
+
+    def appendTimeMark(self, tm):
+        assert isinstance(tm, TimeMark)
+        self.timeMarks.append(tm)
+        self.timeMarks.sort() # Keep them in tm.t order.
+
+    def XXXgetExpandedTimeMarks(t):
+        u"""Answer a new interpolated TimeState instance, from the enclosing time states for t."""
+        timeValueNames = self.timeKeys
+        rootStyleKeys = self.timeMarks[0].keys()
+        for n in range(1, len(timers)):
+            tm0 = self.timeMarks[timers[n-1]]
+            if t < tm0.t:
+                continue
+            tm1 = self.timeMarks[timers[n]]
+            futureTimers = timers[n:]
+            pastTimers = timers[:n-1]
+            for rootStyleKey in rootStyleKeys:
+                if not rootStyleKey in tm1.style:
+                    for futureTime in futureTimers:
+                        futureTimeMark = self.timeMarks[futureTime]
+                        if rootStyleKey in futureTimeMark.style:
+                            tm1.style[rootStyleKey] = futureTimeMark.style[rootStyleKey]
+
+            return tm0, tm1
+        raise ValueError
 
     # Origin compensated by alignment. This is used for easy solving of conditions,
     # where the positioning can be compenssaring the element alignment type.

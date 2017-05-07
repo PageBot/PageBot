@@ -381,7 +381,8 @@ myTextBox.draw()
 myTextBox._drawFrame()
 myTextBox._drawBaselines(showIndex=True, showY=True, showLeading=True)
 
-print myTextBox.findPattern('Find')
+for pattern in myTextBox.findPattern('Find'):
+    print pattern
 
 # Bitcount measures, pixels are 1/10 of Em
 for yy in range(-3,10):
@@ -390,4 +391,4 @@ for yy in range(-3,10):
     y = myTextBox.y + myTextBox.h + yy*fittingSize/10- myTextBox.baseLines[-1][1]
     line((myTextBox.x, y), (myTextBox.x + myTextBox.w, y))
     
-saveImage('_export
+saveImage('_export/testTextLineTextRun.pdf')

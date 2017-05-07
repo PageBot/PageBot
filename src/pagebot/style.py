@@ -92,7 +92,7 @@ ORIGIN_POINT = (0, 0, 0)
 # Min/max values for element sizes. Make sure that elements dimensions never get 0
 XXXL = sys.maxint
 MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
-DEFAULT_WIDTH = DEFAULT_HEIGHT = DEAULT_DEPTH = 100
+DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)
 MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL
 
 LEFT = 'left'
@@ -110,6 +110,8 @@ ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 
 DEFAULT_FONT = 'Verdana'
 DEFAULT_FALLBACK_FONT = 'LucidaGrande'
+
+INTERPOLATING_TIME_KEYS = ('point', 'w', 'h', 'fill', 'stroke', 'strokeWidth', 'textFill',)
 
 def newStyle(**kwargs):
     return dict(**kwargs)
@@ -151,7 +153,8 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         show = True, # If set to False, then the element does not evaluate in the self.elements loop.
         # Basic page/template measures
         u = u, # Base unit for Dutch/Swiss typography :)
-        w = w, # Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
+        point = (0, 0, 0), # Default local origin, relative to parent.
+        w = w, #ons Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
 
@@ -335,7 +338,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         textStrokeWidth = None,
 
         # V I E W
-        
+
         # These parameters are used by viewers, should not part of direct elements.css( ) queries
         # as view may locally change these values.
 
