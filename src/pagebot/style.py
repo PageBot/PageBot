@@ -111,7 +111,7 @@ ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 DEFAULT_FONT = 'Verdana'
 DEFAULT_FALLBACK_FONT = 'LucidaGrande'
 
-INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'fill', 'stroke', 'strokeWidth', 'textFill',)
+INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill',)
 
 def newStyle(**kwargs):
     return dict(**kwargs)

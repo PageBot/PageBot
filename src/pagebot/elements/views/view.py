@@ -241,9 +241,8 @@ class View(Element):
     def _drawElementFrame(self, e, origin):
         u"""When designing templates and pages, this will draw a rectangle on the element
         bounding box if self.css('showElementBox') is True."""
-        p = pointOffset(e.point, origin)
-        p = op = e._applyOrigin(p)    
-        p = self._applyScale(p)    
+        p = pointOffset(e.oPoint, origin)
+        p = self._applyScale(p)   
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
         setFillColor(self.css('viewFrameFill', NO_COLOR))
@@ -298,10 +297,10 @@ class View(Element):
             line((opx + x2, opy + y1 - S), (opx + x2, opy + y1 - 3*S))
 
     def drawElementOrigin(self, e, origin):
+        px, py, _ = pointOffset(e.oPoint, origin)
+        S = self.css('viewInfoOriginMarkerSize', 4)
         if self.showElementOrigin:
             # Draw origin of the element
-            px, py, _ = pointOffset(e.oPoint, origin)
-            S = self.css('viewInfoOriginMarkerSize', 4)
             setFillColor((0.5,0.5,0.5,0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
             setStrokeColor(0, 0.25)
             oval(px-S, py-S, 2*S, 2*S)

@@ -393,6 +393,7 @@ class TextBox(Element):
             rect(px, py, self.w, self.h)
         # Draw the text.    
         textBox(self.fs, (px, py, self.w, self.h))
+        print '@#@#@#@#:@#:@', px, py, origin
         # Draw options stroke rectangle.
         sStroke = self.css('stroke', NO_COLOR)
         sStrokeWidth = self.css('strokeWidth')

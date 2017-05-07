@@ -16,7 +16,7 @@
 #
 from drawBot import textSize
 
-from pagebot.elements.textbox import TextBox
+from pagebot.elements.pbtextbox import TextBox
 
 class Text(TextBox):
 
