@@ -33,19 +33,13 @@ SQ = 8 * G # Size of the squares
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
-RS = getRootStyle(w=W, h=H,
-    originTop = False,
-    yAlign = BOTTOM,
-)
-#for key, value in RS.items():
-#    print key, value
-
 EXPORT_PATH = '_export/AlignElements.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
-def makeDocument(rs):
+def makeDocument():
     u"""Make a new document, using the rs as root style."""
 
-    doc = Document(rs, pages=1)
+    rs = getRootStyle()
+    doc = Document(rs, w=W, h=H, originTop=False, pages=1)
     
     page = doc[0] # Get the single page from te document.
     
@@ -104,12 +98,13 @@ def makeDocument(rs):
     print page.solve() 
     
     view = doc.getView()
+    view.w, view.h = W, H
     view.padding = 0 # Don't show cropmarks and such.
     view.showElementOrigin = True
     view.showElementInfo = True
        
     return doc # Answer the doc for further doing.
         
-d = makeDocument(RS)
+d = makeDocument()
 d.export(EXPORT_PATH) 
 

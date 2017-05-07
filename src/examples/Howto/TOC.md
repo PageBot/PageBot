@@ -11,3 +11,8 @@ The script shows the different alignment conditions. *Left2Left()* goes to the l
 
 ![gallery/SierpinskiSquare.gif](gallery/SierpinskiSquare.gif)
 
+## Draw View Page Frame
+
+Simple test to show the working of view and page. Option Variable checkbox to set the origin to top or bottom.
+
+![gallery/DrawViewPageFrame.pdf](gallery/DrawViewPageFrame.pdf)

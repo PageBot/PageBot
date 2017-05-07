@@ -12,9 +12,9 @@
 #
 from drawBot import newPage, installedFonts, installFont
 
-from pagebot.elements.page import Page
+from pagebot.elements.pbpage import Page
 from pagebot.elements.views import View, DefaultView, SingleView, ThumbView
-from pagebot.style import makeStyle, getRootStyle
+from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
 
 class Document(object):
     u"""A Document is just another kind of container."""
@@ -22,13 +22,17 @@ class Document(object):
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     VIEW_CLASS = View
 
-    def __init__(self, rootStyle=None, styles=None, views=None, name=None, title=None, autoPages=1, pageTemplate=None, **kwargs):
+    def __init__(self, rootStyle=None, styles=None, views=None, name=None, title=None, autoPages=1, pageTemplate=None, 
+            originTop=True, w=None, h=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
         if rootStyle is None:
             rootStyle = getRootStyle()
         self.rootStyle = rootStyle
         self.initializeStyles(rootStyle, styles) # Merge CSS for element tree
+        self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
+        self.w = w
+        self.h = h
 
         self.name = name or 'Untitled'
         self.title = title or self.name
@@ -164,14 +168,36 @@ class Document(object):
     
     #   D E F A U L T  A T T R I B U T E S 
 
-    # CSS property service to children.
-    def _get_w(self):
-        return self.css('w')
-    w = property(_get_w)
+    def _get_orjginTop(self):
+        return self.getRootStyle('originTop')
+    def _set_originTop(self, flag):
+        rs = self.getRootStyle()
+        if flag:
+            rs['originTop'] = True
+            rs['yAlign'] = TOP
+        else:
+            rs['originTop'] = False
+            rs['yAlign'] = BOTTOM
+    originTop = property(_get_orjginTop, _set_originTop)
 
-    def _get_h(self):
-        return self.css('h')
-    h = property(_get_h)
+    # CSS property service to children.
+    def _get_w(self): # Width
+        return self.rootStyle['w'] 
+    def _set_w(self, w):
+        self.rootStyle['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
+    w = property(_get_w, _set_w)
+
+    def _get_h(self): # Height
+        return self.rootStyle['h'] 
+    def _set_h(self, h):
+        self.rootStyle['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
+    h = property(_get_h, _set_h)
+
+    def _get_d(self): # Depth
+        return self.rootStyle['d'] # From self.style, don't inherit.
+    def _set_d(self, d):
+        self.rootStyle['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
+    d = property(_get_d, _set_d)
 
     #   F O N T S
 

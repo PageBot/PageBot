@@ -25,8 +25,8 @@ class Galley(Element):
     Also the sequence may change by slicing, adding or removing elements by the Composer.
     Since the Galley is a full compatible Element, it can contain other galley instances
     recursively."""
-    from pagebot.elements.textbox import TextBox
-    from pagebot.elements.ruler import Ruler
+    from pagebot.elements.pbtextbox import TextBox
+    from pagebot.elements.pbruler import Ruler
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
 

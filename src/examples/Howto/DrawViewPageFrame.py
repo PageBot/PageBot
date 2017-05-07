@@ -9,16 +9,14 @@
 #
 #     MakeABookCover.py
 #
-import pagebot # Import to know the path of non-Python resources.
 from pagebot import getFormattedString
-
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, B4, CENTER, LEFT, TOP, BOTTOM, RIGHT
+from pagebot.style import getRootStyle, A5, BOTTOM, CENTER
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 from pagebot.elements import *
+from pagebot.conditions import *
     
-W, H = 500, 500 
+W, H = 500, 500#A5 
 
 OriginTop = False
 
@@ -34,26 +32,35 @@ def makeDocument():
     rootStyle = getRootStyle()
     
     doc = Document(rootStyle, originTop=OriginTop, w=W, h=H, pages=1) 
-
+    
     page = doc[0] # Get the first/single page of the document.
     page.size = W, H
     
+    if OriginTop:
+        s = 'Origin on top'
+        conditions = (Center2Center(), Top2Top())
+    else:
+        s = 'Origin on bottom'
+        conditions = (Center2Center(), Bottom2Bottom())
+    
+    fs = getFormattedString(s, style=dict(fontSize=30, textFill=(1, 0, 0), xAlign=CENTER)) 
+    nt = newText(fs, conditions=conditions, parent=page, fill=(1, 1, 0))
+    print nt.x, nt.y, nt.w, nt.h
+    score = page.solve()
+    if score.fails:
+        print score.fails
+    print nt.x, nt.y, nt.w, nt.h
+    
+    # Set the view parameters for the required output.
     view = doc.getView()
     view.w = view.h = W, H
-    view.padding = 300
+    view.padding = 100 # Make view padding to show crop marks and frame
     view.showPageFrame = True
     view.showPageCropMarks = True
-    view.showElementOrigin = True
+    view.showElementOrigin = False
     
-    title = 'Book Cover'
-    fontSize = 40
-    t1 = newTextBox(title, x=100, y=100, parent=page, w=400, h=200, 
-    name='Other element', font='Verdana', 
-        fontSize=fontSize, leading=0, rLeading=1, xAlign=LEFT, yAlign=BOTTOM,
-        fill=(0, 1, 0), stroke=(0, 1, 0), textFill=(0, 0, 1))
-
     return doc
         
 d = makeDocument()
-d.drawPages()
+d.export('_export/DrawViewPageFrame.pdf')
     

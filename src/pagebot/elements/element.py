@@ -809,11 +809,11 @@ class Element(object):
         if isinstance(margin, (long, int, float)):
             margin = [margin]
         if len(margin) == 1: # All same value
-            margin = (padding[0], margin[0], margin[0], margin[0], margin[0], margin[0])
+            margin = (margin[0], margin[0], margin[0], margin[0], margin[0], margin[0])
         elif len(margin) == 2: # mt == mb, ml == mr, mzf == mzb
-            margin = (padding[0], margin[1], margin[0], margin[1], margin[0], margin[1])
+            margin = (margin[0], margin[1], margin[0], margin[1], margin[0], margin[1])
         elif len(margin) == 3: # mt == ml == mzf, mb == mr == mzb
-            margin = (padding[0], margin[1], margin[2], margin[0], margin[1], margin[2])
+            margin = (margin[0], margin[1], margin[2], margin[0], margin[1], margin[2])
         elif len(margin) == 4: # mt, mr, mb, ml, 0, 0
             margin = (margin[0], margin[1], margin[2], margin[3], 0, 0)
         elif len(margin) == 6:
@@ -862,6 +862,18 @@ class Element(object):
     def _set_mzb(self, mzb):
         self.style['mzb'] = mzb  # Overwrite element local style from here, parent css becomes inaccessable.
     mzb = property(_get_mzb, _set_mzb)
+    
+    def _get_mw(self): # Width including margins
+        return self.w + self.ml + self.mr
+    mw = property(_get_mw)
+    
+    def _get_mh(self): # Height including margins
+        return self.h + self.mb + self.mt
+    mh = property(_get_mh)
+    
+    def _get_md(self): # Depth including margins
+        return self.d + self.mzf + self.mzb
+    md = property(_get_md)
     
     # Padding properties
 
@@ -927,14 +939,19 @@ class Element(object):
     def _set_pzb(self, pzb):
         self.style['pzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)
-        
+
     def _get_originTop(self):
         u"""Answer the style flag if all point y values should measure top-down (typographic page
         orientation), instead of bottom-up (mathematical orientation). For Y-axis only. 
         The axes in X and Z directions are fixed."""
         return self.css('originTop')
     def _set_originTop(self, flag):
-        self.style['originTop'] = flag # Overwrite element local style from here, parent css becomes inaccessable.
+        if flag:
+            self.style['originTop'] = True # Overwrite element local style from here, parent css becomes inaccessable.
+            self.style['yAlign'] = TOP
+        else:
+            self.style['originTop'] = False
+            self.style['yAlign'] = BOTTOM
     originTop = property(_get_originTop, _set_originTop)
 
     def _get_size(self):
@@ -953,9 +970,16 @@ class Element(object):
         u"""Answer the 3D size of the element."""
         return self.w, self.h, self.d
 
-    def setSize(self, w, h, d=0):
+    def setSize(self, w, h=0, d=0):
         u"""Set the size of the element by calling by properties self.w and self.h. 
         If set, then overwrite access from style width and height. self.d is optional attribute."""
+        if isinstance(w, (list, tuple)):
+            if len(w) == 2:
+                w, h = w
+            elif len(w) == 3:
+                w, h, d = w
+            else:
+                raise ValueError
         self.w = w # Set by property
         self.h = h
         self.d = d # By default elements have 0 depth.
@@ -973,14 +997,26 @@ class Element(object):
         return (self.x + pl, y, self.w - pl - self.pr, self.h - pt - pb)
     paddedBox = property(_get_paddedBox)
 
-    def _get_padded3DBox(self):
+    def _get_paddedBox3D(self):
         u"""Calculate the padded position and padded resized box in 3D of the lement, after applying
         the style padding. Answered format (x, y, z, w, h, d)."""
         x, y, w, h = self.paddedBox
         pzf = self.pzf
         return x, y, self.z + pzf, w, h, self.d - pzf - self.pzb
-    padded3DBox = property(_get_padded3DBox)
+    paddedBox3D = property(_get_paddedBox3D)
 
+    def _get_pw(self): # Padded width
+        return self.w - self.pl - self.pr
+    pw = property(_get_pw)
+    
+    def _get_ph(self): # Padded height
+        return self.h - self.pb - self.pt
+    ph = property(_get_ph)
+    
+    def _get_pd(self): # Padded depth
+        return self.d - self.pzf - self.pzb
+    pd = property(_get_pd)
+    
     def _get_boundingBox3D(self):
         u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""
         return self.x or 0, self.y or 0, self.z or 0, self.w or 0, self.h or 0, self.d or 0
@@ -1092,21 +1128,21 @@ class Element(object):
             self.minD = minD or 0 # Optional minimum depth of the element.
 
     def _get_maxW(self):
-        return self.css('maxW', MAX_WIDTH)
+        return self.style.get('maxW', self.parent.w) # Unless defined local, take current parent.w as maxW
     def _set_maxW(self, maxW):
         self.style['maxW'] = max(MIN_WIDTH, min(MAX_WIDTH, maxW)) # Set on local style, shielding parent self.css value.
     maxW = property(_get_maxW, _set_maxW)
 
     def _get_maxH(self):
-        return self.css('maxH', MAX_HEIGHT)
+        return self.style.get('maxH', self.parent.h) # Unless defined local, take current parent.w as maxW
     def _set_maxH(self, maxH):
-        self.style['maxH'] = max(MIN_WIDTH, min(MAX_WIDTH, maxH)) # Set on local style, shielding parent self.css value.
+        self.style['maxH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, maxH)) # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
 
     def _get_maxD(self):
-        return self.css('maxD', MAX_DEPTH)
+        return self.style.get('maxD', self.parent.d) # Unless defined local, take current parent.w as maxW
     def _set_maxD(self, maxD):
-        self.style['maxD'] = max(MIN_WIDTH, min(MAX_WIDTH, maxD)) # Set on local style, shielding parent self.css value.
+        self.style['maxD'] = max(MIN_DEPTH, min(MAX_DEPTH, maxD)) # Set on local style, shielding parent self.css value.
     maxD = property(_get_maxD, _set_maxD)
 
     def getMaxSize(self):
@@ -1215,7 +1251,7 @@ class Element(object):
         return x
 
     def _applyAlignment(self, p):
-        u"""Answer the p according to the alignment status nin the css.""" 
+        u"""Answer the p according to the alignment status in the css.""" 
         px, py, pz = point3D(p)
         # Horizontal
         xAlign = self.xAlign

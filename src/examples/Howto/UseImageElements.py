@@ -25,13 +25,9 @@ from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
     
-ElementOrigin = True
-CropMarks = True
-RegistrationMarks = True
-PageFrame = True
-PageNameInfo = True
+RedSize = 100
+YellowSize = 30
 PagePadding = 64
-ViewPadding = 64
 PageSize = 500
 
 GUTTER = 8 # Distance between the squares.
@@ -61,12 +57,9 @@ EXPORT_PATH = '_export/UseImages.pdf'
 
 Variable([
     #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='CropMarks', ui='CheckBox', args=dict(value=True)),
-    dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
-    dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
-    dict(name='PageNameInfo', ui='CheckBox', args=dict(value=True)),
-    dict(name='PagePadding', ui='Slider', args=dict(minValue=-10, value=64, maxValue=200)),
-    dict(name='ViewPadding', ui='Slider', args=dict(minValue=0, value=64, maxValue=200)),
+    dict(name='RedSize', ui='Slider', args=dict(minValue=100, value=100, maxValue=500)),
+    dict(name='YellowSize', ui='Slider', args=dict(minValue=10, value=30, maxValue=500)),
+    dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
     dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
 ], globals())
 
@@ -92,25 +85,18 @@ def makeDocument(rs):
     doc = Document(rootStyle=rs, title='Color Squares', autoPages=1)
     
     view = doc.getView()
+    view.showElementOrigin = True
+    view.padding = 0 # Aboid showing of crop marks, etc.
     
-    view.showElementOrigin = ElementOrigin
-    view.showPageCropMarks = CropMarks
-    view.showPageRegistrationMarks = RegistrationMarks
-    view.showPageFrame = PageFrame
-    view.showPageNameInfo = PageNameInfo
-    print view.style
-    view.padding = ViewPadding # Space around the view to accommodate cropmarks and registration marks.
-
     # Get list of pages with equal y, then equal x.    
     #page = doc[0][0] # Get the single page from te document.
     page = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
-    page.name = 'This demo page'
+    page.name = 'This is a demo page for floating child elements'
     page.padding = PagePadding
     
     page.w = W
     page.h = H
  
-    page.padding3D = PagePadding # Set all 3 paddings to same value
     page.gutter3D = GUTTER # Set all 3 gutters to same value
     """
     im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Top2Top(), Fit2Width()), elasticH=True, yAlign=BOTTOM,
@@ -121,30 +107,30 @@ def makeDocument(rs):
         print im.image.size
     # Give parent on creation, to have the css chain working.
     """
-    rr = newRect(fill=(1, 0, 0), parent=page) # conditions=(Top2Top(), Fit2Width()), parent=page)
-    rr.x = rr.y = 100
-    yr1 = newRect(fill=(1, 1, 0), w=30, h=30, parent=rr, xAlign=CENTER, conditions=(Center2Center(),)) 
-    yr2 = newRect(fill=(1, 1, 0), z=10, w=30, h=30, parent=rr, xAlign=CENTER, 
+    rr = newRect(fill=(1, 0, 0), w=RedSize, h=RedSize, conditions=(Left2Left(), Bottom2Bottom()), 
+        parent=page) 
+    rr.pb = 10
+    
+    yr1 = newRect(fill=(1, 1, 0), w=YellowSize, h=YellowSize, parent=rr, xAlign=CENTER, yAlign=TOP,
+        conditions=(Center2Center(), Bottom2Bottom())) 
+    yr2 = newRect(fill=(0, 1, 1), z=10, w=50, h=50, parent=rr, xAlign=CENTER, 
         conditions=(Top2TopSide(), Center2Center(),)) 
-    
-    print yr1.point3D, yr2.point3D
-    
-    cap = newTextBox('This is the caption. ', w=rr.w, name='Caption', parent=rr,
-        font='Verdana', conditions=[Left2LeftSide(), Fit2Width(), Float2BottomSide()], elasticH=True,
-        fontSize=8, textFill=0, frameFill=(0, 0, 1, 0.3), frameStroke=(0, 0, 1),
+   
+    # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
+    cap = newTextBox('Float down to yr1. '*6, w=rr.w, name='Caption', parent=rr,
+        font='Verdana', conditions=[ Fit2Width(), Float2BottomSide()], elasticH=True,
+        fontSize=8, textFill=0, frameStrokeWidth=0.5, frameFill=(0, 0, 1, 0.3), frameStroke=(0, 0, 1),
     )
+    cap.padding = 10
+    print cap.isLeftOnLeft(0)
+    print cap.isRightOnRight(0)
+    print Fit2Width().test(cap)
+    print cap.mw, cap.mh, cap.md
+    print cap.pw, cap.ph, cap.pd
     
-    print rr.elements
-    rr.solve()
-    #print cap.evaluate()
-    #print cap.isFloatOnBottom(1)
-    #score = page.solve()
-    #if score.fails:
-    #    print 'Failed solving conditions', score.fails
-    #print im.x, im.y, im.getVacuumElementsBox(), im.left, im.top, im.right, im.bottom
-    #print cap.evaluate()
-    #print im.x, im.y, im.getVacuumElementsBox()
-    
+    score = page.solve()
+    if score.fails:
+        print score.fails
     return doc # Answer the doc for further doing.
         
 d = makeDocument(RS)
