@@ -36,7 +36,7 @@ class Element(object):
     isTextBox = False
     isFlow = False # Value is True if self.next if defined.
 
-    def __init__(self, point=ORIGIN_POINT, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
+    def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
             title=None, style=None, conditions=None, elements=None, template=None, next=None, nextPage=None, padding=None, 
             margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
@@ -49,7 +49,7 @@ class Element(object):
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0
         # Initialize style values that are not supposed to inherite from parent styles.
         # Always store point in style as separate (x, y, z) values. Missing values are 0
-        self.point3D = point
+        self.point3D = point or (x, y, z)
         self.w = w
         self.h = h
         self.d = d
