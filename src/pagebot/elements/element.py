@@ -1558,8 +1558,7 @@ class Element(object):
         return abs(self.parent.pl - self.right) <= tolerance
 
     def isRightOnRight(self, tolerance=0):
-        padR = self.parent.css('pr')
-        return abs(self.parent.w - padR - self.right) <= tolerance
+        return abs(self.parent.w - self.parent.pr - self.right) <= tolerance
 
     def isRightOnRightSide(self, tolerance=0):
         return abs(self.parent.w - self.right) <= tolerance
@@ -1900,7 +1899,7 @@ class Element(object):
         if self.originTop:
             self.bottom = pt + middle
         else:
-            self.bottom = pg + middle
+            self.bottom = pb + middle
         return True
 
     def bottom2MiddleSides(self):
