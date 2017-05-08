@@ -35,7 +35,7 @@ def makeDocument():
     
     page = doc[0] # Get the first/single page of the document.
     page.size = W, H
-    
+    print page.originTop
     if OriginTop:
         s = 'Origin on top'
         conditions = (Center2Center(), Top2Top())
@@ -44,7 +44,7 @@ def makeDocument():
         conditions = (Center2Center(), Bottom2Bottom())
     
     fs = getFormattedString(s, style=dict(fontSize=30, textFill=(1, 0, 0), xAlign=CENTER)) 
-    nt = newText(fs, conditions=conditions, parent=page, fill=(1, 1, 0))
+    nt = newText(fs, y=100, xxconditions=conditions, parent=page, fill=(1, 1, 0))
     print nt.x, nt.y, nt.w, nt.h
     score = page.solve()
     if score.fails:
