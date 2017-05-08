@@ -18,11 +18,15 @@ from pagebot.conditions import *
     
 W, H = A5 
 
-OriginTop = False
+ShowOrigins = False
+ShowElementInfo = False
+RectSize = 300
 
 Variable([
     #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='OriginTop', ui='CheckBox', args=dict(value=False)),
+    dict(name='ShowOrigins', ui='CheckBox', args=dict(value=True)),
+    dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
+    dict(name='RectSize', ui='Slider', args=dict(minValue=10, value=W/2, maxValue=W)),
 ], globals())
 
 def makeDocument():
@@ -34,12 +38,12 @@ def makeDocument():
     # as Document( ) will create a RootStyle by default.
     rootStyle = getRootStyle()
     
-    doc = Document(rootStyle, originTop=OriginTop, w=W, h=H, pages=1) 
+    doc = Document(rootStyle, originTop=False, w=W, h=H, pages=1) 
     
     page = doc[0] # Get the first/single page of the document.
     
     # Make rect as page element centered with centered origin.
-    newRect(fill=(1, 0, 0), parent=page, w=200, h=200,
+    newRect(fill=(1, 0, 0), parent=page, w=RectSize, h=RectSize,
         conditions=(Center2Center(), Middle2Middle()),
         xAlign=CENTER, yAlign=MIDDLE)
     # Solve the layout conditions of the red rectangle.
@@ -51,10 +55,12 @@ def makeDocument():
     # Set the view parameters for the required output.
     view = doc.getView()
     view.w = view.h = W, H
-    view.padding = 50 # Make view padding to show crop marks and frame
+    view.padding = 30 # Make view padding to show crop marks and frame
     view.showPageFrame = True # Show frame of the page in blue
     view.showPageCropMarks = True # Show crop marks
-    view.showElementOrigin = True # Show alignment positions of the origin for each element.
+    view.showElementOrigin = ShowOrigins # Show origin alignment markers on each element.
+    view.showElementDimensions = ShowOrigins
+    view.showElementInfo = ShowElementInfo # Show baxes with element info element.
     
     return doc
         
