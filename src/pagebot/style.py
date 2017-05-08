@@ -366,11 +366,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         viewCropMarkSize = 40, # Length of crop marks, including bleed distance. 
         viewCropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
  
-        # Style things
-        viewFrameFill = None,
-        viewFrameStroke = (0, 0, 1), # Ouline page frames
-        viewFrameStrokeWidth = 0.5,
-
         viewPageNameFont = DEFAULT_FONT, # Name of the page outside frame.
         viewPageNameFontSize = 6,
          

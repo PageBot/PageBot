@@ -1341,37 +1341,27 @@ class Element(object):
                     s += '\n%s %s' % eFail
         return s
 
-    def draw(self, origin, view):
+    def draw(self, origin, view, drawElements=True):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
-        p = self._applyAlignment(p) # Ignore z-axis for now.
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        # If there are child elements, draw them over the pixel image.
-        self._drawElements(p, view)
+        eFill = self.css('fill', None)
+        eStroke = self.css('stroke', None)
+        eStrokeWidth = self.css('strokeWidth')
+        if eFill or (eStroke and eStrokeWidth):
+            setFillColor(eFill)
+            setStrokeColor(eStroke, eStrokeWidth)
+            rect(px, py, self.w, self.h)
 
-        self.drawFrame(origin, view)
+        if drawElements:
+            # If there are child elements, draw them over the pixel image.
+            self._drawElements(p, view)
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
-
-    def drawFrame(self, origin, view):
-        u"""Used by elements who want to draw their box, independen of the view.showElementFrame flag.
-        The origin point must already have the right "originTop" flag direction.""" 
-        frameFill = self.css('frameFill', None)
-        frameStroke = self.css('frameStroke', None)
-        frameStrokeWidth = self.css('frameStrokeWidth')
-        if frameFill or (frameStroke and frameStrokeWidth):
-            p = pointOffset(self.oPoint, origin) 
-            p = self._applyScale(p)    
-            px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
-
-            setFillColor(frameFill)
-            setStrokeColor(frameStroke, frameStrokeWidth)
-            rect(px, py, self.w, self.h)
-
-            self._restoreScale()
 
     #   V A L I D A T I O N
 

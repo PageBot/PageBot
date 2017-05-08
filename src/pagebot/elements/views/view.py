@@ -244,22 +244,9 @@ class View(Element):
 
     #   D R A W I N G  E L E M E N T  
 
-    def _drawElementFrame(self, e, origin):
-        u"""When designing templates and pages, this will draw a rectangle on the element
-        bounding box if self.css('showElementBox') is True."""
-        p = pointOffset(e.oPoint, origin)
-        p = self._applyScale(p)   
-        px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
-
-        setFillColor(self.css('viewFrameFill', NO_COLOR))
-        setStrokeColor(self.css('viewFrameStroke', NO_COLOR), self.css('viewFrameStrokeWidth'))
-        rect(px, py, e.w, e.h)
-
-        self._restoreScale()
-
     def drawElementFrame(self, e, origin):
         if self.showElementFrame:
-            self._drawElementFrame(e, origin)
+            e.draw(origin, self, False) # Don't recursively draw children.
 
     def drawElementMetaInfo(self, e, origin):
         self.drawElementInfo(e, origin)

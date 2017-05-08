@@ -293,7 +293,7 @@ class TextBox(Element):
         u"""Answer the height of the textBox. If self.style['elasticH'] is set, then answer the 
         vertical space that the text needs. This overwrites the setting of self._h."""
         if self.style.get('elasticH'):
-            h = self.getTextSize()[1]
+            h = self.getTextSize()[1] + self.pt + self.pb
         else:
             h = self.style['h']
         return min(self.maxH, max(self.minH, h or MIN_HEIGHT)) # Should not be 0 or None
@@ -403,7 +403,6 @@ class TextBox(Element):
         self._drawElements(p, view)
 
         # Draw markers on TextLine and TextRun positions.
-        self.drawFrame(origin, view)
         self._drawBaselines(view)
  
         self._restoreScale()

@@ -53,29 +53,15 @@ Variable([
 ], globals())
 
 def makeDocument():
-    u"""Make a new document, using the rs as root style."""
+    u"""Make a new document."""
 
-    #W = H = 120 # Get the standard a4 width and height in points.
-    W = PageSize
-    H = PageSize
-
-    # Hard coded SQUARE and GUTTE, just for simple demo, instead of filling padding an columns in the root style.
-    # Page size decides on the amount squares that is visible.
-    # Page padding is centered then.
-    sqx = int(W/(SQUARE + GUTTER)) # Whole amount of squares that fit on the page.
-    sqy = int(H/(SQUARE + GUTTER))
-    # Calculate centered paddings for the amount of fitting squares.
-    # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
-    #rs['colH'] = rs['colW'] = SQUARE  # Make default colW and colH square.
-
-    #padX = (W - sqx*(SQUARE + GUTTER) + GUTTER)/2
-    my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
+    W = H = PageSize
 
     doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1)
     
     view = doc.getView()
     view.padding = 0 # Aboid showing of crop marks, etc.
-    view.showElementOrigin = True
+    view.showElementOrigin = False
     
     # Get list of pages with equal y, then equal x.    
     #page = doc[0][0] # Get the single page from te document.
@@ -83,32 +69,26 @@ def makeDocument():
     page.name = 'This is a demo page for floating child elements'
     page.padding = PagePadding
     
-    page.gutter3D = GUTTER # Set all 3 gutters to same value
-    """
-    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Top2Top(), Fit2Width()), elasticH=True, yAlign=BOTTOM,
-        fill=(0, 1, 0, 0.3), 
-        stroke=(1, 0, 0)
-    )
-    if im.image:
-        print im.image.size
-    # Give parent on creation, to have the css chain working.
-    """
-    rr = newRect(fill=(1, 0, 0), w=RedSize, h=RedSize, conditions=(Left2Left(), Bottom2Bottom()), 
-        parent=page) 
-    rr.pb = 10
+    newRect(fill=0.9, parent=page, margin=0, conditions=(Left2Left(), Fit2Right(), Bottom2Bottom(), Fit2Height()))
     
-    yr1 = newRect(fill=(1, 1, 0), w=YellowSize, h=YellowSize, parent=rr, xAlign=CENTER, yAlign=TOP,
+    container = newRect(fill=(1, 0, 0), pb=10, w=RedSize, h=RedSize, 
+        conditions=(Left2Left(), Bottom2Bottom()), parent=page) 
+    
+    # Yellow square
+    yellowSquare = newRect(fill=(1, 1, 0), w=YellowSize, h=YellowSize, parent=container, xAlign=CENTER, yAlign=TOP,
         conditions=(Center2Center(), Bottom2Bottom())) 
-    yr2 = newRect(fill=(0, 1, 1), z=10, w=50, h=50, parent=rr, xAlign=CENTER, 
+    # Blue square in different z=layer. No interaction with Floating on other z-layers.
+    blueSquare = newRect(fill=(0, 1, 1), z=10, w=50, h=50, parent=container, xAlign=CENTER, 
         conditions=(Top2TopSide(), Center2Center(),)) 
    
-    # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
-    cap = newTextBox('Float on top of yellow', w=rr.w, name='Caption', parent=rr,
-        font='Verdana', conditions=[ Fit2Width(), Float2BottomSide()], elasticH=True,
-        fontSize=7, textFill=0, strokeWidth=0.5, fill=(0, 0, 1, 0.3), stroke=(0, 0, 1),
-    )
-    cap.padding = 10
-    
+    # Centered string
+    fs = getFormattedString('Float on top of yellow', style=dict(font='Verdana', fontSize=7,
+        textFill=0))
+    # Text falls through the yr2 (with differnt z) and lands on yellowSquare by Float2BottomSide()    
+    newTextBox(fs, w=container.w, name='Caption', parent=container,
+        fill=None, strokeWidth=0.5, stroke=(1, 1, 0),
+        conditions=[ Fit2Width(), Float2BottomSide()], elasticH=True, padding=3,
+    )    
     score = page.solve()
     if score.fails:
         print score.fails

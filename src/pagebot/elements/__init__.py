@@ -34,16 +34,6 @@ def newColTextBox(fs, cx=None, cy=None, cw=None, ch=None, **kwargs):
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index, based on style or parent.css
     return e
 
-def newTextBox(fs, point=None, **kwargs):
-    u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
-    return TextBox(fs, point=point, **kwargs)
-
-def newColTextBox(fs, cx=None, cy=None, cw=None, ch=None, **kwargs):
-    u"""Caller must supply formatted string."""
-    e = newTextBox(fs, **kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index, based on style or parent.css
-    return e
-
 def newText(fs, point=None, **kwargs):
     u"""Draw formatted string. Normally we don't need w and h here, as it is made by the text and 
     style combinations. But in case the defined font is a Variable Font, then we can use the
