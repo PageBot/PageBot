@@ -58,6 +58,7 @@ def makeDocument():
     view.showPageFrame = True
     view.showPageCropMarks = True
     view.showElementOrigin = False
+    view.showElementDimensions = True
     
     return doc
         

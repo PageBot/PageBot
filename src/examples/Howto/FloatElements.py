@@ -63,6 +63,7 @@ def makeDocument(rs):
     doc = Document(rs, pages=1)
 
     view = doc.getView()
+    print  view.parent
     view.w = view.h = PageSize
     view.padding = 0 # Don't show cropmarks and such.
     view.showElementOrigin = ShowOrigin

@@ -339,7 +339,7 @@ class Document(object):
         for viewClass in (DefaultView, SingleView, ThumbView):
             if not viewClass.viewId in self.views:
                 # Create views, default with the same size as document.
-                self.appendElement(viewClass(w=self.w, h=self.h))
+                self.appendElement(viewClass(parent=self, w=self.w, h=self.h))
 
     def getView(self, viewId=None):
         u"""Answer the viewer instance with viewId. Answer DefaultView() if it does not exist."""
