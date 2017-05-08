@@ -117,7 +117,7 @@ def collectFonts(searchName):
 
     if Use_BitPath:
         # Add Bitpath to selection pool of fonts
-        if monoSpaced:
+        if Spacing_Variant:
             familyName = 'BitpathMono'
         else:
             familyName = 'BitpathProp'
@@ -167,6 +167,7 @@ def getColor(index):
 
 def getFont(fontName):
     u"""Answer the Font instance, so we can get more information about features, etc."""
+    print fontName
     return Font(fontNamePaths[fontName])
        
 def getFontName(index):
