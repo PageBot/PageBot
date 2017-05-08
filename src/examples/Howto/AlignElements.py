@@ -41,9 +41,9 @@ def makeDocument():
     doc = Document(w=W, h=H, originTop=False, pages=1)
     
     page = doc[0] # Get the single page from te document.
-    
-    # Hard coded padding, just for simple demo, instead of filling 
-    # padding an columns in the root style.
+
+    # Hard coded padding, just for simple demo, instead of filling padding an 
+    # columns in the root style.
     page.padding = SQ
    
     # Position square in the 4 corners of the page area.
