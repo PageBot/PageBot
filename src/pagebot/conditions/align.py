@@ -49,74 +49,100 @@ class Fit2Left(Condition):
 		return e.isLeftOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fit2Left(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fit2Left(), e, score)
 
 class Fit2Right(Condition):
 	def test(self, e):
 		return e.isRightOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fit2Right(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fit2Right(), e, score)
 
 class Fit2Width(Condition):
 	def test(self, e):
 		return e.isLeftOnLeft(self.tolerance) and e.isRightOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.left2Left() and e.fit2Right(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.left2Left() and e.fit2Right(), e, score)
 		
 class Fit2Height(Condition):
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance) and e.isBottomOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.top2Top() and e.fit2Bottom(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.top2Top() and e.fit2Bottom(), e, score)
 		
 class Fit2Top(Condition):
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fit2Top(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fit2Top(), e, score)
 
 class Fit2Bottom(Condition):
 	def test(self, e):
 		return e.isBottomOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fit2Bottom(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fit2Bottom(), e, score)
 
 #	F I T T I N G  S I D E S
 
 # There are no "FitOrigin" condition, as these mau result is extremely large scalings.
 
+class Fit2WidthSide(Condition):
+	def test(self, e):
+		return e.isLeftOnLeftSide(self.tolerance) and e.isRightOnRightSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.left2LeftSide() and e.fit2RightSide(), e, score)
+		
 class Fit2LeftSide(Condition):
 	def test(self, e):
 		return e.isLeftOnLeftSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fitLeftSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitLeftSide(), e, score)
 
 class Fit2RightSide(Condition):
 	def test(self, e):
 		return e.isRightOnRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fitRightSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitRightSide(), e, score)
 
+class Fit2HeightSide(Condition):
+	def test(self, e):
+		return e.isTopOnTopSide(self.tolerance) and e.isBottomOnBottomSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.top2Top() and e.fit2BottomSide(), e, score)
+		
 class Fit2TopSide(Condition):
 	def test(self, e):
 		return e.isTopOnTopSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fitTopSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitTopSide(), e, score)
 
 class Fit2BottomSide(Condition):
 	def test(self, e):
 		return e.isBottomOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.fitBottomSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitBottomSide(), e, score)
 
 #	C E N T E R  H O R I Z O N T A L
 
@@ -128,7 +154,8 @@ class Center2Center(Condition):
 		return e.isCenterOnCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2Center(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.center2Center(), e, score)
 
 class Left2Center(Condition):
 	u"""Align left of e bounding box horizontal between parent margins."""
@@ -136,7 +163,8 @@ class Left2Center(Condition):
 		return e.isLeftOnCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.left2Center(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.left2Center(), e, score)
 
 class Right2Center(Condition):
 	u"""Align right of e bounding box horizontal between parent margins."""
@@ -144,7 +172,8 @@ class Right2Center(Condition):
 		return e.isRightOnCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.right2Center(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.right2Center(), e, score)
 
 class Origin2Center(Condition):
 	u"""Align left of e bounding box horizontal between parent margins."""
@@ -152,7 +181,8 @@ class Origin2Center(Condition):
 		return e.isOriginOnCenter(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2Center(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2Center(), e, score)
 
 #	Center Horizontal Sides
 
@@ -162,7 +192,8 @@ class Center2CenterSides(Condition):
 		return e.isCenterOnCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2CenterSides(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.center2CenterSides(), e, score)
 
 class Left2CenterSides(Condition):
 	u"""Align left of e bounding box horizontal between parent sides."""
@@ -170,7 +201,8 @@ class Left2CenterSides(Condition):
 		return e.isLeftOnCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.left2CenterSides(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.left2CenterSides(), e, score)
 
 class Right2CenterSides(Condition):
 	u"""Align right of e bounding box horizontal between parent margins."""
@@ -178,7 +210,8 @@ class Right2CenterSides(Condition):
 		return e.isRightOnCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.right2CenterSides(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.right2CenterSides(), e, score)
 
 class Origin2CenterSides(Condition):
 	u"""Align left of e bounding box horizontal between parent margins."""
@@ -186,7 +219,8 @@ class Origin2CenterSides(Condition):
 		return e.isOriginOnCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2CenterSides(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2CenterSides(), e, score)
 
 #   L E F T / R I G H T
 
@@ -196,7 +230,8 @@ class Center2Left(Condition):
 		return e.isCenterOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2Left(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.center2Left(), e, score)
 
 class Left2Left(Condition):
 	u"""Align left of e bounding box on parent left margin."""
@@ -204,7 +239,8 @@ class Left2Left(Condition):
 		return e.isLeftOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.left2Left(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.left2Left(), e, score)
 
 class Right2Left(Condition):
 	u"""Align right of e bounding box to parent left margin."""
@@ -212,7 +248,8 @@ class Right2Left(Condition):
 		return e.isRightOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.right2Left(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.right2Left(), e, score)
 
 class Origin2Left(Condition):
 	u"""Align left of e bounding box horizontal between parent margins."""
@@ -220,7 +257,8 @@ class Origin2Left(Condition):
 		return e.isOriginOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2Left(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2Left(), e, score)
 
 class Center2LeftSide(Condition):
 	u"""Move center of e bounding box on parent left side."""
@@ -228,7 +266,8 @@ class Center2LeftSide(Condition):
 		return e.isCenterOnLeftSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2LeftSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.center2LeftSide(), e, score)
 
 class Left2LeftSide(Condition):
 	u"""Align left of e bounding box on parent left side."""
@@ -236,7 +275,8 @@ class Left2LeftSide(Condition):
 		return e.isLeftOnLeftSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.left2LeftSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.left2LeftSide(), e, score)
 
 # Missing on purpose: Right2LeftSide(Condition). Element is not visible.
 
@@ -246,7 +286,8 @@ class Origin2LeftSide(Condition):
 		return e.isOriginOnLeftSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2LeftSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2LeftSide(), e, score)
 
 class Center2Right(Condition):
 	u"""Move center of e bounding box on parent right margin."""
@@ -254,7 +295,8 @@ class Center2Right(Condition):
 		return e.isCenterOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2Right(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.center2Right(), e, score)
 
 class Left2Right(Condition):
 	u"""Align left of e bounding box on parent right margin."""
@@ -262,7 +304,8 @@ class Left2Right(Condition):
 		return e.isLeftOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.left2Right(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.left2Right(), e, score)
 
 class Right2Right(Condition):
 	u"""Align right of e bounding box to parent right margin."""
@@ -270,7 +313,8 @@ class Right2Right(Condition):
 		return e.isRightOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.right2Right(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.right2Right(), e, score)
 
 class Origin2Right(Condition):
 	u"""Align origin of e bounding box to parent right margin."""
@@ -278,7 +322,8 @@ class Origin2Right(Condition):
 		return e.isOriginOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2Right(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2Right(), e, score)
 
 #	Left Horizontal Sides
 
@@ -288,7 +333,8 @@ class Center2RightSide(Condition):
 		return e.isCenterOnRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.center2RightSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.center2RightSide(), e, score)
 
 # Missing on purpose: Left2RightSide(Condition). Element is not visible.
 
@@ -298,7 +344,8 @@ class Right2RightSide(Condition):
 		return e.isRightOnRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.right2RightSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.right2RightSide(), e, score)
 
 class Origin2RightSide(Condition):
 	u"""Align origin of e bounding box horizontal between parent right side."""
@@ -306,7 +353,8 @@ class Origin2RightSide(Condition):
 		return e.isOriginOnRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2RightSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2RightSide(), e, score)
 
 #	V E R T I C A L S
 
@@ -318,7 +366,8 @@ class Middle2Middle(Condition):
 		return e.isMiddleOnMiddle(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.middle2Middle(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.middle2Middle(), e, score)
 
 class Middle2MiddleSides(Condition):
 	u"""Middle e bounding box vertical between parent vertical sides."""
@@ -326,7 +375,8 @@ class Middle2MiddleSides(Condition):
 		return e.isMiddleOnMiddleSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.middle2MiddleSides(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.middle2MiddleSides(), e, score)
 
 class Top2Middle(Condition):
 	u"""Align top of e bounding box vertical middle between parent margins."""
@@ -334,7 +384,8 @@ class Top2Middle(Condition):
 		return e.isTopOnMiddle(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.top2Middle(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.top2Middle(), e, score)
 
 class Top2MiddleSides(Condition):
 	u"""Align top of e bounding box on vertical middle between parent sides."""
@@ -342,7 +393,8 @@ class Top2MiddleSides(Condition):
 		return e.isTopOnMiddleSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.top2MiddleSides(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.top2MiddleSides(), e, score)
 
 class Bottom2Middle(Condition):
 	u"""Align bottom of e bounding box on vertical middle between parent margins."""
@@ -350,7 +402,8 @@ class Bottom2Middle(Condition):
 		return e.isBottomOnMiddle(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.bottom2Middle(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bottom2Middle(), e, score)
 
 class Bottom2MiddleSides(Condition):
 	u"""Align right of e bounding box on vertical middle between parent sides."""
@@ -358,7 +411,8 @@ class Bottom2MiddleSides(Condition):
 		return e.isBottomOnMiddleSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.bottom2MiddleSides(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bottom2MiddleSides(), e, score)
 
 class Origin2Middle(Condition):
 	u"""Align origin of e bounding box to vertical middle between parent margin."""
@@ -366,7 +420,8 @@ class Origin2Middle(Condition):
 		return e.isOriginOnMiddle(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2Middle(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2Middle(), e, score)
 
 class Origin2MiddleSides(Condition):
 	u"""Align origin of e bounding box to vertical middle between parent sides."""
@@ -374,7 +429,8 @@ class Origin2MiddleSides(Condition):
 		return e.isOriginOnMiddleSides(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2MiddleSides(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2MiddleSides(), e, score)
 
 class Origin2Top(Condition):
 	u"""Align left of e bounding box horizontal between parent margins."""
@@ -382,7 +438,8 @@ class Origin2Top(Condition):
 		return e.isOriginOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2Top(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2Top(), e, score)
 
 class Middle2Top(Condition):
 	u"""Move middle (vertical center) of e bounding box on parent top margin."""
@@ -390,7 +447,8 @@ class Middle2Top(Condition):
 		return e.isMiddleOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.middle2Top(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.middle2Top(), e, score)
 
 class Middle2TopSide(Condition):
 	u"""Move middle (vertical center) of e bounding box on parent top side."""
@@ -398,7 +456,8 @@ class Middle2TopSide(Condition):
 		return e.isMiddleOnTopSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.middle2TopSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.middle2TopSide(), e, score)
 
 class Top2TopSide(Condition):
 	u"""Align left of e bounding box on parent top side."""
@@ -406,7 +465,8 @@ class Top2TopSide(Condition):
 		return e.isTopOnTopSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.top2TopSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.top2TopSide(), e, score)
 
 class Top2Top(Condition):
 	u"""Align top of e bounding box on parent top margin."""
@@ -414,7 +474,8 @@ class Top2Top(Condition):
 		return e.isTopOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.top2Top(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.top2Top(), e, score)
 
 class Bottom2Top(Condition):
 	u"""Align bottom of e bounding box on parent top margin."""
@@ -422,7 +483,8 @@ class Bottom2Top(Condition):
 		return e.isBottomOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.bottom2Top(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bottom2Top(), e, score)
 
 # Missing on purpose: Bottom2TopSide(Condition). Element is not visible.
 
@@ -432,7 +494,8 @@ class Origin2TopSide(Condition):
 		return e.isOriginOnTopSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2TopSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2TopSide(), e, score)
 
 class Middle2Bottom(Condition):
 	u"""Move middle (vertical center) of e bounding box on parent bottom margin."""
@@ -440,7 +503,8 @@ class Middle2Bottom(Condition):
 		return e.isMiddleOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.middle2Bottom(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.middle2Bottom(), e, score)
 
 class Top2Bottom(Condition):
 	u"""Align top of e bounding box on parent bottom margin."""
@@ -448,7 +512,8 @@ class Top2Bottom(Condition):
 		return e.isTopOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.top2Bottom(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.top2Bottom(), e, score)
 
 class Bottom2Bottom(Condition):
 	u"""Align bottom of e bounding box to parent bottom margin."""
@@ -456,7 +521,8 @@ class Bottom2Bottom(Condition):
 		return e.isBottomOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.bottom2Bottom(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bottom2Bottom(), e, score)
 
 class Origin2Bottom(Condition):
 	u"""Align origin of e bounding box to parent bottom margin."""
@@ -464,7 +530,8 @@ class Origin2Bottom(Condition):
 		return e.isOriginOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2Bottom(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2Bottom(), e, score)
 
 #	Left Horizontal Sides
 
@@ -474,7 +541,8 @@ class Middle2BottomSide(Condition):
 		return e.isMiddleOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.middle2BottomSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.middle2BottomSide(), e, score)
 
 # Missing on purpose: TopBottomSide(Condition). Element is not visible.
 
@@ -484,7 +552,8 @@ class Bottom2BottomSide(Condition):
 		return e.isBottomOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.bottom2BottomSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bottom2BottomSide(), e, score)
 
 class Origin2BottomSide(Condition):
 	u"""Align origin of e bounding box horizontal between parent bottom side."""
@@ -492,6 +561,7 @@ class Origin2BottomSide(Condition):
 		return e.isOriginOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.origin2BottomSide(), e, score)
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.origin2BottomSide(), e, score)
 
 
