@@ -258,7 +258,7 @@ class Document(object):
 
     def newPage(self, pn=None, template=None, w=None, h=None, **kwargs):
         u"""Create a new page with size (self.w, self.h) unless defined otherwise."""
-        self.PAGE_CLASS(parent=self, w=w or self.w, h=h or self.h **kwargs)
+        self.PAGE_CLASS(parent=self, w=w or self.w, h=h or self.h, **kwargs)
 
     def makePages(self, pageCnt, pn=None, template=None, w=None, h=None, **kwargs):
         u"""
