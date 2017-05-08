@@ -18,7 +18,7 @@ from pagebot import getFormattedString, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT, A4, A1, CENTER, RIGHT, BOTTOM, TOP
+from pagebot.style import getRootStyle, LEFT, A4, A1, CENTER, RIGHT, BOTTOM, TOP, MIDDLE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 from pagebot.elements import *
@@ -92,32 +92,19 @@ Variable([
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
-RS = getRootStyle(
-    w = W,
-    h = H,
-    pl = Padding_Left, # Page padding
-    pt = Padding_Top,
-    pr = Padding_Right,
-    pb = Padding_Bottom,
-    conditions = [],
-    fontSize = 10,
-    rLeading = 0,
-    originTop = False
-)
-
 EXPORT_PATH = '_export/ConditionalElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
 
-def makeDocument(rootStyle):
+def makeDocument():
     u"""Demo page composer."""
     
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(rootStyle, pages=1) 
+    doc = Document(w=W, h=H, pages=1) 
 
     # Get default view 
     view = doc.getView()
-    view.padding = 30
+    view.padding = 0
     view.showElementOrigin = True
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
@@ -149,27 +136,20 @@ def makeDocument(rootStyle):
     textCondition = [ # Placement condition(s) for the text element..
         Float2Left(),
         Float2Top(),
-    ]
-    # Obvious wrong placement of all elements, to be corrected by solving conditions.
-    # In this example the wrongOrigin still shows the elements in the bottom left corner,
-    # so it is obvious where they are, of not corrected.
-    outsideOrigin = (-300, -300)
-    
+    ]    
     page = doc.getPage(0) # Get the first/single page of the document.
 
-    
-    e0 = newRect(point=outsideOrigin, name='Page area', parent=page, conditions=[Fit()], fill=0.9)
-    e0.z = -10 # Other z-layer, makes this element be ignored on floating checks.
-    e0.solve()
+    # Other z-layer, makes this element be ignored on floating checks.
+    e0 = newRect(z=-10, name='Page area', parent=page, conditions=[Fit()], fill=0.9)
     
     # Add some color elements (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
-    e1 = newRect(point=outsideOrigin, parent=page, name='Other element', 
+    e1 = newRect(parent=page, name='Other element', 
         w=Element1_W, h=Element1_H, conditions=colorCondition1, 
         fill=(1, 0.5, 0.5), xAlign=RIGHT, yAlign=TOP)
-    e2 = newRect(point=outsideOrigin, parent=page, w=Element2_W, h=Element2_H, name='Floating element 2', 
+    e2 = newRect(parent=page, w=Element2_W, h=Element2_H, name='Floating element 2', 
         conditions=colorCondition2, fill=(1, 1, 0), xAlign=LEFT, yAlign=TOP)
-    e3 = newRect(point=outsideOrigin, parent=page, w=Element3_W, h=Element3_H, name='Floating element 3', 
+    e3 = newRect(parent=page, w=Element3_W, h=Element3_H, name='Floating element 3', 
         conditions=colorCondition2, fill=(1, 0, 1), xAlign=LEFT, yAlign=TOP)
     # Make text box at wrong origin. Apply same width a the color rect, which may
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
@@ -177,12 +157,12 @@ def makeDocument(rootStyle):
     if not hasattr(scriptGlobals, 'blurbText'):
         scriptGlobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, leading=16, textColor=0))
-    eTextBox = newTextBox(scriptGlobals.blurbText, point=outsideOrigin, parent=page, w=Text_W, 
-        conditions=textCondition, xAlign=CENTER, yAlign=CENTER, stroke=None, fill=None)
+    eTextBox = newTextBox(scriptGlobals.blurbText, parent=page, w=Text_W, 
+        conditions=textCondition, xAlign=CENTER, yAlign=MIDDLE, stroke=None, fill=None)
 
-    e4 = newRect(point=outsideOrigin, parent=page, w=Element4_W, h=Element4_H, name='Floating element 4', 
+    e4 = newRect(parent=page, w=Element4_W, h=Element4_H, name='Floating element 4', 
         conditions=colorCondition3, fill=(0, 1, 1), xAlign=RIGHT, yAlign=TOP, minH=50, maxH=150)
-    e5 = newRect(point=outsideOrigin, parent=page, w=Element5_W, h=Element5_H, name='Floating element 5', 
+    e5 = newRect(parent=page, w=Element5_W, h=Element5_H, name='Floating element 5', 
         conditions=[Float2RightTopSides()], fill=(0, 1, 0), xAlign=LEFT, yAlign=TOP)
 
     score = page.evaluate()
@@ -201,7 +181,7 @@ def makeDocument(rootStyle):
     
     return doc
         
-d = makeDocument(RS)
+d = makeDocument()
 d.export(EXPORT_PATH) 
 
     

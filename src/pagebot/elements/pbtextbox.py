@@ -226,7 +226,6 @@ class TextLine(object):
     def getOffsetForStringIndex(self, i):
         u"""Answer the z position that is closest to glyph string index i. If i is out of bounds,
         then answer the closest x position (left and right side of the string)."""
-        #print '=====', self._ctLine
         return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
                 
     def _get_stringIndex(self):
@@ -263,14 +262,12 @@ class TextLine(object):
         if isinstance(pattern, basestring):
             pattern = re.compile(pattern)
             #pattern = re.compile('([a-ZA-Z0-9\.\-\_]*])
-        #print '3321123123', self.string
         for iStart, iEnd in [(m.start(0), m.end(0)) for m in re.finditer(pattern, self.string)]:
-            #print 'fsdsdffsd', iStart, iEnd
             xStart = self.getOffsetForStringIndex(iStart)
             xEnd = self.getOffsetForStringIndex(iEnd)
-            print xStart, xEnd
+            #print 'xStart, xEnd', xStart, xEnd
             run = self.getGlyphIndex2Run(xStart)
-            print iStart, xStart, iEnd, xEnd, run
+            #print 'iStart, xStart', iStart, xStart, iEnd, xEnd, run
             founds.append(FoundPattern(self.string[iStart:iEnd], xStart, iStart, line=self, run=run))
         return founds
            
@@ -282,14 +279,15 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, fs, minW=None, **kwargs):
+    def __init__(self, fs, minW=None, w=None, h=None, **kwargs):
         Element.__init__(self,  **kwargs)
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
+        self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
+        self.size = w, h
         if isinstance(fs, basestring):
             fs = getFormattedString(fs, self)
         self.fs = fs # Keep as plain string, in case parent is not set yet.
-        self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
 
     def _get_h(self):
         u"""Answer the height of the textBox. If self.style['elasticH'] is set, then answer the 
@@ -297,10 +295,10 @@ class TextBox(Element):
         if self.style.get('elasticH'):
             h = self.getTextSize()[1]
         else:
-            h = self.css('h', MIN_HEIGHT)
-        return min(self.maxH, max(self.minH, h)) # Should not be 0 or None
+            h = self.style['h']
+        return min(self.maxH, max(self.minH, h or MIN_HEIGHT)) # Should not be 0 or None
     def _set_h(self, h):
-        self.style['h'] = h # Overwrite style from here, unless self.style['vacuum'] is True
+        self.style['h'] = h or MIN_HEIGHT # Overwrite style from here, unless self.style['elasticH'] is True
     h = property(_get_h, _set_h)
 
     def __getitem__(self, lineIndex):
@@ -335,7 +333,7 @@ class TextBox(Element):
 
     def initializeTextLines(self):
         u"""Answer an ordered list of all baseline position, starting at the top."""
-        self._box = self.x, self.y, self.w, self.h
+        self._box = 0, 0, self.w, self.h
         attrString = self._fs.getNSObject()
         setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
         path = Quartz.CGPathCreateMutable()
@@ -393,7 +391,6 @@ class TextBox(Element):
             rect(px, py, self.w, self.h)
         # Draw the text.    
         textBox(self.fs, (px, py, self.w, self.h))
-        print '@#@#@#@#:@#:@', px, py, origin
         # Draw options stroke rectangle.
         sStroke = self.css('stroke', NO_COLOR)
         sStrokeWidth = self.css('strokeWidth')

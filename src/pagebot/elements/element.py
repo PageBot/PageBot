@@ -763,9 +763,9 @@ class Element(object):
     # (w, h, d) size of the element.
 
     def _get_w(self): # Width
-        return min(self.maxW, max(self.minW, self.style['w'])) # From self.style, don't inherit.
+        return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
     def _set_w(self, w):
-        self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['w'] = w or MIN_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
 
     def _get_mw(self): # Width, including margins
@@ -775,9 +775,9 @@ class Element(object):
     mw = property(_get_mw, _set_mw)
 
     def _get_h(self): # Height
-        return min(self.maxH, max(self.minH, self.style['h'])) # From self.style, don't inherit.
+        return min(self.maxH, max(self.minH, self.style['h'], MIN_HEIGHT)) # From self.style, don't inherit.
     def _set_h(self, h):
-        self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['h'] = h or MIN_HEIGHT # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
 
     def _get_mh(self): # Height, including margins
@@ -787,9 +787,9 @@ class Element(object):
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self): # Depth
-        return min(self.maxD, max(self.minD, self.style['d'])) # From self.style, don't inherit.
+        return min(self.maxD, max(self.minD, self.style['d'], MIN_DEPTH)) # From self.style, don't inherit.
     def _set_d(self, d):
-        self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['d'] = d or MIN_DEPTH # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
 
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
@@ -981,7 +981,7 @@ class Element(object):
             else:
                 raise ValueError
         self.w = w # Set by property
-        self.h = h
+        self.h = h 
         self.d = d # By default elements have 0 depth.
 
     def _get_paddedBox(self):
@@ -1085,19 +1085,19 @@ class Element(object):
         return minX, minY, maxX, maxY
 
     def _get_minW(self):
-        return self.css('minW', MIN_WIDTH)
+        return self.css('minW') or MIN_WIDTH
     def _set_minW(self, minW): # Clip values
         self.style['minW'] = max(MIN_WIDTH, min(MAX_WIDTH, minW)) # Set on local style, shielding parent self.css value.
     minW = property(_get_minW, _set_minW)
 
     def _get_minH(self):
-        return self.css('minH', MIN_HEIGHT)
+        return self.css('minH') or MIN_HEIGHT
     def _set_minH(self, minH):
         self.style['minH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, minH)) # Set on local style, shielding parent self.css value.
     minH = property(_get_minH, _set_minH)
 
     def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
-        return self.css('minD', MIN_DEPTH)
+        return self.css('minD') or MIN_DEPTH
     def _set_minD(self, minD):
         self.style['minD'] = max(MIN_DEPTH, min(MAX_DEPTH, minD)) # Set on local style, shielding parent self.css value.
     minD = property(_get_minD, _set_minD)
@@ -1128,19 +1128,19 @@ class Element(object):
             self.minD = minD or 0 # Optional minimum depth of the element.
 
     def _get_maxW(self):
-        return self.style.get('maxW', self.parent.w) # Unless defined local, take current parent.w as maxW
+        return self.style.get('maxW') or self.parent.w or MIN_WIDTH # Unless defined local, take current parent.w as maxW
     def _set_maxW(self, maxW):
         self.style['maxW'] = max(MIN_WIDTH, min(MAX_WIDTH, maxW)) # Set on local style, shielding parent self.css value.
     maxW = property(_get_maxW, _set_maxW)
 
     def _get_maxH(self):
-        return self.style.get('maxH', self.parent.h) # Unless defined local, take current parent.w as maxW
+        return self.style.get('maxH') or self.parent.h or MIN_HEIGHT # Unless defined local, take current parent.w as maxW
     def _set_maxH(self, maxH):
         self.style['maxH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, maxH)) # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
 
     def _get_maxD(self):
-        return self.style.get('maxD', self.parent.d) # Unless defined local, take current parent.w as maxW
+        return self.style.get('maxD') or self.parent.d or MIN_DEPTH # Unless defined local, take current parent.w as maxW
     def _set_maxD(self, maxD):
         self.style['maxD'] = max(MIN_DEPTH, min(MAX_DEPTH, maxD)) # Set on local style, shielding parent self.css value.
     maxD = property(_get_maxD, _set_maxD)
