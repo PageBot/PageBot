@@ -27,6 +27,7 @@ w, h = imageSize(path)
 
 # Let's say we want to scale it to 50%. The 0.5 is the multiplication factor.
 newScale = 0.5
+
 # Make a page with the size of the scaled image, rounded to whole pixels.
 newPage(int(w*newScale), int(h*newScale))
 
@@ -41,8 +42,9 @@ image(path, (0, 0)) # Draw the scaled image at the bottom-left corner. It fills 
 if not os.path.exists('_export/'):
     os.makedirs('_export/')
 # Note that resulting images may look sharper, by has 4.5x the size of the .jpg.
-saveImage('_export/cookbot1-50.png') # 944Kb size
-saveImage('_export/cookbot1-50.jpg') # 168Kb size
-saveImage('_export/cookbot1-50.gif') # 346Kb size
+saveImage('_export/cookbot1-%d.png' % (newScale*100)) # 944Kb size
+saveImage('_export/cookbot1-%d.jpg' % (newScale*100)) # 168Kb size
+saveImage('_export/cookbot1-%d.gif' % (newScale*100)) # 346Kb size
 # Restore the graphics state, so DrawBot scaling is back to 100% after this.
 restore()
+

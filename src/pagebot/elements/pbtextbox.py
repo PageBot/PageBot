@@ -311,7 +311,7 @@ class TextBox(Element):
         return self._fs
     def _set_fs(self, fs):
         self._fs = fs
-        self.initializeTextLines()
+        #self.initializeTextLines()
     fs = property(_get_fs, _set_fs)
   
     def setText(self, s):
@@ -390,7 +390,7 @@ class TextBox(Element):
             setFillColor(sFill)
             rect(px, py, self.w, self.h)
         # Draw the text.    
-        textBox(self.fs, (px, py, self.w, self.h))
+        textBox(self.fs, (px+self.pl, py+self.pb, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
         # Draw options stroke rectangle.
         sStroke = self.css('stroke', NO_COLOR)
         sStrokeWidth = self.css('strokeWidth')
