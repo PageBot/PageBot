@@ -26,7 +26,7 @@ from pagebot.conditions import *
 from pagebot.toolbox.transformer import path2ScriptId
 scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
  
-PageSize = 500
+PageSize = 700
 
 G = 8 # Distance between the squares.
 SQ = 2 * G # Size of the squares
@@ -37,6 +37,8 @@ SQ = 2 * G # Size of the squares
 # Each element uses the root style as copy and then modifies the values it needs. 
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
+
+t = """Headline of formatted text.Amy's Sun paper hit by hackers.Ignoring the fact that the problem, "was resolved through troubleshooting procedures and restored at midnight," wrote KLM spokesman Liz Ali III in an e-mail to BSN.Ignoring the fact that the computer malfunction brought Sky Team’s system of scheduling departures, reservations and processing passengers to a halt at airports across Norfolk Island. The problem left passengers stranded for hours in grounded planes, airport lobbies and security lines."""
 
 MaxPage = 1200
 
@@ -95,22 +97,24 @@ def makeDocument():
     fontSize = RedHeight/3
     fs = getFormattedString('Headline in red box.', style=dict(textFill=1, fontSize=fontSize, 
         maxW=pageArea, maxH=pageArea, leading=fontSize, font='LucidaGrande'))    
-    newTextBox(fs, z=0, w=RedWidth, h=RedHeight, name='RedRect', parent=page, fill=(1, 0, 0), 
+    newTextBox(fs, z=0, w=RedWidth, h=RedHeight, name='RedRect', parent=page, fill=(1, 0.1, 0.1), 
         yAlign=TOP, maxW=pageArea, maxH=pageArea,
         padding=4, conditions=(Center2Center(), Top2Top()))
 
     if not hasattr(scriptGlobals, 'blurbText'):
         scriptGlobals.blurbText = blurb.getBlurb('article_summary', noTags=True)
-    fs = getFormattedString(scriptGlobals.blurbText,
+    fs = getFormattedString('Headline of formatted text.\n',
+        style=dict(font='LucidaGrande-Bold', fontSize=12, leading=14, textFill=0))   
+    fs += getFormattedString(scriptGlobals.blurbText,
         style=dict(font='LucidaGrande', fontSize=10, leading=12, textFill=0))   
     newTextBox(fs, z=0, w=YellowWidth, h=YellowHeight, parent=page, 
-        padding=4, fill=(1, 1, 0), 
+        padding=4, fill=0.7, 
         maxW=pageArea, maxH=pageArea, conditions=(Left2Left(), Float2Top()))
     
-    newImage('images/cookbot10.jpg', z=0, w=BlueWidth, h=BlueHeight, parent=page, fill=(0.1, 0.1, 0.7), 
-        maxW=pageArea, maxH=pageArea, conditions=(Right2Right(), Float2Top()))
+    newImage('images/cookbot10.jpg', z=0, w=BlueWidth, h=BlueHeight, parent=page, fill=0.4, 
+        padding=8, maxW=pageArea, maxH=pageArea, conditions=(Right2Right(), Float2Top()))
     
-    newRect(z=0, w=BlueWidth, h=20, parent=page, fill=(0, 1, 0), 
+    newRect(z=0, w=BlueWidth, h=20, parent=page, fill=0.2, 
         conditions=(Fit2Width(), Float2Top()))
     
     score = page.solve()
