@@ -256,18 +256,17 @@ class Document(object):
                     pages.append(page)
         return pages
 
-    def newPage(self, pn=None, template=None, **kwargs):
-        u"""Use point (x, y) to define the order of pages and spreads. Ignore any parent here, force to self.
-        No need to append, as setting the page.parent will call back on self.appendElement(page)"""
-        self.PAGE_CLASS(parent=self, **kwargs)
+    def newPage(self, pn=None, template=None, w=None, h=None, **kwargs):
+        u"""Create a new page with size (self.w, self.h) unless defined otherwise."""
+        self.PAGE_CLASS(parent=self, w=w or self.w, h=h or self.h **kwargs)
 
-    def makePages(self, pageCnt, pn=None, template=None, **kwargs):
+    def makePages(self, pageCnt, pn=None, template=None, w=None, h=None, **kwargs):
         u"""
         If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position."""
         if template is None:
             template = self.pageTemplate
         for n in range(pageCnt):
-            self.newPage(pn=pn, template=template, **kwargs) # Parent is forced to self.
+            self.newPage(pn=pn, template=template, w=w or self.w, h=h or self.h, **kwargs) # Parent is forced to self.
 
     def nextPage(self, page, nextPage=1, makeNew=True):
         u"""Answer the next page of page. If it does not exist, create a new page."""
@@ -339,7 +338,8 @@ class Document(object):
         # Define some default views if not already  there.
         for viewClass in (DefaultView, SingleView, ThumbView):
             if not viewClass.viewId in self.views:
-                self.appendElement(viewClass())
+                # Create views, default with the same size as document.
+                self.appendElement(viewClass(w=self.w, h=self.h))
 
     def getView(self, viewId=None):
         u"""Answer the viewer instance with viewId. Answer DefaultView() if it does not exist."""

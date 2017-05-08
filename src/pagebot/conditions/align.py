@@ -118,29 +118,6 @@ class Fit2BottomSide(Condition):
 	def solve(self, e, score):
 		self.addScore(not self.test(e) and e.fitBottomSide(), e, score)
 
-#	V A C U U M 
-
-class Vacuum2Size(Condition):
-	def test(self, e):
-		return e.isVacuumOnWidth(self.tolerance) and e.isVacuumOnHeight(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.vacuum2Width() and e.vacuum2Height(), e, score)
-
-class Vacuum2Width(Condition):
-	def test(self, e):
-		return e.isVacuumOnWidth(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.vacuum2Width(), e, score)
-
-class Vacuum2Height(Condition):
-	def test(self, e):
-		return e.isVacuumOnHeight(self.tolerance)
-
-	def solve(self, e, score):
-		self.addScore(not self.test(e) and e.vacuum2Height(), e, score)
-
 #	C E N T E R  H O R I Z O N T A L
 
 #	Center Horizontal Margins

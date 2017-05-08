@@ -11,6 +11,12 @@ The script shows the different alignment conditions. *Left2Left()* goes to the l
 
 ![gallery/SierpinskiSquare.gif](gallery/SierpinskiSquare.gif)
 
+## Draw Red Rect Center Page
+
+Simple demo to show the positioning of a colored rectangle centered on the page. Also the alignment origin of the rectangle is centered. The view draws cropmarks, page frame and rectangle origin marker.
+
+![gallery/DrawRedRectCenterPage.pdf](gallery/DrawRedRectCenterPage.pdf)
+
 ## Draw View Page Frame
 
 Simple test to show the working of view and page. Option Variable checkbox to set the origin to top or bottom.

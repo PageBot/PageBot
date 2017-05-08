@@ -27,8 +27,10 @@ class View(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
     viewId = 'View'
 
-    def __init__(self, **kwargs):
+    def __init__(self, w=None, h=None, **kwargs):
         Element.__init__(self, **kwargs)
+        self.w = w or self.parent.w
+        self.h = h or self.parent.h
         self._initializeControls()
         self.setControls()
 

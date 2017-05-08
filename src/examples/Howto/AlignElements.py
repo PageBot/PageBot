@@ -14,7 +14,7 @@
 import pagebot # Import to know the path of non-Python resources.
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM
+from pagebot.style import getRootStyle, CENTER, NO_COLOR,TOP, BOTTOM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 from pagebot.elements import *
@@ -36,18 +36,16 @@ SQ = 8 * G # Size of the squares
 EXPORT_PATH = '_export/AlignElements.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
 def makeDocument():
-    u"""Make a new document, using the rs as root style."""
+    u"""Make a new document."""
 
-    rs = getRootStyle()
-    doc = Document(rs, w=W, h=H, originTop=False, pages=1)
+    doc = Document(w=W, h=H, originTop=False, pages=1)
     
     page = doc[0] # Get the single page from te document.
     
-    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
+    # Hard coded padding, just for simple demo, instead of filling 
+    # padding an columns in the root style.
     page.padding = SQ
-    #page.cw = page.ch = SQ
-    #page.gw = page.gh = G
-    
+   
     # Position square in the 4 corners of the page area.
     # Notice that their alignment (left) does not matter for the conditions.
     newRect(w=SQ, h=SQ, parent=page, conditions=(Right2Right(),Top2Top()), fill=0.7)
@@ -95,13 +93,15 @@ def makeDocument():
     # Solve the layout placement conditions on the page by moving the
     # elements that are not on the right positions (which is all of them,
     # because we did not add point attributes when creating them.
-    print page.solve() 
-    
+    score = page.solve() 
+    if score.fails:
+        print 'Failed to solve conditions:', score.fails
+        
     view = doc.getView()
     view.w, view.h = W, H
     view.padding = 0 # Don't show cropmarks and such.
-    view.showElementOrigin = True
-    view.showElementInfo = True
+    view.showElementOrigin = True # Show origin alignment markers on each element.
+    view.showElementInfo = True # SHow baxes with element info
        
     return doc # Answer the doc for further doing.
         
