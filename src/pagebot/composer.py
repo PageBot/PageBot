@@ -19,12 +19,12 @@ class Composer(object):
     If necessary elements can be split, new elements can be made on the page and element can be
     reshaped byt width and height, if that results in better placements.
     """
-    def __init__(self, document, validators=None):
-        u"""Store the document that this Composer will be operating on. The document inclused
+    def __init__(self, validators=None, makeNewPage=False):
+        u"""The page, document includes
         the pages that already exist, and it defined the baseStyle for all other cascading styles.
         The style of all document pages and elements may contain conditions that define the weigh
         value for the quality if their status."""
-        self.document = document
+        self.makeNewPage = makeNewPage
         
     def compose(self, galley, page, flowId=None):
         u"""Compose the galley element, starting with the flowId text box on page.
@@ -35,7 +35,7 @@ class Composer(object):
             flows = page.getFlows()
             assert len(flows) # There must be at least one, otherwise error in template.
             flowId, _ = sorted(flows.keys()) # Arbitrary which one, if there are multiple entries.
-        tb = page.getElement(flowId) # Find the seed flow box on the page, as derived from template.
+        tb = page.getElementByName(flowId) # Find the seed flow box on the page, as derived from template.
         assert tb is not None # Make sure, otherwise there is a template error.
         fs = None
         # Keeping overflow of text boxes here while iterating.
@@ -52,14 +52,14 @@ class Composer(object):
             for n in range(1000): # Safety here, "while fs:" seems to be a dangerous method.
                 if fs is None:
                     break
-                overflow = tb.append(fs)
+                overflow = tb.appendString(fs)
                 if fs == overflow:
                     print(u'NOT ABLE TO PLACE %s' % overflow)
                     break
                 fs = overflow
                 if fs: # Can be None or empty
                     # Overflow in this text box, find new from (page, tbFlow)
-                    page, tb = page.getNextFlowBox(tb)
+                    page, tb = page.getNextFlowBox(tb, self.makeNewPage)
                     if tb is None: # In case here is overflow, but no next box defined in the flow.
                         print 'Overflow in text, but no next flow column defined.', flowId
                         break

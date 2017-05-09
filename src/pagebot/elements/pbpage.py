@@ -27,4 +27,4 @@ class Page(Element):
 
 class Template(Page):
     def draw(self, origin, view):
-        raise ValueError('Templates cannot draw themselves in a view. Apply to a page first.')
+        raise ValueError('Templates cannot draw themselves in a view. Apply the template to a page first.')

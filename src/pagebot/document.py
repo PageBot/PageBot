@@ -58,6 +58,11 @@ class Document(object):
         return self._lib 
     lib = property(_get_lib)
 
+    def _get_doc(self):
+        u"""End of the chain of element properties, looking upward in the ancestors tree."""
+        return self
+    doc = property(_get_doc)
+
     # Document[12] answers a list of pages where page.y == 12
     # This behaviour is different from regular elements, who want the page.eId as key.
     def __getitem__(self, pnIndex):
@@ -230,25 +235,28 @@ class Document(object):
         else:
             raise ValueError('Cannot append elements other that Page or View to Document; "%s"' % e)
 
-    def getPage(self, pn, index=0):
-        u"""Answer the page at index, for equal y and x. Raise index errors if it does not exist."""
-        if not pn in self.pages:
-            return None
-        if index >= len(self.pages[pn]):
-            return None
-        return self.pages[pn][index]
+    def getPage(self, pnOrName, index=0):
+        u"""Answer the page at (pn, index). Otherwise search for a page with this name. Raise index errors if it does not exist."""
+        if pnOrName in self.pages:
+            if index >= len(self.pages[pnOrName]):
+                return None
+            return self.pages[pnOrName][index]
+        pages = self.findPages(name=pnOrName) # In case searching by name, there is chance that multiple are answered as list.
+        if pages:
+            return pages[0]
+        return None
 
     def getPages(self, pn):
         u"""Answer all pages that share the same page number. Rase KeyError if non exist."""
         return self.pages[pn]
 
-    def findPages(self, eid=None, name=None, pattern=None, pageSelection=None):
+    def findPages(self, eId=None, name=None, pattern=None, pageSelection=None):
         u"""Various ways to find pages from their attributes."""
         pages = []
         for pn, pnPages in sorted(self.pages.items()):
             if not pageSelection is None and not pn in pageSelection:
                 continue
-            for _, page in sorted(pnPages.items()):
+            for page in pnPages: # List of pages with identical pn
                 if eId == page.eId:
                     return [page]
                 if (name is not None and name == page.name) or \
@@ -256,9 +264,16 @@ class Document(object):
                     pages.append(page)
         return pages
 
-    def newPage(self, pn=None, template=None, w=None, h=None, **kwargs):
-        u"""Create a new page with size (self.w, self.h) unless defined otherwise."""
-        self.PAGE_CLASS(parent=self, w=w or self.w, h=h or self.h, **kwargs)
+    def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
+        u"""Create a new page with size (self.w, self.h) unless defined otherwise. Add the pages in the row of pn, if defined.
+        Otherwise create a new row of pages at pn. If pn is undefined, add a new page row at the end."""
+        page = self.PAGE_CLASS(parent=self, template=template, w=w or self.w, h=h or self.h, name=name, **kwargs)
+        return
+        if pn is None:
+            pn = max(self.pages.keys())+1
+        if not pn in self.pages:
+            self.pages[pn] = []
+        self.pages[pn].append(page)
 
     def makePages(self, pageCnt, pn=None, template=None, w=None, h=None, **kwargs):
         u"""

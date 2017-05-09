@@ -40,7 +40,8 @@ class Typesetter(object):
     IMAGE_CLASS = Image
     TEXTBOX_CLASS = TextBox
 
-    def __init__(self, galley):
+    def __init__(self, doc, galley):
+        self.doc = doc # Doc context of the typesetter.
         self.galley = galley
         self.gState = [] # Stack of graphic state as cascading styles.
      
@@ -174,8 +175,7 @@ class Typesetter(object):
 
     def node_li(self, node, e):
         u"""Generate bullet/Numbered list item."""
-        # Make sure this is a cascaded style, expanded from current values in top style in gState.
-        bulletString = getFormattedString(e.css('listBullet')) # Get styled string with bullet.
+        bulletString = getFormattedString(self.doc.css('listBullet')) # Get styled string with bullet.
         self.galley.appendString(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, e)
@@ -226,29 +226,29 @@ class Typesetter(object):
 
     def getFootnotes(self, e):
         u"""Answer the footnotes dictionary from the e.lib (derived from the root document)"""
-        lib = e.lib
+        lib = self.doc.lib
         if lib is not None:
-            if not 'footnotes' in e.lib:
-                e.lib['footnotes'] = {}
-            return e.lib['footnotes']
+            if not 'footnotes' in lib:
+                lib['footnotes'] = {}
+            return lib['footnotes']
         return None
 
     def getLiteratureRefs(self, e):
         u"""Answer the literature reference dictionary from the e.lib (derived from the root document)"""
-        lib = e.lib
+        lib = self.doc.lib
         if lib is not None:
-            if not 'literatureRefs' in e.lib:
-                e.lib['literatureRefs'] = {}
-            return e.lib['literatureRefs']
+            if not 'literatureRefs' in lib:
+                lib['literatureRefs'] = {}
+            return lib['literatureRefs']
         return None
 
     def getImageRefs(self, e):
         u"""Answer the literature reference dictionary from the e.lib (derived from the root document)"""
-        lib = e.lib
+        lib = self.doc.lib
         if lib is not None:
-            if not 'imageRefs' in e.lib:
-                e.lib['imageRefs'] = {}
-            return e.lib['imageRefs']
+            if not 'imageRefs' in lib:
+                lib['imageRefs'] = {}
+            return lib['imageRefs']
         return None
 
     def _strip(self, s, prefix=None, postfix=None, forceRightStrip=False):

@@ -311,7 +311,7 @@ class TextBox(Element):
         return self._fs
     def _set_fs(self, fs):
         self._fs = fs
-        #self.initializeTextLines()
+        self.initializeTextLines()
     fs = property(_get_fs, _set_fs)
   
     def setText(self, s):
@@ -333,6 +333,11 @@ class TextBox(Element):
 
     def initializeTextLines(self):
         u"""Answer an ordered list of all baseline position, starting at the top."""
+        self.textLines = []
+        self.baseLines = []
+        
+        return # @@@@@@@
+
         self._box = 0, 0, self.w, self.h
         attrString = self._fs.getNSObject()
         setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
