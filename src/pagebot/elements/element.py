@@ -22,7 +22,7 @@ from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
     MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS
-from pagebot.toolbox.transformer import asFormatted
+from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
 
 
@@ -37,8 +37,8 @@ class Element(object):
     isFlow = False # Value is True if self.next if defined.
 
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
-            title=None, style=None, conditions=None, elements=None, template=None, next=None, nextPage=None, padding=None, 
-            margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, **kwargs):  
+            title=None, style=None, conditions=None, elements=None, template=None, nextElement=None, prevElement=None, 
+            nextPage=None, padding=None, margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
@@ -78,13 +78,14 @@ class Element(object):
         self.conditions = conditions # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
         # Save flow reference names
-        self.next = next # Name of the next flow element
+        self.prevElement = prevElement # Name of the prev flow element
+        self.nextElement = nextElement # Name of the next flow element
         self.nextPage = nextPage # Name of the next page.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
-        self._applyTemplate(template, elements) 
+        self.applyTemplate(template, elements) 
         # Initialize the default Element behavior tags, in case this is a flow.
-        self.isFlow = self.next is not None
+        self.isFlow = not None in (prevElement, nextElement, nextPage)
 
     def __repr__(self):
         if self.title:
@@ -106,30 +107,37 @@ class Element(object):
 
     #   T E M P L A T E
 
-    def _applyTemplate(self, template, elements):
+    def applyTemplate(self, template, elements=None):
         u"""Copy relevant info from template: w, h, elements, style, conditions when element is created.
         Don't call later."""
+        self.template = template # Set template by property
+        if elements is not None:
+            # Add optional list of elements.
+            for e in elements or []: 
+                self.appendElement(e) # Add cross reference searching for eId of elements.
+            
+    def _get_template(self):
+        return self._template
+    def _set_template(self, template):
         self.clearElements()
-        self.template = template # Keep in order to clone pages or if addition info is needed.
+        self._template = template # Keep in order to clone pages or if addition info is needed.
         # Copy optional template stuff
         if template is not None:
             # Copy elements from the template and put them in the designated positions.
             self.w = template.w
             self.h = template.h
-            self.next = template.next
-            self.prev = template.prev
+            self.prevElement = template.prevElement
+            self.nextElement = template.nextElement
             self.nextPage = template.nextPage
             # Copy style items
-            for  name, value in template.style.items:
+            for  name, value in template.style.items():
                 self.style[name] = value
             # Copy condition list. Does not have to be deepCopy, condition instances are multi-purpose.
             self.conditions = copy.copy(template.conditions)
             for e in template.elements:
                 self.appendElement(e.deepCopy())
-        # Add optional list of elements.
-        for e in elements or []: 
-            self.appendElement(e) # Add cross reference searching for eId of elements.
-            
+    template = property(_get_template, _set_template)
+
     #   E L E M E N T S
     #   Every element is potentioally a container of other elements.
 
@@ -163,6 +171,13 @@ class Element(object):
         u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
         return self._eIds.get(eId)
 
+    def getElementByName(self, name):
+        u"""Answer the first element in the children list that fits the name. Answer None if it cannot be found."""
+        for e in self.elements:
+            if e.name == name:
+                return e
+        return None
+
     def clearElements(self):
         u"""Properly initializes self._elements and self._eIds. 
         Any existing elements get their parent weakrefs become None and will garbage collect."""
@@ -171,7 +186,7 @@ class Element(object):
 
     def deepCopy(self):
         e = copy.copy(self)
-        e._eId = uniqueId(e) # Guaranteed unique Id for every element.
+        e._eId = uniqueID(e) # Guaranteed unique Id for every element.
         e.style = copy.copy(self.style)
         e.clearElements()
         for child in self.elements:
@@ -250,15 +265,39 @@ class Element(object):
             # There should be a flow with that name in our flows yet
             found = False
             for nextId, seq in flows.items():
-                if seq[-1].nextBox == e.name: # Glue to the end of the sequence.
+                if seq[-1].nextElement == e.name: # Glue to the end of the sequence.
                     seq.append(e)
                     found = True
-                elif e.nextBox == seq[0].name: # Add at the start of the list.
+                elif e.nextElement == seq[0].name: # Add at the start of the list.
                     seq.insert(0, e)
                     found = True
             if not found: # New entry
                 flows[e.next] = [e]
         return flows
+
+    def getNextFlowBox(self, tb, makeNew=True):
+        u"""Answer the next textBox that tb is pointing to. This can be on the same page or a next
+        page, depending how the page (and probably its template) is defined."""
+        if tb.nextPage: # Page number or name
+            # The flow textBox is pointing to another page. Try to get it, and otherwise create one,
+            # if makeNew is set to True.
+            page = self.doc.getPage(tb.nextPage)
+            if page is None and makeNew:
+                page = self.doc.newPage(name=tb.nextPage)
+            # Hard check. Otherwise something must be wrong in the template flow definition.
+            # or there is more content than we can handle, while not allowing to create new pages.
+            assert page is not None
+            assert not page is self # Make sure that we got a another page than self.
+            # Get the element on the next page that
+            tb = page.getElementByName(tb.nextElement)
+            # Hard check. Otherwise something must be wrong in the template flow definition.
+            assert tb is not None and not len(tb)
+        else:
+            page = self # Staying on the same page, flowing into another column.
+            tb = self.getElementByName(tb.nextElement)
+            # Hard check. Make sure that this one is empty, otherwise mistake in template
+            assert not len(tb)
+        return page, tb
 
     #   S T Y L E
 
@@ -290,6 +329,13 @@ class Element(object):
         if parent is not None:
             return parent.lib # Either parent element or document.lib.
         return None # Document cannot be found, there is not document as root.
+
+    def _get_doc(self):
+        u"""Answer the root Document of this element, looking upward in the ancestor tree."""
+        if self.parent is not None:
+            return self.parent.doc
+        return None
+    doc = property(_get_doc)
 
     # Most common properties
 
@@ -737,7 +783,7 @@ class Element(object):
         self.gw, self.gh, self.gd = gutter3D
     gutter3D = property(_get_gutter3D, _set_gutter3D)
 
-    # Absolute posiitons
+    # Absolute positions
 
     def _get_rootX(self): # Answer the root value of local self.x, from whole tree of ancestors.
         parent = self.parent
@@ -1128,19 +1174,28 @@ class Element(object):
             self.minD = minD or 0 # Optional minimum depth of the element.
 
     def _get_maxW(self):
-        return self.style.get('maxW') or self.parent.w or MIN_WIDTH # Unless defined local, take current parent.w as maxW
+        maxW = self.style.get('maxW')
+        if self.parent:
+            maxW = maxW or self.parent.w
+        return maxW or MIN_WIDTH # Unless defined local, take current parent.w as maxW
     def _set_maxW(self, maxW):
         self.style['maxW'] = max(MIN_WIDTH, min(MAX_WIDTH, maxW)) # Set on local style, shielding parent self.css value.
     maxW = property(_get_maxW, _set_maxW)
 
     def _get_maxH(self):
-        return self.style.get('maxH') or self.parent.h or MIN_HEIGHT # Unless defined local, take current parent.w as maxW
+        maxH = self.style.get('maxH')
+        if self.parent:
+            maxH = maxH or self.parent.h
+        return maxH or MIN_HEIGHT # Unless defined local, take current parent.w as maxW
     def _set_maxH(self, maxH):
         self.style['maxH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, maxH)) # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
 
     def _get_maxD(self):
-        return self.style.get('maxD') or self.parent.d or MIN_DEPTH # Unless defined local, take current parent.w as maxW
+        maxD = self.style.get('maxD')
+        if self.parent:
+            maxD = maxD or self.parent.d
+        return maxD or MIN_HEIGHT # Unless defined local, take current parent.w as maxW
     def _set_maxD(self, maxD):
         self.style['maxD'] = max(MIN_DEPTH, min(MAX_DEPTH, maxD)) # Set on local style, shielding parent self.css value.
     maxD = property(_get_maxD, _set_maxD)
