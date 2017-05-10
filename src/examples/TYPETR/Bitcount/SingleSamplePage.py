@@ -15,11 +15,11 @@ import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
 from pagebot.document import Document
-from pagebot.elements.page import Page, Template
+from pagebot.elements import Page, Template, Galley
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
-from pagebot.elements import Galley
 from pagebot.style import A4
+from pagebot.toolbox.transformer import path2ScriptId
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.contributions.filibuster.blurb import blurb
 
@@ -192,30 +192,32 @@ def makeDocument(rs):
 
     return doc
 
-UI = [
-    dict(name='Sample_Text', ui='EditText', args=dict(text=u'Typetr')),
-    dict(name='Monospaced', ui='CheckBox', args=dict(value=Monospaced)),
-    dict(name='HeadlineTracking', ui='CheckBox'),
-    dict(name='BodyTracking', ui='CheckBox'),
-    dict(name='Italic', ui='CheckBox'),
-]
-UI.append(dict(name='Italic_Shapes', ui='CheckBox')) # [ss08]
-UI.append(dict(name='Single', ui='CheckBox')) # Single/Double
-UI.append(dict(name='Ligatures', ui='CheckBox')) # [ss08]
-UI.append(dict(name='Condensed', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
-UI.append(dict(name='Slashed_Zero', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
-UI.append(dict(name='Fraction', ui='CheckBox')) # Fraction 123/456.
-UI.append(dict(name='Smallcaps', ui='CheckBox')) # [smcp]
-UI.append(dict(name='Caps_As_Smallcaps', ui='CheckBox')) # [c2sc].
-UI.append(dict(name='Extended_Ascenders', ui='CheckBox')) # [ss01].
-UI.append(dict(name='Extended_Capitals', ui='CheckBox')) # [ss02].
-UI.append(dict(name='Extended_Descenders', ui='CheckBox')) # [ss03].
-UI.append(dict(name='Contrast_Pixel', ui='CheckBox')) # [ss04].
-UI.append(dict(name='Alternative_g', ui='CheckBox')) # [ss09].
-UI.append(dict(name='LC_Figures', ui='CheckBox')) # [onum].
+if __name__ == '__main__':
+    
+    UI = [
+        dict(name='Sample_Text', ui='EditText', args=dict(text=u'Typetr')),
+        dict(name='Monospaced', ui='CheckBox', args=dict(value=Monospaced)),
+        dict(name='HeadlineTracking', ui='CheckBox'),
+        dict(name='BodyTracking', ui='CheckBox'),
+        dict(name='Italic', ui='CheckBox'),
+    ]
+    UI.append(dict(name='Italic_Shapes', ui='CheckBox')) # [ss08]
+    UI.append(dict(name='Single', ui='CheckBox')) # Single/Double
+    UI.append(dict(name='Ligatures', ui='CheckBox')) # [ss08]
+    UI.append(dict(name='Condensed', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
+    UI.append(dict(name='Slashed_Zero', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
+    UI.append(dict(name='Fraction', ui='CheckBox')) # Fraction 123/456.
+    UI.append(dict(name='Smallcaps', ui='CheckBox')) # [smcp]
+    UI.append(dict(name='Caps_As_Smallcaps', ui='CheckBox')) # [c2sc].
+    UI.append(dict(name='Extended_Ascenders', ui='CheckBox')) # [ss01].
+    UI.append(dict(name='Extended_Capitals', ui='CheckBox')) # [ss02].
+    UI.append(dict(name='Extended_Descenders', ui='CheckBox')) # [ss03].
+    UI.append(dict(name='Contrast_Pixel', ui='CheckBox')) # [ss04].
+    UI.append(dict(name='Alternative_g', ui='CheckBox')) # [ss09].
+    UI.append(dict(name='LC_Figures', ui='CheckBox')) # [onum].
 
-Variable(UI, globals())
-        
-d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+    Variable(UI, globals())
+            
+    d = makeDocument(RS)
+    d.export(EXPORT_PATH) 
 

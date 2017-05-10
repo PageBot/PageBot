@@ -47,18 +47,6 @@ Small_Font_Size = 12
 Small_Leading = 14
 Small_Top_Spacing = 10
 
-Variable([
-    dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
-    dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
-    dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
-    dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
-    dict(name='Text_Font_Size', ui='Slider', args=dict(minValue=9, value=10, maxValue=24)),
-    dict(name='Text_Leading', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
-    dict(name='Small_Font_Size', ui='Slider', args=dict(minValue=9, value=10, maxValue=24)),
-    dict(name='Small_Leading', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
-    dict(name='Small_Top_Spacing', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
-], globals())
-
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot values are filled by their default values. The root style is kept in RS
 # as reference to for all ininitialzaiton of elements. 
@@ -153,7 +141,21 @@ def makeDocument(rootStyle):
     
     return doc
         
-d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+if __name__ == '__main__':
 
-    
+    Variable([
+        dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+        dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+        dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+        dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+        dict(name='Text_Font_Size', ui='Slider', args=dict(minValue=9, value=10, maxValue=24)),
+        dict(name='Text_Leading', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
+        dict(name='Small_Font_Size', ui='Slider', args=dict(minValue=9, value=10, maxValue=24)),
+        dict(name='Small_Leading', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
+        dict(name='Small_Top_Spacing', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
+    ], globals())
+
+    d = makeDocument(RS)
+    d.export(EXPORT_PATH) 
+
+        

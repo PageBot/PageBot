@@ -27,7 +27,7 @@ from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installe
 
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
+#from pagebot.fonttoolbox.variablefontbuilder import generateInstance, drawGlyphPath
 from pagebot.toolbox.transformer import pointOffset
 
 class VariableCircle(Element):

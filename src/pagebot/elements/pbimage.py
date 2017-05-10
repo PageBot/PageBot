@@ -25,16 +25,21 @@ class Image(Element):
     The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
     applied (e.g. if the image element changes size), or the child elements can be put on fixed positions."""
     
-    def __init__(self, path=None, point=None, style=None, pixelMap=None, title=None, caption=None, clipRect=None, mask=None, 
-            imo=None, w=None, h=None, **kwargs):
-        Element.__init__(self, point=point, **kwargs)
+    def __init__(self, path=None, style=None, pixelMap=None, title=None, caption=None, clipRect=None, 
+            mask=None, imo=None, w=None, h=None, **kwargs):
+        self.image = None # Aviud setting of self.omage.w and self.omage.h while not initialized.
+        Element.__init__(self, w=w, h=h, **kwargs)
         assert path is None or pixelMap is None # One or the other or both None.
 
-        self.w = w
-        self.h = h
+        self.fitImageWidth = bool(w) # Flag if image shouid vacuum in x or y direction.
+        self.fitImageHeight = bool(h)
+        if not w and not h:
+            w = h = DEFAULT_WIDTH #At least of the two should be define on init
+            self._w = w
+            self._h = h
 
         if pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
-            pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, 
+            pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, h=h,
                 conditial=(Fit2Width(), Top2TopSide()), **kwargs) # Default width is leading.
         self.image = pixelMap # Property to add to self.elements and set pixelMap.parent to self.
         # Title can be any type of element, but most likely a text box.
@@ -68,21 +73,25 @@ class Image(Element):
     caption = property(_get_caption, _set_caption)
 
     def _get_w(self):
-        if not self._w:
+        if self.fitImageWidth:
             _, _, w, _ = self.getVacuumElementsBox()
             return w
         return self._w # Overwrite vacuum width
     def _set_w(self, w):
         self._w = w
+        if self.image is not None:
+            self.image.w = w - self.pl - self.pr
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        if not self._h:
+        if self.fitImageHeight:
             _, _, _, h = self.getVacuumElementsBox()
             return h
         return self._h
     def _set_h(self, h): # Overwrite vacuum height
         self._h = h
+        if self.image is not None:
+            self.image.w = w - self.pl - self.pr
     h = property(_get_h, _set_h)
 
 

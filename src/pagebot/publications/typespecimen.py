@@ -25,7 +25,7 @@ from pagebot.style import getRootStyle, LEFT, NO_COLOR
 # (pages, styles, etc.)
 from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
-from pagebot.elements.page import Page, Template
+from pagebot.elements.pbpage import Page, Template
       
 class TypeSpecimen(Publication):
     

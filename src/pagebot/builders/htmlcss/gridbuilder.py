@@ -12,7 +12,7 @@
 #
 #     Model after alistapart.com/article/practical-grid
 #
-from pagebot.builders.htmlcss.basebuilder import BaseBuilder
+from pagebot.builders.basebuilder import BaseBuilder
 
 class GridBuilder(BaseBuilder):
 

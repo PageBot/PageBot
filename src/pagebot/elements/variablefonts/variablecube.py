@@ -17,14 +17,14 @@ from copy import copy
 from fontTools.ttLib import TTFont
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
+#from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
 
 
 class VariableCube(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, point=point, style=None, eId=None, dimensions=None, location=None, **kwargs):
+    def __init__(self, font, s=None, point=None, style=None, eId=None, dimensions=None, location=None, **kwargs):
         self.__init__
         self.font = font
         self.eId = eId

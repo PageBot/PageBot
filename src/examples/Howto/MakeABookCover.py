@@ -126,8 +126,9 @@ def makeDocument(rootStyle):
         print fail
     
     return doc
-        
-d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+  
+if __name__ == '__main__':      
+    d = makeDocument(RS)
+    d.export(EXPORT_PATH) 
 
     

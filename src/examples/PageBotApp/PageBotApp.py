@@ -26,13 +26,14 @@ def hitCallback(sender):
     _drawBotDrawingTool._drawInContext(context)
     pdfDocument = _drawBotDrawingTool.pdfImage()
     w.drawView.setPDFDocument(pdfDocument)
-    
-w = Window((10, 10, 400, 480), 'Window')
-w.button = Button((20,20, 100, 30), 'Hit', callback=hitCallback)
-w.drawView = DrawView((0, 64, -0, -0))
 
-w.open()
-outputWindow = Window((500, 10, 400, 300), minSize=(1, 1), closable=True)
-outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
-outputWindow.open()
-#hitCallback(None)
+if __name__ == '__main__':   
+    w = Window((10, 10, 400, 480), 'Window')
+    w.button = Button((20,20, 100, 30), 'Hit', callback=hitCallback)
+    w.drawView = DrawView((0, 64, -0, -0))
+
+    w.open()
+    outputWindow = Window((500, 10, 400, 300), minSize=(1, 1), closable=True)
+    outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
+    outputWindow.open()
+    #hitCallback(None)

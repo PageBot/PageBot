@@ -11,6 +11,7 @@
 #     pagebot/__init__.py
 #
 from __future__ import division
+__doc__ = """PageBot module"""
 
 import CoreText
 import AppKit
@@ -21,7 +22,21 @@ from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeW
 from drawBot.context.baseContext import BaseContext
 
 from pagebot.style import NO_COLOR, LEFT
-import pbglobals
+
+#
+# In order to let PageBot scripts and/applications exchange information, without the need to save 
+# data in files, the pbglobals module supports the storage of non-persistent information.
+# This way, applications with Vanilla windows can be used as UI for scripts that perform as batch process.
+# Note that it is up to the responsibilty of individual scripts to create uniqued ids for 
+# attributes. Also they need to know from each other, in case information is exchanges""".
+#
+# Key is script/application id, e.g. their __file__ value.
+# Access as:
+# from pagebot.toolbox.transformer import path2ScriptId
+# scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
+# or direct as:
+
+pbGlobals = {} 
 
 class Globals(object):
     # Allow adding by attribute and key.
@@ -36,10 +51,10 @@ def getGlobals(scriptId):
     need to save as files, the pbglobals module supports the storage of non-persistent information.
     This way, applications with Vanilla windows can be used as UI for scripts that perform as batch process.
     Note that it is up to the responsibilty of individual scripts to create uniqued ids for 
-    attributes. Also they need to know from each other, in case information is exchanges"""
-    if not scriptId in pbglobals.globals:
-        pbglobals.globals[scriptId] = Globals()
-    return pbglobals.globals[scriptId]
+    attributes. Also they need to know from each other, in case information is exchanged."""
+    if not scriptId in pbGlobals:
+        pbGlobals[scriptId] = Globals()
+    return pbGlobals[scriptId]
 
 def x2cx(x, e):
     gutterW = e.gw

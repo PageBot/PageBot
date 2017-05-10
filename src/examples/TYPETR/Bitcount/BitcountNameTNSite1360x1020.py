@@ -143,21 +143,22 @@ def drawLayers(fss1, fss2, fss3):
         text(fs, (2.55*padding, y+330))
     for fs in fss3:
         text(fs, (2.35*padding, y+10))
-     
-# If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
-if not fontNamePaths:
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
-else:
-    tts = ('Prop','Mono','Grid')
-    for frame in range(frames): 
-        if frame < frames/3:
-            tt = tts[0]
-        elif frame < frames*2/3:
-            tt = tts[1]
-        else:
-            tt = tts[2]               
-        drawSample(t, tt)
+ 
+if __name__ == '__main__':    
+    # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
+    if not fontNamePaths:
+        os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
+    else:
+        tts = ('Prop','Mono','Grid')
+        for frame in range(frames): 
+            if frame < frames/3:
+                tt = tts[0]
+            elif frame < frames*2/3:
+                tt = tts[1]
+            else:
+                tt = tts[2]               
+            drawSample(t, tt)
 
-    saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
-    
-    
+        saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+        
+        

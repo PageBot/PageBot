@@ -10,5 +10,5 @@
 #
 #     __init__.py
 #
-from align import *
-from floating import *
+from pagebot.conditions.align import *
+from pagebot.conditions.floating import *

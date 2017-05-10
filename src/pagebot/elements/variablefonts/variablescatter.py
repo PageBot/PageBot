@@ -18,7 +18,7 @@ from copy import copy
 from fontTools.ttLib import TTFont
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
+#from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
 
 

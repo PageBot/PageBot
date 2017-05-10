@@ -15,9 +15,9 @@ from pagebot.publications.publication import Publication
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
 # Document is the main instance holding all information about the document together 
 # (pages, styles, etc.)
-from pagebot.elements.document import Document
+from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
-from pagebot.elements.page import Template
+from pagebot.elements.pbpage import Template
 
  
 class Poster(Publication):
@@ -46,10 +46,6 @@ class Poster(Publication):
         
         # Template for the main page.
         template = Template(style=rs) # Create template, using the root sttle. This is for the main pages.
-        # Show grid columns and margins if rootStyle.showGrid or 
-        # rootStyle.showGridColumns are True.
-        # The grid is just a regular element, like all others on the page. Same parameters apply.
-        template.grid()  
         # Add named text box to template for main specimen text.
         template.cTextBox('', 1, 0, 5, 7, eId=self.mainContentId) 
         

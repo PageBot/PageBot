@@ -10,7 +10,7 @@
 #
 #     thumbview.py
 #
-from view import View
+from pagebot.elements.views.view import View
 
 class ThumbView(View):
     viewId = 'Thumb'

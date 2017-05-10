@@ -16,14 +16,9 @@ from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
     
-W, H = 500, 500#A5 
+W, H = 500, 500 #A5 
 
 OriginTop = False
-
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='OriginTop', ui='CheckBox', args=dict(value=False)),
-], globals())
 
 def makeDocument():
     # Create new document with (w,h) and fixed amount of pages.
@@ -61,7 +56,14 @@ def makeDocument():
     view.showElementDimensions = True
     
     return doc
-        
-d = makeDocument()
-d.export('_export/DrawViewPageFrame.pdf')
+  
+if __name__ == '__main__':
+
+    Variable([
+        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+        dict(name='OriginTop', ui='CheckBox', args=dict(value=False)),
+    ], globals())
+
+    d = makeDocument()
+    d.export('_export/DrawViewPageFrame.pdf')
     

@@ -1,3 +1,14 @@
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     Made for usage in DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     ScalingAnImage.py
+
 # by Petr van Blokland @petrvanblokland
 # https://twitter.com/petrvanblokland/status/860610270410018817
 
@@ -12,16 +23,17 @@ def drawSierpinskiSquare(px, py, w, maxW):
             elif px <= maxW and py <= maxW:
                 drawSierpinskiSquare(px+x*w, py+y*w, w/3, maxW)
 
-canvasSize = 500
-numFrames = 40
-factor = 3 ** (1/numFrames)
+if __name__ == '__main__':
+    canvasSize = 500
+    numFrames = 40
+    factor = 3 ** (1/numFrames)
 
-for frame in range(numFrames):
-    newPage(canvasSize, canvasSize)
-    frameDuration(1/20)
-    fill(1)
-    rect(0, 0, canvasSize, canvasSize)
-    w = canvasSize * factor ** frame
-    drawSierpinskiSquare(0, 0, w, canvasSize)
+    for frame in range(numFrames):
+        newPage(canvasSize, canvasSize)
+        frameDuration(1/20)
+        fill(1)
+        rect(0, 0, canvasSize, canvasSize)
+        w = canvasSize * factor ** frame
+        drawSierpinskiSquare(0, 0, w, canvasSize)
 
-saveImage("_export/SierpinskiSquare.gif")
+    saveImage("_export/SierpinskiSquare.gif")
