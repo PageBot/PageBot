@@ -1030,6 +1030,43 @@ class Element(object):
         self.h = h 
         self.d = d # By default elements have 0 depth.
 
+    def _get_pw(self): # Padded width
+        return self.w - self.pl - self.pr
+    pw = property(_get_pw)
+    
+    def _get_ph(self): # Padded height
+        return self.h - self.pb - self.pt
+    ph = property(_get_ph)
+    
+    def _get_pd(self): # Padded depth
+        return self.d - self.pzf - self.pzb
+    pd = property(_get_pd)
+    
+    def _get_box3D(self):
+        u"""Answer the 3D bounding box of self from (self.x, self.y, self.w, self.h) properties."""
+        return self.x or 0, self.y or 0, self.z or 0, self.w or 0, self.h or 0, self.d or 0
+    box3D = property(_get_box3D)
+
+    def _get_box(self):
+        u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""
+        return self.x or 0, self.y or 0, self.w or 0, self.h or 0
+    box = property(_get_box)
+
+    def _get_marginBox(self):
+        u"""Calculate the margin position and margin resized box of the element, after applying the
+        option style margin."""
+        mt = self.mt
+        mb = self.mb
+        ml = self.ml
+        if self.originTop:
+            y = self.y - mt
+        else:
+            y = self.y - mb
+        return (self.x - ml, y,
+            self.w + ml + self.mr, 
+            self.h + mt - mb)
+    marginBox = property(_get_marginBox)
+
     def _get_paddedBox(self):
         u"""Calculate the padded position and padded resized box of the element, after applying the
         style padding. Answered format (x, y, w, h)."""
@@ -1051,44 +1088,14 @@ class Element(object):
         return x, y, self.z + pzf, w, h, self.d - pzf - self.pzb
     paddedBox3D = property(_get_paddedBox3D)
 
-    def _get_pw(self): # Padded width
-        return self.w - self.pl - self.pr
-    pw = property(_get_pw)
-    
-    def _get_ph(self): # Padded height
-        return self.h - self.pb - self.pt
-    ph = property(_get_ph)
-    
-    def _get_pd(self): # Padded depth
-        return self.d - self.pzf - self.pzb
-    pd = property(_get_pd)
-    
-    def _get_boundingBox3D(self):
-        u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""
-        return self.x or 0, self.y or 0, self.z or 0, self.w or 0, self.h or 0, self.d or 0
-    boundingBox = property(_get_boundingBox3D)
+    # PDF naming: MediaBox is highlighted with a magenta rectangle, the BleedBox with a cyan 
+    # one while dark blue is used for the TrimBox.
+    # https://www.prepressure.com/pdf/basics/page-boxes
 
-    def _get_boundingBox(self):
-        u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""
-        return self.x or 0, self.y or 0, self.w or 0, self.h or 0
-    boundingBox = property(_get_boundingBox)
+    # "Box" is bounding box on a single element.
+    # "Block" is here used as bounding box of a group of elements.
 
-    def _get_marginBox(self):
-        u"""Calculate the margin position and margin resized box of the element, after applying the
-        option style margin."""
-        mt = self.mt
-        mb = self.mb
-        ml = self.ml
-        if self.originTop:
-            y = self.y - mt
-        else:
-            y = self.y - mb
-        return (self.x - ml, y,
-            self.w + ml + self.mr, 
-            self.h + mt - mb)
-    marginBox = property(_get_marginBox)
-
-    def getVacuumElementsBox3D(self):
+    def _get_block3D(self):
         u"""Answer the vacuum 3D bounding box around all child elements."""
         x1 = y1 = z1 = XXXL
         x2 = y2 = z2 = -XXXL
@@ -1104,16 +1111,80 @@ class Element(object):
                 y1 = min(y1, e.bottom)
                 y2 = max(y2, e.top)
             z1 = min(z1, e.front)
-            z2 = min(z2, e.back)
+            z2 = max(z2, e.back)
 
         return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
+    block3D = property(_get_block3D)
 
-    def getVacuumElementsBox(self):
-        u"""Answer the vacuum bounding box around all child elements."""
+    def _get_block(self):
+        u"""Answer the vacuum bounding box around all child elements in 2D"""
         x, y, _, w, h, _ = self.getVacuumElementsBox3D()
         return x, y, w, h
+    block = property(_get_block)
 
-    def getVacuumOrigins3D(self):
+    def _get_marginBlock3D(self):
+        u"""Answer the vacuum 3D bounding box around all child elements."""
+        x1 = y1 = z1 = XXXL
+        x2 = y2 = z2 = -XXXL
+        if not self.elements:
+            return 0, 0, 0, 0, 0, 0
+        for e in self.elements:
+            x1 = min(x1, e.left - e.ml)
+            x2 = max(x2, e.right + e.mr)
+            if e.originTop:
+                y1 = min(y1, e.top - e.mt)
+                y2 = max(y2, e.bottom + e.mb)
+            else:
+                y1 = min(y1, e.bottom - e.mb)
+                y2 = max(y2, e.top + e.mt)
+            z1 = min(z1, e.front - e.zmf)
+            z2 = max(z2, e.back - e.zmb)
+
+        return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
+    marginBlock3D = property(_get_marginBlock3D)
+
+    def _get_block(self):
+        u"""Answer the vacuum bounding box around all child elements in 2D"""
+        x, y, _, w, h, _ = self._get_block()
+        return x, y, w, h
+    block = property(_get_block)
+
+    def _get_paddedBlock3D(self):
+        u"""Answer the vacuum 3D bounding box around all child elements, 
+        subtracting their paddings. Sizes cannot become nextive."""
+        x1 = y1 = z1 = XXXL
+        x2 = y2 = z2 = -XXXL
+        if not self.elements:
+            return 0, 0, 0, 0, 0, 0
+        for e in self.elements:
+            x1 = max(x1, e.left + e.pl)
+            x2 = min(x2, e.right - e.pl)
+            if e.originTop:
+                y1 = max(y1, e.top + e.pt)
+                y2 = min(y2, e.bottom - e.pb)
+            else:
+                y1 = max(y1, e.bottom + e.pb)
+                y2 = min(y2, e.top - e.pt)
+            z1 = max(z1, e.front + e.zpf)
+            z2 = min(z2, e.back - e.zpb)
+
+        # Make sure that the values cannot overlap.
+        if x2 < x1: # If overlap
+            x1 = x2 = (x1 + x2)/2 # Middle the x position
+        if y2 < y1: # If overlap
+            y1 = y2 = (y1 + y2)/2 # Middle the y position
+        if z2 < z1: # If overlap
+            z1 = z2 = (z1 + z2)/2 # Middle the z position
+        return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
+    paddedBlock3D = property(_get_paddedBlock3D)
+
+    def _get_block(self):
+        u"""Answer the vacuum bounding box around all child elements in 2D"""
+        x, y, _, w, h, _ = self._get_paddedBlock3D()
+        return x, y, w, h
+    block = property(_get_block)
+
+    def _get_originsBlock3D(self):
         u"""Answer (minX, minY, maxX, maxY, minZ, maxZ) for all element origins."""
         minX = minY = XXXL
         maxX = maxY = -XXXL
@@ -1125,10 +1196,14 @@ class Element(object):
             minZ = min(minZ, e.z)
             maxZ = max(maxZ, e.z)
         return minX, minY, minZ, maxX, maxY, maxZ
+    originsBlock3D = property(_get_originsBlock3D)
 
-    def getVacuumOrigins(self):
-        minX, minY, _, maxX, maxY, _ = self.getVacuumOrigins3D()
+    def _get_originsBlock(self):
+        minX, minY, _, maxX, maxY, _ = self._get_originsBlock3D()
         return minX, minY, maxX, maxY
+    originsBlock = property(_get_originsBlock)
+
+    # Size limits
 
     def _get_minW(self):
         return self.css('minW') or MIN_WIDTH
@@ -1637,6 +1712,50 @@ class Element(object):
             return abs(self.top) <= tolerance
         return abs(self.parent.h - self.top) <= tolerance
 
+    # Shrink block conditions
+
+    def isSchrunkOnBlockLeft(self, tolerance):
+        boxX, _, _, _ = self.marginBox
+        return abs(self.left + self.pl - boxX) <= tolerance
+
+    def isShrunkOnBlockRight(self, tolerance):
+        boxX, _, boxW, _ = self.marginBox
+        return abs(self.right - self.pr - (boxX + boxW)) <= tolerance
+     
+    def isShrunkOnBlockTop(self, tolerance):
+        _, boxY, _, boxH = self.marginBox
+        if self.originTop:
+            return abs(self.top + self.pt - boxY) <= tolerance
+        return self.top - self.pt - (boxY + boxH) <= tolerance
+
+    def isShrunkOnBlockBottom(self, tolerance):
+        _, boxY, _, boxH = self.marginBox
+        if self.originTop:
+            return abs(self.bottom - self.mb - (boxY + boxH)) <= tolerance
+        return abs(self.bottom + self.mb - boxY) <= tolerance
+
+    def isShrunkOnBlockLeftSide(self, tolerance):
+        boxX, _, _, _ = self.box
+        return abs(self.left - boxX) <= tolerance
+
+    def isShrunkOnBlockRightSide(self, tolerance):
+        boxX, _, boxW, _ = self.mbox
+        return abs(self.right - (boxX + boxW)) <= tolerance
+     
+    def isShrunkOnBlockTopSide(self, tolerance):
+        _, boxY, _, boxH = self.box
+        if self.originTop:
+            return abs(self.top - boxY) <= tolerance
+        return self.top - (boxY + boxH) <= tolerance
+
+    def isShrunkOnBlockBottomSide(self, tolerance):
+        _, boxY, _, boxH = self.marginBox
+        if self.originTop:
+            return abs(self.bottom - (boxY + boxH)) <= tolerance
+        return abs(self.bottom - boxY) <= tolerance
+
+    # Float conditions
+
     def isFloatOnTop(self, tolerance=0):
         if self.originTop:
             return abs(max(self.getFloatTopSide(), self.parent.pt) - self.top) <= tolerance
@@ -1664,16 +1783,6 @@ class Element(object):
 
     def isFloatOnRightSide(self, tolerance=0):
         return abs(self.getFloatRightSide() - self.right) <= tolerance
-
-    def isVacuumOnWidth(self, tolerance=0):
-        x, _, _, w, _, _ = self.getVacuumElementsBox3D()
-        return abs(self.left - x) <= tolerance and abs(self.w - w) <= tolerance
-
-    def isVacuumOnHeight(self, tolerance=0):
-        _, y, _, _, h, _ = self.getVacuumElementsBox3D()
-        if self.originTop:
-            return abs(self.top - y) <= tolerance and abs(self.h - h) <= tolerance
-        return abs(self.bottom - y) <= tolerance and abs(self.h - h) <= tolerance
 
     #   T R A N S F O R M A T I O N S 
 
@@ -1763,60 +1872,6 @@ class Element(object):
 
     def middle2MiddleSides(self):
         self.middle = self.parent.h/2
-
-    def fit2Bottom(self):
-        if self.originTop:
-            self.h += self.parent.h - self.parent.pb - self.bottom
-        else:
-            self.h = self.top - self.parent.pb
-        return True
-
-    def fit2BottomSide(self):
-        if self.originTop:
-            self.h += self.parent.h - self.bottom
-        else:
-            top = self.top
-            self.bottom = 0
-            self.h += top - self.top
-        return True
-
-    def fit2Left(self):
-        right = self.right
-        self.left = self.parent.pl # Padding left
-        self.w += right - self.right
-        return True
-
-    def fit2LeftSide(self):
-        right = self.right
-        self.left = 0
-        self.w += right - self.right
-        return True
-
-    def fit2Right(self):
-        self.w += self.parent.w - self.parent.pr - self.right
-        return True
-
-    def fit2RightSide(self):
-        self.w += self.parent.w - self.right
-        return True
-
-    def fit2Top(self):
-        if self.originTop:
-            bottom = self.bottom
-            self.top = self.parent.pt
-            self.h += bottom - self.bottom
-        else:
-            self.h += self.parent.h - self.parent.pt - self.top
-        return True
-
-    def fit2TopSide(self):
-        if self.originTop:
-            bottom = self.bottom
-            self.top = 0
-            self.h += bottom - self.bottom
-        else:
-            self.h += self.parent.h - self.top
-        return True
 
     def left2Center(self):
         pl = self.parent.pl # Get parent padding left
@@ -2013,24 +2068,124 @@ class Element(object):
         self.right = self.getFloatRightSide()
         return True
 
-    # Vacuum
-
-    def vacuum2Width(self):
-        x, _, _, w, _, _ = self.getVacuumElementsBox3D()
-        self.left -= x
-        self.w = w
-
-    def vacuum2Height(self):
-        _, y, _, _, h, _ = self.getVacuumElementsBox3D()
+    # WIth fitting (and shrinking) we need to change the actual size of the element.
+    # This can have implications on it's content, and we need to take the min/max
+    # sizes into conderantion: setting the self.w and self.h to a value, does not mean
+    # that the size really got that value, if exceeding a min/max limit.
+    
+    def fit2Bottom(self):
         if self.originTop:
-            self.top += y
+            self.h += self.parent.h - self.parent.pb - self.bottom
         else:
-            self.bottom -= y
-        self.h = h
+            self.h = self.top - self.parent.pb
+        return True
 
-print __name__
+    def fit2BottomSide(self):
+        if self.originTop:
+            self.h += self.parent.h - self.bottom
+        else:
+            top = self.top
+            self.bottom = 0
+            self.h += top - self.top
+        return True
+
+    def fit2Left(self):
+        right = self.right
+        self.left = self.parent.pl # Padding left
+        self.w += right - self.right
+        return True
+
+    def fit2LeftSide(self):
+        right = self.right
+        self.left = 0
+        self.w += right - self.right
+        return True
+
+    def fit2Right(self):
+        self.w += self.parent.w - self.parent.pr - self.right
+        return True
+
+    def fit2RightSide(self):
+        self.w += self.parent.w - self.right
+        return True
+
+    def fit2Top(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = self.parent.pt
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.parent.pt - self.top
+        return True
+
+    def fit2TopSide(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = 0
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.top
+        return True
+
+    # Shrinking
+    
+    def shrink2BlockBottom(self):
+        _, boxY, _, boxH = self.box()
+        if self.originTop:
+            self.h = boxH
+        else:
+            h = self.h
+            self.bottom = boxY
+
+        return True
+
+    def shrink2BlockBottomSide(self):
+        if self.originTop:
+            self.h += self.parent.h - self.bottom
+        else:
+            top = self.top
+            self.bottom = 0 # Parent botom 
+            self.h += top - self.top
+        return True
+
+    def shrink2BlockLeft(self):
+        right = self.right
+        self.left = self.parent.pl # Padding left
+        self.w += right - self.right
+        return True
+
+    def shrink2BlockLeftSide(self):
+        right = self.right
+        self.left = 0
+        self.w += right - self.right
+        return True
+
+    def shrink2BlockRight(self):
+        self.w += self.parent.w - self.parent.pr - self.right
+        return True
+
+    def shrink2BlockRightSide(self):
+        self.w += self.parent.w - self.right
+        return True
+
+    def shrink2BlockTop(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = self.parent.pt
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.parent.pt - self.top
+        return True
+
+    def shrink2BlockTopSide(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = 0
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.top
+        return True
+
 if __name__ == '__main__':
-    print 'SAASSSA'
     import doctest
     doctest.testmod()
-    print 'Run doctest'

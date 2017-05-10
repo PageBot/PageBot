@@ -98,7 +98,7 @@ class Fit2Bottom(Condition):
 
 # There are no "FitOrigin" condition, as these may result is extremely large scalings.
 
-class Fit2WidthSide(Condition):
+class Fit2WidthSides(Condition): # Note the plural in the name!
 	def test(self, e):
 		return e.isLeftOnLeftSide(self.tolerance) and e.isRightOnRightSide(self.tolerance)
 
@@ -112,7 +112,7 @@ class Fit2LeftSide(Condition):
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fitLeftSide(), e, score)
+			self.addScore(e.fit2LeftSide(), e, score)
 
 class Fit2RightSide(Condition):
 	def test(self, e):
@@ -120,7 +120,7 @@ class Fit2RightSide(Condition):
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fitRightSide(), e, score)
+			self.addScore(e.fit2RightSide(), e, score)
 
 class Fit2HeightSide(Condition):
 	def test(self, e):
@@ -136,7 +136,7 @@ class Fit2TopSide(Condition):
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fitTopSide(), e, score)
+			self.addScore(e.fit2TopSide(), e, score)
 
 class Fit2BottomSide(Condition):
 	def test(self, e):
@@ -144,7 +144,7 @@ class Fit2BottomSide(Condition):
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fitBottomSide(), e, score)
+			self.addScore(e.fit2BottomSide(), e, score)
 
 #	S H R I N K 
 
@@ -157,7 +157,7 @@ class Shrink(Condition):
 	There should be at least one child element for this to executed."""
 
 	def _getConditions(self):
-		return [Left2Left, Top2Top, Fit2Right, Fit2Bottom]
+		return [Left2BlockLeft, Top2BlockTop, Fit2BlockRight, Fit2BlockBottom]
 
 	def evaluate(self, e, score):
 		u"""Fit the element on all margins of the parent. First align left and top,
@@ -168,12 +168,12 @@ class Shrink(Condition):
 	def solve(self, e, score):	
 		self.solveAll(e, self._getConditions(), score)
 
-class Shrink2Sides(Condition):
+class Shrink2BlockSides(Condition):
 	u"""Shirink the element on all sides of the children sides. There needs to be at least
 	one child element."""
 
 	def _getConditions(self):
-		return [Shrink2LeftSide, Shrink2TopSide, Shrink2RightSide, Shrink2BottomSide]
+		return [Shrink2BlockLeftSide, Shrink2BlockTopSide, Shrink2BlockRightSide, Shrink2BlockBottomSide]
 
 	def evaluate(self, e, score):
 		self.evaluateAll(e, self._getConditions(), score)
@@ -183,105 +183,91 @@ class Shrink2Sides(Condition):
 
 # There are no "ShrinkOrigin" condition, as these may result is extremely large scalings.
 
-class Shrink2Left(Condition):
+class Shrink2BlockLeft(Condition):
 	def test(self, e):
-		return e.isSchrinkedOnLeft(self.tolerance)
+		return e.isShrunkOnBlockLeft(self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.shrink2Left(), e, score)
+			self.addScore(e.shrink2BlockLeft(), e, score)
 
-class Shrink2Right(Condition):
+class Shrink2BlockRight(Condition):
 	def test(self, e):
-		return e.isShinkOnRight(self.tolerance)
+		return e.isShrunkOnBlockRight(self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fit2Right(), e, score)
+			self.addScore(e.shrink2BlockRight(), e, score)
 
-class Fit2Width(Condition):
-	def test(self, e):
-		return e.isLeftOnLeft(self.tolerance) and e.isRightOnRight(self.tolerance)
-
-	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.left2Left() and e.fit2Right(), e, score)
 		
-class Fit2Height(Condition):
+class Shrink2BlockTop(Condition):
 	def test(self, e):
-		return e.isTopOnTop(self.tolerance) and e.isBottomOnBottom(self.tolerance)
+		return e.isShrunkOnBlockTop(self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.top2Top() and e.fit2Bottom(), e, score)
+			self.addScore(e.shrink2BlockTop(), e, score)
+
+class Shrink2BlockBottom(Condition):
+	def test(self, e):
+		return e.isShrunkOnBlockBottom(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.shrink2BlockBottom(), e, score)
+
+#	S H R I N K I N G  S I D E S
+
+#   Shrink to sides of the child elements, regardless of their margins or the padding of the parent
+#   There are no "Shrink2Origin" conditions, as these may result is extremely large scalings.
+
+class Shrink2BlockWidthSides(Condition): # Note the plural in the name.
+	def test(self, e):
+		return e.isShrunkOnBlockLeftSide(self.tolerance) and e.isShrunkOnBlockRightSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.shrink2BlockLeftSide() and e.shrink2BlockRightSide(), e, score)
 		
-class Fit2Top(Condition):
+class Shrink2BlockLeftSide(Condition):
 	def test(self, e):
-		return e.isTopOnTop(self.tolerance)
+		return e.isShrunkOnBlockLeftSide(self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fit2Top(), e, score)
+			self.addScore(e.shrink2BlockLeftSide(), e, score)
 
-class Fit2Bottom(Condition):
+class Shrink2BlockRightSide(Condition):
 	def test(self, e):
-		return e.isBottomOnBottom(self.tolerance)
+		return e.isShrunkOnBlockRightSide(self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fit2Bottom(), e, score)
+			self.addScore(e.strink2BlockRightSide(), e, score)
 
-#	F I T T I N G  S I D E S
-
-# There are no "FitOrigin" condition, as these may result is extremely large scalings.
-
-class Fit2WidthSide(Condition):
+class Shrink2BlockHeightSide(Condition):
 	def test(self, e):
-		return e.isLeftOnLeftSide(self.tolerance) and e.isRightOnRightSide(self.tolerance)
+		return e.isShrunkOnBlockTopSide(self.tolerance) and e.isShrunkOnBlockBottomSide(self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.left2LeftSide() and e.fit2RightSide(), e, score)
+			self.addScore(e.shrink2BlockTopSide() and e.shrink2BlockBottomSide(), e, score)
 		
-class Fit2LeftSide(Condition):
+class Shrink2BlockTopSide(Condition):
 	def test(self, e):
-		return e.isLeftOnLeftSide(self.tolerance)
+		return e.isShrunkOnBlockTopSide(self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fitLeftSide(), e, score)
+			self.addScore(e.shrink2BlockTopSide(), e, score)
 
-class Fit2RightSide(Condition):
+class Shrink2BlockBottomSide(Condition):
 	def test(self, e):
-		return e.isRightOnRightSide(self.tolerance)
+		return e.isShrunkOnBlockBottomSide(self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fitRightSide(), e, score)
-
-class Fit2HeightSide(Condition):
-	def test(self, e):
-		return e.isTopOnTopSide(self.tolerance) and e.isBottomOnBottomSide(self.tolerance)
-
-	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.top2Top() and e.fit2BottomSide(), e, score)
-		
-class Fit2TopSide(Condition):
-	def test(self, e):
-		return e.isTopOnTopSide(self.tolerance)
-
-	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fitTopSide(), e, score)
-
-class Fit2BottomSide(Condition):
-	def test(self, e):
-		return e.isBottomOnBottomSide(self.tolerance)
-
-	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.fitBottomSide(), e, score)
+			self.addScore(e.shrink2BlockBottomSide(), e, score)
 
 
 #	C E N T E R  H O R I Z O N T A L
