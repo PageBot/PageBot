@@ -1,29 +1,42 @@
-aa = FormattedString('Book Cover', font='Georgia', fontSize=40)
-print textSize(aa)
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     Made for usage in DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     MakeABookCover.py
+
+def run():
+    aa = FormattedString('Book Cover', font='Georgia', fontSize=40)
+    print textSize(aa)
 
 
-aa = FormattedString('')
-aa.font('Georgia')
-aa.fontSize(14)
-aa += '123'
-aa.fontSize(40)
-aa.lineHeight(1.3)
-aa += ('Book Cover')
-print textSize(aa)
+    aa = FormattedString('')
+    aa.font('Georgia')
+    aa.fontSize(14)
+    aa += '123'
+    aa.fontSize(40)
+    aa.lineHeight(1.3)
+    aa += ('Book Cover')
+    print textSize(aa)
 
-aa = FormattedString('')
-aa.font('Georgia')
-aa.fontSize(40)
-aa += 'Book Cover'
-print textSize(aa)
-print aa.fontAscender()
-print aa.fontDescender()
-print aa.fontAscender() - aa.fontDescender()
+    aa = FormattedString('')
+    aa.font('Georgia')
+    aa.fontSize(40)
+    aa += 'Book Cover'
+    print textSize(aa)
+    print aa.fontAscender()
+    print aa.fontDescender()
+    print aa.fontAscender() - aa.fontDescender()
 
-stroke(0)
-fill(None)
-rect(100, 100, 200, 200)
-text(aa, (100, 100))
+    stroke(0)
+    fill(None)
+    rect(100, 100, 200, 200)
+    text(aa, (100, 100))
+
 def css(name, e, styles=None, default=None):
     u"""Answer the named style values. Search in optional style dict first, otherwise up the 
     parent tree of styles in element e. Both e and style can be None. In that case None is answered."""
@@ -50,6 +63,9 @@ def getFormattedString(t, e=None, style=None):
     if sFontSize is not None:
         fs.fontSize(sFontSize)
     return fs + t
-    
-fs = getFormattedString('Book Cover', style=dict(font='Georgia', fontSize=40))
-print textSize(fs)
+
+if __name__ == '__main__':    
+    fs = getFormattedString('Book Cover', style=dict(font='Georgia', fontSize=40))
+    print textSize(fs)
+    run()
+

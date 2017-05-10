@@ -10,7 +10,7 @@
 #
 #     simplebuilder.py
 #
-from basebuilder import BaseBuilder
+from pagebot.builders.basebuilder import BaseBuilder
 
 class SimpleBuilder(BaseBuilder):
 

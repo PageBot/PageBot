@@ -20,6 +20,7 @@ import os
 import pagebot
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot import getFormattedString, textBoxBaseLines
+from pagebot.toolbox.transformer import path2ScriptId
 
 # Optional using Bitpath family, mixed with Bitcount
 Use_BitPath = True
@@ -229,27 +230,30 @@ def drawLayers(fss, fontSize):
         offsetX += Layer_Offset_X
         offsetY += Layer_Offset_Y
 
-UI = [
-    dict(name='Sample_Text', ui='EditText', args=dict(text=u'Typetr')),
-    dict(name='Italics', ui='CheckBox'),
-    dict(name='Use_BitPath', ui='CheckBox'), # Optional usage mixture with Bitpath.
-    dict(name='Background_Color', ui='ColorWell'),
-    #dict(name='Layers', ui='PopUpButton', args=dict(items=('0','1','2','3','4','5','6'))),
-    dict(name="Layer_Offset_X", ui="Slider", args=dict(value=0, minValue=-16, maxValue=16)),
-    dict(name="Layer_Offset_Y", ui="Slider", args=dict(value=0, minValue=-16, maxValue=16)),
-]
-for layerIndex in range(Layers):
-    UI.append(dict(name='Layer_Color_%d' % layerIndex, ui='ColorWell'))
-    
-UI.append(dict(name="Actions", ui="PopUpButton", args=dict(items=('New Random Fonts', 'New Random Color', 'Save'))))
-    
-Variable(UI, globals())
-       
+if __name__ == '__main__':
+
+    UI = [
+        dict(name='Sample_Text', ui='EditText', args=dict(text=u'Typetr')),
+        dict(name='Italics', ui='CheckBox'),
+        dict(name='Use_BitPath', ui='CheckBox'), # Optional usage mixture with Bitpath.
+        dict(name='Background_Color', ui='ColorWell'),
+        #dict(name='Layers', ui='PopUpButton', args=dict(items=('0','1','2','3','4','5','6'))),
+        dict(name="Layer_Offset_X", ui="Slider", args=dict(value=0, minValue=-16, maxValue=16)),
+        dict(name="Layer_Offset_Y", ui="Slider", args=dict(value=0, minValue=-16, maxValue=16)),
+    ]
+    for layerIndex in range(Layers):
+        UI.append(dict(name='Layer_Color_%d' % layerIndex, ui='ColorWell'))
         
-# If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
-collectFonts() # Collect available fonts, filter into characteristics, as weight, italic, etc.
-if not scriptGlobals.fontNamePaths:
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
-else:
-    drawSample()
-    #saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+    UI.append(dict(name="Actions", ui="PopUpButton", args=dict(items=('New Random Fonts', 'New Random Color', 'Save'))))
+        
+    Variable(UI, globals())
+           
+            
+    # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
+    collectFonts() # Collect available fonts, filter into characteristics, as weight, italic, etc.
+    if not scriptGlobals.fontNamePaths:
+        os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
+    else:
+        drawSample()
+        #saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+

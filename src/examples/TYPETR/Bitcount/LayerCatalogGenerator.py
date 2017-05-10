@@ -26,8 +26,8 @@ from pagebot import textBoxBaseLines
 
 # Kinda hack, storing in empty module, to prevent globals to re-initialized, 
 # if variables are changed.
-print __file__
-print path2ScriptId(__file__)
+#print __file__
+#print path2ScriptId(__file__)
 scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
 scriptGlobals.LayerCatalogGenerator = {}
 
@@ -289,17 +289,19 @@ else:
     Alternative_g = random() < 0.3 # [ss09]
     LC_Figures = random() < 0.3 # [onum]      
 
-Variable(UI, globals())
+if __name__ == '__main__':
 
-# Store Italics flag, so we can test if it changed.
-scriptGlobals.random_Features = Random_Features
-    
-                     
-# If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
-fontNamePaths = collectFonts(searchName) # Collect available fonts, filter into characteristics, as weight, italic, etc.
-if not fontNamePaths:
-    print 'The %s family is not installed in your system. How about buying a license @typenetwork?' % familyName
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, familyName.lower()))
-else:
-    drawSample()
-    export()
+    Variable(UI, globals())
+
+    # Store Italics flag, so we can test if it changed.
+    scriptGlobals.random_Features = Random_Features
+        
+                         
+    # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
+    fontNamePaths = collectFonts(searchName) # Collect available fonts, filter into characteristics, as weight, italic, etc.
+    if not fontNamePaths:
+        print 'The %s family is not installed in your system. How about buying a license @typenetwork?' % familyName
+        os.system('open %s/fonts/%s' % (typetrStoreUrl, familyName.lower()))
+    else:
+        drawSample()
+        export()

@@ -11,7 +11,7 @@
 #     floating.py
 #
 from __future__ import division
-from condition import Condition
+from pagebot.conditions.condition import Condition
 
 # Margins
 

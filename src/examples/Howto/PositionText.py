@@ -22,11 +22,6 @@ W, H = 500, 500
 
 OriginTop = False
 
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='OriginTop', ui='CheckBox', args=dict(value=False)),
-], globals())
-
 def makeDocument():
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -53,7 +48,13 @@ def makeDocument():
         fill=(0, 1, 0), stroke=(0, 1, 0), textFill=(0, 0, 1))
 
     return doc
+
+if __name__ == '__main__': 
+    Variable([
+        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+        dict(name='OriginTop', ui='CheckBox', args=dict(value=False)),
+    ], globals())
+           
+    d = makeDocument()
+    d.drawPages()
         
-d = makeDocument()
-d.drawPages()
-    

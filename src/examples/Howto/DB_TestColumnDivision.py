@@ -1,3 +1,14 @@
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     Made for usage in DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     TestColumnDivision.py
+#
 from __future__ import division
 
 class E:
@@ -23,7 +34,8 @@ def cw2w(cw, e):
     return w
 
 
-e = E()
+if __name__ == '__main__':
+    e = E()
 
-print w2cw(60, e)
-print cw2w(1, e)
+    print w2cw(60, e)
+    print cw2w(1, e)

@@ -144,12 +144,14 @@ def drawLayers(fss, frame):
         else:
             fs = fsDouble
         text(fs, (2*padding, y+100))
-     
-# If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
-if not fontNamePaths:
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
-else:
-    drawSample(t)
-    saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
-    
-    
+
+if __name__ == '__main__':
+         
+    # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
+    if not fontNamePaths:
+        os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
+    else:
+        drawSample(t)
+        saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+        
+        

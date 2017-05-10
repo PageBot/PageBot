@@ -16,13 +16,13 @@ from __future__ import division
 
 import pagebot
 from pagebot import getFormattedString
-from pagebot.page import Template
+from pagebot.elements.pbpage import Template
 from pagebot.style import A4,MM
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variablecube import VariableCube
-from pagebot.fonttoolbox.elements.variablescatter import VariableScatter
+from pagebot.elements.variablefonts.variablecube import VariableCube
+#from pagebot.elements.variablefonts.variablescatter import VariableScatter
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -35,10 +35,9 @@ OUTPUT_FILE = 'AmstelvarRandomSpecimen.pdf'
 
 FONT_PATH = pagebot.getFontPath() # Location of PageBot fonts.
 AmstelVarPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
-print 'Using font', AmstelVarPath
 
 # Installing the font in DrawBot
-amstelVarName = installFont(AmstelVarPath)
+#amstelVarName = installFont(AmstelVarPath)
 
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
 
@@ -170,10 +169,12 @@ class VariableTypeSpecimen(TypeSpecimen):
             self.buildVariableMatrixPage(varFont, page, locations)
 
 
-# Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariableTypeSpecimen([amstelVarName], showGrid=DEBUG)
-# Build the pages of the publication, interpreting the font list.
-typeSpecimen.build()
-# Export the document of the publication to PDF.
-typeSpecimen.export(OUTPUT_FILE)
+if __name__ == '__main__':
+    print 'Using font', AmstelVarPath
+    # Create a new specimen publications and add the list of system fonts.
+    typeSpecimen = VariableTypeSpecimen([amstelVarName], showGrid=DEBUG)
+    # Build the pages of the publication, interpreting the font list.
+    typeSpecimen.build()
+    # Export the document of the publication to PDF.
+    typeSpecimen.export(OUTPUT_FILE)
 

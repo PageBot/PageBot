@@ -15,8 +15,9 @@ import pagebot
 from pagebot import getFormattedString, findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT, NO_COLOR, RIGHT
 from pagebot.document import Document
-from pagebot.elements.page import Page, Template
-from pagebot.composition import Composer, Typesetter
+from pagebot.elements.pbpage import Page, Template
+from pagebot.composer import Composer
+from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 
@@ -96,7 +97,6 @@ P_TRACK = 0
 
 familyName = 'Bitcount'
 BitcountPaths = getFamilyFontPaths(familyName) 
-print BitcountPaths.keys()
 
 BOOK = 'BitcountPropSingle-BookCircle'
 MEDIUM = 'BitcountPropSingle-MediumCircle'
@@ -377,7 +377,11 @@ def makeDocument(rs):
                 break
     
     return doc
-        
-d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+
+if __name__ == '__main__':
+    
+    print BitcountPaths.keys()
+
+    d = makeDocument(RS)
+    d.export(EXPORT_PATH) 
 

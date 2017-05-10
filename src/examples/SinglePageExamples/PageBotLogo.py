@@ -13,8 +13,7 @@
 import pagebot # Import to know the path of non-Python resources.
 from pagebot.style import getRootStyle
 from pagebot.document import Document
-from pagebot.page import Page
-from pagebot.elements import Rect
+from pagebot.elements import * # Page and Rect
 
 # Some flags to turn on/off extra debug information on the output pages.    
 DEBUG = True
@@ -37,9 +36,10 @@ def makeLogo():
         x = int(round(random()*(W-4*LINE)))
         y = int(round(random()*(H-4*LINE)))
         w = h = 4*LINE
-        page.rect(x, y, w, h, style=dict(strokeWidth=LINE, stroke=0, fill=None))
+        newRect(x, y, w, h, parent=page, style=dict(strokeWidth=LINE, stroke=0, fill=None))
     return doc
-    
-d = makeLogo()    
-d.export(EXPORT_PATH) 
+ 
+if __name__ == '__main__':   
+    d = makeLogo()    
+    d.export(EXPORT_PATH) 
 

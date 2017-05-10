@@ -1396,6 +1396,15 @@ class Element(object):
                     s += '\n%s %s' % eFail
         return s
 
+    def drawFrame(self, p, view):
+        eFill = self.css('fill', None)
+        eStroke = self.css('stroke', None)
+        eStrokeWidth = self.css('strokeWidth')
+        if eFill or (eStroke and eStrokeWidth):
+            setFillColor(eFill)
+            setStrokeColor(eStroke, eStrokeWidth)
+            rect(p[0], p[1], self.w, self.h)
+
     def draw(self, origin, view, drawElements=True):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
@@ -1403,13 +1412,7 @@ class Element(object):
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        eFill = self.css('fill', None)
-        eStroke = self.css('stroke', None)
-        eStrokeWidth = self.css('strokeWidth')
-        if eFill or (eStroke and eStrokeWidth):
-            setFillColor(eFill)
-            setStrokeColor(eStroke, eStrokeWidth)
-            rect(px, py, self.w, self.h)
+        self.drawFrame(p, view)
 
         if drawElements:
             # If there are child elements, draw them over the pixel image.
@@ -2024,3 +2027,10 @@ class Element(object):
         else:
             self.bottom -= y
         self.h = h
+
+print __name__
+if __name__ == '__main__':
+    print 'SAASSSA'
+    import doctest
+    doctest.testmod()
+    print 'Run doctest'

@@ -44,14 +44,6 @@ SQUARE = 10 * GUTTER # Size of the squares
 EXPORT_PATH = '_export/UseImages.pdf' 
 
 
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='RedSize', ui='Slider', args=dict(minValue=100, value=100, maxValue=500)),
-    dict(name='YellowSize', ui='Slider', args=dict(minValue=10, value=30, maxValue=500)),
-    dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
-    dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-], globals())
-
 def makeDocument():
     u"""Make a new document."""
 
@@ -94,7 +86,17 @@ def makeDocument():
         print score.fails
         
     return doc # Answer the doc for further doing.
-        
-d = makeDocument()
-d.export(EXPORT_PATH) 
+   
+if __name__ == '__main__':
+ 
+    Variable([
+        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+        dict(name='RedSize', ui='Slider', args=dict(minValue=100, value=100, maxValue=500)),
+        dict(name='YellowSize', ui='Slider', args=dict(minValue=10, value=30, maxValue=500)),
+        dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
+        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+    ], globals())
+
+    d = makeDocument()
+    d.export(EXPORT_PATH) 
 

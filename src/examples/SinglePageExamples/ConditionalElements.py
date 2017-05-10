@@ -67,24 +67,6 @@ Element5_W = 50
 Element5_H = 50
 Text_W = 200
 
-Variable([
-    dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
-    dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
-    dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
-    dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
-    dict(name='Element1_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Element1_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='Element2_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Element2_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='Element3_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Element3_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='Element4_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Element4_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='Element5_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Element5_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='Text_W', ui='Slider', args=dict(minValue=100, value=200, maxValue=W)),
-], globals())
-
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot values are filled by their default values. The root style is kept in RS
 # as reference to for all ininitialzaiton of elements. 
@@ -180,8 +162,28 @@ def makeDocument():
         print fail
     
     return doc
-        
-d = makeDocument()
-d.export(EXPORT_PATH) 
 
-    
+if __name__ == '__main__':
+
+    Variable([
+        dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+        dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+        dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+        dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+        dict(name='Element1_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='Element1_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='Element2_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='Element2_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='Element3_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='Element3_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='Element4_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='Element4_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='Element5_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='Element5_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='Text_W', ui='Slider', args=dict(minValue=100, value=200, maxValue=W)),
+    ], globals())
+
+    d = makeDocument()
+    d.export(EXPORT_PATH) 
+
+        

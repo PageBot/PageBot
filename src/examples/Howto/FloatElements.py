@@ -24,7 +24,9 @@ from pagebot.elements import *
 from pagebot.conditions import *
 
 from pagebot.toolbox.transformer import path2ScriptId
-scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
+from pagebot import getGlobals
+
+scriptGlobals = getGlobals(path2ScriptId(__file__))
  
 PageSize = 700
 
@@ -38,7 +40,9 @@ SQ = 2 * G # Size of the squares
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
-t = """Headline of formatted text.Amy's Sun paper hit by hackers.Ignoring the fact that the problem, "was resolved through troubleshooting procedures and restored at midnight," wrote KLM spokesman Liz Ali III in an e-mail to BSN.Ignoring the fact that the computer malfunction brought Sky Team’s system of scheduling departures, reservations and processing passengers to a halt at airports across Norfolk Island. The problem left passengers stranded for hours in grounded planes, airport lobbies and security lines."""
+t = """Headline of formatted text.
+Amy's Sun paper hit by hackers.Ignoring the fact that the problem, "was resolved through troubleshooting procedures and restored at midnight," wrote KLM spokesman Liz Ali III in an e-mail to BSN.Ignoring the fact that the computer malfunction brought Sky Team’s system of scheduling departures, reservations and processing passengers to a halt at airports across Norfolk Island. The problem left passengers stranded for hours in grounded planes, airport lobbies and security lines.
+"""
 
 MaxPage = 1200
 
@@ -52,19 +56,6 @@ BlueHeight = 200
 ShowOrigin = False
 ShowElementInfo = False
 PageSize = MaxPage
-
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='RedWidth', ui='Slider', args=dict(minValue=30, value=100, maxValue=MaxPage)),
-    dict(name='RedHeight', ui='Slider', args=dict(minValue=30, value=100, maxValue=MaxPage)),
-    dict(name='YellowWidth', ui='Slider', args=dict(minValue=60, value=100, maxValue=MaxPage)),
-    dict(name='YellowHeight', ui='Slider', args=dict(minValue=30, value=100, maxValue=MaxPage)),
-    dict(name='BlueWidth', ui='Slider', args=dict(minValue=30, value=100, maxValue=MaxPage)),
-    dict(name='BlueHeight', ui='Slider', args=dict(minValue=30, value=100, maxValue=MaxPage)),
-    dict(name='ShowOrigin', ui='CheckBox', args=dict(value=True)),
-    dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
-    dict(name='PageSize', ui='Slider', args=dict(minValue=200, value=400, maxValue=MaxPage)),
-], globals())
 
 EXPORT_PATH = '_export/AlignElements.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
@@ -122,7 +113,23 @@ def makeDocument():
         print 'Condition fails', score.fails 
     
     return doc # Answer the doc for further doing.
-        
-d = makeDocument()
-d.export(EXPORT_PATH) 
+
+if __name__ == '__main__':
+    
+    Variable([
+        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+        dict(name='RedWidth', ui='Slider', args=dict(minValue=30, value=100, maxValue=MaxPage)),
+        dict(name='RedHeight', ui='Slider', args=dict(minValue=30, value=100, maxValue=MaxPage)),
+        dict(name='YellowWidth', ui='Slider', args=dict(minValue=60, value=100, maxValue=MaxPage)),
+        dict(name='YellowHeight', ui='Slider', args=dict(minValue=30, value=100, maxValue=MaxPage)),
+        dict(name='BlueWidth', ui='Slider', args=dict(minValue=30, value=100, maxValue=MaxPage)),
+        dict(name='BlueHeight', ui='Slider', args=dict(minValue=30, value=100, maxValue=MaxPage)),
+        dict(name='ShowOrigin', ui='CheckBox', args=dict(value=True)),
+        dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
+        dict(name='PageSize', ui='Slider', args=dict(minValue=200, value=400, maxValue=MaxPage)),
+    ], globals())
+
+            
+    d = makeDocument()
+    d.export(EXPORT_PATH) 
 

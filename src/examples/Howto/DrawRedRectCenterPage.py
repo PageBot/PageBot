@@ -22,13 +22,6 @@ ShowOrigins = False
 ShowElementInfo = False
 RectSize = 300
 
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='ShowOrigins', ui='CheckBox', args=dict(value=True)),
-    dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
-    dict(name='RectSize', ui='Slider', args=dict(minValue=10, value=W/2, maxValue=W)),
-], globals())
-
 def makeDocument():
     # Create new document with (w,h) size and fixed amount of pages.
     # Note that most of the rootStyle is cascading through the e.css('name') call,
@@ -63,7 +56,16 @@ def makeDocument():
     view.showElementInfo = ShowElementInfo # Show baxes with element info element.
     
     return doc
+   
+if __name__ == '__main__':
+
+    Variable([
+        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+        dict(name='ShowOrigins', ui='CheckBox', args=dict(value=True)),
+        dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
+        dict(name='RectSize', ui='Slider', args=dict(minValue=10, value=W/2, maxValue=W)),
+    ], globals())
+         
+    d = makeDocument()
+    d.export('_export/DrawRedRectCenterPage.pdf')
         
-d = makeDocument()
-d.export('_export/DrawRedRectCenterPage.pdf')
-    

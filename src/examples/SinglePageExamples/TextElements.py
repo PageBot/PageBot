@@ -19,7 +19,7 @@ from pagebot.style import getRootStyle, LEFT, A4, A3, A2, NO_COLOR
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
-from pagebot.elements.page import Page, Template
+from pagebot.elements.pbpage import Page, Template
 # The Typesetter instance takes content from a file (typically MarkDown text) and converts that 
 # into Galley list of elements.
 from pagebot.typesetter import Typesetter
@@ -28,7 +28,7 @@ from pagebot.composer import Composer
 # Elements that can placed on pages and templates.
 from pagebot.elements import Galley, Rect
 # Get functions to create instances style from Variable fonts.
-from pagebot.fonttoolbox.variablebuilder import getVariableFont, generateInstance
+#from pagebot.fonttoolbox.variablebuilder import getVariableFont, generateInstance
 
 # For clarity, most of the OnePage.py example document is setup as a sequential excecution of
 # Python functions. For complex documents this is not the best method. More functions and classes
@@ -177,7 +177,8 @@ def makeDocument(rs):
     c.compose(g, onePage, flowId0)
     """
     return doc
-        
-d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+ 
+if __name__ == '__main__':       
+    d = makeDocument(RS)
+    d.export(EXPORT_PATH) 
 

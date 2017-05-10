@@ -21,13 +21,13 @@ from pagebot.contributions.filibuster.blurb import blurb
 from pagebot.style import getRootStyle, LEFT, A4, A1, CENTER, RIGHT, BOTTOM, TOP
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
-from pagebot.elements.galley import Galley
+from pagebot.elements import *
+from pagebot.conditions import *
 # The Typesetter instance takes content from a file (typically MarkDown text) and converts that 
 # into Galley list of elements.
 from pagebot.typesetter import Typesetter
 # The Composer instance distributes the Galley content of the pages, according to the defined Templates.
 from pagebot.composer import Composer 
-from pagebot.conditions import *
 
 class FontSizeWidthRatio(Condition):
     def evaluate(self, e):
@@ -65,24 +65,6 @@ PL = 100
 PR = 50
 PB = 100
 
-Variable([
-    #dict(name='ConditionH', ui='PopUpButton', args=dict(items=sorted(ConditionsHDict.keys()))),
-    #dict(name='ConditionV', ui='PopUpButton', args=dict(items=sorted(ConditionsVDict.keys()))),
-    dict(name='PR', ui='Slider', args=dict(minValue=20, value=50, maxValue=W/2)),
-    dict(name='PT', ui='Slider', args=dict(minValue=20, value=50, maxValue=H/2)),
-    dict(name='PB', ui='Slider', args=dict(minValue=20, value=50, maxValue=W/2)),
-    dict(name='PL', ui='Slider', args=dict(minValue=20, value=50, maxValue=H/2)),
-    dict(name='W1', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='H1', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='W2', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='H2', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='W3', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='H3', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='W4', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='H4', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='W5', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='H5', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-], globals())
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot values are filled by their default values. The root style is kept in RS
@@ -168,8 +150,29 @@ def makeDocument(rootStyle):
         print fail
     
     return doc
-        
-d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+  
+if __name__ == '__main__':
 
-    
+    Variable([
+        #dict(name='ConditionH', ui='PopUpButton', args=dict(items=sorted(ConditionsHDict.keys()))),
+        #dict(name='ConditionV', ui='PopUpButton', args=dict(items=sorted(ConditionsVDict.keys()))),
+        dict(name='PR', ui='Slider', args=dict(minValue=20, value=50, maxValue=W/2)),
+        dict(name='PT', ui='Slider', args=dict(minValue=20, value=50, maxValue=H/2)),
+        dict(name='PB', ui='Slider', args=dict(minValue=20, value=50, maxValue=W/2)),
+        dict(name='PL', ui='Slider', args=dict(minValue=20, value=50, maxValue=H/2)),
+        dict(name='W1', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='H1', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='W2', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='H2', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='W3', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='H3', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='W4', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='H4', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='W5', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='H5', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+    ], globals())
+          
+    d = makeDocument(RS)
+    d.export(EXPORT_PATH) 
+
+        

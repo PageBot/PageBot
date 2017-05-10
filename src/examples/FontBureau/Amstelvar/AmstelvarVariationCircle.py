@@ -12,12 +12,12 @@
 from __future__ import division
 
 import pagebot
-from pagebot.page import Template
+from pagebot.elements.pbpage import Template
 # For Variable Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variablecircle import VariableCircle
+from pagebot.elements.variablefonts.variablecircle import VariableCircle
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -25,8 +25,8 @@ OUTPUT_FILE = 'AmstelvarVariableCircle.pdf'
 
 FONT_PATH = pagebot.getFontPath()
 fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
-amstelvar = Font(fontPath)
-amstelvarName = amstelvar.install() # Do DrawBot font install.
+#amstelvar = Font(fontPath)
+#amstelvarName = amstelvar.install() # Do DrawBot font install.
 
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
 
@@ -113,10 +113,11 @@ class VariableCircleSpecimen(TypeSpecimen):
         scatter = VariableCircle(amstelvar, w=500, h=500, s=glyphName)
         page.place(scatter, 50, 100)
                     
-# Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariableCircleSpecimen([amstelvarName], showGrid=DEBUG) 
-# Build the pages of the publication, interpreting the font list.
-typeSpecimen.build()
-# Export the document of the publication to PDF.
-typeSpecimen.export(OUTPUT_FILE)
+if __name__ == '__main__':
+    # Create a new specimen publications and add the list of system fonts.
+    typeSpecimen = VariableCircleSpecimen([amstelvarName], showGrid=DEBUG) 
+    # Build the pages of the publication, interpreting the font list.
+    typeSpecimen.build()
+    # Export the document of the publication to PDF.
+    typeSpecimen.export(OUTPUT_FILE)
 

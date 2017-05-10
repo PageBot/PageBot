@@ -11,18 +11,20 @@
 #     align.py
 #
 from __future__ import division
-from condition import Condition
+from pagebot.conditions.condition import Condition
 
 #	F I T T I N G 
 
+#   By fittng conditions, elements grow to match the size of parents.
+
 class Fit(Condition):
-	u"""Fit the element on all sides of the parent margins."""
+	u"""Fit the element on all sides of the parent paddings."""
 
 	def _getConditions(self):
 		return [Left2Left, Top2Top, Fit2Right, Fit2Bottom]
 
 	def evaluate(self, e, score):
-		u"""Fit the element on all margins of the parent. First align left and top,
+		u"""Fit the element on all paddings of the parent. First align left and top,
 		then fit right and bottom. This order to avoid that element temporary
 		get smaller than their minimum size, if the start position is wrong."""
 		self.evaluateAll(e, self._getConditions(), score)
@@ -94,7 +96,7 @@ class Fit2Bottom(Condition):
 
 #	F I T T I N G  S I D E S
 
-# There are no "FitOrigin" condition, as these mau result is extremely large scalings.
+# There are no "FitOrigin" condition, as these may result is extremely large scalings.
 
 class Fit2WidthSide(Condition):
 	def test(self, e):
@@ -143,6 +145,144 @@ class Fit2BottomSide(Condition):
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.fitBottomSide(), e, score)
+
+#	S H R I N K 
+
+#   By shrinking conditions, elements get smaller to match the size of their children.
+#   Not only literally ”shrinking”, if self is smaller than the space occupied by
+#   the child elements, then it will grow on that side.
+
+class Shrink(Condition):
+	u"""Shrink the element on all sides around the margins of the enclose child elements.
+	There should be at least one child element for this to executed."""
+
+	def _getConditions(self):
+		return [Left2Left, Top2Top, Fit2Right, Fit2Bottom]
+
+	def evaluate(self, e, score):
+		u"""Fit the element on all margins of the parent. First align left and top,
+		then fit right and bottom. This order to avoid that element temporary
+		get smaller than their minimum size, if the start position is wrong."""
+		self.evaluateAll(e, self._getConditions(), score)
+
+	def solve(self, e, score):	
+		self.solveAll(e, self._getConditions(), score)
+
+class Shrink2Sides(Condition):
+	u"""Shirink the element on all sides of the children sides. There needs to be at least
+	one child element."""
+
+	def _getConditions(self):
+		return [Shrink2LeftSide, Shrink2TopSide, Shrink2RightSide, Shrink2BottomSide]
+
+	def evaluate(self, e, score):
+		self.evaluateAll(e, self._getConditions(), score)
+
+	def solve(self, e, score):	
+		self.solveAll(e, self._getConditions(), score)
+
+# There are no "ShrinkOrigin" condition, as these may result is extremely large scalings.
+
+class Shrink2Left(Condition):
+	def test(self, e):
+		return e.isSchrinkedOnLeft(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.shrink2Left(), e, score)
+
+class Shrink2Right(Condition):
+	def test(self, e):
+		return e.isShinkOnRight(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fit2Right(), e, score)
+
+class Fit2Width(Condition):
+	def test(self, e):
+		return e.isLeftOnLeft(self.tolerance) and e.isRightOnRight(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.left2Left() and e.fit2Right(), e, score)
+		
+class Fit2Height(Condition):
+	def test(self, e):
+		return e.isTopOnTop(self.tolerance) and e.isBottomOnBottom(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.top2Top() and e.fit2Bottom(), e, score)
+		
+class Fit2Top(Condition):
+	def test(self, e):
+		return e.isTopOnTop(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fit2Top(), e, score)
+
+class Fit2Bottom(Condition):
+	def test(self, e):
+		return e.isBottomOnBottom(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fit2Bottom(), e, score)
+
+#	F I T T I N G  S I D E S
+
+# There are no "FitOrigin" condition, as these may result is extremely large scalings.
+
+class Fit2WidthSide(Condition):
+	def test(self, e):
+		return e.isLeftOnLeftSide(self.tolerance) and e.isRightOnRightSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.left2LeftSide() and e.fit2RightSide(), e, score)
+		
+class Fit2LeftSide(Condition):
+	def test(self, e):
+		return e.isLeftOnLeftSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitLeftSide(), e, score)
+
+class Fit2RightSide(Condition):
+	def test(self, e):
+		return e.isRightOnRightSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitRightSide(), e, score)
+
+class Fit2HeightSide(Condition):
+	def test(self, e):
+		return e.isTopOnTopSide(self.tolerance) and e.isBottomOnBottomSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.top2Top() and e.fit2BottomSide(), e, score)
+		
+class Fit2TopSide(Condition):
+	def test(self, e):
+		return e.isTopOnTopSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitTopSide(), e, score)
+
+class Fit2BottomSide(Condition):
+	def test(self, e):
+		return e.isBottomOnBottomSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitBottomSide(), e, score)
+
 
 #	C E N T E R  H O R I Z O N T A L
 
