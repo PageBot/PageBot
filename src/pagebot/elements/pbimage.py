@@ -26,21 +26,16 @@ class Image(Element):
     applied (e.g. if the image element changes size), or the child elements can be put on fixed positions."""
     
     def __init__(self, path=None, style=None, pixelMap=None, title=None, caption=None, clipRect=None, 
-            mask=None, imo=None, w=None, h=None, **kwargs):
+            mask=None, imo=None, w=None, h=None, imageConditions=None, conditions=None, **kwargs):
         self.image = None # Aviud setting of self.omage.w and self.omage.h while not initialized.
-        Element.__init__(self, w=w, h=h, **kwargs)
+        Element.__init__(self, conditions=conditions, **kwargs)
         assert path is None or pixelMap is None # One or the other or both None.
 
-        self.fitImageWidth = bool(w) # Flag if image shouid vacuum in x or y direction.
-        self.fitImageHeight = bool(h)
-        if not w and not h:
-            w = h = DEFAULT_WIDTH #At least of the two should be define on init
-            self._w = w
-            self._h = h
-
+        if imageConditions is None:
+            imageConditions = (Top2TopSide(), Fit2Width())
         if pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
             pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, h=h,
-                conditial=(Fit2Width(), Top2TopSide()), **kwargs) # Default width is leading.
+                conditions=imageConditions, **kwargs) # Default width is leading.
         self.image = pixelMap # Property to add to self.elements and set pixelMap.parent to self.
         # Title can be any type of element, but most likely a text box.
         self.title = title # Property to add to self.elements and set caption.parent to self.
@@ -73,10 +68,7 @@ class Image(Element):
     caption = property(_get_caption, _set_caption)
 
     def _get_w(self):
-        if self.fitImageWidth:
-            _, _, w, _ = self.getVacuumElementsBox()
-            return w
-        return self._w # Overwrite vacuum width
+        return self._w 
     def _set_w(self, w):
         self._w = w
         if self.image is not None:
@@ -84,14 +76,11 @@ class Image(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        if self.fitImageHeight:
-            _, _, _, h = self.getVacuumElementsBox()
-            return h
         return self._h
-    def _set_h(self, h): # Overwrite vacuum height
+    def _set_h(self, h): 
         self._h = h
         if self.image is not None:
-            self.image.w = w - self.pl - self.pr
+            self.image.h = h - self.pb - self.pt
     h = property(_get_h, _set_h)
 
 
@@ -101,6 +90,8 @@ class PixelMap(Element):
     def __init__(self, path, w=None, h=None, clipRect=None, mask=None, imo=None, **kwargs):
         Element.__init__(self, **kwargs)
 
+        # One of the two needs to be defined, the other can be None.
+        # If both are set, then the image scale disproportional.
         self.w = w
         self.h = h
 

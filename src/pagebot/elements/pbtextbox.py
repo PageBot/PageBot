@@ -292,13 +292,14 @@ class TextBox(Element):
     def _get_h(self):
         u"""Answer the height of the textBox. If self.style['elasticH'] is set, then answer the 
         vertical space that the text needs. This overwrites the setting of self._h."""
-        if self.style.get('elasticH'):
-            h = self.getTextSize()[1] + self.pt + self.pb
+        if self.style['h'] is None: # Elastic height
+            h = self.getTextSize(self.w)[1] + self.pt + self.pb # Add paddings
         else:
             h = self.style['h']
-        return min(self.maxH, max(self.minH, h or MIN_HEIGHT)) # Should not be 0 or None
+        return min(self.maxH, max(self.minH, h)) # Should not be 0 or None
     def _set_h(self, h):
-        self.style['h'] = h or MIN_HEIGHT # Overwrite style from here, unless self.style['elasticH'] is True
+        # Overwrite style from here, unless self.style['elasticH'] is True
+        self.style['h'] = h # If None, then self.h is elastic from content
     h = property(_get_h, _set_h)
 
     def __getitem__(self, lineIndex):
@@ -441,7 +442,8 @@ class TextBox(Element):
                     font='Verdana', fontSize=fontSize, 
                     fill=(1, 0, 0)), (self.x + self.w + 3, self.y + self.h - prevY - leading/2 - fontSize/4))
             prevY = y
-  
+ 
+ 
     #   F I N D
 
     def findPattern(self, pattern):

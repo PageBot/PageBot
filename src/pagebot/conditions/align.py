@@ -13,6 +13,16 @@
 from __future__ import division
 from pagebot.conditions.condition import Condition
 
+class SolveBlock(Condition):
+	u"""Used as a condition in the sequence of conditions, to fix the block of child elements first."""
+	def evaluate(self, e, score):
+		for child in e.elements:
+			child.evaluate(score)
+
+	def solve(self, e, score):
+		for child in e.elements:
+			child.solve(score)
+
 #	F I T T I N G 
 
 #   By fittng conditions, elements grow to match the size of parents.
