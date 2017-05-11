@@ -37,6 +37,8 @@ class View(Element):
         self.h = h
         self._initializeControls()
         self.setControls()
+        # List of collected elements that need to draw their info on top of the main drawing,
+        self.elementsNeedInfo = [] 
 
     def _initializeControls(self):
         self.showElementInfo = False
@@ -98,6 +100,9 @@ class View(Element):
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             page.draw(origin, self) 
+            # Self.infoElements now may have collected elements needed info to be drawn.
+            for e in self.elementsNeedInfo:
+                self._drawElementsNeedInfo()
 
     def export(self, fileName, pageSelection=None, multiPage=True):
         u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
@@ -254,40 +259,72 @@ class View(Element):
         
     def drawElementInfo(self, e, origin):
         u"""For debugging this will make the elements show their info. The css flag "showElementOrigin"
-        defines if the origin marker of an element is drawn."""
-        p = pointOffset(e.oPoint, origin)
-        p = e._applyScale(p)    
-        px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
-        if self.showElementInfo:
-            # Draw box with element info.
-            fs = getFormattedString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'), 
-                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-            tw, th = textSize(fs)
-            Pd = 4 # Padding in box and shadow offset.
-            tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
-            tpy = py + e.h - th - Pd
-            # Tiny shadow
-            setFillColor((0.3, 0.3, 0.3, 0.5))
-            setStrokeColor(None)
-            rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
-            # Frame
-            setFillColor(self.css('viewInfoFill'))
-            setStrokeColor(0.3, 0.25)
-            rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
-            text(fs, (tpx+Pd, tpy+1.5*Pd))
-            e._restoreScale()
+        defines if the origin marker of an element is drawn. Collect the (e, origin), so we can later
+        draw all info, after the main drawing has been done."""
+        self.elementsNeedInfo.append((e, origin))
 
-        if 0 and self.showElementDimensions:
-            # TODO: Make separate arrow functio and better positions
-            # Draw width and height measures
-            setFillColor(None)
-            setStrokeColor(0, 0.25)
-            S = self.css('viewInfoOriginMarkerSize', 4)
-            opx, opy, _ = p
-            x1, y1, x2, y2 = e.left, e.bottom, e.right, e.top
-            line((opx + x1, opy + y1 - S), (opx + x1, opy + y1 - 3*S))
-            self.drawArrow(e, opx + x1, opy + y1 - 2*S, opx + x2, opy + y1 - 2*S, True, True, fms=2, fmf=0, stroke=0, strokeWidth=0.25, fill=0)
-            line((opx + x2, opy + y1 - S), (opx + x2, opy + y1 - 3*S))
+    def _drawElementsNeedInfo(self):
+        for e, origin in self.elementsNeedInfo:
+            p = pointOffset(e.oPoint, origin)
+            p = e._applyScale(p)    
+            px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
+            if self.showElementInfo:
+                # Draw box with element info.
+                fs = getFormattedString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'), 
+                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                tw, th = textSize(fs)
+                Pd = 4 # Padding in box and shadow offset.
+                tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
+                tpy = py + e.h - th - Pd
+                # Tiny shadow
+                setFillColor((0.3, 0.3, 0.3, 0.5))
+                setStrokeColor(None)
+                rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
+                # Frame
+                setFillColor(self.css('viewInfoFill'))
+                setStrokeColor(0.3, 0.25)
+                rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
+                text(fs, (tpx+Pd, tpy+1.5*Pd))
+                e._restoreScale()
+
+            if self.showElementDimensions:
+                # TODO: Make separate arrow functio and better positions
+                # Draw width and height measures
+                setFillColor(None)
+                setStrokeColor(0, 0.25)
+                S = self.css('viewInfoOriginMarkerSize', 4)
+                x1, y1, x2, y2 = e.left, e.bottom, e.right, e.top
+
+                # Horizontal measure
+                line((x1, y1 - 0.5*S), (x1, y1 - 3.5*S))
+                line((x2, y1 - 0.5*S), (x2, y1 - 3.5*S))
+                line((x1, y1 - 2*S), (x2, y1 - 2*S))
+                # Arrow heads
+                line((x1, y1 - 2*S), (x1+S, y1 - 1.5*S))
+                line((x1, y1 - 2*S), (x1+S, y1 - 2.5*S))
+                line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
+                line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
+
+                fs = getFormattedString(`x2 - x1`, style=dict(font=self.css('viewInfoFont'), 
+                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                tw, th = textSize(fs)
+                text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
+
+                # Vertical measure
+                line((x2+S, y1), (x2+S, y1))
+                line((x2+S, y2), (x2+S, y2))
+                line((x2+2*S, y1), (x2+2*S, y2))
+                # Arrow heads
+                
+                line((x2+S, y2 + 2*S), (x2+2.5*S, y2 - 2*S))
+                line((x2+S, y2 + 2*S), (x2+1.5*S, y2 - 2*S))
+                line((x2+S, y1 + 2*S), (x2+2.5*S, y1 + 2*S))
+                line((x2+S, y1 + 2*S), (x2+1.5*S, y1 + 2*S))
+                
+                fs = getFormattedString(`y2 - y1`, style=dict(font=self.css('viewInfoFont'), 
+                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                tw, th = textSize(fs)
+                text(fs, (x2+2*S-tw/2, (y2+y1)/2))
 
     def drawElementOrigin(self, e, origin):
         px, py, _ = pointOffset(e.oPoint, origin)

@@ -514,6 +514,7 @@ class Element(object):
     # Vertical
 
     def _get_top(self):
+        u"""Answer the top position (relative to self.parent) of self."""
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             return self.y - self.h/2
@@ -523,6 +524,7 @@ class Element(object):
             return self.y + self.h
         return self.y
     def _set_top(self, y):
+        u"""Shift the element so self.top == y."""
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             self.y = y + self.h/2
@@ -830,6 +832,7 @@ class Element(object):
         return self.h + self.mt + self.mb # Add margins to height
     def _set_mh(self, h):
         self.style['h'] = max(0, h - self.mt - self.mb) # Cannot become < 0
+        self.changedHeight()
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self): # Depth
@@ -1479,6 +1482,14 @@ class Element(object):
             setFillColor(eFill)
             setStrokeColor(eStroke, eStrokeWidth)
             rect(p[0], p[1], self.w, self.h)
+            if self.ml or self.mr or self.mb or self.mt:
+                setStrokeColor((0, 0, 1))
+                setFillColor(None)
+                rect(p[0]-self.ml, p[1]-self.mb, self.w + self.ml + self.mr, self.h + self.mb + self.mt)
+            if self.pl or self.pr or self.pb or self.pt:
+                setStrokeColor((0, 1, 0))
+                setFillColor(None)
+                rect(p[0]+self.pl, p[1]+self.pb, self.w - self.pl - self.pr, self.h - self.pb - self.pt)
 
     def draw(self, origin, view, drawElements=True):
         u"""Default drawing method just drawing the frame. 
@@ -1729,10 +1740,11 @@ class Element(object):
         return self.top - self.pt - (boxY + boxH) <= tolerance
 
     def isShrunkOnBlockBottom(self, tolerance):
+        u"""Test if the bottom of self is shrunk to the bottom position of the block."""
         _, boxY, _, boxH = self.marginBox
         if self.originTop:
-            return abs(self.bottom - self.mb - (boxY + boxH)) <= tolerance
-        return abs(self.bottom + self.mb - boxY) <= tolerance
+            return abs(self.h - self.pb - (boxY + boxH)) <= tolerance
+        return abs(self.pb - boxY) <= tolerance
 
     def isShrunkOnBlockLeftSide(self, tolerance):
         boxX, _, _, _ = self.box
@@ -2130,13 +2142,13 @@ class Element(object):
     # Shrinking
     
     def shrink2BlockBottom(self):
-        _, boxY, _, boxH = self.box()
+        _, boxY, _, boxH = self.box
         if self.originTop:
             self.h = boxH
         else:
-            h = self.h
+            top = self.top
             self.bottom = boxY
-
+            self.h += top - self.top
         return True
 
     def shrink2BlockBottomSide(self):

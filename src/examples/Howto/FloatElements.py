@@ -102,7 +102,7 @@ def makeDocument():
         padding=4, fill=0.7, 
         maxW=pageArea, maxH=pageArea, conditions=(Left2Left(), Float2Top()))
     
-    newImage('images/cookbot10.jpg', z=0, w=BlueWidth, h=BlueHeight, parent=page, fill=0.4, 
+    newImage('images/cookbot10.jpg', z=0, w=BlueWidth, parent=page, fill=0.4, 
         padding=8, maxW=pageArea, maxH=pageArea, conditions=(Right2Right(), Float2Top()))
     
     newRect(z=0, w=BlueWidth, h=20, parent=page, fill=0.2, 

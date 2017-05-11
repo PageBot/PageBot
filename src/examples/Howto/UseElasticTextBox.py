@@ -6,11 +6,8 @@
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
-#
-#     UseImageElements.py
-#
-#     This script generates a page with random color squares, indicating where their position is.
-#     This script is using the style parameters "originTop", making the coordinate system run downwards.
+#Z
+#     UseElasticTextBox.py
 #
 from __future__ import division # Make integer division result in float.
 import pagebot # Import to know the path of non-Python resources.
@@ -39,7 +36,9 @@ SQUARE = 10 * GUTTER # Size of the squares
 # that is very similar to what happens in CSS.
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/UseImageElements.pdf' 
+EXPORT_PATH = '_export/UseElasticTextBox.pdf' 
+
+BoxWidth = 200
 
 def makeDocument():
     u"""Make a new document."""
@@ -65,6 +64,7 @@ def makeDocument():
     view = doc.getView()
     view.padding = 0 # Aboid showing of crop marks, etc.
     view.showElementOrigin = True
+    view.showElementDimensions = True
     
     # Get list of pages with equal y, then equal x.    
     #page = doc[0][0] # Get the single page from te document.
@@ -74,18 +74,18 @@ def makeDocument():
     
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Top2Top(), Fit2Width(), SolveBlock(), Shrink2BlockBottom()), yAlign=BOTTOM,
-        fill=(0, 1, 0, 0.3), 
-        stroke=(1, 0, 0)
+    tb = newTextBox('Volume of text defines the box height. ' * 10+'\n\n', 
+        name='ElasticTextBox', 
+        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana',         
+        conditions=[Left2Left(), Float2Top()], yAlign=TOP, leading=5, 
+        fontSize=9, textFill=0, strokeWidth=0.5, fill=0.85, stroke=None,
     )
-    # Give parent on creation, to have the css chain working.
-    
-    # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
-    cap = newTextBox('Captions float below the image', name='Caption', parent=im, padding=4,
-        font='Verdana', conditions=[ Fit2Width(), Float2BottomSide(), Shrink2BlockBottom()], yAlign=TOP, h = 24,
-        fontSize=9, textFill=1, strokeWidth=0.5, fill=(0, 0, 1, 0.3), stroke=(0, 0, 1),
+    tb = newTextBox('Volume of text defines the box height. ' * 10+'\n\n', 
+        name='ElasticTextBox', 
+        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana',         
+        conditions=[Right2Right(), Float2Top()], yAlign=TOP, leading=5, 
+        fontSize=9, textFill=0, strokeWidth=0.5, fill=0.65, stroke=None,
     )
-    
     score = page.solve()
     if score.fails:
         print score.fails
@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
     Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-         dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
+         dict(name='BoxWidth', ui='Slider', args=dict(minValue=50, value=300, maxValue=800)),
         dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
     ], globals())
            
