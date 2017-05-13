@@ -20,7 +20,7 @@ from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineT
 from pagebot import setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
-from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D, point2S
+from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D, point2S, asFormatted
 from pagebot import getFormattedString, setStrokeColor, setFillColor
 
 class View(Element):
@@ -38,7 +38,7 @@ class View(Element):
         self._initializeControls()
         self.setControls()
         # List of collected elements that need to draw their info on top of the main drawing,
-        self.elementsNeedInfo = [] 
+        self.elementsNeedingInfo = {}
 
     def _initializeControls(self):
         self.showElementInfo = False
@@ -101,8 +101,8 @@ class View(Element):
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             page.draw(origin, self) 
             # Self.infoElements now may have collected elements needed info to be drawn.
-            for e in self.elementsNeedInfo:
-                self._drawElementsNeedInfo()
+            for e in self.elementsNeedingInfo.values():
+                self._drawElementsNeedingInfo()
 
     def export(self, fileName, pageSelection=None, multiPage=True):
         u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
@@ -261,10 +261,11 @@ class View(Element):
         u"""For debugging this will make the elements show their info. The css flag "showElementOrigin"
         defines if the origin marker of an element is drawn. Collect the (e, origin), so we can later
         draw all info, after the main drawing has been done."""
-        self.elementsNeedInfo.append((e, origin))
+        if not e.eId in self.elementsNeedingInfo:
+            self.elementsNeedingInfo[e.eId] = (e, origin)
 
-    def _drawElementsNeedInfo(self):
-        for e, origin in self.elementsNeedInfo:
+    def _drawElementsNeedingInfo(self):
+        for e, origin in self.elementsNeedingInfo.values():
             p = pointOffset(e.oPoint, origin)
             p = e._applyScale(p)    
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
@@ -305,23 +306,22 @@ class View(Element):
                 line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
                 line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
 
-                fs = getFormattedString(`x2 - x1`, style=dict(font=self.css('viewInfoFont'), 
+                fs = getFormattedString(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'), 
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
                 tw, th = textSize(fs)
                 text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
 
                 # Vertical measure
-                line((x2+S, y1), (x2+S, y1))
-                line((x2+S, y2), (x2+S, y2))
+                line((x2+0.5*S, y1), (x2+3.5*S, y1))
+                line((x2+0.5*S, y2), (x2+3.5*S, y2))
                 line((x2+2*S, y1), (x2+2*S, y2))
                 # Arrow heads
+                line((x2+2*S, y2), (x2+2.5*S, y2-1.5*S))
+                line((x2+2*S, y2), (x2+1.5*S, y2-1.5*S))
+                line((x2+2*S, y1), (x2+2.5*S, y1 + 1.5*S))
+                line((x2+2*S, y1), (x2+1.5*S, y1 + 1.5*S))
                 
-                line((x2+S, y2 + 2*S), (x2+2.5*S, y2 - 2*S))
-                line((x2+S, y2 + 2*S), (x2+1.5*S, y2 - 2*S))
-                line((x2+S, y1 + 2*S), (x2+2.5*S, y1 + 2*S))
-                line((x2+S, y1 + 2*S), (x2+1.5*S, y1 + 2*S))
-                
-                fs = getFormattedString(`y2 - y1`, style=dict(font=self.css('viewInfoFont'), 
+                fs = getFormattedString(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'), 
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
                 tw, th = textSize(fs)
                 text(fs, (x2+2*S-tw/2, (y2+y1)/2))

@@ -27,7 +27,7 @@ from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installe
 
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-#from pagebot.fonttoolbox.variablefontbuilder import generateInstance, drawGlyphPath
+from pagebot.fonttoolbox.variablefontbuilder import generateInstance, drawGlyphPath
 from pagebot.toolbox.transformer import pointOffset
 
 class VariableCircle(Element):
@@ -36,8 +36,8 @@ class VariableCircle(Element):
     DEFAULT_FONT_SIZE = 64
     R = 2/3 # Fontsize factor to draw glyph markers.
 
-    def __init__(self, font, point=None, parent=None, style=None, eId=None, s=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, eId=eId, **kwargs)
+    def __init__(self, font, s=None, **kwargs):
+        Element.__init__(self, **kwargs)
         # Initialize the default Element behavior tags.
         self.isText = False
         self.isFlow = False
@@ -66,10 +66,9 @@ class VariableCircle(Element):
         glyphPathScale = fontSize/self.font.info.unitsPerEm
         drawGlyphPath(self.font.ttFont, glyphName, mx, my-fontSize/4, location, s=glyphPathScale, fillColor=0)
 
-    def draw(self, origin):
+    def draw(self, origin, view):
         u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
-        p = pointOffset(self.point, origin)
-        p = self._applyOrigin(p)    
+        p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
    

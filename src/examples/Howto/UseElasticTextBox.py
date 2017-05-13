@@ -14,14 +14,15 @@ import pagebot # Import to know the path of non-Python resources.
 
 from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
+from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot import getFormattedString
 
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
-    
+
+DoTextFlow = False   
 PagePadding = 64
 PageSize = 500
 
@@ -38,7 +39,8 @@ SQUARE = 10 * GUTTER # Size of the squares
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/UseElasticTextBox.pdf' 
 
-BoxWidth = 200
+BoxWidths = 200
+FloContent = True
 
 def makeDocument():
     u"""Make a new document."""
@@ -74,17 +76,30 @@ def makeDocument():
     
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    tb = newTextBox('Volume of text defines the box height. ' * 10+'\n\n', 
-        name='ElasticTextBox', 
-        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana',         
-        conditions=[Left2Left(), Float2Top()], yAlign=TOP, leading=5, 
-        fontSize=9, textFill=0, strokeWidth=0.5, fill=0.85, stroke=None,
+    if BoxWidths < 200:
+        tColor = (1, 0, 0)
+        
+    else:
+        tColor = (0, 0, 1)
+    
+    s = ''
+    for n in range(10):
+        s += '(%d) Volume of text defines the box height.\n' % (n+1)
+    if DoTextFlow:
+        h1 = 100
+    else:
+        h1 = None    
+    newTextBox(s, 
+        name='ElasticTextBox1', 
+        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,       
+        conditions=[Left2Left(), Float2Top()], yAlign=BOTTOM, xAlign=LEFT, leading=5, mb=10,
+               fontSize=9, textFill=tColor, strokeWidth=0.5, fill=0.9, stroke=None,
     )
-    tb = newTextBox('Volume of text defines the box height. ' * 10+'\n\n', 
-        name='ElasticTextBox', 
+    newTextBox(s, 
+        name='ElasticTextBox2', mt=10,
         parent=page, padding=4, x=100, w=BoxWidth, font='Verdana',         
         conditions=[Right2Right(), Float2Top()], yAlign=TOP, leading=5, 
-        fontSize=9, textFill=0, strokeWidth=0.5, fill=0.65, stroke=None,
+        fontSize=9, textFill=0.9, strokeWidth=0.5, fill=tColor, stroke=None,
     )
     score = page.solve()
     if score.fails:
@@ -97,7 +112,8 @@ if __name__ == '__main__':
 
     Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-         dict(name='BoxWidth', ui='Slider', args=dict(minValue=50, value=300, maxValue=800)),
+         dict(name='DoTextFlow', ui='CheckBox', args=dict(value=False)),
+         dict(name='BoxWidth', ui='Slider', args=dict(minValue=100, value=300, maxValue=800)),
         dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
     ], globals())
            

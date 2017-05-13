@@ -15,7 +15,7 @@ from __future__ import division
 
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates
-#from fontTools.varLib.models import VariableModel, supportScalar, normalizeLocation
+from fontTools.varLib.models import supportScalar, normalizeLocation # VariableModel
 from fontTools.varLib import _GetCoordinates
 from pagebot.fonttoolbox.designspacemodel import DesignSpaceBase, Axis
 from pagebot.fonttoolbox.ttftools import getBestCmap

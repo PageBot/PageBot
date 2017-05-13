@@ -12,21 +12,20 @@
 from __future__ import division
 
 import pagebot
-from pagebot.elements.pbpage import Template
+from pagebot.elements import *
 # For Variable Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font
-
+from pagebot.conditions import *
 from pagebot.publications.typespecimen import TypeSpecimen
 from pagebot.elements.variablefonts.variablecircle import VariableCircle
 
-DEBUG = False # Make True to see grid and element frames.
-
 OUTPUT_FILE = 'AmstelvarVariableCircle.pdf'
 
-FONT_PATH = pagebot.getFontPath()
-fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
-#varFont = Font(fontPath)
-#varFontName = varFont.install() # Do DrawBot font install.
+CONDITIONS = [Fit2Width(), Float2Top()] # Stacking conditions for all elements in this page.
+
+fontPath = pagebot.getFontPath() + 'fontbureau/AmstelvarAlpha-VF.ttf'
+varFont = Font(fontPath)
+varFontName = varFont.install() # Do DrawBot font install.
 
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
 
@@ -36,7 +35,7 @@ BLD = ('bldA', 'bldB')
 WMX = ('wmx2',)
 
 class VariableCircleSpecimen(TypeSpecimen):
-
+    u"""Inherit from generic publication class the implements default specimen behavior."""
     def getAxisCombinations(self):
         # Answer specific interesting combinations for axes in Decovar.
         combinations = []
@@ -86,40 +85,37 @@ class VariableCircleSpecimen(TypeSpecimen):
         
         return locations
 
-    def makeTemplate(self, rs):
-        hyphenation(False)
+    def makeTemplate(self, rootStyle):
         # Template for the main page.
-        template = Template(style=rs) # Create second template. This is for the main pages.
-        # Show grid columns and paddings if rootStyle.showGrid or 
-        # rootStyle.showGridColumns are True.
-        # The grid is just a regular element, like all others on the page. Same parameters apply.
-        template.grid()  
+        template = Template(style=rootStyle) # Create second template. This is for the main pages.
         # Add named text box to template for main specimen text.
-        template.cTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
-        template.cTextBox('', 1, 1, 5, 6, eId=self.specimenBoxId, style=rs)       
-        #template.cTextBox('', 0, 1, 2, 6, eId=self.infoBoxId, style=rs)
-        # Some lines, positioned by vertical and horizontal column index.
-        template.cLine(0, 0, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
-        template.cLine(0, 1, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
-        template.cLine(0, 7, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
+        newLine(parent=template, conditions=CONDITIONS, stroke=0, strokeWidth=0.25)       
+        newTextBox('', parent=template, conditions=CONDITIONS, eId=self.titleBoxId)       
+        newTextBox('', parent=template, conditions=CONDITIONS, eId=self.specimenBoxId)       
+        newLine(parent=template, conditions=CONDITIONS, stroke=0, strokeWidth=0.25)       
         return template
          
-    def buildPages(self, doc):
+    def buildPages(self, doc, varFont):
         # Build the pages, showing axes, samples, etc.
         # Using the first page as cover (to be filled...)
-        page = doc[1]
+        page = doc[0]
         glyphName = 'A'
         
-        
-        p = page.css('pl'), page.css('pt')
-        variableCircle = VariableCircle(varFont, point=p, w=500, h=500, s=glyphName)
-        page.append(variableCircle)
-                    
+        view = doc.getView()
+        view.showElementOrigin = True
+        view.showElementDimensions = True
+        vce = VariableCircle(varFont, conditions=CONDITIONS, parent=page, s=glyphName)
+        newLine(parent=page, conditions=CONDITIONS, stroke=0, strokeWidth=0.25)       
+        score = page.solve()
+        if score.fails:
+            print score.fails
+        print vce.x, vce.y, vce.w, vce.h 
+                   
 if __name__ == '__main__':
     # Create a new specimen publications and add the list of system fonts.
-    typeSpecimen = VariableCircleSpecimen([varFontName], showGrid=DEBUG) 
+    typeSpecimen = VariableCircleSpecimen([varFontName]) 
     # Build the pages of the publication, interpreting the font list.
-    typeSpecimen.build()
+    typeSpecimen.build(varFont)
     # Export the document of the publication to PDF.
     typeSpecimen.export(OUTPUT_FILE)
 
