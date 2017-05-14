@@ -72,7 +72,7 @@ class VariationTypeSpecimen(TypeSpecimen):
         variationGlyphs = VariationGlyphs(varFont, s='A', style=page.style, fontSize=500, location=location) 
         page.place(variationGlyphs, (250, 100))
 
-if 0:
+if 1:
     # Create a new specimen publications and add the list of system fonts.
     typeSpecimen = VariationTypeSpecimen([decovarName], showGrid=DEBUG) 
     # Build the pages of the publication, interpreting the font list.
