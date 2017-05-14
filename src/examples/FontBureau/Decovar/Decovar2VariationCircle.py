@@ -34,31 +34,28 @@ from pagebot.style import makeStyle
 from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installedFonts, FormattedString, moveTo, lineTo, newPath, drawPath
 #====================
 
-def init():
+DEBUG = False # Make True to see grid and element frames.
 
 
-    DEBUG = False # Make True to see grid and element frames.
+FONT_PATH = pagebot.getFontPath()
+#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
+#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'
+#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'
+fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
+#fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+#fontPath = FONT_PATH + 'PromiseVar.ttf'
+#fontPath = FONT_PATH + 'BitcountGridVar.ttf'
+EXPORT_PATH = '_export/'+ fontPath.split('/')[-1].replace('ttf', 'pdf')
+varFont = Font(fontPath)
+varFontName = varFont.install() # Do DrawBot font install.
 
+axes = varFont.axes
+print axes
 
-    FONT_PATH = pagebot.getFontPath()
-    #fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
-    #fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'
-    #fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'
-    fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
-    #fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
-    fontPath = FONT_PATH + 'PromiseVar.ttf'
-    #fontPath = FONT_PATH + 'BitcountGridVar.ttf'
-    EXPORT_PATH = '_export/'+ fontPath.split('/')[-1].replace('ttf', 'pdf')
-    varFont = Font(fontPath)
-    varFontName = varFont.install() # Do DrawBot font install.
-
-    axes = varFont.axes
-    print axes
-
-    RS = getRootStyle()
-    RS['w'] = W = 600
-    RS['h'] = H = 600
-    M = 50
+RS = getRootStyle()
+RS['w'] = W = 600
+RS['h'] = H = 600
+M = 50
 #====================
 
 def makeAxisName(axisName):
@@ -72,11 +69,14 @@ class VariationCircle(Element):
     DEFAULT_FONT_SIZE = 64
     R = 2/3 # Fontsize factor to draw glyph markers.
 
-    def __init__(self, font, s=None, style=None, eId=None, angles=None, showAxisNames=True,
+    def __init__(self, font, x=None, y=None, w=None, h=None, s=None, angles=None, showAxisNames=True,
         **kwargs):
+        Element.__init__(self, **kwargs)
+        self.x = x
+        self.y = y
+        self.h = h
+        self.w = w
         self.font = font
-        self.eId = eId
-        self.style = makeStyle(style, **kwargs) # Combine self.style from
         self.initAngles(angles) # Initialize the angles in equal parts if not defined.
         self.showAxisNames = showAxisNames
         # Make sure that this is a formatted string. Otherwise create it with the current style.
@@ -220,7 +220,7 @@ class VariationCircle(Element):
 
 #====================
 
-if 0:
+if 1:
 
     FONT_SIZE = VariationCircle.DEFAULT_FONT_SIZE
     INTERPOLATION = 0.5
@@ -246,17 +246,16 @@ if 0:
         doc = Document(rs, pages=1) 
          
         # Change template of page 1
-        page = doc[1]
+        page = doc[0]
         glyphName = 'A' 
         angles = {}
         style = dict(fontSize=FONT_SIZE, labelFont='Verdana', axisNameFontSize=14, 
             valueFontSize=10, axisNameColor=(1, 0, 0))
         for axisName in axes:
             angles[axisName] = globals()[axisName]
-        variationCircle = VariationCircle(varFont, w=W-M*2, h=H-M*2, s=glyphName, angles=angles,
-            style=style, showAxisNames=True)
-        page.place(variationCircle, M, M)
-          
+        vc = VariationCircle(varFont, x=M, y=M, w=W-M*2, h=H-M*2, s=glyphName, angles=angles,
+            parent=page, style=style, showAxisNames=True)
+        print vc.x, vc.y, vc.h, vc.w  
         
         return doc
             

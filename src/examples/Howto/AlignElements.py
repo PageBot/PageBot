@@ -104,7 +104,7 @@ def makeDocument():
     view.w, view.h = W, H
     view.padding = 0 # Don't show cropmarks and such.
     view.showElementOrigin = ShowOrigins # Show origin alignment markers on each element.
-    view.showElementDimensions = ShowOrigins
+    view.showElementDimensions = False
     view.showElementInfo = ShowElementInfo # Show baxes with element info
        
     return doc # Answer the doc for further doing.
