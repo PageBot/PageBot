@@ -16,18 +16,41 @@ from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from drawBot import BezierPath
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
+from pagebot.toolbox.transformer import point3D
 
 C = 0.5
 
 class Point(object):
-    def __init__(self, x, y, onCurve):
-        self.x = x
-        self.y = y
+    def __init__(self, p, onCurve):
+        self.p = list(point3D(p))
         self.onCurve = bool(onCurve)
    
     def __repr__(self):
         return 'Pt(%s,%s,%s)' % (self.x, self.y,{True:'On', False:'Off'}[self.onCurve])
+
+    def __getitem__(self, index):
+        return self.p[index]
+    def __setitem__(self, index, value):
+        self.p[index] = value
         
+    def _get_x(self):
+        return self.p[0]
+    def _set_x(self, x):
+        self.p[0] = x
+    x = property(_get_x, _set_x)
+    
+    def _get_y(self):
+        return self.p[1]
+    def _set_y(self, y):
+        self.p[1] = y
+    y = property(_get_y, _set_y)
+    
+    def _get_z(self):
+        return self.p[2]
+    def _set_z(self, z):
+        self.p[2] = z
+    z = property(_get_z, _set_z)
+    
 class Segment(object):
     def __init__(self, points=None):
         if points is None:
@@ -82,13 +105,13 @@ class Glyph(object):
         currentOnCurve = None
         if coordinates or components:
             self._path = path = BezierPath() # There must be points and/or components, start path
-        for index, (x, y) in enumerate(coordinates):
-            p = Point(x, y, flags[index])
+        for index, xy in enumerate(coordinates):
+            p = Point(xy, flags[index])
             if p.onCurve:
                 currentOnCurve = p
             self._points.append(p)
             if not openContour:
-                path.moveTo((x, y))
+                path.moveTo(xy)
                 openContour = []
                 self._contours.append(openContour)
             if not openSegment:
@@ -119,7 +142,7 @@ class Glyph(object):
         elif len(segment) == 2: # 1:1 Convert of Quadratic to Cubic
             p1, p2 = segment.points 
             #p1, cp, p1 = p1, p2, cp
-            self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y, path)
+            self._drawQuadratic2Cubic(cp, p1, p2, path)
             cp = p2
         #elif len(segment) == 3: # 1:1 Convert of Quadratic to Cubic
         #    pass
@@ -130,20 +153,24 @@ class Glyph(object):
                 p2 = segment.points[n+1]
                 #p2, cp, p1 = p1, p2, cp
                 if n < len(segment):
-                    m = Point((p1.x + p2.x)/2, (p1.y + p2.y)/2, True)
+                    m = Point(((p1.x + p2.x)/2, (p1.y + p2.y)/2), True)
                 else:
                     m = p2
-                self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y, path)
+                self._drawQuadratic2Cubic(cp, p1, p2, path)
                 cp = m
         return cp
                 
-    def _drawQuadratic2Cubic(self, p0x, p0y, p1x, p1y, p2x, p2y, path):
-        pp0x = p0x + (p1x - p0x)*C
-        pp0y = p0y + (p1y - p0y)*C
-        pp1x = p2x + (p1x - p2x)*C
-        pp1y = p2y + (p1y - p2y)*C
-        path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
-                        
+    def _drawQuadratic2Cubic(self, p0, p1, p2, path):
+        pp0x = p0.x + (p1.x - p0.x)*C
+        pp0y = p0.y + (p1.y - p0.y)*C
+        pp1x = p2.x + (p1.x - p2.x)*C
+        pp1y = p2.y + (p1.y - p2.y)*C
+        path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2.x, p2.y))
+    
+    def pointInside(self, p):
+        px, py, _ = point3D(p)
+        return self.path._path.containsPoint_((x, y)) 
+                           
     def _get_ttGlyph(self):
         return self.parent.ttFont['glyf'][self.name]
     ttGlyph = property(_get_ttGlyph)
@@ -290,17 +317,18 @@ from pagebot.fonttoolbox.objects.font import Font
 
 W = H = 1000
 
-cjkF = Font(u'Generic-Regular', install=False)
+PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
+cjkF = Font(PATH, install=False)
 cjkF.GLYPH_CLASS = Glyph
 print cjkF.info.familyName, cjkF.info.styleName
 print cjkF.ttFont.tables.keys()
 glyphs = []
 start = 16500
-end = 16600
+end = 16502
 
 GLYPHS = ('cid05404.1', 'cid05405.1', 'cid05403.1', 'e', 'H', 'O')
-#GLYPHS = ('bullet', 'e','h', 'oe')
-GLYPHS = sorted( cjkF.keys())[start:end]
+GLYPHS = ('bullet', 'e','h', 'oe')
+#GLYPHS = sorted( cjkF.keys())[start:end]
 for name in GLYPHS:
     if name.startswith('.'):
         continue
@@ -374,7 +402,16 @@ for glyph in glyphs:
     #text(`glyph.index`, (30, 30))
     #print glyph.path
     restore()
-    
+
+g = cjkF['H']
+for y in range(0, 1000, 20):
+    for x in range(0,1000,20):
+        if g.pointInside((x, y)):
+            print '*',
+        else:
+            print '.',
+    print
+        
 
     #print d
 #f = OpenFont(u'F5MultiLanguageFontVar.ttf', showUI=False)
