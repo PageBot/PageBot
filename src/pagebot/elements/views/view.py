@@ -316,10 +316,10 @@ class View(Element):
                 line((x2+0.5*S, y2), (x2+3.5*S, y2))
                 line((x2+2*S, y1), (x2+2*S, y2))
                 # Arrow heads
-                line((x2+2*S, y2), (x2+2.5*S, y2-1.5*S))
-                line((x2+2*S, y2), (x2+1.5*S, y2-1.5*S))
-                line((x2+2*S, y1), (x2+2.5*S, y1 + 1.5*S))
-                line((x2+2*S, y1), (x2+1.5*S, y1 + 1.5*S))
+                line((x2+2*S, y2), (x2+2.5*S, y2-S))
+                line((x2+2*S, y2), (x2+1.5*S, y2-S))
+                line((x2+2*S, y1), (x2+2.5*S, y1+S))
+                line((x2+2*S, y1), (x2+1.5*S, y1+S))
                 
                 fs = getFormattedString(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'), 
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))

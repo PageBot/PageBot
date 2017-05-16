@@ -67,7 +67,8 @@ Legal = 8.5*INCH, 14*INCH
 JuniorLegal = 5*INCH, 8*INCH
 Tabloid = 11*INCH, 17*INCH
 # Other rounded definintions compatible to DrawBot
-Screen = sizes('screen') # Current screen size.
+drawBotSizes = sizes()
+Screen = drawBotSizes.get('screen', None) # Current screen size.
 Ledger = sizes('Ledger') # 1224, 792
 Statement = sizes('Statement') # 396, 612 
 Executive = sizes('Executive') # 540, 720

@@ -37,3 +37,4 @@ if __name__ == '__main__':
         drawSierpinskiSquare(0, 0, w, canvasSize)
 
     saveImage("_export/SierpinskiSquare.gif")
+    print 'Done'

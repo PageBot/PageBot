@@ -17,7 +17,7 @@ from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
-#from fontTools.varLib.models import VariableModel, supportScalar #, normalizeLocation
+from fontTools.varLib.models import VariableModel, supportScalar #, normalizeLocation
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
 
 from drawBot import installFont, BezierPath, save, transform, scale, drawPath, restore, fill
