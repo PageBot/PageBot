@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
 #     P A G E B O T
@@ -17,6 +16,7 @@ from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from drawBot import BezierPath
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
+
 C = 0.5
 
 class Point(object):
@@ -74,9 +74,10 @@ class Glyph(object):
         self._segments = []
         coordinates = self.coordinates
         components = self.components
+        contours = self.contours
         flags = self.flags
         endPtsOfContours = set(self.endPtsOfContours)
-        openContour = False
+        openContour = None
         openSegment = None
         currentOnCurve = None
         if coordinates or components:
@@ -88,11 +89,13 @@ class Glyph(object):
             self._points.append(p)
             if not openContour:
                 path.moveTo((x, y))
-                openContour = True
+                openContour = []
+                self._contours.append(openContour)
             if not openSegment:
                 openSegment = Segment()
                 self._segments.append(openSegment)
             openSegment.append(p)
+            openContour.append(p)
             if index in endPtsOfContours and openContour:
                 # If there is an open segment, it may contain mutliple quadratics. 
                 # Split into cubics.
@@ -166,8 +169,8 @@ class Glyph(object):
     def _get_coordinates(self):
         u"""Answer the ttFont.coordinates, if it exists. Otherwise answer None. Note that this is the 
         “raw” list of (x, y) positions, without information on contour index or if the point is on/off curve.
-        This information is stored in ttFont.endPtsOfContours and ttFont.flags. This property is only for low-level
-        access of the coordinates. For regular use, self.points and self.contours are available.
+        This information is stored ttFont.endPtsOfContours and ttFont.flags. This property is only for low-level
+        access of the cootdinates. For regular use, self.points and self.contours are available.
         Also notice that writing the list is at “own risk”, e.g hinting and related tables are not automatically
         updated."""
         if hasattr(self.ttGlyph, 'coordinates'):
@@ -281,3 +284,98 @@ class Glyph(object):
  |      This works on both expanded and compacted glyphs, without
  |      expanding it.
     """
+
+import pagebot
+from pagebot.fonttoolbox.objects.font import Font
+
+W = H = 1000
+
+cjkF = Font(u'Generic-Regular', install=False)
+cjkF.GLYPH_CLASS = Glyph
+print cjkF.info.familyName, cjkF.info.styleName
+print cjkF.ttFont.tables.keys()
+glyphs = []
+start = 16500
+end = 16600
+
+GLYPHS = ('cid05404.1', 'cid05405.1', 'cid05403.1', 'e', 'H', 'O')
+#GLYPHS = ('bullet', 'e','h', 'oe')
+GLYPHS = sorted( cjkF.keys())[start:end]
+for name in GLYPHS:
+    if name.startswith('.'):
+        continue
+    newPage(W, H)
+    glyph = cjkF[name]
+    save()
+    transform((1, 0, 0, 1, 0, 150))
+    fill(None)
+    strokeWidth(20)
+    stroke(0)
+    drawPath(glyph.path)
+    line((0, 0), (1000, 0))
+    for index, p in enumerate(glyph.points):
+        if p.onCurve:
+            fs = FormattedString(`index`, fill=1, stroke=None, font='Verdana', fontSize=18)
+            tw, th = textSize(fs)
+            fill(0)
+            stroke(0)
+            oval(p.x-10, p.y-10, 20, 20)
+            text(fs, (p.x-tw/2, p.y-th/4))
+        else:
+            fs = FormattedString(`index`, fill=(1, 1, 0), stroke=None, font='Verdana', fontSize=18)
+            tw, th = textSize(fs)
+            fill(0.4)
+            stroke(0.4, 0.4, 0.4, 0.9)
+            oval(p.x-10, p.y-10, 20, 20)
+            text(fs, (p.x-tw/2, p.y-th/4))
+    #stroke(None)
+    #fill(1, 0, 0)
+    #for s in glyph.segments:
+    #    for p in s:
+    #        oval(p.x-6, p.y-6, 12, 12)
+    restore()
+            
+newPage(W, H)
+
+for glyphIndex, glyphName in enumerate(sorted(cjkF.keys())[start:end]):
+    glyph = cjkF[glyphName]
+    glyphs.append(glyph)
+    print glyph
+
+        
+x = y = 0
+print len(glyphs)
+#newPage(1000, 1000)
+for glyph in glyphs:
+    print glyph.name
+    print glyph.contours
+    save()
+    transform((1, 0, 0, 1, 20+x*W/5, H - (y+1)*W/5+20))
+    scale(0.14)
+    fill(None)
+    stroke(1, 0, 0)
+    #rect(x*W, y*W, H, H)
+    x += 1
+    if x > 5:
+        x = 0
+        y += 1
+        if y  > 5:
+            y = 0
+            x = 0
+            restore()
+            newPage(W, H)
+            save()
+            transform((1, 0, 0, 1, 20+x*W/5, H - (y+1)*W/5+20))
+            scale(0.14)
+    fill(0)
+    stroke(None)
+    drawPath(glyph.path)
+
+    #text(`glyph.index`, (30, 30))
+    #print glyph.path
+    restore()
+    
+
+    #print d
+#f = OpenFont(u'F5MultiLanguageFontVar.ttf', showUI=False)
+#print f

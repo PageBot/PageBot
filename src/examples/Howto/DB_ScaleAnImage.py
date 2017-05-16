@@ -49,4 +49,5 @@ if __name__ == '__main__':
 	saveImage('_export/cookbot1-%d.gif' % (newScale*100)) # 346Kb size
 	# Restore the graphics state, so DrawBot scaling is back to 100% after this.
 	restore()
+	print 'Done'
 

@@ -1322,7 +1322,8 @@ class Element(object):
     def getFloatTopSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max y that can float to top, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection between (self.left, self.right).
-        Note that the y may be outside the parent box. Only elements with identical z-value are compared."""
+        Note that the y may be outside the parent box. Only elements with identical z-value are compared.
+        Comparison of available spave, includes the margins of the elements."""
         if self.originTop:
             y = 0
         else:
@@ -1330,7 +1331,7 @@ class Element(object):
         for e in self.parent.elements: 
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if abs(e.z - self.z) > tolerance or e.right < self.left or self.right < e.left:
+            if abs(e.z - self.z) > tolerance or e.mRight < self.mLeft or self.mRight < e.mLeft:
                 continue # Not equal z-layer or not in window of vertical projection.
             if self.originTop:
                 y = max(y, e.bottom)
@@ -1341,7 +1342,8 @@ class Element(object):
     def getFloatBottomSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max y that can float to bottom, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
-        Note that the y may be outside the parent box. Only elements with identical z-value are compared."""
+        Note that the y may be outside the parent box. Only elements with identical z-value are compared.
+        Comparison of available spave, includes the margins of the elements."""
         if self.originTop:
             y = self.parent.h
         else:
@@ -1349,7 +1351,7 @@ class Element(object):
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if abs(e.z - self.z) > tolerance or e.right < self.left or self.right < e.left:
+            if abs(e.z - self.z) > tolerance or e.mRight < self.mLeft or self.mRight < e.mLeft:
                 continue # Not equal z-layer or not in window of vertical projection.
             if self.originTop:
                 y = min(y, e.top)
@@ -1360,12 +1362,13 @@ class Element(object):
     def getFloatLeftSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max x that can float to the left, without overlapping previous sibling elements.
         This means we are just looking at the horizontal projection of (self.top, self.bottom).
-        Note that the x may be outside the parent box. Only elements with identical z-value are compared."""
+        Note that the x may be outside the parent box. Only elements with identical z-value are compared.
+        Comparison of available spave, includes the margins of the elements."""
         x = 0
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if abs(e.z - self.z) > tolerance or e.bottom < self.top or self.bottom < e.top:
+            if abs(e.z - self.z) > tolerance or e.mBottom < self.mTop or self.mBottom < e.mTop:
                 continue # Not equal z-layer or not in window of horizontal projection.
             x = max(e.right, x)
         return x
@@ -1373,12 +1376,13 @@ class Element(object):
     def getFloatRightSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max Y that can float to the right, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
-        Note that the y may be outside the parent box. Only elements with identical z-value are compared."""
+        Note that the y may be outside the parent box. Only elements with identical z-value are compared.
+        Comparison of available spave, includes the margins of the elements."""
         x = self.parent.w
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if abs(e.z - self.z) > tolerance or e.bottom < self.top or self.bottom < e.top:
+            if abs(e.z - self.z) > tolerance or e.mBottom < self.mTop or self.mBottom < e.mTop:
                 continue # Not equal z-layer or not in window of horizontal projection.
             x = min(e.left, x)
         return x
@@ -1770,31 +1774,31 @@ class Element(object):
 
     def isFloatOnTop(self, tolerance=0):
         if self.originTop:
-            return abs(max(self.getFloatTopSide(), self.parent.pt) - self.top) <= tolerance
-        return abs(min(self.getFloatTopSide(), self.parent.h - self.parent.pt) - self.top) <= tolerance
+            return abs(max(self.getFloatTopSide(), self.parent.pt) - self.mTop) <= tolerance
+        return abs(min(self.getFloatTopSide(), self.parent.h - self.parent.pt) - self.mTop) <= tolerance
 
     def isFloatOnTopSide(self, tolerance=0):
-        return abs(self.getFloatTopSide() - self.top) <= tolerance
+        return abs(self.getFloatTopSide() - self.mTop) <= tolerance
 
     def isFloatOnBottom(self, tolerance=0):
         if self.originTop:
-            return abs(min(self.getFloatBottomSide(), self.parent.h - self.parent.pb) - self.bottom) <= tolerance
-        return abs(max(self.getFloatTopSide(), self.parent.pb) - self.bottom) <= tolerance
+            return abs(min(self.getFloatBottomSide(), self.parent.h - self.parent.pb) - self.mBottom) <= tolerance
+        return abs(max(self.getFloatTopSide(), self.parent.pb) - self.mBottom) <= tolerance
 
     def isFloatOnBottomSide(self, tolerance=0):
-        return abs(self.getFloatBottomSide() - self.bottom) <= tolerance
+        return abs(self.getFloatBottomSide() - self.mBottom) <= tolerance
 
     def isFloatOnLeft(self, tolerance=0):
-        return abs(max(self.getFloatLeftSide(), self.parent.pl) - self.left) <= tolerance
+        return abs(max(self.getFloatLeftSide(), self.parent.pl) - self.mLeft) <= tolerance
 
     def isFloatOnLeftSide(self, tolerance=0):
-        return abs(self.getFloatLeftSide() - self.left) <= tolerance
+        return abs(self.getFloatLeftSide() - self.mLeft) <= tolerance
 
     def isFloatOnRight(self, tolerance=0):
-        return abs(min(self.getFloatRightSide(), self.parent.w - self.parent.pr) - self.right) <= tolerance
+        return abs(min(self.getFloatRightSide(), self.parent.w - self.parent.pr) - self.mRight) <= tolerance
 
     def isFloatOnRightSide(self, tolerance=0):
-        return abs(self.getFloatRightSide() - self.right) <= tolerance
+        return abs(self.getFloatRightSide() - self.mRight) <= tolerance
 
     #   T R A N S F O R M A T I O N S 
 
@@ -2037,16 +2041,18 @@ class Element(object):
     
     def top2TopSide(self):
         if self.originTop:
-            self.top = 0
+            self.mTop = 0
         else:
-            self.top = self.parent.h
+            self.mTop = self.parent.h
         return True
 
     def float2Top(self):
+        u"""Float the element upward, until top hits the parent top padding.
+        Include margin to decide if it fits."""
         if self.originTop:
-            self.top = min(self.getFloatTopSide(), self.parent.pt)
+            self.mTop = min(self.getFloatTopSide(), self.parent.pt)
         else:
-            self.top = min(self.getFloatTopSide(), self.parent.h - self.parent.pt)
+            self.mTop = min(self.getFloatTopSide(), self.parent.h - self.parent.pt)
         return True
 
     def float2TopSide(self):

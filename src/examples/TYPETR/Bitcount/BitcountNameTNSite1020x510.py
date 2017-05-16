@@ -41,7 +41,7 @@ backgroundColor = (0, 0, 0)#(1, 1, 1) #0.1, 0.2, 0.5
 italics = False
 layers = 4
 color = True
-frames = 4
+frames = 16
 fd = 0.4 # Frame duration
 
 # Bitcount is made from 3 spacing sets: 

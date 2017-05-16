@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
 #     P A G E B O T
@@ -20,7 +21,10 @@
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
-from drawBot import installFont, listOpenTypeFeatures
+try:
+    from drawBot import installFont, listOpenTypeFeatures
+except ImportError:
+    installFont =  listOpenTypeFeatures = None
 
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
@@ -96,6 +100,9 @@ class Font(object):
     def __len__(self):
         return len(self.ttFont['glyf'])
 
+    def keys(self):
+        return self.ttFont['glyf'].keys()
+        
     def _get_axes(self): # Answer dictionary of axes
         try:
             axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in self.ttFont['fvar'].axes}

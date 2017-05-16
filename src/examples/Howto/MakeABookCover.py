@@ -20,6 +20,7 @@ from pagebot.style import getRootStyle, B4, CENTER, LEFT, TOP
 from pagebot.document import Document
 # Import element layout conditions.
 from pagebot.conditions import *
+from pagebot.elements import *
    
 # For clarity, most of the OneValidatingPage.py example documenet is setup as a sequential excecution of
 # Python functions. For complex documents this is not the best method. More functions and classes
@@ -63,9 +64,9 @@ def makeDocument(rootStyle):
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(rootStyle, pages=1) # One page, just the cover.
+    doc = Document(rootStyle, w=W, h=H, pages=1) # One page, just the cover.
  
-    page = doc[1] # Get the first/single page of the document.
+    page = doc[0] # Get the first/single page of the document.
 
     C1 = (random()*0.2, random()*0.2, random()*0.9)
     C2 = lighter(C1, 0.9) # Almost white, tinted to the background color.
@@ -73,25 +74,22 @@ def makeDocument(rootStyle):
     C4 = darker(C1, 0.5) # Default parameter 50% between background color and white.
     
     # Make background element, filling the page color and bleed.
-    pageArea = page.rect(name='Page area', 
+    colorRect1 = pageArea = newRect(z=-10, name='Page area', parent=page,
         conditions=[Top2TopSide(), Left2LeftSide(), Fit2RightSide(), Fit2BottomSide()], fill=C1)
     
-    colorRect1.z = -10 # Other z-layer, makes this element be ignored on floating checks.
     colorRect1.solve() # Solve element position, before we can make other elements depend on position and size.
 
     M = 64
-    colorRect2 = page.rect(name='Frame 2', conditions=[Center2Center(), Center2YCenter()], fill=C4, stroke=None, 
+    colorRect2 = newRect(z=-10, name='Frame 2', conditions=[Center2Center(), Middle2Middle()], 
+        fill=C4, stroke=None, 
         w=colorRect1.w-M, h=colorRect1.h-M, xAlign=CENTER, yAlign=CENTER )
-    colorRect2.z = -10 # Other z-layer, makes this element be ignored on floating checks.
 
     # Add some title (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
-    e1 = page.text('Book Cover', style=rootStyle, name='Other element', font='Georgia', fontSize=40,
-        fill=(0.3, 0.3, 0.5), textFill=(1, 0, 0),
-        conditions=[Top2YCenter(), Top2Top()], 
+    e1 = newText('Book Cover', style=rootStyle, parent=page, name='Other element', 
+        font='Georgia', fontSize=40, fill=(0.3, 0.3, 0.5), textFill=(1, 0, 0),
+        conditions=[Top2Middle(), Top2Top()], 
         xAlign=CENTER) #yAlign=TOP)
-    e1.y = e1.pt
-    e1.center = page.w/2
     """
     e2 = page.rect(point=wrongOrigin, style=rootStyle, w=W2, h=H2, name='Floating element 2', 
         conditions=colorCondition2, fill=(1, 1, 0), xAlign=LEFT, yAlign=TOP)
@@ -115,8 +113,8 @@ def makeDocument(rootStyle):
     #print 'Page value on evaluation:', score
     #print score.fails
     # Try to solve the problems if evaluation < 0
-    if score.result < 0:
-        print 'Solving', score
+    if score.fails:
+        print 'Solving', score.fails
         page.solve()
     #print score.fails
     # Evaluate again, result should now be >= 0
