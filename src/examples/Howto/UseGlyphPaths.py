@@ -168,6 +168,7 @@ class Glyph(object):
         path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2.x, p2.y))
     
     def pointInside(self, p):
+        u"""Answer the boolean if the point is inside the path (black) of the letter."""
         px, py, _ = point3D(p)
         return self.path._path.containsPoint_((x, y)) 
                            
@@ -402,15 +403,15 @@ for glyph in glyphs:
     #text(`glyph.index`, (30, 30))
     #print glyph.path
     restore()
-
-g = cjkF['H']
-for y in range(0, 1000, 20):
-    for x in range(0,1000,20):
-        if g.pointInside((x, y)):
-            print '*',
-        else:
-            print '.',
-    print
+if 0:
+    g = cjkF['H']
+    for y in range(0, 1000, 20):
+        for x in range(0,1000,20):
+            if g.pointInside((x, y)):
+                print '*',
+            else:
+                print '.',
+        print
         
 
     #print d
