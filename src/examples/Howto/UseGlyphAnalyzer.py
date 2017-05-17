@@ -122,6 +122,6 @@ for name in GLYPHS:
     newPage(W, H)
     glyph = cjkF[name]
     glyph.ANALYZER_CLASS = GlyphAnalyzer
-    print glyph.pointContexts
-    print glyph.contours
+    print glyph.analyzer.verticals
+    #print glyph.contours
     

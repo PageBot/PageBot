@@ -110,8 +110,6 @@ class Glyph(object):
                 contour.append(contour[0])
                 contours.append(contour)
 
-        print 'contours', contours
-
         for index, (x, y) in enumerate(coordinates):
             #start = index - 1 in self.endPtsOfContours
             p = Point(x, y, flags[index])
@@ -150,7 +148,6 @@ class Glyph(object):
     def _drawSegment(self, cp, segment, path):
         u"""Draw the Segment instance into the path. It may contain multiple quadratics.
         Split into cubics and lines."""
-        #print self.name, segment
 
         if len(segment) == 1:
             p1 = segment.points[-1]
@@ -247,12 +244,14 @@ class Glyph(object):
 
     def _get_pointContexts(self):
         if self._pointContexts is None:
-            for cIndex, contour in enumerate(self._contours):
+            self._pointContexts = []
+            for cIndex, contour in enumerate(self.contours):
                 openPointContext = {} # Tuples of points -3, -2, -1, 0, 1, 2, 3 contour index
                 self._pointContexts.append(openPointContext)
+                numPoints = len(contour)
                 contour3 = contour+contour+contour
-                for n in range(len(contour), len(contour)*2):
-                    openPointContext[n] = contour3[n-3:n+4]
+                for n in range(numPoints):
+                    openPointContext[n] = contour3[n+numPoints-3:n+numPoints+4]
         return self._pointContexts
     pointContexts = property(_get_pointContexts)
 
