@@ -10,8 +10,8 @@
 #
 #     glyph.py
 #
-#     Implements a PabeBot font classes to get info from a TTFont.
-#   
+#     Implements a PageBot font classes to get info from a TTFont.
+#
 import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
@@ -26,10 +26,10 @@ class Point(object):
         self.x = x
         self.y = y
         self.onCurve = bool(onCurve)
-   
+
     def __repr__(self):
         return 'Pt(%s,%s,%s)' % (self.x, self.y,{True:'On', False:'Off'}[self.onCurve])
-        
+
 class Segment(object):
     def __init__(self, points=None):
         if points is None:
@@ -38,17 +38,18 @@ class Segment(object):
 
     def __len__(self):
         return len(self.points)
-        
+
     def __repr__(self):
         return 'Sg(%s)' % self.points
-        
+
     def append(self, p):
         self.points.append(p)
 
 class Glyph(object):
     u"""This Glyph class is a wrapper around the glyph structure of a ttFont.
-    It is supposed to copy the functions of the RoboFont raw glyph, for all needed functions
-    in PageBot. It is not complete, will be added to when needed."""
+    It is supposed to copy the functions of the RoboFont raw glyph, for all
+    needed functions in PageBot. It is not complete, will be added to when
+    needed."""
 
     ANALYZER_CLASS = GlyphAnalyzer
 
@@ -70,9 +71,9 @@ class Glyph(object):
         return not self.parent is g.parent or self.name != g.name
 
     def __repr__(self):
-        return '<PageBot Glyph %s P:%d/C:%d/Cmp:%d>' % (self.name, 
+        return '<PageBot Glyph %s P:%d/C:%d/Cmp:%d>' % (self.name,
             len(self.coordinates), len(self.endPtsOfContours), len(self.components))
-    
+
     def _initialize(self):
         u"""Initialize the cached data, such as self.points, self.contour, self.components and self.path."""
         self._points = []
@@ -88,26 +89,34 @@ class Glyph(object):
         openContour = False
         openSegment = None
         currentOnCurve = None
+
         if coordinates or components:
             self._path = path = BezierPath() # There must be points and/or components, start path
+
         for index, (x, y) in enumerate(coordinates):
             p = Point(x, y, flags[index])
+
             if p.onCurve:
                 currentOnCurve = p
+
             self._points.append(p)
+
             if not openContour:
                 path.moveTo((x, y))
                 openContour = []
                 self._contours.append(openContour)
+
             openContour.append(p)
 
             if not openSegment:
+
                 openSegment = Segment()
                 self._segments.append(openSegment)
+
             openSegment.append(p)
 
             if index in endPtsOfContours and openContour:
-                # If there is an open segment, it may contain mutliple quadratics. 
+                # If there is an open segment, it may contain mutliple quadratics.
                 # Split into cubics.
                 if openSegment:
                     currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
@@ -121,13 +130,14 @@ class Glyph(object):
     def _drawSegment(self, cp, segment, path):
         u"""Draw the Segment instance into the path. It may contain multiple quadratics.
         Split into cubics and lines."""
-        print self.name, segment
+        #print self.name, segment
+
         if len(segment) == 1:
             p1 = segment.points[-1]
             path.lineTo((p1.x, p1.y))
             cp = p1
         elif len(segment) == 2: # 1:1 Convert of Quadratic to Cubic
-            p1, p2 = segment.points 
+            p1, p2 = segment.points
             #p1, cp, p1 = p1, p2, cp
             self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y, path)
             cp = p2
@@ -146,14 +156,14 @@ class Glyph(object):
                 self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y, path)
                 cp = m
         return cp
-                
+
     def _drawQuadratic2Cubic(self, p0x, p0y, p1x, p1y, p2x, p2y, path):
         pp0x = p0x + (p1x - p0x)*C
         pp0y = p0y + (p1y - p0y)*C
         pp1x = p2x + (p1x - p2x)*C
         pp1y = p2y + (p1y - p2y)*C
         path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
-                        
+
     def _get_ttGlyph(self):
         return self.parent.ttFont['glyf'][self.name]
     ttGlyph = property(_get_ttGlyph)
@@ -177,7 +187,7 @@ class Glyph(object):
     # Direct TTFont cooridinates compatibility
 
     def _get_coordinates(self):
-        u"""Answer the ttFont.coordinates, if it exists. Otherwise answer None. Note that this is the 
+        u"""Answer the ttFont.coordinates, if it exists. Otherwise answer None. Note that this is the
         “raw” list of (x, y) positions, without information on contour index or if the point is on/off curve.
         This information is stored in ttFont.endPtsOfContours and ttFont.flags. This property is only for low-level
         access of the coordinates. For regular use, self.points and self.contours are available.
@@ -212,6 +222,7 @@ class Glyph(object):
         if self._points is None:
             self._initialize()
         return self._points
+
     points = property(_get_points)
 
     def _get_pointContexts(self):
@@ -232,7 +243,7 @@ class Glyph(object):
         return self._contours
     segments = property(_get_contours)
 
-    def _get_components(self): # Read only for now. List Contour instances. 
+    def _get_components(self): # Read only for now. List Contour instances.
         if self._components is None:
             self._initialize()
         return self._components
@@ -254,53 +265,53 @@ class Glyph(object):
     TTGlyph Functions to implement
 
  |  Methods defined here:
- |  
+ |
  |  __getitem__(self, componentIndex)
- |  
+ |
  |  __init__(self, data='')
- |  
-  |  
+ |
+  |
  |  compact(self, glyfTable, recalcBBoxes=True)
- |  
+ |
  |  compile(self, glyfTable, recalcBBoxes=True)
- |  
+ |
  |  compileComponents(self, glyfTable)
- |  
+ |
  |  compileCoordinates(self)
- |  
+ |
  |  compileDeltasGreedy(self, flags, deltas)
- |  
+ |
  |  compileDeltasOptimal(self, flags, deltas)
- |  
+ |
  |  decompileComponents(self, data, glyfTable)
- |  
+ |
  |  decompileCoordinates(self, data)
- |  
+ |
  |  decompileCoordinatesRaw(self, nCoordinates, data)
- |  
+ |
  |  draw(self, pen, glyfTable, offset=0)
- |  
+ |
  |  expand(self, glyfTable)
- |  
+ |
  |  fromXML(self, name, attrs, content, ttFont)
- |  
+ |
  |  getComponentNames(self, glyfTable)
- |  
+ |
  |  getCompositeMaxpValues(self, glyfTable, maxComponentDepth=1)
- |  
+ |
  |  getCoordinates(self, glyfTable)
- |  
+ |
  |  getMaxpValues(self)
- |  
+ |
  |  isComposite(self)
  |      Can be called on compact or expanded glyph.
- |  
+ |
  |  recalcBounds(self, glyfTable)
- |  
+ |
  |  removeHinting(self)
- |  
+ |
  |  toXML(self, writer, ttFont)
- |  
+ |
  |  trim(self, remove_hinting=False)
  |      Remove padding and, if requested, hinting, from a glyph.
  |      This works on both expanded and compacted glyphs, without
