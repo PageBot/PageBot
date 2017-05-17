@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     glyph.py
+#     UseGlyphPaths.py
 #
 #     Implements a PabeBot font classes to get info from a TTFont.
 #   
