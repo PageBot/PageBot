@@ -17,6 +17,8 @@ from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from drawBot import BezierPath
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
+from pagebot.fonttoolbox.objects.glyphanalyzer import GlyphAnalyzer
+
 C = 0.5
 
 class Point(object):
@@ -47,14 +49,19 @@ class Glyph(object):
     u"""This Glyph class is a wrapper around the glyph structure of a ttFont.
     It is supposed to copy the functions of the RoboFont raw glyph, for all needed functions
     in PageBot. It is not complete, will be added to when needed."""
+
+    ANALYZER_CLASS = GlyphAnalyzer
+
     def __init__(self, font, name):
         self.name = name
         self.parent = font # Stored as weakref
         self._points = None
+        self._pointContexts = None
         self._contours = None
         self._segments = None
         self._components = None
         self._path = None
+        self._analyzer = None # Initialized upon property self.analyzer usage.
 
     def __eq__(self, g):
         return self.parent is g.parent and self.name == g.name
@@ -69,9 +76,11 @@ class Glyph(object):
     def _initialize(self):
         u"""Initialize the cached data, such as self.points, self.contour, self.components and self.path."""
         self._points = []
+        self._pointContexts = [] # Tuples of points -3, -2, -1, 0, 1, 2, 3 contour index
         self._contours = []
         self._components = []
         self._segments = []
+
         coordinates = self.coordinates
         components = self.components
         flags = self.flags
@@ -88,18 +97,22 @@ class Glyph(object):
             self._points.append(p)
             if not openContour:
                 path.moveTo((x, y))
-                openContour = True
+                openContour = []
+                self._contours.append(openContour)
+            openContour.append(p)
+
             if not openSegment:
                 openSegment = Segment()
                 self._segments.append(openSegment)
             openSegment.append(p)
+
             if index in endPtsOfContours and openContour:
                 # If there is an open segment, it may contain mutliple quadratics. 
                 # Split into cubics.
                 if openSegment:
                     currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
                 path.closePath()
-                openContour = False
+                openContour = None
                 openSegment = None
             elif p.onCurve:
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
@@ -201,6 +214,12 @@ class Glyph(object):
         return self._points
     points = property(_get_points)
 
+    def _get_pointContexts(self):
+        if self._pointContexts is None:
+            self._initialize()
+        return self._pointContexts
+    pointContexts = property(_get_pointContexts)
+
     def _get_contours(self): # Read only for now. List of Point instance lists.
         if self._contours is None:
             self._initialize()
@@ -224,6 +243,12 @@ class Glyph(object):
             self._initialize()
         return self._path
     path = property(_get_path)
+
+    def _get_analyzer(self): # Read only for now.
+        if self._analyzer is None:
+            self._analyzer = self.ANALYZER_CLASS(self)
+        return self._analyzer
+    analyzer = property(_get_analyzer)
 
     """
     TTGlyph Functions to implement
