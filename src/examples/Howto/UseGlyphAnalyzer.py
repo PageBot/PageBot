@@ -116,7 +116,8 @@ end = 16502
 #GLYPHS = ('cid05404.1', 'cid05405.1', 'cid05403.1', 'e', 'H', 'O')
 #GLYPHS = ('bullet', 'e','h', 'oe')
 #GLYPHS = sorted( cjkF.keys())[start:end]
-GLYPHS = ('b', 'l', 'a')
+GLYPHS = ('d', 'b', 'a')
+scale(0.3)
 
 for name in GLYPHS:
     if name.startswith('.'):

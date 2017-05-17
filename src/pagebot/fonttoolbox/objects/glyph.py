@@ -93,7 +93,28 @@ class Glyph(object):
         if coordinates or components:
             self._path = path = BezierPath() # There must be points and/or components, start path
 
+        contours = []
+        contour = None
+
+        for i, p in enumerate(coordinates):
+            start = i - 1 in self.endPtsOfContours
+            if i == 0:
+                contour = [p]
+            elif start:
+                contour.append(contour[0])
+                contours.append(contour)
+                contour = [p]
+            else:
+                contour.append(p)
+
+            if i == len(coordinates) - 1:
+                contour.append(contour[0])
+                contours.append(contour)
+
+        print 'contours', contours
+
         for index, (x, y) in enumerate(coordinates):
+            #start = index - 1 in self.endPtsOfContours
             p = Point(x, y, flags[index])
 
             if p.onCurve:
