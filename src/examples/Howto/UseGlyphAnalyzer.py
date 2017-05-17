@@ -79,7 +79,7 @@ class GlyphAnalyzer(object):
         """
         self._verticals = verticals = {}
 
-        for pc in self.pointContexts:
+        for pc in self.glyph.pointContexts:
             if pc.isVertical():
                 if not pc.x in verticals:
                     verticals[pc.x] = self.VERTICAL_CLASS()
@@ -107,8 +107,8 @@ W = H = 1000
 
 PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
 cjkF = Font(PATH, install=False)
-print cjkF.info.familyName, cjkF.info.styleName
-print cjkF.ttFont.tables.keys()
+#print cjkF.info.familyName, cjkF.info.styleName
+#print cjkF.ttFont.tables.keys()
 glyphs = []
 start = 16500
 end = 16502
@@ -122,6 +122,6 @@ for name in GLYPHS:
     newPage(W, H)
     glyph = cjkF[name]
     glyph.ANALYZER_CLASS = GlyphAnalyzer
-    print glyph.analyzer
+    print glyph.pointContexts
     print glyph.contours
     

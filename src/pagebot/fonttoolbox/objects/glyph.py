@@ -76,7 +76,6 @@ class Glyph(object):
     def _initialize(self):
         u"""Initialize the cached data, such as self.points, self.contour, self.components and self.path."""
         self._points = []
-        self._pointContexts = [] # Tuples of points -3, -2, -1, 0, 1, 2, 3 contour index
         self._contours = []
         self._components = []
         self._segments = []
@@ -216,7 +215,12 @@ class Glyph(object):
 
     def _get_pointContexts(self):
         if self._pointContexts is None:
-            self._initialize()
+            for cIndex, contour in enumerate(self._contours):
+                openPointContext = {} # Tuples of points -3, -2, -1, 0, 1, 2, 3 contour index
+                self._pointContexts.append(openPointContext)
+                contour3 = contour+contour+contour
+                for n in range(len(contour), len(contour)*2):
+                    openPointContext[n] = contour3[n-3:n+4]
         return self._pointContexts
     pointContexts = property(_get_pointContexts)
 
