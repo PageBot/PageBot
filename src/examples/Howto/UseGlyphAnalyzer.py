@@ -30,7 +30,7 @@ from pagebot.toolbox.transformer import point3D
 #
 #     glyphanalyzer.py
 #
-#     Implements a PabeBot font classes to get info from a TTFont.
+#     Implements a PageBot font classes to get info from a TTFont.
 #   
 import weakref
 
@@ -99,29 +99,34 @@ class GlyphAnalyzer(object):
                 horizontals[pc.y].append(pc)
 
 
-C = 0.5
 import pagebot
 from pagebot.fonttoolbox.objects.font import Font
 
+C = 0.5
 W = H = 1000
 
-PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
+PATH = u"/Users/michiel/Fonts/TnTestFonts/fontFiles/Georgia/Georgia.ttf"
 cjkF = Font(PATH, install=False)
-print cjkF.info.familyName, cjkF.info.styleName
-print cjkF.ttFont.tables.keys()
+#print cjkF.info.familyName, cjkF.info.styleName
+#print cjkF.ttFont.tables.keys()
 glyphs = []
 start = 16500
 end = 16502
 
-GLYPHS = ('cid05404.1', 'cid05405.1', 'cid05403.1', 'e', 'H', 'O')
-GLYPHS = ('bullet', 'e','h', 'oe')
+#GLYPHS = ('cid05404.1', 'cid05405.1', 'cid05403.1', 'e', 'H', 'O')
+#GLYPHS = ('bullet', 'e','h', 'oe')
 #GLYPHS = sorted( cjkF.keys())[start:end]
+GLYPHS = ('b', 'l', 'a')
+
 for name in GLYPHS:
     if name.startswith('.'):
         continue
+
     newPage(W, H)
     glyph = cjkF[name]
     glyph.ANALYZER_CLASS = GlyphAnalyzer
-    print glyph.analyzer
-    print glyph.contours
+    #print glyph.analyzer
+    contours = glyph.contours
+    drawPath(glyph._path)
+        
     
