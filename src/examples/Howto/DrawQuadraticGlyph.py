@@ -22,6 +22,7 @@ from pagebot.fonttoolbox.objects.font import Font
 
 
 C = 0.5
+F = 2 / 3
 glyphName = 'a'
 dx = 200
 x = 50
@@ -46,11 +47,11 @@ def drawSegment(segment):
         offCurve = segment[1]
         onCurve1 = segment[2]
 
-        x0 = onCurve0.x + (offCurve.x - onCurve0.x) * 1 / 1.3 
-        y0 = onCurve0.y + (offCurve.y - onCurve0.y) * 1 / 1.3 
+        x0 = onCurve0.x + (offCurve.x - onCurve0.x) * F
+        y0 = onCurve0.y + (offCurve.y - onCurve0.y) * F
         offCurve0 = (x0, y0) 
-        x1 = onCurve1.x - (onCurve1.x - offCurve.x) * 1 / 1.3 
-        y1 = onCurve1.y - (onCurve1.y - offCurve.y) * 1 / 1.3 
+        x1 = onCurve1.x - (onCurve1.x - offCurve.x) * F
+        y1 = onCurve1.y - (onCurve1.y - offCurve.y) * F
         offCurve1 = (x1, y1) 
         circle(x0, y0, r/4, color='blue')
         circle(x1, y1, r/4, color='blue')
@@ -80,6 +81,8 @@ def circle(x, y, r, color='pink'):
         fill(1, 0, 1)
     elif color == 'green':
         fill(0, 1, 0)
+    elif color == 'blue':
+        fill(0, 0, 1)
     oval(x - r, y - r, r*2, r*2)
 
 contours = []
