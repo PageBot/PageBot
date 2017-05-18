@@ -7,9 +7,9 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     UseGlyphAnalyzer.py
+#     DrawQuadraticGlyph.py
 #
-#     Implements a PageBot font classes to get info from a TTFont.
+#     Shows how to draw quadratic curves with cubic curves.
 #   
 import weakref
 from AppKit import NSFont
@@ -17,8 +17,9 @@ from fontTools.ttLib import TTFont, TTLibError
 from drawBot import BezierPath
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.transformer import point3D
-from pagebot.fonttoolbox.objects.glyph import Glyph
+from pagebot.fonttoolbox.objects.glyph import *
 from pagebot.fonttoolbox.objects.font import Font
+
 
 C = 0.5
 glyphName = 'a'
@@ -33,10 +34,14 @@ glyph = font[glyphName]
 path = BezierPath()
 
 def drawSegment(segment):
-    if len(segment) == 2:
-        return
+    assert len(segment) > 1
 
-    if len(segment) == 3:
+    if len(segment) == 2:
+        point = segment[-1]
+        #print 'bla'
+        path.lineTo((point.x, point.y))
+
+    elif len(segment) == 3:
         onCurve0 = segment[0]
         offCurve = segment[1]
         onCurve1 = segment[2]
@@ -50,6 +55,7 @@ def drawSegment(segment):
         circle(x0, y0, r/4)
         circle(x1, y1, r/4)
         onCurve = (onCurve1.x, onCurve1.y)
+        path.curveTo(offCurve0, offCurve1, onCurve)
     else:
         curve0 = segment[:2]
         curve1 = segment[2:]
@@ -60,13 +66,38 @@ def drawSegment(segment):
         x = offCurve0.x + (offCurve1.x - offCurve0.x) * 0.5
         y = offCurve0.y + (offCurve1.y - offCurve0.y) * 0.5
         oval(x - r/4, y - r/4, d/4, d/4)
+        newOnCurve = Point(x, y, True)
+        curve0.append(newOnCurve)
+        curve1.insert(0, newOnCurve)
         drawSegment(curve0)
         drawSegment(curve1)
 
 def circle(x, y, r):
     oval(x - r, y - r, r*2, r*2)
 
-for contour in glyph.contours:
+contours = []
+contour = None    
+coordinates = glyph.ttGlyph.coordinates
+
+for i, (x, y) in enumerate(coordinates):
+    start = i - 1 in glyph.endPtsOfContours
+    p = Point(x, y, glyph.flags[i])
+
+    if i == 0:
+        contour = [p] 
+    elif start:
+        contour.append(contour[0])
+        contours.append(contour)
+        contour = [p] 
+    else:
+        contour.append(p)
+        
+    if i == len(coordinates) - 1:
+        contour.append(contour[0])
+        contours.append(contour)
+
+# Draws oncurve and (slightly smaller) offcurve points
+for contour in contours:
     for i, point in enumerate(contour):
         x = point.x
         y = point.y
@@ -76,12 +107,14 @@ for contour in glyph.contours:
             circle(x, y, r)
         else:
             circle(x, y, r/ 2)
-
-        print point
     
-for contour in glyph.contours:
+for n, contour in enumerate(contours):
+    print ' * contour %d' % n, contour
+
     segments = []
-    segment = [contour[0]]
+    point = contour[0]
+    segment = [point]
+    path.moveTo((point.x, point.y))
         
     for i, point in enumerate(contour[1:]):
         if point.onCurve:
@@ -90,21 +123,27 @@ for contour in glyph.contours:
             segment = [point]
         else:
             segment.append(point)
-                
-    for segment in segments:
+            
+    for j, segment in enumerate(segments):
+        print '   * segment %d' % j, segment
         drawSegment(segment)
         
 fill(None)
-stroke(0, 0, 0)
+stroke(1, 0, 0)
 strokeWidth(1)
 drawPath(path)
 
-'''            
-print 'pbsegs', glyph._segments
+print '\nPageBot\n'
+
+c = glyph.contours
+segments = glyph._segments
+
+for segment in segments:
+    print segment
+    
+'''
 glyph._path.scale(0.3)
 glyph._path.translate(x, 100)
 #drawPath(glyph._path)
 x += dx
 '''
-    
-    
