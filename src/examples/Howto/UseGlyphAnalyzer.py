@@ -30,7 +30,7 @@ from pagebot.toolbox.transformer import point3D
 #
 #     glyphanalyzer.py
 #
-#     Implements a PabeBot font classes to get info from a TTFont.
+#     Implements a PageBot font classes to get info from a TTFont.
 #   
 import weakref
 
@@ -98,7 +98,6 @@ class GlyphAnalyzer(object):
                     horizontals[pc.y] = self.HORIZONTAL_CLASS()
                 horizontals[pc.y].append(pc)
 
-
 C = 0.5
 import pagebot
 from pagebot.fonttoolbox.objects.font import Font
@@ -122,6 +121,9 @@ for name in GLYPHS:
     newPage(W, H)
     glyph = cjkF[name]
     glyph.ANALYZER_CLASS = GlyphAnalyzer
-    print glyph.analyzer.verticals
-    #print glyph.contours
+    #print glyph.analyzer.verticals
+    print glyph.contours
+    glyph._path.scale(0.5)
+    glyph._path.translate(100, 100)
+    drawPath(glyph._path)
     
