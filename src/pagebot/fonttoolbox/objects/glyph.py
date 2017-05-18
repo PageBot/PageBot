@@ -110,8 +110,9 @@ class Glyph(object):
                 contour.append(contour[0])
                 contours.append(contour)
 
+        print len(contours)
+
         for index, (x, y) in enumerate(coordinates):
-            #start = index - 1 in self.endPtsOfContours
             p = Point(x, y, flags[index])
 
             if p.onCurve:
@@ -133,21 +134,26 @@ class Glyph(object):
 
             openSegment.append(p)
 
+            #start = index - 1 in self.endPtsOfContours
+            # If there is an open segment, it may contain mutliple
+            # quadratics.  Split into cubics.
             if index in endPtsOfContours and openContour:
-                # If there is an open segment, it may contain mutliple quadratics.
-                # Split into cubics.
                 if openSegment:
                     currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
+
                 path.closePath()
                 openContour = None
                 openSegment = None
+
             elif p.onCurve:
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
                 openSegment = None
 
+            print '_contours', len(self._contours)
+
     def _drawSegment(self, cp, segment, path):
-        u"""Draw the Segment instance into the path. It may contain multiple quadratics.
-        Split into cubics and lines."""
+        u"""Draws the Segment instance into the path. It may contain multiple
+        quadratics. Split into cubics and lines."""
 
         if len(segment) == 1:
             p1 = segment.points[-1]
