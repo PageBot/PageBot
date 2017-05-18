@@ -97,6 +97,7 @@ class Glyph(object):
 
         for i, p in enumerate(coordinates):
             start = i - 1 in self.endPtsOfContours
+
             if i == 0:
                 contour = [p]
             elif start:
@@ -109,8 +110,6 @@ class Glyph(object):
             if i == len(coordinates) - 1:
                 contour.append(contour[0])
                 contours.append(contour)
-
-        print len(contours)
 
         for index, (x, y) in enumerate(coordinates):
             p = Point(x, y, flags[index])
@@ -128,7 +127,6 @@ class Glyph(object):
             openContour.append(p)
 
             if not openSegment:
-
                 openSegment = Segment()
                 self._segments.append(openSegment)
 
@@ -149,7 +147,13 @@ class Glyph(object):
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
                 openSegment = None
 
-            print '_contours', len(self._contours)
+        '''
+        print 'contours %s' % self.name, len(contours)
+        print '_contours %s' % self.name, len(self._contours)
+        for i, contour in enumerate(contours):
+            print 'contour %d' % i, contour
+            print '_contour %d' % i, self._contours[i]
+        '''
 
     def _drawSegment(self, cp, segment, path):
         u"""Draws the Segment instance into the path. It may contain multiple
@@ -159,23 +163,26 @@ class Glyph(object):
             p1 = segment.points[-1]
             path.lineTo((p1.x, p1.y))
             cp = p1
+
         elif len(segment) == 2: # 1:1 Convert of Quadratic to Cubic
             p1, p2 = segment.points
             #p1, cp, p1 = p1, p2, cp
             self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y, path)
             cp = p2
-        #elif len(segment) == 3: # 1:1 Convert of Quadratic to Cubic
-        #    pass
-        else: # Else off-curves > 2, handle implied on-curve points.
+
+        else:
+            # handle implied on-curve points.
             for n in range(len(segment)-1):
                 p0 = cp
                 p1 = segment.points[n]
                 p2 = segment.points[n+1]
+
                 #p2, cp, p1 = p1, p2, cp
                 if n < len(segment):
-                    m = Point((p1.x + p2.x)/2, (p1.y + p2.y)/2, True)
+                    m = Point((p1.x + p2.x) / 2, (p1.y + p2.y)/2, True)
                 else:
                     m = p2
+
                 self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y, path)
                 cp = m
         return cp
@@ -185,6 +192,10 @@ class Glyph(object):
         pp0y = p0y + (p1y - p0y)*C
         pp1x = p2x + (p1x - p2x)*C
         pp1y = p2y + (p1y - p2y)*C
+        #pp1x = p2x + (p2x - p1x)*C
+        #pp1y = p2y + (p2y - p1y)*C
+        #pp1x = p1x + (p2x - p1x)*C
+        #pp1y = p1y + (p2y - p1y)*C
         path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
 
     def _get_ttGlyph(self):
