@@ -21,18 +21,21 @@ from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.font import Font
 
 C = 0.5
-PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
-font = Font(PATH, install=False)
-GLYPHS = ('a',)
+glyphName = 'a'
 dx = 200
 x = 50
 d = 10
 r = d / 2
 
+PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
+font = Font(PATH, install=False)
+glyph = font[glyphName]
+path = BezierPath()
+
 def drawSegment(segment):
-    
     if len(segment) == 2:
         return
+
     if len(segment) == 3:
         onCurve0 = segment[0]
         offCurve = segment[1]
@@ -44,11 +47,9 @@ def drawSegment(segment):
         x1 = onCurve1.x - (onCurve1.x - offCurve.x) * 1 / 1.3 
         y1 = onCurve1.y - (onCurve1.y - offCurve.y) * 1 / 1.3 
         offCurve1 = (x1, y1) 
-        oval(x0 - r/4, y0 - r/4, d/4, d/4)
-        oval(x1 - r/4, y1 - r/4, d/4, d/4)
+        circle(x0, y0, r/4)
+        circle(x1, y1, r/4)
         onCurve = (onCurve1.x, onCurve1.y)
-        #pen._curveToOne(offCurve0, offCurve1, onCurve)
-    
     else:
         curve0 = segment[:2]
         curve1 = segment[2:]
@@ -62,54 +63,48 @@ def drawSegment(segment):
         drawSegment(curve0)
         drawSegment(curve1)
 
-for name in GLYPHS:
-    glyph = font[name]
-    path = BezierPath()
+def circle(x, y, r):
+    oval(x - r, y - r, r*2, r*2)
 
-    #print glyph.analyzer.verticals
-    for contour in glyph.contours:
-        for i, point in enumerate(contour):
-            x = point.x
-            y = point.y
-            fill(1, 0, 1)
+for contour in glyph.contours:
+    for i, point in enumerate(contour):
+        x = point.x
+        y = point.y
+        fill(1, 0, 1)
             
-            if point.onCurve:
-                oval(x - r, y - r, d, d)
-                if i == 0:
-                    path.moveTo((point.x, point.y))
-                else:
-                    path.lineTo((point.x, point.y))
-            else:
-                oval(x - r/2, y - r/2, d/2, d/2)
+        if point.onCurve:
+            circle(x, y, r)
+        else:
+            circle(x, y, r/ 2)
 
-            print point
+        print point
     
-    for contour in glyph.contours:
-        segments = []
-        segment = [contour[0]]
+for contour in glyph.contours:
+    segments = []
+    segment = [contour[0]]
         
-        for i, point in enumerate(contour[1:]):
-            if point.onCurve:
-                segment.append(point)
-                segments.append(segment)
-                segment = [point]
-            else:
-                segment.append(point)
+    for i, point in enumerate(contour[1:]):
+        if point.onCurve:
+            segment.append(point)
+            segments.append(segment)
+            segment = [point]
+        else:
+            segment.append(point)
                 
-        for segment in segments:
-            drawSegment(segment)
+    for segment in segments:
+        drawSegment(segment)
         
+fill(None)
+stroke(0, 0, 0)
+strokeWidth(1)
+drawPath(path)
 
-    fill(None)
-    stroke(0, 0, 0)
-    strokeWidth(1)
-    drawPath(path)
-            
-    print 'pbsegs', glyph._segments
-        
-    glyph._path.scale(0.3)
-    glyph._path.translate(x, 100)
-    #drawPath(glyph._path)
-    x += dx
+'''            
+print 'pbsegs', glyph._segments
+glyph._path.scale(0.3)
+glyph._path.translate(x, 100)
+#drawPath(glyph._path)
+x += dx
+'''
     
     
