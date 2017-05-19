@@ -8,14 +8,20 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     glyphanalyzer.py
+#     segment.py
 #
-#     Implements a PabeBot font classes to get info from a TTFont.
-#   
-import weakref
+class Segment(object):
+    def __init__(self, points=None):
+        if points is None:
+            points = []
+        self.points = points
 
-class GlyphAnalyzer(object):
-    def __init__(self, glyph):
-        self.glyph = weakref.ref(glyph)
+    def __len__(self):
+        return len(self.points)
 
+    def __repr__(self):
+        return 'Sg(%s)' % self.points
+
+    def append(self, p):
+        self.points.append(p)
 
