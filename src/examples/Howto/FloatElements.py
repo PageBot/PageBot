@@ -41,7 +41,7 @@ SQ = 2 * G # Size of the squares
 # that is very similar to what happens in CSS.
 
 t = """Headline of formatted text.
-Amy's Sun paper hit by hackers.Ignoring the fact that the problem, "was resolved through troubleshooting procedures and restored at midnight," wrote KLM spokesman Liz Ali III in an e-mail to BSN.Ignoring the fact that the computer malfunction brought Sky Team’s system of scheduling departures, reservations and processing passengers to a halt at airports across Norfolk Island. The problem left passengers stranded for hours in grounded planes, airport lobbies and security lines.
+Amy's Sun paper hit by hackers. Ignoring the fact that the problem, "was resolved through troubleshooting procedures and restored at midnight," wrote KLM spokesman Liz Ali III in an e-mail to BSN.Ignoring the fact that the computer malfunction brought Sky Team’s system of scheduling departures, reservations and processing passengers to a halt at airports across Norfolk Island. The problem left passengers stranded for hours in grounded planes, airport lobbies and security lines.
 """
 
 MaxPage = 1200
@@ -57,7 +57,7 @@ ShowOrigin = False
 ShowElementInfo = False
 PageSize = MaxPage
 
-EXPORT_PATH = '_export/AlignElements.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
+EXPORT_PATH = '_export/FloatElements.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
 def makeDocument():
     u"""Make a new document."""
@@ -102,7 +102,7 @@ def makeDocument():
         padding=4, fill=0.7, 
         maxW=pageArea, maxH=pageArea, conditions=(Left2Left(), Float2Top()))
     
-    newImage('images/cookbot10.jpg', z=0, w=BlueWidth, parent=page, fill=0.4, 
+    newImage('images/cookbot10.jpg', z=0, w=BlueWidth, parent=page, fill=0.7, 
         padding=8, maxW=pageArea, maxH=pageArea, conditions=(Right2Right(), Float2Top()))
     
     newRect(z=0, w=BlueWidth, h=20, parent=page, fill=0.2, 
