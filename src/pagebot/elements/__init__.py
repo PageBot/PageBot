@@ -21,6 +21,7 @@ from pagebot.elements.pboval import Oval
 from pagebot.elements.pbimage import Image
 from pagebot.elements.pbgalley import Galley
 from pagebot.elements.pbpage import Page, Template
+from pagebot.elements.paths.path import Path
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
 
