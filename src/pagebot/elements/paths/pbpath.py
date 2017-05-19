@@ -14,8 +14,7 @@ from pagebot.elements.element import Element
 from pagebot.style import XXXL
 
 class Polygon(Element):
-    u"""The Polygon element is a simple implementation of the polygon DrawBot function.
-    More complex path-like elements inherit from the Path element."""
+
     def __init__(self, fs, points=None, **kwargs):
         Element.__init__(self, **kwargs)
         if points is None:
