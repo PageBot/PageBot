@@ -16,8 +16,8 @@ import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from drawBot import BezierPath
-from pagebot.fonttoolbox.objects.fontinfo import FontInfo
-from pagebot.fonttoolbox.objects.glyphanalyzer import GlyphAnalyzer
+from fontinfo import FontInfo
+from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 
 C = 0.5
 
