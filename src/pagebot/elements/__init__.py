@@ -11,6 +11,7 @@
 #     __init__.py
 #
 from pagebot.elements.element import Element
+# Simple elements
 from pagebot.elements.pbtext import Text
 from pagebot.elements.pbtextbox import TextBox
 from pagebot.elements.pbrect import Rect
@@ -18,10 +19,13 @@ from pagebot.elements.pbline import Line
 from pagebot.elements.pbruler import Ruler
 from pagebot.elements.pbpolygon import Polygon
 from pagebot.elements.pboval import Oval
+# Page elements
 from pagebot.elements.pbimage import Image
 from pagebot.elements.pbgalley import Galley
 from pagebot.elements.pbpage import Page, Template
-from pagebot.elements.paths.path import Path
+# Path and mask elements
+from pagebot.elements.paths.pbpath import Path
+from pagebot.elements.paths.glyphpath import GlyphPath
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
 
