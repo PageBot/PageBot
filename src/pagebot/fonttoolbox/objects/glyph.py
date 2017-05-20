@@ -72,7 +72,7 @@ class Glyph(object):
         return not self.parent is g.parent or self.name != g.name
 
     def __repr__(self):
-        return '<PageBot Glyph %s P:%d/C:%d/Cmp:%d>' % (self.name,
+        return '<PageBot Glyph %s Pts:%d/Cnt:%d/Cmp:%d>' % (self.name,
             len(self.coordinates), len(self.endPtsOfContours), len(self.components))
 
     def _initialize(self):
@@ -93,6 +93,7 @@ class Glyph(object):
         if coordinates or components:
             self._path = path = BezierPath() # There must be points and/or components, start path
 
+        """
         contours = []
         contour = None
 
@@ -111,7 +112,7 @@ class Glyph(object):
             if i == len(coordinates) - 1:
                 contour.append(contour[0])
                 contours.append(contour)
-
+        """
         for index, (x, y) in enumerate(coordinates):
             p = Point(x, y, flags[index])
 
@@ -134,7 +135,7 @@ class Glyph(object):
             openSegment.append(p)
 
             #start = index - 1 in self.endPtsOfContours
-            # If there is an open segment, it may contain mutliple
+            # If there is an open segment, it may contain multiple
             # quadratics.  Split into cubics.
             if index in endPtsOfContours and openContour:
                 if openSegment:
@@ -147,14 +148,6 @@ class Glyph(object):
             elif p.onCurve:
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
                 openSegment = None
-
-        '''
-        print 'contours %s' % self.name, len(contours)
-        print '_contours %s' % self.name, len(self._contours)
-        for i, contour in enumerate(contours):
-            print 'contour %d' % i, contour
-            print '_contour %d' % i, self._contours[i]
-        '''
 
     def _drawSegment(self, cp, segment, path):
         u"""Draws the Segment instance into the path. It may contain multiple
