@@ -10,7 +10,7 @@
 #
 #     path.py
 #
-from drawBot import drawPath, save, restore, transform, scale
+from drawBot import drawPath, save, restore, transform, scale, fill, stroke, strokeWidth
 from pbpath import Path
 from pagebot.toolbox.transformer import pointOffset
 from pagebot import setStrokeColor, setFillColor
@@ -50,7 +50,7 @@ class GlyphPath(Path):
             return DEFAULT_HEIGHT # Undefined and without parent, answer default width.
         return self._h # Height is lead and defined as not 0 or None.
     def _set_h(self, h):
-        self._h = h # If self._w is set too, do disproportioan sizing. Otherwise set to 0 or None.
+        self._h = h # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
     h = property(_get_h, _set_h)
 
     def draw(self, origin, view):
@@ -65,17 +65,21 @@ class GlyphPath(Path):
         scale(sh)
         if self.pathFilter is not None:
             self.pathFilter(self, self.glyph.path)
-        else:
+        if self.css('fill') != NO_COLOR or self.css('stroke') != NO_COLOR:
             setFillColor(self.css('fill'))
-            setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth')/sh)
+            print (self.css('strokeWidth') or 1), sh
+            setStrokeColor(self.css('stroke', NO_COLOR), (self.css('strokeWidth') or 20))
+            fill(0)
+            stroke(1, 0, 0)
+            strokeWidth(20)
             drawPath(self.glyph.path)
         restore()
 
         # If there are child elements, draw them over the polygon.
         self._drawElements(p, view)
 
-        # Draw optional bouning box.
-        self.drawFrame(origin, view)
+        # Draw optional bounding box.
+        #self.drawFrame(origin, view)
  
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
