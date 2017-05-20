@@ -18,6 +18,7 @@ from fontTools.ttLib import TTFont, TTLibError
 from drawBot import BezierPath
 from fontinfo import FontInfo
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
+from pagebot.toolbox.transformer import point2D
 
 C = 0.5
 
@@ -301,6 +302,11 @@ class Glyph(object):
             self._analyzer = self.ANALYZER_CLASS(self)
         return self._analyzer
     analyzer = property(_get_analyzer)
+
+    def onBlack(self, p):
+        u"""Answers the boolean flag is the single point (x, y) is on black."""
+        p = point2D(p)
+        return self.path._path.containsPoint_(p)
 
     """
     TTGlyph Functions to implement
