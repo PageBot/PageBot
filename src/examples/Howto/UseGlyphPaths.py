@@ -325,10 +325,10 @@ print cjkF.info.familyName, cjkF.info.styleName
 print cjkF.ttFont.tables.keys()
 glyphs = []
 start = 16500
-end = 16502
+end = 16552
 
 GLYPHS = ('cid05404.1', 'cid05405.1', 'cid05403.1', 'e', 'H', 'O')
-GLYPHS = ('bullet', 'e','h', 'oe')
+#GLYPHS = ('bullet', 'e','h', 'oe')
 #GLYPHS = sorted( cjkF.keys())[start:end]
 for name in GLYPHS:
     if name.startswith('.'):

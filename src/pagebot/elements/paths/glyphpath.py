@@ -8,63 +8,39 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     polygon.py
+#     path.py
 #
-from pagebot.elements.element import Element
-from pagebot.style import XXXL
+from drawBot import drawPath, save, restore, transform, scale
+from pbpath import Path
+from pagebot.toolbox.transformer import pointOffset
+from pagebot import setStrokeColor, setFillColor
+from pagebot.style import NO_COLOR
 
-class Polygon(Element):
+class GlyphPath(Path):
 
-    def __init__(self, fs, points=None, **kwargs):
-        Element.__init__(self, **kwargs)
-        if points is None:
-            points = []
-        self.points = points[:] # Force copy, so caller cannot change and not change size cache.
-
-    def _get_points(self):
-        return self._points
-    def _set_points(self, points):
-        self._points = points
-        self._size = None # Cached propertions, will reset by self.w, self.h and self.size
-
-    def _get_size(self):
-        if self._size is None:
-            if not self.points:
-                self._size = 0, 0
-            else:
-                maxX = maxY = -XXXL
-                minX = minY = XXXL
-                w = h = None
-                for point in self.points:
-                    maxX = max(maxX, point[0])
-                    minX = min(minX, point[0])
-                    maxY = max(maxY, point[1])
-                    minY = min(minY, point[1])
-                self._size = maxX - minX, maxY - minY
-        return self._size
-    size = property(_get_size)
-
-    def _get_w(self):
-        return self.size[0] # Calculate cache self._size if undefined.
-    w = property(_get_w)
-
-    def _get_h(self):
-        return self.size[1] # Calculate cache self._size if undefined.
+    def __init__(self, glyph, w=None, h=None, pathFilter=None, **kwargs):
+        Path.__init__(self, **kwargs)
+        self.glyph = glyph 
+        self.w = w or 100
+        self.h = h or 100
+        self.pathFilter = pathFilter # Optional pathFilter method, called with self as param.
 
     def draw(self, origin, view):
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
-        px, py, _ = p, self._applyAlignment(p) # Ignore z-axis for now.
-        setFillColor(self.css('fill'))
-        setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
-        newPath()
-        for index, (ppx, ppy) in enumerate(self.points):
-            if index == 0:
-                moveTo((px + ppx, py + ppy))
-            else:
-                lineTo((px + ppx, py + ppy))
-        drawPath()
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        save()
+        scale(0.25)
+        transform((1, 0, 0, 1, px, py))
+        if self.pathFilter is not None:
+            self.pathFilter(self, self.glyph.path)
+        else:
+            setFillColor(self.css('fill'))
+            setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+            drawPath(self.glyph.path)
+        restore()
 
         # If there are child elements, draw them over the polygon.
         self._drawElements(p, view)
@@ -74,4 +50,3 @@ class Polygon(Element):
  
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
-
