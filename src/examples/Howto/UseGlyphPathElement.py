@@ -6,8 +6,8 @@
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
-#Z
-#     UseTextFlows.py
+#
+#     UseGlyphPathElement.py
 #
 import pagebot # Import to know the path of non-Python resources.
 
@@ -28,7 +28,11 @@ PageSize = 500
 EXPORT_PATH = '_export/UseGlyphPathElement.pdf' 
 
 def pathFilter(e, path):
-    print e, path
+    for x in range(0, e.iw, 20):
+        for y in range(0, e.ih, 20):
+            if e.glyph.onBlack((x, y)):
+                fill(random(), random(), random())
+                oval(x-10, y-10, 20, 20)
     
 def makeDocument():
     u"""Make a new document."""
@@ -53,13 +57,15 @@ def makeDocument():
     page.name = 'This is a demo page for floating child elements'
 
     PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
-    doc.f = Font(PATH, install=False)
-
-    e1 = GlyphPath(doc.f['a'], stroke=(1, 0, 0),
+    f = Font(PATH, install=False)
+    #pathFilter = None
+    e1 = GlyphPath(f['H'], stroke=(1, 0, 0), w=200,
         fill=None, strokeWidth=5, pathFilter=pathFilter,
         parent=page, font='Verdana',       
         conditions=[Left2Left(), Float2Top()])
-    #print e1.glyph        
+    
+    print e1.glyph, e1.w, e1.h, e1.iw, e1.ih        
+    
     score = page.solve()
     if score.fails:
         print score.fails

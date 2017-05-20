@@ -91,7 +91,7 @@ class PixelMap(Element):
         Element.__init__(self, **kwargs)
 
         # One of the two needs to be defined, the other can be None.
-        # If both are set, then the image scale disproportional.
+        # If both are set, then the image scales disproportional.
         self.w = w
         self.h = h
 
@@ -134,7 +134,7 @@ class PixelMap(Element):
             return DEFAULT_WIDTH # Undefined and without parent, answer default width.
         return self._w # Width is lead and defined as not 0 or None.
     def _set_w(self, w):
-        self._w = w # If self._h is set too, do disproportioan sizing. Otherwise set to 0 or None.
+        self._w = w # If self._h is set too, do disproportional sizing. Otherwise set to 0 or None.
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -144,7 +144,7 @@ class PixelMap(Element):
             return DEFAULT_HEIGHT # Undefined and without parent, answer default width.
         return self._h # Height is lead and defined as not 0 or None.
     def _set_h(self, h):
-        self._h = h # If self._w is set too, do disproportioan sizing. Otherwise set to 0 or None.
+        self._h = h # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
     h = property(_get_h, _set_h)
 
     def _getAlpha(self):
