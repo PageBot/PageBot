@@ -25,7 +25,9 @@ class Oval(Element):
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-        
+    
+        self.drawFrame(p, view) # Draw optional frame or borders.
+  
         setFillColor(self.css('fill', NO_COLOR))
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         oval(px, py, self.w, self.h)

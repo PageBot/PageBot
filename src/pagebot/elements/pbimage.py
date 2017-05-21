@@ -87,7 +87,8 @@ class Image(Element):
 class PixelMap(Element):
     u"""The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId."""
    
-    def __init__(self, path, w=None, h=None, clipRect=None, mask=None, imo=None, **kwargs):
+    def __init__(self, path, w=None, h=None, clipRect=None, clipPath=None, mask=None, 
+        imo=None, **kwargs):
         Element.__init__(self, **kwargs)
 
         # One of the two needs to be defined, the other can be None.
@@ -96,7 +97,8 @@ class PixelMap(Element):
         self.h = h
 
         self.mask = mask # Optional mask element.
-        self.clipRect = clipRect
+        self.clipRect = clipRect # Optional clip rectangle
+        self.clipPath = clipPath # Optional clip path.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn.
         
@@ -196,6 +198,9 @@ class PixelMap(Element):
                 # the image will be clipped inside the path
                 #fill(1, 0, 0, 0.5)
                 #drawPath(clipRect)
+            elif self.clipPath is not None:
+                #Otherwise if there is a clipPath, then use it.
+                clipPath(self.clipPath)
 
             # Store page element Id in this image, in case we want to make an image index later.
             image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())

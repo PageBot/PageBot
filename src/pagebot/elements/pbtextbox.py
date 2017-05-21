@@ -389,21 +389,10 @@ class TextBox(Element):
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
    
-        # First draw optional fill rectangle.
-        sFill = self.css('fill', NO_COLOR)
-        if sFill != NO_COLOR:
-            setStrokeColor(None)
-            setFillColor(sFill)
-            rect(px, py, self.w, self.h)
+        self.drawFrame(p, view) # Draw optional frame or borders.
+
         # Draw the text.    
         textBox(self.fs, (px+self.pl, py+self.pb, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
-        # Draw options stroke rectangle.
-        sStroke = self.css('stroke', NO_COLOR)
-        sStrokeWidth = self.css('strokeWidth')
-        if sStroke != NO_COLOR and sStrokeWidth is not None:
-            setStrokeColor(sStroke, sStrokeWidth)
-            setFillColor(None)
-            rect(px, py, self.w, self.h)
 
         # If there are child elements, draw them over the text.
         self._drawElements(p, view)
