@@ -657,6 +657,57 @@ class Element(object):
         self.back = z - self.css('mzb')
     mBack = property(_get_mBack, _set_mBack)
 
+    # Borders
+
+    def _borderDict(self, borderData):
+        if isinstance(borderData, (int, long, float)):
+            return dict(line='solid', stroke=0, width=borderData)
+        if isinstance(borderData, dict):
+            if not 'line' in borderData:
+                borderData['line'] = 'solid'
+            if not 'strokeWidth' in borderData:
+                borderData['strokeWidth'] = 1
+            if not 'stroke' in borderData:
+                borderData['stroke'] = 0
+            return borderData
+        return None
+
+    def _get_border(self):
+        return self.borderTop, self.borderRight, self.borderBottom, self.borderLeft
+    def _set_border(self, borders):
+        if not insinstance(borders, (list, tuple)):
+            borders = (borders, borders, borders, borders)
+        elif len(borders) == 2:
+            borders = borders + borders
+        else:
+            raise ValueError
+        self.borderTop, self.borderRight, self.borderBottom, self.borderLeft = borders
+    borders = property(_get_border, _set_border)
+
+    def _get_borderTop(self):
+        return self.css('borderTop')
+    def _set_borderTop(self, border):
+        self.style['borderTop'] = self._borderDict(border)
+    borderTop = property(_get_borderTop, _set_borderTop)
+
+    def _get_borderRight(self):
+        return self.css('borderRight')
+    def _set_borderRight(self, border):
+        self.style['borderRight'] = self._borderDict(border)
+    borderRight = property(_get_borderRight, _set_borderRight)
+
+    def _get_borderBottom(self):
+        return self.css('borderBottom')
+    def _set_borderBottom(self, border):
+        self.style['borderBottom'] = self._borderDict(border)
+    borderBottom = property(_get_borderBottom, _set_borderBottom)
+
+    def _get_borderLeft(self):
+        return self.css('borderLeft')
+    def _set_borderLeft(self, border):
+        self.style['borderLeft'] = self._borderDict(border)
+    borderLeft = property(_get_borderLeft, _set_borderLeft)
+
     # Alignment types, defines where the origin of the element is located.
 
     def _validateXAlign(self, xAlign): # Check and answer value
@@ -1479,9 +1530,18 @@ class Element(object):
         return s
 
     def drawFrame(self, p, view):
+        u"""Draw the frame and fill of the rectangular element space.
+        The self.css('fill') defines the color of the element background.
+        In case self.css('stroke') and self.css('strokeWidth') are defined,
+        then the entire frame is drawn in this stroke color/width (overwriting
+        any border settings).
+        In case either self.css('stroke') or self.css('strokeWidth') is not set,
+        then the border settings are interpreted."""
+
         eFill = self.css('fill', None)
         eStroke = self.css('stroke', None)
         eStrokeWidth = self.css('strokeWidth')
+        # Drawing element fill and/or frame
         if eFill or (eStroke and eStrokeWidth):
             setFillColor(eFill)
             setStrokeColor(eStroke, eStrokeWidth)
@@ -1494,6 +1554,36 @@ class Element(object):
                 setStrokeColor((0, 1, 0))
                 setFillColor(None)
                 rect(p[0]+self.pl, p[1]+self.pb, self.w - self.pl - self.pr, self.h - self.pb - self.pt)
+        # In case not frame drawing, then check on border settings.
+        if not (eStroke and eStrokeWidth):
+            setFillColor(None)
+
+            border = self._borderDict(self.borderTop)
+            print 'saddad', border
+            if border is not None:
+                setStrokeColor(border['stroke'], border['strokeWidth'])
+                if self.originTop:
+                    line((p[0], p[1]), (p[0]+self.w, p[1]))
+                else:
+                    line((p[0], p[1]+self.h), (p[0]+self.w, p[1]+self.h))
+
+            border = self._borderDict(self.borderBottom)
+            if border is not None:
+                setStrokeColor(border['stroke'], border['strokeWidth'])
+                if self.originTop:
+                    line((p[0], p[1]+self.h), (p[0]+self.w, p[1]+self.h))
+                else:
+                    line((p[0], p[1]), (p[0]+self.w, p[1]))
+            
+            border = self._borderDict(self.borderLeft)
+            if border is not None:
+                setStrokeColor(border['stroke'], border['strokeWidth'])
+                line((p[0], p[1]), (p[0], p[1]+self.h))
+
+            border = self._borderDict(self.borderRight)
+            if border is not None:
+                setStrokeColor(border['stroke'], border['strokeWidth'])
+                line((p[0]+self.w, p[1]), (p[0]+self.w, p[1]+self.h))
 
     def draw(self, origin, view, drawElements=True):
         u"""Default drawing method just drawing the frame. 
