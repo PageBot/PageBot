@@ -204,6 +204,14 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         pzf = 0, # Padding “near” front in z-axis direction, closest to viewer. 
         pzb = 0, # Padding ”far” back in z-axis direction.
 
+        # Borders, independent for all sides, value is thickness of the line.
+        # None will show no border. Single value > 0 shows black line of that thickness.
+        # Other options need to be store in dictionary value.
+        borderTop = None, # Border top
+        borderLeft = None, # Border left
+        borderRight = None, # Border right
+        borderBottom = None, # Border bottom
+
         # Gutter is used a standard distance between columns. Note that when not-justifying, the visual
         # gutter on the right side of columns seems to be larger. This can be compensated for in the
         # distance between images.
