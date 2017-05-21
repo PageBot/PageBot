@@ -15,13 +15,15 @@ from __future__ import division
 import weakref
 import copy
 
-from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, fill, text, stroke, strokeWidth
+from drawBot import rect, oval, line, newPath, moveTo, lineTo, lineDash, drawPath, \
+    save, restore, scale, textSize, fill, text, stroke, strokeWidth
 
 from pagebot.conditions.score import Score
 from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
-    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS
+    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS,\
+    ONLINE, INLINE, OUTLINE
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
 
@@ -664,10 +666,12 @@ class Element(object):
 
     def _borderDict(self, borderData):
         if isinstance(borderData, (int, long, float)):
-            return dict(line='solid', stroke=0, width=borderData)
+            return dict(dash=None, stroke=0, strokeWidth=borderData)
         if isinstance(borderData, dict):
-            if not 'line' in borderData:
-                borderData['line'] = 'solid'
+            if not 'line' in borderData: # (ONLINE, INLINE, OUTLINE):
+                borderData['line'] = ONLINE
+            if not 'dash' in borderData:
+                borderData['dash'] = None
             if not 'strokeWidth' in borderData:
                 borderData['strokeWidth'] = 1
             if not 'stroke' in borderData:
@@ -679,7 +683,8 @@ class Element(object):
         return self.borderTop, self.borderRight, self.borderBottom, self.borderLeft
     def _set_borders(self, borders):
         if not isinstance(borders, (list, tuple)):
-            borders = (borders, borders, borders, borders)
+            # Make copy, in case it is a dict, otherwise changes will be made in all.
+            borders = copy.copy(borders), copy.copy(borders), copy.copy(borders), copy.copy(borders)
         elif len(borders) == 2:
             borders = borders*2
         elif len(borders) == 1:
@@ -1533,59 +1538,164 @@ class Element(object):
         return s
 
     def drawFrame(self, p, view):
-        u"""Draw the frame and fill of the rectangular element space.
+        u"""Draw fill of the rectangular element space.
         The self.css('fill') defines the color of the element background.
-        In case self.css('stroke') and self.css('strokeWidth') are defined,
-        then the entire frame is drawn in this stroke color/width (overwriting
-        any border settings).
-        In case either self.css('stroke') or self.css('strokeWidth') is not set,
-        then the border settings are interpreted."""
-
+        Instead of the DrawBot stroke and strokeWidth attributes, use
+        borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
+        """
         eFill = self.css('fill', None)
-        eStroke = self.css('stroke', None)
-        eStrokeWidth = self.css('strokeWidth')
         # Drawing element fill and/or frame
-        if eFill or (eStroke is not None and eStrokeWidth):
+        if eFill:
             setFillColor(eFill)
-            setStrokeColor(eStroke, eStrokeWidth)
+            #setStrokeColor(eStroke, eStrokeWidth)
             rect(p[0], p[1], self.w, self.h)
-            if self.ml or self.mr or self.mb or self.mt:
-                setStrokeColor((0, 0, 1))
-                setFillColor(None)
-                rect(p[0]-self.ml, p[1]-self.mb, self.w + self.ml + self.mr, self.h + self.mb + self.mt)
-            if self.pl or self.pr or self.pb or self.pt:
-                setStrokeColor((0, 1, 0))
-                setFillColor(None)
-                rect(p[0]+self.pl, p[1]+self.pb, self.w - self.pl - self.pr, self.h - self.pb - self.pt)
+            # Later usage: drawing the margin and padding should be done by view settings.
+            #if self.ml or self.mr or self.mb or self.mt:
+            #    setStrokeColor((0, 0, 1))
+            #    setFillColor(None)
+            #    rect(p[0]-self.ml, p[1]-self.mb, self.w + self.ml + self.mr, self.h + self.mb + self.mt)
+            #if self.pl or self.pr or self.pb or self.pt:
+            #    setStrokeColor((0, 1, 0))
+            #    setFillColor(None)
+            #    rect(p[0]+self.pl, p[1]+self.pb, self.w - self.pl - self.pr, self.h - self.pb - self.pt)
         # In case not frame drawing, then check on border settings.
-        if not (eStroke is not None and eStrokeWidth):
-            setFillColor(None)
 
-            border = self._borderDict(self.borderTop)
-            if border is not None:
-                setStrokeColor(border['stroke'], border['strokeWidth'])
-                if self.originTop:
-                    line((p[0], p[1]), (p[0]+self.w, p[1]))
-                else:
-                    line((p[0], p[1]+self.h), (p[0]+self.w, p[1]+self.h))
+        borderTop = self.borderTop
+        borderBottom = self.borderBottom
+        borderRight = self.borderRight
+        borderLeft = self.borderLeft
 
-            border = self._borderDict(self.borderBottom)
-            if border is not None:
-                setStrokeColor(border['stroke'], border['strokeWidth'])
-                if self.originTop:
-                    line((p[0], p[1]+self.h), (p[0]+self.w, p[1]+self.h))
-                else:
-                    line((p[0], p[1]), (p[0]+self.w, p[1]))
-            
-            border = self._borderDict(self.borderLeft)
-            if border is not None:
-                setStrokeColor(border['stroke'], border['strokeWidth'])
-                line((p[0], p[1]), (p[0], p[1]+self.h))
+        if borderTop is not None:
+            save()
+            if borderTop['dash']:
+                lineDash(*borderTop['dash'])
+            setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
 
-            border = self._borderDict(self.borderRight)
-            if border is not None:
-                setStrokeColor(border['stroke'], border['strokeWidth'])
-                line((p[0]+self.w, p[1]), (p[0]+self.w, p[1]+self.h))
+            oLeft = 0 # Extra offset on left, if there is a left border.
+            if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
+                if borderLeft['line'] == ONLINE:
+                    oLeft = borderLeft['strokeWidth']/2
+                elif borderLeft['line'] == OUTLINE:
+                    oLeft = borderLeft['strokeWidth']
+
+            oRight = 0 # Extra offset on right, if there is a right border.
+            if borderRight and (borderRight['strokeWidth'] or 0) > 1:
+                if borderRight['line'] == ONLINE:
+                    oRight = borderRight['strokeWidth']/2
+                elif borderRight['line'] == OUTLINE:
+                    oRight = borderRight['strokeWidth']
+
+            if borderTop['line'] == OUTLINE:
+                oTop = borderTop['strokeWidth']/2
+            elif borderTop['line'] == INLINE:
+                oTop = -borderTop['strokeWidth']/2
+            else:
+                oTop = 0
+
+            if self.originTop:
+                line((p[0]-oLeft, p[1]-oTop), (p[0]+self.w+oRight, p[1]-oTop))
+            else:
+                line((p[0]-oLeft, p[1]+self.h+oTop), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+            restore()
+
+        if borderBottom is not None:
+            save()
+            if borderBottom['dash']:
+                lineDash(*borderBottom['dash'])
+            setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
+
+            oLeft = 0 # Extra offset on left, if there is a left border.
+            if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
+                if borderLeft['line'] == ONLINE:
+                    oLeft = borderLeft['strokeWidth']/2
+                elif borderLeft['line'] == OUTLINE:
+                    oLeft = borderLeft['strokeWidth']
+
+            oRight = 0 # Extra offset on right, if there is a right border.
+            if borderRight and (borderRight['strokeWidth'] or 0) > 1:
+                if borderRight['line'] == ONLINE:
+                    oRight = borderRight['strokeWidth']/2
+                elif borderRight['line'] == OUTLINE:
+                    oRight = borderRight['strokeWidth']
+
+            if borderBottom['line'] == OUTLINE:
+                oBottom = borderTop['strokeWidth']/2
+            elif borderBottom['line'] == INLINE:
+                oBottom = -borderTop['strokeWidth']/2
+            else:
+                oBottom = 0
+
+            if self.originTop:
+                line((p[0]-oLeft, p[1]+self.h+oBottom), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
+            else:
+                line((p[0]-oLeft, p[1]-oBottom), (p[0]+self.w+oRight, p[1]-oBottom))
+            restore()
+        
+        if borderRight is not None:
+            save()
+            if borderRight['dash']:
+                lineDash(*borderRight['dash'])
+            setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
+
+            oTop = 0 # Extra offset on top, if there is a top border.
+            if borderTop and (borderTop['strokeWidth'] or 0) > 1:
+                if borderTop['line'] == ONLINE:
+                    oTop = borderLeft['strokeWidth']/2
+                elif borderLeft['line'] == OUTLINE:
+                    oTop = borderLeft['strokeWidth']
+
+            oBottom = 0 # Extra offset on bottom, if there is a bottom border.
+            if borderBottom and (borderBottom['strokeWidth'] or 0) > 1:
+                if borderBottom['line'] == ONLINE:
+                    oBottom = borderBottom['strokeWidth']/2
+                elif borderBottom['line'] == OUTLINE:
+                    oBottom = borderBottom['strokeWidth']
+
+            if borderRight['line'] == OUTLINE:
+                oRight = borderRight['strokeWidth']/2
+            elif borderLeft['line'] == INLINE:
+                oRight = -borderRight['strokeWidth']/2
+            else:
+                oRight = 0
+
+            if self.originTop:
+                line((p[0]+self.w+oRight, p[1]-oTop), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
+            else:
+                line((p[0]+self.w+oRight, p[1]-oBottom), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+            restore()
+
+        if borderLeft is not None:
+            save()
+            if borderLeft['dash']:
+                lineDash(*borderLeft['dash'])
+            setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
+
+            oTop = 0 # Extra offset on top, if there is a top border.
+            if borderTop and (borderTop['strokeWidth'] or 0) > 1:
+                if borderTop['line'] == ONLINE:
+                    oTop = borderLeft['strokeWidth']/2
+                elif borderLeft['line'] == OUTLINE:
+                    oTop = borderLeft['strokeWidth']
+
+            oBottom = 0 # Extra offset on bottom, if there is a bottom border.
+            if borderBottom and (borderBottom['strokeWidth'] or 0) > 1:
+                if borderBottom['line'] == ONLINE:
+                    oBottom = borderBottom['strokeWidth']/2
+                elif borderBottom['line'] == OUTLINE:
+                    oBottom = borderBottom['strokeWidth']
+
+            if borderLeft['line'] == OUTLINE:
+                oLeft = borderLeft['strokeWidth']/2
+            elif borderLeft['line'] == INLINE:
+                oLeft = -borderLeft['strokeWidth']/2
+            else:
+                oLeft = 0
+
+            if self.originTop:
+                line((p[0]-oLeft, p[1]-oTop), (p[0]-oLeft, p[1]+self.h+oBottom))
+            else:
+                line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
+            restore()
 
     def draw(self, origin, view, drawElements=True):
         u"""Default drawing method just drawing the frame. 
@@ -1594,7 +1704,7 @@ class Element(object):
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.drawFrame(p, view)
+        self.drawFrame(p, view) # Draw optional frame or borders.
 
         if drawElements:
             # If there are child elements, draw them over the pixel image.

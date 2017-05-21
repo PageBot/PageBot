@@ -19,7 +19,7 @@ if 0:
         
 from pagebot import getFormattedString
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, A3, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE
+from pagebot.style import getRootStyle, A4, A3, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 # Import all element classes that can be placed on a page.
@@ -73,26 +73,28 @@ def makeDocument():
     # Make new container for adding elements inside with alignment.
     newRect(z=10, w=pageAreaW, h=pageAreaH, fill=(0.8, 0.8, 0.8, 0.4), 
         parent=page, margin=0, padding=0, yAlign=MIDDLE, maxW=pageAreaW, 
-        maxH=pageAreaH, xAlign=CENTER, stroke=None, 
+        maxH=pageAreaH, xAlign=CENTER,  
         conditions=(Center2Center(), Middle2Middle()))
     
     t1 = newTextBox('The PageBot Times', z=0, font='BlackmoorLetPlain', 
-        fontSize=40, w=pageAreaW/2,
+        fontSize=40, w=pageAreaW/2, 
         parent=page, conditions=(Left2Left(), Top2Top()), mb=30)
         
     w = pageAreaW*0.75 # Used as element width and relative font size. 
     t2 = newTextBox('Book Review', z=0, font='NewOdanaLarge-Black', 
-        fontSize=w/8, w=PageWidth*0.75,
+        fontSize=w/8, w=PageWidth*0.75, 
         parent=page, conditions=(Left2Left(), Float2Top()))
-            
-    i1 = newRect(z=0, fill=(0.7, 0, 0), h=PageHeight/2, borderLeft=40, 
+    print t2.borders
+    i1 = newRect(z=0, fill=(0.7, 0, 0), h=PageHeight/2,
+        borders=dict(dash=(3,4),strokeWidth=40, stroke=(0, 0, 1)), 
         parent=page, conditions=(Fit2Width(), Float2Top()))
-    print i1.borders
+    i1.borderTop['line'] = INLINE
+        
     i2 = newRect(z=0, fill=(0.7, 0.7, 0), h=48,
         parent=page, conditions=(Fit2Width(), Float2Top()))
 
     t3 = newTextBox('Reviewing 2017 score', z=0, font='BodoniSvtyTwoOSITCTT-Book', 
-        fontSize=w/10, w=w, borders=3,
+        fontSize=w/10, w=w, stroke=NO_COLOR,
         parent=page, conditions=(Left2Left(), Float2Top()), mt=24)
                    
     score = page.solve()
