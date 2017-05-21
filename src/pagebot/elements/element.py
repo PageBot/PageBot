@@ -38,7 +38,9 @@ class Element(object):
 
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
             title=None, style=None, conditions=None, elements=None, template=None, nextElement=None, prevElement=None, 
-            nextPage=None, padding=None, margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, **kwargs):  
+            nextPage=None, padding=None, margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
+            mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, borders=None, borderTop=None, borderRight=None,
+            borderBottom=None, borderLeft=None, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
@@ -55,6 +57,7 @@ class Element(object):
         self.d = d
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
+        self.borders = borders or (borderTop, borderRight, borderBottom, borderLeft)
 
         # Set timer of this element.
         self.timeMarks = [TimeMark(0, self.style), TimeMark(XXXL, self.style)] # Default TimeMarks from t == 0 until infinite of time.
@@ -672,17 +675,17 @@ class Element(object):
             return borderData
         return None
 
-    def _get_border(self):
+    def _get_borders(self):
         return self.borderTop, self.borderRight, self.borderBottom, self.borderLeft
-    def _set_border(self, borders):
-        if not insinstance(borders, (list, tuple)):
+    def _set_borders(self, borders):
+        if not isinstance(borders, (list, tuple)):
             borders = (borders, borders, borders, borders)
         elif len(borders) == 2:
-            borders = borders + borders
-        else:
-            raise ValueError
+            borders = borders*2
+        elif len(borders) == 1:
+            borders = borders*4
         self.borderTop, self.borderRight, self.borderBottom, self.borderLeft = borders
-    borders = property(_get_border, _set_border)
+    borders = property(_get_borders, _set_borders)
 
     def _get_borderTop(self):
         return self.css('borderTop')
@@ -1542,7 +1545,7 @@ class Element(object):
         eStroke = self.css('stroke', None)
         eStrokeWidth = self.css('strokeWidth')
         # Drawing element fill and/or frame
-        if eFill or (eStroke and eStrokeWidth):
+        if eFill or (eStroke is not None and eStrokeWidth):
             setFillColor(eFill)
             setStrokeColor(eStroke, eStrokeWidth)
             rect(p[0], p[1], self.w, self.h)
@@ -1555,11 +1558,10 @@ class Element(object):
                 setFillColor(None)
                 rect(p[0]+self.pl, p[1]+self.pb, self.w - self.pl - self.pr, self.h - self.pb - self.pt)
         # In case not frame drawing, then check on border settings.
-        if not (eStroke and eStrokeWidth):
+        if not (eStroke is not None and eStrokeWidth):
             setFillColor(None)
 
             border = self._borderDict(self.borderTop)
-            print 'saddad', border
             if border is not None:
                 setStrokeColor(border['stroke'], border['strokeWidth'])
                 if self.originTop:

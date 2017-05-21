@@ -12,9 +12,10 @@
 import pagebot # Import to know the path of non-Python resources.
 from pagebot.contributions.filibuster.blurb import blurb
 
-for fontName in installedFonts():
-    if 'Bodoni' in fontName:
-        print fontName
+if 0:
+    for fontName in installedFonts():
+        if 'Bodoni' in fontName:
+            print fontName
         
 from pagebot import getFormattedString
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
@@ -79,19 +80,20 @@ def makeDocument():
         fontSize=40, w=pageAreaW/2,
         parent=page, conditions=(Left2Left(), Top2Top()), mb=30)
         
+    w = pageAreaW*0.75 # Used as element width and relative font size. 
     t2 = newTextBox('Book Review', z=0, font='NewOdanaLarge-Black', 
-        fontSize=80, w=PageWidth*0.75,
+        fontSize=w/8, w=PageWidth*0.75,
         parent=page, conditions=(Left2Left(), Float2Top()))
             
-    i1 = newRect(z=0, fill=(0.7, 0, 0), h=PageHeight/2, maxW=pageAreaW/2,
+    i1 = newRect(z=0, fill=(0.7, 0, 0), h=PageHeight/2, borderLeft=40, 
+        parent=page, conditions=(Fit2Width(), Float2Top()))
+    print i1.borders
+    i2 = newRect(z=0, fill=(0.7, 0.7, 0), h=48,
         parent=page, conditions=(Fit2Width(), Float2Top()))
 
-    i2 = newRect(z=0, fill=(0.7, 0.7, 0), h=PageHeight/2, maxW=pageAreaW/2-1,
-        parent=page, conditions=(Fit2Width(), Right2Right(), Float2Top()))
-
     t3 = newTextBox('Reviewing 2017 score', z=0, font='BodoniSvtyTwoOSITCTT-Book', 
-        fontSize=64, w=pageAreaW*0.75, borderBottom=3,
-        parent=page, conditions=(Left2Left(), Float2Top()), mt=32)
+        fontSize=w/10, w=w, borders=3,
+        parent=page, conditions=(Left2Left(), Float2Top()), mt=24)
                    
     score = page.solve()
     if score.fails:
