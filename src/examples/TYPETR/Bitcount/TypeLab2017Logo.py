@@ -84,11 +84,6 @@ doubleBoldPaths = {}
 typetrStoreUrl = 'https://store.typenetwork.com/foundry/typetr'
 EXPORT_DIR = '_export/BitcountLayerCatalog/'
 EXPORT_IMAGES = EXPORT_DIR + 'images/'
-if Save_PDF:
-    EXTENSION = 'pdf'
-else:
-    EXTENSION = 'png'
-EXPORT_PATH = EXPORT_IMAGES + 'TypeLabLogo%04d.'+EXTENSION
 
 # Make sure the export directory exists
 if not os.path.exists(EXPORT_IMAGES):
@@ -279,9 +274,14 @@ def drawLayers(layers):
 def export():
     # Find non-existing name, starting from #0.
     for n in range(10000):
+        if Save_PDF:
+            EXTENSION = 'pdf'
+        else:
+            EXTENSION = 'png'
+        EXPORT_PATH = EXPORT_IMAGES + 'TypeLabLogo%04d.'+EXTENSION
         filePath = EXPORT_PATH % n
         if not os.path.exists(filePath):
-            print filePath
+            print 'AAA', filePath
             saveImage(filePath) # Save the sample as png.
             break # Make sure to break, or else 10000 copies are created.
 
