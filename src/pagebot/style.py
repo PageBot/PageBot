@@ -97,6 +97,11 @@ DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)
 MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL
 
 FIT = 'fit' # Special fontsize that makes text fitting on element width.
+
+ONLINE = 'online' # Positions of borders
+INLINE = 'inline'
+OUTLINE = 'outline'
+
 LEFT = 'left'
 RIGHT = 'right'
 CENTER = 'center'
@@ -337,7 +342,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         # Element color
         NO_COLOR = NO_COLOR, # Add no-color flag (-1) to make difference with "color" None.
-        fill = NO_COLOR, # Default is no color for filling rectangle. Instead textFill color is set default black.
+        fill = None, # Default is no color for filling rectangle. Instead textFill color is set default black.
         stroke = None, # Default is to have no stroke on drawing elements. Not for text.
         cmykFill = NO_COLOR, # Flag to ignore, None is valid value for color.
         cmykStroke = NO_COLOR, # Flag to ignore, None is valid value for color.
