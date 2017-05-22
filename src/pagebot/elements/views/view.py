@@ -14,8 +14,9 @@ from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, \
-        FormattedString, cmykStroke, text, fill, strokeWidth, curveTo, closePath
+from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath,\
+    save, restore, scale, textSize, FormattedString, cmykStroke, text, fill, stroke,\
+    strokeWidth, curveTo, closePath
 
 from pagebot import setFillColor, setStrokeColor
 from pagebot.elements.element import Element
@@ -97,6 +98,10 @@ class View(Element):
                 origin = (0, 0, 0)
 
             newPage(w, h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
+            # View may have defined a background
+            if self.style['fill'] != NO_COLOR:
+                setFillColor(self.style['fill'])
+                rect(0, 0, w, h)
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             page.draw(origin, self) 
@@ -141,7 +146,11 @@ class View(Element):
         if self.showPageFrame and \
                 self.pl > self.MIN_PADDING and self.pr > self.MIN_PADDING and \
                 self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
-            page.drawFrame(origin, self)
+            fill(None)
+            stroke(0, 0, 1)
+            strokeWidth(0.5)
+            rect(origin[0], origin[1], page.w, page.h)
+            #page.drawFrame(origin, self)
 
     def drawPageNameInfo(self, page, origin):
         u"""Draw additional document information, color markers, page number, date, version, etc.
