@@ -1430,8 +1430,14 @@ class Element(object):
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if abs(e.z - self.z) > tolerance or e.mBottom < self.mTop or self.mBottom < e.mTop:
-                continue # Not equal z-layer or not in window of horizontal projection.
+            if abs(e.z - self.z) > tolerance:
+                continue # Not equal z-layer
+            if self.originTop: # not in window of horizontal projection.
+                if e.mBottom < self.mTop or self.mBottom < e.mTop:
+                    continue
+            else:
+                if e.mBottom > self.mTop or self.mBottom > e.mTop:
+                    continue 
             x = max(e.right, x)
         return x
 
@@ -2314,6 +2320,7 @@ class Element(object):
             self.h += self.parent.h - self.parent.pb - self.bottom
         else:
             self.h = self.top - self.parent.pb
+            self.bottom = self.parent.pb
         return True
 
     def fit2BottomSide(self):
