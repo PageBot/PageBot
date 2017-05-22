@@ -249,19 +249,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         scaleY = 1, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
         scaleZ = 1, # Optional scaling in z-direction, depth.
 
-        # Shadow, gradient, etc.
-        shadowOffset = None, # Point tuple, e.g. (4, -6). If None, shadow drawing is ignored. 
-        shadowBlur = 20, # Integer value for the amount of shadow blur. Make shadowOffset != None to work
-        shadowFill = (0, 0, 0, 0.5), # Default transparant black of blurred shadow.
-        linearGradient = NO_COLOR, # ((10, 210), (10, 310), ([1, 1, 1, 1], [0, 1, 1]))
-        radialGradient = NO_COLOR, #((50, 410), (50, 410), ([1, 0, 1, 0], [1, 1, 0, 0], [0, 1, 1]),
-        radialGradient_startRadius = 0,
-        radialGradient_endRadius = 300,
-        cmykShadow = NO_COLOR, # ((10, 10), 20, (0, 1, 1, 0))
-        cmykLinearGradient = NO_COLOR, # ((10, 210), (10, 310), ([1, 1, 1, 1], [0, 1, 1, 0]))
-        cmykRadialGradient = NO_COLOR, #((50, 410), (50, 410), ([1, 0, 1, 0], [1, 1, 0, 0], [0, 1, 1, 0]),
-        cmykRadialGradient_startRadius = 0,
-        cmykRadialGradient_endRadius = 300,
+        # Shadow & Gradient
+        shadow = None, # Contains options Shadow instance.
+        gradient = None, # Contains optional Gradient instance.
 
         # Typographic defaults
         font = DEFAULT_FONT, # Default is to avoid existing font and fontSize in the graphic state.

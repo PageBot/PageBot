@@ -11,6 +11,7 @@
 #
 import pagebot # Import to know the path of non-Python resources.
 from pagebot.contributions.filibuster.blurb import blurb
+from pagebot import Gradient, Shadow
 
 if 0:
     for fontName in installedFonts():
@@ -38,12 +39,7 @@ MinPage = A4[0] # Minimum size of the page.
 MaxPage = A2[1] # Maximum size of the page.
 
 PageWidth, PageHeight = A3 # Small newspaper size
-PADDING = PageWidth/15 # Padding (= normally called margin) of the page.
-
-
-ShowOrigin = False
-#ShowDimensions = False
-ShowElementInfo = False
+PADDING = PageWidth/18 # Padding (= in book layout called margin) of the page.
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/FrontPage001.pdf' 
@@ -56,10 +52,10 @@ def makeDocument():
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.padding = 0 # To show cropmarks and such, make >40 or so.
-    view.showPageCropMarks = True # Won't show if there is not padding in the view.
-    view.showElementOrigin = ShowOrigin
+    view.showPageCropMarks = False # Won't show if there is not padding in the view.
+    view.showElementOrigin = False
     view.showElementDimensions = False #ShowDimensions
-    view.showElementInfo = ShowElementInfo
+    view.showElementInfo = False
        
     page = doc[0] # Get the single frint page from the document.
     
@@ -70,8 +66,12 @@ def makeDocument():
     pageAreaW = PageWidth-2*PADDING
     pageAreaH = PageHeight-2*PADDING
     
+    blockFill = None
+    gradient = Gradient(locations=[1,0], colors=((0, 0, 0), (0.8, 0.8, 0.8)))
+    shadow = Shadow(offset=(6, -6), blur=10, color=(0.2, 0.2, 0.2, 0.5))
+    
     # Make new container for adding elements inside with alignment.
-    newRect(z=10, w=pageAreaW, h=pageAreaH, fill=(0.8, 0.8, 0.8, 0.4), 
+    newRect(z=10, w=pageAreaW, h=pageAreaH, fill=blockFill, 
         parent=page, margin=0, padding=0, yAlign=MIDDLE, maxW=pageAreaW, 
         maxH=pageAreaH, xAlign=CENTER,  
         conditions=(Center2Center(), Middle2Middle()))
@@ -82,19 +82,47 @@ def makeDocument():
         
     w = pageAreaW*0.75 # Used as element width and relative font size. 
     t2 = newTextBox('Book Review', z=0, font='NewOdanaLarge-Black', 
-        fontSize=w/8, w=PageWidth*0.75, 
-        parent=page, conditions=(Left2Left(), Float2Top()))
+        fontSize=w/7, w=PageWidth*0.75, parent=page, 
+        conditions=(Left2Left(), Float2Top()))
 
-    i1 = newRect(z=0, fill=(0.7, 0, 0), h=PageHeight/2,
-        borders=dict(dash=(3,4),strokeWidth=40, stroke=(0, 0, 1)), 
-        parent=page, conditions=(Fit2Width(), Float2Top()))
+    i1 = newRect(z=0, h=PageHeight/2, padding=PageHeight/20,
+        gradient=gradient, borders=None, parent=page, 
+        conditions=(Fit2Width(), Float2Top()))
+    i1.solve()
+    m = i1.h/10    
+    titleStyle = style=dict(font='Georgia', fontSize=26, rLeading=1.4,
+        xAlign=CENTER, textFill=1)
         
-    i2 = newRect(z=0, fill=(0.7, 0.7, 0), h=48,
-        parent=page, conditions=(Fit2Width(), Float2Top()))
-
-    t3 = newTextBox('Reviewing 2017 score', z=0, font='BodoniSvtyTwoOSITCTT-Book', 
-        fontSize=w/10, w=w, stroke=NO_COLOR,
-        parent=page, conditions=(Left2Left(), Float2Top()), mt=24)
+    book1 = newRect(z=0, margin=m, w=(i1.w-3*m)/2, 
+        fill=(0.05, 0.05, 0.25), 
+        gradient=None, parent=i1, shadow=shadow, padding=30,
+        conditions=(Fit2Height(), Top2Top(), Left2Left()),
+        borders=dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE))
+    
+    fs = getFormattedString('\n\nThrilling title\nfor my first book\nabout Design', style=titleStyle)
+    
+    frame = newRect(margin=10, conditions=(Fit(),), 
+    title1 = newTextBox(fs, parent=book1, marginTop=120,
+        conditions=(Fit2Width(), Center2Center(), Top2Top())))
+    # Book 1 cover
+    
+    book2 = newRect(z=0, margin=m, w=(i1.w-3*m)/2, 
+        fill=(0.1, 0.2, 0.45), 
+        gradient=None, parent=i1, shadow=shadow, padding=20,
+        conditions=(Fit2Height(), Top2Top(), Right2Right()),
+        borders=dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE))
+    # Book 2 cover
+    fs = getFormattedString('\n\nPredictable title of my second book about Typography',
+        style=titleStyle)
+    title2 = newTextBox(fs, parent=book2, marginTop=120,
+        conditions=(Fit2Width(), Center2Center(), Top2Top()))
+   
+    t3 = newTextBox('Reviewing 2017 score', z=0, 
+        font='BodoniSvtyTwoOSITCTT-Book', 
+        fontSize=w/8.5, w=w, stroke=NO_COLOR, 
+        paddingBottom=20,
+        borderBottom=dict(strokeWidth=2), parent=page, 
+        conditions=(Left2Left(), Float2Top()), mt=24)
                    
     score = page.solve()
     if score.fails:
