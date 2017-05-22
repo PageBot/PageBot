@@ -23,7 +23,7 @@ from pagebot.fonttoolbox.objects.font import Font
 
 C = 0.5
 F = 2 / 3
-glyphName = 'bullet'
+glyphName = 'Q'
 dx = 200
 x = 50
 r = 10
@@ -112,6 +112,8 @@ contours = []
 contour = None    
 coordinates = glyph.ttGlyph.coordinates
 
+translate(100, 200)
+
 # Converts coordinates to PageBot Points and assigns points
 # to contours.
 for i, (x, y) in enumerate(coordinates):
@@ -171,26 +173,23 @@ for n, contour in enumerate(contours):
         drawSegment(segment)
     
     numSegs += len(segments)
-        
+
+'''        
+# Displays locally built path.
 fill(None)
 stroke(1, 0, 0)
 strokeWidth(1)
-#drawPath(path)
+drawPath(path)
+'''
 
 print '\nCompare\n'
 
-
-#print 'Number of segment =', numSegs
-#print 'Number of pbSegments =', len(pbSegments)
-#print ''
-
-
-# PageBot.
+# Displays path built by PageBot glyph.
 c = glyph.contours
 pbSegments = glyph._segments
 
-for segment in pbSegments:
-    print segment
+#for segment in pbSegments:
+#    print segment
     
 fill(0, 0, 0, 0.5)
 stroke(0, 1, 0)

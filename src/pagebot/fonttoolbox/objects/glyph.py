@@ -93,11 +93,9 @@ class Glyph(object):
         p0 = None
 
         if coordinates or components:
-            self._path = path = BezierPath() # There must be points and/or components, start path
+            self._path = path = BezierPath()
 
         for index, (x, y) in enumerate(coordinates):
-            #if index > 6:
-            #    break
             p = Point(x, y, flags[index])
             self._points.append(p)
 
@@ -116,7 +114,6 @@ class Glyph(object):
 
             openSegment.append(p)
 
-            #start = index - 1 in self.endPtsOfContours
             # If there is an open segment, it may contain multiple
             # quadratics. Split into cubics.
 
@@ -129,14 +126,11 @@ class Glyph(object):
                 path.closePath()
                 openContour = None
                 openSegment = None
-                print 'new seg, new contour'
 
             elif p.onCurve:
                 # Inside contour.
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
-                #currentOnCurve = p
                 openSegment = None
-                print 'new seg'
 
 
     def _drawSegment(self, cp, segment, path):
@@ -156,9 +150,7 @@ class Glyph(object):
             cp = p2
 
         else:
-            print 'third option', segment.points
-
-            # handle implied on-curve points.
+            # Handles implied on-curve points.
             for n in range(len(segment)-1):
                 p0 = cp # Previous oncurve.
                 p1 = segment.points[n] # next offcurve.
