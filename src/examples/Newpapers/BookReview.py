@@ -143,9 +143,10 @@ def makeDocument():
     fs = getFormattedString('About the thrilling title\n', style=headStyle)
     fs += getFormattedString(t, style=bodyStyle)
     
-    t4 = newTextBox(fs, z=0, w=w/2, mt=10, parent=page, conditions=(Left2Left(), Float2Top()))
-    t5 = newTextBox(fs, z=0, w=w/2-20, mt=10, parent=page, conditions=(Right2Right(), Float2Top(), Float2Left(), ))
-    t6 = newTextBox(fs, z=0, w=w/3-16, pt=30, parent=page, conditions=(Float2Right(), Float2Top(), ))
+    t4 = newTextBox(fs, w=w/2, mt=10, parent=page, conditions=(Left2Left(), Float2Top()))
+    page.solve()
+    t5 = newTextBox(fs, w=w/2-20, mt=10, parent=page, conditions=(Right2Right(), Float2Top(), Float2Left(), ))
+    t6 = newTextBox(fs, w=w/3-16, pt=30, parent=page, conditions=(Float2Right(), Float2Top(), ))
 
     fs = getFormattedString(text2, style=bodyStyle)
 
