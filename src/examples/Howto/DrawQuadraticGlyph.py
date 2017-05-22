@@ -95,6 +95,18 @@ def circle(x, y, r, color='pink'):
     oval(x - r, y - r, r*2, r*2)
     stroke(1)
 
+def cross(x, y, d, r=1, g=0, b=0):
+    x0 = x - d 
+    y0 = y - d 
+    x1 = x + d 
+    y1 = y + d 
+    x2 = x + d 
+    y2 = y - d 
+    x3 = x - d 
+    y3 = y + d 
+    stroke(r, g, b)
+    line((x0, y0), (x1, y1))
+    line((x2, y2), (x3, y3))
 
 contours = []
 contour = None    
@@ -119,7 +131,7 @@ for i, (x, y) in enumerate(coordinates):
         contour.append(contour[0])
         contours.append(contour)
 
-    d = 5    
+    d = 3
     #text('%d: (%d, %d)' % (i, x, y), (x + d, y + d))
     text('%d' % i, (x + d, y + d))
 
