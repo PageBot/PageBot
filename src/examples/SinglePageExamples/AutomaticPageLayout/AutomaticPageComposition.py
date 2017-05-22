@@ -13,7 +13,7 @@
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
 from pagebot import textBoxBaseLines
-from pagebot import getFormattedString
+from pagebot import newFS
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT
@@ -105,7 +105,7 @@ def makeDocument(rs):
     newColTextBox('', 2, 0, 2, 8, parent=template1, name=flowId2, nextElement=flowId3, nextPage=0, fill=BOX_COLOR)
     newColTextBox('', 4, 4, 2, 4, parent=template1, name=flowId3, nextElement=flowId1, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
-    pnString = getFormattedString('%d', style=dict(font=BOOK, fontSize=12, fill=BOX_COLOR))
+    pnString = newFS('%d', style=dict(font=BOOK, fontSize=12, fill=BOX_COLOR))
     newColText(pnString, 6, 0, parent=template1)
 
     """

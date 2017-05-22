@@ -51,7 +51,7 @@ def css(name, e, styles=None, default=None):
     return default
 
 
-def getFormattedString(t, e=None, style=None):
+def newFS(t, e=None, style=None):
     u"""Answer a formatted string from valid attributes in Style. Set the all values after testing
     their existence, so they can inherit from previous style formats."""
 
@@ -65,7 +65,7 @@ def getFormattedString(t, e=None, style=None):
     return fs + t
 
 if __name__ == '__main__':    
-    fs = getFormattedString('Book Cover', style=dict(font='Georgia', fontSize=40))
+    fs = newFS('Book Cover', style=dict(font='Georgia', fontSize=40))
     print textSize(fs)
     run()
 

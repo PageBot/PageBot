@@ -19,7 +19,7 @@ from drawBot import rect, oval, line, newPath, moveTo, lineTo, lineDash, drawPat
     save, restore, scale, textSize, fill, text, stroke, strokeWidth, shadow
 
 from pagebot.conditions.score import Score
-from pagebot import getFormattedString, setFillColor, setStrokeColor, setGradient, setShadow,\
+from pagebot import newFS, setFillColor, setStrokeColor, setGradient, setShadow,\
     x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \

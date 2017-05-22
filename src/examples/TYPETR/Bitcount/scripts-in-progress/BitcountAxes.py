@@ -14,7 +14,7 @@
 #
 from fontTools.ttLib import TTFont
 
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import newFS, textBoxBaseLines
 
 import pagebot
 reload(pagebot)

@@ -19,7 +19,7 @@ from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import getFormattedString
+from pagebot import newFS
 
 from pagebot.conditions import *
 from pagebot.elements import *
@@ -74,7 +74,7 @@ def makeDocument():
         conditions=(Top2TopSide(), Center2Center(),)) 
    
     # Centered string
-    fs = getFormattedString('Float on top of yellow', style=dict(font='Verdana', fontSize=7,
+    fs = newFS('Float on top of yellow', style=dict(font='Verdana', fontSize=7,
         textFill=0))
     # Text falls through the yr2 (with differnt z) and lands on yellowSquare by Float2BottomSide()    
     newTextBox(fs, w=container.w, name='Caption', parent=container,

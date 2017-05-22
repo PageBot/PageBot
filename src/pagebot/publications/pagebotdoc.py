@@ -13,7 +13,7 @@
 #     and templates are hood enough. Inherit the redefine functions otherwise.
 #     Example of an inherited publications is FBFamilySpecimen.py
 #
-from pagebot import getFormattedString
+from pagebot import newFS
 
 from pagebot.fonttoolbox.objects.family import Family, guessFamilies
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
