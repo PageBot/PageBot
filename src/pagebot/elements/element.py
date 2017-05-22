@@ -666,7 +666,7 @@ class Element(object):
 
     def _borderDict(self, borderData):
         if isinstance(borderData, (int, long, float)):
-            return dict(dash=None, stroke=0, strokeWidth=borderData)
+            return dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
         if isinstance(borderData, dict):
             if not 'line' in borderData: # (ONLINE, INLINE, OUTLINE):
                 borderData['line'] = ONLINE
@@ -1619,9 +1619,9 @@ class Element(object):
                     oRight = borderRight['strokeWidth']
 
             if borderBottom['line'] == OUTLINE:
-                oBottom = borderTop['strokeWidth']/2
+                oBottom = borderBottom['strokeWidth']/2
             elif borderBottom['line'] == INLINE:
-                oBottom = -borderTop['strokeWidth']/2
+                oBottom = -borderBottom['strokeWidth']/2
             else:
                 oBottom = 0
 
@@ -1640,9 +1640,9 @@ class Element(object):
             oTop = 0 # Extra offset on top, if there is a top border.
             if borderTop and (borderTop['strokeWidth'] or 0) > 1:
                 if borderTop['line'] == ONLINE:
-                    oTop = borderLeft['strokeWidth']/2
+                    oTop = borderTop['strokeWidth']/2
                 elif borderLeft['line'] == OUTLINE:
-                    oTop = borderLeft['strokeWidth']
+                    oTop = borderTop['strokeWidth']
 
             oBottom = 0 # Extra offset on bottom, if there is a bottom border.
             if borderBottom and (borderBottom['strokeWidth'] or 0) > 1:
@@ -1673,9 +1673,9 @@ class Element(object):
             oTop = 0 # Extra offset on top, if there is a top border.
             if borderTop and (borderTop['strokeWidth'] or 0) > 1:
                 if borderTop['line'] == ONLINE:
-                    oTop = borderLeft['strokeWidth']/2
+                    oTop = borderTop['strokeWidth']/2
                 elif borderLeft['line'] == OUTLINE:
-                    oTop = borderLeft['strokeWidth']
+                    oTop = borderTop['strokeWidth']
 
             oBottom = 0 # Extra offset on bottom, if there is a bottom border.
             if borderBottom and (borderBottom['strokeWidth'] or 0) > 1:
