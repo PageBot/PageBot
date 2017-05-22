@@ -90,9 +90,11 @@ def makeDocument():
         conditions=(Fit2Width(), Float2Top()))
     i1.solve()
     m = i1.h/10    
-    titleStyle = style=dict(font='Georgia', fontSize=26, rLeading=1.4,
+    titleStyle =dict(font='Georgia', fontSize=26, rLeading=1.4,
         xAlign=CENTER, textFill=1)
-        
+    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18,
+        xAlign=CENTER)
+            
     book1 = newRect(z=0, margin=m, w=(i1.w-3*m)/2, 
         fill=(0.05, 0.05, 0.25), 
         gradient=None, parent=i1, shadow=shadow, padding=30,
@@ -100,6 +102,7 @@ def makeDocument():
         borders=dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE))
     
     fs = getFormattedString('\n\nThrilling title\nfor my first book\nabout Design', style=titleStyle)
+    fs += getFormattedString('\n'*3 + 'John Smith', style=authorStyle)
     
     frame = newRect(margin=10, conditions=(Fit(),), 
     title1 = newTextBox(fs, parent=book1, marginTop=120,
@@ -108,12 +111,14 @@ def makeDocument():
     
     book2 = newRect(z=0, margin=m, w=(i1.w-3*m)/2, 
         fill=(0.1, 0.2, 0.45), 
-        gradient=None, parent=i1, shadow=shadow, padding=20,
+        gradient=None, parent=i1, shadow=shadow, padding=30,
         conditions=(Fit2Height(), Top2Top(), Right2Right()),
         borders=dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE))
     # Book 2 cover
     fs = getFormattedString('\n\nPredictable title of my second book about Typography',
         style=titleStyle)
+    fs += getFormattedString('\n'*3 + 'John Smith', style=authorStyle)
+
     title2 = newTextBox(fs, parent=book2, marginTop=120,
         conditions=(Fit2Width(), Center2Center(), Top2Top()))
    
@@ -133,9 +138,6 @@ def makeDocument():
 if __name__ == '__main__':
     
     Variable([
-        dict(name='ShowOrigin', ui='CheckBox', args=dict(value=True)),
-        #dict(name='ShowDimensions', ui='CheckBox', args=dict(value=True)),
-        dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
         dict(name='PageWidth', ui='Slider', args=dict(minValue=MinPage, value=A3[0], maxValue=MaxPage)),
         dict(name='PageHeight', ui='Slider', args=dict(minValue=MinPage, value=A3[1], maxValue=MaxPage)),
     ], globals())
