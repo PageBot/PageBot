@@ -20,7 +20,7 @@ if 0:
         
 from pagebot import getFormattedString
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, A3, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE
+from pagebot.style import getRootStyle, A4, A3, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE, LEFT
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 # Import all element classes that can be placed on a page.
@@ -34,7 +34,11 @@ from pagebot import getGlobals
 # This is used to store random information (such as blurb article text), to be consistent
 # thought multiple runs of the script. Restart DrawBot to clean the cash and start fresh.
 scriptGlobals = getGlobals(path2ScriptId(__file__))
- 
+
+t = u"""Amy's Sun paper hit by hackers. Ignoring the fact that the problem, "was resolved through troubleshooting procedures and restored at midnight," wrote KLM spokesman Liz Ali III in an e-mail to BSN.Ignoring the fact that the computer malfunction brought Sky Team’s system of scheduling departures, reservations and processing passengers to a halt at airports across Norfolk Island. The problem left passengers stranded for hours in grounded planes, airport lobbies and security lines.
+"""
+text2 = u"""Amy's Sun paper hit by hackers. Ignoring the fact that the problem, "was resolved through troubleshooting procedures and restored at midnight,"."""
+
 MinPage = A4[0] # Minimum size of the page.
 MaxPage = A2[1] # Maximum size of the page.
 
@@ -78,34 +82,38 @@ def makeDocument():
     
     t1 = newTextBox('The PageBot Times', z=0, font='BlackmoorLetPlain', 
         fontSize=40, w=pageAreaW/2, 
-        parent=page, conditions=(Left2Left(), Top2Top()), mb=30)
+        parent=page, conditions=(Left2Left(), Top2Top()))
         
     w = pageAreaW*0.75 # Used as element width and relative font size. 
+    padding = PageHeight/24
+    
     t2 = newTextBox('Book Review', z=0, font='NewOdanaLarge-Black', 
         fontSize=w/7, w=PageWidth*0.75, parent=page, 
         conditions=(Left2Left(), Float2Top()))
 
-    i1 = newRect(z=0, h=PageHeight/2, padding=PageHeight/20,
+    i1 = newRect(z=0, h=PageHeight/2, padding=padding,
         gradient=gradient, borders=None, parent=page, 
         conditions=(Fit2Width(), Float2Top()))
     i1.solve()
     m = i1.h/10    
-    titleStyle =dict(font='Georgia', fontSize=26, rLeading=1.4,
-        xAlign=CENTER, textFill=1)
-    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18,
-        xAlign=CENTER)
-            
+    titleStyle =dict(font='Georgia', fontSize=26, rLeading=1.4, xAlign=CENTER, textFill=1)
+    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xAlign=CENTER)
+    headStyle = dict(font='Verdana-Bold', textFill=0, fontSize=14, rLeading=1.4, xAlign=LEFT, paragraphTopSpacing=30,
+    paragraphBottomSpacing=0)
+    bodyStyle = dict(font='Verdana', textFill=0, fontSize=12, rLeading=1.4, xAlign=LEFT, paragraphTopSpacing=10)
+           
     book1 = newRect(z=0, margin=m, w=(i1.w-3*m)/2, 
         fill=(0.05, 0.05, 0.25), 
         gradient=None, parent=i1, shadow=shadow, padding=30,
         conditions=(Fit2Height(), Top2Top(), Left2Left()),
         borders=dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE))
     
-    fs = getFormattedString('\n\nThrilling title\nfor my first book\nabout Design', style=titleStyle)
-    fs += getFormattedString('\n'*3 + 'John Smith', style=authorStyle)
+    fs = getFormattedString('Educational series', style=authorStyle)
+    fs += getFormattedString('\n\nThrilling title\nfor my first book\nabout Design', style=titleStyle)
+    fs += getFormattedString('\n'*3 + 'John Smith' + '\n'*8 + u'¶', style=authorStyle)
     
-    frame = newRect(margin=10, conditions=(Fit(),), 
-    title1 = newTextBox(fs, parent=book1, marginTop=120,
+    frame = newRect(margin=6, conditions=(Fit(),), 
+    title1 = newTextBox(fs, parent=book1, shadow=None,
         conditions=(Fit2Width(), Center2Center(), Top2Top())))
     # Book 1 cover
     
@@ -115,20 +123,34 @@ def makeDocument():
         conditions=(Fit2Height(), Top2Top(), Right2Right()),
         borders=dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE))
     # Book 2 cover
-    fs = getFormattedString('\n\nPredictable title of my second book about Typography',
+    fs = getFormattedString('Educational series', style=authorStyle)
+    fs += getFormattedString('\n\nPredictable title of my second book about Typography', 
         style=titleStyle)
-    fs += getFormattedString('\n'*3 + 'John Smith', style=authorStyle)
+    fs += getFormattedString('\n'*3 + 'John Smith' + '\n'*8 + u'¶', style=authorStyle)
 
-    title2 = newTextBox(fs, parent=book2, marginTop=120,
+    title2 = newTextBox(fs, parent=book2, marginTop=120,shadow=None,
         conditions=(Fit2Width(), Center2Center(), Top2Top()))
    
     t3 = newTextBox('Reviewing 2017 score', z=0, 
         font='BodoniSvtyTwoOSITCTT-Book', 
         fontSize=w/8.5, w=w, stroke=NO_COLOR, 
-        paddingBottom=20,
+        paddingBottom=20, pb=10,
         borderBottom=dict(strokeWidth=2), parent=page, 
         conditions=(Left2Left(), Float2Top()), mt=24)
-                   
+    
+    fs = getFormattedString(t, style=bodyStyle)
+    
+    fs = getFormattedString('About the thrilling title\n', style=headStyle)
+    fs += getFormattedString(t, style=bodyStyle)
+    
+    t4 = newTextBox(fs, z=0, w=w/2, mt=10, parent=page, conditions=(Left2Left(), Float2Top()))
+    t5 = newTextBox(fs, z=0, w=w/2-20, mt=10, parent=page, conditions=(Right2Right(), Float2Top(), Float2Left(), ))
+    t6 = newTextBox(fs, z=0, w=w/3-16, pt=30, parent=page, conditions=(Float2Right(), Float2Top(), ))
+
+    fs = getFormattedString(text2, style=bodyStyle)
+
+    top1 = newTextBox(fs, w=w/3-16, parent=page, conditions=(Top2Top(), Right2Right()))
+                      
     score = page.solve()
     if score.fails:
         print 'Condition fails', score.fails 
