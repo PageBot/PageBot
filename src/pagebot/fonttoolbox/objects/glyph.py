@@ -15,14 +15,26 @@
 import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
-from drawBot import BezierPath
-from drawBot import fill, oval, text
+from drawBot import BezierPath, stroke, fill, oval, text, line
 from fontinfo import FontInfo
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 from pagebot.toolbox.transformer import point2D
 
 C = 0.5
-F = 2 / 3
+F = 2.0 / 3.0
+
+def cross(x, y, d, r=1, g=0, b=0):
+    x0 = x - d
+    y0 = y - d
+    x1 = x + d
+    y1 = y + d
+    x2 = x + d
+    y2 = y - d
+    x3 = x - d
+    y3 = y + d
+    stroke(r, g, b)
+    line((x0, y0), (x1, y1))
+    line((x2, y2), (x3, y3))
 
 def circle(x, y, r, color='pink'):
     # Draws on/offcurve dots.
@@ -106,16 +118,15 @@ class Glyph(object):
             self._path = path = BezierPath() # There must be points and/or components, start path
 
         for index, (x, y) in enumerate(coordinates):
+            #if index > 6:
+            #    break
             p = Point(x, y, flags[index])
-
-            if p.onCurve:
-                currentOnCurve = p
-
             self._points.append(p)
 
             if not openContour:
                 print 'moveTo'
                 path.moveTo((x, y))
+                currentOnCurve = p
                 openContour = []
                 self._contours.append(openContour)
 
@@ -131,7 +142,7 @@ class Glyph(object):
             # If there is an open segment, it may contain multiple
             # quadratics. Split into cubics.
 
-            if index - 1 in endPtsOfContours and openContour:
+            if index in endPtsOfContours and openContour:
                 # End of contour.
                 if openSegment:
                     currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
@@ -144,37 +155,45 @@ class Glyph(object):
             elif p.onCurve:
                 # Inside contour.
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
+                #currentOnCurve = p
                 openSegment = None
                 print 'new seg'
+
 
     def _drawSegment(self, cp, segment, path):
         u"""Draws the Segment instance into the path. It may contain multiple
         quadratics. Split into cubics and lines."""
 
         if len(segment) == 1:
+            # Straight line.
             p1 = segment.points[-1]
             path.lineTo((p1.x, p1.y))
             cp = p1
-            circle(p1.x, p1.y, 3, color='green')
 
-        elif len(segment) == 2: # 1:1 Convert of Quadratic to Cubic
+        elif len(segment) == 2:
+            # Converts quadratic curve to cubic.
             p1, p2 = segment.points
             self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y, path)
             cp = p2
 
         else:
+            print 'third option', segment.points
+
             # handle implied on-curve points.
             for n in range(len(segment)-1):
-                p0 = cp
-                p1 = segment.points[n]
-                p2 = segment.points[n+1]
+                p0 = cp # Previous oncurve.
+                #cross(cp.x, cp.y, 10)
+                p1 = segment.points[n] # next offcurve.
+                p2 = segment.points[n+1] # offcurve or last point.
 
-                if n < len(segment):
-                    m = Point((p1.x + p2.x) / 2, (p1.y + p2.y)/2, True)
+                if n < len(segment) - 2:
+                    # Implied point.
+                    m = Point(p1.x + (p2.x - p1.x) / 2, p1.y + (p2.y - p1.y) / 2, True)
                 else:
+                    # Last (oncurve) point.
                     m = p2
 
-                self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y, path)
+                self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, m.x, m.y, path)
                 cp = m
 
         return cp
@@ -187,19 +206,27 @@ class Glyph(object):
         p2 = onCurve1
         """
 
+        # Received points.
+        #cross(p0x, p0y, 10) # current
+        cross(p1x, p1y, 10, 0, 1, 0) # offcurve
+        cross(p2x, p2y, 10, 0, 0, 1) # implied.
+
+        # Cubic control points.
         pp0x = p0x + (p1x - p0x)*F
         pp0y = p0y + (p1y - p0y)*F
 
-        #pp1x = p2x + (p1x - p2x)*F
-        #pp1y = p2y + (p1y - p2y)*F
-        #circle(p0x, p0y, 3, color='green')
-        #text('0', (p0x, p0y))
-        #circle(p1x, p1y, 3, color='green')
-        #text('1', (p1x, p1y))
-        circle(pp0x, pp0y, 10, color='green')
-        #circle(pp1x, pp1y, 10, color='green')
-        circle(p2x, p2y, 3, color='green')
-        #path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
+
+        pp1x = p2x + (p1x - p2x)*F
+        pp1y = p2y + (p1y - p2y)*F
+
+        cross(pp0x, pp0y, 3, 0, 0, 1)
+        cross(pp1x, pp1y, 3, 0, 0, 1)
+        path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
+        #stroke(None)
+        #fill(0, 1, 1)
+        #text('0', (p0x + 5, p0y + 10))
+        #text('1', (p1x + 10, p1y + 10))
+        #text('2', (p2x + 10, p2y + 20))
 
     def _get_ttGlyph(self):
         return self.parent.ttFont['glyf'][self.name]

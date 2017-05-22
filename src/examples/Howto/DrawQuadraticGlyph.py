@@ -23,7 +23,7 @@ from pagebot.fonttoolbox.objects.font import Font
 
 C = 0.5
 F = 2 / 3
-glyphName = 'a'
+glyphName = 'bullet'
 dx = 200
 x = 50
 r = 10
@@ -58,7 +58,7 @@ def drawSegment(segment):
         circle(x1, y1, r/4, color='blue')
         onCurve = (onCurve1.x, onCurve1.y)
         path.curveTo(offCurve0, offCurve1, onCurve)
-        stroke(0)
+        stroke(0, 0, 0, 0.4)
         line((onCurve0.x, onCurve0.y), offCurve0)
         line(offCurve1, onCurve)
         stroke(None)
@@ -83,14 +83,17 @@ def drawSegment(segment):
         drawSegment(curve1)
 
 def circle(x, y, r, color='pink'):
+    #return
+    stroke(None)
     # Draws on/offcurve dots.
     if color == 'pink':
-        fill(1, 0, 1)
+        fill(1, 0, 1, 0.5)
     elif color == 'green':
-        fill(0, 1, 0)
+        fill(0, 1, 0, 0.5)
     elif color == 'blue':
-        fill(0, 0, 1)
+        fill(0, 0, 1, 0.5)
     oval(x - r, y - r, r*2, r*2)
+    stroke(1)
 
 
 contours = []
@@ -116,8 +119,9 @@ for i, (x, y) in enumerate(coordinates):
         contour.append(contour[0])
         contours.append(contour)
 
-    d = 5
-    text(str(i), (x + d, y + d))
+    d = 5    
+    #text('%d: (%d, %d)' % (i, x, y), (x + d, y + d))
+    text('%d' % i, (x + d, y + d))
 
 # Draws oncurve and (slightly smaller) offcurve points.
 for contour in contours:
@@ -159,7 +163,7 @@ for n, contour in enumerate(contours):
 fill(None)
 stroke(1, 0, 0)
 strokeWidth(1)
-drawPath(path)
+#drawPath(path)
 
 print '\nCompare\n'
 
@@ -179,6 +183,3 @@ for segment in pbSegments:
 fill(0, 0, 0, 0.5)
 stroke(0, 1, 0)
 drawPath(glyph._path)
-
-
-
