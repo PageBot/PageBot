@@ -38,11 +38,12 @@ def drawSegment(segment):
 
     if len(segment) == 2:
         point = segment[-1]
-        #print 'bla'
         path.lineTo((point.x, point.y))
         print '     * line to %d, %d' % (point.x, point.y)
+        prevOnCurve = (point.x, point.y)
 
     elif len(segment) == 3:
+        # Quadratic offcurve is split into two cubic offcurves.
         onCurve0 = segment[0]
         offCurve = segment[1]
         onCurve1 = segment[2]
@@ -57,18 +58,23 @@ def drawSegment(segment):
         circle(x1, y1, r/4, color='blue')
         onCurve = (onCurve1.x, onCurve1.y)
         path.curveTo(offCurve0, offCurve1, onCurve)
+        stroke(0)
+        line((onCurve0.x, onCurve0.y), offCurve0)
+        line(offCurve1, onCurve)
+        stroke(None)
         print '     * curve to (%s, %s, %s)' % (offCurve0, offCurve1, onCurve)
     else:
+        # Implied points are calculated and inserted. Number depends on amount
+        # of consecutive offcurves.
         curve0 = segment[:2]
         curve1 = segment[2:]
         offCurve0 = segment[1]
         offCurve1 = segment[2]
-            
-        # Implied point.
         x = offCurve0.x + (offCurve1.x - offCurve0.x) * 0.5
         y = offCurve0.y + (offCurve1.y - offCurve0.y) * 0.5
         newOnCurve = Point(x, y, True)
-        circle(x, y, r/2, color='green')
+        print '     * Implied point %s' % newOnCurve
+        circle(x, y, r/2, color='pink')
         curve0.append(newOnCurve)
         curve1.insert(0, newOnCurve)
 
@@ -77,6 +83,7 @@ def drawSegment(segment):
         drawSegment(curve1)
 
 def circle(x, y, r, color='pink'):
+    # Draws on/offcurve dots.
     if color == 'pink':
         fill(1, 0, 1)
     elif color == 'green':
@@ -85,10 +92,13 @@ def circle(x, y, r, color='pink'):
         fill(0, 0, 1)
     oval(x - r, y - r, r*2, r*2)
 
+
 contours = []
 contour = None    
 coordinates = glyph.ttGlyph.coordinates
 
+# Converts coordinates to PageBot Points and assigns points
+# to contours.
 for i, (x, y) in enumerate(coordinates):
     start = i - 1 in glyph.endPtsOfContours
     p = Point(x, y, glyph.flags[i])
@@ -106,7 +116,10 @@ for i, (x, y) in enumerate(coordinates):
         contour.append(contour[0])
         contours.append(contour)
 
-# Draws oncurve and (slightly smaller) offcurve points
+    d = 5
+    text(str(i), (x + d, y + d))
+
+# Draws oncurve and (slightly smaller) offcurve points.
 for contour in contours:
     for i, point in enumerate(contour):
         x = point.x
@@ -115,16 +128,18 @@ for contour in contours:
         if point.onCurve:
             circle(x, y, r)
         else:
-            circle(x, y, r/ 2)
+            # Quadratic offcurves.
+            circle(x, y, r/ 4, color='green')
     
 numSegs = 0
 
 for n, contour in enumerate(contours):
-    print ' * contour %d' % n, contour
+    print ' * contour %d' % n#, contour
 
     segments = []
     point = contour[0]
     segment = [point]
+    print '   * moveTo', point
     path.moveTo((point.x, point.y))
         
     for i, point in enumerate(contour[1:]):
@@ -146,16 +161,24 @@ stroke(1, 0, 0)
 strokeWidth(1)
 drawPath(path)
 
-print '\nPageBot\n'
+print '\nCompare\n'
 
+
+#print 'Number of segment =', numSegs
+#print 'Number of pbSegments =', len(pbSegments)
+#print ''
+
+
+# PageBot.
 c = glyph.contours
 pbSegments = glyph._segments
-print len(segments)
-print len(pbSegments)
+
 for segment in pbSegments:
     print segment
     
-fill(0)
+fill(0, 0, 0, 0.5)
+stroke(0, 1, 0)
 drawPath(glyph._path)
+
 
 
