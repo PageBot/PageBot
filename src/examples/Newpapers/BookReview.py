@@ -14,15 +14,14 @@ import pagebot # Import to know the path of non-Python resources.
 from pagebot.contributions.filibuster.blurb import blurb
 from pagebot import Gradient, Shadow
 
-if 0:
+# Make True to see the names of currently installed fonts, matching the pattern.
+if 0: 
     for fontName in installedFonts():
         if 'Bodoni' in fontName:
             print fontName
         
-from pagebot import newFS
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, A3, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE, LEFT
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
+# Document is the main instance holding all information about the document together (pages, views, etc.)
 from pagebot.document import Document
 # Import all element classes that can be placed on a page.
 from pagebot.elements import *
@@ -30,27 +29,30 @@ from pagebot.elements import *
 from pagebot.conditions import *
 
 from pagebot.toolbox.transformer import path2ScriptId
-from pagebot import getGlobals
+from pagebot import newFS, getGlobals
 # Get set of globals, unique for this script file name.
 # This is used to store random information (such as blurb article text), to be consistent
 # thought multiple runs of the script. Restart DrawBot to clean the cash and start fresh.
 scriptGlobals = getGlobals(path2ScriptId(__file__))
 
+# Some fixed content, as the filling in this example is not robust,
+# as there is no overfill function yet.
 t = u"""Amy's Sun paper hit by hackers. Ignoring the fact that the problem, “was resolved through troubleshooting procedures and restored at midnight,” wrote KLM spokesman Liz Ali III in an e-mail to BSN. Ignoring the fact that the computer malfunction brought Sky Team’s system of scheduling departures, reservations and processing passengers to a halt at airports across Norfolk Island. The problem left passengers stranded for hours in grounded planes, airport lobbies and security lines.
 """
 topT = u"""Amy's Sun paper hit by hackers. Ignoring the fact that the problem, was resolved through general procedures."""
 
+# Allow some interactive size changed by sliders to show responsive behavior.
 MinPageW = A3[0]*0.9 # Minimum width of the page.
 MaxPageW = A3[0]*1.2 # Maximum siwidthze of the page.
 MinPageH = A3[1]*0.9 # Minimum height of the page.
 MaxPageH = A3[1]*1.2 # Maximum height of the page.
 
 PageWidth, PageHeight = A3 # Small newspaper size
-PADDING = PageWidth/18 # Padding (= in book layout called margin) of the page.
+PADDING = PageWidth/18 # Padding based on size (= in book layout called margin) of the page.
 pt = pl = pr = PADDING
 pb = PADDING*1.2
 pagePadding = (pt, pr, pb, pl)
-G = 12
+G = 12 # Gutter
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/BookReview001.png' 
