@@ -19,7 +19,7 @@ from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
+from pagebot import newFS, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 
 from pagebot.elements import *
 from pagebot.document import Document

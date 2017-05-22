@@ -13,7 +13,7 @@ from pagebot.fonttoolbox.objects.family import getFamilies
 from pagebot.publications.typespecimen import TypeSpecimen
 # Page and Template instances are holding all elements of a page together.
 from pagebot.elements.pbpage import Page, Template
-from pagebot import getFormattedString
+from pagebot import newFS
 # Use Erik & Jonathan’s Filibuster to create random imaginary headlines. 
 from pagebot.contributions.filibuster.blurb import blurb
 
@@ -63,12 +63,12 @@ class FBFamilySpecimen(TypeSpecimen):
         while not box.getOverflow():
             sportsHeadline = ' '.join(blurb.getBlurb('news_headline').split(' ')[:choice((2,2,3,3,4))])+'\n'
             styleKey = choice(('Regular', 'Bold', 'Italic', 'BoldItalic'))
-            fs = getFormattedString(sportsHeadline, self, style=dict(font=family[styleKey].installedName, 
+            fs = newFS(sportsHeadline, self, style=dict(font=family[styleKey].installedName, 
                 fontSize=fontSize))
             fsWidth = fs.size()[0]
             fittingFontSize = fontSize * box.w / fsWidth
             # Make new formatted string with fitting font size.
-            fs = getFormattedString(sportsHeadline, self, style=dict(font=family[styleKey].installedName, 
+            fs = newFS(sportsHeadline, self, style=dict(font=family[styleKey].installedName, 
                 leading=0, fontSize=fittingFontSize, textColor=0))
             box.append(fs)
             print '###', page, family, sportsHeadline

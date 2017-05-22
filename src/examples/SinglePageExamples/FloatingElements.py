@@ -14,7 +14,7 @@
 #     Its purpose is to show the use of Validator
 #
 import pagebot # Import to know the path of non-Python resources.
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import newFS, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.

@@ -18,7 +18,7 @@ if 0:
         if 'Bodoni' in fontName:
             print fontName
         
-from pagebot import getFormattedString
+from pagebot import newFS
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, A3, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE, LEFT
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
@@ -70,9 +70,11 @@ def makeDocument():
     pageAreaW = PageWidth-2*PADDING
     pageAreaH = PageHeight-2*PADDING
     
+    # Resources
     blockFill = None
     gradient = Gradient(locations=[1,0], colors=((0, 0, 0), (0.8, 0.8, 0.8)))
     shadow = Shadow(offset=(6, -6), blur=10, color=(0.2, 0.2, 0.2, 0.5))
+    bookBorders = dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE)
     
     # Make new container for adding elements inside with alignment.
     newRect(z=10, w=pageAreaW, h=pageAreaH, fill=blockFill, 
@@ -101,32 +103,33 @@ def makeDocument():
     headStyle = dict(font='Verdana-Bold', textFill=0, fontSize=14, rLeading=1.4, xAlign=LEFT, paragraphTopSpacing=30,
     paragraphBottomSpacing=0)
     bodyStyle = dict(font='Verdana', textFill=0, fontSize=12, rLeading=1.4, xAlign=LEFT, paragraphTopSpacing=10)
-           
+ 
+    # Book 1 cover          
     book1 = newRect(z=0, margin=m, w=(i1.w-3*m)/2, 
         fill=(0.05, 0.05, 0.25), 
         gradient=None, parent=i1, shadow=shadow, padding=30,
         conditions=(Fit2Height(), Top2Top(), Left2Left()),
-        borders=dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE))
+        borders=bookBorders)
     
-    fs = getFormattedString('Educational series', style=authorStyle)
-    fs += getFormattedString('\n\nThrilling title\nfor my first book\nabout Design', style=titleStyle)
-    fs += getFormattedString('\n'*3 + 'John Smith' + '\n'*8 + u'¶', style=authorStyle)
+    fs = newFS('Educational series', style=authorStyle)
+    fs += newFS('\n\nThrilling title\nfor my first book\nabout Design', style=titleStyle)
+    fs += newFS('\n'*3 + 'John Smith' + '\n'*8 + u'¶', style=authorStyle)
     
     frame = newRect(margin=6, conditions=(Fit(),), 
     title1 = newTextBox(fs, parent=book1, shadow=None,
         conditions=(Fit2Width(), Center2Center(), Top2Top())))
-    # Book 1 cover
     
+    # Book 2 cover
     book2 = newRect(z=0, margin=m, w=(i1.w-3*m)/2, 
         fill=(0.1, 0.2, 0.45), 
         gradient=None, parent=i1, shadow=shadow, padding=30,
         conditions=(Fit2Height(), Top2Top(), Right2Right()),
-        borders=dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE))
-    # Book 2 cover
-    fs = getFormattedString('Educational series', style=authorStyle)
-    fs += getFormattedString('\n\nPredictable title of my second book about Typography', 
+        borders=bookBorders)
+
+    fs = newFS('Educational series', style=authorStyle)
+    fs += newFS('\n\nPredictable title of my second book about Typography', 
         style=titleStyle)
-    fs += getFormattedString('\n'*3 + 'John Smith' + '\n'*8 + u'¶', style=authorStyle)
+    fs += newFS('\n'*3 + 'John Smith' + '\n'*8 + u'¶', style=authorStyle)
 
     title2 = newTextBox(fs, parent=book2, marginTop=120,shadow=None,
         conditions=(Fit2Width(), Center2Center(), Top2Top()))
@@ -138,19 +141,21 @@ def makeDocument():
         borderBottom=dict(strokeWidth=2), parent=page, 
         conditions=(Left2Left(), Float2Top()), mt=24)
     
-    fs = getFormattedString(t, style=bodyStyle)
+    # Review content
+    fs = newFS('About the thrilling title\n', style=headStyle)
+    fs += newFS(t, style=bodyStyle)
     
-    fs = getFormattedString('About the thrilling title\n', style=headStyle)
-    fs += getFormattedString(t, style=bodyStyle)
-    
-    t4 = newTextBox(fs, w=w/2, mt=10, parent=page, conditions=(Left2Left(), Float2Top()))
-    page.solve()
-    t5 = newTextBox(fs, w=w/2-20, mt=10, parent=page, conditions=(Right2Right(), Float2Top(), Float2Left(), ))
-    t6 = newTextBox(fs, w=w/3-16, pt=30, parent=page, conditions=(Float2Right(), Float2Top(), ))
+    t4 = newTextBox(fs, w=w/2, mt=10, parent=page, 
+        conditions=(Left2Left(), Float2Top()))
+    t5 = newTextBox(fs, w=w/2-20, mt=10, parent=page, 
+        conditions=(Right2Right(), Float2Top(), Float2Left(), ))
+    t6 = newTextBox(fs, w=w/3-16, pt=30, parent=page, 
+        conditions=(Float2Right(), Float2Top(), ))
 
-    fs = getFormattedString(text2, style=bodyStyle)
-
-    top1 = newTextBox(fs, w=w/3-16, parent=page, conditions=(Top2Top(), Right2Right()))
+    fs = newFS(topText, style=bodyStyle)
+    fs += getFormat
+    topText = newTextBox(fs, w=w/3-16, parent=page, 
+        conditions=(Top2Top(), Right2Right()))
                       
     score = page.solve()
     if score.fails:

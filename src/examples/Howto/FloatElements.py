@@ -14,7 +14,7 @@
 import pagebot # Import to know the path of non-Python resources.
 from pagebot.contributions.filibuster.blurb import blurb
 
-from pagebot import getFormattedString
+from pagebot import newFS
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MIDDLE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
@@ -86,7 +86,7 @@ def makeDocument():
         xAlign=CENTER, stroke=None, conditions=(Center2Center(), Middle2Middle()))
     
     fontSize = RedHeight/3
-    fs = getFormattedString('Headline in red box.', style=dict(textFill=1, fontSize=fontSize, 
+    fs = newFS('Headline in red box.', style=dict(textFill=1, fontSize=fontSize, 
         maxW=pageArea, maxH=pageArea, leading=fontSize, font='LucidaGrande'))    
     newTextBox(fs, z=0, w=RedWidth, h=RedHeight, name='RedRect', parent=page, fill=(1, 0.1, 0.1), 
         yAlign=TOP, maxW=pageArea, maxH=pageArea,
@@ -94,9 +94,9 @@ def makeDocument():
 
     if not hasattr(scriptGlobals, 'blurbText'):
         scriptGlobals.blurbText = blurb.getBlurb('article_summary', noTags=True)
-    fs = getFormattedString('Headline of formatted text.\n',
+    fs = newFS('Headline of formatted text.\n',
         style=dict(font='LucidaGrande-Bold', fontSize=12, leading=14, textFill=0))   
-    fs += getFormattedString(scriptGlobals.blurbText,
+    fs += newFS(scriptGlobals.blurbText,
         style=dict(font='LucidaGrande', fontSize=10, leading=12, textFill=0))   
     newTextBox(fs, z=0, w=YellowWidth, h=YellowHeight, parent=page, 
         padding=4, fill=0.7, 

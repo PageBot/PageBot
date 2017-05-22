@@ -14,7 +14,7 @@
 #     Its purpose is to show the use of Validator
 #
 import pagebot # Import to know the path of non-Python resources.
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import newFS, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
@@ -102,12 +102,12 @@ def makeDocument(rootStyle):
         scriptGlobals.blurbText = blurb.getBlurb('article_summary', noTags=True)+'\n'
             
     # Construct the text
-    headLineFS = getFormattedString(u'Headline\n', style=dict(font='Verdana', fontSize=24, leading=26, textFill=0))
+    headLineFS = newFS(u'Headline\n', style=dict(font='Verdana', fontSize=24, leading=26, textFill=0))
 
-    blurbTextFS = getFormattedString(scriptGlobals.blurbText, page,
+    blurbTextFS = newFS(scriptGlobals.blurbText, page,
         style=dict(font='Georgia', fontSize=Text_Font_Size, leading=Text_Leading, textFill=0))
 
-    smallTextFS = getFormattedString('Closing with a smaller text line.\n', page,
+    smallTextFS = newFS('Closing with a smaller text line.\n', page,
     style=dict(font='Verdana', fontSize=Small_Font_Size, leading=Small_Leading, textFill=0, paragraphTopSpacing=Small_Top_Spacing))
     textFS = headLineFS + blurbTextFS + smallTextFS
 

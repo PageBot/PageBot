@@ -12,7 +12,7 @@
 #     This script generates an automatic Thesis composition.
 #
 import pagebot
-from pagebot import getFormattedString, findMarkers, textBoxBaseLines
+from pagebot import newFS, findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT, NO_COLOR, A4, TOP, BOTTOM
 from pagebot.document import Document
 from pagebot.elements.page import Page, Template
@@ -352,7 +352,7 @@ def makeDocument(rs):
                         # becomes a method of the composer.
                         # TODO: Make this into Galley, in case footnote <p> has child nodes. 
                         footnoteStyle = doc.findStyle('footnote')
-                        footnoteText = 'AAAAAA' #getFormattedString('%d\t%s\n' % (footnoteId, footnotes[footnoteId]['p'].text),
+                        footnoteText = 'AAAAAA' #newFS('%d\t%s\n' % (footnoteId, footnotes[footnoteId]['p'].text),
                             #style=t.getCascadedStyle(doc.css('footnote')))
                         # Add the footnote content to the box (it may not be the first to be added.
                         fnBox.appendString(footnoteText)
@@ -382,7 +382,7 @@ def makeDocument(rs):
         for pageNumber in item['pageIds']:
             pageNumbers.append(`pageNumber`)
         literatureRefBox.append(u'%s – %s\n' % (refId, ', '.join(pageNumbers)))
-        #fs = getFormattedString('', doc.getStyle('p'))
+        #fs = newFS('', doc.getStyle('p'))
         
         print refId, item['nodeId'], item['node'], item['p'], item['pageIds']
 

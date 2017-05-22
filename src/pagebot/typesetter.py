@@ -31,7 +31,7 @@ except ImportError:
     print 'Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown'
     markdown = None
 
-from pagebot import getFormattedString, getMarker
+from pagebot import newFS, getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
 
 class Typesetter(object):
@@ -175,7 +175,7 @@ class Typesetter(object):
 
     def node_li(self, node, e):
         u"""Generate bullet/Numbered list item."""
-        bulletString = getFormattedString(self.doc.css('listBullet')) # Get styled string with bullet.
+        bulletString = newFS(self.doc.css('listBullet')) # Get styled string with bullet.
         self.galley.appendString(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, e)
@@ -264,7 +264,7 @@ class Typesetter(object):
 
     def typesetString(self, s, e=None):
         u"""Make sure that s is a formatted string, using element (or doc)e for the style parameters."""
-        self.galley.appendString(getFormattedString(s, e))
+        self.galley.appendString(newFS(s, e))
 
     def typesetNode(self, node, e=None):
         u"""Recursively typeset the node, using e a reference to the cascading style, doc.styles an the rootStyle."""
@@ -274,7 +274,7 @@ class Typesetter(object):
         # Still we want to be able to add the prefix to the node.text, so then the text is changed to empty string.
         nodeText = self._strip(node.text)
         if nodeText: # Not None and still has content after stripping?
-            fs = getFormattedString(nodeText, e)
+            fs = newFS(nodeText, e)
             self.galley.appendString(fs) # Add the new formatted string to the current flow textBox
 
         self.pushStyleTag(node.tag)
@@ -296,7 +296,7 @@ class Typesetter(object):
             # to empty string?
             childTail = child.tail #self._strip(child.tail, postfix=style['postfix'])
             if childTail: # Any tail left after stripping, then append to the galley.
-                fs = getFormattedString(childTail, e)
+                fs = newFS(childTail, e)
                 self.galley.appendString(fs)  # Add the tail formatted string to the galley.
 
         # Now restore the graphic state at the end of the element content processing to the
@@ -307,7 +307,7 @@ class Typesetter(object):
         # If there is a postfix for the current state, then add that to the output.
         postfix = self._strip('', postfix=style['postfix'])
         if postfix:
-            fs = getFormattedString(postfix, e, style)
+            fs = newFS(postfix, e, style)
             tb.append(fs) # Add to the current flow textBox
 
         """
@@ -317,7 +317,7 @@ class Typesetter(object):
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
         nodeTail = self._strip(node.tail, postfix=style['postfix'])
         if nodeTail: # Something of a tail left after stripping?
-            fs = getFormattedString(nodeTail, e, style)
+            fs = newFS(nodeTail, e, style)
             tb.append(fs) # Add to the current flow textBox
         """
 

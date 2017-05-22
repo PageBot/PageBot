@@ -19,7 +19,7 @@ import pagebot # Import to know the path of non-Python resources.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM,\
     INLINE, OUTLINE, ONLINE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import getFormattedString, setFillColor, setStrokeColor
+from pagebot import newFS, setFillColor, setStrokeColor
 from pagebot.elements import *
 from pagebot.document import Document
     

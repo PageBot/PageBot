@@ -10,7 +10,7 @@
 #     MakeABookCover.py
 #
 import pagebot # Import to know the path of non-Python resources.
-from pagebot import getFormattedString
+from pagebot import newFS
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, B4, CENTER, LEFT, TOP, BOTTOM, RIGHT

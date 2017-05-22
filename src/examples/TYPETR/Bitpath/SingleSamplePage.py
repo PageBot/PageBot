@@ -14,7 +14,7 @@
 from drawBot import FormattedString
 
 import pagebot
-from pagebot import findMarkers, textBoxBaseLines, getFormattedString
+from pagebot import findMarkers, textBoxBaseLines, newFS
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
 from pagebot.document import Document
 from pagebot.elements import Page, Template, Galley
@@ -73,7 +73,7 @@ RS = getRootStyle(
     rTracking = 0,
     fontSize = 9
 )
-FS = getFormattedString(FormattedString(''), style=RS)
+FS = newFS(FormattedString(''), style=RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 
@@ -176,13 +176,13 @@ def makeDocument(rs):
     #page[mainId]
     e = page.getElement(mainId)
     
-    fs = getFormattedString(Sample_Text + ' V.T.TeY.Yjy\n', style=dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = newFS(Sample_Text + ' V.T.TeY.Yjy\n', style=dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(blurb.getBlurb('sports_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = newFS(blurb.getBlurb('sports_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(blurb.getBlurb('aerospace_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = newFS(blurb.getBlurb('aerospace_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(blurb.getBlurb('article_content', noTags=True)+'\n', style=dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
+    fs = newFS(blurb.getBlurb('article_content', noTags=True)+'\n', style=dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
     e.append(fs)
 
     return doc
