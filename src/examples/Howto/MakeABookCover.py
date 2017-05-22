@@ -10,7 +10,7 @@
 #     MakeABookCover.py
 #
 import pagebot # Import to know the path of non-Python resources.
-from pagebot import getFormattedString
+from pagebot import newFS
 from pagebot.contributions.filibuster.blurb import blurb # Create random title and names
 from pagebot.toolbox.transformer import lighter, darker, moreBlue, lessRed
 
@@ -99,7 +99,7 @@ def makeDocument(rootStyle):
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
     if not hasattr(pbglobals, 'blurbText'):
-        pbglobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
+        pbglobals.blurbText = newFS(blurb.getBlurb('article_summary', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, rLeading=0.2, textColor=0))
     eTextBox = page.textBox(pbglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
         conditions=textCondition, xAlign=CENTER, yAlign=CENTER)

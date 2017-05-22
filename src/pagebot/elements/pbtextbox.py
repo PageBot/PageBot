@@ -19,7 +19,7 @@ from drawBot import textOverflow, hyphenation, textBox, rect, textSize, Formatte
 from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import getFormattedString, setStrokeColor, setFillColor
+from pagebot import newFS, setStrokeColor, setFillColor
 
 class FoundPattern(object):
     def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
@@ -286,7 +286,7 @@ class TextBox(Element):
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
         self.size = w, h
         if isinstance(fs, basestring):
-            fs = getFormattedString(fs, self)
+            fs = newFS(fs, self)
         self.fs = fs # Keep as plain string, in case parent is not set yet.
 
     def _get_h(self):
@@ -317,7 +317,7 @@ class TextBox(Element):
   
     def setText(self, s):
         u"""Set the formatted string to s, using self.style."""
-        self.fs = getFormattedString(s, self)
+        self.fs = newFS(s, self)
 
     def appendString(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string

@@ -12,7 +12,7 @@
 #     This script the PDF document with Bitcount refernce information.
 #
 import pagebot
-from pagebot import getFormattedString, findMarkers, textBoxBaseLines
+from pagebot import newFS, findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
 from pagebot.document import Document
 from pagebot.elements import Page, Template, Galley
@@ -181,13 +181,13 @@ def makeDocument(rs):
     #page[mainId]
     e = page.getElement(mainId)
     
-    fs = getFormattedString(Sample_Text + ' V.T.TeY.Yjy\n', e, dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = newFS(Sample_Text + ' V.T.TeY.Yjy\n', e, dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(scriptGlobals.head, e, dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = newFS(scriptGlobals.head, e, dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(scriptGlobals.subhead, e, dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = newFS(scriptGlobals.subhead, e, dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = getFormattedString(scriptGlobals.body, e, dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
+    fs = newFS(scriptGlobals.body, e, dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
     e.append(fs)
 
     return doc
