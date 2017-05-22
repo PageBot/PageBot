@@ -15,6 +15,7 @@ import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from drawBot import BezierPath
+from drawBot import font as DBFont
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.transformer import point3D
 from pagebot.fonttoolbox.objects.glyph import *
@@ -91,7 +92,7 @@ def circle(x, y, r, color='pink'):
     elif color == 'green':
         fill(0, 1, 0, 0.5)
     elif color == 'blue':
-        fill(0, 0, 1, 0.5)
+        fill(0, 0.5, 1, 0.5)
     oval(x - r, y - r, r*2, r*2)
     stroke(1)
 
@@ -112,7 +113,7 @@ contours = []
 contour = None    
 coordinates = glyph.ttGlyph.coordinates
 
-translate(100, 200)
+translate(0, 200)
 
 # Converts coordinates to PageBot Points and assigns points
 # to contours.
@@ -134,8 +135,9 @@ for i, (x, y) in enumerate(coordinates):
         contours.append(contour)
 
     d = 3
-    #text('%d: (%d, %d)' % (i, x, y), (x + d, y + d))
-    text('%d' % i, (x + d, y + d))
+    x += d
+    y += d    
+    text('%d' % i, (x, y))
 
 # Draws oncurve and (slightly smaller) offcurve points.
 for contour in contours:
@@ -189,8 +191,23 @@ c = glyph.contours
 pbSegments = glyph._segments
 
 #for segment in pbSegments:
-#    print segment
+#     print segment
     
 fill(0, 0, 0, 0.5)
 stroke(0, 1, 0)
 drawPath(glyph._path)
+
+textSize('32')
+line((730, 370), (750, 350))
+line((730, 200), (750, 190))
+line((725, 260), (750, 250))
+line((685, 590), (750, 650))
+line((560, 725), (750, 652))
+
+DBFont('DrawBot-Bold', 20)
+stroke(None)
+fill(0)
+text('On-curve point', (755, 350))
+text('Quadratic control point', (755, 185))
+text('Cubic control point', (755, 245))
+text('Implied on-curve point', (755, 650))
