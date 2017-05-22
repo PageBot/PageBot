@@ -117,6 +117,8 @@ for contour in contours:
         else:
             circle(x, y, r/ 2)
     
+numSegs = 0
+
 for n, contour in enumerate(contours):
     print ' * contour %d' % n, contour
 
@@ -136,6 +138,8 @@ for n, contour in enumerate(contours):
     for j, segment in enumerate(segments):
         print '   * segment %d' % j, segment
         drawSegment(segment)
+    
+    numSegs += len(segments)
         
 fill(None)
 stroke(1, 0, 0)
@@ -145,14 +149,13 @@ drawPath(path)
 print '\nPageBot\n'
 
 c = glyph.contours
-segments = glyph._segments
-
-for segment in segments:
+pbSegments = glyph._segments
+print len(segments)
+print len(pbSegments)
+for segment in pbSegments:
     print segment
     
-'''
-glyph._path.scale(0.3)
-glyph._path.translate(x, 100)
-#drawPath(glyph._path)
-x += dx
-'''
+fill(0)
+drawPath(glyph._path)
+
+
