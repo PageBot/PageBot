@@ -16,10 +16,11 @@ import weakref
 import copy
 
 from drawBot import rect, oval, line, newPath, moveTo, lineTo, lineDash, drawPath, \
-    save, restore, scale, textSize, fill, text, stroke, strokeWidth
+    save, restore, scale, textSize, fill, text, stroke, strokeWidth, shadow
 
 from pagebot.conditions.score import Score
-from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
+from pagebot import getFormattedString, setFillColor, setStrokeColor, setGradient, setShadow,\
+    x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
     MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS,\
@@ -80,6 +81,8 @@ class Element(object):
             # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
             parent.appendElement(self) # Set referecnes in both directions.
         # Conditional placement stuff
+        if not conditions is None and not isinstance(conditions, (list, tuple)): # Allow singles
+            conditions = [conditions]
         self.conditions = conditions # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
         # Save flow reference names
@@ -1543,10 +1546,22 @@ class Element(object):
         Instead of the DrawBot stroke and strokeWidth attributes, use
         borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
         """
+        eShadow = self.css('shadow', None)
+        if eShadow:
+            save()
+            setShadow(eShadow)
+            rect(p[0], p[1], self.w, self.h)
+            restore()
+
         eFill = self.css('fill', None)
-        # Drawing element fill and/or frame
-        if eFill:
-            setFillColor(eFill)
+        eGradient = self.css('gradient', None)
+        if eFill or eGradient:
+            save()
+            # Drawing element fill and/or frame
+            if eGradient: # Gradient overwrites setting of fill.
+                setGradient(eGradient, p, self) # Add self to define start/end from relative size.
+            else:
+                setFillColor(eFill)
             #setStrokeColor(eStroke, eStrokeWidth)
             rect(p[0], p[1], self.w, self.h)
             # Later usage: drawing the margin and padding should be done by view settings.
@@ -1558,8 +1573,9 @@ class Element(object):
             #    setStrokeColor((0, 1, 0))
             #    setFillColor(None)
             #    rect(p[0]+self.pl, p[1]+self.pb, self.w - self.pl - self.pr, self.h - self.pb - self.pt)
-        # In case not frame drawing, then check on border settings.
+            restore()
 
+        # Instead of full frame drawing, check on separate border settings.
         borderTop = self.borderTop
         borderBottom = self.borderBottom
         borderRight = self.borderRight
