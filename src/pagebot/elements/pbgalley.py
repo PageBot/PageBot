@@ -15,7 +15,7 @@ from drawBot import rect
 from pagebot.style import NO_COLOR, makeStyle
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import getFormattedString, setStrokeColor, setFillColor
+from pagebot import newFS, setStrokeColor, setFillColor
 
 class Galley(Element):
     u"""A Galley is sticky sequential flow of elements, where the parts can have

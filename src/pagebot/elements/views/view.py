@@ -14,14 +14,15 @@ from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, \
-        FormattedString, cmykStroke, text, fill, strokeWidth, curveTo, closePath
+from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath,\
+    save, restore, scale, textSize, FormattedString, cmykStroke, text, fill, stroke,\
+    strokeWidth, curveTo, closePath
 
 from pagebot import setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D, point2S, asFormatted
-from pagebot import getFormattedString, setStrokeColor, setFillColor
+from pagebot import newFS, setStrokeColor, setFillColor
 
 class View(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
@@ -97,6 +98,10 @@ class View(Element):
                 origin = (0, 0, 0)
 
             newPage(w, h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
+            # View may have defined a background
+            if self.style['fill'] != NO_COLOR:
+                setFillColor(self.style['fill'])
+                rect(0, 0, w, h)
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             page.draw(origin, self) 
@@ -141,7 +146,11 @@ class View(Element):
         if self.showPageFrame and \
                 self.pl > self.MIN_PADDING and self.pr > self.MIN_PADDING and \
                 self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
-            page.drawFrame(origin, self)
+            fill(None)
+            stroke(0, 0, 1)
+            strokeWidth(0.5)
+            rect(origin[0], origin[1], page.w, page.h)
+            #page.drawFrame(origin, self)
 
     def drawPageNameInfo(self, page, origin):
         u"""Draw additional document information, color markers, page number, date, version, etc.
@@ -271,7 +280,7 @@ class View(Element):
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
             if self.showElementInfo:
                 # Draw box with element info.
-                fs = getFormattedString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'), 
+                fs = newFS(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'), 
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
                 tw, th = textSize(fs)
                 Pd = 4 # Padding in box and shadow offset.
@@ -306,7 +315,7 @@ class View(Element):
                 line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
                 line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
 
-                fs = getFormattedString(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'), 
+                fs = newFS(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'), 
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
                 tw, th = textSize(fs)
                 text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
@@ -321,7 +330,7 @@ class View(Element):
                 line((x2+2*S, y1), (x2+2.5*S, y1+S))
                 line((x2+2*S, y1), (x2+1.5*S, y1+S))
                 
-                fs = getFormattedString(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'), 
+                fs = newFS(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'), 
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
                 tw, th = textSize(fs)
                 text(fs, (x2+2*S-tw/2, (y2+y1)/2))
@@ -338,7 +347,7 @@ class View(Element):
             line((px, py-S), (px, py+S))
 
         if self.showElementDimensions:
-            fs = getFormattedString(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'), 
+            fs = newFS(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'), 
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
             w, h = textSize(fs)
             text(fs, (px - w/2, py + S*1.5))
@@ -431,7 +440,7 @@ class View(Element):
             setStrokeColor(self.css('gridStroke', NO_COLOR), self.css('gridStrokeWidth'))
             # TODO: DrawBot align and fill don't work properly now.
             M = 16
-            fs = getFormattedString('', self, dict(font='Verdana', xAlign=RIGHT, fontSize=M/2,
+            fs = newFS('', self, dict(font='Verdana', xAlign=RIGHT, fontSize=M/2,
                 stroke=None, textFill=self.css('gridStroke')))
             ox = px + padL
             index = 0
@@ -474,7 +483,7 @@ class View(Element):
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
         if self.horizontal:
-            fs = getFormattedString('', self, dict(font=self.css('fallbackFont','Verdana'), xAlign=RIGHT, 
+            fs = newFS('', self, dict(font=self.css('fallbackFont','Verdana'), xAlign=RIGHT, 
                 fontSize=M/2, stroke=None, textFill=self.css('gridStroke')))
             while oy > self.css('pb', 0):
                 setFillColor(None)

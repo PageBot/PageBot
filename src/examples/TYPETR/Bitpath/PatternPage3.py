@@ -12,7 +12,7 @@
 #     This script the PDF document with Bitcount refernce information.
 #
 import pagebot
-from pagebot import getFormattedString
+from pagebot import newFS
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.contributions.filibuster.blurb import blurb
 from pagebot.toolbox.transformer import path2ScriptId
@@ -42,25 +42,25 @@ if __name__ == '__main__':
         newPage(1000, 1000)
         dx = sin(angle/360*2*pi) * R
         dy = cos(angle/360*2*pi) * R
-        fs = getFormattedString(scriptGlobals.s1, None, ict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(1, 0, 0), rLeading=rLeading))
+        fs = newFS(scriptGlobals.s1, None, ict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(1, 0, 0), rLeading=rLeading))
         textBox(fs, (x, y, 1000, 900))
 
-        fs = getFormattedString(scriptGlobals.s2, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 1, 0), rLeading=rLeading))
+        fs = newFS(scriptGlobals.s2, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 1, 0), rLeading=rLeading))
         textBox(fs, (x+7, y+7, 1000, 900))
 
-        fs = getFormattedString(scriptGlobals.s3, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 1, 1), rLeading=rLeading))
+        fs = newFS(scriptGlobals.s3, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 1, 1), rLeading=rLeading))
         textBox(fs, (x, y+7, 1000, 900))
 
-        fs = getFormattedString(scriptGlobals.s4, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(1, 1, 0), rLeading=rLeading))
+        fs = newFS(scriptGlobals.s4, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(1, 1, 0), rLeading=rLeading))
         textBox(fs, (x+7, y, 1000, 900))
 
-        fs = getFormattedString(scriptGlobals.s5, None, dict(font='BitpathGridDouble-BlackLineRound', fontSize=F, textFill=(0, 0, 0, 0.4), rLeading=rLeading))
+        fs = newFS(scriptGlobals.s5, None, dict(font='BitpathGridDouble-BlackLineRound', fontSize=F, textFill=(0, 0, 0, 0.4), rLeading=rLeading))
         textBox(fs, (x+(-dx+dy)/2, y+(-dx+dy)/2, 1000, 900))
 
-        fs = getFormattedString(scriptGlobals.s5, None, dict(font='BitpathGridDouble-Round', fontSize=F, textFill=0, rLeading=rLeading))
+        fs = newFS(scriptGlobals.s5, None, dict(font='BitpathGridDouble-Round', fontSize=F, textFill=0, rLeading=rLeading))
         textBox(fs, (x+dx, y+dy, 1000, 900))
 
-        fs = getFormattedString(scriptGlobals.s5, None, dict(font='BitpathGridDouble-BookRound', fontSize=F, textFill=1, rLeading=rLeading))
+        fs = newFS(scriptGlobals.s5, None, dict(font='BitpathGridDouble-BookRound', fontSize=F, textFill=1, rLeading=rLeading))
         textBox(fs, (x+dx-2, y+dy+2, 1000, 900))
         
     saveImage('_export/PatternRotatingText.gif')

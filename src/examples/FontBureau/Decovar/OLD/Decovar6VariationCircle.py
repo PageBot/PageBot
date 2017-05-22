@@ -13,7 +13,7 @@ from __future__ import division
 
 import myglobals
 import pagebot
-from pagebot import getFormattedString
+from pagebot import newFS
 from pagebot.style import getRootStyle
 from pagebot.document import Document
 from pagebot.page import Template

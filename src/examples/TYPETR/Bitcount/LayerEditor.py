@@ -19,7 +19,7 @@ import os
 
 import pagebot
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import newFS, textBoxBaseLines
 from pagebot.toolbox.transformer import path2ScriptId
 
 # Optional using Bitpath family, mixed with Bitcount
@@ -207,12 +207,12 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
     if fontSize is None:
         # Calculate the size for the given string for the selected font/spacing.
         # Then use the resulting with as source to calculate the fitting fontSize.
-        fs = getFormattedString(Sample_Text, None, dict(font=fontName, 
+        fs = newFS(Sample_Text, None, dict(font=fontName, 
             fontSize=initialFontSize))
         fsWidth, fsHeight = fs.size()
         fontSize = initialFontSize * (W-2*M) / fsWidth
     # Make new formatted string in fitting fontSize
-    fs = getFormattedString(t, None, dict(font=fontName, 
+    fs = newFS(t, None, dict(font=fontName, 
         fontSize=fontSize, textFill=(r, g, b, opacity)))
     return fontSize, fs
                

@@ -14,7 +14,7 @@ import pagebot # Import to know the path of non-Python resources.
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import getFormattedString
+from pagebot import newFS
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.conditions import *

@@ -13,7 +13,7 @@
 #     and templates are hood enough. Inherit the redefine functions otherwise.
 #     Example of an inherited publications is FBFamilySpecimen.py
 #
-from pagebot import getFormattedString
+from pagebot import newFS
 
 from pagebot.fonttoolbox.objects.family import Family, guessFamilies
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
@@ -100,22 +100,22 @@ class TypeSpecimen(Publication):
 
         # Get the title box and try to fit the add family name.
         title = page.getElement(self.titleBoxId) 
-        fs = getFormattedString(family.name, dict(fontSize=48, font=style.name))
+        fs = newFS(family.name, dict(fontSize=48, font=style.name))
         title.append(fs)
         
         if style.info.description:
             info = page.getElement(self.infoBoxId)
-            fs = getFormattedString(style.info.description, dict(fontSize=9, leading=15, font=style.name))
+            fs = newFS(style.info.description, dict(fontSize=9, leading=15, font=style.name))
             info.append(fs)
         
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
         # Create the formatted string with the style names shown in their own style.
         # The first one in the list is also used to show the family Name.
-        fs = getFormattedString('')
+        fs = newFS('')
         for index, (name, style) in enumerate(sorted(family.styles.items())):
             # We can assume these are defined, otherwise the style is skipped.
             styleName = style.info.styleName
-            fs += getFormattedString('%s %s %d %d %0.2f\n' % (family.name, styleName, 
+            fs += newFS('%s %s %d %d %0.2f\n' % (family.name, styleName, 
                 style.info.weightClass, style.info.widthClass, style.info.italicAngle), 
                 style=dict(fontSize=16, font=style.name, rLeading=1.4))
             
