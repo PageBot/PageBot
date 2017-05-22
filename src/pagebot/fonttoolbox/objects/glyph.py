@@ -15,36 +15,13 @@
 import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
-from drawBot import BezierPath, stroke, fill, oval, text, line
+from drawBot import BezierPath
 from fontinfo import FontInfo
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 from pagebot.toolbox.transformer import point2D
 
 C = 0.5
 F = 2.0 / 3.0
-
-def cross(x, y, d, r=1, g=0, b=0):
-    x0 = x - d
-    y0 = y - d
-    x1 = x + d
-    y1 = y + d
-    x2 = x + d
-    y2 = y - d
-    x3 = x - d
-    y3 = y + d
-    stroke(r, g, b)
-    line((x0, y0), (x1, y1))
-    line((x2, y2), (x3, y3))
-
-def circle(x, y, r, color='pink'):
-    # Draws on/offcurve dots.
-    if color == 'pink':
-        fill(1, 0, 1, 0.7)
-    elif color == 'green':
-        fill(0, 1, 0, 0.7)
-    elif color == 'blue':
-        fill(0, 0, 1, 0.7)
-    oval(x - r, y - r, r*2, r*2)
 
 class Point(object):
     def __init__(self, x, y, onCurve):
@@ -113,6 +90,7 @@ class Glyph(object):
         openContour = False
         openSegment = None
         currentOnCurve = None
+        p0 = None
 
         if coordinates or components:
             self._path = path = BezierPath() # There must be points and/or components, start path
@@ -124,8 +102,8 @@ class Glyph(object):
             self._points.append(p)
 
             if not openContour:
-                print 'moveTo'
                 path.moveTo((x, y))
+                p0 = p
                 currentOnCurve = p
                 openContour = []
                 self._contours.append(openContour)
@@ -145,6 +123,7 @@ class Glyph(object):
             if index in endPtsOfContours and openContour:
                 # End of contour.
                 if openSegment:
+                    openSegment.append(p0)
                     currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
 
                 path.closePath()
@@ -182,7 +161,6 @@ class Glyph(object):
             # handle implied on-curve points.
             for n in range(len(segment)-1):
                 p0 = cp # Previous oncurve.
-                #cross(cp.x, cp.y, 10)
                 p1 = segment.points[n] # next offcurve.
                 p2 = segment.points[n+1] # offcurve or last point.
 
@@ -206,27 +184,12 @@ class Glyph(object):
         p2 = onCurve1
         """
 
-        # Received points.
-        #cross(p0x, p0y, 10) # current
-        cross(p1x, p1y, 10, 0, 1, 0) # offcurve
-        cross(p2x, p2y, 10, 0, 0, 1) # implied.
-
         # Cubic control points.
-        pp0x = p0x + (p1x - p0x)*F
-        pp0y = p0y + (p1y - p0y)*F
-
-
-        pp1x = p2x + (p1x - p2x)*F
-        pp1y = p2y + (p1y - p2y)*F
-
-        cross(pp0x, pp0y, 3, 0, 0, 1)
-        cross(pp1x, pp1y, 3, 0, 0, 1)
+        pp0x = p0x + (p1x - p0x) * F
+        pp0y = p0y + (p1y - p0y) * F
+        pp1x = p2x + (p1x - p2x) * F
+        pp1y = p2y + (p1y - p2y) * F
         path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
-        #stroke(None)
-        #fill(0, 1, 1)
-        #text('0', (p0x + 5, p0y + 10))
-        #text('1', (p1x + 10, p1y + 10))
-        #text('2', (p2x + 10, p2y + 20))
 
     def _get_ttGlyph(self):
         return self.parent.ttFont['glyf'][self.name]
