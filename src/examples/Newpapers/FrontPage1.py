@@ -84,11 +84,10 @@ def makeDocument():
     t2 = newTextBox('Book Review', z=0, font='NewOdanaLarge-Black', 
         fontSize=w/8, w=PageWidth*0.75, 
         parent=page, conditions=(Left2Left(), Float2Top()))
-    print t2.borders
+
     i1 = newRect(z=0, fill=(0.7, 0, 0), h=PageHeight/2,
         borders=dict(dash=(3,4),strokeWidth=40, stroke=(0, 0, 1)), 
         parent=page, conditions=(Fit2Width(), Float2Top()))
-    i1.borderTop['line'] = INLINE
         
     i2 = newRect(z=0, fill=(0.7, 0.7, 0), h=48,
         parent=page, conditions=(Fit2Width(), Float2Top()))
