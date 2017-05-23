@@ -19,16 +19,16 @@ from pagebot.elements import *
 def run():
 	c = newRect(name='myContainerElement')
 
-	print 'Container we made:', c 
-	print 'No elements yet:', c.elements # Currently no elements in the container 
+	print 'Container we made:', c
+	print 'No elements yet:', c.elements # Currently no elements in the container
 	print
 	child1 = newRect(parent=c, name='Child1') # Make child containers with unique Id
-	child2= newRect(parent=c, name='Child2')
+	child2 = newRect(parent=c, name='Child2')
 	# Get unique element eIds
 	eId1 = child1.eId
 	eId2 = child2.eId
 	print '-- Now the container got 2 named child containers.'
-	print 'Elements:', c.elements # Currently no elements in the container 
+	print 'Elements:', c.elements # Currently no elements in the container
 	print
 	print '-- None of the children are placed on default position (0, 0, 0)'
 	for e in c.elements:
@@ -51,4 +51,4 @@ def run():
 if __name__ == '__main__':
 	run()
 	print 'Done'
-	
+
