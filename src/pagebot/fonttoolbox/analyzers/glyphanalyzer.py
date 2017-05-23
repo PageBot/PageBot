@@ -10,8 +10,8 @@
 #
 #     glyphanalyzer.py
 #
-#     Implements a PabeBot font classes to get info from a TTFont.
-#   
+#     Implements a PageBot font classes to get info from a TTFont.
+#
 import weakref
 
 from pagebot.toolbox.transformer import point2D
@@ -39,7 +39,7 @@ class GlyphAnalyzer(object):
     def _get_glyph(self):
         return self._glyph()
     glyph = property(_get_glyph)
-        
+
     def __repr__(self):
         return '<Analyzer of "%s">' % self.glyph.name
 

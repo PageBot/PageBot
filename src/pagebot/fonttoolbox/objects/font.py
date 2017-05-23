@@ -10,7 +10,7 @@
 #
 #     font.py
 #
-#     Implements a PabeBot font style to get info from a TTFont.
+#     Implements a PageBot font style to get info from a TTFont.
 #     The Style instance is a convenience caching storage, similar to RoboFont Font.
 #     Using the Family/Font/Glyph classes, allows page layout in PageBot to access
 #     all information in a font purpose of typography and layout.
@@ -69,7 +69,26 @@ def getFontPathOfFont(fontName):
     return None
 
 class Font(object):
-    # Storage of font information while composing the pages.
+    u"""
+    Storage of font information while composing the pages.
+
+    >>> import pagebot
+    >>> from pagebot.toolbox.transformer import *
+    >>> p = module2Path(pagebot)
+    >>> p = path2ParentPath(p) + '/fonts/typetr/BitcountGridVar.ttf'
+    >>> from pagebot.fonttoolbox.objects.font import Font
+    >>> f = Font(p, install=False)
+    >>> f.name
+    u'BitcountGrid'
+    >>> len(f)
+    101
+    >>> f.keys()[-1]
+    'y'
+    >>> f.axes
+    {'rndi': (0.0, 1000.0, 1000.0), 'rndo': (0.0, 1000.0, 1000.0), 'sqri': (0.0, 1000.0, 1000.0), 'sqro': (0.0, 1000.0, 1000.0), 'line': (0.0, 1000.0, 1000.0), 'open': (0.0, 0.0, 1000.0), 'wght': (0.0, 500.0, 1000.0)}
+    >>> f.features
+    ...
+    """
     GLYPH_CLASS = Glyph
 
     def __init__(self, path, name=None, install=True):
@@ -80,13 +99,17 @@ class Font(object):
         name than the DrawBot installing name."""
         self.path = path # File path of the font file.
         if install:
-            self.install() # Installs the font in DrawBot from self.path and initializes self.installedName.
+            # Installs the font in DrawBot from self.path and initializes
+            # self.installedName.
+            self.install()
         else:
             self.installedName = None # Set to DrawBot name, when installed later.
         try:
             self.ttFont = TTFont(path, lazy=True)
-            self.info = FontInfo(self.ttFont) # TTFont is available as lazy style.info.font
-            # Store optional custom name, otherwise use original DrawBot name. Otherwise use from FontInfo.fullName
+            # TTFont is available as lazy style.info.font
+            self.info = FontInfo(self.ttFont)
+            # Stores optional custom name, otherwise use original DrawBot name.
+            # Otherwise use from FontInfo.fullName
             self.name = name or self.installedName or self.info.fullName
             self.path = path
             self._kerning = None # Lazy reading.
@@ -145,15 +168,16 @@ class Font(object):
     groups = property(_get_groups)
 
     def getFeaturedString(self, s, featureSettings):
-        u"""Compile the string s into glyph names, corresponding to the settings in featureSettings."""
+        u"""Compile the string s into glyph names, corresponding to the
+        settings in featureSettings."""
         return s
 
     def install(self):
-        u"""Install the font in DrawBot, if not already there. Answer the DrawBot name."""
+        u"""Install the font in DrawBot, if not already there. Answer the
+        DrawBot name."""
         self.installedName = installFont(self.path)
         return self.installedName
 
     def save(self, path=None):
         u"""Save the font to optional path or to self.path."""
         self.ttFont.save(path or self.path)
-
