@@ -1,5 +1,7 @@
 #export
 
+*.fam
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

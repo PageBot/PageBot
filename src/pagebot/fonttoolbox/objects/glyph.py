@@ -76,7 +76,39 @@ class Glyph(object):
     Font. It is supposed to copy the functions of the RoboFont raw glyph, for
     all needed functions in PageBot. It is not complete, will be added to when
     needed.
-
+    >>> import pagebot
+    >>> from pagebot.toolbox.transformer import *
+    >>> p = module2Path(pagebot)
+    >>> p = path2ParentPath(p) + '/fonts/typetr/PromiseVar.ttf'
+    >>> from pagebot.fonttoolbox.objects.font import Font
+    >>> f = Font(p, install=False)
+    >>> g = f['a']
+    >>> g.name
+    'a'
+    >>> len(g.points)
+    48
+    >>> g.points[-1].onCurve
+    True
+    >>> contours = g.contours
+    >>> len(contours)
+    3
+    >>> path = g.path
+    >>> print path
+    <BezierPath>
+    >>> nspath = path.getNSBezierPath()
+    >>> bounds = nspath.bounds()
+    >>> print bounds
+    <NSRect origin=<NSPoint x=40.0 y=-16.0> size=<NSSize width=529.0 height=572.0>>
+    >>> len(bounds)
+    2
+    >>> len(bounds[0])
+    2
+    >>> len(bounds[1])
+    2
+    >>> print bounds[0]
+    <NSPoint x=40.0 y=-16.0>
+    >>> bounds[0][0]
+    40.0
     """
 
     ANALYZER_CLASS = GlyphAnalyzer
@@ -103,7 +135,8 @@ class Glyph(object):
             len(self.coordinates), len(self.endPtsOfContours), len(self.components))
 
     def _initialize(self):
-        u"""Initialize the cached data, such as self.points, self.contour, self.components and self.path."""
+        u"""Initializes the cached data, such as self.points, self.contour,
+        self.components and self.path."""
         self._points = []
         self._contours = []
         self._components = []
@@ -231,12 +264,14 @@ class Glyph(object):
     # Direct TTFont cooridinates compatibility
 
     def _get_coordinates(self):
-        u"""Answer the ttFont.coordinates, if it exists. Otherwise answer None. Note that this is the
-        “raw” list of (x, y) positions, without information on contour index or if the point is on/off curve.
-        This information is stored in ttFont.endPtsOfContours and ttFont.flags. This property is only for low-level
-        access of the coordinates. For regular use, self.points and self.contours are available.
-        Also notice that writing the list is at “own risk”, e.g hinting and related tables are not automatically
-        updated."""
+        u"""Answers the ttFont.coordinates, if it exists. Otherwise answer None.
+        Note that this is the “raw” list of (x, y) positions, without
+        information on contour index or if the point is on/off curve. This
+        information is stored in ttFont.endPtsOfContours and ttFont.flags.
+        This property is only for low-level access of the coordinates. For
+        regular use, self.points and self.contours are available. Also notice
+        that writing the list is at “own risk”, e.g hinting and related tables
+        are not automatically updated."""
         if hasattr(self.ttGlyph, 'coordinates'):
             return self.ttGlyph.coordinates
         return [] # No coordinates in the TTGlyph

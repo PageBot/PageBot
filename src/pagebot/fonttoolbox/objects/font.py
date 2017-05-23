@@ -14,7 +14,7 @@
 #     The Style instance is a convenience caching storage, similar to RoboFont Font.
 #     Using the Family/Font/Glyph classes, allows page layout in PageBot to access
 #     all information in a font purpose of typography and layout.
-#   
+#
 #     We'll call this class "Font" instead of "Style" (as in other TypeNetwerk tool code),
 #     to avoid confusion with the PageBot style dictionary, which hold style parameters.
 #
@@ -73,14 +73,17 @@ class Font(object):
     GLYPH_CLASS = Glyph
 
     def __init__(self, path, name=None, install=True):
-        u"""Initialize the TTFont, for which Font is a wrapper. Default is to install the font in DrawBot.
-        self.name is supported, in case the caller wants to use a different name than the DrawBot installing name."""
+        u"""Initialize the TTFont, for which Font is a wrapper. Default is to
+        install the font in DrawBot.
+
+        self.name is supported, in case the caller wants to use a different
+        name than the DrawBot installing name."""
         self.path = path # File path of the font file.
         if install:
             self.install() # Installs the font in DrawBot from self.path and initializes self.installedName.
         else:
             self.installedName = None # Set to DrawBot name, when installed later.
-        try: 
+        try:
             self.ttFont = TTFont(path, lazy=True)
             self.info = FontInfo(self.ttFont) # TTFont is available as lazy style.info.font
             # Store optional custom name, otherwise use original DrawBot name. Otherwise use from FontInfo.fullName
@@ -102,7 +105,7 @@ class Font(object):
 
     def keys(self):
         return self.ttFont['glyf'].keys()
-        
+
     def _get_axes(self): # Answer dictionary of axes
         try:
             axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in self.ttFont['fvar'].axes}
@@ -112,15 +115,15 @@ class Font(object):
     axes = property(_get_axes)
 
     def _get_designSpace(self):
-        try: 
+        try:
             designSpace = self.ttFont['cvar']
         except KeyError:
             designSpace = {}
         return designSpace
     designSpace = property(_get_designSpace)
- 
+
     def _get_variables(self):
-        try: 
+        try:
             variables = self.ttFont['gvar']
         except KeyError:
             variables = {}
@@ -144,12 +147,12 @@ class Font(object):
     def getFeaturedString(self, s, featureSettings):
         u"""Compile the string s into glyph names, corresponding to the settings in featureSettings."""
         return s
-        
+
     def install(self):
         u"""Install the font in DrawBot, if not already there. Answer the DrawBot name."""
         self.installedName = installFont(self.path)
         return self.installedName
-        
+
     def save(self, path=None):
         u"""Save the font to optional path or to self.path."""
         self.ttFont.save(path or self.path)
