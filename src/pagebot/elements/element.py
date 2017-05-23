@@ -43,7 +43,8 @@ class Element(object):
             title=None, style=None, conditions=None, elements=None, template=None, nextElement=None, prevElement=None, 
             nextPage=None, padding=None, margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
             mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, borders=None, borderTop=None, borderRight=None,
-            borderBottom=None, borderLeft=None, **kwargs):  
+            borderBottom=None, borderLeft=None, 
+            drawBefore=None, drawAfter=None, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
@@ -61,6 +62,10 @@ class Element(object):
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
         self.borders = borders or (borderTop, borderRight, borderBottom, borderLeft)
+
+        # Drawing hooks
+        self.drawBefore = drawBefore # Optional method to draw before child elements are drawn.
+        self.drawAfter = drawAfter # Optional method to draw after child elements are drawn.
 
         # Set timer of this element.
         self.timeMarks = [TimeMark(0, self.style), TimeMark(XXXL, self.style)] # Default TimeMarks from t == 0 until infinite of time.
@@ -1728,9 +1733,15 @@ class Element(object):
 
         self.drawFrame(p, view) # Draw optional frame or borders.
 
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         if drawElements:
             # If there are child elements, draw them over the pixel image.
             self._drawElements(p, view)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'

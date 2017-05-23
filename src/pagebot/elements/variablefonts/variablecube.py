@@ -45,6 +45,10 @@ class VariableCube(Element):
         self.location = copy(location)
     
     def draw(self, page, x, y):
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         fillColor = self.style.get('fill')
         if fillColor is not None:
             setFillColor(fillColor)
@@ -86,5 +90,10 @@ class VariableCube(Element):
         fs = FormattedString('Other axes: %s' % self.location, fontSize=6, fill=0)
         w, h = fs.size()
         page.text(fs, x, y - 16)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
+
+
 
 		

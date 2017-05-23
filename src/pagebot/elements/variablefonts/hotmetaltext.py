@@ -391,9 +391,6 @@ class TextBox(Element):
    
         self.drawFrame(p, view) # Draw optional frame or borders.
 
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
-
         # Draw the text.    
         textBox(self.fs, (px+self.pl, py+self.pb, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
@@ -403,9 +400,6 @@ class TextBox(Element):
         # Draw markers on TextLine and TextRun positions.
         self._drawBaselines(view)
  
-         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view)
-
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
