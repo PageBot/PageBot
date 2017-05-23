@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     FrontPage1.py
+#     BookReview.py
 #
 import copy
 import pagebot # Import to know the path of non-Python resources.
