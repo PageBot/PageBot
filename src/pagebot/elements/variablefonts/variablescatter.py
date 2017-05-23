@@ -67,6 +67,10 @@ class VariableScatter(Element):
         return location,
 
     def draw(self, page, x, y):
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         fillColor = self.style.get('fill')
         if fillColor is not None:
             setFillColor(fillColor)
@@ -105,5 +109,9 @@ class VariableScatter(Element):
                         fs = FormattedString(recipe, fontSize=4, fill=0)
                         w, h = fs.size()
                         page.text(fs, point(px - stepX/4 + 30, py - 24)) # Bit of hack, we need the width of the glyph here.
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
+
 
 		
