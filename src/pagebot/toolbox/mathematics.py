@@ -34,9 +34,9 @@ def lucasRange(a, z, n, minN=None, maxN=None):
     print Mathematics.lucasRange(32, 212, 8, 100, 200)
     [100, 106, 113, 122, 135, 151, 172, 200]
     """
-
     n = n - 2  # Correct for two masters
     i = []
+
     for x in range(n + 2):
         v = (a ** (n + 1 - x) * z ** x) ** (1 / (n + 1))
         if not None in (minN, maxN):
@@ -45,9 +45,9 @@ def lucasRange(a, z, n, minN=None, maxN=None):
     return i
 
 def intersection(p1, p2, p3, p4):
-    u"""Returns 2D intersection point if it exists. Otherwise (None, None, None) is
-    answered. Different from the RoboFont intersection tool, we intersect
-    on infinite line lengths. See also:
+    u"""Returns 2D intersection point if it exists. Otherwise (None, None,
+    None) is answered. Different from the RoboFont intersection tool, we
+    intersect on infinite line lengths. See also:
 
     http://en.wikipedia.org/wiki/Line-line_intersection
     """
@@ -106,8 +106,9 @@ def dotProduct(v1, v2):
     return reduce(operator.add, map(operator.mul, v1, v2))
 
 def pointProjectedOnLine(cls, p1, p2, p):
-    u"""Answers the projected point <b>(px, py)</b> on line <b>((x1, y1), (x2, y2))</b>.
-    Answers <b>(x1, y1)</b> if there is not distance between the two points of the line."""
+    u"""Answers the projected point <b>(px, py)</b> on line <b>((x1, y1), (x2,
+    y2))</b>.  Answers <b>(x1, y1)</b> if there is not distance between the two
+    points of the line."""
     # Line vector.
     x1, y1 = point2D(p1)
     x2, y2 = point2D(p2)
@@ -130,6 +131,12 @@ def pointProjectedOnLine(cls, p1, p2, p):
     return  x1 + (dot * tx) / dd, y1 + (dot * ty) / dd
 
 def insideCircle(dx, dy, r):
+    u"""
+    >>> insideCircle(1, 1, 5)
+    True
+    >>> insideCircle(3, 3, 3)
+    False
+    """
     assert r > 0
 
     if abs(dx) + abs(dy) <= r:
@@ -148,9 +155,21 @@ def test(condition, error):
         print '###', error
 
 def isOdd(v):
+    u"""
+    >>> isOdd(1)
+    True
+    >>> isOdd(2)
+    False
+    """
     return v%2 != 0
 
 def isEven(v):
+    u"""
+    >>> isEven(2)
+    True
+    >>> isEven(1)
+    False
+    """
     return v%2 == 0
 
 def scalexy(p, scaleP):

@@ -1,2 +1,2 @@
 #!/bin/bash
-python -m doctest doctest.txt
+python -m doctest -v toolbox/mathematics.py
