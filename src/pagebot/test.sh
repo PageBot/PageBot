@@ -1,2 +1,3 @@
 #!/bin/bash
-python -m doctest -v toolbox/mathematics.py
+python -m doctest fonttoolbox/objects/glyph.py
+python -m doctest toolbox/mathematics.py

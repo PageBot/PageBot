@@ -24,6 +24,13 @@ C = 0.5
 F = 2.0 / 3.0
 
 class Point(object):
+    u"""
+    >>> p = Point(101, 303, True)
+    >>> p.onCurve is False
+    False
+    >>> print p
+    Pt(101,303,On)
+    """
     def __init__(self, x, y, onCurve):
         self.x = x
         self.y = y
@@ -33,6 +40,23 @@ class Point(object):
         return 'Pt(%s,%s,%s)' % (self.x, self.y,{True:'On', False:'Off'}[self.onCurve])
 
 class Segment(object):
+    u"""
+    >>> p0 = Point(101, 303, True)
+    >>> p1 = Point(202, 404, False)
+    >>> p2 = Point(303, 808, False)
+    >>> p3 = Point(909, 808, True)
+    >>> points = [p0, p1, p2, p3]
+    >>> s = Segment(points)
+    >>> len(s)
+    4
+    >>> p4 = Point(111, 313, False)
+    >>> s.append(p4)
+    >>> len(s)
+    5
+    >>> s.points[-1].onCurve
+    False
+    """
+
     def __init__(self, points=None):
         if points is None:
             points = []
@@ -48,10 +72,12 @@ class Segment(object):
         self.points.append(p)
 
 class Glyph(object):
-    u"""This Glyph class is a wrapper around the glyph structure of a ttFont.
-    It is supposed to copy the functions of the RoboFont raw glyph, for all
-    needed functions in PageBot. It is not complete, will be added to when
-    needed."""
+    u"""This Glyph class is a wrapper around the glyph structure of a TrueType
+    Font. It is supposed to copy the functions of the RoboFont raw glyph, for
+    all needed functions in PageBot. It is not complete, will be added to when
+    needed.
+
+    """
 
     ANALYZER_CLASS = GlyphAnalyzer
 
@@ -131,7 +157,6 @@ class Glyph(object):
                 # Inside contour.
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
                 openSegment = None
-
 
     def _drawSegment(self, cp, segment, path):
         u"""Draws the Segment instance into the path. It may contain multiple
