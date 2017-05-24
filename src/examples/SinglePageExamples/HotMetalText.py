@@ -56,7 +56,7 @@ pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/BookReview001.png' 
+EXPORT_PATH = '_export/HotMetalText.png' 
 
 def drawAfter(e, origin, view):
     # Now the text box must have done the type setting. We can query
@@ -70,7 +70,7 @@ def drawAfter(e, origin, view):
                 nextX, _ = run.positions[index+1]
                 fill(None)
                 stroke(1)
-                rect(origin[0]+x, origin[1]+y+ry-20, nextX-x, 80) 
+                rect(origin[0]+x, origin[1]+y+ry-20, nextX-x, 72) 
     
 
 def makeDocument():
@@ -109,7 +109,7 @@ def makeDocument():
     # Styles
     titleStyle =dict(font='Georgia', fontSize=26, rLeading=1.4, xAlign=CENTER, textFill=1)
     authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xAlign=CENTER)
-    headStyle = dict(font='Proforma-Bold', textFill=0, fontSize=64, rLeading=1.4, 
+    headStyle = dict(font='Proforma-Bold', textFill=0, fontSize=62, rLeading=1.4, 
         xAlign=LEFT, paragraphTopSpacing=30,
     paragraphBottomSpacing=0)
     bodyStyle = dict(font='Verdana', textFill=0, fontSize=12, rLeading=1.4, 
@@ -146,9 +146,14 @@ def makeDocument():
         conditions=(Top2Top(), Right2Right()))
     
     # Review content
-    fs = newFS('This is an example of hot metal type setting, where every letter has a fixed shape and a fixed width.\nVariable Fonts can adjust, fit and decorate letters where it is most needed in a column of text. ', style=headStyle)
+    fs = newFS('This is an example of digital hot metal typesetting, where every letter has a fixed shape and its own width.\nVariable Fonts can adjust, fit and decorate letters where it is most needed in a column of text. ', style=headStyle)
     t4 = newTextBox(fs, w=w/2-G, mt=10, parent=i1, gradient=None, 
         drawAfter=drawAfter, conditions=(Fit2Width(), Float2Top()))
+        
+    # Font names
+    fs = newFS('Example featuring typefaces TypeNetwork TYPETR Productus and Proforma', style=dict(font='Proforma-Book', fontSize=10, textFill=0))
+    t5 = newTextBox(fs, w=w/2-G, mt=10, parent=page, gradient=None, 
+        conditions=(Fit2Width(), Float2Top()))
         
     score = page.solve()
     if score.fails:
