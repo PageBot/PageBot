@@ -123,15 +123,28 @@ class PageBotDoc(Publication):
         return node
 
     def runModules(self, m, level=0):
-        # TODO: add to file
+        # TODO: recurse
+        # TODO: maybe sort (global variables, global functions, hidden
+        # functions).
         #help(m)
         #print m.__doc__
+        import sys, drawBot#, types
         f = open('docs/%s.md' % m.__name__, 'w')
         p = m.__path__
         d = m.__dict__
+        db = dir(drawBot)
+
+        '''
+        for name, val in globals().items():
+            if isinstance(val, types.ModuleType):
+                print val
+        '''
 
         f.write('# %s\n' % m.__name__)
         for key, value in d.items():
+            if key.startswith('__') or key in sys.modules.keys() or key in db:
+                print ' * skipping %s' % key
+                continue
 
             if value is not None:
                 f.write('## %s\n' % key)
@@ -139,8 +152,6 @@ class PageBotDoc(Publication):
                     s = value.__doc__
                     s = s.strip().replace('    ', '')
                     f.write('%s\n' % s)
-                else:
-                    f.write('---\n')
 
         f.close()
 
