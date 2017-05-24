@@ -446,9 +446,11 @@ def module2Path(module):
 def path2ParentPath(path):
     u"""
     >>> path2ParentPath('/xxx/yyy/zzz/')
-    /xxx/yyy/
+    '/xxx/yyy/zzz'
+    >>> path2ParentPath('/xxx/yyy/zzz')
+    '/xxx/yyy'
     >>> path2ParentPath('/xxx/yyy/zzz.gif')
-    /xxx/yyy/
+    '/xxx/yyy'
     """
     return '/'.join(path.split('/')[:-1])
 
@@ -488,11 +490,11 @@ def path2FontName(path):
     </doc>
 
     >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
-    Agency_FB-Compressed
+    'Agency_FB-Compressed'
     >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')
-    Agency_FB-Compressed
+    'Agency_FB-Compressed'
     >>> path2FontName('#xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo')
-    Agency_FB-Bold
+    'Agency_FB-Bold'
     """
     name = path2Name(path)
     if name is not None:
