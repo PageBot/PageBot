@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     MakeABookCover.py
+#     TestFormattedStrings.py
 
 def run():
     aa = FormattedString('Book Cover', font='Georgia', fontSize=40)

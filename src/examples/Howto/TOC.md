@@ -9,7 +9,7 @@ The script shows the different alignment conditions. *Left2Left()* goes to the l
 
 ![gallery/AlignElementsUI.png](gallery/AlignElementsUI.png)
 
-The Variable UI window shows how to implement checkbox and slider to manipolate certain values in the page. 
+The Variable UI window shows how to implement checkbox and slider to manipulate certain values in the page. 
 
 ## Scale an image (DrawBot)
 
