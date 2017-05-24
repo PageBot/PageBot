@@ -38,4 +38,4 @@ Simple test to show the working of view and page. Option Variable checkbox to se
 
 Shows how to load a Truetype font and draw a glyph with quadratic Bézier curves with the cubic Bézier curves that PageBot uses.
 
-![gallery/DrawQuadraticGlyph.pdf](gallery/DrawQuadraticGlyph.pdf)
+![gallery/DrawQuadraticGlyph.pdf](gallery/DrawQuadraticGlyph.png)
