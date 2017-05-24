@@ -3,7 +3,7 @@ Example scripts, how to do a specific task or explaining a single PageBot functi
 
 ## Align elements
 
-![gallery/AlignElements.pdf](gallery/AlignElements.pdf)
+![gallery/AlignElements.png](gallery/AlignElements.png)
 The script shows the different alignment conditions. *Left2Left()* goes to the left padding. *Left2LeftSide()* goes to the left side of the document.
 *page.solve()* tries to solve any condition that does not fit the defined optimal value.
 
@@ -26,16 +26,16 @@ Example of an animated gif in DrawBot.
 
 Simple demo to show the positioning of a colored rectangle centered on the page. Also the alignment origin of the rectangle is centered. The view draws cropmarks, page frame and rectangle origin marker.
 
-![gallery/DrawRedRectCenterPage.pdf](gallery/DrawRedRectCenterPage.pdf)
+![gallery/DrawRedRectCenterPage.png](gallery/DrawRedRectCenterPage.png)
 
 ## Draw View Page Frame
 
 Simple test to show the working of view and page. Option Variable checkbox to set the origin to top or bottom.
 
-![gallery/DrawViewPageFrame.pdf](gallery/DrawViewPageFrame.pdf)
+![gallery/DrawViewPageFrame.png](gallery/DrawViewPageFrame.png)
 
 ## Draw Quadratic Glyph
 
 Shows how to load a Truetype font and draw a glyph with quadratic Bézier curves with the cubic Bézier curves that PageBot uses.
 
-![gallery/DrawQuadraticGlyph.pdf](gallery/DrawQuadraticGlyph.png)
+![gallery/DrawQuadraticGlyph.png](gallery/DrawQuadraticGlyph.png)
