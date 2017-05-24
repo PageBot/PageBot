@@ -132,12 +132,15 @@ class PageBotDoc(Publication):
 
         f.write('# %s\n' % m.__name__)
         for key, value in d.items():
+
             if value is not None:
                 f.write('## %s\n' % key)
                 if value.__doc__:
-                    f.write('\t%s\n' % value.__doc__)
+                    s = value.__doc__
+                    s = s.strip().replace('    ', '')
+                    f.write('%s\n' % s)
                 else:
-                    f.write('\t---\n')
+                    f.write('---\n')
 
         f.close()
 
