@@ -58,14 +58,21 @@ class TextRun(object):
                 self.string += unichr(int(part[0:4], 16))
                 self.string += part[4:]
 
-        self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
+        #print '=====', ctRun
+        #print gc, len(CoreText.CTRunGetStringIndicesPtr(ctRun)), CoreText.CTRunGetStringIndicesPtr(ctRun), ctRun
+        #self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
         #CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
-        self.advances = CoreText.CTRunGetAdvances(ctRun, CoreText.CFRange(0, 5), None)
-        self.positions = CoreText.CTRunGetPositionsPtr(ctRun)[0:gc]
+        #self.advances = CoreText.CTRunGetAdvances(ctRun, CoreText.CFRange(0, 5), None)
+        #self.positions = CoreText.CTRunGetPositionsPtr(ctRun)[0:gc]
         #CoreText.CTRunGetPositions(ctRun, CoreText.CFRange(0, 5), None)[4]
         #self.glyphFontIndices = CoreText.CTRunGetGlyphsPtr(ctRun)[0:gc]
         #print CoreText.CTRunGetGlyphs(ctRun, CoreText.CFRange(0, 5), None)[0:5]
         self.status = CoreText.CTRunGetStatus(ctRun)
+
+        # get all positions
+        self.positions = CoreText.CTRunGetPositions(ctRun, (0, gc), None)
+        # get all glyphs
+        self.glyphs = CoreText.CTRunGetGlyphs(ctRun, (0, gc), None)
 
     def __len__(self):
         return self.glyphCount
@@ -213,6 +220,7 @@ class TextLine(object):
 
         self.string = '' 
         self.runs = []
+        print ctLine
         for runIndex, ctRun in enumerate(CoreText.CTLineGetGlyphRuns(ctLine)):
             textRun = TextRun(ctRun, runIndex)
             self.runs.append(textRun)

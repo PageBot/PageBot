@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     BookReview.py
+#     HotMetalText.py
 #
 import copy
 import pagebot # Import to know the path of non-Python resources.
@@ -58,21 +58,26 @@ G = 12 # Gutter
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/HotMetalText.png' 
 
-def drawAfter(e, origin, view):
+def drawBefore(e, origin, view):
     # Now the text box must have done the type setting. We can query
     # the position of lines and glyphs.
     for textLine in e.textLines:
+        if not textLine.runs:
+            continue
         run = textLine.runs[0]
-        print run.nsFont
         y = textLine.y
         for index, (x, ry) in enumerate(run.positions):
             if index < len(run.positions)-1:
                 nextX, _ = run.positions[index+1]
-                fill(None)
-                stroke(1)
+                fill(0.7)
+                stroke(0.8)
                 rect(origin[0]+x, origin[1]+y+ry-20, nextX-x, 72) 
+                stroke(1)
+                line((origin[0]+x, origin[1]+y+ry-20), 
+                     (origin[0]+x, origin[1]+y+ry-20+72))
+                line((origin[0]+x, origin[1]+y+ry-20+72), 
+                     (origin[0]+nextX, origin[1]+y+ry-20+72))
     
-
 def makeDocument():
     u"""Create Document instance with a single page. Fill the page with elements
     and perform a conditional layout run, until all conditions are solved."""
@@ -101,7 +106,7 @@ def makeDocument():
     
     # Resources
     blockFill = None #(1, 1, 0) # Use color to debug page area
-    gradient = Gradient(locations=[1,0], colors=((0.6, 0.6, 0.6), (0.8, 0.8, 0.8)))
+    gradient = Gradient(locations=[1,0], colors=((0.3, 0.3, 0.3), (0.6, 0.6, 0.6)))
     shadow = Shadow(offset=(6, -6), blur=10, color=(0.2, 0.2, 0.2, 0.5))
     bookBorders = dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE)
     bookPadding = (25, 30, 40, 30)
@@ -110,8 +115,8 @@ def makeDocument():
     titleStyle =dict(font='Georgia', fontSize=26, rLeading=1.4, xAlign=CENTER, textFill=1)
     authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xAlign=CENTER)
     headStyle = dict(font='Proforma-Bold', textFill=0, fontSize=62, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=30,
-    paragraphBottomSpacing=0)
+        xAlign=LEFT, paragraphTopSpacing=30, openTypeFeatures=dict(liga=True),
+        paragraphBottomSpacing=0)
     bodyStyle = dict(font='Verdana', textFill=0, fontSize=12, rLeading=1.4, 
         xAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
     italicBodyStyle = copy.copy(bodyStyle)
@@ -124,7 +129,7 @@ def makeDocument():
         maxH=pageAreaH, xAlign=CENTER,  
         conditions=(Center2Center(), Middle2Middle()))
     
-    t1 = newTextBox('PageBot Educational Series', z=0, font='Proforma-Book', 
+    t1 = newTextBox('PageBot Educational Series', z=0, font='Productus-Book', 
         fontSize=42, w=pageAreaW*0.75,  
         parent=page, conditions=(Left2Left(), Top2Top()))
         
@@ -141,17 +146,19 @@ def makeDocument():
     i1.solve()
 
     fs = newFS(topT, style=bodyStyle)
-    fs += newFS('\nBetter prepare for what comes next.', style=italicBodyStyle)
+    fs += newFS('\nPrepare for what comes next.', style=italicBodyStyle)
     topText = newTextBox(fs, w=w/3-16, parent=page, 
         conditions=(Top2Top(), Right2Right()))
     
     # Review content
-    fs = newFS('This is an example of digital hot metal typesetting, where every letter has a fixed shape and its own width.\nVariable Fonts can adjust, fit and decorate letters where it is most needed in a column of text. ', style=headStyle)
+    t = 'This is an example of hot metal typesetting, where every letter had a fixed shape and its own width as rectangular box.\nVariable Fonts can adjust, fit and decorate letters where it is most needed in a column of text. '
+    fs = newFS(t, style=headStyle)
     t4 = newTextBox(fs, w=w/2-G, mt=10, parent=i1, gradient=None, 
-        drawAfter=drawAfter, conditions=(Fit2Width(), Float2Top()))
+        drawBefore=drawBefore, 
+        conditions=(Fit2Width(), Float2Top()))
         
     # Font names
-    fs = newFS('Example featuring typefaces TypeNetwork TYPETR Productus and Proforma', style=dict(font='Proforma-Book', fontSize=10, textFill=0))
+    fs = newFS('Example featuring typefaces TypeNetwork TYPETR Productus and Proforma', style=dict(font='Productus-Book', fontSize=10, textFill=0))
     t5 = newTextBox(fs, w=w/2-G, mt=10, parent=page, gradient=None, 
         conditions=(Fit2Width(), Float2Top()))
         
