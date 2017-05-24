@@ -99,7 +99,7 @@ class View(Element):
 
             newPage(w, h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
             # View may have defined a background
-            if self.style['fill'] != NO_COLOR:
+            if self.style.get('fill') is not None:
                 setFillColor(self.style['fill'])
                 rect(0, 0, w, h)
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
