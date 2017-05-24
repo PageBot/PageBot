@@ -3,4 +3,3 @@ pages:
   - Home: index.md
   - How To: howto.md
   - About: about.md
-theme: readthedocs
