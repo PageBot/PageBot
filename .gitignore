@@ -1,6 +1,9 @@
-#export
+#pagebot
 
 *.fam
+site
+
+#export
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

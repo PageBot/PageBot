@@ -2,4 +2,5 @@ site_name: PageBot
 pages:
   - Home: index.md
   - How To: howto.md
+  - API: pagebot.md
   - About: about.md

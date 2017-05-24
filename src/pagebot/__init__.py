@@ -28,10 +28,10 @@ from pagebot.style import NO_COLOR, LEFT
 from pagebot.toolbox.transformer import point2D
 
 #
-# In order to let PageBot scripts and/applications exchange information, without the need to save 
+# In order to let PageBot scripts and/applications exchange information, without the need to save
 # data in files, the pbglobals module supports the storage of non-persistent information.
 # This way, applications with Vanilla windows can be used as UI for scripts that perform as batch process.
-# Note that it is up to the responsibilty of individual scripts to create uniqued ids for 
+# Note that it is up to the responsibilty of individual scripts to create uniqued ids for
 # attributes. Also they need to know from each other, in case information is exchanges""".
 #
 # Key is script/application id, e.g. their __file__ value.
@@ -40,7 +40,7 @@ from pagebot.toolbox.transformer import point2D
 # scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
 # or direct as:
 
-pbGlobals = {} 
+pbGlobals = {}
 
 class Globals(object):
     # Allow adding by attribute and key.
@@ -54,7 +54,7 @@ def getGlobals(scriptId):
     u"""In order to let PageBot scripts and/applications exchange information, without the
     need to save as files, the pbglobals module supports the storage of non-persistent information.
     This way, applications with Vanilla windows can be used as UI for scripts that perform as batch process.
-    Note that it is up to the responsibilty of individual scripts to create uniqued ids for 
+    Note that it is up to the responsibilty of individual scripts to create uniqued ids for
     attributes. Also they need to know from each other, in case information is exchanged."""
     if not scriptId in pbGlobals:
         pbGlobals[scriptId] = Globals()
@@ -73,7 +73,7 @@ def cx2x(cx, e):
     else:
         x = e.parent.pl + cx * (e.css('colW', 0) + e.gw)
     return x
-  
+
 def y2cy(y, e):
     u"""Transform from y value to column y value, using the e.css for colunn values."""
     gutterH = e.gh
@@ -85,7 +85,7 @@ def y2cy(y, e):
         else:
             paddingY = e.pb
         cy = (y - paddingY) / (colH + gutterH)
-    return cy 
+    return cy
 
 def cy2y(cy, e):
     u"""Transform from column y value to y value, using the e.css for colunn values."""
@@ -106,7 +106,7 @@ def z2cz(z, e):
     cz = 0
     if colD + gutterD: # Check on division by 0
         cz = (z - e.parent.pzf) / (colD + gutterD)
-    return cz 
+    return cz
 
 def cz2z(cz, e):
     if cz is None:
@@ -163,7 +163,7 @@ def cd2d(cd, e):
     return d
 
 def baseline2y(yIndex, e):
-    u"""Convert columns index and line index to page position. Answered (x, y) is point position based on 
+    u"""Convert columns index and line index to page position. Answered (x, y) is point position based on
     marginTop + yIndex*baseLine."""
     padT = e.pt
     baseline = e.css('baseline')
@@ -172,11 +172,11 @@ def baseline2y(yIndex, e):
 def getRootPath():
     u"""Answer the root path of the pagebot module."""
     return '/'.join(__file__.split('/')[:-2]) # Path of this file with pagebot/__init__.py(c) removed.
-    
+
 def getFontPath():
     u"""Answer the standard font path of the pagebot module."""
     return getRootPath() + '/fonts/'
-    
+
 def setFillColor(c, fs=None, cmyk=False):
     u"""Set the color for global or the color of the formatted string."""
     if c is NO_COLOR:
@@ -205,7 +205,7 @@ def setFillColor(c, fs=None, cmyk=False):
                 fs.fill(*c)
     else:
         raise ValueError('Error in color format "%s"' % repr(c))
-    
+
 def setStrokeColor(c, w=1, fs=None, cmyk=False):
     u"""Set global stroke color or the color of the formatted string."""
     if c is NO_COLOR:
@@ -282,19 +282,19 @@ def setGradient(gradient, origin, e):
 
     if gradient.linear:
         if gradient.cmykColors is None:
-            linearGradient(startPoint=start, endPoint=end, 
+            linearGradient(startPoint=start, endPoint=end,
                 colors=gradient.colors, locations=gradient.locations)
         else:
-            cmykLinearGradient(startPoint=start, endPoint=end, 
+            cmykLinearGradient(startPoint=start, endPoint=end,
                 colors=gradient.cmykColors, locations=gradient.locations)
     else: # Gradient must be radial.
         if gradient.cmykColors is None:
-            radialGradient(startPoint=start, endPoint=end, 
-                colors=gradient.colors, locations=gradient.locations, 
+            radialGradient(startPoint=start, endPoint=end,
+                colors=gradient.colors, locations=gradient.locations,
                 startRadius=gradient.startRadius, endRadius=gradient.endRadius)
         else:
-            cmykRadialGradient(startPoint=start, endPoint=end, 
-                colors=gradient.cmykColors, locations=gradient.locations, 
+            cmykRadialGradient(startPoint=start, endPoint=end,
+                colors=gradient.cmykColors, locations=gradient.locations,
                 startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 
 class Shadow(object):
@@ -343,14 +343,14 @@ MARKER_PATTERN = '==%s--%s=='
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\-\-([^=]*)\=\=')
 
 def getMarker(markerId, arg=None):
-    u"""Answer a formatted string with markerId that can be used as non-display marker. 
+    u"""Answer a formatted string with markerId that can be used as non-display marker.
     This way the Composer can find the position of markers in text boxes, after
     FS-slicing has been done. Note there is always a very small "white-space"
     added to the string, so there is a potential difference in width that matters.
     For that reason markers should not be changed after slicing (which would theoretically
-    alter the flow of the FormattedString in an box) and the markerId and amount/length 
+    alter the flow of the FormattedString in an box) and the markerId and amount/length
     of args should be kept as small as possible.
-    Note that there is a potential problem of slicing through the argument string at 
+    Note that there is a potential problem of slicing through the argument string at
     the end of a textBox. That is another reason to keep the length of the arguments short.
     And not to use any spaces, etc. inside the markerId.
     Possible slicing through line-endings is not a problem, as the raw string ignores them."""
@@ -365,7 +365,7 @@ def findMarkers(fs, reCompiled=None):
     return reCompiled.findall(u'%s' % fs)
 
 def css(name, e, styles=None, default=None):
-    u"""Answer the named style values. Search in optional style dict first, otherwise up the 
+    u"""Answer the named style values. Search in optional style dict first, otherwise up the
     parent tree of styles in element e. Both e and style can be None. In that case None is answered."""
     if styles is not None: # Can be single style or stack of styles.
         if not isinstance(styles, (tuple, list)):
@@ -414,7 +414,7 @@ def newFS(t, e=None, style=None):
         setStrokeColor(sCmykStroke, sStrokeWidth, fs, cmyk=True)
     sAlign = css('xAlign', e, style)
     if sAlign is not None:
-        fs.align(sAlign)    
+        fs.align(sAlign)
     sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
     rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
     if sParagraphTopSpacing or (rParagraphTopSpacing and sFontSize):
@@ -468,7 +468,7 @@ def newFS(t, e=None, style=None):
         t = t.lower()
     elif sCapitalized:
         t = t.capitalize()
-    
+
     return fs + t
 
 def textBoxBaseLines(txt, box):
@@ -483,7 +483,7 @@ def textBoxBaseLines(txt, box):
     ctLines = CoreText.CTFrameGetLines(box)
     origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
     return [(x + o.x, y + o.y) for o in origins]
-        
+
 def textPositionSearch(fs, w, h, search, xAlign=LEFT, hyphenation=True):
     u"""
     """
