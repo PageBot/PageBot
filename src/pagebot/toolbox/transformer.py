@@ -20,7 +20,7 @@ from random import randint
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
 
-# P O I N T 
+# P O I N T
 
 def point3D(p):
     u"""Answer p as 3D point. If it already is a list of 3 elements, then don't change
@@ -52,7 +52,7 @@ def point2S(p):
         return '%d %d %d' % (round(x), round(y), round(z))
     return '%d %d' % (round(x), round(y))
 
-# C O L O R 
+# C O L O R
 
 def moreRed(c, v=0.5):
     # Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
@@ -196,7 +196,7 @@ def asFormatted(value, default=None):
     if int(round(value)) == value: # Same as rounded whole number
         return '%d' % value
     return '%0.2f' % value # Otherwise show as float with 2 digits.
-    
+
 def asBool(value, default=None):
     if value is None:
         return default
@@ -425,7 +425,7 @@ def obj2StyleId(s):
         for sPart in s:
             styleId.append(obj2StyleId(sPart))
         return ' '.join(styleId)
-        
+
     if not isinstance(s, basestring):
         s = u'%s' % s
     for sPart in s.split(' '):
@@ -444,14 +444,21 @@ def module2Path(module):
     return '/'.join((module.__file__).split('/')[:-1])
 
 def path2ParentPath(path):
+    u"""
+    >>> path2ParentPath('/xxx/yyy/zzz/')
+    /xxx/yyy/
+    >>> path2ParentPath('/xxx/yyy/zzz.gif')
+    /xxx/yyy/
+    """
     return '/'.join(path.split('/')[:-1])
 
 def path2ScriptId(path):
     u"""Answer the scriptId, derived from the __file__ of the main source."""
     return path.split('/src/')[-1]
-    
+
 def path2FormatPath(path, format=None):
-    u"""Answers the path where the extension is changed to format If format is None, then the extension is removed."""
+    u"""Answers the path where the extension is changed to format If format is
+    None, then the extension is removed."""
     if path is not None:
         path = '.'.join(path.split('.')[:-1])
         if format is not None:
@@ -471,12 +478,21 @@ def path2Name(path):
 
 def path2FontName(path):
     u"""
-    <doc>Take that file part of the path, and get the chunk until the first period to remove the extension, version
-    numbers and the database download ID.
+    <doc>Take that file part of the path, and get the chunk until the first
+    period to remove the extension, version numbers and the database download
+    ID.
+
     /xxx/yyy/zzz/Agency_FB-Compressed.ufo becomes Agency_FB-Compressed
     /xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo becomes Agency_FB-Compressed
     #xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo becomes Agency_FB-Bold
     </doc>
+
+    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
+    Agency_FB-Compressed
+    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')
+    Agency_FB-Compressed
+    >>> path2FontName('#xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo')
+    Agency_FB-Bold
     """
     name = path2Name(path)
     if name is not None:

@@ -13,6 +13,7 @@
 from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
+import os, os.path
 
 from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath,\
     save, restore, scale, textSize, FormattedString, cmykStroke, text, fill, stroke,\
@@ -23,6 +24,7 @@ from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D, point2S, asFormatted
 from pagebot import newFS, setStrokeColor, setFillColor
+from pagebot.toolbox.transformer import *
 
 class View(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
@@ -110,20 +112,30 @@ class View(Element):
                 self._drawElementsNeedingInfo()
 
     def export(self, fileName, pageSelection=None, multiPage=True):
-        u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
-        it must be a list with page numbers to export. This allows the order to be changed and pages to
-        be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
-        drawing and export that needs to be done.
+        u"""Export the document to fileName for all pages in sequential order.
+        If pageSelection is defined, it must be a list with page numbers to
+        export. This allows the order to be changed and pages to be omitted.
+        The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct
+        the type of drawing and export that needs to be done.
+
         The multiPage value is passed on to the DrawBot saveImage call.
-        document.export(...) is the most common way to export documents. But in special cases, there is not
-        straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use
-        MyBuilder(document).export(fileName), the builder is responsible to query the document, pages, elements and styles.
+        document.export(...) is the most common way to export documents. But in
+        special cases, there is not straighforward (or sequential) export of
+        pages, e.g. when generating HTML/CSS. In that case use
+        MyBuilder(document).export(fileName), the builder is responsible to
+        query the document, pages, elements and styles.
         """
         self.drawPages(pageSelection)
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif,
         # then set the global frame duration.
         frameDuration = self.css('frameDuration')
+
+        folder = path2ParentPath(fileName)
+
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+
         if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
             frameDuration(frameDuration)
 
