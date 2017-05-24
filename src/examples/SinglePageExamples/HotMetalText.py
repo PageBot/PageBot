@@ -63,6 +63,7 @@ def drawAfter(e, origin, view):
     # the position of lines and glyphs.
     for textLine in e.textLines:
         run = textLine.runs[0]
+        print run.nsFont
         y = textLine.y
         for index, (x, ry) in enumerate(run.positions):
             if index < len(run.positions)-1:
@@ -80,7 +81,7 @@ def makeDocument():
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.style['fill'] = 1
-    view.padding = 40 # To show cropmarks and such, make >40 or so.
+    view.padding = 0 # To show cropmarks and such, make >40 or so.
     view.showPageCropMarks = True # Won't show if there is not padding in the view.
     view.showPageRegistrationMarks = True
     view.showPageFrame = True

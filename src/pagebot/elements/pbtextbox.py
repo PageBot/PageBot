@@ -20,7 +20,7 @@ from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, 
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot import newFS, setStrokeColor, setFillColor
-from fonttoolbox.objects.glyph import Glyph
+from pagebot.fonttoolbox.objects.glyph import Glyph
 
 class FoundPattern(object):
     def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
@@ -75,9 +75,6 @@ class TextRun(object):
 
     def __getitem__(self, index):
         return self.string[index]
-
-    def _get_ttFont(self):
-        if self._ttFont is None:
 
     # Font stuff
 
