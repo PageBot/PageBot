@@ -77,7 +77,7 @@ def makeDocument(rs):
     my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
 
 
-    doc = Document(rootStyle=rs, title='Color Squares', autoPages=1)
+    doc = Document(w=W, h=H, rootStyle=rs, originTop=False, title='Color Squares', autoPages=1)
     
     view = doc.getView()
     
