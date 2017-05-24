@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -----------------------------------------------------------------------------
 #
 #     P A G E B O T
@@ -9,17 +10,17 @@
 #
 #     builddoc.py
 #
-#    
+#
 #    Run through the entire PageBot source tree. Run all .py for unit-test errors.
-#    Create TOC.md and TOC.pdf in every folder, with descriptions of all code in 
+#    Create TOC.md and TOC.pdf in every folder, with descriptions of all code in
 #    that folder. The docs contains an HTML with all PageBot info.
 #    If scripts make images in the local gallery folder with the same name as the
 #    script, then use that image in the example.
 #    Note that this applications script is an example of PageBot functions in itself.
-# 
+#
 import runpy
 
-import os   
+import os
 import pagebot
 from pagebot.publications.publication import Publication
 
@@ -42,49 +43,49 @@ class Node(object):
         if path is not None and not os.path.isdir(path):
             extension = path.split('.')[-1]
         self.extension = extension # If filled, it's a folder. otherwise it's a file.
-    
+
     def __repr__(self):
         return self.path
-        
+
     def append(self, path):
         node = Node(path)
         self.nodes.append(node)
         return node
-    
+
     def __eq__(self, node):
         return self.path == node.path
-            
+
     def __ne__(self, node):
         return self.path != node.path
-            
+
     def __le__(self, node):
         return self.path <= node.path
-            
+
     def __lt__(self, node):
         return self.path < node.path
-            
+
     def __ge__(self, node):
         return self.path >= node.path
-            
+
     def __gt__(self, node):
         return self.path > node.path
-            
+
 class PageBotDoc(Publication):
-    
+
     def __init__(self):
         Publication.__init__(self)
 
     def buildNode(self, node, level=0):
         print '\t'*level + `node`
         for child in sorted(node.nodes):
-            self.build(child, level+1)        
+            self.build(child, level+1)
 
     def build(self):
         # Collect data from all folders.
         rootPath = pagebot.getRootPath()
         rootNode = self.processPath(rootPath)
         self.buildNode(rootNode)
-    
+
     def clearPyc(self, path=None):
         if path is None:
             path = pagebot.getRootPath()
@@ -98,13 +99,13 @@ class PageBotDoc(Publication):
                 os.remove(filePath)
                 print '#### Removed', filePath
                 continue
-            
+
     def processPath(self, path=None, node=None):
         if path is None:
             path = pagebot.getRootPath()
         if node is None:
             node = Node('root')
-        
+
         for fileName in os.listdir(path):
             filePath = path + '/' + fileName
             if fileName.startswith('.') or fileName in SKIP:
@@ -118,26 +119,46 @@ class PageBotDoc(Publication):
                 except:
                     print 'Run', filePath
                     runpy.run_path(filePath)
-                                  
+
         return node
-    
+
     def runModules(self, m, level=0):
+        # TODO: add to file
         #help(m)
-        print m.__doc__
-        
-    
+        #print m.__doc__
+        f = open('docs/%s.md' % m.__name__, 'w')
+        p = m.__path__
+        d = m.__dict__
+
+        f.write('# %s\n' % m.__name__)
+        for key, value in d.items():
+            if value is not None:
+                f.write('## %s\n' % key)
+                if value.__doc__:
+                    f.write('\t%s\n' % value.__doc__)
+                else:
+                    f.write('\t---\n')
+
+        f.close()
+
+# TODO: pass as argument.
 DO_CLEAR = False
-CHECK_ERRORS = True
-RUN_MODULES = False
+CHECK_ERRORS = False
+RUN_MODULES = True
+DOCTEST = True
+
 if __name__ == '__main__':
     # Execute all cleaning, docbuilding and unittesting here.
     pbDoc = PageBotDoc()
+
     if DO_CLEAR:
         pbDoc.clearPyc()
+
     if CHECK_ERRORS:
         pbDoc.processPath()
+
     if RUN_MODULES:
         pbDoc.runModules(pagebot)
 
     print 'Done'
-      
+
