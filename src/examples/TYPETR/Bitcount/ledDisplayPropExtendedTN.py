@@ -60,7 +60,6 @@ HIGHLIGHT = False # Leds appear to be more 3D
 
 
 def drawString(s, px, py, fontName, color=None, gridColor=None):
-       
     if fontName in FONTS:
         fontName = FONTS[fontName]
     font(fontName)
