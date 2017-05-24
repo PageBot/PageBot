@@ -20,6 +20,7 @@ from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, 
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot import newFS, setStrokeColor, setFillColor
+from pagebot.fonttoolbox.objects.glyph import Glyph
 
 class FoundPattern(object):
     def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
@@ -47,7 +48,6 @@ class TextRun(object):
         self.fill = attrs['NSColor']
         self.nsParagraphStyle = attrs['NSParagraphStyle']
 
-
         self.iStart, self.iEnd = CoreText.CTRunGetStringRange(ctRun)
         self.string = u''    
         # Hack for now to find the string in repr-string if self._ctLine.
@@ -72,6 +72,10 @@ class TextRun(object):
 
     def __repr__(self):
         return '[TextRun #%d "%s"]' % (self.runIndex, self.string) 
+
+    def __getitem__(self, index):
+        return self.string[index]
+
     # Font stuff
 
     def _get_displayName(self):
@@ -284,10 +288,18 @@ class TextBox(Element):
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
+        self._textLines = self._baseLines = None # Force initiaize upon first usage.
         self.size = w, h
         if isinstance(fs, basestring):
             fs = newFS(fs, self)
         self.fs = fs # Keep as plain string, in case parent is not set yet.
+
+    def _get_w(self): # Width
+        return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
+    def _set_w(self, w):
+        self.style['w'] = w or MIN_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
+        self._textLines = None # Force reset if being called
+    w = property(_get_w, _set_w)
 
     def _get_h(self):
         u"""Answer the height of the textBox. If self.style['elasticH'] is set, then answer the 
@@ -312,7 +324,7 @@ class TextBox(Element):
         return self._fs
     def _set_fs(self, fs):
         self._fs = fs
-        self.initializeTextLines()
+        self._textLines = None # Force reset when called.
     fs = property(_get_fs, _set_fs)
   
     def setText(self, s):
@@ -332,13 +344,20 @@ class TextBox(Element):
     def appendMarker(self, markerId, arg=None):
         self.appendString(getMarker(markerId, arg=arg))
 
-    def initializeTextLines(self):
-        u"""Answer an ordered list of all baseline position, starting at the top."""
-        self.textLines = []
-        self.baseLines = []
-        
-        return # @@@@@@@
+    def _get_textLines(self):
+        if self._textLines is None:
+            self.initializeTextLines()
+        return self._textLines
+    textLines = property(_get_textLines)
 
+    def _get_baseLines(self):
+        if self._textLines is None: # Check if initialization is needed.
+            self.initializeTextLines()
+        return self._baseLines
+    baseLines = property(_get_baseLines)
+
+    def initializeTextLines(self):
+        u"""Answer an ordered list of all baseline position, starting at the top."""    
         self._box = 0, 0, self.w, self.h
         attrString = self._fs.getNSObject()
         setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
@@ -346,15 +365,18 @@ class TextBox(Element):
         Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*self._box))
         ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
         self._ctLines = CoreText.CTFrameGetLines(ctBox)
-        self.baseLines = [] # Contain (x, y) start position of line
-        self.textLines = []
+        self._baseLines = [] # Contain (x, y) start position of line
+        self._textLines = []
         for lineIndex, p in enumerate(CoreText.CTFrameGetLineOrigins(ctBox, (0, len(self._ctLines)), None)):
             x = p.x
-            y = self.h - p.y
+            if self.originTop:
+                y = self.h - p.y
+            else:
+                y = p.y
             ctLine = self._ctLines[lineIndex]
             textLine = TextLine(ctLine, (x, y), lineIndex)
-            self.textLines.append(textLine)
-            self.baseLines.append((x, y, textLine.string))
+            self._textLines.append(textLine)
+            self._baseLines.append((x, y, textLine.string))
  
     def getTextSize(self, fs=None, w=None):
         """Figure out what the width/height of the text self.fs is, with or given width or
@@ -391,6 +413,9 @@ class TextBox(Element):
    
         self.drawFrame(p, view) # Draw optional frame or borders.
 
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         # Draw the text.    
         textBox(self.fs, (px+self.pl, py+self.pb, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
@@ -400,6 +425,9 @@ class TextBox(Element):
         # Draw markers on TextLine and TextRun positions.
         self._drawBaselines(view)
  
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
+
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 

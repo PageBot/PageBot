@@ -30,13 +30,19 @@ class Ruler(Element):
         sIndent = self.css('indent')
         sTailIndent = self.css('tailIndent')
         w = self.w - sIndent - sTailIndent
-        
+ 
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         setFillColor(None)
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         line((px + sIndent, py), (px + w, py))
 
         # If there are child elements, draw them over the text.
         self._drawElements(origin)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin)
