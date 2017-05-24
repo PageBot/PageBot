@@ -33,3 +33,9 @@ Simple demo to show the positioning of a colored rectangle centered on the page.
 Simple test to show the working of view and page. Option Variable checkbox to set the origin to top or bottom.
 
 ![gallery/DrawViewPageFrame.pdf](gallery/DrawViewPageFrame.pdf)
+
+## Draw Quadratic Glyph
+
+Shows how to load a Truetype font and draw a glyph with quadratic Bézier curves with the cubic Bézier curves that PageBot uses.
+
+![gallery/DrawQuadraticGlyph.pdf](gallery/DrawQuadraticGlyph.pdf)
