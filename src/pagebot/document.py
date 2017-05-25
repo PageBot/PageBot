@@ -365,7 +365,8 @@ class Document(object):
     #   D R A W I N G
 
     def drawPages(self, viewId=None, pageSelection=None):
-        u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
+        u"""Draw the selected pages, using DrawBot as canvas. 
+        PageSelection is an optional list of y-pageNumbers to draw."""
         view = self.getView(viewId) # view.parent is self
         view.drawPages(pageSelection)
 

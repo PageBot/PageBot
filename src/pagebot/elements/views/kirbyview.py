@@ -19,4 +19,5 @@ class KirbyView(View):
     	print pageSelection
 
     def export(self, fileName, pageSelection, multiPage):
+    	u"""Use an HTML/CSS builder to export the pages as website code."""
     	print fileName, pageSelection, multiplePage
