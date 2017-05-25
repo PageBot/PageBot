@@ -261,6 +261,15 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         lowercase = False, # All text in lower case (only if uppercase is False
         capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase)
 
+        # Axis location of the Variable font to create the font instance (in case "font" is a Variable font)
+        variableLocation = None,
+
+        # List of supported OpenType features.
+        # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf,
+        # smcp, ss01, ss02, ss03, ss04, ss05, ss06, ss07, ss08, ss09, ss10, ss11, ss12, ss13, ss14,
+        # ss15, ss16, ss17, ss18, ss19, ss20, subs, sups, swsh, titl, tnum
+        openTypeFeatures = None,
+
         # Horizontal spacing for absolute and fontsize-related measures
         tracking = 0, # Absolute tracking value. Note that this is different from standard name definition.
         rTracking = 0, # Tracking as factor of the fontSize.
@@ -281,12 +290,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         rIndent = 0, # Left indent as factor of font size.
         tailIndent = 0, # Tail/right indent (for left-right based scripts)
         rTailIndent = 0, # Tail/right Indent as factor of font size
-
-        # List of supported OpenType features.
-        # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf,
-        # smcp, ss01, ss02, ss03, ss04, ss05, ss06, ss07, ss08, ss09, ss10, ss11, ss12, ss13, ss14,
-        # ss15, ss16, ss17, ss18, ss19, ss20, subs, sups, swsh, titl, tnum
-        openTypeFeatures = None,
 
         # Vertical spacing for absolute and fontsize-related measures
         baselineGrid = baselineGrid,
