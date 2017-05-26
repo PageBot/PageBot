@@ -10,6 +10,8 @@
 #
 #     style.py
 #
+#     Holds the main style definintion and constants of PageBot.
+#
 import sys
 from drawBot import sizes
 import copy
