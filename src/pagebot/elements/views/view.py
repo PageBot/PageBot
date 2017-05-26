@@ -171,7 +171,7 @@ class View(Element):
             bleed = self.css('bleed')
             cms = self.css('viewCropMarkSize') - bleed
             fontSize = self.css('viewPageNameFontSize')
-            dt = datetime.now()
+            dt = datetime.datetime.now()
             d = dt.strftime("%A, %d. %B %Y %I:%M%p")
             s = 'Page %s | %s | %s' % (page.parent.getPageNumber(page), d, page.parent.title or 'Untitled')
             if page.name:
