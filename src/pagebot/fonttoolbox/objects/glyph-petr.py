@@ -12,6 +12,8 @@
 #
 #     Implements a PageBot font classes to get info from a TTFont.
 #
+import nFontTools as fontTools
+
 import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError

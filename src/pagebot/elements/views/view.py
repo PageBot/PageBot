@@ -42,6 +42,7 @@ class View(Element):
         self.setControls()
         # List of collected elements that need to draw their info on top of the main drawing,
         self.elementsNeedingInfo = {}
+        self._isDrawn = False # Automatic call self.drawPages if export is called without drawing.
 
     def _initializeControls(self):
         self.showElementInfo = False
@@ -56,6 +57,7 @@ class View(Element):
         # Document/page stuff
         self.showPageCropMarks = False
         self.showPageRegistrationMarks = False
+        self.showPagePadding = False
         self.showPageFrame = False
         self.showPageNameInfo = False
         self.showPageMetaInfo = False
@@ -125,7 +127,9 @@ class View(Element):
         MyBuilder(document).export(fileName), the builder is responsible to
         query the document, pages, elements and styles.
         """
-        self.drawPages(pageSelection)
+        if not self._isDrawn:
+            self.drawPages(pageSelection)
+            self._isDrawn = True
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif,
         # then set the global frame duration.
@@ -146,6 +150,7 @@ class View(Element):
 
     def drawPageMetaInfo(self, page, origin):
         self.drawPageFrame(page, origin)
+        self.drawPagePadding(page, origin)
         self.drawPageNameInfo(page, origin)
         self.drawPageRegistrationMarks(page, origin)
         self.drawPageCropMarks(page, origin)
@@ -163,6 +168,21 @@ class View(Element):
             strokeWidth(0.5)
             rect(origin[0], origin[1], page.w, page.h)
             #page.drawFrame(origin, self)
+
+    def drawPagePadding(self, page, origin):
+        u"""Draw the page frame of its current padding."""
+        pt, pr, pb, pl = page.padding
+        if self.showPagePadding and (pt or pr or pb or pl):
+            p = pointOffset(page.oPoint, origin)
+            p = page._applyScale(p)
+            px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
+            fill(None)
+            stroke(0, 0, 1)
+            strokeWidth(0.5)
+            if page.originTop:
+                rect(px+pr, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
+            else:
+                rect(px+pr, py+pb, page.w-pl-pr, page.h-pt-pb)
 
     def drawPageNameInfo(self, page, origin):
         u"""Draw additional document information, color markers, page number, date, version, etc.

@@ -72,7 +72,7 @@ def makeDocument():
     
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    if BoxWidths < 200:
+    if BoxWidth < 200:
         tColor = (1, 0, 0)
         
     else:
@@ -111,8 +111,8 @@ if __name__ == '__main__':
 
     Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-         dict(name='DoTextFlow', ui='CheckBox', args=dict(value=False)),
-         dict(name='BoxWidth', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),
+        dict(name='DoTextFlow', ui='CheckBox', args=dict(value=False)),
+        dict(name='BoxWidth', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),
         dict(name='PagePadding', ui='Slider', args=dict(minValue=0, value=30, maxValue=100)),
         dict(name='PageSize', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),
     ], globals())

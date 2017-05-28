@@ -19,7 +19,7 @@ from pagebot.conditions import *
 from pagebot.publications.typespecimen import TypeSpecimen
 from pagebot.elements.variablefonts.variablecircle import VariableCircle
 
-OUTPUT_FILE = 'AmstelvarVariableCircle.pdf'
+OUTPUT_FILE = '_export/AmstelvarVariableCircle.pdf'
 
 CONDITIONS = [Fit2Width(), Float2Top()] # Stacking conditions for all elements in this page.
 
@@ -93,19 +93,28 @@ class VariableCircleSpecimen(TypeSpecimen):
         newTextBox('', parent=template, conditions=CONDITIONS, eId=self.titleBoxId)       
         newTextBox('', parent=template, conditions=CONDITIONS, eId=self.specimenBoxId)       
         newLine(parent=template, conditions=CONDITIONS, stroke=0, strokeWidth=0.25)       
+        newRect(fill=(1,0,0), w=300,h=400,parent=template)
         return template
          
     def buildPages(self, doc, varFont):
         # Build the pages, showing axes, samples, etc.
         # Using the first page as cover (to be filled...)
         page = doc[0]
+        page.applyTemplate(self.makeTemplate(doc.getRootStyle()))
         glyphName = 'A'
+
+        newLine(parent=page, conditions=CONDITIONS, stroke=0, strokeWidth=0.25)       
+        newTextBox('', parent=page, conditions=CONDITIONS, eId=self.titleBoxId)       
+        newTextBox('', parent=page, conditions=CONDITIONS, eId=self.specimenBoxId)       
+        newLine(parent=page, conditions=CONDITIONS, stroke=0, strokeWidth=0.25)       
+        newRect(fill=(1,0,0), w=300,h=400,conditions=CONDITIONS, parent=page)
         
         view = doc.getView()
         view.showElementOrigin = True
-        view.showElementDimensions = True
+        view.showElementDimensions = False
         vce = VariableCircle(varFont, conditions=CONDITIONS, parent=page, s=glyphName)
         newLine(parent=page, conditions=CONDITIONS, stroke=0, strokeWidth=0.25)       
+        
         score = page.solve()
         if score.fails:
             print score.fails

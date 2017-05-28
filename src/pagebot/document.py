@@ -12,6 +12,7 @@
 #
 from drawBot import newPage, installedFonts, installFont
 
+from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page
 from pagebot.elements.views import View, DefaultView, SingleView, ThumbView
 from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
@@ -342,6 +343,14 @@ class Document(object):
                 d = max(page.d, d)
             return w, h, d
 
+    def solve(self, score=None):
+        u"""Evaluate the content of all pages to retutn the total sum of conditions."""
+        score = Score()
+        for pn, pnPages in sorted(self.pages.items()):
+            for page in pnPages: # List of pages with identical pn
+                page.solve(score)
+        return score
+
     #   V I E W S
 
     def initializeViews(self, views):
@@ -370,8 +379,8 @@ class Document(object):
         view = self.getView(viewId) # view.parent is self
         view.drawPages(pageSelection)
 
-    def export(self, fileName=None, viewId=None, pageSelection=None, multiPage=True):
+    def export(self, fileName=None, pageSelection=None, viewId=None, multiPage=True):
         u"""Let the view do the work."""
         view = self.getView(viewId) # view.parent is self
-        view.export(fileName, pageSelection, multiPage)
+        view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)
 

@@ -12,6 +12,8 @@
 #
 #     Implements info functions on font info.
 #
+import nFontTools as fontTools
+
 from pagebot.fonttoolbox.ttftools import getBestCmap
 from fontTools.ttLib import TTFont
 

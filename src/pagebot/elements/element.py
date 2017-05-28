@@ -93,7 +93,7 @@ class Element(object):
         # Save flow reference names
         self.prevElement = prevElement # Name of the prev flow element
         self.nextElement = nextElement # Name of the next flow element
-        self.nextPage = nextPage # Name of the next page.
+        self.nextPage = nextPage # Name ot identifier of the next page that nextElement refers to.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
         self.applyTemplate(template, elements) 
@@ -311,6 +311,18 @@ class Element(object):
             # Hard check. Make sure that this one is empty, otherwise mistake in template
             assert not len(tb)
         return page, tb
+
+    #   F L O W
+
+    #   If self.nextElement is defined, then check the condition if there is overflow.
+
+    def isOverflow(self, tolerance):
+        return False
+
+    def overflow2Next(self):
+        u"""Try to fix if there is overflow. Default behavior is to do nothing. This method
+        is redefined by inheriting classed, such as TextBox, that can have overflow of text."""
+        return True
 
     #   S T Y L E
 
@@ -1401,9 +1413,9 @@ class Element(object):
             if abs(e.z - self.z) > tolerance or e.mRight < self.mLeft or self.mRight < e.mLeft:
                 continue # Not equal z-layer or not in window of vertical projection.
             if self.originTop:
-                y = max(y, e.bottom)
+                y = max(y, e.mBottom)
             else:
-                y = min(y, e.bottom)
+                y = min(y, e.mBottom)
         return y
 
     def getFloatBottomSide(self, previousOnly=True, tolerance=0):
@@ -1421,9 +1433,9 @@ class Element(object):
             if abs(e.z - self.z) > tolerance or e.mRight < self.mLeft or self.mRight < e.mLeft:
                 continue # Not equal z-layer or not in window of vertical projection.
             if self.originTop:
-                y = min(y, e.top)
+                y = min(y, e.mTop)
             else:
-                y = max(y, e.top)
+                y = max(y, e.mTop)
         return y
 
     def getFloatLeftSide(self, previousOnly=True, tolerance=0):
@@ -1438,12 +1450,12 @@ class Element(object):
             if abs(e.z - self.z) > tolerance:
                 continue # Not equal z-layer
             if self.originTop: # not in window of horizontal projection.
-                if e.mBottom < self.mTop or self.mBottom < e.mTop:
+                if e.mBottom <= self.mTop or self.mBottom <= e.mTop:
                     continue
             else:
-                if e.mBottom > self.mTop or self.mBottom > e.mTop:
+                if e.mBottom >= self.mTop or self.mBottom >= e.mTop:
                     continue 
-            x = max(e.right, x)
+            x = max(e.mRight, x)
         return x
 
     def getFloatRightSide(self, previousOnly=True, tolerance=0):
@@ -1457,7 +1469,7 @@ class Element(object):
                 break 
             if abs(e.z - self.z) > tolerance or e.mBottom < self.mTop or self.mBottom < e.mTop:
                 continue # Not equal z-layer or not in window of horizontal projection.
-            x = min(e.left, x)
+            x = min(e.mLeft, x)
         return x
 
     def _applyAlignment(self, p):
@@ -2018,7 +2030,7 @@ class Element(object):
     def isFloatOnBottom(self, tolerance=0):
         if self.originTop:
             return abs(min(self.getFloatBottomSide(), self.parent.h - self.parent.pb) - self.mBottom) <= tolerance
-        return abs(max(self.getFloatTopSide(), self.parent.pb) - self.mBottom) <= tolerance
+        return abs(max(self.getFloatBottomSide(), self.parent.pb) - self.mBottom) <= tolerance
 
     def isFloatOnBottomSide(self, tolerance=0):
         return abs(self.getFloatBottomSide() - self.mBottom) <= tolerance
@@ -2291,34 +2303,34 @@ class Element(object):
         return True
 
     def float2TopSide(self):
-        self.top = self.getFloatTopSide()
+        self.mTop = self.getFloatTopSide()
         return True
 
     def float2Bottom(self):
         if self.originTop:
-            self.bottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
+            self.mBottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
         else:
-            self.bottom = min(self.getFloatBottomSide(), self.parent.pb)
+            self.mBottom = min(self.getFloatBottomSide(), self.parent.pb)
         return True
 
     def float2BottomSide(self):
-        self.bottom = self.getFloatBottomSide()
+        self.mBottom = self.getFloatBottomSide()
         return True
 
     def float2Left(self):
-        self.left = max(self.getFloatLeftSide(), self.parent.pl) # padding left
+        self.mLeft = max(self.getFloatLeftSide(), self.parent.pl) # padding left
         return True
 
     def float2LeftSide(self):
-        self.left = self.getFloatLeftSide()
+        self.mLeft = self.getFloatLeftSide()
         return True
 
     def float2Right(self):
-        self.right = min(self.getFloatRightSide(), self.parent.w - self.parent.pr)
+        self.mRight = min(self.getFloatRightSide(), self.parent.w - self.parent.pr)
         return True
 
     def float2RightSide(self):
-        self.right = self.getFloatRightSide()
+        self.mRight = self.getFloatRightSide()
         return True
 
     # WIth fitting (and shrinking) we need to change the actual size of the element.
