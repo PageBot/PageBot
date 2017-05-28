@@ -18,6 +18,8 @@
 #     We'll call this class "Font" instead of "Style" (as in other TypeNetwerk tool code),
 #     to avoid confusion with the PageBot style dictionary, which hold style parameters.
 #
+import nFontTools as fontTools
+
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute

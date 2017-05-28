@@ -396,10 +396,11 @@ class TextBox(Element):
 
     def getOverflow(self, w=None, h=None):
         """Figure out what the overflow of the text is, with the given (w,h) or styled
-        (self.w, self.h) of this text box. If self.style['vacuumH'] is True, then by
+        (self.w, self.h) of this text box. If self.style['elasticH'] is True, then by
         definintion overflow will allways be empty."""
-        if self.css('vacuumH'): # In case vacuumH, box will aways fit the content.
+        if self.css('elasticH'): # In case elasticH is True, box will aways fit the content.
             return ''
+        # Otherwise test if there is overflow of text in the given size.
         return textOverflow(self.fs, (0, 0, w or self.w, h or self.h), LEFT)
 
     def getBaselinePositions(self, y=0, w=None, h=None):
@@ -409,6 +410,19 @@ class TextBox(Element):
         for _, baselineY in textBoxBaseLines(self.fs, (0, y, w or self.w, h or self.h)):
             baselines.append(baselineY)
         return baselines
+
+    #   F L O W
+
+    def isOverflow(self, tolerance):
+        u"""Answer the boolean flag if this element needs overflow to be solved.
+        This method is typically called by conditions such as Overflow2Next"""
+        return self.nextElement is not None and self.getOverflow()
+
+    def overflow2Next(self):
+        u"""Try to fix if there is overflow."""
+        overflow = self.getOverflow
+        print overflow
+        return True
 
     #   D R A W 
 

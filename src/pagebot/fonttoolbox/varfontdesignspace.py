@@ -12,6 +12,7 @@
 #     varfontdesignscpace.py
 #
 from __future__ import division
+import nFontTools as fontTools
 
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates

@@ -48,64 +48,80 @@ def makeDocument():
     
     # Position square in the 4 corners of the page area.
     # Notice that their alignment (left) does not matter for the conditions.
-    newRect(w=SQ, h=SQ, parent=page, conditions=(Right2Right(),Top2Top()), fill=0.7)
-    newRect(w=SQ, h=SQ, parent=page, conditions=(Left2Left(),Bottom2Bottom()), fill=0.7)
-    newRect(w=SQ, h=SQ, parent=page, conditions=(Left2Left(),Top2Top()), fill=0.7)
-    newRect(w=SQ, h=SQ, parent=page, conditions=(Right2Right(),Bottom2Bottom()), fill=0.7)
-    
+    cornerConditions = [
+        (Float2Right(),Float2Top()),
+        (Float2Right(),Float2Bottom()),
+        (Float2Left(), Float2Bottom()),
+        (Float2Left(),Float2Top()),
+    ]
+    z = 1
+    for condition in cornerConditions:  
+        newRect(z=z, w=SQ, h=SQ, parent=page, conditions=condition, fill=0.7)
+        z += 1    
     # Make new container for adding elements inside with alignment.
-    cnt = newRect(w=W-2*SQ, h=H-2*SQ, fill=(0.8, 0.8, 0.8, 0.4), parent=page, margin=SQ, yAlign=BOTTOM, 
+    cnt = newRect(z=z, w=W-2*SQ, h=H-2*SQ, fill=(0.8, 0.8, 0.8, 0.4), 
+        parent=page, margin=SQ, yAlign=BOTTOM, 
         xAlign=CENTER, stroke=None, conditions=(Center2Center(), Middle2Middle()))
-    
-    newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+    z += 1
+    newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
         conditions=(Center2Center(), Middle2Middle()), fill=(1, 0, 0))
- 
+    z += 1
+    
+    # Side conditions
+    
     conditions = [
-         (Center2Center(),Top2Top()),
-         (Center2Center(),Bottom2Bottom()),
-         (Left2Left(),Middle2Middle()),
-         (Right2Right(),Middle2Middle()),
+        (Center2Center(),Float2Top()),
+        (Center2Center(),Float2Bottom()),
+        (Float2Left(),Middle2Middle()),
+        (Float2Right(),Middle2Middle()),
     ]   
     for condition in conditions:
-        newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+        newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
             conditions=condition, fill=(1, 1, 0))
-     
+        z += z
+        
     sideConditions = [
-         (Center2Center(),Top2TopSide()),
-         (Center2Center(),Bottom2BottomSide()),
-         (Left2LeftSide(),Middle2Middle()),
-         (Right2RightSide(),Middle2Middle()),
+        (Center2Center(),Float2TopSide()),
+        (Center2Center(),Float2BottomSide()),
+        (Float2LeftSide(),Middle2Middle()),
+        (Float2RightSide(),Middle2Middle()),
     ]   
     for condition in sideConditions:
-        newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+        newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
             conditions=condition, fill=(0.5, 1, 0))
-    
+        z += 1
+        
     cornerConditions = [
-         (Left2LeftSide(),Top2TopSide()),
-         (Right2RightSide(),Top2TopSide()),
-         (Left2LeftSide(),Bottom2BottomSide()),
-         (Right2RightSide(),Bottom2BottomSide()),
+        (Float2LeftSide(),Float2TopSide()),
+        (Float2RightSide(),Float2TopSide()),
+        (Float2LeftSide(),Float2BottomSide()),
+        (Float2RightSide(),Float2BottomSide()),
     ]   
     for condition in cornerConditions:
-        newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+        newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
             conditions=condition, fill=(0, 0, 1))
-    # Solve the layout placement conditions on the page by moving the
+        z += 1
+        
+    # Solve the layout placement conditions on the pages of doc by moving the
     # elements that are not on the right positions (which is all of them,
     # because we did not add point attributes when creating them.
-
-    score = page.solve() 
+    score = doc.solve() # Solves all document. page.solve() only solves page.
     if score.fails:
         print 'Failed to solve %d conditions:' % len(score.fails)
     for condition, e in score.fails:
         print e.bottom2BottomSide()
-        print condition, e, e.bottom, Bottom2BottomSide().test(e), e.isBottomOnBottomSide(), e.bottom
+        print condition, e, e.bottom, Bottom2BottomSide().test(e), \
+            e.isBottomOnBottomSide(), e.bottom
    
         
     view = doc.getView()
     view.w, view.h = W, H
-    view.padding = 0 # Don't show cropmarks and such.
+    view.padding = 40 # Don't show cropmarks and such.
     view.showElementOrigin = ShowOrigins # Show origin alignment markers on each element.
     view.showElementDimensions = ShowDimensions
+    view.showPageFrame = True
+    view.showPagePadding = True
+    view.showPageCropMarks = True
     view.showElementInfo = ShowElementInfo # Show baxes with element info
        
     return doc # Answer the doc for further doing.
@@ -114,6 +130,7 @@ if __name__ == '__main__':
 
     Variable([
         dict(name='ShowMeasures', ui='CheckBox', args=dict(value=True)),
+        dict(name='ShowOrigins', ui='CheckBox', args=dict(value=True)),
         dict(name='ShowDimensions', ui='CheckBox', args=dict(value=False)),
         dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
         dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
