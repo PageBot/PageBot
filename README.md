@@ -6,15 +6,16 @@ As short description PageBot is a scripted page layout program, available as Pyt
 
 An overview of functions reads like this:
 
-* An increasing range of elements can be placed on a page.
-* As pages are elements themselves, they can also be included in pages.
-* Root style where all other values inherit from, similar to CSS behavior.
+* Various types of elements that can be placed on a page.
+* As pages are elements themselves, they can also be included in pages, e.g. as thumbnails.
+* Cascading styles where values inherit from parent, similar to CSS behavior.
 * Automatic layout conditions for elements.
 * Content (such as text) flows from one textBox to another.
+* Access to images on pixel-level.
 * Page templates (or any other element combination)
 * OSX FormattedString for text composition
-* All positioning as 3D points
-* Full access to font parameters and outlines
+* All positioning as 3D points, for future usage.
+* Full access to parameters and outlines inside fonts
 * Elements that show the content of (Variable) fonts.
 * Time line to interpolate all values over a given path and period.
 * Grids
@@ -36,8 +37,11 @@ An overview of functions reads like this:
 
 ## Types of publications to develop
 
-* T-Shirt templates
-* Magazine
-* Newsletter
+* All TypeNetwork stationary and publications as scripted templates
+* Specimens for TN library
+* Magazines
+* Newspapers
+* Newsletters
 * Parametric corporate identities with their manuals.
 * Single page website
+* T-Shirt templates
