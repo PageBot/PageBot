@@ -20,7 +20,7 @@
 #
 import runpy
 
-import os
+import os, pkgutil
 import pagebot
 from pagebot.publications.publication import Publication
 
@@ -122,38 +122,68 @@ class PageBotDoc(Publication):
 
         return node
 
-    def runModules(self, m, level=0):
-        # TODO: recurse
-        # TODO: maybe sort (global variables, global functions, hidden
-        # functions).
-        #help(m)
-        #print m.__doc__
-        import sys, drawBot#, types
-        f = open('docs/%s.md' % m.__name__, 'w')
-        p = m.__path__
+    def runModules(self, m, folder=None, level=0):
+        u"""
+        TODO: maybe sort (global variables, global functions, hidden
+        functions).
+        """
+        import sys, drawBot
+        try:
+            p = m.__path__
+
+        except Exception, e:
+            print m
+            return
+
         d = m.__dict__
         db = dir(drawBot)
+        submodules = {}
 
-        '''
-        for name, val in globals().items():
-            if isinstance(val, types.ModuleType):
-                print val
-        '''
+        if level > 2:
+            return
 
-        f.write('# %s\n' % m.__name__)
-        for key, value in d.items():
-            if key.startswith('__') or key in sys.modules.keys() or key in db:
-                print ' * skipping %s' % key
-                continue
+        for loader, module_name, is_pkg in  pkgutil.walk_packages(p):
+            try:
+                mod = loader.find_module(module_name).load_module(module_name)
+                submodules[module_name] = mod
 
-            if value is not None:
-                f.write('## %s\n' % key)
-                if value.__doc__:
-                    s = value.__doc__
-                    s = s.strip().replace('    ', '')
-                    f.write('%s\n' % s)
+            except Exception, e:
+                print e
 
-        f.close()
+        print folder
+
+        if level == 0:
+            f = open('docs/%s.md' % m.__name__, 'w')
+
+            f.write('# %s\n' % m.__name__)
+
+            for module_name in submodules:
+                f.write('* [%s](%s/%s)\n' % (module_name, m.__name__, module_name))
+
+            for key, value in d.items():
+                if key.startswith('__') or key in sys.modules.keys() or key in db:
+                    print ' * skipping %s' % key
+                    continue
+
+                if value is not None:
+                    f.write('## %s\n' % key)
+                    if value.__doc__:
+                        s = value.__doc__
+                        s = s.strip().replace('    ', '')
+                        f.write('%s\n' % s)
+
+            f.close()
+
+        for modname, mod in submodules.items():
+            if folder is None:
+                f = m.__name__ + '/' + modname
+            else:
+                f = folder + '/' + modname
+            self.runModules(mod, folder=f, level=level+1)
+
+
+
+
 
 # TODO: pass as argument.
 DO_CLEAR = False

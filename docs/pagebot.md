@@ -1,4 +1,107 @@
 # pagebot
+* [contributions.filibuster.content.legal](pagebot/contributions.filibuster.content.legal)
+* [conditions.condition](pagebot/conditions.condition)
+* [contributions](pagebot/contributions)
+* [contributions.filibuster.content.articles](pagebot/contributions.filibuster.content.articles)
+* [fonttoolbox.analyzers.pointcontextlist](pagebot/fonttoolbox.analyzers.pointcontextlist)
+* [style](pagebot/style)
+* [contributions.filibuster.content.jargon](pagebot/contributions.filibuster.content.jargon)
+* [contributions.filibuster.content.corporate](pagebot/contributions.filibuster.content.corporate)
+* [builders.mdblogbuilder](pagebot/builders.mdblogbuilder)
+* [builders.htmlcss.basehtmlcssbuilder](pagebot/builders.htmlcss.basehtmlcssbuilder)
+* [toolbox.transformer](pagebot/toolbox.transformer)
+* [toolbox.dating](pagebot/toolbox.dating)
+* [contributions.filibuster.content.entertainment](pagebot/contributions.filibuster.content.entertainment)
+* [contributions.filibuster.content.general](pagebot/contributions.filibuster.content.general)
+* [fonttoolbox.analyzers.contour](pagebot/fonttoolbox.analyzers.contour)
+* [contributions.filibuster.content.classified](pagebot/contributions.filibuster.content.classified)
+* [toolbox](pagebot/toolbox)
+* [contributions.filibuster.content.portal](pagebot/contributions.filibuster.content.portal)
+* [contributions.filibuster.blurbwriter](pagebot/contributions.filibuster.blurbwriter)
+* [builders.kirby.kirbybuilder](pagebot/builders.kirby.kirbybuilder)
+* [contributions.filibuster.content.filibuster](pagebot/contributions.filibuster.content.filibuster)
+* [builders.basebuilder](pagebot/builders.basebuilder)
+* [contributions.filibuster.content.event](pagebot/contributions.filibuster.content.event)
+* [contributions.filibuster.content.sports](pagebot/contributions.filibuster.content.sports)
+* [contributions.filibuster.content.financial](pagebot/contributions.filibuster.content.financial)
+* [contributions.filibuster.content.quotations](pagebot/contributions.filibuster.content.quotations)
+* [contributions.filibuster.content.news](pagebot/contributions.filibuster.content.news)
+* [fonttoolbox.ttftools](pagebot/fonttoolbox.ttftools)
+* [builders.htmlcss.simplebuilder](pagebot/builders.htmlcss.simplebuilder)
+* [contributions.filibuster.content.creditcard](pagebot/contributions.filibuster.content.creditcard)
+* [contributions.filibuster.content.medical](pagebot/contributions.filibuster.content.medical)
+* [toolbox.drawparts](pagebot/toolbox.drawparts)
+* [contributions.filibuster.content.sciences](pagebot/contributions.filibuster.content.sciences)
+* [conditions](pagebot/conditions)
+* [contributions.filibuster.content.superheroes](pagebot/contributions.filibuster.content.superheroes)
+* [fonttoolbox.analyzers.glyphanalyzer-TNBITS](pagebot/fonttoolbox.analyzers.glyphanalyzer-TNBITS)
+* [contributions.filibuster.content.modernmedia](pagebot/contributions.filibuster.content.modernmedia)
+* [md.literature](pagebot/md.literature)
+* [contributions.filibuster.content.letterror](pagebot/contributions.filibuster.content.letterror)
+* [conditions.floating](pagebot/conditions.floating)
+* [interaction](pagebot/interaction)
+* [fonttoolbox.otlTools](pagebot/fonttoolbox.otlTools)
+* [contributions.adobe.kerndump.getKerningPairsFromOTF](pagebot/contributions.adobe.kerndump.getKerningPairsFromOTF)
+* [builders.htmlcss.gridbuilder](pagebot/builders.htmlcss.gridbuilder)
+* [contributions.filibuster.content.horoscope](pagebot/contributions.filibuster.content.horoscope)
+* [fonttoolbox.analyzers.glyphanalyzer](pagebot/fonttoolbox.analyzers.glyphanalyzer)
+* [fonttoolbox.unicodes.unicoderangesdata](pagebot/fonttoolbox.unicodes.unicoderangesdata)
+* [conditions.flow](pagebot/conditions.flow)
+* [contributions.filibuster.content](pagebot/contributions.filibuster.content)
+* [composer](pagebot/composer)
+* [conditions.score](pagebot/conditions.score)
+* [fonttoolbox.analyzers](pagebot/fonttoolbox.analyzers)
+* [canvas3d](pagebot/canvas3d)
+* [fonttoolbox.analyzers.pointcontext](pagebot/fonttoolbox.analyzers.pointcontext)
+* [contributions.adobe.kerndump.dumpKerningFeatureFromOTF](pagebot/contributions.adobe.kerndump.dumpKerningFeatureFromOTF)
+* [contributions.filibuster](pagebot/contributions.filibuster)
+* [builders.kirby](pagebot/builders.kirby)
+* [contributions.filibuster.content.reviews](pagebot/contributions.filibuster.content.reviews)
+* [contributions.filibuster.content.internet](pagebot/contributions.filibuster.content.internet)
+* [contributions.filibuster.content.living](pagebot/contributions.filibuster.content.living)
+* [contributions.filibuster.blurb](pagebot/contributions.filibuster.blurb)
+* [contributions.filibuster.content.aerospace](pagebot/contributions.filibuster.content.aerospace)
+* [contributions.filibuster.content.filenames](pagebot/contributions.filibuster.content.filenames)
+* [fonttoolbox](pagebot/fonttoolbox)
+* [md](pagebot/md)
+* [fonttoolbox.analyzers.point](pagebot/fonttoolbox.analyzers.point)
+* [contributions.filibuster.content.design](pagebot/contributions.filibuster.content.design)
+* [contributions.filibuster.content.names](pagebot/contributions.filibuster.content.names)
+* [contributions.filibuster.content.boymechanic](pagebot/contributions.filibuster.content.boymechanic)
+* [publications](pagebot/publications)
+* [builders](pagebot/builders)
+* [contributions.filibuster.content.automotive](pagebot/contributions.filibuster.content.automotive)
+* [contributions.filibuster.content.commercial](pagebot/contributions.filibuster.content.commercial)
+* [contributions.filibuster.content.journalism](pagebot/contributions.filibuster.content.journalism)
+* [canvas3d.transform3d](pagebot/canvas3d.transform3d)
+* [contributions.adobe](pagebot/contributions.adobe)
+* [contributions.filibuster.content.realestate](pagebot/contributions.filibuster.content.realestate)
+* [conditions.align](pagebot/conditions.align)
+* [md.footnotes](pagebot/md.footnotes)
+* [contributions.filibuster.content.literature](pagebot/contributions.filibuster.content.literature)
+* [contributions.filibuster.content.music](pagebot/contributions.filibuster.content.music)
+* [contributions.filibuster.titlecase](pagebot/contributions.filibuster.titlecase)
+* [contributions.adobe.kerndump](pagebot/contributions.adobe.kerndump)
+* [toolbox.markers](pagebot/toolbox.markers)
+* [fonttoolbox.unicodes](pagebot/fonttoolbox.unicodes)
+* [contributions.filibuster.content.geography](pagebot/contributions.filibuster.content.geography)
+* [fonttoolbox.analyzers.segment](pagebot/fonttoolbox.analyzers.segment)
+* [contributions.filibuster.content.politics](pagebot/contributions.filibuster.content.politics)
+* [builders.htmlcss.simplehtmlcssbuilder](pagebot/builders.htmlcss.simplehtmlcssbuilder)
+* [contributions.filibuster.content.navigation](pagebot/contributions.filibuster.content.navigation)
+* [interaction.variables](pagebot/interaction.variables)
+* [publications.publication](pagebot/publications.publication)
+* [contributions.filibuster.content.staff](pagebot/contributions.filibuster.content.staff)
+* [contributions.filibuster.content.designarticle](pagebot/contributions.filibuster.content.designarticle)
+* [fonttoolbox.designspacemodel](pagebot/fonttoolbox.designspacemodel)
+* [fonttoolbox.objects](pagebot/fonttoolbox.objects)
+* [builders.htmlcss](pagebot/builders.htmlcss)
+* [contributions.filibuster.content.book_reference](pagebot/contributions.filibuster.content.book_reference)
+* [fonttoolbox.unicodes.unicoderanges](pagebot/fonttoolbox.unicodes.unicoderanges)
+* [contributions.filibuster.content.twitter](pagebot/contributions.filibuster.content.twitter)
+* [contributions.filibuster.content.auction](pagebot/contributions.filibuster.content.auction)
+* [toolbox.timemark](pagebot/toolbox.timemark)
+* [toolbox.mathematics](pagebot/toolbox.mathematics)
 ## h2ch
 ## getRootPath
 Answer the root path of the pagebot module.
@@ -51,7 +154,6 @@ interpret the base from the string as an integer literal.
 Answer a list of (x,y) positions of all line starts in the box. This function may become part
 of standard DrawBot in the near future.
 ## ch2h
-## style
 ## getMarker
 Answer a formatted string with markerId that can be used as non-display marker.
 This way the Composer can find the position of markers in text boxes, after
@@ -66,7 +168,6 @@ And not to use any spaces, etc. inside the markerId.
 Possible slicing through line-endings is not a problem, as the raw string ignores them.
 ## textPositionSearch
 
-## toolbox
 ## setGradient
 Define the gradient call to match the size of element e., Gradient position
 is from the origin of the page, so we need the current origin of e.
@@ -106,7 +207,6 @@ Answer the 2D origin as combination of p and offset.
 ## setShadow
 ## findMarkers
 Answer a dictionary of markers with their arguments in a given FormattedString.
-## publications
 ## pbGlobals
 dict() -> new empty dictionary
 dict(mapping) -> new dictionary initialized from a mapping object's
