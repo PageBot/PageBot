@@ -63,10 +63,8 @@ def makeDocument():
     
     if BoxWidth < 200:
         tColor = (1, 0, 0)
-        
     else:
-        tColor = (0.5, 0.5, 1)
-    
+        tColor = 0
     s = ''
     for n in range(10):
         s += '(%d) Volume of text defines the box height.\n' % (n+1)
