@@ -44,15 +44,6 @@ def makeDocument():
 
     #W = H = 120 # Get the standard a4 width and height in points.
     W = H = PageSize
-    #W, H = A4
-    # Hard coded SQUARE and GUTTE, just for simple demo, instead of filling padding an columns in the root style.
-    # Page size decides on the amount squares that is visible.
-    # Page padding is centered then.
-    sqx = int(W/(SQUARE + GUTTER)) # Whole amount of squares that fit on the page.
-    sqy = int(H/(SQUARE + GUTTER))
-    # Calculate centered paddings for the amount of fitting squares.
-    # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
-    my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
 
     doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=1)
     
@@ -70,36 +61,35 @@ def makeDocument():
     page.name = 'This is a demo page for floating child elements'
     page.padding = PagePadding
     
-    page.gutter3D = GUTTER # Set all 3 gutters to same value
-
     if BoxWidth < 200:
         tColor = (1, 0, 0)
         
     else:
-        tColor = (0, 0, 1)
+        tColor = (0.5, 0.5, 1)
     
     s = ''
     for n in range(10):
         s += '(%d) Volume of text defines the box height.\n' % (n+1)
     if DoTextFlow:
-        h1 = 100
+        h1 = 105
     else:
         h1 = None    
     e1 = newTextBox(s, 
-        name='ElasticTextBox1', 
-        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1, maxW=W-2*PagePadding,      
-        conditions=[Left2Left(), Float2Top()], yAlign=BOTTOM, xAlign=LEFT,
+        name='ElasticTextBox1',
+        nextElement='ElasticTextBox2', 
+        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
+        maxW=W-2*PagePadding, minW=100,      
+        conditions=[Left2Left(), Float2Top(), Overflow2Next()], 
+        yAlign=BOTTOM, xAlign=LEFT,
         leading=5, fontSize=9, textFill=tColor, strokeWidth=0.5, fill=0.9, stroke=None,
     )
-    print e1.mb
-    e2 = newTextBox(s, 
+       
+    e2 = newTextBox('DDD', 
         name='ElasticTextBox2', 
-        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', maxW=W-2*PagePadding,
-        conditions=[Right2Right(), Float2Top()], yAlign=TOP, leading=5, 
-        fontSize=9, textFill=0.9, strokeWidth=0.5, fill=tColor, stroke=None,
+        parent=page, padding=4, x=100, w=BoxWidth, h=200, 
+        maxW=W-2*PagePadding, minW=100,
+        conditions=[Right2Right(), Float2Top()], yAlign=TOP,  fill=1, stroke=None,
     )
-    print e2.mt, e2.mb, e2.getFloatTopSide(), e2.mTop, e2.top
-    
     score = page.solve()
     if score.fails:
         print score.fails
@@ -112,7 +102,7 @@ if __name__ == '__main__':
     Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
         dict(name='DoTextFlow', ui='CheckBox', args=dict(value=False)),
-        dict(name='BoxWidth', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),
+        dict(name='BoxWidth', ui='Slider', args=dict(minValue=100, value=500, maxValue=PageSize)),
         dict(name='PagePadding', ui='Slider', args=dict(minValue=0, value=30, maxValue=100)),
         dict(name='PageSize', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),
     ], globals())

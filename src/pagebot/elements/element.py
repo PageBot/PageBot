@@ -184,11 +184,14 @@ class Element(object):
         u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
         return self._eIds.get(eId)
 
-    def getElementByName(self, name):
+    def getElementByName(self, name, ancestors=False):
         u"""Answer the first element in the children list that fits the name. Answer None if it cannot be found."""
         for e in self.elements:
             if e.name == name:
                 return e
+        # Not found, search ancestors? 
+        if ancestors:
+            return self.parent.getElementByName(name, ancestors)
         return None
 
     def clearElements(self):
@@ -268,7 +271,7 @@ class Element(object):
 
     # If the element is part of a flow, then answer the squence.
     
-    def getFlows(self):
+    def XXXgetFlows(self):
         u"""Answer the set of flow element sequences on the page."""
         flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
         for e in self.elements:
@@ -288,7 +291,7 @@ class Element(object):
                 flows[e.next] = [e]
         return flows
 
-    def getNextFlowBox(self, tb, makeNew=True):
+    def XXXgetNextFlowBox(self, tb, makeNew=True):
         u"""Answer the next textBox that tb is pointing to. This can be on the same page or a next
         page, depending how the page (and probably its template) is defined."""
         if tb.nextPage: # Page number or name
@@ -311,8 +314,6 @@ class Element(object):
             # Hard check. Make sure that this one is empty, otherwise mistake in template
             assert not len(tb)
         return page, tb
-
-    #   F L O W
 
     #   If self.nextElement is defined, then check the condition if there is overflow.
 
