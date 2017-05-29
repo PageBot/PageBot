@@ -10,7 +10,7 @@
 #     ttftools.py
 #
 import re
-import otlTools
+from pagebot.fonttoolbox import otlTools
 from pagebot.fonttoolbox.unicodes import unicoderanges
 
 

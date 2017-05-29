@@ -10,7 +10,7 @@
 #
 #     defaultview.py
 #
-from view import View
+from pagebot.elements.views.view import View
 
 class DefaultView(View):
     viewId = 'Default'

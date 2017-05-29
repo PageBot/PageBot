@@ -9,7 +9,7 @@
 #
 #     DrawRedRectCenterPage.py
 #
-from pagebot import getFormattedString
+from pagebot import newFS
 from pagebot.style import getRootStyle, A5, BOTTOM, CENTER, MIDDLE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
@@ -17,17 +17,12 @@ from pagebot.elements import *
 from pagebot.conditions import *
     
 W, H = A5 
-
+W = 400
+H = 480
 ShowOrigins = False
 ShowElementInfo = False
+RedSect = True # Show red or gray
 RectSize = 300
-
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='ShowOrigins', ui='CheckBox', args=dict(value=True)),
-    dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
-    dict(name='RectSize', ui='Slider', args=dict(minValue=10, value=W/2, maxValue=W)),
-], globals())
 
 def makeDocument():
     # Create new document with (w,h) size and fixed amount of pages.
@@ -43,7 +38,11 @@ def makeDocument():
     page = doc[0] # Get the first/single page of the document.
     
     # Make rect as page element centered with centered origin.
-    newRect(fill=(1, 0, 0), parent=page, w=RectSize, h=RectSize,
+    if RedRect:
+        c = 1, 0, 0
+    else:
+        c = 0.5
+    newRect(fill=c, parent=page, w=RectSize, h=RectSize,
         conditions=(Center2Center(), Middle2Middle()),
         xAlign=CENTER, yAlign=MIDDLE)
     # Solve the layout conditions of the red rectangle.
@@ -63,7 +62,17 @@ def makeDocument():
     view.showElementInfo = ShowElementInfo # Show baxes with element info element.
     
     return doc
+   
+if __name__ == '__main__':
+
+    Variable([
+        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+        dict(name='ShowOrigins', ui='CheckBox', args=dict(value=True)),
+        dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
+        dict(name='RedRect', ui='CheckBox', args=dict(value=True)),
+        dict(name='RectSize', ui='Slider', args=dict(minValue=10, value=W/2, maxValue=W)),
+    ], globals())
+         
+    d = makeDocument()
+    d.export('_export/DrawRedRectCenterPage.png')
         
-d = makeDocument()
-d.export('_export/DrawRedRectCenterPage.pdf')
-    

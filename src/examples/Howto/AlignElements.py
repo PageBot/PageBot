@@ -23,14 +23,8 @@ from pagebot.conditions import *
 
 ShowOrigins = False
 ShowElementInfo = False
+ShowDimensions = False
 PageSize = 500
-
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='ShowOrigins', ui='CheckBox', args=dict(value=True)),
-    dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
-    dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-], globals())
   
 W = H = PageSize
 
@@ -111,11 +105,20 @@ def makeDocument():
     view.w, view.h = W, H
     view.padding = 0 # Don't show cropmarks and such.
     view.showElementOrigin = ShowOrigins # Show origin alignment markers on each element.
-    view.showElementDimensions = ShowOrigins
+    view.showElementDimensions = ShowDimensions
     view.showElementInfo = ShowElementInfo # Show baxes with element info
        
     return doc # Answer the doc for further doing.
-        
-d = makeDocument()
-d.export(EXPORT_PATH) 
+  
+if __name__ == '__main__':
+
+    Variable([
+        dict(name='ShowMeasures', ui='CheckBox', args=dict(value=True)),
+        dict(name='ShowDimensions', ui='CheckBox', args=dict(value=False)),
+        dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
+        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+    ], globals())
+
+    d = makeDocument()
+    d.export(EXPORT_PATH) 
 

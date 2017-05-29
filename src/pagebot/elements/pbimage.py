@@ -25,17 +25,17 @@ class Image(Element):
     The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
     applied (e.g. if the image element changes size), or the child elements can be put on fixed positions."""
     
-    def __init__(self, path=None, point=None, style=None, pixelMap=None, title=None, caption=None, clipRect=None, mask=None, 
-            imo=None, w=None, h=None, **kwargs):
-        Element.__init__(self, point=point, **kwargs)
+    def __init__(self, path=None, style=None, pixelMap=None, title=None, caption=None, clipRect=None, 
+            mask=None, imo=None, w=None, h=None, imageConditions=None, conditions=None, **kwargs):
+        self.image = None # Aviud setting of self.omage.w and self.omage.h while not initialized.
+        Element.__init__(self, conditions=conditions, **kwargs)
         assert path is None or pixelMap is None # One or the other or both None.
 
-        self.w = w
-        self.h = h
-
+        if imageConditions is None:
+            imageConditions = (Top2TopSide(), Fit2Width())
         if pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
-            pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, 
-                conditial=(Fit2Width(), Top2TopSide()), **kwargs) # Default width is leading.
+            pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, h=h,
+                conditions=imageConditions, **kwargs) # Default width is leading.
         self.image = pixelMap # Property to add to self.elements and set pixelMap.parent to self.
         # Title can be any type of element, but most likely a text box.
         self.title = title # Property to add to self.elements and set caption.parent to self.
@@ -68,35 +68,37 @@ class Image(Element):
     caption = property(_get_caption, _set_caption)
 
     def _get_w(self):
-        if not self._w:
-            _, _, w, _ = self.getVacuumElementsBox()
-            return w
-        return self._w # Overwrite vacuum width
+        return self._w 
     def _set_w(self, w):
         self._w = w
+        if self.image is not None:
+            self.image.w = w - self.pl - self.pr
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        if not self._h:
-            _, _, _, h = self.getVacuumElementsBox()
-            return h
         return self._h
-    def _set_h(self, h): # Overwrite vacuum height
+    def _set_h(self, h): 
         self._h = h
+        if self.image is not None:
+            self.image.h = h - self.pb - self.pt
     h = property(_get_h, _set_h)
 
 
 class PixelMap(Element):
     u"""The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId."""
    
-    def __init__(self, path, w=None, h=None, clipRect=None, mask=None, imo=None, **kwargs):
+    def __init__(self, path, w=None, h=None, clipRect=None, clipPath=None, mask=None, 
+        imo=None, **kwargs):
         Element.__init__(self, **kwargs)
 
+        # One of the two needs to be defined, the other can be None.
+        # If both are set, then the image scales disproportional.
         self.w = w
         self.h = h
 
         self.mask = mask # Optional mask element.
-        self.clipRect = clipRect
+        self.clipRect = clipRect # Optional clip rectangle
+        self.clipPath = clipPath # Optional clip path.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn.
         
@@ -134,7 +136,7 @@ class PixelMap(Element):
             return DEFAULT_WIDTH # Undefined and without parent, answer default width.
         return self._w # Width is lead and defined as not 0 or None.
     def _set_w(self, w):
-        self._w = w # If self._h is set too, do disproportioan sizing. Otherwise set to 0 or None.
+        self._w = w # If self._h is set too, do disproportional sizing. Otherwise set to 0 or None.
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -144,7 +146,7 @@ class PixelMap(Element):
             return DEFAULT_HEIGHT # Undefined and without parent, answer default width.
         return self._h # Height is lead and defined as not 0 or None.
     def _set_h(self, h):
-        self._h = h # If self._w is set too, do disproportioan sizing. Otherwise set to 0 or None.
+        self._h = h # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
     h = property(_get_h, _set_h)
 
     def _getAlpha(self):
@@ -196,6 +198,9 @@ class PixelMap(Element):
                 # the image will be clipped inside the path
                 #fill(1, 0, 0, 0.5)
                 #drawPath(clipRect)
+            elif self.clipPath is not None:
+                #Otherwise if there is a clipPath, then use it.
+                clipPath(self.clipPath)
 
             # Store page element Id in this image, in case we want to make an image index later.
             image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())

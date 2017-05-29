@@ -20,7 +20,7 @@ from copy import copy
 from fontTools.ttLib import TTFont
 from pagebot.elements import Element
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
+#from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
 
 
@@ -44,6 +44,10 @@ class VariableGlyphs(Element):
         self.location = copy(location)
     
     def draw(self, page, x, y):
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         fillColor = self.style.get('fill')
         fillColor = (0, 0, 0)
         #if fillColor is not None:
@@ -53,6 +57,10 @@ class VariableGlyphs(Element):
         #    fillColor = (0, 0, 0)
         glyphPathScale = self.fontSize/self.font.info.unitsPerEm
         drawGlyphPath(self.font.ttFont, self.glyphNames[0], x, y, self.location, s=glyphPathScale, fillColor=fillColor)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
+
 
 
         

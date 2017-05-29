@@ -14,12 +14,16 @@ import os
 class Publication(object):
     u"""The abstract Publication class, implements everything needed for a specific kind of publication.
     It can hold multiple related Document instances and serves various output formats."""
-    def __init__(self, documents=None, exportPath=None):
+    def __init__(self, documents=None, name=None, exportPath=None):
         self.exportPath = exportPath or '_export/'
+        self.name = name or self.__class__.__name__
         if documents is None:
             documents = {}
         self.documents = documents 
-        
+    
+    def __repr__(self):
+        return self.name
+
     def build(self):
         pass
     

@@ -13,15 +13,18 @@
 from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
+import os, os.path
 
-from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, \
-        FormattedString, cmykStroke, text, fill, strokeWidth, curveTo, closePath
+from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath,\
+    save, restore, scale, textSize, FormattedString, cmykStroke, text, fill, stroke,\
+    strokeWidth, curveTo, closePath
 
 from pagebot import setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
-from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D, point2S
-from pagebot import getFormattedString, setStrokeColor, setFillColor
+from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D, point2S, asFormatted
+from pagebot import newFS, setStrokeColor, setFillColor
+from pagebot.toolbox.transformer import *
 
 class View(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
@@ -37,6 +40,9 @@ class View(Element):
         self.h = h
         self._initializeControls()
         self.setControls()
+        # List of collected elements that need to draw their info on top of the main drawing,
+        self.elementsNeedingInfo = {}
+        self._isDrawn = False # Automatic call self.drawPages if export is called without drawing.
 
     def _initializeControls(self):
         self.showElementInfo = False
@@ -51,18 +57,19 @@ class View(Element):
         # Document/page stuff
         self.showPageCropMarks = False
         self.showPageRegistrationMarks = False
+        self.showPagePadding = False
         self.showPageFrame = False
         self.showPageNameInfo = False
         self.showPageMetaInfo = False
         # TextBox stuff
         self.showTextBoxIndex = False # Show the line index number on the left side.
-        self.showTextBoxY = False # Show the realtic y-position value if text lines on right side. 
+        self.showTextBoxY = False # Show the realtic y-position value if text lines on right side.
         self.showTextBoxLeading = False # Show distance of leading on the right side.
         self.showTextBoxBaselines = False
         # Flow stuff
         self.showFlowConnections = False
         # Image stuff
-        self.showImageReference = False      
+        self.showImageReference = False
 
     def setControls(self):
         u"""Inheriting views can redefine to alter showing parameters."""
@@ -95,25 +102,44 @@ class View(Element):
                 origin = (0, 0, 0)
 
             newPage(w, h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
+            # View may have defined a background
+            if self.style.get('fill') is not None:
+                setFillColor(self.style['fill'])
+                rect(0, 0, w, h)
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
-            page.draw(origin, self) 
+            page.draw(origin, self)
+            # Self.infoElements now may have collected elements needed info to be drawn.
+            for e in self.elementsNeedingInfo.values():
+                self._drawElementsNeedingInfo()
 
     def export(self, fileName, pageSelection=None, multiPage=True):
-        u"""Export the document to fileName for all pages in sequential order. If pageSelection is defined,
-        it must be a list with page numbers to export. This allows the order to be changed and pages to
-        be omitted. The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct the type of
-        drawing and export that needs to be done.
-        The multiPage value is passed on to the DrawBot saveImage call.
-        document.export(...) is the most common way to export documents. But in special cases, there is not 
-        straighforward (or sequential) export of pages, e.g. when generating HTML/CSS. In that case use 
-        MyBuilder(document).export(fileName), the builder is responsible to query the document, pages, elements and styles.
-        """
-        self.drawPages(pageSelection)
+        u"""Export the document to fileName for all pages in sequential order.
+        If pageSelection is defined, it must be a list with page numbers to
+        export. This allows the order to be changed and pages to be omitted.
+        The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct
+        the type of drawing and export that needs to be done.
 
-        # If rootStyle['frameDuration'] is set and saving as movie or animated gif, 
+        The multiPage value is passed on to the DrawBot saveImage call.
+        document.export(...) is the most common way to export documents. But in
+        special cases, there is not straighforward (or sequential) export of
+        pages, e.g. when generating HTML/CSS. In that case use
+        MyBuilder(document).export(fileName), the builder is responsible to
+        query the document, pages, elements and styles.
+        """
+        if not self._isDrawn:
+            self.drawPages(pageSelection)
+            self._isDrawn = True
+
+        # If rootStyle['frameDuration'] is set and saving as movie or animated gif,
         # then set the global frame duration.
         frameDuration = self.css('frameDuration')
+
+        folder = path2ParentPath(fileName)
+
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+
         if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
             frameDuration(frameDuration)
 
@@ -124,6 +150,7 @@ class View(Element):
 
     def drawPageMetaInfo(self, page, origin):
         self.drawPageFrame(page, origin)
+        self.drawPagePadding(page, origin)
         self.drawPageNameInfo(page, origin)
         self.drawPageRegistrationMarks(page, origin)
         self.drawPageCropMarks(page, origin)
@@ -136,7 +163,26 @@ class View(Element):
         if self.showPageFrame and \
                 self.pl > self.MIN_PADDING and self.pr > self.MIN_PADDING and \
                 self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
-            self._drawElementFrame(page, origin)
+            fill(None)
+            stroke(0, 0, 1)
+            strokeWidth(0.5)
+            rect(origin[0], origin[1], page.w, page.h)
+            #page.drawFrame(origin, self)
+
+    def drawPagePadding(self, page, origin):
+        u"""Draw the page frame of its current padding."""
+        pt, pr, pb, pl = page.padding
+        if self.showPagePadding and (pt or pr or pb or pl):
+            p = pointOffset(page.oPoint, origin)
+            p = page._applyScale(p)
+            px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
+            fill(None)
+            stroke(0, 0, 1)
+            strokeWidth(0.5)
+            if page.originTop:
+                rect(px+pr, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
+            else:
+                rect(px+pr, py+pb, page.w-pl-pr, page.h-pt-pb)
 
     def drawPageNameInfo(self, page, origin):
         u"""Draw additional document information, color markers, page number, date, version, etc.
@@ -145,7 +191,7 @@ class View(Element):
             bleed = self.css('bleed')
             cms = self.css('viewCropMarkSize') - bleed
             fontSize = self.css('viewPageNameFontSize')
-            dt = datetime.now()
+            dt = datetime.datetime.now()
             d = dt.strftime("%A, %d. %B %Y %I:%M%p")
             s = 'Page %s | %s | %s' % (page.parent.getPageNumber(page), d, page.parent.title or 'Untitled')
             if page.name:
@@ -163,7 +209,7 @@ class View(Element):
         if self.showFlowConnections:
             for seq in e.getFlows().values():
                 # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)
-                # This offset is defined by optional 
+                # This offset is defined by optional
                 tbStart = e.getElement(seq[0].eId)
                 startX = tbStart.x
                 startY = tbStart.y
@@ -183,7 +229,7 @@ class View(Element):
                     tbTarget = e.getElement(seq[0].eId)
                     self.drawArrow(e, px+startX+tbStart.w, py+startY, px+tbTarget.x, py+tbTarget.y+tbTarget.h-e.h, 1)
 
-    def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False, fms=None, fmf=None, 
+    def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False, fms=None, fmf=None,
             fill=None, stroke=None, strokeWidth=None):
         u"""Draw curved arrow marker between the two points.
         TODO: Add drawing of real arrow-heads, rotated in the right direction."""
@@ -191,7 +237,7 @@ class View(Element):
             fms = self.css('viewFlowMarkerSize')
         if fmf is None:
             fmf or self.css('viewFlowCurvatureFactor')
-        
+
         if stroke is None:
             if onText == 1:
                 stroke = self.css('viewFlowConnectionStroke2', NO_COLOR)
@@ -199,14 +245,14 @@ class View(Element):
                 stroke = self.css('viewFlowConnectionStroke1', NO_COLOR)
         if strokeWidth is None:
             strokeWidth = self.css('viewFlowConnectionStrokeWidth', 0.5)
-        
+
         setStrokeColor(stroke, strokeWidth)
         if startMarker:
             if fill is None:
                 fill = self.css('viewFlowMarkerFill', NO_COLOR)
             setFillColor(fill)
             oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
-        
+
         xm = (xt + xs)/2
         ym = (yt + ys)/2
         xb1 = xm + onText * (yt - ys) * fmf
@@ -242,7 +288,7 @@ class View(Element):
             setFillColor(self.css('viewFlowMarkerFill', NO_COLOR))
             oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 
-    #   D R A W I N G  E L E M E N T  
+    #   D R A W I N G  E L E M E N T
 
     def drawElementFrame(self, e, origin):
         if self.showElementFrame:
@@ -251,43 +297,75 @@ class View(Element):
     def drawElementMetaInfo(self, e, origin):
         self.drawElementInfo(e, origin)
         self.drawElementOrigin(e, origin)
-        
+
     def drawElementInfo(self, e, origin):
         u"""For debugging this will make the elements show their info. The css flag "showElementOrigin"
-        defines if the origin marker of an element is drawn."""
-        p = pointOffset(e.oPoint, origin)
-        p = e._applyScale(p)    
-        px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
-        if self.showElementInfo:
-            # Draw box with element info.
-            fs = getFormattedString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'), 
-                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-            tw, th = textSize(fs)
-            Pd = 4 # Padding in box and shadow offset.
-            tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
-            tpy = py + e.h - th - Pd
-            # Tiny shadow
-            setFillColor((0.3, 0.3, 0.3, 0.5))
-            setStrokeColor(None)
-            rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
-            # Frame
-            setFillColor(self.css('viewInfoFill'))
-            setStrokeColor(0.3, 0.25)
-            rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
-            text(fs, (tpx+Pd, tpy+1.5*Pd))
-            e._restoreScale()
+        defines if the origin marker of an element is drawn. Collect the (e, origin), so we can later
+        draw all info, after the main drawing has been done."""
+        if not e.eId in self.elementsNeedingInfo:
+            self.elementsNeedingInfo[e.eId] = (e, origin)
 
-        if 0 and self.showElementDimensions:
-            # TODO: Make separate arrow functio and better positions
-            # Draw width and height measures
-            setFillColor(None)
-            setStrokeColor(0, 0.25)
-            S = self.css('viewInfoOriginMarkerSize', 4)
-            opx, opy, _ = p
-            x1, y1, x2, y2 = e.left, e.bottom, e.right, e.top
-            line((opx + x1, opy + y1 - S), (opx + x1, opy + y1 - 3*S))
-            self.drawArrow(e, opx + x1, opy + y1 - 2*S, opx + x2, opy + y1 - 2*S, True, True, fms=2, fmf=0, stroke=0, strokeWidth=0.25, fill=0)
-            line((opx + x2, opy + y1 - S), (opx + x2, opy + y1 - 3*S))
+    def _drawElementsNeedingInfo(self):
+        for e, origin in self.elementsNeedingInfo.values():
+            p = pointOffset(e.oPoint, origin)
+            p = e._applyScale(p)
+            px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
+            if self.showElementInfo:
+                # Draw box with element info.
+                fs = newFS(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'),
+                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                tw, th = textSize(fs)
+                Pd = 4 # Padding in box and shadow offset.
+                tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
+                tpy = py + e.h - th - Pd
+                # Tiny shadow
+                setFillColor((0.3, 0.3, 0.3, 0.5))
+                setStrokeColor(None)
+                rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
+                # Frame
+                setFillColor(self.css('viewInfoFill'))
+                setStrokeColor(0.3, 0.25)
+                rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
+                text(fs, (tpx+Pd, tpy+1.5*Pd))
+                e._restoreScale()
+
+            if self.showElementDimensions:
+                # TODO: Make separate arrow functio and better positions
+                # Draw width and height measures
+                setFillColor(None)
+                setStrokeColor(0, 0.25)
+                S = self.css('viewInfoOriginMarkerSize', 4)
+                x1, y1, x2, y2 = e.left, e.bottom, e.right, e.top
+
+                # Horizontal measure
+                line((x1, y1 - 0.5*S), (x1, y1 - 3.5*S))
+                line((x2, y1 - 0.5*S), (x2, y1 - 3.5*S))
+                line((x1, y1 - 2*S), (x2, y1 - 2*S))
+                # Arrow heads
+                line((x1, y1 - 2*S), (x1+S, y1 - 1.5*S))
+                line((x1, y1 - 2*S), (x1+S, y1 - 2.5*S))
+                line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
+                line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
+
+                fs = newFS(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'),
+                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                tw, th = textSize(fs)
+                text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
+
+                # Vertical measure
+                line((x2+0.5*S, y1), (x2+3.5*S, y1))
+                line((x2+0.5*S, y2), (x2+3.5*S, y2))
+                line((x2+2*S, y1), (x2+2*S, y2))
+                # Arrow heads
+                line((x2+2*S, y2), (x2+2.5*S, y2-S))
+                line((x2+2*S, y2), (x2+1.5*S, y2-S))
+                line((x2+2*S, y1), (x2+2.5*S, y1+S))
+                line((x2+2*S, y1), (x2+1.5*S, y1+S))
+
+                fs = newFS(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'),
+                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                tw, th = textSize(fs)
+                text(fs, (x2+2*S-tw/2, (y2+y1)/2))
 
     def drawElementOrigin(self, e, origin):
         px, py, _ = pointOffset(e.oPoint, origin)
@@ -301,7 +379,7 @@ class View(Element):
             line((px, py-S), (px, py+S))
 
         if self.showElementDimensions:
-            fs = getFormattedString(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'), 
+            fs = newFS(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'),
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
             w, h = textSize(fs)
             text(fs, (px - w/2, py + S*1.5))
@@ -314,8 +392,8 @@ class View(Element):
         if self.showMissingElementRect:
 
             p = pointOffset(e.point, origin)
-            p = e._applyOrigin(p)    
-            p = e._applyScale(p)    
+            p = e._applyOrigin(p)
+            p = e._applyScale(p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
             self.setShadow()
 
@@ -364,7 +442,7 @@ class View(Element):
         if not self.showGridColumns or not self.self.showGrid:
             return
         p = pointOffset(e.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
         sGridFill = e.css('gridFill', NO_COLOR)
@@ -394,7 +472,7 @@ class View(Element):
             setStrokeColor(self.css('gridStroke', NO_COLOR), self.css('gridStrokeWidth'))
             # TODO: DrawBot align and fill don't work properly now.
             M = 16
-            fs = getFormattedString('', self, dict(font='Verdana', xAlign=RIGHT, fontSize=M/2,
+            fs = newFS('', self, dict(font='Verdana', xAlign=RIGHT, fontSize=M/2,
                 stroke=None, textFill=self.css('gridStroke')))
             ox = px + padL
             index = 0
@@ -426,9 +504,9 @@ class View(Element):
         TODO: Make fixed values part of calculation or part of grid style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         if not self.showBaselineGrid:
-            return    
+            return
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         oy = self.h - self.css('pt') - py
@@ -437,7 +515,7 @@ class View(Element):
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
         if self.horizontal:
-            fs = getFormattedString('', self, dict(font=self.css('fallbackFont','Verdana'), xAlign=RIGHT, 
+            fs = newFS('', self, dict(font=self.css('fallbackFont','Verdana'), xAlign=RIGHT,
                 fontSize=M/2, stroke=None, textFill=self.css('gridStroke')))
             while oy > self.css('pb', 0):
                 setFillColor(None)

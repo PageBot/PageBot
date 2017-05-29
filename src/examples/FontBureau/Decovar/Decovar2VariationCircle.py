@@ -11,12 +11,11 @@
 #
 from __future__ import division
 
-import myglobals
 import pagebot
-from pagebot import getFormattedString
+from pagebot import newFS
 from pagebot.style import getRootStyle
 from pagebot.document import Document
-from pagebot.page import Template
+from pagebot.elements.pbpage import Template
 # For Variation Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font
 
@@ -31,19 +30,20 @@ from copy import copy
 from fontTools.ttLib import TTFont
 from pagebot.elements import Element
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
+#from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installedFonts, FormattedString, moveTo, lineTo, newPath, drawPath
 #====================
-
 
 DEBUG = False # Make True to see grid and element frames.
 
 
 FONT_PATH = pagebot.getFontPath()
 #fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
-#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
+#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'
+#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'
+fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
 #fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
-fontPath = FONT_PATH + 'PromiseVar.ttf'
+#fontPath = FONT_PATH + 'PromiseVar.ttf'
 #fontPath = FONT_PATH + 'BitcountGridVar.ttf'
 EXPORT_PATH = '_export/'+ fontPath.split('/')[-1].replace('ttf', 'pdf')
 varFont = Font(fontPath)
@@ -69,11 +69,14 @@ class VariationCircle(Element):
     DEFAULT_FONT_SIZE = 64
     R = 2/3 # Fontsize factor to draw glyph markers.
 
-    def __init__(self, font, s=None, style=None, eId=None, angles=None, showAxisNames=True,
+    def __init__(self, font, x=None, y=None, w=None, h=None, s=None, angles=None, showAxisNames=True,
         **kwargs):
+        Element.__init__(self, **kwargs)
+        self.x = x
+        self.y = y
+        self.h = h
+        self.w = w
         self.font = font
-        self.eId = eId
-        self.style = makeStyle(style, **kwargs) # Combine self.style from
         self.initAngles(angles) # Initialize the angles in equal parts if not defined.
         self.showAxisNames = showAxisNames
         # Make sure that this is a formatted string. Otherwise create it with the current style.
@@ -217,47 +220,48 @@ class VariationCircle(Element):
 
 #====================
 
-FONT_SIZE = VariationCircle.DEFAULT_FONT_SIZE
-INTERPOLATION = 0.5
- 
-VARIABLES = [
-    dict(name='FONT_SIZE', ui='Slider', args=dict(value=60, minValue=24, maxValue=180)),
-    dict(name='INTERPOLATION', ui='Slider', args=dict(value=0.5, minValue=0, maxValue=1)),
-]
-angle = -90
-for axisName in axes:
-    VARIABLES.append(dict(name=axisName, ui='Slider', 
-        args=dict(value=angle, minValue=-90, maxValue=270)))
-    globals()[axisName] = axes[axisName][1]
-    angle += 360/len(axes)
-Variable(VARIABLES, globals())
+if 1:
 
-
-def makeDocument(rs):
-    
-    # Create new document with (w,h) and fixed amount of pages.
-    # Make number of pages with default document size.
-    # Initially make all pages default with template
-    doc = Document(rs, pages=1) 
+    FONT_SIZE = VariationCircle.DEFAULT_FONT_SIZE
+    INTERPOLATION = 0.5
      
-    # Change template of page 1
-    page = doc[1]
-    glyphName = 'A' 
-    angles = {}
-    style = dict(fontSize=FONT_SIZE, labelFont='Verdana', axisNameFontSize=14, 
-        valueFontSize=10, axisNameColor=(1, 0, 0))
+    VARIABLES = [
+        dict(name='FONT_SIZE', ui='Slider', args=dict(value=60, minValue=24, maxValue=180)),
+        dict(name='INTERPOLATION', ui='Slider', args=dict(value=0.5, minValue=0, maxValue=1)),
+    ]
+    angle = -90
     for axisName in axes:
-        angles[axisName] = globals()[axisName]
-    variationCircle = VariationCircle(varFont, w=W-M*2, h=H-M*2, s=glyphName, angles=angles,
-        style=style, showAxisNames=True)
-    page.place(variationCircle, M, M)
-      
-    
-    return doc
+        VARIABLES.append(dict(name=axisName, ui='Slider', 
+            args=dict(value=angle, minValue=-90, maxValue=270)))
+        globals()[axisName] = axes[axisName][1]
+        angle += 360/len(axes)
+    Variable(VARIABLES, globals())
+
+
+    def makeDocument(rs):
         
-d = makeDocument(RS)
-if 1: # Not saving image
-    d.drawPages(None)
-else:
-    d.export(EXPORT_PATH) 
+        # Create new document with (w,h) and fixed amount of pages.
+        # Make number of pages with default document size.
+        # Initially make all pages default with template
+        doc = Document(rs, pages=1) 
+         
+        # Change template of page 1
+        page = doc[0]
+        glyphName = 'A' 
+        angles = {}
+        style = dict(fontSize=FONT_SIZE, labelFont='Verdana', axisNameFontSize=14, 
+            valueFontSize=10, axisNameColor=(1, 0, 0))
+        for axisName in axes:
+            angles[axisName] = globals()[axisName]
+        vc = VariationCircle(varFont, x=M, y=M, w=W-M*2, h=H-M*2, s=glyphName, angles=angles,
+            parent=page, style=style, showAxisNames=True)
+        print vc.x, vc.y, vc.h, vc.w  
+        
+        return doc
+            
+    d = makeDocument(RS)
+    if 1: # Not saving image
+        d.drawPages(None)
+    else:
+        d.export(EXPORT_PATH) 
 

@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     ColorSquares.py
+#     UseImageElements.py
 #
 #     This script generates a page with random color squares, indicating where their position is.
 #     This script is using the style parameters "originTop", making the coordinate system run downwards.
@@ -19,14 +19,12 @@ from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import getFormattedString
+from pagebot import newFS
 
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
     
-RedSize = 100
-YellowSize = 30
 PagePadding = 64
 PageSize = 500
 
@@ -41,19 +39,10 @@ SQUARE = 10 * GUTTER # Size of the squares
 # that is very similar to what happens in CSS.
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/UseImages.pdf' 
-
-
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='RedSize', ui='Slider', args=dict(minValue=100, value=100, maxValue=500)),
-    dict(name='YellowSize', ui='Slider', args=dict(minValue=10, value=30, maxValue=500)),
-    dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
-    dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-], globals())
+EXPORT_PATH = '_export/UseImageElements.pdf' 
 
 def makeDocument():
-    u"""Make a new document, using the rs as root style."""
+    u"""Make a new document."""
 
     #W = H = 120 # Get the standard a4 width and height in points.
     W = PageSize
@@ -84,37 +73,34 @@ def makeDocument():
     page.padding = PagePadding
     
     page.gutter3D = GUTTER # Set all 3 gutters to same value
-    """
-    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Top2Top(), Fit2Width()), elasticH=True, yAlign=BOTTOM,
+
+    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, conditions=(Top2Top(), Fit2Width(), SolveBlock(), Shrink2BlockBottom()), yAlign=BOTTOM,
         fill=(0, 1, 0, 0.3), 
         stroke=(1, 0, 0)
     )
-    if im.image:
-        print im.image.size
     # Give parent on creation, to have the css chain working.
-    """
-    rr = newRect(fill=(1, 0, 0), w=RedSize, h=RedSize, conditions=(Left2Left(), Bottom2Bottom()), 
-        parent=page) 
-    rr.pb = 10
     
-    yr1 = newRect(fill=(1, 1, 0), w=YellowSize, h=YellowSize, parent=rr, xAlign=CENTER, yAlign=TOP,
-        conditions=(Center2Center(), Bottom2Bottom())) 
-    yr2 = newRect(fill=(0, 1, 1), z=10, w=50, h=50, parent=rr, xAlign=CENTER, 
-        conditions=(Top2TopSide(), Center2Center(),)) 
-   
     # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
-    cap = newTextBox('Float on top of yellow', w=rr.w, name='Caption', parent=rr,
-        font='Verdana', conditions=[ Fit2Width(), Float2BottomSide()], elasticH=True,
-        fontSize=7, textFill=0, strokeWidth=0.5, fill=(0, 0, 1, 0.3), stroke=(0, 0, 1),
+    cap = newTextBox('Captions float below the image', name='Caption', parent=im, padding=4,
+        font='Verdana', conditions=[ Fit2Width(), Float2BottomSide(), Shrink2BlockBottom()], yAlign=TOP, h = 24,
+        fontSize=9, textFill=1, strokeWidth=0.5, fill=(0, 0, 1, 0.3), stroke=(0, 0, 1),
     )
-    cap.padding = 10
     
     score = page.solve()
     if score.fails:
         print score.fails
-        
+
     return doc # Answer the doc for further doing.
-        
-d = makeDocument()
-d.export(EXPORT_PATH) 
+ 
+if __name__ == '__main__':
+
+
+    Variable([
+        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+         dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
+        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+    ], globals())
+           
+    d = makeDocument()
+    d.export(EXPORT_PATH) 
 

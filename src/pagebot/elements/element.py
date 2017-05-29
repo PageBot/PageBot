@@ -15,13 +15,16 @@ from __future__ import division
 import weakref
 import copy
 
-from drawBot import rect, oval, line, newPath, moveTo, lineTo, drawPath, save, restore, scale, textSize, fill, text, stroke, strokeWidth
+from drawBot import rect, oval, line, newPath, moveTo, lineTo, lineDash, drawPath, \
+    save, restore, scale, textSize, fill, text, stroke, strokeWidth, shadow
 
 from pagebot.conditions.score import Score
-from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
+from pagebot import newFS, setFillColor, setStrokeColor, setGradient, setShadow,\
+    x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
-    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS
+    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS,\
+    ONLINE, INLINE, OUTLINE
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
 
@@ -35,10 +38,14 @@ class Element(object):
     isText = False
     isTextBox = False
     isFlow = False # Value is True if self.next if defined.
+    isPage = False # Set to True by Page-like elements.
 
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
             title=None, style=None, conditions=None, elements=None, template=None, nextElement=None, prevElement=None, 
-            nextPage=None, padding=None, margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, **kwargs):  
+            nextPage=None, padding=None, margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
+            mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, borders=None, borderTop=None, borderRight=None,
+            borderBottom=None, borderLeft=None, 
+            drawBefore=None, drawAfter=None, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
@@ -55,6 +62,11 @@ class Element(object):
         self.d = d
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
+        self.borders = borders or (borderTop, borderRight, borderBottom, borderLeft)
+
+        # Drawing hooks
+        self.drawBefore = drawBefore # Optional method to draw before child elements are drawn.
+        self.drawAfter = drawAfter # Optional method to draw after child elements are drawn.
 
         # Set timer of this element.
         self.timeMarks = [TimeMark(0, self.style), TimeMark(XXXL, self.style)] # Default TimeMarks from t == 0 until infinite of time.
@@ -75,12 +87,14 @@ class Element(object):
             # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
             parent.appendElement(self) # Set referecnes in both directions.
         # Conditional placement stuff
+        if not conditions is None and not isinstance(conditions, (list, tuple)): # Allow singles
+            conditions = [conditions]
         self.conditions = conditions # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
         # Save flow reference names
         self.prevElement = prevElement # Name of the prev flow element
         self.nextElement = nextElement # Name of the next flow element
-        self.nextPage = nextPage # Name of the next page.
+        self.nextPage = nextPage # Name ot identifier of the next page that nextElement refers to.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
         self.applyTemplate(template, elements) 
@@ -171,11 +185,20 @@ class Element(object):
         u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
         return self._eIds.get(eId)
 
+    def getElementPage(self):
+        u"""Recursively answer the page of this element. This can be several layers above self."""
+        if self.isPage:
+            return self
+        return self.parent.getElementPage()
+
     def getElementByName(self, name):
-        u"""Answer the first element in the children list that fits the name. Answer None if it cannot be found."""
+        u"""Answer the first element in the offspring list that fits the name. Answer None if it cannot be found"""
+        if self.name == name:
+            return self
         for e in self.elements:
-            if e.name == name:
-                return e
+            found = e.getElementByName(name) # Don't search on next page yet.
+            if found is not None:
+                return found
         return None
 
     def clearElements(self):
@@ -255,7 +278,7 @@ class Element(object):
 
     # If the element is part of a flow, then answer the squence.
     
-    def getFlows(self):
+    def XXXgetFlows(self):
         u"""Answer the set of flow element sequences on the page."""
         flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
         for e in self.elements:
@@ -275,7 +298,7 @@ class Element(object):
                 flows[e.next] = [e]
         return flows
 
-    def getNextFlowBox(self, tb, makeNew=True):
+    def XXXgetNextFlowBox(self, tb, makeNew=True):
         u"""Answer the next textBox that tb is pointing to. This can be on the same page or a next
         page, depending how the page (and probably its template) is defined."""
         if tb.nextPage: # Page number or name
@@ -298,6 +321,16 @@ class Element(object):
             # Hard check. Make sure that this one is empty, otherwise mistake in template
             assert not len(tb)
         return page, tb
+
+    #   If self.nextElement is defined, then check the condition if there is overflow.
+
+    def isOverflow(self, tolerance):
+        return False
+
+    def overflow2Next(self):
+        u"""Try to fix if there is overflow. Default behavior is to do nothing. This method
+        is redefined by inheriting classed, such as TextBox, that can have overflow of text."""
+        return True
 
     #   S T Y L E
 
@@ -514,6 +547,7 @@ class Element(object):
     # Vertical
 
     def _get_top(self):
+        u"""Answer the top position (relative to self.parent) of self."""
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             return self.y - self.h/2
@@ -523,6 +557,7 @@ class Element(object):
             return self.y + self.h
         return self.y
     def _set_top(self, y):
+        u"""Shift the element so self.top == y."""
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             self.y = y + self.h/2
@@ -654,6 +689,60 @@ class Element(object):
     def _set_mBack(self, z):
         self.back = z - self.css('mzb')
     mBack = property(_get_mBack, _set_mBack)
+
+    # Borders
+
+    def _borderDict(self, borderData):
+        if isinstance(borderData, (int, long, float)):
+            return dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
+        if isinstance(borderData, dict):
+            if not 'line' in borderData: # (ONLINE, INLINE, OUTLINE):
+                borderData['line'] = ONLINE
+            if not 'dash' in borderData:
+                borderData['dash'] = None
+            if not 'strokeWidth' in borderData:
+                borderData['strokeWidth'] = 1
+            if not 'stroke' in borderData:
+                borderData['stroke'] = 0
+            return borderData
+        return None
+
+    def _get_borders(self):
+        return self.borderTop, self.borderRight, self.borderBottom, self.borderLeft
+    def _set_borders(self, borders):
+        if not isinstance(borders, (list, tuple)):
+            # Make copy, in case it is a dict, otherwise changes will be made in all.
+            borders = copy.copy(borders), copy.copy(borders), copy.copy(borders), copy.copy(borders)
+        elif len(borders) == 2:
+            borders = borders*2
+        elif len(borders) == 1:
+            borders = borders*4
+        self.borderTop, self.borderRight, self.borderBottom, self.borderLeft = borders
+    borders = property(_get_borders, _set_borders)
+
+    def _get_borderTop(self):
+        return self.css('borderTop')
+    def _set_borderTop(self, border):
+        self.style['borderTop'] = self._borderDict(border)
+    borderTop = property(_get_borderTop, _set_borderTop)
+
+    def _get_borderRight(self):
+        return self.css('borderRight')
+    def _set_borderRight(self, border):
+        self.style['borderRight'] = self._borderDict(border)
+    borderRight = property(_get_borderRight, _set_borderRight)
+
+    def _get_borderBottom(self):
+        return self.css('borderBottom')
+    def _set_borderBottom(self, border):
+        self.style['borderBottom'] = self._borderDict(border)
+    borderBottom = property(_get_borderBottom, _set_borderBottom)
+
+    def _get_borderLeft(self):
+        return self.css('borderLeft')
+    def _set_borderLeft(self, border):
+        self.style['borderLeft'] = self._borderDict(border)
+    borderLeft = property(_get_borderLeft, _set_borderLeft)
 
     # Alignment types, defines where the origin of the element is located.
 
@@ -830,6 +919,7 @@ class Element(object):
         return self.h + self.mt + self.mb # Add margins to height
     def _set_mh(self, h):
         self.style['h'] = max(0, h - self.mt - self.mb) # Cannot become < 0
+        self.changedHeight()
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self): # Depth
@@ -1030,6 +1120,43 @@ class Element(object):
         self.h = h 
         self.d = d # By default elements have 0 depth.
 
+    def _get_pw(self): # Padded width
+        return self.w - self.pl - self.pr
+    pw = property(_get_pw)
+    
+    def _get_ph(self): # Padded height
+        return self.h - self.pb - self.pt
+    ph = property(_get_ph)
+    
+    def _get_pd(self): # Padded depth
+        return self.d - self.pzf - self.pzb
+    pd = property(_get_pd)
+    
+    def _get_box3D(self):
+        u"""Answer the 3D bounding box of self from (self.x, self.y, self.w, self.h) properties."""
+        return self.x or 0, self.y or 0, self.z or 0, self.w or 0, self.h or 0, self.d or 0
+    box3D = property(_get_box3D)
+
+    def _get_box(self):
+        u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""
+        return self.x or 0, self.y or 0, self.w or 0, self.h or 0
+    box = property(_get_box)
+
+    def _get_marginBox(self):
+        u"""Calculate the margin position and margin resized box of the element, after applying the
+        option style margin."""
+        mt = self.mt
+        mb = self.mb
+        ml = self.ml
+        if self.originTop:
+            y = self.y - mt
+        else:
+            y = self.y - mb
+        return (self.x - ml, y,
+            self.w + ml + self.mr, 
+            self.h + mt - mb)
+    marginBox = property(_get_marginBox)
+
     def _get_paddedBox(self):
         u"""Calculate the padded position and padded resized box of the element, after applying the
         style padding. Answered format (x, y, w, h)."""
@@ -1051,44 +1178,14 @@ class Element(object):
         return x, y, self.z + pzf, w, h, self.d - pzf - self.pzb
     paddedBox3D = property(_get_paddedBox3D)
 
-    def _get_pw(self): # Padded width
-        return self.w - self.pl - self.pr
-    pw = property(_get_pw)
-    
-    def _get_ph(self): # Padded height
-        return self.h - self.pb - self.pt
-    ph = property(_get_ph)
-    
-    def _get_pd(self): # Padded depth
-        return self.d - self.pzf - self.pzb
-    pd = property(_get_pd)
-    
-    def _get_boundingBox3D(self):
-        u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""
-        return self.x or 0, self.y or 0, self.z or 0, self.w or 0, self.h or 0, self.d or 0
-    boundingBox = property(_get_boundingBox3D)
+    # PDF naming: MediaBox is highlighted with a magenta rectangle, the BleedBox with a cyan 
+    # one while dark blue is used for the TrimBox.
+    # https://www.prepressure.com/pdf/basics/page-boxes
 
-    def _get_boundingBox(self):
-        u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""
-        return self.x or 0, self.y or 0, self.w or 0, self.h or 0
-    boundingBox = property(_get_boundingBox)
+    # "Box" is bounding box on a single element.
+    # "Block" is here used as bounding box of a group of elements.
 
-    def _get_marginBox(self):
-        u"""Calculate the margin position and margin resized box of the element, after applying the
-        option style margin."""
-        mt = self.mt
-        mb = self.mb
-        ml = self.ml
-        if self.originTop:
-            y = self.y - mt
-        else:
-            y = self.y - mb
-        return (self.x - ml, y,
-            self.w + ml + self.mr, 
-            self.h + mt - mb)
-    marginBox = property(_get_marginBox)
-
-    def getVacuumElementsBox3D(self):
+    def _get_block3D(self):
         u"""Answer the vacuum 3D bounding box around all child elements."""
         x1 = y1 = z1 = XXXL
         x2 = y2 = z2 = -XXXL
@@ -1104,16 +1201,80 @@ class Element(object):
                 y1 = min(y1, e.bottom)
                 y2 = max(y2, e.top)
             z1 = min(z1, e.front)
-            z2 = min(z2, e.back)
+            z2 = max(z2, e.back)
 
         return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
+    block3D = property(_get_block3D)
 
-    def getVacuumElementsBox(self):
-        u"""Answer the vacuum bounding box around all child elements."""
+    def _get_block(self):
+        u"""Answer the vacuum bounding box around all child elements in 2D"""
         x, y, _, w, h, _ = self.getVacuumElementsBox3D()
         return x, y, w, h
+    block = property(_get_block)
 
-    def getVacuumOrigins3D(self):
+    def _get_marginBlock3D(self):
+        u"""Answer the vacuum 3D bounding box around all child elements."""
+        x1 = y1 = z1 = XXXL
+        x2 = y2 = z2 = -XXXL
+        if not self.elements:
+            return 0, 0, 0, 0, 0, 0
+        for e in self.elements:
+            x1 = min(x1, e.left - e.ml)
+            x2 = max(x2, e.right + e.mr)
+            if e.originTop:
+                y1 = min(y1, e.top - e.mt)
+                y2 = max(y2, e.bottom + e.mb)
+            else:
+                y1 = min(y1, e.bottom - e.mb)
+                y2 = max(y2, e.top + e.mt)
+            z1 = min(z1, e.front - e.zmf)
+            z2 = max(z2, e.back - e.zmb)
+
+        return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
+    marginBlock3D = property(_get_marginBlock3D)
+
+    def _get_block(self):
+        u"""Answer the vacuum bounding box around all child elements in 2D"""
+        x, y, _, w, h, _ = self._get_block()
+        return x, y, w, h
+    block = property(_get_block)
+
+    def _get_paddedBlock3D(self):
+        u"""Answer the vacuum 3D bounding box around all child elements, 
+        subtracting their paddings. Sizes cannot become nextive."""
+        x1 = y1 = z1 = XXXL
+        x2 = y2 = z2 = -XXXL
+        if not self.elements:
+            return 0, 0, 0, 0, 0, 0
+        for e in self.elements:
+            x1 = max(x1, e.left + e.pl)
+            x2 = min(x2, e.right - e.pl)
+            if e.originTop:
+                y1 = max(y1, e.top + e.pt)
+                y2 = min(y2, e.bottom - e.pb)
+            else:
+                y1 = max(y1, e.bottom + e.pb)
+                y2 = min(y2, e.top - e.pt)
+            z1 = max(z1, e.front + e.zpf)
+            z2 = min(z2, e.back - e.zpb)
+
+        # Make sure that the values cannot overlap.
+        if x2 < x1: # If overlap
+            x1 = x2 = (x1 + x2)/2 # Middle the x position
+        if y2 < y1: # If overlap
+            y1 = y2 = (y1 + y2)/2 # Middle the y position
+        if z2 < z1: # If overlap
+            z1 = z2 = (z1 + z2)/2 # Middle the z position
+        return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
+    paddedBlock3D = property(_get_paddedBlock3D)
+
+    def _get_block(self):
+        u"""Answer the vacuum bounding box around all child elements in 2D"""
+        x, y, _, w, h, _ = self._get_paddedBlock3D()
+        return x, y, w, h
+    block = property(_get_block)
+
+    def _get_originsBlock3D(self):
         u"""Answer (minX, minY, maxX, maxY, minZ, maxZ) for all element origins."""
         minX = minY = XXXL
         maxX = maxY = -XXXL
@@ -1125,10 +1286,14 @@ class Element(object):
             minZ = min(minZ, e.z)
             maxZ = max(maxZ, e.z)
         return minX, minY, minZ, maxX, maxY, maxZ
+    originsBlock3D = property(_get_originsBlock3D)
 
-    def getVacuumOrigins(self):
-        minX, minY, _, maxX, maxY, _ = self.getVacuumOrigins3D()
+    def _get_originsBlock(self):
+        minX, minY, _, maxX, maxY, _ = self._get_originsBlock3D()
         return minX, minY, maxX, maxY
+    originsBlock = property(_get_originsBlock)
+
+    # Size limits
 
     def _get_minW(self):
         return self.css('minW') or MIN_WIDTH
@@ -1244,7 +1409,8 @@ class Element(object):
     def getFloatTopSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max y that can float to top, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection between (self.left, self.right).
-        Note that the y may be outside the parent box. Only elements with identical z-value are compared."""
+        Note that the y may be outside the parent box. Only elements with identical z-value are compared.
+        Comparison of available spave, includes the margins of the elements."""
         if self.originTop:
             y = 0
         else:
@@ -1252,18 +1418,19 @@ class Element(object):
         for e in self.parent.elements: 
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if abs(e.z - self.z) > tolerance or e.right < self.left or self.right < e.left:
+            if abs(e.z - self.z) > tolerance or e.mRight < self.mLeft or self.mRight < e.mLeft:
                 continue # Not equal z-layer or not in window of vertical projection.
             if self.originTop:
-                y = max(y, e.bottom)
+                y = max(y, e.mBottom)
             else:
-                y = min(y, e.bottom)
+                y = min(y, e.mBottom)
         return y
 
     def getFloatBottomSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max y that can float to bottom, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
-        Note that the y may be outside the parent box. Only elements with identical z-value are compared."""
+        Note that the y may be outside the parent box. Only elements with identical z-value are compared.
+        Comparison of available spave, includes the margins of the elements."""
         if self.originTop:
             y = self.parent.h
         else:
@@ -1271,38 +1438,46 @@ class Element(object):
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if abs(e.z - self.z) > tolerance or e.right < self.left or self.right < e.left:
+            if abs(e.z - self.z) > tolerance or e.mRight < self.mLeft or self.mRight < e.mLeft:
                 continue # Not equal z-layer or not in window of vertical projection.
             if self.originTop:
-                y = min(y, e.top)
+                y = min(y, e.mTop)
             else:
-                y = max(y, e.top)
+                y = max(y, e.mTop)
         return y
 
     def getFloatLeftSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max x that can float to the left, without overlapping previous sibling elements.
         This means we are just looking at the horizontal projection of (self.top, self.bottom).
-        Note that the x may be outside the parent box. Only elements with identical z-value are compared."""
+        Note that the x may be outside the parent box. Only elements with identical z-value are compared.
+        Comparison of available spave, includes the margins of the elements."""
         x = 0
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if abs(e.z - self.z) > tolerance or e.bottom < self.top or self.bottom < e.top:
-                continue # Not equal z-layer or not in window of horizontal projection.
-            x = max(e.right, x)
+            if abs(e.z - self.z) > tolerance:
+                continue # Not equal z-layer
+            if self.originTop: # not in window of horizontal projection.
+                if e.mBottom <= self.mTop or self.mBottom <= e.mTop:
+                    continue
+            else:
+                if e.mBottom >= self.mTop or self.mBottom >= e.mTop:
+                    continue 
+            x = max(e.mRight, x)
         return x
 
     def getFloatRightSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max Y that can float to the right, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
-        Note that the y may be outside the parent box. Only elements with identical z-value are compared."""
+        Note that the y may be outside the parent box. Only elements with identical z-value are compared.
+        Comparison of available spave, includes the margins of the elements."""
         x = self.parent.w
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
                 break 
-            if abs(e.z - self.z) > tolerance or e.bottom < self.top or self.bottom < e.top:
+            if abs(e.z - self.z) > tolerance or e.mBottom < self.mTop or self.mBottom < e.mTop:
                 continue # Not equal z-layer or not in window of horizontal projection.
-            x = min(e.left, x)
+            x = min(e.mLeft, x)
         return x
 
     def _applyAlignment(self, p):
@@ -1396,6 +1571,179 @@ class Element(object):
                     s += '\n%s %s' % eFail
         return s
 
+    def drawFrame(self, p, view):
+        u"""Draw fill of the rectangular element space.
+        The self.css('fill') defines the color of the element background.
+        Instead of the DrawBot stroke and strokeWidth attributes, use
+        borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
+        """
+        eShadow = self.css('shadow', None)
+        if eShadow:
+            save()
+            setShadow(eShadow)
+            rect(p[0], p[1], self.w, self.h)
+            restore()
+
+        eFill = self.css('fill', None)
+        eGradient = self.css('gradient', None)
+        if eFill or eGradient:
+            save()
+            # Drawing element fill and/or frame
+            if eGradient: # Gradient overwrites setting of fill.
+                setGradient(eGradient, p, self) # Add self to define start/end from relative size.
+            else:
+                setFillColor(eFill)
+            #setStrokeColor(eStroke, eStrokeWidth)
+            rect(p[0], p[1], self.w, self.h)
+            # Later usage: drawing the margin and padding should be done by view settings.
+            #if self.ml or self.mr or self.mb or self.mt:
+            #    setStrokeColor((0, 0, 1))
+            #    setFillColor(None)
+            #    rect(p[0]-self.ml, p[1]-self.mb, self.w + self.ml + self.mr, self.h + self.mb + self.mt)
+            #if self.pl or self.pr or self.pb or self.pt:
+            #    setStrokeColor((0, 1, 0))
+            #    setFillColor(None)
+            #    rect(p[0]+self.pl, p[1]+self.pb, self.w - self.pl - self.pr, self.h - self.pb - self.pt)
+            restore()
+
+        # Instead of full frame drawing, check on separate border settings.
+        borderTop = self.borderTop
+        borderBottom = self.borderBottom
+        borderRight = self.borderRight
+        borderLeft = self.borderLeft
+
+        if borderTop is not None:
+            save()
+            if borderTop['dash']:
+                lineDash(*borderTop['dash'])
+            setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
+
+            oLeft = 0 # Extra offset on left, if there is a left border.
+            if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
+                if borderLeft['line'] == ONLINE:
+                    oLeft = borderLeft['strokeWidth']/2
+                elif borderLeft['line'] == OUTLINE:
+                    oLeft = borderLeft['strokeWidth']
+
+            oRight = 0 # Extra offset on right, if there is a right border.
+            if borderRight and (borderRight['strokeWidth'] or 0) > 1:
+                if borderRight['line'] == ONLINE:
+                    oRight = borderRight['strokeWidth']/2
+                elif borderRight['line'] == OUTLINE:
+                    oRight = borderRight['strokeWidth']
+
+            if borderTop['line'] == OUTLINE:
+                oTop = borderTop['strokeWidth']/2
+            elif borderTop['line'] == INLINE:
+                oTop = -borderTop['strokeWidth']/2
+            else:
+                oTop = 0
+
+            if self.originTop:
+                line((p[0]-oLeft, p[1]-oTop), (p[0]+self.w+oRight, p[1]-oTop))
+            else:
+                line((p[0]-oLeft, p[1]+self.h+oTop), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+            restore()
+
+        if borderBottom is not None:
+            save()
+            if borderBottom['dash']:
+                lineDash(*borderBottom['dash'])
+            setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
+
+            oLeft = 0 # Extra offset on left, if there is a left border.
+            if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
+                if borderLeft['line'] == ONLINE:
+                    oLeft = borderLeft['strokeWidth']/2
+                elif borderLeft['line'] == OUTLINE:
+                    oLeft = borderLeft['strokeWidth']
+
+            oRight = 0 # Extra offset on right, if there is a right border.
+            if borderRight and (borderRight['strokeWidth'] or 0) > 1:
+                if borderRight['line'] == ONLINE:
+                    oRight = borderRight['strokeWidth']/2
+                elif borderRight['line'] == OUTLINE:
+                    oRight = borderRight['strokeWidth']
+
+            if borderBottom['line'] == OUTLINE:
+                oBottom = borderBottom['strokeWidth']/2
+            elif borderBottom['line'] == INLINE:
+                oBottom = -borderBottom['strokeWidth']/2
+            else:
+                oBottom = 0
+
+            if self.originTop:
+                line((p[0]-oLeft, p[1]+self.h+oBottom), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
+            else:
+                line((p[0]-oLeft, p[1]-oBottom), (p[0]+self.w+oRight, p[1]-oBottom))
+            restore()
+        
+        if borderRight is not None:
+            save()
+            if borderRight['dash']:
+                lineDash(*borderRight['dash'])
+            setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
+
+            oTop = 0 # Extra offset on top, if there is a top border.
+            if borderTop and (borderTop['strokeWidth'] or 0) > 1:
+                if borderTop['line'] == ONLINE:
+                    oTop = borderTop['strokeWidth']/2
+                elif borderLeft['line'] == OUTLINE:
+                    oTop = borderTop['strokeWidth']
+
+            oBottom = 0 # Extra offset on bottom, if there is a bottom border.
+            if borderBottom and (borderBottom['strokeWidth'] or 0) > 1:
+                if borderBottom['line'] == ONLINE:
+                    oBottom = borderBottom['strokeWidth']/2
+                elif borderBottom['line'] == OUTLINE:
+                    oBottom = borderBottom['strokeWidth']
+
+            if borderRight['line'] == OUTLINE:
+                oRight = borderRight['strokeWidth']/2
+            elif borderLeft['line'] == INLINE:
+                oRight = -borderRight['strokeWidth']/2
+            else:
+                oRight = 0
+
+            if self.originTop:
+                line((p[0]+self.w+oRight, p[1]-oTop), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
+            else:
+                line((p[0]+self.w+oRight, p[1]-oBottom), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+            restore()
+
+        if borderLeft is not None:
+            save()
+            if borderLeft['dash']:
+                lineDash(*borderLeft['dash'])
+            setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
+
+            oTop = 0 # Extra offset on top, if there is a top border.
+            if borderTop and (borderTop['strokeWidth'] or 0) > 1:
+                if borderTop['line'] == ONLINE:
+                    oTop = borderTop['strokeWidth']/2
+                elif borderLeft['line'] == OUTLINE:
+                    oTop = borderTop['strokeWidth']
+
+            oBottom = 0 # Extra offset on bottom, if there is a bottom border.
+            if borderBottom and (borderBottom['strokeWidth'] or 0) > 1:
+                if borderBottom['line'] == ONLINE:
+                    oBottom = borderBottom['strokeWidth']/2
+                elif borderBottom['line'] == OUTLINE:
+                    oBottom = borderBottom['strokeWidth']
+
+            if borderLeft['line'] == OUTLINE:
+                oLeft = borderLeft['strokeWidth']/2
+            elif borderLeft['line'] == INLINE:
+                oLeft = -borderLeft['strokeWidth']/2
+            else:
+                oLeft = 0
+
+            if self.originTop:
+                line((p[0]-oLeft, p[1]-oTop), (p[0]-oLeft, p[1]+self.h+oBottom))
+            else:
+                line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
+            restore()
+
     def draw(self, origin, view, drawElements=True):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
@@ -1403,17 +1751,17 @@ class Element(object):
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        eFill = self.css('fill', None)
-        eStroke = self.css('stroke', None)
-        eStrokeWidth = self.css('strokeWidth')
-        if eFill or (eStroke and eStrokeWidth):
-            setFillColor(eFill)
-            setStrokeColor(eStroke, eStrokeWidth)
-            rect(px, py, self.w, self.h)
+        self.drawFrame(p, view) # Draw optional frame or borders.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
 
         if drawElements:
             # If there are child elements, draw them over the pixel image.
             self._drawElements(p, view)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
@@ -1634,43 +1982,78 @@ class Element(object):
             return abs(self.top) <= tolerance
         return abs(self.parent.h - self.top) <= tolerance
 
+    # Shrink block conditions
+
+    def isSchrunkOnBlockLeft(self, tolerance):
+        boxX, _, _, _ = self.marginBox
+        return abs(self.left + self.pl - boxX) <= tolerance
+
+    def isShrunkOnBlockRight(self, tolerance):
+        boxX, _, boxW, _ = self.marginBox
+        return abs(self.right - self.pr - (boxX + boxW)) <= tolerance
+     
+    def isShrunkOnBlockTop(self, tolerance):
+        _, boxY, _, boxH = self.marginBox
+        if self.originTop:
+            return abs(self.top + self.pt - boxY) <= tolerance
+        return self.top - self.pt - (boxY + boxH) <= tolerance
+
+    def isShrunkOnBlockBottom(self, tolerance):
+        u"""Test if the bottom of self is shrunk to the bottom position of the block."""
+        _, boxY, _, boxH = self.marginBox
+        if self.originTop:
+            return abs(self.h - self.pb - (boxY + boxH)) <= tolerance
+        return abs(self.pb - boxY) <= tolerance
+
+    def isShrunkOnBlockLeftSide(self, tolerance):
+        boxX, _, _, _ = self.box
+        return abs(self.left - boxX) <= tolerance
+
+    def isShrunkOnBlockRightSide(self, tolerance):
+        boxX, _, boxW, _ = self.mbox
+        return abs(self.right - (boxX + boxW)) <= tolerance
+     
+    def isShrunkOnBlockTopSide(self, tolerance):
+        _, boxY, _, boxH = self.box
+        if self.originTop:
+            return abs(self.top - boxY) <= tolerance
+        return self.top - (boxY + boxH) <= tolerance
+
+    def isShrunkOnBlockBottomSide(self, tolerance):
+        _, boxY, _, boxH = self.marginBox
+        if self.originTop:
+            return abs(self.bottom - (boxY + boxH)) <= tolerance
+        return abs(self.bottom - boxY) <= tolerance
+
+    # Float conditions
+
     def isFloatOnTop(self, tolerance=0):
         if self.originTop:
-            return abs(max(self.getFloatTopSide(), self.parent.pt) - self.top) <= tolerance
-        return abs(min(self.getFloatTopSide(), self.parent.h - self.parent.pt) - self.top) <= tolerance
+            return abs(max(self.getFloatTopSide(), self.parent.pt) - self.mTop) <= tolerance
+        return abs(min(self.getFloatTopSide(), self.parent.h - self.parent.pt) - self.mTop) <= tolerance
 
     def isFloatOnTopSide(self, tolerance=0):
-        return abs(self.getFloatTopSide() - self.top) <= tolerance
+        return abs(self.getFloatTopSide() - self.mTop) <= tolerance
 
     def isFloatOnBottom(self, tolerance=0):
         if self.originTop:
-            return abs(min(self.getFloatBottomSide(), self.parent.h - self.parent.pb) - self.bottom) <= tolerance
-        return abs(max(self.getFloatTopSide(), self.parent.pb) - self.bottom) <= tolerance
+            return abs(min(self.getFloatBottomSide(), self.parent.h - self.parent.pb) - self.mBottom) <= tolerance
+        return abs(max(self.getFloatBottomSide(), self.parent.pb) - self.mBottom) <= tolerance
 
     def isFloatOnBottomSide(self, tolerance=0):
-        return abs(self.getFloatBottomSide() - self.bottom) <= tolerance
+        return abs(self.getFloatBottomSide() - self.mBottom) <= tolerance
 
     def isFloatOnLeft(self, tolerance=0):
-        return abs(max(self.getFloatLeftSide(), self.parent.pl) - self.left) <= tolerance
+        return abs(max(self.getFloatLeftSide(), self.parent.pl) - self.mLeft) <= tolerance
 
     def isFloatOnLeftSide(self, tolerance=0):
-        return abs(self.getFloatLeftSide() - self.left) <= tolerance
+        return abs(self.getFloatLeftSide() - self.mLeft) <= tolerance
 
     def isFloatOnRight(self, tolerance=0):
-        return abs(min(self.getFloatRightSide(), self.parent.w - self.parent.pr) - self.right) <= tolerance
+        return abs(min(self.getFloatRightSide(), self.parent.w - self.parent.pr) - self.mRight) <= tolerance
 
     def isFloatOnRightSide(self, tolerance=0):
-        return abs(self.getFloatRightSide() - self.right) <= tolerance
-
-    def isVacuumOnWidth(self, tolerance=0):
-        x, _, _, w, _, _ = self.getVacuumElementsBox3D()
-        return abs(self.left - x) <= tolerance and abs(self.w - w) <= tolerance
-
-    def isVacuumOnHeight(self, tolerance=0):
-        _, y, _, _, h, _ = self.getVacuumElementsBox3D()
-        if self.originTop:
-            return abs(self.top - y) <= tolerance and abs(self.h - h) <= tolerance
-        return abs(self.bottom - y) <= tolerance and abs(self.h - h) <= tolerance
+        return abs(self.getFloatRightSide() - self.mRight) <= tolerance
 
     #   T R A N S F O R M A T I O N S 
 
@@ -1760,60 +2143,6 @@ class Element(object):
 
     def middle2MiddleSides(self):
         self.middle = self.parent.h/2
-
-    def fit2Bottom(self):
-        if self.originTop:
-            self.h += self.parent.h - self.parent.pb - self.bottom
-        else:
-            self.h = self.top - self.parent.pb
-        return True
-
-    def fit2BottomSide(self):
-        if self.originTop:
-            self.h += self.parent.h - self.bottom
-        else:
-            top = self.top
-            self.bottom = 0
-            self.h += top - self.top
-        return True
-
-    def fit2Left(self):
-        right = self.right
-        self.left = self.parent.pl # Padding left
-        self.w += right - self.right
-        return True
-
-    def fit2LeftSide(self):
-        right = self.right
-        self.left = 0
-        self.w += right - self.right
-        return True
-
-    def fit2Right(self):
-        self.w += self.parent.w - self.parent.pr - self.right
-        return True
-
-    def fit2RightSide(self):
-        self.w += self.parent.w - self.right
-        return True
-
-    def fit2Top(self):
-        if self.originTop:
-            bottom = self.bottom
-            self.top = self.parent.pt
-            self.h += bottom - self.bottom
-        else:
-            self.h += self.parent.h - self.parent.pt - self.top
-        return True
-
-    def fit2TopSide(self):
-        if self.originTop:
-            bottom = self.bottom
-            self.top = 0
-            self.h += bottom - self.bottom
-        else:
-            self.h += self.parent.h - self.top
-        return True
 
     def left2Center(self):
         pl = self.parent.pl # Get parent padding left
@@ -1967,60 +2296,170 @@ class Element(object):
     
     def top2TopSide(self):
         if self.originTop:
-            self.top = 0
+            self.mTop = 0
         else:
-            self.top = self.parent.h
+            self.mTop = self.parent.h
         return True
 
     def float2Top(self):
+        u"""Float the element upward, until top hits the parent top padding.
+        Include margin to decide if it fits."""
         if self.originTop:
-            self.top = min(self.getFloatTopSide(), self.parent.pt)
+            self.mTop = min(self.getFloatTopSide(), self.parent.pt)
         else:
-            self.top = min(self.getFloatTopSide(), self.parent.h - self.parent.pt)
+            self.mTop = min(self.getFloatTopSide(), self.parent.h - self.parent.pt)
         return True
 
     def float2TopSide(self):
-        self.top = self.getFloatTopSide()
+        self.mTop = self.getFloatTopSide()
         return True
 
     def float2Bottom(self):
         if self.originTop:
-            self.bottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
+            self.mBottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
         else:
-            self.bottom = min(self.getFloatBottomSide(), self.parent.pb)
+            self.mBottom = min(self.getFloatBottomSide(), self.parent.pb)
         return True
 
     def float2BottomSide(self):
-        self.bottom = self.getFloatBottomSide()
+        self.mBottom = self.getFloatBottomSide()
         return True
 
     def float2Left(self):
-        self.left = max(self.getFloatLeftSide(), self.parent.pl) # padding left
+        self.mLeft = max(self.getFloatLeftSide(), self.parent.pl) # padding left
         return True
 
     def float2LeftSide(self):
-        self.left = self.getFloatLeftSide()
+        self.mLeft = self.getFloatLeftSide()
         return True
 
     def float2Right(self):
-        self.right = min(self.getFloatRightSide(), self.parent.w - self.parent.pr)
+        self.mRight = min(self.getFloatRightSide(), self.parent.w - self.parent.pr)
         return True
 
     def float2RightSide(self):
-        self.right = self.getFloatRightSide()
+        self.mRight = self.getFloatRightSide()
         return True
 
-    # Vacuum
-
-    def vacuum2Width(self):
-        x, _, _, w, _, _ = self.getVacuumElementsBox3D()
-        self.left -= x
-        self.w = w
-
-    def vacuum2Height(self):
-        _, y, _, _, h, _ = self.getVacuumElementsBox3D()
+    # WIth fitting (and shrinking) we need to change the actual size of the element.
+    # This can have implications on it's content, and we need to take the min/max
+    # sizes into conderantion: setting the self.w and self.h to a value, does not mean
+    # that the size really got that value, if exceeding a min/max limit.
+    
+    def fit2Bottom(self):
         if self.originTop:
-            self.top += y
+            self.h += self.parent.h - self.parent.pb - self.bottom
         else:
-            self.bottom -= y
-        self.h = h
+            self.h = self.top - self.parent.pb
+            self.bottom = self.parent.pb
+        return True
+
+    def fit2BottomSide(self):
+        if self.originTop:
+            self.h += self.parent.h - self.bottom
+        else:
+            top = self.top
+            self.bottom = 0
+            self.h += top - self.top
+        return True
+
+    def fit2Left(self):
+        right = self.right
+        self.left = self.parent.pl # Padding left
+        self.w += right - self.right
+        return True
+
+    def fit2LeftSide(self):
+        right = self.right
+        self.left = 0
+        self.w += right - self.right
+        return True
+
+    def fit2Right(self):
+        self.w += self.parent.w - self.parent.pr - self.right
+        return True
+
+    def fit2RightSide(self):
+        self.w += self.parent.w - self.right
+        return True
+
+    def fit2Top(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = self.parent.pt
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.parent.pt - self.top
+        return True
+
+    def fit2TopSide(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = 0
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.top
+        return True
+
+    # Shrinking
+    
+    def shrink2BlockBottom(self):
+        _, boxY, _, boxH = self.box
+        if self.originTop:
+            self.h = boxH
+        else:
+            top = self.top
+            self.bottom = boxY
+            self.h += top - self.top
+        return True
+
+    def shrink2BlockBottomSide(self):
+        if self.originTop:
+            self.h += self.parent.h - self.bottom
+        else:
+            top = self.top
+            self.bottom = 0 # Parent botom 
+            self.h += top - self.top
+        return True
+
+    def shrink2BlockLeft(self):
+        right = self.right
+        self.left = self.parent.pl # Padding left
+        self.w += right - self.right
+        return True
+
+    def shrink2BlockLeftSide(self):
+        right = self.right
+        self.left = 0
+        self.w += right - self.right
+        return True
+
+    def shrink2BlockRight(self):
+        self.w += self.parent.w - self.parent.pr - self.right
+        return True
+
+    def shrink2BlockRightSide(self):
+        self.w += self.parent.w - self.right
+        return True
+
+    def shrink2BlockTop(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = self.parent.pt
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.parent.pt - self.top
+        return True
+
+    def shrink2BlockTopSide(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = 0
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.top
+        return True
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

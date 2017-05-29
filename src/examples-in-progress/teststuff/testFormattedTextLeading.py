@@ -1,11 +1,11 @@
 from pagebot.style import getRootStyle
-from pagebot import getFormattedString
+from pagebot import newFS
 
 rs = getRootStyle()
 rs['leading'] = 10
 rs['fontSize'] = 9
 rs['font'] = 'Verdana'
-fs = getFormattedString('aaa', None, rs)
+fs = newFS('aaa', None, rs)
 
 a = FormattedString('', lineHeight=rs['leading'], fontSize=rs['fontSize'], font='Verdana')
 for n in range(100):

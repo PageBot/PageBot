@@ -19,7 +19,7 @@ from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
+from pagebot import newFS, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 
 from pagebot.elements import *
 from pagebot.document import Document
@@ -58,17 +58,6 @@ else:
 
 EXPORT_PATH = '_export/ColorSquares.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
-
-Variable([
-    dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='CropMarks', ui='CheckBox', args=dict(value=True)),
-    dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
-    dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
-    dict(name='PageNameInfo', ui='CheckBox', args=dict(value=True)),
-    dict(name='ViewPadding', ui='Slider', args=dict(minValue=0, value=64, maxValue=200)),
-    dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-], globals())
-
 def makeDocument(rs):
     u"""Make a new document, using the rs as root style."""
 
@@ -88,7 +77,7 @@ def makeDocument(rs):
     my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
 
 
-    doc = Document(rootStyle=rs, title='Color Squares', autoPages=1)
+    doc = Document(w=W, h=H, rootStyle=rs, originTop=False, title='Color Squares', autoPages=1)
     
     view = doc.getView()
     
@@ -137,7 +126,19 @@ def makeDocument(rs):
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around
     # added or deleted or moved to other pages.  
     return doc # Answer the doc for further doing.
-        
-d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+   
+if __name__ == '__main__':
+
+    Variable([
+        dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+        dict(name='CropMarks', ui='CheckBox', args=dict(value=True)),
+        dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
+        dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
+        dict(name='PageNameInfo', ui='CheckBox', args=dict(value=True)),
+        dict(name='ViewPadding', ui='Slider', args=dict(minValue=0, value=64, maxValue=200)),
+        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+    ], globals())
+
+    d = makeDocument(RS)
+    d.export(EXPORT_PATH) 
 

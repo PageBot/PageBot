@@ -15,7 +15,7 @@ from drawBot import rect
 from pagebot.style import NO_COLOR, makeStyle
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import getFormattedString, setStrokeColor, setFillColor
+from pagebot import newFS, setStrokeColor, setFillColor
 
 class Galley(Element):
     u"""A Galley is sticky sequential flow of elements, where the parts can have
@@ -108,6 +108,9 @@ class Galley(Element):
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         setFillColor((1, 1, 0.3))
         gw, gh = self.getSize()
         rect(px, py, gw, gh)
@@ -116,6 +119,9 @@ class Galley(Element):
             # @@@ Find space and do more composition
             element.draw((px, py + gy), view)
             gy += element.h
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin)

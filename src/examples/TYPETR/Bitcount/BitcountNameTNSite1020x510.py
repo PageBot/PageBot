@@ -21,7 +21,7 @@ from random import choice
 
 import pagebot
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import newFS, textBoxBaseLines
 
 typetrStoreUrl = 'https://store.typenetwork.com/foundry/typetr'
 EXPORT_PATH = '_export/BitcountLayerCatalogAnimation.gif'
@@ -41,7 +41,7 @@ backgroundColor = (0, 0, 0)#(1, 1, 1) #0.1, 0.2, 0.5
 italics = False
 layers = 4
 color = True
-frames = 4
+frames = 16
 fd = 0.4 # Frame duration
 
 # Bitcount is made from 3 spacing sets: 
@@ -105,12 +105,12 @@ def getFittingString(t, fontName, c):
     # Calculate the size for the given string for the selected font/spacing.
     # Then use the resulting with as source to calculate the fitting fontSize.
     initialFontSize = 500 
-    fs = getFormattedString(t, None, dict(font=fontName, 
+    fs = newFS(t, None, dict(font=fontName, 
         fontSize=initialFontSize))
     fsWidth, fsHeight = fs.size()
     fontSize =  initialFontSize * (W-3*padding) / fsWidth
     # Make new formatted string in fitting fontSize
-    fs = getFormattedString(t, None, dict(font=fontName, 
+    fs = newFS(t, None, dict(font=fontName, 
         fontSize=fontSize, textFill=c))
     return fs
         
@@ -125,21 +125,22 @@ def drawLayers(fss1, fss2):
         text(fs, (2*padding, y+310))
     for fs in fss2:
         text(fs, (2.35*padding, y+5))
-     
-# If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
-if not fontNamePaths:
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'bitcount')) #familyName.lower())
-else:
-    tts = ('Prop','Mono','Grid')
-    for frame in range(frames): 
-        if frame < frames/3:
-            tt = tts[0]
-        elif frame < frames*2/3:
-            tt = tts[1]
-        else:
-            tt = tts[2]               
-        drawSample(t, tt)
 
-    saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
-    
-    
+if __name__ == '__main__':     
+    # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
+    if not fontNamePaths:
+        os.system('open %s/fonts/%s' % (typetrStoreUrl, 'bitcount')) #familyName.lower())
+    else:
+        tts = ('Prop','Mono','Grid')
+        for frame in range(frames): 
+            if frame < frames/3:
+                tt = tts[0]
+            elif frame < frames*2/3:
+                tt = tts[1]
+            else:
+                tt = tts[2]               
+            drawSample(t, tt)
+
+        saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+        
+        

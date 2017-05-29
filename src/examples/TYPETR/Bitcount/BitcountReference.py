@@ -12,11 +12,12 @@
 #     This script the PDF document with Bitcount refernce information.
 #
 import pagebot
-from pagebot import getFormattedString, findMarkers, textBoxBaseLines
+from pagebot import newFS, findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT, NO_COLOR, RIGHT
 from pagebot.document import Document
-from pagebot.elements.page import Page, Template
-from pagebot.composition import Composer, Typesetter
+from pagebot.elements.pbpage import Page, Template
+from pagebot.composer import Composer
+from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 
@@ -96,7 +97,6 @@ P_TRACK = 0
 
 familyName = 'Bitcount'
 BitcountPaths = getFamilyFontPaths(familyName) 
-print BitcountPaths.keys()
 
 BOOK = 'BitcountPropSingle-BookCircle'
 MEDIUM = 'BitcountPropSingle-MediumCircle'
@@ -328,7 +328,7 @@ def makeDocument(rs):
                         # We are re-using the typesetter here. This may become a separate typesetter, if this code
                         # becomes a method of the composer.
                         # TODO: Make this into Galley, in case footnote <p> has child nodes. 
-                        footnoteText = getFormattedString('%d\t%s\n' % (footnoteId, doc.footnotes[footnoteId]['p'].text),
+                        footnoteText = newFS('%d\t%s\n' % (footnoteId, doc.footnotes[footnoteId]['p'].text),
                             page, t.getCascadedStyle(doc.getStyle('footnote')))
                         # Add the footnote content to the box (it may not be the first to be added.
                         fnBox.append(footnoteText)
@@ -377,7 +377,11 @@ def makeDocument(rs):
                 break
     
     return doc
-        
-d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+
+if __name__ == '__main__':
+    
+    print BitcountPaths.keys()
+
+    d = makeDocument(RS)
+    d.export(EXPORT_PATH) 
 

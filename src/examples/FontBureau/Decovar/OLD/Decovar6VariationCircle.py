@@ -13,7 +13,7 @@ from __future__ import division
 
 import myglobals
 import pagebot
-from pagebot import getFormattedString
+from pagebot import newFS
 from pagebot.style import getRootStyle
 from pagebot.document import Document
 from pagebot.page import Template
@@ -41,9 +41,9 @@ DEBUG = False # Make True to see grid and element frames.
 
 FONT_PATH = pagebot.getFontPath()
 fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
-#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
-#fontPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
-#fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
+fontPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
+fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
 #fontPath = FONT_PATH + 'PromiseVar.ttf'
 #fontPath = FONT_PATH + 'BitcountGridVar.ttf'
 EXPORT_PATH = '_export/'+ fontPath.split('/')[-1].replace('ttf', 'pdf')
@@ -138,7 +138,7 @@ class VariationCircle(Element):
         a1 = None
         for a2 in sortedAngles:
             if a1 is not None:
-                if abs(a2 - a1) < 35:
+                if abs(a2 - a1) < CONNECT: # Max angle to connect
                     anglePairs.append((a1, a2))
             a1 = a2    
                         
@@ -163,9 +163,14 @@ class VariationCircle(Element):
         stroke(0)
         newPath()
         for axisName, angle in self.angles.items():
+            minValue, defaultValue, maxValue = axes[axisName]
             markerX, markerY = self._angle2XY(angle, self.w/2)
-            moveTo((mx, my))
-            lineTo((mx+markerX, my+markerY))
+            if minValue < defaultValue:
+                moveTo((mx, my))
+                lineTo((mx-markerX, my-markerY))
+            if defaultValue < maxValue:
+                moveTo((mx, my))
+                lineTo((mx+markerX, my+markerY))                
         drawPath()
 
         # Pair combinations
@@ -192,25 +197,27 @@ class VariationCircle(Element):
         # Draw DeltaLocation circles.
         for axisName, (minValue, defaultValue, maxValue) in axes.items():
             angle = self.angles[axisName]
-            # Outside maxValue 
-            location = {axisName: maxValue}
-            markerX, markerY = self._angle2XY(angle, self.w/2)
-            self._drawGlyphMarker(mx+markerX, my+markerY, glyphName, markerSize, location)
+            if defaultValue < maxValue:
+                # Outside maxValue 
+                location = {axisName: maxValue}
+                markerX, markerY = self._angle2XY(angle, self.w/2)
+                self._drawGlyphMarker(mx+markerX, my+markerY, glyphName, markerSize, location)
             
-            # Interpolated DeltaLocation circles.
-            location = {axisName: defaultValue + (maxValue - defaultValue)*INTERPOLATION}
-            markerX, markerY = self._angle2XY(angle, self.w/4)
-            self._drawGlyphMarker(mx+markerX*INTERPOLATION*2, my+markerY*INTERPOLATION*2, glyphName, markerSize, location)
+                # Interpolated DeltaLocation circles.
+                location = {axisName: defaultValue + (maxValue - defaultValue)*INTERPOLATION}
+                markerX, markerY = self._angle2XY(angle, self.w/4)
+                self._drawGlyphMarker(mx+markerX*INTERPOLATION*2, my+markerY*INTERPOLATION*2, glyphName, markerSize, location)
 
-            # Outside minValue.
-            location = {axisName: minValue}
-            markerX, markerY = self._angle2XY(angle, self.w/2)
-            self._drawGlyphMarker(mx-markerX, my-markerY, glyphName, markerSize, location)
+            if minValue < defaultValue:
+                # Outside minValue.
+                location = {axisName: minValue}
+                markerX, markerY = self._angle2XY(angle, self.w/2)
+                self._drawGlyphMarker(mx-markerX, my-markerY, glyphName, markerSize, location)
 
-            # Interpolated DeltaLocation circles.
-            location = {axisName: minValue + (defaultValue - minValue)*INTERPOLATION}
-            markerX, markerY = self._angle2XY(angle, self.w/4)
-            self._drawGlyphMarker(mx-markerX*2*INTERPOLATION, my-markerY*2*INTERPOLATION, glyphName, markerSize, location)
+                # Interpolated DeltaLocation circles.
+                location = {axisName: minValue + (defaultValue - minValue)*INTERPOLATION}
+                markerX, markerY = self._angle2XY(angle, self.w/4)
+                self._drawGlyphMarker(mx-markerX*2*INTERPOLATION, my-markerY*2*INTERPOLATION, glyphName, markerSize, location)
 
             # If there are any pairs, draw the interpolation between them
             #if anglePairs:
@@ -219,70 +226,124 @@ class VariationCircle(Element):
         # Draw axis names and DeltaLocation values
         if self.showAxisNames:
             for axisName, (minValue, defaultValue, maxValue) in axes.items():
-                angle = self.angles[axisName]
-                location = {axisName: maxValue}
-                valueFontSize = self.style.get('valueFontSize', 12)
-                axisNameFontSize = self.style.get('axisNameFontSize', 12)
-                markerX, markerY = self._angle2XY(angle, self.w/2)
-                fs = FormattedString(makeAxisName(axisName), font=self.style.get('labelFont', 'Verdana'),
-                    fontSize=axisNameFontSize, fill=self.style.get('axisNameColor', 0))
-                tw, th = textSize(fs)
-                fill(0.7, 0.7, 0.7, 0.6)
-                stroke(None)
-                rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
-                text(fs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5)) 
+                if minValue < defaultValue:
+                    angle = self.angles[axisName]
+                    valueFontSize = self.style.get('valueFontSize', 12)
+                    axisNameFontSize = self.style.get('axisNameFontSize', 12)
+                    markerX, markerY = self._angle2XY(angle, self.w/2)
+                    fs = FormattedString(makeAxisName(axisName), font=self.style.get('labelFont', 'Verdana'),
+                        fontSize=axisNameFontSize, fill=self.style.get('axisNameColor', 0))
+                    tw, th = textSize(fs)
+                    fill(0.7, 0.7, 0.7, 0.6)
+                    stroke(None)
+                    rect(mx-markerX-tw/2-4, my-markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
+                    text(fs, (mx-markerX-tw/2, my-markerY-axisNameFontSize/2-th*1.5)) 
                 
-                # DeltaLocation master value
-                if maxValue < 10:
-                    sMaxValue = '%0.2f' % maxValue
-                else:
-                    sMaxValue = `int(round(maxValue))`
-                fs = FormattedString(sMaxValue, font=self.style.get('labelFont', 'Verdana'),
-                    fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
-                tw, th = textSize(fs)
-                fill(0.7, 0.7, 0.7, 0.6)
-                stroke(None)
-                rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
-                text(fs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5)) 
+                    # DeltaLocation master value
+                    if 0 < minValue < 10:
+                        sMinValue = '%0.2f' % minValue
+                    else:
+                        sMinValue = `int(round(minValue))`
+                    fs = FormattedString(sMinValue, font=self.style.get('labelFont', 'Verdana'),
+                        fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
+                    tw, th = textSize(fs)
+                    fill(0.7, 0.7, 0.7, 0.6)
+                    stroke(None)
+                    rect(mx-markerX-tw/2-4, my-markerY+valueFontSize/2+th*1.5-4, tw+8, th)
+                    text(fs, (mx-markerX-tw/2, my-markerY+valueFontSize/2+th*1.5)) 
 
-                # DeltaLocation value
-                interpolationValue = minValue + (maxValue - minValue)*INTERPOLATION
-                if interpolationValue < 10:
-                    sValue = '%0.2f' % interpolationValue
-                else:
-                    sValue = `int(round(interpolationValue))`
-                fs = FormattedString(sValue, font=self.style.get('labelFont', 'Verdana'),
-                    fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
-                tw, th = textSize(fs)
-                fill(0.7, 0.7, 0.7, 0.6)
-                stroke(None)
-                rect(mx+markerX*INTERPOLATION-tw/2-4, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
-                text(fs, (mx+markerX*INTERPOLATION-tw/2, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5)) 
+                    # DeltaLocation value
+                    interpolationValue = minValue + (defaultValue - minValue)*INTERPOLATION
+                    if 0 < interpolationValue < 10:
+                        sValue = '%0.2f' % interpolationValue
+                    else:
+                        sValue = `int(round(interpolationValue))`
+                    fs = FormattedString(sValue, font=self.style.get('labelFont', 'Verdana'),
+                        fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
+                    tw, th = textSize(fs)
+                    fill(0.7, 0.7, 0.7, 0.6)
+                    stroke(None)
+                    rect(mx-markerX*INTERPOLATION-tw/2-4, my-markerY*INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
+                    text(fs, (mx-markerX*INTERPOLATION-tw/2, my-markerY*INTERPOLATION+valueFontSize/2+th*1.5)) 
 
-                # DeltaLocation value
-                if minValue < 10:
-                    sValue = '%0.2f' % minValue
-                else:
-                    sValue = `int(round(minValue))`
-                fs = FormattedString(sValue, font=self.style.get('labelFont', 'Verdana'),
-                    fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
-                tw, th = textSize(fs)
-                fill(0.7, 0.7, 0.7, 0.6)
-                stroke(None)
-                minM = 0.2
-                rect(mx+markerX*minM-tw/2-4, my+markerY*minM-8, tw+8, th)
-                text(fs, (mx+markerX*minM-tw/2, my+markerY*minM-4)) 
+                    # DeltaLocation value
+                    if 0 < defaultValue < 10:
+                        sValue = '%0.2f' % defaultValue
+                    else:
+                        sValue = `int(round(defaultValue))`
+                    fs = FormattedString(sValue, font=self.style.get('labelFont', 'Verdana'),
+                        fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
+                    tw, th = textSize(fs)
+                    fill(0.7, 0.7, 0.7, 0.6)
+                    stroke(None)
+                    minM = 0.15
+                    rect(mx-markerX*minM-tw/2-4, my-markerY*minM-8, tw+8, th)
+                    text(fs, (mx-markerX*minM-tw/2, my-markerY*minM-4)) 
+                
+                if defaultValue < maxValue:
+                    angle = self.angles[axisName]
+                    valueFontSize = self.style.get('valueFontSize', 12)
+                    axisNameFontSize = self.style.get('axisNameFontSize', 12)
+                    markerX, markerY = self._angle2XY(angle, self.w/2)
+                    fs = FormattedString(makeAxisName(axisName), font=self.style.get('labelFont', 'Verdana'),
+                        fontSize=axisNameFontSize, fill=self.style.get('axisNameColor', 0))
+                    tw, th = textSize(fs)
+                    fill(0.7, 0.7, 0.7, 0.6)
+                    stroke(None)
+                    rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
+                    text(fs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5)) 
+                
+                    # DeltaLocation master value
+                    if 0 < maxValue < 10:
+                        sMaxValue = '%0.2f' % maxValue
+                    else:
+                        sMaxValue = `int(round(maxValue))`
+                    fs = FormattedString(sMaxValue, font=self.style.get('labelFont', 'Verdana'),
+                        fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
+                    tw, th = textSize(fs)
+                    fill(0.7, 0.7, 0.7, 0.6)
+                    stroke(None)
+                    rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
+                    text(fs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5)) 
+
+                    # DeltaLocation value
+                    interpolationValue = defaultValue + (maxValue - defaultValue)*INTERPOLATION
+                    if 0 < interpolationValue < 10:
+                        sValue = '%0.2f' % interpolationValue
+                    else:
+                        sValue = `int(round(interpolationValue))`
+                    fs = FormattedString(sValue, font=self.style.get('labelFont', 'Verdana'),
+                        fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
+                    tw, th = textSize(fs)
+                    fill(0.7, 0.7, 0.7, 0.6)
+                    stroke(None)
+                    rect(mx+markerX*INTERPOLATION-tw/2-4, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
+                    text(fs, (mx+markerX*INTERPOLATION-tw/2, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5)) 
+
+                    # DeltaLocation value
+                    if defaultValue < 10:
+                        sValue = '%0.2f' % defaultValue
+                    else:
+                        sValue = `int(round(defaultValue))`
+                    fs = FormattedString(sValue, font=self.style.get('labelFont', 'Verdana'),
+                        fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
+                    tw, th = textSize(fs)
+                    fill(0.7, 0.7, 0.7, 0.6)
+                    stroke(None)
+                    minM = 0.15
+                    rect(mx+markerX*minM-tw/2-4, my+markerY*minM-8, tw+8, th)
+                    text(fs, (mx+markerX*minM-tw/2, my+markerY*minM-4)) 
 
 #====================
 
 FONT_SIZE = VariationCircle.DEFAULT_FONT_SIZE
 INTERPOLATION = 0.5
-CONNECT = 15 # Max angle to connect neighbors
+CONNECT = 30 # Max angle to connect neighbors
 
 VARIABLES = [
     dict(name='FONT_SIZE', ui='Slider', args=dict(value=60, minValue=24, maxValue=180)),
     dict(name='INTERPOLATION', ui='Slider', args=dict(value=0.5, minValue=0, maxValue=1)),
-    dict(name='CONNECT', ui='Slider', args=dict(value=15, minValue=0, maxValue=90)),
+    dict(name='CONNECT', ui='Slider', args=dict(value=30, minValue=0, maxValue=90)),
 ]
 angle = -90
 for axisName in axes:
@@ -318,5 +379,6 @@ d = makeDocument(RS)
 if 0: # Not saving image
     d.drawPages(None)
 else:
+    print EXPORT_PATH
     d.export(EXPORT_PATH) 
 

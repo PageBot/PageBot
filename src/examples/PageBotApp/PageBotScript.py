@@ -27,11 +27,13 @@ def hitCallback(sender):
     ScriptRunner(script, None, namespace=namespace, stdout=stdout, stderr=stderr)
     _drawBotDrawingTool._drawInContext(context)
     pdfDocument = _drawBotDrawingTool.pdfImage()
-    
-w = Window((10, 10, 400, 200), 'Window')
-w.button = Button((20,20, 100, 30), 'Hit', callback=hitCallback)
-w.open()
+  
+if __name__ == '__main__':
 
-outputWindow = Window((500, 10, 400, 300), minSize=(1, 1), closable=True)
-outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
-outputWindow.open()
+    w = Window((10, 10, 400, 200), 'Window')
+    w.button = Button((20,20, 100, 30), 'Hit', callback=hitCallback)
+    w.open()
+
+    outputWindow = Window((500, 10, 400, 300), minSize=(1, 1), closable=True)
+    outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
+    outputWindow.open()

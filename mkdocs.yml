@@ -1,0 +1,9 @@
+site_name: PageBot
+repo_url: https://github.com/typenetwork/PageBot/
+repo_name: PageBot
+theme: readthedocs
+pages:
+  - 'Home': 'index.md'
+  - 'How To': 'howto.md'
+  - 'API': 'pagebot.md'
+  - 'About': 'about.md'

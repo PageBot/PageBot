@@ -15,14 +15,14 @@
 from __future__ import division
 
 import pagebot
-from pagebot import getFormattedString
-from pagebot.page import Template
+from pagebot import newFS
+from pagebot.elements.pbpage import Template
 from pagebot.style import A4,MM
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variablecube import VariableCube
-from pagebot.fonttoolbox.elements.variablescatter import VariableScatter
+from pagebot.elements.variablefonts.variablecube import VariableCube
+#from pagebot.fonttoolbox.elements.variablescatter import VariableScatter
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -42,10 +42,10 @@ else:
 FONT_PATH = pagebot.getFontPath()
 AmstelVarPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
 #DecovarPath = u"/Users/petr/git/PageBotTYPETR/src/fonts/BitcountVar/BitcountGrid-GX.ttf"
-print 'Using font', AmstelVarPath
+#print 'Using font', AmstelVarPath
 
 # Installing the font in DrawBot
-amstelVarName = installFont(AmstelVarPath)
+#amstelVarName = installFont(AmstelVarPath)
 
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
 
@@ -129,14 +129,14 @@ class VariableTypeSpecimen(TypeSpecimen):
 
     def buildVariablePage(self, varFont, page):
         title = page.getElement(self.titleBoxId)
-        fs = getFormattedString(varFont.info.fullName.upper(), self, dict(fontSize=32, font=amstelVarName))
+        fs = newFS(varFont.info.fullName.upper(), self, dict(fontSize=32, font=amstelVarName))
         title.append(fs)
 
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
         # Create the formatted string with the style names shown in their own style.
         # The first one in the list is also used to show the family Name.
         for fontSize in (9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24):
-            fs = getFormattedString('%dPT %s\n' % (fontSize, s), self,
+            fs = newFS('%dPT %s\n' % (fontSize, s), self,
                 style=dict(font=amstelVarName, fontSize=fontSize, hyphenation=False))
             column.append(fs)
 
@@ -187,10 +187,11 @@ class VariableTypeSpecimen(TypeSpecimen):
                 page.place(vCube, 50, 100)
 
 
-# Create a new specimen publications and add the list of system fonts.
-typeSpecimen = VariableTypeSpecimen([amstelVarName], showGrid=DEBUG)
-# Build the pages of the publication, interpreting the font list.
-typeSpecimen.build()
-# Export the document of the publication to PDF.
-typeSpecimen.export(OUTPUT_FILE)
+if 0:
+    # Create a new specimen publications and add the list of system fonts.
+    typeSpecimen = VariableTypeSpecimen([amstelVarName], showGrid=DEBUG)
+    # Build the pages of the publication, interpreting the font list.
+    typeSpecimen.build()
+    # Export the document of the publication to PDF.
+    typeSpecimen.export(OUTPUT_FILE)
 
