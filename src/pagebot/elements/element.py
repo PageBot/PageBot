@@ -38,6 +38,7 @@ class Element(object):
     isText = False
     isTextBox = False
     isFlow = False # Value is True if self.next if defined.
+    isPage = False # Set to True by Page-like elements.
 
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
             title=None, style=None, conditions=None, elements=None, template=None, nextElement=None, prevElement=None, 
@@ -184,14 +185,20 @@ class Element(object):
         u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
         return self._eIds.get(eId)
 
-    def getElementByName(self, name, ancestors=False):
-        u"""Answer the first element in the children list that fits the name. Answer None if it cannot be found."""
+    def getElementPage(self):
+        u"""Recursively answer the page of this element. This can be several layers above self."""
+        if self.isPage:
+            return self
+        return self.parent.getElementPage()
+
+    def getElementByName(self, name):
+        u"""Answer the first element in the offspring list that fits the name. Answer None if it cannot be found"""
+        if self.name == name:
+            return self
         for e in self.elements:
-            if e.name == name:
-                return e
-        # Not found, search ancestors? 
-        if ancestors:
-            return self.parent.getElementByName(name, ancestors)
+            found = e.getElementByName(name) # Don't search on next page yet.
+            if found is not None:
+                return found
         return None
 
     def clearElements(self):
