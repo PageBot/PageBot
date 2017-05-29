@@ -34,7 +34,7 @@ class Image(Element):
         if imageConditions is None:
             imageConditions = (Top2TopSide(), Fit2Width())
         if pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
-            pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, h=h,
+            pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, h=h, 
                 conditions=imageConditions, **kwargs) # Default width is leading.
         self.image = pixelMap # Property to add to self.elements and set pixelMap.parent to self.
         # Title can be any type of element, but most likely a text box.
@@ -68,6 +68,9 @@ class Image(Element):
     caption = property(_get_caption, _set_caption)
 
     def _get_w(self):
+        if self._w is None:
+            # @@@@ TODO, Calculate the combination size of elements.
+            return None
         return self._w 
     def _set_w(self, w):
         self._w = w
@@ -76,6 +79,9 @@ class Image(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
+        if self._h is None:
+            # @@@@ TODO, Calculate the combination size of elements.
+            return None
         return self._h
     def _set_h(self, h): 
         self._h = h
@@ -87,7 +93,7 @@ class Image(Element):
 class PixelMap(Element):
     u"""The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId."""
    
-    def __init__(self, path, w=None, h=None, clipRect=None, clipPath=None, mask=None, 
+    def __init__(self, path, w=None, h=None, z=0, clipRect=None, clipPath=None, mask=None, 
         imo=None, **kwargs):
         Element.__init__(self, **kwargs)
 
@@ -95,6 +101,7 @@ class PixelMap(Element):
         # If both are set, then the image scales disproportional.
         self.w = w
         self.h = h
+        self.z = z # Make conditions work with captions inside the image frame element.
 
         self.mask = mask # Optional mask element.
         self.clipRect = clipRect # Optional clip rectangle

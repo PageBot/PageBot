@@ -112,9 +112,9 @@ def makeDocument(rootStyle):
     textFS = headLineFS + blurbTextFS + smallTextFS
 
     tb = newTextBox(textFS, point=(page.pl, page.pb), parent=page, 
-         yAlign=TOP, conditions=[Top2Top(), FitWidth()], stroke=None, fill=None)
+         yAlign=TOP, conditions=[Top2Top(), Fit2Width()], stroke=None, fill=None)
 
-    bl = tb.getBaseLines()
+    bl = tb.baseLines
     if bl:
         print bl
         print tb.top, bl[0]
