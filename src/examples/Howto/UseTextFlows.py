@@ -41,7 +41,7 @@ def makeDocument():
     doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)
     
     view = doc.getView()
-    view.padding = 40 # Aboid showing of crop marks, etc.
+    view.padding = 0 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
@@ -88,11 +88,13 @@ def makeDocument():
     # Get next page, to show flow running over page breaks.
     page1 = doc[1]
     page1.name = 'Page 2'
+    page1.padding = PagePadding
+
     e3 = newTextBox('', # Empty box, will get the overflow from e2, if there is any.
         name='ElasticTextBox3', # Flow reference by element.name
         parent=page1, padding=4, w=BoxWidth,  
         maxW=W-2*PagePadding, minW=100,
-        conditions=[Right2RightSide(), Float2Top(), Fit2Bottom()], 
+        conditions=[Right2Right(), Float2Top(), Fit2Bottom()], 
         yAlign=TOP,  fill=1, stroke=None)
         
     score = doc.solve() # Try to solve all pages.
