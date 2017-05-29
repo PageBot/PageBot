@@ -6,9 +6,12 @@
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
-#Z
+#
 #     UseTextFlows.py
 #
+#     If a TextBox as self.nextElement defined as name for another text box on the
+#     same page, then overflow of self will go into the other text box.
+
 from __future__ import division # Make integer division result in float.
 import pagebot # Import to know the path of non-Python resources.
 
@@ -26,26 +29,16 @@ DoTextFlow = False
 PagePadding = 32
 PageSize = 500
 
-GUTTER = 8 # Distance between the squares.
-SQUARE = 10 * GUTTER # Size of the squares
-
-# The standard PageBot function getRootStyle() answers a standard Python dictionary, 
-# where all PageBot style entries are filled by their default values. The root style is kept in RS
-# as reference for the ininitialization of all elements. 
-# Each element uses the root style as copy and then modifies the values it needs. 
-# Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
-# that is very similar to what happens in CSS.
-
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/UseTextFlows.pdf' 
 
 def makeDocument():
     u"""Make a new document."""
 
-    #W = H = 120 # Get the standard a4 width and height in points.
     W = H = PageSize
 
-    doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=1)
+    # Create a new document, default to the defined page size. 
+    doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)
     
     view = doc.getView()
     view.padding = 40 # Aboid showing of crop marks, etc.
@@ -58,38 +51,51 @@ def makeDocument():
     
     # Get list of pages with equal y, then equal x.    
     #page = doc[0][0] # Get the single page from te document.
-    page = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
-    page.name = 'This is a demo page for floating child elements'
-    page.padding = PagePadding
+    page0 = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
+    page0.name = 'Page 1'
+    page0.padding = PagePadding
     
-    if BoxWidth < 200:
-        tColor = (1, 0, 0)
-    else:
-        tColor = 0
     s = ''
     for n in range(10):
-        s += '(%d) Volume of text defines the box height.\n' % (n+1)
+        s += '(Line %d) Volume of text defines the box height. Volume of text defines the box height. \n' % (n+1)
     if DoTextFlow:
-        h1 = 105
+        h1 = 100 # Fox on a given height, to show the text flowing to the e2 element.
     else:
-        h1 = None    
+        h1 = None  
+          
     e1 = newTextBox(s, 
         name='ElasticTextBox1',
-        nextElement='ElasticTextBox2', 
-        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
-        maxW=W-2*PagePadding, minW=100,      
-        conditions=[Left2Left(), Float2Top(), Overflow2Next()], 
+        nextElement='ElasticTextBox2', # Overflow goes here.
+        parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
+        maxW=W-2*PagePadding, minW=100, 
+        # Conditions make the element move to top-left of the page.
+        # And the condition that there should be no overflow, otherwise the text box
+        # will try to solve it.     
+        conditions=[Left2Left(), Float2Top(), Overflow2Next()],
+        # Position of the origin of the element. Just to show where it is.
+        # Has no effect on the position conditions. 
         yAlign=BOTTOM, xAlign=LEFT,
-        leading=5, fontSize=9, textFill=tColor, strokeWidth=0.5, fill=0.9, stroke=None,
+        leading=5, fontSize=9, textFill=0, strokeWidth=0.5, fill=0.9, stroke=None,
     )
        
-    e2 = newTextBox('DDD',
-        name='ElasticTextBox2', 
-        parent=page, padding=4, x=100, w=BoxWidth, h=200, 
+    e2 = newTextBox('', # Empty box, will get the overflow from e1, if there is any.
+        name='ElasticTextBox2', # Flow reference by element.name 
+        nextElement='ElasticTextBox3', nextPage='Page 2',
+        parent=page0, padding=4, x=100, w=BoxWidth, h=200, 
         maxW=W-2*PagePadding, minW=100,
-        conditions=[Right2RightSide(), Float2Top()], yAlign=TOP,  fill=1, stroke=None,
+        conditions=[Right2Right(), Float2Top(), Fit2Bottom(), Overflow2Next()], yAlign=TOP,  fill=1, stroke=None,
     )
-    score = page.solve()
+    # Get next page, to show flow running over page breaks.
+    page1 = doc[1]
+    page1.name = 'Page 2'
+    e3 = newTextBox('', # Empty box, will get the overflow from e2, if there is any.
+        name='ElasticTextBox3', # Flow reference by element.name
+        parent=page1, padding=4, w=BoxWidth,  
+        maxW=W-2*PagePadding, minW=100,
+        conditions=[Right2RightSide(), Float2Top(), Fit2Bottom()], 
+        yAlign=TOP,  fill=1, stroke=None)
+        
+    score = doc.solve() # Try to solve all pages.
     if score.fails:
         print score.fails
 
@@ -97,10 +103,9 @@ def makeDocument():
  
 if __name__ == '__main__':
 
-
     Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-        dict(name='DoTextFlow', ui='CheckBox', args=dict(value=False)),
+        dict(name='DoTextFlow', ui='CheckBox', args=dict(value=True)),
         dict(name='BoxWidth', ui='Slider', args=dict(minValue=100, value=500, maxValue=PageSize)),
         dict(name='PagePadding', ui='Slider', args=dict(minValue=0, value=30, maxValue=100)),
         dict(name='PageSize', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),

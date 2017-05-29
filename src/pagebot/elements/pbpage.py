@@ -14,7 +14,9 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 
 class Page(Element):
-             
+
+    isPage = True
+            
     def draw(self, origin, view):
         u"""Draw all elements this page."""
         p = pointOffset(self.oPoint, origin) # Ignoe z-axis for now.
