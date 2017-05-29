@@ -13,7 +13,6 @@
 #
 from __future__ import division
 import os
-import nFontTools as fontTools
 
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
@@ -73,7 +72,7 @@ def drawGlyphPath(ttFont, glyphName, x, y, location=None, s=0.1, fillColor=0):
     drawPath(pen)
     restore()
     """
-    
+
 def normalizeLocation(location, axes):
     """Normalizes location based on axis min/default/max values from axes.
     >>> axes = {"wght": (100, 400, 900)}

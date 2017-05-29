@@ -401,7 +401,7 @@ class TextBox(Element):
         if self.css('elasticH'): # In case elasticH is True, box will aways fit the content.
             return ''
         # Otherwise test if there is overflow of text in the given size.
-        return textOverflow(self.fs, (0, 0, w or self.w, h or self.h), LEFT)
+        return textOverflow(self.fs, (0, 0, w or self.w-self.pr-self.pl, h or self.h-self.pt-self.pb), LEFT)
 
     def getBaselinePositions(self, y=0, w=None, h=None):
         u"""Answer the list vertical baseline positions, relative to y (default is 0)
