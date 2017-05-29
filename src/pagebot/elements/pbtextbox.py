@@ -220,7 +220,7 @@ class TextLine(object):
 
         self.string = '' 
         self.runs = []
-        print ctLine
+        #print ctLine
         for runIndex, ctRun in enumerate(CoreText.CTLineGetGlyphRuns(ctLine)):
             textRun = TextRun(ctRun, runIndex)
             self.runs.append(textRun)
@@ -416,13 +416,20 @@ class TextBox(Element):
     def isOverflow(self, tolerance):
         u"""Answer the boolean flag if this element needs overflow to be solved.
         This method is typically called by conditions such as Overflow2Next"""
-        return self.nextElement is not None and self.getOverflow()
+        return self.nextElement is None or not len(self.getOverflow())
 
     def overflow2Next(self):
         u"""Try to fix if there is overflow."""
-        overflow = self.getOverflow
-        print overflow
-        return True
+        result = True
+        overflow = self.getOverflow()
+        if overflow and self.nextElement: # If there is text overflow and there is a next element?
+            result = False
+            nextElement = self.getElementByName(self.nextElement, True) # Serch ancestors too.
+            if nextElement is not None: # Found one
+                nextElement.fs = overflow
+                score = nextElement.solve() # Solve any overflow on that element.
+                result = len(score.fails) == 0 # Test if total flow placement succeeded.
+        return result
 
     #   D R A W 
 

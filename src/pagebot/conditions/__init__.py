@@ -12,3 +12,4 @@
 #
 from pagebot.conditions.align import *
 from pagebot.conditions.floating import *
+from pagebot.conditions.flow import *
