@@ -101,77 +101,80 @@ def drawPoster(bgColor, textColor):
         line((x, 0), (x, H))
         line((x+CW, 0), (x+CW, H))
 
-    
-#print installedFonts() # Print all font names installed in the system
-if SHOW_FILTERED_AVAILABLE_FONTS:
-    for fontName in installedFonts():
-        if 'clarendon' in fontName.lower():
-            print fontName
 
-LORUM_IPSUMS = [
-    """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce pretium ex lorem, quis volutpat mi mollis ac. Aliquam consequat orci nec tempus venenatis. """,
-    """Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam quis purus consequat, lacinia tortor in, mattis diam. Suspendisse malesuada eleifend enim vel lacinia. """,
-    """Maecenas pellentesque elit turpis, sed tincidunt lectus placerat eu. Etiam finibus mollis feugiat. Proin mattis lacus venenatis fringilla euismod. Morbi nunc erat, consequat in neque sit amet, posuere maximus purus.
-    """,
-    """Etiam posuere lacus a tincidunt hendrerit. In feugiat lorem tortor, non rhoncus velit finibus ut. Vivamus iaculis orci id viverra aliquet. Donec enim nibh, pellentesque sed condimentum in, vulputate ut massa. Nunc interdum metus sit amet dapibus sodales. Quisque sed quam ac est facilisis congue. Nulla aliquam condimentum nisi sit amet ultrices."""
-]
+def run():    
+    #print installedFonts() # Print all font names installed in the system
+    if SHOW_FILTERED_AVAILABLE_FONTS:
+        for fontName in installedFonts():
+            if 'clarendon' in fontName.lower():
+                print fontName
 
-CAPTION = {
-    'pasta1.jpg': 'Red sauce and cream',
-    'pasta2.jpg': 'Pens and green',
-    'pasta3.jpg': 'Pasta on the deck',
-    'pasta4.jpg': 'Goulash or tortilla?',
-    'pasta5.jpg': 'Pasta screws',
-    'pasta6.jpg': 'Green pens',
-    'pasta7.jpg': 'Noodles or pasta?'
-}
-    
-MM = 72/25.4
-A0 = 841*MM, 1189*MM
-A1 = 594*MM, 841*MM
-A2 = 420*MM, 594*MM
-A3 = 297*MM, 420*MM
-A4 = 210*MM, 297*MM 
-A5 = 148*MM, 210*MM
+    LORUM_IPSUMS = [
+        """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce pretium ex lorem, quis volutpat mi mollis ac. Aliquam consequat orci nec tempus venenatis. """,
+        """Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam quis purus consequat, lacinia tortor in, mattis diam. Suspendisse malesuada eleifend enim vel lacinia. """,
+        """Maecenas pellentesque elit turpis, sed tincidunt lectus placerat eu. Etiam finibus mollis feugiat. Proin mattis lacus venenatis fringilla euismod. Morbi nunc erat, consequat in neque sit amet, posuere maximus purus.
+        """,
+        """Etiam posuere lacus a tincidunt hendrerit. In feugiat lorem tortor, non rhoncus velit finibus ut. Vivamus iaculis orci id viverra aliquet. Donec enim nibh, pellentesque sed condimentum in, vulputate ut massa. Nunc interdum metus sit amet dapibus sodales. Quisque sed quam ac est facilisis congue. Nulla aliquam condimentum nisi sit amet ultrices."""
+    ]
 
-# Define the size of the poster
-W, H = A1
-W += 14
-#H, W = A1 # Use for landscape
-#W = 2*W # Make long banner
-ML = MR = 100 # Margin left and margin right
-G = MR/2 # Gutter, space between the columns
-
-# Fixed number of columns on a page width
-if 1:
-    COLUMNS = 3
-    CW = (W - ML - MR - G*(COLUMNS-1))/COLUMNS # Calculate space of 3 columns
-else: # Make columns size dependent on height
-    CW = 1/6*H
-    COLUMNS = (W-ML-MR)/(CW+G)
-
-# Define color of the background
-# Yelloq version
-for n in range(AMOUNT_OF_SKETCHES):
-    if n == 0: # Force fixed color, yellow background               
-        bgColor = 0xF5/256, 0xF5/256, 0xDC/256 #   #F5F5DC
-        textColor = 0
-    elif n == 1: # Force fixed color, black background
-        bgColor = 0, 0, 0 # In case of black background
-        textColor = (1, 1, 1) # Text red, text green, text blue
-    else: # Random 
-        yellowish = random()
-        bgColor = yellowish, yellowish, yellowish*0.95
-        tColor = 1-yellowish
-        if abs(yellowish - tColor) < 0.3: # Difference in contrast too small, put text in white or black.
-            if yellowish < 0.5:
-                tColor = 1
-            else:
-                tColor = 0
-        textColor = tColor, tColor, tColor
+    CAPTION = {
+        'pasta1.jpg': 'Red sauce and cream',
+        'pasta2.jpg': 'Pens and green',
+        'pasta3.jpg': 'Pasta on the deck',
+        'pasta4.jpg': 'Goulash or tortilla?',
+        'pasta5.jpg': 'Pasta screws',
+        'pasta6.jpg': 'Green pens',
+        'pasta7.jpg': 'Noodles or pasta?'
+    }
         
-    drawPoster(bgColor, textColor)
-      
-saveImage('_export/DB_FoodPosters.pdf')
-saveImage('_export/DB_FoodPosters.png', multipage=True) # Save images a separate PNG files.
-#saveImage('_export/DB_FoodPosters.gif')
+    MM = 72/25.4
+    A0 = 841*MM, 1189*MM
+    A1 = 594*MM, 841*MM
+    A2 = 420*MM, 594*MM
+    A3 = 297*MM, 420*MM
+    A4 = 210*MM, 297*MM 
+    A5 = 148*MM, 210*MM
+
+    # Define the size of the poster
+    W, H = A1
+    W += 14
+    #H, W = A1 # Use for landscape
+    #W = 2*W # Make long banner
+    ML = MR = 100 # Margin left and margin right
+    G = MR/2 # Gutter, space between the columns
+
+    # Fixed number of columns on a page width
+    if 1:
+        COLUMNS = 3
+        CW = (W - ML - MR - G*(COLUMNS-1))/COLUMNS # Calculate space of 3 columns
+    else: # Make columns size dependent on height
+        CW = 1/6*H
+        COLUMNS = (W-ML-MR)/(CW+G)
+
+    # Define color of the background
+    # Yelloq version
+    for n in range(AMOUNT_OF_SKETCHES):
+        if n == 0: # Force fixed color, yellow background               
+            bgColor = 0xF5/256, 0xF5/256, 0xDC/256 #   #F5F5DC
+            textColor = 0
+        elif n == 1: # Force fixed color, black background
+            bgColor = 0, 0, 0 # In case of black background
+            textColor = (1, 1, 1) # Text red, text green, text blue
+        else: # Random 
+            yellowish = random()
+            bgColor = yellowish, yellowish, yellowish*0.95
+            tColor = 1-yellowish
+            if abs(yellowish - tColor) < 0.3: # Difference in contrast too small, put text in white or black.
+                if yellowish < 0.5:
+                    tColor = 1
+                else:
+                    tColor = 0
+            textColor = tColor, tColor, tColor
+            
+        drawPoster(bgColor, textColor)
+ 
+if __name__ == '__main__':   
+    run()  
+    saveImage('_export/DB_FoodPosters.pdf')
+    saveImage('_export/DB_FoodPosters.png', multipage=True) # Save images a separate PNG files.
+    #saveImage('_export/DB_FoodPosters.gif')

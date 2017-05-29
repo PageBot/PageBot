@@ -13,12 +13,13 @@
 #
 from __future__ import division
 import os
+
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
-from fontTools.varLib.models import VariableModel, supportScalar #, normalizeLocation
-from varfontdesignspace import TTVarFontGlyphSet
+from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLocation
+from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
 
 from drawBot import installFont, BezierPath, save, transform, scale, drawPath, restore, fill
 import pagebot
@@ -62,7 +63,7 @@ def drawGlyphPath(ttFont, glyphName, x, y, location=None, s=0.1, fillColor=0):
     g = glyphSet[glyphName]
 
     pen = BezierPath(glyphSet=glyphSet)
-
+    """
     g.draw(pen)
     save()
     fill(rc, gc, bc, op)
@@ -70,6 +71,7 @@ def drawGlyphPath(ttFont, glyphName, x, y, location=None, s=0.1, fillColor=0):
     scale(s)
     drawPath(pen)
     restore()
+    """
 
 def normalizeLocation(location, axes):
     """Normalizes location based on axis min/default/max values from axes.

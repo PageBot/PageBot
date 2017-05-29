@@ -19,7 +19,8 @@ from drawBot import textOverflow, hyphenation, textBox, rect, textSize, Formatte
 from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import getFormattedString, setStrokeColor, setFillColor
+from pagebot import newFS, setStrokeColor, setFillColor
+from pagebot.fonttoolbox.objects.glyph import Glyph
 
 class FoundPattern(object):
     def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
@@ -47,7 +48,6 @@ class TextRun(object):
         self.fill = attrs['NSColor']
         self.nsParagraphStyle = attrs['NSParagraphStyle']
 
-
         self.iStart, self.iEnd = CoreText.CTRunGetStringRange(ctRun)
         self.string = u''    
         # Hack for now to find the string in repr-string if self._ctLine.
@@ -58,20 +58,31 @@ class TextRun(object):
                 self.string += unichr(int(part[0:4], 16))
                 self.string += part[4:]
 
-        self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
+        #print '=====', ctRun
+        #print gc, len(CoreText.CTRunGetStringIndicesPtr(ctRun)), CoreText.CTRunGetStringIndicesPtr(ctRun), ctRun
+        #self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
         #CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
-        self.advances = CoreText.CTRunGetAdvances(ctRun, CoreText.CFRange(0, 5), None)
-        self.positions = CoreText.CTRunGetPositionsPtr(ctRun)[0:gc]
+        #self.advances = CoreText.CTRunGetAdvances(ctRun, CoreText.CFRange(0, 5), None)
+        #self.positions = CoreText.CTRunGetPositionsPtr(ctRun)[0:gc]
         #CoreText.CTRunGetPositions(ctRun, CoreText.CFRange(0, 5), None)[4]
         #self.glyphFontIndices = CoreText.CTRunGetGlyphsPtr(ctRun)[0:gc]
         #print CoreText.CTRunGetGlyphs(ctRun, CoreText.CFRange(0, 5), None)[0:5]
         self.status = CoreText.CTRunGetStatus(ctRun)
+
+        # get all positions
+        self.positions = CoreText.CTRunGetPositions(ctRun, (0, gc), None)
+        # get all glyphs
+        self.glyphs = CoreText.CTRunGetGlyphs(ctRun, (0, gc), None)
 
     def __len__(self):
         return self.glyphCount
 
     def __repr__(self):
         return '[TextRun #%d "%s"]' % (self.runIndex, self.string) 
+
+    def __getitem__(self, index):
+        return self.string[index]
+
     # Font stuff
 
     def _get_displayName(self):
@@ -209,6 +220,7 @@ class TextLine(object):
 
         self.string = '' 
         self.runs = []
+        #print ctLine
         for runIndex, ctRun in enumerate(CoreText.CTLineGetGlyphRuns(ctLine)):
             textRun = TextRun(ctRun, runIndex)
             self.runs.append(textRun)
@@ -284,21 +296,30 @@ class TextBox(Element):
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
+        self._textLines = self._baseLines = None # Force initiaize upon first usage.
         self.size = w, h
         if isinstance(fs, basestring):
-            fs = getFormattedString(fs, self)
+            fs = newFS(fs, self)
         self.fs = fs # Keep as plain string, in case parent is not set yet.
+
+    def _get_w(self): # Width
+        return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
+    def _set_w(self, w):
+        self.style['w'] = w or MIN_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
+        self._textLines = None # Force reset if being called
+    w = property(_get_w, _set_w)
 
     def _get_h(self):
         u"""Answer the height of the textBox. If self.style['elasticH'] is set, then answer the 
         vertical space that the text needs. This overwrites the setting of self._h."""
-        if self.style.get('elasticH'):
-            h = self.getTextSize()[1] + self.pt + self.pb
+        if self.style['h'] is None: # Elastic height
+            h = self.getTextSize(self.w)[1] + self.pt + self.pb # Add paddings
         else:
             h = self.style['h']
-        return min(self.maxH, max(self.minH, h or MIN_HEIGHT)) # Should not be 0 or None
+        return min(self.maxH, max(self.minH, h)) # Should not be 0 or None
     def _set_h(self, h):
-        self.style['h'] = h or MIN_HEIGHT # Overwrite style from here, unless self.style['elasticH'] is True
+        # Overwrite style from here, unless self.style['elasticH'] is True
+        self.style['h'] = h # If None, then self.h is elastic from content
     h = property(_get_h, _set_h)
 
     def __getitem__(self, lineIndex):
@@ -311,12 +332,12 @@ class TextBox(Element):
         return self._fs
     def _set_fs(self, fs):
         self._fs = fs
-        self.initializeTextLines()
+        self._textLines = None # Force reset when called.
     fs = property(_get_fs, _set_fs)
   
     def setText(self, s):
         u"""Set the formatted string to s, using self.style."""
-        self.fs = getFormattedString(s, self)
+        self.fs = newFS(s, self)
 
     def appendString(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
@@ -331,13 +352,20 @@ class TextBox(Element):
     def appendMarker(self, markerId, arg=None):
         self.appendString(getMarker(markerId, arg=arg))
 
-    def initializeTextLines(self):
-        u"""Answer an ordered list of all baseline position, starting at the top."""
-        self.textLines = []
-        self.baseLines = []
-        
-        return # @@@@@@@
+    def _get_textLines(self):
+        if self._textLines is None:
+            self.initializeTextLines()
+        return self._textLines
+    textLines = property(_get_textLines)
 
+    def _get_baseLines(self):
+        if self._textLines is None: # Check if initialization is needed.
+            self.initializeTextLines()
+        return self._baseLines
+    baseLines = property(_get_baseLines)
+
+    def initializeTextLines(self):
+        u"""Answer an ordered list of all baseline position, starting at the top."""    
         self._box = 0, 0, self.w, self.h
         attrString = self._fs.getNSObject()
         setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
@@ -345,15 +373,18 @@ class TextBox(Element):
         Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*self._box))
         ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
         self._ctLines = CoreText.CTFrameGetLines(ctBox)
-        self.baseLines = [] # Contain (x, y) start position of line
-        self.textLines = []
+        self._baseLines = [] # Contain (x, y) start position of line
+        self._textLines = []
         for lineIndex, p in enumerate(CoreText.CTFrameGetLineOrigins(ctBox, (0, len(self._ctLines)), None)):
             x = p.x
-            y = self.h - p.y
+            if self.originTop:
+                y = self.h - p.y
+            else:
+                y = p.y
             ctLine = self._ctLines[lineIndex]
             textLine = TextLine(ctLine, (x, y), lineIndex)
-            self.textLines.append(textLine)
-            self.baseLines.append((x, y, textLine.string))
+            self._textLines.append(textLine)
+            self._baseLines.append((x, y, textLine.string))
  
     def getTextSize(self, fs=None, w=None):
         """Figure out what the width/height of the text self.fs is, with or given width or
@@ -365,11 +396,12 @@ class TextBox(Element):
 
     def getOverflow(self, w=None, h=None):
         """Figure out what the overflow of the text is, with the given (w,h) or styled
-        (self.w, self.h) of this text box. If self.style['vacuumH'] is True, then by
+        (self.w, self.h) of this text box. If self.style['elasticH'] is True, then by
         definintion overflow will allways be empty."""
-        if self.css('vacuumH'): # In case vacuumH, box will aways fit the content.
+        if self.css('elasticH'): # In case elasticH is True, box will aways fit the content.
             return ''
-        return textOverflow(self.fs, (0, 0, w or self.w, h or self.h), LEFT)
+        # Otherwise test if there is overflow of text in the given size.
+        return textOverflow(self.fs, (0, 0, w or self.w-self.pr-self.pl, h or self.h-self.pt-self.pb), LEFT)
 
     def getBaselinePositions(self, y=0, w=None, h=None):
         u"""Answer the list vertical baseline positions, relative to y (default is 0)
@@ -378,6 +410,36 @@ class TextBox(Element):
         for _, baselineY in textBoxBaseLines(self.fs, (0, y, w or self.w, h or self.h)):
             baselines.append(baselineY)
         return baselines
+
+    #   F L O W
+
+    def isOverflow(self, tolerance):
+        u"""Answer the boolean flag if this element needs overflow to be solved.
+        This method is typically called by conditions such as Overflow2Next."""
+        return self.nextElement is None or not len(self.getOverflow())
+
+    def overflow2Next(self):
+        u"""Try to fix if there is overflow."""
+        result = True
+        overflow = self.getOverflow()
+        if overflow and self.nextElement: # If there is text overflow and there is a next element?
+            result = False
+            # Find the page of self
+            page = self.getElementPage()
+            if page is not None:        
+                # Try next page
+                nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
+                if nextElement is None or nextElement.fs and self.nextPage:
+                    # Not found or not empty, search on next page.
+                    nextPage = self.doc.getPage(self.nextPage)
+                    nextElement = nextPage.getElementByName(self.nextElement)
+                if nextElement is not None and not nextElement.fs: 
+                    # Finally found one empty box on this page or next page?
+                    nextElement.fs = overflow
+                    nextElement.prevElement = self.name # Remember the back link
+                    score = nextElement.solve() # Solve any overflow on the next element.
+                    result = len(score.fails) == 0 # Test if total flow placement succeeded.
+        return result
 
     #   D R A W 
 
@@ -388,21 +450,13 @@ class TextBox(Element):
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
    
-        # First draw optional fill rectangle.
-        sFill = self.css('fill', NO_COLOR)
-        if sFill != NO_COLOR:
-            setStrokeColor(None)
-            setFillColor(sFill)
-            rect(px, py, self.w, self.h)
+        self.drawFrame(p, view) # Draw optional frame or borders.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         # Draw the text.    
         textBox(self.fs, (px+self.pl, py+self.pb, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
-        # Draw options stroke rectangle.
-        sStroke = self.css('stroke', NO_COLOR)
-        sStrokeWidth = self.css('strokeWidth')
-        if sStroke != NO_COLOR and sStrokeWidth is not None:
-            setStrokeColor(sStroke, sStrokeWidth)
-            setFillColor(None)
-            rect(px, py, self.w, self.h)
 
         # If there are child elements, draw them over the text.
         self._drawElements(p, view)
@@ -410,6 +464,9 @@ class TextBox(Element):
         # Draw markers on TextLine and TextRun positions.
         self._drawBaselines(view)
  
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
+
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
@@ -441,7 +498,8 @@ class TextBox(Element):
                     font='Verdana', fontSize=fontSize, 
                     fill=(1, 0, 0)), (self.x + self.w + 3, self.y + self.h - prevY - leading/2 - fontSize/4))
             prevY = y
-  
+ 
+ 
     #   F I N D
 
     def findPattern(self, pattern):

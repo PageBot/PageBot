@@ -15,10 +15,10 @@ from __future__ import division
 
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates
-from fontTools.varLib.models import VariableModel, supportScalar, normalizeLocation
+from fontTools.varLib.models import supportScalar, normalizeLocation # VariableModel
 from fontTools.varLib import _GetCoordinates
-from designspacemodel import DesignSpaceBase, Axis
-from ttftools import getBestCmap
+from pagebot.fonttoolbox.designspacemodel import DesignSpaceBase, Axis
+from pagebot.fonttoolbox.ttftools import getBestCmap
 
 
 def setCoordinates(glyph, coord, glyfTable):
@@ -104,6 +104,9 @@ class TTVarGlyph(object):
         glyph = self._ttFont['glyf'][self._glyphName]
         glyph = self._copyGlyph(glyph, self._ttFont['glyf'])
 
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         variables = self._ttFont['gvar'].variables[self._glyphName]
         coordinates, _ = _GetCoordinates(self._ttFont, self._glyphName)
         for var in variables:
@@ -120,6 +123,8 @@ class TTVarGlyph(object):
         self.width = horizontalAdvanceWidth
         glyph.draw(pen, self._ttFont['glyf'])  # XXX offset based on lsb
 
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
 
 class TTVarFontDesignSpace(DesignSpaceBase):
 

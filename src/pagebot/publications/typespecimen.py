@@ -13,20 +13,22 @@
 #     and templates are hood enough. Inherit the redefine functions otherwise.
 #     Example of an inherited publications is FBFamilySpecimen.py
 #
-from pagebot import getFormattedString
+from pagebot import newFS
 
 from pagebot.fonttoolbox.objects.family import Family, guessFamilies
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
 
 from pagebot.publications.publication import Publication
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT, NO_COLOR
+from pagebot.style import getRootStyle, LEFT, NO_COLOR, A4
 # Document is the main instance holding all information about the document together 
 # (pages, styles, etc.)
 from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
-from pagebot.elements.page import Page, Template
-      
+from pagebot.elements.pbpage import Page, Template
+ 
+W, H = A4
+
 class TypeSpecimen(Publication):
     
     MIN_STYLES = 4 # Don't show, if families have fewer amount of style.
@@ -49,10 +51,6 @@ class TypeSpecimen(Publication):
     def makeTemplate(self, rs):
         # Template for the main page.
         template = Template(rs) # Create second template. This is for the main pages.
-        # Show grid columns and margins if rootStyle.showGrid or 
-        # rootStyle.showGridColumns are True.
-        # The grid is just a regular element, like all others on the page. Same parameters apply.
-        template.grid(rs)  
         # Add named text box to template for main specimen text.
         template.cTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
         template.cTextBox('', 2, 1, 4, 6, eId=self.specimenBoxId, style=rs)       
@@ -63,23 +61,23 @@ class TypeSpecimen(Publication):
         template.cLine(0, 7, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
         return template
         
-    def build(self):
+    def build(self, font):
         rs = getRootStyle(showGrid=self.showGrid, showGridColumns=self.showGridColumns)
         rs['language'] = 'en' # Make English hyphenation default. 
         template = self.makeTemplate(rs)
         pageTitle = self.pageTitle or 'Unnamed Type Specimen'
         # Create new document with (w,h) and start with a single page.
-        self.documents['Specimen'] = doc = Document(rs, title=pageTitle, pages=1, template=template) 
+        self.documents['Specimen'] = doc = Document(rs, w=W, h=H, title=pageTitle, pages=1, template=template) 
         # Make number of pages with default document size.
         # When building, make all pages default with template.
         # Call with separate method, so inheriting specimen publications classes can redefine.\   
-        self.buildPages(doc)
+        self.buildPages(doc, font)
         
     def buildPages(self, doc):
         # Build the pages, one page per family. Compsition 
         # Get the current page of the document, created automatic with template.
         # Using the first page as cover (to be filled...)
-        coverPage = doc[1]
+        coverPage = doc[0]
         # Fill cover here.
         
         # Collect the system families, style names and their font paths. Guess their family relation.
@@ -102,22 +100,22 @@ class TypeSpecimen(Publication):
 
         # Get the title box and try to fit the add family name.
         title = page.getElement(self.titleBoxId) 
-        fs = getFormattedString(family.name, dict(fontSize=48, font=style.name))
+        fs = newFS(family.name, dict(fontSize=48, font=style.name))
         title.append(fs)
         
         if style.info.description:
             info = page.getElement(self.infoBoxId)
-            fs = getFormattedString(style.info.description, dict(fontSize=9, leading=15, font=style.name))
+            fs = newFS(style.info.description, dict(fontSize=9, leading=15, font=style.name))
             info.append(fs)
         
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
         # Create the formatted string with the style names shown in their own style.
         # The first one in the list is also used to show the family Name.
-        fs = getFormattedString('')
+        fs = newFS('')
         for index, (name, style) in enumerate(sorted(family.styles.items())):
             # We can assume these are defined, otherwise the style is skipped.
             styleName = style.info.styleName
-            fs += getFormattedString('%s %s %d %d %0.2f\n' % (family.name, styleName, 
+            fs += newFS('%s %s %d %d %0.2f\n' % (family.name, styleName, 
                 style.info.weightClass, style.info.widthClass, style.info.italicAngle), 
                 style=dict(fontSize=16, font=style.name, rLeading=1.4))
             

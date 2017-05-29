@@ -9,21 +9,16 @@
 #
 #     MakeABookCover.py
 #
-from pagebot import getFormattedString
+from pagebot import newFS
 from pagebot.style import getRootStyle, A5, BOTTOM, CENTER
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
     
-W, H = 500, 500#A5 
+W, H = 500, 500 #A5 
 
 OriginTop = False
-
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='OriginTop', ui='CheckBox', args=dict(value=False)),
-], globals())
 
 def makeDocument():
     # Create new document with (w,h) and fixed amount of pages.
@@ -43,7 +38,7 @@ def makeDocument():
         s = 'Origin on bottom'
         conditions = (Center2Center(), Bottom2Bottom())
     
-    fs = getFormattedString(s, style=dict(fontSize=30, textFill=(1, 0, 0), xAlign=CENTER)) 
+    fs = newFS(s, style=dict(fontSize=30, textFill=(1, 0, 0), xAlign=CENTER)) 
     nt = newText(fs, y=100, xxconditions=conditions, parent=page, fill=(1, 1, 0))
     print nt.x, nt.y, nt.w, nt.h
     score = page.solve()
@@ -61,7 +56,14 @@ def makeDocument():
     view.showElementDimensions = True
     
     return doc
-        
-d = makeDocument()
-d.export('_export/DrawViewPageFrame.pdf')
+  
+if __name__ == '__main__':
+
+    Variable([
+        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+        dict(name='OriginTop', ui='CheckBox', args=dict(value=False)),
+    ], globals())
+
+    d = makeDocument()
+    d.export('_export/DrawViewPageFrame.pdf')
     

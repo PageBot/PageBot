@@ -14,7 +14,8 @@ from pagebot.elements.element import Element
 from pagebot.style import XXXL
 
 class Polygon(Element):
-
+    u"""The Polygon element is a simple implementation of the polygon DrawBot function.
+    More complex path-like elements inherit from the Path element."""
     def __init__(self, fs, points=None, **kwargs):
         Element.__init__(self, **kwargs)
         if points is None:
@@ -55,7 +56,11 @@ class Polygon(Element):
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
-        px, py, _ = p, self._applyAlignment(p) # Ignore z-axis for now.
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         setFillColor(self.css('fill'))
         setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         newPath()
@@ -68,6 +73,9 @@ class Polygon(Element):
 
         # If there are child elements, draw them over the polygon.
         self._drawElements(p, view)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
 
         # Draw optional bouning box.
         self.drawFrame(origin, view)

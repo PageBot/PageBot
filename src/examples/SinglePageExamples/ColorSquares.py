@@ -13,15 +13,16 @@
 #     This script is using the style parameters "originTop", making the coordinate system run downwards.
 #
 from __future__ import division # Make integer division result in float.
-import pagebot # Import to know the path of non-Python resources.
+from random import random
+from drawBot import Variable
+from drawBot.misc import DrawBotError
 
+import pagebot # Import to know the path of non-Python resources.
 from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import getFormattedString, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
-
-
+from pagebot import newFS, setFillColor, setStrokeColor, x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 
 from pagebot.elements import *
 from pagebot.document import Document
@@ -37,41 +38,9 @@ PageSize = 500
 GUTTER = 8 # Distance between the squares.
 SQUARE = 10 * GUTTER # Size of the squares
 
-# The standard PageBot function getRootStyle() answers a standard Python dictionary, 
-# where all PageBot style entries are filled by their default values. The root style is kept in RS
-# as reference for the ininitialization of all elements. 
-# Each element uses the root style as copy and then modifies the values it needs. 
-# Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
-# that is very similar to what happens in CSS.
-
-
-RS = getRootStyle(w=PageSize, h=PageSize)
-# Setting value for demo purpose, it is style default, using the elements origin as top-left. 
-# Change to False will show origin of elements in their bottom-left corner.
-if 0: # TOP
-    RS['originTop'] = True
-    RS['yAlign'] = TOP 
-else:
-    RS['originTop'] = False 
-    RS['yAlign'] = BOTTOM 
-  
-#for key, value in RS.items():
-#    print key, value
-
 EXPORT_PATH = '_export/ColorSquares.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
-
-Variable([
-    dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='CropMarks', ui='CheckBox', args=dict(value=True)),
-    dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
-    dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
-    dict(name='PageNameInfo', ui='CheckBox', args=dict(value=True)),
-    dict(name='ViewPadding', ui='Slider', args=dict(minValue=0, value=64, maxValue=200)),
-    dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-], globals())
-
-def makeDocument(rs):
+def makeDocument():
     u"""Make a new document, using the rs as root style."""
 
     #W = H = 120 # Get the standard a4 width and height in points.
@@ -84,13 +53,13 @@ def makeDocument(rs):
     sqy = int(H/(SQUARE + GUTTER))
     # Calculate centered paddings for the amount of fitting squares.
     # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
-    rs['colH'] = rs['colW'] = SQUARE  # Make default colW and colH square.
+    #rs['colH'] = rs['colW'] = SQUARE  # Make default colW and colH square.
 
     padX = (W - sqx*(SQUARE + GUTTER) + GUTTER)/2
     my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
 
 
-    doc = Document(rootStyle=rs, title='Color Squares', autoPages=1)
+    doc = Document(w=W, h=H, title='Color Squares', originTop=False, autoPages=1)
     
     view = doc.getView()
     
@@ -136,14 +105,26 @@ def makeDocument(rs):
             newText('%d, %d Column: %d, %d' % (p[0], p[1], 
                 x2cx(p[0], e), # Calculate back to column index for checking.
                 y2cy(p[1], e)), 
-                (p[0], p[1] + e.css('colH') + e.gh/4), # Position of the coordinate with a bit of offset.
+                # Position of the coordinate with a bit of offset.
+                (p[0], p[1] + e.css('colH') + e.gh/4), 
                 parent=page, textFill=0, fontSize=4, leading=0, 
                 fill=None, stroke=None)
 
     # Note that in this stage nothing is drawn yet in DrawBot. Potentionally all element can still be moved around
     # added or deleted or moved to other pages.  
     return doc # Answer the doc for further doing.
-        
-d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+ 
+
+if __name__ == '__main__': # If running from DrawBot
+    Variable([
+        dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+        dict(name='CropMarks', ui='CheckBox', args=dict(value=True)),
+        dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
+        dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
+        dict(name='PageNameInfo', ui='CheckBox', args=dict(value=True)),
+        dict(name='ViewPadding', ui='Slider', args=dict(minValue=0, value=64, maxValue=200)),
+        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+    ], globals())
+    d = makeDocument()
+    d.export(EXPORT_PATH) 
 

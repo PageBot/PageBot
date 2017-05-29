@@ -18,7 +18,7 @@ from AppKit import NSColor
 import os
 
 import pagebot
-from pagebot import getFormattedString
+from pagebot import newFS
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.toolbox.transformer import path2ScriptId
@@ -26,8 +26,8 @@ from pagebot import textBoxBaseLines
 
 # Kinda hack, storing in empty module, to prevent globals to re-initialized, 
 # if variables are changed.
-print __file__
-print path2ScriptId(__file__)
+#print __file__
+#print path2ScriptId(__file__)
 scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
 scriptGlobals.LayerCatalogGenerator = {}
 
@@ -197,12 +197,12 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
     if fontSize is None:
         # Calculate the size for the given string for the selected font/spacing.
         # Then use the resulting with as source to calculate the fitting fontSize.
-        fs = getFormattedString(Sample_Text, None, dict(font=fontName, 
+        fs = newFS(Sample_Text, None, dict(font=fontName, 
             fontSize=initialFontSize, openTypeFeatures=features))
         fsWidth, fsHeight = fs.size()
         fontSize = int(round(initialFontSize * (W-2*M) / fsWidth))
     # Make new formatted string in fitting fontSize
-    fs = getFormattedString(Sample_Text, None, dict(font=fontName, 
+    fs = newFS(Sample_Text, None, dict(font=fontName, 
         fontSize=fontSize, textFill=(r, g, b, opacity), openTypeFeatures=features))
     return fontSize, fs
 
@@ -289,17 +289,19 @@ else:
     Alternative_g = random() < 0.3 # [ss09]
     LC_Figures = random() < 0.3 # [onum]      
 
-Variable(UI, globals())
+if __name__ == '__main__':
 
-# Store Italics flag, so we can test if it changed.
-scriptGlobals.random_Features = Random_Features
-    
-                     
-# If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
-fontNamePaths = collectFonts(searchName) # Collect available fonts, filter into characteristics, as weight, italic, etc.
-if not fontNamePaths:
-    print 'The %s family is not installed in your system. How about buying a license @typenetwork?' % familyName
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, familyName.lower()))
-else:
-    drawSample()
-    export()
+    Variable(UI, globals())
+
+    # Store Italics flag, so we can test if it changed.
+    scriptGlobals.random_Features = Random_Features
+        
+                         
+    # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
+    fontNamePaths = collectFonts(searchName) # Collect available fonts, filter into characteristics, as weight, italic, etc.
+    if not fontNamePaths:
+        print 'The %s family is not installed in your system. How about buying a license @typenetwork?' % familyName
+        os.system('open %s/fonts/%s' % (typetrStoreUrl, familyName.lower()))
+    else:
+        drawSample()
+        export()

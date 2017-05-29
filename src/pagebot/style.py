@@ -10,6 +10,8 @@
 #
 #     style.py
 #
+#     Holds the main style definintion and constants of PageBot.
+#
 import sys
 from drawBot import sizes
 import copy
@@ -67,7 +69,8 @@ Legal = 8.5*INCH, 14*INCH
 JuniorLegal = 5*INCH, 8*INCH
 Tabloid = 11*INCH, 17*INCH
 # Other rounded definintions compatible to DrawBot
-Screen = sizes('screen') # Current screen size.
+drawBotSizes = sizes()
+Screen = drawBotSizes.get('screen', None) # Current screen size.
 Ledger = sizes('Ledger') # 1224, 792
 Statement = sizes('Statement') # 396, 612 
 Executive = sizes('Executive') # 540, 720
@@ -94,6 +97,12 @@ XXXL = sys.maxint
 MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)
 MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL
+
+FIT = 'fit' # Special fontsize that makes text fitting on element width.
+
+ONLINE = 'online' # Positions of borders
+INLINE = 'inline'
+OUTLINE = 'outline'
 
 LEFT = 'left'
 RIGHT = 'right'
@@ -203,6 +212,14 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         pzf = 0, # Padding “near” front in z-axis direction, closest to viewer. 
         pzb = 0, # Padding ”far” back in z-axis direction.
 
+        # Borders, independent for all sides, value is thickness of the line.
+        # None will show no border. Single value > 0 shows black line of that thickness.
+        # Other options need to be store in dictionary value.
+        borderTop = None, # Border top
+        borderLeft = None, # Border left
+        borderRight = None, # Border right
+        borderBottom = None, # Border bottom
+
         # Gutter is used a standard distance between columns. Note that when not-justifying, the visual
         # gutter on the right side of columns seems to be larger. This can be compensated for in the
         # distance between images.
@@ -234,19 +251,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         scaleY = 1, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
         scaleZ = 1, # Optional scaling in z-direction, depth.
 
-        # Shadow, gradient, etc.
-        shadowOffset = None, # Point tuple, e.g. (4, -6). If None, shadow drawing is ignored. 
-        shadowBlur = 20, # Integer value for the amount of shadow blur. Make shadowOffset != None to work
-        shadowFill = (0, 0, 0, 0.5), # Default transparant black of blurred shadow.
-        linearGradient = NO_COLOR, # ((10, 210), (10, 310), ([1, 1, 1, 1], [0, 1, 1]))
-        radialGradient = NO_COLOR, #((50, 410), (50, 410), ([1, 0, 1, 0], [1, 1, 0, 0], [0, 1, 1]),
-        radialGradient_startRadius = 0,
-        radialGradient_endRadius = 300,
-        cmykShadow = NO_COLOR, # ((10, 10), 20, (0, 1, 1, 0))
-        cmykLinearGradient = NO_COLOR, # ((10, 210), (10, 310), ([1, 1, 1, 1], [0, 1, 1, 0]))
-        cmykRadialGradient = NO_COLOR, #((50, 410), (50, 410), ([1, 0, 1, 0], [1, 1, 0, 0], [0, 1, 1, 0]),
-        cmykRadialGradient_startRadius = 0,
-        cmykRadialGradient_endRadius = 300,
+        # Shadow & Gradient
+        shadow = None, # Contains options Shadow instance.
+        gradient = None, # Contains optional Gradient instance.
 
         # Typographic defaults
         font = DEFAULT_FONT, # Default is to avoid existing font and fontSize in the graphic state.
@@ -255,6 +262,15 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         uppercase = False, # All text in upper case
         lowercase = False, # All text in lower case (only if uppercase is False
         capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase)
+
+        # Axis location of the Variable font to create the font instance (in case "font" is a Variable font)
+        variableLocation = None,
+
+        # List of supported OpenType features.
+        # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf,
+        # smcp, ss01, ss02, ss03, ss04, ss05, ss06, ss07, ss08, ss09, ss10, ss11, ss12, ss13, ss14,
+        # ss15, ss16, ss17, ss18, ss19, ss20, subs, sups, swsh, titl, tnum
+        openTypeFeatures = None,
 
         # Horizontal spacing for absolute and fontsize-related measures
         tracking = 0, # Absolute tracking value. Note that this is different from standard name definition.
@@ -276,12 +292,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         rIndent = 0, # Left indent as factor of font size.
         tailIndent = 0, # Tail/right indent (for left-right based scripts)
         rTailIndent = 0, # Tail/right Indent as factor of font size
-
-        # List of supported OpenType features.
-        # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf,
-        # smcp, ss01, ss02, ss03, ss04, ss05, ss06, ss07, ss08, ss09, ss10, ss11, ss12, ss13, ss14,
-        # ss15, ss16, ss17, ss18, ss19, ss20, subs, sups, swsh, titl, tnum
-        openTypeFeatures = None,
 
         # Vertical spacing for absolute and fontsize-related measures
         baselineGrid = baselineGrid,
@@ -327,7 +337,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         # Element color
         NO_COLOR = NO_COLOR, # Add no-color flag (-1) to make difference with "color" None.
-        fill = NO_COLOR, # Default is no color for filling rectangle. Instead textFill color is set default black.
+        fill = None, # Default is no color for filling rectangle. Instead textFill color is set default black.
         stroke = None, # Default is to have no stroke on drawing elements. Not for text.
         cmykFill = NO_COLOR, # Flag to ignore, None is valid value for color.
         cmykStroke = NO_COLOR, # Flag to ignore, None is valid value for color.

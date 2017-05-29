@@ -17,14 +17,14 @@ from copy import copy
 from fontTools.ttLib import TTFont
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
+#from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
 from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
 
 
 class VariableCube(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, point=point, style=None, eId=None, dimensions=None, location=None, **kwargs):
+    def __init__(self, font, s=None, point=None, style=None, eId=None, dimensions=None, location=None, **kwargs):
         self.__init__
         self.font = font
         self.eId = eId
@@ -45,6 +45,10 @@ class VariableCube(Element):
         self.location = copy(location)
     
     def draw(self, page, x, y):
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, view)
+
         fillColor = self.style.get('fill')
         if fillColor is not None:
             setFillColor(fillColor)
@@ -86,5 +90,10 @@ class VariableCube(Element):
         fs = FormattedString('Other axes: %s' % self.location, fontSize=6, fill=0)
         w, h = fs.size()
         page.text(fs, x, y - 16)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, view)
+
+
 
 		

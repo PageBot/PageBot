@@ -10,7 +10,9 @@
 #
 #     variable.py
 #
-Variable([
+if __name__ == '__main__':
+
+    Variable([
     # create a variable called 'w'
     # and the related ui is a Slider.
     dict(name="w", ui="Slider"),

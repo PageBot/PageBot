@@ -21,7 +21,7 @@ from random import choice
 
 import pagebot
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import newFS, textBoxBaseLines
 
 typetrStoreUrl = 'https://store.typenetwork.com/foundry/typetr'
 EXPORT_PATH = '_export/BitcountLayerCatalogAnimation1708x508-Claire-%d.gif'
@@ -100,12 +100,12 @@ def getFittingString(t, fontName, c):
     # Calculate the size for the given string for the selected font/spacing.
     # Then use the resulting with as source to calculate the fitting fontSize.
     initialFontSize = 500 
-    fs = getFormattedString(t, None, dict(font=fontName, 
+    fs = newFS(t, None, dict(font=fontName, 
         fontSize=initialFontSize))
     fsWidth, fsHeight = fs.size()
     fontSize =  initialFontSize * (W-3*padding) / fsWidth
     # Make new formatted string in fitting fontSize
-    fs = getFormattedString(t, None, dict(font=fontName, 
+    fs = newFS(t, None, dict(font=fontName, 
         fontSize=fontSize, textFill=c))
     return fs
         
@@ -118,11 +118,12 @@ def drawLayers(fss):
     y = 3*padding
     for fs in fss:
         text(fs, (2*padding, y+100))
-     
-# If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
-if not fontNamePaths:
-    os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
-else:
-    drawSample(t)
+ 
+if __name__ == '__main__':    
+    # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
+    if not fontNamePaths:
+        os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
+    else:
+        drawSample(t)
     
     

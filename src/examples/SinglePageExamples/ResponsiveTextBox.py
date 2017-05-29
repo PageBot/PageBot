@@ -14,7 +14,7 @@
 #     Its purpose is to show the use of Validator
 #
 import pagebot # Import to know the path of non-Python resources.
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import newFS, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
@@ -46,18 +46,6 @@ Text_Leading = 14
 Small_Font_Size = 12
 Small_Leading = 14
 Small_Top_Spacing = 10
-
-Variable([
-    dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
-    dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
-    dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
-    dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
-    dict(name='Text_Font_Size', ui='Slider', args=dict(minValue=9, value=10, maxValue=24)),
-    dict(name='Text_Leading', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
-    dict(name='Small_Font_Size', ui='Slider', args=dict(minValue=9, value=10, maxValue=24)),
-    dict(name='Small_Leading', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
-    dict(name='Small_Top_Spacing', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
-], globals())
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot values are filled by their default values. The root style is kept in RS
@@ -114,12 +102,12 @@ def makeDocument(rootStyle):
         scriptGlobals.blurbText = blurb.getBlurb('article_summary', noTags=True)+'\n'
             
     # Construct the text
-    headLineFS = getFormattedString(u'Headline\n', style=dict(font='Verdana', fontSize=24, leading=26, textFill=0))
+    headLineFS = newFS(u'Headline\n', style=dict(font='Verdana', fontSize=24, leading=26, textFill=0))
 
-    blurbTextFS = getFormattedString(scriptGlobals.blurbText, page,
+    blurbTextFS = newFS(scriptGlobals.blurbText, page,
         style=dict(font='Georgia', fontSize=Text_Font_Size, leading=Text_Leading, textFill=0))
 
-    smallTextFS = getFormattedString('Closing with a smaller text line.\n', page,
+    smallTextFS = newFS('Closing with a smaller text line.\n', page,
     style=dict(font='Verdana', fontSize=Small_Font_Size, leading=Small_Leading, textFill=0, paragraphTopSpacing=Small_Top_Spacing))
     textFS = headLineFS + blurbTextFS + smallTextFS
 
@@ -153,7 +141,21 @@ def makeDocument(rootStyle):
     
     return doc
         
-d = makeDocument(RS)
-d.export(EXPORT_PATH) 
+if __name__ == '__main__':
 
-    
+    Variable([
+        dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+        dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+        dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+        dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+        dict(name='Text_Font_Size', ui='Slider', args=dict(minValue=9, value=10, maxValue=24)),
+        dict(name='Text_Leading', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
+        dict(name='Small_Font_Size', ui='Slider', args=dict(minValue=9, value=10, maxValue=24)),
+        dict(name='Small_Leading', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
+        dict(name='Small_Top_Spacing', ui='Slider', args=dict(minValue=0, value=10, maxValue=24)),
+    ], globals())
+
+    d = makeDocument(RS)
+    d.export(EXPORT_PATH) 
+
+        

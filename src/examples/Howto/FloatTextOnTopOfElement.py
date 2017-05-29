@@ -19,7 +19,7 @@ from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import getFormattedString
+from pagebot import newFS
 
 from pagebot.conditions import *
 from pagebot.elements import *
@@ -43,14 +43,6 @@ SQUARE = 10 * GUTTER # Size of the squares
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/UseImages.pdf' 
 
-
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='RedSize', ui='Slider', args=dict(minValue=100, value=100, maxValue=500)),
-    dict(name='YellowSize', ui='Slider', args=dict(minValue=10, value=30, maxValue=500)),
-    dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
-    dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-], globals())
 
 def makeDocument():
     u"""Make a new document."""
@@ -82,7 +74,7 @@ def makeDocument():
         conditions=(Top2TopSide(), Center2Center(),)) 
    
     # Centered string
-    fs = getFormattedString('Float on top of yellow', style=dict(font='Verdana', fontSize=7,
+    fs = newFS('Float on top of yellow', style=dict(font='Verdana', fontSize=7,
         textFill=0))
     # Text falls through the yr2 (with differnt z) and lands on yellowSquare by Float2BottomSide()    
     newTextBox(fs, w=container.w, name='Caption', parent=container,
@@ -94,7 +86,17 @@ def makeDocument():
         print score.fails
         
     return doc # Answer the doc for further doing.
-        
-d = makeDocument()
-d.export(EXPORT_PATH) 
+   
+if __name__ == '__main__':
+ 
+    Variable([
+        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+        dict(name='RedSize', ui='Slider', args=dict(minValue=100, value=100, maxValue=500)),
+        dict(name='YellowSize', ui='Slider', args=dict(minValue=10, value=30, maxValue=500)),
+        dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
+        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+    ], globals())
+
+    d = makeDocument()
+    d.export(EXPORT_PATH) 
 

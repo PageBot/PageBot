@@ -14,7 +14,7 @@
 #     Its purpose is to show the use of Validator
 #
 import pagebot # Import to know the path of non-Python resources.
-from pagebot import getFormattedString, textBoxBaseLines
+from pagebot import newFS, textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
@@ -66,24 +66,6 @@ Element4_H = 50
 Element5_W = 50
 Element5_H = 50
 Text_W = 200
-
-Variable([
-    dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
-    dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
-    dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
-    dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
-    dict(name='Element1_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Element1_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='Element2_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Element2_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='Element3_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Element3_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='Element4_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Element4_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='Element5_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
-    dict(name='Element5_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
-    dict(name='Text_W', ui='Slider', args=dict(minValue=100, value=200, maxValue=W)),
-], globals())
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
 # where all PageBot values are filled by their default values. The root style is kept in RS
@@ -155,7 +137,7 @@ def makeDocument():
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
     if not hasattr(scriptGlobals, 'blurbText'):
-        scriptGlobals.blurbText = getFormattedString(blurb.getBlurb('article_summary', noTags=True), page,
+        scriptGlobals.blurbText = newFS(blurb.getBlurb('article_summary', noTags=True), page,
         style=dict(font='Georgia', fontSize=12, leading=16, textColor=0))
     eTextBox = newTextBox(scriptGlobals.blurbText, parent=page, w=Text_W, 
         conditions=textCondition, xAlign=CENTER, yAlign=MIDDLE, stroke=None, fill=None)
@@ -180,8 +162,28 @@ def makeDocument():
         print fail
     
     return doc
-        
-d = makeDocument()
-d.export(EXPORT_PATH) 
 
-    
+if __name__ == '__main__':
+
+    Variable([
+        dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+        dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+        dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
+        dict(name='Padding_Bottom', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
+        dict(name='Element1_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='Element1_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='Element2_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='Element2_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='Element3_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='Element3_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='Element4_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='Element4_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='Element5_W', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
+        dict(name='Element5_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
+        dict(name='Text_W', ui='Slider', args=dict(minValue=100, value=200, maxValue=W)),
+    ], globals())
+
+    d = makeDocument()
+    d.export(EXPORT_PATH) 
+
+        

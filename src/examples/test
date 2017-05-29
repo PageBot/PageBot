@@ -1,0 +1,2 @@
+#!/bin/bash
+python -m doctest HowTo/DrawQuadraticGlyph.py

@@ -11,7 +11,8 @@
 #
 
 import pagebot 
-import pagebot.publication
+from pagebot.publications.publication import Publication
+from pagebot.elements import *
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
@@ -40,9 +41,9 @@ class RandomPage(Publication):
         # The grid is just a regular element, like all others on the page. Same parameters apply.
         template.grid(rs)  
         # Add named text box to template for main specimen text.
-        template.cTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
-        template.cTextBox('', 2, 1, 4, 6, eId=self.specimenBoxId, style=rs)       
-        template.cTextBox('', 0, 1, 2, 6, eId=self.infoBoxId, style=rs)
+        newTextBox('', 0, 0, 6, 1, parent=template, eId=self.titleBoxId, style=rs)       
+        newTextBox('', 2, 1, 4, 6, parent=template, eId=self.specimenBoxId, style=rs)       
+        newTextBox('', 0, 1, 2, 6, parent=template, eId=self.infoBoxId, style=rs)
         # Some lines
         template.cLine(0, 1, 6, 1, style=rs, stroke=0, strokeWidth=0.25)       
         template.cLine(0, 7, 6, 7, style=rs, stroke=0, strokeWidth=0.25)       

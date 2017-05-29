@@ -10,7 +10,7 @@
 #
 #     kirbyview.py
 #
-from view import View
+from pagebot.elements.views.view import View
 
 class KirbyView(View):
     viewId = 'Kirby'
@@ -19,4 +19,5 @@ class KirbyView(View):
     	print pageSelection
 
     def export(self, fileName, pageSelection, multiPage):
+    	u"""Use an HTML/CSS builder to export the pages as website code."""
     	print fileName, pageSelection, multiplePage

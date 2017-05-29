@@ -10,7 +10,7 @@
 #
 #     simplehtmlcssbuilder.py
 #
-from basehtmlcssbuilder import BaseHtmlCssBuilder
+from pagebot.builders.htmlcss.basehtmlcssbuilder import BaseHtmlCssBuilder
 
 class SimpleHtmlCssBuilder(BaseHtmlCssBuilder):
 

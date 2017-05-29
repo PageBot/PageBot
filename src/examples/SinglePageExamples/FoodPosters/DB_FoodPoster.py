@@ -79,80 +79,84 @@ if False: # Make False for black background
 else:
     r = g = b = 0 # In case of black background
     textColor = (1, 1, 1) # Text red, text green, text blue
-# Create the page
-newPage(W, H)
-# Fill background of whole page
-fill(r, g, b) # Set the "brush" color to the r(ed), g(reen), b(lue) value that we calculated.
-stroke(None)
-#stroke(1, 0, 0) # DEMO: outline color of the shape
-#strokeWidth(100) # DEMO: thickness of the outline
-rect(0, 0, W, H)
-#oval(0, 0, W, H) # Drawing an oval instead of a rect
 
-# Draw title on the poster (not do it this way as separate typographic values
-#titleSize = 128
-#fill(0)
-#font('Superclarendon-Bold')
-#fontSize(titleSize)
-#text('Asian food', (30, H-titleSize))
+def run():
+    # Create the page
+    newPage(W, H)
+    # Fill background of whole page
+    fill(r, g, b) # Set the "brush" color to the r(ed), g(reen), b(lue) value that we calculated.
+    stroke(None)
+    #stroke(1, 0, 0) # DEMO: outline color of the shape
+    #strokeWidth(100) # DEMO: thickness of the outline
+    rect(0, 0, W, H)
+    #oval(0, 0, W, H) # Drawing an oval instead of a rect
 
-titleSize = 140
-fs = FormattedString('Asian', font=fontName, 
-        fontSize=titleSize, fill=textColor, lineHeight=titleSize*1.1)
-fs += FormattedString(' food\n', font=fontNameItalic, 
-        fontSize=titleSize, fill=textColor, lineHeight=titleSize*1.1)
-fs += FormattedString('All the pastas you ever need in your life.', font=fontNameItalic, fontSize=titleSize/3, fill=textColor)
+    # Draw title on the poster (not do it this way as separate typographic values
+    #titleSize = 128
+    #fill(0)
+    #font('Superclarendon-Bold')
+    #fontSize(titleSize)
+    #text('Asian food', (30, H-titleSize))
+
+    titleSize = 140
+    fs = FormattedString('Asian', font=fontName, 
+            fontSize=titleSize, fill=textColor, lineHeight=titleSize*1.1)
+    fs += FormattedString(' food\n', font=fontNameItalic, 
+            fontSize=titleSize, fill=textColor, lineHeight=titleSize*1.1)
+    fs += FormattedString('All the pastas you ever need in your life.', font=fontNameItalic, fontSize=titleSize/3, fill=textColor)
+     
+    textWidth = W-ML-MR # Calculate the area on the post that can contain the title width.
+    x, y = ML, H-titleSize*2 # Calculate the position of the title
+    w, h = textSize(fs, width=textWidth) # Get the size of the text on this width.
+    fill(0, 0, 0, 0.2) # Temporary fill the text box are with transparant black
+    rect(x, y, w, h) # So we can see where it went to (if not showing text).
+    textBox(fs, (x, y, min(w, textWidth), h )) # Draw the title in a box that fits the page.
+
+    x = ML
+    y = Y = H-800
+    # Draw the images.
+    imageFolder = 'images/'
+    for fileName in os.listdir(imageFolder):
+        if fileName.startswith('.'):
+            continue
+        if not fileName.endswith('jpg'):
+            continue
+        #x, y = random()*W, random()*H
+        imageWidth = CW
+        imageW, imageH = scaledImage(imageFolder + fileName, (x, y, imageWidth, 0))
+        print imageFolder + fileName, x, y
+        # Draw a nice transparant color on the bottom left of the image.
+        fill(1, random(), 0, 0.5)
+        cphm = 208# colorPhotoMarker
+        cphm = max(100,cphm) # Never make square smaller than 100
+        cphm = min(300,cphm) # Never make sqyare larger than 300
+        rect(x-cphm/2, y-cphm/2, cphm, cphm)
+        # Add a name to the type of pasta.
+        captionText = CAPTION.get(fileName, 'Cannot find this caption') + '\n'
+        captionSize = cphm/4
+        fs = FormattedString(captionText, font=fontName, fontSize=captionSize, lineHeight=cphm/4,
+            fill=textColor)
+        fs += FormattedString(LORUM_IPSUM, font=captionFontName, fontSize=12, lineHeight=12*1.8,
+            fill=textColor)
+        textW, textH = textSize(fs, width=imageWidth) # Get the size of the text on this width.
+        
+        textBox(fs, (x, y-textH, textW, textH))
+
+        y -= imageH/10 + textH + captionSize
+        if y < 0:
+            x += CW + G
+            y = Y
+        
+    # Draw the grid lines
+    for cx in range(int(COLUMNS)):
+        stroke(0, 0, 1)
+        strokeWidth(0.5)
+        x = cx*(CW+G)+MR
+        line((x, 0), (x, H))
+        line((x+CW, 0), (x+CW, H))
  
-textWidth = W-ML-MR # Calculate the area on the post that can contain the title width.
-x, y = ML, H-titleSize*2 # Calculate the position of the title
-w, h = textSize(fs, width=textWidth) # Get the size of the text on this width.
-fill(0, 0, 0, 0.2) # Temporary fill the text box are with transparant black
-rect(x, y, w, h) # So we can see where it went to (if not showing text).
-textBox(fs, (x, y, min(w, textWidth), h )) # Draw the title in a box that fits the page.
-
-x = ML
-y = Y = H-800
-# Draw the images.
-imageFolder = 'images/'
-for fileName in os.listdir(imageFolder):
-    if fileName.startswith('.'):
-        continue
-    if not fileName.endswith('jpg'):
-        continue
-    #x, y = random()*W, random()*H
-    imageWidth = CW
-    imageW, imageH = scaledImage(imageFolder + fileName, (x, y, imageWidth, 0))
-    print imageFolder + fileName, x, y
-    # Draw a nice transparant color on the bottom left of the image.
-    fill(1, random(), 0, 0.5)
-    cphm = 208# colorPhotoMarker
-    cphm = max(100,cphm) # Never make square smaller than 100
-    cphm = min(300,cphm) # Never make sqyare larger than 300
-    rect(x-cphm/2, y-cphm/2, cphm, cphm)
-    # Add a name to the type of pasta.
-    captionText = CAPTION.get(fileName, 'Cannot find this caption') + '\n'
-    captionSize = cphm/4
-    fs = FormattedString(captionText, font=fontName, fontSize=captionSize, lineHeight=cphm/4,
-        fill=textColor)
-    fs += FormattedString(LORUM_IPSUM, font=captionFontName, fontSize=12, lineHeight=12*1.8,
-        fill=textColor)
-    textW, textH = textSize(fs, width=imageWidth) # Get the size of the text on this width.
-    
-    textBox(fs, (x, y-textH, textW, textH))
-
-    y -= imageH/10 + textH + captionSize
-    if y < 0:
-        x += CW + G
-        y = Y
-    
-# Draw the grid lines
-for cx in range(int(COLUMNS)):
-    stroke(0, 0, 1)
-    strokeWidth(0.5)
-    x = cx*(CW+G)+MR
-    line((x, 0), (x, H))
-    line((x+CW, 0), (x+CW, H))
-    
-# _export files are not committed into git.
-saveImage('_export/DB_FoodPosterSketch.pdf')
-saveImage('_export/DB_FoodPosterSketch.png')
+if __name__ == '__main__':      
+    run()
+    # _export files are not committed into git.
+    saveImage('_export/DB_FoodPosterSketch.pdf')
+    saveImage('_export/DB_FoodPosterSketch.png')
