@@ -52,6 +52,7 @@ def makeDocument():
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
+    view.showPagePadding = True
     view.showElementOrigin = True
     view.showElementDimensions = False
     
@@ -82,11 +83,11 @@ def makeDocument():
         leading=5, fontSize=9, textFill=tColor, strokeWidth=0.5, fill=0.9, stroke=None,
     )
        
-    e2 = newTextBox('DDD', 
+    e2 = newTextBox('DDD',
         name='ElasticTextBox2', 
         parent=page, padding=4, x=100, w=BoxWidth, h=200, 
         maxW=W-2*PagePadding, minW=100,
-        conditions=[Right2Right(), Float2Top()], yAlign=TOP,  fill=1, stroke=None,
+        conditions=[Right2RightSide(), Float2Top()], yAlign=TOP,  fill=1, stroke=None,
     )
     score = page.solve()
     if score.fails:
