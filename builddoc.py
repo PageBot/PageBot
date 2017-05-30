@@ -157,7 +157,7 @@ class PageBotDoc(Publication):
                 submodules[module_name] = mod
 
             except Exception, e:
-                print e
+                print e, loader
 
         print folder
 
