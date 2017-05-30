@@ -92,8 +92,9 @@ def makeDocument():
     if score.fails:
         print score.fails
 
+    print im.h
     for e in im.elements:
-        print e.z
+        print e.h
 
     return doc # Answer the doc for further doing.
  
