@@ -124,82 +124,68 @@ class PageBotDoc(Publication):
 
     def writeModuleDoc(self, m, folder=None, level=0):
         u"""
+        Recursively scans package for docstrings.
         TODO: maybe sort (global variables, global functions, hidden
         functions).
         """
         import sys, drawBot
 
-        '''
-        if hasattr(m, '__path__'):
-            print 'path', m.__path__
-        elif hasattr(m, '__file__'):
-            print 'file', m.__file__
-        else:
-            print 'no path or file'
-        '''
-
         try:
             p = m.__path__
         except Exception, e:
-            #print 'cannot find path', m
-            #print dir(m)
-            #print m.__file__
+            print 'cannot find path', m
             return
 
         d = m.__dict__
         db = dir(drawBot)
-        submodules = {}
+        packages = {}
+        classes = {}
 
-        if level > 2:
-            return
-
-        for loader, module_name, is_pkg in  pkgutil.walk_packages(p):
+        for loader, module_name, is_pkg in pkgutil.walk_packages(p):
             try:
                 mod = loader.find_module(module_name).load_module(module_name)
-                submodules[module_name] = mod
+
+                if is_pkg:
+                    packages[module_name] = mod
+                else:
+                    classes[module_name] = mod
 
             except Exception, e:
-                print e, loader
+                print e
 
-        print folder
+        f = open('docs/%s/index.md' % m.__name__, 'w')
 
-        if level == 0:
-            f = open('docs/%s.md' % m.__name__, 'w')
+        f.write('# %s\n' % m.__name__)
 
-            f.write('# %s\n' % m.__name__)
+        f.write('## %s\n' % 'Modules')
 
-            for module_name in sorted(submodules.keys()):
-                mod = submodules[module_name]
-                if hasattr(mod, '__path__'):
-                    f.write('* [%s](%s/%s)\n' % (module_name.replace('.', '/'), m.__name__, module_name))
+        for packageName in sorted(packages.keys()):
+            mod = packages[packageName]
+            if len(packageName.split('.')) == 1:
+                f.write('* [%s.%s](%s/%s)\n' % (m.__name__, packageName, m.__name__, packageName.replace('.', '/')))
 
-            for key, value in d.items():
-                if key.startswith('__') or key in sys.modules.keys() or key in db:
-                    print ' * skipping %s' % key
-                    continue
+        f.write('## %s\n' % 'Classes')
 
-                if value is not None:
-                    f.write('## %s\n' % key)
-                    if value.__doc__:
-                        s = value.__doc__
-                        s = s.strip().replace('    ', '')
-                        f.write('%s\n' % s)
+        for className in sorted(classes.keys()):
+            if len(className.split('.')) == 1:
+                mod = classes[className]
+                f.write('* [%s.%s](%s/%s)\n' % (m.__name__, className, m.__name__, className.replace('.', '/')))
 
-            f.close()
+        f.write('## %s\n' % 'Functions')
 
+        for key, value in d.items():
+            if key.startswith('__') or key in sys.modules.keys() or key in db:
+                print ' * skipping %s' % key
+                continue
 
-        for modname in sorted(submodules.keys()):
-            mod = submodules[modname]
+            if value is not None:
+                f.write('### %s\n' % key)
+                if value.__doc__:
+                    s = value.__doc__
+                    s = s.strip().replace('    ', '')
+                    f.write('%s\n' % s)
 
-            if folder is None:
-                f = m.__name__ + '/' + modname
-            else:
-                f = folder + '/' + modname
-            self.writeModuleDoc(mod, folder=f, level=level+1)
-
-
-
-
+        f.close()
 
 # TODO: pass as argument.
 DO_CLEAR = False
