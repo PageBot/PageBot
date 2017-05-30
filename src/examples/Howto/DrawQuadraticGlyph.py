@@ -127,7 +127,7 @@ def cross(x, y, d, r=1, g=0, b=0, a=1):
 
 C = 0.5
 F = 2 / 3
-glyphName = 'Q'
+glyphName = 'A'
 dx = 200
 x = 50
 r = 10
