@@ -129,12 +129,14 @@ class PageBotDoc(Publication):
         """
         import sys, drawBot
 
+        '''
         if hasattr(m, '__path__'):
             print 'path', m.__path__
         elif hasattr(m, '__file__'):
             print 'file', m.__file__
         else:
             print 'no path or file'
+        '''
 
         try:
             p = m.__path__
@@ -166,8 +168,10 @@ class PageBotDoc(Publication):
 
             f.write('# %s\n' % m.__name__)
 
-            for module_name in submodules:
-                f.write('* [%s](%s/%s)\n' % (module_name, m.__name__, module_name))
+            for module_name in sorted(submodules.keys()):
+                mod = submodules[module_name]
+                if hasattr(mod, '__path__'):
+                    f.write('* [%s](%s/%s)\n' % (module_name.replace('.', '/'), m.__name__, module_name))
 
             for key, value in d.items():
                 if key.startswith('__') or key in sys.modules.keys() or key in db:
@@ -183,7 +187,10 @@ class PageBotDoc(Publication):
 
             f.close()
 
-        for modname, mod in submodules.items():
+
+        for modname in sorted(submodules.keys()):
+            mod = submodules[modname]
+
             if folder is None:
                 f = m.__name__ + '/' + modname
             else:
