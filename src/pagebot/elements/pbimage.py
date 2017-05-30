@@ -68,25 +68,26 @@ class Image(Element):
     caption = property(_get_caption, _set_caption)
 
     def _get_w(self):
-        if self._w is None:
-            # @@@@ TODO, Calculate the combination size of elements.
-            return None
         return self._w 
     def _set_w(self, w):
-        self._w = w
-        if self.image is not None:
-            self.image.w = w - self.pl - self.pr
+        if w != self._w: # Only when changed
+            self._w = w
+            self.solve() # Rearrange the layout of the elements inside
+            #if self.image is not None:
+            #    self.image.w = w - self.pl - self.pr
+            _, _, _, self._h = self.paddedBox()
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        if self._h is None:
-            # @@@@ TODO, Calculate the combination size of elements.
-            return None
         return self._h
     def _set_h(self, h): 
-        self._h = h
-        if self.image is not None:
-            self.image.h = h - self.pb - self.pt
+        if h != self._h: # Only when changed
+            self._h = h
+            self.solve() # Rearrange the layout of elements inside.
+            #if self.image is not None:
+            #    self.image.h = h - self.pb - self.pt
+            # Take over the width from whatever it became
+            _, _, self._w, _ = self.paddedBox()
     h = property(_get_h, _set_h)
 
 
