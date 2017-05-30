@@ -20,7 +20,7 @@
 #
 import runpy
 
-import os, pkgutil
+import os, pkgutil, traceback
 import pagebot
 from pagebot.publications.publication import Publication
 
@@ -124,22 +124,62 @@ class PageBotDoc(Publication):
 
         return node
 
+    def buildMenu(self, p):
+        base = p.split('/')
+        base = ('/').join(base[:-1]) + '/'
+        folders = {}
+
+        for root, dirs, files in os.walk(p):
+            parent = folders
+            folder = root.replace(base, '')#, dirs, files
+            parts = folder.split('/')
+
+            for part in parts:
+                if part not in parent:
+                    parent[part] = {'files': []}
+
+                parent = parent[part]
+
+            for f in files:
+                if f.endswith('.py'):
+                    f = f.replace('.py', '.md')
+                    if f == '__init__.md':
+                        f = 'index.md'
+                    parent['files'].append(f)
+
+        self.writeMenu(folders)
+
+    def writeMenu(self, folders, level=0):
+        indent = '    ' * level
+
+        for k in folders.keys():
+            print ' - %s' % k
+
+            for x in folders[k].keys():
+                if x == 'files':
+                    for f in folders[k]['files']:
+                        print '    - %s/%s' % (k, f)
+                else:
+                    print '    - %s' % x
+                    self.writeMenu({k + '/' + x: folders[k][x]}, level=level)
+
+            level += 1
+
     def writeModuleDoc(self, m, folder=None, level=0):
         u"""Recursively scans package for docstrings."""
         import sys, drawBot
 
         try:
-            p = m.__path__
+            p = m.__path__[0]
         except Exception, e:
             print 'cannot find path', m
             return
 
         d = m.__dict__
         db = dir(drawBot)
-        packages = {}
-        classes = {}
-        menu = {'files': ['index.md'], 'folders': []}
+        self.buildMenu(p)
 
+        '''
         for loader, name, is_pkg in pkgutil.walk_packages(p):
             try:
                 mod = loader.find_module(name).load_module(name)
@@ -147,25 +187,23 @@ class PageBotDoc(Publication):
                 parts = name.split('.')
 
                 for i, part in enumerate(parts):
-                    if i < len(parts) - 1:
-                        if not part in parent:
-                            parent[part] = {'files': ['index.md'], 'folders': []}
+                    if is_pkg and not part in parent['folders']:
+                        parent['folders'][part] = {'files': ['index.md'], 'folders': {}}
 
-                        parent[part]['folders'].append(name)
+                    elif i == len(parts) - 1:
+                        #if is_pkg:
+                        #    parent['folders'][part] = {}
+                        if not is_pkg:
+                            parent['files'].append(part + '.md')
 
-                    else:
-                        if is_pkg:
-                            parent[part]['folders'].append(name)
-                        else:
-                            parent[part]['files'].append(name)
-
-
-                    parent = parent[part]
+                    if is_pkg:
+                        parent = parent['folders'][part]
 
             except Exception, e:
-                print e
+                print e, traceback.format_exc()
 
-        print menu['builders']
+        print menu
+        '''
 
         '''
 
