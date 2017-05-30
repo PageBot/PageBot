@@ -122,17 +122,26 @@ class PageBotDoc(Publication):
 
         return node
 
-    def runModules(self, m, folder=None, level=0):
+    def writeModuleDoc(self, m, folder=None, level=0):
         u"""
         TODO: maybe sort (global variables, global functions, hidden
         functions).
         """
         import sys, drawBot
+
+        if hasattr(m, '__path__'):
+            print 'path', m.__path__
+        elif hasattr(m, '__file__'):
+            print 'file', m.__file__
+        else:
+            print 'no path or file'
+
         try:
             p = m.__path__
-
         except Exception, e:
-            print m
+            #print 'cannot find path', m
+            #print dir(m)
+            #print m.__file__
             return
 
         d = m.__dict__
@@ -179,7 +188,7 @@ class PageBotDoc(Publication):
                 f = m.__name__ + '/' + modname
             else:
                 f = folder + '/' + modname
-            self.runModules(mod, folder=f, level=level+1)
+            self.writeModuleDoc(mod, folder=f, level=level+1)
 
 
 
@@ -202,7 +211,7 @@ if __name__ == '__main__':
         pbDoc.processPath()
 
     if RUN_MODULES:
-        pbDoc.runModules(pagebot)
+        pbDoc.writeModuleDoc(pagebot)
 
     print 'Done'
 
