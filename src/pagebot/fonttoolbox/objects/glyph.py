@@ -179,9 +179,11 @@ class Glyph(object):
             if index in endPtsOfContours and openContour:
                 # End of contour.
                 if openSegment:
+                    if not p.onCurve:
+                        openSegment.append(p0)
+
                     currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
 
-                openSegment.append(p0)
                 path.closePath()
                 openContour = None
                 openSegment = None
