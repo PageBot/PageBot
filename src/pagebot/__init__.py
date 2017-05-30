@@ -257,6 +257,7 @@ class Gradient(object):
     """
     def __init__(self, start=None, end=None, colors=None, cmykColors=None, locations=None,
         startRadius=None, endRadius=None):
+        # TODO: Add assert test of locations has same length as colors.
         self.start = start or (0.5, 0) # Default to start a center of bottom.
         self.end = end or (0.5, 1) # Default to end at center of top.
         self.colors = colors or ((0,0,0), (1,1,1)) # Default to run between black and white.

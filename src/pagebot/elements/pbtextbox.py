@@ -431,11 +431,12 @@ class TextBox(Element):
                 nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
                 if nextElement is None or nextElement.fs and self.nextPage:
                     # Not found or not empty, search on next page.
-                    nextPage = self.doc.getPage(self.nextPage)
-                    nextElement = nextPage.getElementByName(self.nextElement)
+                    page = self.doc.getPage(self.nextPage)
+                    nextElement =  page.getElementByName(self.nextElement)
                 if nextElement is not None and not nextElement.fs: 
                     # Finally found one empty box on this page or next page?
                     nextElement.fs = overflow
+                    nextElement.prevPage = page.name
                     nextElement.prevElement = self.name # Remember the back link
                     score = nextElement.solve() # Solve any overflow on the next element.
                     result = len(score.fails) == 0 # Test if total flow placement succeeded.
@@ -450,6 +451,8 @@ class TextBox(Element):
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
    
+        # TODO: Add marker if there is overflow text in the textbox.
+
         self.drawFrame(p, view) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined

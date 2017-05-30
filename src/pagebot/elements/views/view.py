@@ -48,7 +48,7 @@ class View(Element):
         self.showElementInfo = False
         self.showElementFrame = False
         self.showElementOrigin = False
-        self.showElementDimensions = False
+        self.showElementDimensions = False # TODO: Does not work if there is view padding.
         self.showMissingElementRect = True
         # Grid stuff
         self.showGrid = False
