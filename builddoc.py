@@ -27,6 +27,8 @@ from pagebot.publications.publication import Publication
 SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD', 'scripts-in-progress',
     'examples-in-progress', 'canvas3d', 'pagebotdoc.py')
 
+CONFIG = 'mkdocs.yml'
+
 class Node(object):
     """The *Node* class is used to build the PageBot file tree, for cleaning doc-building
     and unit tests.
@@ -123,11 +125,7 @@ class PageBotDoc(Publication):
         return node
 
     def writeModuleDoc(self, m, folder=None, level=0):
-        u"""
-        Recursively scans package for docstrings.
-        TODO: maybe sort (global variables, global functions, hidden
-        functions).
-        """
+        u"""Recursively scans package for docstrings."""
         import sys, drawBot
 
         try:
@@ -140,6 +138,37 @@ class PageBotDoc(Publication):
         db = dir(drawBot)
         packages = {}
         classes = {}
+        menu = {'files': ['index.md'], 'folders': []}
+
+        for loader, name, is_pkg in pkgutil.walk_packages(p):
+            try:
+                mod = loader.find_module(name).load_module(name)
+                parent = menu
+                parts = name.split('.')
+
+                for i, part in enumerate(parts):
+                    if i < len(parts) - 1:
+                        if not part in parent:
+                            parent[part] = {'files': ['index.md'], 'folders': []}
+
+                        parent[part]['folders'].append(name)
+
+                    else:
+                        if is_pkg:
+                            parent[part]['folders'].append(name)
+                        else:
+                            parent[part]['files'].append(name)
+
+
+                    parent = parent[part]
+
+            except Exception, e:
+                print e
+
+        print menu['builders']
+
+        '''
+
 
         for loader, module_name, is_pkg in pkgutil.walk_packages(p):
             try:
@@ -153,10 +182,10 @@ class PageBotDoc(Publication):
             except Exception, e:
                 print e
 
+
+        # Module index.
         f = open('docs/%s/index.md' % m.__name__, 'w')
-
         f.write('# %s\n' % m.__name__)
-
         f.write('## %s\n' % 'Modules')
 
         for packageName in sorted(packages.keys()):
@@ -186,6 +215,7 @@ class PageBotDoc(Publication):
                     f.write('%s\n' % s)
 
         f.close()
+        '''
 
 # TODO: pass as argument.
 DO_CLEAR = False
