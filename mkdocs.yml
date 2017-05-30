@@ -5,5 +5,9 @@ theme: readthedocs
 pages:
   - 'Home': 'index.md'
   - 'How To': 'howto.md'
-  - 'API': 'pagebot.md'
   - 'About': 'about.md'
+  - 'pagebot API': 'pagebot/index.md'
+  - 'pagebot.builders':
+     - 'pagebot.builders': 'pagebot/builders/index.md'
+     - 'pagebot.builders.basebuilder': 'pagebot/builders/basebuilder.md'
+        
