@@ -61,24 +61,27 @@ def makeDocument():
     page.name = 'This is a demo page for floating child elements'
     page.padding = PagePadding
     
+    # Show margin of page, can also be done by
+    # view.showPagePadding = True
     newRect(fill=0.9, parent=page, margin=0, conditions=(Left2Left(), Fit2Right(), Bottom2Bottom(), Fit2Height()))
     
-    container = newRect(fill=(1, 0, 0), pb=10, w=RedSize, h=RedSize, 
+    redContainer = newRect(fill=(1, 0, 0), pb=10, w=RedSize, h=RedSize, padding=10,
         conditions=(Left2Left(), Bottom2Bottom()), parent=page) 
     
     # Yellow square
-    yellowSquare = newRect(fill=(1, 1, 0), w=YellowSize, h=YellowSize, parent=container, xAlign=CENTER, yAlign=TOP,
-        conditions=(Center2Center(), Bottom2Bottom())) 
+    yellowSquare = newRect(fill=(1, 1, 0), z=8, w=YellowSize, h=YellowSize, parent=redContainer, xAlign=CENTER, yAlign=TOP,
+        conditions=(Center2Center(), Bottom2Bottom()))
+         
     # Blue square in different z=layer. No interaction with Floating on other z-layers.
-    blueSquare = newRect(fill=(0, 1, 1), z=10, w=50, h=50, parent=container, xAlign=CENTER, 
-        conditions=(Top2TopSide(), Center2Center(),)) 
+    blueSquare = newRect(fill=(0, 1, 1), z=10, w=50, h=50, parent=redContainer, xAlign=CENTER, 
+        conditions=(Top2Top(), Center2Center(),)) 
    
     # Centered string
     fs = newFS('Float on top of yellow', style=dict(font='Verdana', fontSize=7,
         textFill=0))
     # Text falls through the yr2 (with differnt z) and lands on yellowSquare by Float2BottomSide()    
-    newTextBox(fs, w=container.w, name='Caption', parent=container,
-        fill=None, strokeWidth=0.5, stroke=(1, 1, 0),
+    newTextBox(fs, name='Caption', parent=redContainer, z=8,
+        fill=(0, 1, 0), strokeWidth=0.5, stroke=(1, 1, 0),
         conditions=[ Fit2Width(), Float2BottomSide()], elasticH=True, padding=3,
     )    
     score = page.solve()

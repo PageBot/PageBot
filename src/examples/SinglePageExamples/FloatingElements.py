@@ -96,7 +96,7 @@ def makeDocument(rootStyle):
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(rootStyle, pages=1) 
+    doc = Document(w=W, h=H, pages=1) 
  
     w = 300
 
@@ -108,32 +108,32 @@ def makeDocument(rootStyle):
     colorCondition2 = [ # Placement condition(s) for the color rectangle elements.
         Right2Right(),
         #Top2Bottom(),
-        FloatLeft(),
-        FloatTop(),
+        Float2Left(),
+        Float2Top(),
     ]
     # Obvious wrong placement of all elements, to be corrected by solving conditions.
     # In this example the wrongOrigin still shows the elements in the bottom left corner,
     # so it is obvious where they are, of not corrected.
     wrongOrigin = (-300, -300)
     
-    page = doc[1] # Get the first/single page of the document.
+    page = doc[0] # Get the first/single page of the document.
 
-    e0 = page.rect(name='Page area', conditions=[Fit()], fill=0.9)
+    e0 = newRect(name='Page area', conditions=[Fit()], fill=0.9)
     e0.z = -10 # Other z-layer, makes this element be ignored on floating checks.
 
     # Add some color elements (same width, different height) at the “wrongOrigin” position.
     # They will be repositioned by solving the colorConditions.
-    e1 = page.rect(point=wrongOrigin, style=rootStyle, name='Other element', 
+    e1 = newRect(style=rootStyle, name='Other element', 
         w=W1, h=H1, conditions=colorCondition1, 
         fill=(1, 0.5, 0.5), xAlign=LEFT, yAlign=TOP)
-    e2 = page.rect(point=wrongOrigin, style=rootStyle, w=W2, h=H2, name='Floating element 2', 
+    e2 = newRect(parent=page,w=W2, h=H2, name='Floating element 2', 
         conditions=colorCondition2, fill=(1, 1, 0), xAlign=LEFT, yAlign=TOP)
-    e3 = page.rect(point=wrongOrigin, style=rootStyle, w=W3, h=H3, name='Floating element 3', 
+    e3 = newRect(parent=page,w=W3, h=H3, name='Floating element 3', 
         conditions=colorCondition2, fill=(1, 0, 1), xAlign=LEFT, yAlign=TOP)
-    e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 
+    e4 = newRect(parent=page, w=W4, h=H4, name='Floating element 4', 
         conditions=colorCondition2, fill=(0, 1, 1), xAlign=LEFT, yAlign=TOP)
-    e5 = page.rect(point=wrongOrigin, style=rootStyle, w=W5, h=H5, name='Floating element 5', 
-        conditions=[FloatRightTopSides()], fill=(0, 1, 0), xAlign=LEFT, yAlign=TOP)
+    e5 = newRect(parent=page,w=W5, h=H5, name='Floating element 5', 
+        conditions=[Float2RightSide(), Float2TopSide()], fill=(0, 1, 0), xAlign=LEFT, yAlign=TOP)
 
     score = page.evaluate()
     #print 'Page value on evaluation:', score
