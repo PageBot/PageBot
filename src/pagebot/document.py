@@ -48,7 +48,7 @@ class Document(object):
 
         # Document (w, h) size is default from page, but will modified by the type of display mode. 
         if autoPages:
-            self.makePages(pageCnt=autoPages, **kwargs)
+            self.makePages(pageCnt=autoPages, w=w, h=h, **kwargs)
         # Storage lib for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
         self._lib = {}
@@ -269,20 +269,25 @@ class Document(object):
         u"""Create a new page with size (self.w, self.h) unless defined otherwise. Add the pages in the row of pn, if defined.
         Otherwise create a new row of pages at pn. If pn is undefined, add a new page row at the end."""
         page = self.PAGE_CLASS(parent=self, template=template, w=w or self.w, h=h or self.h, name=name, **kwargs)
-        return
-        if pn is None:
-            pn = max(self.pages.keys())+1
-        if not pn in self.pages:
-            self.pages[pn] = []
-        self.pages[pn].append(page)
+        # TODO: Code below not necessary?
+        #if pn is None:
+        #    pn = max(self.pages.keys())+1
+        #if not pn in self.pages:
+        #    self.pages[pn] = []
+        #self.pages[pn].append(page)
 
-    def makePages(self, pageCnt, pn=None, template=None, w=None, h=None, **kwargs):
+    def makePages(self, pageCnt, pn=None, template=None, w=None, h=None, name=None, **kwargs):
         u"""
         If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position."""
         if template is None:
             template = self.pageTemplate
         for n in range(pageCnt):
-            self.newPage(pn=pn, template=template, w=w or self.w, h=h or self.h, **kwargs) # Parent is forced to self.
+            self.newPage(pn=pn, template=template, name=name, w=w, h=h, **kwargs) # Parent is forced to self.
+
+    def getElementPage():
+        u"""Search ancestors for the page element. This can only happen here if elements don't have a
+        Page ancestor. Return None to indicate that there is no Page instance found amongst the ancesters."""
+        return None
 
     def nextPage(self, page, nextPage=1, makeNew=True):
         u"""Answer the next page of page. If it does not exist, create a new page."""
@@ -344,10 +349,10 @@ class Document(object):
             return w, h, d
 
     def solve(self, score=None):
-        u"""Evaluate the content of all pages to retutn the total sum of conditions."""
+        u"""Evaluate the content of all pages to return the total sum of conditions solving."""
         score = Score()
         for pn, pnPages in sorted(self.pages.items()):
-            for page in pnPages: # List of pages with identical pn
+            for page in pnPages: # List of pages with identical pn, step through the pages.
                 page.solve(score)
         return score
 

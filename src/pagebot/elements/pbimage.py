@@ -34,7 +34,7 @@ class Image(Element):
         if imageConditions is None:
             imageConditions = (Top2TopSide(), Fit2Width())
         if pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
-            pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, h=h,
+            pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, h=h, 
                 conditions=imageConditions, **kwargs) # Default width is leading.
         self.image = pixelMap # Property to add to self.elements and set pixelMap.parent to self.
         # Title can be any type of element, but most likely a text box.
@@ -70,24 +70,31 @@ class Image(Element):
     def _get_w(self):
         return self._w 
     def _set_w(self, w):
-        self._w = w
-        if self.image is not None:
-            self.image.w = w - self.pl - self.pr
+        if w != self._w: # Only when changed
+            self._w = w
+            self.solve() # Rearrange the layout of the elements inside
+            #if self.image is not None:
+            #    self.image.w = w - self.pl - self.pr
+            _, _, _, self._h = self.paddedBox()
     w = property(_get_w, _set_w)
 
     def _get_h(self):
         return self._h
     def _set_h(self, h): 
-        self._h = h
-        if self.image is not None:
-            self.image.h = h - self.pb - self.pt
+        if h != self._h: # Only when changed
+            self._h = h
+            self.solve() # Rearrange the layout of elements inside.
+            #if self.image is not None:
+            #    self.image.h = h - self.pb - self.pt
+            # Take over the width from whatever it became
+            _, _, self._w, _ = self.paddedBox()
     h = property(_get_h, _set_h)
 
 
 class PixelMap(Element):
     u"""The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId."""
    
-    def __init__(self, path, w=None, h=None, clipRect=None, clipPath=None, mask=None, 
+    def __init__(self, path, w=None, h=None, z=0, clipRect=None, clipPath=None, mask=None, 
         imo=None, **kwargs):
         Element.__init__(self, **kwargs)
 
@@ -95,6 +102,7 @@ class PixelMap(Element):
         # If both are set, then the image scales disproportional.
         self.w = w
         self.h = h
+        self.z = z # Make conditions work with captions inside the image frame element.
 
         self.mask = mask # Optional mask element.
         self.clipRect = clipRect # Optional clip rectangle

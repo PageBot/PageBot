@@ -415,7 +415,7 @@ class TextBox(Element):
 
     def isOverflow(self, tolerance):
         u"""Answer the boolean flag if this element needs overflow to be solved.
-        This method is typically called by conditions such as Overflow2Next"""
+        This method is typically called by conditions such as Overflow2Next."""
         return self.nextElement is None or not len(self.getOverflow())
 
     def overflow2Next(self):
@@ -424,11 +424,21 @@ class TextBox(Element):
         overflow = self.getOverflow()
         if overflow and self.nextElement: # If there is text overflow and there is a next element?
             result = False
-            nextElement = self.getElementByName(self.nextElement, True) # Serch ancestors too.
-            if nextElement is not None: # Found one
-                nextElement.fs = overflow
-                score = nextElement.solve() # Solve any overflow on that element.
-                result = len(score.fails) == 0 # Test if total flow placement succeeded.
+            # Find the page of self
+            page = self.getElementPage()
+            if page is not None:        
+                # Try next page
+                nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
+                if nextElement is None or nextElement.fs and self.nextPage:
+                    # Not found or not empty, search on next page.
+                    nextPage = self.doc.getPage(self.nextPage)
+                    nextElement = nextPage.getElementByName(self.nextElement)
+                if nextElement is not None and not nextElement.fs: 
+                    # Finally found one empty box on this page or next page?
+                    nextElement.fs = overflow
+                    nextElement.prevElement = self.name # Remember the back link
+                    score = nextElement.solve() # Solve any overflow on the next element.
+                    result = len(score.fails) == 0 # Test if total flow placement succeeded.
         return result
 
     #   D R A W 

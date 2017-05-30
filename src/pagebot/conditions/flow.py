@@ -29,3 +29,6 @@ class Overflow2Next(Condition):
 			self.addScore(e.overflow2Next(), e, score)
 
 
+class EqualizeFlow2Height(Condition):
+	u"""Test if all elements in the flow the same height and/or same amount text lines."""
+	# TODO
