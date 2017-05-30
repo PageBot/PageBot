@@ -127,13 +127,13 @@ def cross(x, y, d, r=1, g=0, b=0, a=1):
 
 C = 0.5
 F = 2 / 3
-glyphName = 'A'
+glyphName = 'Q'
 dx = 200
 x = 50
 r = 10
 
 PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
-PATH = u"/Library/Fonts/BigCaslon.ttf"
+#PATH = u"/Library/Fonts/BigCaslon.ttf"
 font = Font(PATH, install=False)
 glyph = font[glyphName]
 path = BezierPath()
@@ -200,13 +200,13 @@ for n, contour in enumerate(contours):
         # drawPath(path) (see below.)
         drawSegment(segment)
 
-'''
+
 # Enable to let this script draw the path.
 fill(None)
 stroke(1, 0, 0)
 strokeWidth(1)
 drawPath(path)
-'''
+
 
 # Enable to draw path as built by PageBot glyph.
 c = glyph.contours
