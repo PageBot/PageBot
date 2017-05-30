@@ -382,7 +382,14 @@ myTextBox._drawFrame()
 myTextBox._drawBaselines(showIndex=True, showY=True, showLeading=True)
 
 for pattern in myTextBox.findPattern('Find'):
+    #print pattern
+    px = pattern.x
+    py = pattern.y
     print pattern
+    print px, py[1]
+    stroke(1, 0, 0)
+    fill(None)
+    oval(px-10, py[1]-10, 20, 20)
 
 # Bitcount measures, pixels are 1/10 of Em
 for yy in range(-3,10):
