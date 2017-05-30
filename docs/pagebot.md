@@ -87,6 +87,7 @@
 * [contributions.filibuster.content.internet](pagebot/contributions.filibuster.content.internet)
 * [elements.element](pagebot/elements.element)
 * [fonttoolbox.objects](pagebot/fonttoolbox.objects)
+* [canvas3d.canvas3d](pagebot/canvas3d.canvas3d)
 * [elements.variablefonts.variablecube2](pagebot/elements.variablefonts.variablecube2)
 * [contributions.filibuster.blurb](pagebot/contributions.filibuster.blurb)
 * [contributions.filibuster.content.aerospace](pagebot/contributions.filibuster.content.aerospace)
