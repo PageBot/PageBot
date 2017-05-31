@@ -116,6 +116,46 @@ def cz2z(cz, e):
         z = e.parent.pzf + cz * (e.css('cd', 0) + e.gd)
     return z
 
+# Number of cols, rows, lanes
+# TODO Make this work
+"""
+def w2cols(w, e): # Answer the rounded amount of columns that fit in the given width.
+    gw = e.gw
+    cw = e.css('cw', 0)
+    if cw + gw:
+        return int((e.w - e.pl - e.pr + gw) / (cw + gw))
+
+def cols2w(w, e): # Answer the col width for the give amount of colums
+    gw = e.gw
+    cw = e.css('cw', 0)
+    if cw + gw:
+        return int((e.w - e.pl - e.pr + gw) / (cw + gw))
+    
+def w2rows(w, e): # Answer the rounded amount of rows that fit in the given width.
+    gh = e.gh
+    ch = e.css('ch', 0)
+    if ch + gh:
+        return int((e.h - e.pt - e.pb + gh) / (ch + gh))
+
+def rows2w(w, e): # Answer the row width for the give amount of colums
+    gh = e.gh
+    ch = e.css('ch', 0)
+    if ch + gh:
+        return int((e.h - e.pt - e.pr + e.gw) / (cw + gw))
+    
+def w2cols(w, e): # Answer the rounded amount of columns that fit in the given width.
+    gw = e.gw
+    cw = e.css('cw', 0)
+    if cw + gw:
+        return int((e.w - e.pl - e.pr + e.gw) / (cw + gw))
+
+def cols2w(w, e): # Answer the col with for the give amount of colums
+    gw = e.gw
+    cw = e.css('cw', 0)
+    if cw + gw:
+        return int((e.w - e.pl - e.pr + e.gw) / (cw + gw))
+"""    
+
 # Size
 
 def w2cw(w, e):
