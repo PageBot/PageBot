@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     UseTextFlows.py
+#     UseFormattedStringFlows.py
 #
 #     If a TextBox as self.nextElement defined as name for another text box on the
 #     same page, then overflow of self will go into the other text box.
@@ -41,7 +41,7 @@ def makeDocument():
     doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)
     
     view = doc.getView()
-    view.padding = 40 # Aboid showing of crop marks, etc.
+    view.padding = 0 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
@@ -55,15 +55,17 @@ def makeDocument():
     page0.name = 'Page 1'
     page0.padding = PagePadding
     
-    s = ''
+    fs = newFS('')
     for n in range(10):
-        s += '(Line %d) Volume of text defines the box height. Volume of text defines the box height. \n' % (n+1)
+        fs += newFS('(Line %d) ' % (n+1), style=dict(font='Verdana-Bold', fontSize=9, leading=10, textFill=0))
+        fs += newFS('Volume of text defines the box height. Volume of text defines the box height. \n', style=dict(font='Verdana', fontSize=9, leading=10, textFill=0))
+        
     if DoTextFlow:
         h1 = 120 # Fox on a given height, to show the text flowing to the e2 element.
     else:
         h1 = None  
           
-    e1 = newTextBox(s, 
+    e1 = newTextBox(fs, 
         name='ElasticTextBox1',
         nextElement='ElasticTextBox2', # Overflow goes here.
         parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
@@ -74,7 +76,7 @@ def makeDocument():
         # Position of the origin of the element. Just to show where it is.
         # Has no effect on the position conditions. 
         yAlign=BOTTOM, xAlign=LEFT,
-        leading=5, fontSize=9, textFill=0, strokeWidth=0.5, fill=0.9, stroke=None,
+        strokeWidth=0.5, fill=0.9, stroke=None,
     )
     e2 = newTextBox('', # Empty box, will get the overflow from e1, if there is any.
         name='ElasticTextBox2', # Flow reference by element.name 

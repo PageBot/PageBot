@@ -40,10 +40,12 @@ page = doc[0]
 page.padding = 30
 
 conditions = [Right2Right(), Float2Top(), Float2Left()]
-conditions = [Left2Left(), Float2Top(), Float2Right()]
+# TODO: Solve this bug, does not mirror.
+#conditions = [Left2Left(), Float2Top(), Float2Right()]
 
-for n in range(1):
-    mm = newRect(w=40, h=42, mr=4, mt=4, parent=page, fill=(random()*0.5+0.5, 0, 0.5),
+for n in range(62):
+    mm = newRect(w=40, h=42, mr=4, mt=4, parent=page, 
+        fill=(random()*0.5+0.5, 0, 0.5),
         conditions=conditions)  
     
 # Recursively solve the conditions in all pages.

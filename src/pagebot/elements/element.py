@@ -42,7 +42,7 @@ class Element(object):
 
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
             title=None, style=None, conditions=None, elements=None, template=None, nextElement=None, prevElement=None, 
-            nextPage=None, padding=None, margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
+            nextPage=None, prevPage=None, padding=None, margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
             mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, borders=None, borderTop=None, borderRight=None,
             borderBottom=None, borderLeft=None, 
             drawBefore=None, drawAfter=None, **kwargs):  
@@ -95,6 +95,7 @@ class Element(object):
         self.prevElement = prevElement # Name of the prev flow element
         self.nextElement = nextElement # Name of the next flow element
         self.nextPage = nextPage # Name ot identifier of the next page that nextElement refers to.
+        self.prevPage = prevPage
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
         self.applyTemplate(template, elements) 

@@ -70,24 +70,24 @@ class Image(Element):
     def _get_w(self):
         return self._w 
     def _set_w(self, w):
-        if w != self._w: # Only when changed
-            self._w = w
-            self.solve() # Rearrange the layout of the elements inside
-            #if self.image is not None:
-            #    self.image.w = w - self.pl - self.pr
-            _, _, _, self._h = self.paddedBox()
+        self._w = w
+        #if w != self._w: # Only when changed
+        #    self.solve() # Rearrange the layout of the elements inside
+        #    #if self.image is not None:
+        #    #    self.image.w = w - self.pl - self.pr
+        #    _, _, _, self._h = self.paddedBox()
     w = property(_get_w, _set_w)
 
     def _get_h(self):
         return self._h
     def _set_h(self, h): 
-        if h != self._h: # Only when changed
-            self._h = h
-            self.solve() # Rearrange the layout of elements inside.
-            #if self.image is not None:
-            #    self.image.h = h - self.pb - self.pt
-            # Take over the width from whatever it became
-            _, _, self._w, _ = self.paddedBox()
+        #if h != self._h: # Only when changed
+        self._h = h
+        #    self.solve() # Rearrange the layout of elements inside.
+        #    #if self.image is not None:
+        #    #    self.image.h = h - self.pb - self.pt
+        #    # Take over the width from whatever it became
+        #    _, _, self._w, _ = self.paddedBox()
     h = property(_get_h, _set_h)
 
 

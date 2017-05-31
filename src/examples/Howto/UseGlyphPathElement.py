@@ -63,22 +63,23 @@ def makeDocument():
     PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
     f = Font(PATH, install=False)
     #pathFilter = None
-    glyphName = 'a'#'cid05405.1'
+    glyphName = 'e'#'cid05405.1'
     
     e1 = GlyphPath(f[glyphName], stroke=None, h=600,
         fill=None, pathFilter=pathFilter,
         parent=page, font='Verdana',       
         conditions=[Left2Left(), Float2Top()])
+    """
     e2 = GlyphPath(f[glyphName], stroke=(1, 0, 0), h=600,
         fill=None, strokeWidth=20, 
         parent=page, font='Verdana',       
         conditions=[Left2Left(), Float2Top()])
-    
+    """
     score = page.solve()
     if score.fails:
         print score.fails
     e1.y += 100
-    e2.y += 100
+    #e2.y += 100
 
     return doc # Answer the doc for further doing.
  
