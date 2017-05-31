@@ -36,14 +36,16 @@ def makeDocument():
     doc = Document(rootStyle, originTop=False, w=W, h=H, pages=1) 
     
     page = doc[0] # Get the first/single page of the document.
+    page.padding = 40 # TODO: order if 4 values?
     
     # Make rect as page element centered with centered origin.
     if RedRect:
         c = 1, 0, 0
     else:
         c = 0.5
+    conditions = (Center2Center(), Middle2Middle())
     newRect(fill=c, parent=page, w=RectSize, h=RectSize,
-        conditions=(Center2Center(), Middle2Middle()),
+        conditions=conditions,
         xAlign=CENTER, yAlign=MIDDLE)
     # Solve the layout conditions of the red rectangle.
     # Show if one of the conditions failed to solve.
@@ -56,6 +58,7 @@ def makeDocument():
     view.w = view.h = W, H
     view.padding = 30 # Make view padding to show crop marks and frame
     view.showPageFrame = True # Show frame of the page in blue
+    view.showPagePadding = True
     view.showPageCropMarks = True # Show crop marks
     view.showElementOrigin = ShowOrigins # Show origin alignment markers on each element.
     view.showElementDimensions = ShowOrigins
