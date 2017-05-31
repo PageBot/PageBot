@@ -8,7 +8,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     text.py
+#     pbtext.py
 #
 #     Using the DrawBot textBox() instead of text() for better control
 #     of alugnment, position and leading (in case there are "\n" returns
