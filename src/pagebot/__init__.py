@@ -532,5 +532,3 @@ def textPositionSearch(fs, w, h, search, xAlign=LEFT, hyphenation=True):
                 minx = 0
 
     return rectangles
-
-
