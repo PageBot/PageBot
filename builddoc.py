@@ -78,6 +78,9 @@ class PageBotDoc(Publication):
 
     def __init__(self):
         Publication.__init__(self)
+        self.pagebotRoot = pagebot.getRootPath()
+        self.pagebotBase = 'src/pagebot'
+        self.pagebotDocs = self.pagebotRoot.replace('src', 'docs')
 
     def buildNode(self, node, level=0):
         print '\t'*level + `node`
@@ -91,6 +94,7 @@ class PageBotDoc(Publication):
         self.buildNode(rootNode)
 
     def clearPyc(self, path=None):
+        u"""Recursively removes all .pyc files."""
         if path is None:
             path = pagebot.getRootPath()
 
@@ -111,12 +115,10 @@ class PageBotDoc(Publication):
         u"""Calls runpy and doctest.testfile on all .py files in our module.
         """
         if path is None:
-            path = pagebot.getRootPath()
+            path = self.pagebotRoot
 
         if node is None:
             node = Node('root')
-
-        base = 'src/pagebot'
 
         for fileName in os.listdir(path):
             filePath = path + '/' + fileName
@@ -132,7 +134,7 @@ class PageBotDoc(Publication):
             if filePath.endswith('.py'):
                 try:
                     runpy.run_path(filePath)
-                    relPath = base + filePath.split(base)[-1]
+                    relPath = self.pagebotBase + filePath.split(self.pagebotBase)[-1]
                     d = doctest.testfile(relPath)
                 except Exception, e:
                     # TODO: write to file.
@@ -153,14 +155,12 @@ class PageBotDoc(Publication):
         f.write(" - 'Home': 'index.md'\n")
         f.write(" - 'How To': 'howto.md'\n")
         f.write(" - 'About': 'about.md'\n")
-        self.buildDocsMenu(m, f)
+        folders = self.buildDocsMenu(m, f)
         f.close()
-        self.writeDocsPages(p)
+        self.writeDocsPages(folders)
 
     def buildDocsMenu(self, m, yml):
-        u"""
-        Extracts menu from module structure.
-        """
+        u"""Extracts menu from module structure."""
         p = m.__path__[0]
         base = p.split('/')
         base = ('/').join(base[:-1]) + '/'
@@ -179,41 +179,52 @@ class PageBotDoc(Publication):
 
             for f in files:
                 if f.endswith('.py'):
-                    f = f.replace('.py', '.md')
-                    if f == '__init__.md':
-                        f = 'index.md'
+                    f = f.replace('.py', '')
+                    if f == '__init__':
+                        f = 'index'
                     parent['files'].append(f)
 
-        self.writeMenu(folders, yml)
+        self.writeDocsMenu(folders, yml)
+        return folders
 
-    def writeMenu(self, folders, yml, level=0):
-        u"""
-        Writes the menu structure to YAML config file.
-        """
+    def writeDocsMenu(self, folders, yml, level=0):
+        u"""Writes the menu structure to YAML config file."""
         indent = '    ' * level
 
         for k in folders.keys():
-            yml.write(" - '%s':\n" % k)
+            yml.write(" - '%s.md':\n" % k)
 
             for x in folders[k].keys():
                 if x == 'files':
                     for folder in folders[k]['files']:
-                        yml.write("    - '%s/%s'\n" % (k, folder))
+                        yml.write("    - '%s/%s.md'\n" % (k, folder))
                 else:
-                    yml.write("    - '%s'\n" % x)
-                    self.writeMenu({k + '/' + x: folders[k][x]}, yml, level=level)
+                    yml.write("    - '%s.md'\n" % x)
+                    self.writeDocsMenu({k + '/' + x: folders[k][x]}, yml, level=level)
 
             level += 1
 
-    def writeDocsPages(self, m, folder=None, level=0):
-        u"""
-        Writes a doc page for each item in the menu.
-        """
+    def writeDocsPages(self, folders, level=0):
+        u"""Writes a doc page for each item in the menu."""
         db = dir(drawBot) # TODO: global.
 
-        '''
+        for k in sorted(folders.keys()):
+            for x in sorted(folders[k].keys()):
+                if x == 'files':
+                    for f in folders[k]['files']:
+                        print 'docs/' + k + '/' + f
+                else:
+                    folder = 'docs/' + k + '/' + x
+
+                    if not os.path.exists(folder):
+                        os.mkdir(folder)
+
+                    self.writeDocsPages({k + '/' + x: folders[k][x]})
+
+    def writeDocsPage(self, path, m):
         # Module index.
-        f = open('docs/%s/index.md' % m.__name__, 'w')
+        #f = open('docs/%s/index.md' % m.__name__, 'w')
+        f = open('docs/%s/%s.md' % path, 'w')
         f.write('# %s\n' % m.__name__)
         f.write('## %s\n' % 'Modules')
 
@@ -246,7 +257,6 @@ class PageBotDoc(Publication):
                     f.write('%s\n' % s)
 
         f.close()
-        '''
 
 def main(argv):
     try:
