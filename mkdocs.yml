@@ -6,19 +6,19 @@ pages:
  - 'Home': 'index.md'
  - 'How To': 'howto.md'
  - 'About': 'about.md'
- - 'pagebot':
+ - 'pagebot.md':
     - 'pagebot/index.md'
     - 'pagebot/composer.md'
     - 'pagebot/document.md'
     - 'pagebot/style.md'
     - 'pagebot/typesetter.md'
-    - 'md'
- - 'pagebot/md':
+    - 'md.md'
+ - 'pagebot/md.md':
     - 'pagebot/md/index.md'
     - 'pagebot/md/footnotes.md'
     - 'pagebot/md/literature.md'
-    - 'elements'
- - 'pagebot/elements':
+    - 'elements.md'
+ - 'pagebot/elements.md':
     - 'pagebot/elements/index.md'
     - 'pagebot/elements/element.md'
     - 'pagebot/elements/pbgalley.md'
@@ -31,13 +31,13 @@ pages:
     - 'pagebot/elements/pbruler.md'
     - 'pagebot/elements/pbtext.md'
     - 'pagebot/elements/pbtextbox.md'
-    - 'paths'
- - 'pagebot/elements/paths':
+    - 'paths.md'
+ - 'pagebot/elements/paths.md':
     - 'pagebot/elements/paths/index.md'
     - 'pagebot/elements/paths/glyphpath.md'
     - 'pagebot/elements/paths/pbpath.md'
-    - 'variablefonts'
- - 'pagebot/elements/variablefonts':
+    - 'variablefonts.md'
+ - 'pagebot/elements/variablefonts.md':
     - 'pagebot/elements/variablefonts/index.md'
     - 'pagebot/elements/variablefonts/variablecircle.md'
     - 'pagebot/elements/variablefonts/variablecube.md'
@@ -45,8 +45,8 @@ pages:
     - 'pagebot/elements/variablefonts/variableeditor.md'
     - 'pagebot/elements/variablefonts/variableglyphs.md'
     - 'pagebot/elements/variablefonts/variablescatter.md'
-    - 'views'
- - 'pagebot/elements/views':
+    - 'views.md'
+ - 'pagebot/elements/views.md':
     - 'pagebot/elements/views/index.md'
     - 'pagebot/elements/views/defaultview.md'
     - 'pagebot/elements/views/htmlcssview.md'
@@ -54,42 +54,42 @@ pages:
     - 'pagebot/elements/views/singleview.md'
     - 'pagebot/elements/views/thumbview.md'
     - 'pagebot/elements/views/view.md'
-    - 'builders'
- - 'pagebot/builders':
+    - 'builders.md'
+ - 'pagebot/builders.md':
     - 'pagebot/builders/index.md'
     - 'pagebot/builders/basebuilder.md'
     - 'pagebot/builders/mdblogbuilder.md'
-    - 'kirby'
- - 'pagebot/builders/kirby':
+    - 'kirby.md'
+ - 'pagebot/builders/kirby.md':
     - 'pagebot/builders/kirby/index.md'
     - 'pagebot/builders/kirby/kirbybuilder.md'
-    - 'htmlcss'
- - 'pagebot/builders/htmlcss':
+    - 'htmlcss.md'
+ - 'pagebot/builders/htmlcss.md':
     - 'pagebot/builders/htmlcss/index.md'
     - 'pagebot/builders/htmlcss/basehtmlcssbuilder.md'
     - 'pagebot/builders/htmlcss/gridbuilder.md'
     - 'pagebot/builders/htmlcss/simplebuilder.md'
     - 'pagebot/builders/htmlcss/simplehtmlcssbuilder.md'
-    - 'contributions'
- - 'pagebot/contributions':
+    - 'contributions.md'
+ - 'pagebot/contributions.md':
     - 'pagebot/contributions/index.md'
-    - 'adobe'
- - 'pagebot/contributions/adobe':
+    - 'adobe.md'
+ - 'pagebot/contributions/adobe.md':
     - 'pagebot/contributions/adobe/index.md'
-    - 'kerndump'
- - 'pagebot/contributions/adobe/kerndump':
+    - 'kerndump.md'
+ - 'pagebot/contributions/adobe/kerndump.md':
     - 'pagebot/contributions/adobe/kerndump/index.md'
     - 'pagebot/contributions/adobe/kerndump/dumpKerningFeatureFromOTF.md'
     - 'pagebot/contributions/adobe/kerndump/getKerningPairsFromOTF.md'
-    - 'filibuster'
- - 'pagebot/contributions/filibuster':
+    - 'filibuster.md'
+ - 'pagebot/contributions/filibuster.md':
     - 'pagebot/contributions/filibuster/index.md'
     - 'pagebot/contributions/filibuster/blurb.md'
     - 'pagebot/contributions/filibuster/blurbwriter.md'
     - 'pagebot/contributions/filibuster/test.md'
     - 'pagebot/contributions/filibuster/titlecase.md'
-    - 'content'
- - 'pagebot/contributions/filibuster/content':
+    - 'content.md'
+ - 'pagebot/contributions/filibuster/content.md':
     - 'pagebot/contributions/filibuster/content/index.md'
     - 'pagebot/contributions/filibuster/content/aerospace.md'
     - 'pagebot/contributions/filibuster/content/articles.md'
@@ -134,26 +134,26 @@ pages:
     - 'pagebot/contributions/filibuster/content/staff.md'
     - 'pagebot/contributions/filibuster/content/superheroes.md'
     - 'pagebot/contributions/filibuster/content/twitter.md'
-    - 'canvas3d'
- - 'pagebot/canvas3d':
+    - 'canvas3d.md'
+ - 'pagebot/canvas3d.md':
     - 'pagebot/canvas3d/index.md'
     - 'pagebot/canvas3d/canvas3d.md'
     - 'pagebot/canvas3d/designspaceexplorer.md'
     - 'pagebot/canvas3d/transform3d.md'
-    - 'interaction'
- - 'pagebot/interaction':
+    - 'interaction.md'
+ - 'pagebot/interaction.md':
     - 'pagebot/interaction/index.md'
     - 'pagebot/interaction/variables.md'
-    - 'publications'
- - 'pagebot/publications':
+    - 'publications.md'
+ - 'pagebot/publications.md':
     - 'pagebot/publications/index.md'
     - 'pagebot/publications/pagebotdoc.md'
     - 'pagebot/publications/poster.md'
     - 'pagebot/publications/publication.md'
     - 'pagebot/publications/singlepage.md'
     - 'pagebot/publications/typespecimen.md'
-    - 'toolbox'
- - 'pagebot/toolbox':
+    - 'toolbox.md'
+ - 'pagebot/toolbox.md':
     - 'pagebot/toolbox/index.md'
     - 'pagebot/toolbox/dating.md'
     - 'pagebot/toolbox/drawparts.md'
@@ -161,8 +161,8 @@ pages:
     - 'pagebot/toolbox/mathematics.md'
     - 'pagebot/toolbox/timemark.md'
     - 'pagebot/toolbox/transformer.md'
-    - 'fonttoolbox'
- - 'pagebot/fonttoolbox':
+    - 'fonttoolbox.md'
+ - 'pagebot/fonttoolbox.md':
     - 'pagebot/fonttoolbox/index.md'
     - 'pagebot/fonttoolbox/designspacemodel.md'
     - 'pagebot/fonttoolbox/otlTools.md'
@@ -170,8 +170,8 @@ pages:
     - 'pagebot/fonttoolbox/ttftools.md'
     - 'pagebot/fonttoolbox/varfontdesignspace.md'
     - 'pagebot/fonttoolbox/variablefontbuilder.md'
-    - 'analyzers'
- - 'pagebot/fonttoolbox/analyzers':
+    - 'analyzers.md'
+ - 'pagebot/fonttoolbox/analyzers.md':
     - 'pagebot/fonttoolbox/analyzers/index.md'
     - 'pagebot/fonttoolbox/analyzers/contour.md'
     - 'pagebot/fonttoolbox/analyzers/glyphanalyzer-TNBITS.md'
@@ -180,20 +180,20 @@ pages:
     - 'pagebot/fonttoolbox/analyzers/pointcontext.md'
     - 'pagebot/fonttoolbox/analyzers/pointcontextlist.md'
     - 'pagebot/fonttoolbox/analyzers/segment.md'
-    - 'objects'
- - 'pagebot/fonttoolbox/objects':
+    - 'objects.md'
+ - 'pagebot/fonttoolbox/objects.md':
     - 'pagebot/fonttoolbox/objects/index.md'
     - 'pagebot/fonttoolbox/objects/family.md'
     - 'pagebot/fonttoolbox/objects/font.md'
     - 'pagebot/fonttoolbox/objects/fontinfo.md'
     - 'pagebot/fonttoolbox/objects/glyph.md'
-    - 'unicodes'
- - 'pagebot/fonttoolbox/unicodes':
+    - 'unicodes.md'
+ - 'pagebot/fonttoolbox/unicodes.md':
     - 'pagebot/fonttoolbox/unicodes/index.md'
     - 'pagebot/fonttoolbox/unicodes/unicoderanges.md'
     - 'pagebot/fonttoolbox/unicodes/unicoderangesdata.md'
-    - 'conditions'
- - 'pagebot/conditions':
+    - 'conditions.md'
+ - 'pagebot/conditions.md':
     - 'pagebot/conditions/index.md'
     - 'pagebot/conditions/align.md'
     - 'pagebot/conditions/condition.md'
