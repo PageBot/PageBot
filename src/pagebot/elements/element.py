@@ -801,7 +801,8 @@ class Element(object):
             self.z = z
     cz = property(_get_cz, _set_cz)
 
-
+    # TODO: Make this work
+    """
     def _get_cols(self): # Number of columns in the given self.w and self.colW
         return w2cols(self.w, self) # Using self.cw and self.gw
     def _set_cols(self, cols):
@@ -825,7 +826,7 @@ class Element(object):
         if d is not None:
             self.d = d
     lanes = property(_get_lanes, _set_lanes)
-
+    """
 
     def _get_cw(self): # Column width
         return self.css('cw')
