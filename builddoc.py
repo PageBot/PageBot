@@ -19,8 +19,8 @@
 #    Note that this applications script is an example of PageBot functions in itself.
 #
 import runpy
-
 import os, pkgutil, traceback
+import doctest
 import pagebot
 from pagebot.publications.publication import Publication
 
@@ -85,42 +85,53 @@ class PageBotDoc(Publication):
     def build(self):
         # Collect data from all folders.
         rootPath = pagebot.getRootPath()
-        rootNode = self.processPath(rootPath)
+        rootNode = self.docTest(rootPath)
         self.buildNode(rootNode)
 
     def clearPyc(self, path=None):
         if path is None:
             path = pagebot.getRootPath()
+
         for fileName in os.listdir(path):
             filePath = path + '/' + fileName
+
             if fileName.startswith('.') or fileName in SKIP:
                 continue
+
             if os.path.isdir(filePath):
                 self.clearPyc(filePath)
             elif fileName.endswith('.pyc'):
                 os.remove(filePath)
-                print '#### Removed', filePath
+                print ' * Removed', filePath
                 continue
 
-    def processPath(self, path=None, node=None):
+    def docTest(self, path=None, node=None):
         if path is None:
             path = pagebot.getRootPath()
         if node is None:
             node = Node('root')
 
+        base = 'src/pagebot'
+
         for fileName in os.listdir(path):
             filePath = path + '/' + fileName
             if fileName.startswith('.') or fileName in SKIP:
                 continue
+
             child = node.append(filePath)
+
             if os.path.isdir(filePath):
-                self.processPath(filePath, child)
+                self.docTest(filePath, child)
+
             if filePath.endswith('.py'):
                 try:
                     runpy.run_path(filePath)
-                except:
-                    print 'Run', filePath
-                    runpy.run_path(filePath)
+                    relPath = base + filePath.split(base)[-1]
+                    doctest.testfile(relPath)
+                except Exception, e:
+                    # TODO: write to file.
+                    print 'Found error in file %s' % filePath
+                    print traceback.format_exc()
 
         return node
 
@@ -165,7 +176,7 @@ class PageBotDoc(Publication):
 
             level += 1
 
-    def writeModuleDoc(self, m, folder=None, level=0):
+    def writeDocs(self, m, folder=None, level=0):
         u"""Recursively scans package for docstrings."""
         import sys, drawBot
 
@@ -257,22 +268,18 @@ class PageBotDoc(Publication):
 
 # TODO: pass as argument.
 DO_CLEAR = False
-CHECK_ERRORS = False
-RUN_MODULES = True
 DOCTEST = True
+WRITEDOCS = False
 
 if __name__ == '__main__':
     # Execute all cleaning, docbuilding and unittesting here.
-    pbDoc = PageBotDoc()
+    d = PageBotDoc()
 
     if DO_CLEAR:
-        pbDoc.clearPyc()
+        d.clearPyc()
 
-    if CHECK_ERRORS:
-        pbDoc.processPath()
+    if DOCTEST:
+        d.docTest()
 
-    if RUN_MODULES:
-        pbDoc.writeModuleDoc(pagebot)
-
-    print 'Done'
-
+    if WRITEDOCS:
+        d.writeDocs(pagebot)
