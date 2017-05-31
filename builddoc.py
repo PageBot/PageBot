@@ -20,7 +20,9 @@
 #
 import runpy
 import os, pkgutil, traceback
+import sys, getopt
 import doctest
+import drawBot
 import pagebot
 from pagebot.publications.publication import Publication
 
@@ -106,8 +108,11 @@ class PageBotDoc(Publication):
                 continue
 
     def docTest(self, path=None, node=None):
+        u"""Calls runpy and doctest.testfile on all .py files in our module.
+        """
         if path is None:
             path = pagebot.getRootPath()
+
         if node is None:
             node = Node('root')
 
@@ -123,11 +128,12 @@ class PageBotDoc(Publication):
             if os.path.isdir(filePath):
                 self.docTest(filePath, child)
 
+            # Runs tests on all Python files inside out module.
             if filePath.endswith('.py'):
                 try:
                     runpy.run_path(filePath)
                     relPath = base + filePath.split(base)[-1]
-                    doctest.testfile(relPath)
+                    d = doctest.testfile(relPath)
                 except Exception, e:
                     # TODO: write to file.
                     print 'Found error in file %s' % filePath
@@ -135,7 +141,8 @@ class PageBotDoc(Publication):
 
         return node
 
-    def buildMenu(self, p):
+    def buildDocsMenu(self, m):
+        p = m.__path__[0]
         base = p.split('/')
         base = ('/').join(base[:-1]) + '/'
         folders = {}
@@ -178,59 +185,11 @@ class PageBotDoc(Publication):
 
     def writeDocs(self, m, folder=None, level=0):
         u"""Recursively scans package for docstrings."""
-        import sys, drawBot
+        self.buildDocsMenu(m)
+        #self.writeDocsPages(p)
 
-        try:
-            p = m.__path__[0]
-        except Exception, e:
-            print 'cannot find path', m
-            return
-
-        d = m.__dict__
-        db = dir(drawBot)
-        self.buildMenu(p)
-
-        '''
-        for loader, name, is_pkg in pkgutil.walk_packages(p):
-            try:
-                mod = loader.find_module(name).load_module(name)
-                parent = menu
-                parts = name.split('.')
-
-                for i, part in enumerate(parts):
-                    if is_pkg and not part in parent['folders']:
-                        parent['folders'][part] = {'files': ['index.md'], 'folders': {}}
-
-                    elif i == len(parts) - 1:
-                        #if is_pkg:
-                        #    parent['folders'][part] = {}
-                        if not is_pkg:
-                            parent['files'].append(part + '.md')
-
-                    if is_pkg:
-                        parent = parent['folders'][part]
-
-            except Exception, e:
-                print e, traceback.format_exc()
-
-        print menu
-        '''
-
-        '''
-
-
-        for loader, module_name, is_pkg in pkgutil.walk_packages(p):
-            try:
-                mod = loader.find_module(module_name).load_module(module_name)
-
-                if is_pkg:
-                    packages[module_name] = mod
-                else:
-                    classes[module_name] = mod
-
-            except Exception, e:
-                print e
-
+    def writeDocsPages(self, m, folder=None, level=0):
+        db = dir(drawBot) # TODO: global.
 
         # Module index.
         f = open('docs/%s/index.md' % m.__name__, 'w')
@@ -251,6 +210,8 @@ class PageBotDoc(Publication):
 
         f.write('## %s\n' % 'Functions')
 
+        d = m.__dict__
+
         for key, value in d.items():
             if key.startswith('__') or key in sys.modules.keys() or key in db:
                 print ' * skipping %s' % key
@@ -264,22 +225,44 @@ class PageBotDoc(Publication):
                     f.write('%s\n' % s)
 
         f.close()
-        '''
 
-# TODO: pass as argument.
-DO_CLEAR = False
-DOCTEST = True
-WRITEDOCS = False
+def main(argv):
+    try:
+        opts, args = getopt.getopt(argv,"ctwh")
+    except getopt.GetoptError:
+        print 'test.py -c -t -w -h'
+        sys.exit(2)
 
-if __name__ == '__main__':
-    # Execute all cleaning, docbuilding and unittesting here.
+    doClear = False
+    doTest = False
+    doWrite = False
+
+    for o, _ in opts:
+        if o == '-c':
+            doClear = True
+        if o == '-t':
+            doTest = True
+        if o == '-w':
+            doWrite = True
+
     d = PageBotDoc()
 
-    if DO_CLEAR:
+    if doClear:
         d.clearPyc()
+        print 'Cleared .pyc files'
 
-    if DOCTEST:
+    if doTest:
+        import sys
+        f = 'log.txt'
+        sys.stdout = open(f, 'w', 1)
         d.docTest()
+        sys.stdout = sys.__stdout__
+        print 'Wrote results to %s' % f
 
-    if WRITEDOCS:
+
+    if doWrite:
         d.writeDocs(pagebot)
+        print 'Wrote docs'
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
