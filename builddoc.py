@@ -141,7 +141,26 @@ class PageBotDoc(Publication):
 
         return node
 
+    def writeDocs(self, m, folder=None, level=0):
+        u"""Writes config file including menu, traverses module to parse
+        docstrings for all files."""
+        f = open(CONFIG, 'w')
+        f.write('site_name: PageBot\n')
+        f.write('repo_url: https://github.com/typenetwork/PageBot/\n')
+        f.write('repo_name: PageBot\n')
+        f.write('theme: readthedocs\n')
+        f.write('pages:\n')
+        f.write(" - 'Home': 'index.md'\n")
+        f.write(" - 'How To': 'howto.md'\n")
+        f.write(" - 'About': 'about.md'\n")
+        self.buildDocsMenu(m, f)
+        f.close()
+        self.writeDocsPages(p)
+
     def buildDocsMenu(self, m, yml):
+        u"""
+        Extracts menu from module structure.
+        """
         p = m.__path__[0]
         base = p.split('/')
         base = ('/').join(base[:-1]) + '/'
@@ -168,6 +187,9 @@ class PageBotDoc(Publication):
         self.writeMenu(folders, yml)
 
     def writeMenu(self, folders, yml, level=0):
+        u"""
+        Writes the menu structure to YAML config file.
+        """
         indent = '    ' * level
 
         for k in folders.keys():
@@ -183,24 +205,13 @@ class PageBotDoc(Publication):
 
             level += 1
 
-    def writeDocs(self, m, folder=None, level=0):
-        u"""Recursively scans package for docstrings."""
-        f = open(CONFIG, 'w')
-        f.write('site_name: PageBot\n')
-        f.write('repo_url: https://github.com/typenetwork/PageBot/\n')
-        f.write('repo_name: PageBot\n')
-        f.write('theme: readthedocs\n')
-        f.write('pages:\n')
-        f.write(" - 'Home': 'index.md'\n")
-        f.write(" - 'How To': 'howto.md'\n")
-        f.write(" - 'About': 'about.md'\n")
-        self.buildDocsMenu(m, f)
-        f.close()
-        #self.writeDocsPages(p)
-
     def writeDocsPages(self, m, folder=None, level=0):
+        u"""
+        Writes a doc page for each item in the menu.
+        """
         db = dir(drawBot) # TODO: global.
 
+        '''
         # Module index.
         f = open('docs/%s/index.md' % m.__name__, 'w')
         f.write('# %s\n' % m.__name__)
@@ -235,6 +246,7 @@ class PageBotDoc(Publication):
                     f.write('%s\n' % s)
 
         f.close()
+        '''
 
 def main(argv):
     try:
