@@ -26,16 +26,17 @@ import drawBot
 import pagebot
 from pagebot.publications.publication import Publication
 
-SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD', 'scripts-in-progress',
-    'examples-in-progress', 'canvas3d', 'pagebotdoc.py')
+SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD',
+        'scripts-in-progress', 'examples-in-progress', 'canvas3d',
+        'pagebotdoc.py')
 
 CONFIG = 'mkdocs.yml'
 
 class Node(object):
-    """The *Node* class is used to build the PageBot file tree, for cleaning doc-building
-    and unit tests.
+    """The *Node* class is used to build the PageBot file tree, for cleaning
+    doc-building and unit tests.
 
-    >>> improt pagebot
+    >>> import pagebot
     >>> rootPath = pagebot.getRootPath()
     >>> node = Node(rootPath)
     >>> print node
@@ -44,8 +45,10 @@ class Node(object):
         self.path = path
         self.nodes = []
         extension = None
+
         if path is not None and not os.path.isdir(path):
             extension = path.split('.')[-1]
+
         self.extension = extension # If filled, it's a folder. otherwise it's a file.
 
     def __repr__(self):
@@ -81,6 +84,9 @@ class PageBotDoc(Publication):
         self.pagebotRoot = pagebot.getRootPath()
         self.pagebotBase = 'src/pagebot'
         self.pagebotDocs = self.pagebotRoot.replace('src', 'docs')
+        self.packages = {}
+        self.classes = {}
+        self.db = dir(drawBot) # TODO: global.
 
     def buildNode(self, node, level=0):
         print '\t'*level + `node`
@@ -146,6 +152,8 @@ class PageBotDoc(Publication):
     def writeDocs(self, m, folder=None, level=0):
         u"""Writes config file including menu, traverses module to parse
         docstrings for all files."""
+        self.scanPackage(m)
+        print self.classes.keys()
         f = open(CONFIG, 'w')
         f.write('site_name: PageBot\n')
         f.write('repo_url: https://github.com/typenetwork/PageBot/\n')
@@ -204,15 +212,37 @@ class PageBotDoc(Publication):
 
             level += 1
 
+    def scanPackage(self, m):
+        p = m.__path__
+
+        for loader, module_name, is_pkg in pkgutil.walk_packages(p):
+            try:
+                mod = loader.find_module(module_name).load_module(module_name)
+
+                if is_pkg:
+                    self.packages[module_name] = mod
+                else:
+                    self.classes[module_name] = mod
+            except Exception, e:
+                print e
+
     def writeDocsPages(self, folders, level=0):
         u"""Writes a doc page for each item in the menu."""
-        db = dir(drawBot) # TODO: global.
 
         for k in sorted(folders.keys()):
             for x in sorted(folders[k].keys()):
                 if x == 'files':
                     for f in folders[k]['files']:
-                        print 'docs/' + k + '/' + f
+                        path = k + '/' + f
+                        modName = path.replace('/', '.')
+                        modName = modName.replace('index', '__init__')
+                        modName = modName.replace('pagebot.', '')
+                        if modName in self.classes:
+                            mod = self.classes[modName]
+                            try:
+                                self.writeDocsPage(path, mod)
+                            except Exception, e:
+                                print e, path
                 else:
                     folder = 'docs/' + k + '/' + x
 
@@ -224,8 +254,9 @@ class PageBotDoc(Publication):
     def writeDocsPage(self, path, m):
         # Module index.
         #f = open('docs/%s/index.md' % m.__name__, 'w')
-        f = open('docs/%s/%s.md' % path, 'w')
+        f = open('docs/%s.md' % path, 'w')
         f.write('# %s\n' % m.__name__)
+        '''
         f.write('## %s\n' % 'Modules')
 
         for packageName in sorted(packages.keys()):
@@ -239,13 +270,14 @@ class PageBotDoc(Publication):
             if len(className.split('.')) == 1:
                 mod = classes[className]
                 f.write('* [%s.%s](%s/%s)\n' % (m.__name__, className, m.__name__, className.replace('.', '/')))
+        '''
 
         f.write('## %s\n' % 'Functions')
 
         d = m.__dict__
 
         for key, value in d.items():
-            if key.startswith('__') or key in sys.modules.keys() or key in db:
+            if key.startswith('__') or key in sys.modules.keys() or key in self.db:
                 print ' * skipping %s' % key
                 continue
 
@@ -254,7 +286,7 @@ class PageBotDoc(Publication):
                 if value.__doc__:
                     s = value.__doc__
                     s = s.strip().replace('    ', '')
-                    f.write('%s\n' % s)
+                    f.write(u'%s\n' % s)
 
         f.close()
 
