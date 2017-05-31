@@ -141,7 +141,7 @@ class PageBotDoc(Publication):
 
         return node
 
-    def buildDocsMenu(self, m):
+    def buildDocsMenu(self, m, yml):
         p = m.__path__[0]
         base = p.split('/')
         base = ('/').join(base[:-1]) + '/'
@@ -165,27 +165,37 @@ class PageBotDoc(Publication):
                         f = 'index.md'
                     parent['files'].append(f)
 
-        self.writeMenu(folders)
+        self.writeMenu(folders, yml)
 
-    def writeMenu(self, folders, level=0):
+    def writeMenu(self, folders, yml, level=0):
         indent = '    ' * level
 
         for k in folders.keys():
-            print ' - %s' % k
+            yml.write(" - '%s':\n" % k)
 
             for x in folders[k].keys():
                 if x == 'files':
-                    for f in folders[k]['files']:
-                        print '    - %s/%s' % (k, f)
+                    for folder in folders[k]['files']:
+                        yml.write("    - '%s/%s'\n" % (k, folder))
                 else:
-                    print '    - %s' % x
-                    self.writeMenu({k + '/' + x: folders[k][x]}, level=level)
+                    yml.write("    - '%s'\n" % x)
+                    self.writeMenu({k + '/' + x: folders[k][x]}, yml, level=level)
 
             level += 1
 
     def writeDocs(self, m, folder=None, level=0):
         u"""Recursively scans package for docstrings."""
-        self.buildDocsMenu(m)
+        f = open(CONFIG, 'w')
+        f.write('site_name: PageBot\n')
+        f.write('repo_url: https://github.com/typenetwork/PageBot/\n')
+        f.write('repo_name: PageBot\n')
+        f.write('theme: readthedocs\n')
+        f.write('pages:\n')
+        f.write(" - 'Home': 'index.md'\n")
+        f.write(" - 'How To': 'howto.md'\n")
+        f.write(" - 'About': 'about.md'\n")
+        self.buildDocsMenu(m, f)
+        f.close()
         #self.writeDocsPages(p)
 
     def writeDocsPages(self, m, folder=None, level=0):
