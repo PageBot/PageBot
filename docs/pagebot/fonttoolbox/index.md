@@ -2,18 +2,18 @@
 
 ## Classes
 
-* [pagebot.fonttoolbox.designspacemodel](pagebot.fonttoolbox.designspacemodel)
-* [pagebot.fonttoolbox.otlTools](pagebot.fonttoolbox.otlTools)
-* [pagebot.fonttoolbox.svg2drawbot](pagebot.fonttoolbox.svg2drawbot)
-* [pagebot.fonttoolbox.ttftools](pagebot.fonttoolbox.ttftools)
-* [pagebot.fonttoolbox.varfontdesignspace](pagebot.fonttoolbox.varfontdesignspace)
-* [pagebot.fonttoolbox.variablefontbuilder](pagebot.fonttoolbox.variablefontbuilder)
+* [pagebot.fonttoolbox.designspacemodel](designspacemodel)
+* [pagebot.fonttoolbox.otlTools](otlTools)
+* [pagebot.fonttoolbox.svg2drawbot](svg2drawbot)
+* [pagebot.fonttoolbox.ttftools](ttftools)
+* [pagebot.fonttoolbox.varfontdesignspace](varfontdesignspace)
+* [pagebot.fonttoolbox.variablefontbuilder](variablefontbuilder)
 
 ## Modules
 
-* [pagebot.fonttoolbox.analyzers](pagebot.fonttoolbox.analyzers)
-* [pagebot.fonttoolbox.objects](pagebot.fonttoolbox.objects)
-* [pagebot.fonttoolbox.unicodes](pagebot.fonttoolbox.unicodes)
+* [pagebot.fonttoolbox.analyzers](analyzers)
+* [pagebot.fonttoolbox.objects](objects)
+* [pagebot.fonttoolbox.unicodes](unicodes)
 
 ## Functions
 

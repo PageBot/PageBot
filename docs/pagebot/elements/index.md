@@ -2,24 +2,24 @@
 
 ## Classes
 
-* [pagebot.elements.element](pagebot.elements.element)
-* [pagebot.elements.pbgalley](pagebot.elements.pbgalley)
-* [pagebot.elements.pbimage](pagebot.elements.pbimage)
-* [pagebot.elements.pbline](pagebot.elements.pbline)
-* [pagebot.elements.pboval](pagebot.elements.pboval)
-* [pagebot.elements.pbpage](pagebot.elements.pbpage)
-* [pagebot.elements.pbpolygon](pagebot.elements.pbpolygon)
-* [pagebot.elements.pbrect](pagebot.elements.pbrect)
-* [pagebot.elements.pbruler](pagebot.elements.pbruler)
-* [pagebot.elements.pbtable](pagebot.elements.pbtable)
-* [pagebot.elements.pbtext](pagebot.elements.pbtext)
-* [pagebot.elements.pbtextbox](pagebot.elements.pbtextbox)
+* [pagebot.elements.element](element)
+* [pagebot.elements.pbgalley](pbgalley)
+* [pagebot.elements.pbimage](pbimage)
+* [pagebot.elements.pbline](pbline)
+* [pagebot.elements.pboval](pboval)
+* [pagebot.elements.pbpage](pbpage)
+* [pagebot.elements.pbpolygon](pbpolygon)
+* [pagebot.elements.pbrect](pbrect)
+* [pagebot.elements.pbruler](pbruler)
+* [pagebot.elements.pbtable](pbtable)
+* [pagebot.elements.pbtext](pbtext)
+* [pagebot.elements.pbtextbox](pbtextbox)
 
 ## Modules
 
-* [pagebot.elements.paths](pagebot.elements.paths)
-* [pagebot.elements.variablefonts](pagebot.elements.variablefonts)
-* [pagebot.elements.views](pagebot.elements.views)
+* [pagebot.elements.paths](paths)
+* [pagebot.elements.variablefonts](variablefonts)
+* [pagebot.elements.views](views)
 
 ## Functions
 

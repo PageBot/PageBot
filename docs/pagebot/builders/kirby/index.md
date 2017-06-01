@@ -2,7 +2,7 @@
 
 ## Classes
 
-* [pagebot.builders.kirby.kirbybuilder](pagebot.builders.kirby.kirbybuilder)
+* [pagebot.builders.kirby.kirbybuilder](kirbybuilder)
 
 ## Modules
 

@@ -2,8 +2,8 @@
 
 ## Classes
 
-* [pagebot.elements.paths.glyphpath](pagebot.elements.paths.glyphpath)
-* [pagebot.elements.paths.pbpath](pagebot.elements.paths.pbpath)
+* [pagebot.elements.paths.glyphpath](glyphpath)
+* [pagebot.elements.paths.pbpath](pbpath)
 
 ## Modules
 

@@ -153,6 +153,7 @@ class PageBotDoc(Publication):
     def scanPackage(self, m):
         u"""Loads modules into packages and classes dictionaries."""
         p = m.__path__
+        self.packages['index'] = m
 
         for loader, module_name, is_pkg in pkgutil.walk_packages(p):
             try:
@@ -169,8 +170,6 @@ class PageBotDoc(Publication):
         u"""Writes config file including menu, traverses module to parse
         docstrings for all files."""
         self.scanPackage(m)
-        print self.packages.keys()
-        print self.classes.keys()
         f = open(CONFIG, 'w')
         f.write('site_name: PageBot\n')
         f.write('repo_url: https://github.com/typenetwork/PageBot/\n')
@@ -217,14 +216,14 @@ class PageBotDoc(Publication):
         indent = '    ' * level
 
         for k in folders.keys():
-            yml.write(" - '%s.md':\n" % k)
+            yml.write(" - '%s':\n" % k)
 
             for x in folders[k].keys():
                 if x == 'files':
                     for folder in folders[k]['files']:
                         yml.write("    - '%s/%s.md'\n" % (k, folder))
                 else:
-                    yml.write("    - '%s.md'\n" % x)
+                    #yml.write("    - '%s.md'\n" % x)
                     self.writeDocsMenu({k + '/' + x: folders[k][x]}, yml, level=level)
 
             level += 1
@@ -291,15 +290,27 @@ class PageBotDoc(Publication):
                     for x in v:
                         if x == 'index':
                             continue
-                        n = '%s.%s.%s' % ('pagebot', m.__name__, x)
-                        f.write('* [%s](%s)\n' % (n, n) )
+
+                        n = m.__name__
+
+                        if not n.startswith('pagebot'):
+                            n = 'pagebot.' + n
+
+                        n = '%s.%s' % (n, x)
+                        f.write('* [%s](%s)\n' % (n, x))
 
             f.write('\n## %s\n\n' % 'Modules')
 
             for k, v in folders.items():
                 if k != 'files':
-                    n = '%s.%s.%s' % ('pagebot', m.__name__, k)
-                    f.write('* [%s](%s)\n' % (n, n))
+                    n = m.__name__
+
+                    if not n.startswith('pagebot'):
+                        n = 'pagebot.' + n
+
+                    n = '%s.%s' % (n, k)
+
+                    f.write('* [%s](%s)\n' % (n, k))
 
         f.write('\n## %s\n\n' % 'Functions')
 

@@ -2,14 +2,14 @@
 
 ## Classes
 
-* [pagebot.contributions.filibuster.blurb](pagebot.contributions.filibuster.blurb)
-* [pagebot.contributions.filibuster.blurbwriter](pagebot.contributions.filibuster.blurbwriter)
-* [pagebot.contributions.filibuster.test](pagebot.contributions.filibuster.test)
-* [pagebot.contributions.filibuster.titlecase](pagebot.contributions.filibuster.titlecase)
+* [pagebot.contributions.filibuster.blurb](blurb)
+* [pagebot.contributions.filibuster.blurbwriter](blurbwriter)
+* [pagebot.contributions.filibuster.test](test)
+* [pagebot.contributions.filibuster.titlecase](titlecase)
 
 ## Modules
 
-* [pagebot.contributions.filibuster.content](pagebot.contributions.filibuster.content)
+* [pagebot.contributions.filibuster.content](content)
 
 ## Functions
 

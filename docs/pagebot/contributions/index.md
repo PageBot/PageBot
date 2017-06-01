@@ -5,8 +5,8 @@
 
 ## Modules
 
-* [pagebot.contributions.adobe](pagebot.contributions.adobe)
-* [pagebot.contributions.filibuster](pagebot.contributions.filibuster)
+* [pagebot.contributions.adobe](adobe)
+* [pagebot.contributions.filibuster](filibuster)
 
 ## Functions
 

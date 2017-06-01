@@ -2,12 +2,12 @@
 
 ## Classes
 
-* [pagebot.elements.views.defaultview](pagebot.elements.views.defaultview)
-* [pagebot.elements.views.htmlcssview](pagebot.elements.views.htmlcssview)
-* [pagebot.elements.views.kirbyview](pagebot.elements.views.kirbyview)
-* [pagebot.elements.views.singleview](pagebot.elements.views.singleview)
-* [pagebot.elements.views.thumbview](pagebot.elements.views.thumbview)
-* [pagebot.elements.views.view](pagebot.elements.views.view)
+* [pagebot.elements.views.defaultview](defaultview)
+* [pagebot.elements.views.htmlcssview](htmlcssview)
+* [pagebot.elements.views.kirbyview](kirbyview)
+* [pagebot.elements.views.singleview](singleview)
+* [pagebot.elements.views.thumbview](thumbview)
+* [pagebot.elements.views.view](view)
 
 ## Modules
 
