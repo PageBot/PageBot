@@ -153,6 +153,7 @@ class PageBotDoc(Publication):
         u"""Writes config file including menu, traverses module to parse
         docstrings for all files."""
         self.scanPackage(m)
+        print self.packages.keys()
         print self.classes.keys()
         f = open(CONFIG, 'w')
         f.write('site_name: PageBot\n')
@@ -232,18 +233,27 @@ class PageBotDoc(Publication):
         for k in sorted(folders.keys()):
             for x in sorted(folders[k].keys()):
                 if x == 'files':
-                    for f in folders[k]['files']:
+                    print folders[k][x]
+                    # Makes a doc page from a Python file.
+                    for f in folders[k][x]:
                         path = k + '/' + f
                         modName = path.replace('/', '.')
-                        modName = modName.replace('index', '__init__')
                         modName = modName.replace('pagebot.', '')
+                        modName = modName.replace('.index', '')
+
                         if modName in self.classes:
                             mod = self.classes[modName]
-                            try:
-                                self.writeDocsPage(path, mod)
-                            except Exception, e:
-                                print e, path
+
+                        elif modName in self.packages:
+                            mod = self.packages[modName]
+
+                        try:
+                            self.writeDocsPage(path, mod)
+                        except Exception, e:
+                            print e, path
                 else:
+                    # Creates new folders if they do not exists yet;
+                    # recurse.
                     folder = 'docs/' + k + '/' + x
 
                     if not os.path.exists(folder):
@@ -252,19 +262,24 @@ class PageBotDoc(Publication):
                     self.writeDocsPages({k + '/' + x: folders[k][x]})
 
     def writeDocsPage(self, path, m):
-        # Module index.
+        u"""
+        Writes a page for a module.
+        """
         #f = open('docs/%s/index.md' % m.__name__, 'w')
         f = open('docs/%s.md' % path, 'w')
-        f.write('# %s\n' % m.__name__)
-        '''
-        f.write('## %s\n' % 'Modules')
+        f.write('# %s\n\n' % m.__name__)
+        print path
 
-        for packageName in sorted(packages.keys()):
-            mod = packages[packageName]
+
+        '''
+        f.write('## %s\n\n' % 'Modules')
+
+        for packageName in sorted(self.packages.keys()):
+            mod = self.packages[packageName]
             if len(packageName.split('.')) == 1:
                 f.write('* [%s.%s](%s/%s)\n' % (m.__name__, packageName, m.__name__, packageName.replace('.', '/')))
 
-        f.write('## %s\n' % 'Classes')
+        f.write('## %s\n\n' % 'Classes')
 
         for className in sorted(classes.keys()):
             if len(className.split('.')) == 1:
@@ -272,13 +287,13 @@ class PageBotDoc(Publication):
                 f.write('* [%s.%s](%s/%s)\n' % (m.__name__, className, m.__name__, className.replace('.', '/')))
         '''
 
-        f.write('## %s\n' % 'Functions')
+        f.write('## %s\n\n' % 'Functions')
 
         d = m.__dict__
 
         for key, value in d.items():
             if key.startswith('__') or key in sys.modules.keys() or key in self.db:
-                print ' * skipping %s' % key
+                # Skip.
                 continue
 
             if value is not None:
