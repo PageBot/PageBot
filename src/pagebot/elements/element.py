@@ -217,6 +217,16 @@ class Element(object):
             e.appendElement(child.deepCopy())
         return e
 
+    def setElementByIndex(self, e, index):
+        u"""Replace the element, if there is already one at index. Otherwise append it to self.elements
+        and answer the index number that it got."""
+        if index < len(self.elements):
+            self.elements[index] = e
+            if self.eId:
+                self._eIds[e.eId] = e
+            return index
+        return self.appendElement(e)
+
     def appendElement(self, e):
         u"""Add element to the list of child elements. Note that elements can be added multiple times.
         If the element is alread placed in another container, then remove it from its current parent.
@@ -228,6 +238,7 @@ class Element(object):
         e.parent = self
         if e.eId: # Store the element by unique element id, if it is defined.
             self._eIds[e.eId] = e
+        return len(self._elements)-1 # Answer the element index for e.
 
     def removeElement(self, e):
         u"""If the element is placed in self, then remove it. Don't touch the position."""
@@ -240,7 +251,7 @@ class Element(object):
     def _get_show(self): # Set flag for drawing or interpreation with conditional.
         return self.css('show')
     def _set_show(self, showFlag):
-        self.style['show'] = showFlag # Hinding rest of css for this value.
+        self.style['show'] = showFlag # Hiding rest of css for this value.
     show = property(_get_show, _set_show)
 
     #   C H I L D  E L E M E N T  P O S I T I O N S
