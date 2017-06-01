@@ -801,29 +801,49 @@ class Element(object):
             self.z = z
     cz = property(_get_cz, _set_cz)
 
-
-    def _get_cw(self):
-        return w2cw(self.w, self) # Using self.css('colW') and self.gw
-    def _set_cw(self, cw):
-        w = cw2w(cw, self)
+    # TODO: Make this work
+    """
+    def _get_cols(self): # Number of columns in the given self.w and self.colW
+        return w2cols(self.w, self) # Using self.cw and self.gw
+    def _set_cols(self, cols):
+        w = cols2w(cw, self)
         if w is not None:
             self.w = w
-    cw = property(_get_cw, _set_cw)
+    cols = property(_get_cols, _set_cols)
 
-    def _get_ch(self):
-        return h2ch(self.h, self) # Using self.css('colH') and self.gw
-    def _set_ch(self, ch):
-        h = ch2h(ch, self)
+    def _get_rows(self): # Number of vertical rows, in the given self.h and self.colH
+        return h2rows(self.h, self) # Using self.ch and self.gw
+    def _set_rows(self, rows):
+        h = rows2h(ch, self)
         if h is not None:
             self.h = h
-    ch = property(_get_ch, _set_ch)
+    rows = property(_get_rows, _set_rows)
 
-    def _get_cd(self):
-        return d2cd(self.d, self) # Using self.css('colD') and self.gw
-    def _set_cd(self, cd):
-        d = cd2d(cd, self)
+    def _get_lanes(self): # z-axis name for rows and cols.
+        return d2lanes(self.d, self) # Using self.cd and self.gw
+    def _set_lanes(self, cd):
+        d = lanes2d(cd, self)
         if d is not None:
             self.d = d
+    lanes = property(_get_lanes, _set_lanes)
+    """
+
+    def _get_cw(self): # Column width
+        return self.css('cw')
+    def _set_cw(self, cw):
+        self.style['cw'] = cw
+    cw = property(_get_cw, _set_cw)
+
+    def _get_ch(self): # Column height (row height)
+        return self.css('ch')
+    def _set_ch(self, ch):
+        self.style['ch'] = ch
+    ch = property(_get_ch, _set_ch)
+
+    def _get_cd(self): # Column depth (slice?)
+        return self.css('cd')
+    def _set_cd(self, cd):
+        self.style['cd'] = cd
     cd = property(_get_cd, _set_cd)
 
 

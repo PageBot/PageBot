@@ -233,10 +233,12 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Column width for column2point and column2rect calculations.
         # e.g. for micro-layouts in tables.
         # 11*gutter is one of the best values, as the smallest micro-column is 2 instead  of scaling back to 1.
-        # Note that element.cw is calculating property. Different from element.css('colW'), which is the column size.
-        colW = 11*gutter, # 77
-        colH = 6*baselineGrid - u, # Approximately square with cw + gutter: 77
-        colD = 0, # Optional columnt "depth"
+        # Note that element.colW is calculating property. Different from element.css('cw'), which is the column size.
+        # e.cols, e.row and e.lanes properties get/set the number of columns/rows/lanes, adjusting the 
+        # e.cw, e.ch and e.cd.
+        cw = 77*gutter, # 77 columns width
+        ch = 6*baselineGrid - u, # Approximately square with cw + gutter: 77
+        cd = 0, # Optional columnt "depth"
 
         # Minimum size
         minW = 0, # Default minimal width of elements.
