@@ -26,6 +26,8 @@ from pagebot.elements.pbpage import Page, Template
 # Path and mask elements
 from pagebot.elements.paths.pbpath import Path
 from pagebot.elements.paths.glyphpath import GlyphPath
+# Table elements
+from pagebot.elements.pbtable import Table
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
 
@@ -102,5 +104,7 @@ def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
     return e
 
+def newTable(cols=1, rows=1, **kwargs):
+    return Table(rows=rows, cols=cols, **kwargs)
 
 
