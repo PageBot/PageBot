@@ -24,11 +24,12 @@ from pagebot.fonttoolbox.objects.glyph import *
 from pagebot.fonttoolbox.objects.font import Font
 
 ONCURVE = None
-QUADRATIC_CP = None
-CUBIC_CP = None
+QUADRATIC_OFFCURVE = None
+CUBIC_OFFCURVE = None
 IMPLIED_ONCURVE = None
+G =10
 
-def drawSegment(segment, verbose=False):
+def drawSegment(segment, implied, cps, verbose=False):
     u"""
     Draws a quadratic segment as a cubic Bézier curve in drawBot. Each segment
     starts and ends with an oncurve point with 0 ... n offcurve control points.
@@ -73,6 +74,10 @@ def drawSegment(segment, verbose=False):
         line((onCurve0.x, onCurve0.y), offCurve0)
         line(offCurve1, onCurve)
         stroke(None)
+        
+        # Store these so they can be used in the infographic.
+        cps.append(offCurve0)
+        cps.append(offCurve1)
 
         if verbose:
             print '     * curve to (%s, %s, %s)' % (offCurve0, offCurve1, onCurve)
@@ -87,9 +92,9 @@ def drawSegment(segment, verbose=False):
         y = offCurve0.y + (offCurve1.y - offCurve0.y) * 0.5
         newOnCurve = Point(x, y, True)
 
-        #if IMPLIED_ONCURVE is None:
-        #    IMPLIED_ONCURVE = newOnCurve
-
+        # Store these so they can be used in the infographic.
+        implied.append(newOnCurve)
+        
         circle(x, y, r/2, color='pink')
         curve0.append(newOnCurve)
         curve1.insert(0, newOnCurve)
@@ -100,8 +105,8 @@ def drawSegment(segment, verbose=False):
         # Recurse.
         # NOTE: PageBot implementation in glyph uses a loop instead of
         # recursion.
-        drawSegment(curve0)
-        drawSegment(curve1)
+        drawSegment(curve0, implied, cps)
+        drawSegment(curve1, implied, cps)
 
 def circle(x, y, r, color='pink'):
     u"""
@@ -136,7 +141,7 @@ def cross(x, y, d, r=1, g=0, b=0, a=1):
 
 C = 0.5
 F = 2 / 3
-glyphName = 'E'
+glyphName = 'Q'
 dx = 200
 x = 50
 r = 10
@@ -188,13 +193,17 @@ for contour in contours:
                 ONCURVE = point
             circle(x, y, r)
         else:
-            if QUADRATIC_CP is None:
-                QUADRATIC_CP = point
+            if QUADRATIC_OFFCURVE is None:
+                QUADRATIC_OFFCURVE = point
             # Quadratic offcurves.
             circle(x, y, r/ 4, color='green')
 
+
+segments = []
+implied = []
+cps = []
+
 for n, contour in enumerate(contours):
-    segments = []
     point = contour[0]
     segment = [point]
     path.moveTo((point.x, point.y))
@@ -211,20 +220,18 @@ for n, contour in enumerate(contours):
         # Lets this script calculate and draw implied points and derived cubic
         # control points. Optionally draw path itself later by calling
         # drawPath(path) (see below.)
-        drawSegment(segment)
+        drawSegment(segment, implied, cps)
 
+if len(implied) > 0:
+    IMPLIED_ONCURVE = implied[0]
 
-# Enable to let this script draw the path.
-fill(None)
-stroke(1, 0, 0)
-strokeWidth(1)
-drawPath(path)
+if len(cps) > 0:
+    CUBIC_OFFCURVE = cps[0]
 
 
 # Enable to draw path as built by PageBot glyph.
 c = glyph.contours
 pbSegments = glyph._segments
-
 fill(0, 0, 0, 0.3)
 stroke(0, 1, 0)
 drawPath(glyph._path)
@@ -232,30 +239,42 @@ DBFont('LucidaGrande', 16)
 stroke(None)
 fill(0)
 
-x = 800
-y = 750
+x = 500
+y = 400
+d = 30
 
 if ONCURVE:
-    p = (x, y)
-    text('On-curve point', p)        
     stroke(0, 1, 1)
     p1 = (ONCURVE.x, ONCURVE.y)
+    p = (ONCURVE.x + d, ONCURVE.y + d)
     line(p, p1)
     stroke(None)
+    text('On-curve point', p)        
     y -= 20
 
-if QUADRATIC_CP:
-    p = (x, y)
-    text('Quadratic control point', p)
+if QUADRATIC_OFFCURVE:
+
     stroke(0, 1, 1)
-    p1 = (QUADRATIC_CP.x, QUADRATIC_CP.y)
+    p1 = (QUADRATIC_OFFCURVE.x, QUADRATIC_OFFCURVE.y)
+    p = (QUADRATIC_OFFCURVE.x + d, QUADRATIC_OFFCURVE.y + d)
     line(p, p1)
     stroke(None)
-    y -= 20
-
+    text('Quadratic control point', p)
     
-if CUBIC_CP:
-    text('Cubic control point', (800, 710))
+if CUBIC_OFFCURVE:
+
+
+    stroke(0, 1, 1)
+    p1 = (CUBIC_OFFCURVE[0], CUBIC_OFFCURVE[1])
+    p = (CUBIC_OFFCURVE[0] + d, CUBIC_OFFCURVE[1]+ d)
+    line(p, p1)
+    stroke(None)
+    text('Cubic control point', p)
 
 if IMPLIED_ONCURVE:
-    text('Implied on-curve point', (800, 690))
+    stroke(0, 1, 1)
+    p1 = (IMPLIED_ONCURVE.x, IMPLIED_ONCURVE.y)
+    p = (IMPLIED_ONCURVE.x + d, IMPLIED_ONCURVE.y + d)
+    line(p, p1)
+    stroke(None)
+    text('Implied on-curve point', p)
