@@ -109,7 +109,8 @@ class View(Element):
             # Let the page draw itself on the current DrawBot view port if self.writer is None.
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             page.draw(origin, self)
-            # Self.infoElements now may have collected elements needed info to be drawn.
+            # Self.infoElements now may have collected elements needed info to be drawn, after all drawing is done.
+            # So the info boxes don't get covered by regular page content.
             for e in self.elementsNeedingInfo.values():
                 self._drawElementsNeedingInfo()
 
@@ -439,13 +440,13 @@ class View(Element):
         u"""Draw grid of lines and/or rectangles if colors are set in the style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         # Drawing the grid as squares.
-        if not self.showGridColumns or not self.self.showGrid:
+        if not self.showGridColumns or not self.showGrid:
             return
         p = pointOffset(e.oPoint, origin)
         p = self._applyScale(p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        sGridFill = e.css('gridFill', NO_COLOR)
+        sGridFill = e.css('viewGridFill', NO_COLOR)
         gutterW = e.gw # Gutter width
         gutterH = e.gh # Gutter height
         columnWidth = e.cw # Column width
@@ -456,6 +457,7 @@ class View(Element):
         padB = e.pb # padding bottom
         w = e.w
         h = e.h
+
         if self.showGridColumns and sGridFill is not NO_COLOR:
             setFillColor(sGridFill)
             setStrokeColor(None)
@@ -466,14 +468,15 @@ class View(Element):
                     rect(ox, oy + gutterH, columnWidth, columnHeight)
                     oy -= columnHeight + gutterH
                 ox += columnWidth + gutterW
+
         # Drawing the grid as lines.
-        if self.showGrid and self.css('gridStroke', NO_COLOR) is not NO_COLOR:
+        if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
             setFillColor(None)
-            setStrokeColor(self.css('gridStroke', NO_COLOR), self.css('gridStrokeWidth'))
+            setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
             # TODO: DrawBot align and fill don't work properly now.
             M = 16
             fs = newFS('', self, dict(font='Verdana', xAlign=RIGHT, fontSize=M/2,
-                stroke=None, textFill=self.css('gridStroke')))
+                stroke=None, textFill=self.css('viewGridStroke')))
             ox = px + padL
             index = 0
             oy = h - padT - py

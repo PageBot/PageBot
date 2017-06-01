@@ -71,7 +71,7 @@ def makeDocument(rs):
     sqy = int(H/(SQUARE + GUTTER))
     # Calculate centered paddings for the amount of fitting squares.
     # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
-    rs['colH'] = rs['colW'] = SQUARE  # Make default colW and colH square.
+    rs['ch'] = rs['cw'] = SQUARE  # Make default column width and column height square.
 
     padX = (W - sqx*(SQUARE + GUTTER) + GUTTER)/2
     my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
