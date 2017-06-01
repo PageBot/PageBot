@@ -29,6 +29,7 @@ pages:
     - 'pagebot/elements/pbpolygon.md'
     - 'pagebot/elements/pbrect.md'
     - 'pagebot/elements/pbruler.md'
+    - 'pagebot/elements/pbtable.md'
     - 'pagebot/elements/pbtext.md'
     - 'pagebot/elements/pbtextbox.md'
     - 'paths.md'

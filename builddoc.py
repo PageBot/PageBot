@@ -87,6 +87,7 @@ class PageBotDoc(Publication):
         self.packages = {}
         self.classes = {}
         self.db = dir(drawBot) # TODO: global.
+        self.folders = None
 
     def buildNode(self, node, level=0):
         print '\t'*level + `node`
@@ -149,6 +150,21 @@ class PageBotDoc(Publication):
 
         return node
 
+    def scanPackage(self, m):
+        u"""Loads modules into packages and classes dictionaries."""
+        p = m.__path__
+
+        for loader, module_name, is_pkg in pkgutil.walk_packages(p):
+            try:
+                mod = loader.find_module(module_name).load_module(module_name)
+
+                if is_pkg:
+                    self.packages[module_name] = mod
+                else:
+                    self.classes[module_name] = mod
+            except Exception, e:
+                print e
+
     def writeDocs(self, m, folder=None, level=0):
         u"""Writes config file including menu, traverses module to parse
         docstrings for all files."""
@@ -164,9 +180,9 @@ class PageBotDoc(Publication):
         f.write(" - 'Home': 'index.md'\n")
         f.write(" - 'How To': 'howto.md'\n")
         f.write(" - 'About': 'about.md'\n")
-        folders = self.buildDocsMenu(m, f)
+        self.folders = self.buildDocsMenu(m, f)
         f.close()
-        self.writeDocsPages(folders)
+        self.writeDocsPages(self.folders)
 
     def buildDocsMenu(self, m, yml):
         u"""Extracts menu from module structure."""
@@ -213,37 +229,19 @@ class PageBotDoc(Publication):
 
             level += 1
 
-    def scanPackage(self, m):
-        p = m.__path__
-
-        for loader, module_name, is_pkg in pkgutil.walk_packages(p):
-            try:
-                mod = loader.find_module(module_name).load_module(module_name)
-
-                if is_pkg:
-                    self.packages[module_name] = mod
-                else:
-                    self.classes[module_name] = mod
-            except Exception, e:
-                print e
-
     def writeDocsPages(self, folders, level=0):
         u"""Writes a doc page for each item in the menu."""
 
         for k in sorted(folders.keys()):
             for x in sorted(folders[k].keys()):
                 if x == 'files':
-                    print folders[k][x]
                     # Makes a doc page from a Python file.
                     for f in folders[k][x]:
                         path = k + '/' + f
-                        modName = path.replace('/', '.')
-                        modName = modName.replace('pagebot.', '')
-                        modName = modName.replace('.index', '')
+                        modName = self.path2ModName(path)
 
                         if modName in self.classes:
                             mod = self.classes[modName]
-
                         elif modName in self.packages:
                             mod = self.packages[modName]
 
@@ -261,33 +259,49 @@ class PageBotDoc(Publication):
 
                     self.writeDocsPages({k + '/' + x: folders[k][x]})
 
+    def path2ModName(self, path):
+        modName = path.replace('/', '.')
+        modName = modName.replace('pagebot.', '')
+        return modName.replace('.index', '')
+
+    def getFolderContents(self, path):
+        u"""Returns names of files and folders."""
+        parts = path.split('/')[:-1]
+        folders = self.folders
+
+        for part in parts:
+            if part in folders:
+                folders = folders[part]
+
+        return folders
+
     def writeDocsPage(self, path, m):
         u"""
         Writes a page for a module.
         """
-        #f = open('docs/%s/index.md' % m.__name__, 'w')
         f = open('docs/%s.md' % path, 'w')
         f.write('# %s\n\n' % m.__name__)
-        print path
 
+        if path.endswith('index'):
+            folders = self.getFolderContents(path)
+            f.write('## %s\n\n' % 'Classes')
 
-        '''
-        f.write('## %s\n\n' % 'Modules')
+            for k, v in folders.items():
+                if k == 'files':
+                    for x in v:
+                        if x == 'index':
+                            continue
+                        n = '%s.%s.%s' % ('pagebot', m.__name__, x)
+                        f.write('* [%s](%s)\n' % (n, n) )
 
-        for packageName in sorted(self.packages.keys()):
-            mod = self.packages[packageName]
-            if len(packageName.split('.')) == 1:
-                f.write('* [%s.%s](%s/%s)\n' % (m.__name__, packageName, m.__name__, packageName.replace('.', '/')))
+            f.write('\n## %s\n\n' % 'Modules')
 
-        f.write('## %s\n\n' % 'Classes')
+            for k, v in folders.items():
+                if k != 'files':
+                    n = '%s.%s.%s' % ('pagebot', m.__name__, k)
+                    f.write('* [%s](%s)\n' % (n, n))
 
-        for className in sorted(classes.keys()):
-            if len(className.split('.')) == 1:
-                mod = classes[className]
-                f.write('* [%s.%s](%s/%s)\n' % (m.__name__, className, m.__name__, className.replace('.', '/')))
-        '''
-
-        f.write('## %s\n\n' % 'Functions')
+        f.write('\n## %s\n\n' % 'Functions')
 
         d = m.__dict__
 
