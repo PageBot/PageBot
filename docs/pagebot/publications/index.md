@@ -2,11 +2,11 @@
 
 ## Classes
 
-* [pagebot.publications.pagebotdoc](pagebot.publications.pagebotdoc)
-* [pagebot.publications.poster](pagebot.publications.poster)
-* [pagebot.publications.publication](pagebot.publications.publication)
-* [pagebot.publications.singlepage](pagebot.publications.singlepage)
-* [pagebot.publications.typespecimen](pagebot.publications.typespecimen)
+* [pagebot.publications.pagebotdoc](pagebotdoc)
+* [pagebot.publications.poster](poster)
+* [pagebot.publications.publication](publication)
+* [pagebot.publications.singlepage](singlepage)
+* [pagebot.publications.typespecimen](typespecimen)
 
 ## Modules
 

@@ -2,7 +2,7 @@
 
 ## Classes
 
-* [pagebot.interaction.variables](pagebot.interaction.variables)
+* [pagebot.interaction.variables](variables)
 
 ## Modules
 

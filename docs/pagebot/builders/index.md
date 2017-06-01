@@ -2,13 +2,13 @@
 
 ## Classes
 
-* [pagebot.builders.basebuilder](pagebot.builders.basebuilder)
-* [pagebot.builders.mdblogbuilder](pagebot.builders.mdblogbuilder)
+* [pagebot.builders.basebuilder](basebuilder)
+* [pagebot.builders.mdblogbuilder](mdblogbuilder)
 
 ## Modules
 
-* [pagebot.builders.kirby](pagebot.builders.kirby)
-* [pagebot.builders.htmlcss](pagebot.builders.htmlcss)
+* [pagebot.builders.kirby](kirby)
+* [pagebot.builders.htmlcss](htmlcss)
 
 ## Functions
 

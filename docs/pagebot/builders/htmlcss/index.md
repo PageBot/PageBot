@@ -2,10 +2,10 @@
 
 ## Classes
 
-* [pagebot.builders.htmlcss.basehtmlcssbuilder](pagebot.builders.htmlcss.basehtmlcssbuilder)
-* [pagebot.builders.htmlcss.gridbuilder](pagebot.builders.htmlcss.gridbuilder)
-* [pagebot.builders.htmlcss.simplebuilder](pagebot.builders.htmlcss.simplebuilder)
-* [pagebot.builders.htmlcss.simplehtmlcssbuilder](pagebot.builders.htmlcss.simplehtmlcssbuilder)
+* [pagebot.builders.htmlcss.basehtmlcssbuilder](basehtmlcssbuilder)
+* [pagebot.builders.htmlcss.gridbuilder](gridbuilder)
+* [pagebot.builders.htmlcss.simplebuilder](simplebuilder)
+* [pagebot.builders.htmlcss.simplehtmlcssbuilder](simplehtmlcssbuilder)
 
 ## Modules
 

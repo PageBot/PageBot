@@ -2,11 +2,11 @@
 
 ## Classes
 
-* [pagebot.conditions.align](pagebot.conditions.align)
-* [pagebot.conditions.condition](pagebot.conditions.condition)
-* [pagebot.conditions.floating](pagebot.conditions.floating)
-* [pagebot.conditions.flow](pagebot.conditions.flow)
-* [pagebot.conditions.score](pagebot.conditions.score)
+* [pagebot.conditions.align](align)
+* [pagebot.conditions.condition](condition)
+* [pagebot.conditions.floating](floating)
+* [pagebot.conditions.flow](flow)
+* [pagebot.conditions.score](score)
 
 ## Modules
 

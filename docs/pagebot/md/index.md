@@ -2,8 +2,8 @@
 
 ## Classes
 
-* [pagebot.md.footnotes](pagebot.md.footnotes)
-* [pagebot.md.literature](pagebot.md.literature)
+* [pagebot.md.footnotes](footnotes)
+* [pagebot.md.literature](literature)
 
 ## Modules
 

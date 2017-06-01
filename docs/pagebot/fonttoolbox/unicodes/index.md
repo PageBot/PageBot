@@ -2,8 +2,8 @@
 
 ## Classes
 
-* [pagebot.fonttoolbox.unicodes.unicoderanges](pagebot.fonttoolbox.unicodes.unicoderanges)
-* [pagebot.fonttoolbox.unicodes.unicoderangesdata](pagebot.fonttoolbox.unicodes.unicoderangesdata)
+* [pagebot.fonttoolbox.unicodes.unicoderanges](unicoderanges)
+* [pagebot.fonttoolbox.unicodes.unicoderangesdata](unicoderangesdata)
 
 ## Modules
 

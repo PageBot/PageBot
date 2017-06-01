@@ -5,7 +5,7 @@
 
 ## Modules
 
-* [pagebot.contributions.adobe.kerndump](pagebot.contributions.adobe.kerndump)
+* [pagebot.contributions.adobe.kerndump](kerndump)
 
 ## Functions
 

@@ -2,8 +2,8 @@
 
 ## Classes
 
-* [pagebot.contributions.adobe.kerndump.dumpKerningFeatureFromOTF](pagebot.contributions.adobe.kerndump.dumpKerningFeatureFromOTF)
-* [pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF](pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF)
+* [pagebot.contributions.adobe.kerndump.dumpKerningFeatureFromOTF](dumpKerningFeatureFromOTF)
+* [pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF](getKerningPairsFromOTF)
 
 ## Modules
 
