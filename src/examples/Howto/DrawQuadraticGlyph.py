@@ -23,6 +23,11 @@ from pagebot.toolbox.transformer import point3D
 from pagebot.fonttoolbox.objects.glyph import *
 from pagebot.fonttoolbox.objects.font import Font
 
+ONCURVE = None
+QUADRATIC_CP = None
+CUBIC_CP = None
+IMPLIED_ONCURVE = None
+
 def drawSegment(segment, verbose=False):
     u"""
     Draws a quadratic segment as a cubic Bézier curve in drawBot. Each segment
@@ -81,6 +86,10 @@ def drawSegment(segment, verbose=False):
         x = offCurve0.x + (offCurve1.x - offCurve0.x) * 0.5
         y = offCurve0.y + (offCurve1.y - offCurve0.y) * 0.5
         newOnCurve = Point(x, y, True)
+
+        #if IMPLIED_ONCURVE is None:
+        #    IMPLIED_ONCURVE = newOnCurve
+
         circle(x, y, r/2, color='pink')
         curve0.append(newOnCurve)
         curve1.insert(0, newOnCurve)
@@ -127,7 +136,7 @@ def cross(x, y, d, r=1, g=0, b=0, a=1):
 
 C = 0.5
 F = 2 / 3
-glyphName = 'C'
+glyphName = 'E'
 dx = 200
 x = 50
 r = 10
@@ -175,8 +184,12 @@ for contour in contours:
         y = point.y
 
         if point.onCurve:
+            if ONCURVE is None:
+                ONCURVE = point
             circle(x, y, r)
         else:
+            if QUADRATIC_CP is None:
+                QUADRATIC_CP = point
             # Quadratic offcurves.
             circle(x, y, r/ 4, color='green')
 
@@ -212,29 +225,37 @@ drawPath(path)
 c = glyph.contours
 pbSegments = glyph._segments
 
-fill(0, 0, 0, 0.5)
+fill(0, 0, 0, 0.3)
 stroke(0, 1, 0)
 drawPath(glyph._path)
+DBFont('LucidaGrande', 16)
+stroke(None)
+fill(0)
 
-# Some annotations specifically for the letter 'Q'.
-if glyphName == 'Q':
-    textSize('32')
-    line((730, 370), (750, 350))
-    line((730, 200), (750, 190))
-    line((725, 260), (750, 250))
-    line((685, 590), (750, 650))
-    line((560, 725), (750, 652))
+x = 800
+y = 750
 
-    DBFont('LucidaGrande', 20)
+if ONCURVE:
+    p = (x, y)
+    text('On-curve point', p)        
+    stroke(0, 1, 1)
+    p1 = (ONCURVE.x, ONCURVE.y)
+    line(p, p1)
     stroke(None)
-    fill(0)
-    text('On-curve point', (755, 350))
-    text('Quadratic control point', (755, 185))
-    text('Cubic control point', (755, 245))
-    text('Implied on-curve point', (755, 650))
+    y -= 20
 
-u"""
-# This is not being parsed by doctest!
->>> print a
-'a'
-"""
+if QUADRATIC_CP:
+    p = (x, y)
+    text('Quadratic control point', p)
+    stroke(0, 1, 1)
+    p1 = (QUADRATIC_CP.x, QUADRATIC_CP.y)
+    line(p, p1)
+    stroke(None)
+    y -= 20
+
+    
+if CUBIC_CP:
+    text('Cubic control point', (800, 710))
+
+if IMPLIED_ONCURVE:
+    text('Implied on-curve point', (800, 690))
