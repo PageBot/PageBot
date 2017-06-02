@@ -83,7 +83,7 @@ def makeDocument():
             # Create Rect object and place it in the page on position p
             # Initialize the borders dicts on lineWidth == 0
             e = newRect(p, w=SQUARE, h=SQUARE, parent=page, 
-                fill=color1, stroke=None, borders=1)
+                fill=color1, stroke=None, borders=1) # border=1 also works, identical.
             lineType = {-1:ONLINE, 0:INLINE, 1:ONLINE, 2:OUTLINE}[LineType]
             e.borderLeft['strokeWidth'] = (ix+1)*4
             e.borderLeft['line'] = lineType

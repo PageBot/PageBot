@@ -730,7 +730,8 @@ class Element(object):
         elif len(borders) == 1:
             borders = borders*4
         self.borderTop, self.borderRight, self.borderBottom, self.borderLeft = borders
-    borders = property(_get_borders, _set_borders)
+    # Seems to be onfusing having only one of the two. So allow both property names for the same.
+    border = borders = property(_get_borders, _set_borders)
 
     def _get_borderTop(self):
         return self.css('borderTop')

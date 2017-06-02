@@ -16,7 +16,7 @@ import Quartz
 
 from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString, line
 
-from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle
+from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE, BOTTOM
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot import newFS, setStrokeColor, setFillColor
@@ -458,8 +458,19 @@ class TextBox(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, p, view)
 
-        # Draw the text.    
-        textBox(self.fs, (px+self.pl, py+self.pb, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
+        # Draw the text with horizontal and vertical alignment
+        tw, th = textSize(self.fs)
+        xOffset = yOffset = 0
+        if self.css('yTextAlign') == MIDDLE:
+            yOffset = (self.h - self.pb - self.pt - th)/2
+        elif self.css('yTextAlign') == BOTTOM:
+            yOffset = self.h - self.pb - self.pt - th
+        if self.css('xTextAlign') == CENTER:
+            xOffset = (self.w - self.pl - self.pr - tw)/2
+        elif self.css('xTextAlign') == RIGHT:
+            xOffset = self.w - self.pl - self.pr - tw
+
+        textBox(self.fs, (px+self.pl+xOffset, py+self.pb-yOffset, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
         # If there are child elements, draw them over the text.
         self._drawElements(p, view)
