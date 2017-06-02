@@ -39,9 +39,9 @@ def makeDocument():
     view.padding = 40 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
-    view.showPageFrame = True
+    view.showPageFrame = False
     view.showPagePadding = False # Table already has background color
-    view.showElementOrigin = True
+    view.showElementOrigin = False
     view.showElementDimensions = False
     
     # Get list of pages with equal y, then equal x.    
@@ -50,7 +50,7 @@ def makeDocument():
     page0.name = 'Page 1'
     page0.padding = PagePadding
     
-    t = newTable(cols=4, rows=12, borders=6, parent=page0, 
+    t = newTable(cols=6, rows=12, borders=0.5, parent=page0, 
         fill=0.85, conditions=[Fit()])
     
     score = doc.solve() # Try to solve all pages.

@@ -351,6 +351,8 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         textCmykFill = NO_COLOR, # Flag to ignore, None is valid value for color.
         textCmykStroke = NO_COLOR, # Flag to ignore, None is valid value for color.
         textStrokeWidth = None,
+        xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT), independent of inside FS.
+        yTextAlign = TOP, # Alignment of text inside text boxes, one of (TOP, MIDDLE, BOTTOM)
 
         # V I E W
 

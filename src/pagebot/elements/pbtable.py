@@ -16,41 +16,31 @@ import Quartz
 
 from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString, line
 
-from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle
+from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot import newFS, setStrokeColor, setFillColor
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.conditions import *
+from pagebot.elements.pbtextbox import TextBox
 
 class Row(Element):
     def __init__(self, **kwargs):
         Element.__init__(self,  **kwargs)
 
-
-    def solve(self, score=None):
-        u"""The solve will align all rows and cells to the available space in Table,
-        and taking into account what the volume is that cells need and how they align
-        in columns and rows."""
-        if score is None:
-            score = Score()
-        if self.conditions: # Can be None or empty
-            for condition in self.conditions: # Skip in case there are no conditions in the style.
-                condition.solve(self, score)
+    def getCell(self, index):
+        return self.elements[index]
 
 class Header(Row):
     u"""The Table header is a special kind of row. The header holds the titles of 
     the columns and is reference for their widthts."""
     pass
 
-class Cell(Element):
-    def __init__(self, colSpan=1, rowSpan=1, **kwargs):
-        Element.__init__(self,  **kwargs)
+class Cell(TextBox):
+    def __init__(self, fs, minW=None, w=None, h=None, colSpan=1, rowSpan=1, **kwargs):
+        TextBox.__init__(self,  fs, minW=minW, w=w, h=h, **kwargs)
         self.colSpan = colSpan
         self.rowSpan = rowSpan
-
-    def getCell(self, index):
-        return self.elements[index]
 
 class HeaderCell(Cell):
     pass
@@ -62,7 +52,7 @@ class EmptyCell(Element):
 
 class Table(Element):
 
-    DEFAULT_H = 18
+    DEFAULT_H = 48
     DEFAULT_W = DEFAULT_H*4
 
     HEADER_CLASS = Header
@@ -71,29 +61,34 @@ class Table(Element):
     CELL_CLASS = Cell
     EMPTYCELL_CLASS = EmptyCell
 
-    def __init__(self, colNames=None, cols=1, rows=1, **kwargs):
+    COLNAMES = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+    def __init__(self, colNames=None, cols=1, rows=1, fillHeader=0.8, **kwargs):
         Element.__init__(self,  **kwargs)
         # Make the column/row/cell dictionary
-        self.initCells(colNames, cols, rows)
+        self.initCells(colNames, cols, rows, fillHeader)
 
-    def initCells(self, colNames, cols, rows):
+    def initCells(self, colNames, cols, rows, fillHeader):
         cellConditions = [Float2Left(), Top2Top(), Fit2Bottom()]
         rowConditions = [Fit2Width(), Float2Top()]
  
-        header = self.HEADER_CLASS(parent=self, fill=(0, 1, 0), borders=6, conditions=rowConditions) # Header as first row element.
+        header = self.HEADER_CLASS(parent=self, h=self.DEFAULT_H, fill=fillHeader, conditions=rowConditions) # Header as first row element.
         for colIndex, col in enumerate(range(cols)):
+            fs = newFS(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=1, fontSize=10))
             if colNames is not None:
                 colName = colNames[colIndex]
             else:
                 colName = None
-            self.HEADERCELL_CLASS(parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H, name=colName, 
-                conditions=cellConditions)
+            self.HEADERCELL_CLASS(fs, parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H, 
+                xTextAlign=CENTER, yTextAlign=MIDDLE, name=colName, 
+                borders=self.borders, fill=0.4, conditions=cellConditions)
 
+        fs = newFS('abc', style=dict(font='Verdana', textFill=0, fontSize=10))
         for rowIndex in range(rows):
             row = self.ROW_CLASS(parent=self, h=self.DEFAULT_H, conditions=rowConditions)
             for colIndex in range(cols):
-                self.CELL_CLASS(parent=row, w=self.DEFAULT_W, h=self.DEFAULT_H, fill=(1, 0, 0), 
-                    conditions=cellConditions)
+                self.CELL_CLASS(fs, parent=row, w=self.DEFAULT_W, h=self.DEFAULT_H, borders=self.borders,
+                    xTextAlign=CENTER, yTextAlign=MIDDLE, conditions=cellConditions)
 
     def getHeader(self):
         return self.elements[0]
