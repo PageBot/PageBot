@@ -4,6 +4,8 @@ W = H = 500
 fontName = 'BitcountMonoDouble-RegularCircle'
 if not fontName in installedFonts():
     fontName = 'Georgia-Bold'
+IMAGE_PATH = '_export/Horizon.pdf'
+
 size(W, H)
 for n in range(10):
     c = choice(LETTERS)
@@ -13,7 +15,7 @@ for n in range(10):
     
     x = 1/z + random()*100-100
     #y = y/z
-    fill(0.1, 0.1, 0.1)
+    fill(random()*0.1+0.1, random()*0.1+0.1, random()*0.1*0.1)
     font(fontName)
     stroke(None)
     fSize = min(200, 40000/z)
@@ -34,3 +36,5 @@ for n in range(0, 500, 10):
     strokeWidth(random()*3+0.5)
     y = W/2-2 - n*0.4
     line((0, y), (W, y))
+    
+saveImage(IMAGE_PATH)
