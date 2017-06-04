@@ -14,15 +14,18 @@
 from __future__ import division
 import os
 
+import pagebot
+from drawBot import installFont, BezierPath, save, transform, scale, drawPath, restore, fill
+
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLocation
-from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
 
-from drawBot import installFont, BezierPath, save, transform, scale, drawPath, restore, fill
-import pagebot
+from pagebot import setFillColor
+from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
 
 DEBUG = False
 
@@ -31,47 +34,28 @@ def getMasterPath():
     #return '/'.join(pagebot.__file__.split('/')[:-2])+'/fonts/'
     from os.path import expanduser
     home = expanduser("~")
-    return home + '/fonts/'
+    return home + '/Fonts/'
 
 def getInstancePath():
     u"""Answer the path to write instance fonts."""
     return getMasterPath() + 'instances/'
 
-def getVariableFont(masterStylePath, location):
+def getVariableFont(font, location, install=True):
     u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     {"wght": 0, "wdth": 1000}"""
-    fontName, _ = generateInstance(masterStylePath, location, targetDirectory=getInstancePath())
-    return fontName
+    fontName, path = generateInstance(font.path, location, targetDirectory=getInstancePath())
+    return Font(path, fontName, install=install)
 
-def drawGlyphPath(ttFont, glyphName, x, y, location=None, s=0.1, fillColor=0):
-
-    if isinstance(fillColor, (tuple, list)):
-        if len(fillColor) == 3:
-            rc, gc, bc = fillColor
-            op = 1 # If not defined, defauly opacity is 1
-        else:
-            rc, gc, bc, op = fillColor
-    else:
-        rc = gc = bc = fillColor
-        op = 1
-
-    glyphSet = TTVarFontGlyphSet(ttFont)
-    if location is None:
-        location = {"wght": 500}
-    glyphSet.setLocation(location)
-    g = glyphSet[glyphName]
-
-    pen = BezierPath(glyphSet=glyphSet)
-    """
-    g.draw(pen)
+def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0):
+    glyph = font[glyphName]
     save()
-    fill(rc, gc, bc, op)
-    transform((1, 0, 0, 1, x - g.width/2*s, y))
+    setFillColor(fillColor)
+    transform((1, 0, 0, 1, x - glyph.width/2*s, y))
     scale(s)
-    drawPath(pen)
+    drawPath(glyph.path)
     restore()
-    """
+
 
 def normalizeLocation(location, axes):
     """Normalizes location based on axis min/default/max values from axes.
@@ -179,9 +163,9 @@ def generateInstance(variableFontPath, location, targetDirectory):
             print("Normalized location:", varFileName, normalizedLoc)
 
         gvar = varFont['gvar']
-        for glyphName, variables in gvar.variables.items():
+        for glyphName, variations in gvar.variations.items():
             coordinates, _ = _GetCoordinates(varFont, glyphName)
-            for var in variables:
+            for var in variations:
                 scalar = supportScalar(normalizedLoc, var.axes)
                 if not scalar: continue
                 # TODO Do IUP / handle None items
