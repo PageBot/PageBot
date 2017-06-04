@@ -113,7 +113,7 @@ class Table(Element):
     def getOverflow(self):
         overflow = []
         for row in self.elements:
-            if row..y < 0:
+            if row.y < 0:
                 overflow.append(row)
         return overflow
 

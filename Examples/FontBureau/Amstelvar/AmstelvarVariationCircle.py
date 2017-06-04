@@ -24,9 +24,12 @@ DEBUG = False # Make True to see grid and element frames.
 OUTPUT_FILE = 'AmstelvarVariableCircle.pdf'
 
 FONT_PATH = pagebot.getFontPath()
-fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
-#amstelvar = Font(fontPath)
-#amstelvarName = amstelvar.install() # Do DrawBot font install.
+print FONT_PATH
+print pagebot.getRootPath()
+
+fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+amstelvar = Font(fontPath)
+amstelvarName = amstelvar.install() # Do DrawBot font install.
 
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
 
@@ -86,8 +89,7 @@ class VariableCircleSpecimen(TypeSpecimen):
         
         return locations
 
-    def makeTemplate(self, rs):
-        hyphenation(False)
+    def makeTemplate(self):
         # Template for the main page.
         template = Template(rs) # Create second template. This is for the main pages.
         # Show grid columns and paddings if rootStyle.showGrid or 
@@ -95,7 +97,7 @@ class VariableCircleSpecimen(TypeSpecimen):
         # The grid is just a regular element, like all others on the page. Same parameters apply.
         template.grid(rs)  
         # Add named text box to template for main specimen text.
-        template.cTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
+        newTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
         template.cTextBox('', 1, 1, 5, 6, eId=self.specimenBoxId, style=rs)       
         #template.cTextBox('', 0, 1, 2, 6, eId=self.infoBoxId, style=rs)
         # Some lines, positioned by vertical and horizontal column index.

@@ -27,6 +27,16 @@ from drawBot.context.baseContext import BaseContext
 from pagebot.style import NO_COLOR, LEFT
 from pagebot.toolbox.transformer import point2D
 
+#   P A T H S 
+
+def getRootPath():
+    u"""Answer the root path of the pagebot module."""
+    return '/'.join(__file__.split('/')[:-3]) # Path of this file with pagebot/__init__.py(c) removed.
+
+def getFontPath():
+    u"""Answer the standard font path of the pagebot module."""
+    return getRootPath() + '/Fonts/'
+
 #
 # In order to let PageBot scripts and/applications exchange information, without the need to save
 # data in files, the pbglobals module supports the storage of non-persistent information.
@@ -210,13 +220,7 @@ def baseline2y(yIndex, e):
     baseline = e.css('baseline')
     return padT + cy * baseline
 
-def getRootPath():
-    u"""Answer the root path of the pagebot module."""
-    return '/'.join(__file__.split('/')[:-2]) # Path of this file with pagebot/__init__.py(c) removed.
-
-def getFontPath():
-    u"""Answer the standard font path of the pagebot module."""
-    return getRootPath() + '/fonts/'
+#   C O L O R
 
 def setFillColor(c, fs=None, cmyk=False):
     u"""Set the color for global or the color of the formatted string."""
