@@ -98,6 +98,8 @@ def makeDocument():
     paragraphBottomSpacing=0)
     bodyStyle = dict(font='Verdana', textFill=0, fontSize=12, rLeading=1.4, 
         xAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
+    sideBarStyle = dict(font='Verdana', textFill=0, fontSize=10, rLeading=1.4, 
+        xAlign=LEFT, paragraphTopSpacing=10, hyphenation=True) 
     italicBodyStyle = copy.copy(bodyStyle)
     italicBodyStyle['font'] = 'Verdana-Italic'
     italicBodyStyle['paragraphTopSpacing'] = 0
@@ -186,9 +188,9 @@ def makeDocument():
         
     # Text box on bottom right
     fs = newFS('This is a funny head.\n', style=headStyle)
-    fs += newFS(t, style=bodyStyle)
+    fs += newFS(t+t, style=sideBarStyle)
     t6 = newTextBox(fs, w=w/3-16, pt=34, parent=page, 
-        conditions=(Float2Right(), Float2Top(), ))
+        conditions=(Float2Right(), Float2Top(), Fit2Bottom()))
 
     fs = newFS(topT, style=bodyStyle)
     fs += newFS('\nAn addition italic line', style=italicBodyStyle)
