@@ -32,19 +32,31 @@ from pagebot.fonttoolbox.variablefontbuilder import generateInstance, drawGlyphP
 from pagebot.toolbox.transformer import pointOffset
 
 class VariableCircle(Element):
-    u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info."""
-
+    u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info.
+    Information is derived from the Variable Font and automatic converted into
+    an info-grapgic, showing a simplified model of the design space.
+    To show all possible interpoaltion, it would need to visualize an n-dimensional
+    space (where n is the amount of axes in the font). In the simplified model
+    all axes are represented as spikes/needles on a wheel, where the amount of
+    penetration in the neutral glyph defined the influence of that axis.
+    In that respect is it not much better than a list of sliders, but at least this
+    model allows to show interactions between axes, by putting them on another 
+    angle on the circle.
+    """
     isText = False
     isFlow = False
 
     DEFAULT_FONT_SIZE = 64
-    R = 2/3 # Fontsize factor to draw glyph markers.
+    R = 1#2/3 # Fontsize factor to draw glyph markers.
 
-    def __init__(self, font, s=None, **kwargs):
+    def __init__(self, font, s=None, draw3D=True, location=None, showAxisNames=True, **kwargs):
         Element.__init__(self, **kwargs)
         # Initialize the default Element behavior tags.
         self.font = font
         self.glyphNames = s or 'e'
+        self.draw3D = draw3D # TODO: Draw as 3D structure of spheres and needles/spikes.
+        self.location = location # Use to visualize a specific location, otherwise all needles are at min value.
+        self.showAxisNames = showAxisNames
 
     #   Always keep square
 
@@ -69,17 +81,94 @@ class VariableCircle(Element):
     def _drawGlyphMarker(self, axisName, mx, my, glyphName, fontSize, location, strokeW=2):
         # Middle circle 
         fill(1)
-        stroke(0)
+        stroke(0.7)
         strokeWidth(strokeW)
-        oval(mx-fontSize*self.R, my-fontSize*self.R, fontSize*2*self.R, fontSize*2*self.R)
+        oval(mx-fontSize/2*self.R, my-fontSize/2*self.R, fontSize*self.R, fontSize*self.R)
 
         variableFont = getVariableFont(self.font, location)
-        if axisName is not None:
+        # Show axis name below circle marker?
+        if self.showAxisNames and axisName is not None:
             fs = newFS(axisName, style=dict(font=variableFont.installedName, fontSize=fontSize/4, textFill=0))
             tw, th = textSize(fs)
-            text(fs, (mx-tw/2, my-fontSize*self.R-th*2/3))
+            text(fs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.font.info.unitsPerEm
         drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
+
+
+    def _getVarLocation(self):
+        u"""Convert the self.location (randing from 0-1) inro Variable location."""
+        if self.location is None:
+            return {}
+        varLocation = {}
+        for axisName, (minValue, defaultValue, maxValue) in self.font.axes.items():
+            if axisName in self.location:
+                varLocation[axisName] = minValue + (maxValue - minValue) * (1-self.location[axisName])
+        return varLocation
+
+
+    def _drawFontCircle(self, px, py):
+        fontSize = self.css('fontSize', self.DEFAULT_FONT_SIZE)
+        markerSize = fontSize*self.R
+
+        # Calculate the max square size
+        w = self.w - markerSize
+        h = self.h - markerSize
+
+        fill(0.9)
+        stroke(None)
+        mx = px + self.pw/2
+        my = py + self.ph/2
+        # Gray circle that defines the area of the axis extremes.
+        oval(px+markerSize/2, py+markerSize/2, w, h)
+        # Draw axis spikes first, so we can cover them by the circle markers.
+        axes = self.font.axes
+
+        # Draw default glyph circle marker in middle.
+        glyphName = self.glyphNames[0]
+        varLocation = self._getVarLocation() # Show neutral, unless a location is requested 
+        self._drawGlyphMarker(None, mx, my, glyphName, fontSize, varLocation, strokeW=3)
+
+        # Draw 
+        angle = 0
+        for axisName, (minValue, defaultValue, maxValue) in axes.items():
+        # Draw needles, depending on the axis values and the status of self.location
+            if self.draw3D:
+                needleStart = 0.40 # Just enouhg overlap with edge of neutral circle marker
+            else:
+                needleStart = 2/3 # Start at edge of neutral circle marker
+
+            rStart = fontSize
+            rEnd = w/2
+            if self.location is not None and axisName in self.location:
+                rEnd = rStart + (rEnd - rStart) * self.location[axisName]
+            rStart = fontSize*needleStart
+            #print rStart, rEnd
+            startX, startY = self._angle2XY(angle, rStart)
+            endX, endY = self._angle2XY(angle, rEnd)
+            if (w/2 + rStart) - rEnd - fontSize > fontSize:
+                startX1, startY1 = self._angle2XY(angle-180, fontSize/2)
+                endX1, endY1 = self._angle2XY(angle-180, (w/2 + rStart) - rEnd - fontSize)
+            else:
+                startX1 = None
+            stroke(None)
+            fill(0.3)
+            oval(mx+startX-2, my+startY-2, 4, 4)
+            
+            fill(None)
+            stroke(0)
+            strokeWidth(1)
+            newPath()
+            moveTo((mx+startX, my+startY))
+            lineTo((mx+endX, my+endY))
+            if startX1 is not None:
+                moveTo((mx+startX1, my+startY1))
+                lineTo((mx+endX1, my+endY1))
+            drawPath()
+
+            # Show the glyph shape as it is at the max location of the axis.
+            location = {axisName: maxValue}
+            self._drawGlyphMarker(axisName, mx+endX, my+endY, glyphName, fontSize, location)
+            angle += 360/len(axes)
 
 
     def draw(self, origin, view):
@@ -104,50 +193,6 @@ class VariableCircle(Element):
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
-
-
-
-    def _drawFontCircle(self, px, py):
-        fontSize = self.css('fontSize', self.DEFAULT_FONT_SIZE)
-        markerSize = fontSize*self.R
-
-        # Calculate the max square size
-        w = self.w - markerSize
-        h = self.h - markerSize
-
-        fill(0.9)
-        stroke(None)
-        mx = px + self.pw/2
-        my = py + self.ph/2
-        # Gray circle that defines the area of the axis extremes.
-        oval(px+markerSize/2, py+markerSize/2, w, h)
-        # Draw axis spikes first, so we can cover them by the circle markers.
-        angle = 0
-        axes = self.font.axes
-        fill(None)
-        stroke(0)
-        strokeWidth(1)
-        newPath()
-        while angle < 360:
-            markerX, markerY = self._angle2XY(angle, self.w/2)
-            moveTo((mx, my))
-            lineTo((mx+markerX, my+markerY))
-            angle += 360/len(axes)
-        drawPath()
-
-        # Draw default glyph marker in middle.
-        glyphName = self.glyphNames[0]
-        defaultLocation = {}
-        self._drawGlyphMarker(None, mx, my, glyphName, fontSize, defaultLocation, strokeW=3)
-
-        angle = 0
-        for axisName, (minValue, defaultValue, maxValue) in axes.items():
-            location = {axisName: maxValue}
-            markerX, markerY = self._angle2XY(angle, w/2)
-            self._drawGlyphMarker(axisName, mx+markerX, my+markerY, glyphName, fontSize/2, location)
-            angle += 360/len(axes)
-
-        self._restoreScale()
 
 
 

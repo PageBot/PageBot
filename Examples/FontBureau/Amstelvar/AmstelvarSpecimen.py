@@ -40,12 +40,7 @@ else:
     OUTPUT_FILE = 'AmstelvarMatrixSpecimen.pdf'
 
 FONT_PATH = pagebot.getFontPath()
-AmstelVarPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
-#DecovarPath = u"/Users/petr/git/PageBotTYPETR/src/fonts/BitcountVar/BitcountGrid-GX.ttf"
-#print 'Using font', AmstelVarPath
-
-# Installing the font in DrawBot
-#amstelVarName = installFont(AmstelVarPath)
+fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
 
 s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789'
 
@@ -187,11 +182,10 @@ class VariableTypeSpecimen(TypeSpecimen):
                 page.place(vCube, 50, 100)
 
 
-if 0:
-    # Create a new specimen publications and add the list of system fonts.
-    typeSpecimen = VariableTypeSpecimen([amstelVarName], showGrid=DEBUG)
-    # Build the pages of the publication, interpreting the font list.
-    typeSpecimen.build()
-    # Export the document of the publication to PDF.
-    typeSpecimen.export(OUTPUT_FILE)
+# Create a new specimen publications and add the list of system fonts.
+typeSpecimen = VariableTypeSpecimen([amstelVarName], showGrid=DEBUG)
+# Build the pages of the publication, interpreting the font list.
+typeSpecimen.build()
+# Export the document of the publication to PDF.
+typeSpecimen.export(OUTPUT_FILE)
 

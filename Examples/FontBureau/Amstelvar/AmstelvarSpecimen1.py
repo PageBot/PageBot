@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     AmstelvarVariableCircle.py
+#     AmstelvarSpecimen.py
 #
 import pagebot # Import to know the path of non-Python resources.
 
@@ -20,14 +20,14 @@ from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.elements.variablefonts.variablecircle import VariableCircle
+from pagebot.elements.variablefonts.variablecube import VariableCube
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
 
 PagePadding = 32
 PageSize = 500
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/AmstelvarVariableCircle.pdf' 
+EXPORT_PATH = '_export/AmstelvarSpecimen.pdf' 
 
 FONT_PATH = pagebot.getFontPath()
 fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
