@@ -38,13 +38,25 @@ def getMasterPath():
 
 def getInstancePath():
     u"""Answer the path to write instance fonts."""
-    return getMasterPath() + 'instances/'
+    return getMasterPath() + '_instances/'
 
-def getVariableFont(font, location, install=True):
+def getVarLocation(font, normLocation):
+    u"""Translate the normalized location dict (all values between 0 and 1) to what the font expects
+    by its min/max values for each axis."""
+
+    if normLocation is None:
+        return {}
+    varLocation = {}
+    for axisName, (minValue, defaultValue, maxValue) in font.axes.items():
+        if axisName in normLocation:
+            varLocation[axisName] = minValue + (maxValue - minValue) * (1-normLocation[axisName])
+    return varLocation
+
+def getVariableFont(font, normLocation, install=True):
     u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     {"wght": 0, "wdth": 1000}"""
-    fontName, path = generateInstance(font.path, location, targetDirectory=getInstancePath())
+    fontName, path = generateInstance(font.path, getVarLocation(font, normLocation), targetDirectory=getInstancePath())
     return Font(path, fontName, install=install)
 
 def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0):
