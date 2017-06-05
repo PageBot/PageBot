@@ -28,7 +28,7 @@ from drawBot import textSize, text, fill, rect, oval, stroke, strokeWidth, insta
 from pagebot import newFS
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, MIN_WIDTH
-from pagebot.fonttoolbox.variablefontbuilder import generateInstance, drawGlyphPath, getVariableFont
+from pagebot.fonttoolbox.variablefontbuilder import generateInstance, drawGlyphPath, getVariableFont, getVarLocation
 from pagebot.toolbox.transformer import pointOffset
 
 class VariableCircle(Element):
@@ -95,17 +95,6 @@ class VariableCircle(Element):
         drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
 
 
-    def _getVarLocation(self):
-        u"""Convert the self.location (randing from 0-1) inro Variable location."""
-        if self.location is None:
-            return {}
-        varLocation = {}
-        for axisName, (minValue, defaultValue, maxValue) in self.font.axes.items():
-            if axisName in self.location:
-                varLocation[axisName] = minValue + (maxValue - minValue) * (1-self.location[axisName])
-        return varLocation
-
-
     def _drawFontCircle(self, px, py):
         fontSize = self.css('fontSize', self.DEFAULT_FONT_SIZE)
         markerSize = fontSize*self.R
@@ -125,7 +114,7 @@ class VariableCircle(Element):
 
         # Draw default glyph circle marker in middle.
         glyphName = self.glyphNames[0]
-        varLocation = self._getVarLocation() # Show neutral, unless a location is requested 
+        varLocation = getVarLocation(self.font, self.location) # Show neutral, unless a location is requested 
         self._drawGlyphMarker(None, mx, my, glyphName, fontSize, varLocation, strokeW=3)
 
         # Draw 
