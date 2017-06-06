@@ -157,12 +157,19 @@ Align the element.right with min of all placed element.left or parent.rightSide.
 ### Float2BottomSide
 Align the element.bottom with max of all placed element.top or parent.bottomSide.
 	Positioning includes the margin of all elements.
+### MIDDLE
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
 ### Float2LeftBottom
 ### Middle2TopSide
 Move middle (vertical center) of e bounding box on parent top side.
 ### Float2BottomRight
 ### Left2LeftSide
 Align left of e bounding box on parent left side.
+### HeaderCell
+### TextBox
 ### Origin2Left
 Align left of e bounding box horizontal between parent margins.
 ### Float2LeftTopSides
@@ -230,7 +237,8 @@ Align top of e bounding box vertical middle between parent margins.
 ### Shrink2BlockLeft
 ### align
 ### Header
-The Table header is a special kind of row.
+The Table header is a special kind of row. The header holds the titles of 
+the columns and is reference for their widthts.
 ### Float2TopRightSides
 ### Center2Center
 Center e bounding box horizontal between parent margins.

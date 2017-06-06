@@ -122,11 +122,6 @@ pages:
     - 'pagebot/contributions/filibuster/content/staff.md'
     - 'pagebot/contributions/filibuster/content/superheroes.md'
     - 'pagebot/contributions/filibuster/content/twitter.md'
- - 'pagebot/canvas3d':
-    - 'pagebot/canvas3d/index.md'
-    - 'pagebot/canvas3d/canvas3d.md'
-    - 'pagebot/canvas3d/designspaceexplorer.md'
-    - 'pagebot/canvas3d/transform3d.md'
  - 'pagebot/interaction':
     - 'pagebot/interaction/index.md'
     - 'pagebot/interaction/variables.md'
@@ -144,6 +139,7 @@ pages:
     - 'pagebot/toolbox/markers.md'
     - 'pagebot/toolbox/mathematics.md'
     - 'pagebot/toolbox/timemark.md'
+    - 'pagebot/toolbox/transform3d.md'
     - 'pagebot/toolbox/transformer.md'
  - 'pagebot/fonttoolbox':
     - 'pagebot/fonttoolbox/index.md'

@@ -82,3 +82,21 @@ margin for float values, can be substituted by zero for integer
 values.
 ### scalePointByVector
 ### lucasRange
+Answers the range stem widths for interpolation, according to
+Lucas’ formula.
+
+http://www.lucasfonts.com/about/interpolation-theory/
+a = minStem
+z = maxStem
+n = number of interpolated stems, including the two masters
+minN = optional minimum value if normalizing, e.g. 0-1000
+maxN = optional maximum value if normalizing
+
+print Mathematics.lucasRange(32, 212, 8)
+[32, 42, 55, 72, 94, 124, 162, 212]
+
+print Mathematics.lucasRange(32, 212, 8, 0, 1000)
+[0, 55, 127, 222, 346, 508, 721, 1000]
+
+print Mathematics.lucasRange(32, 212, 8, 100, 200)
+[100, 106, 113, 122, 135, 151, 172, 200]
