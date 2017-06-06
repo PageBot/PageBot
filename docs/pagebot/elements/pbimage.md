@@ -53,7 +53,7 @@ Align top of e bounding box on vertical middle between parent sides.
 ### Bottom2MiddleSides
 Align right of e bounding box on vertical middle between parent sides.
 ### condition
-### point2D
+### function point2D
 Answer the 2D origin as combination of p and offset.
 ### Float2TopLeft
 ### Shrink2BlockBottomSide
@@ -167,7 +167,7 @@ Middle e bounding box vertical between parent vertical sides.
 ### Float2RightBottomSides
 ### Fit2Height
 ### Shrink2BlockRight
-### pointOffset
+### function pointOffset
 Answer new 3D point, shifted by offset.
 ### Fit2Bottom
 ### Fit2Top

@@ -25,5 +25,5 @@ The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
 >>> int('0b100', base=0)
 4
-### point2D
+### function point2D
 Answer the 2D origin as combination of p and offset.

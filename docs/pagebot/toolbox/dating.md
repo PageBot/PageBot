@@ -3,7 +3,7 @@
 
 ## Functions
 
-### DateTime
+### class DateTime
 The ``newdate`` method answers a new ``DateTime`` instance. If the ``date`` is
 ``None``, then answer ``None``. If ``date`` is a string, then convert to
 ``DateTime``. Check on the month and day boundaries.<br/>
@@ -29,21 +29,21 @@ DateTime(2008, 11, 23)
 DateTime(2008, 11, 23, 23, 11, 22, 0)
 DateTime(2008, week=23)
 </python>
-### uniqueLong
+### function uniqueLong
 The ``uniqueLong`` method answers a unique number (as string) of 18 digits.
-### monthdays
-### timestampLong
+### function monthdays
+### function timestampLong
 The ``timestampLong`` method answers the timestamp. This may not be unique.
-### leapyear
-### checkdatetime
+### function leapyear
+### function checkdatetime
 The ``checkdatetime`` answers the ``date`` if it is a date. If date is None, then answer None. If
 date is a string, then convert to DateTime. Check on the month and day boundaries. Answer the same type that date
 was. Note that we do not check if date was already a DateTime. This method is especially made to set database fields
 with dates, where that None will result in a NULL value for that field.
-### uniqueId
+### function uniqueId
 The ``uniqueId`` method answers a unique number (as string) of ``size`` length concatenated
 timestamps. Minimum length of the number is 18 digits, or else string will not be unique.
-### Period
+### class Period
 The ``Duration`` class contains a duration in time. It can e.g. be used to add to a ``DateTime``
 instance with a new date as result.<br/>
 <python>
@@ -56,7 +56,7 @@ All common arithmetic applies to a ``Duration`` instance.
 d = Duration(3)<br/>
 d * 3 is a duration of 6 days.<br/>
 </python>
-### Duration
+### class Duration
 The ``Duration`` class contains a duration in time. It can e.g. be used to add to a ``DateTime``
 instance with a new date as result.<br/>
 <python>
@@ -69,7 +69,7 @@ All common arithmetic applies to a ``Duration`` instance.
 d = Duration(3)<br/>
 d * 3 is a duration of 6 days.<br/>
 </python>
-### newdatetime
+### function newdatetime
 The ``newdate`` method answers a new ``DateTime`` instance. If the ``date`` is
 ``None``, then answer ``None``. If ``date`` is a string, then convert to
 ``DateTime``. Check on the month and day boundaries.<br/>

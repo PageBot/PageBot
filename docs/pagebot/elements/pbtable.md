@@ -178,7 +178,7 @@ Align right of e bounding box to parent left margin.
 ### Origin2Right
 Align origin of e bounding box to parent right margin.
 ### Fit2Height
-### newFS
+### function newFS
 Answer a formatted string from valid attributes in Style. Set the all values after testing
 their existence, so they can inherit from previous style formats.
 ### Float2BottomRightSides
@@ -222,7 +222,7 @@ Return a nice string representation of the object.
 If the argument is a string, the return value is the same object.
 ### Float2RightBottomSides
 ### Shrink2BlockRight
-### pointOffset
+### function pointOffset
 Answer new 3D point, shifted by offset.
 ### Fit2Bottom
 ### Float2LeftBottomSides
@@ -242,7 +242,7 @@ the columns and is reference for their widthts.
 ### Float2TopRightSides
 ### Center2Center
 Center e bounding box horizontal between parent margins.
-### setStrokeColor
+### function setStrokeColor
 Set global stroke color or the color of the formatted string.
 ### Float2TopSide
 Align the element.top with max of all placed element.bottom or parent.topSide.
@@ -267,14 +267,14 @@ Move center of e bounding box on parent right side.
 ### Float2TopLeftSides
 ### Origin2Center
 Align left of e bounding box horizontal between parent margins.
-### makeStyle
+### function makeStyle
 Make style from a copy of style dict (providing all necessary default values for the
 element to operate) and then overwrite these values with any specific arguments.
 If style is None, then create a new style dict. In that case all the element style values need
 to be defined by argument. The calling element must test if its minimum set
 (such as self.w and self.h) are properly defined.
 ### Element
-### setFillColor
+### function setFillColor
 Set the color for global or the color of the formatted string.
 ### Left2Right
 Align left of e bounding box on parent right margin.

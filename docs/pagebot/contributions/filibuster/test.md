@@ -5,7 +5,7 @@
 
 ### BlurbWriter
 A very unspecific recursive compiler and randomizer for text.
-### titlecase
+### function titlecase
 Titlecases input text
 
 This filter changes all words to Title Caps, and attempts to be clever

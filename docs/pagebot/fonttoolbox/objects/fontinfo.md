@@ -12,7 +12,7 @@ The main font object. It manages file input and output, and offers
 A property that is only computed once per instance and then replaces itself
 with an ordinary attribute. Deleting the attribute resets the property.
 Source: https://github.com/bottlepy/bottle/commit/fa7733e075da0d790d809aa3d2f53071897e6f76
-### getBestCmap
+### function getBestCmap
 Return a unicode -> glyphName dictionary from the 'best' unicode cmap that the font
 contains. In order of preference, the font will be searched for cmaps 3,10, 3,1 and 0,3.
 

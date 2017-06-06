@@ -11,7 +11,7 @@ str(object='') -> string
 Return a nice string representation of the object.
 If the argument is a string, the return value is the same object.
 ### SingleView
-### makeStyle
+### function makeStyle
 Make style from a copy of style dict (providing all necessary default values for the
 element to operate) and then overwrite these values with any specific arguments.
 If style is None, then create a new style dict. In that case all the element style values need
@@ -19,7 +19,7 @@ to be defined by argument. The calling element must test if its minimum set
 (such as self.w and self.h) are properly defined.
 ### ThumbView
 ### Score
-### getRootStyle
+### function getRootStyle
 Answer the main root style tha contains all default style attributes of PageBot.
 To be overwritten when needed by calling applications.
 CAPITALIZED attribute names are for reference only. Not used directly from styles.

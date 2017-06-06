@@ -103,14 +103,14 @@ str(object='') -> string
 
 Return a nice string representation of the object.
 If the argument is a string, the return value is the same object.
-### makeStyle
+### function makeStyle
 Make style from a copy of style dict (providing all necessary default values for the
 element to operate) and then overwrite these values with any specific arguments.
 If style is None, then create a new style dict. In that case all the element style values need
 to be defined by argument. The calling element must test if its minimum set
 (such as self.w and self.h) are properly defined.
 ### Element
-### pointOffset
+### function pointOffset
 Answer new 3D point, shifted by offset.
 ### MIDDLE
 str(object='') -> string
@@ -119,15 +119,15 @@ Return a nice string representation of the object.
 If the argument is a string, the return value is the same object.
 ### TextLine
 ### TextBox
-### setFillColor
+### function setFillColor
 Set the color for global or the color of the formatted string.
 ### RIGHT
 str(object='') -> string
 
 Return a nice string representation of the object.
 If the argument is a string, the return value is the same object.
-### newFS
+### function newFS
 Answer a formatted string from valid attributes in Style. Set the all values after testing
 their existence, so they can inherit from previous style formats.
-### setStrokeColor
+### function setStrokeColor
 Set global stroke color or the color of the formatted string.

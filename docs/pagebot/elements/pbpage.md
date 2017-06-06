@@ -4,7 +4,7 @@
 ## Functions
 
 ### Element
-### pointOffset
+### function pointOffset
 Answer new 3D point, shifted by offset.
 ### Template
 ### Page

@@ -3,9 +3,9 @@
 
 ## Functions
 
-### getFamilyFontPaths
+### function getFamilyFontPaths
 ### Family
-### getFamilies
+### function getFamilies
 Construct a dictionary of Family instances from dictionary familyPaths. It is assumed that all paths
 are valied to font files. Force key in family from dictionary familyPaths, instead of font.info.styleName.
 What is best practice? Keep as option?
@@ -19,13 +19,13 @@ italic=LIB_PATH+'Georgia Italic.ttf', boldItalic=LIB_PATH+'Georgia Bold Italic.t
 'Verdana': dict(regular=LIB_PATH+'Verdana.ttf', bold=LIB_PATH+'Verdana Bold.ttf', 
 italic=LIB_PATH+'Verdana Italic.ttf', boldItalic=LIB_PATH+'Verdana Bold Italic.ttf'),
 }
-### path2Name
+### function path2Name
 <doc>Answers the file name part of the path.</doc>
-### guessFamilies
+### function guessFamilies
 Find the family relation of all fonts in the list. Note that this cannot be a 100% safe guess.
 Answer a dictionary with Family instances. Key is family name.
-### getFontPathOfFont
-### getSystemFontPaths
+### function getFontPathOfFont
+### function getSystemFontPaths
 Answer the cleaned list of installed font names.
 ### Font
 Storage of font information while composing the pages.
@@ -56,4 +56,4 @@ u'BitcountGrid'
 >>> f.install()
 u'BitcountGrid-SingleCircleSquare-wght500rndi1000rndo1000line1000sqri1000sqro1000open0'
 >>> f.save()
-### getFamilyFonts
+### function getFamilyFonts

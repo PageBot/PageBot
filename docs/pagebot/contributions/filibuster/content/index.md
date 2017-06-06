@@ -51,15 +51,15 @@
 
 ## Functions
 
-### content
+### function content
 Return one dictionary that contains all dictionaries of the
 module. By making a function rather than part of the namespace,
 the content can be updated dynamically. Should not make any
 difference in speed for normal use.
-### index
+### function index
 Return the name of the submodule that tagname is defined in,
 as well as a list of modules and keys in which this tagname is used.
-### clearCache
+### function clearCache
 ### DEBUG
 int(x=0) -> int or long
 int(x, base=10) -> int or long

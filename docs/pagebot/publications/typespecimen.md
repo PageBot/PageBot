@@ -23,13 +23,13 @@ If the argument is a tuple, the return value is the same object.
 float(x) -> floating point number
 
 Convert a string or number to a floating point number, if possible.
-### newFS
+### function newFS
 Answer a formatted string from valid attributes in Style. Set the all values after testing
 their existence, so they can inherit from previous style formats.
-### guessFamilies
+### function guessFamilies
 Find the family relation of all fonts in the list. Note that this cannot be a 100% safe guess.
 Answer a dictionary with Family instances. Key is family name.
-### getFontPathOfFont
+### function getFontPathOfFont
 ### NO_COLOR
 int(x=0) -> int or long
 int(x, base=10) -> int or long
@@ -46,7 +46,7 @@ interpret the base from the string as an integer literal.
 >>> int('0b100', base=0)
 4
 ### Template
-### getRootStyle
+### function getRootStyle
 Answer the main root style tha contains all default style attributes of PageBot.
 To be overwritten when needed by calling applications.
 CAPITALIZED attribute names are for reference only. Not used directly from styles.

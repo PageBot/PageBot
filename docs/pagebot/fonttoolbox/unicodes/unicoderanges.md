@@ -3,7 +3,7 @@
 
 ## Functions
 
-### countCoverageByRangeName
+### function countCoverageByRangeName
 Given a set of characters, count how many characters are present in each (used) range.
 The return value is a dict with range names as keys, and (count, size) tuples as values.
 'count' is the number of characters used in the range, 'size' is the total amount of
@@ -23,7 +23,7 @@ will be (count, None).
 ### unicodeRanges
 list() -> new empty list
 list(iterable) -> new list initialized from iterable's items
-### _getUnicodeRangeBits_ReferenceImplementation
+### function _getUnicodeRangeBits_ReferenceImplementation
 >>> unicodes = range(3000)
 >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
 >>> unicodes = range(10, 3000)
@@ -46,7 +46,7 @@ for k, v in iterable:
 d[k] = v
 dict(**kwargs) -> new dictionary initialized with the name=value pairs
 in the keyword argument list.  For example:  dict(one=1, two=2)
-### getUnicodeRange
+### function getUnicodeRange
 Return the unicode range that uni belongs to, if any. If a range is found,
 a (bit, name, rangeMinimum, rangeMaximum) tuple is returned. If no range is found,
 (None, None, None, None) is returned.
@@ -81,7 +81,7 @@ for k, v in iterable:
 d[k] = v
 dict(**kwargs) -> new dictionary initialized with the name=value pairs
 in the keyword argument list.  For example:  dict(one=1, two=2)
-### distributeUnicodes
+### function distributeUnicodes
 Return a dictionary with range names as keys, and subsets of unicodes
 belonging to the respective range as values. None is used as a key for
 characters that don't fall into any range.
@@ -101,7 +101,7 @@ characters that don't fall into any range.
 ... all.update(unis)
 ...
 >>> assert all == set(unicodes)
-### getUnicodeRangesByScriptTag
+### function getUnicodeRangesByScriptTag
 Given an OpenType script tag, return a list of unicode ranges, expressed as
 (bit, name, rangeMinimum, rangeMaximum) tuples. Raise KeyError if no matching
 range is found.
@@ -141,7 +141,7 @@ for k, v in iterable:
 d[k] = v
 dict(**kwargs) -> new dictionary initialized with the name=value pairs
 in the keyword argument list.  For example:  dict(one=1, two=2)
-### getUnicodeRangeByBit
+### function getUnicodeRangeByBit
 Given a bit number for a OS/2 unicode range, return a list of (name, rangeMinimum, rangeMaximum) tuples.
 
 >>> getUnicodeRangeByBit(100)
@@ -164,7 +164,7 @@ beyond the rightmost x already there
 
 Optional args lo (default 0) and hi (default len(a)) bound the
 slice of a to be searched.
-### packRangeBits
+### function packRangeBits
 Given a set of bit numbers, return the corresponding ulUnicodeRange1, ulUnicodeRange2,
 ulUnicodeRange3 and ulUnicodeRange4 for the OS/2 table.
 
@@ -190,7 +190,7 @@ for k, v in iterable:
 d[k] = v
 dict(**kwargs) -> new dictionary initialized with the name=value pairs
 in the keyword argument list.  For example:  dict(one=1, two=2)
-### _testAll
+### function _testAll
 >>> count = 0
 >>> for bit, name, rangeMinimum, rangeMaximum in unicodeRanges:
 ... for uni in range(rangeMinimum, rangeMaximum+1):
@@ -199,7 +199,7 @@ in the keyword argument list.  For example:  dict(one=1, two=2)
 ...
 >>> count
 181420
-### getUnicodeRangeBits
+### function getUnicodeRangeBits
 Return a set of range bits. Each bit number represents the presence of
 at least one character in that range.
 
@@ -209,7 +209,7 @@ at least one character in that range.
 [0, 3, 56, 75]
 >>> sorted(getUnicodeRangeBits([6399]))  # not in any range
 []
-### _runDocTests
+### function _runDocTests
 ### bisect_left
 bisect_left(a, x[, lo[, hi]]) -> index
 
@@ -231,7 +231,7 @@ for k, v in iterable:
 d[k] = v
 dict(**kwargs) -> new dictionary initialized with the name=value pairs
 in the keyword argument list.  For example:  dict(one=1, two=2)
-### _distributeUnicodes_ReferenceImplementation
+### function _distributeUnicodes_ReferenceImplementation
 >>> unicodes = range(3000)
 >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
 >>> unicodes = range(10, 3000)
@@ -251,7 +251,7 @@ in the keyword argument list.  For example:  dict(one=1, two=2)
 ...
 >>> all.sort()
 >>> assert all == unicodes
-### countCoverageByRangeBit
+### function countCoverageByRangeBit
 Given a set of characters, count how many characters are present in each (used) range.
 The return value is a dict with range bits as keys, and (count, size) tuples as values.
 'count' is the number of characters used in the range, 'size' is the total amount of
@@ -271,7 +271,7 @@ will be (count, None).
 ### _rangeMinimums
 list() -> new empty list
 list(iterable) -> new list initialized from iterable's items
-### _countCoverage
+### function _countCoverage
 >>> _countCoverage([65, 66], byName=False)
 {0: (2, 128)}
 >>> _countCoverage([65, 66], byName=True)
@@ -282,8 +282,8 @@ list(iterable) -> new list initialized from iterable's items
 {'General Punctuation': (1, 112)}
 >>> _countCoverage([8192], byName=False)
 {31: (1, 240)}
-### _buildByBitDict
-### unpackRangeBits
+### function _buildByBitDict
+### function unpackRangeBits
 Given the ulUnicodeRange1, ulUnicodeRange2, ulUnicodeRange3, ulUnicodeRange4 values
 from the OS/2 table, return a set of bit numbers.
 
@@ -295,7 +295,7 @@ set([0])
 set([0, 32, 64, 96])
 >>> unpackRangeBits(0xffffffff, 0x1, 0x2, 0x4)
 set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 65, 98])
-### getUnicodeRangeByName
+### function getUnicodeRangeByName
 Given the name for a OS/2 unicode range, return a (bit, rangeMinimum, rangeMaximum) tuple.
 
 >>> getUnicodeRangeByName("Basic Latin")

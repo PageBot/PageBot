@@ -81,5 +81,5 @@ True
 5
 >>> s.points[-1].onCurve
 False
-### point2D
+### function point2D
 Answer the 2D origin as combination of p and offset.
