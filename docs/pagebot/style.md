@@ -118,7 +118,7 @@ tuple() -> empty tuple
 tuple(iterable) -> tuple initialized from iterable's items
 
 If the argument is a tuple, the return value is the same object.
-### newStyle
+### function newStyle
 ### MAX_HEIGHT
 int(x=0) -> int or long
 int(x, base=10) -> int or long
@@ -274,7 +274,7 @@ The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
 >>> int('0b100', base=0)
 4
-### getRootStyle
+### function getRootStyle
 Answer the main root style tha contains all default style attributes of PageBot.
 To be overwritten when needed by calling applications.
 CAPITALIZED attribute names are for reference only. Not used directly from styles.
@@ -574,7 +574,7 @@ tuple() -> empty tuple
 tuple(iterable) -> tuple initialized from iterable's items
 
 If the argument is a tuple, the return value is the same object.
-### makeStyle
+### function makeStyle
 Make style from a copy of style dict (providing all necessary default values for the
 element to operate) and then overwrite these values with any specific arguments.
 If style is None, then create a new style dict. In that case all the element style values need

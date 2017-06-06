@@ -11,7 +11,7 @@ The main font object. It manages file input and output, and offers
 	Tables will be only decompiled when necessary, ie. when they're actually
 	accessed. This means that simple operations can be extremely fast.
 ### VariableScatter
-### makeStyle
+### function makeStyle
 Make style from a copy of style dict (providing all necessary default values for the
 element to operate) and then overwrite these values with any specific arguments.
 If style is None, then create a new style dict. In that case all the element style values need

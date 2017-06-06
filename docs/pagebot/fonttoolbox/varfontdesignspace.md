@@ -4,7 +4,7 @@
 ## Functions
 
 ### division
-### supportScalar
+### function supportScalar
 Returns the scalar multiplier at location, for a master
 	with support.
 	>>> supportScalar({}, {})
@@ -21,15 +21,15 @@ The main font object. It manages file input and output, and offers
 	a convenient way of accessing tables.
 	Tables will be only decompiled when necessary, ie. when they're actually
 	accessed. This means that simple operations can be extremely fast.
-### setCoordinates
-### _GetCoordinates
+### function setCoordinates
+### function _GetCoordinates
 font, glyphName --> glyph coordinates as expected by "gvar" table
 
 	The result includes four "phantom points" for the glyph metrics,
 	as mandated by the "gvar" spec.
 ### TTVarGlyph
 ### TTVarFontDesignSpace
-### getBestCmap
+### function getBestCmap
 Return a unicode -> glyphName dictionary from the 'best' unicode cmap that the font
 contains. In order of preference, the font will be searched for cmaps 3,10, 3,1 and 0,3.
 
@@ -54,7 +54,7 @@ Traceback (most recent call last):
 ...
 ValueError: None of the requested cmap subtables were found
 ### GlyphCoordinates
-### normalizeLocation
+### function normalizeLocation
 Normalizes location based on axis min/default/max values from axes.
 ### DesignSpaceBase
 ### TTVarFontGlyphSet

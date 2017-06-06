@@ -3,8 +3,8 @@
 
 ## Functions
 
-### strjoin
-### supportScalar
+### function strjoin
+### function supportScalar
 Returns the scalar multiplier at location, for a master
 	with support.
 	>>> supportScalar({}, {})
@@ -20,20 +20,20 @@ The main font object. It manages file input and output, and offers
 	a convenient way of accessing tables.
 	Tables will be only decompiled when necessary, ie. when they're actually
 	accessed. This means that simple operations can be extremely fast.
-### xrange
-### _GetCoordinates
+### function xrange
+### function _GetCoordinates
 font, glyphName --> glyph coordinates as expected by "gvar" table
 
 	The result includes four "phantom points" for the glyph metrics,
 	as mandated by the "gvar" spec.
-### bytesjoin
+### function bytesjoin
 ### Py23Error
-### generateInstance
+### function generateInstance
 Instantiate an instance of a variable font at the specified location.
 Keyword arguments:
 varfilename -- a variable font file path
 location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
-### normalizeLocation
+### function normalizeLocation
 Normalizes location based on axis min/default/max values from axes.
 >>> axes = {"wght": (100, 400, 900)}
 >>> normalizeLocation({"wght": 400}, axes)
@@ -77,7 +77,7 @@ unicode(string[, encoding[, errors]]) -> unicode object
 Create a new Unicode object from the given encoded string.
 encoding defaults to the current default string encoding.
 errors can be 'strict', 'replace' or 'ignore' and defaults to 'strict'.
-### unichr
+### function unichr
 Return the unicode character whose Unicode code is the integer 'i'.
 			The valid range is 0 to 0x10FFFF inclusive.
 
@@ -93,7 +93,7 @@ Return the unicode character whose Unicode code is the integer 'i'.
 			Traceback (most recent call last):
 			  File "<stdin>", line 1, in ?
 			ValueError: unichr() arg not in range(0x110000)
-### open
+### function open
 Wrapper around `io.open` that bridges the differences between Python 2
 	and Python 3's built-in `open` functions. In Python 2, `io.open` is a
 	backport of Python 3's `open`, whereas in Python 3, it is an alias of the
@@ -127,18 +127,18 @@ Wrapper around `io.open` that bridges the differences between Python 2
 	O_BINARY'ed before I pass them on to io.open.
 
 	For more info, see: https://bugs.python.org/issue10841
-### getMasterPath
+### function getMasterPath
 Answer the path to read master fonts. Default is at the same level as pagebot module.
 ### basestring
 Type basestring cannot be instantiated; it is the base for str and unicode.
-### drawGlyphPath
+### function drawGlyphPath
 ### UnicodeIO
 Text I/O implementation using an in-memory buffer.
 
 The initial_value argument sets the value of object.  The newline
 argument is like the one of TextIOWrapper's constructor.
 ### GlyphCoordinates
-### getVariableFont
+### function getVariableFont
 The variablesFontPath refers to the file of the source variable font.
 The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
 {"wght": 0, "wdth": 1000}
@@ -180,17 +180,17 @@ Locations must be in normalized space.  Ie. base master
 	  7: 0.6666666666666667}]
 ### division
 ### TTVarFontGlyphSet
-### setFillColor
+### function setFillColor
 Set the color for global or the color of the formatted string.
-### _SetCoordinates
-### tobytes
+### function _SetCoordinates
+### function tobytes
 ### DEBUG
 bool(x) -> bool
 
 Returns True when the argument x is true, False otherwise.
 The builtins True and False are the only two instances of the class bool.
 The class bool is a subclass of the class int, and cannot be subclassed.
-### byteord
+### function byteord
 Given a 8-bit or unicode character, return an integer representing the
 			Unicode code point of the character. If a unicode argument is given, the
 			character's code point must be in the range 0 to 0x10FFFF inclusive.
@@ -203,10 +203,10 @@ Given a 8-bit or unicode character, return an integer representing the
 			True
 			>>> byteord(u'\U0010FFFF') == 1114111
 			True
-### getVarLocation
+### function getVarLocation
 Translate the normalized location dict (all values between 0 and 1) to what the font expects
 by its min/max values for each axis.
-### getInstancePath
+### function getInstancePath
 Answer the path to write instance fonts.
 ### range
 xrange(stop) -> xrange object
@@ -216,8 +216,8 @@ Like range(), but instead of returning a list, returns an object that
 generates the numbers in the range on demand.  For looping, this is 
 slightly faster than range() and more memory efficient.
 ### Tag
-### tounicode
-### tostr
+### function tounicode
+### function tostr
 ### Font
 Storage of font information while composing the pages.
 
@@ -251,7 +251,7 @@ u'BitcountGrid-SingleCircleSquare-wght500rndi1000rndo1000line1000sqri1000sqro100
 chr(i) -> character
 
 Return a string of one character with ordinal i; 0 <= i < 256.
-### round
+### function round
 See Python 3 documentation: uses Banker's Rounding.
 
 	Delegates to the __round__ method if for some reason this exists.

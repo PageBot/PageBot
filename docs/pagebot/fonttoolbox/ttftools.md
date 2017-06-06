@@ -5,7 +5,7 @@
 
 ### _pat
 Compiled regular expression objects
-### findGlyphsByUnicode
+### function findGlyphsByUnicode
 Return the set of glyph names that are needed in the font to support the characters
 listed in 'unicodes'. This includes substituted glyphs from GSUB features, as well as
 glyphs needed as components in composite glyphs.
@@ -21,7 +21,7 @@ set(['bar'])
 >>> font = TTFont(getFontPath("CusterRE-RegularS2.ttf"))
 >>> sorted(findGlyphsByUnicode(font, [224]))
 ['a', 'agrave', 'grave']
-### findComponentGlyphs
+### function findComponentGlyphs
 Given a set of glyph names, return the set of glyphs that are used as components for these glyphs.
 
 >>> from fontTools.ttLib import TTFont
@@ -41,8 +41,8 @@ KeyError: 'xyz'
 >>> sorted(findComponentGlyphs(font, ["d"]))
 ['a', 'b', 'c']
 ### FontSubsetter
-### _setupMaxp
-### stripInstructions
+### function _setupMaxp
+### function stripInstructions
 Remove all TrueType instructions from the font.
 
 >>> from fontTools.ttLib import TTFont
@@ -60,13 +60,13 @@ Remove all TrueType instructions from the font.
 0
 >>> font.has_key("cvt ")
 0
-### setUnicodeRanges
+### function setUnicodeRanges
 Set the OS/2 unicode range fields according to the cmap. It sets any bit
 the cmap defines at least one character for.
 ### FontMerger
 ### otlTools
 A collection of code to inspect and manipulate OpenType Layout features in a FontTools TTFont.
-### mergeFonts
+### function mergeFonts
 Merge all glyphs from otherFont into font. Glyphs from font B that are
 present in font A will be ignored. If font B defines a code point that also
 exists in font A, the code point from font A will be kept, unless
@@ -87,7 +87,7 @@ overWriteCodePoints is True.
 ['A.bold', 'B.bold', 'C.bold', 'a.bold', 'b.bold', 'c.bold']
 >>> subsetFont(fontB, set(fontB.getGlyphOrder()) - glyphsToKeep)
 >>> mergeFonts(fontA, fontB)
-### _findComponentParentGlyphs
+### function _findComponentParentGlyphs
 Return a list of glyph names that reference the named glyph as a component.
 Note that this function is VERY inefficient as it iterates through all the glyphs
 in the font. It should not be used in production code, but only for debugging.
@@ -98,7 +98,7 @@ in the font. It should not be used in production code, but only for debugging.
 >>> font = TTFont(path)
 >>> _findComponentParentGlyphs(font, "a")
 ['aring', 'agrave', 'adieresis', 'atilde', 'acircumflex', 'aacute']
-### tagToIdentifier
+### function tagToIdentifier
 Convert a TT table tag into a Python identifier. Not as robust as fontTools.ttLib.tagToIdentifier(), but more practical.
 
 >>> from fontTools.ttLib import TTFont
@@ -107,7 +107,7 @@ Convert a TT table tag into a Python identifier. Not as robust as fontTools.ttLi
 >>> font = TTFont(path)
 >>> sorted([tagToIdentifier(tableTag) for tableTag in font.keys()])
 ['DSIG', 'GlyphOrder', 'OS2', 'cmap', 'cvt', 'fpgm', 'gasp', 'glyf', 'head', 'hhea', 'hmtx', 'loca', 'maxp', 'name', 'post', 'prep']
-### convertFontToTTF
+### function convertFontToTTF
 Convert a CFF-based OTF to a glyf-based TTF.
 
 >>> from cStringIO import StringIO
@@ -120,7 +120,7 @@ Convert a CFF-based OTF to a glyf-based TTF.
 >>> font.save(outf)
 >>> len(outf.getvalue())
 104280
-### scaleFont
+### function scaleFont
 Resize a font to the desiredUnitsPerEm.
 
 >>> from cStringIO import StringIO
@@ -146,9 +146,9 @@ def <myprefix>_<tabletag>(self, table, *args, **kwargs): ...
 Then calling traverser.traverseTables("<myprefix>", *args, **kwargs) will go
 through all the tables in the font, and will call a handler for each, if one
 is defined, passing along args and kwargs.
-### _runDocTests
-### _setupPost
-### patchGlyphNames
+### function _runDocTests
+### function _setupPost
+### function patchGlyphNames
 Given a freshly opened TTFont instance (no tables must have been loaded),
 apply filterFunc() on each glyph name in the font. filterFunc() takes two
 arguments: the original glyph name and the glyph ID. It must return a glyph
@@ -205,7 +205,7 @@ handling OS/2
 handling cvt
 ['GlyphOrder', 'head', 'hhea', 'hmtx', 'cmap', 'fpgm', 'prep', 'loca', 'glyf', 'name', 'post', 'gasp', 'DSIG']
 ### FontScaler
-### getBestCmap
+### function getBestCmap
 Return a unicode -> glyphName dictionary from the 'best' unicode cmap that the font
 contains. In order of preference, the font will be searched for cmaps 3,10, 3,1 and 0,3.
 
@@ -246,7 +246,7 @@ unicodeRanges -- Some functions to deal with OS/2 unicodeRange values.
 {'Latin Extended-B': (3, 208), 'Basic Latin': (2, 128)}
 >>> countCoverageByRangeBit([65, 66, 534, 535, 536])
 {0: (2, 128), 3: (3, 208)}
-### subsetFont
+### function subsetFont
 Delete the set of glyphs 'glyphsToDelete' from the font. The caller is responsible
 for the consistency of this set: eg. one should not delete a glyph that is used as a
 component while not deleting the composite glyph that references it.

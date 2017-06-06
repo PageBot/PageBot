@@ -39,7 +39,7 @@ ElementTree, modifies it as necessary and returns an ElementTree
 object.
 
 Treeprocessors must extend markdown.Treeprocessor.
-### makeExtension
+### function makeExtension
 Return an instance of the LiteraturesExtension
 ### LiteraturePreprocessor
 Find all literature references and store for later use.

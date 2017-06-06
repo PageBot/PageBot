@@ -3,7 +3,7 @@
 
 ## Functions
 
-### pointOffset
+### function pointOffset
 Answer new 3D point, shifted by offset.
 ### NO_COLOR
 int(x=0) -> int or long
@@ -22,5 +22,5 @@ interpret the base from the string as an integer literal.
 4
 ### Line
 ### Element
-### setStrokeColor
+### function setStrokeColor
 Set global stroke color or the color of the formatted string.

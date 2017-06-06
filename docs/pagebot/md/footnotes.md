@@ -33,7 +33,7 @@ ElementTree, modifies it as necessary and returns an ElementTree
 object.
 
 Treeprocessors must extend markdown.Treeprocessor.
-### makeExtension
+### function makeExtension
 Return an instance of the FootnoteExtension
 ### FootnotePostprocessor
 Replace placeholders with html entities.

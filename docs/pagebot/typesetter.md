@@ -8,7 +8,7 @@ The Image element is a “normal” container, which contains one (or more) Pixe
 caption or other elements. This way the user can add mulitple PixelMaps, a title elements, etc. 
 The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
 applied (e.g. if the image element changes size), or the child elements can be put on fixed positions.
-### getMarker
+### function getMarker
 Answer a formatted string with markerId that can be used as non-display marker.
 This way the Composer can find the position of markers in text boxes, after
 FS-slicing has been done. Note there is always a very small "white-space"
@@ -44,7 +44,7 @@ elements may change width/height at any time during the composition process.
 Also the sequence may change by slicing, adding or removing elements by the Composer.
 Since the Galley is a full compatible Element, it can contain other galley instances
 recursively.
-### newFS
+### function newFS
 Answer a formatted string from valid attributes in Style. Set the all values after testing
 their existence, so they can inherit from previous style formats.
 ### Typesetter

@@ -22,7 +22,7 @@ Compiled regular expression objects
 Compiled regular expression objects
 ### SUBPHRASE
 Compiled regular expression objects
-### titlecase
+### function titlecase
 Titlecases input text
 
 This filter changes all words to Title Caps, and attempts to be clever

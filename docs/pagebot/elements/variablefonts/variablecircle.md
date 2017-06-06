@@ -3,7 +3,7 @@
 
 ## Functions
 
-### getVarLocation
+### function getVarLocation
 Translate the normalized location dict (all values between 0 and 1) to what the font expects
 by its min/max values for each axis.
 ### TTFont
@@ -26,12 +26,12 @@ The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
 >>> int('0b100', base=0)
 4
-### generateInstance
+### function generateInstance
 Instantiate an instance of a variable font at the specified location.
 Keyword arguments:
 varfilename -- a variable font file path
 location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
-### newFS
+### function newFS
 Answer a formatted string from valid attributes in Style. Set the all values after testing
 their existence, so they can inherit from previous style formats.
 ### VariableCircle
@@ -45,18 +45,18 @@ penetration in the neutral glyph defined the influence of that axis.
 In that respect is it not much better than a list of sliders, but at least this
 model allows to show interactions between axes, by putting them on another 
 angle on the circle.
-### drawGlyphPath
-### getVariableFont
+### function drawGlyphPath
+### function getVariableFont
 The variablesFontPath refers to the file of the source variable font.
 The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
 {"wght": 0, "wdth": 1000}
 ### division
 ### Element
-### makeStyle
+### function makeStyle
 Make style from a copy of style dict (providing all necessary default values for the
 element to operate) and then overwrite these values with any specific arguments.
 If style is None, then create a new style dict. In that case all the element style values need
 to be defined by argument. The calling element must test if its minimum set
 (such as self.w and self.h) are properly defined.
-### pointOffset
+### function pointOffset
 Answer new 3D point, shifted by offset.

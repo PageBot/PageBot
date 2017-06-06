@@ -20,6 +20,7 @@
 #
 import runpy
 import os, pkgutil, traceback
+import types
 import sys, getopt
 import doctest
 import drawBot
@@ -217,21 +218,21 @@ class PageBotDoc(Publication):
         indent = '    ' * level
 
         for k in folders.keys():
+            # Folder header.
             yml.write(" - '%s':\n" % k)
 
             for x in folders[k].keys():
+                # Links to files.
                 if x == 'files':
                     for folder in folders[k]['files']:
                         yml.write("    - '%s/%s.md'\n" % (k, folder))
                 else:
-                    #yml.write("    - '%s.md'\n" % x)
                     self.writeDocsMenu({k + '/' + x: folders[k][x]}, yml, level=level)
 
             level += 1
 
     def writeDocsPages(self, folders, level=0):
         u"""Writes a doc page for each item in the menu."""
-
         for k in sorted(folders.keys()):
             for x in sorted(folders[k].keys()):
                 if x == 'files':
@@ -265,6 +266,53 @@ class PageBotDoc(Publication):
         f = open('docs/%s.md' % path, 'w')
         f.write('# %s\n\n' % m.__name__)
 
+        self.writeIndexMenu(f, path, m)
+        self.writeDocStrings(f, path, m)
+
+    def writeDocStrings(self, f, path, m):
+        u"""Writes docstring contents for all classes in the file."""
+
+        f.write('\n## %s\n\n' % 'Functions')
+
+        d = m.__dict__
+
+        for key, value in d.items():
+            if key.startswith('__') or key in sys.modules.keys() or key in self.db:
+                # Skip.
+                continue
+
+            if value is not None:
+                t = None
+
+                if isinstance(value, types.FunctionType):
+                    t = 'function'
+                elif isinstance(value, types.ClassType):
+                    t = 'class'
+                else:
+                    if not type(t) is types.NoneType:
+                        print type(t)
+
+                if t:
+                    title = '### %s %s\n' % (t, key)
+                else:
+                    title = '### %s\n' % key
+
+                f.write(title)
+                if value.__doc__:
+                    s = value.__doc__
+                    s = s.strip().replace('    ', '')
+                    try:
+                        f.write('%s\n' % s.encode('utf-8'))
+                    except Exception, e:
+                        print 'An error occurred writing a doc file.'
+                        print traceback.format_exc()
+
+        f.close()
+
+    def writeIndexMenu(self, f, path, m):
+        u"""If index (__init__.py), writes links to class files and
+        submodules."""
+
         if path.endswith('index'):
             folders = self.getFolderContents(path)
             f.write('## %s\n\n' % 'Classes')
@@ -295,28 +343,6 @@ class PageBotDoc(Publication):
                     n = '%s.%s' % (n, k)
 
                     f.write('* [%s](%s)\n' % (n, k))
-
-        f.write('\n## %s\n\n' % 'Functions')
-
-        d = m.__dict__
-
-        for key, value in d.items():
-            if key.startswith('__') or key in sys.modules.keys() or key in self.db:
-                # Skip.
-                continue
-
-            if value is not None:
-                f.write('### %s\n' % key)
-                if value.__doc__:
-                    s = value.__doc__
-                    s = s.strip().replace('    ', '')
-                    try:
-                        f.write('%s\n' % s.encode('utf-8'))
-                    except Exception, e:
-                        print 'An error occurred writing a doc file.'
-                        print traceback.format_exc()
-
-        f.close()
 
     def path2ModName(self, path):
         modName = path.replace('/', '.')

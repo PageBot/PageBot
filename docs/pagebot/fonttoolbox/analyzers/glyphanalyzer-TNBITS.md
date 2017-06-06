@@ -45,17 +45,17 @@ interpret the base from the string as an integer literal.
 >>> int('0b100', base=0)
 4
 ### Width
-### getComponents
+### function getComponents
 Answer the list of components for this glyph.
 ### NSPoint
 ### Stem
 <doc>The <code>Stem</code> class instant takes the CVT related to this stem, and the  left and point <code>Vertical
 </code> instance that stem binds.</doc>
-### TX
+### class TX
 ### GlyphAnalyzer
 The GlyphAnalyzer analyzes the defcon glyph and find key measures
 about its outline or components.
-### Component
+### class Component
 ### VerticalCounter
 ### Horizontal
 <doc>The <code>HOrizontal</code> class is a list of point contexts that share the same y-value
@@ -88,7 +88,7 @@ str(object='') -> string
 
 Return a nice string representation of the object.
 If the argument is a string, the return value is the same object.
-### getPoints
+### function getPoints
 ### PointAnalyzer
 ### DefconGlyph
 This object represents a glyph and it contains contour, component, anchor
