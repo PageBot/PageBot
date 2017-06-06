@@ -13,7 +13,6 @@
 * [pagebot.elements](elements)
 * [pagebot.builders](builders)
 * [pagebot.contributions](contributions)
-* [pagebot.canvas3d](canvas3d)
 * [pagebot.interaction](interaction)
 * [pagebot.publications](publications)
 * [pagebot.toolbox](toolbox)
