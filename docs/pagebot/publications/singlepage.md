@@ -47,6 +47,7 @@ The optional imo attribute is an ImageObject() with filters in place.
 The Image element is answered for convenience of the caller
 ### Ruler
 ### newPolygon
+### newTable
 ### newOval
 Draw the oval. Note that w and h can also be defined in the style. In case h is omitted,
 a circle is drawn.
@@ -61,6 +62,7 @@ U-based values must be recalculated for proper measures.
 ### pbruler
 ### Path
 ### Line
+### pbpage
 ### Rect
 ### LEFT
 str(object='') -> string
@@ -76,7 +78,7 @@ Caller must supply formatted string.
 ### GlyphPath
 ### Element
 ### Oval
-### pbpage
+### pbtable
 ### pbgalley
 ### pbtextbox
 ### Page
@@ -85,6 +87,28 @@ Caller must supply formatted string.
 ### newColLine
 ### pbtext
 ### newColOval
+### Table
 ### pboval
 ### Text
 ### Image
+The Image element is a “normal” container, which contains one (or more) PixelMap elements and zero (or more)
+caption or other elements. This way the user can add mulitple PixelMaps, a title elements, etc. 
+The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
+applied (e.g. if the image element changes size), or the child elements can be put on fixed positions.
+### newLine
+### element
+### newColText
+Draw formatted string.
+We don't need w and h here, as it is made by the text and style combinations.
+Caller must supply formatted string.
+### newText
+Draw formatted string. Normally we don't need w and h here, as it is made by the text and 
+style combinations. But in case the defined font is a Variable Font, then we can use the
+width and height to interpolate a font that fits the space for the given string and weight.
+Caller must supply formatted string. Support both (x, y) and x, y as position.
+### newImage
+Create Image element as position (x, y) and optional width, height (w, h) of which
+at least one of them should be defined. The path can be None, to be filled later.
+If the image is drawn with an empty path, a missingImage cross-frame is shown.
+The optional imo attribute is an ImageObject() with filters in place. 
+The Image element is answered for convenience of the caller.

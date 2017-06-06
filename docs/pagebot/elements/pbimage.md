@@ -116,3 +116,120 @@ interpret the base from the string as an integer literal.
 ### Top2Bottom
 Align top of e bounding box on parent bottom margin.
 ### Image
+The Image element is a “normal” container, which contains one (or more) PixelMap elements and zero (or more)
+caption or other elements. This way the user can add mulitple PixelMaps, a title elements, etc. 
+The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
+applied (e.g. if the image element changes size), or the child elements can be put on fixed positions.
+### Middle2BottomSide
+Move middle (vertical center) of e bounding box on parent bottom side.
+### score
+### Float2RightTopSides
+### Origin2BottomSide
+Align origin of e bounding box horizontal between parent bottom side.
+### Shrink2BlockTop
+### Shrink2BlockLeftSide
+### Float2BottomLeftSides
+### Float2BottomSide
+Align the element.bottom with max of all placed element.top or parent.bottomSide.
+	Positioning includes the margin of all elements.
+### Float2LeftBottom
+### Float2BottomRight
+### Left2LeftSide
+Align left of e bounding box on parent left side.
+### Left2CenterSides
+Align left of e bounding box horizontal between parent sides.
+### Float2LeftTopSides
+### Right2Left
+Align right of e bounding box to parent left margin.
+### Origin2Right
+Align origin of e bounding box to parent right margin.
+### Right2Right
+Align right of e bounding box to parent right margin.
+### Float2BottomRightSides
+### Left2Center
+Align left of e bounding box horizontal between parent margins.
+### Float2Bottom
+Align the element.bottom with max of all placed element.top or parent.bottom.
+	Positioning includes the margin of all elements.
+### Center2Left
+Move center of e bounding box on parent left margin.
+### Top2TopSide
+Align left of e bounding box on parent top side.
+### Fit2Right
+### Fit2LeftSide
+### Origin2MiddleSides
+Align origin of e bounding box to vertical middle between parent sides.
+### Middle2TopSide
+Move middle (vertical center) of e bounding box on parent top side.
+### Middle2MiddleSides
+Middle e bounding box vertical between parent vertical sides.
+### Condition
+### Float2RightBottomSides
+### Fit2Height
+### Shrink2BlockRight
+### pointOffset
+Answer new 3D point, shifted by offset.
+### Fit2Bottom
+### Fit2Top
+### Middle2Bottom
+Move middle (vertical center) of e bounding box on parent bottom margin.
+### Top2Top
+Align top of e bounding box on parent top margin.
+### Top2Middle
+Align top of e bounding box vertical middle between parent margins.
+### Shrink2BlockLeft
+### align
+### PixelMap
+The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId.
+### Float2TopRightSides
+### Center2Center
+Center e bounding box horizontal between parent margins.
+### Float2TopSide
+Align the element.top with max of all placed element.bottom or parent.topSide.
+	Positioning includes the margin of all elements.
+### division
+### Origin2Bottom
+Align origin of e bounding box to parent bottom margin.
+### Float2LeftTop
+### Bottom2Bottom
+Align bottom of e bounding box to parent bottom margin.
+### Center2CenterSides
+Center e bounding box horizontal between parent sides.
+### floating
+### Float2TopRight
+### Middle2Middle
+Middle (vertical center) e bounding box vertical between parent margins.
+### Center2RightSide
+Move center of e bounding box on parent right side.
+### Float2RightBottom
+### Shrink2BlockRightSide
+### Float2TopLeftSides
+### Origin2Center
+Align left of e bounding box horizontal between parent margins.
+### Float2RightSide
+Align the element.right with min of all placed element.left or parent.rightSide.
+	Positioning includes the margin of all elements.
+### Element
+### Origin2Left
+Align left of e bounding box horizontal between parent margins.
+### Left2Right
+Align left of e bounding box on parent right margin.
+### Fit2RightSide
+### Fit2Sides
+Fit the element on all sides of the parent sides.
+### Float2LeftSide
+Align the element.left with max of all placed element.right or parent.leftSide.
+	Positioning includes the margin of all elements.
+### Fit2Width
+### Float2LeftBottomSides
+### Shrink2BlockWidthSides
+### flow
+### Middle2Top
+Move middle (vertical center) of e bounding box on parent top margin.
+### Shrink2BlockBottom
+### Origin2Middle
+Align origin of e bounding box to vertical middle between parent margin.
+### Fit2TopSide
+### Shrink2BlockSides
+Shirink the element on all sides of the children sides. There needs to be at least
+	one child element.

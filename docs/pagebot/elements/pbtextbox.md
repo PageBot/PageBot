@@ -76,6 +76,11 @@ str(object='') -> string
 
 Return a nice string representation of the object.
 If the argument is a string, the return value is the same object.
+### BOTTOM
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
 ### MIN_HEIGHT
 int(x=0) -> int or long
 int(x, base=10) -> int or long
@@ -107,6 +112,11 @@ to be defined by argument. The calling element must test if its minimum set
 ### Element
 ### pointOffset
 Answer new 3D point, shifted by offset.
+### MIDDLE
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
 ### TextLine
 ### TextBox
 ### setFillColor

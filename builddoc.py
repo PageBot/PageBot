@@ -145,7 +145,7 @@ class PageBotDoc(Publication):
                     d = doctest.testfile(relPath)
                 except Exception, e:
                     # TODO: write to file.
-                    print 'Found error in file %s' % filePath
+                    print 'doctest: an error occurred, file path is %s' % filePath
                     print traceback.format_exc()
 
         return node
@@ -164,7 +164,8 @@ class PageBotDoc(Publication):
                 else:
                     self.classes[module_name] = mod
             except Exception, e:
-                print e
+                print 'scanPackage: an error occurred, moduleaname is %s' % module_name
+                print traceback.format_exc()
 
     def writeDocs(self, m, folder=None, level=0):
         u"""Writes config file including menu, traverses module to parse
@@ -247,7 +248,8 @@ class PageBotDoc(Publication):
                         try:
                             self.writeDocsPage(path, mod)
                         except Exception, e:
-                            print e, path
+                            print 'WriteDocsPages: an error occurred, path is %s' % path
+                            print traceback.format_exc()
                 else:
                     # Creates new folders if they do not exists yet;
                     # recurse.
@@ -258,26 +260,8 @@ class PageBotDoc(Publication):
 
                     self.writeDocsPages({k + '/' + x: folders[k][x]})
 
-    def path2ModName(self, path):
-        modName = path.replace('/', '.')
-        modName = modName.replace('pagebot.', '')
-        return modName.replace('.index', '')
-
-    def getFolderContents(self, path):
-        u"""Returns names of files and folders."""
-        parts = path.split('/')[:-1]
-        folders = self.folders
-
-        for part in parts:
-            if part in folders:
-                folders = folders[part]
-
-        return folders
-
     def writeDocsPage(self, path, m):
-        u"""
-        Writes a page for a module.
-        """
+        u"""Writes a page for a module."""
         f = open('docs/%s.md' % path, 'w')
         f.write('# %s\n\n' % m.__name__)
 
@@ -326,9 +310,29 @@ class PageBotDoc(Publication):
                 if value.__doc__:
                     s = value.__doc__
                     s = s.strip().replace('    ', '')
-                    f.write(u'%s\n' % s)
+                    try:
+                        f.write('%s\n' % s.encode('utf-8'))
+                    except Exception, e:
+                        print 'An error occurred writing a doc file.'
+                        print traceback.format_exc()
 
         f.close()
+
+    def path2ModName(self, path):
+        modName = path.replace('/', '.')
+        modName = modName.replace('pagebot.', '')
+        return modName.replace('.index', '')
+
+    def getFolderContents(self, path):
+        u"""Returns names of files and folders."""
+        parts = path.split('/')[:-1]
+        folders = self.folders
+
+        for part in parts:
+            if part in folders:
+                folders = folders[part]
+
+        return folders
 
 def main(argv):
     try:

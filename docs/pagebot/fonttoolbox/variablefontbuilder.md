@@ -180,6 +180,8 @@ Locations must be in normalized space.  Ie. base master
 	  7: 0.6666666666666667}]
 ### division
 ### TTVarFontGlyphSet
+### setFillColor
+Set the color for global or the color of the formatted string.
 ### _SetCoordinates
 ### tobytes
 ### DEBUG
@@ -201,6 +203,9 @@ Given a 8-bit or unicode character, return an integer representing the
 			True
 			>>> byteord(u'\U0010FFFF') == 1114111
 			True
+### getVarLocation
+Translate the normalized location dict (all values between 0 and 1) to what the font expects
+by its min/max values for each axis.
 ### getInstancePath
 Answer the path to write instance fonts.
 ### range
@@ -213,6 +218,35 @@ slightly faster than range() and more memory efficient.
 ### Tag
 ### tounicode
 ### tostr
+### Font
+Storage of font information while composing the pages.
+
+# p = pp + '/fonts/google/Roboto-VF.ttf'
+# p = pp + '/fonts/fontbureau/AmstelvarAlpha-Variations.ttf'
+
+>>> import pagebot
+>>> from pagebot.toolbox.transformer import *
+>>> p = module2Path(pagebot)
+>>> pp = path2ParentPath(p)
+>>> p = pp + '/fonts/typetr/BitcountGridVar.ttf'
+>>> from pagebot.fonttoolbox.objects.font import Font
+>>> f = Font(p, install=False)
+>>> f.name
+u'BitcountGrid'
+>>> len(f)
+101
+>>> f.keys()[-1]
+'y'
+>>> f.axes
+{'rndi': (0.0, 1000.0, 1000.0), 'rndo': (0.0, 1000.0, 1000.0), 'sqri': (0.0, 1000.0, 1000.0), 'sqro': (0.0, 1000.0, 1000.0), 'line': (0.0, 1000.0, 1000.0), 'open': (0.0, 0.0, 1000.0), 'wght': (0.0, 500.0, 1000.0)}
+>>> variables = f.variables
+>>> features = f.features
+>>> f.groups
+>>> f.designSpace
+{}
+>>> f.install()
+u'BitcountGrid-SingleCircleSquare-wght500rndi1000rndo1000line1000sqri1000sqro1000open0'
+>>> f.save()
 ### bytechr
 chr(i) -> character
 
