@@ -196,7 +196,7 @@ for the given *sizeStyle*.
 +-----------+
 | "mini"|
 +-----------+
-### ImageListCell
+### function ImageListCell
 **horizontalAlignment** A string representing the desired horizontal
 alignment of the image in the view. The options are:
 
@@ -352,7 +352,7 @@ The options are:
 +-----------+
 | "mini"|
 +-----------+
-### CheckBoxListCell
+### function CheckBoxListCell
 An object that displays a check box in a List column.
 
 **This object should only be used in the *columnDescriptions*
@@ -542,7 +542,7 @@ the sheet can be resized to.
 
 **autosaveName** A string representing a unique name for the sheet. If given,
 this name will be used to store the sheet size in the application preferences.
-### SegmentedButtonListCell
+### function SegmentedButtonListCell
 **segmentDescriptions** An ordered list of dictionaries describing the segments.
 
 +------------------------+--------------------------------------------------------------------------------------------------+
@@ -661,7 +661,7 @@ size of the button. The size of the button sould match the standard dimensions.
 +--------+----------------+
 
 **callback** The method to be called when the user presses the button.
-### getAxisInfo
+### function getAxisInfo
 ### Drawer
 A drawer attached to a window. Drawers are capable of containing controls.
 
@@ -714,7 +714,7 @@ drawer cannot be opened on the preferred edge, it will be opened on the opposite
 **leadingOffset** Distance between the top or left edge of the drawer and the parent window.
 
 **trailingOffset** Distance between the bottom or right edge of the drawer and the parent window.
-### intToTag
+### function intToTag
 ### ComboBox
 A text entry control that allows direct text entry or selection for a list of options.::
 
@@ -1052,7 +1052,7 @@ No special naming is required for the attributes. However, each attribute must h
 
 **title** The title to be displayed dabove the box. Pass *None* if no title is desired.
 ### GradientButton
-### LevelIndicatorListCell
+### function LevelIndicatorListCell
 An object that displays a level indicator in a List column.
 
 **This object should only be used in the *columnDescriptions* argument
@@ -1628,7 +1628,7 @@ entry control.
 
 **checksSpelling** Boolean representing if spelling should be automatically
 checked or not.
-### getFont
+### function getFont
 ### TextBox
 A rectangle containing static text.::
 
@@ -1963,8 +1963,8 @@ VerticalLineDemo()
 +---+---------------------+
 | V | 1   |
 +---+---------------------+
-### tagToInt
-### PopUpButtonListCell
+### function tagToInt
+### function PopUpButtonListCell
 An object that displays a pop up list in a List column.
 
 **This object should only be used in the *columnDescriptions*
@@ -1995,7 +1995,7 @@ def editCallback(self, sender):
 print sender.get()
 
 PopUpButtonListCellDemo()
-### SliderListCell
+### function SliderListCell
 An object that displays a slider in a List column.
 
 **This object should only be used in the *columnDescriptions*

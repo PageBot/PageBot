@@ -3,7 +3,7 @@
 
 ## Functions
 
-### setFillColor
+### function setFillColor
 Set the color for global or the color of the formatted string.
 ### Galley
 A Galley is sticky sequential flow of elements, where the parts can have
@@ -13,16 +13,16 @@ elements may change width/height at any time during the composition process.
 Also the sequence may change by slicing, adding or removing elements by the Composer.
 Since the Galley is a full compatible Element, it can contain other galley instances
 recursively.
-### makeStyle
+### function makeStyle
 Make style from a copy of style dict (providing all necessary default values for the
 element to operate) and then overwrite these values with any specific arguments.
 If style is None, then create a new style dict. In that case all the element style values need
 to be defined by argument. The calling element must test if its minimum set
 (such as self.w and self.h) are properly defined.
-### newFS
+### function newFS
 Answer a formatted string from valid attributes in Style. Set the all values after testing
 their existence, so they can inherit from previous style formats.
-### pointOffset
+### function pointOffset
 Answer new 3D point, shifted by offset.
 ### NO_COLOR
 int(x=0) -> int or long
@@ -40,5 +40,5 @@ interpret the base from the string as an integer literal.
 >>> int('0b100', base=0)
 4
 ### Element
-### setStrokeColor
+### function setStrokeColor
 Set global stroke color or the color of the formatted string.

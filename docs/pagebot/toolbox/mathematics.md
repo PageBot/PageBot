@@ -3,21 +3,21 @@
 
 ## Functions
 
-### point2Line
+### function point2Line
 Answers the distance from point <i>(px, py)</i> to line <i>((x1,
 y1), (x2, y2))</i>.
-### insideCircle
+### function insideCircle
 >>> insideCircle(1, 1, 5)
 True
 >>> insideCircle(3, 3, 3)
 False
-### dotProduct
-### pointProjectedOnLine
+### function dotProduct
+### function pointProjectedOnLine
 Answers the projected point <b>(px, py)</b> on line <b>((x1, y1), (x2,
 y2))</b>.  Answers <b>(x1, y1)</b> if there is not distance between the two
 points of the line.
-### normalize
-### vectorLength
+### function normalize
+### function vectorLength
 ### normalizedVector
 classmethod(function) -> method
 
@@ -38,37 +38,37 @@ object is passed as the implied first argument.
 
 Class methods are different than C++ or Java static methods.
 If you want those, see the staticmethod builtin.
-### squareDistance
+### function squareDistance
 Answers the square of the distance for relative comparison and to
 save the time of the <b>sqrt</b>.
-### test
-### isEven
+### function test
+### function isEven
 >>> isEven(2)
 True
 >>> isEven(1)
 False
-### isOdd
+### function isOdd
 >>> isOdd(1)
 True
 >>> isOdd(2)
 False
-### intersection
+### function intersection
 Returns 2D intersection point if it exists. Otherwise (None, None,
 None) is answered. Different from the RoboFont intersection tool, we
 intersect on infinite line lengths. See also:
 
 http://en.wikipedia.org/wiki/Line-line_intersection
-### point2D
+### function point2D
 Answer the 2D origin as combination of p and offset.
-### scalexy
-### distance
+### function scalexy
+### function distance
 Answers the distance between the points.
-### isBetween
+### function isBetween
 Checks if point is on line between line endpoints. Uses epsilon
 margin for float values, can be substituted by zero for integer
 values.
-### scalePointByVector
-### lucasRange
+### function scalePointByVector
+### function lucasRange
 Answers the range stem widths for interpolation, according to
 Lucas’ formula.
 

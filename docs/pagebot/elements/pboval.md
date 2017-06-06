@@ -3,10 +3,10 @@
 
 ## Functions
 
-### pointOffset
+### function pointOffset
 Answer new 3D point, shifted by offset.
 ### division
-### setFillColor
+### function setFillColor
 Set the color for global or the color of the formatted string.
 ### Oval
 ### NO_COLOR
@@ -25,5 +25,5 @@ interpret the base from the string as an integer literal.
 >>> int('0b100', base=0)
 4
 ### Element
-### setStrokeColor
+### function setStrokeColor
 Set global stroke color or the color of the formatted string.

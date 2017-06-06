@@ -7,7 +7,7 @@
 The abstract Publication class, implements everything needed for a specific kind of publication.
 It can hold multiple related Document instances and serves various output formats.
 ### Poster
-### newFS
+### function newFS
 Answer a formatted string from valid attributes in Style. Set the all values after testing
 their existence, so they can inherit from previous style formats.
 ### NO_COLOR
@@ -26,7 +26,7 @@ interpret the base from the string as an integer literal.
 >>> int('0b100', base=0)
 4
 ### Template
-### getRootStyle
+### function getRootStyle
 Answer the main root style tha contains all default style attributes of PageBot.
 To be overwritten when needed by calling applications.
 CAPITALIZED attribute names are for reference only. Not used directly from styles.

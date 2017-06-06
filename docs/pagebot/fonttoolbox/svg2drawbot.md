@@ -3,7 +3,7 @@
 
 ## Functions
 
-### findAlternateGlyphsAndFeatures
+### function findAlternateGlyphsAndFeatures
 Find all alternate glyphs that can be accessed through GSUB features, listing which
 feature(s) may trigger the substitution.
 
@@ -33,11 +33,11 @@ feature(s) may trigger the substitution.
 >>> mapping = findAlternateGlyphsAndFeatures(font["GSUB"])
 >>> mapping['cid02946']
 [(('aalt', 'trad'), 'cid04470'), (('dlig',), 'cid08322'), (('dlig',), 'cid12051')]
-### _mergeLangSys
-### _findScript
+### function _mergeLangSys
+### function _findScript
 ### AlternateGlyphAndFeatureFinder
 Find all alternate glyphs that can be accessed through any feature that uses SingleSubst.
-### _test
+### function _test
 >>> from fontTools.ttLib import TTFont
 >>> from tnTestFonts import getFontPath
 >>> from cStringIO import StringIO
@@ -110,9 +110,9 @@ Find all alternate glyphs that can be accessed through any feature that uses Sin
 >>> font.save(outf)
 >>> len(outf.getvalue())
 8468992
-### _remapNestedLookups
+### function _remapNestedLookups
 Go through all the lookups and remap the references (indices) to other lookups.
-### _calcClassDefDeletionAndRemap
+### function _calcClassDefDeletionAndRemap
 >>> _calcClassDefDeletionAndRemap(set([1, 2, 3]), set([1, 2, 3]))
 ([], {0: 0, 1: 1, 2: 2, 3: 3})
 >>> _calcClassDefDeletionAndRemap(set([1, 2, 3]), set([1, 3]))
@@ -128,7 +128,7 @@ Go through all the lookups and remap the references (indices) to other lookups.
 >>> _calcClassDefDeletionAndRemap(set([]), set([]))
 ([], {})
 ### GlyphDeleter
-### scaleGpos
+### function scaleGpos
 Scale all values in the GPOS table that are in design units.
 
 >>> from fontTools.ttLib import TTFont
@@ -136,7 +136,7 @@ Scale all values in the GPOS table that are in design units.
 >>> path = getFontPath("SegoeUI-Regular-All.ttf")
 >>> f = TTFont(path)
 >>> scaleGpos(f["GPOS"], 0.5)
-### _remapAndDeleteIndices
+### function _remapAndDeleteIndices
 >>> _remapAndDeleteIndices(range(6), {})
 []
 >>> _remapAndDeleteIndices(range(6), {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5})
@@ -145,7 +145,7 @@ Scale all values in the GPOS table that are in design units.
 [0, 1, 2, 3, 4]
 >>> _remapAndDeleteIndices([5, 1, 3, 2, 2, 1, 4, 4, 0], {0: 0, 1: 1, 2: 2, 4: 3, 5: 4})
 [4, 1, 2, 2, 1, 3, 3, 0]
-### findAlternateGlyphs
+### function findAlternateGlyphs
 Given a set of input glyph names, return the set of possible output glyphs,
 as the result of GSUB glyph substitutions.
 
@@ -159,7 +159,7 @@ as the result of GSUB glyph substitutions.
 ['e.swash']
 >>> sorted(findAlternateGlyphs(font["GSUB"], ["f"]))
 ['f.swash', 'f_b.swash', 'f_f', 'f_f.swash', 'f_f_i', 'f_f_i.swash', 'f_f_ij', 'f_f_ij.swash', 'f_f_l', 'f_f_l.swash', 'f_i', 'f_i.swash', 'f_ij', 'f_ij.swash', 'f_j.swash', 'f_k.swash', 'f_l', 'f_l.swash', 'f_t.swash']
-### mergeFeatures
+### function mergeFeatures
 Merge the features from table2 into table1. Note this is destructive also for table2.
 
 >>> from fontTools.ttLib import TTFont
@@ -171,21 +171,21 @@ Merge the features from table2 into table1. Note this is destructive also for ta
 ### _testGlyphsToDelete
 list() -> new empty list
 list(iterable) -> new list initialized from iterable's items
-### deleteGlyphs
+### function deleteGlyphs
 Delete all references to the glyphs named in the glyphNames set. Lookups,
 features, language systems and scripts that become dysfunctional because of
 that will also be deleted.
-### _printPairPosFormat2Matrix
+### function _printPairPosFormat2Matrix
 ### NestedLookupFinderAndRemapper
-### _getClassesFromClassDef
-### remapLookups
-### _remapLookupsAndPruneFeatures
+### function _getClassesFromClassDef
+### function remapLookups
+### function _remapLookupsAndPruneFeatures
 Go through the feature list and remap or remove lookup indices. If a feature
 becomes empty, delete it from the feature list. Return a dictionary mapping the
 old feature indices to the new feature indices, for remapping the features in
 the scripts.
-### _remapLangSys
-### _remapFeaturesAndPruneScripts
+### function _remapLangSys
+### function _remapFeaturesAndPruneScripts
 Go through the scripts list, and remap or delete feature indices. If a script
 becomes empty, delete it.
 ### ObjectIdSet
@@ -230,11 +230,11 @@ False
 >>> s.update([16, 32, 64])
 >>> sorted(s)
 [1, 2, 4, 8, 16, 32, 64]
-### _findDuplicateFeatureTypes
+### function _findDuplicateFeatureTypes
 ### LookupTypeFinder
-### _mergeLists
+### function _mergeLists
 ### AlternateGlyphFinder
-### findSingleSubstAlts
+### function findSingleSubstAlts
 Find the alternate glyphs that can be accessed through any direct (non-contextual)
 GSUB SingleSubst features, listing which feature(s) may trigger the substitution.
 
@@ -260,10 +260,10 @@ GSUB SingleSubst features, listing which feature(s) may trigger the substitution
 Traceback (most recent call last):
 ...
 KeyError: 'glyph03901'
-### findNestedLookups
+### function findNestedLookups
 Return a list of lookup indices for lookups that are referenced from
 within other lookups. (As opposed to directly from features.)
-### _runDocTests
+### function _runDocTests
 ### LookupTraverser
 LookupTraverser provides a tiny framework to dispatch operations to methods
 (to be implemented by the subclass) specialized for specific lookup types.
@@ -280,8 +280,8 @@ def myAction_AlternateSubstFormat1(self, subTable, argument):
 # handle specifics for "myAction" for AlternateSubstFormat1
 # ...
 return None # or a list; traverseLookups() will return all returned lists combined as one.
-### _findLanguage
-### findLookupTypes
+### function _findLanguage
+### function findLookupTypes
 Return the list of lookup types that a specific OTL table uses.
 
 >>> from fontTools.ttLib import TTFont
@@ -296,13 +296,13 @@ Return the list of lookup types that a specific OTL table uses.
 ['ChainContextPosFormat3', 'MarkBasePosFormat1', 'MarkLigPosFormat1', 'MarkMarkPosFormat1', 'PairPosFormat1', 'PairPosFormat2', 'SinglePosFormat1', 'SinglePosFormat2']
 >>> findLookupTypes(f["GSUB"])
 ['ChainContextSubstFormat3', 'LigatureSubstFormat1', 'MultipleSubstFormat1', 'SingleSubstFormat2']
-### remapFeatures
+### function remapFeatures
 ### GposScaler
-### _pruneLookups
+### function _pruneLookups
 Go through the lookup list and remove the lookups that are in the deadLookups
 set. Return a dictionary that maps the old lookup indices to the new, for remapping
 the lookup indices used in features and in other lookups.
-### _remapClassDefs
-### sortFeatureList
+### function _remapClassDefs
+### function sortFeatureList
 Sort the feature list by feature tag, and remap the feature indices
 elsewhere. This is needed after the feature list has been modified.
