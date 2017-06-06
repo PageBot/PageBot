@@ -2,8 +2,7 @@
 
 ## Ambo ut
 
-Lorem markdownum avara rediit: damnarat ut sonuit Latinas intexere sum illis
-paterni faventibus Aeneas. Intrat quod perfregit praeterit et cernis antris:
+About us. paterni faventibus Aeneas. Intrat quod perfregit praeterit et cernis antris:
 terra at *favillae adquirit* erat.
 
 ## Solitos talia
