@@ -32,6 +32,7 @@ SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD',
         'pagebotdoc.py')
 
 CONFIG = 'mkdocs.yml'
+DOC = 'Doc'
 
 class Node(object):
     """The *Node* class is used to build the PageBot file tree, for cleaning
@@ -83,8 +84,8 @@ class PageBotDoc(Publication):
     def __init__(self):
         Publication.__init__(self)
         self.pagebotRoot = pagebot.getRootPath()
-        self.pagebotBase = 'src/pagebot'
-        self.pagebotDocs = self.pagebotRoot.replace('src', 'docs')
+        self.pagebotBase = 'Lib/pagebot'
+        self.pagebotDocs = self.pagebotRoot.replace('Lib', DOC)
         self.packages = {}
         self.classes = {}
         self.db = dir(drawBot) # TODO: global.
@@ -254,7 +255,7 @@ class PageBotDoc(Publication):
                 else:
                     # Creates new folders if they do not exists yet;
                     # recurse.
-                    folder = 'docs/' + k + '/' + x
+                    folder = DOC + '/' + k + '/' + x
 
                     if not os.path.exists(folder):
                         os.mkdir(folder)
@@ -263,7 +264,7 @@ class PageBotDoc(Publication):
 
     def writeDocsPage(self, path, m):
         u"""Writes a page for a module."""
-        f = open('docs/%s.md' % path, 'w')
+        f = open(DOC + '/%s.md' % path, 'w')
         f.write('# %s\n\n' % m.__name__)
 
         self.writeIndexMenu(f, path, m)
@@ -278,7 +279,7 @@ class PageBotDoc(Publication):
         d = m.__dict__
 
         for key, value in d.items():
-            if key.startswith('__') or key in sys.modules.keys() or key in self.db:
+            if key in sys.modules.keys() or key in self.db:
                 # Skip.
                 continue
 
