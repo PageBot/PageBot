@@ -264,3 +264,4 @@ dict(**kwargs) -> new dictionary initialized with the name=value pairs
 in the keyword argument list.  For example:  dict(one=1, two=2)
 ### function int2Bool
 ### function module2Path
+### function getFontPath
