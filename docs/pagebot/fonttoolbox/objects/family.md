@@ -33,27 +33,34 @@ Storage of font information while composing the pages.
 # p = pp + '/fonts/google/***REMOVED***'
 # p = pp + '/fonts/fontbureau/AmstelvarAlpha-Variations.ttf'
 
->>> import pagebot
->>> from pagebot.toolbox.transformer import *
->>> p = module2Path(pagebot)
->>> pp = path2ParentPath(p)
->>> p = pp + '/fonts/typetr/BitcountGridVar.ttf'
->>> from pagebot.fonttoolbox.objects.font import Font
->>> f = Font(p, install=False)
->>> f.name
-u'BitcountGrid'
->>> len(f)
-101
->>> f.keys()[-1]
-'y'
->>> f.axes
-{'rndi': (0.0, 1000.0, 1000.0), 'rndo': (0.0, 1000.0, 1000.0), 'sqri': (0.0, 1000.0, 1000.0), 'sqro': (0.0, 1000.0, 1000.0), 'line': (0.0, 1000.0, 1000.0), 'open': (0.0, 0.0, 1000.0), 'wght': (0.0, 500.0, 1000.0)}
->>> variables = f.variables
->>> features = f.features
->>> f.groups
->>> f.designSpace
-{}
->>> f.install()
-u'BitcountGrid-SingleCircleSquare-wght500rndi1000rndo1000line1000sqri1000sqro1000open0'
->>> f.save()
+
+    >>> import pagebot
+    >>> from pagebot.toolbox.transformer import *
+    >>> p = module2Path(pagebot)
+    >>> pp = path2ParentPath(p)
+    >>> p = pp + '/fonts/typetr/BitcountGridVar.ttf'
+    >>> from pagebot.fonttoolbox.objects.font import Font
+    >>> f = Font(p, install=False)
+    >>> f.name
+    u'BitcountGrid'
+
+    >>> len(f)
+    101
+
+    >>> f.keys()[-1]
+    'y'
+
+    >>> f.axes
+    {'rndi': (0.0, 1000.0, 1000.0), 'rndo': (0.0, 1000.0, 1000.0), 'sqri': (0.0, 1000.0, 1000.0), 'sqro': (0.0, 1000.0, 1000.0), 'line': (0.0, 1000.0, 1000.0), 'open': (0.0, 0.0, 1000.0), 'wght': (0.0, 500.0, 1000.0)}
+
+    >>> variables = f.variables
+    >>> features = f.features
+    >>> f.groups
+    >>> f.designSpace
+    {}
+
+    >>> f.install()
+    u'BitcountGrid-SingleCircleSquare-wght500rndi1000rndo1000line1000sqri1000sqro1000open0'
+
+    >>> f.save()
 ### function getFamilyFonts

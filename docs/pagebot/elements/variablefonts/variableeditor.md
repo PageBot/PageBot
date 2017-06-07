@@ -1203,53 +1203,64 @@ self.w.myList = List((10, 10, 200, 100), ["A", "B", "C"])
 The following Python list methods work:::
 
 # Getting the length of the List.
->>> len(self.w.myList)
-3
+
+    >>> len(self.w.myList)
+    3
 
 # Retrieving an item or items from a List.
->>> self.w.myList[1]
-"B"
->>> self.w.myList[:2]
-["A", "B"]
+
+    >>> self.w.myList[1]
+    "B"
+
+    >>> self.w.myList[:2]
+    ["A", "B"]
 
 # Setting an item in a List.
->>> self.w.myList[1] = "XYZ"
->>> self.w.myList.get()
-["A", "XYZ", "C"]
+
+    >>> self.w.myList[1] = "XYZ"
+    >>> self.w.myList.get()
+    ["A", "XYZ", "C"]
 
 # Deleting an item at an index in a List.
->>> del self.w.myList[1]
->>> self.w.myList.get()
-["A", "C"]
+
+    >>> del self.w.myList[1]
+    >>> self.w.myList.get()
+    ["A", "C"]
 
 # Appending an item to a List.
->>> self.w.myList.append("Z")
->>> self.w.myList.get()
-["A", "B", "C", "Z"]
+
+    >>> self.w.myList.append("Z")
+    >>> self.w.myList.get()
+    ["A", "B", "C", "Z"]
 
 # Removing the first occurance of an item in a List.
->>> self.w.myList.remove("A")
->>> self.w.myList.get()
-["B", "C"]
+
+    >>> self.w.myList.remove("A")
+    >>> self.w.myList.get()
+    ["B", "C"]
 
 # Getting the index for the first occurance of an item in a List.
->>> self.w.myList.index("B")
-1
+
+    >>> self.w.myList.index("B")
+    1
 
 # Inserting an item into a List.
->>> self.w.myList.insert(1, "XYZ")
->>> self.w.myList.get()
-["A", "XYZ", "B", "C"]
+
+    >>> self.w.myList.insert(1, "XYZ")
+    >>> self.w.myList.get()
+    ["A", "XYZ", "B", "C"]
 
 # Extending a List.
->>> self.w.myList.extend(["X", "Y", "Z"])
->>> self.w.myList.get()
-["A", "B", "C", "X", "Y", "Z"]
+
+    >>> self.w.myList.extend(["X", "Y", "Z"])
+    >>> self.w.myList.get()
+    ["A", "B", "C", "X", "Y", "Z"]
 
 # Iterating over a List.
->>> for i in self.w.myList:
->>> i
-"A"
+
+    >>> for i in self.w.myList:
+    >>> i
+    "A"
 "B"
 "C"
 

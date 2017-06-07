@@ -16,24 +16,29 @@ Source: https://github.com/bottlepy/bottle/commit/fa7733e075da0d790d809aa3d2f530
 Return a unicode -> glyphName dictionary from the 'best' unicode cmap that the font
 contains. In order of preference, the font will be searched for cmaps 3,10, 3,1 and 0,3.
 
->>> from fontTools.ttLib import TTFont
->>> from tnTestFonts import getFontPath
->>> path = getFontPath("CusterRE-RegularS2.ttf")
->>> font = TTFont(path)
->>> cmap = getBestCmap(font)
->>> len(cmap)
-248
->>> max(cmap)
-64258
->>> path = getFontPath("ProW6.otf")
->>> font = TTFont(path)
->>> cmap = getBestCmap(font)
->>> len(cmap)
-13641
->>> print hex(max(cmap))  # if result > 0xffff then it must have been a 3,10 cmap
-0x2f9f4
->>> getBestCmap(font, cmapPreferences=[(123, 456)])
-Traceback (most recent call last):
+
+    >>> from fontTools.ttLib import TTFont
+    >>> from tnTestFonts import getFontPath
+    >>> path = getFontPath("CusterRE-RegularS2.ttf")
+    >>> font = TTFont(path)
+    >>> cmap = getBestCmap(font)
+    >>> len(cmap)
+    248
+
+    >>> max(cmap)
+    64258
+
+    >>> path = getFontPath("ProW6.otf")
+    >>> font = TTFont(path)
+    >>> cmap = getBestCmap(font)
+    >>> len(cmap)
+    13641
+
+    >>> print hex(max(cmap))  # if result > 0xffff then it must have been a 3,10 cmap
+    0x2f9f4
+
+    >>> getBestCmap(font, cmapPreferences=[(123, 456)])
+    Traceback (most recent call last):
 ...
 ValueError: None of the requested cmap subtables were found
 ### FontInfo

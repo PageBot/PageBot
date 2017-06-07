@@ -26,8 +26,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### DiagonalStem
 ### DOWN
 int(x=0) -> int or long
@@ -42,8 +43,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### Width
 ### function getComponents
 Answer the list of components for this glyph.
@@ -157,8 +159,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### BoundingBox
 ### SPANSTEP
 int(x=0) -> int or long
@@ -173,6 +176,7 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### Location
