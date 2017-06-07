@@ -30,15 +30,9 @@ Answer the cleaned list of installed font names.
 ### Font
 Storage of font information while composing the pages.
 
-# p = pp + '/fonts/google/Roboto-VF.ttf'
-# p = pp + '/fonts/fontbureau/AmstelvarAlpha-Variations.ttf'
-
-
     >>> import pagebot
-    >>> from pagebot.toolbox.transformer import *
-    >>> p = module2Path(pagebot)
-    >>> pp = path2ParentPath(p)
-    >>> p = pp + '/fonts/typetr/BitcountGridVar.ttf'
+    >>> from pagebot.toolbox.transformer import getFontPath
+    >>> p = getFontPath('AmstelvarAlpha-VF')
     >>> from pagebot.fonttoolbox.objects.font import Font
     >>> f = Font(p, install=False)
     >>> f.name
