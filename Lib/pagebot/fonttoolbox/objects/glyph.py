@@ -25,6 +25,7 @@ F = 2.0 / 3.0
 
 class Point(object):
     u"""
+    Point object containing Cartesian coordinates plus on / offcurve boolean.
     >>> p = Point(101, 303, True)
     >>> p.onCurve is False
     False
@@ -41,6 +42,7 @@ class Point(object):
 
 class Segment(object):
     u"""
+    Curve segment from a certain oncurve point to the next one.
     >>> p0 = Point(101, 303, True)
     >>> p1 = Point(202, 404, False)
     >>> p2 = Point(303, 808, False)
@@ -72,33 +74,30 @@ class Segment(object):
         self.points.append(p)
 
 class Glyph(object):
-    u"""This Glyph class is a wrapper around the glyph structure of a TrueType
-    Font. It is supposed to copy the functions of the RoboFont raw glyph, for
-    all needed functions in PageBot. It is not complete, will be added to when
-    needed.
+    u"""The Glyph class wraps the glyph structure of a TrueType Font and
+    extracts data from the raw glyph such as point sequence and type.
     >>> import pagebot
-    >>> from pagebot.toolbox.transformer import *
-    >>> p = module2Path(pagebot)
-    >>> p = path2ParentPath(p) + '/fonts/typetr/PromiseVar.ttf'
+    >>> from pagebot.toolbox.transformer import getFontPath
+    >>> p = getFontPath('AmstelvarAlpha-VF')
     >>> from pagebot.fonttoolbox.objects.font import Font
     >>> f = Font(p, install=False)
     >>> g = f['a']
     >>> g.name
     'a'
     >>> len(g.points)
-    48
+    40
     >>> g.points[-1].onCurve
-    True
+    False
     >>> contours = g.contours
     >>> len(contours)
-    3
+    2
     >>> path = g.path
     >>> print path
     <BezierPath>
     >>> nspath = path.getNSBezierPath()
     >>> bounds = nspath.bounds()
     >>> print bounds
-    <NSRect origin=<NSPoint x=40.0 y=-16.0> size=<NSSize width=529.0 height=572.0>>
+    <NSRect origin=<NSPoint x=38.0 y=-15.0> size=<NSSize width=948.0 height=1037.0>>
     >>> len(bounds)
     2
     >>> len(bounds[0])
@@ -106,9 +105,9 @@ class Glyph(object):
     >>> len(bounds[1])
     2
     >>> print bounds[0]
-    <NSPoint x=40.0 y=-16.0>
+    <NSPoint x=38.0 y=-15.0>
     >>> bounds[0][0]
-    40.0
+    38.0
     """
 
     ANALYZER_CLASS = GlyphAnalyzer
