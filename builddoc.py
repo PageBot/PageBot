@@ -413,12 +413,12 @@ def main(argv):
 
     if doTest:
         import sys
-        #sys.stdout = open(fileName, 'w', 1)
-        #try:
-        #    d.testDoc()
-        #except Exception, e:
-        #    sys.stdout = sys.__stdout__
-        #    traceback.format_exc()
+        f = open(fileName, 'w', 1)
+        try:
+            d.testDoc()
+        except Exception, e:
+            sys.stdout = sys.__stdout__
+            traceback.format_exc()
         #sys.stdout = sys.__stdout__
         #print 'Wrote results to %s' % fileName
 
