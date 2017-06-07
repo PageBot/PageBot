@@ -7,10 +7,12 @@
 Answers the distance from point <i>(px, py)</i> to line <i>((x1,
 y1), (x2, y2))</i>.
 ### function insideCircle
->>> insideCircle(1, 1, 5)
-True
->>> insideCircle(3, 3, 3)
-False
+
+    >>> insideCircle(1, 1, 5)
+    True
+
+    >>> insideCircle(3, 3, 3)
+    False
 ### function dotProduct
 ### function pointProjectedOnLine
 Answers the projected point <b>(px, py)</b> on line <b>((x1, y1), (x2,
@@ -43,15 +45,19 @@ Answers the square of the distance for relative comparison and to
 save the time of the <b>sqrt</b>.
 ### function test
 ### function isEven
->>> isEven(2)
-True
->>> isEven(1)
-False
+
+    >>> isEven(2)
+    True
+
+    >>> isEven(1)
+    False
 ### function isOdd
->>> isOdd(1)
-True
->>> isOdd(2)
-False
+
+    >>> isOdd(1)
+    True
+
+    >>> isOdd(2)
+    False
 ### function intersection
 Returns 2D intersection point if it exists. Otherwise (None, None,
 None) is answered. Different from the RoboFont intersection tool, we

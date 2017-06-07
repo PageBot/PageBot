@@ -63,12 +63,15 @@ ID.
 #xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo becomes Agency_FB-Bold
 </doc>
 
->>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
-'Agency_FB-Compressed'
->>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')
-'Agency_FB-Compressed'
->>> path2FontName('#xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo')
-'Agency_FB-Bold'
+
+    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
+    'Agency_FB-Compressed'
+
+    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')
+    'Agency_FB-Compressed'
+
+    >>> path2FontName('#xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo')
+    'Agency_FB-Bold'
 ### function readUnicodes
 <doc>takes a list of robofab friendly integers and returns a string of unicodes.</doc>
 ### function fixed2Float
@@ -84,12 +87,15 @@ ID.
 #xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo becomes Agency_FB-Bold
 </doc>
 
->>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
-'Agency_FB-Compressed'
->>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')
-'Agency_FB-Compressed'
->>> path2FontName('#xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo')
-'Agency_FB-Bold'
+
+    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
+    'Agency_FB-Compressed'
+
+    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')
+    'Agency_FB-Compressed'
+
+    >>> path2FontName('#xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo')
+    'Agency_FB-Bold'
 ### function hex2char
 ### function commaString2IntegerList
 ### function obj2StyleId
@@ -103,12 +109,15 @@ Answer the interpolated value of factor v between a and b. If doRound is True (d
 round the result before answering it.
 ### function bool2Int
 ### function path2ParentPath
->>> path2ParentPath('/xxx/yyy/zzz/')
-'/xxx/yyy/zzz'
->>> path2ParentPath('/xxx/yyy/zzz')
-'/xxx/yyy'
->>> path2ParentPath('/xxx/yyy/zzz.gif')
-'/xxx/yyy'
+
+    >>> path2ParentPath('/xxx/yyy/zzz/')
+    '/xxx/yyy/zzz'
+
+    >>> path2ParentPath('/xxx/yyy/zzz')
+    '/xxx/yyy'
+
+    >>> path2ParentPath('/xxx/yyy/zzz.gif')
+    '/xxx/yyy'
 ### function field2Floq
 ### function asIntOrValue
 ### function isUniqueList
