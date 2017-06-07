@@ -360,24 +360,46 @@ class PageBotDoc(Publication):
 
         return folders
 
-def main(argv):
-    try:
-        opts, args = getopt.getopt(argv,"ctwh")
-    except getopt.GetoptError:
-        print 'test.py -c -t -w -h'
-        sys.exit(2)
+def printOpts():
+    print './builddoc.py -ctwho'
+    print '-h, --help: prints this listing.'
+    print '-c, --clear: clears .pyc files.'
+    print '-w, --write: writes the markdown files to the doc folder.'
+    print '-d, --doctest: runs doctests on the pagebot module and HowTo files.'
+    print '-o, --output: takes file name as argument.'
 
+def main(argv):
+    fileName = 'log.txt'
+    clearOpts = ('-c', '--clear')
+    testOpts = ('-d', '--doctest')
+    writeOpts = ('-w', '--write')
+    helpOpts = ('-h', '--help')
+    outputOpts = ('-o', '--output')
     doClear = False
     doTest = False
     doWrite = False
 
-    for o, _ in opts:
-        if o == '-c':
+    try:
+        opts, args = getopt.getopt(argv, "cdwho:", ['clear', 'doctest', 'write', 'help', 'output='])
+    except getopt.GetoptError('missing arguments'):
+        printOpts()
+        sys.exit(2)
+
+    if len(opts) == 0:
+        printOpts()
+        return
+
+    for o, v in opts:
+        if o in helpOpts:
+            printOpts()
+        if o in clearOpts:
             doClear = True
-        if o == '-t':
+        if o in testOpts:
             doTest = True
-        if o == '-w':
+        if o == writeOpts:
             doWrite = True
+        if o == outputOpts:
+            fileName = v
 
     d = PageBotDoc()
 
@@ -387,12 +409,10 @@ def main(argv):
 
     if doTest:
         import sys
-        f = 'log.txt'
-        sys.stdout = open(f, 'w', 1)
+        sys.stdout = open(fileName, 'w', 1)
         d.docTest()
         sys.stdout = sys.__stdout__
         print 'Wrote results to %s' % f
-
 
     if doWrite:
         d.writeDocs(pagebot)
