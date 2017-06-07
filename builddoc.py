@@ -98,7 +98,7 @@ class PageBotDoc(Publication):
     def build(self):
         # Collect data from all folders.
         rootPath = pagebot.getRootPath()
-        rootNode = self.testDoc(rootPath)
+        rootNode = self.testDocs(rootPath)
         self.buildNode(rootNode)
 
     def clearPyc(self, path=None):
@@ -119,7 +119,7 @@ class PageBotDoc(Publication):
                 print ' * Removed', filePath
                 continue
 
-    def testDoc(self, path=None, node=None):
+    def testDocs(self, path=None, node=None, logFile=None):
         u"""Calls runpy and doctest.testfile on all .py files in our module.
         """
         if path is None:
@@ -136,7 +136,7 @@ class PageBotDoc(Publication):
             child = node.append(filePath)
 
             if os.path.isdir(filePath):
-                self.testDoc(filePath, child)
+                self.testDocs(filePath, child)
 
             # Runs tests on all Python files inside out module.
             if filePath.endswith('.py'):
@@ -165,10 +165,10 @@ class PageBotDoc(Publication):
                 else:
                     self.classes[module_name] = mod
             except Exception, e:
-                print 'scanPackage: an error occurred, moduleaname is %s' % module_name
+                print 'scanPackage: an error occurred, modulename is %s' % module_name
                 print traceback.format_exc()
 
-    def writeDocs(self, m, folder=None, level=0):
+    def writeDocs(self, m, folder=None, level=0, logFile=None):
         u"""Writes config file including menu, traverses module to parse
         docstrings for all files."""
         self.scanPackage(m)
@@ -366,7 +366,7 @@ def printOpts():
     print '-c, --clear: clears .pyc files.'
     print '-w, --write: writes the markdown files to the doc folder.'
     print '-d, --doctest: runs doctests on the pagebot module and HowTo files.'
-    print '-o, --output: takes file name as argument.'
+    print '-l, --log: outputs to log, takes log file name as argument.'
 
 def main(argv):
     fileName = 'log.txt'
@@ -374,13 +374,14 @@ def main(argv):
     testOpts = ('-d', '--doctest')
     writeOpts = ('-w', '--write')
     helpOpts = ('-h', '--help')
-    outputOpts = ('-o', '--output')
+    logOpts = ('-l', '--log')
     doClear = False
     doTest = False
     doWrite = False
+    logFile = None
 
     try:
-        opts, args = getopt.getopt(argv, "cdwho:", ['clear', 'doctest', 'write', 'help', 'output='])
+        opts, args = getopt.getopt(argv, "cdwhl:", ['clear', 'doctest', 'write', 'help', 'log='])
     except getopt.GetoptError('missing arguments'):
         printOpts()
         sys.exit(2)
@@ -398,8 +399,9 @@ def main(argv):
             doTest = True
         if o in writeOpts:
             doWrite = True
-        if o in outputOpts:
+        if o in logOpts:
             fileName = v
+            logFile = open(fileName, 'w', 1)
 
     d = PageBotDoc()
 
@@ -408,19 +410,14 @@ def main(argv):
         print 'Cleared .pyc files'
 
     if doWrite:
-        d.writeDocs(pagebot)
+        d.writeDocs(pagebot, logFile=logFile)
         print 'Wrote docs'
 
     if doTest:
-        import sys
-        f = open(fileName, 'w', 1)
         try:
-            d.testDoc()
+            d.testDocs(logFile=logFile)
         except Exception, e:
-            sys.stdout = sys.__stdout__
             traceback.format_exc()
-        #sys.stdout = sys.__stdout__
-        #print 'Wrote results to %s' % fileName
 
 if __name__ == '__main__':
     main(sys.argv[1:])
