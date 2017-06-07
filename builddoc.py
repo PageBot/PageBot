@@ -98,7 +98,7 @@ class PageBotDoc(Publication):
     def build(self):
         # Collect data from all folders.
         rootPath = pagebot.getRootPath()
-        rootNode = self.docTest(rootPath)
+        rootNode = self.testDoc(rootPath)
         self.buildNode(rootNode)
 
     def clearPyc(self, path=None):
@@ -119,7 +119,7 @@ class PageBotDoc(Publication):
                 print ' * Removed', filePath
                 continue
 
-    def docTest(self, path=None, node=None):
+    def testDoc(self, path=None, node=None):
         u"""Calls runpy and doctest.testfile on all .py files in our module.
         """
         if path is None:
@@ -136,7 +136,7 @@ class PageBotDoc(Publication):
             child = node.append(filePath)
 
             if os.path.isdir(filePath):
-                self.docTest(filePath, child)
+                self.testDoc(filePath, child)
 
             # Runs tests on all Python files inside out module.
             if filePath.endswith('.py'):
@@ -396,9 +396,9 @@ def main(argv):
             doClear = True
         if o in testOpts:
             doTest = True
-        if o == writeOpts:
+        if o in writeOpts:
             doWrite = True
-        if o == outputOpts:
+        if o in outputOpts:
             fileName = v
 
     d = PageBotDoc()
@@ -407,16 +407,20 @@ def main(argv):
         d.clearPyc()
         print 'Cleared .pyc files'
 
-    if doTest:
-        import sys
-        sys.stdout = open(fileName, 'w', 1)
-        d.docTest()
-        sys.stdout = sys.__stdout__
-        print 'Wrote results to %s' % f
-
     if doWrite:
         d.writeDocs(pagebot)
         print 'Wrote docs'
+
+    if doTest:
+        import sys
+        #sys.stdout = open(fileName, 'w', 1)
+        #try:
+        #    d.testDoc()
+        #except Exception, e:
+        #    sys.stdout = sys.__stdout__
+        #    traceback.format_exc()
+        #sys.stdout = sys.__stdout__
+        #print 'Wrote results to %s' % fileName
 
 if __name__ == '__main__':
     main(sys.argv[1:])
