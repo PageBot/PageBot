@@ -16,8 +16,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### GlyphPath
 ### function pointOffset
 Answer new 3D point, shifted by offset.
@@ -34,8 +35,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### function setFillColor
 Set the color for global or the color of the formatted string.
 ### NO_COLOR
@@ -51,8 +53,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### Path
 ### function setStrokeColor
 Set global stroke color or the color of the formatted string.

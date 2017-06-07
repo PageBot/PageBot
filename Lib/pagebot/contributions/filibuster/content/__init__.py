@@ -68,7 +68,6 @@ def content():
                 print __name__, 'submodule ', module, 'misses a content dictionary.'
     return content
 
-
 def index(tagname):
     """Return the name of the submodule that tagname is defined in,
     as well as a list of modules and keys in which this tagname is used."""

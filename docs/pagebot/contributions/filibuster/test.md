@@ -26,8 +26,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### closetag
 unicode(object='') -> unicode object
 unicode(string[, encoding[, errors]]) -> unicode object
@@ -55,8 +56,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### print_function
 ### opentag
 unicode(object='') -> unicode object

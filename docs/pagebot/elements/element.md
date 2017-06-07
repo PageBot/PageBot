@@ -21,8 +21,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### Score
 ### function d2cd
 ### NO_COLOR
@@ -38,8 +39,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### function uniqueID
 ### ZALIGNS
 set() -> new empty set object
@@ -67,8 +69,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### CENTER
 str(object='') -> string
 
@@ -92,8 +95,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### function point2D
 Answer the 2D origin as combination of p and offset.
 ### TimeMark
@@ -111,8 +115,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### MIN_HEIGHT
 int(x=0) -> int or long
 int(x, base=10) -> int or long
@@ -126,8 +131,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### RIGHT
 str(object='') -> string
 
@@ -187,8 +193,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### function asFormatted
 ### function cz2z
 ### function pointOffset
@@ -223,8 +230,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### function newFS
 Answer a formatted string from valid attributes in Style. Set the all values after testing
 their existence, so they can inherit from previous style formats.
@@ -241,8 +249,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### LEFT
 str(object='') -> string
 
@@ -261,8 +270,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### YALIGNS
 set() -> new empty set object
 set(iterable) -> new set object
@@ -289,8 +299,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### function z2cz
 Transform from z value to column z value, using the e.css for colunn values.
 ### function setStrokeColor

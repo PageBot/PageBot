@@ -35,41 +35,57 @@ varfilename -- a variable font file path
 location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
 ### function normalizeLocation
 Normalizes location based on axis min/default/max values from axes.
->>> axes = {"wght": (100, 400, 900)}
->>> normalizeLocation({"wght": 400}, axes)
-{'wght': 0}
->>> normalizeLocation({"wght": 100}, axes)
-{'wght': -1.0}
->>> normalizeLocation({"wght": 900}, axes)
-{'wght': 1.0}
->>> normalizeLocation({"wght": 650}, axes)
-{'wght': 0.5}
->>> normalizeLocation({"wght": 1000}, axes)
-{'wght': 1.0}
->>> normalizeLocation({"wght": 0}, axes)
-{'wght': -1.0}
->>> axes = {"wght": (0, 0, 1000)}
->>> normalizeLocation({"wght": 0}, axes)
-{'wght': 0}
->>> normalizeLocation({"wght": -1}, axes)
-{'wght': 0}
->>> normalizeLocation({"wght": 1000}, axes)
-{'wght': 1.0}
->>> normalizeLocation({"wght": 500}, axes)
-{'wght': 0.5}
->>> normalizeLocation({"wght": 1001}, axes)
-{'wght': 1.0}
->>> axes = {"wght": (0, 1000, 1000)}
->>> normalizeLocation({"wght": 0}, axes)
-{'wght': -1.0}
->>> normalizeLocation({"wght": -1}, axes)
-{'wght': -1.0}
->>> normalizeLocation({"wght": 500}, axes)
-{'wght': -0.5}
->>> normalizeLocation({"wght": 1000}, axes)
-{'wght': 0}
->>> normalizeLocation({"wght": 1001}, axes)
-{'wght': 0}
+
+    >>> axes = {"wght": (100, 400, 900)}
+    >>> normalizeLocation({"wght": 400}, axes)
+    {'wght': 0}
+
+    >>> normalizeLocation({"wght": 100}, axes)
+    {'wght': -1.0}
+
+    >>> normalizeLocation({"wght": 900}, axes)
+    {'wght': 1.0}
+
+    >>> normalizeLocation({"wght": 650}, axes)
+    {'wght': 0.5}
+
+    >>> normalizeLocation({"wght": 1000}, axes)
+    {'wght': 1.0}
+
+    >>> normalizeLocation({"wght": 0}, axes)
+    {'wght': -1.0}
+
+    >>> axes = {"wght": (0, 0, 1000)}
+    >>> normalizeLocation({"wght": 0}, axes)
+    {'wght': 0}
+
+    >>> normalizeLocation({"wght": -1}, axes)
+    {'wght': 0}
+
+    >>> normalizeLocation({"wght": 1000}, axes)
+    {'wght': 1.0}
+
+    >>> normalizeLocation({"wght": 500}, axes)
+    {'wght': 0.5}
+
+    >>> normalizeLocation({"wght": 1001}, axes)
+    {'wght': 1.0}
+
+    >>> axes = {"wght": (0, 1000, 1000)}
+    >>> normalizeLocation({"wght": 0}, axes)
+    {'wght': -1.0}
+
+    >>> normalizeLocation({"wght": -1}, axes)
+    {'wght': -1.0}
+
+    >>> normalizeLocation({"wght": 500}, axes)
+    {'wght': -0.5}
+
+    >>> normalizeLocation({"wght": 1000}, axes)
+    {'wght': 0}
+
+    >>> normalizeLocation({"wght": 1001}, axes)
+    {'wght': 0}
 ### unicode
 unicode(object='') -> unicode object
 unicode(string[, encoding[, errors]]) -> unicode object
@@ -224,29 +240,36 @@ Storage of font information while composing the pages.
 # p = pp + '/fonts/google/Roboto-VF.ttf'
 # p = pp + '/fonts/fontbureau/AmstelvarAlpha-Variations.ttf'
 
->>> import pagebot
->>> from pagebot.toolbox.transformer import *
->>> p = module2Path(pagebot)
->>> pp = path2ParentPath(p)
->>> p = pp + '/fonts/typetr/BitcountGridVar.ttf'
->>> from pagebot.fonttoolbox.objects.font import Font
->>> f = Font(p, install=False)
->>> f.name
-u'BitcountGrid'
->>> len(f)
-101
->>> f.keys()[-1]
-'y'
->>> f.axes
-{'rndi': (0.0, 1000.0, 1000.0), 'rndo': (0.0, 1000.0, 1000.0), 'sqri': (0.0, 1000.0, 1000.0), 'sqro': (0.0, 1000.0, 1000.0), 'line': (0.0, 1000.0, 1000.0), 'open': (0.0, 0.0, 1000.0), 'wght': (0.0, 500.0, 1000.0)}
->>> variables = f.variables
->>> features = f.features
->>> f.groups
->>> f.designSpace
-{}
->>> f.install()
-u'BitcountGrid-SingleCircleSquare-wght500rndi1000rndo1000line1000sqri1000sqro1000open0'
->>> f.save()
+
+    >>> import pagebot
+    >>> from pagebot.toolbox.transformer import *
+    >>> p = module2Path(pagebot)
+    >>> pp = path2ParentPath(p)
+    >>> p = pp + '/fonts/typetr/BitcountGridVar.ttf'
+    >>> from pagebot.fonttoolbox.objects.font import Font
+    >>> f = Font(p, install=False)
+    >>> f.name
+    u'BitcountGrid'
+
+    >>> len(f)
+    101
+
+    >>> f.keys()[-1]
+    'y'
+
+    >>> f.axes
+    {'rndi': (0.0, 1000.0, 1000.0), 'rndo': (0.0, 1000.0, 1000.0), 'sqri': (0.0, 1000.0, 1000.0), 'sqro': (0.0, 1000.0, 1000.0), 'line': (0.0, 1000.0, 1000.0), 'open': (0.0, 0.0, 1000.0), 'wght': (0.0, 500.0, 1000.0)}
+
+    >>> variables = f.variables
+    >>> features = f.features
+    >>> f.groups
+    >>> f.designSpace
+    {}
+
+    >>> f.install()
+    u'BitcountGrid-SingleCircleSquare-wght500rndi1000rndo1000line1000sqri1000sqro1000open0'
+
+    >>> f.save()
 ### bytechr
 chr(i) -> character
 

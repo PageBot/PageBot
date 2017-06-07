@@ -271,7 +271,8 @@ class PageBotDoc(Publication):
 
     def writeDocStrings(self, f, path, m):
         u"""Writes docstring contents for all classes in the file."""
-
+        indent = '    '
+        newline = '\n'
         f.write('\n## %s\n\n' % 'Functions')
 
         d = m.__dict__
@@ -298,14 +299,31 @@ class PageBotDoc(Publication):
                     title = '### %s\n' % key
 
                 f.write(title)
+
                 if value.__doc__:
                     s = value.__doc__
                     s = s.strip().replace('    ', '')
-                    try:
-                        f.write('%s\n' % s.encode('utf-8'))
-                    except Exception, e:
-                        print 'An error occurred writing a doc file.'
-                        print traceback.format_exc()
+                    lines = s.split('\n')
+                    isDocTest = False
+
+                    for line in lines:
+                        if line.startswith('>>>'):
+                            line = indent + line
+
+                            if not isDocTest:
+                                line = newline + line
+
+                            isDocTest = True
+                        else:
+                            if isDocTest:
+                                line = indent + line
+                                isDocTest = False
+
+                        try:
+                            f.write('%s\n' % line.encode('utf-8'))
+                        except Exception, e:
+                            print 'An error occurred writing a doc file.'
+                            print traceback.format_exc()
 
         f.close()
 

@@ -21,8 +21,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### Statement
 tuple() -> empty tuple
 tuple(iterable) -> tuple initialized from iterable's items
@@ -51,8 +52,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### MAX_WIDTH
 int(x=0) -> int or long
 int(x, base=10) -> int or long
@@ -66,8 +68,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### FRONT
 str(object='') -> string
 
@@ -86,8 +89,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### FIT
 str(object='') -> string
 
@@ -106,8 +110,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### ONLINE
 str(object='') -> string
 
@@ -132,8 +137,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### B4
 tuple() -> empty tuple
 tuple(iterable) -> tuple initialized from iterable's items
@@ -152,8 +158,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### B6
 tuple() -> empty tuple
 tuple(iterable) -> tuple initialized from iterable's items
@@ -212,8 +219,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### Legal
 tuple() -> empty tuple
 tuple(iterable) -> tuple initialized from iterable's items
@@ -232,8 +240,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### MIN_WIDTH
 int(x=0) -> int or long
 int(x, base=10) -> int or long
@@ -247,8 +256,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### CENTER
 str(object='') -> string
 
@@ -272,8 +282,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### function getRootStyle
 Answer the main root style tha contains all default style attributes of PageBot.
 To be overwritten when needed by calling applications.
@@ -314,8 +325,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### W
 float(x) -> floating point number
 
@@ -402,8 +414,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### C9
 tuple() -> empty tuple
 tuple(iterable) -> tuple initialized from iterable's items
@@ -567,8 +580,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### A8
 tuple() -> empty tuple
 tuple(iterable) -> tuple initialized from iterable's items
@@ -593,8 +607,9 @@ Unicode object representing an integer literal in the given base.  The
 literal can be preceded by '+' or '-' and be surrounded by whitespace.
 The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
 interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
+
+    >>> int('0b100', base=0)
+    4
 ### RIGHT
 str(object='') -> string
 
