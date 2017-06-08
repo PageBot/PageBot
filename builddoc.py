@@ -22,7 +22,7 @@ import runpy
 import os, pkgutil, traceback
 from shutil import copyfile
 from types import *
-import sys, getopt
+import sys, getopt, inspect
 import doctest
 import drawBot
 import pagebot
@@ -34,6 +34,9 @@ SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD',
 
 CONFIG = 'mkdocs.yml'
 DOC = 'Doc'
+INDENT = '    '
+NEWLINE = '\n'
+
 
 class Node(object):
     """The *Node* class is used to build the PageBot file tree, for cleaning
@@ -225,7 +228,7 @@ class PageBotDoc(Publication):
 
     def writeDocsMenu(self, folders, yml, level=0):
         u"""Writes the menu structure to YAML config file."""
-        indent = '    ' * level
+        #indent = '    ' * level
 
         for k in folders.keys():
             # Folder header.
@@ -279,62 +282,88 @@ class PageBotDoc(Publication):
         self.writeIndexMenu(f, path, m)
         self.writeDocStrings(f, path, m)
 
+    def getTypeString(self, value):
+        t = None
+
+        if isinstance(value, FunctionType):
+            t = 'def'
+        elif isinstance(value, int):
+            t = 'int'
+        elif isinstance(value, str):
+            t = 'str'
+        elif isinstance(value, UnicodeType):
+            t = 'unicode'
+        elif isinstance(value, dict):
+            t = 'dict'
+        elif isinstance(value, float):
+            t = 'float'
+        elif isinstance(value, tuple):
+            t = 'tuple'
+        elif isinstance(value, list):
+            t = 'list'
+        elif isinstance(value, set):
+            t = 'set'
+        elif isinstance(value, ModuleType):
+            t = 'module'
+        elif isinstance(value, TypeType):
+            t = 'class'
+        elif isinstance(value, InstanceType):
+            t = 'instance'
+        else:
+            print type(value)
+
+        return t
+
     def writeDocStrings(self, f, path, m):
         u"""Writes docstring contents for all classes in the file."""
-        indent = '    '
-        newline = '\n'
-        f.write('\n## %s\n\n' % 'Functions')
-
-        d = m.__dict__
-
-        for key, value in d.items():
-            if key in sys.modules.keys() or key in self.db:
-                # Skip.
-                continue
-
-            if value is not None:
-                t = None
-
-                if isinstance(value, FunctionType):
-                    t = 'function'
-                elif isinstance(value, ClassType):
-                    t = 'class'
-                else:
-                    print type(value)
-
-                if t:
-                    title = '### %s %s\n' % (t, key)
-                else:
-                    title = '### %s\n' % key
-
-                f.write(title)
-
-                if value.__doc__:
-                    s = value.__doc__
-                    s = s.strip().replace('    ', '')
-                    lines = s.split('\n')
-                    isDocTest = False
-
-                    for line in lines:
-                        if line.startswith('>>>'):
-                            line = indent + line
-
-                            if not isDocTest:
-                                line = newline + line
-
-                            isDocTest = True
-                        else:
-                            if isDocTest:
-                                line = indent + line
-                                isDocTest = False
-
-                        try:
-                            f.write('%s\n' % line.encode('utf-8'))
-                        except Exception, e:
-                            print 'An error occurred writing a doc file.'
-                            print traceback.format_exc()
+        #for key, value in d.items():
+        for key, value in inspect.getmembers(m):
+            self.writeDocString(f, key, value)
 
         f.close()
+
+    def writeDocString(self, f, key, value):
+        #print key.startswith('__'), key in sys.modules.keys()
+        #if key in self.db:
+        if not key.startswith('__') and (key in sys.modules.keys() or key in self.db):
+            # Skip.
+            return
+
+        t = self.getTypeString(value)
+
+        if t:
+            title = '### %s %s\n' % (t, key)
+        else:
+            title = '### %s\n' % key
+
+        f.write(title)
+
+        if value is not None:
+            if value.__doc__:
+                s = value.__doc__
+                s = s.strip().replace('    ', '')
+                lines = s.split('\n')
+                isDocTest = False
+
+                for line in lines:
+                    if line.startswith('>>>'):
+                        line = INDENT + line
+
+                        if not isDocTest:
+                            line = NEWLINE + line
+
+                        isDocTest = True
+                    else:
+                        if isDocTest:
+                            line = INDENT + line
+                            isDocTest = False
+
+                    try:
+                        f.write('%s\n' % line.encode('utf-8'))
+                    except Exception, e:
+                        print 'An error occurred writing a doc file.'
+                        print traceback.format_exc()
+
 
     def writeIndexMenu(self, f, path, m):
         u"""If index (__init__.py), writes links to class files and
@@ -342,7 +371,7 @@ class PageBotDoc(Publication):
 
         if path.endswith('index'):
             folders = self.getFolderContents(path)
-            f.write('## %s\n\n' % 'Classes')
+            f.write('## %s\n\n' % 'Related Classes')
 
             for k, v in folders.items():
                 if k == 'files':
@@ -358,7 +387,7 @@ class PageBotDoc(Publication):
                         n = '%s.%s' % (n, x)
                         f.write('* [%s](%s)\n' % (n, x))
 
-            f.write('\n## %s\n\n' % 'Modules')
+            f.write('\n## %s\n\n' % 'Related Modules')
 
             for k, v in folders.items():
                 if k != 'files':

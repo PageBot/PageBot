@@ -1,6 +1,6 @@
 # contributions.filibuster.content
 
-## Classes
+## Related Classes
 
 * [pagebot.contributions.filibuster.content.aerospace](aerospace)
 * [pagebot.contributions.filibuster.content.articles](articles)
@@ -46,21 +46,9 @@
 * [pagebot.contributions.filibuster.content.superheroes](superheroes)
 * [pagebot.contributions.filibuster.content.twitter](twitter)
 
-## Modules
+## Related Modules
 
-
-## Functions
-
-### function content
-Return one dictionary that contains all dictionaries of the
-module. By making a function rather than part of the namespace,
-the content can be updated dynamically. Should not make any
-difference in speed for normal use.
-### function index
-Return the name of the submodule that tagname is defined in,
-as well as a list of modules and keys in which this tagname is used.
-### function clearCache
-### DEBUG
+### int DEBUG
 int(x=0) -> int or long
 int(x, base=10) -> int or long
 
@@ -76,3 +64,51 @@ interpret the base from the string as an integer literal.
 
     >>> int('0b100', base=0)
     4
+### dict __builtins__
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### str __doc__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __file__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __name__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __package__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### list __path__
+list() -> new empty list
+list(iterable) -> new list initialized from iterable's items
+### str __version__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### _contentCache
+### def clearCache
+### def content
+Return one dictionary that contains all dictionaries of the
+module. By making a function rather than part of the namespace,
+the content can be updated dynamically. Should not make any
+difference in speed for normal use.
+### def index
+Return the name of the submodule that tagname is defined in,
+as well as a list of modules and keys in which this tagname is used.
