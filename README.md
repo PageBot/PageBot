@@ -2,7 +2,7 @@
 
 ## What is PageBot?
 
-As short description PageBot is a scripted page layout program, available as Python library inside <a href="http:/drawbot.com">@DrawBotApp</a> and as a collection of stand-alone desktop applications.
+As short description PageBot is a scripted page layout program, available as Python library inside <a href="http://www.drawbot.com">@DrawBotApp</a> and as a collection of stand-alone desktop applications.
 
 An overview of functions reads like this:
 
