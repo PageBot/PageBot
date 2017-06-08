@@ -187,7 +187,7 @@ class PageBotDoc(Publication):
         f.write('pages:\n')
         f.write(" - 'Home': 'index.md'\n")
         f.write(" - 'How To': 'howto.md'\n")
-        f.write(" - 'About': 'about.md'\n")
+        #f.write(" - 'About': 'about.md'\n")
         self.folders = self.buildDocsMenu(m, f)
         f.write(" - 'License': 'license.md'\n")
         f.close()
