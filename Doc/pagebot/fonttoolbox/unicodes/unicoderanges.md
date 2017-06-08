@@ -1,9 +1,188 @@
 # fonttoolbox.unicodes.unicoderanges
 
+### dict __builtins__
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### str __doc__
+str(object='') -> string
 
-## Functions
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __file__
+str(object='') -> string
 
-### function countCoverageByRangeName
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __name__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __package__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### def _buildByBitDict
+### dict _byBit
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### dict _byName
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### dict _byRangeMinimum
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### def _countCoverage
+
+    >>> _countCoverage([65, 66], byName=False)
+    {0: (2, 128)}
+
+    >>> _countCoverage([65, 66], byName=True)
+    {'Basic Latin': (2, 128)}
+
+    >>> _countCoverage([65, 66, 600], byName=True)
+    {'IPA Extensions': (1, 96), 'Basic Latin': (2, 128)}
+
+    >>> _countCoverage([8192], byName=True)
+    {'General Punctuation': (1, 112)}
+
+    >>> _countCoverage([8192], byName=False)
+    {31: (1, 240)}
+### def _distributeUnicodes_ReferenceImplementation
+
+    >>> unicodes = range(3000)
+    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
+    >>> unicodes = range(10, 3000)
+    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
+    >>> unicodes = range(3000, 13000)
+    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
+    >>> unicodes = range(10, 19000, 1)
+    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
+    >>> unicodes = range(10, 19000, 7)
+    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
+    >>> unicodes = range(10, 19000, 20)
+    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
+    >>> unicodes = range(10, 19000, 1)
+    >>> all = []
+    >>> for unis in distributeUnicodes(unicodes).values():
+    ... all.extend(unis)
+...
+
+    >>> all.sort()
+    >>> assert all == unicodes
+### def _getUnicodeRangeBits_ReferenceImplementation
+
+    >>> unicodes = range(3000)
+    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
+    >>> unicodes = range(10, 3000)
+    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
+    >>> unicodes = range(3000, 13000)
+    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
+    >>> unicodes = range(10, 19000, 1)
+    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
+    >>> unicodes = range(10, 19000, 7)
+    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
+    >>> unicodes = range(10, 19000, 20)
+    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
+### dict _openTypeScriptToUnicodeRangeNameMapping
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### list _rangeMinimums
+list() -> new empty list
+list(iterable) -> new list initialized from iterable's items
+### def _runDocTests
+### def _testAll
+
+    >>> count = 0
+    >>> for bit, name, rangeMinimum, rangeMaximum in unicodeRanges:
+    ... for uni in range(rangeMinimum, rangeMaximum+1):
+... assert getUnicodeRange(uni)[0] == bit
+... count += 1
+...
+
+    >>> count
+    181420
+### bisect_left
+bisect_left(a, x[, lo[, hi]]) -> index
+
+Return the index where to insert item x in list a, assuming a is sorted.
+
+The return value i is such that all e in a[:i] have e < x, and all e in
+a[i:] have e >= x.  So if x already appears in the list, i points just
+before the leftmost x already there.
+
+Optional args lo (default 0) and hi (default len(a)) bound the
+slice of a to be searched.
+### bisect_right
+bisect(a, x[, lo[, hi]]) -> index
+bisect_right(a, x[, lo[, hi]]) -> index
+
+Return the index where to insert item x in list a, assuming a is sorted.
+
+The return value i is such that all e in a[:i] have e <= x, and all e in
+a[i:] have e > x.  So if x already appears in the list, i points just
+beyond the rightmost x already there
+
+Optional args lo (default 0) and hi (default len(a)) bound the
+slice of a to be searched.
+### def countCoverageByRangeBit
+Given a set of characters, count how many characters are present in each (used) range.
+The return value is a dict with range bits as keys, and (count, size) tuples as values.
+'count' is the number of characters used in the range, 'size' is the total amount of
+characters that belong to the range. Ranges that are not used are not included in the
+dict, so 'count' is always greater than 0.
+Characters for which no range can be found are counted under a key of None, the value
+will be (count, None).
+
+
+    >>> countCoverageByRangeBit([65, 66])
+    {0: (2, 128)}
+
+    >>> countCoverageByRangeBit([65, 66, 600])
+    {0: (2, 128), 4: (1, 288)}
+
+    >>> countCoverageByRangeBit([8192])
+    {31: (1, 240)}
+
+    >>> countCoverageByRangeBit([100000])
+    {None: (1, None)}
+### def countCoverageByRangeName
 Given a set of characters, count how many characters are present in each (used) range.
 The return value is a dict with range names as keys, and (count, size) tuples as values.
 'count' is the number of characters used in the range, 'size' is the total amount of
@@ -24,34 +203,33 @@ will be (count, None).
 
     >>> countCoverageByRangeName([100000])
     {None: (1, None)}
-### unicodeRanges
-list() -> new empty list
-list(iterable) -> new list initialized from iterable's items
-### function _getUnicodeRangeBits_ReferenceImplementation
+### def distributeUnicodes
+Return a dictionary with range names as keys, and subsets of unicodes
+belonging to the respective range as values. None is used as a key for
+characters that don't fall into any range.
 
-    >>> unicodes = range(3000)
-    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
-    >>> unicodes = range(10, 3000)
-    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
-    >>> unicodes = range(3000, 13000)
-    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
-    >>> unicodes = range(10, 19000, 1)
-    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
-    >>> unicodes = range(10, 19000, 7)
-    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
-    >>> unicodes = range(10, 19000, 20)
-    >>> assert getUnicodeRangeBits(unicodes) == _getUnicodeRangeBits_ReferenceImplementation(unicodes)
-### _openTypeScriptToUnicodeRangeNameMapping
-dict() -> new empty dictionary
-dict(mapping) -> new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -> new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -> new dictionary initialized with the name=value pairs
-in the keyword argument list.  For example:  dict(one=1, two=2)
-### function getUnicodeRange
+
+    >>> distributeUnicodes([65])
+    {'Basic Latin': [65]}
+
+    >>> distributeUnicodes([100000])
+    {None: [100000]}
+
+    >>> distributeUnicodes([65, 165])
+    {'Latin-1 Supplement': [165], 'Basic Latin': [65]}
+
+    >>> unicodes = range(65, 70) + range(6000, 6005) + [100000]
+    >>> ranges = distributeUnicodes(unicodes)
+    >>> ranges
+    {None: [100000], 'Tagbanwa': [6000, 6001, 6002, 6003, 6004], 'Basic Latin': [65, 66, 67, 68, 69]}
+
+    >>> all = set()
+    >>> for unis in ranges.values():
+    ... all.update(unis)
+...
+
+    >>> assert all == set(unicodes)
+### def getUnicodeRange
 Return the unicode range that uni belongs to, if any. If a range is found,
 a (bit, name, rangeMinimum, rangeMaximum) tuple is returned. If no range is found,
 (None, None, None, None) is returned.
@@ -86,43 +264,48 @@ a (bit, name, rangeMinimum, rangeMaximum) tuple is returned. If no range is foun
 
     >>> print getUnicodeRange(0x10840)
     (None, None, None, None)
-### _byBit
-dict() -> new empty dictionary
-dict(mapping) -> new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -> new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -> new dictionary initialized with the name=value pairs
-in the keyword argument list.  For example:  dict(one=1, two=2)
-### function distributeUnicodes
-Return a dictionary with range names as keys, and subsets of unicodes
-belonging to the respective range as values. None is used as a key for
-characters that don't fall into any range.
+### def getUnicodeRangeBits
+Return a set of range bits. Each bit number represents the presence of
+at least one character in that range.
 
 
-    >>> distributeUnicodes([65])
-    {'Basic Latin': [65]}
+    >>> sorted(getUnicodeRangeBits(range(32, 500)))
+    [0, 1, 2, 3]
 
-    >>> distributeUnicodes([100000])
-    {None: [100000]}
+    >>> sorted(getUnicodeRangeBits([50, 500, 5000, 50000]))
+    [0, 3, 56, 75]
 
-    >>> distributeUnicodes([65, 165])
-    {'Latin-1 Supplement': [165], 'Basic Latin': [65]}
+    >>> sorted(getUnicodeRangeBits([6399]))  # not in any range
+    []
+### def getUnicodeRangeByBit
+Given a bit number for a OS/2 unicode range, return a list of (name, rangeMinimum, rangeMaximum) tuples.
 
-    >>> unicodes = range(65, 70) + range(6000, 6005) + [100000]
-    >>> ranges = distributeUnicodes(unicodes)
-    >>> ranges
-    {None: [100000], 'Tagbanwa': [6000, 6001, 6002, 6003, 6004], 'Basic Latin': [65, 66, 67, 68, 69]}
 
-    >>> all = set()
-    >>> for unis in ranges.values():
-    ... all.update(unis)
+    >>> getUnicodeRangeByBit(100)
+    [('Syloti Nagri', 43008, 43055)]
+
+    >>> getUnicodeRangeByBit(31)
+    [('General Punctuation', 8192, 8303), ('Supplemental Punctuation', 11776, 11903)]
+
+    >>> getUnicodeRangeByBit(999)
+    Traceback (most recent call last):
 ...
+KeyError: 999
+### def getUnicodeRangeByName
+Given the name for a OS/2 unicode range, return a (bit, rangeMinimum, rangeMaximum) tuple.
 
-    >>> assert all == set(unicodes)
-### function getUnicodeRangesByScriptTag
+
+    >>> getUnicodeRangeByName("Basic Latin")
+    (0, 0, 127)
+
+    >>> getUnicodeRangeByName("Katakana Phonetic Extensions")
+    (50, 12784, 12799)
+
+    >>> getUnicodeRangeByName("Bad Name")
+    Traceback (most recent call last):
+...
+KeyError: 'Bad Name'
+### def getUnicodeRangesByScriptTag
 Given an OpenType script tag, return a list of unicode ranges, expressed as
 (bit, name, rangeMinimum, rangeMaximum) tuples. Raise KeyError if no matching
 range is found.
@@ -162,7 +345,7 @@ it's not always possible to find range based on a script tag.
     Traceback (most recent call last):
 ...
 KeyError: "no unicode ranges euivalent for 'mand' script found"
-### _byRangeMinimum
+### dict otScriptTags
 dict() -> new empty dictionary
 dict(mapping) -> new dictionary initialized from a mapping object's
 (key, value) pairs
@@ -172,33 +355,7 @@ for k, v in iterable:
 d[k] = v
 dict(**kwargs) -> new dictionary initialized with the name=value pairs
 in the keyword argument list.  For example:  dict(one=1, two=2)
-### function getUnicodeRangeByBit
-Given a bit number for a OS/2 unicode range, return a list of (name, rangeMinimum, rangeMaximum) tuples.
-
-
-    >>> getUnicodeRangeByBit(100)
-    [('Syloti Nagri', 43008, 43055)]
-
-    >>> getUnicodeRangeByBit(31)
-    [('General Punctuation', 8192, 8303), ('Supplemental Punctuation', 11776, 11903)]
-
-    >>> getUnicodeRangeByBit(999)
-    Traceback (most recent call last):
-...
-KeyError: 999
-### bisect_right
-bisect(a, x[, lo[, hi]]) -> index
-bisect_right(a, x[, lo[, hi]]) -> index
-
-Return the index where to insert item x in list a, assuming a is sorted.
-
-The return value i is such that all e in a[:i] have e <= x, and all e in
-a[i:] have e > x.  So if x already appears in the list, i points just
-beyond the rightmost x already there
-
-Optional args lo (default 0) and hi (default len(a)) bound the
-slice of a to be searched.
-### function packRangeBits
+### def packRangeBits
 Given a set of bit numbers, return the corresponding ulUnicodeRange1, ulUnicodeRange2,
 ulUnicodeRange3 and ulUnicodeRange4 for the OS/2 table.
 
@@ -220,126 +377,10 @@ ulUnicodeRange3 and ulUnicodeRange4 for the OS/2 table.
 
     >>> 0xffffffff
     4294967295
-### otScriptTags
-dict() -> new empty dictionary
-dict(mapping) -> new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -> new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -> new dictionary initialized with the name=value pairs
-in the keyword argument list.  For example:  dict(one=1, two=2)
-### function _testAll
-
-    >>> count = 0
-    >>> for bit, name, rangeMinimum, rangeMaximum in unicodeRanges:
-    ... for uni in range(rangeMinimum, rangeMaximum+1):
-... assert getUnicodeRange(uni)[0] == bit
-... count += 1
-...
-
-    >>> count
-    181420
-### function getUnicodeRangeBits
-Return a set of range bits. Each bit number represents the presence of
-at least one character in that range.
-
-
-    >>> sorted(getUnicodeRangeBits(range(32, 500)))
-    [0, 1, 2, 3]
-
-    >>> sorted(getUnicodeRangeBits([50, 500, 5000, 50000]))
-    [0, 3, 56, 75]
-
-    >>> sorted(getUnicodeRangeBits([6399]))  # not in any range
-    []
-### function _runDocTests
-### bisect_left
-bisect_left(a, x[, lo[, hi]]) -> index
-
-Return the index where to insert item x in list a, assuming a is sorted.
-
-The return value i is such that all e in a[:i] have e < x, and all e in
-a[i:] have e >= x.  So if x already appears in the list, i points just
-before the leftmost x already there.
-
-Optional args lo (default 0) and hi (default len(a)) bound the
-slice of a to be searched.
-### _byName
-dict() -> new empty dictionary
-dict(mapping) -> new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -> new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -> new dictionary initialized with the name=value pairs
-in the keyword argument list.  For example:  dict(one=1, two=2)
-### function _distributeUnicodes_ReferenceImplementation
-
-    >>> unicodes = range(3000)
-    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
-    >>> unicodes = range(10, 3000)
-    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
-    >>> unicodes = range(3000, 13000)
-    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
-    >>> unicodes = range(10, 19000, 1)
-    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
-    >>> unicodes = range(10, 19000, 7)
-    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
-    >>> unicodes = range(10, 19000, 20)
-    >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
-    >>> unicodes = range(10, 19000, 1)
-    >>> all = []
-    >>> for unis in distributeUnicodes(unicodes).values():
-    ... all.extend(unis)
-...
-
-    >>> all.sort()
-    >>> assert all == unicodes
-### function countCoverageByRangeBit
-Given a set of characters, count how many characters are present in each (used) range.
-The return value is a dict with range bits as keys, and (count, size) tuples as values.
-'count' is the number of characters used in the range, 'size' is the total amount of
-characters that belong to the range. Ranges that are not used are not included in the
-dict, so 'count' is always greater than 0.
-Characters for which no range can be found are counted under a key of None, the value
-will be (count, None).
-
-
-    >>> countCoverageByRangeBit([65, 66])
-    {0: (2, 128)}
-
-    >>> countCoverageByRangeBit([65, 66, 600])
-    {0: (2, 128), 4: (1, 288)}
-
-    >>> countCoverageByRangeBit([8192])
-    {31: (1, 240)}
-
-    >>> countCoverageByRangeBit([100000])
-    {None: (1, None)}
-### _rangeMinimums
+### list unicodeRanges
 list() -> new empty list
 list(iterable) -> new list initialized from iterable's items
-### function _countCoverage
-
-    >>> _countCoverage([65, 66], byName=False)
-    {0: (2, 128)}
-
-    >>> _countCoverage([65, 66], byName=True)
-    {'Basic Latin': (2, 128)}
-
-    >>> _countCoverage([65, 66, 600], byName=True)
-    {'IPA Extensions': (1, 96), 'Basic Latin': (2, 128)}
-
-    >>> _countCoverage([8192], byName=True)
-    {'General Punctuation': (1, 112)}
-
-    >>> _countCoverage([8192], byName=False)
-    {31: (1, 240)}
-### function _buildByBitDict
-### function unpackRangeBits
+### def unpackRangeBits
 Given the ulUnicodeRange1, ulUnicodeRange2, ulUnicodeRange3, ulUnicodeRange4 values
 from the OS/2 table, return a set of bit numbers.
 
@@ -355,17 +396,3 @@ from the OS/2 table, return a set of bit numbers.
 
     >>> unpackRangeBits(0xffffffff, 0x1, 0x2, 0x4)
     set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 65, 98])
-### function getUnicodeRangeByName
-Given the name for a OS/2 unicode range, return a (bit, rangeMinimum, rangeMaximum) tuple.
-
-
-    >>> getUnicodeRangeByName("Basic Latin")
-    (0, 0, 127)
-
-    >>> getUnicodeRangeByName("Katakana Phonetic Extensions")
-    (50, 12784, 12799)
-
-    >>> getUnicodeRangeByName("Bad Name")
-    Traceback (most recent call last):
-...
-KeyError: 'Bad Name'

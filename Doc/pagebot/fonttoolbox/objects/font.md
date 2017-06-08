@@ -1,14 +1,18 @@
 # fonttoolbox.objects.font
 
-
-## Functions
-
-### TTFont
-The main font object. It manages file input and output, and offers
-	a convenient way of accessing tables.
-	Tables will be only decompiled when necessary, ie. when they're actually
-	accessed. This means that simple operations can be extremely fast.
-### Font
+### dict AXES
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### CTFontDescriptorCopyAttribute
+### CTFontDescriptorCreateWithNameAndSize
+### class Font
 Storage of font information while composing the pages.
 
     >>> import pagebot
@@ -38,33 +42,10 @@ Storage of font information while composing the pages.
     u'BitcountGrid-SingleCircleSquare-wght500rndi1000rndo1000line1000sqri1000sqro1000open0'
 
     >>> f.save()
-### TTLibError
-### AXES
-dict() -> new empty dictionary
-dict(mapping) -> new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -> new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -> new dictionary initialized with the name=value pairs
-in the keyword argument list.  For example:  dict(one=1, two=2)
-### NSFont
-### function getFontPathOfFont
-### kCTFontURLAttribute
-objc.pyobjc_unicode
-
-Subclass of unicode for representing NSString values. Use 
-the method nsstring to access the NSString. 
-Note that instances are immutable and won't be updated when
-the value of the NSString changes.
-### OTFKernReader
-### CTFontDescriptorCreateWithNameAndSize
-### FontInfo
+### class FontInfo
 Read-only access to font information, such as names, character set and supported
 OpenType features.
-### CTFontDescriptorCopyAttribute
-### Glyph
+### class Glyph
 The Glyph class wraps the glyph structure of a TrueType Font and
 extracts data from the raw glyph such as point sequence and type.
 
@@ -110,3 +91,45 @@ extracts data from the raw glyph such as point sequence and type.
 
     >>> bounds[0][0]
     38.0
+### class NSFont
+### class OTFKernReader
+### class TTFont
+The main font object. It manages file input and output, and offers
+	a convenient way of accessing tables.
+	Tables will be only decompiled when necessary, ie. when they're actually
+	accessed. This means that simple operations can be extremely fast.
+### class TTLibError
+### dict __builtins__
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### __doc__
+### str __file__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __name__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __package__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### def getFontPathOfFont
+### unicode kCTFontURLAttribute
+objc.pyobjc_unicode
+
+Subclass of unicode for representing NSString values. Use 
+the method nsstring to access the NSString. 
+Note that instances are immutable and won't be updated when
+the value of the NSString changes.

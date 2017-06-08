@@ -1,27 +1,49 @@
 # typesetter
 
-
-## Functions
-
-### Image
+### module ET
+### class FootnoteExtension
+Footnote Extension.
+### class Galley
+A Galley is sticky sequential flow of elements, where the parts can have
+different widths (like headlines, images and tables) or responsive width, such as images
+and formatted text volumes. Size is calculated dynamically, since one of the enclosed
+elements may change width/height at any time during the composition process.
+Also the sequence may change by slicing, adding or removing elements by the Composer.
+Since the Galley is a full compatible Element, it can contain other galley instances
+recursively.
+### class Image
 The Image element is a “normal” container, which contains one (or more) PixelMap elements and zero (or more)
 caption or other elements. This way the user can add mulitple PixelMaps, a title elements, etc. 
 The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
 applied (e.g. if the image element changes size), or the child elements can be put on fixed positions.
-### function getMarker
-Answer a formatted string with markerId that can be used as non-display marker.
-This way the Composer can find the position of markers in text boxes, after
-FS-slicing has been done. Note there is always a very small "white-space"
-added to the string, so there is a potential difference in width that matters.
-For that reason markers should not be changed after slicing (which would theoretically
-alter the flow of the FormattedString in an box) and the markerId and amount/length
-of args should be kept as small as possible.
-Note that there is a potential problem of slicing through the argument string at
-the end of a textBox. That is another reason to keep the length of the arguments short.
-And not to use any spaces, etc. inside the markerId.
-Possible slicing through line-endings is not a problem, as the raw string ignores them.
-### Nl2BrExtension
-### ET
+### class LiteratureExtension
+Literature Extension.
+### class Nl2BrExtension
+### class Ruler
+### class TextBox
+### class Typesetter
+### dict __builtins__
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### __doc__
+### str __file__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __name__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### __package__
 ### fromstring
 fromstring(text, parser=None, base_url=None)
 
@@ -34,21 +56,18 @@ the ``parser`` keyword argument.
 The ``base_url`` keyword argument allows to set the original base URL of
 the document to support relative Paths when looking up external entities
 (DTD, XInclude, ...).
-### LiteratureExtension
-Literature Extension.
-### Galley
-A Galley is sticky sequential flow of elements, where the parts can have
-different widths (like headlines, images and tables) or responsive width, such as images
-and formatted text volumes. Size is calculated dynamically, since one of the enclosed
-elements may change width/height at any time during the composition process.
-Also the sequence may change by slicing, adding or removing elements by the Composer.
-Since the Galley is a full compatible Element, it can contain other galley instances
-recursively.
-### function newFS
+### def getMarker
+Answer a formatted string with markerId that can be used as non-display marker.
+This way the Composer can find the position of markers in text boxes, after
+FS-slicing has been done. Note there is always a very small "white-space"
+added to the string, so there is a potential difference in width that matters.
+For that reason markers should not be changed after slicing (which would theoretically
+alter the flow of the FormattedString in an box) and the markerId and amount/length
+of args should be kept as small as possible.
+Note that there is a potential problem of slicing through the argument string at
+the end of a textBox. That is another reason to keep the length of the arguments short.
+And not to use any spaces, etc. inside the markerId.
+Possible slicing through line-endings is not a problem, as the raw string ignores them.
+### def newFS
 Answer a formatted string from valid attributes in Style. Set the all values after testing
 their existence, so they can inherit from previous style formats.
-### Typesetter
-### Ruler
-### FootnoteExtension
-Footnote Extension.
-### TextBox

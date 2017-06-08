@@ -1,17 +1,7 @@
 # elements.variablefonts.variablecircle
 
-
-## Functions
-
-### function getVarLocation
-Translate the normalized location dict (all values between 0 and 1) to what the font expects
-by its min/max values for each axis.
-### TTFont
-The main font object. It manages file input and output, and offers
-	a convenient way of accessing tables.
-	Tables will be only decompiled when necessary, ie. when they're actually
-	accessed. This means that simple operations can be extremely fast.
-### MIN_WIDTH
+### class Element
+### int MIN_WIDTH
 int(x=0) -> int or long
 int(x, base=10) -> int or long
 
@@ -27,15 +17,12 @@ interpret the base from the string as an integer literal.
 
     >>> int('0b100', base=0)
     4
-### function generateInstance
-Instantiate an instance of a variable font at the specified location.
-Keyword arguments:
-varfilename -- a variable font file path
-location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
-### function newFS
-Answer a formatted string from valid attributes in Style. Set the all values after testing
-their existence, so they can inherit from previous style formats.
-### VariableCircle
+### class TTFont
+The main font object. It manages file input and output, and offers
+	a convenient way of accessing tables.
+	Tables will be only decompiled when necessary, ie. when they're actually
+	accessed. This means that simple operations can be extremely fast.
+### class VariableCircle
 Interpret the content of the self.font variable font and draw a circle info graphic on that info.
 Information is derived from the Variable Font and automatic converted into
 an info-grapgic, showing a simplified model of the design space.
@@ -46,18 +33,54 @@ penetration in the neutral glyph defined the influence of that axis.
 In that respect is it not much better than a list of sliders, but at least this
 model allows to show interactions between axes, by putting them on another 
 angle on the circle.
-### function drawGlyphPath
-### function getVariableFont
+### dict __builtins__
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### __doc__
+### str __file__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __name__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __package__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### instance division
+### def drawGlyphPath
+### def generateInstance
+Instantiate an instance of a variable font at the specified location.
+Keyword arguments:
+varfilename -- a variable font file path
+location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
+### def getVarLocation
+Translate the normalized location dict (all values between 0 and 1) to what the font expects
+by its min/max values for each axis.
+### def getVariableFont
 The variablesFontPath refers to the file of the source variable font.
 The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
 {"wght": 0, "wdth": 1000}
-### division
-### Element
-### function makeStyle
+### def makeStyle
 Make style from a copy of style dict (providing all necessary default values for the
 element to operate) and then overwrite these values with any specific arguments.
 If style is None, then create a new style dict. In that case all the element style values need
 to be defined by argument. The calling element must test if its minimum set
 (such as self.w and self.h) are properly defined.
-### function pointOffset
+### def newFS
+Answer a formatted string from valid attributes in Style. Set the all values after testing
+their existence, so they can inherit from previous style formats.
+### def pointOffset
 Answer new 3D point, shifted by offset.
