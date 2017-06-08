@@ -389,7 +389,7 @@ class PageBotDoc(Publication):
                             isDocTest = False
 
                     try:
-                        f.write('%s\n' % line.encode('utf-8'))
+                        f.write('%s  \n' % line.encode('utf-8'))
                     except Exception, e:
                         print 'An error occurred writing a doc file.'
                         print traceback.format_exc()
@@ -402,38 +402,52 @@ class PageBotDoc(Publication):
 
     def writeIndexMenu(self, f, path, m):
         u"""If index (__init__.py), writes links to class files and
-        submodules."""
+        submodules.
+
+        """
 
         if path.endswith('index'):
             folders = self.getFolderContents(path)
-            f.write('## %s\n\n' % 'Related Classes')
 
-            for k, v in folders.items():
-                if k == 'files':
-                    for x in v:
-                        if x == 'index':
-                            continue
+            if 'files' in folders:
+                f.write('## %s\n\n' % 'Related Classes')
+                v = folders['files']
 
-                        n = m.__name__
+                for x in v:
+                    if x == 'index':
+                        continue
 
-                        if not n.startswith('pagebot'):
-                            n = 'pagebot.' + n
-
-                        n = '%s.%s' % (n, x)
-                        f.write('* [%s](%s)\n' % (n, x))
-
-            f.write('\n## %s\n\n' % 'Related Modules')
-
-            for k, v in folders.items():
-                if k != 'files':
                     n = m.__name__
 
                     if not n.startswith('pagebot'):
                         n = 'pagebot.' + n
 
-                    n = '%s.%s' % (n, k)
+                    n = '%s.%s' % (n, x)
+                    f.write('* [%s](%s)\n' % (n, x))
 
-                    f.write('* [%s](%s)\n' % (n, k))
+            hasModules = False
+
+            if 'files' in folders:
+                if len(folders) > 1:
+                    hasModules = True
+            else:
+                if len(folders) > 0:
+                    hasModules = True
+
+            if hasModules:
+                f.write('\n## %s\n\n' % 'Related Modules')
+
+                for k, v in folders.items():
+                    if k != 'files':
+                        n = m.__name__
+
+                        if not n.startswith('pagebot'):
+                            n = 'pagebot.' + n
+
+                        n = '%s.%s' % (n, k)
+                        f.write('* [%s](%s)\n' % (n, k))
+            else:
+                f.write(NEWLINE)
 
     def path2ModName(self, path):
         modName = path.replace('/', '.')
