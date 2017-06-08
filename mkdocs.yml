@@ -1,7 +1,6 @@
 site_name: PageBot
 repo_url: https://github.com/typenetwork/PageBot/
 repo_name: PageBot
-docs_dir: Doc
 theme: readthedocs
 pages:
  - 'Home': 'index.md'
