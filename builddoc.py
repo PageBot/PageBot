@@ -318,8 +318,10 @@ class PageBotDoc(Publication):
         elif isinstance(value, NoneType):
             pass
         else:
-            print type(value)
-            t = '??'
+            t = str(type(value))
+            t = t.replace("<type '", '')
+            t = t.replace("<class '", '')
+            t = t.replace("'>", '')
 
         return t
 
@@ -352,14 +354,10 @@ class PageBotDoc(Publication):
             return
 
         t = self.getTypeString(value)
-        if key.startswith('__'):
-            t1 = key.replace('__', '\_\_')
-        elif key.startswith('_'):
-            t1 = key.replace('_', '\_')
-        else:
-            t1 = key
+        t1 = key.replace('_', '\_')
 
         if t:
+            t = t.replace('_', '\_')
             title = '### %s %s\n' % (t, t1)
         else:
             title = '### %s\n' % t1
@@ -367,8 +365,12 @@ class PageBotDoc(Publication):
         f.write(title)
 
         if value is not None:
-            if value.__doc__:
+            if '__doc__' in dir(value):
+            #if value.__doc__:
                 s = value.__doc__
+                if s is None:
+                    return
+
                 s = s.strip().replace('    ', '')
                 lines = s.split('\n')
                 isDocTest = False
