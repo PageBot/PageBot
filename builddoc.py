@@ -20,7 +20,8 @@
 #
 import runpy
 import os, pkgutil, traceback
-import types
+from shutil import copyfile
+from types import *
 import sys, getopt
 import doctest
 import drawBot
@@ -170,21 +171,29 @@ class PageBotDoc(Publication):
                 print traceback.format_exc()
 
     def writeDocs(self, m, folder=None, level=0, logFile=None):
-        u"""Writes config file including menu, traverses module to parse
+        """Writes config file including menu, traverses module to parse
         docstrings for all files."""
+        self.copyFiles()
         self.scanPackage(m)
         f = open(CONFIG, 'w')
         f.write('site_name: PageBot\n')
         f.write('repo_url: https://github.com/typenetwork/PageBot/\n')
         f.write('repo_name: PageBot\n')
         f.write('theme: readthedocs\n')
+        f.write('docs_dir: %s\n' % DOC)
         f.write('pages:\n')
         f.write(" - 'Home': 'index.md'\n")
         f.write(" - 'How To': 'howto.md'\n")
         f.write(" - 'About': 'about.md'\n")
         self.folders = self.buildDocsMenu(m, f)
+        f.write(" - 'License': 'license.md'\n")
         f.close()
         self.writeDocsPages(self.folders)
+
+    def copyFiles(self):
+        copyfile('README.md', '%s/index.md' % DOC)
+        copyfile('LICENSE.md', '%s/license.md' % DOC)
+        copyfile('Examples/Howto/TOC.md', '%s/howto.md' % DOC)
 
     def buildDocsMenu(self, m, yml):
         u"""Extracts menu from module structure."""
@@ -286,13 +295,12 @@ class PageBotDoc(Publication):
             if value is not None:
                 t = None
 
-                if isinstance(value, types.FunctionType):
+                if isinstance(value, FunctionType):
                     t = 'function'
-                elif isinstance(value, types.ClassType):
+                elif isinstance(value, ClassType):
                     t = 'class'
                 else:
-                    if not type(t) is types.NoneType:
-                        print type(t)
+                    print type(value)
 
                 if t:
                     title = '### %s %s\n' % (t, key)

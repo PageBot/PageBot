@@ -2,6 +2,7 @@ site_name: PageBot
 repo_url: https://github.com/typenetwork/PageBot/
 repo_name: PageBot
 theme: readthedocs
+docs_dir: Doc
 pages:
  - 'Home': 'index.md'
  - 'How To': 'howto.md'
@@ -175,3 +176,4 @@ pages:
     - 'pagebot/conditions/floating.md'
     - 'pagebot/conditions/flow.md'
     - 'pagebot/conditions/score.md'
+ - 'License': 'license.md'
