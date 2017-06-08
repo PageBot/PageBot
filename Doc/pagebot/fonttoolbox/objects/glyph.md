@@ -1,37 +1,17 @@
 # fonttoolbox.objects.glyph
 
-
-## Functions
-
-### NSFont
-### C
+### float C
 float(x) -> floating point number
 
 Convert a string or number to a floating point number, if possible.
-### TTFont
-The main font object. It manages file input and output, and offers
-	a convenient way of accessing tables.
-	Tables will be only decompiled when necessary, ie. when they're actually
-	accessed. This means that simple operations can be extremely fast.
-### TTLibError
-### GlyphAnalyzer
-### Point
-Point object containing Cartesian coordinates plus on / offcurve boolean.
-
-    >>> p = Point(101, 303, True)
-    >>> p.onCurve is False
-    False
-
-    >>> print p
-    Pt(101,303,On)
-### F
+### float F
 float(x) -> floating point number
 
 Convert a string or number to a floating point number, if possible.
-### FontInfo
+### class FontInfo
 Read-only access to font information, such as names, character set and supported
 OpenType features.
-### Glyph
+### class Glyph
 The Glyph class wraps the glyph structure of a TrueType Font and
 extracts data from the raw glyph such as point sequence and type.
 
@@ -77,7 +57,18 @@ extracts data from the raw glyph such as point sequence and type.
 
     >>> bounds[0][0]
     38.0
-### Segment
+### class GlyphAnalyzer
+### class NSFont
+### class Point
+Point object containing Cartesian coordinates plus on / offcurve boolean.
+
+    >>> p = Point(101, 303, True)
+    >>> p.onCurve is False
+    False
+
+    >>> print p
+    Pt(101,303,On)
+### class Segment
 Curve segment from a certain oncurve point to the next one.
 
     >>> p0 = Point(101, 303, True)
@@ -96,5 +87,37 @@ Curve segment from a certain oncurve point to the next one.
 
     >>> s.points[-1].onCurve
     False
-### function point2D
+### class TTFont
+The main font object. It manages file input and output, and offers
+	a convenient way of accessing tables.
+	Tables will be only decompiled when necessary, ie. when they're actually
+	accessed. This means that simple operations can be extremely fast.
+### class TTLibError
+### dict __builtins__
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### __doc__
+### str __file__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __name__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __package__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### def point2D
 Answer the 2D origin as combination of p and offset.

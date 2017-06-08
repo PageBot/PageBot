@@ -27,7 +27,7 @@ from drawBot.context.baseContext import BaseContext
 from pagebot.style import NO_COLOR, LEFT
 from pagebot.toolbox.transformer import point2D
 
-#   P A T H S 
+#   P A T H S
 
 def getRootPath():
     u"""Answer the root path of the pagebot module."""
@@ -140,7 +140,7 @@ def cols2w(w, e): # Answer the col width for the give amount of colums
     cw = e.css('cw', 0)
     if cw + gw:
         return int((e.w - e.pl - e.pr + gw) / (cw + gw))
-    
+
 def w2rows(w, e): # Answer the rounded amount of rows that fit in the given width.
     gh = e.gh
     ch = e.css('ch', 0)
@@ -152,7 +152,7 @@ def rows2w(w, e): # Answer the row width for the give amount of colums
     ch = e.css('ch', 0)
     if ch + gh:
         return int((e.h - e.pt - e.pr + e.gw) / (cw + gw))
-    
+
 def w2cols(w, e): # Answer the rounded amount of columns that fit in the given width.
     gw = e.gw
     cw = e.css('cw', 0)
@@ -164,7 +164,7 @@ def cols2w(w, e): # Answer the col with for the give amount of colums
     cw = e.css('cw', 0)
     if cw + gw:
         return int((e.w - e.pl - e.pr + e.gw) / (cw + gw))
-"""    
+"""
 
 # Size
 

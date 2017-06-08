@@ -1,16 +1,13 @@
 # publications.poster
 
+### class Document
+A Document is just another kind of container.
+### str LEFT
+str(object='') -> string
 
-## Functions
-
-### Publication
-The abstract Publication class, implements everything needed for a specific kind of publication.
-It can hold multiple related Document instances and serves various output formats.
-### Poster
-### function newFS
-Answer a formatted string from valid attributes in Style. Set the all values after testing
-their existence, so they can inherit from previous style formats.
-### NO_COLOR
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### int NO_COLOR
 int(x=0) -> int or long
 int(x, base=10) -> int or long
 
@@ -26,18 +23,44 @@ interpret the base from the string as an integer literal.
 
     >>> int('0b100', base=0)
     4
-### Template
-### function getRootStyle
+### class Poster
+### class Publication
+The abstract Publication class, implements everything needed for a specific kind of publication.
+It can hold multiple related Document instances and serves various output formats.
+### class Template
+### dict __builtins__
+dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+in the keyword argument list.  For example:  dict(one=1, two=2)
+### __doc__
+### str __file__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __name__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### str __package__
+str(object='') -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object.
+### def getRootStyle
 Answer the main root style tha contains all default style attributes of PageBot.
 To be overwritten when needed by calling applications.
 CAPITALIZED attribute names are for reference only. Not used directly from styles.
 They can be copied on other style attributes.
 Note that if the overall unit style.u is changed by the calling application, also the
 U-based values must be recalculated for proper measures.
-### Document
-A Document is just another kind of container.
-### LEFT
-str(object='') -> string
-
-Return a nice string representation of the object.
-If the argument is a string, the return value is the same object.
+### def newFS
+Answer a formatted string from valid attributes in Style. Set the all values after testing
+their existence, so they can inherit from previous style formats.
