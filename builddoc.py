@@ -194,6 +194,7 @@ class PageBotDoc(Publication):
         self.writeDocsPages(self.folders)
 
     def copyFiles(self):
+        u"""Copies hand edited files."""
         copyfile('README.md', '%s/index.md' % DOC)
         copyfile('LICENSE.md', '%s/license.md' % DOC)
         copyfile('Examples/Howto/TOC.md', '%s/howto.md' % DOC)
@@ -283,9 +284,12 @@ class PageBotDoc(Publication):
         self.writeDocStrings(f, path, m)
 
     def getTypeString(self, value):
+        u"""Converts the type to a string."""
         t = None
 
         if isinstance(value, FunctionType):
+            t = 'def'
+        elif isinstance(value, MethodType):
             t = 'def'
         elif isinstance(value, int):
             t = 'int'
@@ -309,32 +313,56 @@ class PageBotDoc(Publication):
             t = 'class'
         elif isinstance(value, InstanceType):
             t = 'instance'
+        elif isinstance(value, property):
+            t = 'property'
+        elif isinstance(value, NoneType):
+            pass
         else:
             print type(value)
+            t = '??'
 
         return t
 
     def writeDocStrings(self, f, path, m):
         u"""Writes docstring contents for all classes in the file."""
-        #for key, value in d.items():
         for key, value in inspect.getmembers(m):
             self.writeDocString(f, key, value)
 
         f.close()
 
-    def writeDocString(self, f, key, value):
+    def inIgnores(self, key):
+        if key.startswith('__'):
+            return False
+        elif key.startswith('NS'):
+            return True
+        elif key in sys.modules.keys():
+            return True
+        elif key in self.db:
+            return True
+
+        return False
+
+    def writeDocString(self, f, key, value, level=0):
         #print key.startswith('__'), key in sys.modules.keys()
         #if key in self.db:
-        if not key.startswith('__') and (key in sys.modules.keys() or key in self.db):
-            # Skip.
+        if level > 1:
+            return
+
+        if self.inIgnores(key):
             return
 
         t = self.getTypeString(value)
+        if key.startswith('__'):
+            t1 = key.replace('__', '\_\_')
+        elif key.startswith('_'):
+            t1 = key.replace('_', '\_')
+        else:
+            t1 = key
 
         if t:
-            title = '### %s %s\n' % (t, key)
+            title = '### %s %s\n' % (t, t1)
         else:
-            title = '### %s\n' % key
+            title = '### %s\n' % t1
 
         f.write(title)
 
@@ -363,6 +391,11 @@ class PageBotDoc(Publication):
                     except Exception, e:
                         print 'An error occurred writing a doc file.'
                         print traceback.format_exc()
+
+        if isinstance(value, TypeType):
+            level += 1
+            for k, v in inspect.getmembers(value):
+                self.writeDocString(f, k, v, level=level)
 
 
     def writeIndexMenu(self, f, path, m):
