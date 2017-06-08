@@ -2,6 +2,8 @@
 
 *.fam
 site
+mkdocs.yml
+log.txt
 
 #export
 
