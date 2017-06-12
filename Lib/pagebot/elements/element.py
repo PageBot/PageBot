@@ -40,7 +40,7 @@ class Element(object):
     isFlow = False # Value is True if self.next if defined.
     isPage = False # Set to True by Page-like elements.
 
-    def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_WIDTH, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
+    def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
             title=None, style=None, conditions=None, elements=None, template=None, nextElement=None, prevElement=None, 
             nextPage=None, prevPage=None, padding=None, margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
             mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, borders=None, borderTop=None, borderRight=None,
@@ -933,7 +933,7 @@ class Element(object):
     def _get_w(self): # Width
         return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
     def _set_w(self, w):
-        self.style['w'] = w or MIN_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['w'] = w or DEFAULT_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
 
     def _get_mw(self): # Width, including margins

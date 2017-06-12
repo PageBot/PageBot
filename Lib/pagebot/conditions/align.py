@@ -25,7 +25,7 @@ class SolveBlock(Condition):
 
 #	F I T T I N G 
 
-#   By fittng conditions, elements grow to match the size of parents.
+#   By fitting conditions, elements grow to match the size of parents.
 
 class Fit(Condition):
 	u"""Fit the element on all sides of the parent paddings."""
@@ -279,6 +279,41 @@ class Shrink2BlockBottomSide(Condition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.shrink2BlockBottomSide(), e, score)
 
+#	B L O C K  F I T T I N G
+#
+#	Make the block fit the width/height of the element.
+
+class FitBlock2Width(Condition):
+	def test(self, e):
+		return e.isBlockFittingWidth(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitBlock2Width(), e, score)
+
+class FitBlock2WidthSides(Condition):
+	def test(self, e):
+		return e.isBlockFittingWidthSides(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitBlock2WidthSides(), e, score)
+
+class FitBlock2Height(Condition):
+	def test(self, e):
+		return e.isBlockFittingHeight(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitBlock2Height(), e, score)
+
+class FitBlock2HeightSides(Condition):
+	def test(self, e):
+		return e.isBlockFittingHeightSides(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.fitBlock2HeightSides(), e, score)
 
 #	C E N T E R  H O R I Z O N T A L
 

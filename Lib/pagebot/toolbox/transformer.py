@@ -440,13 +440,6 @@ def obj2StyleIds(s):
 # ---------------------------------------------------------------------------------------------------------
 #    P A T H
 
-def getFontPath(fontName, foundryName='fontbureau', fontFormat='ttf'):
-    import pagebot
-    p = module2Path(pagebot)
-    pp = path2ParentPath(p)
-    gpp = path2ParentPath(pp)
-    return gpp + '/Fonts/%s/%s.%s' % (foundryName, fontName, fontFormat)
-
 def module2Path(module):
     return '/'.join((module.__file__).split('/')[:-1])
 
