@@ -20,14 +20,14 @@ import Quartz
 import re
 from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth, \
     hyphenation, cmykLinearGradient, linearGradient, cmykRadialGradient, radialGradient,\
-    shadow
+    shadow, textSize
 
 from drawBot.context.baseContext import BaseContext
 
 from pagebot.style import NO_COLOR, LEFT
 from pagebot.toolbox.transformer import point2D
 
-#   P A T H S
+#   P A T H S 
 
 def getRootPath():
     u"""Answer the root path of the pagebot module."""

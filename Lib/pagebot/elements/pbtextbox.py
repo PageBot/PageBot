@@ -14,9 +14,9 @@ import re
 import CoreText
 import Quartz
 
-from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString, line
+from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString, line, fill, stroke, strokeWidth
 
-from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE, BOTTOM
+from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE, BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot import newFS, setStrokeColor, setFillColor
