@@ -80,7 +80,7 @@ def makeDocument():
     fs = newFS('Float on top of yellow', style=dict(font='Verdana', fontSize=7,
         textFill=0))
     # Text falls through the yr2 (with differnt z) and lands on yellowSquare by Float2BottomSide()    
-    newTextBox(fs, name='Caption', parent=redContainer, z=8, h=None, # Elastic vertical size
+    newTextBox(fs, name='Caption', parent=redContainer, z=8,
         fill=(0, 1, 0), strokeWidth=0.5, stroke=(1, 1, 0),
         conditions=[ Fit2Width(), Float2BottomSide()], elasticH=True, padding=3,
     )    

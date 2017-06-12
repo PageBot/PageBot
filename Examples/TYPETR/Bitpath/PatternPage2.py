@@ -43,3 +43,5 @@ if __name__ == '__main__':
 	s = blurb.getBlurb('article_content', noTags=True)
 	fs = newFS(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 0, 0), rLeading=0.5))
 	textBox(fs, (x, y, 1000, 900))
+	
+saveImage('_export/PatternPage2.pdf')
