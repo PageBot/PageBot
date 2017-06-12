@@ -95,7 +95,8 @@ ORIGIN_POINT = (0, 0, 0)
 # Min/max values for element sizes. Make sure that elements dimensions never get 0
 XXXL = sys.maxint
 MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
-DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)
+# DEFAULT_HEIGHT makes default vertical elastic to content size.
+DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, None, 0)
 MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL
 
 FIT = 'fit' # Special fontsize that makes text fitting on element width.
@@ -164,6 +165,8 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         x = 0, # Default local origin, relative to parent.
         y = 0,
         z = 0, 
+        # If one of the sizes is None, then the value is used that the content needs in that direction,
+        # making the element into elastic containers.
         w = w, #ons Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.

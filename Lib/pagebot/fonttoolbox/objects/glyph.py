@@ -25,7 +25,6 @@ F = 2.0 / 3.0
 
 class Point(object):
     u"""
-    Point object containing Cartesian coordinates plus on / offcurve boolean.
     >>> p = Point(101, 303, True)
     >>> p.onCurve is False
     False
@@ -42,7 +41,6 @@ class Point(object):
 
 class Segment(object):
     u"""
-    Curve segment from a certain oncurve point to the next one.
     >>> p0 = Point(101, 303, True)
     >>> p1 = Point(202, 404, False)
     >>> p2 = Point(303, 808, False)
