@@ -19,7 +19,7 @@ from pagebot.toolbox.transformer import path2ScriptId
 
 if __name__ == '__main__':
 
-    scriptGlobals = pageBot.getGlobals(path2ScriptId(__file__))
+    scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
 
     #for k in sorted(getFamilyFontPaths('Bitpath')):
     #    print k
