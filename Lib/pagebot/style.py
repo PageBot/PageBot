@@ -82,12 +82,24 @@ Size10x14 = sizes('10x14') # 720, 1008
 # International generic fit for stationary
 A4Letter = A4[0], Letter[1] # 210mm width and 11" height will always fit printer and fax.
 W, H = A4Letter # Default size.
+# Overzized (depending on requirement of printer, including 36pt view padding for crop marks
+A4Oversized = A4[0]+INCH, A4[1]+INCH
+A3Oversized = A3[0]+INCH, A3[1]+INCH
 # International Postcard Size
 IntPostcardMax = 235*MM, 120*MM
 IntPostcardMin = 140*MM, 90*MM
 # US Postal Postcard Size
 USPostcardMax = 6*INCH, 4.25*INCH
 USPostcardMin = 5*INCH, 3.5*INCH
+# Business card, https://nl.wikipedia.org/wiki/Visitekaartje
+ISOCreditCard = 85.60*MM, 53.98*MM
+ISO216 = A8
+USBusinessCard = 3.5*INCH, 2*INCH # USA, Canada
+EuropeBusinessCard = 85*MM, 55*MM # Germany, France, Italy, Spain, UK, Netherlands, Portugal
+EastEuropeBusinessCard = 90*MM, 50*MM # Hungary, Check.
+AustraliaBusinessCard = 90*MM, 55*MM # Australia, New Zealand
+ChinaBusinessCard = 90*MM, 54*MM
+JapanBusinessCard = 91*MM, 55*MM
 
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
@@ -95,8 +107,7 @@ ORIGIN_POINT = (0, 0, 0)
 # Min/max values for element sizes. Make sure that elements dimensions never get 0
 XXXL = sys.maxint
 MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
-# DEFAULT_HEIGHT makes default vertical elastic to content size.
-DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, None, 0)
+DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)
 MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL
 
 FIT = 'fit' # Special fontsize that makes text fitting on element width.
@@ -165,8 +176,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         x = 0, # Default local origin, relative to parent.
         y = 0,
         z = 0, 
-        # If one of the sizes is None, then the value is used that the content needs in that direction,
-        # making the element into elastic containers.
         w = w, #ons Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
