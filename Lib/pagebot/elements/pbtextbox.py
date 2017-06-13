@@ -291,7 +291,7 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, fs, minW=None, w=None, h=None, **kwargs):
+    def __init__(self, fs, minW=None, w=None, h=None, showBaselines=False, **kwargs):
         Element.__init__(self,  **kwargs)
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
@@ -301,6 +301,7 @@ class TextBox(Element):
         if isinstance(fs, basestring):
             fs = newFS(fs, self)
         self.fs = fs # Keep as plain string, in case parent is not set yet.
+        self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
         return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
@@ -472,11 +473,11 @@ class TextBox(Element):
 
         textBox(self.fs, (px+self.pl+xOffset, py+self.pb-yOffset, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
-        # If there are child elements, draw them over the text.
+        # If there are any child elements, draw them over the text.
         self._drawElements(p, view)
 
         # Draw markers on TextLine and TextRun positions.
-        self._drawBaselines(view)
+        self._drawBaselines(px, py, view)
  
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, p, view)
@@ -484,33 +485,36 @@ class TextBox(Element):
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
-    def _drawBaselines(self, view):
+    def _drawBaselines(self, px, py, view):
         # Let's see if we can draw over them in exactly the same position.
-        if not view.showTextBoxBaselines:
+        if not view.showTextBoxBaselines and not self.showBaselines:
             return
 
         fontSize = self.css('baseLineMarkerSize')
         if view.showTextBoxY:
             text(FormattedString(`0`, xAlign=LEFT, 
                 font='Verdana', fontSize=8, 
-                fill=(0, 0, 1)), (self.x + self.w + 3,  self.y + self.h - fontSize/4))
+                fill=(0, 0, 1)), (px + self.w + 3,  py + self.h - fontSize/4))
 
+        stroke(0, 0, 1)
+        strokeWidth(0.5)
         prevY = 0
         for index in range(len(self)):
             _, y, _ = self.baseLines[index]
-            line((self.x, self.y + self.h - y), (self.x + self.w, self.y + self.h - y))
+            print 'sasaasasa', index, px, py, y
+            line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
                 text(FormattedString(`index`, xAlign=RIGHT, font='Verdana', fontSize=fontSize, 
-                    fill=(0, 0, 1)), (self.x-8, self.y + self.h - y - fontSize/3))
+                    fill=(0, 0, 1)), (px-8, py + y - fontSize/3))
             if view.showTextBoxY:
                 text(FormattedString('%d' % round(y), xlign=LEFT, 
                     font='Verdana', fontSize=fontSize, 
-                    fill=(0, 0, 1)), (self.x + self.w + 3, self.y + self.h - y - fontSize/4))
+                    fill=(0, 0, 1)), (px + self.w + 3, py + y - fontSize/4))
             if view.showTextBoxLeading:
                 leading = round(abs(y - prevY))
                 text(FormattedString('%d' % leading, xAlign=LEFT, 
                     font='Verdana', fontSize=fontSize, 
-                    fill=(1, 0, 0)), (self.x + self.w + 3, self.y + self.h - prevY - leading/2 - fontSize/4))
+                    fill=(1, 0, 0)), (px + self.w + 3, py + prevY - leading/2 - fontSize/4))
             prevY = y
  
  

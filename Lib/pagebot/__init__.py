@@ -140,7 +140,7 @@ def cols2w(w, e): # Answer the col width for the give amount of colums
     cw = e.css('cw', 0)
     if cw + gw:
         return int((e.w - e.pl - e.pr + gw) / (cw + gw))
-
+    
 def w2rows(w, e): # Answer the rounded amount of rows that fit in the given width.
     gh = e.gh
     ch = e.css('ch', 0)
@@ -152,7 +152,7 @@ def rows2w(w, e): # Answer the row width for the give amount of colums
     ch = e.css('ch', 0)
     if ch + gh:
         return int((e.h - e.pt - e.pr + e.gw) / (cw + gw))
-
+    
 def w2cols(w, e): # Answer the rounded amount of columns that fit in the given width.
     gw = e.gw
     cw = e.css('cw', 0)
@@ -164,7 +164,7 @@ def cols2w(w, e): # Answer the col with for the give amount of colums
     cw = e.css('cw', 0)
     if cw + gw:
         return int((e.w - e.pl - e.pr + e.gw) / (cw + gw))
-"""
+"""    
 
 # Size
 
@@ -423,9 +423,10 @@ def css(name, e, styles=None, default=None):
         return e.css(name)
     return default
 
-def newFS(t, e=None, style=None):
-    u"""Answer a formatted string from valid attributes in Style. Set the all values after testing
-    their existence, so they can inherit from previous style formats."""
+def newFS(t, e=None, style=None, w=None, h=None, fontSize=None):
+    u"""Answer a formatted string from valid attributes in Style. Set all values after testing
+    their existence, so they can inherit from previous style formats.
+    If target width w or height w is defined, then the fontSize is scaled to make the string fit w or h."""
 
     hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
 
@@ -433,7 +434,8 @@ def newFS(t, e=None, style=None):
     sFont = css('font', e, style)
     if sFont is not None:
         fs.font(sFont)
-    sFontSize = css('fontSize', e, style)
+    # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
+    sFontSize = fontSize or css('fontSize', e, style) # May be scaled to fit w or h if target is defined.
     sLeading = css('leading', e, style)
     rLeading = css('rLeading', e, style)
     if sLeading or (rLeading and sFontSize):
@@ -515,7 +517,17 @@ def newFS(t, e=None, style=None):
     elif sCapitalized:
         t = t.capitalize()
 
-    return fs + t
+    newt = fs + t # Format plain string t onto new formatted fs.
+    if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
+        tw, _ = textSize(newt)
+        fontSize = w / tw * sFontSize
+        newt = newFS(t, e, style, fontSize=fontSize)
+    elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
+        _, th = textSize(newt)
+        fontSize = h / th * sFontSize
+        newt = newFS(t, e, style, fontSize=fontSize)
+
+    return newt
 
 def textBoxBaseLines(txt, box):
     u"""Answer a list of (x,y) positions of all line starts in the box. This function may become part

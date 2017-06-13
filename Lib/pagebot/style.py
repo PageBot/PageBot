@@ -180,12 +180,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
 
-        # Elastic sizes: if the flag is, then the (w, h, d) is elastic (depending on what is inside),
-        # relative to the origin.
-        elasticW = False,
-        elasticH = False,
-        elasticD = False,
-
         frameDuration = None, # In case saving as .mov or .gif, this value defines 1/frames_per_second
         # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
         folds = None,
@@ -272,7 +266,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Typographic defaults
         font = DEFAULT_FONT, # Default is to avoid existing font and fontSize in the graphic state.
         fallbackFont = DEFAULT_FALLBACK_FONT,
-        fontSize = u * 7/10, # Default font size in points, related to U
+        fontSize = u * 7/10, # Default font size in points, related to U. If FIT, size is elastic to width.
         uppercase = False, # All text in upper case
         lowercase = False, # All text in lower case (only if uppercase is False
         capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase)
