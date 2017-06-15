@@ -206,7 +206,7 @@ def makeDocument(rs):
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=sFontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
-        rTracking=P_TRACK, sLeading=14, rLeading=0, xAlign=LEFT, hyphenation=True)
+        rTracking=P_TRACK, sLeading=14, rLeading=0, xTextAlign=LEFT, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)

@@ -14,7 +14,8 @@ import re
 import CoreText
 import Quartz
 
-from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString, line, fill, stroke, strokeWidth
+from drawBot import textOverflow, hyphenation, textBox, text, rect, textSize, FormattedString, line, fill, \
+    stroke, strokeWidth
 
 from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE, BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT
 from pagebot.elements.element import Element
@@ -60,9 +61,9 @@ class TextRun(object):
 
         #print '=====', ctRun
         #print gc, len(CoreText.CTRunGetStringIndicesPtr(ctRun)), CoreText.CTRunGetStringIndicesPtr(ctRun), ctRun
-        #self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
+        self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
         #CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
-        #self.advances = CoreText.CTRunGetAdvances(ctRun, CoreText.CFRange(0, 5), None)
+        self.advances = CoreText.CTRunGetAdvances(ctRun, CoreText.CFRange(0, 5), None)
         #self.positions = CoreText.CTRunGetPositionsPtr(ctRun)[0:gc]
         #CoreText.CTRunGetPositions(ctRun, CoreText.CFRange(0, 5), None)[4]
         #self.glyphFontIndices = CoreText.CTRunGetGlyphsPtr(ctRun)[0:gc]
@@ -291,7 +292,8 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, fs, minW=None, w=None, h=None, showBaselines=False, **kwargs):
+    def __init__(self, fs, minW=None, w=None, h=None, showBaselines=False, 
+            showOverflowMarker=True, **kwargs):
         Element.__init__(self,  **kwargs)
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
@@ -302,6 +304,7 @@ class TextBox(Element):
             fs = newFS(fs, self)
         self.fs = fs # Keep as plain string, in case parent is not set yet.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
+        self.showOverflowMarker = showOverflowMarker # If there is overflow and no chain to next, show [+] marker
 
     def _get_w(self): # Width
         return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
@@ -374,7 +377,6 @@ class TextBox(Element):
         Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*self._box))
         ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
         self._ctLines = CoreText.CTFrameGetLines(ctBox)
-        self._baseLines = [] # Contain (x, y) start position of line
         self._textLines = []
         for lineIndex, p in enumerate(CoreText.CTFrameGetLineOrigins(ctBox, (0, len(self._ctLines)), None)):
             x = p.x
@@ -385,7 +387,6 @@ class TextBox(Element):
             ctLine = self._ctLines[lineIndex]
             textLine = TextLine(ctLine, (x, y), lineIndex)
             self._textLines.append(textLine)
-            self._baseLines.append((x, y, textLine.string))
  
     def getTextSize(self, fs=None, w=None):
         """Figure out what the width/height of the text self.fs is, with or given width or
@@ -404,7 +405,7 @@ class TextBox(Element):
         # Otherwise test if there is overflow of text in the given size.
         return textOverflow(self.fs, (0, 0, w or self.w-self.pr-self.pl, h or self.h-self.pt-self.pb), LEFT)
 
-    def getBaselinePositions(self, y=0, w=None, h=None):
+    def XXXgetBaselinePositions(self, y=0, w=None, h=None):
         u"""Answer the list vertical baseline positions, relative to y (default is 0)
         for the given width and height. If omitted use (self.w, self.h)"""
         baselines = []
@@ -414,10 +415,13 @@ class TextBox(Element):
 
     #   F L O W
 
-    def isOverflow(self, tolerance):
+    def isOverflow(self, tolerance=0):
         u"""Answer the boolean flag if this element needs overflow to be solved.
-        This method is typically called by conditions such as Overflow2Next."""
-        return self.nextElement is None or not len(self.getOverflow())
+        This method is typically called by conditions such as Overflow2Next or during drawing
+        if the overflow marker needs to be drawn.
+        Note: There is currently not a test if text actually went into the next element. It's just
+        checking if there is a name defined, not if it exists or is already filled by another flow."""
+        return self.nextElement is None and len(self.getOverflow())
 
     def overflow2Next(self):
         u"""Try to fix if there is overflow."""
@@ -479,6 +483,9 @@ class TextBox(Element):
         # Draw markers on TextLine and TextRun positions.
         self._drawBaselines(px, py, view)
  
+        if self.showOverflowMarker and self.isOverflow():
+            self._drawOverflowMarker(px, py, view)
+
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, p, view)
 
@@ -491,33 +498,92 @@ class TextBox(Element):
             return
 
         fontSize = self.css('baseLineMarkerSize')
+        indexStyle = dict(font='Verdana', fontSize=8, textFill=(0, 0, 1))
+        yStyle = dict(font='Verdana', fontSize=fontSize, textFill=(0, 0, 1))
+        leadingStyle = dict(font='Verdana', fontSize=fontSize, textFill=(1, 0, 0))
+
         if view.showTextBoxY:
-            text(FormattedString(`0`, xAlign=LEFT, 
-                font='Verdana', fontSize=8, 
-                fill=(0, 0, 1)), (px + self.w + 3,  py + self.h - fontSize/4))
+            fs = newFS(`0`, style=indexStyle)
+            _, th = textSize(fs)
+            text(fs, (px + self.w + 3,  py + self.h - th/4))
 
         stroke(0, 0, 1)
         strokeWidth(0.5)
         prevY = 0
-        for index in range(len(self)):
-            _, y, _ = self.baseLines[index]
-            print 'sasaasasa', index, px, py, y
+        for textLine in self.textLines: 
+            y = textLine.y
+            # TODO: Why measures not showing?
             line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
-                text(FormattedString(`index`, xAlign=RIGHT, font='Verdana', fontSize=fontSize, 
-                    fill=(0, 0, 1)), (px-8, py + y - fontSize/3))
+                fs = newFS(`textLine.lineIndex`, style=indexStyle)
+                tw, th = textSize(fs) # Calculate right alignment
+                text(fs, (px-3-tw, py + y - th/4))
             if view.showTextBoxY:
-                text(FormattedString('%d' % round(y), xlign=LEFT, 
-                    font='Verdana', fontSize=fontSize, 
-                    fill=(0, 0, 1)), (px + self.w + 3, py + y - fontSize/4))
+                fs = newFS('%d' % round(y), style=yStyle)
+                _, th = textSize(fs)
+                text(fs, (px + self.w + 3, py + y - th/4))
             if view.showTextBoxLeading:
                 leading = round(abs(y - prevY))
-                text(FormattedString('%d' % leading, xAlign=LEFT, 
-                    font='Verdana', fontSize=fontSize, 
-                    fill=(1, 0, 0)), (px + self.w + 3, py + prevY - leading/2 - fontSize/4))
+                fs = newFS('%d' % leading, style=leadingStyle)
+                _, th = textSize(fs)
+                text(fs, (px + self.w + 3, py + prevY - leading/2 - th/4))
             prevY = y
  
- 
+    def _drawOverflowMarker(self, px, py, view):
+        fs = newFS('[+]', style=dict(textFill=(1, 0, 0), font='Verdana-Bold', fontSize=8))
+        tw, th = textSize(fs)
+        if self.originTop:
+            pass
+        else:
+            text(fs, (px + self.w - 3 - tw, py + th/2))
+
+    #   C O N D I T I O N S
+
+    # Text conditions
+
+    def isBaselineOnTop(self, tolerance):
+        u"""Answer the boolean if the top baseline is located at self.parent.pt."""
+        return abs(self.top - (self.parent.h - self.parent.pt - self.textLines[0].y + self.h)) <= tolerance
+
+    def isBaselineOnBottom(self, tolerance):
+        u"""Answer the boolean if the bottom baseline is located at self.parent.pb."""
+        return abs(self.bottom - self.parent.pb) <= tolerance
+
+    def isAscenderOnTop(self, tolerance):
+        return True
+
+    def isCapHeightOnTop(self, tolerance):
+        return True
+
+    def isXHeightOnTop(self, tolerance):
+        return True
+
+
+    def baseline2Top(self):
+        self.top = self.parent.h - self.parent.pt - self.textLines[0].y + self.h
+        return True
+        
+    def baseline2Bottom(self):
+        self.bottom = self.parent.pb # - self.textLines[-1].y
+        return True
+
+    def floatBaseline2Top(self):
+        # ...
+        return True
+
+    def floatAscender2Top(self):
+        # ...
+        return True
+
+    def floatCapHeight2Top(self):
+        # ...
+        return True
+
+    def floatXHeight2Top(self):
+        # ...
+        return True
+
+
     #   F I N D
 
     def findPattern(self, pattern):

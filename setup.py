@@ -16,8 +16,8 @@ setup(
     name='pagebot',
      url="https://github.com/TypeNetwork/PageBot",
     version='0.1',
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
+    packages=find_packages('Lib'),
+    package_dir={'': 'Lib'},
     #entry_points={
     #    'console_scripts': [
     #        'pagebot = pagebot.__main__:main'
