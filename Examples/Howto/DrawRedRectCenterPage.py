@@ -45,8 +45,7 @@ def makeDocument():
         c = 0.5
     conditions = (Center2Center(), Middle2Middle())
     newRect(fill=c, parent=page, w=RectSize, h=RectSize,
-        conditions=conditions,
-        xAlign=CENTER, yAlign=MIDDLE)
+        conditions=conditions, xAlign=CENTER, yAlign=MIDDLE)
     # Solve the layout conditions of the red rectangle.
     # Show if one of the conditions failed to solve.
     score = page.solve()

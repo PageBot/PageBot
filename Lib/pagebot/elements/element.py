@@ -209,13 +209,19 @@ class Element(object):
         self._eIds = {}
 
     def deepCopy(self):
+        u"""Answer a copy of self, where the "unique" fields are set to default. Also perform a deep copy
+        on all child elements."""
         e = copy.copy(self)
         e._eId = uniqueID(e) # Guaranteed unique Id for every element.
+        e.nextElement = None
+        e.prevElement = None
         e.style = copy.copy(self.style)
         e.clearElements()
         for child in self.elements:
             e.appendElement(child.deepCopy())
         return e
+
+    copy = deepCopy # Make the same as default.
 
     def setElementByIndex(self, e, index):
         u"""Replace the element, if there is already one at index. Otherwise append it to self.elements
@@ -337,11 +343,43 @@ class Element(object):
     #   If self.nextElement is defined, then check the condition if there is overflow.
 
     def isOverflow(self, tolerance):
-        return False
+        return True
 
     def overflow2Next(self):
         u"""Try to fix if there is overflow. Default behavior is to do nothing. This method
         is redefined by inheriting classed, such as TextBox, that can have overflow of text."""
+        return True
+
+    def _get_baselineGrid(self):
+        return self.css('baselineGrid')
+    def _set_baselineGrid(self, baselineGrid):
+        self.style['baselineGrid'] = baselineGrid
+    baselineGrid = property(_get_baselineGrid, _set_baselineGrid)
+
+    def _get_baselineGridStart(self):
+        return self.css('baselineGridStart')
+    def _set_baselineGridStart(self, baselineGridStart):
+        self.style['baselineGridStart'] = baselineGridStart
+    baselineGridStart = property(_get_baselineGridStart, _set_baselineGridStart)
+
+    # Text conditions, always True for non-text elements.
+
+    def isBaselineOnTop(self, tolerance):
+        return True
+
+    def isBaselineOnBottom(self, tolerance):
+        return True
+
+    def isBaselineOnTop(self, tolerance):
+        return True
+
+    def isCapHeightOnTop(self, tolerance):
+        return True
+
+    def isAscenderOnTop(self, tolerance):
+        return True
+
+    def isXHeightOnTop(self, tolerance):
         return True
 
     #   S T Y L E
@@ -2492,6 +2530,29 @@ class Element(object):
         else:
             self.h += self.parent.h - self.top
         return True
+
+    #    Text conditions
+
+    def baseline2Top(self):
+        # ...
+        return True
+        
+    def baseline2Bottom(self):
+        # ...
+        return True
+
+    def floatBaseline2Top(self):
+        # ...
+        return True
+
+    def floatCapHeight2Top(self):
+        # ...
+        return True
+
+    def floatXHeight2Top(self):
+        # ...
+        return True
+
 
 if __name__ == '__main__':
     import doctest

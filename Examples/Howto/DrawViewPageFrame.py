@@ -38,7 +38,7 @@ def makeDocument():
         s = 'Origin on bottom'
         conditions = (Center2Center(), Bottom2Bottom())
     
-    fs = newFS(s, style=dict(fontSize=30, textFill=(1, 0, 0), xAlign=CENTER)) 
+    fs = newFS(s, style=dict(fontSize=30, textFill=(1, 0, 0), xTextAlign=CENTER)) 
     nt = newText(fs, y=100, xxconditions=conditions, parent=page, fill=(1, 1, 0))
     print nt.x, nt.y, nt.w, nt.h
     score = page.solve()

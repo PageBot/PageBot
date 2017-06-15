@@ -435,7 +435,7 @@ def newFS(t, e=None, style=None, w=None, h=None, fontSize=None):
     if sFont is not None:
         fs.font(sFont)
     # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
-    sFontSize = fontSize or css('fontSize', e, style) # May be scaled to fit w or h if target is defined.
+    sFontSize = fontSize or css('fontSize', e, style) or 16 # May be scaled to fit w or h if target is defined.
     sLeading = css('leading', e, style)
     rLeading = css('rLeading', e, style)
     if sLeading or (rLeading and sFontSize):
@@ -460,8 +460,8 @@ def newFS(t, e=None, style=None, w=None, h=None, fontSize=None):
     sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
     if sCmykStroke is not NO_COLOR:
         setStrokeColor(sCmykStroke, sStrokeWidth, fs, cmyk=True)
-    sAlign = css('xAlign', e, style)
-    if sAlign is not None:
+    sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
+    if sAlign is not None: # yTextAlign must be solved by parent container element.
         fs.align(sAlign)
     sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
     rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
@@ -542,14 +542,14 @@ def textBoxBaseLines(txt, box):
     origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
     return [(x + o.x, y + o.y) for o in origins]
 
-def textPositionSearch(fs, w, h, search, xAlign=LEFT, hyphenation=True):
+def textPositionSearch(fs, w, h, search, xTextAlign=LEFT, hyphenation=True):
     u"""
     """
     bc = BaseContext()
     path = CoreText.CGPathCreateMutable()
     CoreText.CGPathAddRect(path, None, CoreText.CGRectMake(0, 0, w, h))
 
-    attrString = bc.attributedString(fs, align=xAlign)
+    attrString = bc.attributedString(fs, align=xTextAlign)
     if hyphenation and bc._state.hyphenation:
         attrString = bc.hyphenateAttributedString(attrString, w)
 

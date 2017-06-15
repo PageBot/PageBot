@@ -79,14 +79,14 @@ def makeDocument():
     shadow = Shadow(offset=(6, -6), blur=10, color=(0.2, 0.2, 0.2, 0.5))
     
     # Styles
-    coverTitleStyle = dict(font='Georgia', fontSize=80, rLeading=1.4, xAlign=CENTER, textFill=(1,0,0))
-    titleStyle = dict(font='Georgia', fontSize=26, rLeading=1.4, xAlign=CENTER, textFill=1)
-    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xAlign=CENTER)
+    coverTitleStyle = dict(font='Georgia', fontSize=80, rLeading=1.4, xTextAlign=CENTER, textFill=(1,0,0))
+    titleStyle = dict(font='Georgia', fontSize=26, rLeading=1.4, xTextAlign=CENTER, textFill=1)
+    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xTextAlign=CENTER)
     headStyle = dict(font='Verdana-Bold', textFill=0, fontSize=14, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=30,
+        xTextAlign=LEFT, paragraphTopSpacing=30,
     paragraphBottomSpacing=0)
     bodyStyle = dict(font='Verdana', textFill=0, fontSize=12, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
+        xTextAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
     italicBodyStyle = copy.copy(bodyStyle)
     italicBodyStyle['font'] = 'Verdana-Italic'
     italicBodyStyle['paragraphTopSpacing'] = 0
