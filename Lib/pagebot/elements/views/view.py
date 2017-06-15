@@ -475,7 +475,7 @@ class View(Element):
             setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
             # TODO: DrawBot align and fill don't work properly now.
             M = 16
-            fs = newFS('', self, dict(font='Verdana', xAlign=RIGHT, fontSize=M/2,
+            fs = newFS('', self, dict(font='Verdana', xTextAlign=RIGHT, fontSize=M/2,
                 stroke=None, textFill=self.css('viewGridStroke')))
             ox = px + padL
             index = 0
@@ -511,26 +511,27 @@ class View(Element):
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
-
-        oy = self.h - self.css('pt') - py
-        line = 0
         M = 16
+        startY = e.css('baselineGridStart')
+        if startY is None:
+            startY = e.pt # Otherwise use the top padding as start Y.
+        oy = e.h - startY#- py
+        line = 0
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
-        if self.horizontal:
-            fs = newFS('', self, dict(font=self.css('fallbackFont','Verdana'), xAlign=RIGHT,
-                fontSize=M/2, stroke=None, textFill=self.css('gridStroke')))
-            while oy > self.css('pb', 0):
-                setFillColor(None)
-                setStrokeColor(self.css('baselineGridStroke', NO_COLOR), self.css('gridStrokeWidth'))
-                newPath()
-                moveTo((px + M, py + oy))
-                lineTo((px + self.parent.w - M, py + oy))
-                drawPath()
-                text(fs + repr(line), (px + M - 2, py + oy - M * 0.6))
-                text(fs + repr(line), (px + self.parent.w - M - 8, py + oy - M * 0.6))
-                line += 1 # Increment line index.
-                oy -= self.css('baselineGrid') # Next vertical line position of baseline grid.
+        fs = newFS('', self, dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
+            fontSize=M/2, stroke=None, textFill=e.css('gridStroke')))
+        while oy > e.pb or 0:
+            setFillColor(None)
+            setStrokeColor(e.css('baselineGridStroke', NO_COLOR), e.css('gridStrokeWidth'))
+            newPath()
+            moveTo((px + e.pl, py + oy))
+            lineTo((px + e.w - e.pr, py + oy))
+            drawPath()
+            text(fs + repr(line), (px + e.pl - 2, py + oy - e.pl * 0.6))
+            text(fs + repr(line), (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
+            line += 1 # Increment line index.
+            oy -= e.css('baselineGrid') # Next vertical line position of baseline grid.
 
     #    M A R K E R S
 

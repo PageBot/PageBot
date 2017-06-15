@@ -189,8 +189,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # goes downward from the top, they are not flipped vertical. It is up to the caller to make sure
         # there is enough space for elements to show themselves on top of a given position.
         # originTop often goes with yAlign = TOP.
-        originTop = True,
-        xAlign = LEFT, # Default alignment, one of ('left', 'justified', 'center'. 'right', 'anchor')
+        originTop = False, # TODO: Setting to  default True has currently positioning bugs.
+        # Alignment of origin on element. Note that formatted text string are aligned by the xTextAlign attribute.
+        xAlign = LEFT, # Default alignment, one of ('left', 'justified', 'center'. 'right')
         yAlign = TOP, # Default alignment for elements like image, that float in their designated space.
         zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
 
@@ -221,7 +222,11 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Borders, independent for all sides, value is thickness of the line.
         # None will show no border. Single value > 0 shows black line of that thickness.
         # Other options need to be store in dictionary value.
-        borderTop = None, # Border top
+        # Borders hold dictionaries of format 
+        # border = dict(strokeWidth=3, line=lineType, stroke=(1, 0, 0, 0,5), dash=(4,4))
+        # where lineType is one of (INLINE, ONLINE, OUTLINE)
+
+        borderTop = None, # Border top. 
         borderLeft = None, # Border left
         borderRight = None, # Border right
         borderBottom = None, # Border bottom
@@ -303,6 +308,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         # Vertical spacing for absolute and fontsize-related measures
         baselineGrid = baselineGrid,
+        baselineGridStart = None, # Optional baselineGridStart if different from top padding.
         baseLineMarkerSize = 8, # FontSize of markers showing base line grid info.
         leading = 0, # Absolute leading value (can be used complementary to rLeading).
         rLeading = 1, # Relative factor to fontSize.

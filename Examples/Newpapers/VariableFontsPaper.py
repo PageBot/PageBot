@@ -90,13 +90,12 @@ def makeDocument(fontPath):
     bookPadding = (25, 30, 40, 30)
     
     # Styles
-    titleStyle =dict(font=fHeader.installedName, fontSize=26, rLeading=1.4, xAlign=CENTER, textFill=1)
-    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xAlign=CENTER)
+    titleStyle =dict(font=fHeader.installedName, fontSize=26, rLeading=1.4, xTextAlign=CENTER, textFill=1)
+    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xTextAlign=CENTER)
     headStyle = dict(font=fHeader.installedName, textFill=0, fontSize=14, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=30,
-    paragraphBottomSpacing=0)
+        xTextAlign=LEFT, paragraphTopSpacing=30, paragraphBottomSpacing=0)
     bodyStyle = dict(font='Verdana', textFill=0, fontSize=12, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
+        xTextAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
     italicBodyStyle = copy.copy(bodyStyle)
     italicBodyStyle['font'] = 'Verdana-Italic'
     italicBodyStyle['paragraphTopSpacing'] = 0
