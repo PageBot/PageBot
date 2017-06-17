@@ -68,6 +68,7 @@ class View(Element):
         self.showTextBoxBaselines = False
         # Flow stuff
         self.showFlowConnections = False
+        self.showTextOverflowMarker = True
         # Image stuff
         self.showImageReference = False
 

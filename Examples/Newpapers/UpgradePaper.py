@@ -100,14 +100,13 @@ def makeDocument():
     
     return doc # Answer the doc for further doing.
 
-if __name__ == '__main__':
-    
-    Variable([
-        dict(name='PageWidth', ui='Slider', args=dict(minValue=MinPageW, value=A2[0], maxValue=MaxPageW)),
-        dict(name='PageHeight', ui='Slider', args=dict(minValue=MinPageH, value=A2[1], maxValue=MaxPageH)),
-    ], globals())
+  
+Variable([
+    dict(name='PageWidth', ui='Slider', args=dict(minValue=MinPageW, value=A2[0], maxValue=MaxPageW)),
+    dict(name='PageHeight', ui='Slider', args=dict(minValue=MinPageH, value=A2[1], maxValue=MaxPageH)),
+], globals())
 
-            
-    d = makeDocument()
-    d.export(EXPORT_PATH) 
+        
+d = makeDocument()
+d.export(EXPORT_PATH) 
 
