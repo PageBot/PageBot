@@ -292,8 +292,7 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, fs, minW=None, w=None, h=None, showBaselines=False, 
-            showOverflowMarker=True, **kwargs):
+    def __init__(self, fs, minW=None, w=None, h=None, showBaselines=False, **kwargs):
         Element.__init__(self,  **kwargs)
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
@@ -304,7 +303,6 @@ class TextBox(Element):
             fs = newFS(fs, self)
         self.fs = fs # Keep as plain string, in case parent is not set yet.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
-        self.showOverflowMarker = showOverflowMarker # If there is overflow and no chain to next, show [+] marker
 
     def _get_w(self): # Width
         return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
@@ -483,7 +481,7 @@ class TextBox(Element):
         # Draw markers on TextLine and TextRun positions.
         self._drawBaselines(px, py, view)
  
-        if self.showOverflowMarker and self.isOverflow():
+        if view.showTextOverflowMarker and self.isOverflow():
             self._drawOverflowMarker(px, py, view)
 
         if self.drawAfter is not None: # Call if defined

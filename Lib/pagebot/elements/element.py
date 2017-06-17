@@ -373,10 +373,10 @@ class Element(object):
     def isBaselineOnTop(self, tolerance):
         return True
 
-    def isCapHeightOnTop(self, tolerance):
+    def isAscenderOnTop(self, tolerance):
         return True
 
-    def isAscenderOnTop(self, tolerance):
+    def isCapHeightOnTop(self, tolerance):
         return True
 
     def isXHeightOnTop(self, tolerance):
@@ -2542,6 +2542,10 @@ class Element(object):
         return True
 
     def floatBaseline2Top(self):
+        # ...
+        return True
+
+    def floatAscender2Top(self):
         # ...
         return True
 
