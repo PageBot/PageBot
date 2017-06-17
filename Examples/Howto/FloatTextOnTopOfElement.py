@@ -41,7 +41,7 @@ SQUARE = 10 * GUTTER # Size of the squares
 # that is very similar to what happens in CSS.
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/UseImages.pdf' 
+EXPORT_PATH = '_export/FloatTextOnTopOfElement.pdf' 
 
 
 def makeDocument():
@@ -54,6 +54,7 @@ def makeDocument():
     view = doc.getView()
     view.padding = 0 # Aboid showing of crop marks, etc.
     view.showElementOrigin = False
+    view.showTextOverflowMarker = False
     
     # Get list of pages with equal y, then equal x.    
     #page = doc[0][0] # Get the single page from te document.
@@ -63,26 +64,31 @@ def makeDocument():
     
     # Show margin of page, can also be done by
     # view.showPagePadding = True
-    newRect(fill=0.9, parent=page, margin=0, conditions=(Left2Left(), Fit2Right(), Bottom2Bottom(), Fit2Height()))
+    newRect(fill=0.9, parent=page, margin=0, 
+        conditions=(Left2Left(), Fit2Right(), Bottom2Bottom(), Fit2Height()))
     
-    redContainer = newRect(fill=(1, 0, 0), pb=10, w=RedSize, h=RedSize, padding=10,
-        conditions=(Left2Left(), Bottom2Bottom()), parent=page) 
+    redContainer = newRect(fill=(1, 0, 0), pb=10, w=RedSize, h=RedSize, 
+        padding=10, conditions=(Left2Left(), Bottom2Bottom()), parent=page) 
     
     # Yellow square
-    yellowSquare = newRect(fill=(1, 1, 0), z=8, w=YellowSize, h=YellowSize, parent=redContainer, xAlign=CENTER, yAlign=TOP,
+    yellowSquare = newRect(fill=(1, 1, 0), z=8, w=YellowSize, 
+        h=YellowSize, parent=redContainer, xAlign=CENTER, yAlign=TOP,
         conditions=(Center2Center(), Bottom2Bottom()))
          
     # Blue square in different z=layer. No interaction with Floating on other z-layers.
-    blueSquare = newRect(fill=(0, 1, 1), z=10, w=50, h=50, parent=redContainer, xAlign=CENTER, 
+    blueSquare = newRect(fill=(0, 1, 1), z=10, w=50, h=50, 
+        parent=redContainer, xAlign=CENTER, 
         conditions=(Top2Top(), Center2Center(),)) 
    
     # Centered string
-    fs = newFS('Float on top of yellow', style=dict(font='Verdana', fontSize=7,
+    fs = newFS('Float on top of yellow', 
+        style=dict(font='Verdana', fontSize=7, xTextAlign=CENTER,
         textFill=0))
     # Text falls through the yr2 (with differnt z) and lands on yellowSquare by Float2BottomSide()    
     newTextBox(fs, name='Caption', parent=redContainer, z=8,
         fill=(0, 1, 0), strokeWidth=0.5, stroke=(1, 1, 0),
-        conditions=[ Fit2Width(), Float2BottomSide()], elasticH=True, padding=3,
+        conditions=[ Fit2Width(), Float2BottomSide()], 
+        padding=3,
     )    
     score = page.solve()
     if score.fails:
@@ -90,16 +96,14 @@ def makeDocument():
         
     return doc # Answer the doc for further doing.
    
-if __name__ == '__main__':
- 
-    Variable([
-        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-        dict(name='RedSize', ui='Slider', args=dict(minValue=100, value=100, maxValue=500)),
-        dict(name='YellowSize', ui='Slider', args=dict(minValue=10, value=30, maxValue=500)),
-        dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
-        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-    ], globals())
+Variable([
+    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+    dict(name='RedSize', ui='Slider', args=dict(minValue=100, value=100, maxValue=500)),
+    dict(name='YellowSize', ui='Slider', args=dict(minValue=10, value=30, maxValue=500)),
+    dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
+    dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+], globals())
 
-    d = makeDocument()
-    d.export(EXPORT_PATH) 
+d = makeDocument()
+d.export(EXPORT_PATH) 
 
