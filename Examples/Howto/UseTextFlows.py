@@ -41,7 +41,7 @@ def makeDocument():
     doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)
     
     view = doc.getView()
-    view.padding = 40 # Aboid showing of crop marks, etc.
+    view.padding = 0 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
