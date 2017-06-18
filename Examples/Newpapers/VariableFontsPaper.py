@@ -68,6 +68,7 @@ def makeDocument(fontPath):
     view.showPageCropMarks = True # Won't show if there is not padding in the view.
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
+    view.showPagePadding = True
     view.showPageNameInfo = True
     view.showElementOrigin = False
     view.showElementDimensions = False #ShowDimensions
@@ -128,7 +129,7 @@ def makeDocument(fontPath):
         # Conditions make the element move to top-left of the page.
         # And the condition that there should be no overflow, otherwise the text box
         # will try to solve it.     
-        conditions=[Left2Left(), Float2Top()],
+        conditions=[Right2Right(), Float2Bottom()],
         # Position of the origin of the element. Just to show where it is.
         # Has no effect on the position conditions. 
         yAlign=BOTTOM, xAlign=LEFT, fill=CIRCLE_ELEMENT_FILL, borders=1,
