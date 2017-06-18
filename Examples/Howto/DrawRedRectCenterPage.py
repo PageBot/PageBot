@@ -55,7 +55,7 @@ def makeDocument():
     # Set the view parameters for the required output.
     view = doc.getView()
     view.w = view.h = W, H
-    view.padding = 30 # Make view padding to show crop marks and frame
+    view.padding = 0 # Make view padding to show crop marks and frame
     view.showPageFrame = True # Show frame of the page in blue
     view.showPagePadding = True
     view.showPageCropMarks = True # Show crop marks
