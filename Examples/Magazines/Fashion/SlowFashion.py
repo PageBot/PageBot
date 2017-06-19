@@ -17,11 +17,14 @@ from pagebot import newFS
 
 from pagebot.style import getRootStyle, LEFT, TOP, A4Letter
 from pagebot.elements import *
+from pagebot.conditions import *
 from pagebot.document import Document
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
-    
+
+from pagebot.fonttoolbox.variablefontbuilder import getVariableFont   
 W, H = A4Letter
+PADDING = 32
 
 MD_PATH = 'slowFashionStories.md'
 EXPORT_PATH = '_export/SlowFashion.pdf'
@@ -35,70 +38,71 @@ FLOWID2 = MAIN_FLOW+'2'
 FLOWID3 = MAIN_FLOW+'3'
 
 ROOT_PATH = pagebot.getRootPath()
-FONT_PATH = ROOT_PATH + '../Fonts/_private/PromisePageBot-GX.ttf'
+FONT_PATH = ROOT_PATH + '/Fonts/_private/PromisePageBot-GX.ttf'
 FACTOR = 1
 #FONT_PATH = getMasterPath() + 'BitcountGrid-GX.ttf'
 #FACTOR = 1000
 
-LIGHT = getVariationFont(FONT_PATH, dict(wght=100/FACTOR, wdth=1000))
-BOOK_LIGHT = getVariationFont(FONT_PATH, dict(wght=240/FACTOR, wdth=1000))
-BOOK_CONDENSED = getVariationFont(FONT_PATH, dict(wght=250/FACTOR, wdth=800))
-BOOK = getVariationFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
-BOOK_ITALIC = getVariationFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
-MEDIUM = getVariationFont(FONT_PATH, dict(wght=400/FACTOR, wdth=1000))
-SEMIBOLD = getVariationFont(FONT_PATH, dict(wght=400/FACTOR, wdth=1000))
-SEMIBOLD_CONDENSED = getVariationFont(FONT_PATH, dict(wght=400/FACTOR, wdth=500))
-BOLD = getVariationFont(FONT_PATH, dict(wght=700/FACTOR, wdth=1000))
-BOLD_ITALIC = getVariationFont(FONT_PATH, dict(wght=700/FACTOR, wdth=1000))
+LIGHT = getVariableFont(FONT_PATH, dict(wght=100/FACTOR, wdth=1000))
+BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=240/FACTOR, wdth=1000))
+BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=250/FACTOR, wdth=800))
+BOOK = getVariableFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
+BOOK_ITALIC = getVariableFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
+MEDIUM = getVariableFont(FONT_PATH, dict(wght=400/FACTOR, wdth=1000))
+SEMIBOLD = getVariableFont(FONT_PATH, dict(wght=400/FACTOR, wdth=1000))
+SEMIBOLD_CONDENSED = getVariableFont(FONT_PATH, dict(wght=400/FACTOR, wdth=500))
+BOLD = getVariableFont(FONT_PATH, dict(wght=700/FACTOR, wdth=1000))
+BOLD_ITALIC = getVariableFont(FONT_PATH, dict(wght=700/FACTOR, wdth=1000))
 
-RS['font'] = BOOK
-
-def makeCoverTemplate(imagePath, rs):
-    bleed = rs['bleed']
+def makeCoverTemplate(imagePath, w, h):
+    bleed = 0
+    textColor = 1
     # Cover
-    coverTemplate = Template(style=rs) # Cover template of the magazine.
-    coverTemplate.image(imagePath, (-bleed, -bleed), w=rs['w'] + 2 * bleed)
+    coverTemplate = Template(w=w, h=h, padding=PADDING) # Cover template of the magazine.
+    newImage(imagePath, parent=coverTemplate, 
+        conditions=[Fit2WidthSides(), Bottom2BottomSide()])
     # Title of the magazine cover.
-    coverTitle = FormattedString('Fashion', font=LIGHT, fontSize=180, fill=1, tracking=-9)
-    coverTemplate.text(coverTitle, (10, 148), shadowOffset=(4, -4),
-    shadowBlur=8, shadowFill=(0,0,0,0.2))
+    coverTitle = newFS('Fashion', 
+        style=dict(font=LIGHT.installedName, fontSize=180, textFill=textColor, 
+        tracking=-3))
+    newText(coverTitle, parent=coverTemplate, conditions=[Fit2Width(), Top2Top()],
+        style=dict(shadowOffset=(4, -4), shadowBlur=8, shadowFill=(0,0,0,0.2)))
     
     # Make actual date in top-right with magazine title. Draw a bit transparant on background photo.
     dt = datetime.now()
     d = dt.strftime("%B %Y")
-    fs = FormattedString(d, font=MEDIUM, fontSize=18, fill=(1, 1, 1, 0.8), tracking=0.5)
-    coverTemplate.text(fs, (436, 28))
+    fs = newFS(d, style=dict(font=MEDIUM.installedName, fontSize=18, 
+        textColor=(1, 1, 1, 0.8), tracking=0.5))
+    newText(fs, parent=coverTemplate, conditions=[Float2Top(), Fit2Width()])
 
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('$6.95', font=BOOK, fontSize=12, fill=1, tracking=0.5,
-        lineHeight=12 )
-    coverTemplate.text(fs, (540, 765))
-
-    # Show baseline grid if rs.showBaselineGrid is True
-    coverTemplate.baselineGrid()
+    fs = newFS('$6.95',  style=dict(font=BOOK.installedName, fontSize=12, 
+        textFill=textColor, tracking=0.5, leading=12 ))
+    newText(fs, parent=coverTemplate, conditions=[Float2Top(), Left2Left()])
   
-    makeCoverTitles(coverTemplate, rs)
+    makeCoverTitles(coverTemplate)
     
     return coverTemplate
 
-def makeCoverTitles(coverTemplate, rs):
+def makeCoverTitles(coverTemplate):
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Skirts &\nScarves', font=BOOK_CONDENSED, fontSize=54, fill=1, tracking=0.5,
-        lineHeight=48)
-    coverTemplate.text(fs, (22, 280))
-
+    fs = newFS('Skirts &\nScarves', style=dict(font=BOOK_CONDENSED.installedName, 
+        fontSize=54, fill=1, tracking=0.5, leading=48))
+    newText(fs, parent=coverTemplate, conditions=[Left2Left(), Float2Top()])
+    """
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Ideal style:\n', font=MEDIUM, fontSize=32, fill=1, tracking=0.5,
-        lineHeight=34)
-    fs += FormattedString('The almost nothing', font=BOOK, fontSize=32, fill=1, tracking=0.5,
-        lineHeight=34)
+    fs = newFS('Ideal style:\n', style=dict(font=MEDIUM.installedName, fontSize=32, 
+        fill=1, tracking=0.5, leading=34))
+    fs += newFS('The almost nothing', style=dict(font=BOOK.installedName, 
+        fontSize=32, fill=1, tracking=0.5, leading=34))
     coverTemplate.text(fs, (22, 420))
         
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Findings\non the island', font=BOOK_LIGHT, fontSize=60, fill=1, 
-        tracking=0.5, lineHeight=52 )
-    coverTemplate.text(fs, (18, 690), shadowOffset=(4, -4), shadowBlur=20, shadowFill=(0,0,0,0.6))
-        
+    fs = FormattedString('Findings\non the island', font=BOOK_LIGHT.installedName, 
+        fontSize=60, fill=1, tracking=0.5, leading=52 )
+    newText(fs, parent=coverTemplate, style=dict(shadowOffset=(4, -4), shadowBlur=20, 
+        shadowFill=(0,0,0,0.6))
+      
     # Titles could come automatic from chapters in the magazine.
     c = 1 #(0.2, 0.2, 1, 0.9)
     fs = FormattedString('Exclusive:\n', font=MEDIUM, fontSize=32, fill=c, tracking=0.5,
@@ -111,14 +115,13 @@ def makeCoverTitles(coverTemplate, rs):
     fs = FormattedString('Slow', font=MEDIUM, fontSize=70, fill=(1, 1, 1, 0.15), tracking=0.5,
         lineHeight=52 )
     coverTemplate.text(fs, (95, 65))
-
-def makeTemplate1(rs):
+    """
+    
+def makeTemplate1():
     # Template 16
     template = Template() # Create template of main size. Front page only.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    template.grid() 
-    # Show baseline grid if rs.showBaselineGrid is True
-    template.baselineGrid()
+    """
     # Create empty image place holders. To be filled by running content on the page.
     template.cContainer(2, -0.7, 5, 4)  # Empty image element, cx, cy, cw, ch
     template.cContainer(0, 5, 2, 3)
@@ -128,15 +131,14 @@ def makeTemplate1(rs):
     template.cTextBox('', 4, 3, 2, 5, eId=FLOWID3, nextBox=FLOWID1, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
     template.text(rs['pageIdMarker'], (template.css('w',0)-template.css('mr',0), 20), style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR, align='right')
+    """
     return template
  
-def makeTemplate2(rs):
+def makeTemplate2():
     # Template 2
     template = Template() # Create second template. This is for the main pages.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    template.grid() 
-    # Show baseline grid if rs.showBaselineGrid is True
-    template.baselineGrid()
+    """
     template.cContainer(4, 0, 2, 3)  # Empty image element, cx, cy, cw, ch
     template.cContainer(0, 5, 2, 3)
     template.cContainer(2, 2, 2, 2)
@@ -147,23 +149,36 @@ def makeTemplate2(rs):
     template.cTextBox('', 4, 3, 2, 3, eId=FLOWID3, nextBox=FLOWID1, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
     template.text(rs['pageIdMarker'], (template.css('w',0) - template.css('mr',0), 20), style=rs, font=BOOK, fontSize=12, fill=BOX_COLOR, align='right')
+    """
     return template
            
 # -----------------------------------------------------------------         
-def makeDocument(rs):
+def makeDocument():
     u"""Demo page composer."""
 
-    coverTemplate1 = makeCoverTemplate(COVER_IMAGE_PATH1, rs)
-    template1 = makeTemplate1(rs) 
-    template2 = makeTemplate2(rs)
+    coverTemplate1 = makeCoverTemplate(COVER_IMAGE_PATH1, W, H)
+    template1 = makeTemplate1() 
+    template2 = makeTemplate2()
        
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2.
     # Oversized document (docW, docH) is defined in the rootStyle.
-    doc = Document(rs, title=EXPORT_PATH, pages=3, template=template1) 
+    doc = Document(title=EXPORT_PATH, w=W, h=H, pages=3, originTop=False,
+        template=template1) 
  
+    view = doc.getView()
+    view.padding = 40
+    view.showPagePadding = True
+    view.showPageCropMarks = True
+    view.showPageRegistrationMarks = True
+    view.showPageFrame = True
+    view.showPagePadding = True
+    view.showElementOrigin = True
+    view.showElementDimensions = False
+    
     # Cache some values from the root style that we need multiple time to create the tag styles.
+    """
     fontSize = rs['fontSize']
     leading = rs['leading']
     rLeading = rs['rLeading']
@@ -213,19 +228,19 @@ def makeDocument(rs):
     doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
         leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
         indent=U/2, tailIndent=-U/2, hyphenation=True)
-    
+    """
     # Change template of page 1
-    page1 = doc[1]
-    page1.setTemplate(coverTemplate1)
-    
-    page2 = doc[2] # Default is template1, as defined in Document creation.
+    page0 = doc[0]
+    page0.applyTemplate(coverTemplate1)
+
+    #page2 = doc[1] # Default is template1, as defined in Document creation.
     
     # Show thumbnail of entire paga4 on cover. 
     # TODO: Needs to be masked still.
     # TODO: Scale should not be attribute of style, but part of placement instead.
     #page3.style['scaleX'] = page3.style['scaleY'] = 0.1
     #page1.place(page3, 500, 48)# sx, sy)
-    
+    """
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
     t = Typesetter(g)
@@ -234,9 +249,11 @@ def makeDocument(rs):
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
     c.compose(g, page2, FLOWID1)
+    """
+    doc.solve()
     
     return doc
         
-d = makeDocument(RS)
+d = makeDocument()
 d.export(EXPORT_PATH) 
 
