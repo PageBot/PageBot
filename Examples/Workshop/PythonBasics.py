@@ -67,7 +67,8 @@ if 0:
     a, b = b, a
     print a, b
 
-# Loops    
+# Loops  
+if 1:  
     # Processing: for (int i=0; i<10; i++){ ... }
     for n in range(10):
         print n
