@@ -43,7 +43,7 @@ FACTOR = 1
 #FONT_PATH = getMasterPath() + 'BitcountGrid-GX.ttf'
 #FACTOR = 1000
 
-LIGHT = getVariableFont(FONT_PATH, dict(wght=100/FACTOR, wdth=0))
+LIGHT = getVariableFont(FONT_PATH, dict(wght=100/FACTOR, wdth=1))
 BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=240/FACTOR, wdth=1000))
 BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=250/FACTOR, wdth=800))
 BOOK = getVariableFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
