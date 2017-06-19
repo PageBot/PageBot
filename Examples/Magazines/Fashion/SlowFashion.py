@@ -13,8 +13,7 @@ from __future__ import division
 
 import pagebot
 from datetime import datetime # Make date fit today.
-from pagebot import newFS
-
+from pagebot import newFS, Gradient, Shadow
 from pagebot.style import getRootStyle, LEFT, TOP, A4Letter
 from pagebot.elements import *
 from pagebot.conditions import *
@@ -39,20 +38,20 @@ FLOWID3 = MAIN_FLOW+'3'
 
 ROOT_PATH = pagebot.getRootPath()
 FONT_PATH = ROOT_PATH + '/Fonts/_private/PromisePageBot-GX.ttf'
-FACTOR = 1
 #FONT_PATH = getMasterPath() + 'BitcountGrid-GX.ttf'
-#FACTOR = 1000
 
-LIGHT = getVariableFont(FONT_PATH, dict(wght=100/FACTOR, wdth=1))
-BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=240/FACTOR, wdth=1000))
-BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=250/FACTOR, wdth=800))
-BOOK = getVariableFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
-BOOK_ITALIC = getVariableFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
-MEDIUM = getVariableFont(FONT_PATH, dict(wght=400/FACTOR, wdth=1000))
-SEMIBOLD = getVariableFont(FONT_PATH, dict(wght=400/FACTOR, wdth=1000))
-SEMIBOLD_CONDENSED = getVariableFont(FONT_PATH, dict(wght=400/FACTOR, wdth=500))
-BOLD = getVariableFont(FONT_PATH, dict(wght=700/FACTOR, wdth=1000))
-BOLD_ITALIC = getVariableFont(FONT_PATH, dict(wght=700/FACTOR, wdth=1000))
+LIGHT = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=0.34))
+BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=1, wdth=1))
+BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=0.8))
+BOOK = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=1))
+BOOK_ITALIC = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=1))
+MEDIUM = getVariableFont(FONT_PATH, dict(wght=0.40, wdth=1))
+SEMIBOLD = getVariableFont(FONT_PATH, dict(wght=0.40, wdth=1))
+SEMIBOLD_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.40, wdth=0.5))
+BOLD = getVariableFont(FONT_PATH, dict(wght=0.70, wdth=1))
+BOLD_ITALIC = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=1))
+
+shadow = Shadow(offset=(6, -6), blur=10, color=(0.2, 0.2, 0.2, 0.5))
 
 def makeCoverTemplate(imagePath, w, h):
     bleed = 0
@@ -62,11 +61,11 @@ def makeCoverTemplate(imagePath, w, h):
     newImage(imagePath, parent=coverTemplate, 
         conditions=[Fit2WidthSides(), Bottom2BottomSide()])
     # Title of the magazine cover.
+    LIGHT = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=0.34))
+
     coverTitle = newFS('Fashion', 
-        style=dict(font=LIGHT.installedName, fontSize=180, textFill=textColor, 
-        tracking=-3))
-    newText(coverTitle, parent=coverTemplate, conditions=[Fit2Width(), Top2TopSide()],
-        style=dict(shadowOffset=(4, -4), shadowBlur=8, shadowFill=(0,0,0,0.2)))
+        style=dict(font=LIGHT.installedName, fontSize=180, shadow=shadow, textFill=textColor, tracking=-3))
+    newText(coverTitle, parent=coverTemplate, conditions=[Fit2Width(), Top2TopSide()], shadow=shadow)
     
     # Make actual date in top-right with magazine title. Draw a bit transparant on background photo.
     dt = datetime.now()
