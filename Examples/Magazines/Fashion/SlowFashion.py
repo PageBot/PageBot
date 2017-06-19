@@ -24,7 +24,7 @@ from pagebot.typesetter import Typesetter
 
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont   
 W, H = A4Letter
-PADDING = 32
+PADDING = 24
 
 MD_PATH = 'slowFashionStories.md'
 EXPORT_PATH = '_export/SlowFashion.pdf'
@@ -43,7 +43,7 @@ FACTOR = 1
 #FONT_PATH = getMasterPath() + 'BitcountGrid-GX.ttf'
 #FACTOR = 1000
 
-LIGHT = getVariableFont(FONT_PATH, dict(wght=100/FACTOR, wdth=1000))
+LIGHT = getVariableFont(FONT_PATH, dict(wght=100/FACTOR, wdth=0))
 BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=240/FACTOR, wdth=1000))
 BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=250/FACTOR, wdth=800))
 BOOK = getVariableFont(FONT_PATH, dict(wght=250/FACTOR, wdth=1000))
@@ -65,7 +65,7 @@ def makeCoverTemplate(imagePath, w, h):
     coverTitle = newFS('Fashion', 
         style=dict(font=LIGHT.installedName, fontSize=180, textFill=textColor, 
         tracking=-3))
-    newText(coverTitle, parent=coverTemplate, conditions=[Fit2Width(), Top2Top()],
+    newText(coverTitle, parent=coverTemplate, conditions=[Fit2Width(), Top2TopSide()],
         style=dict(shadowOffset=(4, -4), shadowBlur=8, shadowFill=(0,0,0,0.2)))
     
     # Make actual date in top-right with magazine title. Draw a bit transparant on background photo.

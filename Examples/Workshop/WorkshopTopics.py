@@ -12,18 +12,18 @@ Importing text (Markdown tools, XML, etree, parsing HTML, regular expressions = 
 Pagebot architecture (classes, functions, pattern)
 
 # Tuesday
-Pagebot Howto 
-Pagebot Example
-Pagebot fonts (variable fonts, fonttools, RoboFont)
-Pagebot FormattedString
-Pagebot Element
-Pagebot Grid
-Pagebot Conditions
 Pagebot Style
+Pagebot Howto 
+Pagebot Example (newspaper, magazine, identity, manuals)
+Pagebot fonts (variable fonts, fonttools, Font class, RoboFont)
+Pagebot FormattedString
+Pagebot Element (inheriting from, inside/outside, 
+Pagebot Grid (similatities/difference with InDesign, principles)
+Pagebot Conditions
 
 # Wednesday
 Pagebot builders (exporting other formats that standard drawbot)
-    Export HTML/JS/CSS/SVG (XPyth, Xierpa, Xierpa3)
+    Export HTML/JS/CSS/SVG (basics, XPyth, Xierpa, Xierpa3, MAMP)
     Export JS-InDesign
 Make your design(s) into Pagebot code
 
