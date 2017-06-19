@@ -26,6 +26,7 @@ from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLo
 from pagebot import setFillColor
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
+from pagebot.toolbox.transformer import path2FontName
 
 DEBUG = False
 
@@ -52,10 +53,14 @@ def getVarLocation(font, normLocation):
             varLocation[axisName] = minValue + (maxValue - minValue) * (1-normLocation[axisName])
     return varLocation
 
-def getVariableFont(font, normLocation, install=True):
+def getVariableFont(fontOrPath, normLocation, install=True):
     u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     {"wght": 0, "wdth": 1000}"""
+    if isinstance(fontOrPath, basestring):
+        font = Font(fontOrPath, path2FontName(fontOrPath), install=install)    
+    else:
+        font = fontOrPath
     fontName, path = generateInstance(font.path, getVarLocation(font, normLocation), targetDirectory=getInstancePath())
     return Font(path, fontName, install=install)
 
