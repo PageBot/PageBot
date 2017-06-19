@@ -7,6 +7,7 @@ Drawbot examples (animated gifs)
 Drawbot FormattedString
 
 Drawbot classes
+http://readthedocs.org/projects/drawbot/downloads/pdf/latest/
 
 
 Programming tools (TextWrangler, TextMate, DrawBot, HomeBrew, Sublime, Coda)
