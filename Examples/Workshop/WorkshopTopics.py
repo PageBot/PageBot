@@ -1,14 +1,14 @@
 import pagebot
 """
 # Monday
-Python basics
+Python basics (variable types, loops, functions, conditions)
 
-Drawbot basics
-Drawbot examples
+Drawbot basics (drawing primitives)
+Drawbot examples (animated gifs)
 Drawbot FormattedString
 Drawbot classes
-Programming tools
-Markdown tools
+Programming tools (TextWrangler, TextMate, DrawBot, HomeBrew, Sublime, Coda)
+Importing text (Markdown tools, XML, etree, parsing HTML, regular expressions = re)
 Pagebot architecture (classes, functions, pattern)
 
 # Tuesday
