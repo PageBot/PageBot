@@ -55,56 +55,68 @@ def point2S(p):
 # C O L O R
 
 def moreRed(c, v=0.5):
-    # Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
     moreRedC = [c[0] + (1 - c[0])*v, c[1], c[2]]
     if len(c) == 4:
         moreRedC.append(c[3])
     return moreRedC
 
 def moreGreen(c, v=0.5):
-    # Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
     moreGreenC = [c[0], c[1] + (1 - c[1])*v, c[2]]
     if len(c) == 4:
         moreGreenC.append(c[3])
     return moreGreenC
 
 def moreBlue(c, v=0.5):
-    # Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
     moreBlueC = [c[0], c[1], c[2] + (1 - c[2])*v]
     if len(c) == 4:
         moreBlueC.append(c[3])
     return moreBlueC
 
 def lighter(c, v=0.5):
-    # Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
     return moreRed(moreGreen(moreBlue(c, v), v), v)
 
 def lessRed(c, v=0.5):
-    # Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
     lessRedC = [c[0]*v, c[1], c[2]]
     if len(c) == 4:
         lessRedC.append(c[3])
     return lessRedC
 
 def lessGreen(c, v=0.5):
-    # Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
     lessGreenC = [c[0], c[1]*v, c[2]]
     if len(c) == 4:
         lessGreenC.append(c[3])
     return lessGreenC
 
 def lessBlue(c, v=0.5):
-    # Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
     lessBlueC = [c[0], c[1], c[2]*v]
     if len(c) == 4:
         lessBlueC.append(c[3])
     return lessBlueC
 
 def darker(c, v=0.5):
-    # Answer a darker color of c. v = 0 gives black, v = 1 gives same color
+    u"""Answer a darker color of c. v = 0 gives black, v = 1 gives same color"""
     return lessRed(lessGreen(lessBlue(c, v), v), v)
 
+def int2Color(c):
+    u"""Answer the color typle, represented by the integer, e.g. 0xFFEE99."""
+    return ((c >> 16) & 255)/255.0, ((c >> 8) & 255)/255.0, (c & 255)/255.0
 
+def s2Color(s):
+    u"""Answer the color typle, represented by the hex-string, e.g. #FFEE99.
+    The "#" is optional, and will be ignored in the conversion."""
+    s = s.replace('#','').replace(' ','')
+    try:
+        c = int(s, 16)
+        return int2Color(c)
+    except ValueError: 
+        return None
 
 # N U M B E R S
 

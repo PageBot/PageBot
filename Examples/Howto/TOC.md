@@ -32,10 +32,13 @@ Simple demo to show the positioning of a colored rectangle centered on the page.
 
 Simple test to show the working of view and page. Option Variable checkbox to set the origin to top or bottom.
 
-![gallery/DrawViewPageFrame.png](gallery/DrawViewPageFrame.png)
-
 ## Draw Quadratic Glyph
 
 Shows how to load a Truetype font and draw a glyph with quadratic Bézier curves with the cubic Bézier curves that PageBot uses.
 
-![gallery/DrawQuadraticGlyph.png](gallery/DrawQuadraticGlyph.png)
+## Use text flows
+
+The example shows two floating colums of text, where th overflow of one goes into the other. If the second one also overflows, the remaining text goes into a column on the third page.
+
+![gallery/DrawRedRectCenterPage.png](gallery/UseTextFlows.png)
+
