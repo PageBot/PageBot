@@ -10,7 +10,7 @@
 #     UseShadow.py
 #
 from pagebot import newFS
-from pagebot.style import getRootStyle, A5, BOTTOM, CENTER, MIDDLE
+from pagebot.style import getRootStyle, BOTTOM, CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
@@ -26,7 +26,7 @@ ShadowTextBlur = 10
 
 def makeDocument():
     
-    doc = Document(originTop=False, w=W, h=H, pages=1) 
+    doc = Document(originTop=False, w=W, h=H, autoPages=1) 
     
     page = doc[0] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?
