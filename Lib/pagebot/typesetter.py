@@ -36,7 +36,6 @@ from pagebot.elements import Galley, Image, Ruler, TextBox
 
 class Typesetter(object):
 
-    GALLEY_CLASS = Galley
     IMAGE_CLASS = Image
     TEXTBOX_CLASS = TextBox
 

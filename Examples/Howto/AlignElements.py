@@ -32,7 +32,7 @@ G = 8 # Distance between the squares.
 SQ = 8 * G # Size of the squares
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/AlignElements.pdf' 
+EXPORT_PATH = '_export/AlignElements.png' 
 
 
 def makeDocument():

@@ -178,7 +178,8 @@ class PixelMap(Element):
 
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
-            self._drawMissingElementRect(page, px, py, self.w, self.h)
+            print 'Cannot display pixelMap', self
+            #self._drawMissingElementRect(page, px, py, self.w, self.h)
         else:
             save()
             sx = self.w / self.iw
