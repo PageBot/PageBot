@@ -10,12 +10,15 @@ class Car():
         self._capacity = 20
         
     def drive(self, speed):
-        print 'I am a', self.color, self.__class__.__name__ + ', driving',
+        print str(self) + ', driving',
         print min(speed, self.MaxSpeed), 'km/h'
 
     def __add__(self, anotherCar):
         print 'BOOOOM'
-        
+    
+    def __repr__(self): # Create represenation string from self
+       return 'I am a ' + self.color + ' ' + self.__class__.__name__ 
+           
 class Mercedes(Car): # Class inheritance
     Colors = ['black', 'blue', 'gray']
     
@@ -37,5 +40,10 @@ print car._capacity
 myFerrari = Ferrari('yellow')
 myFerrari.drive(1000080)
 
-car + myFerrari
+car + myFerrari # Is converted by preprocessor into:
+car.__add__(myFerrari) # Is was is actually executed.
 
+# This is printing the car as string. All are equivalent.
+print car
+print str(car)
+print `car`
