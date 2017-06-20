@@ -15,12 +15,12 @@ import CoreText
 import Quartz
 
 from drawBot import textOverflow, hyphenation, textBox, text, rect, textSize, FormattedString, line, fill, \
-    stroke, strokeWidth
+    stroke, strokeWidth, save, restore
 
+from pagebot import newFS, setStrokeColor, setFillColor, setGradient, setShadow
 from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE, BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import newFS, setStrokeColor, setFillColor
 from pagebot.fonttoolbox.objects.glyph import Glyph
 
 class FoundPattern(object):
@@ -473,7 +473,15 @@ class TextBox(Element):
         elif self.css('xTextAlign') == RIGHT:
             xOffset = self.w - self.pl - self.pr - tw
 
+        textShadow = self.textShadow
+        if textShadow:
+            save()
+            setShadow(textShadow)
+
         textBox(self.fs, (px+self.pl+xOffset, py+self.pb-yOffset, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
+
+        if textShadow:
+            restore()
 
         # If there are any child elements, draw them over the text.
         self._drawElements(p, view)
