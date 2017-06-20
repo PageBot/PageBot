@@ -1213,11 +1213,23 @@ class Element(object):
         self.style['shadow'] = shadow
     shadow = property(_get_shadow, _set_shadow)
 
+    def _get_textShadow(self):
+        return self.css('textShadow')
+    def _set_textShadow(self, textShadow):
+        self.style['textShadow'] = textShadow
+    textShadow = property(_get_textShadow, _set_textShadow)
+
     def _get_gradient(self):
         return self.css('gradient')
     def _set_gradient(self, gradient):
         self.style['gradient'] = gradient
     gradient = property(_get_gradient, _set_gradient)
+
+    def _get_textGradient(self):
+        return self.css('textGradient')
+    def _set_textGradient(self, textGradient):
+        self.style['textGradient'] = textGradient
+    textGradient = property(_get_textGradient, _set_textGradient)
 
     def _get_box3D(self):
         u"""Answer the 3D bounding box of self from (self.x, self.y, self.w, self.h) properties."""

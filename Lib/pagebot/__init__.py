@@ -351,10 +351,11 @@ class Shadow(object):
         self.cmykColor = cmykColor
 
 def setShadow(eShadow):
-    if eShadow.cmykColor is not None:
-        shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
-    else:
-        shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.color)
+    if shadow is not None:
+        if eShadow.cmykColor is not None:
+            shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
+        else:
+            shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.color)
 
 #   E L E M E N T
 

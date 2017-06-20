@@ -61,7 +61,7 @@ def makeCoverTemplate(imagePath, w, h):
     newImage(imagePath, parent=coverTemplate, 
         conditions=[Fit2WidthSides(), Bottom2BottomSide()])
     # Title of the magazine cover.
-    LIGHT = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=0.34))
+    #LIGHT = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=0.34))
 
     coverTitle = newFS('Fashion', 
         style=dict(font=LIGHT.installedName, fontSize=180, shadow=shadow, textFill=textColor, tracking=-3))
