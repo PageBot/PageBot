@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     MakeABookCover.py
+#     DrawViewPageFrame.py
 #
 from pagebot import newFS
 from pagebot.style import getRootStyle, A5, BOTTOM, CENTER
