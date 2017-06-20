@@ -30,7 +30,7 @@ PagePadding = 32
 PageSize = 500
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/UseTextFlows.pdf' 
+EXPORT_PATH = '_export/UseTextFlows.png' 
 
 def makeDocument():
     u"""Make a new document."""

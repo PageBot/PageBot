@@ -5,7 +5,6 @@ Python basics (variable types, loops, functions, conditions)
 Drawbot basics (drawing primitives)
 Drawbot examples (animated gifs)
 Drawbot FormattedString
-
 Drawbot classes
 http://readthedocs.org/projects/drawbot/downloads/pdf/latest/
 

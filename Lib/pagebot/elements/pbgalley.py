@@ -14,7 +14,7 @@ from drawBot import rect
 
 from pagebot.style import NO_COLOR, makeStyle
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.transformer import pointOffset, int2Color
 from pagebot import newFS, setStrokeColor, setFillColor
 
 class Galley(Element):
@@ -29,6 +29,8 @@ class Galley(Element):
     from pagebot.elements.pbruler import Ruler
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
+        
+    OLD_PAPER_COLOR = int2Color(0xF8ECC2) # Color of old paper: #F8ECC2
 
     def appendString(self, fs):
         u"""Add the string to the laat text box. Create a new textbox if not found."""
@@ -111,7 +113,7 @@ class Galley(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, p, view)
 
-        setFillColor((1, 1, 0.3))
+        setFillColor(self.OLD_PAPER_COLOR) # Color of old paper: #F8ECC2
         gw, gh = self.getSize()
         rect(px, py, gw, gh)
         gy = 0
