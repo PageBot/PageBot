@@ -40,12 +40,12 @@ class Element(object):
     isFlow = False # Value is True if self.next if defined.
     isPage = False # Set to True by Page-like elements.
 
-    def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, t=0, parent=None, name=None, 
-            title=None, style=None, conditions=None, elements=None, template=None, nextElement=None, prevElement=None, 
-            nextPage=None, prevPage=None, padding=None, margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
-            mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, borders=None, borderTop=None, borderRight=None,
-            borderBottom=None, borderLeft=None, 
-            drawBefore=None, drawAfter=None, **kwargs):  
+    def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
+            t=0, parent=None, name=None, title=None, style=None, conditions=None, elements=None, 
+            template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, padding=None, 
+            margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
+            borders=None, borderTop=None, borderRight=None, borderBottom=None, borderLeft=None, 
+            shadow=None, gradient=None, drawBefore=None, drawAfter=None, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
@@ -67,6 +67,10 @@ class Element(object):
         # Drawing hooks
         self.drawBefore = drawBefore # Optional method to draw before child elements are drawn.
         self.drawAfter = drawAfter # Optional method to draw after child elements are drawn.
+
+        # Shadow and gradient, if defined
+        self.shadow = shadow
+        self.gradient = gradient
 
         # Set timer of this element.
         self.timeMarks = [TimeMark(0, self.style), TimeMark(XXXL, self.style)] # Default TimeMarks from t == 0 until infinite of time.
@@ -1203,6 +1207,18 @@ class Element(object):
         return self.d - self.pzf - self.pzb
     pd = property(_get_pd)
     
+    def _get_shadow(self):
+        return self.css('shadow')
+    def _set_shadow(self, shadow):
+        self.style['shadow'] = shadow
+    shadow = property(_get_shadow, _set_shadow)
+
+    def _get_gradient(self):
+        return self.css('gradient')
+    def _set_gradient(self, gradient):
+        self.style['gradient'] = gradient
+    gradient = property(_get_gradient, _set_gradient)
+
     def _get_box3D(self):
         u"""Answer the 3D bounding box of self from (self.x, self.y, self.w, self.h) properties."""
         return self.x or 0, self.y or 0, self.z or 0, self.w or 0, self.h or 0, self.d or 0
@@ -1648,7 +1664,7 @@ class Element(object):
         Instead of the DrawBot stroke and strokeWidth attributes, use
         borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
         """
-        eShadow = self.css('shadow', None)
+        eShadow = self.shadow
         if eShadow:
             save()
             setShadow(eShadow)
@@ -1656,7 +1672,7 @@ class Element(object):
             restore()
 
         eFill = self.css('fill', None)
-        eGradient = self.css('gradient', None)
+        eGradient = self.gradient
         if eFill or eGradient:
             save()
             # Drawing element fill and/or frame
