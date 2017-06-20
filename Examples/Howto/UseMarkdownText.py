@@ -30,7 +30,10 @@ markdownPath = 'TOC.md'
 def makeDocument():
     
     doc = Document(originTop=False, w=W, h=H, pages=1) 
-
+    doc.addStyle('h1', dict(textFill=0))
+    doc.addStyle('h2', dict(textFill=0))
+    doc.addStyle('p', dict(textFill=0))
+    
     page = doc[0] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?
 
@@ -59,5 +62,5 @@ def makeDocument():
     return doc
         
 d = makeDocument()
-d.export('_export/UseMarkdownText.pdf ')
+d.export('_export/UseMarkdownText.pdf')
     
