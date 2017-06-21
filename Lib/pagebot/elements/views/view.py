@@ -328,7 +328,7 @@ class View(Element):
                 setFillColor(self.css('viewInfoFill'))
                 setStrokeColor(0.3, 0.25)
                 rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
-                text(fs, (tpx+Pd, tpy+1.5*Pd))
+                text(fs, (tpx+Pd, tpy+th-1.5*Pd))
                 e._restoreScale()
 
             if self.showElementDimensions:
@@ -337,7 +337,7 @@ class View(Element):
                 setFillColor(None)
                 setStrokeColor(0, 0.25)
                 S = self.css('viewInfoOriginMarkerSize', 4)
-                x1, y1, x2, y2 = e.left, e.bottom, e.right, e.top
+                x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
                 # Horizontal measure
                 line((x1, y1 - 0.5*S), (x1, y1 - 3.5*S))
