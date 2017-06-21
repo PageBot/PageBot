@@ -31,6 +31,12 @@ More on grids and other page positioning
 Reading text from files (markdown, XML, HTML), Galleys and Typesetter
 Make your design(s) into Pagebot code
 
+    Take text of 3-4 paragraphs (headline, body text, caption)
+    Make 1-2 formatted strings from that (with newFS)
+    Make 2 rect elements, with a color
+    Origanize those 3-4 elements on a responsive page.
+     
+
 # Thursday
 Make your design(s) into Pagebot code
 Design theory, design the design process
