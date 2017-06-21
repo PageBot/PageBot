@@ -328,7 +328,7 @@ class View(Element):
                 setFillColor(self.css('viewInfoFill'))
                 setStrokeColor(0.3, 0.25)
                 rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
-                text(fs, (tpx+Pd, tpy+th-1.5*Pd))
+                text(fs, (tpx+Pd, tpy+th))
                 e._restoreScale()
 
             if self.showElementDimensions:
