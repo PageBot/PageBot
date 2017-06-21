@@ -24,9 +24,11 @@ Pagebot Grid (similatities/difference with InDesign, principles)
 Pagebot Conditions
 
 # Wednesday
-Pagebot builders (exporting other formats that standard drawbot)
+How to make Pagebot builders (exporting other formats that standard drawbot)
     Export HTML/JS/CSS/SVG (basics, XPyth, Xierpa, Xierpa3, MAMP)
     Export JS-InDesign
+More on grids and other page positioning
+Reading text from files (markdown, XML, HTML), Galleys and Typesetter
 Make your design(s) into Pagebot code
 
 # Thursday
