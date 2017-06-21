@@ -6,7 +6,9 @@ d = dict(x=10, y=20, width=300, height=200)
 script = '''
 #target InDesign 
 
-fillRect(%(x)f, %(y)f, %(width)f, %(height)f);
+app.activeDocument.pages.item(0).rectangles.add({              geometricBounds: [%(y)f, %(x)f, %(width)f, %(height)f],              //fillColor: myColorA,            // fillTint: myTint,            });
+
+//fillRect(%(x)f, %(y)f, %(width)f, %(height)f);
 
     
 ''' % d
