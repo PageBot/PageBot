@@ -31,6 +31,7 @@ from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 
 AXES = {
+    # https://www.typenetwork.com/brochure/opentype-variable-fonts-moving-right-along/
     # Registered axes
     'wght': dict(name='Weight', tag='wght', description='Description of registered wght axis here'),
     'wdth': dict(name='Width', tag='wdth', description='Description of registered wdth axis here'),
@@ -141,6 +142,7 @@ class Font(object):
 
     def _get_axes(self): # Answer dictionary of axes
         try:
+            # TODO: Change value to Axis dictionary instead of list
             axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in self.ttFont['fvar'].axes}
         except KeyError:
             axes = {} # This is not a var font.
