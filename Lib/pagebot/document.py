@@ -30,7 +30,7 @@ class Document(object):
         if rootStyle is None:
             rootStyle = getRootStyle()
         self.rootStyle = rootStyle
-        self.initializeStyles(rootStyle, styles) # Merge CSS for element tree
+        self.initializeStyles(styles) # Merge CSS for element tree
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
         self.w = w
         self.h = h
@@ -95,7 +95,7 @@ class Document(object):
         self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
         # Make sure that the default styles for document and page are always there.
         name = 'root'
-        self.addStyle(name)
+        self.addStyle(name, self.rootStyle)
         name = 'document'
         if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
