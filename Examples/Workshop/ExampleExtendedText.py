@@ -5,7 +5,7 @@
      
 from pagebot import newFS
 from pagebot.document import Document
-#from pagebot.elements import *
+from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.style import A5, TOP
 from pagebot.contributions.filibuster.blurb import Blurb
@@ -35,10 +35,7 @@ def getExtendedBlurb(doc):
     return fs
     
 extendedBlurb = getExtendedBlurb(doc)
-print textSize(extendedBlurb)
-fill(0)
-textBox(extendedBlurb, (20, 20, 500, 1000))
-"""
+
 view = doc.getView()
 view.showPagePadding = True
 view.showElementOrigin = True
@@ -47,7 +44,6 @@ view.showFlowConnections = True
 page = doc[0]
 page.padding = int(page.h/12), int(page.w/12)
 
-
 newRect(parent=page, z=10, fill=(1, 0, 0), conditions=[Left2LeftSide(), Bottom2Top(), Fit2TopSide(), Fit2WidthSides()])
 newRect(parent=page, z=10, x=10, y=10, fill=(1, 0, 1, 0.5), conditions=[Left2LeftSide(), 
     Top2Bottom(), Fit2BottomSide(), Fit2WidthSides()])
@@ -55,14 +51,7 @@ newRect(parent=page, z=10, x=10, y=10, fill=(1, 0, 1, 0.5), conditions=[Left2Lef
 cId2 = 'colum2'
 fontSize = 10
 
-he = newTextBox(blurb.getBlurb('news_headline'), parent=page, x=20, y=220, w=page.pw, fill=0, fontSize=18,
-    conditions=[Left2Left(), Top2Top()], mb=20)
-ce1 = newTextBox(blurb.getBlurb('article', noTags=True), parent=page, x=20, y=20, w=page.pw/2-page.gw, mr=page.gw,
-    fill=0, fontSize=fontSize,
-    conditions=[Left2Left(), Float2Top(), Fit2Bottom(), Overflow2Next()], nextElement=cId2)
-#print ce1.isOverflow()
-
-newTextBox('', name=cId2, parent=page, ml=page.gw, x=20, y=20, fill=0, fontSize=fontSize,
+newTextBox(extendedBlurb, name=cId2, parent=page, ml=page.gw, x=20, y=20, fill=0, fontSize=fontSize,
     w=page.pw/2-page.gw,
     conditions=[Float2Right(), Float2Top(),Float2Left(), Fit2Bottom()]
 )
@@ -72,4 +61,3 @@ print page.solve()
 
 doc.export('_export/TextAssignment.pdf')
 
-"""
