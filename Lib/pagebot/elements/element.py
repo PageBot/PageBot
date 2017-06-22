@@ -1120,7 +1120,7 @@ class Element(object):
     def _set_pt(self, pt):
         self.style['pt'] = pt  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
-    
+
     def _get_pb(self): # Padding bottom
         return self.css('pb', 0)
     def _set_pb(self, pb):
@@ -1863,7 +1863,7 @@ class Element(object):
             self.drawAfter(self, p, view)
 
         self._restoreScale()
-        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     #   V A L I D A T I O N
 

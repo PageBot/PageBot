@@ -88,14 +88,14 @@ class Document(object):
  
     #   S T Y L E
 
-    def initializeStyles(self, rootStyle, styles):
+    def initializeStyles(self, styles):
         u"""Make sure that the default styles always exist."""
         if styles is None:
             styles = {}
         self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
         # Make sure that the default styles for document and page are always there.
         name = 'root'
-        self.addStyle(name, rootStyle)
+        self.addStyle(name)
         name = 'document'
         if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
