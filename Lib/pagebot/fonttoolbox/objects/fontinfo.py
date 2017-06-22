@@ -188,7 +188,8 @@ class FontInfo(object):
         return self._getOTLFeatures("GSUB")
 
     def _get_metrics(self):
-        u"""Small collection of font metrics info data as dictionary."""        
+        u"""Small collection of font metrics info data as dictionary."""     
+        # @@@ TODO Does not work   
         return dict(typoDescender=self.typoDescender, typoAscender=self.typoAscender,
             descender=hhea.descent, ascender=hhea.ascent,
             xHeight=os2.sxHeight, capHeight=os2.sCapHeight, subscriptYOffset=os2.ySubscriptYOffset,
