@@ -5,6 +5,7 @@
 #
 #     Made for usage in PageBot, www.pagebot.pro
 #
+# Copied from <https://github.com/waylan/Python-Markdown>
 """
 Literature Extension for Python-Markdown
 =======================================
