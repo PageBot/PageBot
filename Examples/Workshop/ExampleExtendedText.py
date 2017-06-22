@@ -16,22 +16,28 @@ print W, H
 doc = Document(w=W, h=H, originTop=False, autoPages=1)
 doc.newStyle(name='h1', fontSize=30, font='Verdana', textFill=(1, 0, 0), 
         leading=36)
-doc.newStyle(name='h2', fontSize=30, font='Verdana', textFill=0, 
+doc.newStyle(name='h2', fontSize=22, font='Verdana', textFill=0, 
         leading=24)
+doc.newStyle(name='h3', fontSize=16, font='Verdana', textFill=0, 
+        leading=14)
+doc.newStyle(name='p', fontSize=10, font='Verdana', textFill=0, 
+        leading=12)
         
 def getExtendedBlurb(doc):
     blurb = Blurb()
     fs = newFS(blurb.getBlurb('news_headline')+'\n', style=doc.styles['h1'])
-    fs += newFS(blurb.getBlurb('design_headline')+'\n', style=doc.styles['h2'])
-    #fs += newFS(blurb.getBlurb('article'), style=doc.getStyle('p'))
-    #fs += newFS(blurb.getBlurb('design_headline'), style=doc.getStyle('h2'))
-    #fs += newFS(blurb.getBlurb('article'), style=doc.getStyle('p'))
+    for n in range(50):
+        fs += newFS(blurb.getBlurb('design_headline')+'\n', style=doc.styles['h2'])
+        fs += newFS(blurb.getBlurb('design_headline')+'\n', style=doc.styles['h3'])
+        fs += newFS(blurb.getBlurb('article')+'\n', style=doc.styles['p'])
+        fs += newFS(blurb.getBlurb('design_headline')+'\n', style=doc.styles['h3'])
+        fs += newFS(blurb.getBlurb('article')+'\n', style=doc.styles['p'])
     return fs
     
 extendedBlurb = getExtendedBlurb(doc)
-print extendedBlurb
+print textSize(extendedBlurb)
 fill(0)
-textBox(extendedBlurb, (20, 20, 300, 200))
+textBox(extendedBlurb, (20, 20, 500, 1000))
 """
 view = doc.getView()
 view.showPagePadding = True
