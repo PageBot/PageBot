@@ -329,7 +329,7 @@ class Typesetter(object):
         child elements."""
         fileExtension = fileName.split('.')[-1]
         if fileExtension == 'md':
-            # If we have MarkDown content, conver to HTNK/XML
+            # If we have MarkDown content, convert to XML (XHTML)
             f = codecs.open(fileName, mode="r", encoding="utf-8")
             mdText = f.read()
             f.close()
