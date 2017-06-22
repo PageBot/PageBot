@@ -16,22 +16,22 @@ print W, H
 doc = Document(w=W, h=H, originTop=False, autoPages=1)
 doc.newStyle(name='h1', fontSize=30, font='Verdana', textFill=(1, 0, 0), 
         leading=36)
-doc.newStyle(name='h2', fontSize=22, font='Verdana', textFill=0, 
+doc.newStyle(name='h2', fontSize=22, font='Verdana', textFill=(0, 1, 0), 
         leading=24)
-doc.newStyle(name='h3', fontSize=16, font='Verdana', textFill=0, 
+doc.newStyle(name='h3', fontSize=16, font='Verdana', textFill=(0, 0, 1), 
         leading=14)
 doc.newStyle(name='p', fontSize=10, font='Verdana', textFill=0, 
         leading=12)
         
 def getExtendedBlurb(doc):
     blurb = Blurb()
-    fs = newFS(blurb.getBlurb('news_headline')+'\n', style=doc.styles['h1'])
-    for n in range(50):
-        fs += newFS(blurb.getBlurb('design_headline')+'\n', style=doc.styles['h2'])
-        fs += newFS(blurb.getBlurb('design_headline')+'\n', style=doc.styles['h3'])
-        fs += newFS(blurb.getBlurb('article')+'\n', style=doc.styles['p'])
-        fs += newFS(blurb.getBlurb('design_headline')+'\n', style=doc.styles['h3'])
-        fs += newFS(blurb.getBlurb('article')+'\n', style=doc.styles['p'])
+    fs = newFS(blurb.getBlurb('news_headline', noTags=True)+'\n', style=doc.styles['h1'])
+    for n in range(3):
+        fs += newFS(blurb.getBlurb('design_headline', noTags=True)+'\n', style=doc.styles['h2'])
+        fs += newFS(blurb.getBlurb('design_headline', noTags=True)+'\n', style=doc.styles['h3'])
+        fs += newFS(blurb.getBlurb('article', noTags=True)+'\n', style=doc.styles['p'])
+        fs += newFS(blurb.getBlurb('design_headline', noTags=True)+'\n', style=doc.styles['h3'])
+        fs += newFS(blurb.getBlurb('article', noTags=True)+'\n', style=doc.styles['p'])
     return fs
     
 extendedBlurb = getExtendedBlurb(doc)
@@ -43,21 +43,35 @@ view.showFlowConnections = True
 
 page = doc[0]
 page.padding = int(page.h/12), int(page.w/12)
+pn = 0
 
-newRect(parent=page, z=10, fill=(1, 0, 0), conditions=[Left2LeftSide(), Bottom2Top(), Fit2TopSide(), Fit2WidthSides()])
-newRect(parent=page, z=10, x=10, y=10, fill=(1, 0, 1, 0.5), conditions=[Left2LeftSide(), 
-    Top2Bottom(), Fit2BottomSide(), Fit2WidthSides()])
+overflowText = extendedBlurb 
 
-cId2 = 'colum2'
-fontSize = 10
+for n in range(4):#0000):
+    newRect(parent=page, z=10, fill=(1, 0, 0), 
+        conditions=[Left2LeftSide(), Bottom2Top(), Fit2TopSide(), Fit2WidthSides()])
+    newRect(parent=page, z=10, x=10, y=10, fill=(1, 0, 1, 0.5), conditions=[Left2LeftSide(), 
+        Top2Bottom(), Fit2BottomSide(), Fit2WidthSides()])
 
-newTextBox(extendedBlurb, name=cId2, parent=page, ml=page.gw, x=20, y=20, fill=0, fontSize=fontSize,
-    w=page.pw/2-page.gw,
-    conditions=[Float2Right(), Float2Top(),Float2Left(), Fit2Bottom()]
-)
-#print he.x, he.y 
-print page.solve()
-#print he.x, he.y 
+    cId2 = 'colum2'
+    fontSize = 10
+
+    tb = newTextBox(overflowText, name=cId2, parent=page, ml=page.gw, x=20, y=20, fill=0, fontSize=fontSize,
+        w=page.pw,conditions=[Float2Right(), Float2Top(),Float2Left(), Fit2Bottom()]
+    )
+    #print he.x, he.y 
+    page.solve()
+    if not tb.isOverflow():
+        break
+    overflowText = tb.getOverflow()
+    
+    pn += 1
+    doc.newPage()
+    # TODO: This should work: get the last page in a doc.
+    page = doc[pn]
+    page.padding = int(page.h/12), int(page.w/12)
+        
+    #print he.x, he.y 
 
 doc.export('_export/TextAssignment.pdf')
 
