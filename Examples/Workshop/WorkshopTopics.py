@@ -38,9 +38,13 @@ Make your design(s) into Pagebot code
      
 
 # Thursday
+InstallFonts()
+Make InDesign document (Builder)
+Make Webpages (Builder)
 Make your design(s) into Pagebot code
 Design theory, design the design process
 Pagebot 3D
 Pagebot timeline
 Pagebot future
+    Run PageBot on other platforms (Window) than only DrawBot
 """
