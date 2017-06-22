@@ -24,7 +24,7 @@ except ImportError:
 try:
     import markdown
     from markdown.extensions.nl2br import Nl2BrExtension
-    from markdown.extensions.footnotes import FootnoteExtension
+    # from markdown.extensions.footnotes import FootnoteExtension
     from pagebot.md.literature import LiteratureExtension
     from pagebot.md.footnotes import FootnoteExtension
 except ImportError:
