@@ -37,7 +37,7 @@ FLOWID2 = MAIN_FLOW+'2'
 FLOWID3 = MAIN_FLOW+'3'
 
 ROOT_PATH = pagebot.getRootPath()
-FONT_PATH = ROOT_PATH + '/Fonts/_private/PromisePageBot-GX.ttf'
+FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
 #FONT_PATH = getMasterPath() + 'BitcountGrid-GX.ttf'
 
 LIGHT = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=0.34))
