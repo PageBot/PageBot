@@ -10,6 +10,9 @@
 #
 #     mdblogbuilder.py
 #
+#	  Exporting MarkDown (MacDown) text with Wiki codes.
+#	  TODO: To be implemented.
+#
 from pagebot.builders.basebuilder import BaseBuilder
 
 class MDBlogBuilder(BaseBuilder):
