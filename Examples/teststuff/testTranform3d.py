@@ -16,7 +16,7 @@ print t.transformPoints([(100, 200, 300)])  # transform a seq. of points
 
 print t
 
-radius = 150
+radius = 222
 cube = []
 for x in [-radius, radius]:
     for y in [-radius, radius]:
@@ -24,9 +24,9 @@ for x in [-radius, radius]:
             cube.append((x, y, z))
 
 t = Transform3D()  # identity transform
-t = t.rotateX(radians(40))
-t = t.rotateY(radians(0))
-t = t.rotateZ(radians(-22))
+t = t.rotateX(radians(68))
+t = t.rotateY(radians(8))
+t = t.rotateZ(radians(--10))
 
 affine = t.getAffineTransform2D(2)
 

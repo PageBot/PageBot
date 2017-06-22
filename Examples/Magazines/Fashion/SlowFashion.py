@@ -21,7 +21,7 @@ from pagebot.document import Document
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 
-from pagebot.fonttoolbox.variablefontbuilder import getVariableFont   
+from pagebot.fonttoolbox.variablefontbuilder import getVariableFont, Font 
 W, H = A4Letter
 PADDING = 24
 
@@ -40,7 +40,13 @@ ROOT_PATH = pagebot.getRootPath()
 FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
 #FONT_PATH = getMasterPath() + 'BitcountGrid-GX.ttf'
 
-LIGHT = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=0.34))
+f = Font(FONT_PATH)
+print f.axes
+
+LIGHT = getVariableFont(FONT_PATH, dict(wght=0.5, wdth=0.6))
+print LIGHT.path
+LIGHT.save(ROOT_PATH + '/Fonts/_instances/PromiseInstance.otf')
+
 BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=1, wdth=1))
 BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=0.8))
 BOOK = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=1))
@@ -252,7 +258,7 @@ def makeDocument():
     doc.solve()
     
     return doc
-        
+
 d = makeDocument()
 d.export(EXPORT_PATH) 
 
