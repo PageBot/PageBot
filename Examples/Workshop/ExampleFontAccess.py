@@ -12,6 +12,8 @@ print f.axes
 
 print f.info.weightClass, f.info.unitsPerEm
 
+print f.ttFont['fvar'].axes
+
 g = f.keys()
 g = f['a']
 print g.name, g.width

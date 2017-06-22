@@ -11,4 +11,8 @@ ts = Typesetter(doc, g)
 ROOT_PATH = pagebot.getRootPath()
 MD_PATH = ROOT_PATH + "/Examples/Howto/TOC.md"
 
-print os.path.exists(MD_PATH)
+ts.typesetFile(MD_PATH)
+for e in g.elements:
+    print e.fs
+    print e
+
