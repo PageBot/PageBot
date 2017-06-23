@@ -44,8 +44,7 @@ f = Font(FONT_PATH)
 print f.axes
 
 LIGHT = getVariableFont(FONT_PATH, dict(wght=0.5, wdth=0.6))
-print LIGHT.path
-LIGHT.save(ROOT_PATH + '/Fonts/_instances/PromiseInstance.otf')
+#LIGHT.save(ROOT_PATH + '/Fonts/_instances/PromiseInstance.otf')
 
 BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=1, wdth=1))
 BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=0.8))
