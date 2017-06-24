@@ -43,7 +43,7 @@ class Typesetter(object):
         self.doc = doc # Doc context of the typesetter.
         self.galley = galley
         self.gState = [] # Stack of graphic state as cascading styles.
-     
+
     def getTextBox(self, e=None):
         u"""Answer the current text box, if the width fits the current style.
         If style is omitted, then always answer the current latest text box."""
@@ -51,7 +51,7 @@ class Typesetter(object):
 
     def node_h1(self, node, e):
         u"""Collect the page-node-pageNumber connection."""
-        # Add line break to whatever style/content there was before. 
+        # Add line break to whatever style/content there was before.
         # Add invisible h1-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.appendString(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
@@ -60,7 +60,7 @@ class Typesetter(object):
 
     def node_h2(self, node, e):
         u"""Collect the page-node-pageNumber connection."""
-        # Add line break to whatever style/content there was before. 
+        # Add line break to whatever style/content there was before.
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.appendString(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
@@ -69,16 +69,16 @@ class Typesetter(object):
 
     def node_h3(self, node, e):
         u"""Collect the page-node-pageNumber connection."""
-        # Add line break to whatever style/content there was before. 
+        # Add line break to whatever style/content there was before.
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, e)
-        
+
     def node_h4(self, node, e):
         u"""Collect the page-node-pageNumber connection."""
-        # Add line break to whatever style/content there was before. 
+        # Add line break to whatever style/content there was before.
         # Add invisible h4-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
@@ -99,7 +99,7 @@ class Typesetter(object):
         u"""Ignore links, but process the block"""
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
-       
+
     def node_sup(self, node, e):
         u"""Collect footnote references on their page number.
         And typeset the superior footnote index reference."""
@@ -118,12 +118,12 @@ class Typesetter(object):
 
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
- 
+
     def node_literatureref(self, node, e):
         u"""Collect literature references."""
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         # Check if this is a literature reference
-        nodeId = node.attrib.get('id')        
+        nodeId = node.attrib.get('id')
         if nodeId.startswith('litref:'): # It is a literature reference.
             literatureRefs = self.getLiteratureRefs(e)
             if literatureRefs:
@@ -137,10 +137,10 @@ class Typesetter(object):
 
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node)
-         
+
     def node_div(self, node, e):
         u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
-        as output at the end of the HTML export. We will handle them separately by looking them up 
+        as output at the end of the HTML export. We will handle them separately by looking them up
         in the XML-tree. So we'll skip them in the regular flow process."""
 
         if node.attrib.get('class') == 'footnote':
@@ -163,7 +163,7 @@ class Typesetter(object):
                         # Store the content as node, so we can process it with a Typesetter in case of child nodes.
                         # Spltting fields inside the p content will be done by the calling application or Composer.
                        literatureRefs[index+1]['p'] = p
-                    else: 
+                    else:
                         print '### Warning: ', index+1, 'literature reference not found.', literatureRefs.keys()
             result = None # Nothing to return, we handled the references
 
@@ -181,8 +181,10 @@ class Typesetter(object):
 
     def node_img(self, node, e):
         u"""Process the image. Find nearby empty space on the page to place it,
-        that best fit the w/h ratio of the image and the optional caption.
-        A new child Galley is created to hold the combination if there is a caption."""
+        possibly intended to fit the w/h ratio of the image and the optional caption.
+        A new Image element is created with a PixelMap element and TextBox caption
+        element inside. The Image will use style based conditions to define the layout
+        interaction between pixelMap and caption."""
         src = node.attrib.get('src')
         self.pushStyleTag(node.tag)
         imageContainer = self.IMAGE_CLASS(src) # Set path, image w/h and image caontainer scale from style.
@@ -206,13 +208,13 @@ class Typesetter(object):
             self.galley.append(g)
         """
         self.popStyleTag()
-       
+
     def pushStyleTag(self, tag):
-        u"""Push the cascaded style on the gState stack. Make sure that the style is not None and that it 
-        is a cascaded style, otherwise it cannot be used as source for child styles. Answer the cascaded 
+        u"""Push the cascaded style on the gState stack. Make sure that the style is not None and that it
+        is a cascaded style, otherwise it cannot be used as source for child styles. Answer the cascaded
         style as convenience for the caller. """
         self.gState.append(tag)
-        
+
     def popStyleTag(self):
         u"""Pop the cascaded style from the gState stack and answer the next style that is on top.
         Make sure that there still is a style to pop, otherwise raise an error. """
@@ -282,7 +284,7 @@ class Typesetter(object):
             hook = 'node_'+child.tag
             # Method will handle the styled body of the element, but not the tail.
             if hasattr(self, hook):
-                # There is a child hook, let this method do the work. 
+                # There is a child hook, let this method do the work.
                 getattr(self, hook)(child, e) # Hook must be able to derive styles from e.
                 # We are in tail mode now, but we don't know what happened in the child block.
             else:
@@ -291,7 +293,7 @@ class Typesetter(object):
 
             # XML-nodes are organized as: node - node.text - node.children - node.tail
             # If there is no text or if the node does not have tail text, these are None.
-            # Still we want to be able to add the postfix to the tail, so then the tail is changed 
+            # Still we want to be able to add the postfix to the tail, so then the tail is changed
             # to empty string?
             childTail = child.tail #self._strip(child.tail, postfix=style['postfix'])
             if childTail: # Any tail left after stripping, then append to the galley.
@@ -323,7 +325,7 @@ class Typesetter(object):
     def typesetFile(self, fileName, e=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
         start at page pageNumber and find the name of the flow in the page template.
-        The optional filter can be a list of tag names that need to be included in the 
+        The optional filter can be a list of tag names that need to be included in the
         composition, ignoring the rest.
         The optional rootStyle can be defined as style for the root tag, cascading force all
         child elements."""
@@ -334,13 +336,15 @@ class Typesetter(object):
             mdText = f.read()
             f.close()
             mdExtensions = [FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
-            xml = u'<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
+            xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
             xml = xml.replace('&nbsp;', ' ')
-            xmlName = fileName + '.xml'
-            f = codecs.open(xmlName, mode="w", encoding="utf-8")
+            """
+            fileName = fileName + '.xml' # New file name to XML export
+            """
+            f = codecs.open(fileName, mode="w", encoding="utf-8")
             f.write(xml)
             f.close()
-            fileName = xmlName
+            """
 
         tree = ET.parse(fileName)
         root = tree.getroot() # Get the root element of the tree.
@@ -353,7 +357,7 @@ class Typesetter(object):
         else:
             # Collect all flowing text in one formatted string, while simulating the page/flow, because
             # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
-            # reference, image index and footnote placement.   
+            # reference, image index and footnote placement.
             self.typesetNode(root, e)
 
     def typesetFilibuster(self, e, blurbNames=None):
