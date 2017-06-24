@@ -13,6 +13,7 @@ MD_PATH = ROOT_PATH + "/Examples/Howto/TOC.md"
 
 ts.typesetFile(MD_PATH)
 for e in g.elements:
-    print e.fs
-    print e
+    #print e.fs
+    pass
+    #print e
 
