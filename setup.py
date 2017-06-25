@@ -12,6 +12,8 @@
 
 from setuptools import setup, find_packages
 
+# TODO: Add install for markdown, if it does not exist.
+
 setup(
     name='pagebot',
      url="https://github.com/TypeNetwork/PageBot",
