@@ -54,7 +54,8 @@ Code, Open source under MIT conditions & All source code available.
 
 ## Future developments
 
-* Elements for various types of info-graphics
+* Element classes supporting various types of graphs, info-graphics, maps, PageBot document layout, Variable Font axes layout, font metrics.
+* Views for thumbnail page overview, combined booklet-sheets for print, site-maps, etc.
 * Add export of text to MarkDown .md files.
 * Add export to HTML/CSS/JS for specific designs of web pages, such as Kirby.
 * Export to Ruby/Sketchup.
@@ -70,7 +71,10 @@ Code, Open source under MIT conditions & All source code available.
 * Magazines
 * Newspapers
 * Newsletters
-* Parametric corporate identities, including their manuals.
-* Single page website
-* Wayfindng template 
+* Books
+* Parametric corporate identities, including their manuals, stationary and business cards.
+* Parametric advertizements (connecting to existing ad-systems)
+* Single page websites
+* Wayfindng templates for signs and maps
 * T-Shirt templates
+* Templates with embedded information for graphic- and typographic education.
