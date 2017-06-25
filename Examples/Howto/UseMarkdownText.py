@@ -40,8 +40,7 @@ def makeDocument():
     # Make rect as page element centered with centered origin.
     conditions = [Fit()]
     
-    g = Galley(parent=page, conditions=conditions,
-        style=dict(fill=0))
+    g = Galley(parent=page, conditions=conditions, textFill=0)
     ts = Typesetter(doc, g)
     print ts
     ts.typesetFile(markdownPath)
