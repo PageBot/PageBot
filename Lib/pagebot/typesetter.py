@@ -16,17 +16,10 @@ import codecs
 import xml.etree.ElementTree as ET
 
 try:
-    from lxml.etree import fromstring
-except ImportError:
-    print 'Typesetter: Install Python lxml from https://pypi.python.org/pypi/lxml'
-    fromstring = None
-
-try:
     import markdown
     from markdown.extensions.nl2br import Nl2BrExtension
-    # from markdown.extensions.footnotes import FootnoteExtension
-    from pagebot.md.literature import LiteratureExtension
-    from pagebot.md.footnotes import FootnoteExtension
+    from pagebot.contributions.markdown.literature import LiteratureExtension
+    from pagebot.contributions.markdown.footnotes import FootnoteExtension
 except ImportError:
     print 'Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown'
     markdown = None
@@ -327,20 +320,7 @@ class Typesetter(object):
         composition, ignoring the rest.
         The optional rootStyle can be defined as style for the root tag, cascading force all
         child elements."""
-        fileExtension = fileName.split('.')[-1]
-        if fileExtension == 'md':
-            # If we have MarkDown content, convert to XML (XHTML)
-            f = codecs.open(fileName, mode="r", encoding="utf-8")
-            mdText = f.read()
-            f.close()
-            mdExtensions = [FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
-            xml = u'<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
-            xml = xml.replace('&nbsp;', ' ')
-            xmlName = fileName + '.xml'
-            f = codecs.open(xmlName, mode="w", encoding="utf-8")
-            f.write(xml)
-            f.close()
-            fileName = xmlName
+        fileName = self.makeXMLFile(fileName) # Convert to XML if it is not, and use new file name.
 
         tree = ET.parse(fileName)
         root = tree.getroot() # Get the root element of the tree.
@@ -356,6 +336,29 @@ class Typesetter(object):
             # reference, image index and footnote placement.   
             self.typesetNode(root, e)
 
+    def makeXMLFile(self, fileName):
+        u"""If fileName is pointing to a non-XML file, then try to convert. This needs to be 
+        extended in the future e.g. to support Word documents or other text resources.
+        If the document is already an XML document, then ignore."""
+        xml = None # Check is something changed.
+        fileExtension = fileName.split('.')[-1].lower()
+        if fileExtension == 'xml':
+            pass # Ignore, it's already XML
+        elif fileExtension == 'md':
+            # If we have MarkDown content, convert to XML (XHTML)
+            f = codecs.open(fileName, mode="r", encoding="utf-8")
+            mdText = f.read()
+            f.close()
+            mdExtensions = [FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
+            xml = u'<?xml version="1.0" encoding="UTF-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
+            xml = xml.replace('&nbsp;', ' ')
+        if xml is not None:
+            fileName = fileName + '.xml'
+            f = codecs.open(fileName, mode="w", encoding="utf-8")
+            f.write(xml)
+            f.close()
+        return fileName # Return altered fileName if converted. Otherwise return original fileName
+
     def typesetFilibuster(self, e, blurbNames=None):
         u"""The typesetFilibuster answers the parsed typeset nodes from a Filibuster blurb. If the blurb
         instances is not given, then create a default Filibuster article."""
@@ -367,10 +370,7 @@ class Typesetter(object):
         for tag, blurbName in blurbNames:
             blurbArticle.append('<%s>%s</%s>\n' % (tag, blurb.getBlurb(blurbName), tag))
         xml = u'<document>%s</document>' % '\n'.join(blurbArticle)
-        if fromString is not None:
-            root = fromstring(xml) # Get the root element of the parsed XML tree.
-            self.typesetNode(root, e)
-        else: # Otherwise just show the string.
-            self.typesetString(s, e)
+        root = ET.parseString(xml) # Get the root element of the parsed XML tree.
+        self.typesetNode(root, e)
 
 
