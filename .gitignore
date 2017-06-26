@@ -4,6 +4,8 @@
 site
 mkdocs.yml
 log.txt
+_export/
+_private/
 
 #export
 
