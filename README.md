@@ -20,6 +20,7 @@ Known bugs and missing functions are:
 * Better management of text baselines on pages and throughout documents.
 * More useful views (representations of Documents) need to be developed and tested.
 * Not all examples currently work properly.
+* Windows, GNU+Linux and Android users are not yet supported, but PageBot could be ported to <http://xxyxyz.org/flat>
 
 ## Documentation
 
