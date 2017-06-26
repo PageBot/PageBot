@@ -2,8 +2,10 @@
 
 ## What is PageBot?
 
-PageBot is a scripted page layout program, available as Python library inside <a href="http:/drawbot.com">DrawBotApp</a> and as a collection of stand-alone desktop applications that can be created from it.
-PageBot is an initiative of [](https:/typenetwork.com)Type Network to create a system for scriptable applications generating high quality typographic documents.
+PageBot enables designers to create high quality typographic documents using scripted page layout programs. 
+It is available both as Python library inside [DrawBot](https://www.drawbot.com> and as a collection of stand-alone desktop applications. 
+
+PageBot is an initiative of [Type Network](https:/typenetwork.com)
 
 ## Current status
 
@@ -23,7 +25,7 @@ Known bugs and missing functions are:
 
 Full documentation is available at <https://typenetwork.github.io/PageBot>
 
-An overview of functions reads like this:
+Functions overview:
 
 * Various types of Element objects can be placed on a page or inside other Element objects.
 * Grids can be defined through style measurements and views.
@@ -50,9 +52,9 @@ An overview of functions reads like this:
 
 ## License
 
-All source code is available as open source under the MIT license. 
-
-Some other works are available in this repositoriy under other licenses, such as fonts available under the SIL Open Font License. 
+All PageBot source code is available as open source under the MIT license. 
+However, some other separate works are aggregated in this repository for convenience, and available under their own licenses. 
+See LICENSE files for details. 
 
 ## Future developments
 
