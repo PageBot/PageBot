@@ -2,12 +2,14 @@
 
 ## What is PageBot?
 
-As short description PageBot is a scripted page layout program, available as Python library inside <a href="http:/drawbot.com">@DrawBotApp</a> and as a collection of stand-alone desktop applications that can be created from it.
-PageBot is an initiative of <a href="http:/typenetwork.com">Type Network</a> to create a system for scriptable applications generating high quality typographic documents.
+PageBot is a scripted page layout program, available as Python library inside <a href="http:/drawbot.com">DrawBotApp</a> and as a collection of stand-alone desktop applications that can be created from it.
+PageBot is an initiative of [](https:/typenetwork.com)Type Network to create a system for scriptable applications generating high quality typographic documents.
 
 ## Current status
 
-Although released as Open Source under MIT license, PageBot is still in testing alpha phase. More examples need to be created to fully test all functions. For further development the contribution of others is highly appreciated.
+Although released as Open Source under MIT license, PageBot is still in testing alpha phase. 
+More examples need to be created to fully test all functions. 
+For further development the contribution of others is highly appreciated.
 
 Known bugs and missing functions are:
 
@@ -17,7 +19,10 @@ Known bugs and missing functions are:
 * More useful views (representations of Documents) need to be developed and tested.
 * Not all examples currently work properly.
 
-## Functions
+## Documentation
+
+Full documentation is available at <https://typenetwork.github.io/PageBot>
+
 An overview of functions reads like this:
 
 * Various types of Element objects can be placed on a page or inside other Element objects.
@@ -44,7 +49,10 @@ An overview of functions reads like this:
 * Export to PDF, PNG, JPG, SVG, (animated) GIF, MOV, XML, through programmable views.
 
 ## License
-Code, Open source under MIT conditions & All source code available.
+
+All source code is available as open source under the MIT license. 
+
+Some other works are available in this repositoriy under other licenses, such as fonts available under the SIL Open Font License. 
 
 ## Future developments
 
