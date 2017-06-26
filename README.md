@@ -1,30 +1,24 @@
-# PageBot
+# PageBot Version 0.5
 
 ## What is PageBot?
 
-As short description PageBot is a scripted page layout program, available as Python library inside <a href="http:/drawbot.com">@DrawBotApp</a> and as a collection of stand-alone desktop applications.
+As short description PageBot is a scripted page layout program, available as Python library inside <a href="http:/drawbot.com">@DrawBotApp</a> and as a collection of stand-alone desktop applications that can be created from it.
+PageBot is an initiative of <a href="http:/typenetwork.com">Type Network</a> to create a system for scriptable applications generating high quality typographic documents.
 
+## Current status
+
+Although released as Open Source under MIT license, PageBot is still in testing alpha phase. More examples need to be created to fully test all functions. For further development the contribution of others is highly appreciated.
+
+Known bugs and missing functions are:
+
+* Image + Pixelmap + Caption elements have some scaling problems.
+* Reading XML text from markdown is missing Document styles.
+* Better management of text baselines on pages and throughout documents.
+* More useful views (representations of Documents) need to be developed and tested.
+* Not all examples currently work properly.
+
+## Functions
 An overview of functions reads like this:
-
-<!--* Various types of elements that can be placed on a page.
-* As pages are elements themselves, they can also be included in pages, e.g. as thumbnails.
-* Cascading styles where values inherit from parent, similar to CSS behavior.
-* Automatic layout conditions for elements.
-* Content (such as text) flows from one textBox to another.
-* Access to images on pixel-level.
-* Page templates (or any other element combination)
-* OSX FormattedString for text composition
-* All positioning as 3D points, for future usage.
-* Full access to parameters and outlines inside fonts
-* Elements that show the content of (Variable) fonts.
-* Time line to interpolate all values over a given path and period.
-* Grids
-* Random text generator
-* All source code available.
-* Open source under MIT conditions.
-* All DrawBot functions accessable.
-* Export to PDF, PNG, JPG, SVG, (animated) GIF, MOV, XML, through programmable views.
-* Growing set of examples, templates and page elements with a specific task.-->
 
 * Various types of Element objects can be placed on a page or inside other Element objects.
 * Grids can be defined through style measurements and views.
@@ -58,21 +52,21 @@ Code, Open source under MIT conditions & All source code available.
 * Views for thumbnail page overview, combined booklet-sheets for print, site-maps, etc.
 * Add export of text to MarkDown .md files.
 * Add export to HTML/CSS/JS for specific designs of web pages, such as Kirby.
-* Export to Ruby/Sketchup.
+* Export to Ruby/Sketchup data files.
 * Add export to Angular files.
 * Export to InDesign® and Illustrator®, as close as possible to the native file format.
 * Time line, definition and editing, length and fps.
 
 ## Types of publications to develop
 
-* All TypeNetwork stationary and publications as scripted templates
+* TypeNetwork stationary and publications as scripted templates
 * Specimens for TN library
 * Recreation of legacy type specimens as PageBot templates
 * Magazines
 * Newspapers
 * Newsletters
 * Books
-* Parametric corporate identities, including their manuals, stationary and business cards.
+* Parametric corporate identities, including their styleguides, stationary and business card templates.
 * Parametric advertizements (connecting to existing ad-systems)
 * Single page websites
 * Wayfindng templates for signs and maps
