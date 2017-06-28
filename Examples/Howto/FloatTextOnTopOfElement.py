@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     ColorSquares.py
+#     FloatTextOnTopOfElement.py
 #
 #     This script generates a page with random color squares, indicating where their position is.
 #     This script is using the style parameters "originTop", making the coordinate system run downwards.

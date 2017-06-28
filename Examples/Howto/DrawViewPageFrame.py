@@ -9,6 +9,8 @@
 #
 #     DrawViewPageFrame.py
 #
+#     Needs debug in view dimension showing.
+#
 from pagebot import newFS
 from pagebot.style import getRootStyle, A5, BOTTOM, CENTER
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)

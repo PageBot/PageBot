@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     TestColumnDivision.py
+#     DB_TestColumnDivision.py
 #
 from __future__ import division
 

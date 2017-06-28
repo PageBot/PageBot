@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     AlignElements.py
+#     FloatElementsOnPage.py
 #
 #     This script generates a page with aligned square, showing how conditional placement works.
 #

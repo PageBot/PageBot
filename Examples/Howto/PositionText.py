@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     MakeABookCover.py
+#     PositionText.py
 #
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import newFS

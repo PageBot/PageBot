@@ -7,7 +7,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     TestFormattedStrings.py
+#     DB_TestFormattedStrings.py
 
 def run():
     aa = FormattedString('Book Cover', font='Georgia', fontSize=40)

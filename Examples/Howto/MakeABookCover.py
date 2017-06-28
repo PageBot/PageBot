@@ -9,6 +9,8 @@
 #
 #     MakeABookCover.py
 #
+#     Needs filling in with content.
+#
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import newFS
 from pagebot.contributions.filibuster.blurb import blurb # Create random title and names
