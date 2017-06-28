@@ -7,7 +7,9 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     UseShadow.py
+#     BuildMampSite.py
+#
+#     BROKEN: Needs more development on HTML/CSS builder class.
 #
 from pagebot import newFS
 from pagebot.style import getRootStyle, BOTTOM, CENTER, MIDDLE
