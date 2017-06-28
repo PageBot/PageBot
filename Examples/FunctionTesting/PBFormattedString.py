@@ -11,9 +11,6 @@
 #
 #     Can be used to experiment with the DrawBot FormattedString class.
 #
-from drawBot import DummyContext
-
-
 fs = FormattedString('')
 
 class PBFormattedString(fs.__class__):

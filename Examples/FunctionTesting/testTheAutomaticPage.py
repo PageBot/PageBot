@@ -12,12 +12,13 @@
 #     This script generates an article in Dustch the apporach to
 #     generate automatic layouts, using Galley, Typesetter and Composer classes.
 #
+#     BROKEN: Needs to update Element interfaces.
+#
 from pagebot.style import getRootStyle, LEFT
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
-from pagebot.fonttoolbox.variablebuilder import generateInstance
 
 SHOW_TIMER = False
 
@@ -41,8 +42,7 @@ RS = getRootStyle(
     # Basic layout measures altering the default rooT STYLE.
     w = 595, # Om root level the "w" is the page width 210mm, international generic fit.
     h = 11 * 72, # Page height 11", international generic fit.
-    ml = 7*U, # Margin left rs.
-    mt = 7*U, # Margin top
+    ml = 7*U, # Margin left rs.mt = 7*U # Margin top
     baselineGrid = 14,#baselineGrid,
     gw = 2*U, # Generic gutter, equal for width and height
     gd = 2*U,
@@ -76,44 +76,9 @@ P_TRACK = 0.030
 
 VARS = True
 
-if VARS:
-    FONT_PATH = '../../fonts/'
-
-    FONT_LOCATIONS = {
-        #'Promise-BoldCondensed': {"wght": 750, "wdth": 500, },
-        #'Promise-LightCondensed': {"wght": 0, "wdth": 500},
-        'Promise-Light': {"wght": 0, "wdth": 1000},
-        'Promise-Book': {"wght": 250, "wdth": 1000},
-        'Promise-Regular': {"wght": 400, "wdth": 1000},    
-        'Promise-Medium': {"wght": 600, "wdth": 1000},    
-        'Promise-Semibold': {"wght": 750, "wdth": 1000},    
-        'Promise-Bold': {"wght": 1000, "wdth": 1000},
-    }
-    FONTS = {}
-    # Install the test V-font
-    if not 'Promise-Bold' in installedFonts():
-        installFont(FONT_PATH + 'Promise-GX.ttf')
-    for name, location in FONT_LOCATIONS.items():
-        fontName, fontPath = generateInstance(FONT_PATH + 'Promise-GX.ttf', 
-        location, targetDirectory=FONT_PATH + 'instances')
-        FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
-    if 0:
-        BOOK = FONTS['Promise-LightCondensed']
-        BOOK_ITALIC = FONTS['Promise-LightCondensed']
-        MEDIUM = FONTS['Promise-LightCondensed']
-        SEMIBOLD = FONTS['Promise-LightCondensed']
-        BOLD = FONTS['Promise-LightCondensed']
-    else:
-        LIGHT = FONTS['Promise-Light']
-        BOOK = FONTS['Promise-Book']
-        BOOK_ITALIC = FONTS['Promise-Book']
-        MEDIUM = FONTS['Promise-Medium']
-        SEMIBOLD = FONTS['Promise-Semibold']
-        BOLD = FONTS['Promise-Bold']
-else:
-    BOOK = MEDIUM = 'Verdana'
-    BOOK_ITALIC = 'Verdana-Italic'
-    BOLD = SEMIBOLD = 'Verdana-Bold'
+BOOK = MEDIUM = 'Verdana'
+BOOK_ITALIC = 'Verdana-Italic'
+BOLD = SEMIBOLD = 'Verdana-Bold'
 # -----------------------------------------------------------------         
 def makeDocument(rs):
     u"""Demo page composer."""
@@ -137,8 +102,8 @@ def makeDocument(rs):
     template1.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox('', 2, 0, 2, 8, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     template1.cTextBox('', 4, 4, 2, 4, rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
-    # Create page number box. Pattern pageIdMarker is replaced by actual page number.
-    template1.cText(rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
+    template1.cText(rs['pageNumberMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
 
     # Template 2
     template2 = Template(rs) # Create second template. This is for the main pages.
@@ -154,8 +119,8 @@ def makeDocument(rs):
     template2.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBox=flowId1, nextPage=0, fill=BOX_COLOR)
     template2.cTextBox('', 2, 4, 2, 4, rs, flowId1, nextBox=flowId2, nextPage=0, fill=BOX_COLOR)
     template2.cTextBox('', 4, 3, 2, 3, rs, flowId2, nextBox=flowId0, nextPage=1, fill=BOX_COLOR)
-    # Create page number box. Pattern pageIdMarker is replaced by actual page number.
-    template2.cText(rs['pageIdMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
+    # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
+    template2.cText(rs['pageNumberMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -163,55 +128,70 @@ def makeDocument(rs):
     doc = Document(rs, pages=2, template=template2) 
  
     # Cache some values from the root style that we need multiple time to create the tag styles.
-    fontSize = rs['fontSize']
-    leading = rs['leading']
+    sFontSize = rs['fontSize']
+    sLeading = rs['leading']
     rLeading = rs['rLeading']
-    listIndent = rs['listIndent']
-    language = rs['language']
+    sListIndent = rs['listIndent']
+    sLanguage = rs['language']
     
     # Add styles for whole document and text flows.  
     # Note that some values are defined here for clarity, even if their default root values
     # are the same.             
     doc.newStyle(name='chapter', font=BOOK)    
-    doc.newStyle(name='title', fontSize=3*fontSize, font=BOLD)
-    doc.newStyle(name='subtitle', fontSize=2*fontSize, font=BOOK_ITALIC)
-    doc.newStyle(name='author', fontSize=2*fontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3*fontSize, font=SEMIBOLD, fill=(1, 0, 0),
-        leading=2*fontSize, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=2*fontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
-        leading=1*fontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
-    doc.newStyle(name='h3', fontSize=2*fontSize, font=MEDIUM, fill=0, 
-        leading=1*fontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+    doc.newStyle(name='title', fontSize=3*sFontSize, font=BOLD)
+    doc.newStyle(name='subtitle', fontSize=2*sFontSize, font=BOOK_ITALIC)
+    doc.newStyle(name='author', fontSize=2*sFontSize, font=BOOK, fill=(1, 0, 0))
+    doc.newStyle(name='h1', fontSize=3*sFontSize, font=SEMIBOLD, fill=(1, 0, 0),
+        leading=2*sFontSize, tracking=H1_TRACK, postfix='\n')
+    doc.newStyle(name='h2', fontSize=2*sFontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
+        leading=1*sFontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
+    doc.newStyle(name='h3', fontSize=2*sFontSize, font=MEDIUM, fill=0, 
+        leading=1*sFontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         postfix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
-        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT, hyphenation=True)
+    doc.newStyle(name='p', fontSize=sFontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
+        rTracking=P_TRACK, sLeading=14, rLeading=0, xTextAlign=LEFT, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
     doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> be newline
-    doc.newStyle(name='img', leading=leading, fontSize=fontSize, font=BOOK,)
+    doc.newStyle(name='img', leading=sLeading, fontSize=sFontSize, font=BOOK,)
     
     # Footnote reference index.
     doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6,
-        fontSize=0.65*fontSize)
-    doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
-        tracking=P_TRACK, leading=leading, hyphenation=True, 
+        fontSize=0.65*sFontSize)
+    doc.newStyle(name='li', fontSize=sFontSize, font=BOOK, 
+        tracking=P_TRACK, leading=sLeading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=sListIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul',)
-    doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)
+    doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*sFontSize)
     doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
-    doc.newStyle(name='caption', tracking=P_TRACK, language=language, fill=0.2, 
-        leading=leading*0.8, fontSize=0.8*fontSize, font=BOOK_ITALIC, 
+    doc.newStyle(name='caption', tracking=P_TRACK, language=sLanguage, fill=0.2, 
+        leading=0.8*sLeading, fontSize=0.8*sFontSize, font=BOOK_ITALIC, 
         indent=U/2, tailIndent=-U/2, hyphenation=True)
     
     # Change template of page 1
-    page0 = doc[1]
+    page0 = doc[0]
     page0.setTemplate(template1)
-        
+  
+    AA = """Waar in de traditionele manier van werken met opmaakprogrammatuur.""" 
+    aa = """Waar in de traditionele manier van werken met opmaakprogrammatuur zoals Quark XPress en InDesign altijd een menselijke beslissing de definitieve opmaak van een pagina bepaalt, zijn er steeds meer situaties waarin dat geen optie is. Doordat steeds meer pagina’s worden gegenereerd met inhoud die uit een database komt – of van een online source – en waar de selectie van de informatie direct wordt bepaald door eigenschappen van de lezer, moet de layout van de pagina’s automatisch worden berekend. Er bestaat op het moment vreemd genoeg geen digitaal gereedschap dat enerzijds voldoende flexibel is om in alle mogelijk technieken en soorten layouts te gebruiken, te koppelen is met een grote verscheidenheid aan informatiebronnen, en anderzijds voldoet aan de typografische eisen die aan handmatige opmaak worden gesteld. """*5
+
+    tb = page0.getElement(flowId0)
+    print tb
+    hyphenation(True)
+    language('nl-be')
+    tb.append(FormattedString(AA+'\n', fontSize=20, lineHeight=28))
+    aa = tb.append(FormattedString(aa, fontSize=10, lineHeight=14))
+    tb = page0.getElement(flowId1)
+    aa = tb.append(aa)
+    tb = page0.getElement(flowId2)
+    aa = tb.append(aa)
+    
+    """ 
     # Create main Galley for this page, for pasting the sequence of elements.    
     g = Galley() 
     t = Typesetter(doc, g)
@@ -219,8 +199,8 @@ def makeDocument(rs):
     
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
-    c.compose(g, doc[1], flowId0)
-    
+    c.compose(g, doc[0], flowId0)
+    """
     return doc
         
 d = makeDocument(RS)
