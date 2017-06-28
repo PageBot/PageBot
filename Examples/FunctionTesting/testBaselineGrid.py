@@ -24,7 +24,7 @@ fs2 = FormattedString('aaa vvv bbbbbb\nss' * 5, fontSize=14, lineHeight=24)
 
 appendS(fs1, fs2, 300, 24)
 
-bx, by, bw, bh = 50, 50, leading*3, 200, leading*20
+bx, by, bw, bh = 50, 50, leading*3, 200#, leading*20
 stroke(0)
 fill(None)
 rect(bx, by, bw, bh)
