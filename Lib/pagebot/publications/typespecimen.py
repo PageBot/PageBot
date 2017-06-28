@@ -13,6 +13,7 @@
 #     and templates are hood enough. Inherit the redefine functions otherwise.
 #     Example of an inherited publications is FBFamilySpecimen.py
 #
+from drawBot import installedFonts
 from pagebot import newFS
 
 from pagebot.fonttoolbox.objects.family import Family, guessFamilies
@@ -36,9 +37,15 @@ class TypeSpecimen(Publication):
     FONT_CLASS = Font
     FAMILY_CLASS = Family
     
-    def __init__(self, styleNames=None, pageTitle=None, showGrid=False, showGridColumns=False):
+    def __init__(self, styleNamePattern, styleNames=None, pageTitle=None, showGrid=False, showGridColumns=False):
         Publication.__init__(self)
-        self.styleNames = styleNames
+        # Name pattern to match available installed fonts.
+        self.styleNamePattern = styleNamePattern 
+        self.styleNames = []
+        for styleName in installedFonts():
+            if styleNamePattern in styleName:
+                self.styleNames.append(styleName)
+        
         self.pageTitle = pageTitle
         # Identifiers of template text box elements.
         self.titleBoxId = 'titleBoxId'
@@ -48,30 +55,35 @@ class TypeSpecimen(Publication):
         self.showGrid = showGrid
         self.showGridColumns = showGridColumns
         
-    def makeTemplate(self, rs):
+    def makeTemplate(self):
+        # Generic conditions to build stacked elements page with full width.
+        lw = 0.25
+        lineColor = 0
+        conditions = (Float2Top(), Left2Left(), Fit2Width())
         # Template for the main page.
-        template = Template(rs) # Create second template. This is for the main pages.
+        template = Template() # Create second template. This is for the main pages.
         # Add named text box to template for main specimen text.
-        template.cTextBox('', 0, 0, 6, 1, eId=self.titleBoxId, style=rs)       
-        template.cTextBox('', 2, 1, 4, 6, eId=self.specimenBoxId, style=rs)       
-        template.cTextBox('', 0, 1, 2, 6, eId=self.infoBoxId, style=rs)
+        newTextBox('', eId=self.titleBoxId, parent=template, conditions=conditions)       
         # Some lines, positioned by vertical and horizontal column index.
-        template.cLine(0, 0, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
-        template.cLine(0, 1, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
-        template.cLine(0, 7, 6, 0, style=rs, stroke=0, strokeWidth=0.25)       
+        newLine(stroke=lineColor, strokeWidth=lw, parent=template, 
+            conditions=conditions)       
+        newTextBox('', eId=self.specimenBoxId, parent=template)       
+        newLine(stroke=lineColor, strokeWidth=lw, parent=template, 
+            conditions=conditions)       
+        newTextBox('', eId=self.infoBoxId, parent=template)
+        newLine(stroke=lineColor, strokeWidth=lw, parent=template, 
+            conditions=conditions)       
         return template
         
-    def build(self, font):
-        rs = getRootStyle(showGrid=self.showGrid, showGridColumns=self.showGridColumns)
-        rs['language'] = 'en' # Make English hyphenation default. 
-        template = self.makeTemplate(rs)
+    def build(self):
+        template = self.makeTemplate()
         pageTitle = self.pageTitle or 'Unnamed Type Specimen'
         # Create new document with (w,h) and start with a single page.
-        self.documents['Specimen'] = doc = Document(rs, w=W, h=H, title=pageTitle, pages=1, template=template) 
         # Make number of pages with default document size.
         # When building, make all pages default with template.
         # Call with separate method, so inheriting specimen publications classes can redefine.\   
-        self.buildPages(doc, font)
+        doc = Document(w=W, h=H, title=pageTitle, originTop=False, 
+            autoPages=1, template=template) 
         
     def buildPages(self, doc):
         # Build the pages, one page per family. Compsition 
