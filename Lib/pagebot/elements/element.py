@@ -45,7 +45,7 @@ class Element(object):
             template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, padding=None, 
             margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
             borders=None, borderTop=None, borderRight=None, borderBottom=None, borderLeft=None, 
-            shadow=None, gradient=None, drawBefore=None, drawAfter=None, **kwargs):  
+            shadow=None, gradient=None, drawBefore=None, drawAfter=None, framePath=None, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
@@ -71,6 +71,7 @@ class Element(object):
         # Shadow and gradient, if defined
         self.shadow = shadow
         self.gradient = gradient
+        self.framePath = framePath # Optiona frame path to draw instead of bounding box element rectangle.
 
         # Set timer of this element.
         self.timeMarks = [TimeMark(0, self.style), TimeMark(XXXL, self.style)] # Default TimeMarks from t == 0 until infinite of time.
@@ -1693,16 +1694,10 @@ class Element(object):
             else:
                 setFillColor(eFill)
             #setStrokeColor(eStroke, eStrokeWidth)
-            rect(p[0], p[1], self.w, self.h)
-            # Later usage: drawing the margin and padding should be done by view settings.
-            #if self.ml or self.mr or self.mb or self.mt:
-            #    setStrokeColor((0, 0, 1))
-            #    setFillColor(None)
-            #    rect(p[0]-self.ml, p[1]-self.mb, self.w + self.ml + self.mr, self.h + self.mb + self.mt)
-            #if self.pl or self.pr or self.pb or self.pt:
-            #    setStrokeColor((0, 1, 0))
-            #    setFillColor(None)
-            #    rect(p[0]+self.pl, p[1]+self.pb, self.w - self.pl - self.pr, self.h - self.pb - self.pt)
+            if self.framePath is not None: # In case defined, use instead of bounding box. 
+                drawPath(self.framePath)
+            else:
+                rect(p[0], p[1], self.w, self.h)
             restore()
 
         # Instead of full frame drawing, check on separate border settings.
