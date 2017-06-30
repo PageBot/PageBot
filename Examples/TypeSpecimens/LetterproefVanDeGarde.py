@@ -9,8 +9,14 @@
 #
 #     LetterproefVanDeGarde.py
 #
-#     This scripts generates a look-alike revival type specimen for
-#     a selection of system fonts.
+#     This scripts generates a look-alike revival type specimen with an interpretation
+#     of the "Letterproef Van De Garde" Monotype letterpress type specimen, dated 1967.
+#     The full name of the printer is "Koninklijke Drukkerij Van de Garde Zaltbommel"
+#     Instead of the range of type faces the printer had, a selection of system fonts
+#     is shown instead. If you want to use your own typefaces to show up, there is a little
+#     coding exercise. 
+#
+#     As NL-based hot-metal 
 #
 import copy
 import pagebot # Import to know the path of non-Python resources.
@@ -20,7 +26,7 @@ from pagebot.fonttoolbox.objects.font import findInstalledFonts, getFontByName
 from pagebot.contributions.filibuster.blurb import Blurb
 
 from pagebot.toolbox.transformer import int2Color    
-from pagebot.style import getRootStyle, A4, A3, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE, RIGHT, LEFT, MM
+from pagebot.style import getRootStyle, A4, A3, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE, RIGHT, LEFT, MM, INCH
 # Document is the main instance holding all information about the document together (pages, views, etc.)
 from pagebot.document import Document
 # Import all element classes that can be placed on a page.
@@ -32,44 +38,57 @@ from pagebot import newFS
 
 PageWidth, PageHeight = 180*MM, 247*MM # Original size of Letterproef (type specimen)
 PADDING = PageWidth/18 # Padding based on size (= in book layout called margin) of the page.
-pt = pl = pr = 20*MM
+pt = pl = pr = 20*MM # Although the various types of specimen page have their own margin, this it the overall page padding.
 pb = 36*MM
 pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
-
-print findInstalledFonts('Proforma')
+SYSTEM_FONT_NAMES = ('Verdana',)
+SYSTEM_FONT_NAMES = ('Georgia',)
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/LetterproefVanDeGarde.pdf' 
+EXPORT_PATH = '_export/LetterproefVanDeGarde.png' 
 
 def findFont(styleNames, italic=False):
-    u"""Find available fonts and closest styles."""
+    u"""Find available fonts and guess closest styles for regular, medium and bold."""
     # Any TypeNetwork TYPETR Productus or Proforma installed in the system?
+    # Some hard wired foundry name here. This could be improved. Maybe we can add a public
+    # "Meta-info about typefaces somewhere in PageBot, so foundries and designers can add their own
+    # data there.
     fontNames = findInstalledFonts(('Proforma', 'Productus'))
     foundryName = 'TN | TYPETR' # TODO: Get from font is available
     if not fontNames: # Not installed, find something else that is expected to exist in OSX:
-        foundryName = 'Apple OSX System Font'
-        for pattern in ('Georgia', 'Verdana', 'Arial'):
+        foundryName = 'Apple OSX Font'
+        for pattern in SYSTEM_FONT_NAMES:
             fontNames = findInstalledFonts(pattern)
             if fontNames:
                 break
+    # Find matching styles. 
     for styleName in styleNames:
         for fontName in fontNames:
+            if not styleName and not '-' in fontName: # Some fonts are named by plain family name for the Regular.
+                return foundryName, fontName
             if styleName in fontName:
                 return foundryName, fontName
     return None, None # Nothing found.
 
+def italicName(fontName):
+    if not '-' in fontName:
+        return fontName + '-Italic'
+    return fontName + 'Italic'
+    
 def makeDocument():
     u"""Create Document instance with a single page. Fill the page with elements
     and perform a conditional layout run, until all conditions are solved."""
     
-    foundryName, bookName = findFont(('Book', 'Regular')) # Find these styles in order.
+    foundryName, bookName = findFont(('', 'Book', 'Regular')) # Find these styles in order.
     _, mediumName = findFont(('Medium', 'Book', 'Regular'))
+    mediumName = mediumName or bookName # In case medium weight does not exist.
     _, boldName = findFont(('Bold', 'Medium'))
-    bookItalicName = bookName + 'Italic'
-    mediumItalicName = mediumName + 'Italic'
-    boldItalicName = boldName + 'Italic'
-    
+
+    bookItalicName = italicName(bookName)
+    mediumItalicName = italicName(mediumName)
+    boldItalicName = italicName(boldName)
+
     # Get the fonts, so we can dig in the information.
     bookFont = getFontByName(bookName, install=False)
     mediumFont = getFontByName(mediumName, install=False)
@@ -90,11 +109,12 @@ def makeDocument():
     
     blurb = Blurb() # BLurb generator
     
-    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=3)
+    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=6)
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.style['fill'] = 1
-    view.padding = 0 # To show cropmarks and such, make >40 or so.
+    # TODO: There is a bug that makes view page size grow, if there are multiple pages and padding > 0
+    view.padding = 0 # 20*MM # To show cropmarks and such, make >=20*MM or INCH.
     view.showPageCropMarks = True # Won't show if there is not padding in the view.
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
@@ -104,6 +124,7 @@ def makeDocument():
     view.showElementInfo = False
     view.showTextOverflowMarker = False # Don't show marker in case Filibuster blurb is too long.
 
+ 
     labelFont = boldFont
     padding = (3*MM, 3*MM, 3*MM, 3*MM)
     fontNameSize = 16
@@ -117,16 +138,38 @@ def makeDocument():
     capHeight = labelFont.info.capHeight / labelFont.info.unitsPerEm * fontNameSize
 
     border = dict(line=INLINE, dash=None, stroke=redColor, strokeWidth=1)
-   
-    # Title page 0
-    pn = 1   
-    page = doc[pn-1] # Get the single front page from the document.    
-    newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
-    
+
+    # Full red page with white chapter title.
+    pn = 1
+    page = doc[pn-1]   
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
+    # Fill full page with red color
+    newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=redColor)
+    
+    fs = newFS('BOEKLETTER', style=dict(font=boldName, xTextAlign=RIGHT, textFill=paperColor, fontSize=24, rTracking=0.1))#, xTextAlign=RIGHT))
+    newTextBox(fs, parent=page, y=page.h-176*MM, conditions=[Left2Left(), Fit2Right(), Fit2Bottom()])
+    page.solve()
+        
+    # Empty left page.
+    pn += 1
+    page = doc[pn-1]   
+    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
+    page.margin = 0
+    page.padding = pagePadding
+    # Fill full page with red color
+    newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
             
+    # Title page of family.
+    pn += 1   
+    page = doc[pn-1] # Get the single front page from the document.    
+    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
+    page.margin = 0
+    page.padding = pagePadding
+
+    newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
+                
     fs = newFS(labelFont.info.familyName.upper(), style=dict(font=boldName, textFill=paperColor, 
         fontSize=fontNameSize, tracking=0, rTracking=0.3))
     tw, th = textSize(fs)
@@ -152,9 +195,9 @@ def makeDocument():
     tbAbout = newTextBox(fs, parent=page, x=columnX, w=columnW, conditions=[Fit2Bottom()])
     tbAbout.top = tbFoundry.bottom - 8*MM
     
-    # Page 2 Glyph overview and 3 columns.
+    # Page 2 of a family chapter. Glyph overview and 3 columns.
     
-    pn = 2
+    pn += 1
     page = doc[pn-1]
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
@@ -233,7 +276,7 @@ def makeDocument():
     tbSpec6.top = tbFoundry.bottom - 8*MM
 
     fs = newFS('6 1/2 set\nop 6 pt gegoten (links)', style=dict(font=bookName, fontSize=captionSize, 
-        textFill=redColor, xTextAlign=RIGHT, rTracking=0.05, leading=8))
+        textFill=redColor, xTextAlign=RIGHT, rTracking=0.05, leading=8, openTypeFeatures=dict(frac=True)))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbCaption6 = newTextBox(fs, parent=page, x=page.pl, w=leftPadding - page.pl - 3*MM, h=30*MM)
     tbCaption6.top = tbSpec6.top
@@ -250,7 +293,7 @@ def makeDocument():
         textFill=redColor, xTextAlign=RIGHT, rTracking=0.05, leading=8))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbCaption7 = newTextBox(fs, parent=page, x=page.pl, w=leftPadding - page.pl - 3*MM, h=30*MM)
-    tbCaption7.top = tbSpec7.top
+    tbCaption7.top = tbSpec7.top # TODO: Align with first baseline, instead of box top.
     
     # Make blurb text about design and typography.
     specText = blurb.getBlurb('article', noTags=True)
@@ -266,10 +309,10 @@ def makeDocument():
         textFill=redColor, xTextAlign=RIGHT, rTracking=0.05, leading=8))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbCaption8 = newTextBox(fs, parent=page, x=page.pl, w=leftPadding - page.pl - 3*MM)
-    tbCaption8.bottom = tbSpec8.bottom
+    tbCaption8.bottom = tbSpec8.bottom # TODO: Align with the position of the lowest base line.
     
     # TODO: Calculate the right amount
-    fs = newFS('Corps 6 – per 100 aug.: romein 417, cursief 444, vet 426 letter', 
+    fs = newFS('Corps 6 – per 100 aug.: romein 417, cursief 444, vet 426 letters', 
         style=dict(font=bookName, fontSize=captionSize, 
         textFill=redColor, xTextAlign=RIGHT, rTracking=rt, leading=8))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
@@ -283,13 +326,10 @@ def makeDocument():
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbPageNumber = newTextBox(fs, parent=page, x=leftPadding, w=10*MM)
     tbPageNumber.bottom = 20*MM
-    
-
-    # Captions
-        
+            
     # Page 3, 3 columns.
     
-    pn = 3
+    pn += 1
     page = doc[pn-1]
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
@@ -304,71 +344,9 @@ def makeDocument():
     tbName = newTextBox(fs, parent=page, h=capHeight+3*padding[0], w=tw+2*padding[1], conditions=[Right2RightSide()], 
         fill=redColor, padding=padding)
     tbName.top = page.h-RedBoxY
-    tbName.solve() # Make it go to right side of page.
-
     
-    
-    # 
-    """
-    # Resources
-    blockFill = None #(1, 1, 0) # Use color to debug page area
-    gradient = Gradient(locations=[1,0], colors=((0.3, 0.3, 0.3), (0.6, 0.6, 0.6)))
-    shadow = Shadow(offset=(6, -6), blur=10, color=(0.2, 0.2, 0.2, 0.5))
-    bookBorders = dict(stroke=(1, 1, 1, 0.5),strokeWidth=0.1,line=OUTLINE)
-    bookPadding = (25, 30, 40, 30)
-    
-    # Styles
-    titleStyle = dict(font=bookName, fontSize=26, rLeading=1.4, xTextAlign=CENTER, textFill=1)
-    authorStyle = dict(font=bookName, textFill=1, fontSize=18, xTextAlign=CENTER)
-    headStyle = dict(font=boldName, textFill=0, fontSize=62, rLeading=1.4, 
-        xTextAlign=LEFT, paragraphTopSpacing=30, openTypeFeatures=dict(liga=True),
-        paragraphBottomSpacing=0)
-    bodyStyle = dict(font=bookName, textFill=0, fontSize=12, rLeading=1.4, 
-        xTextAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
-    
-    # Make new container for adding elements inside with alignment.
-    newRect(z=10, w=pageAreaW, h=pageAreaH, fill=blockFill, 
-        parent=page, margin=0, padding=0, yAlign=MIDDLE, maxW=pageAreaW, 
-        maxH=pageAreaH, xAlign=CENTER,  
-        conditions=(Center2Center(), Middle2Middle()))
-    
-    t1 = newTextBox('PageBot Educational Series', z=0, font=bookName, 
-        fontSize=42, w=pageAreaW*0.75,  
-        parent=page, conditions=(Left2Left(), Top2Top()))
-        
-    w = pageAreaW*0.75 # Used as element width and relative font size. 
-    padding = 24
-    
-    t2 = newTextBox('Hot metal typesetting', z=0, font=mediumName, 
-        fontSize=w/8, w=pageAreaW, parent=page, mt=14,
-        conditions=(Left2Left(), Float2Top()))
-
-    i1 = newRect(z=0, h=PageHeight/2, pl=padding, pr=padding,
-        gradient=gradient, borders=None, parent=page, 
-        conditions=(Fit2Width(), Float2Top(), Fit2Bottom()))
-    i1.solve()
-
-    fs = newFS(topT, style=bodyStyle)
-    fs += newFS('\nPrepare for what comes next.', style=bookName)
-    topText = newTextBox(fs, w=w/3-16, parent=page, 
-        conditions=(Top2Top(), Right2Right()))
-    
-    # Review content. Hard coded ligatures.
-    t = u'This is an example of hot metal typesetting, where every letter had a ﬁxed shape and its own width as rectangular box.\nVariable Fonts could adjust, ﬁt and decorate letters where it is most needed in a column of text. Not in this example.'
-    fs = newFS(t, style=headStyle)
-    t4 = newTextBox(fs, w=w/2-G, mt=10, parent=i1, gradient=None, 
-        drawBefore=drawBefore, 
-        conditions=(Fit2Width(), Float2Top()))
-        
-    # Font names
-    if 'Proforma' in bookName or 'Productus' in bookName:
-        fontNamesFeatures = 'Example featuring typefaces TypeNetwork TYPETR Productus and Proforma'
-    else:
-        fontNamesFeatures = 'Example featuring OSX system fonts %s' % ', '.join(sorted(set((bookName, mediumName, boldName))))
-    fs = newFS(fontNamesFeatures, style=dict(font=bookName, fontSize=14, textFill=0))
-    t5 = newTextBox(fs, w=w/2-G, mt=10, parent=page, gradient=None, 
-        conditions=(Fit2Width(), Float2Top()))
-    """    
+    # Solve remaining layout and size conditions.
+       
     score = doc.solve()
     if score.fails:
         print 'Condition fails', score.fails 
