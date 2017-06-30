@@ -38,8 +38,9 @@ from pagebot import newFS
 
 PageWidth, PageHeight = 180*MM, 247*MM # Original size of Letterproef (type specimen)
 PADDING = PageWidth/18 # Padding based on size (= in book layout called margin) of the page.
-pt = pl = pr = 20*MM # Although the various types of specimen page have their own margin, this it the overall page padding.
+pt = 22*MM
 pb = 36*MM
+pl = pr = 16*MM # Although the various types of specimen page have their own margin, this it the overall page padding.
 pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
 SYSTEM_FONT_NAMES = ('Verdana',)
@@ -105,11 +106,11 @@ def makeDocument():
     RedBoxY = 118*MM # Vertical position of the Red Box, on Bodoni chapter.
     columnX = 80*MM # Original 80MM, by we don't adjust, so optically a bit more.
     columnW = 60*MM
-    leftPadding = 52*MM
+    leftPadding = rightPadding = 52*MM # Exception page padding for columns
     
     blurb = Blurb() # BLurb generator
     
-    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=6)
+    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=5)
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.style['fill'] = 1
@@ -337,6 +338,33 @@ def makeDocument():
             
     newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
 
+    # Make blurb text about design and typography.
+    specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
+    fs = newFS(specText, style=dict(font=bookName, textFill=0, fontSize=8.5, tracking=0, rTracking=rt, leading=8,
+        hyphenation='en'))
+    # TODO: Something wrong with left padding or right padding. Should be symmetric.
+    tbText1 = newTextBox(fs, parent=page, h=110*MM, w=50*MM, conditions=[Top2Top(), Left2Left()])
+    page.solve()
+    
+    # Make blurb text about design and typography.
+    specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
+    fs = newFS(specText, style=dict(font=bookName, textFill=0, fontSize=8.5, tracking=0, rTracking=rt, leading=9,
+        hyphenation='en'))
+    # TODO: Something wrong with left padding or right padding. Should be symmetric.
+    x = tbText1.right + 5*MM
+    tbText2 = newTextBox(fs, parent=page, x=x, y=tbText1.y, h=tbText1.h, w=page.w - x - rightPadding)
+    page.solve()
+    
+    # Make blurb text about design and typography.
+    specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
+    fs = newFS(specText, style=dict(font=bookName, textFill=0, fontSize=8.5, tracking=0, rTracking=rt, leading=10,
+        hyphenation='en'))
+    x = tbText1.left
+    tbText3 = newTextBox(fs, parent=page, x=x, h=64*MM, w=page.w - x - rightPadding, mt=10*MM, conditions=[Float2TopLeft()])
+    
+    # TODO: Add red captions here.
+
+    # Red label on the right
     fs = newFS(labelFont.info.styleName.upper(), style=dict(font=boldName, textFill=paperColor, 
         fontSize=fontNameSize, tracking=0, rTracking=0.3))
     tw, th = textSize(fs)
@@ -345,6 +373,13 @@ def makeDocument():
         fill=redColor, padding=padding)
     tbName.top = page.h-RedBoxY
     
+    # Page number
+    fs = newFS(`pn`, 
+        style=dict(font=bookName, fontSize=pageNumberSize, 
+        textFill=redColor, xTextAlign=RIGHT, rTracking=rt, leading=8))
+    tbPageNumber = newTextBox(fs, parent=page, x=page.w - rightPadding - 10*MM, w=10*MM)
+    tbPageNumber.bottom = 20*MM
+                
     # Solve remaining layout and size conditions.
        
     score = doc.solve()
