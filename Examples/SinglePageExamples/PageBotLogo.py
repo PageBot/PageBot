@@ -9,6 +9,7 @@
 #
 #     PageBotLogo.py
 #
+#     TODO: Get this to work.
 #
 import pagebot # Import to know the path of non-Python resources.
 from pagebot.style import getRootStyle

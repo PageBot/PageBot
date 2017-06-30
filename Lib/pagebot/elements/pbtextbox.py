@@ -478,7 +478,8 @@ class TextBox(Element):
             save()
             setShadow(textShadow)
 
-        textBox(self.fs, (px+self.pl+xOffset, py+self.pb-yOffset, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
+        textBox(self.fs, (px + self.pl + xOffset, py + self.pb-yOffset, 
+            self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
         if textShadow:
             restore()
