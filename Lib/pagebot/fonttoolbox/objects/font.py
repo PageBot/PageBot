@@ -22,7 +22,7 @@ from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
 try:
-    from drawBot import installFont, listOpenTypeFeatures
+    from drawBot import installFont, listOpenTypeFeatures, installedFonts
 except ImportError:
     installFont =  listOpenTypeFeatures = None
 
@@ -68,6 +68,24 @@ def getFontPathOfFont(fontName):
         url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
         return url.path()
     return None
+
+def findInstalledFonts(fontNamePatterns):
+    u"""Answer a list of installed font names that include the fontNamePattern. The pattern
+    search is not case sensitive. The pattern can be a string or a list of strings."""
+    fontNames = []
+    if not isinstance(fontNamePatterns, (list, tuple)):
+        fontNamePatterns = [fontNamePatterns]
+    for fontNamePattern in fontNamePatterns:
+        for fontName in installedFonts():
+            if fontNamePattern in fontName:
+                fontNames.append(fontName)
+    return fontNames
+
+def getFontByName(fontName, install=True):
+    return getFontByPath(getFontPathOfFont(fontName), install=install)
+
+def getFontByPath(fontPath, install=True):
+    return Font(fontPath, install=install)
 
 class Font(object):
     u"""
