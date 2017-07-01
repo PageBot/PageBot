@@ -318,8 +318,8 @@ class BlurbWriter(object):
                 
             tagname, cmd, variable, hard = self.parsetag(tag)
             # process in-tag commands, if any
-            cachethis = False    # whether results should be cached
-            setarticle = False    # prepare an article ( 'a' or 'an' )
+            cacheThis = False    # whether results should be cached
+            setArticle = False    # prepare an article ( 'a' or 'an' )
             makeUpperCase = False    # make first character uppercase
             makeTitleCase = False   # makeTitlecase
             makeAllCaps = False      # make all caps
@@ -333,7 +333,7 @@ class BlurbWriter(object):
                 if not si:
                     continue
                 if u'article' in si:
-                    setarticle = True
+                    setArticle = True
                 if u'!' in si:        # it's a format command!
                     formatcmds.append(si[1:])
                 if u'^' in si:        # make first character uppercase
@@ -362,7 +362,7 @@ class BlurbWriter(object):
             # take care of the article command
             art = ''
             if c:
-                if setarticle:
+                if setArticle:
                     if c[0] in vowels:
                         art = u'an '
                     else:
@@ -385,7 +385,7 @@ class BlurbWriter(object):
                 elif space_to_underscore:
                     c = c.replace(u" ", u"_")
 
-            #print('cachethis', cachethis, 'makeUpperCase', makeUpperCase, 'makeLowercase', makeLowercase, 'space_to_underscore', space_to_underscore, 'nonletter_remove', nonletter_remove)
+            #print('cacheThis', cacheThis, 'makeUpperCase', makeUpperCase, 'makeLowercase', makeLowercase, 'space_to_underscore', space_to_underscore, 'nonletter_remove', nonletter_remove)
 
             # format the line if necessary
             if len(formatcmds) > 0 and self.formatfunc:
@@ -409,7 +409,7 @@ class BlurbWriter(object):
                 return 0, text
             # store the result in the cache
             # note: it is storing the stylised version
-            if variable or cachethis:
+            if variable or cacheThis:
                 if variable:
                     tg = variable
                 else:
@@ -488,6 +488,12 @@ if __name__ == "__main__":
         >>> bw.write('pattern1')
         u'AA AA'
 
+        >>> # generate a random number 
+        >>> content = { 'pattern1': ['<-randint(1, 20)->']}
+        >>> bw = BlurbWriter(content)        
+        >>> result = bw.write('pattern1')
+        >>> assert 1 <= int(result) <= 20
+
         >>> # detect spinning because of a malformed tag
         >>> content = { 'pattern2': ['a'], 'pattern1': ['<#pattern2>']}
         >>> bw = BlurbWriter(content)
@@ -497,7 +503,8 @@ if __name__ == "__main__":
         u'<#pattern2>'
 
         >>> # replace a tag, variable
-        >>> content = { 'pattern2': ['a'], 'pattern1': ['<#var,pattern2#>']}
+        >>> # u'<#_aname=name#><#_aname#>’s
+        >>> content = { 'pattern2': ['a'], 'pattern1': ['<#varName=pattern2#>']}
         >>> bw = BlurbWriter(content)
         >>> bw.write('pattern2')
         u'a'
