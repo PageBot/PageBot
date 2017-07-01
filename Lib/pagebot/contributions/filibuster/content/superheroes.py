@@ -27,11 +27,11 @@ content = {
         'hero_onomatopaea': ['BLAST', 'KAPOW', 'WHAM', 'ZAP', 'ZOT', 'KRAZOOM', 'ZZZZZOOM'],
         
         'hero_comic_title': [
-                '#<-randint(1,320)-> "<#!capitalize, hero_antagonist#> vs. <#!capitalize, hero_protagonist#>" (<#hero_comic_publisher#>)',
-                '<#!capitalize, hero_antagonist#> SERIES <-randint(1,320)->',
-                '<#!capitalize, hero_protagonist#>, <#hero_comic_issue#>: #<-randint(1,320)->',
-                '<#!capitalize, hero_protagonist#>, <#hero_comic_issue#> #<-randint(1,320)->',
-                '<#!capitalize, hero_protagonist#>, <#hero_comic_publisher#> #<-randint(1,320)->',
+                '#<-randint(1,320)-> "<#!^,hero_antagonist#> vs. <#!^,hero_protagonist#>" (<#hero_comic_publisher#>)',
+                '<#!^,hero_antagonist#> SERIES <-randint(1,320)->',
+                '<#!^,hero_protagonist#>, <#hero_comic_issue#>: #<-randint(1,320)->',
+                '<#!^,hero_protagonist#>, <#hero_comic_issue#> #<-randint(1,320)->',
+                '<#!^,hero_protagonist#>, <#hero_comic_publisher#> #<-randint(1,320)->',
                 ],
         'hero_comic_publisher': ['<#p_oldbiz_px#> Comics', '<#p_oldbiz_px#> Mills', '<#p_oldbiz_px#> Toons', ],
         'hero_comic_issue': ['Phantom Zone', 'The Dark Period', 'The 3D Episode',

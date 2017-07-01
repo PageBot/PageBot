@@ -144,8 +144,8 @@ content = {
             '<#city#> Business School',
             ],
     'university_dept':     [
-            'Department of <#!capitalize, sci_disciplines#> of the <#university#>',
-            'Dpt. of <#!capitalize, sci_disciplines#> of the <#university#>',
+            'Department of <#!^,sci_disciplines#> of the <#university#>',
+            'Dpt. of <#!^,sci_disciplines#> of the <#university#>',
             ],
 
 }

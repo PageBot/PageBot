@@ -92,11 +92,11 @@ content = {
         u'<#name_german_descent#><#name_german_base#>',
     ],
     'name_german_base': [
-        u'<#!capitalize, name_german_px1#><#name_german_px2#><#name_german_px3#>',
-        u'<#!capitalize, name_german_noun#><#name_german_px3#><#name_german_heimat#><#name_german_px3#>',
-        u'<#!capitalize, name_german_noun#><#name_german_px3#>',
-        u'<#!capitalize, name_german_noun#><#name_german_px3#>',
-        u'<#!capitalize, name_german_noun#>',
+        u'<#!^,name_german_px1#><#name_german_px2#><#name_german_px3#>',
+        u'<#!^,name_german_noun#><#name_german_px3#><#name_german_heimat#><#name_german_px3#>',
+        u'<#!^,name_german_noun#><#name_german_px3#>',
+        u'<#!^,name_german_noun#><#name_german_px3#>',
+        u'<#!^,name_german_noun#>',
     ],
     'name_german_descent': [
         'von ',
