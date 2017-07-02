@@ -16,7 +16,17 @@
 #     is shown instead. If you want to use your own typefaces to show up, there is a little
 #     coding exercise. 
 #
-#     As NL-based hot-metal 
+#     As NL-based hot-metal, the measures in the origal book are augustin, but the layout
+#     measures often seem to be whole measures of centimeters.
+#     For convenience of calculation augustins are treated as points (font size, etc.)
+#     and the other measures are calculated as multiplication factor of MM
+#
+#     This script is intentionally structures as a linear building of pages, without the
+#     use of page functions or templates, in order to illustrate the sequentials building
+#     of the content. 
+#     As real application it would be more generic to add a second layer of abstractions,
+#     that defines the types of pages as templates and uses parameter values and data
+#     to make insert the content in the template elements.
 #
 import copy
 import pagebot # Import to know the path of non-Python resources.
@@ -43,11 +53,13 @@ pb = 36*MM
 pl = pr = 16*MM # Although the various types of specimen page have their own margin, this it the overall page padding.
 pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
-SYSTEM_FONT_NAMES = ('Verdana',)
-SYSTEM_FONT_NAMES = ('Georgia',)
+SYSTEM_FAMILY_NAMES = ('Verdana',)
+SYSTEM_FAMILY_NAMES = ('Georgia',)
+MY_FAMILY_NAMES = ('Proforma', 'Productus')
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/LetterproefVanDeGarde.png' 
+COVER_IMAGE_PATH = 'images/VanDeGardeOriginalCover.png'
 
 def findFont(styleNames, italic=False):
     u"""Find available fonts and guess closest styles for regular, medium and bold."""
@@ -55,19 +67,23 @@ def findFont(styleNames, italic=False):
     # Some hard wired foundry name here. This could be improved. Maybe we can add a public
     # "Meta-info about typefaces somewhere in PageBot, so foundries and designers can add their own
     # data there.
-    fontNames = findInstalledFonts(('Proforma', 'Productus'))
+    FAMILY_NAMES = MY_FAMILY_NAMES
+    fontNames = findInstalledFonts(FAMILY_NAMES)
     foundryName = 'TN | TYPETR' # TODO: Get from font is available
     if not fontNames: # Not installed, find something else that is expected to exist in OSX:
         foundryName = 'Apple OSX Font'
-        for pattern in SYSTEM_FONT_NAMES:
+        FAMILY_NAMES = SYSTEM_FONT_NAMES
+        for pattern in FAMILY_NAMES:
             fontNames = findInstalledFonts(pattern)
             if fontNames:
                 break
     # Find matching styles. 
     for styleName in styleNames:
         for fontName in fontNames:
-            if not styleName and not '-' in fontName: # Some fonts are named by plain family name for the Regular.
-                return foundryName, fontName
+            if styleName is None:
+                if fontName in FAMILY_NAMES: # Some fonts are named by plain family name for the Regular.
+                    return foundryName, fontName
+                continue
             if styleName in fontName:
                 return foundryName, fontName
     return None, None # Nothing found.
@@ -81,11 +97,12 @@ def makeDocument():
     u"""Create Document instance with a single page. Fill the page with elements
     and perform a conditional layout run, until all conditions are solved."""
     
-    foundryName, bookName = findFont(('', 'Book', 'Regular')) # Find these styles in order.
+    foundryName, bookName = findFont((None, 'Book', 'Regular')) # Find these styles in order.
     _, mediumName = findFont(('Medium', 'Book', 'Regular'))
     mediumName = mediumName or bookName # In case medium weight does not exist.
     _, boldName = findFont(('Bold', 'Medium'))
 
+    print bookName, mediumName, boldName
     bookItalicName = italicName(bookName)
     mediumItalicName = italicName(mediumName)
     boldItalicName = italicName(boldName)
@@ -110,7 +127,7 @@ def makeDocument():
     
     blurb = Blurb() # BLurb generator
     
-    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=5)
+    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=8)
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.style['fill'] = 1
@@ -140,28 +157,56 @@ def makeDocument():
 
     border = dict(line=INLINE, dash=None, stroke=redColor, strokeWidth=1)
 
-    # Full red page with white chapter title.
+    # -----------------------------------------------------------------------------------
+    # Cover from image scan.
     pn = 1
     page = doc[pn-1]   
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
-    # Fill full page with red color
-    newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=redColor)
-    
-    fs = newFS('BOEKLETTER', style=dict(font=boldName, xTextAlign=RIGHT, textFill=paperColor, fontSize=24, rTracking=0.1))#, xTextAlign=RIGHT))
-    newTextBox(fs, parent=page, y=page.h-176*MM, conditions=[Left2Left(), Fit2Right(), Fit2Bottom()])
+    # Add image of cover scan.
+    # TODO: Make other positions and scaling work on image element.
+    newImage(path=COVER_IMAGE_PATH, parent=page, conditions=[Fit2Sides()])
     page.solve()
-        
+
+    # -----------------------------------------------------------------------------------
     # Empty left page.
     pn += 1
     page = doc[pn-1]   
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
+    # Fill with paper color
+    # TODO: Just background color could be part of page fill instead of extra element.
+    newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
+                    
+    # -----------------------------------------------------------------------------------
+    # Full red page with white chapter title.
+    pn += 1
+    page = doc[pn-1]   
+    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
+    page.margin = 0
+    page.padding = pagePadding
     # Fill full page with red color
+    # TODO: Just background color could be part of page fill instead of extra element.
+    newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=redColor)
+    
+    fs = newFS('BOEKLETTER', style=dict(font=boldName, xTextAlign=RIGHT, textFill=paperColor, fontSize=24, rTracking=0.1))#, xTextAlign=RIGHT))
+    newTextBox(fs, parent=page, y=page.h-176*MM, conditions=[Left2Left(), Fit2Right(), Fit2Bottom()])
+    page.solve()
+        
+    # -----------------------------------------------------------------------------------
+    # Empty left page.
+    pn += 1
+    page = doc[pn-1]   
+    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
+    page.margin = 0
+    page.padding = pagePadding
+    # Fill with paper color
+    # TODO: Just background color could be part of page fill instead of extra element.
     newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
             
+    # -----------------------------------------------------------------------------------
     # Title page of family.
     pn += 1   
     page = doc[pn-1] # Get the single front page from the document.    
@@ -169,6 +214,8 @@ def makeDocument():
     page.margin = 0
     page.padding = pagePadding
 
+    # Fill with paper color
+    # TODO: Just background color could be part of page fill instead of extra element.
     newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
                 
     fs = newFS(labelFont.info.familyName.upper(), style=dict(font=boldName, textFill=paperColor, 
@@ -196,6 +243,7 @@ def makeDocument():
     tbAbout = newTextBox(fs, parent=page, x=columnX, w=columnW, conditions=[Fit2Bottom()])
     tbAbout.top = tbFoundry.bottom - 8*MM
     
+    # -----------------------------------------------------------------------------------
     # Page 2 of a family chapter. Glyph overview and 3 columns.
     
     pn += 1
@@ -204,9 +252,11 @@ def makeDocument():
     page.margin = 0
     page.padding = pagePadding
 
+    # Fill with paper color
+    # TODO: Just background color could be part of page fill instead of extra element.
     newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
 
-    # Glyph set
+    # Glyph set 
     
     caps = u'ABCDEFGHIJKLMNOPQRSTUVWXYZ\n'
     lc = caps.lower()
@@ -220,33 +270,40 @@ def makeDocument():
     fs += newFS(lc, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
         tracking=0, rTracking=glyphTracking))
 
-    fs += newFS(caps, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
-        tracking=0, rTracking=glyphTracking))
-    fs += newFS(lc, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
-        tracking=0, rTracking=glyphTracking))
+    if bookName != bookItalicName:
+        fs += newFS(caps, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
+            tracking=0, rTracking=glyphTracking))
+        fs += newFS(lc, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
+            tracking=0, rTracking=glyphTracking))
 
     fs += newFS(figures, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
         tracking=0, rTracking=glyphTracking))
-    fs += newFS(figures, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
-        tracking=0, rTracking=glyphTracking))
+    if bookName != bookItalicName:
+        fs += newFS(figures, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
+            tracking=0, rTracking=glyphTracking))
 
     fs += newFS(capAccents, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
         tracking=0, rTracking=glyphTracking))
     fs += newFS(lcAccents, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
         tracking=0, rTracking=glyphTracking))
 
-    fs += newFS(capAccents, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
-        tracking=0, rTracking=glyphTracking))
-    fs += newFS(lcAccents, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
-        tracking=0, rTracking=glyphTracking))
+    if bookName != bookItalicName:
+        fs += newFS(capAccents, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
+            tracking=0, rTracking=glyphTracking))
+        fs += newFS(lcAccents, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
+            tracking=0, rTracking=glyphTracking))
 
     fs += newFS(punctuations, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
         tracking=0, rTracking=glyphTracking))
-    fs += newFS(punctuations + '\n', style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
-        tracking=0, rTracking=glyphTracking))
-
-    fs += newFS(caps+lc+figures+capAccents+lcAccents+punctuations, style=dict(font=boldName, textFill=0, 
-        fontSize=glyphSetSize, leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
+    if bookName != bookItalicName:
+        fs += newFS(punctuations + '\n', style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, leading=glyphSetLeading,
+            tracking=0, rTracking=glyphTracking))
+    else:
+        fs += '\n'
+        
+    if bookName != boldName:
+        fs += newFS(caps+lc+figures+capAccents+lcAccents+punctuations, style=dict(font=boldName, textFill=0, 
+            fontSize=glyphSetSize, leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
 
     tbGlyphSet = newTextBox(fs, parent=page, w=112*MM, x=leftPadding, conditions=[Top2Top()]) 
 
@@ -336,6 +393,8 @@ def makeDocument():
     page.margin = 0
     page.padding = pagePadding
             
+    # Fill with paper color
+    # TODO: Just background color could be part of page fill instead of extra element.
     newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
 
     # Make blurb text about design and typography.
@@ -364,7 +423,7 @@ def makeDocument():
     
     # TODO: Add red captions here.
 
-    # Red label on the right
+    # Red label on the left
     fs = newFS(labelFont.info.styleName.upper(), style=dict(font=boldName, textFill=paperColor, 
         fontSize=fontNameSize, tracking=0, rTracking=0.3))
     tw, th = textSize(fs)
@@ -378,6 +437,61 @@ def makeDocument():
         style=dict(font=bookName, fontSize=pageNumberSize, 
         textFill=redColor, xTextAlign=RIGHT, rTracking=rt, leading=8))
     tbPageNumber = newTextBox(fs, parent=page, x=page.w - rightPadding - 10*MM, w=10*MM)
+    tbPageNumber.bottom = 20*MM
+                
+    # Page 4, 3 columns.
+    
+    pn += 1
+    page = doc[pn-1]
+    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
+    page.margin = 0
+    page.padding = pagePadding
+            
+    # Fill with paper color
+    # TODO: Just background color could be part of page fill instead of extra element.
+    newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
+    x = leftPadding
+    
+    # Make blurb text about design and typography.
+    specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
+    fs = newFS(specText, style=dict(font=bookName, textFill=0, fontSize=10.5, tracking=0, rTracking=rt, leading=10,
+        hyphenation='en'))
+    # TODO: Something wrong with left padding or right padding. Should be symmetric.
+    tbText1 = newTextBox(fs, parent=page, x=x, h=55*MM, w=page.w - x - page.pl, conditions=[Top2Top()])
+    page.solve()
+    
+    # Make blurb text about design and typography.
+    specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
+    fs = newFS(specText, style=dict(font=bookName, textFill=0, fontSize=10.5, tracking=0, rTracking=rt, leading=11,
+        hyphenation='en'))
+    # TODO: Something wrong with left padding or right padding. Should be symmetric.
+    newTextBox(fs, parent=page, mt=5*MM, x=x, h=60*MM, w=page.w - x - page.pl, conditions=[Float2Top()])
+    page.solve()
+        
+    # Make blurb text about design and typography.
+    specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
+    fs = newFS(specText, style=dict(font=bookName, textFill=0, fontSize=10.5, tracking=0, rTracking=rt, leading=12,
+        hyphenation='en'))
+    # TODO: Something wrong with left padding or right padding. Should be symmetric.
+    newTextBox(fs, parent=page, mt=5*MM, x=x, h=65*MM, w=page.w - x - page.pl, conditions=[Float2Top()])
+    page.solve()
+        
+    # TODO: Add red captions here.
+
+    # Red label on the right
+    fs = newFS('10.5pt', style=dict(font=boldName, textFill=paperColor, 
+        fontSize=fontNameSize, tracking=0, rTracking=0.3))
+    tw, th = textSize(fs)
+    # TODO: h is still bit of a guess with padding and baseline position. Needs to be solved more structured.
+    tbName = newTextBox(fs, parent=page, h=capHeight+3*padding[0], w=tw+2*padding[1], conditions=[Left2LeftSide()], 
+        fill=redColor, padding=padding)
+    tbName.top = page.h-RedBoxY
+    
+    # Page number
+    fs = newFS(`pn`, 
+        style=dict(font=bookName, fontSize=pageNumberSize, 
+        textFill=redColor, xTextAlign=RIGHT, rTracking=rt, leading=8))
+    tbPageNumber = newTextBox(fs, parent=page, x=leftPadding - 10*MM, w=10*MM)
     tbPageNumber.bottom = 20*MM
                 
     # Solve remaining layout and size conditions.

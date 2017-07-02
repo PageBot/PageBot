@@ -132,7 +132,7 @@ class Fit2RightSide(Condition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.fit2RightSide(), e, score)
 
-class Fit2HeightSide(Condition):
+class Fit2HeightSides(Condition):
 	def test(self, e):
 		return e.isTopOnTopSide(self.tolerance) and e.isBottomOnBottomSide(self.tolerance)
 
