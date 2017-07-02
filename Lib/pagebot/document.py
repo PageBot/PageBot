@@ -23,8 +23,8 @@ class Document(object):
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     VIEW_CLASS = View
 
-    def __init__(self, rootStyle=None, styles=None, views=None, name=None, title=None, autoPages=1, pageTemplate=None, 
-            originTop=True, w=None, h=None, **kwargs):
+    def __init__(self, rootStyle=None, styles=None, views=None, name=None, title=None, autoPages=1, 
+            pageTemplate=None,  originTop=True, w=None, h=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
         if rootStyle is None:
