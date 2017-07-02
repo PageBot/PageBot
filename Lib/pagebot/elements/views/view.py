@@ -107,9 +107,16 @@ class View(Element):
             if self.style.get('fill') is not None:
                 setFillColor(self.style['fill'])
                 rect(0, 0, w, h)
-            # Let the page draw itself on the current DrawBot view port if self.writer is None.
+
+            if self.drawBefore is not None: # Call if defined
+                self.drawBefore(page, origin, self)
+
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             page.draw(origin, self)
+
+            if self.drawAfter is not None: # Call if defined
+                self.drawAfter(page, origin, self)
+
             # Self.infoElements now may have collected elements needed info to be drawn, after all drawing is done.
             # So the info boxes don't get covered by regular page content.
             for e in self.elementsNeedingInfo.values():
