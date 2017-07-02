@@ -19,16 +19,17 @@ from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineT
     save, restore, scale, textSize, FormattedString, cmykStroke, text, fill, stroke,\
     strokeWidth, curveTo, closePath
 
-from pagebot import setFillColor, setStrokeColor
+from pagebot import setFillColor, setStrokeColor, newFS, setStrokeColor, setFillColor
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
-from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D, point2S, asFormatted
-from pagebot import newFS, setStrokeColor, setFillColor
 from pagebot.toolbox.transformer import *
+from pagebot.builders.cssbuilder import CssBuilder
 
 class View(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
     viewId = 'View'
+
+    CSSBUILDER_CLASS = CssBuilder
 
     def __init__(self, w=None, h=None, parent=None, **kwargs):
         Element.__init__(self, parent=parent, **kwargs)
@@ -152,8 +153,11 @@ class View(Element):
         if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
             frameDuration(frameDuration)
 
-        # http://www.drawbot.com/content/canvas/saveImage.html
-        saveImage(fileName, multipage=multiPage)
+        if fileName.lower().endswith('.css'): # Use CssBuilder instead
+            self.CSSBUILDER_CLASS(fileName).build(self.document, self)
+        else:
+            # http://www.drawbot.com/content/canvas/saveImage.html
+            saveImage(fileName, multipage=multiPage)
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 

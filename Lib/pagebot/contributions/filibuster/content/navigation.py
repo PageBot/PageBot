@@ -47,7 +47,7 @@ content = {
 
     # list of alternative names for navigation bar items.
     #These items get their name from the name of their component,
-    # it seems nice to have some variable in there.
+    # it seems nice to have some variation in there.
     # pattern: navigation_alt_THEME
     'navigation_alt_filibuster':    ['Filibuster', 'Our Partner', ],
     'navigation_alt_corporate':    ['Corporate', 'Business', 'About Us', 'Our Company'],

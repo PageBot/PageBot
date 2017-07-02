@@ -206,7 +206,7 @@ content = {
         '<-randint(10, 100)*50->',
     ],
     'auction_miscellaneous': [
-        '<#!capitalize, sci_anatomy_human#>, <#sci_blood#>',
+        '<#!^,sci_anatomy_human#>, <#sci_blood#>',
         'property on <#sci_astro_planets#>',
     ],
     'auction_miscellaneous_bid': [
