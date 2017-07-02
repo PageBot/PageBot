@@ -8,17 +8,20 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     basebuilder.py
+#     cssbuilder.py
 #
-class BaseBuilder(object):
-    u"""The BaseBuilder is the abstract builder class, for all builders that need
-    to write files in a directory, besides the binary export formats that are already
-    supported by DrawBot."""
+import codecs
+from basebuilder import BaseBuilder
 
-    def __init__(self, path):
-        self.path = path
+class CssBuilder(BaseBuilder):
 
     def build(self, e, view):
-        pass
-        
+        u"""
+        Builds the CSS for Element e and downwards, using the view parent document 
+        as reference for styles.
+        """
+        assert self.path is not None
+        out = codecs.open(self.path, 'w', 'utf-8')
+        f.write('@charset "UTF-8";\n\n')
 
+        f.close()
