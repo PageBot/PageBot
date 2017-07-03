@@ -10,12 +10,23 @@
 #
 #     spreadview.py
 #
-import math
+from drawBot import newPage, rect, fill, stroke, strokeWidth
+from pagebot import setFillColor, setStrokeColor
 from view import View
 
 class SpreadView(View):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
     viewId = 'SpreadView'
+
+    def drawPageFrame(self, page, origin):
+        u"""Draw the page frame if the the flag is on and  if there ie padding enough to show other meta info.
+        Otherwise the padding is truncated to 0: no use to draw the frame."""
+        if self.showPageFrame: # Different from base View, no check on padding.
+            fill(None)
+            stroke(0.5)
+            strokeWidth(0.5)
+            rect(origin[0], origin[1], page.w, page.h)
+            #page.drawFrame(origin, self)
 
     def drawPages(self, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
@@ -23,13 +34,14 @@ class SpreadView(View):
 
         w, h, _ = doc.getMaxPageSizes(pageSelection)
         w2 = 2*w # Make spread width
-        for page in doc.getSortedPages():
+        for pn, pages in doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
             # Create a new DrawBot viewport page to draw template + page, if not already done.
             # In case the document is oversized, then make all pages the size of the document, so the
             # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
             # Size depends on the size of the larges pages + optional decument padding.
+            page = pages[0] # TODO: Make it work if there as multiple pages on the same page number.
             if self.pl > self.MIN_PADDING and self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING and self.pr > self.MIN_PADDING:
                 w += self.pl + self.pr
                 h += self.pt + self.pb
@@ -42,17 +54,19 @@ class SpreadView(View):
                 h = page.h
                 origin = (0, 0, 0)
 
-            if math.even(page.pn):
+            if (pn % 2 == 0): # Is even?
                 newPage(w2, h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
                 # View may have defined a background
                 if self.style.get('fill') is not None:
                     setFillColor(self.style['fill'])
                     rect(0, 0, w2, h)
-            else # Uneven, shift origin to right
+            else: # Odd, shift origin to right
                 origin = origin[0]+w, origin[1], origin[2]
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, origin, self)
+
+            self.drawPageFrame(page, origin)
 
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             page.draw(origin, self)

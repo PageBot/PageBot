@@ -14,3 +14,4 @@ from pagebot.elements.views.view import View
 from pagebot.elements.views.defaultview import DefaultView
 from pagebot.elements.views.singleview import SingleView
 from pagebot.elements.views.thumbview import ThumbView
+from pagebot.elements.views.spreadview import SpreadView

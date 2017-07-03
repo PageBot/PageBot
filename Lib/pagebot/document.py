@@ -24,7 +24,7 @@ class Document(object):
     VIEW_CLASS = View
 
     def __init__(self, rootStyle=None, styles=None, views=None, name=None, title=None, autoPages=1, 
-            pageTemplate=None,  originTop=True, w=None, h=None, **kwargs):
+            pageTemplate=None,  originTop=True, startPage=0, w=None, h=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
         if rootStyle is None:
@@ -48,7 +48,7 @@ class Document(object):
 
         # Document (w, h) size is default from page, but will modified by the type of display mode. 
         if autoPages:
-            self.makePages(pageCnt=autoPages, w=w, h=h, **kwargs)
+            self.makePages(pageCnt=autoPages, pn=startPage, w=w, h=h, **kwargs)
         # Storage lib for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
         self._lib = {}
@@ -222,19 +222,24 @@ class Document(object):
 
     def appendElement(self, e): 
         u"""Add page to the document. Called when page.parent is set or view.parent is set. 
-        If Page, add after last page. If View, add to self.views[view.name]"""
-        if isinstance(e, self.PAGE_CLASS):
+        If Page, add after last page. If View, add as self.views[view.viewId]"""
+        if e.isPage:
+            self.appendPage(e)
+        elif e.isView:
             e.parent = self
-            if self.pages.keys():
-                pn = max(self.pages.keys())+1
-            else:
-                pn = 0
-            self[pn] = e
-        elif isinstance(e, self.VIEW_CLASS):
-            e.parent = self
-            self.views[e.name] = e
+            self.views[e.viewId] = e
         else:
             raise ValueError('Cannot append elements other that Page or View to Document; "%s"' % e)
+
+    def appendPage(self, page):
+        u"""Append a page to the document. Assert that it is a page element."""
+        assert page.isPage    
+        page.parent = self
+        if self.pages.keys():
+            pn = max(self.pages.keys())+1
+        else:
+            pn = 0
+        self[pn] = page
 
     def getPage(self, pnOrName, index=0):
         u"""Answer the page at (pn, index). Otherwise search for a page with this name. Raise index errors if it does not exist."""
@@ -276,13 +281,13 @@ class Document(object):
         #    self.pages[pn] = []
         #self.pages[pn].append(page)
 
-    def makePages(self, pageCnt, pn=None, template=None, w=None, h=None, name=None, **kwargs):
+    def makePages(self, pageCnt, pn=0, template=None, w=None, h=None, name=None, **kwargs):
         u"""
         If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position."""
         if template is None:
             template = self.pageTemplate
-        for n in range(pageCnt):
-            self.newPage(pn=pn, template=template, name=name, w=w, h=h, **kwargs) # Parent is forced to self.
+        for n in range(pageCnt): # First page is n + pn
+            self.newPage(pn=n+pn, template=template, name=name, w=w, h=h, **kwargs) # Parent is forced to self.
 
     def getElementPage():
         u"""Search ancestors for the page element. This can only happen here if elements don't have a
@@ -305,7 +310,9 @@ class Document(object):
 
     def getPageNumber(self, page):
         u"""Answer a string with the page number pn, if the page can be found. If the page has index > 0:
-        then answer page format "pn-index". pn and index are incremented by 1."""
+        then answer page format "pn-index". pn and index are incremented by 1.
+        TODO: Make a reversed table if this squential search shows to be slow in the future with large docs.
+        """
         for pn, pnPages in sorted(self.pages.items()):
             for index, pg in enumerate(pnPages):
                 if pg is page:
@@ -326,11 +333,13 @@ class Document(object):
         pn = sorted(self.pages.keys())[-1]
         return self.pages[pn][-1]
 
-    def getSortedPages(self):
+    def getSortedPages(self, pageSelection=None):
         u"""Answer the dynamic list of pages, sorted by y, x and index."""
-        pages = []
-        for _, pnPages in sorted(self.pages.items()):
-            pages += pnPages
+        pages = [] # List of (pn, pnPages) tuples of pages with the same page number.
+        for pn, pnPages in sorted(self.pages.items()):
+            if pageSelection is not None and not pn in pageSelection:
+                continue
+            pages.append((pn, pnPages))
         return pages
 
     def getMaxPageSizes(self, pageSelection=None):
@@ -359,21 +368,21 @@ class Document(object):
     #   V I E W S
 
     def initializeViews(self, views):
-        self.views = {} # Key is name of View instance. 
+        self.views = {} # Key is name or eId of View instance. 
         if views is not None:
             for view in views:
                 assert not view.name in self.views
                 self.appendElement(view)
         # Define some default views if not already  there.
-        for viewClass in (DefaultView, SingleView, ThumbView):
-            if not viewClass.viewId in self.views:
+        for viewClass in (DefaultView, ThumbView):
+            if not viewClass.viewId in self.views: # Only if not already defined, to make sure it is there.
                 # Create views, default with the same size as document.
                 self.appendElement(viewClass(parent=self, w=self.w, h=self.h))
 
     def getView(self, viewId=None):
         u"""Answer the viewer instance with viewId. Answer DefaultView() if it does not exist."""
         if not viewId in self.views:
-            viewId = DefaultView.viewId
+            viewId = DefaultView.viewId # We know for sure that this one is in self.views
         return self.views.get(viewId)
 
     #   D R A W I N G
