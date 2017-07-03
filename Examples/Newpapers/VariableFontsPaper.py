@@ -129,7 +129,7 @@ def makeDocument(fontPath):
         # Conditions make the element move to top-left of the page.
         # And the condition that there should be no overflow, otherwise the text box
         # will try to solve it.     
-        conditions=[Right2Right(), Float2Bottom()],
+        conditions=[Right2Right(), Float2Top()],
         # Position of the origin of the element. Just to show where it is.
         # Has no effect on the position conditions. 
         yAlign=BOTTOM, xAlign=LEFT, fill=CIRCLE_ELEMENT_FILL, borders=1,
