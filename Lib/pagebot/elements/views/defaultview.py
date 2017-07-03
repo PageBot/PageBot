@@ -15,6 +15,3 @@ from pagebot.elements.views.view import View
 class DefaultView(View):
     viewId = 'Default'
 
-    def setControls(self):
-        self.showElementInfo = True
-

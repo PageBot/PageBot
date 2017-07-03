@@ -103,7 +103,6 @@ def makeDocument():
     mediumName = mediumName or bookName # In case medium weight does not exist.
     _, boldName = findFont(('Bold', 'Medium'))
 
-    print bookName, mediumName, boldName
     bookItalicName = italicName(bookName)
     mediumItalicName = italicName(mediumName)
     boldItalicName = italicName(boldName)

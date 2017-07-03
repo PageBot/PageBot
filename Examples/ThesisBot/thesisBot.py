@@ -61,7 +61,7 @@ RS = getRootStyle(
     showGridColumns = SHOW_GRID_COLUMNS,
     showBaselineGrid = SHOW_BASELINE_GRID,
     showFlowConnections = SHOW_FLOW_CONNECTIONS,
-    showElementInfo = True,
+    showElementInfo = False,
     showElementOrigin = True,
     BOX_COLOR = BOX_COLOR,
     # Text measures
