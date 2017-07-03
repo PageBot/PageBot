@@ -19,7 +19,7 @@ from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineT
     save, restore, scale, textSize, FormattedString, cmykStroke, text, fill, stroke,\
     strokeWidth, curveTo, closePath
 
-from pagebot import setFillColor, setStrokeColor, newFS, setStrokeColor, setFillColor
+from pagebot import setFillColor, setStrokeColor, newFS
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import *
@@ -28,6 +28,7 @@ from pagebot.builders.cssbuilder import CssBuilder
 class View(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
     viewId = 'View'
+    isView = True
 
     CSSBUILDER_CLASS = CssBuilder
 
@@ -153,6 +154,8 @@ class View(Element):
         if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
             frameDuration(frameDuration)
 
+        # Select other than standard DrawBot export builders here.
+        # TODO: Show be more generic if number of builders grows.
         if fileName.lower().endswith('.css'): # Use CssBuilder instead
             self.CSSBUILDER_CLASS(fileName).build(self.document, self)
         else:

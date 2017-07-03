@@ -29,21 +29,22 @@
 #     to make insert the content in the template elements.
 #
 import copy
+
 import pagebot # Import to know the path of non-Python resources.
-from pagebot.contributions.filibuster.blurb import blurb
-from pagebot import Gradient, Shadow
-from pagebot.fonttoolbox.objects.font import findInstalledFonts, getFontByName
 from pagebot.contributions.filibuster.blurb import Blurb
+from pagebot.fonttoolbox.objects.font import findInstalledFonts, getFontByName
 
 from pagebot.toolbox.transformer import int2Color    
-from pagebot.style import getRootStyle, A4, A3, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE, RIGHT, LEFT, MM, INCH
+from pagebot.style import CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE, RIGHT, LEFT, MM, INCH
 # Document is the main instance holding all information about the document together (pages, views, etc.)
 from pagebot.document import Document
 # Import all element classes that can be placed on a page.
 from pagebot.elements import *
 # Import all layout condition classes
 from pagebot.conditions import *
-
+# Import other than default view class
+from pagebot.elements.views.spreadview import SpreadView
+# Generic function to create new FormattedString, extended version of DrawBot FormattedString() call.
 from pagebot import newFS
 
 PageWidth, PageHeight = 180*MM, 247*MM # Original size of Letterproef (type specimen)
@@ -70,7 +71,7 @@ def findFont(styleNames, italic=False):
     FAMILY_NAMES = MY_FAMILY_NAMES
     fontNames = findInstalledFonts(FAMILY_NAMES)
     foundryName = 'TN | TYPETR' # TODO: Get from font is available
-    if 1 or not fontNames: # Not installed, find something else that is expected to exist in OSX:
+    if not fontNames: # Not installed, find something else that is expected to exist in OSX:
         foundryName = 'Apple OSX Font'
         FAMILY_NAMES = SYSTEM_FAMILY_NAMES
         for pattern in FAMILY_NAMES:
@@ -127,21 +128,21 @@ def makeDocument():
     
     blurb = Blurb() # BLurb generator
     
-    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=8)
+    doc = Document(w=PageWidth, h=PageHeight, originTop=False, startPage=1, autoPages=9)
     # Get default view from the document and set the viewing parameters.
-    view = doc.getView()
+    view = SpreadView(parent=doc)
     view.style['fill'] = 1
     # TODO: There is a bug that makes view page size grow, if there are multiple pages and padding > 0
+    # TODO: Add optional showing of mid-page line gradient, to suggest bended book pages.
     view.padding = 0 # 20*MM # To show cropmarks and such, make >=20*MM or INCH.
-    view.showPageCropMarks = True # Won't show if there is not padding in the view.
-    view.showPageRegistrationMarks = True
+    view.showPageCropMarks = False # Won't show if there is not padding in the view.
+    view.showPageRegistrationMarks = False
     view.showPageFrame = True
-    view.showPageNameInfo = True
+    view.showPageNameInfo = False
     view.showElementOrigin = False
     view.showElementDimensions = False #ShowDimensions
     view.showElementInfo = False
     view.showTextOverflowMarker = False # Don't show marker in case Filibuster blurb is too long.
-
  
     labelFont = boldFont
     padding = (3*MM, 3*MM, 3*MM, 3*MM)
@@ -160,7 +161,7 @@ def makeDocument():
     # -----------------------------------------------------------------------------------
     # Cover from image scan.
     pn = 1
-    page = doc[pn-1]   
+    page = doc[pn]   
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
@@ -172,7 +173,7 @@ def makeDocument():
     # -----------------------------------------------------------------------------------
     # Empty left page.
     pn += 1
-    page = doc[pn-1]   
+    page = doc[pn]   
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
@@ -183,7 +184,7 @@ def makeDocument():
     # -----------------------------------------------------------------------------------
     # Full red page with white chapter title.
     pn += 1
-    page = doc[pn-1]   
+    page = doc[pn]   
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
@@ -198,7 +199,7 @@ def makeDocument():
     # -----------------------------------------------------------------------------------
     # Empty left page.
     pn += 1
-    page = doc[pn-1]   
+    page = doc[pn]   
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
@@ -209,7 +210,7 @@ def makeDocument():
     # -----------------------------------------------------------------------------------
     # Title page of family.
     pn += 1   
-    page = doc[pn-1] # Get the single front page from the document.    
+    page = doc[pn] # Get the single front page from the document.    
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
@@ -247,7 +248,7 @@ def makeDocument():
     # Page 2 of a family chapter. Glyph overview and 3 columns.
     
     pn += 1
-    page = doc[pn-1]
+    page = doc[pn]
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
@@ -388,7 +389,7 @@ def makeDocument():
     # Page 3, 3 columns.
     
     pn += 1
-    page = doc[pn-1]
+    page = doc[pn]
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
@@ -442,7 +443,7 @@ def makeDocument():
     # Page 4, 3 columns.
     
     pn += 1
-    page = doc[pn-1]
+    page = doc[pn]
     # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
     page.margin = 0
     page.padding = pagePadding
@@ -487,11 +488,11 @@ def makeDocument():
         fill=redColor, padding=padding)
     tbName.top = page.h-RedBoxY
     
-    # Page number
+    # Page number, even on left side.
     fs = newFS(`pn`, 
         style=dict(font=bookName, fontSize=pageNumberSize, 
-        textFill=redColor, xTextAlign=RIGHT, rTracking=rt, leading=8))
-    tbPageNumber = newTextBox(fs, parent=page, x=leftPadding - 10*MM, w=10*MM)
+        textFill=redColor, xTextAlign=LEFT, rTracking=rt, leading=8))
+    tbPageNumber = newTextBox(fs, parent=page, x=leftPadding, w=10*MM)
     tbPageNumber.bottom = 20*MM
                 
     # Solve remaining layout and size conditions.
@@ -503,5 +504,5 @@ def makeDocument():
 
 
 d = makeDocument()
-d.export(EXPORT_PATH) 
+d.export(EXPORT_PATH, viewId=SpreadView.viewId) 
 
