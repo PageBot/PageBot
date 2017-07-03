@@ -53,15 +53,9 @@ pb = 36*MM
 pl = pr = 16*MM # Although the various types of specimen page have their own margin, this it the overall page padding.
 pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
-<<<<<<< HEAD
 SYSTEM_FAMILY_NAMES = ('Verdana',)
 SYSTEM_FAMILY_NAMES = ('Georgia',)
 MY_FAMILY_NAMES = ('Proforma', 'Productus')
-=======
-MY_FONT_NAMES = ('Proforma', 'Productus')
-SYSTEM_FONT_NAMES = ('Verdana',)
-SYSTEM_FONT_NAMES = ('Georgia',)
->>>>>>> origin/master
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/LetterproefVanDeGarde.png' 
@@ -73,16 +67,12 @@ def findFont(styleNames, italic=False):
     # Some hard wired foundry name here. This could be improved. Maybe we can add a public
     # "Meta-info about typefaces somewhere in PageBot, so foundries and designers can add their own
     # data there.
-<<<<<<< HEAD
     FAMILY_NAMES = MY_FAMILY_NAMES
     fontNames = findInstalledFonts(FAMILY_NAMES)
-=======
-    fontNames = findInstalledFonts(MY_FONT_NAMES)
->>>>>>> origin/master
     foundryName = 'TN | TYPETR' # TODO: Get from font is available
-    if not fontNames: # Not installed, find something else that is expected to exist in OSX:
+    if 1 or not fontNames: # Not installed, find something else that is expected to exist in OSX:
         foundryName = 'Apple OSX Font'
-        FAMILY_NAMES = SYSTEM_FONT_NAMES
+        FAMILY_NAMES = SYSTEM_FAMILY_NAMES
         for pattern in FAMILY_NAMES:
             fontNames = findInstalledFonts(pattern)
             if fontNames:
@@ -99,26 +89,15 @@ def findFont(styleNames, italic=False):
     return None, None # Nothing found.
 
 def italicName(fontName):
-    italicFontName = fontName # Ignore in case we cannot find an italic.
-    if fontName + '-Italic' in installedFonts():
-       italicFontName = fontName + '-Italic' 
-    elif fontName + 'Italic' in installedFonts():
-        italicFontName = fontName + 'Italic'
-    elif fontName.split('-')[0] + '-Italic' in installedFonts():
-       italicFontName = fontName.split('-')[0] + '-Italic' 
-    elif fontName.split('-')[0] + 'Italic' in installedFonts():
-        italicFontName = fontName.split('-')[0] + 'Italic'
-    return italicFontName
+    if not '-' in fontName:
+        return fontName + '-Italic'
+    return fontName + 'Italic'
     
 def makeDocument():
     u"""Create Document instance with a single page. Fill the page with elements
     and perform a conditional layout run, until all conditions are solved."""
     
-<<<<<<< HEAD
     foundryName, bookName = findFont((None, 'Book', 'Regular')) # Find these styles in order.
-=======
-    foundryName, bookName = findFont(('', 'Regular', 'Book', 'Light')) # Find these styles in order.
->>>>>>> origin/master
     _, mediumName = findFont(('Medium', 'Book', 'Regular'))
     mediumName = mediumName or bookName # In case medium weight does not exist.
     _, boldName = findFont(('Bold', 'Medium'))
