@@ -85,30 +85,32 @@ class View(Element):
         doc = self.parent
 
         w, h, _ = doc.getMaxPageSizes(pageSelection)
-        for page in doc.getSortedPages():
+        for pn, pages in doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
             # Create a new DrawBot viewport page to draw template + page, if not already done.
             # In case the document is oversized, then make all pages the size of the document, so the
             # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
             # Size depends on the size of the larges pages + optional decument padding.
+            page = pages[0] # TODO: make this work for pages that share the same page number
+            pw, ph = w, h  # Copy from main (w, h), since they may be altered.
             if self.pl > self.MIN_PADDING and self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING and self.pr > self.MIN_PADDING:
-                w += self.pl + self.pr
-                h += self.pt + self.pb
+                pw += self.pl + self.pr
+                ph += self.pt + self.pb
                 if self.originTop:
                     origin = self.pl, self.pt, 0
                 else:
                     origin = self.pl, self.pb, 0
             else:
-                w = page.w # No padding defined, follow the size of the page.
-                h = page.h
+                pw = page.w # No padding defined, follow the size of the page.
+                ph = page.h
                 origin = (0, 0, 0)
 
-            newPage(w, h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
+            newPage(pw, ph) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
             # View may have defined a background
             if self.style.get('fill') is not None:
                 setFillColor(self.style['fill'])
-                rect(0, 0, w, h)
+                rect(0, 0, pw, ph)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, origin, self)
