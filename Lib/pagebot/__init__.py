@@ -13,6 +13,8 @@
 from __future__ import division
 __doc__ = """PageBot module"""
 
+__version__ = '0.8-beta'
+
 import CoreText
 import AppKit
 import Quartz
