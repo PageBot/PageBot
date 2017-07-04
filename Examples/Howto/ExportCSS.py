@@ -78,10 +78,11 @@ def makeDocument():
     score = doc.solve() # Try to solve all pages.
     if score.fails:
         print score.fails
-
+            
     return doc # Answer the doc for further doing.
  
 # Document current view will recognize .css extension to call the CssBuilder.
 d = makeDocument()
-d.export(EXPORT_PATH) 
+d.export(EXPORT_PATH)
+print 'Done' 
 

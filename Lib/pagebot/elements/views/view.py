@@ -159,7 +159,7 @@ class View(Element):
         # Select other than standard DrawBot export builders here.
         # TODO: Show be more generic if number of builders grows.
         if fileName.lower().endswith('.css'): # Use CssBuilder instead
-            self.CSSBUILDER_CLASS(fileName).build(self.document, self)
+            self.CSSBUILDER_CLASS(fileName).build(self.parent, self)
         else:
             # http://www.drawbot.com/content/canvas/saveImage.html
             saveImage(fileName, multipage=multiPage)
