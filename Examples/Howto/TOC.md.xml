@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<document><h1>How to...</h1>
+<p>Example scripts, how to do a specific task or explaining a single PageBot functions.</p>
+<h2>Align elements</h2>
+<p><img alt="gallery/AlignElements.png" src="gallery/AlignElements.png" /><br />
+The script shows the different alignment conditions. <em>Left2Left()</em> goes to the left padding. <em>Left2LeftSide()</em> goes to the left side of the document.<br />
+<em>page.solve()</em> tries to solve any condition that does not fit the defined optimal value.</p>
+<p>AAAA</p>
+</document>

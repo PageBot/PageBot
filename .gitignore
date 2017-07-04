@@ -1,3 +1,14 @@
+#pagebot
+
+*.fam
+site
+mkdocs.yml
+log.txt
+_export/
+_private/
+
+#export
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -15,7 +26,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -92,6 +102,6 @@ ENV/
 
 .idea/*
 
-fonts/instances/*.ttf
-
-src/fonts/instances/PromisePageBot-GX-wdth0-wght1000.ttf
+_export
+_instances
+_private

@@ -1,4 +1,9 @@
-Copyright 2016+ Type Network, Petr van Blokland and other contributors.
+Enclosed code from other contributers is (as in e.g. the directories "Lib/contributions" and "Fonts" is marked with the original LICENSE.md files.
+
+For the rest the following MIT license applies.
+
+PageBot
+Copyright 2016+ Type Network, Petr van Blokland.
 http://pagebot.io/
 
 Permission is hereby granted, free of charge, to any person obtaining
