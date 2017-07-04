@@ -48,7 +48,7 @@ G = 12 # Gutter
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/VariableFontsPaper.pdf' 
 
-GLYPH_NAME = 'B'
+GLYPH_NAME = ['B'] # a list allows for glyphNames with more than one character: 'four'
 FONT_PATH = pagebot.getFontPath()
 fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-VF.ttf'
 CIRCLE_ELEMENT_FILL = 1
