@@ -301,7 +301,7 @@ class Element(object):
 
     # If the element is part of a flow, then answer the squence.
     
-    def XXXgetFlows(self):
+    def NOTNOW_getFlows(self):
         u"""Answer the set of flow element sequences on the page."""
         flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
         for e in self.elements:
@@ -321,7 +321,7 @@ class Element(object):
                 flows[e.next] = [e]
         return flows
 
-    def XXXgetNextFlowBox(self, tb, makeNew=True):
+    def NOTNOW_getNextFlowBox(self, tb, makeNew=True):
         u"""Answer the next textBox that tb is pointing to. This can be on the same page or a next
         page, depending how the page (and probably its template) is defined."""
         if tb.nextPage: # Page number or name
@@ -412,14 +412,16 @@ class Element(object):
     #   L I B --> Document.lib
 
     def _get_lib(self):
-        u"""Answer the shared document.lib dictionary, used for share global entry by elements."""
+        u"""Answer the shared document.lib dictionary by property, used for share global entry by elements.
+        Elements query their self.parent.lib until the root document is reached."""
         parent = self.parent
         if parent is not None:
             return parent.lib # Either parent element or document.lib.
-        return None # Document cannot be found, there is not document as root.
+        return None # Document cannot be found, or there is there is no parent defined in the element.
+    lib = property(_get_lib)
 
     def _get_doc(self):
-        u"""Answer the root Document of this element, looking upward in the ancestor tree."""
+        u"""Answer the root Document of this element by property, looking upward in the ancestor tree."""
         if self.parent is not None:
             return self.parent.doc
         return None
@@ -428,6 +430,8 @@ class Element(object):
     # Most common properties
 
     def _get_parent(self):
+        u"""Answer the parent of the element, if it exists, by weakref reference. Answer None of there
+        is not parent defined or if the parent not longer exists."""
         if self._parent is not None:
             return self._parent()
         return None
@@ -439,7 +443,8 @@ class Element(object):
         self._parent = parent
     parent = property(_get_parent, _set_parent)
 
-    def _get_siblings(self): # Answer all elements that share self.parent, without self.
+    def _get_siblings(self):
+        u"""Answer all elements that share self.parent, not including self in the list."""
         siblings = []
         for e in self.parent.elements:
             if not e is self:
@@ -448,6 +453,7 @@ class Element(object):
     siblings = property(_get_siblings)
 
     def _get_ancestors(self):
+        u"""Answer the list of anscestors of self, including the document root. Self is not included."""
         ancestors = []
         parent = self.parent
         while parent is not None:
@@ -458,6 +464,7 @@ class Element(object):
     ancestors = property(_get_ancestors)
 
     def _get_point(self):
+        u"""Answer the 2D point tuple of the relative local position of self."""
         return self.x, self.y # Answer as 2D
     def _set_point(self, point):
         self.x = point[0]
@@ -465,30 +472,35 @@ class Element(object):
     point = property(_get_point, _set_point)
 
     def _get_point3D(self):
+        u"""Answer the 3D point tuple of the relative local position of self."""
         return self.x, self.y, self.z
     def _set_point3D(self, point):
         self.x, self.y, self.z = point3D(point) # Always store as 3D-point, z = 0 if missing.
     point3D = property(_get_point3D, _set_point3D)
 
-    def _get_oPoint(self): # Answer the self.style['point'], y-flipped, depending on the self.originTop flag.
+    def _get_oPoint(self): 
+        u"""Answer the self.point, where y can be flipped, depending on the self.originTop flag."""
         return self._applyOrigin(self.point)
     oPoint3D = oPoint = property(_get_oPoint)
 
     # Plain coordinates
 
     def _get_x(self):
+        u"""Answer the x position of self."""
         return self.style['x'] # Direct from style. Not CSS lookup.
     def _set_x(self, x):
         self.style['x'] = x
     x = property(_get_x, _set_x)
     
     def _get_y(self):
+        u"""Answer the y position of self."""
         return self.style['y'] # Direct from style. Not CSS lookup.
     def _set_y(self, y):
         self.style['y'] = y
     y = property(_get_y, _set_y)
     
     def _get_z(self):
+        u"""Answer the z position of self."""
         return self.style['z'] # Direct from style. Not CSS lookup.
     def _set_z(self, z):
         self.style['z'] = z
@@ -497,7 +509,7 @@ class Element(object):
     # Time management
 
     def _get_t(self):
-        u"""The self.t status is the time status, interpolating between the values in 
+        u"""The self._t status is the time status, interpolating between the values in 
         self.tStyles[t1] and self.tStyles[t2] where t1 <= t <= t2 and these styles contain
         the requested parameters."""
         return self._t
@@ -512,7 +524,7 @@ class Element(object):
         self.timeMarks.append(tm)
         self.timeMarks.sort() # Keep them in tm.t order.
 
-    def XXXgetExpandedTimeMarks(t):
+    def NOTNOW_getExpandedTimeMarks(t):
         u"""Answer a new interpolated TimeState instance, from the enclosing time states for t."""
         timeValueNames = self.timeKeys
         rootStyleKeys = self.timeMarks[0].keys()

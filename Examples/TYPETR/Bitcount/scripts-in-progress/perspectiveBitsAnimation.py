@@ -62,7 +62,7 @@ def drawString(s, px, py, fontName, color=None, gridColor=None, showLayer=False)
     text(s, (X+px*PIX, Y+(1+py)*PIX))
 
     
-def XXXdrawGrid(w, h, offsetX=0, offsetY=0, color=None):
+def NOTNOW_drawGrid(w, h, offsetX=0, offsetY=0, color=None):
     newPath()
     for x in range(w):
         moveTo((PIX*(x+offsetX), Y+PIX*offsetY))

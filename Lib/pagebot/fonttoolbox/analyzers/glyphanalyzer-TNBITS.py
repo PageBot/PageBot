@@ -957,7 +957,7 @@ class GlyphAnalyzer(PointAnalyzer):
             pc1 = pc0.p1
         return self.pointCoveredInWhite(pc0) and self.pointCoveredInWhite(pc1) and self.lineOnWhite(pc0, pc1, step)
 
-    def XXXspanGray(self, x1, y1, x2, y2, step):
+    def NOTNOW_spanGray(self, x1, y1, x2, y2, step):
         u"""Spanning gray is neither full spanning white or spanning black"""
         return not self.overlappingLinesInWindowOnBlack(x1, y1, x2, y2, step) and not self.overlappingLinesInWindowOnWhite(x1, y1, x2, y2, step)
 
