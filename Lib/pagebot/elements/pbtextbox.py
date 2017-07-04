@@ -403,7 +403,7 @@ class TextBox(Element):
         # Otherwise test if there is overflow of text in the given size.
         return textOverflow(self.fs, (0, 0, w or self.w-self.pr-self.pl, h or self.h-self.pt-self.pb), LEFT)
 
-    def XXXgetBaselinePositions(self, y=0, w=None, h=None):
+    def NOTNOW_getBaselinePositions(self, y=0, w=None, h=None):
         u"""Answer the list vertical baseline positions, relative to y (default is 0)
         for the given width and height. If omitted use (self.w, self.h)"""
         baselines = []
