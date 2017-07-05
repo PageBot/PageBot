@@ -11,9 +11,9 @@
 #     htmlbuilder.py
 #
 from basebuilder import BaseBuilder
-from pagebot.toolbox.transformer import TX
+from pagebot.toolbox.transformer import *
 
-class HtmlBuilderPart(BaseBuilder):
+class HtmlBuilder(BaseBuilder):
     """
     The ``HtmlBuilder`` class implements the standard XHTML tag set with all attributes. No additional
     whitespace is added.
@@ -235,7 +235,7 @@ class HtmlBuilderPart(BaseBuilder):
         # Build required search engine info, if available in self.adapter
         self.buildMetaDescription(component)
         self.buildMetaKeyWords(component)
-        
+
         self.link(rel="apple-touch-icon-precomposed", href="img/appletouchicon.png")
         self.buildJavascript(component)
         self.buildFavIconLinks(component)
@@ -246,7 +246,7 @@ class HtmlBuilderPart(BaseBuilder):
         self.div(class_='page_' + component.name or component.class_ or self.C.CLASS_PAGE)
         self.comment(component.getClassName()) # Add reference  Python class name of this component
 
-         
+
         u"""Build the tail of an HTML document.
         Note that the inheriting PhPBuilder uses the result of this method to generate
         the footer.php file, as a separate result stream."""

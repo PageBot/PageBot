@@ -14,7 +14,7 @@ import os
 from basehtmlcssbuilder import BaseHtmlCssBuilder
 
 class MampBuilder(BaseHtmlCssBuilder):
-    
+
     def build(self, doc, path):
     	assert os.path.exists(path)
     	print 'Build site from document.'
