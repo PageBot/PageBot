@@ -10,9 +10,9 @@
 #
 #     sitebuilder.py
 #
-from baseBuilder import BaseBuilder
-from htmlBuilder import htmlBuilder
-from cssBuilder import cssBuilder
+from basebuilder import BaseBuilder
+from htmlbuilder import HtmlBuilder
+from cssbuilder import CssBuilder
 
 class SiteBuilder(BaseBuilder):
 

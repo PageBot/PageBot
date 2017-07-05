@@ -29,9 +29,10 @@ import pagebot
 from pagebot.publications.publication import Publication
 
 SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD',
-        'scripts-in-progress', 'examples-in-progress', 'canvas3d',
+        'scripts-in-progress', 'examples-in-progress',
         'pagebotdoc.py')
 ALLOWED_BUILTINS = ('init', 'repr', 'len', 'getitem', 'setitem')
+SKIP_DOCGEN = ['TMP_Xierpa3_builders', 'contributions']
 
 CONFIG = 'mkdocs.yml'
 DOCS = 'Docs'
@@ -162,6 +163,15 @@ class PageBotDoc(Publication):
         self.packages['index'] = m
 
         for loader, module_name, is_pkg in pkgutil.walk_packages(p):
+            skip = False
+
+            for substring in SKIP_DOCGEN:
+                if substring in module_name:
+                    skip = True
+
+            if skip is True:
+                continue
+
             try:
                 mod = loader.find_module(module_name).load_module(module_name)
 
@@ -397,7 +407,7 @@ class PageBotDoc(Publication):
                     try:
                         f.write('%s  \n' % line.encode('utf-8'))
                     except Exception, e:
-                        print 'An error occurred writing a doc file.'
+                        print 'An error occurred writing a doc file %s, (%s %s)' % (f, key, value)
                         print traceback.format_exc()
 
         if isinstance(value, TypeType):

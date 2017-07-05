@@ -10,9 +10,9 @@
 #
 #     basehtmlcssbuilder.py
 #
-from pagebot.builders.basebuilder import Basebuilder
+from pagebot.builders.basebuilder import BaseBuilder
 
-class BaseHtmlCssBuilder(Basebuilder):
+class BaseHtmlCssBuilder(BaseBuilder):
 
     def build(self, e, view):
         u"""
@@ -36,7 +36,7 @@ class BaseHtmlCssBuilder(Basebuilder):
         # Build required search engine info, if available in self.adapter
         self.buildMetaDescription(component)
         self.buildMetaKeyWords(component)
-        
+
         self.link(rel="apple-touch-icon-precomposed", href="img/appletouchicon.png")
         self.buildJavascript(component)
         self.buildFavIconLinks(component)
@@ -47,7 +47,7 @@ class BaseHtmlCssBuilder(Basebuilder):
         self.div(class_='page_' + component.name or component.class_ or self.C.CLASS_PAGE)
         self.comment(component.getClassName()) # Add reference  Python class name of this component
 
-         
+
         u"""Build the tail of an HTML document.
         Note that the inheriting PhPBuilder uses the result of this method to generate
         the footer.php file, as a separate result stream."""
