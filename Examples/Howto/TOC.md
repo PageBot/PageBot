@@ -85,7 +85,7 @@ However, it takes one or more arguments:
 
 ### Clear
 
-Clears all `.pyc` files to make sure no old compiles  are left.
+Clears all `.pyc` files to make sure no old compiles are left.
 
 ### Write
 
