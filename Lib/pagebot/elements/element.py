@@ -39,8 +39,7 @@ class Element(object):
     isTextBox = False
     isFlow = False # Value is True if self.next if defined.
     isPage = False # Set to True by Page-like elements.
-    isView = False 
-    
+
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
             t=0, parent=None, name=None, title=None, style=None, conditions=None, elements=None, 
             template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, padding=None, 
@@ -63,8 +62,6 @@ class Element(object):
         self.d = d
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
-        # Border info dict have foramt: 
-        # dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
         self.borders = borders or (borderTop, borderRight, borderBottom, borderLeft)
 
         # Drawing hooks
