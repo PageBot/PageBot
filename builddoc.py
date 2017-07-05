@@ -32,7 +32,7 @@ SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD',
         'scripts-in-progress', 'examples-in-progress',
         'pagebotdoc.py')
 ALLOWED_BUILTINS = ('init', 'repr', 'len', 'getitem', 'setitem')
-SKIP_DOCGEN = ['TMP_Xierpa3_builders', 'contributions']
+SKIP_DOCGEN = ['TMP_Xierpa3_builders', 'builders', 'contributions']
 
 CONFIG = 'mkdocs.yml'
 DOCS = 'Docs'
@@ -221,6 +221,15 @@ class PageBotDoc(Publication):
             parent = folders
             folder = root.replace(base, '')#, dirs, files
             parts = folder.split('/')
+            skip = False
+
+            for skipped in SKIP_DOCGEN:
+                if skipped in parts:
+                    skip = True
+
+            if skip is True:
+                print 'skipping %s' % folder
+                continue
 
             for part in parts:
                 if part not in parent:
