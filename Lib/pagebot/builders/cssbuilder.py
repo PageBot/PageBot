@@ -10,6 +10,13 @@
 #
 #     cssbuilder.py
 #
+#     U N D E R  D E V E L O P M E N T
+#
+#     This builder is being worked on. 
+#     It will generate the export .css from all CSS-based style values in the element tree,
+#     which will be used by the HtmlBuilder to generate a close representation of the 
+#     document as interactive & responsive website.
+#
 import codecs
 import pagebot
 from basebuilder import BaseBuilder
@@ -33,10 +40,12 @@ class CssBuilder(BaseBuilder):
         out.close()
 
     def _buildStyle(self, doc, out, styleName, style):
-		out.write('.%s {\n' % styleName)
-		for parName, value in sorted(style.items()):
+        out.write('.%s {\n' % styleName)
+        out.write('/*')
+        for parName, value in sorted(style.items()):
 			out.write('\t%s: %s;\n' % (parName, value))
-		out.write('}\n\n')
+        out.write('*/\n')
+        out.write('}\n\n')
 
     def buildRootStyle(self, doc, out):
     	u"""Translate the doc.rootStyle to the root body{...} CSS style."""
@@ -49,7 +58,7 @@ class CssBuilder(BaseBuilder):
 
     def buildMainStyles(self, doc, out):
     	u"""BUild the styles for text elements, as defined in the doc.styles dictionary."""
-    	for styleName, style in sorted(doc.styled.getItems()):
+    	for styleName, style in sorted(doc.styles.items()):
     		self._buildStyle(doc, out, styleName, style)
 
     def buildElementStyles(self, doc, out, e=None):
