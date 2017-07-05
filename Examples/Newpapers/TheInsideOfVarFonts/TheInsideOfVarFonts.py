@@ -46,7 +46,7 @@ pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/VariableFontsPaper.pdf' 
+EXPORT_PATH = '../_export/TheInsideOfVarFonts.pdf' 
 
 GLYPH_NAME = ['B'] # a list allows for glyphNames with more than one character: 'four'
 FONT_PATH = pagebot.getFontPath()
@@ -59,12 +59,13 @@ def makeDocument(fontPath):
 
     f = Font(fontPath) # Get PageBot Font instance of Variable font.
     fHeader = getVariableFont(f, dict(wght=0.5))
+    fHeaderCondensed = getVariableFont(f, dict(wght=0.5, wdth=0.4))
     
     doc = Document(w=PageWidth, h=PageHeight, originTop=False, pages=1)
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.style['fill'] = 1
-    view.padding = 40 # To show cropmarks and such, make >40 or so.
+    view.padding = 0 # To show cropmarks and such, make >40 or so.
     view.showPageCropMarks = True # Won't show if there is not padding in the view.
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
@@ -119,17 +120,21 @@ def makeDocument(fontPath):
     w = pageAreaW*0.75 # Used as element width and relative font size. 
     padding = PageHeight/24
     
-    t2 = newTextBox('Variable Fonts Explained', z=0, font=fHeader.installedName, 
-        fontSize=w/7, w=PageWidth*0.75, parent=page, 
-        conditions=(Left2Left(), Float2Top()))
+    fs = newFS('Variable Fonts ', style=dict(font=fHeader.installedName, 
+        textFill=0, fontSize=90))
+    fs += newFS('Explained', style=dict(font=fHeaderCondensed.installedName,
+        textFill=0, fontSize=90))
+    t2 = newTextBox(fs, z=0, w=PageWidth*0.75, parent=page, 
+        conditions=(Left2Left(), Fit2Width(), Float2Top()))
   
     circle = VariableCircle(f, s=GLYPH_NAME, name='VariableCircleSpeciment',
-        parent=page, padding=4, x=100, fontSize=64, h=(PageWidth-2*PADDING)/2,
+        parent=page, padding=4, x=100, fontSize=150,
         maxW=PageWidth-2*PADDING, minW=100, showAxisName=True,     
         # Conditions make the element move to top-left of the page.
         # And the condition that there should be no overflow, otherwise the text box
         # will try to solve it.     
-        conditions=[Right2Right(), Float2Top()],
+        #conditions=[Right2Right(), Float2Top()],
+        conditions=[Left2Left(), Fit2Width(), Bottom2Bottom()],
         # Position of the origin of the element. Just to show where it is.
         # Has no effect on the position conditions. 
         yAlign=BOTTOM, xAlign=LEFT, fill=CIRCLE_ELEMENT_FILL, borders=1,
