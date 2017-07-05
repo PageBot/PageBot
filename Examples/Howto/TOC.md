@@ -85,8 +85,24 @@ However, it takes one or more arguments:
 
 ### Clear
 
+Clears all `.pyc` files to make sure no old compiles  are left.
+
 ### Write
+
+The `-w` option formats and writes the docstrings to markdown files. It will generate the `mkdocs.yml` file next to the `Docs` folder. Run
+
+    mkdocs serve
+
+To preview the results on [http://localhost:8000](http://localhost:8000). Finally, deploy them to GitHub using this command:
+
+    mkdocs gh-deploy
+
+If all goes well, you should be able to view the updated documentation at [https://typenetwork.github.io/PageBot/](https://typenetwork.github.io/PageBot/) (case sensitive).
 
 ### Doctest
 
+See Use Doctests.
+
 ### Log
+
+Sends the output to a log file instead of standard out, a filename such as `out.txt` is required.
