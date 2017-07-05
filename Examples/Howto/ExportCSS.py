@@ -9,6 +9,7 @@
 #
 #     ExportCSS.py
 #
+import os
 import pagebot # Import to know the path of non-Python resources.
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
@@ -84,5 +85,8 @@ def makeDocument():
 # Document current view will recognize .css extension to call the CssBuilder.
 d = makeDocument()
 d.export(EXPORT_PATH)
+print 'Generated CSS code saved as file', EXPORT_PATH
+# Open the css file in the default editor of your local system.
+os.system(u'open "%s"' % EXPORT_PATH)
 print 'Done' 
 
