@@ -43,8 +43,7 @@ class Element(object):
     isTextBox = False
     isFlow = False # Value is True if self.next if defined.
     isPage = False # Set to True by Page-like elements.
-    isView = False 
-    
+
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
             t=0, parent=None, context=None, name=None, class_=None, title=None, description=None, language=None,
             style=None, conditions=None, info=None, framePath=None, 
