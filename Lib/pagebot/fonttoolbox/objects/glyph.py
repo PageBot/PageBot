@@ -442,6 +442,11 @@ class Glyph(object):
         return self._analyzer
     analyzer = property(_get_analyzer)
 
+    def _get_box(self): # Read only
+        self._box = (self.ttGlyph.xMin, self.ttGlyph.yMin, self.ttGlyph.xMax, self.ttGlyph.yMax)
+        return self._box
+    box = property(_get_box)
+
     def onBlack(self, p):
         u"""Answers the boolean flag is the single point (x, y) is on black."""
         p = point2D(p)
