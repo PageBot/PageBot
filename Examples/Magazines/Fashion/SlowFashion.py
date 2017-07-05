@@ -48,8 +48,8 @@ print f.axes
 LIGHT = getVariableFont(FONT_PATH, dict(wght=0.5, wdth=0.6))
 #LIGHT.save(ROOT_PATH + '/Fonts/_instances/PromiseInstance.otf')
 
-BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=1, wdth=1))
-BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=0.8))
+BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=0.5, wdth=0.7))
+BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=0.4))
 BOOK = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=0))
 BOOK_ITALIC = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=1))
 MEDIUM = getVariableFont(FONT_PATH, dict(wght=0.40, wdth=0))
@@ -87,7 +87,7 @@ def makeCoverTemplate(imagePath, w, h):
         conditions=[Left2Left(), Fit2Width(), Top2TopSide()])
     
     tw, th = textSize(coverTitle)
-    newText(coverTitle, parent=coverTemplate, z=10, h=th*0.4, 
+    newText(coverTitle, parent=coverTemplate, z=20, h=th*0.4, 
         conditions=[Fit2Width(), Top2TopSide()], shadow=shadow)
 
     # Make actual date in top-right with magazine title. Draw a bit transparant on background photo.
@@ -96,7 +96,7 @@ def makeCoverTemplate(imagePath, w, h):
     fs = newFS(d, style=dict(font=MEDIUM.installedName, fontSize=17,
         textFill=(1, 1, 1, 0.6), tracking=0.5))
     # TODO: padding righ could come from right stem of the "n"
-    newTextBox(fs, parent=coverTemplate, xTextAlign=RIGHT, pr=12, conditions=[Top2Top(), Right2Right()])
+    newTextBox(fs, parent=coverTemplate, xTextAlign=RIGHT, pr=10, pt=6, conditions=[Top2Top(), Right2Right()])
 
     # Titles could come automatic from chapters in the magazine.
     fs = newFS('$6.95',  style=dict(font=BOOK.installedName, fontSize=12, 
@@ -109,31 +109,38 @@ def makeCoverTemplate(imagePath, w, h):
 
 def makeCoverTitles(coverTemplate):
     # Titles could come automatic from chapters in the magazine.
+    pl = 8
     fs = newFS('Skirts &\nScarves', style=dict(font=BOOK_CONDENSED.installedName, 
-        fontSize=54, fill=1, tracking=0.5, leading=48))
-    newTextBox(fs, parent=coverTemplate, conditions=[Left2Left(), Float2Top()])
-    """
-    # Titles could come automatic from chapters in the magazine.
-    fs = newFS('Ideal style:\n', style=dict(font=MEDIUM.installedName, fontSize=32, 
-        fill=1, tracking=0.5, leading=34))
-    fs += newFS('The almost nothing', style=dict(font=BOOK.installedName, 
-        fontSize=32, fill=1, tracking=0.5, leading=34))
-    coverTemplate.text(fs, (22, 420))
+        fontSize=64, textFill=1, tracking=0.5, leading=0, rLeading=0.9))
+    newTextBox(fs, z=20, pl=15, pt=-40, parent=coverTemplate, 
+        conditions=[Left2Left(), Fit2Width(), Float2Top()])
         
+    # TODO: titles could come automatic from chapters in the magazine.
+    fs = newFS('Ideal style:\n', style=dict(font=MEDIUM.installedName, fontSize=32, 
+        textFill=1, tracking=0.5, leading=50))
+    fs += newFS('The almost nothing', style=dict(font=BOOK.installedName, 
+        fontSize=45, textFill=1, tracking=0.5, leading=48))
+    newTextBox(fs, z=20, pl=8, w=400, pt=0, parent=coverTemplate, 
+        conditions=[Left2Left(), Float2Top()])
+    #    
     # Titles could come automatic from chapters in the magazine.
-    fs = FormattedString('Findings\non the island', font=BOOK_LIGHT.installedName, 
-        fontSize=60, fill=1, tracking=0.5, leading=52 )
-    newText(fs, parent=coverTemplate, style=dict(shadowOffset=(4, -4), shadowBlur=20, 
-        shadowFill=(0,0,0,0.6))
+    fs = newFS('Findings\non an island', style=dict(font=BOOK_LIGHT.installedName, 
+        fontSize=72, textFill=1, tracking=0.5, leading=74))
+    newTextBox(fs, z=20, pl=8, w=400, pt=40, parent=coverTemplate, 
+        style=dict(shadowOffset=(4, -4), shadowBlur=20, shadowFill=(0,0,0,0.6)),
+        conditions=[Left2Left(), Float2Top()])
       
     # Titles could come automatic from chapters in the magazine.
     c = 1 #(0.2, 0.2, 1, 0.9)
-    fs = FormattedString('Exclusive:\n', font=MEDIUM, fontSize=32, fill=c, tracking=0.5,
-        lineHeight=34)
-    fs += FormattedString('Interview with Pepper+Tom ', font=BOOK, fontSize=32, fill=c, tracking=0.5,
-        lineHeight=34)
-    coverTemplate.text(fs, (22, 760))
-        
+    fs = newFS('Exclusive:\n', style=dict(font=MEDIUM.installedName, fontSize=32, 
+        textFill=c, tracking=0.5, lineHeight=34))
+    fs += newFS('Interview with Pepper+Tom ', style=dict(font=BOOK.installedName, 
+        fontSize=32, textFill=c, tracking=0.5, lineHeight=34))
+    newTextBox(fs, z=20, pl=pl, pt=20, parent=coverTemplate, 
+        style=dict(shadowOffset=(4, -4), shadowBlur=20, shadowFill=(0,0,0,0.6)),
+        conditions=[Left2Left(), Fit2Width(), Float2Top()])
+
+    """        
     # Titles could come automatic from chapters in the magazine.
     fs = FormattedString('Slow', font=MEDIUM, fontSize=70, fill=(1, 1, 1, 0.15), tracking=0.5,
         lineHeight=52 )
