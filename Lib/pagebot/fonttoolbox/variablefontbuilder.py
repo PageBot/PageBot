@@ -41,27 +41,35 @@ def getInstancePath():
     u"""Answer the path to write instance fonts."""
     return getMasterPath() + '_instances/'
 
-def getVarLocation(font, normLocation):
-    u"""Translate the normalized location dict (all values between 0 and 1) to what the font expects
-    by its min/max values for each axis."""
-
-    if normLocation is None:
+def getVarLocation(font, location):
+    u"""Translate the location dict (all values between (0, 1) or between (0, 1000)) 
+    to what the font expects by its min/max values for each axis.
+    Location axis tags that don't exits in the font are ignored.
+    Axis values in the font that don't exist in the location are used at their default values.
+    """
+    if location is None:
         return {}
     varLocation = {}
-    for axisName, (minValue, defaultValue, maxValue) in font.axes.items():
-        if axisName in normLocation:
-            varLocation[axisName] = minValue + (maxValue - minValue) * (1-normLocation[axisName])
+    for axisTag, (minValue, defaultValue, maxValue) in font.axes.items():
+        if axisTag in location:
+            axisValue = location[axisTag]
+            if axisTag == 'opsz':
+                varLocation[axisTag] = axisValue # Unchanged of opsz.
+            else:
+                if axisValue > 1:
+                    axisTag /= 1000.0
+                varLocation[axisTag] = minValue + (maxValue - minValue) * (1-axisValue)
     return varLocation
 
-def getVariableFont(fontOrPath, normLocation, install=True):
+def getVariableFont(fontOrPath, location, install=True):
     u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
-    {"wght": 0, "wdth": 1000}"""
+    dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6)"""
     if isinstance(fontOrPath, basestring):
         font = Font(fontOrPath, path2FontName(fontOrPath), install=install)    
     else:
         font = fontOrPath
-    fontName, path = generateInstance(font.path, getVarLocation(font, normLocation), targetDirectory=getInstancePath())
+    fontName, path = generateInstance(font.path, getVarLocation(font, location), targetDirectory=getInstancePath())
     return Font(path, fontName, install=install)
 
 def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0):

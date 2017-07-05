@@ -42,7 +42,7 @@ from pagebot.document import Document
 from pagebot.elements import *
 # Import all layout condition classes
 from pagebot.conditions import *
-# Import other than default view class
+# Import other than default view class, showing double pages spread
 from pagebot.elements.views.spreadview import SpreadView
 # Generic function to create new FormattedString, extended version of DrawBot FormattedString() call.
 from pagebot import newFS
