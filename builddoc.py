@@ -337,7 +337,10 @@ class PageBotDoc(Publication):
 
     def inIgnores(self, key):
         if key.startswith('__'):
-            return False
+            if key.replace('__', '') in ALLOWED_BUILTINS:
+                return False
+            else:
+                return True
         elif key.startswith('NS'):
             return True
         elif key in sys.modules.keys():
@@ -359,6 +362,7 @@ class PageBotDoc(Publication):
         t = self.getTypeString(value)
         t1 = key.replace('_', '\_')
 
+
         if t:
             t = t.replace('_', '\_')
             title = '### %s %s\n' % (t, t1)
@@ -369,7 +373,6 @@ class PageBotDoc(Publication):
 
         if value is not None:
             if '__doc__' in dir(value):
-            #if value.__doc__:
                 s = value.__doc__
                 if s is None:
                     return
