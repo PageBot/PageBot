@@ -378,7 +378,47 @@ class PageBotDoc(Publication):
 
         t = self.getTypeString(value)
         t1 = key.replace('_', '\_')
+        argString = None
 
+        if t == 'def':
+            extra = False
+            args, varargs, kwargs, defaults = inspect.getargspec(value)
+            argString = '('
+
+            if varargs is not None or kwargs is not None:
+                extra = True
+
+            if defaults:
+                diff = len(args) - len(defaults)
+
+                for i in range(0, diff):
+                    if i == len(args) - 1 and not extra:
+                        argString += '%s)' % args[i]
+                    else:
+                        argString += '%s, ' % args[i]
+
+                j = 0
+
+                for i in range(diff, len(args)):
+                    if i == len(args) - 1 and not extra:
+                        argString += '%s=%s)' % (args[i], defaults[j])
+                    else:
+                        argString += '%s=%s, ' % (args[i], defaults[j])
+                    j += 1
+
+            if varargs is not None and kwargs is None:
+                argString += '*args)'
+            elif varargs is not None:
+                argString += '*args, '
+
+            if kwargs is not None:
+                argString += '**kwargs)'
+
+            if argString == '(':
+                argString += ')'
+
+        if argString:
+            t1 = t1 + argString
 
         if t:
             t = t.replace('_', '\_')
