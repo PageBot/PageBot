@@ -54,7 +54,7 @@ def point2S(p):
 
 # C O L O R
 
-def moreRed(c, v=0.5):
+def moreRed(c='bla', v=0.5):
     u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
     moreRedC = [c[0] + (1 - c[0])*v, c[1], c[2]]
     if len(c) == 4:
