@@ -115,7 +115,7 @@ def s2Color(s):
     try:
         c = int(s, 16)
         return int2Color(c)
-    except ValueError: 
+    except ValueError:
         return None
 
 # N U M B E R S
@@ -492,15 +492,15 @@ def path2Name(path):
 
 def path2FontName(path):
     u"""
-    <doc>Take that file part of the path, and get the chunk until the first
+    Take that file part of the path, and get the chunk until the first
     period to remove the extension, version numbers and the database download
     ID.
 
     /xxx/yyy/zzz/Agency_FB-Compressed.ufo becomes Agency_FB-Compressed
     /xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo becomes Agency_FB-Compressed
     #xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo becomes Agency_FB-Bold
-    </doc>
 
+    >>> from pagebot.toolbox.transformer import *
     >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency_FB-Compressed'
     >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')

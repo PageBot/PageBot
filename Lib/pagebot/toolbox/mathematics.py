@@ -165,6 +165,7 @@ def isOdd(v):
 
 def isEven(v):
     u"""
+    import pagebot.toolbox.mathematics.*
     >>> isEven(2)
     True
     >>> isEven(1)

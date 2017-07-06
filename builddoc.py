@@ -370,8 +370,6 @@ class PageBotDoc(Publication):
         return False
 
     def writeDocString(self, f, key, value, level=0):
-        #print key.startswith('__'), key in sys.modules.keys()
-        #if key in self.db:
         if level > 1:
             return
 
