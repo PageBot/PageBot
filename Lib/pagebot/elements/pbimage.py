@@ -211,8 +211,13 @@ class PixelMap(Element):
                 #Otherwise if there is a clipPath, then use it.
                 clipPath(self.clipPath)
 
-            # Store page element Id in this image, in case we want to make an image index later.
-            image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
+            if self.imo is not None:
+                with self.imo:
+                    image(self.path, (0, 0), pageNumber=0, alpha=self._getAlpha())
+                image(self.imo, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
+            else:
+                # Store page element Id in this image, in case we want to make an image index later.
+                image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
             restore()
 
