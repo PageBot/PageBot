@@ -63,8 +63,10 @@ class Element(object):
         self.d = d
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
-        # Border info dict have foramt: 
+        # Border info dict have format: 
         # dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
+        # If not borders defined, then drawing will use the stroke and strokeWidth (if defined)
+        # for intuitive compatibility with DrawBot.
         self.borders = borders or (borderTop, borderRight, borderBottom, borderLeft)
 
         # Drawing hooks
@@ -763,6 +765,9 @@ class Element(object):
     # Borders
 
     def _borderDict(self, borderData):
+        u"""Internal method to create a dictionary with border info. If no valid border
+        dictionary is defined, then use optional stroke and strokeWidth to create one.
+        Otherwise answer *None*."""
         if isinstance(borderData, (int, long, float)):
             return dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
         if isinstance(borderData, dict):
@@ -775,6 +780,10 @@ class Element(object):
             if not 'stroke' in borderData:
                 borderData['stroke'] = 0
             return borderData
+        stroke = self.css('stroke')
+        strokeWidth = self.css('strokeWidht')
+        if stroke is not None and strokeWidth:
+             return dict(line=ONLINE, dash=None, stroke=stroke, strokeWidth=strokeWidth)
         return None
 
     def _get_borders(self):
