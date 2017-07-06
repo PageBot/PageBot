@@ -388,7 +388,7 @@ class PageBotDoc(Publication):
             if varargs is not None or kwargs is not None:
                 extra = True
 
-            if defaults:
+            if defaults is not None:
                 diff = len(args) - len(defaults)
 
                 for i in range(0, diff):
@@ -405,14 +405,20 @@ class PageBotDoc(Publication):
                     else:
                         argString += '%s=%s, ' % (args[i], defaults[j])
                     j += 1
+            else:
+                for i in range(len(args)):
+                    if i == len(args) - 1 and not extra:
+                        argString += '%s)' % args[i]
+                    else:
+                        argString += '%s, ' % args[i]
 
             if varargs is not None and kwargs is None:
                 argString += '*args)'
             elif varargs is not None:
-                argString += '*args, '
+                argString += '\*args, '
 
             if kwargs is not None:
-                argString += '**kwargs)'
+                argString += '\*\*kwargs)'
 
             if argString == '(':
                 argString += ')'
