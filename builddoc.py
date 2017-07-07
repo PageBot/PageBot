@@ -31,12 +31,12 @@ from pagebot.publications.publication import Publication
 SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD',
         'scripts-in-progress', 'examples-in-progress', 'canvas3d',
         'pagebotdoc.py')
-ALLOWED_BUILTINS = ('init', 'repr', 'len', 'getitem', 'setitem')
 
 CONFIG = 'mkdocs.yml'
-DOCS = 'Docs'
+DOC = 'Doc'
 INDENT = '    '
 NEWLINE = '\n'
+
 
 class Node(object):
     """The *Node* class is used to build the PageBot file tree, for cleaning
@@ -89,7 +89,7 @@ class PageBotDoc(Publication):
         Publication.__init__(self)
         self.pagebotRoot = pagebot.getRootPath()
         self.pagebotBase = 'Lib/pagebot'
-        self.pagebotDocs = self.pagebotRoot.replace('Lib', DOCS)
+        self.pagebotDocs = self.pagebotRoot.replace('Lib', DOC)
         self.packages = {}
         self.classes = {}
         self.db = dir(drawBot) # TODO: global.
@@ -179,12 +179,11 @@ class PageBotDoc(Publication):
         self.copyFiles()
         self.scanPackage(m)
         f = open(CONFIG, 'w')
-        f.write('# THIS IS A GENERATED FILE, DO NOT EDIT.\n')
         f.write('site_name: PageBot\n')
         f.write('repo_url: https://github.com/typenetwork/PageBot/\n')
         f.write('repo_name: PageBot\n')
         f.write('theme: readthedocs\n')
-        f.write('docs_dir: %s\n' % DOCS)
+        f.write('docs_dir: %s\n' % DOC)
         f.write('pages:\n')
         f.write(" - 'Home': 'index.md'\n")
         f.write(" - 'How To': 'howto.md'\n")
@@ -196,9 +195,9 @@ class PageBotDoc(Publication):
 
     def copyFiles(self):
         u"""Copies hand edited files."""
-        copyfile('README.md', '%s/index.md' % DOCS)
-        copyfile('LICENSE.md', '%s/license.md' % DOCS)
-        copyfile('Examples/Howto/TOC.md', '%s/howto.md' % DOCS)
+        copyfile('README.md', '%s/index.md' % DOC)
+        copyfile('LICENSE.md', '%s/license.md' % DOC)
+        copyfile('Examples/Howto/TOC.md', '%s/howto.md' % DOC)
 
     def buildDocsMenu(self, m, yml):
         u"""Extracts menu from module structure."""
@@ -269,18 +268,16 @@ class PageBotDoc(Publication):
                 else:
                     # Creates new folders if they do not exists yet;
                     # recurse.
-                    parent = DOCS + '/' + k
-                    folder = parent + '/' + x
+                    folder = DOC + '/' + k + '/' + x
 
-                    for f in (parent, folder):
-                        if not os.path.exists(f):
-                            os.mkdir(f)
+                    if not os.path.exists(folder):
+                        os.mkdir(folder)
 
                     self.writeDocsPages({k + '/' + x: folders[k][x]})
 
     def writeDocsPage(self, path, m):
         u"""Writes a page for a module."""
-        f = open(DOCS + '/%s.md' % path, 'w')
+        f = open(DOC + '/%s.md' % path, 'w')
         f.write('# %s\n\n' % m.__name__)
 
         self.writeIndexMenu(f, path, m)
@@ -337,10 +334,7 @@ class PageBotDoc(Publication):
 
     def inIgnores(self, key):
         if key.startswith('__'):
-            if key.replace('__', '') in ALLOWED_BUILTINS:
-                return False
-            else:
-                return True
+            return False
         elif key.startswith('NS'):
             return True
         elif key in sys.modules.keys():
@@ -362,7 +356,6 @@ class PageBotDoc(Publication):
         t = self.getTypeString(value)
         t1 = key.replace('_', '\_')
 
-
         if t:
             t = t.replace('_', '\_')
             title = '### %s %s\n' % (t, t1)
@@ -373,6 +366,7 @@ class PageBotDoc(Publication):
 
         if value is not None:
             if '__doc__' in dir(value):
+            #if value.__doc__:
                 s = value.__doc__
                 if s is None:
                     return
