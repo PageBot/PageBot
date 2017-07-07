@@ -1,3 +1,6 @@
+# ImageObject
+See also: http://www.drawbot.com/content/image/imageObject.html
+
 ##clearFilters()
 Clear all filters.',
 ##open(path)
