@@ -57,7 +57,7 @@ def getVarLocation(font, location):
                 varLocation[axisTag] = axisValue # Unchanged of opsz.
             else:
                 if axisValue > 1:
-                    axisTag /= 1000.0
+                    axisValue /= 1000.0
                 varLocation[axisTag] = minValue + (maxValue - minValue) * (1-axisValue)
     return varLocation
 
