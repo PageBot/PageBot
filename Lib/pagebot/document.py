@@ -16,6 +16,7 @@ from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page
 from pagebot.elements.views import View, DefaultView, SingleView, ThumbView
 from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
+from pagebot.toolbox.transformer import obj2StyleId
 
 class Document(object):
     u"""A Document is just another kind of container."""
@@ -146,7 +147,7 @@ class Document(object):
 
     def getStyle(self, name):
         u"""Answer the names style. If that does not exist, answer the default root style."""
-        self.styles.get(name, self.getRootStyle())
+        return self.styles.get(name)
     
     def getRootStyle(self):
         u"""Answer the default root style, used by the composer as default for all other stacked styles."""
@@ -226,7 +227,7 @@ class Document(object):
         if e.isPage:
             self.appendPage(e)
         elif e.isView:
-            e.parent = self
+            e.setParent(self) # Set parent as weakref, without calling self.appendElement again.
             self.views[e.viewId] = e
         else:
             raise ValueError('Cannot append elements other that Page or View to Document; "%s"' % e)
@@ -234,7 +235,7 @@ class Document(object):
     def appendPage(self, page):
         u"""Append a page to the document. Assert that it is a page element."""
         assert page.isPage    
-        page.parent = self
+        page.setParent(self) # Set parent as weakref, without calling self.appendElement again.
         if self.pages.keys():
             pn = max(self.pages.keys())+1
         else:

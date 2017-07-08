@@ -96,7 +96,7 @@ def newImage(path, point=None, **kwargs):
     return Image(path, point=point, **kwargs)
       
 def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs):
-    """Convert the column size into point size, depending on the column settings of the 
+    u"""Convert the column size into point size, depending on the column settings of the 
     current template, when drawing images "hard-coded" directly on a certain page.
     The optional imo attribute is an ImageObject() with filters in place. 
     The Image element is answered for convenience of the caller"""
@@ -105,6 +105,10 @@ def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs)
     return e
 
 def newTable(cols=1, rows=1, **kwargs):
+    u"""Answer a new Table instanec."""
     return Table(rows=rows, cols=cols, **kwargs)
 
+def newGalley(**kwargs):
+    u"""Answer a new Galley instance."""
+    return Galley(**kwargs)
 

@@ -26,6 +26,7 @@ from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLo
 from pagebot import setFillColor
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
+from pagebot.fonttoolbox.variablefontaxes import axisDefinitions
 from pagebot.toolbox.transformer import path2FontName
 
 DEBUG = False

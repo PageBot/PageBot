@@ -95,7 +95,7 @@ class Element(object):
         self._parent = None # Preset, so it exists for checking when appending parent.
         if parent is not None:
             # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
-            parent.appendElement(self) # Set referecnes in both directions.
+            self.parent = parent # Set referecnes in both directions. Remove any previous parent links
         # Conditional placement stuff
         if not conditions is None and not isinstance(conditions, (list, tuple)): # Allow singles
             conditions = [conditions]
@@ -248,10 +248,10 @@ class Element(object):
         If the element is alread placed in another container, then remove it from its current parent.
         This relation and position is lost. The position e is supposed to be filled already in local position."""
         eParent = e.parent
-        if not eParent in (None, self): 
-            e.parent.removeElement(e) # Remove from current parent, if there is one.
-        self._elements.append(e)
-        e.parent = self
+        if not eParent is None: 
+            eParent.removeElement(e) # Remove from current parent, if there is one.
+        self._elements.append(e) # Possibly add to self again, will move it to the top of the element stack.
+        e.setParent(self) # Set parent of element without calling this method again.
         if e.eId: # Store the element by unique element id, if it is defined.
             self._eIds[e.eId] = e
         return len(self._elements)-1 # Answer the element index for e.
@@ -259,10 +259,12 @@ class Element(object):
     def removeElement(self, e):
         u"""If the element is placed in self, then remove it. Don't touch the position."""
         assert e.parent is self
+        e.setParent(None) # Unlink the parent reference of e
         if e.eId in self._eIds:
             del self._eIds[e.eId]
         if e in self._elements:
             self._elements.remove(e)
+        return e # Answer the unlinked elements for convenience of the caller.
 
     def _get_show(self): # Set flag for drawing or interpreation with conditional.
         return self.css('show')
@@ -434,6 +436,12 @@ class Element(object):
 
     # Most common properties
 
+    def setParent(self, parent):
+        u"""Set the parent of self as weakref if it is not None. Don't call self.appendElement()."""
+        if parent is not None:
+            parent = weakref.ref(parent)
+        self._parent = parent # Can be None if self needs to be unlinked from a parent tree. E.g. when moving it.
+
     def _get_parent(self):
         u"""Answer the parent of the element, if it exists, by weakref reference. Answer None of there
         is not parent defined or if the parent not longer exists."""
@@ -443,9 +451,10 @@ class Element(object):
     def _set_parent(self, parent):
         # Note that the caller must add self to its elements.
         if parent is not None:
-            assert not self in parent.ancestors, '[%s.%s] Cannot set one of the children "%s" as parent.' % (self.__class__.__name__, self.name, parent)
-            parent = weakref.ref(parent)
-        self._parent = parent
+            #assert not self in parent.ancestors, '[%s.%s] Cannot set one of the children "%s" as parent.' % (self.__class__.__name__, self.name, parent)
+            parent.appendElement(self)
+        else:
+            self._parent = None
     parent = property(_get_parent, _set_parent)
 
     def _get_siblings(self):

@@ -79,6 +79,11 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_em(self, node, e):
+        u"""Handle the <em> tag"""
+        self.typesetNode(node, e)
+
+    def node_p(self, node, e):
+        u"""Handle the <p> tag."""
         self.typesetNode(node, e)
 
     # Solve <br/> best by simple style with: doc.newStyle(name='br', postfix='\n')
@@ -86,12 +91,16 @@ class Typesetter(object):
     def node_hr(self, node, e):
         u"""Add Ruler instance to the Galley.
         TODO: Need to find a way to address multiple styles here."""
-        self.galley.append(Ruler(e)) # Make a new Ruler instance in the Galley
+        self.galley.appendElement(Ruler(e)) # Make a new Ruler instance in the Galley
+
+    def node_br(self, node, e):
+        u"""Add newline instance to the Galley."""
+        self.galley.appendString('\n') # Add newline in the current setting of FormattedString
 
     def node_a(self, node, e):
         u"""Ignore links, but process the block"""
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
-        self.typesetNode(node)
+        self.typesetNode(node, e)
 
     def node_sup(self, node, e):
         u"""Collect footnote references on their page number.
@@ -110,7 +119,7 @@ class Typesetter(object):
                 self.galley.appendString(getMarker('footnote', index))
 
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
-        self.typesetNode(node)
+        self.typesetNode(node, e)
 
     def node_literatureref(self, node, e):
         u"""Collect literature references."""
@@ -129,7 +138,7 @@ class Typesetter(object):
                 self.galley.appendString(getMarker('literature', index))
 
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
-        self.typesetNode(node)
+        self.typesetNode(node, e)
 
     def node_div(self, node, e):
         u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
@@ -179,7 +188,7 @@ class Typesetter(object):
         element inside. The Image will use style based conditions to define the layout
         interaction between pixelMap and caption."""
         src = node.attrib.get('src')
-        self.pushStyleTag(node.tag)
+        #self.pushStyleTag(node.tag)
         imageContainer = self.IMAGE_CLASS(src) # Set path, image w/h and image caontainer scale from style.
         self.galley.appendElement(imageContainer)
         captionString = node.get('title')
@@ -200,21 +209,21 @@ class Typesetter(object):
             tb.append(getMarker(node.tag, src))
             self.galley.append(g)
         """
-        self.popStyleTag()
+        #self.popStyleTag()
 
-    def pushStyleTag(self, tag):
+    def ZZZpushStyleTag(self, tag):
         u"""Push the cascaded style on the gState stack. Make sure that the style is not None and that it
         is a cascaded style, otherwise it cannot be used as source for child styles. Answer the cascaded
         style as convenience for the caller. """
         self.gState.append(tag)
 
-    def popStyleTag(self):
+    def ZZZpopStyleTag(self):
         u"""Pop the cascaded style from the gState stack and answer the next style that is on top.
         Make sure that there still is a style to pop, otherwise raise an error. """
         assert len(self.gState)
         self.gState.pop()
 
-    def peekStyleTag(self):
+    def ZZZpeekStyleTag(self):
         u"""Answer the top cascaded style, without changing the stack."""
         return self.gState[-1]
 
@@ -256,9 +265,21 @@ class Typesetter(object):
             s = (s or '').rstrip() + postfix # Force s to empty string in case it is None, to add postfix.
         return s
 
+    def findStyle(self, tag):
+        u"""Find the best fitting style for the node with name tag. If e is defined, then find the style
+        there. If it cannot be found or e is undefined, search in self.doc."""
+        style = self.doc.getStyle(tag)
+        if not style:
+            style = self.doc.findStyle(tag)
+        return style  
+
     def typesetString(self, s, e=None):
-        u"""Make sure that s is a formatted string, using element (or doc)e for the style parameters."""
-        self.galley.appendString(newFS(s, e))
+        u"""If s is a formatted string, them it is placed untouched. If it is a plain stirng, then
+        use the optional element *e.css(name)* for searching style parameters. Answer the new formatted
+        string for convenience of the caller. e.g. to measure its size."""
+        fs = newFS(s, e)
+        self.galley.appendString(fs)
+        return fs
 
     def typesetNode(self, node, e=None):
         u"""Recursively typeset the node, using e a reference to the cascading style, doc.styles an the rootStyle."""
@@ -266,54 +287,52 @@ class Typesetter(object):
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
         # Still we want to be able to add the prefix to the node.text, so then the text is changed to empty string.
+        
         nodeText = self._strip(node.text)
         if nodeText: # Not None and still has content after stripping?
-            fs = newFS(nodeText, e)
+            fs = newFS(nodeText, e, self.findStyle(node.tag))
             self.galley.appendString(fs) # Add the new formatted string to the current flow textBox
+        
+        #self.pushStyleTag(node.tag)
 
-        self.pushStyleTag(node.tag)
         # Type set all child node in the current node, by recursive call.
         for child in node:
             hook = 'node_'+child.tag
             # Method will handle the styled body of the element, but not the tail.
             if hasattr(self, hook):
-                # There is a child hook, let this method do the work.
+                # There is a hook for this node, let this method do the work.
                 getattr(self, hook)(child, e) # Hook must be able to derive styles from e.
                 # We are in tail mode now, but we don't know what happened in the child block.
             else:
                 # If no method hook defined, then just solve recursively. Child node will get the style.
                 self.typesetNode(child, e)
-
             # XML-nodes are organized as: node - node.text - node.children - node.tail
             # If there is no text or if the node does not have tail text, these are None.
             # Still we want to be able to add the postfix to the tail, so then the tail is changed
             # to empty string?
             childTail = child.tail #self._strip(child.tail, postfix=style['postfix'])
             if childTail: # Any tail left after stripping, then append to the galley.
-                fs = newFS(childTail, e)
+                fs = newFS(childTail, e, self.findStyle(child.tag))
                 self.galley.appendString(fs)  # Add the tail formatted string to the galley.
-
+        
         # Now restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text. Back to the style of the parent.
-        self.popStyleTag()
+        #self.popStyleTag()
+       
 
-        """
         # If there is a postfix for the current state, then add that to the output.
-        postfix = self._strip('', postfix=style['postfix'])
-        if postfix:
-            fs = newFS(postfix, e, style)
-            tb.append(fs) # Add to the current flow textBox
-
-        """
-        """
+        if e is not None: # Do we have a style tree?
+            postfix = self._strip('', postfix=e.css('postfix'))
+        else:
+            postfix = ''
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
-        nodeTail = self._strip(node.tail, postfix=style['postfix'])
+        nodeTail = self._strip(node.tail, postfix=postfix)
         if nodeTail: # Something of a tail left after stripping?
-            fs = newFS(nodeTail, e, style)
-            tb.append(fs) # Add to the current flow textBox
-        """
+            fs = newFS(nodeTail, e, self.findStyle(node.tag))
+            self.galley.appendString(fs) # Add to the current flow textBox
+        
 
     def typesetFile(self, fileName, e=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
