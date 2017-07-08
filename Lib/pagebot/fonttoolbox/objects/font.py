@@ -28,7 +28,7 @@ except ImportError:
 
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
-from pagebot.fonttoolbox.variablefontaxes import axisDefinition
+from pagebot.fonttoolbox.variablefontaxes import axisDefinitions
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 
 def getFontPathOfFont(fontName):

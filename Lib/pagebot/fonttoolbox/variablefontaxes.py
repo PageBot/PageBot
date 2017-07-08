@@ -11,7 +11,18 @@
 #
 #     variablefontaxes.py
 #
-AXES = {
+from sys import maxint
+
+# Types of axes
+PRIMARY_AXIS = 'Primary'
+TREATMENT_AXIS = 'Treatment'
+CJK_AXIS = 'Non-latin' # ??? CJK
+MOTION_AXIS = 'Motion'
+GLYPH_AXIS = 'Glyph'
+UNDEFINED_AXIS = 'Undefined'
+CUSTOM_AXIS = 'Custom'
+
+axisDefinitions = {
     # https://www.typenetwork.com/brochure/opentype-variable-fonts-moving-right-along/
     # Registered axes
     'wght': dict(name='Weight', tag='wght', description='Description of registered wght axis here',
@@ -20,6 +31,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['wdth'],
+        type=PRIMARY_AXIS,
         images=[]),
     'wdth': dict(name='Width', tag='wdth', description='Description of registered wdth axis here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -27,6 +39,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['wght'],
+        type=PRIMARY_AXIS,
         images=[]),
     'slnt': dict(name='Slant', tag='slnt', description='Slanted glyphs for value > 0',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -34,6 +47,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=[]),
     'opsz': dict(name='Optical size', tag='opsz', description='Description of registered opsz axis here',
         minValue=8, maxValue=72, scale='per-mille-of-em', defaultValue=18,
@@ -41,6 +55,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=[]),
 
     # PageBot defined axes.
@@ -50,6 +65,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=[],
+        type=CUSTOM_AXIS,
         images=[]),
     'YTSE': dict(name='????', tag='YTSE', description='Description of YTSE here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -57,6 +73,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=[],
+        type=CUSTOM_AXIS,
         images=[]),
     'YTLC': dict(name='????', tag='YTLC', description='Description of YTLC here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -64,6 +81,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=[],
+        type=CUSTOM_AXIS,
         images=[]),
     'XTRA': dict(name='????', tag='XTRA', description='Description of XTRA here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -71,6 +89,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=[],
+        type=CUSTOM_AXIS,
         images=[]),
     'XOPQ': dict(name='????', tag='XOPQ', description='Description of XOPQ here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -78,6 +97,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=[],
+        type=CUSTOM_AXIS,
         images=[]),
     'GRAD': dict(name='????', tag='GRAD', description='Description of GRAD here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -85,6 +105,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=[],
+        type=CUSTOM_AXIS,
         images=[]),
 
     # Decovar (temp names?)
@@ -94,6 +115,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=[],
+        type=CUSTOM_AXIS,
         images=[]),
     'bldB': dict(name='????', tag='bldB', description='Description of bldB here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -101,6 +123,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['bldA'],
+        type=CUSTOM_AXIS,
         images=[]),
     'bldA': dict(name='????', tag='bldA', description='Description of bldA here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -108,6 +131,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['bldB'],
+        type=CUSTOM_AXIS,
         images=[]),
     'sklA': dict(name='Skeleton A', tag='sklA', description='Description of sklA here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -115,6 +139,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['sklB', 'sklD'],
+        type=CUSTOM_AXIS,
         images=[]),
     'sklB': dict(name='Skeleton B', tag='sklB', description='Description of sklB here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -122,6 +147,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['sklA', 'sklD'],
+        type=CUSTOM_AXIS,
         images=[]),
     'sklD': dict(name='Skeleton D', tag='sklD', description='Description of sklD here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -129,6 +155,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['sklB', 'sklB'],
+        type=CUSTOM_AXIS,
         images=[]),
     'trmA': dict(name='Terminal A', tag='trmA', description='Description of trmA here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -136,6 +163,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmK'],
+        type=CUSTOM_AXIS,
         images=[]),
     'trmB': dict(name='Terminal B', tag='trmB', description='Description of trmB here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -143,6 +171,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmK'],
+        type=CUSTOM_AXIS,
         images=[]),
     'trmC': dict(name='Terminal C', tag='trmC', description='Description of trmC here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -150,6 +179,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmK'],
+        type=CUSTOM_AXIS,
         images=[]),
     'trmD': dict(name='Terminal D', tag='trmD', description='Description of trmD here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -157,6 +187,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmK'],
+        type=CUSTOM_AXIS,
         images=[]),
     'trmE': dict(name='Terminal E', tag='trmE', description='Description of trmE here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -164,6 +195,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmK'],
+        type=CUSTOM_AXIS,
         images=[]),
     'trmF': dict(name='Terminal F', tag='trmF', description='Description of trmF here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -171,6 +203,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmK'],
+        type=CUSTOM_AXIS,
         images=[]),
     'trmG': dict(name='Terminal G', tag='trmG', description='Description of trmG here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -178,6 +211,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmK'],
+        type=CUSTOM_AXIS,
         images=[]),
     'trmK': dict(name='Terminal K', tag='trmK', description='Description of trmK here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -185,6 +219,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmK'],
+        type=CUSTOM_AXIS,
         images=[]),
     'trmL': dict(name='Terminal L', tag='trmL', description='Description of trmL here',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=500,
@@ -192,6 +227,7 @@ AXES = {
         userInteractions='',
         relatedAxesDescription='',
         relatedAxes=['trmA', 'trmB', 'trmC', 'trmD', 'trmE', 'trmF', 'trmG', 'trmK'],
+        type=CUSTOM_AXIS,
         images=[]),
 
     # Poposed registered axes
@@ -201,6 +237,7 @@ AXES = {
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=['animation-xtra.gif']
     ),
     'xopq': dict(name='x opaque', tag='xopq', description='Assigns a “black” per mille value to each instance of the design space',
@@ -209,6 +246,7 @@ AXES = {
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=['animation-xopq.gif']
     ),
     'ytra': dict(name='y transparent', tag='ytra', description='Assigns an overall “white” per mille value to each instance',
@@ -217,6 +255,7 @@ AXES = {
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=['animation-ytra.gif']
     ),
     'yopq': dict(name='y transparent', tag='yopq', description='Assigns a “black” per mille value to each instance of the design space',
@@ -225,6 +264,7 @@ AXES = {
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=['animation-yopq.gif']
     ),
     'ytlc': dict(name='y transparent lowercase', tag='ytlc', description='Assigns a “white” per mille value to each instance of the design space',
@@ -233,6 +273,7 @@ AXES = {
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=['animation-ytlc.gif']
     ),
     'ytuc': dict(name='y transparent uppercase', tag='ytuc', description='Assigns a “white” per mille value to each instance of the design space',
@@ -241,6 +282,7 @@ AXES = {
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=['animation-ytuc.gif']
     ),
     'ytde': dict(name='y transparent descender', tag='ytde', description='Assigns a “white” per mille value to each instance of the design space',
@@ -249,6 +291,7 @@ AXES = {
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=['animation-ytde.gif']
     ),
     'ytas': dict(name='y transparent descender', tag='ytas', description='Assigns a “white” per mille value to each instance of the design space',
@@ -257,6 +300,7 @@ AXES = {
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=['animation-ytas.gif']
     ),
     'xtab': dict(name='tabular width', tag='xtab', description='Axis contains a per mille value to each monospace or tabular instance',
@@ -265,6 +309,7 @@ AXES = {
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=['animation-xtab.gif']
     ),
     'vrot': dict(name='tabular width', tag='vrot', description='Assigns a value to each instance of the axis',
@@ -273,6 +318,7 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=PRIMARY_AXIS,
         images=['animation-vrot.gif']
     ),
     'udln': dict(name='Underline', tag='udln', description='Assigns a value to each instance of the axis',
@@ -281,6 +327,7 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=TREATMENT_AXIS,
         images=['animation-udln.gif']
     ),
     'shdw': dict(name='Shadow depth', tag='shdw', description='Assigns a value to each instance of the axis',
@@ -289,6 +336,7 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=TREATMENT_AXIS,
         images=['animation-shdw.gif', 'animation-shdw-2.png', 'animation-shdw-38.png'],
     ),
     'refl': dict(name='a y reflection', tag='shdw', description='Assigns a value to each instance of the axis',
@@ -297,6 +345,7 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=TREATMENT_AXIS,
         images=['animation-refl.gif', 'animation-refl.jpg'],
     ),
     'otln': dict(name='Outline value', tag='otln', description='Values for the weight of an outlined font.',
@@ -305,7 +354,8 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
-        images=['animation-otln.gif'. 'animation-otln-2.png', 'animation-otln-25.png'],
+        type=TREATMENT_AXIS,
+        images=['animation-otln.gif', 'animation-otln-2.png', 'animation-otln-25.png'],
     ),
     'engr': dict(name='Engraving value', tag='engr', description='Values for the width of the engrave.',
         minValue=1, maxValue=1000, scale='Sample value for a Sans regular Latin engraving would be 33.', defaultValue=33,
@@ -313,6 +363,7 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=TREATMENT_AXIS,
         images=['animation-engr.gif', 'image-engr.jpeg'],
     ),
     'embo': dict(name='Emboss depth', tag='engr', description='Values for embossment depth.',
@@ -321,6 +372,7 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=TREATMENT_AXIS,
         images=['animation-embo.gif', 'image-embo.jpeg'],
     ),
     'ytch': dict(name='y transparent Chinese', tag='ytch', description='Values represent the height of Chinese glyphs.', # CJK?
@@ -329,6 +381,7 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=CJK_AXIS,
         images=['animation-ytch.gif'],
     ),
     'xtch': dict(name='x transparent Chinese', tag='ytch', description='Values represent the width of Chinese glyphs.', # CJK?
@@ -337,6 +390,7 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=CJK_AXIS,
         images=['animation-xtch.gif'],
     ),
     'rxad': dict(name='relative x advance', tag='rxad', description='Assigns a distance value per mille to the motion of a glyph', 
@@ -345,6 +399,7 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=MOTION_AXIS,
         images=['animation-rxad.gif'],
     ),
     'ryad': dict(name='relative y advance', tag='ryad', description='Assigns a distance value per mille to the motion of a glyph', 
@@ -353,6 +408,7 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=MOTION_AXIS,
         images=['animation-ryad.gif'],
     ),
     'rsec': dict(name='relative second', tag='rsec', description='Value can be interpreted as a recommendation for one second of animation time', 
@@ -361,22 +417,25 @@ AXES = {
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=MOTION_AXIS,
         images=['animation-rsec.gif'],
     ),
     'vuid': dict(name='Unicode variation axis', tag='vuid', description='Value can be interpreted as a recommendation for one second of animation time', 
-        minValue=-1000, maxValue=maxint(), scale='Any Unicode value can be used', defaultValue=1,
+        minValue=-1000, maxValue=maxint, scale='Any Unicode value can be used', defaultValue=1,
         programInteractions='Applications may choose to present a variation in connection to an input Unicode id',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection.',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=GLYPH_AXIS,
         images=['animation-vuid.gif'],
     ),
-    'votf': dict(name='Unicode variation axis', tag='votf', description=u'Instances represent changes to a glyph’s feature', 
-        minValue=-1000, maxValue=maxint(), scale='Any Unicode value can be used', defaultValue=1,
+    'votf': dict(name='Feature variation axis', tag='votf', description=u'Instances represent changes to a glyph’s feature', 
+        minValue=-0, maxValue=1000, scale='Any common feature', defaultValue=0,
         programInteractions='Applications may choose to select a variation in connection to an input feature tag id.',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection.',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
         relatedAxes=[],
+        type=GLYPH_AXIS,
         images=['animation-votf.gif'],
     ),
 }
