@@ -14,7 +14,6 @@
 #
 import codecs
 from xmlreader import readXML
-import xml.etree.ElementTree as ET
 
 try:
     import markdown
@@ -39,9 +38,8 @@ def markDown2XMLFile(path):
     xml = u'<?xml version="1.0" encoding="UTF-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
     xml = xml.replace('&nbsp;', ' ')
 
-    print ET.fromstring(xml)
-
     xmlPath = path + '.xml'
+    print xmlPath
     f = codecs.open(xmlPath, mode="w", encoding="utf-8")
     f.write(xml)
     f.close()

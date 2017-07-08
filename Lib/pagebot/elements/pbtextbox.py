@@ -343,13 +343,18 @@ class TextBox(Element):
 
     def appendString(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
-        is already assumed to be styled or can be added as plain string."""
+        is already assumed to be styled or can be added as plain string.
+        Don't calculate the overflow here, as this is slow/expensive operation.
+        Also we don't want to calcualte the textLines/runs for every string appended,
+        as we don't know how much more the caller will add. self._textLines is set to None
+        to force recalculation as soon as self.textLines is called again."""
         assert fs is not None
+        self._textLines = None # Reset to force call to self.initializeTextLines()
         if self.fs is None:
             self.fs = fs
         else:
             self.fs += fs
-        return self.getOverflow(self.w, self.h)
+        return self.fs # Answer the complete FormattedString as convenience for the caller.
 
     def appendMarker(self, markerId, arg=None):
         self.appendString(getMarker(markerId, arg=arg))
