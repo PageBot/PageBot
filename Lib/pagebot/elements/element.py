@@ -780,10 +780,11 @@ class Element(object):
             if not 'stroke' in borderData:
                 borderData['stroke'] = 0
             return borderData
-        stroke = self.css('stroke')
-        strokeWidth = self.css('strokeWidht')
-        if stroke is not None and strokeWidth:
-             return dict(line=ONLINE, dash=None, stroke=stroke, strokeWidth=strokeWidth)
+        # TODO: Solve this, error on initialize of element, _parent does not yet exist.
+        #stroke = self.css('stroke')
+        #strokeWidth = self.css('strokeWidht')
+        #if stroke is not None and strokeWidth:
+        #     return dict(line=ONLINE, dash=None, stroke=stroke, strokeWidth=strokeWidth)
         return None
 
     def _get_borders(self):
