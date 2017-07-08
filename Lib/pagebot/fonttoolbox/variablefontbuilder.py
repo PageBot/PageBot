@@ -53,7 +53,7 @@ def getVarLocation(font, location):
     for axisTag, (minValue, defaultValue, maxValue) in font.axes.items():
         if axisTag in location:
             axisValue = location[axisTag]
-            if axisTag == 'opsz':
+            if axisTag == 'opsz': # Exception, should come from overall axes-data dictionary.
                 varLocation[axisTag] = axisValue # Unchanged of opsz.
             else:
                 if axisValue > 1:
