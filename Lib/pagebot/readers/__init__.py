@@ -10,4 +10,6 @@
 #
 #     pagebot/readers/__init__.py
 #
-
+from rereader import readRE
+from mdreader import readMD
+from xmlreader import readXML, readHTML

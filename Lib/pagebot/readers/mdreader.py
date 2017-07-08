@@ -13,7 +13,8 @@
 #     Read markdown files from path or url and answer the etree.
 #
 import codecs
-from xmlreader import readXMLFile
+from xmlreader import readXML
+import xml.etree.ElementTree as ET
 
 try:
     import markdown
@@ -38,14 +39,16 @@ def markDown2XMLFile(path):
     xml = u'<?xml version="1.0" encoding="UTF-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
     xml = xml.replace('&nbsp;', ' ')
 
+    print ET.fromstring(xml)
+
     xmlPath = path + '.xml'
     f = codecs.open(xmlPath, mode="w", encoding="utf-8")
     f.write(xml)
     f.close()
     return xmlPath # Return altered fileName if converted. Otherwise return original fileName
 
-def readMarkDown(path):
+def readMD(path):
     u"""Read the markdown from path and answer the compiled etree."""
     xmlPath = markDown2XMLFile(path)
-    return readXMLFile(xmlPath)
+    return readXML(xmlPath)
 

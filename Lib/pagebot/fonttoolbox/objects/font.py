@@ -28,39 +28,9 @@ except ImportError:
 
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
+from pagebot.fonttoolbox.variablefontaxes import axisDefinition
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 
-AXES = {
-    # https://www.typenetwork.com/brochure/opentype-variable-fonts-moving-right-along/
-    # Registered axes
-    'wght': dict(name='Weight', tag='wght', description='Description of registered wght axis here'),
-    'wdth': dict(name='Width', tag='wdth', description='Description of registered wdth axis here'),
-    'opsz': dict(name='Optical size', tag='opsz', description='Description of registered opsz axis here'),
-    # PageBot defined axes.
-    'YOPQ': dict(name='????', tag='YOPQ', description='Description of YOPQ here'),
-    'YTSE': dict(name='????', tag='YTSE', description='Description of YTSE here'),
-    'YTLC': dict(name='????', tag='YTLC', description='Description of YTLC here'),
-    'XTRA': dict(name='????', tag='XTRA', description='Description of XTRA here'),
-    'XOPQ': dict(name='????', tag='XOPQ', description='Description of XOPQ here'),
-    'GRAD': dict(name='????', tag='GRAD', description='Description of GRAD here'),
-    # Decovar (temp names?)
-    'wmx2': dict(name='????', tag='wmx2', description='Description of wmx2 here'),
-    'bldB': dict(name='????', tag='bldB', description='Description of bldB here'),
-    'bldA': dict(name='????', tag='bldA', description='Description of bldA here'),
-    'sklA': dict(name='Skeleton A', tag='sklA', description='Description of sklA here'),
-    'sklB': dict(name='Skeleton B', tag='sklB', description='Description of sklB here'),
-    'sklD': dict(name='Skeleton D', tag='sklD', description='Description of sklD here'),
-    'trmA': dict(name='Terminal A', tag='trmA', description='Description of trmA here'),
-    'trmB': dict(name='Terminal B', tag='trmB', description='Description of trmB here'),
-    'trmC': dict(name='Terminal C', tag='trmC', description='Description of trmC here'),
-    'trmD': dict(name='Terminal D', tag='trmD', description='Description of trmD here'),
-    'trmE': dict(name='Terminal E', tag='trmE', description='Description of trmE here'),
-    'trmF': dict(name='Terminal F', tag='trmF', description='Description of trmF here'),
-    'trmG': dict(name='Terminal G', tag='trmG', description='Description of trmG here'),
-    'trmK': dict(name='Terminal K', tag='trmK', description='Description of trmK here'),
-    'trmL': dict(name='Terminal L', tag='trmL', description='Description of trmL here'),
-
-}
 def getFontPathOfFont(fontName):
     font = NSFont.fontWithName_size_(fontName, 25)
     if font is not None:
