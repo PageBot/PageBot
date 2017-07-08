@@ -43,6 +43,12 @@ The example shows two floating colums of text, where th overflow of one goes int
 
 ![gallery/DrawRedRectCenterPage.png](gallery/UseTextFlows.png)
 
+## Advanced Hyphenation
+
+A proposal for advanced hyphenation:
+For hyphenation head and tail (the minimum amound of charaters before / after a hyphenation), the FormattedString will need these arguments (headHyphenation=4, tailHyphenation=3). 
+These values are needed in drawBot.context.baseContext.BaseContext.hyphenateAttributedString. How to get them there?
+See HowTo/AdvancedHyphenation.py
 
 ## Use Doctests
 
@@ -85,8 +91,41 @@ However, it takes one or more arguments:
 
 ### Clear
 
+Clears all `.pyc` files to make sure no old compiles are left.
+
 ### Write
+
+The `-w` option formats and writes the docstrings to markdown files and copies handwritten markdown files to the folder that serves the documentation files, `Docs`. It will also generate the `mkdocs.yml` file next to the `Docs` folder. If the script finishes without errors, you should be ready to run
+
+    mkdocs serve
+
+To preview the results on [http://localhost:8000](http://localhost:8000). This will return something like this:
+
+```
+INFO    -  Building documentation... 
+INFO    -  Cleaning site directory 
+[I 170705 13:14:15 server:283] Serving on http://127.0.0.1:8000
+[I 170705 13:14:15 handlers:60] Start watching changes
+[I 170705 13:14:15 handlers:62] Start detecting changes
+```
+
+Changes to the files will be updated live. Since they are generated, this means running the builddoc script again. Finally, you can deploy them to GitHub using this command:
+
+    mkdocs gh-deploy
+
+If all goes well, you should be able to view the updated documentation at [https://typenetwork.github.io/PageBot/](https://typenetwork.github.io/PageBot/) (case sensitive):
+
+```
+INFO    -  Cleaning site directory 
+INFO    -  Building documentation to directory: /Users/michiel/Code/PageBot/site 
+INFO    -  Copying '/Users/michiel/Code/PageBot/site' to 'gh-pages' branch and pushing to GitHub. 
+INFO    -  Your documentation should shortly be available at: https://TypeNetwork.github.io/PageBot/ 
+``` 
 
 ### Doctest
 
+See Use Doctests.
+
 ### Log
+
+Sends the output to a log file instead of standard out, a filename such as `out.txt` is required.
