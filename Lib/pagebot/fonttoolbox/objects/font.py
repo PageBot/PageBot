@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -133,7 +134,7 @@ class Font(object):
             # TODO: Change value to Axis dictionary instead of list
             axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in self.ttFont['fvar'].axes}
         except KeyError:
-            axes = {} # This is not a var font.
+            axes = {} # This is not a variable font.
         return axes
     axes = property(_get_axes)
 
