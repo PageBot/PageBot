@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #

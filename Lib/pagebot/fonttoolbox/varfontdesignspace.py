@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #       from https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/varLib/mutator.py
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
