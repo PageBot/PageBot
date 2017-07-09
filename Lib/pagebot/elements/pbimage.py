@@ -91,6 +91,10 @@ class Image(Element):
         #    _, _, self._w, _ = self.paddedBox()
     h = property(_get_h, _set_h)
 
+    def _get_exists(self):
+        u"""Answer the boolean flag if the *self.image.path* image file really exists."""
+        return os.path.exists(self.image.path)
+    exists = property(_get_exists)
 
 class PixelMap(Element):
     u"""The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId."""

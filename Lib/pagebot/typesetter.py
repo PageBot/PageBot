@@ -334,8 +334,8 @@ class Typesetter(object):
             if styleName in self.doc.styles:
                 matches.append(styleName)
         #print tag, parents, revHistory, matches
+        #print tag, matches
         matches.reverse()
-        print tag, matches
         return matches
 
     def getNodeStyle(self, tag):
