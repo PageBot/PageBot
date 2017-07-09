@@ -50,7 +50,7 @@ axisDefinitions = {
         programInteractions='',
         userInteractions='',
         relatedAxesDescription='',
-        relatedAxes=[],
+        relatedAxes=['ital'],
         type=PRIMARY_AXIS,
         images=[]),
     'opsz': dict(name='Optical size', tag='opsz', description='Used to vary design to suit different text sizes.',
@@ -68,7 +68,7 @@ axisDefinitions = {
         programInteractions='',
         userInteractions='',
         relatedAxesDescription='',
-        relatedAxes=[],
+        relatedAxes=['slnt'],
         type=PRIMARY_AXIS,
         images=[]),
 
@@ -245,7 +245,7 @@ axisDefinitions = {
         images=[]),
 
     # Poposed registered axes
-    'xtra': dict(name='x transparent', tag='xtra', description='Assigns a “white” per mille value to each instance of the design space',
+    'xtra': dict(name='X transparent', tag='xtra', description='Assigns a “white” per mille value to each instance of the design space',
         minValue=-1000, maxValue=2000, scale='per-mille-of-em', defaultValue=400,
         programInteractions='Applications may choose to select a variant in connection to an input, or it might be programmatically used',
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
@@ -254,7 +254,7 @@ axisDefinitions = {
         type=PRIMARY_AXIS,
         images=['animation-xtra.gif']
     ),
-    'xopq': dict(name='x opaque', tag='xopq', description='Assigns a “black” per mille value to each instance of the design space',
+    'xopq': dict(name='X opaque', tag='xopq', description='Assigns a “black” per mille value to each instance of the design space',
         minValue=-1000, maxValue=2000, scale='per-mille-of-em', defaultValue=400,
         programInteractions='Applications may choose to select a variant in connection to an input, or it might be programmatically used',
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
@@ -263,7 +263,7 @@ axisDefinitions = {
         type=PRIMARY_AXIS,
         images=['animation-xopq.gif']
     ),
-    'ytra': dict(name='y transparent', tag='ytra', description='Assigns an overall “white” per mille value to each instance',
+    'ytra': dict(name='Y transparent', tag='ytra', description='Assigns an overall “white” per mille value to each instance',
         minValue=0, maxValue=2000, scale='per-mille-of-em', defaultValue=884,
         programInteractions='Applications may choose to select a variant in connection to an input, or it might be programmatically used',
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
@@ -272,7 +272,7 @@ axisDefinitions = {
         type=PRIMARY_AXIS,
         images=['animation-ytra.gif']
     ),
-    'yopq': dict(name='y transparent', tag='yopq', description='Assigns a “black” per mille value to each instance of the design space',
+    'yopq': dict(name='Y transparent', tag='yopq', description='Assigns a “black” per mille value to each instance of the design space',
         minValue=-1000, maxValue=2000, scale='per-mille-of-em', defaultValue=884,
         programInteractions='Applications may choose to select a variant in connection to an input, or it might be programmatically used',
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
@@ -281,7 +281,7 @@ axisDefinitions = {
         type=PRIMARY_AXIS,
         images=['animation-yopq.gif']
     ),
-    'ytlc': dict(name='y transparent lowercase', tag='ytlc', description='Assigns a “white” per mille value to each instance of the design space',
+    'ytlc': dict(name='Y transparent lowercase', tag='ytlc', description='Assigns a “white” per mille value to each instance of the design space',
         minValue=-1000, maxValue=2000, scale='per-mille-of-em', defaultValue=500,
         programInteractions='Applications may choose to select a variant in connection to an input, or it might be programmatically used',
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
@@ -290,7 +290,7 @@ axisDefinitions = {
         type=PRIMARY_AXIS,
         images=['animation-ytlc.gif']
     ),
-    'ytuc': dict(name='y transparent uppercase', tag='ytuc', description='Assigns a “white” per mille value to each instance of the design space',
+    'ytuc': dict(name='Y transparent uppercase', tag='ytuc', description='Assigns a “white” per mille value to each instance of the design space',
         minValue=-1000, maxValue=2000, scale='per-mille-of-em', defaultValue=725,
         programInteractions='Applications may choose to select a variant in connection to an input, or it might be programmatically used',
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
@@ -299,7 +299,7 @@ axisDefinitions = {
         type=PRIMARY_AXIS,
         images=['animation-ytuc.gif']
     ),
-    'ytde': dict(name='y transparent descender', tag='ytde', description='Assigns a “white” per mille value to each instance of the design space',
+    'ytde': dict(name='Y transparent descender', tag='ytde', description='Assigns a “white” per mille value to each instance of the design space',
         minValue=-1000, maxValue=0, scale='per-mille-of-em', defaultValue=-250,
         programInteractions='Applications may choose to select a variant in connection to an input, or it might be programmatically used',
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
@@ -308,7 +308,7 @@ axisDefinitions = {
         type=PRIMARY_AXIS,
         images=['animation-ytde.gif']
     ),
-    'ytas': dict(name='y transparent descender', tag='ytas', description='Assigns a “white” per mille value to each instance of the design space',
+    'ytas': dict(name='Y transparent descender', tag='ytas', description='Assigns a “white” per mille value to each instance of the design space',
         minValue=0, maxValue=1000, scale='per-mille-of-em', defaultValue=750,
         programInteractions='Applications may choose to select a variant in connection to an input, or it might be programmatically used',
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
@@ -317,7 +317,7 @@ axisDefinitions = {
         type=PRIMARY_AXIS,
         images=['animation-ytas.gif']
     ),
-    'xtab': dict(name='tabular width', tag='xtab', description='Axis contains a per mille value to each monospace or tabular instance',
+    'xtab': dict(name='Tabular width', tag='xtab', description='Axis contains a per mille value to each monospace or tabular instance',
         minValue=1, maxValue=4000, scale='per-mille-of-em', defaultValue=500,
         programInteractions='Applications may choose to select a variant in connection to an input, or it might be programmatically used',
         userInteractions='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
@@ -326,7 +326,7 @@ axisDefinitions = {
         type=PRIMARY_AXIS,
         images=['animation-xtab.gif']
     ),
-    'vrot': dict(name='tabular width', tag='vrot', description='Assigns a value to each instance of the axis',
+    'vrot': dict(name='Tabular width', tag='vrot', description='Assigns a value to each instance of the axis',
         minValue=-360.00, maxValue=360, scale='Values can be interpreted as degrees of rotation from the default, which is zero', defaultValue=500,
         programInteractions='Applications may choose to select a variant in connection to an input for ccw or cw vrot, or it might be programmatically used.',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
@@ -353,7 +353,7 @@ axisDefinitions = {
         type=TREATMENT_AXIS,
         images=['animation-shdw.gif', 'animation-shdw-2.png', 'animation-shdw-38.png'],
     ),
-    'refl': dict(name='a y reflection', tag='shdw', description='Assigns a value to each instance of the axis',
+    'refl': dict(name='Y reflection', tag='shdw', description='Assigns a value to each instance of the axis',
         minValue=1, maxValue=1000, scale='Values can be interpreted as per-mille-of-em.', defaultValue=-350,
         programInteractions='Applications may allow the user to select the reflection of text.',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
@@ -389,7 +389,7 @@ axisDefinitions = {
         type=TREATMENT_AXIS,
         images=['animation-embo.gif', 'image-embo.jpeg'],
     ),
-    'ytch': dict(name='y transparent Chinese', tag='ytch', description='Values represent the height of Chinese glyphs.', # CJK?
+    'ytch': dict(name='Y transparent Chinese', tag='ytch', description='Values represent the height of Chinese glyphs.', # CJK?
         minValue=1, maxValue=2400, scale='Sample value for Sans 60 point emboss would be 24.', defaultValue=24,
         programInteractions='Values can be interpreted as per-mille-of-em changes, between any instances in the axis.',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
@@ -398,7 +398,7 @@ axisDefinitions = {
         type=CJK_AXIS,
         images=['animation-ytch.gif'],
     ),
-    'xtch': dict(name='x transparent Chinese', tag='ytch', description='Values represent the width of Chinese glyphs.', # CJK?
+    'xtch': dict(name='X transparent Chinese', tag='ytch', description='Values represent the width of Chinese glyphs.', # CJK?
         minValue=1, maxValue=2400, scale='Sample value 950.', defaultValue=950,
         programInteractions='Values can be interpreted as per-mille-of-em changes, between any instances in the axis.',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
@@ -407,7 +407,7 @@ axisDefinitions = {
         type=CJK_AXIS,
         images=['animation-xtch.gif'],
     ),
-    'rxad': dict(name='relative x advance', tag='rxad', description='Assigns a distance value per mille to the motion of a glyph', 
+    'rxad': dict(name='Relative x advance', tag='rxad', description='Assigns a distance value per mille to the motion of a glyph', 
         minValue=-1000, maxValue=1000, scale='Normal value 0', defaultValue=0,
         programInteractions='Applications may enable plotting the number of loops of an animation required for the time and distance defined by the user.',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
@@ -416,7 +416,7 @@ axisDefinitions = {
         type=MOTION_AXIS,
         images=['animation-rxad.gif'],
     ),
-    'ryad': dict(name='relative y advance', tag='ryad', description='Assigns a distance value per mille to the motion of a glyph', 
+    'ryad': dict(name='Relative y advance', tag='ryad', description='Assigns a distance value per mille to the motion of a glyph', 
         minValue=-1000, maxValue=1000, scale='Normal value 0', defaultValue=0,
         programInteractions='Applications may enable plotting the number of loops of an animation required for the time and distance defined by the user',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
@@ -425,7 +425,7 @@ axisDefinitions = {
         type=MOTION_AXIS,
         images=['animation-ryad.gif'],
     ),
-    'rsec': dict(name='relative second', tag='rsec', description='Value can be interpreted as a recommendation for one second of animation time', 
+    'rsec': dict(name='Relative second', tag='rsec', description='Value can be interpreted as a recommendation for one second of animation time', 
         minValue=-1000, maxValue=1000, scale='Normal value 1', defaultValue=1,
         programInteractions='Applications may plot the relative time of a glyph, or a glyph to other glyphs, and play them in relative or absolute time',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
