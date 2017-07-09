@@ -31,11 +31,32 @@ class Typesetter(object):
 
     IMAGE_CLASS = Image
     TEXTBOX_CLASS = TextBox
+    RULER_CLASS = Ruler
 
-    def __init__(self, doc, galley):
+    TAG_MATCHING = {
+        'document': [],
+        'h1' : ('document',),
+        'h2' : ('document', 'h1', 'li'),
+        'h3' : ('document', 'h1', 'h2', 'li'),
+        'h4' : ('document', 'h1', 'h2', 'h3', 'li'),
+        'h5' : ('document', 'h1', 'h2', 'h3', 'h4', 'li'),
+        'h6' : ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'li'),
+        'p': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'),
+        'strong': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
+        'em': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'strong'),
+        'img': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'strong'),
+        'li': ('ul', 'ol'),
+        'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
+    }
+    def __init__(self, doc, galley, rootStyle=None):
         self.doc = doc # Doc context of the typesetter.
-        self.galley = galley
-        self.gState = [] # Stack of graphic state as cascading styles.
+        # Galley can also be a TextBox, if typsetting must go directly into a page element. In that case image elements
+        # are added as child, loosing contact with their position in the text. A Galley element keeps that relation,
+        # by adding multiple TextBox elements between the images.
+        self.galley = galley 
+        # Stack of graphic state as cascading styles. Last is template for the next.
+        self.gState = [] 
+        self.tagHistory = []
 
     def getTextBox(self, e=None):
         u"""Answer the current text box, if the width fits the current style.
@@ -86,17 +107,41 @@ class Typesetter(object):
         u"""Handle the <p> tag."""
         self.typesetNode(node, e)
 
-    # Solve <br/> best by simple style with: doc.newStyle(name='br', postfix='\n')
-
     def node_hr(self, node, e):
-        u"""Add Ruler instance to the Galley.
-        TODO: Need to find a way to address multiple styles here."""
-        self.galley.appendElement(Ruler(e)) # Make a new Ruler instance in the Galley
+        u"""Add Ruler instance to the Galley."""
+        if self.peekStyle() is None and e is not None:
+            # Root of stack is empty style, to force searching on the e.parent line.
+            self.pushStyle({}) # Define top level for styles.
+        hrStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
+        self.galley.appendElement(self.RULER_CLASS(e, style=hrStyle)) # Make a new Ruler instance in the Galley
+
+    def getStyleValue(self, name, e=None, style=None, default=None):
+        u"""Answer the best style value match for *name*, depending on the status of *style*, *e* and *default*,
+        on that order. Answer None if everything failes."""
+        value = None
+        if style is not None:
+            value = style.get(name)
+        if value is None and e is not None:
+            value = e.css(name)
+        if value is None:
+            value = default
+        return value
+
+    # Solve <br/> best by simple style with: doc.newStyle(name='br', postfix='\n')
 
     def node_br(self, node, e):
         u"""Add newline instance to the Galley."""
-        self.galley.appendString('\n') # Add newline in the current setting of FormattedString
-
+        # For now, just ignore, as <br/> already get a break in MarkDown, as part of the exclosing tag.
+        # TODO: now <br/> makes the same vertical spacing as <p> 
+        """
+        if self.peekStyle() is None and e is not None:
+            # Root of stack is empty style, to force searching on the e.parent line.
+            self.pushStyle({}) # Define top level for styles.
+        brStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
+        s = self.getStyleValue('prefix', e, brStyle, default='') + '\n' + self.getStyleValue('postfix', e, brStyle, default='')
+        fs = newFS(s, e, style=brStyle)
+        self.galley.appendString(fs) # Add newline in the current setting of FormattedString
+        """
     def node_a(self, node, e):
         u"""Ignore links, but process the block"""
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
@@ -211,21 +256,32 @@ class Typesetter(object):
         """
         #self.popStyleTag()
 
-    def ZZZpushStyleTag(self, tag):
+    def pushStyle(self, tag):
         u"""Push the cascaded style on the gState stack. Make sure that the style is not None and that it
         is a cascaded style, otherwise it cannot be used as source for child styles. Answer the cascaded
         style as convenience for the caller. """
         self.gState.append(tag)
 
-    def ZZZpopStyleTag(self):
+    def popStyle(self):
         u"""Pop the cascaded style from the gState stack and answer the next style that is on top.
         Make sure that there still is a style to pop, otherwise raise an error. """
         assert len(self.gState)
         self.gState.pop()
+        return self.peekStyle()
 
-    def ZZZpeekStyleTag(self):
+    def peekStyle(self):
         u"""Answer the top cascaded style, without changing the stack."""
+        if not self.gState: # It's empty, answer None
+            return None
         return self.gState[-1]
+
+    def addHistory(self, tag):
+        u"""Add the *tag* to the history."""
+        if not self.tagHistory or tag != self.tagHistory[-1]:
+            self.tagHistory.append(tag)
+
+    def getHistory(self):
+        return self.tagHistory
 
     def getFootnotes(self, e):
         u"""Answer the footnotes dictionary from the e.lib (derived from the root document)"""
@@ -255,8 +311,8 @@ class Typesetter(object):
         return None
 
     def _strip(self, s, prefix=None, postfix=None, forceRightStrip=False):
-        u"""Strip the white space from string “s” if prefix and/or postfix are not None.
-        Otherwise answer the untouched s."""
+        u"""Strip the white space from string *s* if *prefix* and/or *postfix* are not None.
+        Otherwise answer the untouched *s*."""
         if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
             s = prefix + (s or '').lstrip() # Force s to empty string in case it is None, to add prefix.
         elif forceRightStrip:
@@ -265,36 +321,68 @@ class Typesetter(object):
             s = (s or '').rstrip() + postfix # Force s to empty string in case it is None, to add postfix.
         return s
 
-    def findStyle(self, tag):
-        u"""Find the best fitting style for the node with name tag. If e is defined, then find the style
-        there. If it cannot be found or e is undefined, search in self.doc."""
-        style = self.doc.getStyle(tag)
-        if not style:
-            style = self.doc.findStyle(tag)
-        return style  
+    def getMatchingStyleNames(self, tag):
+        parents = self.TAG_MATCHING[tag]
+        revHistory = self.tagHistory[:]
+        revHistory.reverse()
+        matches = []
+        for n in range(len(revHistory)):
+            styleName = revHistory[:n+1]
+            styleName.reverse()
+            styleName = ' '.join(styleName)
+            if styleName in self.doc.styles:
+                matches.append(styleName)
+        print tag, parents, revHistory, matches
+        return [tag]
 
-    def typesetString(self, s, e=None):
-        u"""If s is a formatted string, them it is placed untouched. If it is a plain stirng, then
-        use the optional element *e.css(name)* for searching style parameters. Answer the new formatted
-        string for convenience of the caller. e.g. to measure its size."""
-        fs = newFS(s, e)
+    def getNodeStyle(self, tag):
+        u"""Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style."""
+        if self.peekStyle() is None: # Not an initialized stack, use doc.rootStyle as default.
+            self.pushStyle(self.doc.getRootStyle()) # Happens if calling directly, without check on e
+        mergedStyle = copy.copy(self.peekStyle())
+        # Find the best matching style for tag on order of relevance, 
+        # considering the possible HTML tag parents and the history.
+        for styleName in self.getMatchingStyleNames(tag):
+            nodeStyle = self.doc.getStyle(styleName)
+            if nodeStyle is not None:
+                for name, value in nodeStyle.items():
+                    mergedStyle[name] = value
+                break
+        return mergedStyle
+
+    def typesetString(self, s, e=None, style=None):
+        u"""If s is a formatted string, them it is placed untouched. If it is a plain string, then
+        use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters. 
+        Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
+        fs = newFS(s, e, style)
         self.galley.appendString(fs)
         return fs
 
     def typesetNode(self, node, e=None):
-        u"""Recursively typeset the node, using e a reference to the cascading style, doc.styles an the rootStyle."""
+        u"""Recursively typeset the etree *node*, using a reference to element *e* or the cascading *style*.
+        If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then 
+        rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
+
+        # Add this tag to the tag-hitstory line
+        self.addHistory(node.tag)
+
+        # If e is undefined, then we make sure that the stack contains the doc.rootStyle on top.
+        # If e is defined then root queries for style should follow the e.parent path. 
+        if self.peekStyle() is None and e is not None:
+            # Root of stack is empty style, to force searching on the e.parent line.
+            self.pushStyle({}) # Define top level for styles.
+        nodeStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
+        self.pushStyle(nodeStyle) # Push this merged style on the stack
 
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
-        # Still we want to be able to add the prefix to the node.text, so then the text is changed to empty string.
+        # Still we want to be able to add the prefix to the node.text, so then the text is changed to an empty string.
         
         nodeText = self._strip(node.text)
         if nodeText: # Not None and still has content after stripping?
-            fs = newFS(nodeText, e, self.findStyle(node.tag))
+            fs = newFS(nodeText, e, nodeStyle)
             self.galley.appendString(fs) # Add the new formatted string to the current flow textBox
         
-        #self.pushStyleTag(node.tag)
-
         # Type set all child node in the current node, by recursive call.
         for child in node:
             hook = 'node_'+child.tag
@@ -310,31 +398,32 @@ class Typesetter(object):
             # If there is no text or if the node does not have tail text, these are None.
             # Still we want to be able to add the postfix to the tail, so then the tail is changed
             # to empty string?
-            childTail = child.tail #self._strip(child.tail, postfix=style['postfix'])
+            childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
             if childTail: # Any tail left after stripping, then append to the galley.
-                fs = newFS(childTail, e, self.findStyle(child.tag))
+                fs = newFS(childTail, e, nodeStyle)
                 self.galley.appendString(fs)  # Add the tail formatted string to the galley.
         
         # Now restore the graphic state at the end of the element content processing to the
-        # style of the parent in order to process the tail text. Back to the style of the parent.
-        #self.popStyleTag()
-       
+        # style of the parent in order to process the tail text. Back to the style of the parent, 
+        # which was in nodeStyle.
+        self.popStyle()  
 
+        """
         # If there is a postfix for the current state, then add that to the output.
-        if e is not None: # Do we have a style tree?
-            postfix = self._strip('', postfix=e.css('postfix'))
-        else:
-            postfix = ''
+        postfix = style.get('postfix')
+        if not postfix and e is not None: # Do we have a style tree?
+            postfix = self._strip('', postfix= or e.css('postfix'))
+
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
         nodeTail = self._strip(node.tail, postfix=postfix)
         if nodeTail: # Something of a tail left after stripping?
-            fs = newFS(nodeTail, e, self.findStyle(node.tag))
+            fs = newFS(nodeTail, e, nodeStyle)
             self.galley.appendString(fs) # Add to the current flow textBox
-        
+        """
 
-    def typesetFile(self, fileName, e=None, xPath=None):
+    def DEPRECATED_typesetFile(self, fileName, e=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
         start at page pageNumber and find the name of the flow in the page template.
         The optional filter can be a list of tag names that need to be included in the
@@ -371,7 +460,7 @@ class Typesetter(object):
             # reference, image index and footnote placement.
             self.typesetNode(root, e)
 
-    def makeXMLFile(self, fileName):
+    def DEPRECATED_makeXMLFile(self, fileName):
         u"""If fileName is pointing to a non-XML file, then try to convert. This needs to be
         extended in the future e.g. to support Word documents or other text resources.
         If the document is already an XML document, then ignore."""
@@ -394,7 +483,7 @@ class Typesetter(object):
             f.close()
         return fileName # Return altered fileName if converted. Otherwise return original fileName
 
-    def typesetFilibuster(self, e, blurbNames=None):
+    def DEPRECATED_typesetFilibuster(self, e, blurbNames=None):
         u"""The typesetFilibuster answers the parsed typeset nodes from a Filibuster blurb. If the blurb
         instances is not given, then create a default Filibuster article."""
         if blurbNames is None: # Nothing supplied: at least create some standard content as article to parse.

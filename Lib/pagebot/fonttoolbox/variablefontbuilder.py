@@ -57,7 +57,7 @@ def getVarLocation(font, location):
             if axisTag == 'opsz': # Exception, should come from overall axes-data dictionary.
                 varLocation[axisTag] = axisValue # Unchanged of opsz.
             else:
-                if axisValue > 1:
+                if axisValue > 1: # Assume 1-1000 scale.
                     axisValue /= 1000.0
                 varLocation[axisTag] = minValue + (maxValue - minValue) * (1-axisValue)
     return varLocation
@@ -65,14 +65,17 @@ def getVarLocation(font, location):
 def getVariableFont(fontOrPath, location, install=True):
     u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
-    dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6)"""
+    dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
+    If there is a [opsz] Optical Size value defined, then store that information in the font.info.opticalSize."""
     if isinstance(fontOrPath, basestring):
-        font = Font(fontOrPath, path2FontName(fontOrPath), install=install)    
+        varFont = Font(fontOrPath, name=path2FontName(fontOrPath))    
     else:
-        font = fontOrPath
-    fontName, path = generateInstance(font.path, getVarLocation(font, location), targetDirectory=getInstancePath())
-    return Font(path, fontName, install=install)
+        varFont = fontOrPath
+    fontName, path = generateInstance(varFont.path, getVarLocation(varFont, location), targetDirectory=getInstancePath())
+    # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
+    return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location)
 
+# TODO: Remove from here.
 def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0):
     glyph = font[glyphName]
     save()
@@ -81,7 +84,6 @@ def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0):
     scale(s)
     drawPath(glyph.path)
     restore()
-
 
 def normalizeLocation(location, axes):
     """Normalizes location based on axis min/default/max values from axes.
