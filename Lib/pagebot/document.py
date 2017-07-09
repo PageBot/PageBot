@@ -31,7 +31,7 @@ class Document(object):
         if rootStyle is None:
             rootStyle = getRootStyle()
         self.rootStyle = rootStyle
-        self.initializeStyles(styles) # Merge CSS for element tree
+        self.initializeStyles(styles) # Create some default styles, to make sure they are there.
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
         self.w = w
         self.h = h
@@ -150,16 +150,30 @@ class Document(object):
         return self.styles.get(name)
     
     def getRootStyle(self):
-        u"""Answer the default root style, used by the composer as default for all other stacked styles."""
+        u"""Answer the default root style, used by the Typesetter as default for all other stacked styles."""
         return self.rootStyle
 
+    def add2Style(self, name, addStyle):
+        u"""Add (overwrite) the values in the existing style *name* with the values in *addStyle*.
+        Raise an error if the *name* style does not exist. Answer the named target style for convenience of the caller."""
+        assert name in self.styles
+        style = self.styles[name]
+        for key, value in addStyle.items():
+            style[key] = value
+        return style
+
     def addStyle(self, name, style):
-        u"""Add the style to the self.styles dictionary."""
-        assert not name in self.styles # Make sure that styles don't get overwritten. Remove them first.
+        u"""Add the style to the self.styles dictionary.  Make sure that styles don't get overwritten. Remove them first
+        with *self.removeStyle* or use *self.replaceStyle(name, style)* instead."""
+        assert not name in self.styles
         self.styles[name] = style
         # Force the name of the style to synchronize with the requested key.
         style['name'] = name
-      
+    
+    def removeStyle(self, name):
+        u"""Remove the style *name* if it exists. Raise an error if is does not exist."""
+        del self.styles[name]
+
     def replaceStyle(self, name, style):
         u"""Set the style by name. Overwrite the style with that name if it already exists."""
         self.styles[name] = style
