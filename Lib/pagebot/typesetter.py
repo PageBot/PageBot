@@ -334,7 +334,9 @@ class Typesetter(object):
             if styleName in self.doc.styles:
                 matches.append(styleName)
         #print tag, parents, revHistory, matches
-        return [tag]
+        matches.reverse()
+        print tag, matches
+        return matches
 
     def getNodeStyle(self, tag):
         u"""Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style."""
