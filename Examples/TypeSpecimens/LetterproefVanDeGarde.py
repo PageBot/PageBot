@@ -55,8 +55,9 @@ pb = 36*MM
 pl = pr = 16*MM # Although the various types of specimen page have their own margin, this it the overall page padding.
 pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
-SYSTEM_FAMILY_NAMES = ('Verdana',)
-SYSTEM_FAMILY_NAMES = ('Georgia',)
+#SYSTEM_FAMILY_NAMES = ('Verdana',)
+#SYSTEM_FAMILY_NAMES = ('Georgia',)
+SYSTEM_FAMILY_NAMES = ('Proforma', 'Productus')
 MY_FAMILY_NAMES = ('Proforma', 'Productus')
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
@@ -79,6 +80,7 @@ def findFont(styleNames, italic=False):
             fontNames = findInstalledFonts(pattern)
             if fontNames:
                 break
+    print fontNames
     # Find matching styles. 
     for styleName in styleNames:
         for fontName in fontNames:

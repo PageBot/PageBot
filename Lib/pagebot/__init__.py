@@ -333,6 +333,8 @@ class Gradient(object):
         self.locations = locations or [0,1]
         self.startRadius = startRadius
         self.endRadius = endRadius
+        # Make sure that lengths of colors and locations are identical.
+        assert len(self.colors) == len(self.location)
 
     def _get_linear(self):
         return not self.radial

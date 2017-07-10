@@ -92,15 +92,15 @@ def makeDocument():
     bookPadding = (25, 30, 40, 30)
     
     # Styles
-    titleStyle =dict(font='Georgia', fontSize=26, rLeading=1.4, xAlign=CENTER, textFill=1)
-    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xAlign=CENTER)
+    titleStyle =dict(font='Georgia', fontSize=26, rLeading=1.4, xTextAlign=CENTER, textFill=1)
+    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xTextAlign=CENTER)
     headStyle = dict(font='Verdana-Bold', textFill=0, fontSize=14, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=30,
+        xTextAlign=LEFT, paragraphTopSpacing=30,
     paragraphBottomSpacing=0)
     bodyStyle = dict(font='Verdana', textFill=0, fontSize=12, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
+        xTextAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
     sideBarStyle = dict(font='Verdana', textFill=0, fontSize=10, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=10, hyphenation=True) 
+        xTextAlign=LEFT, paragraphTopSpacing=10, hyphenation=True) 
     italicBodyStyle = copy.copy(bodyStyle)
     italicBodyStyle['font'] = 'Verdana-Italic'
     italicBodyStyle['paragraphTopSpacing'] = 0

@@ -70,7 +70,17 @@ BOLD_ITALIC = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=1))
 
 shadow = Shadow(offset=(6, -6), blur=10, color=(0.2, 0.2, 0.2, 0.5))
 imo = ImageObject()
-imo.photoEffectTonal()
+#imo.photoEffectTonal()
+imo.lineOverlay()
+#imo.pixellate()
+#imo.convolution7X7()
+#imo.rowAverage()
+#imo.flashTransition()
+#imo.spotLight()
+#imo.edges()
+imo.hexagonalPixellate()
+#imo.gloom()
+
 
 def makeCoverTemplate(imagePath, w, h):
     bleed = 0
