@@ -1654,7 +1654,7 @@ class Element(object):
             restore()
 
     def _applyScale(self, p):
-        u"""Apply the scale, if both self.scaleX and self.scaleY are set. Use this
+        u"""Internal method to apply the scale, if both *self.scaleX* and *self.scaleY* are set. Use this
         method paired with self._restoreScale(). The (x, y) answered as reversed scaled tuple,
         so drawing elements can still draw on "real size", while the other element is in scaled mode."""
         sx = self.scaleX
