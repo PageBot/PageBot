@@ -63,18 +63,20 @@ def getVarLocation(font, location):
                 varLocation[axisTag] = minValue + (maxValue - minValue) * (1-axisValue)
     return varLocation
 
-def getVariableFont(fontOrPath, location, install=True):
+def getVariableFont(fontOrPath, location, install=True, styleName=None):
     u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
-    If there is a [opsz] Optical Size value defined, then store that information in the font.info.opticalSize."""
+    If there is a [opsz] Optical Size value defined, then store that information in the font.info.opticalSize.
+    The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
+    location name."""
     if isinstance(fontOrPath, basestring):
         varFont = Font(fontOrPath, name=path2FontName(fontOrPath))    
     else:
         varFont = fontOrPath
     fontName, path = generateInstance(varFont.path, getVarLocation(varFont, location), targetDirectory=getInstancePath())
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
-    return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location)
+    return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName)
 
 # TODO: Remove from here.
 def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0):
