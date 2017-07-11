@@ -89,7 +89,7 @@ class Font(object):
     """
     GLYPH_CLASS = Glyph
 
-    def __init__(self, path, name=None, install=True, opticalSize=None, location=None):
+    def __init__(self, path, name=None, install=True, opticalSize=None, location=None, styleName=None):
         u"""Initialize the TTFont, for which Font is a wrapper. Default is to
         install the font in DrawBot.
 
@@ -111,6 +111,8 @@ class Font(object):
             # Stores optional custom name, otherwise use original DrawBot name.
             # Otherwise use from FontInfo.fullName
             self.name = name or self.installedName or self.info.fullName
+            if styleName is not None:
+                self.info.styleName = styleName # Overwrite default style name in the ttFont or Variable Font location
             self.path = path
             self._kerning = None # Lazy reading.
             self._groups = None # Lazy reading.
