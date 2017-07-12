@@ -193,10 +193,13 @@ def drawBackground(keyFrame, frame):
     fill(1)
     rect(0, 0, W, H)
     
-        
 def drawAnimation():
     positionFontIcons()
     varFontIcon = id2FontIcon['VarFont']
+
+    KeyFrame(fontIcons, {}, 8,
+        drawBackground=drawBackground
+    ).draw()
 
     KeyFrame(fontIcons, 
         {'Light': (varFontIcon.x, varFontIcon.y), 'Bold': (varFontIcon.x, varFontIcon.y)}, 14,
@@ -219,7 +222,9 @@ def drawAnimation():
     KeyFrame(fontIcons, {}, 14,
         drawBackground=drawBackground
     ).draw()
-    
-drawAnimation()
 
-saveImage('_export/VarFont2Axes.gif')
+    saveImage('_export/VarFont2Axes.gif')    
+
+drawAnimation()
+   
+    
