@@ -130,7 +130,7 @@ def makeDocument():
     
     blurb = Blurb() # BLurb generator
     
-    doc = Document(w=PageWidth, h=PageHeight, originTop=False, startPage=1, autoPages=9)
+    doc = Document(w=PageWidth, h=PageHeight, originTop=False, startPage=1, autoPages=10)
     # Get default view from the document and set the viewing parameters.
     view = SpreadView(parent=doc)
     view.style['fill'] = 1
@@ -388,6 +388,7 @@ def makeDocument():
     tbPageNumber = newTextBox(fs, parent=page, x=leftPadding, w=10*MM)
     tbPageNumber.bottom = 20*MM
             
+    # -----------------------------------------------------------------------------------
     # Page 3, 3 columns.
     
     pn += 1
@@ -442,6 +443,7 @@ def makeDocument():
     tbPageNumber = newTextBox(fs, parent=page, x=page.w - rightPadding - 10*MM, w=10*MM)
     tbPageNumber.bottom = 20*MM
                 
+    # -----------------------------------------------------------------------------------
     # Page 4, 3 columns.
     
     pn += 1
@@ -497,6 +499,49 @@ def makeDocument():
     tbPageNumber = newTextBox(fs, parent=page, x=leftPadding, w=10*MM)
     tbPageNumber.bottom = 20*MM
                 
+    # -----------------------------------------------------------------------------------
+    # Page 5, 2 columns.
+    
+    pn += 1
+    page = doc[pn]
+    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
+    page.margin = 0
+    page.padding = pagePadding
+            
+    # Fill with paper color
+    # TODO: Just background color could be part of page fill instead of extra element.
+    newRect(z=-1, parent=page, conditions=[Fit2Sides()], fill=paperColor)
+
+    # Make blurb text about design and typography.
+    specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
+    fs = newFS(specText, style=dict(font=bookName, textFill=0, fontSize=12.5, tracking=0, rTracking=rt, leading=12,
+        hyphenation='en'))
+    newTextBox(fs, parent=page, x=x, h=64*MM, w=page.w - page.pl - rightPadding, mt=10*MM, conditions=[Top2Top(), Left2Left()])
+    
+    # Make blurb text about design and typography.
+    specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
+    fs = newFS(specText, style=dict(font=bookName, textFill=0, fontSize=12.5, tracking=0, rTracking=rt, leading=13,
+        hyphenation='en'))
+    newTextBox(fs, parent=page, x=x, h=64*MM, w=page.w - page.pl - rightPadding, mt=10*MM, conditions=[Float2TopLeft()])
+    
+    # TODO: Add red captions here.
+
+    # Red label on the left
+    fs = newFS(labelFont.info.styleName.upper(), style=dict(font=boldName, textFill=paperColor, 
+        fontSize=fontNameSize, tracking=0, rTracking=0.3))
+    tw, th = textSize(fs)
+    # TODO: h is still bit of a guess with padding and baseline position. Needs to be solved more structured.
+    tbName = newTextBox(fs, parent=page, h=capHeight+3*padding[0], w=tw+2*padding[1], conditions=[Right2RightSide()], 
+        fill=redColor, padding=padding)
+    tbName.top = page.h-RedBoxY
+    
+    # Page number
+    fs = newFS(`pn`, 
+        style=dict(font=bookName, fontSize=pageNumberSize, 
+        textFill=redColor, xTextAlign=RIGHT, rTracking=rt, leading=8))
+    tbPageNumber = newTextBox(fs, parent=page, x=page.w - rightPadding - 10*MM, w=10*MM)
+    tbPageNumber.bottom = 20*MM
+
     # Solve remaining layout and size conditions.
        
     score = doc.solve()
