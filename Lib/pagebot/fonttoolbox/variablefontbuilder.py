@@ -55,23 +55,39 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
     change the size. Again this cannot be done by simple interpolation, as the [opsz] also changes the width.
     It one of the axes does not exist in the font, then use the default setting of the font.
     """
+    # TODO: Adjusting by size change (if reequested width is not possible with the width limits of the fon)t)
+    # TODO: is not yet implemented.
+
+    # Get the instances for the extreme width locations. This allows the caller to define the actual range
+    # of the [wdth] axis to be user, instead of the default minValue and maxValue. E.g. for a range of widths
+    # in a headline, the typographer may only want a small change before the line is wrapping, instead 
+    # using the full spectrum to extreme condensed.
     condensedFont = getVariableFont(varFont, condensedLocation)
-    condensedFs = newFS(s, style=dict(font=condensedFont.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
-    condensedWidth, _ = textSize(condensedFs)
     wideFont = getVariableFont(varFont, wideLocation)
-    wideFs = newFS(s, style=dict(font=wideFont.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
+    # Calculate the widths of the string using these two instances.
+    condensedFs = newFS(s, style=dict(font=condensedFont.installedName, fontSize=fontSize, tracking=tracking, 
+        rTracking=rTracking, textFill=0))
+    wideFs = newFS(s, style=dict(font=wideFont.installedName, fontSize=fontSize, tracking=tracking, 
+        rTracking=rTracking, textFill=0))
+    # Calculate the widths of the strings. 
+    # TODO: Handle if these lines would wrap on the given width. In that case we may want to set the wrapped
+    # first line back to it's uncondensed value, to make the first wrapped line fit the width.
+    condensedWidth, _ = textSize(condensedFs)
     wideWidth, _ = textSize(wideFs)
+
     # Check if the requested with is inside the boundaries of the font width axis
-    if w < condensedWidth:
+    if w < condensedWidth: # Requested width is smaller than was was possible using the extreme value of [wdth] axis.
         font = condensedFont
         fs = condensedFs
         location = condensedLocation
-    elif w > wideWidth:       
+    elif w > wideWidth:  # Requested width is larger than was was possible using the extreme value of [wdth] axis.      
         font = wideFont
         fs = wideFs
         location = wideLocation
-    else:
-        # Inside the selected [wdth] range, now interpolation the fitting location
+    else: # Inside the selected [wdth] range, now interpolation the fitting location.
+        # TODO: Check if the width of the new string is within tolerance of the request width.
+        # This may not be the case if the range of the [wdth] is interpolating in a non-linear way.
+        # In that case we may need to do a number of iterations.
         widthRange = wideLocation['wdth'] - condensedLocation['wdth'] 
         print widthRange
         location = copy.copy(condensedLocation)
@@ -79,6 +95,7 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
         print location
         font = getVariableFont(varFont, location)
         fs = newFS(s, style=dict(font=font.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
+    # Answer the dictionary with calculated data, so the caller can reuse it, without the need to new expensive recalculations.
     return dict(
         condensendFont=condensedFont, condensedFs=condensedFs, condensedWidth=condensedWidth, condensedLocation=condensedLocation,
         wideFont=wideFont, wideFs=wideFs, wideWidth=wideWidth, wideLocation=wideLocation,

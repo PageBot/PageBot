@@ -11,6 +11,7 @@ text(fs, (10, 100))
 
 lineHeight(28)
 r = (66, 0, 100, 100 + fontLineHeight()+fontDescender())
+r = (66, 0, 100, 100)
 
 fs = FormattedString(t * 10,font='Times', fontSize=17, lineHeight=19)
 textBox(fs, r)
