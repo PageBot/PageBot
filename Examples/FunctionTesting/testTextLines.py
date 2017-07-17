@@ -2,6 +2,8 @@
 import CoreText
 import Quartz
 
+#    NOTE: Assumes TYPETR-Bitcount to be installed.
+
 #for name in installedFonts():
 #    if 'Bitcount' in name:
 #        print name

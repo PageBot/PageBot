@@ -71,6 +71,7 @@ Code, Open source under MIT conditions & All source code available.
 * Time line, definition and editing, length and fps.
 * Integrate the PageBot manual builder with other export functions of the library.
 * Add more unit-tests to guarantee the integrity of the library and output consistency.
+* Automatic support of ornament frames, in connection to the Element borders and the layout of exiting (TN) border fonts.
 
 ## Types of publications to develop
 
