@@ -4,14 +4,16 @@
 size(200, 200)
 fontSize(17)
 font("Times")
-t = "hello world "
+t = "hello world\nsecond line\n"
+fs = FormattedString(t,font='Times', fontSize=17, lineHeight=19)
 
-text(t, (10, 100))
+text(fs, (10, 100))
 
 lineHeight(28)
 r = (66, 0, 100, 100 + fontLineHeight()+fontDescender())
 
-textBox(t * 10, r)
+fs = FormattedString(t * 10,font='Times', fontSize=17, lineHeight=19)
+textBox(fs, r)
 
 
 stroke(0)

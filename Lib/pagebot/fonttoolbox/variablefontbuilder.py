@@ -10,13 +10,13 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     variablebuilder.py
+#     variablefontbuilder.py
 #
 from __future__ import division
 import os
 
 import pagebot
-from drawBot import installFont, BezierPath, save, transform, scale, drawPath, restore, fill
+from drawBot import installFont, BezierPath, save, transform, scale, drawPath, restore, fill, textSize
 
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
@@ -24,7 +24,7 @@ from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLocation
 
-from pagebot import setFillColor
+from pagebot import setFillColor, newFS
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
 from pagebot.fonttoolbox.variablefontaxes import axisDefinitions
@@ -42,6 +42,48 @@ def getMasterPath():
 def getInstancePath():
     u"""Answer the path to write instance fonts."""
     return getMasterPath() + '_instances/'
+
+def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, fixedSize=True, 
+        tracking=None, rTracking=None):
+    u"""Answer the font instance that makes string s width on the given width *w* for the given *fontSize*.
+    The *condensedLocation* dictionary defines the most condensed font instance (optionally including the opsz)
+    and the *wideLocation* dictionary defines the most wide font instance (optionally including the opsz).
+    The string width for s is calculated with both locations and then the [wdth] value is interpolated and iterated
+    until the location is found where the string *s* fits width *w). Note that interpolation may not be enough,
+    as the width axis may contain non-linear masters.
+    If the requested w outside of what is possible with two locations, then interations are performed to 
+    change the size. Again this cannot be done by simple interpolation, as the [opsz] also changes the width.
+    It one of the axes does not exist in the font, then use the default setting of the font.
+    """
+    condensedFont = getVariableFont(varFont, condensedLocation)
+    condensedFs = newFS(s, style=dict(font=condensedFont.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
+    condensedWidth, _ = textSize(condensedFs)
+    wideFont = getVariableFont(varFont, wideLocation)
+    wideFs = newFS(s, style=dict(font=wideFont.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
+    wideWidth, _ = textSize(wideFs)
+    # Check if the requested with is inside the boundaries of the font width axis
+    if w < condensedWidth:
+        font = condensedFont
+        fs = condensedFs
+        location = condensedLocation
+    elif w > wideWidth:       
+        font = wideFont
+        fs = wideFs
+        location = wideLocation
+    else:
+        # Inside the selected [wdth] range, now interpolation the fitting location
+        widthRange = wideLocation['wdth'] - condensedLocation['wdth'] 
+        print widthRange
+        location = copy.copy(condensedLocation)
+        location['wdth'] += widthRange*(w-condensedWidth)/(wideWidth-condensedWidth)
+        print location
+        font = getVariableFont(varFont, location)
+        fs = newFS(s, style=dict(font=font.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
+    return dict(
+        condensendFont=condensedFont, condensedFs=condensedFs, condensedWidth=condensedWidth, condensedLocation=condensedLocation,
+        wideFont=wideFont, wideFs=wideFs, wideWidth=wideWidth, wideLocation=wideLocation,
+        font=font, fs=fs, width=textSize(fs)[0], location=location
+    )
 
 def getVarLocation(font, location):
     u"""Translate the location dict (all values between (0, 1) or between (0, 1000)) 

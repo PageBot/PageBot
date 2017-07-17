@@ -1,3 +1,20 @@
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     Made for usage in DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     DrawVariableFont2AxisAnimation.py
+#
+#     Note: the type of animation used in this example is self-contained:
+#     all code for for FontIcon class and KeyFrame class is here.
+#     In the future these classes will be part of the main PageBot library,
+#     which may make them incompatible with this particular example.
+#     
 import pagebot
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
 from pagebot import newFS
