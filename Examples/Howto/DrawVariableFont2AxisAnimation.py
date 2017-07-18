@@ -240,7 +240,7 @@ def drawAnimation():
         drawBackground=drawBackground
     ).draw()
 
-    saveImage('_export/VarFont2Axes.gif')    
+    saveImage('_export/varFont2Axes.gif')    
 
 drawAnimation()
    
