@@ -13,6 +13,7 @@
 #     variablefontbuilder.py
 #
 from __future__ import division
+import copy
 import os
 
 import pagebot
@@ -89,10 +90,8 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
         # This may not be the case if the range of the [wdth] is interpolating in a non-linear way.
         # In that case we may need to do a number of iterations.
         widthRange = wideLocation['wdth'] - condensedLocation['wdth'] 
-        print widthRange
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condensedWidth)/(wideWidth-condensedWidth)
-        print location
         font = getVariableFont(varFont, location)
         fs = newFS(s, style=dict(font=font.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
     # Answer the dictionary with calculated data, so the caller can reuse it, without the need to new expensive recalculations.

@@ -76,53 +76,24 @@ condensedLocation = dict(opsz=HEADLINE_SIZE, wdth=MAX_WDTH, wght=0.7) # Amount o
 wideLocation = dict(opsz=HEADLINE_SIZE, wdth=MIN_WDTH, wght=0.7) # Full default width = 0
 
 W = 600
-H = 340
+H = 220
 Width = 200
 PADDING = 20
 
 INTERACTIVE = False # Interactive or save as animation.
 FRAMES = 60
-LEADING = 70
 
 def draw(w):
     u"""Draw 3 lines of text: the boundaries of with the width axis and the interpolated width from the slider value.
     If the slider goes of the extremes, then the middle line stops at the boundary width."""
     d = fitVariableWidth(f, HEADLINE, w, HEADLINE_SIZE, condensedLocation, wideLocation)
 
-    minWidth = d['condensedWidth']
-    maxWidth = d['wideWidth']
-    fixedWidth = minWidth + (maxWidth - minWidth)/2
-    dFixed = fitVariableWidth(f, HEADLINE, fixedWidth, HEADLINE_SIZE, condensedLocation, wideLocation)
-    
     newPage(W, H)
-    y = 2*PADDING
     fill(1)
     rect(0, 0, W, H)
-    #
-    
-    # Draw calculated fitting instance and the two boundary instances.
-    text(d['condensedFs'], (PADDING, y+LEADING))
-    text(d['fs'], (PADDING, y+2*LEADING))
-    text(d['wideFs'], (PADDING, y+3*LEADING))
-    
-    # Draw the instance choice of 3
-    if w < fixedWidth:
-        text(d['condensedFs'], (PADDING, y))
-    elif w < maxWidth:
-        text(dFixed['fs'], (PADDING, y))
-    else:
-        text(d['wideFs'], (PADDING, y))
-        
-    fill(0.5)
-    fontSize(12)
-    text('Variable Font Amstelvar (Maximum width)', (PADDING, y+3*LEADING+40))
-    text('Variable Font Amstelvar (Calculated width)', (PADDING, y+2*LEADING+40))
-    text('Variable Font Amstelvar (Minimum width)', (PADDING, y+LEADING+40))
-    text('Traditional fixed font styles', (PADDING, y+40))
-    
-    
-    # Draw vertical lines, marking the text headline widths and in read the requested column width.
-    # Also draw the values of the column width and the [wdth] axis value for that fitting location.
+    text(d['condensedFs'], (PADDING, 50))
+    text(d['fs'], (PADDING, 100))
+    text(d['wideFs'], (PADDING, 150))
     fill(None)
     stroke(0)
     line((PADDING, PADDING), (PADDING, H-PADDING)) 
@@ -138,7 +109,7 @@ def draw(w):
     line((PADDING+w, PADDING), (PADDING+w, H-PADDING)) 
     stroke(None)
     fill(1, 0, 0)
-    text('w=%d' % w, (PADDING+w+5, H-PADDING-5))
+    text('Column %d' % w, (PADDING+w+5, H-PADDING-5))
 
 if INTERACTIVE:
     Variable([
@@ -154,3 +125,4 @@ else:
         draw(160 + (W-2*PADDING-160) * dx)
         angle += 360/FRAMES
     saveImage('_export/fitVariableHeadline.gif')
+    
