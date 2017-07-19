@@ -95,13 +95,13 @@ class Font(object):
 
         self.name is supported, in case the caller wants to use a different
         name than the DrawBot installing name."""
-        self.path = path # File path of the font file.
+        self.path = path # File path of the font file. 
         if install:
             # Installs the font in DrawBot from self.path and initializes
             # self.installedName.
             self.install()
         else:
-            self.installedName = None # Set to DrawBot name, when installed later.
+            self.installedName = None # Set to DrawBot name, if installing later.
         try:
             self.ttFont = TTFont(path, lazy=True)
             # TTFont is available as lazy style.info.font
@@ -113,7 +113,6 @@ class Font(object):
             self.name = name or self.installedName or self.info.fullName
             if styleName is not None:
                 self.info.styleName = styleName # Overwrite default style name in the ttFont or Variable Font location
-            self.path = path
             self._kerning = None # Lazy reading.
             self._groups = None # Lazy reading.
         except TTLibError:
@@ -131,7 +130,8 @@ class Font(object):
     def keys(self):
         return self.ttFont['glyf'].keys()
 
-    def _get_axes(self): # Answer dictionary of axes
+    def _get_axes(self): 
+        u"""Answer dictionary of axes if self.ttFont is a Variable Font. Otherwise answer an empty dictioary."""
         try:
             # TODO: Change value to Axis dictionary instead of list
             axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in self.ttFont['fvar'].axes}
@@ -139,6 +139,15 @@ class Font(object):
             axes = {} # This is not a variable font.
         return axes
     axes = property(_get_axes)
+
+    def _get_rawDeltas(self):
+        u"""Answer the list of axis dictionaries with deltas for all glyphs and axes. Answer an empty dictionary
+        if the [gvar] table does not exist."""
+        try:
+            return self.ttFont['gvar'].variations
+        except:
+            return {}
+    rawDeltas = property(_get_rawDeltas)
 
     def _get_designSpace(self):
         try:

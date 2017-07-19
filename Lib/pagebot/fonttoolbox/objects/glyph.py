@@ -13,6 +13,7 @@
 #
 #     Implements a PageBot font classes to get info from a TTFont.
 #
+import sys
 import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
@@ -32,13 +33,31 @@ class Point(object):
     >>> print p
     Pt(101,303,On)
     """
-    def __init__(self, x, y, onCurve):
+    def __init__(self, x, y, onCurve=None):
+        u"""Construct new point as potiiotn (x, y). onCurve is boolean, unless None, in case point
+        type is undefined."""
         self.x = x
         self.y = y
-        self.onCurve = bool(onCurve)
+        self.onCurve = onCurve # Can be True, False or None
 
     def __repr__(self):
         return 'Pt(%s,%s,%s)' % (self.x, self.y,{True:'On', False:'Off'}[self.onCurve])
+
+class AxisDeltas(object):
+    u"""Hold the list of axis parts with their minValue, defaultValue, maxValue and list of deltas."""
+    def __init__(self, name):
+        self.name = name
+        self.deltas = {}
+
+    def __repr__(self):
+        return '[AxisDeltas:%s]' % self.name
+
+    def __setitem__(self, key, value):
+        assert isinstance(key, tuple) and len(key) == 3 and isinstance(value, (tuple, list))
+        self.deltas[key] = value
+
+    def __getitem__(self, key):
+        return self.deltas[key]
 
 class Segment(object):
     u"""
@@ -110,17 +129,20 @@ class Glyph(object):
     """
 
     ANALYZER_CLASS = GlyphAnalyzer
+    AXIS_DELTAS_CLASS = AxisDeltas
 
     def __init__(self, font, name):
         self.name = name
         self.parent = font # Stored as weakref
-        self._points = None
+        self._points = None # Same as self.points property with added 4 spacing points in TTF style.
+        self._points4 = None
         self._pointContexts = None
         self._contours = None
         self._segments = None
         self._components = None
         self._path = None
         self._analyzer = None # Initialized upon property self.analyzer usage.
+        self._axisDeltas = None # Caching for AxisDeltas instances.
 
     def __eq__(self, g):
         return self.parent is g.parent and self.name == g.name
@@ -136,9 +158,11 @@ class Glyph(object):
         u"""Initializes the cached data, such as self.points, self.contour,
         self.components and self.path."""
         self._points = []
+        self._points4 = [] # Same as self.points property with added 4 spacing points in TTF style.
         self._contours = []
         self._components = []
         self._segments = []
+        self._drawPath = None
 
         coordinates = self.coordinates
         components = self.components
@@ -149,10 +173,18 @@ class Glyph(object):
         currentOnCurve = None
         p0 = None
 
+        xMin = yMin = sys.maxint # Store bounding box as we process the coordinate.
+        xMax = yMax = -sys.maxint
+
         if coordinates or components:
             self._path = path = BezierPath()
 
         for index, (x, y) in enumerate(coordinates):
+            xMin = min(x, xMin)
+            xMax = max(x, xMax)
+            yMin = min(y, yMin)
+            yMax = max(y, yMax)
+
             p = Point(x, y, flags[index])
             self._points.append(p)
 
@@ -190,6 +222,31 @@ class Glyph(object):
                 # Inside contour.
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
                 openSegment = None
+
+        self._points4 = self._points[:] + [Point(xMin, 0), Point(0, yMin), Point(xMax, 0), Point(0, yMax)]
+
+    #def _get_drawPath(self):
+    #    u"""Answer the cached Cocoa drawing path. If it does not yet exist, create it first and cache it."""
+    #    if self._drawPath is None:
+    #        pen = CocoaPen(None)
+            
+    def getAxisDeltas(self):
+        u"""Answer dictionary of axis-delta relations. Key is axis name, value is an *AxisDeltas* instance.
+        The instance containse (minValue, defaultValue, maxValue) keys, holding the sets of deltas for the
+        glyph points."""
+        if self._axisDeltas is None:
+            font = self.parent
+            self._axisDeltas = {}
+            if font is not None:
+                axisName = None
+                for rawDelta in font.rawDeltas[self.name]:
+                    axes = rawDelta.axes
+                    assert len(axes) == 1 # Can there be others here?
+                    axisName = axes.keys()[0]
+                    if not axisName in self._axisDeltas:
+                        self._axisDeltas[axisName] = self.AXIS_DELTAS_CLASS(axisName)
+                    self._axisDeltas[axisName][tuple(axes[axisName])] = rawDelta.coordinates
+        return self._axisDeltas
 
     def _drawSegment(self, cp, segment, path):
         u"""Draws the Segment instance into the path. It may contain multiple
@@ -297,12 +354,23 @@ class Glyph(object):
 
     # Kind of RoboFont glyph compatibility
 
-    def _get_points(self): # Read only for now.
+    def _get_points(self): 
+        u"""Answer the list of Point instances, representing the outline of the glyph,
+        not including the standard 4 spacing points at the end of the list in TTF style.
+        Read only for now."""
         if self._points is None:
             self._initialize()
         return self._points
-
     points = property(_get_points)
+
+    def _get_points4(self):
+        u"""Answer the list of Points instances, representing the outline of the glyph,
+        including the standard 4 spacing points at the end of the list in TTF style.
+        Read only for now."""
+        if self._points4 is None:
+            self._initialize()
+        return self._points4
+    points4 = property(_get_points4)
 
     def _get_pointContexts(self):
         if self._pointContexts is None:
