@@ -91,7 +91,7 @@ class Element(object):
             self.margin = margin
 
         self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
-        self.class_ = class_ # Alternative name of this element, e.g. to group paramters together in HTML/CSS export.
+        self.class_ = class_ or self.__class__.__name__ # Alternative name of this element, e.g. to group paramters together in HTML/CSS export.
         self.title = title or name # Optional to make difference between title name, style property
         self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value. 
         self._parent = None # Preset, so it exists for checking when appending parent.

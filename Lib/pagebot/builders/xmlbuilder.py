@@ -35,11 +35,15 @@ class XmlBuilder(BaseBuilder):
                 s.append(className)
         return ' '.join(s)
 
+    def __init__(self, path):
+        BaseBuilder.__init__(self, path)
+
     def _initialize(self):
         self._doIndent = True
         self._tabLevel = 0
+        self._tabIndent = '\t'
         self._tagStack = [] # Stack with running tags for closing and XML validation
-        self._verbose = False
+        self._verbose = True
         self._newLine = '\n'
         self._svgMode = False
         self._useOnline = True
@@ -48,7 +52,7 @@ class XmlBuilder(BaseBuilder):
         """"Output tabs to the current level and add newlines, depending on the setting of @self._newline@
         (string with newlines) and ``self._tabLevel`` (number of indents)."""
         if self._verbose:
-            self.output(self._newLine + (self.C.TAB_INDENT * self._tabLevel)) 
+            self.output(self._newLine + (self._tabIndent * self._tabLevel)) 
 
     def tabIn(self):
         if self._doIndent:

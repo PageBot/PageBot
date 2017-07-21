@@ -216,7 +216,7 @@ class HtmlBuilder(XmlBuilder):
 
     def build(self, e, view):
         u"""
-        Builds the header of an HTML document.
+        Builds the main structure of of an HTML document.
         Note that the inheriting PhPBuilder uses the result of this method to generate
         the header.php file, as a separate result stream.
         """
@@ -248,7 +248,8 @@ class HtmlBuilder(XmlBuilder):
         # Instead of calling the main self.block
         eId = e.name or e.class_ or e.eId
         self.div(class_='page_' + eId)
-        self.comment(e.getClassName()) # Add reference  Python class name of this component
+        if e.class_:
+            self.comment(e.class_) # Add reference Python class name of this component
         self._div(comment='.page_'+ eId)
         self._body()
         self._html()
@@ -279,7 +280,10 @@ class HtmlBuilder(XmlBuilder):
                
     def buildJavascript(self, e):
         pass
-               
+    
+    def buildFavIconLinks(self, e):
+        pass
+
     def ieExceptions(self):
         self.comment("1140px Grid styles for <= IE9")
         self.newline()
@@ -544,6 +548,7 @@ class HtmlBuilder(XmlBuilder):
         self.write_tag_noWhitespace(u'h4', True, args)
 
     def _h4(self):
+        u"""Closing tag of h4."""
         self._closeTag_noWhitespace(u'h4')
         self.newline()
 
