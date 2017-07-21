@@ -256,7 +256,6 @@ class HtmlBuilder(XmlBuilder):
     def setViewPort(self):
         self.meta(name='viewport', content='width=device-width, initial-scale=1.0')
 
-
     def buildFontLinks(self, e):
         u"""Build the webfont links of they are defined in **components.fonts**.
         Ignore if **self.C.useOnline()** is **False**."""
