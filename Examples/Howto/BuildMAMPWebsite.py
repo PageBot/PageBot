@@ -33,7 +33,7 @@ MAMP_PATH = '/Applications/MAMP/htdocs/'
 MAMP_PAGEBOT_PATH = MAMP_PATH + 'pagebot/examplewebsite/'
 EXPORT_PATH_HTML = MAMP_PAGEBOT_PATH + 'index.html'
 EXPORT_PATH_CSS = MAMP_PAGEBOT_PATH + 'main.css'
-MAMP_LOCAL_URL = 'http://localhost:8888/pagebot/'
+MAMP_LOCAL_URL = 'http://localhost:8888/pagebot/examplewebsite/index.html'
 MAMP_SHOP_URL = 'https://www.mamp.info/en/' # In cade MAMP does not exist, open on their website to download and install.
 
 def makeDocument():
@@ -102,6 +102,6 @@ else:
     d.export(EXPORT_PATH_HTML)
     print 'Generated HTML and CSS code saved as files', EXPORT_PATH_HTML
     # Open the css file in the default editor of your local system.
-    os.system(u'open "%s"' % MAMP_LOCAL_URL + EXPORT_PATH_HTML)
+    os.system(u'open "%s"' % MAMP_LOCAL_URL)
     print 'Done' 
 
