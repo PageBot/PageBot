@@ -10,6 +10,8 @@
 #
 #     ExportCSS.py
 #
+#     U N D E R  C O N S T R U C T I O N
+#
 import os
 import pagebot # Import to know the path of non-Python resources.
 
@@ -27,6 +29,9 @@ PagePadding = 32
 PageSize = 500
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
+# The .css extension triggers the CssBuilder to be used for file export.
+# Currently a style dumps as CSS comment is exported. Needs to be adjusted
+# to filter and translate info real CSS.
 EXPORT_PATH = '_export/ExportCSS.css' 
 
 def makeDocument():

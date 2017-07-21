@@ -9,3 +9,8 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
+from basebuilder import BaseBuilder
+from xmlbuilder import XmlBuilder
+from cssbuilder import CssBuilder
+from htmlbuilder import HtmlBuilder
+from phpbuilder import PhpBuilder

@@ -43,7 +43,7 @@ class Element(object):
     isView = False 
     
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
-            t=0, parent=None, name=None, title=None, style=None, conditions=None, elements=None, 
+            t=0, parent=None, name=None, class_=None, title=None, style=None, conditions=None, elements=None, 
             template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, padding=None, 
             margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
             borders=None, borderTop=None, borderRight=None, borderBottom=None, borderLeft=None, 
@@ -90,7 +90,8 @@ class Element(object):
         if margin is not None:
             self.margin = margin
 
-        self.name = name
+        self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
+        self.class_ = class_ # Alternative name of this element, e.g. to group paramters together in HTML/CSS export.
         self.title = title or name # Optional to make difference between title name, style property
         self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value. 
         self._parent = None # Preset, so it exists for checking when appending parent.

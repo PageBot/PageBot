@@ -12,7 +12,6 @@
 #     phpbuilder.py
 #
 from htmlbuilder import HtmlBuilder
-from pagebot.toolbox.transformer import *
 
 class PhpBuilder(HtmlBuilder):
     # TODO: To be implemented here.

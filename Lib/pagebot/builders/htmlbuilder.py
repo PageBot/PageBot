@@ -11,14 +11,15 @@
 #
 #     htmlbuilder.py
 #
-from basebuilder import BaseBuilder
+from xmlbuilder import XmlBuilder
 from pagebot.toolbox.transformer import *
 
-class HtmlBuilder(BaseBuilder):
+class HtmlBuilder(XmlBuilder):
     """
     The ``HtmlBuilder`` class implements the standard XHTML tag set with all attributes. No additional
     whitespace is added.
     """
+    ID = 'html'
     # Names of attributes that are written without their value.
     # Since this breaks XML validation, this list is empty by default,
     # but it can be redefined by the inheriting application class.
@@ -213,51 +214,97 @@ class HtmlBuilder(BaseBuilder):
 
     BOOLEAN_ATTRIBUTES = {'checked': 'checked', 'selected': 'selected', 'disabled': 'disabled'}
 
-
     def build(self, e, view):
         u"""
         Builds the header of an HTML document.
         Note that the inheriting PhPBuilder uses the result of this method to generate
         the header.php file, as a separate result stream.
         """
+        self._root = e
+        self._view = view
+
+        self.openOutput()
         self.docType(self.ID)
         self.html()
         self.head()
         # Title depends on selected article. Otherwise show the path, if not available.
-        path = self.getPath()
-        title = component.getTitle(path=path) or path
+        title = e.name or self.getPath() or e.eId
         self.title_(title) # Search for the title in the component  tree
         self.ieExceptions()
         # self.supportMediaQueries() # Very slow, getting this from Google?
         self.setViewPort()
-        self.buildFontLinks(component)
-        self.buildCssLinks(component)
-        self.ieExceptions()
+        self.buildFontLinks(e)
+        self.buildCssLinks(e)
         # Build required search engine info, if available in self.adapter
-        self.buildMetaDescription(component)
-        self.buildMetaKeyWords(component)
+        self.buildMetaDescription(e)
+        self.buildMetaKeyWords(e)
 
         self.link(rel="apple-touch-icon-precomposed", href="img/appletouchicon.png")
-        self.buildJavascript(component)
-        self.buildFavIconLinks(component)
+        self.buildJavascript(e)
+        self.buildFavIconLinks(e)
         self._head()
 
         self.body()
         # Instead of calling the main self.block
-        self.div(class_='page_' + component.name or component.class_ or self.C.CLASS_PAGE)
-        self.comment(component.getClassName()) # Add reference  Python class name of this component
-
-
-        u"""Build the tail of an HTML document.
-        Note that the inheriting PhPBuilder uses the result of this method to generate
-        the footer.php file, as a separate result stream."""
-        # Instead of calling the main self._block
-        if self.isEditor(): # In case we are live in /edit mode, make the whole page as form.
-            self._editor(component)
-        self._div(comment='.page_'+(component.name or component.class_ or self.C.CLASS_PAGE))
+        eId = e.name or e.class_ or e.eId
+        self.div(class_='page_' + eId)
+        self.comment(e.getClassName()) # Add reference  Python class name of this component
+        self._div(comment='.page_'+ eId)
         self._body()
         self._html()
+        self.closeOutput()
 
+    def setViewPort(self):
+        self.meta(name='viewport', content='width=device-width, initial-scale=1.0')
+
+
+    def buildFontLinks(self, e):
+        u"""Build the webfont links of they are defined in **components.fonts**.
+        Ignore if **self.C.useOnline()** is **False**."""
+        if self._useOnline:
+            """
+            for fontUrl in e.fonts: # Should always be defined, default is an empty list
+                self.link(href=fontUrl, type="text/css", charset="UTF-8", rel="stylesheet", media="screen")
+            """
+            pass
+
+    def buildCssLinks(self, e):
+        pass
+
+    def buildMetaDescription(self, e):
+        pass
+
+    def buildMetaKeyWords(self, e):
+        pass
+               
+    def buildJavascript(self, e):
+        pass
+               
+    def ieExceptions(self):
+        self.comment("1140px Grid styles for <= IE9")
+        self.newline()
+        self.text("""<!--[if lte IE 9]><link rel="stylesheet" href="/cssie/ie9.css" type="text/css" media="screen" /><![endif]-->""")
+        # self.text("""<link rel="stylesheet" href="cssie/ie9.css" type="text/css" media="screen,projection" />""")
+        self.newline()
+
+    def text(self, componentOrText, **kwargs):
+        u"""
+        If in **self._svgMode** output as SVG tags. Otherwise just output if plain text string.
+        If it is a components, then get it’s text string.
+        """
+        if componentOrText is None:
+            return
+        if isinstance(componentOrText, basestring):
+            if self._svgMode:
+                self.svgText(componentOrText, **kwargs)
+            else:
+                self.output(componentOrText)
+        else: # Otherwise it must be of type component
+            if componentOrText.id:
+                self.span(id=id, contentEditable=componentOrText.editable)
+            self.output(componentOrText.text)
+            if componentOrText.id:
+                self._span()
 
     def get_attribute_exceptions(self, key, value):
         u"""
@@ -265,10 +312,10 @@ class HtmlBuilder(BaseBuilder):
         the Xierpa attributes and HTML attributes.
         """
         # Boolean attributes.
-        key = TX.dataAttribute2Html5Attribute(key)
+        key = dataAttribute2Html5Attribute(key)
 
         if key in self.BOOLEAN_ATTRIBUTES:
-            if TX.value2Bool(value): # Can be boolean or text boolean
+            if value2Bool(value): # Can be boolean or text boolean
                 self.write_attribute(key, self.BOOLEAN_ATTRIBUTES[key])
         else:
             # Some exceptions.
@@ -1143,7 +1190,7 @@ class HtmlBuilder(BaseBuilder):
         if language is not None:
             r.write(u' language="%s"' % language)
         for key, value in args.items():
-            r.write(u' %s="%s"' % (TX.dataAttribute2Html5Attribute(key), value))
+            r.write(u' %s="%s"' % (dataAttribute2Html5Attribute(key), value))
         src = args.get(u'src')
         if src is not None:
             r.write(u'></script>\n')
@@ -1451,4 +1498,4 @@ class HtmlBuilder(BaseBuilder):
 
     def comment(self, s):
         if s:
-            self.output('<!-- %s -->' % TX.object2SpacedString(s))
+            self.output('<!-- %s -->' % object2SpacedString(s))
