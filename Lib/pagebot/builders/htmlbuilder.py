@@ -246,10 +246,9 @@ class HtmlBuilder(XmlBuilder):
 
         self.body()
         # Instead of calling the main self.block
-        eId = e.name or e.class_ or e.eId
-        self.div(class_='page_' + eId)
-        self.comment(e.getClassName()) # Add reference  Python class name of this component
-        self._div(comment='.page_'+ eId)
+        self.div(class_='page_' + e.class_)
+        self.comment(e.class_) # Add reference  Python class name of this component
+        self._div(comment='.page_'+ e.class_)
         self._body()
         self._html()
         self.closeOutput()
@@ -279,7 +278,10 @@ class HtmlBuilder(XmlBuilder):
                
     def buildJavascript(self, e):
         pass
-               
+    
+    def buildFavIconLinks(self, e):
+        pass
+
     def ieExceptions(self):
         self.comment("1140px Grid styles for <= IE9")
         self.newline()
@@ -308,8 +310,8 @@ class HtmlBuilder(XmlBuilder):
 
     def get_attribute_exceptions(self, key, value):
         u"""
-        The ``get_attribute_exceptions`` method writes the attribute, and checks on naming differences between
-        the Xierpa attributes and HTML attributes.
+        The ``get_attribute_exceptions`` method writes the attribute and checks on naming differences between
+        the element attributes and HTML attributes.
         """
         # Boolean attributes.
         key = dataAttribute2Html5Attribute(key)
