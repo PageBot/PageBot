@@ -21,6 +21,7 @@
 import codecs
 import pagebot
 from basebuilder import BaseBuilder
+from pagebot.toolbox.transformer import color2Css
 
 class CssBuilder(BaseBuilder):
 
@@ -52,9 +53,15 @@ class CssBuilder(BaseBuilder):
     def buildRootStyle(self, doc, out):
     	u"""Translate the doc.rootStyle to the root body{...} CSS style."""
     	out.write('body {\n')
+        style = doc.styles['root']
+        out.write('\tbackground-color: %s;\n' % (color2Css(style['fill'] or (1,1,1))))
+        out.write('\tfont-family: %s;\n' % ((style['font'])))
+        out.write('\tfont-size: %spx;\n' % ((style['fontSize'])))
+        out.write('\tcolor: %s;\n' % (color2Css(style['textFill'] or (1, 0, 0))))
+
         # For now write all values as comment.
     	out.write('/*')
-    	for name, value in sorted(doc.styles['root'].items()):
+    	for name, value in sorted(style.items()):
     		out.write('\t%s: %s;\n' % (name, value))
     	out.write('*/\n')
     	out.write('}\n\n')

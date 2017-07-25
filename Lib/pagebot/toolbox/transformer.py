@@ -119,6 +119,11 @@ def s2Color(s):
     except ValueError:
         return None
 
+def color2Css(c):
+    u"""Answer the CSS hex color string from the color (r, g, b) tuple."""
+    r, g, b = c
+    return '#%02x%02x%02x' % (r*255, g*255, b*255)
+
 # N U M B E R S
 
 def asNumber(v):
