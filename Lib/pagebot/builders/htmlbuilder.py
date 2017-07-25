@@ -214,6 +214,9 @@ class HtmlBuilder(XmlBuilder):
 
     BOOLEAN_ATTRIBUTES = {'checked': 'checked', 'selected': 'selected', 'disabled': 'disabled'}
 
+    USE_JQUERY = True
+    #USE_VANILLAJS = True
+
     def build(self, e, view):
         u"""
         Builds the main structure of of an HTML document.
@@ -239,6 +242,11 @@ class HtmlBuilder(XmlBuilder):
         self.buildMetaDescription(e)
         self.buildMetaKeyWords(e)
 
+        if self.USE_JQUERY:
+            self.jsUrl('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+        #elif self.USE_VANILLAJS: # Alternative for jQuery: http://vanilla-js.com
+        #    self.jsUrl()
+
         self.link(rel="apple-touch-icon-precomposed", href="img/appletouchicon.png")
         self.buildJavascript(e)
         self.buildFavIconLinks(e)
@@ -246,12 +254,28 @@ class HtmlBuilder(XmlBuilder):
 
         self.body()
         # Instead of calling the main self.block
-        self.div(class_='page_' + e.class_)
+        self.div(class_=e.__class__.__name__) # Probably Page class.
         self.comment(e.class_) # Add reference  Python class name of this component
-        self._div(comment='.page_'+ e.class_)
+        self.buildElements(e, view)
+        self._div(comment=e.__class__.__name__)
         self._body()
         self._html()
         self.closeOutput()
+
+    def buildElements(self, e, view):
+        u"""Recursively build element e and its children."""
+        for child in e.elements:
+            self.tabs()
+            self.div(class_=child.class_)
+            self.tabIn()
+            if child.isText:
+                self.output(`child.fs`) # TODO: For now, just show plain string.
+                self.newline()
+            else:
+                self.buildElements(child, view)
+            self.tabOut()
+            self.tabs()
+            self._div(comment=child.class_)
 
     def setViewPort(self):
         self.meta(name='viewport', content='width=device-width, initial-scale=1.0')
@@ -266,8 +290,21 @@ class HtmlBuilder(XmlBuilder):
             """
             pass
 
+    def jsUrl(self, js):
+        u"""Add url to external Javascript includes."""
+        if not isinstance(js, (tuple, list)):
+            js = [js]
+        for url in js:
+            self.script(type="text/javascript", src=url)
+            self.newline()
+
     def buildCssLinks(self, e):
-        pass
+        u"""Create the CSS links inside the head. /css-<SASS_STYLENAME> defines the type of CSS output from the Sass
+        compiler. The CSS parameter must be one of ['nested', 'expanded', 'compact', 'compressed']
+        """
+        cssUrl = 'main.css' # For now.
+        self.link(href=cssUrl, type="text/css", charset="UTF-8", rel="stylesheet", media="screen")
+        self.newline()
 
     def buildMetaDescription(self, e):
         pass
@@ -1182,23 +1219,22 @@ class HtmlBuilder(XmlBuilder):
         #     Build script. Note that if @src is used, then no self._script()
         #     must be used.
         #
-        r = self.result.peek()
-        r.write(u'<script')
+        self.output(u'<script')
         # Make sure to write "UTF-8" instead of "utf-8" since FireFox 2.0.0.4 will
         # ignore the script otherwise.
-        r.write(u' charset="%s"' % charset.upper())
-        r.write(u' type="%s"' % type)
+        self.output(u' charset="%s"' % charset.upper())
+        self.output(u' type="%s"' % type)
         language = args.get(u'language')
         if language is not None:
-            r.write(u' language="%s"' % language)
+            self.output(u' language="%s"' % language)
         for key, value in args.items():
-            r.write(u' %s="%s"' % (dataAttribute2Html5Attribute(key), value))
+            self.output(u' %s="%s"' % (dataAttribute2Html5Attribute(key), value))
         src = args.get(u'src')
         if src is not None:
-            r.write(u'></script>\n')
+            self.output(u'></script>\n')
         else:
             self._pushTag(u'script')
-            r.write(u'>\n')
+            self.output(u'>\n')
 
     def _script(self):
         self.output(u'\n')
