@@ -42,8 +42,9 @@ class CssBuilder(BaseBuilder):
         out.close()
 
     def _buildStyle(self, doc, out, styleName, style):
+        u"""Export the style parameters as translated CSS values."""
         out.write('.%s {\n' % styleName)
-        # For now write all values as comment.
+        # For now write all values as comment as development reference.
         out.write('/*')
         for parName, value in sorted(style.items()):
 			out.write('\t%s: %s;\n' % (parName, value))
@@ -51,7 +52,7 @@ class CssBuilder(BaseBuilder):
         out.write('}\n\n')
 
     def buildRootStyle(self, doc, out):
-    	u"""Translate the doc.rootStyle to the root body{...} CSS style."""
+    	u"""Translate the doc.rootStyle to the root body{...} CSS style using doc.rootStyle values."""
     	out.write('body {\n')
         style = doc.styles['root']
         out.write('\tbackground-color: %s;\n' % (color2Css(style['fill'] or (1,1,1))))
@@ -59,7 +60,7 @@ class CssBuilder(BaseBuilder):
         out.write('\tfont-size: %spx;\n' % ((style['fontSize'])))
         out.write('\tcolor: %s;\n' % (color2Css(style['textFill'] or (1, 0, 0))))
 
-        # For now write all values as comment.
+        # For now write all values as comments a development reference.
     	out.write('/*')
     	for name, value in sorted(style.items()):
     		out.write('\t%s: %s;\n' % (name, value))
@@ -72,6 +73,7 @@ class CssBuilder(BaseBuilder):
     		self._buildStyle(doc, out, styleName, style)
 
     def buildElementStyles(self, doc, out, e=None):
+        u"""Recursively build all style values into CSS."""
     	if e is None:
     		self.builfElementStyle(doc, out, self)
     	else:
