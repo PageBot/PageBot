@@ -377,6 +377,7 @@ class Glyph(object):
             self._pointContexts = []
             for cIndex, contour in enumerate(self.contours):
                 openPointContext = {} # Tuples of points -3, -2, -1, 0, 1, 2, 3 contour index
+                #def __init__(self, points, index, contourIndex, clockwise, glyphName=None):
                 self._pointContexts.append(openPointContext)
                 numPoints = len(contour)
                 contour3 = contour+contour+contour

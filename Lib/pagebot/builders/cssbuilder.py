@@ -42,6 +42,7 @@ class CssBuilder(BaseBuilder):
 
     def _buildStyle(self, doc, out, styleName, style):
         out.write('.%s {\n' % styleName)
+        # For now write all values as comment.
         out.write('/*')
         for parName, value in sorted(style.items()):
 			out.write('\t%s: %s;\n' % (parName, value))
@@ -51,6 +52,7 @@ class CssBuilder(BaseBuilder):
     def buildRootStyle(self, doc, out):
     	u"""Translate the doc.rootStyle to the root body{...} CSS style."""
     	out.write('body {\n')
+        # For now write all values as comment.
     	out.write('/*')
     	for name, value in sorted(doc.styles['root'].items()):
     		out.write('\t%s: %s;\n' % (name, value))

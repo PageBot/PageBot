@@ -160,10 +160,12 @@ class View(Element):
 
         # Select other than standard DrawBot export builders here.
         # TODO: Show be more generic if number of builders grows.
+        # TODO: Build multiple pages, now only doc[0] is supported.
+        doc = self.parent
         if fileName.lower().endswith('.html'): # Use CssBuilder instead
-            self.HTMLBUILDER_CLASS(fileName).build(self.parent, self)
+            self.HTMLBUILDER_CLASS(fileName).build(doc[0], self)
         elif fileName.lower().endswith('.css'): # Use CssBuilder instead
-            self.CSSBUILDER_CLASS(fileName).build(self.parent, self)
+            self.CSSBUILDER_CLASS(fileName).build(doc[0], self)
         else:
             # http://www.drawbot.com/content/canvas/saveImage.html
             saveImage(fileName, multipage=multiPage)
