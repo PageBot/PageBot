@@ -44,6 +44,12 @@ def makeDocument():
     # Create a new document, default to the defined page size. 
     doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)
     
+    rs = doc.getRootStyle()
+    rs['fill'] = (1, 1, 0) # Yellow background for debugging
+    rs['font'] = 'Georgia'
+    rs['fontSize'] = 24
+    rs['textFill'] = (1, 0, 0)
+    
     view = doc.getView()
     view.padding = 0 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
