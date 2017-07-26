@@ -47,16 +47,17 @@ class CssBuilder(BaseBuilder):
         'fontSize': ('font-size: %spx;', 12, None),
         'textFill': ('color: %s;', (0, 0, 0), color2Css),
         'leading': ('line-height: %spx;', None, None),
-        'rleading': ('line-height: %sem;', '%0.2f'%1.3, None),
+        'rLeading': ('line-height: %sem;', '%0.2f'%1.3, None),
     }
     def _writeStyleValue(self, name, value, out):
+        u"""Write the converted style value as CSS, using self.STYLE2CSS for conversion parameters."""
         if name in self.STYLE2CSS:
             cssName, default, f = self.STYLE2CSS[name]
             cssValue = value or default
             if f is not None:
                 cssValue = f(cssValue)
             if cssValue is not None:
-                out.write('\t'+(cssName % cssValue)+(' /* %s */\n' % `value`)) 
+                out.write('\t'+(cssName % cssValue)+(' /* %s:%s */\n' % (name, `value`)))
                 return True # Mark that we found it
         return False
 

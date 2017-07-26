@@ -273,6 +273,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         font = DEFAULT_FONT, # Default is to avoid existing font and fontSize in the graphic state.
         fallbackFont = DEFAULT_FALLBACK_FONT,
         fontSize = u * 7/10, # Default font size in points, related to U. If FIT, size is elastic to width.
+        rFontSize = 1, # Relative font size as relative fraction of current root font size.
         uppercase = False, # All text in upper case
         lowercase = False, # All text in lower case (only if uppercase is False
         capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase)
@@ -312,7 +313,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         baselineGridStart = None, # Optional baselineGridStart if different from top padding.
         baseLineMarkerSize = 8, # FontSize of markers showing base line grid info.
         leading = 0, # Absolute leading value (can be used complementary to rLeading).
-        rLeading = 1, # Relative factor to fontSize.
+        rLeading = 1, # Relative factor to current fontSize.
         paragraphTopSpacing = 0, # Only works if there is a prefix style value != 0
         rParagraphTopSpacing = 0,  # Only works if there is a prefix style value != 0
         paragraphBottomSpacing = 0,  # Only works if there is a postfix style value != 0
