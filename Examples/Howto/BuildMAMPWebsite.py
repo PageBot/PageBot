@@ -47,9 +47,13 @@ def makeDocument():
     rs = doc.getRootStyle()
     rs['fill'] = (1, 1, 0) # Yellow background for debugging
     rs['font'] = 'Georgia'
-    rs['fontSize'] = 24
+    rs['fontSize'] = 14
     rs['rLeading'] = 1.4
     rs['textFill'] = (1, 0, 0)
+    
+    pStyle = doc.addStyle('p', dict(textFill=0))
+    h1Style = doc.addStyle('h1', dict(fontSize=24, textFill=(0,0,1)))
+    h2Style = doc.addStyle('h2', dict(fontSize=18, textFill=(0,1,0)))
     
     view = doc.getView()
     view.padding = 0 # Aboid showing of crop marks, etc.
@@ -66,9 +70,9 @@ def makeDocument():
     page0.name = 'Page 1'
     page0.padding = PagePadding
     
-    s = ''
+    s = newFS('Headline\n', style=h1Style)
     for n in range(10):
-        s += '(Line %d) Volume of text defines the box height. Volume of text defines the box height. \n' % (n+1)
+        s += newFS('(Line %d) Volume of text defines the box height. Volume of text defines the box height. \n' % (n+1), style=pStyle)
         h1 = None  
           
     e1 = newTextBox(s, 

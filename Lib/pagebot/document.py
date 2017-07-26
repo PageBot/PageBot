@@ -162,7 +162,7 @@ class Document(object):
         style = self.styles[name]
         for key, value in addStyle.items():
             style[key] = value
-        return style
+        return style # Answer the style for convenience of the caller.
 
     def addStyle(self, name, style):
         u"""Add the style to the self.styles dictionary.  Make sure that styles don't get overwritten. Remove them first
@@ -171,7 +171,8 @@ class Document(object):
         self.styles[name] = style
         # Force the name of the style to synchronize with the requested key.
         style['name'] = name
-    
+        return style # Answer the style for convenience of the caller.
+        
     def removeStyle(self, name):
         u"""Remove the style *name* if it exists. Raise an error if is does not exist."""
         del self.styles[name]
