@@ -124,6 +124,18 @@ def color2Css(c):
     r, g, b = c
     return '#%02x%02x%02x' % (r*255, g*255, b*255)
 
+def value2Tuple4(v):
+    u"""Answer a tuple of 4 values."""
+    if not isinstance(v, (list, tuple)):
+        v = [v]
+    if len(v) == 1:
+        return v[0], v[0], v[0], v[0]
+    if len(v) == 2:
+        return v[0], v[1], v[0], v[1]
+    if len(v) == 4:
+        return v
+    raise ValueError
+
 # N U M B E R S
 
 def asNumber(v):
@@ -487,9 +499,7 @@ def path2FormatPath(path, format=None):
     return None
 
 def path2Name(path):
-    u"""
-    <doc>Answers the file name part of the path.</doc>
-    """
+    u"""Answers the file name part of the path."""
     if path is None:
         return None
     if not path:
