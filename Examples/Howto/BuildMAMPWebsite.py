@@ -48,6 +48,7 @@ def makeDocument():
     rs['fill'] = (1, 1, 0) # Yellow background for debugging
     rs['font'] = 'Georgia'
     rs['fontSize'] = 24
+    rs['rLeading'] = 1.4
     rs['textFill'] = (1, 0, 0)
     
     view = doc.getView()

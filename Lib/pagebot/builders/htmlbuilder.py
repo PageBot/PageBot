@@ -269,7 +269,7 @@ class HtmlBuilder(XmlBuilder):
             self.div(class_=child.class_)
             self.tabIn()
             if child.isText:
-                self.output(`child.fs`) # TODO: For now, just show plain string.
+                self.output(addHtmlBreaks(`child.fs`)) # TODO: For now, just show plain string.
                 self.newline()
             else:
                 self.buildElements(child, view)

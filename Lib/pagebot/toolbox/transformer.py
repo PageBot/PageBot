@@ -859,7 +859,7 @@ def dataAttribute2Html5Attribute(key):
 def pyAttrName2XmlAttrName(key):
     u"""
     The @pyAttrName2XmlAttrName@ converts the Python XML attribute name @key@ to an
-    appropriate XML attribute identifier.<br/>.
+    appropriate XML attribute identifier.
     If the *key* is @'class_'@ then it is translated into @'class'@.
     If there is an HTML5 attribute *data_xxxx* used, then change that to *data-xxxx*.
     """
@@ -871,11 +871,10 @@ def pyAttrName2XmlAttrName(key):
 
 def xmlAttrName2PyAttrName(key):
     u"""The @xmlAttrName2PyAttrName@ method converts the XML attribute name
-    *key* to an appropriate Python attribute identifier.<br/>
-
+    *key* to an appropriate Python attribute identifier.
     If the *key* is @'class'@ then it is translated into @'class_'@. If a
     namespace is defined (to be recognized on {...}, then replace that by
-    prefix @'ns_'@.<br/> If there is an HTML5 attribute *data-xxxx* used,
+    prefix @'ns_'@. If there is an HTML5 attribute *data-xxxx* used,
     then change that to *data_xxxx*."""
     if key == 'class':
         key = 'class_'
@@ -938,6 +937,11 @@ REMOVETAGS = re.compile(r'<.*?>')
 
 def stripTags(xml):
     return REMOVETAGS.sub('', xml)
+
+def addHtmlBreaks(s, isXhtml=True):
+    u"""Replace all returns by <br/> or <br>."""
+    tag = {True:'<br/>\n', False:'<br>\n'}[isXhtml]
+    return s.replace('\n',tag)
 
 REMOVEMULTIPLEWHITESPACE = re.compile(r'\n\s+')
 
