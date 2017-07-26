@@ -466,7 +466,7 @@ def newFS(t, e=None, style=None, w=None, h=None, fontSize=None):
     if sFont is not None:
         fs.font(sFont)
     # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
-    # TODO: add calculation of rFontSize here too.
+    # TODO: add calculation of rFontSize (relative float based on root-fontSize) here too.
     sFontSize = fontSize or css('fontSize', e, style) or 16 # May be scaled to fit w or h if target is defined.
     sLeading = css('leading', e, style)
     rLeading = css('rLeading', e, style)

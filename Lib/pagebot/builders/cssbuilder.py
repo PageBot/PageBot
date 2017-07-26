@@ -48,6 +48,10 @@ class CssBuilder(BaseBuilder):
         'textFill': ('color: %s;', (0, 0, 0), color2Css),
         'leading': ('line-height: %spx;', None, None),
         'rLeading': ('line-height: %sem;', '%0.2f'%1.3, None),
+        'pl': ('padding-left: %spx;', 0, None),
+        'pt': ('padding-top: %spx;', 0, None),
+        'pb': ('padding-bottom: %spx;', 0, None),
+        'pr': ('padding-right: %spx;', 0, None),
     }
     def _writeStyleValue(self, name, value, out):
         u"""Write the converted style value as CSS, using self.STYLE2CSS for conversion parameters."""
