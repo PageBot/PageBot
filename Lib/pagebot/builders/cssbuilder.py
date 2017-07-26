@@ -41,44 +41,63 @@ class CssBuilder(BaseBuilder):
         self.buildMainStyles(doc, out)
         out.close()
 
-    def _buildStyle(self, doc, out, styleName, style):
+    STYLE2CSS = {
+        'fill': ('background-color: %s;', (1, 1, 1), color2Css),
+        'font': ('font-family: %s;', 'Verdana, Sans', None),
+        'fontSize': ('font-size: %spx;', 12, None),
+        'textFill': ('color: %s;', (0, 0, 0), color2Css),
+        'leading': ('line-height: %spx;', None, None),
+        'rleading': ('line-height: %sem;', '%0.2f'%1.3, None),
+    }
+    def _writeStyleValue(self, name, value, out):
+        if name in self.STYLE2CSS:
+            cssName, default, f = self.STYLE2CSS[name]
+            cssValue = value or default
+            if f is not None:
+                cssValue = f(cssValue)
+            if cssValue is not None:
+                out.write('\t'+(cssName % cssValue)+(' /* %s */\n' % `value`)) 
+                return True # Mark that we found it
+        return False
+
+    def _buildStyle(self, doc, out, style):
         u"""Export the style parameters as translated CSS values."""
-        out.write('.%s {\n' % styleName)
         # For now write all values as comment as development reference.
-        out.write('/*')
+        notProcessed = {}
         for parName, value in sorted(style.items()):
-			out.write('\t%s: %s;\n' % (parName, value))
+            if not self._writeStyleValue(parName, value, out):
+                notProcessed[parName] = value
+
+        # For now write all unprocessed values as comments a development reference.
+        out.write('/*')
+        for parName, value in sorted(notProcessed.items()):
+    		out.write('\t%s: %s;\n' % (parName, value))
         out.write('*/\n')
-        out.write('}\n\n')
 
     def buildRootStyle(self, doc, out):
     	u"""Translate the doc.rootStyle to the root body{...} CSS style using doc.rootStyle values."""
     	out.write('body {\n')
-        style = doc.styles['root']
-        out.write('\tbackground-color: %s;\n' % (color2Css(style['fill'] or (1,1,1))))
-        out.write('\tfont-family: %s;\n' % ((style['font'])))
-        out.write('\tfont-size: %spx;\n' % ((style['fontSize'])))
-        out.write('\tcolor: %s;\n' % (color2Css(style['textFill'] or (1, 0, 0))))
-
-        # For now write all values as comments a development reference.
-    	out.write('/*')
-    	for name, value in sorted(style.items()):
-    		out.write('\t%s: %s;\n' % (name, value))
-    	out.write('*/\n')
+        self._buildStyle(doc, out, doc.styles['root'])
     	out.write('}\n\n')
 
     def buildMainStyles(self, doc, out):
-    	u"""BUild the styles for text elements, as defined in the doc.styles dictionary."""
+    	u"""Build the styles for text elements, as defined in the doc.styles dictionary."""
     	for styleName, style in sorted(doc.styles.items()):
-    		self._buildStyle(doc, out, styleName, style)
+            if styleName == 'root':
+                continue
+            out.write('%s {\n' % styleName)
+            self._buildStyle(doc, out, style)
+            out.write('}\n\n')
 
     def buildElementStyles(self, doc, out, e=None):
         u"""Recursively build all style values into CSS."""
     	if e is None:
     		self.builfElementStyle(doc, out, self)
     	else:
-    		self._buildStyle(doc, out, e.name, e.style)
-    		for child in e.getElements():
-    			self.buildElementStyles(doc, out, child)
+            out.write('.%s {\n' % e.name, )
+            self._buildStyle(doc, out, e.style)
+            out.write('}\n\n')
+            for child in e.getElements():
+                self.buildElementStyles(doc, out, child)
 
 
