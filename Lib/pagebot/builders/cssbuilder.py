@@ -34,11 +34,18 @@ STYLE2CSS = {
     'textFill': ('color: %s;', (0, 0, 0), color2Css),
     'leading': ('line-height: %spx;', None, None),
     'rLeading': ('line-height: %sem;', '%0.2f'%1.3, None),
+    # Padding
     'padding': ('padding: %spx %spx %spx %spx;', (0, 0, 0, 0), value2Tuple4),
     'pl': ('padding-left: %spx;', 0, None),
     'pt': ('padding-top: %spx;', 0, None),
     'pb': ('padding-bottom: %spx;', 0, None),
     'pr': ('padding-right: %spx;', 0, None),
+    # Margin
+    'margin': ('margin: %spx %spx %spx %spx;', (0, 0, 0, 0), value2Tuple4),
+    'ml': ('margin-left: %spx;', 0, None),
+    'mt': ('margin-top: %spx;', 0, None),
+    'mb': ('margin-bottom: %spx;', 0, None),
+    'mr': ('margin-right: %spx;', 0, None),
 }
 
 class CssBuilder(BaseBuilder):
@@ -90,7 +97,7 @@ class CssBuilder(BaseBuilder):
         if notProcessed: # Any style value not processed, then show as comment.
             out.write('/*')
             for parName, value in sorted(notProcessed.items()):
-        		out.write('\t%s: %s;\n' % (self._cssId(parName), value))
+        		out.write('\t%s: %s;\n' % (parName, value))
             out.write('*/\n')
 
     def buildRootStyle(self, doc, out):
