@@ -120,9 +120,18 @@ def s2Color(s):
         return None
 
 def color2Css(c):
-    u"""Answer the CSS hex color string from the color (r, g, b) tuple."""
-    r, g, b = c
+    u"""Answer the CSS hex color string from the color (r, g, b, o) or (r, g, b) tuple."""
+    if len(c) == 4: # Includes opacity
+        r, g, b, _ = c
+    else: # Must be just r, g, b
+        r, g, b = c
     return '#%02x%02x%02x' % (r*255, g*255, b*255)
+
+def color2CssOpacity(c):
+    u"""Answer the tuple with CSS hex color and value for opacity from the color (r, g, b, o) or (r, g, b) tuple."""
+    if len(c) == 4: # Includes opacity
+        return color2Css(c), c[-1] # 0..1
+    return color2Css(c), 1
 
 def value2Tuple4(v):
     u"""Answer a tuple of 4 values."""

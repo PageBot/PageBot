@@ -9,9 +9,12 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     cssbuilder.py
+#     scssbuilder.py
 #
 #     U N D E R  D E V E L O P M E N T
+#
+#     TODO: Add download/install for pyscss, if it does not exist.
+#     https://github.com/Kronuz/pyScss
 #
 #     This builder is being worked on. 
 #     It will generate the export .css from all CSS-based style values in the element tree,
@@ -20,17 +23,18 @@
 #
 #     TODO: Also make available as SCSS generator.
 #
+import scss # Pyscss
 import pagebot
 from basebuilder import BaseBuilder
-from pagebot.toolbox.transformer import color2CssOpacity, value2Tuple4
+from pagebot.toolbox.transformer import color2Css, value2Tuple4
 
 HTMLTAGS = set(['h1','h2','h3','h4','h5','h6','p','span','div'])
 
 STYLE2CSS = {
-    'fill': ('background-color: %s; opacity: %s;', (1, 1, 1, 1), color2CssOpacity),
+    'fill': ('background-color: %s;', (1, 1, 1), color2Css),
     'font': ('font-family: %s;', 'Verdana, Sans', None),
     'fontSize': ('font-size: %spx;', 12, None),
-    'textFill': ('color: %s; opacity: %s;', (0, 0, 0, 1), color2CssOpacity),
+    'textFill': ('color: %s;', (0, 0, 0), color2Css),
     'leading': ('line-height: %spx;', None, None),
     'rLeading': ('line-height: %sem;', '%0.2f'%1.3, None),
     # Padding
@@ -96,18 +100,18 @@ class CssBuilder(BaseBuilder):
         if notProcessed: # Any style value not processed, then show as comment.
             self.write('/*')
             for parName, value in sorted(notProcessed.items()):
-        		self.write('\t%s: %s;\n' % (parName, value))
+                self.write('\t%s: %s;\n' % (parName, value))
             self.write('*/\n')
 
     def buildRootStyle(self, doc):
-    	u"""Translate the doc.rootStyle to the root body{...} CSS style using doc.rootStyle values."""
-    	self.write('body {\n')
+        u"""Translate the doc.rootStyle to the root body{...} CSS style using doc.rootStyle values."""
+        self.write('body {\n')
         self._buildStyle(doc, doc.styles['root'])
-    	self.write('} /* body */\n\n')
+        self.write('} /* body */\n\n')
 
     def buildMainStyles(self, doc):
-    	u"""Build the styles for text elements, as defined in the doc.styles dictionary."""
-    	for styleName, style in sorted(doc.styles.items()):
+        u"""Build the styles for text elements, as defined in the doc.styles dictionary."""
+        for styleName, style in sorted(doc.styles.items()):
             if styleName == 'root':
                 continue
             cssId = self._cssId(styleName)
@@ -117,9 +121,9 @@ class CssBuilder(BaseBuilder):
 
     def buildElementStyles(self, doc, e=None):
         u"""Recursively build all style values into CSS."""
-    	if e is None:
-    		self.builfElementStyle(doc, self)
-    	else:
+        if e is None:
+            self.builfElementStyle(doc, self)
+        else:
             cssId = self._cssId(e.name)
             self.write('%s {\n' % cssId)
             self._buildStyle(doc, e.style)

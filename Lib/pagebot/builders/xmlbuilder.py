@@ -52,7 +52,7 @@ class XmlBuilder(BaseBuilder):
         """"Output tabs to the current level and add newlines, depending on the setting of @self._newline@
         (string with newlines) and ``self._tabLevel`` (number of indents)."""
         if self._verbose:
-            self.output(self._newLine + (self._tabIndent * self._tabLevel)) 
+            self.write(self._newLine + (self._tabIndent * self._tabLevel)) 
 
     def tabIn(self):
         if self._doIndent:
@@ -64,7 +64,7 @@ class XmlBuilder(BaseBuilder):
 
     def newline(self, count=1):
         if self._verbose:
-            self.output(self._newLine * count)
+            self.write(self._newLine * count)
 
     def getandwrite_attributes(self, tagname, args):
         attributes = self.GLOBAL_ATTRIBUTES.union(getattr(self, tagname.upper() + '_ATTRIBUTES', set([])))
@@ -133,42 +133,42 @@ class XmlBuilder(BaseBuilder):
                 value = value.replace('"', '&quot;');
             line = u' %s="%s"' % (key, value)
         if line:
-            self.output(line)
+            self.write(line)
 
     def write_php_attribute(self, value):
-        self.output(' ')
-        self.output(value)
+        self.write(' ')
+        self.write(value)
 
     def write_tag(self, tagname, open, args):
         u"""
         Writes a normally formatted HTML tag, exceptions have a custom implementation, see respective functions.
         """
         self.tabs()
-        self.output(u'<' + tagname)
+        self.write(u'<' + tagname)
         self.getandwrite_attributes(tagname, args)
 
         if open:
-            self.output(u'>')
+            self.write(u'>')
             # Push as last, so we can see the current tag on the stack
             self._pushTag(tagname)
             self.tabIn()
         else:
-            self.output(u'/>')
+            self.write(u'/>')
 
     def write_tag_noWhitespace(self, tagname, open, args):
         u"""
         Writes a normally formatted HTML tag, exceptions have a custom implementation, see respective functions.
         Don’t write any white space inside the block. E.g. used by <textarea>
         """
-        self.output(u'<' + tagname)
+        self.write(u'<' + tagname)
         self.getandwrite_attributes(tagname, args)
 
         if open:
-            self.output(u'>')
+            self.write(u'>')
             # Push as last, so we can see the current tag on the stack
             self._pushTag(tagname)
         else:
-            self.output(u'/>')
+            self.write(u'/>')
 
     # ---------------------------------------------------------------------------------------------------------
     #     B L O C K
@@ -193,19 +193,19 @@ class XmlBuilder(BaseBuilder):
     def _closeTag(self, tag):
         self.tabOut()
         self.tabs()
-        self.output(u'</%s>' % tag)
+        self.write(u'</%s>' % tag)
         self._popTag(tag)
 
     def _closeTag_noWhitespace(self, tag):
         u"""Close the tag. Don’t write any white space inside the block. E.g. used by <textarea>."""
-        self.output(u'</%s>' % tag)
+        self.write(u'</%s>' % tag)
         self._popTag(tag)
 
     def _popTag(self, tag):
         u"""Pop tag from the tag stack."""
         runningTag = self._tagStack.pop()
         if runningTag is None or not runningTag == tag:
-            self.output('<div color=%s>Mismatch in closing tag "%s", expected "%s" in tree "%s".</div>' %
+            self.write('<div color=%s>Mismatch in closing tag "%s", expected "%s" in tree "%s".</div>' %
                 (self.C.CLASS_ERROR, tag, runningTag, `self._tagStack`))
 
     def _peekTag(self):

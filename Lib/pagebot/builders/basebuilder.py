@@ -35,7 +35,7 @@ class BaseBuilder(object):
         self._output.close()
         self._output = None
 
-    def output(self, s):
+    def write(self, s):
         u"""Write the string *s* to the output file."""
         self._output.write(s)
 
