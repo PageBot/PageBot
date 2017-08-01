@@ -42,17 +42,20 @@ class TextRun(object):
     def __init__(self, ctRun, runIndex):
         self.runIndex = runIndex # Index of the run in the TextLine
         self._ctRun = ctRun
+        self._style = None # Property cash for constructed style from run parameters.
         self.glyphCount = gc = CoreText.CTRunGetGlyphCount(ctRun)
-
+        # Reverse the style from 
         attrs = CoreText.CTRunGetAttributes(ctRun)
         self.nsFont = attrs['NSFont']
         #self.fontDescriptor = f.fontDescriptor()
         self.fill = attrs['NSColor']
         self.nsParagraphStyle = attrs['NSParagraphStyle']
+        self.attrs = attrs # Save, in case the caller want to query run parameters.
 
         self.iStart, self.iEnd = CoreText.CTRunGetStringRange(ctRun)
         self.string = u''    
         # Hack for now to find the string in repr-string if self._ctLine.
+        # TODO: Make a better conversion here, not relying on the format of the repr-string.
         for index, part in enumerate(`ctRun`.split('"')[1].split('\\u')):
             if index == 0:
                 self.string += part
@@ -60,9 +63,11 @@ class TextRun(object):
                 self.string += unichr(int(part[0:4], 16))
                 self.string += part[4:]
 
-        #print '=====', ctRun
         #print gc, len(CoreText.CTRunGetStringIndicesPtr(ctRun)), CoreText.CTRunGetStringIndicesPtr(ctRun), ctRun
-        self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
+        try:
+            self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
+        except TypeError:
+            self.stringIndices = [0]
         #CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
         self.advances = CoreText.CTRunGetAdvances(ctRun, CoreText.CFRange(0, 5), None)
         #self.positions = CoreText.CTRunGetPositionsPtr(ctRun)[0:gc]
@@ -84,6 +89,21 @@ class TextRun(object):
 
     def __getitem__(self, index):
         return self.string[index]
+
+    def _get_style(self):
+        u"""Answer the constructed style dictionary, with names that fit the standard
+        PageBot style."""
+        if self._style is None:
+            self._style = dict(
+                textFill=self.fill,
+                pl=self.headIndent,
+                pr=self.tailIndent,
+                fontSize=self.fontSize,
+                font=self.displayName,
+                leading=self.leading + self.fontSize, # ??
+            )
+        return self._style
+    style = property(_get_style)
 
     # Font stuff
 
@@ -199,10 +219,6 @@ class TextRun(object):
     def _get_lineHeightMultiple(self):
         return self.nsParagraphStyle.lineHeightMultiple()
     lineHeightMultiple = property(_get_lineHeightMultiple)
-
-    def _get_lineSpacing(self):
-        return self.nsParagraphStyle.lineSpacing()
-    lineSpacing = property(_get_lineSpacing)
 
     def _get_maximumLineHeight(self):
         return self.nsParagraphStyle.maximumLineHeight()
@@ -416,6 +432,30 @@ class TextBox(Element):
         for _, baselineY in textBoxBaseLines(self.fs, (0, y, w or self.w, h or self.h)):
             baselines.append(baselineY)
         return baselines
+
+    def _findStyle(self, run):
+        u"""Answer the name and style that desctibes this run best. If there is a doc
+        style, then answer that one with its name. Otherwise answer a new unique style name
+        and the style dict with its parameters."""
+        print run.attrs
+        print '#++@+', run.style
+        return 'ZZZ', run.style
+
+    def getStyledLines(self):
+        u"""Answer the list with (styleName, style, textRun) tuples, reversed engeneered
+        from the FormattedString self.fs. This list can be used to query the style parameters
+        used in the textBox, or to create CSS styles from its content."""
+        styledLines = []
+        prevStyle = None
+        for line in self.textLines:
+            for run in line.runs:
+                styleName, style = self._findStyle(run)
+                if prevStyle is None or prevStyle != style:
+                    styledLines.append([styleName, style, run.string])
+                else: # In case styles of runs are identical (e.g. on line wraps), just add.
+                    styledLines[-1][-1] += run.string
+                prevStyle = style
+        return styledLines
 
     #   F L O W
 

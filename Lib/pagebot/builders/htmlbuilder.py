@@ -269,7 +269,7 @@ class HtmlBuilder(XmlBuilder):
             self.div(class_=child.class_)
             self.tabIn()
             if child.isText:
-                self.output(addHtmlBreaks(`child.fs`)) # TODO: For now, just show plain string.
+                self.write(addHtmlBreaks(`child.fs`)) # TODO: For now, just show plain string.
                 self.newline()
             else:
                 self.buildElements(child, view)
@@ -336,11 +336,11 @@ class HtmlBuilder(XmlBuilder):
             if self._svgMode:
                 self.svgText(componentOrText, **kwargs)
             else:
-                self.output(componentOrText)
+                self.write(componentOrText)
         else: # Otherwise it must be of type component
             if componentOrText.id:
                 self.span(id=id, contentEditable=componentOrText.editable)
-            self.output(componentOrText.text)
+            self.write(componentOrText.text)
             if componentOrText.id:
                 self._span()
 
@@ -384,7 +384,7 @@ class HtmlBuilder(XmlBuilder):
             self.write_attribute(key, value)
 
     def docType(self, s):
-        self.output('<!DOCTYPE %s>\n' % s)
+        self.write('<!DOCTYPE %s>\n' % s)
 
     def html(self, xmlns=None, **args):
         """
@@ -396,9 +396,9 @@ class HtmlBuilder(XmlBuilder):
         </python>
         Default value for xmlns is "http://www.w3.org/1999/xhtml".
         """
-        self.output(u'<html xmlns="%s"' % (xmlns or 'http://www.w3.org/1999/xhtml'))
+        self.write(u'<html xmlns="%s"' % (xmlns or 'http://www.w3.org/1999/xhtml'))
         self.getandwrite_attributes(u'html', args)
-        self.output(u'>')
+        self.write(u'>')
         self.tabIn()
         # Push as last, so we can see the current tag on the stack
         self._pushTag(u'html')
@@ -420,9 +420,9 @@ class HtmlBuilder(XmlBuilder):
         """
         self.tabs()
         self.tabIn()
-        self.output(u'<head')
+        self.write(u'<head')
         self.getandwrite_attributes(u'head', args)
-        self.output(u'>')
+        self.write(u'>')
         # Automatic meta charset tag, so we don't forget we only want to work in UTF-8
         self.meta(httpequiv='Content-Type', content='text/html;charset=UTF-8')
         # Push as last, so we can see the current tag on the stack
@@ -443,7 +443,7 @@ class HtmlBuilder(XmlBuilder):
         """
         self.tabs()
         self.tabIn()
-        self.output(u'<title>')
+        self.write(u'<title>')
         # Push as last, so we can see the current tag on the stack
         self._pushTag(u'title')
 
@@ -452,7 +452,7 @@ class HtmlBuilder(XmlBuilder):
 
     def title_(self, s):
         self.title()
-        self.output(s)
+        self.write(s)
         self._title()
 
     def link(self, **args):
@@ -916,7 +916,7 @@ class HtmlBuilder(XmlBuilder):
         """
         The ``nbsp`` generates the ``count`` (default is 1) amound of non-breaking-spaces.
         """
-        self.output('&nbsp;'*count)
+        self.write('&nbsp;'*count)
 
     def table(self, **args):
         u"""
@@ -1090,7 +1090,7 @@ class HtmlBuilder(XmlBuilder):
         self.write_tag(u'img', False, args)
 
     def map(self, name):
-        self.output(u'<map name="%s">' % name)
+        self.write(u'<map name="%s">' % name)
         self._pushTag(u'map')
 
     def _map(self):
@@ -1192,7 +1192,7 @@ class HtmlBuilder(XmlBuilder):
         r = self.result
         r.write(u'<iframe src="%s"' % src)
         self.getandwrite_attributes(u'iframe', args)
-        self.output(u'></iframe>')
+        self.write(u'></iframe>')
 
     def embed(self, **args):
         """
@@ -1219,25 +1219,25 @@ class HtmlBuilder(XmlBuilder):
         #     Build script. Note that if @src is used, then no self._script()
         #     must be used.
         #
-        self.output(u'<script')
+        self.write(u'<script')
         # Make sure to write "UTF-8" instead of "utf-8" since FireFox 2.0.0.4 will
         # ignore the script otherwise.
-        self.output(u' charset="%s"' % charset.upper())
-        self.output(u' type="%s"' % type)
+        self.write(u' charset="%s"' % charset.upper())
+        self.write(u' type="%s"' % type)
         language = args.get(u'language')
         if language is not None:
-            self.output(u' language="%s"' % language)
+            self.write(u' language="%s"' % language)
         for key, value in args.items():
-            self.output(u' %s="%s"' % (dataAttribute2Html5Attribute(key), value))
+            self.write(u' %s="%s"' % (dataAttribute2Html5Attribute(key), value))
         src = args.get(u'src')
         if src is not None:
-            self.output(u'></script>\n')
+            self.write(u'></script>\n')
         else:
             self._pushTag(u'script')
-            self.output(u'>\n')
+            self.write(u'>\n')
 
     def _script(self):
-        self.output(u'\n')
+        self.write(u'\n')
         self._closeTag(u'script')
         self.newline()
 
@@ -1373,22 +1373,22 @@ class HtmlBuilder(XmlBuilder):
             method = 'POST'
         if action is None:
             action = self.e['path']
-        self.output(u'<form method="%s" action="%s"' % (method, action))
+        self.write(u'<form method="%s" action="%s"' % (method, action))
         if class_ is not None:
-            self.output(u' class="%s"' % class_)
+            self.write(u' class="%s"' % class_)
         if id is not None:
-            self.output(u' id="%s"' % id)
+            self.write(u' id="%s"' % id)
         if role is not None:
-            self.output(u' role="%s"' % role)
+            self.write(u' role="%s"' % role)
         if name is not None:
-            self.output(u' name="%s"' % name)
+            self.write(u' name="%s"' % name)
         if onsubmit is not None:
-            self.output(u' onsubmit="%s"' % onsubmit)
+            self.write(u' onsubmit="%s"' % onsubmit)
         if enctype is not None:
-            self.output(u' enctype="%s"' % enctype)
+            self.write(u' enctype="%s"' % enctype)
         if style is not None:
-            self.output(u' style="%s"' % style)
-        self.output(u' accept-charset="utf-8">')
+            self.write(u' style="%s"' % style)
+        self.write(u' accept-charset="utf-8">')
         # Push as last, so we can see the current tag on the stack
         self._pushTag(u'form')
 
@@ -1536,4 +1536,4 @@ class HtmlBuilder(XmlBuilder):
 
     def comment(self, s):
         if s:
-            self.output('<!-- %s -->' % object2SpacedString(s))
+            self.write('<!-- %s -->' % object2SpacedString(s))
