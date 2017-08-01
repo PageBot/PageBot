@@ -19,7 +19,7 @@ from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from drawBot import BezierPath
 from fontinfo import FontInfo
-from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
+from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, PointContext
 from pagebot.toolbox.transformer import point2D
 
 C = 0.5
@@ -376,13 +376,15 @@ class Glyph(object):
         if self._pointContexts is None:
             self._pointContexts = []
             for cIndex, contour in enumerate(self.contours):
-                openPointContext = {} # Tuples of points -3, -2, -1, 0, 1, 2, 3 contour index
+                #openPointContext = PointContext # Instance as tuple of points -3, -2, -1, 0, 1, 2, 3 contour index
                 #def __init__(self, points, index, contourIndex, clockwise, glyphName=None):
-                self._pointContexts.append(openPointContext)
+                #self._pointContexts.append(openPointContext)
                 numPoints = len(contour)
                 contour3 = contour+contour+contour
-                for n in range(numPoints):
-                    openPointContext[n] = contour3[n+numPoints-3:n+numPoints+4]
+                for pIndex in range(numPoints):
+                    points = contour3[pIndex+numPoints-3:pIndex+numPoints+4]
+                    pc = PointContext(points, pIndex, cIndex )
+                    self._pointContexts.append(pc)
         return self._pointContexts
     pointContexts = property(_get_pointContexts)
 

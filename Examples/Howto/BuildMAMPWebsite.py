@@ -49,10 +49,10 @@ def makeDocument():
     rs['font'] = 'Georgia'
     rs['fontSize'] = 14
     rs['rLeading'] = 1.4
-    rs['textFill'] = (1, 0, 0)
+    rs['textFill'] = (1, 0, 0, 1)
     
-    textBoxStyle = doc.addStyle('textbox', dict(fill=(0, 0, 0, 0.1),
-        padding=20))
+    textBoxStyle = doc.addStyle('textbox', dict(fill=(0, 0, 0, 0.7),
+        padding=40))
     pStyle = doc.addStyle('p', dict(textFill=0))
     h1Style = doc.addStyle('h1', dict(fontSize=24, textFill=(0,0,1)))
     h2Style = doc.addStyle('h2', dict(fontSize=18, textFill=(0,1,0)))
@@ -89,7 +89,6 @@ def makeDocument():
         yAlign=BOTTOM, xAlign=LEFT,
         leading=5, fontSize=9, textFill=0, strokeWidth=0.5, fill=0.9, stroke=None,
     )
-    print e1.getStyledLines()
     
     e2 = newTextBox('', # Empty box, will get the overflow from e1, if there is any.
         name='CSSTextBox2', # Flow reference by element.name 

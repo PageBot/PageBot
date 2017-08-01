@@ -25,8 +25,9 @@ class GlyphAnalyzer(object):
     VERTICAL_CLASS = Vertical # Allow inheriting classes to change this
     HORIZONTAL_CLASS = Horizontal
 
-    def __init__(self, glyph):
-        self._glyph = weakref.ref(glyph)
+    def __init__(self, style, name):
+        self._style = style
+        self.name = name
         self._analyzer = None
 
         self._horizontals = None
@@ -38,11 +39,11 @@ class GlyphAnalyzer(object):
         self._roundBars = None # Recognized round bars, so not filtered by FloqMemes
 
     def _get_glyph(self):
-        return self._glyph()
+        return self._style[self.name]
     glyph = property(_get_glyph)
 
     def __repr__(self):
-        return '<Analyzer of "%s">' % self.glyph.name
+        return '<Analyzer of %s[%s]>' % (self.style.info.fullName, self.name)
 
     # self.verticals
 
