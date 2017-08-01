@@ -439,7 +439,10 @@ class Element(object):
     # Most common properties
 
     def setParent(self, parent):
-        u"""Set the parent of self as weakref if it is not None. Don't call self.appendElement()."""
+        u"""Set the parent of self as weakref if it is not None. Don't call self.appendElement().
+        Calling setParent is not the main way to add an element to a parent, because the original
+        parent would not know that the element disappeared. Call self.appendElement(e), which will
+        call this method. """
         if parent is not None:
             parent = weakref.ref(parent)
         self._parent = parent # Can be None if self needs to be unlinked from a parent tree. E.g. when moving it.
@@ -1031,7 +1034,6 @@ class Element(object):
         return self.h + self.mt + self.mb # Add margins to height
     def _set_mh(self, h):
         self.style['h'] = max(0, h - self.mt - self.mb) # Cannot become < 0
-        self.changedHeight()
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self): # Depth

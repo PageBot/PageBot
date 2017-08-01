@@ -250,6 +250,9 @@ class TextLine(object):
     def __len__(self):
         return self.glyphCount
 
+    def __getitem__(self, index):
+        return self.runs[index]
+        
     def getIndexForPosition(self, (x, y)):
         return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
     
@@ -643,9 +646,8 @@ class TextBox(Element):
         u"""Answer the point locations where this pattern occures in the Formatted String."""
         foundPatterns = [] # List of FoundPattern instances. 
         for lineIndex, textLine in enumerate(self.textLines):
-            y = self.baseLines[lineIndex]
             for foundPattern in textLine.findPattern(pattern):
-                foundPattern.y = y
+                foundPattern.y = textLine.y
                 foundPattern.z = self.z
                 foundPatterns.append(foundPattern)
         return foundPatterns

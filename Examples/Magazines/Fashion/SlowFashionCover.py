@@ -215,11 +215,25 @@ def makeDocument():
     view.padding = 40
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
-    view.showPageFrame = False
+    view.showPageFrame = True
     view.showPagePadding = False
     view.showElementOrigin = False
     view.showElementDimensions = False
-    
+    """
+    view.showElementInfo = True
+    view.showElementFrame = True
+    view.showElementOrigin = True
+    view.showElementDimensions = True # TODO: Does not work if there is view padding.
+    view.showMissingElementRect = True
+
+    view.showTextBoxIndex = True # Show the line index number on the left side.
+    view.showTextBoxY = True # Show the realtic y-position value if text lines on right side.
+    view.showTextBoxLeading = True # Show distance of leading on the right side.
+    view.showTextBoxBaselines = True
+    """
+    view.showPageNameInfo = True
+    view.showPageMetaInfo = True
+   
     # Cache some values from the root style that we need multiple time to create the tag styles.
     """
     fontSize = rs['fontSize']

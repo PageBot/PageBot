@@ -8,3 +8,6 @@
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
+
+from glyphanalyzer import GlyphAnalyzer
+from pointcontext import PointContext
