@@ -83,6 +83,26 @@ class GlyphAnalyzer(object):
                     horizontals[pc.y] = self.HORIZONTAL_CLASS()
                 horizontals[pc.y].append(pc)
 
+    #   Test color
+
+    def overlappingLinesInWindowOnBlack(self, pc0, pc1, step=SPANSTEP):
+        u"""Answers the boolean flag if the vertical span between <i>pc0</i>
+        and <i>pc1</i> just spans black area, by stepping from a point on one
+        line to a point on the other line. The trick is to fine the right
+        points. If the line it too angled (e.g. under certain circumstances the
+        line between the middle points is almost parallel to the line, then our
+        trick with testing on the blackness the 4 one-unit points around a
+        point fails, when the segments is tested close to one of the main
+        points. So we need to test on from the middle of the overlapping window
+        perpendicular to the other line."""
+        pp0, pp1 = pc0.getProjectedWindowLine(pc1)
+        return not None in (pp0, pp1) and self.lineOnBlack(pp0, pp1, step)
+
+    def overlappingLinesInWindowOnWhite(self, pc0, pc1, step=SPANSTEP):
+        u"""See <b>self.overlappingLinesInWindowOnBlack</b>."""
+        pp0, pp1 = pc0.getProjectedWindowLine(pc1)
+        return not None in (pp0, pp1) and self.lineOnWhite(pp0, pp1, step)
+
     #   S T E M S
 
     # self.stems
