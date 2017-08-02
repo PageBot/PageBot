@@ -1,3 +1,4 @@
+## This works with the current (3.97) version of DrawBot
 """
 Hyphenation with head and tail
 TODO: 
@@ -49,5 +50,4 @@ textBox(b,(20,50,w,500))
 fill(None)
 stroke(0)
 rect(20,50,w,500)
-        
-        
+
