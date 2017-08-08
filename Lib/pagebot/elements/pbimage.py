@@ -29,7 +29,7 @@ class Image(Element):
     def __init__(self, path=None, style=None, pixelMap=None, title=None, caption=None, clipRect=None, 
             mask=None, imo=None, w=None, h=None, imageConditions=None, conditions=None, **kwargs):
         self.image = None # Aviud setting of self.omage.w and self.omage.h while not initialized.
-        Element.__init__(self, conditions=conditions, **kwargs)
+        Element.__init__(self, w=w, h=h, conditions=conditions, **kwargs)
         assert path is None or pixelMap is None # One or the other or both None.
 
         if imageConditions is None:
@@ -69,6 +69,8 @@ class Image(Element):
     caption = property(_get_caption, _set_caption)
 
     def _get_w(self):
+        if self._w is None: # Undefined elastic, get size from pixelmap
+            return self.image.w
         return self._w 
     def _set_w(self, w):
         self._w = w
@@ -80,6 +82,8 @@ class Image(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
+        if self._h is None:
+            return self.image.h
         return self._h
     def _set_h(self, h): 
         #if h != self._h: # Only when changed
