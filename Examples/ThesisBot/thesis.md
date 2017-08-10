@@ -1,3 +1,5 @@
+[[brochure]]
+
 ##ThesisBot Example
 ####Petr van Blokland
 
@@ -43,4 +45,5 @@ The origin of Processing is more in the processing of images, – focussed on pi
 In this course the differences between Processing and Python will be mentioned if that is really important, but this course will mainly focus on the use of Python in the design practice.
 
 [=thisAuthor2014]: This is book reference for this author.
+
 
