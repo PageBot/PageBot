@@ -28,12 +28,16 @@ except ImportError:
 
 from pagebot import newFS, getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
+from pagebot.document import Document
 
 class Typesetter(object):
 
     IMAGE_CLASS = Image
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
+    GALLEY_CLASS = Galley
+
+    DEFAULT_BULLET = u'•' # Used if no valid bullet string can be found in styles.
 
     TAG_MATCHING = {
         'document': [],
@@ -50,16 +54,35 @@ class Typesetter(object):
         'li': ('ul', 'ol'),
         'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
     }
-    def __init__(self, doc, galley, rootStyle=None):
-        self.doc = doc # Doc context of the typesetter.
+    def __init__(self, doc=None, galley=None):
+        self._doc = doc # Doc context of the typesetter. Can be None.
         # Galley can also be a TextBox, if typsetting must go directly into a page element. In that case image elements
         # are added as child, loosing contact with their position in the text. A Galley element keeps that relation,
         # by adding multiple TextBox elements between the images.
+        # If galley is None, then create an empty Galley instance, without parent.
+        if galley is None:
+            galley = self.GALLEY_CLASS()
         self.galley = galley 
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = [] 
         self.tagHistory = []
-        self.codeBlocks = {} # No results for now.
+        self.codeBlocks = {} # No results for now. Find codeblock result by codeId after typesetting.
+
+    def _get_doc(self):
+        u"""Answer the typesetter self._doc. If it is (still) None, then check if there is a
+        doc instance defined in one of the codeblocks. Raise an error if there is 
+        more than one doc defined."""
+        if self._doc is None: # Not defined, try to find one in the codeblocks result.
+            for codeId, result in sorted(self.codeBlocks.items()):
+                for resultId, value in sorted(result.items()):
+                    if isinstance(value, Document):
+                        self.doc = value # Raise an error if mulitple docs are defined.
+                        return self._doc
+        return self._doc
+    def _set_doc(self, doc):
+        assert self._doc is None # Don't allow accidental creation or setting of multiple docs.
+        self._doc = doc
+    doc = property(_get_doc, _set_doc)
 
     def getTextBox(self, e=None):
         u"""Answer the current text box, if the width fits the current style.
@@ -224,7 +247,11 @@ class Typesetter(object):
 
     def node_li(self, node, e):
         u"""Generate bullet/Numbered list item."""
-        bulletString = newFS(self.doc.css('listBullet')) # Get styled string with bullet.
+        if self.doc is not None:
+            bullet = self.doc.css('listBullet')
+        else:
+            bullet = self.DEFAULT_BULLET # Default, in case doc or css does not exist.
+        bulletString = newFS(bullet) # Get styled string with bullet.
         self.galley.appendString(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
         self.typesetNode(node, e)
@@ -288,45 +315,69 @@ class Typesetter(object):
 
     def getFootnotes(self, e):
         u"""Answer the footnotes dictionary from the e.lib (derived from the root document)"""
-        lib = self.doc.lib
-        if lib is not None:
-            if not 'footnotes' in lib:
-                lib['footnotes'] = {}
-            return lib['footnotes']
+        if self.doc is not None:
+            lib = self.doc.lib
+            if lib is not None:
+                if not 'footnotes' in lib:
+                    lib['footnotes'] = {}
+                return lib['footnotes']
         return None
 
     def getLiteratureRefs(self, e):
         u"""Answer the literature reference dictionary from the e.lib (derived from the root document)"""
-        lib = self.doc.lib
-        if lib is not None:
-            if not 'literatureRefs' in lib:
-                lib['literatureRefs'] = {}
-            return lib['literatureRefs']
+        if self.doc is not None:
+            lib = self.doc.lib
+            if lib is not None:
+                if not 'literatureRefs' in lib:
+                    lib['literatureRefs'] = {}
+                return lib['literatureRefs']
         return None
 
     def runCodeBlocks(self, node):
         u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with 
         ~~~Python
-        doc = Magazine()
+        cid = 'NameOfBlock'
+        doc = Document(w=300, h=500)
         ~~~
         block code. In this case the MacDown and MarkDown extension libraries 
         convert this codeblock into 
-        <pre><code class="Python">doc = Magazine()</code></pre>
+        <pre><code class="Python">
+        cid = 'NameOfBlock'
+        doc = Document(w=300, h=500)
+        </code></pre>
         This way editors can run PageBot generators controlled by content.
+        Content result dictionary (per codeblock) is stored in self.codeBlocks[codeId].
+
         """
         for index, codeNode in enumerate(node.findall('*//code')):
+            if not codeNode.attrib.get('class') == 'Python':
+                # "~~~"" code blocks are skipped.
+                # "~~~Python" code blocks are processed by self.
+                continue
             codeId = 'codeBlock_%d' % index
-            result = {}
+            result = {} # Will contain all "global" defined objects in one code block.
             try:
-                exec(codeNode.text) in result
-                codeId = result.get('id', codeId)
-                del result['__builtins__'] # We don't need this one in the results.
+                exec(codeNode.text) in result # Exectute code block, where result goes dict.
+                codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
+                del result['__builtins__'] # We don't need this set of globals in the results.
             except NameError:
                 result = dict(error='### NameError') # TODO: More error message here.
             except SyntaxError:
                 result = dict(error='### SyntaxError') # TODO: More error message here.
+            # TODO: insert more possible exec() errors here.
+
             # Store the result dict as code block. Global values have become dict entries.
+            # Make sure that we have a unique codeId (it may have been defined in different
+            # markdown files, so sequential index it no guarantee.)
+            if codeId in self.codeBlocks:
+                n = 0
+                codeIdTmp = codeId
+                while codeIdTmp in self.codeBlocks:
+                    codeIdTmp = '%s_%d' % (codeId, n)
+                    n += 1
+                codeId = codeIdTmp # We have a codeId now that does not already exist.
+            # Store the result dict in self.codeBlocks under the unique name.
             self.codeBlocks[codeId] = result
 
     def getImageRefs(self, e):
@@ -405,7 +456,8 @@ class Typesetter(object):
         If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then 
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
 
-        self.runCodeBlocks(node)
+        # Fills self.codeBlocks dictionary from node codeblocks.
+        self.runCodeBlocks(node) 
 
         # Add this tag to the tag-hitstory line
         self.addHistory(node.tag)
