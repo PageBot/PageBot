@@ -42,4 +42,6 @@ class BaseBuilder(object):
     def build(self, e, view):
         raise NotImplementedError
         
-
+    def getPath(self):
+        u"""Default behavior is to answer the value of self.path."""  
+        return self.path
