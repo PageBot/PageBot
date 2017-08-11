@@ -75,6 +75,8 @@ class View(Element):
         self.showTextOverflowMarker = True
         # Image stuff
         self.showImageReference = False
+        # Spread stuff
+        self.showSpreadMiddleAsGap = True # Show the spread with single crop marks. False glues pages togethers as in real spread.
 
     def setControls(self):
         u"""Inheriting views can redefine to alter showing parameters."""
