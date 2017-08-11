@@ -26,7 +26,8 @@ class Document(object):
     VIEW_CLASS = View
 
     def __init__(self, rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
-            autoPages=1, pageTemplate=None,  originTop=True, startPage=0, w=None, h=None, **kwargs):
+            autoPages=1, pageTemplate=None,  originTop=True, startPage=0, w=None, h=None, 
+            exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
         if rootStyle is None:
@@ -35,8 +36,8 @@ class Document(object):
         self.class_ = class_ or self.__class__.__name__ # Optional class name, e.g. to group elements together in HTML/CSS export.
         self.initializeStyles(styles) # Create some default styles, to make sure they are there.
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
-        self.w = w
-        self.h = h
+        self.w = w or 1000
+        self.h = h or 1000
 
         self.name = name or 'Untitled'
         self.title = title or self.name

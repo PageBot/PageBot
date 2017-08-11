@@ -333,7 +333,7 @@ class Typesetter(object):
                 return lib['literatureRefs']
         return None
 
-    def runCodeBlocks(self, node):
+    def runCodeBlocks(self, node, execute=True):
         u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with 
         ~~~Python
@@ -362,10 +362,14 @@ class Typesetter(object):
                 codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
                 del result['__builtins__'] # We don't need this set of globals in the results.
             except NameError:
-                result = dict(error='### NameError') # TODO: More error message here.
+                result = dict(__error__='### NameError', ) # TODO: More error message here.
             except SyntaxError:
-                result = dict(error='### SyntaxError') # TODO: More error message here.
+                result = dict(__error__='### SyntaxError') # TODO: More error message here.
             # TODO: insert more possible exec() errors here.
+            
+            # For convenience, store the source code of the block in the result dict.
+            if not '__code__' in result:
+                result['__code__'] = codeNode.text
 
             # Store the result dict as code block. Global values have become dict entries.
             # Make sure that we have a unique codeId (it may have been defined in different
