@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<document><pre><code class="Python">id = 'Document'
+from pagebot.document import Document
+doc = Document(w=400, h=600)
+
+</code></pre>
+
+<h1>PageBot Examples</h1>
+<p>The examples in this folder are very basic, explaining the principles if usage of PageBot. </p>
+<p>Moet practicle examples, templates and application can be found in the separate GitHub repository TypeNetwork/PageBotTemplates.</p>
+<pre><code class="Python">id = 'Views'
+aa = 123
+bb = 234
+</code></pre></document>
