@@ -19,6 +19,7 @@ import xml.etree.ElementTree as ET
 try:
     import markdown
     from markdown.extensions.nl2br import Nl2BrExtension
+    from markdown.extensions.fenced_code import FencedCodeExtension
     from pagebot.contributions.markdown.literature import LiteratureExtension
     from pagebot.contributions.markdown.footnotes import FootnoteExtension
 except ImportError:
@@ -58,6 +59,7 @@ class Typesetter(object):
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = [] 
         self.tagHistory = []
+        self.codeBlocks = {} # No results for now.
 
     def getTextBox(self, e=None):
         u"""Answer the current text box, if the width fits the current style.
@@ -302,9 +304,36 @@ class Typesetter(object):
             return lib['literatureRefs']
         return None
 
+    def runCodeBlocks(self, node):
+        u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
+        made by Markdown with 
+        ~~~Python
+        doc = Magazine()
+        ~~~
+        block code. In this case the MacDown and MarkDown extension libraries 
+        convert this codeblock into 
+        <pre><code class="Python">doc = Magazine()</code></pre>
+        This way editors can run PageBot generators controlled by content.
+        """
+        for index, codeNode in enumerate(node.findall('*//code')):
+            codeId = 'codeBlock_%d' % index
+            result = {}
+            try:
+                exec(codeNode.text) in result
+                codeId = result.get('id', codeId)
+                del result['__builtins__'] # We don't need this one in the results.
+            except NameError:
+                result = dict(error='### NameError') # TODO: More error message here.
+            except SyntaxError:
+                result = dict(error='### SyntaxError') # TODO: More error message here.
+            # Store the result dict as code block. Global values have become dict entries.
+            self.codeBlocks[codeId] = result
+
     def getImageRefs(self, e):
-        u"""Answer the literature reference dictionary from the e.lib (derived from the root document)"""
-        lib = self.doc.lib
+        u"""Answer the image reference dictionary from the e.lib (derived from the root document)
+        if it exists. Otherwise create an empty e.lib['imageRefs'] and answer it as empty dictionary. 
+        Answer None if e.lib does not exist."""
+        lib = e.lib
         if lib is not None:
             if not 'imageRefs' in lib:
                 lib['imageRefs'] = {}
@@ -323,7 +352,8 @@ class Typesetter(object):
         return s
 
     def getMatchingStyleNames(self, tag):
-        parents = self.TAG_MATCHING[tag]
+        u"""Answer the list of matching style, with decreasing relevance."""
+        #parents = self.TAG_MATCHING.get(tag)
         revHistory = self.tagHistory[:]
         revHistory.reverse()
         matches = []
@@ -331,23 +361,32 @@ class Typesetter(object):
             styleName = revHistory[:n+1]
             styleName.reverse()
             styleName = ' '.join(styleName)
-            if styleName in self.doc.styles:
+            if self.doc is not None and styleName in self.doc.styles:
                 matches.append(styleName)
         #print tag, parents, revHistory, matches
         #print tag, matches
         matches.reverse()
         return matches
 
+    def getNamedStyle(self, styleName):
+        u"""Answer the named style and otherwise an empty style dict if the named style
+        does not exist."""
+        if self.doc is not None:
+            if styleName == 'root':
+                return self.doc.getRootStyle()
+            return self.doc.getStyle(styleName)
+        return {}
+
     def getNodeStyle(self, tag):
         u"""Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style."""
         if self.peekStyle() is None: # Not an initialized stack, use doc.rootStyle as default.
-            self.pushStyle(self.doc.getRootStyle()) # Happens if calling directly, without check on e
+            self.pushStyle(self.getNamedStyle('root')) # Happens if calling directly, without check on e
         mergedStyle = copy.copy(self.peekStyle())
         # Find the best matching style for tag on order of relevance, 
         # considering the possible HTML tag parents and the history.
         for styleName in self.getMatchingStyleNames(tag):
-            nodeStyle = self.doc.getStyle(styleName)
-            if nodeStyle is not None:
+            nodeStyle = self.getNamedStyle(styleName)
+            if nodeStyle: # Not None and not empty
                 for name, value in nodeStyle.items():
                     mergedStyle[name] = value
                 break
@@ -365,6 +404,8 @@ class Typesetter(object):
         u"""Recursively typeset the etree *node*, using a reference to element *e* or the cascading *style*.
         If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then 
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
+
+        self.runCodeBlocks(node)
 
         # Add this tag to the tag-hitstory line
         self.addHistory(node.tag)
@@ -426,25 +467,23 @@ class Typesetter(object):
             self.galley.appendString(fs) # Add to the current flow textBox
         """
 
-    def DEPRECATED_typesetFile(self, fileName, e=None, xPath=None):
+    def typesetFile(self, fileName, e=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
         start at page pageNumber and find the name of the flow in the page template.
         The optional filter can be a list of tag names that need to be included in the
         composition, ignoring the rest.
         The optional rootStyle can be defined as style for the root tag, cascading force all
-        child elements."""
+        child elements. Answer the root node for convenience of the caller."""
         fileExtension = fileName.split('.')[-1]
         if fileExtension == 'md':
             # If we have MarkDown content, convert to XML (XHTML)
             f = codecs.open(fileName, mode="r", encoding="utf-8")
             mdText = f.read()
             f.close()
-            mdExtensions = [FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
+            mdExtensions = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
             xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
             xml = xml.replace('&nbsp;', ' ')
-            """
             fileName = fileName + '.xml' # New file name to XML export
-            """
             f = codecs.open(fileName, mode="w", encoding="utf-8")
             f.write(xml)
             f.close()
@@ -462,6 +501,8 @@ class Typesetter(object):
             # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
             # reference, image index and footnote placement.
             self.typesetNode(root, e)
+        return root
+
 
     def DEPRECATED_makeXMLFile(self, fileName):
         u"""If fileName is pointing to a non-XML file, then try to convert. This needs to be
