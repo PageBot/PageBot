@@ -391,6 +391,11 @@ class TextBox(Element):
         return self._baseLines
     baseLines = property(_get_baseLines)
 
+    def _get_text(self):
+        u"""Answer the plain text of the current self.fs"""
+        return u'%s' % self.fs
+    text = property(_get_text)
+    
     def initializeTextLines(self):
         u"""Answer an ordered list of all baseline position, starting at the top."""    
         self._box = 0, 0, self.w, self.h

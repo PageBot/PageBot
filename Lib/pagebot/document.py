@@ -26,7 +26,7 @@ class Document(object):
     VIEW_CLASS = View
 
     def __init__(self, rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
-            autoPages=1, pageTemplate=None,  originTop=True, startPage=0, w=None, h=None, 
+            autoPages=1, pageTemplate=None, originTop=True, startPage=0, w=None, h=None,
             exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
@@ -36,7 +36,7 @@ class Document(object):
         self.class_ = class_ or self.__class__.__name__ # Optional class name, e.g. to group elements together in HTML/CSS export.
         self.initializeStyles(styles) # Create some default styles, to make sure they are there.
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
-        self.w = w or 1000
+        self.w = w or 1000 # Always needs a value. Take 1000 if None defined.
         self.h = h or 1000
 
         self.name = name or 'Untitled'
@@ -47,15 +47,24 @@ class Document(object):
 
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
 
+        # Storage lib for collected content while typesetting and composing, referring to the pages
+        # they where placed on during composition.
+        self._lib = {}
+
         # Initialize some basic views.
         self.initializeViews(views)
 
         # Document (w, h) size is default from page, but will modified by the type of display mode. 
         if autoPages:
             self.makePages(pageCnt=autoPages, pn=startPage, w=w, h=h, **kwargs)
-        # Storage lib for collected content while typesetting and composing, referring to the pages
-        # they where placed on during composition.
-        self._lib = {}
+
+        # Call generic initialize method, allowing inheriting publication classes to initialize their stuff.
+        # Default is to do nothing.
+        self.initialize()
+
+    def initialize(self):
+        u"""Default implementation of publication initialized. Can be redefined by inheriting classed."""
+        pass
 
     def _get_lib(self):
         u"""Answer the global storage dictionary, used by TypeSetter and others to keep track of footnotes,
