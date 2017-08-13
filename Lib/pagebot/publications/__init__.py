@@ -11,4 +11,5 @@
 #
 #     __init__.py
 #
-
+from poster import Poster
+from singlepage import SinglePage

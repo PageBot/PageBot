@@ -18,7 +18,7 @@ from pagebot.elements import *
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
         
-class RandomPage(Publication):
+class SinglePage(Publication):
     
     def __init__(self, title=None, showGrid=False, showGridColumns=False):
         Publication.__init__(self)

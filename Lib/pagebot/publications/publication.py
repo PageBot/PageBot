@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
 #     P A G E B O T
@@ -10,36 +11,14 @@
 #
 #     publication.py
 #
-import os
-           
-class Publication(object):
-    u"""The abstract Publication class, implements everything needed for a specific kind of publication.
-    It can hold multiple related Document instances and serves various output formats."""
-    def __init__(self, documents=None, name=None, exportPath=None):
-        self.exportPath = exportPath or '_export/'
-        self.name = name or self.__class__.__name__
-        if documents is None:
-            documents = {}
-        self.documents = documents 
-    
-    def __repr__(self):
-        return self.name
+from pagebot.document import Document
+      
+class Publication(Document):
+    u"""Subclass of Document, implementing templates for generic publications.
+    See also other – more specific – implementations, such as Poster, Brochure and Manaziner.
 
-    def build(self):
-        pass
-    
-    def draw(self):
-        for document in self.documents.values():
-            document.draw()
-                
-    def export(self, fileName=None):
-        if not self.exportPath.endswith('/'):
-            self.exportPath += '/'
-        if not os.path.exists(self.exportPath):
-            os.makedirs(self.exportPath)
-        for document in self.documents.values():
-            #print document
-            #print self.exportPath
-            #print fileName, document.fileName
-            document.export(self.exportPath + (fileName or document.fileName or 'Document.pdf'))
+    Originally Publication was an abstract class, holding multiple documents. But since the split 
+    between the Document container class and View classes for representations, there is no need
+    to have a "top-class" containing multiple documents."""
+    pass
 
