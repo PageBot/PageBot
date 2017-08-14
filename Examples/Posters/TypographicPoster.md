@@ -9,18 +9,37 @@ The connection between Markdown content and Python can be made from 2 different 
 
 ~~~Python
 cid = 'Poster'
+# Import the size, Poster class and layout template.
 
-from pagebot.publications import Poster
 from pagebot.style import A2
+from pagebot.publications import Poster
+from pagebot.templates import StackedTypography
+
 W, H = A2 
 title = 'When fonts started a new world'
+
 # Poster instance stored as “doc”, typsetter can find it.
-doc = Poster(w=W, h=H, title=title)
+# Set the size of the poster as derived from "A2"
+# Use the predefined dynamic template for content layout.
+
+doc = Poster(w=W, h=H, originTop=False, 	
+	title=title, 
+	pageTemplate=StackedTypography())
+
+# Views define the way documents are exported.
+# Add space for cropmarks and registrations marks
+view = doc.getView()
+view.padding = 40
+view.showPageCropMarks = True
+view.showPageRegistrationMarks = True
+view.showPageFrame = True
 ~~~	
 
 ~~~
-The content of this poster is an example summary of the the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published in the TN website 
+reference
 ~~~
+The content of this poster is an example summary of the the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published on the TN website.
+
 
 ~~~
 headline
