@@ -106,8 +106,8 @@ class Element(object):
         # Save flow reference names
         self.prevElement = prevElement # Name of the prev flow element
         self.nextElement = nextElement # Name of the next flow element
-        self.nextPage = nextPage # Name ot identifier of the next page that nextElement refers to.
-        self.prevPage = prevPage
+        self.nextPage = nextPage # Name ot identifier of the next page that nextElement refers to,
+        self.prevPage = prevPage # if a flow must run over page boundaries.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
         self.applyTemplate(template, elements) 
@@ -137,7 +137,7 @@ class Element(object):
     def applyTemplate(self, template, elements=None):
         u"""Copy relevant info from template: w, h, elements, style, conditions when element is created.
         Don't call later."""
-        self.template = template # Set template by property
+        self.template = template # Set template value by property call, copying all temaplate elements and attributes.
         if elements is not None:
             # Add optional list of elements.
             for e in elements or []: 
@@ -147,7 +147,7 @@ class Element(object):
         return self._template
     def _set_template(self, template):
         self.clearElements()
-        self._template = template # Keep in order to clone pages or if addition info is needed.
+        self._template = template # Keep in order to clone pages or if additional template info is needed.
         # Copy optional template stuff
         if template is not None:
             # Copy elements from the template and put them in the designated positions.

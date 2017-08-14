@@ -8,32 +8,55 @@
 <li>MarkDown text files that include all Python code to create documents. It only needs a small bootstrap script to create the <strong>Typesetter</strong> and parse this file.</li>
 </ul>
 <pre><code class="Python">cid = 'Poster'
+# Import the size, Poster class and layout template.
 
-from pagebot.publications import Poster
 from pagebot.style import A2
+from pagebot.publications import Poster
+from pagebot.templates import StackedTypography
+
 W, H = A2 
 title = 'When fonts started a new world'
+
 # Poster instance stored as “doc”, typsetter can find it.
-doc = Poster(w=W, h=H, title=title)
+# Set the size of the poster as derived from &quot;A2&quot;
+# Use the predefined dynamic template for content layout.
+
+doc = Poster(w=W, h=H, originTop=False,     
+    title=title, 
+    pageTemplate=StackedTypography())
+
+# Views define the way documents are exported.
+# Add space for cropmarks and registrations marks
+view = doc.getView()
+view.padding = 40
+view.showPageCropMarks = True
+view.showPageRegistrationMarks = True
+view.showPageFrame = True
 </code></pre>
 
-<pre><code>The content of this poster is an example summary of the the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published in the TN website 
+<pre><code>reference
 </code></pre>
 
-<p>Type Network<br />
-Home Fonts News Gallery <br />
-SEARCH</p>
-<h2>Foundries</h2>
-<p>NEWS /<br />
-JUNE 27, 2017</p>
+<p>The content of this poster is an example summary of the the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published on the TN website.</p>
+<pre><code>headline
+</code></pre>
+
 <h3>When fonts started a new world</h3>
-<p>A lot has been written and said about OpenType Variations. There are Operating Systems developers, application developers, font developers, content-developing users, and just plain old users. “As you were,” “Just a taste,” and “Whole hog!” are three of many possible attitudes these folks may, or may not, adopt towards OpenType Variations. As you can imagine, I’m going to write more on the topic.<br />
-As you were</p>
+<p>A lot has been written and said about OpenType Variations. There are Operating Systems developers, application developers, font developers, content-developing users, and just plain old users. “As you were,” “Just a taste,” and “Whole hog!” are three of many possible attitudes these folks may, or may not, adopt towards OpenType Variations. As you can imagine, I’m going to write more on the topic.</p>
+<pre><code>topic
+</code></pre>
+
 <p>As described in the introduction, variations technology superficially changes nothing about the “workings” of older fonts or applications. Users still begin their work by selecting the keyboard and input method associated with their script and language, or just by clicking an icon of their national flag. From there, the OS maps the characters it’ll show on the screen to match those on the keyboard, and turns on any required OpenType features for that script and language. All the individual font files are sorted for presentation by family name, with a hyphen somewhere separating the family name from the style, treatment, and/or effect name.</p>
 <p>So, when the user opens an application for authoring a new document, applications present a font family, style, and size, ready for the user’s input of their own script, in the form of whatever characters they want to type; defaults for all of the selections, from script to character, must exist. This is also true of web documents: the workings cannot exist without the full satisfaction of the “mantra” — from script to font family, to style, to size — in order to function at the simplest level, with fonts today.</p>
 <p>A script is a collection of characters that may be used to compose one or more languages. A design class relates to the basic characteristics of font families like serif, sans serif, or script. A font family is a collection of font variants with common details in the terminations, shapes, internal contrasts, and angles. A font style is a variation of the family, or a combination of variations like weight and width, that do not fundamentally alter the comment characteristics of the font family, just the proportions of white and black. Font treatments include stroking the contour, filling it, drop shadows, and possible variants that change neither font family nor style, just how it is positioned, or how the contour is interpreted or augmented. Lastly, a user may choose effects, like simulated scratches and scuffs to the output type, or modification of one or multiple treatments over time, as in animation.</p>
+<pre><code>description
+</code></pre>
+
 <p>From there the document specifications are commonly available to fonts in the form of size selection, justification, line spacing, and column width, as well as web techniques like fitting text to boxes on the fly. As things are, that mantra takes the user up to character input, a blinking cursor…or they can change font families, or style within the font family, or they can change from standard characters to an OpenType feature. Then they can either accept or change the default composition parameters, and finally set type.</p>
 <p>That of course depends on their application taking advantage of what the operating system and/or HTML offer today. And each operating system, and the web, offers slightly different mantras. But as things are, nothing about any of this changes for users of non-variable fonts, in operating systems or applications that are compliant with the new variations in OpenType 1.8. What users continue to be faced with is large aggregate font file sizes that get larger for every specialized use required of the font family, and often inscrutable font names like FamilySansDisplay-SemiboldItalicPro. Type developers, of course, can just keep doing things as they were.</p>
+<pre><code>chapter1
+</code></pre>
+
 <h3>Just a taste</h3>
 <p>Stepping out for “just a taste” of OpenType Variations, for both a font developer and a web developer, means that an existing font family of 24 individual styles can be reduced to a single variable-font file. The type developer defines a master style, creates a width axis to contain the four widths of the font family, makes a weight axis to contain the six weights of the family, adds each of the existing 24 styles as intermediate instances of width and weight, and via variations-compliant browsers, serves the same documents with no apparent difference to the typography. In fact, the same styles in use would be served to non-compliant browsers and they would obviously look the same.</p>
 <p>The major difference in a variable-font approach is that all the styles are contained in a single font file. My mom? She thinks every page of the web is shown somewhere; and via an image and camera system, her computer points at it so she can see it. No offense, but most people think a font is an Illustrator file of each letter that can be scaled and otherwise manipulated before the computer takes a picture of it for use. I wish it was all like that, but fonts today are conglomerates of different data, dedicated to a span of functions from the presentation of the font name in menus, to a kerning-pair adjustment of four pixels in the last character I typed.</p>
@@ -49,6 +72,9 @@ As you were</p>
 <p>Variable fonts store 24 points for the default font and a total of 20 deltas for all the 24 existing uppercase O‘s, and for all the weights and widths of all the O’s in between. To add an optical size axis, or any other set of stylistic options, like grade or contrast, eight or so additional deltas brings hundreds of new possible shapes to our O. This style compression, and its effects on the storage of complex scripts, like some of those found in Asia, combined with the additional functionality of all the intermediate styles (a true rarity in software development), is what re-attracted Google, Microsoft, and Adobe back to variations, 20 years after their invention.</p>
 <p>As a result of their attraction to the rarity of compression-with-additional-functionality, “just a taste” is what most users are likely to get from variable fonts, as OS fonts like Microsoft’s Segoe, Google’s Roboto, and Adobe’s Source Sans follow Apple’s San Francisco, an Apple GX Variations font, into somewhat secret service. That is to say, unlike the font industry or the typographic press, the majority of users will be working with variable fonts before they know it. By the end of 2018 all the major operating systems and the web will have attained what I call Variations World, which is implementation of the OpenType 1.8 specification.</p>
 <p>The wider world it enters this time, though, includes the combination of variable fonts, much wider adoption of Unicode, OpenType layout, TrueType hinting, higher resolution devices, HTML, broadband, and an exceptionally strong type industry, both creatively and technically. For foundries and users adopting a taste of variations, they will be able to remake and use, respectively, the same font families they made before as individual styles, bringing any user who wishes, up to the same level of typographic font software and font functionality as the OS font users will already be experiencing.</p>
+<pre><code>chapter2
+</code></pre>
+
 <h3>Whole hog!</h3>
 <p>As I write this today, in June of 2017, major browser manufacturers are developing variations-aware upgrades, and it appears highly likely that variable font technology will take off on the web first. This is, I think, a really good thing for variable fonts, as the web presents the opportunity for type developers and web programmers, with no application “interference,” to really exercise and shape the common uses of the combined technologies listed above in a relatively free and open environment.</p>
 <p>Starting with only my own experience as a guide, I’ve had one round of development with variations two decades ago. So I already know what it’s like to be “as you were,” as well as having “just a taste” of variations in Skia and our demo GX fonts like Zycon, Buffalo Gal, Jam, and Chunk. So two weeks before the August 2016 announcement of variable fonts, when the alliance supporting their advancement asked for our support at Font Bureau, I was ready to go “whole hog.”</p>
@@ -62,7 +88,13 @@ As you were</p>
 <p>This rather belated presentation of detailed examples of variable fonts in potential use, somewhat perplexed the developers of the specification. The alliance, while clearly devoted to one interoperable effort to get variable fonts done, does not have one market to do it for. Apple integrates all, Adobe is concentrated in the creative suite, Microsoft in the office, and Google is diversified but more of a web-based open app developer than the other three combined.</p>
 <p>In the year-and-a-half the alliance worked on the specification in secret, they never made the connection between all the axes people have been requesting for years, and the way to actually make them. They also never made the connection between the mantra, all their software uses, and this new technology with the ability to manipulate typography all along the mantra; e.g., not a single axis we have encountered so far, crosses the mantra’s bounds. All of the axes we’ve developed, that we plan to present to users, affect one part of the mantra at a time.</p>
 <p>So, this is an exciting time, as the give-and-take between alliance members seeking solutions for their markets, application and font developers seeking differentiation, and a lot of users seeking help, all ramping up over a 20-year period of relative stagnation in this area, means a lot of font software of various kinds, from type-design tools to font families, from applications to web code, will be coming out in the next year or two.</p>
+<pre><code>conclusion
+</code></pre>
+
 <p>So, hold on to your háčeks, it should be an interesting year for typography.</p>
+<pre><code>navigation
+</code></pre>
+
 <p>Chapter i: When lines roamed the earth<br />
 Chapter ii: When line-to curve-to ruled the world<br />
 About Type Network Subscribe to the Newsletter Help and Support © Copyright Type Network 2016. All Rights Reserved.</p></document>

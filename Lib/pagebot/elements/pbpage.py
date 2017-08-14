@@ -17,7 +17,7 @@ from pagebot.toolbox.transformer import pointOffset
 class Page(Element):
 
     isPage = True
-            
+           
     def draw(self, origin, view):
         u"""Draw all elements this page."""
         p = pointOffset(self.oPoint, origin) # Ignoe z-axis for now.
@@ -29,5 +29,11 @@ class Page(Element):
         #self._restoreScale()
 
 class Template(Page):
+
+    def initialize(self):
+        u"""Allow inheriting element classes to do extra initialization stuff. Default behavior is to do nothing. 
+        Inheriting classes can implmented their own version."""
+        pass
+ 
     def draw(self, origin, view):
         raise ValueError('Templates cannot draw themselves in a view. Apply the template to a page first.')

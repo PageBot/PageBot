@@ -42,10 +42,13 @@ class Document(object):
         self.name = name or 'Untitled'
         self.title = title or self.name
 
-        # Used as default document master template if undefined in pages.
-        self.pageTemplate = pageTemplate 
-
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
+
+        # Used as default document master template if undefined in pages.
+        if pageTemplate is not None and pageTemplate.parent is None: # Defined without parent
+            pageTemplate.setParent(self) # Connect to self, so template has full access to styles.
+            pageTemplate.initialize() # Now the template parent is set, it can initialize its contnet.
+        self.pageTemplate = pageTemplate # Set template, can be None
 
         # Storage lib for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
@@ -56,7 +59,7 @@ class Document(object):
 
         # Document (w, h) size is default from page, but will modified by the type of display mode. 
         if autoPages:
-            self.makePages(pageCnt=autoPages, pn=startPage, w=w, h=h, **kwargs)
+            self.makePages(pageCnt=autoPages, template=pageTemplate, pn=startPage, w=self.w, h=self.h, **kwargs)
 
         # Call generic initialize method, allowing inheriting publication classes to initialize their stuff.
         # Default is to do nothing.
@@ -300,7 +303,10 @@ class Document(object):
 
     def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
         u"""Create a new page with size (self.w, self.h) unless defined otherwise. Add the pages in the row of pn, if defined.
-        Otherwise create a new row of pages at pn. If pn is undefined, add a new page row at the end."""
+        Otherwise create a new row of pages at pn. If pn is undefined, add a new page row at the end.
+        If template is undefined, then use self.pageTemplat to initialize the new page."""
+        if template is None:
+            template = self.pageTemplate
         page = self.PAGE_CLASS(parent=self, template=template, w=w or self.w, h=h or self.h, name=name, **kwargs)
         # TODO: Code below not necessary?
         #if pn is None:
@@ -308,17 +314,17 @@ class Document(object):
         #if not pn in self.pages:
         #    self.pages[pn] = []
         #self.pages[pn].append(page)
+        return page # Answer the new page 
 
     def makePages(self, pageCnt, pn=0, template=None, w=None, h=None, name=None, **kwargs):
         u"""
-        If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position."""
-        if template is None:
-            template = self.pageTemplate
+        If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position.
+        If template is undefined, then self.newPage will use self.pageTemplate to initialize the new pages."""
         for n in range(pageCnt): # First page is n + pn
             self.newPage(pn=n+pn, template=template, name=name, w=w, h=h, **kwargs) # Parent is forced to self.
 
     def getElementPage():
-        u"""Search ancestors for the page element. This can only happen here if elements don't have a
+        u"""Search ancestors for the page element. This call can only happen here if elements don't have a
         Page ancestor. Return None to indicate that there is no Page instance found amongst the ancesters."""
         return None
 
