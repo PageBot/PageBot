@@ -9,31 +9,37 @@ The connection between Markdown content and Python can be made from 2 different 
 
 ~~~Python
 cid = 'Book'
-# Import the size, Book class and layout template.
 
-from pagebot.style import A5 # Or other book size
+from pagebot.style import MM # Converter from MM to points
+# Import the Document-Book class.
+# No need to add any templates, they are already defined in Book
 from pagebot.publications import Book
-# No need to add templates, they are already defined in Book
 
-W, H = A5
+W, H = 163*MM, 244*MM # Overall size of the book pages.
+padding = 18*MM, 12*MM, 12*MM, 10*MM # Top, Right, Bottom, Left
+
 title = 'Using Variable Fonts'
 
-# Book instance stored as “doc”, typsetter can find it.
-# Set the size of the book as derived from "A5"
+# The Book instance stored as “doc”, so typsetter can find it.
 # Use the predefined dynamic templates inside book.
-# Starting cover at doc[1] as first right page.
+# No automatic pages, all are created by content in this file.
 
-doc = Book(w=W, h=H, originTop=False, title=title)
+doc = Book(w=W, h=H, autoPages=0, originTop=False, title=title, padding=padding)
+
+# Show some information about the doc so far.
+print doc.getInfo() 
 
 ~~~
 
 This is text.
 
 ~~~Python
-page = doc.newPage(name='Cover')
+page = doc.newPage(template='Cover')
 ~~~
 
-# Title of the book
+~~~Python
+page = doc.newPage(template='TableOfContent')
+~~~
 
 ~~~Python
 page = doc.newPage(name='Reference')

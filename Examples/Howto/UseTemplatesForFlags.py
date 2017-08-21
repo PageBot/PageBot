@@ -63,7 +63,7 @@ def makeDocument():
     # Create overall template, and set it in the document as default template for new pages.
     template = makeTemplate(W, H)
 
-    doc = Document(title='Color Squares', w=W, h=H, originTop=False, autoPages=3, pageTemplate=template)
+    doc = Document(title='Color Squares', w=W, h=H, originTop=False, autoPages=3, defaultTemplate=template)
     
     view = doc.getView()
     view.padding = 0 # Don't show cropmarks in this example.
