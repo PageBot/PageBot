@@ -250,7 +250,20 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # e.cw, e.ch and e.cd.
         cw = 77*gutter, # 77 columns width
         ch = 6*baselineGrid - u, # Approximately square with cw + gutter: 77
-        cd = 0, # Optional columnt "depth"
+        cd = 0, # Optional column "depth"
+        # Optional list of horizontal grid line positions, to force the use of non-repeating grids.
+        # Format is [(width1, gutter1), (width2, gutter2), (None, 0)]
+        # If this paramater is set, column width "cw" and column gutter "gw" are ignored.
+        # If the column width is None, it is assumed to fill the rest of the available space.
+        # If there are multiple None widths, then their values is calculated from an equal division of available space.
+        # It is up to the caller to make sure that the grid values fit the width of the current element.
+        gridX = None,
+        gridL = None, # Left page version, overwriting gridX
+        gridR = None, # Right page version, overwriting gridX
+        # Optional list of vertical grid line positions, to force the use of non-repeating grids.
+        # Format is [(height1, gutter1), (None, gutter2), (None, 0)]
+        gridY = None,
+        gridZ = None, # Similar to gridX and gridY
 
         # Minimum size
         minW = 0, # Default minimal width of elements.

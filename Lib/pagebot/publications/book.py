@@ -10,10 +10,10 @@
 #
 #     book.py
 #
-from pagebot import newFS
+from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 # Page and Template instances are holding all elements of a page together.
-from pagebot.elements.pbpage import Template
+from pagebot.elements import *
 
  
 class Book(Publication):
@@ -24,22 +24,29 @@ class Book(Publication):
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, 
     w=None, h=None, exportPaths=None, **kwargs)"""
 
-    def initialize(self):
+    def initialize(self, coverBackgroundFill=None, **kwargs):
         padding = self.css('pt'), self.css('pr'), self.css('pb'), self.css('pl')
         w, h = self.w, self.h
-        
-        cover = Template(w=w, h=h, name='Cover', padding=padding)
-        self.addTemplate(cover.name, cover)
+        gridY = [(None, 0)] # Default is full height of columns, not horizontal division.
 
-        titlePage = Template(w=w, h=h, name='Title Page', padding=padding)
-        self.addTemplate(titlePage.name, titlePage)
+        if coverBackgroundFill is None:
+            coverBackgroundFill = (0.3, 0.3, 0.3)
+
+        t = Template(w=w, h=h, name='Cover', padding=padding, gridY=gridY) 
+        newRect(parent=t, conditions=[Fit2Sides()], fill=coverBackgroundFill)
+        self.addTemplate(t.name, t)
+
+        t = Template(w=w, h=h, name='Title Page', padding=padding, gridY=gridY)
+        newTextBox('AAAA', parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], w=400, fill=(1, 0, 0))
+        self.addTemplate(t.name, t)
         
-        tocPage = Template(w=w, h=h, name='Table Of Content', padding=padding)
-        self.addTemplate(tocPage.name, tocPage)
+        t = Template(w=w, h=h, name='Table Of Content', padding=padding, gridY=gridY)
+        newTextBox('AAAA', parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], w=400, fill=(1, 1, 0))
+        self.addTemplate(t.name, t)
         
-        mainPage = Template(w=w, h=h, name='Main Page', padding=padding)
-        self.addTemplate('default', mainPage)
+        t = Template(w=w, h=h, name='Main Page', padding=padding, gridY=gridY)
+        self.addTemplate('default', t)
         
-        registerPage = Template(w=w, h=h, name='Register Page', padding=padding)
-        self.addTemplate(registerPage.name, mainPage)
+        t = Template(w=w, h=h, name='Register Page', padding=padding, gridY=gridY)
+        self.addTemplate(t.name, t)
         
