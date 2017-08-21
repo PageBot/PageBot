@@ -19,7 +19,15 @@ from pagebot.toolbox.transformer import pointOffset
 class Page(Element):
 
     isPage = True
-           
+    
+    def isLeft(self):
+        u"""Answer the boolean flag if this is a left page. The only one who can know that is the document."""
+        return self.doc.isLeftPage(self)
+
+    def isRight(self):
+        u"""Answer the boolean flag if this is a right page. The only one who can know that is the document."""
+        return self.doc.isRightPage(self)
+
     def draw(self, origin, view):
         u"""Draw all elements this page."""
         p = pointOffset(self.oPoint, origin) # Ignoe z-axis for now.

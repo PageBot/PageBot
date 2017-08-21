@@ -321,7 +321,7 @@ class Typesetter(object):
                 return lib['literatureRefs']
         return None
 
-    def runCodeBlock(self, node, execute=True):
+    def runCodeBlock(self, node, execute=True, tryExcept=False):
         u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with 
         ~~~Python
@@ -348,14 +348,19 @@ class Typesetter(object):
         # self.doc contains the Typesetter doc reference, which can be defined in an earlier code block
         result = dict(doc=self.doc) 
         if execute and node.text:
-            try:
+            if not tryExcept:
                 exec(node.text) in result # Exectute code block, where result goes dict.
                 codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
                 del result['__builtins__'] # We don't need this set of globals in the results.
-            except NameError:
-                result['__error__'] = '### NameError' # TODO: More error message here.
-            except SyntaxError:
-                result['__error__'] = '### SyntaxError' # TODO: More error message here.
+            else:
+                try:
+                    exec(node.text) in result # Exectute code block, where result goes dict.
+                    codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
+                    del result['__builtins__'] # We don't need this set of globals in the results.
+                except NameError:
+                    result['__error__'] = '### NameError' # TODO: More error message here.
+                except SyntaxError:
+                    result['__error__'] = '### SyntaxError' # TODO: More error message here.
         # TODO: insert more possible exec() errors here.
         
         # For convenience, store the source code of the block in the result dict.

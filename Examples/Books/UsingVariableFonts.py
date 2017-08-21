@@ -45,11 +45,13 @@ if 0: # Print some results of the typesetter
     #print page.w, page.h
 
 if 1: # Debugging, show the pages with their names.
+    print t.doc.css('gridL')
     for templateName, template in t.doc.templates.items():
         print templateName, template.name
     for pn, pages in t.doc.getSortedPages():
         for page in pages:
             print '\t', page, page.w, page.h, page.template.name
+            #page.isLeft(), page.isRight(), page.getGridColumnsX()
 
 if 1:
     # Views define the way documents are exported.
@@ -57,9 +59,14 @@ if 1:
     view = t.doc.getView()
     view.padding = 30
     view.showPageNameInfo = True
-    view.showPagePadding = True
+    view.showPagePadding = False # No need, as we are drawing the grid
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
-    view.showPageFrame = True
+    view.showPageFrame = True 
+    view.showGrid = True
+    
+    view.style['viewGridStroke'] = (0, 0, 1)
+    view.style['viewGridStrokeWidth'] = 0.5
 
+t.doc.solve()
 t.doc.export(EXPORT_PATH)

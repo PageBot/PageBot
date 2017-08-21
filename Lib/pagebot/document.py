@@ -26,32 +26,32 @@ class Document(object):
     VIEW_CLASS = View
 
     def __init__(self, rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
-            autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None,
+            autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None, padding=None,
             exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
-        if rootStyle is None:
-            rootStyle = getRootStyle()
-        self.rootStyle = rootStyle
+        self.rootStyle = rs = self.makeRootStyle(rootStyle, **kwargs)
         self.class_ = class_ or self.__class__.__name__ # Optional class name, e.g. to group elements together in HTML/CSS export.
         self.initializeStyles(styles) # Create some default styles, to make sure they are there.
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
         self.w = w or 1000 # Always needs a value. Take 1000 if None defined.
         self.h = h or 1000
+        if padding is not None:
+            self.padding = padding
 
         self.name = name or title or 'Untitled'
         self.title = title or self.name
 
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
 
-        self.initializeTemplates(defaultTemplate, templates)
+        self.initializeTemplates(defaultTemplate, templates, **kwargs)
 
         # Storage lib for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
         self._lib = {}
 
         # Initialize some basic views.
-        self.initializeViews(views)
+        self.initializeViews(views, **kwargs)
 
         # Document (w, h) size is default from page, but will modified by the type of display mode. 
         if autoPages:
@@ -60,10 +60,11 @@ class Document(object):
         # Call generic initialize method, allowing inheriting publication classes to initialize their stuff.
         # This can be the creation of templates, pages, adding/altering styles and view settings.
         # Default is to do nothing.
-        self.initialize()
+        self.initialize(**kwargs)
 
-    def initialize(self):
-        u"""Default implementation of publication initialized. Can be redefined by inheriting classed."""
+    def initialize(self, **kwargs):
+        u"""Default implementation of publication initialized. Can be redefined by inheriting classed.
+        All **kwargs are available to allow access for inheriting Publication documents."""
         pass
 
     def _get_lib(self):
@@ -107,14 +108,14 @@ class Document(object):
         info = []
         info.append('Document-%s "%s"' % (self.__class__.__name__, self.name))
         info.append('\tPages: %d' % len(self.pages))
-        info.append('\tTemplates: %s' % ', '.join(self.templates.keys()))
-        info.append('\tStyles: %s' % ', '.join(self.styles.keys()))
+        info.append('\tTemplates: %s' % ', '.join(sorted(self.templates.keys())))
+        info.append('\tStyles: %s' % ', '.join(sorted(self.styles.keys())))
         info.append('\tLib: %s' % ', '.join(self._lib.keys()))
         return '\n'.join(info)
 
     #   T E M P L A T E
 
-    def initializeTemplates(self, defaultTemplate, templates):
+    def initializeTemplates(self, defaultTemplate, templates, **kwargs):
         if templates is None:
             templates = {}
         self.templates = templates # Store defined dictionary of templates or empty dict.
@@ -162,6 +163,17 @@ class Document(object):
         name = 'page'
         if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
+
+    def makeRootStyle(self, rootStyle, **kwargs):
+        u"""Create a rootStyle if not defined, then set the arguments from **kwargs, if their entry name already exists.
+        This is similar (but not identical) to the makeStyle in Elements. There any value entry is copied, even if that
+        is not defined in the root style."""
+        if rootStyle is None:
+            rootStyle = getRootStyle()
+        for name, v in kwargs.items():
+            if name in rootStyle: # Only overwrite existing values.
+                rootStyle[name] = v 
+        return rootStyle
 
     def getMaxPageSizes(self, pageSelection=None):
         u"""Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
@@ -280,6 +292,63 @@ class Document(object):
         self.rootStyle['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
 
+    def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
+        return self.pt, self.pr, self.pb, self.pl
+    def _set_padding(self, padding):
+        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
+        if isinstance(padding, (long, int, float)):
+            padding = [padding]
+        if len(padding) == 1: # All same value
+            padding = (padding[0], padding[0], padding[0], padding[0], padding[0], padding[0])
+        elif len(padding) == 2: # pt == pb, pl == pr, pzf == pzb
+            padding = (padding[0], padding[1], padding[0], padding[1], padding[0], padding[1])
+        elif len(padding) == 3: # pt == pl == pzf, pb == pr == pzb
+            padding = (padding[0], padding[1], padding[2], padding[0], padding[1], padding[2])
+        elif len(padding) == 4: # pt, pr, pb, pl, 0, 0
+            padding = (padding[0], padding[1], padding[2], padding[3], 0, 0)
+        elif len(padding) == 6:
+            pass
+        else:
+            raise ValueError
+        self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb = padding
+    padding = property(_get_padding, _set_padding)
+
+    def _get_pt(self): # Padding top
+        return self.css('pt', 0)
+    def _set_pt(self, pt):
+        self.rootStyle['pt'] = pt  
+    pt = property(_get_pt, _set_pt)
+
+    def _get_pb(self): # Padding bottom
+        return self.css('pb', 0)
+    def _set_pb(self, pb):
+        self.rootStyle['pb'] = pb  
+    pb = property(_get_pb, _set_pb)
+    
+    def _get_pl(self): # Padding left
+        return self.css('pl', 0)
+    def _set_pl(self, pl):
+        self.rootStyle['pl'] = pl 
+    pl = property(_get_pl, _set_pl)
+    
+    def _get_pr(self): # Margin right
+        return self.css('pr', 0)
+    def _set_pr(self, pr):
+        self.rootStyle['pr'] = pr  
+    pr = property(_get_pr, _set_pr)
+
+    def _get_pzf(self): # Padding z-axis front
+        return self.css('pzf', 0)
+    def _set_pzf(self, pzf):
+        self.rootStyle['pzf'] = pzf  
+    pzf = property(_get_pzf, _set_pzf)
+    
+    def _get_pzb(self): # Padding z-axis back
+        return self.css('pzb', 0)
+    def _set_pzb(self, pzb):
+        self.rootStyle['pzb'] = pzb  
+    pzb = property(_get_pzb, _set_pzb)
+
     #   F O N T S
 
     def getInstalledFonts(self):
@@ -344,6 +413,20 @@ class Document(object):
                        pattern is not None and page.name is not None and pattern in page.name:
                     pages.append(page)
         return pages
+
+    def isLeftPage(self, page):
+        u"""Answer the boolean flag if the page is currently defined as a left page. Left page is even page number"""
+        for pn, pnPages in self.pages.items():
+            if page in pnPages:
+                return bool(pn & 0x1)
+        return False # Page not found
+
+    def isRightPage(self, page):
+        u"""Answer the boolean flag if the page is currently defined as a left page. Right page is odd page number."""
+        for pn, pnPages in self.pages.items():
+            if page in pnPages:
+                return not pn & 0x1
+        return False # Page not found
 
     def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
         u"""Create a new page with size (self.w, self.h) unless defined otherwise. Add the pages in the row of pn, if defined.
@@ -446,7 +529,9 @@ class Document(object):
 
     #   V I E W S
 
-    def initializeViews(self, views):
+    def initializeViews(self, views, **kwargs):
+        u"""Initialize the views. All **kwargs arguments are available, to give access for inheriting
+        Publication documents that redefine this method."""
         self.views = {} # Key is name or eId of View instance. 
         if views is not None:
             for view in views:

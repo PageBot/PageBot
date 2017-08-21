@@ -465,8 +465,10 @@ class View(Element):
         u"""Draw grid of lines and/or rectangles if colors are set in the style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         # Drawing the grid as squares.
-        if not self.showGridColumns or not self.showGrid:
+        if not self.showGrid:
             return
+        #if not self.showGridColumns or not self.showGrid:
+        #    return
         p = pointOffset(e.oPoint, origin)
         p = self._applyScale(p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
@@ -480,9 +482,36 @@ class View(Element):
         padT = e.pt # Padding top
         padR = e.pr # padding right
         padB = e.pb # padding bottom
+        padW = e.pw # Padding width
+        padH = e.ph # Padding height
+
         w = e.w
         h = e.h
 
+        if e.isRight():
+            ox = px + padR
+        else:
+            ox = px + padL
+        oy = py + padB
+
+        if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
+            setFillColor(None)
+            setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
+            newPath()
+            for cx, cw in e.getGridColumnsX():
+                moveTo((ox+cx, oy))
+                lineTo((ox+cx, oy + padH))
+                moveTo((ox+cx + cw, oy))
+                lineTo((ox+cx + cw, oy + padH))
+            for cy, ch in e.getGridColumnsY():
+                moveTo((ox, oy+cy))
+                lineTo((ox + padW, oy+cy))
+                moveTo((ox, oy+cy + ch))
+                lineTo((ox + padW, oy+cy + ch))
+            drawPath()
+                #text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
+
+        """
         if self.showGridColumns and sGridFill is not NO_COLOR:
             setFillColor(sGridFill)
             setStrokeColor(None)
@@ -503,18 +532,16 @@ class View(Element):
             fs = newFS('', self, dict(font='Verdana', xTextAlign=RIGHT, fontSize=M/2,
                 stroke=None, textFill=self.css('viewGridStroke')))
             ox = px + padL
-            index = 0
-            oy = h - padT - py
-            while ox < px + w - padR:
-                newPath()
-                moveTo((ox, py))
-                lineTo((ox, py + h))
-                moveTo((ox + columnWidth, py))
-                lineTo((ox + columnWidth, py + h))
-                drawPath()
-                text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
-                index += 1
-                ox += columnWidth + gutterW
+            for cw, gutter in e.getGridX(): # Answer the sequence or relative (column, gutter) measures.
+                    newPath()
+                    moveTo((ox, py))
+                    lineTo((ox, py + h))
+                    moveTo((ox + columnWidth, py))
+                    lineTo((ox + columnWidth, py + h))
+                    drawPath()
+                    text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
+                    index += 1
+                    ox += columnWidth + gutterW
             index = 0
             while oy > py:
                 newPath()
@@ -526,6 +553,7 @@ class View(Element):
                 text(fs + repr(index), (px + padL - M / 2, oy - M * 0.6))
                 index += 1
                 oy -= columnHeight + gutterH
+        """
 
     def drawBaselineGrid(self, e, origin):
         u"""Draw baseline grid if line color is set in the style.

@@ -25,5 +25,5 @@ class Poster(Publication):
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
     exportPaths=None, **kwargs)"""
 
-    def initialize(self):
+    def initialize(self, **kwargs):
         pass

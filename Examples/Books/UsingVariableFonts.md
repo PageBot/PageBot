@@ -16,15 +16,22 @@ from pagebot.style import MM # Converter from MM to points
 from pagebot.publications import Book
 
 W, H = 163*MM, 244*MM # Overall size of the book pages.
+# Defing the padding for right pages. Left are mirrored by templates.
 padding = 18*MM, 12*MM, 12*MM, 10*MM # Top, Right, Bottom, Left
+# Define the grid values for left and right pages
+gridR = [(50*MM, 3*MM), (None, 0)]
+gridL = [(None, 3*MM), (50*MM, 0)]
+coverBackgroundFill = (0.05, 0.07, 0.05) # Greenish black
 
 title = 'Using Variable Fonts'
 
-# The Book instance stored as “doc”, so typsetter can find it.
+# The Book instance stored as “doc”, so typesetter can find it.
 # Use the predefined dynamic templates inside book.
 # No automatic pages, all are created by content in this file.
+# Set the left and right grid measures.
 
-doc = Book(w=W, h=H, autoPages=0, originTop=False, title=title, padding=padding)
+doc = Book(w=W, h=H, autoPages=0, originTop=False, title=title, padding=padding, gridL=gridL, gridR=gridR, 
+coverBackgroundFill=coverBackgroundFill)
 
 # Show some information about the doc so far.
 print doc.getInfo() 
@@ -38,13 +45,13 @@ page = doc.newPage(template='Cover')
 ~~~
 
 ~~~Python
-page = doc.newPage(template='TableOfContent')
+page = doc.newPage(template='Table Of Content')
 ~~~
 
 ~~~Python
-page = doc.newPage(name='Reference')
+page = doc.newPage(template='Title Page')
 ~~~
-The content of this poster is an example summary of the the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published on the TN website.
+The content of this book is an example summary of the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published on the TN website.
 
 
 ~~~Python

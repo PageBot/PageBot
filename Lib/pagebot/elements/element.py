@@ -502,6 +502,127 @@ class Element(object):
         return self._applyOrigin(self.point)
     oPoint3D = oPoint = property(_get_oPoint)
 
+    # Orientation of elements (and pages)
+
+    def isLeft(self):
+        return False
+    def isRight(self):
+        return False
+
+    def _get_gridX(self):
+        u"""Answer the grid, depending on the left/right orientation of self."""
+        if self.isLeft():
+            return self.css('gridL') or self.css('gridX')
+        if self.isRight():
+            return self.css('gridR') or self.css('gridX')
+        return self.css('gridX')
+    def _set_gridX(self, gridX):
+        if self.isLeft():
+            self.style['gridL'] = gridX  # Save locally, blocking CSS parent scope for this param.
+        elif self.isRight():
+            self.style['gridR'] = gridX
+        else:
+            self.style['gridX'] = gridX
+    gridX = property(_get_gridX, _set_gridX)
+
+    def _get_gridY(self):
+        u"""Answer the grid, depending on the left/right orientation of self."""
+        return self.css('gridY')
+    def _set_gridY(self, gridY):
+        self.style['gridY'] = gridY  # Save locally, blocking CSS parent scope for this param.
+    gridY = property(_get_gridY, _set_gridY)
+
+    def _get_gridZ(self):
+        u"""Answer the grid, depending on the left/right orientation of self."""
+        return self.css('gridZ')
+    def _set_gridZ(self, gridZ):
+        self.style['gridZ'] = gridZ  # Save locally, blocking CSS parent scope for this param.
+    gridZ = property(_get_gridZ, _set_gridZ)
+
+    def getGridColumnsX(self):
+        u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
+        Note that this is different from the gridX definition [(wx, gutter), ...]
+        If there is one or more None in the grid definition, then try to fit equally on self.cw.
+        If gurtter is left None, then the default style gutter is filled there."""
+        gridColumns = []
+        gridX = self.gridX 
+        pw = self.pw # Padded with, available space for columns.
+        gw = self.gw
+        if gridX is not None: # If there is a non-linear grid sequence defined, use that.
+            undefined = 0
+            usedWidth = 0
+            # Make a first pass to see how many columns (None) need equal division.
+            for cw, gutter in gridX:
+                if cw is None:
+                    undefined += 1
+                else:
+                    usedWidth += cw
+                if gutter is None:
+                    gutter = gw
+                usedWidth += gutter
+            equalWidth = (pw - usedWidth) / (undefined or 1)
+            # Now we know the divide width, scane through the grid list again, building x coordinates.
+            x = 0
+            for cw, gutter in gridX:
+                if cw is None:
+                    cw = equalWidth
+                if gutter is None:
+                    gutter = gw
+                gridColumns.append((x, cw))
+                x += cw + gutter
+        else: # If no grid defined, then run the squence for cw + gutter
+            cw = self.cw
+            x = 0
+            for index in range(int(pw/cw)): # Roughly the amount of columns to expect. Avoid while loop
+                if x + cw > pw:
+                    break
+                gridColumns.append((x, cw))
+                x += cw + gw # Next column start position.
+        return gridColumns
+
+    def getGridColumnsY(self):
+        u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
+        Note that this is different from the gridX definition [(wx, gutter), ...]
+        If there is one or more None in the grid definition, then try to fit equally on self.cw.
+        If gurtter is left None, then the default style gutter is filled there."""
+        gridColumns = []
+        gridY = self.gridY 
+        ph = self.ph # Padded height, available space for vertical columns.
+        gh = self.gh
+        if gridY is not None: # If there is a non-linear grid sequence defined, use that.
+            undefined = 0
+            usedHeight = 0
+            # Make a first pass to see how many columns (None) need equal division.
+            for ch, gutter in gridY:
+                if ch is None:
+                    undefined += 1
+                else:
+                    usedWidth += ch
+                if gutter is None:
+                    gutter = gh
+                usedHeight += gutter
+            usedHeight = (ph - usedHeight) / (undefined or 1)
+            # Now we know the divide width, scane through the grid list again, building x coordinates.
+            y = 0
+            for ch, gutter in gridY:
+                if ch is None:
+                    ch = usedHeight
+                if gutter is None:
+                    gutter = gh
+                gridColumns.append((y, ch))
+                y += ch + gutter
+        else: # If no grid defined, then run the squence for ch + gutter
+            ch = self.ch
+            y = 0
+            for index in range(int(ph/ch)): # Roughly the amount of columns to expect. Avoid while loop
+                if y + ch > ph:
+                    break
+                gridColumns.append((y, ch))
+                y += ch + gh # Next column start position.
+        return gridColumns
+
+    # No getGridColumnsZ for now.
+
     # Plain coordinates
 
     def _get_x(self):
@@ -1128,7 +1249,8 @@ class Element(object):
     # Padding properties
 
     # TODO: Add support of "auto" values, doing live centering.
-    
+ 
+
     def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
@@ -1190,6 +1312,21 @@ class Element(object):
         self.style['pzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)
 
+    def _get_pw(self): 
+        u"""Padded width of the element block."""
+        return self.w - self.pl - self.pr
+    pw = property(_get_pw)
+    
+    def _get_ph(self):
+        u"""Padded height of the element block."""
+        return self.h - self.pb - self.pt
+    ph = property(_get_ph)
+    
+    def _get_pd(self):
+        u"""Padded depth of the element block."""
+        return self.d - self.pzf - self.pzb
+    pd = property(_get_pd)
+
     def _get_originTop(self):
         u"""Answer the style flag if all point y values should measure top-down (typographic page
         orientation), instead of bottom-up (mathematical orientation). For Y-axis only. 
@@ -1234,18 +1371,8 @@ class Element(object):
         self.h = h 
         self.d = d # By default elements have 0 depth.
 
-    def _get_pw(self): # Padded width
-        return self.w - self.pl - self.pr
-    pw = property(_get_pw)
-    
-    def _get_ph(self): # Padded height
-        return self.h - self.pb - self.pt
-    ph = property(_get_ph)
-    
-    def _get_pd(self): # Padded depth
-        return self.d - self.pzf - self.pzb
-    pd = property(_get_pd)
-    
+    #   S H A D O W   &  G R A D I E N T
+
     def _get_shadow(self):
         return self.css('shadow')
     def _set_shadow(self, shadow):
