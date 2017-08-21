@@ -54,8 +54,10 @@ class Typesetter(object):
         'li': ('ul', 'ol'),
         'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
     }
-    def __init__(self, doc=None, galley=None):
-        self._doc = doc # Doc context of the typesetter. Can be None.
+    def __init__(self, doc=None, galley=None, globalDocName=None):
+        # Set the doc context of the typesetter. Can be None, in which case it is expected that one of the code blocks
+        # will define it in ~~~Python or it is set later by the calling application.
+        self.doc = doc
         # Galley can also be a TextBox, if typsetting must go directly into a page element. In that case image elements
         # are added as child, loosing contact with their position in the text. A Galley element keeps that relation,
         # by adding multiple TextBox elements between the images.
@@ -66,23 +68,9 @@ class Typesetter(object):
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = [] 
         self.tagHistory = []
+        # Code block results if any ~~~Python blocks defined in the Markdown file.
+        self.globalDocName = globalDocName or 'doc' # Name of global doc to find in code blocks, to be stored in self.doc
         self.codeBlocks = {} # No results for now. Find codeblock result by codeId after typesetting.
-
-    def _get_doc(self):
-        u"""Answer the typesetter self._doc. If it is (still) None, then check if there is a
-        doc instance defined in one of the codeblocks. Raise an error if there is 
-        more than one doc defined."""
-        if self._doc is None: # Not defined, try to find one in the codeblocks result.
-            for codeId, result in sorted(self.codeBlocks.items()):
-                for resultId, value in sorted(result.items()):
-                    if isinstance(value, Document):
-                        self.doc = value # Raise an error if mulitple docs are defined.
-                        return self._doc
-        return self._doc
-    def _set_doc(self, doc):
-        assert self._doc is None # Don't allow accidental creation or setting of multiple docs.
-        self._doc = doc
-    doc = property(_get_doc, _set_doc)
 
     def getTextBox(self, e=None):
         u"""Answer the current text box, if the width fits the current style.
@@ -333,7 +321,7 @@ class Typesetter(object):
                 return lib['literatureRefs']
         return None
 
-    def runCodeBlocks(self, node, execute=True):
+    def runCodeBlock(self, node, execute=True):
         u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with 
         ~~~Python
@@ -350,39 +338,43 @@ class Typesetter(object):
         Content result dictionary (per codeblock) is stored in self.codeBlocks[codeId].
 
         """
-        for index, codeNode in enumerate(node.findall('*//code')):
-            if not codeNode.attrib.get('class') == 'Python':
-                # "~~~"" code blocks are skipped.
-                # "~~~Python" code blocks are processed by self.
-                continue
-            codeId = 'codeBlock_%d' % index
-            result = {} # Will contain all "global" defined objects in one code block.
+        if node.tag != 'code' or not node.attrib.get('class') == 'Python':
+            # "~~~"" code blocks are skipped.
+            # "~~~Python" code blocks are processed by self.
+            return None, None
+
+        codeId = 'codeBlock_%d' % (len(self.codeBlocks)+1)
+        # Will contain all "global" defined objects in one code block.
+        # self.doc contains the Typesetter doc reference, which can be defined in an earlier code block
+        result = dict(doc=self.doc) 
+        if execute and node.text:
             try:
-                exec(codeNode.text) in result # Exectute code block, where result goes dict.
+                exec(node.text) in result # Exectute code block, where result goes dict.
                 codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
                 del result['__builtins__'] # We don't need this set of globals in the results.
             except NameError:
-                result = dict(__error__='### NameError', ) # TODO: More error message here.
+                result['__error__'] = '### NameError' # TODO: More error message here.
             except SyntaxError:
-                result = dict(__error__='### SyntaxError') # TODO: More error message here.
-            # TODO: insert more possible exec() errors here.
-            
-            # For convenience, store the source code of the block in the result dict.
-            if not '__code__' in result:
-                result['__code__'] = codeNode.text
+                result['__error__'] = '### SyntaxError' # TODO: More error message here.
+        # TODO: insert more possible exec() errors here.
+        
+        # For convenience, store the source code of the block in the result dict.
+        if not '__code__' in result:
+            result['__code__'] = node.text
 
-            # Store the result dict as code block. Global values have become dict entries.
-            # Make sure that we have a unique codeId (it may have been defined in different
-            # markdown files, so sequential index it no guarantee.)
-            if codeId in self.codeBlocks:
-                n = 0
-                codeIdTmp = codeId
-                while codeIdTmp in self.codeBlocks:
-                    codeIdTmp = '%s_%d' % (codeId, n)
-                    n += 1
-                codeId = codeIdTmp # We have a codeId now that does not already exist.
-            # Store the result dict in self.codeBlocks under the unique name.
-            self.codeBlocks[codeId] = result
+        # Store the result dict as code block. Global values have become dict entries.
+        # Make sure that we have a unique codeId (it may have been defined in different
+        # markdown files, so sequential index it no guarantee.)
+        if codeId in self.codeBlocks:
+            n = 0
+            codeIdTmp = codeId
+            while codeIdTmp in self.codeBlocks:
+                codeIdTmp = '%s_%d' % (codeId, n)
+                n += 1
+            codeId = codeIdTmp # We have a codeId now that does not already exist.
+        # Store the result dict in self.codeBlocks under the unique name.
+        self.codeBlocks[codeId] = result
+        return codeId, result
 
     def getImageRefs(self, e):
         u"""Answer the image reference dictionary from the e.lib (derived from the root document)
@@ -461,7 +453,11 @@ class Typesetter(object):
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
 
         # Fills self.codeBlocks dictionary from node codeblocks.
-        self.runCodeBlocks(node) 
+        cid, codeResult = self.runCodeBlock(node) 
+        if codeResult is not None:
+            doc = codeResult.get(self.globalDocName)
+            if doc is not None:
+                self.doc = doc
 
         # Add this tag to the tag-hitstory line
         self.addHistory(node.tag)

@@ -2,7 +2,7 @@
 cid = 'Document'
 from pagebot.document import Document
 from pagebot.elements import *
-doc = Document(title='Bitcount Minisite', autoPages=2)
+doc = Document(title='BitcountMinisite', autoPages=2)
 page = doc[0]
 newTextBox('AAA', parent=page, w=200, h=200, fill=(1, 1, 0))
 

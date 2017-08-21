@@ -11,5 +11,6 @@
 #
 #     __init__.py
 #
+from book import Book
 from poster import Poster
 from singlepage import SinglePage
