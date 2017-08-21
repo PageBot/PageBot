@@ -75,6 +75,9 @@ class Document(object):
         return self._lib 
     lib = property(_get_lib)
 
+    def __repr__(self):
+        return '[Document-%s "%s"]' % (self.__class__.__name__, self.name)
+
     def _get_doc(self):
         u"""End of the chain of element properties, looking upward in the ancestors tree."""
         return self
