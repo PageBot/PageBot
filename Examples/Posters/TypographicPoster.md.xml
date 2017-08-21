@@ -23,7 +23,7 @@ title = 'When fonts started a new world'
 
 doc = Poster(w=W, h=H, originTop=False,     
     title=title, 
-    pageTemplate=StackedTypography())
+    defaultTemplate=StackedTypography())
 
 # Views define the way documents are exported.
 # Add space for cropmarks and registrations marks

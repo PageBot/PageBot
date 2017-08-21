@@ -39,7 +39,7 @@ if 0: # Print some results of the typesetter
     # Added counter 'Views_0' to 'Views' to make it unique. 
     print 'Found code blocks:', t.codeBlocks.keys()
     #print t.galley.elements[0].text
-    template = t.doc.pageTemplate
+    template = t.doc.defaultTemplate
     print template.elements
     page = t.doc[0]
     print page.template.w, page.w, page.h

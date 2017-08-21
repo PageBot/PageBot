@@ -27,31 +27,39 @@ t = Typesetter()
 # The blocks, global defined variables and text content are in the 
 # typesetter t.galley.
 t.typesetFile(MD_PATH)
-print t.codeBlocks
+#print t.codeBlocks
 # The typesetter produced a single Galley with content and code blocks.
 # Now use a composer (automatic "designer") to fit the pieces together.
 # Takes a galley as soruce and a document for target pages. 
-#Composer().compose(t.galley, t.doc)
+Composer().compose(t.galley, t.doc)
 
 if 0: # Print some results of the typesetter
     # Typesetter found document definition inside content.
     print 'Book title:', t.doc.title, round(t.doc.w), round(t.doc.h)
     # Multiple code blocks found with identical identifier.
     # Added counter 'Views_0' to 'Views' to make it unique. 
-    print 'Found code blocks:', t.codeBlocks.keys()
+    print 'Found code blocks: %d' % len(t.codeBlocks.keys())
     #print t.galley.elements[0].text
-    template = t.doc.pageTemplate
-    print template.elements
-    page = t.doc[0]
-    print page.template.w, page.w, page.h
+    #page = t.doc[0]
+    #print page.padding
+    #print page.w, page.h
+
+if 1: # Debugging, show the pages with their names.
+    for templateName, template in t.doc.templates.items():
+        print templateName, template.name
+    for pn, pages in t.doc.getSortedPages():
+        for page in pages:
+            print '\t', page, page.w, page.h, page.template.name
 
 if 1:
     # Views define the way documents are exported.
     # Add space for cropmarks and registrations marks
     view = t.doc.getView()
-    view.padding = 40
+    view.padding = 30
+    view.showPageNameInfo = True
+    view.showPagePadding = True
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
 
-#t.doc.export(EXPORT_PATH)
+t.doc.export(EXPORT_PATH)
