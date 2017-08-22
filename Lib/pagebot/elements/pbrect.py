@@ -23,3 +23,4 @@ class Rect(Element):
     pass
 
     # No separate draw, default behavior is in Element.draw()
+

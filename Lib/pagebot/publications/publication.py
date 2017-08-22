@@ -20,5 +20,4 @@ class Publication(Document):
     Originally Publication was an abstract class, holding multiple documents. But since the split 
     between the Document container class and View classes for representations, there is no need
     to have a "top-class" containing multiple documents."""
-    pass
 

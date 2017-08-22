@@ -498,12 +498,12 @@ class View(Element):
             setFillColor(None)
             setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
             newPath()
-            for cx, cw in e.getGridColumnsX():
+            for cx, cw in e.getGridColumns():
                 moveTo((ox+cx, oy))
                 lineTo((ox+cx, oy + padH))
                 moveTo((ox+cx + cw, oy))
                 lineTo((ox+cx + cw, oy + padH))
-            for cy, ch in e.getGridColumnsY():
+            for cy, ch in e.getGridRows():
                 moveTo((ox, oy+cy))
                 lineTo((ox + padW, oy+cy))
                 moveTo((ox, oy+cy + ch))

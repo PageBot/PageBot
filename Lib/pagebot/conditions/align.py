@@ -23,8 +23,8 @@ class SolveBlock(Condition):
 	def solve(self, e, score):
 		for child in e.elements:
 			child.solve(score)
-
-#	F I T T I N G 
+			
+#	F I T T I N G  P A G E  P A D D I N G 
 
 #   By fitting conditions, elements grow to match the size of parents.
 
