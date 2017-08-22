@@ -19,7 +19,7 @@ W, H = 163*MM, 244*MM # Overall size of the book pages.
 # Defing the padding for right pages. Left are mirrored by templates.
 padding = 18*MM, 12*MM, 12*MM, 10*MM # Top, Right, Bottom, Left
 # Define the grid values for left and right pages
-gridR = [(50*MM, 3*MM), (None, 0)]
+gridR = [(50*MM, 3*MM),(20*MM, 3*MM),(20*MM, 3*MM), (None, 0)]
 gridL = [(None, 3*MM), (50*MM, 0)]
 coverBackgroundFill = (0.05, 0.07, 0.05) # Greenish black
 

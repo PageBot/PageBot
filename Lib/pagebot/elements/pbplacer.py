@@ -9,9 +9,15 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     __init__.py
+#     placer.py
 #
-from pagebot.conditions.align import *
-from pagebot.conditions.floating import *
-from pagebot.conditions.flow import *
-from pagebot.conditions.columns import *
+from pagebot.elements.element import Element
+
+class Placer(Element):
+
+    DEFAULT_FILL = (0.8, 0.8, 0.8)
+
+    def __init__(self, fill=None, **kwargs):  
+        if fill is None:
+            fill = self.DEFAULT_FILL
+        Element.__init__(self, fill=fill, **kwargs)

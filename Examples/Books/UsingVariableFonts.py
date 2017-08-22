@@ -51,7 +51,7 @@ if 1: # Debugging, show the pages with their names.
     for pn, pages in t.doc.getSortedPages():
         for page in pages:
             print '\t', page, page.w, page.h, page.template.name
-            #page.isLeft(), page.isRight(), page.getGridColumnsX()
+            #page.isLeft(), page.isRight(), page.getGridColumns()
 
 if 1:
     # Views define the way documents are exported.

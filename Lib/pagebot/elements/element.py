@@ -539,7 +539,7 @@ class Element(object):
         self.style['gridZ'] = gridZ  # Save locally, blocking CSS parent scope for this param.
     gridZ = property(_get_gridZ, _set_gridZ)
 
-    def getGridColumnsX(self):
+    def getGridColumns(self):
         u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
         Note that this is different from the gridX definition [(wx, gutter), ...]
         If there is one or more None in the grid definition, then try to fit equally on self.cw.
@@ -580,12 +580,12 @@ class Element(object):
                 x += cw + gw # Next column start position.
         return gridColumns
 
-    def getGridColumnsY(self):
+    def getGridRows(self):
         u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
         Note that this is different from the gridX definition [(wx, gutter), ...]
         If there is one or more None in the grid definition, then try to fit equally on self.cw.
         If gurtter is left None, then the default style gutter is filled there."""
-        gridColumns = []
+        gridRows = []
         gridY = self.gridY 
         ph = self.ph # Padded height, available space for vertical columns.
         gh = self.gh
@@ -609,7 +609,7 @@ class Element(object):
                     ch = usedHeight
                 if gutter is None:
                     gutter = gh
-                gridColumns.append((y, ch))
+                gridRows.append((y, ch))
                 y += ch + gutter
         else: # If no grid defined, then run the squence for ch + gutter
             ch = self.ch
@@ -617,11 +617,11 @@ class Element(object):
             for index in range(int(ph/ch)): # Roughly the amount of columns to expect. Avoid while loop
                 if y + ch > ph:
                     break
-                gridColumns.append((y, ch))
+                gridRows.append((y, ch))
                 y += ch + gh # Next column start position.
-        return gridColumns
+        return gridRows
 
-    # No getGridColumnsZ for now.
+    # No getGrid in Z-direction for now.
 
     # Plain coordinates
 
@@ -2314,9 +2314,114 @@ class Element(object):
     def isFloatOnRightSide(self, tolerance=0):
         return abs(self.getFloatRightSide() - self.mRight) <= tolerance
 
+    #   Column/Row conditions
+
+    def isLeftOnCol(self, col, tolerance):
+        u"""Move top of the element to col index position."""
+        gridColumns = self.getGridColumns()
+        if col in range(len(gridColumns)):
+            return abs(self.left - gridColumns[col][0]) <= tolerance
+        return False # row is not in range of gridColumns 
+
+    def isRightOnCol(self, col, tolerance):
+        u"""Move top of the element to col index position."""
+        gridColumns = self.getGridColumns()
+        if col in range(len(gridColumns)):
+            return abs(self.right - gridColumns[col][0]) <= tolerance
+        return False # row is not in range of gridColumns 
+
+    def isFitOnColspan(col, colSpan, tolerance):
+        gridColumns = self.getGridColumns()
+        indices = range(len(gridColumns))
+        if col in indices and col + colSpan in indices:
+            c1 = gridColumns[col]
+            c2 = gridColumns[col + colspan - 1]
+            return abs(e.w - (c2[0] - c1[0] + c2[1])) <= tolerance
+        return False
+
+    def isTopOnRow(self, row, tolerance):
+        u"""Move top of the element to row."""
+        gridRows = self.getGridRows()
+        if row in range(len(gridRows)):
+            return abs(self.top - gridRows[row][0]) <= tolerance
+        return False # row is not in range of gridColumns 
+
+    def isBottomOnRow(self, row, tolerance):
+        u"""Move top of the element to row."""
+        gridRows = self.getGridRows()
+        if row in range(len(gridRows)):
+            return abs(self.bottom - gridRows[row][0]) <= tolerance
+        return False # row is not in range of gridColumns 
+
+    def isFitOnRowspan(self, row, rowSpan, tolerance):
+        gridRows = self.getGridRows()
+        indices = range(len(gridRows))
+        if row in indices and row + rowSpan in indices:
+            r1 = gridRows[row]
+            r2 = gridRows[row + colspan - 1]
+            return abs(e.h - (r2[0] - r1[0] + r2[1])) <= tolerance
+        return False
+
     #   T R A N S F O R M A T I O N S 
 
+    #   Column/Row alignment
+
+    def left2Col(self, col):
+        u"""Move top of the element to col index position."""
+        gridColumns = self.getGridColumns()
+        if col in range(len(gridColumns)):
+            self.left = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
+            return True
+        return False # row is not in range of gridColumns 
+
+    def right2Col(self, col):
+        u"""Move right of the element to col index position."""
+        gridColumns = self.getGridColumns()
+        if col in range(len(gridColumns)):
+            self.right = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
+            return True
+        return False # row is not in range of gridColumns 
+
+    def fit2ColSpan(self, col, colSpan):
+        gridColumns = self.getGridColumns()
+        indices = range(len(gridColumns))
+        if col in indices and col + colSpan in indices:
+            c1 = gridColumns[col]
+            c2 = gridColumns[col + colspan - 1]
+            e.w = c2[0] - c1[0] + c2[1]
+            return True
+        return False
+
+    def top2Row(self, row):
+        u"""Move top of the element to row."""
+        gridRows = self.getGridRows()
+        if row in range(len(gridRows)):
+            self.top = self.parent.pb + gridRows[row][0] # @@@ FIX GUTTER
+            return True
+        return False # row is not in range of gridColumns 
+
+    def bottom2Row(self, row):
+        u"""Move top of the element to row."""
+        gridRows = self.getGridRows()
+        if row in range(len(gridRows)):
+            self.bottom = self.parent.pb + gridRows[row][0] # @@@ FIX GUTTER
+            return True
+        return False # row is not in range of gridColumns 
+
+    def fit2RowSpan(self, row, rowSpan):
+        gridRows = self.getGridRows()
+        indices = range(len(gridRows))
+        if row in indices and row + rowSpan in indices:
+            r1 = gridRows[row]
+            r2 = gridRows[row + colspan - 1]
+            e.h = r2[0] - r1[0] + r2[1]
+            return True
+        return False
+    
+    #   Page block and Page side alignments
+
     def bottom2Bottom(self):
+        u"""Move bottom of the element to the bottom of the parent block."""
         if self.originTop:
             self.bottom = self.parent.h - self.parent.pb
         else:
@@ -2324,6 +2429,7 @@ class Element(object):
         return True
 
     def bottom2BottomSide(self):
+        u"""Move bottom of the element to the bottom of the parent side."""
         if self.originTop:
             self.bottom = self.parent.h
         else:
@@ -2331,6 +2437,7 @@ class Element(object):
         return True
 
     def bottom2Top(self):
+        u"""Move bottom of the element to the top of the parent block."""
         if self.originTop:
             self.bottom = self.parent.pt 
         else:
@@ -2338,6 +2445,7 @@ class Element(object):
         return True
     
     def middle2Bottom(self):
+        u"""Move middle of the element to the bottom of the parent block."""
         if self.originTop:
             self.middle = self.parent.h - self.parent.pb
         else:
@@ -2345,6 +2453,7 @@ class Element(object):
         return True
     
     def middle2BottomSide(self):
+        u"""Move middle of the element to the bottom parent side."""
         if self.originTop:
             self.middle = self.parent.h
         else:
@@ -2600,7 +2709,7 @@ class Element(object):
         self.mRight = self.getFloatRightSide()
         return True
 
-    # WIth fitting (and shrinking) we need to change the actual size of the element.
+    # With fitting (and shrinking) we need to change the actual size of the element.
     # This can have implications on it's content, and we need to take the min/max
     # sizes into conderantion: setting the self.w and self.h to a value, does not mean
     # that the size really got that value, if exceeding a min/max limit.

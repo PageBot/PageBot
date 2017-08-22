@@ -24,6 +24,7 @@ from pagebot.elements.pboval import Oval
 from pagebot.elements.pbimage import Image
 from pagebot.elements.pbgalley import Galley
 from pagebot.elements.pbpage import Page, Template
+from pagebot.elements.pbplacer import Placer # Place holder element, typically for Templates.
 # Path and mask elements
 from pagebot.elements.paths.pbpath import Path
 from pagebot.elements.paths.glyphpath import GlyphPath
@@ -31,6 +32,16 @@ from pagebot.elements.paths.glyphpath import GlyphPath
 from pagebot.elements.pbtable import Table
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
+
+def newPlacer(**kwargs):
+    u"""Placer occupying a space on Page or Template. Is not visible exported documets."""
+    return Placer(**kwargs)
+
+def newColPlacer(cx=None, cy=None, cw=None, ch=None, *kwargs):
+    u"""Placer occupying a space on Page or Template. Is not visible exported documets."""
+    e = newPlacer(**kwargs)
+    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index, based on style or parent.css
+    return e
 
 def newTextBox(fs, point=None, **kwargs):
     u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
