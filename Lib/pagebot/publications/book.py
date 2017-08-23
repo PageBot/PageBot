@@ -39,23 +39,30 @@ class Book(Publication):
             coverBackgroundFill = self.DEFAULT_COVERBACKGROUND
 
         t = Template(w=w, h=h, name='Cover', padding=padding, gridY=gridY) 
-        newRect(parent=t, conditions=[Fit2Sides()], fill=coverBackgroundFill)
+        newRect(parent=t, conditions=[Fit2Sides()], name='Cover', fill=coverBackgroundFill)
         self.addTemplate(t.name, t)
+        score = t.solve()
 
         t = Template(w=w, h=h, name='Title Page', padding=padding, gridY=gridY)
-        newPlacer(parent=t, conditions=[Left2Col(1), Bottom2Row(0)], h=200)
+        newPlacer(parent=t, conditions=[Left2Col(1), Bottom2Row(0)], name='Title', h=200)
         self.addTemplate(t.name, t)
+        t.solve(score)
         
         t = Template(w=w, h=h, name='Table Of Content', padding=padding, gridY=gridY)
-        newPlacer(parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], w=200)
+        newPlacer(parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], name='TOC', w=200)
         self.addTemplate(t.name, t)
+        t.solve(score)
         
         t = Template(w=w, h=h, name='Main Page', padding=padding, gridY=gridY)
-        newPlacer(parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], w=200)
+        newPlacer(parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], name='Main Column', w=200)
         self.addTemplate('default', t)
+        t.solve(score)
         
         t = Template(w=w, h=h, name='Register Page', padding=padding, gridY=gridY)
-        newPlacer(parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], w=200)
+        newPlacer(parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], name='Register', w=200)
         self.addTemplate(t.name, t)
+        t.solve(score)
         
-        print 'asddsaads', self.solve()
+        print 'Score', score
+        for failed in score.fails:
+            print '\t', failed

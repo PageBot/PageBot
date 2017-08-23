@@ -258,12 +258,13 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # If there are multiple None widths, then their values is calculated from an equal division of available space.
         # It is up to the caller to make sure that the grid values fit the width of the current element.
         gridX = None,
-        gridL = None, # Left page version, overwriting gridX
-        gridR = None, # Right page version, overwriting gridX
         # Optional list of vertical grid line positions, to force the use of non-repeating grids.
         # Format is [(height1, gutter1), (None, gutter2), (None, 0)]
         gridY = None,
         gridZ = None, # Similar to gridX and gridY
+        # Flags indicating on which side of the fold this template Default is to use the template on both sides of a fold. 
+        useLeft = True, 
+        useRight = True,
 
         # Minimum size
         minW = 0, # Default minimal width of elements.
