@@ -311,7 +311,10 @@ class Glyph(object):
     parent = property(_get_parent, _set_parent)
 
     def _get_width(self):
-        return self.parent.ttFont['hmtx'][self.name][0]
+        try:
+            return self.parent.ttFont['hmtx'][self.name][0]
+        except KeyError:
+            return None # Glyph is undefined in hmtx table.
     def _set_width(self, width):
         hmtx = list(self.parent.ttFont['hmtx'][self.name]) # Keep vertical value
         hmtx[0] = width

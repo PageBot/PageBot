@@ -16,11 +16,17 @@ from pagebot.style import MM # Converter from MM to points
 from pagebot.publications import Book
 
 W, H = 163*MM, 244*MM # Overall size of the book pages.
-# Defing the padding for right pages. Left are mirrored by templates.
-padding = 18*MM, 12*MM, 12*MM, 10*MM # Top, Right, Bottom, Left
+# Defing the padding for right pages. Left pages are mirrored by templates.
+
+#padding = 18*MM, 12*MM, 12*MM, 10*MM # Top, Right, Bottom, Left
+padding = 54, 36, 36, 32 # Top, Right, Bottom, Left
 # Define the grid values for left and right pages
-gridR = [(50*MM, 3*MM),(20*MM, 3*MM),(20*MM, 3*MM), (None, 0)]
-gridL = [(None, 3*MM), (50*MM, 0)]
+
+#gridR = [(50*MM, 3*MM),(20*MM, 3*MM),(20*MM, 3*MM), (None, 0)]
+#gridL = [(None, 3*MM), (50*MM, 0)]
+gridR = [(150, 9),(60, 9),(60, 9), (None, 0)]
+gridL = [(None, 9), (150, 0)]
+
 coverBackgroundFill = (0.05, 0.07, 0.05) # Greenish black
 
 title = 'Using Variable Fonts'
@@ -45,14 +51,19 @@ page = doc.newPage(template='Cover')
 ~~~
 
 ~~~Python
-page = doc.newPage(template='Table Of Content')
+page = doc.newPage(template='DEMO Page')
 ~~~
+
+AAAAA
 
 ~~~Python
 page = doc.newPage(template='Title Page')
 ~~~
 The content of this book is an example summary of the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published on the TN website.
 
+~~~Python
+page = doc.newPage(template='Table Of Content')
+~~~
 
 ~~~Python
 page = doc.newPage(name='Headline')

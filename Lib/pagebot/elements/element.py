@@ -505,9 +505,13 @@ class Element(object):
     # Orientation of elements (and pages)
 
     def isLeft(self):
-        return False
+        u"""Normal elements don't know the left/right orientation of the page that they are on.
+        Pass the request on to the parent, until a page is reachted."""
+        return self.parent.isLeft() 
     def isRight(self):
-        return False
+        u"""Normal elements don't know the left/right orientation of the page that they are on.
+        Pass the request on to the parent, until a page is reachted."""
+        return self.parent.isRight()
 
     def _get_gridX(self):
         u"""Answer the grid, depending on the left/right orientation of self."""

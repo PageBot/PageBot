@@ -414,6 +414,12 @@ class Document(object):
                     pages.append(page)
         return pages
 
+    def isLeft(self):
+        u"""This is reached for e.isleft() queries, when elements are not placed on a page.
+        The Document cannot know the answer then. Always answer False."""
+        return False
+    isRight = isLeft
+    
     def isLeftPage(self, page):
         u"""Answer the boolean flag if the page is currently defined as a left page. Left page is even page number"""
         for pn, pnPages in self.pages.items():

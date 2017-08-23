@@ -13,6 +13,8 @@
 from pagebot.typesetter import Typesetter
 from pagebot.composer import Composer
 from pagebot.publications.publication import Publication
+from pagebot.elements import *
+from pagebot.conditions import *
 
 # Path to markdown file, including Python code blocks.
 MD_PATH = u"UsingVariableFonts.md"
@@ -32,6 +34,14 @@ t.typesetFile(MD_PATH)
 # Now use a composer (automatic "designer") to fit the pieces together.
 # Takes a galley as soruce and a document for target pages. 
 Composer().compose(t.galley, t.doc)
+
+tmp = Template(w=t.doc.w, h=t.doc.h, name='DEMO Page', gridY=[(None, 0)])
+t.doc.demo = newPlacer(parent=tmp, conditions=[Left2Col(1), Bottom2Row(0)], name='Title', h=200)
+t.doc.addTemplate(tmp.name, tmp)
+tmp.solve()
+
+print 'XXXXX', tmp.gridX
+
 
 if 0: # Print some results of the typesetter
     # Typesetter found document definition inside content.
@@ -69,4 +79,7 @@ if 1:
     view.style['viewGridStrokeWidth'] = 0.5
 
 t.doc.solve()
+pl = t.doc.placer
+print pl.x, pl.y
+
 t.doc.export(EXPORT_PATH)
