@@ -426,6 +426,7 @@ class Glyph(object):
         p = point2D(p)
         return self.path._path.containsPoint_(p)
 
+
     """
     TTGlyph Functions to implement
 

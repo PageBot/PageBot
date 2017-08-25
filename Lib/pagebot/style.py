@@ -16,6 +16,7 @@
 import sys
 from drawBot import sizes
 import copy
+from pagebot.toolbox.units import MM, INCH, mm, fr, pt, px, perc
 
 NO_COLOR = -1
 
@@ -23,12 +24,11 @@ NO_COLOR = -1
 U = 7
 BASELINE_GRID = 2*U
 
-INCH = 72
-MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
-
 # These sizes are all portrait. For Landscape simply reverse to (H, W) usage.
 # ISO A Sizes
-A0 = 841*MM, 1189*MM
+# The values are calculated as floats points, not using the more specifc fr(v) or px(v), needed for CSS output.
+#
+A0 = 841*MM, 1189*MM # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
 A1 = 594*MM, 841*MM
 A2 = 420*MM, 594*MM
 A3 = 297*MM, 420*MM
@@ -251,20 +251,27 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         cw = 77*gutter, # 77 columns width
         ch = 6*baselineGrid - u, # Approximately square with cw + gutter: 77
         cd = 0, # Optional column "depth"
-        # Optional list of horizontal grid line positions, to force the use of non-repeating grids.
-        # Format is [(width1, gutter1), (width2, gutter2), (None, 0)]
-        # If this paramater is set, column width "cw" and column gutter "gw" are ignored.
-        # If the column width is None, it is assumed to fill the rest of the available space.
-        # If there are multiple None widths, then their values is calculated from an equal division of available space.
+
+        # Grid definitions, used static media as well as CSS display: grid; exports.
+        # gridX, gridY and gridZ are optional lista of grid line positions, to allow the use of non-repeating grids.
+        # The format is [(width1, gutter1), (width2, gutter2), (None, 0)] in case different gutters are needed.
+        # If the format is [width1, width2, (width3, gutter3)], then the missing gutters are used from gw ot gh.
+        # If this paramater is set, then the style values for column width "cw" and column gutter "gw" are ignored.
+        # If a width is None, it is assumed to fill the rest of the available space.
+        # If the width is a float between 0..1 or a string with format "50%" then these are interpreted as percentages.
+        # If there are multiple None widths, then their values are calculated from an equal division of available space.
         # It is up to the caller to make sure that the grid values fit the width of the current element.
+        #
+        # HTML/CSS builders convert to:
+        # grid-template-columns, grid-template-rows, grid-auto-rows, grid-column-gap, grid-row-gap, 
         gridX = None,
         # Optional list of vertical grid line positions, to force the use of non-repeating grids.
         # Format is [(height1, gutter1), (None, gutter2), (None, 0)]
         gridY = None,
-        gridZ = None, # Similar to gridX and gridY
-        # Flags indicating on which side of the fold this template Default is to use the template on both sides of a fold. 
-        useLeft = True, 
-        useRight = True,
+        gridZ = None, # Similar to gridX and gridY. 
+        # Flags indicating on which side of the fold this element (e.g. page template) is used. 
+        left = True, 
+        right = True,
 
         # Minimum size
         minW = 0, # Default minimal width of elements.
