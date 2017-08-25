@@ -22,38 +22,30 @@
 #
 import pagebot
 from basebuilder import BaseBuilder
-from pagebot.toolbox.transformer import color2CssOpacity, value2Tuple4
+from pagebot.toolbox.transformer import color2HexOpacity, value2Tuple4
+from pagebot.toolbox.units import Unit
 
-HTMLTAGS = set(['h1','h2','h3','h4','h5','h6','p','span','div'])
-
-STYLE2CSS = {
-    'fill': ('background-color: %s; opacity: %s;', (1, 1, 1, 1), color2CssOpacity),
-    'font': ('font-family: %s;', 'Verdana, Sans', None),
-    'fontSize': ('font-size: %spx;', 12, None),
-    'textFill': ('color: %s; opacity: %s;', (0, 0, 0, 1), color2CssOpacity),
-    'leading': ('line-height: %spx;', None, None),
-    'rLeading': ('line-height: %sem;', '%0.2f'%1.3, None),
-    # Padding
-    'padding': ('padding: %spx %spx %spx %spx;', (0, 0, 0, 0), value2Tuple4),
-    'pl': ('padding-left: %spx;', 0, None),
-    'pt': ('padding-top: %spx;', 0, None),
-    'pb': ('padding-bottom: %spx;', 0, None),
-    'pr': ('padding-right: %spx;', 0, None),
-    # Margin
-    'margin': ('margin: %spx %spx %spx %spx;', (0, 0, 0, 0), value2Tuple4),
-    'ml': ('margin-left: %spx;', 0, None),
-    'mt': ('margin-top: %spx;', 0, None),
-    'mb': ('margin-bottom: %spx;', 0, None),
-    'mr': ('margin-right: %spx;', 0, None),
-}
-
+def value2Css(v):
+    if isinstance(v, Unit): # Let Units do their own conversion to CSS strings
+        return v.css
+    if isinstance(v, basestring): 
+        return v # No change, can already be a string like "50%" or '1.2em'
+    if not v:
+        return '0' # Just 0, no units needed.
+    if isinstance(v, float): 
+        return '%0.2fem' % v # Assume to be relative to em fot nnow.
+    return '%dpx' % v # Assume to be pixels for integer numbers.
+        
 class CssBuilder(BaseBuilder):
+
+    HTMLTAGS = set(['h1','h2','h3','h4','h5','h6','p','span','div'])
 
     def build(self, e, view):
         u"""
         Builds the CSS for Element e and downwards, using the view parent document 
         as reference for styles.
         """
+        self.verbose = view.cssVerbose
         assert self.path is not None
         line = '\t'+'.'*70+'\n'
         self.openOutput(self.path)
@@ -65,20 +57,123 @@ class CssBuilder(BaseBuilder):
         self.buildMainStyles(doc)
         self.closeOutput()
 
+    #   C S S  E X P O R T 
+
+    def _write_font(self, value):
+        u"""Write the CSS fill color and opacity. Skip export if value is None."""
+        css = 'font-family: %s;' % (value or 'Verdana, Sans')
+        self.write('\t'+css+'\n')
+
+    def _write_fontSize(self, value):
+        css = 'font-size: %s;' % value2Css(value or 12)
+        self.write('\t'+css+'\n')
+
+    def _write_leading(self, value):
+        css = 'line-height: %s;' % value2Css(value)
+        self.write('\t'+css+'\n')
+        
+    def _write_rLeading(self, value):
+        css = 'line-height: %s;' % value2Css(value or 1.3)
+        self.write('\t'+css+'\n')
+
+    #   C O L O R
+
+    def _write_fill(self, value):
+        u"""Write the CSS fill color and opacity. Skip export if value is None."""
+        css = 'background-color: %s; opacity: %s;' % color2HexOpacity(value)
+        self.write('\t'+css+'\n')
+
+    def _write_textFill(self, value):
+        css = 'color: %s; opacity: %s;' % color2HexOpacity(value)
+        self.write('\t'+css+'\n')
+
+    #   G R I D
+
+    def _write_gridX(self, value):
+        self.write('\tdisplay: grid;\n')
+        values = []
+        gap = None
+        for v, gutter in value:
+            values.append(value2Css(v))
+            if gap is None and gutter is not None:
+                gap = gutter # Take the first not-none value
+        css = 'grid-template-columns:  %s;' % ' '.join(values)
+        self.write('\t'+css+'\n')
+        if gap is not None:
+            css = 'grid-column-gap:  %s;' % value2Css(gap)
+            self.write('\t'+css+'\n')
+
+    def _write_gridY(self, value):
+        #self.write('\tdisplay: grid;\n') # Assuming that gridX already defined this
+        values = []
+        gap = None
+        autoRows = None
+        for v, gutter in value:
+            values.append(value2Css(v))
+            autoRows = v # Remember last row height for default auto rows
+            if gap is None and gutter is not None:
+                gap = gutter # Take the first not-none value
+        css = 'grid-template-rows:  %s;' % ' '.join(values)
+        self.write('\t'+css+'\n')
+        if gap is not None:
+            css = 'grid-row-gap:  %s;' % value2Css(gap)
+            self.write('\t'+css+'\n')
+        if autoRows is not None:
+            css = 'grid-auto-rows:  %s;' % value2Css(autoRows)
+            self.write('\t'+css+'\n')
+        
+    #   P A D D I N G
+
+    # TODO: Add optimized CSS for padding pt, pr, pb, pl
+    def _write_pl(self, value):
+        css = 'padding-left: %s;' % value2Css(value)
+        self.write('\t'+css+'\n')
+
+    def _write_pt(self, value):
+        css = 'padding-top: %s;' % value2Css(value)
+        self.write('\t'+css+'\n')
+
+    def _write_pb(self, value):
+        css = 'padding-bottom: %s;' % value2Css(value)
+        self.write('\t'+css+'\n')
+
+    def _write_pr(self, value):
+        css = 'padding-right: %s;' % value2Css(value)
+        self.write('\t'+css+'\n')
+
+    #   M A R G I N 
+    
+    # TODO: Add optimized CSS for margin mt, mr, mb, ml
+
+    def _write_ml(self, value):
+        css = 'margin-left: %s;' % value2Css(value)
+        self.write('\t'+css+'\n')
+
+    def _write_mt(self, value):
+        css = 'margin-top: %s;' % value2Css(value)
+        self.write('\t'+css+'\n')
+
+    def _write_mb(self, value):
+        css = 'margin-bottom: %s;' % value2Css(value)
+        self.write('\t'+css+'\n')
+
+    def _write_mr(self, value):
+        css = 'margin-right: %s;' % value2Css(value)
+        self.write('\t'+css+'\n')
+
+    #   W R I T I N G 
+
     def _writeStyleValue(self, name, value):
         u"""Write the converted style value as CSS, using STYLE2CSS for conversion parameters."""
-        if name in STYLE2CSS:
-            cssName, default, f = STYLE2CSS[name]
-            cssValue = value or default
-            if f is not None:
-                cssValue = f(cssValue)
-            if cssValue is not None:
-                self.write('\t'+(cssName % cssValue)+(' /* %s:%s */\n' % (name, `value`)))
-                return True # Mark that we found it
-        return False
+        if value is not None:
+            hook = '_write_' + name
+            if hasattr(self, hook):
+                return getattr(self, hook)(value)
+            return False
+        return True # Successfully ignored
 
     def _cssId(self, name):
-        if name in HTMLTAGS:
+        if name in self.HTMLTAGS:
             return name
         return 'div.'+name
 
@@ -88,6 +183,8 @@ class CssBuilder(BaseBuilder):
         notProcessed = {}
         for parName, value in sorted(style.items()):
             if parName == 'name':
+                continue
+            if value is None: # Undefined, ignore
                 continue
             if not self._writeStyleValue(parName, value):
                 notProcessed[parName] = value

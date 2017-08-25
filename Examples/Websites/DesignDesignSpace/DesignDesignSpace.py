@@ -8,8 +8,11 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     UsingVariableFonts.py
+#     DesignDesignSpace.py
 #
+#     Build automatic website for designdesign.space
+# 
+import os
 from pagebot.typesetter import Typesetter
 from pagebot.composer import Composer
 from pagebot.publications.publication import Publication
@@ -17,9 +20,17 @@ from pagebot.elements import *
 from pagebot.conditions import *
 
 # Path to markdown file, including Python code blocks.
-MD_PATH = u"UsingVariableFonts.md"
-# Export path to save the poster PDF.
-EXPORT_PATH = '_export/UsingVariableFonts.pdf'
+MD_PATH = u"DesignDesignSpace.md"
+
+# Export in _export folder that does not commit in Git. Force to export PDF.
+# The .html and .css extensions triggers the HtmlBuilder and CssBuilder to be used for file export.
+# If the MAMP server application not installed, a browser is opened on their website to download it.
+MAMP_PATH = '/Applications/MAMP/htdocs/'
+MAMP_PAGEBOT_PATH = MAMP_PATH + 'pagebot/examplewebsite/'
+EXPORT_PATH_HTML = MAMP_PAGEBOT_PATH + 'index.html'
+EXPORT_PATH_CSS = MAMP_PAGEBOT_PATH + 'main.css'
+MAMP_LOCAL_URL = 'http://localhost:8888/pagebot/examplewebsite/index.html'
+MAMP_SHOP_URL = 'https://www.mamp.info/en/' # In cade MAMP does not exist, open on their website to download and install.
 
 # Create an unbound Typesetter instance (trying to find a Poster
 # (inheriting from Document) instance in one of the codeblock results. 
@@ -78,8 +89,16 @@ if 1:
     view.style['viewGridStroke'] = (0, 0, 1)
     view.style['viewGridStrokeWidth'] = 0.5
 
-t.doc.solve()
-pl = t.doc.placer
-print pl.x, pl.y
+if not os.path.exists(MAMP_PATH):
+    print 'The local MAMP server application does not exist. Download and in stall from %s.' % MAMP_SHOP_URL 
+    os.system(u'open %s' % MAMP_SHOP_URL)
+else:
 
-t.doc.export(EXPORT_PATH)
+    t.doc.export(EXPORT_PATH_CSS)
+    print 'Generated CSS code saved as file', EXPORT_PATH_CSS
+    t.doc.export(EXPORT_PATH_HTML)
+    print 'Generated HTML and CSS code saved as files', EXPORT_PATH_HTML
+    # Open the css file in the default editor of your local system.
+    os.system(u'open "%s"' % MAMP_LOCAL_URL)
+    print 'Done' 
+

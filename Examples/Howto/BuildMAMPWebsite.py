@@ -14,7 +14,7 @@ import os
 import pagebot # Import to know the path of non-Python resources.
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
+from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM, fr, px
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot import newFS
 
@@ -46,10 +46,10 @@ def makeDocument():
     
     rs = doc.getRootStyle()
     rs['fill'] = (1, 1, 0) # Yellow background for debugging
-    rs['font'] = 'Georgia'
+    rs['font'] = 'Verdana'
     rs['fontSize'] = 14
     rs['rLeading'] = 1.4
-    rs['textFill'] = (1, 0, 0, 1)
+    rs['textFill'] = 1
     
     textBoxStyle = doc.addStyle('textbox', dict(fill=(0, 0, 0, 0.7),
         padding=40))
@@ -81,6 +81,8 @@ def makeDocument():
         name='CSSTextBox1',
         parent=page0, padding=4, x=100, font='Verdana', h=h1,
         maxW=W-2*PagePadding, minW=100, mb=20, mr=10,       # Conditions make the element move to top-left of the page.
+        gridX=((fr(3), px(8)), (fr(2), px(8))),
+
         # And the condition that there should be no overflow, otherwise the text box
         # will try to solve it.     
         conditions=[Left2Left(), Fit2Width(), Float2Top()],
@@ -89,8 +91,9 @@ def makeDocument():
         yAlign=BOTTOM, xAlign=LEFT,
         leading=5, fontSize=9, textFill=0, strokeWidth=0.5, fill=0.9, stroke=None,
     )
+    print e1.style
     
-    e2 = newTextBox('', # Empty box, will get the overflow from e1, if there is any.
+    e2 = newTextBox(s, # Empty box, will get the overflow from e1, if there is any.
         name='CSSTextBox2', # Flow reference by element.name 
         parent=page0, padding=4, x=100, h=200, 
         maxW=W-2*PagePadding, minW=100,

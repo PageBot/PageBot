@@ -555,8 +555,11 @@ class Element(object):
         if gridX is not None: # If there is a non-linear grid sequence defined, use that.
             undefined = 0
             usedWidth = 0
-            # Make a first pass to see how many columns (None) need equal division.
-            for cw, gutter in gridX:
+            # Make a first pass to see how many columns (None) need equal division and what total width spare we have.
+            for gridValue in gridX:
+                if not isinstance(gridValue, (list, tuple)):
+                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gutter
+                cw, gutter = gridValue
                 if cw is None:
                     undefined += 1
                 else:
@@ -567,7 +570,10 @@ class Element(object):
             equalWidth = (pw - usedWidth) / (undefined or 1)
             # Now we know the divide width, scane through the grid list again, building x coordinates.
             x = 0
-            for cw, gutter in gridX:
+            for gridValue in gridX:
+                if not isinstance(gridValue, (list, tuple)):
+                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gutter
+                cw, gutter = gridValue
                 if cw is None:
                     cw = equalWidth
                 if gutter is None:
@@ -597,7 +603,10 @@ class Element(object):
             undefined = 0
             usedHeight = 0
             # Make a first pass to see how many columns (None) need equal division.
-            for ch, gutter in gridY:
+            for gridValue in gridY:
+                if not isinstance(gridValue, (list, tuple)):
+                    gridValue = (gridValue, None) # Only single column height defined, force fill in with default gutter
+                ch, gutter = gridValue
                 if ch is None:
                     undefined += 1
                 else:
@@ -608,7 +617,10 @@ class Element(object):
             usedHeight = (ph - usedHeight) / (undefined or 1)
             # Now we know the divide width, scane through the grid list again, building x coordinates.
             y = 0
-            for ch, gutter in gridY:
+            for gridValue in gridY:
+                if not isinstance(gridValue, (list, tuple)):
+                    gridValue = (gridValue, None) # Only single column height defined, force fill in with default gutter
+                ch, gutter = gridValue
                 if ch is None:
                     ch = usedHeight
                 if gutter is None:

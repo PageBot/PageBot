@@ -12,5 +12,6 @@
 #     __init__.py
 #
 from book import Book
+from website import Website
 from poster import Poster
 from singlepage import SinglePage
