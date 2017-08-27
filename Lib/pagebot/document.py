@@ -15,7 +15,7 @@ from drawBot import newPage, installedFonts, installFont
 
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
-from pagebot.elements.views import View, DefaultView, SingleView, ThumbView
+from pagebot.elements.views import View, DefaultView, SingleView, ThumbView, MampView
 from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
 from pagebot.toolbox.transformer import obj2StyleId
 
@@ -544,7 +544,7 @@ class Document(object):
                 assert not view.name in self.views
                 self.appendElement(view)
         # Define some default views if not already  there.
-        for viewClass in (DefaultView, ThumbView):
+        for viewClass in (DefaultView, ThumbView, MampView):
             if not viewClass.viewId in self.views: # Only if not already defined, to make sure it is there.
                 # Create views, default with the same size as document.
                 self.appendElement(viewClass(parent=self, w=self.w, h=self.h))
@@ -555,7 +555,7 @@ class Document(object):
             viewId = DefaultView.viewId # We know for sure that this one is in self.views
         return self.views.get(viewId)
 
-    #   D R A W I N G
+    #   D R A W I N G  &  B U I L D I N G
 
     def drawPages(self, viewId=None, pageSelection=None):
         u"""Draw the selected pages, using DrawBot as canvas. 
@@ -564,9 +564,12 @@ class Document(object):
         view.drawPages(pageSelection)
 
     def export(self, fileName=None, pageSelection=None, viewId=None, multiPage=True):
-        u"""Let the view do the work."""
+        u"""Let the view do alle the export work."""
         view = self.getView(viewId) # view.parent is self
         view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)
 
-
-
+    def build(self, fileName=None, pageSelection=None, viewId=None, multiPage=True):
+        u"""Build the document as website, using the MampView for export."""
+        if viewId is None:
+            view = self.getView(MampView.viewId)
+        view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)
