@@ -26,10 +26,10 @@ MD_PATH = u"DesignDesignSpace.md"
 # The .html and .css extensions triggers the HtmlBuilder and CssBuilder to be used for file export.
 # If the MAMP server application not installed, a browser is opened on their website to download it.
 MAMP_PATH = '/Applications/MAMP/htdocs/'
-MAMP_PAGEBOT_PATH = MAMP_PATH + 'pagebot/examplewebsite/'
+MAMP_PAGEBOT_PATH = MAMP_PATH + 'pagebot/designdesignspace/'
 EXPORT_PATH_HTML = MAMP_PAGEBOT_PATH + 'index.html'
 EXPORT_PATH_CSS = MAMP_PAGEBOT_PATH + 'main.css'
-MAMP_LOCAL_URL = 'http://localhost:8888/pagebot/examplewebsite/index.html'
+MAMP_LOCAL_URL = 'http://localhost:8888/pagebot/designdesignspace/index.html'
 MAMP_SHOP_URL = 'https://www.mamp.info/en/' # In cade MAMP does not exist, open on their website to download and install.
 
 # Create an unbound Typesetter instance (trying to find a Poster
@@ -45,14 +45,6 @@ t.typesetFile(MD_PATH)
 # Now use a composer (automatic "designer") to fit the pieces together.
 # Takes a galley as soruce and a document for target pages. 
 Composer().compose(t.galley, t.doc)
-
-tmp = Template(w=t.doc.w, h=t.doc.h, name='DEMO Page', gridY=[(None, 0)])
-t.doc.demo = newPlacer(parent=tmp, conditions=[Left2Col(1), Bottom2Row(0)], name='Title', h=200)
-t.doc.addTemplate(tmp.name, tmp)
-tmp.solve()
-
-print 'XXXXX', tmp.gridX
-
 
 if 0: # Print some results of the typesetter
     # Typesetter found document definition inside content.

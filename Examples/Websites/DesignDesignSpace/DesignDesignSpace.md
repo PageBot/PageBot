@@ -21,22 +21,14 @@ W, H = 163*MM, 244*MM # Default size of the website pages for preview
 padding = 54, 36, 36, 32 # Top, Right, Bottom, Left
 # Define the grid values for left and right pages
 
-#gridR = [(50*MM, 3*MM),(20*MM, 3*MM),(20*MM, 3*MM), (None, 0)]
-#gridL = [(None, 3*MM), (50*MM, 0)]
-gridR = [(150, 9),(60, 9),(60, 9), (None, 0)]
-gridL = [(None, 9), (150, 0)]
-
-coverBackgroundFill = (0.05, 0.07, 0.05) # Greenish black
-
-title = 'Using Variable Fonts'
+title = 'Design Design Space'
 
 # The Website instance stored as “doc”, so typesetter can find it.
 # Use the predefined dynamic templates inside inside Website.
 # No automatic pages, all are created by content in this file.
 # Set the left and right grid measures.
 
-doc = Website(w=W, h=H, autoPages=0, originTop=False, title=title, padding=padding, gridL=gridL, gridR=gridR, 
-coverBackgroundFill=coverBackgroundFill)
+doc = Website(w=W, h=H, autoPages=0, template='Home', originTop=False, title=title, padding=padding)
 
 # Show some information about the doc so far.
 print doc.getInfo() 
@@ -46,34 +38,13 @@ print doc.getInfo()
 This is text.
 
 ~~~Python
-page = doc.newPage(template='Cover')
+page = doc.newPage(template='Home')
 ~~~
 
-~~~Python
-page = doc.newPage(template='DEMO Page')
-~~~
-
-AAAAA
-
-~~~Python
-page = doc.newPage(template='Title Page')
-~~~
 The content of this book is an example summary of the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published on the TN website.
-
-~~~Python
-page = doc.newPage(template='Table Of Content')
-~~~
-
-~~~Python
-page = doc.newPage(name='Headline')
-~~~
 
 ### When fonts started a new world
 A lot has been written and said about OpenType Variations. There are Operating Systems developers, application developers, font developers, content-developing users, and just plain old users. “As you were,” “Just a taste,” and “Whole hog!” are three of many possible attitudes these folks may, or may not, adopt towards OpenType Variations. As you can imagine, I’m going to write more on the topic.
-
-~~~Python
-page = doc.newPage(name='Topic')
-~~~
 
 As described in the introduction, variations technology superficially changes nothing about the “workings” of older fonts or applications. Users still begin their work by selecting the keyboard and input method associated with their script and language, or just by clicking an icon of their national flag. From there, the OS maps the characters it’ll show on the screen to match those on the keyboard, and turns on any required OpenType features for that script and language. All the individual font files are sorted for presentation by family name, with a hyphen somewhere separating the family name from the style, treatment, and/or effect name.
 
