@@ -14,7 +14,6 @@
 from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
-import os, os.path
 
 from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath,\
     save, restore, scale, textSize, FormattedString, cmykStroke, text, fill, stroke,\
@@ -24,15 +23,11 @@ from pagebot import setFillColor, setStrokeColor, newFS
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import *
-from pagebot.builders import CssBuilder, HtmlBuilder
 
 class View(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
     viewId = 'View'
     isView = True
-
-    CSSBUILDER_CLASS = CssBuilder
-    HTMLBUILDER_CLASS = HtmlBuilder
 
     def __init__(self, w=None, h=None, parent=None, **kwargs):
         Element.__init__(self, parent=parent, **kwargs)
@@ -163,16 +158,10 @@ class View(Element):
             frameDuration(frameDuration)
 
         # Select other than standard DrawBot export builders here.
+        # TODO: Take build into separte htmlView, instead of split by extension
         # TODO: Show be more generic if number of builders grows.
         # TODO: Build multiple pages, now only doc[0] is supported.
-        doc = self.parent
-        if fileName.lower().endswith('.html'): # Use CssBuilder instead
-            self.HTMLBUILDER_CLASS(fileName).build(doc[0], self)
-        elif fileName.lower().endswith('.css'): # Use CssBuilder instead
-            self.CSSBUILDER_CLASS(fileName).build(doc[0], self)
-        else:
-            # http://www.drawbot.com/content/canvas/saveImage.html
-            saveImage(fileName, multipage=multiPage)
+        saveImage(fileName, multipage=multiPage)
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 

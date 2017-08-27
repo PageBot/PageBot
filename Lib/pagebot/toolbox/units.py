@@ -63,32 +63,32 @@ class Unit(object):
     def __eq__(self, u):
         if isinstance(u, self.__class__):
             return self.v == u.v
-        return self._v == v 
+        return self._v == u 
 
     def __ne__(self, u):
         if isinstance(u, self.__class__):
             return self._v != u._v
-        return self._v != v 
+        return self._v != u 
 
     def __le__(self, u):
         if isinstance(u, self.__class__):
             return self._v <= u._v
-        return self._v <= v 
+        return self._v <= u 
 
     def __lt__(self, u):
         if isinstance(u, self.__class__):
             return self._v < u._v
-        return self._v < v 
+        return self._v < u 
 
     def __ge__(self, u):
         if isinstance(u, self.__class__):
             return self._v >= u._v
-        return self._v >= v 
+        return self._v >= u 
 
     def __gt__(self, u):
         if isinstance(u, self.__class__):
             return self._v > u._v
-        return self._v > v 
+        return self._v > u 
 
     def __add__(self, u):
         if isinstance(u, self.__class__):
