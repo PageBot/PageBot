@@ -14,7 +14,7 @@
 import weakref
 
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.transformer import pointOffset, tabs
 
 class Page(Element):
 
@@ -37,6 +37,29 @@ class Page(Element):
         view.drawPageMetaInfo(self, origin)
         # Check if we are in scaled mode. Then restore.
         #self._restoreScale()
+
+    def build(self, view, html=None, css=None, htmlIndent=0, cssIndent=0):
+        u"""Answer the (html, css) tuple that is the closest representation of self. 
+        If there are any child elements, then also included their code, using the
+        level recursive indent."""
+        if html is None:
+            html = []
+        if css is None:
+            css = []
+        html.append("""<!DOCTYPE html>\n<html lang="en">\n<head>\n\t<meta charset="utf-8">\n\t<title>%s</title>\n""" % self.name)
+
+        pageBotCssPath = 'pagebot.css'
+        html.append("""\t<meta name="viewport" content="width=device-width">\n\t<link rel="stylesheet" href="%s">\n</head>\n<body>\n""" % pageBotCssPath)
+
+        htmlIndent += 1
+        cssIndent += 1
+        html.append('%s<div id="%s">\n' % (tabs(htmlIndent), self.eId))
+        html.append('CONTENT!')
+        for e in self.elements:
+            e.build(view, html, css, htmlIndent+1, cssIndent+1)
+        html.append('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
+        html.append('<body>\n<html>\n')
+        return html, css
 
 class Template(Page):
 

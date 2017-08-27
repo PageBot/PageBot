@@ -291,6 +291,10 @@ def filterValue2Int(s):
             digits += c
     return asInt(digits)
 
+def tabs(i):
+    u"""Answer a string with the amount of tabs of i."""
+    return '\t'*i
+
 # B O O L E A N
 
 def bool2Int(value):
