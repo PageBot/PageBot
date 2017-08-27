@@ -23,13 +23,6 @@
 * [pagebot.publications](pagebot/publications)
 * [pagebot.toolbox](pagebot/toolbox)
 ## Classes
-* [pagebot.builders.basebuilder](pagebot/builders/basebuilder)
-* [pagebot.builders.htmlcss.basehtmlcssbuilder](pagebot/builders/htmlcss/basehtmlcssbuilder)
-* [pagebot.builders.htmlcss.gridbuilder](pagebot/builders/htmlcss/gridbuilder)
-* [pagebot.builders.htmlcss.simplebuilder](pagebot/builders/htmlcss/simplebuilder)
-* [pagebot.builders.htmlcss.simplehtmlcssbuilder](pagebot/builders/htmlcss/simplehtmlcssbuilder)
-* [pagebot.builders.kirby.kirbybuilder](pagebot/builders/kirby/kirbybuilder)
-* [pagebot.builders.mdblogbuilder](pagebot/builders/mdblogbuilder)
 * [pagebot.canvas3d.canvas3d](pagebot/canvas3d/canvas3d)
 * [pagebot.canvas3d.transform3d](pagebot/canvas3d/transform3d)
 * [pagebot.composer](pagebot/composer)

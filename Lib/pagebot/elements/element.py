@@ -26,7 +26,7 @@ from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
     MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS,\
     ONLINE, INLINE, OUTLINE
-from pagebot.toolbox.transformer import asFormatted, uniqueID
+from pagebot.toolbox.transformer import asFormatted, uniqueID, tabs
 from pagebot.toolbox.timemark import TimeMark
 
 
@@ -2040,6 +2040,24 @@ class Element(object):
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
+
+    #   H T M L  /  C S S  S U P P O R T
+
+    def build(self, view, html=None, css=None, htmlIndent=0, cssIndent=0):
+        u"""Answer the (html, css) tuple that is the closest representation of self. 
+        If there are any child elements, then also included their code, using the
+        level recursive indent."""
+        if html is None:
+            html = []
+        if css is None:
+            css = []
+        html.append('%s<div id="%s">\n' % (tabs(htmlIndent), self.eId))
+        html.append('E-CONTENT!<br>')
+        for e in self.elements:
+            e.build(view, html, css, htmlIndent+1, cssIndent+1)
+        html.append('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
+        return html, css
+
 
     #   V A L I D A T I O N
 
