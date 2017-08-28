@@ -21,19 +21,7 @@ from pagebot.conditions import *
 
 # Path to markdown file, including Python code blocks.
 MD_PATH = u"DesignDesignSpace.md"
-
-<<<<<<< HEAD
-# Export in _export folder that does not commit in Git. Force to export PDF.
-# The .html and .css extensions triggers the HtmlBuilder and CssBuilder to be used for file export.
-# If the MAMP server application not installed, a browser is opened on their website to download it.
-MAMP_PATH = '/Applications/MAMP/htdocs/'
-MAMP_PAGEBOT_PATH = MAMP_PATH + 'pagebot/designdesignspace/'
-EXPORT_PATH_HTML = MAMP_PAGEBOT_PATH + 'index.html'
-EXPORT_PATH_CSS = MAMP_PAGEBOT_PATH + 'main.css'
-MAMP_LOCAL_URL = 'http://localhost:8888/pagebot/designdesignspace/index.html'
-MAMP_SHOP_URL = 'https://www.mamp.info/en/' # In cade MAMP does not exist, open on their website to download and install.
-=======
->>>>>>> origin/master
+NAME = 'designdesignspace'
 
 # Create an unbound Typesetter instance (trying to find a Poster
 # (inheriting from Document) instance in one of the codeblock results. 
@@ -86,12 +74,12 @@ if 1:
 
 view = t.doc.getView('Mamp')
 
-if not os.path.exists(view.MAMP_PATH):
+if not os.path.exists(view.EXPORT_PATH):
     print 'The local MAMP server application does not exist. Download and in stall from %s.' % view.MAMP_SHOP_URL 
     os.system(u'open %s' % view.MAMP_SHOP_URL)
 else:
-    t.doc.build('DesignDesignSpace')
+    t.doc.build(NAME)
     # Open the css file in the default editor of your local system.
-    os.system(u'open "%s"' % view.MAMP_LOCAL_URL)
+    os.system(u'open "%s"' % view.getUrl(NAME))
     print 'Done' 
 

@@ -12,14 +12,13 @@
 #
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
-# Page and Template instances are holding all elements of a page together.
 from pagebot.elements import *
 
  
 class Book(Publication):
     """Create a default book, with cover, title pages, table of content,
     chapters and index. Layout and content options defined by external parameters.
-    Inheriting from Document with the following optional attribures:
+    Subclassed from Document with the following optional attributes:
     rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, 
     w=None, h=None, exportPaths=None, **kwargs)"""

@@ -8,18 +8,13 @@ The connection between Markdown content and Python can be made from 2 different 
 * MarkDown text files that include all Python code to create documents. It only needs a small bootstrap script to create the **Typesetter** and parse this file.
 
 ~~~Python
+# Reference id of this code block
 cid = 'Website'
 
-from pagebot.style import MM # Converter from MM to points
-# Import the Document-Website class.
 # No need to add any templates, they are already defined in Website
 from pagebot.publications import Website
 
-W, H = 163*MM, 244*MM # Default size of the website pages for preview
-
-#padding = 18*MM, 12*MM, 12*MM, 10*MM # Top, Right, Bottom, Left
 padding = 54, 36, 36, 32 # Top, Right, Bottom, Left
-# Define the grid values for left and right pages
 
 title = 'Design Design Space'
 
@@ -28,7 +23,7 @@ title = 'Design Design Space'
 # No automatic pages, all are created by content in this file.
 # Set the left and right grid measures.
 
-doc = Website(w=W, h=H, autoPages=0, template='Home', originTop=False, title=title, padding=padding)
+doc = Website(autoPages=1, template='Home', title=title, padding=padding)
 
 # Show some information about the doc so far.
 print doc.getInfo() 
@@ -38,7 +33,7 @@ print doc.getInfo()
 This is text.
 
 ~~~Python
-page = doc.newPage(template='Home')
+page = doc.newPage()
 ~~~
 
 The content of this book is an example summary of the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published on the TN website.
