@@ -28,7 +28,7 @@ from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, B
     ONLINE, INLINE, OUTLINE
 from pagebot.toolbox.transformer import asFormatted, uniqueID, tabs
 from pagebot.toolbox.timemark import TimeMark
-
+from pagebot.toolbox.webdata import WebData
 
 class Element(object):
 
@@ -43,9 +43,11 @@ class Element(object):
     isView = False 
     
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
-            t=0, parent=None, name=None, class_=None, title=None, style=None, conditions=None, elements=None, 
-            template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, padding=None, 
-            margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
+            t=0, parent=None, name=None, class_=None, title=None, style=None, conditions=None, 
+            elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, 
+            htmlPath=None, cssPath=None, jsPath=None, includePath=None,
+            padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
+            margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
             borders=None, borderTop=None, borderRight=None, borderBottom=None, borderLeft=None, 
             shadow=None, gradient=None, drawBefore=None, drawAfter=None, framePath=None, **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
@@ -113,6 +115,11 @@ class Element(object):
         self.applyTemplate(template, elements) 
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isFlow = not None in (prevElement, nextElement, nextPage)
+        # Reference directory paths for source files, as used by building Html/Css templates and self.build
+        self.htmlPath = htmlPath
+        self.cssPath = cssPath
+        self.jsPath = jsPath
+        self.includePath = includePath
 
     def __repr__(self):
         if self.title:
@@ -2043,21 +2050,23 @@ class Element(object):
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build(self, view, html=None, css=None, htmlIndent=0, cssIndent=0):
+    def build(self, view, wd=None, htmlIndex=1, cssIndent=1):
         u"""Answer the (html, css) tuple that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        if html is None:
-            html = []
-        if css is None:
-            css = []
-        html.append('%s<div id="%s">\n' % (tabs(htmlIndent), self.eId))
-        html.append('E-CONTENT!<br>')
-        for e in self.elements:
-            e.build(view, html, css, htmlIndent+1, cssIndent+1)
-        html.append('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
-        return html, css
-
+        if wd is None:
+            wd = WebData()
+        if self.cssPath is not None:
+            wd.readCss(self.cssPath)
+        if self.htmlPath is not None:
+            wd.readHtml(self.htmlPath)
+        else:
+            wd.appendHtml('%s<div id="%s" class="%s">\n' % (tabs(htmlIndent), self.eId, self.class_ or 'e'))
+            wd.appendHtml('E-CONTENT!<br>')
+            for e in self.elements:
+                e.build(view, wd, htmlIndent+1, cssIndent+1)
+            wd.appendHtml('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
+        return wd
 
     #   V A L I D A T I O N
 

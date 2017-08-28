@@ -26,7 +26,7 @@ class Document(object):
     VIEW_CLASS = View
 
     def __init__(self, rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
-            autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None, padding=None,
+            autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, padding=None,
             exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
@@ -44,7 +44,7 @@ class Document(object):
 
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
 
-        self.initializeTemplates(defaultTemplate, templates, **kwargs)
+        self.initializeTemplates(templates, template) # Template is name or instance default template.
 
         # Storage lib for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
@@ -53,9 +53,10 @@ class Document(object):
         # Initialize some basic views.
         self.initializeViews(views, **kwargs)
 
+
         # Document (w, h) size is default from page, but will modified by the type of display mode. 
         if autoPages:
-            self.makePages(pageCnt=autoPages, template=defaultTemplate, pn=startPage, w=self.w, h=self.h, **kwargs)
+            self.makePages(pageCnt=autoPages, pn=startPage, w=self.w, h=self.h, **kwargs)
 
         # Call generic initialize method, allowing inheriting publication classes to initialize their stuff.
         # This can be the creation of templates, pages, adding/altering styles and view settings.
@@ -115,26 +116,23 @@ class Document(object):
 
     #   T E M P L A T E
 
-    def initializeTemplates(self, defaultTemplate, templates, **kwargs):
-        if templates is None:
-            templates = {}
-        self.templates = templates # Store defined dictionary of templates or empty dict.
+    def initializeTemplates(self, templates, defaultTemplate):
+        u"""Initialize the document templates.""" 
+        self.templates = {} # Store defined dictionary of templates or empty dict.
+        if templates is not None:
+            for name, template in templates.items():
+                self.addTemplate(name, template)
         # Used as default document master template if undefined in pages.
-        if defaultTemplate is not None:
-            if isinstance(defaultTemplate, basestring): # Make reference to existing template by name
-                defaultTemplate = self.templates.get(defaultTemplate) # If it exists, otherwise it is None
-            if defaultTemplate is None: # Only if we have one, overwriter existing default template if it was there.
-                # Make sure there is at least a default template.
-                defaultTemplate = Template(w=self.w, h=self.h, name='default', padding=self.css('padding'))
-            self.templates['default'] = defaultTemplate
-        for template in self.templates.values(): # Hard-reference the parent of all templates to Document self, so theu share the rootStyle.
-            template.parent = self
+        if isinstance(defaultTemplate, basestring): # Make reference to existing template by name
+            defaultTemplate = self.templates.get(defaultTemplate) # If it exists, otherwise it is None
+        if defaultTemplate is None: # Only if we have one, overwrite existing default template if it was there.
+            # Make sure there is at least a default template.
+            defaultTemplate = Template(w=self.w, h=self.h, name='default', padding=self.css('padding'))
+        self.defaultTemplate = defaultTemplate
 
     def getTemplate(self, name=None):
         u"""Answer the named template. If it does not exist, then answer the default template. Answer None of if there is no default."""
-        if name in self.templates:
-            return self.templates[name]
-        return self.defaultTemplate
+        return self.templates.get(name, self.defaultTemplate)
 
     def addTemplate(self, name, template):
         u"""Add the template to the self.templates of dictionaries. There is no check, so caller can overwrite existing templates.
@@ -145,7 +143,9 @@ class Document(object):
 
     def _get_defaultTemplate(self):
         return self.templates.get('default')
-    defaultTemplate = property(_get_defaultTemplate)
+    def _set_defaultTemplate(self, template):
+        self.addTemplate('default', template)
+    defaultTemplate = property(_get_defaultTemplate, _set_defaultTemplate)
 
     #   S T Y L E
 
@@ -434,12 +434,11 @@ class Document(object):
                 return not pn & 0x1
         return False # Page not found
 
-    def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
+    def newPage(self, pn=None, templateName=None, w=None, h=None, name=None, **kwargs):
         u"""Create a new page with size (self.w, self.h) unless defined otherwise. Add the pages in the row of pn, if defined.
         Otherwise create a new row of pages at pn. If pn is undefined, add a new page row at the end.
         If template is undefined, then use self.pageTemplat to initialize the new page."""
-        if isinstance(template, basestring):
-            template = self.templates.get(template)
+        template = self.templates.get(templateName)
         if template is None:
             template = self.defaultTemplate
         
@@ -450,7 +449,7 @@ class Document(object):
         page.applyTemplate(template)
         return page # Answer the new page 
 
-    def makePages(self, pageCnt, pn=0, template=None, w=None, h=None, name=None, **kwargs):
+    def makePages(self, pageCnt, pn=0, template=None, name=None, w=None, h=None, **kwargs):
         u"""
         If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position.
         If template is undefined, then self.newPage will use self.defaultTemplate to initialize the new pages."""
