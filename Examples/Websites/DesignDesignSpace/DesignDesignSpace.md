@@ -34,6 +34,8 @@ This is text.
 
 ~~~Python
 page = doc.newPage()
+page.htmlPath = 'sources/DesignDesignSpace.html'
+page.cssPath = 'sources/DesignDesignSpace.css'
 box = page['Main']
 ~~~
 

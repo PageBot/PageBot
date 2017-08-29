@@ -31,6 +31,8 @@ print doc.getInfo()
 
 <p>This is text.</p>
 <pre><code class="Python">page = doc.newPage()
+page.htmlPath = 'sources/DesignDesignSpace.html'
+page.cssPath = 'sources/DesignDesignSpace.css'
 box = page['Main']
 </code></pre>
 

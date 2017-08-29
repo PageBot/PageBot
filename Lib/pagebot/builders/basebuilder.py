@@ -30,10 +30,10 @@ class BaseBuilder(object):
 
     write = addHtml
 
-    def writeHtml(self, path):
+    def importHtml(self, path):
         u"""Read a chunk of HTML code from the path."""
         f = codecs.open(path, 'r', 'utf-8')
-        self.__html(f.read())
+        self.addHtml(f.read())
         f.close()
 
     def writeHtml(self, path):
@@ -44,9 +44,9 @@ class BaseBuilder(object):
 
     def addCss(self, css):
         u"""Add the css chunk to self.css, the ordered list of css for output."""
-        self.css.append(css)
+        self.__css.append(css)
 
-    def readCss(self, path):
+    def importCss(self, path):
         f = codecs.open(path, 'r', 'utf-8')
         self.addCss(f.read())
         f.close()

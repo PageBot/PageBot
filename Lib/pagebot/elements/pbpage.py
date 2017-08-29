@@ -44,9 +44,9 @@ class Page(Element):
         If there are any child elements, then also included their code, using the
         level recursive indent."""
         if self.cssPath is not None:
-            b.includeCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
+            b.importCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
         if self.htmlPath is not None:
-            b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+            b.importHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.addHtml('<!DOCTYPE html>\n<html lang="en">\n<head>\n\t<meta charset="utf-8">\n')
             b.addHtml('\t<title>%s</title>\n' % self.name)
