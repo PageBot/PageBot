@@ -434,11 +434,12 @@ class Document(object):
                 return not pn & 0x1
         return False # Page not found
 
-    def newPage(self, pn=None, templateName=None, w=None, h=None, name=None, **kwargs):
+    def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
         u"""Create a new page with size (self.w, self.h) unless defined otherwise. Add the pages in the row of pn, if defined.
         Otherwise create a new row of pages at pn. If pn is undefined, add a new page row at the end.
         If template is undefined, then use self.pageTemplat to initialize the new page."""
-        template = self.templates.get(templateName)
+        if isinstance(template, basestring):
+            template = self.templates.get(template)
         if template is None:
             template = self.defaultTemplate
         

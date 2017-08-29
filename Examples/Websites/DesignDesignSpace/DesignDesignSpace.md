@@ -23,7 +23,7 @@ title = 'Design Design Space'
 # No automatic pages, all are created by content in this file.
 # Set the left and right grid measures.
 
-doc = Website(autoPages=1, template='Home', title=title, padding=padding)
+doc = Website(autoPages=0, template='Home', title=title, padding=padding)
 
 # Show some information about the doc so far.
 print doc.getInfo() 
@@ -34,6 +34,7 @@ This is text.
 
 ~~~Python
 page = doc.newPage()
+box = page['Main']
 ~~~
 
 The content of this book is an example summary of the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published on the TN website.
@@ -49,6 +50,7 @@ A script is a collection of characters that may be used to compose one or more l
 
 ~~~Python
 page = doc.newPage(name='Description')
+box = page['Main']
 ~~~
 
 From there the document specifications are commonly available to fonts in the form of size selection, justification, line spacing, and column width, as well as web techniques like fitting text to boxes on the fly. As things are, that mantra takes the user up to character input, a blinking cursor…or they can change font families, or style within the font family, or they can change from standard characters to an OpenType feature. Then they can either accept or change the default composition parameters, and finally set type.
@@ -57,6 +59,7 @@ That of course depends on their application taking advantage of what the operati
 
 ~~~Python
 page = doc.newPage(name='Chapter1')
+box = page['Main']
 ~~~
 
 ### Just a taste
@@ -91,6 +94,7 @@ The wider world it enters this time, though, includes the combination of variabl
 
 ~~~Python
 page = doc.newPage(name='Chapter 2')
+box = page['Main']
 ~~~
 
 ### Whole hog!
@@ -121,12 +125,14 @@ So, this is an exciting time, as the give-and-take between alliance members seek
 
 ~~~Python
 page = doc.newPage(name='Conclusion')
+box = page['Main']
 ~~~
 
 So, hold on to your háčeks, it should be an interesting year for typography.
 
 ~~~Python
 page = doc.newPage(name='Navigation')
+box = page['Main']
 ~~~
 
 Chapter i: When lines roamed the earth

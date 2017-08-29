@@ -21,7 +21,7 @@ from drawBot import textOverflow, hyphenation, textBox, text, rect, textSize, Fo
 from pagebot import newFS, setStrokeColor, setFillColor, setGradient, setShadow
 from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE, BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.transformer import pointOffset, tabs
 from pagebot.fonttoolbox.objects.glyph import Glyph
 
 class FoundPattern(object):
@@ -349,7 +349,26 @@ class TextBox(Element):
 
     def __len__(self):
         return len(self.textLines)
-            
+  
+    def __repr__(self):
+        if self.title:
+            name = ':'+self.title
+        elif self.name:
+            name = ':'+self.name
+        else: # No naming, show unique self.eId:
+            name = ':'+self.eId
+
+        if self.fs:
+            fs = ' FS(%d)' % len(self.fs)
+        else:
+            fs = ''
+
+        if self.elements:
+            elements = ' E(%d)' % len(self.elements)
+        else:
+            elements = ''
+        return '%s%s (%d, %d)%s%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), fs, elements)
+
     def _get_fs(self):
         return self._fs
     def _set_fs(self, fs):
@@ -498,6 +517,23 @@ class TextBox(Element):
                     score = nextElement.solve() # Solve any overflow on the next element.
                     result = len(score.fails) == 0 # Test if total flow placement succeeded.
         return result
+
+    #   B U I L D
+
+    def build(self, view, b, htmlIndent=1, cssIndent=1):
+        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
+        If there are any child elements, then also included their code, using the
+        level recursive indent."""
+        if self.cssPath is not None:
+            b.includeCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
+        if self.htmlPath is not None:
+            b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+        else:
+            b.addHtml('%s<div id="%s" class="%s">\n' % (tabs(htmlIndent), self.eId, self.class_ or 'e'))
+            b.addHtml(u'%s' % self.fs)
+            for e in self.elements:
+                e.build(view, builder, htmlIndent+1, cssIndent+1)
+            b.addHtml('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
 
     #   D R A W 
 

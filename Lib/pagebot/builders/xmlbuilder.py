@@ -35,9 +35,6 @@ class XmlBuilder(BaseBuilder):
                 s.append(className)
         return ' '.join(s)
 
-    def __init__(self, path):
-        BaseBuilder.__init__(self, path)
-
     def _initialize(self):
         self._doIndent = True
         self._tabLevel = 0

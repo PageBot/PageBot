@@ -16,7 +16,6 @@ import codecs
 
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset, tabs
-from pagebot.toolbox.webdata import WebData
 
 class Page(Element):
 
@@ -40,33 +39,30 @@ class Page(Element):
         # Check if we are in scaled mode. Then restore.
         #self._restoreScale()
 
-    def build(self, view, wd=None, htmlIndent=0, cssIndent=0):
-        u"""Answer the Result export storage that is the closest representation of self in html/css/js.
+    def build(self, view, b, htmlIndent=1, cssIndent=1):
+        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        if wd is None:
-            wd = WebData()
         if self.cssPath is not None:
-            wd.readCss(self.cssPath)
+            b.includeCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
         if self.htmlPath is not None:
-            wd.readHtml(self.htmlPath)
+            b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            wd.appendHtml('<!DOCTYPE html>\n<html lang="en">\n<head>\n\t<meta charset="utf-8">\n')
-            wd.appendHtml('\t<title>%s</title>\n' % self.name)
+            b.addHtml('<!DOCTYPE html>\n<html lang="en">\n<head>\n\t<meta charset="utf-8">\n')
+            b.addHtml('\t<title>%s</title>\n' % self.name)
 
             pageBotCssPath = 'pagebot.css'
-            wd.appendHtml('\t<meta name="viewport" content="width=device-width">\n')
-            wd.appendHtml('\t<link rel="stylesheet" href="%s">\n</head>\n<body>\n' % pageBotCssPath)
+            b.addHtml('\t<meta name="viewport" content="width=device-width">\n')
+            b.addHtml('\t<link rel="stylesheet" href="%s">\n</head>\n<body>\n' % pageBotCssPath)
 
-            wd.appendHtml('%s<div id="%s">\n' % (tabs(htmlIndent), self.eId))
-            wd.appendHtml('<hr>')
-            wd.appendHtml('CONTENT!')
-            wd.appendHtml('<hr>')
+            b.addHtml('%s<div id="%s">\n' % (tabs(htmlIndent), self.eId))
+            b.addHtml('<hr>')
+            b.addHtml('CONTENT! Elements(%d)' % len(self.elements))
+            b.addHtml('<hr>')
             for e in self.elements:
-                e.build(view, wd, htmlIndent+1, cssIndent+1)
-            wd.appendHtml('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
-            wd.appendHtml('<body>\n<html>\n')
-        return wd
+                e.build(view, b, htmlIndent+1, cssIndent+1)
+            b.addHtml('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
+            b.addHtml('<body>\n<html>\n')
 
 class Template(Page):
 

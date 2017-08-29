@@ -217,7 +217,7 @@ class HtmlBuilder(XmlBuilder):
     USE_JQUERY = True
     #USE_VANILLAJS = True
 
-    def build(self, e, view):
+    def XXXbuild(self, e, view):
         u"""
         Builds the main structure of of an HTML document.
         Note that the inheriting PhPBuilder uses the result of this method to generate
@@ -262,7 +262,7 @@ class HtmlBuilder(XmlBuilder):
         self._html()
         self.closeOutput()
 
-    def buildElements(self, e, view):
+    def XXXbuildElements(self, e, view):
         u"""Recursively build element e and its children."""
         for child in e.elements:
             self.tabs()
