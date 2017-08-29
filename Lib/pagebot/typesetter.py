@@ -326,7 +326,7 @@ class Typesetter(object):
                 return lib['literatureRefs']
         return None
 
-    def runCodeBlock(self, node, execute=True, tryExcept=False):
+    def runCodeBlock(self, node, execute=True, tryExcept=True):
         u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with 
         ~~~Python

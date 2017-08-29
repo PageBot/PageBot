@@ -15,7 +15,7 @@ from drawBot import newPage, installedFonts, installFont
 
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
-from pagebot.elements.views import View, DefaultView, SingleView, ThumbView, MampView
+from pagebot.elements.views import View, DefaultView, SingleView, ThumbView, MampView, GitView
 from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
 from pagebot.toolbox.transformer import obj2StyleId
 
@@ -544,7 +544,7 @@ class Document(object):
                 assert not view.name in self.views
                 self.appendElement(view)
         # Define some default views if not already  there.
-        for viewClass in (DefaultView, ThumbView, MampView):
+        for viewClass in (DefaultView, ThumbView, MampView, GitView):
             if not viewClass.viewId in self.views: # Only if not already defined, to make sure it is there.
                 # Create views, default with the same size as document.
                 self.appendElement(viewClass(parent=self, w=self.w, h=self.h))
@@ -570,6 +570,5 @@ class Document(object):
 
     def build(self, fileName=None, pageSelection=None, viewId=None, multiPage=True):
         u"""Build the document as website, using the MampView for export."""
-        if viewId is None:
-            view = self.getView(MampView.viewId)
+        view = self.getView(viewId or MampView.viewId)
         view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)

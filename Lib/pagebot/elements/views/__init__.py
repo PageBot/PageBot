@@ -17,4 +17,5 @@ from pagebot.elements.views.singleview import SingleView
 from pagebot.elements.views.thumbview import ThumbView
 from pagebot.elements.views.spreadview import SpreadView
 # Website views
-from pagebot.elements.views.mampview import MampView
+from pagebot.elements.views.mampview import MampView # Saves in local Applications/MAMP/htdocs directory
+from pagebot.elements.views.gitview import GitView # Saves in local position, so git works as website server.
