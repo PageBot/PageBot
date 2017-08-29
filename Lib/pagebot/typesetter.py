@@ -54,13 +54,16 @@ class Typesetter(object):
         'li': ('ul', 'ol'),
         'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
     }
-    def __init__(self, doc=None, galley=None, globalDocName=None):
+    def __init__(self, doc=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None):
         # Set the doc context of the typesetter. Can be None, in which case it is expected that one of the code blocks
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
-        # Galley can also be a TextBox, if typsetting must go directly into a page element. In that case image elements
-        # are added as child, loosing contact with their position in the text. A Galley element keeps that relation,
-        # by adding multiple TextBox elements between the images.
+        self.page = None # Keep track of current page, as may have been defined in code blocks.
+        self.box = None # Keep track of current box, as may have been defined in code blocks.
+        #
+        # The galley can also be a Galley or a TextBox instance, if typsetting must go directly into a page element. 
+        # In that case image elements are added as child, loosing contact with their position in the text. 
+        # A Galley element keeps that relation, by adding multiple TextBox elements between the images.
         # If galley is None, then create an empty Galley instance, without parent.
         if galley is None:
             galley = self.GALLEY_CLASS()
@@ -70,6 +73,8 @@ class Typesetter(object):
         self.tagHistory = []
         # Code block results if any ~~~Python blocks defined in the Markdown file.
         self.globalDocName = globalDocName or 'doc' # Name of global doc to find in code blocks, to be stored in self.doc
+        self.globalPageName = globalPageName or 'page'
+        self.globalBoxName = globalBoxName = 'box'
         self.codeBlocks = {} # No results for now. Find codeblock result by codeId after typesetting.
 
     def getTextBox(self, e=None):
@@ -444,12 +449,19 @@ class Typesetter(object):
                 break
         return mergedStyle
 
+    def appendString(self, fs):
+        u"""Append the string to the current box, if it is defined. Otherwise add to the existing galley."""
+        if self.box is not None:
+            self.box.appendString(fs)
+        else:
+            self.galley.appendString(fs)  # Add the tail formatted string to the galley.
+
     def typesetString(self, s, e=None, style=None):
         u"""If s is a formatted string, them it is placed untouched. If it is a plain string, then
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters. 
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
         fs = newFS(s, e, style)
-        self.galley.appendString(fs)
+        self.appendString(fs)
         return fs
 
     def typesetNode(self, node, e=None):
@@ -463,6 +475,13 @@ class Typesetter(object):
             doc = codeResult.get(self.globalDocName)
             if doc is not None:
                 self.doc = doc
+            page = codeResult.get(self.globalPageName)
+            if page is not None:
+                self.page = page
+            box = codeResult.get(self.globalBoxName)
+            if box is not None:
+                assert box.isTextBox, 'Reference page element is not text box.'
+                self.box = box
 
         # Add this tag to the tag-hitstory line
         self.addHistory(node.tag)
@@ -482,7 +501,7 @@ class Typesetter(object):
         nodeText = self._strip(node.text)
         if nodeText: # Not None and still has content after stripping?
             fs = newFS(nodeText, e, nodeStyle)
-            self.galley.appendString(fs) # Add the new formatted string to the current flow textBox
+            self.appendString(fs)
         
         # Type set all child node in the current node, by recursive call.
         for child in node:
@@ -502,7 +521,7 @@ class Typesetter(object):
             childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
             if childTail: # Any tail left after stripping, then append to the galley.
                 fs = newFS(childTail, e, nodeStyle)
-                self.galley.appendString(fs)  # Add the tail formatted string to the galley.
+                self.appendString(fs)
         
         # Now restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text. Back to the style of the parent, 

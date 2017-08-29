@@ -33,10 +33,9 @@ class Website(Publication):
         gridX = (fr(1), fr(1))
         gridY = [None] # Default is full height of columns, no horizontal division.
 
-        t = Template(w=w, h=h, name='Home', padding=padding, gridX=gridX, gridY=gridY) 
+        t = Template(w=w, h=h, name='default', padding=padding, gridX=gridX, gridY=gridY) 
         newRect(parent=t, conditions=[Fit2Sides()], name='Home')
         self.addTemplate(t.name, t)
-        newTextBox('AAAA', parent=t)
-        newTextBox('VVVV', parent=t)
+        newTextBox('', parent=t, name='Main')
 
         

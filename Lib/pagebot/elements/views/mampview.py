@@ -12,6 +12,7 @@
 #     mampview.py
 #
 from pagebot.elements.views.view import View
+from pagebot.builders import WebBuilder
 
 class MampView(View):
     viewId = 'Mamp'
@@ -30,9 +31,10 @@ class MampView(View):
     def export(self, fileName, pageSelection=None, multiPage=True):
         path = self.MAMP_PAGEBOT_PATH + fileName + '/' 
         doc = self.parent
-        exported = doc[0].build(self)
-        exported.writeHtml(path + self.DEFAULT_HTML_FILE)
-        exported.writeCss(path + self.DEFAULT_CSS_FILE)
+        b = WebBuilder()
+        doc[0].build(self, b)
+        b.writeHtml(path + self.DEFAULT_HTML_FILE)
+        b.writeCss(path + self.DEFAULT_CSS_FILE)
 
     def getUrl(self, name):
         return 'http://localhost:8888/pagebot/%s/%s' % (name, self.DEFAULT_HTML_FILE)

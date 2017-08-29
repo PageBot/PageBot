@@ -22,7 +22,7 @@ title = 'Design Design Space'
 # No automatic pages, all are created by content in this file.
 # Set the left and right grid measures.
 
-doc = Website(autoPages=1, template='Home', title=title, padding=padding)
+doc = Website(autoPages=0, template='Home', title=title, padding=padding)
 
 # Show some information about the doc so far.
 print doc.getInfo() 
@@ -31,6 +31,7 @@ print doc.getInfo()
 
 <p>This is text.</p>
 <pre><code class="Python">page = doc.newPage()
+box = page['Main']
 </code></pre>
 
 <p>The content of this book is an example summary of the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published on the TN website.</p>
@@ -40,11 +41,13 @@ print doc.getInfo()
 <p>So, when the user opens an application for authoring a new document, applications present a font family, style, and size, ready for the user’s input of their own script, in the form of whatever characters they want to type; defaults for all of the selections, from script to character, must exist. This is also true of web documents: the workings cannot exist without the full satisfaction of the “mantra” — from script to font family, to style, to size — in order to function at the simplest level, with fonts today.</p>
 <p>A script is a collection of characters that may be used to compose one or more languages. A design class relates to the basic characteristics of font families like serif, sans serif, or script. A font family is a collection of font variants with common details in the terminations, shapes, internal contrasts, and angles. A font style is a variation of the family, or a combination of variations like weight and width, that do not fundamentally alter the comment characteristics of the font family, just the proportions of white and black. Font treatments include stroking the contour, filling it, drop shadows, and possible variants that change neither font family nor style, just how it is positioned, or how the contour is interpreted or augmented. Lastly, a user may choose effects, like simulated scratches and scuffs to the output type, or modification of one or multiple treatments over time, as in animation.</p>
 <pre><code class="Python">page = doc.newPage(name='Description')
+box = page['Main']
 </code></pre>
 
 <p>From there the document specifications are commonly available to fonts in the form of size selection, justification, line spacing, and column width, as well as web techniques like fitting text to boxes on the fly. As things are, that mantra takes the user up to character input, a blinking cursor…or they can change font families, or style within the font family, or they can change from standard characters to an OpenType feature. Then they can either accept or change the default composition parameters, and finally set type.</p>
 <p>That of course depends on their application taking advantage of what the operating system and/or HTML offer today. And each operating system, and the web, offers slightly different mantras. But as things are, nothing about any of this changes for users of non-variable fonts, in operating systems or applications that are compliant with the new variations in OpenType 1.8. What users continue to be faced with is large aggregate font file sizes that get larger for every specialized use required of the font family, and often inscrutable font names like FamilySansDisplay-SemiboldItalicPro. Type developers, of course, can just keep doing things as they were.</p>
 <pre><code class="Python">page = doc.newPage(name='Chapter1')
+box = page['Main']
 </code></pre>
 
 <h3>Just a taste</h3>
@@ -63,6 +66,7 @@ print doc.getInfo()
 <p>As a result of their attraction to the rarity of compression-with-additional-functionality, “just a taste” is what most users are likely to get from variable fonts, as OS fonts like Microsoft’s Segoe, Google’s Roboto, and Adobe’s Source Sans follow Apple’s San Francisco, an Apple GX Variations font, into somewhat secret service. That is to say, unlike the font industry or the typographic press, the majority of users will be working with variable fonts before they know it. By the end of 2018 all the major operating systems and the web will have attained what I call Variations World, which is implementation of the OpenType 1.8 specification.</p>
 <p>The wider world it enters this time, though, includes the combination of variable fonts, much wider adoption of Unicode, OpenType layout, TrueType hinting, higher resolution devices, HTML, broadband, and an exceptionally strong type industry, both creatively and technically. For foundries and users adopting a taste of variations, they will be able to remake and use, respectively, the same font families they made before as individual styles, bringing any user who wishes, up to the same level of typographic font software and font functionality as the OS font users will already be experiencing.</p>
 <pre><code class="Python">page = doc.newPage(name='Chapter 2')
+box = page['Main']
 </code></pre>
 
 <h3>Whole hog!</h3>
@@ -79,10 +83,12 @@ print doc.getInfo()
 <p>In the year-and-a-half the alliance worked on the specification in secret, they never made the connection between all the axes people have been requesting for years, and the way to actually make them. They also never made the connection between the mantra, all their software uses, and this new technology with the ability to manipulate typography all along the mantra; e.g., not a single axis we have encountered so far, crosses the mantra’s bounds. All of the axes we’ve developed, that we plan to present to users, affect one part of the mantra at a time.</p>
 <p>So, this is an exciting time, as the give-and-take between alliance members seeking solutions for their markets, application and font developers seeking differentiation, and a lot of users seeking help, all ramping up over a 20-year period of relative stagnation in this area, means a lot of font software of various kinds, from type-design tools to font families, from applications to web code, will be coming out in the next year or two.</p>
 <pre><code class="Python">page = doc.newPage(name='Conclusion')
+box = page['Main']
 </code></pre>
 
 <p>So, hold on to your háčeks, it should be an interesting year for typography.</p>
 <pre><code class="Python">page = doc.newPage(name='Navigation')
+box = page['Main']
 </code></pre>
 
 <p>Chapter i: When lines roamed the earth<br />

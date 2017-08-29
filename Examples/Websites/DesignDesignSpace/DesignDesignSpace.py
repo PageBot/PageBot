@@ -54,7 +54,7 @@ if 1: # Debugging, show the pages with their names.
         print templateName, template.name
     for pn, pages in t.doc.getSortedPages():
         for page in pages:
-            print '\t', page, page.w, page.h, page.template.name
+            print '\t', page, page.w, page.h, len(page.elements), page.template.name
             #page.isLeft(), page.isRight(), page.getGridColumns()
 
 if 1:

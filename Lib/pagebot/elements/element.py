@@ -28,7 +28,7 @@ from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, B
     ONLINE, INLINE, OUTLINE
 from pagebot.toolbox.transformer import asFormatted, uniqueID, tabs
 from pagebot.toolbox.timemark import TimeMark
-from pagebot.toolbox.webdata import WebData
+from pagebot.builders.webbuilder import WebBuilder
 
 class Element(object):
 
@@ -144,7 +144,7 @@ class Element(object):
     def applyTemplate(self, template, elements=None):
         u"""Copy relevant info from template: w, h, elements, style, conditions when element is created.
         Don't call later."""
-        self.template = template # Set template value by property call, copying all temaplate elements and attributes.
+        self.template = template # Set template value by property call, copying all template elements and attributes.
         if elements is not None:
             # Add optional list of elements.
             for e in elements or []: 
@@ -160,6 +160,8 @@ class Element(object):
             # Copy elements from the template and put them in the designated positions.
             self.w = template.w
             self.h = template.h
+            self.padding = template.padding
+            self.margin = template.margin
             self.prevElement = template.prevElement
             self.nextElement = template.nextElement
             self.nextPage = template.nextPage
@@ -175,9 +177,9 @@ class Element(object):
     #   E L E M E N T S
     #   Every element is potentioally a container of other elements.
 
-    def __getitem__(self, eId):
-        u"""Answer the element with eId. Raise a KeyError if the element does not exist."""
-        return self._eIds[eId]
+    def __getitem__(self, eIdOrName):
+        u"""Answer the element with eIdOrName. Answer None if the element does not exist."""
+        return self.get(eIdOrName)
 
     def __setitem__(self, eId, e):
         if not e in self.elements:
@@ -200,6 +202,15 @@ class Element(object):
     def _get_elementIds(self): # Answer the x-ref dictionary with elements by their e.eIds
         return self._eIds
     elementIds = property(_get_elementIds)
+
+    def get(self, eIdOrName, default=None):
+        u"""Answer the element by eId or name. Answer None if it does not exist."""
+        if eIdOrName in self._eIds:
+            return self._eIds[eIdOrName]
+        e = self.getElementByName(eIdOrName)
+        if e is not None:
+            return e
+        return self.get(default)
 
     def getElement(self, eId):
         u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
@@ -2050,23 +2061,19 @@ class Element(object):
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build(self, view, wd=None, htmlIndex=1, cssIndent=1):
-        u"""Answer the (html, css) tuple that is the closest representation of self. 
+    def build(self, view, b, htmlIndent=1, cssIndent=1):
+        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        if wd is None:
-            wd = WebData()
         if self.cssPath is not None:
-            wd.readCss(self.cssPath)
+            b.includeCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
         if self.htmlPath is not None:
-            wd.readHtml(self.htmlPath)
+            b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            wd.appendHtml('%s<div id="%s" class="%s">\n' % (tabs(htmlIndent), self.eId, self.class_ or 'e'))
-            wd.appendHtml('E-CONTENT!<br>')
+            b.addHtml('%s<div id="%s" class="%s">\n' % (tabs(htmlIndent), self.eId, self.class_ or 'e'))
             for e in self.elements:
-                e.build(view, wd, htmlIndent+1, cssIndent+1)
-            wd.appendHtml('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
-        return wd
+                e.build(view, builder, htmlIndent+1, cssIndent+1)
+            b.addHtml('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
 
     #   V A L I D A T I O N
 
