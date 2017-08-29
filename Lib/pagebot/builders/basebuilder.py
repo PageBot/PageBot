@@ -15,23 +15,23 @@ import codecs
 
 class BaseBuilder(object):
     u"""The BaseBuilder is the abstract builder class, for all builders that need
-    to write files in a directory, besides the binary export formats that are already
+    to import and write files in a directory, besides the binary export formats that are already
     supported by DrawBot."""
 
     def __init__(self):
-        self.__html = []
-        self.__css = []
-        self.__js = []
-        self.__copyPaths = []
+        self._htmlOut = [] 
+        self._cssOut = []  
+        self._jsOut = []  
+        self._copyPaths = []
 
     def addHtml(self, html):
         u"""Add the html chunk to self.html, the ordered list of html for output."""
-        self.__html.append(html)
+        self._htmlOut.append(html)
 
     write = addHtml
 
     def importHtml(self, path):
-        u"""Read a chunk of HTML code from the path."""
+        u"""Import a chunk of UTF-8 HTML code from the path."""
         f = codecs.open(path, 'r', 'utf-8')
         self.addHtml(f.read())
         f.close()
@@ -39,14 +39,15 @@ class BaseBuilder(object):
     def writeHtml(self, path):
         u"""Write the collected set of html chunks to path."""
         f = codecs.open(path, 'w', 'utf-8')
-        f.write(''.join(self.__html))
+        f.write(''.join(self._htmlOut))
         f.close()
 
     def addCss(self, css):
         u"""Add the css chunk to self.css, the ordered list of css for output."""
-        self.__css.append(css)
+        self._cssOut.append(css)
 
     def importCss(self, path):
+        u"""Import a chunk of UTF-8 CSS code from the path."""
         f = codecs.open(path, 'r', 'utf-8')
         self.addCss(f.read())
         f.close()
@@ -54,14 +55,20 @@ class BaseBuilder(object):
     def writeCss(self, path):
         u"""Write the collected set of css chunks to path."""
         f = codecs.open(path, 'w', 'utf-8')
-        f.write(''.join(self.__css))
+        f.write(''.join(self._cssOut))
         f.close()
 
     def addJs(self, js):
-        self.__js.append(js)
+        self._jsOut.append(js)
+
+    def importJs(self, path):
+        u"""Import a chunk of UTF-8 CSS code from the path."""
+        f = codecs.open(path, 'r', 'utf-8')
+        self.addJs(f.read())
+        f.close()
 
     def copyPath(self, path):
         u"""Collect path of files to copy to the output website."""
-        self.__copyPaths.append(path)
+        self._copyPaths.append(path)
 
 
