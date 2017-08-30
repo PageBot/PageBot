@@ -16,12 +16,11 @@ from pagebot.builders import WebBuilder
 
 class GitView(View):
     viewId = 'Git'
-
+    
+    GIT_PATH = 'docs/'
     DEFAULT_HTML_FILE = 'index.html'
-    DEFAULT_CSS_FILE = 'css/pagebot.css'
-    # If the MAMP server application not installed, a browser is opened on the MAMP website to download it.
-    # There is a free demo version can be installed.
-    MAMP_SHOP_URL = 'https://www.mamp.info/en/' 
+    DEFAULT_HTML_PATH = GIT_PATH + DEFAULT_HTML_FILE
+    DEFAULT_CSS_PATH = GIT_PATH + 'css/pagebot.css'
 
     #   B U I L D  H T M L  /  C S S
 
@@ -29,8 +28,8 @@ class GitView(View):
         doc = self.parent
         b = WebBuilder()
         doc[0].build(self, b)
-        b.writeHtml(self.DEFAULT_HTML_FILE)
-        b.writeCss(self.DEFAULT_CSS_FILE)
+        b.writeHtml(self.DEFAULT_HTML_PATH)
+        b.writeCss(self.DEFAULT_CSS_PATH)
 
     def getUrl(self, name):
         return 'http://%s/%s' % (name, self.DEFAULT_HTML_FILE)

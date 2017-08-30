@@ -557,18 +557,21 @@ class Document(object):
 
     #   D R A W I N G  &  B U I L D I N G
 
-    def drawPages(self, viewId=None, pageSelection=None):
+    def drawPages(self, pageSelection=None, view=None):
         u"""Draw the selected pages, using DrawBot as canvas. 
         PageSelection is an optional list of y-pageNumbers to draw."""
-        view = self.getView(viewId) # view.parent is self
+        if view is None or isinstance(view, basestring):
+            view = self.getView(view) # view.parent is self
         view.drawPages(pageSelection)
 
-    def export(self, fileName=None, pageSelection=None, viewId=None, multiPage=True):
+    def export(self, fileName=None, pageSelection=None, view=None, multiPage=True):
         u"""Let the view do alle the export work."""
-        view = self.getView(viewId) # view.parent is self
+        if view is None or isinstance(view, basestring):
+            view = self.getView(view) # view.parent is self
         view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)
 
-    def build(self, fileName=None, pageSelection=None, viewId=None, multiPage=True):
+    def build(self, fileName=None, pageSelection=None, view=None, multiPage=True):
         u"""Build the document as website, using the MampView for export."""
-        view = self.getView(viewId or MampView.viewId)
+        if view is None or isinstance(view, basestring):
+            view = self.getView(view or MampView.viewId)
         view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)

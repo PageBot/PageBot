@@ -551,5 +551,5 @@ def makeDocument():
 
 
 d = makeDocument()
-d.export(EXPORT_PATH, viewId=SpreadView.viewId) 
+d.export(EXPORT_PATH, view=SpreadView.viewId) 
 

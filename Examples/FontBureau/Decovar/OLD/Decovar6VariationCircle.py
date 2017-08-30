@@ -42,7 +42,9 @@ DEBUG = False # Make True to see grid and element frames.
 
 FONT_PATH = pagebot.getFontPath()
 fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
-#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
+#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'
+fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'
+#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
 fontPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
 fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
 #fontPath = FONT_PATH + 'PromiseVar.ttf'
@@ -378,7 +380,7 @@ def makeDocument(rs):
         
 d = makeDocument(RS)
 if 0: # Not saving image
-    d.drawPages(None)
+    d.drawPages()
 else:
     print EXPORT_PATH
     d.export(EXPORT_PATH) 
