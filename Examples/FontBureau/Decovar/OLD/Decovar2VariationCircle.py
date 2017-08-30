@@ -263,7 +263,7 @@ if 0:
             
     d = makeDocument(RS)
     if 1: # Not saving image
-        d.drawPages(None)
+        d.drawPages()
     else:
         d.export(EXPORT_PATH) 
 

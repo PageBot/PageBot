@@ -142,7 +142,7 @@ class View(Element):
         query the document, pages, elements and styles.
         """
         if not self._isDrawn:
-            self.drawPages(pageSelection)
+            self.drawPages(pageSelection=pageSelection)
             self._isDrawn = True
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif,
