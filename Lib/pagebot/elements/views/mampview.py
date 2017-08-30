@@ -13,6 +13,7 @@
 #
 from pagebot.elements.views.view import View
 from pagebot.builders import WebBuilder
+import os
 
 class MampView(View):
     viewId = 'Mamp'
@@ -32,9 +33,16 @@ class MampView(View):
         path = self.MAMP_PAGEBOT_PATH + name + '/' 
         doc = self.parent
         b = WebBuilder()
+        print path
         doc[0].build(self, b)
-        b.writeHtml(path + self.DEFAULT_HTML_FILE)
-        b.writeCss(path + self.DEFAULT_CSS_FILE)
+        if path.endswith('.html'):
+            b.writeHtml(path) 
+            b.writeCss(os.path.join(os.path.dirname(path), self.DEFAULT_CSS_FILE))
+        else:
+            if path[-1] != "/":
+                path+="/"
+            b.writeHtml(path + self.DEFAULT_HTML_FILE)
+            b.writeCss(path + self.DEFAULT_CSS_FILE)
 
     def getUrl(self, name):
         return 'http://localhost:8888/pagebot/%s/%s' % (name, self.DEFAULT_HTML_FILE)

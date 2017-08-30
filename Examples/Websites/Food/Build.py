@@ -17,7 +17,7 @@ print t.doc
 # Export HTML, showing what is found inside the markdown file.
 # Use the created document as exporter, to create the website files.
 EXPORT_PATH = '_export/%s/index.html' % doc.title
-doc.export(EXPORT_PATH)
+doc.build(EXPORT_PATH)
 # Export HTML, showing what is found inside the markdown file.
 # Use the created document as exporter, to create the website files.
 EXPORT_PATH = '_export/%s/index.css' % doc.title
