@@ -570,8 +570,8 @@ class Document(object):
             view = self.getView(view) # view.parent is self
         view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)
 
-    def build(self, fileName=None, pageSelection=None, view=None, multiPage=True):
+    def build(self, name=None, pageSelection=None, view=None, multiPage=True):
         u"""Build the document as website, using the MampView for export."""
         if view is None or isinstance(view, basestring):
             view = self.getView(view or MampView.viewId)
-        view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)
+        view.build(name=name, pageSelection=pageSelection, multiPage=multiPage)

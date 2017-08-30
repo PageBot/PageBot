@@ -24,7 +24,7 @@ class GitView(View):
 
     #   B U I L D  H T M L  /  C S S
 
-    def export(self, fileName, pageSelection=None, multiPage=True):
+    def build(self, name, pageSelection=None, multiPage=True):
         doc = self.parent
         b = WebBuilder()
         doc[0].build(self, b)

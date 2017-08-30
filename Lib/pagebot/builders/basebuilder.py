@@ -23,7 +23,8 @@ class BaseBuilder(object):
         self._cssOut = []  
         self._jsOut = []  
         self._copyPaths = []
-
+        self._initialize()
+        
     def addHtml(self, html):
         u"""Add the html chunk to self.html, the ordered list of html for output."""
         self._htmlOut.append(html)
