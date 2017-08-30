@@ -28,6 +28,7 @@ from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, B
     ONLINE, INLINE, OUTLINE
 from pagebot.toolbox.transformer import asFormatted, uniqueID, tabs
 from pagebot.toolbox.timemark import TimeMark
+from pagebot.builders import BuildInfo # Container with Builder flags and data/parametets
 from pagebot.builders.webbuilder import WebBuilder
 
 class Element(object):
@@ -43,13 +44,14 @@ class Element(object):
     isView = False 
     
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
-            t=0, parent=None, name=None, class_=None, title=None, style=None, conditions=None, 
+            t=0, parent=None, name=None, class_=None, title=None, description=None, language=None,
+            style=None, conditions=None, info=None,
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, 
-            htmlPath=None, cssPath=None, jsPath=None, includePath=None,
             padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
             margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
             borders=None, borderTop=None, borderRight=None, borderBottom=None, borderLeft=None, 
-            shadow=None, gradient=None, drawBefore=None, drawAfter=None, framePath=None, **kwargs):  
+            shadow=None, gradient=None, drawBefore=None, drawAfter=None, framePath=None, 
+            **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
@@ -115,11 +117,9 @@ class Element(object):
         self.applyTemplate(template, elements) 
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isFlow = not None in (prevElement, nextElement, nextPage)
+        # Instance to hold details flags and data to direct the builder of this element.
         # Reference directory paths for source files, as used by building Html/Css templates and self.build
-        self.htmlPath = htmlPath
-        self.cssPath = cssPath
-        self.jsPath = jsPath
-        self.includePath = includePath
+        self.info = info or BuildInfo()
 
     def __repr__(self):
         if self.title:
@@ -165,6 +165,7 @@ class Element(object):
             self.prevElement = template.prevElement
             self.nextElement = template.nextElement
             self.nextPage = template.nextPage
+            self.info = copy.copy(template.info)
             # Copy style items
             for  name, value in template.style.items():
                 self.style[name] = value
@@ -204,13 +205,16 @@ class Element(object):
     elementIds = property(_get_elementIds)
 
     def get(self, eIdOrName, default=None):
-        u"""Answer the element by eId or name. Answer None if it does not exist."""
+        u"""Answer the element by eId or name. Answer the same selection for default, if the element cannot be found.
+        Answer None if it does not exist."""
         if eIdOrName in self._eIds:
             return self._eIds[eIdOrName]
         e = self.getElementByName(eIdOrName)
         if e is not None:
             return e
-        return self.get(default)
+        if default is not None:
+            return self.get(default)
+        return None
 
     def getElement(self, eId):
         u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
@@ -2065,15 +2069,16 @@ class Element(object):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        if self.cssPath is not None:
-            b.includeCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
-        if self.htmlPath is not None:
-            b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+        info = self.info # Contains builder parameters and flags for Builder "b"
+        if info.cssPath is not None:
+            b.includeCss(info.cssPath) # Add CSS content of file, if path is not None and the file exists.
+        if info.htmlPath is not None:
+            b.includeHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.addHtml('%s<div id="%s" class="%s">\n' % (tabs(htmlIndent), self.eId, self.class_ or 'e'))
+            b.div(id=self.eId, class_=self.class_ or `e`)
             for e in self.elements:
                 e.build(view, builder, htmlIndent+1, cssIndent+1)
-            b.addHtml('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
+            b._div()
 
     #   V A L I D A T I O N
 

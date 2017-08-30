@@ -20,14 +20,25 @@ from pagebot.toolbox.transformer import pointOffset, tabs
 class Page(Element):
 
     isPage = True
-    
-    def isLeft(self):
-        u"""Answer the boolean flag if this is a left page. The only one who can know that is the document."""
-        return self.doc.isLeftPage(self)
 
-    def isRight(self):
+    def __init__(self, leftPage=None, rightPage=None, **kwargs):  
+        u"""Add specific parameters for a page, besides the parameters for standard Elements.
+        """
+        Element.__init__(self,  **kwargs)
+        self.leftPage = leftPage # Force left/right side of a page, independen of document odd/even.
+        self.rightPage = rightPage 
+
+    def isLeftPage(self):
+        u"""Answer the boolean flag if this is a left page. The only one who can know that is the document."""
+        if self.leftPage is None:
+            return self.doc.isLeftPage(self) # If undefined, query parent document to decide.
+        return self.leftPage   
+
+    def isRightPage(self):
         u"""Answer the boolean flag if this is a right page. The only one who can know that is the document."""
-        return self.doc.isRightPage(self)
+        if self.rightPage is None:
+            return self.doc.isRightPage(self)
+        return self.rightPage 
 
     def draw(self, origin, view):
         u"""Draw all elements this page."""
@@ -43,26 +54,57 @@ class Page(Element):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        if self.cssPath is not None:
-            b.importCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
-        if self.htmlPath is not None:
-            b.importHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+        info = self.info # Contains flags and parameter to Builder "b"
+        if info.cssPath is not None:
+            b.importCss(info.cssPath) # Add CSS content of file, if path is not None and the file exists.
+        if info.htmlPath is not None:
+            b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.addHtml('<!DOCTYPE html>\n<html lang="en">\n<head>\n\t<meta charset="utf-8">\n')
-            b.addHtml('\t<title>%s</title>\n' % self.name)
-
-            pageBotCssPath = 'pagebot.css'
-            b.addHtml('\t<meta name="viewport" content="width=device-width">\n')
-            b.addHtml('\t<link rel="stylesheet" href="%s">\n</head>\n<body>\n' % pageBotCssPath)
-
-            b.addHtml('%s<div id="%s">\n' % (tabs(htmlIndent), self.eId))
-            b.addHtml('<hr>')
-            b.addHtml('CONTENT! Elements(%d)' % len(self.elements))
-            b.addHtml('<hr>')
-            for e in self.elements:
-                e.build(view, b, htmlIndent+1, cssIndent+1)
-            b.addHtml('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
-            b.addHtml('<body>\n<html>\n')
+            b.docType('html')
+            b.html()#lang="%s" itemtype="http://schema.org/">\n' % self.css('language'))
+            if info.headPath is not None:
+                b.importHtml(info.headPath) # Add HTML content of file, if path is not None and the file exists.
+            else:
+                b.head()
+                b.meta(charset=self.css('encoding'))
+                b.title_(info.title or self.name)
+                
+                if info.webFonts:
+                    for webFontn in info.webFonts:
+                        b.link(href=webFont, rel='stylesheet', type='text/css')
+                
+                if info.jQueryUrl:
+                    b.script(type="text/javascript", src=info.jQueryUrl)
+                if info.mediaQuriesUrl: # Enables media queries in some unsupported browsers-->
+                    b.script(type="text/javascript", src=info.mediaQueriesUrl)
+                b.meta(name='viewport', content=info.viewPort) # Cannot be None
+                if info.cssPath is not None:
+                    cssPath = 'css/' + info.cssPath.split('/')[-1]
+                else:
+                    cssPath = 'css/pagebot.css'
+                b.link(rel='stylesheet', href=cssPath, type='text/css', media='all')
+                if info.favIconUrl:
+                    b.link(rel='icon', href=info.favIconUrl, type='images/%s' % info.favIconUrl.split('.')[-1])
+                if self.appleTouchIconUrl:
+                    b.link(rel='apple-touch-icon-precomposed', href=info.appleTouchIconUrl)
+                if info.description:
+                    b.meta(name='description', content=info.description)
+                if info.keyWords:
+                    b.meta(name='keywords', content=info.keyWords)
+                b._head()
+            if info.bodyPath is not None:
+                b.importHtml(info.bodyPath) # Add HTML content of file, if path is not None and the file exists.
+            else:
+                b.body()
+                b.div(id=self.eId)
+                b.hr()
+                b.addHtml('CONTENT! Elements(%d)' % len(self.elements))
+                b.hr()
+                for e in self.elements:
+                    e.build(view, b, htmlIndent+1, cssIndent+1)
+                b._div()
+                b._body()
+            b._html()
 
 class Template(Page):
 

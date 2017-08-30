@@ -452,7 +452,7 @@ class HtmlBuilder(XmlBuilder):
 
     def title_(self, s):
         self.title()
-        self.write(s)
+        self.write(s.strip())
         self._title()
 
     def link(self, **args):

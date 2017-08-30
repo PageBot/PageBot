@@ -28,8 +28,8 @@ class MampView(View):
 
     #   B U I L D  H T M L  /  C S S
 
-    def export(self, fileName, pageSelection=None, multiPage=True):
-        path = self.MAMP_PAGEBOT_PATH + fileName + '/' 
+    def build(self, name, pageSelection=None, multiPage=True):
+        path = self.MAMP_PAGEBOT_PATH + name + '/' 
         doc = self.parent
         b = WebBuilder()
         doc[0].build(self, b)
