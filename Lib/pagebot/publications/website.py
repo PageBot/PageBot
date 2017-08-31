@@ -97,7 +97,7 @@ class Featured(TextBox):
 """)
 
 
-class Main1(TextBox):
+class Main(TextBox):
 
     def build(self, view, b, htmlIndent=1, cssIndent=1):
         b.addHtml(u"""  <div class="container mainContent">
@@ -132,7 +132,14 @@ In exceptional situations payment in portions can be discussed.</p>
 <p>Students are submitted after showing their portfolios and the result of a given assignment. They have to write a motivation and development plan, which will be presented in a Google Hangout.<br />
 If there is enough time between submission and the start of a new sequence, students can get some initial assignment to work on without coaching. <br />
 The volume this depends on the length of the of the training that students apply for.</p>
-<p>Students finishing one training level adequately, automatically get admitions for a next level.</p>
+<p>Students finishing one training level adequately, automatically get admitions for a next level.</p>""")
+
+        if self.fs:
+            b.addHtml(u'%s' % self.fs)
+        for e in self.elements:
+            e.build(view, b, htmlIndent+1, cssIndent+1)
+
+        b.addHtml("""
     </div>
     </div>
     </div>
@@ -185,74 +192,82 @@ class Section(TextBox):
     </div>
 """)
 
-class Main2(TextBox):
+class OtherMain(TextBox):
 
     def build(self, view, b, htmlIndent=1, cssIndent=1):
-        b.addHtml(u"""  <div class="container mainContent">
-        <div class="row">
-            <div class="eightcol">
-                <h3>What designdesign.space is</h3>
-                <ul>
-                <li>It is a personal environment to develop design skills, by accepting design challenges, meeting with coaches and colleage students in online feed-back sessions and presentations.</li>
-                <li>The design of personal space (time, topic, skills) as tool to be designer for the rest of your life</li>
-                <li>The focus is on design students. Not on predefined course content.</li>
-                </ul>
+        b.div(class_='container mainContent')
+        b.div(class_='row')
+        
+        b.div(class_='eightcol')
+        b.addHtml(u"""  
+            <h3>What designdesign.space is</h3>
+            <ul>
+            <li>It is a personal environment to develop design skills, by accepting design challenges, meeting with coaches and colleage students in online feed-back sessions and presentations.</li>
+            <li>The design of personal space (time, topic, skills) as tool to be designer for the rest of your life</li>
+            <li>The focus is on design students. Not on predefined course content.</li>
+            </ul>
 
-                <h3>What is designdesign.space for</h3>
-                <ul>
-                <li>Graduated design students</li>
-                <li>Designers with experience, working in practice</li>
-                <li>Designers interested in improving their process</li>
-                <li>Designers interested in specializing a specific topic</li>
-                <li>Designers interested to develop skill that make them independent from future developments.</li>
-                <li>Designers who would like to do a follow-up/refresh study, but are lacking time, finance or geographic location to make it work.</li>
-                </ul>
-                <p>In general the aim is to get graduated students as well as experienced designers back to a space of “WOW!”.</p>
+            <h3>What is designdesign.space for</h3>
+            <ul>
+            <li>Graduated design students</li>
+            <li>Designers with experience, working in practice</li>
+            <li>Designers interested in improving their process</li>
+            <li>Designers interested in specializing a specific topic</li>
+            <li>Designers interested to develop skill that make them independent from future developments.</li>
+            <li>Designers who would like to do a follow-up/refresh study, but are lacking time, finance or geographic location to make it work.</li>
+            </ul>
+            <p>In general the aim is to get graduated students as well as experienced designers back to a space of “WOW!”.</p>
+        """)
+        #if self.fs:
+        b.addHtml(u'%s' % self.fs)
+        b._div() # class: eightcol
 
-            </div>
-            <div class="fourcol last">
-                <h5>
-                    Projects 
-                </h5>
-                <h3>
-                    Cras vitae urna porta 
-                </h3>
-                Aliquam erat volutpat. Etiam iaculis elementum massa, ultricies vestibulum lectus. Vestibulum justo orci, ultricies non purus vestibulum. 
-                <h5>
-                    Schedule 
-                </h5>
-                <h3>
-                    Cras vitae urna porta 
-                </h3>
-                Ut ultrices enim vitae nunc consequat aliquet. Phasellus cursus felis eros, et lobortis augue luctus et. Curabitur metus metus, auctor eget arcu vel. 
-            </div>
-        </div>
-    </div>
-
-""")
+        b.div(class_='fourcol last')
+        b.addHtml(u"""
+            <h5>
+                Projects 
+            </h5>
+            <h3>
+                Cras vitae urna porta 
+            </h3>
+            Aliquam erat volutpat. Etiam iaculis elementum massa, ultricies vestibulum lectus. Vestibulum justo orci, ultricies non purus vestibulum. 
+            <h5>
+                Schedule 
+            </h5>
+            <h3>
+                Cras vitae urna porta 
+            </h3>
+            Ut ultrices enim vitae nunc consequat aliquet. Phasellus cursus felis eros, et lobortis augue luctus et. Curabitur metus metus, auctor eget arcu vel. 
+        """)
+        b._div() # class: fourcol last
+        b._div() # class: row
+        b._div() # class: container mainContent
 
 class Footer(TextBox):
 
     def build(self, view, b, htmlIndent=1, cssIndent=1):
-        b.addHtml(u"""  <div class="container footer">
-        <div class="row">
-            <div class="eightcol">
-                <nav id="navigation-wrap">
+        b.div(class_="container footer")
+        b.div(class_='row')
+        
+        b.div(class_='eightcol')
+        b.nav(id='navigation-wrap')
+        b.addHtml(u"""
                     <ol>
                         <li> <a href="projects.html"> Projects </a> </li>
                         <li> <a href="schedule.html"> Schedule </a> </li>
                         <li> <a href="about.html"> About </a> </li>
                         <li> <a href="articles.html"> Articles </a> </li>
                     </ol>
-                </nav>
-            </div>
-            <div class="fourcol last">
-                Ut ultrices enim vitae nunc consequat aliquet. Phasellus cursus felis eros, et lobortis augue luctus et. Curabitur metus metus, auctor eget arcu vel. 
-            </div>
-        </div>
-<!--row -->
-    </div>
-""")
+        """)
+        b._nav()
+        b._div() # class: eightcol
+
+        b.div(class_='fourcol last')
+        b.addHtml("""Ut ultrices enim vitae nunc consequat aliquet. Phasellus cursus felis eros, et lobortis augue luctus et. Curabitur metus metus, auctor eget arcu vel. """)
+        b._div() # class: fourcol last
+        
+        b._div() # class: row
+        b._div() # class: container footer
 
 class JS(TextBox):
 
@@ -298,9 +313,9 @@ class Website(Publication):
         box = MobileNavigation('', parent=t, name='MobileNavigation')
         box = Navigation('', parent=t, name='Navigation')
         box = Featured('', parent=t, name='Featured')
-        box = Main1('', parent=t, name='Main')
+        box = Main('', parent=t, name='Main')
         box = Section('', parent=t, name='Section')
-        box = Main2('', parent=t, name='Main2')
+        box = OtherMain('', parent=t, name='OtherMain')
         box = Footer('', parent=t, name='Footer')
         box = JS('', parent=t, name='JS')
         

@@ -71,11 +71,17 @@ class Typesetter(object):
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = [] 
         self.tagHistory = []
+        self._tagged = [] # Storage of text as HTML/XMLtags.
         # Code block results if any ~~~Python blocks defined in the Markdown file.
         self.globalDocName = globalDocName or 'doc' # Name of global doc to find in code blocks, to be stored in self.doc
         self.globalPageName = globalPageName or 'page'
         self.globalBoxName = globalBoxName = 'box'
         self.codeBlocks = {} # No results for now. Find codeblock result by codeId after typesetting.
+
+    def _get_tagged(self):
+        u"""Answer the tagged list as connected string."""
+        return ''.join(self._tagged).replace('&', '&amp;')
+    tagged = property(_get_tagged)
 
     def getTextBox(self, e=None):
         u"""Answer the current text box, if the width fits the current style.
@@ -326,7 +332,7 @@ class Typesetter(object):
                 return lib['literatureRefs']
         return None
 
-    def runCodeBlock(self, node, execute=True, tryExcept=True):
+    def runCodeBlock(self, node, execute=True, tryExcept=False):
         u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with 
         ~~~Python
@@ -343,7 +349,7 @@ class Typesetter(object):
         Content result dictionary (per codeblock) is stored in self.codeBlocks[codeId].
 
         """
-        if node.tag != 'code' or not node.attrib.get('class') == 'Python':
+        if node.tag != 'code' or not node.attrib.get('class') in ('language-Python', 'Python'):
             # "~~~"" code blocks are skipped.
             # "~~~Python" code blocks are processed by self.
             return None, None
@@ -351,7 +357,7 @@ class Typesetter(object):
         codeId = 'codeBlock_%d' % (len(self.codeBlocks)+1)
         # Will contain all "global" defined objects in one code block.
         # self.doc contains the Typesetter doc reference, which can be defined in an earlier code block
-        result = dict(doc=self.doc) 
+        result = {self.globalDocName:self.doc, self.globalPageName:self.page, self.globalBoxName:self.box}
         if execute and node.text:
             if not tryExcept:
                 exec(node.text) in result # Exectute code block, where result goes dict.
@@ -366,6 +372,11 @@ class Typesetter(object):
                     result['__error__'] = '### NameError' # TODO: More error message here.
                 except SyntaxError:
                     result['__error__'] = '### SyntaxError' # TODO: More error message here.
+        # doc, page or box may have changed, store them back into the typesetter, so they are availabe for 
+        # the execution of a next code block.
+        self.doc = result.get(self.globalDocName)
+        self.page = result.get(self.globalPageName)
+        self.box = result.get(self.globalBoxName)
         # TODO: insert more possible exec() errors here.
         
         # For convenience, store the source code of the block in the result dict.
@@ -470,19 +481,13 @@ class Typesetter(object):
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
 
         # Fills self.codeBlocks dictionary from node codeblocks.
+        # Side effect is to update self.doc, self.page and self.box
         cid, codeResult = self.runCodeBlock(node) 
         if codeResult is not None:
-            doc = codeResult.get(self.globalDocName)
-            if doc is not None:
-                self.doc = doc
-            page = codeResult.get(self.globalPageName)
-            if page is not None:
-                self.page = page
-            box = codeResult.get(self.globalBoxName)
-            if box is not None:
-                assert box.isTextBox, 'Reference page element is not text box.'
-                self.box = box
+            return
 
+        # Start current tag. Keep separate output tag string as list, while we still have the tag/style names.
+        self._tagged.append('<%s>' % node.tag)
         # Add this tag to the tag-hitstory line
         self.addHistory(node.tag)
 
@@ -502,7 +507,8 @@ class Typesetter(object):
         if nodeText: # Not None and still has content after stripping?
             fs = newFS(nodeText, e, nodeStyle)
             self.appendString(fs)
-        
+            self._tagged.append(nodeText) # Add the child tail to tagged output stream, while we still know styles/tags.
+
         # Type set all child node in the current node, by recursive call.
         for child in node:
             hook = 'node_'+child.tag
@@ -522,7 +528,10 @@ class Typesetter(object):
             if childTail: # Any tail left after stripping, then append to the galley.
                 fs = newFS(childTail, e, nodeStyle)
                 self.appendString(fs)
+                self._tagged.append(childTail) # Add the child tail to tagged output stream, while we still know styles/tags.
         
+        # End current tag. Keep separate output tag string as list, while we still have the tag/style names.
+        self._tagged.append('</%s>' % node.tag)
         # Now restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text. Back to the style of the parent, 
         # which was in nodeStyle.
