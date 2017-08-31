@@ -202,8 +202,8 @@ class XmlBuilder(BaseBuilder):
         u"""Pop tag from the tag stack."""
         runningTag = self._tagStack.pop()
         if runningTag is None or not runningTag == tag:
-            self.write('<div color=%s>Mismatch in closing tag "%s", expected "%s" in tree "%s".</div>' %
-                (self.C.CLASS_ERROR, tag, runningTag, `self._tagStack`))
+            self.write('<div color="#FF0000">Mismatch in closing tag "%s", expected "%s" in tree "%s".</div>' %
+                (tag, runningTag, `self._tagStack`))
 
     def _peekTag(self):
         u"""Answer the name of the current tag."""
