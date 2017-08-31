@@ -451,6 +451,7 @@ class HtmlBuilder(XmlBuilder):
         self._closeTag(u'title')
 
     def title_(self, s):
+        u"""Write the stripped string s as <title> tag."""
         self.title()
         self.write(s.strip())
         self._title()
