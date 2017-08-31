@@ -67,39 +67,46 @@ class Page(Element):
             else:
                 b.head()
                 b.meta(charset=self.css('encoding'))
-                b.title_(info.title or self.name)
+                # Try to find the page name, in sequence order of importance. Note that self.info gets copied from
+                # templates (supplying a generic title or name), which can be overwritted by the direct self.title
+                # and self.name of the the page element.
+                b.title_(self.title or self.name or info.title or info.name)
                 
-                if info.webFonts:
-                    for webFontn in info.webFonts:
-                        b.link(href=webFont, rel='stylesheet', type='text/css')
-                
+                # Devices
+                b.meta(name='viewport', content=info.viewPort) # Cannot be None
+                # Javascript
                 if info.jQueryUrl:
                     b.script(type="text/javascript", src=info.jQueryUrl)
-                if info.mediaQuriesUrl: # Enables media queries in some unsupported browsers-->
+                if info.mediaQueriesUrl: # Enables media queries in some unsupported browsers-->
                     b.script(type="text/javascript", src=info.mediaQueriesUrl)
-                b.meta(name='viewport', content=info.viewPort) # Cannot be None
+
+                # CSS
+                if info.webFontsUrl:
+                    b.script(type="text/css", src=info.webFontsUrl)
                 if info.cssPath is not None:
                     cssPath = 'css/' + info.cssPath.split('/')[-1]
                 else:
                     cssPath = 'css/pagebot.css'
                 b.link(rel='stylesheet', href=cssPath, type='text/css', media='all')
-                if info.favIconUrl:
-                    b.link(rel='icon', href=info.favIconUrl, type='images/%s' % info.favIconUrl.split('.')[-1])
-                if self.appleTouchIconUrl:
-                    b.link(rel='apple-touch-icon-precomposed', href=info.appleTouchIconUrl)
+
+                # Icons
+                if info.favIconUrl: # Add the icon link and let the type follow the image extension.
+                    b.link(rel='icon', href=info.favIconUrl, type='image/%s' % info.favIconUrl.split('.')[-1])
+                if info.appleTouchIconUrl: # Add the icon link and let the type follow the image extension.
+                    b.link(rel='apple-touch-icon-precomposed', href=info.appleTouchIconUrl, type='image/%s' % info.appleTouchIconUrl.split('.')[-1])
+                
+                # Description and keywords
                 if info.description:
                     b.meta(name='description', content=info.description)
                 if info.keyWords:
                     b.meta(name='keywords', content=info.keyWords)
                 b._head()
+
             if info.bodyPath is not None:
                 b.importHtml(info.bodyPath) # Add HTML content of file, if path is not None and the file exists.
             else:
                 b.body()
-                b.div(id=self.eId)
-                b.hr()
-                b.addHtml('CONTENT! Elements(%d)' % len(self.elements))
-                b.hr()
+                b.div(id=self.eId, class_='page')
                 for e in self.elements:
                     e.build(view, b, htmlIndent+1, cssIndent+1)
                 b._div()
