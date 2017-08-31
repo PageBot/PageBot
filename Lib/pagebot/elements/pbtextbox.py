@@ -314,6 +314,9 @@ class TextBox(Element):
 
     def __init__(self, fs, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
         Element.__init__(self,  **kwargs)
+        u"""Default is the storage of self.fs (DrawBot FormattedString), but optional can be ts (tagged basestring)
+        if output is mainly through build and HTML/CSS. Since both strings cannot be conversted lossless one into the other,
+        it is safer to keep them both if they are available."""
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
@@ -369,6 +372,8 @@ class TextBox(Element):
             elements = ''
         return '%s%s (%d, %d)%s%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), fs, elements)
 
+    # Formatted string
+
     def _get_fs(self):
         return self._fs
     def _set_fs(self, fs):
@@ -379,6 +384,12 @@ class TextBox(Element):
     def setText(self, s):
         u"""Set the formatted string to s, using self.style."""
         self.fs = newFS(s, self)
+
+    def _get_text(self):
+        u"""Answer the plain text of the current self.fs"""
+        return u'%s' % self.fs
+    text = property(_get_text)
+    
 
     def appendString(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
@@ -410,11 +421,6 @@ class TextBox(Element):
         return self._baseLines
     baseLines = property(_get_baseLines)
 
-    def _get_text(self):
-        u"""Answer the plain text of the current self.fs"""
-        return u'%s' % self.fs
-    text = property(_get_text)
-    
     def initializeTextLines(self):
         u"""Answer an ordered list of all baseline position, starting at the top."""    
         self._box = 0, 0, self.w, self.h
