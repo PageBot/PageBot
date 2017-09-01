@@ -29,7 +29,7 @@ def makeDocument():
     # Initially make all pages default with template
     rootStyle = getRootStyle()
     
-    doc = Document(rootStyle, originTop=OriginTop, w=W, h=H, pages=1) 
+    doc = Document(rootStyle, originTop=OriginTop, w=W, h=H, autoPages=1) 
     
     page = doc[0] # Get the first/single page of the document.
     page.size = W, H

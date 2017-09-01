@@ -107,7 +107,7 @@ def makeSpecimen(rs):
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(rs, pages=2, template=template1) 
+    doc = Document(rs, autoPages=2, template=template1) 
 
     page1 = doc[1]
     vCube = VariationCube(FONT_PATH, w=500, h=500, s='a', fontSize=86, dimensions=dict(wght=4,rnds=4))

@@ -55,7 +55,7 @@ def makeDocument():
     u"""Create Document instance with a single page. Fill the page with elements
     and perform a conditional layout run, until all conditions are solved."""
 
-    doc = Document(w=PageWidth, h=PageHeight, originTop=False, pages=1)
+    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=1)
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.style['fill'] = 1

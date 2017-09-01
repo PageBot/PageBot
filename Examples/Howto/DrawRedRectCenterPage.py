@@ -36,7 +36,7 @@ def makeDocument():
     # as Document( ) will create a RootStyle by default.
     rootStyle = getRootStyle()
     
-    doc = Document(rootStyle, originTop=False, w=W, h=H, pages=1) 
+    doc = Document(rootStyle, originTop=False, w=W, h=H, autoPages=1) 
     
     page = doc[0] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?

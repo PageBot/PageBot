@@ -83,7 +83,7 @@ def makeDocument():
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(w=W, h=H, pages=1) 
+    doc = Document(w=W, h=H, autoPages=1) 
 
     # Get default view 
     view = doc.getView()

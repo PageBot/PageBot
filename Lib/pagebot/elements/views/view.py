@@ -81,6 +81,27 @@ class View(Element):
 
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
 
+    def draw(self, origin, ignoredView):
+        u"""This method is called is the view is used as a placable element inside
+        another element, such as a Page or Template. """
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, self)
+
+        self.drawElementFrame(self, p)
+        for page in self.elements:
+            self.drawPageMetaInfo(page, p)
+            page.draw((px, py), self)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, self)
+
+        self._restoreScale()
+        #view.drawElementMetaInfo(self, origin)
+
     def drawPages(self, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
         doc = self.parent
@@ -95,6 +116,7 @@ class View(Element):
             # Size depends on the size of the larges pages + optional decument padding.
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered.
+            
             if self.pl > self.MIN_PADDING and self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING and self.pr > self.MIN_PADDING:
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
@@ -620,8 +642,8 @@ class View(Element):
             x, y, _ = point3D(origin) # Ignore z-axus for now.
             w, h = e.w, e.h
             folds = self.css('folds')
-            bleed = self.css('bleed')
-            cmSize = self.css('viewCropMarkSize')
+            bleed = self.css('bleed')/2 # 1/2 overlap with image bleed
+            cmSize = min(self.css('viewCropMarkSize', 32), self.pl)
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
 
             fill(None)
