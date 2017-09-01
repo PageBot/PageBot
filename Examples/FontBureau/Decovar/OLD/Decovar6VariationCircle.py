@@ -361,7 +361,7 @@ def makeDocument(rs):
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(rs, pages=1) 
+    doc = Document(rs, autoPages=1) 
      
     # Change template of page 1
     page = doc[1]

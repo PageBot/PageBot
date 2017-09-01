@@ -39,7 +39,7 @@ EXPORT_PATH = '_export/AlignElements.png'
 def makeDocument():
     u"""Make a new document."""
 
-    doc = Document(w=W, h=H, originTop=False, pages=1)
+    doc = Document(w=W, h=H, originTop=False, autoPages=1)
     
     page = doc[0] # Get the single page from te document.
 
