@@ -454,15 +454,6 @@ def css(name, e, styles=None, default=None):
         return e.css(name)
     return default
 
-def ts2fs(ts):
-    pass
-
-def fs2ts(ts):
-    pass
-    
-def newTS(t):
-    ts = TaggedString('')
-
 def newFS(t, e=None, style=None, w=None, h=None, fontSize=None):
     u"""Answer a *FormattedString* instance from valid attributes in *style*. Set all values after testing
     their existence, so they can inherit from previous style formats.
