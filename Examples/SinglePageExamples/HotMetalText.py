@@ -102,7 +102,7 @@ def makeDocument():
     mediumName = findFont(('Medium', 'Book', 'Regular'))
     boldName = findFont(('Bold', 'Medium'))
     
-    doc = Document(w=PageWidth, h=PageHeight, originTop=False, pages=1)
+    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=1)
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.style['fill'] = 1

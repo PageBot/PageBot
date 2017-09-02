@@ -67,7 +67,7 @@ def makeDocument(rootStyle):
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(rootStyle, w=W, h=H, pages=1) # One page, just the cover.
+    doc = Document(rootStyle, w=W, h=H, autoPages=1) # One page, just the cover.
  
     page = doc[0] # Get the first/single page of the document.
 

@@ -87,7 +87,7 @@ if __name__ == '__main__':
         # Create new document with (w,h) and fixed amount of pages.
         # Make number of pages with default document size.
         # Initially make all pages default with template2
-        doc = Document(rs, pages=1, template=template1) 
+        doc = Document(rs, autoPages=1, template=template1) 
 
         return doc
             

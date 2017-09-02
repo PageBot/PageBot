@@ -174,7 +174,7 @@ def makeDocument(rs):
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(rs, pages=1, template=template1) 
+    doc = Document(rs, aufoPages=1, template=template1) 
  
     page = doc[1]
     # Index by element id, answers ([e1, ...], (x, y)) tuple. There can be multiple elements
