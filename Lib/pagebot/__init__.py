@@ -463,7 +463,7 @@ def fs2ts(ts):
 def newTS(t):
     ts = TaggedString('')
 
-def newFS(t, e=None, style=None, w=None, h=None, fontSize=None):
+def newFS(t, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
     u"""Answer a *FormattedString* instance from valid attributes in *style*. Set all values after testing
     their existence, so they can inherit from previous style formats.
     If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
@@ -562,11 +562,17 @@ def newFS(t, e=None, style=None, w=None, h=None, fontSize=None):
     if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
         tw, _ = textSize(newt)
         fontSize = w / tw * sFontSize
-        newt = newFS(t, e, style, fontSize=fontSize)
+        newt = newFS(t, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
     elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
         _, th = textSize(newt)
         fontSize = h / th * sFontSize
-        newt = newFS(t, e, style, fontSize=fontSize)
+        newt = newFS(t, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
+
+    # In case this FormattedString is created by a Typesetter, or another caller that
+    # wants to store the style name and tag name, we store those values in the attributes
+    # of the string run.
+    attr = newt.getNSObject()
+    attr.addAttribute_value_range_("io.pagebot.attrs", dict(style=styleName, tag=tagName), (0, len(newt))) 
 
     return newt
 
