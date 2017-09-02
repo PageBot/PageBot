@@ -89,6 +89,7 @@ A3Oversized = A3[0]+INCH, A3[1]+INCH
 # International Postcard Size
 IntPostcardMax = 235*MM, 120*MM
 IntPostcardMin = 140*MM, 90*MM
+AnsichtCard = int(round(A6[1])), int(round(A6[0])) # Landscape Rounded A6
 # US Postal Postcard Size
 USPostcardMax = 6*INCH, 4.25*INCH
 USPostcardMin = 5*INCH, 3.5*INCH

@@ -30,8 +30,31 @@ from pagebot.elements.paths.pbpath import Path
 from pagebot.elements.paths.glyphpath import GlyphPath
 # Table elements
 from pagebot.elements.pbtable import Table
+# Views
+from pagebot.elements.views.view import View
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
+
+def newView(**kwargs):
+    u"""In most cases views are initialized as dictionary by the Document class.
+    But since they inherit from Element, they also can be used as placable elements.
+    Make sure to define the right parent (likely to be a Page or Template).
+    """
+    return View(**kwargs)
+
+def newPage(**kwargs):
+    u"""In most cases views are initialized as dictionary by the Document class.
+    But since they inherit from Element, they also can be used as placable elements.
+    Make sure to define the right parent (likely to be a Page or Template).
+    Embed the page in a View element, to control appearance, such as cropmarks.
+    """
+    return Page(**kwargs)
+
+def newTemplate(**kwargs):
+    u"""In most cases views are initialized as dictionary by the Document class.
+    But since they inherit from Element, they also can be used as placable elements.
+    """
+    return Template(**kwargs)
 
 def newPlacer(**kwargs):
     u"""Placer occupying a space on Page or Template. Is not visible exported documets."""
