@@ -18,3 +18,12 @@ text(f, (96, 172))
 
 
 print attr
+
+
+f = FormattedString()
+f += 'ABVCEESFJLK LDKJD LSDK DSLK'
+attr = f.getNSObject()
+l = []
+attr.addAttribute_value_range_('io.pagebot.aaa', l, (0, 10))
+l.append('aaaaaaa')
+print f.getNSObject()
