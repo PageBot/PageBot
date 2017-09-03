@@ -25,7 +25,7 @@ from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLocation
 
-from pagebot import setFillColor, newFS
+from pagebot import setFillColor, setStrokeColor, newFS
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
 from pagebot.fonttoolbox.variablefontaxes import axisDefinitions
@@ -101,7 +101,7 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
         font=font, fs=fs, width=textSize(fs)[0], location=location
     )
 
-def getVarLocation(font, location):
+def getVarLocation(font, location, normalize=True):
     u"""Translate the location dict (all values between (0, 1) or between (0, 1000)) 
     to what the font expects by its min/max values for each axis.
     Location axis tags that don't exits in the font are ignored.
@@ -115,16 +115,19 @@ def getVarLocation(font, location):
             axisValue = location[axisTag]
             if axisTag == 'opsz': # Exception, should come from overall axes-data dictionary.
                 varLocation[axisTag] = axisValue # Unchanged of opsz.
-            else:
+            elif normalize:
                 if axisValue > 1: # Assume 1-1000 scale.
                     axisValue /= 1000.0
                 varLocation[axisTag] = minValue + (maxValue - minValue) * (1-axisValue)
+            else: # Value already in right proportions, just copy.
+                varLocation[axisTag] = axisValue
     return varLocation
 
-def getVariableFont(fontOrPath, location, install=True, styleName=None):
+def getVariableFont(fontOrPath, location, install=True, styleName=None, normalize=True):
     u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
+    Set normalize to False if the values in location already are matching the axis min/max of the font.
     If there is a [opsz] Optical Size value defined, then store that information in the font.info.opticalSize.
     The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
     location name."""
@@ -132,15 +135,16 @@ def getVariableFont(fontOrPath, location, install=True, styleName=None):
         varFont = Font(fontOrPath, name=path2FontName(fontOrPath))    
     else:
         varFont = fontOrPath
-    fontName, path = generateInstance(varFont.path, getVarLocation(varFont, location), targetDirectory=getInstancePath())
+    fontName, path = generateInstance(varFont.path, getVarLocation(varFont, location, normalize), targetDirectory=getInstancePath(), normalize=normalize)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName)
 
 # TODO: Remove from here.
-def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0):
+def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0, strokeColor=None, strokeWidth=0):
     glyph = font[glyphName]
     save()
     setFillColor(fillColor)
+    setStrokeColor(strokeColor, strokeWidth)
     transform((1, 0, 0, 1, x - glyph.width/2*s, y))
     scale(s)
     drawPath(glyph.path)
@@ -197,7 +201,7 @@ def normalizeLocation(location, axes):
         out[tag] = v
     return out
 
-def generateInstance(variableFontPath, location, targetDirectory):
+def generateInstance(variableFontPath, location, targetDirectory, normalize=True):
     u"""
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
@@ -246,7 +250,10 @@ def generateInstance(variableFontPath, location, targetDirectory):
         fvar = varFont['fvar']
         axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in fvar.axes}
         # TODO Round to F2Dot14?
-        normalizedLoc = normalizeLocation(location, axes)
+        if normalize:
+            normalizedLoc = normalizeLocation(location, axes)
+        else:
+            normalizedLoc = location
         # Location is normalized now
         if DEBUG:
             print("Normalized location:", varFileName, normalizedLoc)
