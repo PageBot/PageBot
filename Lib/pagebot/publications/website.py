@@ -59,7 +59,7 @@ class Navigation(TextBox):
         b.div(class_='sevencol last')
         b.nav(id='navigation-wrap')
         b.ol()
-        for pn, pages in sorted(view.doc.pages.items()):
+        for pn, pages in sorted(view.doc.pages.items(), reverse=True): # Reverse: builds from right to left.
             for page in pages:
                 b.li()
                 b.a(href=page.name)

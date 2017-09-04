@@ -20,7 +20,8 @@ from math import radians
 import pagebot
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
 from pagebot import newFS
-from pagebot.fonttoolbox.variablefontbuilder import getVariableFont, drawGlyphPath, getVarLocation
+from pagebot.fonttoolbox.mutator import getVariableFont
+from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
 from pagebot.style import CENTER
 
 W = H = 500
@@ -34,9 +35,6 @@ f = Font('/Library/Fonts/Skia.ttf')
 
 wghtMin, wghtDef, wghtMax = f.axes['wght']
 wdthMin, wdthDef, wdthMax = f.axes['wdth']
-
-wghtMin, wghtDef, wghtMax = (-1, 0, 1)
-wdthMin, wdthDef, wdthMax = (-1, 0, 1)
 
 print 'wght', wghtMin, wghtDef, wghtMax
 print 'wdth', wdthMin, wdthDef, wdthMax
@@ -179,12 +177,13 @@ class KeyFrame(object):
                 o.y = ty            
 S = 1
 labelSize = 12
+C = 'Q'
 print f.axes
-skiaIcon = FontIcon(NORMAL, 'Skia', eId='Regular', s=S, labelSize=labelSize, labelFont=f, label='(1,1)')
-lightIcon = FontIcon(LIGHT, 'Light', eId='Regular', s=S, labelSize=labelSize, labelFont=f, label='(0.5,1)')
-boldIcon = FontIcon(BOLD, 'Bold', eId='Regular', s=S, labelSize=labelSize, labelFont=f, label='(3.2,1)')
-condIcon = FontIcon(COND, 'Cond', eId='Regular', s=S, labelSize=labelSize, labelFont=f, label='(1,0.6)')
-wideIcon = FontIcon(WIDE, 'Wide', eId='Regular', s=S, labelSize=labelSize, labelFont=f, label='(1,1.3)')
+skiaIcon = FontIcon(NORMAL, 'Skia', eId='Regular', c=C, s=S, labelSize=labelSize, labelFont=f, label='(1,1)')
+lightIcon = FontIcon(LIGHT, 'Light', eId='Regular', c=C, s=S, labelSize=labelSize, labelFont=f, label='(0.5,1)')
+boldIcon = FontIcon(BOLD, 'Bold', eId='Regular', c=C, s=S, labelSize=labelSize, labelFont=f, label='(3.2,1)')
+condIcon = FontIcon(COND, 'Cond', eId='Regular', c=C, s=S, labelSize=labelSize, labelFont=f, label='(1,0.6)')
+wideIcon = FontIcon(WIDE, 'Wide', eId='Regular', c=C, s=S, labelSize=labelSize, labelFont=f, label='(1,1.3)')
 
 icons = [skiaIcon, lightIcon, boldIcon, condIcon, wideIcon]
 
@@ -202,10 +201,10 @@ def drawAnimation():
         x, y = 100, 360
         dSquare = 80
 
-        radX = sin(radians(-angle))
-        radY = -cos(radians(-angle))
-        locRadX = sin(radians(-angle+45))
-        locRadY = -cos(radians(-angle+45))
+        radX = cos(radians(-angle))
+        radY = sin(radians(-angle))
+        locRadX = cos(radians(-angle+135))
+        locRadY = sin(radians(-angle+135))
         
         # Reset scale drawing of all icons.
         for icon in icons:
@@ -272,6 +271,7 @@ def drawAnimation():
         oval(px-(px-xl)*0.6, (py-(py-yb)*0.6-markerSize/2)*sy, (xr-xl)*0.6, (yt-yb)*0.6)
 
         lx, ly = px + radX*dd, sy*(py + radY*dd)
+        
         fill(1, 0, 0)
         stroke(None)
         oval(lx-markerSize/2, ly-markerSize/2*sy, markerSize, markerSize*sy) 
@@ -287,7 +287,7 @@ def drawAnimation():
         boldIcon.draw((xr+xb)/2-boldIcon.w/2, (yr+yb)/2, drawLabel=False)
         condIcon.draw((xl+xb)/2-condIcon.w/2, (yl+yb)/2, drawLabel=False)
         wideIcon.draw((xt+xr)/2-wideIcon.w/2, (yt+yr)/2, drawLabel=False)
-        """
+        
         if locRadX < 0:
             wdthLoc = wdthDef + (wdthDef-wdthMin)*locRadX
         else:
@@ -296,9 +296,9 @@ def drawAnimation():
             wghtLoc = wghtDef + (wghtDef-wghtMin)*locRadY
         else:
             wghtLoc = wghtDef + (wghtMax-wghtDef)*locRadY
-        """
-        wdthLoc = locRadX
-        wghtLoc = locRadY
+        
+        #wdthLoc = 1#wghtDef#locRadX
+        #wghtLoc = locRadY
         
         fs = newFS('angle %0.2f rx %0.2f ry %0.2f wdth %0.2f wght %0.2f' % (angle, locRadX, locRadY, wdthLoc, wghtLoc), style=dict(font=f.installedName, textFill=0, 
             rTracking=0.02, fontSize=12))
@@ -306,7 +306,8 @@ def drawAnimation():
         
         location = dict(wght=wghtLoc, wdth=wdthLoc)
         locFont = getVariableFont(f, location, styleName='Location', normalize=True)
-        print getVarLocation(f, location, normalize=False)
+        print locFont.info.location
+        #print getVarLocation(f, location, normalize=False)
         """
         stroke(None)
         fill(0)
@@ -316,8 +317,7 @@ def drawAnimation():
             rTracking=0.02, fontSize=80))
         tw, th = textSize(fs)
         text(fs, (lx-tw/2, ly+20)) 
-        
-        
+                
         fs = newFS('#PageBot', style=dict(font=f.installedName, textFill=0.5, 
             rTracking=0.02, fontSize=10))
         tw, th = textSize(fs)
