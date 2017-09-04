@@ -241,7 +241,7 @@ def drawBackground2(keyFrame, frame):
 def drawBackground3(keyFrame, frame):
     drawBackground1(keyFrame, frame)
     varFontIcon = id2FontIcon['VarFont']
-    fs = newFS('Infinite weights\nTotal 100k', style=dict(font=LABEL_FONT.installedName, rLeading=1.2, fontSize=18, textFill=(1, 0, 0)))
+    fs = newFS('%d weights\nTotal 100k' % ((2**15)+1), style=dict(font=LABEL_FONT.installedName, rLeading=1.2, fontSize=18, textFill=(1, 0, 0)))
     textBox(fs, (varFontIcon.x, H-60, 200, 50))
         
 def drawAnimation():
