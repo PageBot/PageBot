@@ -29,6 +29,7 @@ except ImportError:
 from pagebot import newFS, getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
 from pagebot.document import Document
+from pagebot.builders import WebBuilder
 
 class Typesetter(object):
 
@@ -71,6 +72,8 @@ class Typesetter(object):
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = [] 
         self.tagHistory = []
+        # HTML/CSS Builder, to build parallel HTML while parsing the markdown.
+        self.b = WebBuilder()
         # Code block results if any ~~~Python blocks defined in the Markdown file.
         self.globalDocName = globalDocName or 'doc' # Name of global doc to find in code blocks, to be stored in self.doc
         self.globalPageName = globalPageName or 'page'
@@ -425,8 +428,6 @@ class Typesetter(object):
             styleName = ' '.join(styleName)
             if self.doc is not None and styleName in self.doc.styles:
                 matches.append(styleName)
-        #print tag, parents, revHistory, matches
-        #print tag, matches
         matches.reverse()
         return matches
 
@@ -461,6 +462,13 @@ class Typesetter(object):
         else:
             self.galley.appendString(fs)  # Add the tail formatted string to the galley.
 
+    def appendHtml(self, html):
+        u"""Append the UTF-8 html to the current box, if it is defined. Otherwise add to the existing galley."""
+        if self.box is not None:
+            self.box.appendHtml(html)
+        else:
+            self.galley.appendHtml(html)  # Add UTF-8 html string to the galley.
+
     def typesetString(self, s, e=None, style=None):
         u"""If s is a formatted string, them it is placed untouched. If it is a plain string, then
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters. 
@@ -477,10 +485,13 @@ class Typesetter(object):
         # Fills self.codeBlocks dictionary from node codeblocks.
         # Side effect is to update self.doc, self.page and self.box
         cid, codeResult = self.runCodeBlock(node) 
-        if codeResult is not None:
-            return
+        #if codeResult is not None:
+        #    return
 
-        # Add this tag to the tag-hitstory line
+        # Open the tag in HTML output
+        self.appendHtml('<%s>' % node.tag)
+
+        # Add this tag to the tag-history line
         self.addHistory(node.tag)
 
         # If e is undefined, then we make sure that the stack contains the doc.rootStyle on top.
@@ -499,6 +510,7 @@ class Typesetter(object):
         if nodeText: # Not None and still has content after stripping?
             fs = newFS(nodeText, e, nodeStyle)
             self.appendString(fs)
+            self.appendHtml(nodeText) # Export the plain text as parallel HTML output as well.
 
         # Type set all child node in the current node, by recursive call.
         for child in node:
@@ -519,6 +531,10 @@ class Typesetter(object):
             if childTail: # Any tail left after stripping, then append to the galley.
                 fs = newFS(childTail, e, nodeStyle)
                 self.appendString(fs)
+                self.appendHtml(childTail) # Export the plain text as parallel HTML output as well.
+
+        # Close the tag in HTML output.
+        self.appendHtml('</%s>' % node.tag)
         
         # Now restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text. Back to the style of the parent, 
@@ -568,12 +584,13 @@ class Typesetter(object):
             filteredNodes = root.findall(xPath)
             if filteredNodes:
                 # How to handle if there is multiple result nodes?
-                self.typesetNode(filteredNodes[0], e)
+                self.typesetNode(filteredNodes[0], e) 
         else:
             # Collect all flowing text in one formatted string, while simulating the page/flow, because
             # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
             # reference, image index and footnote placement.
             self.typesetNode(root, e)
+
         return root
 
 

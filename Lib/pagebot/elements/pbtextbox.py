@@ -312,7 +312,7 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, fs, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
+    def __init__(self, fs, html=None, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
         Element.__init__(self,  **kwargs)
         u"""Default is the storage of self.fs (DrawBot FormattedString), but optional can be ts (tagged basestring)
         if output is mainly through build and HTML/CSS. Since both strings cannot be conversted lossless one into the other,
@@ -325,6 +325,7 @@ class TextBox(Element):
         if isinstance(fs, basestring):
             fs = newFS(fs, self)
         self.fs = fs # Keep as plain string, in case parent is not set yet.
+        self.html = html or '' # Parallel storage of html content.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
@@ -390,7 +391,6 @@ class TextBox(Element):
         return u'%s' % self.fs
     text = property(_get_text)
     
-
     def appendString(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
         is already assumed to be styled or can be added as plain string.
@@ -406,8 +406,14 @@ class TextBox(Element):
             self.fs += fs
         return self.fs # Answer the complete FormattedString as convenience for the caller.
 
+    def appendHtml(self, html):
+        u"""Add parellel utf-8 html string to the self content."""
+        self.html += html or ''
+
     def appendMarker(self, markerId, arg=None):
-        self.appendString(getMarker(markerId, arg=arg))
+        marker = getMarker(markerId, arg=arg)
+        self.appendString(marker)
+        self.appendHtml('<!-- %s -->' % marker)
 
     def _get_textLines(self):
         if self._textLines is None:
@@ -536,7 +542,7 @@ class TextBox(Element):
             b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.addHtml('%s<div id="%s" class="%s">\n' % (tabs(htmlIndent), self.eId, self.class_ or 'e'))
-            b.addHtml(u'%s' % self.fs)
+            b.addHtml(self.html)
             for e in self.elements:
                 e.build(view, builder, htmlIndent+1, cssIndent+1)
             b.addHtml('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))

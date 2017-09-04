@@ -575,3 +575,4 @@ class Document(object):
         if view is None or isinstance(view, basestring):
             view = self.getView(view or MampView.viewId)
         view.build(name=name, pageSelection=pageSelection, multiPage=multiPage)
+

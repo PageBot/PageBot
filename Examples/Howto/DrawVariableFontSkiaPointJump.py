@@ -25,7 +25,7 @@ from pagebot.style import CENTER
 
 W = H = 500
 
-FRAMES = 10
+FRAMES = 90
 
 #for fontName in installedFonts():
 #    if 'Skia' in fontName:
@@ -42,11 +42,11 @@ print 'wght', wghtMin, wghtDef, wghtMax
 print 'wdth', wdthMin, wdthDef, wdthMax
 
 
-NORMAL = getVariableFont(f, dict(wght=wghtDef, wdth=wdthDef), styleName='Normal', normalize=False)
-LIGHT = getVariableFont(f, dict(wght=wghtMin, wdth=wdthDef), styleName='Light', normalize=False)
-BOLD = getVariableFont(f, dict(wght=wghtMax, wdth=wdthDef), styleName='Bold', normalize=False)
-COND = getVariableFont(f, dict(wght=wghtDef, wdth=wdthMin), styleName='Cond', normalize=False)
-WIDE = getVariableFont(f, dict(wght=wghtDef, wdth=wdthMax), styleName='Wide', normalize=False)
+NORMAL = getVariableFont(f, dict(wght=wghtDef, wdth=wdthDef), styleName='Normal', normalize=True)
+LIGHT = getVariableFont(f, dict(wght=wghtMin, wdth=wdthDef), styleName='Light', normalize=True)
+BOLD = getVariableFont(f, dict(wght=wghtMax, wdth=wdthDef), styleName='Bold', normalize=True)
+COND = getVariableFont(f, dict(wght=wghtDef, wdth=wdthMin), styleName='Cond', normalize=True)
+WIDE = getVariableFont(f, dict(wght=wghtDef, wdth=wdthMax), styleName='Wide', normalize=True)
 
 
 class FontIcon(object):
@@ -305,9 +305,9 @@ def drawAnimation():
         text(fs, (200, 480))
         
         location = dict(wght=wghtLoc, wdth=wdthLoc)
-        locFont = getVariableFont(f, location, styleName='Location', normalize=False)
+        locFont = getVariableFont(f, location, styleName='Location', normalize=True)
         print getVarLocation(f, location, normalize=False)
-        
+        """
         stroke(None)
         fill(0)
         drawGlyphPath(locFont, 'Q', lx-tw/2+20, ly+20, s=0.05, fillColor=0)
@@ -316,7 +316,7 @@ def drawAnimation():
             rTracking=0.02, fontSize=80))
         tw, th = textSize(fs)
         text(fs, (lx-tw/2, ly+20)) 
-        """
+        
         
         fs = newFS('#PageBot', style=dict(font=f.installedName, textFill=0.5, 
             rTracking=0.02, fontSize=10))
