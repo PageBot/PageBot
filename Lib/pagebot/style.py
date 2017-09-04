@@ -14,8 +14,9 @@
 #     Holds the main style definintion and constants of PageBot.
 #
 import sys
-from drawBot import sizes
 import copy
+from drawBot import sizes
+
 from pagebot.toolbox.units import MM, INCH, mm, fr, pt, px, perc
 
 NO_COLOR = -1
