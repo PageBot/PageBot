@@ -23,20 +23,22 @@ class MobileNavigation(TextBox):
         b.div(class_='container mobilenavigation')
         b.div(class_='row')
         b.div(class_='twelvecol last')
-        b.addHtml("""
-            <nav id="nav-wrap">
-                    <ul id="nav">
+        b.nav(id='nav-wrap')
+        b.ul(id="nav")
+        for pn, pages in sorted(view.doc.pages.items()):
+            for page in pages:
+                b.li()
+                b.a(href=page.name)
+                b.addHtml(page.title)
+                b._a()
+                b._li()
+        b._ul()
+        b._nav()
 
-            <li> <a href="projects.html"> Projects</a> </li>
-            <li> <a href="schedule.html"> Schedule </a> </li>
-            <li> <a href="about.html"> About </a> </li>
-            <li> <a href="articles.html"> Articles </a> </li>
+        b.a(href="index.html")
+        b.addHtml(view.doc.title)
+        b._a()
 
-                    </ul>
-                </nav>
-                <a href="http://designdesign.space"> Design Design Space </a> 
-
-            """)
         b._div() # .twelvecol last
         b._div() # .row
         b._div() # .container .mobilenavigation
@@ -46,25 +48,28 @@ class Navigation(TextBox):
     def build(self, view, b, htmlIndent=1, cssIndent=1):
         b.div(class_='container top')
         b.div(class_='row')
+        
         b.div(class_='fivecol')
-        b.addHtml(u"""  
-            <div class="logo">
-                <a href="http://designdesign.space"> Design Design Space </a> 
-            </div>
-        """)
+        b.div(class_='logo')
+        b.a(href="index.html")
+        b.addHtml(view.doc.title)
+        b._a()
         b._div() # .fivecol
+        
         b.div(class_='sevencol last')
-        b.addHtml(u"""
-            <nav id="navigation-wrap">
-                <ol>
-                    <li> <a href="projects.html"> Projects </a> </li>
-                    <li> <a href="schedule.html"> Schedule </a> </li>
-                    <li> <a href="about.html"> About </a> </li>
-                    <li> <a href="articles.html"> Articles </a> </li>
-                </ol>
-            </nav>
-        """)
+        b.nav(id='navigation-wrap')
+        b.ol()
+        for pn, pages in sorted(view.doc.pages.items()):
+            for page in pages:
+                b.li()
+                b.a(href=page.name)
+                b.addHtml(page.title)
+                b._a()
+                b._li()
+        b._ol()
+        b._nav()
         b._div() # .sevencol
+        
         b._div() # .row
         b._div() # .container .top
 
@@ -212,15 +217,17 @@ class Footer(TextBox):
         b.div(class_='row')
         
         b.div(class_='eightcol')
+        # Build flat navivation for this simple site
         b.nav(id='navigation-wrap')
-        b.addHtml(u"""
-            <ol>
-                <li> <a href="projects.html"> Projects </a> </li>
-                <li> <a href="schedule.html"> Schedule </a> </li>
-                <li> <a href="about.html"> About </a> </li>
-                <li> <a href="articles.html"> Articles </a> </li>
-            </ol>
-        """)
+        b.ol()
+        for pn, pages in sorted(view.doc.pages.items()):
+            for page in pages:
+                b.li()
+                b.a(href=page.name)
+                b.addHtml(page.title)
+                b._a()
+                b._li()
+        b._ol()
         b._nav()
         b._div() # class: eightcol
 
