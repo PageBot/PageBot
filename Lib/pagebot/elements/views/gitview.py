@@ -26,10 +26,21 @@ class GitView(View):
 
     def build(self, name, pageSelection=None, multiPage=True):
         doc = self.parent
-        b = WebBuilder()
-        doc[0].build(self, b)
-        b.writeHtml(self.DEFAULT_HTML_PATH)
-        b.writeCss(self.DEFAULT_CSS_PATH)
+        for pn, pages in doc.pages.items():
+            for page in pages:
+                fileName = page.name
+                if not fileName:
+                    fileName = DEFAULT_HTML_FILE
+                if not fileName.lower().endswith('.html'):
+                    fileName += '.html'
+                path = self.GIT_PATH + fileName
+                print pn, page.name, path
+                b = WebBuilder()
+                page.build(self, b)
+                b.writeHtml(path)
+                if pn == 0:
+                    # TODO: Don't need to write the css for every page.
+                    b.writeCss(self.DEFAULT_CSS_PATH)
 
     def getUrl(self, name):
         return 'http://%s/%s' % (name, self.DEFAULT_HTML_FILE)

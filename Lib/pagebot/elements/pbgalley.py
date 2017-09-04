@@ -46,6 +46,13 @@ class Galley(Element):
         else:
             self.lastTextBox.appendString(fs)
 
+    def appendHtml(self, html):
+        u"""Add the utf-8 html to the laat text box. Create a new textbox if not found."""
+        if self.lastTextBox is None:
+            self.newTextBox('', html=html) # Also sets self.lastTextBox 
+        else:
+            self.lastTextBox.appendHtml(html)
+
     def getMinSize(self):
         u"""Cumulation of the maximum minSize of all enclosed elements."""
         minW = minH = 0 # Let's see if we need bigger than this.
@@ -97,10 +104,10 @@ class Galley(Element):
             return None
         return elements[-1]
 
-    def newTextBox(self, fs):
+    def newTextBox(self, fs, html=None):
         u"""Create a new *self.TEXTBOX_CLASS* instance, filled with the *fs* FormattedString.
         Append the element to *self* (also setting self.lastTextBox) and answer the element."""
-        tb = self.TEXTBOX_CLASS(fs, parent=self)
+        tb = self.TEXTBOX_CLASS('', parent=self, html=html)
         self.appendElement(tb) # Will set the self.lastTextBox by local self.appendElement(tb)
         return tb
 

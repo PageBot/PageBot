@@ -559,12 +559,6 @@ def newFS(t, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, 
         fontSize = h / th * sFontSize
         newt = newFS(t, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
 
-    # In case this FormattedString is created by a Typesetter, or another caller that
-    # wants to store the style name and tag name, we store those values in the attributes
-    # of the string run.
-    attr = newt.getNSObject()
-    attr.addAttribute_value_range_("io.pagebot.attrs", dict(style=styleName, tag=tagName), (0, len(newt))) 
-
     return newt
 
 def textBoxBaseLines(txt, box):
