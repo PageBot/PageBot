@@ -18,8 +18,10 @@ from pagebot.toolbox.units import fr, px
 
 
 class MobileNavigation(TextBox):
-    
-    def build(self, view, b, htmlIndent=1, cssIndent=1):
+    def __init__(self, **kwargs):
+        TextBox.__init__(self, '', **kwargs)
+   
+    def build(self, view, b):
         b.div(class_='container mobilenavigation')
         b.div(class_='row')
         b.div(class_='twelvecol last')
@@ -44,16 +46,18 @@ class MobileNavigation(TextBox):
         b._div() # .container .mobilenavigation
 
 class Navigation(TextBox):
+    def __init__(self, **kwargs):
+        TextBox.__init__(self, '', **kwargs)
    
-    def build(self, view, b, htmlIndent=1, cssIndent=1):
+    def build(self, view, b):
         b.div(class_='container top')
         b.div(class_='row')
-        
         b.div(class_='fivecol')
         b.div(class_='logo')
         b.a(href="index.html")
         b.addHtml(view.doc.title)
         b._a()
+        b._div() # .logo
         b._div() # .fivecol
         
         b.div(class_='sevencol last')
@@ -68,54 +72,99 @@ class Navigation(TextBox):
                 b._li()
         b._ol()
         b._nav()
-        b._div() # .sevencol
+        b._div() # .sevencol last
         
         b._div() # .row
         b._div() # .container .top
 
-class Featured(TextBox):
-    def build(self, view, b, htmlIndent=1, cssIndent=1):
+class Introduction(TextBox):
+    def __init__(self, **kwargs):
+        TextBox.__init__(self, '', **kwargs)
+    
+    def build(self, view, b):
+        u"""Build a page wide in intoduction box for large type, if there is any content."""
+        if not self.html:
+            return
+        b.div(class_='container introduction')
+        b.div(class_='row')
+        b.div(class_='twelvecol last')
+        b.addHtml(self.html)
+        for e in self.elements:
+            e.build(view, b)
+        b._div() # .twelvecol last
+        b._div() # .row
+        b._div() # .container .introduction        
+
+class Featured(Rect):
+    u"""The Featured elements is a container of an image on the left and side column on the right.
+    On mobile the side text appears below the images."""
+    def __init__(self, **kwargs):
+        Rect.__init__(self, **kwargs)
+        u"""Initialize the generic featured item, adding and image text box and side text box."""
+        TextBox('', parent=self, name='Image')
+        TextBox('', parent=self, name='Side')
+
+    def build(self, view, b):
+        u"""Build the featured topic, image on the left and side column on the right."""
+        image = self['Image']
+        side = self['Side']
+        if not image.html or not side.html:
+            return
         b.div(class_='container featured')
         b.div(class_='row')
         b.div(class_='eightcol')
-        b.addHtml(u"""  <a href="http://designdesign.space"> <img src="images/HowToWearAGGShawl.png" alt="Design Design Space" /> </a> 
-        """)
+        image.build(view, b)
         b._div() # .eightcol
         b.div(class_="fourcol last")
-        b.addHtml("""
-                <h2>
-                    Featured projects 
-                </h2>
-                <h5>
-                    Level 1 month 
-                </h5>
-                <h3>
-                    How to wear a generous gesture shawl 
-                </h3>
-                Donec ligula turpis, sodales vitae varius id, posuere id mauris. Mauris semper bibendum elit, elementum ultrices nisl pulvinar sed. Praesent suscipit purus id felis posuere consectetur. Morbi ultricies, justo ac lobortis mattis, nisl elit gravida sapien, non ornare ante augue vitae turpis. 
-            """)
+        side.build(view, b)
         b._div() # .fourcol last
         b._div() # .row
         b._div() # .container .featured
 
-class Main(TextBox):
+class Main(Rect):
 
-    def build(self, view, b, htmlIndent=1, cssIndent=1):
+    def __init__(self, **kwargs):
+        Rect.__init__(self,  **kwargs)
+        u"""Initialize the generic featured item, adding and image text box and side text box."""
+        TextBox('', parent=self, name='Content') # Note that child elements should not have the same name as parent to find them.
+        TextBox('', parent=self, name='Side')
+
+    def appendString(self, fs):
+        u"""Add FormattedString to main content."""
+        self['Content'].appendString(fs)
+
+    def appendHtml(self, html):
+        u"""And html to main element."""
+        self['Content'].appendHtml(html)
+
+    def build(self, view, b):
+        content = self['Content']
+        side = self['Side']
+        if not content.html: # If there is nothing in the main part, then also ignore the side.
+            return
         b.div(class_='container mainContent')
         b.div(class_='row')
         b.div(class_='eightcol')
-        if self.html:
-            b.addHtml(u'%s' % self.html)
-        for e in self.elements:
-            e.build(view, b, htmlIndent+1, cssIndent+1)
+        content.build(view, b)
         b._div() # .eightcol
+        b.div(class_='fourcol')
+        # TODO: We could do something to fill here, if there is not side content.
+        side.build(view, b)
+        b._div() # .fourcol
         b._div() # .row
         b._div() # .container .mainContnet
 
-class Section(TextBox):
+class Section(Rect):
 
-    def build(self, view, b, htmlIndent=1, cssIndent=1):
-        b.addHtml(u"""  <div class="container section">
+    def __init__(self, rows=1, **kwargs):
+        Rect.__init__(self,  **kwargs)
+        u"""Initialize the generic featured item, adding and image text box and side text box."""
+        for row in range(0, rows, 2):
+            TextBox('', parent=self, name='Section%d' % row)
+
+    def build(self, view, b):
+        b.div(class_='container section')
+        b.addHtml(u"""  
         <div class="row">
             <div class="tencol">
                 <h2>
@@ -156,63 +205,15 @@ class Section(TextBox):
             </div>
 <!--/sixcol-->
         </div>
-    </div>
+
 """)
-
-class OtherMain(TextBox):
-
-    def build(self, view, b, htmlIndent=1, cssIndent=1):
-        b.div(class_='container mainContent')
-        b.div(class_='row')
-        b.div(class_='eightcol')
-        '''
-        b.addHtml(u"""  
-            <h3>What designdesign.space is</h3>
-            <ul>
-            <li>It is a personal environment to develop design skills, by accepting design challenges, meeting with coaches and colleage students in online feed-back sessions and presentations.</li>
-            <li>The design of personal space (time, topic, skills) as tool to be designer for the rest of your life</li>
-            <li>The focus is on design students. Not on predefined course content.</li>
-            </ul>
-
-            <h3>What is designdesign.space for</h3>
-            <ul>
-            <li>Graduated design students</li>
-            <li>Designers with experience, working in practice</li>
-            <li>Designers interested in improving their process</li>
-            <li>Designers interested in specializing a specific topic</li>
-            <li>Designers interested to develop skill that make them independent from future developments.</li>
-            <li>Designers who would like to do a follow-up/refresh study, but are lacking time, finance or geographic location to make it work.</li>
-            </ul>
-            <p>In general the aim is to get graduated students as well as experienced designers back to a space of “WOW!”.</p>
-        """)
-        '''
-        if self.html:
-            b.addHtml(u'%s' % self.html)
-        b._div() # .eightcol
-        b.div(class_='fourcol last')
-        b.addHtml(u"""
-            <h5>
-                Projects 
-            </h5>
-            <h3>
-                Cras vitae urna porta 
-            </h3>
-            Aliquam erat volutpat. Etiam iaculis elementum massa, ultricies vestibulum lectus. Vestibulum justo orci, ultricies non purus vestibulum. 
-            <h5>
-                Schedule 
-            </h5>
-            <h3>
-                Cras vitae urna porta 
-            </h3>
-            Ut ultrices enim vitae nunc consequat aliquet. Phasellus cursus felis eros, et lobortis augue luctus et. Curabitur metus metus, auctor eget arcu vel. 
-        """)
-        b._div() # .fourcol last
-        b._div() # .row
-        b._div() # .container mainContent
-
+        self._div()
+        
 class Footer(TextBox):
-
-    def build(self, view, b, htmlIndent=1, cssIndent=1):
+    def __init__(self, **kwargs):
+        TextBox.__init__(self, '', **kwargs)
+    
+    def build(self, view, b):
         b.div(class_="container footer")
         b.div(class_='row')
         
@@ -232,16 +233,19 @@ class Footer(TextBox):
         b._div() # class: eightcol
 
         b.div(class_='fourcol last')
-        b.addHtml("""Ut ultrices enim vitae nunc consequat aliquet. Phasellus cursus felis eros, et lobortis augue luctus et. Curabitur metus metus, auctor eget arcu vel. """)
+        b.addHtml(self.html)
         b._div() # class: fourcol last
         
         b._div() # class: row
         b._div() # class: container footer
 
 class JS(TextBox):
-
-    def build(self, view, b, htmlIndent=1, cssIndent=1):
-        b.addHtml(u"""<script type="text/javascript">
+    def __init__(self, **kwargs):
+        TextBox.__init__(self, '', **kwargs)
+    
+    def build(self, view, b):
+        b.script(type="text/javascript")
+        b.addHtml(u"""
     jQuery(document).ready(function($){
       /* prepend menu icon */
       $('#nav-wrap').prepend('<div id="menu-icon"><img src="images/menu_icon.png"/></div>');
@@ -251,8 +255,8 @@ class JS(TextBox):
         $("#nav").slideToggle();
         $(this).toggleClass("active");
       });
-    });
-  </script>""")
+    });""")
+        b._script()
 
 
 class Website(Publication):
@@ -279,14 +283,15 @@ class Website(Publication):
         t.info.favIconUrl = 'images/favicon.gif'
         t.info.mediaQueriesUrl = None
         # Add page elements.
-        box = MobileNavigation('', parent=t, name='MobileNavigation')
-        box = Navigation('', parent=t, name='Navigation')
-        box = Featured('', parent=t, name='Featured')
-        box = Main('', parent=t, name='Main')
-        box = Section('', parent=t, name='Section')
-        box = OtherMain('', parent=t, name='OtherMain')
-        box = Footer('', parent=t, name='Footer')
-        box = JS('', parent=t, name='JS')
+        box = MobileNavigation(parent=t, name='MobileNavigation')
+        box = Navigation(parent=t, name='Navigation')
+        box = Introduction(parent=t, name='Introduction')
+        box = Featured(parent=t, name='Featured')
+        box = Main(parent=t, name='Main')
+        box = Section(rows=1, parent=t, name='Section')
+        box = Main(parent=t, name='OtherMain')
+        box = Footer(parent=t, name='Footer')
+        box = JS(parent=t, name='JS')
 
         # Default page templatre
         t = Template(w=w, h=h, name='home', padding=padding, gridX=gridX, gridY=gridY)
@@ -295,14 +300,15 @@ class Website(Publication):
         t.info.favIconUrl = 'images/favicon.gif'
         t.info.mediaQueriesUrl = None
         # Add page elements.
-        box = MobileNavigation('', parent=t, name='MobileNavigation')
-        box = Navigation('', parent=t, name='Navigation')
-        box = Featured('', parent=t, name='Featured')
-        box = Main('', parent=t, name='Main')
-        box = Section('', parent=t, name='Section')
-        box = OtherMain('', parent=t, name='OtherMain')
-        box = Footer('', parent=t, name='Footer')
-        box = JS('', parent=t, name='JS')
+        box = MobileNavigation(parent=t, name='MobileNavigation')
+        box = Navigation(parent=t, name='Navigation')
+        box = Introduction(parent=t, name='Introduction')
+        box = Featured(parent=t, name='Featured')
+        box = Main(parent=t, name='Main')
+        box = Section(rows=1, parent=t, name='Section')
+        box = Main(parent=t, name='OtherMain')
+        box = Footer(parent=t, name='Footer')
+        box = JS(parent=t, name='JS')
         
     def build(self, name=None, pageSelection=None, view=None, multiPage=True):
         u"""Build the document as website, using a view like MampView or GitView for export."""

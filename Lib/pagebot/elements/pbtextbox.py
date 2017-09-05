@@ -21,7 +21,7 @@ from drawBot import textOverflow, hyphenation, textBox, text, rect, textSize, Fo
 from pagebot import newFS, setStrokeColor, setFillColor, setGradient, setShadow
 from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE, BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset, tabs
+from pagebot.toolbox.transformer import pointOffset
 from pagebot.fonttoolbox.objects.glyph import Glyph
 
 class FoundPattern(object):
@@ -349,6 +349,7 @@ class TextBox(Element):
     h = property(_get_h, _set_h)
 
     def __getitem__(self, lineIndex):
+        print '#@@@@#@#@@', self
         return self.textLines[lineIndex]
 
     def __len__(self):
@@ -532,20 +533,20 @@ class TextBox(Element):
 
     #   B U I L D
 
-    def build(self, view, b, htmlIndent=1, cssIndent=1):
+    def build(self, view, b):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        if self.cssPath is not None:
+        if self.info.cssPath is not None:
             b.includeCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
-        if self.htmlPath is not None:
+        if self.info.htmlPath is not None:
             b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.addHtml('%s<div id="%s" class="%s">\n' % (tabs(htmlIndent), self.eId, self.class_ or 'e'))
+            b.div(id=self.eId, class_=self.class_)
             b.addHtml(self.html)
             for e in self.elements:
-                e.build(view, builder, htmlIndent+1, cssIndent+1)
-            b.addHtml('%s</div> <!-- %s -->\n' % (tabs(htmlIndent), self.__class__.__name__))
+                e.build(view, b)
+            b._div() 
 
     #   D R A W 
 

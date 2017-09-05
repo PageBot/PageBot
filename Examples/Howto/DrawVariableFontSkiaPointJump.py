@@ -26,7 +26,7 @@ from pagebot.style import CENTER
 
 W = H = 500
 
-FRAMES = 90
+FRAMES = 120
 
 #for fontName in installedFonts():
 #    if 'Skia' in fontName:
@@ -201,10 +201,10 @@ def drawAnimation():
         x, y = 100, 360
         dSquare = 80
 
-        radX = cos(radians(-angle))
-        radY = sin(radians(-angle))
-        locRadX = cos(radians(-angle+135))
-        locRadY = sin(radians(-angle+135))
+        radX = -sin(radians(-angle))
+        radY = cos(radians(-angle))
+        locRadX = -sin(radians(-angle+45))
+        locRadY = cos(radians(-angle+45))
         
         # Reset scale drawing of all icons.
         for icon in icons:
