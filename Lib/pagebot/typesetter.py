@@ -91,7 +91,7 @@ class Typesetter(object):
         # Add invisible h1-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.appendString(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
     def node_h2(self, node, e):
@@ -100,7 +100,7 @@ class Typesetter(object):
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.appendString(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
     def node_h3(self, node, e):
@@ -109,7 +109,7 @@ class Typesetter(object):
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
     def node_h4(self, node, e):
@@ -118,7 +118,7 @@ class Typesetter(object):
         # Add invisible h4-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
     def node_em(self, node, e):
@@ -166,7 +166,7 @@ class Typesetter(object):
         """
     def node_a(self, node, e):
         u"""Ignore links, but process the block"""
-        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
     def node_sup(self, node, e):
@@ -185,12 +185,12 @@ class Typesetter(object):
                 # on which page it ended up.
                 self.galley.appendString(getMarker('footnote', index))
 
-        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
     def node_literatureref(self, node, e):
         u"""Collect literature references."""
-        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        # Typeset the block of the tag. 
         # Check if this is a literature reference
         nodeId = node.attrib.get('id')
         if nodeId.startswith('litref:'): # It is a literature reference.
@@ -204,7 +204,7 @@ class Typesetter(object):
                 literatureRefs[index] = dict(nodeId=nodeId, node=node, e=e, p=None, pageIds=[])
                 self.galley.appendString(getMarker('literature', index))
 
-        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
     def node_div(self, node, e):
@@ -249,7 +249,7 @@ class Typesetter(object):
             bullet = self.DEFAULT_BULLET # Default, in case doc or css does not exist.
         bulletString = newFS(bullet) # Get styled string with bullet.
         self.galley.appendString(bulletString) # Append the bullet as defined in the style.
-        # Typeset the block of the tag. Pass on the cascaded style, as we already calculated it.
+        # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
     def node_img(self, node, e):
@@ -266,6 +266,9 @@ class Typesetter(object):
         if captionString: # If there is no caption, we can add the Image element directly to the main galley.
             caption = self.TEXTBOX_CLASS(captionString)
             imageContainer.appendElement(caption)
+        # Typeset the empty block of the img, which creates the HTML tag.
+        self.htmlNode_(node) 
+
         """
         else:
             # If there is a caption, create a new child Galley to hold image + caption
@@ -462,6 +465,29 @@ class Typesetter(object):
         else:
             self.galley.appendString(fs)  # Add the tail formatted string to the galley.
 
+    def htmlNode(self, node, end=False):
+        u"""Open the tag in HTML output and copy the node attributes if there are any."""
+        htmlTag = u'<%s' % node.tag
+        attrs = []
+        for name, value in node.items():
+            if name == 'src' and value.startswith('docs/'): # Exception hack to bridge the .md --> img url.
+                value = value[5:]
+            attrs.append('%s="%s"' % (name, value))
+        if attrs:
+            htmlTag += u' '+u' '.join(attrs)
+        if end:
+            htmlTag += '/'
+        htmlTag += '>'
+        self.appendHtml(htmlTag)
+
+    def _htmlNode(self, node):
+        u"""Close the html tag of node."""
+        self.appendHtml('</%s>' % node.tag)
+
+    def htmlNode_(self, node):
+        u"""Opem+close the html tag of node."""
+        self.htmlNode(node, end=True)
+
     def appendHtml(self, html):
         u"""Append the UTF-8 html to the current box, if it is defined. Otherwise add to the existing galley."""
         if self.box is not None:
@@ -488,9 +514,8 @@ class Typesetter(object):
         #if codeResult is not None:
         #    return
 
-        # Open the tag in HTML output
-        self.appendHtml('<%s>' % node.tag)
-
+        # Open the node in HTML export for this node
+        self.htmlNode(node)
         # Add this tag to the tag-history line
         self.addHistory(node.tag)
 
@@ -533,8 +558,8 @@ class Typesetter(object):
                 self.appendString(fs)
                 self.appendHtml(childTail) # Export the plain text as parallel HTML output as well.
 
-        # Close the tag in HTML output.
-        self.appendHtml('</%s>' % node.tag)
+        # Close the HTML tag of this node.
+        self._htmlNode(node)
         
         # Now restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text. Back to the style of the parent, 

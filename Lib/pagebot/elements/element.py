@@ -26,7 +26,7 @@ from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
     MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS,\
     ONLINE, INLINE, OUTLINE
-from pagebot.toolbox.transformer import asFormatted, uniqueID, tabs
+from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.builders import BuildInfo # Container with Builder flags and data/parametets
 from pagebot.builders.webbuilder import WebBuilder
@@ -95,7 +95,7 @@ class Element(object):
             self.margin = margin
 
         self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
-        self.class_ = class_ or self.__class__.__name__.lower() # Optional class name, e.g. to group elements together in HTML/CSS export.
+        self.class_ = class_ # Optional class name. Ignored if None, not to overwrite CSS of parents.
         self.title = title or name # Optional to make difference between title name, style property
         self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value. 
         self._parent = None # Preset, so it exists for checking when appending parent.
@@ -2065,7 +2065,7 @@ class Element(object):
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build(self, view, b, htmlIndent=1, cssIndent=1):
+    def build(self, view, b):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
@@ -2075,9 +2075,9 @@ class Element(object):
         if info.htmlPath is not None:
             b.includeHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.div(id=self.eId, class_=self.class_ or `e`)
+            b.div(id=self.eId, class_=self.class_) # No default class, ignore if not defined.
             for e in self.elements:
-                e.build(view, builder, htmlIndent+1, cssIndent+1)
+                e.build(view, b)
             b._div()
 
     #   V A L I D A T I O N
