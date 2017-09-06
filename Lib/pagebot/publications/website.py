@@ -155,59 +155,44 @@ class Main(Rect):
         b._div() # .container .mainContnet
 
 class Section(Rect):
-
-    def __init__(self, rows=1, **kwargs):
+    u"""Implements a stack of rows, each holding 2 text boxes. Content should be filled
+    in even amount. Uneven rows and empty rows will be omitted from the output.
+    The self['Title'] container runs over the entire width of both columns. If there
+    is no title defined, it will be ignored."""
+    def __init__(self, rows=5, **kwargs):        
         Rect.__init__(self,  **kwargs)
-        u"""Initialize the generic featured item, adding and image text box and side text box."""
-        for row in range(0, rows, 2):
-            TextBox('', parent=self, name='Section%d' % row)
+        self._sectionRows = rows
+        TextBox('', parent=self, name='Title')
+        for row in range(0, rows):
+            TextBox('', parent=self, name=`row*2`)
+            TextBox('', parent=self, name=`row*2+1`)
 
     def build(self, view, b):
+        title = self['Title']
         b.div(class_='container section')
-        b.addHtml(u"""  
-        <div class="row">
-            <div class="tencol">
-                <h2>
-                    Project levels 
-                </h2>
-            </div>
-            <div class="twocol last">
-            </div>
-        </div>
-        <div class="row">
-            <div class="sixcol">
-                <img src="images/HowToApplyForArtSchool.png" alt="Design Design Space" /> 
-        <h5>
-          Level 1 month 
-        </h5>
-        <h3>
-          How to make a pitch 
-        </h3>
-        Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
-        <h5>
-          Level 1 day 
-        </h5>
-        <h3>
-          Sketching techniques 
-        </h3>
-        Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
-            </div>
-<!--/sixcol-->
-            <div class="sixcol last">
-                <img src="images/DoYouReallyNeedADesigner.png" alt="Design Design Space" /> 
-                <h5>
-                    Level 1 day 
-                </h5>
-                <h3>
-                    The deeps of typography 
-                </h3>
-                Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
-            </div>
-<!--/sixcol-->
-        </div>
+        if title.html:
+            b.div(class_='row')
+            b.div(class_='tencol')
+            b.addHtml(title.html)
+            b._div() # .tencol
+            b.div(class_='twocol last')
+            b._div() # .twocol last
+            b._div() # .row
 
-""")
-        self._div()
+        for row in range(0, self._sectionRows):
+            e1 = self[`row*2`]
+            e2 = self[`row*2+1`]
+            if e1.html and e2.html: # Only output if both are filled.
+                b.div(class_='row')
+                b.div(class_='sixcol')
+                b.addHtml(e1.html)
+                b._div() # .sixcol
+                b.div(class_='sixcol last')
+                b.addHtml(e2.html)
+                b._div() # 'sixcol last
+                b._div() # .row
+        
+        b._div() # .container .section
         
 class Footer(TextBox):
     def __init__(self, **kwargs):
