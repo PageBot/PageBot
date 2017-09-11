@@ -82,7 +82,7 @@ class Page(Element):
 
                 # CSS
                 if info.webFontsUrl:
-                    b.script(type="text/css", src=info.webFontsUrl)
+                    b.link(rel='stylesheet', type="text/css", href=info.webFontsUrl, media='all')
                 if info.cssPath is not None:
                     cssPath = 'css/' + info.cssPath.split('/')[-1]
                 else:

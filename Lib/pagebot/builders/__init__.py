@@ -21,7 +21,7 @@ class BuildInfo(object):
         self.description = None
         self.keyWords = None
         # Urls for <link>
-        self.webFontsUrl = 'css/webfonts.css'
+        self.webFontsUrl = 'fonts/webfonts.css'
         self.favIconUrl = None
         self.jsUrls = None
         self.appleTouchIconUrl = None
