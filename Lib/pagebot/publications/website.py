@@ -187,7 +187,6 @@ class Section(Rect):
             for row in range(0, self._sectionRows):
                 e1 = self[`row*2`]
                 e2 = self[`row*2+1`]
-                print 'AAAAAA', e1, e2
                 if e1.html and e2.html: # Only output if both are filled.
                     b.div(class_='row')
                     b.div(class_='sixcol')
