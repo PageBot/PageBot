@@ -158,7 +158,8 @@ class Section(Rect):
     u"""Implements a stack of rows, each holding 2 text boxes. Content should be filled
     in even amount. Uneven rows and empty rows will be omitted from the output.
     The self['Title'] container runs over the entire width of both columns. If there
-    is no title defined, it will be ignored."""
+    is no title defined, it will be ignored. If there is not content at all, then the
+    container <div> is not created."""
     def __init__(self, rows=5, **kwargs):        
         Rect.__init__(self,  **kwargs)
         self._sectionRows = rows
@@ -169,31 +170,36 @@ class Section(Rect):
 
     def build(self, view, b):
         title = self['Title']
-        b.div(class_='container section')
-        if title.html:
-            b.div(class_='row')
-            b.div(class_='tencol')
-            b.addHtml(title.html)
-            b._div() # .tencol
-            b.div(class_='twocol last')
-            b._div() # .twocol last
-            b._div() # .row
-
+        hasContent = bool(title.html)
         for row in range(0, self._sectionRows):
-            e1 = self[`row*2`]
-            e2 = self[`row*2+1`]
-            if e1.html and e2.html: # Only output if both are filled.
+            hasContent |= bool(self[`row*2`].html) or bool(self[`row*2+1`].html)
+        if hasContent: # Onle start the container if there is any content.
+            b.div(class_='container section')
+            if title.html:
                 b.div(class_='row')
-                b.div(class_='sixcol')
-                b.addHtml(e1.html)
-                b._div() # .sixcol
-                b.div(class_='sixcol last')
-                b.addHtml(e2.html)
-                b._div() # 'sixcol last
+                b.div(class_='tencol')
+                b.addHtml(title.html)
+                b._div() # .tencol
+                b.div(class_='twocol last')
+                b._div() # .twocol last
                 b._div() # .row
-        
-        b._div() # .container .section
-        
+
+            for row in range(0, self._sectionRows):
+                e1 = self[`row*2`]
+                e2 = self[`row*2+1`]
+                print 'AAAAAA', e1, e2
+                if e1.html and e2.html: # Only output if both are filled.
+                    b.div(class_='row')
+                    b.div(class_='sixcol')
+                    b.addHtml(e1.html)
+                    b._div() # .sixcol
+                    b.div(class_='sixcol last')
+                    b.addHtml(e2.html)
+                    b._div() # 'sixcol last
+                    b._div() # .row
+            
+            b._div() # .container .section
+            
 class Footer(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
@@ -273,7 +279,7 @@ class Website(Publication):
         box = Introduction(parent=t, name='Introduction')
         box = Featured(parent=t, name='Featured')
         box = Main(parent=t, name='Main')
-        box = Section(rows=1, parent=t, name='Section')
+        box = Section(parent=t, name='Section')
         box = Main(parent=t, name='OtherMain')
         box = Footer(parent=t, name='Footer')
         box = JS(parent=t, name='JS')
@@ -290,7 +296,7 @@ class Website(Publication):
         box = Introduction(parent=t, name='Introduction')
         box = Featured(parent=t, name='Featured')
         box = Main(parent=t, name='Main')
-        box = Section(rows=1, parent=t, name='Section')
+        box = Section(parent=t, name='Section')
         box = Main(parent=t, name='OtherMain')
         box = Footer(parent=t, name='Footer')
         box = JS(parent=t, name='JS')
