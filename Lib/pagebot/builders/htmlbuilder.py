@@ -386,6 +386,19 @@ class HtmlBuilder(XmlBuilder):
     def docType(self, s):
         self.write('<!DOCTYPE %s>\n' % s)
 
+    #   C S S
+
+    def openCss(self, selector):
+        self.addCss('%s {\n' % selector)
+
+    def closeCss(self, selector=None):
+        if selector is None:
+            self.addCss('}\n')
+        else:
+            self.addCss('} /* %s */\n' % selector)
+            
+    #   H T L M
+
     def html(self, xmlns=None, **args):
         """
         <seealso><www href="http://www.w3schools.com/tags/tag_html.asp" target="external"/></seealso>

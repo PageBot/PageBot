@@ -211,7 +211,7 @@ class Footer(TextBox):
         # Build flat navivation for this simple site
         b.nav(id='navigation-wrap')
         b.ol()
-        for pn, pages in sorted(view.doc.pages.items()):
+        for pn, pages in sorted(view.doc.pages.items(), reverse=True):
             for page in pages:
                 b.li()
                 b.a(href=page.name)
