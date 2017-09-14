@@ -27,6 +27,7 @@ class Page(Element):
         Element.__init__(self,  **kwargs)
         self.leftPage = leftPage # Force left/right side of a page, independen of document odd/even.
         self.rightPage = rightPage 
+        self.class_ = self.class_ or 'page' # Defined default CSS class for pages.
 
     def isLeftPage(self):
         u"""Answer the boolean flag if this is a left page. The only one who can know that is the document."""
@@ -106,7 +107,7 @@ class Page(Element):
                 b.importHtml(info.bodyPath) # Add HTML content of file, if path is not None and the file exists.
             else:
                 b.body()
-                b.div(class_=self.class_) # Ignore if self.class_ is undefined as None.
+                b.div(class_=self.class_) # Us standard 'page' if self.class_ is undefined as None.
                 for e in self.elements:
                     e.build(view, b)
                 b._div()
