@@ -106,7 +106,7 @@ class Page(Element):
                 b.importHtml(info.bodyPath) # Add HTML content of file, if path is not None and the file exists.
             else:
                 b.body()
-                b.div(id=self.eId, class_=self.class_) # Ignore if self.class_ is undefined.
+                b.div(class_=self.class_) # Ignore if self.class_ is undefined as None.
                 for e in self.elements:
                     e.build(view, b)
                 b._div()
