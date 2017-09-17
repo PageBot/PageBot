@@ -9,11 +9,12 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     thumbview.py
+#     solidbuilder.py
 #
-from pagebot.elements.views import View
+#	  https://github.com/SolidCode/SolidPython/tree/master/solid
+#	  https://github.com/felipesanches/SolidPinball
+#	
+from basebuilder import BaseBuilder
 
-class ThumbView(View):
-    viewId = 'Thumb'
-
-
+class SolidBuilder(BaseBuilder):
+ 	pass

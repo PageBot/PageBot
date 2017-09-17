@@ -19,7 +19,7 @@ class BaseBuilder(object):
     supported by DrawBot."""
 
     def __init__(self):
-        self._htmlOut = [] 
+        self.resetHtml() # Initialize the HTML output stream.
         self._cssOut = []  
         self._jsOut = []  
         self._copyPaths = []
@@ -42,6 +42,12 @@ class BaseBuilder(object):
         f = codecs.open(path, 'w', 'utf-8')
         f.write(''.join(self._htmlOut))
         f.close()
+
+    def resetHtml(self):
+        u"""Reset the output stream, as should be done after each page export.
+        It is likely not to reset the CSS, because we want to collect all and 
+        write to the single CSS file for the entire site."""
+        self._htmlOut = []
 
     def addCss(self, css):
         u"""Add the css chunk to self.css, the ordered list of css for output."""

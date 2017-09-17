@@ -13,10 +13,10 @@
 #
 import os
 import shutil
-from pagebot.elements.views.view import View
+from pagebot.elements.views import HtmlView
 from pagebot.builders import WebBuilder
 
-class MampView(View):
+class MampView(HtmlView):
     viewId = 'Mamp'
 
     # self.build exports in MAMP folder that does not commit in Git. 
@@ -34,21 +34,21 @@ class MampView(View):
 
     def build(self, name, pageSelection=None, multiPage=True):
         doc = self.parent
+        b = WebBuilder()
+        doc.buildCss(self, b) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
+                b.resetHtml()
                 fileName = page.name
                 if not fileName:
                     fileName = DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
                 path = self.SITE_PATH + fileName
-                print pn, page.name, path
-                b = WebBuilder()
-                page.build(self, b)
+                page.build(self, b) # Building HTML and page-specific CSS, storage in builder.
                 b.writeHtml(path)
-                if pn == 0:
-                    # TODO: Don't need to write the css for every page.
-                    b.writeCss(self.DEFAULT_CSS_PATH)
+        # Write all collected CSS into one file
+        b.writeCss(self.DEFAULT_CSS_PATH)
 
         mampPath = self.MAMP_PATH + name
         if os.path.exists(mampPath):

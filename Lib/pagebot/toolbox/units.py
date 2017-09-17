@@ -131,8 +131,12 @@ class mm(Unit):
     u = property(_get_u, _set_u)
                         
 class px(Unit):
-    pass
-        
+    def __repr__(self):
+        u = self.u
+        if int(round(u)) != u:
+            return '%0.2f%s' % (u, self.__class__.__name__.lower())
+        return '%d%s' % (u, self.__class__.__name__.lower())
+         
 class pt(Unit):
     pass
 
@@ -156,8 +160,13 @@ class fr(RelativeUnit):
 class em(RelativeUnit):
     u"""Em size is based on the current setting of the fontSize. 
     Used in CSS export."""
-    pass
 
+    def __repr__(self):
+        u = self.u
+        if int(round(u)) != u:
+            return '%0.2f%s' % (u, self.__class__.__name__.lower())
+        return '%d%s' % (u, self.__class__.__name__.lower())
+  
 class perc(RelativeUnit):
     def __repr__(self):
         if isinstance(self._v, (int, long)):

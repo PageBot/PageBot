@@ -9,12 +9,11 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     webdata.py
+#     webbuilder.py
 #
-import codecs
 from htmlbuilder import HtmlBuilder
 
 class WebBuilder(HtmlBuilder):
     u"""Generic output builder container, used of collecting html, css, js, include paths and other data
-    needed to export the website, e.g. by the MampView."""
+    needed to export the website, e.g. by the GitView or MampView."""
 

@@ -85,6 +85,9 @@ def checkdatetime(date):
         return DateTime(date=date).date
     return date
 
+def now():
+    return DateTime(date='now')
+    
 def newdatetime(date):
     u"""
     The ``newdate`` method answers a new ``DateTime`` instance. If the ``date`` is
@@ -331,7 +334,7 @@ class DateTime:
             # Assume that dt is of type date string. Direct init from existing datetime
             self.datetime = dt
         else:
-            if date == 'now' or date_time == 'now':
+            if date == 'now' or date_time == 'now': 
                 self.datetime = datetime.datetime.now()
                 return
 
@@ -411,15 +414,15 @@ class DateTime:
                     raise ValueError('[DateTime] Did not supply all values of y,m,d (%s,%s,%s)' % (year, month, day))
 
             elif trimvalues:
-                year          = int(year)
-                month          = min(12, max(1, int(month)))
-                day          = min(monthdays(year, month), max(1, int(day)))
-                hour          = min(23, max(0, int(hour)))
-                minute          = min(60, max(0, int(minute)))
-                second         = min(60, max(0, int(second)))
-                microsecond     = min(99, max(0, int(microsecond)))
+                year = int(year)
+                month = min(12, max(1, int(month)))
+                day = min(monthdays(year, month), max(1, int(day)))
+                hour = min(23, max(0, int(hour)))
+                minute = min(60, max(0, int(minute)))
+                second = min(60, max(0, int(second)))
+                microsecond = min(99, max(0, int(microsecond)))
                 self.datetime = datetime.datetime(year, month, day, hour, minute, second, microsecond, tz)
-            else:
+            else: # Nothing specified, assume it is now.
                 self.datetime = datetime.datetime(int(year), int(month), int(day), int(hour), int(minute), int(second),
                                                 int(microsecond), tz)
 
@@ -437,8 +440,8 @@ class DateTime:
     def __str__(self):
         u"""
         
-        The function ``str(dt)`` answers the string representation of the date. Typically the identical to
-        ``dt.date + ' ' + dt.time``.
+        The function str(dt) answers the string representation of the date. Typically the identical to
+        dt.date + ' ' + dt.time.
         
         """
         return `self`

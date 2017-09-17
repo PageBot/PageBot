@@ -15,7 +15,11 @@ from htmlbuilder import HtmlBuilder
 from webbuilder import WebBuilder
 
 class BuildInfo(object):
-    u"""Container with builder flags and data, as stored in elements, to direct conditional e.build( ) calls."""
+    u"""Container with builder flags and data, as stored in elements, to direct conditional 
+    e.build( ) and e.buildCss( ) calls.
+    Note that these attribute and flags can be defined specifically per elemene, to they
+    cannot be part of a view.
+    """
     def __init__(self, **kwargs):
         self.title = None # Can be used to overwrite the standard name/title of an element.
         self.description = None

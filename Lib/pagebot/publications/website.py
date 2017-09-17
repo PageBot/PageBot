@@ -20,9 +20,12 @@ from pagebot.toolbox.units import fr, px
 class MobileNavigation(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
+        # Default class (e.g. for CSS usage) name of not defined as attribute.
+        self.class_ = self.class_ or self.__class__.__name__.lower()
    
     def build(self, view, b):
-        b.div(class_='container mobilenavigation')
+        self.buildCss(view, b)
+        b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='twelvecol last')
         b.nav(id='nav-wrap')
@@ -48,8 +51,9 @@ class MobileNavigation(TextBox):
 class Navigation(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
-   
+  
     def build(self, view, b):
+        self.buildCss(view, b)
         b.div(class_='container top')
         b.div(class_='row')
         b.div(class_='fivecol')
@@ -80,12 +84,15 @@ class Navigation(TextBox):
 class Introduction(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
-    
+        # Default class (e.g. for CSS usage) name of not defined as attribute.
+        self.class_ = self.class_ or self.__class__.__name__.lower()
+      
     def build(self, view, b):
         u"""Build a page wide in intoduction box for large type, if there is any content."""
         if not self.html:
             return
-        b.div(class_='container introduction')
+        self.buildCss(view, b)
+        b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='twelvecol last')
         b.addHtml(self.html)
@@ -103,14 +110,17 @@ class Featured(Rect):
         u"""Initialize the generic featured item, adding and image text box and side text box."""
         TextBox('', parent=self, name='Image')
         TextBox('', parent=self, name='Side')
-
+        # Default class (e.g. for CSS usage) name of not defined as attribute.
+        self.class_ = self.class_ or self.__class__.__name__.lower()
+  
     def build(self, view, b):
         u"""Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
         side = self['Side']
         if not image.html or not side.html:
             return
-        b.div(class_='container featured')
+        self.buildCss(view, b)
+        b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='eightcol')
         image.build(view, b)
@@ -128,6 +138,8 @@ class Main(Rect):
         u"""Initialize the generic featured item, adding and image text box and side text box."""
         TextBox('', parent=self, name='Content') # Note that child elements should not have the same name as parent to find them.
         TextBox('', parent=self, name='Side')
+        # Default class (e.g. for CSS usage) name of not defined as attribute.
+        self.class_ = self.class_ or 'mainContent'
 
     def appendString(self, fs):
         u"""Add FormattedString to main content."""
@@ -142,7 +154,8 @@ class Main(Rect):
         side = self['Side']
         if not content.html: # If there is nothing in the main part, then also ignore the side.
             return
-        b.div(class_='container mainContent')
+        self.buildCss(view, b)
+        b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='eightcol')
         content.build(view, b)
@@ -162,6 +175,8 @@ class Section(Rect):
     container <div> is not created."""
     def __init__(self, rows=5, **kwargs):        
         Rect.__init__(self,  **kwargs)
+        # Default class (e.g. for CSS usage) name of not defined as attribute.
+        self.class_ = self.class_ or self.__class__.__name__.lower() 
         self._sectionRows = rows
         TextBox('', parent=self, name='Title')
         for row in range(0, rows):
@@ -174,7 +189,8 @@ class Section(Rect):
         for row in range(0, self._sectionRows):
             hasContent |= bool(self[`row*2`].html) or bool(self[`row*2+1`].html)
         if hasContent: # Onle start the container if there is any content.
-            b.div(class_='container section')
+            self.buildCss(view, b)
+            b.div(class_='container %s' % self.class_)
             if title.html:
                 b.div(class_='row')
                 b.div(class_='tencol')
@@ -202,9 +218,12 @@ class Section(Rect):
 class Footer(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
-    
+        # Default class (e.g. for CSS usage) name of not defined as attribute.
+        self.class_ = self.class_ or self.__class__.__name__.lower() 
+
     def build(self, view, b):
-        b.div(class_="container footer")
+        self.buildCss(view, b)
+        b.div(class_="container %s" % self.class_)
         b.div(class_='row')
         
         b.div(class_='eightcol')

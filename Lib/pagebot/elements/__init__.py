@@ -11,6 +11,9 @@
 #
 #     __init__.py
 #
+#     New Elements to be added   
+#     Graphs, Maps, 3Dto2DContainers.
+#     
 from pagebot.elements.element import Element
 # Simple elements
 from pagebot.elements.pbtext import Text

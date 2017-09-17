@@ -55,9 +55,8 @@ class Page(Element):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
+        self.buildCss(view, b)
         info = self.info # Contains flags and parameter to Builder "b"
-        if info.cssPath is not None:
-            b.importCss(info.cssPath) # Add CSS content of file, if path is not None and the file exists.
         if info.htmlPath is not None:
             b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
