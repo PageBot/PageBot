@@ -2065,17 +2065,27 @@ class Element(object):
 
     #   H T M L  /  C S S  S U P P O R T
 
+    def buildCss(self, view, b):
+        u"""Build the css for this element. Default behavior is to import the content of the file
+        if there is a path reference, otherwise build the CSS from the available values and parameters
+        in self.style and self.css()."""
+        if self.info.cssPath is not None:
+            b.includeCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
+        elif self.class_: # For now, we only can generate CSS if the element has a class name defined.
+            b.css('.'+self.class_, self.style)
+        else:
+            b.css(message='No CSS for element %s\n' % self.__class__.__name__)
+
     def build(self, view, b):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
+        self.buildCss(view, b)
         info = self.info # Contains builder parameters and flags for Builder "b"
-        if info.cssPath is not None:
-            b.includeCss(info.cssPath) # Add CSS content of file, if path is not None and the file exists.
         if info.htmlPath is not None:
             b.includeHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.div(id=self.eId, class_=self.class_) # No default class, ignore if not defined.
+            b.div(class_=self.class_) # No default class, ignore if not defined.
             for e in self.elements:
                 e.build(view, b)
             b._div()

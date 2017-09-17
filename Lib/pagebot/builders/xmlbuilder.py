@@ -153,9 +153,8 @@ class XmlBuilder(BaseBuilder):
             self.write(u'/>')
 
     def write_tag_noWhitespace(self, tagname, open, args):
-        u"""
-        Writes a normally formatted HTML tag, exceptions have a custom implementation, see respective functions.
-        Don’t write any white space inside the block. E.g. used by <textarea>
+        u"""Writes a normally formatted HTML tag, exceptions have a custom implementation, 
+        see respective functions. Don’t write any white space inside the block. E.g. used by <textarea>
         """
         self.write(u'<' + tagname)
         self.getandwrite_attributes(tagname, args)

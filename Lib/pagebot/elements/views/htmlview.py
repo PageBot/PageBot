@@ -9,11 +9,13 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     thumbview.py
+#     htmlview.py
 #
+import os
+import shutil
 from pagebot.elements.views import View
 
-class ThumbView(View):
-    viewId = 'Thumb'
-
+class HtmlView(View):
+    u"""Abstract class for HTML/CSS generating views."""
+    
 

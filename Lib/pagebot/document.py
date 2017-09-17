@@ -11,13 +11,16 @@
 #
 #     document.py
 #
+import copy
 from drawBot import newPage, installedFonts, installFont
 
+from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import View, DefaultView, SingleView, ThumbView, MampView, GitView
 from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
 from pagebot.toolbox.transformer import obj2StyleId
+from pagebot.builders import BuildInfo # Container with Builder flags and data/parametets
 
 class Document(object):
     u"""A Document is just another kind of container."""
@@ -26,7 +29,8 @@ class Document(object):
     VIEW_CLASS = View
 
     def __init__(self, rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
-            autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, padding=None,
+            autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
+            padding=None, info=None, 
             exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
@@ -53,6 +57,8 @@ class Document(object):
         # Initialize some basic views.
         self.initializeViews(views, **kwargs)
 
+        # Instance to hold details flags and data to direct the HTML/CSS builder of this document.
+        self.info = info or BuildInfo()
 
         # Document (w, h) size is default from page, but will modified by the type of display mode. 
         if autoPages:
@@ -152,16 +158,16 @@ class Document(object):
     def initializeStyles(self, styles):
         u"""Make sure that the default styles always exist."""
         if styles is None:
-            styles = {}
+            styles = copy.copy(styleLib['default'])
         self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
         # Make sure that the default styles for document and page are always there.
         name = 'root'
         self.addStyle(name, self.rootStyle)
         name = 'document'
-        if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
+        if not name in self.styles: # Default dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
         name = 'page'
-        if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
+        if not name in self.styles: # Default dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
 
     def makeRootStyle(self, rootStyle, **kwargs):
@@ -174,6 +180,11 @@ class Document(object):
             if name in rootStyle: # Only overwrite existing values.
                 rootStyle[name] = v 
         return rootStyle
+
+    def applyStyle(self, style):
+        u"""Apply the key-value of the style onto the self.rootStyle."""
+        for key, value in style.items():
+            self.rootStyle[key] = value
 
     def getMaxPageSizes(self, pageSelection=None):
         u"""Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
@@ -191,7 +202,9 @@ class Document(object):
 
     def css(self, name, default=None, styleId=None):
         u"""If optional sId is None or style cannot found, then use the root style. 
-        If the style is found from the (cascading) sId, then use that to return the requested attribute."""
+        If the style is found from the (cascading) sId, then use that to return the requested attribute.
+        Note that self.css( ) is a generic query for a named CSS value, upwards the parent tree.
+        This is different from the CSS functions as self.buildCss( ), that actually generate CSS code."""
         style = self.findStyle(styleId)
         if style is None:
             style = self.rootStyle
@@ -569,6 +582,18 @@ class Document(object):
         if view is None or isinstance(view, basestring):
             view = self.getView(view) # view.parent is self
         view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)
+
+    def buildCss(self, view, b):
+        u"""Build the CSS for this document. Default behavior is to import the content of the file
+        if there is a path reference, otherwise build the CSS from the available values and parameters
+        in self.style and self.css()."""
+        if self.info.cssPath is not None:
+            b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
+        else: 
+            b.headerCss(self.name or self.title)
+            b.resetCss() # Add CSS to reset specific default behavior of browsers.
+            b.sectionCss('Document root style')
+            b.css('body', self.rootStyle) # <body> selector and style output
 
     def build(self, name=None, pageSelection=None, view=None, multiPage=True):
         u"""Build the document as website, using the MampView for export."""

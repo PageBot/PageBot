@@ -123,6 +123,8 @@ def color2Hex(c):
     u"""Answer the CSS hex color string from the color (r, g, b, o) or (r, g, b) tuple.
     This format is CSS compatible."""
     if isinstance(c, (int, long, float)):
+        if c > 1:
+            return '#%06x' % c
         c = (c, c, c)
     if len(c) == 4: # Includes opacity
         r, g, b, _ = c
