@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -21,12 +22,10 @@ from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
 from pagebot.publications.publication import Publication
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
-# Document is the main instance holding all information about the document together 
+# Document is the main instance holding all information about the document together
 # (pages, styles, etc.)
 from pagebot.document import Document
-# Page and Template instances are holding all elements of a page together.
-from pagebot.elements.page import Page, Template
-      
+
 class PageBotDoc(Publication):
 
     MIN_STYLES = 4 # Don't show, if families have fewer amount of style.

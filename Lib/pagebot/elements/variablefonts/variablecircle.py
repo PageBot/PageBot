@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -34,8 +35,8 @@ from pagebot.toolbox.transformer import pointOffset
 class VariableCircle(Element):
     u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info.
     Information is derived from the Variable Font and automatic converted into
-    an info-grapgic, showing a simplified model of the design space.
-    To show all possible interpoaltion, it would need to visualize an n-dimensional
+    an info-graphic, showing a simplified model of the design space.
+    To show all possible interpolation, it would need to visualize an n-dimensional
     space (where n is the amount of axes in the font). In the simplified model
     all axes are represented as spikes/needles on a wheel, where the amount of
     penetration in the neutral glyph defined the influence of that axis.
@@ -122,7 +123,7 @@ class VariableCircle(Element):
         for axisName, (minValue, defaultValue, maxValue) in axes.items():
         # Draw needles, depending on the axis values and the status of self.location
             if self.draw3D:
-                needleStart = 0.40 # Just enouhg overlap with edge of neutral circle marker
+                needleStart = 0.40 # Just enough overlap with edge of neutral circle marker
             else:
                 needleStart = 2/3 # Start at edge of neutral circle marker
 

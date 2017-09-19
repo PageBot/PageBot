@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -41,13 +42,15 @@ def makeDocument():
     doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)
     
     view = doc.getView()
-    view.padding = 0 # Aboid showing of crop marks, etc.
+    print view.viewId, doc.views
+    view.padding = 30 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
     view.showPagePadding = True
     view.showElementOrigin = True
     view.showElementDimensions = False
+    view.showElementInfo = False
     
     # Get list of pages with equal y, then equal x.    
     #page = doc[0][0] # Get the single page from te document.

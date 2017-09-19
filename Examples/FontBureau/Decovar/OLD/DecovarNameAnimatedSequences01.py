@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -89,13 +90,13 @@ def getProofSequences():
     ]
     return sequences
         
-def XXXsetValue(list, step, index):
+def NOTNOW_setValue(list, step, index):
     list[index] += step[index]*F
     if list[index] < 0 or list[index] > 1000:
         step[index] = -step[index]
         list[index] += step[index]*F
 
-def XXXnewAxisState(axisName, minValue, defaultValue, maxValue):
+def NOTNOW_newAxisState(axisName, minValue, defaultValue, maxValue):
     # Value, Start angle   Step cycles in FRAMES
     axisState = AxisState()
     axisState.value = minValue + random() * (maxValue - minValue)
@@ -103,7 +104,7 @@ def XXXnewAxisState(axisName, minValue, defaultValue, maxValue):
     axisState.stepCycle = 1.0*int(MOVE+random()*MOVE)/FRAMES
     return axisState
          
-def XXXnextValue(axisState, padding1=500, padding2=500):
+def NOTNOW_nextValue(axisState, padding1=500, padding2=500):
     # Calculate new angle and put back into array for next iteration.
     newAngle = sin(axisState.angle*2*pi)
     axisState.angle += axisState.stepCycle
@@ -114,7 +115,7 @@ def XXXnextValue(axisState, padding1=500, padding2=500):
         axisState.angle += 1
     return newAngle 
 
-def XXXXgetNextLocation(axisStates):
+def NOTNOW_getNextLocation(axisStates):
     location = {}
     for axisName, axisState in axisStates.items():
         location[axisName] = nextValue(axisState) * AXIS_FACTOR

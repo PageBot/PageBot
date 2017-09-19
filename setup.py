@@ -1,9 +1,9 @@
-# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -12,11 +12,15 @@
 
 from setuptools import setup, find_packages
 
-# TODO: Add install for markdown, if it does not exist.
+# TODO: Add download/install for markdown, if it does not exist.
+# https://pypi.python.org/pypi/Markdown
+
+# TODO: Add download/install for pyscss, if it does not exist.
+# https://github.com/Kronuz/pyScss
 
 setup(
     name='pagebot',
-     url="https://github.com/TypeNetwork/PageBot",
+    url="https://github.com/TypeNetwork/PageBot",
     version='0.1',
     packages=find_packages('Lib'),
     package_dir={'': 'Lib'},

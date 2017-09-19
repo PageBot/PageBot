@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -27,7 +28,8 @@ from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, B
     ONLINE, INLINE, OUTLINE
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
-
+from pagebot.builders import BuildInfo # Container with Builder flags and data/parametets
+from pagebot.builders.webbuilder import WebBuilder
 
 class Element(object):
 
@@ -39,13 +41,17 @@ class Element(object):
     isTextBox = False
     isFlow = False # Value is True if self.next if defined.
     isPage = False # Set to True by Page-like elements.
-
+    isView = False 
+    
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
-            t=0, parent=None, name=None, title=None, style=None, conditions=None, elements=None, 
-            template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, padding=None, 
-            margin=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
+            t=0, parent=None, name=None, class_=None, title=None, description=None, language=None,
+            style=None, conditions=None, info=None,
+            elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, 
+            padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
+            margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
             borders=None, borderTop=None, borderRight=None, borderBottom=None, borderLeft=None, 
-            shadow=None, gradient=None, drawBefore=None, drawAfter=None, **kwargs):  
+            shadow=None, gradient=None, drawBefore=None, drawAfter=None, framePath=None, 
+            **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
@@ -62,6 +68,10 @@ class Element(object):
         self.d = d
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
+        # Border info dict have format: 
+        # dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
+        # If not borders defined, then drawing will use the stroke and strokeWidth (if defined)
+        # for intuitive compatibility with DrawBot.
         self.borders = borders or (borderTop, borderRight, borderBottom, borderLeft)
 
         # Drawing hooks
@@ -71,6 +81,7 @@ class Element(object):
         # Shadow and gradient, if defined
         self.shadow = shadow
         self.gradient = gradient
+        self.framePath = framePath # Optiona frame path to draw instead of bounding box element rectangle.
 
         # Set timer of this element.
         self.timeMarks = [TimeMark(0, self.style), TimeMark(XXXL, self.style)] # Default TimeMarks from t == 0 until infinite of time.
@@ -83,13 +94,14 @@ class Element(object):
         if margin is not None:
             self.margin = margin
 
-        self.name = name
+        self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
+        self.class_ = class_ # Optional class name. Ignored if None, not to overwrite CSS of parents.
         self.title = title or name # Optional to make difference between title name, style property
         self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value. 
         self._parent = None # Preset, so it exists for checking when appending parent.
         if parent is not None:
             # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
-            parent.appendElement(self) # Set referecnes in both directions.
+            self.parent = parent # Set referecnes in both directions. Remove any previous parent links
         # Conditional placement stuff
         if not conditions is None and not isinstance(conditions, (list, tuple)): # Allow singles
             conditions = [conditions]
@@ -98,13 +110,16 @@ class Element(object):
         # Save flow reference names
         self.prevElement = prevElement # Name of the prev flow element
         self.nextElement = nextElement # Name of the next flow element
-        self.nextPage = nextPage # Name ot identifier of the next page that nextElement refers to.
-        self.prevPage = prevPage
+        self.nextPage = nextPage # Name ot identifier of the next page that nextElement refers to,
+        self.prevPage = prevPage # if a flow must run over page boundaries.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
         self.applyTemplate(template, elements) 
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isFlow = not None in (prevElement, nextElement, nextPage)
+        # Instance to hold details flags and data to direct the builder of this element.
+        # Reference directory paths for source files, as used by building Html/Css templates and self.build
+        self.info = info or BuildInfo()
 
     def __repr__(self):
         if self.title:
@@ -129,7 +144,7 @@ class Element(object):
     def applyTemplate(self, template, elements=None):
         u"""Copy relevant info from template: w, h, elements, style, conditions when element is created.
         Don't call later."""
-        self.template = template # Set template by property
+        self.template = template # Set template value by property call, copying all template elements and attributes.
         if elements is not None:
             # Add optional list of elements.
             for e in elements or []: 
@@ -139,15 +154,18 @@ class Element(object):
         return self._template
     def _set_template(self, template):
         self.clearElements()
-        self._template = template # Keep in order to clone pages or if addition info is needed.
+        self._template = template # Keep in order to clone pages or if additional template info is needed.
         # Copy optional template stuff
         if template is not None:
             # Copy elements from the template and put them in the designated positions.
             self.w = template.w
             self.h = template.h
+            self.padding = template.padding
+            self.margin = template.margin
             self.prevElement = template.prevElement
             self.nextElement = template.nextElement
             self.nextPage = template.nextPage
+            self.info = copy.copy(template.info)
             # Copy style items
             for  name, value in template.style.items():
                 self.style[name] = value
@@ -160,9 +178,9 @@ class Element(object):
     #   E L E M E N T S
     #   Every element is potentioally a container of other elements.
 
-    def __getitem__(self, eId):
-        u"""Answer the element with eId. Raise a KeyError if the element does not exist."""
-        return self._eIds[eId]
+    def __getitem__(self, eIdOrName):
+        u"""Answer the element with eIdOrName. Answer None if the element does not exist."""
+        return self.get(eIdOrName)
 
     def __setitem__(self, eId, e):
         if not e in self.elements:
@@ -185,6 +203,18 @@ class Element(object):
     def _get_elementIds(self): # Answer the x-ref dictionary with elements by their e.eIds
         return self._eIds
     elementIds = property(_get_elementIds)
+
+    def get(self, eIdOrName, default=None):
+        u"""Answer the element by eId or name. Answer the same selection for default, if the element cannot be found.
+        Answer None if it does not exist."""
+        if eIdOrName in self._eIds:
+            return self._eIds[eIdOrName]
+        e = self.getElementByName(eIdOrName)
+        if e is not None:
+            return e
+        if default is not None:
+            return self.get(default)
+        return None
 
     def getElement(self, eId):
         u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
@@ -242,10 +272,10 @@ class Element(object):
         If the element is alread placed in another container, then remove it from its current parent.
         This relation and position is lost. The position e is supposed to be filled already in local position."""
         eParent = e.parent
-        if not eParent in (None, self): 
-            e.parent.removeElement(e) # Remove from current parent, if there is one.
-        self._elements.append(e)
-        e.parent = self
+        if not eParent is None: 
+            eParent.removeElement(e) # Remove from current parent, if there is one.
+        self._elements.append(e) # Possibly add to self again, will move it to the top of the element stack.
+        e.setParent(self) # Set parent of element without calling this method again.
         if e.eId: # Store the element by unique element id, if it is defined.
             self._eIds[e.eId] = e
         return len(self._elements)-1 # Answer the element index for e.
@@ -253,10 +283,12 @@ class Element(object):
     def removeElement(self, e):
         u"""If the element is placed in self, then remove it. Don't touch the position."""
         assert e.parent is self
+        e.setParent(None) # Unlink the parent reference of e
         if e.eId in self._eIds:
             del self._eIds[e.eId]
         if e in self._elements:
             self._elements.remove(e)
+        return e # Answer the unlinked elements for convenience of the caller.
 
     def _get_show(self): # Set flag for drawing or interpreation with conditional.
         return self.css('show')
@@ -300,7 +332,7 @@ class Element(object):
 
     # If the element is part of a flow, then answer the squence.
     
-    def XXXgetFlows(self):
+    def NOTNOW_getFlows(self):
         u"""Answer the set of flow element sequences on the page."""
         flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
         for e in self.elements:
@@ -320,7 +352,7 @@ class Element(object):
                 flows[e.next] = [e]
         return flows
 
-    def XXXgetNextFlowBox(self, tb, makeNew=True):
+    def NOTNOW_getNextFlowBox(self, tb, makeNew=True):
         u"""Answer the next textBox that tb is pointing to. This can be on the same page or a next
         page, depending how the page (and probably its template) is defined."""
         if tb.nextPage: # Page number or name
@@ -411,14 +443,16 @@ class Element(object):
     #   L I B --> Document.lib
 
     def _get_lib(self):
-        u"""Answer the shared document.lib dictionary, used for share global entry by elements."""
+        u"""Answer the shared document.lib dictionary by property, used for share global entry by elements.
+        Elements query their self.parent.lib until the root document is reached."""
         parent = self.parent
         if parent is not None:
             return parent.lib # Either parent element or document.lib.
-        return None # Document cannot be found, there is not document as root.
+        return None # Document cannot be found, or there is there is no parent defined in the element.
+    lib = property(_get_lib)
 
     def _get_doc(self):
-        u"""Answer the root Document of this element, looking upward in the ancestor tree."""
+        u"""Answer the root Document of this element by property, looking upward in the ancestor tree."""
         if self.parent is not None:
             return self.parent.doc
         return None
@@ -426,19 +460,32 @@ class Element(object):
 
     # Most common properties
 
+    def setParent(self, parent):
+        u"""Set the parent of self as weakref if it is not None. Don't call self.appendElement().
+        Calling setParent is not the main way to add an element to a parent, because the original
+        parent would not know that the element disappeared. Call self.appendElement(e), which will
+        call this method. """
+        if parent is not None:
+            parent = weakref.ref(parent)
+        self._parent = parent # Can be None if self needs to be unlinked from a parent tree. E.g. when moving it.
+
     def _get_parent(self):
+        u"""Answer the parent of the element, if it exists, by weakref reference. Answer None of there
+        is not parent defined or if the parent not longer exists."""
         if self._parent is not None:
             return self._parent()
         return None
     def _set_parent(self, parent):
         # Note that the caller must add self to its elements.
         if parent is not None:
-            assert not self in parent.ancestors, '[%s.%s] Cannot set one of the children "%s" as parent.' % (self.__class__.__name__, self.name, parent)
-            parent = weakref.ref(parent)
-        self._parent = parent
+            #assert not self in parent.ancestors, '[%s.%s] Cannot set one of the children "%s" as parent.' % (self.__class__.__name__, self.name, parent)
+            parent.appendElement(self)
+        else:
+            self._parent = None
     parent = property(_get_parent, _set_parent)
 
-    def _get_siblings(self): # Answer all elements that share self.parent, without self.
+    def _get_siblings(self):
+        u"""Answer all elements that share self.parent, not including self in the list."""
         siblings = []
         for e in self.parent.elements:
             if not e is self:
@@ -447,6 +494,7 @@ class Element(object):
     siblings = property(_get_siblings)
 
     def _get_ancestors(self):
+        u"""Answer the list of anscestors of self, including the document root. Self is not included."""
         ancestors = []
         parent = self.parent
         while parent is not None:
@@ -457,6 +505,7 @@ class Element(object):
     ancestors = property(_get_ancestors)
 
     def _get_point(self):
+        u"""Answer the 2D point tuple of the relative local position of self."""
         return self.x, self.y # Answer as 2D
     def _set_point(self, point):
         self.x = point[0]
@@ -464,30 +513,172 @@ class Element(object):
     point = property(_get_point, _set_point)
 
     def _get_point3D(self):
+        u"""Answer the 3D point tuple of the relative local position of self."""
         return self.x, self.y, self.z
     def _set_point3D(self, point):
         self.x, self.y, self.z = point3D(point) # Always store as 3D-point, z = 0 if missing.
     point3D = property(_get_point3D, _set_point3D)
 
-    def _get_oPoint(self): # Answer the self.style['point'], y-flipped, depending on the self.originTop flag.
+    def _get_oPoint(self): 
+        u"""Answer the self.point, where y can be flipped, depending on the self.originTop flag."""
         return self._applyOrigin(self.point)
     oPoint3D = oPoint = property(_get_oPoint)
+
+    # Orientation of elements (and pages)
+
+    def isLeft(self):
+        u"""Normal elements don't know the left/right orientation of the page that they are on.
+        Pass the request on to the parent, until a page is reachted."""
+        return self.parent.isLeft() 
+    def isRight(self):
+        u"""Normal elements don't know the left/right orientation of the page that they are on.
+        Pass the request on to the parent, until a page is reachted."""
+        return self.parent.isRight()
+
+    def _get_gridX(self):
+        u"""Answer the grid, depending on the left/right orientation of self."""
+        if self.isLeft():
+            return self.css('gridL') or self.css('gridX')
+        if self.isRight():
+            return self.css('gridR') or self.css('gridX')
+        return self.css('gridX')
+    def _set_gridX(self, gridX):
+        if self.isLeft():
+            self.style['gridL'] = gridX  # Save locally, blocking CSS parent scope for this param.
+        elif self.isRight():
+            self.style['gridR'] = gridX
+        else:
+            self.style['gridX'] = gridX
+    gridX = property(_get_gridX, _set_gridX)
+
+    def _get_gridY(self):
+        u"""Answer the grid, depending on the left/right orientation of self."""
+        return self.css('gridY')
+    def _set_gridY(self, gridY):
+        self.style['gridY'] = gridY  # Save locally, blocking CSS parent scope for this param.
+    gridY = property(_get_gridY, _set_gridY)
+
+    def _get_gridZ(self):
+        u"""Answer the grid, depending on the left/right orientation of self."""
+        return self.css('gridZ')
+    def _set_gridZ(self, gridZ):
+        self.style['gridZ'] = gridZ  # Save locally, blocking CSS parent scope for this param.
+    gridZ = property(_get_gridZ, _set_gridZ)
+
+    def getGridColumns(self):
+        u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
+        Note that this is different from the gridX definition [(wx, gutter), ...]
+        If there is one or more None in the grid definition, then try to fit equally on self.cw.
+        If gurtter is left None, then the default style gutter is filled there."""
+        gridColumns = []
+        gridX = self.gridX 
+        pw = self.pw # Padded with, available space for columns.
+        gw = self.gw
+        if gridX is not None: # If there is a non-linear grid sequence defined, use that.
+            undefined = 0
+            usedWidth = 0
+            # Make a first pass to see how many columns (None) need equal division and what total width spare we have.
+            for gridValue in gridX:
+                if not isinstance(gridValue, (list, tuple)):
+                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gutter
+                cw, gutter = gridValue
+                if cw is None:
+                    undefined += 1
+                else:
+                    usedWidth += cw
+                if gutter is None:
+                    gutter = gw
+                usedWidth += gutter
+            equalWidth = (pw - usedWidth) / (undefined or 1)
+            # Now we know the divide width, scane through the grid list again, building x coordinates.
+            x = 0
+            for gridValue in gridX:
+                if not isinstance(gridValue, (list, tuple)):
+                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gutter
+                cw, gutter = gridValue
+                if cw is None:
+                    cw = equalWidth
+                if gutter is None:
+                    gutter = gw
+                gridColumns.append((x, cw))
+                x += cw + gutter
+        else: # If no grid defined, then run the squence for cw + gutter
+            cw = self.cw
+            x = 0
+            for index in range(int(pw/cw)): # Roughly the amount of columns to expect. Avoid while loop
+                if x + cw > pw:
+                    break
+                gridColumns.append((x, cw))
+                x += cw + gw # Next column start position.
+        return gridColumns
+
+    def getGridRows(self):
+        u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
+        Note that this is different from the gridX definition [(wx, gutter), ...]
+        If there is one or more None in the grid definition, then try to fit equally on self.cw.
+        If gurtter is left None, then the default style gutter is filled there."""
+        gridRows = []
+        gridY = self.gridY 
+        ph = self.ph # Padded height, available space for vertical columns.
+        gh = self.gh
+        if gridY is not None: # If there is a non-linear grid sequence defined, use that.
+            undefined = 0
+            usedHeight = 0
+            # Make a first pass to see how many columns (None) need equal division.
+            for gridValue in gridY:
+                if not isinstance(gridValue, (list, tuple)):
+                    gridValue = (gridValue, None) # Only single column height defined, force fill in with default gutter
+                ch, gutter = gridValue
+                if ch is None:
+                    undefined += 1
+                else:
+                    usedWidth += ch
+                if gutter is None:
+                    gutter = gh
+                usedHeight += gutter
+            usedHeight = (ph - usedHeight) / (undefined or 1)
+            # Now we know the divide width, scane through the grid list again, building x coordinates.
+            y = 0
+            for gridValue in gridY:
+                if not isinstance(gridValue, (list, tuple)):
+                    gridValue = (gridValue, None) # Only single column height defined, force fill in with default gutter
+                ch, gutter = gridValue
+                if ch is None:
+                    ch = usedHeight
+                if gutter is None:
+                    gutter = gh
+                gridRows.append((y, ch))
+                y += ch + gutter
+        else: # If no grid defined, then run the squence for ch + gutter
+            ch = self.ch
+            y = 0
+            for index in range(int(ph/ch)): # Roughly the amount of columns to expect. Avoid while loop
+                if y + ch > ph:
+                    break
+                gridRows.append((y, ch))
+                y += ch + gh # Next column start position.
+        return gridRows
+
+    # No getGrid in Z-direction for now.
 
     # Plain coordinates
 
     def _get_x(self):
+        u"""Answer the x position of self."""
         return self.style['x'] # Direct from style. Not CSS lookup.
     def _set_x(self, x):
         self.style['x'] = x
     x = property(_get_x, _set_x)
     
     def _get_y(self):
+        u"""Answer the y position of self."""
         return self.style['y'] # Direct from style. Not CSS lookup.
     def _set_y(self, y):
         self.style['y'] = y
     y = property(_get_y, _set_y)
     
     def _get_z(self):
+        u"""Answer the z position of self."""
         return self.style['z'] # Direct from style. Not CSS lookup.
     def _set_z(self, z):
         self.style['z'] = z
@@ -496,7 +687,7 @@ class Element(object):
     # Time management
 
     def _get_t(self):
-        u"""The self.t status is the time status, interpolating between the values in 
+        u"""The self._t status is the time status, interpolating between the values in 
         self.tStyles[t1] and self.tStyles[t2] where t1 <= t <= t2 and these styles contain
         the requested parameters."""
         return self._t
@@ -511,7 +702,7 @@ class Element(object):
         self.timeMarks.append(tm)
         self.timeMarks.sort() # Keep them in tm.t order.
 
-    def XXXgetExpandedTimeMarks(t):
+    def NOTNOW_getExpandedTimeMarks(t):
         u"""Answer a new interpolated TimeState instance, from the enclosing time states for t."""
         timeValueNames = self.timeKeys
         rootStyleKeys = self.timeMarks[0].keys()
@@ -747,6 +938,9 @@ class Element(object):
     # Borders
 
     def _borderDict(self, borderData):
+        u"""Internal method to create a dictionary with border info. If no valid border
+        dictionary is defined, then use optional stroke and strokeWidth to create one.
+        Otherwise answer *None*."""
         if isinstance(borderData, (int, long, float)):
             return dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
         if isinstance(borderData, dict):
@@ -759,6 +953,11 @@ class Element(object):
             if not 'stroke' in borderData:
                 borderData['stroke'] = 0
             return borderData
+        # TODO: Solve this, error on initialize of element, _parent does not yet exist.
+        #stroke = self.css('stroke')
+        #strokeWidth = self.css('strokeWidht')
+        #if stroke is not None and strokeWidth:
+        #     return dict(line=ONLINE, dash=None, stroke=stroke, strokeWidth=strokeWidth)
         return None
 
     def _get_borders(self):
@@ -994,7 +1193,6 @@ class Element(object):
         return self.h + self.mt + self.mb # Add margins to height
     def _set_mh(self, h):
         self.style['h'] = max(0, h - self.mt - self.mb) # Cannot become < 0
-        self.changedHeight()
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self): # Depth
@@ -1089,7 +1287,8 @@ class Element(object):
     # Padding properties
 
     # TODO: Add support of "auto" values, doing live centering.
-    
+ 
+
     def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
@@ -1151,6 +1350,21 @@ class Element(object):
         self.style['pzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)
 
+    def _get_pw(self): 
+        u"""Padded width of the element block."""
+        return self.w - self.pl - self.pr
+    pw = property(_get_pw)
+    
+    def _get_ph(self):
+        u"""Padded height of the element block."""
+        return self.h - self.pb - self.pt
+    ph = property(_get_ph)
+    
+    def _get_pd(self):
+        u"""Padded depth of the element block."""
+        return self.d - self.pzf - self.pzb
+    pd = property(_get_pd)
+
     def _get_originTop(self):
         u"""Answer the style flag if all point y values should measure top-down (typographic page
         orientation), instead of bottom-up (mathematical orientation). For Y-axis only. 
@@ -1195,18 +1409,8 @@ class Element(object):
         self.h = h 
         self.d = d # By default elements have 0 depth.
 
-    def _get_pw(self): # Padded width
-        return self.w - self.pl - self.pr
-    pw = property(_get_pw)
-    
-    def _get_ph(self): # Padded height
-        return self.h - self.pb - self.pt
-    ph = property(_get_ph)
-    
-    def _get_pd(self): # Padded depth
-        return self.d - self.pzf - self.pzb
-    pd = property(_get_pd)
-    
+    #   S H A D O W   &  G R A D I E N T
+
     def _get_shadow(self):
         return self.css('shadow')
     def _set_shadow(self, shadow):
@@ -1618,7 +1822,7 @@ class Element(object):
             restore()
 
     def _applyScale(self, p):
-        u"""Apply the scale, if both self.scaleX and self.scaleY are set. Use this
+        u"""Internal method to apply the scale, if both *self.scaleX* and *self.scaleY* are set. Use this
         method paired with self._restoreScale(). The (x, y) answered as reversed scaled tuple,
         so drawing elements can still draw on "real size", while the other element is in scaled mode."""
         sx = self.scaleX
@@ -1693,16 +1897,10 @@ class Element(object):
             else:
                 setFillColor(eFill)
             #setStrokeColor(eStroke, eStrokeWidth)
-            rect(p[0], p[1], self.w, self.h)
-            # Later usage: drawing the margin and padding should be done by view settings.
-            #if self.ml or self.mr or self.mb or self.mt:
-            #    setStrokeColor((0, 0, 1))
-            #    setFillColor(None)
-            #    rect(p[0]-self.ml, p[1]-self.mb, self.w + self.ml + self.mr, self.h + self.mb + self.mt)
-            #if self.pl or self.pr or self.pb or self.pt:
-            #    setStrokeColor((0, 1, 0))
-            #    setFillColor(None)
-            #    rect(p[0]+self.pl, p[1]+self.pb, self.w - self.pl - self.pr, self.h - self.pb - self.pt)
+            if self.framePath is not None: # In case defined, use instead of bounding box. 
+                drawPath(self.framePath)
+            else:
+                rect(p[0], p[1], self.w, self.h)
             restore()
 
         # Instead of full frame drawing, check on separate border settings.
@@ -1864,6 +2062,33 @@ class Element(object):
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
+
+    #   H T M L  /  C S S  S U P P O R T
+
+    def buildCss(self, view, b):
+        u"""Build the css for this element. Default behavior is to import the content of the file
+        if there is a path reference, otherwise build the CSS from the available values and parameters
+        in self.style and self.css()."""
+        if self.info.cssPath is not None:
+            b.includeCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
+        elif self.class_: # For now, we only can generate CSS if the element has a class name defined.
+            b.css('.'+self.class_, self.style)
+        else:
+            b.css(message='No CSS for element %s\n' % self.__class__.__name__)
+
+    def build(self, view, b):
+        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
+        If there are any child elements, then also included their code, using the
+        level recursive indent."""
+        self.buildCss(view, b)
+        info = self.info # Contains builder parameters and flags for Builder "b"
+        if info.htmlPath is not None:
+            b.includeHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+        else:
+            b.div(class_=self.class_) # No default class, ignore if not defined.
+            for e in self.elements:
+                e.build(view, b)
+            b._div()
 
     #   V A L I D A T I O N
 
@@ -2154,9 +2379,114 @@ class Element(object):
     def isFloatOnRightSide(self, tolerance=0):
         return abs(self.getFloatRightSide() - self.mRight) <= tolerance
 
+    #   Column/Row conditions
+
+    def isLeftOnCol(self, col, tolerance):
+        u"""Move top of the element to col index position."""
+        gridColumns = self.getGridColumns()
+        if col in range(len(gridColumns)):
+            return abs(self.left - gridColumns[col][0]) <= tolerance
+        return False # row is not in range of gridColumns 
+
+    def isRightOnCol(self, col, tolerance):
+        u"""Move top of the element to col index position."""
+        gridColumns = self.getGridColumns()
+        if col in range(len(gridColumns)):
+            return abs(self.right - gridColumns[col][0]) <= tolerance
+        return False # row is not in range of gridColumns 
+
+    def isFitOnColspan(col, colSpan, tolerance):
+        gridColumns = self.getGridColumns()
+        indices = range(len(gridColumns))
+        if col in indices and col + colSpan in indices:
+            c1 = gridColumns[col]
+            c2 = gridColumns[col + colspan - 1]
+            return abs(e.w - (c2[0] - c1[0] + c2[1])) <= tolerance
+        return False
+
+    def isTopOnRow(self, row, tolerance):
+        u"""Move top of the element to row."""
+        gridRows = self.getGridRows()
+        if row in range(len(gridRows)):
+            return abs(self.top - gridRows[row][0]) <= tolerance
+        return False # row is not in range of gridColumns 
+
+    def isBottomOnRow(self, row, tolerance):
+        u"""Move top of the element to row."""
+        gridRows = self.getGridRows()
+        if row in range(len(gridRows)):
+            return abs(self.bottom - gridRows[row][0]) <= tolerance
+        return False # row is not in range of gridColumns 
+
+    def isFitOnRowspan(self, row, rowSpan, tolerance):
+        gridRows = self.getGridRows()
+        indices = range(len(gridRows))
+        if row in indices and row + rowSpan in indices:
+            r1 = gridRows[row]
+            r2 = gridRows[row + colspan - 1]
+            return abs(e.h - (r2[0] - r1[0] + r2[1])) <= tolerance
+        return False
+
     #   T R A N S F O R M A T I O N S 
 
+    #   Column/Row alignment
+
+    def left2Col(self, col):
+        u"""Move top of the element to col index position."""
+        gridColumns = self.getGridColumns()
+        if col in range(len(gridColumns)):
+            self.left = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
+            return True
+        return False # row is not in range of gridColumns 
+
+    def right2Col(self, col):
+        u"""Move right of the element to col index position."""
+        gridColumns = self.getGridColumns()
+        if col in range(len(gridColumns)):
+            self.right = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
+            return True
+        return False # row is not in range of gridColumns 
+
+    def fit2ColSpan(self, col, colSpan):
+        gridColumns = self.getGridColumns()
+        indices = range(len(gridColumns))
+        if col in indices and col + colSpan in indices:
+            c1 = gridColumns[col]
+            c2 = gridColumns[col + colspan - 1]
+            e.w = c2[0] - c1[0] + c2[1]
+            return True
+        return False
+
+    def top2Row(self, row):
+        u"""Move top of the element to row."""
+        gridRows = self.getGridRows()
+        if row in range(len(gridRows)):
+            self.top = self.parent.pb + gridRows[row][0] # @@@ FIX GUTTER
+            return True
+        return False # row is not in range of gridColumns 
+
+    def bottom2Row(self, row):
+        u"""Move top of the element to row."""
+        gridRows = self.getGridRows()
+        if row in range(len(gridRows)):
+            self.bottom = self.parent.pb + gridRows[row][0] # @@@ FIX GUTTER
+            return True
+        return False # row is not in range of gridColumns 
+
+    def fit2RowSpan(self, row, rowSpan):
+        gridRows = self.getGridRows()
+        indices = range(len(gridRows))
+        if row in indices and row + rowSpan in indices:
+            r1 = gridRows[row]
+            r2 = gridRows[row + colspan - 1]
+            e.h = r2[0] - r1[0] + r2[1]
+            return True
+        return False
+    
+    #   Page block and Page side alignments
+
     def bottom2Bottom(self):
+        u"""Move bottom of the element to the bottom of the parent block."""
         if self.originTop:
             self.bottom = self.parent.h - self.parent.pb
         else:
@@ -2164,6 +2494,7 @@ class Element(object):
         return True
 
     def bottom2BottomSide(self):
+        u"""Move bottom of the element to the bottom of the parent side."""
         if self.originTop:
             self.bottom = self.parent.h
         else:
@@ -2171,6 +2502,7 @@ class Element(object):
         return True
 
     def bottom2Top(self):
+        u"""Move bottom of the element to the top of the parent block."""
         if self.originTop:
             self.bottom = self.parent.pt 
         else:
@@ -2178,6 +2510,7 @@ class Element(object):
         return True
     
     def middle2Bottom(self):
+        u"""Move middle of the element to the bottom of the parent block."""
         if self.originTop:
             self.middle = self.parent.h - self.parent.pb
         else:
@@ -2185,6 +2518,7 @@ class Element(object):
         return True
     
     def middle2BottomSide(self):
+        u"""Move middle of the element to the bottom parent side."""
         if self.originTop:
             self.middle = self.parent.h
         else:
@@ -2440,7 +2774,7 @@ class Element(object):
         self.mRight = self.getFloatRightSide()
         return True
 
-    # WIth fitting (and shrinking) we need to change the actual size of the element.
+    # With fitting (and shrinking) we need to change the actual size of the element.
     # This can have implications on it's content, and we need to take the min/max
     # sizes into conderantion: setting the self.w and self.h to a value, does not mean
     # that the size really got that value, if exceeding a min/max limit.

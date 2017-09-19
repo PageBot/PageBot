@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -54,7 +55,7 @@ def point2S(p):
 
 # C O L O R
 
-def moreRed(c, v=0.5):
+def moreRed(c='bla', v=0.5):
     u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
     moreRedC = [c[0] + (1 - c[0])*v, c[1], c[2]]
     if len(c) == 4:
@@ -115,8 +116,42 @@ def s2Color(s):
     try:
         c = int(s, 16)
         return int2Color(c)
-    except ValueError: 
+    except ValueError:
         return None
+
+def color2Hex(c):
+    u"""Answer the CSS hex color string from the color (r, g, b, o) or (r, g, b) tuple.
+    This format is CSS compatible."""
+    if isinstance(c, (int, long, float)):
+        if c > 1:
+            return '#%06x' % c
+        c = (c, c, c)
+    if len(c) == 4: # Includes opacity
+        r, g, b, _ = c
+    else: # Must be just r, g, b
+        r, g, b = c
+    return '#%02x%02x%02x' % (r*255, g*255, b*255)
+
+def color2HexOpacity(c):
+    u"""Answer the tuple ((r, g, b), opacity) with CSS hex color and value for opacity from the color 
+    (r, g, b, o) or (r, g, b) tuple. This format is CSS compatible."""
+    if isinstance(c, (int, long, float)):
+        c = (c, c, c)
+    if len(c) == 4: # Includes opacity
+        return color2Hex(c), c[-1] # 0..1
+    return color2Hex(c), 1
+
+def value2Tuple4(v):
+    u"""Answer a tuple of 4 values."""
+    if not isinstance(v, (list, tuple)):
+        v = [v]
+    if len(v) == 1:
+        return v[0], v[0], v[0], v[0]
+    if len(v) == 2:
+        return v[0], v[1], v[0], v[1]
+    if len(v) == 4:
+        return v
+    raise ValueError
 
 # N U M B E R S
 
@@ -481,9 +516,7 @@ def path2FormatPath(path, format=None):
     return None
 
 def path2Name(path):
-    u"""
-    <doc>Answers the file name part of the path.</doc>
-    """
+    u"""Answers the file name part of the path."""
     if path is None:
         return None
     if not path:
@@ -492,15 +525,15 @@ def path2Name(path):
 
 def path2FontName(path):
     u"""
-    <doc>Take that file part of the path, and get the chunk until the first
+    Take that file part of the path, and get the chunk until the first
     period to remove the extension, version numbers and the database download
     ID.
 
     /xxx/yyy/zzz/Agency_FB-Compressed.ufo becomes Agency_FB-Compressed
     /xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo becomes Agency_FB-Compressed
     #xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo becomes Agency_FB-Bold
-    </doc>
 
+    >>> from pagebot.toolbox.transformer import *
     >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency_FB-Compressed'
     >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')
@@ -838,5 +871,163 @@ def bash(cmd, cwd=None):
     else:
         return(retVal)
 
+# ----------------------------------------------------------------------------------------------------------
+# XML  transformers.
 
+def dataAttribute2Html5Attribute(key):
+    u"""The @dataAttribute2Html5Attribute@ method converts an *key*
+    attribute that starts with @'data_'@ to the HTML5 attribute that starts
+    with @'data-'@. Otherwise the *key* attribute is answered unchanged.
+    """
+    if key.startswith(u'data_'):
+        return 'data-' + key[5:]
+    return key
 
+def pyAttrName2XmlAttrName(key):
+    u"""
+    The @pyAttrName2XmlAttrName@ converts the Python XML attribute name @key@ to an
+    appropriate XML attribute identifier.
+    If the *key* is @'class_'@ then it is translated into @'class'@.
+    If there is an HTML5 attribute *data_xxxx* used, then change that to *data-xxxx*.
+    """
+    if key == 'class_':
+        key = 'class'
+    if key.startswith('data'):
+        key = key.replace('_', '-')
+    return key
+
+def xmlAttrName2PyAttrName(key):
+    u"""The @xmlAttrName2PyAttrName@ method converts the XML attribute name
+    *key* to an appropriate Python attribute identifier.
+    If the *key* is @'class'@ then it is translated into @'class_'@. If a
+    namespace is defined (to be recognized on {...}, then replace that by
+    prefix @'ns_'@. If there is an HTML5 attribute *data-xxxx* used,
+    then change that to *data_xxxx*."""
+    if key == 'class':
+        key = 'class_'
+    elif key.startswith('{'):
+        key = 'ns_' + key.split('}')[-1]
+    elif '-' in key:
+        # In case of new HTML5 data-xxxx attributes.
+        key = key.replace('-', '_')
+    return key
+
+def xmlValue2PyValue(value, conversions):
+    u"""The @xmlValue2PyValue@ method converts the XML string attribute to
+    the appropriate Python object type, if the class is defined in the list
+    *conversions*. If the *value* is not a string, it must have been
+    converted before (e.g. by self.EXPR), the answer it untouched."""
+    if not isinstance(value, basestring):
+        return value
+
+    strippedvalue = value.strip()
+
+    if int in conversions:
+        try:
+            return int(strippedvalue)
+        except ValueError:
+            pass
+
+    if long in conversions:
+        try:
+            return long(strippedvalue)
+        except ValueError:
+            pass
+
+    if float in conversions:
+        try:
+            return float(strippedvalue)
+        except ValueError:
+            pass
+
+    if bool in conversions:
+        if strippedvalue.lower() in ['true', 'false']:
+            return strippedvalue.lower() == 'true'
+
+    if dict in conversions or list in conversions or tuple in conversions:
+        if ((strippedvalue.startswith('{') and strippedvalue.endswith('}')) or
+            (strippedvalue.startswith('[') and strippedvalue.endswith(']')) or
+            (strippedvalue.startswith('(') and strippedvalue.endswith(')'))):
+            try:
+                # In theory this is a security leak, since there maybe
+                # "strange" objects inside the dictionary. Problem to be
+                # solved in the future?
+                return eval(strippedvalue)
+            except (SyntaxError, NameError):
+                pass
+
+    # Can't do anything with this value. Return unstripped and untouched.
+    return value
+
+# Remove all tags from the string
+REMOVETAGS = re.compile(r'<.*?>')
+
+def stripTags(xml):
+    return REMOVETAGS.sub('', xml)
+
+def addHtmlBreaks(s, isXhtml=True):
+    u"""Replace all returns by <br/> or <br>."""
+    tag = {True:'<br/>\n', False:'<br>\n'}[isXhtml]
+    return s.replace('\n',tag)
+
+REMOVEMULTIPLEWHITESPACE = re.compile(r'\n\s+')
+
+def stripMultipleWhiteLines(s):
+    return REMOVEMULTIPLEWHITESPACE.sub('\n\n', s)
+
+# support single or double quotes while ignoring quotes preceded by \
+XMLATTRS = re.compile(r'''([A-Z][A-Z0-9_]*)\s*=\s*(?P<quote>["'])(.*?)(?<!\\)(?P=quote)''', re.IGNORECASE)
+
+def xmlAttrString2PyAttr(s, conversions):
+    attrs = {}
+    for key, _, value in XMLATTRS.findall(s):
+        attrs[key] = value
+    return cls.xmlAttr2PyAttr(attrs, conversions)
+
+def xmlAttr2PyAttr(par_dict, conversions):
+    """Transforms an XML attribute dictionary to a Python attribute
+    dictionary. The *class* attribute name is translated into *class_* and
+    all values are tested to convert into either @int@, @long@, @float@ or
+    boolean as represented by one of @'TRUE'@, @True@, @true@, @FALSE@,
+    @False@, @false@. If the conversion fails, then pass the value
+    unchanged. If there the attribute name is of format
+
+    @'{http://www.w3.org/XML/1998/namespace}space'@
+
+    e.g. as generated by Xopus XML Schema, then just remove the name space
+    prefix. If there is an HTML5 attribute *data-xxxx* used, then change
+    that to *data_xxxx*."""
+    pydict = {}
+
+    for key, value in par_dict.items():
+        key = cls.xmlAttrName2PyAttrName(key)
+        value = cls.xmlValue2PyValue(value, conversions)
+        pydict[key] = value
+    return pydict
+
+def tableField2JoinedField(table, field):
+    if field.startswith(table):
+        return field
+    return '%s_%s' % (table, field)
+
+def value2TagName(value):
+    u"""
+    The @value2TagName@ class method converts the *value* object into a value XML tag name.
+    """
+    tagname = []
+    if not isinstance(value, basestring):
+        value = `value`
+    if value.lower().startswith('xml'):
+        tagname.append('_')
+    for c in value:
+        if c in ' !?@#$%^&*()[]\t\r\n/\\':
+            pass
+        elif c.upper() in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890:.':
+            tagname.append(c)
+        else:
+            tagname.append('_')
+    return ''.join(tagname)
+
+def object2SpacedString(o):
+    return `o`
+    

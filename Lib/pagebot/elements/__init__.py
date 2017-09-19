@@ -3,13 +3,17 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
 #     __init__.py
 #
+#     New Elements to be added   
+#     Graphs, Maps, 3Dto2DContainers.
+#     
 from pagebot.elements.element import Element
 # Simple elements
 from pagebot.elements.pbtext import Text
@@ -23,13 +27,47 @@ from pagebot.elements.pboval import Oval
 from pagebot.elements.pbimage import Image
 from pagebot.elements.pbgalley import Galley
 from pagebot.elements.pbpage import Page, Template
+from pagebot.elements.pbplacer import Placer # Place holder element, typically for Templates.
 # Path and mask elements
 from pagebot.elements.paths.pbpath import Path
 from pagebot.elements.paths.glyphpath import GlyphPath
 # Table elements
 from pagebot.elements.pbtable import Table
+# Views
+from pagebot.elements.views.view import View
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
+
+def newView(**kwargs):
+    u"""In most cases views are initialized as dictionary by the Document class.
+    But since they inherit from Element, they also can be used as placable elements.
+    Make sure to define the right parent (likely to be a Page or Template).
+    """
+    return View(**kwargs)
+
+def newPage(**kwargs):
+    u"""In most cases views are initialized as dictionary by the Document class.
+    But since they inherit from Element, they also can be used as placable elements.
+    Make sure to define the right parent (likely to be a Page or Template).
+    Embed the page in a View element, to control appearance, such as cropmarks.
+    """
+    return Page(**kwargs)
+
+def newTemplate(**kwargs):
+    u"""In most cases views are initialized as dictionary by the Document class.
+    But since they inherit from Element, they also can be used as placable elements.
+    """
+    return Template(**kwargs)
+
+def newPlacer(**kwargs):
+    u"""Placer occupying a space on Page or Template. Is not visible exported documets."""
+    return Placer(**kwargs)
+
+def newColPlacer(cx=None, cy=None, cw=None, ch=None, *kwargs):
+    u"""Placer occupying a space on Page or Template. Is not visible exported documets."""
+    e = newPlacer(**kwargs)
+    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index, based on style or parent.css
+    return e
 
 def newTextBox(fs, point=None, **kwargs):
     u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
@@ -96,7 +134,7 @@ def newImage(path, point=None, **kwargs):
     return Image(path, point=point, **kwargs)
       
 def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs):
-    """Convert the column size into point size, depending on the column settings of the 
+    u"""Convert the column size into point size, depending on the column settings of the 
     current template, when drawing images "hard-coded" directly on a certain page.
     The optional imo attribute is an ImageObject() with filters in place. 
     The Image element is answered for convenience of the caller"""
@@ -105,6 +143,10 @@ def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs)
     return e
 
 def newTable(cols=1, rows=1, **kwargs):
+    u"""Answer a new Table instanec."""
     return Table(rows=rows, cols=cols, **kwargs)
 
+def newGalley(**kwargs):
+    u"""Answer a new Galley instance."""
+    return Galley(**kwargs)
 

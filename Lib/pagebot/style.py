@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -13,8 +14,10 @@
 #     Holds the main style definintion and constants of PageBot.
 #
 import sys
-from drawBot import sizes
 import copy
+from drawBot import sizes
+
+from pagebot.toolbox.units import MM, INCH, mm, fr, pt, px, perc
 
 NO_COLOR = -1
 
@@ -22,12 +25,11 @@ NO_COLOR = -1
 U = 7
 BASELINE_GRID = 2*U
 
-INCH = 72
-MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
-
 # These sizes are all portrait. For Landscape simply reverse to (H, W) usage.
 # ISO A Sizes
-A0 = 841*MM, 1189*MM
+# The values are calculated as floats points, not using the more specifc fr(v) or px(v), needed for CSS output.
+#
+A0 = 841*MM, 1189*MM # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
 A1 = 594*MM, 841*MM
 A2 = 420*MM, 594*MM
 A3 = 297*MM, 420*MM
@@ -88,6 +90,7 @@ A3Oversized = A3[0]+INCH, A3[1]+INCH
 # International Postcard Size
 IntPostcardMax = 235*MM, 120*MM
 IntPostcardMin = 140*MM, 90*MM
+AnsichtCard = int(round(A6[1])), int(round(A6[0])) # Landscape Rounded A6
 # US Postal Postcard Size
 USPostcardMax = 6*INCH, 4.25*INCH
 USPostcardMin = 5*INCH, 3.5*INCH
@@ -249,7 +252,28 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # e.cw, e.ch and e.cd.
         cw = 77*gutter, # 77 columns width
         ch = 6*baselineGrid - u, # Approximately square with cw + gutter: 77
-        cd = 0, # Optional columnt "depth"
+        cd = 0, # Optional column "depth"
+
+        # Grid definitions, used static media as well as CSS display: grid; exports.
+        # gridX, gridY and gridZ are optional lista of grid line positions, to allow the use of non-repeating grids.
+        # The format is [(width1, gutter1), (width2, gutter2), (None, 0)] in case different gutters are needed.
+        # If the format is [width1, width2, (width3, gutter3)], then the missing gutters are used from gw ot gh.
+        # If this paramater is set, then the style values for column width "cw" and column gutter "gw" are ignored.
+        # If a width is None, it is assumed to fill the rest of the available space.
+        # If the width is a float between 0..1 or a string with format "50%" then these are interpreted as percentages.
+        # If there are multiple None widths, then their values are calculated from an equal division of available space.
+        # It is up to the caller to make sure that the grid values fit the width of the current element.
+        #
+        # HTML/CSS builders convert to:
+        # grid-template-columns, grid-template-rows, grid-auto-rows, grid-column-gap, grid-row-gap, 
+        gridX = None,
+        # Optional list of vertical grid line positions, to force the use of non-repeating grids.
+        # Format is [(height1, gutter1), (None, gutter2), (None, 0)]
+        gridY = None,
+        gridZ = None, # Similar to gridX and gridY. 
+        # Flags indicating on which side of the fold this element (e.g. page template) is used. 
+        left = True, 
+        right = True,
 
         # Minimum size
         minW = 0, # Default minimal width of elements.
@@ -272,6 +296,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         font = DEFAULT_FONT, # Default is to avoid existing font and fontSize in the graphic state.
         fallbackFont = DEFAULT_FALLBACK_FONT,
         fontSize = u * 7/10, # Default font size in points, related to U. If FIT, size is elastic to width.
+        rFontSize = 1, # Relative font size as relative fraction of current root font size.
         uppercase = False, # All text in upper case
         lowercase = False, # All text in lower case (only if uppercase is False
         capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase)
@@ -311,7 +336,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         baselineGridStart = None, # Optional baselineGridStart if different from top padding.
         baseLineMarkerSize = 8, # FontSize of markers showing base line grid info.
         leading = 0, # Absolute leading value (can be used complementary to rLeading).
-        rLeading = 1, # Relative factor to fontSize.
+        rLeading = 1, # Relative factor to current fontSize.
         paragraphTopSpacing = 0, # Only works if there is a prefix style value != 0
         rParagraphTopSpacing = 0,  # Only works if there is a prefix style value != 0
         paragraphBottomSpacing = 0,  # Only works if there is a postfix style value != 0
@@ -333,6 +358,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         # Language and hyphenation
         language = 'en', # Language for hyphenation and spelling. Can be altered per style in FormattedString.
+        encoding  = 'UTF-8',
         hyphenation = True,
         # Strip pre/post white space from e.text and e.tail and substitute by respectively prefix and postfix
         # if they are not None. Set to e.g. newline(s) "\n" or empty string, if tags need to glue together.

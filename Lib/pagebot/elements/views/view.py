@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -13,22 +14,20 @@
 from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
-import os, os.path
 
 from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath,\
     save, restore, scale, textSize, FormattedString, cmykStroke, text, fill, stroke,\
     strokeWidth, curveTo, closePath
 
-from pagebot import setFillColor, setStrokeColor
+from pagebot import setFillColor, setStrokeColor, newFS
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
-from pagebot.toolbox.transformer import pointOffset, obj2StyleId, point3D, point2S, asFormatted
-from pagebot import newFS, setStrokeColor, setFillColor
 from pagebot.toolbox.transformer import *
 
 class View(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
     viewId = 'View'
+    isView = True
 
     def __init__(self, w=None, h=None, parent=None, **kwargs):
         Element.__init__(self, parent=parent, **kwargs)
@@ -71,6 +70,10 @@ class View(Element):
         self.showTextOverflowMarker = True
         # Image stuff
         self.showImageReference = False
+        # Spread stuff
+        self.showSpreadMiddleAsGap = True # Show the spread with single crop marks. False glues pages togethers as in real spread.
+        # CSS flags
+        self.cssVerbose = True # Adds information comments with original values to CSS export.
 
     def setControls(self):
         u"""Inheriting views can redefine to alter showing parameters."""
@@ -78,38 +81,69 @@ class View(Element):
 
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
 
+    def draw(self, origin, ignoredView):
+        u"""This method is called is the view is used as a placable element inside
+        another element, such as a Page or Template. """
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, p, self)
+
+        self.drawElementFrame(self, p)
+        for page in self.elements:
+            self.drawPageMetaInfo(page, p)
+            page.draw((px, py), self)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, p, self)
+
+        self._restoreScale()
+        #view.drawElementMetaInfo(self, origin)
+
     def drawPages(self, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
         doc = self.parent
 
         w, h, _ = doc.getMaxPageSizes(pageSelection)
-        for page in doc.getSortedPages():
+        for pn, pages in doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
             # Create a new DrawBot viewport page to draw template + page, if not already done.
             # In case the document is oversized, then make all pages the size of the document, so the
             # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
             # Size depends on the size of the larges pages + optional decument padding.
+            page = pages[0] # TODO: make this work for pages that share the same page number
+            pw, ph = w, h  # Copy from main (w, h), since they may be altered.
+            
             if self.pl > self.MIN_PADDING and self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING and self.pr > self.MIN_PADDING:
-                w += self.pl + self.pr
-                h += self.pt + self.pb
+                pw += self.pl + self.pr
+                ph += self.pt + self.pb
                 if self.originTop:
                     origin = self.pl, self.pt, 0
                 else:
                     origin = self.pl, self.pb, 0
             else:
-                w = page.w # No padding defined, follow the size of the page.
-                h = page.h
+                pw = page.w # No padding defined, follow the size of the page.
+                ph = page.h
                 origin = (0, 0, 0)
 
-            newPage(w, h) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
+            newPage(pw, ph) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
             # View may have defined a background
             if self.style.get('fill') is not None:
                 setFillColor(self.style['fill'])
-                rect(0, 0, w, h)
-            # Let the page draw itself on the current DrawBot view port if self.writer is None.
+                rect(0, 0, pw, ph)
+
+            if self.drawBefore is not None: # Call if defined
+                self.drawBefore(page, origin, self)
+
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             page.draw(origin, self)
+
+            if self.drawAfter is not None: # Call if defined
+                self.drawAfter(page, origin, self)
+
             # Self.infoElements now may have collected elements needed info to be drawn, after all drawing is done.
             # So the info boxes don't get covered by regular page content.
             for e in self.elementsNeedingInfo.values():
@@ -130,7 +164,7 @@ class View(Element):
         query the document, pages, elements and styles.
         """
         if not self._isDrawn:
-            self.drawPages(pageSelection)
+            self.drawPages(pageSelection=pageSelection)
             self._isDrawn = True
 
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif,
@@ -145,7 +179,10 @@ class View(Element):
         if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
             frameDuration(frameDuration)
 
-        # http://www.drawbot.com/content/canvas/saveImage.html
+        # Select other than standard DrawBot export builders here.
+        # TODO: Take build into separte htmlView, instead of split by extension
+        # TODO: Show be more generic if number of builders grows.
+        # TODO: Build multiple pages, now only doc[0] is supported.
         saveImage(fileName, multipage=multiPage)
 
     #   D R A W I N G  P A G E  M E T A  I N F O
@@ -441,8 +478,10 @@ class View(Element):
         u"""Draw grid of lines and/or rectangles if colors are set in the style.
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         # Drawing the grid as squares.
-        if not self.showGridColumns or not self.showGrid:
+        if not self.showGrid:
             return
+        #if not self.showGridColumns or not self.showGrid:
+        #    return
         p = pointOffset(e.oPoint, origin)
         p = self._applyScale(p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
@@ -456,9 +495,36 @@ class View(Element):
         padT = e.pt # Padding top
         padR = e.pr # padding right
         padB = e.pb # padding bottom
+        padW = e.pw # Padding width
+        padH = e.ph # Padding height
+
         w = e.w
         h = e.h
 
+        if e.isRight():
+            ox = px + padR
+        else:
+            ox = px + padL
+        oy = py + padB
+
+        if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
+            setFillColor(None)
+            setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
+            newPath()
+            for cx, cw in e.getGridColumns():
+                moveTo((ox+cx, oy))
+                lineTo((ox+cx, oy + padH))
+                moveTo((ox+cx + cw, oy))
+                lineTo((ox+cx + cw, oy + padH))
+            for cy, ch in e.getGridRows():
+                moveTo((ox, oy+cy))
+                lineTo((ox + padW, oy+cy))
+                moveTo((ox, oy+cy + ch))
+                lineTo((ox + padW, oy+cy + ch))
+            drawPath()
+                #text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
+
+        """
         if self.showGridColumns and sGridFill is not NO_COLOR:
             setFillColor(sGridFill)
             setStrokeColor(None)
@@ -479,18 +545,16 @@ class View(Element):
             fs = newFS('', self, dict(font='Verdana', xTextAlign=RIGHT, fontSize=M/2,
                 stroke=None, textFill=self.css('viewGridStroke')))
             ox = px + padL
-            index = 0
-            oy = h - padT - py
-            while ox < px + w - padR:
-                newPath()
-                moveTo((ox, py))
-                lineTo((ox, py + h))
-                moveTo((ox + columnWidth, py))
-                lineTo((ox + columnWidth, py + h))
-                drawPath()
-                text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
-                index += 1
-                ox += columnWidth + gutterW
+            for cw, gutter in e.getGridX(): # Answer the sequence or relative (column, gutter) measures.
+                    newPath()
+                    moveTo((ox, py))
+                    lineTo((ox, py + h))
+                    moveTo((ox + columnWidth, py))
+                    lineTo((ox + columnWidth, py + h))
+                    drawPath()
+                    text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
+                    index += 1
+                    ox += columnWidth + gutterW
             index = 0
             while oy > py:
                 newPath()
@@ -502,6 +566,7 @@ class View(Element):
                 text(fs + repr(index), (px + padL - M / 2, oy - M * 0.6))
                 index += 1
                 oy -= columnHeight + gutterH
+        """
 
     def drawBaselineGrid(self, e, origin):
         u"""Draw baseline grid if line color is set in the style.
@@ -577,8 +642,8 @@ class View(Element):
             x, y, _ = point3D(origin) # Ignore z-axus for now.
             w, h = e.w, e.h
             folds = self.css('folds')
-            bleed = self.css('bleed')
-            cmSize = self.css('viewCropMarkSize')
+            bleed = self.css('bleed')/2 # 1/2 overlap with image bleed
+            cmSize = min(self.css('viewCropMarkSize', 32), self.pl)
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
 
             fill(None)

@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -8,6 +9,8 @@
 # -----------------------------------------------------------------------------
 #
 #     DrawRedRectCenterPage.py
+#
+#     Needs debugging in dimension showing of views.
 #
 from pagebot import newFS
 from pagebot.style import getRootStyle, A5, BOTTOM, CENTER, MIDDLE
@@ -33,7 +36,7 @@ def makeDocument():
     # as Document( ) will create a RootStyle by default.
     rootStyle = getRootStyle()
     
-    doc = Document(rootStyle, originTop=False, w=W, h=H, pages=1) 
+    doc = Document(rootStyle, originTop=False, w=W, h=H, autoPages=1) 
     
     page = doc[0] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?

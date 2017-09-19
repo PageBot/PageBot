@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -26,7 +27,14 @@ class Composer(object):
         value for the quality if their status."""
         self.makeNewPage = makeNewPage
         
-    def compose(self, galley, page, flowId=None):
+    def compose(self, galley, doc):
+        u"""Compose the galley element, starting with the flowId text box on page.
+        The composer negotiates between what the galley needs a sequential space
+        for its elements, and what the page has to offer.
+        If flowId is omitted, then let the page find the entry point for the first flow."""
+        print doc, galley
+
+    def XXXcompose(self, galley, page, flowId=None):
         u"""Compose the galley element, starting with the flowId text box on page.
         The composer negotiates between what the galley needs a sequential space
         for its elements, and what the page has to offer.

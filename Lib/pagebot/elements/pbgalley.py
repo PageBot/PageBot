@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -32,12 +33,25 @@ class Galley(Element):
         
     OLD_PAPER_COLOR = int2Color(0xF8ECC2) # Color of old paper: #F8ECC2
 
+    def __init__(self, **kwargs):
+        Element.__init__(self,  **kwargs)
+        # Make sure that this is a formatted string. Otherwise create it with the current style.
+        # Note that in case there is potential clash in the double usage of fill and stroke.
+        self.lastTextBox = None
+
     def appendString(self, fs):
         u"""Add the string to the laat text box. Create a new textbox if not found."""
-        e = self.getLastTextBox()
-        if e is None:
-            e = self.getTextBox()
-        e.appendString(fs)
+        if self.lastTextBox is None:
+            self.newTextBox(fs) # Also sets self.lastTextBox 
+        else:
+            self.lastTextBox.appendString(fs)
+
+    def appendHtml(self, html):
+        u"""Add the utf-8 html to the laat text box. Create a new textbox if not found."""
+        if self.lastTextBox is None:
+            self.newTextBox('', html=html) # Also sets self.lastTextBox 
+        else:
+            self.lastTextBox.appendHtml(html)
 
     def getMinSize(self):
         u"""Cumulation of the maximum minSize of all enclosed elements."""
@@ -47,6 +61,22 @@ class Galley(Element):
             minW = max(minW, eMinW)
             minH += eMinH
         return minW, minH
+
+    def appendElement(self, e):
+        u"""Add element to the list of child elements. Note that elements can be added multiple times.
+        If the element is alread placed in another container, then remove it from its current parent.
+        This relation and position is lost. The position e is supposed to be filled already in local position."""
+        eParent = e.parent
+        if not eParent is None: 
+            eParent.removeElement(e) # Remove from current parent, if there is one.
+        self._elements.append(e) # Possibly add to self again, will move it to the top of the element stack.
+        e.setParent(self) # Set parent of element without calling this method again.
+        if e.eId: # Store the element by unique element id, if it is defined.
+            self._eIds[e.eId] = e
+        # If this is a text box, then set self.lastTextBox
+        if e.isTextBox:
+            self.lastTextBox = e
+        return len(self._elements)-1 # Answer the element index for e.
 
     def getSize(self):
         u"""Answer the enclosing rectangle of all elements in the galley."""
@@ -67,16 +97,6 @@ class Galley(Element):
     def getHeight(self):
         return self.getSize()[1]
 
-    def getLastTextBox(self):
-        u"""Answer the last text box in the sequence, so we can copy that style."""
-        elements = self.elements
-        if not elements:
-            return None
-        for index in range(1, len(elements)-1):
-            if elements[-index].isTextBox:
-                return elements[-index]
-        return None # Not found
-
     def getLastElement(self):
         u"""Answer the last element in the sequence."""
         elements = self.elements
@@ -84,17 +104,12 @@ class Galley(Element):
             return None
         return elements[-1]
 
-    def getTextBox(self, style=None):
-        u"""If the last element is a TextBox, answer it. Otherwise create a new textBox with self.style
-        and answer that."""
-        lastTextBox = self.getLastTextBox()
-        if lastTextBox is not None and style is None:
-            style = lastTextBox.style # If not style supplied, copy from the last textBox.
-        if lastTextBox is None or lastTextBox != self.getLastElement():
-            if style is None: # No last textbox to copy from and no style supplied. Create something here.
-                style = dict(w=200, h=0) # Arbitrary width and height, in case not
-            self.appendElement(self.TEXTBOX_CLASS('', point=(0, 0), parent=self, style=style))  # Create a new TextBox with style width and empty height.
-        return self.getLastElement() # Which only can be a textBox now.
+    def newTextBox(self, fs, html=None):
+        u"""Create a new *self.TEXTBOX_CLASS* instance, filled with the *fs* FormattedString.
+        Append the element to *self* (also setting self.lastTextBox) and answer the element."""
+        tb = self.TEXTBOX_CLASS('', parent=self, html=html)
+        self.appendElement(tb) # Will set the self.lastTextBox by local self.appendElement(tb)
+        return tb
 
     def newRuler(self, style):
         u"""Add a new Ruler instance, depending on style."""

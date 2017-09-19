@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -61,7 +62,7 @@ RS = getRootStyle(
     showGridColumns = SHOW_GRID_COLUMNS,
     showBaselineGrid = SHOW_BASELINE_GRID,
     showFlowConnections = SHOW_FLOW_CONNECTIONS,
-    showElementInfo = True,
+    showElementInfo = False,
     showElementOrigin = True,
     BOX_COLOR = BOX_COLOR,
     # Text measures
@@ -198,7 +199,7 @@ def makeDocument(rs):
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(rs, pages=5, template=template1) 
+    doc = Document(rs, autoPages=5, template=template1) 
  
     # Cache some values from the root style that we need multiple time to create the tag styles.
     fontSize = rs['fontSize']

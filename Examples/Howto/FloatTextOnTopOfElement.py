@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -7,7 +8,7 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     ColorSquares.py
+#     FloatTextOnTopOfElement.py
 #
 #     This script generates a page with random color squares, indicating where their position is.
 #     This script is using the style parameters "originTop", making the coordinate system run downwards.

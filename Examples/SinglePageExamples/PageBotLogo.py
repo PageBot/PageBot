@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -9,6 +10,7 @@
 #
 #     PageBotLogo.py
 #
+#     TODO: Get this to work.
 #
 import pagebot # Import to know the path of non-Python resources.
 from pagebot.style import getRootStyle

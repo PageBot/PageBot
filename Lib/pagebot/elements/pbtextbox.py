@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -41,17 +42,20 @@ class TextRun(object):
     def __init__(self, ctRun, runIndex):
         self.runIndex = runIndex # Index of the run in the TextLine
         self._ctRun = ctRun
+        self._style = None # Property cash for constructed style from run parameters.
         self.glyphCount = gc = CoreText.CTRunGetGlyphCount(ctRun)
-
+        # Reverse the style from 
         attrs = CoreText.CTRunGetAttributes(ctRun)
         self.nsFont = attrs['NSFont']
         #self.fontDescriptor = f.fontDescriptor()
         self.fill = attrs['NSColor']
         self.nsParagraphStyle = attrs['NSParagraphStyle']
+        self.attrs = attrs # Save, in case the caller want to query run parameters.
 
         self.iStart, self.iEnd = CoreText.CTRunGetStringRange(ctRun)
         self.string = u''    
         # Hack for now to find the string in repr-string if self._ctLine.
+        # TODO: Make a better conversion here, not relying on the format of the repr-string.
         for index, part in enumerate(`ctRun`.split('"')[1].split('\\u')):
             if index == 0:
                 self.string += part
@@ -59,9 +63,11 @@ class TextRun(object):
                 self.string += unichr(int(part[0:4], 16))
                 self.string += part[4:]
 
-        #print '=====', ctRun
         #print gc, len(CoreText.CTRunGetStringIndicesPtr(ctRun)), CoreText.CTRunGetStringIndicesPtr(ctRun), ctRun
-        self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
+        try:
+            self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
+        except TypeError:
+            self.stringIndices = [0]
         #CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
         self.advances = CoreText.CTRunGetAdvances(ctRun, CoreText.CFRange(0, 5), None)
         #self.positions = CoreText.CTRunGetPositionsPtr(ctRun)[0:gc]
@@ -83,6 +89,21 @@ class TextRun(object):
 
     def __getitem__(self, index):
         return self.string[index]
+
+    def _get_style(self):
+        u"""Answer the constructed style dictionary, with names that fit the standard
+        PageBot style."""
+        if self._style is None:
+            self._style = dict(
+                textFill=self.fill,
+                pl=self.headIndent,
+                pr=self.tailIndent,
+                fontSize=self.fontSize,
+                font=self.displayName,
+                leading=self.leading + self.fontSize, # ??
+            )
+        return self._style
+    style = property(_get_style)
 
     # Font stuff
 
@@ -199,10 +220,6 @@ class TextRun(object):
         return self.nsParagraphStyle.lineHeightMultiple()
     lineHeightMultiple = property(_get_lineHeightMultiple)
 
-    def _get_lineSpacing(self):
-        return self.nsParagraphStyle.lineSpacing()
-    lineSpacing = property(_get_lineSpacing)
-
     def _get_maximumLineHeight(self):
         return self.nsParagraphStyle.maximumLineHeight()
     maximumLineHeight = property(_get_maximumLineHeight)
@@ -233,6 +250,9 @@ class TextLine(object):
     def __len__(self):
         return self.glyphCount
 
+    def __getitem__(self, index):
+        return self.runs[index]
+        
     def getIndexForPosition(self, (x, y)):
         return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
     
@@ -292,8 +312,11 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, fs, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
+    def __init__(self, fs, html=None, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
         Element.__init__(self,  **kwargs)
+        u"""Default is the storage of self.fs (DrawBot FormattedString), but optional can be ts (tagged basestring)
+        if output is mainly through build and HTML/CSS. Since both strings cannot be conversted lossless one into the other,
+        it is safer to keep them both if they are available."""
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
@@ -302,6 +325,7 @@ class TextBox(Element):
         if isinstance(fs, basestring):
             fs = newFS(fs, self)
         self.fs = fs # Keep as plain string, in case parent is not set yet.
+        self.html = html or '' # Parallel storage of html content.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
@@ -325,11 +349,33 @@ class TextBox(Element):
     h = property(_get_h, _set_h)
 
     def __getitem__(self, lineIndex):
+        print '#@@@@#@#@@', self
         return self.textLines[lineIndex]
 
     def __len__(self):
         return len(self.textLines)
-            
+  
+    def __repr__(self):
+        if self.title:
+            name = ':'+self.title
+        elif self.name:
+            name = ':'+self.name
+        else: # No naming, show unique self.eId:
+            name = ':'+self.eId
+
+        if self.fs:
+            fs = ' FS(%d)' % len(self.fs)
+        else:
+            fs = ''
+
+        if self.elements:
+            elements = ' E(%d)' % len(self.elements)
+        else:
+            elements = ''
+        return '%s%s (%d, %d)%s%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), fs, elements)
+
+    # Formatted string
+
     def _get_fs(self):
         return self._fs
     def _set_fs(self, fs):
@@ -341,18 +387,34 @@ class TextBox(Element):
         u"""Set the formatted string to s, using self.style."""
         self.fs = newFS(s, self)
 
+    def _get_text(self):
+        u"""Answer the plain text of the current self.fs"""
+        return u'%s' % self.fs
+    text = property(_get_text)
+    
     def appendString(self, fs):
         u"""Append s to the running formatted string of the self. Note that the string
-        is already assumed to be styled or can be added as plain string."""
+        is already assumed to be styled or can be added as plain string.
+        Don't calculate the overflow here, as this is slow/expensive operation.
+        Also we don't want to calcualte the textLines/runs for every string appended,
+        as we don't know how much more the caller will add. self._textLines is set to None
+        to force recalculation as soon as self.textLines is called again."""
         assert fs is not None
+        self._textLines = None # Reset to force call to self.initializeTextLines()
         if self.fs is None:
             self.fs = fs
         else:
             self.fs += fs
-        return self.getOverflow(self.w, self.h)
+        return self.fs # Answer the complete FormattedString as convenience for the caller.
+
+    def appendHtml(self, html):
+        u"""Add parellel utf-8 html string to the self content."""
+        self.html += html or ''
 
     def appendMarker(self, markerId, arg=None):
-        self.appendString(getMarker(markerId, arg=arg))
+        marker = getMarker(markerId, arg=arg)
+        self.appendString(marker)
+        self.appendHtml('<!-- %s -->' % marker)
 
     def _get_textLines(self):
         if self._textLines is None:
@@ -403,13 +465,37 @@ class TextBox(Element):
         # Otherwise test if there is overflow of text in the given size.
         return textOverflow(self.fs, (0, 0, w or self.w-self.pr-self.pl, h or self.h-self.pt-self.pb), LEFT)
 
-    def XXXgetBaselinePositions(self, y=0, w=None, h=None):
+    def NOTNOW_getBaselinePositions(self, y=0, w=None, h=None):
         u"""Answer the list vertical baseline positions, relative to y (default is 0)
         for the given width and height. If omitted use (self.w, self.h)"""
         baselines = []
         for _, baselineY in textBoxBaseLines(self.fs, (0, y, w or self.w, h or self.h)):
             baselines.append(baselineY)
         return baselines
+
+    def _findStyle(self, run):
+        u"""Answer the name and style that desctibes this run best. If there is a doc
+        style, then answer that one with its name. Otherwise answer a new unique style name
+        and the style dict with its parameters."""
+        print run.attrs
+        print '#++@+', run.style
+        return 'ZZZ', run.style
+
+    def getStyledLines(self):
+        u"""Answer the list with (styleName, style, textRun) tuples, reversed engeneered
+        from the FormattedString self.fs. This list can be used to query the style parameters
+        used in the textBox, or to create CSS styles from its content."""
+        styledLines = []
+        prevStyle = None
+        for line in self.textLines:
+            for run in line.runs:
+                styleName, style = self._findStyle(run)
+                if prevStyle is None or prevStyle != style:
+                    styledLines.append([styleName, style, run.string])
+                else: # In case styles of runs are identical (e.g. on line wraps), just add.
+                    styledLines[-1][-1] += run.string
+                prevStyle = style
+        return styledLines
 
     #   F L O W
 
@@ -445,6 +531,23 @@ class TextBox(Element):
                     result = len(score.fails) == 0 # Test if total flow placement succeeded.
         return result
 
+    #   B U I L D
+
+    def build(self, view, b):
+        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
+        If there are any child elements, then also included their code, using the
+        level recursive indent."""
+        if self.info.cssPath is not None:
+            b.includeCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
+        if self.info.htmlPath is not None:
+            b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+        else:
+            b.div(id=self.eId, class_=self.class_)
+            b.addHtml(self.html)
+            for e in self.elements:
+                e.build(view, b)
+            b._div() 
+
     #   D R A W 
 
     def draw(self, origin, view):
@@ -478,7 +581,8 @@ class TextBox(Element):
             save()
             setShadow(textShadow)
 
-        textBox(self.fs, (px+self.pl+xOffset, py+self.pb-yOffset, self.w-self.pl-self.pr, self.h-self.pb-self.pt))
+        textBox(self.fs, (px + self.pl + xOffset, py + self.pb-yOffset, 
+            self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
         if textShadow:
             restore()
@@ -596,9 +700,8 @@ class TextBox(Element):
         u"""Answer the point locations where this pattern occures in the Formatted String."""
         foundPatterns = [] # List of FoundPattern instances. 
         for lineIndex, textLine in enumerate(self.textLines):
-            y = self.baseLines[lineIndex]
             for foundPattern in textLine.findPattern(pattern):
-                foundPattern.y = y
+                foundPattern.y = textLine.y
                 foundPattern.z = self.z
                 foundPatterns.append(foundPattern)
         return foundPatterns

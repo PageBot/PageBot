@@ -3,19 +3,24 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
 #     document.py
 #
+import copy
 from drawBot import newPage, installedFonts, installFont
 
+from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
-from pagebot.elements.pbpage import Page
-from pagebot.elements.views import View, DefaultView, SingleView, ThumbView
+from pagebot.elements.pbpage import Page, Template
+from pagebot.elements.views import View, DefaultView, SingleView, ThumbView, MampView, GitView
 from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
+from pagebot.toolbox.transformer import obj2StyleId
+from pagebot.builders import BuildInfo # Container with Builder flags and data/parametets
 
 class Document(object):
     u"""A Document is just another kind of container."""
@@ -23,41 +28,60 @@ class Document(object):
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     VIEW_CLASS = View
 
-    def __init__(self, rootStyle=None, styles=None, views=None, name=None, title=None, autoPages=1, pageTemplate=None, 
-            originTop=True, w=None, h=None, **kwargs):
+    def __init__(self, rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
+            autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
+            padding=None, info=None, 
+            exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
-        if rootStyle is None:
-            rootStyle = getRootStyle()
-        self.rootStyle = rootStyle
-        self.initializeStyles(styles) # Merge CSS for element tree
+        self.rootStyle = rs = self.makeRootStyle(rootStyle, **kwargs)
+        self.class_ = class_ or self.__class__.__name__ # Optional class name, e.g. to group elements together in HTML/CSS export.
+        self.initializeStyles(styles) # Create some default styles, to make sure they are there.
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
-        self.w = w
-        self.h = h
+        self.w = w or 1000 # Always needs a value. Take 1000 if None defined.
+        self.h = h or 1000
+        if padding is not None:
+            self.padding = padding
 
-        self.name = name or 'Untitled'
+        self.name = name or title or 'Untitled'
         self.title = title or self.name
-
-        # Used as default document master template if undefined in pages.
-        self.pageTemplate = pageTemplate 
 
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
 
-        # Initialize some basic views.
-        self.initializeViews(views)
+        self.initializeTemplates(templates, template) # Template is name or instance default template.
 
-        # Document (w, h) size is default from page, but will modified by the type of display mode. 
-        if autoPages:
-            self.makePages(pageCnt=autoPages, w=w, h=h, **kwargs)
         # Storage lib for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
         self._lib = {}
+
+        # Initialize some basic views.
+        self.initializeViews(views, **kwargs)
+
+        # Instance to hold details flags and data to direct the HTML/CSS builder of this document.
+        self.info = info or BuildInfo()
+
+        # Document (w, h) size is default from page, but will modified by the type of display mode. 
+        if autoPages:
+            self.makePages(pageCnt=autoPages, pn=startPage, w=self.w, h=self.h, **kwargs)
+
+        # Call generic initialize method, allowing inheriting publication classes to initialize their stuff.
+        # This can be the creation of templates, pages, adding/altering styles and view settings.
+        # Default is to do nothing.
+        self.initialize(**kwargs)
+
+    def initialize(self, **kwargs):
+        u"""Default implementation of publication initialized. Can be redefined by inheriting classed.
+        All **kwargs are available to allow access for inheriting Publication documents."""
+        pass
 
     def _get_lib(self):
         u"""Answer the global storage dictionary, used by TypeSetter and others to keep track of footnotes,
         table of content, etc. Some common entries are predefined. """
         return self._lib 
     lib = property(_get_lib)
+
+    def __repr__(self):
+        return '[Document-%s "%s"]' % (self.__class__.__name__, self.name)
 
     def _get_doc(self):
         u"""End of the chain of element properties, looking upward in the ancestors tree."""
@@ -85,23 +109,82 @@ class Document(object):
     def _get_parent(self):
         return None
     parent = property(_get_parent)
- 
+
+    def getInfo(self):
+        u"""Answer a string with most representing info about the document."""
+        info = []
+        info.append('Document-%s "%s"' % (self.__class__.__name__, self.name))
+        info.append('\tPages: %d' % len(self.pages))
+        info.append('\tTemplates: %s' % ', '.join(sorted(self.templates.keys())))
+        info.append('\tStyles: %s' % ', '.join(sorted(self.styles.keys())))
+        info.append('\tLib: %s' % ', '.join(self._lib.keys()))
+        return '\n'.join(info)
+
+    #   T E M P L A T E
+
+    def initializeTemplates(self, templates, defaultTemplate):
+        u"""Initialize the document templates.""" 
+        self.templates = {} # Store defined dictionary of templates or empty dict.
+        if templates is not None:
+            for name, template in templates.items():
+                self.addTemplate(name, template)
+        # Used as default document master template if undefined in pages.
+        if isinstance(defaultTemplate, basestring): # Make reference to existing template by name
+            defaultTemplate = self.templates.get(defaultTemplate) # If it exists, otherwise it is None
+        if defaultTemplate is None: # Only if we have one, overwrite existing default template if it was there.
+            # Make sure there is at least a default template.
+            defaultTemplate = Template(w=self.w, h=self.h, name='default', padding=self.css('padding'))
+        self.defaultTemplate = defaultTemplate
+
+    def getTemplate(self, name=None):
+        u"""Answer the named template. If it does not exist, then answer the default template. Answer None of if there is no default."""
+        return self.templates.get(name, self.defaultTemplate)
+
+    def addTemplate(self, name, template):
+        u"""Add the template to the self.templates of dictionaries. There is no check, so caller can overwrite existing templates.
+        Answer the template as convenience of the caller."""
+        template.parent = self
+        self.templates[name] = template
+        return template
+
+    def _get_defaultTemplate(self):
+        return self.templates.get('default')
+    def _set_defaultTemplate(self, template):
+        self.addTemplate('default', template)
+    defaultTemplate = property(_get_defaultTemplate, _set_defaultTemplate)
+
     #   S T Y L E
 
     def initializeStyles(self, styles):
         u"""Make sure that the default styles always exist."""
         if styles is None:
-            styles = {}
+            styles = copy.copy(styleLib['default'])
         self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
         # Make sure that the default styles for document and page are always there.
         name = 'root'
         self.addStyle(name, self.rootStyle)
         name = 'document'
-        if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
+        if not name in self.styles: # Default dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
         name = 'page'
-        if not name in self.styles: # Empty dict styles as placeholder, if nothing is defined.
+        if not name in self.styles: # Default dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
+
+    def makeRootStyle(self, rootStyle, **kwargs):
+        u"""Create a rootStyle if not defined, then set the arguments from **kwargs, if their entry name already exists.
+        This is similar (but not identical) to the makeStyle in Elements. There any value entry is copied, even if that
+        is not defined in the root style."""
+        if rootStyle is None:
+            rootStyle = getRootStyle()
+        for name, v in kwargs.items():
+            if name in rootStyle: # Only overwrite existing values.
+                rootStyle[name] = v 
+        return rootStyle
+
+    def applyStyle(self, style):
+        u"""Apply the key-value of the style onto the self.rootStyle."""
+        for key, value in style.items():
+            self.rootStyle[key] = value
 
     def getMaxPageSizes(self, pageSelection=None):
         u"""Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
@@ -119,7 +202,9 @@ class Document(object):
 
     def css(self, name, default=None, styleId=None):
         u"""If optional sId is None or style cannot found, then use the root style. 
-        If the style is found from the (cascading) sId, then use that to return the requested attribute."""
+        If the style is found from the (cascading) sId, then use that to return the requested attribute.
+        Note that self.css( ) is a generic query for a named CSS value, upwards the parent tree.
+        This is different from the CSS functions as self.buildCss( ), that actually generate CSS code."""
         style = self.findStyle(styleId)
         if style is None:
             style = self.rootStyle
@@ -146,19 +231,34 @@ class Document(object):
 
     def getStyle(self, name):
         u"""Answer the names style. If that does not exist, answer the default root style."""
-        self.styles.get(name, self.getRootStyle())
+        return self.styles.get(name)
     
     def getRootStyle(self):
-        u"""Answer the default root style, used by the composer as default for all other stacked styles."""
+        u"""Answer the default root style, used by the Typesetter as default for all other stacked styles."""
         return self.rootStyle
 
+    def add2Style(self, name, addStyle):
+        u"""Add (overwrite) the values in the existing style *name* with the values in *addStyle*.
+        Raise an error if the *name* style does not exist. Answer the named target style for convenience of the caller."""
+        assert name in self.styles
+        style = self.styles[name]
+        for key, value in addStyle.items():
+            style[key] = value
+        return style # Answer the style for convenience of the caller.
+
     def addStyle(self, name, style):
-        u"""Add the style to the self.styles dictionary."""
-        assert not name in self.styles # Make sure that styles don't get overwritten. Remove them first.
+        u"""Add the style to the self.styles dictionary.  Make sure that styles don't get overwritten. Remove them first
+        with *self.removeStyle* or use *self.replaceStyle(name, style)* instead."""
+        assert not name in self.styles
         self.styles[name] = style
         # Force the name of the style to synchronize with the requested key.
         style['name'] = name
-      
+        return style # Answer the style for convenience of the caller.
+        
+    def removeStyle(self, name):
+        u"""Remove the style *name* if it exists. Raise an error if is does not exist."""
+        del self.styles[name]
+
     def replaceStyle(self, name, style):
         u"""Set the style by name. Overwrite the style with that name if it already exists."""
         self.styles[name] = style
@@ -205,6 +305,63 @@ class Document(object):
         self.rootStyle['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
 
+    def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
+        return self.pt, self.pr, self.pb, self.pl
+    def _set_padding(self, padding):
+        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
+        if isinstance(padding, (long, int, float)):
+            padding = [padding]
+        if len(padding) == 1: # All same value
+            padding = (padding[0], padding[0], padding[0], padding[0], padding[0], padding[0])
+        elif len(padding) == 2: # pt == pb, pl == pr, pzf == pzb
+            padding = (padding[0], padding[1], padding[0], padding[1], padding[0], padding[1])
+        elif len(padding) == 3: # pt == pl == pzf, pb == pr == pzb
+            padding = (padding[0], padding[1], padding[2], padding[0], padding[1], padding[2])
+        elif len(padding) == 4: # pt, pr, pb, pl, 0, 0
+            padding = (padding[0], padding[1], padding[2], padding[3], 0, 0)
+        elif len(padding) == 6:
+            pass
+        else:
+            raise ValueError
+        self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb = padding
+    padding = property(_get_padding, _set_padding)
+
+    def _get_pt(self): # Padding top
+        return self.css('pt', 0)
+    def _set_pt(self, pt):
+        self.rootStyle['pt'] = pt  
+    pt = property(_get_pt, _set_pt)
+
+    def _get_pb(self): # Padding bottom
+        return self.css('pb', 0)
+    def _set_pb(self, pb):
+        self.rootStyle['pb'] = pb  
+    pb = property(_get_pb, _set_pb)
+    
+    def _get_pl(self): # Padding left
+        return self.css('pl', 0)
+    def _set_pl(self, pl):
+        self.rootStyle['pl'] = pl 
+    pl = property(_get_pl, _set_pl)
+    
+    def _get_pr(self): # Margin right
+        return self.css('pr', 0)
+    def _set_pr(self, pr):
+        self.rootStyle['pr'] = pr  
+    pr = property(_get_pr, _set_pr)
+
+    def _get_pzf(self): # Padding z-axis front
+        return self.css('pzf', 0)
+    def _set_pzf(self, pzf):
+        self.rootStyle['pzf'] = pzf  
+    pzf = property(_get_pzf, _set_pzf)
+    
+    def _get_pzb(self): # Padding z-axis back
+        return self.css('pzb', 0)
+    def _set_pzb(self, pzb):
+        self.rootStyle['pzb'] = pzb  
+    pzb = property(_get_pzb, _set_pzb)
+
     #   F O N T S
 
     def getInstalledFonts(self):
@@ -222,19 +379,24 @@ class Document(object):
 
     def appendElement(self, e): 
         u"""Add page to the document. Called when page.parent is set or view.parent is set. 
-        If Page, add after last page. If View, add to self.views[view.name]"""
-        if isinstance(e, self.PAGE_CLASS):
-            e.parent = self
-            if self.pages.keys():
-                pn = max(self.pages.keys())+1
-            else:
-                pn = 0
-            self[pn] = e
-        elif isinstance(e, self.VIEW_CLASS):
-            e.parent = self
-            self.views[e.name] = e
+        If Page, add after last page. If View, add as self.views[view.viewId]"""
+        if e.isPage:
+            self.appendPage(e)
+        elif e.isView:
+            e.setParent(self) # Set parent as weakref, without calling self.appendElement again.
+            self.views[e.viewId] = e
         else:
             raise ValueError('Cannot append elements other that Page or View to Document; "%s"' % e)
+
+    def appendPage(self, page):
+        u"""Append a page to the document. Assert that it is a page element."""
+        assert page.isPage    
+        page.setParent(self) # Set parent as weakref, without calling self.appendElement again.
+        if self.pages.keys():
+            pn = max(self.pages.keys())+1
+        else:
+            pn = 0
+        self[pn] = page
 
     def getPage(self, pnOrName, index=0):
         u"""Answer the page at (pn, index). Otherwise search for a page with this name. Raise index errors if it does not exist."""
@@ -265,27 +427,51 @@ class Document(object):
                     pages.append(page)
         return pages
 
+    def isLeft(self):
+        u"""This is reached for e.isleft() queries, when elements are not placed on a page.
+        The Document cannot know the answer then. Always answer False."""
+        return False
+    isRight = isLeft
+    
+    def isLeftPage(self, page):
+        u"""Answer the boolean flag if the page is currently defined as a left page. Left page is even page number"""
+        for pn, pnPages in self.pages.items():
+            if page in pnPages:
+                return bool(pn & 0x1)
+        return False # Page not found
+
+    def isRightPage(self, page):
+        u"""Answer the boolean flag if the page is currently defined as a left page. Right page is odd page number."""
+        for pn, pnPages in self.pages.items():
+            if page in pnPages:
+                return not pn & 0x1
+        return False # Page not found
+
     def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
         u"""Create a new page with size (self.w, self.h) unless defined otherwise. Add the pages in the row of pn, if defined.
-        Otherwise create a new row of pages at pn. If pn is undefined, add a new page row at the end."""
-        page = self.PAGE_CLASS(parent=self, template=template, w=w or self.w, h=h or self.h, name=name, **kwargs)
-        # TODO: Code below not necessary?
-        #if pn is None:
-        #    pn = max(self.pages.keys())+1
-        #if not pn in self.pages:
-        #    self.pages[pn] = []
-        #self.pages[pn].append(page)
-
-    def makePages(self, pageCnt, pn=None, template=None, w=None, h=None, name=None, **kwargs):
-        u"""
-        If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position."""
+        Otherwise create a new row of pages at pn. If pn is undefined, add a new page row at the end.
+        If template is undefined, then use self.pageTemplat to initialize the new page."""
+        if isinstance(template, basestring):
+            template = self.templates.get(template)
         if template is None:
-            template = self.pageTemplate
-        for n in range(pageCnt):
-            self.newPage(pn=pn, template=template, name=name, w=w, h=h, **kwargs) # Parent is forced to self.
+            template = self.defaultTemplate
+        
+        if not name and template is not None:
+            name = template.name
+
+        page = self.PAGE_CLASS(parent=self, w=None, h=None, name=name, **kwargs)
+        page.applyTemplate(template)
+        return page # Answer the new page 
+
+    def makePages(self, pageCnt, pn=0, template=None, name=None, w=None, h=None, **kwargs):
+        u"""
+        If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position.
+        If template is undefined, then self.newPage will use self.defaultTemplate to initialize the new pages."""
+        for n in range(pageCnt): # First page is n + pn
+            self.newPage(pn=n+pn, template=template, name=name, w=w, h=h, **kwargs) # Parent is forced to self.
 
     def getElementPage():
-        u"""Search ancestors for the page element. This can only happen here if elements don't have a
+        u"""Search ancestors for the page element. This call can only happen here if elements don't have a
         Page ancestor. Return None to indicate that there is no Page instance found amongst the ancesters."""
         return None
 
@@ -305,7 +491,9 @@ class Document(object):
 
     def getPageNumber(self, page):
         u"""Answer a string with the page number pn, if the page can be found. If the page has index > 0:
-        then answer page format "pn-index". pn and index are incremented by 1."""
+        then answer page format "pn-index". pn and index are incremented by 1.
+        TODO: Make a reversed table if this squential search shows to be slow in the future with large docs.
+        """
         for pn, pnPages in sorted(self.pages.items()):
             for index, pg in enumerate(pnPages):
                 if pg is page:
@@ -326,11 +514,13 @@ class Document(object):
         pn = sorted(self.pages.keys())[-1]
         return self.pages[pn][-1]
 
-    def getSortedPages(self):
+    def getSortedPages(self, pageSelection=None):
         u"""Answer the dynamic list of pages, sorted by y, x and index."""
-        pages = []
-        for _, pnPages in sorted(self.pages.items()):
-            pages += pnPages
+        pages = [] # List of (pn, pnPages) tuples of pages with the same page number.
+        for pn, pnPages in sorted(self.pages.items()):
+            if pageSelection is not None and not pn in pageSelection:
+                continue
+            pages.append((pn, pnPages))
         return pages
 
     def getMaxPageSizes(self, pageSelection=None):
@@ -358,34 +548,56 @@ class Document(object):
 
     #   V I E W S
 
-    def initializeViews(self, views):
-        self.views = {} # Key is name of View instance. 
+    def initializeViews(self, views, **kwargs):
+        u"""Initialize the views. All **kwargs arguments are available, to give access for inheriting
+        Publication documents that redefine this method."""
+        self.views = {} # Key is name or eId of View instance. 
         if views is not None:
             for view in views:
                 assert not view.name in self.views
                 self.appendElement(view)
         # Define some default views if not already  there.
-        for viewClass in (DefaultView, SingleView, ThumbView):
-            if not viewClass.viewId in self.views:
+        for viewClass in (DefaultView, ThumbView, MampView, GitView):
+            if not viewClass.viewId in self.views: # Only if not already defined, to make sure it is there.
                 # Create views, default with the same size as document.
                 self.appendElement(viewClass(parent=self, w=self.w, h=self.h))
 
     def getView(self, viewId=None):
         u"""Answer the viewer instance with viewId. Answer DefaultView() if it does not exist."""
         if not viewId in self.views:
-            viewId = DefaultView.viewId
+            viewId = DefaultView.viewId # We know for sure that this one is in self.views
         return self.views.get(viewId)
 
-    #   D R A W I N G
+    #   D R A W I N G  &  B U I L D I N G
 
-    def drawPages(self, viewId=None, pageSelection=None):
+    def drawPages(self, pageSelection=None, view=None):
         u"""Draw the selected pages, using DrawBot as canvas. 
         PageSelection is an optional list of y-pageNumbers to draw."""
-        view = self.getView(viewId) # view.parent is self
+        if view is None or isinstance(view, basestring):
+            view = self.getView(view) # view.parent is self
         view.drawPages(pageSelection)
 
-    def export(self, fileName=None, pageSelection=None, viewId=None, multiPage=True):
-        u"""Let the view do the work."""
-        view = self.getView(viewId) # view.parent is self
+    def export(self, fileName=None, pageSelection=None, view=None, multiPage=True):
+        u"""Let the view do alle the export work."""
+        if view is None or isinstance(view, basestring):
+            view = self.getView(view) # view.parent is self
         view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)
+
+    def buildCss(self, view, b):
+        u"""Build the CSS for this document. Default behavior is to import the content of the file
+        if there is a path reference, otherwise build the CSS from the available values and parameters
+        in self.style and self.css()."""
+        if self.info.cssPath is not None:
+            b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
+        else: 
+            b.headerCss(self.name or self.title)
+            b.resetCss() # Add CSS to reset specific default behavior of browsers.
+            b.sectionCss('Document root style')
+            b.css('body', self.rootStyle) # <body> selector and style output
+
+    def build(self, name=None, pageSelection=None, view=None, multiPage=True):
+        u"""Build the document as website, using the MampView for export."""
+        if view is None or isinstance(view, basestring):
+            view = self.getView(view or MampView.viewId)
+        view.build(name=name, pageSelection=pageSelection, multiPage=multiPage)
 

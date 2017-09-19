@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -43,23 +44,26 @@ class PointContext(object):
     """
     PARALLEL_TOLERANCE = 2 # Difference tolerance angle in degrees to take point contexts as parallel
     
-    def __init__(self, points, index, contourIndex, clockwise, glyphName=None):
+    def __init__(self, points, index, contourIndex, clockwise=None, glyphName=None):
         u"""Points list is supposed to contain Point instances, not point lists.
         We need the extra storage, e.g. for point type that Point holds."""
         self.p_3, self.p_2, self.p_1, self.p, self.p1, self.p2, self.p3 = points
         self.contourIndex = contourIndex
         self.index = index
-        self.clockwise = clockwise
+        #self.clockwise = clockwise # TODO: Add clockwise attribute from caller.
         self.glyphName = glyphName
         self._direction = None  # Cache direction once calculated.
         self._angle = None  # Cache axis once calculated.
-        
+    
+    def __getitem__(self, index):
+        return (self.p_3, self.p_2, self.p_1, self.p, self.p1, self.p2, self.p3)[index]
+
     def _get_x(self):
-        return self.p[0]
+        return self.p.x
     x = property(_get_x)
 
     def _get_y(self):
-        return self.p[1]
+        return self.p.y
     y = property(_get_y)
     
     def _get_rx(self):
@@ -103,10 +107,11 @@ class PointContext(object):
             s += ' roundbar'
         if self.isTerminal():
             s += ' terminal'
-        if self.clockwise:
-            s += ' c%d CW' % self.contourIndex
-        else:
-            s += ' c%s CCW' % self.contourIndex
+        # TODO: Add clocksize info at initialization
+        #if self.clockwise:
+        #    s += ' c%d CW' % self.contourIndex
+        #else:
+        #    s += ' c%s CCW' % self.contourIndex
         if self.glyphName is not None:
             s += ' (%s)' % self.glyphName
         return s
@@ -366,7 +371,7 @@ class PointContext(object):
         If the points are omitted, then use respectively self.p and self.p1."""
         if p1 is None:
             p1 = self.p1
-        return int(round((self.p[0] + p1[0])/2)), int(round((self.p[1] + p1[1])/2))
+        return int(round((self.p.x + p1.x)/2)), int(round((self.p.y + p1.y)/2))
      
     def distanceTo(self, p):
         u"""Answer the distance of point p to the line of self."""

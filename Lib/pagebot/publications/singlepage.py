@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -17,7 +18,7 @@ from pagebot.elements import *
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
         
-class RandomPage(Publication):
+class SinglePage(Publication):
     
     def __init__(self, title=None, showGrid=False, showGridColumns=False):
         Publication.__init__(self)
@@ -48,7 +49,7 @@ class RandomPage(Publication):
         template.cLine(0, 1, 6, 1, style=rs, stroke=0, strokeWidth=0.25)       
         template.cLine(0, 7, 6, 7, style=rs, stroke=0, strokeWidth=0.25)       
         # Create new document with (w,h) and start with a single page.
-        self.documents['OnePage'] = doc = Document(rs, title=self.title, pages=1, template=template) 
+        self.documents['OnePage'] = doc = Document(rs, title=self.title, autoPages=1, template=template) 
         # Make number of pages with default document size.
         # When building, make all pages default with template.
         # Call with separate method, so inheriting specimen publications classes can redefine.\   

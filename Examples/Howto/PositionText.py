@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -7,7 +8,9 @@
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     MakeABookCover.py
+#     PositionText.py
+#
+#     Hard position a text box on an (x, y) position.
 #
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import newFS
@@ -20,40 +23,43 @@ from pagebot.elements import *
     
 W, H = 500, 500 
 
-OriginTop = False
-
 def makeDocument():
-    # Create new document with (w,h) and fixed amount of pages.
-    # Make number of pages with default document size.
-    # Initially make all pages default with template
-    rootStyle = getRootStyle()
+    u"""Create new document with (w,h) and fixed amount of pages.
+    Make number of pages with default document size.
+    Initially make all pages default with template."""
     
-    doc = Document(rootStyle, originTop=OriginTop, w=W, h=H, pages=1) 
+    doc = Document(originTop=False, w=W, h=H, autoPages=1) 
 
     page = doc[0] # Get the first/single page of the document.
     page.size = W, H
     
     view = doc.getView()
     view.w = view.h = W, H
-    view.padding = 300
+    view.padding = 40
     view.showPageFrame = True
     view.showPageCropMarks = True
-    view.showElementOrigin = True
+    view.showElementOrigin = True # Show the alignment position of elements as plus-mark.
     
-    title = 'Book Cover'
+    title = 'Book Cover' # Using plain string, style values from from text box element.
     fontSize = 40
-    t1 = newTextBox(title, x=100, y=100, parent=page, w=400, h=200, 
-    name='Other element', font='Verdana', 
-        fontSize=fontSize, leading=0, rLeading=1, xAlign=LEFT, yAlign=BOTTOM,
-        fill=(0, 1, 0), stroke=(0, 1, 0), textFill=(0, 0, 1))
-
+    e = newTextBox(title, # Text inside the text box
+        name='Other element', # Optinal (unique) name of element. Otherwise e.eId is used.
+        x=100, y=100, # Position from left-bottom of page side (not page padding)
+        parent=page,
+        w=400, h=200, # Size of the element. Since x = 100 and W = 500, this "manually" fits.
+        padding=5, # Padding inside text box for all 4 sides equal.
+        fill=(0.4, 0.6, 1), stroke=(1, 0, 0), strokeWidth=13, # Rectangle fill, stroke colors 
+        # Below style values that apply to the content
+        font='Verdana', 
+        fontSize=fontSize, 
+        leading=0, rLeading=1, # Absolute and relative leading.
+        xAlign=LEFT, yAlign=BOTTOM, # Set origin of element to left-bottom
+        textFill=(0, 0, 1) # Color of the text.
+    )
+    # Return the generated document to the caller.
     return doc
 
 if __name__ == '__main__': 
-    Variable([
-        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-        dict(name='OriginTop', ui='CheckBox', args=dict(value=False)),
-    ], globals())
            
     d = makeDocument()
     d.drawPages()

@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -288,7 +289,7 @@ if 0:
         # Create new document with (w,h) and fixed amount of pages.
         # Make number of pages with default document size.
         # Initially make all pages default with template
-        doc = Document(rs, pages=1) 
+        doc = Document(rs, autoPages=1) 
          
         # Change template of page 1
         page = doc[1]
@@ -307,7 +308,7 @@ if 0:
             
     d = makeDocument(RS)
     if 0: # Not saving image
-        d.drawPages(None)
+        d.drawPages()
     else:
         d.export(EXPORT_PATH) 
 

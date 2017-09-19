@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -22,8 +23,8 @@ class SolveBlock(Condition):
 	def solve(self, e, score):
 		for child in e.elements:
 			child.solve(score)
-
-#	F I T T I N G 
+			
+#	F I T T I N G  P A G E  P A D D I N G 
 
 #   By fitting conditions, elements grow to match the size of parents.
 
@@ -132,7 +133,7 @@ class Fit2RightSide(Condition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.fit2RightSide(), e, score)
 
-class Fit2HeightSide(Condition):
+class Fit2HeightSides(Condition):
 	def test(self, e):
 		return e.isTopOnTopSide(self.tolerance) and e.isBottomOnBottomSide(self.tolerance)
 

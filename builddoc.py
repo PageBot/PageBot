@@ -1,9 +1,9 @@
-#!/usr/bin/python
 # -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -29,14 +29,15 @@ import pagebot
 from pagebot.publications.publication import Publication
 
 SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD',
-        'scripts-in-progress', 'examples-in-progress', 'canvas3d',
+        'scripts-in-progress', 'examples-in-progress',
         'pagebotdoc.py')
+ALLOWED_BUILTINS = ('init', 'repr', 'len', 'getitem', 'setitem')
+SKIP_DOCGEN = ['TMP_Xierpa3_builders', 'builders', 'contributions']
 
 CONFIG = 'mkdocs.yml'
-DOC = 'Doc'
+DOCS = 'Docs'
 INDENT = '    '
 NEWLINE = '\n'
-
 
 class Node(object):
     """The *Node* class is used to build the PageBot file tree, for cleaning
@@ -89,7 +90,7 @@ class PageBotDoc(Publication):
         Publication.__init__(self)
         self.pagebotRoot = pagebot.getRootPath()
         self.pagebotBase = 'Lib/pagebot'
-        self.pagebotDocs = self.pagebotRoot.replace('Lib', DOC)
+        self.pagebotDocs = self.pagebotRoot.replace('Lib', DOCS)
         self.packages = {}
         self.classes = {}
         self.db = dir(drawBot) # TODO: global.
@@ -162,6 +163,15 @@ class PageBotDoc(Publication):
         self.packages['index'] = m
 
         for loader, module_name, is_pkg in pkgutil.walk_packages(p):
+            skip = False
+
+            for substring in SKIP_DOCGEN:
+                if substring in module_name:
+                    skip = True
+
+            if skip is True:
+                continue
+
             try:
                 mod = loader.find_module(module_name).load_module(module_name)
 
@@ -179,11 +189,12 @@ class PageBotDoc(Publication):
         self.copyFiles()
         self.scanPackage(m)
         f = open(CONFIG, 'w')
+        f.write('# THIS IS A GENERATED FILE, DO NOT EDIT.\n')
         f.write('site_name: PageBot\n')
         f.write('repo_url: https://github.com/typenetwork/PageBot/\n')
         f.write('repo_name: PageBot\n')
         f.write('theme: readthedocs\n')
-        f.write('docs_dir: %s\n' % DOC)
+        f.write('docs_dir: %s\n' % DOCS)
         f.write('pages:\n')
         f.write(" - 'Home': 'index.md'\n")
         f.write(" - 'How To': 'howto.md'\n")
@@ -195,9 +206,9 @@ class PageBotDoc(Publication):
 
     def copyFiles(self):
         u"""Copies hand edited files."""
-        copyfile('README.md', '%s/index.md' % DOC)
-        copyfile('LICENSE.md', '%s/license.md' % DOC)
-        copyfile('Examples/Howto/TOC.md', '%s/howto.md' % DOC)
+        copyfile('README.md', '%s/index.md' % DOCS)
+        copyfile('LICENSE.md', '%s/license.md' % DOCS)
+        copyfile('Examples/Howto/TOC.md', '%s/howto.md' % DOCS)
 
     def buildDocsMenu(self, m, yml):
         u"""Extracts menu from module structure."""
@@ -210,6 +221,15 @@ class PageBotDoc(Publication):
             parent = folders
             folder = root.replace(base, '')#, dirs, files
             parts = folder.split('/')
+            skip = False
+
+            for skipped in SKIP_DOCGEN:
+                if skipped in parts:
+                    skip = True
+
+            if skip is True:
+                print 'skipping %s' % folder
+                continue
 
             for part in parts:
                 if part not in parent:
@@ -268,16 +288,18 @@ class PageBotDoc(Publication):
                 else:
                     # Creates new folders if they do not exists yet;
                     # recurse.
-                    folder = DOC + '/' + k + '/' + x
+                    parent = DOCS + '/' + k
+                    folder = parent + '/' + x
 
-                    if not os.path.exists(folder):
-                        os.mkdir(folder)
+                    for f in (parent, folder):
+                        if not os.path.exists(f):
+                            os.mkdir(f)
 
                     self.writeDocsPages({k + '/' + x: folders[k][x]})
 
     def writeDocsPage(self, path, m):
         u"""Writes a page for a module."""
-        f = open(DOC + '/%s.md' % path, 'w')
+        f = open(DOCS + '/%s.md' % path, 'w')
         f.write('# %s\n\n' % m.__name__)
 
         self.writeIndexMenu(f, path, m)
@@ -334,7 +356,10 @@ class PageBotDoc(Publication):
 
     def inIgnores(self, key):
         if key.startswith('__'):
-            return False
+            if key.replace('__', '') in ALLOWED_BUILTINS:
+                return False
+            else:
+                return True
         elif key.startswith('NS'):
             return True
         elif key in sys.modules.keys():
@@ -345,8 +370,6 @@ class PageBotDoc(Publication):
         return False
 
     def writeDocString(self, f, key, value, level=0):
-        #print key.startswith('__'), key in sys.modules.keys()
-        #if key in self.db:
         if level > 1:
             return
 
@@ -355,6 +378,53 @@ class PageBotDoc(Publication):
 
         t = self.getTypeString(value)
         t1 = key.replace('_', '\_')
+        argString = None
+
+        if t == 'def':
+            extra = False
+            args, varargs, kwargs, defaults = inspect.getargspec(value)
+            argString = '('
+
+            if varargs is not None or kwargs is not None:
+                extra = True
+
+            if defaults is not None:
+                diff = len(args) - len(defaults)
+
+                for i in range(0, diff):
+                    if i == len(args) - 1 and not extra:
+                        argString += '%s)' % args[i]
+                    else:
+                        argString += '%s, ' % args[i]
+
+                j = 0
+
+                for i in range(diff, len(args)):
+                    if i == len(args) - 1 and not extra:
+                        argString += '%s=%s)' % (args[i], defaults[j])
+                    else:
+                        argString += '%s=%s, ' % (args[i], defaults[j])
+                    j += 1
+            else:
+                for i in range(len(args)):
+                    if i == len(args) - 1 and not extra:
+                        argString += '%s)' % args[i]
+                    else:
+                        argString += '%s, ' % args[i]
+
+            if varargs is not None and kwargs is None:
+                argString += '*args)'
+            elif varargs is not None:
+                argString += '\*args, '
+
+            if kwargs is not None:
+                argString += '\*\*kwargs)'
+
+            if argString == '(':
+                argString += ')'
+
+        if argString:
+            t1 = t1 + argString
 
         if t:
             t = t.replace('_', '\_')
@@ -366,7 +436,6 @@ class PageBotDoc(Publication):
 
         if value is not None:
             if '__doc__' in dir(value):
-            #if value.__doc__:
                 s = value.__doc__
                 if s is None:
                     return
@@ -391,7 +460,7 @@ class PageBotDoc(Publication):
                     try:
                         f.write('%s  \n' % line.encode('utf-8'))
                     except Exception, e:
-                        print 'An error occurred writing a doc file.'
+                        print 'An error occurred writing a doc file %s, (%s %s)' % (f, key, value)
                         print traceback.format_exc()
 
         if isinstance(value, TypeType):

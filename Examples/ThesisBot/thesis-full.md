@@ -1,3 +1,4 @@
+[[magazine]]
 
 ##ThesisBot Example
 ####Petr van Blokland

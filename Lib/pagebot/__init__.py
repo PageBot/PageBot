@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -12,6 +13,8 @@
 #
 from __future__ import division
 __doc__ = """PageBot module"""
+
+__version__ = '0.8-beta'
 
 import CoreText
 import AppKit
@@ -71,7 +74,8 @@ def getGlobals(scriptId):
     return pbGlobals[scriptId]
 
 def x2cx(x, e):
-    u"""Transform from y value to column y value, using the e.css for colunn values."""
+    u"""Transform from *x* value to column *x* index value, using the *e.css('cw')* (column width)
+    as column measure."""
     gw = e.gw # Gutter
     cw = e.css('cw', 0)
     if cw + gw: # Check on division by 0
@@ -79,6 +83,8 @@ def x2cx(x, e):
     return 0
 
 def cx2x(cx, e):
+    u"""Transform from *x* index value to *x* index value, using the *e.css('cw')* (column width)
+    as column measure."""
     if cx is None:
         x = 0
     else:
@@ -86,7 +92,8 @@ def cx2x(cx, e):
     return x
 
 def y2cy(y, e):
-    u"""Transform from y value to column y value, using the e.css for colunn values."""
+    u"""Transform from *y* value to column *y* index value, using the *e.css('ch')* (column height)
+    as column measure."""
     gh = e.gh # Gutter
     ch = e.css('ch', 0)
     cy = 0
@@ -99,7 +106,8 @@ def y2cy(y, e):
     return cy
 
 def cy2y(cy, e):
-    u"""Transform from column y value to y value, using the e.css for colunn values."""
+    u"""Transform from *y* index value to *y* index value, using the *e.css('ch')* (column height)
+    as column measure."""
     if cy is None:
         y = 0
     else:
@@ -111,7 +119,8 @@ def cy2y(cy, e):
     return y
 
 def z2cz(z, e):
-    u"""Transform from z value to column z value, using the e.css for colunn values."""
+    u"""Transform from *z* value to column *z* index value, using the *e.css('cd')* (column depth) 
+    as column measure."""
     gd = e.gd # Gutter
     cd = e.css('cd', 0) # Column width
     cz = 0
@@ -120,6 +129,8 @@ def z2cz(z, e):
     return cz
 
 def cz2z(cz, e):
+    u"""Transform from *z* index value to *z* index value, using the *e.css('cd')* (column depth)
+    as column measure."""
     if cz is None:
         z = 0
     else:
@@ -169,6 +180,8 @@ def cols2w(w, e): # Answer the col with for the give amount of colums
 # Size
 
 def w2cw(w, e):
+    u"""Transform from *w* value to column *w* count value, using the *e.css('cw')* (column width) 
+    as column measure."""
     gw = e.gw
     cw = e.css('cw', 0)
     if cw + gw: # Test for division by 0
@@ -176,6 +189,8 @@ def w2cw(w, e):
     return 0 # Undefined, not info about column width and gutter or zero division
 
 def cw2w(cw, e):
+    u"""Transform from *w* index value to *w* count value, using the *e.css('cd')* (column width)
+    as column measure."""
     if cw is None:
         w = 0
     else:
@@ -184,6 +199,8 @@ def cw2w(cw, e):
     return w
 
 def h2ch(h, e):
+    u"""Transform from *h* value to column *w* count value, using the *e.css('ch')* (column height) 
+    as column measure."""
     gh = e.gh
     ch = e.css('ch', 0)
     if ch + gh: # Test for division by 0
@@ -191,6 +208,8 @@ def h2ch(h, e):
     return 0 # Undefined, no info about column height and gutter or zero division
 
 def ch2h(ch, e):
+    u"""Transform from *h* index value to *w* count value, using the *e.css('ch')* (column height)
+    as column measure."""
     if ch is None:
         h = 0
     else:
@@ -199,6 +218,8 @@ def ch2h(ch, e):
     return h
 
 def d2cd(d, e):
+    u"""Transform from *d* value to column *cd* count value, using the *e.css('cd')* (column depth) 
+    as column measure."""
     guttgderD = e.gd
     cd = e.css('cd', 0)
     if cd + gd: # Test for division by 0
@@ -206,6 +227,8 @@ def d2cd(d, e):
     return 0 # Undefined, no info about column depth and gutter or zero division
 
 def cd2d(cd, e):
+    u"""Transform from *cd* index value to *d* count value, using the *e.css('ch')* (column depth)
+    as column measure."""
     if cd is None:
         d = 0
     else:
@@ -310,6 +333,8 @@ class Gradient(object):
         self.locations = locations or [0,1]
         self.startRadius = startRadius
         self.endRadius = endRadius
+        # Make sure that lengths of colors and locations are identical.
+        assert len(self.colors) == len(self.locations)
 
     def _get_linear(self):
         return not self.radial
@@ -351,6 +376,10 @@ class Shadow(object):
         self.cmykColor = cmykColor
 
 def setShadow(eShadow):
+    u"""Set the *Shadow* instance *eShadow* as current. The *eShadow.cmykColor* 
+    flag decides which type of shadow (RGB or CMYK) is set. 
+    The *Shadow* class takes *(offset=None, blur=None, color=None, cmykColor=None)*
+    as attributes. Ignore is *eShadow* is *None*."""
     if shadow is not None:
         if eShadow.cmykColor is not None:
             shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
@@ -360,8 +389,8 @@ def setShadow(eShadow):
 #   E L E M E N T
 
 def deepFind(elements, name=None, pattern=None, result=None):
-    u"""Perform a dynamic deep find the for all elements with the name. Don't include self.
-    Either name or pattern should be defined."""
+    u"""Perform a dynamic deep find for all elements with the *name*. Don't include self.
+    Either *name* or *pattern* should be defined, otherwise an error is raised."""
     assert name or pattern
     if result is None:
         result = []
@@ -374,8 +403,9 @@ def deepFind(elements, name=None, pattern=None, result=None):
     return result
 
 def find(elements, name=None, pattern=None, result=None):
-    u"""Perform a dynamic find the named element(s) in self.elements. Don't include self.
-    Either name or pattern should be defined."""
+    u"""Perform a dynamic find for the named element(s) in self.elements. Don't include self.
+    Either *name* or *pattern* should be defined, otherwise an error is raised."""
+    assert name or pattern
     result = []
     for e in elements:
         if pattern is not None and pattern in e.name: # Simple pattern match
@@ -424,10 +454,10 @@ def css(name, e, styles=None, default=None):
         return e.css(name)
     return default
 
-def newFS(t, e=None, style=None, w=None, h=None, fontSize=None):
-    u"""Answer a formatted string from valid attributes in Style. Set all values after testing
+def newFS(t, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+    u"""Answer a *FormattedString* instance from valid attributes in *style*. Set all values after testing
     their existence, so they can inherit from previous style formats.
-    If target width w or height w is defined, then the fontSize is scaled to make the string fit w or h."""
+    If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
 
     hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
 
@@ -436,6 +466,7 @@ def newFS(t, e=None, style=None, w=None, h=None, fontSize=None):
     if sFont is not None:
         fs.font(sFont)
     # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
+    # TODO: add calculation of rFontSize (relative float based on root-fontSize) here too.
     sFontSize = fontSize or css('fontSize', e, style) or 16 # May be scaled to fit w or h if target is defined.
     sLeading = css('leading', e, style)
     rLeading = css('rLeading', e, style)
@@ -522,11 +553,11 @@ def newFS(t, e=None, style=None, w=None, h=None, fontSize=None):
     if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
         tw, _ = textSize(newt)
         fontSize = w / tw * sFontSize
-        newt = newFS(t, e, style, fontSize=fontSize)
+        newt = newFS(t, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
     elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
         _, th = textSize(newt)
         fontSize = h / th * sFontSize
-        newt = newFS(t, e, style, fontSize=fontSize)
+        newt = newFS(t, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
 
     return newt
 

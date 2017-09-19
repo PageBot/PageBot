@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -61,7 +62,7 @@ def makeDocument():
     u"""Create Document instance with a single page. Fill the page with elements
     and perform a conditional layout run, until all conditions are solved."""
 
-    doc = Document(w=PageWidth, h=PageHeight, originTop=False, pages=1)
+    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=1)
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.style['fill'] = 1
@@ -91,15 +92,15 @@ def makeDocument():
     bookPadding = (25, 30, 40, 30)
     
     # Styles
-    titleStyle =dict(font='Georgia', fontSize=26, rLeading=1.4, xAlign=CENTER, textFill=1)
-    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xAlign=CENTER)
+    titleStyle =dict(font='Georgia', fontSize=26, rLeading=1.4, xTextAlign=CENTER, textFill=1)
+    authorStyle = dict(font='Georgia-Italic', textFill=1, fontSize=18, xTextAlign=CENTER)
     headStyle = dict(font='Verdana-Bold', textFill=0, fontSize=14, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=30,
+        xTextAlign=LEFT, paragraphTopSpacing=30,
     paragraphBottomSpacing=0)
     bodyStyle = dict(font='Verdana', textFill=0, fontSize=12, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
+        xTextAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
     sideBarStyle = dict(font='Verdana', textFill=0, fontSize=10, rLeading=1.4, 
-        xAlign=LEFT, paragraphTopSpacing=10, hyphenation=True) 
+        xTextAlign=LEFT, paragraphTopSpacing=10, hyphenation=True) 
     italicBodyStyle = copy.copy(bodyStyle)
     italicBodyStyle['font'] = 'Verdana-Italic'
     italicBodyStyle['paragraphTopSpacing'] = 0

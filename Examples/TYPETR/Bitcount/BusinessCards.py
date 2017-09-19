@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -35,7 +36,7 @@ fontNames = []
 for fontName in installedFonts():
     if 'BitcountMonoDouble' in fontName:
         fontNames.append(fontName)
-print fontNames
+#print fontNames
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/TYPETRBusinessCards.pdf' 
@@ -53,6 +54,7 @@ def makeDocument():
     view.showPagePadding = True
     view.showElementOrigin = True
     view.showElementDimensions = False
+    view.showTextOverflowMarker = False
     
     padding = 12
     
@@ -65,7 +67,7 @@ def makeDocument():
     BODY_FONT = 'BitcountMonoDouble-RegularCircle'
     
     fs = newFS('TYPETR', w=W-padding*2, style=dict(font=BODY_FONT, fontSize=56, leading=0, textFill=0))
-    fs += newFS("""Petr van Blokland
+    fs += newFS("""\nPetr van Blokland
 Designer|Lecturer|Developer
 
 Rietveld 56 | 2611 LM Delft 

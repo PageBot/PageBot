@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #
 #     P A G E B O T
 #
@@ -8,6 +9,8 @@
 # -----------------------------------------------------------------------------
 #
 #     MakeABookCover.py
+#
+#     Needs filling in with content.
 #
 import pagebot # Import to know the path of non-Python resources.
 from pagebot import newFS
@@ -64,7 +67,7 @@ def makeDocument(rootStyle):
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(rootStyle, w=W, h=H, pages=1) # One page, just the cover.
+    doc = Document(rootStyle, w=W, h=H, autoPages=1) # One page, just the cover.
  
     page = doc[0] # Get the first/single page of the document.
 

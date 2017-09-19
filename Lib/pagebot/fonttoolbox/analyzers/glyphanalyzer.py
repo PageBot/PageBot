@@ -3,7 +3,8 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Type Network, www.typenetwork.com, www.pagebot.io
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     Made for usage in DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
@@ -24,8 +25,9 @@ class GlyphAnalyzer(object):
     VERTICAL_CLASS = Vertical # Allow inheriting classes to change this
     HORIZONTAL_CLASS = Horizontal
 
-    def __init__(self, glyph):
-        self._glyph = weakref.ref(glyph)
+    def __init__(self, style, name):
+        self._style = style
+        self.name = name
         self._analyzer = None
 
         self._horizontals = None
@@ -37,11 +39,11 @@ class GlyphAnalyzer(object):
         self._roundBars = None # Recognized round bars, so not filtered by FloqMemes
 
     def _get_glyph(self):
-        return self._glyph()
+        return self._style[self.name]
     glyph = property(_get_glyph)
 
     def __repr__(self):
-        return '<Analyzer of "%s">' % self.glyph.name
+        return '<Analyzer of %s[%s]>' % (self.style.info.fullName, self.name)
 
     # self.verticals
 
@@ -75,11 +77,31 @@ class GlyphAnalyzer(object):
         main point is on curve."""
         self._horizontals = horizontals = {}
 
-        for pc in self.glyph.pointContexts:
+        for pc in sorted(self.glyph.pointContexts):
             if pc.isHorizontal():
                 if not pc.y in horizontals:
                     horizontals[pc.y] = self.HORIZONTAL_CLASS()
                 horizontals[pc.y].append(pc)
+
+    #   Test color
+
+    def overlappingLinesInWindowOnBlack(self, pc0, pc1, step=SPANSTEP):
+        u"""Answers the boolean flag if the vertical span between <i>pc0</i>
+        and <i>pc1</i> just spans black area, by stepping from a point on one
+        line to a point on the other line. The trick is to fine the right
+        points. If the line it too angled (e.g. under certain circumstances the
+        line between the middle points is almost parallel to the line, then our
+        trick with testing on the blackness the 4 one-unit points around a
+        point fails, when the segments is tested close to one of the main
+        points. So we need to test on from the middle of the overlapping window
+        perpendicular to the other line."""
+        pp0, pp1 = pc0.getProjectedWindowLine(pc1)
+        return not None in (pp0, pp1) and self.lineOnBlack(pp0, pp1, step)
+
+    def overlappingLinesInWindowOnWhite(self, pc0, pc1, step=SPANSTEP):
+        u"""See <b>self.overlappingLinesInWindowOnBlack</b>."""
+        pp0, pp1 = pc0.getProjectedWindowLine(pc1)
+        return not None in (pp0, pp1) and self.lineOnWhite(pp0, pp1, step)
 
     #   S T E M S
 
