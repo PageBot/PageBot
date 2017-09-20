@@ -14,9 +14,9 @@
 #     htmlview.py
 #
 from pagebot.builders import WebBuilder
-from pagebot.elements.views import View
+from pagebot.elements.views.baseview import BaseView
 
-class HtmlView(View):
+class HtmlView(BaseView):
     u"""Abstract class for HTML/CSS generating views."""
 
     # Postfix for self.build_html method names. 

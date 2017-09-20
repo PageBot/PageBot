@@ -58,8 +58,7 @@ def makeDocument():
 
     doc = Document(title='Color Squares', w=W, h=H, originTop=False, autoPages=1)
     
-    view = doc.getView()
-    view.padding = 0 # Don't show cropmarks in this example.
+    doc.view.padding = 0 # Don't show cropmarks in this example.
 
     # Get list of pages with equal y, then equal x.    
     #page = doc[0][0] # Get the single page from te document.

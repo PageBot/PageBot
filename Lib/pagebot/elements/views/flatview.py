@@ -17,9 +17,10 @@ import os
 import shutil
 import flat
 
-from pagebot.elements.views import View
+from pagebot.elements.views.baseview import BaseView
+from pagebot.builders.flatbuilder import flatBuilder
 
-class FlatView(View):
+class FlatView(BaseView):
     u"""Support the flat library, so PageBot can run on non-OSX environments."""
     viewId = 'Flat'
 
@@ -28,7 +29,7 @@ class FlatView(View):
     # Postfix for self.s_flat storage of formatted strings in TextBox.
     stringType = 'flat'
 
-    b = drawBotBuilder # self.b builder for this view.
+    b = flatBuilder # self.b builder for this view.
 
     def build(self, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""

@@ -290,7 +290,7 @@ class TextBox(Element):
                 for e in self.elements:
                     e.build(view, b)
 
-            if self.drawBAfteris not None: # Call if defined
+            if self.drawBAfter is not None: # Call if defined
                 self.drawAfter(self, view, p)
 
             b._div() 

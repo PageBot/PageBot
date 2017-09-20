@@ -27,6 +27,7 @@ class BaseView(Element):
     path way for export. Views also support services, such as answering the size of a formatted
     string (of possible), how much overflow there is for a certain box, etc."""
     viewId = 'View'
+
     # Postfix for self.build_xxx method names. To be redefined by inheriting View classes.
     buildType = None 
     # Postfix for self.s_xxx storage of formatted strings.
