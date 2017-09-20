@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     mampview.py
@@ -17,7 +19,6 @@ from pagebot.elements.views import HtmlView
 from pagebot.builders import WebBuilder
 
 class MampView(HtmlView):
-    viewId = 'Mamp'
 
     # self.build exports in MAMP folder that does not commit in Git. 
     MAMP_PATH = '/Applications/MAMP/htdocs/'

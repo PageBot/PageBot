@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     image.py
@@ -14,7 +16,6 @@
 from __future__ import division # Make integer division result in float.
 
 import os
-from drawBot import imageSize, imagePixelColor, save, restore, image, scale
 from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset, point2D
@@ -175,7 +176,7 @@ class PixelMap(Element):
             alpha = 1
         return alpha
 
-    def draw(self, origin, view):
+    def draw(self, origin, view, b):
         u"""Draw the image in the calculated scale. Since we need to use the image
         by scale transform, all other measure (position, lineWidth) are scaled
         back to their original proportions.
@@ -193,7 +194,7 @@ class PixelMap(Element):
             save()
             sx = self.w / self.iw
             sy = self.h / self.ih
-            scale(sx, sy)
+            b.scale(sx, sy)
             
             # If there is a clipRect defined, create the bezier path
             if self.clipRect is not None:
@@ -222,18 +223,18 @@ class PixelMap(Element):
 
             if self.imo is not None:
                 with self.imo:
-                    image(self.path, (0, 0), pageNumber=0, alpha=self._getAlpha())
-                image(self.imo, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
+                    b.image(self.path, (0, 0), pageNumber=0, alpha=self._getAlpha())
+                b.image(self.imo, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
             else:
                 # Store page element Id in this image, in case we want to make an image index later.
-                image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
+                b.image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
-            restore()
+            b.restore()
 
         # If there are child elements, draw them over the pixel image.
-        self._drawElements(origin, view)
+        self._drawElements(origin, view, b)
 
-        self._restoreScale()
+        self._restoreScale(b)
         view.drawElementMetaInfo(self, origin)
 
    

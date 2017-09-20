@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     DecovarVariationCircle.py
@@ -114,35 +116,35 @@ class VariationCircle(Element):
         glyphPathScale = fontSize/self.font.info.unitsPerEm
         drawGlyphPath(self.font.ttFont, glyphName, mx, my-fontSize/4, location, s=glyphPathScale, fillColor=0)
            
-    def draw(self, page, x, y):
+    def draw(self, origin, view, b):
         u"""Draw the circle info-graphic, showing most info about the variation font as can be interpreted from the file."""
-        fill(0.9)
-        stroke(None)
+        b.fill(0.9)
+        b.stroke(None)
         mx = x + self.w/2
         my = y + self.h/2
 
         # Gray circle that defines the area of
-        oval(x, y, self.w, self.h)
+        b.oval(x, y, self.w, self.h)
         
         # Draw axis spikes first, so we can cover them by the circle markers.
         axes = self.font.axes
         fontSize = self.style.get('fontSize', self.DEFAULT_FONT_SIZE)
         
         # Draw name of the font
-        fill(0)
-        text(FormattedString(self.font.info.familyName, font=self.style['labelFont'],
+        b.fill(0)
+        b.text(FormattedString(self.font.info.familyName, font=self.style['labelFont'],
             fontSize=self.style['axisNameFontSize']), (x-fontSize/2, y+self.h+fontSize/2))
 
         # Draw spokes
-        fill(None)
-        stroke(0)
-        strokeWidth(1)
-        newPath()
+        b.fill(None)
+        b.stroke(0)
+        b.strokeWidth(1)
+        b.newPath()
         for axisName, angle in self.angles.items():
             markerX, markerY = self._angle2XY(angle, self.w/2)
-            moveTo((mx, my))
-            lineTo((mx+markerX, my+markerY))
-        drawPath()
+            b.moveTo((mx, my))
+            b.lineTo((mx+markerX, my+markerY))
+        b.drawPath()
 
         # Draw default glyph marker in middle.
         glyphName = self.glyphNames[0]
@@ -173,23 +175,23 @@ class VariationCircle(Element):
                 fs = FormattedString(makeAxisName(axisName), font=self.style.get('labelFont', 'Verdana'),
                     fontSize=axisNameFontSize, fill=self.style.get('axisNameColor', 0))
                 tw, th = textSize(fs)
-                fill(0.7, 0.7, 0.7, 0.6)
-                stroke(None)
-                rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
-                text(fs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5)) 
+                b.fill(0.7, 0.7, 0.7, 0.6)
+                b.stroke(None)
+                b.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
+                b.text(fs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5)) 
                 
                 # DeltaLocation master value
                 if maxValue < 10:
                     sMaxValue = '%0.2f' % maxValue
                 else:
                     sMaxValue = `int(round(maxValue))`
-                fs = FormattedString(sMaxValue, font=self.style.get('labelFont', 'Verdana'),
+                fs = b.FormattedString(sMaxValue, font=self.style.get('labelFont', 'Verdana'),
                     fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
                 tw, th = textSize(fs)
-                fill(0.7, 0.7, 0.7, 0.6)
-                stroke(None)
-                rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
-                text(fs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5)) 
+                b.fill(0.7, 0.7, 0.7, 0.6)
+                b.stroke(None)
+                b.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
+                b.text(fs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5)) 
 
                 # DeltaLocation value
                 interpolationValue = minValue + (maxValue - minValue)*INTERPOLATION
@@ -200,10 +202,10 @@ class VariationCircle(Element):
                 fs = FormattedString(sValue, font=self.style.get('labelFont', 'Verdana'),
                     fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
                 tw, th = textSize(fs)
-                fill(0.7, 0.7, 0.7, 0.6)
-                stroke(None)
-                rect(mx+markerX*INTERPOLATION-tw/2-4, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
-                text(fs, (mx+markerX*INTERPOLATION-tw/2, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5)) 
+                b.fill(0.7, 0.7, 0.7, 0.6)
+                b.stroke(None)
+                b.rect(mx+markerX*INTERPOLATION-tw/2-4, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
+                b.text(fs, (mx+markerX*INTERPOLATION-tw/2, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5)) 
 
                 # DeltaLocation value
                 if minValue < 10:
@@ -213,11 +215,11 @@ class VariationCircle(Element):
                 fs = FormattedString(sValue, font=self.style.get('labelFont', 'Verdana'),
                     fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
                 tw, th = textSize(fs)
-                fill(0.7, 0.7, 0.7, 0.6)
-                stroke(None)
+                b.fill(0.7, 0.7, 0.7, 0.6)
+                b.stroke(None)
                 minM = 0.2
-                rect(mx+markerX*minM-tw/2-4, my+markerY*minM+th*0.5-4, tw+8, th)
-                text(fs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5)) 
+                b.rect(mx+markerX*minM-tw/2-4, my+markerY*minM+th*0.5-4, tw+8, th)
+                b.text(fs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5)) 
 
 #====================
 

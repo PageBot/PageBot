@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     AmstelvarSpecimen.py
@@ -16,7 +18,6 @@
 from __future__ import division
 
 import pagebot
-from pagebot import newFS
 from pagebot.elements.pbpage import Template
 from pagebot.style import A4,MM
 from pagebot.fonttoolbox.objects.font import Font

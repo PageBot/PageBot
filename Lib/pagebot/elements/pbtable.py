@@ -6,21 +6,18 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     pbtextbox.py
+#     pbtable.py
 #
-import re
-import CoreText
-import Quartz
-
-from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString, line
-
+from pagebot.builders.drawbotbuilder import newFS
 from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import newFS, setStrokeColor, setFillColor
+from pagebot import setStrokeColor, setFillColor
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.conditions import *
 from pagebot.elements.pbtextbox import TextBox
@@ -148,7 +145,7 @@ class Table(Element):
         return result
 
 
-    def draw(self, origin, view):
+    def draw(self, origin, view, b):
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
@@ -156,15 +153,15 @@ class Table(Element):
         self.drawFrame(p, view) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
+            self.drawBefore(self, p, view, b)
 
         # If there are child elements, draw them over the text.
         # TODO: Needs updated x/y value
-        self._drawElements(p, view)
+        self._drawElements(p, view, b)
  
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view)
+            self.drawAfter(self, p, view, b)
 
-        self._restoreScale()
-        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+        self._restoreScale(b)
+        view.drawElementMetaInfo(self, origin, b) # Depends on css flag 'showElementInfo'
 

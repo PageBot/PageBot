@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     gitview.py
@@ -22,6 +24,8 @@ class GitView(HtmlView):
     DEFAULT_HTML_PATH = GIT_PATH + DEFAULT_HTML_FILE
     DEFAULT_CSS_PATH = GIT_PATH + 'css/pagebot.css'
 
+    BUILDERS_CLASS = HtmlBuilder()
+    
     #   B U I L D  H T M L  /  C S S
 
     def build(self, name, pageSelection=None, multiPage=True):
