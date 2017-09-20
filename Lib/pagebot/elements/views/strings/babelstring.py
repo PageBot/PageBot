@@ -30,9 +30,12 @@ class BabelString(object):
 
     def __len__(self):
     	return len(self.s)
-    	
+
     def append(self, s):
-        self.s += s
+    	if isinstance(s, self.__class__):
+    		self.s += s.s
+    	else:
+	        self.s += s
 
     def type(self):
     	return self.BABEL_STRING_TYPE

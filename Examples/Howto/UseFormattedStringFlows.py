@@ -18,7 +18,6 @@
 from __future__ import division # Make integer division result in float.
 import pagebot # Import to know the path of non-Python resources.
 
-from pagebot.babelstring import BabelString
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
@@ -55,8 +54,8 @@ def makeDocument():
     
     bs = view.newString('')
     for n in range(10):
-        bs += view.newString('')('(Line %d) ' % (n+1), style=dict(font='Verdana-Bold', fontSize=9, leading=10, textFill=0))
-        bs += view.newString('')('Volume of text defines the box height. Volume of text defines the box height. \n', style=dict(font='Verdana', fontSize=9, leading=10, textFill=0))
+        bs += view.newString('(Line %d) ' % (n+1), style=dict(font='Verdana-Bold', fontSize=9, leading=10, textFill=0))
+        bs += view.newString('Volume of text defines the box height. Volume of text defines the box height. \n', style=dict(font='Verdana', fontSize=9, leading=10, textFill=0))
         
     if DoTextFlow:
         h1 = 120 # Fox on a given height, to show the text flowing to the e2 element.
