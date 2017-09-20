@@ -467,10 +467,11 @@ class Element(object):
         return None
     view = property(_get_view)
 
-    def newString(self, **kwargs):
+    def newString(self, s, **kwargs):
+        u"""Create a new BabelString, with emphasis on the current type of self.doc.view."""
         view = self.view
         assert view is not None
-        return view.newString(**kwargs)
+        return view.newString(s, **kwargs)
         
     # Most common properties
 
@@ -1960,8 +1961,8 @@ class Element(object):
 
     #   D R A W I N G  S U P P O R T 
 
-    def getElementInfoString(self):
-        u"""Answer a single string with info about the element. Default is to show the posiiton
+    def getMetricsString(self, view=None):
+        u"""Answer a single string with metrics info about the element. Default is to show the posiiton
         and size (in points and columns). This method can be redefined by inheriting elements
         that want to show additional information."""
         s = '%s\nPosition: %s, %s, %s\nSize: %s, %s\nColumn point: %s, %s\nColumn size: %s, %s' % \
@@ -1972,7 +1973,9 @@ class Element(object):
         if self.xAlign or self.yAlign:
             s += '\nAlign: %s, %s' % (self.xAlign, self.yAlign)
         if self.conditions:
-            score = self.evaluate()
+            if view is None:
+                view = self.doc.view
+            score = self.evaluate(view)
             s += '\nConditions: %d | Evaluate %d' % (len(self.conditions), score.result)
             if score.fails:
                 s += ' Fails: %d' % len(score.fails)

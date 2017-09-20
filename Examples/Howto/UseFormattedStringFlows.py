@@ -18,12 +18,7 @@
 from __future__ import division # Make integer division result in float.
 import pagebot # Import to know the path of non-Python resources.
 
-from pagebot import x2cx, y2cy
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
-
+from pagebot.babelstring import BabelString
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
@@ -43,7 +38,7 @@ def makeDocument():
     # Create a new document, default to the defined page size. 
     doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)
     
-    view = doc.getView()
+    view = doc.view
     view.padding = 0 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
@@ -58,17 +53,17 @@ def makeDocument():
     page0.name = 'Page 1'
     page0.padding = PagePadding
     
-    fs = newFS('')
+    bs = view.newString('')
     for n in range(10):
-        fs += newFS('(Line %d) ' % (n+1), style=dict(font='Verdana-Bold', fontSize=9, leading=10, textFill=0))
-        fs += newFS('Volume of text defines the box height. Volume of text defines the box height. \n', style=dict(font='Verdana', fontSize=9, leading=10, textFill=0))
+        bs += view.newString('')('(Line %d) ' % (n+1), style=dict(font='Verdana-Bold', fontSize=9, leading=10, textFill=0))
+        bs += view.newString('')('Volume of text defines the box height. Volume of text defines the box height. \n', style=dict(font='Verdana', fontSize=9, leading=10, textFill=0))
         
     if DoTextFlow:
         h1 = 120 # Fox on a given height, to show the text flowing to the e2 element.
     else:
         h1 = None  
           
-    e1 = newTextBox(fs, 
+    e1 = newTextBox(bs, 
         name='ElasticTextBox1',
         nextElement='ElasticTextBox2', # Overflow goes here.
         parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
