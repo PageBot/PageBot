@@ -14,11 +14,16 @@
 #
 #     Can be used to experiment with the DrawBot FormattedString class.
 #
-fs = FormattedString('')
+from pagebot.builders.drawbotbuilder import drawBotBuilder as b
+from pagebot.elements.views.strings import newFsString
+if b is None:
+    print 'Platform does not support DrawBot.'
+else:
+    fs = FormattedString('')
 
-class PBFormattedString(fs.__class__):
-    pass
+    class PBFormattedString(fs.__class__):
+        pass
     
-f = PBFormattedString('AAA', font='Verdana', fontSize=300, fill=(1, 0, 0))
-text(f, (100 ,100))
+    f = PBFormattedString('AAA', font='Verdana', fontSize=300, fill=(1, 0, 0))
+    text(f, (100 ,100))
 
