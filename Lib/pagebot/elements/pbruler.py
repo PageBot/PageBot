@@ -13,9 +13,9 @@
 #
 #     ruler.py
 #
-from pagebot import setFillColor
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
+from pagebot.style import ORIGIN
 
 class Ruler(Element):
 
@@ -72,8 +72,8 @@ class Ruler(Element):
         
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_html(self, origin, view, drawElements=True):
-
+    def build_html(self, view, origin=None, drawElements=True):
+        self.build_css(view)
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.

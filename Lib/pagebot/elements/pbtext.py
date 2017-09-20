@@ -14,11 +14,9 @@
 #     pbtext.py
 #
 #     Using the DrawBot textBox() instead of text() for better control
-#     of alugnment, position and leading (in case there are "\n" returns
+#     of alignment, position and leading (in case there are "\n" returns
 #     in the string)
 #
-from drawBot import textSize
-
 from pagebot.elements.pbtextbox import TextBox
 
 class Text(TextBox):
@@ -37,6 +35,6 @@ class Text(TextBox):
         
     def getTextSize(self):
         """Figure out what the width/height of the text self.fs is."""
-        return textSize(self.fs)
+        return self.doc.view.textSize(self.s)
 
 

@@ -13,11 +13,9 @@
 #
 #     galley.py
 #
-from pagebot.builders.drawbotbuilder import newFS
-from pagebot.style import NO_COLOR, makeStyle
+from pagebot.style import NO_COLOR, ORIGIN, makeStyle
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset, int2Color
-from pagebot import setStrokeColor, setFillColor
 
 class Galley(Element):
     u"""A Galley is sticky sequential flow of elements, where the parts can have
@@ -119,7 +117,7 @@ class Galley(Element):
 
     #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, view, origin=ORIGIN, view, drawElements=True):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the

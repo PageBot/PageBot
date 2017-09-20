@@ -17,9 +17,8 @@ from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.views import BaseView
+from pagebot.elements.views.baseview import BaseView
 from pagebot.builders import drawBotBuilder
-from pagebot import setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import *
@@ -60,7 +59,7 @@ class DrawBotView(BaseView):
         self._restoreScale()
         #view.drawElementMetaInfo(self, origin)
 
-    def drawPages(self, pageSelection=None):
+    def build(self, path, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
         doc = self.parent
         b = self.b # Get builder of this view.
@@ -95,15 +94,15 @@ class DrawBotView(BaseView):
                 b.rect(0, 0, pw, ph)
 
             if self.drawBefore is not None: # Call if defined
-                self.drawBefore(page, origin, self)
+                self.drawBefore(page, self, origin)
 
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             # Determine the drawing method from the builder.PB_ID
             # From there all element will use the same builder extension if implemented.
-            getattr(page, 'build_' + b.PB_ID)(origin, self)
+            page.build_drawBot(self, origin)
 
             if self.drawAfter is not None: # Call if defined
-                self.drawAfter(page, origin, self)
+                self.drawAfter(page, self, origin)
 
             # Self.infoElements now may have collected elements needed info to be drawn, after all drawing is done.
             # So the info boxes don't get covered by regular page content.

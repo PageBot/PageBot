@@ -13,11 +13,9 @@
 #
 #     pbtable.py
 #
-from pagebot.builders.drawbotbuilder import newFS
-from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE
+from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, ORIGIN, makeStyle, MIDDLE
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import setStrokeColor, setFillColor
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.conditions import *
 from pagebot.elements.pbtextbox import TextBox
@@ -144,8 +142,9 @@ class Table(Element):
                     result = len(score.fails) == 0 # Test if total flow placement succeeded.
         return result
 
+    #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, view, origin):
+    def build_drawBot(self, view, origin, drawElements=True):
         b = view.b
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
@@ -154,15 +153,52 @@ class Table(Element):
         self.drawFrame(p, view) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view, b)
+            self.drawBefore(self, view, p)
 
-        # If there are child elements, draw them over the text.
-        # TODO: Needs updated x/y value
-        self._drawElements(p, view, b)
+        if drawElements:
+            for e in self.elements:
+                e.build_drawBot(view, p)
  
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, p, view, b)
 
         self._restoreScale(b)
         view.drawElementMetaInfo(self, origin, b) # Depends on css flag 'showElementInfo'
+
+    #   F L A T  S U P P O R T
+
+    def build_flat(self, view, origin=ORIGIN, drawElements=True):
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, view, p)
+
+        if drawElements:
+            for e in self.elements:
+                e.build_flat(view, p)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view, p)
+        
+    #   H T M L  /  C S S  S U P P O R T
+
+    def build_html(self, view, origin=None, drawElements=True):
+        self.build_css(view)
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, view, p)
+
+        if drawElements:
+            for e in self.elements:
+                e.build_html(view, p)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view, p)
+
+
 

@@ -13,9 +13,6 @@
 #
 #     __init__.py
 #
-# Abstract views
-from pagebot.elements.views.baseview import BaseView # Abstract base view
-from pagebot.elements.views.htmlview import HtmlView # Abstract HTML/CSS generator view
 # DrawBot views
 from pagebot.elements.views.drawbotview import DrawBotView
 # Flat views

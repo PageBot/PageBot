@@ -16,7 +16,6 @@
 from drawBot import drawPath, save, restore, transform, scale, fill, stroke, strokeWidth
 from pbpath import Path
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import setStrokeColor, setFillColor
 from pagebot.style import NO_COLOR, DEFAULT_HEIGHT, DEFAULT_WIDTH
 
 class GlyphPath(Path):

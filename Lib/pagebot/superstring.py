@@ -11,62 +11,25 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     babelstring.py
+#     superstring.py
 #
-from pagebot.views
 from pagebot.view import stringTypes
 
-class BabelString(object):
+class SuperString(object):
     u"""SuperString instances keep parallel (formatted) string representations for all strings
     needed by the available builder classes. Default behavior is to support all of them,
     but if builders are not in the current framework or indicated in the contructor,
     some types of strings may be left out."""
 
-    def __init__(self, s, types=None, style=None):
+    def __init__(self, s, types=None):
         if types is None:
             types = stringTypes.keys() # Get the type tags for the kind of strings that are supported.
-        if 'fs' in types:
-            fs = s
-            if isinstance(fs, basestring):
-                fs = self.newString_fs(s, e=e, style=style)
-            self.fs = fs
-        else:
-            self.fs = None
-
-        # F L A T  S U P P O R T
-        if 'flat' in types:
-            self.flat = flatString = s # TODO: Needs formatting
-        else:
-            self.flat = None
-
-        # H T M L  S U P P O R T
-        if 'html' in types:
-            self.html = s
-        else:
-            self.html = None
-
-    def append_fs(self, s):
-        if self.fs is not None:
-            self.fs += s
-        
-    def append_flat(self, s):
-        if self.flat is not None:
-            self.flat += s
-        
-    def append_html(self, s):
-        if self.html is not None:
-            self.html += s
-        
-    def append(self, s):
-        self.append_fs(s)
-        self.append_flat(s)
-        self.append_html(s)
-
+                
     def newString_fs(t, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
         u"""Answer a *FormattedString* instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
-        b = stringTypes['drawBot'].b
+        b = self.b
         b.hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
 
         fs = b.FormattedString('')

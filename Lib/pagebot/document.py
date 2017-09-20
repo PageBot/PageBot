@@ -383,16 +383,20 @@ class Document(object):
 
     #   P A G E S
 
-    def appendPage(self, page):
+    def appendPage(self, pageOrView):
         u"""Append a page to the document. Assert that it is a page element."""
-        assert page.isPage    
-        page.setParent(self) # Set parent as weakref, without calling self.appendElement again.
-        if self.pages.keys():
-            pn = max(self.pages.keys())+1
+        if pageOrView.isView:
+            self.view = pageOrView
+        elif pageOrView.isPage:
+            pageOrView.setParent(self) # Set parent as weakref, without calling self.appendElement again.
+            if self.pages.keys():
+                pn = max(self.pages.keys())+1
+            else:
+                pn = 0
+            self[pn] = pageOrView
         else:
-            pn = 0
-        self[pn] = page
-
+            raise TypeError, ('Cannot add element "%s" to document. Only pages and view supported.' % pageOrView)
+    
     appendElement = appendPage
 
     def getPage(self, pnOrName, index=0):
@@ -569,7 +573,10 @@ class Document(object):
             b.sectionCss('Document root style')
             b.css('body', self.rootStyle) # <body> selector and style output
 
-    def build(self, name=None, pageSelection=None, multiPage=True):
+    def build(self, name=None, path=None, pageSelection=None, multiPage=True):
         u"""Build the document as website, using the MampView for export."""
-        self.view.buildPages(name=name, pageSelection=pageSelection, multiPage=multiPage)
+        self.view.build(name=name, path=path, pageSelection=pageSelection, multiPage=multiPage)
+
+    def export(self, path, multiPage=True):
+        self.build(path=path, multiPage=multiPage)
 

@@ -13,7 +13,7 @@
 #
 #     gitview.py
 #
-from pagebot.elements.views import HtmlView
+from pagebot.elements.views.htmlview import HtmlView
 from pagebot.builders import WebBuilder
 
 class GitView(HtmlView):
@@ -24,7 +24,7 @@ class GitView(HtmlView):
     DEFAULT_HTML_PATH = GIT_PATH + DEFAULT_HTML_FILE
     DEFAULT_CSS_PATH = GIT_PATH + 'css/pagebot.css'
 
-    BUILDERS_CLASS = HtmlBuilder()
+    BUILDERS_CLASS = WebBuilder()
     
     #   B U I L D  H T M L  /  C S S
 

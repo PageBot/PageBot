@@ -15,7 +15,7 @@
 #
 import os
 import shutil
-from pagebot.elements.views import HtmlView
+from pagebot.elements.views.htmlview import HtmlView
 from pagebot.builders import WebBuilder
 
 class MampView(HtmlView):

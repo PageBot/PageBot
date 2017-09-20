@@ -15,3 +15,5 @@
 from pagebot.elements.views import viewClasses, stringTypes, buildTypes
 
 print viewClasses
+print stringTypes
+print buildTypes

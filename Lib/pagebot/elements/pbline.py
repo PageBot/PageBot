@@ -16,6 +16,7 @@
 from pagebot.style import NO_COLOR
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements.element import Element
+from pagebot.style import ORIGIN
 
 class Line(Element):
 
