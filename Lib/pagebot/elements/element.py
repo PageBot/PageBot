@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     element.py
@@ -16,20 +18,16 @@ from __future__ import division
 import weakref
 import copy
 
-from drawBot import rect, oval, line, newPath, moveTo, lineTo, lineDash, drawPath, \
-    save, restore, scale, textSize, fill, text, stroke, strokeWidth, shadow
-
 from pagebot.conditions.score import Score
-from pagebot import newFS, setFillColor, setStrokeColor, setGradient, setShadow,\
-    x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
+from pagebot import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
 from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
     MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS,\
-    ONLINE, INLINE, OUTLINE
+    ONLINE, INLINE, OUTLINE, ORIGIN
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.builders import BuildInfo # Container with Builder flags and data/parametets
-from pagebot.builders.webbuilder import WebBuilder
+from pagebot.builders import WebBuilder
 
 class Element(object):
 
@@ -45,12 +43,13 @@ class Element(object):
     
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
             t=0, parent=None, name=None, class_=None, title=None, description=None, language=None,
-            style=None, conditions=None, info=None,
+            style=None, conditions=None, info=None, framePath=None, 
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, 
             padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
             margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
             borders=None, borderTop=None, borderRight=None, borderBottom=None, borderLeft=None, 
-            shadow=None, gradient=None, drawBefore=None, drawAfter=None, framePath=None, 
+            shadow=None, gradient=None, 
+            drawBefore=None, drawAfter=None, 
             **kwargs):  
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
@@ -74,9 +73,11 @@ class Element(object):
         # for intuitive compatibility with DrawBot.
         self.borders = borders or (borderTop, borderRight, borderBottom, borderLeft)
 
-        # Drawing hooks
-        self.drawBefore = drawBefore # Optional method to draw before child elements are drawn.
-        self.drawAfter = drawAfter # Optional method to draw after child elements are drawn.
+        # Drawing hooks is same for 3 types of view/builders. Seperation must be done by caller.
+        # Optional method to draw before child elements are drawn.
+        self.drawBefore = drawBefore 
+        # Optional method to draw right after child elements are drawn.
+        self.drawAfter = drawAfter
 
         # Shadow and gradient, if defined
         self.shadow = shadow
@@ -458,6 +459,19 @@ class Element(object):
         return None
     doc = property(_get_doc)
 
+    def _get_view(self):
+        u"""Answer the self.doc.view, currently set for reference and building this element."""
+        doc = self.doc
+        if doc is not None:
+            return self.doc.view
+        return None
+    view = property(_get_view)
+
+    def newString(self, **kwargs):
+        view = self.view
+        assert view is not None
+        return view.newString(**kwargs)
+        
     # Most common properties
 
     def setParent(self, parent):
@@ -684,7 +698,107 @@ class Element(object):
         self.style['z'] = z
     z = property(_get_z, _set_z)
     
-    # Time management
+    #   C O L O R
+
+    def buildShadow_drawBot(self, view, eShadow):
+        u"""Set the *Shadow* instance *eShadow* as current. The *eShadow.cmykColor* 
+        flag decides which type of shadow (RGB or CMYK) is set. 
+        The *Shadow* class takes *(offset=None, blur=None, color=None, cmykColor=None)*
+        as attributes. Ignore is *eShadow* is *None*."""
+        if eShadow is not None:
+            if eShadow.cmykColor is not None:
+                view.b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
+            else:
+                view.b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.color)
+
+    def buildGradient_drawBot(self, view, gradient, origin):
+        u"""Define the gradient call to match the size of element e., Gradient position
+        is from the origin of the page, so we need the current origin of e."""
+        assert isinstance(gradient, Gradient)
+        start = origin[0] + gradient.start[0] * e.w, origin[1] + gradient.start[1] * e.h
+        end = origin[0] + gradient.end[0] * e.w, origin[1] + gradient.end[1] * e.h
+
+        b = view.b
+        if gradient.linear:
+            if gradient.cmykColors is None:
+                b.linearGradient(startPoint=start, endPoint=end,
+                    colors=gradient.colors, locations=gradient.locations)
+            else:
+                b.cmykLinearGradient(startPoint=start, endPoint=end,
+                    colors=gradient.cmykColors, locations=gradient.locations)
+        else: # Gradient must be radial.
+            if gradient.cmykColors is None:
+                b.radialGradient(startPoint=start, endPoint=end,
+                    colors=gradient.colors, locations=gradient.locations,
+                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
+            else:
+                b.cmykRadialGradient(startPoint=start, endPoint=end,
+                    colors=gradient.cmykColors, locations=gradient.locations,
+                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
+
+    def buildFillColor_drawBot(self, view, c, fs=None, cmyk=False):
+        u"""Set the color for global or the color of the formatted string or as status for builder b."""
+        b = view.b
+        if c is NO_COLOR:
+            pass # Color is undefined, do nothing.
+        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
+            if cmyk:
+                if fs is None:
+                    b.cmykFill(c)
+                else:
+                    fs.cmykFill(c)
+            else:
+                if fs is None:
+                    b.fill(c)
+                else:
+                    fs.fill(c)
+        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
+            if cmyk:
+                if fs is None:
+                    b.cmykFill(*c)
+                else:
+                    fs.cmykFill(*c)
+            else:
+                if fs is None:
+                    b.fill(*c)
+                else:
+                    fs.fill(*c)
+        else:
+            raise ValueError('Error in color format "%s"' % repr(c))
+
+    def buildStrokeColor_drawBot(self, view, c, w=1, fs=None, cmyk=False):
+        u"""Set global stroke color or the color of the formatted string."""
+        b = view.b
+        if c is NO_COLOR:
+            pass # Color is undefined, do nothing.
+        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
+            if cmyk:
+                if fs is None:
+                    b.cmykStroke(c)
+                else:
+                    fs.cmykStroke(c)
+            else:
+                if fs is None:
+                    b.stroke(c)
+                else:
+                    fs.stroke(c)
+        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
+            if cmyk:
+                if fs is None:
+                    b.cmykStroke(*c)
+                else:
+                    fs.cmykStroke(*c)
+            else:
+                if fs is None:
+                    b.stroke(*c)
+                else:
+                    fs.stroke(*c)
+        else:
+            raise ValueError('Error in color format "%s"' % c)
+        if w is not None:
+            b.strokeWidth(w)
+
+    #   T I M E
 
     def _get_t(self):
         u"""The self._t status is the time status, interpolating between the values in 
@@ -1811,17 +1925,17 @@ class Element(object):
             py = self.parent.h - py
         return px, py, pz
 
-    def _applyRotation(self, mx, my, angle):
+    def _applyRotation(self, view, mx, my, angle):
         u"""Apply the rotation for angle, where (mx, my) is the rotation center."""
-        save()
+        view.saveGraphicState()
         # TODO: Working on this.
 
-    def _restoreRotation(self):
+    def _restoreRotation(self, view):
         u"""Reset graphics state from rotation mode."""
         if self.css('rotationX') and self.css('rotationY') and self.css('rotationAngle'):
-            restore()
+            view.restoreGraphicState()
 
-    def _applyScale(self, p):
+    def _applyScale(self, view, p):
         u"""Internal method to apply the scale, if both *self.scaleX* and *self.scaleY* are set. Use this
         method paired with self._restoreScale(). The (x, y) answered as reversed scaled tuple,
         so drawing elements can still draw on "real size", while the other element is in scaled mode."""
@@ -1830,29 +1944,21 @@ class Element(object):
         sz = self.scaleZ
         p = point3D(p)
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
-            save()
-            scale(sx, sy)
+            view.saveGraphicState()
+            view.scale(sx, sy)
             p = (p[0] / sx, p[1] / sy, p[2] / sz) # Scale point in 3 dimensions.
         return p
 
-    def _restoreScale(self):
+    def _restoreScale(self, view):
         u"""Reset graphics state from svaed scale mode. Make sure to match the call of self._applyScale.
         If one of (self.scaleX, self.scaleY, self.scaleZ) is not 0 or 1, then do the restore."""
         sx = self.scaleX
         sy = self.scaleY
         sz = self.scaleZ
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
-            restore()
+            view.restoreGraphicState()
 
     #   D R A W I N G  S U P P O R T 
-
-    def _drawElements(self, origin, view):
-        u"""Recursively draw all elements of self on their own relative position in the main canvas, """
-        #p = pointOffset(self.point, origin)
-        # Draw all elements relative to this point
-        for e in self.elements:
-            if e.show:
-                e.draw(origin, view)
 
     def getElementInfoString(self):
         u"""Answer a single string with info about the element. Default is to show the posiiton
@@ -1874,34 +1980,35 @@ class Element(object):
                     s += '\n%s %s' % eFail
         return s
 
-    def drawFrame(self, p, view):
+    def buildFrame_drawBot(self, p, view):
         u"""Draw fill of the rectangular element space.
         The self.css('fill') defines the color of the element background.
         Instead of the DrawBot stroke and strokeWidth attributes, use
         borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
         """
+        b = view.b # Get the DrawBot (or equivalent) builder for drawing the frame.
         eShadow = self.shadow
         if eShadow:
-            save()
-            setShadow(eShadow)
-            rect(p[0], p[1], self.w, self.h)
-            restore()
+            b.save()
+            b.setShadow(eShadow)
+            b.rect(p[0], p[1], self.w, self.h)
+            b.restore()
 
         eFill = self.css('fill', None)
         eGradient = self.gradient
         if eFill or eGradient:
-            save()
+            b.save()
             # Drawing element fill and/or frame
             if eGradient: # Gradient overwrites setting of fill.
-                setGradient(eGradient, p, self) # Add self to define start/end from relative size.
+                setGradient(eGradient, p, self, b) # Add self to define start/end from relative size.
             else:
-                setFillColor(eFill)
+                setFillColor(eFill, b)
             #setStrokeColor(eStroke, eStrokeWidth)
             if self.framePath is not None: # In case defined, use instead of bounding box. 
-                drawPath(self.framePath)
+                b.drawPath(self.framePath)
             else:
-                rect(p[0], p[1], self.w, self.h)
-            restore()
+                b.rect(p[0], p[1], self.w, self.h)
+            b.restore()
 
         # Instead of full frame drawing, check on separate border settings.
         borderTop = self.borderTop
@@ -1910,7 +2017,7 @@ class Element(object):
         borderLeft = self.borderLeft
 
         if borderTop is not None:
-            save()
+            b.save()
             if borderTop['dash']:
                 lineDash(*borderTop['dash'])
             setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
@@ -1937,13 +2044,13 @@ class Element(object):
                 oTop = 0
 
             if self.originTop:
-                line((p[0]-oLeft, p[1]-oTop), (p[0]+self.w+oRight, p[1]-oTop))
+                b.line((p[0]-oLeft, p[1]-oTop), (p[0]+self.w+oRight, p[1]-oTop))
             else:
-                line((p[0]-oLeft, p[1]+self.h+oTop), (p[0]+self.w+oRight, p[1]+self.h+oTop))
-            restore()
+                b.line((p[0]-oLeft, p[1]+self.h+oTop), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+            b.restore()
 
         if borderBottom is not None:
-            save()
+            b.save()
             if borderBottom['dash']:
                 lineDash(*borderBottom['dash'])
             setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
@@ -1970,13 +2077,13 @@ class Element(object):
                 oBottom = 0
 
             if self.originTop:
-                line((p[0]-oLeft, p[1]+self.h+oBottom), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
+                b.line((p[0]-oLeft, p[1]+self.h+oBottom), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
             else:
-                line((p[0]-oLeft, p[1]-oBottom), (p[0]+self.w+oRight, p[1]-oBottom))
-            restore()
+                b.line((p[0]-oLeft, p[1]-oBottom), (p[0]+self.w+oRight, p[1]-oBottom))
+            b.restore()
         
         if borderRight is not None:
-            save()
+            b.save()
             if borderRight['dash']:
                 lineDash(*borderRight['dash'])
             setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
@@ -2003,13 +2110,13 @@ class Element(object):
                 oRight = 0
 
             if self.originTop:
-                line((p[0]+self.w+oRight, p[1]-oTop), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
+                b.line((p[0]+self.w+oRight, p[1]-oTop), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
             else:
-                line((p[0]+self.w+oRight, p[1]-oBottom), (p[0]+self.w+oRight, p[1]+self.h+oTop))
-            restore()
+                b.line((p[0]+self.w+oRight, p[1]-oBottom), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+            b.restore()
 
         if borderLeft is not None:
-            save()
+            b.save()
             if borderLeft['dash']:
                 lineDash(*borderLeft['dash'])
             setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
@@ -2036,39 +2143,49 @@ class Element(object):
                 oLeft = 0
 
             if self.originTop:
-                line((p[0]-oLeft, p[1]-oTop), (p[0]-oLeft, p[1]+self.h+oBottom))
+                b.line((p[0]-oLeft, p[1]-oTop), (p[0]-oLeft, p[1]+self.h+oBottom))
             else:
-                line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
-            restore()
+                b.line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
+            b.restore()
 
-    def draw(self, origin, view, drawElements=True):
+    #   D R A W B O T  S U P P O R T
+
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.drawFrame(p, view) # Draw optional frame or borders.
+        self.buildFrame_drawBot(p, view) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
+            self.drawBefore(self, view, p)
 
         if drawElements:
-            # If there are child elements, draw them over the pixel image.
-            self._drawElements(p, view)
+            # If there are child elements, recursively draw them over the pixel image.
+            for e in self.elements:
+                if e.show:
+                    e.build_drawBot(view, origin)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view)
+            self.drawAfter(self, view, p)
 
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
+    #   F L A T  S U P P O R T
+
+    def build_flat(self, view, origin=None, drawElements=True):
+        pass
+
     #   H T M L  /  C S S  S U P P O R T
 
-    def buildCss(self, view, b):
+    def build_css(self, view, origin=None):
         u"""Build the css for this element. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
+        b = view.b # Use the view builder to write the HTML/CSS code.
         if self.info.cssPath is not None:
             b.includeCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
         elif self.class_: # For now, we only can generate CSS if the element has a class name defined.
@@ -2076,23 +2193,33 @@ class Element(object):
         else:
             b.css(message='No CSS for element %s\n' % self.__class__.__name__)
 
-    def build(self, view, b):
+    def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        self.buildCss(view, b)
+        self.build_css(view)
+        b = view.b # Use the view builder to write the HTML/CSS code.
         info = self.info # Contains builder parameters and flags for Builder "b"
         if info.htmlPath is not None:
             b.includeHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.div(class_=self.class_) # No default class, ignore if not defined.
-            for e in self.elements:
-                e.build(view, b)
+            
+            if self.drawBefore is not None: # Call if defined
+                self.drawBefore(self, view, p)
+
+            if drawElements: # Optional create empty element.
+                for e in self.elements:
+                    e.build(view)
+
+            if self.drawAfter is not None: # Call if defined
+                self.drawAfter(self, view, p)
+
             b._div()
 
     #   V A L I D A T I O N
 
-    def evaluate(self, score=None):
+    def evaluate(self, view, score=None):
         u"""Evaluate the content of element e with the total sum of conditions."""
         if score is None:
             score = Score()
@@ -2101,76 +2228,78 @@ class Element(object):
              condition.evaluate(self, score)
         for e in self.elements: # Also works if showing element is not a container.
             if e.show:
-                e.evaluate(score)
+                e.evaluate(view, score)
         return score
          
-    def solve(self, score=None):
-        u"""Evaluate the content of element e with the total sum of conditions."""
+    def solve(self, view, score=None):
+        u"""Evaluate the content of element e with the total sum of conditions.
+        The view is passed, as it (or its builder) may be needed to solve specific text 
+        conditions, such as run length of text and overflow of text boxes."""
         if score is None:
             score = Score()
         if self.conditions: # Can be None or empty
             for condition in self.conditions: # Skip in case there are no conditions in the style.
-                condition.solve(self, score)
+                condition.solve(self, b, score)
         for e in self.elements: # Also works if showing element is not a container.
             if e.show:
-                e.solve(score)
+                e.solve(view, score)
         return score
          
     #   C O N D I T I O N S
 
-    def isBottomOnBottom(self, tolerance=0):
+    def isBottomOnBottom(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.parent.pb - self.bottom) <= tolerance
         return abs(self.parent.pb - self.bottom) <= tolerance
 
-    def isBottomOnBottomSide(self, tolerance=0):
+    def isBottomOnBottomSide(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.bottom) <= tolerance
         return abs(self.bottom) <= tolerance
         
-    def isBottomOnTop(self, tolerance=0):
+    def isBottomOnTop(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.bottom) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.bottom) <= tolerance
 
-    def isCenterOnCenter(self, tolerance=0):
+    def isCenterOnCenter(self, view, tolerance=0):
         pl = self.parent.pl # Get parent padding left
         center = (self.parent.w - self.parent.pr - pl)/2
         return abs(pl + center - self.center) <= tolerance
 
-    def isCenterOnCenterSides(self, tolerance=0):
+    def isCenterOnCenterSides(self, view, tolerance=0):
         return abs(self.parent.w/2 - self.center) <= tolerance
   
-    def isCenterOnLeft(self, tolerance=0):
+    def isCenterOnLeft(self, view, tolerance=0):
         return abs(self.parent.pl - self.center) <= tolerance
 
-    def isCenterOnRight(self, tolerance=0):
+    def isCenterOnRight(self, view, tolerance=0):
         return abs(self.parent.w - self.parent.pr - self.center) <= tolerance
    
-    def isCenterOnRightSide(self, tolerance=0):
+    def isCenterOnRightSide(self, view, tolerance=0):
         return abs(self.parent.w - self.center) <= tolerance
 
-    def isMiddleOnBottom(self, tolerance=0):
+    def isMiddleOnBottom(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.parent.pb - self.middle) <= tolerance
         return abs(self.parent.pb - self.middle) <= tolerance
 
-    def isMiddleOnBottomSide(self, tolerance=0):
+    def isMiddleOnBottomSide(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.middle) <= tolerance
         return abs(self.middle) <= tolerance
 
-    def isMiddleOnTop(self, tolerance=0):
+    def isMiddleOnTop(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.middle) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.middle) <= tolerance
 
-    def isMiddleOnTopSide(self, tolerance=0):
+    def isMiddleOnTopSide(self, b, tolerance=0):
         if self.originTop:
             return abs(self.middle) <= tolerance
         return abs(self.parent.h - self.middle) <= tolerance
 
-    def isMiddleOnMiddle(self, tolerance=0):
+    def isMiddleOnMiddle(self, view, tolerance=0):
         pt = self.parent.pt # Get parent padding top
         pb = self.parent.pb 
         middle = (self.parent.h - pt - pb)/2
@@ -2178,32 +2307,32 @@ class Element(object):
             return abs(pt + middle - self.middle) <= tolerance
         return abs(pb + middle - self.middle) <= tolerance
 
-    def isMiddleOnMiddleSides(self, tolerance=0):
+    def isMiddleOnMiddleSides(self, view, tolerance=0):
         if self.originTop:
             return abs(self.middle) <= tolerance
         return abs(self.parent.h - self.middle) <= tolerance
   
-    def isLeftOnCenter(self, tolerance=0):
+    def isLeftOnCenter(self, view, tolerance=0):
         pl = self.parent.pl # Get parent padding left
         center = (self.parent.w - self.parent.pr - pl)/2
         return abs(pl + center - self.left) <= tolerance
 
-    def isLeftOnCenterSides(self, tolerance=0):
+    def isLeftOnCenterSides(self, view, tolerance=0):
         return abs(self.parent.w/2 - self.left) <= tolerance
 
-    def isLeftOnLeft(self, tolerance=0):
+    def isLeftOnLeft(self, view, tolerance=0):
         return abs(self.parent.pl - self.left) <= tolerance
 
-    def isLeftOnLeftSide(self, tolerance=0):
+    def isLeftOnLeftSide(self, view, tolerance=0):
         return abs(self.left) <= tolerance
 
-    def isLeftOnRight(self, tolerance=0):
+    def isLeftOnRight(self, view, tolerance=0):
         return abs(self.parent.w - self.parent.pr - self.left) <= tolerance
 
-    def isCenterOnLeftSide(self, tolerance=0):
+    def isCenterOnLeftSide(self, view, tolerance=0):
         return abs(self.parent.left - self.center) <= tolerance
 
-    def isTopOnMiddle(self, tolerance=0):
+    def isTopOnMiddle(self, view, tolerance=0):
         pt = self.parent.pt # Get parent padding top
         pb = self.parent.pb 
         middle = (self.parent.h - pb - pt)/2
@@ -2211,76 +2340,76 @@ class Element(object):
             return abs(pt + middle - self.top) <= tolerance
         return abs(pb + middle - self.top) <= tolerance
 
-    def isTopOnMiddleSides(self, tolerance=0):
+    def isTopOnMiddleSides(self, view, tolerance=0):
         return abs(self.parent.h/2 - self.top) <= tolerance
 
-    def isOriginOnBottom(self, tolerance=0):
+    def isOriginOnBottom(self, view, tolerance=0):
         pb = self.parent.pb # Get parent padding left
         if self.originTop:
             return abs(self.parent.h - pb - self.y) <= tolerance
         return abs(pb - self.y) <= tolerance
 
-    def isOriginOnBottomSide(self, tolerance=0):
+    def isOriginOnBottomSide(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.y) <= tolerance
         return abs(self.y) <= tolerance
 
-    def isOriginOnCenter(self, tolerance=0):
+    def isOriginOnCenter(self, view, tolerance=0):
         pl = self.parent.pl # Get parent padding left
         center = (self.parent.w - self.parent.pr - pl)/2
         return abs(pl + center - self.x) <= tolerance
 
-    def isOriginOnCenterSides(self, tolerance=0):
+    def isOriginOnCenterSides(self, view, tolerance=0):
         return abs(self.parent.w/2 - self.x) <= tolerance
 
-    def isOriginOnLeft(self, tolerance=0):
+    def isOriginOnLeft(self, view, tolerance=0):
         return abs(self.parent.pl - self.x) <= tolerance
 
-    def isOriginOnLeftSide(self, tolerance=0):
+    def isOriginOnLeftSide(self, view, tolerance=0):
         return abs(self.x) <= tolerance
 
-    def isOriginOnRight(self, tolerance=0):
+    def isOriginOnRight(self, view, tolerance=0):
         return abs(self.parent.w - self.parent.pr - self.x) <= tolerance
 
-    def isOriginOnRightSide(self, tolerance=0):
+    def isOriginOnRightSide(self, view, tolerance=0):
         return abs(self.parent.w - self.x) <= tolerance
 
-    def isOriginOnTop(self, tolerance=0):
+    def isOriginOnTop(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.y) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.y) <= tolerance
 
-    def isOriginOnTopSide(self, tolerance=0):
+    def isOriginOnTopSide(self, view, tolerance=0):
         if self.originTop:
             return abs(self.y) <= tolerance
         return abs(self.parent.h - self.y) <= tolerance
 
-    def isOriginOnMiddle(self, tolerance=0):
+    def isOriginOnMiddle(self, view, tolerance=0):
         if self.originTop:
             return abs(mt + (self.parent.h - self.parent.pb - self.parent.pt)/2 - self.y) <= tolerance
         return abs(mb + (self.parent.h - self.parent.pb - self.parent.pt)/2 - self.y) <= tolerance
  
-    def isOriginOnMiddleSides(self, tolerance=0):
+    def isOriginOnMiddleSides(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.h/2 - self.y) <= tolerance
         return abs(self.parent.h/2 - self.y) <= tolerance
  
-    def isRightOnCenter(self, tolerance=0):
+    def isRightOnCenter(self, view, tolerance=0):
         return abs(self.parent.w - self.x) <= tolerance
 
-    def isRightOnCenterSides(self, tolerance=0):
+    def isRightOnCenterSides(self, view, tolerance=0):
         return abs(self.parent.w/2 - self.right) <= tolerance
 
-    def isRightOnLeft(self, tolerance=0):
+    def isRightOnLeft(self, view, tolerance=0):
         return abs(self.parent.pl - self.right) <= tolerance
 
-    def isRightOnRight(self, tolerance=0):
+    def isRightOnRight(self, view, tolerance=0):
         return abs(self.parent.w - self.parent.pr - self.right) <= tolerance
 
-    def isRightOnRightSide(self, tolerance=0):
+    def isRightOnRightSide(self, view, tolerance=0):
         return abs(self.parent.w - self.right) <= tolerance
 
-    def isBottomOnMiddle(self, tolerance=0):
+    def isBottomOnMiddle(self, view, tolerance=0):
         pt = self.parent.pt # Get parent padding top
         pb = self.parent.pb
         middle = (self.parent.h - pb - pt)/2
@@ -2291,59 +2420,59 @@ class Element(object):
     def isBottomOnMiddleSides(self, tolerance=0):
         return abs(self.parent.h/2 - self.bottom) <= tolerance
 
-    def isTopOnBottom(self, tolerance=0):
+    def isTopOnBottom(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.parent.pb - self.top) <= tolerance
         return abs(self.parent.pb - self.top) <= tolerance
 
-    def isTopOnTop(self, tolerance=0):
+    def isTopOnTop(self, view, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.top) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.top) <= tolerance
 
-    def isTopOnTopSide(self, tolerance=0):
+    def isTopOnTopSide(self, view, tolerance=0):
         if self.originTop:
             return abs(self.top) <= tolerance
         return abs(self.parent.h - self.top) <= tolerance
 
     # Shrink block conditions
 
-    def isSchrunkOnBlockLeft(self, tolerance):
+    def isSchrunkOnBlockLeft(self, view, tolerance):
         boxX, _, _, _ = self.marginBox
         return abs(self.left + self.pl - boxX) <= tolerance
 
-    def isShrunkOnBlockRight(self, tolerance):
+    def isShrunkOnBlockRight(self, view, tolerance):
         boxX, _, boxW, _ = self.marginBox
         return abs(self.right - self.pr - (boxX + boxW)) <= tolerance
      
-    def isShrunkOnBlockTop(self, tolerance):
+    def isShrunkOnBlockTop(self, view, tolerance):
         _, boxY, _, boxH = self.marginBox
         if self.originTop:
             return abs(self.top + self.pt - boxY) <= tolerance
         return self.top - self.pt - (boxY + boxH) <= tolerance
 
-    def isShrunkOnBlockBottom(self, tolerance):
+    def isShrunkOnBlockBottom(self, view, tolerance):
         u"""Test if the bottom of self is shrunk to the bottom position of the block."""
         _, boxY, _, boxH = self.marginBox
         if self.originTop:
             return abs(self.h - self.pb - (boxY + boxH)) <= tolerance
         return abs(self.pb - boxY) <= tolerance
 
-    def isShrunkOnBlockLeftSide(self, tolerance):
+    def isShrunkOnBlockLeftSide(self, view, tolerance):
         boxX, _, _, _ = self.box
         return abs(self.left - boxX) <= tolerance
 
-    def isShrunkOnBlockRightSide(self, tolerance):
+    def isShrunkOnBlockRightSide(self, view, tolerance):
         boxX, _, boxW, _ = self.mbox
         return abs(self.right - (boxX + boxW)) <= tolerance
      
-    def isShrunkOnBlockTopSide(self, tolerance):
+    def isShrunkOnBlockTopSide(self, view, tolerance):
         _, boxY, _, boxH = self.box
         if self.originTop:
             return abs(self.top - boxY) <= tolerance
         return self.top - (boxY + boxH) <= tolerance
 
-    def isShrunkOnBlockBottomSide(self, tolerance):
+    def isShrunkOnBlockBottomSide(self, view, tolerance):
         _, boxY, _, boxH = self.marginBox
         if self.originTop:
             return abs(self.bottom - (boxY + boxH)) <= tolerance
@@ -2351,12 +2480,12 @@ class Element(object):
 
     # Float conditions
 
-    def isFloatOnTop(self, tolerance=0):
+    def isFloatOnTop(self, view, tolerance=0):
         if self.originTop:
             return abs(max(self.getFloatTopSide(), self.parent.pt) - self.mTop) <= tolerance
         return abs(min(self.getFloatTopSide(), self.parent.h - self.parent.pt) - self.mTop) <= tolerance
 
-    def isFloatOnTopSide(self, tolerance=0):
+    def isFloatOnTopSide(self, view, tolerance=0):
         return abs(self.getFloatTopSide() - self.mTop) <= tolerance
 
     def isFloatOnBottom(self, tolerance=0):

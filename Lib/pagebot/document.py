@@ -6,18 +6,19 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     document.py
 #
 import copy
-from drawBot import newPage, installedFonts, installFont
 
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
-from pagebot.elements.views import View, DefaultView, SingleView, ThumbView, MampView, GitView
+from pagebot.elements.views import viewClasses, DrawBotView
 from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
 from pagebot.toolbox.transformer import obj2StyleId
 from pagebot.builders import BuildInfo # Container with Builder flags and data/parametets
@@ -26,9 +27,10 @@ class Document(object):
     u"""A Document is just another kind of container."""
     
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
-    VIEW_CLASS = View
 
-    def __init__(self, rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
+    DEFAULT_VIEWID = DrawBotView.viewId
+
+    def __init__(self, rootStyle=None, styles=None, viewId=None, name=None, class_=None, title=None, 
             autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
             padding=None, info=None, 
             exportPaths=None, **kwargs):
@@ -48,16 +50,20 @@ class Document(object):
 
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
 
-        self.initializeTemplates(templates, template) # Template is name or instance default template.
+        # Initialize the current view of this document. All conditional checking and building
+        # is done through this view. 
+        # TODO: If the view is (re)set in a later stage, some template and other initialization
+        # needs to be done again, or else calculated text sizes may be wrong.
+        self.setView(viewId or self.DEFAULT_VIEWID)
+
+        # Template is name or instance default template.
+        self.initializeTemplates(templates, template) 
 
         # Storage lib for collected content while typesetting and composing, referring to the pages
         # they where placed on during composition.
         self._lib = {}
 
-        # Initialize some basic views.
-        self.initializeViews(views, **kwargs)
-
-        # Instance to hold details flags and data to direct the HTML/CSS builder of this document.
+        # Instance to hold details flags and data to guide the self.view.b builder of this document.
         self.info = info or BuildInfo()
 
         # Document (w, h) size is default from page, but will modified by the type of display mode. 
@@ -366,27 +372,16 @@ class Document(object):
 
     def getInstalledFonts(self):
         u"""Answer the list of font names, currently installed in the application."""
-        return installedFonts()
+        return self.view.installedFonts()
 
     def installFont(self, path):
         u"""Install a font with a given path and the postscript font name will be returned. The postscript
         font name can be used to set the font as the active font. Fonts are installed only for the current
         process. Fonts will not be accessible outside the scope of drawBot.
         All installed fonts will automatically be uninstalled when the script is done."""
-        return installFont(path)
+        return self.view.installFont(path)
 
     #   P A G E S
-
-    def appendElement(self, e): 
-        u"""Add page to the document. Called when page.parent is set or view.parent is set. 
-        If Page, add after last page. If View, add as self.views[view.viewId]"""
-        if e.isPage:
-            self.appendPage(e)
-        elif e.isView:
-            e.setParent(self) # Set parent as weakref, without calling self.appendElement again.
-            self.views[e.viewId] = e
-        else:
-            raise ValueError('Cannot append elements other that Page or View to Document; "%s"' % e)
 
     def appendPage(self, page):
         u"""Append a page to the document. Assert that it is a page element."""
@@ -397,6 +392,8 @@ class Document(object):
         else:
             pn = 0
         self[pn] = page
+
+    appendElement = appendPage
 
     def getPage(self, pnOrName, index=0):
         u"""Answer the page at (pn, index). Otherwise search for a page with this name. Raise index errors if it does not exist."""
@@ -538,55 +535,32 @@ class Document(object):
                 d = max(page.d, d)
             return w, h, d
 
-    def solve(self, score=None):
-        u"""Evaluate the content of all pages to return the total sum of conditions solving."""
+    def solve(self, b, score=None):
+        u"""Evaluate the content of all pages to return the total sum of conditions solving.
+        Builder b is passed, as it may be needed to solve specific text conditions, such as
+        run length of text and overflow of text boxes."""
         score = Score()
         for pn, pnPages in sorted(self.pages.items()):
             for page in pnPages: # List of pages with identical pn, step through the pages.
-                page.solve(score)
+                page.solve(b, score)
         return score
 
     #   V I E W S
 
-    def initializeViews(self, views, **kwargs):
-        u"""Initialize the views. All **kwargs arguments are available, to give access for inheriting
-        Publication documents that redefine this method."""
-        self.views = {} # Key is name or eId of View instance. 
-        if views is not None:
-            for view in views:
-                assert not view.name in self.views
-                self.appendElement(view)
-        # Define some default views if not already  there.
-        for viewClass in (DefaultView, ThumbView, MampView, GitView):
-            if not viewClass.viewId in self.views: # Only if not already defined, to make sure it is there.
-                # Create views, default with the same size as document.
-                self.appendElement(viewClass(parent=self, w=self.w, h=self.h))
-
-    def getView(self, viewId=None):
-        u"""Answer the viewer instance with viewId. Answer DefaultView() if it does not exist."""
-        if not viewId in self.views:
-            viewId = DefaultView.viewId # We know for sure that this one is in self.views
-        return self.views.get(viewId)
+    def setView(self, viewId):
+        u"""Set the self.view default view, that will be used for checking on view parameters,
+        before any element rendering is done, such as layout conditions and creating the right
+        type of strings. 
+        """
+        self.view = viewClasses[viewId](parent=self, w=self.w, h=self.h)
 
     #   D R A W I N G  &  B U I L D I N G
 
-    def drawPages(self, pageSelection=None, view=None):
-        u"""Draw the selected pages, using DrawBot as canvas. 
-        PageSelection is an optional list of y-pageNumbers to draw."""
-        if view is None or isinstance(view, basestring):
-            view = self.getView(view) # view.parent is self
-        view.drawPages(pageSelection)
-
-    def export(self, fileName=None, pageSelection=None, view=None, multiPage=True):
-        u"""Let the view do alle the export work."""
-        if view is None or isinstance(view, basestring):
-            view = self.getView(view) # view.parent is self
-        view.export(fileName=fileName, pageSelection=pageSelection, multiPage=multiPage)
-
-    def buildCss(self, view, b):
+    def build_css(self, view):
         u"""Build the CSS for this document. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
+        b = view.b
         if self.info.cssPath is not None:
             b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
         else: 
@@ -595,9 +569,7 @@ class Document(object):
             b.sectionCss('Document root style')
             b.css('body', self.rootStyle) # <body> selector and style output
 
-    def build(self, name=None, pageSelection=None, view=None, multiPage=True):
+    def build(self, name=None, pageSelection=None, multiPage=True):
         u"""Build the document as website, using the MampView for export."""
-        if view is None or isinstance(view, basestring):
-            view = self.getView(view or MampView.viewId)
-        view.build(name=name, pageSelection=pageSelection, multiPage=multiPage)
+        self.view.buildPages(name=name, pageSelection=pageSelection, multiPage=multiPage)
 

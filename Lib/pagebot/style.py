@@ -6,7 +6,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     style.py
@@ -134,6 +136,8 @@ ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 
 DEFAULT_FONT = 'Verdana'
 DEFAULT_FALLBACK_FONT = 'LucidaGrande'
+
+ORIGIN = (0, 0, 0) # Default origin if location is omitted.
 
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 
@@ -440,6 +444,21 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
     for name, value in kwargs.items():
         rs[name] = value
     return rs
+
+
+def css(name, e, styles=None, default=None):
+    u"""Answer the named style values. Search in optional style dict first, otherwise up the
+    parent tree of styles in element e. Both e and style can be None. In that case None is answered.
+    Note that this is a generic "Cacascading style request", outside the realm of HTML/CSS."""
+    if styles is not None: # Can be single style or stack of styles.
+        if not isinstance(styles, (tuple, list)):
+            styles = [styles] # Make stack of styles.
+        for style in styles:
+            if name in style:
+                return style[name]
+    if e is not None:
+        return e.css(name)
+    return default
 
 
   

@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     __init__.py
@@ -34,16 +36,16 @@ from pagebot.elements.paths.glyphpath import GlyphPath
 # Table elements
 from pagebot.elements.pbtable import Table
 # Views
-from pagebot.elements.views.view import View
+from pagebot.elements.views import viewClasses
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
 
-def newView(**kwargs):
+def newView(viewId, **kwargs):
     u"""In most cases views are initialized as dictionary by the Document class.
     But since they inherit from Element, they also can be used as placable elements.
     Make sure to define the right parent (likely to be a Page or Template).
     """
-    return View(**kwargs)
+    return viewClasses[viewId](**kwargs)
 
 def newPage(**kwargs):
     u"""In most cases views are initialized as dictionary by the Document class.

@@ -6,82 +6,40 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     view.py
+#     drawbotview.py
 #
 from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from drawBot import saveImage, newPage, rect, oval, line, newPath, moveTo, lineTo, drawPath,\
-    save, restore, scale, textSize, FormattedString, cmykStroke, text, fill, stroke,\
-    strokeWidth, curveTo, closePath
-
-from pagebot import setFillColor, setStrokeColor, newFS
+from pagebot.views import BaseView
+from pagebot.builders import drawBotBuilder
+from pagebot import setFillColor, setStrokeColor
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import *
 
-class View(Element):
-    u"""A View is just another kind of container, kept by document to make a certain presentation of the page tree."""
-    viewId = 'View'
-    isView = True
+class DrawBotView(BaseView):
+    u"""A View is just another kind of container, kept by document to make a certain presentation 
+    of the page tree. Views have a builder (self.b) as attribute, that is their path way for export.
+    The builder."""
+    viewId = 'DrawBot'
 
-    def __init__(self, w=None, h=None, parent=None, **kwargs):
-        Element.__init__(self, parent=parent, **kwargs)
-        if not w and self.parent:
-            w = self.parent.w
-        if not h and self.parent:
-            h = self.parent.h
-        self.w = w
-        self.h = h
-        self._initializeControls()
-        self.setControls()
-        # List of collected elements that need to draw their info on top of the main drawing,
-        self.elementsNeedingInfo = {}
-        self._isDrawn = False # Automatic call self.drawPages if export is called without drawing.
+    # Postfix for self.build_xxx method names. To be redefined by inheriting View classes.
+    buildType = 'drawBot' 
+    # Postfix for self.s_xxx storage of formatted strings.
+    stringType = 'fs'
 
-    def _initializeControls(self):
-        self.showElementInfo = False
-        self.showElementFrame = False
-        self.showElementOrigin = False
-        self.showElementDimensions = False # TODO: Does not work if there is view padding.
-        self.showMissingElementRect = True
-        # Grid stuff
-        self.showGrid = False
-        self.showGridColumns = False
-        self.showBaselineGrid = False
-        # Document/page stuff
-        self.showPageCropMarks = False
-        self.showPageRegistrationMarks = False
-        self.showPagePadding = False
-        self.showPageFrame = False
-        self.showPageNameInfo = False
-        self.showPageMetaInfo = False
-        # TextBox stuff
-        self.showTextBoxIndex = False # Show the line index number on the left side.
-        self.showTextBoxY = False # Show the realtic y-position value if text lines on right side.
-        self.showTextBoxLeading = False # Show distance of leading on the right side.
-        self.showTextBoxBaselines = False
-        # Flow stuff
-        self.showFlowConnections = False
-        self.showTextOverflowMarker = True
-        # Image stuff
-        self.showImageReference = False
-        # Spread stuff
-        self.showSpreadMiddleAsGap = True # Show the spread with single crop marks. False glues pages togethers as in real spread.
-        # CSS flags
-        self.cssVerbose = True # Adds information comments with original values to CSS export.
-
-    def setControls(self):
-        u"""Inheriting views can redefine to alter showing parameters."""
-        pass
-
+    b = drawBotBuilder # self.b builder for this view.
+ 
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
 
-    def draw(self, origin, ignoredView):
+    def build_drawBot(self, origin, ignoredView, b):
         u"""This method is called is the view is used as a placable element inside
         another element, such as a Page or Template. """
         p = pointOffset(self.oPoint, origin)
@@ -94,7 +52,7 @@ class View(Element):
         self.drawElementFrame(self, p)
         for page in self.elements:
             self.drawPageMetaInfo(page, p)
-            page.draw((px, py), self)
+            page.build_drawBot((px, py), self)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, p, self)
@@ -105,6 +63,7 @@ class View(Element):
     def drawPages(self, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
         doc = self.parent
+        b = self.b # Get builder of this view.
 
         w, h, _ = doc.getMaxPageSizes(pageSelection)
         for pn, pages in doc.getSortedPages():
@@ -129,17 +88,19 @@ class View(Element):
                 ph = page.h
                 origin = (0, 0, 0)
 
-            newPage(pw, ph) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
+            b.newPage(pw, ph) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
             # View may have defined a background
             if self.style.get('fill') is not None:
-                setFillColor(self.style['fill'])
-                rect(0, 0, pw, ph)
+                setFillColor(b, self.style['fill'])
+                b.rect(0, 0, pw, ph)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, origin, self)
 
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
-            page.draw(origin, self)
+            # Determine the drawing method from the builder.PB_ID
+            # From there all element will use the same builder extension if implemented.
+            getattr(page, 'build_' + b.PB_ID)(origin, self)
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, origin, self)
@@ -149,7 +110,6 @@ class View(Element):
             for e in self.elementsNeedingInfo.values():
                 self._drawElementsNeedingInfo()
 
-    def export(self, fileName, pageSelection=None, multiPage=True):
         u"""Export the document to fileName for all pages in sequential order.
         If pageSelection is defined, it must be a list with page numbers to
         export. This allows the order to be changed and pages to be omitted.
@@ -183,7 +143,8 @@ class View(Element):
         # TODO: Take build into separte htmlView, instead of split by extension
         # TODO: Show be more generic if number of builders grows.
         # TODO: Build multiple pages, now only doc[0] is supported.
-        saveImage(fileName, multipage=multiPage)
+        # TODO: Make it work in case of FlatBuilder
+        b.saveImage(fileName, multipage=multiPage)
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 
@@ -202,28 +163,30 @@ class View(Element):
         if self.showPageFrame and \
                 self.pl > self.MIN_PADDING and self.pr > self.MIN_PADDING and \
                 self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
-            fill(None)
-            stroke(0, 0, 1)
-            strokeWidth(0.5)
-            rect(origin[0], origin[1], page.w, page.h)
+            b = self.b
+            b.fill(None)
+            b.stroke(0, 0, 1)
+            b.strokeWidth(0.5)
+            b.rect(origin[0], origin[1], page.w, page.h)
             #page.drawFrame(origin, self)
 
     def drawPagePadding(self, page, origin):
         u"""Draw the page frame of its current padding."""
         pt, pr, pb, pl = page.padding
         if self.showPagePadding and (pt or pr or pb or pl):
+            b = self.b
             p = pointOffset(page.oPoint, origin)
             p = page._applyScale(p)
             px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
-            fill(None)
-            stroke(0, 0, 1)
-            strokeWidth(0.5)
+            b.fill(None)
+            b.stroke(0, 0, 1)
+            b.strokeWidth(0.5)
             if page.originTop:
-                rect(px+pr, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
+                b.rect(px+pr, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
             else:
-                rect(px+pr, py+pb, page.w-pl-pr, page.h-pt-pb)
+                b.rect(px+pr, py+pb, page.w-pl-pr, page.h-pt-pb)
 
-    def drawPageNameInfo(self, page, origin):
+    def drawPageNameInfo(self, page, origin, b):
         u"""Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks."""
         if self.showPageNameInfo:
@@ -235,12 +198,12 @@ class View(Element):
             s = 'Page %s | %s | %s' % (page.parent.getPageNumber(page), d, page.parent.title or 'Untitled')
             if page.name:
                 s += ' | ' + page.name
-            fs = FormattedString(s, font=self.css('viewPageNameFont'), fill=0, fontSize=fontSize)
-            text(fs, (self.pl + bleed, self.pb + page.h + cms - fontSize*2)) # Draw on top of page.
+            fs = self.b.FormattedString(s, font=self.css('viewPageNameFont'), fill=0, fontSize=fontSize)
+            self.b.text(fs, (self.pl + bleed, self.pb + page.h + cms - fontSize*2)) # Draw on top of page.
 
     #   D R A W I N G  F L O W S
 
-    def drawFlowConnections(self, e, origin):
+    def drawFlowConnections(self, e, origin, b):
         u"""If rootStyle.showFlowConnections is True, then draw the flow connections
         on the page, using their stroke/width settings of the style."""
         px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
@@ -285,11 +248,11 @@ class View(Element):
         if strokeWidth is None:
             strokeWidth = self.css('viewFlowConnectionStrokeWidth', 0.5)
 
-        setStrokeColor(stroke, strokeWidth)
+        setStrokeColor(b, stroke, strokeWidth)
         if startMarker:
             if fill is None:
                 fill = self.css('viewFlowMarkerFill', NO_COLOR)
-            setFillColor(fill)
+            setFillColor(b, fill)
             oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
 
         xm = (xt + xs)/2
@@ -307,31 +270,34 @@ class View(Element):
         ay1 = yt + sin(hookedAngle+arrowAngle) * arrowSize
         ax2 = xt - cos(hookedAngle-arrowAngle) * arrowSize
         ay2 = yt + sin(hookedAngle-arrowAngle) * arrowSize
-        newPath()
-        setFillColor(None)
-        moveTo((xs, ys))
-        curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
-        drawPath()
+        
+        b = self.b
+        b.newPath()
+        b.setFillColor(None)
+        b.moveTo((xs, ys))
+        b.curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
+        b.drawPath()
 
         #  Draw the arrow head.
-        newPath()
-        setFillColor(stroke)
-        setStrokeColor(None)
-        moveTo((xt, yt))
-        lineTo((ax1, ay1))
-        lineTo((ax2, ay2))
-        closePath()
-        drawPath()
+        b.newPath()
+        setFillColor(b, stroke)
+        setStrokeColor(b, None)
+        b.moveTo((xt, yt))
+        b.lineTo((ax1, ay1))
+        b.lineTo((ax2, ay2))
+        b.closePath()
+        b.drawPath()
 
         if endMarker:
-            setFillColor(self.css('viewFlowMarkerFill', NO_COLOR))
-            oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
+            setFillColor(b, self.css('viewFlowMarkerFill', NO_COLOR))
+            b.oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 
     #   D R A W I N G  E L E M E N T
 
     def drawElementFrame(self, e, origin):
         if self.showElementFrame:
-            e.draw(origin, self, False) # Don't recursively draw children.
+            # Get the method for e to draw the frame. Flag not to recursively draw children.
+            getattr(e, 'buildFrame_' + self.b.PB_ID)(origin, self, False) 
 
     def drawElementMetaInfo(self, e, origin):
         self.drawElementInfo(e, origin)
@@ -345,6 +311,7 @@ class View(Element):
             self.elementsNeedingInfo[e.eId] = (e, origin)
 
     def _drawElementsNeedingInfo(self):
+        b = self.b
         for e, origin in self.elementsNeedingInfo.values():
             p = pointOffset(e.oPoint, origin)
             p = e._applyScale(p)
@@ -357,71 +324,73 @@ class View(Element):
                 Pd = 4 # Padding in box and shadow offset.
                 tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
                 tpy = py + e.h - th - Pd
+
                 # Tiny shadow
-                setFillColor((0.3, 0.3, 0.3, 0.5))
-                setStrokeColor(None)
-                rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
+                setFillColor(b, (0.3, 0.3, 0.3, 0.5))
+                setStrokeColor(b, None)
+                b.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
                 # Frame
-                setFillColor(self.css('viewInfoFill'))
-                setStrokeColor(0.3, 0.25)
-                rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
-                text(fs, (tpx+Pd, tpy+th))
+                setFillColor(b, self.css('viewInfoFill'))
+                setStrokeColor(b, 0.3, 0.25)
+                b.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
+                b.text(fs, (tpx+Pd, tpy+th))
                 e._restoreScale()
 
             if self.showElementDimensions:
                 # TODO: Make separate arrow functio and better positions
                 # Draw width and height measures
-                setFillColor(None)
-                setStrokeColor(0, 0.25)
+                setFillColor(b, None)
+                setStrokeColor(b, 0, 0.25)
                 S = self.css('viewInfoOriginMarkerSize', 4)
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
                 # Horizontal measure
-                line((x1, y1 - 0.5*S), (x1, y1 - 3.5*S))
-                line((x2, y1 - 0.5*S), (x2, y1 - 3.5*S))
-                line((x1, y1 - 2*S), (x2, y1 - 2*S))
+                b.line((x1, y1 - 0.5*S), (x1, y1 - 3.5*S))
+                b.line((x2, y1 - 0.5*S), (x2, y1 - 3.5*S))
+                b.line((x1, y1 - 2*S), (x2, y1 - 2*S))
                 # Arrow heads
-                line((x1, y1 - 2*S), (x1+S, y1 - 1.5*S))
-                line((x1, y1 - 2*S), (x1+S, y1 - 2.5*S))
-                line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
-                line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
+                b.line((x1, y1 - 2*S), (x1+S, y1 - 1.5*S))
+                b.line((x1, y1 - 2*S), (x1+S, y1 - 2.5*S))
+                b.line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
+                b.line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
 
                 fs = newFS(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-                tw, th = textSize(fs)
-                text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
+                tw, th = b.textSize(fs)
+                b.text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
 
                 # Vertical measure
-                line((x2+0.5*S, y1), (x2+3.5*S, y1))
-                line((x2+0.5*S, y2), (x2+3.5*S, y2))
-                line((x2+2*S, y1), (x2+2*S, y2))
+                b.line((x2+0.5*S, y1), (x2+3.5*S, y1))
+                b.line((x2+0.5*S, y2), (x2+3.5*S, y2))
+                b.line((x2+2*S, y1), (x2+2*S, y2))
                 # Arrow heads
-                line((x2+2*S, y2), (x2+2.5*S, y2-S))
-                line((x2+2*S, y2), (x2+1.5*S, y2-S))
-                line((x2+2*S, y1), (x2+2.5*S, y1+S))
-                line((x2+2*S, y1), (x2+1.5*S, y1+S))
+                b.line((x2+2*S, y2), (x2+2.5*S, y2-S))
+                b.line((x2+2*S, y2), (x2+1.5*S, y2-S))
+                b.line((x2+2*S, y1), (x2+2.5*S, y1+S))
+                b.line((x2+2*S, y1), (x2+1.5*S, y1+S))
 
                 fs = newFS(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-                tw, th = textSize(fs)
-                text(fs, (x2+2*S-tw/2, (y2+y1)/2))
+                tw, th = b.textSize(fs)
+                b.text(fs, (x2+2*S-tw/2, (y2+y1)/2))
 
-    def drawElementOrigin(self, e, origin):
+    def drawElementOrigin(self, e, origin, b):
+        b = self.b
         px, py, _ = pointOffset(e.oPoint, origin)
         S = self.css('viewInfoOriginMarkerSize', 4)
         if self.showElementOrigin:
             # Draw origin of the element
-            setFillColor((0.5,0.5,0.5,0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
-            setStrokeColor(0, 0.25)
-            oval(px-S, py-S, 2*S, 2*S)
-            line((px-S, py), (px+S, py))
-            line((px, py-S), (px, py+S))
+            setFillColor(b, (0.5,0.5,0.5,0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
+            setStrokeColor(b, 0, 0.25)
+            b.oval(px-S, py-S, 2*S, 2*S)
+            b.line((px-S, py), (px+S, py))
+            b.line((px, py-S), (px, py+S))
 
         if self.showElementDimensions:
             fs = newFS(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'),
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-            w, h = textSize(fs)
-            text(fs, (px - w/2, py + S*1.5))
+            w, h = b.textSize(fs)
+            b.text(fs, (px - w/2, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):
         u"""When designing templates and pages, this will draw a filled rectangle on the element
@@ -429,12 +398,12 @@ class View(Element):
         that this element has missing content (as in unused image frames).
         Only draw if self.css('showGrid') is True."""
         if self.showMissingElementRect:
-
+            b = self.b
             p = pointOffset(e.point, origin)
             p = e._applyOrigin(p)
             p = e._applyScale(p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
-            self.setShadow()
+            self.setShadow(b)
 
             sMissingElementFill = self.css('viewMissingElementFill', NO_COLOR)
             if sMissingElementFill is not NO_COLOR:
@@ -442,15 +411,15 @@ class View(Element):
                 setStrokeColor(None)
                 rect(px, py, self.w, self.h)
             # Draw crossed rectangle.
-            setFillColor(None)
-            setStrokeColor(0, 0.5)
-            rect(px, py, self.w, self.h)
-            newPath()
-            moveTo((px, py))
-            lineTo((px + self.w, py + self.h))
-            moveTo((px + self.w, py))
-            lineTo((px, py + self.h))
-            drawPath()
+            setFillColor(b, None)
+            setStrokeColor(b, 0, 0.5)
+            b.rect(px, py, self.w, self.h)
+            b.newPath()
+            b.moveTo((px, py))
+            b.lineTo((px + self.w, py + self.h))
+            b.moveTo((px + self.w, py))
+            b.lineTo((px, py + self.h))
+            b.drawPath()
 
             self.resetShadow()
             e._restoreScale()
@@ -462,15 +431,16 @@ class View(Element):
         method with self._resetShadow()"""
         shadowOffset = e.css('shadowOffset') # Use DrawBot graphic state switch on shadow mode.
         if shadowOffset is not None:
-            save() # DrawBot graphics state push
+            b = self.b
+            b.save() # DrawBot graphics state push
             shadowBlur = e.css('shadowBlur') # Should be integer.
             shadowFill = e.css('shadowFill') # Should be color, different from NO_COLOR
-            shadow(shadowOffset, shadowBlur, shadowFill)
+            b.shadow(shadowOffset, shadowBlur, shadowFill)
 
     def resetShadow(self, e):
         u"""Restore the shadow mode of DrawBot. Should be paired with call self._setShadow()."""
         if e.css('shadowOffset') is not None:
-            restore() # DrawBot graphics state pop.
+            self.b.restore() # DrawBot graphics state pop.
 
     #    G R I D
 
@@ -480,6 +450,7 @@ class View(Element):
         # Drawing the grid as squares.
         if not self.showGrid:
             return
+        b = self.b
         #if not self.showGridColumns or not self.showGrid:
         #    return
         p = pointOffset(e.oPoint, origin)
@@ -508,26 +479,26 @@ class View(Element):
         oy = py + padB
 
         if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
-            setFillColor(None)
-            setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
-            newPath()
+            setFillColor(b, None)
+            setStrokeColor(b, self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
+            b.newPath()
             for cx, cw in e.getGridColumns():
-                moveTo((ox+cx, oy))
-                lineTo((ox+cx, oy + padH))
-                moveTo((ox+cx + cw, oy))
-                lineTo((ox+cx + cw, oy + padH))
+                b.moveTo((ox+cx, oy))
+                b.lineTo((ox+cx, oy + padH))
+                b.moveTo((ox+cx + cw, oy))
+                b.lineTo((ox+cx + cw, oy + padH))
             for cy, ch in e.getGridRows():
-                moveTo((ox, oy+cy))
-                lineTo((ox + padW, oy+cy))
-                moveTo((ox, oy+cy + ch))
-                lineTo((ox + padW, oy+cy + ch))
-            drawPath()
+                b.moveTo((ox, oy+cy))
+                b.lineTo((ox + padW, oy+cy))
+                b.moveTo((ox, oy+cy + ch))
+                b.lineTo((ox + padW, oy+cy + ch))
+            b.drawPath()
                 #text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
 
         """
         if self.showGridColumns and sGridFill is not NO_COLOR:
-            setFillColor(sGridFill)
-            setStrokeColor(None)
+            setFillColor(b, sGridFill)
+            setStrokeColor(b, None)
             ox = px + padL
             while ox < w - padR - columnWidth:
                 oy = h - padT - columnHeight - gutterH
@@ -538,32 +509,32 @@ class View(Element):
 
         # Drawing the grid as lines.
         if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
-            setFillColor(None)
-            setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
+            setFillColor(b, None)
+            setStrokeColor(b, self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
             # TODO: DrawBot align and fill don't work properly now.
             M = 16
             fs = newFS('', self, dict(font='Verdana', xTextAlign=RIGHT, fontSize=M/2,
                 stroke=None, textFill=self.css('viewGridStroke')))
             ox = px + padL
             for cw, gutter in e.getGridX(): # Answer the sequence or relative (column, gutter) measures.
-                    newPath()
-                    moveTo((ox, py))
-                    lineTo((ox, py + h))
-                    moveTo((ox + columnWidth, py))
-                    lineTo((ox + columnWidth, py + h))
-                    drawPath()
-                    text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
+                    b.newPath()
+                    b.moveTo((ox, py))
+                    b.lineTo((ox, py + h))
+                    b.moveTo((ox + columnWidth, py))
+                    b.lineTo((ox + columnWidth, py + h))
+                    b.drawPath()
+                    b.text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
                     index += 1
                     ox += columnWidth + gutterW
             index = 0
             while oy > py:
-                newPath()
-                moveTo((px, oy))
-                lineTo((px + w, oy))
-                moveTo((px, oy - columnHeight))
-                lineTo((px+w, oy - columnHeight))
-                drawPath()
-                text(fs + repr(index), (px + padL - M / 2, oy - M * 0.6))
+                b.newPath()
+                b.moveTo((px, oy))
+                b.lineTo((px + w, oy))
+                b.moveTo((px, oy - columnHeight))
+                b.lineTo((px+w, oy - columnHeight))
+                b.drawPath()
+                b.text(fs + repr(index), (px + padL - M / 2, oy - M * 0.6))
                 index += 1
                 oy -= columnHeight + gutterH
         """
@@ -574,6 +545,7 @@ class View(Element):
         Normally px and py will be 0, but it's possible to give them a fixed offset."""
         if not self.showBaselineGrid:
             return
+        b = self.b
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
@@ -588,14 +560,14 @@ class View(Element):
         fs = newFS('', self, dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
             fontSize=M/2, stroke=None, textFill=e.css('gridStroke')))
         while oy > e.pb or 0:
-            setFillColor(None)
-            setStrokeColor(e.css('baselineGridStroke', NO_COLOR), e.css('gridStrokeWidth'))
-            newPath()
-            moveTo((px + e.pl, py + oy))
-            lineTo((px + e.w - e.pr, py + oy))
-            drawPath()
-            text(fs + repr(line), (px + e.pl - 2, py + oy - e.pl * 0.6))
-            text(fs + repr(line), (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
+            setFillColor(b, None)
+            setStrokeColor(b, e.css('baselineGridStroke', NO_COLOR), e.css('gridStrokeWidth'))
+            b.newPath()
+            b.moveTo((px + e.pl, py + oy))
+            b.lineTo((px + e.w - e.pr, py + oy))
+            b.drawPath()
+            b.text(fs + repr(line), (px + e.pl - 2, py + oy - e.pl * 0.6))
+            b.text(fs + repr(line), (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
             line += 1 # Increment line index.
             oy -= e.css('baselineGrid') # Next vertical line position of baseline grid.
 
@@ -603,6 +575,7 @@ class View(Element):
 
     def _drawPageRegistrationMark(self, page, origin, cmSize, cmStrokeWidth, vertical):
         u"""Draw registration mark as position x, y."""
+        b = self.b
         x, y = origin
         if vertical:
             dx = cmSize/2
@@ -610,18 +583,18 @@ class View(Element):
         else:
             dx = cmSize
             dy = cmSize/2
-        fill(None)
-        cmykStroke(1,1,1,1)
-        strokeWidth(cmStrokeWidth)
-        newPath()
+        b.fill(None)
+        b.cmykStroke(1,1,1,1)
+        b.strokeWidth(cmStrokeWidth)
+        b.newPath()
         # Registration circle
-        oval(x - cmSize/4, y - cmSize/4, cmSize/2, cmSize/2)
+        b.oval(x - cmSize/4, y - cmSize/4, cmSize/2, cmSize/2)
         # Registration cross, in length of direction.
-        moveTo((x - dx, y)) # Horizontal line.
-        lineTo((x + dx, y))
-        moveTo((x, y + dy)) # Vertical line.
-        lineTo((x, y - dy))
-        drawPath()
+        b.moveTo((x - dx, y)) # Horizontal line.
+        b.lineTo((x + dx, y))
+        b.moveTo((x, y + dy)) # Vertical line.
+        b.lineTo((x, y - dy))
+        b.drawPath()
 
     def drawPageRegistrationMarks(self, page, origin):
         u"""Draw standard registration mark, to show registration of CMYK colors.
@@ -646,44 +619,45 @@ class View(Element):
             cmSize = min(self.css('viewCropMarkSize', 32), self.pl)
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
 
-            fill(None)
-            cmykStroke(1,1,1,1)
-            strokeWidth(cmStrokeWidth)
-            newPath()
+            b = self.b
+            b.fill(None)
+            b.cmykStroke(1,1,1,1)
+            b.strokeWidth(cmStrokeWidth)
+            b.newPath()
             # Bottom left
-            moveTo((x - bleed, y))
-            lineTo((x - cmSize, y))
-            moveTo((x, y - bleed))
-            lineTo((x, y - cmSize))
+            b.moveTo((x - bleed, y))
+            b.lineTo((x - cmSize, y))
+            b.moveTo((x, y - bleed))
+            b.lineTo((x, y - cmSize))
             # Bottom right
-            moveTo((x + w + bleed, y))
-            lineTo((x + w + cmSize, y))
-            moveTo((x + w, y - bleed))
-            lineTo((x + w, y - cmSize))
+            b.moveTo((x + w + bleed, y))
+            b.lineTo((x + w + cmSize, y))
+            b.moveTo((x + w, y - bleed))
+            b.lineTo((x + w, y - cmSize))
             # Top left
-            moveTo((x - bleed, y + h))
-            lineTo((x - cmSize, y + h))
-            moveTo((x, y + h + bleed))
-            lineTo((x, y + h + cmSize))
+            b.moveTo((x - bleed, y + h))
+            b.lineTo((x - cmSize, y + h))
+            b.moveTo((x, y + h + bleed))
+            b.lineTo((x, y + h + cmSize))
             # Top right
-            moveTo((x + w + bleed, y + h))
-            lineTo((x + w + cmSize, y + h))
-            moveTo((x + w, y + h + bleed))
-            lineTo((x + w, y + h + cmSize))
+            b.moveTo((x + w + bleed, y + h))
+            b.lineTo((x + w + cmSize, y + h))
+            b.moveTo((x + w, y + h + bleed))
+            b.lineTo((x + w, y + h + cmSize))
             # Any fold lines to draw?
             if folds is not None:
                 for fx, fy in folds:
                     if fx is not None:
-                        moveTo((x + fx, y - bleed))
-                        lineTo((x + fx, y - cmSize))
-                        moveTo((x + fx, y + h + bleed))
-                        lineTo((x + fx, y + h + cmSize))
+                        b.moveTo((x + fx, y - bleed))
+                        b.lineTo((x + fx, y - cmSize))
+                        b.moveTo((x + fx, y + h + bleed))
+                        b.lineTo((x + fx, y + h + cmSize))
                     if fy is not None:
-                        moveTo((x - bleed, y + fy))
-                        lineTo((x - cmSize, y + fy))
-                        moveTo((x + w + bleed, y + fy))
-                        lineTo((x + w + cmSize, y + fy))
-            drawPath()
+                        b.moveTo((x - bleed, y + fy))
+                        b.lineTo((x - cmSize, y + fy))
+                        b.moveTo((x + w + bleed, y + fy))
+                        b.lineTo((x + w + cmSize, y + fy))
+            b.drawPath()
 
 
 
