@@ -164,15 +164,15 @@ class TextBox(Element):
 
     #   F L O W
 
-    def isOverflow(self, b, tolerance=0):
+    def isOverflow(self, tolerance=0):
         u"""Answer the boolean flag if this element needs overflow to be solved.
         This method is typically called by conditions such as Overflow2Next or during drawing
         if the overflow marker needs to be drawn.
         Note: There is currently not a test if text actually went into the next element. It's just
         checking if there is a name defined, not if it exists or is already filled by another flow."""
-        return self.nextElement is None and len(self.getOverflow(b))
+        return self.nextElement is None and len(self.getOverflow())
 
-    def overflow2Next(self, b):
+    def overflow2Next(self):
         u"""Try to fix if there is overflow."""
         result = True
         overflow = self.getOverflow(b)
@@ -248,8 +248,8 @@ class TextBox(Element):
         if view.showTextOverflowMarker and self.isOverflow(b):
             self._drawOverflowMarker(view, px, py)
 
-        if self.drawAfter_drawBot is not None: # Call if defined
-            self.drawAfter_drawBot(view, p)
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(view, p)
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'

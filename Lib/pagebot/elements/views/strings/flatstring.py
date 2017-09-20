@@ -29,6 +29,8 @@ class FlatString(BabelString):
         u"""Answer the embedded Flat string by property, to enforce checking type of the string."""
         return self.s
     def _set_flat(self, flatString):
+        #if isinstance(fs, basestring):
+        #    fs = Style(s)
         self.s = flatString
     flat = property(_get_flat, _set_flat)
     
