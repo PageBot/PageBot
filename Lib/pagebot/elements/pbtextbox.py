@@ -37,7 +37,7 @@ class TextBox(Element):
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
         self._textLines = self._baseLines = None # Force initiaize upon first usage.
         self.size = w, h
-        self.s = self.newString(s) # Create SuperString if not already.
+        self.s = BabelString(s, e=self, w=w, h=h) # Create BabelString if not already.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
@@ -103,22 +103,18 @@ class TextBox(Element):
         Also we don't want to calcualte the textLines/runs for every string appended,
         as we don't know how much more the caller will add. self._textLines is set to None
         to force recalculation as soon as self.textLines is called again."""
-        assert fs is not None
-        if isinstance(fs, basestring):
-            fs = self.newString(fs, self)
-        self._textLines = None # Reset to force call to self.initializeTextLines()
-        if self.s_fs is None:
-            self.s_fs = fs
-        else:
-            self.s_fs += fs
-        return self.s_fs # Answer the complete FormattedString as convenience for the caller.
+        if fs:
+            self.s.append_fs(fs)
 
     def append_flat(self, s):
         u"""Append a Flat formatted string."""
+        if s:
+            self.s.append_flat(s)
 
     def append_html(self, s):
         u"""Add parallel utf-8 html string to the self content."""
-        self.s_html += s or ''
+        if s:
+            self.s.append_html(s)
 
     def append(self, s):
         u"""Append to the string type that is defined by the current view/builder type."""
@@ -248,33 +244,17 @@ class TextBox(Element):
 
     #   B U I L D
 
-    def build(self, view, b):
-        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
-        If there are any child elements, then also included their code, using the
-        level recursive indent."""
-        if self.info.cssPath is not None:
-            b.includeCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
-        if self.info.htmlPath is not None:
-            b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
-        else:
-            b.div(id=self.eId, class_=self.class_)
-            b.addHtml(self.html)
-            for e in self.elements:
-                e.build(view, b)
-            b._div() 
-
-    #   D R A W 
-
-    def draw(self, origin, view, b):
+    def build_drawBot(self, origin, view):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
+        b = view.b
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
    
         # TODO: Add marker if there is overflow text in the textbox.
 
-        self.drawFrame(p, view) # Draw optional frame or borders.
+        self.buildFrame_drawBot(p, view) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, p, view)
@@ -311,11 +291,35 @@ class TextBox(Element):
         if view.showTextOverflowMarker and self.isOverflow(b):
             self._drawOverflowMarker(px, py, view, b)
 
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view, b)
+        if self.drawAfter_drawBot is not None: # Call if defined
+            self.drawAfter_drawBot(self, p, view)
 
         self._restoreScale(b)
         view.drawElementMetaInfo(self, origin, b) # Depends on css flag 'showElementInfo'
+
+
+    def build_html(self, view, b, showElements=True):
+        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
+        If there are any child elements, then also included their code, using the
+        level recursive indent."""
+        self.build_css(view)
+        if self.info.htmlPath is not None:
+            b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+        else:
+            b.div(class_=self.class_)
+            b.addHtml(self.html)
+
+            if self.drawBefore is not None: # Call if defined
+                self.drawBefore(self, p, view)
+
+            if showElements:
+                for e in self.elements:
+                    e.build(view, b)
+
+            if self.drawBAfteris not None: # Call if defined
+                self.drawAfter(self, p, view)
+
+            b._div() 
 
     def _drawBaselines(self, px, py, view, b):
         # Let's see if we can draw over them in exactly the same position.
