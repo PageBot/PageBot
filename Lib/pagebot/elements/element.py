@@ -1980,7 +1980,7 @@ class Element(object):
                     s += '\n%s %s' % eFail
         return s
 
-    def buildFrame_drawBot(self, p, view):
+    def buildFrame_drawBot(self, view, p):
         u"""Draw fill of the rectangular element space.
         The self.css('fill') defines the color of the element background.
         Instead of the DrawBot stroke and strokeWidth attributes, use
@@ -1995,15 +1995,16 @@ class Element(object):
             b.restore()
 
         eFill = self.css('fill', None)
+        eStroke = self.css('stroke', None)
         eGradient = self.gradient
-        if eFill or eGradient:
+        if eStroke is not None or eFill is not None or eGradient:
             b.save()
             # Drawing element fill and/or frame
             if eGradient: # Gradient overwrites setting of fill.
-                setGradient(eGradient, p, self, b) # Add self to define start/end from relative size.
+                view.setGradient(eGradient, p, self) # Add self to define start/end from relative size.
             else:
-                setFillColor(eFill, b)
-            #setStrokeColor(eStroke, eStrokeWidth)
+                view.setFillColor(eFill)
+            view.setStrokeColor(eStroke, self.css('strokeWidth', 1))
             if self.framePath is not None: # In case defined, use instead of bounding box. 
                 b.drawPath(self.framePath)
             else:
@@ -2019,8 +2020,8 @@ class Element(object):
         if borderTop is not None:
             b.save()
             if borderTop['dash']:
-                lineDash(*borderTop['dash'])
-            setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
+                b.lineDash(*borderTop['dash'])
+            view.setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
             if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
@@ -2052,8 +2053,8 @@ class Element(object):
         if borderBottom is not None:
             b.save()
             if borderBottom['dash']:
-                lineDash(*borderBottom['dash'])
-            setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
+                b.lineDash(*borderBottom['dash'])
+            view.setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
             if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
@@ -2085,8 +2086,8 @@ class Element(object):
         if borderRight is not None:
             b.save()
             if borderRight['dash']:
-                lineDash(*borderRight['dash'])
-            setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
+                b.lineDash(*borderRight['dash'])
+            view.setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
 
             oTop = 0 # Extra offset on top, if there is a top border.
             if borderTop and (borderTop['strokeWidth'] or 0) > 1:
@@ -2118,8 +2119,8 @@ class Element(object):
         if borderLeft is not None:
             b.save()
             if borderLeft['dash']:
-                lineDash(*borderLeft['dash'])
-            setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
+                b.lineDash(*borderLeft['dash'])
+            view.setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
 
             oTop = 0 # Extra offset on top, if there is a top border.
             if borderTop and (borderTop['strokeWidth'] or 0) > 1:
@@ -2154,10 +2155,10 @@ class Element(object):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.buildFrame_drawBot(p, view) # Draw optional frame or borders.
+        self.buildFrame_drawBot(view, p) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -2171,7 +2172,7 @@ class Element(object):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
-        self._restoreScale()
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     #   F L A T  S U P P O R T

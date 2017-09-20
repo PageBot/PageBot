@@ -5,7 +5,7 @@ from pagebot import newFS
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
-from pagebot.style import A5, TOP
+from pagebot.style import A5, TOP, ORIGIN
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.transformer import pointOffset, lighter
 
@@ -39,29 +39,29 @@ class DemoSpreadSheet(Element):
             x = px + ix*self.CW
             line((x,py), (x, py+self.h)) 
         
-    def draw(self, origin, view, drawElements=True):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
 
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.drawFrame(p, view) # Draw optional frame or borders.
+        self.drawFrame(view, p) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
+            self.drawBefore(self, view, p)
 
-        self._drawSpreadSheet(p, view)
+        self._drawSpreadSheet(view, p)
         
         if drawElements:
             # If there are child elements, draw them over the pixel image.
-            self._drawElements(p, view)
+            self._drawElements(view, p)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view)
+            self.drawAfter(self, view, p)
 
-        self._restoreScale()
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     

@@ -245,68 +245,6 @@ def baseline2y(yIndex, e):
     baseline = e.css('baseline')
     return padT + cy * baseline
 
-#   C O L O R
-
-def setFillColor(c, fs=None, cmyk=False):
-    u"""Set the color for global or the color of the formatted string."""
-    if c is NO_COLOR:
-        pass # Color is undefined, do nothing.
-    elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
-        if cmyk:
-            if fs is None:
-                cmykFill(c)
-            else:
-                fs.cmykFill(c)
-        else:
-            if fs is None:
-                fill(c)
-            else:
-                fs.fill(c)
-    elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-        if cmyk:
-            if fs is None:
-                cmykFill(*c)
-            else:
-                fs.cmykFill(*c)
-        else:
-            if fs is None:
-                fill(*c)
-            else:
-                fs.fill(*c)
-    else:
-        raise ValueError('Error in color format "%s"' % repr(c))
-
-def setStrokeColor(c, w=1, fs=None, cmyk=False):
-    u"""Set global stroke color or the color of the formatted string."""
-    if c is NO_COLOR:
-        pass # Color is undefined, do nothing.
-    elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
-        if cmyk:
-            if fs is None:
-                cmykStroke(c)
-            else:
-                fs.cmykStroke(c)
-        else:
-            if fs is None:
-                stroke(c)
-            else:
-                fs.stroke(c)
-    elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-        if cmyk:
-            if fs is None:
-                cmykStroke(*c)
-            else:
-                fs.cmykStroke(*c)
-        else:
-            if fs is None:
-                stroke(*c)
-            else:
-                fs.stroke(*c)
-    else:
-        raise ValueError('Error in color format "%s"' % c)
-    if w is not None:
-        strokeWidth(w)
-
 class Gradient(object):
     u"""
     As linear gradient (startRadius or endRadius not set):

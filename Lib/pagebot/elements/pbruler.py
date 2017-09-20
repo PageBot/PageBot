@@ -50,14 +50,14 @@ class Ruler(Element):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, p, view)
 
-        self._restoreScale()
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
 
     #   F L A T  S U P P O R T
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
@@ -69,13 +69,16 @@ class Ruler(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin)
         
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
         self.build_css(view)
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
@@ -88,4 +91,6 @@ class Ruler(Element):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin)
 

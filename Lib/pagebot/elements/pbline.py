@@ -22,10 +22,10 @@ class Line(Element):
 
     #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, origin, view, drawElements=True):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         b = view.b
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
  
         view.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
@@ -34,13 +34,19 @@ class Line(Element):
         b.lineTo((px + self.w, py + self.h))
         b.drawPath()
 
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, view, p)
+
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
             for e in self.elements:
                 if e.show:
-                    e.build_drawBot(origin, view)
+                    e.build_drawBot(view, origin)
 
-        self._restoreScale()
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view, p)
+  
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
 
     #   F L A T  S U P P O R T
@@ -59,7 +65,10 @@ class Line(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
-        
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin)
+       
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, origin, view, drawElements=True):
@@ -77,3 +86,6 @@ class Line(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin)

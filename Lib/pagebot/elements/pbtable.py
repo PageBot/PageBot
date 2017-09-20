@@ -144,10 +144,10 @@ class Table(Element):
 
     #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, view, origin, drawElements=True):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         b = view.b
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         self.drawFrame(p, view) # Draw optional frame or borders.
@@ -160,10 +160,10 @@ class Table(Element):
                 e.build_drawBot(view, p)
  
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view, b)
+            self.drawAfter(self, view, p)
 
-        self._restoreScale(b)
-        view.drawElementMetaInfo(self, origin, b) # Depends on css flag 'showElementInfo'
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
     #   F L A T  S U P P O R T
 
@@ -181,6 +181,9 @@ class Table(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
         
     #   H T M L  /  C S S  S U P P O R T
 
@@ -199,6 +202,9 @@ class Table(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
 
 
