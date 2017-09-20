@@ -119,45 +119,12 @@ class TextBox(Element):
     def append(self, s):
         u"""Append to the string type that is defined by the current view/builder type."""
 
-
-
     def appendMarker(self, markerId, arg=None):
         marker = getMarker(markerId, arg=arg)
-        self.append
-        self.append(marker)
-        self.appendHtml('<!-- %s -->' % marker)
+        self.append_drawBot(marker)
+        self.append_flat(marker)
+        self.append_html('<!-- %s -->' % marker)
 
-    def _get_textLines(self):
-        if self._textLines is None:
-            self.initializeTextLines()
-        return self._textLines
-    textLines = property(_get_textLines)
-
-    def _get_baseLines(self):
-        if self._textLines is None: # Check if initialization is needed.
-            self.initializeTextLines()
-        return self._baseLines
-    baseLines = property(_get_baseLines)
-
-    def initializeTextLines(self):
-        u"""Answer an ordered list of all baseline position, starting at the top."""    
-        self._box = 0, 0, self.w, self.h
-        attrString = self._fs.getNSObject()
-        setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
-        path = Quartz.CGPathCreateMutable()
-        Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*self._box))
-        ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-        self._ctLines = CoreText.CTFrameGetLines(ctBox)
-        self._textLines = []
-        for lineIndex, p in enumerate(CoreText.CTFrameGetLineOrigins(ctBox, (0, len(self._ctLines)), None)):
-            x = p.x
-            if self.originTop:
-                y = self.h - p.y
-            else:
-                y = p.y
-            ctLine = self._ctLines[lineIndex]
-            textLine = TextLine(ctLine, (x, y), lineIndex)
-            self._textLines.append(textLine)
  
     def getTextSize(self, fs=None, w=None):
         """Figure out what the width/height of the text self.fs is, with or given width or
@@ -249,7 +216,7 @@ class TextBox(Element):
         fill and/or stroke are defined."""
         b = view.b
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
    
         # TODO: Add marker if there is overflow text in the textbox.
@@ -282,26 +249,33 @@ class TextBox(Element):
         if textShadow:
             b.restore()
 
-        # If there are any child elements, draw them over the text.
-        self._drawElements(p, view, b)
+        if drawElements:
+            # If there are child elements, recursively draw them over the pixel image.
+            for e in self.elements:
+                if e.show:
+                    e.build_drawBot(origin, view)
 
         # Draw markers on TextLine and TextRun positions.
         self._drawBaselines(px, py, view, b)
  
         if view.showTextOverflowMarker and self.isOverflow(b):
-            self._drawOverflowMarker(px, py, view, b)
+            self._drawOverflowMarker(self, view, px, py)
 
         if self.drawAfter_drawBot is not None: # Call if defined
-            self.drawAfter_drawBot(self, p, view)
+            self.drawAfter_drawBot(self, view, p)
 
-        self._restoreScale(b)
-        view.drawElementMetaInfo(self, origin, b) # Depends on css flag 'showElementInfo'
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
+    def build_flat(self, view, p=None, showElenents=True):
+        # TODO: Fill this code.
+        pass
 
-    def build_html(self, view, b, showElements=True):
+    def build_html(self, view, p=None, showElements=True):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
+        b = view.b
         self.build_css(view)
         if self.info.htmlPath is not None:
             b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
@@ -310,22 +284,23 @@ class TextBox(Element):
             b.addHtml(self.html)
 
             if self.drawBefore is not None: # Call if defined
-                self.drawBefore(self, p, view)
+                self.drawBefore(self, view, p)
 
             if showElements:
                 for e in self.elements:
                     e.build(view, b)
 
             if self.drawBAfteris not None: # Call if defined
-                self.drawAfter(self, p, view)
+                self.drawAfter(self, view, p)
 
             b._div() 
 
-    def _drawBaselines(self, px, py, view, b):
+    def _drawBaselines(self, px, py, view):
         # Let's see if we can draw over them in exactly the same position.
         if not view.showTextBoxBaselines and not self.showBaselines:
             return
 
+        b = view.b
         fontSize = self.css('baseLineMarkerSize')
         indexStyle = dict(font='Verdana', fontSize=8, textFill=(0, 0, 1))
         yStyle = dict(font='Verdana', fontSize=fontSize, textFill=(0, 0, 1))

@@ -145,7 +145,8 @@ class Table(Element):
         return result
 
 
-    def draw(self, origin, view, b):
+    def build_drawBot(self, view, origin):
+        b = view.b
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
