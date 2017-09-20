@@ -22,7 +22,6 @@ from pagebot.elements.views.mampview import MampView # Saves in local Applicatio
 from pagebot.elements.views.gitview import GitView # Saves in local position, so git works as website server.
 
 viewClasses = {} # Give access to placable views.
-stringTypes = {} # X-ref of the different string types and their supporting view classes.
 buildTypes = {} # X-ref of the different build types and their supporting view classes.
 
 # Check is the view classes have supported builders and then make an X-ref from their types.
@@ -30,12 +29,6 @@ for viewClass in (DrawBotView, FlatView, MampView, GitView):
 	if viewClass.b is None: # If not a valid builder supported for this view, then skip
 		continue
 	viewClasses[viewClass.viewId] = viewClass
-
-	# Collect the stringType-->viewClass relations
-	stringType = viewClass.stringType
-	if not stringType in stringTypes:
-		stringTypes[stringType] = []
-	stringTypes[stringType].append(viewClass)
 	
 	# Collect the buildType-->viewClass relations
 	buildType = viewClass.buildType

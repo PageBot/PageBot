@@ -2223,7 +2223,7 @@ class Element(object):
 
     #   V A L I D A T I O N
 
-    def evaluate(self, view, score=None):
+    def evaluate(self, score=None):
         u"""Evaluate the content of element e with the total sum of conditions."""
         if score is None:
             score = Score()
@@ -2232,10 +2232,10 @@ class Element(object):
              condition.evaluate(self, score)
         for e in self.elements: # Also works if showing element is not a container.
             if e.show:
-                e.evaluate(view, score)
+                e.evaluate(score)
         return score
          
-    def solve(self, view, score=None):
+    def solve(self, score=None):
         u"""Evaluate the content of element e with the total sum of conditions.
         The view is passed, as it (or its builder) may be needed to solve specific text 
         conditions, such as run length of text and overflow of text boxes."""
@@ -2243,10 +2243,10 @@ class Element(object):
             score = Score()
         if self.conditions: # Can be None or empty
             for condition in self.conditions: # Skip in case there are no conditions in the style.
-                condition.solve(self, b, score)
+                condition.solve(self, score)
         for e in self.elements: # Also works if showing element is not a container.
             if e.show:
-                e.solve(view, score)
+                e.solve(score)
         return score
          
     #   C O N D I T I O N S

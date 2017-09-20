@@ -13,7 +13,8 @@
 #
 #     textbox.py
 #
-from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE, BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT
+from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, \
+    makeStyle, MIDDLE, BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.fonttoolbox.objects.glyph import Glyph
@@ -26,7 +27,7 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, s=None, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
+    def __init__(self, bs=None, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
         Element.__init__(self,  **kwargs)
         u"""Default is the storage of self.s (DrawBot FormattedString or Flat equivalent), 
         but optional it can be ts (tagged basestring)
@@ -37,7 +38,7 @@ class TextBox(Element):
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
         self._textLines = self._baseLines = None # Force initiaize upon first usage.
         self.size = w, h
-        self.s = BabelString(s, e=self, w=w, h=h) # Create BabelString if not already.
+        self.bs = self.view.newString(bs) # Can be any type: BabelString instance or plain unicode string.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
@@ -51,7 +52,7 @@ class TextBox(Element):
         u"""Answer the height of the textBox. If self.style['elasticH'] is set, then answer the 
         vertical space that the text needs. This overwrites the setting of self._h."""
         if self.style['h'] is None: # Elastic height
-            h = self.getTextSize(self.w)[1] + self.pt + self.pb # Add paddings
+            h = self.getTextSize(w=self.w)[1] + self.pt + self.pb # Add paddings
         else:
             h = self.style['h']
         return min(self.maxH, max(self.minH, h)) # Should not be 0 or None
@@ -74,8 +75,8 @@ class TextBox(Element):
         else: # No naming, show unique self.eId:
             name = ':'+self.eId
 
-        if self.fs:
-            s = ' S(%d)' % len(self.s)
+        if self.bs.s:
+            s = ' S(%d)' % len(self.bs)
         else:
             s = ''
 
@@ -87,67 +88,53 @@ class TextBox(Element):
 
     # SuperString support, answering the structure that holds strings for all builder types.
   
+
     def setText(self, s):
         u"""Set the formatted string to s, using self.style."""
-        self.x = newFS(s, self)
+        self.x = newString(s, self)
 
     def _get_text(self):
         u"""Answer the plain text of the current self.fs"""
         return u'%s' % self.fs
     text = property(_get_text)
     
-    def append_drawBot(self, fs):
-        u"""Append s to the running formatted string of the self. Note that the string
-        is already assumed to be styled or can be added as plain string.
+    def append(self, s):
+        u"""Append to the string type that is defined by the current view/builder type.
+        Note that the string is already assumed to be styled or can be added as plain string.
         Don't calculate the overflow here, as this is slow/expensive operation.
         Also we don't want to calcualte the textLines/runs for every string appended,
         as we don't know how much more the caller will add. self._textLines is set to None
         to force recalculation as soon as self.textLines is called again."""
-        if fs:
-            self.s.append_fs(fs)
-
-    def append_flat(self, s):
-        u"""Append a Flat formatted string."""
-        if s:
-            self.s.append_flat(s)
-
-    def append_html(self, s):
-        u"""Add parallel utf-8 html string to the self content."""
-        if s:
-            self.s.append_html(s)
-
-    def append(self, s):
-        u"""Append to the string type that is defined by the current view/builder type."""
+        self.bs += s
 
     def appendMarker(self, markerId, arg=None):
         marker = getMarker(markerId, arg=arg)
-        self.append_drawBot(marker)
-        self.append_flat(marker)
-        self.append_html('<!-- %s -->' % marker)
+        if self.bs.type == 'html':
+            marker = '<!-- %s -->' % marker
+        self.append(marker)
 
- 
-    def getTextSize(self, fs=None, w=None):
+    def getTextSize(self, bs=None, w=None):
         """Figure out what the width/height of the text self.fs is, with or given width or
         the styled width of this text box. If fs is defined as external attribute, then the
         size of the string is answers, as if it was already inside the text box."""
-        if fs is None:
-            fs = self.fs
-        return textSize(self.fs, width=w or self.w)
+        if bs is None:
+            bs = self.bs
+        return bs.textSize(w or self.w)
 
-    def getOverflow(self, b, w=None, h=None):
+    def getOverflow(self, w=None, h=None):
         """Figure out what the overflow of the text is, with the given (w,h) or styled
         (self.w, self.h) of this text box. If self.style['elasticH'] is True, then by
         definintion overflow will allways be empty."""
         if self.css('elasticH'): # In case elasticH is True, box will aways fit the content.
             return ''
         # Otherwise test if there is overflow of text in the given size.
-        return b.textOverflow(self.fs, (0, 0, w or self.w-self.pr-self.pl, h or self.h-self.pt-self.pb), LEFT)
+        return self.bs.textOverflow(w or self.w-self.pr-self.pl, h or self.h-self.pt-self.pb, LEFT)
 
     def NOTNOW_getBaselinePositions(self, y=0, w=None, h=None):
         u"""Answer the list vertical baseline positions, relative to y (default is 0)
         for the given width and height. If omitted use (self.w, self.h)"""
         baselines = []
-        for _, baselineY in textBoxBaseLines(self.fs, (0, y, w or self.w, h or self.h)):
+        for _, baselineY in self.bs.baseLines(0, y, w or self.w, h or self.h):
             baselines.append(baselineY)
         return baselines
 
@@ -211,7 +198,7 @@ class TextBox(Element):
 
     #   B U I L D
 
-    def build_drawBot(self, origin, view):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
         b = view.b
@@ -221,13 +208,13 @@ class TextBox(Element):
    
         # TODO: Add marker if there is overflow text in the textbox.
 
-        self.buildFrame_drawBot(p, view) # Draw optional frame or borders.
+        self.buildFrame_drawBot(view, p) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
+            self.drawBefore(view, p)
 
         # Draw the text with horizontal and vertical alignment
-        tw, th = textSize(self.fs)
+        tw, th = self.bs.textSize()
         xOffset = yOffset = 0
         if self.css('yTextAlign') == MIDDLE:
             yOffset = (self.h - self.pb - self.pt - th)/2
@@ -243,7 +230,7 @@ class TextBox(Element):
             b.save()
             b.setShadow(textShadow)
 
-        b.textBox(self.fs, (px + self.pl + xOffset, py + self.pb-yOffset, 
+        b.textBox(self.bs.fs, (px + self.pl + xOffset, py + self.pb-yOffset, 
             self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
         if textShadow:
@@ -253,21 +240,21 @@ class TextBox(Element):
             # If there are child elements, recursively draw them over the pixel image.
             for e in self.elements:
                 if e.show:
-                    e.build_drawBot(origin, view)
+                    e.build_drawBot(view, origin)
 
         # Draw markers on TextLine and TextRun positions.
-        self._drawBaselines(px, py, view, b)
+        self._drawBaselines(view, px, py)
  
         if view.showTextOverflowMarker and self.isOverflow(b):
-            self._drawOverflowMarker(self, view, px, py)
+            self._drawOverflowMarker(view, px, py)
 
         if self.drawAfter_drawBot is not None: # Call if defined
-            self.drawAfter_drawBot(self, view, p)
+            self.drawAfter_drawBot(view, p)
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
-    def build_flat(self, view, p=None, showElenents=True):
+    def build_flat(self, view, p=None, showElements=True):
         # TODO: Fill this code.
         pass
 
@@ -295,7 +282,7 @@ class TextBox(Element):
 
             b._div() 
 
-    def _drawBaselines(self, px, py, view):
+    def _drawBaselines(self, view, px, py):
         # Let's see if we can draw over them in exactly the same position.
         if not view.showTextBoxBaselines and not self.showBaselines:
             return

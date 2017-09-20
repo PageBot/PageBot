@@ -15,11 +15,8 @@
 from __future__ import division # Make integer division result in float.
 import pagebot # Import to know the path of non-Python resources.
 
-from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
 
 from pagebot.conditions import *
 from pagebot.elements import *
@@ -66,7 +63,7 @@ def makeDocument():
 
     doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1)
     
-    view = doc.getView()
+    view = doc.view # Get the current view of the document.
     view.padding = 40 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
