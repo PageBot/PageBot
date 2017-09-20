@@ -36,7 +36,7 @@ def run():
 
 	# Get the element info string, as used in meta info boxes
 	print '-'*20
-	print e.getElementInfoString()
+	print e.getMetricsString()
 	print '-'*20
 
 if __name__ == '__main__':

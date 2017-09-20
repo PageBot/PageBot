@@ -242,6 +242,8 @@ def asFloat(value, default=None):
         return default
 
 def asFormatted(value, default=None):
+    if value is None:
+        return default
     if int(round(value)) == value: # Same as rounded whole number
         return '%d' % value
     return '%0.2f' % value # Otherwise show as float with 2 digits.
