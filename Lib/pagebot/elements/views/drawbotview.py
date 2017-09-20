@@ -38,28 +38,7 @@ class DrawBotView(BaseView):
  
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
 
-    def build_drawBot(self, origin, ignoredView, b):
-        u"""This method is called is the view is used as a placable element inside
-        another element, such as a Page or Template. """
-        p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, self)
-
-        self.drawElementFrame(self, p)
-        for page in self.elements:
-            self.drawPageMetaInfo(page, p)
-            page.build_drawBot((px, py), self)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, self)
-
-        self._restoreScale()
-        #view.drawElementMetaInfo(self, origin)
-
-    def build(self, path, pageSelection=None):
+    def build(self, path, name=None, pageSelection=None, multiPage=True):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
         doc = self.parent
         b = self.b # Get builder of this view.
@@ -122,15 +101,11 @@ class DrawBotView(BaseView):
         MyBuilder(document).export(fileName), the builder is responsible to
         query the document, pages, elements and styles.
         """
-        if not self._isDrawn:
-            self.drawPages(pageSelection=pageSelection)
-            self._isDrawn = True
-
         # If rootStyle['frameDuration'] is set and saving as movie or animated gif,
         # then set the global frame duration.
         frameDuration = self.css('frameDuration')
 
-        folder = path2ParentPath(fileName)
+        folder = path2ParentPath(path)
 
         if not os.path.exists(folder):
             os.mkdir(folder)
@@ -139,11 +114,13 @@ class DrawBotView(BaseView):
             frameDuration(frameDuration)
 
         # Select other than standard DrawBot export builders here.
-        # TODO: Take build into separte htmlView, instead of split by extension
-        # TODO: Show be more generic if number of builders grows.
-        # TODO: Build multiple pages, now only doc[0] is supported.
-        # TODO: Make it work in case of FlatBuilder
-        b.saveImage(fileName, multipage=multiPage)
+        b.saveImage(path, multipage=multiPage)
+
+    def saveGraphicState(self):
+        self.b.save()
+
+    def restoreGraphicState(self):
+        self.b.restore()
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 
@@ -175,7 +152,7 @@ class DrawBotView(BaseView):
         if self.showPagePadding and (pt or pr or pb or pl):
             b = self.b
             p = pointOffset(page.oPoint, origin)
-            p = page._applyScale(p)
+            p = page._applyScale(self, p)
             px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
             b.fill(None)
             b.stroke(0, 0, 1)
@@ -184,6 +161,7 @@ class DrawBotView(BaseView):
                 b.rect(px+pr, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
             else:
                 b.rect(px+pr, py+pb, page.w-pl-pr, page.h-pt-pb)
+            page._restoreScale(self)
 
     def drawPageNameInfo(self, page, origin, b):
         u"""Draw additional document information, color markers, page number, date, version, etc.
@@ -313,7 +291,7 @@ class DrawBotView(BaseView):
         b = self.b
         for e, origin in self.elementsNeedingInfo.values():
             p = pointOffset(e.oPoint, origin)
-            p = e._applyScale(p)
+            p = e._applyScale(self, p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
             if self.showElementInfo:
                 # Draw box with element info.
@@ -325,15 +303,15 @@ class DrawBotView(BaseView):
                 tpy = py + e.h - th - Pd
 
                 # Tiny shadow
-                setFillColor(b, (0.3, 0.3, 0.3, 0.5))
-                setStrokeColor(b, None)
+                self.setFillColor((0.3, 0.3, 0.3, 0.5))
+                self.setStrokeColor(None)
                 b.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
                 # Frame
-                setFillColor(b, self.css('viewInfoFill'))
-                setStrokeColor(b, 0.3, 0.25)
+                self.setFillColor(self.css('viewInfoFill'))
+                self.setStrokeColor(0.3, 0.25)
                 b.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
                 b.text(fs, (tpx+Pd, tpy+th))
-                e._restoreScale()
+                e._restoreScale(self)
 
             if self.showElementDimensions:
                 # TODO: Make separate arrow functio and better positions
@@ -373,7 +351,9 @@ class DrawBotView(BaseView):
                 tw, th = b.textSize(fs)
                 b.text(fs, (x2+2*S-tw/2, (y2+y1)/2))
 
-    def drawElementOrigin(self, e, origin, b):
+            e._restoreScale(self)
+
+    def drawElementOrigin(self, e, origin):
         b = self.b
         px, py, _ = pointOffset(e.oPoint, origin)
         S = self.css('viewInfoOriginMarkerSize', 4)
@@ -658,5 +638,77 @@ class DrawBotView(BaseView):
                         b.lineTo((x + w + cmSize, y + fy))
             b.drawPath()
 
+    #   C O L O R
+
+    def setTextFillColor(self, fs, c, cmyk=False):
+        self.setFillColor(c, cmyk, fs)
+
+    def setTextStrokeColor(self, fs, c, w=1, cmyk=False):
+        self.setStrokeColor(c, w, cmyk, fs)
+
+    def setFillColor(self, c, cmyk=False, b=None):
+        u"""Set the color for global or the color of the formatted string."""
+        if b is None: # Can be optional FormattedString
+            b = self.b
+        if c is NO_COLOR:
+            pass # Color is undefined, do nothing.
+        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
+            if cmyk:
+                b.cmykFill(c)
+            else:
+                b.fill(c)
+        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
+            if cmyk:
+                b.cmykFill(*c)
+            else:
+                b.fill(*c)
+        else:
+            raise ValueError('Error in color format "%s"' % repr(c))
+
+    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
+        u"""Set global stroke color or the color of the formatted string."""
+        if b is None: # Can be optional FormattedString
+            b = self.b 
+        if c is NO_COLOR:
+            pass # Color is undefined, do nothing.
+        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
+            if cmyk:
+                b.cmykStroke(c)
+            else:
+                b.stroke(c)
+        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
+            if cmyk:
+                b.cmykStroke(*c)
+            else:
+                b.stroke(*c)
+        else:
+            raise ValueError('Error in color format "%s"' % c)
+        if w is not None:
+            b.strokeWidth(w)
+
+    #   D R A W B O T  S U P P O R T
+
+    # The methods are used, in case the view itself is placed in a layout.
+
+    def build_drawBot(self, view, origin):
+        u"""This method is called is the view is used as a placable element inside
+        another element, such as a Page or Template. """
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(view, p)    
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(view, p)
+
+        self.drawElementFrame(view, p)
+        for page in self.elements:
+            self.drawPageMetaInfo(page, p)
+            page.build_drawBot(view, p)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(view, p)
+
+        self._restoreScale(view)
+        #view.drawElementMetaInfo(self, origin)
 
 

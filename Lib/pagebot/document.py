@@ -386,6 +386,7 @@ class Document(object):
     def appendPage(self, pageOrView):
         u"""Append a page to the document. Assert that it is a page element."""
         if pageOrView.isView:
+            pageOrView.setParent(self) # Set parent as weakref, without calling self.appendElement again.
             self.view = pageOrView
         elif pageOrView.isPage:
             pageOrView.setParent(self) # Set parent as weakref, without calling self.appendElement again.

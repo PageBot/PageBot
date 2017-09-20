@@ -79,3 +79,13 @@ class FlatView(BaseView):
             for e in self.elementsNeedingInfo.values():
                 self._drawElementsNeedingInfo()
 
+    def saveGraphicState(self):
+        pass
+        #self.b.save()
+
+    def restoreGraphicState(self):
+        pass
+        #self.b.restore()
+
+
+

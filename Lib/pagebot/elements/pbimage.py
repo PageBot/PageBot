@@ -17,7 +17,7 @@ from __future__ import division # Make integer division result in float.
 
 import os
 from pagebot.elements.element import Element
-from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR # In case no image is defined.
+from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR, ORIGIN # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset, point2D
 from pagebot.conditions import *
 
@@ -176,14 +176,15 @@ class PixelMap(Element):
             alpha = 1
         return alpha
 
-    def draw(self, origin, view, b):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the image in the calculated scale. Since we need to use the image
         by scale transform, all other measure (position, lineWidth) are scaled
         back to their original proportions.
         If stroke is defined, then use that to draw a frame around the image.
         Note that the (sx, sy) is already scaled to fit the padding position and size."""
+        b = view.b
         p = pointOffset(self.oPoint, origin)   
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
@@ -231,10 +232,11 @@ class PixelMap(Element):
             # TODO: Draw optional (transparant) forground color?
             b.restore()
 
-        # If there are child elements, draw them over the pixel image.
-        self._drawElements(origin, view, b)
+        if drawElements:
+            for e in self.elements:
+                e.build_html(view, p)
 
-        self._restoreScale(b)
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
 
    

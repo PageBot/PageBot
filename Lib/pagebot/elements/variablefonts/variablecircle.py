@@ -162,28 +162,30 @@ class VariableCircle(Element):
             self._drawGlyphMarker(axisName, mx+endX, my+endY, glyphName, fontSize, location)
             angle += 360/len(axes)
 
+    #   D R A W B O T  S U P P O R T
 
-    def draw(self, origin, view):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         self.drawFrame(p, view) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
+            self.drawBefore(self, view, p)
 
         # Draw actual circle
         self._drawFontCircle(px, py)
 
-        # If there are child elements, draw them over the text.
-        self._drawElements(p, view)
+        if drawElements:
+            for e in self.elements:
+                e.build_flat(view, p)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view)
+            self.drawAfter(self, view, p)
 
-        self._restoreScale()
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
 

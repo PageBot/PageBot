@@ -24,10 +24,10 @@ class Oval(Element):
 
     #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, view, origin):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         b = view.b
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
     
         self.drawFrame(p, view) # Draw optional frame or borders.
@@ -46,14 +46,14 @@ class Oval(Element):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
-        self._restoreScale()
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
 
     #   F L A T  S U P P O R T
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
@@ -65,13 +65,16 @@ class Oval(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin)
         
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_html(self, origin, view, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True):
 
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
@@ -83,4 +86,7 @@ class Oval(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin)
 
