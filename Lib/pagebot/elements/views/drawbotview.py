@@ -20,6 +20,7 @@ from math import atan2, radians, degrees, cos, sin
 from pagebot.elements.views.baseview import BaseView
 from pagebot.builders import drawBotBuilder
 from pagebot.elements.element import Element
+from pagebot.elements.views.strings import newFsString, FsString
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import *
 
@@ -31,8 +32,6 @@ class DrawBotView(BaseView):
 
     # Postfix for self.build_xxx method names. To be redefined by inheriting View classes.
     buildType = 'drawBot' 
-    # Postfix for self.s_xxx storage of formatted strings.
-    stringType = 'fs'
 
     b = drawBotBuilder # self.b builder for this view.
  
@@ -225,7 +224,7 @@ class DrawBotView(BaseView):
         if strokeWidth is None:
             strokeWidth = self.css('viewFlowConnectionStrokeWidth', 0.5)
 
-        setStrokeColor(b, stroke, strokeWidth)
+        self.setStrokeColor(stroke, strokeWidth)
         if startMarker:
             if fill is None:
                 fill = self.css('viewFlowMarkerFill', NO_COLOR)
@@ -258,7 +257,7 @@ class DrawBotView(BaseView):
         #  Draw the arrow head.
         b.newPath()
         setFillColor(b, stroke)
-        setStrokeColor(b, None)
+        self.setStrokeColor(None)
         b.moveTo((xt, yt))
         b.lineTo((ax1, ay1))
         b.lineTo((ax2, ay2))
@@ -316,8 +315,8 @@ class DrawBotView(BaseView):
             if self.showElementDimensions:
                 # TODO: Make separate arrow functio and better positions
                 # Draw width and height measures
-                setFillColor(b, None)
-                setStrokeColor(b, 0, 0.25)
+                self.setFillColor(None)
+                self.setStrokeColor(0, 0.25) 
                 S = self.css('viewInfoOriginMarkerSize', 4)
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
@@ -331,9 +330,9 @@ class DrawBotView(BaseView):
                 b.line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
                 b.line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
 
-                fs = newFS(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'),
+                fs = newFsString(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-                tw, th = b.textSize(fs)
+                tw, th = b.textSize(fs.s)
                 b.text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
 
                 # Vertical measure
@@ -359,16 +358,16 @@ class DrawBotView(BaseView):
         S = self.css('viewInfoOriginMarkerSize', 4)
         if self.showElementOrigin:
             # Draw origin of the element
-            setFillColor(b, (0.5,0.5,0.5,0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
-            setStrokeColor(b, 0, 0.25)
+            self.setFillColor((0.5,0.5,0.5,0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
+            self.setStrokeColor(0, 0.25)
             b.oval(px-S, py-S, 2*S, 2*S)
             b.line((px-S, py), (px+S, py))
             b.line((px, py-S), (px, py+S))
 
         if self.showElementDimensions:
-            fs = newFS(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'),
+            fs = newFsString(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'),
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-            w, h = b.textSize(fs)
+            w, h = b.textSize(fs.s)
             b.text(fs, (px - w/2, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):
@@ -386,12 +385,12 @@ class DrawBotView(BaseView):
 
             sMissingElementFill = self.css('viewMissingElementFill', NO_COLOR)
             if sMissingElementFill is not NO_COLOR:
-                setFillColor(sMissingElementFill)
-                setStrokeColor(None)
+                self.setFillColor(sMissingElementFill)
+                self.setStrokeColor(None)
                 rect(px, py, self.w, self.h)
             # Draw crossed rectangle.
             setFillColor(b, None)
-            setStrokeColor(b, 0, 0.5)
+            self.setStrokeColor(0, 0.5)
             b.rect(px, py, self.w, self.h)
             b.newPath()
             b.moveTo((px, py))
@@ -458,8 +457,8 @@ class DrawBotView(BaseView):
         oy = py + padB
 
         if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
-            setFillColor(b, None)
-            setStrokeColor(b, self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
+            self.setFillColor(None)
+            self.setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
             b.newPath()
             for cx, cw in e.getGridColumns():
                 b.moveTo((ox+cx, oy))
@@ -476,8 +475,8 @@ class DrawBotView(BaseView):
 
         """
         if self.showGridColumns and sGridFill is not NO_COLOR:
-            setFillColor(b, sGridFill)
-            setStrokeColor(b, None)
+            selfl.setFillColor(sGridFill)
+            self.setStrokeColor(None)
             ox = px + padL
             while ox < w - padR - columnWidth:
                 oy = h - padT - columnHeight - gutterH
@@ -488,8 +487,8 @@ class DrawBotView(BaseView):
 
         # Drawing the grid as lines.
         if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
-            setFillColor(b, None)
-            setStrokeColor(b, self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
+            self.setFillColor(None)
+            self.setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
             # TODO: DrawBot align and fill don't work properly now.
             M = 16
             fs = newFS('', self, dict(font='Verdana', xTextAlign=RIGHT, fontSize=M/2,
@@ -536,11 +535,11 @@ class DrawBotView(BaseView):
         line = 0
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
-        fs = newFS('', self, dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
+        fs = newFsString('', self, dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
             fontSize=M/2, stroke=None, textFill=e.css('gridStroke')))
         while oy > e.pb or 0:
-            setFillColor(b, None)
-            setStrokeColor(b, e.css('baselineGridStroke', NO_COLOR), e.css('gridStrokeWidth'))
+            self.setFillColor(None)
+            self.setStrokeColor(e.css('baselineGridStroke', NO_COLOR), e.css('gridStrokeWidth'))
             b.newPath()
             b.moveTo((px + e.pl, py + oy))
             b.lineTo((px + e.w - e.pr, py + oy))
@@ -638,18 +637,31 @@ class DrawBotView(BaseView):
                         b.lineTo((x + w + cmSize, y + fy))
             b.drawPath()
 
+    #   T E X T
+
+    @classmethod
+    def newString(cls, s, view=None, e=None, style=None, w=None, h=None, fontSize=None, 
+            styleName=None, tagName=None):
+        if not isinstance(s, FsString):
+            s = newFsString(s, view=view, e=e, style=style, w=w, h=h, 
+                fontSize=fontSize, styleName=styleName, tagName=tagName)
+        return s
+
     #   C O L O R
 
-    def setTextFillColor(self, fs, c, cmyk=False):
-        self.setFillColor(c, cmyk, fs)
+    @classmethod
+    def setTextFillColor(cls, fs, c, cmyk=False):
+        cls.setFillColor(c, cmyk, fs)
 
-    def setTextStrokeColor(self, fs, c, w=1, cmyk=False):
-        self.setStrokeColor(c, w, cmyk, fs)
+    @classmethod
+    def setTextStrokeColor(cls, fs, c, w=1, cmyk=False):
+        cls.setStrokeColor(c, w, cmyk, fs)
 
-    def setFillColor(self, c, cmyk=False, b=None):
+    @classmethod
+    def setFillColor(cls, c, cmyk=False, b=None):
         u"""Set the color for global or the color of the formatted string."""
         if b is None: # Can be optional FormattedString
-            b = self.b
+            b = cls.b
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
         elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
@@ -665,10 +677,11 @@ class DrawBotView(BaseView):
         else:
             raise ValueError('Error in color format "%s"' % repr(c))
 
-    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
+    @classmethod
+    def setStrokeColor(cls, c, w=1, cmyk=False, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         if b is None: # Can be optional FormattedString
-            b = self.b 
+            b = cls.b 
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
         elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.

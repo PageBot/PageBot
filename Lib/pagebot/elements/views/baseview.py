@@ -30,8 +30,7 @@ class BaseView(Element):
 
     # Postfix for self.build_xxx method names. To be redefined by inheriting View classes.
     buildType = None 
-    # Postfix for self.s_xxx storage of formatted strings.
-    stringType = None
+    stringClass = None
 
     isView = True
 

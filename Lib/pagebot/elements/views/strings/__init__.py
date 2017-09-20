@@ -1,18 +1,16 @@
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
-#     www.pagebot.io
 #
 #     P A G E B O T
 #
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
 #     Licensed under MIT conditions
 #     
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     TestViewBuilders.py
-#
-from pagebot.elements.views import viewClasses, buildTypes
-
-print viewClasses
-print buildTypes
+from fsstring import FsString, newFsString
+from flatstring import FlatString, newFlatString
+from htmlstring import HtmlString, newHtmlString
