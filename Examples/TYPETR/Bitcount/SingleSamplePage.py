@@ -14,11 +14,14 @@
 #
 #     This script the PDF document with Bitcount refernce information.
 #
+# Only works on DrawBot for now.
+
 import pagebot
-from pagebot import newFS, findMarkers, textBoxBaseLines
+from pagebot import findMarkers
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
 from pagebot.document import Document
-from pagebot.elements import Page, Template, Galley
+from pagebot.elements import *
+from pagebot.elements.views.strings import newFsString
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.style import A4
@@ -116,7 +119,7 @@ BitcountPaths = getFamilyFontPaths(familyName)
 #print BitcountPaths.keys()
 
 #-----------------------------------------------------------------         
-def makeDocument(rs):
+def makeDocument():
     u"""Demo Bitcount Reference composer."""
     mainId = 'mainId'
 
@@ -165,32 +168,32 @@ def makeDocument(rs):
     BOOK_ITALIC = '%s%s%s-BookCircle%s' % (familyName, spacing, singleDouble, italic)
     BOLD = '%s%s%s-MediumCircle%s' % (familyName, spacing, singleDouble, italic)
     SEMIBOLD = '%s%sProp%s-BoldCircle%s' % (familyName, spacing, singleDouble, italic)
-     
+
     # Template 1
-    template1 = Template(rs) # Create template of main size. Front page only.
+    template1 = Template() # Create template of main size. Front page only.
     # Show baseline grid if rs.showBaselineGrid is True
-    template1.baselineGrid(rs)
+    #template1.baselineGrid(rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox('', 1, 0, 6, 6, style=rs, eId=mainId)
+    newColTextBox('', 1, 0, 6, 6, parent=template1, name=mainId)
     
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(rs, aufoPages=1, template=template1) 
- 
+    doc = Document(rs, autoPages=1, template=template1) 
+     
     page = doc[1]
     # Index by element id, answers ([e1, ...], (x, y)) tuple. There can be multiple elements
     # with the same Id, and there can be multiple elements on the same position).
     #page[mainId]
     e = page.getElement(mainId)
     
-    fs = newFS(Sample_Text + ' V.T.TeY.Yjy\n', e, dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = newFsString(Sample_Text + ' V.T.TeY.Yjy\n', e, dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = newFS(scriptGlobals.head, e, dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = newFsString(scriptGlobals.head, e, dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = newFS(scriptGlobals.subhead, e, dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = newFsString(scriptGlobals.subhead, e, dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
     e.append(fs)
-    fs = newFS(scriptGlobals.body, e, dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
+    fs = newFsString(scriptGlobals.body, e, dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
     e.append(fs)
 
     return doc
@@ -221,6 +224,6 @@ if __name__ == '__main__':
 
     Variable(UI, globals())
             
-    d = makeDocument(RS)
+    d = makeDocument()
     d.export(EXPORT_PATH) 
 

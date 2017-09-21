@@ -131,7 +131,8 @@ class PixelMap(Element):
 
     def initImageSize(self):
         if self.path is not None and os.path.exists(self.path):
-            self.iw, self.ih = imageSize(self.path)
+            # TODO: THIS IS CALLED, if self.doc is not yet initialized
+            self.iw, self.ih = self.view.imageSize(self.path)
         else:
             self.iw = self.ih = 0 # Undefined, there is no image file.
 
@@ -142,7 +143,8 @@ class PixelMap(Element):
         if scaled:
             x = self.w / self.iw
             y = self.h / self.ih
-        return imagePixelColor(self.path, (x, y))
+        p = x, y
+        return self.view.imagePixelColor(self.path, p)
 
     # Set the intended width and calculate the new scale, validating the
     # width to the image minimum width and the height to the image minimum height.
