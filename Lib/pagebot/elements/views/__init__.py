@@ -36,3 +36,12 @@ for viewClass in (DrawBotView, FlatView, MampView, GitView):
 		buildTypes[buildType] = []
 	buildTypes[buildType].append(viewClass)
 
+# Check with builder works, to define the default view class.
+# DrawBot will DrawBotView.b make into a valid DrawBotBuilder instance.
+# Otherwise FlatView is used, to run on non-OSX platforms.
+
+if DrawBotView.b is not None:
+	defaultViewClass = DrawBotView
+else:
+	defaultViewClass = FlatView
+

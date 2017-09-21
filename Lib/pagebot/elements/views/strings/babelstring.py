@@ -25,7 +25,10 @@ class BabelString(object):
     	return self
 
     def __mul__(self, d):
-    	self.s = self.s * d
+        s = self.s
+        for n in range(d-1):
+            s += self.s
+        self.s = s
     	return self
 
     def __len__(self):
@@ -38,5 +41,7 @@ class BabelString(object):
 	        self.s += s
 
     def type(self):
+        u"""Answer the id of the class, in case a caller wants to know what kind of 
+        BabelString this is."""
     	return self.BABEL_STRING_TYPE
 
