@@ -104,7 +104,7 @@ def makeDocument():
         print condition, e, e.bottom, Bottom2BottomSide().test(e), e.isBottomOnBottomSide(), e.bottom
    
         
-    view = doc.getView()
+    view = doc.view
     view.w, view.h = W, H
     view.padding = 40 # Don't show cropmarks and such.
     view.showElementOrigin = ShowOrigins # Show origin alignment markers on each element.
