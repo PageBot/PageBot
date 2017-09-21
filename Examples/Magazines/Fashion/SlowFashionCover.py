@@ -16,7 +16,7 @@ from __future__ import division
 from datetime import datetime # Make date on magazine cover fit today.
 
 import pagebot
-from pagebot import newFS, Gradient, Shadow
+from pagebot import Gradient, Shadow
 from pagebot.style import getRootStyle, LEFT, TOP, RIGHT, A4Letter
 from pagebot.elements import *
 from pagebot.conditions import *
@@ -25,7 +25,6 @@ from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.toolbox.transformer import s2Color, int2Color, lighter
 # Import other than default view class, showing double pages spread
-from pagebot.elements.views.spreadview import SpreadView
 
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont, Font 
 W, H = A4Letter # Vertical Letter size, horizontal A4.
@@ -212,9 +211,9 @@ def makeDocument():
         template=template1, startPage=1) 
  
     # TODO Will be expanded with more pages later.
-    view = doc.getView()
-    #view = SpreadView(parent=doc) # Show as spread, not a single pages.
+    view = doc.view
     view.padding = 40
+    view.showSpread = True # Show the magazine pages as spread.
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
     view.showPageFrame = True

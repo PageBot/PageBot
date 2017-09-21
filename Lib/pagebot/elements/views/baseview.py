@@ -53,6 +53,16 @@ class BaseView(Element):
         self._isDrawn = False # Automatic call self.drawPages if build is called without drawing.
 
     def _initializeControls(self):
+        # Paging
+        self.showSpread = False # If True, show even pages on left of fold, odd on the right.
+        # Document/page stuff
+        self.showPageCropMarks = False
+        self.showPageRegistrationMarks = False
+        self.showPagePadding = False
+        self.showPageFrame = False
+        self.showPageNameInfo = False
+        self.showPageMetaInfo = False
+        # Element info showing
         self.showElementInfo = False
         self.showElementFrame = False
         self.showElementOrigin = False
@@ -62,13 +72,6 @@ class BaseView(Element):
         self.showGrid = False
         self.showGridColumns = False
         self.showBaselineGrid = False
-        # Document/page stuff
-        self.showPageCropMarks = False
-        self.showPageRegistrationMarks = False
-        self.showPagePadding = False
-        self.showPageFrame = False
-        self.showPageNameInfo = False
-        self.showPageMetaInfo = False
         # TextBox stuff
         self.showTextBoxIndex = False # Show the line index number on the left side.
         self.showTextBoxY = False # Show the realtic y-position value if text lines on right side.

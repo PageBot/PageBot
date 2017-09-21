@@ -27,7 +27,6 @@ from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import VariationModel, supportScalar #, normalizeLocation
 
-from pagebot import setFillColor, setStrokeColor, newFS
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
 from pagebot.fonttoolbox.variablefontaxes import axisDefinitions

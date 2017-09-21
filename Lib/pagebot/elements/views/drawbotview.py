@@ -667,6 +667,16 @@ class DrawBotView(BaseView):
                     colors=gradient.cmykColors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 
+    #   I M A G E
+
+    @classmethod
+    def imagePixelColor(cls, path, p):
+        return cls.b.imagePixelColor(path, p)
+
+    @classmethod
+    def imageSize(cls, path):
+        return cls.b.imageSize(path)
+
     #   C O L O R
 
     @classmethod
