@@ -1992,10 +1992,10 @@ class Element(object):
         b = view.b # Get the DrawBot (or equivalent) builder for drawing the frame.
         eShadow = self.shadow
         if eShadow:
-            b.save()
-            b.setShadow(eShadow)
+            view.saveGraphicState()
+            view.setShadow(eShadow)
             b.rect(p[0], p[1], self.w, self.h)
-            b.restore()
+            view.restoreGraphicState()
 
         eFill = self.css('fill', None)
         eStroke = self.css('stroke', None)
@@ -2004,7 +2004,7 @@ class Element(object):
             b.save()
             # Drawing element fill and/or frame
             if eGradient: # Gradient overwrites setting of fill.
-                view.setGradient(eGradient, p, self) # Add self to define start/end from relative size.
+                view.setGradient(eGradient, self, p) # Add self to define start/end from relative size.
             else:
                 view.setFillColor(eFill)
             view.setStrokeColor(eStroke, self.css('strokeWidth', 1))
