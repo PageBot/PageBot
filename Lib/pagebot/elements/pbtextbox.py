@@ -243,10 +243,10 @@ class TextBox(Element):
                     e.build_drawBot(view, origin)
 
         # Draw markers on TextLine and TextRun positions.
-        self._drawBaselines(view, px, py)
+        self._drawBaselines_drawBot(view, px, py)
  
         if view.showTextOverflowMarker and self.isOverflow(b):
-            self._drawOverflowMarker(view, px, py)
+            self._drawOverflowMarker_drawBot(view, px, py)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(view, p)
@@ -282,7 +282,7 @@ class TextBox(Element):
 
             b._div() 
 
-    def _drawBaselines(self, view, px, py):
+    def _drawBaselines_drawBot(self, view, px, py):
         # Let's see if we can draw over them in exactly the same position.
         if not view.showTextBoxBaselines and not self.showBaselines:
             return
@@ -306,27 +306,28 @@ class TextBox(Element):
             # TODO: Why measures not showing?
             line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
-                fs = newFS(`textLine.lineIndex`, style=indexStyle)
+                fs = view.newString(`textLine.lineIndex`, style=indexStyle)
                 tw, th = b.textSize(fs) # Calculate right alignment
-                b.text(fs, (px-3-tw, py + y - th/4))
+                b.text(fs.s, (px-3-tw, py + y - th/4))
             if view.showTextBoxY:
-                fs = newFS('%d' % round(y), style=yStyle)
+                fs = view.newString('%d' % round(y), style=yStyle)
                 _, th = b.textSize(fs)
-                b.text(fs, (px + self.w + 3, py + y - th/4))
+                b.text(fs.s, (px + self.w + 3, py + y - th/4))
             if view.showTextBoxLeading:
                 leading = round(abs(y - prevY))
-                fs = newFS('%d' % leading, style=leadingStyle)
+                fs = view.newString('%d' % leading, style=leadingStyle)
                 _, th = b.textSize(fs)
-                b.text(fs, (px + self.w + 3, py + prevY - leading/2 - th/4))
+                b.text(fs.s, (px + self.w + 3, py + prevY - leading/2 - th/4))
             prevY = y
  
-    def _drawOverflowMarker(self, px, py, view):
-        fs = newFS('[+]', style=dict(textFill=(1, 0, 0), font='Verdana-Bold', fontSize=8))
-        tw, th = textSize(fs)
+    def _drawOverflowMarker_drawBot(self, view, px, py):
+        b = view.b
+        fs = view.newString('[+]', style=dict(textFill=(1, 0, 0), font='Verdana-Bold', fontSize=8))
+        tw, th = b.textSize(fs.s)
         if self.originTop:
             pass
         else:
-            b.text(fs, (px + self.w - 3 - tw, py + th/2))
+            b.text(fs.s, (px + self.w - 3 - tw, py + th/2))
 
     #   C O N D I T I O N S
 

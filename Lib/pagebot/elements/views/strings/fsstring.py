@@ -42,7 +42,6 @@ class FsString(BabelString):
         return self.b.textSize(self.s, w)
 
     def textOverflow(self, w, h, align=LEFT):
-        print '@#@#@#@#@#', self.s, 111111, w, 22222222, h, 3333333, align
         return self.b.textOverflow(self.fs, (0, 0, w, h), align)
 
 def newFsString(t, view=None, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):

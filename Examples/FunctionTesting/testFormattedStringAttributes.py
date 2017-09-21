@@ -1,4 +1,4 @@
-from pagebot import drawBotBuilder as b
+from pagebot.builders import drawBotBuilder as b
 if b is None:
 	print 'Example only runs in DrawBot'
 	raise KeyboardInterrupt()

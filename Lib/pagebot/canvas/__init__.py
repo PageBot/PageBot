@@ -23,11 +23,11 @@ import AppKit
 import Quartz
 
 import re
-from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth, \
-    hyphenation, cmykLinearGradient, linearGradient, cmykRadialGradient, radialGradient,\
-    shadow, textSize
-
-from drawBot.context.baseContext import BaseContext
+#from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth, \
+#    hyphenation, cmykLinearGradient, linearGradient, cmykRadialGradient, radialGradient,\
+#    shadow, textSize
+#
+#from drawBot.context.baseContext import BaseContext
 
 from pagebot.style import NO_COLOR, LEFT
 from pagebot.toolbox.transformer import point2D
@@ -284,47 +284,12 @@ class Gradient(object):
         return self.startRadius is not None and self.endRadius is not None
     radial = property(_get_radial)
 
-def setGradient(gradient, origin, e):
-    u"""Define the gradient call to match the size of element e., Gradient position
-    is from the origin of the page, so we need the current origin of e."""
-    assert isinstance(gradient, Gradient)
-    start = origin[0] + gradient.start[0] * e.w, origin[1] + gradient.start[1] * e.h
-    end = origin[0] + gradient.end[0] * e.w, origin[1] + gradient.end[1] * e.h
-
-    if gradient.linear:
-        if gradient.cmykColors is None:
-            linearGradient(startPoint=start, endPoint=end,
-                colors=gradient.colors, locations=gradient.locations)
-        else:
-            cmykLinearGradient(startPoint=start, endPoint=end,
-                colors=gradient.cmykColors, locations=gradient.locations)
-    else: # Gradient must be radial.
-        if gradient.cmykColors is None:
-            radialGradient(startPoint=start, endPoint=end,
-                colors=gradient.colors, locations=gradient.locations,
-                startRadius=gradient.startRadius, endRadius=gradient.endRadius)
-        else:
-            cmykRadialGradient(startPoint=start, endPoint=end,
-                colors=gradient.cmykColors, locations=gradient.locations,
-                startRadius=gradient.startRadius, endRadius=gradient.endRadius)
-
 class Shadow(object):
     def __init__(self, offset=None, blur=None, color=None, cmykColor=None):
         self.offset = offset or (5, -5)
         self.blur = blur
         self.color = color
         self.cmykColor = cmykColor
-
-def setShadow(eShadow):
-    u"""Set the *Shadow* instance *eShadow* as current. The *eShadow.cmykColor* 
-    flag decides which type of shadow (RGB or CMYK) is set. 
-    The *Shadow* class takes *(offset=None, blur=None, color=None, cmykColor=None)*
-    as attributes. Ignore is *eShadow* is *None*."""
-    if shadow is not None:
-        if eShadow.cmykColor is not None:
-            shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
-        else:
-            shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.color)
 
 #   E L E M E N T
 

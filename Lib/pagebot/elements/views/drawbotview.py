@@ -68,7 +68,7 @@ class DrawBotView(BaseView):
             b.newPage(pw, ph) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
             # View may have defined a background
             if self.style.get('fill') is not None:
-                setFillColor(b, self.style['fill'])
+                self.setFillColor(self.style['fill'])
                 b.rect(0, 0, pw, ph)
 
             if self.drawBefore is not None: # Call if defined
@@ -228,7 +228,7 @@ class DrawBotView(BaseView):
         if startMarker:
             if fill is None:
                 fill = self.css('viewFlowMarkerFill', NO_COLOR)
-            setFillColor(b, fill)
+            self.setFillColor(fill)
             oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
 
         xm = (xt + xs)/2
@@ -249,14 +249,14 @@ class DrawBotView(BaseView):
         
         b = self.b
         b.newPath()
-        b.setFillColor(None)
+        self.setFillColor(None)
         b.moveTo((xs, ys))
         b.curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
         b.drawPath()
 
         #  Draw the arrow head.
         b.newPath()
-        setFillColor(b, stroke)
+        self.setFillColor(stroke)
         self.setStrokeColor(None)
         b.moveTo((xt, yt))
         b.lineTo((ax1, ay1))
@@ -265,7 +265,7 @@ class DrawBotView(BaseView):
         b.drawPath()
 
         if endMarker:
-            setFillColor(b, self.css('viewFlowMarkerFill', NO_COLOR))
+            self.setFillColor(self.css('viewFlowMarkerFill', NO_COLOR))
             b.oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 
     #   D R A W I N G  E L E M E N T
@@ -389,7 +389,7 @@ class DrawBotView(BaseView):
                 self.setStrokeColor(None)
                 rect(px, py, self.w, self.h)
             # Draw crossed rectangle.
-            setFillColor(b, None)
+            self.setFillColor(None)
             self.setStrokeColor(0, 0.5)
             b.rect(px, py, self.w, self.h)
             b.newPath()
@@ -404,21 +404,15 @@ class DrawBotView(BaseView):
 
     #   S H A D O W
 
-    def setShadow(self, e):
+    def setShadow(self, eShadow):
         u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this
         method with self._resetShadow()"""
-        shadowOffset = e.css('shadowOffset') # Use DrawBot graphic state switch on shadow mode.
-        if shadowOffset is not None:
-            b = self.b
-            b.save() # DrawBot graphics state push
-            shadowBlur = e.css('shadowBlur') # Should be integer.
-            shadowFill = e.css('shadowFill') # Should be color, different from NO_COLOR
-            b.shadow(shadowOffset, shadowBlur, shadowFill)
-
-    def resetShadow(self, e):
-        u"""Restore the shadow mode of DrawBot. Should be paired with call self._setShadow()."""
-        if e.css('shadowOffset') is not None:
-            self.b.restore() # DrawBot graphics state pop.
+        b = self.b
+        if eShadow is not None and eShadow.offset is not None:
+            if eShadow.cmykColor is not None:
+                b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
+            else:
+                b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.color)
 
     #    G R I D
 
@@ -475,7 +469,7 @@ class DrawBotView(BaseView):
 
         """
         if self.showGridColumns and sGridFill is not NO_COLOR:
-            selfl.setFillColor(sGridFill)
+            self.setFillColor(sGridFill)
             self.setStrokeColor(None)
             ox = px + padL
             while ox < w - padR - columnWidth:
@@ -646,6 +640,32 @@ class DrawBotView(BaseView):
             s = newFsString(s, view=view, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         return s
+
+    #   G R A D I E N T  &  S H A D O W
+
+    def setGradient(self, gradient, e, origin):
+        u"""Define the gradient call to match the size of element e., Gradient position
+        is from the origin of the page, so we need the current origin of e."""
+        b = self.b
+        start = origin[0] + gradient.start[0] * e.w, origin[1] + gradient.start[1] * e.h
+        end = origin[0] + gradient.end[0] * e.w, origin[1] + gradient.end[1] * e.h
+
+        if gradient.linear:
+            if gradient.cmykColors is None:
+                b.linearGradient(startPoint=start, endPoint=end,
+                    colors=gradient.colors, locations=gradient.locations)
+            else:
+                b.cmykLinearGradient(startPoint=start, endPoint=end,
+                    colors=gradient.cmykColors, locations=gradient.locations)
+        else: # Gradient must be radial.
+            if gradient.cmykColors is None:
+                b.radialGradient(startPoint=start, endPoint=end,
+                    colors=gradient.colors, locations=gradient.locations,
+                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
+            else:
+                b.cmykRadialGradient(startPoint=start, endPoint=end,
+                    colors=gradient.cmykColors, locations=gradient.locations,
+                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 
     #   C O L O R
 
