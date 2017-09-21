@@ -51,10 +51,11 @@ class Document(object):
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
 
         # Initialize the current view of this document. All conditional checking and building
-        # is done through this view. 
+        # is done through this view. The defaultViewClass is set either to DrawBotView or FlatView,
+        # depending on the type of platform we are running on.
         # TODO: If the view is (re)set in a later stage, some template and other initialization
         # needs to be done again, or else calculated text sizes may be wrong.
-        self.setView(viewId or self.DEFAULT_VIEWID)
+        self.setView(viewId or defaultViewClass.viewId)
 
         # Template is name or instance default template.
         self.initializeTemplates(templates, template) 
