@@ -12,7 +12,6 @@
 #
 #     UseShadow.py
 #
-from pagebot import newFS
 from pagebot.style import getRootStyle, BOTTOM, CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import *
@@ -44,7 +43,7 @@ def makeDocument():
         blur=ShadowTextBlur, 
         color=(0.2, 0.2, 0.2, 0.5)
     )
-    fs = newFS('This is text with a shadow', 
+    fs = doc.view.newString('This is text with a shadow', 
         style=dict(font='Verdana', fontSize=30, textFill=0, rLeading=1.2))
     
     newTextBox(fs, fill=0.8, parent=page, 
@@ -57,7 +56,7 @@ def makeDocument():
         print 'Failed conditions', score.fails
         
     # Set the view parameters for the required output.
-    view = doc.getView()
+    view = doc.view
     view.padding = 0 # Make view padding to show crop marks and frame
     view.showPageFrame = True # Show frame of the page in blue
     #view.showPagePadding = True

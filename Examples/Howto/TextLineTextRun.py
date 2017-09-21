@@ -14,6 +14,14 @@
 #
 #     Needs Bitcount to be installed for best view.
 #     See gallery.
+#
+#    Implements a demo version of TextLine and TextRun.
+#    This code has been built into BabelString FsString.
+#
+from pagebot.builders import drawBotBuilder as b
+if b is None:
+	print 'Example only runs in DrawBot'
+	raise KeyboardInterrupt()
 
 import CoreText
 import Quartz
