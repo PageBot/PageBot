@@ -464,7 +464,12 @@ class Element(object):
         doc = self.doc
         if doc is not None:
             return self.doc.view
-        return None
+
+        # Default view class for the current platform.
+        from pagebot.elements.views import defaultViewClass 
+        # In case there is not a document yet, then create a default view instance 
+        # so solitary elements at least can create BabelStrings of the right type.
+        return defaultViewClass()
     view = property(_get_view)
 
     def newString(self, s, **kwargs):

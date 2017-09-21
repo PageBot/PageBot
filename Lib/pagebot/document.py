@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-#
+
 #     P A G E B O T
 #
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
@@ -21,6 +21,7 @@ from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import viewClasses, DrawBotView
 from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
 from pagebot.toolbox.transformer import obj2StyleId
+from pagebot.elements.views import defaultViewClass
 from pagebot.builders import BuildInfo # Container with Builder flags and data/parametets
 
 class Document(object):
@@ -116,6 +117,10 @@ class Document(object):
     def _get_parent(self):
         return None
     parent = property(_get_parent)
+
+    def getView(self):
+        u"""For compatibility with old code."""
+        return self.view
 
     def getInfo(self):
         u"""Answer a string with most representing info about the document."""

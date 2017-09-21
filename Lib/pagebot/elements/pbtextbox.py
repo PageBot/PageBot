@@ -227,14 +227,14 @@ class TextBox(Element):
 
         textShadow = self.textShadow
         if textShadow:
-            b.save()
-            b.setShadow(textShadow)
+            view.saveGraphicState()
+            view.setShadow(textShadow)
 
         b.textBox(self.bs.fs, (px + self.pl + xOffset, py + self.pb-yOffset, 
             self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
         if textShadow:
-            b.restore()
+            view.restoreGraphicState()
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
@@ -376,17 +376,5 @@ class TextBox(Element):
         return True
 
 
-    #   F I N D
-
-    def findPattern(self, pattern):
-        u"""Answer the point locations where this pattern occures in the Formatted String."""
-        foundPatterns = [] # List of FoundPattern instances. 
-        for lineIndex, textLine in enumerate(self.textLines):
-            for foundPattern in textLine.findPattern(pattern):
-                foundPattern.y = textLine.y
-                foundPattern.z = self.z
-                foundPatterns.append(foundPattern)
-        return foundPatterns
-                
 
 
