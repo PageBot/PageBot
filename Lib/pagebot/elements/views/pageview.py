@@ -11,7 +11,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     drawbotview.py
+#     pageview.py
 #
 from __future__ import division
 from datetime import datetime
@@ -23,11 +23,10 @@ from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import *
 
-class DrawBotView(BaseView):
+class PageView(BaseView):
     u"""A View is just another kind of container, kept by document to make a certain presentation 
-    of the page tree. Views have a builder (self.b) as attribute, that is their path way for export.
-    The builder."""
-    viewId = 'DrawBot'
+    of the page tree. Views use the current Context.b builder for export."""
+    viewId = 'Page'
 
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
 

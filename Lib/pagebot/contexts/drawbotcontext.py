@@ -22,6 +22,8 @@ class DrawBotContext(BaseContext):
     This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
 
+    # The context builder "self.b" is the main drawBot library, that contains all 
+    # drawing calls in as used regular DrawBot scripts.
     b = drawBotBuilder # self.b builder for this canvas.
  
     #   P A T H S 
@@ -39,12 +41,12 @@ class DrawBotContext(BaseContext):
     #   T E X T
 
     @classmethod
-    def newString(cls, s, view=None, e=None, style=None, w=None, h=None, fontSize=None, 
+    def newString(cls, s, e=None, style=None, w=None, h=None, fontSize=None, 
             styleName=None, tagName=None):
         u"""Create a new styles BabelString(FsString) instance from s, using e or style.
         Ignore and answer s if it is already a FsString."""
         if isinstance(s, basestring):
-            s = newFsString(s, view=view, e=e, style=style, w=w, h=h, 
+            s = newFsString(s, cls.b, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, FsString)
         return s

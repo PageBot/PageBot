@@ -28,10 +28,10 @@ except ImportError:
     print 'Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown'
     markdown = None
 
+from pagebot.contexts import Context
 from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
 from pagebot.document import Document
-from pagebot.builders import WebBuilder
 
 class Typesetter(object):
 
@@ -57,7 +57,7 @@ class Typesetter(object):
         'li': ('ul', 'ol'),
         'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
     }
-    def __init__(self, doc=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None):
+    def __init__(self, doc=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None, b=None):
         # Set the doc context of the typesetter. Can be None, in which case it is expected that one of the code blocks
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
@@ -74,8 +74,8 @@ class Typesetter(object):
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = [] 
         self.tagHistory = []
-        # HTML/CSS Builder, to build parallel HTML while parsing the markdown.
-        self.b = WebBuilder()
+        # Current builder
+        self.b = b or Context.b
         # Code block results if any ~~~Python blocks defined in the Markdown file.
         self.globalDocName = globalDocName or 'doc' # Name of global doc to find in code blocks, to be stored in self.doc
         self.globalPageName = globalPageName or 'page'

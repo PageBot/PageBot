@@ -45,13 +45,10 @@ class HtmlString(BabelString):
         # TODO: Some stuff needs to get here.
         return ''
 
-def newHtmlString(s, b=None, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+def newHtmlString(s, b, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
     u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
     their existence, so they can inherit from previous style formats.
     If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
-    if b is None:
-        from pagebot.builders.htmlbuilder import htmlBuilder as b
-    # TODO: HTML Style stuff here.
 
     sUpperCase = css('uppercase', e, style)
     sLowercase = css('lowercase', e, style)
