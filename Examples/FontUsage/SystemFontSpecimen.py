@@ -19,7 +19,7 @@ DEBUG = False # Make True to see grid and element frames.
 
 if __name__ == '__main__':
 	# Create a new specimen publications and add the list of system fonts.
-	typeSpecimen = TypeSpecimen(getSystemFontPaths(), showGrid=DEBUG) 
+	typeSpecimen = TypeSpecimen(styleNames=getSystemFontPaths(), showGrid=DEBUG) 
 	# Build the pages of the publication, interpreting the font list.
 	typeSpecimen.build()
 	# Export the document of the publication to PDF.

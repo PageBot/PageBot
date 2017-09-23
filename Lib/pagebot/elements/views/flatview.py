@@ -15,8 +15,8 @@
 #
 import os
 import shutil
-import flat
 
+from platforms import platform # Get the platform we are building for.
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.views.strings import newFlatString, FlatString
 from pagebot.builders.flatbuilder import flatBuilder
@@ -24,11 +24,6 @@ from pagebot.builders.flatbuilder import flatBuilder
 class FlatView(BaseView):
     u"""Support the flat library, so PageBot can run on non-OSX environments."""
     viewId = 'Flat'
-
-    # Postfix for self.build_flat method names. 
-    buildType = 'flat' 
-
-    b = flatBuilder # self.b builder for this view.
 
     def build(self, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
@@ -77,79 +72,4 @@ class FlatView(BaseView):
             # So the info boxes don't get covered by regular page content.
             for e in self.elementsNeedingInfo.values():
                 self._drawElementsNeedingInfo()
-
-    def saveGraphicState(self):
-        pass
-        #self.b.save()
-
-    def restoreGraphicState(self):
-        pass
-        #self.b.restore()
-
-    #   T E X T
-
-    @classmethod
-    def newString(cls, s, view=None, e=None, style=None, w=None, h=None, fontSize=None, 
-            styleName=None, tagName=None):
-        if not isinstance(s, FlatString):
-            s = newFlatString(s, view=view, e=e, style=style, w=w, h=h, 
-                fontSize=fontSize, styleName=styleName, tagName=tagName)
-        return s
- 
-    #   C O L O R
-
-    @classmethod
-    def setTextFillColor(cls, fs, c, cmyk=False):
-        # TODO: Make this work in Flat
-        cls.setFillColor(c, cmyk, fs)
-
-    @classmethod
-    def setTextStrokeColor(cls, fs, c, w=1, cmyk=False):
-        # TODO: Make this work in Flat
-        cls.setStrokeColor(c, w, cmyk, fs)
-
-    @classmethod
-    def setFillColor(cls, c, cmyk=False, b=None):
-        u"""Set the color for global or the color of the formatted string."""
-        # TODO: Make this work in Flat
-        if b is None: # Can be optional FormattedString
-            b = cls.b
-        if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykFill(c)
-            else:
-                b.fill(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykFill(*c)
-            else:
-                b.fill(*c)
-        else:
-            raise ValueError('Error in color format "%s"' % repr(c))
-
-    @classmethod
-    def setStrokeColor(cls, c, w=1, cmyk=False, b=None):
-        u"""Set global stroke color or the color of the formatted string."""
-        # TODO: Make this work in Flat
-        if b is None: # Can be optional FormattedString
-            b = cls.b 
-        if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykStroke(c)
-            else:
-                b.stroke(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykStroke(*c)
-            else:
-                b.stroke(*c)
-        else:
-            raise ValueError('Error in color format "%s"' % c)
-        if w is not None:
-            b.strokeWidth(w)
-
 

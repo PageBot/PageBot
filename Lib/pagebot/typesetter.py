@@ -460,12 +460,13 @@ class Typesetter(object):
                 break
         return mergedStyle
 
-    def appendString(self, fs):
-        u"""Append the string to the current box, if it is defined. Otherwise add to the existing galley."""
+    def append(self, bs):
+        u"""Append the string (or BabelString instance) to the current box, 
+        if it is defined. Otherwise add to the existing galley."""
         if self.box is not None:
-            self.box.appendString(fs)
+            self.box.append(bs)
         else:
-            self.galley.appendString(fs)  # Add the tail formatted string to the galley.
+            self.galley.append(bs)  # Add the tail formatted string to the galley.
 
     def htmlNode(self, node, end=False):
         u"""Open the tag in HTML output and copy the node attributes if there are any."""
@@ -480,30 +481,24 @@ class Typesetter(object):
         if end:
             htmlTag += '/'
         htmlTag += '>'
-        self.appendHtml(htmlTag)
+        self.append(htmlTag)
 
     def _htmlNode(self, node):
         u"""Close the html tag of node."""
-        self.appendHtml('</%s>' % node.tag)
+        self.append('</%s>' % node.tag)
 
     def htmlNode_(self, node):
         u"""Opem+close the html tag of node."""
         self.htmlNode(node, end=True)
 
-    def appendHtml(self, html):
-        u"""Append the UTF-8 html to the current box, if it is defined. Otherwise add to the existing galley."""
-        if self.box is not None:
-            self.box.appendHtml(html)
-        else:
-            self.galley.appendHtml(html)  # Add UTF-8 html string to the galley.
-
-    def typesetString(self, s, e=None, style=None):
+    def typesetString(self, bs, e=None, style=None):
         u"""If s is a formatted string, them it is placed untouched. If it is a plain string, then
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters. 
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
-        fs = newFS(s, e, style)
-        self.appendString(fs)
-        return fs
+        if isinstance(bs, basestring): # Only convert if not yet BabelString instance.
+            bs = e.C.newString(bs, e, style)
+        self.append(bs)
+        return bs
 
     def typesetNode(self, node, e=None):
         u"""Recursively typeset the etree *node*, using a reference to element *e* or the cascading *style*.
@@ -535,9 +530,8 @@ class Typesetter(object):
         
         nodeText = self._strip(node.text)
         if nodeText: # Not None and still has content after stripping?
-            fs = newFS(nodeText, e, nodeStyle)
-            self.appendString(fs)
-            self.appendHtml(nodeText) # Export the plain text as parallel HTML output as well.
+            bs = e.C.newString(nodeText, e, nodeStyle)
+            self.appendString(bs)
 
         # Type set all child node in the current node, by recursive call.
         for child in node:
@@ -556,9 +550,9 @@ class Typesetter(object):
             # to empty string?
             childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
             if childTail: # Any tail left after stripping, then append to the galley.
-                fs = newFS(childTail, e, nodeStyle)
-                self.appendString(fs)
-                self.appendHtml(childTail) # Export the plain text as parallel HTML output as well.
+                bs = e.C.newString(childTail, e, nodeStyle)
+                self.append(bs)
+                self.append(childTail) # Export the plain text as parallel HTML output as well.
 
         # Close the HTML tag of this node.
         self._htmlNode(node)

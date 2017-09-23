@@ -16,8 +16,6 @@
 #     and templates are hood enough. Inherit the redefine functions otherwise.
 #     Example of an inherited publications is FBFamilySpecimen.py
 #
-from drawBot import installedFonts
-from pagebot import newFS
 
 from pagebot.fonttoolbox.objects.family import Family, guessFamilies
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
@@ -29,7 +27,10 @@ from pagebot.style import getRootStyle, LEFT, NO_COLOR, A4
 # (pages, styles, etc.)
 from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
-from pagebot.elements.pbpage import Page, Template
+# And import all other element constructors.
+from pagebot.elements import *
+# Import conditions for layout placements and other element status.
+from pagebot.conditions import *
  
 W, H = A4
 
@@ -40,13 +41,13 @@ class TypeSpecimen(Publication):
     FONT_CLASS = Font
     FAMILY_CLASS = Family
     
-    def __init__(self, styleNamePattern, styleNames=None, pageTitle=None, showGrid=False, showGridColumns=False):
+    def __init__(self, styleNamePattern=None, styleNames=None, pageTitle=None, showGrid=False, showGridColumns=False):
         Publication.__init__(self)
         # Name pattern to match available installed fonts.
         self.styleNamePattern = styleNamePattern 
         self.styleNames = []
-        for styleName in installedFonts():
-            if styleNamePattern in styleName:
+        for styleName in self.view.installedFonts():
+            if styleNamePattern is None or styleNamePattern in styleName:
                 self.styleNames.append(styleName)
         
         self.pageTitle = pageTitle
@@ -58,7 +59,7 @@ class TypeSpecimen(Publication):
         self.showGrid = showGrid
         self.showGridColumns = showGridColumns
         
-    def makeTemplate(self):
+    def XXXmakeTemplate(self):
         # Generic conditions to build stacked elements page with full width.
         lw = 0.25
         lineColor = 0
@@ -78,7 +79,7 @@ class TypeSpecimen(Publication):
             conditions=conditions)       
         return template
         
-    def build(self):
+    def XXXbuild(self):
         template = self.makeTemplate()
         pageTitle = self.pageTitle or 'Unnamed Type Specimen'
         # Create new document with (w,h) and start with a single page.
@@ -88,7 +89,7 @@ class TypeSpecimen(Publication):
         doc = Document(w=W, h=H, title=pageTitle, originTop=False, 
             autoPages=1, template=template) 
         
-    def buildPages(self, doc):
+    def XXXbuildPages(self, doc):
         # Build the pages, one page per family. Compsition 
         # Get the current page of the document, created automatic with template.
         # Using the first page as cover (to be filled...)
@@ -107,7 +108,7 @@ class TypeSpecimen(Publication):
             page = doc.newPage()    
             self.buildFamilyPage(page, family)
     
-    def buildFamilyPage(self, page, family):
+    def XXXbuildFamilyPage(self, page, family):
         u"""Build the family page. Layout depends on the content of the family and the type of font."""
         
         # Get the "most regular style" in the family.

@@ -23,14 +23,9 @@ from pagebot.toolbox.transformer import *
 
 class BaseView(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation 
-    of the enclosed page/element tree. Views have a builder (self.b) as attribute, that is their 
-    path way for export. Views also support services, such as answering the size of a formatted
+    of the enclosed page/element tree. Views support services, such as answering the size of a formatted
     string (of possible), how much overflow there is for a certain box, etc."""
     viewId = 'View'
-
-    # Postfix for self.build_xxx method names. To be redefined by inheriting View classes.
-    buildType = None 
-    stringClass = None
 
     isView = True
 

@@ -546,14 +546,14 @@ class Document(object):
                 d = max(page.d, d)
             return w, h, d
 
-    def solve(self, b, score=None):
+    def solve(self, score=None):
         u"""Evaluate the content of all pages to return the total sum of conditions solving.
-        Builder b is passed, as it may be needed to solve specific text conditions, such as
-        run length of text and overflow of text boxes."""
+        If necessary, the builder for solving specific text conditions, such as
+        run length of text and overflow of text boxes, is found by the current self.view.b."""
         score = Score()
         for pn, pnPages in sorted(self.pages.items()):
             for page in pnPages: # List of pages with identical pn, step through the pages.
-                page.solve(b, score)
+                page.solve(score)
         return score
 
     #   V I E W S

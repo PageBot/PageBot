@@ -12,6 +12,7 @@
 #
 #     UseShadow.py
 #
+from pagebot.contexts import Context as C
 from pagebot.style import getRootStyle, BOTTOM, CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import *
@@ -43,7 +44,7 @@ def makeDocument():
         blur=ShadowTextBlur, 
         color=(0.2, 0.2, 0.2, 0.5)
     )
-    fs = doc.view.newString('This is text with a shadow', 
+    fs = C.newString('This is text with a shadow', 
         style=dict(font='Verdana', fontSize=30, textFill=0, rLeading=1.2))
     
     newTextBox(fs, fill=0.8, parent=page, 

@@ -38,19 +38,12 @@ class Galley(Element):
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.lastTextBox = None
 
-    def appendString(self, fs):
-        u"""Add the string to the laat text box. Create a new textbox if not found."""
+    def append(self, bs):
+        u"""Add the string to the last text box. Create a new textbox if not found."""
         if self.lastTextBox is None:
-            self.newTextBox(fs) # Also sets self.lastTextBox 
+            self.newTextBox(bs) # Also sets self.lastTextBox 
         else:
-            self.lastTextBox.appendString(fs)
-
-    def appendHtml(self, html):
-        u"""Add the utf-8 html to the laat text box. Create a new textbox if not found."""
-        if self.lastTextBox is None:
-            self.newTextBox('', html=html) # Also sets self.lastTextBox 
-        else:
-            self.lastTextBox.appendHtml(html)
+            self.lastTextBox.append(bs)
 
     def getMinSize(self):
         u"""Cumulation of the maximum minSize of all enclosed elements."""
