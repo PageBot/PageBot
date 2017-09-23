@@ -16,10 +16,8 @@
 import os
 import shutil
 
-from platforms import platform # Get the platform we are building for.
+from pagebot.contexts import Context as C
 from pagebot.elements.views.baseview import BaseView
-from pagebot.elements.views.strings import newFlatString, FlatString
-from pagebot.builders.flatbuilder import flatBuilder
 
 class FlatView(BaseView):
     u"""Support the flat library, so PageBot can run on non-OSX environments."""
@@ -28,7 +26,7 @@ class FlatView(BaseView):
     def build(self, pageSelection=None):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
         doc = self.parent
-        b = self.b
+        b = C.b
         
         w, h, _ = doc.getMaxPageSizes(pageSelection)
         for pn, pages in doc.getSortedPages():

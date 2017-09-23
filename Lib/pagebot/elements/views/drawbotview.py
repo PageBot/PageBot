@@ -17,11 +17,9 @@ from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.contexts import Context
+from pagebot.contexts import Context as C
 from pagebot.elements.views.baseview import BaseView
-from pagebot.builders import drawBotBuilder
 from pagebot.elements.element import Element
-from pagebot.elements.views.strings import newFsString, FsString
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import *
 
@@ -30,9 +28,6 @@ class DrawBotView(BaseView):
     of the page tree. Views have a builder (self.b) as attribute, that is their path way for export.
     The builder."""
     viewId = 'DrawBot'
-
-    # Postfix for self.build_xxx method names. To be redefined by inheriting View classes.
-    buildType = 'drawBot' 
 
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
 
@@ -323,7 +318,7 @@ class DrawBotView(BaseView):
                 b.line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
                 b.line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
 
-                fs = newFsString(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'),
+                fs = C.newString(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
                 tw, th = b.textSize(fs.s)
                 b.text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
@@ -358,7 +353,7 @@ class DrawBotView(BaseView):
             b.line((px, py-S), (px, py+S))
 
         if self.showElementDimensions:
-            fs = newFsString(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'),
+            fs = C.newString(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'),
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
             w, h = b.textSize(fs.s)
             b.text(fs, (px - w/2, py + S*1.5))
@@ -522,7 +517,7 @@ class DrawBotView(BaseView):
         line = 0
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
-        fs = newFsString('', self, dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
+        fs = C.newString('', self, dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
             fontSize=M/2, stroke=None, textFill=e.css('gridStroke')))
         while oy > e.pb or 0:
             self.setFillColor(None)

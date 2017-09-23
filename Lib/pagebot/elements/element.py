@@ -27,8 +27,7 @@ from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, B
     ONLINE, INLINE, OUTLINE, ORIGIN
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
-from pagebot.builders import BuildInfo # Container with Builder flags and data/parametets
-from pagebot.builders import WebBuilder
+from pagebot.contexts.builders import BuildInfo # Container with Builder flags and data/parametets
 
 class Element(object):
 
@@ -466,11 +465,6 @@ class Element(object):
         if doc is not None:
             return self.doc.view
 
-        # Default view class for the current platform.
-        from pagebot.elements.views import defaultViewClass 
-        # In case there is not a document yet, then create a default view instance 
-        # so solitary elements at least can create BabelStrings of the right type.
-        return defaultViewClass()
     view = property(_get_view)
 
     def newString(self, s, **kwargs):

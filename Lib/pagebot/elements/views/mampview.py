@@ -15,8 +15,8 @@
 #
 import os
 import shutil
+from pagebot.contexts import Context as C
 from pagebot.elements.views.htmlview import HtmlView
-from pagebot.builders import WebBuilder
 
 class MampView(HtmlView):
 
@@ -35,7 +35,7 @@ class MampView(HtmlView):
 
     def build(self, name, pageSelection=None, multiPage=True):
         doc = self.parent
-        b = WebBuilder()
+        b = C.b
         doc.buildCss(self, b) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
