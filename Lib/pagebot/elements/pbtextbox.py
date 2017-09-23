@@ -39,7 +39,7 @@ class TextBox(Element):
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
         self._textLines = self._baseLines = None # Force initiaize upon first usage.
         self.size = w, h
-        self.bs = self.C.newString(bs) # Can be any type: BabelString instance or plain unicode string.
+        self.bs = C.newString(bs) # Can be any type: BabelString instance or plain unicode string.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width

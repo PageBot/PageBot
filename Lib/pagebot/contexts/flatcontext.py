@@ -37,12 +37,12 @@ class FlatContext(BaseContext):
     #   T E X T
 
     @classmethod
-    def newString(cls, s, view=None, e=None, style=None, w=None, h=None, fontSize=None, 
+    def newString(cls, s, e=None, style=None, w=None, h=None, fontSize=None, 
             styleName=None, tagName=None):
         u"""Create a new styles BabelString(FlatString) instance from s, using e or style.
         Ignore and answer s if it is already a FlatString."""
         if isinstance(s, basestring):
-            s = newFlatString(s, view=view, e=e, style=style, w=w, h=h, 
+            s = newFlatString(s, cls.b, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, FlatString)
         return s

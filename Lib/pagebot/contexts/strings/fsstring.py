@@ -44,14 +44,11 @@ class FsString(BabelString):
     def textOverflow(self, w, h, align=LEFT):
         return self.b.textOverflow(self.fs, (0, 0, w, h), align)
 
-def newFsString(t, view=None, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+def newFsString(t, b, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
     u"""Answer a FsString instance from valid attributes in *style*. Set all values after testing
     their existence, so they can inherit from previous style formats.
     If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
-    if view is None:
-        from pagebot.elements.views.drawbotview import DrawBotView
-        view = DrawBotView # Class used as reference to access class methods and view related builder instance.
-        b = view.b
+    # Get the drawBotBuilder, no need to check, we already must be in context here.
 
     b.hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
 

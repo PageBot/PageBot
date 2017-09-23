@@ -18,18 +18,17 @@ import copy
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
-from pagebot.elements.views import viewClasses, DrawBotView
+from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
 from pagebot.toolbox.transformer import obj2StyleId
-from pagebot.elements.views import defaultViewClass
-from pagebot.builders import BuildInfo # Container with Builder flags and data/parametets
+from pagebot.contexts.builders import BuildInfo # Container with Builder flags and data/parametets
 
 class Document(object):
     u"""A Document is just another kind of container."""
     
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
 
-    DEFAULT_VIEWID = DrawBotView.viewId
+    DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, rootStyle=None, styles=None, viewId=None, name=None, class_=None, title=None, 
             autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, 

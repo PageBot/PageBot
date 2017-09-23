@@ -13,10 +13,16 @@
 #
 #     __init__.py
 #
-# DrawBot views
-from pagebot.elements.views.drawbotview import DrawBotView
-# Flat views
-from pagebot.elements.views.flatview import FlatView
+# Page views
+from pagebot.elements.views.pageview import PageView
 # Website views
 from pagebot.elements.views.mampview import MampView # Saves in local Applications/MAMP/htdocs directory
 from pagebot.elements.views.gitview import GitView # Saves in local position, so git works as website server.
+
+viewClasses = {
+	PageView.viewId: PageView,
+	MampView.viewId: MampView,
+	GitView.viewId: GitView,
+}
+
+defaultViewClass = PageView
