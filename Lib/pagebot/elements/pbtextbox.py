@@ -109,7 +109,7 @@ class TextBox(Element):
         If bs is not a BabelString instance, then create one, defined by the current view,
         based on the style of self."""
         if isinstance(bs, basestring):
-            bs = self.C.newString(bs, e=self)
+            bs = C.newString(bs, e=self)
         self.bs += bs
 
     def appendMarker(self, markerId, arg=None):

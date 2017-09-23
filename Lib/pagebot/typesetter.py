@@ -28,7 +28,7 @@ except ImportError:
     print 'Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown'
     markdown = None
 
-from pagebot.contexts import Context
+from pagebot.contexts import Context as C
 from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
 from pagebot.document import Document
@@ -75,7 +75,7 @@ class Typesetter(object):
         self.gState = [] 
         self.tagHistory = []
         # Current builder
-        self.b = b or Context.b
+        self.b = b or C.b # Take alternative builder if define, and otherwise builder of currnet context.
         # Code block results if any ~~~Python blocks defined in the Markdown file.
         self.globalDocName = globalDocName or 'doc' # Name of global doc to find in code blocks, to be stored in self.doc
         self.globalPageName = globalPageName or 'page'
@@ -92,7 +92,7 @@ class Typesetter(object):
         # Add line break to whatever style/content there was before.
         # Add invisible h1-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.galley.appendString(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
+        #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
@@ -101,7 +101,7 @@ class Typesetter(object):
         # Add line break to whatever style/content there was before.
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.galley.appendString(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
+        #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
@@ -163,8 +163,8 @@ class Typesetter(object):
             self.pushStyle({}) # Define top level for styles.
         brStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
         s = self.getStyleValue('prefix', e, brStyle, default='') + '\n' + self.getStyleValue('postfix', e, brStyle, default='')
-        fs = newFS(s, e, style=brStyle)
-        self.galley.appendString(fs) # Add newline in the current setting of FormattedString
+        fs = C.newString(s, e, style=brStyle)
+        self.galley.append(fs) # Add newline in the current setting of FormattedString
         """
     def node_a(self, node, e):
         u"""Ignore links, but process the block"""
@@ -185,7 +185,7 @@ class Typesetter(object):
                 footnotes[index] = dict(nodeId=nodeId, index=index, node=node, e=e, p=None)
                 # Add invisible mark, so we can scan the text after page composition to find
                 # on which page it ended up.
-                self.galley.appendString(getMarker('footnote', index))
+                self.galley.append(getMarker('footnote', index))
 
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
@@ -204,7 +204,7 @@ class Typesetter(object):
                 assert not nodeId in literatureRefs
                 # Make literature reference entry. Content <p> and split fields will be added later.
                 literatureRefs[index] = dict(nodeId=nodeId, node=node, e=e, p=None, pageIds=[])
-                self.galley.appendString(getMarker('literature', index))
+                self.galley.append(getMarker('literature', index))
 
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
@@ -249,8 +249,8 @@ class Typesetter(object):
             bullet = self.doc.css('listBullet')
         else:
             bullet = self.DEFAULT_BULLET # Default, in case doc or css does not exist.
-        bulletString = newFS(bullet) # Get styled string with bullet.
-        self.galley.appendString(bulletString) # Append the bullet as defined in the style.
+        bulletString = C.newString(bullet) # Get styled string with bullet.
+        self.galley.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
@@ -496,7 +496,7 @@ class Typesetter(object):
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters. 
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
         if isinstance(bs, basestring): # Only convert if not yet BabelString instance.
-            bs = e.C.newString(bs, e, style)
+            bs = C.newString(bs, e, style)
         self.append(bs)
         return bs
 
@@ -530,8 +530,8 @@ class Typesetter(object):
         
         nodeText = self._strip(node.text)
         if nodeText: # Not None and still has content after stripping?
-            bs = e.C.newString(nodeText, e, nodeStyle)
-            self.appendString(bs)
+            bs = C.newString(nodeText, e, nodeStyle)
+            self.append(bs)
 
         # Type set all child node in the current node, by recursive call.
         for child in node:
@@ -550,7 +550,7 @@ class Typesetter(object):
             # to empty string?
             childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
             if childTail: # Any tail left after stripping, then append to the galley.
-                bs = e.C.newString(childTail, e, nodeStyle)
+                bs = C.newString(childTail, e, nodeStyle)
                 self.append(bs)
                 self.append(childTail) # Export the plain text as parallel HTML output as well.
 
@@ -573,8 +573,8 @@ class Typesetter(object):
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
         nodeTail = self._strip(node.tail, postfix=postfix)
         if nodeTail: # Something of a tail left after stripping?
-            fs = newFS(nodeTail, e, nodeStyle)
-            self.galley.appendString(fs) # Add to the current flow textBox
+            bs = C.newString(nodeTail, e, nodeStyle)
+            self.galley.append(bs) # Add to the current flow textBox
         """
 
     def typesetFile(self, fileName, e=None, xPath=None):

@@ -42,7 +42,7 @@ class FlatContext(BaseContext):
         u"""Create a new styles BabelString(FlatString) instance from s, using e or style.
         Ignore and answer s if it is already a FlatString."""
         if isinstance(s, basestring):
-            s = newFlatString(s, cls.b, e=e, style=style, w=w, h=h, 
+            s = newFlatString(s, cls.c, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, FlatString)
         return s

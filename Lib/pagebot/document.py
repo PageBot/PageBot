@@ -15,6 +15,7 @@
 #
 import copy
 
+from pagebot.contexts import Context as C
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
@@ -117,8 +118,16 @@ class Document(object):
         return None
     parent = property(_get_parent)
 
-    def getView(self):
-        u"""For compatibility with old code."""
+    def getView(self, viewId=None):
+        u"""Answer the view width viewId. Otherwise answer self.view."""
+        if viewId in viewClasses:
+            return viewClasses[viewId]
+        return self.view
+
+    def setView(self, viewId):
+        view = viewClasses.get(viewId)(parent=self)
+        if view is not None:
+            self.view = view
         return self.view
 
     def getInfo(self):
@@ -159,6 +168,7 @@ class Document(object):
         return template
 
     def _get_defaultTemplate(self):
+        u"""Answer the default template of the document."""
         return self.templates.get('default')
     def _set_defaultTemplate(self, template):
         self.addTemplate('default', template)
@@ -570,7 +580,7 @@ class Document(object):
         u"""Build the CSS for this document. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
-        b = view.b
+        b = C.b
         if self.info.cssPath is not None:
             b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
         else: 

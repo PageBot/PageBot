@@ -16,6 +16,7 @@
 import weakref
 import codecs
 
+from pagebot.contexts import Context as C
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 
@@ -53,11 +54,12 @@ class Page(Element):
         # Check if we are in scaled mode. Then restore.
         #self._restoreScale()
 
-    def build(self, view, b):
+    def build(self, view):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        self.buildCss(view, b)
+        b = C.b
+        self.build_css(view)
         info = self.info # Contains flags and parameter to Builder "b"
         if info.htmlPath is not None:
             b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
