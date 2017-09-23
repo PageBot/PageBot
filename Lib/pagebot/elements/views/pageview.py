@@ -17,7 +17,7 @@ from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.contexts import Context as C
+from pagebot.contexts import Context # Get current context with its builder.
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
@@ -28,12 +28,15 @@ class PageView(BaseView):
     of the page tree. Views use the current Context.b builder for export."""
     viewId = 'Page'
 
+    c = Context # Store current context and builder in the view. Can be DrawBot of Flat
+
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
 
-    def build(self, path, name=None, pageSelection=None, multiPage=True):
+    def build(self, path, pageSelection=None, multiPage=True):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
         doc = self.parent
-        b = Context.b # Get builder of the current context.
+        
+        b = self.c.b # Get builder of the current context.
 
         w, h, _ = doc.getMaxPageSizes(pageSelection)
         for pn, pages in doc.getSortedPages():

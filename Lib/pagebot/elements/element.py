@@ -699,106 +699,6 @@ class Element(object):
         self.style['z'] = z
     z = property(_get_z, _set_z)
     
-    #   C O L O R
-
-    def buildShadow_drawBot(self, view, eShadow):
-        u"""Set the *Shadow* instance *eShadow* as current. The *eShadow.cmykColor* 
-        flag decides which type of shadow (RGB or CMYK) is set. 
-        The *Shadow* class takes *(offset=None, blur=None, color=None, cmykColor=None)*
-        as attributes. Ignore is *eShadow* is *None*."""
-        if eShadow is not None:
-            if eShadow.cmykColor is not None:
-                view.b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
-            else:
-                view.b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.color)
-
-    def buildGradient_drawBot(self, view, gradient, origin):
-        u"""Define the gradient call to match the size of element e., Gradient position
-        is from the origin of the page, so we need the current origin of e."""
-        assert isinstance(gradient, Gradient)
-        start = origin[0] + gradient.start[0] * e.w, origin[1] + gradient.start[1] * e.h
-        end = origin[0] + gradient.end[0] * e.w, origin[1] + gradient.end[1] * e.h
-
-        b = view.b
-        if gradient.linear:
-            if gradient.cmykColors is None:
-                b.linearGradient(startPoint=start, endPoint=end,
-                    colors=gradient.colors, locations=gradient.locations)
-            else:
-                b.cmykLinearGradient(startPoint=start, endPoint=end,
-                    colors=gradient.cmykColors, locations=gradient.locations)
-        else: # Gradient must be radial.
-            if gradient.cmykColors is None:
-                b.radialGradient(startPoint=start, endPoint=end,
-                    colors=gradient.colors, locations=gradient.locations,
-                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
-            else:
-                b.cmykRadialGradient(startPoint=start, endPoint=end,
-                    colors=gradient.cmykColors, locations=gradient.locations,
-                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
-
-    def buildFillColor_drawBot(self, view, c, fs=None, cmyk=False):
-        u"""Set the color for global or the color of the formatted string or as status for builder b."""
-        b = view.b
-        if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
-            if cmyk:
-                if fs is None:
-                    b.cmykFill(c)
-                else:
-                    fs.cmykFill(c)
-            else:
-                if fs is None:
-                    b.fill(c)
-                else:
-                    fs.fill(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                if fs is None:
-                    b.cmykFill(*c)
-                else:
-                    fs.cmykFill(*c)
-            else:
-                if fs is None:
-                    b.fill(*c)
-                else:
-                    fs.fill(*c)
-        else:
-            raise ValueError('Error in color format "%s"' % repr(c))
-
-    def buildStrokeColor_drawBot(self, view, c, w=1, fs=None, cmyk=False):
-        u"""Set global stroke color or the color of the formatted string."""
-        b = view.b
-        if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
-            if cmyk:
-                if fs is None:
-                    b.cmykStroke(c)
-                else:
-                    fs.cmykStroke(c)
-            else:
-                if fs is None:
-                    b.stroke(c)
-                else:
-                    fs.stroke(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                if fs is None:
-                    b.cmykStroke(*c)
-                else:
-                    fs.cmykStroke(*c)
-            else:
-                if fs is None:
-                    b.stroke(*c)
-                else:
-                    fs.stroke(*c)
-        else:
-            raise ValueError('Error in color format "%s"' % c)
-        if w is not None:
-            b.strokeWidth(w)
-
     #   T I M E
 
     def _get_t(self):
@@ -2154,42 +2054,42 @@ class Element(object):
 
     #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+    def build_drawBot(self, view, b, origin=ORIGIN, drawElements=True):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.buildFrame_drawBot(view, p) # Draw optional frame or borders.
+        self.buildFrame_drawBot(view, b, p) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
+            self.drawBefore(self, view, b, p)
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
             for e in self.elements:
                 if e.show:
-                    e.build_drawBot(view, origin)
+                    e.build_drawBot(view, b, origin)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
+            self.drawAfter(self, view, b, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
+        view.drawElementMetaInfo(self, b, origin) # Depends on flag 'view.showElementInfo'
 
     #   F L A T  S U P P O R T
 
-    def build_flat(self, view, origin=None, drawElements=True):
+    def build_flat(self, view, b, origin=None, drawElements=True):
+        u"""TODO: Generic build of flat elements goes here."""
         pass
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_css(self, view, origin=None):
+    def build_css(self, view, b, origin=None):
         u"""Build the css for this element. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
-        b = view.b # Use the view builder to write the HTML/CSS code.
         if self.info.cssPath is not None:
             b.includeCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
         elif self.class_: # For now, we only can generate CSS if the element has a class name defined.
@@ -2197,12 +2097,12 @@ class Element(object):
         else:
             b.css(message='No CSS for element %s\n' % self.__class__.__name__)
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, b, origin=None, drawElements=True):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
         self.build_css(view)
-        b = view.b # Use the view builder to write the HTML/CSS code.
+        b = C.b # Use the current context builder to write the HTML/CSS code.
         info = self.info # Contains builder parameters and flags for Builder "b"
         if info.htmlPath is not None:
             b.includeHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
@@ -2210,14 +2110,14 @@ class Element(object):
             b.div(class_=self.class_) # No default class, ignore if not defined.
             
             if self.drawBefore is not None: # Call if defined
-                self.drawBefore(self, view, p)
+                self.drawBefore(self, view, b, p)
 
             if drawElements: # Optional create empty element.
                 for e in self.elements:
-                    e.build(view)
+                    e.build_html(view, b, origin)
 
             if self.drawAfter is not None: # Call if defined
-                self.drawAfter(self, view, p)
+                self.drawAfter(self, view, b, p)
 
             b._div()
 

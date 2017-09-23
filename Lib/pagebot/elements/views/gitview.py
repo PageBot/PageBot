@@ -13,6 +13,7 @@
 #
 #     gitview.py
 #
+from pagebot.contexts import HtmlContext
 from pagebot.elements.views.htmlview import HtmlView
 
 class GitView(HtmlView):
@@ -25,10 +26,13 @@ class GitView(HtmlView):
     
     #   B U I L D  H T M L  /  C S S
 
-    def build(self, name, pageSelection=None, multiPage=True):
-        doc = self.parent
-        b = WebBuilder()
-        doc.buildCss(self, b) # Make doc build the main/overall CSS.
+    def build_html(self, path=None, pageSelection=None, multiPage=True):
+        doc = self.doc
+        sitePath = path or self.GIT_PATH
+        if not sitePath.endswith('/'):
+            sitePath += '/'
+        b = self.c.b # Get builder of current context.
+        doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
@@ -37,8 +41,8 @@ class GitView(HtmlView):
                     fileName = DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
-                path = self.GIT_PATH + fileName
-                page.build(self, b) # Building HTML and CSS, storage in builder.
+                path = sitePath + fileName
+                page.build_html(self) # Building HTML and CSS, storage in builder.
                 b.writeHtml(path)
         # Write all collected CSS into one file
         b.writeCss(self.DEFAULT_CSS_PATH)

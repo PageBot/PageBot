@@ -19,6 +19,7 @@ from pagebot.contexts import Context as C
 from pagebot.elements.views.htmlview import HtmlView
 
 class MampView(HtmlView):
+    viewId = 'Mamp'
 
     # self.build exports in MAMP folder that does not commit in Git. 
     MAMP_PATH = '/Applications/MAMP/htdocs/'
@@ -33,10 +34,13 @@ class MampView(HtmlView):
 
     #   B U I L D  H T M L  /  C S S
 
-    def build(self, name, pageSelection=None, multiPage=True):
+    def build(self, name, path=None, pageSelection=None, multiPage=True):
         doc = self.parent
         b = C.b
-        doc.buildCss(self, b) # Make doc build the main/overall CSS.
+        sitePath = path or self.SITE_PATH
+        if not sitePath.endswith('/'):
+            sitePath += '/'
+        doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
@@ -45,8 +49,8 @@ class MampView(HtmlView):
                     fileName = DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
-                path = self.SITE_PATH + fileName
-                page.build(self, b) # Building HTML and page-specific CSS, storage in builder.
+                path = sitePath + fileName
+                page.build_html(self) # Building HTML and page-specific CSS, storage in builder.
                 b.writeHtml(path)
         # Write all collected CSS into one file
         b.writeCss(self.DEFAULT_CSS_PATH)

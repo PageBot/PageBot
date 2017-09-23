@@ -34,3 +34,16 @@ class HtmlContext(BaseContext):
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, HtmlString)
         return s
+
+    #   I M A G E
+
+    @classmethod
+    def imagePixelColor(cls, path, p):
+        return 0
+        #return cls.b.imagePixelColor(path, p)
+
+    @classmethod
+    def imageSize(cls, path):
+        u"""Answer the (w, h) image size of the image file at path."""
+        return (0, 0)
+        #return cls.b.imageSize(path)

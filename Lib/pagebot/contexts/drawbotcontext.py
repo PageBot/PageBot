@@ -104,6 +104,7 @@ class DrawBotContext(BaseContext):
 
     @classmethod
     def imageSize(cls, path):
+        u"""Answer the (w, h) image size of the image file at path."""
         return cls.b.imageSize(path)
 
     #   C O L O R

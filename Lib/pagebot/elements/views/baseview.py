@@ -32,9 +32,6 @@ class BaseView(Element):
     def __init__(self, w=None, h=None, parent=None, **kwargs):
         Element.__init__(self, parent=parent, **kwargs)
         
-        # Check on self.b builder instance, and check if it was succesfull.
-        assert self.b is not None, 'Builder type "%s" is not supported' % self.viewId
-
         if not w and self.parent:
             w = self.parent.w
         if not h and self.parent:

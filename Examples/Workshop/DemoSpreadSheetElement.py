@@ -39,7 +39,7 @@ class DemoSpreadSheet(Element):
             x = px + ix*self.CW
             line((x,py), (x, py+self.h)) 
         
-    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+    def build_drawBot(self, view, b, origin=ORIGIN, drawElements=True):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
 
@@ -52,14 +52,14 @@ class DemoSpreadSheet(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        self._drawSpreadSheet(view, p)
+        self._drawSpreadSheet(view, b, p)
         
         if drawElements:
             # If there are child elements, draw them over the pixel image.
-            self._drawElements(view, p)
+            self._drawElements(view, b, p)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
+            self.drawAfter(self, view, b, p)
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'

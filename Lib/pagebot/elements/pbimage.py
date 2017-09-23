@@ -16,6 +16,8 @@
 from __future__ import division # Make integer division result in float.
 
 import os
+
+from pagebot.contexts import Context as C
 from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR, ORIGIN # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset, point2D
@@ -131,8 +133,7 @@ class PixelMap(Element):
 
     def initImageSize(self):
         if self.path is not None and os.path.exists(self.path):
-            # TODO: THIS IS CALLED, if self.doc is not yet initialized
-            self.iw, self.ih = self.view.imageSize(self.path)
+            self.iw, self.ih = C.imageSize(self.path)
         else:
             self.iw = self.ih = 0 # Undefined, there is no image file.
 
@@ -144,7 +145,7 @@ class PixelMap(Element):
             x = self.w / self.iw
             y = self.h / self.ih
         p = x, y
-        return self.view.imagePixelColor(self.path, p)
+        return C.imagePixelColor(self.path, p)
 
     # Set the intended width and calculate the new scale, validating the
     # width to the image minimum width and the height to the image minimum height.

@@ -25,8 +25,8 @@ class MobileNavigation(TextBox):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
    
-    def build(self, view, b):
-        self.buildCss(view, b)
+    def build_html(self, view, b):
+        self.build_css(view, b)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='twelvecol last')
@@ -54,8 +54,8 @@ class Navigation(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
   
-    def build(self, view, b):
-        self.buildCss(view, b)
+    def build_html(self, view, b):
+        self.build_css(view, b)
         b.div(class_='container top')
         b.div(class_='row')
         b.div(class_='fivecol')
@@ -89,11 +89,11 @@ class Introduction(TextBox):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
       
-    def build(self, view, b):
+    def build_html(self, view, b):
         u"""Build a page wide in intoduction box for large type, if there is any content."""
         if not self.html:
             return
-        self.buildCss(view, b)
+        self.build_css(view, b)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='twelvecol last')
@@ -115,13 +115,13 @@ class Featured(Rect):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
   
-    def build(self, view, b):
+    def build_html(self, view, b):
         u"""Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
         side = self['Side']
         if not image.html or not side.html:
             return
-        self.buildCss(view, b)
+        self.build_css(view, b)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='eightcol')
@@ -143,15 +143,11 @@ class Main(Rect):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or 'mainContent'
 
-    def appendString(self, fs):
+    def append(self, bs):
         u"""Add FormattedString to main content."""
-        self['Content'].appendString(fs)
+        self['Content'].append(bs)
 
-    def appendHtml(self, html):
-        u"""And html to main element."""
-        self['Content'].appendHtml(html)
-
-    def build(self, view, b):
+    def build_html(self, view, b):
         content = self['Content']
         side = self['Side']
         if not content.html: # If there is nothing in the main part, then also ignore the side.
@@ -185,7 +181,7 @@ class Section(Rect):
             TextBox('', parent=self, name=`row*2`)
             TextBox('', parent=self, name=`row*2+1`)
 
-    def build(self, view, b):
+    def build_html(self, view, b):
         title = self['Title']
         hasContent = bool(title.html)
         for row in range(0, self._sectionRows):
@@ -223,8 +219,8 @@ class Footer(TextBox):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower() 
 
-    def build(self, view, b):
-        self.buildCss(view, b)
+    def build_html(self, view, b):
+        self.build_css(view, b)
         b.div(class_="container %s" % self.class_)
         b.div(class_='row')
         
@@ -254,7 +250,7 @@ class JS(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
     
-    def build(self, view, b):
+    def build_html(self, view, b):
         b.script(type="text/javascript")
         b.addHtml(u"""
     jQuery(document).ready(function($){
