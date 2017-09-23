@@ -194,7 +194,7 @@ class PixelMap(Element):
             print 'Cannot display pixelMap', self
             #self._drawMissingElementRect(page, px, py, self.w, self.h)
         else:
-            save()
+            view.saveGraphicState()
             sx = self.w / self.iw
             sy = self.h / self.ih
             b.scale(sx, sy)
@@ -232,7 +232,7 @@ class PixelMap(Element):
                 # Store page element Id in this image, in case we want to make an image index later.
                 b.image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
-            b.restore()
+            view.restoreGraphicState()
 
         if drawElements:
             for e in self.elements:

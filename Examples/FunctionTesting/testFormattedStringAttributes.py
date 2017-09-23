@@ -2,7 +2,9 @@ from pagebot.builders import drawBotBuilder as b
 if b is None:
 	print 'Example only runs in DrawBot'
 	raise KeyboardInterrupt()
-	
+
+# TODO: Make this example work in Flat too.
+
 f = FormattedString()
 
 f.fill(1, 0, 0)

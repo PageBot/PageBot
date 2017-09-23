@@ -13,7 +13,7 @@
 #
 #     htmlstring.py
 #
-from pagebot.elements.views.strings.babelstring import BabelString
+from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
 
 class HtmlString(BabelString):

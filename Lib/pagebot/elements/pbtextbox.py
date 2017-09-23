@@ -13,6 +13,7 @@
 #
 #     textbox.py
 #
+from pagebot.contexts import Context as C
 from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, \
     makeStyle, MIDDLE, BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN
 from pagebot.elements.element import Element
@@ -38,7 +39,7 @@ class TextBox(Element):
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
         self._textLines = self._baseLines = None # Force initiaize upon first usage.
         self.size = w, h
-        self.bs = self.view.newString(bs) # Can be any type: BabelString instance or plain unicode string.
+        self.bs = self.C.newString(bs) # Can be any type: BabelString instance or plain unicode string.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
@@ -98,14 +99,18 @@ class TextBox(Element):
         return u'%s' % self.fs
     text = property(_get_text)
     
-    def append(self, s):
+    def append(self, bs):
         u"""Append to the string type that is defined by the current view/builder type.
         Note that the string is already assumed to be styled or can be added as plain string.
         Don't calculate the overflow here, as this is slow/expensive operation.
         Also we don't want to calcualte the textLines/runs for every string appended,
         as we don't know how much more the caller will add. self._textLines is set to None
-        to force recalculation as soon as self.textLines is called again."""
-        self.bs += s
+        to force recalculation as soon as self.textLines is called again.
+        If bs is not a BabelString instance, then create one, defined by the current view,
+        based on the style of self."""
+        if isinstance(bs, basestring):
+            bs = self.C.newString(bs, e=self)
+        self.bs += bs
 
     def appendMarker(self, markerId, arg=None):
         marker = getMarker(markerId, arg=arg)
@@ -306,23 +311,23 @@ class TextBox(Element):
             # TODO: Why measures not showing?
             line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
-                fs = view.newString(`textLine.lineIndex`, style=indexStyle)
+                fs = C.newString(`textLine.lineIndex`, style=indexStyle)
                 tw, th = b.textSize(fs) # Calculate right alignment
                 b.text(fs.s, (px-3-tw, py + y - th/4))
             if view.showTextBoxY:
-                fs = view.newString('%d' % round(y), style=yStyle)
+                fs = C.newString('%d' % round(y), style=yStyle)
                 _, th = b.textSize(fs)
                 b.text(fs.s, (px + self.w + 3, py + y - th/4))
             if view.showTextBoxLeading:
                 leading = round(abs(y - prevY))
-                fs = view.newString('%d' % leading, style=leadingStyle)
+                fs = C.newString('%d' % leading, style=leadingStyle)
                 _, th = b.textSize(fs)
                 b.text(fs.s, (px + self.w + 3, py + prevY - leading/2 - th/4))
             prevY = y
  
     def _drawOverflowMarker_drawBot(self, view, px, py):
         b = view.b
-        fs = view.newString('[+]', style=dict(textFill=(1, 0, 0), font='Verdana-Bold', fontSize=8))
+        fs = C.newString('[+]', style=dict(textFill=(1, 0, 0), font='Verdana-Bold', fontSize=8))
         tw, th = b.textSize(fs.s)
         if self.originTop:
             pass

@@ -321,7 +321,7 @@ class Website(Publication):
         box = Footer(parent=t, name='Footer')
         box = JS(parent=t, name='JS')
         
-    def build(self, name=None, pageSelection=None, view=None, multiPage=True):
+    def XXXbuild(self, name=None, pageSelection=None, view=None, multiPage=True):
         u"""Build the document as website, using a view like MampView or GitView for export."""
         if view is None or isinstance(view, basestring):
             view = self.getView(view or MampView.viewId)
