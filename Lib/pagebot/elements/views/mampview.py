@@ -55,9 +55,8 @@ class MampView(HtmlView):
                     fileName = DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
-                
-                path = sitePath + fileName
-                b.writeHtml(path)
+                print "#@@#@#@#", sitePath, fileName
+                b.writeHtml(sitePath + fileName)
         # Write all collected CSS into one file
         b.writeCss(self.DEFAULT_CSS_PATH)
 

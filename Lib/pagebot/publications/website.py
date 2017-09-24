@@ -118,7 +118,7 @@ class Featured(Rect):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
   
-    def build_html(self, view):
+    def build_html(self, view, origin=None):
         u"""Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
         side = self['Side']
@@ -154,7 +154,7 @@ class Main(Rect):
     def build_html(self, view, origin=None):
         content = self['Content']
         side = self['Side']
-        if not content.html: # If there is nothing in the main part, then also ignore the side.
+        if not content.bs.html: # If there is nothing in the main part, then also ignore the side.
             return
         b = view.context.b
         self.build_css(view)
@@ -186,12 +186,12 @@ class Section(Rect):
             TextBox('', parent=self, name=`row*2`)
             TextBox('', parent=self, name=`row*2+1`)
 
-    def build_html(self, view):
+    def build_html(self, view, origin=None):
         b = view.context.b
         title = self['Title']
         hasContent = bool(title.bs.html)
         for row in range(0, self._sectionRows):
-            hasContent |= bool(self[`row*2`].html) or bool(self[`row*2+1`].html)
+            hasContent |= bool(self[`row*2`].bs.html) or bool(self[`row*2+1`].bs.html)
         if hasContent: # Onle start the container if there is any content.
             self.build_css(view)
             b.div(class_='container %s' % self.class_)
