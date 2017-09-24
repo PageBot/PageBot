@@ -26,7 +26,7 @@ class MobileNavigation(TextBox):
         self.class_ = self.class_ or self.__class__.__name__.lower()
    
     def build_html(self, view, origin=None):
-        b = view.context.b
+        b = self.context.b
         self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
@@ -56,7 +56,7 @@ class Navigation(TextBox):
         TextBox.__init__(self, '', **kwargs)
   
     def build_html(self, view, origin=None):
-        b = view.context.b
+        b = self.context.b
         self.build_css(view)
         b.div(class_='container top')
         b.div(class_='row')
@@ -95,7 +95,7 @@ class Introduction(TextBox):
         u"""Build a page wide in intoduction box for large type, if there is any content."""
         if not self.bs.html:
             return
-        b = view.context.b
+        b = self.context.b
         self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
@@ -124,7 +124,7 @@ class Featured(Rect):
         side = self['Side']
         if not image.bs.html or not side.bs.html: # No HTML in any of the BabelStrings?
             return
-        b = view.context.b
+        b = self.context.b
         self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
@@ -156,7 +156,7 @@ class Main(Rect):
         side = self['Side']
         if not content.bs.html: # If there is nothing in the main part, then also ignore the side.
             return
-        b = view.context.b
+        b = self.context.b
         self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
@@ -187,7 +187,7 @@ class Section(Rect):
             TextBox('', parent=self, name=`row*2+1`)
 
     def build_html(self, view, origin=None):
-        b = view.context.b
+        b = self.context.b
         title = self['Title']
         hasContent = bool(title.bs.html)
         for row in range(0, self._sectionRows):
@@ -226,7 +226,7 @@ class Footer(TextBox):
         self.class_ = self.class_ or self.__class__.__name__.lower() 
 
     def build_html(self, view, origin=None):
-        b = view.context.b
+        b = self.context.b
         self.build_css(view)
         b.div(class_="container %s" % self.class_)
         b.div(class_='row')
@@ -258,7 +258,7 @@ class JS(TextBox):
         TextBox.__init__(self, '', **kwargs)
     
     def build_html(self, view, origin=None):
-        b = view.context.b
+        b = self.context.b
         b.script(type="text/javascript")
         b.addHtml(u"""
     jQuery(document).ready(function($){
@@ -325,8 +325,4 @@ class Website(Publication):
         box = Footer(parent=t, name='Footer')
         box = JS(parent=t, name='JS')
         
-    def XXXbuild(self, name=None, pageSelection=None, view=None, multiPage=True):
-        u"""Build the document as website, using a view like MampView or GitView for export."""
-        if view is None or isinstance(view, basestring):
-            view = self.getView(view or MampView.viewId)
-        view.build(name=name, pageSelection=pageSelection, multiPage=multiPage)
+  

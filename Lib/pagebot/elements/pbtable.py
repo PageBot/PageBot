@@ -168,8 +168,6 @@ class Table(Element):
     #   F L A T  S U P P O R T
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
-        context = view.context
-        b = context.b
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
@@ -191,6 +189,7 @@ class Table(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
+
         self.build_css(view)
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    

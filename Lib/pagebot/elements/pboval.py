@@ -25,8 +25,9 @@ class Oval(Element):
     #   D R A W B O T  S U P P O R T
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
-        context = view.context # Get current context
-        b = context.b # Get builder of the context.
+
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
@@ -55,8 +56,8 @@ class Oval(Element):
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
         
-        context = view.context # Get current context
-        b = context.b # Get builder of the context.
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
@@ -83,8 +84,8 @@ class Oval(Element):
 
     def build_html(self, view, origin=None, drawElements=True):
         
-        context = view.context # Get current context
-        b = context.b # Get builder of the context.
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    

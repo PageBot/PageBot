@@ -60,9 +60,10 @@ class PageView(BaseView):
 
             b.newPage(pw, ph) #  Make page in of self size, actual page may be smaller if showing cropmarks.
             # View may have defined a background
-            if self.style.get('fill') is not None:
-                context.setFillColor(self.style['fill'])
-                context.b.rect(0, 0, pw, ph)
+            fillColor = self.style.get('fill')
+            if fillColor is not NO_COLOR:
+                context.setFillColor(fillColor)
+                b.rect(0, 0, pw, ph)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)

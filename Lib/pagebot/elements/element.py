@@ -477,7 +477,7 @@ class Element(object):
     def _get_builder(self):
         return self.context.b
     b = builder = property(_get_builder)
-    
+
     def newString(self, s, **kwargs):
         u"""Create a new BabelString, using the current type of self.doc.view.context,
         or pagebot.contexts.Context if not self.doc or self.doc.view defined."""

@@ -18,6 +18,4 @@ from pagebot.contexts import HtmlContext
 
 class HtmlView(BaseView):
     u"""Abstract class for HTML/CSS generating views."""
-
-    context = HtmlContext # View stores current context
  

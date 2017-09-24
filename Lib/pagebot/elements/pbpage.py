@@ -78,9 +78,9 @@ class Page(Element):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        context = view.context
-        b = context.b # Get builder from current context.
-        
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
+       
         self.build_css(view)
         info = self.info # Contains flags and parameter to Builder "b"
         if info.htmlPath is not None:
