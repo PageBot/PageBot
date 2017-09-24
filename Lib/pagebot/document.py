@@ -30,6 +30,7 @@ class Document(object):
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
 
     DEFAULT_VIEWID = defaultViewClass.viewId
+    DEFAULT_CONTEXT = Context
 
     def __init__(self, rootStyle=None, styles=None, viewId=None, name=None, class_=None, title=None, 
             autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
@@ -38,7 +39,7 @@ class Document(object):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
         # Set the context. Initialize from default if not defined.
-        self.context = context or Context
+        self.context = context or self.DEFAULT_CONTEXT
         self.rootStyle = rs = self.makeRootStyle(rootStyle, **kwargs)
         self.class_ = class_ or self.__class__.__name__ # Optional class name, e.g. to group elements together in HTML/CSS export.
         self.initializeStyles(styles) # Create some default styles, to make sure they are there.
@@ -146,7 +147,7 @@ class Document(object):
         u"""Answer the builder, as supposed to be available in the self.context."""
         return self.context.b
     b = builder = property(_get_builder)
-    
+
     #   T E M P L A T E
 
     def initializeTemplates(self, templates, defaultTemplate):
@@ -406,7 +407,7 @@ class Document(object):
     #   P A G E S
 
     def appendPage(self, pageOrView):
-        u"""Append a page to the document. Assert that it is a page element."""
+        u"""Append a view, page to the document. Assert that it is a page element."""
         if pageOrView.isView:
             pageOrView.setParent(self) # Set parent as weakref, without calling self.appendElement again.
             self.view = pageOrView

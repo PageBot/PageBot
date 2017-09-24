@@ -21,8 +21,8 @@ class FsString(BabelString):
     BABEL_STRING_TYPE = 'fs'
 
     u"""FsString is a wrapper around the standard DrawBot FormattedString."""
-    def __init__(self, s, b):
-        self.b = b # Store the builder, in case we need it.
+    def __init__(self, s, context):
+        self.context = context # Store the context, in case we need it.
         self.fs = s # Enclose the DrawBot FormattedString
 
     def _get_fs(self):
@@ -39,17 +39,18 @@ class FsString(BabelString):
 
     def textSize(self, w=None):
         u"""Answer the (w, h) size for a given width, with the current text."""
-        return self.b.textSize(self.s, w)
+        return self.context.textSize(self.s, w)
 
     def textOverflow(self, w, h, align=LEFT):
-        return self.b.textOverflow(self.fs, (0, 0, w, h), align)
+        return self.context.textOverflow(self.fs, (0, 0, w, h), align)
 
-def newFsString(t, b, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+def newFsString(t, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
     u"""Answer a FsString instance from valid attributes in *style*. Set all values after testing
     their existence, so they can inherit from previous style formats.
     If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
     # Get the drawBotBuilder, no need to check, we already must be in context here.
 
+    b = context.b
     b.hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
 
     fs = b.FormattedString('')
@@ -73,17 +74,17 @@ def newFsString(t, b, e=None, style=None, w=None, h=None, fontSize=None, styleNa
         fs.fallbackFont(sFallbackFont)
     sFill = css('textFill', e, style)
     if sFill is not NO_COLOR: # Test on this flag, None is valid value
-        view.setTextFillColor(fs, sFill)
+        context.setTextFillColor(fs, sFill)
     sCmykFill = css('cmykFill', e, style, NO_COLOR)
     if sCmykFill is not NO_COLOR:
-        view.setTextFillColor(fs, sCmykFill, cmyk=True)
+        context.setTextFillColor(fs, sCmykFill, cmyk=True)
     sStroke = css('textStroke', e, style, NO_COLOR)
     sStrokeWidth = css('textStrokeWidth', e, style)
     if sStroke is not NO_COLOR and sStrokeWidth is not None:
-        view.setTextStrokeColor(fs, sStroke, sStrokeWidth)
+        context.setTextStrokeColor(fs, sStroke, sStrokeWidth)
     sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
     if sCmykStroke is not NO_COLOR:
-        view.setTextStrokeColor(fs, sCmykStroke, sStrokeWidth, cmyk=True)
+        context.setTextStrokeColor(fs, sCmykStroke, sStrokeWidth, cmyk=True)
     sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
     if sAlign is not None: # yTextAlign must be solved by parent container element.
         fs.align(sAlign)

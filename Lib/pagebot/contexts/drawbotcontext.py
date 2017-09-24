@@ -16,6 +16,7 @@
 from basecontext import BaseContext
 from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
 from pagebot.contexts.strings.fsstring import FsString, newFsString
+from pagebot.style import NO_COLOR
 
 class DrawBotContext(BaseContext):
     u"""A DrawBotContext instance combines the specific functions of the DrawBot library
@@ -114,12 +115,12 @@ class DrawBotContext(BaseContext):
     #   C O L O R
 
     @classmethod
-    def setTextFillColor(cls, bs, c, cmyk=False):
-        cls.setFillColor(c, cmyk, bs.s)
+    def setTextFillColor(cls, fs, c, cmyk=False):
+        cls.setFillColor(c, cmyk, fs)
 
     @classmethod
-    def setTextStrokeColor(cls, bs, c, w=1, cmyk=False):
-        cls.setStrokeColor(c, w, cmyk, bs.s)
+    def setTextStrokeColor(cls, fs, c, w=1, cmyk=False):
+        cls.setStrokeColor(c, w, cmyk, fs)
 
     @classmethod
     def setFillColor(cls, c, cmyk=False, b=None):

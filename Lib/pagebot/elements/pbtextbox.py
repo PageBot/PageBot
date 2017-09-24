@@ -13,7 +13,6 @@
 #
 #     textbox.py
 #
-from pagebot.contexts import Context as C
 from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, \
     makeStyle, MIDDLE, BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN
 from pagebot.elements.element import Element
@@ -39,7 +38,7 @@ class TextBox(Element):
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
         self._textLines = self._baseLines = None # Force initiaize upon first usage.
         self.size = w, h
-        self.bs = C.newString(bs) # Can be any type: BabelString instance or plain unicode string.
+        self.bs = self.newString(bs) # Can be any type: BabelString instance or plain unicode string.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
@@ -109,7 +108,7 @@ class TextBox(Element):
         If bs is not a BabelString instance, then create one, defined by the current view,
         based on the style of self."""
         if isinstance(bs, basestring):
-            bs = C.newString(bs, e=self)
+            bs = self.newString(bs, e=self)
         self.bs += bs
 
     def appendMarker(self, markerId, arg=None):
@@ -281,14 +280,14 @@ class TextBox(Element):
             b.addHtml(self.bs.html) # Get HTML from BabelString in HtmlString context.
 
             if self.drawBefore is not None: # Call if defined
-                self.drawBefore(self, view, p)
+                self.drawBefore(self, view, origin)
 
             if showElements:
                 for e in self.elements:
-                    e.build_html(view, p)
+                    e.build_html(view, origin)
 
             if self.drawAfter is not None: # Call if defined
-                self.drawAfter(self, view, p)
+                self.drawAfter(self, view, origin)
 
             b._div() 
 

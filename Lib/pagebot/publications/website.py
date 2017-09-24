@@ -13,6 +13,7 @@
 #
 #     website.py
 #
+from pagebot.contexts import HtmlContext
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
@@ -280,7 +281,9 @@ class Website(Publication):
     Subclassed from Document with the following optional attributes:
     rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, 
-    w=None, h=None, exportPaths=None, **kwargs)"""
+    w=None, h=None, exportPaths=None, context=None, **kwargs)"""
+
+    DEFAULT_CONTEXT = HtmlContext
 
     def initialize(self, **kwargs):
         u"""Initialize the generic website templates. """
@@ -291,38 +294,21 @@ class Website(Publication):
         gridX = (fr(1), fr(1))
         gridY = [None] # Default is full height of columns, no horizontal division.
 
-        # Default page templatre
-        t = Template(w=w, h=h, name='default', padding=padding, gridX=gridX, gridY=gridY)
-        self.addTemplate(t.name, t)
-        # Set template <head> building parameters. # Page element definition in pbpage.py
-        t.info.favIconUrl = 'images/favicon.gif'
-        t.info.mediaQueriesUrl = None
-        # Add page elements.
-        box = MobileNavigation(parent=t, name='MobileNavigation')
-        box = Navigation(parent=t, name='Navigation')
-        box = Introduction(parent=t, name='Introduction')
-        box = Featured(parent=t, name='Featured')
-        box = Main(parent=t, name='Main')
-        box = Section(parent=t, name='Section')
-        box = Main(parent=t, name='OtherMain')
-        box = Footer(parent=t, name='Footer')
-        box = JS(parent=t, name='JS')
-
-        # Default page templatre
+        # Default page template
         t = Template(w=w, h=h, name='home', padding=padding, gridX=gridX, gridY=gridY)
         self.addTemplate(t.name, t)
         # Set template <head> building parameters. # Page element definition in pbpage.py
         t.info.favIconUrl = 'images/favicon.gif'
         t.info.mediaQueriesUrl = None
         # Add page elements.
-        box = MobileNavigation(parent=t, name='MobileNavigation')
-        box = Navigation(parent=t, name='Navigation')
-        box = Introduction(parent=t, name='Introduction')
-        box = Featured(parent=t, name='Featured')
-        box = Main(parent=t, name='Main')
-        box = Section(parent=t, name='Section')
-        box = Main(parent=t, name='OtherMain')
-        box = Footer(parent=t, name='Footer')
-        box = JS(parent=t, name='JS')
+        MobileNavigation(parent=t, name='MobileNavigation')
+        Navigation(parent=t, name='Navigation')
+        Introduction(parent=t, name='Introduction')
+        Featured(parent=t, name='Featured')
+        Main(parent=t, name='Main')
+        Section(parent=t, name='Section')
+        Main(parent=t, name='OtherMain')
+        Footer(parent=t, name='Footer')
+        JS(parent=t, name='JS')
         
   
