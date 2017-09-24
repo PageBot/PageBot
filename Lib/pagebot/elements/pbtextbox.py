@@ -278,14 +278,14 @@ class TextBox(Element):
             b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.div(class_=self.class_)
-            b.addHtml(self.bs.html)
+            b.addHtml(self.bs.html) # Get HTML from BabelString in HtmlString context.
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(self, view, p)
 
             if showElements:
                 for e in self.elements:
-                    e.build(view, origin)
+                    e.build_html(view, p)
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(self, view, p)

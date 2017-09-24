@@ -134,7 +134,7 @@ class PixelMap(Element):
         u"""Initialize the image size. Note that this is done with the default/current 
         Context, as there may not be a view availabe yet."""
         if self.path is not None and os.path.exists(self.path):
-            self.iw, self.ih = Context.imageSize(self.path)
+            self.iw, self.ih = self.context.imageSize(self.path)
         else:
             self.iw = self.ih = 0 # Undefined or non-existing, there is no image file.
 
@@ -186,8 +186,9 @@ class PixelMap(Element):
         back to their original proportions.
         If stroke is defined, then use that to draw a frame around the image.
         Note that the (sx, sy) is already scaled to fit the padding position and size."""
-        context = view.context # Get current context and builder
-        b = context.b
+
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
 
         p = pointOffset(self.oPoint, origin)   
         p = self._applyScale(view, p)    

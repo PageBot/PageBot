@@ -36,12 +36,14 @@ class MampView(HtmlView):
     #   B U I L D  H T M L  /  C S S
 
     def build(self, path=None, pageSelection=None, multiPage=True):
-        doc = self.doc
+
+        doc = self.doc 
+
         sitePath = self.SITE_PATH
         if not sitePath.endswith('/'):
             sitePath += '/'
             
-        b = self.b # Get builder from doc.context of this view.
+        b = self.b # Get builder from self.doc.context of this view.
         doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:

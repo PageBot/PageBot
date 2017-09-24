@@ -61,12 +61,14 @@ class Typesetter(object):
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
         self.page = None # Keep track of current page, as may have been defined in code blocks.
-        self.box = None # Keep track of current box, as may have been defined in code blocks.
         #
-        # The galley can also be a Galley or a TextBox instance, if typsetting must go directly into a page element. 
+        # The galley can be a Galley or a TextBox instance, if typsetting must go directly into a page element. 
         # In that case image elements are added as child, loosing contact with their position in the text. 
         # A Galley element keeps that relation, by adding multiple TextBox elements between the images.
         # If galley is None, then create an empty Galley instance, without parent.
+        # Note that the single Galley will use the pagebot.contexts.Context as reference.
+        # Also note that self.box and self.galley refer to the same object. self.box is used 
+        # in MarkDown files as reference where text should go.
         if galley is None:
             galley = self.GALLEY_CLASS()
         self.galley = galley 
@@ -78,6 +80,12 @@ class Typesetter(object):
         self.globalPageName = globalPageName or 'page'
         self.globalBoxName = globalBoxName = 'box'
         self.codeBlocks = {} # No results for now. Find codeblock result by codeId after typesetting.
+
+    def _get_box(self):
+        return self.galley
+    def _set_box(self, e):
+        self.galley = e
+    box = property(_get_box, _set_box)
 
     def getTextBox(self, e=None):
         u"""Answer the current text box, if the width fits the current style.
@@ -160,7 +168,7 @@ class Typesetter(object):
             self.pushStyle({}) # Define top level for styles.
         brStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
         s = self.getStyleValue('prefix', e, brStyle, default='') + '\n' + self.getStyleValue('postfix', e, brStyle, default='')
-        fs = e.newString(s, e, style=brStyle)
+        fs = e.newString(s, e=e, style=brStyle)
         self.galley.append(fs) # Add newline in the current setting of FormattedString
         """
     def node_a(self, node, e):
@@ -246,7 +254,7 @@ class Typesetter(object):
             bullet = self.doc.css('listBullet')
         else:
             bullet = self.DEFAULT_BULLET # Default, in case doc or css does not exist.
-        bulletString = C.newString(bullet) # Get styled string with bullet.
+        bulletString = self.galley.newString(bullet) # Get styled string with bullet.
         self.galley.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
@@ -460,10 +468,8 @@ class Typesetter(object):
     def append(self, bs):
         u"""Append the string (or BabelString instance) to the current box, 
         if it is defined. Otherwise add to the existing galley."""
-        if self.box is not None:
-            self.box.append(bs)
-        else:
-            self.galley.append(bs)  # Add the tail formatted string to the galley.
+        # Add the tail formatted string to the textBox or galley. Equivalent to self.box.
+        self.galley.append(bs)  
 
     def htmlNode(self, node, end=False):
         u"""Open the tag in HTML output and copy the node attributes if there are any."""
@@ -493,7 +499,7 @@ class Typesetter(object):
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters. 
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
         if isinstance(bs, basestring): # Only convert if not yet BabelString instance.
-            bs = C.newString(bs, e, style)
+            bs = self.galley.newString(bs, e=e, style=style)
         self.append(bs)
         return bs
 
@@ -527,7 +533,7 @@ class Typesetter(object):
         
         nodeText = self._strip(node.text)
         if nodeText: # Not None and still has content after stripping?
-            bs = C.newString(nodeText, e, nodeStyle)
+            bs = self.galley.newString(nodeText, e=e, style=nodeStyle)
             self.append(bs)
 
         # Type set all child node in the current node, by recursive call.
@@ -547,7 +553,7 @@ class Typesetter(object):
             # to empty string?
             childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
             if childTail: # Any tail left after stripping, then append to the galley.
-                bs = C.newString(childTail, e, nodeStyle)
+                bs = self.galley.newString(childTail, e=e, style=nodeStyle)
                 self.append(bs)
                 self.append(childTail) # Export the plain text as parallel HTML output as well.
 
@@ -570,7 +576,7 @@ class Typesetter(object):
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
         nodeTail = self._strip(node.tail, postfix=postfix)
         if nodeTail: # Something of a tail left after stripping?
-            bs = C.newString(nodeTail, e, nodeStyle)
+            bs = self.galley.newString(nodeTail, e=e, style=nodeStyle)
             self.galley.append(bs) # Add to the current flow textBox
         """
 

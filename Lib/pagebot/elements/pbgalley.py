@@ -115,6 +115,10 @@ class Galley(Element):
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the
         containing page."""
+
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
+
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
@@ -122,7 +126,7 @@ class Galley(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(view, p)
 
-        view.setFillColor(self.OLD_PAPER_COLOR) # Color of old paper: #F8ECC2
+        context.setFillColor(self.OLD_PAPER_COLOR) # Color of old paper: #F8ECC2
         gw, gh = self.getSize()
         b.rect(px, py, gw, gh)
         if drawElements:
