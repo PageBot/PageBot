@@ -47,8 +47,7 @@ class GitView(HtmlView):
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
  
-                path = sitePath + fileName
-                b.writeHtml(path)
+                b.writeHtml(sitePath + fileName)
         # Write all collected CSS into one file
         b.writeCss(self.DEFAULT_CSS_PATH)
 

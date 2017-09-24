@@ -278,7 +278,7 @@ class TextBox(Element):
             b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.div(class_=self.class_)
-            b.addHtml(self.html)
+            b.addHtml(self.bs.html)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(self, view, p)
@@ -287,7 +287,7 @@ class TextBox(Element):
                 for e in self.elements:
                     e.build(view, origin)
 
-            if self.drawBAfter is not None: # Call if defined
+            if self.drawAfter is not None: # Call if defined
                 self.drawAfter(self, view, p)
 
             b._div() 

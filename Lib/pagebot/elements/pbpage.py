@@ -135,7 +135,6 @@ class Page(Element):
                 b.div(class_=self.class_) # Us standard 'page' if self.class_ is undefined as None.
                 if drawElements:
                     for e in self.elements:
-                        print e
                         e.build_html(view, origin)
                 b._div()
                 b._body()
