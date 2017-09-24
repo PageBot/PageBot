@@ -85,7 +85,7 @@ class TextBox(Element):
             elements = ' E(%d)' % len(self.elements)
         else:
             elements = ''
-        return '%s%s (%d, %d)%s%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), fs, elements)
+        return '%s%s (%d, %d)%s%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), self.bs.s, elements)
 
     # SuperString support, answering the structure that holds strings for all builder types.
   
@@ -206,7 +206,9 @@ class TextBox(Element):
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
-        b = view.b
+        context = view.context # Get current context
+        b = context.b # Get view from current context
+        
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
@@ -232,14 +234,14 @@ class TextBox(Element):
 
         textShadow = self.textShadow
         if textShadow:
-            view.saveGraphicState()
-            view.setShadow(textShadow)
+            context.saveGraphicState()
+            context.setShadow(textShadow)
 
         b.textBox(self.bs.fs, (px + self.pl + xOffset, py + self.pb-yOffset, 
             self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
         if textShadow:
-            view.restoreGraphicState()
+            context.restoreGraphicState()
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
@@ -259,15 +261,18 @@ class TextBox(Element):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
-    def build_flat(self, view, p=None, showElements=True):
+    def build_flat(self, view, origin=ORIGIN, showElements=True):
         # TODO: Fill this code.
         pass
 
-    def build_html(self, view, p=None, showElements=True):
+    def build_html(self, view, origin=None, showElements=True):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        b = view.b
+        
+        context = view.context # Get current context.
+        b = context.b
+
         self.build_css(view)
         if self.info.htmlPath is not None:
             b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
@@ -280,7 +285,7 @@ class TextBox(Element):
 
             if showElements:
                 for e in self.elements:
-                    e.build(view, b)
+                    e.build(view, origin)
 
             if self.drawBAfter is not None: # Call if defined
                 self.drawAfter(self, view, p)

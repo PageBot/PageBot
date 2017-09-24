@@ -18,9 +18,12 @@ from pagebot.toolbox.transformer import point3D
 
 #   Additional drawing stuff.
 
-def drawArrow(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
+def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
     u"""Draw curved arrow marker between the two points.
     TODO: Add drawing of real arrow-heads, rotated in the right direction."""
+    context = view.context # Get current context
+    b = context.b
+
     fms = e.css('flowMarkerSize')
     fmf = e.css('flowCurvatureFactor')
     if onText == 1:
@@ -46,21 +49,21 @@ def drawArrow(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=Fa
     ay1 = yt + sin(hookedAngle+arrowAngle) * arrowSize
     ax2 = xt - cos(hookedAngle-arrowAngle) * arrowSize
     ay2 = yt + sin(hookedAngle-arrowAngle) * arrowSize
-    newPath()
-    setFillColor(None)
-    moveTo((xs, ys))
-    curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
-    drawPath()
+    b.newPath()
+    context.setFillColor(None)
+    b.moveTo((xs, ys))
+    b.curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
+    b.drawPath()
 
     #  Draw the arrow head.
-    newPath()
-    setFillColor(c)
-    setStrokeColor(None)
-    moveTo((xt, yt))
-    lineTo((ax1, ay1))
-    lineTo((ax2, ay2))
-    closePath()
-    drawPath()
+    b.newPath()
+    context.setFillColor(c)
+    context.setStrokeColor(None)
+    b.moveTo((xt, yt))
+    b.lineTo((ax1, ay1))
+    b.lineTo((ax2, ay2))
+    b.closePath()
+    b.drawPath()
     if endMarker:
         oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 

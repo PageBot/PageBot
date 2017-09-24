@@ -16,9 +16,9 @@
 import weakref
 import codecs
 
-from pagebot.contexts import Context as C
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
+from pagebot.style import ORIGIN
 
 class Page(Element):
 
@@ -44,21 +44,43 @@ class Page(Element):
             return self.doc.isRightPage(self)
         return self.rightPage 
 
-    def draw(self, origin, view):
-        u"""Draw all elements this page."""
+    #   D R A W B O T  S U P P O R T
+
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+        u"""Draw all elements of this page in DrawBot."""
         p = pointOffset(self.oPoint, origin) # Ignoe z-axis for now.
         # If there are child elements, draw them over the text.
-        self._drawElements(p, view)
+        if drawElements:
+            for e in self.elements:
+                e.build_drawBot(view, p)
         # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
         view.drawPageMetaInfo(self, origin)
         # Check if we are in scaled mode. Then restore.
         #self._restoreScale()
 
-    def build(self, view):
+    #   F L A T  S U P P O R T
+
+    def build_flat(self, view, origin=ORIGIN, drawElements=True):
+        u"""Draw all elements of this page in Flat"""
+        p = pointOffset(self.oPoint, origin) # Ignoe z-axis for now.
+        # If there are child elements, draw them over the text.
+        if drawElements:
+            for e in self.elements:
+                e.build_flat(view, p)
+        # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
+        view.drawPageMetaInfo(self, origin)
+        # Check if we are in scaled mode. Then restore.
+        #self._restoreScale()
+
+    #   H T M L  /  C S S  S U P P O R T
+
+    def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        b = C.b
+        context = view.context
+        b = context.b # Get builder from current context.
+        
         self.build_css(view)
         info = self.info # Contains flags and parameter to Builder "b"
         if info.htmlPath is not None:
@@ -111,8 +133,10 @@ class Page(Element):
             else:
                 b.body()
                 b.div(class_=self.class_) # Us standard 'page' if self.class_ is undefined as None.
-                for e in self.elements:
-                    e.build(view, b)
+                if drawElements:
+                    for e in self.elements:
+                        print e
+                        e.build_html(view, origin)
                 b._div()
                 b._body()
             b._html()

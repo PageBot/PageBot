@@ -22,9 +22,9 @@ class DrawBotContext(BaseContext):
     This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
 
-    # The context builder "self.b" is the main drawBot library, that contains all 
+    # The context builder "cls.b" is the main drawBot library, that contains all 
     # drawing calls in as used regular DrawBot scripts.
-    b = drawBotBuilder # self.b builder for this canvas.
+    b = drawBotBuilder # cls.b builder for this canvas.
  
     #   P A T H S 
 
@@ -46,7 +46,7 @@ class DrawBotContext(BaseContext):
         u"""Create a new styles BabelString(FsString) instance from s, using e or style.
         Ignore and answer s if it is already a FsString."""
         if isinstance(s, basestring):
-            s = newFsString(s, cls.b, e=e, style=style, w=w, h=h, 
+            s = newFsString(s, cls, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, FsString)
         return s
@@ -57,7 +57,7 @@ class DrawBotContext(BaseContext):
     def setGradient(cls, gradient, e, origin):
         u"""Define the gradient call to match the size of element e., Gradient position
         is from the origin of the page, so we need the current origin of e."""
-        b = self.b
+        b = cls.b
         start = origin[0] + gradient.start[0] * e.w, origin[1] + gradient.start[1] * e.h
         end = origin[0] + gradient.end[0] * e.w, origin[1] + gradient.end[1] * e.h
 
@@ -93,7 +93,7 @@ class DrawBotContext(BaseContext):
     @classmethod
     def installedFonts(cls):
         u"""Answer the list with names of all installed fonts in the system, as available
-        for self.newString( ) style."""
+        for cls.newString( ) style."""
         return cls.b.installedFonts()
 
     #   I M A G E

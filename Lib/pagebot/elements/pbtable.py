@@ -145,12 +145,14 @@ class Table(Element):
     #   D R A W B O T  S U P P O R T
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
-        b = view.b
+        context = view.context
+        b = context.b
+
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.drawFrame(p, view) # Draw optional frame or borders.
+        self.drawFrame(view, p) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -168,6 +170,9 @@ class Table(Element):
     #   F L A T  S U P P O R T
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
+        context = view.context
+        b = context.b
+
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.

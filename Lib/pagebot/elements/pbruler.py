@@ -25,8 +25,13 @@ class Ruler(Element):
         self.style['h'] = self.style['strokeWidth'] = h # Overwrite style from here.
     h = property(_get_h, _set_h)
 
-    def build_drawBot(self, origin, view, drawElement=True):
-        b = view.b # Get builder for this view build.
+    #   D R A W B O T  S U P P O R T
+
+    def build_drawBot(self, view, origin, drawElement=True):
+
+        context = view.context # Get current context
+        b = context.b # Get builder of the context.
+
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
@@ -37,8 +42,8 @@ class Ruler(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(p, view)
 
-        view.setFillColor(None)
-        view.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        c.setFillColor(None)
+        c.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         b.line((px + sIndent, py), (px + w, py))
 
         if drawElements:
@@ -56,12 +61,20 @@ class Ruler(Element):
     #   F L A T  S U P P O R T
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
+
+        c = view.c # Get current context
+        b = c.b # Get builder of the context.
+
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
+
+        c.setFillColor(None)
+        c.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        #b.line((px + sIndent, py), (px + w, py))
 
         if drawElements:
             for e in self.elements:
@@ -76,10 +89,17 @@ class Ruler(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
+        conctext = view.context # Get current context
+        b = context.b # Get builder of the context.
+ 
         self.build_css(view)
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        context.setFillColor(None)
+        context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        #b.line((px + sIndent, py), (px + w, py))
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)

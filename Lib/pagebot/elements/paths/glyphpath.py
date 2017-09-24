@@ -55,12 +55,15 @@ class GlyphPath(Path):
     h = property(_get_h, _set_h)
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
-        b = view.b
+        
+        context = view.context # Get current context
+        b = context.b
+
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        b.save()
+        context.saveGraphicState()
         sh = 1.0*self.h/self.ih
         b.transform((1, 0, 0, 1, px, py))
         b.scale(sh)
@@ -73,7 +76,7 @@ class GlyphPath(Path):
             b.stroke(1, 0, 0)
             b.strokeWidth(20)
             b.drawPath(self.glyph.path)
-        b.restore()
+        context.restoreGraphicState()
 
         if drawElements:
             for e in self.elements:

@@ -22,7 +22,7 @@ class HtmlContext(BaseContext):
     This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
 
-    b = WebBuilder() # self.b builder for this canvas.
+    b = WebBuilder()
  
     @classmethod
     def newString(cls, s, e=None, style=None, w=None, h=None, fontSize=None, 
@@ -30,7 +30,7 @@ class HtmlContext(BaseContext):
         u"""Create a new styles BabelString(HtmlString) instance from s, using e or style.
         Ignore and answer s if it is already an HtmlString."""
         if isinstance(s, basestring):
-            s = newHtmlString(s, cls.b, e=e, style=style, w=w, h=h, 
+            s = newHtmlString(s, cls, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, HtmlString)
         return s

@@ -22,7 +22,7 @@ class FlatContext(BaseContext):
     This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
 
-    b = flatBuilder # self.b builder for this canvas.
+    b = flatBuilder # cls.b builder for this canvas.
  
  	#	C A N V A S
 
@@ -42,7 +42,7 @@ class FlatContext(BaseContext):
         u"""Create a new styles BabelString(FlatString) instance from s, using e or style.
         Ignore and answer s if it is already a FlatString."""
         if isinstance(s, basestring):
-            s = newFlatString(s, cls.c, e=e, style=style, w=w, h=h, 
+            s = newFlatString(s, cls, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, FlatString)
         return s

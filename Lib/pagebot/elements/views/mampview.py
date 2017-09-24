@@ -15,8 +15,9 @@
 #
 import os
 import shutil
-from pagebot.contexts import Context as C
+
 from pagebot.elements.views.htmlview import HtmlView
+from pagebot.style import ORIGIN
 
 class MampView(HtmlView):
     viewId = 'Mamp'
@@ -34,23 +35,28 @@ class MampView(HtmlView):
 
     #   B U I L D  H T M L  /  C S S
 
-    def build(self, name, path=None, pageSelection=None, multiPage=True):
-        doc = self.parent
-        b = C.b
+    def build(self, path=None, pageSelection=None, multiPage=True):
+        doc = self.doc
         sitePath = path or self.SITE_PATH
         if not sitePath.endswith('/'):
             sitePath += '/'
+            
+        b = self.context.b # Get builder from context of this view.
         doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
+
+                hook = 'build_' + b.PB_ID
+                getattr(page, hook)(self, ORIGIN) # Typically calling page.build_drawBot or page.build_flat
+
                 fileName = page.name
                 if not fileName:
                     fileName = DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
+                
                 path = sitePath + fileName
-                page.build_html(self) # Building HTML and page-specific CSS, storage in builder.
                 b.writeHtml(path)
         # Write all collected CSS into one file
         b.writeCss(self.DEFAULT_CSS_PATH)

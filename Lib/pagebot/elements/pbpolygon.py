@@ -14,7 +14,7 @@
 #     polygon.py
 #
 from pagebot.elements.element import Element
-from pagebot.style import XXXL
+from pagebot.style import XXXL, ORIGIN
 
 class Polygon(Element):
     u"""The Polygon element is a simple implementation of the polygon DrawBot function.
@@ -55,34 +55,58 @@ class Polygon(Element):
     def _get_h(self):
         return self.size[1] # Calculate cache self._size if undefined.
 
-    def draw(self, origin, view):
+    #   D R A W B O T  S U P P O R T
+
+    def buld_drawBot(self, view, origin, drawElements=True):
+
+        context = view.context # Get current context
+        b = context.b # Get builder of the context.
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
+            self.drawBefore(self, view, p)
 
-        setFillColor(self.css('fill'))
-        setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
-        newPath()
+        context.setFillColor(self.css('fill'))
+        context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        b.newPath()
         for index, (ppx, ppy) in enumerate(self.points):
             if index == 0:
-                moveTo((px + ppx, py + ppy))
+                b.moveTo((px + ppx, py + ppy))
             else:
-                lineTo((px + ppx, py + ppy))
-        drawPath()
+                b.lineTo((px + ppx, py + ppy))
+        b.drawPath()
 
-        # If there are child elements, draw them over the polygon.
-        self._drawElements(p, view)
+        if drawElements:
+            # If there are child elements, recursively draw them over the pixel image.
+            for e in self.elements:
+                if e.show:
+                    e.build_drawBot(view, origin)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view)
+            self.drawAfter(self, view, p)
 
         # Draw optional bouning box.
         self.drawFrame(origin, view)
  
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+
+    #   F L A T  S U P P O R T
+
+    def build_flat(self, view, origin=ORIGIN, drawElements=True):
+        u"""Drawing Flat polygons here."""
+        context = view.context # Get current context
+        b = context.b # Get builder of the context.
+
+    #   H T M L  /  C S S  S U P P O R T
+
+    def build_html(self, view, origin=None, drawElements=True):
+        u"""Drawing HTML Polygon through SVG?"""
+        context = view.context # Get current context
+        b = context.b # Get builder of the context.
+       
+        
 

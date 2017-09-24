@@ -25,8 +25,9 @@ class MobileNavigation(TextBox):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
    
-    def build_html(self, view, b):
-        self.build_css(view, b)
+    def build_html(self, view, origin=None):
+        b = view.context.b
+        self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='twelvecol last')
@@ -54,8 +55,9 @@ class Navigation(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
   
-    def build_html(self, view, b):
-        self.build_css(view, b)
+    def build_html(self, view, origin=None):
+        b = view.context.b
+        self.build_css(view)
         b.div(class_='container top')
         b.div(class_='row')
         b.div(class_='fivecol')
@@ -89,17 +91,18 @@ class Introduction(TextBox):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
       
-    def build_html(self, view, b):
+    def build_html(self, view, origin=None):
         u"""Build a page wide in intoduction box for large type, if there is any content."""
-        if not self.html:
+        if not self.bs.html:
             return
-        self.build_css(view, b)
+        b = view.context.b
+        self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='twelvecol last')
-        b.addHtml(self.html)
+        b.addHtml(self.bs.html)
         for e in self.elements:
-            e.build(view, b)
+            e.build_html(view, origin)
         b._div() # .twelvecol last
         b._div() # .row
         b._div() # .container .introduction        
@@ -115,20 +118,21 @@ class Featured(Rect):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
   
-    def build_html(self, view, b):
+    def build_html(self, view):
         u"""Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
         side = self['Side']
-        if not image.html or not side.html:
+        if not image.bs.html or not side.bs.html: # No HTML in any of the BabelStrings?
             return
-        self.build_css(view, b)
+        b = view.context.b
+        self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='eightcol')
-        image.build(view, b)
+        image.build_html(view, origin)
         b._div() # .eightcol
         b.div(class_="fourcol last")
-        side.build(view, b)
+        side.build_html(view, origin)
         b._div() # .fourcol last
         b._div() # .row
         b._div() # .container .featured
@@ -147,20 +151,21 @@ class Main(Rect):
         u"""Add FormattedString to main content."""
         self['Content'].append(bs)
 
-    def build_html(self, view, b):
+    def build_html(self, view, origin=None):
         content = self['Content']
         side = self['Side']
         if not content.html: # If there is nothing in the main part, then also ignore the side.
             return
-        self.buildCss(view, b)
+        b = view.context.b
+        self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='eightcol')
-        content.build(view, b)
+        content.build_html(view, origin)
         b._div() # .eightcol
         b.div(class_='fourcol')
         # TODO: We could do something to fill here, if there is not side content.
-        side.build(view, b)
+        side.build_html(view, origin)
         b._div() # .fourcol
         b._div() # .row
         b._div() # .container .mainContnet
@@ -181,18 +186,19 @@ class Section(Rect):
             TextBox('', parent=self, name=`row*2`)
             TextBox('', parent=self, name=`row*2+1`)
 
-    def build_html(self, view, b):
+    def build_html(self, view):
+        b = view.context.b
         title = self['Title']
-        hasContent = bool(title.html)
+        hasContent = bool(title.bs.html)
         for row in range(0, self._sectionRows):
             hasContent |= bool(self[`row*2`].html) or bool(self[`row*2+1`].html)
         if hasContent: # Onle start the container if there is any content.
-            self.buildCss(view, b)
+            self.build_css(view)
             b.div(class_='container %s' % self.class_)
-            if title.html:
+            if title.bs.html:
                 b.div(class_='row')
                 b.div(class_='tencol')
-                b.addHtml(title.html)
+                b.addHtml(title.bs.html)
                 b._div() # .tencol
                 b.div(class_='twocol last')
                 b._div() # .twocol last
@@ -201,13 +207,13 @@ class Section(Rect):
             for row in range(0, self._sectionRows):
                 e1 = self[`row*2`]
                 e2 = self[`row*2+1`]
-                if e1.html and e2.html: # Only output if both are filled.
+                if e1.bs.html and e2.bs.html: # Only output if both are filled.
                     b.div(class_='row')
                     b.div(class_='sixcol')
-                    b.addHtml(e1.html)
+                    b.addHtml(e1.bs.html)
                     b._div() # .sixcol
                     b.div(class_='sixcol last')
-                    b.addHtml(e2.html)
+                    b.addHtml(e2.bs.html)
                     b._div() # 'sixcol last
                     b._div() # .row
             
@@ -219,8 +225,9 @@ class Footer(TextBox):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower() 
 
-    def build_html(self, view, b):
-        self.build_css(view, b)
+    def build_html(self, view, origin=None):
+        b = view.context.b
+        self.build_css(view)
         b.div(class_="container %s" % self.class_)
         b.div(class_='row')
         
@@ -240,7 +247,7 @@ class Footer(TextBox):
         b._div() # class: eightcol
 
         b.div(class_='fourcol last')
-        b.addHtml(self.html)
+        b.addHtml(self.bs.html)
         b._div() # class: fourcol last
         
         b._div() # class: row
@@ -250,7 +257,8 @@ class JS(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
     
-    def build_html(self, view, b):
+    def build_html(self, view, origin=None):
+        b = view.context.b
         b.script(type="text/javascript")
         b.addHtml(u"""
     jQuery(document).ready(function($){
