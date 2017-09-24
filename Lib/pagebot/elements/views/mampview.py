@@ -37,11 +37,11 @@ class MampView(HtmlView):
 
     def build(self, path=None, pageSelection=None, multiPage=True):
         doc = self.doc
-        sitePath = path or self.SITE_PATH
+        sitePath = self.SITE_PATH
         if not sitePath.endswith('/'):
             sitePath += '/'
             
-        b = self.context.b # Get builder from context of this view.
+        b = self.b # Get builder from doc.context of this view.
         doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
@@ -55,12 +55,11 @@ class MampView(HtmlView):
                     fileName = DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
-                print "#@@#@#@#", sitePath, fileName
                 b.writeHtml(sitePath + fileName)
         # Write all collected CSS into one file
         b.writeCss(self.DEFAULT_CSS_PATH)
 
-        mampPath = self.MAMP_PATH + name
+        mampPath = self.MAMP_PATH + path
         if os.path.exists(mampPath):
             shutil.rmtree(mampPath)
         shutil.copytree(self.SITE_PATH, mampPath)

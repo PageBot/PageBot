@@ -297,16 +297,18 @@ class TextBox(Element):
         if not view.showTextBoxBaselines and not self.showBaselines:
             return
 
-        b = view.b
+        context = self.context # Get current context and builder
+        b = context.b # A bit more efficient than self.b once we have the context.
+
         fontSize = self.css('baseLineMarkerSize')
         indexStyle = dict(font='Verdana', fontSize=8, textFill=(0, 0, 1))
         yStyle = dict(font='Verdana', fontSize=fontSize, textFill=(0, 0, 1))
         leadingStyle = dict(font='Verdana', fontSize=fontSize, textFill=(1, 0, 0))
 
         if view.showTextBoxY:
-            fs = newFS(`0`, style=indexStyle)
-            _, th = b.textSize(fs)
-            b.text(fs, (px + self.w + 3,  py + self.h - th/4))
+            bs = self.newString(`0`, style=indexStyle)
+            _, th = context.textSize(bs)
+            b.text(bs.s, (px + self.w + 3,  py + self.h - th/4))
 
         stroke(0, 0, 1)
         strokeWidth(0.5)
@@ -316,23 +318,24 @@ class TextBox(Element):
             # TODO: Why measures not showing?
             line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
-                fs = C.newString(`textLine.lineIndex`, style=indexStyle)
+                bs = self.newString(`textLine.lineIndex`, style=indexStyle)
                 tw, th = b.textSize(fs) # Calculate right alignment
-                b.text(fs.s, (px-3-tw, py + y - th/4))
+                b.text(bs.s, (px-3-tw, py + y - th/4))
             if view.showTextBoxY:
-                fs = C.newString('%d' % round(y), style=yStyle)
+                bs = self.newString('%d' % round(y), style=yStyle)
                 _, th = b.textSize(fs)
-                b.text(fs.s, (px + self.w + 3, py + y - th/4))
+                b.text(bs.s, (px + self.w + 3, py + y - th/4))
             if view.showTextBoxLeading:
                 leading = round(abs(y - prevY))
-                fs = C.newString('%d' % leading, style=leadingStyle)
+                bs = self.newString('%d' % leading, style=leadingStyle)
                 _, th = b.textSize(fs)
-                b.text(fs.s, (px + self.w + 3, py + prevY - leading/2 - th/4))
+                b.text(bs.s, (px + self.w + 3, py + prevY - leading/2 - th/4))
             prevY = y
  
     def _drawOverflowMarker_drawBot(self, view, px, py):
-        b = view.b
-        fs = C.newString('[+]', style=dict(textFill=(1, 0, 0), font='Verdana-Bold', fontSize=8))
+        u"""Draw the optional overflow marker, if text doesn't fit in the box."""
+        b = self.b # Get current builder from self.doc.context.b
+        fs = self.newString('[+]', style=dict(textFill=(1, 0, 0), font='Verdana-Bold', fontSize=8))
         tw, th = b.textSize(fs.s)
         if self.originTop:
             pass

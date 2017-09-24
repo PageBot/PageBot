@@ -18,6 +18,7 @@ from __future__ import division
 import weakref
 import copy
 
+from pagebot.contexts import Context
 from pagebot.conditions.score import Score
 from pagebot import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
@@ -462,15 +463,25 @@ class Element(object):
         u"""Answer the self.doc.view, currently set for reference and building this element."""
         doc = self.doc
         if doc is not None:
-            return self.doc.view
-
+            return doc.view
+        return None
     view = property(_get_view)
 
+    def _get_context(self):
+        doc = self.doc
+        if doc is not None:
+            return doc.context
+        return Context
+    context = property(_get_context)
+
+    def _get_builder(self):
+        return self.context.b
+    b = builder = property(_get_builder)
+    
     def newString(self, s, **kwargs):
-        u"""Create a new BabelString, with emphasis on the current type of self.doc.view."""
-        view = self.view
-        assert view is not None
-        return C.newString(s, **kwargs)
+        u"""Create a new BabelString, using the current type of self.doc.view.context,
+        or pagebot.contexts.Context if not self.doc or self.doc.view defined."""
+        return self.context.newString(s, **kwargs)
         
     # Most common properties
 

@@ -15,7 +15,7 @@
 #
 import copy
 
-from pagebot.contexts import Context as C
+from pagebot.contexts import Context # Default context for this document if undefined.
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
@@ -34,9 +34,11 @@ class Document(object):
     def __init__(self, rootStyle=None, styles=None, viewId=None, name=None, class_=None, title=None, 
             autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
             padding=None, info=None, 
-            exportPaths=None, **kwargs):
+            context=None, exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
+        # Set the context. Initialize from default if not defined.
+        self.context = context or Context
         self.rootStyle = rs = self.makeRootStyle(rootStyle, **kwargs)
         self.class_ = class_ or self.__class__.__name__ # Optional class name, e.g. to group elements together in HTML/CSS export.
         self.initializeStyles(styles) # Create some default styles, to make sure they are there.
@@ -140,6 +142,11 @@ class Document(object):
         info.append('\tLib: %s' % ', '.join(self._lib.keys()))
         return '\n'.join(info)
 
+    def _get_builder(self):
+        u"""Answer the builder, as supposed to be available in the self.context."""
+        return self.context.b
+    b = builder = property(_get_builder)
+    
     #   T E M P L A T E
 
     def initializeTemplates(self, templates, defaultTemplate):
@@ -467,7 +474,7 @@ class Document(object):
     def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
         u"""Create a new page with size (self.w, self.h) unless defined otherwise. Add the pages in the row of pn, if defined.
         Otherwise create a new row of pages at pn. If pn is undefined, add a new page row at the end.
-        If template is undefined, then use self.pageTemplat to initialize the new page."""
+        If template is undefined, then use self.pageTemplate to initialize the new page."""
         if isinstance(template, basestring):
             template = self.templates.get(template)
         if template is None:
@@ -481,11 +488,10 @@ class Document(object):
         return page # Answer the new page 
 
     def makePages(self, pageCnt, pn=0, template=None, name=None, w=None, h=None, **kwargs):
-        u"""
-        If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position.
+        u"""If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position.
         If template is undefined, then self.newPage will use self.defaultTemplate to initialize the new pages."""
         for n in range(pageCnt): # First page is n + pn
-            self.newPage(pn=n+pn, template=template, name=name, w=w, h=h, **kwargs) # Parent is forced to self.
+            self.newPage(pn=pn+n, template=template, name=name, w=w, h=h, **kwargs) # Parent is forced to self.
 
     def getElementPage():
         u"""Search ancestors for the page element. This call can only happen here if elements don't have a
@@ -573,14 +579,15 @@ class Document(object):
         type of strings. 
         """
         self.view = viewClasses[viewId](parent=self, w=self.w, h=self.h)
-
+        return self.view
+        
     #   D R A W I N G  &  B U I L D I N G
 
     def build_css(self, view):
         u"""Build the CSS for this document. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
-        b = C.b
+        b = view.context.b
         if self.info.cssPath is not None:
             b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
         else: 

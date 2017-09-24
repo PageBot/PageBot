@@ -29,8 +29,8 @@ class Ruler(Element):
 
     def build_drawBot(self, view, origin, drawElement=True):
 
-        context = view.context # Get current context
-        b = context.b # Get builder of the context.
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
@@ -42,8 +42,8 @@ class Ruler(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(p, view)
 
-        c.setFillColor(None)
-        c.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        context.setFillColor(None)
+        context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         b.line((px + sIndent, py), (px + w, py))
 
         if drawElements:
@@ -62,8 +62,8 @@ class Ruler(Element):
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
 
-        c = view.c # Get current context
-        b = c.b # Get builder of the context.
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
@@ -72,8 +72,8 @@ class Ruler(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        c.setFillColor(None)
-        c.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        context.setFillColor(None)
+        context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         #b.line((px + sIndent, py), (px + w, py))
 
         if drawElements:
@@ -89,8 +89,9 @@ class Ruler(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
-        conctext = view.context # Get current context
-        b = context.b # Get builder of the context.
+
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
  
         self.build_css(view)
         p = pointOffset(self.oPoint, origin)

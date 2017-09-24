@@ -59,9 +59,9 @@ class Polygon(Element):
 
     def buld_drawBot(self, view, origin, drawElements=True):
 
-        context = view.context # Get current context
-        b = context.b # Get builder of the context.
-
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
+       
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
@@ -98,15 +98,15 @@ class Polygon(Element):
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
         u"""Drawing Flat polygons here."""
-        context = view.context # Get current context
-        b = context.b # Get builder of the context.
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
 
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
         u"""Drawing HTML Polygon through SVG?"""
-        context = view.context # Get current context
-        b = context.b # Get builder of the context.
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
        
         
 

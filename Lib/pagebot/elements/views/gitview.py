@@ -27,13 +27,13 @@ class GitView(HtmlView):
     #   B U I L D  H T M L  /  C S S
 
     def build(self, path=None, pageSelection=None, multiPage=True):
-        doc = self.doc
-        sitePath = path or self.GIT_PATH
+
+        sitePath = self.GIT_PATH
         if not sitePath.endswith('/'):
             sitePath += '/'
             
-        b = self.context.b # Get builder of current context.
-        doc.build_css(self) # Make doc build the main/overall CSS.
+        b = self.b # Get builder from self.doc.context of this view.
+        self.doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
