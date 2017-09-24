@@ -250,12 +250,14 @@ class Typesetter(object):
 
     def node_li(self, node, e):
         u"""Generate bullet/Numbered list item."""
+        context = self.galley.context
         if self.doc is not None:
             bullet = self.doc.css('listBullet')
         else:
             bullet = self.DEFAULT_BULLET # Default, in case doc or css does not exist.
-        bulletString = self.galley.newString(bullet) # Get styled string with bullet.
-        self.galley.append(bulletString) # Append the bullet as defined in the style.
+        bulletString = context.newBulletString(bullet) # Get styled string with bullet.
+        if bulletString is not None: # HtmlContext does not want a bullet character.
+            self.galley.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
