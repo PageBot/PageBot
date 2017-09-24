@@ -18,7 +18,6 @@ from __future__ import division
 import weakref
 import copy
 
-from pagebot.contexts import Context as C
 from pagebot.conditions.score import Score
 from pagebot import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
@@ -1889,7 +1888,9 @@ class Element(object):
         Instead of the DrawBot stroke and strokeWidth attributes, use
         borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
         """
-        b = view.b # Get the DrawBot (or equivalent) builder for drawing the frame.
+        context = view.context
+        b = context.b # Get the DrawBot (or equivalent) builder for drawing the frame.
+        
         eShadow = self.shadow
         if eShadow:
             view.saveGraphicState()
@@ -1901,18 +1902,18 @@ class Element(object):
         eStroke = self.css('stroke', None)
         eGradient = self.gradient
         if eStroke is not None or eFill is not None or eGradient:
-            b.save()
+            context.saveGraphicState()
             # Drawing element fill and/or frame
             if eGradient: # Gradient overwrites setting of fill.
-                view.setGradient(eGradient, self, p) # Add self to define start/end from relative size.
+                context.setGradient(eGradient, self, p) # Add self to define start/end from relative size.
             else:
-                view.setFillColor(eFill)
-            view.setStrokeColor(eStroke, self.css('strokeWidth', 1))
+                context.setFillColor(eFill)
+            context.setStrokeColor(eStroke, self.css('strokeWidth', 1))
             if self.framePath is not None: # In case defined, use instead of bounding box. 
                 b.drawPath(self.framePath)
             else:
                 b.rect(p[0], p[1], self.w, self.h)
-            b.restore()
+            context.restoreGraphicState()
 
         # Instead of full frame drawing, check on separate border settings.
         borderTop = self.borderTop
@@ -1921,10 +1922,10 @@ class Element(object):
         borderLeft = self.borderLeft
 
         if borderTop is not None:
-            b.save()
+            context.saveGraphicState()
             if borderTop['dash']:
                 b.lineDash(*borderTop['dash'])
-            view.setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
+            context.setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
             if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
@@ -1951,13 +1952,13 @@ class Element(object):
                 b.line((p[0]-oLeft, p[1]-oTop), (p[0]+self.w+oRight, p[1]-oTop))
             else:
                 b.line((p[0]-oLeft, p[1]+self.h+oTop), (p[0]+self.w+oRight, p[1]+self.h+oTop))
-            b.restore()
+            context.restoreGraphicState()
 
         if borderBottom is not None:
-            b.save()
+            context.saveGraphicState()
             if borderBottom['dash']:
                 b.lineDash(*borderBottom['dash'])
-            view.setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
+            context.setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
             if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
@@ -1984,13 +1985,13 @@ class Element(object):
                 b.line((p[0]-oLeft, p[1]+self.h+oBottom), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
             else:
                 b.line((p[0]-oLeft, p[1]-oBottom), (p[0]+self.w+oRight, p[1]-oBottom))
-            b.restore()
+            context.restoreGraphicState()
         
         if borderRight is not None:
-            b.save()
+            context.saveGraphicState()
             if borderRight['dash']:
                 b.lineDash(*borderRight['dash'])
-            view.setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
+            context.setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
 
             oTop = 0 # Extra offset on top, if there is a top border.
             if borderTop and (borderTop['strokeWidth'] or 0) > 1:
@@ -2017,13 +2018,13 @@ class Element(object):
                 b.line((p[0]+self.w+oRight, p[1]-oTop), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
             else:
                 b.line((p[0]+self.w+oRight, p[1]-oBottom), (p[0]+self.w+oRight, p[1]+self.h+oTop))
-            b.restore()
+            context.restoreGraphicState()
 
         if borderLeft is not None:
-            b.save()
+            context.saveGraphicState()
             if borderLeft['dash']:
                 b.lineDash(*borderLeft['dash'])
-            view.setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
+            context.setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
 
             oTop = 0 # Extra offset on top, if there is a top border.
             if borderTop and (borderTop['strokeWidth'] or 0) > 1:
@@ -2050,46 +2051,47 @@ class Element(object):
                 b.line((p[0]-oLeft, p[1]-oTop), (p[0]-oLeft, p[1]+self.h+oBottom))
             else:
                 b.line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
-            b.restore()
+            context.restoreGraphicState()
 
     #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, view, b, origin=ORIGIN, drawElements=True):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.buildFrame_drawBot(view, b, p) # Draw optional frame or borders.
+        self.buildFrame_drawBot(view, p) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, b, p)
+            self.drawBefore(self, view, p)
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
             for e in self.elements:
                 if e.show:
-                    e.build_drawBot(view, b, origin)
+                    e.build_drawBot(view, origin)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, b, p)
+            self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, b, origin) # Depends on flag 'view.showElementInfo'
+        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     #   F L A T  S U P P O R T
 
-    def build_flat(self, view, b, origin=None, drawElements=True):
+    def build_flat(self, view, origin=None, drawElements=True):
         u"""TODO: Generic build of flat elements goes here."""
         pass
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_css(self, view, b, origin=None):
+    def build_css(self, view, origin=None):
         u"""Build the css for this element. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
+        b = view.context.b # Get the build of the current context.
         if self.info.cssPath is not None:
             b.includeCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
         elif self.class_: # For now, we only can generate CSS if the element has a class name defined.
@@ -2097,12 +2099,12 @@ class Element(object):
         else:
             b.css(message='No CSS for element %s\n' % self.__class__.__name__)
 
-    def build_html(self, view, b, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
         self.build_css(view)
-        b = C.b # Use the current context builder to write the HTML/CSS code.
+        b = self.context.b # Use the current context builder to write the HTML/CSS code.
         info = self.info # Contains builder parameters and flags for Builder "b"
         if info.htmlPath is not None:
             b.includeHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
@@ -2110,14 +2112,14 @@ class Element(object):
             b.div(class_=self.class_) # No default class, ignore if not defined.
             
             if self.drawBefore is not None: # Call if defined
-                self.drawBefore(self, view, b, p)
+                self.drawBefore(self, view, p)
 
             if drawElements: # Optional create empty element.
                 for e in self.elements:
-                    e.build_html(view, b, origin)
+                    e.build_html(view, origin)
 
             if self.drawAfter is not None: # Call if defined
-                self.drawAfter(self, view, b, p)
+                self.drawAfter(self, view, p)
 
             b._div()
 
@@ -2198,7 +2200,7 @@ class Element(object):
             return abs(self.parent.pt - self.middle) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.middle) <= tolerance
 
-    def isMiddleOnTopSide(self, b, tolerance=0):
+    def isMiddleOnTopSide(self, tolerance=0):
         if self.originTop:
             return abs(self.middle) <= tolerance
         return abs(self.parent.h - self.middle) <= tolerance

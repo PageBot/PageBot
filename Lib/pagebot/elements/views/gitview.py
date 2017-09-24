@@ -26,23 +26,28 @@ class GitView(HtmlView):
     
     #   B U I L D  H T M L  /  C S S
 
-    def build_html(self, path=None, pageSelection=None, multiPage=True):
+    def build(self, path=None, pageSelection=None, multiPage=True):
         doc = self.doc
         sitePath = path or self.GIT_PATH
         if not sitePath.endswith('/'):
             sitePath += '/'
-        b = self.c.b # Get builder of current context.
+            
+        b = self.context.b # Get builder of current context.
         doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
+
+                hook = 'build_' + b.PB_ID
+                getattr(page, hook)(self, origin) # Typically calling page.build_drawBot or page.build_flat
+
                 fileName = page.name
                 if not fileName:
                     fileName = DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
+ 
                 path = sitePath + fileName
-                page.build_html(self) # Building HTML and CSS, storage in builder.
                 b.writeHtml(path)
         # Write all collected CSS into one file
         b.writeCss(self.DEFAULT_CSS_PATH)

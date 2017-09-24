@@ -110,7 +110,7 @@ class Galley(Element):
 
     #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, view, b, origin=ORIGIN, drawElements=True):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the
@@ -120,7 +120,7 @@ class Galley(Element):
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(view, b, p)
+            self.drawBefore(view, p)
 
         view.setFillColor(self.OLD_PAPER_COLOR) # Color of old paper: #F8ECC2
         gw, gh = self.getSize()
@@ -129,48 +129,48 @@ class Galley(Element):
             gy = 0
             for e in self.elements:
                 # @@@ Find space and do more composition
-                e.build_drawBot(view, b, (px, py + gy))
+                e.build_drawBot(view, (px, py + gy))
                 gy += element.h
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(view, b, p)
+            self.drawAfter(view, p)
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
 
     #   F L A T  S U P P O R T
 
-    def build_flat(self, view, b, origin=ORIGIN, drawElements=True):
+    def build_flat(self, view, origin=ORIGIN, drawElements=True):
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(view, b, p)
+            self.drawBefore(view, p)
 
         if drawElements:
             for e in self.elements:
-                e.build_flat(view, b, p)
+                e.build_flat(view, p)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(view, b, p)
+            self.drawAfter(view, p)
         
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_html(self, b, origin, view, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True):
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(view, b, p)
+            self.drawBefore(view, p)
 
         if drawElements:
             for e in self.elements:
-                e.build_html(view, b, p)
+                e.build_html(view, p)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(view, b, p)
+            self.drawAfter(view, p)
 
 

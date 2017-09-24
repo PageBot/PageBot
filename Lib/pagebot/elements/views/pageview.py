@@ -17,7 +17,7 @@ from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.contexts import Context # Get current context with its builder.
+from pagebot.contexts import Context # Get current context with its builder.    
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
@@ -34,9 +34,9 @@ class PageView(BaseView):
 
     def build(self, path, pageSelection=None, multiPage=True):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
-        doc = self.parent
+        doc = self.doc
         
-        b = self.c.b # Get builder of the current context.
+        b = self.context.b # Get builder of the current context.
 
         w, h, _ = doc.getMaxPageSizes(pageSelection)
         for pn, pages in doc.getSortedPages():
@@ -61,7 +61,7 @@ class PageView(BaseView):
                 ph = page.h
                 origin = (0, 0, 0)
 
-            b.newPage(pw, ph) #  Make page in DrawBot of self size, actual page may be smaller if showing cropmarks.
+            b.newPage(pw, ph) #  Make page in of self size, actual page may be smaller if showing cropmarks.
             # View may have defined a background
             if self.style.get('fill') is not None:
                 self.setFillColor(self.style['fill'])
@@ -73,7 +73,8 @@ class PageView(BaseView):
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             # Determine the drawing method from the builder.PB_ID
             # From there all element will use the same builder extension if implemented.
-            page.build_drawBot(self, origin)
+            hook = 'build_' + b.PB_ID
+            getattr(page, hook)(self, origin) # Typically calling page.build_drawBot or page.build_flat
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, self, origin)

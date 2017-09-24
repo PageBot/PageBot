@@ -17,7 +17,7 @@ from __future__ import division # Make integer division result in float.
 
 import os
 
-from pagebot.contexts import Context as C
+from pagebot.contexts import Context # To be used if undefined inside the image element.
 from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR, ORIGIN # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset, point2D
@@ -132,10 +132,12 @@ class PixelMap(Element):
         self.initImageSize() # Get real size from the file.
 
     def initImageSize(self):
+        u"""Initialize the image size. Note that this is done with the default/current 
+        Context, as there may not be a view availabe yet."""
         if self.path is not None and os.path.exists(self.path):
-            self.iw, self.ih = C.imageSize(self.path)
+            self.iw, self.ih = Context.imageSize(self.path)
         else:
-            self.iw = self.ih = 0 # Undefined, there is no image file.
+            self.iw = self.ih = 0 # Undefined or non-existing, there is no image file.
 
     def getPixelColor(self, p, scaled=True):
         u"""Answer the color in either the scaled point (x, y) or original image size point."""
@@ -145,7 +147,7 @@ class PixelMap(Element):
             x = self.w / self.iw
             y = self.h / self.ih
         p = x, y
-        return C.imagePixelColor(self.path, p)
+        return view.c.imagePixelColor(self.path, p)
 
     # Set the intended width and calculate the new scale, validating the
     # width to the image minimum width and the height to the image minimum height.
@@ -185,7 +187,6 @@ class PixelMap(Element):
         back to their original proportions.
         If stroke is defined, then use that to draw a frame around the image.
         Note that the (sx, sy) is already scaled to fit the padding position and size."""
-        b = view.b
         p = pointOffset(self.oPoint, origin)   
         p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
@@ -195,10 +196,10 @@ class PixelMap(Element):
             print 'Cannot display pixelMap', self
             #self._drawMissingElementRect(page, px, py, self.w, self.h)
         else:
-            view.saveGraphicState()
+            view.c.saveGraphicState()
             sx = self.w / self.iw
             sy = self.h / self.ih
-            b.scale(sx, sy)
+            C.scale(sx, sy)
             
             # If there is a clipRect defined, create the bezier path
             if self.clipRect is not None:
