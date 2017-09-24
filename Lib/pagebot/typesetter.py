@@ -57,11 +57,11 @@ class Typesetter(object):
         'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
     }
     def __init__(self, doc=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None):
-        # Set the doc context of the typesetter. Can be None, in which case it is expected that one of the code blocks
+        # Set the doc context of the typesetter. doc be None, in which case it is expected that one of the code blocks
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
-        self.page = None # Keep track of current page, as may have been defined in code blocks.
-        #
+        # Keep track of current page, as may have been defined in code blocks.
+        self.page = None 
         # The galley can be a Galley or a TextBox instance, if typsetting must go directly into a page element. 
         # In that case image elements are added as child, loosing contact with their position in the text. 
         # A Galley element keeps that relation, by adding multiple TextBox elements between the images.
@@ -469,7 +469,7 @@ class Typesetter(object):
 
     def append(self, bs):
         u"""Append the string (or BabelString instance) to the current box, 
-        if it is defined. Otherwise add to the existing galley."""
+        if it is defined and it has a context. Otherwise add to the existing galley."""
         # Add the tail formatted string to the textBox or galley. Equivalent to self.box.
         self.galley.append(bs)  
 
