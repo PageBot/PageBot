@@ -17,7 +17,6 @@ from __future__ import division
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.contexts import Context # Get current context with its builder.    
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, getRootStyle, NO_COLOR, RIGHT
@@ -28,18 +27,16 @@ class PageView(BaseView):
     of the page tree. Views use the current Context.b builder for export."""
     viewId = 'Page'
 
-    c = Context # Store current context and builder in the view. Can be DrawBot of Flat
-
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
 
     def build(self, path, pageSelection=None, multiPage=True):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
-        doc = self.doc
         
-        b = self.context.b # Get builder of the current context.
+        context = self.context # Get current context and builder from doc. Can be DrawBot of Flat
+        b = context.b # Get current builder.
 
-        w, h, _ = doc.getMaxPageSizes(pageSelection)
-        for pn, pages in doc.getSortedPages():
+        w, h, _ = self.doc.getMaxPageSizes(pageSelection)
+        for pn, pages in self.doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
             # Create a new DrawBot viewport page to draw template + page, if not already done.
@@ -64,8 +61,8 @@ class PageView(BaseView):
             b.newPage(pw, ph) #  Make page in of self size, actual page may be smaller if showing cropmarks.
             # View may have defined a background
             if self.style.get('fill') is not None:
-                self.setFillColor(self.style['fill'])
-                b.rect(0, 0, pw, ph)
+                context.setFillColor(self.style['fill'])
+                context.b.rect(0, 0, pw, ph)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)

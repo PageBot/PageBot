@@ -17,7 +17,6 @@ from __future__ import division # Make integer division result in float.
 
 import os
 
-from pagebot.contexts import Context # To be used if undefined inside the image element.
 from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR, ORIGIN # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset, point2D
@@ -147,7 +146,7 @@ class PixelMap(Element):
             x = self.w / self.iw
             y = self.h / self.ih
         p = x, y
-        return view.c.imagePixelColor(self.path, p)
+        return view.context.imagePixelColor(self.path, p)
 
     # Set the intended width and calculate the new scale, validating the
     # width to the image minimum width and the height to the image minimum height.
@@ -187,6 +186,9 @@ class PixelMap(Element):
         back to their original proportions.
         If stroke is defined, then use that to draw a frame around the image.
         Note that the (sx, sy) is already scaled to fit the padding position and size."""
+        context = view.context # Get current context and builder
+        b = context.b
+
         p = pointOffset(self.oPoint, origin)   
         p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
@@ -196,14 +198,14 @@ class PixelMap(Element):
             print 'Cannot display pixelMap', self
             #self._drawMissingElementRect(page, px, py, self.w, self.h)
         else:
-            view.c.saveGraphicState()
+            context.saveGraphicState()
             sx = self.w / self.iw
             sy = self.h / self.ih
-            C.scale(sx, sy)
+            context.scale(sx, sy)
             
             # If there is a clipRect defined, create the bezier path
             if self.clipRect is not None:
-                clipRect = BezierPath()
+                clipRect = b.BezierPath()
                 clX, clY, clW, clH = self.clipRect
                 sclX = clX/sx
                 sclY = clY/sx
@@ -218,13 +220,13 @@ class PixelMap(Element):
                 # close the path
                 clipRect.closePath()
                 # set the path as a clipping path
-                clipPath(clipRect)
+                b.clipPath(clipRect)
                 # the image will be clipped inside the path
                 #fill(1, 0, 0, 0.5)
                 #drawPath(clipRect)
             elif self.clipPath is not None:
                 #Otherwise if there is a clipPath, then use it.
-                clipPath(self.clipPath)
+                b.clipPath(self.clipPath)
 
             if self.imo is not None:
                 with self.imo:
@@ -234,7 +236,7 @@ class PixelMap(Element):
                 # Store page element Id in this image, in case we want to make an image index later.
                 b.image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
-            view.restoreGraphicState()
+            context.restoreGraphicState()
 
         if drawElements:
             for e in self.elements:

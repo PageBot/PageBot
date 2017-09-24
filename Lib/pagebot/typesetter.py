@@ -28,7 +28,6 @@ except ImportError:
     print 'Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown'
     markdown = None
 
-from pagebot.contexts import Context as C
 from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
 from pagebot.document import Document
@@ -57,7 +56,7 @@ class Typesetter(object):
         'li': ('ul', 'ol'),
         'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
     }
-    def __init__(self, doc=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None, b=None):
+    def __init__(self, doc=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None):
         # Set the doc context of the typesetter. Can be None, in which case it is expected that one of the code blocks
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
@@ -74,8 +73,6 @@ class Typesetter(object):
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = [] 
         self.tagHistory = []
-        # Current builder
-        self.b = b or C.b # Take alternative builder if define, and otherwise builder of currnet context.
         # Code block results if any ~~~Python blocks defined in the Markdown file.
         self.globalDocName = globalDocName or 'doc' # Name of global doc to find in code blocks, to be stored in self.doc
         self.globalPageName = globalPageName or 'page'
@@ -163,7 +160,7 @@ class Typesetter(object):
             self.pushStyle({}) # Define top level for styles.
         brStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
         s = self.getStyleValue('prefix', e, brStyle, default='') + '\n' + self.getStyleValue('postfix', e, brStyle, default='')
-        fs = C.newString(s, e, style=brStyle)
+        fs = e.newString(s, e, style=brStyle)
         self.galley.append(fs) # Add newline in the current setting of FormattedString
         """
     def node_a(self, node, e):

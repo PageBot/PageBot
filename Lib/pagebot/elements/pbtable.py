@@ -70,20 +70,20 @@ class Table(Element):
  
         header = self.HEADER_CLASS(parent=self, h=self.DEFAULT_H, fill=fillHeader, conditions=rowConditions) # Header as first row element.
         for colIndex, col in enumerate(range(cols)):
-            fs = newFS(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=1, fontSize=10))
+            bs = self.newString(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=1, fontSize=10))
             if colNames is not None:
                 colName = colNames[colIndex]
             else:
                 colName = None
-            self.HEADERCELL_CLASS(fs, parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H, 
+            self.HEADERCELL_CLASS(bs, parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H, 
                 xTextAlign=CENTER, yTextAlign=MIDDLE, name=colName, 
                 borders=self.borders, fill=0.4, conditions=cellConditions)
 
-        fs = newFS('abc', style=dict(font='Verdana', textFill=0, fontSize=10))
+        bs = self.newString('abc', style=dict(font='Verdana', textFill=0, fontSize=10))
         for rowIndex in range(rows):
             row = self.ROW_CLASS(parent=self, h=self.DEFAULT_H, conditions=rowConditions)
             for colIndex in range(cols):
-                self.CELL_CLASS(fs, parent=row, w=self.DEFAULT_W, h=self.DEFAULT_H, borders=self.borders,
+                self.CELL_CLASS(bs, parent=row, w=self.DEFAULT_W, h=self.DEFAULT_H, borders=self.borders,
                     xTextAlign=CENTER, yTextAlign=MIDDLE, conditions=cellConditions)
 
     def getHeader(self):
@@ -133,7 +133,7 @@ class Table(Element):
                     # Not found or not empty, search on next page.
                     page = self.doc.getPage(self.nextPage)
                     nextElement =  page.getElementByName(self.nextElement)
-                if nextElement is not None and not nextElement.fs: 
+                if nextElement is not None and not nextElement.bs: 
                     # Finally found one empty box on this page or next page?
                     nextElement.fs = overflow
                     nextElement.prevPage = page.name
@@ -145,8 +145,6 @@ class Table(Element):
     #   D R A W B O T  S U P P O R T
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
-        context = view.context
-        b = context.b
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    

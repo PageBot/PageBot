@@ -35,6 +35,6 @@ class Text(TextBox):
         
     def getTextSize(self, view):
         """Figure out what the width/height of the text self.fs is."""
-        return view.context.textSize(self.s)
+        return self.context.textSize(self.bs.s)
 
 
