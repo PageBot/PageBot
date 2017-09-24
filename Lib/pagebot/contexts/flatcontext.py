@@ -47,6 +47,10 @@ class FlatContext(BaseContext):
         assert isinstance(s, FlatString)
         return s
 
+    @classmethod
+    def newBulletString(cls, bullet, e=None, style=None):
+        return cls.newString(bullet, e=e, style=style)
+
     #   C O L O R
 
     @classmethod

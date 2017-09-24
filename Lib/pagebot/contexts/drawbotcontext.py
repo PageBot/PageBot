@@ -51,6 +51,10 @@ class DrawBotContext(BaseContext):
         assert isinstance(s, FsString)
         return s
 
+    @classmethod
+    def newBulletString(cls, bullet, e=None, style=None):
+        return cls.newString(bullet, e=e, style=style)
+
     #   G R A D I E N T  &  S H A D O W
 
     @classmethod

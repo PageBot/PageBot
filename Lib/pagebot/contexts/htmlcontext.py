@@ -24,6 +24,16 @@ class HtmlContext(BaseContext):
 
     b = WebBuilder()
  
+    #   C A N V A S
+
+    def saveGraphicState(self):
+        pass # Ignore for HTML
+
+    def restoreGraphicState(self):
+        pass # Ignore for HTML
+
+    #   T E X T
+
     @classmethod
     def newString(cls, s, e=None, style=None, w=None, h=None, fontSize=None, 
             styleName=None, tagName=None):
@@ -34,6 +44,10 @@ class HtmlContext(BaseContext):
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, HtmlString)
         return s
+
+    @classmethod
+    def newBulletString(cls, bullet, e=None, style=None):
+        return None # HTML does bullets automatic. Ignore answered None.
 
     #   I M A G E
 
