@@ -246,14 +246,14 @@ class Element(object):
     def deepCopy(self):
         u"""Answer a copy of self, where the "unique" fields are set to default. Also perform a deep copy
         on all child elements."""
-        e = copy.copy(self)
+        e = copy.deepcopy(self) # This also deep copies all child elements 
         e._eId = uniqueID(e) # Guaranteed unique Id for every element.
         e.nextElement = None
         e.prevElement = None
-        e.style = copy.copy(self.style)
-        e.clearElements()
-        for child in self.elements:
-            e.appendElement(child.deepCopy())
+        e.style = copy.deepcopy(self.style)
+        #e.clearElements()
+        #for child in self.elements:
+        #    e.appendElement(child.deepCopy())
         return e
 
     copy = deepCopy # Make the same as default.

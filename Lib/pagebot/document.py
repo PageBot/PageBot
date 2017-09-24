@@ -484,6 +484,8 @@ class Document(object):
         if not name and template is not None:
             name = template.name
 
+        print '2432432234', len(template['Featured']['Side'].bs.s)
+
         page = self.PAGE_CLASS(parent=self, w=None, h=None, name=name, **kwargs)
         page.applyTemplate(template)
         return page # Answer the new page 
