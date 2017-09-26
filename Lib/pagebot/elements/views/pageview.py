@@ -36,6 +36,8 @@ class PageView(BaseView):
         b = context.b # Get current builder.
 
         w, h, _ = self.doc.getMaxPageSizes(pageSelection)
+
+        context.newDocument(w, h)
         for pn, pages in self.doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
@@ -63,7 +65,7 @@ class PageView(BaseView):
             fillColor = self.style.get('fill')
             if fillColor is not NO_COLOR:
                 context.setFillColor(fillColor)
-                b.rect(0, 0, pw, ph)
+                context.rect(0, 0, pw, ph)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)
@@ -107,8 +109,7 @@ class PageView(BaseView):
         if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
             frameDuration(frameDuration)
 
-        # Select other than standard DrawBot export builders here.
-        b.saveImage(path, multipage=multiPage)
+        context.saveDocument(path, multiPage=multiPage)
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 

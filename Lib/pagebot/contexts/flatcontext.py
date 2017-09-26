@@ -18,93 +18,139 @@ from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings. flatstring import FlatString, newFlatString
 
 class FlatContext(BaseContext):
-    u"""A FlatContext instance combines the specific functions of the Flat library
-    This way it way it hides e.g. the type of BabelString
+    u"""A FlatContext instance combines the specific functions of the Flat library, 
+    and offers a PageBot “standard” API, so it can be swapped with the DrawBotContext.
+    This way it way it also hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
 
-    b = flatBuilder # cls.b builder for this canvas.
  
- 	#	C A N V A S
+    def __init__(self):
+        # Keep status of last color, to make difference between fill and stroke colors.
+        self.fillColor = None
+        self.strokeColor = None
 
-    def saveGraphicState(self):
-        pass
-        #self.b.save()
+        self.b = flatBuilder # Builder for this canvas.
+        
+        self.doc = None
+        self.pages = []
+        self.style = None # Current open style
+        self.image = None # Current open image
+        self.shape = None # Current open shape
+        self.flatString = None
 
-    def restoreGraphicState(self):
-        pass
-        #self.b.restore()
+    def newDocument(self, w, h, units='pt'):
+        self.doc = self.b.document(w, h, units)
+
+    def saveDocument(self, doc, path, multiPages=True):
+        if path.endswidth('png'):
+            for p in self.pages:
+                #p.png(path)
+                pass
+        elif path.endswith('svg'):
+            for p in self.pages:
+                #p.svg(path)
+                pass
+        elif page.endswith('pdf'):
+            self.doc.pdf(path)
 
     #   T E X T
 
-    @classmethod
-    def newString(cls, s, e=None, style=None, w=None, h=None, fontSize=None, 
+    def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
             styleName=None, tagName=None):
         u"""Create a new styles BabelString(FlatString) instance from s, using e or style.
         Ignore and answer s if it is already a FlatString."""
         if isinstance(s, basestring):
-            s = newFlatString(s, cls, e=e, style=style, w=w, h=h, 
+            s = newFlatString(s, self, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, FlatString)
         return s
 
-    @classmethod
-    def newBulletString(cls, bullet, e=None, style=None):
+    def newBulletString(self, bullet, e=None, style=None):
         return cls.newString(bullet, e=e, style=style)
 
+    #   D R A W I N G
+
+    def rect(self, x, y, w, h):
+        self.b.rect(x, y, w, h)
+        
     #   C O L O R
 
-    @classmethod
-    def setTextFillColor(cls, fs, c, cmyk=False):
-        # TODO: Make this work in Flat
-        cls.setFillColor(c, cmyk, fs)
-
-    @classmethod
-    def setTextStrokeColor(cls, fs, c, w=1, cmyk=False):
-        # TODO: Make this work in Flat
-        cls.setStrokeColor(c, w, cmyk, fs)
-
-    @classmethod
-    def setFillColor(cls, c, cmyk=False, b=None):
-        u"""Set the color for global or the color of the formatted string."""
-        # TODO: Make this work in Flat
-        if b is None: # Can be optional FormattedString
-            b = cls.b
+    def setFillColor(self, c, cmyk=False, spot=False, overprint=False):
+        u"""Set the color for global or the color of the formatted string.
+        See: http://xxyxyz.org/flat, color.py."""
+        b = self.b
         if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
+            self.fillColor = None
+            return # Color is undefined, do nothing.
+        if c is None:
+            self.fillColor = b.ga(0, 0) # Ignore by total transparant
+            return
+        if isinstance(c, (float, long, int)): # Grayscale
+            self.fillColor = b.gray(c * 255, )
+            return
+        if isinstance(c, (list, tuple)):
+            if len(c) == 2 and isinstance(c[0], basestring) and isinstance(c[1], (list,tuple)):
+                name, cmyk = c
+                self.fillColor = b.spot(name, cmyk)
+                return
+            if len(c) == 2:
+                gray, opacity = c
+                self.fillColor = b.ga(gray, opacity)
+                return
             if cmyk:
-                b.cmykFill(c)
-            else:
-                b.fill(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykFill(*c)
-            else:
-                b.fill(*c)
-        else:
-            raise ValueError('Error in color format "%s"' % repr(c))
+                c_, m, y, k = c
+                self.fillColor = b.cmyk(c_, m, y, k)
+                return
+            if len(c) == 4: # rgb and opaque
+                r, g, b, a = c
+                self.fillColor = b.rgba(r, g, b, a)
+                return
+            if len(c) == 3:
+                r, g, b = c
+                self.fillColor = b.rgb(r, g, b)
+                return
+
+        raise ValueError('FlatContext.setFillColor: Error in color format "%s"' % repr(c))
 
     @classmethod
     def setStrokeColor(cls, c, w=1, cmyk=False, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         # TODO: Make this work in Flat
-        if b is None: # Can be optional FormattedString
-            b = cls.b 
+        b = self.b
+        success = False
         if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykStroke(c)
-            else:
-                b.stroke(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykStroke(*c)
-            else:
-                b.stroke(*c)
-        else:
-            raise ValueError('Error in color format "%s"' % c)
+            self.strokeColor = None
+            success = True # Color is undefined, do nothing.
+        elif c is None:
+            self.strokeColor = b.ga(0, 0) # Ignore by total transparant
+            success = True
+        elif isinstance(c, (float, long, int)): # Grayscale
+            self.strokeColor = b.gray(c * 255, )
+            success = True
+        elif isinstance(c, (list, tuple)):
+            if len(c) == 2 and isinstance(c[0], basestring) and isinstance(c[1], (list,tuple)):
+                name, cmyk = c
+                self.strokeColor = b.spot(name, cmyk)
+                success = True
+            elif len(c) == 2:
+                gray, opacity = c
+                self.fillColor = b.ga(gray, opacity)
+                success = True
+            elif cmyk:
+                c_, m, y, k = c
+                self.strokeColor = b.cmyk(c_, m, y, k)
+                success = True
+            elif len(c) == 4: # rgb and opaque
+                r, g, b, a = c
+                self.strokeColor = b.rgba(r, g, b, a)
+                success = True
+            elif len(c) == 3:
+                r, g, b = c
+                self.strokeColor = b.rgb(r, g, b)
+                success = True
+        if not success:
+            raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
         if w is not None:
-            b.strokeWidth(w)
+            self.style.width = w
 
 

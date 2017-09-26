@@ -23,46 +23,55 @@ class DrawBotContext(BaseContext):
     This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
 
-    # The context builder "cls.b" is the main drawBot library, that contains all 
-    # drawing calls in as used regular DrawBot scripts.
-    b = drawBotBuilder # cls.b builder for this canvas.
+    def __init__(self):
+        # The context builder "cls.b" is the main drawBot library, that contains all 
+        # drawing calls in as used regular DrawBot scripts.
+        self.b = drawBotBuilder # cls.b builder for this canvas.
  
+    def newDocument(self, w, h):
+        u"""Ignore for DrawBot, as document open automatic if first page is created."""
+        pass
+
+    def saveDocument(self, doc, path, multiPage=None):
+        u"""Select other than standard DrawBot export builders here."""
+        self.b.saveImage(path, multipage=multiPage)
+
     #   P A T H S 
 
-    @classmethod
-    def getRootPath(cls):
+    def getRootPath(self):
         u"""Answer the root path of the pagebot module."""
         return '/'.join(__file__.split('/')[:-3]) # Path of this file with pagebot/__init__.py(c) removed.
 
-    @classmethod
-    def getFontPath(cls):
+    def getFontPath(self):
         u"""Answer the standard font path of the pagebot module."""
         return cls.getRootPath() + '/Fonts/'
 
     #   T E X T
 
-    @classmethod
-    def newString(cls, s, e=None, style=None, w=None, h=None, fontSize=None, 
+    def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
             styleName=None, tagName=None):
         u"""Create a new styles BabelString(FsString) instance from s, using e or style.
         Ignore and answer s if it is already a FsString."""
         if isinstance(s, basestring):
-            s = newFsString(s, cls, e=e, style=style, w=w, h=h, 
+            s = newFsString(s, self, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, FsString)
         return s
 
-    @classmethod
-    def newBulletString(cls, bullet, e=None, style=None):
-        return cls.newString(bullet, e=e, style=style)
+    def newBulletString(self, bullet, e=None, style=None):
+        return self.newString(bullet, e=e, style=style)
+
+    #   D R A W I N G
+
+    def rect(self, x, y, w, h):
+        self.b.rect(x, y, w, h)
 
     #   G R A D I E N T  &  S H A D O W
 
-    @classmethod
-    def setGradient(cls, gradient, e, origin):
+    def setGradient(self, gradient, e, origin):
         u"""Define the gradient call to match the size of element e., Gradient position
         is from the origin of the page, so we need the current origin of e."""
-        b = cls.b
+        b = self.b
         start = origin[0] + gradient.start[0] * e.w, origin[1] + gradient.start[1] * e.h
         end = origin[0] + gradient.end[0] * e.w, origin[1] + gradient.end[1] * e.h
 
@@ -86,47 +95,43 @@ class DrawBotContext(BaseContext):
     #   C A N V A S
 
     @classmethod
-    def saveGraphicState(cls):
-        cls.b.save()
+    def saveGraphicState(self):
+        print '#@#@#@#', self.__class__.__name__, self.b
+        self.b.save()
 
     @classmethod
-    def restoreGraphicState(cls):
-        cls.b.restore()
+    def restoreGraphicState(self):
+        self.b.restore()
 
     #   F O N T S
 
     @classmethod
-    def installedFonts(cls):
+    def installedFonts(self):
         u"""Answer the list with names of all installed fonts in the system, as available
         for cls.newString( ) style."""
-        return cls.b.installedFonts()
+        return self.b.installedFonts()
 
     #   I M A G E
 
-    @classmethod
-    def imagePixelColor(cls, path, p):
-        return cls.b.imagePixelColor(path, p)
+    def imagePixelColor(self, path, p):
+        return self.b.imagePixelColor(path, p)
 
-    @classmethod
-    def imageSize(cls, path):
+    def imageSize(self, path):
         u"""Answer the (w, h) image size of the image file at path."""
-        return cls.b.imageSize(path)
+        return self.b.imageSize(path)
 
     #   C O L O R
 
-    @classmethod
-    def setTextFillColor(cls, fs, c, cmyk=False):
-        cls.setFillColor(c, cmyk, fs)
+    def setTextFillColor(self, fs, c, cmyk=False):
+        self.setFillColor(c, cmyk, fs)
 
-    @classmethod
-    def setTextStrokeColor(cls, fs, c, w=1, cmyk=False):
-        cls.setStrokeColor(c, w, cmyk, fs)
+    def setTextStrokeColor(self, fs, c, w=1, cmyk=False):
+        self.setStrokeColor(c, w, cmyk, fs)
 
-    @classmethod
-    def setFillColor(cls, c, cmyk=False, b=None):
+    def setFillColor(self, c, cmyk=False, b=None):
         u"""Set the color for global or the color of the formatted string."""
         if b is None: # Builder can be optional DrawBot FormattedString
-            b = cls.b
+            b = self.b
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
         elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
@@ -140,10 +145,9 @@ class DrawBotContext(BaseContext):
             else:
                 b.fill(*c)
         else:
-            raise ValueError('Error in color format "%s"' % repr(c))
+            raise ValueError('DrawBotContext.setFillColor: Error in color format "%s"' % repr(c))
 
-    @classmethod
-    def setStrokeColor(cls, c, w=1, cmyk=False, b=None):
+    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         if b is None: # Builder can be optional DrawBot FormattedString
             b = cls.b 
@@ -160,7 +164,7 @@ class DrawBotContext(BaseContext):
             else:
                 b.stroke(*c)
         else:
-            raise ValueError('Error in color format "%s"' % c)
+            raise ValueError('DrawBotContext.setStrokeColor: Error in color format "%s"' % repr(c))
         if w is not None:
             b.strokeWidth(w)
 

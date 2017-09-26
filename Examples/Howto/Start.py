@@ -17,9 +17,10 @@
 from __future__ import division # Make integer division result in float.
 from random import random
 
+
 import pagebot # Import to know the path of non-Python resources.
+from pagebot.contexts import Context
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.document import Document
@@ -32,7 +33,7 @@ EXPORT_PATH_PDF = EXPORT_PATH + '.pdf'
 EXPORT_PATH_PNG = EXPORT_PATH + '.png'
 
 # Create the document that holds the pages.
-doc = Document(w=W, h=H, originTop=False, autoPages=1)
+doc = Document(w=W, h=H, originTop=False, autoPages=1, context=Context)
 print doc.pages   
 view = doc.getView()
 view.padding = 0 # Don't show cropmarks in this example.

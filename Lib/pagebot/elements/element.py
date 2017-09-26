@@ -2064,6 +2064,17 @@ class Element(object):
                 b.line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
             context.restoreGraphicState()
 
+    def buildFrame_flat(self, view, p):
+        u"""Draw fill of the rectangular element space.
+        The self.css('fill') defines the color of the element background.
+        Instead of the DrawBot stroke and strokeWidth attributes, use
+        borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
+        http://xxyxyz.org/flat
+        """
+        context = view.context
+        b = context.b # Get the DrawBot (or equivalent) builder for drawing the frame.
+
+
     #   D R A W B O T  S U P P O R T
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
@@ -2093,8 +2104,29 @@ class Element(object):
     #   F L A T  S U P P O R T
 
     def build_flat(self, view, origin=None, drawElements=True):
-        u"""TODO: Generic build of flat elements goes here."""
-        pass
+        u"""Default drawing method just drawing the frame. 
+        Probably will be redefined by inheriting element classes."""
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(view, p)    
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        self.buildFrame_flat(view, p) # Draw optional frame or borders.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, view, p)
+
+        if drawElements:
+            # If there are child elements, recursively draw them over the pixel image.
+            for e in self.elements:
+                if e.show:
+                    e.build_drawBot(view, origin)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view, p)
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
+
 
     #   H T M L  /  C S S  S U P P O R T
 
