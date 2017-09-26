@@ -17,7 +17,7 @@
 from __future__ import division # Make integer division result in float.
 from random import random
 
-USE_DRAWBOT = False
+USE_DRAWBOT = True
 USE_FLAT = not USE_DRAWBOT
 
 import pagebot # Import to know the path of non-Python resources.
@@ -29,7 +29,9 @@ else:
     EXPORT_PATH = '_export/Start' 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH_PDF = EXPORT_PATH + '.pdf'
+EXPORT_PATH_JPG = EXPORT_PATH + '.jpg'
 EXPORT_PATH_PNG = EXPORT_PATH + '.png'
+EXPORT_PATH_SVG = EXPORT_PATH + '.svg'
 
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements import *
@@ -62,6 +64,9 @@ score = doc.solve()
 if score.fails:
     print score.fails
     
+doc.export(EXPORT_PATH_SVG) 
+doc.export(EXPORT_PATH_JPG) 
 doc.export(EXPORT_PATH_PNG) 
 doc.export(EXPORT_PATH_PDF) 
 
+print 'Done'
