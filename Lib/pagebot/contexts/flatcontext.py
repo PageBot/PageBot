@@ -13,6 +13,8 @@
 #
 #     flatcontext.py
 #
+import os
+
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
@@ -48,18 +50,33 @@ class FlatContext(BaseContext):
 
     def saveDocument(self, path, multiPage=True):
         if path.endswith('.png'):
-            for n, p in enumerate(self.pages):
-                p.image(kind='rgb').png(path.replace('.png', '%03d.png' % n))
+            if len(self.pages) == 1 or not multiPage:
+                self.pages[0].image(kind='rgb').png(path)
+            else:
+                for n, p in enumerate(self.pages):
+                    pagePath = path.replace('.png', '%03d.png' % n)
+                    p.image(kind='rgb').png(pagePath)
+        elif path.endswith('.jpg'):
+            if len(self.pages) == 1 or not multiPage:
+                self.pages[0].image(kind='rgb').jpeg(path)
+            else:
+                for n, p in enumerate(self.pages):
+                    pagePath = path.replace('.png', '%03d.png' % n)
+                    p.image(kind='rgb').jpeg(pagePath)
         elif path.endswith('.svg'):
-            for p in self.pages:
-                #p.svg(path)
-                pass
+            if len(self.pages) == 1 or not multiPage:
+                self.pages[0].svg(path)
+            else:
+                for n, p in enumerate(self.pages):
+                    pagePath = path.replace('.png', '%03d.png' % n)
+                    p.svg(pagePath)
         elif path.endswith('.pdf'):
             self.doc.pdf(path)
 
     def newPage(self, w, h):
         u"""Other page sizes than default in self.doc, are ignored in Flat."""
         self.page = self.doc.addpage()
+        self.page.size(w, h, units='pt')
         self.pages.append(self.page)
 
     #   T E X T
@@ -98,7 +115,6 @@ class FlatContext(BaseContext):
 
     def rect(self, x, y, w, h):
         shape = self._getShape()
-        print '@##@#@#', shape
         if shape is not None:
             self.page.place(shape.rectangle(x, y, w, h))
 
@@ -147,7 +163,6 @@ class FlatContext(BaseContext):
         u"""Set global stroke color or the color of the formatted string."""
         # TODO: Make this work in Flat
         b = self.b
-        print 'ewrrewrrwe', c
         success = False
         if c is NO_COLOR:
             self.strokeColor = NO_COLOR # Ignore drawing
