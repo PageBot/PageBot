@@ -18,7 +18,7 @@ from __future__ import division
 import weakref
 import copy
 
-from pagebot.contexts import Context
+from pagebot.contexts import defaultContext
 from pagebot.conditions.score import Score
 from pagebot import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
@@ -471,7 +471,7 @@ class Element(object):
         doc = self.doc
         if doc is not None:
             return doc.context
-        return Context
+        return defaultContext
     context = property(_get_context)
 
     def _get_builder(self):

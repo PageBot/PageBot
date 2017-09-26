@@ -18,8 +18,8 @@ from flatcontext import FlatContext
 from htmlcontext import HtmlContext
 
 from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
-if drawBotBuilder is not None: # Platform is supporing DrawBot:
-	Context = DrawBotContext()
+if drawBotBuilder is not None: # Test if platform is supporing DrawBot:
+	defaultContext = DrawBotContext()
 else:
-	Context = FlatContext()
+	defaultContext = FlatContext()
 	

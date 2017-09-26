@@ -17,9 +17,20 @@
 from __future__ import division # Make integer division result in float.
 from random import random
 
+USE_DRAWBOT = False
+USE_FLAT = not USE_DRAWBOT
 
 import pagebot # Import to know the path of non-Python resources.
-from pagebot.contexts import Context
+from pagebot.contexts import defaultContext, FlatContext
+if USE_FLAT:
+    EXPORT_PATH = '_export/FlatStart' 
+    defaultContext = FlatContext()
+else:
+    EXPORT_PATH = '_export/Start' 
+# Export in _export folder that does not commit in Git. Force to export PDF.
+EXPORT_PATH_PDF = EXPORT_PATH + '.pdf'
+EXPORT_PATH_PNG = EXPORT_PATH + '.png'
+
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements import *
 from pagebot.conditions import *
@@ -27,17 +38,10 @@ from pagebot.document import Document
     
 W, H = 500, 400
 
-# Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/Start' 
-EXPORT_PATH_PDF = EXPORT_PATH + '.pdf'
-EXPORT_PATH_PNG = EXPORT_PATH + '.png'
-
-# Create the document that holds the pages.
-doc = Document(w=W, h=H, originTop=False, autoPages=1, context=Context)
-print doc.pages   
-view = doc.getView()
-view.padding = 0 # Don't show cropmarks in this example.
-view.showPagePadding = True
+# Create the publication/document that holds the pages.
+doc = Document(w=W, h=H, originTop=False, autoPages=1, context=defaultContext)
+doc.view.padding = 0 # Don't show cropmarks in this example.
+doc.view.showPagePadding = True
 
 # Get page by pageNumber, first in row (there is only one now in this row).
 page = doc[0] 
@@ -58,8 +62,6 @@ score = doc.solve()
 if score.fails:
     print score.fails
     
-print mm.isFloatOnRight()
-print mm.mRight        
 doc.export(EXPORT_PATH_PNG) 
 doc.export(EXPORT_PATH_PDF) 
 

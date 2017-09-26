@@ -191,6 +191,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
         folds = None,
 
+        # Resolution in dpi for pixel based elements.
+        resolution = 72,
+
         # Position of origin. DrawBot has y on bottom-left. In PageBot it is optional. Default is top-left.
         # Note that the direcion of display is always upwards. This means that the position of text and elements
         # goes downward from the top, they are not flipped vertical. It is up to the caller to make sure
