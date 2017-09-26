@@ -60,7 +60,7 @@ class PageView(BaseView):
                 ph = page.h
                 origin = (0, 0, 0)
 
-            b.newPage(pw, ph) #  Make page in of self size, actual page may be smaller if showing cropmarks.
+            context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
             # View may have defined a background
             fillColor = self.style.get('fill')
             if fillColor is not NO_COLOR:
@@ -128,31 +128,31 @@ class PageView(BaseView):
         if self.showPageFrame and \
                 self.pl > self.MIN_PADDING and self.pr > self.MIN_PADDING and \
                 self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
-            b = self.b
-            b.fill(None)
-            b.stroke(0, 0, 1)
-            b.strokeWidth(0.5)
-            b.rect(origin[0], origin[1], page.w, page.h)
+            context = self.context
+            context.setFillColor(None)
+            context.setStrokColor((0, 0, 1), 0.5)
+            context.rect(origin[0], origin[1], page.w, page.h)
             #page.drawFrame(origin, self)
 
     def drawPagePadding(self, page, origin):
         u"""Draw the page frame of its current padding."""
         pt, pr, pb, pl = page.padding
         if self.showPagePadding and (pt or pr or pb or pl):
-            b = self.b
+            context = self.context
+
             p = pointOffset(page.oPoint, origin)
             p = page._applyScale(self, p)
             px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
-            b.fill(None)
-            b.stroke(0, 0, 1)
-            b.strokeWidth(0.5)
+
+            context.setFillColor(None)
+            context.setStrokeColor((0, 0, 1), 0.5)
             if page.originTop:
-                b.rect(px+pr, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
+                context.rect(px+pr, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
             else:
-                b.rect(px+pr, py+pb, page.w-pl-pr, page.h-pt-pb)
+                context.rect(px+pr, py+pb, page.w-pl-pr, page.h-pt-pb)
             page._restoreScale(self)
 
-    def drawPageNameInfo(self, page, origin, b):
+    def drawPageNameInfo(self, page, origin):
         u"""Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks."""
         if self.showPageNameInfo:
@@ -164,8 +164,8 @@ class PageView(BaseView):
             s = 'Page %s | %s | %s' % (page.parent.getPageNumber(page), d, page.parent.title or 'Untitled')
             if page.name:
                 s += ' | ' + page.name
-            fs = self.b.FormattedString(s, font=self.css('viewPageNameFont'), fill=0, fontSize=fontSize)
-            self.b.text(fs, (self.pl + bleed, self.pb + page.h + cms - fontSize*2)) # Draw on top of page.
+            bs = self.newString(s, font=self.css('viewPageNameFont'), fill=0, fontSize=fontSize)
+            self.context.text(bs, (self.pl + bleed, self.pb + page.h + cms - fontSize*2)) # Draw on top of page.
 
     #   D R A W I N G  F L O W S
 

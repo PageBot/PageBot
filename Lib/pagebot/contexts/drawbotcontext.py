@@ -32,10 +32,13 @@ class DrawBotContext(BaseContext):
         u"""Ignore for DrawBot, as document open automatic if first page is created."""
         pass
 
-    def saveDocument(self, doc, path, multiPage=None):
+    def saveDocument(self, path, multiPage=None):
         u"""Select other than standard DrawBot export builders here."""
         self.b.saveImage(path, multipage=multiPage)
 
+    def newPage(self, w, h):
+        self.b.newPage(w, h)
+        
     #   P A T H S 
 
     def getRootPath(self):
@@ -60,6 +63,9 @@ class DrawBotContext(BaseContext):
 
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, e=e, style=style)
+
+    def text(self, bs, p):
+        self.b.text(bs.s, p)
 
     #   D R A W I N G
 
@@ -94,18 +100,14 @@ class DrawBotContext(BaseContext):
 
     #   C A N V A S
 
-    @classmethod
     def saveGraphicState(self):
-        print '#@#@#@#', self.__class__.__name__, self.b
         self.b.save()
 
-    @classmethod
     def restoreGraphicState(self):
         self.b.restore()
 
     #   F O N T S
 
-    @classmethod
     def installedFonts(self):
         u"""Answer the list with names of all installed fonts in the system, as available
         for cls.newString( ) style."""
@@ -150,7 +152,7 @@ class DrawBotContext(BaseContext):
     def setStrokeColor(self, c, w=1, cmyk=False, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         if b is None: # Builder can be optional DrawBot FormattedString
-            b = cls.b 
+            b = self.b 
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
         elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.

@@ -15,7 +15,7 @@
 #
 import copy
 
-from pagebot.contexts import Context # Default context for this document if undefined.
+from pagebot.contexts import defaultContext # Default context for this document if undefined.
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
@@ -30,7 +30,7 @@ class Document(object):
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
 
     DEFAULT_VIEWID = defaultViewClass.viewId
-    DEFAULT_CONTEXT = Context
+    DEFAULT_CONTEXT = defaultContext
 
     def __init__(self, rootStyle=None, styles=None, viewId=None, name=None, class_=None, title=None, 
             autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
