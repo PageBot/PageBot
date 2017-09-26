@@ -22,42 +22,36 @@ class HtmlContext(BaseContext):
     This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
 
-    b = WebBuilder()
- 
-    #   C A N V A S
-
-    def saveGraphicState(self):
-        pass # Ignore for HTML
-
-    def restoreGraphicState(self):
-        pass # Ignore for HTML
+    def __init__(self):
+        self.b = WebBuilder()
 
     #   T E X T
 
-    @classmethod
-    def newString(cls, s, e=None, style=None, w=None, h=None, fontSize=None, 
+    def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
             styleName=None, tagName=None):
         u"""Create a new styles BabelString(HtmlString) instance from s, using e or style.
         Ignore and answer s if it is already an HtmlString."""
         if isinstance(s, basestring):
-            s = newHtmlString(s, cls, e=e, style=style, w=w, h=h, 
+            s = newHtmlString(s, self, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, HtmlString)
         return s
 
-    @classmethod
-    def newBulletString(cls, bullet, e=None, style=None):
+    def newBulletString(self, bullet, e=None, style=None):
         return None # HTML does bullets automatic. Ignore answered None.
 
+    #   D R A W I N G
+
+    def rect(self, x, y, w, h):
+        self.b.rect(x, y, w, h)
+        
     #   I M A G E
 
-    @classmethod
-    def imagePixelColor(cls, path, p):
+    def imagePixelColor(self, path, p):
         return 0
         #return cls.b.imagePixelColor(path, p)
 
-    @classmethod
-    def imageSize(cls, path):
+    def imageSize(self, path):
         u"""Answer the (w, h) image size of the image file at path."""
         return (0, 0)
         #return cls.b.imageSize(path)

@@ -19,8 +19,6 @@ try:
     # Id to make builder hook name. Views will be calling e.build_html()
     drawBotBuilder.PB_ID = 'drawBot' 
 
-    from drawBot.context.baseContext import BaseContext
-
     import CoreText
     import AppKit
     import Quartz
