@@ -72,6 +72,12 @@ class DrawBotContext(BaseContext):
     def rect(self, x, y, w, h):
         self.b.rect(x, y, w, h)
 
+    def oval(self, x, y, w, h):
+        self.b.oval(x, y, w, h)
+
+    def line(self, p1, p2):
+        self.b.line(p1, p2)
+
     #   G R A D I E N T  &  S H A D O W
 
     def setGradient(self, gradient, e, origin):

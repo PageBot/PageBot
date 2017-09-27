@@ -17,16 +17,16 @@
 from __future__ import division # Make integer division result in float.
 from random import random
 
-USE_DRAWBOT = True
+USE_DRAWBOT = False
 USE_FLAT = not USE_DRAWBOT
 
 import pagebot # Import to know the path of non-Python resources.
 from pagebot.contexts import defaultContext, FlatContext
 if USE_FLAT:
-    EXPORT_PATH = '_export/FlatStart' 
+    EXPORT_PATH = '_export/Start_Flat' 
     defaultContext = FlatContext()
 else:
-    EXPORT_PATH = '_export/Start' 
+    EXPORT_PATH = '_export/Start'
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH_PDF = EXPORT_PATH + '.pdf'
 EXPORT_PATH_JPG = EXPORT_PATH + '.jpg'
@@ -54,7 +54,7 @@ conditions = [Right2Right(), Float2Top(), Float2Left()]
 #conditions = [Left2Left(), Float2Top(), Float2Right()]
 
 for n in range(62):
-    mm = newRect(w=40, h=42, mr=4, mt=4, parent=page, 
+    newRect(w=40, h=42, mr=4, mt=4, parent=page, 
         fill=(random()*0.5+0.5, 0, 0.5),
         conditions=conditions)  
     

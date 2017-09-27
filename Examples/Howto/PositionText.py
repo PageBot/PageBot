@@ -14,8 +14,16 @@
 #
 #     Hard position a text box on an (x, y) position.
 #
+USE_FLAT = True
+
+import os
 import pagebot # Import to know the path of non-Python resources.
-from pagebot import newFS
+from pagebot.contexts import defaultContext, FlatContext
+if USE_FLAT:
+    EXPORT_PATH = '_export/PositionText_Flat.pdf'
+    defaultContext = FlatContext()
+else:
+    EXPORT_PATH = '_export/PositionText.pdf'
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, B4, CENTER, LEFT, TOP, BOTTOM, RIGHT
@@ -30,12 +38,12 @@ def makeDocument():
     Make number of pages with default document size.
     Initially make all pages default with template."""
     
-    doc = Document(originTop=False, w=W, h=H, autoPages=1) 
+    doc = Document(originTop=False, w=W, h=H, autoPages=1, context=defaultContext) 
 
     page = doc[0] # Get the first/single page of the document.
     page.size = W, H
     
-    view = doc.getView()
+    view = doc.view
     view.w = view.h = W, H
     view.padding = 40
     view.showPageFrame = True
@@ -44,13 +52,13 @@ def makeDocument():
     
     title = 'Book Cover' # Using plain string, style values from from text box element.
     fontSize = 40
-    e = newTextBox(title, # Text inside the text box
+    newTextBox(title, # Text inside the text box
         name='Other element', # Optinal (unique) name of element. Otherwise e.eId is used.
         x=100, y=100, # Position from left-bottom of page side (not page padding)
         parent=page,
         w=400, h=200, # Size of the element. Since x = 100 and W = 500, this "manually" fits.
         padding=5, # Padding inside text box for all 4 sides equal.
-        fill=(0.4, 0.6, 1), stroke=(1, 0, 0), strokeWidth=13, # Rectangle fill, stroke colors 
+        fill=(0.4, 0.6, 1), stroke=(1, 0, 0), strokeWidth=10, # Rectangle fill, stroke colors 
         # Below style values that apply to the content
         font='Verdana', 
         fontSize=fontSize, 
@@ -61,8 +69,11 @@ def makeDocument():
     # Return the generated document to the caller.
     return doc
 
-if __name__ == '__main__': 
-           
-    d = makeDocument()
-    d.drawPages()
+doc = makeDocument()
+doc.export(EXPORT_PATH)
+
+if USE_FLAT:
+    os.system(u'open "%s"' % EXPORT_PATH)
+    
+print 'Done'
         
