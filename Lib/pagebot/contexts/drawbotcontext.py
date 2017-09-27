@@ -23,6 +23,9 @@ class DrawBotContext(BaseContext):
     This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
 
+    # In case of specific builder addressing, callers can check here.
+    isDrawBot = True
+    
     def __init__(self):
         # The context builder "cls.b" is the main drawBot library, that contains all 
         # drawing calls in as used regular DrawBot scripts.
