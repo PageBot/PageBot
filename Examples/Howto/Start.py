@@ -53,7 +53,7 @@ conditions = [Right2Right(), Float2Top(), Float2Left()]
 # TODO: Solve this bug, does not mirror.
 #conditions = [Left2Left(), Float2Top(), Float2Right()]
 
-for n in range(62):
+for n in range(32):
     newRect(w=40, h=42, mr=4, mt=4, parent=page, 
         fill=(random()*0.5+0.5, 0, 0.5),
         conditions=conditions)  

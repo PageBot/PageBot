@@ -1893,14 +1893,13 @@ class Element(object):
                     s += '\n%s %s' % eFail
         return s
 
-    def buildFrame_drawBot(self, view, p):
+    def buildFrame(self, view, p):
         u"""Draw fill of the rectangular element space.
         The self.css('fill') defines the color of the element background.
         Instead of the DrawBot stroke and strokeWidth attributes, use
         borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
         """
         context = view.context
-        b = context.b # Get the DrawBot (or equivalent) builder for drawing the frame.
         
         eShadow = self.shadow
         if eShadow:
@@ -1923,7 +1922,7 @@ class Element(object):
             if self.framePath is not None: # In case defined, use instead of bounding box. 
                 b.drawPath(self.framePath)
             else:
-                b.rect(p[0], p[1], self.w, self.h)
+                context.rect(p[0], p[1], self.w, self.h)
             context.restoreGraphicState()
 
         # Instead of full frame drawing, check on separate border settings.
@@ -1935,7 +1934,7 @@ class Element(object):
         if borderTop is not None:
             context.saveGraphicState()
             if borderTop['dash']:
-                b.lineDash(*borderTop['dash'])
+                context.lineDash(*borderTop['dash'])
             context.setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
@@ -1960,15 +1959,15 @@ class Element(object):
                 oTop = 0
 
             if self.originTop:
-                b.line((p[0]-oLeft, p[1]-oTop), (p[0]+self.w+oRight, p[1]-oTop))
+                context.line((p[0]-oLeft, p[1]-oTop), (p[0]+self.w+oRight, p[1]-oTop))
             else:
-                b.line((p[0]-oLeft, p[1]+self.h+oTop), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+                context.line((p[0]-oLeft, p[1]+self.h+oTop), (p[0]+self.w+oRight, p[1]+self.h+oTop))
             context.restoreGraphicState()
 
         if borderBottom is not None:
             context.saveGraphicState()
             if borderBottom['dash']:
-                b.lineDash(*borderBottom['dash'])
+                context.lineDash(*borderBottom['dash'])
             context.setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
@@ -1993,15 +1992,15 @@ class Element(object):
                 oBottom = 0
 
             if self.originTop:
-                b.line((p[0]-oLeft, p[1]+self.h+oBottom), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
+                context.line((p[0]-oLeft, p[1]+self.h+oBottom), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
             else:
-                b.line((p[0]-oLeft, p[1]-oBottom), (p[0]+self.w+oRight, p[1]-oBottom))
+                context.line((p[0]-oLeft, p[1]-oBottom), (p[0]+self.w+oRight, p[1]-oBottom))
             context.restoreGraphicState()
         
         if borderRight is not None:
             context.saveGraphicState()
             if borderRight['dash']:
-                b.lineDash(*borderRight['dash'])
+                context.lineDash(*borderRight['dash'])
             context.setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
 
             oTop = 0 # Extra offset on top, if there is a top border.
@@ -2026,15 +2025,15 @@ class Element(object):
                 oRight = 0
 
             if self.originTop:
-                b.line((p[0]+self.w+oRight, p[1]-oTop), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
+                context.line((p[0]+self.w+oRight, p[1]-oTop), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
             else:
-                b.line((p[0]+self.w+oRight, p[1]-oBottom), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+                context.line((p[0]+self.w+oRight, p[1]-oBottom), (p[0]+self.w+oRight, p[1]+self.h+oTop))
             context.restoreGraphicState()
 
         if borderLeft is not None:
             context.saveGraphicState()
             if borderLeft['dash']:
-                b.lineDash(*borderLeft['dash'])
+                context.lineDash(*borderLeft['dash'])
             context.setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
 
             oTop = 0 # Extra offset on top, if there is a top border.
@@ -2059,21 +2058,10 @@ class Element(object):
                 oLeft = 0
 
             if self.originTop:
-                b.line((p[0]-oLeft, p[1]-oTop), (p[0]-oLeft, p[1]+self.h+oBottom))
+                context.line((p[0]-oLeft, p[1]-oTop), (p[0]-oLeft, p[1]+self.h+oBottom))
             else:
-                b.line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
+                context.line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
             context.restoreGraphicState()
-
-    def buildFrame_flat(self, view, p):
-        u"""Draw fill of the rectangular element space.
-        The self.css('fill') defines the color of the element background.
-        Instead of the DrawBot stroke and strokeWidth attributes, use
-        borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
-        http://xxyxyz.org/flat
-        """
-        context = view.context
-        b = context.b # Get the DrawBot (or equivalent) builder for drawing the frame.
-
 
     #   D R A W B O T  S U P P O R T
 
@@ -2084,7 +2072,7 @@ class Element(object):
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.buildFrame_drawBot(view, p) # Draw optional frame or borders.
+        self.buildFrame(view, p) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -2110,7 +2098,7 @@ class Element(object):
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.buildFrame_flat(view, p) # Draw optional frame or borders.
+        self.buildFrame(view, p) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)

@@ -14,6 +14,7 @@
 #     flatcontext.py
 #
 import os
+import imageio
 
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR
@@ -82,6 +83,14 @@ class FlatContext(BaseContext):
         self.page.size(w, h, units='pt')
         self.pages.append(self.page)
 
+    #   C A N V A S
+
+    def saveGraphicState(self):
+        pass # Not implemented?
+
+    def restoreGraphicState(self):
+        pass # Not implemented?
+
     #   T E X T
 
     def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
@@ -119,18 +128,32 @@ class FlatContext(BaseContext):
     def rect(self, x, y, w, h):
         shape = self._getShape()
         if shape is not None:
+            print '234423423234', x, y, w, h, shape
             self.page.place(shape.rectangle(x, y, w, h))
 
     def oval(self, x, y, w, h):
         shape = self._getShape()
         if shape is not None:
-            self.page.place(shape.oval(x, y, w, h))
+            self.page.place(shape.ellipse(x, y, w, h)) 
+
+    def circle(self, x, y, r):
+        shape = self._getShape()
+        if shape is not None:
+            self.page.place(shape.circle(x, y, w, r)) 
 
     def line(self, (x1, y1), (x2, y2)):
         print self.fillColor, self.strokeColor, self.strokeWidth
         shape = self._getShape()
         if shape is not None:
             self.page.place(shape.line(x1, y1, x2, y2))
+
+    #   S H A D O W  &  G R A D I E N T
+
+    def setGradient(self, gradient, e, origin):
+        pass # Not implemented?
+
+    def lineDash(self, *lineDash):
+        pass # Not implemented?
 
     #   C O L O R
 
@@ -214,4 +237,12 @@ class FlatContext(BaseContext):
         if w is not None:
             self.strokeWidth = 20#w
 
+    #   E X P O R T
+
+    def create_gif(self, filenames, duration):
+        images = []
+        for filename in filenames:
+            images.append(imageio.imread(filename))
+        output_file = 'Gif-%s.gif' % datetime.datetime.now().strftime('%Y-%M-%d-%H-%M-%S')
+        imageio.mimsave(output_file, images, duration=duration)
 

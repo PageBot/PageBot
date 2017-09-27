@@ -78,6 +78,9 @@ class DrawBotContext(BaseContext):
     def oval(self, x, y, w, h):
         self.b.oval(x, y, w, h)
 
+    def circle(self, x, y, r):
+        self.b.oval(x, y, r, r)
+
     def line(self, p1, p2):
         self.b.line(p1, p2)
 
@@ -106,6 +109,9 @@ class DrawBotContext(BaseContext):
                 b.cmykRadialGradient(startPoint=start, endPoint=end,
                     colors=gradient.cmykColors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
+
+    def lineDash(self, *lineDash):
+        self.b.lineDash(*lineDash)
 
     #   C A N V A S
 

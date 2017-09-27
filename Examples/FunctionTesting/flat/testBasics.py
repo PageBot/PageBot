@@ -3,7 +3,7 @@ from flat import rgb, font, shape, strike, document
 #c = rgb(255, 0, 0)
 c = rgb(0, 0, 0)
 #lato = font.open('/Library/Fonts/Verdana.ttf')
-lato = font.open('/Library/Fonts/Upgrade-Medium.ttf')
+lato = font.open('/Library/Fonts/Upgrade-Middle.ttf')
 figure = shape().stroke(c).width(2.5)
 headline = strike(lato).color(c).size(80, 96)
 

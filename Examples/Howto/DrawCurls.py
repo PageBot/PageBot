@@ -28,8 +28,8 @@ w = W - 2*M
 h = H - 2*H
 
 def drawSpiral():
-    mx = W/2
-    my = H/2
+    mx = W/2+X
+    my = H/2+Y
     runs = False
     path = BezierPath()
     for n in range(0, int(N), 4):
@@ -60,8 +60,8 @@ def drawSpiral():
     
 Variable([
     #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='X', ui='Slider', args=dict(minValue=100, value=300, maxValue=1000)),
-    dict(name='Y', ui='Slider', args=dict(minValue=100, value=300, maxValue=1000)),
+    dict(name='X', ui='Slider', args=dict(minValue=-W/2, value=0, maxValue=W/2)),
+    dict(name='Y', ui='Slider', args=dict(minValue=-H/2, value=0, maxValue=H/2)),
     dict(name='N', ui='Slider', args=dict(minValue=8*2, value=8*8, maxValue=8*32)),
     dict(name='Sx', ui='Slider', args=dict(minValue=2, value=10, maxValue=40)),
     dict(name='Sy', ui='Slider', args=dict(minValue=2, value=10, maxValue=40)),
