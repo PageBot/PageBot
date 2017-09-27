@@ -62,6 +62,10 @@ def newFlatString(s, b, e=None, style=None, w=None, h=None, fontSize=None, style
     elif sCapitalized:
         s = s.capitalize()
 
+    # Since Flat does not do fetaure compile, we'll make the transformed string here,
+    # using Tal's https://github.com/typesupply/compositor
+    # This needs to be installed, in case PageBot is running outside of DrawBot.
+    
     # TODO: Style stuff here.
     return FlatString(s, b) # Make real Flat string here.
 
