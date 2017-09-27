@@ -510,6 +510,8 @@ class Typesetter(object):
         If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then 
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
 
+        context = self.galley.context
+
         # Fills self.codeBlocks dictionary from node codeblocks.
         # Side effect is to update self.doc, self.page and self.box
         cid, codeResult = self.runCodeBlock(node) 
@@ -535,7 +537,7 @@ class Typesetter(object):
         
         nodeText = self._strip(node.text)
         if nodeText: # Not None and still has content after stripping?
-            bs = self.galley.newString(nodeText, e=e, style=nodeStyle)
+            bs = context.newString(nodeText, e=e, style=nodeStyle)
             self.append(bs)
 
         # Type set all child node in the current node, by recursive call.
@@ -555,9 +557,8 @@ class Typesetter(object):
             # to empty string?
             childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
             if childTail: # Any tail left after stripping, then append to the galley.
-                bs = self.galley.newString(childTail, e=e, style=nodeStyle)
+                bs = context.newString(childTail, e=e, style=nodeStyle)
                 self.append(bs)
-                self.append(childTail) # Export the plain text as parallel HTML output as well.
 
         # Close the HTML tag of this node.
         self._htmlNode(node)
