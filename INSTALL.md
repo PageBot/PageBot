@@ -56,7 +56,9 @@ If there is no error, PageBit is installed property for DrawBotApp.
 PageBot is using other Open Source libraries, that may be (or not yet) installed in RoboFont.
 Also, when running PageBot outside of DrawBot context (e.g. using Flat), these libraries need to be installed separately.
 
-https://github.com/typesupply/compositor
 https://github.com/xxyxyz/flat
+https://github.com/typesupply/compositor
+https://github.com/imageio/imageio
 
+https://github.com/GoogleCloudPlatform/google-cloud-python
 
