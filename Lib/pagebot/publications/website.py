@@ -283,7 +283,7 @@ class Website(Publication):
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, 
     w=None, h=None, exportPaths=None, context=None, **kwargs)"""
 
-    DEFAULT_CONTEXT = HtmlContext
+    DEFAULT_CONTEXT = HtmlContext()
 
     def initialize(self, **kwargs):
         u"""Initialize the generic website templates. """

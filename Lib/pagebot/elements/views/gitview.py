@@ -15,6 +15,7 @@
 #
 from pagebot.contexts import HtmlContext
 from pagebot.elements.views.htmlview import HtmlView
+from pagebot.style import ORIGIN
 
 class GitView(HtmlView):
     viewId = 'Git'
@@ -28,18 +29,20 @@ class GitView(HtmlView):
 
     def build(self, path=None, pageSelection=None, multiPage=True):
 
+        doc = self.doc
+
         sitePath = self.GIT_PATH
         if not sitePath.endswith('/'):
             sitePath += '/'
             
         b = self.b # Get builder from self.doc.context of this view.
-        self.doc.build_css(self) # Make doc build the main/overall CSS.
+        doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
 
                 hook = 'build_' + b.PB_ID
-                getattr(page, hook)(self, origin) # Typically calling page.build_drawBot or page.build_flat
+                getattr(page, hook)(self, ORIGIN) # Typically calling page.build_drawBot or page.build_flat
 
                 fileName = page.name
                 if not fileName:

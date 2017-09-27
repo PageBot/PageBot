@@ -17,3 +17,7 @@ class BaseContext(object):
     u"""A BaseContext instance combines the specific functions of a platform, 
     such as DrawBot, Flat or HTML. This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
+    
+    # In case of specific builder addressing, callers can check here.
+    isDrawBot = False
+    isFlat = False
