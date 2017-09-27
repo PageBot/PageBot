@@ -28,7 +28,10 @@ class FlatContext(BaseContext):
     https://github.com/xxyxyz/flat
     http://xxyxyz.org/flat
     """
- 
+
+    # In case of specific builder addressing, callers can check here.
+    isFlat = True
+
     def __init__(self):
         # Keep status of last color, to make difference between fill and stroke colors.
         self.fillColor = None
@@ -118,6 +121,17 @@ class FlatContext(BaseContext):
         if shape is not None:
             self.page.place(shape.rectangle(x, y, w, h))
 
+    def oval(self, x, y, w, h):
+        shape = self._getShape()
+        if shape is not None:
+            self.page.place(shape.oval(x, y, w, h))
+
+    def line(self, (x1, y1), (x2, y2)):
+        print self.fillColor, self.strokeColor, self.strokeWidth
+        shape = self._getShape()
+        if shape is not None:
+            self.page.place(shape.line(x1, y1, x2, y2))
+
     #   C O L O R
 
     def setFillColor(self, c, cmyk=False, spot=False, overprint=False):
@@ -139,7 +153,7 @@ class FlatContext(BaseContext):
                 name, cmyk = c
                 self.fillColor = b.spot(name, cmyk)
                 success = True
-            # Not supported in PDF, leave out for compatibility?
+            # Not supported in PDF, leave out for general compatibility?
             #elif len(c) == 2:
             #    gray, a = c
             #    self.fillColor = b.ga(gray, a)
@@ -178,7 +192,7 @@ class FlatContext(BaseContext):
                 name, cmyk = c
                 self.strokeColor = b.spot(name, cmyk)
                 success = True
-            # Not supported in PDF, leave out for compatibility?
+            # Not supported in PDF, leave out for general compatibility?
             #elif len(c) == 2:
             #    gray, a = c
             #    self.strokeColor = b.ga(gray, a)
@@ -198,6 +212,6 @@ class FlatContext(BaseContext):
         if not success:
             raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
         if w is not None:
-            self.strokeWidth = w
+            self.strokeWidth = 20#w
 
 

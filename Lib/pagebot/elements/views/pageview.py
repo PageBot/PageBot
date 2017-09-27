@@ -130,7 +130,7 @@ class PageView(BaseView):
                 self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
             context = self.context
             context.setFillColor(None)
-            context.setStrokColor((0, 0, 1), 0.5)
+            context.setStrokeColor((0, 0, 1), 0.5)
             context.rect(origin[0], origin[1], page.w, page.h)
             #page.drawFrame(origin, self)
 
@@ -343,22 +343,22 @@ class PageView(BaseView):
             e._restoreScale(self)
 
     def drawElementOrigin(self, e, origin):
-        b = self.b
+        context = self.context
         px, py, _ = pointOffset(e.oPoint, origin)
         S = self.css('viewInfoOriginMarkerSize', 4)
         if self.showElementOrigin:
             # Draw origin of the element
-            self.setFillColor((0.5,0.5,0.5,0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
-            self.setStrokeColor(0, 0.25)
-            b.oval(px-S, py-S, 2*S, 2*S)
-            b.line((px-S, py), (px+S, py))
-            b.line((px, py-S), (px, py+S))
+            context.setFillColor((0.5,0.5,0.5,0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
+            context.setStrokeColor(0, 0.25)
+            context.oval(px-S, py-S, 2*S, 2*S)
+            context.line((px-S, py), (px+S, py))
+            context.line((px, py-S), (px, py+S))
 
         if self.showElementDimensions:
-            fs = C.newString(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'),
+            bs = context.newString(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'),
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-            w, h = b.textSize(fs.s)
-            b.text(fs, (px - w/2, py + S*1.5))
+            w, h = context.textSize(bs)
+            context.text(bs, (px - w/2, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):
         u"""When designing templates and pages, this will draw a filled rectangle on the element
@@ -574,6 +574,8 @@ class PageView(BaseView):
     def drawPageCropMarks(self, e, origin):
         u"""If the show flag is set, then draw the cropmarks or page frame."""
         if self.showPageCropMarks:
+            context = self.context
+
             x, y, _ = point3D(origin) # Ignore z-axus for now.
             w, h = e.w, e.h
             folds = self.css('folds')
@@ -581,46 +583,29 @@ class PageView(BaseView):
             cmSize = min(self.css('viewCropMarkSize', 32), self.pl)
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
 
-            b = self.b
-            b.fill(None)
-            b.cmykStroke(1,1,1,1)
-            b.strokeWidth(cmStrokeWidth)
-            b.newPath()
+            context.setFillColor(None)
+            context.setStrokeColor((1,1,1,1), w=cmStrokeWidth, cmyk=True)
             # Bottom left
-            b.moveTo((x - bleed, y))
-            b.lineTo((x - cmSize, y))
-            b.moveTo((x, y - bleed))
-            b.lineTo((x, y - cmSize))
+            context.line((x - bleed, y), (x - cmSize, y))
+            context.line((x, y - bleed), (x, y - cmSize))
             # Bottom right
-            b.moveTo((x + w + bleed, y))
-            b.lineTo((x + w + cmSize, y))
-            b.moveTo((x + w, y - bleed))
-            b.lineTo((x + w, y - cmSize))
+            context.line((x + w + bleed, y), (x + w + cmSize, y))
+            context.line((x + w, y - bleed), (x + w, y - cmSize))
             # Top left
-            b.moveTo((x - bleed, y + h))
-            b.lineTo((x - cmSize, y + h))
-            b.moveTo((x, y + h + bleed))
-            b.lineTo((x, y + h + cmSize))
+            context.line((x - bleed, y + h), (x - cmSize, y + h))
+            context.line((x, y + h + bleed), (x, y + h + cmSize))
             # Top right
-            b.moveTo((x + w + bleed, y + h))
-            b.lineTo((x + w + cmSize, y + h))
-            b.moveTo((x + w, y + h + bleed))
-            b.lineTo((x + w, y + h + cmSize))
+            context.line((x + w + bleed, y + h), (x + w + cmSize, y + h))
+            context.line((x + w, y + h + bleed), (x + w, y + h + cmSize))
             # Any fold lines to draw?
             if folds is not None:
                 for fx, fy in folds:
                     if fx is not None:
-                        b.moveTo((x + fx, y - bleed))
-                        b.lineTo((x + fx, y - cmSize))
-                        b.moveTo((x + fx, y + h + bleed))
-                        b.lineTo((x + fx, y + h + cmSize))
+                        context.line((x + fx, y - bleed), (x + fx, y - cmSize))
+                        context.line((x + fx, y + h + bleed), (x + fx, y + h + cmSize))
                     if fy is not None:
-                        b.moveTo((x - bleed, y + fy))
-                        b.lineTo((x - cmSize, y + fy))
-                        b.moveTo((x + w + bleed, y + fy))
-                        b.lineTo((x + w + cmSize, y + fy))
-            b.drawPath()
-
+                        context.line((x - bleed, y + fy), (x - cmSize, y + fy))
+                        context.line((x + w + bleed, y + fy), (x + w + cmSize, y + fy))
 
     #   D R A W B O T  S U P P O R T
 
