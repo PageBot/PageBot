@@ -29,6 +29,7 @@ class DrawBotContext(BaseContext):
     def __init__(self):
         # The context builder "cls.b" is the main drawBot library, that contains all 
         # drawing calls in as used regular DrawBot scripts.
+        
         self.b = drawBotBuilder # cls.b builder for this canvas.
  
     def newDocument(self, w, h):

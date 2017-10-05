@@ -15,7 +15,7 @@
 #
 import math
 from pagebot.toolbox.mathematics import *
-from point import Point
+from apoint import APoint
 
 def calculateAngle(p1, p2, inDegrees=True):
     u"""Calculate the angle between points p1 and p2. Points can be either 2D or 3D 
@@ -36,7 +36,7 @@ def angleOfLines(p1, p2, q1, q2, inDegrees=True):
     elif angle > 180: angle -= 360
     return angle
 
-class PointContext(object):
+class APointContext(object):
     u"""The PointContext instance is a Point wrapper, that also takes the 3 points previous
     and next 3 points on the contour. The instance behaves like a normal point p, but
     additional information is available as interpreted from the point context in relation 
@@ -58,7 +58,7 @@ class PointContext(object):
         self._angle = None  # Cache axis once calculated.
     
     def __getitem__(self, index):
-        return (self.p_3, self.p_2, self.p_1, self.p, self.p1, self.p2, self.p3)[index]
+        return self.p[index]
 
     def _get_x(self):
         return self.p.x
@@ -121,14 +121,14 @@ class PointContext(object):
     def isOffCurve(self, p=None):
         if p is None:
             p = self.p
-        if isinstance(p, Point):
+        if isinstance(p, APoint):
             return not p.onCurve
         return False # Point2D type is always on-curve.
 
     def isOnCurve(self, p=None):
         if p is None:
             p = self.p
-        if isinstance(p, Point):
+        if isinstance(p, APoint):
             return p.onCurve
         return True # Point2D type is always on-curve.
 
@@ -381,8 +381,8 @@ class PointContext(object):
     
     def projectedOnLine(self, p):
         u"""Answer the point context pc projects on the line of self."""
-        xy = pointProjectedOnLine(self.p, self.p1, p)
-        return Point(xy)
+        xy = pointProjectedOnLine(self.p.p, self.p1.p, p.p)
+        return APoint(xy)
     
     # self.nextOnCurvePoint
     

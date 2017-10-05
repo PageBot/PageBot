@@ -19,31 +19,18 @@ import sys
 import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
+
+# TODO: Needs DrawBot/Flex context.
 from drawBot import BezierPath
+
 from fontinfo import FontInfo
-from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, PointContext
+from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
 from pagebot.toolbox.transformer import point2D
+from pagebot.fonttoolbox.analyzers.apoint import APoint
+from pagebot.fonttoolbox.analyzers.asegment import ASegment
 
 C = 0.5
 F = 2.0 / 3.0
-
-class Point(object):
-    u"""
-    >>> p = Point(101, 303, True)
-    >>> p.onCurve is False
-    False
-    >>> print p
-    Pt(101,303,On)
-    """
-    def __init__(self, x, y, onCurve=None):
-        u"""Construct new point as potiiotn (x, y). onCurve is boolean, unless None, in case point
-        type is undefined."""
-        self.x = x
-        self.y = y
-        self.onCurve = onCurve # Can be True, False or None
-
-    def __repr__(self):
-        return 'Pt(%s,%s,%s)' % (self.x, self.y,{True:'On', False:'Off'}[self.onCurve])
 
 class AxisDeltas(object):
     u"""Hold the list of axis parts with their minValue, defaultValue, maxValue and list of deltas."""
@@ -60,38 +47,6 @@ class AxisDeltas(object):
 
     def __getitem__(self, key):
         return self.deltas[key]
-
-class Segment(object):
-    u"""
-    >>> p0 = Point(101, 303, True)
-    >>> p1 = Point(202, 404, False)
-    >>> p2 = Point(303, 808, False)
-    >>> p3 = Point(909, 808, True)
-    >>> points = [p0, p1, p2, p3]
-    >>> s = Segment(points)
-    >>> len(s)
-    4
-    >>> p4 = Point(111, 313, False)
-    >>> s.append(p4)
-    >>> len(s)
-    5
-    >>> s.points[-1].onCurve
-    False
-    """
-
-    def __init__(self, points=None):
-        if points is None:
-            points = []
-        self.points = points
-
-    def __len__(self):
-        return len(self.points)
-
-    def __repr__(self):
-        return 'Sg(%s)' % self.points
-
-    def append(self, p):
-        self.points.append(p)
 
 class Glyph(object):
     u"""The Glyph class wraps the glyph structure of a TrueType Font and
@@ -145,6 +100,7 @@ class Glyph(object):
         self._path = None
         self._analyzer = None # Initialized upon property self.analyzer usage.
         self._axisDeltas = None # Caching for AxisDeltas instances.
+        self._boundingBox = None
 
     def __eq__(self, g):
         return self.parent is g.parent and self.name == g.name
@@ -165,6 +121,7 @@ class Glyph(object):
         self._components = []
         self._segments = []
         self._drawPath = None
+        self._boundingBox = None
 
         coordinates = self.coordinates
         components = self.components
@@ -175,19 +132,20 @@ class Glyph(object):
         currentOnCurve = None
         p0 = None
 
-        xMin = yMin = sys.maxint # Store bounding box as we process the coordinate.
-        xMax = yMax = -sys.maxint
+        minX = minY = sys.maxint # Store bounding box as we process the coordinate.
+        maxX = maxY = -sys.maxint
 
         if coordinates or components:
+            # TODO: Needs context for DrawBot/Flex
             self._path = path = BezierPath()
 
         for index, (x, y) in enumerate(coordinates):
-            xMin = min(x, xMin)
-            xMax = max(x, xMax)
-            yMin = min(y, yMin)
-            yMax = max(y, yMax)
+            minX = min(x, minX)
+            maxX = max(x, maxX)
+            minY = min(y, minY)
+            maxY = max(y, maxY)
 
-            p = Point(x, y, flags[index])
+            p = APoint((x, y), flags[index])
             self._points.append(p)
 
             if not openContour:
@@ -200,7 +158,7 @@ class Glyph(object):
             openContour.append(p)
 
             if not openSegment:
-                openSegment = Segment()
+                openSegment = ASegment()
                 self._segments.append(openSegment)
 
             openSegment.append(p)
@@ -225,7 +183,8 @@ class Glyph(object):
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
                 openSegment = None
 
-        self._points4 = self._points[:] + [Point(xMin, 0), Point(0, yMin), Point(xMax, 0), Point(0, yMax)]
+        self._points4 = self._points[:] + [APoint((minX, 0)), APoint((0, minY)), APoint((maxX, 0)), APoint((0, maxY))]
+        self._boundingBox = (minX, minY, maxX, maxY)
 
     #def _get_drawPath(self):
     #    u"""Answer the cached Cocoa drawing path. If it does not yet exist, create it first and cache it."""
@@ -275,7 +234,7 @@ class Glyph(object):
 
                 if n < len(segment) - 2:
                     # Implied point.
-                    m = Point(p1.x + (p2.x - p1.x) / 2, p1.y + (p2.y - p1.y) / 2, True)
+                    m = APoint((p1.x + (p2.x - p1.x) / 2, p1.y + (p2.y - p1.y) / 2), True)
                 else:
                     # Last (oncurve) point.
                     m = p2
@@ -388,7 +347,7 @@ class Glyph(object):
                 contour3 = contour+contour+contour
                 for pIndex in range(numPoints):
                     points = contour3[pIndex+numPoints-3:pIndex+numPoints+4]
-                    pc = PointContext(points, pIndex, cIndex )
+                    pc = APointContext(points, pIndex, cIndex )
                     self._pointContexts.append(pc)
         return self._pointContexts
     pointContexts = property(_get_pointContexts)
@@ -428,6 +387,27 @@ class Glyph(object):
         p = point2D(p)
         return self.path._path.containsPoint_(p)
 
+    def _get_minX(self):
+        return self.boundingBox[0]
+    minX = property(_get_minX)
+    
+    def _get_minY(self):
+        return self.boundingBox[1]
+    minY = property(_get_minY)
+    
+    def _get_maxX(self):
+        return self.boundingBox[2]
+    maxX = property(_get_maxX)
+    
+    def _get_maxY(self):
+        return self.boundingBox[3]
+    maxY = property(_get_maxY)
+    
+    def _get_boundingBox(self):
+        if self._boundingBox is None:
+            self._initialize()
+        return self._boundingBox
+    boundingBox = property(_get_boundingBox)
 
     """
     TTGlyph Functions to implement

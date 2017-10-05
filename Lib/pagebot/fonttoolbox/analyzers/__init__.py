@@ -12,4 +12,8 @@
 # -----------------------------------------------------------------------------
 
 from glyphanalyzer import GlyphAnalyzer
-from pointcontext import PointContext
+# Analyzer point and pointContect classes.
+from asegment import ASegment
+from acontour import AContour
+from apoint import APoint
+from apointcontext import APointContext
