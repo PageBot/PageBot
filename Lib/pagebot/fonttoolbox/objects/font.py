@@ -127,10 +127,17 @@ class Font(object):
         return self.GLYPH_CLASS(self, glyphName)
 
     def __len__(self):
-        return len(self.ttFont['glyf'])
+        if 'glyf' in self.ttFont:
+            return len(self.ttFont['glyf'])
+        return 0
 
     def keys(self):
-        return self.ttFont['glyf'].keys()
+        if 'glyf' in self.ttFont:
+            return self.ttFont['glyf'].keys()
+        return []
+
+    def __contains__(self, glyphName):
+        return glyphName in self.keys()
 
     def _get_axes(self): 
         u"""Answer dictionary of axes if self.ttFont is a Variable Font. Otherwise answer an empty dictioary."""

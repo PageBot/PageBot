@@ -11,29 +11,36 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     contour.py
+#     asegment.py
 #
-class Contour(object):
-    def __init__(self):
-        self.points = []
-        self._clockWise = True
+class ASegment(object):
+    u"""
+    >>> p0 = Point(101, 303, True)
+    >>> p1 = Point(202, 404, False)
+    >>> p2 = Point(303, 808, False)
+    >>> p3 = Point(909, 808, True)
+    >>> points = [p0, p1, p2, p3]
+    >>> s = Segment(points)
+    >>> len(s)
+    4
+    >>> p4 = Point(111, 313, False)
+    >>> s.append(p4)
+    >>> len(s)
+    5
+    >>> s.points[-1].onCurve
+    False
+    """
+    def __init__(self, points=None):
+        if points is None:
+            points = []
+        self.points = points
 
     def __len__(self):
         return len(self.points)
 
     def __repr__(self):
-        return 'Cnt(%d)' % len(self.points)
+        return 'Sg(%s)' % self.points
 
-    def __getitem__(self, index):
-        return self.points[index]
-
-    def __setitem__(self, index, p):
-        self.points[index] = p
-
-    def _get_clockWise(self):
-        return self._clockWise
-    clockWise = property(_get_clockWise)
-    
     def append(self, p):
         self.points.append(p)
 

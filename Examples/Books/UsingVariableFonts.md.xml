@@ -15,7 +15,7 @@ from pagebot.style import MM # Converter from MM to points
 from pagebot.publications import Book
 
 W, H = 163*MM, 244*MM # Overall size of the book pages.
-# Defing the padding for right pages. Left are mirrored by templates.
+# Defing the padding for right pages. Left pages are mirrored by templates.
 
 #padding = 18*MM, 12*MM, 12*MM, 10*MM # Top, Right, Bottom, Left
 padding = 54, 36, 36, 32 # Top, Right, Bottom, Left

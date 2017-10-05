@@ -14,7 +14,11 @@
 #     flatcontext.py
 #
 import os
-import imageio
+
+#import imageio
+#Could be used for animated gifs and other export. Gives currently an error
+#File "/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/numpy/lib/npyio.py", line 32, in <module>
+#ImportError: No module named future_builtins
 
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR

@@ -11,20 +11,29 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     segment.py
+#     acontour.py
 #
-class Segment(object):
-    def __init__(self, points=None):
-        if points is None:
-            points = []
-        self.points = points
+class AContour(object):
+    def __init__(self):
+        self.points = []
+        self._clockWise = True
 
     def __len__(self):
         return len(self.points)
 
     def __repr__(self):
-        return 'Sg(%s)' % self.points
+        return 'Cnt(%d)' % len(self.points)
 
+    def __getitem__(self, index):
+        return self.points[index]
+
+    def __setitem__(self, index, p):
+        self.points[index] = p
+
+    def _get_clockWise(self):
+        return self._clockWise
+    clockWise = property(_get_clockWise)
+    
     def append(self, p):
         self.points.append(p)
 

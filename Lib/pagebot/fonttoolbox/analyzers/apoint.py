@@ -15,8 +15,18 @@
 #
 from pagebot.toolbox.transformer import point3D
 
-class Point(object):
-    def __init__(self, xy, onCurve):
+class APoint(object):
+    u"""Analyzer Point, used if addition information (like its type) needs to be stored.
+    Otherwise just use the point2D() and point3D() which are simple tuples.
+
+    >>> p = APoint(101, 303, True)
+    >>> p.onCurve is False
+    False
+    >>> print p
+    Pt(101,303,On)
+    """
+
+    def __init__(self, xy, onCurve=True):
         self.p = point3D(xy)
         self.onCurve = bool(onCurve)
 
@@ -26,6 +36,24 @@ class Point(object):
         self.p = list(p)
         self.p[index] = value
 
+    def __getitem__(self, i):
+        u"""Allow APoint to be indexed like a point2D tuple."""
+        return self.p[i]
+    def __setitem__(self, i, v):
+        self.p[i] = v
+    
+    def __sub__(self, p):
+        return self.p[0] - p[0], self.p[1] - p[1]
+
+    def __add__(self, p):
+        return self.p[0] + p[0], self.p[1] + p[1]
+
+    def __mul__(self, v):
+        return self.p[0] * v, self.p[1] * v
+
+    def __div__(self, v):
+        return self.p[0] / v, self.p[1] / v
+            
     def _get_x(self):
         return self.p[0]
     def _set_x(self, x):

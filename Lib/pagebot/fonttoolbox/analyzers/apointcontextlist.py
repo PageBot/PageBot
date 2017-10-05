@@ -13,19 +13,19 @@
 #
 #     vertical.py
 #
-from pointcontext import PointContext
+from apointcontext import APointContext
 
-class PointContextList(list):
+class APointContextList(list):
     u"""The PointContextList us a group of related PointContext instances that can be
     queried and selected on their attributes."""
     def __repr__(self):
         return '[%s %s]' % (self.__class__.__name__, list(self))
     
     def append(self, pc):
-        assert isinstance(pc, PointContext)
+        assert isinstance(pc, APointContext)
         list.append(self, pc)
  
-class Vertical(PointContextList):
+class Vertical(APointContextList):
     u"""The Vertical class is a list of point contexts that share the same x-value
     self.append, self.x, self.y, self.alternates, self.minYPoint, self.maxYPoint"""
     # self.x
@@ -69,7 +69,7 @@ class Vertical(PointContextList):
         return alternates
     alternates = property(_get_alternates)
     
-class Horizontal(PointContextList):
+class Horizontal(APointContextList):
     u"""The Horizontal class is a list of point contexts that share the same y-value
     self.append, self.x, self.y, self.alternates, self.minXPoint, self.maxXPoint."""
     
@@ -115,5 +115,5 @@ class Horizontal(PointContextList):
 
     alternates = property(_get_alternates)
     
-class Diagonal(PointContextList):
+class Diagonal(APointContextList):
     pass
