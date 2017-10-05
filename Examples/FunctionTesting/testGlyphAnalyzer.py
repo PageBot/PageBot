@@ -18,16 +18,12 @@ from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 EXPORT_PATH = '_export/textGlyphAnalyzer.pdf'
 
 FONT_PATH = '/Library/Fonts/'
-ROBOTO_PATH = '/Users/petr/Desktop/git/fonts/apache/roboto/'
-paths = [
-    ROBOTO_PATH+'Roboto-Black.ttf',    ROBOTO_PATH+'Roboto-Bold.ttf',     ROBOTO_PATH+'Roboto-Light.ttf',     ROBOTO_PATH+'Roboto-Medium.ttf',     ROBOTO_PATH+'Roboto-Regular.ttf',     ROBOTO_PATH+'Roboto-Thin.ttf', 
-    
+paths = [   
     FONT_PATH+'Verdana Bold.ttf',
     FONT_PATH+'Verdana.ttf',   
     FONT_PATH+'Georgia Bold.ttf',
     FONT_PATH+'Georgia.ttf',   
-
-    #'/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount/Custom/Spaced25/Bitcount_Mono_Double-Circle_Spaced25.ttf',]
+]
 for path in paths:
     font = Font(path, install=False)
     EM = font.info.unitsPerEm
