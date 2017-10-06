@@ -85,12 +85,13 @@ class Glyph(object):
     38.0
     """
 
-    ANALYZER_CLASS = GlyphAnalyzer
+    GLYPHANALYZER_CLASS = GlyphAnalyzer
     AXIS_DELTAS_CLASS = AxisDeltas
 
     def __init__(self, font, name):
         self.name = name
-        self.parent = font # Stored as weakref
+        self.font = font # Stored as weakref
+        self._analyzer = None # Installed upon request
         self._points = None # Same as self.points property with added 4 spacing points in TTF style.
         self._points4 = None
         self._pointContexts = None
@@ -103,10 +104,10 @@ class Glyph(object):
         self._boundingBox = None
 
     def __eq__(self, g):
-        return self.parent is g.parent and self.name == g.name
+        return self.font is g.font and self.name == g.name
 
     def __ne__(self, g):
-        return not self.parent is g.parent or self.name != g.name
+        return not self.font is g.font or self.name != g.name
 
     def __repr__(self):
         return '<PageBot Glyph %s Pts:%d/Cnt:%d/Cmp:%d>' % (self.name,
@@ -196,7 +197,7 @@ class Glyph(object):
         The instance containse (minValue, defaultValue, maxValue) keys, holding the sets of deltas for the
         glyph points."""
         if self._axisDeltas is None:
-            font = self.parent
+            font = self.font
             self._axisDeltas = {}
             if font is not None:
                 axisName = None
@@ -260,26 +261,26 @@ class Glyph(object):
         path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
 
     def _get_ttGlyph(self):
-        return self.parent.ttFont['glyf'][self.name]
+        return self.font.ttFont['glyf'][self.name]
     ttGlyph = property(_get_ttGlyph)
 
-    def _set_parent(self, font):
-        self._parent = weakref.ref(font)
-    def _get_parent(self):
-        if self._parent is not None:
-            return self._parent()
+    def _set_font(self, font):
+        self._font = weakref.ref(font)
+    def _get_font(self):
+        if self._font is not None:
+            return self._font()
         return None
-    parent = property(_get_parent, _set_parent)
+    font = property(_get_font, _set_font)
 
     def _get_width(self):
         try:
-            return self.parent.ttFont['hmtx'][self.name][0]
+            return self.font.ttFont['hmtx'][self.name][0]
         except KeyError:
             return None # Glyph is undefined in hmtx table.
     def _set_width(self, width):
-        hmtx = list(self.parent.ttFont['hmtx'][self.name]) # Keep vertical value
+        hmtx = list(self.font.ttFont['hmtx'][self.name]) # Keep vertical value
         hmtx[0] = width
-        self.parent.ttFont['hmtx'][self.name] = hmtx
+        self.font.ttFont['hmtx'][self.name] = hmtx
     width = property(_get_width, _set_width)
 
     # Direct TTFont cooridinates compatibility
@@ -378,7 +379,7 @@ class Glyph(object):
 
     def _get_analyzer(self): # Read only for now.
         if self._analyzer is None:
-            self._analyzer = self.ANALYZER_CLASS(self)
+            self._analyzer = self.GLYPHANALYZER_CLASS(self)
         return self._analyzer
     analyzer = property(_get_analyzer)
 

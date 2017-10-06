@@ -32,9 +32,8 @@ class GlyphAnalyzer(object):
     COUNTER_CLASS = Counter
     VERTICAL_COUNTER_CLASS = VerticalCounter
 
-    def __init__(self, style, name):
-        self._style = style
-        self.name = name
+    def __init__(self, glyph):
+        self.glyph = glyph # Set weakref to glyph
 
         # Get cache initialize on first access by any property.
         self._horizontals = None
@@ -46,19 +45,41 @@ class GlyphAnalyzer(object):
         self._roundBars = None # Recognized round bars, so not filtered by FloqMemes
         self._blueBars = None # Tuple of 3 bars for minY->up, baseline->up, maxY->down.
 
+        # User defined dimensions, overruling automatic analyzer dimensions (UFO only)
+        self._dimensions = None
+
+    def _get_name(self):
+        return self.glyph.name
+    name = property(_get_name)
+
+    # self.glyph    Weakref to the glyph
     def _get_glyph(self):
-        return self._style[self.name]
-    glyph = property(_get_glyph)
+        return self._glyph()
+    def _set_glyph(self, glyph):
+        # Set the weakref to the glyph
+        self._glyph = weakref.ref(glyph)
+    glyph = property(_get_glyph, _set_glyph)
+
+    def _get_font(self):
+        return self.glyph.font
+    font = property(_get_font)
 
     def __repr__(self):
-        return '<Analyzer of %s[%s]>' % (self.style.info.fullName, self.name)
+        return '<Analyzer of %s[%s]>' % (self.font.info.fullName, self.name)
 
     #   M E T R I C S
 
     def _get_width(self):
         return self.glyph.width
     width = property(_get_width)
-    
+
+    def _get_dimensions(self):
+        if self._dimensions is None:
+            # TODO: Needs to be written
+            self._dimensions = [] # User defined dimension references, overruling analyzer findings (UFO only)
+        return self._dimensions
+    dimensions = property(_get_dimensions)
+
     #   V E R T I C A L S
 
     # self.verticals
@@ -341,6 +362,106 @@ class GlyphAnalyzer(object):
             self.findBars()
         return self._bars
     bars = property(_get_bars)
+
+    def findBars(self):
+        u"""The @findBars@ method finds the bars in the current glyph and
+        assigns them as dictionary to @self._bars@. Since we cannot use the CVT
+        of the glyph (the analyzer is user to find these values, not to use
+        them), we'll make an assumption about the pattern of vertices found. It
+        is up to the caller to make sure that the current glyph is relevant in
+        the kind of vertices that we are looking for."""
+        horizontals = self.horizontals
+        self._bars = bars = {}
+        # BlueBars are derived from bars, separate property
+        self._roundBars = roundBars = {}
+        self._straightRoundBars = straightRoundBars = {}
+        self._verticalCounters = verticalCounters = {}
+        self._verticalRoundCounters = verticalRoundCounters = {}
+        self._verticalMixedCounters = verticalMixedCounters = {}
+        self._allVerticalCounters = allVerticalCounters = {} # Space between all neighboring stems, running over white only.
+
+
+        checked = set() # Store what we checked, to avoid doubles in the loops
+        hints = self.hints
+        if hints:
+            for hint in hints:
+                if self.C.FLOQMEME_BAR in hint['types']: # Is this this hint defining a stem?
+                    bar = self.BARCLASS(hint['pc0'], hint['pc1'], self.glyph.name)
+                    size = bar.size
+                    if not size in bars:
+                        bars[size] = []
+                    bars[size].append(bar)
+        if not bars: # No "manual" hints defined, try to analyze from the found Vertical instances.
+            for _, horizontal1 in sorted(horizontals.items()): # y1, horizontal1
+                for _, horizontal2 in sorted(horizontals.items()): # y2, horizontal2
+                    if horizontal1 is horizontal2:
+                        continue
+                    # We need to loop through the points of the horizontal
+                    # separate, to find e.g. the vertical separate round bars
+                    # of the points of a ellipsis. Otherwise they will seen as one horizontal.
+                    for pc0 in horizontal1:
+                        for pc1 in horizontal2:
+                            # Skip if identical, they cannot be a stem.
+                            if pc0 is pc1:
+                                continue
+                            # Skip if we already examined this one.
+                            if (pc0.index, pc1.index) in checked:
+                                continue
+                            checked.add((pc0.index, pc1.index))
+                            checked.add((pc1.index, pc0.index))
+                            # Test if the y values are in range so this can be seen as stem pair
+                            # and test if this pair is spanning a black space and not covered in black.
+                            if self.isBar(pc0, pc1):
+                                # Add this bar to the result.
+                                bar = self.BARCLASS(pc0, pc1, self.glyph.name)
+                                size = TX.asInt(bar.size) # Make sure not to get floats as keys
+                                if not size in bars:
+                                    bars[size] = []
+                                bars[size].append(bar)
+
+                            elif self.isRoundBar(pc0, pc1):
+                                # If either of the point context is a curve extreme
+                                # then count this bar as round bar
+                                bar = self.BARCLASS(pc0, pc1, self.glyph.name)
+                                size = TX.asInt(bar.size) # Make sure not to get floats as keys
+                                if not size in roundBars:
+                                    roundBars[size] = []
+                                roundBars[size].append(bar)
+
+                            elif self.isStraightRoundBar(pc0, pc1):
+                                # If one side is straight and the other side is round extreme
+                                # then count this stem as straight round bar.
+                                bar = self.BARCLASS(pc0, pc1, self.glyph.name)
+                                size = TX.asInt(bar.size) # Make sure not to get floats as key
+                                if not size in straightRoundBars:
+                                    straightRoundBars[size] = []
+                                straightRoundBars[size].append(bar)
+
+                            elif self.isVerticalCounter(pc0, pc1):
+                                # If there is just white space between the points and they are some kind of extreme,
+                                # then assume this is a counter.
+                                counter = self.VCOUNTERCLASS(pc0, pc1, self.glyph.name)
+                                size = TX.asInt(counter.size)
+                                
+                                if pc0.isHorizontalExtreme() and pc1.isHorizontalExtreme():
+                                    if not size in vierticalCounters:
+                                        verticalCounters[size] = []
+                                    verticalCounters[size].append(counter)
+                                elif pc0.isHorizontalRoundExtreme() and pc1.isHorizontalRoundExtreme():
+                                    if not size in verticalRoundCounters:
+                                        verticalRoundCounters[size] = []
+                                    verticalRoundCounters[size].append(counter)
+                                else:
+                                    if not size in verticalMixedCounters:
+                                        verticalMixedCounters[size] = []
+                                    verticalMixedCounters[size].append(counter)
+                                   
+                                if not size in allVerticalCounters:
+                                    allVerticalCounters[size] = []
+                                allVerticalCounters[size].append(counter)
+
+        return self._bars
+
 
     def isVerticalCounter(self, pc0, pc1):
         u"""Answers the boolean flag is the connection between pc0.y and pc1.y
