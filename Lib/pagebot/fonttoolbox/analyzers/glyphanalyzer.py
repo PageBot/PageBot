@@ -19,7 +19,7 @@ import weakref
 
 from pagebot.toolbox.transformer import point2D, asInt
 from apointcontextlist import Vertical, Horizontal
-from stems import Stem, Bar, Counter, VerticalCounter
+from stems import Stem, Bar, BlueBar, Counter, VerticalCounter
 
 SPANSTEP = 4
 
@@ -29,6 +29,7 @@ class GlyphAnalyzer(object):
     HORIZONTAL_CLASS = Horizontal
     STEM_CLASS = Stem
     BAR_CLASS = Bar
+    BLUEBAR_CLASS = BlueBar
     COUNTER_CLASS = Counter
     VERTICAL_COUNTER_CLASS = VerticalCounter
 
@@ -119,6 +120,20 @@ class GlyphAnalyzer(object):
                 if not pc.y in horizontals:
                     horizontals[pc.y] = self.HORIZONTAL_CLASS()
                 horizontals[pc.y].append(pc)
+
+    def _get_blueBars(self):
+        u"""If not self._blueBars defined, make the 3: minY->up, baseline->up and maxY->down."""
+        if self._blueBars is None:
+
+            gaH = self.font['H'].analyzer # Works even if self.name == 'H', as blueBars are lazy.
+            bar = 89#min(sorted(gaH.bars.keys())
+            self._blueBars = {
+                self.minY: self.BLUEBAR_CLASS(self.minY, bar, self.name),
+                0: self.BLUEBAR_CLASS(0, bar, self.name),
+                self.maxY: self.BLUEBAR_CLASS(gaH.maxY, -bar, self.name)
+            }
+        return self._blueBars
+    blueBars = property(_get_blueBars)
 
     #   B L A C K
 
