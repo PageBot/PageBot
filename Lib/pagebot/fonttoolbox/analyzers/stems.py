@@ -149,17 +149,17 @@ class Bar(Stem):
 
 class BlueBar(object):
 
-    def __init__(self, y, size, glyphName=None, offset=None):
+    def __init__(self, y, h, glyphName=None, offset=None):
         self.x = 0
         self._y = y
-        self.size = size
+        self.h = h
         self.offset = offset or (0,0) # Optional offset (dx, dy) tuple, e.g. used for stems derived from component references.
         self.glyphName = glyphName
 
     def __repr__(self):
         if self.offset in (None, (0,0)):
-             return '[%s.%s: %s --> %s]' % (self.glyphName, self.__class__.__name__, self.y, self.size)
-        return '[%s.%s: %s+%s --> %s+%d]' % (self.glyphName, self.__class__.__name__, self.y, self.offset[0], self.y+self.size, self.offset[1])
+             return '[%s.%s: %s --> %s]' % (self.glyphName, self.__class__.__name__, self.y, self.h)
+        return '[%s.%s: %s+%s --> %s+%d]' % (self.glyphName, self.__class__.__name__, self.y, self.offset[0], self.y+self.h, self.offset[1])
 
     # self.y    Answers the tuple of both y values, shifted by y-offset    
     def _get_y(self):
