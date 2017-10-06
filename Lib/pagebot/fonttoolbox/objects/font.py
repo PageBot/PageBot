@@ -30,6 +30,7 @@ except ImportError:
     installFont =  listOpenTypeFeatures = None
 
 from pagebot.fonttoolbox.objects.glyph import Glyph
+from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.fonttoolbox.variablefontaxes import axisDefinitions
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
@@ -90,6 +91,7 @@ class Font(object):
     >>> f.save()
     """
     GLYPH_CLASS = Glyph
+    FONTANALYZER_CLASS = FontAnalyzer
 
     def __init__(self, path, name=None, install=True, opticalSize=None, location=None, styleName=None):
         u"""Initialize the TTFont, for which Font is a wrapper. Default is to
@@ -117,6 +119,8 @@ class Font(object):
                 self.info.styleName = styleName # Overwrite default style name in the ttFont or Variable Font location
             self._kerning = None # Lazy reading.
             self._groups = None # Lazy reading.
+            self._glyphs = {} # Lazy creation of self[glyphName]
+            self._analyzer = None # Lazy creation.
         except TTLibError:
             raise OSError('Cannot open font file "%s"' % path)
 
@@ -124,7 +128,9 @@ class Font(object):
         return '<PageBot Font %s>' % (self.path or self.name)
 
     def __getitem__(self, glyphName):
-        return self.GLYPH_CLASS(self, glyphName)
+        if not glyphName in self._glyphs:
+            self._glyphs[glyphName] = self.GLYPH_CLASS(self, glyphName)
+        return self._glyphs[glyphName]
 
     def __len__(self):
         if 'glyf' in self.ttFont:
@@ -138,6 +144,13 @@ class Font(object):
 
     def __contains__(self, glyphName):
         return glyphName in self.keys()
+
+    def _get_analyzer(self):
+        u"""Answer the style/font analyzer if it exists. Otherwise create one."""
+        if self._analyzer is None:
+            self._analyzer = self.FONTANALYZER_CLASS(self)
+        return self._analyzer
+    analyzer = property(_get_analyzer)
 
     def _get_axes(self): 
         u"""Answer dictionary of axes if self.ttFont is a Variable Font. Otherwise answer an empty dictioary."""

@@ -12,6 +12,7 @@
 # -----------------------------------------------------------------------------
 
 from glyphanalyzer import GlyphAnalyzer
+from fontanalyzer import FontAnalyzer
 # Analyzer point and pointContect classes.
 from asegment import ASegment
 from acontour import AContour
