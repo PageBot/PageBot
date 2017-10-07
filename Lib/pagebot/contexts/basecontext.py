@@ -21,3 +21,9 @@ class BaseContext(object):
     # In case of specific builder addressing, callers can check here.
     isDrawBot = False
     isFlat = False
+
+    #   V A R I A B L E
+
+    def Variable(self, ui, globals):
+        """Offers interactive global value manipulation in DrawBot. Probably to be ignored in other contexts."""
+        pass

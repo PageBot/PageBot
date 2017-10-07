@@ -156,6 +156,7 @@ class PageView(BaseView):
         u"""Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks."""
         if self.showPageNameInfo:
+            context = self.context
             bleed = self.css('bleed')
             cms = self.css('viewCropMarkSize') - bleed
             fontSize = self.css('viewPageNameFontSize')
@@ -164,7 +165,7 @@ class PageView(BaseView):
             s = 'Page %s | %s | %s' % (page.parent.getPageNumber(page), d, page.parent.title or 'Untitled')
             if page.name:
                 s += ' | ' + page.name
-            bs = self.newString(s, font=self.css('viewPageNameFont'), fill=0, fontSize=fontSize)
+            bs = context.newString(s, style=dict(font=self.css('viewPageNameFont'), textFill=0, fontSize=fontSize))
             self.context.text(bs, (self.pl + bleed, self.pb + page.h + cms - fontSize*2)) # Draw on top of page.
 
     #   D R A W I N G  F L O W S
@@ -278,26 +279,27 @@ class PageView(BaseView):
 
     def _drawElementsNeedingInfo(self):
         b = self.b
+        context = self.context
         for e, origin in self.elementsNeedingInfo.values():
             p = pointOffset(e.oPoint, origin)
             p = e._applyScale(self, p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
             if self.showElementInfo:
                 # Draw box with element info.
-                fs = newFS(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'),
+                bs = context.newString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-                tw, th = textSize(fs)
+                tw, th = context.textSize(bs)
                 Pd = 4 # Padding in box and shadow offset.
                 tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
                 tpy = py + e.h - th - Pd
 
                 # Tiny shadow
-                self.setFillColor((0.3, 0.3, 0.3, 0.5))
-                self.setStrokeColor(None)
+                context.setFillColor((0.3, 0.3, 0.3, 0.5))
+                context.setStrokeColor(None)
                 b.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
                 # Frame
-                self.setFillColor(self.css('viewInfoFill'))
-                self.setStrokeColor(0.3, 0.25)
+                context.setFillColor(self.css('viewInfoFill'))
+                context.setStrokeColor(0.3, 0.25)
                 b.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
                 b.text(fs, (tpx+Pd, tpy+th))
                 e._restoreScale(self)
@@ -305,8 +307,8 @@ class PageView(BaseView):
             if self.showElementDimensions:
                 # TODO: Make separate arrow functio and better positions
                 # Draw width and height measures
-                self.setFillColor(None)
-                self.setStrokeColor(0, 0.25) 
+                context.setFillColor(None)
+                context.setStrokeColor(0, 0.25) 
                 S = self.css('viewInfoOriginMarkerSize', 4)
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
@@ -320,7 +322,7 @@ class PageView(BaseView):
                 b.line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
                 b.line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
 
-                fs = C.newString(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'),
+                bs = context.newString(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
                 tw, th = b.textSize(fs.s)
                 b.text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
@@ -335,9 +337,9 @@ class PageView(BaseView):
                 b.line((x2+2*S, y1), (x2+2.5*S, y1+S))
                 b.line((x2+2*S, y1), (x2+1.5*S, y1+S))
 
-                fs = newFS(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'),
+                bs = context.newString(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-                tw, th = b.textSize(fs)
+                tw, th = context.textSize(bs)
                 b.text(fs, (x2+2*S-tw/2, (y2+y1)/2))
 
             e._restoreScale(self)
@@ -508,6 +510,7 @@ class PageView(BaseView):
         if not self.showBaselineGrid:
             return
         b = self.b
+        context = self.context
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
@@ -519,17 +522,17 @@ class PageView(BaseView):
         line = 0
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
-        fs = C.newString('', self, dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
+        bs = context.newString('', self, dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
             fontSize=M/2, stroke=None, textFill=e.css('gridStroke')))
         while oy > e.pb or 0:
-            self.setFillColor(None)
-            self.setStrokeColor(e.css('baselineGridStroke', NO_COLOR), e.css('gridStrokeWidth'))
-            b.newPath()
-            b.moveTo((px + e.pl, py + oy))
-            b.lineTo((px + e.w - e.pr, py + oy))
-            b.drawPath()
-            b.text(fs + repr(line), (px + e.pl - 2, py + oy - e.pl * 0.6))
-            b.text(fs + repr(line), (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
+            context.setFillColor(None)
+            context.setStrokeColor(e.css('baselineGridStroke', NO_COLOR), e.css('gridStrokeWidth'))
+            context.b.newPath()
+            context.b.moveTo((px + e.pl, py + oy))
+            context.b.lineTo((px + e.w - e.pr, py + oy))
+            context.b.drawPath()
+            context.text(bs + repr(line), (px + e.pl - 2, py + oy - e.pl * 0.6))
+            context.text(bs + repr(line), (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
             line += 1 # Increment line index.
             oy -= e.css('baselineGrid') # Next vertical line position of baseline grid.
 

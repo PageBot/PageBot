@@ -42,7 +42,14 @@ class DrawBotContext(BaseContext):
 
     def newPage(self, w, h):
         self.b.newPage(w, h)
-        
+    
+    #   V A R I A B L E
+
+    def Variable(self, ui , variableGlobals):
+        """Offers interactive global value manipulation in DrawBot. Probably to be ignored in other contexts."""
+        from drawBot import Variable
+        Variable(ui, variableGlobals)
+
     #   P A T H S 
 
     def getRootPath(self):
@@ -70,6 +77,10 @@ class DrawBotContext(BaseContext):
 
     def text(self, bs, p):
         self.b.text(bs.s, p)
+
+    def textSize(self, bs):
+        u"""Answer the textSize (w, h) tuple of the formatted string."""
+        return self.b.textSize(bs.s)
 
     #   D R A W I N G
 
