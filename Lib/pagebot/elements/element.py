@@ -478,10 +478,12 @@ class Element(object):
         return self.context.b
     b = builder = property(_get_builder)
 
-    def newString(self, s, **kwargs):
+    def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
+            styleName=None, tagName=None):
         u"""Create a new BabelString, using the current type of self.doc.view.context,
         or pagebot.contexts.Context if not self.doc or self.doc.view defined."""
-        return self.context.newString(s, **kwargs)
+        return self.context.newString(s, e=e, style=style, w=w, h=h, fontSize=fontSize, 
+            styleName=styleName, tagName=tagName)
         
     # Most common properties
 

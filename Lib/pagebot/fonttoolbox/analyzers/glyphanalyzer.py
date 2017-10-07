@@ -40,10 +40,14 @@ class GlyphAnalyzer(object):
         self._horizontals = None
         self._stems = None # Recognized stems, so not filtered by FloqMemes
         self._roundStems = None # Recognized round stems, not filtered by FloqMemes
+        self._straightRoundStems = None
+        self._allStems = None
 
         self._verticals = None
         self._bars = None # Recognized bars, so not filtered by FloqMemes
-        self._roundBars = None # Recognized round bars, so not filtered by FloqMemes
+        self._roundBars = None # Recognized round bars.
+        self._straightRoundBars = None # Bars with round on one side and straight on the other size.
+        self._allBars = None # Collection of all types of bars
         self._blueBars = None # Tuple of 3 bars for minY->up, baseline->up, maxY->down.
 
         # User defined dimensions, overruling automatic analyzer dimensions (UFO only)
@@ -124,17 +128,30 @@ class GlyphAnalyzer(object):
     def _get_blueBars(self):
         u"""If not self._blueBars defined, make the 3: minY->up, baseline->up and maxY->down."""
         if self._blueBars is None:
-
             gaH = self.font['H'].analyzer # Works even if self.name == 'H', as blueBars are lazy.
-            bar = 89#min(sorted(gaH.bars.keys())
-            self._blueBars = {
-                self.minY: self.BLUEBAR_CLASS(self.minY, bar, self.name),
-                0: self.BLUEBAR_CLASS(0, bar, self.name),
-                self.maxY: self.BLUEBAR_CLASS(gaH.maxY, -bar, self.name)
-            }
+            bar = min(sorted(gaH.bars.keys()))
+            self._bottomBlueBar = self.BLUEBAR_CLASS((0, self.minY), (0, self.minY+bar), self.name, name='bottom')
+            self._baselineBlueBar = self.BLUEBAR_CLASS((0, 0), (0, bar), self.name, name='baseline')
+            self._topBlueBar = self.BLUEBAR_CLASS((0, self.maxY), (0, self.maxY-bar), self.name, name='top')
+            self._blueBars = {self.minY: self._topBlueBar, 0: self._baselineBlueBar, self.maxY: self._topBlueBar}
         return self._blueBars
     blueBars = property(_get_blueBars)
 
+    def _get_bottomBlueBar(self):
+        self._get_blueBars() # Make sure they are initialized.
+        return self._bottomBlueBar
+    bottomBlueBar = property(_get_bottomBlueBar)
+    
+    def _get_baselineBlueBar(self):
+        self._get_blueBars() # Make sure they are initialized.
+        return self._baselineBlueBar
+    baselineBlueBar = property(_get_baselineBlueBar)
+    
+    def _get_topBlueBar(self):
+        self._get_blueBars() # Make sure they are initialized.
+        return self._topBlueBar
+    topBlueBar = property(_get_topBlueBar)
+    
     #   B L A C K
 
     def spanRoundsOnBlack(self, pc0, pc1):
@@ -167,7 +184,7 @@ class GlyphAnalyzer(object):
         dx = p1[0] - p0[0]
         dy = p1[1] - p0[1]
         distance = dx*dx + dy*dy # Save sqrt time, compare with square of step
-        m = p0[0] + dx/2, p1[1] + dy/2
+        m = p0[0] + dx/2, p0[1] + dy/2
         result = self.onBlack(m) # Check the middle of the vector distance.
         if distance > step*step: # Check for the range of steps if the middle point of the line is still on black
             result = result and self.spanBlack(p0, m, step) and self.spanBlack(m, p1, step)
@@ -326,6 +343,25 @@ class GlyphAnalyzer(object):
             and self.overlappingLinesInWindowOnBlack(pc0, pc1)
             #and not (self.pointCoveredInBlack(pc0) or self.pointCoveredInBlack(pc1))
 
+    # self.roundStems
+    def _get_roundStems(self):
+        if self._roundStems is None:
+            self.findStems() # Cache finds of both stems and round stems
+        return self._roundStems
+    roundStems = property(_get_roundStems)
+
+    # self.straightRoundStems
+    def _get_straightRoundStems(self):
+        if self._straightRoundStems is None:
+            self.findStems() # Cache finds of both stems and round stems
+        return self._straightRoundStems
+    straightRoundStems = property(_get_straightRoundStems)
+
+    def isPortrait(self, pc0, pc1):
+        u"""Stems are supposed to be portrait within the FUZZ range. May not
+        work in all extremely wide or narrow glyphs."""
+        return not self.isLandscape(pc0, pc1)
+
     def isRoundStem(self, pc0, pc1):
         u"""The <b>isRoundStem</b> method answers the boolean flag if the
         <i>pc0</i> and <i>pc1</i> define a round stem. This is @True@ if one of
@@ -352,7 +388,28 @@ class GlyphAnalyzer(object):
         return (not pc0Ext and min(p0y) <= pc1.p.y and pc1.p.y <= max(p0y))\
             or (not pc1Ext and min(p1y) <= pc0.p.y and pc0.p.y <= max(p1y))
 
-    #   C O U N T E R
+    # self.allStems      Answers the combination dict of stems and round stems
+    def _get_allStems(self):
+        u"""Collect all stems in the dictionary with their value as key."""
+        if self._allStems is None:
+            self.findStems()
+            self._allStems = {}
+            for value, stems in self.stems.items():
+                self._allStems[value] = stems
+            for value, roundStems in self.roundStems.items():
+                if not value in self._allStems:
+                    self._allStems[value] = []
+                for roundStem in roundStems:
+                    self._allStems[value].append(roundStem)
+            for value, straightRoundStems in self.straightRoundStems.items():
+                if not value in self._allStems:
+                    self._allStems[value] = []
+                for straightRoundStem in straightRoundStems:
+                    self._allStems[value].append(straightRoundStem)
+        return self._allStems
+    allStems = property(_get_allStems)
+
+    #   H O R I Z O N T A L  C O U N T E R
 
     def isHorizontalCounter(self, pc0, pc1):
         u"""Answers the boolean flag is the connection between pc0.x and pc1.x
@@ -363,6 +420,23 @@ class GlyphAnalyzer(object):
         if not (pc1.isHorizontalRoundExtreme() or pc1.isVertical()):
             return False
         if not pc0.inHorizontalWindow(pc1):
+            return False
+        # Don't use plain self.lineOnWhite(pc0, px1) here, as corner-->roundExtreme (as in the counter of "P"
+        # will be too close to the horizontal stroke, so it's recognized as black. Instead we take bigger steps
+        # from the corner point, so the iterations of the line are always white.
+        return self.lineOnWhite(pc0, pc1, 50) or self.lineOnWhite(pc1, pc0, 50)
+
+    #   V E R T I C A L  C O U N T E R
+
+    def isVerticalCounter(self, pc0, pc1):
+        u"""Answers the boolean flag is the connection between pc0.y and pc1.y
+        is running entirely over white, and they both are some sort of
+        horizontal extreme. The connection is a “white bar”."""
+        if not (pc0.isVerticalRoundExtreme() or pc0.isHorizontal()):
+            return False
+        if not (pc1.isVerticalRoundExtreme() or pc1.isHorizontal()):
+            return False
+        if not pc0.inVerticalWindow(pc1):
             return False
         # Don't use plain self.lineOnWhite(pc0, px1) here, as corner-->roundExtreme (as in the counter of "P"
         # will be too close to the horizontal stroke, so it's recognized as black. Instead we take bigger steps
@@ -389,7 +463,7 @@ class GlyphAnalyzer(object):
         self._bars = bars = {}
         # BlueBars are derived from bars, separate property
         self._roundBars = roundBars = {}
-        self._straightRoundBars = straightRoundBars = {}
+        self._straighRoundBars = straightRoundBars = {}
         self._verticalCounters = verticalCounters = {}
         self._verticalRoundCounters = verticalRoundCounters = {}
         self._verticalMixedCounters = verticalMixedCounters = {}
@@ -438,7 +512,7 @@ class GlyphAnalyzer(object):
                                 # If either of the point context is a curve extreme
                                 # then count this bar as round bar
                                 bar = self.BARCLASS(pc0, pc1, self.glyph.name)
-                                size = TX.asInt(bar.size) # Make sure not to get floats as keys
+                                size = asInt(bar.size) # Make sure not to get floats as keys
                                 if not size in roundBars:
                                     roundBars[size] = []
                                 roundBars[size].append(bar)
@@ -447,8 +521,8 @@ class GlyphAnalyzer(object):
                                 # If one side is straight and the other side is round extreme
                                 # then count this stem as straight round bar.
                                 bar = self.BARCLASS(pc0, pc1, self.glyph.name)
-                                size = TX.asInt(bar.size) # Make sure not to get floats as key
-                                if not size in straightRoundBars:
+                                size = asInt(bar.size) # Make sure not to get floats as key
+                                if not size in straightRoundars:
                                     straightRoundBars[size] = []
                                 straightRoundBars[size].append(bar)
 
@@ -477,21 +551,70 @@ class GlyphAnalyzer(object):
 
         return self._bars
 
+    # self.roundBars
+    def _get_roundBars(self):
+        if self._roundBars is None:
+            self.findBars() # Cache finds of both bars and round bars
+        return self._roundBars
+    roundBars = property(_get_roundBars)
 
-    def isVerticalCounter(self, pc0, pc1):
-        u"""Answers the boolean flag is the connection between pc0.y and pc1.y
-        is running entirely over white, and they both are some sort of
-        horizontal extreme. The connection is a “white bar”."""
-        if not (pc0.isVerticalRoundExtreme() or pc0.isHorizontal()):
+    # self.straightRoundBars
+    def _get_straightRoundBars(self):
+        if self._straightRoundBars is None:
+            self.findBars() # Cache finds of both bars and round bars
+        return self._straightRoundBars
+    straightRoundBars = property(_get_straightRoundBars)
+
+    def isLandscape(self, pc0, pc1):
+        u"""Bars are supposed to be landscape within the FUZZ range. May not
+        work in all extremely wide or narrow glyphs."""
+        if pc0.isVerticalExtreme() or pc1.isVerticalExtreme():
+            return True
+        return abs(pc0.p.x - pc1.p.x) - abs(pc0.p.y - pc1.p.y) > self.FUZZ
+
+    def isRoundBar(self, pc0, pc1):
+        # self.isSameVerticalRoundExtreme(pc0, pc1) and\
+        return pc0.isVerticalRoundExtreme()\
+            and pc1.isVerticalRoundExtreme()\
+            and self.spanRoundsOnBlack(pc0, pc1)
+
+    def isStraightRoundBar(self, pc0, pc1):
+        u"""Answers the boolean flag if one of (pc0, pc1) is a straight extreme
+        and the other is a curve extreme.  The stem is only valid if the y of
+        the curve extreme is between the y of the 2 vertical on-curves."""
+        if not self.spanRoundsOnBlack(pc0, pc1):
+            return False # Must be only black between the curve extreme and one of the oncurves.
+        pc0Ext = pc0.isVerticalRoundExtreme()
+        pc1Ext = pc1.isVerticalRoundExtreme()
+        if pc0Ext == pc1Ext: # Extremes need to be different type.
             return False
-        if not (pc1.isVerticalRoundExtreme() or pc1.isHorizontal()):
-            return False
-        if not pc0.inVerticalWindow(pc1):
-            return False
-        # Don't use plain self.lineOnWhite(pc0, px1) here, as corner-->roundExtreme (as in the counter of "P"
-        # will be too close to the horizontal stroke, so it's recognized as black. Instead we take bigger steps
-        # from the corner point, so the iterations of the line are always white.
-        return self.lineOnWhite(pc0, pc1, 50) or self.lineOnWhite(pc1, pc0, 50)
+        # Seems to be right, finalize by testing the vertical window overlap.
+        p0x = pc0.p.x, pc0.p1.x
+        p1x = pc1.p.x, pc1.p1.x
+        return (not pc0Ext and min(p0x) <= pc1.p.x and pc1.p.x <= max(p0x))\
+            or (not pc1Ext and min(p1x) <= pc0.p.x and pc0.p.x <= max(p1x))
+
+    # self.allBars      Answers the combination dict of bars and round bars
+    def _get_allBars(self):
+        u"""Collect all bars in the dictionary with their value as key.
+        BlueBars are not added to self._allBars, to be addressed separately from self.blueBars """
+        if self._allBars is None:
+            self.findBars()
+            self._allBars = {}
+            for value, bars in self.bars.items():
+                self._allBars[value] = bars
+            for value, roundBars in self.roundBars.items():
+                if not value in self._allBars:
+                    self._allBars[value] = []
+                for roundBar in roundBars:
+                    self._allBars[value].append(roundBar)
+            for value, straightRoundBars in self.straightRoundBars.items():
+                if not value in self._allBars:
+                    self._allBars[value] = []
+                for straightRoundBar in straightRoundBars:
+                    self._allBars[value].append(straightRoundBar)
+        return self._allBars
+    allBars = property(_get_allBars)
 
     #   P O I N T S
 

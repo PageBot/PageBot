@@ -19,18 +19,20 @@ class Stem(object):
     </code> instance that stem binds.</doc>
     """
 
-    def __init__(self, parent, point, glyphName=None, offset=None):
-        assert parent is None or isinstance(parent, APointContext)
-        assert point is None or isinstance(point, APointContext)
+    def __init__(self, parent, point, glyphName=None, offset=None, name=None):
+        assert parent is None or isinstance(parent, (tuple, list, APointContext))
+        assert point is None or isinstance(point, (tuple, list, APointContext))
         self.parent = parent
         self.point = point
         self.offset = offset or (0,0) # Optional offset (dx, dy) tuple, e.g. used for stems derived from component references.
         self.glyphName = glyphName
+        self.name = name
 
     def __repr__(self):
+        print self.__dict__
         if self.offset in (None, (0,0)):
-             return '[%s.%s: %s --> %s]' % (self.glyphName, self.__class__.__name__, self.parent, self.point)
-        return '[%s.%s: %s+%s --> %s+%d]' % (self.glyphName, self.__class__.__name__, self.parent, self.point, self.offset[0], self.offset[1])
+             return '[%s.%s: %s --> %s]' % (self.glyphName, self.name or self.__class__.__name__, self.parent, self.point)
+        return '[%s.%s: %s+%s --> %s+%d]' % (self.glyphName, self.name or self.__class__.__name__, self.parent, self.point, self.offset[0], self.offset[1])
 
     def copy(self):
         return self.__class__(self.parent, self.point, self.glyphName, self.offset)
@@ -40,30 +42,39 @@ class Stem(object):
         self.offset = self.offset[0] + offset[0], self.offset[1] + offset[1]
 
     # self.size
-    
     def _get_size(self):
-        return abs(self.parent.x - self.point.x)
+        u"""Note that size can be negative, to indicate the direction of the arrow, as in the top blueBar."""
+        return self.point[0] - self.parent[0] 
     size = property(_get_size)
 
-    # self.x    # Answers the tuple of both x value, shifted by x-offset
+    # self.xSpan    # Answers the span tuple of both x value, shifted by x-offset 
+    def _get_xSpan(self):
+        dx = self.offset[0]
+        return self.parent[0] + dx, self.point[0] + dx
+    xSpan = property(_get_xSpan)
     
+    # self.x    Answers parent.x, shifted by x-offset   
     def _get_x(self):
         dx = self.offset[0]
-        return self.parent.x + dx, self.point.x + dx
+        return self.parent[0] + dx
     x = property(_get_x)
     
-    # self.y    Answers the tuple of both y values, shifted by y-offset
+    # self.ys    Answers the span tuple of both y values, shifted by y-offset   
+    def _get_ySpan(self):
+        dy = self.offset[1]
+        return self.parent[1] + dy, self.point[1] + dy
+    ySpan = property(_get_ySpan)
     
+    # self.y    Answers parent.y, shifted by y-offset   
     def _get_y(self):
         dy = self.offset[1]
-        return self.parent.y + dy, self.point.y + dy
+        return self.parent[1] + dy
     y = property(_get_y)
 
     def isWhite(self):
         return False
 
-    # self.nearestPoint
-    
+    # self.nearestPoint   
     def _get_nearestPoint(self):
         u"""
         <doc>The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
@@ -124,7 +135,7 @@ class Bar(Stem):
     # self.size
     
     def _get_size(self):
-        return abs(self.parent.p.y - self.point.p.y)
+        return abs(self.parent[1] - self.point[1])
     size = property(_get_size)
     
     def _get_nearestPoint(self):
@@ -147,25 +158,8 @@ class Bar(Stem):
 
     nearestPoint = property(_get_nearestPoint)
 
-class BlueBar(object):
-
-    def __init__(self, y, h, glyphName=None, offset=None):
-        self.x = 0
-        self._y = y
-        self.h = h
-        self.offset = offset or (0,0) # Optional offset (dx, dy) tuple, e.g. used for stems derived from component references.
-        self.glyphName = glyphName
-
-    def __repr__(self):
-        if self.offset in (None, (0,0)):
-             return '[%s.%s: %s --> %s]' % (self.glyphName, self.__class__.__name__, self.y, self.h)
-        return '[%s.%s: %s+%s --> %s+%d]' % (self.glyphName, self.__class__.__name__, self.y, self.offset[0], self.y+self.h, self.offset[1])
-
-    # self.y    Answers the tuple of both y values, shifted by y-offset    
-    def _get_y(self):
-        return self._y + self.offset[1]
-    y = property(_get_y)
-
+class BlueBar(Bar):
+    pass
 
 class VerticalCounter(Bar):
 
