@@ -15,21 +15,23 @@
 #
 #     Implements a PageBot font classes to get info from a TTFont.
 #
+from AppKit import NSBezierPath
 import weakref
 
 from pagebot.toolbox.transformer import point2D, asInt
 from apointcontextlist import Vertical, Horizontal
-from stems import Stem, Bar, BlueBar, Counter, VerticalCounter
+from stems import Stem, Bar, Counter, VerticalCounter
 
 SPANSTEP = 4
 
 class GlyphAnalyzer(object):
 
+    FUZZ = 4 # Default amount that a value can be off while treated the same.
+
     VERTICAL_CLASS = Vertical # Allow inheriting classes to change this
     HORIZONTAL_CLASS = Horizontal
     STEM_CLASS = Stem
     BAR_CLASS = Bar
-    BLUEBAR_CLASS = BlueBar
     COUNTER_CLASS = Counter
     VERTICAL_COUNTER_CLASS = VerticalCounter
 
@@ -48,7 +50,11 @@ class GlyphAnalyzer(object):
         self._roundBars = None # Recognized round bars.
         self._straightRoundBars = None # Bars with round on one side and straight on the other size.
         self._allBars = None # Collection of all types of bars
-        self._blueBars = None # Tuple of 3 bars for minY->up, baseline->up, maxY->down.
+
+        self._blueBars = None # Collect bloeBars from H on property call.
+        self._bottomBlueBar = None
+        self._baselineBlueBar = None
+        self._topBlueBar = None
 
         # User defined dimensions, overruling automatic analyzer dimensions (UFO only)
         self._dimensions = None
@@ -59,15 +65,26 @@ class GlyphAnalyzer(object):
 
     # self.glyph    Weakref to the glyph
     def _get_glyph(self):
-        return self._glyph()
+        return self._glyph() # Can be None, in case of broken weakref.
     def _set_glyph(self, glyph):
         # Set the weakref to the glyph
         self._glyph = weakref.ref(glyph)
     glyph = property(_get_glyph, _set_glyph)
 
     def _get_font(self):
-        return self.glyph.font
+        glyph = self.glyph
+        if glyph is not None:
+            return self.glyph.font
+        return None # Could not find glyph, maybe broken weakref.
     font = property(_get_font)
+
+    def _get_parent(self):
+        u"""Answer the analyzer of the parent font."""
+        font = self.font
+        if font is not None:
+            return font.analyzer
+        return None # Could not find font, maybe broken weakref.
+    parent = property(_get_parent)
 
     def __repr__(self):
         return '<Analyzer of %s[%s]>' % (self.font.info.fullName, self.name)
@@ -84,6 +101,35 @@ class GlyphAnalyzer(object):
             self._dimensions = [] # User defined dimension references, overruling analyzer findings (UFO only)
         return self._dimensions
     dimensions = property(_get_dimensions)
+
+    def _det(a, b):
+        return a[0] * b[1] - a[1] * b[0]
+
+    def intersectWithLine(self, line):
+        u"""Answer the list of intersecting points between the straight line and the flatteded glyph path."""
+        intersections = []
+
+        def det(a, b):
+            return a[0] * b[1] - a[1] * b[0]
+
+        for contour in self.glyph.flattenedPathPoints:
+            for n in range(len(contour)):
+                pLine = contour[n-1:n]
+                (px0, py0), (px1, py1) = pLine
+                if minY > max(py0, py1) or maxY < min(py0, py1) or minX > max(px0, px1) or maxX < min(px0, px1):
+                    continue # Skip if boundings boxes don't overlap.
+
+                xdiff = (line[0][0] - line[1][0], pLine[0][0] - pLine[1][0])
+                ydiff = (line[0][1] - line[1][1], pLine[0][1] - pLine[1][1]) 
+
+                div = det(xdiff, ydiff)
+                if div == 0:
+                   continue # No intersection
+
+                d = (det(*line1), det(*line2))
+                intersections.append((det(d, xdiff) / div, det(d, ydiff) / div))
+
+        return intersections
 
     #   V E R T I C A L S
 
@@ -125,33 +171,6 @@ class GlyphAnalyzer(object):
                     horizontals[pc.y] = self.HORIZONTAL_CLASS()
                 horizontals[pc.y].append(pc)
 
-    def _get_blueBars(self):
-        u"""If not self._blueBars defined, make the 3: minY->up, baseline->up and maxY->down."""
-        if self._blueBars is None:
-            gaH = self.font['H'].analyzer # Works even if self.name == 'H', as blueBars are lazy.
-            bar = min(sorted(gaH.bars.keys()))
-            self._bottomBlueBar = self.BLUEBAR_CLASS((0, self.minY), (0, self.minY+bar), self.name, name='bottom')
-            self._baselineBlueBar = self.BLUEBAR_CLASS((0, 0), (0, bar), self.name, name='baseline')
-            self._topBlueBar = self.BLUEBAR_CLASS((0, self.maxY), (0, self.maxY-bar), self.name, name='top')
-            self._blueBars = {self.minY: self._topBlueBar, 0: self._baselineBlueBar, self.maxY: self._topBlueBar}
-        return self._blueBars
-    blueBars = property(_get_blueBars)
-
-    def _get_bottomBlueBar(self):
-        self._get_blueBars() # Make sure they are initialized.
-        return self._bottomBlueBar
-    bottomBlueBar = property(_get_bottomBlueBar)
-    
-    def _get_baselineBlueBar(self):
-        self._get_blueBars() # Make sure they are initialized.
-        return self._baselineBlueBar
-    baselineBlueBar = property(_get_baselineBlueBar)
-    
-    def _get_topBlueBar(self):
-        self._get_blueBars() # Make sure they are initialized.
-        return self._topBlueBar
-    topBlueBar = property(_get_topBlueBar)
-    
     #   B L A C K
 
     def spanRoundsOnBlack(self, pc0, pc1):
@@ -294,7 +313,7 @@ class GlyphAnalyzer(object):
                         if self.isStem(pc0, pc1):
                             # Add this stem to the result.
                             stem = self.STEM_CLASS(pc0, pc1, self.glyph.name)
-                            size = TX.asInt(stem.size) # Make sure not to get floats as key
+                            size = asInt(stem.size) # Make sure not to get floats as key
                             if not size in stems:
                                 stems[size] = []
                             stems[size].append(stem)
@@ -303,7 +322,7 @@ class GlyphAnalyzer(object):
                             # If either of the point context is a curve extreme
                             # then count this stem as round stem
                             stem = self.STEM_CLASS(pc0, pc1, self.glyph.name)
-                            size = TX.asInt(stem.size) # Make sure not to get floats as key
+                            size = asInt(stem.size) # Make sure not to get floats as key
                             if not size in roundStems:
                                 roundStems[size] = []
                             roundStems[size].append(stem)
@@ -312,7 +331,7 @@ class GlyphAnalyzer(object):
                             # If one side is straight and the other side is round extreme
                             # then count this stem as straight round stem.
                             stem = self.STEM_CLASS(pc0, pc1, self.glyph.name)
-                            size = TX.asInt(stem.size) # Make sure not to get floats as key
+                            size = asInt(stem.size) # Make sure not to get floats as key
                             if not size in straightRoundStems:
                                 straightRoundStems[size] = []
                             straightRoundStems[size].append(stem)
@@ -356,6 +375,15 @@ class GlyphAnalyzer(object):
             self.findStems() # Cache finds of both stems and round stems
         return self._straightRoundStems
     straightRoundStems = property(_get_straightRoundStems)
+
+    def getBeamStems(self, y=None):
+        u"""Calculate the stem by a horizontal beam through the middle of the bounding box.
+        This works best with the capital I. The value is uncached and should only be used if
+        normal stem detection fails. Or in case of italic."""
+        if y is None:
+            y = (self.maxY - self.minY)/2
+        line = ((-10000, y), (10000, y))
+        return self.intersectWithLine(line)
 
     def isPortrait(self, pc0, pc1):
         u"""Stems are supposed to be portrait within the FUZZ range. May not
@@ -461,9 +489,9 @@ class GlyphAnalyzer(object):
         the kind of vertices that we are looking for."""
         horizontals = self.horizontals
         self._bars = bars = {}
-        # BlueBars are derived from bars, separate property
+        # BlueBars by separate property call
         self._roundBars = roundBars = {}
-        self._straighRoundBars = straightRoundBars = {}
+        self._straightRoundBars = straightRoundBars = {}
         self._verticalCounters = verticalCounters = {}
         self._verticalRoundCounters = verticalRoundCounters = {}
         self._verticalMixedCounters = verticalMixedCounters = {}
@@ -471,11 +499,11 @@ class GlyphAnalyzer(object):
 
 
         checked = set() # Store what we checked, to avoid doubles in the loops
-        hints = self.hints
-        if hints:
-            for hint in hints:
-                if self.C.FLOQMEME_BAR in hint['types']: # Is this this hint defining a stem?
-                    bar = self.BARCLASS(hint['pc0'], hint['pc1'], self.glyph.name)
+        dimensions = self.dimensions
+        if dimensions:
+            for dimension in dimensions: # UFO only, needs to be written.
+                if self.FLOQMEME_BAR in dimensions['types']: # Is this this dimension defining a stem?
+                    bar = self.BAR_CLASS(dimensions['pc0'], dimensions['pc1'], self.glyph.name)
                     size = bar.size
                     if not size in bars:
                         bars[size] = []
@@ -502,8 +530,8 @@ class GlyphAnalyzer(object):
                             # and test if this pair is spanning a black space and not covered in black.
                             if self.isBar(pc0, pc1):
                                 # Add this bar to the result.
-                                bar = self.BARCLASS(pc0, pc1, self.glyph.name)
-                                size = TX.asInt(bar.size) # Make sure not to get floats as keys
+                                bar = self.BAR_CLASS(pc0, pc1, self.glyph.name)
+                                size = asInt(bar.size) # Make sure not to get floats as keys
                                 if not size in bars:
                                     bars[size] = []
                                 bars[size].append(bar)
@@ -511,7 +539,7 @@ class GlyphAnalyzer(object):
                             elif self.isRoundBar(pc0, pc1):
                                 # If either of the point context is a curve extreme
                                 # then count this bar as round bar
-                                bar = self.BARCLASS(pc0, pc1, self.glyph.name)
+                                bar = self.BAR_CLASS(pc0, pc1, self.glyph.name)
                                 size = asInt(bar.size) # Make sure not to get floats as keys
                                 if not size in roundBars:
                                     roundBars[size] = []
@@ -520,17 +548,17 @@ class GlyphAnalyzer(object):
                             elif self.isStraightRoundBar(pc0, pc1):
                                 # If one side is straight and the other side is round extreme
                                 # then count this stem as straight round bar.
-                                bar = self.BARCLASS(pc0, pc1, self.glyph.name)
+                                bar = self.BAR_CLASS(pc0, pc1, self.glyph.name)
                                 size = asInt(bar.size) # Make sure not to get floats as key
-                                if not size in straightRoundars:
+                                if not size in straightRoundBars:
                                     straightRoundBars[size] = []
                                 straightRoundBars[size].append(bar)
 
                             elif self.isVerticalCounter(pc0, pc1):
                                 # If there is just white space between the points and they are some kind of extreme,
                                 # then assume this is a counter.
-                                counter = self.VCOUNTERCLASS(pc0, pc1, self.glyph.name)
-                                size = TX.asInt(counter.size)
+                                counter = self.VERTICAL_COUNTER_CLASS(pc0, pc1, self.glyph.name)
+                                size = asInt(counter.size)
                                 
                                 if pc0.isHorizontalExtreme() and pc1.isHorizontalExtreme():
                                     if not size in vierticalCounters:
@@ -551,6 +579,22 @@ class GlyphAnalyzer(object):
 
         return self._bars
 
+    def isBar(self, pc0, pc1):
+        u"""
+        The <b>isBar</b> method takes the point contexts <i>pc0</i> and
+        <i>pc1</i> to compare if the can be defined as a “bar”: if two point
+        contexts have overlap in the horizontal directions if the line between
+        them is entirely on black, and if the lines are not entirely covered in
+        black.
+        """
+        return not pc0.isVerticalRoundExtreme()\
+            and not pc1.isVerticalRoundExtreme()\
+            and pc0.isHorizontal() and pc1.isHorizontal()\
+            and self.isVerticalSpanInRange(pc0, pc1, self.font.info.capHeight/2)\
+            and self.middleLineOnBlack(pc0, pc1)\
+            and self.overlappingLinesInWindowOnBlack(pc0, pc1)
+            #and (not self.pointCoveredInBlack(pc0) or not self.pointCoveredInBlack(pc1))
+
     # self.roundBars
     def _get_roundBars(self):
         if self._roundBars is None:
@@ -564,6 +608,10 @@ class GlyphAnalyzer(object):
             self.findBars() # Cache finds of both bars and round bars
         return self._straightRoundBars
     straightRoundBars = property(_get_straightRoundBars)
+
+    def isVerticalSpanInRange(self, pc0, pc1, dy):
+        u"""Check for vertical spans to be within dy range."""
+        return abs(pc0.p.y - pc1.p.y) < dy
 
     def isLandscape(self, pc0, pc1):
         u"""Bars are supposed to be landscape within the FUZZ range. May not
@@ -615,6 +663,38 @@ class GlyphAnalyzer(object):
                     self._allBars[value].append(straightRoundBar)
         return self._allBars
     allBars = property(_get_allBars)
+
+    #   B L U E B A R S
+
+    def _get_blueBars(self):
+        u"""If not self._blueBars defined, make the 3: minY->up, baseline->up and maxY->down."""
+        if self._blueBars is None:
+            gaH = self['H'] # Seperate from blueBars property, so no recursion problem.
+            if gaH.bars: # Check if there were any bars found for 'H'
+                bar = min(sorted(gaH.bars.keys()))
+            else: # Otherwise take an arbitrary number for now.
+                bar = self.font.info.unitsPerEm/20
+            self._bottomBlueBar = self.BLUEBAR_CLASS((0, self.minY), (0, self.minY+bar), self.name, name='bottom')
+            self._baselineBlueBar = self.BLUEBAR_CLASS((0, 0), (0, bar), self.name, name='baseline')
+            self._topBlueBar = self.BLUEBAR_CLASS((0, self.maxY), (0, self.maxY-bar), self.name, name='top')
+            self._blueBars = {self.minY: self._topBlueBar, 0: self._baselineBlueBar, self.maxY: self._topBlueBar}
+        return self._blueBars
+    blueBars = property(_get_blueBars)
+
+    def _get_bottomBlueBar(self):
+        self._get_blueBars() # Make sure they are initialized.
+        return self._bottomBlueBar
+    bottomBlueBar = property(_get_bottomBlueBar)
+    
+    def _get_baselineBlueBar(self):
+        self._get_blueBars() # Make sure they are initialized.
+        return self._baselineBlueBar
+    baselineBlueBar = property(_get_baselineBlueBar)
+    
+    def _get_topBlueBar(self):
+        self._get_blueBars() # Make sure they are initialized.
+        return self._topBlueBar
+    topBlueBar = property(_get_topBlueBar)
 
     #   P O I N T S
 
