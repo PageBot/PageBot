@@ -98,10 +98,12 @@ class Glyph(object):
         self._contours = None
         self._segments = None
         self._components = None
-        self._path = None
+        self._path = None # "Expensive", create self.path property value on initialize.
+        self._flattenedPath = None # "More expensive", create property value upon request.
+        self._flattenedPathPoints = None # "More expensive", create property value upon request.
         self._analyzer = None # Initialized upon property self.analyzer usage.
         self._axisDeltas = None # Caching for AxisDeltas instances.
-        self._boundingBox = None
+        self._boundingBox = None # Initialized on property call.
 
     def __eq__(self, g):
         return self.font is g.font and self.name == g.name
@@ -121,7 +123,6 @@ class Glyph(object):
         self._contours = []
         self._components = []
         self._segments = []
-        self._drawPath = None
         self._boundingBox = None
 
         coordinates = self.coordinates
@@ -137,7 +138,7 @@ class Glyph(object):
         maxX = maxY = -sys.maxint
 
         if coordinates or components:
-            # TODO: Needs context for DrawBot/Flex
+            # TODO: Needs context for DrawBot/Flex usage
             self._path = path = BezierPath()
 
         for index, (x, y) in enumerate(coordinates):
@@ -186,6 +187,32 @@ class Glyph(object):
 
         self._points4 = self._points[:] + [APoint((minX, 0)), APoint((0, minY)), APoint((maxX, 0)), APoint((0, maxY))]
         self._boundingBox = (minX, minY, maxX, maxY)
+
+    def _get_flattenedPath(self):
+        u"""Answer the flattened NSBezier path. 
+        TODO: Needs to get DrawBotContext reference, and Flex equivalent."""
+        if self._flattenedPath is None:
+            self._flattenedPath = self.path.getNSBezierPath().bezierPathByFlatteningPath()
+        return self._flattenedPath
+    flattenedPath = property(_get_flattenedPath)
+
+    def _get_flattenedPathPoints(self):
+        u"""Answer the flattened NSBezier path As contour list [contour, contour, ...] where
+        contours are lists of point2D() points.
+        TODO: Needs to get DrawBotContext reference, and Flex equivalent."""
+        if self._flattenedPathPoints is None:
+            contour = []
+            self._flattenedPathPoints = [contour]
+            flatPath = self.flattenedPath
+            for index in range(flatPath.elementCount()): # Typical NSBezierPath size + index call. 
+                p = flatPath.elementAtIndex_associatedPoints_(index)[1]
+                if p:
+                    contour.append((p[0].x, p[0].y)) # Make point2D() tuples.
+                else:
+                    contour = []
+                    self._flattenedPathPoints.append(contour)
+        return self._flattenedPathPoints
+    flattenedPathPoints = property(_get_flattenedPathPoints)
 
     #def _get_drawPath(self):
     #    u"""Answer the cached Cocoa drawing path. If it does not yet exist, create it first and cache it."""

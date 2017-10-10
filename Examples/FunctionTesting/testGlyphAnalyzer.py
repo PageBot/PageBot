@@ -27,7 +27,7 @@ paths = [
 for path in paths:
     font = Font(path, install=False)
     EM = font.info.unitsPerEm
-    gaH = GlyphAnalyzer(font, 'H')
+    gaH = GlyphAnalyzer(font['H'])
 
     for gName in ('H', 'O'):
         newPage(EM, EM)
@@ -36,9 +36,15 @@ for path in paths:
         fontSize(24)
         text(path, (0, -EM/20))
     
-        ga = GlyphAnalyzer(font, gName)
+        ga = GlyphAnalyzer(font[gName])
         #print ga.glyph.points
-    
+        #for contour in ga.glyph.flattenedPathPoints:
+        #    print '===Contour'
+        #    for p in contour:
+        #        print '    ', p
+        line = (-10000, 400), (10000, 400)
+        print ga.intersectWithLine(line)
+        
         strokeWidth(3)
         stroke(0.6)
         fill(0.92)

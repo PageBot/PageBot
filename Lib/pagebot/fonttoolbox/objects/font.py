@@ -21,6 +21,8 @@
 #     We'll call this class "Font" instead of "Style" (as in other TypeNetwerk tool code),
 #     to avoid confusion with the PageBot style dictionary, which hold style parameters.
 #
+# TODO: This only works in DrawBotContext now. Needs to be changed to work under FlexContext
+
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
@@ -93,7 +95,7 @@ class Font(object):
     GLYPH_CLASS = Glyph
     FONTANALYZER_CLASS = FontAnalyzer
 
-    def __init__(self, path, name=None, install=True, opticalSize=None, location=None, styleName=None):
+    def __init__(self, path, name=None, install=True, opticalSize=None, location=None, styleName=None, lazy=True):
         u"""Initialize the TTFont, for which Font is a wrapper. Default is to
         install the font in DrawBot.
 
@@ -107,7 +109,7 @@ class Font(object):
         else:
             self.installedName = None # Set to DrawBot name, if installing later.
         try:
-            self.ttFont = TTFont(path, lazy=True)
+            self.ttFont = TTFont(path, lazy=lazy)
             # TTFont is available as lazy style.info.font
             self.info = FontInfo(self.ttFont)
             self.info.opticalSize = opticalSize # Optional optical size, to indicate where this Variable Font is rendered for.

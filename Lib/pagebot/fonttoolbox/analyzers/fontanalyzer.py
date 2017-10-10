@@ -22,14 +22,17 @@ class FontAnalyzer(object):
 
     def __init__(self, font):
         self.font = font
-        self._stems = [] # Collect stems of H
+        # Cached stems
+        self._stems = None # Collect stems from H on property call.
+        # Cached bars
+        self._bars = None
 
     def __repr__(self):
         return '<Analyzer of %s>' % self.font.info.fullName
 
     def __getitem__(self, glyphName):
         u"""Answer the glyph analyzer of glyphName."""
-        return self[glyphName].analyzer
+        return self.font[glyphName].analyzer
 
     def _get_name(self):
         return path2Name(self.font.path)
@@ -43,8 +46,26 @@ class FontAnalyzer(object):
         self._font = weakref.ref(font)
     font = property(_get_font, _set_font)
 
+    #   S T E M S
+
     def _get_stems(self):
         if self._stems is None:
             self._stems = self['H'].stems
-        return self._stems
+        # If no stems found in H or not reliable amount, then do second guess with "I"
+        if not self._stems or len(self._stems) != 2: 
+            self._stems = self['I'].stems
+        # No stems found by verticals, try beaming the I
+        if not self._stems or len(self._stems) != 1:
+            # This will still not catch on outlines or flourishes, but better that nothing.
+            self._stems = self['I'].beamStems 
+        return self._stems # If still empty, give up for now.
     stems = property(_get_stems)
+
+    #    B A R S
+
+    def _get_bars(self):
+        if self._bars is None:
+            self._bars = self['H'].bars
+        return self._bars
+    bars = property(_get_bars)
+

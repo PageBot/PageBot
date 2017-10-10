@@ -13,7 +13,7 @@
 #
 #     family.py
 #
-#     Implements a family collestion of Style instances.
+#     Implements a family collection of Font instances.
 #
 from drawBot import installedFonts
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
