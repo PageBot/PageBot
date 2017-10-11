@@ -115,6 +115,16 @@ class DrawBotContext(BaseContext):
 
     #   G R A D I E N T  &  S H A D O W
 
+    def setShadow(self, eShadow):
+        u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this
+        method with self._resetShadow()"""
+        b = self.b
+        if eShadow is not None and eShadow.offset is not None:
+            if eShadow.cmykColor is not None:
+                b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
+            else:
+                b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.color)
+
     def setGradient(self, gradient, e, origin):
         u"""Define the gradient call to match the size of element e., Gradient position
         is from the origin of the page, so we need the current origin of e."""
