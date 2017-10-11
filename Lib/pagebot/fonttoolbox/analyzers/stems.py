@@ -21,8 +21,8 @@ class Stem(object):
 
     def __init__(self, parent, point, glyphName=None, offset=None, name=None):
         u"""Parent and point can be point or point context, depending on available data and usage."""
-        assert parent is None or isinstance(parent, (tuple, list, APoint, APointContext))
-        assert point is None or isinstance(point, (tuple, list, APoint, APointContext))
+        assert parent is None or isinstance(parent, (tuple, list, APointContext))
+        assert point is None or isinstance(point, (tuple, list, APointContext))
         self.parent = parent
         self.point = point
         self.offset = offset or (0,0) # Optional offset (dx, dy) tuple, e.g. used for stems derived from component references.

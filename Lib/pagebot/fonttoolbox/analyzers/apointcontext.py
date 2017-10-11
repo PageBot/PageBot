@@ -13,13 +13,20 @@
 #
 #     pointcontext.py
 #
+#     Naming of "context" here has not relation with DrawBotContext/FlexContext.
+#     It is glyph contour pints with its +3 and -3 neighbors, combined into one point.
+#     This way users can easily see the progression of lines through a points and
+#     test on vertical/horizontal directions.
+#     The 7 contained points can be of type point2D (x,y)-tuple, or APoint instances.
+#
 import math
 from pagebot.toolbox.mathematics import *
 from apoint import APoint
 
 def calculateAngle(p1, p2, inDegrees=True):
     u"""Calculate the angle between points p1 and p2. Points can be either 2D or 3D 
-    point tuples or Point instances."""
+    point tuples or Point instances. In the case of Point3D, only the 2D projection
+    in (x, y) plane is calculated."""
     xDiff = p2[0] - p1[0]
     yDiff = p2[1] - p1[1]
     angle = math.atan2(yDiff, xDiff)
@@ -28,7 +35,9 @@ def calculateAngle(p1, p2, inDegrees=True):
     return angle
 
 def angleOfLines(p1, p2, q1, q2, inDegrees=True):
-    u"""Answer the angle difference (radials or default degrees) between p1-->p2 and q1-->q2."""
+    u"""Answer the angle difference (radials or default degrees) between p1-->p2 and q1-->q2.
+    Points can be either 2D or 3D point tuples or Point instances. 
+    In the case of Point3D, only the 2D projection in (x, y) plane is calculated."""
     angle1 = calculateAngle(p1, p2, inDegrees)
     angle2 = calculateAngle(q1, q2, inDegrees)
     angle = angle2 - angle1
@@ -40,15 +49,17 @@ class APointContext(object):
     u"""The PointContext instance is a Point wrapper, that also takes the 3 points previous
     and next 3 points on the contour. The instance behaves like a normal point p, but
     additional information is available as interpreted from the point context in relation 
-    to the neighbor points. The total of 6 points is derived
+    to the neighbor points. The total of 7 points is derived
     from the average construction of a serif, so it is possible to hold (and interpret) an 
     entire serif sequence inside one point context.
     """
     PARALLEL_TOLERANCE = 2 # Difference tolerance angle in degrees to take point contexts as parallel
     
-    def __init__(self, points, index, contourIndex, clockwise=None, glyphName=None):
+    def __init__(self, points, index=None, contourIndex=None, clockwise=None, glyphName=None):
         u"""Points list is supposed to contain Point instances, not point lists.
         We need the extra storage, e.g. for point type that Point holds."""
+        if len(points) != 7:
+            print points
         self.p_3, self.p_2, self.p_1, self.p, self.p1, self.p2, self.p3 = points
         self.contourIndex = contourIndex
         self.index = index
@@ -123,14 +134,14 @@ class APointContext(object):
             p = self.p
         if isinstance(p, APoint):
             return not p.onCurve
-        return False # Point2D type is always on-curve.
+        return False # Point2D type is always on-curve by definition.
 
     def isOnCurve(self, p=None):
         if p is None:
             p = self.p
         if isinstance(p, APoint):
             return p.onCurve
-        return True # Point2D type is always on-curve.
+        return True # Point2D type is always on-curve by definition.
 
     def isUp(self):
         return self.p.y < self.p1.y
