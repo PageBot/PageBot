@@ -15,8 +15,11 @@
 #
 #     Implements a PageBot font classes to get info from a TTFont.
 #
-from AppKit import NSBezierPath
+import sys
 import weakref
+
+# TODO: Import needs to be done inside DrawBotContext
+from AppKit import NSBezierPath
 
 from pagebot.toolbox.transformer import point2D, asInt
 from apointcontextlist import Vertical, Horizontal
@@ -395,7 +398,7 @@ class GlyphAnalyzer(object):
         normal stem detection fails. Or in case of italic."""
         if y is None:
             y = (self.maxY - self.minY)/2
-        line = ((-10000, y), (10000, y))
+        line = ((-sys.maxint, y), (sys.maxint, y))
         return self.intersectWithLine(line)
 
     def isPortrait(self, pc0, pc1):
