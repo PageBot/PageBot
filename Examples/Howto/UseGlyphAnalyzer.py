@@ -18,11 +18,10 @@
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts import defaultContext as c
 
-newPage(1000, 1000)
 font = Font('/Library/Fonts/Georgia.ttf')
 print font.analyzer 
 print font.analyzer.name 
-glyphH = font['ampersand']
+glyphH = font['H']
 gaH = glyphH.analyzer
 print gaH
 print 'H width:', gaH.width, gaH.glyph.width, glyphH.width
@@ -31,3 +30,6 @@ print 'H bounding box:', gaH.boundingBox
 print 'x-position of verticals:', sorted(gaH.verticals.keys())
 # Y position of horizontal lines
 print 'y-position of horizontals:', sorted(gaH.horizontals.keys())
+
+# SHow the stems as derived from a beam on y=200 from baseline.
+print gaH.getBeamStems(200)

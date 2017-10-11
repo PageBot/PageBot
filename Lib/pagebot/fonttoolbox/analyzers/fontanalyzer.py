@@ -49,15 +49,16 @@ class FontAnalyzer(object):
     #   S T E M S
 
     def _get_stems(self):
-        if self._stems is None:
+        if self._stems is None and 'H' in self.font:
             self._stems = self['H'].stems
-        # If no stems found in H or not reliable amount, then do second guess with "I"
-        if not self._stems or len(self._stems) != 2: 
-            self._stems = self['I'].stems
-        # No stems found by verticals, try beaming the I
-        if not self._stems or len(self._stems) != 1:
-            # This will still not catch on outlines or flourishes, but better that nothing.
-            self._stems = self['I'].beamStems 
+        if 'I' in self.font: # Check if there is a "I" in the font anyway
+            # If no stems found in H or not reliable amount, then do second guess with "I", if it exists
+            if not self._stems or len(self._stems) != 2: 
+                self._stems = self['I'].stems
+            # No stems found by verticals, try beaming the I
+            if not self._stems or len(self._stems) != 1:
+                # This will still not catch on outlines or flourishes, but better that nothing.
+                self._stems = self['I'].getBeamStems() 
         return self._stems # If still empty, give up for now.
     stems = property(_get_stems)
 

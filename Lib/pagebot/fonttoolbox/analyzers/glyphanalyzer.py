@@ -24,6 +24,7 @@ from AppKit import NSBezierPath
 from pagebot.toolbox.transformer import point2D, asInt
 from apointcontextlist import Vertical, Horizontal
 from stems import Stem, Bar, Counter, VerticalCounter
+from apoint import APoint 
 
 SPANSTEP = 4
 
@@ -117,8 +118,8 @@ class GlyphAnalyzer(object):
         return a[0] * b[1] - a[1] * b[0]
 
     def intersectWithLine(self, line):
-        u"""Answer the list of intersecting points between the straight line and the flatteded glyph path."""
-        intersections = []
+        u"""Answer the sorted set of intersecting points between the straight line and the flatteded glyph path."""
+        intersections = set() # As set,  make sure to remove any doubles.
 
         def det(a, b):
             return a[0] * b[1] - a[1] * b[0]
@@ -143,9 +144,10 @@ class GlyphAnalyzer(object):
                    continue # No intersection
 
                 d = (det(*line), det(*pLine))
-                intersections.append((det(d, xdiff) / div, det(d, ydiff) / div))
+                intersections.add((det(d, xdiff) / div, det(d, ydiff) / div))
 
-        return intersections
+        # Answer the set as sorted list, increasing x, from left to right.
+        return sorted(intersections)
 
     #   V E R T I C A L S
 
@@ -396,10 +398,29 @@ class GlyphAnalyzer(object):
         u"""Calculate the stem by a horizontal beam through the middle of the bounding box.
         This works best with the capital I. The value is uncached and should only be used if
         normal stem detection fails. Or in case of italic."""
+        beamStems = {}
         if y is None:
             y = (self.maxY - self.minY)/2
         line = ((-sys.maxint, y), (sys.maxint, y))
-        return self.intersectWithLine(line)
+        # Get intersections with this line. We can assume they are sorted set by x value
+        intersections = self.intersectWithLine(line)
+        # If no intersections or just one, give up.
+        if len(intersections) < 2:
+            return None
+        # Now make Stem instance from these values, as if they we Verticals positions.
+        # The difference is that we only have points, not point contexts here,
+        # but for limited use that should not make a difference for entry in a Stem
+        for n in range(0, len(intersections), 2):
+            # Add this stem to the result.
+            p0 = APoint(intersections[n])
+            p1 = APoint(intersections[n+1])
+            print p0, p1
+            stem = self.STEM_CLASS(p0, p1, self.glyph.name)
+            size = asInt(stem.size) # Make sure not to get floats as key
+            if not size in beamStems:
+                beamStems[size] = []
+            beamStems[size].append(stem)
+        return beamStems
 
     def isPortrait(self, pc0, pc1):
         u"""Stems are supposed to be portrait within the FUZZ range. May not
