@@ -95,6 +95,14 @@ class GlyphAnalyzer(object):
         return self.glyph.width
     width = property(_get_width)
 
+    def _get_leftMargin(self):
+        return self.glyph.minX
+    leftMargin = property(_get_leftMargin)
+
+    def _get_rightMargin(self):
+        return self.glyph.width - self.glyph.maxX
+    rightMargin = property(_get_rightMargin)
+
     def _get_dimensions(self):
         if self._dimensions is None:
             # TODO: Needs to be written
@@ -112,9 +120,14 @@ class GlyphAnalyzer(object):
         def det(a, b):
             return a[0] * b[1] - a[1] * b[0]
 
-        for contour in self.glyph.flattenedPathPoints:
+        (lx0, ly0), (lx1, ly1) = line
+        maxX = max(lx0, lx1)
+        minX = min(lx0, lx1)
+        maxY = max(ly0, ly1)
+        minY = min(ly0, ly1)
+        for contour in self.glyph.flattenedContours:
             for n in range(len(contour)):
-                pLine = contour[n-1:n]
+                pLine = contour[n], contour[n-1]
                 (px0, py0), (px1, py1) = pLine
                 if minY > max(py0, py1) or maxY < min(py0, py1) or minX > max(px0, px1) or maxX < min(px0, px1):
                     continue # Skip if boundings boxes don't overlap.
@@ -126,7 +139,7 @@ class GlyphAnalyzer(object):
                 if div == 0:
                    continue # No intersection
 
-                d = (det(*line1), det(*line2))
+                d = (det(*line), det(*pLine))
                 intersections.append((det(d, xdiff) / div, det(d, ydiff) / div))
 
         return intersections

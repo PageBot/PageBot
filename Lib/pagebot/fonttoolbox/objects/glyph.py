@@ -100,7 +100,7 @@ class Glyph(object):
         self._components = None
         self._path = None # "Expensive", create self.path property value on initialize.
         self._flattenedPath = None # "More expensive", create property value upon request.
-        self._flattenedPathPoints = None # "More expensive", create property value upon request.
+        self._flattenedContours = None # "More expensive", create property value upon request.
         self._analyzer = None # Initialized upon property self.analyzer usage.
         self._axisDeltas = None # Caching for AxisDeltas instances.
         self._boundingBox = None # Initialized on property call.
@@ -196,29 +196,24 @@ class Glyph(object):
         return self._flattenedPath
     flattenedPath = property(_get_flattenedPath)
 
-    def _get_flattenedPathPoints(self):
+    def _get_flattenedContours(self):
         u"""Answer the flattened NSBezier path As contour list [contour, contour, ...] where
         contours are lists of point2D() points.
         TODO: Needs to get DrawBotContext reference, and Flex equivalent."""
-        if self._flattenedPathPoints is None:
+        if self._flattenedContours is None:
             contour = []
-            self._flattenedPathPoints = [contour]
+            self._flattenedContours = [contour]
             flatPath = self.flattenedPath
             for index in range(flatPath.elementCount()): # Typical NSBezierPath size + index call. 
                 p = flatPath.elementAtIndex_associatedPoints_(index)[1]
                 if p:
-                    contour.append((p[0].x, p[0].y)) # Make point2D() tuples.
+                    contour.append((p[0].x, p[0].y)) # Make point2D() tuples, no need to add point type, all onCurve.
                 else:
                     contour = []
-                    self._flattenedPathPoints.append(contour)
-        return self._flattenedPathPoints
-    flattenedPathPoints = property(_get_flattenedPathPoints)
-
-    #def _get_drawPath(self):
-    #    u"""Answer the cached Cocoa drawing path. If it does not yet exist, create it first and cache it."""
-    #    if self._drawPath is None:
-    #        pen = CocoaPen(None)
-            
+                    self._flattenedContours.append(contour)
+        return self._flattenedContours
+    flattenedContours = property(_get_flattenedContours)
+          
     def getAxisDeltas(self):
         u"""Answer dictionary of axis-delta relations. Key is axis name, value is an *AxisDeltas* instance.
         The instance containse (minValue, defaultValue, maxValue) keys, holding the sets of deltas for the
@@ -305,16 +300,25 @@ class Glyph(object):
         except KeyError:
             return None # Glyph is undefined in hmtx table.
     def _set_width(self, width):
+        u"""TODO: Does not seem to work. How about saving the font?"""
         hmtx = list(self.font.ttFont['hmtx'][self.name]) # Keep vertical value
         hmtx[0] = width
         self.font.ttFont['hmtx'][self.name] = hmtx
     width = property(_get_width, _set_width)
 
+    def _get_leftMargin(self):
+        return self.minX
+    leftMargin = property(_get_leftMargin)
+
+    def _get_rightMargin(self):
+        return self.width - self.maxX
+    rightMargin = property(_get_rightMargin)
+
     # Direct TTFont cooridinates compatibility
 
     def _get_coordinates(self):
-        u"""Answers the ttFont.coordinates, if it exists. Otherwise answer None.
-        Note that this is the “raw” list of (x, y) positions, without
+        u"""Answers the ttFont.coordinates, if it exists, as GlyphCoordinates instance. 
+        Otherwise answer None. Note that this is the “raw” list of (x, y) positions, without
         information on contour index or if the point is on/off curve. This
         information is stored in ttFont.endPtsOfContours and ttFont.flags.
         This property is only for low-level access of the coordinates. For
