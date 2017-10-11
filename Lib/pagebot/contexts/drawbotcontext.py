@@ -96,6 +96,23 @@ class DrawBotContext(BaseContext):
     def line(self, p1, p2):
         self.b.line(p1, p2)
 
+    def drawPath(self, path, p=(0,0), sx=1, sy=None):
+        u"""Draw the NSBezierPath, or equivalent in other contexts. Scaled image is drawn on (x, y),
+        in that order."""
+        self.saveGraphicState()
+        if sy is None:
+            sy = sx
+        self.scale(sx, sy)
+        self.b.translate(p[0]/sx, p[1]/sy)
+        self.b.drawPath(path)
+        self.restoreGraphicState()
+
+    def scale(self, sx, sy=None):
+        u"""Set the drawing scale."""
+        if sy is None:
+            sy = sx
+        self.b.scale(sx, sy)
+
     #   G R A D I E N T  &  S H A D O W
 
     def setGradient(self, gradient, e, origin):
@@ -176,6 +193,8 @@ class DrawBotContext(BaseContext):
         else:
             raise ValueError('DrawBotContext.setFillColor: Error in color format "%s"' % repr(c))
 
+    fill = setFillColor # DrawBot compatible API
+
     def setStrokeColor(self, c, w=1, cmyk=False, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         if b is None: # Builder can be optional DrawBot FormattedString
@@ -197,3 +216,6 @@ class DrawBotContext(BaseContext):
         if w is not None:
             b.strokeWidth(w)
 
+    stroke = setStrokeColor # DrawBot compatible API
+
+    
