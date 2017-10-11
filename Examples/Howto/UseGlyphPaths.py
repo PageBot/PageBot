@@ -13,6 +13,10 @@
 #     UseGlyphPaths.py
 #
 #     Implements a PabeBot font classes to get info from a TTFont.
+#     NOTE: This is the first implementation of the code. It is not embedded in
+#     Glyph and GlyphAnalyzer classes.
+#     The code of this exmaple is DEPRECATED from more maintenance and not longer
+#     compatible with Glyph and GlyphAnalyzer
 #   
 import weakref
 from AppKit import NSFont
@@ -321,7 +325,7 @@ from pagebot.fonttoolbox.objects.font import Font
 
 W = H = 1000
 
-PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
+PATH = u"/Library/Fonts/Georgia.ttf"
 cjkF = Font(PATH, install=False)
 cjkF.GLYPH_CLASS = Glyph
 print cjkF.info.familyName, cjkF.info.styleName
@@ -330,7 +334,7 @@ glyphs = []
 start = 16500
 end = 16552
 
-GLYPHS = ('cid05404.1', 'cid05405.1', 'cid05403.1', 'e', 'H', 'O')
+GLYPHS = ('e', 'H', 'O', 'Z')
 #GLYPHS = ('bullet', 'e','h', 'oe')
 #GLYPHS = sorted( cjkF.keys())[start:end]
 for name in GLYPHS:
@@ -383,7 +387,7 @@ for glyph in glyphs:
     print glyph.contours
     save()
     transform((1, 0, 0, 1, 20+x*W/5, H - (y+1)*W/5+20))
-    scale(0.14)
+    scale(0.01)
     fill(None)
     stroke(1, 0, 0)
     #rect(x*W, y*W, H, H)
@@ -398,7 +402,7 @@ for glyph in glyphs:
             newPage(W, H)
             save()
             transform((1, 0, 0, 1, 20+x*W/5, H - (y+1)*W/5+20))
-            scale(0.14)
+            scale(0.01)
     fill(0)
     stroke(None)
     drawPath(glyph.path)
@@ -418,5 +422,4 @@ if 0:
         
 
     #print d
-#f = OpenFont(u'F5MultiLanguageFontVar.ttf', showUI=False)
-#print f
+1
