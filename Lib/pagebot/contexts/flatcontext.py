@@ -153,6 +153,14 @@ class FlatContext(BaseContext):
 
     #   S H A D O W  &  G R A D I E N T
 
+    def setShadow(self, eShadow):
+        u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this
+        method with self._resetShadow()"""
+        pass # Not implemented?
+
+    def resetShadow(self):
+        pass # Not implemented?
+
     def setGradient(self, gradient, e, origin):
         pass # Not implemented?
 

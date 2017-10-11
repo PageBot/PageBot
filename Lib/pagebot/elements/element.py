@@ -1901,31 +1901,32 @@ class Element(object):
         Instead of the DrawBot stroke and strokeWidth attributes, use
         borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
         """
-        context = view.context
-        
+        c = view.context
+        b = c.b # Get builder from context
+
         eShadow = self.shadow
         if eShadow:
-            view.saveGraphicState()
-            view.setShadow(eShadow)
-            b.rect(p[0], p[1], self.w, self.h)
-            view.restoreGraphicState()
+            c.saveGraphicState()
+            c.setShadow(eShadow) 
+            c.rect(p[0], p[1], self.w, self.h)
+            c.restoreGraphicState()
 
         eFill = self.css('fill', None)
         eStroke = self.css('stroke', None)
         eGradient = self.gradient
         if eStroke is not None or eFill is not None or eGradient:
-            context.saveGraphicState()
+            c.saveGraphicState()
             # Drawing element fill and/or frame
             if eGradient: # Gradient overwrites setting of fill.
-                context.setGradient(eGradient, self, p) # Add self to define start/end from relative size.
+                c.setGradient(eGradient, self, p) # Add self to define start/end from relative size.
             else:
-                context.setFillColor(eFill)
-            context.setStrokeColor(eStroke, self.css('strokeWidth', 1))
+                c.setFillColor(eFill)
+            c.setStrokeColor(eStroke, self.css('strokeWidth', 1))
             if self.framePath is not None: # In case defined, use instead of bounding box. 
-                b.drawPath(self.framePath)
+                c.drawPath(self.framePath)
             else:
-                context.rect(p[0], p[1], self.w, self.h)
-            context.restoreGraphicState()
+                c.rect(p[0], p[1], self.w, self.h)
+            c.restoreGraphicState()
 
         # Instead of full frame drawing, check on separate border settings.
         borderTop = self.borderTop
@@ -1934,10 +1935,10 @@ class Element(object):
         borderLeft = self.borderLeft
 
         if borderTop is not None:
-            context.saveGraphicState()
+            c.saveGraphicState()
             if borderTop['dash']:
-                context.lineDash(*borderTop['dash'])
-            context.setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
+                c.lineDash(*borderTop['dash'])
+            c.setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
             if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
@@ -1961,16 +1962,16 @@ class Element(object):
                 oTop = 0
 
             if self.originTop:
-                context.line((p[0]-oLeft, p[1]-oTop), (p[0]+self.w+oRight, p[1]-oTop))
+                c.line((p[0]-oLeft, p[1]-oTop), (p[0]+self.w+oRight, p[1]-oTop))
             else:
-                context.line((p[0]-oLeft, p[1]+self.h+oTop), (p[0]+self.w+oRight, p[1]+self.h+oTop))
-            context.restoreGraphicState()
+                c.line((p[0]-oLeft, p[1]+self.h+oTop), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+            c.restoreGraphicState()
 
         if borderBottom is not None:
-            context.saveGraphicState()
+            c.saveGraphicState()
             if borderBottom['dash']:
-                context.lineDash(*borderBottom['dash'])
-            context.setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
+                c.lineDash(*borderBottom['dash'])
+            c.setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
             if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
@@ -1994,16 +1995,16 @@ class Element(object):
                 oBottom = 0
 
             if self.originTop:
-                context.line((p[0]-oLeft, p[1]+self.h+oBottom), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
+                c.line((p[0]-oLeft, p[1]+self.h+oBottom), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
             else:
-                context.line((p[0]-oLeft, p[1]-oBottom), (p[0]+self.w+oRight, p[1]-oBottom))
-            context.restoreGraphicState()
+                c.line((p[0]-oLeft, p[1]-oBottom), (p[0]+self.w+oRight, p[1]-oBottom))
+            c.restoreGraphicState()
         
         if borderRight is not None:
-            context.saveGraphicState()
+            c.saveGraphicState()
             if borderRight['dash']:
-                context.lineDash(*borderRight['dash'])
-            context.setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
+                c.lineDash(*borderRight['dash'])
+            c.setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
 
             oTop = 0 # Extra offset on top, if there is a top border.
             if borderTop and (borderTop['strokeWidth'] or 0) > 1:
@@ -2027,16 +2028,16 @@ class Element(object):
                 oRight = 0
 
             if self.originTop:
-                context.line((p[0]+self.w+oRight, p[1]-oTop), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
+                c.line((p[0]+self.w+oRight, p[1]-oTop), (p[0]+self.w+oRight, p[1]+self.h+oBottom))
             else:
-                context.line((p[0]+self.w+oRight, p[1]-oBottom), (p[0]+self.w+oRight, p[1]+self.h+oTop))
-            context.restoreGraphicState()
+                c.line((p[0]+self.w+oRight, p[1]-oBottom), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+            c.restoreGraphicState()
 
         if borderLeft is not None:
-            context.saveGraphicState()
+            c.saveGraphicState()
             if borderLeft['dash']:
-                context.lineDash(*borderLeft['dash'])
-            context.setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
+                c.lineDash(*borderLeft['dash'])
+            c.setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
 
             oTop = 0 # Extra offset on top, if there is a top border.
             if borderTop and (borderTop['strokeWidth'] or 0) > 1:
@@ -2060,10 +2061,10 @@ class Element(object):
                 oLeft = 0
 
             if self.originTop:
-                context.line((p[0]-oLeft, p[1]-oTop), (p[0]-oLeft, p[1]+self.h+oBottom))
+                c.line((p[0]-oLeft, p[1]-oTop), (p[0]-oLeft, p[1]+self.h+oBottom))
             else:
-                context.line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
-            context.restoreGraphicState()
+                c.line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
+            c.restoreGraphicState()
 
     #   D R A W B O T  S U P P O R T
 
