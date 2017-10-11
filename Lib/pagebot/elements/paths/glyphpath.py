@@ -21,7 +21,7 @@ class GlyphPath(Path):
 
     def __init__(self, glyph, w=None, h=None, pathFilter=None, **kwargs):
         Path.__init__(self, **kwargs)
-        self.font = glyph.parent # Store separate, to avoid disappearing weakref.
+        self.font = glyph.font # Store separate, to avoid disappearing weakref.
         self.glyph = glyph 
         # One of the two needs to be defined, the other can be None.
         # If both are set, then the image scales disproportional.
@@ -56,7 +56,7 @@ class GlyphPath(Path):
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         
-        context = view.context # Get current context
+        context = self.context # Get current context
         b = context.b
 
         p = pointOffset(self.oPoint, origin)
@@ -67,11 +67,13 @@ class GlyphPath(Path):
         sh = 1.0*self.h/self.ih
         b.transform((1, 0, 0, 1, px, py))
         b.scale(sh)
+        # If there is a path filter defined, then call that the draw and ignore regular drawing.
         if self.pathFilter is not None:
-            self.pathFilter(self, self.glyph.path)
-        if self.css('fill') != NO_COLOR or self.css('stroke') != NO_COLOR:
-            view.setFillColor(self.css('fill'))
-            view.setStrokeColor(self.css('stroke', NO_COLOR), (self.css('strokeWidth') or 20))
+            self.pathFilter(self, self.glyph.path, view)
+        elif self.css('fill') != NO_COLOR or self.css('stroke') != NO_COLOR:
+            # Not path filter defined, draw by regular stroke/fill.
+            context.setFillColor(self.css('fill'))
+            context.setStrokeColor(self.css('stroke', NO_COLOR), (self.css('strokeWidth') or 20))
             b.fill(0)
             b.stroke(1, 0, 0)
             b.strokeWidth(20)

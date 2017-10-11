@@ -37,7 +37,7 @@ class APoint(object):
         self.p[index] = value
 
     def __getitem__(self, i):
-        u"""Allow APoint to be indexed like a point2D tuple."""
+        u"""Allow APoint to x and y attributes to be indexed like a point2D tuple."""
         return self.p[i]
     def __setitem__(self, i, v):
         self.p[i] = v

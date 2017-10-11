@@ -12,12 +12,14 @@
 #
 #     UseGlyphPathElement.py
 #
+#     TODO: Needs some cleaning to get letter better in page, with lifted baseline.
+#
 import pagebot # Import to know the path of non-Python resources.
 
+from pagebot.contexts import defaultContext as c
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.conditions import *
@@ -30,16 +32,18 @@ PageSize = 500
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/UseGlyphPathElement.pdf' 
 
-def pathFilter(e, path):
-    r = 18
-    for x in range(0, e.iw, 20):
-        for y in range(0, e.ih, 20):
+def pathFilter(e, path, view):
+    c = e.context
+    r = 24
+    for x in range(0, e.w*4, 30):
+        for y in range(0, e.h*2, 30):
+            # Use the glyph to query for color at this position.
             if e.glyph.onBlack((x, y)):
-                fill(random(), random(), random())
-                oval(x-r/2, y-r/2, r, r)
+                c.fill((random(), random(), random())) # Color as one tuple, in context API
+                c.oval(x-r/2, y-r/2, r, r)
             else:
-                fill(0, 1, 0)
-                rect(x-r/4, y-r/4, r/2, r/2)
+                c.fill((0, 1, 0)) # Color as one tuple, in context API
+                c.rect(x-r/4, y-r/4, r/2, r/2)
     
 def makeDocument():
     u"""Make a new document."""
@@ -63,7 +67,7 @@ def makeDocument():
     page = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
     page.name = 'This is a demo page for floating child elements'
 
-    PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
+    PATH = u"/Library/Fonts/Georgia.ttf"
     f = Font(PATH, install=False)
     #pathFilter = None
     glyphName = 'e'#'cid05405.1'
@@ -72,12 +76,7 @@ def makeDocument():
         fill=None, pathFilter=pathFilter,
         parent=page, font='Verdana',       
         conditions=[Left2Left(), Float2Top()])
-    """
-    e2 = GlyphPath(f[glyphName], stroke=(1, 0, 0), h=600,
-        fill=None, strokeWidth=20, 
-        parent=page, font='Verdana',       
-        conditions=[Left2Left(), Float2Top()])
-    """
+
     score = page.solve()
     if score.fails:
         print score.fails
