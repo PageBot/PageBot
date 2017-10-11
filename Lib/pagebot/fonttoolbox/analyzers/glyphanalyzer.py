@@ -414,7 +414,6 @@ class GlyphAnalyzer(object):
             # Add this stem to the result.
             p0 = APoint(intersections[n])
             p1 = APoint(intersections[n+1])
-            print p0, p1
             stem = self.STEM_CLASS(p0, p1, self.glyph.name)
             size = asInt(stem.size) # Make sure not to get floats as key
             if not size in beamStems:
