@@ -214,7 +214,7 @@ class TextBox(Element):
    
         # TODO: Add marker if there is overflow text in the textbox.
 
-        self.buildFrame_drawBot(view, p) # Draw optional frame or borders.
+        self.buildFrame(view, p) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(view, p)
