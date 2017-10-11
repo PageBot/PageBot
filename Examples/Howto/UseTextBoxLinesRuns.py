@@ -22,7 +22,6 @@ from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
 from pagebot.fonttoolbox.objects.font import getFontPathOfFont, getFontByName
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 
@@ -45,6 +44,8 @@ def makeDocument():
     # Create a new document, default to the defined page size. 
     doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)
     
+    context = doc.context
+    
     view = doc.getView()
     view.padding = 30 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
@@ -61,11 +62,11 @@ def makeDocument():
     page0.name = 'Page 1'
     page0.padding = PagePadding
     
-    s = newFS('', style=dict(font='Verdana', fontSize=10, textFill=0))
+    s = context.newString('', style=dict(font='Verdana', fontSize=10, textFill=0))
     for n in range(10):
-        s += newFS('(Line %d) Volume of text defines the box height.' % (n+1), style=dict(fontSize=10+n*2, textFill=0))
-        s += newFS('Volume', style=dict(textFill=(1, 0, 0), font='Verdana', fontSize=10+n*2))
-        s += newFS(' of text defines the box height. \n', style=dict(textFill=0, font='Verdana', fontSize=10+n*2))
+        s += context.newString('(Line %d) Volume of text defines the box height.' % (n+1), style=dict(fontSize=10+n*2, textFill=0))
+        s += context.newString('Volume', style=dict(textFill=(1, 0, 0), font='Verdana', fontSize=10+n*2))
+        s += context.newString(' of text defines the box height. \n', style=dict(textFill=0, font='Verdana', fontSize=10+n*2))
           
     e1 = newTextBox(s, 
         parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=None,
