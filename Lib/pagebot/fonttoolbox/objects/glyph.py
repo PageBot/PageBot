@@ -190,8 +190,9 @@ class Glyph(object):
 
     def _get_flattenedPath(self):
         u"""Answer the flattened NSBezier path. 
-        TODO: Needs to get DrawBotContext reference, and Flex equivalent."""
-        if self._flattenedPath is None:
+        TODO: Needs to get DrawBotContext reference, and Flex equivalent.
+        TODO: Needs some notifcation is self.path was None. """
+        if self._flattenedPath is None and self.path is not None:
             self._flattenedPath = self.path.getNSBezierPath().bezierPathByFlatteningPath()
         return self._flattenedPath
     flattenedPath = property(_get_flattenedPath)
@@ -204,14 +205,15 @@ class Glyph(object):
             contour = []
             self._flattenedContours = [contour]
             flatPath = self.flattenedPath
-            for index in range(flatPath.elementCount()): # Typical NSBezierPath size + index call. 
-                p = flatPath.elementAtIndex_associatedPoints_(index)[1]
-                if p:
-                    contour.append((p[0].x, p[0].y)) # Make point2D() tuples, no need to add point type, all onCurve.
-                else:
-                    contour = []
-                    self._flattenedContours.append(contour)
-        return self._flattenedContours
+            if flatPath is not None: # In case self.path could not be created.
+                for index in range(flatPath.elementCount()): # Typical NSBezierPath size + index call. 
+                    p = flatPath.elementAtIndex_associatedPoints_(index)[1]
+                    if p:
+                        contour.append((p[0].x, p[0].y)) # Make point2D() tuples, no need to add point type, all onCurve.
+                    else:
+                        contour = []
+                        self._flattenedContours.append(contour)
+        return self._flattenedContours # Can still be None.
     flattenedContours = property(_get_flattenedContours)
           
     def getAxisDeltas(self):
@@ -379,6 +381,15 @@ class Glyph(object):
                 contour3 = contour+contour+contour
                 for pIndex in range(numPoints):
                     points = contour3[pIndex+numPoints-3:pIndex+numPoints+4]
+                    if not points:
+                        break # Nothing here, back out.
+                    if len(points) < 7:
+                        print '@@#@##', self.font, self.name, points
+                    # Make sure number of points is 7, otherwise extend by doubling on both ends.
+                    while len(points) < 7: # Alternate left-right, until we reach exact 7 point contexts.
+                        points = [points[0]] + points
+                        if len(points) < 7:
+                            points = points + [points[-1]]
                     pc = APointContext(points, pIndex, cIndex )
                     self._pointContexts.append(pc)
         return self._pointContexts

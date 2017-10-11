@@ -24,7 +24,7 @@ from AppKit import NSBezierPath
 from pagebot.toolbox.transformer import point2D, asInt
 from apointcontextlist import Vertical, Horizontal
 from stems import Stem, Bar, Counter, VerticalCounter
-from apoint import APoint 
+from apointcontext import APointContext
 
 SPANSTEP = 4
 
@@ -129,7 +129,10 @@ class GlyphAnalyzer(object):
         minX = min(lx0, lx1)
         maxY = max(ly0, ly1)
         minY = min(ly0, ly1)
-        for contour in self.glyph.flattenedContours:
+        contours = self.glyph.flattenedContours
+        if not contours: # Could not generate path or flattenedPath. Or there are no contours. Give up.
+            return None
+        for contour in contours:
             for n in range(len(contour)):
                 pLine = contour[n], contour[n-1]
                 (px0, py0), (px1, py1) = pLine
@@ -404,16 +407,22 @@ class GlyphAnalyzer(object):
         line = ((-sys.maxint, y), (sys.maxint, y))
         # Get intersections with this line. We can assume they are sorted set by x value
         intersections = self.intersectWithLine(line)
-        # If no intersections or just one, give up.
-        if len(intersections) < 2:
+        # If could not make path or flattened path or no intersections or just one, give up.
+        if intersections is None or len(intersections) < 2:
             return None
         # Now make Stem instance from these values, as if they we Verticals positions.
         # The difference is that we only have points, not point contexts here,
         # but for limited use that should not make a difference for entry in a Stem
         for n in range(0, len(intersections), 2):
-            # Add this stem to the result.
-            p0 = APoint(intersections[n])
-            p1 = APoint(intersections[n+1])
+            # Add this stem to the result. Create point contexts, simulating vertical 
+            p = intersections[n]
+            pUp = p[0], p[1]+10
+            pDown = p[0], p[1]-10
+            p0 = APointContext((pUp, pUp, pUp, p, pDown, pDown, pDown)) # Simulate vertical context.
+            p =  intersections[n+1]
+            pUp = p[0], p[1]+10
+            pDown = p[0], p[1]-10
+            p1 = APointContext((pUp, pUp, pUp, p, pDown, pDown, pDown)) # Simulate vertical context.
             stem = self.STEM_CLASS(p0, p1, self.glyph.name)
             size = asInt(stem.size) # Make sure not to get floats as key
             if not size in beamStems:

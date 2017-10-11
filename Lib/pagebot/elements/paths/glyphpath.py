@@ -56,8 +56,8 @@ class GlyphPath(Path):
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         
-        context = self.context # Get current context
-        b = context.b
+        c = self.context # Get current context
+        b = c.b # Get context builder
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
@@ -66,18 +66,16 @@ class GlyphPath(Path):
         context.saveGraphicState()
         sh = 1.0*self.h/self.ih
         b.transform((1, 0, 0, 1, px, py))
-        b.scale(sh)
+        c.scale(sh)
         # If there is a path filter defined, then call that the draw and ignore regular drawing.
         if self.pathFilter is not None:
             self.pathFilter(self, self.glyph.path, view)
         elif self.css('fill') != NO_COLOR or self.css('stroke') != NO_COLOR:
             # Not path filter defined, draw by regular stroke/fill.
-            context.setFillColor(self.css('fill'))
-            context.setStrokeColor(self.css('stroke', NO_COLOR), (self.css('strokeWidth') or 20))
-            b.fill(0)
-            b.stroke(1, 0, 0)
-            b.strokeWidth(20)
-            b.drawPath(self.glyph.path)
+            c.setFillColor(self.css('fill'))
+            c.setStrokeColor(self.css('stroke', NO_COLOR), (self.css('strokeWidth') or 20))
+            c.strokeWidth(20)
+            c.drawPath(self.glyph.path)
         context.restoreGraphicState()
 
         if drawElements:
