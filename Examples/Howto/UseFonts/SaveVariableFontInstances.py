@@ -23,7 +23,7 @@ f = Font(fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf', install=False)
 print f.axes
 # Get an instance at a certain location
 
-location = getConstrainedLocation(f, dict(wdth=126, wght=958))
-instance = getVariableFont(f, location, install=False)
+location = getConstrainedLocation(f, dict(wdth=3944/10, wght=760/10))
+instance = getVariableFont(f, location, install=False, cached=False)
 
-c.drawPath(instance['H'].path, (100, 100), sx=0.2)
+c.drawPath(instance['H'].path, (100, 100), sx=0.4)
