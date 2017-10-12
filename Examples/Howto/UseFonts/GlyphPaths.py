@@ -10,9 +10,9 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     UseGlyphPaths.py
+#     GlyphPaths.py
 #
-#     Implements a PabeBot font classes to get info from a TTFont.
+#     Implements a PageBot font classes to get info from a TTFont.
 #     NOTE: This is the first implementation of the code. It is not embedded in
 #     Glyph and GlyphAnalyzer classes.
 #     The code of this exmaple is DEPRECATED from more maintenance and not longer
@@ -422,4 +422,3 @@ if 0:
         
 
     #print d
-1

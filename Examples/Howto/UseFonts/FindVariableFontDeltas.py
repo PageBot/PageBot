@@ -18,7 +18,6 @@
 from fontTools.pens.cocoaPen import CocoaPen
 import pagebot
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
-from pagebot import newFS
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont 
 from tnbits.toolparts.buildvariations.varfontdesignspace import TTVarFontGlyphSet
 

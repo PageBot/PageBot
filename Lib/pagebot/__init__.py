@@ -21,7 +21,7 @@ __version__ = '0.8-beta'
 import re
 
 from pagebot.style import NO_COLOR, LEFT
-from pagebot.toolbox.transformer import point2D
+from pagebot.toolbox.transformer import point2D 
 
 #   P A T H S 
 

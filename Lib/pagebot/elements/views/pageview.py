@@ -367,44 +367,34 @@ class PageView(BaseView):
         bounding box (if self.css('missingElementFill' is defined) and a cross, indicating
         that this element has missing content (as in unused image frames).
         Only draw if self.css('showGrid') is True."""
+        c = self.context
+        b = c.b
+
         if self.showMissingElementRect:
-            b = self.b
             p = pointOffset(e.point, origin)
             p = e._applyOrigin(p)
             p = e._applyScale(p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
-            self.setShadow(b)
+            c.setShadow(b)
 
             sMissingElementFill = self.css('viewMissingElementFill', NO_COLOR)
             if sMissingElementFill is not NO_COLOR:
-                self.setFillColor(sMissingElementFill)
-                self.setStrokeColor(None)
-                rect(px, py, self.w, self.h)
+                c.setFillColor(sMissingElementFill)
+                c.setStrokeColor(None)
+                c.rect(px, py, self.w, self.h)
             # Draw crossed rectangle.
-            self.setFillColor(None)
-            self.setStrokeColor(0, 0.5)
-            b.rect(px, py, self.w, self.h)
-            b.newPath()
+            c.setFillColor(None)
+            c.setStrokeColor(0, 0.5)
+            c.rect(px, py, self.w, self.h)
+            b.newPath() # TODO: Needs to become context instead of builder call.
             b.moveTo((px, py))
             b.lineTo((px + self.w, py + self.h))
             b.moveTo((px + self.w, py))
             b.lineTo((px, py + self.h))
             b.drawPath()
 
-            self.resetShadow()
+            c.resetShadow()
             e._restoreScale()
-
-    #   S H A D O W
-
-    def setShadow(self, eShadow):
-        u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this
-        method with self._resetShadow()"""
-        b = self.b
-        if eShadow is not None and eShadow.offset is not None:
-            if eShadow.cmykColor is not None:
-                b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
-            else:
-                b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.color)
 
     #    G R I D
 
