@@ -35,14 +35,12 @@ from pagebot.toolbox.transformer import path2FontName
 DEBUG = False
 
 def getMasterPath():
-    u"""Answer the path to read master fonts. Default is at the same level as pagebot module."""
-    #return '/'.join(pagebot.__file__.split('/')[:-2])+'/fonts/'
-    from os.path import expanduser
-    home = expanduser("~")
-    return home + '/Fonts/'
+    u"""Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
+    Default is at the same level as pagebot module."""
+    return os.path.expanduser("~") + '/Fonts/'
 
 def getInstancePath():
-    u"""Answer the path to write instance fonts."""
+    u"""Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
     return getMasterPath() + '_instances/'
 
 def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, fixedSize=True, 
@@ -57,7 +55,7 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
     change the size. Again this cannot be done by simple interpolation, as the [opsz] also changes the width.
     It one of the axes does not exist in the font, then use the default setting of the font.
     """
-    # TODO: Adjusting by size change (if reequested width is not possible with the width limits of the fon)t)
+    # TODO: Adjusting by size change (if requested width is not possible with the width limits of the fon)t)
     # TODO: is not yet implemented.
 
     # Get the instances for the extreme width locations. This allows the caller to define the actual range
@@ -101,6 +99,16 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
         wideFont=wideFont, wideFs=wideFs, wideWidth=wideWidth, wideLocation=wideLocation,
         font=font, fs=fs, width=textSize(fs)[0], location=location
     )
+def getConstrainedLocation(font, location):
+    u"""Answer the location with applied min/max values for each axis. Don't change values
+    for axes that are not defined in the font."""
+    constrainedLocation = {}
+    axes = font.axes
+    for name, value in location.items():
+        if name in axes:
+            value = min(max(axes[name][0], value), axes[name][2])
+        constrainedLocation[name] = value
+    return constrainedLocation
 
 def getVarLocation(font, location, normalize=True):
     u"""Translate the location dict (all values between (0, 1) or between (0, 1000)) 
