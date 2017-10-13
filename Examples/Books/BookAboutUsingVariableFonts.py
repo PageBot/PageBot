@@ -10,7 +10,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     UsingVariableFonts.py
+#     BookAboutUsingVariableFonts.py
 #
 from pagebot.typesetter import Typesetter
 from pagebot.composer import Composer
@@ -75,13 +75,11 @@ if 1:
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
     view.showPageFrame = True 
-    view.showGrid = True
+    view.showGrid = False
     
     view.style['viewGridStroke'] = (0, 0, 1)
     view.style['viewGridStrokeWidth'] = 0.5
 
 t.doc.solve()
-pl = t.doc.placer
-print pl.x, pl.y
 
 t.doc.export(EXPORT_PATH)

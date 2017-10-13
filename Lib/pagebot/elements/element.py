@@ -243,20 +243,32 @@ class Element(object):
         self._elements = [] 
         self._eIds = {}
 
-    def deepCopy(self):
-        u"""Answer a copy of self, where the "unique" fields are set to default. Also perform a deep copy
-        on all child elements."""
-        e = copy.deepcopy(self) # This also deep copies all child elements 
-        e._eId = uniqueID(e) # Guaranteed unique Id for every element.
-        e.nextElement = None
-        e.prevElement = None
-        e.style = copy.deepcopy(self.style)
-        #e.clearElements()
-        #for child in self.elements:
-        #    e.appendElement(child.deepCopy())
+    def copy(self):
+        u"""Answer a full copy of self, where the "unique" fields are set to default. 
+        Also perform a deep copy on all child elements."""
+        # This also initializes the child element tree as empty list.
+        # Style is supposed to be a deep-copyable dictionary.
+        # self._eId is automatically created, guaranteed unique Id for every element.
+        e = self.__class__(x=self.x, y=self.y, z=self,z w=self.w, h=self.h, d=self.d, 
+            t=self.t, parent=None, # No parent yet in a copied element. Keep it dangling.
+            name=self.name, class_=self.class_, title=self.title, description=self.description, language=self.language,
+            style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
+            conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
+            info=copy.deepcopy(self.info), # Info may be modified by the element of ascestors.
+            framePath=self.framePath, 
+            elements=None, # Will be copied separately.
+            template=self.template, nextElement=self.nextElement, prevElement=self.prevElement, 
+            nextPage=self.nextPage, prevPage=self.prevPage, 
+            padding=self.padding, # Copies all padding values at once
+            margin=self.margin, # Copues all margin values at once, 
+            borders=self.borders, # Copies all borders at once.
+            shadow=self.shadow, # Needs to be copied?
+            gradient=self.gradient, # Needs to be copied? 
+            drawBefore=self.drawBefore, drawAfter=self.drawAfter)  
+        # Now do the same for each child element and append it to self.
+        for child in self.elements:
+            e.appendElement(child.copy()) # Add the element to child list and update self._eId dictionary
         return e
-
-    copy = deepCopy # Make the same as default.
 
     def setElementByIndex(self, e, index):
         u"""Replace the element, if there is already one at index. Otherwise append it to self.elements
