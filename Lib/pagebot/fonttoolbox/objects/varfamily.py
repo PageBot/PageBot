@@ -20,6 +20,6 @@ from family import Family
 def guessVarFamilyFromPaths(fontPaths):
     u"""Answer a VarFamily instance with found font paths in their guessed locations. 
     """
-  
+
 class VarFamily(Family):
     pass
