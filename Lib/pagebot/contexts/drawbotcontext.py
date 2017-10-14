@@ -161,8 +161,12 @@ class DrawBotContext(BaseContext):
     def saveGraphicState(self):
         self.b.save()
 
+    save = saveGraphicState # Compatible with DrawBot API
+
     def restoreGraphicState(self):
         self.b.restore()
+
+    restore = restoreGraphicState # Compatible with DrawBot API
 
     #   F O N T S
 

@@ -249,6 +249,8 @@ class Element(object):
         # This also initializes the child element tree as empty list.
         # Style is supposed to be a deep-copyable dictionary.
         # self._eId is automatically created, guaranteed unique Id for every element.
+        # Ignore original **kwargs, as these values are supposed to be in style now.
+        # Inheriting classes are responsible to add their own specific values. 
         e = self.__class__(x=self.x, y=self.y, z=self,z w=self.w, h=self.h, d=self.d, 
             t=self.t, parent=None, # No parent yet in a copied element. Keep it dangling.
             name=self.name, class_=self.class_, title=self.title, description=self.description, language=self.language,
