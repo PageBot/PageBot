@@ -33,14 +33,16 @@ print g.points
 # Get the 4th APoint instance, that has reference back to the glyph.points[p.index]
 p = g.points[3]
 # This is the point we got.
-print p.x, p.y, p.glyph, p.index
+print 'glyph.points[3]:', p.x, p.y, 'Glyph:', p.glyph.name, 'Index:', p.index
 # Change the point position. In DrawBot this works interactive while holding cmd-drag.
 p.x -= -538
 p.y += 308
 p.onCurve = False
-print g.dirty
+# Now the glyph is dirty
+print 'Changed point:', p, 'Glyph is dirty:', g.dirty
+# Update the cached data, such as glyph.points, glyph.path
 g.update()
-print g.dirty
+print 'Now it is clean:', g.dirty
 c.drawPath(g.path, (0, 0), s)
 
 c.stroke((1, 0, 0), 3)
