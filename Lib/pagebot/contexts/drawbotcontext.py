@@ -113,6 +113,10 @@ class DrawBotContext(BaseContext):
             sy = sx
         self.b.scale(sx, sy)
 
+    def translate(self, x, y):
+        u"""Translate the origin to this point."""
+        self.b.translate(x, y)
+        
     #   G R A D I E N T  &  S H A D O W
 
     def setShadow(self, eShadow):
@@ -216,7 +220,7 @@ class DrawBotContext(BaseContext):
     def strokeWidth(self, w):
         u"""Set the current stroke width."""
         self.b.strokeWidth(w)
-        
+
     def setStrokeColor(self, c, w=1, cmyk=False, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         if b is None: # Builder can be optional DrawBot FormattedString
