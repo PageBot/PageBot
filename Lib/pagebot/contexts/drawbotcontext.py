@@ -213,6 +213,10 @@ class DrawBotContext(BaseContext):
 
     fill = setFillColor # DrawBot compatible API
 
+    def strokeWidth(self, w):
+        u"""Set the current stroke width."""
+        self.b.strokeWidth(w)
+        
     def setStrokeColor(self, c, w=1, cmyk=False, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         if b is None: # Builder can be optional DrawBot FormattedString
@@ -235,5 +239,4 @@ class DrawBotContext(BaseContext):
             b.strokeWidth(w)
 
     stroke = setStrokeColor # DrawBot compatible API
-
     

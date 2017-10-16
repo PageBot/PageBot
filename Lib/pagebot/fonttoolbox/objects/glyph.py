@@ -91,6 +91,8 @@ class Glyph(object):
     def __init__(self, font, name):
         self.name = name
         self.font = font # Stored as weakref
+        self.dirty = True # Mark that we need initialization or something changed in the points.
+
         self._analyzer = None # Installed upon request
         self._points = None # Same as self.points property with added 4 spacing points in TTF style.
         self._points4 = None
@@ -125,8 +127,8 @@ class Glyph(object):
         self._segments = []
         self._boundingBox = None
 
-        coordinates = self.coordinates
-        components = self.components
+        coordinates = self.coordinates # Get list from the font.
+        components = self._components # No property call to avoid infinite recursion.
         flags = self.flags
         endPtsOfContours = set(self.endPtsOfContours)
         openContour = False
@@ -139,6 +141,7 @@ class Glyph(object):
 
         if coordinates or components:
             # TODO: Needs context for DrawBot/Flex usage
+            # TODO: Separate path creation from init?
             self._path = path = BezierPath()
 
         for index, (x, y) in enumerate(coordinates):
@@ -147,7 +150,8 @@ class Glyph(object):
             minY = min(y, minY)
             maxY = max(y, maxY)
 
-            p = APoint((x, y), flags[index])
+            # Create APoint, to store weakref to self and index for altering the coordinate and onCurve
+            p = APoint((x, y), flags[index], self, index) 
             self._points.append(p)
 
             if not openContour:
@@ -185,8 +189,23 @@ class Glyph(object):
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
                 openSegment = None
 
-        self._points4 = self._points[:] + [APoint((minX, 0)), APoint((0, minY)), APoint((maxX, 0)), APoint((0, maxY))]
+        # Add spacing points, as default in TTF. No index, as they cannot be written back.
+        # Instead, for writing, use self.leftMargin, self.rightMargin and self.width.
+        self._points4 = self._points[:] + [
+            APoint((minX, 0), self), 
+            APoint((0, minY), self), 
+            APoint((maxX, 0), self), 
+            APoint((0, maxY), self)
+        ]
         self._boundingBox = (minX, minY, maxX, maxY)
+        self.dirty = False # All cleaned up.
+
+    def update(self):
+        u"""Update the font if it became dirty by changing cooridinates. Otherwise ignore.
+        Note that in case the caller cache points, contours, components, etc. these are
+        no longer valid."""
+        if self.dirty:
+            self._initialize()
 
     def _get_flattenedPath(self):
         u"""Answer the flattened NSBezier path. 
@@ -316,7 +335,7 @@ class Glyph(object):
         return self.width - self.maxX
     rightMargin = property(_get_rightMargin)
 
-    # Direct TTFont cooridinates compatibility
+    # Direct TTFont coordinates compatibility
 
     def _get_coordinates(self):
         u"""Answers the ttFont.coordinates, if it exists, as GlyphCoordinates instance. 
@@ -353,25 +372,29 @@ class Glyph(object):
     # Kind of RoboFont glyph compatibility
 
     def _get_points(self): 
-        u"""Answer the list of Point instances, representing the outline of the glyph,
+        u"""Answer the list of APoint instances, representing the outline of the glyph,
         not including the standard 4 spacing points at the end of the list in TTF style.
-        Read only for now."""
-        if self._points is None:
+        Read only for now. Although APoints are constructed from the self.ttFont coordinates,
+        they keep a weakref to the glyph and their index. This way point positions in the
+        self.ttFont can be modified."""
+        if self._points is None or self.dirty:
             self._initialize()
         return self._points
     points = property(_get_points)
 
     def _get_points4(self):
-        u"""Answer the list of Points instances, representing the outline of the glyph,
+        u"""Answer the list of APoints instances, representing the outline of the glyph,
         including the standard 4 spacing points at the end of the list in TTF style.
-        Read only for now."""
-        if self._points4 is None:
+        Read only for now. Although APoints are constructed from the self.ttFont coordinates,
+        they keep a weakref to the glyph and their index. This way point positions in the
+        self.ttFont can be modified."""
+        if self._points4 is None or self.dirty:
             self._initialize()
         return self._points4
     points4 = property(_get_points4)
 
     def _get_pointContexts(self):
-        if self._pointContexts is None:
+        if self._pointContexts is None or self.dirty:
             self._pointContexts = []
             for cIndex, contour in enumerate(self.contours):
                 #openPointContext = PointContext # Instance as tuple of points -3, -2, -1, 0, 1, 2, 3 contour index
@@ -383,8 +406,6 @@ class Glyph(object):
                     points = contour3[pIndex+numPoints-3:pIndex+numPoints+4]
                     if not points:
                         break # Nothing here, back out.
-                    if len(points) < 7:
-                        print '@@#@##', self.font, self.name, points
                     # Make sure number of points is 7, otherwise extend by doubling on both ends.
                     while len(points) < 7: # Alternate left-right, until we reach exact 7 point contexts.
                         points = [points[0]] + points
@@ -396,25 +417,25 @@ class Glyph(object):
     pointContexts = property(_get_pointContexts)
 
     def _get_contours(self): # Read only for now. List of Point instance lists.
-        if self._contours is None:
+        if self._contours is None or self.dirty:
             self._initialize()
         return self._contours
     contours = property(_get_contours)
 
     def _get_segments(self): # Read only for now. List of Segment instance lists.
-        if self._segments is None:
+        if self._segments is None or self.dirty:
             self._initialize()
         return self._contours
     segments = property(_get_contours)
 
     def _get_components(self): # Read only for now. List Contour instances.
-        if self._components is None:
+        if self._components is None or self.dirty:
             self._initialize()
         return self._components
     components = property(_get_components)
 
     def _get_path(self): # Read only for now.
-        if self._path is None:
+        if self._path is None or self.dirty:
             self._initialize()
         return self._path
     path = property(_get_path)
@@ -447,7 +468,7 @@ class Glyph(object):
     maxY = property(_get_maxY)
     
     def _get_boundingBox(self):
-        if self._boundingBox is None:
+        if self._boundingBox is None or self.dirty:
             self._initialize()
         return self._boundingBox
     boundingBox = property(_get_boundingBox)
