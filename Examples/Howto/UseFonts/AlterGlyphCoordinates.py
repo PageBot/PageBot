@@ -35,20 +35,27 @@ p = g.points[3]
 # This is the point we got.
 print 'glyph.points[3]:', p.x, p.y, 'Glyph:', p.glyph.name, 'Index:', p.index
 # Change the point position. In DrawBot this works interactive while holding cmd-drag.
-p.x -= -538
-p.y += 308
+d = 30
+p.x += d
+p.y += d
 p.onCurve = False
 # Now the glyph is dirty
 print 'Changed point:', p, 'Glyph is dirty:', g.dirty
 # Update the cached data, such as glyph.points, glyph.path
 g.update()
 print 'Now it is clean:', g.dirty
-c.drawPath(g.path, (0, 0), s)
-
-c.stroke((1, 0, 0), 3)
+# Draw the changed path
 c.fill(None)
-R = 16
+c.stroke(0, 1)
+c.drawPath(g.path, (0, 0), s)
+# Draw the position of the points
+c.stroke((1, 0, 0), 2)
+c.fill(None)
 for p in g.points:
+    if p.onCurve:
+        R = 16
+    else:
+        R = 6
     c.oval(p.x*s-R/2, p.y*s-R/2, R, R)
     
     
