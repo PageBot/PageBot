@@ -116,7 +116,7 @@ class DrawBotContext(BaseContext):
     def translate(self, x, y):
         u"""Translate the origin to this point."""
         self.b.translate(x, y)
-        
+
     #   G R A D I E N T  &  S H A D O W
 
     def setShadow(self, eShadow):
@@ -243,4 +243,11 @@ class DrawBotContext(BaseContext):
             b.strokeWidth(w)
 
     stroke = setStrokeColor # DrawBot compatible API
+
+    #   E X P O R T
+
+    def saveImage(self, path):
+        u"""Save the current image as path, rendering depending on the extension of the path file."""
+        self.b.saveImage(path)
+        
     
