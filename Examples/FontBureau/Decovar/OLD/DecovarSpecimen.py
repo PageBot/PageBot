@@ -15,7 +15,6 @@
 from __future__ import division
 
 import pagebot
-from pagebot import newFS
 from pagebot.elements.page import Template
 from pagebot.fonttoolbox.objects.font import Font
 
@@ -117,15 +116,19 @@ class VariableTypeSpecimen(TypeSpecimen):
  
     def buildVariablePage(self, varFont, page):
         title = page.getElement(self.titleBoxId) 
-        fs = newFS(varFont.info.fullName.upper(), self, dict(fontSize=32, font=decovarName))
+        fs = self.context.newString(varFont.info.fullName.upper(),
+                                    self, dict(fontSize=32, font=decovarName))
         title.append(fs)
  
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
         # Create the formatted string with the style names shown in their own style.
         # The first one in the list is also used to show the family Name.
         for fontSize in (9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24):
-            fs = newFS('%dPT %s\n' % (fontSize, s), self, 
-                style=dict(font=decovarName, fontSize=fontSize, hyphenation=False))
+            fs = self.context.newString('%dPT %s\n' % (fontSize, s),
+                                        self,
+                                        style=dict(font=decovarName,
+                                                   fontSize=fontSize,
+                                                   hyphenation=False))
             column.append(fs)
         
     def buildPages(self, doc):

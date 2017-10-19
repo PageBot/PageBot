@@ -17,7 +17,6 @@ import pagebot # Import to know the path of non-Python resources.
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
 
 from pagebot.conditions import *
 from pagebot.elements import *
@@ -63,8 +62,10 @@ def makeDocument(fontPath):
     page.name = 'Page 1'
     page.padding = PagePadding
     
-    fs = newFS(f.info.familyName + ' ' + f.info.styleName, 
-        style=dict(font=f.name, fontSize=18, textFill=0))
+    fs = doc.context.newString(f.info.familyName + ' ' + f.info.styleName, 
+                               style=dict(font=f.name,
+                                          fontSize=18,
+                                          textFill=0))
     _, th = textSize(fs)
     title = newTextBox(fs, conditions=[Top2Top(), Fit2Width()],
         parent=page, h=th*1.2)

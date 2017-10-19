@@ -18,7 +18,7 @@
 #     from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 #     
 import copy
-from pagebot import newFS, getRootPath
+from pagebot import getRootPath
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont, fitVariableWidth
 

@@ -73,9 +73,11 @@ def makeDocument():
     page0.name = 'Page 1'
     page0.padding = PagePadding
     
-    s = newFS('Headline\n', style=h1Style)
+    s = doc.context.newString('Headline\n', style=h1Style)
     for n in range(10):
-        s += newFS('(Line %d) Volume of text defines the box height. Volume of text defines the box height. \n' % (n+1), style=pStyle)
+        s += doc.context.newString(('(Line %d) Volume of text defines the box height.'
+                                    ' Volume of text defines the box height. \n') % (n+1),
+                                   style=pStyle)
         h1 = None  
           
     e1 = newTextBox(s, 
