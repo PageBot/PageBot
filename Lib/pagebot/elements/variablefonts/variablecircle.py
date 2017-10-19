@@ -28,7 +28,7 @@ from fontTools.ttLib import TTFont
 
 from drawBot import textSize, text, fill, rect, oval, stroke, strokeWidth, installFont, installedFonts, FormattedString, moveTo, lineTo, newPath, drawPath
 
-from pagebot import newFS
+from pagebot.contexts import defaultContext as context
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle, MIN_WIDTH
 from pagebot.fonttoolbox.variablefontbuilder import generateInstance, drawGlyphPath, getVariableFont, getVarLocation
@@ -91,7 +91,10 @@ class VariableCircle(Element):
         variableFont = getVariableFont(self.font, location)
         # Show axis name below circle marker?
         if self.showAxisNames and axisName is not None:
-            fs = newFS(axisName, style=dict(font=variableFont.installedName, fontSize=fontSize/4, textFill=0))
+            fs = context.newString(axisName,
+                                   style=dict(font=variableFont.installedName,
+                                              fontSize=fontSize/4,
+                                              textFill=0))
             tw, th = textSize(fs)
             text(fs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.font.info.unitsPerEm

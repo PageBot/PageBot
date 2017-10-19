@@ -28,6 +28,7 @@ from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import VariationModel, supportScalar, normalizeLocation
 from fontTools.varLib.mutator import _iup_delta
 
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
 from pagebot.fonttoolbox.variablefontaxes import axisDefinitions
@@ -104,10 +105,16 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
     condensedFont = getVariableFont(varFont, condensedLocation, cached=cached)
     wideFont = getVariableFont(varFont, wideLocation, cached=cached)
     # Calculate the widths of the string using these two instances.
-    condensedFs = newFS(s, style=dict(font=condensedFont.installedName, fontSize=fontSize, tracking=tracking, 
-        rTracking=rTracking, textFill=0))
-    wideFs = newFS(s, style=dict(font=wideFont.installedName, fontSize=fontSize, tracking=tracking, 
-        rTracking=rTracking, textFill=0))
+    condensedFs = context.newString(s, style=dict(font=condensedFont.installedName,
+                                                  fontSize=fontSize,
+                                                  tracking=tracking,
+                                                  rTracking=rTracking,
+                                                  textFill=0))
+    wideFs = context.newString(s, style=dict(font=wideFont.installedName,
+                                             fontSize=fontSize,
+                                             tracking=tracking,
+                                             rTracking=rTracking,
+                                             textFill=0))
     # Calculate the widths of the strings. 
     # TODO: Handle if these lines would wrap on the given width. In that case we may want to set the wrapped
     # first line back to it's uncondensed value, to make the first wrapped line fit the width.
@@ -131,7 +138,11 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condensedWidth)/(wideWidth-condensedWidth)
         font = getVariableFont(varFont, location, cached=cached)
-        fs = newFS(s, style=dict(font=font.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
+        fs = context.newString(s, style=dict(font=font.installedName,
+                                             fontSize=fontSize,
+                                             tracking=tracking,
+                                             rTracking=rTracking,
+                                             textFill=0))
     # Answer the dictionary with calculated data, so the caller can reuse it, without the need to new expensive recalculations.
     return dict(
         condensendFont=condensedFont, condensedFs=condensedFs, condensedWidth=condensedWidth, condensedLocation=condensedLocation,
