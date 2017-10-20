@@ -30,7 +30,6 @@ class Stem(object):
         self.name = name
 
     def __repr__(self):
-        print self.__dict__
         if self.offset in (None, (0,0)):
              return '[%s.%s: %s --> %s]' % (self.glyphName, self.name or self.__class__.__name__, self.parent, self.point)
         return '[%s.%s: %s+%s --> %s+%d]' % (self.glyphName, self.name or self.__class__.__name__, self.parent, self.point, self.offset[0], self.offset[1])

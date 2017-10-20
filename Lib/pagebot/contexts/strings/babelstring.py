@@ -18,30 +18,31 @@ class BabelString(object):
     needed for different builder classes."""
 
     def __repr__(self):
-    	return u'%s' % self.s
+        return u'%s' % self.s
 
     def __add__(self, s):
-    	self.append(s)
-    	return self
+        self.append(s)
+        return self
 
     def __mul__(self, d):
         s = self.s
         for n in range(d-1):
             s += self.s
         self.s = s
-    	return self
+        return self
 
     def __len__(self):
-    	return len(self.s)
+        return len(self.s)
 
     def append(self, s):
-    	if isinstance(s, self.__class__):
-    		self.s += s.s
-    	else:
-	        self.s += s
+        if isinstance(s, self.__class__):
+            self.s += s.s
+        else:
+            # TODO: An error if used if Typesetter
+            self.s += s
 
     def type(self):
         u"""Answer the id of the class, in case a caller wants to know what kind of 
         BabelString this is."""
-    	return self.BABEL_STRING_TYPE
+        return self.BABEL_STRING_TYPE
 

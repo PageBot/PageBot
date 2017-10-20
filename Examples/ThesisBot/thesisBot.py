@@ -355,7 +355,7 @@ def makeDocument(rs):
                         # becomes a method of the composer.
                         # TODO: Make this into Galley, in case footnote <p> has child nodes. 
                         footnoteStyle = doc.findStyle('footnote')
-                        footnoteText = 'AAAAAA' #newFS('%d\t%s\n' % (footnoteId, footnotes[footnoteId]['p'].text),
+                        footnoteText = 'TODO: Add footnote text here.' #newFS('%d\t%s\n' % (footnoteId, footnotes[footnoteId]['p'].text),
                             #style=t.getCascadedStyle(doc.css('footnote')))
                         # Add the footnote content to the box (it may not be the first to be added.
                         fnBox.appendString(footnoteText)

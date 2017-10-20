@@ -86,8 +86,8 @@ class Element(object):
 
         # Set timer of this element.
         self.timeMarks = [TimeMark(0, self.style), TimeMark(XXXL, self.style)] # Default TimeMarks from t == 0 until infinite of time.
-        self._t = 0 # Initialize self.style from t = 0
         self._tm0 = self._tm1 = None # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
+        self.t = t # Initialize self.style from t = 0
         self.timeKeys = INTERPOLATING_TIME_KEYS # List of names of style entries that can interpolate in time.
 
         if padding is not None:
@@ -108,6 +108,9 @@ class Element(object):
             conditions = [conditions]
         self.conditions = conditions # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
+        # Optional description of this element or its content. Otherwise None. Can be string or BabelString
+        self.description = description 
+        self.language = language # Optional language code from HTML standard. Otherwise None.
         # Save flow reference names
         self.prevElement = prevElement # Name of the prev flow element
         self.nextElement = nextElement # Name of the next flow element
@@ -173,7 +176,7 @@ class Element(object):
             # Copy condition list. Does not have to be deepCopy, condition instances are multi-purpose.
             self.conditions = copy.copy(template.conditions)
             for e in template.elements:
-                self.appendElement(e.deepCopy())
+                self.appendElement(e.copy())
     template = property(_get_template, _set_template)
 
     #   E L E M E N T S
@@ -251,7 +254,7 @@ class Element(object):
         # self._eId is automatically created, guaranteed unique Id for every element.
         # Ignore original **kwargs, as these values are supposed to be in style now.
         # Inheriting classes are responsible to add their own specific values. 
-        e = self.__class__(x=self.x, y=self.y, z=self,z w=self.w, h=self.h, d=self.d, 
+        e = self.__class__(x=self.x, y=self.y, z=self, w=self.w, h=self.h, d=self.d, 
             t=self.t, parent=None, # No parent yet in a copied element. Keep it dangling.
             name=self.name, class_=self.class_, title=self.title, description=self.description, language=self.language,
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
@@ -492,11 +495,12 @@ class Element(object):
         return self.context.b
     b = builder = property(_get_builder)
 
-    def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
+    def newString(self, bs, e=None, style=None, w=None, h=None, fontSize=None, 
             styleName=None, tagName=None):
-        u"""Create a new BabelString, using the current type of self.doc.view.context,
-        or pagebot.contexts.Context if not self.doc or self.doc.view defined."""
-        return self.context.newString(s, e=e, style=style, w=w, h=h, fontSize=fontSize, 
+        u"""Create a new BabelString, using the current type of self.doc.context,
+        or pagebot.contexts.defaultContext if not self.doc or self.doc.view defined, 
+        if bs is a plain string. Otherwise just answer the BabelString unchanged."""
+        return self.context.newString(bs, e=e, style=style, w=w, h=h, fontSize=fontSize, 
             styleName=styleName, tagName=tagName)
         
     # Most common properties
@@ -734,9 +738,11 @@ class Element(object):
         return self._t
     def _set_t(self, t):
         self._t = t
-        if self._tm0 is None or self._tm1 is None or t < self._tm0.t or self._tm1.t < t:
-            # If not initialized or t outside cached time span, then create new expanded styles.
-            self._tm0, self._tm1 = self.getExpandedTimeMarks(t)
+        # @@@ NOT YET
+        #if self._tm0 is None or self._tm1 is None or t < self._tm0.t or self._tm1.t < t:
+        #    # If not initialized or t outside cached time span, then create new expanded styles.
+        #    self._tm0, self._tm1 = self.getExpandedTimeMarks(t)
+    t = property(_get_t, _set_t)
 
     def appendTimeMark(self, tm):
         assert isinstance(tm, TimeMark)

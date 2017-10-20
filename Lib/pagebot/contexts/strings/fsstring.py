@@ -23,6 +23,7 @@ class FsString(BabelString):
     u"""FsString is a wrapper around the standard DrawBot FormattedString."""
     def __init__(self, s, context):
         self.context = context # Store the context, in case we need it.
+        assert isinstance(s, basestring) or s.__class__.__name__ == 'FormattedString'
         self.fs = s # Enclose the DrawBot FormattedString
 
     def _get_fs(self):
@@ -63,7 +64,6 @@ def newFsString(t, context, e=None, style=None, w=None, h=None, fontSize=None, s
     sLeading = css('leading', e, style)
     rLeading = css('rLeading', e, style)
     if sLeading or (rLeading and sFontSize):
-        print '344224224', sLeading, rLeading, sFontSize
         lineHeight = (sLeading or 0) + (rLeading or 0) * (sFontSize or 0)
         if lineHeight:
             fs.lineHeight(lineHeight)
@@ -72,18 +72,18 @@ def newFsString(t, context, e=None, style=None, w=None, h=None, fontSize=None, s
     sFallbackFont = css('fallbackFont', e, style)
     if sFallbackFont is not None:
         fs.fallbackFont(sFallbackFont)
-    sFill = css('textFill', e, style)
-    if sFill is not NO_COLOR: # Test on this flag, None is valid value
+    sFill = css('textFill', e, style, 0) # Default is black, not None or NO_COLOR
+    if sFill != NO_COLOR: # Test on this flag, None is valid value
         context.setTextFillColor(fs, sFill)
     sCmykFill = css('cmykFill', e, style, NO_COLOR)
-    if sCmykFill is not NO_COLOR:
+    if sCmykFill != NO_COLOR:
         context.setTextFillColor(fs, sCmykFill, cmyk=True)
     sStroke = css('textStroke', e, style, NO_COLOR)
     sStrokeWidth = css('textStrokeWidth', e, style)
-    if sStroke is not NO_COLOR and sStrokeWidth is not None:
+    if sStroke != NO_COLOR and sStrokeWidth is not None:
         context.setTextStrokeColor(fs, sStroke, sStrokeWidth)
     sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
-    if sCmykStroke is not NO_COLOR:
+    if sCmykStroke != NO_COLOR:
         context.setTextStrokeColor(fs, sCmykStroke, sStrokeWidth, cmyk=True)
     sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
     if sAlign is not None: # yTextAlign must be solved by parent container element.

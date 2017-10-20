@@ -48,6 +48,7 @@ class GlyphAnalyzer(object):
         self._roundStems = None # Recognized round stems, not filtered by FloqMemes
         self._straightRoundStems = None
         self._allStems = None
+        self._allHorizontalCounters = None 
 
         self._verticals = None
         self._bars = None # Recognized bars, so not filtered by FloqMemes
@@ -498,6 +499,12 @@ class GlyphAnalyzer(object):
         # will be too close to the horizontal stroke, so it's recognized as black. Instead we take bigger steps
         # from the corner point, so the iterations of the line are always white.
         return self.lineOnWhite(pc0, pc1, 50) or self.lineOnWhite(pc1, pc0, 50)
+
+    def _get_horizontalCounters(self):
+        if self._allHorizontalCounters is None:
+            self.findStems()
+        return self._allHorizontalCounters
+    horizontalCounters = property(_get_horizontalCounters)
 
     #   V E R T I C A L  C O U N T E R
 

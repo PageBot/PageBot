@@ -58,7 +58,6 @@ class APoint(object):
         if glyph is not None and self.index is not None: # Still alive, then update value.
             glyph.flags[self.index] = bool(onCurve)
             glyph.dirty = True
-
     onCurve = property(_get_onCurve, _set_onCurve)
 
     def __sub__(self, p):
