@@ -17,8 +17,9 @@
 from drawBot import FormattedString
 
 import pagebot
-from pagebot import findMarkers, textBoxBaseLines, newFS
+from pagebot import findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
+from pagebot.contexts import defaultContext as context
 from pagebot.document import Document
 from pagebot.elements import Page, Template, Galley
 from pagebot.composer import Composer
@@ -76,7 +77,7 @@ RS = getRootStyle(
     rTracking = 0,
     fontSize = 9
 )
-FS = newFS(FormattedString(''), style=RS)
+FS = context.newString("", style=RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 
@@ -179,13 +180,29 @@ def makeDocument(rs):
     #page[mainId]
     e = page.getElement(mainId)
     
-    fs = newFS(Sample_Text + ' V.T.TeY.Yjy\n', style=dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = doc.context.newString(Sample_Text + ' V.T.TeY.Yjy\n',
+                               style=dict(font=BOLD,
+                                          fontSize=32,
+                                          rTracking=headlineTracking,
+                                          openTypeFeatures = features))
     e.append(fs)
-    fs = newFS(blurb.getBlurb('sports_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = doc.context.newString(blurb.getBlurb('sports_headline', noTags=True)+'\n',
+                               style=dict(font=BOOK,
+                                          fontSize=32,
+                                          rTracking=headlineTracking,
+                                          openTypeFeatures = features))
     e.append(fs)
-    fs = newFS(blurb.getBlurb('aerospace_headline', noTags=True)+'\n', style=dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
+    fs = doc.context.newString(blurb.getBlurb('aerospace_headline', noTags=True)+'\n',
+                               style=dict(font=BOOK,
+                                          fontSize=16,
+                                          rTracking=headlineTracking,
+                                          openTypeFeatures = features))
     e.append(fs)
-    fs = newFS(blurb.getBlurb('article_content', noTags=True)+'\n', style=dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
+    fs = doc.context.newString(blurb.getBlurb('article_content', noTags=True)+'\n',
+                               style=dict(font=BOOK,
+                                          fontSize=12,
+                                          rTracking=bodyTracking,
+                                          openTypeFeatures = features))
     e.append(fs)
 
     return doc

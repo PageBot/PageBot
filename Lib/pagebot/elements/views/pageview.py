@@ -467,8 +467,12 @@ class PageView(BaseView):
             self.setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
             # TODO: DrawBot align and fill don't work properly now.
             M = 16
-            fs = newFS('', self, dict(font='Verdana', xTextAlign=RIGHT, fontSize=M/2,
-                stroke=None, textFill=self.css('viewGridStroke')))
+            fs = context.newString('',
+                                   style=dict(font='Verdana',
+                                              xTextAlign=RIGHT,
+                                              fontSize=M/2,
+                                              stroke=None,
+                                              textFill=self.css('viewGridStroke')))
             ox = px + padL
             for cw, gutter in e.getGridX(): # Answer the sequence or relative (column, gutter) measures.
                     b.newPath()

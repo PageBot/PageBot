@@ -32,7 +32,7 @@ from pagebot.elements import *
 from pagebot.conditions import *
 
 from pagebot.toolbox.transformer import path2ScriptId
-from pagebot import newFS, getGlobals
+from pagebot import getGlobals
 # Get set of globals, unique for this script file name.
 # This is used to store random information (such as blurb article text), to be consistent
 # thought multiple runs of the script. Restart DrawBot to clean the cash and start fresh.

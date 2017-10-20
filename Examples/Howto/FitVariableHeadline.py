@@ -18,7 +18,8 @@
 #     from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 #     
 import copy
-from pagebot import newFS, getRootPath
+from pagebot.contexts import defaultContext as context
+from pagebot import getRootPath
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
 
@@ -39,10 +40,19 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
     It one of the axes does not exist in the font, then use the default setting of the font.
     """
     condensedFont = getVariableFont(varFont, condensedLocation)
-    condensedFs = newFS(s, style=dict(font=condensedFont.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
+    condensedFs = context.newString(s, style=dict(font=condensedFont.installedName,
+                                                  fontSize=fontSize,
+                                                  tracking=tracking,
+                                                  rTracking=rTracking,
+                                                  textFill=0))
     condensedWidth, _ = textSize(condensedFs)
     wideFont = getVariableFont(varFont, wideLocation)
-    wideFs = newFS(s, style=dict(font=wideFont.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
+
+    wideFs = context.newString(s, style=dict(font=wideFont.installedName,
+                                             fontSize=fontSize,
+                                             tracking=tracking,
+                                             rTracking=rTracking,
+                                             textFill=0))
     wideWidth, _ = textSize(wideFs)
     # Check if the requested with is inside the boundaries of the font width axis
     if w < condensedWidth:
@@ -59,7 +69,11 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condensedWidth)/(wideWidth-condensedWidth)
         font = getVariableFont(varFont, location)
-        fs = newFS(s, style=dict(font=font.installedName, fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=0))
+        fs = context.newString(s, style=dict(font=font.installedName,
+                                             fontSize=fontSize,
+                                             tracking=tracking,
+                                             rTracking=rTracking,
+                                             textFill=0))
     return dict(
         condensendFont=condensedFont, condensedFs=condensedFs, condensedWidth=condensedWidth, condensedLocation=condensedLocation,
         wideFont=wideFont, wideFs=wideFs, wideWidth=wideWidth, wideLocation=wideLocation,

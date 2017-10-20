@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -21,8 +22,9 @@ from AppKit import NSColor
 import os
 
 import pagebot
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
-from pagebot import newFS, textBoxBaseLines
+from pagebot import textBoxBaseLines
 from pagebot.toolbox.transformer import path2ScriptId
 
 # Optional using Bitpath family, mixed with Bitcount
@@ -210,13 +212,15 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
     if fontSize is None:
         # Calculate the size for the given string for the selected font/spacing.
         # Then use the resulting with as source to calculate the fitting fontSize.
-        fs = newFS(Sample_Text, None, dict(font=fontName, 
-            fontSize=initialFontSize))
+        fs = context.newString(Sample_Text,
+                               style=dict(font=fontName,
+                                          fontSize=initialFontSize))
         fsWidth, fsHeight = fs.size()
         fontSize = initialFontSize * (W-2*M) / fsWidth
     # Make new formatted string in fitting fontSize
-    fs = newFS(t, None, dict(font=fontName, 
-        fontSize=fontSize, textFill=(r, g, b, opacity)))
+    fs = context.newString(t, style=dict(font=fontName,
+                                         fontSize=fontSize,
+                                         textFill=(r, g, b, opacity)))
     return fontSize, fs
                
 def drawLayers(fss, fontSize):

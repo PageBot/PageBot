@@ -11,13 +11,13 @@
 # -----------------------------------------------------------------------------
 #
 #     DB_TestFormattedStrings.py
+from pagebot.contexts import defaultContext as context
 
 def run():
-    aa = FormattedString('Book Cover', font='Georgia', fontSize=40)
+    aa = context.newString('Book Cover', font='Georgia', fontSize=40)
     print textSize(aa)
 
-
-    aa = FormattedString('')
+    aa = context.newString('')
     aa.font('Georgia')
     aa.fontSize(14)
     aa += '123'
@@ -26,7 +26,7 @@ def run():
     aa += ('Book Cover')
     print textSize(aa)
 
-    aa = FormattedString('')
+    aa = context.newString('')
     aa.font('Georgia')
     aa.fontSize(40)
     aa += 'Book Cover'
@@ -40,35 +40,8 @@ def run():
     rect(100, 100, 200, 200)
     text(aa, (100, 100))
 
-def css(name, e, styles=None, default=None):
-    u"""Answer the named style values. Search in optional style dict first, otherwise up the 
-    parent tree of styles in element e. Both e and style can be None. In that case None is answered."""
-    if styles is not None: # Can be single style or stack of styles.
-        if not isinstance(styles, (tuple, list)):
-            styles = [styles] # Make stack of styles.
-        for style in styles:
-            if name in style:
-                return style[name]
-    if e is not None:
-        return e.css(name)
-    return default
-
-
-def newFS(t, e=None, style=None):
-    u"""Answer a formatted string from valid attributes in Style. Set the all values after testing
-    their existence, so they can inherit from previous style formats."""
-
-    fs = FormattedString('')
-    sFont = css('font', e, style)
-    if sFont is not None:
-        fs.font(sFont)
-    sFontSize = css('fontSize', e, style)
-    if sFontSize is not None:
-        fs.fontSize(sFontSize)
-    return fs + t
-
-if __name__ == '__main__':    
-    fs = newFS('Book Cover', style=dict(font='Georgia', fontSize=40))
+if __name__ == '__main__':
+    fs = context.newString('Book Cover', style=dict(font='Georgia', fontSize=40))
     print textSize(fs)
     run()
 

@@ -15,7 +15,6 @@
 from __future__ import division
 
 import pagebot
-from pagebot import newFS
 from pagebot.style import getRootStyle
 from pagebot.document import Document
 from pagebot.elements.pbpage import Template

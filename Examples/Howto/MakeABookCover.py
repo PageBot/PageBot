@@ -15,7 +15,6 @@
 #     Needs filling in with content.
 #
 import pagebot # Import to know the path of non-Python resources.
-from pagebot import newFS
 from pagebot.contributions.filibuster.blurb import blurb # Create random title and names
 from pagebot.toolbox.transformer import lighter, darker, moreBlue, lessRed
 
@@ -89,7 +88,7 @@ def makeDocument(rootStyle):
         fill=C4, stroke=None, 
         w=colorRect1.w-M, h=colorRect1.h-M, xAlign=CENTER, yAlign=CENTER )
 
-    # Add some title (same width, different height) at the “wrongOrigin” position.
+    # Add some title (same width, different height) at the "wrongOrigin" position.
     # They will be repositioned by solving the colorConditions.
     e1 = newText('Book Cover', style=rootStyle, parent=page, name='Other element', 
         font='Georgia', fontSize=40, fill=(0.3, 0.3, 0.5), textFill=(1, 0, 0),
@@ -104,9 +103,13 @@ def makeDocument(rootStyle):
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
     if not hasattr(pbglobals, 'blurbText'):
-        pbglobals.blurbText = newFS(blurb.getBlurb('article_summary', noTags=True), page,
-        style=dict(font='Georgia', fontSize=12, rLeading=0.2, textColor=0))
-    eTextBox = page.textBox(pbglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT, 
+        pbglobals.blurbText = doc.context.newString(blurb.getBlurb('article_summary', noTags=True),
+                                                    page,
+                                                    style=dict(font='Georgia',
+                                                               fontSize=12,
+                                                               rLeading=0.2,
+                                                               textColor=0))
+    eTextBox = page.textBox(pbglobals.blurbText, point=wrongOrigin, style=rootStyle, w=WT,
         conditions=textCondition, xAlign=CENTER, yAlign=CENTER)
 
     e4 = page.rect(point=wrongOrigin, style=rootStyle, w=W4, h=H4, name='Floating element 4', 

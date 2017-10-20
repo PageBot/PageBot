@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -23,8 +24,9 @@ import os
 from random import choice
 
 import pagebot
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
-from pagebot import newFS, textBoxBaseLines
+from pagebot import textBoxBaseLines
 
 typetrStoreUrl = 'https://store.typenetwork.com/foundry/typetr'
 EXPORT_PATH = '_export/Essentials1_28-1_1.gif'
@@ -140,13 +142,15 @@ def getFittingString(t, fontName, c):
     # Calculate the size for the given string for the selected font/spacing.
     # Then use the resulting with as source to calculate the fitting fontSize.
     initialFontSize = 500 
-    fs = newFS(t, None, dict(font=fontName, 
-        fontSize=initialFontSize))
+    fs = context.newString(t, style=dict(font=fontName,
+                                         fontSize=initialFontSize))
     fsWidth, fsHeight = fs.size()
     fontSize =  initialFontSize * (W-5*padding) / fsWidth
     # Make new formatted string in fitting fontSize
-    fs = newFS(t, None, dict(font=fontName, leading=fontSize*0.75,
-        fontSize=fontSize, textFill=c))
+    fs = context.newString(t, style=dict(font=fontName,
+                                         leading=fontSize*0.75,
+                                         fontSize=fontSize,
+                                         textFill=c))
     return fs
         
 def drawLayers(fss, frame, dx, dy, doNewPage):

@@ -15,7 +15,7 @@
 #     This script the PDF document with Bitcount refernce information.
 #
 import pagebot
-from pagebot import newFS
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.contributions.filibuster.blurb import blurb
 
@@ -28,23 +28,38 @@ if __name__ == '__main__':
 	x = y = 20
 
 	s = blurb.getBlurb('article_content', noTags=True)
-	fs = newFS(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(1, 0, 0), rLeading=0.5))
+	fs = context.newString(s, style=dict(font='BitpathGridDouble-RegularLineSquare',
+                                             fontSize=F,
+                                             textFill=(1, 0, 0),
+                                             rLeading=0.5))
 	textBox(fs, (x, y, 1000, 900))
 
 	s = blurb.getBlurb('article_content', noTags=True)
-	fs = newFS(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 1, 0), rLeading=0.5))
+	fs = context.newString(s, style=dict(font='BitpathGridDouble-RegularLineSquare',
+                                             fontSize=F,
+                                             textFill=(0, 1, 0),
+                                             rLeading=0.5))
 	textBox(fs, (x, y, 1000, 900))
 
 	s = blurb.getBlurb('article_content', noTags=True)
-	fs = newFS(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 1, 1), rLeading=0.5))
+	fs = context.newString(s, style=dict(font='BitpathGridDouble-RegularLineSquare',
+                                             fontSize=F,
+                                             textFill=(0, 1, 1),
+                                             rLeading=0.5))
 	textBox(fs, (x, y, 1000, 900))
 
 	s = blurb.getBlurb('article_content', noTags=True)
-	fs = newFS(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(1, 1, 0), rLeading=0.5))
+	fs = context.newString(s, style=dict(font='BitpathGridDouble-RegularLineSquare',
+                                             fontSize=F,
+                                             textFill=(1, 1, 0),
+                                             rLeading=0.5))
 	textBox(fs, (x, y, 1000, 900))
 
 	s = blurb.getBlurb('article_content', noTags=True)
-	fs = newFS(s, None, dict(font='BitpathGridDouble-RegularLineSquare', fontSize=F, textFill=(0, 0, 0), rLeading=0.5))
+	fs = context.newString(s, style=dict(font='BitpathGridDouble-RegularLineSquare',
+                                             fontSize=F,
+                                             textFill=(0, 0, 0),
+                                             rLeading=0.5))
 	textBox(fs, (x, y, 1000, 900))
 	
 saveImage('_export/PatternPage2.pdf')

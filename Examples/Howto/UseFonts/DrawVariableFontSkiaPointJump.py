@@ -20,8 +20,8 @@
 from math import radians
  
 import pagebot
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
-from pagebot import newFS
 from pagebot.fonttoolbox.mutator import getVariableFont
 from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
 from pagebot.style import CENTER
@@ -122,27 +122,39 @@ class FontIcon(object):
         strokeWidth(self.line)
         translate(x, y)
         drawPath(path)
-        fs = newFS(self.c, style=dict(font=self.f.installedName, textFill=0, fontSize=h*2/3))
+        fs = context.newString(self.c,
+                               style=dict(font=self.f.installedName,
+                                          textFill=0,
+                                          fontSize=h*2/3))
         tw, th = textSize(fs)
         text(fs, (w/2-tw/2, h/2-th/3.2))
         
         if drawLabel:
             if self.title:
-                fs = newFS(self.title, style=dict(font=self.labelFont.installedName, textFill=0, 
-                    rTracking=self.LABEL_RTRACKING, fontSize=self.labelSize))
+                fs = context.newString(self.title,
+                                       style=dict(font=self.labelFont.installedName,
+                                                  textFill=0,
+                                                  rTracking=self.LABEL_RTRACKING,
+                                                  fontSize=self.labelSize))
                 tw, th = textSize(fs)
                 text(fs, (w/2-tw/2, self.ih+th/2))
 
             y = -self.LABEL_RLEADING*self.labelSize
             if self.name:
-                fs = newFS(self.name, style=dict(font=self.labelFont.installedName, textFill=0, 
-                    rTracking=self.LABEL_RTRACKING, fontSize=self.labelSize))
+                fs = context.newString(self.name,
+                                       style=dict(font=self.labelFont.installedName,
+                                                  textFill=0,
+                                                  rTracking=self.LABEL_RTRACKING,
+                                                  fontSize=self.labelSize))
                 tw, th = textSize(fs)
                 text(fs, (w/2-tw/2, y))
                 y -= self.LABEL_RLEADING*self.labelSize
             if self.label:
-                fs = newFS(self.label, style=dict(font=self.labelFont.installedName, textFill=0, 
-                    rTracking=self.LABEL_RTRACKING, fontSize=self.labelSize))
+                fs = context.newString(self.label,
+                                       style=dict(font=self.labelFont.installedName,
+                                                  textFill=0,
+                                                  rTracking=self.LABEL_RTRACKING,
+                                                  fontSize=self.labelSize))
                 tw, th = textSize(fs)
                 text(fs, (w/2-tw/2, y))
         restore()
@@ -249,22 +261,34 @@ def drawAnimation():
         line(((xl+xt)/2, (yl+yt)/2), ((xr+xb)/2, (yr+yb)/2))
         line(((xl+xb)/2, (yl+yb)/2), ((xr+xt)/2, (yr+yt)/2))
 
-        fs = newFS('Weight %0.1f' % wghtMin, style=dict(font=f.installedName, textFill=0, 
-            rTracking=0.02, fontSize=12))
+        fs = context.newString('Weight %0.1f' % wghtMin,
+                               style=dict(font=f.installedName,
+                                          textFill=0,
+                                          rTracking=0.02,
+                                          fontSize=12))
         tw, th = textSize(fs)
         text(fs, ((xl+xt)/2-tw-20, (yl+yt)/2))
 
-        fs = newFS('Width %0.1f' % wdthMin, style=dict(font=f.installedName, textFill=0, 
-            rTracking=0.02, fontSize=12))
+        fs = context.newString('Width %0.1f' % wdthMin,
+                               style=dict(font=f.installedName,
+                                          textFill=0,
+                                          rTracking=0.02,
+                                          fontSize=12))
         tw, th = textSize(fs)
         text(fs, ((xl+xb)/2-tw-20, (yl+yb)/2))
 
-        fs = newFS('Width %0.1f' % wdthMax, style=dict(font=f.installedName, textFill=0, 
-            rTracking=0.02, fontSize=12))
+        fs = context.newString('Width %0.1f' % wdthMax,
+                               style=dict(font=f.installedName,
+                                          textFill=0,
+                                          rTracking=0.02,
+                                          fontSize=12))
         text(fs, ((xr+xt)/2+20, (yr+yt)/2))
 
-        fs = newFS('Weight %0.1f' % wghtMax, style=dict(font=f.installedName, textFill=0, 
-            rTracking=0.02, fontSize=12))
+        fs = context.newString('Weight %0.1f' % wghtMax,
+                               style=dict(font=f.installedName,
+                                          textFill=0,
+                                          rTracking=0.02,
+                                          fontSize=12))
         text(fs, ((xb+xr)/2+20, (yb+yr)/2))
 
         dd = d*0.6
@@ -302,8 +326,14 @@ def drawAnimation():
         #wdthLoc = 1#wghtDef#locRadX
         #wghtLoc = locRadY
         
-        fs = newFS('angle %0.2f rx %0.2f ry %0.2f wdth %0.2f wght %0.2f' % (angle, locRadX, locRadY, wdthLoc, wghtLoc), style=dict(font=f.installedName, textFill=0, 
-            rTracking=0.02, fontSize=12))
+        fs = context.newString(('angle %0.2f rx %0.2f'
+                                ' ry %0.2f wdth %0.2f'
+                                ' wght %0.2f') % (angle, locRadX, locRadY,
+                                                  wdthLoc, wghtLoc),
+                               style=dict(font=f.installedName,
+                                          textFill=0,
+                                          rTracking=0.02,
+                                          fontSize=12))
         text(fs, (200, 480))
         
         location = dict(wght=wghtLoc, wdth=wdthLoc)
@@ -315,13 +345,19 @@ def drawAnimation():
         fill(0)
         drawGlyphPath(locFont, 'Q', lx-tw/2+20, ly+20, s=0.05, fillColor=0)
         """
-        fs = newFS('Q', style=dict(font=locFont.installedName, textFill=0, 
-            rTracking=0.02, fontSize=80))
+        fs = context.newString('Q',
+                               style=dict(font=locFont.installedName,
+                                          textFill=0,
+                                          rTracking=0.02,
+                                          fontSize=80))
         tw, th = textSize(fs)
         text(fs, (lx-tw/2, ly+20)) 
                 
-        fs = newFS('#PageBot', style=dict(font=f.installedName, textFill=0.5, 
-            rTracking=0.02, fontSize=10))
+        fs = context.newString('#PageBot',
+                               style=dict(font=f.installedName,
+                                          textFill=0.5,
+                                          rTracking=0.02,
+                                          fontSize=10))
         tw, th = textSize(fs)
         text(fs, (W-tw-10, 10))
                  
