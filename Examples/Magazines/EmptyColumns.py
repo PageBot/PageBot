@@ -32,7 +32,7 @@ from pagebot.elements import *
 from pagebot.conditions import *
 
 from pagebot.toolbox.transformer import path2ScriptId
-from pagebot import newFS, getGlobals
+from pagebot import getGlobals
 # Get set of globals, unique for this script file name.
 # This is used to store random information (such as blurb article text), to be consistent
 # thought multiple runs of the script. Restart DrawBot to clean the cash and start fresh.
@@ -96,7 +96,9 @@ def makeDocument():
  
     # Adding width to formatted string request will scale fontSize of 
     # style to force fit width.
-    fs = newFS('Magazine', w=page.pw, style=coverTitleStyle)
+    fs = doc.context.newString('Magazine',
+                               w=page.pw,
+                               style=coverTitleStyle)
     # Keep h=None, to make vertical elastic box, depending on content.
     tb = newTextBox(fs, parent=page,  
         showBaselines=True,

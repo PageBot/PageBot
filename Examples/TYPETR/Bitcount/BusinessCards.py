@@ -22,7 +22,6 @@ from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A3, EuropeBusinessCard, INCH, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
 
 PH, PW = A3 # Landscape for collection of pages in thumb view.
 W, H = EuropeBusinessCard
@@ -68,8 +67,14 @@ def makeDocument():
     
     BODY_FONT = 'BitcountMonoDouble-RegularCircle'
     
-    fs = newFS('TYPETR', w=W-padding*2, style=dict(font=BODY_FONT, fontSize=56, leading=0, textFill=0))
-    fs += newFS("""\nPetr van Blokland
+    fs = doc.context.newString('TYPETR',
+                               w=W-padding*2,
+                               style=dict(font=BODY_FONT,
+                                          fontSize=56,
+                                          leading=0,
+                                          textFill=0))
+    fs += doc.context.newString("""
+Petr van Blokland
 Designer|Lecturer|Developer
 
 Rietveld 56 | 2611 LM Delft 
@@ -77,8 +82,11 @@ The Netherlands
 Email buro@petr.com
 typetr.typenetwork.com
 Twitter @petrvanblokland
-Mobile +31 6 2421 9502""", style=dict(font=BODY_FONT, fontSize=9, leading=0, textFill=0))
-              
+Mobile +31 6 2421 9502""", style=dict(font=BODY_FONT,
+                                      fontSize=9,
+                                      leading=0,
+                                      textFill=0))
+
     e1 = newTextBox(fs, 
         name='ElasticTextBox1',
         parent=page, font=BODY_FONT, pt=6,

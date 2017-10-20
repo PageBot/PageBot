@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -15,9 +16,10 @@
 #     This script generates an automatic Thesis composition.
 #
 import pagebot
-from pagebot import newFS, findMarkers, textBoxBaseLines
+from pagebot import findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT, NO_COLOR, A4, TOP, BOTTOM
 from pagebot.document import Document
+from pagebot.contexts import defaultContext as context
 from pagebot.elements.page import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
@@ -355,8 +357,11 @@ def makeDocument(rs):
                         # becomes a method of the composer.
                         # TODO: Make this into Galley, in case footnote <p> has child nodes. 
                         footnoteStyle = doc.findStyle('footnote')
-                        footnoteText = 'TODO: Add footnote text here.' #newFS('%d\t%s\n' % (footnoteId, footnotes[footnoteId]['p'].text),
-                            #style=t.getCascadedStyle(doc.css('footnote')))
+                        footnoteText = 'TODO: Add footnote text here.'
+                            #doc.context.newStyle('%d\t%s\n' % (footnoteId,
+                            #                                   footnotes[footnoteId]['p'].text),
+                            #                     style=t.getCascadedStyle(doc.css('footnote')))
+
                         # Add the footnote content to the box (it may not be the first to be added.
                         fnBox.appendString(footnoteText)
                 elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all in the TOC
@@ -385,7 +390,7 @@ def makeDocument(rs):
         for pageNumber in item['pageIds']:
             pageNumbers.append(`pageNumber`)
         literatureRefBox.append(u'%s – %s\n' % (refId, ', '.join(pageNumbers)))
-        #fs = newFS('', doc.getStyle('p'))
+        #fs = doc.context.newString('', doc.getStyle('p'))
         
         print refId, item['nodeId'], item['node'], item['p'], item['pageIds']
 

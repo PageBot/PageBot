@@ -1,8 +1,8 @@
 
 # Demo Spreadsheet Element
 
-from pagebot import newFS     
 from pagebot.document import Document
+from pagebot.contexts import defaultContext as context
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.style import A5, TOP, ORIGIN
@@ -29,9 +29,12 @@ class DemoSpreadSheet(Element):
         for iy in range(int(self.h/leading)+1):
             y = py + iy*leading
             line((px,y), (px+self.w, y)) 
-            fs = newFS(str(iy), style=dict(font='Verdana', fontSize=6, textFill=(1, 0, 0)))
+            fs = context.newString(str(iy),
+                                   style=dict(font='Verdana',
+                                              fontSize=6,
+                                              textFill=(1, 0, 0)))
             tw, th = textSize(fs)
-            #print y, leading, leading/2, th, th/2
+            #print (y, leading, leading/2, th, th/2)
             text(fs, (px+self.CW-4-tw, y+th/2))
             
         # Draw vertical lines

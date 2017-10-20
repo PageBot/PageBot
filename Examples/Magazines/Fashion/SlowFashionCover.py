@@ -16,6 +16,7 @@ from __future__ import division
 from datetime import datetime # Make date on magazine cover fit today.
 
 import pagebot
+from pagebot.contexts import defaultContext as context
 from pagebot import Gradient, Shadow
 from pagebot.style import getRootStyle, LEFT, TOP, RIGHT, A4Letter
 from pagebot.elements import *
@@ -91,12 +92,12 @@ def makeCoverTemplate(imagePath, w, h):
     coverTemplate = Template(w=w, h=h, padding=PADDING) # Cover template of the magazine.
     newImage(imagePath, parent=coverTemplate, conditions=[Fit2WidthSides(), Bottom2BottomSide()])
     # Title of the magazine cover.
-    coverTitle = newFS('Fashion', style=coverTitleStyle)
+    coverTitle = context.newString('Fashion', style=coverTitleStyle)
     # Calculate width if single "F" for now, to align "Slow"
     # TODO: Change in example to go through the coverTitle to get positions and widths.
-    FWidth, _ = textSize(newFS('F', style=coverTitleStyle))
+    FWidth, _ = textSize(context.newString('F', style=coverTitleStyle))
         
-    coversubTitle = newFS('Slow', style=coverSubTitleStyle)
+    coversubTitle = context.newString('Slow', style=coverSubTitleStyle)
     newTextBox(coversubTitle, parent=coverTemplate, pl=FWidth*0.5, 
         conditions=[Left2Left(), Fit2Width(), Top2TopSide()])
     
@@ -107,14 +108,20 @@ def makeCoverTemplate(imagePath, w, h):
     # Make actual date in top-right with magazine title. Draw a bit transparant on background photo.
     dt = datetime.now()
     d = dt.strftime("%B %Y")
-    fs = newFS(d, style=dict(font=MEDIUM.installedName, fontSize=17,
-        textFill=(1, 1, 1, 0.6), tracking=0.5))
+    fs = context.newString(d, style=dict(font=MEDIUM.installedName,
+                                         fontSize=17,
+                                         textFill=(1, 1, 1, 0.6),
+                                         tracking=0.5))
     # TODO: padding righ could come from right stem of the "n"
     newTextBox(fs, parent=coverTemplate, xTextAlign=RIGHT, pr=10, pt=6, conditions=[Top2Top(), Right2Right()])
 
     # Titles could come automatic from chapters in the magazine.
-    fs = newFS('$6.95',  style=dict(font=BOOK.installedName, fontSize=12, 
-        textFill=textColor, tracking=1, leading=12 ))
+    fs = context.newString('$6.95',
+                           style=dict(font=BOOK.installedName,
+                                      fontSize=12,
+                                      textFill=textColor,
+                                      tracking=1,
+                                      leading=12))
     newText(fs, parent=coverTemplate, mt=8, conditions=[Top2Bottom(), Right2Right()])
   
     makeCoverTitles(coverTemplate)
@@ -127,23 +134,40 @@ def makeCoverTitles(coverTemplate):
 
     # TODO: Titles should come automatic from random blurb chapter titles in the magazine.
     pl = 8 # Generic offset as padding left from the page padding to aligh with cover title.
-    fs = newFS('Skirts &\nScarves', style=dict(font=BOOK_CONDENSED.installedName, 
-        fontSize=64, textFill=1, tracking=0.5, leading=0, rLeading=0.9))
+    fs = context.newString('Skirts &\nScarves',
+                           style=dict(font=BOOK_CONDENSED.installedName,
+                                      fontSize=64,
+                                      textFill=1,
+                                      tracking=0.5,
+                                      leading=0,
+                                      rLeading=0.9))
     newTextBox(fs, z=20, pl=15, pt=-40, parent=coverTemplate, 
         conditions=[Left2Left(), Fit2Width(), Float2Top()])
         
     # TODO: Titles should come automatic from random blurb chapter titles in the magazine.
-    fs = newFS('Ideal style:\n', style=dict(font=MEDIUM.installedName, fontSize=32, 
-        textFill=1, tracking=0.5, leading=50))
-    fs += newFS('The almost nothing', style=dict(font=BOOK.installedName, 
-        fontSize=45, textFill=1, tracking=0.5, leading=48))
+    fs = context.newString('Ideal style:\n',
+                           style=dict(font=MEDIUM.installedName,
+                                      fontSize=32,
+                                      textFill=1,
+                                      tracking=0.5,
+                                      leading=50))
+    fs += context.newString('The almost nothing',
+                            style=dict(font=BOOK.installedName,
+                                       fontSize=45,
+                                       textFill=1,
+                                       tracking=0.5,
+                                       leading=48))
     newTextBox(fs, z=20, pl=8, w=400, pt=0, parent=coverTemplate, 
         textShadow=shadow, 
         conditions=[Left2Left(), Float2Top()])
         
     # TODO: Titles should come automatic from random blurb chapter titles in the magazine.
-    fs = newFS('Findings\non vineyard island', style=dict(font=BOOK_LIGHT.installedName, 
-        fontSize=72, textFill=1, tracking=0.5, leading=74))
+    fs = context.newString('Findings\non vineyard island',
+                           style=dict(font=BOOK_LIGHT.installedName,
+                                      fontSize=72,
+                                      textFill=1,
+                                      tracking=0.5,
+                                      leading=74))
     newTextBox(fs, z=20, pl=8, pt=40, parent=coverTemplate, 
         style=dict(shadowOffset=(4, -4), shadowBlur=20, shadowFill=(0,0,0,0.6)),
         textShadow=shadow, 
@@ -151,14 +175,24 @@ def makeCoverTitles(coverTemplate):
       
     # TODO: Titles should come automatic from random blurb chapter titles in the magazine.
     c = (1, 1, 0, 1) #lighter(int2Color(0x99CBE9)) # Pick from light spot in the photo
-    fs = newFS('Exclusive:\n', style=dict(font=MEDIUM.installedName, fontSize=32, 
-        textFill=c, tracking=0.5, lineHeight=34))
-    fs += newFS('Interview with Pepper+Tom ', style=dict(font=BOOK.installedName, 
-        fontSize=32, textFill=c, tracking=0.5, lineHeight=34))
+    fs = context.newString('Exclusive:\n',
+                           style=dict(font=MEDIUM.installedName,
+                                      fontSize=32,
+                                      textFill=c,
+                                      tracking=0.5,
+                                      lineHeight=34))
+    fs += context.newString('Interview with Pepper+Tom ',
+                            style=dict(font=BOOK.installedName,
+                                       fontSize=32,
+                                       textFill=c,
+                                       tracking=0.5,
+                                       lineHeight=34))
     newTextBox(fs, z=20, pl=pl, pt=20, parent=coverTemplate, 
-        style=dict(shadowOffset=(4, -4), shadowBlur=20, shadowFill=(0,0,0,0.6)),
-        textShadow=shadow, 
-        conditions=[Left2Left(), Fit2Width(), Float2Bottom()])
+               style=dict(shadowOffset=(4, -4),
+                          shadowBlur=20,
+                          shadowFill=(0,0,0,0.6)),
+               textShadow=shadow,
+               conditions=[Left2Left(), Fit2Width(), Float2Bottom()])
 
 def makeTemplate1(w, h):
     # Template 16
