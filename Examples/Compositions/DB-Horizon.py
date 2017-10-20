@@ -1,7 +1,7 @@
 from random import choice
 from pagebot.builders import drawBotBuilder as b
 if b is None:
-    print 'Example runs only in DrawBot'.
+    print ('Example runs only in DrawBot')
 else:
     LETTERS = 'ABCEFGHIJKLMNOPQTSTIVWXUZ'
 
