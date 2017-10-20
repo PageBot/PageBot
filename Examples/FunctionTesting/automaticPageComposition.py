@@ -17,8 +17,6 @@
 #
 from time import time
 
-from pagebot import newFS
-
 import pagebot.style
 reload(pagebot.style)
 from pagebot.style import getRootStyle, LEFT
@@ -253,7 +251,7 @@ def makeDocument():
     ttt = ''
     for n in range(100):
         ttt += 'abcdefg%d\n' % n
-    ttt = newFS(ttt, rs)
+    ttt = doc.context.newString(ttt, rs)
     ttt = page0.textBox(ttt, point(rs.get('pl'), rs.get('pt')), w=11*14, h=50*14, fill=(0.8, 0.8, 0.8, 0.5))
     page0.textBox(ttt, point=(rs.get('pl')+11*14+14, rs.get('pt')), w=11*14, h=50*14, fill=(0.8, 0.8, 0.8, 0.5))
     

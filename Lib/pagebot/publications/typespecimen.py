@@ -116,24 +116,29 @@ class TypeSpecimen(Publication):
 
         # Get the title box and try to fit the add family name.
         title = page.getElement(self.titleBoxId) 
-        fs = newFS(family.name, dict(fontSize=48, font=style.name))
+        fs = self.context.newString(family.name, dict(fontSize=48, font=style.name))
         title.append(fs)
         
         if style.info.description:
             info = page.getElement(self.infoBoxId)
-            fs = newFS(style.info.description, dict(fontSize=9, leading=15, font=style.name))
+            fs = self.context.newString(style.info.description, dict(fontSize=9, leading=15, font=style.name))
             info.append(fs)
         
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
         # Create the formatted string with the style names shown in their own style.
         # The first one in the list is also used to show the family Name.
-        fs = newFS('')
+        fs = self.context.newString('')
         for index, (name, style) in enumerate(sorted(family.styles.items())):
             # We can assume these are defined, otherwise the style is skipped.
             styleName = style.info.styleName
-            fs += newFS('%s %s %d %d %0.2f\n' % (family.name, styleName, 
-                style.info.weightClass, style.info.widthClass, style.info.italicAngle), 
-                style=dict(fontSize=16, font=style.name, rLeading=1.4))
+            fs += self.context.newString('%s %s %d %d %0.2f\n' % (family.name,
+                                                                  styleName,
+                                                                  style.info.weightClass,
+                                                                  style.info.widthClass,
+                                                                  style.info.italicAngle),
+                                         style=dict(fontSize=16,
+                                                    font=style.name,
+                                                    rLeading=1.4))
             
         column.append(fs)	
 

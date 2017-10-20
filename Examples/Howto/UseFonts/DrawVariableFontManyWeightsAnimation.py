@@ -18,8 +18,8 @@
 #     which may make them incompatible with this particular example.
 #     
 import pagebot
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
-from pagebot import newFS
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont 
 from pagebot.style import CENTER
 
@@ -132,26 +132,38 @@ class FontIcon(object):
         translate(x, y)
         drawPath(path)
         labelSize = e
-        fs = newFS(self.c, style=dict(font=self.f.installedName, textFill=0, fontSize=h*2/3))
+        fs = context.newString(self.c,
+                               style=dict(font=self.f.installedName,
+                                          textFill=0,
+                                          fontSize=h*2/3))
         tw, th = textSize(fs)
         text(fs, (w/2-tw/2, h/2-th/3.2))
         
         if self.title:
-            fs = newFS(self.title, style=dict(font=self.labelFont.installedName, textFill=0, 
-                rTracking=self.LABEL_RTRACKING, fontSize=labelSize))
+            fs = context.newString(self.title,
+                                   style=dict(font=self.labelFont.installedName,
+                                   textFill=0,
+                                   rTracking=self.LABEL_RTRACKING,
+                                   fontSize=labelSize))
             tw, th = textSize(fs)
             text(fs, (w/2-tw/2, self.ih+th/2))
 
         y = -self.LABEL_RLEADING*labelSize
         if self.name:
-            fs = newFS(self.name, style=dict(font=self.labelFont.installedName, textFill=0, 
-                rTracking=self.LABEL_RTRACKING, fontSize=labelSize))
+            fs = context.newString(self.name,
+                                   style=dict(font=self.labelFont.installedName,
+                                              textFill=0,
+                                              rTracking=self.LABEL_RTRACKING,
+                                              fontSize=labelSize))
             tw, th = textSize(fs)
             text(fs, (w/2-tw/2, y))
             y -= self.LABEL_RLEADING*labelSize
         if self.label:
-            fs = newFS(self.label, style=dict(font=self.labelFont.installedName, textFill=0, 
-                rTracking=self.LABEL_RTRACKING, fontSize=labelSize))
+            fs = context.newString(self.label,
+                                   style=dict(font=self.labelFont.installedName,
+                                              textFill=0,
+                                              rTracking=self.LABEL_RTRACKING,
+                                              fontSize=labelSize))
             tw, th = textSize(fs)
             text(fs, (w/2-tw/2, y))
         restore()
@@ -231,19 +243,31 @@ def positionFontIcons():
     varFontIcon.y = H/2-varFontIcon.ih/2
 
 def drawBackground1(keyFrame, frame):
-    fs = newFS('8 weight fonts\nTotal 400k', style=dict(font=LABEL_FONT.installedName, rLeading=1.2, fontSize=18, textFill=(1, 0, 0)))
+    fs = context.newString('8 weight fonts\nTotal 400k',
+                           style=dict(font=LABEL_FONT.installedName,
+                                      rLeading=1.2,
+                                      fontSize=18,
+                                      textFill=(1, 0, 0)))
     textBox(fs, (50, H-60, 200, 50))
     
 def drawBackground2(keyFrame, frame):
     drawBackground1(keyFrame, frame)
     varFontIcon = id2FontIcon['VarFont']
-    fs = newFS('1 axis\nTotal 100k', style=dict(font=LABEL_FONT.installedName, rLeading=1.2, fontSize=18, textFill=(1, 0, 0)))
+    fs = context.newString('1 axis\nTotal 100k',
+                           style=dict(font=LABEL_FONT.installedName,
+                                      rLeading=1.2,
+                                      fontSize=18,
+                                      textFill=(1, 0, 0)))
     textBox(fs, (varFontIcon.x, H-60, 200, 50))
     
 def drawBackground3(keyFrame, frame):
     drawBackground1(keyFrame, frame)
     varFontIcon = id2FontIcon['VarFont']
-    fs = newFS('%d weights\nTotal 100k' % ((2**15)+1), style=dict(font=LABEL_FONT.installedName, rLeading=1.2, fontSize=18, textFill=(1, 0, 0)))
+    fs = context.newString('%d weights\nTotal 100k' % ((2**15)+1),
+                           style=dict(font=LABEL_FONT.installedName,
+                                      rLeading=1.2,
+                                      fontSize=18,
+                                      textFill=(1, 0, 0)))
     textBox(fs, (varFontIcon.x, H-60, 200, 50))
         
 def drawAnimation():
