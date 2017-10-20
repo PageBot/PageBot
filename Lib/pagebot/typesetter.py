@@ -500,8 +500,8 @@ class Typesetter(object):
         u"""If s is a formatted string, them it is placed untouched. If it is a plain string, then
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters. 
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
-        if isinstance(bs, basestring): # Only convert if not yet BabelString instance.
-            bs = self.galley.newString(bs, e=e, style=style)
+        # Only convert if not yet BabelString instance.
+        bs = self.galley.newString(bs, e=e, style=style)
         self.append(bs)
         return bs
 

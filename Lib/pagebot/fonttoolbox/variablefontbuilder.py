@@ -139,8 +139,9 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
         font=font, fs=fs, width=textSize(fs)[0], location=location
     )
 def getConstrainedLocation(font, location):
-    u"""Answer the location with applied min/max values for each axis. Don't change values
-    for axes that are not defined in the font."""
+    u"""Answer the location with applied min/max values for each axis. Don't change the values
+    if they are positioned between their min/max values. Don't change values for axes that are 
+    not defined in the font."""
     constrainedLocation = {}
     axes = font.axes
     for name, value in location.items():

@@ -18,7 +18,7 @@ if 0:
     print ('abc' + 'def') * 10
 # List
 if 0:
-    print [12, 23, 'AAAA', 45, 56] + [55,55]*3
+    print [12, 23, 'This is a list', 45, 56] + [55,55]*3
     aa = [44,55,66,99,100,22, 33, 44]
     aa.append(77)
     print aa
@@ -29,7 +29,7 @@ if 0:
     print hugeList[233:-600]
 # Tuple
 if 0:
-    print (12, 23, 'AAAA', 45, 56) + (55,55)*3
+    print (12, 23, 'This is a tuple', 45, 56) + (55,55)*3
     aa = (44,55,66,99,100,22, 33, 44)
     #aa.append(77)
     print aa

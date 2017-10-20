@@ -66,10 +66,9 @@ class DrawBotContext(BaseContext):
             styleName=None, tagName=None):
         u"""Create a new styles BabelString(FsString) instance from s, using e or style.
         Ignore and answer s if it is already a FsString."""
-        if isinstance(s, basestring):
+        if not isinstance(s, FsString):
             s = newFsString(s, self, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
-        assert isinstance(s, FsString)
         return s
 
     def newBulletString(self, bullet, e=None, style=None):
