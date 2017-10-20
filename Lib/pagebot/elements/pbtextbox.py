@@ -38,7 +38,7 @@ class TextBox(Element):
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
         self._textLines = self._baseLines = None # Force initiaize upon first usage.
         self.size = w, h
-        self.bs = self.newString(bs) # Can be any type: BabelString instance or plain unicode string.
+        self.bs = self.newString(bs) # Source can be any type: BabelString instance or plain unicode string.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
@@ -107,9 +107,11 @@ class TextBox(Element):
         to force recalculation as soon as self.textLines is called again.
         If bs is not a BabelString instance, then create one, defined by the current view,
         based on the style of self."""
-        if isinstance(bs, basestring):
-            bs = self.newString(bs, e=self)
-        self.bs += bs
+        #print '@#_@_@_@#_', bs, self.bs, bs.__class__.__name__, self.bs.__class__.__name__
+        #if isinstance(bs, basestring):
+        #    bs = self.newString(bs, e=self)
+        #print 'EW+E+WE+E', bs, self.bs, bs.__class__.__name__, self.bs.__class__.__name__
+        self.bs += self.newString(bs, e=self)
 
     def appendMarker(self, markerId, arg=None):
         marker = getMarker(markerId, arg=arg)
