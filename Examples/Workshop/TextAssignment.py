@@ -1,5 +1,4 @@
 #    Take text of 3-4 paragraphs (headline, body text, caption)
-#    Make 1-2 formatted strings from that (with newFS)
 #    Make 2 rect elements, with a color
 #    Organize those 3-4 elements on a responsive page.
      

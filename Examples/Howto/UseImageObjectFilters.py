@@ -22,7 +22,6 @@ from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
 
 from pagebot.conditions import *
 from pagebot.elements import *
@@ -87,7 +86,10 @@ def makeDocument():
     # Give parent on creation, to have the css chain working.
     
     # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
-    fs = newFS('Captions float below the image', style=dict(font='Verdana', fontSize=20, textFill=1))
+    fs = doc.context.newString('Captions float below the image',
+                               style=dict(font='Verdana',
+                                          fontSize=20,
+                                          textFill=1))
     cap = newTextBox(fs, name='Caption', parent=im, z=0,
         conditions=[ Fit2Width(), Float2Top()], 
         padding=4, font='Verdana', 

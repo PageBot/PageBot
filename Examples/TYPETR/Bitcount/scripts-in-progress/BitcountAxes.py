@@ -17,7 +17,7 @@
 #
 from fontTools.ttLib import TTFont
 
-from pagebot import newFS, textBoxBaseLines
+from pagebot import textBoxBaseLines
 
 import pagebot
 reload(pagebot)

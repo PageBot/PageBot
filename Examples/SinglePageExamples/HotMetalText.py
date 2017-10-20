@@ -30,7 +30,7 @@ from pagebot.elements import *
 from pagebot.conditions import *
 
 from pagebot.toolbox.transformer import path2ScriptId
-from pagebot import newFS, getGlobals
+from pagebot import getGlobals
 # Get set of globals, unique for this script file name.
 # This is used to store random information (such as blurb article text), to be consistent
 # thought multiple runs of the script. Restart DrawBot to clean the cash and start fresh.
@@ -164,14 +164,14 @@ def makeDocument():
         conditions=(Fit2Width(), Float2Top(), Fit2Bottom()))
     i1.solve()
 
-    fs = newFS(topT, style=bodyStyle)
-    fs += newFS('\nPrepare for what comes next.', style=bookName)
+    fs = doc.context.newString(topT, style=bodyStyle)
+    fs += doc.context.newString('\nPrepare for what comes next.', style=bookName)
     topText = newTextBox(fs, w=w/3-16, parent=page, 
         conditions=(Top2Top(), Right2Right()))
     
     # Review content. Hard coded ligatures.
     t = u'This is an example of hot metal typesetting, where every letter had a ﬁxed shape and its own width as rectangular box.\nVariable Fonts could adjust, ﬁt and decorate letters where it is most needed in a column of text. Not in this example.'
-    fs = newFS(t, style=headStyle)
+    fs = doc.context.newString(t, style=headStyle)
     t4 = newTextBox(fs, w=w/2-G, mt=10, parent=i1, gradient=None, 
         drawBefore=drawBefore, 
         conditions=(Fit2Width(), Float2Top()))
@@ -181,7 +181,10 @@ def makeDocument():
         fontNamesFeatures = 'Example featuring typefaces TypeNetwork TYPETR Productus and Proforma'
     else:
         fontNamesFeatures = 'Example featuring OSX system fonts %s' % ', '.join(sorted(set((bookName, mediumName, boldName))))
-    fs = newFS(fontNamesFeatures, style=dict(font=bookName, fontSize=14, textFill=0))
+    fs = doc.context.newString(fontNamesFeatures,
+                               style=dict(font=bookName,
+                                          fontSize=14,
+                                          textFill=0))
     t5 = newTextBox(fs, w=w/2-G, mt=10, parent=page, gradient=None, 
         conditions=(Fit2Width(), Float2Top()))
         

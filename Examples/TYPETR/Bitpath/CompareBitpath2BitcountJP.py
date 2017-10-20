@@ -12,8 +12,8 @@
 #
 #     CompareBitpath2Bitcount.py
 
-from pagebot import newFS
 from random import shuffle
+from pagebot.contexts import defaultContext as context
 
 ITALIC = False
 
@@ -46,12 +46,17 @@ for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz':
             continue
         if not 'Mono' in name:
             continue
-        fs = newFS('Jill Pichotta', style=dict(font=name, fontSize=200,
-            openTypeFeatures=dict(ss01=True, ss02=True,ss03=True), tracking=40,
-            #textFill=None,
-            textFill=(random(), random(), random(), 0.1), 
-            textStroke=(random(), random(), random()), textStrokeWidth=0.5,
-        ))
+        fs = context.newString('Jill Pichotta',
+                               style=dict(font=name,
+                                          fontSize=200,
+                                          openTypeFeatures=dict(ss01=True,
+                                                                ss02=True,
+                                                                ss03=True),
+                                          tracking=40,
+                                         #textFill=None,
+                                          textFill=(random(), random(), random(), 0.1),
+                                          textStroke=(random(), random(), random()),
+                                          textStrokeWidth=0.5))
         text(fs, (50, 100))
         
 saveImage('_export/CompareBitpath2Bitcount.pdf')

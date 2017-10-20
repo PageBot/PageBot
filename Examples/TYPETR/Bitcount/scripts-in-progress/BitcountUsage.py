@@ -15,7 +15,7 @@
 #     This script generates an article (in Dutch) of 2009 about the approach to
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
-from pagebot import newFS, textBoxBaseLines
+from pagebot import textBoxBaseLines
 
 import pagebot.style
 reload(pagebot.style)

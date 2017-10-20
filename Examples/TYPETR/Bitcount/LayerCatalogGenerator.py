@@ -21,7 +21,7 @@ from AppKit import NSColor
 import os
 
 import pagebot
-from pagebot import newFS
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.toolbox.transformer import path2ScriptId
@@ -200,13 +200,18 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
     if fontSize is None:
         # Calculate the size for the given string for the selected font/spacing.
         # Then use the resulting with as source to calculate the fitting fontSize.
-        fs = newFS(Sample_Text, None, dict(font=fontName, 
-            fontSize=initialFontSize, openTypeFeatures=features))
+        fs = context.newString(Sample_Text,
+                               style=dict(font=fontName,
+                                          fontSize=initialFontSize,
+                                          openTypeFeatures=features))
         fsWidth, fsHeight = fs.size()
         fontSize = int(round(initialFontSize * (W-2*M) / fsWidth))
     # Make new formatted string in fitting fontSize
-    fs = newFS(Sample_Text, None, dict(font=fontName, 
-        fontSize=fontSize, textFill=(r, g, b, opacity), openTypeFeatures=features))
+    fs = context.newString(Sample_Text,
+                           style=dict(font=fontName,
+                                      fontSize=fontSize,
+                                      textFill=(r, g, b, opacity),
+                                      openTypeFeatures=features))
     return fontSize, fs
 
 S_HEADLINES = [

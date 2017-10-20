@@ -30,7 +30,7 @@ from pagebot.elements.variablefonts.variablecircle import VariableCircle
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
 
 from pagebot.toolbox.transformer import path2ScriptId
-from pagebot import newFS, getGlobals
+from pagebot import getGlobals
 # Get set of globals, unique for this script file name.
 # This is used to store random information (such as blurb article text), to be consistent
 # thought multiple runs of the script. Restart DrawBot to clean the cash and start fresh.
@@ -105,7 +105,8 @@ def makeDocument(fontPath):
     italicBodyStyle['font'] = 'Verdana-Italic'
     italicBodyStyle['paragraphTopSpacing'] = 0
 
-    fs = newFS(f.info.familyName + ' ' + f.info.styleName, style=titleStyle)
+    fs = doc.context.newString(f.info.familyName + ' ' + f.info.styleName,
+                               style=titleStyle)
     _, th = textSize(fs)
     title = newTextBox(fs, conditions=[Top2Top(), Fit2Width()],
         parent=page, h=th*1.2)
@@ -123,10 +124,14 @@ def makeDocument(fontPath):
     w = pageAreaW*0.75 # Used as element width and relative font size. 
     padding = PageHeight/24
     
-    fs = newFS('Variable Fonts ', style=dict(font=fHeader.installedName, 
-        textFill=0, fontSize=90))
-    fs += newFS('Explained', style=dict(font=fHeaderCondensed.installedName,
-        textFill=0, fontSize=90))
+    fs = doc.context.newString('Variable Fonts ',
+                               style=dict(font=fHeader.installedName,
+                                          textFill=0,
+                                          fontSize=90))
+    fs += doc.context.newString('Explained',
+                                style=dict(font=fHeaderCondensed.installedName,
+                                           textFill=0,
+                                           fontSize=90))
     t2 = newTextBox(fs, z=0, w=PageWidth*0.75, parent=page, 
         conditions=(Left2Left(), Fit2Width(), Float2Top()))
   
