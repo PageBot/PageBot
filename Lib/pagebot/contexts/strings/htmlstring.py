@@ -21,14 +21,15 @@ class HtmlString(BabelString):
     BABEL_STRING_TYPE = 'html'
 
     u"""HtmlString is a wrapper around an HTML tagged string."""
-    def __init__(self, s, b):
-        self.b = b # Store the builder, in case we need it.
+    def __init__(self, s, context):
+        self.context = context # Store the context, in case we need it.
         self.s = s # Enclose the Flat string
 
     def _get_html(self):
         u"""Answer the embedded HTML string by property, to enforce checking type of the string."""
         return self.s
     def _set_html(self, html):
+        assert isinstance(html, basestring)
         self.s = html
     html = property(_get_html, _set_html)
     
@@ -45,7 +46,7 @@ class HtmlString(BabelString):
         # TODO: Some stuff needs to get here.
         return ''
 
-def newHtmlString(s, b, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+def newHtmlString(s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
     u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
     their existence, so they can inherit from previous style formats.
     If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
@@ -60,6 +61,6 @@ def newHtmlString(s, b, e=None, style=None, w=None, h=None, fontSize=None, style
     elif sCapitalized:
         s = s.capitalize()
 
-    return HtmlString(s, b)
+    return HtmlString(s, context)
 
 

@@ -101,7 +101,7 @@ class Introduction(TextBox):
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='twelvecol last')
-        b.addHtml(self.bs.html)
+        b.addHtml(self.bs.s)
         for e in self.elements:
             e.build_html(view, origin)
         b._div() # .twelvecol last

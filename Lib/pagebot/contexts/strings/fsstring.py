@@ -21,10 +21,10 @@ class FsString(BabelString):
     BABEL_STRING_TYPE = 'fs'
 
     u"""FsString is a wrapper around the standard DrawBot FormattedString."""
-    def __init__(self, s, context):
-        self.context = context # Store the context, in case we need it.
+    def __init__(self, s, context, html=None):
+        BabelString.__init__(self, s, context, html=None)
         assert isinstance(s, basestring) or s.__class__.__name__ == 'FormattedString'
-        self.fs = s # Enclose the DrawBot FormattedString
+        self.fs = s # Enclose the DrawBot FormattedString. Property to make sure it is a FormattedString, otherwise create it.
 
     def _get_fs(self):
         u"""Answer the embedded FormattedString by property, to enforce checking type of the string."""
@@ -36,7 +36,7 @@ class FsString(BabelString):
     fs = property(_get_fs, _set_fs)
 
     def asText(self):
-        return self.s.text
+        return u'%s' % self.s #  Convert to text
 
     def textSize(self, w=None):
         u"""Answer the (w, h) size for a given width, with the current text."""
@@ -50,6 +50,8 @@ def newFsString(t, context, e=None, style=None, w=None, h=None, fontSize=None, s
     their existence, so they can inherit from previous style formats.
     If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
     # Get the drawBotBuilder, no need to check, we already must be in context here.
+    if t is None:
+        t = ''
 
     b = context.b
     b.hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global

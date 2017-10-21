@@ -21,15 +21,12 @@ class FlatString(BabelString):
     BABEL_STRING_TYPE = 'flat'
 
     u"""FlatString is a wrapper around the Flat string."""
-    def __init__(self, s, b):
-        self.b = b # Store the builder, in case we need it.
-        self.s = s # Enclose the Flat string
 
     def _get_flat(self):
         u"""Answer the embedded Flat string by property, to enforce checking type of the string."""
         return self.s
     def _set_flat(self, flatString):
-        #if isinstance(fs, basestring):
+        #if isinstance(fs, basestring): # (See how it is done in FsString)
         #    fs = Style(s)
         self.s = flatString
     flat = property(_get_flat, _set_flat)

@@ -22,6 +22,23 @@ class BaseContext(object):
     isDrawBot = False
     isFlat = False
 
+    # To be redefined by inheriting context classes.
+    STRING_CLASS = None
+    NEW_STRING = None
+
+    #   T E X T
+
+    def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
+            styleName=None, tagName=None):
+        u"""Create a new styles BabelString(HtmlString) instance from s (converted to plain unicode string), 
+        using e or style. Ignore and answer s if it is already a FsString."""
+        if not isinstance(s, self.STRING_CLASS):
+            # Otherwise convert s into plain string, from whatever it is now.
+            s = self.NEW_STRING(u'%s' % s, context=self, e=e, style=style, w=w, h=h, 
+                fontSize=fontSize, styleName=styleName, tagName=tagName)
+        assert isinstance(s, self.STRING_CLASS)
+        return s
+
     #   V A R I A B L E
 
     def Variable(self, ui, globals):

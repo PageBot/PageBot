@@ -17,6 +17,10 @@ class BabelString(object):
     u"""BabelString is the base class of various types of (formatted) string representations 
     needed for different builder classes."""
 
+    def __init__(self, s, context):
+        self.context = context # Store the context, in case we need it.
+        self.s = s # Enclose the Flat string in this wrapper.
+
     def __repr__(self):
         return u'%s' % self.s
 
@@ -29,16 +33,18 @@ class BabelString(object):
         for n in range(d-1):
             s += self.s
         self.s = s
+        # Something to do with the html? 
         return self
 
     def __len__(self):
         return len(self.s)
 
     def append(self, s):
-        if isinstance(s, self.__class__):
+        u"""Append the BabelString content or plain string to self.s. Note that the type of
+        string depends on the inheriting class."""
+        if isinstance(s, BabelString): # This must be kind of BabelString, add the attribute string
             self.s += s.s
         else:
-            # TODO: An error if used if Typesetter
             self.s += s
 
     def type(self):
