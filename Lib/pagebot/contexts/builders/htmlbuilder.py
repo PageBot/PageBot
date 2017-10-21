@@ -18,6 +18,7 @@ import codecs
 from xmlbuilder import XmlBuilder
 from pagebot.toolbox.transformer import *
 from pagebot.toolbox.dating import now
+from pagebot.contexts.strings.htmlstring import HtmlString
 
 class HtmlBuilder(XmlBuilder):
     """
@@ -280,7 +281,13 @@ table {
         self._initialize()
         
     def addHtml(self, html):
-        u"""Add the html chunk to self.html, the ordered list of html for output."""
+        u"""Add the html chunk to self.html, the ordered list of html for output. Test if the html
+        is a plain string or of type HtmlString(BabelString). Otherwise raise an error, because
+        we don't want to support BabelString conversion. They should have been created of the right
+        type in the context from the start."""
+        if not isinstance(html, basestring): # It's something else, test on the kind of BabelString.
+            assert isinstance(html, HtmlString)
+            html = html.s # Get the collected html from the BabelString.
         self._htmlOut.append(html)
 
     write = addHtml

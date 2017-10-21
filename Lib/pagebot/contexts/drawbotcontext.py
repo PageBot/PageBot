@@ -25,7 +25,11 @@ class DrawBotContext(BaseContext):
 
     # In case of specific builder addressing, callers can check here.
     isDrawBot = True
-    
+  
+    # Used by the generic BaseContext.newString( )
+    STRING_CLASS = FsString
+    NEW_STRING = newFsString
+  
     def __init__(self):
         # The context builder "cls.b" is the main drawBot library, that contains all 
         # drawing calls in as used regular DrawBot scripts.
@@ -61,15 +65,6 @@ class DrawBotContext(BaseContext):
         return cls.getRootPath() + '/Fonts/'
 
     #   T E X T
-
-    def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
-            styleName=None, tagName=None):
-        u"""Create a new styles BabelString(FsString) instance from s, using e or style.
-        Ignore and answer s if it is already a FsString."""
-        if not isinstance(s, FsString):
-            s = newFsString(s, self, e=e, style=style, w=w, h=h, 
-                fontSize=fontSize, styleName=styleName, tagName=tagName)
-        return s
 
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, e=e, style=style)

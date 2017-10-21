@@ -598,7 +598,7 @@ class Document(object):
             b.css('body', self.rootStyle) # <body> selector and style output
 
     def build(self, path=None, pageSelection=None, multiPage=True):
-        u"""Build the document as website, using the MampView for export."""
+        u"""Build the document as website, using the document.view for export."""
         self.view.build(path=path, pageSelection=pageSelection, multiPage=multiPage)
 
     def export(self, path, multiPage=True):

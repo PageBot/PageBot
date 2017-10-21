@@ -105,12 +105,9 @@ class TextBox(Element):
         Also we don't want to calcualte the textLines/runs for every string appended,
         as we don't know how much more the caller will add. self._textLines is set to None
         to force recalculation as soon as self.textLines is called again.
-        If bs is not a BabelString instance, then create one, defined by the current view,
-        based on the style of self."""
-        #print '@#_@_@_@#_', bs, self.bs, bs.__class__.__name__, self.bs.__class__.__name__
-        #if isinstance(bs, basestring):
-        #    bs = self.newString(bs, e=self)
-        #print 'EW+E+WE+E', bs, self.bs, bs.__class__.__name__, self.bs.__class__.__name__
+        If bs is not a BabelString instance, then create one, defined by the self.context,
+        and based on the style of self."""
+        assert isinstance(bs, (basestring, self.context.STRING_CLASS))
         self.bs += self.newString(bs, e=self)
 
     def appendMarker(self, markerId, arg=None):
@@ -279,7 +276,7 @@ class TextBox(Element):
             b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.div(class_=self.class_)
-            b.addHtml(self.bs.html) # Get HTML from BabelString in HtmlString context.
+            b.addHtml(self.bs.s) # Get HTML from BabelString in HtmlString context.
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(self, view, origin)

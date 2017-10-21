@@ -499,7 +499,11 @@ class Element(object):
             styleName=None, tagName=None):
         u"""Create a new BabelString, using the current type of self.doc.context,
         or pagebot.contexts.defaultContext if not self.doc or self.doc.view defined, 
-        if bs is a plain string. Otherwise just answer the BabelString unchanged."""
+        if bs is a plain string. Otherwise just answer the BabelString unchanged.
+        In case of a BabelString, is has to be the same as the current context would
+        create, otherwise an error is raised. In other words, there is no BabelString
+        conversion defined (no reliable way of doing that, they should be created 
+        in the right context from the beginning)."""
         return self.context.newString(bs, e=e, style=style, w=w, h=h, fontSize=fontSize, 
             styleName=styleName, tagName=tagName)
         

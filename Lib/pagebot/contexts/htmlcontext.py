@@ -22,20 +22,14 @@ class HtmlContext(BaseContext):
     This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
 
+    # Used by the generic BaseContext.newString( )
+    STRING_CLASS = HtmlString
+    NEW_STRING = newHtmlString
+
     def __init__(self):
         self.b = WebBuilder()
 
     #   T E X T
-
-    def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
-            styleName=None, tagName=None):
-        u"""Create a new styles BabelString(HtmlString) instance from s, using e or style.
-        Ignore and answer s if it is already an HtmlString."""
-        if isinstance(s, basestring):
-            s = newHtmlString(s, self, e=e, style=style, w=w, h=h, 
-                fontSize=fontSize, styleName=styleName, tagName=tagName)
-        assert isinstance(s, HtmlString)
-        return s
 
     def newBulletString(self, bullet, e=None, style=None):
         return None # HTML does bullets automatic. Ignore answered None.
