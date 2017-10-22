@@ -15,7 +15,7 @@
 #
 from basecontext import BaseContext
 from pagebot.contexts.builders import WebBuilder
-from pagebot.contexts.strings.htmlstring import HtmlString, newHtmlString
+from pagebot.contexts.strings.htmlstring import HtmlString
 
 class HtmlContext(BaseContext):
     u"""A HtmlContext instance combines the specific functions of the Flat library
@@ -24,7 +24,6 @@ class HtmlContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = HtmlString
-    NEW_STRING = newHtmlString
 
     def __init__(self):
         self.b = WebBuilder()

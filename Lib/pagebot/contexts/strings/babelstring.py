@@ -19,7 +19,7 @@ class BabelString(object):
 
     def __init__(self, s, context):
         self.context = context # Store the context, in case we need it.
-        self.s = s # Enclose the Flat string in this wrapper.
+        self.s = s # Enclose the Flat/Drawbot/html string in this wrapper.
 
     def __repr__(self):
         return u'%s' % self.s
@@ -40,12 +40,11 @@ class BabelString(object):
         return len(self.s)
 
     def append(self, s):
-        u"""Append the BabelString content or plain string to self.s. Note that the type of
-        string depends on the inheriting class."""
-        if isinstance(s, BabelString): # This must be kind of BabelString, add the attribute string
+        u"""Append string or FlatString to self."""
+        if isinstance(s, self.s.__class__):
             self.s += s.s
         else:
-            self.s += s
+            self.s += u'%s' % s # Convert to string, whatever it is.
 
     def type(self):
         u"""Answer the id of the class, in case a caller wants to know what kind of 

@@ -56,7 +56,7 @@ class Typesetter(object):
         'li': ('ul', 'ol'),
         'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
     }
-    def __init__(self, doc=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None):
+    def __init__(self, doc=None, context=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None):
         # Set the doc context of the typesetter. doc be None, in which case it is expected that one of the code blocks
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
@@ -69,8 +69,15 @@ class Typesetter(object):
         # Note that the single Galley will use the pagebot.contexts.Context as reference.
         # Also note that self.box and self.galley refer to the same object. self.box is used 
         # in MarkDown files as reference where text should go.
+        
+        # Find the context, in case no doc has be defined yet.
+        if context is None and doc is not None:
+            context = doc.context
+        if context is None:
+            context = defaultContext
+
         if galley is None:
-            galley = self.GALLEY_CLASS()
+            galley = self.GALLEY_CLASS(context=context)
         self.galley = galley 
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = [] 

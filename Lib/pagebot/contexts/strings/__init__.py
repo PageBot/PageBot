@@ -11,6 +11,6 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-from fsstring import FsString, newFsString
-from flatstring import FlatString, newFlatString
-from htmlstring import HtmlString, newHtmlString
+from fsstring import FsString
+from flatstring import FlatString
+from htmlstring import HtmlString

@@ -25,13 +25,13 @@ class HtmlString(BabelString):
         self.context = context # Store the context, in case we need it.
         self.s = s # Enclose the Flat string
 
-    def _get_html(self):
+    def _get_s(self):
         u"""Answer the embedded HTML string by property, to enforce checking type of the string."""
-        return self.s
-    def _set_html(self, html):
+        return self._s
+    def _set_s(self, html):
         assert isinstance(html, basestring)
-        self.s = html
-    html = property(_get_html, _set_html)
+        self._s = html
+    s = property(_get_s, _set_s)
     
     def asText(self):
         return self.s # TODO: Use re to find non-tagged text to return.
@@ -46,21 +46,22 @@ class HtmlString(BabelString):
         # TODO: Some stuff needs to get here.
         return ''
 
-def newHtmlString(s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
-    u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
-    their existence, so they can inherit from previous style formats.
-    If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
+    @classmethod
+    def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+        u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
+        their existence, so they can inherit from previous style formats.
+        If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
 
-    sUpperCase = css('uppercase', e, style)
-    sLowercase = css('lowercase', e, style)
-    sCapitalized = css('capitalized', e, style)
-    if sUpperCase:
-        s = s.upper()
-    elif sLowercase:
-        s = s.lower()
-    elif sCapitalized:
-        s = s.capitalize()
+        sUpperCase = css('uppercase', e, style)
+        sLowercase = css('lowercase', e, style)
+        sCapitalized = css('capitalized', e, style)
+        if sUpperCase:
+            s = s.upper()
+        elif sLowercase:
+            s = s.lower()
+        elif sCapitalized:
+            s = s.capitalize()
 
-    return HtmlString(s, context)
+        return cls(s, context)
 
 

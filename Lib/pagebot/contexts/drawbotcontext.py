@@ -15,7 +15,7 @@
 #
 from basecontext import BaseContext
 from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
-from pagebot.contexts.strings.fsstring import FsString, newFsString
+from pagebot.contexts.strings.fsstring import FsString
 from pagebot.style import NO_COLOR
 
 class DrawBotContext(BaseContext):
@@ -28,7 +28,6 @@ class DrawBotContext(BaseContext):
   
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FsString
-    NEW_STRING = newFsString
   
     def __init__(self):
         # The context builder "cls.b" is the main drawBot library, that contains all 

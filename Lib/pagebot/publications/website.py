@@ -94,7 +94,7 @@ class Introduction(TextBox):
       
     def build_html(self, view, origin=None):
         u"""Build a page wide in intoduction box for large type, if there is any content."""
-        if not self.bs.html:
+        if not self.bs.s:
             return
         b = self.context.b
         self.build_css(view)
@@ -123,7 +123,7 @@ class Featured(Rect):
         u"""Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
         side = self['Side']
-        if not image.bs.html or not side.bs.html: # No HTML in any of the BabelStrings?
+        if not image.bs.s or not side.bs.s: # No HTML in any of the BabelStrings?
             return
         b = self.context.b
         self.build_css(view)
@@ -155,7 +155,7 @@ class Main(Rect):
     def build_html(self, view, origin=None):
         content = self['Content']
         side = self['Side']
-        if not content.bs.html: # If there is nothing in the main part, then also ignore the side.
+        if not content.bs.s: # If there is nothing in the main part, then also ignore the side.
             return
         b = self.context.b
         self.build_css(view)
@@ -190,16 +190,16 @@ class Section(Rect):
     def build_html(self, view, origin=None):
         b = self.context.b
         title = self['Title']
-        hasContent = bool(title.bs.html)
+        hasContent = bool(title.bs.s)
         for row in range(0, self._sectionRows):
-            hasContent |= bool(self[`row*2`].bs.html) or bool(self[`row*2+1`].bs.html)
+            hasContent |= bool(self[`row*2`].bs.s) or bool(self[`row*2+1`].bs.s)
         if hasContent: # Onle start the container if there is any content.
             self.build_css(view)
             b.div(class_='container %s' % self.class_)
-            if title.bs.html:
+            if title.bs.s:
                 b.div(class_='row')
                 b.div(class_='tencol')
-                b.addHtml(title.bs.html)
+                b.addHtml(title.bs.s)
                 b._div() # .tencol
                 b.div(class_='twocol last')
                 b._div() # .twocol last
@@ -208,13 +208,13 @@ class Section(Rect):
             for row in range(0, self._sectionRows):
                 e1 = self[`row*2`]
                 e2 = self[`row*2+1`]
-                if e1.bs.html and e2.bs.html: # Only output if both are filled.
+                if e1.bs.s and e2.bs.s: # Only output if both are filled.
                     b.div(class_='row')
                     b.div(class_='sixcol')
-                    b.addHtml(e1.bs.html)
+                    b.addHtml(e1.bs.s)
                     b._div() # .sixcol
                     b.div(class_='sixcol last')
-                    b.addHtml(e2.bs.html)
+                    b.addHtml(e2.bs.s)
                     b._div() # 'sixcol last
                     b._div() # .row
             
@@ -248,7 +248,7 @@ class Footer(TextBox):
         b._div() # class: eightcol
 
         b.div(class_='fourcol last')
-        b.addHtml(self.bs.html)
+        b.addHtml(self.bs.s)
         b._div() # class: fourcol last
         
         b._div() # class: row
