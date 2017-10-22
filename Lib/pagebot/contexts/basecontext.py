@@ -24,7 +24,6 @@ class BaseContext(object):
 
     # To be redefined by inheriting context classes.
     STRING_CLASS = None
-    NEW_STRING = None
 
     #   T E X T
 
@@ -34,7 +33,7 @@ class BaseContext(object):
         using e or style. Ignore and answer s if it is already a FsString."""
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
-            s = self.NEW_STRING(u'%s' % s, context=self, e=e, style=style, w=w, h=h, 
+            s = self.STRING_CLASS.newString(u'%s' % s, context=self, e=e, style=style, w=w, h=h, 
                 fontSize=fontSize, styleName=styleName, tagName=tagName)
         assert isinstance(s, self.STRING_CLASS)
         return s

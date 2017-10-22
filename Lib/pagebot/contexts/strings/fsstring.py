@@ -21,19 +21,19 @@ class FsString(BabelString):
     BABEL_STRING_TYPE = 'fs'
 
     u"""FsString is a wrapper around the standard DrawBot FormattedString."""
-    def __init__(self, s, context, html=None):
-        BabelString.__init__(self, s, context, html=None)
-        assert isinstance(s, basestring) or s.__class__.__name__ == 'FormattedString'
-        self.fs = s # Enclose the DrawBot FormattedString. Property to make sure it is a FormattedString, otherwise create it.
+    def __init__(self, s, context):
+        BabelString.__init__(self, s, context)
+        self.s = s # Enclose the DrawBot FormattedString. Property to make sure it is a FormattedString, otherwise create it.
 
-    def _get_fs(self):
+    def _get_s(self):
         u"""Answer the embedded FormattedString by property, to enforce checking type of the string."""
-        return self.s
-    def _set_fs(self, fs):
-        if isinstance(fs, basestring):
-            fs = self.b.FormattedString(s)
-        self.s = fs
-    fs = property(_get_fs, _set_fs)
+        return self._s
+    def _set_s(self, s):
+        assert isinstance(s, basestring) or s.__class__.__name__ == 'FormattedString'
+        if isinstance(s, basestring):
+            s = self.b.FormattedString(s)
+        self._s = s
+    s = property(_get_s, _set_s)
 
     def asText(self):
         return u'%s' % self.s #  Convert to text
@@ -45,116 +45,118 @@ class FsString(BabelString):
     def textOverflow(self, w, h, align=LEFT):
         return self.context.textOverflow(self.fs, (0, 0, w, h), align)
 
-def newFsString(t, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
-    u"""Answer a FsString instance from valid attributes in *style*. Set all values after testing
-    their existence, so they can inherit from previous style formats.
-    If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
-    # Get the drawBotBuilder, no need to check, we already must be in context here.
-    if t is None:
-        t = ''
+    @classmethod
+    def newString(cls, t, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+        u"""Answer a FsString instance from valid attributes in *style*. Set all values after testing
+        their existence, so they can inherit from previous style formats.
+        If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
+        # Get the drawBotBuilder, no need to check, we already must be in context here.
+        ZZZ = AAA
+        if t is None:
+            t = ''
 
-    b = context.b
-    b.hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
+        b = context.b
+        b.hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
 
-    fs = b.FormattedString('')
-    sFont = css('font', e, style)
-    if sFont is not None:
-        fs.font(sFont)
-    # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
-    # TODO: add calculation of rFontSize (relative float based on root-fontSize) here too.
-    sFontSize = fontSize or css('fontSize', e, style) or 16 # May be scaled to fit w or h if target is defined.
-    sLeading = css('leading', e, style)
-    rLeading = css('rLeading', e, style)
-    if sLeading or (rLeading and sFontSize):
-        lineHeight = (sLeading or 0) + (rLeading or 0) * (sFontSize or 0)
-        if lineHeight:
-            fs.lineHeight(lineHeight)
-    if sFontSize is not None:
-        fs.fontSize(sFontSize) # For some reason fontSize must be set after leading.
-    sFallbackFont = css('fallbackFont', e, style)
-    if sFallbackFont is not None:
-        fs.fallbackFont(sFallbackFont)
-    sFill = css('textFill', e, style, 0) # Default is black, not None or NO_COLOR
-    if sFill != NO_COLOR: # Test on this flag, None is valid value
-        context.setTextFillColor(fs, sFill)
-    sCmykFill = css('cmykFill', e, style, NO_COLOR)
-    if sCmykFill != NO_COLOR:
-        context.setTextFillColor(fs, sCmykFill, cmyk=True)
-    sStroke = css('textStroke', e, style, NO_COLOR)
-    sStrokeWidth = css('textStrokeWidth', e, style)
-    if sStroke != NO_COLOR and sStrokeWidth is not None:
-        context.setTextStrokeColor(fs, sStroke, sStrokeWidth)
-    sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
-    if sCmykStroke != NO_COLOR:
-        context.setTextStrokeColor(fs, sCmykStroke, sStrokeWidth, cmyk=True)
-    sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
-    if sAlign is not None: # yTextAlign must be solved by parent container element.
-        fs.align(sAlign)
-    sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
-    rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
-    if sParagraphTopSpacing or (rParagraphTopSpacing and sFontSize):
-        fs.paragraphTopSpacing((sParagraphTopSpacing or 0) + (rParagraphTopSpacing or 0) * (sFontSize or 0))
-    sParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
-    rParagraphBottomSpacing = css('rParagraphBottomSpacing', e, style)
-    if sParagraphBottomSpacing or (rParagraphBottomSpacing and sFontSize):
-        fs.paragraphBottomSpacing((sParagraphBottomSpacing or 0) + (rParagraphBottomSpacing or 0) * (sFontSize or 0))
-    sTracking = css('tracking', e, style)
-    rTracking = css('rTracking', e, style)
-    if sTracking or (rTracking and sFontSize):
-        fs.tracking((sTracking or 0) + (rTracking or 0) * (sFontSize or 0))
-    sBaselineShift = css('baselineShift', e, style)
-    rBaselineShift = css('rBaselineShift', e, style)
-    if sBaselineShift or (rBaselineShift and sFontSize):
-        fs.baselineShift((sBaselineShift or 0) + (rBaselineShift or 0) * (sFontSize or 0))
-    sOpenTypeFeatures = css('openTypeFeatures', e, style)
-    if sOpenTypeFeatures is not None:
-        fs.openTypeFeatures([], **sOpenTypeFeatures)
-    sTabs = css('tabs', e, style)
-    if sTabs is not None:
-        fs.tabs(*sTabs)
-    sFirstLineIndent = css('firstLineIndent', e, style)
-    rFirstLineIndent = css('rFirstLineIndent', e, style)
-    # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
-    # sFirstParagraphIndent = style.get('firstParagraphIndent')
-    # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
-    # TODO: Use this value instead, if currently on top of a new string.
-    sFirstColumnIndent = css('firstColumnIndent', e, style)
-    rFirstColumnIndent = css('rFirstColumnIndent', e, style)
-    if sFirstLineIndent or (rFirstLineIndent and sFontSize):
-        fs.firstLineIndent((sFirstLineIndent or 0) + (rFirstLineIndent or 0) * (sFontSize or 0))
-    sIndent = css('indent', e, style)
-    rIndent = css('rIndent', e, style)
-    if sIndent is not None or (rIndent is not None and sFontSize is not None):
-        fs.indent((sIndent or 0) + (rIndent or 0) * (sFontSize or 0))
-    sTailIndent = css('tailIndent', e, style)
-    rTailIndent = css('rTaildIndent', e, style)
-    if sTailIndent or (rTailIndent and sFontSize):
-        fs.tailIndent((sTailIndent or 0) + (rTailIndent or 0) * (sFontSize or 0))
-    sLanguage = css('language', e, style)
-    if sLanguage is not None:
-        fs.language(sLanguage)
+        fs = b.FormattedString('')
+        sFont = css('font', e, style)
+        if sFont is not None:
+            fs.font(sFont)
+        # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
+        # TODO: add calculation of rFontSize (relative float based on root-fontSize) here too.
+        sFontSize = fontSize or css('fontSize', e, style) or 16 # May be scaled to fit w or h if target is defined.
+        sLeading = css('leading', e, style)
+        rLeading = css('rLeading', e, style)
+        if sLeading or (rLeading and sFontSize):
+            lineHeight = (sLeading or 0) + (rLeading or 0) * (sFontSize or 0)
+            if lineHeight:
+                fs.lineHeight(lineHeight)
+        if sFontSize is not None:
+            fs.fontSize(sFontSize) # For some reason fontSize must be set after leading.
+        sFallbackFont = css('fallbackFont', e, style)
+        if sFallbackFont is not None:
+            fs.fallbackFont(sFallbackFont)
+        sFill = css('textFill', e, style, 0) # Default is black, not None or NO_COLOR
+        if sFill != NO_COLOR: # Test on this flag, None is valid value
+            context.setTextFillColor(fs, sFill)
+        sCmykFill = css('cmykFill', e, style, NO_COLOR)
+        if sCmykFill != NO_COLOR:
+            context.setTextFillColor(fs, sCmykFill, cmyk=True)
+        sStroke = css('textStroke', e, style, NO_COLOR)
+        sStrokeWidth = css('textStrokeWidth', e, style)
+        if sStroke != NO_COLOR and sStrokeWidth is not None:
+            context.setTextStrokeColor(fs, sStroke, sStrokeWidth)
+        sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
+        if sCmykStroke != NO_COLOR:
+            context.setTextStrokeColor(fs, sCmykStroke, sStrokeWidth, cmyk=True)
+        sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
+        if sAlign is not None: # yTextAlign must be solved by parent container element.
+            fs.align(sAlign)
+        sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
+        rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
+        if sParagraphTopSpacing or (rParagraphTopSpacing and sFontSize):
+            fs.paragraphTopSpacing((sParagraphTopSpacing or 0) + (rParagraphTopSpacing or 0) * (sFontSize or 0))
+        sParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
+        rParagraphBottomSpacing = css('rParagraphBottomSpacing', e, style)
+        if sParagraphBottomSpacing or (rParagraphBottomSpacing and sFontSize):
+            fs.paragraphBottomSpacing((sParagraphBottomSpacing or 0) + (rParagraphBottomSpacing or 0) * (sFontSize or 0))
+        sTracking = css('tracking', e, style)
+        rTracking = css('rTracking', e, style)
+        if sTracking or (rTracking and sFontSize):
+            fs.tracking((sTracking or 0) + (rTracking or 0) * (sFontSize or 0))
+        sBaselineShift = css('baselineShift', e, style)
+        rBaselineShift = css('rBaselineShift', e, style)
+        if sBaselineShift or (rBaselineShift and sFontSize):
+            fs.baselineShift((sBaselineShift or 0) + (rBaselineShift or 0) * (sFontSize or 0))
+        sOpenTypeFeatures = css('openTypeFeatures', e, style)
+        if sOpenTypeFeatures is not None:
+            fs.openTypeFeatures([], **sOpenTypeFeatures)
+        sTabs = css('tabs', e, style)
+        if sTabs is not None:
+            fs.tabs(*sTabs)
+        sFirstLineIndent = css('firstLineIndent', e, style)
+        rFirstLineIndent = css('rFirstLineIndent', e, style)
+        # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
+        # sFirstParagraphIndent = style.get('firstParagraphIndent')
+        # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
+        # TODO: Use this value instead, if currently on top of a new string.
+        sFirstColumnIndent = css('firstColumnIndent', e, style)
+        rFirstColumnIndent = css('rFirstColumnIndent', e, style)
+        if sFirstLineIndent or (rFirstLineIndent and sFontSize):
+            fs.firstLineIndent((sFirstLineIndent or 0) + (rFirstLineIndent or 0) * (sFontSize or 0))
+        sIndent = css('indent', e, style)
+        rIndent = css('rIndent', e, style)
+        if sIndent is not None or (rIndent is not None and sFontSize is not None):
+            fs.indent((sIndent or 0) + (rIndent or 0) * (sFontSize or 0))
+        sTailIndent = css('tailIndent', e, style)
+        rTailIndent = css('rTaildIndent', e, style)
+        if sTailIndent or (rTailIndent and sFontSize):
+            fs.tailIndent((sTailIndent or 0) + (rTailIndent or 0) * (sFontSize or 0))
+        sLanguage = css('language', e, style)
+        if sLanguage is not None:
+            fs.language(sLanguage)
 
-    sUpperCase = css('uppercase', e, style)
-    sLowercase = css('lowercase', e, style)
-    sCapitalized = css('capitalized', e, style)
-    if sUpperCase:
-        s = s.upper()
-    elif sLowercase:
-        s = s.lower()
-    elif sCapitalized:
-        s = s.capitalize()
+        sUpperCase = css('uppercase', e, style)
+        sLowercase = css('lowercase', e, style)
+        sCapitalized = css('capitalized', e, style)
+        if sUpperCase:
+            s = s.upper()
+        elif sLowercase:
+            s = s.lower()
+        elif sCapitalized:
+            s = s.capitalize()
 
-    newt = fs + t # Format plain string t onto new formatted fs.
-    if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
-        tw, _ = b.textSize(newt)
-        fontSize = w / tw * sFontSize
-        newt = newFsString(t, view, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
-    elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
-        _, th = b.textSize(newt)
-        fontSize = h / th * sFontSize
-        newt = newFsString(t, view, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
+        newt = fs + t # Format plain string t onto new formatted fs.
+        if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
+            tw, _ = b.textSize(newt)
+            fontSize = w / tw * sFontSize
+            newt = cls.newFsString(t, view, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
+        elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
+            _, th = b.textSize(newt)
+            fontSize = h / th * sFontSize
+            newt = cls.newFsString(t, view, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
 
-    return FsString(newt, b)
+        return cls(newt, context)
 
 
 class FoundPattern(object):

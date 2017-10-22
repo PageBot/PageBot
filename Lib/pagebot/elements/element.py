@@ -42,7 +42,7 @@ class Element(object):
     isView = False 
     
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
-            t=0, parent=None, name=None, class_=None, title=None, description=None, language=None,
+            t=0, parent=None, context=None, name=None, class_=None, title=None, description=None, language=None,
             style=None, conditions=None, info=None, framePath=None, 
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, 
             padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
@@ -58,6 +58,9 @@ class Element(object):
         """  
         assert point is None or isinstance(point, (tuple, list))
         
+        # Set the property for elements that need their own context. If None the property will query parent and root.
+        self.context = context 
+
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0
         # Initialize style values that are not supposed to inherite from parent styles.
         # Always store point in style as separate (x, y, z) values. Missing values are 0
@@ -255,7 +258,9 @@ class Element(object):
         # Ignore original **kwargs, as these values are supposed to be in style now.
         # Inheriting classes are responsible to add their own specific values.
         e = self.__class__(x=self.x, y=self.y, z=self.z, w=self.w, h=self.h, d=self.d,
-            t=self.t, parent=None, # No parent yet in a copied element. Keep it dangling.
+            t=self.t, # Copy type frame.
+            parent=self.parent, # For now keep reference to current parent context and style.
+            context=self._context, # Copy raw context, can be None in case reference to parent->doc context is required.
             name=self.name, class_=self.class_, title=self.title, description=self.description, language=self.language,
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
@@ -345,6 +350,7 @@ class Element(object):
                 positions[point] = []
             positions[point].append(e)
         return positions
+
 
     #   F L O W
 
@@ -485,11 +491,18 @@ class Element(object):
     view = property(_get_view)
 
     def _get_context(self):
-        doc = self.doc
-        if doc is not None:
-            return doc.context
+        u"""Answer the context of this element. In general the self._context will be None, to allow
+        searching the parent-->doc tree. But there may be exceptions where elements+children need their own."""
+        if self._context is not None:
+            return self._context
+        # Context not defined for this element, try parent.
+        if self.parent is not None:
+            return self.parent.context
+        # No context defined and no parent, we only can answer the default context here.
         return defaultContext
-    context = property(_get_context)
+    def _set_context(self, context):
+        self._context = context
+    context = property(_get_context, _set_context)
 
     def _get_builder(self):
         return self.context.b

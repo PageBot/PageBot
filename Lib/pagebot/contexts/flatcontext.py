@@ -23,7 +23,7 @@ import os
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
-from pagebot.contexts.strings. flatstring import FlatString, newFlatString
+from pagebot.contexts.strings. flatstring import FlatString
 
 class FlatContext(BaseContext):
     u"""A FlatContext instance combines the specific functions of the Flat library, 
@@ -39,7 +39,6 @@ class FlatContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FlatString
-    NEW_STRING = newFlatString
 
     def __init__(self):
         # Keep status of last color, to make difference between fill and stroke colors.
