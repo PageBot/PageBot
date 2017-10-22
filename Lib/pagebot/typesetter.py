@@ -56,7 +56,8 @@ class Typesetter(object):
         'li': ('ul', 'ol'),
         'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
     }
-    def __init__(self, doc=None, context=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None):
+    def __init__(self, doc=None, context=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None,
+            tryExcept=True, verbose=False):
         # Set the doc context of the typesetter. doc be None, in which case it is expected that one of the code blocks
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
@@ -87,6 +88,9 @@ class Typesetter(object):
         self.globalPageName = globalPageName or 'page'
         self.globalBoxName = globalBoxName = 'box'
         self.codeBlocks = {} # No results for now. Find codeblock result by codeId after typesetting.
+        # Save some flags in case the typesetter is running in Python try-except mode.
+        self.tryExcept = tryExcept
+        self.verbose = verbose
 
     def _get_box(self):
         return self.galley
@@ -348,7 +352,7 @@ class Typesetter(object):
                 return lib['literatureRefs']
         return None
 
-    def runCodeBlock(self, node, execute=True, tryExcept=False):
+    def runCodeBlock(self, node, execute=True):
         u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with 
         ~~~Python
@@ -375,19 +379,30 @@ class Typesetter(object):
         # self.doc contains the Typesetter doc reference, which can be defined in an earlier code block
         result = {self.globalDocName:self.doc, self.globalPageName:self.page, self.globalBoxName:self.box}
         if execute and node.text:
-            if not tryExcept:
+            if not self.tryExcept:
+                if self.verbose:
+                     print u'Typesetter: %s' % node.text
                 exec(node.text) in result # Exectute code block, where result goes dict.
                 codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
-                del result['__builtins__'] # We don't need this set of globals in the results.
+                del result['__builtins__'] # We don't need this set of globals in the returned results.
             else:
+                error = None
                 try:
                     exec(node.text) in result # Exectute code block, where result goes dict.
                     codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
                     del result['__builtins__'] # We don't need this set of globals in the results.
+                except TypeError:
+                    error = u'TypeError'
                 except NameError:
-                    result['__error__'] = '### NameError' # TODO: More error message here.
+                    error = 'NameError'
                 except SyntaxError:
-                    result['__error__'] = '### SyntaxError' # TODO: More error message here.
+                    error = 'SyntaxError'
+                except AttributeError:
+                    error = 'AttributeError'
+                result['__error__'] = error
+                if self.verbose and error is not None:
+                    print u'### %s ### %s' % (error, node.text)
+
         # doc, page or box may have changed, store them back into the typesetter, so they are availabe for 
         # the execution of a next code block.
         self.doc = result.get(self.globalDocName)
@@ -478,7 +493,10 @@ class Typesetter(object):
         u"""Append the string (or BabelString instance) to the current box, 
         if it is defined and it has a context. Otherwise add to the existing galley."""
         # Add the tail formatted string to the textBox or galley. Equivalent to self.box.
-        self.galley.append(bs)  
+        if self.galley is not None:
+            self.galley.append(bs)  
+        elif self.verbose:
+            print '### Typesetter.append: Cannot append "%s"' % bs
 
     def htmlNode(self, node, end=False):
         u"""Open the tag in HTML output and copy the node attributes if there are any."""

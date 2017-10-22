@@ -153,7 +153,7 @@ class Element(object):
         Don't call later."""
         self.template = template # Set template value by property call, copying all template elements and attributes.
         if elements is not None:
-            # Add optional list of elements.
+            # Add optional list of additional elements.
             for e in elements or []: 
                 self.appendElement(e) # Add cross reference searching for eId of elements.
             
@@ -179,7 +179,7 @@ class Element(object):
             # Copy condition list. Does not have to be deepCopy, condition instances are multi-purpose.
             self.conditions = copy.copy(template.conditions)
             for e in template.elements:
-                self.appendElement(e.copy())
+                self.appendElement(e.copy(parent=self))
     template = property(_get_template, _set_template)
 
     #   E L E M E N T S
@@ -249,7 +249,7 @@ class Element(object):
         self._elements = [] 
         self._eIds = {}
 
-    def copy(self):
+    def copy(self, parent=None):
         u"""Answer a full copy of self, where the "unique" fields are set to default. 
         Also perform a deep copy on all child elements."""
         # This also initializes the child element tree as empty list.
@@ -259,8 +259,8 @@ class Element(object):
         # Inheriting classes are responsible to add their own specific values.
         e = self.__class__(x=self.x, y=self.y, z=self.z, w=self.w, h=self.h, d=self.d,
             t=self.t, # Copy type frame.
-            parent=self.parent, # For now keep reference to current parent context and style.
-            context=self._context, # Copy raw context, can be None in case reference to parent->doc context is required.
+            parent=parent, # Allow to keep reference to current parent context and style.
+            context=self._context, # Copy local context, None most cases, where reference to parent->doc context is required.
             name=self.name, class_=self.class_, title=self.title, description=self.description, language=self.language,
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
@@ -277,7 +277,7 @@ class Element(object):
             drawBefore=self.drawBefore, drawAfter=self.drawAfter)  
         # Now do the same for each child element and append it to self.
         for child in self.elements:
-            e.appendElement(child.copy()) # Add the element to child list and update self._eId dictionary
+            e.appendElement(child.copy(parent=e)) # Add the element to child list and update self._eId dictionary
         return e
 
     def setElementByIndex(self, e, index):
