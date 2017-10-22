@@ -599,8 +599,8 @@ class Document(object):
 
     def build(self, path=None, pageSelection=None, multiPage=True):
         u"""Build the document as website, using the document.view for export."""
-        self.view.build(path=path, pageSelection=pageSelection, multiPage=multiPage)
+        self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 
-    def export(self, path, multiPage=True):
-        self.build(path=path, multiPage=multiPage)
+    def export(self, path=None, multiPage=True):
+        self.build(path=None, multiPage=multiPage)
 

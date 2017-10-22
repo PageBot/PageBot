@@ -61,7 +61,7 @@ class MampView(HtmlView):
         # Write all collected CSS into one file
         b.writeCss(self.DEFAULT_CSS_PATH)
 
-        mampPath = self.MAMP_PATH + path
+        mampPath = self.MAMP_PATH + (path or '')
         if os.path.exists(mampPath):
             shutil.rmtree(mampPath)
         shutil.copytree(self.SITE_PATH, mampPath)
