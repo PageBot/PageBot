@@ -27,7 +27,7 @@ def run():
     #    F O N T  S T U F F 
 
     # Get the variable font.
-    decovarPath = getFontPath() + '/fontbureau/Decovar-VF_2017-02-06.ttf'
+    decovarPath = getFontPath() + '/fontbureau/DecovarAlpha-VF.ttf'
     decovar = Font(decovarPath)
 
     if 1: # Font info stuff.
