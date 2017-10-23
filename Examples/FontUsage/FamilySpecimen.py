@@ -18,9 +18,11 @@ from pagebot.publications.typespecimen import TypeSpecimen
 from pagebot.elements.pbpage import Page, Template
 # Use Erik & Jonathan's Filibuster to create random imaginary headlines. 
 from pagebot.contributions.filibuster.blurb import blurb
+from pagebot.elements import *
 
 DEBUG = False # Make True to see grid and element frames.
 
+# Use OSX location of fonts here.
 LIB_PATH = '/Library/Fonts/'
 SOME_SYSTEM_FONTS = {
     # Let's try some plain OSX system fonts, while they are still there (not variable font yet).
@@ -34,7 +36,7 @@ class FBFamilySpecimen(TypeSpecimen):
 
     def makeTemplate(self, rs):
         # Template for the main page.
-        template = Template(style=rs) # Create second template. This is for the main pages.
+        template = Template() # Create second template. This is for the main pages.
         # Add named text box to template for main specimen text.
         template.cTextBox('', 0, -1, 6, 1, eId=self.titleBoxId)       
         template.cTextBox('', 0, 0, 6, 6, eId=self.specimenBoxId)       
@@ -81,7 +83,7 @@ class FBFamilySpecimen(TypeSpecimen):
             box.append(fs)
             print '###', page, family, sportsHeadline
                 
-if 0:
+if 1:
     # Create a new specimen publications and add the list of system fonts.
     familySpecimen = FBFamilySpecimen(showGrid=DEBUG) 
     # Build the pages of the publication, interpreting the font list.
