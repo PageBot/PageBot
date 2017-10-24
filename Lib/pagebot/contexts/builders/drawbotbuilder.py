@@ -26,5 +26,4 @@ try:
 except ImportError:
     drawBotBuilder = None
 
-from pagebot.style import NO_COLOR, LEFT, css
 
