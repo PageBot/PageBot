@@ -103,6 +103,8 @@ class Page(Element):
                 # Javascript
                 if info.jQueryUrl:
                     b.script(type="text/javascript", src=info.jQueryUrl)
+                if info.jQueryUrlSecure:
+                    b.script(type="text/javascript", src=info.jQueryUrlSecure)
                 if info.mediaQueriesUrl: # Enables media queries in some unsupported browsers-->
                     b.script(type="text/javascript", src=info.mediaQueriesUrl)
 

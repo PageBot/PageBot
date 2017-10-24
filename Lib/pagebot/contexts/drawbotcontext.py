@@ -31,10 +31,17 @@ class DrawBotContext(BaseContext):
   
     def __init__(self):
         # The context builder "cls.b" is the main drawBot library, that contains all 
-        # drawing calls in as used regular DrawBot scripts.
-        
+        # drawing calls in as used regular DrawBot scripts.   
         self.b = drawBotBuilder # cls.b builder for this canvas.
  
+     #   S C R E E N
+
+    def screenSize(self):
+        u"""Answer the current screen size in DrawBot. Otherwise default is to do nothing."""
+        return self.b.sizes.get('screen', None)
+
+    #   D O C U M E N T 
+
     def newDocument(self, w, h):
         u"""Ignore for DrawBot, as document open automatic if first page is created."""
         pass

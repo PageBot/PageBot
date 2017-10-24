@@ -17,8 +17,7 @@
 #
 import sys
 import copy
-from drawBot import sizes
-
+from pagebot.contexts import defaultContext
 from pagebot.toolbox.units import MM, INCH, mm, fr, pt, px, perc
 
 NO_COLOR = -1
@@ -73,14 +72,13 @@ Legal = 8.5*INCH, 14*INCH
 JuniorLegal = 5*INCH, 8*INCH
 Tabloid = 11*INCH, 17*INCH
 # Other rounded definintions compatible to DrawBot
-drawBotSizes = sizes()
-Screen = drawBotSizes.get('screen', None) # Current screen size.
-Ledger = sizes('Ledger') # 1224, 792
-Statement = sizes('Statement') # 396, 612 
-Executive = sizes('Executive') # 540, 720
-Folio = sizes('Folio') # 612, 936
-Quarto = sizes('Quarto') # 610, 780
-Size10x14 = sizes('10x14') # 720, 1008
+Screen = defaultContext.screenSize() # Current screen size.
+Ledger = 1224, 792
+Statement = 396, 612 
+Executive = 540, 720
+Folio = 612, 936
+Quarto = 610, 780
+Size10x14 = 720, 1008
 
 # Hybrid sizes
 # International generic fit for stationary

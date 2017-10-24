@@ -27,6 +27,7 @@ class BuildInfo(object):
         self.jsUrls = None
         self.appleTouchIconUrl = None
         self.jQueryUrl = 'http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
+        self.jQueryUrlSecure = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
         self.mediaQueriesUrl = 'http://code.google.com/p/css3-mediaqueries-js'
         # Device
         self.viewPort = "width=device-width, initial-scale=1.0"

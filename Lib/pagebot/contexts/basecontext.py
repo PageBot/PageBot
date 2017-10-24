@@ -25,6 +25,12 @@ class BaseContext(object):
     # To be redefined by inheriting context classes.
     STRING_CLASS = None
 
+    #   S C R E E N
+
+    def screenSize(self):
+        u"""Answer the current screen size in DrawBot. Otherwise default is to do nothing."""
+        return None
+
     #   T E X T
 
     def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
