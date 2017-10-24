@@ -32,7 +32,7 @@ class Document(object):
     DEFAULT_VIEWID = defaultViewClass.viewId
     DEFAULT_CONTEXT = defaultContext
 
-    def __init__(self, rootStyle=None, styles=None, viewId=None, name=None, class_=None, title=None, 
+    def __init__(self, rootStyle=None, styles=None, theme=None, viewId=None, name=None, class_=None, title=None, 
             autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
             padding=None, info=None, 
             context=None, exportPaths=None, **kwargs):
@@ -40,9 +40,12 @@ class Document(object):
         without the need to send them directly to the output for "asynchronic" page filling."""
         # Set the context. Initialize from default if not defined.
         self.context = context or self.DEFAULT_CONTEXT
+
+        # Apply the theme if defined or create default styles, to make sure they are there.
         self.rootStyle = rs = self.makeRootStyle(rootStyle, **kwargs)
         self.class_ = class_ or self.__class__.__name__ # Optional class name, e.g. to group elements together in HTML/CSS export.
-        self.initializeStyles(styles) # Create some default styles, to make sure they are there.
+        self.initializeStyles(theme, styles) # May or may not overwrite the root style.
+
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
         self.w = w or 1000 # Always needs a value. Take 1000 if None defined.
         self.h = h or 1000
@@ -184,14 +187,22 @@ class Document(object):
 
     #   S T Y L E
 
-    def initializeStyles(self, styles):
+    def initializeStyles(self, theme, styles):
         u"""Make sure that the default styles always exist."""
-        if styles is None:
-            styles = copy.copy(styleLib['default'])
-        self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
+        if theme is not None:
+            self.styles = copy.copy(theme.styles)
+            # Additional styles defined? Let them overwrite the theme.
+            for styleName, style in (styles or {}).items():
+                self.addStyle(name, style)
+
+        else: # No theme defined, use the styles, otherwise use defailt style.
+            if styles is None:
+                styles = copy.copy(styleLib['default'])
+            self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
         # Make sure that the default styles for document and page are always there.
         name = 'root'
-        self.addStyle(name, self.rootStyle)
+        if not name in self.styles:
+            self.addStyle(name, self.rootStyle)
         name = 'document'
         if not name in self.styles: # Default dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
