@@ -51,7 +51,6 @@ class FsString(BabelString):
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
         # Get the drawBotBuilder, no need to check, we already must be in context here.
-        ZZZ = AAA
         if t is None:
             t = ''
 
