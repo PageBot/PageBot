@@ -2,17 +2,21 @@
 
 ## What is PageBot?
 
-As short description PageBot is a scripted page layout program, available as Python library inside <a href="http:/drawbot.com">@DrawBotApp</a> and as a collection of stand-alone desktop applications that can be created from it.
+PageBot is a page layout program, that enables designers to create high quality documents using code. 
+It is available both as Python library inside [DrawBot](https://www.drawbot.com) and as part of a collection of stand-alone desktop applications that can be created from it. 
 
-PageBot is an initiative of <a href="http:/typenetwork.com">Type Network</a> to create a system for scriptable applications generating high quality typographic documents, supporting high quality fonts.
+Initiated by [Type Network](https:/typenetwork.com), our aim is to create a system for scriptable applications generating high quality typographic documents that support high quality fonts.
 
-PageBot is available under MIT Open Source license from <a href="https://github.com/TypeNetwork/PageBot">github.com/TypeNetwork/PageBot</a>.
+PageBot is available under MIT Open Source license from [github.com/TypeNetwork/PageBot](https://github.com/TypeNetwork/PageBot)
 
-An automatic generated manual is at <a href="https://typenetwork.github.io/PageBot/">typenetwork.github.io/PageBot</a>.
+A manual, generated automatically with PageBot, is at [typenetwork.github.io/PageBot](https://typenetwork.github.io/PageBot)
 
 ## Current status
 
-Although released as Open Source under MIT license, PageBot is still in testing alpha phase. More examples need to be created to fully test all functions. For further development the contribution of others is highly appreciated.
+Although publicly available as Open Source under an MIT license, PageBot is still in a testing/alpha phase.
+More examples need to be created to fully test all functions.
+
+For further development, the contribution of others is highly appreciated.
 
 Known bugs and missing functions are:
 
@@ -20,9 +24,11 @@ Known bugs and missing functions are:
 * Reading XML text from markdown is missing Document styles.
 * Better management of text baselines on pages and throughout documents.
 * More useful views (representations of Documents) need to be developed and tested.
-* Not all scripts in the Examples currently work properly, due to late changes in the PageBot core.
+* Currently, not all scripts in the Examples directory work properly, due to late changes in the PageBot core.
+* Windows, GNU+Linux and Android users are not yet supported (see [issue #40](https://github.com/TypeNetwork/PageBot/issues/40).)
 
-## Functions
+## Functionality
+
 An overview of PageBot functions reads like this:
 
 * Various types of Element objects can be placed on a page or inside other Element objects.
@@ -34,15 +40,15 @@ An overview of PageBot functions reads like this:
 * All image filtering supplied by Drawbot ImageObject.
 * Access and modify images on pixel-level.
 * Cascading styles, where Element values inherit from parent Elements, similar to CSS behavior.   
-* Text flows are using the OSX FormattedString for all typographic parameters.
+* Text flows are using the macOS FormattedString for all typographic parameters.
 * Random Text generator for headlines and articles.
-* Read text from markdown (.md) and XML files.
+* Read text from MarkDown and XML (.MD .XML)
 * Support large amount of text processing functions:
    * centered, left, right and justified
    * Text to fit a box and elastic box to fit text
    * Tabular setting
    * Text Flow from one element to another. 
-   * Variable Font UI access and instance creation, all of Python library "fonttools" available.
+   * Variable Font UI access and instance creation, as the whole "fonttools" Python library is available.
    * Access to all font metrics.
    * Outline Font access modification.
    * Space, groups and kerning access and modifcation.
@@ -50,13 +56,15 @@ An overview of PageBot functions reads like this:
 * 3D Positioning of points, for future usage.
 * Motion Graphics, export as animated .gif and .mov files, keyframing timeline, 
 * Export to PDF, PNG, JPG, SVG, (animated) GIF, MOV, XML, through programmable views.
-
-## Sub-functions
-* Building online documents, pre-compiles all used images into formats that can be displayed by browsers, such as PNG, JPG or SVG.
-* Creating automatic table of contents, image reference, quote reference, etc. from composed documents.
+* Build web sites, pre-compiling all images used into the formats that can be displayed by browsers (.PNG .JPG .SVG)
+* Automatic table of contents, image references, quote references, etc. from composed documents.
 
 ## License
-Code, Open source under MIT conditions & All source code available.
+
+All PageBot source code is available as open source under the MIT license. 
+
+However, some other separate works are aggregated in this repository for convenience, and available under their own licenses. 
+See LICENSE files for details. 
 
 ## Future developments
 
