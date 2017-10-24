@@ -32,6 +32,9 @@ class PageView(BaseView):
     def build(self, path, pageSelection=None, multiPage=True):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
         
+        if not path:
+            path = '_export/' + self.doc.name + '.pdf'
+
         context = self.context # Get current context and builder from doc. Can be DrawBot of Flat
         b = context.b # Get current builder.
 
@@ -408,7 +411,7 @@ class PageView(BaseView):
         #if not self.showGridColumns or not self.showGrid:
         #    return
         p = pointOffset(e.oPoint, origin)
-        p = self._applyScale(p)
+        p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
         sGridFill = e.css('viewGridFill', NO_COLOR)
@@ -433,8 +436,8 @@ class PageView(BaseView):
         oy = py + padB
 
         if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
-            self.setFillColor(None)
-            self.setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
+            b.fill(None)
+            b.stroke(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
             b.newPath()
             for cx, cw in e.getGridColumns():
                 b.moveTo((ox+cx, oy))

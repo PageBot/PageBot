@@ -94,8 +94,8 @@ class TextBox(Element):
         self.x = newString(s, self)
 
     def _get_text(self):
-        u"""Answer the plain text of the current self.fs"""
-        return u'%s' % self.fs
+        u"""Answer the plain text of the current self.bs"""
+        return u'%s' % self.bs
     text = property(_get_text)
     
     def append(self, bs):
@@ -117,7 +117,7 @@ class TextBox(Element):
         self.append(marker)
 
     def getTextSize(self, bs=None, w=None):
-        """Figure out what the width/height of the text self.fs is, with or given width or
+        """Figure out what the width/height of the text self.bs is, with or given width or
         the styled width of this text box. If fs is defined as external attribute, then the
         size of the string is answers, as if it was already inside the text box."""
         if bs is None:
@@ -151,7 +151,7 @@ class TextBox(Element):
 
     def getStyledLines(self):
         u"""Answer the list with (styleName, style, textRun) tuples, reversed engeneered
-        from the FormattedString self.fs. This list can be used to query the style parameters
+        from the FormattedString self.bs. This list can be used to query the style parameters
         used in the textBox, or to create CSS styles from its content."""
         styledLines = []
         prevStyle = None
@@ -186,13 +186,13 @@ class TextBox(Element):
             if page is not None:        
                 # Try next page
                 nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
-                if nextElement is None or nextElement.fs and self.nextPage:
+                if nextElement is None or nextElement.bs and self.nextPage:
                     # Not found or not empty, search on next page.
                     page = self.doc.getPage(self.nextPage)
                     nextElement =  page.getElementByName(self.nextElement)
-                if nextElement is not None and not nextElement.fs: 
+                if nextElement is not None and not nextElement.bs: 
                     # Finally found one empty box on this page or next page?
-                    nextElement.fs = overflow
+                    nextElement.bs = overflow
                     nextElement.prevPage = page.name
                     nextElement.prevElement = self.name # Remember the back link
                     score = nextElement.solve() # Solve any overflow on the next element.
@@ -235,7 +235,7 @@ class TextBox(Element):
             context.saveGraphicState()
             context.setShadow(textShadow)
 
-        b.textBox(self.bs.fs, (px + self.pl + xOffset, py + self.pb-yOffset, 
+        b.textBox(self.bs.s, (px + self.pl + xOffset, py + self.pb-yOffset, 
             self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
         if textShadow:
@@ -295,8 +295,7 @@ class TextBox(Element):
         if not view.showTextBoxBaselines and not self.showBaselines:
             return
 
-        context = self.context # Get current context and builder
-        b = context.b # A bit more efficient than self.b once we have the context.
+        c = self.context # Get current context and builder
 
         fontSize = self.css('baseLineMarkerSize')
         indexStyle = dict(font='Verdana', fontSize=8, textFill=(0, 0, 1))
@@ -305,29 +304,28 @@ class TextBox(Element):
 
         if view.showTextBoxY:
             bs = self.newString(`0`, style=indexStyle)
-            _, th = context.textSize(bs)
-            b.text(bs.s, (px + self.w + 3,  py + self.h - th/4))
+            _, th = c.textSize(bs)
+            c.text(bs.s, (px + self.w + 3,  py + self.h - th/4))
 
-        stroke(0, 0, 1)
-        strokeWidth(0.5)
+        c.stroke((0, 0, 1), 0.5)
         prevY = 0
-        for textLine in self.textLines: 
+        for textLine in []: #self.textLines: TODO: not implemented yet.
             y = textLine.y
             # TODO: Why measures not showing?
-            line((px, py+y), (px + self.w, py+y))
+            context.line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
                 bs = self.newString(`textLine.lineIndex`, style=indexStyle)
-                tw, th = b.textSize(fs) # Calculate right alignment
-                b.text(bs.s, (px-3-tw, py + y - th/4))
+                tw, th = c.textSize(fs) # Calculate right alignment
+                c.text(bs.s, (px-3-tw, py + y - th/4))
             if view.showTextBoxY:
                 bs = self.newString('%d' % round(y), style=yStyle)
-                _, th = b.textSize(fs)
-                b.text(bs.s, (px + self.w + 3, py + y - th/4))
+                _, th = c.textSize(fs)
+                c.text(bs.s, (px + self.w + 3, py + y - th/4))
             if view.showTextBoxLeading:
                 leading = round(abs(y - prevY))
                 bs = self.newString('%d' % leading, style=leadingStyle)
-                _, th = b.textSize(fs)
-                b.text(bs.s, (px + self.w + 3, py + prevY - leading/2 - th/4))
+                _, th = c.textSize(fs)
+                c.text(bs.s, (px + self.w + 3, py + prevY - leading/2 - th/4))
             prevY = y
  
     def _drawOverflowMarker_drawBot(self, view, px, py):

@@ -29,9 +29,13 @@ class FsString(BabelString):
         u"""Answer the embedded FormattedString by property, to enforce checking type of the string."""
         return self._s
     def _set_s(self, s):
-        assert isinstance(s, basestring) or s.__class__.__name__ == 'FormattedString'
+        u"""Check on the type of s. Three types are supported here: plain strings, 
+        DrawBot FormattedString and the class of self."""
+        assert isinstance(s, (FsString, basestring)) or s.__class__.__name__ == 'FormattedString'
         if isinstance(s, basestring):
             s = self.b.FormattedString(s)
+        elif isinstance(s, FsString):
+            s = s.s
         self._s = s
     s = property(_get_s, _set_s)
 
@@ -40,10 +44,11 @@ class FsString(BabelString):
 
     def textSize(self, w=None):
         u"""Answer the (w, h) size for a given width, with the current text."""
-        return self.context.textSize(self.s, w)
+        # TODO: Add in case w is defined.
+        return self.context.textSize(self)
 
     def textOverflow(self, w, h, align=LEFT):
-        return self.context.textOverflow(self.fs, (0, 0, w, h), align)
+        return self.context.textOverflow(self, (0, 0, w, h), align)
 
     @classmethod
     def newString(cls, t, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
@@ -149,11 +154,11 @@ class FsString(BabelString):
         if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
             tw, _ = b.textSize(newt)
             fontSize = w / tw * sFontSize
-            newt = cls.newFsString(t, view, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
+            newt = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
         elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
             _, th = b.textSize(newt)
             fontSize = h / th * sFontSize
-            newt = cls.newFsString(t, view, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
+            newt = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
 
         return cls(newt, context)
 

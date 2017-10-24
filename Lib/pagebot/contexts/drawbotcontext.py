@@ -82,6 +82,11 @@ class DrawBotContext(BaseContext):
         u"""Answer the textSize (w, h) tuple of the formatted string."""
         return self.b.textSize(bs.s)
 
+    def textOverflow(self, bs, bounds, align):
+        u"""Answer the overflowing of from the box (0, 0, w, h) as new FsString in 
+        the current context."""
+        return FsString(self.b.textOverflow(bs.s, bounds, align), self)
+
     #   D R A W I N G
 
     def rect(self, x, y, w, h):
