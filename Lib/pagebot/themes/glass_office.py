@@ -21,10 +21,12 @@ class GlassOffice(BaseTheme):
     can be used in environments when functionality is more important than “arty”
     appearance."""
 
+	NAME = 'Glass Office'
+
     def initialize(self):
         u"""Theme styles are created here by inheriting them classes. If srcTheme is not None,
         start initialize with a copy of that one."""
-        self.name = 'Glass Office'
+        self.name = self.NAME
         self[self.ROOT] = getRootStyle()
         for headName in self.HEADS:
             self[headName] = getRootStyle() # Make sure there is something there for now.
