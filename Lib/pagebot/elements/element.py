@@ -161,7 +161,7 @@ class Element(object):
         return self._template
     def _set_template(self, template):
         self.clearElements()
-        self._template = template # Keep in order to clone pages or if additional template info is needed.
+        self._template = template # Keep template reference to clone pages or if additional template info is needed later.
         # Copy optional template stuff
         if template is not None:
             # Copy elements from the template and put them in the designated positions.
