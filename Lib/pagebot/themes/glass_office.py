@@ -22,6 +22,7 @@ class GlassOffice(BaseTheme):
     appearance."""
 
 	NAME = 'Glass Office'
+    SCSS_PATH = 'scss/office.scss'
 
     def initialize(self):
         u"""Theme styles are created here by inheriting them classes. If srcTheme is not None,
