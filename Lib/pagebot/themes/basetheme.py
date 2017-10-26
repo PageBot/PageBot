@@ -14,6 +14,7 @@
 #     basetheme.py
 #
 import copy
+from scss import compiler
 from pagebot.style import makeStyle, getRootStyle
 
 class BaseTheme(object):
@@ -25,8 +26,10 @@ class BaseTheme(object):
 
     PageBot will support a growing number of predefined themes, that can be copied in
     a document and then modified. Thet CSS behavior of elements will comply to the 
-    selected theme of a document, unles they have their own style defined.
+    selected theme of a document, unless they have their own style defined.
     """
+    SCSS_PATH = None # Needs to be redefined by inheriting theme classes.
+
     # Predefined style names
     ROOT = 'root' # Rootstyle selector of a theme.
     H1, H2, H3, H4, H5, H6, H7, H8 = HEADS = ('h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8')
@@ -35,6 +38,7 @@ class BaseTheme(object):
         self.name = name
         self.description = description
         self.styles = {} # Key is selector, value is a style.
+        self.palette = {} # Dicitionary of named generic style values
 
         if srcTheme is not None:
             self.styles = srcTheme.copyStyles()
@@ -56,7 +60,19 @@ class BaseTheme(object):
     def __setitem__(self, selector, style):
         self.styles[selector] = style
 
-    def applyPalette(self, palette):
+    def getStyles(self):
+        u"""Answer the theme as a dictionary of styles."""
+        self.applyPalette() # In case it was not executed before, substitute the palette values
+        return self.styles
+
+    def getCss(self):
+        u"""Answer the theme as a CSS source, compiled from the available styles, the palette,
+        and the optional file at self.SCSS_PATH.
+        Construct the SCSS variable files, and compile the result into CSS."""
+        if self.SCSS_PATH is not None:
+            compiler(self.CSS_PATH)
+
+    def applyPalette(self, palette=None):
         u"""After setting style values, named typographic values and colors, apply them
         to the styles, overwriting values that start with "@"."""
         for style in self.styles.values():
