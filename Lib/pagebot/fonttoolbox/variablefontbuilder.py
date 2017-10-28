@@ -26,7 +26,7 @@ from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import VariationModel, supportScalar, normalizeLocation
-from fontTools.varLib.mutator import _iup_delta
+from fontTools.varLib.mutator import iup_delta
 
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font
@@ -286,7 +286,7 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
                     if origCoords is None:
                         origCoords,control = _GetCoordinates(varfont, glyphname)
                         endPts = control[1] if control[0] >= 1 else list(range(len(control[1])))
-                    delta = _iup_delta(delta, origCoords, endPts)
+                    delta = iup_delta(delta, origCoords, endPts)
                 coordinates += GlyphCoordinates(delta) * scalar
             _SetCoordinates(varfont, glyphname, coordinates)
 
