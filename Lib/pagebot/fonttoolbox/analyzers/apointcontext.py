@@ -92,8 +92,8 @@ class APointContext(object):
     # self.angle    Answer angle of the point context
     def _get_angle(self):
         if self._angle is None:
-            xDiff = self.p1.x - self.p.x
-            yDiff = self.p1.y - self.p.y
+            xDiff = self.p1[0] - self.p[0]
+            yDiff = self.p1[1] - self.p[1]
             self._angle = round(math.atan2(yDiff, xDiff) * 180 / math.pi, 3)
         return self._angle
     angle = property(_get_angle)
@@ -109,7 +109,10 @@ class APointContext(object):
     normalizedAngle = property(_get_normalizedAngle)
     
     def __repr__(self):
-        s = 'pc[%s] (%s,%s)' % (self.index, self.p.x, self.p.y)
+        s = 'pc'
+        if self.index is not None:
+            s += '[index:%s]' % self.index
+        s += '(%s,%s)' % (self.p[0], self.p[1])
         if self.isNextVertical():
             s += ' vertical'
         if self.isNextHorizontal():
@@ -144,16 +147,16 @@ class APointContext(object):
         return True # Point2D type is always on-curve by definition.
 
     def isUp(self):
-        return self.p.y < self.p1.y
+        return self.p[1] < self.p1[1]
 
     def isDown(self):
-        return self.p.y > self.p1.y
+        return self.p[1] > self.p1[1]
 
     def isLeft(self):
-        return self.p.x < self.p1.x
+        return self.p[0] < self.p1[0]
 
     def isRight(self):
-        return self.p.y > self.p1.y
+        return self.p[0] > self.p1[0]
 
     def isHorizontalExtreme(self):
         u"""
@@ -168,46 +171,62 @@ class APointContext(object):
             and self.isOffCurve(self.p_1)
 
     def isLeftRoundExtreme(self):
+        u"""Answer the boolean flag if the point context is a left round extreme. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
         return nextP is not None and prevP is not None\
-            and self.p.x < nextP.x\
-            and self.p.x < prevP.x
+            and self.p[0] < nextP[0]\
+            and self.p[0] < prevP[0]
 
     def isRightRoundExtreme(self):
+        u"""Answer the boolean flag if the point context is a right round extreme. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
         return nextP is not None and prevP is not None\
-            and self.p.x > nextP.x\
-            and self.p.x > prevP.x
+            and self.p[0] > nextP[0]\
+            and self.p[0] > prevP[0]
 
     def isTopRoundExtreme(self):
+        u"""Answer the boolean flag if the point context is a top round extreme. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
         return nextP is not None and prevP is not None\
-            and self.p.y > nextP.y\
-            and self.p.y > prevP.y
+            and self.p[1] > nextP[1]\
+            and self.p[1] > prevP[1]
 
     def isBottomRoundExtreme(self):
+        u"""Answer the boolean flag if the point context is a bottom round extreme. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
         return nextP is not None and prevP is not None\
-            and self.p.y < nextP.y\
-            and self.p.y < prevP.y
+            and self.p[1] < nextP[1]\
+            and self.p[1] < prevP[1]
 
     def isVerticalRoundExtreme(self):
+        u"""Answer the boolean flag if the point context is a vertical round extreme. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
         return self.isTopRoundExtreme() or self.isBottomRoundExtreme()
 
     def isHorizontalRoundExtreme(self):
+        u"""Answer the boolean flag if the point context is a horizontal round extreme. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
         return self.isLeftRoundExtreme() or self.isRightRoundExtreme()
 
     def isNextVertical(self):
-        return self.p.x == self.p1.x
+        u"""Answer the boolean flag if the point context next point is vertical. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
+        return self.p[0] == self.p1[0]
 
     isVertical = isNextVertical
 
     def isPrevVertical(self):
-        return self.p.x == self.p_1.x
+        u"""Answer the boolean flag if the point context prev point is vertical. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
+        return self.p[0] == self.p_1[0]
 
     def isVerticalExtreme(self):
         u"""Is the point context a horizontal and extreme in y-direction?"""
@@ -217,12 +236,16 @@ class APointContext(object):
             and self.isOffCurve(self.p_1)
 
     def isNextHorizontal(self):
-        return self.p.y == self.p1.y
+        u"""Answer the boolean flag if the point context prev point is horizontal. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
+        return self.p[1] == self.p1[1]
 
     isHorizontal = isNextHorizontal
 
     def isPrevHorizontal(self):
-        return self.p.y == self.p_1.y
+        u"""Answer the boolean flag if the point context prev point is horizontal. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
+        return self.p[1] == self.p_1[1]
 
     def isInflection(self):
         valid = self.isOnCurve(self.p) and self.isOffCurve(self.p_1) and self.isOffCurve(self.p1)
@@ -364,27 +387,36 @@ class APointContext(object):
     def inBoundingBox(self, p):
         u"""Answer the boolean flag is p is inside the bounding box of the glyph.
         p can be a point-typles or a Point instance."""
-        return (self.p.x <= p[0] <= self.p1.x or self.p1.x <= p[0] <= self.p.x) and \
-               (self.p.y <= p[1] <= self.p1.y or self.p1.y <= p[1] <= self.p.y)
+        return (self.p[0] <= p[0] <= self.p1[0] or self.p1[0] <= p[0] <= self.p[0]) and \
+               (self.p[1] <= p[1] <= self.p1[1] or self.p1[1] <= p[1] <= self.p[1])
         
     def minx(self):
-        return min(self.p_1.x, self.p.x, self.p1.x)
+        u"""Answer the minimum x, compared with the two neighbor points. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
+        return min(self.p_1[0], self.p[0], self.p1[0])
     
     def maxx(self):
-        return max(self.p_1.x, self.p.x, self.p1.x)
+        u"""Answer the maximum x, compared with the two neighbor points. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
+        return max(self.p_1[0], self.p[0], self.p1[0])
     
     def miny(self):
-        return min(self.p_1.y, self.p.y, self.p1.y)
+        u"""Answer the minimum y, compared with the two neighbor points. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
+        return min(self.p_1[1], self.p[1], self.p1[1])
     
     def maxy(self):
-        return max(self.p_1.y, self.p.y, self.p1.y)
+        u"""Answer the maximum y, compared with the two neighbor points. 
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
+        return max(self.p_1[1], self.p[1], self.p1[1])
     
     def middle(self, p1=None):
         u"""Answer the Point instance of the middle between the optional attribute points p0 and p1.
-        If the points are omitted, then use respectively self.p and self.p1."""
+        If the points are omitted, then use respectively self.p and self.p1.
+        x/y selection by index, as these can be APoint or point2D tuple instances."""
         if p1 is None:
             p1 = self.p1
-        return int(round((self.p.x + p1.x)/2)), int(round((self.p.y + p1.y)/2))
+        return int(round((self.p[0] + p1[0])/2)), int(round((self.p[1] + p1[1])/2))
      
     def distanceTo(self, p):
         u"""Answer the distance of point p to the line of self."""

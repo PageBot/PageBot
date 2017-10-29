@@ -21,11 +21,9 @@ from pagebot.toolbox.transformer import path2Name
 class FontAnalyzer(object):
 
     def __init__(self, font):
+        u"""Initially the variable font instance is equal to the original."""
         self.font = font
-        # Cached stems
-        self._stems = None # Collect stems from H on property call.
-        # Cached bars
-        self._bars = None
+        self.reset()
 
     def __repr__(self):
         return '<Analyzer of %s>' % self.font.info.fullName
@@ -45,6 +43,13 @@ class FontAnalyzer(object):
         # Set the weakref to the font
         self._font = weakref.ref(font)
     font = property(_get_font, _set_font)
+
+    def reset(self):
+        u"""Reset cached values in case self.font changed."""
+        # Cached stems
+        self._stems = None # Collect stems from H on property call.
+        # Cached bars
+        self._bars = None
 
     #   S T E M S
 
