@@ -83,6 +83,16 @@ def getInstancePath():
     u"""Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
     return getMasterPath() + '_instances/'
 
+def getVariableAxisFonts(varFont, axisName, install=True, normalize=True, cached=False):
+    u"""Answer the two instance fonts located at minValue and maxValue of the axis. If varFont is not
+    a Variable Font, or the axis does not exist in the font, then answer (varFont, varFont)."""
+    if axisName in varFont.axes:
+        minValue, _, maxValue = varFont.axes[axisName]
+        minInstance = getVariableFont(varFont, {axisName:minValue}, install=install, normalize=normalize, cached=cached)
+        maxInstance = getVariableFont(varFont, {axisName:maxValue}, install=install, normalize=normalize, cached=cached)
+        return minInstance, maxInstance 
+    return varFont, varFont
+
 def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, fixedSize=True, 
         tracking=None, rTracking=None, cached=True):
     u"""Answer the font instance that makes string s width on the given width *w* for the given *fontSize*.
@@ -105,30 +115,34 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
     condensedFont = getVariableFont(varFont, condensedLocation, cached=cached)
     wideFont = getVariableFont(varFont, wideLocation, cached=cached)
     # Calculate the widths of the string using these two instances.
-    condensedFs = context.newString(s, style=dict(font=condensedFont.installedName,
-                                                  fontSize=fontSize,
-                                                  tracking=tracking,
-                                                  rTracking=rTracking,
-                                                  textFill=0))
-    wideFs = context.newString(s, style=dict(font=wideFont.installedName,
-                                             fontSize=fontSize,
-                                             tracking=tracking,
-                                             rTracking=rTracking,
-                                             textFill=0))
+    condensedBs = context.newString(s, style=dict(
+        font=condensedFont.installedName,
+        fontSize=fontSize,
+        tracking=tracking,
+        rTracking=rTracking,
+        textFill=0)
+    )
+    wideBs = context.newString(s, style=dict(
+        font=wideFont.installedName,
+        fontSize=fontSize,
+        tracking=tracking,
+        rTracking=rTracking,
+        textFill=0)
+    )
     # Calculate the widths of the strings. 
     # TODO: Handle if these lines would wrap on the given width. In that case we may want to set the wrapped
     # first line back to it's uncondensed value, to make the first wrapped line fit the width.
-    condensedWidth, _ = textSize(condensedFs)
-    wideWidth, _ = textSize(wideFs)
+    condensedWidth, _ = context.textSize(condensedBs)
+    wideWidth, _ = context.textSize(wideBs)
 
     # Check if the requested with is inside the boundaries of the font width axis
     if w < condensedWidth: # Requested width is smaller than was was possible using the extreme value of [wdth] axis.
         font = condensedFont
-        fs = condensedFs
+        bs = condensedBs
         location = condensedLocation
     elif w > wideWidth:  # Requested width is larger than was was possible using the extreme value of [wdth] axis.      
         font = wideFont
-        fs = wideFs
+        bs = wideBs
         location = wideLocation
     else: # Inside the selected [wdth] range, now interpolation the fitting location.
         # TODO: Check if the width of the new string is within tolerance of the request width.
@@ -138,16 +152,18 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condensedWidth)/(wideWidth-condensedWidth)
         font = getVariableFont(varFont, location, cached=cached)
-        fs = context.newString(s, style=dict(font=font.installedName,
-                                             fontSize=fontSize,
-                                             tracking=tracking,
-                                             rTracking=rTracking,
-                                             textFill=0))
+        bs = context.newString(s, style=dict(
+            font=font.installedName,
+            fontSize=fontSize,
+            tracking=tracking,
+            rTracking=rTracking,
+            textFill=0)
+        )
     # Answer the dictionary with calculated data, so the caller can reuse it, without the need to new expensive recalculations.
     return dict(
         condensendFont=condensedFont, condensedFs=condensedFs, condensedWidth=condensedWidth, condensedLocation=condensedLocation,
         wideFont=wideFont, wideFs=wideFs, wideWidth=wideWidth, wideLocation=wideLocation,
-        font=font, fs=fs, width=textSize(fs)[0], location=location
+        font=font, s=bs, width=context.textSize(bs)[0], location=location
     )
 def getConstrainedLocation(font, location):
     u"""Answer the location with applied min/max values for each axis. Don't change the values
@@ -161,7 +177,8 @@ def getConstrainedLocation(font, location):
         constrainedLocation[name] = value
     return constrainedLocation
 
-def getVarLocation(font, location, normalize=True):
+# DEPRECATED, remove usage.
+def XXXgetVarLocation(font, location, normalize=True):
     u"""Translate the location dict (all values between (0, 1) or between (0, 1000)) 
     to what the font expects by its min/max values for each axis.
     Location axis tags that don't exits in the font are ignored.
@@ -195,7 +212,7 @@ def getVariableFont(fontOrPath, location, install=True, styleName=None, normaliz
         varFont = Font(fontOrPath, name=path2FontName(fontOrPath))    
     else:
         varFont = fontOrPath
-    fontName, path = generateInstance(varFont.path, getVarLocation(varFont, location, normalize), targetDirectory=getInstancePath(), normalize=normalize, cached=cached)
+    fontName, path = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), normalize=normalize, cached=cached)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName)
 
