@@ -72,11 +72,22 @@ class DrawBotContext(BaseContext):
 
     #   T E X T
 
+    def fontSize(self, fontSize):
+        self.b.fontSize(fontSize)
+
+    def font(self, font, fontSize=None):
+        self.b.font(font)
+        if fontSize is not None:
+            self.b.fontSize(fontSize)
+
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, e=e, style=style)
 
-    def text(self, bs, p):
-        self.b.text(bs.s, p)
+    def text(self, sOrBs, p):
+        u"""Draw the sOrBs text string, can be a basestring or BabelString, including a DrawBot FormattedString."""
+        if not isinstance(sOrBs, basestring):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        self.b.text(sOrBs, p)
 
     def textSize(self, bs):
         u"""Answer the textSize (w, h) tuple of the formatted string."""
