@@ -96,6 +96,9 @@ class FsString(BabelString):
         sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
         if sAlign is not None: # yTextAlign must be solved by parent container element.
             fs.align(sAlign)
+        underline = css('underline', e, style)
+        if underline in ('single', None): # Only these values work in FormattedString
+            fs.underline(underline)
         sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
         rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
         if sParagraphTopSpacing or (rParagraphTopSpacing and sFontSize):

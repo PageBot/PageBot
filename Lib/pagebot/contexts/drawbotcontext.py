@@ -84,10 +84,18 @@ class DrawBotContext(BaseContext):
         return self.newString(bullet, e=e, style=style)
 
     def text(self, sOrBs, p):
-        u"""Draw the sOrBs text string, can be a basestring or BabelString, including a DrawBot FormattedString."""
+        u"""Draw the sOrBs text string, can be a basestring or BabelString, including a DrawBot FormattedString
+        at position p."""
         if not isinstance(sOrBs, basestring):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         self.b.text(sOrBs, p)
+
+    def textBox(self, sOrBs, r):
+        u"""Draw the sOrBs text string, can be a basestring or BabelString, including a DrawBot FormattedString
+        in rectangle r."""
+        if not isinstance(sOrBs, basestring):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        self.b.textBox(sOrBs, r)
 
     def textSize(self, bs):
         u"""Answer the textSize (w, h) tuple of the formatted string."""

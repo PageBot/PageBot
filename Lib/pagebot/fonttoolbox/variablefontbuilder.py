@@ -83,18 +83,18 @@ def getInstancePath():
     u"""Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
     return getMasterPath() + '_instances/'
 
-def getVariableAxisFonts(varFont, axisName, install=True, normalize=True, cached=False):
+def getVariableAxisFonts(varFont, axisName, install=True, normalize=True, cached=False, lazy=True):
     u"""Answer the two instance fonts located at minValue and maxValue of the axis. If varFont is not
     a Variable Font, or the axis does not exist in the font, then answer (varFont, varFont)."""
     if axisName in varFont.axes:
         minValue, _, maxValue = varFont.axes[axisName]
-        minInstance = getVariableFont(varFont, {axisName:minValue}, install=install, normalize=normalize, cached=cached)
-        maxInstance = getVariableFont(varFont, {axisName:maxValue}, install=install, normalize=normalize, cached=cached)
+        minInstance = getVariableFont(varFont, {axisName:minValue}, install=install, normalize=normalize, cached=cached, lazy=lazy)
+        maxInstance = getVariableFont(varFont, {axisName:maxValue}, install=install, normalize=normalize, cached=cached, lazy=lazy)
         return minInstance, maxInstance 
     return varFont, varFont
 
 def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, fixedSize=True, 
-        tracking=None, rTracking=None, cached=True):
+        tracking=None, rTracking=None, cached=True, lazy=True):
     u"""Answer the font instance that makes string s width on the given width *w* for the given *fontSize*.
     The *condensedLocation* dictionary defines the most condensed font instance (optionally including the opsz)
     and the *wideLocation* dictionary defines the most wide font instance (optionally including the opsz).
@@ -112,8 +112,8 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
     # of the [wdth] axis to be user, instead of the default minValue and maxValue. E.g. for a range of widths
     # in a headline, the typographer may only want a small change before the line is wrapping, instead 
     # using the full spectrum to extreme condensed.
-    condensedFont = getVariableFont(varFont, condensedLocation, cached=cached)
-    wideFont = getVariableFont(varFont, wideLocation, cached=cached)
+    condensedFont = getVariableFont(varFont, condensedLocation, cached=cached, lazy=lazy)
+    wideFont = getVariableFont(varFont, wideLocation, cached=cached, lazy=lazy)
     # Calculate the widths of the string using these two instances.
     condensedBs = context.newString(s, style=dict(
         font=condensedFont.installedName,
@@ -151,7 +151,7 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
         widthRange = wideLocation['wdth'] - condensedLocation['wdth'] 
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condensedWidth)/(wideWidth-condensedWidth)
-        font = getVariableFont(varFont, location, cached=cached)
+        font = getVariableFont(varFont, location, cached=cached, lazy=lazy)
         bs = context.newString(s, style=dict(
             font=font.installedName,
             fontSize=fontSize,
@@ -200,7 +200,7 @@ def XXXgetVarLocation(font, location, normalize=True):
                 varLocation[axisTag] = axisValue
     return varLocation
 
-def getVariableFont(fontOrPath, location, install=True, styleName=None, normalize=True, cached=True):
+def getVariableFont(fontOrPath, location, install=True, styleName=None, normalize=True, cached=True, lazy=True):
     u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
@@ -209,12 +209,12 @@ def getVariableFont(fontOrPath, location, install=True, styleName=None, normaliz
     The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
     location name."""
     if isinstance(fontOrPath, basestring):
-        varFont = Font(fontOrPath, name=path2FontName(fontOrPath))    
+        varFont = Font(fontOrPath, name=path2FontName(fontOrPath), lazy=lazy)    
     else:
         varFont = fontOrPath
-    fontName, path = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), normalize=normalize, cached=cached)
+    fontName, path = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), normalize=normalize, cached=cached, lazy=lazy)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
-    return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName)
+    return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName, lazy=lazy)
 
 # TODO: Remove from here.
 def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0, strokeColor=None, strokeWidth=0):
@@ -228,7 +228,7 @@ def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0, strokeColor=None, s
     restore()
 
 
-def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True):
+def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):
     u"""
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
@@ -255,7 +255,7 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
         # Instance does not exist as file. Create it.
 
         # print("Loading GX font")
-        varfont = TTFont(variableFontPath)
+        varfont = TTFont(variableFontPath, lazy=lazy)
 
         # Set the instance name IDs in the name table
         platforms=((1, 0, 0), (3, 1, 0x409)) # Macintosh and Windows
