@@ -75,13 +75,13 @@ class APoint(object):
     def _get_x(self):
         return self.p[0]
     def _set_x(self, x):
-        self[0] = x # Indirect by index, trigger the update of the glyph point data.
+        self[0] = x # Indirect by index, triggers the update of the glyph point data.
     x = property(_get_x, _set_x)
 
     def _get_y(self):
         return self.p[1]
     def _set_y(self, y):
-        self[1] = y # Indirect by index, trigger the update of the glyph data.
+        self[1] = y # Indirect by index, triggers the update of the glyph data.
     y = property(_get_y, _set_y)
 
     def _get_z(self):

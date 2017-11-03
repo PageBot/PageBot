@@ -41,10 +41,14 @@ class GlyphAnalyzer(object):
 
     def __init__(self, glyph):
         self.glyph = glyph # Set weakref to glyph
+        self.reset()
 
+    def reset(self): 
+        u"""Clear all cached value to force recalculation."""
         # Get cache initialize on first access by any property.
         self._horizontals = None
         self._stems = None # Recognized stems, so not filtered by FloqMemes
+        self._stem = None # Holds cache of the left most stem found
         self._roundStems = None # Recognized round stems, not filtered by FloqMemes
         self._straightRoundStems = None
         self._allStems = None
@@ -55,6 +59,7 @@ class GlyphAnalyzer(object):
         self._roundBars = None # Recognized round bars.
         self._straightRoundBars = None # Bars with round on one side and straight on the other size.
         self._allBars = None # Collection of all types of bars
+        self._allVerticalCounters = None
 
         self._blueBars = None # Collect bloeBars from H on property call.
         self._bottomBlueBar = None
@@ -369,16 +374,16 @@ class GlyphAnalyzer(object):
 
         return self._stems
 
-    def isStem(self, pc0, pc1):
+    def isStem(self, pc0, pc1, tolerance=0):
         u"""The isStem method takes the point contexts pc0 and
         pc1 to compare if the can be defined as a “stem”: if they are
         not round extremes, if the two point contexts have overlap in the
         vertical directions (being part of the same window) that runs on black
         and if both lines are not entirely covered in black.
         """
-        return not pc0.isHorizontalRoundExtreme() \
-            and not pc1.isHorizontalRoundExtreme()\
-            and pc0.isVertical() and pc1.isVertical()\
+        return not pc0.isHorizontalRoundExtreme(tolerance) \
+            and not pc1.isHorizontalRoundExtreme(tolerance)\
+            and pc0.isVertical(tolerance) and pc1.isVertical(tolerance)\
             and pc0.inHorizontalWindow(pc1)\
             and self.middleLineOnBlack(pc0, pc1)\
             and self.overlappingLinesInWindowOnBlack(pc0, pc1)
@@ -398,11 +403,12 @@ class GlyphAnalyzer(object):
         return self._straightRoundStems
     straightRoundStems = property(_get_straightRoundStems)
 
-    def getBeamStems(self, y=None):
-        u"""Calculate the stem by a horizontal beam through the middle of the bounding box.
+    def getBeamStemCounters(self, y=None):
+        u"""Calculate the stems and counters by a horizontal beam through the middle of the bounding box.
         This works best with the capital I. The value is uncached and should only be used if
         normal stem detection fails. Or in case of italic."""
         beamStems = {}
+        beamCounters = {}
         if y is None:
             y = (self.maxY - self.minY)/2
         line = ((-sys.maxint, y), (sys.maxint, y))
@@ -414,22 +420,40 @@ class GlyphAnalyzer(object):
         # Now make Stem instance from these values, as if they we Verticals positions.
         # The difference is that we only have points, not point contexts here,
         # but for limited use that should not make a difference for entry in a Stem
-        for n in range(0, len(intersections), 2):
-            # Add this stem to the result. Create point contexts, simulating vertical 
+        p0 = ap0 = None
+        for n in range(0, len(intersections)):
+            # Add this stem or counter to the result. Create point contexts, simulating vertical 
+            # We cannot just check on odd/even, as a line may pass exactly on the top/bottom of a curve.
             p = intersections[n]
             pUp = p[0], p[1]+10
             pDown = p[0], p[1]-10
-            p0 = APointContext((pUp, pUp, pUp, p, pDown, pDown, pDown)) # Simulate vertical context.
-            p =  intersections[n+1]
-            pUp = p[0], p[1]+10
-            pDown = p[0], p[1]-10
-            p1 = APointContext((pUp, pUp, pUp, p, pDown, pDown, pDown)) # Simulate vertical context.
-            stem = self.STEM_CLASS(p0, p1, self.glyph.name)
-            size = asInt(stem.size) # Make sure not to get floats as key
-            if not size in beamStems:
-                beamStems[size] = []
-            beamStems[size].append(stem)
-        return beamStems
+            ap = APointContext((pUp, pUp, pUp, p, pDown, pDown, pDown)) # Simulate vertical context.
+
+            if p0 is None:
+                p0 = p
+                ap0 = ap
+                continue
+            
+            p1 = p0
+            ap1 = ap0
+            p0 = p
+            ap0 = ap
+
+            # If middle of the point is on black, then it is a stem. Otherwise it is a counter.
+            mp = (p0[0]+p1[0])/2, (p0[1]+p1[1])/2
+            if self.onBlack(mp):
+                stem = self.STEM_CLASS(ap1, ap0, self.glyph.name)
+                size = asInt(stem.size) # Make sure not to get floats as key
+                if not size in beamStems:
+                    beamStems[size] = []
+                beamStems[size].append(stem)
+            else: # Otherwise, middle point between intersections is on white, it must be a counter
+                counter = self.COUNTER_CLASS(ap1, ap0, self.glyph.name)
+                size = asInt(counter.size) # Make sure to get floats as key
+                if not size in beamCounters:
+                    beamCounters[size] = []
+                beamCounters[size].append(counter)
+        return beamStems, beamCounters
 
     def isPortrait(self, pc0, pc1):
         u"""Stems are supposed to be portrait within the FUZZ range. May not
@@ -483,15 +507,30 @@ class GlyphAnalyzer(object):
         return self._allStems
     allStems = property(_get_allStems)
 
+    def _get_stem(self):
+        u"""Answer left stem. Answer None if no stems can be found."""
+        if self._stem is None:
+            self.findStems()
+            for stems in self.allStems.values():
+                for stem in stems:
+                    if self._stem is None or stem.parent[0] < self._stem.parent[0]:
+                        self._stem = stem
+        return self._stem
+    stem = property(_get_stem)
+
     #   H O R I Z O N T A L  C O U N T E R
 
-    def isHorizontalCounter(self, pc0, pc1):
+    def isHorizontalCounter(self, pc0, pc1, tolerance=0):
         u"""Answers the boolean flag is the connection between pc0.x and pc1.x
         is running entirely over white, and they both are some sort of
         horizontal extreme. The connection is a “white stem”."""
-        if not (pc0.isHorizontalRoundExtreme() or pc0.isVertical()):
+        #print 'pc0', pc0, pc0.isHorizontalRoundExtreme(tolerance), pc0.isVertical(tolerance)
+        #print 'pc1', pc1, pc1.isHorizontalRoundExtreme(tolerance), pc1.isVertical(tolerance)
+        #print '===', pc0.inHorizontalWindow(pc1)
+        #print '---', self.lineOnWhite(pc0, pc1, 50), self.lineOnWhite(pc1, pc0, 50)
+        if not (pc0.isHorizontalRoundExtreme(tolerance) or pc0.isVertical(tolerance)):
             return False
-        if not (pc1.isHorizontalRoundExtreme() or pc1.isVertical()):
+        if not (pc1.isHorizontalRoundExtreme(tolerance) or pc1.isVertical(tolerance)):
             return False
         if not pc0.inHorizontalWindow(pc1):
             return False
@@ -506,15 +545,24 @@ class GlyphAnalyzer(object):
         return self._allHorizontalCounters
     horizontalCounters = property(_get_horizontalCounters)
 
+    def _get_hotizontalCounter(self):
+        u"""Answer single horizontal counter value, which by definintion is the smallest straight counter found.
+        Answer None if no counters can be found."""
+        counters = self.horizontalCounters.keys()
+        if counters:
+            return min(counters)
+        return None
+    horizontalCounter = property(_get_hotizontalCounter)
+
     #   V E R T I C A L  C O U N T E R
 
-    def isVerticalCounter(self, pc0, pc1):
+    def isVerticalCounter(self, pc0, pc1, tolerance=0):
         u"""Answers the boolean flag is the connection between pc0.y and pc1.y
         is running entirely over white, and they both are some sort of
         horizontal extreme. The connection is a “white bar”."""
-        if not (pc0.isVerticalRoundExtreme() or pc0.isHorizontal()):
+        if not (pc0.isVerticalRoundExtreme(tolerance) or pc0.isHorizontal(tolerance)):
             return False
-        if not (pc1.isVerticalRoundExtreme() or pc1.isHorizontal()):
+        if not (pc1.isVerticalRoundExtreme(tolerance) or pc1.isHorizontal(tolerance)):
             return False
         if not pc0.inVerticalWindow(pc1):
             return False
@@ -522,6 +570,12 @@ class GlyphAnalyzer(object):
         # will be too close to the horizontal stroke, so it's recognized as black. Instead we take bigger steps
         # from the corner point, so the iterations of the line are always white.
         return self.lineOnWhite(pc0, pc1, 50) or self.lineOnWhite(pc1, pc0, 50)
+
+    def _get_verticalCounters(self):
+        if self._allVerticalCounters is None:
+            self.findBars()
+        return self._allVerticalCounters
+    verticalCounters = property(_get_verticalCounters)
 
     #   B A R S
 

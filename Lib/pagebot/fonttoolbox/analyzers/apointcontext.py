@@ -115,11 +115,11 @@ class APointContext(object):
         s += '(%s,%s)' % (self.p[0], self.p[1])
         if self.isNextVertical():
             s += ' vertical'
-        if self.isNextHorizontal():
+        elif self.isNextHorizontal():
             s += ' horizontal'
         if self.isRoundStemExtreme():
             s += ' roundstem'
-        if self.isRoundBarExtreme():
+        elif self.isRoundBarExtreme():
             s += ' roundbar'
         if self.isTerminal():
             s += ' terminal'
@@ -158,94 +158,94 @@ class APointContext(object):
     def isRight(self):
         return self.p[0] > self.p1[0]
 
-    def isHorizontalExtreme(self):
+    def isHorizontalExtreme(self, tolerance=0):
         u"""
         <doc>The <code>isHorizontalExtreme</code> method answers the boolean flag if the point context is an extreme
         (such as the side of an O).</doc>
         """
         # Is the point context a vertical and extreme in x-direction?
         # @@@ Also test on non-inflection point.
-        return self.isNextVertical()\
-            and self.isPrevVertical()\
+        return self.isNextVertical(tolerance)\
+            and self.isPrevVertical(tolerance)\
             and self.isOffCurve(self.p1)\
             and self.isOffCurve(self.p_1)
 
-    def isLeftRoundExtreme(self):
+    def isLeftRoundExtreme(self, tolerance=0):
         u"""Answer the boolean flag if the point context is a left round extreme. 
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
         return nextP is not None and prevP is not None\
-            and self.p[0] < nextP[0]\
-            and self.p[0] < prevP[0]
+            and self.p[0] < (nextP[0] - tolerance)\
+            and self.p[0] < (prevP[0] - tolerance)
 
-    def isRightRoundExtreme(self):
+    def isRightRoundExtreme(self, tolerance=0):
         u"""Answer the boolean flag if the point context is a right round extreme. 
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
         return nextP is not None and prevP is not None\
-            and self.p[0] > nextP[0]\
-            and self.p[0] > prevP[0]
+            and self.p[0] > (nextP[0] + tolerance)\
+            and self.p[0] > (prevP[0] + tolerance)
 
-    def isTopRoundExtreme(self):
+    def isTopRoundExtreme(self, tolerance=0):
         u"""Answer the boolean flag if the point context is a top round extreme. 
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
         return nextP is not None and prevP is not None\
-            and self.p[1] > nextP[1]\
-            and self.p[1] > prevP[1]
+            and self.p[1] > (nextP[1] + tolerance)\
+            and self.p[1] > (prevP[1] + tolerance)
 
-    def isBottomRoundExtreme(self):
+    def isBottomRoundExtreme(self, tolerance=0):
         u"""Answer the boolean flag if the point context is a bottom round extreme. 
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
         return nextP is not None and prevP is not None\
-            and self.p[1] < nextP[1]\
-            and self.p[1] < prevP[1]
+            and self.p[1] < (nextP[1] - tolerance)\
+            and self.p[1] < (prevP[1] - tolerance)
 
-    def isVerticalRoundExtreme(self):
+    def isVerticalRoundExtreme(self, tolerance=0):
         u"""Answer the boolean flag if the point context is a vertical round extreme. 
         x/y selection by index, as these can be APoint or point2D tuple instances."""
-        return self.isTopRoundExtreme() or self.isBottomRoundExtreme()
+        return self.isTopRoundExtreme(tolerance) or self.isBottomRoundExtreme(tolerance)
 
-    def isHorizontalRoundExtreme(self):
+    def isHorizontalRoundExtreme(self, tolerance=0):
         u"""Answer the boolean flag if the point context is a horizontal round extreme. 
         x/y selection by index, as these can be APoint or point2D tuple instances."""
-        return self.isLeftRoundExtreme() or self.isRightRoundExtreme()
+        return self.isLeftRoundExtreme(tolerance) or self.isRightRoundExtreme(tolerance)
 
-    def isNextVertical(self):
+    def isNextVertical(self, tolerance=0):
         u"""Answer the boolean flag if the point context next point is vertical. 
         x/y selection by index, as these can be APoint or point2D tuple instances."""
-        return self.p[0] == self.p1[0]
+        return abs(self.p[0] - self.p1[0]) <= tolerance
 
     isVertical = isNextVertical
 
-    def isPrevVertical(self):
+    def isPrevVertical(self, tolerance=0):
         u"""Answer the boolean flag if the point context prev point is vertical. 
         x/y selection by index, as these can be APoint or point2D tuple instances."""
-        return self.p[0] == self.p_1[0]
+        return abs(self.p[0] - self.p_1[0]) <= tolerance
 
-    def isVerticalExtreme(self):
+    def isVerticalExtreme(self, tolerance=0):
         u"""Is the point context a horizontal and extreme in y-direction?"""
-        return self.isNextHorizontal()\
-            and self.isPrevHorizontal()\
+        return self.isNextHorizontal(tolerance)\
+            and self.isPrevHorizontal(tolerance)\
             and self.isOffCurve(self.p1)\
             and self.isOffCurve(self.p_1)
 
-    def isNextHorizontal(self):
+    def isNextHorizontal(self, tolerance=0):
         u"""Answer the boolean flag if the point context prev point is horizontal. 
         x/y selection by index, as these can be APoint or point2D tuple instances."""
-        return self.p[1] == self.p1[1]
+        return abs(self.p[1] - self.p1[1]) <= tolerance
 
     isHorizontal = isNextHorizontal
 
-    def isPrevHorizontal(self):
+    def isPrevHorizontal(self, tolerance=0):
         u"""Answer the boolean flag if the point context prev point is horizontal. 
         x/y selection by index, as these can be APoint or point2D tuple instances."""
-        return self.p[1] == self.p_1[1]
+        return abs(self.p[1] - self.p_1[1]) <= tolerance
 
     def isInflection(self):
         valid = self.isOnCurve(self.p) and self.isOffCurve(self.p_1) and self.isOffCurve(self.p1)
@@ -269,29 +269,29 @@ class APointContext(object):
             tolerance = self.PARALLEL_TOLERANCE
         return abs(self.normalizedAngle - pc.normalizedAngle) <= tolerance
             
-    def isRoundStemExtreme(self):
-        return self.isHorizontalExtreme()\
-            and (self.isLeftRoundExtreme() or self.isRightRoundExtreme())\
+    def isRoundStemExtreme(self, tolerance=0):
+        return self.isHorizontalExtreme(tolerance)\
+            and (self.isLeftRoundExtreme(tolerance) or self.isRightRoundExtreme(tolerance))\
             and self.isOffCurve(self.p1)\
             and self.isOffCurve(self.p_1)
 
-    def isRoundBarExtreme(self):
-        return self.isVerticalExtreme()\
-            and (self.isTopRoundExtreme() or self.isBottomRoundExtreme())\
+    def isRoundBarExtreme(self, tolerance=0):
+        return self.isVerticalExtreme(tolerance)\
+            and (self.isTopRoundExtreme(tolerance) or self.isBottomRoundExtreme(tolerance))\
             and self.isOffCurve(self.p1)\
             and self.isOffCurve(self.p_1)
 
     def isTerminal(self):
         return False
 
-    def isRoundStem(self, pc0, pc1):
+    def isRoundStem(self, pc0, pc1, tolerance=0):
         u"""The isRoundStem method answers the boolean flag if the pc0 and pc1 define a
         round stem. This is True if one of both of point contexts are extremes and if both, they must
         “bend” in the same direction.
         Also there should be overlap in horizontal direction and the point context should span black only.
         """
-        return pc0.isHorizontalRoundExtreme()\
-            and pc1.isHorizontalRoundExtreme()\
+        return pc0.isHorizontalRoundExtreme(tolerance)\
+            and pc1.isHorizontalRoundExtreme(tolerance)\
             and self.spanRoundsOnBlack(pc0, pc1)
 
     def inVerticalWindow(self, pc):

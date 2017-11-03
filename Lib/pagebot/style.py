@@ -398,6 +398,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT), independent of inside FS.
         yTextAlign = TOP, # Alignment of text inside text boxes, one of (TOP, MIDDLE, BOTTOM)
         
+        underlinePosition = None, # Underline position and thickness of BabelString/FormattedString
+        underlineThickness = None,
+
         # V I E W
 
         # These parameters are used by viewers, should not part of direct elements.css( ) queries

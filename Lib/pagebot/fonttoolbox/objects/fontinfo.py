@@ -177,6 +177,18 @@ class FontInfo(object):
     def unitsPerEm(self):
         return self.ttFont["head"].unitsPerEm
 
+    def _get_underlineThickness(self):
+        return self.ttFont['post'].underlineThickness
+    def _set_underlineThickness(self, v):
+        self.ttFont['post'].underlineThickness = v
+    underlineThickness = property(_get_underlineThickness, _set_underlineThickness)
+
+    def _get_underlinePosition(self):
+        return self.ttFont['post'].underlinePosition
+    def _set_underlinePosition(self, v):
+        self.ttFont['post'].underlinePosition = v
+    underlinePosition = property(_get_underlinePosition, _set_underlinePosition)
+
     def _getOTLFeatures(self, tableTag):
         assert tableTag in ("GPOS", "GSUB")
         if tableTag not in self.ttFont:
