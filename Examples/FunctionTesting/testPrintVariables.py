@@ -11,7 +11,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     TestPrintVariables.py
+#     testPrintVariables.py
 #
 # Variable == vanilla power in DrawBot
 from AppKit import NSColor
