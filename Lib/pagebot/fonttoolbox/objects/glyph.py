@@ -17,11 +17,12 @@
 #
 import sys
 import weakref
-from AppKit import NSFont
+
 from fontTools.ttLib import TTFont, TTLibError
 
 # TODO: Needs DrawBot/Flex context.
-from drawBot import BezierPath
+#from AppKit import NSFont
+#from drawBot import BezierPath
 
 from fontinfo import FontInfo
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext

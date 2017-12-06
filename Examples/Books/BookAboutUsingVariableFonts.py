@@ -42,9 +42,6 @@ t.doc.demo = newPlacer(parent=tmp, conditions=[Left2Col(1), Bottom2Row(0)], name
 t.doc.addTemplate(tmp.name, tmp)
 tmp.solve()
 
-print 'XXXXX', tmp.gridX
-
-
 if 0: # Print some results of the typesetter
     # Typesetter found document definition inside content.
     print 'Book title:', t.doc.title, round(t.doc.w), round(t.doc.h)
@@ -56,7 +53,7 @@ if 0: # Print some results of the typesetter
     #print page.padding
     #print page.w, page.h
 
-if 1: # Debugging, show the pages with their names.
+if 0: # Debugging, show the pages with their names.
     print t.doc.css('gridL')
     for templateName, template in t.doc.templates.items():
         print templateName, template.name
