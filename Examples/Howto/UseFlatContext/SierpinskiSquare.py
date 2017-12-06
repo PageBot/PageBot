@@ -10,12 +10,15 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     ScalingAnImage.py
+#     SierpinskySquare.py
 
 # by Petr van Blokland @petrvanblokland
 # https://twitter.com/petrvanblokland/status/860610270410018817
 
+from random import random
 from pagebot.contexts import defaultContext as context
+
+W = H = 500
 
 def drawSierpinskiSquare(px, py, w, maxW):
     if w < 1:
@@ -23,23 +26,19 @@ def drawSierpinskiSquare(px, py, w, maxW):
     for x in range(3):
         for y in range(3):
             if x == 1 and y == 1:
-                context.fill(max(0, 0.75 - w/100))
+                c = max(0, 0.5 - 0.5*w/W)
+                context.fill((random(), c, c))
+                #print x, y, w, 0.5*w/W
                 context.rect(px+w, py+w, w, w)
             elif px <= maxW and py <= maxW:
-                drawSierpinskiSquare(px+x*w, py+y*w, w/3, maxW)
+                drawSierpinskiSquare(px+x*w, py+y*w, w/3.0, maxW)
 
-if __name__ == '__main__':
-    canvasSize = 500
-    numFrames = 40
-    factor = 3 ** (1/numFrames)
 
-    for frame in range(numFrames):
-        context.newPage(canvasSize, canvasSize)
-        context.frameDuration(1/20)
-        context.fill(1)
-        context.rect(0, 0, canvasSize, canvasSize)
-        w = canvasSize * factor ** frame
-        drawSierpinskiSquare(0, 0, w, canvasSize)
+context.newDocument(w=W, h=H)
+context.newPage(W, H)
+context.fill(1)
+context.rect(0, 0, W, H)
+drawSierpinskiSquare(0, 0, W, W)
 
-    context.saveDocument("_export/SierpinskiSquare.gif")
-    print 'Done'
+context.saveDocument("_export/SierpinskiSquare.pdf")
+print 'Done'
