@@ -20,6 +20,7 @@ import os
 #File "/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/numpy/lib/npyio.py", line 32, in <module>
 #ImportError: No module named future_builtins
 
+from pagebot import getFontPath
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
@@ -49,7 +50,10 @@ class FlatContext(BaseContext):
         self.strokeColor = None
         self.strokeWidth = 0
 
-        self.b = flatBuilder # Builder for this canvas.
+        self.b = flatBuilder # Builder for this canvas, e.g. equivalent of bare drawbot.fill( )
+
+        # Dictionary of fontName-fontPath relations. Initialize with default PageBot fonts.
+        self.fontPaths = self._findFontPaths()
 
         self.doc = None
         self.pages = []
@@ -103,6 +107,33 @@ class FlatContext(BaseContext):
     def restoreGraphicState(self):
         pass # Not implemented?
 
+    #   F O N T S
+
+    def _findFontPaths(self, path=None, fontPaths=None):
+        u"""Recursively find the default PageBot font paths. Answer the dictioanary of name-path relations."""
+        if fontPaths is None:
+            fontPaths = {}
+        if path is None:
+            path = getFontPath()
+        for fileName in os.listdir(path):
+            if fileName.startswith('.'):
+                continue
+            filePath = path + '/' + fileName
+            if os.path.isdir(filePath):
+                self._findFontPaths(filePath, fontPaths) # Recursively search in folder.
+            elif fileName.lower().endswith('.ttf') or fileName.lower().endswith('.otf'):
+                fontPaths[fileName] = filePath
+        return fontPaths
+
+    def installedFonts(self):
+        u"""Answer the list with names of all installed fonts in the system, as available
+        for cls.newString( ) style."""
+        return self.fontPaths.keys()
+
+    def getFontPathOfFont(self, fontName):
+        u"""Answer the path that is source of the given font name. Answer None if the font cannot be found."""
+        return self.fontPaths.get(fontName)
+
     #   T E X T
 
     def newBulletString(self, bullet, e=None, style=None):
@@ -113,8 +144,8 @@ class FlatContext(BaseContext):
         Currently the z-axis is ignored. The FlatContext version of the BabelString is supposed to contain
         Flat.text. Note that in the Flat model, the positions is an attribute of the string, so
         strings cannot be reused to show on multiple positions."""
-        bs.s.position(p[0], p[1])
-        self.page.place(bs.s)
+        placedText = self.page.place(bs.s)
+        placedText.position(p[0], p[1])
 
     #   D R A W I N G
 

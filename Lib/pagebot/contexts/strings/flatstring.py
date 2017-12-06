@@ -13,13 +13,17 @@
 #
 #     fsstring.py
 #
+#     http://xxyxyz.org/flat
+
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
 
 class FlatString(BabelString):
 
     BABEL_STRING_TYPE = 'flat'
-    DEFAULT_FONT = 'Verdana'
+    DEFAULT_FONT = 'AmstelvarAlpha-VF.ttf' # Part of PageBot, we can assume it is there.
+    DEFAULT_FONTSIZE = 12
+    DEFAULT_LEADING = 0
 
     u"""FlatString is a wrapper around the Flat string."""
 
@@ -62,13 +66,17 @@ class FlatString(BabelString):
         elif sCapitalized:
             s = s.capitalize()
 
+        fontPath = context.getFontPathOfFont(style.get('font', cls.DEFAULT_FONT))
+        font = context.b.font.open(fontPath)
+        strike = context.b.strike(font)
+        strike.size(fontSize or style.get('fontSize', cls.DEFAULT_FONTSIZE), style.get('leading', cls.DEFAULT_LEADING), units='pt')
+        if w is not None:
+            strike.width = w
 
         # Since Flat does not do font GSUB feature compile, we'll make the transformed string here,
         # using Tal's https://github.com/typesupply/compositor
         # This needs to be installed, in case PageBot is running outside of DrawBot.
         
-        # TODO: Style stuff here to make bs.s = flat.text(...)
-        text = s # TODO: make font-->strike-->text in flat.
-        return cls(text, context) # Make real Flat flavor BabelString here.
+        return cls(strike.text(s), context) # Make real Flat flavor BabelString here.
 
 

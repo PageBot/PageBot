@@ -13,6 +13,14 @@
 #
 #     drawbotcontext.py
 #
+from AppKit import NSFont
+from fontTools.ttLib import TTFont, TTLibError
+from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
+try:
+    from drawBot import installFont, listOpenTypeFeatures, installedFonts
+except ImportError:
+    installFont =  listOpenTypeFeatures = None
+
 from basecontext import BaseContext
 from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
 from pagebot.contexts.strings.fsstring import FsString
@@ -206,6 +214,15 @@ class DrawBotContext(BaseContext):
         for cls.newString( ) style."""
         return self.b.installedFonts()
 
+    def getFontPathOfFont(self, fontName):
+        u"""Answer the path that is source of the given font name. Answer None if the font cannot be found."""
+        font = NSFont.fontWithName_size_(fontName, 25)
+        if font is not None:
+            fontRef = CTFontDescriptorCreateWithNameAndSize(font.fontName(), font.pointSize())
+            url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
+            return url.path()
+        return None
+        
     #   I M A G E
 
     def imagePixelColor(self, path, p):
