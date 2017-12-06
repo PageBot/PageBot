@@ -36,9 +36,14 @@ def drawSierpinskiSquare(px, py, w, maxW):
 
 context.newDocument(w=W, h=H)
 context.newPage(W, H)
-context.fill(1)
+context.fill((1, 1, 1))
 context.rect(0, 0, W, H)
 drawSierpinskiSquare(0, 0, W, W)
 
-context.saveDocument("_export/SierpinskiSquare.pdf")
+# TODO: Check on sensitivity of Flat for color types in relation to document types
+# Gray scale does not work for .svg
+# Opaque does not work for .pdf
+# Context should hide that problem.
+for extension in ('pdf', 'jpg'):
+    context.saveDocument("_export/SierpinskiSquare."+extension)
 print 'Done'
