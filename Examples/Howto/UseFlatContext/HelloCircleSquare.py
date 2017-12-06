@@ -17,6 +17,9 @@
 #
 #     http://xxyxyz.org/flat#tutorial
 #
+#     Run as cmd-line:
+#     --> python HelloCircleSquare.py 
+
 from random import random
 from pagebot.contexts import defaultContext as context
 
@@ -47,5 +50,9 @@ for p in range(PAGES):
             #context.text(bs, (x, y))
             pass
 
-#c.saveImage('_export/HelloCircleSquare.gif')
+#context.saveImage('_export/HelloCircleSquare.gif')
+# PDF does not support alpha colors.
+#context.saveDocument('_export/HelloCircleSquare.pdf')
+# Does not support alpha colors
+#context.saveDocument('_export/HelloCircleSquare.jpg')
 context.saveDocument('_export/HelloCircleSquare.png')
