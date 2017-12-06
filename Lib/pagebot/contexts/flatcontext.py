@@ -25,6 +25,9 @@ from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings. flatstring import FlatString
 
+def iround(value):
+    return min(255, max(0, int(round(value*255.0))))
+
 class FlatContext(BaseContext):
     u"""A FlatContext instance combines the specific functions of the Flat library, 
     and offers a PageBot “standard” API, so it can be swapped with the DrawBotContext.
@@ -62,11 +65,11 @@ class FlatContext(BaseContext):
     def saveDocument(self, path, multiPage=True):
         if path.endswith('.png'):
             if len(self.pages) == 1 or not multiPage:
-                self.pages[0].image(kind='rgb').png(path)
+                self.pages[0].image(kind='rgba').png(path)
             else:
                 for n, p in enumerate(self.pages):
                     pagePath = path.replace('.png', '%03d.png' % n)
-                    p.image(kind='rgb').png(pagePath)
+                    p.image(kind='rgba').png(pagePath)
         elif path.endswith('.jpg'):
             if len(self.pages) == 1 or not multiPage:
                 self.pages[0].image(kind='rgb').jpeg(path)
@@ -83,6 +86,8 @@ class FlatContext(BaseContext):
                     p.svg(pagePath)
         elif path.endswith('.pdf'):
             self.doc.pdf(path)
+
+    saveImage = saveDocument # Compatible API with DrawBot
 
     def newPage(self, w, h):
         u"""Other page sizes than default in self.doc, are ignored in Flat."""
@@ -125,7 +130,6 @@ class FlatContext(BaseContext):
     def rect(self, x, y, w, h):
         shape = self._getShape()
         if shape is not None:
-            print '234423423234', x, y, w, h, shape
             self.page.place(shape.rectangle(x, y, w, h))
 
     def oval(self, x, y, w, h):
@@ -138,11 +142,11 @@ class FlatContext(BaseContext):
         if shape is not None:
             self.page.place(shape.circle(x, y, w, r)) 
 
-    def line(self, (x1, y1), (x2, y2)):
+    def line(self, p0, p1):
         print self.fillColor, self.strokeColor, self.strokeWidth
         shape = self._getShape()
         if shape is not None:
-            self.page.place(shape.line(x1, y1, x2, y2))
+            self.page.place(shape.line(p0[0], p0[1], p1[0], p2[1]))
 
     #   S H A D O W  &  G R A D I E N T
 
@@ -174,12 +178,12 @@ class FlatContext(BaseContext):
             self.fillColor = None # No fill
             success = True
         elif isinstance(c, (float, long, int)): # Grayscale
-            self.fillColor = b.gray(c * 255, )
+            self.fillColor = b.gray(iround(c))
             success = True
         elif isinstance(c, (list, tuple)):
             if len(c) == 2 and isinstance(c[0], basestring) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
-                name, cmyk = c
-                self.fillColor = b.spot(name, cmyk)
+                name, (cyan, magenta, yellow, k) = c
+                self.fillColor = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
                 success = True
             # Not supported in PDF, leave out for general compatibility?
             #elif len(c) == 2:
@@ -188,18 +192,21 @@ class FlatContext(BaseContext):
             #    success = True
             elif cmyk:
                 cyan, magenta, yellow, k = c
-                self.fillColor = b.cmyk(cyan, magenta, yellow, k)
+                self.fillColor = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
                 success = True
             elif len(c) == 4: # rgb and opaque
                 red, green, blue, a = c
-                self.fillColor = b.rgba(red, green, blue, a)
+                self.fillColor = b.rgba(iround(red), iround(green), iround(blue), iround(a))
                 success = True
             elif len(c) == 3:
                 red, green, blue = c
-                self.fillColor = b.rgb(red, green, blue)
+                print 'aaaaaaa', c
+                #self.fillColor = b.rgba(iround(red), iround(green), iround(blue), 255)
                 success = True
         if not success:
             raise ValueError('FlatContext.setFillColor: Error in color format "%s"' % repr(c))
+
+    fill = setFillColor # DrawBot compatible API
 
     def setStrokeColor(self, c, w=1, cmyk=False, b=None):
         u"""Set global stroke color or the color of the formatted string."""
@@ -213,12 +220,12 @@ class FlatContext(BaseContext):
             self.strokeColor = None # no stroke
             success = True
         elif isinstance(c, (float, long, int)): # Grayscale
-            self.strokeColor = b.gray(c * 255, )
+            self.strokeColor = b.gray(iround(c))
             success = True
         elif isinstance(c, (list, tuple)):
             if len(c) == 2 and isinstance(c[0], basestring) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
-                name, cmyk = c
-                self.strokeColor = b.spot(name, cmyk)
+                name, (cyan, magenta, yellow, k) = c
+                self.strokeColor = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
                 success = True
             # Not supported in PDF, leave out for general compatibility?
             #elif len(c) == 2:
@@ -227,20 +234,22 @@ class FlatContext(BaseContext):
             #    success = True
             elif cmyk:
                 cyan, magenta, yellow, k = c
-                self.strokeColor = b.cmyk(cyan, magenta, yellow, k)
+                self.strokeColor = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
                 success = True
             elif len(c) == 4: # rgb and opaque
                 red, green, blue, a = c
-                self.strokeColor = b.rgba(red, green, blue, a)
+                self.strokeColor = b.rgba(iround(red), iround(green), iround(blue), iround(a))
                 success = True
             elif len(c) == 3:
                 red, green, blue = c
-                self.strokeColor = b.rgb(red, green, blue)
+                #self.strokeColor = b.rgb(iround(red), iround(green), iround(blue), 255)
                 success = True
         if not success:
             raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
         if w is not None:
-            self.strokeWidth = 20#w
+            self.strokeWidth = w
+
+    stroke = setStrokeColor # DrawBot compatible API
 
     #   E X P O R T
 

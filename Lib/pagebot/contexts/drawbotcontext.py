@@ -47,8 +47,11 @@ class DrawBotContext(BaseContext):
         pass
 
     def saveDocument(self, path, multiPage=None):
-        u"""Select other than standard DrawBot export builders here."""
+        u"""Select other than standard DrawBot export builders here.
+        Save the current image as path, rendering depending on the extension of the path file."""
         self.b.saveImage(path, multipage=multiPage)
+
+    saveImage = saveDocument # Compatible API with DrawBot
 
     def newPage(self, w, h):
         self.b.newPage(w, h)
@@ -268,10 +271,5 @@ class DrawBotContext(BaseContext):
 
     stroke = setStrokeColor # DrawBot compatible API
 
-    #   E X P O R T
-
-    def saveImage(self, path):
-        u"""Save the current image as path, rendering depending on the extension of the path file."""
-        self.b.saveImage(path)
         
     
