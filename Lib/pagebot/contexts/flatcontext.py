@@ -205,8 +205,7 @@ class FlatContext(BaseContext):
                 success = True
             elif len(c) == 3:
                 red, green, blue = c
-                print 'aaaaaaa', c
-                #self.fillColor = b.rgba(iround(red), iround(green), iround(blue), 255)
+                self.fillColor = b.rgb(iround(red), iround(green), iround(blue))
                 success = True
         if not success:
             raise ValueError('FlatContext.setFillColor: Error in color format "%s"' % repr(c))
@@ -247,7 +246,7 @@ class FlatContext(BaseContext):
                 success = True
             elif len(c) == 3:
                 red, green, blue = c
-                #self.strokeColor = b.rgb(iround(red), iround(green), iround(blue), 255)
+                self.strokeColor = b.rgb(iround(red), iround(green), iround(blue))
                 success = True
         if not success:
             raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
