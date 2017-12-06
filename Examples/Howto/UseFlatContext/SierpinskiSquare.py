@@ -14,6 +14,9 @@
 
 # by Petr van Blokland @petrvanblokland
 # https://twitter.com/petrvanblokland/status/860610270410018817
+#
+#     Run as cmd-line:
+#     --> python SierpinskiSquare.py 
 
 from random import random
 from pagebot.contexts import defaultContext as context
