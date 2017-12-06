@@ -18,7 +18,7 @@ class BabelString(object):
     needed for different builder classes."""
 
     def __init__(self, s, context):
-        self.context = context # Store the context, in case we need it.
+        self.context = context # Store the context, in case we need it for further transformations.
         self.s = s # Enclose the Flat/Drawbot/html string in this wrapper.
 
     def __repr__(self):
