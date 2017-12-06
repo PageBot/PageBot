@@ -19,6 +19,7 @@ from pagebot.style import css, LEFT
 class FlatString(BabelString):
 
     BABEL_STRING_TYPE = 'flat'
+    DEFAULT_FONT = 'Verdana'
 
     u"""FlatString is a wrapper around the Flat string."""
 
@@ -61,11 +62,13 @@ class FlatString(BabelString):
         elif sCapitalized:
             s = s.capitalize()
 
-        # Since Flat does not do fetaure compile, we'll make the transformed string here,
+
+        # Since Flat does not do font GSUB feature compile, we'll make the transformed string here,
         # using Tal's https://github.com/typesupply/compositor
         # This needs to be installed, in case PageBot is running outside of DrawBot.
         
-        # TODO: Style stuff here.
-        return cls(s, context) # Make real Flat string here.
+        # TODO: Style stuff here to make bs.s = flat.text(...)
+        text = s # TODO: make font-->strike-->text in flat.
+        return cls(text, context) # Make real Flat flavor BabelString here.
 
 

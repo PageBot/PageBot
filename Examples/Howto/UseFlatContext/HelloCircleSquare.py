@@ -42,10 +42,10 @@ for p in range(PAGES):
         elif ch < 0.4:
             context.rect(x, y, R, R )
         else:
-            #c.fontSize(24)
-            #c.text('Hello world on %d,%d' % (x, y), (x, y))
+            # Make formatted Flat flavor BabelString instance.
+            #bs = context.newString('Hello world on %d,%d' % (x, y), style=dict(font='Verdana', fontSize=24))
+            #context.text(bs, (x, y))
             pass
-
 
 #c.saveImage('_export/HelloCircleSquare.gif')
 context.saveDocument('_export/HelloCircleSquare.png')

@@ -108,8 +108,13 @@ class FlatContext(BaseContext):
     def newBulletString(self, bullet, e=None, style=None):
         return cls.newString(bullet, e=e, style=style)
 
-    def text(self, bs):
-        self.b.text(bs.s, p)
+    def text(self, bs, p):
+        u"""Place the babelstring instance at position p. The position can be any 2D or 3D points tuple.
+        Currently the z-axis is ignored. The FlatContext version of the BabelString is supposed to contain
+        Flat.text. Note that in the Flat model, the positions is an attribute of the string, so
+        strings cannot be reused to show on multiple positions."""
+        bs.s.position(p[0], p[1])
+        self.page.place(bs.s)
 
     #   D R A W I N G
 
