@@ -22,6 +22,9 @@
 
 from random import random
 from pagebot.contexts import defaultContext as context
+from pagebot.fonttoolbox.objects.font import findInstalledFonts
+
+FONTNAME = 'AmstelvarAlpha-VF.ttf'
 
 W = H = 500
 PAGES = 3
@@ -34,9 +37,10 @@ for p in range(PAGES):
     context.newPage(W, H)
     for n in range(RECTS):
         # Compatible to DrawBot: color values between (0, 1)
-        a = 0.5 +random()*0.5
         red, green, blue = random(), random(), random()
-        context.fill((red, green, blue, a))
+        #a = 0.5 +random()*0.5
+        #context.fill((red, green, blue, a))
+        context.fill((red, green, blue))
         ch = random()
         x = M + random()*(W-2*M-R) # Only in available space
         y = M + random()*(H-2*M-R)
@@ -46,13 +50,14 @@ for p in range(PAGES):
             context.rect(x, y, R, R )
         else:
             # Make formatted Flat flavor BabelString instance.
-            #bs = context.newString('Hello world on %d,%d' % (x, y), style=dict(font='Verdana', fontSize=24))
-            #context.text(bs, (x, y))
-            pass
+            bs = context.newString('Hello world on %d,%d' % (x, y), style=dict(font=FONTNAME, fontSize=10))
+            context.text(bs, (x, y))
 
 #context.saveImage('_export/HelloCircleSquare.gif')
 # PDF does not support alpha colors.
 #context.saveDocument('_export/HelloCircleSquare.pdf')
 # Does not support alpha colors
 #context.saveDocument('_export/HelloCircleSquare.jpg')
-context.saveDocument('_export/HelloCircleSquare.png')
+context.saveDocument('_export/HelloCircleSquare.pdf')
+print 'Done'
+

@@ -13,13 +13,15 @@
 #
 #     pagebot/contexts/__init__.py
 #
-from drawbotcontext import DrawBotContext
-from flatcontext import FlatContext
 from htmlcontext import HtmlContext
 
-from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
-if drawBotBuilder is not None: # Test if platform is supporing DrawBot:
-	defaultContext = DrawBotContext()
-else:
-	defaultContext = FlatContext()
+try:
+    from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
+    from drawbotcontext import DrawBotContext
+    defaultContext = DrawBotContext() # Test if platform is supporing DrawBot:
+    FlatContext = None
+except ImportError:
+    from flatcontext import FlatContext
+    DrawBotContext = None
+    defaultContext = FlatContext()
 	
