@@ -11,10 +11,11 @@
 # -----------------------------------------------------------------------------
 #
 #     DB_TestFormattedStrings.py
+#
 from pagebot.contexts import defaultContext as context
 
 def run():
-    aa = context.newString('Book Cover', font='Georgia', fontSize=40)
+    aa = context.newString('Book Cover', style=dict(font='Georgia', fontSize=40))
     print textSize(aa)
 
     aa = context.newString('')

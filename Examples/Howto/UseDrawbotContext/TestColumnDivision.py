@@ -14,7 +14,7 @@
 #
 from __future__ import division
 
-class E:
+class E(object):
     def css(self, n, v):
         if n == 'gw':
             return 20

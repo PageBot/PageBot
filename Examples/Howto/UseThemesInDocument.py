@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+# -----------------------------------------------------------------------------
+#
+#     UseThemesInDocument.py
+#
+#     U N D E R  D E V E L O P M E N T
+#
 from pagebot.themes import Themes
 
 theme = Themes['Metallic Office']
