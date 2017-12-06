@@ -14,7 +14,6 @@
 #     rect.py
 #
 from __future__ import division # Make integer division result in float.
-from drawBot import rect
 
 from pagebot.style import NO_COLOR
 from pagebot.elements.element import Element

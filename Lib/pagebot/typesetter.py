@@ -28,6 +28,7 @@ except ImportError:
     print 'Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown'
     markdown = None
 
+from pagebot.contexts import defaultContext
 from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
 from pagebot.document import Document

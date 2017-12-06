@@ -19,7 +19,7 @@ import sys
 import weakref
 
 # TODO: Import needs to be done inside DrawBotContext
-from AppKit import NSBezierPath
+#from AppKit import NSBezierPath
 
 from pagebot.toolbox.transformer import point2D, asInt
 from apointcontextlist import Vertical, Horizontal
@@ -516,7 +516,7 @@ class GlyphAnalyzer(object):
                     if self._stem is None or stem.parent[0] < self._stem.parent[0]:
                         self._stem = stem
         return self._stem
-    stem = property(_get_stem)
+    sortedStems = property(_get_stem)
 
     #   H O R I Z O N T A L  C O U N T E R
 
