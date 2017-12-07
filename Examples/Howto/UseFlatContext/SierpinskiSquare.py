@@ -11,7 +11,7 @@
 # -----------------------------------------------------------------------------
 #
 #     SierpinskiSquare.py
-
+#
 # by Petr van Blokland @petrvanblokland
 # https://twitter.com/petrvanblokland/status/860610270410018817
 #
@@ -50,8 +50,9 @@ drawSierpinskiSquare(0, 0, W, W)
 # Opaque does not work for .pdf
 # Context should hide that problem.
 for extension in ('pdf', 'jpg'):
-    exportPath = "_export/SierpinskiSquare."+extension
+    exportPath = "_export/SierpinskiSquare." + extension
     context.saveDocument(exportPath)
     os.system(u'open "%s"' % exportPath)
 
-print 'Done'
+print ('Done')
+
