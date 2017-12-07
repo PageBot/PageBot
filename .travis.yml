@@ -15,4 +15,4 @@ script:
 - export MAYBE_SOMEDAY=fixme,missing-docstring,superfluous-parens
 - export PYLINT="pylint --disable=$WONT_FIX,$MAYBE_SOMEDAY"
 - $PYLINT Examples/Howto/UseFlatContext/*.py
-- $PYLINT Examples/Howto/PositionText.py
+- $PYLINT Examples/Howto/*.py
