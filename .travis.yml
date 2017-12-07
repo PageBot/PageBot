@@ -1,0 +1,10 @@
+language: python
+branches:
+  only:
+  - master
+before_install:
+- pip install --upgrade pip
+install:
+- pip install -e .
+- pip install flat
+- pip install fontTools
