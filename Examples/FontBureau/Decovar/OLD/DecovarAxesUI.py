@@ -22,7 +22,7 @@
 from __future__ import division
 
 import pagebot
-from pagebot.page import Template
+from pagebot.elements.pbpage import Template
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
