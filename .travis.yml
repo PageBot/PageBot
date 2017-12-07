@@ -8,3 +8,6 @@ install:
 - pip install -e .
 - pip install flat
 - pip install fontTools
+- pip install pylint
+script:
+- pylint Examples/Howto/UseFlatContext/*.py
