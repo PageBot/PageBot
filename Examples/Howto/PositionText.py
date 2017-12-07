@@ -43,10 +43,14 @@ def makeDocument():
     view = doc.view
     view.w = view.h = W, H
     view.padding = 40
-    view.showPageFrame = True
-    view.showPageCropMarks = True
     view.showElementOrigin = True # Show the alignment position of elements as plus-mark.
-    
+
+    view.showPageCropMarks = True
+    view.showPageRegistrationMarks = True
+    view.showPageFrame = True
+    view.showPageNameInfo = True
+    view.showPageMetaInfo = True
+ 
     title = context.newString(TITLE, style=dict(fontSize = 40, textFill=(0, 0, 1)))
     newTextBox(title, # Text inside the text box
         name='Other element', # Optinal (unique) name of element. Otherwise e.eId is used.

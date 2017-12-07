@@ -63,10 +63,13 @@ class FlatContext(BaseContext):
         self.shape = None # Current open shape
         self.flatString = None
 
+        self._pathCommands = None # Collect path commnands here before drawing the path.
+
     def newDocument(self, w, h, units='pt'):
         self.doc = self.b.document(w, h, units)
 
     def saveDocument(self, path, multiPage=True):
+        u"""Save the document to file(s)."""
         if path.endswith('.png'):
             if len(self.pages) == 1 or not multiPage:
                 self.pages[0].image(kind='rgba').png(path)
@@ -182,6 +185,35 @@ class FlatContext(BaseContext):
         shape = self._getShape()
         if shape is not None:
             self.page.place(shape.line(p0[0], p0[1], p1[0], p1[1]))
+
+    def newPath(self):
+        u"""Create a new path list, o collect the path commands."""
+        self._pathCommands = [] # Collect path commands here.
+
+    def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
+        shape = self._getShape()
+        if shape is not None:
+            self.page.place(shape.path(self._pathCommands))
+
+    def moveTo(self, p):
+        assert self._pathCommands is not None
+        self._pathCommands.append(self.b.moveto(p[0], p[1]))
+
+    def lineTo(self, p):
+        assert self._pathCommands is not None
+        self._pathCommands.append(self.b.lineto(p[0], p[1]))
+
+    def quadTo(bcp, p):
+        assert self._pathCommands is not None
+        self._pathCommands.append(self.b.quadto(bcp[0], bcp[1], p[0], p[1]))
+
+    def curveTo(self, bcp1, bcp2, p):
+        assert self._pathCommands is not None
+        self._pathCommands.append(self.b.curveto(bcp1[0], bcp1[1], bcp2[0], bcp2[1], p[0], p[1]))
+
+    def closePath(self):
+        assert self._pathCommands is not None
+        self._pathCommands.append(self.b.closePath())
 
     #   S H A D O W  &  G R A D I E N T
 
