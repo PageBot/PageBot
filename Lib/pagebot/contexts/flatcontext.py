@@ -179,10 +179,9 @@ class FlatContext(BaseContext):
             self.page.place(shape.circle(x, y, w, r)) 
 
     def line(self, p0, p1):
-        print self.fillColor, self.strokeColor, self.strokeWidth
         shape = self._getShape()
         if shape is not None:
-            self.page.place(shape.line(p0[0], p0[1], p1[0], p2[1]))
+            self.page.place(shape.line(p0[0], p0[1], p1[0], p1[1]))
 
     #   S H A D O W  &  G R A D I E N T
 
