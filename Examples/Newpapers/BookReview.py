@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     BookReview.py
@@ -30,7 +32,9 @@ from pagebot.elements import *
 from pagebot.conditions import *
 
 from pagebot.toolbox.transformer import path2ScriptId
-from pagebot import newFS, getGlobals
+from pagebot import getGlobals
+from pagebot.elements.views.strings.fsstring import newFsString
+
 # Get set of globals, unique for this script file name.
 # This is used to store random information (such as blurb article text), to be consistent
 # thought multiple runs of the script. Restart DrawBot to clean the cash and start fresh.
@@ -64,7 +68,7 @@ def makeDocument():
 
     doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=1)
     # Get default view from the document and set the viewing parameters.
-    view = doc.getView()
+    view = doc.view
     view.style['fill'] = 1
     view.padding = 40 # To show cropmarks and such, make >40 or so.
     view.showPageCropMarks = True # Won't show if there is not padding in the view.
@@ -135,15 +139,15 @@ def makeDocument():
         conditions=(Fit2Height(), Top2Top(), Left2Left()),
         borders=bookBorders)
     
-    fs = newFS('Educational series', style=authorStyle)
-    fs += newFS('\n\nThrilling title\nfor my first book\nabout Design', style=titleStyle)
-    fs += newFS('\n'*3 + 'John Smith', style=authorStyle)
+    fs = newFsString('Educational series', style=authorStyle)
+    fs += newFsString('\n\nThrilling title\nfor my first book\nabout Design', style=titleStyle)
+    fs += newFsString('\n'*3 + 'John Smith', style=authorStyle)
     
     frame = newRect(margin=6, conditions=(Fit(),), 
     title1 = newTextBox(fs, parent=book1, shadow=None,
         conditions=(Fit2Width(), Center2Center(), Top2Top())))
 
-    fs = newFS(u'¶', style=authorStyle)
+    fs = newFsString(u'¶', style=authorStyle)
     publisher1 = newTextBox(fs, parent=book1, shadow=None, 
         conditions=(Fit2Width(), Bottom2Bottom()))
     
@@ -154,15 +158,15 @@ def makeDocument():
         conditions=(Fit2Height(), Top2Top(), Right2Right()),
         borders=bookBorders)
 
-    fs = newFS('Educational series', style=authorStyle)
-    fs += newFS('\n\nPredictable title of my second book about Typography', 
+    fs = newFsString('Educational series', style=authorStyle)
+    fs += newFsString('\n\nPredictable title of my second book about Typography', 
         style=titleStyle)
-    fs += newFS('\n'*3 + 'John Smith', style=authorStyle)
+    fs += newFsString('\n'*3 + 'John Smith', style=authorStyle)
 
     title2 = newTextBox(fs, parent=book2, marginTop=120, shadow=None,
         conditions=(Fit2Width(), Center2Center(), Top2Top()))
     
-    fs = newFS(u'¶', style=authorStyle)
+    fs = newFsString(u'¶', style=authorStyle)
     publisher2 = newTextBox(fs, parent=book2, shadow=None, 
         conditions=(Fit2Width(), Bottom2Bottom()))
     
@@ -177,24 +181,24 @@ def makeDocument():
         conditions=(Fit2Width(), Float2Top()), mt=20)
     
     # Review content
-    fs = newFS('About the thrilling title\n', style=headStyle)
-    fs += newFS(t, style=bodyStyle)    
+    fs = newFsString('About the thrilling title\n', style=headStyle)
+    fs += newFsString(t, style=bodyStyle)    
     t4 = newTextBox(fs, w=w/2-G, mt=10, parent=bottomContainer, 
         conditions=(Left2Left(), Float2Top()))
 
-    fs = newFS('Second column\n', style=headStyle)
-    fs += newFS(t, style=bodyStyle)
+    fs = newFsString('Second column\n', style=headStyle)
+    fs += newFsString(t, style=bodyStyle)
     t5 = newTextBox(fs, w=w/2-G, mt=10, parent=bottomContainer, 
         conditions=(Float2Right(), Float2Top()))
         
     # Text box on bottom right
-    fs = newFS('This is a funny head.\n', style=headStyle)
-    fs += newFS(t+t, style=sideBarStyle)
+    fs = newFsString('This is a funny head.\n', style=headStyle)
+    fs += newFsString(t+t, style=sideBarStyle)
     t6 = newTextBox(fs, w=w/3-16, pt=34, parent=page, 
         conditions=(Float2Right(), Float2Top(), Fit2Bottom()))
 
-    fs = newFS(topT, style=bodyStyle)
-    fs += newFS('\nAn addition italic line', style=italicBodyStyle)
+    fs = newFsString(topT, style=bodyStyle)
+    fs += newFsString('\nAn addition italic line', style=italicBodyStyle)
     topText = newTextBox(fs, w=w/3-16, parent=page, 
         conditions=(Top2Top(), Right2Right()))
                       

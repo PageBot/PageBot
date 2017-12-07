@@ -6,16 +6,16 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     htmlview.py
 #
-import os
-import shutil
-from pagebot.elements.views import View
+from pagebot.elements.views.baseview import BaseView
+from pagebot.contexts import HtmlContext
 
-class HtmlView(View):
+class HtmlView(BaseView):
     u"""Abstract class for HTML/CSS generating views."""
-    
-
+ 

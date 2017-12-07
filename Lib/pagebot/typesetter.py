@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     typesetter.py
@@ -26,10 +28,10 @@ except ImportError:
     print 'Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown'
     markdown = None
 
-from pagebot import newFS, getMarker
+from pagebot.contexts import defaultContext
+from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
 from pagebot.document import Document
-from pagebot.builders import WebBuilder
 
 class Typesetter(object):
 
@@ -55,30 +57,47 @@ class Typesetter(object):
         'li': ('ul', 'ol'),
         'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
     }
-    def __init__(self, doc=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None):
-        # Set the doc context of the typesetter. Can be None, in which case it is expected that one of the code blocks
+    def __init__(self, doc=None, context=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None,
+            tryExcept=True, verbose=False):
+        # Set the doc context of the typesetter. doc be None, in which case it is expected that one of the code blocks
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
-        self.page = None # Keep track of current page, as may have been defined in code blocks.
-        self.box = None # Keep track of current box, as may have been defined in code blocks.
-        #
-        # The galley can also be a Galley or a TextBox instance, if typsetting must go directly into a page element. 
+        # Keep track of current page, as may have been defined in code blocks.
+        self.page = None 
+        # The galley can be a Galley or a TextBox instance, if typsetting must go directly into a page element. 
         # In that case image elements are added as child, loosing contact with their position in the text. 
         # A Galley element keeps that relation, by adding multiple TextBox elements between the images.
         # If galley is None, then create an empty Galley instance, without parent.
+        # Note that the single Galley will use the pagebot.contexts.Context as reference.
+        # Also note that self.box and self.galley refer to the same object. self.box is used 
+        # in MarkDown files as reference where text should go.
+        
+        # Find the context, in case no doc has be defined yet.
+        if context is None and doc is not None:
+            context = doc.context
+        if context is None:
+            context = defaultContext
+
         if galley is None:
-            galley = self.GALLEY_CLASS()
+            galley = self.GALLEY_CLASS(context=context)
         self.galley = galley 
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = [] 
         self.tagHistory = []
-        # HTML/CSS Builder, to build parallel HTML while parsing the markdown.
-        self.b = WebBuilder()
         # Code block results if any ~~~Python blocks defined in the Markdown file.
         self.globalDocName = globalDocName or 'doc' # Name of global doc to find in code blocks, to be stored in self.doc
         self.globalPageName = globalPageName or 'page'
         self.globalBoxName = globalBoxName = 'box'
         self.codeBlocks = {} # No results for now. Find codeblock result by codeId after typesetting.
+        # Save some flags in case the typesetter is running in Python try-except mode.
+        self.tryExcept = tryExcept
+        self.verbose = verbose
+
+    def _get_box(self):
+        return self.galley
+    def _set_box(self, e):
+        self.galley = e
+    box = property(_get_box, _set_box)
 
     def getTextBox(self, e=None):
         u"""Answer the current text box, if the width fits the current style.
@@ -90,7 +109,7 @@ class Typesetter(object):
         # Add line break to whatever style/content there was before.
         # Add invisible h1-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.galley.appendString(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
+        #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
@@ -99,7 +118,7 @@ class Typesetter(object):
         # Add line break to whatever style/content there was before.
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.galley.appendString(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
+        #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
@@ -161,8 +180,8 @@ class Typesetter(object):
             self.pushStyle({}) # Define top level for styles.
         brStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
         s = self.getStyleValue('prefix', e, brStyle, default='') + '\n' + self.getStyleValue('postfix', e, brStyle, default='')
-        fs = newFS(s, e, style=brStyle)
-        self.galley.appendString(fs) # Add newline in the current setting of FormattedString
+        fs = e.newString(s, e=e, style=brStyle)
+        self.galley.append(fs) # Add newline in the current setting of FormattedString
         """
     def node_a(self, node, e):
         u"""Ignore links, but process the block"""
@@ -183,7 +202,7 @@ class Typesetter(object):
                 footnotes[index] = dict(nodeId=nodeId, index=index, node=node, e=e, p=None)
                 # Add invisible mark, so we can scan the text after page composition to find
                 # on which page it ended up.
-                self.galley.appendString(getMarker('footnote', index))
+                self.galley.append(getMarker('footnote', index))
 
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
@@ -202,7 +221,7 @@ class Typesetter(object):
                 assert not nodeId in literatureRefs
                 # Make literature reference entry. Content <p> and split fields will be added later.
                 literatureRefs[index] = dict(nodeId=nodeId, node=node, e=e, p=None, pageIds=[])
-                self.galley.appendString(getMarker('literature', index))
+                self.galley.append(getMarker('literature', index))
 
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
@@ -243,12 +262,14 @@ class Typesetter(object):
 
     def node_li(self, node, e):
         u"""Generate bullet/Numbered list item."""
+        context = self.galley.context
         if self.doc is not None:
             bullet = self.doc.css('listBullet')
         else:
             bullet = self.DEFAULT_BULLET # Default, in case doc or css does not exist.
-        bulletString = newFS(bullet) # Get styled string with bullet.
-        self.galley.appendString(bulletString) # Append the bullet as defined in the style.
+        bulletString = context.newBulletString(bullet) # Get styled string with bullet.
+        if bulletString is not None: # HtmlContext does not want a bullet character.
+            self.galley.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
 
@@ -332,7 +353,7 @@ class Typesetter(object):
                 return lib['literatureRefs']
         return None
 
-    def runCodeBlock(self, node, execute=True, tryExcept=False):
+    def runCodeBlock(self, node, execute=True):
         u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with 
         ~~~Python
@@ -359,19 +380,30 @@ class Typesetter(object):
         # self.doc contains the Typesetter doc reference, which can be defined in an earlier code block
         result = {self.globalDocName:self.doc, self.globalPageName:self.page, self.globalBoxName:self.box}
         if execute and node.text:
-            if not tryExcept:
+            if not self.tryExcept:
+                if self.verbose:
+                     print u'Typesetter: %s' % node.text
                 exec(node.text) in result # Exectute code block, where result goes dict.
                 codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
-                del result['__builtins__'] # We don't need this set of globals in the results.
+                del result['__builtins__'] # We don't need this set of globals in the returned results.
             else:
+                error = None
                 try:
                     exec(node.text) in result # Exectute code block, where result goes dict.
                     codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
                     del result['__builtins__'] # We don't need this set of globals in the results.
+                except TypeError:
+                    error = u'TypeError'
                 except NameError:
-                    result['__error__'] = '### NameError' # TODO: More error message here.
+                    error = 'NameError'
                 except SyntaxError:
-                    result['__error__'] = '### SyntaxError' # TODO: More error message here.
+                    error = 'SyntaxError'
+                except AttributeError:
+                    error = 'AttributeError'
+                result['__error__'] = error
+                if self.verbose and error is not None:
+                    print u'### %s ### %s' % (error, node.text)
+
         # doc, page or box may have changed, store them back into the typesetter, so they are availabe for 
         # the execution of a next code block.
         self.doc = result.get(self.globalDocName)
@@ -458,12 +490,14 @@ class Typesetter(object):
                 break
         return mergedStyle
 
-    def appendString(self, fs):
-        u"""Append the string to the current box, if it is defined. Otherwise add to the existing galley."""
-        if self.box is not None:
-            self.box.appendString(fs)
-        else:
-            self.galley.appendString(fs)  # Add the tail formatted string to the galley.
+    def append(self, bs):
+        u"""Append the string (or BabelString instance) to the current box, 
+        if it is defined and it has a context. Otherwise add to the existing galley."""
+        # Add the tail formatted string to the textBox or galley. Equivalent to self.box.
+        if self.galley is not None:
+            self.galley.append(bs)  
+        elif self.verbose:
+            print '### Typesetter.append: Cannot append "%s"' % bs
 
     def htmlNode(self, node, end=False):
         u"""Open the tag in HTML output and copy the node attributes if there are any."""
@@ -478,30 +512,24 @@ class Typesetter(object):
         if end:
             htmlTag += '/'
         htmlTag += '>'
-        self.appendHtml(htmlTag)
+        self.append(htmlTag)
 
     def _htmlNode(self, node):
         u"""Close the html tag of node."""
-        self.appendHtml('</%s>' % node.tag)
+        self.append('</%s>' % node.tag)
 
     def htmlNode_(self, node):
         u"""Opem+close the html tag of node."""
         self.htmlNode(node, end=True)
 
-    def appendHtml(self, html):
-        u"""Append the UTF-8 html to the current box, if it is defined. Otherwise add to the existing galley."""
-        if self.box is not None:
-            self.box.appendHtml(html)
-        else:
-            self.galley.appendHtml(html)  # Add UTF-8 html string to the galley.
-
-    def typesetString(self, s, e=None, style=None):
-        u"""If s is a formatted string, them it is placed untouched. If it is a plain string, then
+    def typesetString(self, sOrBs, e=None, style=None):
+        u"""If s is a formatted string, then it is placed untouched. If it is a plain string, then
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters. 
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
-        fs = newFS(s, e, style)
-        self.appendString(fs)
-        return fs
+        # Only convert if not yet BabelString instance.
+        bs = self.galley.newString(sOrBs, e=e, style=style)
+        self.append(bs)
+        return bs
 
     def typesetNode(self, node, e=None):
         u"""Recursively typeset the etree *node*, using a reference to element *e* or the cascading *style*.
@@ -533,9 +561,10 @@ class Typesetter(object):
         
         nodeText = self._strip(node.text)
         if nodeText: # Not None and still has content after stripping?
-            fs = newFS(nodeText, e, nodeStyle)
-            self.appendString(fs)
-            self.appendHtml(nodeText) # Export the plain text as parallel HTML output as well.
+            # Don't cache the context from self.galley as variable, as it may become dynamically updated by code blocks.
+            # The galley context will define the type of BabelStrings generated by the Typesetter.
+            bs = self.galley.newString(nodeText, e=e, style=nodeStyle)
+            self.append(bs)
 
         # Type set all child node in the current node, by recursive call.
         for child in node:
@@ -554,9 +583,9 @@ class Typesetter(object):
             # to empty string?
             childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
             if childTail: # Any tail left after stripping, then append to the galley.
-                fs = newFS(childTail, e, nodeStyle)
-                self.appendString(fs)
-                self.appendHtml(childTail) # Export the plain text as parallel HTML output as well.
+                # Don't cache the context from self.galley as variable, as it may become dynamically updated by code blocks.
+                bs = self.galley.newString(childTail, e=e, style=nodeStyle)
+                self.append(bs)
 
         # Close the HTML tag of this node.
         self._htmlNode(node)
@@ -577,8 +606,8 @@ class Typesetter(object):
         # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
         nodeTail = self._strip(node.tail, postfix=postfix)
         if nodeTail: # Something of a tail left after stripping?
-            fs = newFS(nodeTail, e, nodeStyle)
-            self.galley.appendString(fs) # Add to the current flow textBox
+            bs = self.galley.context.(nodeTail, e=e, style=nodeStyle)
+            self.galley.append(bs) # Add to the current flow textBox
         """
 
     def typesetFile(self, fileName, e=None, xPath=None):

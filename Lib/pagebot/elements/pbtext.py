@@ -6,17 +6,17 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     pbtext.py
 #
 #     Using the DrawBot textBox() instead of text() for better control
-#     of alugnment, position and leading (in case there are "\n" returns
+#     of alignment, position and leading (in case there are "\n" returns
 #     in the string)
 #
-from drawBot import textSize
-
 from pagebot.elements.pbtextbox import TextBox
 
 class Text(TextBox):
@@ -33,8 +33,8 @@ class Text(TextBox):
         pass # Ignore
     h = property(_get_h, _set_h)
         
-    def getTextSize(self):
+    def getTextSize(self, view):
         """Figure out what the width/height of the text self.fs is."""
-        return textSize(self.fs)
+        return self.context.textSize(self.bs.s)
 
 

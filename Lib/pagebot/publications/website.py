@@ -6,11 +6,14 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     website.py
 #
+from pagebot.contexts import HtmlContext
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
@@ -23,8 +26,9 @@ class MobileNavigation(TextBox):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
    
-    def build(self, view, b):
-        self.buildCss(view, b)
+    def build_html(self, view, origin=None):
+        b = self.context.b
+        self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='twelvecol last')
@@ -52,8 +56,9 @@ class Navigation(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
   
-    def build(self, view, b):
-        self.buildCss(view, b)
+    def build_html(self, view, origin=None):
+        b = self.context.b
+        self.build_css(view)
         b.div(class_='container top')
         b.div(class_='row')
         b.div(class_='fivecol')
@@ -87,17 +92,18 @@ class Introduction(TextBox):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
       
-    def build(self, view, b):
+    def build_html(self, view, origin=None):
         u"""Build a page wide in intoduction box for large type, if there is any content."""
-        if not self.html:
+        if not self.bs.s:
             return
-        self.buildCss(view, b)
+        b = self.context.b
+        self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='twelvecol last')
-        b.addHtml(self.html)
+        b.addHtml(self.bs.s)
         for e in self.elements:
-            e.build(view, b)
+            e.build_html(view, origin)
         b._div() # .twelvecol last
         b._div() # .row
         b._div() # .container .introduction        
@@ -113,20 +119,21 @@ class Featured(Rect):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
   
-    def build(self, view, b):
+    def build_html(self, view, origin=None):
         u"""Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
         side = self['Side']
-        if not image.html or not side.html:
+        if not image.bs.s or not side.bs.s: # No HTML in any of the BabelStrings?
             return
-        self.buildCss(view, b)
+        b = self.context.b
+        self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='eightcol')
-        image.build(view, b)
+        image.build_html(view, origin)
         b._div() # .eightcol
         b.div(class_="fourcol last")
-        side.build(view, b)
+        side.build_html(view, origin)
         b._div() # .fourcol last
         b._div() # .row
         b._div() # .container .featured
@@ -141,28 +148,25 @@ class Main(Rect):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or 'mainContent'
 
-    def appendString(self, fs):
+    def append(self, bs):
         u"""Add FormattedString to main content."""
-        self['Content'].appendString(fs)
+        self['Content'].append(bs)
 
-    def appendHtml(self, html):
-        u"""And html to main element."""
-        self['Content'].appendHtml(html)
-
-    def build(self, view, b):
+    def build_html(self, view, origin=None):
         content = self['Content']
         side = self['Side']
-        if not content.html: # If there is nothing in the main part, then also ignore the side.
+        if not content.bs.s: # If there is nothing in the main part, then also ignore the side.
             return
-        self.buildCss(view, b)
+        b = self.context.b
+        self.build_css(view)
         b.div(class_='container %s' % self.class_)
         b.div(class_='row')
         b.div(class_='eightcol')
-        content.build(view, b)
+        content.build_html(view, origin)
         b._div() # .eightcol
         b.div(class_='fourcol')
         # TODO: We could do something to fill here, if there is not side content.
-        side.build(view, b)
+        side.build_html(view, origin)
         b._div() # .fourcol
         b._div() # .row
         b._div() # .container .mainContnet
@@ -183,18 +187,19 @@ class Section(Rect):
             TextBox('', parent=self, name=`row*2`)
             TextBox('', parent=self, name=`row*2+1`)
 
-    def build(self, view, b):
+    def build_html(self, view, origin=None):
+        b = self.context.b
         title = self['Title']
-        hasContent = bool(title.html)
+        hasContent = bool(title.bs.s)
         for row in range(0, self._sectionRows):
-            hasContent |= bool(self[`row*2`].html) or bool(self[`row*2+1`].html)
+            hasContent |= bool(self[`row*2`].bs.s) or bool(self[`row*2+1`].bs.s)
         if hasContent: # Onle start the container if there is any content.
-            self.buildCss(view, b)
+            self.build_css(view)
             b.div(class_='container %s' % self.class_)
-            if title.html:
+            if title.bs.s:
                 b.div(class_='row')
                 b.div(class_='tencol')
-                b.addHtml(title.html)
+                b.addHtml(title.bs.s)
                 b._div() # .tencol
                 b.div(class_='twocol last')
                 b._div() # .twocol last
@@ -203,13 +208,13 @@ class Section(Rect):
             for row in range(0, self._sectionRows):
                 e1 = self[`row*2`]
                 e2 = self[`row*2+1`]
-                if e1.html and e2.html: # Only output if both are filled.
+                if e1.bs.s and e2.bs.s: # Only output if both are filled.
                     b.div(class_='row')
                     b.div(class_='sixcol')
-                    b.addHtml(e1.html)
+                    b.addHtml(e1.bs.s)
                     b._div() # .sixcol
                     b.div(class_='sixcol last')
-                    b.addHtml(e2.html)
+                    b.addHtml(e2.bs.s)
                     b._div() # 'sixcol last
                     b._div() # .row
             
@@ -221,8 +226,9 @@ class Footer(TextBox):
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower() 
 
-    def build(self, view, b):
-        self.buildCss(view, b)
+    def build_html(self, view, origin=None):
+        b = self.context.b
+        self.build_css(view)
         b.div(class_="container %s" % self.class_)
         b.div(class_='row')
         
@@ -242,7 +248,7 @@ class Footer(TextBox):
         b._div() # class: eightcol
 
         b.div(class_='fourcol last')
-        b.addHtml(self.html)
+        b.addHtml(self.bs.s)
         b._div() # class: fourcol last
         
         b._div() # class: row
@@ -252,7 +258,8 @@ class JS(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
     
-    def build(self, view, b):
+    def build_html(self, view, origin=None):
+        b = self.context.b
         b.script(type="text/javascript")
         b.addHtml(u"""
     jQuery(document).ready(function($){
@@ -274,7 +281,9 @@ class Website(Publication):
     Subclassed from Document with the following optional attributes:
     rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, 
-    w=None, h=None, exportPaths=None, **kwargs)"""
+    w=None, h=None, exportPaths=None, context=None, **kwargs)"""
+
+    DEFAULT_CONTEXT = HtmlContext()
 
     def initialize(self, **kwargs):
         u"""Initialize the generic website templates. """
@@ -285,42 +294,21 @@ class Website(Publication):
         gridX = (fr(1), fr(1))
         gridY = [None] # Default is full height of columns, no horizontal division.
 
-        # Default page templatre
-        t = Template(w=w, h=h, name='default', padding=padding, gridX=gridX, gridY=gridY)
-        self.addTemplate(t.name, t)
-        # Set template <head> building parameters. # Page element definition in pbpage.py
-        t.info.favIconUrl = 'images/favicon.gif'
-        t.info.mediaQueriesUrl = None
-        # Add page elements.
-        box = MobileNavigation(parent=t, name='MobileNavigation')
-        box = Navigation(parent=t, name='Navigation')
-        box = Introduction(parent=t, name='Introduction')
-        box = Featured(parent=t, name='Featured')
-        box = Main(parent=t, name='Main')
-        box = Section(parent=t, name='Section')
-        box = Main(parent=t, name='OtherMain')
-        box = Footer(parent=t, name='Footer')
-        box = JS(parent=t, name='JS')
-
-        # Default page templatre
+        # Default page template
         t = Template(w=w, h=h, name='home', padding=padding, gridX=gridX, gridY=gridY)
         self.addTemplate(t.name, t)
         # Set template <head> building parameters. # Page element definition in pbpage.py
         t.info.favIconUrl = 'images/favicon.gif'
         t.info.mediaQueriesUrl = None
         # Add page elements.
-        box = MobileNavigation(parent=t, name='MobileNavigation')
-        box = Navigation(parent=t, name='Navigation')
-        box = Introduction(parent=t, name='Introduction')
-        box = Featured(parent=t, name='Featured')
-        box = Main(parent=t, name='Main')
-        box = Section(parent=t, name='Section')
-        box = Main(parent=t, name='OtherMain')
-        box = Footer(parent=t, name='Footer')
-        box = JS(parent=t, name='JS')
+        MobileNavigation(parent=t, name='MobileNavigation')
+        Navigation(parent=t, name='Navigation')
+        Introduction(parent=t, name='Introduction')
+        Featured(parent=t, name='Featured')
+        Main(parent=t, name='Main')
+        Section(parent=t, name='Section')
+        Main(parent=t, name='OtherMain')
+        Footer(parent=t, name='Footer')
+        JS(parent=t, name='JS')
         
-    def build(self, name=None, pageSelection=None, view=None, multiPage=True):
-        u"""Build the document as website, using a view like MampView or GitView for export."""
-        if view is None or isinstance(view, basestring):
-            view = self.getView(view or MampView.viewId)
-        view.build(name=name, pageSelection=pageSelection, multiPage=multiPage)
+  

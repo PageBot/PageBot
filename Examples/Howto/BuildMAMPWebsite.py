@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     BuildMAMPWebsite.py
@@ -16,7 +18,6 @@ import pagebot # Import to know the path of non-Python resources.
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM, fr, px
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
 
 from pagebot.conditions import *
 from pagebot.elements import *
@@ -72,9 +73,11 @@ def makeDocument():
     page0.name = 'Page 1'
     page0.padding = PagePadding
     
-    s = newFS('Headline\n', style=h1Style)
+    s = doc.context.newString('Headline\n', style=h1Style)
     for n in range(10):
-        s += newFS('(Line %d) Volume of text defines the box height. Volume of text defines the box height. \n' % (n+1), style=pStyle)
+        s += doc.context.newString(('(Line %d) Volume of text defines the box height.'
+                                    ' Volume of text defines the box height. \n') % (n+1),
+                                   style=pStyle)
         h1 = None  
           
     e1 = newTextBox(s, 

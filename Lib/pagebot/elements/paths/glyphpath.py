@@ -6,22 +6,22 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     path.py
+#     glyphpath.py
 #
-from drawBot import drawPath, save, restore, transform, scale, fill, stroke, strokeWidth
 from pbpath import Path
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import setStrokeColor, setFillColor
-from pagebot.style import NO_COLOR, DEFAULT_HEIGHT, DEFAULT_WIDTH
+from pagebot.style import NO_COLOR, DEFAULT_HEIGHT, DEFAULT_WIDTH, ORIGIN
 
 class GlyphPath(Path):
 
     def __init__(self, glyph, w=None, h=None, pathFilter=None, **kwargs):
         Path.__init__(self, **kwargs)
-        self.font = glyph.parent # Store separate, to avoid disappearing weakref.
+        self.font = glyph.font # Store separate, to avoid disappearing weakref.
         self.glyph = glyph 
         # One of the two needs to be defined, the other can be None.
         # If both are set, then the image scales disproportional.
@@ -54,33 +54,36 @@ class GlyphPath(Path):
         self._h = h # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
     h = property(_get_h, _set_h)
 
-    def draw(self, origin, view):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+        
+        c = self.context # Get current context
+        b = c.b # Get context builder
 
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        save()
+        context.saveGraphicState()
         sh = 1.0*self.h/self.ih
-        transform((1, 0, 0, 1, px, py))
-        scale(sh)
+        b.transform((1, 0, 0, 1, px, py))
+        c.scale(sh)
+        # If there is a path filter defined, then call that the draw and ignore regular drawing.
         if self.pathFilter is not None:
-            self.pathFilter(self, self.glyph.path)
-        if self.css('fill') != NO_COLOR or self.css('stroke') != NO_COLOR:
-            setFillColor(self.css('fill'))
-            print (self.css('strokeWidth') or 1), sh
-            setStrokeColor(self.css('stroke', NO_COLOR), (self.css('strokeWidth') or 20))
-            fill(0)
-            stroke(1, 0, 0)
-            strokeWidth(20)
-            drawPath(self.glyph.path)
-        restore()
+            self.pathFilter(self, self.glyph.path, view)
+        elif self.css('fill') != NO_COLOR or self.css('stroke') != NO_COLOR:
+            # Not path filter defined, draw by regular stroke/fill.
+            c.setFillColor(self.css('fill'))
+            c.setStrokeColor(self.css('stroke', NO_COLOR), (self.css('strokeWidth') or 20))
+            c.strokeWidth(20)
+            c.drawPath(self.glyph.path)
+        context.restoreGraphicState()
 
-        # If there are child elements, draw them over the polygon.
-        self._drawElements(p, view)
+        if drawElements:
+            for e in self.elements:
+                e.build_flat(view, p)
 
         # Draw optional bounding box.
         #self.drawFrame(origin, view)
  
-        self._restoreScale()
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'

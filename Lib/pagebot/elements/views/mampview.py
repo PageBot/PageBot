@@ -6,15 +6,18 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     mampview.py
 #
 import os
 import shutil
-from pagebot.elements.views import HtmlView
-from pagebot.builders import WebBuilder
+
+from pagebot.elements.views.htmlview import HtmlView
+from pagebot.style import ORIGIN
 
 class MampView(HtmlView):
     viewId = 'Mamp'
@@ -32,25 +35,33 @@ class MampView(HtmlView):
 
     #   B U I L D  H T M L  /  C S S
 
-    def build(self, name, pageSelection=None, multiPage=True):
-        doc = self.parent
-        b = WebBuilder()
-        doc.buildCss(self, b) # Make doc build the main/overall CSS.
+    def build(self, path=None, pageSelection=None, multiPage=True):
+
+        doc = self.doc 
+
+        sitePath = self.SITE_PATH
+        if not sitePath.endswith('/'):
+            sitePath += '/'
+            
+        b = self.b # Get builder from self.doc.context of this view.
+        doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
+
+                hook = 'build_' + b.PB_ID
+                getattr(page, hook)(self, ORIGIN) # Typically calling page.build_drawBot or page.build_flat
+
                 fileName = page.name
                 if not fileName:
                     fileName = DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
-                path = self.SITE_PATH + fileName
-                page.build(self, b) # Building HTML and page-specific CSS, storage in builder.
-                b.writeHtml(path)
+                b.writeHtml(sitePath + fileName)
         # Write all collected CSS into one file
         b.writeCss(self.DEFAULT_CSS_PATH)
 
-        mampPath = self.MAMP_PATH + name
+        mampPath = self.MAMP_PATH + (path or '')
         if os.path.exists(mampPath):
             shutil.rmtree(mampPath)
         shutil.copytree(self.SITE_PATH, mampPath)
