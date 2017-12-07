@@ -18,11 +18,15 @@
 import os
 import pagebot # Import to know the path of non-Python resources.
 
+from pagebot.elements import newTextBox
+from pagebot.contexts import defaultContext
 from pagebot.style import LEFT, BOTTOM
 # Document is the main instance holding all information
 # about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 
+USE_FLAT = True
+EXPORT_PATH = '_export/'
 W, H = 500, 500
 
 def makeDocument():
@@ -50,23 +54,23 @@ def makeDocument():
                          # from text box element.
     fontSize = 40
     newTextBox(title, # Text inside the text box
-        name='Other element', # Optinal (unique) name of element.
-                              # Otherwise e.eId is used.
-        x=100, y=100, # Position from left-bottom of page side
-                      # (not page padding)
-        parent=page,
-        w=400, h=200, # Size of the element.
-                      # Since x = 100 and W = 500, this "manually" fits.
-        padding=5, # Padding inside text box for all 4 sides equal.
-        fill=(0.4, 0.6, 1), # Rectangle fill color
-        stroke=(1, 0, 0), # Rectangle stroke color
-        strokeWidth=10,
-        # Below style values that apply to the content
-        font='Verdana',
-        fontSize=fontSize,
-        leading=0, rLeading=1, # Absolute and relative leading.
-        xAlign=LEFT, yAlign=BOTTOM, # Set origin of element to left-bottom
-        textFill=(0, 0, 1) # Color of the text.
+               name='Other element', # Optinal (unique) name of element.
+                                     # Otherwise e.eId is used.
+               x=100, y=100, # Position from left-bottom of page side
+                             # (not page padding)
+               parent=page,
+               w=400, h=200, # Size of the element.
+                             # Since x = 100 and W = 500, this "manually" fits.
+               padding=5, # Padding inside text box for all 4 sides equal.
+               fill=(0.4, 0.6, 1), # Rectangle fill color
+               stroke=(1, 0, 0), # Rectangle stroke color
+               strokeWidth=10,
+               # Below style values that apply to the content
+               font='Verdana',
+               fontSize=fontSize,
+               leading=0, rLeading=1, # Absolute and relative leading.
+               xAlign=LEFT, yAlign=BOTTOM, # Set origin of element to left-bottom
+               textFill=(0, 0, 1) # Color of the text.
     )
     # Return the generated document to the caller.
     return doc
