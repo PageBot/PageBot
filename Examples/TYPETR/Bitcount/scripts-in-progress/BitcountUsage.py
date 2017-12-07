@@ -25,9 +25,9 @@ import pagebot.document
 reload(pagebot.document)
 from pagebot.document import Document
 
-import pagebot.page
-reload(pagebot.page)
-from pagebot.page import Page, Template
+import pagebot.elements.pbpage
+reload(pagebot.elements.pbpage)
+from pagebot.elements.pbpage import Template
 
 import pagebot.composer
 reload(pagebot.composer)
