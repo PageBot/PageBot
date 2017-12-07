@@ -21,18 +21,21 @@ from pagebot.contexts import defaultContext as context
 
 EXPORT_PATH = '_export/PositionText.pdf'
 
+TITLE = 'Book Cover'
+
+from pagebot.style import A5
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 from pagebot.elements import *
     
-W, H = 500, 500 
+W, H = A5 
 
 def makeDocument():
     u"""Create new document with (w,h) and fixed amount of pages.
     Make number of pages with default document size.
     Initially make all pages default with template."""
     
-    doc = Document(originTop=False, w=W, h=H, autoPages=1, context=context) 
+    doc = Document(originTop=False, w=W, h=H, title=TITLE, autoPages=1, context=context) 
 
     page = doc[0] # Get the first/single page of the document.
     page.size = W, H
@@ -44,7 +47,7 @@ def makeDocument():
     view.showPageCropMarks = True
     view.showElementOrigin = True # Show the alignment position of elements as plus-mark.
     
-    title = context.newString('Book Cover', style=dict(fontSize = 40, textFill=(0, 0, 1)))
+    title = context.newString(TITLE, style=dict(fontSize = 40, textFill=(0, 0, 1)))
     newTextBox(title, # Text inside the text box
         name='Other element', # Optinal (unique) name of element. Otherwise e.eId is used.
         x=100, y=100, # Position from left-bottom of page side (not page padding)
