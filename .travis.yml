@@ -12,7 +12,7 @@ install:
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position
-- export MAYBE_SOMEDAY=fixme,missing-docstring,superfluous-parens
+- export MAYBE_SOMEDAY=fixme,missing-docstring,superfluous-parens,wildcard-import,unused-wildcard-import
 - export PYLINT="pylint --disable=$WONT_FIX,$MAYBE_SOMEDAY"
 - $PYLINT Examples/Howto/UseFlatContext/*.py
 - $PYLINT Examples/Howto/*.py

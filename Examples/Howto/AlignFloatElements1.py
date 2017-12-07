@@ -16,15 +16,12 @@
 #     This script generates a page with aligned square, showing how conditional placement works.
 #     Interactive Variable() only works in DrawBot context.
 #
-import pagebot # Import to know the path of non-Python resources.
-
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, CENTER, NO_COLOR, TOP, BOTTOM
+from pagebot.style import CENTER #, BOTTOM
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document
-from pagebot.elements import *
-# Import all layout condition classes
+from pagebot.elements import newRect
 from pagebot.conditions import *
 
 # Variables used as interactive globals in DrawBot context.
@@ -49,59 +46,53 @@ def makeDocument():
 
     page = doc[0] # Get the single page from te document.
 
-    # Hard coded padding, just for simple demo, instead of filling padding an 
-    # columns in the root style.
+    # Hard coded padding, just for simple demo,
+    # instead of filling padding and columns in the root style.
     page.padding = SQ
 
     # Position square in the 4 corners of the page area.
     # Notice that their alignment (left) does not matter for the conditions.
     newRect(w=SQ, h=SQ, parent=page,
-            conditions=(Right2Right(),Top2Top()), fill=0.7)
+            conditions=(Right2Right(), Top2Top()), fill=0.7)
     newRect(w=SQ, h=SQ, parent=page,
-            conditions=(Left2Left(),Bottom2Bottom()), fill=0.7)
+            conditions=(Left2Left(), Bottom2Bottom()), fill=0.7)
     newRect(w=SQ, h=SQ, parent=page,
-            conditions=(Left2Left(),Top2Top()), fill=0.7)
+            conditions=(Left2Left(), Top2Top()), fill=0.7)
     newRect(w=SQ, h=SQ, parent=page,
-            conditions=(Right2Right(),Bottom2Bottom()), fill=0.7)
+            conditions=(Right2Right(), Bottom2Bottom()), fill=0.7)
 
     # Make new container for adding elements inside with alignment.
-    cnt = newRect(w=W-2*SQ, h=H-2*SQ,
-                  fill=(0.8, 0.8, 0.8, 0.4),
-                  parent=page, margin=SQ, yAlign=BOTTOM, 
-                  xAlign=CENTER, stroke=None,
-                  conditions=(Center2Center(), Middle2Middle()))
+    # cnt = newRect(w=W-2*SQ, h=H-2*SQ,
+    #               fill=(0.8, 0.8, 0.8, 0.4),
+    #               parent=page, margin=SQ, yAlign=BOTTOM,
+    #               xAlign=CENTER, stroke=None,
+    #               conditions=(Center2Center(), Middle2Middle()))
 
     # Add rectangles to the page,
     # using alignment conditions to position rules.
     newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
             conditions=(Center2Center(), Middle2Middle()), fill=(1, 0, 0))
- 
-    conditions = [
-         (Center2Center(),Top2Top()),
-         (Center2Center(),Bottom2Bottom()),
-         (Left2Left(),Middle2Middle()),
-         (Right2Right(),Middle2Middle())
-    ]
+
+    conditions = [(Center2Center(), Top2Top()),
+                  (Center2Center(), Bottom2Bottom()),
+                  (Left2Left(), Middle2Middle()),
+                  (Right2Right(), Middle2Middle())]
     for condition in conditions:
         newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
                 conditions=condition, fill=(1, 1, 0))
 
-    sideConditions = [
-         (Center2Center(),Top2TopSide()),
-         (Center2Center(),Bottom2BottomSide()),
-         (Left2LeftSide(),Middle2Middle()),
-         (Right2RightSide(),Middle2Middle())
-    ]
+    sideConditions = [(Center2Center(), Top2TopSide()),
+                      (Center2Center(), Bottom2BottomSide()),
+                      (Left2LeftSide(), Middle2Middle()),
+                      (Right2RightSide(), Middle2Middle())]
     for condition in sideConditions:
         newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
                 conditions=condition, fill=(0.5, 1, 0))
 
-    cornerConditions = [
-         (Left2LeftSide(),Top2TopSide()),
-         (Right2RightSide(),Top2TopSide()),
-         (Left2LeftSide(),Bottom2BottomSide()),
-         (Right2RightSide(),Bottom2BottomSide())
-    ]
+    cornerConditions = [(Left2LeftSide(), Top2TopSide()),
+                        (Right2RightSide(), Top2TopSide()),
+                        (Left2LeftSide(), Bottom2BottomSide()),
+                        (Right2RightSide(), Bottom2BottomSide())]
     for condition in cornerConditions:
         newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
                 conditions=condition, fill=(0, 0, 1))
@@ -139,7 +130,7 @@ def makeDocument():
     view.showElementInfo = ShowElementInfo # Show boxes with element info
 
     return doc # Answer the doc for further doing.
-  
+
 if __name__ == '__main__':
 
     d = makeDocument()
@@ -151,5 +142,5 @@ if __name__ == '__main__':
         dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
     ], globals())
 
-    d.export(EXPORT_PATH) 
+    d.export(EXPORT_PATH)
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
