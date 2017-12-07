@@ -613,5 +613,5 @@ class Document(object):
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 
     def export(self, path=None, multiPage=True):
-        self.build(path=None, multiPage=multiPage)
+        self.build(path=path, multiPage=multiPage)
 
