@@ -16,7 +16,6 @@
 #
 from __future__ import division
 
-import myglobals
 import pagebot
 from pagebot.style import getRootStyle
 from pagebot.document import Document
