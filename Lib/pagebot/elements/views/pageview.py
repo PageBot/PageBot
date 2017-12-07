@@ -549,7 +549,7 @@ class PageView(BaseView):
         c.stroke((1,1,1,1), cmyk=True, w=cmStrokeWidth)
         c.newPath()
         # Registration circle
-        c.oval(x - cmSize/4, y - cmSize/4, cmSize/2, cmSize/2)
+        c.circle(x, y, cmSize/4)
         # Registration cross, in length of direction.
         c.moveTo((x - dx, y)) # Horizontal line.
         c.lineTo((x + dx, y))
