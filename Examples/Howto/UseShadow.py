@@ -5,12 +5,13 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     UseShadow.py
 #
-from pagebot import newFS
 from pagebot.style import getRootStyle, BOTTOM, CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import *
@@ -28,6 +29,14 @@ ShadowTextBlur = 10
 def makeDocument():
     
     doc = Document(originTop=False, w=W, h=H, autoPages=1) 
+
+    # Set the view parameters for the required output.
+    view = doc.view
+    c = view.context
+    view.padding = 0 # Make view padding to show crop marks and frame
+    view.showPageFrame = True # Show frame of the page in blue
+    #view.showPagePadding = True
+    view.showPageCropMarks = True # Show crop marks
     
     page = doc[0] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?
@@ -42,7 +51,7 @@ def makeDocument():
         blur=ShadowTextBlur, 
         color=(0.2, 0.2, 0.2, 0.5)
     )
-    fs = newFS('This is text with a shadow', 
+    fs = c.newString('This is text with a shadow', 
         style=dict(font='Verdana', fontSize=30, textFill=0, rLeading=1.2))
     
     newTextBox(fs, fill=0.8, parent=page, 
@@ -53,14 +62,7 @@ def makeDocument():
     score = page.solve()
     if score.fails:
         print 'Failed conditions', score.fails
-        
-    # Set the view parameters for the required output.
-    view = doc.getView()
-    view.padding = 0 # Make view padding to show crop marks and frame
-    view.showPageFrame = True # Show frame of the page in blue
-    #view.showPagePadding = True
-    view.showPageCropMarks = True # Show crop marks
-    
+            
     return doc
    
 if __name__ == '__main__':

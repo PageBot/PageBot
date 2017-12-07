@@ -1,5 +1,11 @@
-import AppKit
 
+from pagebot.builders.drawbotbuilder import drawBotBuilder as b
+from pagebot.elements.views.strings import newFsString
+if b is None:
+    print 'Platform does not support DrawBot.'
+else:
+
+import AppKit
 
 from vanilla import Window, Button, CheckBox
 

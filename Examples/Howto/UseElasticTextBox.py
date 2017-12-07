@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #Z
 #     UseElasticTextBox.py
@@ -13,11 +15,8 @@
 from __future__ import division # Make integer division result in float.
 import pagebot # Import to know the path of non-Python resources.
 
-from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
 
 from pagebot.conditions import *
 from pagebot.elements import *
@@ -64,7 +63,7 @@ def makeDocument():
 
     doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1)
     
-    view = doc.getView()
+    view = doc.view # Get the current view of the document.
     view.padding = 40 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
@@ -81,8 +80,7 @@ def makeDocument():
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
     if BoxWidths < 200:
-        tColor = (1, 0, 0)
-        
+        tColor = (1, 0, 0)        
     else:
         tColor = (0, 0, 1)
     
@@ -99,14 +97,12 @@ def makeDocument():
         conditions=[Left2Left(), Float2Top()], yAlign=BOTTOM, xAlign=LEFT,
         leading=5, fontSize=9, textFill=tColor, strokeWidth=0.5, fill=0.9, stroke=None,
     )
-    print e1.mb
     e2 = newTextBox(s, 
         name='ElasticTextBox2', 
         parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', maxW=W-2*PagePadding,
         conditions=[Right2Right(), Float2Top()], yAlign=TOP, leading=5, 
         fontSize=9, textFill=0.9, strokeWidth=0.5, fill=tColor, stroke=None,
     )
-    print e2.mt, e2.mb, e2.getFloatTopSide(), e2.mTop, e2.top
     
     score = page.solve()
     if score.fails:
@@ -115,7 +111,6 @@ def makeDocument():
     return doc # Answer the doc for further doing.
  
 if __name__ == '__main__':
-
 
     Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),

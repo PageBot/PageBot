@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -5,7 +6,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     BitcountReference.py
@@ -13,7 +16,7 @@
 #     This script the PDF document with Bitcount refernce information.
 #
 import pagebot
-from pagebot import newFS, findMarkers, textBoxBaseLines
+from pagebot import findMarkers, textBoxBaseLines
 from pagebot.style import getRootStyle, LEFT, NO_COLOR, RIGHT
 from pagebot.document import Document
 from pagebot.elements.pbpage import Page, Template
@@ -329,8 +332,10 @@ def makeDocument(rs):
                         # We are re-using the typesetter here. This may become a separate typesetter, if this code
                         # becomes a method of the composer.
                         # TODO: Make this into Galley, in case footnote <p> has child nodes. 
-                        footnoteText = newFS('%d\t%s\n' % (footnoteId, doc.footnotes[footnoteId]['p'].text),
-                            page, t.getCascadedStyle(doc.getStyle('footnote')))
+                        footnoteText = doc.context.newString('%d\t%s\n' % (footnoteId,
+                                                                           doc.footnotes[footnoteId]['p'].text),
+                                                             page,
+                                                             t.getCascadedStyle(doc.getStyle('footnote')))
                         # Add the footnote content to the box (it may not be the first to be added.
                         fnBox.append(footnoteText)
                 elif marker in ('h1', 'h2', 'h3', 'h4'): # For now we want them all in the TOC

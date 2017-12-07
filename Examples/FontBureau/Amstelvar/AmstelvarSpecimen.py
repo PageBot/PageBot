@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     AmstelvarSpecimen.py
@@ -16,7 +18,6 @@
 from __future__ import division
 
 import pagebot
-from pagebot import newFS
 from pagebot.elements.pbpage import Template
 from pagebot.style import A4,MM
 from pagebot.fonttoolbox.objects.font import Font
@@ -125,14 +126,14 @@ class VariableTypeSpecimen(TypeSpecimen):
 
     def buildVariablePage(self, varFont, page):
         title = page.getElement(self.titleBoxId)
-        fs = newFS(varFont.info.fullName.upper(), self, dict(fontSize=32, font=amstelVarName))
-        title.append(fs)
+        s = self.newString(varFont.info.fullName.upper(), self, dict(fontSize=32, font=amstelVarName))
+        title.append(s)
 
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
         # Create the formatted string with the style names shown in their own style.
         # The first one in the list is also used to show the family Name.
         for fontSize in (9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24):
-            fs = newFS('%dPT %s\n' % (fontSize, s), self,
+            s = self.newString('%dPT %s\n' % (fontSize, s), 
                 style=dict(font=amstelVarName, fontSize=fontSize, hyphenation=False))
             column.append(fs)
 
@@ -164,8 +165,8 @@ class VariableTypeSpecimen(TypeSpecimen):
             # Using the first page as cover (to be filled...)
             coverPage = doc[1]
             # Fill cover here.
-            coverPage.rect(0, 0, W, H, fill=(1, 0, 0)) 
-            coverPage.text(amstelVarName, x=PADDING, y=H-3*PADDING, style=dict(font=amstelVarName, fontSize=50, textColor=1) )
+            newRect(parent=coverPage, w=W, h=H, fill=(1, 0, 0)) 
+            newText(amstelVarName, parent=coverPage, x=PADDING, y=H-3*PADDING, style=dict(font=amstelVarName, fontSize=50, textColor=1) )
             self.buildVariableMatrixPage(varFont, coverPage, locations, textFill=1)
 
             print 'Total amount of locations', len(locations)

@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     book.py
@@ -23,7 +25,7 @@ class Book(Publication):
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, 
     w=None, h=None, exportPaths=None, **kwargs)"""
 
-    DEFAULT_COVERBACKGROUND = (0.3, 0.3, 0.3)
+    DEFAULT_COVERBACKGROUND = (0.3, 0.6, 0.3)
 
     def initialize(self, coverBackgroundFill=None, **kwargs):
         u"""Initialize the generic book templates. """
@@ -39,6 +41,7 @@ class Book(Publication):
 
         t = Template(w=w, h=h, name='Cover', padding=padding, gridY=gridY) 
         newRect(parent=t, conditions=[Fit2Sides()], name='Cover', fill=coverBackgroundFill)
+        newTextBox(parent=t, conditions=[Fit2Width(), Top2Top()], name='Title', h=200)
         self.addTemplate(t.name, t)
         score = t.solve()
 

@@ -5,12 +5,15 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     AlignElements.py
 #
 #     This script generates a page with aligned square, showing how conditional placement works.
+#     Interactive Variable() only works in DrawBot context.
 #
 import pagebot # Import to know the path of non-Python resources.
 
@@ -22,6 +25,7 @@ from pagebot.elements import *
 # Import all layout condition classes
 from pagebot.conditions import *
 
+# Variables used as interactive globals in DrawBot context.
 ShowOrigins = False
 ShowElementInfo = False
 ShowDimensions = False
@@ -58,6 +62,7 @@ def makeDocument():
     cnt = newRect(w=W-2*SQ, h=H-2*SQ, fill=(0.8, 0.8, 0.8, 0.4), parent=page, margin=SQ, yAlign=BOTTOM, 
         xAlign=CENTER, stroke=None, conditions=(Center2Center(), Middle2Middle()))
     
+    # Add rectangles to the page, using alignment conditions to position rules.
     newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
         conditions=(Center2Center(), Middle2Middle()), fill=(1, 0, 0))
  
@@ -101,16 +106,20 @@ def makeDocument():
         print e.bottom2BottomSide()
         print condition, e, e.bottom, Bottom2BottomSide().test(e), e.isBottomOnBottomSide(), e.bottom
    
-        
-    view = doc.getView()
+    # Get the current view of the document. This allows setting of parameters how the
+    # document is represented on output.   
+    view = doc.view
     view.w, view.h = W, H
-    view.padding = 40 # Don't show cropmarks and such.
-    view.showElementOrigin = ShowOrigins # Show origin alignment markers on each element.
-    view.showPageCropMarks = True
+    # Set view options. Full list is in elements/views/baseviews.py
+    view.padding = 30 # Showing cropmarks and registration marks need >= 20 padding of the view.
     view.showPageRegistrationMarks = True
+    view.showPageCropMarks = True
     view.showPageFrame = True
     view.showPagePadding = True
+    view.showPageNameInfo = True
 
+    # These values can be changed in the Variable window, when in DrawBot context.
+    view.showElementOrigin = ShowOrigins # Show origin alignment markers on each element.
     view.showElementDimensions = ShowDimensions
     view.showElementInfo = ShowElementInfo # Show baxes with element info
        
@@ -118,13 +127,14 @@ def makeDocument():
   
 if __name__ == '__main__':
 
-    Variable([
+    d = makeDocument()
+    # Make interactive global controls. Only works in DrawBot context. Otherwise ignored.
+    d.context.Variable([
         dict(name='ShowMeasures', ui='CheckBox', args=dict(value=True)),
         dict(name='ShowDimensions', ui='CheckBox', args=dict(value=False)),
         dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
         dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
     ], globals())
 
-    d = makeDocument()
     d.export(EXPORT_PATH) 
 

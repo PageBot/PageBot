@@ -6,21 +6,16 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     pbtextbox.py
+#     pbtable.py
 #
-import re
-import CoreText
-import Quartz
-
-from drawBot import textOverflow, hyphenation, textBox, rect, textSize, FormattedString, line
-
-from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, makeStyle, MIDDLE
+from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, ORIGIN, makeStyle, MIDDLE
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
-from pagebot import newFS, setStrokeColor, setFillColor
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.conditions import *
 from pagebot.elements.pbtextbox import TextBox
@@ -75,20 +70,20 @@ class Table(Element):
  
         header = self.HEADER_CLASS(parent=self, h=self.DEFAULT_H, fill=fillHeader, conditions=rowConditions) # Header as first row element.
         for colIndex, col in enumerate(range(cols)):
-            fs = newFS(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=1, fontSize=10))
+            bs = self.newString(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=1, fontSize=10))
             if colNames is not None:
                 colName = colNames[colIndex]
             else:
                 colName = None
-            self.HEADERCELL_CLASS(fs, parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H, 
+            self.HEADERCELL_CLASS(bs, parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H, 
                 xTextAlign=CENTER, yTextAlign=MIDDLE, name=colName, 
                 borders=self.borders, fill=0.4, conditions=cellConditions)
 
-        fs = newFS('abc', style=dict(font='Verdana', textFill=0, fontSize=10))
+        bs = self.newString('abc', style=dict(font='Verdana', textFill=0, fontSize=10))
         for rowIndex in range(rows):
             row = self.ROW_CLASS(parent=self, h=self.DEFAULT_H, conditions=rowConditions)
             for colIndex in range(cols):
-                self.CELL_CLASS(fs, parent=row, w=self.DEFAULT_W, h=self.DEFAULT_H, borders=self.borders,
+                self.CELL_CLASS(bs, parent=row, w=self.DEFAULT_W, h=self.DEFAULT_H, borders=self.borders,
                     xTextAlign=CENTER, yTextAlign=MIDDLE, conditions=cellConditions)
 
     def getHeader(self):
@@ -138,7 +133,7 @@ class Table(Element):
                     # Not found or not empty, search on next page.
                     page = self.doc.getPage(self.nextPage)
                     nextElement =  page.getElementByName(self.nextElement)
-                if nextElement is not None and not nextElement.fs: 
+                if nextElement is not None and not nextElement.bs: 
                     # Finally found one empty box on this page or next page?
                     nextElement.fs = overflow
                     nextElement.prevPage = page.name
@@ -147,24 +142,71 @@ class Table(Element):
                     result = len(score.fails) == 0 # Test if total flow placement succeeded.
         return result
 
+    #   D R A W B O T  S U P P O R T
 
-    def draw(self, origin, view):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(view, p)    
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        self.drawFrame(view, p) # Draw optional frame or borders.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, view, p)
+
+        if drawElements:
+            for e in self.elements:
+                e.build_drawBot(view, p)
+ 
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view, p)
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+
+    #   F L A T  S U P P O R T
+
+    def build_flat(self, view, origin=ORIGIN, drawElements=True):
+
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.drawFrame(p, view) # Draw optional frame or borders.
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, view, p)
+
+        if drawElements:
+            for e in self.elements:
+                e.build_flat(view, p)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view, p)
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+        
+    #   H T M L  /  C S S  S U P P O R T
+
+    def build_html(self, view, origin=None, drawElements=True):
+
+        self.build_css(view)
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
+            self.drawBefore(self, view, p)
 
-        # If there are child elements, draw them over the text.
-        # TODO: Needs updated x/y value
-        self._drawElements(p, view)
- 
+        if drawElements:
+            for e in self.elements:
+                e.build_html(view, p)
+
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view)
+            self.drawAfter(self, view, p)
 
-        self._restoreScale()
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+
+
 

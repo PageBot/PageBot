@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     FloatElementsOnPage.py
@@ -15,7 +17,6 @@
 import pagebot # Import to know the path of non-Python resources.
 from pagebot.contributions.filibuster.blurb import blurb
 
-from pagebot import newFS
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MIDDLE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
@@ -42,7 +43,7 @@ SQ = 2 * G # Size of the squares
 # that is very similar to what happens in CSS.
 
 t = """Headline of formatted text.
-Amy's Sun paper hit by hackers. Ignoring the fact that the problem, "was resolved through troubleshooting procedures and restored at midnight," wrote KLM spokesman Liz Ali III in an e-mail to BSN.Ignoring the fact that the computer malfunction brought Sky Team’s system of scheduling departures, reservations and processing passengers to a halt at airports across Norfolk Island. The problem left passengers stranded for hours in grounded planes, airport lobbies and security lines.
+Amy's Sun paper hit by hackers. Ignoring the fact that the problem, "was resolved through troubleshooting procedures and restored at midnight," wrote KLM spokesman Liz Ali III in an e-mail to BSN.Ignoring the fact that the computer malfunction brought Sky Team's system of scheduling departures, reservations and processing passengers to a halt at airports across Norfolk Island. The problem left passengers stranded for hours in grounded planes, airport lobbies and security lines.
 """
 
 MaxPage = 1200
@@ -87,18 +88,29 @@ def makeDocument():
         xAlign=CENTER, stroke=None, conditions=(Center2Center(), Middle2Middle()))
     
     fontSize = RedHeight/3
-    fs = newFS('Headline in red box.', style=dict(textFill=1, fontSize=fontSize, 
-        maxW=pageArea, maxH=pageArea, leading=fontSize, font='LucidaGrande'))    
+    fs = doc.context.newString('Headline in red box.',
+                               style=dict(textFill=1,
+                                          fontSize=fontSize,
+                                          maxW=pageArea,
+                                          maxH=pageArea,
+                                          leading=fontSize,
+                                          font='LucidaGrande'))
     newTextBox(fs, z=0, w=RedWidth, h=RedHeight, name='RedRect', parent=page, fill=(1, 0.1, 0.1), 
         yAlign=TOP, maxW=pageArea, maxH=pageArea,
         padding=4, conditions=(Center2Center(), Top2Top()))
 
     if not hasattr(scriptGlobals, 'blurbText'):
         scriptGlobals.blurbText = blurb.getBlurb('article_summary', noTags=True)
-    fs = newFS('Headline of formatted text.\n',
-        style=dict(font='LucidaGrande-Bold', fontSize=12, leading=14, textFill=0))   
-    fs += newFS(scriptGlobals.blurbText,
-        style=dict(font='LucidaGrande', fontSize=10, leading=12, textFill=0))   
+    fs = doc.context.newString('Headline of formatted text.\n',
+                               style=dict(font='LucidaGrande-Bold',
+                                          fontSize=12,
+                                          leading=14,
+                                          textFill=0))
+    fs += doc.context.newString(scriptGlobals.blurbText,
+                                style=dict(font='LucidaGrande',
+                                           fontSize=10,
+                                           leading=12,
+                                           textFill=0))
     newTextBox(fs, z=0, w=YellowWidth, h=YellowHeight, parent=page, 
         padding=4, fill=0.7, 
         maxW=pageArea, maxH=pageArea, conditions=(Left2Left(), Float2Top()))

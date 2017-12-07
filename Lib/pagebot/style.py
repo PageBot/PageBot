@@ -6,7 +6,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     style.py
@@ -15,8 +17,6 @@
 #
 import sys
 import copy
-from drawBot import sizes
-
 from pagebot.toolbox.units import MM, INCH, mm, fr, pt, px, perc
 
 NO_COLOR = -1
@@ -71,14 +71,13 @@ Legal = 8.5*INCH, 14*INCH
 JuniorLegal = 5*INCH, 8*INCH
 Tabloid = 11*INCH, 17*INCH
 # Other rounded definintions compatible to DrawBot
-drawBotSizes = sizes()
-Screen = drawBotSizes.get('screen', None) # Current screen size.
-Ledger = sizes('Ledger') # 1224, 792
-Statement = sizes('Statement') # 396, 612 
-Executive = sizes('Executive') # 540, 720
-Folio = sizes('Folio') # 612, 936
-Quarto = sizes('Quarto') # 610, 780
-Size10x14 = sizes('10x14') # 720, 1008
+#Screen = defaultContext.screenSize() # Current screen size. TODO: fix this
+Ledger = 1224, 792
+Statement = 396, 612 
+Executive = 540, 720
+Folio = 612, 936
+Quarto = 610, 780
+Size10x14 = 720, 1008
 
 # Hybrid sizes
 # International generic fit for stationary
@@ -135,6 +134,8 @@ ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 DEFAULT_FONT = 'Verdana'
 DEFAULT_FALLBACK_FONT = 'LucidaGrande'
 
+ORIGIN = (0, 0, 0) # Default origin if location is omitted.
+
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 
 def newStyle(**kwargs):
@@ -186,6 +187,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         frameDuration = None, # In case saving as .mov or .gif, this value defines 1/frames_per_second
         # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
         folds = None,
+
+        # Resolution in dpi for pixel based publications and elements.
+        resolution = 72,
 
         # Position of origin. DrawBot has y on bottom-left. In PageBot it is optional. Default is top-left.
         # Note that the direcion of display is always upwards. This means that the position of text and elements
@@ -394,6 +398,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT), independent of inside FS.
         yTextAlign = TOP, # Alignment of text inside text boxes, one of (TOP, MIDDLE, BOTTOM)
         
+        underlinePosition = None, # Underline position and thickness of BabelString/FormattedString
+        underlineThickness = None,
+
         # V I E W
 
         # These parameters are used by viewers, should not part of direct elements.css( ) queries
@@ -440,6 +447,21 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
     for name, value in kwargs.items():
         rs[name] = value
     return rs
+
+
+def css(name, e, styles=None, default=None):
+    u"""Answer the named style values. Search in optional style dict first, otherwise up the
+    parent tree of styles in element e. Both e and style can be None. In that case None is answered.
+    Note that this is a generic "Cacascading style request", outside the realm of HTML/CSS."""
+    if styles is not None: # Can be single style or stack of styles.
+        if not isinstance(styles, (tuple, list)):
+            styles = [styles] # Make stack of styles.
+        for style in styles:
+            if name in style:
+                return style[name]
+    if e is not None:
+        return e.css(name)
+    return default
 
 
   

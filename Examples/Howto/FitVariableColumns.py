@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     fitVariableHeadline.py
@@ -16,7 +18,7 @@
 #     from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 #     
 import copy
-from pagebot import newFS, getRootPath
+from pagebot import getRootPath
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont, fitVariableWidth
 

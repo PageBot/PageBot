@@ -5,14 +5,15 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     DrawRedRectCenterPage.py
 #
 #     Needs debugging in dimension showing of views.
 #
-from pagebot import newFS
 from pagebot.style import getRootStyle, A5, BOTTOM, CENTER, MIDDLE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document

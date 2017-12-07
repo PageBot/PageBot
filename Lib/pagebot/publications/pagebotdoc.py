@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     pagebotdoc.py
@@ -14,8 +16,6 @@
 #     and templates are hood enough. Inherit the redefine functions otherwise.
 #     Example of an inherited publications is FBFamilySpecimen.py
 #
-from pagebot import newFS
-
 from pagebot.fonttoolbox.objects.family import Family, guessFamilies
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
 

@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # ---------------- -------------------------------------------------------------
 #
 #     ConditionalElements.py
@@ -15,7 +17,7 @@
 #     Its purpose is to show the use of Validator
 #
 import pagebot # Import to know the path of non-Python resources.
-from pagebot import newFS, textBoxBaseLines
+from pagebot import textBoxBaseLines
 from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
@@ -138,8 +140,12 @@ def makeDocument():
     # be too wide from typographic point ogf view. The MaxWidthByFontSize will set the 
     # self.w to the maximum width for this pointSize.
     if not hasattr(scriptGlobals, 'blurbText'):
-        scriptGlobals.blurbText = newFS(blurb.getBlurb('article_summary', noTags=True), page,
-        style=dict(font='Georgia', fontSize=12, leading=16, textColor=0))
+        scriptGlobals.blurbText = doc.context.newString(blurb.getBlurb('article_summary', noTags=True),
+                                                        page,
+                                                        style=dict(font='Georgia',
+                                                                   fontSize=12,
+                                                                   leading=16,
+                                                                   textColor=0))
     eTextBox = newTextBox(scriptGlobals.blurbText, parent=page, w=Text_W, 
         conditions=textCondition, xAlign=CENTER, yAlign=MIDDLE, stroke=None, fill=None)
 

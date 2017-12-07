@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     UseTemplates.py
@@ -22,7 +24,7 @@ from __future__ import division # Make integer division result in float.
 
 import pagebot # Import to know the path of non-Python resources.
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import newFS
+from pagebot.contexts import defaultContext as context
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.document import Document
@@ -44,8 +46,8 @@ def makeTemplate(w, h, french=False):
     else:
         rightColor = 0, 0.5, 0 # r, g, b Make Italian flag.
     # Make 2 formatted strings with white text,
-    fsLeft = newFS('Template box left', style=dict(textFill=1))
-    fsRight = newFS('Template box right', style=dict(textFill=1))
+    fsLeft = context.newString('Template box left', style=dict(textFill=1))
+    fsRight = context.newString('Template box right', style=dict(textFill=1))
 
     newTextBox(fsLeft, w=w/3, fill=(1, 0, 0), padding=10,
         parent=template, conditions=[Left2Left(), Top2Top(), Fit2Height()])       
