@@ -5,7 +5,7 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     
+#
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
@@ -18,11 +18,10 @@
 #     http://xxyxyz.org/flat#tutorial
 #
 #     Run as cmd-line:
-#     --> python HelloCircleSquare.py 
+#     --> python HelloCircleSquare.py
 
 from random import random
 from pagebot.contexts import defaultContext as context
-from pagebot.fonttoolbox.objects.font import findInstalledFonts
 
 FONTNAME = 'AmstelvarAlpha-VF.ttf'
 
@@ -45,12 +44,13 @@ for p in range(PAGES):
         x = M + random()*(W-2*M-R) # Only in available space
         y = M + random()*(H-2*M-R)
         if ch < 0.2:
-            context.oval(x, y, R, R )
+            context.oval(x, y, R, R)
         elif ch < 0.4:
-            context.rect(x, y, R, R )
+            context.rect(x, y, R, R)
         else:
             # Make formatted Flat flavor BabelString instance.
-            bs = context.newString('Hello world on %d,%d' % (x, y), style=dict(font=FONTNAME, fontSize=10))
+            bs = context.newString('Hello world on %d,%d' % (x, y), 
+                style=dict(font=FONTNAME, fontSize=10))
             context.text(bs, (x, y))
 
 #context.saveImage('_export/HelloCircleSquare.gif')
