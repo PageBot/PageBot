@@ -22,7 +22,7 @@ from pagebot.style import getRootStyle, LEFT
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
-from pagebot.elements.pbpage import Page, Template
+from pagebot.elements.pbpage import Template
 # The Typesetter instance takes content from a file (typically MarkDown text) and converts that 
 # into Galley list of elements.
 from pagebot.typesetter import Typesetter
