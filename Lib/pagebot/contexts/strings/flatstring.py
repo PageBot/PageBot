@@ -66,7 +66,9 @@ class FlatString(BabelString):
         elif sCapitalized:
             s = s.capitalize()
 
-        fontPath = context.getFontPathOfFont(style.get('font', cls.DEFAULT_FONT))
+        fontPath = context.getFontPathOfFont(style.get('font'))
+        if fontPath is None:
+            fontPath = context.getFontPathOfFont(cls.DEFAULT_FONT)
         font = context.b.font.open(fontPath)
         strike = context.b.strike(font)
         strike.size(fontSize or style.get('fontSize', cls.DEFAULT_FONTSIZE), style.get('leading', cls.DEFAULT_LEADING), units='pt')
