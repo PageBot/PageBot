@@ -15,7 +15,7 @@
 from __future__ import division
 
 import pagebot
-from pagebot.page import Template
+from pagebot.elements.pbpage import Template
 # For Variable Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font
 
