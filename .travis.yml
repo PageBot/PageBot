@@ -11,7 +11,8 @@ install:
 - pip install pylint
 script:
 - mkdir _export
-- export WONT_FIX=invalid-name,bad-indentation
-- export MAYBE_SOMEDAY=fixme,missing-docstring
+- export WONT_FIX=invalid-name,bad-indentation,trailing-newlines
+- export MAYBE_SOMEDAY=fixme,missing-docstring,superfluous-parens
 - export PYLINT="pylint --disable=$WONT_FIX,$MAYBE_SOMEDAY"
 - $PYLINT Examples/Howto/UseFlatContext/*.py
+- $PYLINT Examples/Howto/PositionText.py
