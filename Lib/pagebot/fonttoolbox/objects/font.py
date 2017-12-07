@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     font.py
@@ -19,44 +21,39 @@
 #     We'll call this class "Font" instead of "Style" (as in other TypeNetwerk tool code),
 #     to avoid confusion with the PageBot style dictionary, which hold style parameters.
 #
-from AppKit import NSFont
-from fontTools.ttLib import TTFont, TTLibError
-from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
-try:
-    from drawBot import installFont, listOpenTypeFeatures, installedFonts
-except ImportError:
-    installFont =  listOpenTypeFeatures = None
+from pagebot.contexts import defaultContext
 
 from pagebot.fonttoolbox.objects.glyph import Glyph
+from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.fonttoolbox.variablefontaxes import axisDefinitions
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 
-def getFontPathOfFont(fontName):
-    font = NSFont.fontWithName_size_(fontName, 25)
-    if font is not None:
-        fontRef = CTFontDescriptorCreateWithNameAndSize(font.fontName(), font.pointSize())
-        url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
-        return url.path()
-    return None
-
-def findInstalledFonts(fontNamePatterns):
-    u"""Answer a list of installed font names that include the fontNamePattern. The pattern
-    search is not case sensitive. The pattern can be a string or a list of strings."""
-    fontNames = []
-    if not isinstance(fontNamePatterns, (list, tuple)):
-        fontNamePatterns = [fontNamePatterns]
-    for fontNamePattern in fontNamePatterns:
-        for fontName in installedFonts():
-            if fontNamePattern in fontName:
-                fontNames.append(fontName)
-    return fontNames
-
-def getFontByName(fontName, install=True):
-    return getFontByPath(getFontPathOfFont(fontName), install=install)
-
 def getFontByPath(fontPath, install=True):
     return Font(fontPath, install=install)
+
+def getFontByName(self, fontName, install=True, context=None):
+    if context is None:
+        context = defaultContext
+    return getFontByPath(context.getFontPathOfFont(fontName), install=install)
+
+def findInstalledFonts(fontNamePatterns=None, context=None):
+    u"""Answer a list of installed font names that include the fontNamePattern. The pattern
+    search is not case sensitive. The pattern can be a string or a list of strings."""
+    if context is None:
+        context = defaultContext
+    fontNames = []
+    installedFontNames = context.installedFonts()
+    if fontNamePatterns is not None and not isinstance(fontNamePatterns, (None, list, tuple)):
+        fontNamePatterns = [fontNamePatterns]
+    if fontNamePatterns is not None:
+        for fontNamePattern in fontNamePatterns:
+            for fontName in installedFontNames:
+                if fontNamePattern in fontName:
+                    fontNames.append(fontName)
+    else:
+        fontNames = installedFontNames
+    return fontNames
 
 class Font(object):
     u"""
@@ -88,8 +85,9 @@ class Font(object):
     >>> f.save()
     """
     GLYPH_CLASS = Glyph
+    FONTANALYZER_CLASS = FontAnalyzer
 
-    def __init__(self, path, name=None, install=True, opticalSize=None, location=None, styleName=None):
+    def __init__(self, path, name=None, install=True, opticalSize=None, location=None, styleName=None, lazy=True):
         u"""Initialize the TTFont, for which Font is a wrapper. Default is to
         install the font in DrawBot.
 
@@ -103,7 +101,7 @@ class Font(object):
         else:
             self.installedName = None # Set to DrawBot name, if installing later.
         try:
-            self.ttFont = TTFont(path, lazy=True)
+            self.ttFont = TTFont(path, lazy=lazy)
             # TTFont is available as lazy style.info.font
             self.info = FontInfo(self.ttFont)
             self.info.opticalSize = opticalSize # Optional optical size, to indicate where this Variable Font is rendered for.
@@ -115,6 +113,8 @@ class Font(object):
                 self.info.styleName = styleName # Overwrite default style name in the ttFont or Variable Font location
             self._kerning = None # Lazy reading.
             self._groups = None # Lazy reading.
+            self._glyphs = {} # Lazy creation of self[glyphName]
+            self._analyzer = None # Lazy creation.
         except TTLibError:
             raise OSError('Cannot open font file "%s"' % path)
 
@@ -122,13 +122,29 @@ class Font(object):
         return '<PageBot Font %s>' % (self.path or self.name)
 
     def __getitem__(self, glyphName):
-        return self.GLYPH_CLASS(self, glyphName)
+        if not glyphName in self._glyphs:
+            self._glyphs[glyphName] = self.GLYPH_CLASS(self, glyphName)
+        return self._glyphs[glyphName]
 
     def __len__(self):
-        return len(self.ttFont['glyf'])
+        if 'glyf' in self.ttFont:
+            return len(self.ttFont['glyf'])
+        return 0
 
     def keys(self):
-        return self.ttFont['glyf'].keys()
+        if 'glyf' in self.ttFont:
+            return self.ttFont['glyf'].keys()
+        return []
+
+    def __contains__(self, glyphName):
+        return glyphName in self.keys()
+
+    def _get_analyzer(self):
+        u"""Answer the style/font analyzer if it exists. Otherwise create one."""
+        if self._analyzer is None:
+            self._analyzer = self.FONTANALYZER_CLASS(self)
+        return self._analyzer
+    analyzer = property(_get_analyzer)
 
     def _get_axes(self): 
         u"""Answer dictionary of axes if self.ttFont is a Variable Font. Otherwise answer an empty dictioary."""
@@ -184,10 +200,12 @@ class Font(object):
         settings in featureSettings."""
         return s
 
-    def install(self):
+    def install(self, context=None):
         u"""Install the font in DrawBot, if not already there. Answer the
         DrawBot name."""
-        self.installedName = installFont(self.path)
+        if context is None:
+            context = defaultContext
+        self.installedName = context.installFont(self.path)
         return self.installedName
 
     def save(self, path=None):

@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     FBFamilySpecimen.py
@@ -14,12 +16,13 @@ from pagebot.fonttoolbox.objects.family import getFamilies
 from pagebot.publications.typespecimen import TypeSpecimen
 # Page and Template instances are holding all elements of a page together.
 from pagebot.elements.pbpage import Page, Template
-from pagebot import newFS
-# Use Erik & Jonathan’s Filibuster to create random imaginary headlines. 
+# Use Erik & Jonathan's Filibuster to create random imaginary headlines. 
 from pagebot.contributions.filibuster.blurb import blurb
+from pagebot.elements import *
 
 DEBUG = False # Make True to see grid and element frames.
 
+# Use OSX location of fonts here.
 LIB_PATH = '/Library/Fonts/'
 SOME_SYSTEM_FONTS = {
     # Let's try some plain OSX system fonts, while they are still there (not variable font yet).
@@ -33,7 +36,7 @@ class FBFamilySpecimen(TypeSpecimen):
 
     def makeTemplate(self, rs):
         # Template for the main page.
-        template = Template(style=rs) # Create second template. This is for the main pages.
+        template = Template() # Create second template. This is for the main pages.
         # Add named text box to template for main specimen text.
         template.cTextBox('', 0, -1, 6, 1, eId=self.titleBoxId)       
         template.cTextBox('', 0, 0, 6, 6, eId=self.specimenBoxId)       
@@ -64,17 +67,23 @@ class FBFamilySpecimen(TypeSpecimen):
         while not box.getOverflow():
             sportsHeadline = ' '.join(blurb.getBlurb('news_headline').split(' ')[:choice((2,2,3,3,4))])+'\n'
             styleKey = choice(('Regular', 'Bold', 'Italic', 'BoldItalic'))
-            fs = newFS(sportsHeadline, self, style=dict(font=family[styleKey].installedName, 
-                fontSize=fontSize))
+            fs = self.context.newString(sportsHeadline,
+                                        self,
+                                        style=dict(font=family[styleKey].installedName,
+                                                   fontSize=fontSize))
             fsWidth = fs.size()[0]
             fittingFontSize = fontSize * box.w / fsWidth
             # Make new formatted string with fitting font size.
-            fs = newFS(sportsHeadline, self, style=dict(font=family[styleKey].installedName, 
-                leading=0, fontSize=fittingFontSize, textColor=0))
+            fs = self.context.newString(sportsHeadline,
+                                        self,
+                                        style=dict(font=family[styleKey].installedName, 
+                                                   leading=0,
+                                                   fontSize=fittingFontSize,
+                                                   textColor=0))
             box.append(fs)
             print '###', page, family, sportsHeadline
                 
-if 0:
+if 1:
     # Create a new specimen publications and add the list of system fonts.
     familySpecimen = FBFamilySpecimen(showGrid=DEBUG) 
     # Build the pages of the publication, interpreting the font list.

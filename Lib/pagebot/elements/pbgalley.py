@@ -6,17 +6,16 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     galley.py
 #
-from drawBot import rect
-
-from pagebot.style import NO_COLOR, makeStyle
+from pagebot.style import NO_COLOR, ORIGIN, makeStyle
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset, int2Color
-from pagebot import newFS, setStrokeColor, setFillColor
 
 class Galley(Element):
     u"""A Galley is sticky sequential flow of elements, where the parts can have
@@ -39,19 +38,12 @@ class Galley(Element):
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.lastTextBox = None
 
-    def appendString(self, fs):
-        u"""Add the string to the laat text box. Create a new textbox if not found."""
+    def append(self, bs):
+        u"""Add the string to the last text box. Create a new textbox if not found."""
         if self.lastTextBox is None:
-            self.newTextBox(fs) # Also sets self.lastTextBox 
+            self.newTextBox(bs) # Also sets self.lastTextBox 
         else:
-            self.lastTextBox.appendString(fs)
-
-    def appendHtml(self, html):
-        u"""Add the utf-8 html to the laat text box. Create a new textbox if not found."""
-        if self.lastTextBox is None:
-            self.newTextBox('', html=html) # Also sets self.lastTextBox 
-        else:
-            self.lastTextBox.appendHtml(html)
+            self.lastTextBox.append(bs)
 
     def getMinSize(self):
         u"""Cumulation of the maximum minSize of all enclosed elements."""
@@ -116,30 +108,73 @@ class Galley(Element):
         ruler = self.RULER_CLASS(style=style)
         self.appendElement(ruler)
 
-    def draw(self, origin, view):
+    #   D R A W B O T  S U P P O R T
+
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the
         containing page."""
+
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
+
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
+            self.drawBefore(view, p)
 
-        setFillColor(self.OLD_PAPER_COLOR) # Color of old paper: #F8ECC2
+        context.setFillColor(self.OLD_PAPER_COLOR) # Color of old paper: #F8ECC2
         gw, gh = self.getSize()
-        rect(px, py, gw, gh)
-        gy = 0
-        for element in self.elements:
-            # @@@ Find space and do more composition
-            element.draw((px, py + gy), view)
-            gy += element.h
+        b.rect(px, py, gw, gh)
+        if drawElements:
+            gy = 0
+            for e in self.elements:
+                # @@@ Find space and do more composition
+                e.build_drawBot(view, (px, py + gy))
+                gy += element.h
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view)
+            self.drawAfter(view, p)
 
-        self._restoreScale()
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
+
+    #   F L A T  S U P P O R T
+
+    def build_flat(self, view, origin=ORIGIN, drawElements=True):
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(view, p)
+
+        if drawElements:
+            for e in self.elements:
+                e.build_flat(view, p)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(view, p)
+        
+    #   H T M L  /  C S S  S U P P O R T
+
+    def build_html(self, view, origin=None, drawElements=True):
+
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(p)    
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(view, p)
+
+        if drawElements:
+            for e in self.elements:
+                e.build_html(view, p)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(view, p)
+
 

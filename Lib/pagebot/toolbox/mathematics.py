@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     mathematics.py
@@ -106,7 +108,7 @@ def point2Line(p1, p2, p):
 def dotProduct(v1, v2):
     return reduce(operator.add, map(operator.mul, v1, v2))
 
-def pointProjectedOnLine(cls, p1, p2, p):
+def pointProjectedOnLine(p1, p2, p):
     u"""Answers the projected point <b>(px, py)</b> on line <b>((x1, y1), (x2,
     y2))</b>.  Answers <b>(x1, y1)</b> if there is not distance between the two
     points of the line."""
@@ -128,7 +130,7 @@ def pointProjectedOnLine(cls, p1, p2, p):
     if dd == 0:
         return x1, y1
 
-    dot = cls.dotProduct(v1, v2)
+    dot = dotProduct(v1, v2)
     return  x1 + (dot * tx) / dd, y1 + (dot * ty) / dd
 
 def insideCircle(dx, dy, r):

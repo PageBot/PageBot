@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     pagebot/__init__.py
@@ -16,19 +18,10 @@ __doc__ = """PageBot module"""
 
 __version__ = '0.8-beta'
 
-import CoreText
-import AppKit
-import Quartz
-
 import re
-from drawBot import FormattedString, cmykFill, fill, cmykStroke, stroke, strokeWidth, \
-    hyphenation, cmykLinearGradient, linearGradient, cmykRadialGradient, radialGradient,\
-    shadow, textSize
-
-from drawBot.context.baseContext import BaseContext
 
 from pagebot.style import NO_COLOR, LEFT
-from pagebot.toolbox.transformer import point2D
+from pagebot.toolbox.transformer import point2D 
 
 #   P A T H S 
 
@@ -40,7 +33,6 @@ def getFontPath():
     u"""Answer the standard font path of the pagebot module."""
     return getRootPath() + '/Fonts/'
 
-#
 # In order to let PageBot scripts and/applications exchange information, without the need to save
 # data in files, the pbglobals module supports the storage of non-persistent information.
 # This way, applications with Vanilla windows can be used as UI for scripts that perform as batch process.
@@ -243,68 +235,6 @@ def baseline2y(yIndex, e):
     baseline = e.css('baseline')
     return padT + cy * baseline
 
-#   C O L O R
-
-def setFillColor(c, fs=None, cmyk=False):
-    u"""Set the color for global or the color of the formatted string."""
-    if c is NO_COLOR:
-        pass # Color is undefined, do nothing.
-    elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
-        if cmyk:
-            if fs is None:
-                cmykFill(c)
-            else:
-                fs.cmykFill(c)
-        else:
-            if fs is None:
-                fill(c)
-            else:
-                fs.fill(c)
-    elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-        if cmyk:
-            if fs is None:
-                cmykFill(*c)
-            else:
-                fs.cmykFill(*c)
-        else:
-            if fs is None:
-                fill(*c)
-            else:
-                fs.fill(*c)
-    else:
-        raise ValueError('Error in color format "%s"' % repr(c))
-
-def setStrokeColor(c, w=1, fs=None, cmyk=False):
-    u"""Set global stroke color or the color of the formatted string."""
-    if c is NO_COLOR:
-        pass # Color is undefined, do nothing.
-    elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
-        if cmyk:
-            if fs is None:
-                cmykStroke(c)
-            else:
-                fs.cmykStroke(c)
-        else:
-            if fs is None:
-                stroke(c)
-            else:
-                fs.stroke(c)
-    elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-        if cmyk:
-            if fs is None:
-                cmykStroke(*c)
-            else:
-                fs.cmykStroke(*c)
-        else:
-            if fs is None:
-                stroke(*c)
-            else:
-                fs.stroke(*c)
-    else:
-        raise ValueError('Error in color format "%s"' % c)
-    if w is not None:
-        strokeWidth(w)
-
 class Gradient(object):
     u"""
     As linear gradient (startRadius or endRadius not set):
@@ -344,47 +274,12 @@ class Gradient(object):
         return self.startRadius is not None and self.endRadius is not None
     radial = property(_get_radial)
 
-def setGradient(gradient, origin, e):
-    u"""Define the gradient call to match the size of element e., Gradient position
-    is from the origin of the page, so we need the current origin of e."""
-    assert isinstance(gradient, Gradient)
-    start = origin[0] + gradient.start[0] * e.w, origin[1] + gradient.start[1] * e.h
-    end = origin[0] + gradient.end[0] * e.w, origin[1] + gradient.end[1] * e.h
-
-    if gradient.linear:
-        if gradient.cmykColors is None:
-            linearGradient(startPoint=start, endPoint=end,
-                colors=gradient.colors, locations=gradient.locations)
-        else:
-            cmykLinearGradient(startPoint=start, endPoint=end,
-                colors=gradient.cmykColors, locations=gradient.locations)
-    else: # Gradient must be radial.
-        if gradient.cmykColors is None:
-            radialGradient(startPoint=start, endPoint=end,
-                colors=gradient.colors, locations=gradient.locations,
-                startRadius=gradient.startRadius, endRadius=gradient.endRadius)
-        else:
-            cmykRadialGradient(startPoint=start, endPoint=end,
-                colors=gradient.cmykColors, locations=gradient.locations,
-                startRadius=gradient.startRadius, endRadius=gradient.endRadius)
-
 class Shadow(object):
     def __init__(self, offset=None, blur=None, color=None, cmykColor=None):
         self.offset = offset or (5, -5)
         self.blur = blur
         self.color = color
         self.cmykColor = cmykColor
-
-def setShadow(eShadow):
-    u"""Set the *Shadow* instance *eShadow* as current. The *eShadow.cmykColor* 
-    flag decides which type of shadow (RGB or CMYK) is set. 
-    The *Shadow* class takes *(offset=None, blur=None, color=None, cmykColor=None)*
-    as attributes. Ignore is *eShadow* is *None*."""
-    if shadow is not None:
-        if eShadow.cmykColor is not None:
-            shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
-        else:
-            shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.color)
 
 #   E L E M E N T
 
@@ -419,7 +314,7 @@ def find(elements, name=None, pattern=None, result=None):
 MARKER_PATTERN = '==%s--%s=='
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\-\-([^=]*)\=\=')
 
-def getMarker(markerId, arg=None):
+def getMarker(b, markerId, arg=None):
     u"""Answer a formatted string with markerId that can be used as non-display marker.
     This way the Composer can find the position of markers in text boxes, after
     FS-slicing has been done. Note there is always a very small "white-space"
@@ -432,7 +327,7 @@ def getMarker(markerId, arg=None):
     And not to use any spaces, etc. inside the markerId.
     Possible slicing through line-endings is not a problem, as the raw string ignores them."""
     marker = MARKER_PATTERN % (markerId, arg or '')
-    return FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)
+    return b.FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)
     ###return FormattedString(marker, fill=(1, 0, 0), stroke=None, fontSize=10)
 
 def findMarkers(fs, reCompiled=None):
@@ -440,184 +335,3 @@ def findMarkers(fs, reCompiled=None):
     if reCompiled is None:
         reCompiled= FIND_FS_MARKERS
     return reCompiled.findall(u'%s' % fs)
-
-def css(name, e, styles=None, default=None):
-    u"""Answer the named style values. Search in optional style dict first, otherwise up the
-    parent tree of styles in element e. Both e and style can be None. In that case None is answered."""
-    if styles is not None: # Can be single style or stack of styles.
-        if not isinstance(styles, (tuple, list)):
-            styles = [styles] # Make stack of styles.
-        for style in styles:
-            if name in style:
-                return style[name]
-    if e is not None:
-        return e.css(name)
-    return default
-
-def newFS(t, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
-    u"""Answer a *FormattedString* instance from valid attributes in *style*. Set all values after testing
-    their existence, so they can inherit from previous style formats.
-    If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
-
-    hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
-
-    fs = FormattedString('')
-    sFont = css('font', e, style)
-    if sFont is not None:
-        fs.font(sFont)
-    # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
-    # TODO: add calculation of rFontSize (relative float based on root-fontSize) here too.
-    sFontSize = fontSize or css('fontSize', e, style) or 16 # May be scaled to fit w or h if target is defined.
-    sLeading = css('leading', e, style)
-    rLeading = css('rLeading', e, style)
-    if sLeading or (rLeading and sFontSize):
-        lineHeight = (sLeading or 0) + (rLeading or 0) * (sFontSize or 0)
-        if lineHeight:
-            fs.lineHeight(lineHeight)
-    if sFontSize is not None:
-        fs.fontSize(sFontSize) # For some reason fontSize must be set after leading.
-    sFallbackFont = css('fallbackFont', e, style)
-    if sFallbackFont is not None:
-        fs.fallbackFont(sFallbackFont)
-    sFill = css('textFill', e, style)
-    if sFill is not NO_COLOR: # Test on this flag, None is valid value
-        setFillColor(sFill, fs)
-    sCmykFill = css('cmykFill', e, style, NO_COLOR)
-    if sCmykFill is not NO_COLOR:
-        setFillColor(sCmykFill, fs, cmyk=True)
-    sStroke = css('textStroke', e, style, NO_COLOR)
-    sStrokeWidth = css('textStrokeWidth', e, style)
-    if sStroke is not NO_COLOR and strokeWidth is not None:
-        setStrokeColor(sStroke, sStrokeWidth, fs)
-    sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
-    if sCmykStroke is not NO_COLOR:
-        setStrokeColor(sCmykStroke, sStrokeWidth, fs, cmyk=True)
-    sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
-    if sAlign is not None: # yTextAlign must be solved by parent container element.
-        fs.align(sAlign)
-    sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
-    rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
-    if sParagraphTopSpacing or (rParagraphTopSpacing and sFontSize):
-        fs.paragraphTopSpacing((sParagraphTopSpacing or 0) + (rParagraphTopSpacing or 0) * (sFontSize or 0))
-    sParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
-    rParagraphBottomSpacing = css('rParagraphBottomSpacing', e, style)
-    if sParagraphBottomSpacing or (rParagraphBottomSpacing and sFontSize):
-        fs.paragraphBottomSpacing((sParagraphBottomSpacing or 0) + (rParagraphBottomSpacing or 0) * (sFontSize or 0))
-    sTracking = css('tracking', e, style)
-    rTracking = css('rTracking', e, style)
-    if sTracking or (rTracking and sFontSize):
-        fs.tracking((sTracking or 0) + (rTracking or 0) * (sFontSize or 0))
-    sBaselineShift = css('baselineShift', e, style)
-    rBaselineShift = css('rBaselineShift', e, style)
-    if sBaselineShift or (rBaselineShift and sFontSize):
-        fs.baselineShift((sBaselineShift or 0) + (rBaselineShift or 0) * (sFontSize or 0))
-    sOpenTypeFeatures = css('openTypeFeatures', e, style)
-    if sOpenTypeFeatures is not None:
-        fs.openTypeFeatures([], **sOpenTypeFeatures)
-    sTabs = css('tabs', e, style)
-    if sTabs is not None:
-        fs.tabs(*sTabs)
-    sFirstLineIndent = css('firstLineIndent', e, style)
-    rFirstLineIndent = css('rFirstLineIndent', e, style)
-    # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
-    # sFirstParagraphIndent = style.get('firstParagraphIndent')
-    # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
-    # TODO: Use this value instead, if currently on top of a new string.
-    sFirstColumnIndent = css('firstColumnIndent', e, style)
-    rFirstColumnIndent = css('rFirstColumnIndent', e, style)
-    if sFirstLineIndent or (rFirstLineIndent and sFontSize):
-        fs.firstLineIndent((sFirstLineIndent or 0) + (rFirstLineIndent or 0) * (sFontSize or 0))
-    sIndent = css('indent', e, style)
-    rIndent = css('rIndent', e, style)
-    if sIndent is not None or (rIndent is not None and sFontSize is not None):
-        fs.indent((sIndent or 0) + (rIndent or 0) * (sFontSize or 0))
-    sTailIndent = css('tailIndent', e, style)
-    rTailIndent = css('rTaildIndent', e, style)
-    if sTailIndent or (rTailIndent and sFontSize):
-        fs.tailIndent((sTailIndent or 0) + (rTailIndent or 0) * (sFontSize or 0))
-    sLanguage = css('language', e, style)
-    if sLanguage is not None:
-        fs.language(sLanguage)
-
-    sUpperCase = css('uppercase', e, style)
-    sLowercase = css('lowercase', e, style)
-    sCapitalized = css('capitalized', e, style)
-    if sUpperCase:
-        t = t.upper()
-    elif sLowercase:
-        t = t.lower()
-    elif sCapitalized:
-        t = t.capitalize()
-
-    newt = fs + t # Format plain string t onto new formatted fs.
-    if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
-        tw, _ = textSize(newt)
-        fontSize = w / tw * sFontSize
-        newt = newFS(t, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
-    elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
-        _, th = textSize(newt)
-        fontSize = h / th * sFontSize
-        newt = newFS(t, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
-
-    return newt
-
-def textBoxBaseLines(txt, box):
-    u"""Answer a list of (x,y) positions of all line starts in the box. This function may become part
-    of standard DrawBot in the near future."""
-    x, y, w, h = box
-    attrString = txt.getNSObject()
-    setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
-    path = Quartz.CGPathCreateMutable()
-    Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
-    box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-    ctLines = CoreText.CTFrameGetLines(box)
-    origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-    return [(x + o.x, y + o.y) for o in origins]
-
-def textPositionSearch(fs, w, h, search, xTextAlign=LEFT, hyphenation=True):
-    u"""
-    """
-    bc = BaseContext()
-    path = CoreText.CGPathCreateMutable()
-    CoreText.CGPathAddRect(path, None, CoreText.CGRectMake(0, 0, w, h))
-
-    attrString = bc.attributedString(fs, align=xTextAlign)
-    if hyphenation and bc._state.hyphenation:
-        attrString = bc.hyphenateAttributedString(attrString, w)
-
-    txt = attrString.string()
-    searchRE = re.compile(search)
-    locations = []
-    for found in searchRE.finditer(txt):
-        locations.append((found.start(), found.end()))
-
-    setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
-    box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-
-    ctLines = CoreText.CTFrameGetLines(box)
-    origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-
-    rectangles = []
-    for startLocation, endLocation in locations:
-        minx = miny = maxx = maxy = None
-        for i, (originX, originY) in enumerate(origins):
-            ctLine = ctLines[i]
-            bounds = CoreText.CTLineGetImageBounds(ctLine, None)
-            if bounds.size.width == 0:
-                continue
-            _, ascent, descent, leading = CoreText.CTLineGetTypographicBounds(ctLine, None, None, None)
-            height = ascent + descent
-            lineRange = CoreText.CTLineGetStringRange(ctLine)
-            miny = maxy = originY
-            if AppKit.NSLocationInRange(startLocation, lineRange):
-                minx, _ = CoreText.CTLineGetOffsetForStringIndex(ctLine, startLocation, None)
-
-            if AppKit.NSLocationInRange(endLocation, lineRange):
-                maxx, _ = CoreText.CTLineGetOffsetForStringIndex(ctLine, endLocation, None)
-                rectangles.append((ctLine, (minx, miny - descent, maxx - minx, height)))
-
-            if minx and maxx is None:
-                rectangles.append((ctLine, (minx, miny - descent, bounds.size.width - minx, height)))
-                minx = 0
-
-    return rectangles

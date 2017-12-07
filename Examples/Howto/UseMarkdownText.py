@@ -5,12 +5,13 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     UseMarkDownText.py
 #
-from pagebot import newFS
 from pagebot.style import getRootStyle, A5, BOTTOM, CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import *

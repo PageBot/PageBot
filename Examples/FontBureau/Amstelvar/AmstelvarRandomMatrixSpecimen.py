@@ -5,7 +5,9 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     AmstelvarSpecimen.py
@@ -16,7 +18,6 @@
 from __future__ import division
 
 import pagebot
-from pagebot import newFS
 from pagebot.elements.pbpage import Template
 from pagebot.style import A4,MM
 from pagebot.fonttoolbox.objects.font import Font
@@ -122,15 +123,18 @@ class VariableTypeSpecimen(TypeSpecimen):
 
     def buildVariablePage(self, varFont, page):
         title = page.getElement(self.titleBoxId)
-        fs = newFS(varFont.info.fullName.upper(), self, dict(fontSize=32, font=amstelVarName))
+        fs = self.context.newString(varFont.info.fullName.upper(),
+                                    self, dict(fontSize=32, font=amstelVarName))
         title.append(fs)
 
         column = page.getElement(self.specimenBoxId) # Find the specimen column element on the current page.
         # Create the formatted string with the style names shown in their own style.
         # The first one in the list is also used to show the family Name.
         for fontSize in (9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24):
-            fs = newFS('%dPT %s\n' % (fontSize, s), self,
-                style=dict(font=amstelVarName, fontSize=fontSize, hyphenation=False))
+            fs = self.context.newString('%dPT %s\n' % (fontSize, s),
+                                        self, style=dict(font=amstelVarName,
+                                                         fontSize=fontSize,
+                                                         hyphenation=False))
             column.append(fs)
 
     def buildVariableMatrixPage(self, varFont, page, locations, textFill=0):

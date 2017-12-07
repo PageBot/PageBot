@@ -6,12 +6,14 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     family.py
 #
-#     Implements a family collestion of Style instances.
+#     Implements a family collection of Font instances.
 #
 from drawBot import installedFonts
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont

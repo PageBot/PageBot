@@ -1,10 +1,9 @@
 #    Take text of 3-4 paragraphs (headline, body text, caption)
-#    Make 1-2 formatted strings from that (with newFS)
+#    Make 1-2 formatted strings from that (with context.newString)
 #    Make 2 rect elements, with a color
 #    Organize those 3-4 elements on a responsive page.
   
 import pagebot  
-from pagebot import newFS
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
@@ -43,13 +42,14 @@ doc.newStyle(name='p', fontSize=10, font=pFont.installedName, textFill=0,
         
 def getExtendedBlurb(doc):
     blurb = Blurb()
-    fs = newFS(blurb.getBlurb('news_headline', noTags=True)+'\n', style=doc.styles['h1'])
+    fs = doc.newString(blurb.getBlurb('news_headline', noTags=True)+'\n',
+                       style=doc.styles['h1'])
     for n in range(ARTICLE_CNT):
-        fs += newFS(blurb.getBlurb('design_headline', noTags=True)+'\n', style=doc.styles['h2'])
-        fs += newFS(blurb.getBlurb('design_headline', noTags=True)+'\n', style=doc.styles['h3'])
-        fs += newFS(blurb.getBlurb('article', noTags=True)+'\n', style=doc.styles['p'])
-        fs += newFS(blurb.getBlurb('design_headline', noTags=True)+'\n', style=doc.styles['h3'])
-        fs += newFS(blurb.getBlurb('article', noTags=True)+'\n', style=doc.styles['p'])
+        fs += doc.context.newString(blurb.getBlurb('design_headline', noTags=True)+'\n', style=doc.styles['h2'])
+        fs += doc.context.newString(blurb.getBlurb('design_headline', noTags=True)+'\n', style=doc.styles['h3'])
+        fs += doc.context.newString(blurb.getBlurb('article', noTags=True)+'\n', style=doc.styles['p'])
+        fs += doc.context.newString(blurb.getBlurb('design_headline', noTags=True)+'\n', style=doc.styles['h3'])
+        fs += doc.context.newString(blurb.getBlurb('article', noTags=True)+'\n', style=doc.styles['p'])
     return fs
     
 extendedBlurb = getExtendedBlurb(doc)

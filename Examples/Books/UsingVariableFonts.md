@@ -10,7 +10,8 @@ The connection between Markdown content and Python can be made from 2 different 
 ~~~Python
 cid = 'Book'
 
-from pagebot.style import MM # Converter from MM to points
+# Converter from MM to points
+from pagebot.style import MM 
 # Import the Document-Book class.
 # No need to add any templates, they are already defined in Book
 from pagebot.publications import Book
@@ -31,9 +32,9 @@ coverBackgroundFill = (0.05, 0.07, 0.05) # Greenish black
 
 title = 'Using Variable Fonts'
 
-# The Book instance stored as “doc”, so typesetter can find it.
+# The Book instance stored as “doc”, so the typesetter can find it.
 # Use the predefined dynamic templates inside book.
-# No automatic pages, all are created by content in this file.
+# No autoPages, all are created by content in this file.
 # Set the left and right grid measures.
 
 doc = Book(w=W, h=H, autoPages=0, originTop=False, title=title, padding=padding, gridL=gridL, gridR=gridR, 
@@ -48,7 +49,10 @@ This is text.
 
 ~~~Python
 page = doc.newPage(template='Cover')
+box = page['Title']
 ~~~
+
+Using Variable Fonts
 
 ~~~Python
 page = doc.newPage(template='DEMO Page')

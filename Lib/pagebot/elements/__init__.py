@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     __init__.py
@@ -34,16 +36,16 @@ from pagebot.elements.paths.glyphpath import GlyphPath
 # Table elements
 from pagebot.elements.pbtable import Table
 # Views
-from pagebot.elements.views.view import View
+from pagebot.elements.views import viewClasses
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
 
-def newView(**kwargs):
+def newView(viewId, **kwargs):
     u"""In most cases views are initialized as dictionary by the Document class.
     But since they inherit from Element, they also can be used as placable elements.
     Make sure to define the right parent (likely to be a Page or Template).
     """
-    return View(**kwargs)
+    return viewClasses[viewId](**kwargs)
 
 def newPage(**kwargs):
     u"""In most cases views are initialized as dictionary by the Document class.
@@ -69,28 +71,28 @@ def newColPlacer(cx=None, cy=None, cw=None, ch=None, *kwargs):
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index, based on style or parent.css
     return e
 
-def newTextBox(fs, point=None, **kwargs):
+def newTextBox(bs='', point=None, **kwargs):
     u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
-    return TextBox(fs, point=point, **kwargs)
+    return TextBox(bs, point=point, **kwargs)
 
-def newColTextBox(fs, cx=None, cy=None, cw=None, ch=None, **kwargs):
+def newColTextBox(bs='', cx=None, cy=None, cw=None, ch=None, **kwargs):
     u"""Caller must supply formatted string."""
-    e = newTextBox(fs, **kwargs)
+    e = newTextBox(bs, **kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index, based on style or parent.css
     return e
 
-def newText(fs, point=None, **kwargs):
+def newText(bs='', point=None, **kwargs):
     u"""Draw formatted string. Normally we don't need w and h here, as it is made by the text and 
     style combinations. But in case the defined font is a Variable Font, then we can use the
     width and height to interpolate a font that fits the space for the given string and weight.
     Caller must supply formatted string. Support both (x, y) and x, y as position."""
-    return Text(fs, point=point, **kwargs)
+    return Text(bs, point=point, **kwargs)
 
-def newColText(fs, cx=None, cy=None, cw=None, ch=None, **kwargs):
+def newColText(bs='', cx=None, cy=None, cw=None, ch=None, **kwargs):
     u"""Draw formatted string.
     We don't need w and h here, as it is made by the text and style combinations.
     Caller must supply formatted string."""
-    e = newText(fs, **kwargs)
+    e = newText(bs, **kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
     return e
             

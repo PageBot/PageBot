@@ -6,7 +6,9 @@
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
 #     Licensed under MIT conditions
-#     Made for usage in DrawBot, www.drawbot.com
+#     
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     image.py
@@ -14,9 +16,9 @@
 from __future__ import division # Make integer division result in float.
 
 import os
-from drawBot import imageSize, imagePixelColor, save, restore, image, scale
+
 from pagebot.elements.element import Element
-from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR # In case no image is defined.
+from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR, ORIGIN # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset, point2D
 from pagebot.conditions import *
 
@@ -129,10 +131,12 @@ class PixelMap(Element):
         self.initImageSize() # Get real size from the file.
 
     def initImageSize(self):
+        u"""Initialize the image size. Note that this is done with the default/current 
+        Context, as there may not be a view availabe yet."""
         if self.path is not None and os.path.exists(self.path):
-            self.iw, self.ih = imageSize(self.path)
+            self.iw, self.ih = self.context.imageSize(self.path)
         else:
-            self.iw = self.ih = 0 # Undefined, there is no image file.
+            self.iw = self.ih = 0 # Undefined or non-existing, there is no image file.
 
     def getPixelColor(self, p, scaled=True):
         u"""Answer the color in either the scaled point (x, y) or original image size point."""
@@ -141,7 +145,8 @@ class PixelMap(Element):
         if scaled:
             x = self.w / self.iw
             y = self.h / self.ih
-        return imagePixelColor(self.path, (x, y))
+        p = x, y
+        return view.context.imagePixelColor(self.path, p)
 
     # Set the intended width and calculate the new scale, validating the
     # width to the image minimum width and the height to the image minimum height.
@@ -175,14 +180,18 @@ class PixelMap(Element):
             alpha = 1
         return alpha
 
-    def draw(self, origin, view):
+    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the image in the calculated scale. Since we need to use the image
         by scale transform, all other measure (position, lineWidth) are scaled
         back to their original proportions.
         If stroke is defined, then use that to draw a frame around the image.
         Note that the (sx, sy) is already scaled to fit the padding position and size."""
+
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
+
         p = pointOffset(self.oPoint, origin)   
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
@@ -190,14 +199,14 @@ class PixelMap(Element):
             print 'Cannot display pixelMap', self
             #self._drawMissingElementRect(page, px, py, self.w, self.h)
         else:
-            save()
+            context.saveGraphicState()
             sx = self.w / self.iw
             sy = self.h / self.ih
-            scale(sx, sy)
+            context.scale(sx, sy)
             
             # If there is a clipRect defined, create the bezier path
             if self.clipRect is not None:
-                clipRect = BezierPath()
+                clipRect = b.BezierPath()
                 clX, clY, clW, clH = self.clipRect
                 sclX = clX/sx
                 sclY = clY/sx
@@ -212,28 +221,29 @@ class PixelMap(Element):
                 # close the path
                 clipRect.closePath()
                 # set the path as a clipping path
-                clipPath(clipRect)
+                b.clipPath(clipRect)
                 # the image will be clipped inside the path
                 #fill(1, 0, 0, 0.5)
                 #drawPath(clipRect)
             elif self.clipPath is not None:
                 #Otherwise if there is a clipPath, then use it.
-                clipPath(self.clipPath)
+                b.clipPath(self.clipPath)
 
             if self.imo is not None:
                 with self.imo:
-                    image(self.path, (0, 0), pageNumber=0, alpha=self._getAlpha())
-                image(self.imo, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
+                    b.image(self.path, (0, 0), pageNumber=0, alpha=self._getAlpha())
+                b.image(self.imo, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
             else:
                 # Store page element Id in this image, in case we want to make an image index later.
-                image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
+                b.image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
-            restore()
+            context.restoreGraphicState()
 
-        # If there are child elements, draw them over the pixel image.
-        self._drawElements(origin, view)
+        if drawElements:
+            for e in self.elements:
+                e.build_html(view, p)
 
-        self._restoreScale()
+        self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
 
    
