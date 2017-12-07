@@ -172,14 +172,18 @@ class FlatContext(BaseContext):
             self.page.place(shape.rectangle(x, y, w, h))
 
     def oval(self, x, y, w, h):
+        u"""Draw an oval in rectangle, where (x,y) is the bottom left origin and (w,h) is the size.
+        This default DrawBot behavior, different from default Flat, where the (x,y) is the middle
+        if the oval. Compensate for the difference."""
         shape = self._getShape()
         if shape is not None:
-            self.page.place(shape.ellipse(x, y, w, h)) 
+            self.page.place(shape.ellipse(x-w/2, y-h/2, w, h)) 
 
     def circle(self, x, y, r):
+        u"""Draw an circle in square, with radius r and (x,y) as middle."""
         shape = self._getShape()
         if shape is not None:
-            self.page.place(shape.circle(x, y, w, r)) 
+            self.page.place(shape.circle(x, y, r)) 
 
     def line(self, p0, p1):
         shape = self._getShape()
