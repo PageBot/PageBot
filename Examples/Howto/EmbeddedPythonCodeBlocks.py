@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from pagebot.typesetter import Typesetter
 
 # Path to markdown file, including Python code blocks.
@@ -12,9 +13,10 @@ t = Typesetter()
 # Parse the markdown content and execute the embedded Python code blocks.
 t.typesetFile(MARKDOWN_PATH)
 # Typesetter found document definition inside content.
-print 'Document title:', t.doc.title 
+print 'Document title:', t.doc.title
 # Multiple code blocks found with identical identifier.
-# Added counter 'Views_0' to 'Views' to make it unique. 
+# Added counter 'Views_0' to 'Views' to make it unique.
 print 'Found code blocks:', t.codeBlocks.keys()
 
 t.doc.export(EXPORT_PATH)
+

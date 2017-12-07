@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -5,7 +6,7 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     
+#
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
@@ -15,12 +16,13 @@
 #     Needs debug in view dimension showing.
 #
 from pagebot.style import getRootStyle, A5, BOTTOM, CENTER
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
+# Document is the main instance holding all information about
+# the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
-    
-W, H = 500, 500 #A5 
+
+W, H = 500, 500 #A5
 
 OriginTop = False
 
@@ -29,9 +31,9 @@ def makeDocument():
     # Make number of pages with default document size.
     # Initially make all pages default with template
     rootStyle = getRootStyle()
-    
-    doc = Document(rootStyle, originTop=OriginTop, w=W, h=H, autoPages=1) 
-    
+
+    doc = Document(rootStyle, originTop=OriginTop, w=W, h=H, autoPages=1)
+
     page = doc[0] # Get the first/single page of the document.
     page.size = W, H
     print page.originTop
@@ -41,7 +43,7 @@ def makeDocument():
     else:
         s = 'Origin on bottom'
         conditions = (Center2Center(), Bottom2Bottom())
-    
+
     fs = doc.context.newString(s, style=dict(fontSize=30,
                                              textFill=(1, 0, 0),
                                              xTextAlign=CENTER)) 
@@ -51,7 +53,7 @@ def makeDocument():
     if score.fails:
         print score.fails
     print nt.x, nt.y, nt.w, nt.h
-    
+
     # Set the view parameters for the required output.
     view = doc.getView()
     view.w = view.h = W, H
@@ -60,9 +62,9 @@ def makeDocument():
     view.showPageCropMarks = True
     view.showElementOrigin = False
     view.showElementDimensions = True
-    
+
     return doc
-  
+
 if __name__ == '__main__':
 
     Variable([
@@ -72,4 +74,4 @@ if __name__ == '__main__':
 
     d = makeDocument()
     d.export('_export/DrawViewPageFrame.pdf')
-    
+

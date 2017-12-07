@@ -16,8 +16,6 @@
 #     Hard position a text box on an (x, y) position.
 #
 import os
-import pagebot # Import to know the path of non-Python resources.
-
 from pagebot.elements import newTextBox
 from pagebot.contexts import defaultContext
 from pagebot.style import LEFT, BOTTOM
@@ -70,8 +68,7 @@ def makeDocument():
                fontSize=fontSize,
                leading=0, rLeading=1, # Absolute and relative leading.
                xAlign=LEFT, yAlign=BOTTOM, # Set origin of element to left-bottom
-               textFill=(0, 0, 1) # Color of the text.
-    )
+               textFill=(0, 0, 1)) # Color of the text.
     # Return the generated document to the caller.
     return doc
 
