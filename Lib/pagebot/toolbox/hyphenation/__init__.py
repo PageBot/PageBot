@@ -11,9 +11,13 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     hyphenation/languages/__init__.py
-
 #     hyphenation/__init__.py
+#
+#     TODO
+#     Add more languages
+#     Include into text processing of PageBot (e.g. Flat text handling + reflow should become aware of ghost-hyphens)
+#     Add scanning for combined words by recursively splitting into parts.
+#     Add statistical hyphenation per language if words or combination of words fails.
 #
 import os, codecs
 from pagebot import getRootPath
