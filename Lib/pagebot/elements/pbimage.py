@@ -180,6 +180,12 @@ class PixelMap(Element):
             alpha = 1
         return alpha
 
+    def build_html(self, view, origin=ORIGIN, drawElements=True):
+        print '[build_html] Not implemented yet'
+
+    def build_flat(self, view, origin=ORIGIN, drawElements=True):
+        print '[build_flat] Not implemented yet'
+
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the image in the calculated scale. Since we need to use the image
         by scale transform, all other measure (position, lineWidth) are scaled
@@ -240,8 +246,7 @@ class PixelMap(Element):
             context.restoreGraphicState()
 
         if drawElements:
-            for e in self.elements:
-                e.build_html(view, p)
+            self.buildElements(view, p)
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)

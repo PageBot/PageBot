@@ -91,7 +91,7 @@ class TextBox(Element):
 
     def setText(self, s):
         u"""Set the formatted string to s, using self.style."""
-        self.x = newString(s, self)
+        self.x = self.newString(s, e=self)
 
     def _get_text(self):
         u"""Answer the plain text of the current self.bs"""
@@ -201,12 +201,11 @@ class TextBox(Element):
 
     #   B U I L D
 
-    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
         context = view.context # Get current context
-        b = context.b # Get view from current context
-        
+
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
@@ -235,7 +234,7 @@ class TextBox(Element):
             context.saveGraphicState()
             context.setShadow(textShadow)
 
-        b.textBox(self.bs.s, (px + self.pl + xOffset, py + self.pb-yOffset, 
+        context.textBox(self.bs, (px + self.pl + xOffset, py + self.pb-yOffset, 
             self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
         if textShadow:
@@ -243,9 +242,7 @@ class TextBox(Element):
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            for e in self.elements:
-                if e.show:
-                    e.build_drawBot(view, origin)
+            self.buildChildElements(view, p)
 
         # Draw markers on TextLine and TextRun positions.
         self._drawBaselines_drawBot(view, px, py)
@@ -258,10 +255,6 @@ class TextBox(Element):
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
-
-    def build_flat(self, view, origin=ORIGIN, showElements=True):
-        # TODO: Fill this code.
-        pass
 
     def build_html(self, view, origin=None, showElements=True):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 

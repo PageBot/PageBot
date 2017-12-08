@@ -16,6 +16,7 @@
 from htmlcontext import HtmlContext
 
 try:
+    import Appkit # Force exception on non-OSX platforms
     from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
     from drawbotcontext import DrawBotContext
     defaultContext = DrawBotContext() # Test if platform is supporing DrawBot:

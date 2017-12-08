@@ -36,7 +36,6 @@ class PageView(BaseView):
             path = '_export/' + self.doc.name + '.pdf'
 
         context = self.context # Get current context and builder from doc. Can be DrawBot of Flat
-        b = context.b # Get current builder.
 
         w, h, _ = self.doc.getMaxPageSizes(pageSelection)
 
@@ -74,10 +73,10 @@ class PageView(BaseView):
                 self.drawBefore(page, self, origin)
 
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
-            # Determine the drawing method from the builder.PB_ID
-            # From there all element will use the same builder extension if implemented.
-            hook = 'build_' + b.PB_ID
-            getattr(page, hook)(self, origin) # Typically calling page.build_drawBot or page.build_flat
+            # Recursively call all elements in the tree to build themselves.
+            # Note that is independent from the context. If there is a difference, the elements should 
+            # make the switch themselves.
+            page.buildChildElements(self, origin)
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, self, origin)

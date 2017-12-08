@@ -24,7 +24,8 @@ from pagebot import getFontPath
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
-from pagebot.contexts.strings. flatstring import FlatString
+from pagebot.contexts.strings.flatstring import FlatString
+from pagebot.toolbox.transformer import path2Name
 
 def iround(value):
     return min(255, max(0, int(round(value*255.0))))
@@ -121,7 +122,9 @@ class FlatContext(BaseContext):
         for fileName in os.listdir(path):
             if fileName.startswith('.'):
                 continue
-            filePath = path + '/' + fileName
+            if not path.endswith('/'):
+                path += '/'
+            filePath = path + fileName
             if os.path.isdir(filePath):
                 self._findFontPaths(filePath, fontPaths) # Recursively search in folder.
             elif fileName.lower().endswith('.ttf') or fileName.lower().endswith('.otf'):
@@ -132,6 +135,11 @@ class FlatContext(BaseContext):
         u"""Answer the list with names of all installed fonts in the system, as available
         for cls.newString( ) style."""
         return self.fontPaths.keys()
+
+    def installFont(self, fontPath):
+        u"""Install the font in the context and answer the font (file)name."""
+        # TODO: To be implemented later, if there is a real need for cached fonts.
+        return path2Name(fontPath)
 
     def getFontPathOfFont(self, fontName):
         u"""Answer the path that is source of the given font name. Answer None if the font cannot be found."""
@@ -149,6 +157,11 @@ class FlatContext(BaseContext):
         strings cannot be reused to show on multiple positions."""
         placedText = self.page.place(bs.s)
         placedText.position(p[0], p[1])
+
+    def textBox(self, bs, rect):
+        x, y, w, h = rect
+        placedText = self.page.place(bs.s)
+        placedText.position(x, y)
 
     #   D R A W I N G
 

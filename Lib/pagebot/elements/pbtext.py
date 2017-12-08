@@ -33,8 +33,8 @@ class Text(TextBox):
         pass # Ignore
     h = property(_get_h, _set_h)
         
-    def getTextSize(self, view):
+    def getTextSize(self, w=None):
         """Figure out what the width/height of the text self.fs is."""
-        return self.context.textSize(self.bs.s)
+        return self.bs.textSize(w=w)
 
 

@@ -57,6 +57,12 @@ class Fit2Sides(Condition):
 	def solve(self, e, score):	
 		self.solveAll(e, self._getConditions(), score)
 
+class Bleed2Sides(Fit2Sides):
+	u"""Bleed the element on all sides of the parent sides."""
+
+	def _getConsitions(self):
+		return [Bleed2LeftSide, Bleed2TopSide, Bleed2RightSide, Bleed2BottomSide]
+
 # There are no "FitOrigin" condition, as these may result is extremely large scalings.
 
 class Fit2Left(Condition):
@@ -141,7 +147,7 @@ class Fit2HeightSides(Condition):
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.top2Top() and e.fit2BottomSide(), e, score)
+			self.addScore(e.top2TopSide() and e.fit2BottomSide(), e, score)
 		
 class Fit2TopSide(Condition):
 	def test(self, e):
@@ -158,6 +164,57 @@ class Fit2BottomSide(Condition):
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.fit2BottomSide(), e, score)
+
+#	Bleed fits.
+
+class Bleed2WidthSides(Condition): # Note the plural in the name!
+	def test(self, e):
+		return e.isBleedOnLeftSide(self.tolerance) and e.isBleedOnRightSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bleed2LeftSide() and e.bleed2RightSide(), e, score)
+		
+class Bleed2LeftSide(Condition):
+	def test(self, e):
+		return e.isBleedOnLeftSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bleed2LeftSide(), e, score)
+
+class Bleed2RightSide(Condition):
+	def test(self, e):
+		return e.isBleedOnRightSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bleed2RightSide(), e, score)
+
+class Bleed2HeightSides(Condition):
+	def test(self, e):
+		return e.isBleedOnTopSide(self.tolerance) and e.isBleedOnBottomSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bleed2TopSide() and e.bleed2BottomSide(), e, score)
+		
+class Bleed2TopSide(Condition):
+	def test(self, e):
+		return e.isBleedOnTopSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bleed2TopSide(), e, score)
+
+class Bleed2BottomSide(Condition):
+	def test(self, e):
+		return e.isBleedOnBottomSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.bleed2BottomSide(), e, score)
+
 
 #	S H R I N K 
 

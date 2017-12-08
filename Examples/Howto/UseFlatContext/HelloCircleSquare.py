@@ -20,10 +20,14 @@
 #     Run as cmd-line:
 #     --> python HelloCircleSquare.py
 
+import os
+
 from random import random
 from pagebot.contexts import defaultContext as context
 
 FONTNAME = 'AmstelvarAlpha-VF.ttf'
+
+EXPORT_PATH = '_export/HelloCircleSquare.pdf'
 
 W = H = 500
 PAGES = 3
@@ -58,6 +62,9 @@ for p in range(PAGES):
 #context.saveDocument('_export/HelloCircleSquare.pdf')
 # Does not support alpha colors
 #context.saveDocument('_export/HelloCircleSquare.jpg')
-context.saveDocument('_export/HelloCircleSquare.pdf')
+context.saveDocument(EXPORT_PATH)
+
+os.system(u'open "%s"' % EXPORT_PATH)
+ 
 print 'Done'
 

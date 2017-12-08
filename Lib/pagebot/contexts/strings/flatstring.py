@@ -39,9 +39,9 @@ class FlatString(BabelString):
     def asText(self):
         return self.s # TODO: To be changed to Flat string behavior.
 
-    def textSize(self, w):
+    def textSize(self, w=None):
         u"""Answer the (w, h) size for a given width, with the current text."""
-        return 0, 0
+        return 100, 20
         # TODO: Make this work in Flat same as in DrawBot
         #return self.b.textSize(s)
  
