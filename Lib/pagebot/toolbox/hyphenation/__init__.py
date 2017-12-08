@@ -43,6 +43,44 @@ def hyphenatedWords(language=DEFAULT_LANGUAGE):
                 words[line.replace('-','')] = line
     return languages.get(language)
 
-def hyphenate(word, language=DEFAULT_LANGUAGE):
-    return (hyphenatedWords(language) or {}).get(word)
+def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
+    u"""Get the dictionary for the defined language and answer the hyphenated word if it exists.
+    If it does not exists and checkCombined flag is True, try break the word into parts and check
+    if on or nore of the parts are hyphenated. If all fails, then answer None."""
+    #
+    # Dutch combination check:
+    # TODO: Some changges in greedy patter needed, to match big patterns first before small ones.
+    #
+    # Word: marmerplaatsbepaling
+    # Right: mar-mer-plaats-be-pa-ling
+    #
+    # Word: ochtendjaskledinghangerschroefdraad
+    # Wrong: och-tend-jas-kle-ding-hang-er-schroef-draad
+    # Right: och-tend-jas-kle-ding-han-ger-schroef-draad
+    #
+    # Word: hagelslagroomboterbloemkoolstofzuigerveerpont
+    # Wrong: ha-gel-slag-room-bot-er-bloem-kool-st-of-zuig-er-veer-pont
+    # Right: ha-gel-slag-room-bo-ter-bloem-kool-stof-zui-ger-veer-pont
 
+    hWords = hyphenatedWords(language) or {} # Empty dictionary if the langueage does not exist.
+    hyphenated = hWords.get(word)
+    if hyphenated is not None: # If exact, then stop searching.
+        return hyphenated
+    # In case the language support combined words, try to find matching parts.
+    # TODO: Needs some adjustments for words with more than 2 parts, to take greedy large patterns
+    # to check first
+    if checkCombined and len(word) > 4:
+        # Cecking on combined words (as in 'nl' and 'de').
+        for i in range(2, len(word)-2):
+            w1 = word[:i]
+            hw1 = hyphenate(w1, language, True)
+            if hw1 is None:
+                continue
+            w2 = word[i:]
+            hw2 = hyphenate(w2, language, True)
+            if hw2 is None:
+                continue
+            return hw1 + '-' + hw2
+    return None
+
+    
