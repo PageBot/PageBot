@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -5,7 +6,7 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     
+#
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
@@ -22,10 +23,10 @@ import os
 from pagebot.style import LEFT, TOP, BOTTOM
 
 from pagebot.conditions import *
-from pagebot.elements import newRect, newTextBox
+from pagebot.elements import newTextBox
 from pagebot.document import Document
 
-DoTextFlow = False   
+DoTextFlow = False
 PagePadding = 32
 PageSize = 500
 
@@ -65,36 +66,36 @@ def makeDocument():
               ' Volume of text defines the box height.\n') % (n+1)
         h1 = None
 
-    e1 = newTextBox(s,
-                    name='CSSTextBox1',
-                    parent=page0, padding=4, x=100, font='Verdana', h=h1,
-                    maxW=W-2*PagePadding,
-                    minW=100, mb=20, mr=10, # Conditions make the
-                                            # element move to
-                                            # top-left of the page.
-                    # And the condition that there should be no overflow,
-                    # otherwise the text box will try to solve it.
-                    conditions=[Left2Left(), Fit2Width(), Float2Top()],
-                    # Position of the origin of the element.
-                    # Just to show where it is.
-                    # Has no effect on the position conditions.
-                    yAlign=BOTTOM, xAlign=LEFT,
-                    leading=5, fontSize=9, textFill=0,
-                    strokeWidth=0.5, fill=0.9, stroke=None)
-    e2 = newTextBox('', # Empty box, will get the
-                        # overflow from e1, if there is any.
-                    name='CSSTextBox2', # Flow reference by element.name
-                    parent=page0, padding=4, x=100, h=200,
-                    maxW=W-2*PagePadding, minW=100,
-                    conditions=[Left2Left(), Fit2Width(), Float2Top()],
-                    yAlign=TOP, fill=1, stroke=None)
-        
+    newTextBox(s,
+               name='CSSTextBox1',
+               parent=page0, padding=4, x=100, font='Verdana', h=h1,
+               maxW=W-2*PagePadding,
+               minW=100, mb=20, mr=10, # Conditions make the
+                                       # element move to
+                                       # top-left of the page.
+               # And the condition that there should be no overflow,
+               # otherwise the text box will try to solve it.
+               conditions=[Left2Left(), Fit2Width(), Float2Top()],
+               # Position of the origin of the element.
+               # Just to show where it is.
+               # Has no effect on the position conditions.
+               yAlign=BOTTOM, xAlign=LEFT,
+               leading=5, fontSize=9, textFill=0,
+               strokeWidth=0.5, fill=0.9, stroke=None)
+    newTextBox('', # Empty box, will get the
+                   # overflow from e1, if there is any.
+               name='CSSTextBox2', # Flow reference by element.name
+               parent=page0, padding=4, x=100, h=200,
+               maxW=W-2*PagePadding, minW=100,
+               conditions=[Left2Left(), Fit2Width(), Float2Top()],
+               yAlign=TOP, fill=1, stroke=None)
+    
     score = doc.solve() # Try to solve all pages.
     if score.fails:
         print score.fails
 
     return doc # Answer the doc for further doing.
- 
+
 # Document current view will recognize .css extension to call the CssBuilder.
 d = makeDocument()
 d.export(EXPORT_PATH)
