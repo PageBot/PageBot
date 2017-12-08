@@ -13,12 +13,14 @@
 #
 #     drawbotcontext.py
 #
-from AppKit import NSFont
-from fontTools.ttLib import TTFont, TTLibError
-from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
 try:
+    from AppKit import NSFont
+    from fontTools.ttLib import TTFont, TTLibError
+    from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
     from drawBot import installFont, listOpenTypeFeatures, installedFonts
 except ImportError:
+    NSFont = TTFont = TTLibError = None
+    CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
     installFont =  listOpenTypeFeatures = None
 
 from basecontext import BaseContext

@@ -55,9 +55,9 @@ class Polygon(Element):
     def _get_h(self):
         return self.size[1] # Calculate cache self._size if undefined.
 
-    #   D R A W B O T  S U P P O R T
+    #   D R A W B O T / F L A T  S U P P O R T
 
-    def buld_drawBot(self, view, origin, drawElements=True):
+    def buld(self, view, origin, drawElements=True):
 
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
@@ -81,9 +81,7 @@ class Polygon(Element):
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            for e in self.elements:
-                if e.show:
-                    e.build_drawBot(view, origin)
+            self.buildElements(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -94,19 +92,12 @@ class Polygon(Element):
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
-    #   F L A T  S U P P O R T
-
-    def build_flat(self, view, origin=ORIGIN, drawElements=True):
-        u"""Drawing Flat polygons here."""
-        context = self.context # Get current context and builder.
-        b = context.b # This is a bit more efficient than self.b once we got context
-
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
         u"""Drawing HTML Polygon through SVG?"""
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
-       
+        # TODO: Needs a solution, SVG or pixels?
         
 

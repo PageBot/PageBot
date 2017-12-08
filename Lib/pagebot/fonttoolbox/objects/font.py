@@ -21,6 +21,7 @@
 #     We'll call this class "Font" instead of "Style" (as in other TypeNetwerk tool code),
 #     to avoid confusion with the PageBot style dictionary, which hold style parameters.
 #
+from fontTools.ttLib import TTFont
 from pagebot.contexts import defaultContext
 
 from pagebot.fonttoolbox.objects.glyph import Glyph
@@ -32,7 +33,7 @@ from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernR
 def getFontByPath(fontPath, install=True):
     return Font(fontPath, install=install)
 
-def getFontByName(self, fontName, install=True, context=None):
+def getFontByName(fontName, install=True, context=None):
     if context is None:
         context = defaultContext
     return getFontByPath(context.getFontPathOfFont(fontName), install=install)
@@ -44,7 +45,7 @@ def findInstalledFonts(fontNamePatterns=None, context=None):
         context = defaultContext
     fontNames = []
     installedFontNames = context.installedFonts()
-    if fontNamePatterns is not None and not isinstance(fontNamePatterns, (None, list, tuple)):
+    if fontNamePatterns is not None and not isinstance(fontNamePatterns, (list, tuple)):
         fontNamePatterns = [fontNamePatterns]
     if fontNamePatterns is not None:
         for fontNamePattern in fontNamePatterns:
@@ -100,7 +101,8 @@ class Font(object):
             self.install()
         else:
             self.installedName = None # Set to DrawBot name, if installing later.
-        try:
+        #try:
+        if 1:
             self.ttFont = TTFont(path, lazy=lazy)
             # TTFont is available as lazy style.info.font
             self.info = FontInfo(self.ttFont)
@@ -115,8 +117,8 @@ class Font(object):
             self._groups = None # Lazy reading.
             self._glyphs = {} # Lazy creation of self[glyphName]
             self._analyzer = None # Lazy creation.
-        except TTLibError:
-            raise OSError('Cannot open font file "%s"' % path)
+        #except:# TTLibError:
+        #    raise OSError('Cannot open font file "%s"' % path)
 
     def __repr__(self):
         return '<PageBot Font %s>' % (self.path or self.name)

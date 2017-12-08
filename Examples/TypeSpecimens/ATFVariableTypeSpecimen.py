@@ -21,25 +21,57 @@ import os, copy
 from pagebot.contexts import defaultContext as context
 from pagebot.style import INCH
 from pagebot.document import Document
+from pagebot.fonttoolbox.objects.font import findInstalledFonts, getFontByName
+from pagebot.elements import newTextBox, newRect, newText
+from pagebot.toolbox.transformer import int2Color
+from pagebot.conditions import Bleed2Sides
 
 W = 8.5*INCH
 H = 11*INCH
 
+# Build the specimen pages for the font names that include these patterns.
+FONT_NAME_PATTERNS = ('Bungee', 'Amstel', 'Deco')
+
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/ATFSpecimen-%s.pdf' 
 
-def makeDocument():
+# Some parameters from the original book
+PAPER_COLOR = int2Color(0xF4EbC9) # Approximation of paper color of original specimen.
+RED_COLOR = int2Color(0xAC1E2B) # Red color used in the original specimen
+  
+def buildSpecimenPages(doc, fontNames):
+    for index, fontName in enumerate(sorted(fontNames)):
+        font = getFontByName(fontName)
+        page = doc[index]
+        pageTitle = font.info.familyName + ' ' + font.info.styleName
+        # Add filling rectangle for background color of the old paper book.
+        newRect(z=-1, parent=page, conditions=[Bleed2Sides()], fill=PAPER_COLOR)
+        # Centered title: family name and style name of the current font.
+        titleBs = context.newString(pageTitle, style=dict(fontSize=24, textFill=0))
+        newText(titleBs, x=50, y=100, parent=page, w=400)
 
-    doc = Document(w=W, h=H, originTop=False, startPage=1, autoPages=10, context=context)
+def makeDocument():
+    u"""Create the main document in the defined size with a couple of automatic empty pages."""
+    doc = Document(w=W, h=H, title='Variable Font Sample Page', originTop=False, startPage=1, autoPages=10, context=context)
     # Get default view from the document and set the viewing parameters.
     view = doc.view
     view.padding = INCH/2 # To show cropmarks and such, make >=20*MM or INCH.
     view.showPageCropMarks = True # Won't show if there is not padding in the view.
-    view.showPageFrame = True
+    view.showPageFrame = False # No frame in case PAPER_COLOR exists to be shown.
     view.showPageRegistrationMarks = True
     view.showPageNameInfo = True
     view.showTextOverflowMarker = False # Don't show marker in case Filibuster blurb is too long.
- 
+
+    # Build the pages for all fonts that include one of these patterns.
+    fontNames = findInstalledFonts(fontNamePatterns=FONT_NAME_PATTERNS, context=context)
+    buildSpecimenPages(doc, fontNames)
+
+    # Solve remaining layout and size conditions.
+       
+    score = doc.solve()
+    if score.fails:
+        print 'Conditiond failed', score.fails 
+
     return doc
 
 doc = makeDocument()

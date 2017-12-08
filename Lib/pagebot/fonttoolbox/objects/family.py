@@ -15,7 +15,7 @@
 #
 #     Implements a family collection of Font instances.
 #
-from drawBot import installedFonts
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
 from pagebot.toolbox.transformer import path2Name
 
@@ -54,7 +54,7 @@ def getFamilyFontPaths(familyName):
 def getFamilyFonts(familyName):
     # Collect the DrawBot names of all available fonts for the named family, that are installed in the system.
     fonts = {} # Dictionary, where key is the DrawBot font name, value is the OS path of the font file.
-    for fontName in installedFonts(): # Answers complete list of all installed fonts.
+    for fontName in context.installedFonts(): # Answers complete list of all installed fonts.
         if familyName in fontName: # If this is a with with the familyName that we are looking for...
             fontPath = getFontPathOfFont(fontName)
             if fontPath is not None:
@@ -64,7 +64,7 @@ def getFamilyFonts(familyName):
 def getSystemFontPaths():
     u"""Answer the cleaned list of installed font names."""
     fontPaths = []
-    for fontName in installedFonts():
+    for fontName in context.installedFonts():
         if not fontName.startswith('.'):
             fontPaths.append(getFontPathOfFont(fontName))
     return fontPaths

@@ -59,7 +59,7 @@ class DemoSpreadSheet(Element):
         
         if drawElements:
             # If there are child elements, draw them over the pixel image.
-            self._drawElements(view, b, p)
+            self.buildChildElements(view, b, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, b, p)

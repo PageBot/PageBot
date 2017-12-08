@@ -41,8 +41,7 @@ class Oval(Element):
         context.oval(px, py, self.w, self.h)
 
         if drawElements:
-            for e in self.elements:
-                e.build_flat(view, p)
+            self.buildElements(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

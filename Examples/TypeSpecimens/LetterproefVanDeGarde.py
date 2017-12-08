@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -56,8 +57,9 @@ pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
 #SYSTEM_FAMILY_NAMES = ('Verdana',)
 #SYSTEM_FAMILY_NAMES = ('Georgia',)
-SYSTEM_FAMILY_NAMES = ('Proforma', 'Productus')
-MY_FAMILY_NAMES = ('Proforma', 'Productus')
+FONT_NAME_PATTERNS = ('Bungee', 'Amstel', 'Deco') # TODO, make this work.
+#SYSTEM_FAMILY_NAMES = ('Proforma', 'Productus')
+#MY_FAMILY_NAMES = ('Proforma', 'Productus')
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/LetterproefVanDeGarde.png' 
@@ -69,9 +71,9 @@ def findFont(styleNames, italic=False):
     # Some hard wired foundry name here. This could be improved. Maybe we can add a public
     # "Meta-info about typefaces somewhere in PageBot, so foundries and designers can add their own
     # data there.
-    FAMILY_NAMES = MY_FAMILY_NAMES
-    fontNames = findInstalledFonts(FAMILY_NAMES)
-    foundryName = 'TN | TYPETR' # TODO: Get from font is available
+    FAMILY_NAMES = FONT_NAME_PATTERNS
+    fontNames = findInstalledFonts(FONT_NAME_PATTERNS)
+    foundryName = 'TN | TYPETR' # TODO: Get from font if available
     if not fontNames: # Not installed, find something else that is expected to exist in OSX:
         foundryName = 'Apple OSX Font'
         FAMILY_NAMES = SYSTEM_FAMILY_NAMES
@@ -79,7 +81,7 @@ def findFont(styleNames, italic=False):
             fontNames = findInstalledFonts(pattern)
             if fontNames:
                 break
-    print fontNames
+
     # Find matching styles. 
     for styleName in styleNames:
         for fontName in fontNames:

@@ -2103,9 +2103,9 @@ class Element(object):
                 c.line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
             c.restoreGraphicState()
 
-    #   D R A W B O T  S U P P O R T
+    #   D R A W B O T / F L A T  S U P P O R T
 
-    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
@@ -2119,9 +2119,7 @@ class Element(object):
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            for e in self.elements:
-                if e.show:
-                    e.build_drawBot(view, origin)
+            self.buildChildElements(view, origin)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -2129,32 +2127,17 @@ class Element(object):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
-    #   F L A T  S U P P O R T
-
-    def build_flat(self, view, origin=None, drawElements=True):
-        u"""Default drawing method just drawing the frame. 
-        Probably will be redefined by inheriting element classes."""
-        p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)    
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
-        self.buildFrame(view, p) # Draw optional frame or borders.
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            for e in self.elements:
-                if e.show:
-                    e.build_drawBot(view, origin)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
-        self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
-
+    def buildChildElements(self, view, origin):
+        u"""Draw child elements, dispatching depending on the implementation of context specific build elements.
+        If not specific builder_<context.b.PB_ID> is implemented, call default. e.build(view, origin)"""
+        hook = 'build_' + self.context.b.PB_ID
+        for e in self.elements:
+            if not e.show:
+                continue
+            if hasattr(e, hook):
+                getattr(e, hook)(view, origin)
+            else: # No implementation for this context, call default building method for this element.
+                e.build(view, origin)
 
     #   H T M L  /  C S S  S U P P O R T
 
@@ -2185,9 +2168,8 @@ class Element(object):
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(self, view, p)
 
-            if drawElements: # Optional create empty element.
-                for e in self.elements:
-                    e.build_html(view, origin)
+            if drawElements: # Build child elements, dispatch if they implemented generic or context specific build method.
+                self.buildChildElements(view, origin)
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(self, view, p)
@@ -2532,6 +2514,20 @@ class Element(object):
             r2 = gridRows[row + colspan - 1]
             return abs(e.h - (r2[0] - r1[0] + r2[1])) <= tolerance
         return False
+
+    #   Bleed conditions
+    #   TODO: To be written with bleed value from self.css('bleed')
+    def isBleedOnLeftSide(self, tolerance):
+        pass
+
+    def isBleedOnRightSide(self, tolerance):
+        pass
+
+    def isBleedOnTopSide(self, tolerance):
+        pass
+
+    def isBleedOnBottomSide(self, tolerance):
+        pass
 
     #   T R A N S F O R M A T I O N S 
 
@@ -2940,7 +2936,25 @@ class Element(object):
             self.h += self.parent.h - self.top
         return True
 
-    # Shrinking
+    #   Bleeding
+    #   TODO: Need to be written.
+    def bleed2LeftSide(self):
+        pass
+        return False
+
+    def bleed2RightSide(self):
+        pass
+        return False
+
+    def bleed2TopSide(self):
+        pass
+        return False
+        
+    def bleed2BottomSide(self):
+        pass
+        return False
+
+    #   Shrinking
     
     def shrink2BlockBottom(self):
         _, boxY, _, boxH = self.box

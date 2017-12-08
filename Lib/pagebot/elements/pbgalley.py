@@ -108,9 +108,9 @@ class Galley(Element):
         ruler = self.RULER_CLASS(style=style)
         self.appendElement(ruler)
 
-    #   D R A W B O T  S U P P O R T
+    #   D R A W B O T / F L A T  S U P P O R T
 
-    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True):
         u"""Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the
@@ -130,10 +130,17 @@ class Galley(Element):
         gw, gh = self.getSize()
         b.rect(px, py, gw, gh)
         if drawElements:
+            hook = 'build_' + self.context.b.PB_ID
+            # Don't call self.buildElements, as we want to track the vertical positions
             gy = 0
             for e in self.elements:
+                if not e.show:
+                    continue
                 # @@@ Find space and do more composition
-                e.build_drawBot(view, (px, py + gy))
+                if hasattr(e, hook):
+                    getattr(e, hook)(view, (px, py + gy))
+                else: # No implementation for this context, call default building method for this element.
+                    e.build(view, (px, py + gy))
                 gy += element.h
 
         if self.drawAfter is not None: # Call if defined
@@ -141,24 +148,7 @@ class Galley(Element):
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
-
-    #   F L A T  S U P P O R T
-
-    def build_flat(self, view, origin=ORIGIN, drawElements=True):
-        p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(view, p)
-
-        if drawElements:
-            for e in self.elements:
-                e.build_flat(view, p)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(view, p)
-        
+      
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
@@ -171,8 +161,7 @@ class Galley(Element):
             self.drawBefore(view, p)
 
         if drawElements:
-            for e in self.elements:
-                e.build_html(view, p)
+            self.buildElements(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(view, p)

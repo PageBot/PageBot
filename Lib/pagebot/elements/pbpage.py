@@ -46,27 +46,12 @@ class Page(Element):
 
     #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw all elements of this page in DrawBot."""
         p = pointOffset(self.oPoint, origin) # Ignoe z-axis for now.
         # If there are child elements, draw them over the text.
         if drawElements:
-            for e in self.elements:
-                e.build_drawBot(view, p)
-        # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
-        view.drawPageMetaInfo(self, origin)
-        # Check if we are in scaled mode. Then restore.
-        #self._restoreScale()
-
-    #   F L A T  S U P P O R T
-
-    def build_flat(self, view, origin=ORIGIN, drawElements=True):
-        u"""Draw all elements of this page in Flat"""
-        p = pointOffset(self.oPoint, origin) # Ignoe z-axis for now.
-        # If there are child elements, draw them over the text.
-        if drawElements:
-            for e in self.elements:
-                e.build_flat(view, p)
+            self.buildChildElements(view, p) # Build child elements, depending in context build implementations.
         # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
         view.drawPageMetaInfo(self, origin)
         # Check if we are in scaled mode. Then restore.
