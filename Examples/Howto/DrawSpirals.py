@@ -14,7 +14,7 @@
 #     drawSpirals.py
 #
 from __future__ import division # Make integer division result in float.
-import pagebot # Import to know the path of non-Python resources.
+#import pagebot # Import to know the path of non-Python resources.
 W = H = 1000
 X = 0
 Y = 0
@@ -42,8 +42,8 @@ def drawSpiral():
         dy3 = (n+2)*Sy*D
         dx4 = (n+3)*Sx*D
         dy4 = (n+3)*Sy*D
-        dx5 = (n+4)*Sx*D
-        dy5 = (n+4)*Sy*D
+        #dx5 = (n+4)*Sx*D
+        #dy5 = (n+4)*Sy*D
         if not runs:
             path.moveTo((mx, my))
         else:
@@ -57,17 +57,23 @@ def drawSpiral():
     stroke(0)
     strokeWidth(2)
     drawPath(path)
-    
-    
-Variable([
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    dict(name='X', ui='Slider', args=dict(minValue=-W/2, value=0, maxValue=W/2)),
-    dict(name='Y', ui='Slider', args=dict(minValue=-H/2, value=0, maxValue=H/2)),
-    dict(name='N', ui='Slider', args=dict(minValue=8*2, value=8*8, maxValue=8*32)),
-    dict(name='Sx', ui='Slider', args=dict(minValue=2, value=10, maxValue=40)),
-    dict(name='Sy', ui='Slider', args=dict(minValue=2, value=10, maxValue=40)),
-    dict(name='Exy', ui='Slider', args=dict(minValue=0.01, value=0.58, maxValue=1)),
-    dict(name='D', ui='Slider', args=dict(minValue=0.1, value=0.5, maxValue=5)),
-], globals())
-       
+
+#dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+Variable([dict(name='X', ui='Slider',
+               args=dict(minValue=-W/2, value=0, maxValue=W/2)),
+          dict(name='Y', ui='Slider',
+               args=dict(minValue=-H/2, value=0, maxValue=H/2)),
+          dict(name='N', ui='Slider',
+               args=dict(minValue=8*2, value=8*8, maxValue=8*32)),
+          dict(name='Sx', ui='Slider',
+               args=dict(minValue=2, value=10, maxValue=40)),
+          dict(name='Sy', ui='Slider',
+               args=dict(minValue=2, value=10, maxValue=40)),
+          dict(name='Exy', ui='Slider',
+               args=dict(minValue=0.01, value=0.58, maxValue=1)),
+          dict(name='D', ui='Slider',
+               args=dict(minValue=0.1, value=0.5, maxValue=5))
+         ],
+         globals())
+
 drawSpiral()

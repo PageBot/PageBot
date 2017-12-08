@@ -6,7 +6,7 @@ MARKDOWN_PATH = u"TEST_CONTENT.md"
 
 # Export PDF, showing what is found inside the markdown file.
 EXPORT_PATH = '_export/EmbeddedPythonCodeBlocks.pdf'
-# Create an unbound Typesetter instance (trying to find a Document 
+# Create an unbound Typesetter instance (trying to find a Document
 # instance in the codeblock result. If no Galley instance is supplied
 # to the Typesetter, it will create one.
 t = Typesetter()

@@ -15,19 +15,19 @@
 #
 #     Needs debugging in dimension showing of views.
 #
-from pagebot.style import getRootStyle, A5, BOTTOM, CENTER, MIDDLE
+from pagebot.style import getRootStyle, A5, CENTER, MIDDLE
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document
-from pagebot.elements import *
+from pagebot.elements import newRect
 from pagebot.conditions import *
- 
+
 W, H = A5
 W = 400
 H = 480
 ShowOrigins = False
 ShowElementInfo = False
-RedSect = True # Show red or gray
+RedRect = True # Show red or gray
 RectSize = 300
 
 def makeDocument():

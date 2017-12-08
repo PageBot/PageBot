@@ -18,11 +18,11 @@
 #     For real use, import the function as:
 #     from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 #
-import copy
+from random import random
+from math import sin
 from pagebot import getRootPath
-from pagebot.fonttoolbox.objects.font import Font, getFontByName
-from pagebot.fonttoolbox.variablefontbuilder import (getVariableFont,
-                                                     fitVariableWidth)
+from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 
 ROOT_PATH = getRootPath()
 FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
@@ -59,7 +59,7 @@ for n in range(20):
 
 # Drawn torn-off page top
 PAGE_FRAME = None
- 
+
 def drawPageFrame(w):
     fill(1)
     stroke(0)
@@ -79,7 +79,7 @@ def drawPageFrame(w):
     for n in range(10):
         line((PADDING+M, H-5*PADDING-n*leading),
              (PADDING+w-M-LINE_ENDINGS[n], H-5*PADDING-n*leading))
-    
+
 def draw(w, y, drawVariable):
     u"""
       Draw 3 lines of text: the boundaries of with the width axis and
@@ -95,7 +95,7 @@ def draw(w, y, drawVariable):
         translate(0, -H/2+PADDING/2)
     drawPageFrame(d['width']+2*M)
     restore()
-    
+
     minWidth = d['condensedWidth']
     maxWidth = d['wideWidth']
     fixedWidth = minWidth + (maxWidth - minWidth)/2
@@ -112,7 +112,7 @@ def draw(w, y, drawVariable):
             text(dFixed['fs'], (PADDING+M, y-PADDING-M))
         else:
             text(d['wideFs'], (PADDING+M, y-PADDING-M))
-    
+
 if INTERACTIVE:
     Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),

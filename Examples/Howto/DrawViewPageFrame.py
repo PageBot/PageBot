@@ -15,7 +15,7 @@
 #
 #     Needs debug in view dimension showing.
 #
-from pagebot.style import getRootStyle, A5, BOTTOM, CENTER
+from pagebot.style import getRootStyle, CENTER
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document
@@ -46,7 +46,7 @@ def makeDocument():
 
     fs = doc.context.newString(s, style=dict(fontSize=30,
                                              textFill=(1, 0, 0),
-                                             xTextAlign=CENTER)) 
+                                             xTextAlign=CENTER))
     nt = newText(fs, y=100, xxconditions=conditions, parent=page, fill=(1, 1, 0))
     print nt.x, nt.y, nt.w, nt.h
     score = page.solve()
