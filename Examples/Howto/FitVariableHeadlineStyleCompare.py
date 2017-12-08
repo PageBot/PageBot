@@ -30,17 +30,27 @@ ROOT_PATH = getRootPath()
 FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
 f = Font(FONT_PATH, install=True) # Get PageBot Font instance of Variable font.
 
-def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, fixedSize=False, 
-        tracking=None, rTracking=None):
-    u"""Answer the font instance that makes string s width on the given width *w* for the given *fontSize*.
-    The *condensedLocation* dictionary defines the most condensed font instance (optionally including the opsz)
-    and the *wideLocation* dictionary defines the most wide font instance (optionally including the opsz).
-    The string width for s is calculated with both locations and then the [wdth] value is interpolated and iterated
-    until the location is found where the string *s* fits width *w). Note that interpolation may not be enough,
-    as the width axis may contain non-linear masters.
-    If the requested w outside of what is possible with two locations, then interations are performed to 
-    change the size. Again this cannot be done by simple interpolation, as the [opsz] also changes the width.
-    It one of the axes does not exist in the font, then use the default setting of the font.
+def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
+                     wideLocation, fixedSize=False,
+                     tracking=None, rTracking=None):
+    u"""
+      Answer the font instance that makes string s width on the given width
+      *w* for the given *fontSize*. The *condensedLocation* dictionary defines
+      the most condensed font instance (optionally including the opsz) and
+      the *wideLocation* dictionary defines the most wide font instance
+      (optionally including the opsz).
+
+      The string width for s is calculated with both locations and then the
+      [wdth] value is interpolated and iterated until the location is found
+      where the string *s* fits width *w). Note that interpolation may not
+      be enough, as the width axis may contain non-linear masters.
+
+      If the requested w outside of what is possible with two locations,
+      then interations are performed to change the size. Again this cannot
+      be done by simple interpolation, as the [opsz] also changes the width.
+
+      It one of the axes does not exist in the font, then use the default
+      setting of the font.
     """
     condFont = getVariableFont(varFont, condensedLocation)
     condensedFs = context.newString(s, style=dict(font=condFont.installedName,
@@ -61,13 +71,13 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation, f
         font = condFont
         fs = condensedFs
         location = condensedLocation
-    elif w > wideWidth:       
+    elif w > wideWidth:
         font = wideFont
         fs = wideFs
         location = wideLocation
     else:
         # Now interpolation the fitting location
-        widthRange = wideLocation['wdth'] - condensedLocation['wdth'] 
+        widthRange = wideLocation['wdth'] - condensedLocation['wdth']
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condWidth)/(wideWidth-condWidth)
         font = getVariableFont(varFont, location)
@@ -204,3 +214,4 @@ else:
         draw(160 + (W-2*PADDING-160) * dx)
         angle += 360/FRAMES
     saveImage('_export/fitVariableHeadlineStyleCompare.gif')
+
