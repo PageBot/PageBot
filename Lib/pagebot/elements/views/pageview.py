@@ -78,6 +78,8 @@ class PageView(BaseView):
             # make the switch themselves.
             page.buildChildElements(self, origin)
 
+            self.drawPageMetaInfo(page, origin)
+            
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, self, origin)
 

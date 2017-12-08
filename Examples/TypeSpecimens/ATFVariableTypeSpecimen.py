@@ -30,7 +30,7 @@ W = 8.5*INCH
 H = 11*INCH
 
 # Build the specimen pages for the font names that include these patterns.
-FONT_NAME_PATTERNS = ('Bungee', 'Amstel', 'Deco')
+FONT_NAME_PATTERNS = ('Bungee', 'Amstel')
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/ATFSpecimen-%s.pdf' 
@@ -46,7 +46,6 @@ def buildSpecimenPages(doc, fontNames):
         pageTitle = font.info.familyName + ' ' + font.info.styleName
         # Add filling rectangle for background color of the old paper book.
         newRect(z=-1, parent=page, conditions=[Bleed2Sides()], fill=PAPER_COLOR)
-        print '@#@##@#', fontName
         # Centered title: family name and style name of the current font.
         titleBs = context.newString(pageTitle, style=dict(font=fontName, fontSize=24, textFill=0))
         newText(titleBs, x=50, y=100, parent=page, w=400)
