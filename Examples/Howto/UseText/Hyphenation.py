@@ -24,3 +24,13 @@ print hyphenate('Tutankhamun', 'en')
 print hyphenate('marmerplaatjes', 'nl')
 # Hyphenates as plaat-staal (sheet of steel) where plaats-taal (regional language) also would have been valid
 print hyphenate('plaatstaal', 'nl') 
+
+# Combined dutch words, hyphenating between valid words.
+print hyphenate('marmer', 'nl', True)
+print hyphenate('plaats', 'nl', True)
+print hyphenate('marmerplaats', 'nl', True)
+print hyphenate('marmerplaatsbepaling', 'nl', True)
+print hyphenate('ochtendjaskledinghangerschroefdraad', 'nl', True)
+print hyphenate('hagelslagroomboterbloemkoolstofzuigerveerpont', 'nl', True)
+
+
