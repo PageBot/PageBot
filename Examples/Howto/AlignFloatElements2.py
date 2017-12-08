@@ -16,15 +16,15 @@
 #     This script generates a page with aligned square,
 #     showing how conditional placement works.
 #
-import pagebot # Import to know the path of non-Python resources.
+#import pagebot # Import to know the path of non-Python resources.
 
 # Creation of the RootStyle (dictionary) with all
 # available default style parameters filled.
-from pagebot.style import getRootStyle, CENTER, NO_COLOR, TOP, BOTTOM
+from pagebot.style import CENTER #, BOTTOM
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document
-from pagebot.elements import *
+from pagebot.elements import newRect
 # Import all layout condition classes
 from pagebot.conditions import *
 
@@ -64,10 +64,10 @@ def makeDocument():
         newRect(z=z, w=SQ, h=SQ, parent=page, conditions=condition, fill=0.7)
         z += 1
     # Make new container for adding elements inside with alignment.
-    cnt = newRect(z=z, w=W-2*SQ, h=H-2*SQ, fill=(0.8, 0.8, 0.8, 0.4),
-                  parent=page, margin=SQ, yAlign=BOTTOM,
-                  xAlign=CENTER, stroke=None,
-                  conditions=(Center2Center(), Middle2Middle()))
+    #cnt = newRect(z=z, w=W-2*SQ, h=H-2*SQ, fill=(0.8, 0.8, 0.8, 0.4),
+    #              parent=page, margin=SQ, yAlign=BOTTOM,
+    #              xAlign=CENTER, stroke=None,
+    #              conditions=(Center2Center(), Middle2Middle()))
     z += 1
     newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
             conditions=(Center2Center(), Middle2Middle()), fill=(1, 0, 0))
@@ -78,7 +78,7 @@ def makeDocument():
     conditions = [(Center2Center(), Float2Top()),
                   (Center2Center(), Float2Bottom()),
                   (Float2Left(), Middle2Middle()),
-                  (Float2Right(), Middle2Middle())] 
+                  (Float2Right(), Middle2Middle())]
     for condition in conditions:
         newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
                 conditions=condition, fill=(1, 1, 0))
