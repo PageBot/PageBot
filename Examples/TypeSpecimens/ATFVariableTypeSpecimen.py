@@ -46,8 +46,9 @@ def buildSpecimenPages(doc, fontNames):
         pageTitle = font.info.familyName + ' ' + font.info.styleName
         # Add filling rectangle for background color of the old paper book.
         newRect(z=-1, parent=page, conditions=[Bleed2Sides()], fill=PAPER_COLOR)
+        print '@#@##@#', fontName
         # Centered title: family name and style name of the current font.
-        titleBs = context.newString(pageTitle, style=dict(fontSize=24, textFill=0))
+        titleBs = context.newString(pageTitle, style=dict(font=fontName, fontSize=24, textFill=0))
         newText(titleBs, x=50, y=100, parent=page, w=400)
 
 def makeDocument():

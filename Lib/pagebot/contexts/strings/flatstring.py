@@ -66,19 +66,23 @@ class FlatString(BabelString):
         elif sCapitalized:
             s = s.capitalize()
 
+        # Since Flat does not do font GSUB feature compile, we'll make the transformed string here,
+        # using Tal's https://github.com/typesupply/compositor
+        # This needs to be installed, in case PageBot is running outside of DrawBot.
+
         fontPath = context.getFontPathOfFont(style.get('font'))
         if fontPath is None:
             fontPath = context.getFontPathOfFont(cls.DEFAULT_FONT)
-        font = context.b.font.open(fontPath)
+        try:
+            font = context.b.font.open(fontPath)
+        except ValueError:
+            fontPath = context.getFontPathOfFont(cls.DEFAULT_FONT)
+            font = context.b.font.open(fontPath)
         strike = context.b.strike(font)
         strike.size(fontSize or style.get('fontSize', cls.DEFAULT_FONTSIZE), style.get('leading', cls.DEFAULT_LEADING), units='pt')
         if w is not None:
             strike.width = w
-
-        # Since Flat does not do font GSUB feature compile, we'll make the transformed string here,
-        # using Tal's https://github.com/typesupply/compositor
-        # This needs to be installed, in case PageBot is running outside of DrawBot.
-        
         return cls(strike.text(s), context) # Make real Flat flavor BabelString here.
+        
 
 
