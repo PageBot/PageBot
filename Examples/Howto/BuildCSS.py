@@ -89,7 +89,7 @@ def makeDocument():
                maxW=W-2*PagePadding, minW=100,
                conditions=[Left2Left(), Fit2Width(), Float2Top()],
                yAlign=TOP, fill=1, stroke=None)
-    
+
     score = doc.solve() # Try to solve all pages.
     if score.fails:
         print score.fails

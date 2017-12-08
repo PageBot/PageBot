@@ -23,7 +23,7 @@ from pagebot.conditions import *
 from pagebot.elements import newTextBox
 from pagebot.document import Document
 
-DoTextFlow = False   
+DoTextFlow = False
 PagePadding = 32
 PageSize = 500
 
@@ -56,11 +56,11 @@ def makeDocument():
     rs['rLeading'] = 1.4
     rs['textFill'] = 1
 
-    textBoxStyle = doc.addStyle('textbox', dict(fill=(0, 0, 0, 0.7),
-                                                padding=40))
+    #textBoxStyle = doc.addStyle('textbox', dict(fill=(0, 0, 0, 0.7),
+    #                                            padding=40))
     pStyle = doc.addStyle('p', dict(textFill=0))
-    h1Style = doc.addStyle('h1', dict(fontSize=24, textFill=(0,0,1)))
-    h2Style = doc.addStyle('h2', dict(fontSize=18, textFill=(0,1,0)))
+    h1Style = doc.addStyle('h1', dict(fontSize=24, textFill=(0, 0, 1)))
+    #h2Style = doc.addStyle('h2', dict(fontSize=18, textFill=(0, 1, 0)))
 
     view = doc.getView()
     view.padding = 0 # Aboid showing of crop marks, etc.
@@ -88,21 +88,21 @@ def makeDocument():
         h1 = None
 
     e1 = newTextBox(s,
-        name='CSSTextBox1',
-        parent=page0, padding=4, x=100, font='Verdana', h=h1,
-        maxW=W-2*PagePadding,
-        minW=100, mb=20, mr=10, # Conditions make the element
-                                # move to top-left of the page.
-        gridX=((fr(3), px(8)), (fr(2), px(8))),
-        # And the condition that there should be no overflow,
-        # otherwise the text box will try to solve it.     
-        conditions=[Left2Left(), Fit2Width(), Float2Top()],
-        # Position of the origin of the element.
-        # Just to show where it is.
-        # Has no effect on the position conditions. 
-        yAlign=BOTTOM, xAlign=LEFT,
-        leading=5, fontSize=9, textFill=0,
-        strokeWidth=0.5, fill=0.9, stroke=None)
+                    name='CSSTextBox1',
+                    parent=page0, padding=4, x=100, font='Verdana', h=h1,
+                    maxW=W-2*PagePadding,
+                    minW=100, mb=20, mr=10, # Conditions make the element
+                                            # move to top-left of the page.
+                    gridX=((fr(3), px(8)), (fr(2), px(8))),
+                    # And the condition that there should be no overflow,
+                    # otherwise the text box will try to solve it.
+                    conditions=[Left2Left(), Fit2Width(), Float2Top()],
+                    # Position of the origin of the element.
+                    # Just to show where it is.
+                    # Has no effect on the position conditions.
+                    yAlign=BOTTOM, xAlign=LEFT,
+                    leading=5, fontSize=9, textFill=0,
+                    strokeWidth=0.5, fill=0.9, stroke=None)
     print(e1.style)
 
     newTextBox(s, # Empty box, will get the overflow
@@ -115,7 +115,7 @@ def makeDocument():
 
     score = doc.solve() # Try to solve all pages.
     if score.fails:
-        print score.fails
+        print(score.fails)
 
     return doc # Answer the doc for further doing.
 
