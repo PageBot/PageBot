@@ -12,7 +12,8 @@ install:
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position
+- export WILL_FIX_LATER=line-too-long,trailing-whitespace
 - export MAYBE_SOMEDAY=fixme,missing-docstring,superfluous-parens,wildcard-import,unused-wildcard-import,redefined-outer-name
-- export PYLINT="pylint --disable=$WONT_FIX,$MAYBE_SOMEDAY"
+- export PYLINT="pylint --disable=$WONT_FIX,$MAYBE_SOMEDAY,$WILL_FIX_LATER"
 - $PYLINT Examples/Howto/UseFlatContext/*.py
 - $PYLINT Examples/Howto/*.py
