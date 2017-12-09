@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -15,12 +16,12 @@
 #     This script generates a page with aligned square,
 #     showing how conditional placement works.
 #
-import pagebot # Import to know the path of non-Python resources.
+#import pagebot # Import to know the path of non-Python resources.
 from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available
 # default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE
+from pagebot.style import CENTER, TOP, MIDDLE
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document
