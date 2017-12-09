@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -41,7 +42,7 @@ for p in range(PAGES):
     for n in range(RECTS):
         # Compatible to DrawBot: color values between (0, 1)
         red, green, blue = random(), random(), random()
-        #a = 0.5 +random()*0.5
+        #a = 0.5 + random()*0.5
         #context.fill((red, green, blue, a))
         context.fill((red, green, blue))
         ch = random()
@@ -53,8 +54,9 @@ for p in range(PAGES):
             context.rect(x, y, R, R)
         else:
             # Make formatted Flat flavor BabelString instance.
-            bs = context.newString('Hello world on %d,%d' % (x, y), 
-                style=dict(font=FONTNAME, fontSize=10))
+            bs = context.newString('Hello world on %d,%d' % (x, y),
+                                   style=dict(font=FONTNAME,
+                                              fontSize=10))
             context.text(bs, (x, y))
 
 #context.saveImage('_export/HelloCircleSquare.gif')
@@ -65,6 +67,5 @@ for p in range(PAGES):
 context.saveDocument(EXPORT_PATH)
 
 os.system(u'open "%s"' % EXPORT_PATH)
- 
-print 'Done'
+print('Done')
 
