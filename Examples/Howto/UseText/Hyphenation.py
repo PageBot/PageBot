@@ -12,7 +12,7 @@
 #
 #     Hyphenation.py
 #
-from pagebot.toolbox.hyphenation import hyphenate, hyphenatedWords
+from pagebot.toolbox.hyphenation import hyphenate, hyphenatedWords, words
 
 print 'English hyphenated words:', len(hyphenatedWords('en'))
 print 'Dutch hyphenated words:', len(hyphenatedWords('nl'))
@@ -33,4 +33,5 @@ print hyphenate('marmerplaatsbepaling', 'nl', True)
 print hyphenate('ochtendjaskledinghangerschroefdraad', 'nl', True)
 print hyphenate('hagelslagroomboterbloemkoolstofzuigerveerpont', 'nl', True)
 
-
+# First 20 words of the sorted list of all language words in the dictionary.
+print words('nl')[:20] 

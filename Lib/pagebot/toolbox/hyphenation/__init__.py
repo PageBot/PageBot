@@ -83,4 +83,8 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
             return hw1 + '-' + hw2
     return None
 
+def words(language=DEFAULT_LANGUAGE):
+    u"""Answer the sorted list of all words in the dictionary for this language."""
+    return sorted(hyphenatedWords(language).keys())
+
     
