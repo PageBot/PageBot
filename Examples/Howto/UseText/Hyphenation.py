@@ -32,6 +32,8 @@ print hyphenate('marmerplaats', 'nl', True)
 print hyphenate('marmerplaatsbepaling', 'nl', True)
 print hyphenate('ochtendjaskledinghangerschroefdraad', 'nl', True)
 print hyphenate('hagelslagroomboterbloemkoolstofzuigerveerpont', 'nl', True)
+# Longest. Don't go longer than this, as calculation time exponentioally increases.
+print hyphenate('kernenergieadviesbureaugebouwtoegangsdeurknopbedieningspaneeltjes', 'nl', True)
 
-# First 20 words of the sorted list of all language words in the dictionary.
-print words('nl')[:20] 
+# First [100:120] words of the sorted list of all language words in the dictionary.
+print words('nl')[100:120] 
