@@ -97,8 +97,10 @@ class FlatContext(BaseContext):
 
     saveImage = saveDocument # Compatible API with DrawBot
 
-    def newPage(self, w, h):
+    def newPage(self, w, h, units='pt'):
         u"""Other page sizes than default in self.doc, are ignored in Flat."""
+        if self.doc is None:
+            self.newDocument(w, h, units)
         self.page = self.doc.addpage()
         self.page.size(w, h, units='pt')
         self.pages.append(self.page)

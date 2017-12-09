@@ -55,7 +55,9 @@ class FlatString(BabelString):
         u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
-
+        if style is None:
+            style = {}
+            
         sUpperCase = css('uppercase', e, style)
         sLowercase = css('lowercase', e, style)
         sCapitalized = css('capitalized', e, style)
