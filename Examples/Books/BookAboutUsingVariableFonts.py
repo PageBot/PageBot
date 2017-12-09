@@ -5,7 +5,7 @@
 #     P A G E B O T
 #
 #     Free to use. Licensed under MIT conditions
-#     
+#
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
