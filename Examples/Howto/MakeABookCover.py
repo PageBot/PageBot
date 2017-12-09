@@ -20,7 +20,7 @@
 # Create random title and names
 # from pagebot.contributions.filibuster.blurb import blurb
 
-from pagebot.toolbox.transformer import lighter, darker
+from pagebot.toolbox.transformer import darker
 
 # Creation of the RootStyle (dictionary) with all
 # available default style parameters filled.
@@ -60,17 +60,17 @@ else:
 # to what happens in CSS.
 
 RS = getRootStyle(
-    w = W,
-    h = H,
-    pl = 64,
-    pt = 64,
-    pr = 64,
-    pb = 80,
-    docW = docW,
-    docH = docH,
-    showElementInfo = False,
-    showElementOrigin = True,
-    originTop = True
+    w=W,
+    h=H,
+    pl=64,
+    pt=64,
+    pr=64,
+    pb=80,
+    docW=docW,
+    docH=docH,
+    showElementInfo=False,
+    showElementOrigin=True,
+    originTop=True
 )
 
 # Export in folder that does not commit to Git. Force to export PDF.
@@ -88,23 +88,29 @@ def makeDocument(rootStyle):
 
     page = doc[0] # Get the first/single page of the document.
 
+    from random import random
     C1 = (random()*0.2, random()*0.2, random()*0.9)
-    C2 = lighter(C1, 0.9) # Almost white, tinted to the background color.
-    C3 = darker(C1, 0.75) # Default parameter 50% between background color and white.
-    C4 = darker(C1, 0.5) # Default parameter 50% between background color and white.
 
     # Make background element, filling the page color and bleed.
-    colorRect1 = pageArea = newRect(z=-10, name='Page area', parent=page,
-                                    conditions=[Top2TopSide(),
-                                                Left2LeftSide(),
-                                                Fit2RightSide(), Fit2BottomSide()], fill=C1)
+    colorRect1 = newRect(z=-10, name='Page area', parent=page,
+                         conditions=[Top2TopSide(),
+                                     Left2LeftSide(),
+                                     Fit2RightSide(),
+                                     Fit2BottomSide()],
+                         fill=C1)
     
-    colorRect1.solve() # Solve element position, before we can make other elements depend on position and size.
+    colorRect1.solve() # Solve element position, before we can make
+                       # other elements depend on position and size.
 
+    #colorRect2:
     M = 64
-    colorRect2 = newRect(z=-10, name='Frame 2', conditions=[Center2Center(), Middle2Middle()], 
-        fill=C4, stroke=None, 
-        w=colorRect1.w-M, h=colorRect1.h-M, xAlign=CENTER, yAlign=CENTER )
+    newRect(z=-10, name='Frame 2', conditions=[Center2Center(),
+                                               Middle2Middle()],
+            fill=darker(C1, 0.5), # Default parameter:
+                                  # 50% between background color and white
+            stroke=None,
+            w=colorRect1.w-M, h=colorRect1.h-M,
+            xAlign=CENTER, yAlign=CENTER)
 
     # Add some title (same width, different height) at the "wrongOrigin" position.
     # They will be repositioned by solving the colorConditions.
