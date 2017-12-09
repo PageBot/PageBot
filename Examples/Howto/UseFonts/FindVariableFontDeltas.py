@@ -5,7 +5,7 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     
+#
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
@@ -14,7 +14,7 @@
 #
 #     Delta are stored per glyph in the Font.ttFont.
 #     But you can better use the wrapper attribute font Font.
-#     
+#
 from fontTools.pens.cocoaPen import CocoaPen
 import pagebot
 from pagebot.fonttoolbox.objects.font import Font, getFontByName

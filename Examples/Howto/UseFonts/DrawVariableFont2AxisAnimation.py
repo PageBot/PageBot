@@ -5,7 +5,7 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     
+#
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
@@ -16,7 +16,7 @@
 #     all code for for FontIcon class and KeyFrame class is here.
 #     In the future these classes will be part of the main PageBot library,
 #     which may make them incompatible with this particular example.
-#     
+#
 import pagebot
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font, getFontByName

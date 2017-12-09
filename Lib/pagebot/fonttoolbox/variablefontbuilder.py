@@ -7,7 +7,7 @@
 #     www.pagebot.io
 #       from https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/varLib/mutator.py
 #     Licensed under MIT conditions
-#     
+#
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
