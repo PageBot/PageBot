@@ -20,8 +20,8 @@
 #
 from pagebot.builders import drawBotBuilder as b
 if b is None:
-	print 'Example only runs in DrawBot'
-	raise KeyboardInterrupt()
+    print 'Example only runs in DrawBot'
+    raise KeyboardInterrupt()
 
 import CoreText
 import Quartz
@@ -342,33 +342,37 @@ class TextBox(object):
         # Let's see if we can draw over them in exactly the same position.
         fontSize = 8
         if showY:
-            text(FormattedString(`0`, align='left', 
-                font='Verdana', fontSize=8, 
-                fill=(0, 0, 1)), (self.x + self.w + 3,  self.y + self.h - fontSize/4))
+            text(FormattedString('0', align='left', font='Verdana',
+                                 fontSize=8, fill=(0, 0, 1)),
+                 (self.x + self.w + 3, self.y + self.h - fontSize/4))
 
         prevY = 0
         for index in range(len(self)):
             _, y, _ = self.baseLines[index]
-            line((self.x, self.y + self.h - y), (self.x + self.w, self.y + self.h - y))
+            line((self.x, self.y + self.h - y),
+                 (self.x + self.w, self.y + self.h - y))
             if showIndex:
-                text(FormattedString(`index`, align='right', font='Verdana', fontSize=fontSize, 
-                    fill=(0, 0, 1)), (self.x-8, self.y + self.h - y - fontSize/3))
+                text(FormattedString('index', align='right', font='Verdana',
+                                     fontSize=fontSize, fill=(0, 0, 1)),
+                     (self.x-8, self.y + self.h - y - fontSize/3))
             if showY:
-                text(FormattedString('%d' % round(y), align='left', 
-                    font='Verdana', fontSize=fontSize, 
-                    fill=(0, 0, 1)), (self.x + self.w + 3, self.y + self.h - y - fontSize/4))
+                text(FormattedString('%d' % round(y), align='left',
+                                     font='Verdana', fontSize=fontSize,
+                                     fill=(0, 0, 1)),
+                     (self.x + self.w + 3, self.y + self.h - y - fontSize/4))
             if showLeading:
                 leading = round(abs(y - prevY))
-                text(FormattedString('%d' % leading, align='left', 
-                    font='Verdana', fontSize=fontSize, 
-                    fill=(1, 0, 0)), (self.x + self.w + 3, self.y + self.h - prevY - leading/2 - fontSize/4))
+                text(FormattedString('%d' % leading, align='left',
+                                     font='Verdana', fontSize=fontSize,
+                                     fill=(1, 0, 0)),
+                     (self.x + self.w + 3, self.y + self.h - prevY - leading/2 - fontSize/4))
             prevY = y
 
     def _drawFrame(self):
         stroke(0, 0, 1)
         fill(None)
         rect(self.x, self.y, self.w, self.h)
-        
+
 
 W = 380
 H = 600
@@ -379,24 +383,46 @@ Variable([
     dict(name='H', ui='Slider', args=dict(minValue=200, value=600, maxValue=1000)),
 ], globals())
 
-  
-fs = FormattedString(u'This åéöøa hêädliñe rúns over one or more lines.\n', align='left', font='BitcountMonoDouble-RegularCircleItalic', fontSize=24, openTypeFeatures=dict(ss01=True, ss02=True, ss06=True), lineHeight=26, tracking=1.2)
-fs = fs + FormattedString('This an example of TextLines and TextRuns and more and more. ', font='Verdana', fontSize=14, lineHeight=22)
-fs = fs + FormattedString('=== Find this. === ', font='Georgia-Bold', fontSize=16, lineHeight=22)
-fs = fs + FormattedString('This an example of larger TextLines and TextRuns. ', font='Georgia', fontSize=16, lineHeight=22)
-fs = fs + FormattedString('=== Find this. === ', font='Georgia-Bold', fontSize=16, lineHeight=22)
-fs = fs + FormattedString('This an example of TextLines and TextRuns. ', font='Verdana', fontSize=14, lineHeight=22)
 
-fittingWord = FormattedString('Word\n', font='Georgia', align='left', fontSize=500)
+fs = FormattedString(u'This åéöøa hêädliñe rúns over one or more lines.\n',
+                     align='left',
+                     font='BitcountMonoDouble-RegularCircleItalic',
+                     fontSize=24,
+                     openTypeFeatures=dict(ss01=True,
+                                           ss02=True,
+                                           ss06=True),
+                     lineHeight=26,
+                     tracking=1.2)
+fs = fs + FormattedString(('This an example of TextLines and TextRuns'
+                           ' and more and more. '),
+                          font='Verdana', fontSize=14, lineHeight=22)
+fs = fs + FormattedString('=== Find this. === ',
+                          font='Georgia-Bold', fontSize=16, lineHeight=22)
+fs = fs + FormattedString('This an example of larger TextLines and TextRuns. ',
+                          font='Georgia', fontSize=16, lineHeight=22)
+fs = fs + FormattedString('=== Find this. === ', font='Georgia-Bold',
+                          fontSize=16, lineHeight=22)
+fs = fs + FormattedString('This an example of TextLines and TextRuns. ',
+                          font='Verdana', fontSize=14, lineHeight=22)
+
+fittingWord = FormattedString('Word\n', font='Georgia',
+                              align='left', fontSize=500)
 w, _ = textSize(fittingWord)
 fittingSize = W/w*500
-fittingWord = FormattedString('Word\n', font='Georgia', align='left', fontSize=fittingSize, lineHeight=fittingSize*1.2)
+fittingWord = FormattedString('Word\n', font='Georgia',
+                              align='left', fontSize=fittingSize,
+                              lineHeight=fittingSize*1.2)
 fs = fs + fittingWord
 
-fittingWord =  FormattedString('ABC\n', font='BitcountMonoDouble-RegularCircle', align='left', fontSize=500)
+fittingWord =  FormattedString('ABC\n',
+                               font='BitcountMonoDouble-RegularCircle',
+                               align='left', fontSize=500)
 w, _ = textSize(fittingWord)
 fittingSize = W/w*500
-fittingWord = FormattedString('ABC\n', font='BitcountMonoDouble-RegularCircle', align='left', fontSize=fittingSize, lineHeight=fittingSize)
+fittingWord = FormattedString('ABC\n',
+                              font='BitcountMonoDouble-RegularCircle',
+                              align='left', fontSize=fittingSize,
+                              lineHeight=fittingSize)
 fs = fs + fittingWord
 
 newPage(W+G*2, H + G*2)
@@ -419,7 +445,8 @@ for pattern in myTextBox.findPattern('Find'):
 for yy in range(-3,10):
     stroke(1, 0, 0)
     fill(None)
-    y = myTextBox.y + myTextBox.h + yy*fittingSize/10- myTextBox.baseLines[-1][1]
+    y = (myTextBox.y + myTextBox.h +
+         yy*fittingSize/10 - myTextBox.baseLines[-1][1])
     line((myTextBox.x, y), (myTextBox.x + myTextBox.w, y))
-    
+
 saveImage('_export/testTextLineTextRun.pdf')
