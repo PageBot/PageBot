@@ -26,6 +26,8 @@ h1Style = dict(font='Upgrade-Medium', fontSize=18, rLeading=1.4, tracking=0.2, p
 h2Style = dict(font='Upgrade-Medium', fontSize=12, rLeading=1.3, tracking=0.2, paragraphTopSpacing=12*1.3*0.5)
 bodyStyle = dict(font='Upgrade-Book', fontSize=11, rLeading=1.3, tracking=0.2)
 pageNumberStyle = dict(font='Upgrade-Book', fontSize=9, rLeading=1.3, tracking=0.2, xTextAlign=CENTER)
+footNoteStyle = dict(font='Upgrade-BookItalic', fontSize=8, rLeading=1.3, tracking=0.2)
+footNoteRefStyle = dict(font='Upgrade-Book', fontSize=11, openTypeFeatures=dict(sups=True))
 
 t = [
     (u"""Design Design Space""", h1Style),
@@ -39,11 +41,13 @@ How would you design such a design process better next time?""", bodyStyle),
     (u"""1 day • 1 week • 1 month • 1 season • 1 year""", h2Style),
     (u"""Study lengths range from 1 day, 1 week, 1 month, 1 season and possibly 1 year, whatever fits best to your plans, your practical possibilities and your financial situation.""", bodyStyle),
     (u"""What is the schedule & how to submit?""", h2Style),
-    (u"""Every 6 months, in March and September, a new day-week-month-season-year sequence starts, most likely if there is enough participating students. 
-Day-week sequences or single day Design Games can take place on other dates during the year, if the amount of participants makes it possible. Since working as a team of students a minimum amount of three is required, and also a mininum level of quality, motivation and experience.
+    (u"""Every 6 months, in March and September, a new day-week-month-season-year sequence starts, most likely if there is enough participating students.""", bodyStyle),
+    (context.newString(12, style=footNoteRefStyle), None),
+    (u""" Day-week sequences or single day Design Games can take place on other dates during the year, if the amount of participants makes it possible. Since working as a team of students a minimum amount of three is required, and also a mininum level of quality, motivation and experience.
 Season and year-students are admitted after showing their portfolios and the result of a given assignment. Also they are asked to write a motivation and development plan.
 Students that finish a training adequately, automatically get accepted for a next.""", bodyStyle)
 ]
+footNoteText = u"""Repeat to improve: What makes a design process fundamentally different from a production process, is that repetition improves the result. Starting with quick sketches, ignoring most details, next steps take more time. It’s not a linear process, it’s an iterative process, which means repeating the previous step in more detail."""
 
 # Path to markdown file, including Python code blocks.
 MD_PATH = u"UsingVariableFonts.md"
@@ -55,7 +59,7 @@ M = 48
 
 doc = Document(title='Pages 66-67', w=W, h=H, autoPages=3)
 
-tmp = Template(w=doc.w, h=doc.h, name='DEMO Page', gridY=[(None, 0)], pl=M, pr=M, pt=M, pb=M*2)
+tmp = Template(w=doc.w, h=doc.h, name='DEMO Page', gridY=[(None, 0)], pl=M, pr=M, pt=M, pb=M*1.9)
 newTextBox('', parent=tmp, conditions=[Fit2Width(), Fit2Height()], name='Column', h=200)
 newText('', parent=tmp, y=H-M, w=112, h=20, conditions=[Center2Center()], name='PageNumber', style=pageNumberStyle)
 doc.addTemplate(tmp.name, tmp)
@@ -69,8 +73,12 @@ bs = page['Column'].getOverflow()
 
 page = doc[2]
 page.applyTemplate(tmp)
+newTextBox('', parent=page, conditions=[Fit2Width(), Bottom2Bottom()], name='FootNotes', h=48)
+page.pb = 1.5*M
 page['Column'].setText(bs)
 page['PageNumber'].setText(67)
+footNote = context.newString(12, style=footNoteRefStyle) + context.newString(' '+footNoteText, style=footNoteStyle)
+page['FootNotes'].setText(footNote, style=footNoteStyle)
 
 # Views define the way documents are exported.
 # Add space for cropmarks and registrations marks
