@@ -11,7 +11,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     fitVariableHeadline.py
+#     fitVariableColumns.py
 #
 #     Demo version of pagebot.fonttoolbox.variablefontbuilder.fitVariableWidth,
 #     to show usage and format of the answered dictionary.
@@ -20,6 +20,8 @@
 #
 from random import random
 from math import sin
+
+from pagebot.contexts import defaultContext as context
 from pagebot import getRootPath
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
@@ -61,9 +63,9 @@ for n in range(20):
 PAGE_FRAME = None
 
 def drawPageFrame(w):
-    fill(1)
-    stroke(0)
-    path = BezierPath()
+    context.fill(1)
+    context.stroke(0)
+    path = context.BezierPath()
     path.moveTo((PADDING, H-PADDING))
     path.lineTo((PADDING+w, H-PADDING))
     path.lineTo((PADDING+w, H/2+PADDING))
@@ -71,13 +73,13 @@ def drawPageFrame(w):
                  (PADDING+w/2, H/2+PADDING-M/2),
                  (PADDING, H/2+PADDING-M/2))
     path.closePath()
-    drawPath(path)
-    fill(None)
-    stroke(0.5)
-    strokeWidth(4)
+    context.drawPath(path)
+    context.fill(None)
+    context.stroke(0.5)
+    context.strokeWidth(4)
     leading = 14
     for n in range(10):
-        line((PADDING+M, H-5*PADDING-n*leading),
+        context.line((PADDING+M, H-5*PADDING-n*leading),
              (PADDING+w-M-LINE_ENDINGS[n], H-5*PADDING-n*leading))
 
 def draw(w, y, drawVariable):
@@ -90,28 +92,28 @@ def draw(w, y, drawVariable):
     d = fitVariableWidth(f, HEADLINE, w, HEADLINE_SIZE,
                          condensedLocation, wideLocation)
     # move the canvas
-    save()
+    context.save()
     if not drawVariable:
-        translate(0, -H/2+PADDING/2)
-    drawPageFrame(d['width']+2*M)
-    restore()
+        context.translate(0, -H/2+PADDING/2)
+    context.drawPageFrame(d['width']+2*M)
+    context.estore()
 
     minWidth = d['condensedWidth']
     maxWidth = d['wideWidth']
     fixedWidth = minWidth + (maxWidth - minWidth)/2
-    dFixed = fitVariableWidth(f, HEADLINE, fixedWidth, HEADLINE_SIZE,
+    dFixed = context.fitVariableWidth(f, HEADLINE, fixedWidth, HEADLINE_SIZE,
                               condensedLocation, wideLocation)
 
     if drawVariable:
-        text(d['fs'], (PADDING+M, y-PADDING-M))
+        context.text(d['fs'], (PADDING+M, y-PADDING-M))
     else:
         # Draw the instance choice of 3
         if w < fixedWidth:
-            text(d['condensedFs'], (PADDING+M, y-PADDING-M))
+            context.text(d['condensedFs'], (PADDING+M, y-PADDING-M))
         elif w < maxWidth:
-            text(dFixed['fs'], (PADDING+M, y-PADDING-M))
+            context.text(dFixed['fs'], (PADDING+M, y-PADDING-M))
         else:
-            text(d['wideFs'], (PADDING+M, y-PADDING-M))
+            context.text(d['wideFs'], (PADDING+M, y-PADDING-M))
 
 if INTERACTIVE:
     Variable([
@@ -123,18 +125,18 @@ if INTERACTIVE:
                        maxValue=W-2*PADDING))
     ], globals())
 
-    draw(Width)
+    context.draw(Width)
 else:
     pageFrame = None
     angle = 0
     while angle < 360:
-        newPage(W, H)
-        fill(0.8)
-        rect(0, 0, W, H)
+        context.newPage(W, H)
+        context.fill(0.8)
+        context.rect(0, 0, W, H)
         dx = sin(radians(angle))*0.5+0.5
         w = W/2 + (W-2*PADDING-W/2) * dx
         draw(w, H-PADDING, True)
         draw(w, (H-PADDING)/2, False)
         angle += 360/FRAMES
-    saveImage('_export/fitVariableColumns.gif')
+    context.saveImage('_export/fitVariableColumns.gif')
 
