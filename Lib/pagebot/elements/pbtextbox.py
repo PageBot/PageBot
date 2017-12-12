@@ -89,9 +89,14 @@ class TextBox(Element):
     # SuperString support, answering the structure that holds strings for all builder types.
   
 
-    def setText(self, s):
-        u"""Set the formatted string to s, using self.style."""
-        self.x = self.newString(s, e=self)
+    def setText(self, bs, style=None):
+        u"""Set the formatted string to s, using style or self.style. The bs as also be a number, in which
+        case is gets converted into a string."""
+        if isinstance(bs, (int, long, float)):
+            bs = `bs`
+        if isinstance(bs, basestring):
+            bs = self.newString(bs, e=self, style=style)
+        self.bs = bs
 
     def _get_text(self):
         u"""Answer the plain text of the current self.bs"""
@@ -247,7 +252,7 @@ class TextBox(Element):
         # Draw markers on TextLine and TextRun positions.
         self._drawBaselines_drawBot(view, px, py)
  
-        if view.showTextOverflowMarker and self.isOverflow(b):
+        if view.showTextOverflowMarker and self.isOverflow():
             self._drawOverflowMarker_drawBot(view, px, py)
 
         if self.drawAfter is not None: # Call if defined

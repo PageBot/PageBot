@@ -93,12 +93,12 @@ class FsString(BabelString):
         sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
         if sCmykStroke != NO_COLOR:
             context.setTextStrokeColor(fs, sCmykStroke, sStrokeWidth, cmyk=True)
-        sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
-        if sAlign is not None: # yTextAlign must be solved by parent container element.
-            fs.align(sAlign)
-        underline = css('underline', e, style)
-        if underline in ('single', None): # Only these values work in FormattedString
-            fs.underline(underline)
+        sTextAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
+        if sTextAlign is not None: # yTextAlign must be solved by parent container element.
+            fs.align(sTextAlign)
+        sUnderline = css('underline', e, style)
+        if sUnderline in ('single', None): # Only these values work in FormattedString
+            fs.underline(sUnderline)
         sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
         rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
         if sParagraphTopSpacing or (rParagraphTopSpacing and sFontSize):

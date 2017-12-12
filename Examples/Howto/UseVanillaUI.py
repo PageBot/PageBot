@@ -12,9 +12,9 @@
 #
 #     UseVanillaUI.py
 #
+
+
 import AppKit
-
-
 from vanilla import Window, Button, CheckBox
 
 class VariableController(object):

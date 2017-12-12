@@ -130,7 +130,7 @@ class DrawBotContext(BaseContext):
 
     def circle(self, x, y, r):
         u"""Circle draws a DrawBot oval with (x,y) as middle point and radius r."""
-        self.b.oval(x-r/2, y-r/2, r*2, r*2)
+        self.b.oval(x-r, y-r, r*2, r*2)
 
     def line(self, p1, p2):
         self.b.line(p1, p2)

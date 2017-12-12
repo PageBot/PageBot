@@ -44,6 +44,21 @@ class BaseContext(object):
         assert isinstance(s, self.STRING_CLASS)
         return s
 
+    def newText(self, textStyles, e=None, w=None, h=None, newLine=True):
+        u"""Answer the BabelString, as combination of all text and style in textStyles, which is supposed to
+        have format [(baseString, style), (baseString, style), ...]"""
+        assert isinstance(textStyles, (tuple, list))
+        s = None
+        for t, style in textStyles:
+            if newLine:
+                t += '\n'
+            bs = self.newString(t, style=style, e=e, w=w, h=h)
+            if s is None:
+                s = bs
+            else:
+                s += bs
+        return s
+
     #   V A R I A B L E
 
     def Variable(self, ui, globals):
