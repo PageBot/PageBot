@@ -50,6 +50,14 @@ class FlatString(BabelString):
         # TODO: Some stuff needs to get here.
         return ''
 
+    def append(self, s):
+        u"""Append string or FlatString to self."""
+        # TODO: Make this to work.
+        #try:
+        #    self.s += s.s
+        #except TypeError:
+        #    self.s += `s` # Convert to babel string, whatever it is.
+
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
         u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing

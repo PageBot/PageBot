@@ -41,10 +41,10 @@ class BabelString(object):
 
     def append(self, s):
         u"""Append string or FlatString to self."""
-        if isinstance(s, self.s.__class__):
+        try:
             self.s += s.s
-        else:
-            self.s += u'%s' % s # Convert to string, whatever it is.
+        except TypeError:
+            self.s += `s` # Convert to babel string, whatever it is.
 
     def type(self):
         u"""Answer the id of the class, in case a caller wants to know what kind of 

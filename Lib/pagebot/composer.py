@@ -13,7 +13,7 @@
 #
 #     composer.py
 #
-from drawBot import FormattedString
+from pagebot.contexts import defaultContext as context
 
 class Composer(object):
     u"""A Composer takes a galley and tries to make a “nice” layout (on existing or new document pages),
