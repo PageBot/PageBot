@@ -19,7 +19,7 @@
 #     from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 #
 from random import random
-from math import sin
+from math import sin, radians
 
 from pagebot.contexts import defaultContext as context
 from pagebot import getRootPath
@@ -65,15 +65,15 @@ PAGE_FRAME = None
 def drawPageFrame(w):
     context.fill(1)
     context.stroke(0)
-    path = context.BezierPath()
-    path.moveTo((PADDING, H-PADDING))
-    path.lineTo((PADDING+w, H-PADDING))
-    path.lineTo((PADDING+w, H/2+PADDING))
-    path.curveTo((PADDING+w/2, H/2+PADDING),
+    context.newPath()
+    context.moveTo((PADDING, H-PADDING))
+    context.lineTo((PADDING+w, H-PADDING))
+    context.lineTo((PADDING+w, H/2+PADDING))
+    context.curveTo((PADDING+w/2, H/2+PADDING),
                  (PADDING+w/2, H/2+PADDING-M/2),
                  (PADDING, H/2+PADDING-M/2))
-    path.closePath()
-    context.drawPath(path)
+    context.closePath()
+    context.drawPath()
     context.fill(None)
     context.stroke(0.5)
     context.strokeWidth(4)
@@ -95,8 +95,8 @@ def draw(w, y, drawVariable):
     context.save()
     if not drawVariable:
         context.translate(0, -H/2+PADDING/2)
-    context.drawPageFrame(d['width']+2*M)
-    context.estore()
+    drawPageFrame(d['width']+2*M)
+    context.restore()
 
     minWidth = d['condensedWidth']
     maxWidth = d['wideWidth']
@@ -125,7 +125,7 @@ if INTERACTIVE:
                        maxValue=W-2*PADDING))
     ], globals())
 
-    context.draw(Width)
+    draw(Width)
 else:
     pageFrame = None
     angle = 0
