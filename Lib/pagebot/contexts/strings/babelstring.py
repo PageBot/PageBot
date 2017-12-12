@@ -43,8 +43,8 @@ class BabelString(object):
         u"""Append string or FlatString to self."""
         try:
             self.s += s.s
-        except TypeError:
-            self.s += `s` # Convert to babel string, whatever it is.
+        except (TypeError, AttributeError):
+            self.s += s # Convert to babel string, whatever it is.
 
     def type(self):
         u"""Answer the id of the class, in case a caller wants to know what kind of 
