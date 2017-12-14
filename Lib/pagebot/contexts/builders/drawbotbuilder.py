@@ -18,7 +18,7 @@ try:
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will be calling e.build_html()
     drawBotBuilder.PB_ID = 'drawBot' 
-
+    # Text import if MacOS specific imports are available.
     import CoreText
     import AppKit
     import Quartz

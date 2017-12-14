@@ -103,7 +103,7 @@ class TextBox(Element):
         return u'%s' % self.bs
     text = property(_get_text)
     
-    def append(self, bs):
+    def append(self, bs, style=None):
         u"""Append to the string type that is defined by the current view/builder type.
         Note that the string is already assumed to be styled or can be added as plain string.
         Don't calculate the overflow here, as this is slow/expensive operation.
@@ -113,7 +113,7 @@ class TextBox(Element):
         If bs is not a BabelString instance, then create one, defined by the self.context,
         and based on the style of self."""
         assert isinstance(bs, (basestring, self.context.STRING_CLASS))
-        self.bs += self.newString(bs, e=self)
+        self.bs += self.newString(bs, e=self, style=style)
 
     def appendMarker(self, markerId, arg=None):
         marker = getMarker(markerId, arg=arg)

@@ -127,6 +127,9 @@ TOP = 'top'
 BOTTOM = 'bottom'
 FRONT = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
 BACK = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
+DISPLAY_BLOCK = 'block' # Add \n to the end of a style block. Similar to CSS behavior of <div>
+DISPLAY_INLINE = 'inline' # Inline style, similar to CSS behavior of <span>
+
 XALIGNS = set((None, LEFT, RIGHT, CENTER, JUSTIFIED))
 YALIGNS = set((None, TOP, BOTTOM, MIDDLE))
 ZALIGNS = set((None, FRONT, MIDDLE, BACK))
@@ -359,7 +362,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         needsBelow = 0,
         # Check if this relative fontSize space is available below, to get amount of text lines below headings.
         rNeedsBelow = 0,
-
+        # CSS-behavior as <div> and <span>, adding trailing \n to block context is value set to DISPLAY_BLOCK
+        display = DISPLAY_INLINE,
+        
         # Language and hyphenation
         language = 'en', # Language for hyphenation and spelling. Can be altered per style in FormattedString.
         encoding  = 'UTF-8',
