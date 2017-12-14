@@ -13,6 +13,8 @@
 #
 #     pagebot/contexts/__init__.py
 #
+from pagebot.style import DISPLAY_BLOCK
+
 class BaseContext(object):
     u"""A BaseContext instance combines the specific functions of a platform, 
     such as DrawBot, Flat or HTML. This way it way it hides e.g. the type of BabelString
@@ -44,13 +46,14 @@ class BaseContext(object):
         assert isinstance(s, self.STRING_CLASS)
         return s
 
-    def newText(self, textStyles, e=None, w=None, h=None, newLine=True):
+    def newText(self, textStyles, e=None, w=None, h=None, newLine=False):
         u"""Answer the BabelString, as combination of all text and style in textStyles, which is supposed to
-        have format [(baseString, style), (baseString, style), ...]"""
+        have format [(baseString, style), (baseString, style), ...]. Add return \n to the string is the
+        newLine attribute is True or if a style has style.get('display') == DISPLAY_BLOCK."""
         assert isinstance(textStyles, (tuple, list))
         s = None
         for t, style in textStyles:
-            if newLine:
+            if newLine or (style and style.get('display') == DISPLAY_BLOCK):
                 t += '\n'
             bs = self.newString(t, style=style, e=e, w=w, h=h)
             if s is None:
