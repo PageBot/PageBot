@@ -15,10 +15,14 @@
 #
 import os
 
-#import imageio
-#Could be used for animated gifs and other export. Gives currently an error
-#File "/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/numpy/lib/npyio.py", line 32, in <module>
-#ImportError: No module named future_builtins
+'''
+FIXME
+import imageio
+Could be used for animated gifs and other export. Currently gives an error:
+
+File "/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/numpy/lib/npyio.py", line 32, in <module>
+ImportError: No module named future_builtins
+'''
 
 from pagebot import getFontPath
 from basecontext import BaseContext
@@ -31,12 +35,13 @@ def iround(value):
     return min(255, max(0, int(round(value*255.0))))
 
 class FlatContext(BaseContext):
-    u"""A FlatContext instance combines the specific functions of the Flat library, 
-    and offers a PageBot “standard” API, so it can be swapped with the DrawBotContext.
-    This way it way it also hides e.g. the type of BabelString
+    u"""A FlatContext instance combines the specific functions of the Flat
+    library, and offers a PageBot “standard” API, so it can be swapped with the
+    DrawBotContext. This way it way it also hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created.
-    https://github.com/xxyxyz/flat
-    http://xxyxyz.org/flat
+
+    * https://github.com/xxyxyz/flat
+    * http://xxyxyz.org/flat
     """
 
     # In case of specific builder addressing, callers can check here.
@@ -192,13 +197,13 @@ class FlatContext(BaseContext):
         if the oval. Compensate for the difference."""
         shape = self._getShape()
         if shape is not None:
-            self.page.place(shape.ellipse(x-w/2, y-h/2, w, h)) 
+            self.page.place(shape.ellipse(x-w/2, y-h/2, w, h))
 
     def circle(self, x, y, r):
         u"""Draw an circle in square, with radius r and (x,y) as middle."""
         shape = self._getShape()
         if shape is not None:
-            self.page.place(shape.circle(x, y, r)) 
+            self.page.place(shape.circle(x, y, r))
 
     def line(self, p0, p1):
         shape = self._getShape()
