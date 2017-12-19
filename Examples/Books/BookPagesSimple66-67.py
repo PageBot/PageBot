@@ -61,6 +61,8 @@ M = 65
 ML, MR, MT, MB = M, 0.75*M, M, 1.5*M
 
 def buildDesignPages(w, h):
+
+    cw = w-ML-MR
     
     # Page 66
     context.newPage(w, h) 
@@ -79,7 +81,6 @@ def buildDesignPages(w, h):
     # Page 67
     context.newPage(w, h) 
     # Assume that we have a footnote on this page, calc it's space.
-    cw = w-ML-MR
     fnMark = context.newString(footNoteRef, style=footNoteRefStyle)
     fn = fnMark + ' ' + context.newString(footNoteText, style=footNoteStyle)
     fnw, fnh = fn.textSize(cw)
@@ -103,7 +104,7 @@ IMAGES = (
 for path, w, h, m in IMAGES:
     newDrawing()
     m(w, h)
-    imagePath = 'docs/images/'+path
-    saveImage(imagePath)
+    imagePath = '_export/'+path
+    saveImage(imagePath, multipage=True)
     print imagePath
     
