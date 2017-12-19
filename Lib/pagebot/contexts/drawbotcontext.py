@@ -26,7 +26,7 @@ except ImportError:
 from basecontext import BaseContext
 from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
 from pagebot.contexts.strings.fsstring import FsString
-from pagebot.style import NO_COLOR
+from pagebot.style import NO_COLOR, LEFT
 
 class DrawBotContext(BaseContext):
     u"""A DrawBotContext instance combines the specific functions of the DrawBot library
@@ -110,11 +110,16 @@ class DrawBotContext(BaseContext):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         self.b.textBox(sOrBs, r)
 
-    def textSize(self, bs):
-        u"""Answer the textSize (w, h) tuple of the formatted string."""
+    def textSize(self, bs, w=None, h=None):
+        u"""Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
+        Answer the height of the string if the width w is given."""
+        if w is not None:
+            return self.b.textSize(bs.s, width=w)
+        if h is not None:
+            return self.b.textSize(bs.s, height=h)
         return self.b.textSize(bs.s)
 
-    def textOverflow(self, bs, bounds, align):
+    def textOverflow(self, bs, bounds, align=LEFT):
         u"""Answer the overflowing of from the box (0, 0, w, h) as new FsString in 
         the current context."""
         return FsString(self.b.textOverflow(bs.s, bounds, align), self)
@@ -233,6 +238,9 @@ class DrawBotContext(BaseContext):
     restore = restoreGraphicState # Compatible with DrawBot API
 
     #   F O N T S
+
+    def installFont(self, fontName):
+        self.b.installFont(fontName)
 
     def installedFonts(self):
         u"""Answer the list with names of all installed fonts in the system, as available

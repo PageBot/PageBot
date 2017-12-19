@@ -13,6 +13,8 @@
 #
 #     flatcontext.py
 #
+#     http://xxyxyz.org/flat
+#
 import os
 
 '''
@@ -169,6 +171,16 @@ class FlatContext(BaseContext):
         x, y, w, h = rect
         placedText = self.page.place(bs.s)
         placedText.position(x, y)
+
+    def textSize(self, bs, w=None, h=None):
+        u"""Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
+        Answer the height of the string if the width w is given."""
+        return self.b.textSize(self.s, w=w, h=h)
+
+    def textOverflow(self, bs, bounds, align=LEFT):
+        u"""Answer the overflowing of from the box (0, 0, w, h) as new FsString in 
+        the current context."""
+        return FlatString(self.b.textOverflow(bs.s, bounds, align), self)
 
     #   D R A W I N G
 
