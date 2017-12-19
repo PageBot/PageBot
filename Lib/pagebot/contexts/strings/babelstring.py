@@ -51,3 +51,14 @@ class BabelString(object):
         BabelString this is."""
         return self.BABEL_STRING_TYPE
 
+    def _get_w(self):
+        return self.size()[0]
+    w = property(_get_w)
+
+    def _get_h(self):
+        return self.size()[1]
+    h = property(_get_h)
+
+    def size(self):
+        u"""Answer the size tuple (w, h) of the string."""
+        return self.context.textSize(self)

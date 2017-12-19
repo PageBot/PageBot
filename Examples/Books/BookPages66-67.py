@@ -28,7 +28,7 @@ h2Style = dict(font='Upgrade-Medium', fontSize=12, rLeading=1.3, tracking=0.2, p
 bodyStyle = dict(font='Upgrade-Book', fontSize=11, rLeading=1.3, tracking=0.2)
 pageNumberStyle = dict(font='Upgrade-Book', fontSize=9, rLeading=1.3, tracking=0.2, xTextAlign=CENTER)
 footNoteStyle = dict(font='Upgrade-BookItalic', fontSize=8, rLeading=1.3, tracking=0.2)
-footNoteRefStyle = dict(font='Upgrade-Book', fontSize=11, openTypeFeatures=dict(sups=True))
+footNoteRefStyle = dict(font='Upgrade-Book', fontSize=10, openTypeFeatures=dict(sups=True))
 
 SPECIMEN_TEXT = u"""AÀÁÂÃÄÅĀĂĄǺBCÇĆĈĊČDĎEÈÉÊËĒĔĖĘĚFGĜĞĠĢǦHĤIÌÍÎÏĨĪĬĮİJĴKĶLĹĻĽMNÑŃŅŇOÒÓÔÕÖŌŎŐPQRŔŖŘSŚŜŞŠȘTŢŤȚUÙÚÛÜŨŪŬŮŰŲVWŴẀẂẄXYÝŶŸỲZŹŻŽÆǼÐØǾÞĐĦĿŁŊŒŦΔaàáâãäåāăąǻbcçćĉċčdďeèéêëēĕėęěfgĝğġģǧhĥiìíîïĩīĭįjĵkķlĺļľmnñńņňoòóôõöōŏőpqrŕŗřsśŝşšștţťțuùúûüũūŭůűųvwŵẁẃẅxyýÿŷỳzźżžªºßæǽðøǿ¼½¾₀₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹_-–—―!"#%&'*,.//:;?@¡·¿†‡•…‰+<=>|~¬±×÷⁄∂∏∑−√∞∫≈≠≤≥^`¨¯´¸˘˙˚˛˜˝¦§©®°¶℗™◊✓Ꞷ₿"""
 
@@ -69,6 +69,8 @@ footNoteText = u"""Repeat to improve: What makes a design process fundamentally 
 MD_PATH = u"UsingVariableFonts.md"
 # Export path to save the poster PDF.
 EXPORT_PATH = '_export/BookPages66-67.pdf'
+# Export path in case .png is needed.
+EXPORT_PATH = '_export/BookPages66-67.png'
 
 W, H = A5
 M = 48
