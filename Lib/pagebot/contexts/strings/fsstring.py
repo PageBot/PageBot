@@ -42,10 +42,10 @@ class FsString(BabelString):
     def asText(self):
         return u'%s' % self.s #  Convert to text
 
-    def textSize(self, w=None):
+    def textSize(self, w=None, h=None):
         u"""Answer the (w, h) size for a given width, with the current text."""
         # TODO: Add in case w is defined.
-        return self.context.textSize(self)
+        return self.context.textSize(self, w=w, h=h)
 
     def textOverflow(self, w, h, align=LEFT):
         return self.context.textOverflow(self, (0, 0, w, h), align)
