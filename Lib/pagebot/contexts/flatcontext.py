@@ -32,6 +32,7 @@ from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings.flatstring import FlatString
 from pagebot.toolbox.transformer import path2Name
+from pagebot.style import NO_COLOR, LEFT
 
 def iround(value):
     return min(255, max(0, int(round(value*255.0))))
@@ -178,7 +179,7 @@ class FlatContext(BaseContext):
         return self.b.textSize(self.s, w=w, h=h)
 
     def textOverflow(self, bs, bounds, align=LEFT):
-        u"""Answer the overflowing of from the box (0, 0, w, h) as new FsString in 
+        u"""Answer the overflowing of from the box (0, 0, w, h) as new FsString in
         the current context."""
         return FlatString(self.b.textOverflow(bs.s, bounds, align), self)
 
