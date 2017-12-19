@@ -363,8 +363,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Check if this relative fontSize space is available below, to get amount of text lines below headings.
         rNeedsBelow = 0,
         # CSS-behavior as <div> and <span>, adding trailing \n to block context is value set to DISPLAY_BLOCK
+        # Interpreted by 
         display = DISPLAY_INLINE,
-        
+
         # Language and hyphenation
         language = 'en', # Language for hyphenation and spelling. Can be altered per style in FormattedString.
         encoding  = 'UTF-8',
