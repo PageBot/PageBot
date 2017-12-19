@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -21,8 +22,11 @@
 import os, os.path
 
 from random import random
-from pagebot.contexts import defaultContext as context
+#from pagebot.contexts import defaultContext as context
+from pagebot.contexts.flatcontext import FlatContext
 
+context = FlatContext()
+print 'Context class is %s' % type(context).__name__
 W = H = 500
 
 def drawSierpinskiSquare(px, py, w, maxW):
