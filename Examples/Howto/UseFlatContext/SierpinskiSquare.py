@@ -18,7 +18,7 @@
 #     Run as cmd-line:
 #     --> python SierpinskiSquare.py
 
-import os
+import os, os.path
 
 from random import random
 from pagebot.contexts import defaultContext as context
@@ -50,6 +50,8 @@ drawSierpinskiSquare(0, 0, W, W)
 # Opaque does not work for .pdf
 # Context should hide that problem.
 for extension in ('pdf', 'jpg'):
+    if not os.path.exists('_export'):
+        os.mkdir('_export')
     exportPath = "_export/SierpinskiSquare." + extension
     context.saveDocument(exportPath)
     os.system(u'open "%s"' % exportPath)
