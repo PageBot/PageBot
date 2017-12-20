@@ -22,7 +22,6 @@
 import os, os.path
 
 from random import random
-#from pagebot.contexts import defaultContext as context
 from pagebot.contexts.flatcontext import FlatContext
 
 context = FlatContext()
