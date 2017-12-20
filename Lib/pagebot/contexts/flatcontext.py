@@ -102,6 +102,8 @@ class FlatContext(BaseContext):
                     p.svg(pagePath)
         elif path.endswith('.pdf'):
             self.doc.pdf(path)
+        elif path.endswith('.gif'):
+            print path
 
     saveImage = saveDocument # Compatible API with DrawBot
 
