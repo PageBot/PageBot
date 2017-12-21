@@ -51,7 +51,8 @@ class FsString(BabelString):
         return self.context.textOverflow(self, (0, 0, w, h), align)
 
     @classmethod
-    def newString(cls, t, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+    def newString(cls, t, context, e=None, style=None, w=None, h=None, 
+        fontSize=None, styleName=None, tracking=None, rTracking=None, tagName=None):
         u"""Answer a FsString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
@@ -107,10 +108,16 @@ class FsString(BabelString):
         rParagraphBottomSpacing = css('rParagraphBottomSpacing', e, style)
         if sParagraphBottomSpacing or (rParagraphBottomSpacing and sFontSize):
             fs.paragraphBottomSpacing((sParagraphBottomSpacing or 0) + (rParagraphBottomSpacing or 0) * (sFontSize or 0))
-        sTracking = css('tracking', e, style)
-        rTracking = css('rTracking', e, style)
-        if sTracking or (rTracking and sFontSize):
-            fs.tracking((sTracking or 0) + (rTracking or 0) * (sFontSize or 0))
+        if tracking is not None: # Test in case this is defined for fontSize fitting, Can be force to 0.
+            sTracking = tracking
+        else:
+            sTracking = css('tracking', e, style)
+        if rTracking is not None: # Test in case this is defined for fontSize fitting. Can be forced to 0
+            srTracking = rTracking
+        else:
+            srTracking = css('rTracking', e, style)
+        if sTracking or (srTracking and sFontSize):
+            fs.tracking((sTracking or 0) + (srTracking or 0) * (sFontSize or 0))
         sBaselineShift = css('baselineShift', e, style)
         rBaselineShift = css('rBaselineShift', e, style)
         if sBaselineShift or (rBaselineShift and sFontSize):
@@ -157,11 +164,19 @@ class FsString(BabelString):
         if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
             tw, _ = b.textSize(newt)
             fontSize = w / tw * sFontSize
-            newt = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
+            # Call this method again, with the calculated real size of the string to fit the width.
+            # Note that this assumes a linear relation between size and width, which may not be the the case
+            # with [opsz] optical size axes of Variable Fonts. 
+            newt = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, 
+                tracking=tracking, rTracking=rTracking, tagName=tagName)
         elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
             _, th = b.textSize(newt)
             fontSize = h / th * sFontSize
-            newt = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, tagName=tagName)
+            # Call this method again, with the calculated real size of the string to fit the width.
+            # Note that this assumes a linear relation between size and width, which may not be the the case
+            # with [opsz] optical size axes of Variable Fonts. 
+            newt = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, 
+                tracking=tracking, rTacking=rTracking, tagName=tagName)
 
         return cls(newt, context)
 
