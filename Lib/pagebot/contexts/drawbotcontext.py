@@ -66,6 +66,10 @@ class DrawBotContext(BaseContext):
     def newPage(self, w, h):
         self.b.newPage(w, h)
     
+    def newDrawing(self):
+        u"""Clear output canvas, start new export file."""
+        self.b.newDrawing()
+
     #   V A R I A B L E
 
     def Variable(self, ui , variableGlobals):
@@ -188,7 +192,7 @@ class DrawBotContext(BaseContext):
         u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this
         method with self._resetShadow()"""
         b = self.b
-        self.saveGraphicsState()
+        self.saveGraphicState()
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.cmykColor is not None:
                 b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
@@ -198,12 +202,12 @@ class DrawBotContext(BaseContext):
     def resetShadow(self):
         self.restoreGraphicState()
 
-    def setGradient(self, gradient, e, origin):
+    def setGradient(self, gradient, origin, w, h):
         u"""Define the gradient call to match the size of element e., Gradient position
         is from the origin of the page, so we need the current origin of e."""
         b = self.b
-        start = origin[0] + gradient.start[0] * e.w, origin[1] + gradient.start[1] * e.h
-        end = origin[0] + gradient.end[0] * e.w, origin[1] + gradient.end[1] * e.h
+        start = origin[0] + gradient.start[0] * w, origin[1] + gradient.start[1] * h
+        end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
 
         if gradient.linear:
             if gradient.cmykColors is None:
@@ -264,6 +268,32 @@ class DrawBotContext(BaseContext):
     def imageSize(self, path):
         u"""Answer the (w, h) image size of the image file at path."""
         return self.b.imageSize(path)
+
+    def initImageSize(self):
+        u"""Initialize the image size. Note that this is done with the default/current 
+        Context, as there may not be a view availabe yet."""
+        if self.path is not None and os.path.exists(self.path):
+            self.iw, self.ih = self.context.imageSize(self.path)
+        else:
+            self.iw = self.ih = 0 # Undefined or non-existing, there is no image file.
+
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+        u"""Draw the image. If w or h is defined, then scale the image to fit."""
+        iw, ih = self.imageSize(path)
+        if w and not h: # Scale proportional
+            h = ih * w/iw # iw : ih = w : h 
+        elif not w and h:
+            w = iw * h/ih
+        elif not w and not h:
+            w = iw
+            h = ih
+        # else both w and h are defined, scale disproportional
+        x, y, = p[0], p[1]
+        sx, sy = w/iw, h/ih
+        self.save()
+        self.scale(sx, sy)
+        self.b.image(path, (x*sx, y*sy), alpha=alpha, pageNumber=pageNumber)
+        self.restore()
 
     #   C O L O R
 

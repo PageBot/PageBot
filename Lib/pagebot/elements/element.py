@@ -1955,7 +1955,7 @@ class Element(object):
             c.saveGraphicState()
             # Drawing element fill and/or frame
             if eGradient: # Gradient overwrites setting of fill.
-                c.setGradient(eGradient, self, p) # Add self to define start/end from relative size.
+                c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
             else:
                 c.setFillColor(eFill)
             c.setStrokeColor(eStroke, self.css('strokeWidth', 1))

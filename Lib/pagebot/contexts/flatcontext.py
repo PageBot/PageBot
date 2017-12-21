@@ -264,7 +264,7 @@ class FlatContext(BaseContext):
     def resetShadow(self):
         pass # Not implemented?
 
-    def setGradient(self, gradient, e, origin):
+    def setGradient(self, gradient, origin, w, h):
         pass # Not implemented?
 
     def lineDash(self, *lineDash):
