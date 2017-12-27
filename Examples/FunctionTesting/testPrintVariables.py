@@ -14,14 +14,15 @@
 #     testPrintVariables.py
 #
 # Variable == vanilla power in DrawBot
-from AppKit import NSColor
+from pagebot.contexts import defaultContext as context
+#from AppKit import NSColor
 
 if __name__ == '__main__':
 
 	# create a color
-	_color = NSColor.colorWithCalibratedRed_green_blue_alpha_(0, .5, 1, .8)
+	_color = None #NSColor.colorWithCalibratedRed_green_blue_alpha_(0, .5, 1, .8)
 	# setup variables useing different vanilla ui elements.
-	Variable([
+	context.Variable([
 	    dict(name="aList", ui="PopUpButton", args=dict(items=['a', 'b', 'c', 'd'])),
 	    dict(name="aText", ui="EditText", args=dict(text='hello world')),
 	    dict(name="aSlider", ui="Slider", args=dict(value=100, minValue=50, maxValue=300)),

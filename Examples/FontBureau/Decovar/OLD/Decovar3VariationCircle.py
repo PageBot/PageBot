@@ -15,6 +15,7 @@
 from __future__ import division
 
 import pagebot
+from pagebot.contexts import defaultContext as context
 from pagebot.style import getRootStyle
 from pagebot.document import Document
 from pagebot.elements.pbpage import Template
@@ -283,7 +284,7 @@ if 0:
             args=dict(value=angle, minValue=-90, maxValue=270)))
         globals()[axisName] = axes[axisName][1]
         angle += 360/len(axes)
-    Variable(VARIABLES, globals())
+    context.Variable(VARIABLES, globals())
 
     def makeDocument(rs):
         

@@ -16,7 +16,7 @@
 #     (takes around 10 minutes to run).
 #
 from pagebot import getFontPath
-
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablebuilder import getVariableFont, drawGlyphPath
     
@@ -169,7 +169,7 @@ for v in WEIGHT_VALUES:
 vMasterFont = Font(FONT_PATH)
     
 # -----------------------------------------------------------------         
-def makeAnimatiom():
+def makeAnimation():
     axes = vMasterFont.axes
 
     print 'Variable A X E S'
@@ -189,9 +189,9 @@ def makeAnimatiom():
     #for sequence in getProofSequences():   
     #    for location in getLocations(axes, sequence): # Expand into a sequence of locations. 
     #        newPage(W, H)
-    fill(1)
-    rect(0, 0, W, H)
-    save()
+    context.fill(1)
+    context.rect(0, 0, W, H)
+    context.save()
     textColor = 0
     for gIndex, glyph in enumerate(TEXT):
         # Only works by glyph name.
@@ -199,13 +199,13 @@ def makeAnimatiom():
         drawGlyphPath(vMasterFont.ttFont, glyph, S*40 + S*gIndex*6*9, S*22, location=location, s=S*0.04, fillColor=textColor)
     # TODO To be extended PageBot
     #drawGlyphPaths(vMasterFont, TEXT, x=S*40 + S*gIndex*6*9, y=S*22, location=location, fontSize=S*0.04, fillColor=textColor)
-    restore()
-    fill(0)
-    fontSize(24)
+    context.restore()
+    context.fill(0)
+    context.fontSize(24)
     #text('%s %s' % (location['changed1'][0], location['changed2'][0]), (100, 20))
 
 
-Variable([
+context.Variable([
     dict(name='TerminalValue', ui='PopUpButton', args=dict(items=TERMINAL_VALUES_S)),
     dict(name='TerminalShape', ui='PopUpButton', args=dict(items=(
         'Rounded [trmA]', 
@@ -237,6 +237,6 @@ Variable([
     #dict(name="c", ui="ColorWell")
     ], globals())
 
-makeAnimatiom()
+makeAnimation()
 #saveImage(EXPORT_PATH)
 print TerminalValue
