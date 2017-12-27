@@ -14,6 +14,7 @@
 #     drawSpirals.py
 #
 from __future__ import division # Make integer division result in float.
+from pagebot.contexts import defaultContext as context
 #import pagebot # Import to know the path of non-Python resources.
 W = H = 1000
 X = 0
@@ -32,7 +33,7 @@ def drawSpiral():
     mx = W/2+X
     my = H/2+Y
     runs = False
-    path = BezierPath()
+    path = context.BezierPath()
     for n in range(0, int(N), 4):
         dx1 = n*Sx*D
         dy1 = n*Sy*D
@@ -59,7 +60,7 @@ def drawSpiral():
     drawPath(path)
 
 #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-Variable([dict(name='X', ui='Slider',
+context.Variable([dict(name='X', ui='Slider',
                args=dict(minValue=-W/2, value=0, maxValue=W/2)),
           dict(name='Y', ui='Slider',
                args=dict(minValue=-H/2, value=0, maxValue=H/2)),

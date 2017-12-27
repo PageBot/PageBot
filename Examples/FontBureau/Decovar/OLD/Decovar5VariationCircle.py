@@ -17,6 +17,7 @@
 from __future__ import division
 
 import pagebot
+from pagebot.contexts import defaultContext as context
 from pagebot.style import getRootStyle
 from pagebot.document import Document
 # For Variation Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
@@ -294,7 +295,7 @@ for axisName in axes:
         args=dict(value=angle, minValue=-90, maxValue=270)))
     globals()[axisName] = axes[axisName][1]
     angle += 360/len(axes)
-Variable(VARIABLES, globals())
+context.Variable(VARIABLES, globals())
 
 def makeDocument(rs):
     

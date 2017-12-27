@@ -22,6 +22,7 @@
 from __future__ import division
 
 import pagebot
+from pagebot.contexts import defaultContext as context
 from pagebot.elements.pbpage import Template
 from pagebot.fonttoolbox.objects.font import Font
 
@@ -72,7 +73,7 @@ for axisName, (minValue, defaultValue, maxValue) in axes.items():
     VARIABLES.append(dict(name=axisName, ui='Slider', 
         args=dict(value=defaultValue, minValue=minValue, maxValue=maxValue)))
     globals()[axisName] = defaultValue        
-Variable(VARIABLES, globals())
+context.Variable(VARIABLES, globals())
 
 class VariableTypeSpecimen(TypeSpecimen):
 

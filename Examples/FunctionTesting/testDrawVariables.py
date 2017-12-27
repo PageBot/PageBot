@@ -13,10 +13,11 @@
 #     TestDrawVariables.py
 #
 # create small ui element for variables in the script
+from pagebot.contexts import defaultContext as context
 
 if __name__ == '__main__':
 
-    Variable([
+    context.Variable([
         # create a variable called 'w'
         # and the related ui is a Slider.
         dict(name="w", ui="Slider"),

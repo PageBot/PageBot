@@ -130,7 +130,8 @@ def makeDocument():
 
 if __name__ == '__main__':
 
-    Variable([
+    d = makeDocument()
+    d.context.Variable([
         dict(name='ShowMeasures', ui='CheckBox', args=dict(value=True)),
         dict(name='ShowOrigins', ui='CheckBox', args=dict(value=True)),
         dict(name='ShowDimensions', ui='CheckBox', args=dict(value=False)),
@@ -140,6 +141,5 @@ if __name__ == '__main__':
                                                      maxValue=800)),
     ], globals())
 
-    d = makeDocument()
     d.export(EXPORT_PATH)
 

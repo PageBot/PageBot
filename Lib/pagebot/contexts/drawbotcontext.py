@@ -17,7 +17,7 @@ try:
     from AppKit import NSFont
     from fontTools.ttLib import TTFont, TTLibError
     from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
-    from drawBot import installFont, listOpenTypeFeatures, installedFonts
+    from drawBot import installFont, listOpenTypeFeatures, installedFonts, Variable
 except ImportError:
     NSFont = TTFont = TTLibError = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
@@ -35,7 +35,8 @@ class DrawBotContext(BaseContext):
 
     # In case of specific builder addressing, callers can check here.
     isDrawBot = True
-  
+    # Variable is a DrawBot context global, used to make simple UI with controls on input parameters
+    Variable = DB_Variable
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FsString
   
@@ -44,7 +45,12 @@ class DrawBotContext(BaseContext):
         # drawing calls in as used regular DrawBot scripts.   
         self.b = drawBotBuilder # cls.b builder for this canvas.
  
-     #   S C R E E N
+    #   V A R I A B L E
+
+    def Variable(variableUI, globalVariables):
+        Variable(variableUI, globalVariable)
+
+    #   S C R E E N
 
     def screenSize(self):
         u"""Answer the current screen size in DrawBot. Otherwise default is to do nothing."""

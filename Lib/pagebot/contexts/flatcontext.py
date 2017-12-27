@@ -74,6 +74,13 @@ class FlatContext(BaseContext):
 
         self._pathCommands = None # Collect path commnands here before drawing the path.
 
+    #   V A R I A B L E
+
+    def Variable(variableUI, globalVariables):
+        # TODO: Make this work in Flat-way. Getting parameters from command line?
+
+    #   D O C U M E N T
+
     def newDocument(self, w, h, units='pt'):
         self.doc = self.b.document(w, h, units)
 
