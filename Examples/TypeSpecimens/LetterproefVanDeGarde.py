@@ -33,6 +33,7 @@
 #     to make insert the content in the template elements.
 #
 import copy
+from pagebot.contexts import defaultContext as context
 
 import pagebot # Import to know the path of non-Python resources.
 from pagebot.contributions.filibuster.blurb import Blurb
@@ -48,7 +49,7 @@ from pagebot.elements import *
 from pagebot.conditions import *
 # Generic function to create new FormattedString, extended version of DrawBot FormattedString() call.
 
-PageWidth, PageHeight = 180*MM, 247*MM # Original size of Letterproef (type specimen)
+W, H, = PageWidth, PageHeight = 180*MM, 247*MM # Original size of Letterproef (type specimen)
 PADDING = PageWidth/18 # Padding based on size (= in book layout called margin) of the page.
 pt = 22*MM
 pb = 36*MM
@@ -60,9 +61,14 @@ G = 12 # Gutter
 FONT_NAME_PATTERNS = ('Bungee', 'Amstel', 'Deco') # TODO, make this work.
 #SYSTEM_FAMILY_NAMES = ('Proforma', 'Productus')
 #MY_FAMILY_NAMES = ('Proforma', 'Productus')
+#FONT_NAME_PATTERNS = ('Proforma')
+#FONT_NAME_PATTERNS = ('Productus')
+#FONT_NAME_PATTERNS = ('Bitcount',)
+FONT_NAME_PATTERNS = ('Upgrade',)
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/LetterproefVanDeGarde.png' 
+EXPORT_PATH_PNG = '_export/LetterproefVanDeGarde.png' 
+EXPORT_PATH_PDF = '_export/LetterproefVanDeGarde.pdf' 
 COVER_IMAGE_PATH = 'images/VanDeGardeOriginalCover.png'
 
 def findFont(styleNames, italic=False):
@@ -94,6 +100,7 @@ def findFont(styleNames, italic=False):
     return None, None # Nothing found.
 
 def italicName(fontName):
+    print '222', fontName
     if not '-' in fontName:
         return fontName + '-Italic'
     return fontName + 'Italic'
@@ -129,7 +136,7 @@ def makeDocument():
     columnW = 60*MM
     leftPadding = rightPadding = 52*MM # Exception page padding for columns
     
-    blurb = Blurb() # BLurb generator
+    blurb = Blurb() # Blurb text generator
     
     doc = Document(w=PageWidth, h=PageHeight, originTop=False, startPage=1, autoPages=10)
     # Get default view from the document and set the viewing parameters.
@@ -171,7 +178,7 @@ def makeDocument():
     page.padding = pagePadding
     # Add image of cover scan.
     # TODO: Make other positions and scaling work on image element.
-    newImage(path=COVER_IMAGE_PATH, parent=page, conditions=[Fit2Sides()])
+    newImage(path=COVER_IMAGE_PATH, parent=page, conditions=[Fit2Sides()], h=H, w=W)
     page.solve()
 
     # -----------------------------------------------------------------------------------
@@ -233,7 +240,7 @@ def makeDocument():
     tbName.top = page.h-RedBoxY
     tbName.solve() # Make it go to right side of page.
     
-    fs = c.newString(foundryName.upper(), style=dict(font=boldName, textFill=0, 
+    fs = context.newString(foundryName.upper(), style=dict(font=boldName, textFill=0, 
         fontSize=fontNameSize, tracking=0, rTracking=0.3))
     tw, th = fs.textSize()
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
@@ -244,7 +251,7 @@ def makeDocument():
     
     # Make blurb text about design and typography.
     aboutText = blurb.getBlurb('article_summary', noTags=True)
-    fs = c.newString(aboutText, style=dict(font=bookName, textFill=0, fontSize=aboutSize, 
+    fs = context.newString(aboutText, style=dict(font=bookName, textFill=0, fontSize=aboutSize, 
         tracking=0, rTracking=rt, rLeading=1.3, hyphenation='en'))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbAbout = newTextBox(fs, parent=page, x=columnX, w=columnW, conditions=[Fit2Bottom()])
@@ -272,50 +279,50 @@ def makeDocument():
     lcAccents = capAccents.lower()
     punctuations = u',.;:?![]()-–—“”‘’'
     
-    fs = c.newString(caps, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, 
+    fs = context.newString(caps, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, 
         leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
-    fs += c.newString(lc, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, 
-        leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
-
-    if bookName != bookItalicName:
-        fs += C.newString(caps, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, 
-            leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
-        fs += C.newString(lc, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, 
-            leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
-
-    fs += c.newString(figures, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize,     
-        leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
-    if bookName != bookItalicName:
-        fs += C.newString(figures, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, 
-            leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
-
-    fs += c.newString(capAccents, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, 
-        leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
-    fs += c.newString(lcAccents, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, 
+    fs += context.newString(lc, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, 
         leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
 
     if bookName != bookItalicName:
-        fs += C.newString(capAccents, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, 
+        fs += context.newString(caps, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, 
             leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
-        fs += C.newString(lcAccents, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, 
+        fs += context.newString(lc, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, 
             leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
 
-    fs += c.newString(punctuations, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, 
+    fs += context.newString(figures, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize,     
         leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
     if bookName != bookItalicName:
-        fs += c.newString(punctuations + '\n', style=dict(font=bookItalicName, textFill=0, 
+        fs += context.newString(figures, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, 
+            leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
+
+    fs += context.newString(capAccents, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, 
+        leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
+    fs += context.newString(lcAccents, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, 
+        leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
+
+    if bookName != bookItalicName:
+        fs += context.newString(capAccents, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, 
+            leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
+        fs += context.newString(lcAccents, style=dict(font=bookItalicName, textFill=0, fontSize=glyphSetSize, 
+            leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
+
+    fs += context.newString(punctuations, style=dict(font=bookName, textFill=0, fontSize=glyphSetSize, 
+        leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
+    if bookName != bookItalicName:
+        fs += context.newString(punctuations + '\n', style=dict(font=bookItalicName, textFill=0, 
             fontSize=glyphSetSize, leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
     else:
         fs += '\n'
         
     if bookName != boldName:
-        fs += c.newString(caps+lc+figures+capAccents+lcAccents+punctuations, 
+        fs += context.newString(caps+lc+figures+capAccents+lcAccents+punctuations, 
             style=dict(font=boldName, textFill=0, 
             fontSize=glyphSetSize, leading=glyphSetLeading, tracking=0, rTracking=glyphTracking))
 
     tbGlyphSet = newTextBox(fs, parent=page, w=112*MM, x=leftPadding, conditions=[Top2Top()]) 
 
-    fs = c.newString(labelFont.info.familyName.upper(), style=dict(font=boldName, textFill=paperColor, 
+    fs = context.newString(labelFont.info.familyName.upper(), style=dict(font=boldName, textFill=paperColor, 
         fontSize=fontNameSize, tracking=0, rTracking=0.3))
     tw, th = fs.textSize()
     # TODO: h is still bit of a guess with padding and baseline position. Needs to be solved more structured.
@@ -324,7 +331,7 @@ def makeDocument():
     tbName.top = page.h-RedBoxY
     tbName.solve() # Make it go to right side of page.
 
-    fs = c.newString(foundryName.upper(), style=dict(font=boldName, textFill=0, fontSize=fontNameSize, tracking=0, rTracking=0.3))
+    fs = context.newString(foundryName.upper(), style=dict(font=boldName, textFill=0, fontSize=fontNameSize, tracking=0, rTracking=0.3))
     tw, th = fs.textSize()
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbFoundry = newTextBox(fs, parent=page, h=capHeight+3*padding[0], w=tw+2*padding[1],
@@ -334,14 +341,14 @@ def makeDocument():
 
     # Make blurb text about design and typography.
     specText = blurb.getBlurb('article', noTags=True)
-    fs = c.newString(specText, style=dict(font=bookName, textFill=0, fontSize=6.5, tracking=0, rTracking=rt, leading=6.5,
+    fs = context.newString(specText, style=dict(font=bookName, textFill=0, fontSize=6.5, tracking=0, rTracking=rt, leading=6.5,
         hyphenation='en'))
     # TODO: Last line of text blocks in original is bold.
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbSpec6 = newTextBox(fs, parent=page, x=leftPadding, w=50*MM, h=30*MM)
     tbSpec6.top = tbFoundry.bottom - 8*MM
 
-    fs = c.newString('6 1/2 set\nop 6 pt gegoten (links)', style=dict(font=bookName, fontSize=captionSize, 
+    fs = context.newString('6 1/2 set\nop 6 pt gegoten (links)', style=dict(font=bookName, fontSize=captionSize, 
         textFill=redColor, xTextAlign=RIGHT, rTracking=0.05, leading=8, openTypeFeatures=dict(frac=True)))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbCaption6 = newTextBox(fs, parent=page, x=page.pl, w=leftPadding - page.pl - 3*MM, h=30*MM)
@@ -349,13 +356,13 @@ def makeDocument():
     
     # Make blurb text about design and typography.
     specText = blurb.getBlurb('article', noTags=True)
-    fs = c.newString(specText, style=dict(font=bookName, textFill=0, fontSize=6.5, tracking=0, 
+    fs = context.newString(specText, style=dict(font=bookName, textFill=0, fontSize=6.5, tracking=0, 
         rTracking=rt, leading=7, hyphenation='en'))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbSpec7 = newTextBox(fs, parent=page, x=leftPadding, w=50*MM, h=35*MM)
     tbSpec7.top = tbSpec6.bottom - 5*MM
 
-    fs = c.newString('op 7 pt gegoten (links)', style=dict(font=bookName, fontSize=captionSize, 
+    fs = context.newString('op 7 pt gegoten (links)', style=dict(font=bookName, fontSize=captionSize, 
         textFill=redColor, xTextAlign=RIGHT, rTracking=0.05, leading=8))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbCaption7 = newTextBox(fs, parent=page, x=page.pl, w=leftPadding - page.pl - 3*MM, h=30*MM)
@@ -363,7 +370,7 @@ def makeDocument():
     
     # Make blurb text about design and typography.
     specText = blurb.getBlurb('article', noTags=True)
-    fs = c.newString(specText, style=dict(font=bookName, textFill=0, fontSize=6.5, tracking=0, 
+    fs = context.newString(specText, style=dict(font=bookName, textFill=0, fontSize=6.5, tracking=0, 
         rTracking=rt, leading=8, hyphenation='en'))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbSpec8 = newTextBox(fs, parent=page, h=tbSpec6.top - tbSpec7.bottom)
@@ -371,14 +378,14 @@ def makeDocument():
     tbSpec8.left = tbSpec6.right + 5*MM
     tbSpec8.w = page.w - page.pr - tbSpec8.left
 
-    fs = c.newString('op 8 pt gegoten (rechts)', style=dict(font=bookName, fontSize=captionSize, 
+    fs = context.newString('op 8 pt gegoten (rechts)', style=dict(font=bookName, fontSize=captionSize, 
         textFill=redColor, xTextAlign=RIGHT, rTracking=0.05, leading=8))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbCaption8 = newTextBox(fs, parent=page, x=page.pl, w=leftPadding - page.pl - 3*MM)
     tbCaption8.bottom = tbSpec8.bottom # TODO: Align with the position of the lowest base line.
     
     # TODO: Calculate the right amount
-    fs = c.newString('Corps 6 – per 100 aug.: romein 417, cursief 444, vet 426 letters', 
+    fs = context.newString(u'Corps 6 – per 100 aug.: romein 417, cursief 444, vet 426 letters', 
         style=dict(font=bookName, fontSize=captionSize, 
         textFill=redColor, xTextAlign=RIGHT, rTracking=rt, leading=8))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
@@ -386,7 +393,7 @@ def makeDocument():
     tbCaptionTotal.top = tbSpec8.bottom - MM
     
     # Page number
-    fs = c.newString(`pn`, 
+    fs = context.newString(`pn`, 
         style=dict(font=bookName, fontSize=pageNumberSize, 
         textFill=redColor, xTextAlign=LEFT, rTracking=rt, leading=8))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
@@ -408,7 +415,7 @@ def makeDocument():
 
     # Make blurb text about design and typography.
     specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
-    fs = c.newString(specText, style=dict(font=bookName, textFill=0, fontSize=8.5, tracking=0, 
+    fs = context.newString(specText, style=dict(font=bookName, textFill=0, fontSize=8.5, tracking=0, 
         rTracking=rt, leading=8, hyphenation='en'))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbText1 = newTextBox(fs, parent=page, h=110*MM, w=50*MM, conditions=[Top2Top(), Left2Left()])
@@ -416,7 +423,7 @@ def makeDocument():
     
     # Make blurb text about design and typography.
     specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
-    fs = c.newString(specText, style=dict(font=bookName, textFill=0, fontSize=8.5, tracking=0, 
+    fs = context.newString(specText, style=dict(font=bookName, textFill=0, fontSize=8.5, tracking=0, 
         rTracking=rt, leading=9, hyphenation='en'))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     x = tbText1.right + 5*MM
@@ -425,7 +432,7 @@ def makeDocument():
     
     # Make blurb text about design and typography.
     specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
-    fs = c.newString(specText, style=dict(font=bookName, textFill=0, fontSize=8.5, tracking=0, 
+    fs = context.newString(specText, style=dict(font=bookName, textFill=0, fontSize=8.5, tracking=0, 
         rTracking=rt, leading=10, hyphenation='en'))
     x = tbText1.left
     tbText3 = newTextBox(fs, parent=page, x=x, h=64*MM, w=page.w - x - rightPadding, mt=10*MM, 
@@ -434,7 +441,7 @@ def makeDocument():
     # TODO: Add red captions here.
 
     # Red label on the left
-    fs = c.newString(labelFont.info.styleName.upper(), style=dict(font=boldName, textFill=paperColor, 
+    fs = context.newString(labelFont.info.styleName.upper(), style=dict(font=boldName, textFill=paperColor, 
         fontSize=fontNameSize, tracking=0, rTracking=0.3))
     tw, th = fs.textSize()
     # TODO: h is still bit of a guess with padding and baseline position. Needs to be solved more structured.
@@ -443,7 +450,7 @@ def makeDocument():
     tbName.top = page.h-RedBoxY
     
     # Page number
-    fs = c.newString(`pn`, 
+    fs = context.newString(`pn`, 
         style=dict(font=bookName, fontSize=pageNumberSize, 
         textFill=redColor, xTextAlign=RIGHT, rTracking=rt, leading=8))
     tbPageNumber = newTextBox(fs, parent=page, x=page.w - rightPadding - 10*MM, w=10*MM)
@@ -465,7 +472,7 @@ def makeDocument():
     
     # Make blurb text about design and typography.
     specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
-    fs = c.newString(specText, style=dict(font=bookName, textFill=0, fontSize=10.5, tracking=0, 
+    fs = context.newString(specText, style=dict(font=bookName, textFill=0, fontSize=10.5, tracking=0, 
         rTracking=rt, leading=10, hyphenation='en'))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     tbText1 = newTextBox(fs, parent=page, x=x, h=55*MM, w=page.w - x - page.pl, conditions=[Top2Top()])
@@ -473,7 +480,7 @@ def makeDocument():
     
     # Make blurb text about design and typography.
     specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
-    fs = c.newString(specText, style=dict(font=bookName, textFill=0, fontSize=10.5, tracking=0, 
+    fs = context.newString(specText, style=dict(font=bookName, textFill=0, fontSize=10.5, tracking=0, 
         rTracking=rt, leading=11, hyphenation='en'))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     newTextBox(fs, parent=page, mt=5*MM, x=x, h=60*MM, w=page.w - x - page.pl, conditions=[Float2Top()])
@@ -481,7 +488,7 @@ def makeDocument():
         
     # Make blurb text about design and typography.
     specText = blurb.getBlurb('article', noTags=True) + ' ' + blurb.getBlurb('article', noTags=True)
-    fs = c.newString(specText, style=dict(font=bookName, textFill=0, fontSize=10.5, tracking=0, 
+    fs = context.newString(specText, style=dict(font=bookName, textFill=0, fontSize=10.5, tracking=0, 
         rTracking=rt, leading=12, hyphenation='en'))
     # TODO: Something wrong with left padding or right padding. Should be symmetric.
     newTextBox(fs, parent=page, mt=5*MM, x=x, h=65*MM, w=page.w - x - page.pl, conditions=[Float2Top()])
@@ -557,5 +564,6 @@ def makeDocument():
 
 
 d = makeDocument()
-d.export(EXPORT_PATH) 
+d.export(EXPORT_PATH_PNG) 
+d.export(EXPORT_PATH_PDF) 
 
