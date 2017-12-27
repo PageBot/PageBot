@@ -246,7 +246,7 @@ class PixelMap(Element):
             context.restoreGraphicState()
 
         if drawElements:
-            self.buildElements(view, p)
+            self.buildChildElements(view, p)
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
