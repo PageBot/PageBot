@@ -178,7 +178,7 @@ class TextBox(Element):
         if the overflow marker needs to be drawn.
         Note: There is currently not a test if text actually went into the next element. It's just
         checking if there is a name defined, not if it exists or is already filled by another flow."""
-        return self.nextElement is None and len(self.getOverflow())
+        return self.nextElement is None and self.getOverflow()
 
     def overflow2Next(self):
         u"""Try to fix if there is overflow."""
@@ -201,7 +201,7 @@ class TextBox(Element):
                     nextElement.prevPage = page.name
                     nextElement.prevElement = self.name # Remember the back link
                     score = nextElement.solve() # Solve any overflow on the next element.
-                    result = len(score.fails) == 0 # Test if total flow placement succeeded.
+                    result = not score.fails # Test if total flow placement succeeded.
         return result
 
     #   B U I L D

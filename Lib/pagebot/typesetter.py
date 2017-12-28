@@ -315,7 +315,7 @@ class Typesetter(object):
     def popStyle(self):
         u"""Pop the cascaded style from the gState stack and answer the next style that is on top.
         Make sure that there still is a style to pop, otherwise raise an error. """
-        assert len(self.gState)
+        assert self.gState
         self.gState.pop()
         return self.peekStyle()
 

@@ -392,12 +392,12 @@ class Element(object):
             # Get the element on the next page that
             tb = page.getElementByName(tb.nextElement)
             # Hard check. Otherwise something must be wrong in the template flow definition.
-            assert tb is not None and not len(tb)
+            assert tb is not None and not tb
         else:
             page = self # Staying on the same page, flowing into another column.
             tb = self.getElementByName(tb.nextElement)
             # Hard check. Make sure that this one is empty, otherwise mistake in template
-            assert not len(tb)
+            assert not tb
         return page, tb
 
     #   If self.nextElement is defined, then check the condition if there is overflow.
