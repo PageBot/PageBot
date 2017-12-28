@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -16,6 +17,13 @@
 from pagebot.contexts import defaultContext as context
 
 if __name__ == '__main__':
+
+    w = 100
+    h = 100
+    x = 0
+    y = 0
+    useColor = True
+    c = [1, 0, 0]
 
     context.Variable([
         # create a variable called 'w'
@@ -46,10 +54,10 @@ if __name__ == '__main__':
     # check if the 'useColor' variable is checked
     if useColor:
         # set the fill color from the variables
-        fill(c)
+        context.fill(c)
     # draw a rect
-    rect(x, y, w, h)
+    context.rect(x, y, w, h)
     # set the font size
-    fontSize(h)
+    context.fontSize(h)
     # draw some text
-    text("Hello Variable", (w, h))
+    context.text("Hello Variable", (w, h))

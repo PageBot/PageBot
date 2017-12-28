@@ -233,9 +233,9 @@ class Document(object):
         for (y, x), page in self.pages.items():
             if pageSelection is not None and not y in pageSelection:
                 continue
-            w = max(w, e.w)
-            h = max(h, e.h)
-            d = max(d, e.d)
+            w = max(w, page.w)
+            h = max(h, page.h)
+            d = max(d, page.d)
         return w, h, d
 
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
@@ -514,10 +514,10 @@ class Document(object):
         u"""Answer the next page of page. If it does not exist, create a new page."""
         found = False
         for pn, pnPages in sorted(self.pages.items()):
-            for index, page in enumerate(pnPages):
+            for index, pg in enumerate(pnPages):
                 if found:
-                    return page
-                if eId == page.eId:
+                    return pg
+                if pg.eId == page.eId:
                     found = True
         # Not found, create new one?
         if makeNew:

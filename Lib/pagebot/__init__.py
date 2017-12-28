@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -113,11 +114,10 @@ def cy2y(cy, e):
 def z2cz(z, e):
     u"""Transform from *z* value to column *z* index value, using the *e.css('cd')* (column depth) 
     as column measure."""
-    gd = e.gd # Gutter
     cd = e.css('cd', 0) # Column width
     cz = 0
-    if cd + gd: # Check on division by 0
-        cz = (z - e.parent.pzf) / (cd + gd)
+    if cd + e.gd: # Check on division by 0
+        cz = (z - e.parent.pzf) / (cd + e.gd)
     return cz
 
 def cz2z(cz, e):
@@ -212,10 +212,9 @@ def ch2h(ch, e):
 def d2cd(d, e):
     u"""Transform from *d* value to column *cd* count value, using the *e.css('cd')* (column depth) 
     as column measure."""
-    guttgderD = e.gd
     cd = e.css('cd', 0)
-    if cd + gd: # Test for division by 0
-        return (d + gd) / (cd + gd)
+    if cd + e.gd: # Test for division by 0
+        return (d + e.gd) / (cd + e.gd)
     return 0 # Undefined, no info about column depth and gutter or zero division
 
 def cd2d(cd, e):
@@ -224,16 +223,18 @@ def cd2d(cd, e):
     if cd is None:
         d = 0
     else:
-        gutterD = e.gd
-        d = cd * (e.css('cd', 0) + gd) - gd  # Overwrite style from here.
+        d = cd * (e.css('cd', 0) + e.gd) - e.gd  # Overwrite style from here.
     return d
 
-def baseline2y(yIndex, e):
-    u"""Convert columns index and line index to page position. Answered (x, y) is point position based on
-    marginTop + yIndex*baseLine."""
-    padT = e.pt
-    baseline = e.css('baseline')
-    return padT + cy * baseline
+# FIX-ME: No code is currently using this method and
+#         its implementation in broken since the 'cy' var is undefined.
+#
+#def baseline2y(yIndex, e):
+#    u"""Convert columns index and line index to page position. Answered (x, y) is point position based on
+#    marginTop + yIndex*baseLine."""
+#    padT = e.pt
+#    baseline = e.css('baseline')
+#    return padT + cy * baseline
 
 class Gradient(object):
     u"""

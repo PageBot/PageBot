@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -19,14 +20,14 @@ from __future__ import division # Make integer division result in float.
 #import pagebot # Import to know the path of non-Python resources.
 
 from pagebot.style import TOP, BOTTOM
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
+# Document is the main instance holding all information about the
+# document together (pages, styles, etc.)
     
-PagePadding = 64
-PageSize = 500
+PagePadding = 30
+PageSize = 400
 
 GUTTER = 8 # Distance between the squares.
 SQUARE = 10 * GUTTER # Size of the squares
@@ -74,10 +75,15 @@ def makeDocument():
     
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    im = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0, parent=page, w=200, h=300,
-        conditions=(Top2Top(), Fit2Width(), SolveBlock(), Shrink2BlockBottom()), 
-        yAlign=BOTTOM, fill=(0, 1, 0, 0.3), stroke=(1, 0, 0)
-    )
+    img = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0,
+                   parent=page, w=200, h=300,
+                   conditions=(Top2Top(),
+                               Fit2Width(),
+                               SolveBlock(),
+                               Shrink2BlockBottom()),
+                   yAlign=BOTTOM,
+                   fill=(0, 1, 0, 0.3),
+                   stroke=(1, 0, 0))
     # Give parent on creation, to have the css chain working.
     
     # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
@@ -85,7 +91,7 @@ def makeDocument():
                                style=dict(font='Verdana',
                                           fontSize=20,
                                           textFill=1))
-    cap = newTextBox(fs, name='Caption', parent=im, z=0,
+    cap = newTextBox(fs, name='Caption', parent=img, z=0,
         conditions=[ Fit2Width(), Float2Top()], 
         padding=4, font='Verdana', 
         yAlign=TOP, fontSize=9, textFill=1, strokeWidth=0.5, 
@@ -95,21 +101,18 @@ def makeDocument():
     if score.fails:
         print score.fails
 
-    print im.h
-    for e in im.elements:
+    print img.h
+    for e in img.elements:
         print e.h
 
     return doc # Answer the doc for further doing.
  
 if __name__ == '__main__':
-
-
-    Variable([
-        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-         dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
-        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-    ], globals())
-           
     d = makeDocument()
+    d.context.Variable(
+      [dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
+       dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+      #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+      ], globals())
     d.export(EXPORT_PATH) 
 

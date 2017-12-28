@@ -21,8 +21,9 @@
 #     from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 #
 import copy
+from math import sin, radians
 from pagebot import getRootPath
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts import defaultContext as c
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
 
@@ -53,19 +54,19 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
       setting of the font.
     """
     condFont = getVariableFont(varFont, condensedLocation)
-    condensedFs = context.newString(s, style=dict(font=condFont.installedName,
-                                                  fontSize=fontSize,
-                                                  tracking=tracking,
-                                                  rTracking=rTracking,
-                                                  textFill=0))
-    condWidth, _ = textSize(condensedFs)
+    condensedFs = c.newString(s, style=dict(font=condFont.installedName,
+                                            fontSize=fontSize,
+                                            tracking=tracking,
+                                            rTracking=rTracking,
+                                            textFill=0))
+    condWidth, _ = c.textSize(condensedFs)
     wideFont = getVariableFont(varFont, wideLocation)
-    wideFs = context.newString(s, style=dict(font=wideFont.installedName,
-                                             fontSize=fontSize,
-                                             tracking=tracking,
-                                             rTracking=rTracking,
-                                             textFill=0))
-    wideWidth, _ = textSize(wideFs)
+    wideFs = c.newString(s, style=dict(font=wideFont.installedName,
+                                       fontSize=fontSize,
+                                       tracking=tracking,
+                                       rTracking=rTracking,
+                                       textFill=0))
+    wideWidth, _ = c.textSize(wideFs)
     # Check if the requested with is inside the boundaries of the font width axis
     if w < condWidth:
         font = condFont
@@ -81,11 +82,11 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condWidth)/(wideWidth-condWidth)
         font = getVariableFont(varFont, location)
-        fs = context.newString(s, style=dict(font=font.installedName,
-                                             fontSize=fontSize,
-                                             tracking=tracking,
-                                             rTracking=rTracking,
-                                             textFill=0))
+        fs = c.newString(s, style=dict(font=font.installedName,
+                                       fontSize=fontSize,
+                                       tracking=tracking,
+                                       rTracking=rTracking,
+                                       textFill=0))
     return dict(condensedFont=condFont,
                 condensedFs=condensedFs,
                 condensedWidth=condWidth,
@@ -95,12 +96,11 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
                 wideWidth=wideWidth,
                 wideLocation=wideLocation,
                 font=font, fs=fs,
-                width=textSize(fs)[0],
+                width=c.textSize(fs)[0],
                 location=location)
 
 HEADLINE_SIZE = 36
 HEADLINE = """When fonts started a new world."""
-
 
 MIN_WDTH = 0 # Minimum value of width [wdth] axis. 0 == Normal width
 MAX_WDTH = 0.8 # Maximum amount of compressions.
@@ -139,79 +139,79 @@ def draw(w):
     dFixed = fitVariableWidth(f, HEADLINE, fixedWidth, HEADLINE_SIZE,
                               condensedLocation, wideLocation)
 
-    newPage(W, H)
+    c.newPage(W, H)
     y = 2*PADDING
-    fill(1)
-    rect(0, 0, W, H)
+    c.fill(1)
+    c.rect(0, 0, W, H)
 
     # Draw calculated fitting instance and the two boundary instances.
-    text(d['condensedFs'], (PADDING, y+LEADING))
-    text(d['fs'], (PADDING, y+2*LEADING))
-    text(d['wideFs'], (PADDING, y+3*LEADING))
+    c.text(d['condensedFs'], (PADDING, y+LEADING))
+    c.text(d['fs'], (PADDING, y+2*LEADING))
+    c.text(d['wideFs'], (PADDING, y+3*LEADING))
 
     # Draw the instance choice of 3
     if w < fixedWidth:
-        text(d['condensedFs'], (PADDING, y))
+        c.text(d['condensedFs'], (PADDING, y))
     elif w < maxWidth:
-        text(dFixed['fs'], (PADDING, y))
+        c.text(dFixed['fs'], (PADDING, y))
     else:
-        text(d['wideFs'], (PADDING, y))
+        c.text(d['wideFs'], (PADDING, y))
 
-    fill(0.5)
-    fontSize(12)
-    text('Variable Font Amstelvar (Maximum width)', (PADDING, y+3*LEADING+40))
-    text('Variable Font Amstelvar (Calculated width)',
-         (PADDING, y+2*LEADING+40))
-    text('Variable Font Amstelvar (Minimum width)', (PADDING, y+LEADING+40))
-    text('Traditional fixed font styles', (PADDING, y+40))
+    c.fill(0.5)
+    c.fontSize(12)
+    c.text('Variable Font Amstelvar (Maximum width)', (PADDING, y+3*LEADING+40))
+    c.text('Variable Font Amstelvar (Calculated width)',
+           (PADDING, y+2*LEADING+40))
+    c.text('Variable Font Amstelvar (Minimum width)', (PADDING, y+LEADING+40))
+    c.text('Traditional fixed font styles', (PADDING, y+40))
 
 
     # Draw vertical lines, marking the text headline widths and in read the
     # requested column width. Also draw the values of the column width and
     # the [wdth] axis value for that fitting location.
-    fill(None)
-    stroke(0)
-    line((PADDING, PADDING), (PADDING, H-PADDING))
-    line((PADDING+d['condensedWidth'], PADDING),
-         (PADDING+d['condensedWidth'], H-PADDING))
-    line((PADDING+d['width'], PADDING),
-         (PADDING+d['width'], H-PADDING))
-    line((PADDING+d['wideWidth'], PADDING),
-         (PADDING+d['wideWidth'], H-PADDING))
-    stroke(None)
-    fill(0)
-    text('%d %0.2f' % (round(d['condensedWidth']),
-                       d['condensedLocation']['wdth']),
-         (PADDING+d['condensedWidth']+5, PADDING))
+    c.fill(None)
+    c.stroke(0)
+    c.line((PADDING, PADDING), (PADDING, H-PADDING))
+    c.line((PADDING+d['condensedWidth'], PADDING),
+           (PADDING+d['condensedWidth'], H-PADDING))
+    c.line((PADDING+d['width'], PADDING),
+           (PADDING+d['width'], H-PADDING))
+    c.line((PADDING+d['wideWidth'], PADDING),
+           (PADDING+d['wideWidth'], H-PADDING))
+    c.stroke(None)
+    c.fill(0)
+    c.text('%d %0.2f' % (round(d['condensedWidth']),
+                         d['condensedLocation']['wdth']),
+           (PADDING+d['condensedWidth']+5, PADDING))
 
-    text('%d %0.2f' % (round(d['width']),
-                       d['location']['wdth']),
-         (PADDING+d['width']+5, PADDING))
+    c.text('%d %0.2f' % (round(d['width']),
+                         d['location']['wdth']),
+           (PADDING+d['width']+5, PADDING))
 
-    text('%d %0.2f' % (round(d['wideWidth']),
-                       d['wideLocation']['wdth']),
-         (PADDING+d['wideWidth']+5, PADDING))
+    c.text('%d %0.2f' % (round(d['wideWidth']),
+                         d['wideLocation']['wdth']),
+           (PADDING+d['wideWidth']+5, PADDING))
 
-    stroke(1, 0, 0)
-    line((PADDING+w, PADDING), (PADDING+w, H-PADDING))
-    stroke(None)
-    fill(1, 0, 0)
-    text('w=%d' % w, (PADDING+w+5, H-PADDING-5))
+    c.stroke(1, 0, 0)
+    c.line((PADDING+w, PADDING), (PADDING+w, H-PADDING))
+    c.stroke(None)
+    c.fill(1, 0, 0)
+    c.text('w=%d' % w, (PADDING+w+5, H-PADDING-5))
 
 if INTERACTIVE:
     #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    Variable([dict(name='Width', ui='Slider',
-                   args=dict(minValue=PADDING,
-                             value=200,
-                             maxValue=W-2*PADDING))
-             ], globals())
+    c.Variable([dict(name='Width', ui='Slider',
+                     args=dict(minValue=PADDING,
+                               value=200,
+                               maxValue=W-2*PADDING))
+               ], globals())
 
-    draw(Width)
+    c.draw(Width)
 else:
     angle = 0
     while angle < 360:
         dx = sin(radians(angle))*0.5 + 0.5
         draw(160 + (W-2*PADDING-160) * dx)
         angle += 360/FRAMES
-    saveImage('_export/fitVariableHeadlineStyleCompare.gif')
+    c.saveImage('_export/fitVariableHeadlineStyleCompare.gif')
 

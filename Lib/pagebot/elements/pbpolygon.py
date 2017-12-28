@@ -15,7 +15,9 @@
 #     polygon.py
 #
 from pagebot.elements.element import Element
-from pagebot.style import XXXL
+from pagebot.style import XXXL, NO_COLOR
+from pagebot.toolbox.transformer import pointOffset
+
 
 class Polygon(Element):
     u"""The Polygon element is a simple implementation of the polygon DrawBot function.
