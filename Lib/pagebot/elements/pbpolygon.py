@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -14,7 +15,7 @@
 #     polygon.py
 #
 from pagebot.elements.element import Element
-from pagebot.style import XXXL, ORIGIN
+from pagebot.style import XXXL
 
 class Polygon(Element):
     u"""The Polygon element is a simple implementation of the polygon DrawBot function.

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,7 +16,6 @@
 #
 import copy
 import codecs
-
 import xml.etree.ElementTree as ET
 
 try:
@@ -31,7 +31,6 @@ except ImportError:
 from pagebot.contexts import defaultContext
 from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
-from pagebot.document import Document
 
 class Typesetter(object):
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -18,20 +19,12 @@
 #     for additional parameters.
 #
 from __future__ import division
-
-import os
 from math import pi, sin, cos
-from random import random, choice
-from copy import copy
-
-from fontTools.ttLib import TTFont
-
-from drawBot import textSize, text, fill, rect, oval, stroke, strokeWidth, installFont, installedFonts, FormattedString, moveTo, lineTo, newPath, drawPath
-
+from drawBot import textSize, text, fill, oval, stroke, strokeWidth, moveTo, lineTo, newPath, drawPath
 from pagebot.contexts import defaultContext as context
 from pagebot.elements.element import Element
-from pagebot.style import makeStyle, MIN_WIDTH
-from pagebot.fonttoolbox.variablefontbuilder import generateInstance, drawGlyphPath, getVariableFont, getVarLocation
+from pagebot.style import MIN_WIDTH
+from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath, getVariableFont, getVarLocation
 from pagebot.toolbox.transformer import pointOffset
 
 class VariableCircle(Element):

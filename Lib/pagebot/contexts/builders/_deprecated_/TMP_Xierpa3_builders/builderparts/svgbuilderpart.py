@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #    xierpa server
@@ -10,9 +11,6 @@
 #
 #     svgbuilderpart.py
 #
-from xierpa3.toolbox.transformer import TX
-from xierpa3.attributes.gradient import LinearGradient
-
 class SvgBuilderPart:
     
     SVG_ATTRIBUTES = set(['width', 'height'])

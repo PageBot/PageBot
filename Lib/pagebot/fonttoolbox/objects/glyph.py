@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -18,13 +19,10 @@
 import sys
 import weakref
 
-from fontTools.ttLib import TTFont, TTLibError
-
 # TODO: Needs DrawBot/Flex context.
 #from AppKit import NSFont
 #from drawBot import BezierPath
 
-from fontinfo import FontInfo
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
 from pagebot.toolbox.transformer import point2D
 from pagebot.fonttoolbox.analyzers.apoint import APoint

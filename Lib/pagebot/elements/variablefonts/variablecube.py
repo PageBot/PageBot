@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,13 +16,10 @@
 #
 from __future__ import division
 
-import os
 from copy import copy
-from fontTools.ttLib import TTFont
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-#from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
-from drawBot import fill, rect, stroke, strokeWidth, installFont, installedFonts, FormattedString
+from drawBot import fill, rect, stroke, strokeWidth, FormattedString
 
 
 class VariableCube(Element):

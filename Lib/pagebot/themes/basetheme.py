@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,7 +16,7 @@
 #
 import copy
 from scss import compiler
-from pagebot.style import makeStyle, getRootStyle
+from pagebot.style import getRootStyle
 
 class BaseTheme(object):
     u"""The Theme instances combines a number style dictionaries (property values), 

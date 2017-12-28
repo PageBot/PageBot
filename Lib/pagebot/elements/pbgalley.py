@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -13,7 +14,7 @@
 #
 #     galley.py
 #
-from pagebot.style import NO_COLOR, ORIGIN, makeStyle
+from pagebot.style import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset, int2Color
 

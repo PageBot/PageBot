@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
@@ -17,7 +18,7 @@
 #
 import sys
 import copy
-from pagebot.toolbox.units import MM, INCH, mm, fr, pt, px, perc
+from pagebot.toolbox.units import MM, INCH 
 
 NO_COLOR = -1
 

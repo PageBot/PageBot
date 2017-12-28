@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 
@@ -14,13 +15,12 @@
 #     document.py
 #
 import copy
-
 from pagebot.contexts import defaultContext # Default context for this document if undefined.
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import viewClasses, defaultViewClass
-from pagebot.style import makeStyle, getRootStyle, TOP, BOTTOM
+from pagebot.style import getRootStyle, TOP, BOTTOM
 from pagebot.toolbox.transformer import obj2StyleId
 from pagebot.contexts.builders import BuildInfo # Container with Builder flags and data/parametets
 

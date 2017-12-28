@@ -12,10 +12,6 @@
 #
 #     AlignElements.py
 #
-import pagebot
-import pagebot.toolbox
-import pagebot.toolbox.timemark
-
 from pagebot.toolbox.timemark import TimeMark
 
 def run():

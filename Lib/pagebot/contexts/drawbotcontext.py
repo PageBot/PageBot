@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,13 +16,11 @@
 #
 try:
     from AppKit import NSFont
-    from fontTools.ttLib import TTFont, TTLibError
     from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
-    from drawBot import installFont, listOpenTypeFeatures, installedFonts, Variable
+    from drawBot import Variable
 except ImportError:
-    NSFont = TTFont = TTLibError = None
+    NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
-    installFont =  listOpenTypeFeatures = None
 
 from basecontext import BaseContext
 from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder

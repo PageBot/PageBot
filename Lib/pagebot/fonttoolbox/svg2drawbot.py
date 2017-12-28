@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,12 +16,8 @@
 #
 #     Converts SVG paths to drawbot Bézier paths.
 #
-
 from drawBot.context.baseContext import BezierPath
 from xml.dom import minidom
-import random
-import os.path
-from AppKit import NSPoint
 
 def getSvgPaths(fileName):
     u"""Extracts path strings from XML."""
