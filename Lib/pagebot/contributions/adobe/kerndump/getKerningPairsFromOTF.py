@@ -90,7 +90,7 @@ class OTFKernReader(object):
         self.uniqueKernLookupIndexList = collectUniqueKernLookupListIndexes(self.featureRecord)
 
     def findKerningLookups(self):
-        if not len(self.uniqueKernLookupIndexList):
+        if not self.uniqueKernLookupIndexList:
             print "The font has no %s feature." % kKernFeatureTag
             self.goodbye()
 

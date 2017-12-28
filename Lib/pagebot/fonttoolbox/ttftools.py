@@ -192,7 +192,7 @@ def patchGlyphNames(font, filterFunc):
         >>> cs.program
         [406, 784, -20, 'hstem', 49, 784, 'rmoveto', 20, -265, 'rlineto', 82, 'hlineto', 20, 265, 'rlineto', 44, 'callgsubr']
     """
-    assert len(font.tables) == 0, "font must be freshly opened, no tables can be loaded at this point."
+    assert not font.tables, "font must be freshly opened, no tables can be loaded at this point."
     glyphOrder = font.getGlyphOrder()
     if "space" in glyphOrder[:4]:
         # skip the glyphs before the "space" glyph

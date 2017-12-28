@@ -43,7 +43,7 @@ class Composer(object):
         If flowId is omitted, then let the page find the entry point for the first flow."""
         if flowId is None:
             flows = page.getFlows()
-            assert len(flows) # There must be at least one, otherwise error in template.
+            assert flows # There must be at least one, otherwise error in template.
             flowId, _ = sorted(flows.keys()) # Arbitrary which one, if there are multiple entries.
         tb = page.getElementByName(flowId) # Find the seed flow box on the page, as derived from template.
         assert tb is not None # Make sure, otherwise there is a template error.

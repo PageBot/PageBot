@@ -43,7 +43,7 @@ def setCoordinates(glyph, coord, glyfTable):
             if hasattr(comp, 'x'):
                 comp.x,comp.y = p
     elif glyph.numberOfContours is 0:
-        assert len(coord) == 0
+        assert not coord
     else:
         assert len(coord) == len(glyph.coordinates)
         glyph.coordinates = coord

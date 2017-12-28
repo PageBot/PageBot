@@ -31,7 +31,7 @@ class Vertical(APointContextList):
     # self.x
     
     def _get_x(self):
-        if len(self):
+        if self:
             return self[0].p[0] 
         return None
     x = property(_get_x)
@@ -79,7 +79,7 @@ class Horizontal(APointContextList):
     x = property(_get_x)
     
     def _get_y(self):
-        if len(self):
+        if self:
             return self[0].p.y
         return None
     y = property(_get_y)

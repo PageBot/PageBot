@@ -116,7 +116,7 @@ class Table(Element):
     def isOverflow(self, tolerance):
         u"""Answer the boolean flag if this element needs overflow to be solved.
         This method is typically called by conditions such as Overflow2Next."""
-        return self.nextElement is None or not len(self.getOverflow())
+        return self.nextElement is None or not self.getOverflow()
 
     def overflow2Next(self):
         u"""Try to fix if there is overflow."""
@@ -139,7 +139,7 @@ class Table(Element):
                     nextElement.prevPage = page.name
                     nextElement.prevElement = self.name # Remember the back link
                     score = nextElement.solve() # Solve any overflow on the next element.
-                    result = len(score.fails) == 0 # Test if total flow placement succeeded.
+                    result = not score.fails # Test if total flow placement succeeded.
         return result
 
     #   D R A W B O T / F L A T  S U P P O R T

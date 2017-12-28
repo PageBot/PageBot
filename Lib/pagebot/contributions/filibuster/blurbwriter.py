@@ -134,7 +134,7 @@ class BlurbWriter(object):
         if self.has_key(cached):
             return 1, self[cached][0]
         items = self[key]
-        if len(items)>0:
+        if items:
             i = randint(0, len(items)-1)
             self.choicetree.append((self.keyindex(key), i))
             return i, items[i]
@@ -231,7 +231,7 @@ class BlurbWriter(object):
             if m == None:
                 return 0, text
             tag = m.group('tagname')
-            if len(tag) == 0:
+            if not tag:
                 raise 'Error in blurb code' # Better make it crash to show the error
                 return 0, '__empty tag__'
             try:
@@ -300,7 +300,7 @@ class BlurbWriter(object):
             if start == None:
                 return 0, text
             tag = text[start:stop]
-            if len(tag) == 0:
+            if not tag:
                 raise 'Error in blurb code' # Better make it crash to show the error
                 return 0, u'__empty tag__'
 
@@ -388,7 +388,7 @@ class BlurbWriter(object):
             #print('cacheThis', cacheThis, 'makeUpperCase', makeUpperCase, 'makeLowercase', makeLowercase, 'space_to_underscore', space_to_underscore, 'nonletter_remove', nonletter_remove)
 
             # format the line if necessary
-            if len(formatcmds) > 0 and self.formatfunc:
+            if formatcmds and self.formatfunc:
                 for fc in formatcmds:
                     if DEBUG:
                         print('writerformatting before:', fc, c)
