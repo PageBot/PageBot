@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -17,14 +18,17 @@ from __future__ import division
 
 import weakref
 import copy
-
 from pagebot.contexts import defaultContext
 from pagebot.conditions.score import Score
-from pagebot import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
-from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID, point2D
-from pagebot.style import makeStyle, ORIGIN_POINT, MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT, BACK, NO_COLOR, XALIGNS, YALIGNS, ZALIGNS, \
-    MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT, MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, INTERPOLATING_TIME_KEYS,\
-    ONLINE, INLINE, OUTLINE, ORIGIN
+from pagebot import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z  
+from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID
+from pagebot.style import (makeStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
+                           LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS,
+                           MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT,
+                           MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH,
+                           DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL,
+                           INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
+                           OUTLINE, ORIGIN)
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.contexts.builders import BuildInfo # Container with Builder flags and data/parametets

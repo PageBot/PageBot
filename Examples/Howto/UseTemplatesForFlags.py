@@ -21,13 +21,13 @@
 #     to a specific page.
 #
 from __future__ import division # Make integer division result in float.
+#import pagebot # Import to know the path of non-Python resources.
 
-import pagebot # Import to know the path of non-Python resources.
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.contexts import defaultContext as context
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.document import Document
+# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
     
 PageSize = 500, 400
 

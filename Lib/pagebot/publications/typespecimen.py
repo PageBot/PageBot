@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -16,19 +17,19 @@
 #     and templates are hood enough. Inherit the redefine functions otherwise.
 #     Example of an inherited publications is FBFamilySpecimen.py
 #
-
 from pagebot.fonttoolbox.objects.family import Family, guessFamilies
-from pagebot.fonttoolbox.objects.font import Font, getFontPathOfFont
-
+from pagebot.fonttoolbox.objects.font import Font
 from pagebot.publications.publication import Publication
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT, NO_COLOR, A4
+from pagebot.style import A4
+
 # Document is the main instance holding all information about the document together 
 # (pages, styles, etc.)
 from pagebot.document import Document
+
 # Page and Template instances are holding all elements of a page together.
 # And import all other element constructors.
 from pagebot.elements import *
+
 # Import conditions for layout placements and other element status.
 from pagebot.conditions import *
  

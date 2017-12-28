@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -24,7 +25,7 @@
 #
 import pagebot
 from basebuilder import BaseBuilder
-from pagebot.toolbox.transformer import color2HexOpacity, value2Tuple4
+from pagebot.toolbox.transformer import color2HexOpacity
 from pagebot.toolbox.units import Unit
 
 def value2Css(v):

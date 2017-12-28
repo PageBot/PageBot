@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -13,7 +14,6 @@
 #
 #     gitview.py
 #
-from pagebot.contexts import HtmlContext
 from pagebot.elements.views.htmlview import HtmlView
 from pagebot.style import ORIGIN
 

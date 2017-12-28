@@ -16,11 +16,9 @@
 #     This script is using the style parameters "originTop", making the coordinate system run downwards.
 #
 from __future__ import division # Make integer division result in float.
-import pagebot # Import to know the path of non-Python resources.
+#import pagebot # Import to know the path of non-Python resources.
 
-from pagebot import x2cx, y2cy
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
+from pagebot.style import TOP, BOTTOM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 
 from pagebot.conditions import *

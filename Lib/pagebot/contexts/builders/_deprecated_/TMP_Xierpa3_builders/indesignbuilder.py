@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #    xierpa server
@@ -15,7 +16,7 @@
 #
 from xierpa3.builders.javascriptbuilder import JavaScriptBuilder
 from xierpa3.builders.builderparts.xmltransformerpart import XmlTransformerPart
-from xierpa3.toolbox.transformer import TX
+
 
 class InDesignBuilder(XmlTransformerPart, JavaScriptBuilder):
     u"""The InDesignBuilder allows to create InDesign JavaScript, that build the document

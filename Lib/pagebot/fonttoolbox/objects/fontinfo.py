@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -16,7 +17,6 @@
 #     Implements info functions on font info.
 #
 from pagebot.fonttoolbox.ttftools import getBestCmap
-from fontTools.ttLib import TTFont
 
 class cached_property(object):
     """

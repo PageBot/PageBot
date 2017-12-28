@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -17,21 +18,17 @@
 from __future__ import division
 import copy
 import os
-
-import pagebot
-from drawBot import installFont, BezierPath, save, transform, scale, drawPath, restore, fill, textSize
+from drawBot import installFont, save, transform, scale, drawPath, restore
 
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
-from fontTools.varLib.models import VariationModel, supportScalar, normalizeLocation
+from fontTools.varLib.models import supportScalar, normalizeLocation
 from fontTools.varLib.mutator import iup_delta
 
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
-from pagebot.fonttoolbox.variablefontaxes import axisDefinitions
 from pagebot.toolbox.transformer import path2FontName
 
 DEBUG = False

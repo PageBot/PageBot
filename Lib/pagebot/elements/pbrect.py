@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,9 +16,7 @@
 #
 from __future__ import division # Make integer division result in float.
 
-from pagebot.style import NO_COLOR
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset
 
 class Rect(Element):
     pass

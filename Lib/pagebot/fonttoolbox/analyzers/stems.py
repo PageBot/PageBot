@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2014+ Type Network
@@ -10,7 +11,6 @@
 #     stems.py
 #
 from pagebot.toolbox.mathematics import *
-from apoint import APoint
 from apointcontext import APointContext
 
 class Stem(object):

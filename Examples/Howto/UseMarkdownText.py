@@ -12,11 +12,9 @@
 #
 #     UseMarkDownText.py
 #
-from pagebot.style import getRootStyle, A5, BOTTOM, CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
-from pagebot import Gradient, Shadow
 from pagebot.typesetter import Typesetter
 
 W = 400

@@ -14,14 +14,12 @@
 #
 
 from __future__ import division # Make integer division result in float.
-import pagebot # Import to know the path of non-Python resources.
-
-from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
+#import pagebot # Import to know the path of non-Python resources.
 
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
+# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 
 PagePadding = 32
 PageSize = 500

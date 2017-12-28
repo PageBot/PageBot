@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -12,14 +13,11 @@
 #
 #     randompage.py
 #
-
-import pagebot 
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
+from pagebot.style import getRootStyle
 
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT, NO_COLOR
-        
+
 class SinglePage(Publication):
     
     def __init__(self, title=None, showGrid=False, showGridColumns=False):

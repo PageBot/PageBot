@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -14,8 +15,7 @@
 #
 #     Implements a range of common transforms.
 #
-import json, re, math, hashlib
-import os
+import json, re
 from time import time
 import datetime
 from random import randint

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -13,8 +14,7 @@
 #
 #     drawPart.py
 #
-from drawBot import cmykStroke, newPath, drawPath, moveTo, lineTo, strokeWidth, oval, text, rect, fill, curveTo, closePath, FormattedString
-from pagebot.toolbox.transformer import point3D
+from drawBot import oval 
 
 #   Additional drawing stuff.
 
