@@ -176,14 +176,14 @@ def contourToPath(contour):
     return path
 
 def addValueToPoints(valuestring, points):
-    u"""Adds the collected character string to the last coordinate in the points
-    list."""
-    if len(valuestring) == 0:
+    u"""Adds the collected character string to the last coordinate
+    in the points list."""
+    if not valuestring:
         return
 
     value = float(valuestring)
 
-    if len(points) == 0 or len(points[-1]) == 2:
+    if not points or len(points[-1]) == 2:
         points.append([])
 
     points[-1].append(value)

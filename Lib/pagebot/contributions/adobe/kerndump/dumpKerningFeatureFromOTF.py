@@ -44,7 +44,7 @@ def sortGlyphs(glyphlist):
 
 def nameClass(glyphlist, flag):
     glyphs = sortGlyphs(glyphlist)
-    if len(glyphs) == 0:
+    if not glyphs:
         name = 'error!!!'
     else:
         name = glyphs[0]
@@ -64,7 +64,7 @@ def nameClass(glyphlist, flag):
 
 def buildOutputList(sourceList, outputList, headlineString):
     # Basically just a function to create a nice headline before each chunk of kerning data.
-    if len(sourceList):
+    if sourceList:
         headline = headlineString
         decoration = '-'*len(headline)
 
