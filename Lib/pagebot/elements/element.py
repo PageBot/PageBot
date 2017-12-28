@@ -346,7 +346,7 @@ class Element(object):
         positions = {}
         for e in self.elements:
             point = tuple(e.point) # Point needs to be tuple to be used a key.
-            if not point in positions:
+            if point not in positions:
                 positions[point] = []
             positions[point].append(e)
         return positions

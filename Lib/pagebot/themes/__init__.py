@@ -26,7 +26,7 @@ def addTheme(theme):
 			name = 'Untitled'
 		if name in Themes:
 			name = '%s%d' % (name, n)
-		if not name in Themes:
+		if name not in Themes:
 			Themes[name] = theme
 			theme.name = name
 			return
