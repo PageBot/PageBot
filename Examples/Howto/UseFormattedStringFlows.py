@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -17,12 +18,14 @@
 from __future__ import division # Make integer division result in float.
 #import pagebot # Import to know the path of non-Python resources.
 
+from pagebot.style import LEFT, BOTTOM, TOP
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
 
-DoTextFlow = False   
-PagePadding = 32
+DoTextFlow = True 
+BoxWidth = 500
+PagePadding = 30
 PageSize = 500
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
@@ -101,15 +104,13 @@ def makeDocument():
     return doc # Answer the doc for further doing.
  
 if __name__ == '__main__':
-
-    Variable([
+    d = makeDocument()
+    d.context.Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
         dict(name='DoTextFlow', ui='CheckBox', args=dict(value=True)),
         dict(name='BoxWidth', ui='Slider', args=dict(minValue=100, value=500, maxValue=PageSize)),
         dict(name='PagePadding', ui='Slider', args=dict(minValue=0, value=30, maxValue=100)),
         dict(name='PageSize', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),
     ], globals())
-           
-    d = makeDocument()
     d.export(EXPORT_PATH) 
 

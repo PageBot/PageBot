@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -21,7 +22,7 @@ from pagebot.elements import *
 from pagebot.document import Document
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 
-PagePadding = 32
+PagePadding = 30
 PageSize = 500
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
@@ -51,16 +52,16 @@ def makeDocument():
     page0.padding = PagePadding
     
     t = newTable(cols=6, rows=62, borders=0.5, parent=page0, 
-        fill=0.85, conditions=[Fit(), Overflow2Next()],
-        nextElement='nextTable', nextPage='Page 2')
-    
+                 fill=0.85, conditions=[Fit(), Overflow2Next()],
+                 nextElement='nextTable', nextPage='Page 2')
+
     page1 = doc.getPage(1)
     page1.name = 'Page 2'
     page1.padding = PagePadding
-    
+
     t = newTable(cols=0, rows=0, borders=0.5, parent=page1, 
-        name='nextTable', fill=0.85, conditions=[Fit()])
-        
+                 name='nextTable', fill=0.85, conditions=[Fit()])
+
     score = doc.solve() # Try to solve all pages.
     if score.fails:
         print score.fails
@@ -70,12 +71,10 @@ def makeDocument():
     return doc # Answer the doc for further doing.
  
 if __name__ == '__main__':
-
-    Variable([
-        dict(name='PagePadding', ui='Slider', args=dict(minValue=0, value=30, maxValue=100)),
-        dict(name='PageSize', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),
-    ], globals())
-           
     d = makeDocument()
+    d.context.Variable(
+        [dict(name='PagePadding', ui='Slider', args=dict(minValue=0, value=30, maxValue=100)),
+         dict(name='PageSize', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),
+        ], globals())
     d.export(EXPORT_PATH) 
 

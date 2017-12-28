@@ -14,9 +14,8 @@
 #
 #     drawPart.py
 #
-from drawBot import oval 
-
-#   Additional drawing stuff.
+from pagebot.style import NO_COLOR
+from math import sin, cos, atan2, radians, degrees
 
 def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
     u"""Draw curved arrow marker between the two points.
@@ -30,10 +29,10 @@ def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endM
         c = e.css('flowConnectionStroke2', NO_COLOR)
     else:
         c = e.css('flowConnectionStroke1', NO_COLOR)
-    setStrokeColor(c, e.css('flowConnectionStrokeWidth'))
+    context.setStrokeColor(c, e.css('flowConnectionStrokeWidth'))
     if startMarker:
-        setFillColor(e.css('flowMarkerFill', NO_COLOR))
-        oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
+        context.setFillColor(e.css('flowMarkerFill', NO_COLOR))
+        context.oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
     xm = (xt + xs)/2
     ym = (yt + ys)/2
     xb1 = xm + onText * (yt - ys) * fmf
@@ -65,5 +64,5 @@ def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endM
     b.closePath()
     b.drawPath()
     if endMarker:
-        oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
+        context.oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 

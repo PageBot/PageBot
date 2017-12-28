@@ -1,3 +1,4 @@
+#!/usr/bin/evn python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -15,13 +16,15 @@
 from __future__ import division # Make integer division result in float.
 #import pagebot # Import to know the path of non-Python resources.
 
+from pagebot.contexts import defaultContext as c
 from pagebot.style import A4, LEFT, TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
 
 DoTextFlow = False   
-PagePadding = 32
+BoxWidth = 500
+PagePadding = 30
 PageSize = 500
 
 GUTTER = 8 # Distance between the squares.
@@ -37,8 +40,6 @@ SQUARE = 10 * GUTTER # Size of the squares
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/UseElasticTextBox.pdf' 
 
-BoxWidths = 200
-FloContent = True
 
 def makeDocument():
     u"""Make a new document."""
@@ -77,7 +78,7 @@ def makeDocument():
     
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    if BoxWidths < 200:
+    if BoxWidth < 200:
         tColor = (1, 0, 0)        
     else:
         tColor = (0, 0, 1)
@@ -110,7 +111,7 @@ def makeDocument():
  
 if __name__ == '__main__':
 
-    Variable([
+    c.Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
          dict(name='DoTextFlow', ui='CheckBox', args=dict(value=False)),
          dict(name='BoxWidth', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),

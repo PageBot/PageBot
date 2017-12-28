@@ -16,6 +16,7 @@
 #     Needs debug in view dimension showing.
 #
 from pagebot.style import getRootStyle, CENTER
+from pagebot.contexts import defaultContext as context as c
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document
@@ -67,7 +68,7 @@ def makeDocument():
 
 if __name__ == '__main__':
 
-    Variable([
+    c.Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
         dict(name='OriginTop', ui='CheckBox', args=dict(value=False)),
     ], globals())

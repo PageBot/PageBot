@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -36,12 +37,10 @@ EXPORT_PATH = '_export/useTextBoxLinesRuns.png'
 def makeDocument():
     u"""Make a new document."""
 
-
     # Create a new document, default to the defined page size. 
     doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)
-    
-    context = doc.context
-    
+    c = doc.context
+
     view = doc.getView()
     view.padding = 30 # Aboid showing of crop marks, etc.
     view.showPageCropMarks = True
@@ -51,30 +50,39 @@ def makeDocument():
     view.showElementOrigin = True
     view.showElementDimensions = False
     view.showElementInfo = False
-    
+
     # Get list of pages with equal y, then equal x.    
     #page = doc[0][0] # Get the single page from te document.
     page0 = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
     page0.name = 'Page 1'
     page0.padding = PagePadding
-    
-    s = context.newString('', style=dict(font='Verdana', fontSize=10, textFill=0))
+
+    s = c.newString('', style=dict(font='Verdana', fontSize=10, textFill=0))
     for n in range(10):
-        s += context.newString('(Line %d) Volume of text defines the box height.' % (n+1), style=dict(fontSize=10+n*2, textFill=0))
-        s += context.newString('Volume', style=dict(textFill=(1, 0, 0), font='Verdana', fontSize=10+n*2))
-        s += context.newString(' of text defines the box height. \n', style=dict(textFill=0, font='Verdana', fontSize=10+n*2))
-          
-    e1 = newTextBox(s, 
-        parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=None,
-        maxW=W-2*PagePadding, minW=100, mb=20, mr=10,       # Conditions make the element move to top-left of the page.
-        # And the condition that there should be no overflow, otherwise the text box
-        # will try to solve it.     
-        conditions=[Left2Left(), Float2Top(), Overflow2Next()],
-        # Position of the origin of the element. Just to show where it is.
-        # Has no effect on the position conditions. 
-        yAlign=BOTTOM, xAlign=LEFT,
-        leading=5, fontSize=9, textFill=0, strokeWidth=0.5, fill=0.9, stroke=None,
-    )
+        s += c.newString(('(Line %d) '
+                          'Volume of text defines the box height.') % (n+1),
+                         style=dict(fontSize=10+n*2, textFill=0))
+        s += c.newString('Volume', style=dict(textFill=(1, 0, 0),
+                                              font='Verdana',
+                                              fontSize=10+n*2))
+        s += c.newString(' of text defines the box height. \n',
+                         style=dict(textFill=0,
+                                    font='Verdana',
+                                    fontSize=10+n*2))
+    e1 = newTextBox(s, parent=page0, padding=4, x=100,
+                    w=BoxWidth, font='Verdana', h=None,
+                    maxW=W-2*PagePadding, minW=100, mb=20, mr=10,
+                    #Conditions make the element move to top-left of the page.
+                    # And the condition that there should be no overflow,
+                    # otherwise the text box will try to solve it.
+                    conditions=[Left2Left(),
+                                Float2Top(),
+                                Overflow2Next()],
+                    #Position of the origin of the element. Just to show
+                    # where it is. Has no effect on the position conditions.
+                    yAlign=BOTTOM, xAlign=LEFT,
+                    leading=5, fontSize=9, textFill=0,
+                    strokeWidth=0.5, fill=0.9, stroke=None)
     """
     for line in e1.textLines:
         print line, line.x, line.y
@@ -82,27 +90,27 @@ def makeDocument():
         print foundPattern.x, foundPattern.y, foundPattern.line, foundPattern.line.runs
     """
     font = getFontByName(e1.textLines[0].runs[1].displayName)
-    c = 'hyphen'
-    g = font[c]
+    char = 'hyphen'
+    g = font[char]
     print g.pointContexts[0].p.x
-    save()
-    scale(0.3)
-    path = font[c].path
-    fill(1, 0, 0)
-    drawPath(path)
-    ga = GlyphAnalyzer(font, c)
+    c.save()
+    c.scale(0.3)
+    path = font[char].path
+    c.fill(1, 0, 0)
+    c.drawPath(path)
+    ga = GlyphAnalyzer(font, char)
     for x, vertical in ga.verticals.items():
-        stroke(0)
-        strokeWidth(1)
-        fill(None)
-        line((x, 0), (x, 3000))
+        c.stroke(0)
+        c.strokeWidth(1)
+        c.fill(None)
+        c.line((x, 0), (x, 3000))
     print ga.horizontals    
     for y, horizontal in ga.horizontals.items():
-        stroke(0)
-        strokeWidth(1)
-        fill(None)
-        line((0, y), (2000, y))
-    restore()
+        c.stroke(0)
+        c.strokeWidth(1)
+        c.fill(None)
+        c.line((0, y), (2000, y))
+    c.restore()
     """
     for contour in ga.glyph.pointContexts:
         path = BezierPath()
@@ -113,20 +121,18 @@ def makeDocument():
             else:
                 path.lineTo((p.x/2, p.y/2))
         path.closePath()
-        fill(0)
-        drawPath(path)   
-            #oval(p.x/2, p.y/2, 4, 4)
+        c.fill(0)
+        c.drawPath(path)   
+            #c.oval(p.x/2, p.y/2, 4, 4)
             #print index, pc   
     """
-    
     score = doc.solve() # Try to solve all pages.
     if score.fails:
         print score.fails
 
     return doc # Answer the doc for further doing.
- 
-if __name__ == '__main__':
-           
+
+if __name__ == '__main__':       
     d = makeDocument()
-    d.export(EXPORT_PATH) 
+    d.export(EXPORT_PATH)
 

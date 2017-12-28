@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -12,10 +13,9 @@
 #
 #     UseVanillaUI.py
 #
-
-
 import AppKit
-from vanilla import Window, Button, CheckBox
+import vanilla
+from DrawBot.misc import DrawBotError
 
 class VariableController(object):
 
@@ -51,7 +51,11 @@ class VariableController(object):
             # create a label for every ui element except a checkbox
             if uiElement not in ("CheckBox", "Button"):
                 # create the label view
-                label = vanilla.TextBox((0, y + 2, labelSize - gutter, height), "%s:" % name, alignment="right", sizeStyle="small")
+                label = vanilla.TextBox((0, y + 2,
+                                         labelSize - gutter, height),
+                                        "%s:" % name,
+                                        alignment="right",
+                                        sizeStyle="small")
                 # set the label view
                 setattr(ui, "%sLabel" % name, label)
             else:
@@ -70,7 +74,8 @@ class VariableController(object):
                 # all other get a size style
                 args["sizeStyle"] = "small"
             # create the control view
-            attr = getattr(vanilla, uiElement)((labelSize, y, -10, height), callback=self.changed, **args)
+            attr = getattr(vanilla, uiElement)((labelSize, y, -10, height),
+                                               callback=self.changed, **args)
             # set the control view
             setattr(ui, name, attr)
             y += height + 6
@@ -99,24 +104,27 @@ class VariableController(object):
 
 def do(sender):
     controller = getController()
-    controller.runCode() # runt je script opnieuw.
+    controller.runCode()
     
 def getController():
-    document = AppKit.NSDocumentController.sharedDocumentController().currentDocument()
+    nsdc = AppKit.NSDocumentController
+    document = nsdc.sharedDocumentController().currentDocument()
     print document
     
     if not document:
-        raise DrawBotError("There is no document open")
+      raise DrawBotError("There is no document open")
     controller = document.vanillaWindowController
-    try:
-        controller._variableController.buildUI(variables)
-        controller._variableController.show()
-    except:
-        controller._variableController = VariableController(variables, controller.runCode, document)
-
+# TODO: the 'variables' var below is undefined:
+#    try:
+#      controller._variableController.buildUI(variables)
+#      controller._variableController.show()
+#    except:
+#      controller._variableController = VariableController(variables,
+#                                                          controller.runCode,
+#                                                          document)
     return controller
 
-w = Window((978, 388, 400, 400), 'Test Vanilla in DrawBot')
-w.button = Button((10, 10, 150, 30), 'Do', callback=do)
-w.checkbox = CheckBox((10, 150, 150, 30), 'Check', callback=do)
+w = vanilla.Window((978, 388, 400, 400), 'Test Vanilla in DrawBot')
+w.button = vanilla.Button((10, 10, 150, 30), 'Do', callback=do)
+w.checkbox = vanilla.CheckBox((10, 150, 150, 30), 'Check', callback=do)
 w.open()

@@ -21,7 +21,7 @@
 from random import random
 from math import sin, radians
 
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts import defaultContext as c
 from pagebot import getRootPath
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
@@ -63,24 +63,24 @@ for n in range(20):
 PAGE_FRAME = None
 
 def drawPageFrame(w):
-    context.fill(1)
-    context.stroke(0)
-    context.newPath()
-    context.moveTo((PADDING, H-PADDING))
-    context.lineTo((PADDING+w, H-PADDING))
-    context.lineTo((PADDING+w, H/2+PADDING))
-    context.curveTo((PADDING+w/2, H/2+PADDING),
-                 (PADDING+w/2, H/2+PADDING-M/2),
-                 (PADDING, H/2+PADDING-M/2))
-    context.closePath()
-    context.drawPath()
-    context.fill(None)
-    context.stroke(0.5)
-    context.strokeWidth(4)
+    c.fill(1)
+    c.stroke(0)
+    c.newPath()
+    c.moveTo((PADDING, H-PADDING))
+    c.lineTo((PADDING+w, H-PADDING))
+    c.lineTo((PADDING+w, H/2+PADDING))
+    c.curveTo((PADDING+w/2, H/2+PADDING),
+              (PADDING+w/2, H/2+PADDING-M/2),
+              (PADDING, H/2+PADDING-M/2))
+    c.closePath()
+    c.drawPath()
+    c.fill(None)
+    c.stroke(0.5)
+    c.strokeWidth(4)
     leading = 14
     for n in range(10):
-        context.line((PADDING+M, H-5*PADDING-n*leading),
-             (PADDING+w-M-LINE_ENDINGS[n], H-5*PADDING-n*leading))
+        c.line((PADDING+M, H-5*PADDING-n*leading),
+               (PADDING+w-M-LINE_ENDINGS[n], H-5*PADDING-n*leading))
 
 def draw(w, y, drawVariable):
     u"""
@@ -92,51 +92,51 @@ def draw(w, y, drawVariable):
     d = fitVariableWidth(f, HEADLINE, w, HEADLINE_SIZE,
                          condensedLocation, wideLocation)
     # move the canvas
-    context.save()
+    c.save()
     if not drawVariable:
-        context.translate(0, -H/2+PADDING/2)
+        c.translate(0, -H/2+PADDING/2)
     drawPageFrame(d['width']+2*M)
-    context.restore()
+    c.restore()
 
     minWidth = d['condensedWidth']
     maxWidth = d['wideWidth']
     fixedWidth = minWidth + (maxWidth - minWidth)/2
-    dFixed = context.fitVariableWidth(f, HEADLINE, fixedWidth, HEADLINE_SIZE,
-                              condensedLocation, wideLocation)
+    dFixed = c.fitVariableWidth(f, HEADLINE, fixedWidth, HEADLINE_SIZE,
+                                condensedLocation, wideLocation)
 
     if drawVariable:
-        context.text(d['fs'], (PADDING+M, y-PADDING-M))
+        c.text(d['fs'], (PADDING+M, y-PADDING-M))
     else:
         # Draw the instance choice of 3
         if w < fixedWidth:
-            context.text(d['condensedFs'], (PADDING+M, y-PADDING-M))
+            c.text(d['condensedFs'], (PADDING+M, y-PADDING-M))
         elif w < maxWidth:
-            context.text(dFixed['fs'], (PADDING+M, y-PADDING-M))
+            c.text(dFixed['fs'], (PADDING+M, y-PADDING-M))
         else:
-            context.text(d['wideFs'], (PADDING+M, y-PADDING-M))
+            c.text(d['wideFs'], (PADDING+M, y-PADDING-M))
 
 if INTERACTIVE:
-    Variable([
-        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-        dict(name='Width',
-             ui='Slider',
-             args=dict(minValue=PADDING,
-                       value=200,
-                       maxValue=W-2*PADDING))
-    ], globals())
+    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+    c.Variable(
+        [dict(name='Width',
+              ui='Slider',
+              args=dict(minValue=PADDING,
+                        value=200,
+                        maxValue=W-2*PADDING))
+        ], globals())
 
     draw(Width)
 else:
     pageFrame = None
     angle = 0
     while angle < 360:
-        context.newPage(W, H)
-        context.fill(0.8)
-        context.rect(0, 0, W, H)
+        c.newPage(W, H)
+        c.fill(0.8)
+        c.rect(0, 0, W, H)
         dx = sin(radians(angle))*0.5+0.5
         w = W/2 + (W-2*PADDING-W/2) * dx
         draw(w, H-PADDING, True)
         draw(w, (H-PADDING)/2, False)
         angle += 360/FRAMES
-    context.saveImage('_export/fitVariableColumns.gif')
+    c.saveImage('_export/fitVariableColumns.gif')
 
