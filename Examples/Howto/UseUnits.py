@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -11,22 +12,6 @@
 # -----------------------------------------------------------------------------
 #
 #     UseUnits.py
-#
-#from pagebot.toolbox.units import perc, fr, px, pt, mm
-
-# -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
-#     www.pagebot.io
-#
-#     P A G E B O T
-#
-#     Licensed under MIT conditions
-#
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
-# -----------------------------------------------------------------------------
-#
-#     units.py
 #
 #     Implements basic intelligent spacing units with build-in conversions.
 #
@@ -80,33 +65,33 @@ class Unit(object):
    
     def __eq__(self, u):
         if isinstance(u, self.__class__):
-            return self.v == u.v
-        return self._v == v 
+            return self._v == u._v
+        return self._v == u
 
     def __ne__(self, u):
         if isinstance(u, self.__class__):
             return self._v != u._v
-        return self._v != v 
+        return self._v != u
 
     def __le__(self, u):
         if isinstance(u, self.__class__):
             return self._v <= u._v
-        return self._v <= v 
+        return self._v <= u
 
     def __lt__(self, u):
         if isinstance(u, self.__class__):
             return self._v < u._v
-        return self._v < v 
+        return self._v < u
 
     def __ge__(self, u):
         if isinstance(u, self.__class__):
             return self._v >= u._v
-        return self._v >= v 
+        return self._v >= u
 
     def __gt__(self, u):
         if isinstance(u, self.__class__):
             return self._v > u._v
-        return self._v > v 
+        return self._v > u
 
     def __add__(self, u):
         if isinstance(u, self.__class__):

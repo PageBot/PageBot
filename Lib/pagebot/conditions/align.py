@@ -224,10 +224,10 @@ class Bleed2BottomSide(Condition):
 
 class Shrink(Condition):
 	u"""Shrink the element on all sides around the margins of the enclose child elements.
-	There should be at least one child element for this to executed."""
+	There should be at least one child element for this to be executed."""
 
 	def _getConditions(self):
-		return [Left2BlockLeft, Top2BlockTop, Fit2BlockRight, Fit2BlockBottom]
+		return [Left2Left, Top2Top, Fit2Right, Fit2Bottom]
 
 	def evaluate(self, e, score):
 		u"""Fit the element on all margins of the parent. First align left and top,

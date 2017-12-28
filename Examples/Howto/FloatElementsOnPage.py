@@ -57,16 +57,16 @@ Amy's Sun paper hit by hackers. Ignoring the fact that the problem, "was resolve
 
 MaxPage = 1200
 
-RedWidth = 200
+RedWidth = 100
 RedHeight = 100
-YellowWidth = 200
-YellowHeight = 200
-BlueWidth = 200
-BlueHeight = 200
+YellowWidth = 100
+YellowHeight = 100
+BlueWidth = 100
+BlueHeight = 100
 
-ShowOrigin = False
+ShowOrigin = True
 ShowElementInfo = False
-PageSize = MaxPage
+PageSize = 400
 
 EXPORT_PATH = '_export/FloatElements.pdf'
 # Export in _export folder that does not commit in Git. Force to export PDF.
@@ -148,27 +148,28 @@ def makeDocument():
     return doc # Answer the doc for further doing.
 
 if __name__ == '__main__':
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    Variable([dict(name='RedWidth', ui='Slider',
-                   args=dict(minValue=30, value=100, maxValue=MaxPage)),
-              dict(name='RedHeight', ui='Slider',
-                   args=dict(minValue=30, value=100, maxValue=MaxPage)),
-              dict(name='YellowWidth', ui='Slider',
-                   args=dict(minValue=60, value=100, maxValue=MaxPage)),
-              dict(name='YellowHeight', ui='Slider',
-                   args=dict(minValue=30, value=100, maxValue=MaxPage)),
-              dict(name='BlueWidth', ui='Slider',
-                   args=dict(minValue=30, value=100, maxValue=MaxPage)),
-              dict(name='BlueHeight', ui='Slider',
-                   args=dict(minValue=30, value=100, maxValue=MaxPage)),
-              dict(name='ShowOrigin', ui='CheckBox',
-                   args=dict(value=True)),
-              dict(name='ShowElementInfo', ui='CheckBox',
-                   args=dict(value=False)),
-              dict(name='PageSize', ui='Slider',
-                   args=dict(minValue=200, value=400, maxValue=MaxPage))
-             ], globals())
 
     d = makeDocument()
+    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+    d.context.Variable(
+        [dict(name='RedWidth', ui='Slider',
+              args=dict(minValue=30, value=100, maxValue=MaxPage)),
+         dict(name='RedHeight', ui='Slider',
+              args=dict(minValue=30, value=100, maxValue=MaxPage)),
+         dict(name='YellowWidth', ui='Slider',
+              args=dict(minValue=60, value=100, maxValue=MaxPage)),
+         dict(name='YellowHeight', ui='Slider',
+              args=dict(minValue=30, value=100, maxValue=MaxPage)),
+         dict(name='BlueWidth', ui='Slider',
+              args=dict(minValue=30, value=100, maxValue=MaxPage)),
+         dict(name='BlueHeight', ui='Slider',
+              args=dict(minValue=30, value=100, maxValue=MaxPage)),
+         dict(name='ShowOrigin', ui='CheckBox',
+              args=dict(value=True)),
+         dict(name='ShowElementInfo', ui='CheckBox',
+              args=dict(value=False)),
+         dict(name='PageSize', ui='Slider',
+              args=dict(minValue=200, value=400, maxValue=MaxPage))
+        ], globals())
     d.export(EXPORT_PATH)
 

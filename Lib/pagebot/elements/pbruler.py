@@ -16,6 +16,7 @@
 #
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
+from pagebot.style import NO_COLOR
 
 class Ruler(Element):
 
@@ -27,7 +28,7 @@ class Ruler(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build_drawBot(self, view, origin, drawElement=True):
+    def build_drawBot(self, view, origin, drawElements=True):
 
         context = self.context # Get current context and builder.
 

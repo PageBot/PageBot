@@ -29,8 +29,8 @@ from pagebot.document import Document
     
 RedSize = 100
 YellowSize = 30
-PagePadding = 64
-PageSize = 500
+PagePadding = 30
+PageSize = 400
 
 GUTTER = 8 # Distance between the squares.
 SQUARE = 10 * GUTTER # Size of the squares
@@ -97,18 +97,18 @@ def makeDocument():
         print(score.fails)
 
     return doc # Answer the doc for further doing.
-   
-#dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-Variable([dict(name='RedSize', ui='Slider',
-               args=dict(minValue=100, value=100, maxValue=500)),
-          dict(name='YellowSize', ui='Slider',
-               args=dict(minValue=10, value=30, maxValue=500)),
-          dict(name='PagePadding', ui='Slider',
-               args=dict(minValue=10, value=30, maxValue=100)),
-          dict(name='PageSize', ui='Slider',
-               args=dict(minValue=100, value=400, maxValue=800))
-         ], globals())
 
 d = makeDocument()
+#dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+d.context.Variable(
+    [dict(name='RedSize', ui='Slider',
+          args=dict(minValue=100, value=100, maxValue=500)),
+     dict(name='YellowSize', ui='Slider',
+          args=dict(minValue=10, value=30, maxValue=500)),
+     dict(name='PagePadding', ui='Slider',
+          args=dict(minValue=10, value=30, maxValue=100)),
+     dict(name='PageSize', ui='Slider',
+          args=dict(minValue=100, value=400, maxValue=800))
+    ], globals())
 d.export(EXPORT_PATH)
 

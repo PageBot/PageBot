@@ -17,15 +17,17 @@
 try:
     from AppKit import NSFont
     from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
-    from drawBot import Variable
 except ImportError:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
 
+import os
+from drawBot import Variable
 from basecontext import BaseContext
 from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
 from pagebot.contexts.strings.fsstring import FsString
 from pagebot.style import NO_COLOR, LEFT
+
 
 class DrawBotContext(BaseContext):
     u"""A DrawBotContext instance combines the specific functions of the DrawBot library
@@ -34,8 +36,7 @@ class DrawBotContext(BaseContext):
 
     # In case of specific builder addressing, callers can check here.
     isDrawBot = True
-    # Variable is a DrawBot context global, used to make simple UI with controls on input parameters
-    Variable = DB_Variable
+
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FsString
   
@@ -47,7 +48,9 @@ class DrawBotContext(BaseContext):
     #   V A R I A B L E
 
     def Variable(variableUI, globalVariables):
-        Variable(variableUI, globalVariable)
+        # Variable is a DrawBot context global,
+        # used to make simple UI with controls on input parameters.
+        Variable(variableUI, globalVariables)
 
     #   S C R E E N
 
@@ -90,7 +93,7 @@ class DrawBotContext(BaseContext):
 
     def getFontPath(self):
         u"""Answer the standard font path of the pagebot module."""
-        return cls.getRootPath() + '/Fonts/'
+        return self.getRootPath() + '/Fonts/'
 
     #   T E X T
 

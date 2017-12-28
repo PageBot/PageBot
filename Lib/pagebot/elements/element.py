@@ -274,7 +274,7 @@ class Element(object):
             template=self.template, nextElement=self.nextElement, prevElement=self.prevElement, 
             nextPage=self.nextPage, prevPage=self.prevPage, 
             padding=self.padding, # Copies all padding values at once
-            margin=self.margin, # Copues all margin values at once, 
+            margin=self.margin, # Copies all margin values at once, 
             borders=self.borders, # Copies all borders at once.
             shadow=self.shadow, # Needs to be copied?
             gradient=self.gradient, # Needs to be copied? 
@@ -682,7 +682,7 @@ class Element(object):
         u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
         Note that this is different from the gridX definition [(wx, gutter), ...]
         If there is one or more None in the grid definition, then try to fit equally on self.cw.
-        If gurtter is left None, then the default style gutter is filled there."""
+        If gutter is left None, then the default style gutter is filled there."""
         gridRows = []
         gridY = self.gridY 
         ph = self.ph # Padded height, available space for vertical columns.
@@ -690,6 +690,7 @@ class Element(object):
         if gridY is not None: # If there is a non-linear grid sequence defined, use that.
             undefined = 0
             usedHeight = 0
+            #usedWidth = 0
             # Make a first pass to see how many columns (None) need equal division.
             for gridValue in gridY:
                 if not isinstance(gridValue, (list, tuple)):
@@ -697,8 +698,8 @@ class Element(object):
                 ch, gutter = gridValue
                 if ch is None:
                     undefined += 1
-                else:
-                    usedWidth += ch
+                #else:
+                #    usedWidth += ch
                 if gutter is None:
                     gutter = gh
                 usedHeight += gutter
@@ -770,26 +771,29 @@ class Element(object):
         self.timeMarks.append(tm)
         self.timeMarks.sort() # Keep them in tm.t order.
 
-    def NOTNOW_getExpandedTimeMarks(t):
-        u"""Answer a new interpolated TimeState instance, from the enclosing time states for t."""
-        timeValueNames = self.timeKeys
-        rootStyleKeys = self.timeMarks[0].keys()
-        for n in range(1, len(timers)):
-            tm0 = self.timeMarks[timers[n-1]]
-            if t < tm0.t:
-                continue
-            tm1 = self.timeMarks[timers[n]]
-            futureTimers = timers[n:]
-            pastTimers = timers[:n-1]
-            for rootStyleKey in rootStyleKeys:
-                if not rootStyleKey in tm1.style:
-                    for futureTime in futureTimers:
-                        futureTimeMark = self.timeMarks[futureTime]
-                        if rootStyleKey in futureTimeMark.style:
-                            tm1.style[rootStyleKey] = futureTimeMark.style[rootStyleKey]
-
-            return tm0, tm1
-        raise ValueError
+    # @@@ NOT YET
+    # FIX-ME: The 'timers' var below is undefined. Was it intended to be self.timeMarks perhaps ?
+    #
+    #def NOTNOW_getExpandedTimeMarks(self, t):
+    #    u"""Answer a new interpolated TimeState instance, from the enclosing time states for t."""
+    #    timeValueNames = self.timeKeys
+    #    rootStyleKeys = self.timeMarks[0].keys()
+    #    for n in range(1, len(timers)):
+    #        tm0 = self.timeMarks[timers[n-1]]
+    #        if t < tm0.t:
+    #            continue
+    #        tm1 = self.timeMarks[timers[n]]
+    #        futureTimers = timers[n:]
+    #        pastTimers = timers[:n-1]
+    #        for rootStyleKey in rootStyleKeys:
+    #            if not rootStyleKey in tm1.style:
+    #                for futureTime in futureTimers:
+    #                    futureTimeMark = self.timeMarks[futureTime]
+    #                    if rootStyleKey in futureTimeMark.style:
+    #                        tm1.style[rootStyleKey] = futureTimeMark.style[rootStyleKey]
+    #
+    #        return tm0, tm1
+    #    raise ValueError
 
     # Origin compensated by alignment. This is used for easy solving of conditions,
     # where the positioning can be compenssaring the element alignment type.
@@ -1193,7 +1197,7 @@ class Element(object):
             gutter = [gutter]
         if len(gutter) == 1:
             gutter = (gutter[0], gutter[0])
-        elif len(margin) == 2:
+        elif len(self.margin) == 2:
             pass
         else:
             raise ValueError
@@ -1207,7 +1211,7 @@ class Element(object):
             gutter3D = [gutter3D]
         if len(gutter3D) == 1:
             gutter3D = (gutter3D[0], gutter3D[0], gutter3D[0])
-        elif len(margin) == 3:
+        elif len(self.margin) == 3:
             pass
         else:
             raise ValueError
@@ -1772,7 +1776,7 @@ class Element(object):
 
     def _get_scaleZ(self):
         return self.css('scaleZ', 1)
-    def _set_scaleZ(self, scaleY):
+    def _set_scaleZ(self, scaleZ):
         assert scaleZ != 0
         self.style['scaleZ'] = scaleZ # Set on local style, shielding parent self.css value.
     scaleZ = property(_get_scaleZ, _set_scaleZ)
