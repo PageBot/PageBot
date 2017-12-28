@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -13,10 +14,9 @@
 #
 #     pbtable.py
 #
-from pagebot.style import LEFT, RIGHT, CENTER, NO_COLOR, MIN_WIDTH, MIN_HEIGHT, ORIGIN, makeStyle, MIDDLE
+from pagebot.style import CENTER, ORIGIN, MIDDLE
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
-from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.conditions import *
 from pagebot.elements.pbtextbox import TextBox
 

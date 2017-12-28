@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -27,7 +28,6 @@ from pagebot.contexts import defaultContext
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
-from pagebot.fonttoolbox.variablefontaxes import axisDefinitions
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 
 def getFontByPath(fontPath, install=True):

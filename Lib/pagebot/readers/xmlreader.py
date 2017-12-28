@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,7 +16,6 @@
 #
 #     Read XML files from path or url and answer the etree.
 #
-import codecs
 import xml.etree.ElementTree as ET
 
 def readXML(path, xPath=None):

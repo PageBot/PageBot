@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,9 +16,6 @@
 #
 #     TO BE DEVELOPED: Live server using GoogleAppsContext to generate live pages.
 #
-import os
-import shutil
-
 from pagebot.elements.views.htmlview import HtmlView
 
 class GoogleAppsView(HtmlView):

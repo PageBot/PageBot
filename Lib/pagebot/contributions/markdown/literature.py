@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -20,16 +21,13 @@ Copyright The Python Markdown Project
 License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
 
 """
-# -----------------------------------------------------------------------------
-
-#from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.preprocessors import Preprocessor
 from markdown.inlinepatterns import Pattern
 from markdown.treeprocessors import Treeprocessor
 from markdown.postprocessors import Postprocessor
-from markdown.util import etree, text_type
+from markdown.util import etree
 from markdown.odict import OrderedDict
 import re
 

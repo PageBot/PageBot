@@ -15,8 +15,6 @@
 #     Container element hold an ordered list of elements.
 #     Each element knows its own position.
 #
-import os # Import module that communicates with the file system.
-
 from pagebot.elements import *
 
 def run():

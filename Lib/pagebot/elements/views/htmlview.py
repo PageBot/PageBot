@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -14,7 +15,7 @@
 #     htmlview.py
 #
 from pagebot.elements.views.baseview import BaseView
-from pagebot.contexts import HtmlContext
+#from pagebot.contexts import HtmlContext
 
 class HtmlView(BaseView):
     u"""Abstract class for HTML/CSS generating views."""

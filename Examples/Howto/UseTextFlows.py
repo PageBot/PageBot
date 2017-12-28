@@ -14,18 +14,14 @@
 #
 #     If a TextBox as self.nextElement defined as name for another text box on the
 #     same page, then overflow of self will go into the other text box.
-
 from __future__ import division # Make integer division result in float.
-import pagebot # Import to know the path of non-Python resources.
+#import pagebot # Import to know the path of non-Python resources.
 
-from pagebot import x2cx, y2cy
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-
+from pagebot.style import LEFT, TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
+# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 
 DoTextFlow = False   
 PagePadding = 32

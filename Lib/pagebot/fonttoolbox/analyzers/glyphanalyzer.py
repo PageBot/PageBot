@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -21,7 +22,7 @@ import weakref
 # TODO: Import needs to be done inside DrawBotContext
 #from AppKit import NSBezierPath
 
-from pagebot.toolbox.transformer import point2D, asInt
+from pagebot.toolbox.transformer import asInt
 from apointcontextlist import Vertical, Horizontal
 from stems import Stem, Bar, Counter, VerticalCounter
 from apointcontext import APointContext

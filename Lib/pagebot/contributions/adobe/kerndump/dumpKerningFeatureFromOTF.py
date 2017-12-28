@@ -1,14 +1,10 @@
 #!/usr/bin/python
-
 # From:
 # https://github.com/adobe-type-tools/kern-dump/blob/master/dumpKernFeatureFromOTF.py
 #
-
 import os
 import sys
 import string
-from fontTools import ttLib
-
 import getKerningPairsFromOTF
 reload(getKerningPairsFromOTF)
 

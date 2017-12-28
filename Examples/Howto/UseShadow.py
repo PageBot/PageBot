@@ -12,11 +12,11 @@
 #
 #     UseShadow.py
 #
-from pagebot.style import getRootStyle, BOTTOM, CENTER, MIDDLE
+from pagebot.style import CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
-from pagebot import Gradient, Shadow
+from pagebot import Shadow
     
 W = 400
 H = 480

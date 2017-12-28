@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,9 +16,6 @@
 #
 #     TO BE DEVELOPED: Use MampView amd GitView as model
 #
-import os
-import shutil
-
 from pagebot.elements.views.htmlview import HtmlView
 
 class GoogleCloudView(HtmlView):
