@@ -29,7 +29,7 @@ languages = {}
 
 def hyphenatedWords(language=DEFAULT_LANGUAGE):
     u"""Answer the dictionary of hyphenated words for this language (default is English)."""
-    if not language in languages:
+    if language not in languages:
         # Not initialized yet, try to read.
         path = '%s/Lib/pagebot/toolbox/hyphenation/languages/%s.txt' % (getRootPath(), language)
         if os.path.exists(path):

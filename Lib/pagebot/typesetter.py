@@ -412,7 +412,7 @@ class Typesetter(object):
         # TODO: insert more possible exec() errors here.
         
         # For convenience, store the source code of the block in the result dict.
-        if not '__code__' in result:
+        if '__code__' not in result:
             result['__code__'] = node.text
 
         # Store the result dict as code block. Global values have become dict entries.
