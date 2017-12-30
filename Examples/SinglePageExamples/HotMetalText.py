@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -15,13 +16,12 @@
 #     This scripts generates a look-alike revival type specimen for
 #     a selection of system fonts.
 #
-import copy
-import pagebot # Import to know the path of non-Python resources.
-from pagebot.contributions.filibuster.blurb import blurb
+#import pagebot # Import to know the path of non-Python resources.
+
 from pagebot import Gradient, Shadow
 from pagebot.fonttoolbox.objects.font import findInstalledFonts
       
-from pagebot.style import getRootStyle, A4, A3, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE, LEFT
+from pagebot.style import A3, CENTER, MIDDLE, OUTLINE, LEFT
 # Document is the main instance holding all information about the document together (pages, views, etc.)
 from pagebot.document import Document
 # Import all element classes that can be placed on a page.
