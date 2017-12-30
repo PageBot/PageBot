@@ -77,6 +77,7 @@ def findFont(styleNames, italic=False):
     return None # Nothing found.
     
 def drawBefore(e, origin, view):
+    c = e.doc.context
     # Now the text box must have done the type setting. We can query
     # the position of lines and glyphs.
     for textLine in e.textLines:
@@ -87,14 +88,14 @@ def drawBefore(e, origin, view):
         for index, (x, ry) in enumerate(run.positions):
             if index < len(run.positions)-1:
                 nextX, _ = run.positions[index+1]
-                fill(0.7)
-                stroke(0.8)
-                rect(origin[0]+x, origin[1]+y+ry-20, nextX-x, 72) 
-                stroke(1)
-                line((origin[0]+x, origin[1]+y+ry-20), 
-                     (origin[0]+x, origin[1]+y+ry-20+72))
-                line((origin[0]+x, origin[1]+y+ry-20+72), 
-                     (origin[0]+nextX, origin[1]+y+ry-20+72))
+                c.fill(0.7)
+                c.stroke(0.8)
+                c.rect(origin[0]+x, origin[1]+y+ry-20, nextX-x, 72) 
+                c.stroke(1)
+                c.line((origin[0]+x, origin[1]+y+ry-20), 
+                       (origin[0]+x, origin[1]+y+ry-20+72))
+                c.line((origin[0]+x, origin[1]+y+ry-20+72), 
+                       (origin[0]+nextX, origin[1]+y+ry-20+72))
     
 def makeDocument():
     u"""Create Document instance with a single page. Fill the page with elements
@@ -137,44 +138,44 @@ def makeDocument():
     titleStyle = dict(font=bookName, fontSize=26, rLeading=1.4, xTextAlign=CENTER, textFill=1)
     authorStyle = dict(font=bookName, textFill=1, fontSize=18, xTextAlign=CENTER)
     headStyle = dict(font=boldName, textFill=0, fontSize=62, rLeading=1.4, 
-        xTextAlign=LEFT, paragraphTopSpacing=30, openTypeFeatures=dict(liga=True),
-        paragraphBottomSpacing=0)
+                     xTextAlign=LEFT, paragraphTopSpacing=30, openTypeFeatures=dict(liga=True),
+                     paragraphBottomSpacing=0)
     bodyStyle = dict(font=bookName, textFill=0, fontSize=12, rLeading=1.4, 
-        xTextAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
+                     xTextAlign=LEFT, paragraphTopSpacing=10, hyphenation=True)
     
     # Make new container for adding elements inside with alignment.
     newRect(z=10, w=pageAreaW, h=pageAreaH, fill=blockFill, 
-        parent=page, margin=0, padding=0, yAlign=MIDDLE, maxW=pageAreaW, 
-        maxH=pageAreaH, xAlign=CENTER,  
-        conditions=(Center2Center(), Middle2Middle()))
+            parent=page, margin=0, padding=0, yAlign=MIDDLE, maxW=pageAreaW, 
+            maxH=pageAreaH, xAlign=CENTER,  
+            conditions=(Center2Center(), Middle2Middle()))
     
     t1 = newTextBox('PageBot Educational Series', z=0, font=bookName, 
-        fontSize=42, w=pageAreaW*0.75,  
-        parent=page, conditions=(Left2Left(), Top2Top()))
+                    fontSize=42, w=pageAreaW*0.75,  
+                    parent=page, conditions=(Left2Left(), Top2Top()))
         
     w = pageAreaW*0.75 # Used as element width and relative font size. 
     padding = 24
     
     t2 = newTextBox('Hot metal typesetting', z=0, font=mediumName, 
-        fontSize=w/8, w=pageAreaW, parent=page, mt=14,
-        conditions=(Left2Left(), Float2Top()))
+                    fontSize=w/8, w=pageAreaW, parent=page, mt=14,
+                    conditions=(Left2Left(), Float2Top()))
 
     i1 = newRect(z=0, h=PageHeight/2, pl=padding, pr=padding,
-        gradient=gradient, borders=None, parent=page, 
-        conditions=(Fit2Width(), Float2Top(), Fit2Bottom()))
+                 gradient=gradient, borders=None, parent=page, 
+                 conditions=(Fit2Width(), Float2Top(), Fit2Bottom()))
     i1.solve()
 
     fs = doc.context.newString(topT, style=bodyStyle)
     fs += doc.context.newString('\nPrepare for what comes next.', style=bookName)
     topText = newTextBox(fs, w=w/3-16, parent=page, 
-        conditions=(Top2Top(), Right2Right()))
+                         conditions=(Top2Top(), Right2Right()))
     
     # Review content. Hard coded ligatures.
     t = u'This is an example of hot metal typesetting, where every letter had a ﬁxed shape and its own width as rectangular box.\nVariable Fonts could adjust, ﬁt and decorate letters where it is most needed in a column of text. Not in this example.'
     fs = doc.context.newString(t, style=headStyle)
     t4 = newTextBox(fs, w=w/2-G, mt=10, parent=i1, gradient=None, 
-        drawBefore=drawBefore, 
-        conditions=(Fit2Width(), Float2Top()))
+                    drawBefore=drawBefore,
+                    conditions=(Fit2Width(), Float2Top()))
         
     # Font names
     if 'Proforma' in bookName or 'Productus' in bookName:
@@ -186,7 +187,7 @@ def makeDocument():
                                           fontSize=14,
                                           textFill=0))
     t5 = newTextBox(fs, w=w/2-G, mt=10, parent=page, gradient=None, 
-        conditions=(Fit2Width(), Float2Top()))
+                    conditions=(Fit2Width(), Float2Top()))
         
     score = page.solve()
     if score.fails:
@@ -194,13 +195,9 @@ def makeDocument():
     return doc # Answer the doc for further doing.
 
 if __name__ == '__main__':
-    
-    Variable([
+    d = makeDocument()
+    d.context.Variable([
         dict(name='PageWidth', ui='Slider', args=dict(minValue=MinPageW, value=A3[0], maxValue=MaxPageW)),
         dict(name='PageHeight', ui='Slider', args=dict(minValue=MinPageH, value=A3[1], maxValue=MaxPageH)),
     ], globals())
-
-            
-    d = makeDocument()
     d.export(EXPORT_PATH) 
-

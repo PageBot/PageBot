@@ -324,5 +324,5 @@ class LiteraturePostprocessor(Postprocessor):
 
 
 def makeExtension(*args, **kwargs):
-    """ Return an instance of the LiteraturesExtension """
-    return LiteraturesExtension(*args, **kwargs)
+    """ Return an instance of the LiteratureExtension """
+    return LiteratureExtension(*args, **kwargs)

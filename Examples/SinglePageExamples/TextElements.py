@@ -16,8 +16,7 @@
 #     This script generates a fake article on a single page, using Filibuster text,
 #     automatic layout template, Galley, Typesetter and Composer classes.
 #
-#import pagebot # Import to know the path of non-Python resources.
-
+from pagebot import getRootPath()
 from pagebot.style import A3
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
@@ -70,7 +69,7 @@ MT = ML
 # that is very similar to what happens in CSS.
 
 
-ROOT_PATH = pagebot.getRootPath()
+ROOT_PATH = getRootPath()
 EXPORT_PATH = '_export/TextElements.pdf' # Export in folder that does not commit un Git. Force to export PDF.
 
 MAIN_FLOW = 'main' # Element id of the text box on pages the hold the main text flow.

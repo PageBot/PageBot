@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -13,6 +14,11 @@
 #
 #     fsstring.py
 #
+import re
+import AppKit
+import CoreText
+import Quartz
+from pagebot.contexts import BaseContext
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
 
@@ -527,7 +533,7 @@ def getTextPositionSearch(fs, w, h, search, xTextAlign=LEFT, hyphenation=True):
 def findPattern(textLines, pattern):
     u"""Answer the point locations where this pattern occures in the Formatted String."""
     foundPatterns = [] # List of FoundPattern instances. 
-    for lineIndex, textLine in enumerate(stextLines):
+    for lineIndex, textLine in enumerate(textLines):
         for foundPattern in textLine.findPattern(pattern):
             foundPattern.y = textLine.y
             foundPattern.z = 0

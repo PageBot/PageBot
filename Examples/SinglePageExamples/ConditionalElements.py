@@ -17,8 +17,7 @@
 #     automatic layout template, Galley, Typesetter and Composer classes.
 #     Its purpose is to show the use of Validator
 #
-#import pagebot # Import to know the path of non-Python resources.
-
+from pagebot import getGlobals
 from pagebot.contributions.filibuster.blurb import blurb
 from pagebot.style import LEFT, A4, CENTER, RIGHT, TOP, MIDDLE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
@@ -27,7 +26,7 @@ from pagebot.elements import *
 from pagebot.conditions import *
 
 from pagebot.toolbox.transformer import path2ScriptId
-scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
+scriptGlobals = getGlobals(path2ScriptId(__file__))
 
 class FontSizeWidthRatio(Condition):
     def evaluate(self, e):
@@ -165,8 +164,8 @@ def makeDocument():
     return doc
 
 if __name__ == '__main__':
-
-    Variable([
+    d = makeDocument()
+    d.context.Variable([
         dict(name='Padding_Left', ui='Slider', args=dict(minValue=0, value=100, maxValue=W)),
         dict(name='Padding_Right', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
         dict(name='Padding_Top', ui='Slider', args=dict(minValue=0, value=50, maxValue=W)),
@@ -183,8 +182,6 @@ if __name__ == '__main__':
         dict(name='Element5_H', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
         dict(name='Text_W', ui='Slider', args=dict(minValue=100, value=200, maxValue=W)),
     ], globals())
-
-    d = makeDocument()
     d.export(EXPORT_PATH) 
 
         

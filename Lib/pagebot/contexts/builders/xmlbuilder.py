@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -14,6 +15,7 @@
 #     xmlbuilder.py
 #
 from basebuilder import BaseBuilder
+from xierpa3.toolbox.transformer import TX
 
 class XmlBuilder(BaseBuilder):
         

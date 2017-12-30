@@ -16,6 +16,7 @@
 #     This script generates an article (in Dutch) of 2009 about the approach to
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
+from pagebot import getFontPath
 from pagebot.style import getRootStyle, LEFT
 from pagebot.document import Document
 from pagebot.elements.pbpage import Template
@@ -62,7 +63,7 @@ H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
 H3_TRACK = 0.030 # Tracking as relative factor to font size.
 P_TRACK = 0.030
 
-FONT_PATH = pagebot.getFontPath()
+FONT_PATH = getFontPath()
 VAR_FONT_PATH = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variables.ttf'
 EXPORT_PATH = '_export/AmstelvarAlphaSpecimen.pdf'
 

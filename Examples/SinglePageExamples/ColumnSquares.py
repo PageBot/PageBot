@@ -131,17 +131,15 @@ def makeDocument(rs):
     return doc # Answer the doc for further doing.
    
 if __name__ == '__main__':
-
-    Variable([
-        dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-        dict(name='CropMarks', ui='CheckBox', args=dict(value=True)),
-        dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
-        dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
-        dict(name='PageNameInfo', ui='CheckBox', args=dict(value=True)),
-        dict(name='ViewPadding', ui='Slider', args=dict(minValue=0, value=64, maxValue=200)),
-        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-    ], globals())
-
     d = makeDocument(RS)
+    d.context.Variable(
+        [dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+         dict(name='CropMarks', ui='CheckBox', args=dict(value=True)),
+         dict(name='RegistrationMarks', ui='CheckBox', args=dict(value=True)),
+         dict(name='PageFrame', ui='CheckBox', args=dict(value=True)),
+         dict(name='PageNameInfo', ui='CheckBox', args=dict(value=True)),
+         dict(name='ViewPadding', ui='Slider', args=dict(minValue=0, value=64, maxValue=200)),
+         dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+        ], globals())
     d.export(EXPORT_PATH) 
 
