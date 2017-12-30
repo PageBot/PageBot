@@ -149,8 +149,8 @@ def makeDocument(rootStyle):
     return doc
   
 if __name__ == '__main__':
-
-    Variable([
+    d = makeDocument(RS)
+    d.context.Variable([
         #dict(name='ConditionH', ui='PopUpButton', args=dict(items=sorted(ConditionsHDict.keys()))),
         #dict(name='ConditionV', ui='PopUpButton', args=dict(items=sorted(ConditionsVDict.keys()))),
         dict(name='PR', ui='Slider', args=dict(minValue=20, value=50, maxValue=W/2)),
@@ -168,8 +168,4 @@ if __name__ == '__main__':
         dict(name='W5', ui='Slider', args=dict(minValue=20, value=50, maxValue=W)),
         dict(name='H5', ui='Slider', args=dict(minValue=20, value=50, maxValue=H)),
     ], globals())
-          
-    d = makeDocument(RS)
     d.export(EXPORT_PATH) 
-
-        

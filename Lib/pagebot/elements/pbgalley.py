@@ -142,7 +142,7 @@ class Galley(Element):
                     getattr(e, hook)(view, (px, py + gy))
                 else: # No implementation for this context, call default building method for this element.
                     e.build(view, (px, py + gy))
-                gy += element.h
+                gy += e.h
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(view, p)

@@ -14,6 +14,7 @@
 #
 #     textbox.py
 #
+from pagebot import getMarker
 from pagebot.style import (LEFT, RIGHT, CENTER, MIN_WIDTH, MIDDLE,
                            BOTTOM, DEFAULT_WIDTH, ORIGIN)
 from pagebot.elements.element import Element
@@ -183,7 +184,7 @@ class TextBox(Element):
     def overflow2Next(self):
         u"""Try to fix if there is overflow."""
         result = True
-        overflow = self.getOverflow(b)
+        overflow = self.getOverflow()
         if overflow and self.nextElement: # If there is text overflow and there is a next element?
             result = False
             # Find the page of self
@@ -310,20 +311,20 @@ class TextBox(Element):
         for textLine in []: #self.textLines: TODO: not implemented yet.
             y = textLine.y
             # TODO: Why measures not showing?
-            context.line((px, py+y), (px + self.w, py+y))
+            c.line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
-                bs = self.newString(`textLine.lineIndex`, style=indexStyle)
+                fs = self.newString(`textLine.lineIndex`, style=indexStyle)
                 tw, th = c.textSize(fs) # Calculate right alignment
-                c.text(bs.s, (px-3-tw, py + y - th/4))
+                c.text(fs.s, (px-3-tw, py + y - th/4))
             if view.showTextBoxY:
-                bs = self.newString('%d' % round(y), style=yStyle)
+                fs = self.newString('%d' % round(y), style=yStyle)
                 _, th = c.textSize(fs)
-                c.text(bs.s, (px + self.w + 3, py + y - th/4))
+                c.text(fs.s, (px + self.w + 3, py + y - th/4))
             if view.showTextBoxLeading:
                 leading = round(abs(y - prevY))
-                bs = self.newString('%d' % leading, style=leadingStyle)
+                fs = self.newString('%d' % leading, style=leadingStyle)
                 _, th = c.textSize(fs)
-                c.text(bs.s, (px + self.w + 3, py + prevY - leading/2 - th/4))
+                c.text(fs.s, (px + self.w + 3, py + prevY - leading/2 - th/4))
             prevY = y
  
     def _drawOverflowMarker_drawBot(self, view, px, py):

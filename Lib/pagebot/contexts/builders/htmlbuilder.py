@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -14,7 +15,7 @@
 #     htmlbuilder.py
 #
 import codecs
-
+from xierpa3.toolbox.transformer import TX
 from xmlbuilder import XmlBuilder
 from pagebot.toolbox.transformer import *
 from pagebot.toolbox.dating import now
@@ -429,7 +430,7 @@ table {
         key = dataAttribute2Html5Attribute(key)
 
         if key in self.BOOLEAN_ATTRIBUTES:
-            if value2Bool(value): # Can be boolean or text boolean
+            if TX.value2Bool(value): # Can be boolean or text boolean
                 self.write_attribute(key, self.BOOLEAN_ATTRIBUTES[key])
         else:
             # Some exceptions.
@@ -482,10 +483,10 @@ table {
                 attributes.append('color: %s;' % color2Hex(style['textFill']))
             value = style.get('transition')
             if value is not None:
-                atttributes.append('transition=%s;' % value)
-                atttributes.append('-webkit-transition=%s;' % value)
-                atttributes.append('-moz-transition=%s;' % value)
-                atttributes.append('-o-transition=%s;' % value)
+                attributes.append('transition=%s;' % value)
+                attributes.append('-webkit-transition=%s;' % value)
+                attributes.append('-moz-transition=%s;' % value)
+                attributes.append('-o-transition=%s;' % value)
 
         if selector is not None and attributes:
             css += '%s {\n\t%s} ' % (selector, '\n\t'.join(attributes))
