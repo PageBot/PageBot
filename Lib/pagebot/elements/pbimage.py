@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -16,7 +17,6 @@
 from __future__ import division # Make integer division result in float.
 
 import os
-
 from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR, ORIGIN # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset, point2D
@@ -146,7 +146,7 @@ class PixelMap(Element):
             x = self.w / self.iw
             y = self.h / self.ih
         p = x, y
-        return view.context.imagePixelColor(self.path, p)
+        return self.doc.context.imagePixelColor(self.path, p)
 
     # Set the intended width and calculate the new scale, validating the
     # width to the image minimum width and the height to the image minimum height.

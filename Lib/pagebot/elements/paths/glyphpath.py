@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -63,7 +64,7 @@ class GlyphPath(Path):
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        context.saveGraphicState()
+        c.saveGraphicState()
         sh = 1.0*self.h/self.ih
         b.transform((1, 0, 0, 1, px, py))
         c.scale(sh)
@@ -76,7 +77,7 @@ class GlyphPath(Path):
             c.setStrokeColor(self.css('stroke', NO_COLOR), (self.css('strokeWidth') or 20))
             c.strokeWidth(20)
             c.drawPath(self.glyph.path)
-        context.restoreGraphicState()
+        c.restoreGraphicState()
 
         if drawElements:
             for e in self.elements:

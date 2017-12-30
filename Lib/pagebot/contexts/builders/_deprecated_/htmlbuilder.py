@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,6 +16,8 @@
 #
 from xmlbuilder import XmlBuilder
 from pagebot.toolbox.transformer import *
+from xierpa3.toolbox.transformer import TX
+
 
 class HtmlBuilder(XmlBuilder):
     """
@@ -355,7 +358,7 @@ class HtmlBuilder(XmlBuilder):
         key = dataAttribute2Html5Attribute(key)
 
         if key in self.BOOLEAN_ATTRIBUTES:
-            if value2Bool(value): # Can be boolean or text boolean
+            if TX.value2Bool(value): # Can be boolean or text boolean
                 self.write_attribute(key, self.BOOLEAN_ATTRIBUTES[key])
         else:
             # Some exceptions.
