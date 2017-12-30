@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -16,16 +17,15 @@
 #     This script is using the style parameters "originTop", making the coordinate system run downwards.
 #
 from __future__ import division # Make integer division result in float.
-import pagebot # Import to know the path of non-Python resources.
 
+#import pagebot # Import to know the path of non-Python resources.
+
+from random import random
 from pagebot import x2cx, y2cy
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z, w2cw, cw2w, h2ch, ch2h, d2cd, cd2d
-
+from pagebot.style import getRootStyle, TOP, BOTTOM
 from pagebot.elements import *
 from pagebot.document import Document
+# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
     
 ElementOrigin = True
 CropMarks = True

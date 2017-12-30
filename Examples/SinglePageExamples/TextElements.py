@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -15,19 +16,16 @@
 #     This script generates a fake article on a single page, using Filibuster text,
 #     automatic layout template, Galley, Typesetter and Composer classes.
 #
-import pagebot # Import to know the path of non-Python resources.
+#import pagebot # Import to know the path of non-Python resources.
 
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT, A4, A3, A2, NO_COLOR
+from pagebot.style import A3
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 # Page and Template instances are holding all elements of a page together.
-from pagebot.elements.pbpage import Page, Template
+from pagebot.elements.pbpage import Template
 # The Typesetter instance takes content from a file (typically MarkDown text) and converts that 
 # into Galley list of elements.
 from pagebot.typesetter import Typesetter
-# The Composer instance distributes the Galley content of the pages, according to the defined Templates.
-from pagebot.composer import Composer
 # Elements that can placed on pages and templates.
 from pagebot.elements import *
 # Get functions to create instances style from Variable fonts.

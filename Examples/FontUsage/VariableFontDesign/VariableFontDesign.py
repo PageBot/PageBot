@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -15,18 +16,11 @@
 #     This script generates an article (in Dutch) of 2009 about the approach to
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
-import pagebot
-from pagebot import textBoxBaseLines
-
 from pagebot.style import getRootStyle, LEFT
 from pagebot.document import Document
-from pagebot.elements.pbpage import Page, Template
-from pagebot.composer import Composer
-from pagebot.typesetter import Typesetter
-from pagebot.elements import Galley, Rect
-#from pagebot.elements.variablefonts.variablecube import VariableCube
-#from pagebot.fonttoolbox.variablebuilder import generateInstance
-    
+from pagebot.elements.pbpage import Template
+from pagebot.elements.variablefonts.variablecube import VariableCube
+
 DEBUG = False
 
 SHOW_GRID = DEBUG

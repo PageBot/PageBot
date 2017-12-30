@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -14,8 +15,9 @@
 #
 #     TODO: Get this to work.
 #
-import pagebot # Import to know the path of non-Python resources.
-from pagebot.style import getRootStyle
+#import pagebot # Import to know the path of non-Python resources.
+
+from random import random
 from pagebot.document import Document
 from pagebot.elements import * # Page and Rect
 
