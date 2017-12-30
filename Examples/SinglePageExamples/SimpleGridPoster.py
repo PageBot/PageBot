@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -12,7 +13,7 @@
 #
 #     SimpleGridPoster.py
 #
-import pagebot # Import to know the path of non-Python resources.
+#import pagebot # Import to know the path of non-Python resources.
 
 from pagebot.publications.poster import Poster
 

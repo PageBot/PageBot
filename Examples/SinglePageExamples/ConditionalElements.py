@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -16,20 +17,13 @@
 #     automatic layout template, Galley, Typesetter and Composer classes.
 #     Its purpose is to show the use of Validator
 #
-import pagebot # Import to know the path of non-Python resources.
-from pagebot import textBoxBaseLines
-from pagebot.contributions.filibuster.blurb import blurb
+#import pagebot # Import to know the path of non-Python resources.
 
-# Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, LEFT, A4, A1, CENTER, RIGHT, BOTTOM, TOP, MIDDLE
+from pagebot.contributions.filibuster.blurb import blurb
+from pagebot.style import LEFT, A4, CENTER, RIGHT, TOP, MIDDLE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 from pagebot.elements import *
-# The Typesetter instance takes content from a file (typically MarkDown text) and converts that 
-# into Galley list of elements.
-from pagebot.typesetter import Typesetter
-# The Composer instance distributes the Galley content of the pages, according to the defined Templates.
-from pagebot.composer import Composer 
 from pagebot.conditions import *
 
 from pagebot.toolbox.transformer import path2ScriptId

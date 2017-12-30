@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -12,10 +13,11 @@
 #
 #     FBFamilySpecimen.py
 #
+from random import choice
 from pagebot.fonttoolbox.objects.family import getFamilies
 from pagebot.publications.typespecimen import TypeSpecimen
 # Page and Template instances are holding all elements of a page together.
-from pagebot.elements.pbpage import Page, Template
+from pagebot.elements.pbpage import Template
 # Use Erik & Jonathan's Filibuster to create random imaginary headlines. 
 from pagebot.contributions.filibuster.blurb import blurb
 from pagebot.elements import *
