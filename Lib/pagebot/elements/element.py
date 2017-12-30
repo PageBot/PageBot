@@ -2165,6 +2165,15 @@ class Element(object):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
         If there are any child elements, then also included their code, using the
         level recursive indent."""
+
+        # REVIEW THIS!
+        # Since the 'p' variable in the drawBefor and drawAfter
+        # calls bellow was undefined, I have added here the three following
+        # lines of code copied from the Element.build method implementation:
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(view, p)
+        p = self._applyAlignment(p)
+
         self.build_css(view)
         b = self.context.b # Use the current context builder to write the HTML/CSS code.
         info = self.info # Contains builder parameters and flags for Builder "b"
@@ -2353,8 +2362,8 @@ class Element(object):
 
     def isOriginOnMiddle(self, view, tolerance=0):
         if self.originTop:
-            return abs(mt + (self.parent.h - self.parent.pb - self.parent.pt)/2 - self.y) <= tolerance
-        return abs(mb + (self.parent.h - self.parent.pb - self.parent.pt)/2 - self.y) <= tolerance
+            return abs(self.parent.mt + (self.parent.h - self.parent.pb - self.parent.pt)/2 - self.y) <= tolerance
+        return abs(self.parent.mb + (self.parent.h - self.parent.pb - self.parent.pt)/2 - self.y) <= tolerance
  
     def isOriginOnMiddleSides(self, view, tolerance=0):
         if self.originTop:
@@ -2491,13 +2500,13 @@ class Element(object):
             return abs(self.right - gridColumns[col][0]) <= tolerance
         return False # row is not in range of gridColumns 
 
-    def isFitOnColspan(col, colSpan, tolerance):
+    def isFitOnColspan(self, col, colSpan, tolerance):
         gridColumns = self.getGridColumns()
         indices = range(len(gridColumns))
         if col in indices and col + colSpan in indices:
             c1 = gridColumns[col]
-            c2 = gridColumns[col + colspan - 1]
-            return abs(e.w - (c2[0] - c1[0] + c2[1])) <= tolerance
+            c2 = gridColumns[col + colSpan - 1]
+            return abs(self.w - (c2[0] - c1[0] + c2[1])) <= tolerance
         return False
 
     def isTopOnRow(self, row, tolerance):
@@ -2519,8 +2528,8 @@ class Element(object):
         indices = range(len(gridRows))
         if row in indices and row + rowSpan in indices:
             r1 = gridRows[row]
-            r2 = gridRows[row + colspan - 1]
-            return abs(e.h - (r2[0] - r1[0] + r2[1])) <= tolerance
+            r2 = gridRows[row + rowSpan - 1]
+            return abs(self.h - (r2[0] - r1[0] + r2[1])) <= tolerance
         return False
 
     #   Bleed conditions
@@ -2562,8 +2571,8 @@ class Element(object):
         indices = range(len(gridColumns))
         if col in indices and col + colSpan in indices:
             c1 = gridColumns[col]
-            c2 = gridColumns[col + colspan - 1]
-            e.w = c2[0] - c1[0] + c2[1]
+            c2 = gridColumns[col + colSpan - 1]
+            self.w = c2[0] - c1[0] + c2[1]
             return True
         return False
 
@@ -2588,8 +2597,8 @@ class Element(object):
         indices = range(len(gridRows))
         if row in indices and row + rowSpan in indices:
             r1 = gridRows[row]
-            r2 = gridRows[row + colspan - 1]
-            e.h = r2[0] - r1[0] + r2[1]
+            r2 = gridRows[row + rowSpan - 1]
+            self.h = r2[0] - r1[0] + r2[1]
             return True
         return False
     
@@ -2737,7 +2746,7 @@ class Element(object):
         return True       
 
     def origin2Center(self):
-        self.x = ml + (self.parent.w - self.parent.pr - sepf.parent.pl)/2
+        self.x = self.parent.ml + (self.parent.w - self.parent.pr - self.parent.pl)/2
         return True       
 
     def origin2CenterSides(self):
