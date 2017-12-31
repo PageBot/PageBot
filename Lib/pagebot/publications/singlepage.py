@@ -11,11 +11,12 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     randompage.py
+#     singlepage.py
 #
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.style import getRootStyle
+from pagebot.document import Document
 
 
 class SinglePage(Publication):

@@ -23,7 +23,7 @@ from math import pi, sin, cos
 from drawBot import textSize, text, fill, oval, stroke, strokeWidth, moveTo, lineTo, newPath, drawPath
 from pagebot.contexts import defaultContext as context
 from pagebot.elements.element import Element
-from pagebot.style import MIN_WIDTH
+from pagebot.style import MIN_WIDTH, ORIGIN
 from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath, getVariableFont, getVarLocation
 from pagebot.toolbox.transformer import pointOffset
 
