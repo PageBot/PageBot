@@ -15,8 +15,8 @@
 #     htmlbuilder.py
 #
 import codecs
+from pagebot.toolbox.transformer import value2Bool 
 from xmlbuilder import XmlBuilder
-from pagebot.toolbox.transformer import *
 from pagebot.toolbox.dating import now
 from pagebot.contexts.strings.htmlstring import HtmlString
 
