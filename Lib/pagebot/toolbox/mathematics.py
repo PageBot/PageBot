@@ -183,7 +183,7 @@ def scalePointByVector(p, v):
     return p[0] * v[0], p[1] * v[1]
 
 def vectorLength(v):
-    return math.sqrt(x*x + y*y)
+    return math.sqrt(v[0]**2 + v[1]**2)
 
 @classmethod
 def normalizedVector(p, length=1):
@@ -193,7 +193,7 @@ def normalizedVector(p, length=1):
     ###    Freetype XXX: UNDOCUMENTED! It seems that it is possible to try   */
     ###    to normalize the vector (0,0).  Return immediately. */
     """
-    if y == 0:
+    if p[1] == 0:
         return math.copysign(length, p[0]), 0
     w = vectorLength(p)
     if w == 0:
@@ -201,7 +201,7 @@ def normalizedVector(p, length=1):
     return 1.0 * p[0] * length / w, 1.0 * p[1] * length / w
 
 def normalize(p, length=1):
-    if y == 0:
+    if p[1] == 0:
         return length, 0
     w = vectorLength(p)
     if w == 0:
