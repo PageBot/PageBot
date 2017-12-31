@@ -12,11 +12,11 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#         variablecube.py
+#         variableeditor.py
 #
 import AppKit
 import CoreText
-from vanilla import *
+from vanilla import Window, Slider, TextEditor #, Button
 
 
 def tagToInt(tag):

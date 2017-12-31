@@ -668,7 +668,7 @@ class GlyphAnalyzer(object):
                                 size = asInt(counter.size)
                                 
                                 if pc0.isHorizontalExtreme() and pc1.isHorizontalExtreme():
-                                    if not size in vierticalCounters:
+                                    if not size in verticalCounters:
                                         verticalCounters[size] = []
                                     verticalCounters[size].append(counter)
                                 elif pc0.isHorizontalRoundExtreme() and pc1.isHorizontalRoundExtreme():

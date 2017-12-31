@@ -1077,6 +1077,6 @@ def value2Bool(v):
             if value2Bool(vv):
                 return True
         return False
-    return not str(v).lower() in FALSEVALUES
+    return str(v).lower() not in FALSEVALUES
 
 

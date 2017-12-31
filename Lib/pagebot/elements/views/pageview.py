@@ -52,7 +52,10 @@ class PageView(BaseView):
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered.
             
-            if self.pl > self.MIN_PADDING and self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING and self.pr > self.MIN_PADDING:
+            if self.pl > self.MIN_PADDING and
+               self.pt > self.MIN_PADDING and
+               self.pb > self.MIN_PADDING and
+               self.pr > self.MIN_PADDING:
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
                 if self.originTop:
@@ -112,8 +115,11 @@ class PageView(BaseView):
         if not os.path.exists(folder):
             os.mkdir(folder)
 
-        if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
-            frameDuration(frameDuration)
+        # FIXME:
+        #  - "fileName" is undefined
+        #  - "frameDuration" is a method or a CSS value ?
+        #if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
+        #    frameDuration(frameDuration)
 
         context.saveDocument(path, multiPage=multiPage)
 
@@ -226,7 +232,7 @@ class PageView(BaseView):
             if fill is None:
                 fill = self.css('viewFlowMarkerFill', NO_COLOR)
             self.setFillColor(fill)
-            oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
+            self.context.oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
 
         xm = (xt + xs)/2
         ym = (yt + ys)/2
@@ -328,8 +334,11 @@ class PageView(BaseView):
                 b.line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
                 b.line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
 
-                bs = context.newString(asFormatted(x2 - x1), style=dict(font=self.css('viewInfoFont'),
-                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                fs = context.newString(asFormatted(x2 - x1),
+                                       style=dict(font=self.css('viewInfoFont'),
+                                                  fontSize=self.css('viewInfoFontSize'),
+                                                  leading=self.css('viewInfoLeading'),
+                                                  textFill=0.1))
                 tw, th = b.textSize(fs.s)
                 b.text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
 

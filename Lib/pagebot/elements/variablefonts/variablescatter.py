@@ -19,13 +19,16 @@ from __future__ import division
 from random import random, choice
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from drawBot import stroke, FormattedString
+from drawBot import FormattedString
+from pagebot.fonttoolbox.variationbuilder import drawGlyphPath
 
 
 class VariableScatter(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, parent=None, name=None, style=None, eId=None, fontSize=72, sizeX=5, sizeY=5, recipeAxes=None, designSpace=None, locations=None, **kwargs):
+    def __init__(self, font, s=None, parent=None, name=None, style=None,
+                 eId=None, fontSize=72, sizeX=5, sizeY=5, recipeAxes=None,
+                 designSpace=None, locations=None, **kwargs):
         self.font = font
         self.eId = eId
         self.name =  name
@@ -67,21 +70,22 @@ class VariableScatter(Element):
         return location,
 
     def draw(self, page, x, y):
+        c = self.doc.context
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, p, view)
 
         fillColor = self.style.get('fill')
         if fillColor is not None:
-            setFillColor(fillColor)
-            setStrokColor(None)
+            c.setFillColor(fillColor)
+            c.setStrokeColor(None)
 
-        #stroke(0.8)
-        #strokeWidth(0.5)
-        #fill(None)
-        #rect(x, y, self.w, self.h)
+        #c.stroke(0.8)
+        #c.strokeWidth(0.5)
+        #c.fill(None)
+        #c.rect(x, y, self.w, self.h)
         
-        stroke(None)
+        c.stroke(None)
 
         stepX = self.w / (self.sizeX+1)
         stepY = self.h / (self.sizeY+1)
@@ -98,7 +102,9 @@ class VariableScatter(Element):
                     location = self.getRandomLocation()
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
                 fillColor = self.style.get('textFill') or (0, 0, 0)
-                drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py, location, s=glyphPathScale, fillColor=fillColor)
+                drawGlyphPath(self.font.ttFont, self.glyphNames[0],
+                              px, py, location, s=glyphPathScale,
+                              fillColor=fillColor)
                 if self.recipeAxes:
                     recipe = self.location2Recipe(location)
                     fs = FormattedString(recipe, fontSize=4, fill=0)
@@ -108,10 +114,7 @@ class VariableScatter(Element):
                         recipe = self.location2Recipe(location, 3, 6)
                         fs = FormattedString(recipe, fontSize=4, fill=0)
                         w, h = fs.size()
-                        page.text(fs, point(px - stepX/4 + 30, py - 24)) # Bit of hack, we need the width of the glyph here.
+                        page.text(fs, point=(px - stepX/4 + 30, py - 24)) # Bit of hack, we need the width of the glyph here.
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, p, view)
-
-
-		

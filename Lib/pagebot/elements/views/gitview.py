@@ -46,7 +46,7 @@ class GitView(HtmlView):
 
                 fileName = page.name
                 if not fileName:
-                    fileName = DEFAULT_HTML_FILE
+                    fileName = self.DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
  
