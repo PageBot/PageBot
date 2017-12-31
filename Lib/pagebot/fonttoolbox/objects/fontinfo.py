@@ -206,17 +206,26 @@ class FontInfo(object):
 
     def _get_metrics(self):
         u"""Small collection of font metrics info data as dictionary."""     
-        # @@@ TODO Does not work   
-        return dict(typoDescender=self.typoDescender, typoAscender=self.typoAscender,
-            descender=hhea.descent, ascender=hhea.ascent,
-            xHeight=os2.sxHeight, capHeight=os2.sCapHeight, subscriptYOffset=os2.ySubscriptYOffset,
-            lineGap=os2.sTypoLineGap, superscriptXSize=os2.ySuperscriptXSize,
-            weightClass=os2.usWeightClass, widthClass=os2.usWidthClass, 
-            subscriptXOffset=os2.ySubscriptXOffset, strikeoutPosition=os2.yStrikeoutPosition,
-            subscriptXSize=os2.ySubscriptXSize, superscriptYOffset=os2.ySuperscriptYOffset,
-            strikeoutSize=os2.yStrikeoutSize, subscriptYSize=os2.ySubscriptYSize,
-            superscriptYSize=os2.ySuperscriptYSize, unitsPerEm=unitsPerEm
-        )
+        # @@@ TODO Review this!   
+        return dict(typoDescender=self.typoDescender(),
+                    typoAscender=self.typoAscender(),
+                    descender=self.descender(),
+                    ascender=self.ascender(),
+                    xHeight=self.xHeight(),
+                    capHeight=self.capHeight(),
+                    subscriptYOffset=self.subscriptYOffset(),
+                    lineGap=self.lineGap(),
+                    superscriptXSize=self.superscriptXSize(),
+                    weightClass=self.weightClass(),
+                    widthClass=self.widthClass(),
+                    subscriptXOffset=self.subscriptXOffset(),
+                    strikeoutPosition=self.strikeoutPosition(),
+                    subscriptXSize=self.subscriptXSize(),
+                    superscriptYOffset=self.superscriptYOffset(),
+                    strikeoutSize=self.strikeoutSize(),
+                    subscriptYSize=self.subscriptYSize(),
+                    superscriptYSize=self.superscriptYSize(),
+                    unitsPerEm=self.unitsPerEm())
     metrics = property(_get_metrics) 
 
 

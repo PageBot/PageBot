@@ -986,7 +986,7 @@ def xmlAttrString2PyAttr(s, conversions):
     attrs = {}
     for key, _, value in XMLATTRS.findall(s):
         attrs[key] = value
-    return cls.xmlAttr2PyAttr(attrs, conversions)
+    return xmlAttr2PyAttr(attrs, conversions)
 
 def xmlAttr2PyAttr(par_dict, conversions):
     """Transforms an XML attribute dictionary to a Python attribute
@@ -1004,8 +1004,8 @@ def xmlAttr2PyAttr(par_dict, conversions):
     pydict = {}
 
     for key, value in par_dict.items():
-        key = cls.xmlAttrName2PyAttrName(key)
-        value = cls.xmlValue2PyValue(value, conversions)
+        key = xmlAttrName2PyAttrName(key)
+        value = xmlValue2PyValue(value, conversions)
         pydict[key] = value
     return pydict
 
