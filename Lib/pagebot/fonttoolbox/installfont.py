@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -93,7 +94,7 @@ def _runDocTests():
     import doctest
     return doctest.testmod()
 
-
+from pagebot.contexts import defaultContext as c
 if __name__ == "__main__":
     if True:
         _runDocTests()
@@ -106,7 +107,7 @@ if __name__ == "__main__":
         except FontInstallError, error:
             print "font probably already installed"
             #print error
-        font("Condor-Bold")
-        fontSize(200)
-        text("Hallo", (100, 100))
+        c.font("Condor-Bold")
+        c.fontSize(200)
+        c.text("Hallo", (100, 100))
         # uninstallFontFile(path)
