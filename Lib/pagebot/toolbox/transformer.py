@@ -1034,4 +1034,49 @@ def value2TagName(value):
 
 def object2SpacedString(o):
     return `o`
+
+
+def flatten2Class(*args):
+    u"""
+
+    The ``flatten2Class`` method answers the class string, made from space separated class names. If
+    ``class_`` is a ``tuple`` or ``list``, then merge the content. Check recursively in
+    case the names are nested. If the ``classes`` is empty or ``None`` or contain an empty
+    element, then this is ignored.
     
+    """
+    result = []
+    for class_ in args:
+        if isinstance(class_, basestring):
+            result.append(class_)
+        elif isinstance(class_, (tuple, list)):
+            s = []
+            for part in class_:
+                flattened = flatten2Class(part)
+                s.append(flattened)
+            result.append(' '.join(s))
+        elif class_ is None:
+            continue
+        else:
+            raise TypeError('[Transformer.flatten2Class] Class part must be None, string, tuple or list, not "%s"' % class_)
+    return ' '.join(result)
+
+
+def value2Bool(v):
+    u"""
+        
+    The ``value2Bool`` method answers the interpreted value of ``v`` as boolean. The following
+    values (independent of case) interpret as ``False``: ``['', '0', 'f', 'F', 'none', 'false']``.
+    If ``v`` is a list or tuple, then it is ``True`` if there is at least one element 
+    the renders to ``True``, so it performs a an ``OR``.
+        
+    """
+    FALSEVALUES = ('', 0, '0', 'f', 'F', 'none', 'None', 'NONE', 'false', 'False', 'FALSE', 'n', 'N', 'no', 'No', 'NO', None, False)
+    if (isinstance(v, (tuple, list))):
+        for vv in v:
+            if value2Bool(vv):
+                return True
+        return False
+    return not str(v).lower() in FALSEVALUES
+
+
