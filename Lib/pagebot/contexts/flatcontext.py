@@ -16,16 +16,8 @@
 #     http://xxyxyz.org/flat
 #
 import os
-
-'''
-FIXME
 import imageio
-Could be used for animated gifs and other export. Currently gives an error:
-
-File "/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/numpy/lib/npyio.py", line 32, in <module>
-ImportError: No module named future_builtins
-'''
-
+from datetime import datetime
 from pagebot import getFontPath
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR
@@ -153,7 +145,7 @@ class FlatContext(BaseContext):
 
     def installedFonts(self):
         u"""Answer the list with names of all installed fonts in the system, as available
-        for cls.newString( ) style."""
+        for self.newString( ) style."""
         return self.fontPaths.keys()
 
     def installFont(self, fontPath):
@@ -168,7 +160,7 @@ class FlatContext(BaseContext):
     #   T E X T
 
     def newBulletString(self, bullet, e=None, style=None):
-        return cls.newString(bullet, e=e, style=style)
+        return self.newString(bullet, e=e, style=style)
 
     def text(self, bs, p):
         u"""Place the babelstring instance at position p. The position can be any 2D or 3D points tuple.
@@ -250,7 +242,7 @@ class FlatContext(BaseContext):
         assert self._pathCommands is not None
         self._pathCommands.append(self.b.lineto(p[0], p[1]))
 
-    def quadTo(bcp, p):
+    def quadTo(self, bcp, p):
         assert self._pathCommands is not None
         self._pathCommands.append(self.b.quadto(bcp[0], bcp[1], p[0], p[1]))
 
@@ -370,6 +362,6 @@ class FlatContext(BaseContext):
         images = []
         for filename in filenames:
             images.append(imageio.imread(filename))
-        output_file = 'Gif-%s.gif' % datetime.datetime.now().strftime('%Y-%M-%d-%H-%M-%S')
+        output_file = 'Gif-%s.gif' % datetime.now().strftime('%Y-%M-%d-%H-%M-%S')
         imageio.mimsave(output_file, images, duration=duration)
 
