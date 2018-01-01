@@ -52,9 +52,9 @@ class PageView(BaseView):
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered.
             
-            if self.pl > self.MIN_PADDING and
-               self.pt > self.MIN_PADDING and
-               self.pb > self.MIN_PADDING and
+            if self.pl > self.MIN_PADDING and \
+               self.pt > self.MIN_PADDING and \
+               self.pb > self.MIN_PADDING and \
                self.pr > self.MIN_PADDING:
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
