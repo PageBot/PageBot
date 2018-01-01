@@ -76,8 +76,9 @@ class FlatContext(BaseContext):
 
     #   V A R I A B L E
 
-    def Variable(variableUI, globalVariables):
+    def Variable(self, variableUI, globalVariables):
         # TODO: Make this work in Flat-way. Getting parameters from command line?
+        pass
 
     #   D O C U M E N T
 
