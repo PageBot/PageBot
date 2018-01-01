@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -33,7 +35,6 @@ from pagebot.conditions import *
 
 from pagebot.toolbox.transformer import path2ScriptId
 from pagebot import getGlobals
-from pagebot.elements.views.strings.fsstring import newFsString
 
 # Get set of globals, unique for this script file name.
 # This is used to store random information (such as blurb article text), to be consistent
@@ -67,6 +68,7 @@ def makeDocument():
     and perform a conditional layout run, until all conditions are solved."""
 
     doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=1)
+    c = doc.context
     # Get default view from the document and set the viewing parameters.
     view = doc.view
     view.style['fill'] = 1
@@ -110,112 +112,117 @@ def makeDocument():
     italicBodyStyle['paragraphTopSpacing'] = 0
     
     # Make new container for adding elements inside with alignment.
-    newRect(z=10, w=pageAreaW, h=pageAreaH, fill=blockFill, 
-        parent=page, margin=0, padding=0, yAlign=MIDDLE, maxW=pageAreaW, 
-        maxH=pageAreaH, xAlign=CENTER,  
-        conditions=(Center2Center(), Middle2Middle()))
-    
-    t1 = newTextBox('The PageBot Times', z=0, font='BlackmoorLetPlain', 
-        fontSize=40, w=pageAreaW/2, 
-        parent=page, conditions=(Left2Left(), Top2Top()))
+    newRect(z=10, w=pageAreaW, h=pageAreaH, fill=blockFill,
+            parent=page, margin=0, padding=0, yAlign=MIDDLE, maxW=pageAreaW,
+            maxH=pageAreaH, xAlign=CENTER,
+            conditions=(Center2Center(), Middle2Middle()))
+
+    t1 = newTextBox('The PageBot Times', z=0, font='BlackmoorLetPlain',
+                    fontSize=40, w=pageAreaW/2,
+                    parent=page, conditions=(Left2Left(), Top2Top()))
         
-    w = pageAreaW*0.75 # Used as element width and relative font size. 
+    w = pageAreaW*0.75 # Used as element width and relative font size.
     padding = PageHeight/24
-    
+
     t2 = newTextBox('Book Review', z=0, font='NewOdanaLarge-Black', 
-        fontSize=w/7, w=PageWidth*0.75, parent=page, 
-        conditions=(Left2Left(), Float2Top()))
+                    fontSize=w/7, w=PageWidth*0.75, parent=page, 
+                    conditions=(Left2Left(), Float2Top()))
 
     i1 = newRect(z=0, h=PageHeight/2, padding=padding,
-        gradient=gradient, borders=None, parent=page, 
-        conditions=(Fit2Width(), Float2Top()))
+                 gradient=gradient, borders=None, parent=page,
+                 conditions=(Fit2Width(), Float2Top()))
     i1.solve()
     m = i1.h/10    
  
     # Book 1 cover          
     book1 = newRect(z=0, margin=m, w=(i1.w-3*m)/2, 
-        fill=(0.05, 0.05, 0.25), 
-        gradient=None, parent=i1, shadow=shadow, padding=bookPadding,
-        conditions=(Fit2Height(), Top2Top(), Left2Left()),
-        borders=bookBorders)
-    
-    fs = newFsString('Educational series', style=authorStyle)
-    fs += newFsString('\n\nThrilling title\nfor my first book\nabout Design', style=titleStyle)
-    fs += newFsString('\n'*3 + 'John Smith', style=authorStyle)
-    
-    frame = newRect(margin=6, conditions=(Fit(),), 
+                    fill=(0.05, 0.05, 0.25), 
+                    gradient=None, parent=i1, shadow=shadow, padding=bookPadding,
+                    conditions=(Fit2Height(), Top2Top(), Left2Left()),
+                    borders=bookBorders)
+
+    fs = c.newString('Educational series', style=authorStyle)
+    fs += c.newString('\n\nThrilling title\nfor my first book\nabout Design',
+                      style=titleStyle)
+    fs += c.newString('\n'*3 + 'John Smith', style=authorStyle)
+
+    frame = newRect(margin=6, conditions=[Fit()])
     title1 = newTextBox(fs, parent=book1, shadow=None,
-        conditions=(Fit2Width(), Center2Center(), Top2Top())))
+                        conditions=(Fit2Width(), Center2Center(), Top2Top()))
 
-    fs = newFsString(u'¶', style=authorStyle)
-    publisher1 = newTextBox(fs, parent=book1, shadow=None, 
-        conditions=(Fit2Width(), Bottom2Bottom()))
-    
+    fs = c.newString(u'¶', style=authorStyle)
+    publisher1 = newTextBox(fs, parent=book1, shadow=None,
+                            conditions=(Fit2Width(), Bottom2Bottom()))
+
     # Book 2 cover
-    book2 = newRect(z=0, margin=m, w=(i1.w-3*m)/2, 
-        fill=(0.1, 0.2, 0.45), 
-        gradient=None, parent=i1, shadow=shadow, padding=bookPadding,
-        conditions=(Fit2Height(), Top2Top(), Right2Right()),
-        borders=bookBorders)
+    book2 = newRect(z=0, margin=m, w=(i1.w-3*m)/2,
+                    fill=(0.1, 0.2, 0.45),
+                    gradient=None, parent=i1, shadow=shadow,
+                    padding=bookPadding,
+                    conditions=(Fit2Height(), Top2Top(), Right2Right()),
+                    borders=bookBorders)
 
-    fs = newFsString('Educational series', style=authorStyle)
-    fs += newFsString('\n\nPredictable title of my second book about Typography', 
-        style=titleStyle)
-    fs += newFsString('\n'*3 + 'John Smith', style=authorStyle)
+    fs = c.newString('Educational series', style=authorStyle)
+    fs += c.newString(('\n\nPredictable title of my'
+                       ' second book about Typography'),
+                      style=titleStyle)
+    fs += c.newString('\n'*3 + 'John Smith', style=authorStyle)
 
     title2 = newTextBox(fs, parent=book2, marginTop=120, shadow=None,
-        conditions=(Fit2Width(), Center2Center(), Top2Top()))
+                        conditions=(Fit2Width(),
+                                    Center2Center(),
+                                    Top2Top()))
     
-    fs = newFsString(u'¶', style=authorStyle)
-    publisher2 = newTextBox(fs, parent=book2, shadow=None, 
-        conditions=(Fit2Width(), Bottom2Bottom()))
-    
-    bottomContainer = newRect(parent=page, w=w, 
-        borderBottom=dict(strokeWidth=1), padding=0,
-        conditions=(Left2Left(), Float2Top(), Fit2Bottom()))
-        
-    t3 = newTextBox('Reviewing 2017 score', z=0, 
-        font='BodoniSvtyTwoOSITCTT-Book', 
-        fontSize=w/8.5+3, w=w, stroke=NO_COLOR, pb=16,
-        borderBottom=dict(strokeWidth=1), parent=bottomContainer, 
-        conditions=(Fit2Width(), Float2Top()), mt=20)
-    
-    # Review content
-    fs = newFsString('About the thrilling title\n', style=headStyle)
-    fs += newFsString(t, style=bodyStyle)    
-    t4 = newTextBox(fs, w=w/2-G, mt=10, parent=bottomContainer, 
-        conditions=(Left2Left(), Float2Top()))
+    fs = c.newString(u'¶', style=authorStyle)
+    publisher2 = newTextBox(fs, parent=book2, shadow=None,
+                            conditions=(Fit2Width(), Bottom2Bottom()))
 
-    fs = newFsString('Second column\n', style=headStyle)
-    fs += newFsString(t, style=bodyStyle)
-    t5 = newTextBox(fs, w=w/2-G, mt=10, parent=bottomContainer, 
-        conditions=(Float2Right(), Float2Top()))
-        
+    bottomContainer = newRect(parent=page, w=w,
+                              borderBottom=dict(strokeWidth=1), padding=0,
+                              conditions=(Left2Left(),
+                                          Float2Top(),
+                                          Fit2Bottom()))
+
+    t3 = newTextBox('Reviewing 2017 score', z=0,
+                    font='BodoniSvtyTwoOSITCTT-Book',
+                    fontSize=w/8.5+3, w=w, stroke=NO_COLOR, pb=16,
+                    borderBottom=dict(strokeWidth=1), parent=bottomContainer,
+                    conditions=(Fit2Width(), Float2Top()), mt=20)
+
+    # Review content
+    fs = c.newString('About the thrilling title\n', style=headStyle)
+    fs += c.newString(t, style=bodyStyle)
+    t4 = newTextBox(fs, w=w/2-G, mt=10, parent=bottomContainer,
+                    conditions=(Left2Left(), Float2Top()))
+
+    fs = c.newString('Second column\n', style=headStyle)
+    fs += c.newString(t, style=bodyStyle)
+    t5 = newTextBox(fs, w=w/2-G, mt=10, parent=bottomContainer,
+                    conditions=(Float2Right(), Float2Top()))
+
     # Text box on bottom right
-    fs = newFsString('This is a funny head.\n', style=headStyle)
-    fs += newFsString(t+t, style=sideBarStyle)
-    t6 = newTextBox(fs, w=w/3-16, pt=34, parent=page, 
+    fs = c.newString('This is a funny head.\n', style=headStyle)
+    fs += c.newString(t+t, style=sideBarStyle)
+    t6 = newTextBox(fs, w=w/3-16, pt=34, parent=page,
         conditions=(Float2Right(), Float2Top(), Fit2Bottom()))
 
-    fs = newFsString(topT, style=bodyStyle)
-    fs += newFsString('\nAn addition italic line', style=italicBodyStyle)
-    topText = newTextBox(fs, w=w/3-16, parent=page, 
-        conditions=(Top2Top(), Right2Right()))
-                      
+    fs = c.newString(topT, style=bodyStyle)
+    fs += c.newString('\nAn addition italic line', style=italicBodyStyle)
+    topText = newTextBox(fs, w=w/3-16, parent=page,
+                         conditions=(Top2Top(), Right2Right()))
+
     score = page.solve()
     if score.fails:
-        print 'Condition fails', score.fails 
-    
+        print 'Condition fails', score.fails
+
     return doc # Answer the doc for further doing.
 
 if __name__ == '__main__':
-    
-    Variable([
-        dict(name='PageWidth', ui='Slider', args=dict(minValue=MinPageW, value=A3[0], maxValue=MaxPageW)),
-        dict(name='PageHeight', ui='Slider', args=dict(minValue=MinPageH, value=A3[1], maxValue=MaxPageH)),
-    ], globals())
-
-            
     d = makeDocument()
-    d.export(EXPORT_PATH) 
-
+    d.context.Variable([
+        dict(name='PageWidth', ui='Slider',
+             args=dict(minValue=MinPageW, value=A3[0], maxValue=MaxPageW)),
+        dict(name='PageHeight', ui='Slider',
+             args=dict(minValue=MinPageH, value=A3[1], maxValue=MaxPageH))
+    ], globals())
+    d.export(EXPORT_PATH)

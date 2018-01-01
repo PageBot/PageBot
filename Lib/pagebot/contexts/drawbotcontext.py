@@ -47,7 +47,7 @@ class DrawBotContext(BaseContext):
  
     #   V A R I A B L E
 
-    def Variable(variableUI, globalVariables):
+    def Variable(self, variableUI, globalVariables):
         # Variable is a DrawBot context global,
         # used to make simple UI with controls on input parameters.
         Variable(variableUI, globalVariables)
