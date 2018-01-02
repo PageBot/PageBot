@@ -16,6 +16,7 @@
 #
 from __future__ import division
 
+import os
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 

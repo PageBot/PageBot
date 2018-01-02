@@ -15,7 +15,6 @@
 #     htmlbuilder.py
 #
 import codecs
-from xierpa3.toolbox.transformer import TX
 from xmlbuilder import XmlBuilder
 from pagebot.toolbox.transformer import *
 from pagebot.toolbox.dating import now
@@ -430,7 +429,7 @@ table {
         key = dataAttribute2Html5Attribute(key)
 
         if key in self.BOOLEAN_ATTRIBUTES:
-            if TX.value2Bool(value): # Can be boolean or text boolean
+            if value2Bool(value): # Can be boolean or text boolean
                 self.write_attribute(key, self.BOOLEAN_ATTRIBUTES[key])
         else:
             # Some exceptions.
