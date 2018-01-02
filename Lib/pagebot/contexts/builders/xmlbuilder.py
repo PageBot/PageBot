@@ -15,7 +15,6 @@
 #     xmlbuilder.py
 #
 from basebuilder import BaseBuilder
-from xierpa3.toolbox.transformer import TX
 
 class XmlBuilder(BaseBuilder):
         
@@ -122,7 +121,7 @@ class XmlBuilder(BaseBuilder):
             line = u' ' + key
         elif isinstance(value, (list, tuple)):
             if key in self.CASCADING_ATTRIBUTES:
-                value = TX.flatten2Class(value)
+                value = self.flatten2Class(value)
                 if isinstance(value, basestring):
                     value = value.replace('"', '&quot;');
                 if value:
