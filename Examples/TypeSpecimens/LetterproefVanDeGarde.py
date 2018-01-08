@@ -58,7 +58,7 @@ pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
 #SYSTEM_FAMILY_NAMES = ('Verdana',)
 #SYSTEM_FAMILY_NAMES = ('Georgia',)
-FONT_NAME_PATTERNS = ('Bungee', 'Amstel', 'Deco') # TODO, make this work.
+FONT_NAME_PATTERNS = ('Bungee', 'Amstel', 'Deco') # TODO, make this work if fonts don't exist.
 #SYSTEM_FAMILY_NAMES = ('Proforma', 'Productus')
 #MY_FAMILY_NAMES = ('Proforma', 'Productus')
 #FONT_NAME_PATTERNS = ('Proforma')
@@ -100,7 +100,6 @@ def findFont(styleNames, italic=False):
     return None, None # Nothing found.
 
 def italicName(fontName):
-    print '222', fontName
     if not '-' in fontName:
         return fontName + '-Italic'
     return fontName + 'Italic'
@@ -114,6 +113,8 @@ def makeDocument():
     mediumName = mediumName or bookName # In case medium weight does not exist.
     _, boldName = findFont(('Bold', 'Medium'))
 
+    print 'Found fonts', bookName, mediumName, boldName
+    
     bookItalicName = italicName(bookName)
     mediumItalicName = italicName(mediumName)
     boldItalicName = italicName(boldName)
