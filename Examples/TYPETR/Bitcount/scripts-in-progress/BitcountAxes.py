@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -10,49 +11,18 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     AutomaticPageComposition.py
-#
-#     This script generates an article (in Dutch) of 2009 about the approach to
-#     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
+#     BitcountAxes.py
 #
 from fontTools.ttLib import TTFont
 
-from pagebot import textBoxBaseLines
-
 import pagebot
-reload(pagebot)
-import pagebot
-
-import pagebot.style
-reload(pagebot.style)
 from pagebot.style import getRootStyle, LEFT
-
-import pagebot.document 
-reload(pagebot.document)
 from pagebot.document import Document
-
-import pagebot.elements.pbpage
-reload(pagebot.elements.pbpage)
 from pagebot.elements.pbpage import Template
-
-import pagebot.composer
-reload(pagebot.composer)
 from pagebot.composer import Composer
-
-import pagebot.typesetter
-reload(pagebot.typesetter)
 from pagebot.typesetter import Typesetter
-
-import pagebot.elements
-reload(pagebot.elements)
 from pagebot.elements import Galley, Rect
-
-import pagebot.fonttoolbox.elements.variationcube
-reload(pagebot.fonttoolbox.elements.variationcube)
 from pagebot.fonttoolbox.elements.variationcube import VariationCube
-
-import pagebot.fonttoolbox.variationbuilder
-reload(pagebot.fonttoolbox.variationbuilder)
 from pagebot.fonttoolbox.variationbuilder import getVariationFont, drawGlyphPath
     
 DEBUG = False

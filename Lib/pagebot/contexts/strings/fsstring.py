@@ -14,7 +14,15 @@
 #
 #     fsstring.py
 #
+try:
+    import CoreText
+    import AppKit
+    import Quartz
+except:
+    pass
+
 import re
+<<<<<<< HEAD
 try:
     import AppKit
     import CoreText
@@ -23,6 +31,8 @@ try:
 except ImportError:
     BezierPath = None
 
+=======
+>>>>>>> origin/master
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT

@@ -22,12 +22,14 @@ from __future__ import division
 from copy import copy
 from pagebot.elements import Element
 from pagebot.style import makeStyle
+from pagebot.fonttoolbox.variationbuilder import drawGlyphPath
 
 
 class VariableGlyphs(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, ttFont, s=None, style=None, eId=None, fontSize=50, location=None, **kwargs):
+    def __init__(self, ttFont, s=None, style=None, eId=None,
+                 fontSize=50, location=None, **kwargs):
         self.font = ttFont
         self.eId = eId
         self.fontSize = fontSize
@@ -51,16 +53,14 @@ class VariableGlyphs(Element):
         fillColor = self.style.get('fill')
         fillColor = (0, 0, 0)
         #if fillColor is not None:
-        #    setFillColor(fillColor)
-        #    setStrokColor(None)
+        #    c = self.doc.context
+        #    c.setFillColor(fillColor)
+        #    c.setStrokeColor(None)
         #else:
         #    fillColor = (0, 0, 0)
         glyphPathScale = self.fontSize/self.font.info.unitsPerEm
-        drawGlyphPath(self.font.ttFont, self.glyphNames[0], x, y, self.location, s=glyphPathScale, fillColor=fillColor)
+        drawGlyphPath(self.font.ttFont, self.glyphNames[0], x, y,
+                      self.location, s=glyphPathScale, fillColor=fillColor)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, p, view)
-
-
-
-        

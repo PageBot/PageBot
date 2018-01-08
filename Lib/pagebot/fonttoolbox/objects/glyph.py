@@ -20,8 +20,7 @@ import sys
 import weakref
 
 # TODO: Needs DrawBot/Flex context.
-#from AppKit import NSFont
-#from drawBot import BezierPath
+from drawBot import BezierPath
 
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
 from pagebot.toolbox.transformer import point2D

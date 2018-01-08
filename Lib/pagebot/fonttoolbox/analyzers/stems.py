@@ -10,7 +10,8 @@
 #
 #     stems.py
 #
-from pagebot.toolbox.mathematics import *
+from pagebot.toolbox.mathematics import distance
+from apoint import APoint
 from apointcontext import APointContext
 
 class Stem(object):
@@ -189,7 +190,7 @@ class DiagonalStem(Stem):
         d = 0
         projectionLines = self.projectionLines
         for p, projectedP in projectionLines: # p is PointContext instance, projectP is Point instance.
-            d += Mathematics.distance(p.x, p.y, projectedP.x, projectedP.y)
+            d += distance([p.x, p.y], [projectedP.x, projectedP.y])
         return int(round(d/len(projectionLines)))
         
     size = property(_get_size)
@@ -218,7 +219,10 @@ class DiagonalStem(Stem):
         for p, projectedP in projectionLines:
             mx += p.x + projectedP.x
             my += p.y + projectedP.y
-        m = Point(mx/count, my/count)
+
+        #FIXME: I'm not sure if APoint (from apoint.py) is the correct object to use here:
+        m = APoint(mx/count, my/count)
+
         # Now project this window middle points on the two lines again. 
         pp0 = self.point.getProjectedPoint(m)
         pp1 = self.parent.getProjectedPoint(m)

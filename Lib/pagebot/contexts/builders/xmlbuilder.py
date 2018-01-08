@@ -16,6 +16,7 @@
 #
 from basebuilder import BaseBuilder
 
+
 class XmlBuilder(BaseBuilder):
         
     GLOBAL_ATTRIBUTES = set(['id', 'class_', 'title', 'onclick', 'style'])
@@ -94,7 +95,7 @@ class XmlBuilder(BaseBuilder):
                     self.get_attribute_exceptions(key, value)
             # TODO: Make attribute writing directly by builder if valid extension
             #else:
-            #    key, builderType = TX.attrName2attrBuilderType(key)
+            #    key, builderType = attrName2attrBuilderType(key)
             #    if builderType is not None:
             #        # If the key is not in the standard HTML list, is can be a CSS attribute. Just ignore it.
 

@@ -18,26 +18,27 @@ from __future__ import division
 
 from copy import copy
 from pagebot.elements.element import Element
-from pagebot.style import makeStyle
-#from pagebot.fonttoolbox.variablebuilder import generateInstance, drawGlyphPath
-from drawBot import fill, rect, stroke, strokeWidth, FormattedString
+from pagebot.style import makeStyle, ORIGIN
+from pagebot.toolbox.transformer import pointOffset
+from pagebot.fonttoolbox.variablebuilder import drawGlyphPath
+from drawBot import FormattedString
 
 
 class VariableCube(Element):
     # Initialize the default behavior tags as different from Element.
 
-    #def __init__(self, font, s=None, point=point, style=None, eId=None, dimensions=None, location=None, **kwargs):
-    def __init__(self, path, point=None, parent=None, style=None, name=None, eId=None, captionStyle=None, caption=None, clipRect=None, mask=None, imo=None, **kwargs):
-        Element.__init__(self, point=point, parent=parent, style=style, name=name, eId=eId, **kwargs)
+    def __init__(self, fontpath, point=None, parent=None, style=None,
+                 name=None, eId=None, captionStyle=None, caption=None,
+                 clipRect=None, mask=None, imo=None, **kwargs):
+        Element.__init__(self, point=point, parent=parent, style=style,
+                         name=name, eId=eId, **kwargs)
 
-        p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = pointOffset(self.oPoint, ORIGIN)
+        p = self._applyScale(p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
-        
-
 
         self.__init__
-        self.font = font
+        self.font = fontpath
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
         # Try to figure out the requested dimensions if the element display per axes.
@@ -49,22 +50,28 @@ class VariableCube(Element):
         assert self.w is not None and self.h is not None # Make sure that these are defined.
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
-        self.glyphNames = s or 'e'
+
+        # FIXME: Review this: the 's' variable below is undefined.
+        #self.glyphNames = s or 'e'
+        self.glyphNames = 'e'
+
         # Store the external location, to allow other axis values to be set.
         if location is None:
             location = {}
         self.location = copy(location)
     
     def draw(self, page, x, y):
+        c = self.doc.context
+
         fillColor = self.style.get('fill')
         if fillColor is not None:
-            setFillColor(fillColor)
-            setStrokColor(None)
+            c.setFillColor(fillColor)
+            c.setStrokeColor(None)
 
-        stroke(0.8)
-        strokeWidth(0.5)
-        fill(None)
-        rect(x, y, self.w, self.h)
+        c.stroke(0.8)
+        c.strokeWidth(0.5)
+        c.fill(None)
+        c.rect(x, y, self.w, self.h)
         if len(self.dimensions) == 1:
             raise ValueError('Not supporting 1 axis now')
         if len(self.dimensions) > 2:
@@ -89,13 +96,22 @@ class VariableCube(Element):
                 self.location[axisY] = indexY * RANGE / sizeY
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
 
-                drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py, self.location, s=glyphPathScale, fillColor=(0, 0, 0))
+                drawGlyphPath(self.font.ttFont, self.glyphNames[0],
+                              px, py, self.location, s=glyphPathScale,
+                              fillColor=(0, 0, 0))
 
-                fs = FormattedString('%s %d\n%s %d' % (axisX, indexX * RANGE / sizeX, axisY, indexY * RANGE / sizeY), fontSize=6, fill=0)
+                fs = FormattedString('%s %d\n%s %d' % (axisX,
+                                                       indexX * RANGE / sizeX,
+                                                       axisY,
+                                                       indexY * RANGE / sizeY),
+                                     fontSize=6,
+                                     fill=0)
                 w, h = fs.size()
-                page.text(fs, px - stepX/4, py - 16) # Bit of hack, we need the width of the glyph here.
-        fs = FormattedString('Other axes: %s' % self.location, fontSize=6, fill=0)
+
+                page.text(fs, px - stepX/4, py - 16)
+                # Bit of hack, we need the width of the glyph here.
+
+        fs = FormattedString('Other axes: %s' % self.location,
+                             fontSize=6, fill=0)
         w, h = fs.size()
         page.text(fs, x, y - 16)
-
-		
