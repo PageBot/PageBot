@@ -1,8 +1,21 @@
-"""
-Instantiate a variation font.  Run, eg:
-
-$ python mutator.py ./NotoSansArabic-VF.ttf wght=140 wdth=85
-"""
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+# -----------------------------------------------------------------------------
+#
+#     P A G E B O T
+#
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
+#       from https://github.com/fonttools/fonttools/
+#                                   blob/master/Lib/fontTools/varLib/mutator.py
+#     Licensed under MIT conditions
+#
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+# -----------------------------------------------------------------------------
+#
+#    mutator.py
+#
 from __future__ import print_function, division, absolute_import
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
@@ -13,6 +26,7 @@ import os.path
 
 from drawBot import installFont
 from pagebot.fonttoolbox.objects.font import Font
+from pagebot.toolbox.transformer import path2FontName
 
 def getMasterPath():
     u"""Answer the path to read master fonts. Default is at the same level as pagebot module."""
@@ -209,11 +223,3 @@ def getVariableFont(fontOrPath, location, install=True, styleName=None, normaliz
     fontName, path = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), normalize=normalize)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName)
-
-
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv) > 1:
-        sys.exit(main())
-    import doctest
-    sys.exit(doctest.testmod().failed)

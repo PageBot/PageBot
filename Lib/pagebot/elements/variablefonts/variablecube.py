@@ -19,7 +19,8 @@ from __future__ import division
 from copy import copy
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from drawBot import fill, rect, stroke, strokeWidth, FormattedString
+from drawBot import FormattedString
+from pagebot.fonttoolbox.variablebuilder import drawGlyphPath
 
 
 class VariableCube(Element):
@@ -46,19 +47,20 @@ class VariableCube(Element):
         self.location = copy(location)
     
     def draw(self, page, x, y):
+        c = self.doc.context
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, p, view)
 
         fillColor = self.style.get('fill')
         if fillColor is not None:
-            setFillColor(fillColor)
-            setStrokColor(None)
+            c.setFillColor(fillColor)
+            c.setStrokeColor(None)
 
-        stroke(0.8)
-        strokeWidth(0.5)
-        fill(None)
-        rect(x, y, self.w, self.h)
+        c.stroke(0.8)
+        c.strokeWidth(0.5)
+        c.fill(None)
+        c.rect(x, y, self.w, self.h)
         if len(self.dimensions) == 1:
             raise ValueError('Not supporting 1 axis now')
         if len(self.dimensions) > 2:
@@ -94,7 +96,3 @@ class VariableCube(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, p, view)
-
-
-
-		
