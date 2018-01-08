@@ -73,6 +73,7 @@ class BaseView(Element):
         # Image stuff
         self.showImageReference = False
         # Spread stuff
+        self.showSpreadPages = False # Show even/odd pages as spread, as well as pages that share the same pagenumber.
         self.showSpreadMiddleAsGap = True # Show the spread with single crop marks. False glues pages togethers as in real spread.
         # CSS flags
         self.cssVerbose = True # Adds information comments with original values to CSS export.

@@ -14,15 +14,18 @@
 #
 #     drawbotcontext.py
 #
+import os
+
 try:
     from AppKit import NSFont
     from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
+    from drawbot.context.baseContext import BezierPath
+    from drawBot import Variable
 except ImportError:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
+    Variable = BezierPath = None
 
-import os
-from drawBot import Variable
 from basecontext import BaseContext
 from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
 from pagebot.contexts.strings.fsstring import FsString
@@ -302,6 +305,12 @@ class DrawBotContext(BaseContext):
         self.scale(sx, sy)
         self.b.image(path, (x*sx, y*sy), alpha=alpha, pageNumber=pageNumber)
         self.restore()
+
+    #   A N I M A T I O N 
+
+    def frameDuration(self, secondsPerFrame):
+        u"""Set the frame duretion for animated gifs to a number of seconds per frame."""
+        self.b.frameDuration(secondsPerFrame)
 
     #   C O L O R
 

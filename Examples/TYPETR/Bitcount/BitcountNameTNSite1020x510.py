@@ -122,15 +122,15 @@ def getFittingString(t, fontName, c):
         
 def drawLayers(fss1, fss2):
     # Draw this layer in a couple of frame
-    newPage(W, H)
-    frameDuration(fd)
-    fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
-    rect(0, 0, W, H)
+    context.newPage(W, H)
+    context.frameDuration(fd)
+    context.fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
+    context.rect(0, 0, W, H)
     y = 3*padding
     for fs in fss1:
-        text(fs, (2*padding, y+310))
+        context.text(fs, (2*padding, y+310))
     for fs in fss2:
-        text(fs, (2.35*padding, y+5))
+        context.text(fs, (2.35*padding, y+5))
 
 if __name__ == '__main__':     
     # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
@@ -147,6 +147,6 @@ if __name__ == '__main__':
                 tt = tts[2]               
             drawSample(t, tt)
 
-        saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+        context.saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
         
         

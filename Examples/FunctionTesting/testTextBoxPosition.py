@@ -9,15 +9,15 @@ TEXT = """The advent of variable fonts means doing nothing, or everything, or so
 
 newPage(W, H)
 
-fs = context.newString(HEAD_LINE+'\n',
+bs = context.newString(HEAD_LINE+'\n',
                        style=dict(font='Verdana',
                                   fontSize=24,
                                   textFill=0))
-fs += context.newString(TEXT,
+bs += context.newString(TEXT,
                         style=dict(font='Verdana',
                         fontSize=12,
                         textFill=0))
 
-tw, th = textSize(fs, width=200)
+tw, th = context.textSize(bs, w=200)
 print tw, th
-textBox(fs, (100, -th+H, 200, th))
+context.textBox(bs, (100, -th+H, 200, th))

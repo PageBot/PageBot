@@ -30,21 +30,31 @@ class PageView(BaseView):
     viewId = 'Page'
 
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
+    EXPORT_PATH = '_export/' # Default path for local document export, that does not commit documents to Github.
 
     def build(self, path, pageSelection=None, multiPage=True):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
         
         if not path:
-            path = '_export/' + self.doc.name + '.pdf'
+            path = EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
+        # If default _export directory does not exist, then create it.
+        if path.startswith(EXPORT_PATH) and not os.path.exists(EXPORT_PATH):
+            os.makedirs(EXPORT_PATH)
 
         context = self.context # Get current context and builder from doc. Can be DrawBot of Flat
 
+        # Find the maximum document page size to this in all pages sizes of the document.
         w, h, _ = self.doc.getMaxPageSizes(pageSelection)
 
         context.newDocument(w, h)
         for pn, pages in self.doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
+            
+            # TODO: Some options here for layout of the combined pages, depending on the spread view option.
+            # self.showSpreadPages # Show even/odd pages as spread, as well as pages that share the same pagenumber.
+            # self.showSpreadMiddleAsGap # Show the spread with single crop marks. False glues pages togethers as in real spread.
+
             # Create a new DrawBot viewport page to draw template + page, if not already done.
             # In case the document is oversized, then make all pages the size of the document, so the
             # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
@@ -613,7 +623,7 @@ class PageView(BaseView):
 
     # The methods are used, in case the view itself is placed in a layout.
 
-    def build_drawBot(self, view, origin):
+    def build(self, view, origin):
         u"""This method is called is the view is used as a placable element inside
         another element, such as a Page or Template. """
         p = pointOffset(self.oPoint, origin)
@@ -626,7 +636,7 @@ class PageView(BaseView):
         self.drawElementFrame(view, p)
         for page in self.elements:
             self.drawPageMetaInfo(page, p)
-            page.build_drawBot(view, p)
+            page.build(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(view, p)
@@ -634,4 +644,7 @@ class PageView(BaseView):
         self._restoreScale(view)
         #view.drawElementMetaInfo(self, origin)
 
+    def build_html(self, view, origin):
+        u"""HTML page view to be implemented. Ignore for now."""
+        pass
 

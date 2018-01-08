@@ -15,9 +15,14 @@
 #     fsstring.py
 #
 import re
-import AppKit
-import CoreText
-import Quartz
+try:
+    import AppKit
+    import CoreText
+    import Quartz
+    from drawBot import BezierPath
+except ImportError:
+    BezierPath = None
+
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
@@ -49,9 +54,61 @@ class FsString(BabelString):
         return u'%s' % self.s #  Convert to text
 
     def textSize(self, w=None, h=None):
-        u"""Answer the (w, h) size for a given width, with the current text."""
+        u"""Answer the (w, h) size for a given width, with the current text, measured from bottom em-size
+        to top-emsize (including ascender+ and descender+) and the string width (including margins)."""
         # TODO: Add in case w is defined.
         return self.context.textSize(self, w=w, h=h)
+
+    def bounds(self, w=None, h=None):
+        u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
+        Note that by can be a negative value, if there is text (e.g. overshoot) below the baseline.
+        bh is the amount ofr pixels above the baseline. 
+        For the height of the pixel-map, calculare ph - py."""
+        p = BezierPath()
+        p.text(self.s, (0, 0))
+        return  p.bounds() # bx, by, bw, bh 
+
+    def fontContainsCharacters(character):
+        u"""Return a bool if the current font contains the provided characters. 
+        Characters is a string containing one or more characters."""
+        return self.s.fontContainsCharacters(characters)
+
+    def fontFilePath(self):
+        u"""Return the path to the file of the current font."""
+        return self.s.fontFilePath()
+
+    def listFontGlyphNames(self):
+        """Return a list of glyph names supported by the current font."""
+        return self.s.listFontGlyphNames()
+
+    def fontAscender(self):
+        u"""Returns the current font ascender, based on the current font and fontSize."""
+        return self.s.fontAscender()
+
+    def fontDescender(self):
+        u"""Returns the current font descender, based on the current font and fontSize."""
+        return self.s.fontDescender()
+
+    def fontXHeight(self):
+        u"""Returns the current font x-height, based on the current font and fontSize."""
+        return self.s.fontXHeight()
+
+    def fontCapHeight(self):
+        u"""Returns the current font cap height, based on the current font and fontSize."""
+        return self.s.fontCapHeight()
+
+    def fontLeading(self):
+        u"""Returns the current font leading, based on the current font and fontSize."""
+        return self.s.fontLeading()
+
+    def fontLineHeight(self):
+        u"""Returns the current line height, based on the current font and fontSize. 
+        If a lineHeight is set, this value will be returned."""
+        return self.s.fontLineHeight()
+
+    def appendGlyph(*glyphNames):
+        u"""Append a glyph by his glyph name using the current font. Multiple glyph names are possible."""
+        self.s.appenGlyph(glyphNames)
 
     def textOverflow(self, w, h, align=LEFT):
         return self.context.textOverflow(self, (0, 0, w, h), align)
@@ -169,7 +226,7 @@ class FsString(BabelString):
         newt = fs + t # Format plain string t onto new formatted fs.
         if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
             tw, _ = b.textSize(newt)
-            fontSize = w / tw * sFontSize
+            fontSize = 1.0 * w / tw * sFontSize
             # Call this method again, with the calculated real size of the string to fit the width.
             # Note that this assumes a linear relation between size and width, which may not be the the case
             # with [opsz] optical size axes of Variable Fonts. 
@@ -177,7 +234,7 @@ class FsString(BabelString):
                 tracking=tracking, rTracking=rTracking, tagName=tagName)
         elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
             _, th = b.textSize(newt)
-            fontSize = h / th * sFontSize
+            fontSize = 1.0 * h / th * sFontSize
             # Call this method again, with the calculated real size of the string to fit the width.
             # Note that this assumes a linear relation between size and width, which may not be the the case
             # with [opsz] optical size axes of Variable Fonts. 
@@ -299,7 +356,9 @@ class TextRun(object):
         return self.nsFont.renderingMode()
     renderingMode = property(_get_renderingMode)
 
-    #   Font metrics
+    #   Font metrics, based on self.nsFont. This can be different from 
+    #   self.fontAswcencender and self.fontDescender, etc. which are
+    #   based on the current setting in the FormattedString
 
     def _get_ascender(self):
         return self.nsFont.ascender()
