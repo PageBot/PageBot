@@ -61,11 +61,13 @@ class Element(object):
         not inheriting from one of the parent styles.
         Ignore setting of setting eId as attribute, guaranteed to be unique.
         
-        >>> e = Element(x=10, y=20, w=100, h=120)
-        >>> e.maxW == sys.maxint
-        True
-        >>> e.x, e.y, e.w, e.h
-        (10, 20, 100, 120)
+        >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, maxH=1000, pl=11, pt=22, margin=(33,44,55,66))
+        >>> e.name, e.info.description is None
+        ('TestElement', True)
+        >>> e.maxW == sys.maxint, e.maxH
+        (True, 1000)
+        >>> e.x, e.y, e.w, e.h, e.padding, e.margin
+        (10, 20, 100, 120, (22, 0, 0, 11), (33, 44, 55, 66))
         """  
         assert point is None or isinstance(point, (tuple, list))
         
