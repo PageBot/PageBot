@@ -18,8 +18,14 @@ from drawBot import (cmykStroke, newPath, drawPath, moveTo,
                      lineTo, strokeWidth, oval, fill)
 from pagebot.toolbox.transformer import point3D
 
-def drawRegistrationMark(origin, cmSize, cmStrokeWidth, vertical):
-    u"""Draw registration mark as position x, y."""
+def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
+    u"""Draw registration mark as position x, y.
+
+    >>> from pagebot.contexts.flatcontext import FlatContext
+    >>> c = FlatContext()
+    >>> c.newPage(100, 100)
+    >>> drawRegistrationMark(c, (0,0), 20, 1, True)
+    """
     x, y = origin
     if vertical:
         dx = cmSize/2
@@ -27,68 +33,81 @@ def drawRegistrationMark(origin, cmSize, cmStrokeWidth, vertical):
     else:
         dx = cmSize
         dy = cmSize/2
-    fill(None)
-    cmykStroke(1,1,1,1)
-    strokeWidth(cmStrokeWidth)
-    newPath()
+    context.fill(None)
+    context.stroke((1,1,1,1), cmyk=True, w=cmStrokeWidth)
+    context.newPath()
     # Registration circle
-    oval(x - cmSize/4, y - cmSize/4, cmSize/2, cmSize/2)
+    context.oval(x - cmSize/4, y - cmSize/4, cmSize/2, cmSize/2)
     # Registration cross, in length of direction.
-    moveTo((x - dx, y)) # Horizontal line.
-    lineTo((x + dx, y))
-    moveTo((x, y + dy)) # Vertical line.
-    lineTo((x, y - dy))
-    drawPath()
+    context.moveTo((x - dx, y)) # Horizontal line.
+    context.lineTo((x + dx, y))
+    context.moveTo((x, y + dy)) # Vertical line.
+    context.lineTo((x, y - dy))
+    context.drawPath()
 
-def drawRegistrationMarks(origin, w, h, cmSize, cmStrokeWidth):
+def drawRegistrationMarks(context, origin, w, h, cmSize, cmStrokeWidth):
     u"""Draw standard registration mark, to show registration of CMYK colors.
-    https://en.wikipedia.org/wiki/Printing_registration."""
-    x, y, _ = point3D(origin)
-    drawRegistrationMark((x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
-    drawRegistrationMark((x - cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Left registration mark
-    drawRegistrationMark((x + w + cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Right registration mark
-    drawRegistrationMark((x + w/2, y + h + cmSize), cmSize, cmStrokeWidth, False) # Top registration mark
+    https://en.wikipedia.org/wiki/Printing_registration.
 
-def drawCropMarks(origin, w, h, bleed, cmSize, cmStrokeWidth, folds=None):
-    u"""If the show flag is set, then draw the cropmarks or page frame."""
+    >>> from pagebot.contexts.flatcontext import FlatContext
+    >>> c = FlatContext()
+    >>> c.newPage(100, 100)
+    >>> drawRegistrationMarks(c, (0,0), 100, 100, 20, 1)
+    """
+    x, y, _ = point3D(origin)
+    drawRegistrationMark(context, (x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
+    drawRegistrationMark(context, (x - cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Left registration mark
+    drawRegistrationMark(context, (x + w + cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Right registration mark
+    drawRegistrationMark(context, (x + w/2, y + h + cmSize), cmSize, cmStrokeWidth, False) # Top registration mark
+
+def drawCropMarks(context, origin, w, h, bleed, cmSize, cmStrokeWidth, folds=None):
+    u"""If the show flag is set, then draw the cropmarks or page frame.
+
+    >>> from pagebot.contexts.flatcontext import FlatContext
+    >>> c = FlatContext()
+    >>> c.newPage(100, 100)
+    >>> drawCropMarks(c, (0,0), 100, 100, False, 20, 1)
+    """
     x, y, _ = point3D(origin) # Ignore z-axus for now.
-    fill(None)
-    cmykStroke(1,1,1,1)
-    strokeWidth(cmStrokeWidth)
-    newPath()
+    context.fill(None)
+    context.stroke((1,1,1,1), cmyk=True, w=cmStrokeWidth)
+    context.newPath()
     # Bottom left
-    moveTo((x - bleed, y))
-    lineTo((x - cmSize, y))
-    moveTo((x, y - bleed))
-    lineTo((x, y - cmSize))
+    context.moveTo((x - bleed, y))
+    context.lineTo((x - cmSize, y))
+    context.moveTo((x, y - bleed))
+    context.lineTo((x, y - cmSize))
     # Bottom right
-    moveTo((x + w + bleed, y))
-    lineTo((x + w + cmSize, y))
-    moveTo((x + w, y - bleed))
-    lineTo((x + w, y - cmSize))
+    context.moveTo((x + w + bleed, y))
+    context.lineTo((x + w + cmSize, y))
+    context.moveTo((x + w, y - bleed))
+    context.lineTo((x + w, y - cmSize))
     # Top left
-    moveTo((x - bleed, y + h))
-    lineTo((x - cmSize, y + h))
-    moveTo((x, y + h + bleed))
-    lineTo((x, y + h + cmSize))
+    context.moveTo((x - bleed, y + h))
+    context.lineTo((x - cmSize, y + h))
+    context.moveTo((x, y + h + bleed))
+    context.lineTo((x, y + h + cmSize))
     # Top right
-    moveTo((x + w + bleed, y + h))
-    lineTo((x + w + cmSize, y + h))
-    moveTo((x + w, y + h + bleed))
-    lineTo((x + w, y + h + cmSize))
+    context.moveTo((x + w + bleed, y + h))
+    context.lineTo((x + w + cmSize, y + h))
+    context.moveTo((x + w, y + h + bleed))
+    context.lineTo((x + w, y + h + cmSize))
     # Any fold lines to draw?
     if folds is not None:
         for fx, fy in folds:
             if fx is not None:
-                moveTo((x + fx, y - bleed))
-                lineTo((x + fx, y - cmSize))
-                moveTo((x + fx, y + h + bleed))
-                lineTo((x + fx, y + h + cmSize))
+                context.moveTo((x + fx, y - bleed))
+                context.lineTo((x + fx, y - cmSize))
+                context.moveTo((x + fx, y + h + bleed))
+                context.lineTo((x + fx, y + h + cmSize))
             if fy is not None:
-                moveTo((x - bleed, y + fy))
-                lineTo((x - cmSize, y + fy))
-                moveTo((x + w + bleed, y + fy))
-                lineTo((x + w + cmSize, y + fy))
-    drawPath()
+                context.moveTo((x - bleed, y + fy))
+                context.lineTo((x - cmSize, y + fy))
+                context.moveTo((x + w + bleed, y + fy))
+                context.lineTo((x + w + cmSize, y + fy))
+    context.drawPath()
 
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
 

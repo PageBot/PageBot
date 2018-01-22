@@ -347,7 +347,7 @@ def asFloatOrNone(value):
     except (ValueError, TypeError):
         return None
 
-def asId(value, default=0):
+def asId(v, default=0):
     u"""
     The *asId* method transforms the *value* attribute either to an instance of @
     long@ or to @None@, so it can be used as *id* field in a @Record@
@@ -360,22 +360,41 @@ def asId(value, default=0):
     'ABCD'
     """
     try:
-        value = long(value)
-        if value <= 0:
+        v = long(v)
+        if v <= 0:
             return default
-        return value
+        return v
     except (ValueError, TypeError):
         return default
 
-def asIntOrNone(value):
-    try:
-        return int(value)
-    except (ValueError, TypeError):
-        return None
+def asIntOrNone(v):
+    u"""Answer v converted to int. Answer None if the conversion raised an error.
 
-def asIntOrDefault(value, default):
+    >>> asIntOrNone(1234)
+    1234
+    >>> asIntOrNone('1234')
+    1234
+    >>> asIntOrNone('1234.2')
+    1234
+    >>> asIntOrNone('1234a') is None
+    True
+    """
+    return asIntOrDefault(v)
+
+def asIntOrDefault(v, default=None):
+    u"""Answer v converted to int. Answer None if the conversion raised an error.
+
+    >>> asIntOrNone(1234)
+    1234
+    >>> asIntOrNone('1234')
+    1234
+    >>> asIntOrNone('1234.2')
+    1234
+    >>> asIntOrNone('1234a') is None
+    True
+    """
     try:
-        return int(value)
+        return int(round(float(v)))
     except (ValueError, TypeError):
         return default
 
