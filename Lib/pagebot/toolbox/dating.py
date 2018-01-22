@@ -322,6 +322,99 @@ class DateTime:
     DateTime(2008, week=23)
     </python>
     
+    if __name__ == "__main__":
+    #d1 = DateTime(date='now')
+    #d2 = DateTime(year=2008, month=2, day=10)
+    #print d1 + Duration(123)
+    #print d1.assecond()
+    #print d1 - Duration(days=2)
+    p = Duration(seconds=10) * 6 / 2
+    print 'Duration', p,
+    print 'Negated duration', -p
+    print 'Duration 1 day longer', p + 1
+    print 'Duration 2 minutes longer', p + Duration(minutes=2)
+    d1 = DateTime(date='now')
+    d2 = d1 + Duration(seconds=10)
+
+    print d1.weekday, d1.dayname
+    print d1.month, d1.monthname
+    print d1.week, d2.week
+    print 'Next working day', d1.nextworkday
+    print d1
+    print d1 + p
+    print '6 days later', d1 + 6
+    print '60 days later', d1 + 60
+    print 'First work day after 60 days', (d1 + 60).nextworkday
+    print '20 days earlier', d1 - 20
+    print d1 - p
+    print d1 - d2 + d2
+    print d1.date
+    print d1.datenumber
+    print d1.datetuple
+    print d1.time
+    print d1.timetuple
+    print d1.nextdaynamed(5).dayname
+    print d1.nextdaynamed(5).nextworkday.dayname
+    print d1.nextdaynamed(6).nextworkday.dayname
+    print d1.leapyear
+    d3 = DateTime(2007, 12, 20)
+    print d3.nextmonth
+    d3 = DateTime(2008, 1, 15)
+    print d3.prevmonth
+    print d3 - d1
+    d3 = DateTime(d1.year, d1.month, 1)
+    print d3 + Duration(days=d3.monthdays - 1)
+    print d1.monthstart, d1.monthend
+    print d1 - Duration(days=1)
+    print 'First week of this month', DateTime(date='2007-12-10').monthstart.week
+    print 'Date of start of first week of this month', DateTime(date='2007-12-10').monthstart.weekstart
+    print 'Previous month of 2007-12-10 is', DateTime(date='2007-12-10').prevmonth.date
+    print 'Previous month of 2008-1-10 is', DateTime(date='2008-1-10').prevmonth.date
+    print 'Next month of 2007-12-10 is', DateTime(date='2007-12-10').nextmonth.date
+    print 'Next month of 2008-1-10 is', DateTime(date='2008-1-10').nextmonth.date
+    print 'First day of third week', DateTime(year=2008, week=2).date
+    print 'Trim day value', DateTime(year=2008, month=2, day=35).date
+    print 'Trim month and day value', DateTime(year=2008, month=22, day=35).date
+    print 'Year start and end', d1.yearstart.date, d1.yearend.date
+    print 'Month start and end', d1.monthstart.date, d1.monthend.date
+    print d1.calendarmonth
+    print DateTime(date='2008-2-29').calendarmonth
+    print DateTime(date='2007-12-31').calendaryear
+
+    >>> dt1 = DateTime(2007, 12, 20)
+    >>> dt1.nextmonth.monthname
+    'Jan'
+    >>> dt2 = DateTime(2008, 1, 15)
+    >>> dt2.prevmonth.monthname
+    'Dec'
+    >>> (dt2 - dt1).days
+    26
+    >>> dt3 = DateTime(dt1.year, dt1.month, 1)
+    >>> dt3 + Duration(days=dt3.monthdays - 1)
+    2007-12-31 00:00:00
+    >>> dt1.monthstart, dt1.monthend
+    (2007-12-01 00:00:00, 2007-12-31 00:00:00)
+    >>> dt1 - Duration(days=1)
+    2007-12-19 00:00:00
+    >>> 'First week of this month', DateTime(date='2007-12-10').monthstart.week
+    ('First week of this month', 48)
+    >>> 'Date of start of first week of this month', DateTime(date='2007-12-10').monthstart.weekstart
+    ('Date of start of first week of this month', 2007-11-26 00:00:00)
+    >>> 'Previous month of 2007-12-10 is', DateTime(date='2007-12-10').prevmonth.date
+    ('Previous month of 2007-12-10 is', '2007-11-01')
+
+    print 'Previous month of 2008-1-10 is', DateTime(date='2008-1-10').prevmonth.date
+    print 'Next month of 2007-12-10 is', DateTime(date='2007-12-10').nextmonth.date
+    print 'Next month of 2008-1-10 is', DateTime(date='2008-1-10').nextmonth.date
+    print 'First day of third week', DateTime(year=2008, week=2).date
+    print 'Trim day value', DateTime(year=2008, month=2, day=35).date
+    print 'Trim month and day value', DateTime(year=2008, month=22, day=35).date
+    print 'Year start and end', d1.yearstart.date, d1.yearend.date
+    print 'Month start and end', d1.monthstart.date, d1.monthend.date
+    print d1.calendarmonth
+    print DateTime(date='2008-2-29').calendarmonth
+    print DateTime(date='2007-12-31').calendaryear
+
     """
     keys = {'year': 0, 'month': 1, 'day': 2, 'hour': 3, 'minute': 4, 'second': 5, 'weekday': 6, 'yearday': 7, 'tz': 8}
     daynames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -873,60 +966,7 @@ class DateTime:
         return None
 
 if __name__ == "__main__":
-    #d1 = DateTime(date='now')
-    #d2 = DateTime(year=2008, month=2, day=10)
-    #print d1 + Duration(123)
-    #print d1.assecond()
-    #print d1 - Duration(days=2)
-    p = Duration(seconds=10) * 6 / 2
-    print 'Duration', p,
-    print 'Negated duration', -p
-    print 'Duration 1 day longer', p + 1
-    print 'Duration 2 minutes longer', p + Duration(minutes=2)
-    d1 = DateTime(date='now')
-    d2 = d1 + Duration(seconds=10)
+    import doctest
+    doctest.testmod()
 
-    print d1.weekday, d1.dayname
-    print d1.month, d1.monthname
-    print d1.week, d2.week
-    print 'Next working day', d1.nextworkday
-    print d1
-    print d1 + p
-    print '6 days later', d1 + 6
-    print '60 days later', d1 + 60
-    print 'First work day after 60 days', (d1 + 60).nextworkday
-    print '20 days earlier', d1 - 20
-    print d1 - p
-    print d1 - d2 + d2
-    print d1.date
-    print d1.datenumber
-    print d1.datetuple
-    print d1.time
-    print d1.timetuple
-    print d1.nextdaynamed(5).dayname
-    print d1.nextdaynamed(5).nextworkday.dayname
-    print d1.nextdaynamed(6).nextworkday.dayname
-    print d1.leapyear
-    d3 = DateTime(2007, 12, 20)
-    print d3.nextmonth
-    d3 = DateTime(2008, 1, 15)
-    print d3.prevmonth
-    print d3 - d1
-    d3 = DateTime(d1.year, d1.month, 1)
-    print d3 + Duration(days=d3.monthdays - 1)
-    print d1.monthstart, d1.monthend
-    print d1 - Duration(days=1)
-    print 'First week of this month', DateTime(date='2007-12-10').monthstart.week
-    print 'Date of start of first week of this month', DateTime(date='2007-12-10').monthstart.weekstart
-    print 'Previous month of 2007-12-10 is', DateTime(date='2007-12-10').prevmonth.date
-    print 'Previous month of 2008-1-10 is', DateTime(date='2008-1-10').prevmonth.date
-    print 'Next month of 2007-12-10 is', DateTime(date='2007-12-10').nextmonth.date
-    print 'Next month of 2008-1-10 is', DateTime(date='2008-1-10').nextmonth.date
-    print 'First day of third week', DateTime(year=2008, week=2).date
-    print 'Trim day value', DateTime(year=2008, month=2, day=35).date
-    print 'Trim month and day value', DateTime(year=2008, month=22, day=35).date
-    print 'Year start and end', d1.yearstart.date, d1.yearend.date
-    print 'Month start and end', d1.monthstart.date, d1.monthend.date
-    print d1.calendarmonth
-    print DateTime(date='2008-2-29').calendarmonth
-    print DateTime(date='2007-12-31').calendaryear
+
