@@ -75,6 +75,8 @@ class Ruler(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
+        b.hr(class_=self.class_)
+
         if drawElements:
             self.buildChildElements(view, p)
 
@@ -82,5 +84,5 @@ class Ruler(Element):
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin)
+        #view.drawElementMetaInfo(self, origin)
 

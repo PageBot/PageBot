@@ -33,8 +33,9 @@ class Composer(object):
         The composer negotiates between what the galley needs a sequential space
         for its elements, and what the page has to offer.
         If flowId is omitted, then let the page find the entry point for the first flow."""
-        print doc, galley
-
+        #print doc, galley
+        pass
+        
     def XXXcompose(self, galley, page, flowId=None):
         u"""Compose the galley element, starting with the flowId text box on page.
         The composer negotiates between what the galley needs a sequential space

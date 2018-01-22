@@ -25,8 +25,22 @@ from pagebot.toolbox.transformer import obj2StyleId
 from pagebot.contexts.builders import BuildInfo # Container with Builder flags and data/parametets
 
 class Document(object):
-    u"""A Document is just another kind of container."""
-    
+    u"""A Document is just another kind of container.
+
+    Doctest: https://docs.python.org/2/library/doctest.html
+    Run doctest in Sublime: cmd-B
+
+    >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
+    >>> doc.name, doc.w, doc.h, doc.originTop, len(doc)
+    ('TestDoc', 300, 400, True, 2)
+    >>> doc.padding
+    (30, 40, 50, 60)
+    >>> page = doc[0]
+    >>> page.padding = 20
+    >>> page.w, page.h, page.pw, page.ph, page.pt, page.pr, page.pb, page.pl, page.title
+    (300, 400, 260, 360, 20, 20, 20, 20, 'default')
+
+    """    
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
 
     DEFAULT_VIEWID = defaultViewClass.viewId
@@ -93,6 +107,10 @@ class Document(object):
         table of content, etc. Some common entries are predefined. """
         return self._lib 
     lib = property(_get_lib)
+
+    def __len__(self):
+        u"""Answer the amount of pages in the document."""
+        return len(self.pages)
 
     def __repr__(self):
         return '[Document-%s "%s"]' % (self.__class__.__name__, self.name)
@@ -315,7 +333,7 @@ class Document(object):
     #   D E F A U L T  A T T R I B U T E S 
 
     def _get_orjginTop(self):
-        return self.getRootStyle('originTop')
+        return self.getRootStyle().get('originTop')
     def _set_originTop(self, flag):
         rs = self.getRootStyle()
         if flag:
@@ -614,4 +632,8 @@ class Document(object):
 
     def export(self, path=None, multiPage=True):
         self.build(path=path, multiPage=multiPage)
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
 

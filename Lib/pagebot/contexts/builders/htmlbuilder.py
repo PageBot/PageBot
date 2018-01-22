@@ -19,6 +19,7 @@ from pagebot.toolbox.transformer import value2Bool
 from xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.contexts.strings.htmlstring import HtmlString
+from pagebot.toolbox.transformer import dataAttribute2Html5Attribute
 
 class HtmlBuilder(XmlBuilder):
     """
@@ -1227,8 +1228,10 @@ table {
         <hr size="15" color="green"/>
         </python>
         """
+        print '#@@#@##@@#@#', args
+        self.write('AAAAA')
         self.write_tag_noWhitespace(u'hr', False, args)
-
+        self.write('BBBBB')
 
     def a(self, **kwargs):
         """

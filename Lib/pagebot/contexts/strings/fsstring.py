@@ -14,15 +14,7 @@
 #
 #     fsstring.py
 #
-try:
-    import CoreText
-    import AppKit
-    import Quartz
-except:
-    pass
-
 import re
-<<<<<<< HEAD
 try:
     import AppKit
     import CoreText
@@ -31,8 +23,6 @@ try:
 except ImportError:
     BezierPath = None
 
-=======
->>>>>>> origin/master
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
@@ -71,9 +61,10 @@ class FsString(BabelString):
 
     def bounds(self, w=None, h=None):
         u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
-        Note that by can be a negative value, if there is text (e.g. overshoot) below the baseline.
-        bh is the amount ofr pixels above the baseline. 
-        For the height of the pixel-map, calculare ph - py."""
+        Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
+        @bh is the amount of pixels above the baseline. 
+        For the total height of the pixel-map, calculate @ph - @py.
+        For the total width of the pixel-map, calculate @pw - @px."""
         p = BezierPath()
         p.text(self.s, (0, 0))
         return  p.bounds() # bx, by, bw, bh 

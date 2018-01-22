@@ -237,7 +237,7 @@ if 0:
             args=dict(value=angle, minValue=-90, maxValue=270)))
         globals()[axisName] = axes[axisName][1]
         angle += 360/len(axes)
-    Variable(VARIABLES, globals())
+    context.Variable(VARIABLES, globals())
 
 
     def makeDocument(rs):

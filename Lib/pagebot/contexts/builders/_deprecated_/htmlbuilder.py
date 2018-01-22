@@ -15,8 +15,7 @@
 #     htmlbuilder.py
 #
 from xmlbuilder import XmlBuilder
-from pagebot.toolbox.transformer import *
-from xierpa3.toolbox.transformer import TX
+from pagebot.toolbox.transformer import dataAttribute2Html5Attribute
 
 
 class HtmlBuilder(XmlBuilder):

@@ -10,7 +10,7 @@
 #
 #     htmlbuilderpart.py
 #
-from xierpa3.toolbox.transformer import TX
+from pagebot.toolbox.transformer import dataAttribute2Html5Attribute
 
 class HtmlBuilderPart:
     """
@@ -217,7 +217,7 @@ class HtmlBuilderPart:
         the Xierpa attributes and HTML attributes.
         """
         # Boolean attributes.
-        key = TX.dataAttribute2Html5Attribute(key)
+        key = dataAttribute2Html5Attribute(key)
 
         if key in self.BOOLEAN_ATTRIBUTES:
             if TX.value2Bool(value): # Can be boolean or text boolean
@@ -1095,7 +1095,7 @@ class HtmlBuilderPart:
         if language is not None:
             r.write(u' language="%s"' % language)
         for key, value in args.items():
-            r.write(u' %s="%s"' % (TX.dataAttribute2Html5Attribute(key), value))
+            r.write(u' %s="%s"' % (dataAttribute2Html5Attribute(key), value))
         src = args.get(u'src')
         if src is not None:
             r.write(u'></script>\n')

@@ -25,23 +25,59 @@ ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5,
 
 # P O I N T
 
-def point3D(p):
+def point3D(p=None):
     u"""Answer p as 3D point. If it already is a list of 3 elements, then don't change
-    and answer the original."""
+    and answer the original.
+
+    >>> point3D() # Default 3D origin
+    [0, 0, 0]
+    >>> point3D((20, -40)) # Add z = 0
+    [20, -40, 0]
+    >>> point3D(30) # One value defaults to x == y
+    [30, 30, 0]
+    >>> point3D((2,3,4,5)) # Trim tuple to 3 coordinates.
+    [2, 3, 4]
+    """
     if not p: # None or zero.
         return [0, 0, 0] # Undefined 3D point as list.
-    if isinstance(p, tuple):
+    if isinstance(p, (list, tuple)):
+        if len(p) > 3:
+            p = p[:3]
         p = list(p)
+    else:
+        p = [p, p]
     while len(p) < 3:
-        p.append(0) # Value undefined, add origin.
+        p.append(0) # Value undefined, add origin as z value.
     return p
 
-def point2D(p):
-    u"""Answer the 2D origin as combination of p and offset."""
+def point2D(p=None):
+    u"""Answer the 2D origin as combination of p and offset.
+
+    >>> point2D() # Default 2D origin
+    [0, 0]
+    >>> point2D((20, -40))
+    [20, -40]
+    >>> point2D(20)
+    [20, 20]
+    >>> point2D((2,3,4,5,6))
+    [2, 3]
+    """
     return point3D(p)[:2]
 
 def pointOffset(point, offset):
-    u"""Answer new 3D point, shifted by offset."""
+    u"""Answer new 3D point, shifted by offset.
+
+    >>> pointOffset((20, 30, 10), 12)
+    (32, 42, 22)
+    >>> pointOffset((20, 30, 40), (2,3,4))
+    (22, 33, 44)
+    >>> pointOffset((12, 13), 100)
+    (112, 113, 100)
+    >>> point2D(pointOffset((12, 13), 100))
+    [112, 113]
+    """
+    if isinstance(offset, (int, float, long)):
+        offset = (offset, offset, offset)
     if not len(point) == 3:
         point = point3D(point)
     if not len(offset) == 3:
@@ -49,7 +85,13 @@ def pointOffset(point, offset):
     return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
 
 def point2S(p):
-    u"""Answer the point as string of rounded integers. Ignore z value if it is 0."""
+    u"""Answer the point as string of rounded integers. Ignore z value if it is 0.
+
+    >>> point2S((22.4, 33.5, 44.6))
+    '22 34 45'
+    >>> point2S((33.6, 44.7))
+    '34 45'
+    """
     x, y, z = point3D(p)
     if z:
         return '%d %d %d' % (round(x), round(y), round(z))
@@ -57,23 +99,47 @@ def point2S(p):
 
 # C O L O R
 
-def moreRed(c='bla', v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
-    moreRedC = [c[0] + (1 - c[0])*v, c[1], c[2]]
+def moreRed(c, v=0.5):
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white.
+
+    >>> moreRed((0.1, 0.2, 0.3))
+    [0.55, 0.2, 0.3]
+    >>> moreRed((0.1, 0.2, 0.3), 100)
+    [1, 0.2, 0.3]
+    >>> '%0.2f' % moreRed((0.1, 0.2, 0.3, 0.4), 0.8)[0]
+    '0.82'
+    """
+    moreRedC = [min(1, c[0] + (1 - c[0])*v), c[1], c[2]]
     if len(c) == 4:
         moreRedC.append(c[3])
     return moreRedC
 
 def moreGreen(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
-    moreGreenC = [c[0], c[1] + (1 - c[1])*v, c[2]]
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+
+    >>> moreGreen((0.1, 0, 0.3))
+    [0.1, 0.5, 0.3]
+    >>> moreGreen((0.1, 0.2, 0.3), 100)
+    [0.1, 1, 0.3]
+    >>> '%0.2f' % moreGreen((0.1, 0.2, 0.3, 0.4), 0.8)[1]
+    '0.84'
+    """
+    moreGreenC = [c[0], min(1, c[1] + (1 - c[1])*v), c[2]]
     if len(c) == 4:
         moreGreenC.append(c[3])
     return moreGreenC
 
 def moreBlue(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
-    moreBlueC = [c[0], c[1], c[2] + (1 - c[2])*v]
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white.
+
+    >>> moreBlue((0.1, 0, 0.3))
+    [0.1, 0.5, 0.3]
+    >>> moreBlue((0.1, 0.2, 0.3), 100)
+    [0.1, 1, 0.3]
+    >>> '%0.2f' % moreBlue((0.1, 0.2, 0.3, 0.4), 0.8)[2]
+    '0.30'
+    """
+    moreBlueC = [c[0], min(1, c[1] + (1 - c[1])*v), c[2]]
     if len(c) == 4:
         moreBlueC.append(c[3])
     return moreBlueC
@@ -1079,4 +1145,6 @@ def value2Bool(v):
         return False
     return str(v).lower() not in FALSEVALUES
 
-
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
