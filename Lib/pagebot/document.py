@@ -594,7 +594,13 @@ class Document(object):
     def solve(self, score=None):
         u"""Evaluate the content of all pages to return the total sum of conditions solving.
         If necessary, the builder for solving specific text conditions, such as
-        run length of text and overflow of text boxes, is found by the current self.view.b."""
+        run length of text and overflow of text boxes, is found by the current self.view.b.
+
+        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
+        >>> score = doc.solve()
+        >>> score
+        Score: 0 Fails: 0
+        """
         score = Score()
         for pn, pnPages in sorted(self.pages.items()):
             for page in pnPages: # List of pages with identical pn, step through the pages.
@@ -607,6 +613,13 @@ class Document(object):
         u"""Set the self.view default view, that will be used for checking on view parameters,
         before any element rendering is done, such as layout conditions and creating the right
         type of strings. 
+
+        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
+        >>> viewClasses.keys()
+        ['Mamp', 'Git', 'Page']
+        >>> view = doc.setView('Page')
+        >>> view.w, view.h
+        (300, 400)
         """
         self.view = viewClasses[viewId](parent=self, w=self.w, h=self.h)
         return self.view

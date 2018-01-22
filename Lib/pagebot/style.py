@@ -287,9 +287,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         minW = 0, # Default minimal width of elements.
         minH = 0, # Default minimal height of elements.
         minD = 0, # Default minimal depth of elements.
-        maxW = XXXL, # No maximum limits, sys.maxint
-        maxH = XXXL,
-        maxD = XXXL,
+        maxW = MAX_WIDTH, # No maximum limits, sys.maxint
+        maxH = MAX_HEIGHT,
+        maxD = MAX_DEPTH,
 
         # Overall content scaling.
         scaleX = 1, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.

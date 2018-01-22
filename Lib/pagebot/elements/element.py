@@ -16,6 +16,7 @@
 #
 from __future__ import division
 
+import sys
 import weakref
 import copy
 from pagebot.contexts import defaultContext
@@ -59,6 +60,12 @@ class Element(object):
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
         Ignore setting of setting eId as attribute, guaranteed to be unique.
+        
+        >>> e = Element(x=10, y=20, w=100, h=120)
+        >>> e.maxW == sys.maxint
+        True
+        >>> e.x, e.y, e.w, e.h
+        (10, 20, 100, 120)
         """  
         assert point is None or isinstance(point, (tuple, list))
         
@@ -1717,7 +1724,7 @@ class Element(object):
         maxW = self.style.get('maxW')
         if self.parent:
             maxW = maxW or self.parent.w
-        return maxW or MIN_WIDTH # Unless defined local, take current parent.w as maxW
+        return maxW or MAX_WIDTH # Unless defined local, take current parent.w as maxW
     def _set_maxW(self, maxW):
         self.style['maxW'] = max(MIN_WIDTH, min(MAX_WIDTH, maxW)) # Set on local style, shielding parent self.css value.
     maxW = property(_get_maxW, _set_maxW)
@@ -1726,7 +1733,7 @@ class Element(object):
         maxH = self.style.get('maxH')
         if self.parent:
             maxH = maxH or self.parent.h
-        return maxH or MIN_HEIGHT # Unless defined local, take current parent.w as maxW
+        return maxH or MAX_HEIGHT # Unless defined local, take current parent.w as maxW
     def _set_maxH(self, maxH):
         self.style['maxH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, maxH)) # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
@@ -1735,7 +1742,7 @@ class Element(object):
         maxD = self.style.get('maxD')
         if self.parent:
             maxD = maxD or self.parent.d
-        return maxD or MIN_HEIGHT # Unless defined local, take current parent.w as maxW
+        return maxD or MAX_DEPTH # Unless defined local, take current parent.w as maxW
     def _set_maxD(self, maxD):
         self.style['maxD'] = max(MIN_DEPTH, min(MAX_DEPTH, maxD)) # Set on local style, shielding parent self.css value.
     maxD = property(_get_maxD, _set_maxD)
