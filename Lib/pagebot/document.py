@@ -39,6 +39,10 @@ class Document(object):
     >>> page.padding = 20
     >>> page.w, page.h, page.pw, page.ph, page.pt, page.pr, page.pb, page.pl, page.title
     (300, 400, 260, 360, 20, 20, 20, 20, 'default')
+    >>> pages = (Page(), Page(), Page())
+    >>> doc = Document(name='TestDoc', w=300, h=400, pages=pages, autoPages=0)
+    >>> len(doc)
+    3
 
     """    
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
@@ -46,9 +50,9 @@ class Document(object):
     DEFAULT_VIEWID = defaultViewClass.viewId
     DEFAULT_CONTEXT = defaultContext
 
-    def __init__(self, rootStyle=None, styles=None, theme=None, viewId=None, name=None, class_=None, title=None, 
-            autoPages=1, template=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
-            padding=None, info=None, 
+    def __init__(self, rootStyle=None, styles=None, theme=None, viewId=None, name=None, 
+            class_=None, title=None, pages=None, autoPages=1, template=None, templates=None, 
+            originTop=True, startPage=0, w=None, h=None, padding=None, info=None, 
             context=None, exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
@@ -70,6 +74,8 @@ class Document(object):
         self.title = title or self.name
 
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
+        for page in pages or []: # In case there are pages defined on init, add them.
+            self.appendPage(page)
 
         # Initialize the current view of this document. All conditional checking and building
         # is done through this view. The defaultViewClass is set either to DrawBotView or FlatView,
@@ -643,7 +649,8 @@ class Document(object):
         u"""Build the document as website, using the document.view for export.
 
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
-        >>> #doc.build()
+        >>> view = doc.setView('Page')
+        >>> doc.build()
         """
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 

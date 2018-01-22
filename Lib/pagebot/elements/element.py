@@ -68,6 +68,9 @@ class Element(object):
         (True, 1000)
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (10, 20, 100, 120, (22, 0, 0, 11), (33, 44, 55, 66))
+        >>> e = Element()
+        >>> e.x, e.y, e.w, e.h, e.padding, e.margin
+        (0, 0, 100, 100, (0, 0, 0, 0), (0, 0, 0, 0))
         """  
         assert point is None or isinstance(point, (tuple, list))
         
@@ -142,6 +145,16 @@ class Element(object):
         self.info = info or BuildInfo()
 
     def __repr__(self):
+        u"""Object as string.
+
+        >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120)
+        >>> `e`
+        'Element:TestElement (10, 20)'
+        >>> e.title = 'MyTitle'
+        >>> e.x, e.y = 100, 200
+        >>> `e`
+        'Element:MyTitle (100, 200)'
+        """
         if self.title:
             name = ':'+self.title
         elif self.name:
@@ -156,14 +169,31 @@ class Element(object):
         return '%s%s (%d, %d)%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), elements)
 
     def __len__(self):
-        u"""Answer total amount of elements, placed or not."""
+        u"""Answer total amount of elements, placed or not.
+
+        >>> e = Element(name='TestElement', x=100, y=200, w=100, h=120)
+        >>> childE1 = Element(name='E1', x=0, y=0, w=21, h=22)
+        >>> childE2 = Element(name='E2', x=100, y=0, w=11, h=12)
+        >>> i1 = e.appendElement(childE1)
+        >>> i2 = e.appendElement(childE2)
+        >>> i1, i2, len(e) # Index of appended elements and length of parent
+        (0, 1, 2)
+        """
         return len(self.elements) 
 
     #   T E M P L A T E
 
     def applyTemplate(self, template, elements=None):
         u"""Copy relevant info from template: w, h, elements, style, conditions when element is created.
-        Don't call later."""
+        Don't call later.
+
+        >>> from pagebot.elements import Template
+        >>> e = Element(name='TestElement')
+        >>> t = Template(x=11, y=12, w=100, h=200)
+        >>> e.applyTemplate(t)
+        >>> e.x, e.y, e.w, e.h
+        (11, 12, 100, 200)
+        """
         self.template = template # Set template value by property call, copying all template elements and attributes.
         if elements is not None:
             # Add optional list of additional elements.
@@ -171,6 +201,15 @@ class Element(object):
                 self.appendElement(e) # Add cross reference searching for eId of elements.
             
     def _get_template(self):
+        u"""Property get/set for e.template.
+
+        >>> from pagebot.elements import Template
+        >>> e = Element(name='TestElement')
+        >>> t = Template(name='MyTemplate', x=11, y=12, w=100, h=200)
+        >>> e.applyTemplate(t)
+        >>> e.template
+        Template:MyTemplate (11, 12)
+        """
         return self._template
     def _set_template(self, template):
         self.clearElements()
@@ -199,7 +238,16 @@ class Element(object):
     #   Every element is potentioally a container of other elements.
 
     def __getitem__(self, eIdOrName):
-        u"""Answer the element with eIdOrName. Answer None if the element does not exist."""
+        u"""Answer the element with eIdOrName. Answer None if the element does not exist.
+        Elements behave as a semi-dictionary for child elements. 
+        For retrieval by index, use e.elements[index]
+
+        >>> e = Element(name='TestElement', x=100, y=200, w=100, h=120)
+        >>> childE1 = Element(name='E1', x=0, y=0, w=21, h=22)
+        >>> i = e.appendElement(childE1)
+        >>> e['E1'] is childE1
+        True
+        """
         return self.get(eIdOrName)
 
     def __setitem__(self, eId, e):
@@ -208,11 +256,27 @@ class Element(object):
         self._eIds[eId] = e
 
     def _get_eId(self):
+        u"""Answer the unique element Id. Cannot set self._eId through self.eId property. 
+        Set self._eId if really necessary, as hex string.
+
+        >>> from pagebot.toolbox.transformer import hex2dec
+        >>> e = Element(name='TestElement', x=100, y=200, w=100, h=120)
+        >>> isinstance(hex2dec(e.eId), (int, long)) # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
+        True
+        """
         return self._eId
-        # Cannot set self._eId through self.eId property. Set self._eId if necessary.
     eId = property(_get_eId)
 
     def _get_elements(self):
+        u"""Property to get/set elements to parent self.
+
+        >>> e = Element()
+        >>> len(e), len(e.elements)
+        (0, 0)
+        >>> e.elements = (Element(), Element(), Element())
+        >>> len(e), len(e.elements)
+        (3, 3)
+        """
         return self._elements
     def _set_elements(self, elements):
         self.clearElements()
@@ -221,12 +285,34 @@ class Element(object):
     elements = property(_get_elements, _set_elements)
 
     def _get_elementIds(self): # Answer the x-ref dictionary with elements by their e.eIds
+        u"""Answer the list with child.eId
+
+        >>> e = Element()
+        >>> e.elements = (Element(), Element(), Element())
+        >>> len(e.elementIds)
+        3
+        """
         return self._eIds
     elementIds = property(_get_elementIds)
 
     def get(self, eIdOrName, default=None):
         u"""Answer the element by eId or name. Answer the same selection for default, if the element cannot be found.
-        Answer None if it does not exist."""
+        Answer None if it does not exist.
+
+        >>> e = Element(name='Parent')
+        >>> e1 = Element(name='Child')
+        >>> i = e.appendElement(e1)
+        >>> child = e.get('Child') # Get child element by its name
+        >>> child is e1
+        True
+        >>> child = e.get(e1.eId) # Get child elements by is eId
+        >>> child is e1
+        True
+        >>> child.name, child.parent.name # Child has e as parent
+        ('Child', 'Parent')
+        >>> e.get('OtherName') is None
+        True
+        """
         if eIdOrName in self._eIds:
             return self._eIds[eIdOrName]
         e = self.getElementByName(eIdOrName)
@@ -237,17 +323,55 @@ class Element(object):
         return None
 
     def getElement(self, eId):
-        u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child."""
+        u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child.
+
+        >>> e1 = Element(name='Child')
+        >>> e = Element(name='Parent', elements=[e1])
+        >>> child = e.getElement(e1.eId)
+        >>> child is e1
+        True
+        >>> e.getElement('FalseId') is None
+        True
+        """
         return self._eIds.get(eId)
 
     def getElementPage(self):
-        u"""Recursively answer the page of this element. This can be several layers above self."""
+        u"""Recursively answer the page of this element. This can be several layers above self.
+        If there element has not a parent in the line of parents, then answer None.
+
+        >>> from pagebot.elements.pbpage import Page
+        >>> eb = Element(name='Bottom')
+        >>> e = Element(elements=[eb])
+        >>> e = Element(elements=[e])
+        >>> e = Element(elements=[e])
+        >>> page = Page(elements=[e])
+        >>> parentPage = eb.getElementPage() # Find page upwards of parent line, starting a lowest e.
+        >>> page is parentPage
+        True
+        >>> eb = Element(name='Bottom')
+        >>> e = Element(elements=[eb])
+        >>> eb.getElementPage() is None # Element parent line does not contain a page.
+        True
+        """
         if self.isPage:
-            return self
-        return self.parent.getElementPage()
+            return self # Answer if self is a page.
+        if self.parent is not None:
+            return self.parent.getElementPage()
+        return None
 
     def getElementByName(self, name):
-        u"""Answer the first element in the offspring list that fits the name. Answer None if it cannot be found"""
+        u"""Answer the first element in the offspring list that fits the name. Answer None if it cannot be found.
+
+        >>> e1 = Element(name='Deeper')
+        >>> e2 = Element(name='Deeper')
+        >>> e3 = Element(name='Child', elements=[e1, e2])
+        >>> e = Element(name='Parent', elements=[e3])
+        >>> child = e.get('Child') # Get child element by its name
+        >>> child is e3
+        True
+        >>> e.get('Deeper') is e1, e.get('Deeper') is e2 # Find first down the list
+        (True, False)
+        """
         if self.name == name:
             return self
         for e in self.elements:
@@ -258,13 +382,33 @@ class Element(object):
 
     def clearElements(self):
         u"""Properly initializes self._elements and self._eIds. 
-        Any existing elements get their parent weakrefs become None and will garbage collect."""
+        Any existing elements get their parent weakrefs become None and will garbage collect.        >>> e1 = Element(name='Child')
+
+        >>> e1 = Element(name='Child')
+        >>> e = Element(name='Parent', elements=[e1])
+        >>> len(e)
+        1
+        >>> e.clearElements()
+        >>> len(e)
+        0
+        """
         self._elements = [] 
         self._eIds = {}
 
     def copy(self, parent=None):
         u"""Answer a full copy of self, where the "unique" fields are set to default. 
-        Also perform a deep copy on all child elements."""
+        Also perform a deep copy on all child elements.
+
+        >>> e1 = Element(name='Child', w=100)
+        >>> e = Element(name='Parent', elements=[e1], w=200)
+        >>> copyE = e.copy()
+        >>> len(copyE) == len(e) == 1
+        True
+        >>> copyE is e, copyE['Child'] is e['Child'] # Element tree is copied
+        (False, False)
+        >>> copyE.name == e.name, copyE.w == e.w == 200, copyE['Child'].w == e['Child'].w == 100 # Values are copied
+        (True, True, True)
+        """
         # This also initializes the child element tree as empty list.
         # Style is supposed to be a deep-copyable dictionary.
         # self._eId is automatically created, guaranteed unique Id for every element.
@@ -295,7 +439,23 @@ class Element(object):
 
     def setElementByIndex(self, e, index):
         u"""Replace the element, if there is already one at index. Otherwise append it to self.elements
-        and answer the index number that it got."""
+        and answer the index number that it got. If index < 0, just answer None and do nothing.
+
+        >>> e1 = Element(name='Child1')
+        >>> e2 = Element(name='Child2')
+        >>> e3 = Element(name='Child3')
+        >>> e = Element(name='Parent', elements=[e1, e2])
+        >>> index = e.setElementByIndex(e3, 1) # 
+        >>> e.elements[1] is e3, index == 1
+        (True, True)
+        >>> e.setElementByIndex(e2, 20) # Add at end
+        2
+        >>> e4 = Element(name='Child4')
+        >>> e.setElementByIndex(e2, -2) is None
+        True
+        """
+        if index < 0:
+            return None # Don't accept.
         if index < len(self.elements):
             self.elements[index] = e
             if self.eId:
@@ -306,7 +466,19 @@ class Element(object):
     def appendElement(self, e):
         u"""Add element to the list of child elements. Note that elements can be added multiple times.
         If the element is alread placed in another container, then remove it from its current parent.
-        This relation and position is lost. The position e is supposed to be filled already in local position."""
+        This relation and position is lost. The position e is supposed to be filled already in local position.
+
+        >>> e1 = Element(name='Child1')
+        >>> e2 = Element(name='Child2')
+        >>> e3 = Element(name='Child3')
+        >>> e = Element(name='Parent', elements=[e1, e2])
+        >>> i = e.appendElement(e3)
+        >>> e.elements[-1] is e3, i
+        (True, 2)
+        >>> i = e.appendElement(e1) # Append elements that is already child of e
+        >>> e.elements[0] is e2, e.elements[1] is e3, e.elements[2] is e1 # Now e1 is at end of list
+        (True, True, True)
+        """
         eParent = e.parent
         if not eParent is None: 
             eParent.removeElement(e) # Remove from current parent, if there is one.
@@ -317,7 +489,16 @@ class Element(object):
         return len(self._elements)-1 # Answer the element index for e.
 
     def removeElement(self, e):
-        u"""If the element is placed in self, then remove it. Don't touch the position."""
+        u"""If the element is placed in self, then remove it. Don't touch the position.
+
+        >>> e1 = Element(name='Child1')
+        >>> e2 = Element(name='Child2')
+        >>> e3 = Element(name='Child3')
+        >>> e = Element(name='Parent', elements=[e1, e2, e3])
+        >>> removedE = e.removeElement(e2)
+        >>> e.elements[0] is e1, e.elements[1] is e3, e2.parent is None
+        (True, True, True)
+        """
         assert e.parent is self
         e.setParent(None) # Unlink the parent reference of e
         if e.eId in self._eIds:
@@ -326,8 +507,26 @@ class Element(object):
             self._elements.remove(e)
         return e # Answer the unlinked elements for convenience of the caller.
 
-    def _get_show(self): # Set flag for drawing or interpreation with conditional.
-        return self.css('show')
+    def _get_show(self):
+        u"""Set flag for drawing or interpretation with conditional.
+        
+        >>> e = Element(show=False) # Set a separate attribute
+        >>> e.show 
+        False
+        >>> e.show = True
+        >>> e.show
+        True
+        >>> e = Element(style=dict(show=False)) # Set through local style
+        >>> e.show
+        False
+        >>> e1 = Element()
+        >>> e1.show # Default is True
+        True
+        >>> i = e.appendElement(e1) # Add to parent, inheriting show == False
+        >>> e1.show
+        False
+        """
+        return self.css('show', True)
     def _set_show(self, showFlag):
         self.style['show'] = showFlag # Hiding rest of css for this value.
     show = property(_get_show, _set_show)
@@ -336,7 +535,18 @@ class Element(object):
 
     def getElementsAtPoint(self, point):
         u"""Answer the list with elements that fit the point. Note None in the point will match any
-        value in the element position. Where None in the element position with not fit any xyz of the point."""
+        value in the element position. Where None in the element position with not fit any xyz of the point.
+
+        >>> e1 = Element(name='Child1', x=20, y=30)
+        >>> e2 = Element(name='Child2', x=20, y=40)
+        >>> e = Element(name='Parent', elements=[e1, e2])
+        >>> e.getElementsAtPoint((20, 30)) == [e1]
+        True
+        >>> e.getElementsAtPoint((None, 40)) == [e2] # Search on wildcard x
+        True
+        >>> e.getElementsAtPoint((20, None)) == [e1, e2] # Find both on wildcard y
+        True
+        """
         elements = []
         px, py, pz = point3D(point) 
         for e in self.elements:
@@ -346,7 +556,17 @@ class Element(object):
         return elements
 
     def getElementsPosition(self):
-        u"""Answer the dictionary of elements that have eIds and their positions."""
+        u"""Answer the dictionary of element Ids as key and their position as value.
+
+        >>> e1 = Element(name='Child1', x=20, y=30)
+        >>> e2 = Element(name='Child2', x=20, y=40)
+        >>> e = Element(name='Parent', elements=[e1, e2])
+        >>> d = e.getElementsPosition()
+        >>> len(d)
+        2
+        >>> d[e1.eId], d[e2.eId]
+        ((20, 30), (20, 40))
+        """
         elements = {}
         for e in self.elements:
             if e.eId:
@@ -355,7 +575,17 @@ class Element(object):
 
     def getPositions(self):
         u""""Answer the dictionary of positions of elements. 
-        Key is the local point of the child element. Value is list of elements."""
+        Key is the local point of the child element. Value is list of elements.
+
+        >>> e1 = Element(name='Child1', x=20, y=30)
+        >>> e2 = Element(name='Child2', x=20, y=40)
+        >>> e = Element(name='Parent', elements=[e1, e2])
+        >>> d = e.getPositions()
+        >>> sorted(d.keys())
+        [(20, 30), (20, 40)]
+        >>> d[(20, 30)] == [e1], d[(20, 40)] == [e2]
+        (True, True)
+        """
         positions = {}
         for e in self.elements:
             point = tuple(e.point) # Point needs to be tuple to be used a key.
@@ -424,12 +654,36 @@ class Element(object):
         return True
 
     def _get_baselineGrid(self):
+        u"""Answer the baseline grid distance, as defined in the (parent)style. 
+
+        >>> e = Element()
+        >>> e.baselineGrid is None # Undefined without style or parent style.
+        True
+        >>> e.baselineGrid = 12
+        >>> e.baselineGrid
+        12
+        >>> e = Element(style=dict(baselineGrid=14))
+        >>> e.baselineGrid
+        14
+        """
         return self.css('baselineGrid')
     def _set_baselineGrid(self, baselineGrid):
         self.style['baselineGrid'] = baselineGrid
     baselineGrid = property(_get_baselineGrid, _set_baselineGrid)
 
     def _get_baselineGridStart(self):
+        u"""Answer the baseline grid startf, as defined in the (parent)style. 
+
+        >>> e = Element()
+        >>> e.baselineGridStart is None # Undefined without style or parent style.
+        True
+        >>> e.baselineGridStart = 17
+        >>> e.baselineGridStart
+        17
+        >>> e = Element(style=dict(baselineGridStart=15))
+        >>> e.baselineGridStart
+        15
+        """
         return self.css('baselineGridStart')
     def _set_baselineGridStart(self, baselineGridStart):
         self.style['baselineGridStart'] = baselineGridStart
@@ -481,7 +735,19 @@ class Element(object):
 
     def _get_lib(self):
         u"""Answer the shared document.lib dictionary by property, used for share global entry by elements.
-        Elements query their self.parent.lib until the root document is reached."""
+        Elements query their self.parent.lib until the root document is reached.
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements.pbpage import Page
+        >>> e = Element(name='Child')
+        >>> page = Page(elements=[e])
+        >>> doc = Document(pages=[page])
+        >>> e.lib.get('MyValue') == None # Get undefined value
+        True
+        >>> doc.lib['MyValue'] = (1, 2, 3)
+        >>> e.lib.get('MyValue') # Get defined value, up parent tree.
+        (1, 2, 3)
+        """
         parent = self.parent
         if parent is not None:
             return parent.lib # Either parent element or document.lib.
@@ -754,7 +1020,12 @@ class Element(object):
     y = property(_get_y, _set_y)
     
     def _get_z(self):
-        u"""Answer the z position of self."""
+        u"""Answer the z position of self.
+
+        >>> e = Element(z=100)
+        >>> e.x, e.y, e.z
+        (0, 0, 100)
+        """
         return self.style['z'] # Direct from style. Not CSS lookup.
     def _set_z(self, z):
         self.style['z'] = z
@@ -765,7 +1036,15 @@ class Element(object):
     def _get_t(self):
         u"""The self._t status is the time status, interpolating between the values in 
         self.tStyles[t1] and self.tStyles[t2] where t1 <= t <= t2 and these styles contain
-        the requested parameters."""
+        the requested parameters.
+
+        >>> e = Element()
+        >>> e.t
+        0
+        >>> e.t = 16
+        >>> e.t
+        16
+        """
         return self._t
     def _set_t(self, t):
         self._t = t

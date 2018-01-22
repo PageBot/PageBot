@@ -835,6 +835,12 @@ def family2UfoQueryName(font):
 #    G E N E R A T O R
 
 def uniqueID(obj=None):
+    u"""Answer unique Id as hex string, based on time and id(obj) if defined.
+
+    >>> id = int('0x' + uniqueID(), base=16)
+    >>> isinstance(id, (long, int))
+    True
+    """
     if obj is not None:
         return '%X%X' % (long(time()) * 100, id(obj))
     return '%x' % (long(time()) * 100000 + randint(0, 100000))
@@ -843,12 +849,23 @@ def uniqueID(obj=None):
 #   T I M E
 
 def seconds2Date(seconds, year=1904):
-    u"""Answer TTF seconds converted to a datetime instance."""
+    u"""Answer TTF seconds converted to a datetime instance.
+
+    >>> seconds2Date(20, year=2018)
+    datetime.datetime(2018, 1, 1, 0, 0, 20)
+    >>> seconds2Date(200000, year=2018)
+    datetime.datetime(2018, 1, 3, 7, 33, 20)
+    """
     return datetime.datetime(year, 1, 1, 0, 0, 0) + datetime.timedelta(seconds=seconds)
 
-def date2Seconds(dt, year=1904):
-    u"""Answer the datetime converted to TTF seconds."""
-    return int((dt - datetime.datetime(year, 1, 1, 0, 0, 0)).total_seconds())
+def date2Seconds(dt):
+    u"""Answer the datetime converted to TTF seconds.
+
+    >>> dt = seconds2Date(20, year=2018)
+    >>> date2Seconds(dt)
+    20
+    """
+    return int((dt - datetime.datetime(dt.year, 1, 1, 0, 0, 0)).total_seconds())
 
 # ---------------------------------------------------------------------------------------------------------
 #    J S O N
@@ -878,8 +895,19 @@ def list2Json(d):
 #    R O M A N  N U M E R A L S
 
 def arabic2RomanNumerals(arabic):
-    u"""
-    <doc>Return the roman numeral representing n. Should work for n in (1, 4999). Borrowed from Nick Montfort.</doc>
+    u"""Return the roman numeral representing n. Should work for n in (1, 4999). 
+    Borrowed from Nick Montfort.
+
+    >>> arabic2RomanNumerals(5)
+    'V'
+    >>> arabic2RomanNumerals(15)
+    'XV'
+    >>> arabic2RomanNumerals(100)
+    'C'
+    >>> arabic2RomanNumerals(234)
+    'CCXXXIV'
+    >>> arabic2RomanNumerals(2018)
+    'MMXVIII'
     """
     numerals = [(value, numeral) for numeral, value in ROMAN_NUMERAL_VALUES.items()]
     numerals.sort()
@@ -896,56 +924,71 @@ def arabic2RomanNumerals(arabic):
             arabic -= (value - smaller[value][0])
     return roman
 
-""" -- "values" is error here
-def romanNumeral2Arabic(roman, VERBOSE=False):
-    letters = list(roman)
-    letters.reverse()
-    arabic = 0
-    place = 0
-    for letter in letters:
-        if VERBOSE: print letter, place
-        value = values[letter]
-        if value >= place:
-            arabic += value
-            if VERBOSE: print '\t+', value
-        else:
-            arabic -= value
-            if VERBOSE: print '\t-', value
-        place = value
-    return arabic
-"""
 # ---------------------------------------------------------------------------------------------------------
 #    U N I C O D E
 
 def dec2hex(n, uni=1):
-        hex = "%X" % n
-        if uni == 1:
-            while len(hex) <= 3:
-                hex = '0' + str(hex)
-        return hex
+    u"""Convert decimal number to hex string with 4 digits, and more digits if the number is larger.
+
+    >>> dec2hex(12)
+    '000C'
+    >>> dec2hex(100)
+    '0064'
+    >>> dec2hex(65535)
+    'FFFF'
+    >>> dec2hex(100000)
+    '186A0'
+    """
+    hex = "%X" % n
+    if uni == 1:
+        while len(hex) <= 3:
+            hex = '0' + str(hex)
+    return hex
 
 def hex2dec(s):
-        try:
-            return int(s, 16)
-        except:
-            pass
+    u""" Convert hex string to decimal number. Answer None if conversion raises an error.
+
+    >>> hex2dec('0064')
+    100
+    >>> hex2dec('FFFF')
+    65535
+    >>> hex2dec(dec2hex(32))
+    32
+    >>> hex2dec('FFZ') is None
+    True
+    """
+    try:
+        return int(s, 16)
+    except ValueError:
+        pass
+    return None
 
 def hex2char(hex):
+    u"""Answer the unicode char that matcher the hex value. Answer None if conversion fails.
+
+    >>> hex(ord('A'))
+    '0x41'
+    >>> hex2dec('41')
+    65
+    >>> hex2char('41')
+    u'A'
+    >>> hex2char('FFZ') is None
+    True
+    """
     try:
         return unichr(hex2dec(hex))
     except:
         pass
 
-def writeUnicode(unicodeString):
-        u"""
-        <doc>Takes a unicode string and returns a decimal integer.</doc>
-        """
-        if type(unicodeString) is str:
-            return hex2dec(unicodeString)
-        else:
-            return int(unicodeString)
+# Deprecated
+def XXXwriteUnicode(unicodeString):
+    u"""Takes a unicode string and returns a decimal integer."""
+    if isinstance(unicodeString, str):
+        return hex2dec(unicodeString)
+    else:
+        return int(unicodeString)
 
-def readUnicode(unicodeInteger):
+def XXXreadUnicode(unicodeInteger):
     u"""
     <doc>Takes a decimal integer and returns a unicode string.</doc>
     """
@@ -954,7 +997,7 @@ def readUnicode(unicodeInteger):
     else:
         return str(unicodeInteger)
 
-def writeUnicodes(uniStringList):
+def XXXwriteUnicodes(uniStringList):
     u"""
     <doc>Takes a list of unicode strings and returns a list of robofab-friendly integers.</doc>
     """
@@ -963,7 +1006,7 @@ def writeUnicodes(uniStringList):
         intList.append(writeUnicode(u))
     return intList
 
-def readUnicodes(uniIntList):
+def XXXreadUnicodes(uniIntList):
         u"""
         <doc>takes a list of robofab friendly integers and returns a string of unicodes.</doc>
         """
@@ -1031,6 +1074,13 @@ def isUniqueDict(d):
         return False
 
 def reverseDict(d):
+    u"""Reverse key-values of d.
+
+    >>> d = dict(a=1, b=2, c=3)
+    >>> reverseDict(d)
+    {1: 'a', 2: 'b', 3: 'c'}
+
+    """
     if not isUniqueDict(d):
         usedValues = []
         duplicateValues = []
@@ -1053,7 +1103,7 @@ def reverseDict(d):
 
 def bash(cmd, cwd=None):
     u"""
-    <doc>Runs a command in the bash shell.</doc>
+    Runs a command in the bash shell.
     """
     import subprocess
     retVal = subprocess.Popen(cmd, shell=True, \

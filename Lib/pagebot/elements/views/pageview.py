@@ -32,14 +32,18 @@ class PageView(BaseView):
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
     EXPORT_PATH = '_export/' # Default path for local document export, that does not commit documents to Github.
 
-    def build(self, path, pageSelection=None, multiPage=True):
-        u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw."""
-        
+    def build(self, path=None, pageSelection=None, multiPage=True):
+        u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw.
+
+        >>> e = PageView(name='MyPageView')
+        >>> e.w, e.h, e.name
+        (100, 100, 'MyPageView')
+        """
         if not path:
-            path = EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
+            path = self.EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
         # If default _export directory does not exist, then create it.
-        if path.startswith(EXPORT_PATH) and not os.path.exists(EXPORT_PATH):
-            os.makedirs(EXPORT_PATH)
+        if path.startswith(self.EXPORT_PATH) and not os.path.exists(self.EXPORT_PATH):
+            os.makedirs(self.EXPORT_PATH)
 
         context = self.context # Get current context and builder from doc. Can be DrawBot of Flat
 
@@ -632,8 +636,8 @@ class PageView(BaseView):
 
     # The methods are used, in case the view itself is placed in a layout.
 
-    def build(self, view, origin):
-        u"""This method is called is the view is used as a placable element inside
+    def build_drawBot(self, view, origin):
+        u"""This method is called if the view is used as a placable element inside
         another element, such as a Page or Template. """
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
@@ -653,7 +657,13 @@ class PageView(BaseView):
         self._restoreScale(view)
         #view.drawElementMetaInfo(self, origin)
 
+    build_flat = build_drawBot
+
     def build_html(self, view, origin):
         u"""HTML page view to be implemented. Ignore for now."""
         pass
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
 
