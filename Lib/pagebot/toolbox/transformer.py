@@ -132,54 +132,95 @@ def moreGreen(c, v=0.5):
 def moreBlue(c, v=0.5):
     u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white.
 
-    >>> moreBlue((0.1, 0, 0.3))
-    [0.1, 0.5, 0.3]
+    >>> moreBlue((0.1, 0, 0))
+    [0.1, 0, 0.5]
     >>> moreBlue((0.1, 0.2, 0.3), 100)
-    [0.1, 1, 0.3]
+    [0.1, 0.2, 1]
     >>> '%0.2f' % moreBlue((0.1, 0.2, 0.3, 0.4), 0.8)[2]
-    '0.30'
+    '0.86'
     """
-    moreBlueC = [c[0], min(1, c[1] + (1 - c[1])*v), c[2]]
+    moreBlueC = [c[0], c[1], min(1, c[2] + (1 - c[2])*v)]
     if len(c) == 4:
         moreBlueC.append(c[3])
     return moreBlueC
 
 def lighter(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
-    return moreRed(moreGreen(moreBlue(c, v), v), v)
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+
+    >>> lighter((0, 0, 0))
+    (0.5, 0.5, 0.5)
+
+    """
+    return moreRed(c, v)[0], moreGreen(c, v)[1], moreBlue(c, v)[2]
 
 def lessRed(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
-    lessRedC = [c[0]*v, c[1], c[2]]
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+
+    >>> lessRed((1, 1, 1))
+    [0.5, 1, 1]
+    >>> lessRed((0.1, 0.2, 0.3), 0.3)
+    [0.03, 0.2, 0.3]
+    >>> '%0.2f' % lessRed((0.1, 0.2, 0.3, 0.4), 0.8)[0]
+    '0.08'
+    """
+    lessRedC = [max(0, c[0]*v), c[1], c[2]]
     if len(c) == 4:
         lessRedC.append(c[3])
     return lessRedC
 
 def lessGreen(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+
+    >>> lessGreen((1, 1, 1))
+    [1, 0.5, 1]
+    >>> lessGreen((0.1, 0.2, 0.3), 0.3)
+    [0.1, 0.06, 0.3]
+    >>> '%0.2f' % lessGreen((0.1, 0.2, 0.3, 0.4), 0.8)[1]
+    '0.16'
+    """
     lessGreenC = [c[0], c[1]*v, c[2]]
     if len(c) == 4:
         lessGreenC.append(c[3])
     return lessGreenC
 
 def lessBlue(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white"""
+    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
+
+    >>> lessBlue((1, 1, 1))
+    [1, 1, 0.5]
+    >>> lessBlue((0.1, 0.2, 0.3), 0.3)
+    [0.1, 0.2, 0.09]
+    >>> '%0.2f' % lessBlue((0.1, 0.2, 0.3, 0.4), 0.8)[2]
+    '0.24'
+    """
     lessBlueC = [c[0], c[1], c[2]*v]
     if len(c) == 4:
         lessBlueC.append(c[3])
     return lessBlueC
 
 def darker(c, v=0.5):
-    u"""Answer a darker color of c. v = 0 gives black, v = 1 gives same color"""
-    return lessRed(lessGreen(lessBlue(c, v), v), v)
+    u"""Answer a darker color of c. v = 0 gives black, v = 1 gives same color
+
+    >>> darker((1, 1, 1))
+    (0.5, 0.5, 0.5)
+    """
+    return lessRed(c, v)[0], lessGreen(c, v)[1], lessBlue(c, v)[2]
 
 def int2Color(c):
-    u"""Answer the color typle, represented by the integer, e.g. 0xFFEE99."""
+    u"""Answer the color typle, represented by the integer, e.g. 0xFFEE99.
+
+    >>> int2Color(0x00FF00)
+    (0.0, 1.0, 0.0)
+    """
     return ((c >> 16) & 255)/255.0, ((c >> 8) & 255)/255.0, (c & 255)/255.0
 
 def s2Color(s):
     u"""Answer the color typle, represented by the hex-string, e.g. #FFEE99.
-    The "#" is optional, and will be ignored in the conversion."""
+    The "#" is optional, and will be ignored in the conversion.
+
+    >>> s2Color('00FF00')
+    (0.0, 1.0, 0.0)
+    """
     s = s.replace('#','').replace(' ','')
     try:
         c = int(s, 16)
@@ -189,7 +230,15 @@ def s2Color(s):
 
 def color2Hex(c):
     u"""Answer the CSS hex color string from the color (r, g, b, o) or (r, g, b) tuple.
-    This format is CSS compatible."""
+    This format is CSS compatible.
+
+    >>> color2Hex((0.2, 0.3, 0.4))
+    '#334c66'
+    >>> color2Hex((1, 1, 1))
+    '#ffffff'
+    >>> color2Hex((0, 0, 0))
+    '#000000'
+    """
     if isinstance(c, (int, long, float)):
         if c > 1:
             return '#%06x' % c
@@ -224,6 +273,11 @@ def value2Tuple4(v):
 # N U M B E R S
 
 def asNumber(v):
+    """
+
+    >>> asNumber('1234')
+    1234
+    """
     try:
         fv = float(v)
         iv = int(v)
@@ -235,6 +289,13 @@ def asNumber(v):
     return 0
 
 def asNumberOrNone(value):
+    u"""
+
+    >>> asNumberOrNone('1234')
+    1234.0
+    >>> asNumberOrNone('1234ab')
+    
+    """
     try:
         if value == int(value):
             return asIntOrNone(value)
