@@ -62,6 +62,12 @@ class TextBox(Element):
         self.style['h'] = h # If None, then self.h is elastic from content
     h = property(_get_h, _set_h)
 
+    def _get_textLines(self):
+        if self._textLines is None:
+            return []
+        return self._textLines
+    textLines = property(_get_textLines)
+    
     def __getitem__(self, lineIndex):
         return self.textLines[lineIndex]
 
@@ -218,7 +224,7 @@ class TextBox(Element):
    
         # TODO: Add marker if there is overflow text in the textbox.
 
-        self.buildFrame(view, p) # Draw optional frame or borders.
+        self.buildFrame(view, p) # Draw optional background, frame or borders.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(view, p)

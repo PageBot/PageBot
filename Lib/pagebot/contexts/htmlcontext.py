@@ -57,3 +57,16 @@ class HtmlContext(BaseContext):
         u"""Answer the (w, h) image size of the image file at path."""
         return (0, 0)
         #return cls.b.imageSize(path)
+
+    #   C O L O R
+
+    def setFillColor(self, c, cmyk=False, b=None):
+        pass
+
+    fill = setFillColor # DrawBot compatible API
+      
+    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
+        pass
+
+    stroke = setStrokeColor # DrawBot compatible API
+       
