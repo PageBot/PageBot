@@ -251,7 +251,13 @@ def color2Hex(c):
 
 def color2HexOpacity(c):
     u"""Answer the tuple ((r, g, b), opacity) with CSS hex color and value for opacity from the color 
-    (r, g, b, o) or (r, g, b) tuple. This format is CSS compatible."""
+    (r, g, b, o) or (r, g, b) tuple. This format is CSS compatible.
+
+    >>> color2HexOpacity((0.2, 0.3, 0.4))
+    ('#334c66', 1)
+    >>> color2HexOpacity((0.2, 0.3, 0.4, 0.1))
+    ('#334c66', 0.1)
+    """
     if isinstance(c, (int, long, float)):
         c = (c, c, c)
     if len(c) == 4: # Includes opacity
@@ -259,7 +265,15 @@ def color2HexOpacity(c):
     return color2Hex(c), 1
 
 def value2Tuple4(v):
-    u"""Answer a tuple of 4 values."""
+    u"""Answer a tuple of 4 values. Can be used for colors and rectangles.
+
+    >>> value2Tuple4(123)
+    (123, 123, 123, 123)
+    >>> value2Tuple4((2,3))
+    (2, 3, 2, 3)
+    >>> value2Tuple4((2,3,4,5))
+    (2, 3, 4, 5)
+    """
     if not isinstance(v, (list, tuple)):
         v = [v]
     if len(v) == 1:
@@ -273,17 +287,31 @@ def value2Tuple4(v):
 # N U M B E R S
 
 def asNumber(v):
-    """
+    """Answer v converted to a float or int. Answer 0 if the conversion raised an error.
 
+    >>> asNumber(1234)
+    1234
+    >>> asNumber(1234.2)
+    1234.2
+    >>> asNumber('1234.2')
+    1234.2
+    >>> asNumber('1234.2a')
+    0
     >>> asNumber('1234')
     1234
+    >>> asNumber('1234a')
+    0
     """
     try:
-        fv = float(v)
         iv = int(v)
-        if fv == iv:
+        fv = float(v)
+        if iv == fv:
             return iv
         return fv
+    except (ValueError, TypeError):
+        pass
+    try:
+        return float(v)
     except (ValueError, TypeError):
         pass
     return 0
@@ -305,6 +333,15 @@ def asNumberOrNone(value):
     return None
 
 def asFloatOrNone(value):
+    u"""Answer a float if it can be converted. Answer None otherwise.
+
+    >>> asFloatOrNone(123)
+    123.0
+    >>> asFloatOrNone('123')
+    123.0
+    >>> asFloatOrNone('123a') is None
+    True
+    """
     try:
         return float(value)
     except (ValueError, TypeError):
@@ -316,6 +353,11 @@ def asId(value, default=0):
     long@ or to @None@, so it can be used as *id* field in a @Record@
     instance. If the value cannot be converted, then the optional *default* (default value is @0
     @) is answered.
+
+    >>> asId(123) == 123L
+    True
+    >>> asId('abcd', 'ABCD')
+    'ABCD'
     """
     try:
         value = long(value)
