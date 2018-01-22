@@ -28,13 +28,11 @@ def lucasRange(a, z, n, minN=None, maxN=None):
     minN = optional minimum value if normalizing, e.g. 0-1000
     maxN = optional maximum value if normalizing
 
-    print Mathematics.lucasRange(32, 212, 8)
+    >>> lucasRange(32, 212, 8)
     [32, 42, 55, 72, 94, 124, 162, 212]
-
-    print Mathematics.lucasRange(32, 212, 8, 0, 1000)
+    >>> lucasRange(32, 212, 8, 0, 1000)
     [0, 55, 127, 222, 346, 508, 721, 1000]
-
-    print Mathematics.lucasRange(32, 212, 8, 100, 200)
+    >>> lucasRange(32, 212, 8, 100, 200)
     [100, 106, 113, 122, 135, 151, 172, 200]
     """
     n = n - 2  # Correct for two masters
@@ -208,3 +206,6 @@ def normalize(p, length=1):
         return None
     return 1.0 * p[0] * length / w
 
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
