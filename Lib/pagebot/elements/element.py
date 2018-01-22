@@ -1006,14 +1006,30 @@ class Element(object):
     # Plain coordinates
 
     def _get_x(self):
-        u"""Answer the x position of self."""
+        u"""Answer the x position of self.
+
+        >>> e = Element(x=100)
+        >>> e.x, e.y, e.z
+        (100, 0, 0)
+        >>> e.x = 101
+        >>> e.x, e.y, e.z
+        (101, 0, 0)
+        """
         return self.style['x'] # Direct from style. Not CSS lookup.
     def _set_x(self, x):
         self.style['x'] = x
     x = property(_get_x, _set_x)
     
     def _get_y(self):
-        u"""Answer the y position of self."""
+        u"""Answer the y position of self.
+
+        >>> e = Element(y=100)
+        >>> e.x, e.y, e.z
+        (0, 100, 0)
+        >>> e.y = 101
+        >>> e.x, e.y, e.z
+        (0, 101, 0)
+        """
         return self.style['y'] # Direct from style. Not CSS lookup.
     def _set_y(self, y):
         self.style['y'] = y
@@ -1025,6 +1041,9 @@ class Element(object):
         >>> e = Element(z=100)
         >>> e.x, e.y, e.z
         (0, 0, 100)
+        >>> e.z = 101
+        >>> e.x, e.y, e.z
+        (0, 0, 101)
         """
         return self.style['z'] # Direct from style. Not CSS lookup.
     def _set_z(self, z):
@@ -1127,6 +1146,15 @@ class Element(object):
     center = property(_get_center, _set_center)
 
     def _get_right(self):
+        u"""Answer the position of the right side of the element, depending on alignment.
+
+        >>> e = Element(x=100, w=123, xAlign=LEFT)
+        >>> e.left
+        100
+        >>> e.xAlign = RIGHT
+        >>> e.left
+        -23
+        """
         xAlign = self.xAlign
         if xAlign == LEFT:
             return self.x + self.w
