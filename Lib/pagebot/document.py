@@ -627,7 +627,11 @@ class Document(object):
             b.css('body', self.rootStyle) # <body> selector and style output
 
     def build(self, path=None, pageSelection=None, multiPage=True):
-        u"""Build the document as website, using the document.view for export."""
+        u"""Build the document as website, using the document.view for export.
+
+        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
+        >>> #doc.build()
+        """
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 
     def export(self, path=None, multiPage=True):
