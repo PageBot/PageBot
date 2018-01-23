@@ -1106,6 +1106,15 @@ class Element(object):
     # where the positioning can be compenssaring the element alignment type.
 
     def _get_left(self):
+        u"""Answer the position of the left side of the element, depending on alignment.
+
+        >>> e = Element(x=100, w=248, xAlign=LEFT)
+        >>> e.left
+        100
+        >>> e.xAlign = RIGHT
+        >>> e.left
+        -148
+        """
         xAlign = self.xAlign
         if xAlign == CENTER:
             return self.x - self.w/2
@@ -1148,12 +1157,15 @@ class Element(object):
     def _get_right(self):
         u"""Answer the position of the right side of the element, depending on alignment.
 
-        >>> e = Element(x=100, w=123, xAlign=LEFT)
-        >>> e.left
-        100
+        >>> e = Element(x=100, w=248, xAlign=LEFT)
+        >>> e.right
+        348
         >>> e.xAlign = RIGHT
-        >>> e.left
-        -23
+        >>> e.right
+        100
+        >>> e.xAlign = CENTER
+        >>> int(e.right)
+        224
         """
         xAlign = self.xAlign
         if xAlign == LEFT:
@@ -1171,7 +1183,19 @@ class Element(object):
             self.x = x
     right = property(_get_right, _set_right)
 
-    def _get_mRight(self): # Right, including right margin
+    def _get_mRight(self):
+        u"""Right position, including right margin.
+
+        >>> e = Element(x=100, w=248, mr=44, xAlign=LEFT)
+        >>> e.mRight
+        304
+        >>> e.xAlign = RIGHT
+        >>> e.mRight
+        56
+        >>> e.xAlign = CENTER
+        >>> int(e.mRight)
+        180
+        """
         return self.right - self.mr
     def _set_mRight(self, x):
         self.right = x + self.mr
@@ -1180,7 +1204,18 @@ class Element(object):
     # Vertical
 
     def _get_top(self):
-        u"""Answer the top position (relative to self.parent) of self."""
+        u"""Answer the top position (relative to self.parent) of self.
+
+        >>> e = Element(y=100, h=248, yAlign=TOP)
+        >>> e.top
+        100
+        >>> e.yAlign = BOTTOM
+        >>> e.top
+        348
+        >>> e.yAlign = MIDDLE
+        >>> int(e.top)
+        -24
+        """
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             return self.y - self.h/2
@@ -1214,7 +1249,19 @@ class Element(object):
             self.top = y - self.mt
     mTop = property(_get_mTop, _set_mTop)
 
-    def _get_middle(self): # On bounding box, not including margins.
+    def _get_middle(self): 
+        u"""On bounding box, not including margins.
+        
+        >>> e = Element(y=100, h=248, yAlign=TOP)
+        >>> int(e.middle)
+        -24
+        >>> e.yAlign = BOTTOM
+        >>> int(e.middle)
+        224
+        >>> e.yAlign = MIDDLE
+        >>> int(e.middle)
+        100
+        """
         yAlign = self.yAlign
         if yAlign == TOP:
             if self.originTop:
@@ -1242,6 +1289,18 @@ class Element(object):
     middle = property(_get_middle, _set_middle)
 
     def _get_bottom(self):
+        u"""On bounding box, not including margins.
+
+        >>> e = Element(y=100, h=248, yAlign=TOP)
+        >>> e.bottom
+        -148
+        >>> e.yAlign = BOTTOM
+        >>> e.bottom
+        100
+        >>> e.yAlign = MIDDLE
+        >>> int(e.bottom)
+        224
+        """
         yAlign = self.yAlign
         if yAlign == TOP:
             if self.originTop:
@@ -1559,7 +1618,22 @@ class Element(object):
 
     # (w, h, d) size of the element.
 
-    def _get_w(self): # Width
+    def _get_w(self): 
+        u"""Answer the width of the element.
+
+        >>> e = Element(w=100, maxW=1000)
+        >>> e.w
+        100
+        >>> e.w = 101
+        >>> e.w
+        101
+        >>> e.w = e.maxW + 10000
+        >>> e.w
+        1000
+        >>> e.w = 0
+        >>> e.w, e.w == DEFAULT_WIDTH
+        (100, True)
+        """ 
         return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
     def _set_w(self, w):
         self.style['w'] = w or DEFAULT_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
@@ -1571,10 +1645,25 @@ class Element(object):
         self.style['w'] = max(0, w - self.ml - self.mr) # Cannot become < 0
     mw = property(_get_mw, _set_mw)
 
-    def _get_h(self): # Height
+    def _get_h(self):
+        u"""Answer the height of the element.
+
+        >>> e = Element(h=100, maxH=1000)
+        >>> e.h
+        100
+        >>> e.h = 101
+        >>> e.h
+        101
+        >>> e.h = e.maxH + 10000
+        >>> e.h
+        1000
+        >>> e.h = 0
+        >>> e.h, e.h == DEFAULT_HEIGHT
+        (100, True)
+        """ 
         return min(self.maxH, max(self.minH, self.style['h'], MIN_HEIGHT)) # From self.style, don't inherit.
     def _set_h(self, h):
-        self.style['h'] = h or MIN_HEIGHT # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['h'] = h or DEFAULT_HEIGHT # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
 
     def _get_mh(self): # Height, including margins
@@ -1583,7 +1672,22 @@ class Element(object):
         self.style['h'] = max(0, h - self.mt - self.mb) # Cannot become < 0
     mh = property(_get_mh, _set_mh)
 
-    def _get_d(self): # Depth
+    def _get_d(self): 
+        u"""Answer the depth of the element.
+
+        >>> e = Element(d=100, maxD=1000)
+        >>> e.d
+        100
+        >>> e.d = 101
+        >>> e.d
+        101
+        >>> e.d = e.maxD + 10000
+        >>> e.d
+        1000
+        >>> e.d = 0
+        >>> e.d, e.d == MIN_DEPTH
+        (1, True)
+        """ 
         return min(self.maxD, max(self.minD, self.style['d'], MIN_DEPTH)) # From self.style, don't inherit.
     def _set_d(self, d):
         self.style['d'] = d or MIN_DEPTH # Overwrite element local style from here, parent css becomes inaccessable.
@@ -1599,7 +1703,31 @@ class Element(object):
 
     # TODO: Add support of "auto" values, doing live centering.
 
-    def _get_margin(self): # Tuple of paddings in CSS order, direction of clock
+    def _get_margin(self): 
+        u"""Tuple of paddings in CSS order, direction of clock
+        
+        >>> e = Element(margin=(10, 20, 30, 40))
+        >>> e.mt, e.mr, e.mb, e.ml
+        (10, 20, 30, 40)
+        >>> e.ml = 123
+        >>> e.margin
+        (10, 20, 30, 123)
+        >>> e.margin = 11
+        >>> e.margin
+        (11, 11, 11, 11)
+        >>> e.margin = (11, 22)
+        >>> e.margin
+        (11, 22, 11, 22)
+        >>> e.margin = (11, 22, 33)
+        >>> e.margin
+        (11, 22, 33, 11)
+        >>> e.margin = (11, 22, 33, 44)
+        >>> e.margin
+        (11, 22, 33, 44)
+        >>> e.margin = (11, 22, 33, 44, 55, 66)
+        >>> e.margin
+        (11, 22, 33, 44)
+        """
         return self.mt, self.mr, self.mb, self.ml
     def _set_margin(self, margin):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
@@ -1620,7 +1748,31 @@ class Element(object):
         self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb = margin
     margin = property(_get_margin, _set_margin)
 
-    def _get_margin3D(self): # Tuple of margin in CSS order + (front, back), direction of clock
+    def _get_margin3D(self): 
+        u"""Tuple of margin in CSS order + (front, back), direction of clock
+        
+        >>> e = Element(margin=(10, 20, 30, 40))
+        >>> e.mt, e.mr, e.mb, e.ml
+        (10, 20, 30, 40)
+        >>> e.ml = 123
+        >>> e.margin3D
+        (10, 20, 30, 123, 0, 0)
+        >>> e.margin3D = 11
+        >>> e.margin3D
+        (11, 11, 11, 11, 11, 11)
+        >>> e.margin3D = (11, 22)
+        >>> e.margin3D
+        (11, 22, 11, 22, 11, 22)
+        >>> e.margin3D = (11, 22, 33)
+        >>> e.margin3D
+        (11, 22, 33, 11, 22, 33)
+        >>> e.margin3D = (11, 22, 33, 44)
+        >>> e.margin3D
+        (11, 22, 33, 44, 0, 0)
+        >>> e.margin3D = (11, 22, 33, 44, 55, 66)
+        >>> e.margin3D
+        (11, 22, 33, 44, 55, 66)
+        """
         return self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb
     margin3D = property(_get_margin3D, _set_margin)
 
@@ -1677,10 +1829,35 @@ class Element(object):
     # TODO: Add support of "auto" values, doing live centering.
  
 
-    def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
+    def _get_padding(self): 
+        u"""Tuple of paddings in CSS order, direction of clock
+        
+        >>> e = Element(padding=(10, 20, 30, 40))
+        >>> e.pt, e.pr, e.pb, e.pl
+        (10, 20, 30, 40)
+        >>> e.pl = 123
+        >>> e.padding
+        (10, 20, 30, 123)
+        >>> e.padding = 11
+        >>> e.padding
+        (11, 11, 11, 11)
+        >>> e.padding = (11, 22)
+        >>> e.padding
+        (11, 22, 11, 22)
+        >>> e.padding = (11, 22, 33)
+        >>> e.padding
+        (11, 22, 33, 11)
+        >>> e.padding = (11, 22, 33, 44)
+        >>> e.padding
+        (11, 22, 33, 44)
+        >>> e.padding = (11, 22, 33, 44, 55, 66)
+        >>> e.padding
+        (11, 22, 33, 44)
+        """
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
+        assert padding is not None
         if isinstance(padding, (long, int, float)):
             padding = [padding]
         if len(padding) == 1: # All same value
@@ -1698,29 +1875,89 @@ class Element(object):
         self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb = padding
     padding = property(_get_padding, _set_padding)
 
-    def _get_padding3D(self): # Tuple of padding in CSS order + (front, back), direction of clock
+    def _get_padding3D(self): 
+        u"""Tuple of padding in CSS order + (front, back), direction of clock
+        
+        >>> e = Element(padding=(10, 20, 30, 40))
+        >>> e.pt, e.pr, e.pb, e.pl
+        (10, 20, 30, 40)
+        >>> e.pl = 123
+        >>> e.padding3D
+        (10, 20, 30, 123, 0, 0)
+        >>> e.padding3D = 11
+        >>> e.padding3D
+        (11, 11, 11, 11, 11, 11)
+        >>> e.padding3D = (11, 22)
+        >>> e.padding3D
+        (11, 22, 11, 22, 11, 22)
+        >>> e.padding3D = (11, 22, 33)
+        >>> e.padding3D
+        (11, 22, 33, 11, 22, 33)
+        >>> e.padding3D = (11, 22, 33, 44)
+        >>> e.padding3D
+        (11, 22, 33, 44, 0, 0)
+        >>> e.padding3D = (11, 22, 33, 44, 55, 66)
+        >>> e.padding3D
+        (11, 22, 33, 44, 55, 66)
+        """
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
     padding3D = property(_get_padding3D, _set_padding)
 
-    def _get_pt(self): # Padding top
+    def _get_pt(self): 
+        u"""Answer the padding top
+        
+        >>> e = Element(padding=(10, 20, 30, 40))
+        >>> e.pt
+        10
+        >>> e.pt = 11
+        >>> e.pt
+        11
+        """
         return self.css('pt', 0)
     def _set_pt(self, pt):
         self.style['pt'] = pt  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
 
-    def _get_pb(self): # Padding bottom
+    def _get_pb(self): 
+        u"""Padding bottom
+        
+        >>> e = Element(padding=(10, 20, 30, 40))
+        >>> e.pb
+        30
+        >>> e.pb = 31
+        >>> e.pb
+        31
+        """
         return self.css('pb', 0)
     def _set_pb(self, pb):
         self.style['pb'] = pb  # Overwrite element local style from here, parent css becomes inaccessable.
     pb = property(_get_pb, _set_pb)
     
-    def _get_pl(self): # Padding left
+    def _get_pl(self): 
+        u"""Padding left
+        
+        >>> e = Element(padding=(10, 20, 30, 40))
+        >>> e.pl
+        40
+        >>> e.pl = 41
+        >>> e.pl
+        41
+        """
         return self.css('pl', 0)
     def _set_pl(self, pl):
         self.style['pl'] = pl # Overwrite element local style from here, parent css becomes inaccessable.
     pl = property(_get_pl, _set_pl)
     
-    def _get_pr(self): # Margin right
+    def _get_pr(self): 
+        u"""Padding right
+        
+        >>> e = Element(padding=(10, 20, 30, 40))
+        >>> e.pr
+        20
+        >>> e.pl = 21
+        >>> e.pl
+        21
+        """
         return self.css('pr', 0)
     def _set_pr(self, pr):
         self.style['pr'] = pr  # Overwrite element local style from here, parent css becomes inaccessable.
@@ -1768,6 +2005,18 @@ class Element(object):
     originTop = property(_get_originTop, _set_originTop)
 
     def _get_size(self):
+        u"""Answer the 3D size tuple.
+
+        >>> e = Element(w=100, h=200)
+        >>> e.size
+        (100, 200, 1)
+        >>> e.d = 300
+        >>> e.size
+        (100, 200, 300)
+        >>> e.size = (101, 201, 301)
+        >>> e.size
+        (101, 201, 301)
+        """
         return self.getSize3D()  
     def _set_size(self, size):
         self.setSize(size)
@@ -1776,16 +2025,44 @@ class Element(object):
     def getSize(self):
         u"""Answer the size of the element by calling properties self.w and self.h.
         This allows element to dynamically calculate the size if necessary, by redefining the
-        self.w and/or self.h properties."""
+        self.w and/or self.h properties.
+        
+        >>> e = Element(w=100, h=200)
+        >>> e.getSize()
+        (100, 200)
+        """
         return self.w, self.h
 
     def getSize3D(self):
-        u"""Answer the 3D size of the element."""
+        u"""Answer the 3D size of the element.
+
+        >>> e = Element(w=100, h=200, d=300)
+        >>> e.getSize3D() # Same as e.size
+        (100, 200, 300)
+        """
         return self.w, self.h, self.d
 
     def setSize(self, w, h=0, d=0):
         u"""Set the size of the element by calling by properties self.w and self.h. 
-        If set, then overwrite access from style width and height. self.d is optional attribute."""
+        If set, then overwrite access from style width and height. self.d is optional attribute.
+
+        >>> e = Element()
+        >>> e.setSize(100, 200, 300)
+        >>> e.size
+        (100, 200, 300)
+        >>> e.setSize(101) # Set h to default and d to 1
+        >>> e.size
+        (101, 100, 1)
+        >>> e.setSize(101, 201)
+        >>> e.size
+        (101, 201, 1)
+        >>> e.setSize((101, 201, 301)) # Set by size tuple
+        >>> e.size
+        (101, 201, 301)
+        >>> e.setSize((101, 201)) # Set by size tuple
+        >>> e.size
+        (101, 201, 1)
+        """
         if isinstance(w, (list, tuple)):
             if len(w) == 2:
                 w, h = w
@@ -1877,7 +2154,18 @@ class Element(object):
     # "Block" is here used as bounding box of a group of elements.
 
     def _get_block3D(self):
-        u"""Answer the vacuum 3D bounding box around all child elements."""
+        u"""Answer the vacuum 3D bounding box around all child elements.
+
+        >>> e1 = Element(x=10, y=10, z=10, w=100, h=100, d=101)
+        >>> e2 = Element(x=50, y=50, z=50, w=200, h=100, d=401)
+        >>> e3 = Element(x=70, y=30, z=50, w=801, h=10, d=100)
+        >>> #e3.w, e3.h
+
+        >>> e = Element(elements=[e1, e2, e3])
+        >>> #e1.left, r1.right
+
+        >>> #e.block3D
+        """
         x1 = y1 = z1 = XXXL
         x2 = y2 = z2 = -XXXL
         if not self.elements:
@@ -1898,8 +2186,16 @@ class Element(object):
     block3D = property(_get_block3D)
 
     def _get_block(self):
-        u"""Answer the vacuum bounding box around all child elements in 2D"""
-        x, y, _, w, h, _ = self.getVacuumElementsBox3D()
+        u"""Answer the vacuum bounding box around all child elements in 2D
+
+        >>> e1 = Element(x=10, y=10, w=100, h=100)
+        >>> e2 = Element(x=50, y=50, w=200, h=100)
+        >>> e3 = Element(x=70, y=30, w=801, h=10)
+        >>> e = Element(elements=[e1, e2, e3])
+        >>> #e.block
+        (10, 10, 871, 150)
+        """
+        x, y, _, w, h, _ = self._get_block3D()
         return x, y, w, h
     block = property(_get_block)
 
@@ -1924,11 +2220,11 @@ class Element(object):
         return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
     marginBlock3D = property(_get_marginBlock3D)
 
-    def _get_block(self):
+    def _get_marginBlock(self):
         u"""Answer the vacuum bounding box around all child elements in 2D"""
-        x, y, _, w, h, _ = self._get_block()
+        x, y, _, w, h, _ = self._get_marginBlock3D()
         return x, y, w, h
-    block = property(_get_block)
+    marginBlock = property(_get_marginBlock)
 
     def _get_paddedBlock3D(self):
         u"""Answer the vacuum 3D bounding box around all child elements, 
@@ -1959,11 +2255,11 @@ class Element(object):
         return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
     paddedBlock3D = property(_get_paddedBlock3D)
 
-    def _get_block(self):
+    def _get_paddedBlock(self):
         u"""Answer the vacuum bounding box around all child elements in 2D"""
         x, y, _, w, h, _ = self._get_paddedBlock3D()
         return x, y, w, h
-    block = property(_get_block)
+    paddedBlock = property(_get_paddedBlock)
 
     def _get_originsBlock3D(self):
         u"""Answer (minX, minY, maxX, maxY, minZ, maxZ) for all element origins."""
