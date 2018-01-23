@@ -1111,6 +1111,12 @@ class Element(object):
         >>> e = Element(x=100, w=248, xAlign=LEFT)
         >>> e.left
         100
+        >>> e.left = 100
+        >>> e.left
+        100
+        >>> e.xAlign = CENTER
+        >>> int(e.left)
+        -24
         >>> e.xAlign = RIGHT
         >>> e.left
         -148
@@ -1138,18 +1144,33 @@ class Element(object):
     mLeft = property(_get_mLeft, _set_mLeft)
 
     def _get_center(self):
+        u"""Answer the position of the horizontal center of the element, depending on alignment.
+
+        >>> e = Element(x=100, w=248, xAlign=LEFT)
+        >>> int(e.center)
+        224
+        >>> e.center = 224
+        >>> int(e.center)
+        224
+        >>> e.xAlign = CENTER
+        >>> int(e.center)
+        100
+        >>> e.xAlign = RIGHT
+        >>> int(e.center)
+        -24
+        """
         xAlign = self.xAlign
         if xAlign == LEFT:
             return self.x + self.w/2
         if xAlign == RIGHT:
-            return self.x + self.w
+            return self.x - self.w/2
         return self.x
     def _set_center(self, x):
         xAlign = self.xAlign
         if xAlign == LEFT:
             self.x = x - self.w/2
         elif xAlign == RIGHT:
-            self.x = x - self.w
+            self.x = x + self.w/2
         else:
             self.x = x
     center = property(_get_center, _set_center)
@@ -1160,12 +1181,12 @@ class Element(object):
         >>> e = Element(x=100, w=248, xAlign=LEFT)
         >>> e.right
         348
-        >>> e.xAlign = RIGHT
-        >>> e.right
-        100
         >>> e.xAlign = CENTER
         >>> int(e.right)
         224
+        >>> e.xAlign = RIGHT
+        >>> e.right
+        100
         """
         xAlign = self.xAlign
         if xAlign == LEFT:
@@ -2159,10 +2180,10 @@ class Element(object):
         >>> e1 = Element(x=10, y=10, z=10, w=100, h=100, d=101)
         >>> e2 = Element(x=50, y=50, z=50, w=200, h=100, d=401)
         >>> e3 = Element(x=70, y=30, z=50, w=801, h=10, d=100)
-        >>> #e3.w, e3.h
+        >>> #e1.w, e1.h
 
         >>> e = Element(elements=[e1, e2, e3])
-        >>> #e1.left, r1.right
+        >>> #e1.left, e1.right
 
         >>> #e.block3D
         """
@@ -3217,7 +3238,14 @@ class Element(object):
     #   Page block and Page side alignments
 
     def bottom2Bottom(self):
-        u"""Move bottom of the element to the bottom of the parent block."""
+        u"""Move bottom of the element to the bottom of the parent block.
+
+        >>> e1 = Element(y=300)
+        >>> e2 = Element(elements=[e1], pb=20)
+        >>> success = e1.bottom2Bottom()
+        >>> e1.bottom # Move bottom of e1 down to padding-bottom position of e2
+        20
+        """
         if self.originTop:
             self.bottom = self.parent.h - self.parent.pb
         else:
@@ -3225,7 +3253,14 @@ class Element(object):
         return True
 
     def bottom2BottomSide(self):
-        u"""Move bottom of the element to the bottom of the parent side."""
+        u"""Move bottom of the element to the bottom of the parent side.
+
+        >>> e1 = Element(y=300)
+        >>> e2 = Element(elements=[e1])
+        >>> success = e1.bottom2BottomSide()
+        >>> e1.bottom # Move bottom of e1 down to padding-bottom position of e2
+        0
+        """
         if self.originTop:
             self.bottom = self.parent.h
         else:
