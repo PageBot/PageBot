@@ -1587,13 +1587,30 @@ class Element(object):
     gd = property(_get_gd, _set_gd)
 
     def _get_gutter(self): # Tuple of (w, h) gutters
+        u"""Gutter property for (e.gw, e.gh) 
+
+        >>> e = Element()
+        >>> e.gutter
+        (0, 0)
+        >>> e.gutter = 10, 8
+        >>> e.gutter, e.gw, e.gh
+        ((10, 8), 10, 8)
+        >>> e.gutter = 12 # Set both values
+        >>> e.gutter 
+        (12, 12)
+        >>> e = Element(style=dict(gw=13, gh=9))
+        >>> e.gutter
+        (13, 9)
+        >>> e.gutter[0] == e.gw, e.gutter[1] == e.gh
+        (True, True)
+        """
         return self.gw, self.gh
     def _set_gutter(self, gutter):
         if isinstance(gutter, (long, int, float)):
             gutter = [gutter]
         if len(gutter) == 1:
             gutter = (gutter[0], gutter[0])
-        elif len(self.margin) == 2:
+        elif len(gutter) == 2:
             pass
         else:
             raise ValueError
@@ -1601,13 +1618,30 @@ class Element(object):
     gutter = property(_get_gutter, _set_gutter)
 
     def _get_gutter3D(self): # Tuple of (gw, gh, gd) gutters
+        u"""Gutter 3D property for (e.gw, e.gh, e.gd) 
+
+        >>> e = Element()
+        >>> e.gutter3D
+        (0, 0, 0)
+        >>> e.gutter3D = 10, 8, 6
+        >>> e.gutter3D, e.gw, e.gh, e.gd
+        ((10, 8, 6), 10, 8, 6)
+        >>> e.gutter3D = 12 # Set all 3 values values
+        >>> e.gutter3D 
+        (12, 12, 12)
+        >>> e = Element(style=dict(gw=13, gh=9, gd=7))
+        >>> e.gutter3D
+        (13, 9, 7)
+        >>> e.gutter3D[0] == e.gw, e.gutter3D[1] == e.gh, e.gutter3D[2] == e.gd
+        (True, True, True)
+        """
         return self.gw, self.gh, self.gd
     def _set_gutter3D(self, gutter3D):
         if isinstance(gutter3D, (long, int, float)):
             gutter3D = [gutter3D]
         if len(gutter3D) == 1:
             gutter3D = (gutter3D[0], gutter3D[0], gutter3D[0])
-        elif len(self.margin) == 3:
+        elif len(gutter3D) == 3:
             pass
         else:
             raise ValueError
@@ -1616,21 +1650,48 @@ class Element(object):
 
     # Absolute positions
 
-    def _get_rootX(self): # Answer the root value of local self.x, from whole tree of ancestors.
+    def _get_rootX(self): 
+        u"""Answer the read-only property root value of local self.x, 
+        from the whole tree of ancestors.
+
+        >>> e1 = Element(x=10)
+        >>> e2 = Element(x=20, elements=[e1])
+        >>> e3 = Element(x=44, elements=[e2])
+        >>> e1.x, e1.rootX, e2.x, e2.rootX, e3.x, e3.rootX
+        (10, 74, 20, 64, 44, 44)
+        """
         parent = self.parent
         if parent is not None:
             return self.x + parent.rootX # Add relative self to parents position.
         return self.x
     rootX = property(_get_rootX)
 
-    def _get_rootY(self): # Answer the absolute value of local self.y, from whole tree of ancestors.
+    def _get_rootY(self): 
+        u"""Answer the read-only property root value of local self.y, 
+        from the whole tree of ancestors.
+
+        >>> e1 = Element(y=10)
+        >>> e2 = Element(y=20, elements=[e1])
+        >>> e3 = Element(y=44, elements=[e2])
+        >>> e1.y, e1.rootY, e2.y, e2.rootY, e3.y, e3.rootY
+        (10, 74, 20, 64, 44, 44)
+        """
         parent = self.parent
         if parent is not None:
             return self.y + parent.rootY # Add relative self to parents position.
         return self.y
     rootY = property(_get_rootY)
 
-    def _get_rootZ(self): # Answer the absolute value of local self.z, from whole tree of ancestors.
+    def _get_rootZ(self): 
+        u"""Answer the read-only property root value of local self.z, 
+        from the whole tree of ancestors.
+
+        >>> e1 = Element(z=10)
+        >>> e2 = Element(z=20, elements=[e1])
+        >>> e3 = Element(z=44, elements=[e2])
+        >>> e1.z, e1.rootZ, e2.z, e2.rootZ, e3.z, e3.rootZ
+        (10, 74, 20, 64, 44, 44)
+        """
         parent = self.parent
         if parent is not None:
             return self.z + parent.rootZ # Add relative self to parents position.
@@ -1661,6 +1722,18 @@ class Element(object):
     w = property(_get_w, _set_w)
 
     def _get_mw(self): # Width, including margins
+        u"""Width property for self.mw style.
+
+        >>> e = Element(w=10, ml=22, mr=33)
+        >>> e.mw
+        65
+        >>> e = Element()
+        >>> e.w = 10
+        >>> e.ml = 22
+        >>> e.mr = 33
+        >>> e.mw
+        65
+        """
         return self.w + self.ml + self.mr # Add margins to width
     def _set_mw(self, w):
         self.style['w'] = max(0, w - self.ml - self.mr) # Cannot become < 0
@@ -1688,6 +1761,18 @@ class Element(object):
     h = property(_get_h, _set_h)
 
     def _get_mh(self): # Height, including margins
+        u"""Width property for self.mh style.
+
+        >>> e = Element(h=10, mt=22, mb=33)
+        >>> e.mh
+        65
+        >>> e = Element()
+        >>> e.h = 10
+        >>> e.mt = 22
+        >>> e.mb = 33
+        >>> e.mh
+        65
+        """
         return self.h + self.mt + self.mb # Add margins to height
     def _set_mh(self, h):
         self.style['h'] = max(0, h - self.mt - self.mb) # Cannot become < 0
@@ -1715,6 +1800,18 @@ class Element(object):
     d = property(_get_d, _set_d)
 
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
+        u"""Width property for self.md style.
+
+        >>> e = Element(d=10, mzb=22, mzf=33)
+        >>> e.md
+        65
+        >>> e = Element()
+        >>> e.d = 10
+        >>> e.mzb = 22
+        >>> e.mzf = 33
+        >>> e.md
+        65
+        """
         return self.d + self.mzb + self.mzf # Add front and back margins to depth
     def _set_md(self, d):
         self.style['d'] = max(0, d - self.mzf - self.mzb) # Cannot become < 0, behind viewer?
@@ -1797,59 +1894,118 @@ class Element(object):
         return self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb
     margin3D = property(_get_margin3D, _set_margin)
 
-    def _get_mt(self): # Margin top
+    def _get_mt(self): 
+        u"""Margin top property
+
+        >>> e = Element(mt=12)
+        >>> e.mt
+        12
+        >>> e.mt = 13
+        >>> e.mt
+        13
+        >>> e.style = dict(mt=14)
+        >>> e.mt
+        14
+        """
         return self.style['mt'] # Don't inherit
     def _set_mt(self, mt):
         self.style['mt'] = mt  # Overwrite element local style from here, parent css becomes inaccessable.
     mt = property(_get_mt, _set_mt)
     
     def _get_mb(self): # Margin bottom
+        u"""Margin bottom property
+
+        >>> e = Element(mb=12)
+        >>> e.mb
+        12
+        >>> e.mb = 13
+        >>> e.mb
+        13
+        >>> e.style = dict(mb=14)
+        >>> e.mb
+        14
+        """
         return self.style['mb'] # Don't inherit
     def _set_mb(self, mb):
         self.style['mb'] = mb  # Overwrite element local style from here, parent css becomes inaccessable.
     mb = property(_get_mb, _set_mb)
     
     def _get_ml(self): # Margin left
+        u"""Margin left property
+
+        >>> e = Element(ml=12)
+        >>> e.ml
+        12
+        >>> e.ml = 13
+        >>> e.ml
+        13
+        >>> e.style = dict(ml=14)
+        >>> e.ml
+        14
+        """
         return self.style['ml'] # Don't inherit
     def _set_ml(self, ml):
         self.style['ml'] = ml # Overwrite element local style from here, parent css becomes inaccessable.
     ml = property(_get_ml, _set_ml)
     
     def _get_mr(self): # Margin right
+        u"""Margin right property
+
+        >>> e = Element(mr=12)
+        >>> e.mr
+        12
+        >>> e.mr = 13
+        >>> e.mr
+        13
+        >>> e.style = dict(mr=14)
+        >>> e.mr
+        14
+        """
         return self.style['mr'] # Don't inherit
     def _set_mr(self, mr):
         self.style['mr'] = mr  # Overwrite element local style from here, parent css becomes inaccessable.
     mr = property(_get_mr, _set_mr)
 
     def _get_mzf(self): # Margin z-axis front
+        u"""Margin z-axis front property (closest to view point)
+
+        >>> e = Element(mzf=12)
+        >>> e.mzf
+        12
+        >>> e.mzf = 13
+        >>> e.mzf
+        13
+        >>> e.style = dict(mzf=14)
+        >>> e.mzf
+        14
+        """
         return self.style['mzf'] # Don't inherit
     def _set_mzf(self, mzf):
         self.style['mzf'] = mzf  # Overwrite element local style from here, parent css becomes inaccessable.
     mzf = property(_get_mzf, _set_mzf)
     
     def _get_mzb(self): # Margin z-axis back
+        u"""Margin z-axis back property (most distant to view point)
+
+        >>> e = Element(mzb=12)
+        >>> e.mzb
+        12
+        >>> e.mzb = 13
+        >>> e.mzb
+        13
+        >>> e.style = dict(mzb=14)
+        >>> e.mzb
+        14
+        """
         return self.style['mzb'] # Don't inherit
     def _set_mzb(self, mzb):
         self.style['mzb'] = mzb  # Overwrite element local style from here, parent css becomes inaccessable.
     mzb = property(_get_mzb, _set_mzb)
-    
-    def _get_mw(self): # Width including margins
-        return self.w + self.ml + self.mr
-    mw = property(_get_mw)
-    
-    def _get_mh(self): # Height including margins
-        return self.h + self.mb + self.mt
-    mh = property(_get_mh)
-    
-    def _get_md(self): # Depth including margins
-        return self.d + self.mzf + self.mzb
-    md = property(_get_md)
-    
+        
     # Padding properties
 
     # TODO: Add support of "auto" values, doing live centering.
  
-
     def _get_padding(self): 
         u"""Tuple of paddings in CSS order, direction of clock
         
@@ -1925,29 +2081,38 @@ class Element(object):
     padding3D = property(_get_padding3D, _set_padding)
 
     def _get_pt(self): 
-        u"""Answer the padding top
-        
-        >>> e = Element(padding=(10, 20, 30, 40))
+        u"""Padding top property
+
+        >>> e = Element(pt=12)
         >>> e.pt
-        10
-        >>> e.pt = 11
+        12
+        >>> e.pt = 13
         >>> e.pt
-        11
+        13
+        >>> e.style = dict(pt=14)
+        >>> e.pt
+        14
         """
         return self.css('pt', 0)
     def _set_pt(self, pt):
         self.style['pt'] = pt  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
 
-    def _get_pb(self): 
-        u"""Padding bottom
-        
+    def _get_pb(self): # Padding bottom
+        u"""Padding bottom property
+
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pb
         30
-        >>> e.pb = 31
+        >>> e = Element(pb=12)
         >>> e.pb
-        31
+        12
+        >>> e.pb = 13
+        >>> e.pb
+        13
+        >>> e.style = dict(pb=14)
+        >>> e.pb
+        14
         """
         return self.css('pb', 0)
     def _set_pb(self, pb):
@@ -1955,66 +2120,128 @@ class Element(object):
     pb = property(_get_pb, _set_pb)
     
     def _get_pl(self): 
-        u"""Padding left
-        
+        u"""Padding left property
+
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pl
         40
-        >>> e.pl = 41
+        >>> e = Element(pl=12)
         >>> e.pl
-        41
+        12
+        >>> e.pl = 13
+        >>> e.pl
+        13
+        >>> e.style = dict(pl=14)
+        >>> e.pl
+        14
         """
         return self.css('pl', 0)
     def _set_pl(self, pl):
         self.style['pl'] = pl # Overwrite element local style from here, parent css becomes inaccessable.
     pl = property(_get_pl, _set_pl)
     
-    def _get_pr(self): 
-        u"""Padding right
-        
+    def _get_pr(self): # Margin right
+        u"""Padding right property
+
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pr
         20
-        >>> e.pl = 21
-        >>> e.pl
-        21
+        >>> e = Element(pr=12)
+        >>> e.pr
+        12
+        >>> e.pr = 13
+        >>> e.pr
+        13
+        >>> e.style = dict(pr=14)
+        >>> e.pr
+        14
         """
         return self.css('pr', 0)
     def _set_pr(self, pr):
         self.style['pr'] = pr  # Overwrite element local style from here, parent css becomes inaccessable.
     pr = property(_get_pr, _set_pr)
 
-    def _get_pzf(self): # Padding z-axis front
+    def _get_pzf(self): 
+        u"""Padding z-axis front property
+
+        >>> e = Element(pzf=12)
+        >>> e.pzf
+        12
+        >>> e.pzf = 13
+        >>> e.pzf
+        13
+        >>> e.style = dict(pzf=14)
+        >>> e.pzf
+        14
+        """
         return self.css('pzf', 0)
     def _set_pzf(self, pzf):
         self.style['pzf'] = pzf  # Overwrite element local style from here, parent css becomes inaccessable.
     pzf = property(_get_pzf, _set_pzf)
     
-    def _get_pzb(self): # Padding z-axis back
+    def _get_pzb(self): 
+        u"""Padding z-axis back property
+
+        >>> e = Element(pzb=12)
+        >>> e.pzb
+        12
+        >>> e.pzb = 13
+        >>> e.pzb
+        13
+        >>> e.style = dict(pzb=14)
+        >>> e.pzb
+        14
+        """
         return self.css('pzb', 0)
     def _set_pzb(self, pzb):
         self.style['pzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)
 
     def _get_pw(self): 
-        u"""Padded width of the element block."""
+        u"""Padded width read-only property of the element block.
+
+        >>> e = Element(w=400, pl=22, pr=33)
+        >>> e.pw
+        345
+        """
         return self.w - self.pl - self.pr
     pw = property(_get_pw)
     
     def _get_ph(self):
-        u"""Padded height of the element block."""
+        u"""Padded height read-only property of the element block. 
+
+        >>> e = Element(h=400, pb=22, pt=33)
+        >>> e.ph
+        345
+        """
         return self.h - self.pb - self.pt
     ph = property(_get_ph)
     
     def _get_pd(self):
-        u"""Padded depth of the element block."""
+        u"""Padded depth read-only property of the element block.
+
+        >>> e = Element(d=400, pzf=22, pzb=33)
+        >>> e.pd
+        345
+        """
         return self.d - self.pzf - self.pzb
     pd = property(_get_pd)
 
     def _get_originTop(self):
         u"""Answer the style flag if all point y values should measure top-down (typographic page
         orientation), instead of bottom-up (mathematical orientation). For Y-axis only. 
-        The axes in X and Z directions are fixed."""
+        The axes in X and Z directions are fixed.
+
+        >>> e = Element()
+        >>> e.originTop is None
+        True
+        >>> e = Element(originTop=True)
+        >>> e.originTop
+        True
+        >>> e.originTop = False
+        >>> e.originTop
+        False
+        """
         return self.css('originTop')
     def _set_originTop(self, flag):
         if flag:
@@ -2322,14 +2549,35 @@ class Element(object):
     minD = property(_get_minD, _set_minD)
 
     def getMinSize(self):
-        u"""Answer the (minW, minH) of this element."""
-        return self.minW, self.minH, self.minD
+        u"""Answer the (minW, minH) of this element.
+
+        >>> e = Element()
+        >>> e.getMinSize()
+        (1, 1)
+        """
+        return self.minW, self.minH
 
     def getMinSize3D(self):
-        u"""Answer the (minW, minH, minD) of this element."""
+        u"""Answer the (minW, minH, minD) of this element.
+
+        >>> e = Element()
+        >>> e.getMinSize3D()
+        (1, 1, 1)
+        """
         return self.minW, self.minH, self.minD
 
     def setMinSize(self, minW, minH=None, minD=None):
+        u"""Set the min size vaues.
+
+        >>> e = Element()
+        >>> e.getMinSize()
+        (1, 1)
+        >>> e.setMinSize(100, 200, 300)
+        >>> e.getMinSize()
+        (100, 200)
+        >>> e.getMinSize3D()
+        (100, 200, 300)
+        """
         if minW and minH is None and minD is None:
             if isinstance(minW, (int, float, long)):
                 self.minW = self.minH = self.minD = minW
