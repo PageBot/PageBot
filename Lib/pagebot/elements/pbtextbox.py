@@ -30,10 +30,12 @@ class TextBox(Element):
 
     def __init__(self, bs=None, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
         Element.__init__(self,  **kwargs)
-        u"""Default is the storage of self.s (DrawBot FormattedString or Flat equivalent), 
-        but optional it can be ts (tagged basestring)
-        if output is mainly through build and HTML/CSS. Since both strings cannot be conversted lossless one into the other,
-        it is safer to keep them both if they are available."""
+        u"""Creates a TextBox element. Default is the storage of self.s 
+        (DrawBot FormattedString or Flat equivalent), but optional it can also be ts (tagged basestring)
+        if output is mainly through build and HTML/CSS. Since both strings cannot be conversted lossless 
+        one into the other, it is safer to keep them both if they are available.
+
+        """
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
@@ -43,6 +45,18 @@ class TextBox(Element):
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
+        u"""Property for self.w, holding the width of the textbox.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> page = doc[0]
+        >>> tb = TextBox(parent=page, w=125)
+        >>> page[tb.eId].w
+        125
+        >>> tb.w = 150
+        >>> tb.w, tb.w == page[tb.eId].w
+        (150, True)
+        """
         return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
     def _set_w(self, w):
         self.style['w'] = w or MIN_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
@@ -50,8 +64,23 @@ class TextBox(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        u"""Answer the height of the textBox. If self.style['elasticH'] is set, then answer the 
-        vertical space that the text needs. This overwrites the setting of self._h."""
+        u"""Answer the height of the textBox. If self.style['h'] is None, then answer the 
+        vertical space that the text needs.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> page = doc[0]
+        >>> style = dict(font='Verdana', fontSize=14)
+        >>> tb = TextBox('This is content', parent=page, style=style, w=100, h=220)
+        >>> page[tb.eId].h
+        220
+        >>> tb.h = 220
+        >>> tb.h, tb.h == page[tb.eId].h
+        (220, True)
+        >>> tb.h = None
+        >>> tb.h, tb.style['h'] is None
+        (37.0, True)
+        """
         if self.style['h'] is None: # Elastic height
             h = self.getTextSize(w=self.w)[1] + self.pt + self.pb # Add paddings
         else:
@@ -59,7 +88,7 @@ class TextBox(Element):
         return min(self.maxH, max(self.minH, h)) # Should not be 0 or None
     def _set_h(self, h):
         # Overwrite style from here, unless self.style['elasticH'] is True
-        self.style['h'] = h # If None, then self.h is elastic from content
+        self.style['h'] = h # If None, then self.h is elastic defined by content
     h = property(_get_h, _set_h)
 
     def _get_textLines(self):
@@ -131,7 +160,28 @@ class TextBox(Element):
     def getTextSize(self, bs=None, w=None):
         """Figure out what the width/height of the text self.bs is, with or given width or
         the styled width of this text box. If fs is defined as external attribute, then the
-        size of the string is answers, as if it was already inside the text box."""
+        size of the string is answers, as if it was already inside the text box.
+
+        >>> from pagebot.contexts import defaultContext as c
+        >>> c.name in ('DrawBotContext', 'FlatContext')
+        True
+        >>> bs = c.newString('ABC', style=dict(font='Verdana', fontSize=124))
+        >>> tb = TextBox(bs, w=100, h=None)
+        >>> tb.bs
+        ABC
+        >>> tb.getTextSize()[1] 
+        454.0
+        >>> bs = c.newString('ABC', style=dict(font='Verdana', fontSize=24))
+        >>> tb = TextBox(bs, w=100, h=None)
+        >>> tb.getTextSize()[1] 
+        30.0
+        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> c = FlatContext()
+        >>> bs = c.newString('ABC', style=dict(font='Verdana', fontSize=124))
+        >>> tb = TextBox(bs, w=100, h=None)
+        >>> tb.getTextSize()[1] # ???
+        73.0
+        """
         if bs is None:
             bs = self.bs
         return bs.textSize(w or self.w)
@@ -389,6 +439,8 @@ class TextBox(Element):
         # ...
         return True
 
-
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 
 

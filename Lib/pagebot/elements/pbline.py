@@ -54,7 +54,7 @@ class Line(Element):
     def build_html(self, view, origin=None, drawElements=True):
 
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined

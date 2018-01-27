@@ -401,7 +401,7 @@ class PageView(BaseView):
 
         if self.showMissingElementRect:
             p = pointOffset(e.point, origin)
-            p = e._applyOrigin(p)
+            p = e._applyOrigin(self, p)
             p = e._applyScale(p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
             c.setShadow(b)
@@ -535,7 +535,7 @@ class PageView(BaseView):
         b = self.b
         context = self.context
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)
+        p = self._applyScale(e, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         M = 16
         startY = e.css('baselineGridStart')
