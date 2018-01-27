@@ -51,7 +51,7 @@ def point3D(p=None):
     return p
 
 def point2D(p=None):
-    u"""Answer the 2D origin as combination of p and offset.
+    u"""Answer the 2D point from a 2D or 3D point.
 
     >>> point2D() # Default 2D origin
     [0, 0]
@@ -75,7 +75,11 @@ def pointOffset(point, offset):
     (112, 113, 100)
     >>> point2D(pointOffset((12, 13), 100))
     [112, 113]
+    >>> pointOffset((10, 20, 30), None) # None is interpreted as offset == 0
+    (10, 20, 30)
     """
+    if not offset:
+        offset = 0
     if isinstance(offset, (int, float, long)):
         offset = (offset, offset, offset)
     if not len(point) == 3:
