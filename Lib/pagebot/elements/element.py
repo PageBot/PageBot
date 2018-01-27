@@ -2258,6 +2258,9 @@ class Element(object):
         >>> e = Element(w=100, h=200)
         >>> e.size
         (100, 200, 1)
+        >>> e.d = 111
+        >>> e.size
+        (100, 200, 111)
         >>> e.d = 300
         >>> e.size
         (100, 200, 300)
