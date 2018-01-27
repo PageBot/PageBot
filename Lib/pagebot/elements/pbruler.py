@@ -21,6 +21,18 @@ from pagebot.style import NO_COLOR
 class Ruler(Element):
 
     def _get_h(self):
+        u"""Poperty for the self.h height value 
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> page = doc[0]
+        >>> e = Ruler(parent=page, h=3)
+        >>> e.h, e.style['h'], e.style['strokeWidth']
+        (3, 3, 3)
+        >>> e.h = 20
+        >>> e.h, e.style['h'], e.style['strokeWidth']
+        (20, 20, 20)
+        """
         return self.css('strokeWidth', 0)
     def _set_h(self, h):
         self.style['h'] = self.style['strokeWidth'] = h # Overwrite style from here.
@@ -28,11 +40,21 @@ class Ruler(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build_drawBot(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True):
+        u"""Build the Ruler in the current context
 
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> page = doc[0]
+        >>> e = Ruler(parent=page, h=3)
+        >>> e.build(doc.getView(), (0, 0))
+        >>> e.x, e.y
+
+        """
         context = self.context # Get current context and builder.
 
         p = pointOffset(self.oPoint, origin)
+        print 'assas', p
         p = self._applyScale(p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         sIndent = self.css('indent')
@@ -86,3 +108,6 @@ class Ruler(Element):
         self._restoreScale(view)
         #view.drawElementMetaInfo(self, origin)
 
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

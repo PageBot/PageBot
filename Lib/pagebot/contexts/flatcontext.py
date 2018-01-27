@@ -47,6 +47,7 @@ class FlatContext(BaseContext):
 
     def __init__(self):
         # Keep status of last color, to make difference between fill and stroke colors.
+        self.name = self.__class__.__name__
         self.fillColor = None
         self.strokeColor = None
         self.strokeWidth = 0

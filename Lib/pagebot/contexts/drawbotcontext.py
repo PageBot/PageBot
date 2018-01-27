@@ -47,7 +47,8 @@ class DrawBotContext(BaseContext):
         # The context builder "cls.b" is the main drawBot library, that contains all 
         # drawing calls in as used regular DrawBot scripts.   
         self.b = drawBotBuilder # cls.b builder for this canvas.
- 
+        self.name = self.__class__.__name__
+        
     #   V A R I A B L E
 
     def Variable(self, variableUI, globalVariables):
