@@ -60,18 +60,19 @@ class VariableCube(Element):
             location = {}
         self.location = copy(location)
     
-    def draw(self, page, x, y):
+    def draw(self, view, origin):
         c = self.doc.context
+
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(view, p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         fillColor = self.style.get('fill')
         if fillColor is not None:
-            c.setFillColor(fillColor)
-            c.setStrokeColor(None)
+            c.fill(fillColor)
 
-        c.stroke(0.8)
-        c.strokeWidth(0.5)
-        c.fill(None)
-        c.rect(x, y, self.w, self.h)
+        c.stroke((0.8, 0.8, 0.8), 0.5)
+        c.rect(px, py, self.w, self.h)
         if len(self.dimensions) == 1:
             raise ValueError('Not supporting 1 axis now')
         if len(self.dimensions) > 2:
@@ -90,8 +91,8 @@ class VariableCube(Element):
             for indexY in range(sizeY+1):
                 ox = 30
                 oy = 25
-                px = ox + x + indexX * stepX
-                py = oy + y + indexY * stepY
+                ppx = ox + x + indexX * stepX
+                ppy = oy + y + indexY * stepY
                 self.location[axisX] = indexX * RANGE / sizeX
                 self.location[axisY] = indexY * RANGE / sizeY
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
@@ -108,10 +109,10 @@ class VariableCube(Element):
                                      fill=0)
                 w, h = fs.size()
 
-                page.text(fs, px - stepX/4, py - 16)
+                page.text(fs, ppx - stepX/4, ppy - 16)
                 # Bit of hack, we need the width of the glyph here.
 
-        fs = FormattedString('Other axes: %s' % self.location,
+        bs = c.newString('Other axes: %s' % self.location,
                              fontSize=6, fill=0)
-        w, h = fs.size()
-        page.text(fs, x, y - 16)
+        w, h = bs.size()
+        page.text(bs, px, py - 16)
