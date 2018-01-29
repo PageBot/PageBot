@@ -1050,6 +1050,52 @@ class Element(object):
         self.style['z'] = z
     z = property(_get_z, _set_z)
     
+    def _get_xy(self):
+        u"""Answer ther Point2D tuple.
+
+        >>> e = Element(x=10, y=20)
+        >>> e.xy
+        (10, 20)
+        >>> e.xy = 11, 21
+        >>> e.xy
+        (11, 21)
+        >>> e.xy = 12, 22, 32 # Ignore the z-value
+        >>> e.xy
+        (12, 22)
+        >>> e.y += 100
+        >>> e.xy
+        (12, 122)
+        """
+        return self.x, self.y
+    def _set_xy(self, p):
+        self.x = p[0]
+        self.y = p[1] # Ignore any z
+    xy = property(_get_xy, _set_xy)
+
+    def _get_xyz(self):
+        u"""Answer ther Point3D tuple.
+
+        >>> e = Element(x=10, y=20, z=30)
+        >>> e.xyz
+        (10, 20, 30)
+        >>> e.xyz = 11, 21, 31
+        >>> e.xyz
+        (11, 21, 31)
+        >>> e.xyz = 12, 22, 32 
+        >>> e.xyz
+        (12, 22, 32)
+        >>> e.x += 100
+        >>> e.xyz
+        (112, 22, 32)
+        """
+        return self.x, self.y, self.z
+    def _set_xyz(self, p):
+        self.x = p[0]
+        self.y = p[1] 
+        self.z = p[2] 
+    xyz = property(_get_xyz, _set_xyz)
+
+
     #   T I M E
 
     def _get_t(self):
@@ -3254,7 +3300,16 @@ class Element(object):
             return abs(self.parent.h/2 - self.y) <= tolerance
         return abs(self.parent.h/2 - self.y) <= tolerance
  
-    def isRightOnCenter(self, view, tolerance=0):
+    def isRightOnCenter(self, view=None, tolerance=0):
+        u"""Answer the boolean flag if the right size of self is on the middle of the parent.
+
+        >>> e1 = Element(x=100, w=200) # e1.right == 300
+        >>> e2 = Element(w=600, elements=[e1])
+        >>> e1.x, e1.w, e1.right
+
+        >>> #e1.isRightOnCenter()
+
+        """
         return abs(self.parent.w - self.x) <= tolerance
 
     def isRightOnCenterSides(self, view, tolerance=0):
