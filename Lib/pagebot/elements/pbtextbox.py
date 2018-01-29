@@ -104,6 +104,15 @@ class TextBox(Element):
         return len(self.textLines)
   
     def __repr__(self):
+        u"""Answer the representation string of the element.
+
+        >>> e = TextBox('ABC')
+        >>> str(e) == 'TextBox:%s (0, 0)ABC' % e.eId
+        True
+        >>> e = TextBox('ABC', x=100, y=100, w=200)
+        >>> str(e) == 'TextBox:%s (100, 100)ABC' % e.eId
+        True
+        """
         if self.title:
             name = ':'+self.title
         elif self.name:

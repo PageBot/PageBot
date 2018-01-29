@@ -44,18 +44,19 @@ class Ruler(Element):
         u"""Build the Ruler in the current context
 
         >>> from pagebot.document import Document
-        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30, originTop=False)
         >>> page = doc[0]
-        >>> e = Ruler(parent=page, h=3)
+        >>> e = Ruler(parent=page, x=0, y=20, w=page.w, h=3)
         >>> e.build(doc.getView(), (0, 0))
-        >>> e.x, e.y
-
+        >>> e.xy
+        (0, 20)
+        >>> e.size
+        (300, 3, 1)
         """
         context = self.context # Get current context and builder.
 
         p = pointOffset(self.oPoint, origin)
-        print 'assas', p
-        p = self._applyScale(p)    
+        p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         sIndent = self.css('indent')
         sTailIndent = self.css('tailIndent')
