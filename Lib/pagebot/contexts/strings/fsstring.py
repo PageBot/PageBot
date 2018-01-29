@@ -69,7 +69,7 @@ class FsString(BabelString):
         p.text(self.s, (0, 0))
         return  p.bounds() # bx, by, bw, bh 
 
-    def fontContainsCharacters(character):
+    def fontContainsCharacters(self, character):
         u"""Return a bool if the current font contains the provided characters. 
         Characters is a string containing one or more characters."""
         return self.s.fontContainsCharacters(characters)
