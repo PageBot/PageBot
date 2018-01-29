@@ -69,22 +69,19 @@ class VariableScatter(Element):
 
         return location,
 
-    def draw(self, page, x, y):
+    def draw(self, view, origin):
         c = self.doc.context
 
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(view, p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
+            self.drawBefore(self, view, p)
 
         fillColor = self.style.get('fill')
         if fillColor is not None:
-            c.setFillColor(fillColor)
-            c.setStrokeColor(None)
-
-        #c.stroke(0.8)
-        #c.strokeWidth(0.5)
-        #c.fill(None)
-        #c.rect(x, y, self.w, self.h)
-        
+            c.fill(fillColor)
         c.stroke(None)
 
         stepX = self.w / (self.sizeX+1)
@@ -94,8 +91,8 @@ class VariableScatter(Element):
             for indexY in range(self.sizeY+1):
                 ox = 30
                 oy = 25
-                px = ox + x + indexX * stepX
-                py = oy + y + indexY * stepY
+                ppx = ox + x + indexX * stepX
+                ppy = oy + y + indexY * stepY
                 if self.locations is not None:
                     location = choice(self.locations)
                 else:
@@ -107,14 +104,14 @@ class VariableScatter(Element):
                               fillColor=fillColor)
                 if self.recipeAxes:
                     recipe = self.location2Recipe(location)
-                    fs = FormattedString(recipe, fontSize=4, fill=0)
-                    w, h = fs.size()
-                    page.text(fs, px - stepX/4, py - 24) # Bit of hack, we need the width of the glyph here.
+                    bs = c.newString(recipe, fontSize=4, fill=0)
+                    w, h = bs.size()
+                    c.text(bs, ppx - stepX/4, ppy - 24) # Bit of hack, we need the width of the glyph here.
                     if len(self.recipeAxes) > 3:
                         recipe = self.location2Recipe(location, 3, 6)
-                        fs = FormattedString(recipe, fontSize=4, fill=0)
-                        w, h = fs.size()
-                        page.text(fs, point=(px - stepX/4 + 30, py - 24)) # Bit of hack, we need the width of the glyph here.
+                        bs = c.newString(recipe, fontSize=4, fill=0)
+                        w, h = bs.size()
+                        c.text(bs, point=(ppx - stepX/4 + 30, ppy - 24)) # Bit of hack, we need the width of the glyph here.
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view)
+            self.drawAfter(self, view, p)

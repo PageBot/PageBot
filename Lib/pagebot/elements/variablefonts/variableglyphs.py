@@ -45,10 +45,14 @@ class VariableGlyphs(Element):
             location = {}
         self.location = copy(location)
     
-    def draw(self, page, x, y):
+    def draw(self, view, origin):
+
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(view, p)    
+        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, p, view)
+            self.drawBefore(self, view, p)
 
         fillColor = self.style.get('fill')
         fillColor = (0, 0, 0)
@@ -63,4 +67,4 @@ class VariableGlyphs(Element):
                       self.location, s=glyphPathScale, fillColor=fillColor)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, p, view)
+            self.drawAfter(self, view, p)
