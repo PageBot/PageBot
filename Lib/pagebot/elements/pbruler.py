@@ -40,7 +40,7 @@ class Ruler(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin):
         u"""Build the Ruler in the current context
 
         >>> from pagebot.document import Document
@@ -81,7 +81,7 @@ class Ruler(Element):
       
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None):
 
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context

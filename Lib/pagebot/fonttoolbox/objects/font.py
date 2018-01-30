@@ -184,7 +184,8 @@ class Font(object):
     variables = property(_get_variables)
 
     def _get_features(self):
-        return listOpenTypeFeatures(self.installedName)
+        from pagebot.contexts import defaultContext as c
+        return c.listOpenTypeFeatures(self.installedName)
     features = property(_get_features)
 
     def _get_kerning(self):
