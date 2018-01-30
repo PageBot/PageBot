@@ -19,8 +19,8 @@ from __future__ import division
 from copy import copy
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from drawBot import FormattedString
-from pagebot.fonttoolbox.variablebuilder import drawGlyphPath
+from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
+from pagebot.toolbox.transformer import pointOffset
 
 
 class VariableCube(Element):
@@ -89,12 +89,12 @@ class VariableCube(Element):
 
                 drawGlyphPath(self.font.ttFont, self.glyphNames[0], ppx, ppy, self.location, s=glyphPathScale, fillColor=(0, 0, 0))
 
-                fs = FormattedString('%s %d\n%s %d' % (axisX, indexX * RANGE / sizeX, axisY, indexY * RANGE / sizeY), fontSize=6, fill=0)
+                fs = c.newString('%s %d\n%s %d' % (axisX, indexX * RANGE / sizeX, axisY, indexY * RANGE / sizeY), fontSize=6, fill=0)
                 w, h = fs.size()
-                page.text(fs, ppx - stepX/4, ppy - 16) # Bit of hack, we need the width of the glyph here.
+                c.text(fs, ppx - stepX/4, ppy - 16) # Bit of hack, we need the width of the glyph here.
         fs = c.newString('Other axes: %s' % self.location, fontSize=6, fill=0)
         w, h = fs.size()
-        page.text(fs, px, py - 16)
+        c.text(fs, px, py - 16)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
