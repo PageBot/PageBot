@@ -27,7 +27,6 @@ except ImportError:
     Variable = BezierPath = None
 
 from basecontext import BaseContext
-from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
 from pagebot.contexts.strings.fsstring import FsString
 from pagebot.style import NO_COLOR, LEFT
 
@@ -271,7 +270,11 @@ class DrawBotContext(BaseContext):
             url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
             return url.path()
         return None
-        
+    
+    def listOpenTypeFeatures(self, fontName):
+        u"""Answer the list of opentype features available in the named font."""
+        return self.b.listOpenTypeFeatures(fontName)
+
     #   I M A G E
 
     def imagePixelColor(self, path, p):
