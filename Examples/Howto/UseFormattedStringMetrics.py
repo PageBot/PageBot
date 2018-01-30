@@ -16,7 +16,6 @@
 #     It is possible to measure on the content of FormattedString instances.
 #     These show examples how to do that.
 #
-from drawBot import FormattedString
 from pagebot.contexts import defaultContext as c
 
 def run():
@@ -25,9 +24,10 @@ def run():
 	txt = "Hello World"
 	x, y = 10, 100
 
-        fs = FormattedString(txt, fontSize=300, font="Verdana")
+        fs = c.newString(txt, style=dict(fontSize=300,
+                                         font="Verdana"))
 	# draw the text
-	c.text(txt, (x, y))
+	c.text(fs, (x, y))
 
 	# calculate the size of the text
 	textWidth, textHeight = c.textSize(txt)
