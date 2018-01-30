@@ -27,8 +27,6 @@ from pagebot.elements.pbpage import Template
 from pagebot.typesetter import Typesetter
 # Elements that can placed on pages and templates.
 from pagebot.elements import *
-# Get functions to create instances style from Variable fonts.
-#from pagebot.fonttoolbox.variablebuilder import getVariableFont, generateInstance
 
 # For clarity, most of the OnePage.py example document is setup as a sequential excecution of
 # Python functions. For complex documents this is not the best method. More functions and classes

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -31,7 +32,7 @@ from pagebot.composer import Composer
 # Elements that can placed on pages and templates.
 from pagebot.elements import Galley, Rect
 # Get functions to create instances style from Variable fonts.
-from pagebot.fonttoolbox.variablebuilder import getVariableFont
+from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
 
 # Some flags to turn on/off extra debug information on the output pages.    
 DEBUG = True
