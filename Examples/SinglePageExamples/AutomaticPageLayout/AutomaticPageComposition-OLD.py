@@ -16,7 +16,6 @@
 #     This script generates an article (in Dutch) of 2009 about the approach to
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
-from pagebot import textBoxBaseLines
 
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT
@@ -237,4 +236,3 @@ def makeDocument(rs):
         
 d = makeDocument(RS)
 d.export(EXPORT_PATH) 
-

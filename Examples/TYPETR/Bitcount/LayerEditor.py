@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
@@ -20,11 +21,8 @@
 #
 from AppKit import NSColor
 import os
-
-import pagebot
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
-from pagebot import textBoxBaseLines
 from pagebot.toolbox.transformer import path2ScriptId
 
 # Optional using Bitpath family, mixed with Bitcount

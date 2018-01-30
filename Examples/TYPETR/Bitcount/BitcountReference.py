@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
@@ -15,8 +16,7 @@
 #
 #     This script the PDF document with Bitcount refernce information.
 #
-import pagebot
-from pagebot import findMarkers, textBoxBaseLines
+from pagebot import findMarkers
 from pagebot.style import getRootStyle, LEFT, NO_COLOR, RIGHT
 from pagebot.document import Document
 from pagebot.elements.pbpage import Page, Template

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -18,36 +19,15 @@
 #     Feel free to use as inspiration. 
 #     Don't use exactly like this, an idenity is supposed to be unique. :)
 #
-from pagebot import getFormattedString, textBoxBaseLines
-
-import pagebot.style
-reload(pagebot.style)
-from pagebot.style import getRootStyle, LEFT_ALIGN
-
-import pagebot.document 
-reload(pagebot.document)
+from pagebot.contexts import defaultContext as c
+from pagebot.style import getRootStyle, LEFT
 from pagebot.document import Document
-
-import pagebot.elements.pbpage
-reload(pagebot.elements.pbpage)
 from pagebot.elements.pbpage import Template
-
-import pagebot.composer
-reload(pagebot.composer)
 from pagebot.composer import Composer
-
-import pagebot.typesetter
-reload(pagebot.typesetter)
 from pagebot.typesetter import Typesetter
-
-import pagebot.elements
-reload(pagebot.elements)
 from pagebot.elements import Galley, Rect
+from pagebot.fonttoolbox.variablefontbuilder import generateInstance
 
-import pagebot.fonttoolbox.variationbuilder
-reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import generateInstance
-    
 DEBUG = True
 
 SHOW_GRID = DEBUG
@@ -78,7 +58,7 @@ RS = getRootStyle(
     cw = 11*U, 
     ch = 6*baselineGrid - U, # Approx. square and fitting with baseline.
     listIndent = listIndent, # Indent for bullet lists
-    listTabs = [(listIndent, LEFT_ALIGN)], # Match bullet+tab with left indent.
+    listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
     showGrid = SHOW_GRID,
     showGridColumns = SHOW_GRID_COLUMNS,
@@ -90,7 +70,7 @@ RS = getRootStyle(
     rLeading = 0,
     fontSize = 9
 )
-FS = getFormattedString(FormattedString(''), RS)
+FS = c.newString("")
 print FS
     # LANGUAGE-SWITCH Language settings
 if 0: # EN version of the article.
@@ -114,6 +94,7 @@ P_TRACK = 0.030
 VARS = True
 
 if VARS:
+    # FIXME: this is a bad path for a general purpose example!
     FONT_PATH = '../../../fonts/'
 
     FONT_LOCATIONS = {
@@ -133,8 +114,8 @@ if VARS:
     FONTS = {}
     VFONT_PATH = 'PromisePageBot-GX.ttf'
     # Install the test V-font
-    if not 'PromisePageBot-Bold' in installedFonts():
-        installFont(FONT_PATH + VFONT_PATH)
+    if not 'PromisePageBot-Bold' in c.installedFonts():
+        c.installFont(FONT_PATH + VFONT_PATH)
     for name, location in FONT_LOCATIONS.items():
         fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
             location, targetDirectory=FONT_PATH + 'instances')
@@ -231,7 +212,7 @@ def makeDocument(rs):
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
-        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT_ALIGN, hyphenation=True)
+        rTracking=P_TRACK, leading=14, rLeading=0, align=LEFT, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
@@ -246,7 +227,7 @@ def makeDocument(rs):
     doc.newStyle(name='li', fontSize=fontSize, font=BOOK, 
         tracking=P_TRACK, leading=leading, hyphenation=True, 
         # Lists need to copy the listIndex over to the regalar style value.
-        tabs=[(listIndent, LEFT_ALIGN)], indent=listIndent, 
+        tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul', prefix='', postfix='')
     doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*fontSize)

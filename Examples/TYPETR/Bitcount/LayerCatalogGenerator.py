@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -19,13 +20,10 @@
 #
 from AppKit import NSColor
 import os
-
-import pagebot
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.toolbox.transformer import path2ScriptId
-from pagebot import textBoxBaseLines
 
 # Kinda hack, storing in empty module, to prevent globals to re-initialized, 
 # if variables are changed.

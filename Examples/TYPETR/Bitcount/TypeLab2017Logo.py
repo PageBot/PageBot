@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -19,10 +20,7 @@
 #
 from AppKit import NSColor
 import os
-
-import pagebot
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
-from pagebot import textBoxBaseLines
 from pagebot.fonttoolbox.objects.font import Font
 #from pagebot.toolbox.transformer import path2ScriptId
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -15,7 +16,7 @@
 #     This script generates an article (in Dutch) of 2009 about the approach to
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
-from pagebot import textBoxBaseLines, getFontPath
+from pagebot import getFontPath
 from pagebot.contexts import defaultContext as context
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, LEFT
@@ -31,7 +32,7 @@ from pagebot.composer import Composer
 # Elements that can placed on pages and templates.
 from pagebot.elements import *
 # Get functions to create instances style from Variable fonts.
-from pagebot.fonttoolbox.variablefontbuild import getVariableFont
+from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
   
 if 0: # In case an English MarkDown text of this example article is ready.
     LANGUAGE = 'en' # Tell RootStyle instance to use Englisch hyphenation.

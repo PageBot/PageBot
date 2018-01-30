@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
@@ -15,12 +16,11 @@
 #
 #     This script generates an automatic Thesis composition.
 #
-import pagebot
-from pagebot import findMarkers, textBoxBaseLines
+from pagebot import findMarkers
 from pagebot.style import getRootStyle, LEFT, NO_COLOR, A4, TOP, BOTTOM
 from pagebot.document import Document
 from pagebot.contexts import defaultContext as context
-from pagebot.elements.page import Page, Template
+from pagebot.elements.pbpage import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.elements import Galley
