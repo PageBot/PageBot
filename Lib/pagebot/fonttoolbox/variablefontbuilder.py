@@ -20,7 +20,6 @@
 from __future__ import division
 import copy
 import os
-from drawBot import installFont, drawPath
 
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
@@ -234,7 +233,7 @@ def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0, strokeColor=None, s
     context.setStrokeColor(strokeColor, strokeWidth)
     context.transform((1, 0, 0, 1, x - glyph.width/2*s, y))
     context.scale(s)
-    drawPath(glyph.path)
+    context.drawPath(glyph.path)
     context.restore()
 
 
@@ -341,6 +340,6 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
     varfont.save(outFile)
 
     # Installing the font in DrawBot. Answer font name and path.
-    return installFont(outFile), outFile
+    return context.installFont(outFile), outFile
 
 

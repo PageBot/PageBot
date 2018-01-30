@@ -19,9 +19,7 @@
 import sys
 import weakref
 
-# TODO: Needs DrawBot/Flex context.
-from drawBot import BezierPath
-
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
 from pagebot.toolbox.transformer import point2D
 from pagebot.fonttoolbox.analyzers.apoint import APoint
@@ -140,7 +138,7 @@ class Glyph(object):
         if coordinates or components:
             # TODO: Needs context for DrawBot/Flex usage
             # TODO: Separate path creation from init?
-            self._path = path = BezierPath()
+            self._path = path = context.BezierPath()
 
         for index, (x, y) in enumerate(coordinates):
             minX = min(x, minX)
