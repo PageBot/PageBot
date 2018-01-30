@@ -336,8 +336,8 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
             if tag in varfont:
                 del varfont[tag]
 
-    #print("Saving instance font", outFile)
-    varfont.save(outFile)
+        #print("Saving instance font", outFile)
+        varfont.save(outFile)
 
     # Installing the font in DrawBot. Answer font name and path.
     return context.installFont(outFile), outFile
