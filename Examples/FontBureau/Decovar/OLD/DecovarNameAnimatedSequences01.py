@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -19,9 +20,7 @@ from fontTools.ttLib import TTFont
 from pagebot import getFontPath
 
 from pagebot.fonttoolbox.objects.ont import Font
-import pagebot.fonttoolbox.variablebuilder
-reload(pagebot.fonttoolbox.variablebuilder)
-from pagebot.fonttoolbox.variablebuilder import getVariableFont, drawGlyphPath
+from pagebot.fonttoolbox.variablefontbuilder import getVariableFont, drawGlyphPath
     
 EXPORT_PATH = '_export/DecovarAnimated002.gif'
   

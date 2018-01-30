@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -18,7 +19,7 @@
 from pagebot import getFontPath
 
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.fonttoolbox.variablebuilder import getVariableFont, drawGlyphPath
+from pagebot.fonttoolbox.variablefontbuilder import getVariableFont, drawGlyphPath
     
 EXPORT_PATH = '_export/DecovarAnimated_skeletons_terminals.gif'
   
