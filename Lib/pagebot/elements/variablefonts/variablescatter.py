@@ -19,8 +19,8 @@ from __future__ import division
 from random import random, choice
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from drawBot import FormattedString
 from pagebot.fonttoolbox.variationbuilder import drawGlyphPath
+from pagebot.toolbox.transformer import pointOffset
 
 
 class VariableScatter(Element):
@@ -91,8 +91,8 @@ class VariableScatter(Element):
             for indexY in range(self.sizeY+1):
                 ox = 30
                 oy = 25
-                ppx = ox + x + indexX * stepX
-                ppy = oy + y + indexY * stepY
+                ppx = ox + px + indexX * stepX
+                ppy = oy + py + indexY * stepY
                 if self.locations is not None:
                     location = choice(self.locations)
                 else:
