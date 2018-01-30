@@ -69,9 +69,8 @@ class Ruler(Element):
         context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         context.line((px + sIndent, py), (px + w, py))
 
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, origin)
+        # If there are child elements, recursively draw them over the pixel image.
+        self.buildChildElements(view, origin)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -100,8 +99,7 @@ class Ruler(Element):
 
         b.hr(class_=self.class_)
 
-        if drawElements:
-            self.buildChildElements(view, p)
+        self.buildChildElements(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
