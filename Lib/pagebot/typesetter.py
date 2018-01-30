@@ -14,6 +14,7 @@
 #
 #     typesetter.py
 #
+import sys
 import copy
 import codecs
 import xml.etree.ElementTree as ET
@@ -25,7 +26,7 @@ try:
     from pagebot.contributions.markdown.literature import LiteratureExtension
     from pagebot.contributions.markdown.footnotes import FootnoteExtension
 except ImportError:
-    print 'Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown'
+    sys.exit('Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown')
     markdown = None
 
 from pagebot.contexts import defaultContext
