@@ -3286,6 +3286,17 @@ class Element(object):
         return abs(self.parent.h - self.parent.pt - self.y) <= tolerance
 
     def isOriginOnTopSide(self, view, tolerance=0):
+        u"""Answer the boolean test if the origin of self is on the top side of self.parent.
+
+        >>> e1 = Element(w=200, h=200, x=0, y=500)
+        >>> e2 = Element(w=500, h=500, elements=[e1])
+        >>> e1.isOriginOnTopSide(None)
+        True
+        >>> e1.y = 400
+        >>> e1.isOriginOnTopSide(None)
+        False
+        >>> 
+        """
         if self.originTop:
             return abs(self.y) <= tolerance
         return abs(self.parent.h - self.y) <= tolerance
@@ -3305,9 +3316,6 @@ class Element(object):
 
         >>> e1 = Element(x=100, w=200) # e1.right == 300
         >>> e2 = Element(w=600, elements=[e1])
-        >>> e1.x, e1.w, e1.right
-
-        >>> #e1.isRightOnCenter()
 
         """
         return abs(self.parent.w - self.x) <= tolerance
