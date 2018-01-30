@@ -14,8 +14,6 @@
 #
 #     markers.py
 #
-from drawBot import (cmykStroke, newPath, drawPath, moveTo,
-                     lineTo, strokeWidth, oval, fill)
 from pagebot.toolbox.transformer import point3D
 
 def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):

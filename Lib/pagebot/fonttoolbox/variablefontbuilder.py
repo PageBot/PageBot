@@ -226,15 +226,15 @@ def getVariableFont(fontOrPath, location, install=True, styleName=None, normaliz
     return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName, lazy=lazy)
 
 # TODO: Remove from here.
-def drawGlyphPath(font, glyphName, x, y, s=0.1, fillColor=0, strokeColor=None, strokeWidth=0):
+def drawGlyphPath(c, font, glyphName, x, y, s=0.1, fillColor=0, strokeColor=None, strokeWidth=0):
     glyph = font[glyphName]
-    context.save()
-    context.setFillColor(fillColor)
-    context.setStrokeColor(strokeColor, strokeWidth)
-    context.transform((1, 0, 0, 1, x - glyph.width/2*s, y))
-    context.scale(s)
-    context.drawPath(glyph.path)
-    context.restore()
+    c.save()
+    c.setFillColor(fillColor)
+    c.setStrokeColor(strokeColor, strokeWidth)
+    c.transform((1, 0, 0, 1, x - glyph.width/2*s, y))
+    c.scale(s)
+    c.drawPath(glyph.path)
+    c.restore()
 
 
 def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):

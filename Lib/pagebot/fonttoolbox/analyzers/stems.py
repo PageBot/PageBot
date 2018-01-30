@@ -247,11 +247,12 @@ class Serif(Stem):
     """
 
     def _get_boundingBox(self):
-        bb = BoundingBox()
-        bb.extendByPointContext(self.parent)
-        bb.extendByPointContext(self.point)
-        return bb
-
+        # TODO: get this to work
+        #bb = BoundingBox()
+        #bb.extendByPointContext(self.parent)
+        #bb.extendByPointContext(self.point)
+        #return bb
+        return 0, 0, 0, 0
     boundingBox = property(_get_boundingBox)
     
 class Overshoot(object):
