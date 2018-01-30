@@ -984,41 +984,6 @@ def hex2char(hex):
     except:
         pass
 
-# Deprecated
-def XXXwriteUnicode(unicodeString):
-    u"""Takes a unicode string and returns a decimal integer."""
-    if isinstance(unicodeString, str):
-        return hex2dec(unicodeString)
-    else:
-        return int(unicodeString)
-
-def XXXreadUnicode(unicodeInteger):
-    u"""
-    <doc>Takes a decimal integer and returns a unicode string.</doc>
-    """
-    if type(unicodeInteger) is int:
-        return dec2hex(unicodeInteger)
-    else:
-        return str(unicodeInteger)
-
-def XXXwriteUnicodes(uniStringList):
-    u"""
-    <doc>Takes a list of unicode strings and returns a list of robofab-friendly integers.</doc>
-    """
-    intList = []
-    for u in uniStringList:
-        intList.append(writeUnicode(u))
-    return intList
-
-def XXXreadUnicodes(uniIntList):
-        u"""
-        <doc>takes a list of robofab friendly integers and returns a string of unicodes.</doc>
-        """
-        stringList = []
-        for u in uniIntList:
-            stringList.append(readUnicode(u))
-        return stringList
-
 # ---------------------------------------------------------------------------------------------------------
 # Floq field name conversion between Floq attributes and database fields
 
