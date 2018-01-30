@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -15,39 +16,14 @@
 #     This script generates an article (in Dutch) of 2009 about the approach to
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
-from pagebot import textBoxBaseLines
-
-import pagebot.style
-reload(pagebot.style)
 from pagebot.style import getRootStyle, LEFT
-
-import pagebot.document 
-reload(pagebot.document)
 from pagebot.document import Document
-
-import pagebot.elements.pbpage
-reload(pagebot.elements.pbpage)
 from pagebot.elements.pbpage import Template
-
-import pagebot.composer
-reload(pagebot.composer)
 from pagebot.composer import Composer
-
-import pagebot.typesetter
-reload(pagebot.typesetter)
 from pagebot.typesetter import Typesetter
-
-import pagebot.elements
-reload(pagebot.elements)
 from pagebot.elements import Galley, Rect
-
-import pagebot.fonttoolbox.elements.variationcube
-reload(pagebot.fonttoolbox.elements.variationcube)
-from pagebot.fonttoolbox.elements.variationcube import VariationCube
-
-import pagebot.fonttoolbox.variationbuilder
-reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import getVariationFont
+from pagebot.elements.variablefonts.variablecube import VariableCube
+from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
     
 DEBUG = False
 
@@ -112,10 +88,10 @@ def makeSpecimen(rs):
     doc = Document(rs, autoPages=2, template=template1) 
 
     page1 = doc[1]
-    vCube = VariationCube(FONT_PATH, w=500, h=500, s='a', fontSize=86, dimensions=dict(wght=4,rnds=4))
+    vCube = VariableCube(FONT_PATH, w=500, h=500, s='a', fontSize=86, dimensions=dict(wght=4,rnds=4))
     page1.place(vCube, 50, 160)
 
-    font = getVariationFont(FONT_PATH, location=dict(wght=-0.5, rnds=2,diam=0.5))
+    font = getVariableFont(FONT_PATH, location=dict(wght=-0.5, rnds=2,diam=0.5))
     page2 = doc[2]
     for n in range(600):
         page2.text(FormattedString('@', font=font, fontSize=800, fill=(random(), random(), random(), 0.8)), 50+random()*100, 200+random()*100)

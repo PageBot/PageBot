@@ -186,6 +186,9 @@ class FlatContext(BaseContext):
         the current context."""
         return FlatString(self.b.textOverflow(bs.s, bounds, align), self)
 
+    def textBoxBaseLines(self, txt, box):
+        raise NotImplementedError()
+
     #   D R A W I N G
 
     def _getShape(self):

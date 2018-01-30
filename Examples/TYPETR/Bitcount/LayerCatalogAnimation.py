@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
@@ -21,11 +22,8 @@
 #     TODO: Add Variable selection (color selector, checkbox, color wheel)
 #
 import os
-
-import pagebot
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
-from pagebot import textBoxBaseLines
 
 typetrStoreUrl = 'https://store.typenetwork.com/foundry/typetr'
 EXPORT_PATH = '_export/BitcountLayerCatalogAnimation.gif'

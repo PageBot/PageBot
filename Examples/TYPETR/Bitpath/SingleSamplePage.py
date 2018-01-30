@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -14,10 +15,7 @@
 #
 #     This script the PDF document with Bitcount refernce information.
 #
-from drawBot import FormattedString
-
-import pagebot
-from pagebot import findMarkers, textBoxBaseLines
+from pagebot import findMarkers
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
 from pagebot.contexts import defaultContext as context
 from pagebot.document import Document
@@ -82,8 +80,8 @@ FS = context.newString("", style=RS)
 RS['language'] = 'en'
 
 Monospaced = False
-Headline_Tracking = False
-Body_Tracking = False
+HeadlineTracking = False
+BodyTracking = False
 Single = False
 Ligatures = False # [liga]
 Slashed_Zero = True # [zero]
@@ -236,8 +234,7 @@ if __name__ == '__main__':
     UI.append(dict(name='Alternative_g', ui='CheckBox')) # [ss09].
     UI.append(dict(name='LC_Figures', ui='CheckBox')) # [onum].
 
-    Variable(UI, globals())
-            
     d = makeDocument(RS)
+    d.context.Variable(UI, globals())
     d.export(EXPORT_PATH) 
 
