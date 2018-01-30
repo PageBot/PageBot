@@ -1240,8 +1240,16 @@ def value2TagName(value):
     return ''.join(tagname)
 
 def object2SpacedString(o):
-    return `o`
+    u"""Answer the object as string.
 
+    >>> object2SpacedString(2)
+    '2'
+    >>> object2SpacedString('ABC')
+    'ABC'
+    >>> object2SpacedString(['ABC', 12])
+    "['ABC', 12]"
+    """
+    return str(o)
 
 def flatten2Class(*args):
     u"""

@@ -21,8 +21,6 @@ from pagebot.elements.element import Element
 from pagebot.style import makeStyle, ORIGIN
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.fonttoolbox.variablebuilder import drawGlyphPath
-from drawBot import FormattedString
-
 
 class VariableCube(Element):
     # Initialize the default behavior tags as different from Element.
@@ -33,11 +31,6 @@ class VariableCube(Element):
         Element.__init__(self, point=point, parent=parent, style=style,
                          name=name, eId=eId, **kwargs)
 
-        p = pointOffset(self.oPoint, ORIGIN)
-        p = self._applyScale(p)
-        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
-
-        self.__init__
         self.font = fontpath
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from

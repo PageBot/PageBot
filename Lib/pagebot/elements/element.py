@@ -16,7 +16,6 @@
 #
 from __future__ import division
 
-import sys
 import weakref
 import copy
 from pagebot.contexts import defaultContext

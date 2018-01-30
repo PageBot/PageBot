@@ -158,6 +158,12 @@ class FlatContext(BaseContext):
         u"""Answer the path that is source of the given font name. Answer None if the font cannot be found."""
         return self.fontPaths.get(fontName)
 
+    def listOpenTypeFeatures(self, fontName):
+        u"""Answer the list of opentype features available in the named font.
+        TODO: Tobe implemented"""
+        #return self.b.listOpenTypeFeatures(fontName)
+        return []
+
     #   T E X T
 
     def newBulletString(self, bullet, e=None, style=None):

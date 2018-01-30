@@ -20,7 +20,6 @@
 from __future__ import division
 
 from copy import copy
-from pagebot.contexts import defaultContext as context
 from pagebot.elements import Element
 from pagebot.style import makeStyle
 from pagebot.fonttoolbox.variationbuilder import drawGlyphPath
@@ -49,6 +48,8 @@ class VariableGlyphs(Element):
     
     def draw(self, view, origin):
 
+        c = self.context
+
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
@@ -65,7 +66,7 @@ class VariableGlyphs(Element):
         #else:
         #    fillColor = (0, 0, 0)
         glyphPathScale = self.fontSize/self.font.info.unitsPerEm
-        drawGlyphPath(self.font.ttFont, self.glyphNames[0], px, py,
+        drawGlyphPath(c, self.font.ttFont, self.glyphNames[0], px, py,
                       self.location, s=glyphPathScale, fillColor=fillColor)
 
         if self.drawAfter is not None: # Call if defined
