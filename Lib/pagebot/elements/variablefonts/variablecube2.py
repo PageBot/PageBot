@@ -91,8 +91,8 @@ class VariableCube(Element):
             for indexY in range(sizeY+1):
                 ox = 30
                 oy = 25
-                ppx = ox + x + indexX * stepX
-                ppy = oy + y + indexY * stepY
+                ppx = ox + px + indexX * stepX
+                ppy = oy + py + indexY * stepY
                 self.location[axisX] = indexX * RANGE / sizeX
                 self.location[axisY] = indexY * RANGE / sizeY
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
@@ -109,10 +109,10 @@ class VariableCube(Element):
                                      fill=0)
                 w, h = bs.size()
 
-                page.text(bs, ppx - stepX/4, ppy - 16)
+                c.text(bs, ppx - stepX/4, ppy - 16)
                 # Bit of hack, we need the width of the glyph here.
 
         bs = c.newString('Other axes: %s' % self.location,
                              fontSize=6, fill=0)
         w, h = bs.size()
-        page.text(bs, px, py - 16)
+        c.text(bs, px, py - 16)
