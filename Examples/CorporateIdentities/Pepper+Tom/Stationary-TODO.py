@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -13,39 +14,15 @@
 #     Pepper+Tom Identity
 #     Stationary.py
 #
-#
-#
-import pagebot
-from pagebot import getFormattedString, textBoxBaseLines
-
-import pagebot.style
-reload(pagebot.style)
+from pagebot.contexts import defaultContext as c
 from pagebot.style import getRootStyle, LEFT_ALIGN
-
-import pagebot.document 
-reload(pagebot.document)
 from pagebot.document import Document
-
-import pagebot.elements.pbpage
-reload(pagebot.elements.pbpage)
-from pagebot.elements.pbpage import Template
-
-import pagebot.composer
-reload(pagebot.composer)
-from pagebot.composer import Composer
-
-import pagebot.typesetter
-reload(pagebot.typesetter)
-from pagebot.typesetter import Typesetter
-
-import pagebot.elements
-reload(pagebot.elements)
 from pagebot.elements import Galley, Rect
+from pagebot.elements.pbpage import Template
+from pagebot.composer import Composer
+from pagebot.typesetter import Typesetter
+from pagebot.fonttoolbox.variablefontbuilder import generateInstance
 
-import pagebot.fonttoolbox.variationbuilder
-reload(pagebot.fonttoolbox.variationbuilder)
-from pagebot.fonttoolbox.variationbuilder import generateInstance
-    
 DEBUG = True
 
 SHOW_GRID = DEBUG
@@ -88,7 +65,7 @@ RS = getRootStyle(
     rLeading = 0,
     fontSize = 9
 )
-FS = getFormattedString(FormattedString(''), RS)
+FS = c.newString('')
 print FS
     # LANGUAGE-SWITCH Language settings
 if 0: # EN version of the article.

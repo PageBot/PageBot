@@ -139,6 +139,17 @@ class DrawBotContext(BaseContext):
         the current context."""
         return FsString(self.b.textOverflow(bs.s, bounds, align), self)
 
+    def textBoxBaseLines(self, txt, box):
+        x, y, w, h = box
+        attrString = txt.getNSObject()
+        setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
+        path = Quartz.CGPathCreateMutable()
+        Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
+        box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
+        ctLines = CoreText.CTFrameGetLines(box)
+        origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+        return [(x + o.x, y + o.y) for o in origins]
+
     #   D R A W I N G
 
     def rect(self, x, y, w, h):
