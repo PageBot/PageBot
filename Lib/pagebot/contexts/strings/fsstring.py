@@ -69,7 +69,7 @@ class FsString(BabelString):
         p.text(self.s, (0, 0))
         return  p.bounds() # bx, by, bw, bh 
 
-    def fontContainsCharacters(self, character):
+    def fontContainsCharacters(self, characters):
         u"""Return a bool if the current font contains the provided characters. 
         Characters is a string containing one or more characters."""
         return self.s.fontContainsCharacters(characters)
@@ -107,9 +107,9 @@ class FsString(BabelString):
         If a lineHeight is set, this value will be returned."""
         return self.s.fontLineHeight()
 
-    def appendGlyph(*glyphNames):
+    def appendGlyph(self, *glyphNames):
         u"""Append a glyph by his glyph name using the current font. Multiple glyph names are possible."""
-        self.s.appenGlyph(glyphNames)
+        self.s.appendGlyph(glyphNames)
 
     def textOverflow(self, w, h, align=LEFT):
         return self.context.textOverflow(self, (0, 0, w, h), align)

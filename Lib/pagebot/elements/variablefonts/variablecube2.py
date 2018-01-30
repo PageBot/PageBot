@@ -97,7 +97,7 @@ class VariableCube(Element):
                 self.location[axisY] = indexY * RANGE / sizeY
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
 
-                drawGlyphPath(self.font.ttFont, self.glyphNames[0],
+                drawGlyphPath(c, self.font.ttFont, self.glyphNames[0],
                               ppx, ppy, self.location, s=glyphPathScale,
                               fillColor=(0, 0, 0))
 
