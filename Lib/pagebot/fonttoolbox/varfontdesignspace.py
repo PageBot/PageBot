@@ -12,7 +12,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     varfontdesignscpace.py
+#     varfontdesignspace.py
 #
 from __future__ import division
 
@@ -59,7 +59,7 @@ def setCoordinates(glyph, coord, glyfTable):
 
 
 class TTVarFontGlyphSet(object):
-    # TODO: CHange to PageBot Font wrapper
+    # TODO: Change to PageBot Font wrapper
     def __init__(self, ttFont):
         self._ttFont = ttFont
         self._axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in ttFont['fvar'].axes}
@@ -103,12 +103,9 @@ class TTVarGlyph(object):
         glyph.expand(glyfTable)
         return glyph
 
-    def draw(self, view, origin):
+    def draw(self, pen):
         glyph = self._ttFont['glyf'][self._glyphName]
         glyph = self._copyGlyph(glyph, self._ttFont['glyf'])
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
 
         variables = self._ttFont['gvar'].variables[self._glyphName]
         coordinates, _ = _GetCoordinates(self._ttFont, self._glyphName)
@@ -126,8 +123,6 @@ class TTVarGlyph(object):
         self.width = horizontalAdvanceWidth
         glyph.draw(pen, self._ttFont['glyf'])  # XXX offset based on lsb
 
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
 
 class TTVarFontDesignSpace(DesignSpaceBase):
 
