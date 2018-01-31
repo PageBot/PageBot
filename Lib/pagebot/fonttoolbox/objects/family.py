@@ -56,7 +56,7 @@ def getFamilyFonts(familyName):
     fonts = {} # Dictionary, where key is the DrawBot font name, value is the OS path of the font file.
     for fontName in context.installedFonts(): # Answers complete list of all installed fonts.
         if familyName in fontName: # If this is a with with the familyName that we are looking for...
-            fontPath = getFontPathOfFont(fontName)
+            fontPath = context.getFontPathOfFont(fontName)
             if fontPath is not None:
                 fonts[fontName] = Font(fontPath) # Store the name and find the font path name.
     return fonts #  Answer the dictionary. This is empty, if no Bitcount fonts are installed now.
@@ -66,7 +66,7 @@ def getSystemFontPaths():
     fontPaths = []
     for fontName in context.installedFonts():
         if not fontName.startswith('.'):
-            fontPaths.append(getFontPathOfFont(fontName))
+            fontPaths.append(context.getFontPathOfFont(fontName))
     return fontPaths
 
 def guessFamilies(styleNames):
@@ -77,7 +77,7 @@ def guessFamilies(styleNames):
     for styleName in styleNames:
         if styleName.startswith('.'): # Filter the system fonts that has a name with initial "."
             continue
-        path = getFontPathOfFont(styleName)
+        path = context.getFontPathOfFont(styleName)
         # Could have an extension like .ttf or .otf, by OSX system font don't have an extension.
         # o we just try to open the plain file and see how that goes.
         # Try to open the font in font tools, so we have access to a lot of information for our proof.

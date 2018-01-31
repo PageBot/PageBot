@@ -18,9 +18,18 @@ import os
 
 try:
     from AppKit import NSFont
-    from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute, kCTFontURLAttribute
-    from drawbot.context.baseContext import BezierPath
+    from CoreText import CTFontDescriptorCreateWithNameAndSize,
+                         CTFontDescriptorCopyAttribute,
+                         kCTFontURLAttribute,
+                         CTFramesetterCreateWithAttributedString,
+                         CTFramesetterCreateFrame,
+                         CTFrameGetLines,
+                         CTFrameGetLineOrigins
+    from Quartz import CGPathAddRect,
+                       CGPathCreateMutable,
+                       CGRectMake
     from drawBot import Variable
+    from pagebot.builders import drawBotBuilder
 except ImportError:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
@@ -142,12 +151,12 @@ class DrawBotContext(BaseContext):
     def textBoxBaseLines(self, txt, box):
         x, y, w, h = box
         attrString = txt.getNSObject()
-        setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
-        path = Quartz.CGPathCreateMutable()
-        Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
-        box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-        ctLines = CoreText.CTFrameGetLines(box)
-        origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+        setter = CTFramesetterCreateWithAttributedString(attrString)
+        path = CGPathCreateMutable()
+        CGPathAddRect(path, None, CGRectMake(*box))
+        box = CTFramesetterCreateFrame(setter, (0, 0), path, None)
+        ctLines = CTFrameGetLines(box)
+        origins = CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
         return [(x + o.x, y + o.y) for o in origins]
 
     #   D R A W I N G
