@@ -75,16 +75,20 @@ if __name__ == '__main__':
         # Template 1
         template1 = Template(rs) # Create template of main size. Front page only.
         # Show grid columns and paddings if rootStyle.showGrid or rootStyle.showGridColumns are True
-        # FIXME: template1.grid(rs) 
+        template1.grid(rs)
         # Show baseline grid if rs.showBaselineGrid is True
         # FIXEME: template1.baselineGrid(rs)
-        # FIXME: vCube = VariableCube(path=VAR_FONT_PATH, point=(50, 100), w=500, h=500, s='a', fontSize=86, dimensions=dict(wght=5, wdth=5))
-        # FIXME: template1.append(vCube)
+        vCube = VariableCube(VAR_FONT_PATH,
+                             s='a',
+                             point=(50, 100),
+                             style=dict(w=500, h=500, fontSize=86),
+                             dimensions=dict(wght=5, wdth=5))
+        template1.append(vCube)
        
         # Create new document with (w,h) and fixed amount of pages.
         # Make number of pages with default document size.
         # Initially make all pages default with template2
-        # FIXME: doc = Document(rs, autoPages=1, template=template1) 
+        doc = Document(rs, autoPages=1, template=template1) 
         doc = Document(rs, autoPages=1) 
 
         return doc
