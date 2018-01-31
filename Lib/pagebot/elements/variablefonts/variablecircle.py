@@ -20,12 +20,15 @@
 #
 from __future__ import division
 from math import pi, sin, cos
-from drawBot import textSize, text, fill, oval, stroke, strokeWidth, moveTo, lineTo, newPath, drawPath
 from pagebot.contexts import defaultContext as context
 from pagebot.elements.element import Element
 from pagebot.style import MIN_WIDTH, ORIGIN
-from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath, getVariableFont, getVarLocation
+from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath, getVariableFont
 from pagebot.toolbox.transformer import pointOffset
+
+###DEPRECATED: remove usage:
+from pagebot.fonttoolbox.variablefontbuilder import XXXgetVarLocation as getVarLocation
+
 
 class VariableCircle(Element):
     u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info.
@@ -76,10 +79,10 @@ class VariableCircle(Element):
 
     def _drawGlyphMarker(self, axisName, mx, my, glyphName, fontSize, location, strokeW=2):
         # Middle circle 
-        fill(1)
-        stroke(0.7)
-        strokeWidth(strokeW)
-        oval(mx-fontSize/2*self.R, my-fontSize/2*self.R, fontSize*self.R, fontSize*self.R)
+        context.fill(1)
+        context.stroke(0.7)
+        context.strokeWidth(strokeW)
+        context.oval(mx-fontSize/2*self.R, my-fontSize/2*self.R, fontSize*self.R, fontSize*self.R)
 
         variableFont = getVariableFont(self.font, location)
         # Show axis name below circle marker?
@@ -88,8 +91,8 @@ class VariableCircle(Element):
                                    style=dict(font=variableFont.installedName,
                                               fontSize=fontSize/4,
                                               textFill=0))
-            tw, th = textSize(fs)
-            text(fs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
+            tw, th = context.textSize(fs)
+            context.text(fs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.font.info.unitsPerEm
         drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
 
@@ -102,12 +105,12 @@ class VariableCircle(Element):
         w = self.w - markerSize
         h = self.h - markerSize
 
-        fill(0.9)
-        stroke(None)
+        context.fill(0.9)
+        context.stroke(None)
         mx = px + self.pw/2
         my = py + self.ph/2
         # Gray circle that defines the area of the axis extremes.
-        oval(px+markerSize/2, py+markerSize/2, w, h)
+        context.oval(px+markerSize/2, py+markerSize/2, w, h)
         # Draw axis spikes first, so we can cover them by the circle markers.
         axes = self.font.axes
 
@@ -138,20 +141,20 @@ class VariableCircle(Element):
                 endX1, endY1 = self._angle2XY(angle-180, (w/2 + rStart) - rEnd - fontSize)
             else:
                 startX1 = None
-            stroke(None)
-            fill(0.3)
-            oval(mx+startX-2, my+startY-2, 4, 4)
+            context.stroke(None)
+            context.fill(0.3)
+            context.oval(mx+startX-2, my+startY-2, 4, 4)
             
-            fill(None)
-            stroke(0)
-            strokeWidth(1)
-            newPath()
-            moveTo((mx+startX, my+startY))
-            lineTo((mx+endX, my+endY))
+            context.fill(None)
+            context.stroke(0)
+            context.strokeWidth(1)
+            context.newPath()
+            context.moveTo((mx+startX, my+startY))
+            context.lineTo((mx+endX, my+endY))
             if startX1 is not None:
-                moveTo((mx+startX1, my+startY1))
-                lineTo((mx+endX1, my+endY1))
-            drawPath()
+                context.moveTo((mx+startX1, my+startY1))
+                context.lineTo((mx+endX1, my+endY1))
+            context.drawPath()
 
             # Show the glyph shape as it is at the max location of the axis.
             location = {axisName: maxValue}
@@ -183,7 +186,3 @@ class VariableCircle(Element):
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
-
-
-
-		
