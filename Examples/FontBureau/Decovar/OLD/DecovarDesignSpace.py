@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -20,7 +21,7 @@ from pagebot.elements.pbpage import Template
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variablecircle import VariableCircle
+from pagebot.elements.variablefonts.variablecircle import VariableCircle
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -29,7 +30,7 @@ OUTPUT_FILE = 'DecovarVariableCircle.pdf'
 FONT_PATH = pagebot.getFontPath()
 fontPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
 decovar = Font(fontPath)
-decovarName = decovar.install() # Do DrawBot font install.
+decovarName = decovar.install()
 
 #print decovar.designSpace.variables['A']
 print decovar.designSpace

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -27,7 +28,7 @@ from pagebot.elements.pbpage import Template
 from pagebot.fonttoolbox.objects.font import Font
 
 from pagebot.publications.typespecimen import TypeSpecimen
-from pagebot.fonttoolbox.elements.variableglyphs import VariableGlyphs
+from pagebot.elements.variablefonts.variableglyphs import VariableGlyphs
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -37,7 +38,7 @@ FONT_PATH = pagebot.getFontPath()
 DecovarPath = FONT_PATH + 'fontbureau/Decovar-VF_2017-02-06.ttf'
 #DecovarPath = u"/Users/petr/git/PageBotTYPETR/src/fonts/BitcountVar/BitcountGrid-GX.ttf"
 
-decovarName = installFont(DecovarPath)
+decovarName = context.installFont(DecovarPath)
 
 varFont = Font(DecovarPath)
 
