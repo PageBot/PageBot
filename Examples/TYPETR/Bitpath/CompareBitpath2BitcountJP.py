@@ -59,4 +59,4 @@ for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz':
                                           textStrokeWidth=0.5))
         context.text(fs, (50, 100))
         
-context.saveImage('_export/CompareBitpath2Bitcount.pdf')
+context.saveImage('_export/CompareBitpath2BitcountJP.pdf')

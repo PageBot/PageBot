@@ -12,7 +12,7 @@
 #
 #     CompareBitpath2Bitcount.py
 
-from random import shuffle
+from random import random, shuffle
 from pagebot.contexts import defaultContext as context
 
 ITALIC = False
@@ -20,7 +20,7 @@ ITALIC = False
 bitpaths = []
 bitcounts = []
 
-for fontName in installedFonts():
+for fontName in context.installedFonts():
     if 'Bitcount' in fontName:
         if 'Italic' in fontName:
             continue
@@ -31,16 +31,16 @@ for fontName in installedFonts():
         bitpaths.append(fontName)
         
 bitpaths=[]
-print len(bitpaths)
-print len(bitcounts)
+#print len(bitpaths)
+#print len(bitcounts)
 
 for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz':
     #newPage(1200, 500)
-    newPage(500, 500)
+    context.newPage(500, 500)
     s = 'Bitcount & Bitpath'
-    s = c
+    #s = c
     fonts = bitpaths + bitcounts
-    print len(fonts)
+    #print len(fonts)
     shuffle(fonts)
     for name in fonts:
         #if not 'Double' in name:
@@ -51,13 +51,13 @@ for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz':
             continue
         fs = context.newString(s, style=dict(font=name,
                                              fontSize=400,
-                                             openTypeFeatures=dict(ss01=True,
-                                                                   ss02=True,
-                                                                   ss03=True),
-                                            #textFill=None,
+                                             #openTypeFeatures=dict(ss01=True,
+                                             #                      ss02=True,
+                                             #                      ss03=True),
+                                             #textFill=None,
                                              textFill=(random(), random(), random(), 0.05),
                                              textStroke=(random(), random(), random(), 0.5),
                                              textStrokeWidth=0.5))
-        text(fs, (130, 130))
+        context.text(fs, (130, 130))
         
-saveImage('_export/CompareBitpath2Bitcount.pdf')
+context.saveImage('_export/CompareBitpath2Bitcount.pdf')
