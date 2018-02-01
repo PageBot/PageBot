@@ -38,7 +38,10 @@ class BaseContext(object):
     def newString(self, s, e=None, style=None, w=None, h=None, fontSize=None, 
             styleName=None, tagName=None):
         u"""Create a new styles BabelString(HtmlString) instance from s (converted to plain unicode string), 
-        using e or style. Ignore and answer s if it is already a FsString."""
+        using e or style. Ignore and answer s if it is already a FsString.
+
+
+        """
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
             s = self.STRING_CLASS.newString(u'%s' % s, context=self, e=e, style=style, w=w, h=h, 

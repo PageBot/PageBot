@@ -50,7 +50,6 @@ class DrawBotContext(BaseContext):
         u"""Constructor of DrawBotContext if drawBot import exists.
 
         >>> import drawBot
-
         >>> drawBotBuilder is not None
         True
         >>> drawBotBuilder is not None and drawBotBuilder.PB_ID == 'drawBot'
