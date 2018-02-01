@@ -33,6 +33,15 @@ class FsString(BabelString):
 
     u"""FsString is a wrapper around the standard DrawBot FormattedString."""
     def __init__(self, s, context):
+        u"""Constructor of the FsString, wrapper around DrawBot.FormattedString.
+    
+        >>> from pagebot.contexts import defaultContext as context
+        >>> context.b
+
+        >>> bs = FsString('ABC', context)
+        >>> bs
+
+        """
         BabelString.__init__(self, s, context)
         self.s = s # Enclose the DrawBot FormattedString. Property to make sure it is a FormattedString, otherwise create it.
 
@@ -44,7 +53,7 @@ class FsString(BabelString):
         DrawBot FormattedString and the class of self."""
         assert isinstance(s, (FsString, basestring)) or s.__class__.__name__ == 'FormattedString'
         if isinstance(s, basestring):
-            s = self.b.FormattedString(s)
+            s = self.context.b.FormattedString(s)
         elif isinstance(s, FsString):
             s = s.s
         self._s = s
@@ -540,14 +549,14 @@ def getBaseLines(txt, box):
     origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
     return [(x + o.x, y + o.y) for o in origins]
 
-def getTextPositionSearch(fs, w, h, search, xTextAlign=LEFT, hyphenation=True):
+def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
     u"""
     """
     bc = BaseContext()
     path = CoreText.CGPathCreateMutable()
     CoreText.CGPathAddRect(path, None, CoreText.CGRectMake(0, 0, w, h))
 
-    attrString = bc.attributedString(fs, align=xTextAlign)
+    attrString = bc.attributedString(bs, align=xTextAlign)
     if hyphenation and bc._state.hyphenation:
         attrString = bc.hyphenateAttributedString(attrString, w)
 
@@ -600,4 +609,8 @@ def findPattern(textLines, pattern):
             foundPatterns.append(foundPattern)
     return foundPatterns
             
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 

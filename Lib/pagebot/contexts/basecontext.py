@@ -67,3 +67,4 @@ class BaseContext(object):
     def Variable(self, ui, globals):
         """Offers interactive global value manipulation in DrawBot. Probably to be ignored in other contexts."""
         pass
+

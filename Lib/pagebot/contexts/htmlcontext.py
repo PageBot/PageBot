@@ -14,7 +14,7 @@
 #     htmlcontext.py
 #
 from basecontext import BaseContext
-from pagebot.contexts.builders import WebBuilder
+from pagebot.contexts.builders.webbuilder import WebBuilder
 from pagebot.contexts.strings.htmlstring import HtmlString
 
 class HtmlContext(BaseContext):

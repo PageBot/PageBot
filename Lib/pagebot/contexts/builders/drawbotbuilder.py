@@ -14,12 +14,13 @@
 #
 #     drawbotbuilder.py
 #
+
 try:
     import drawBot
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will be calling e.build_html()
     drawBotBuilder.PB_ID = 'drawBot' 
-    # Text import if MacOS specific imports are available.
+    # Text by import if MacOS specific imports are available.
     import CoreText, AppKit, Quartz # #pylint: disable=unused-import
 
 except ImportError:
