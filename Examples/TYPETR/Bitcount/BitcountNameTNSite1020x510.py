@@ -22,7 +22,7 @@
 #     TODO: Add Variation selection (color selector, checkbox, color wheel)
 #
 import os
-from random import choice
+from random import random, choice
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 
@@ -113,22 +113,23 @@ def getFittingString(t, fontName, c):
     fsWidth, fsHeight = fs.size()
     fontSize =  initialFontSize * (W-3*padding) / fsWidth
     # Make new formatted string in fitting fontSize
-    fs = context.newString(t, style=dict(font=fontName,
+    bs = context.newString(t, style=dict(font=fontName,
                                          fontSize=fontSize,
                                          textFill=c))
-    return fs
+    return bs
         
 def drawLayers(fss1, fss2):
     # Draw this layer in a couple of frame
     context.newPage(W, H)
     context.frameDuration(fd)
-    context.fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
+    context.fill((backgroundColor[0],backgroundColor[1],backgroundColor[2]))
     context.rect(0, 0, W, H)
     y = 3*padding
+    offsetY = -100
     for fs in fss1:
-        context.text(fs, (2*padding, y+310))
+        context.text(fs, (2*padding, y+offsetY+310))
     for fs in fss2:
-        context.text(fs, (2.35*padding, y+5))
+        context.text(fs, (2.35*padding, y+offsetY+5))
 
 if __name__ == '__main__':     
     # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.

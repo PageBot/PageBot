@@ -18,8 +18,10 @@
 #     Purchase Bitcount fonts at https://store.typenetwork.com/foundry/typetr/fonts/bitcount
 #     A single user license of Bitcount is $10.10 per font or $101 for the complete package of 300 styles).
 #
-from AppKit import NSColor
 import os
+from random import random, choice
+import pagebot
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.fonttoolbox.objects.font import Font
 #from pagebot.toolbox.transformer import path2ScriptId
@@ -50,7 +52,7 @@ Save_PDF = True
 Sample_Text = u'TypeLab' # Initial sample string
 Spacing_Variant = True #random()<0.5
 Tracking = 0
-Background_Color = NSColor.blackColor()
+Background_Color = (0, 0, 0)
 Italic = False
 Italic_Shapes = False # [ss08]
 Condensed = False # [ss07] Excludes Double if selected
@@ -333,7 +335,7 @@ if __name__ == '__main__':
         Alternative_g = random() < 0.3 # [ss09]
         LC_Figures = random() < 0.3 # [onum]      
 
-    Variable(UI, globals())
+    context.Variable(UI, globals())
 
     # Store Italics flag, so we can test if it changed.
     scriptGlobals.random_Features = Random_Features
