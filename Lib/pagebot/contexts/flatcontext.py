@@ -46,6 +46,15 @@ class FlatContext(BaseContext):
     STRING_CLASS = FlatString
 
     def __init__(self):
+        u"""Constructor of Flat context.
+
+        >>> context = FlatContext()
+        >>> context.isFlat
+        True
+        >>> context.newDocument(100, 100)
+        >>> context.doc.__class__.__name__
+        'document'
+        """
         # Keep status of last color, to make difference between fill and stroke colors.
         self.name = self.__class__.__name__
         self.fillColor = None
@@ -76,35 +85,64 @@ class FlatContext(BaseContext):
     #   D O C U M E N T
 
     def newDocument(self, w, h, units='pt'):
+        u"""Create a new self.doc Flat canvas to draw on.
+
+        >>> context = FlatContext()
+        >>> context.isFlat
+        True
+        >>> context.newDocument(100, 100)
+        >>> int(context.doc.width), int(context.doc.height)
+        (100, 100)
+        """
         self.doc = self.b.document(w, h, units)
 
     def saveDocument(self, path, multiPage=True):
-        u"""Save the document to file(s)."""
-        if path.endswith('.png'):
+        u"""Save the current document to file(s)
+
+        >>> import os
+        >>> from pagebot import getRootPath
+        >>> exportPath = getRootPath() + '/_export/' # _export/* Files are ignored in git
+        >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
+        >>> context = FlatContext()
+        >>> w, h = 100, 100
+        >>> context.newDocument(w, h)
+        >>> context.newPage(w, h)
+        >>> context.fill((0, 0, 0, 0))
+        >>> context.rect(10, 10, w-20, h-20)
+        >>> #context.saveDocument(exportPath + 'MyTextDocument_F.jpg') # Flat is too scrict with color-format match
+        >>> #context.saveDocument(exportPath + 'MyTextDocument_F.pdf') # Flat is too scrict with color-format match
+        >>> context.saveDocument(exportPath + 'MyTextDocument_F.png')
+        >>> context.saveDocument(exportPath + 'MyTextDocument_F.gif')
+        [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
+        """
+        extension = path.split('.')[-1]
+        if extension == 'png':
             if len(self.pages) == 1 or not multiPage:
                 self.pages[0].image(kind='rgba').png(path)
             else:
                 for n, p in enumerate(self.pages):
                     pagePath = path.replace('.png', '%03d.png' % n)
                     p.image(kind='rgba').png(pagePath)
-        elif path.endswith('.jpg'):
+        elif extension == 'jpg':
             if len(self.pages) == 1 or not multiPage:
                 self.pages[0].image(kind='rgb').jpeg(path)
             else:
                 for n, p in enumerate(self.pages):
                     pagePath = path.replace('.png', '%03d.png' % n)
                     p.image(kind='rgb').jpeg(pagePath)
-        elif path.endswith('.svg'):
+        elif extension == 'svg':
             if len(self.pages) == 1 or not multiPage:
                 self.pages[0].svg(path)
             else:
                 for n, p in enumerate(self.pages):
                     pagePath = path.replace('.png', '%03d.png' % n)
                     p.svg(pagePath)
-        elif path.endswith('.pdf'):
+        elif extension == 'pdf':
             self.doc.pdf(path)
-        elif path.endswith('.gif'):
-            print path
+        elif extension == 'gif':
+            print('[FlatContext] Gif not yet implemented for "%s"' % path.split('/')[-1])
+        else:
+            raise NotImplementedError('[FlatContext] File format "%s" is not implemented' % path.split('/')[-1])
 
     saveImage = saveDocument # Compatible API with DrawBot
 
@@ -369,9 +407,17 @@ class FlatContext(BaseContext):
     #   E X P O R T
 
     def create_gif(self, filenames, duration):
+        """
+        #TODO: Not implement yet. 
         images = []
         for filename in filenames:
             images.append(imageio.imread(filename))
         output_file = 'Gif-%s.gif' % datetime.now().strftime('%Y-%M-%d-%H-%M-%S')
         imageio.mimsave(output_file, images, duration=duration)
+        """
 
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+  
