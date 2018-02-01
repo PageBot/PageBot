@@ -16,7 +16,7 @@
 #     Needs debug in view dimension showing.
 #
 from pagebot.style import getRootStyle, CENTER
-from pagebot.contexts import defaultContext as context as c
+from pagebot.contexts import defaultContext as context
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document
@@ -31,29 +31,28 @@ def makeDocument():
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    rootStyle = getRootStyle()
-
-    doc = Document(rootStyle, originTop=OriginTop, w=W, h=H, autoPages=1)
+    doc = Document(originTop=OriginTop, w=W, h=H, autoPages=1)
 
     page = doc[0] # Get the first/single page of the document.
     page.size = W, H
-    print page.originTop
+    #print page.originTop
     if OriginTop:
-        s = 'Origin on top'
+        s = u'Origin on top'
         conditions = (Center2Center(), Top2Top())
     else:
-        s = 'Origin on bottom'
+        s = u'Origin on bottom'
         conditions = (Center2Center(), Bottom2Bottom())
 
-    fs = doc.context.newString(s, style=dict(fontSize=30,
+    bs = doc.context.newString(s, style=dict(fontSize=30,
                                              textFill=(1, 0, 0),
                                              xTextAlign=CENTER))
-    nt = newText(fs, y=100, xxconditions=conditions, parent=page, fill=(1, 1, 0))
-    print nt.x, nt.y, nt.w, nt.h
+    nt = newTextBox(bs, x=100, y=100, conditions=conditions, parent=page, fill=(1, 1, 0))
+    print bs.s
+    #print nt.x, nt.y, nt.w, nt.h
     score = page.solve()
-    if score.fails:
-        print score.fails
-    print nt.x, nt.y, nt.w, nt.h
+    #if score.fails:
+    #    print score.fails
+    #print nt.x, nt.y, nt.w, nt.h
 
     # Set the view parameters for the required output.
     view = doc.getView()
@@ -68,7 +67,7 @@ def makeDocument():
 
 if __name__ == '__main__':
 
-    c.Variable([
+    context.Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
         dict(name='OriginTop', ui='CheckBox', args=dict(value=False)),
     ], globals())
