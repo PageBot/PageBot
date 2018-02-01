@@ -17,6 +17,7 @@
 #     Interactive Variable() only works in DrawBot context.
 #
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
+from pagebot.contexts import defaultContext as context
 from pagebot.style import CENTER #, BOTTOM
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
@@ -133,14 +134,17 @@ def makeDocument():
 
 if __name__ == '__main__':
 
-    d = makeDocument()
-    # Make interactive global controls. Only works in DrawBot context. Otherwise ignored.
-    d.context.Variable([
-        dict(name='ShowMeasures', ui='CheckBox', args=dict(value=True)),
-        dict(name='ShowDimensions', ui='CheckBox', args=dict(value=False)),
-        dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
-        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-    ], globals())
+    try:
+        d = makeDocument()
+        # Make interactive global controls. Only works in DrawBot context. Otherwise ignored.
+        d.context.Variable([
+            dict(name='ShowMeasures', ui='CheckBox', args=dict(value=True)),
+            dict(name='ShowDimensions', ui='CheckBox', args=dict(value=False)),
+            dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
+            dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+        ], globals())
+    except context.b.misc.DrawBotError:
+        pass # Not running inside DrawBot
 
     d.export(EXPORT_PATH)
 
