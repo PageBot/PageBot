@@ -18,8 +18,9 @@
 #     Purchase Bitcount fonts at https://store.typenetwork.com/foundry/typetr/fonts/bitcount
 #     A single user license of Bitcount is $10.10 per font or $101 for the complete package of 300 styles).
 #
-from AppKit import NSColor
 import os
+from random import random, choice
+import pagebot
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
@@ -41,7 +42,7 @@ W = 500 # Width of the sample image. Heights is calculated from string.
 M = 32 # Margin between text and image side.
 Sample_Text = u'Typetr' # Initial sample string
 MonoSpaced = True #random()<0.5
-Background_Color = NSColor.blackColor()
+Background_Color = (0, 0, 0)
 Italic = False
 Italic_Shapes = False # [ss08]
 Condensed = False # [ss07] Excludes Double if selected
@@ -170,9 +171,9 @@ def drawSample():
         layers[layerIndex] = layer = dict(offsetX=Layer_Offset_X, offsetY=Layer_Offset_Y)
         layer['fontName'] = fontName = getFontName(layerIndex)
         layer['font'] = getFont(fontName)
-        fontSize, fs = getFittingString(Sample_Text, fontName, layerIndex, fontSize)
+        fontSize, bs = getFittingString(Sample_Text, fontName, layerIndex, fontSize)
         layer['fontSize'] = fontSize
-        layer['text'] = fs
+        layer['text'] = bs
     drawLayers(layers) # Draw layers on several identical frames
     # Explain from parameters
     explain(layers)
@@ -297,7 +298,11 @@ else:
 
 if __name__ == '__main__':
 
-    Variable(UI, globals())
+    if context.isDrawBot:
+        try:
+            context.Variable(UI, globals())
+        except context.b.misc.DrawBotError:
+            pass
 
     # Store Italics flag, so we can test if it changed.
     scriptGlobals.random_Features = Random_Features

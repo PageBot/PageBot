@@ -17,7 +17,6 @@
 #
 import os
 #import imageio
-from datetime import datetime
 from pagebot import getFontPath
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR

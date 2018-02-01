@@ -19,8 +19,9 @@
 #     Purchase Bitcount fonts at https://store.typenetwork.com/foundry/typetr/fonts/bitcount
 #     A single user license of Bitcount is $10.10 per font or $101 for the complete package of 300 styles).
 #
-from AppKit import NSColor
 import os
+from random import random, choice
+import pagebot
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.toolbox.transformer import path2ScriptId
@@ -33,7 +34,7 @@ W = 500 # Width of the sample image. Heights is calculated from string.
 M = 32 # Margin between text and image side.
 Sample_Text = u'Typëtr' # Initial sample string
 monoSpaced = True #random()<0.5
-Background_Color = NSColor.blackColor()
+Background_Color = 0, 0, 0
 Italics = False
 Layers = 3
 Actions = 'QQQ'
@@ -47,6 +48,8 @@ Layer_Color_2 = None
 Layer_Color_3 = None
 Layer_Color_4 = None
 Layer_Color_5 = None
+
+EXPORT_PATH = '_export/LayerEditor.pdf'
 
 def clearFonts():
     scriptGlobals.layerFonts = {0: None, 1:None, 2:None, 3:None, 4:None, 5:None} # 
@@ -62,8 +65,8 @@ if not hasattr(scriptGlobals, 'initializedLayerEditor'):
     scriptGlobals.use_BitPath = Use_BitPath
     # Currently (random) selected fonts per layer
     clearFonts() # Initialize font choice, so new random fonts will be selected.
-    scriptGlobals.layerColors = {0:NSColor.grayColor(), 1:NSColor.grayColor(), 2:NSColor.grayColor(), 
-        3:NSColor.grayColor(), 4:NSColor.grayColor(), 5:NSColor.grayColor()} # 
+    c = (0, 0, 0)
+    scriptGlobals.layerColors = {0:c, 1:c, 2:c, 3:c, 4:c, 5:c, 6:c} # 
     # Collections of avaiable fonts, filtered by weight and stem-pixel 
     scriptGlobals.fontNamePaths = {}
     scriptGlobals.lightPaths = {} # Not Bold or Black
@@ -193,16 +196,16 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
     colorLabel = 'Layer_Color_%d' % layerIndex
     layerColor = getColor(layerIndex)
     if glb.get(colorLabel) is None:
-        glb[colorLabel] = NSColor.whiteColor()
+        glb[colorLabel] = (1, 1, 1)
         
     try:
-        r, g, b, opacity = layerColor.getRed_green_blue_alpha_(None, None, None, None)
+        r, g, b, opacity = layerColor
     except ValueError:
         r = random()
         g = random()
         b = random()
         opacity = 0.4+0.6*random() # Not totally opaque.
-        glb[colorLabel] = NSColor.colorWithCalibratedRed_green_blue_alpha_(r, g, b, opacity)
+        glb[colorLabel] = r, g, b, opacity
 
     if not color:
         r = g = b = random()*0.8
@@ -224,14 +227,14 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
 def drawLayers(fss, fontSize):
     # Draw this layer in a couple of frame
     offsetX = 0
-    offsetY = 0
+    offsetY = -20
     _, h = fss[0].size()
     h += M
-    newPage(W, h)
-    fill(Background_Color)
-    rect(0, 0, W, h)
+    context.newPage(W, h)
+    context.fill(Background_Color)
+    context.rect(0, 0, W, h)
     for fs in fss:
-        text(fs, (M+offsetX, M+offsetY))
+        context.text(fs, (M+offsetX, M+offsetY))
         offsetX += Layer_Offset_X
         offsetY += Layer_Offset_Y
 
@@ -251,8 +254,7 @@ if __name__ == '__main__':
         
     UI.append(dict(name="Actions", ui="PopUpButton", args=dict(items=('New Random Fonts', 'New Random Color', 'Save'))))
         
-    Variable(UI, globals())
-           
+    context.Variable(UI, globals())
             
     # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
     collectFonts() # Collect available fonts, filter into characteristics, as weight, italic, etc.
@@ -260,5 +262,5 @@ if __name__ == '__main__':
         os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
     else:
         drawSample()
-        #saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+        context.saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
 
