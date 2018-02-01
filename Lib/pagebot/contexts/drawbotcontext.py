@@ -16,24 +16,21 @@
 #
 import os
 
+from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
+
 try:
+    from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
     from AppKit import NSFont
-    from CoreText import CTFontDescriptorCreateWithNameAndSize,
-                         CTFontDescriptorCopyAttribute,
-                         kCTFontURLAttribute,
-                         CTFramesetterCreateWithAttributedString,
-                         CTFramesetterCreateFrame,
-                         CTFrameGetLines,
-                         CTFrameGetLineOrigins
-    from Quartz import CGPathAddRect,
-                       CGPathCreateMutable,
-                       CGRectMake
+    from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute
+    from CoreText import kCTFontURLAttribute, CTFramesetterCreateWithAttributedString
+    from CoreText import CTFramesetterCreateFrame, CTFrameGetLines, CTFrameGetLineOrigins
+    from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
     from drawBot import Variable
-    from pagebot.builders import drawBotBuilder
 except ImportError:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
     Variable = BezierPath = None
+    drawBotBuilder = None
 
 from basecontext import BaseContext
 from pagebot.contexts.strings.fsstring import FsString
@@ -52,6 +49,20 @@ class DrawBotContext(BaseContext):
     STRING_CLASS = FsString
   
     def __init__(self):
+        u"""Constructor of DrawBotContext if drawBot import exists.
+
+        >>> import drawBot
+
+        >>> drawBotBuilder is not None
+        True
+        >>> drawBotBuilder is not None and drawBotBuilder.PB_ID == 'drawBot'
+        True
+        >>> context = DrawBotContext()
+        >>> context.isDrawBot
+        True
+        >>> context.name
+        'DrawBotContext'
+        """
         # The context builder "cls.b" is the main drawBot library, that contains all 
         # drawing calls in as used regular DrawBot scripts.   
         self.b = drawBotBuilder # cls.b builder for this canvas.
@@ -67,8 +78,14 @@ class DrawBotContext(BaseContext):
     #   S C R E E N
 
     def screenSize(self):
-        u"""Answer the current screen size in DrawBot. Otherwise default is to do nothing."""
-        return self.b.sizes.get('screen', None)
+        u"""Answer the current screen size in DrawBot. Otherwise default is to do nothing.
+
+        >>> context = DrawBotContext()
+        >>> size = context.screenSize()
+        >>> size[0] > 100 and size[1] > 100
+        True
+        """
+        return self.b.sizes().get('screen', None)
 
     #   D O C U M E N T 
 
@@ -84,10 +101,19 @@ class DrawBotContext(BaseContext):
     saveImage = saveDocument # Compatible API with DrawBot
 
     def newPage(self, w, h):
+        u"""Create a new drawbot page.
+
+        >>> context = DrawBotContext()
+        >>> context.newPage(100, 100)
+        """
         self.b.newPage(w, h)
     
     def newDrawing(self):
-        u"""Clear output canvas, start new export file."""
+        u"""Clear output canvas, start new export file.
+
+        >>> context = DrawBotContext()
+        >>> context.newDrawing()
+        """
         self.b.newDrawing()
 
     #   V A R I A B L E
@@ -100,16 +126,32 @@ class DrawBotContext(BaseContext):
     #   P A T H S 
 
     def getRootPath(self):
-        u"""Answer the root path of the pagebot module."""
+        u"""Answer the root path of the pagebot module.
+    
+        >>> context = DrawBotContext()
+        >>> context.getRootPath().endswith('/Lib')
+        True
+
+        """
         return '/'.join(__file__.split('/')[:-3]) # Path of this file with pagebot/__init__.py(c) removed.
 
     def getFontPath(self):
-        u"""Answer the standard font path of the pagebot module."""
+        u"""Answer the standard font path of the pagebot module.
+
+        >>> context = DrawBotContext()
+        >>> context.getFontPath().endswith('/Lib/Fonts/')
+        True
+        """
         return self.getRootPath() + '/Fonts/'
 
     #   T E X T
 
     def fontSize(self, fontSize):
+        u"""Set the font size in the context.
+
+        >>> context = DrawBotContext()
+        >>> context.fontSize(12)
+        """
         self.b.fontSize(fontSize)
 
     def font(self, font, fontSize=None):
@@ -393,4 +435,8 @@ class DrawBotContext(BaseContext):
     stroke = setStrokeColor # DrawBot compatible API
 
         
-    
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+   

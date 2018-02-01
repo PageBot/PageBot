@@ -16,7 +16,7 @@
 #     http://xxyxyz.org/flat
 #
 import os
-import imageio
+#import imageio
 from datetime import datetime
 from pagebot import getFontPath
 from basecontext import BaseContext

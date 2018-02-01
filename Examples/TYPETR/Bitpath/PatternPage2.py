@@ -32,34 +32,34 @@ if __name__ == '__main__':
                                              fontSize=F,
                                              textFill=(1, 0, 0),
                                              rLeading=0.5))
-	textBox(fs, (x, y, 1000, 900))
+	context.textBox(fs, (x, y, 1000, 900))
 
 	s = blurb.getBlurb('article_content', noTags=True)
 	fs = context.newString(s, style=dict(font='BitpathGridDouble-RegularLineSquare',
                                              fontSize=F,
                                              textFill=(0, 1, 0),
                                              rLeading=0.5))
-	textBox(fs, (x, y, 1000, 900))
+	context.textBox(fs, (x, y, 1000, 900))
 
 	s = blurb.getBlurb('article_content', noTags=True)
 	fs = context.newString(s, style=dict(font='BitpathGridDouble-RegularLineSquare',
                                              fontSize=F,
                                              textFill=(0, 1, 1),
                                              rLeading=0.5))
-	textBox(fs, (x, y, 1000, 900))
+	context.textBox(fs, (x, y, 1000, 900))
 
 	s = blurb.getBlurb('article_content', noTags=True)
 	fs = context.newString(s, style=dict(font='BitpathGridDouble-RegularLineSquare',
                                              fontSize=F,
                                              textFill=(1, 1, 0),
                                              rLeading=0.5))
-	textBox(fs, (x, y, 1000, 900))
+	context.textBox(fs, (x, y, 1000, 900))
 
 	s = blurb.getBlurb('article_content', noTags=True)
 	fs = context.newString(s, style=dict(font='BitpathGridDouble-RegularLineSquare',
                                              fontSize=F,
                                              textFill=(0, 0, 0),
                                              rLeading=0.5))
-	textBox(fs, (x, y, 1000, 900))
+	context.textBox(fs, (x, y, 1000, 900))
 	
-saveImage('_export/PatternPage2.pdf')
+context.saveImage('_export/PatternPage2.pdf')

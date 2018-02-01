@@ -19,7 +19,7 @@ from pagebot import findMarkers
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
 from pagebot.contexts import defaultContext as context
 from pagebot.document import Document
-from pagebot.elements import Page, Template, Galley
+from pagebot.elements import Page, Template, Galley, newTextBox
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.style import A4
@@ -46,6 +46,8 @@ H = W # For now.
 U = 7
 baselineGrid = 2*U
 listIndent = 1.5*U
+
+Sample_Text = u'ABCDEFGHIJLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz'
 
 RS = getRootStyle(
     u = U, # Page base unit
@@ -106,7 +108,7 @@ H3_TRACK = 0 # Tracking as relative factor to font size.
 P_TRACK = 0
 
 #-----------------------------------------------------------------         
-def makeDocument(rs):
+def makeDocument(docStyle):
     u"""Demo Bitpath Reference composer."""
     mainId = 'mainId'
 
@@ -161,80 +163,79 @@ def makeDocument(rs):
     SEMIBOLD = '%s%s%s-RegularLineRound%s' % (familyName, spacing, singleDouble, italic)
      
     # Template 1
-    template1 = Template(rs) # Create template of main size. Front page only.
-    # Show baseline grid if rs.showBaselineGrid is True
-    template1.baselineGrid(rs)
+    template1 = Template() # Create template of main size. Front page only.
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 1, 0, 6, 6, rs, eId=mainId)
-    
+    newTextBox(FS, x=20, y=20, w=W-40, h=40, parent=template1)    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(rs, autoPages=1, template=template1) 
+    doc = Document(style=docStyle, autoPages=1, template=template1) 
  
-    page = doc[1]
+    page = doc[0]
     # Index by element id, answers ([e1, ...], (x, y)) tuple. There can be multiple elements
     # with the same Id, and there can be multiple elements on the same position).
     #page[mainId]
     e = page.getElement(mainId)
     
-    fs = doc.context.newString(Sample_Text + ' V.T.TeY.Yjy\n',
+    context = doc.context
+
+    bs = context.newString(Sample_Text + u' V.T.TeY.Yjy\n',
                                style=dict(font=BOLD,
                                           fontSize=32,
                                           rTracking=headlineTracking,
                                           openTypeFeatures = features))
-    e.append(fs)
-    fs = doc.context.newString(blurb.getBlurb('sports_headline', noTags=True)+'\n',
+    e.append(bs)
+    bs = context.newString(blurb.getBlurb('sports_headline', noTags=True)+'\n',
                                style=dict(font=BOOK,
                                           fontSize=32,
                                           rTracking=headlineTracking,
                                           openTypeFeatures = features))
-    e.append(fs)
-    fs = doc.context.newString(blurb.getBlurb('aerospace_headline', noTags=True)+'\n',
+    e.append(bs)
+    fs = context.newString(blurb.getBlurb('aerospace_headline', noTags=True)+'\n',
                                style=dict(font=BOOK,
                                           fontSize=16,
                                           rTracking=headlineTracking,
                                           openTypeFeatures = features))
-    e.append(fs)
-    fs = doc.context.newString(blurb.getBlurb('article_content', noTags=True)+'\n',
+    e.append(bs)
+    fs = context.newString(blurb.getBlurb('article_content', noTags=True)+'\n',
                                style=dict(font=BOOK,
                                           fontSize=12,
                                           rTracking=bodyTracking,
                                           openTypeFeatures = features))
-    e.append(fs)
+    e.append(bs)
 
     return doc
 
 if __name__ == '__main__':
     familyName = 'Bitpath'
     BitcountPaths = getFamilyFontPaths(familyName) 
-    for k in BitcountPaths.keys():
-        if 'Line' in k:
-            print k
+    if not BitcountPaths:
+        print('No Bitcount fonts found.')
+    else:
 
-    UI = [
-        dict(name='Sample_Text', ui='EditText', args=dict(text=u'Typetr')),
-        dict(name='Monospaced', ui='CheckBox'),
-        dict(name='HeadlineTracking', ui='CheckBox'),
-        dict(name='BodyTracking', ui='CheckBox'),
-        dict(name='Italic', ui='CheckBox'),
-    ]
-    UI.append(dict(name='Italic_Shapes', ui='CheckBox')) # [ss08]
-    UI.append(dict(name='Single', ui='CheckBox')) # Single/Double
-    UI.append(dict(name='Ligatures', ui='CheckBox')) # [ss08]
-    UI.append(dict(name='Condensed', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
-    UI.append(dict(name='Slashed_Zero', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
-    UI.append(dict(name='Fraction', ui='CheckBox')) # Fraction 123/456.
-    UI.append(dict(name='Smallcaps', ui='CheckBox')) # [smcp]
-    UI.append(dict(name='Caps_As_Smallcaps', ui='CheckBox')) # [c2sc].
-    UI.append(dict(name='Extended_Ascenders', ui='CheckBox')) # [ss01].
-    UI.append(dict(name='Extended_Capitals', ui='CheckBox')) # [ss02].
-    UI.append(dict(name='Extended_Descenders', ui='CheckBox')) # [ss03].
-    UI.append(dict(name='Contrast_Pixel', ui='CheckBox')) # [ss04].
-    UI.append(dict(name='Alternative_g', ui='CheckBox')) # [ss09].
-    UI.append(dict(name='LC_Figures', ui='CheckBox')) # [onum].
+        UI = [
+            dict(name='Sample_Text', ui='EditText', args=dict(text=u'Typetr')),
+            dict(name='Monospaced', ui='CheckBox'),
+            dict(name='HeadlineTracking', ui='CheckBox'),
+            dict(name='BodyTracking', ui='CheckBox'),
+            dict(name='Italic', ui='CheckBox'),
+        ]
+        UI.append(dict(name='Italic_Shapes', ui='CheckBox')) # [ss08]
+        UI.append(dict(name='Single', ui='CheckBox')) # Single/Double
+        UI.append(dict(name='Ligatures', ui='CheckBox')) # [ss08]
+        UI.append(dict(name='Condensed', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
+        UI.append(dict(name='Slashed_Zero', ui='CheckBox')) # Used Condensed feaure. Excludes "Double" Bitcount font selection.
+        UI.append(dict(name='Fraction', ui='CheckBox')) # Fraction 123/456.
+        UI.append(dict(name='Smallcaps', ui='CheckBox')) # [smcp]
+        UI.append(dict(name='Caps_As_Smallcaps', ui='CheckBox')) # [c2sc].
+        UI.append(dict(name='Extended_Ascenders', ui='CheckBox')) # [ss01].
+        UI.append(dict(name='Extended_Capitals', ui='CheckBox')) # [ss02].
+        UI.append(dict(name='Extended_Descenders', ui='CheckBox')) # [ss03].
+        UI.append(dict(name='Contrast_Pixel', ui='CheckBox')) # [ss04].
+        UI.append(dict(name='Alternative_g', ui='CheckBox')) # [ss09].
+        UI.append(dict(name='LC_Figures', ui='CheckBox')) # [onum].
 
-    d = makeDocument(RS)
-    d.context.Variable(UI, globals())
-    d.export(EXPORT_PATH) 
+        d = makeDocument(RS)
+        d.context.Variable(UI, globals())
+        d.export(EXPORT_PATH) 
 

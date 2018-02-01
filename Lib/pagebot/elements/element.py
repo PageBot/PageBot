@@ -31,7 +31,7 @@ from pagebot.style import (makeStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            OUTLINE, ORIGIN)
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
-from pagebot.contexts.builders import BuildInfo # Container with Builder flags and data/parametets
+from pagebot.contexts.builders.buildinfo import BuildInfo # Container with Builder flags and data/parametets
 
 class Element(object):
 
@@ -60,6 +60,7 @@ class Element(object):
         not inheriting from one of the parent styles.
         Ignore setting of setting eId as attribute, guaranteed to be unique.
         
+        >>> import sys
         >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, maxH=1000, pl=11, pt=22, margin=(33,44,55,66))
         >>> e.name, e.info.description is None
         ('TestElement', True)

@@ -22,7 +22,7 @@ from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.style import getRootStyle, TOP, BOTTOM
 from pagebot.toolbox.transformer import obj2StyleId
-from pagebot.contexts.builders import BuildInfo # Container with Builder flags and data/parametets
+from pagebot.contexts.builders.buildinfo import BuildInfo # Container with Builder flags and data/parametets
 
 class Document(object):
     u"""A Document is just another kind of container.

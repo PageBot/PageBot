@@ -14,6 +14,7 @@
 #
 #     This script the PDF document with Bitcount refernce information.
 #
+from math import sin, cos, pi
 import pagebot
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
@@ -42,7 +43,7 @@ if __name__ == '__main__':
     rLeading = 0.6
 
     for angle in range(0, 360, 10):
-        newPage(1000, 1000)
+        context.newPage(1000, 1000)
         dx = sin(angle/360*2*pi) * R
         dy = cos(angle/360*2*pi) * R
         fs = context.newString(scriptGlobals.s1,
@@ -50,49 +51,49 @@ if __name__ == '__main__':
                                           fontSize=F,
                                           textFill=(1, 0, 0),
                                           rLeading=rLeading))
-        textBox(fs, (x, y, 1000, 900))
+        context.textBox(fs, (x, y, 1000, 900))
 
         fs = context.newString(scriptGlobals.s2,
                                style=dict(font='BitpathGridDouble-RegularLineSquare',
                                           fontSize=F,
                                           textFill=(0, 1, 0),
                                           rLeading=rLeading))
-        textBox(fs, (x+7, y+7, 1000, 900))
+        context.textBox(fs, (x+7, y+7, 1000, 900))
 
         fs = context.newString(scriptGlobals.s3,
                                style=dict(font='BitpathGridDouble-RegularLineSquare',
                                           fontSize=F,
                                           textFill=(0, 1, 1),
                                           rLeading=rLeading))
-        textBox(fs, (x, y+7, 1000, 900))
+        context.textBox(fs, (x, y+7, 1000, 900))
 
         fs = context.newString(scriptGlobals.s4,
                                style=dict(font='BitpathGridDouble-RegularLineSquare',
                                           fontSize=F,
                                           textFill=(1, 1, 0),
                                           rLeading=rLeading))
-        textBox(fs, (x+7, y, 1000, 900))
+        context.textBox(fs, (x+7, y, 1000, 900))
 
         fs = context.newString(scriptGlobals.s5,
                                style=dict(font='BitpathGridDouble-BlackLineRound',
                                           fontSize=F,
                                           textFill=(0, 0, 0, 0.4),
                                           rLeading=rLeading))
-        textBox(fs, (x+(-dx+dy)/2, y+(-dx+dy)/2, 1000, 900))
+        context.textBox(fs, (x+(-dx+dy)/2, y+(-dx+dy)/2, 1000, 900))
 
         fs = context.newString(scriptGlobals.s5,
                                style=dict(font='BitpathGridDouble-Round',
                                           fontSize=F,
                                           textFill=0,
                                           rLeading=rLeading))
-        textBox(fs, (x+dx, y+dy, 1000, 900))
+        context.textBox(fs, (x+dx, y+dy, 1000, 900))
 
         fs = context.newString(scriptGlobals.s5,
                                style=dict(font='BitpathGridDouble-BookRound',
                                           fontSize=F,
                                           textFill=1,
                                           rLeading=rLeading))
-        textBox(fs, (x+dx-2, y+dy+2, 1000, 900))
+        context.textBox(fs, (x+dx-2, y+dy+2, 1000, 900))
         
-    saveImage('_export/PatternRotatingText.gif')
+    context.saveImage('_export/PatternRotatingText.gif')
         

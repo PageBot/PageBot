@@ -11,16 +11,6 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-from drawbotbuilder import drawBotBuilder # Instance with functions, not a class
-from flatbuilder import flatBuilder # Instance with functions, not a class
-# Future alternative builders? https://skia.org
-
-from basebuilder import BaseBuilder
-from xmlbuilder import XmlBuilder
-from htmlbuilder import HtmlBuilder
-from webbuilder import WebBuilder
-
-from buildinfo import BuildInfo # Container with builder flags.
 
 # Future developments Python --> JS ??
 #
