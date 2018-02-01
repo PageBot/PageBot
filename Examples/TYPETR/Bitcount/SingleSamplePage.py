@@ -17,11 +17,11 @@
 # Only works on DrawBot for now.
 
 import pagebot
+from pagebot.contexts import defaultContext as context
 from pagebot import findMarkers
 from pagebot.style import getRootStyle, LEFT, NO_COLOR
 from pagebot.document import Document
 from pagebot.elements import *
-from pagebot.elements.views.strings import newFsString
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.style import A4
@@ -50,8 +50,8 @@ else:
 
 # Unpack A4 standard A4 size.
 W, H = A4
-H = W # For now.
-   
+M = 40 # Margin
+
 # Get the default root style and overwrite values for this document.
 U = 7
 baselineGrid = 2*U
@@ -106,8 +106,10 @@ Extended_Descenders = False # [ss03]
 Contrast_Pixel = False # [ss04]
 Alternative_g = False # [ss09]
 LC_Figures = False # [onum]
+HeadlineTracking = True
+BodyTracking = True
 
-EXPORT_PATH = '_export/SingleSamplePage.pdf'
+EXPORT_PATH = '_export/SingleSampleArticle.pdf'
 
 # Tracking presets
 H1_TRACK = H2_TRACK = 10 # 1/1000 of fontSize, multiplier factor.
@@ -170,31 +172,28 @@ def makeDocument():
     SEMIBOLD = '%s%sProp%s-BoldCircle%s' % (familyName, spacing, singleDouble, italic)
 
     # Template 1
-    template1 = Template() # Create template of main size. Front page only.
+    template1 = Template(w=W, h=H) # Create template of main size. Front page only.
     # Show baseline grid if rs.showBaselineGrid is True
     #template1.baselineGrid(rs)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    newColTextBox('', 1, 0, 6, 6, parent=template1, name=mainId)
+    newTextBox('*', x=M, y=M, w=W-2*M, h=H-2*M, parent=template1, name=mainId)
     
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(rs, autoPages=1, template=template1) 
+    doc = Document(w=W, h=H, autoPages=1) 
      
-    page = doc[1]
+    page = doc[0]
+    page.applyTemplate(template1)
     # Index by element id, answers ([e1, ...], (x, y)) tuple. There can be multiple elements
     # with the same Id, and there can be multiple elements on the same position).
     #page[mainId]
-    e = page.getElement(mainId)
+    e = page[mainId]
     
-    fs = newFsString(Sample_Text + ' V.T.TeY.Yjy\n', e, dict(font=BOLD, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
-    e.append(fs)
-    fs = newFsString(scriptGlobals.head, e, dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
-    e.append(fs)
-    fs = newFsString(scriptGlobals.subhead, e, dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
-    e.append(fs)
-    fs = newFsString(scriptGlobals.body, e, dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
-    e.append(fs)
+    bs = context.newString(scriptGlobals.head, e, dict(font=BOOK, fontSize=32, rTracking=headlineTracking, openTypeFeatures = features))
+    bs += context.newString(scriptGlobals.subhead, e, dict(font=BOOK, fontSize=16, rTracking=headlineTracking, openTypeFeatures = features))
+    bs += context.newString(scriptGlobals.body, e, dict(font=BOOK, fontSize=12, rTracking=bodyTracking, openTypeFeatures = features))
+    e.bs = bs
 
     return doc
 
@@ -222,7 +221,7 @@ if __name__ == '__main__':
     UI.append(dict(name='Alternative_g', ui='CheckBox')) # [ss09].
     UI.append(dict(name='LC_Figures', ui='CheckBox')) # [onum].
 
-    Variable(UI, globals())
+    context.Variable(UI, globals())
             
     d = makeDocument()
     d.export(EXPORT_PATH) 
