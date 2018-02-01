@@ -75,25 +75,25 @@ animation = [
 # Define method to show a random sample
 def drawSample(name):
     for imageIndex, layers in enumerate(animation):
-        newDrawing()
+        context.newDrawing()
         for index in range(len(layers)):
-            fss = []
+            bss = []
             for fontName, color in layers[:index+1]:
                 fontName = 'BitcountPropSingle-%s' % fontName
                 c = (int(color[:2], 16)/256.0,int(color[2:4], 16)/256.0,int(color[4:], 16)/256.0)
                 # First half of frames, add
-                fss.append(getFittingString(name, fontName, c))
-            drawLayers(fss) # Draw layers on several identical frames, using SIngle or Double.
+                bss.append(getFittingString(name, fontName, c))
+            drawLayers(bss) # Draw layers on several identical frames, using SIngle or Double.
         for index in range(len(layers)-2):
-            fss = []
+            bss = []
             for fontName, color in layers[:-index-1]:
                 fontName = 'BitcountPropSingle-%s' % fontName
                 c = (int(color[:2], 16)/256.0,int(color[2:4], 16)/256.0,int(color[4:], 16)/256.0)
                 # First half of frames, add
-                fss.append(getFittingString(name, fontName, c))
-            drawLayers(fss) # Draw layers on several identical frames, using SIngle or Double.
-        saveImage(EXPORT_PATH % imageIndex) # Save the sample as file or animated gif.
-        print EXPORT_PATH % imageIndex
+                bss.append(getFittingString(name, fontName, c))
+            drawLayers(bss) # Draw layers on several identical frames, using SIngle or Double.
+        context.saveImage(EXPORT_PATH % imageIndex) # Save the sample as file or animated gif.
+        #print(EXPORT_PATH % imageIndex)
          
 def getFittingString(t, fontName, c):
     # Make formatted string of large type. 
@@ -103,25 +103,25 @@ def getFittingString(t, fontName, c):
     # Calculate the size for the given string for the selected font/spacing.
     # Then use the resulting with as source to calculate the fitting fontSize.
     initialFontSize = 500 
-    fs = context.newString(t, style=dict(font=fontName,
+    bs = context.newString(t, style=dict(font=fontName,
                                          fontSize=initialFontSize))
-    fsWidth, fsHeight = fs.size()
+    fsWidth, fsHeight = bs.size()
     fontSize =  initialFontSize * (W-3*padding) / fsWidth
     # Make new formatted string in fitting fontSize
-    fs = context.newString(t, style=dict(font=fontName,
+    bs = context.newString(t, style=dict(font=fontName,
                                          fontSize=fontSize,
                                          textFill=c))
-    return fs
+    return bs
         
-def drawLayers(fss):
+def drawLayers(bss):
     # Draw this layer in a couple of frame
-    newPage(W, H)
-    frameDuration(fd)
+    context.newPage(W, H)
+    context.frameDuration(fd)
     #fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
     #rect(0, 0, W, H)
     y = 3*padding
-    for fs in fss:
-        text(fs, (2*padding, y+100))
+    for bs in bss:
+        context.text(bs, (2*padding, y+100))
  
 if __name__ == '__main__':    
     # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.

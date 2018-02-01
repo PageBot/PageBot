@@ -22,7 +22,7 @@
 #     TODO: Add Variable selection (color selector, checkbox, color wheel)
 #
 import os
-from random import choice
+from random import random, choice
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 
@@ -136,17 +136,18 @@ def getFittingString(t, fontName, c):
         
 def drawLayers(fss1, fss2, fss3):
     # Draw this layer in a couple of frame
-    newPage(W, H)
-    frameDuration(fd)
-    fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
-    rect(0, 0, W, H)
+    context.newPage(W, H)
+    context.frameDuration(fd)
+    context.fill((backgroundColor[0],backgroundColor[1],backgroundColor[2]))
+    context.rect(0, 0, W, H)
     y = 3*padding
+    offsetY = -80
     for fs in fss1:
-        text(fs, (2*padding, y+750))
+        context.text(fs, (2*padding, y+offsetY+750))
     for fs in fss2:
-        text(fs, (2.55*padding, y+330))
+        context.text(fs, (2.55*padding, y+offsetY+280))
     for fs in fss3:
-        text(fs, (2.35*padding, y+10))
+        context.text(fs, (2.35*padding, y+offsetY+10))
  
 if __name__ == '__main__':    
     # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
@@ -163,6 +164,6 @@ if __name__ == '__main__':
                 tt = tts[2]               
             drawSample(t, tt)
 
-        saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+        context.saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
         
         
