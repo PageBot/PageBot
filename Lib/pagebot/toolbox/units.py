@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -10,7 +11,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     units.py
+#     UseUnits.py
 #
 #     Implements basic intelligent spacing units with build-in conversions.
 #
@@ -23,20 +24,28 @@ MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
 class Unit(object):
     u"""Base class for units, implementing most of the logic.
 
-        >>> print fr(2) * fr(3)
-        >>> print px(5) + 2    
-        >>> print perc(12.4) + 4
-        #print 3 + px(3) Gives error. Revesre works
-        >>> print px(3) + 3
-        >>> print px(12) + px(10)
-        >>> print mm(12) + px(12)
-        >>> print mm(12) + pt(5)
-        >>> print perc(20) + 8
+        >>> fr(2) * fr(3)
+        6fr
+        >>> px(5) + 2    
+        7px
+        >>> perc(12.4) + 4
+        16.40%
+        >>> # 3 + px(3) # Gives error. Reverse works
+        >>> px(3) + 3
+        6px
+        >>> px(12) + px(10)
+        22px
+        >>> mm(12) + px(12)
+        46.02mm
+        >>> mm(12) + pt(5)
+        39.02mm
+        >>> perc(20) + 8
+        28%
     """
     absolute = True
     def __init__(self, v=None, u=None):
         if v is not None: 
-            self.u = v # Value is definedin this class units , convert internal to class units
+            self.u = v # Value is defined in this class units , convert internal to class units
         elif u is not None:
             self._v = u # Already in class units, keep value unchanged
         else:
@@ -47,6 +56,8 @@ class Unit(object):
     def _set_u(self, v):
         self._v = v or 0 # Assume that value is already class units
     u = property(_get_u, _set_u)
+
+    pt = u
 
     def _get_css(self):
         # Assuming that px == pt == class inits
@@ -59,38 +70,38 @@ class Unit(object):
     def __repr__(self):
         u = self.u
         if int(round(u)) != u:
-            return '%s(%0.2f)' % (self.__class__.__name__, u)
-        return '%s(%d)' % (self.__class__.__name__, u)
+            return '%0.2f%s' % (u, self.__class__.__name__)
+        return '%d%s' % (u, self.__class__.__name__)
    
     def __eq__(self, u):
         if isinstance(u, self.__class__):
-            return self.v == u.v
-        return self._v == u 
+            return self._v == u._v
+        return self._v == u
 
     def __ne__(self, u):
         if isinstance(u, self.__class__):
             return self._v != u._v
-        return self._v != u 
+        return self._v != u
 
     def __le__(self, u):
         if isinstance(u, self.__class__):
             return self._v <= u._v
-        return self._v <= u 
+        return self._v <= u
 
     def __lt__(self, u):
         if isinstance(u, self.__class__):
             return self._v < u._v
-        return self._v < u 
+        return self._v < u
 
     def __ge__(self, u):
         if isinstance(u, self.__class__):
             return self._v >= u._v
-        return self._v >= u 
+        return self._v >= u
 
     def __gt__(self, u):
         if isinstance(u, self.__class__):
             return self._v > u._v
-        return self._v > u 
+        return self._v > u
 
     def __add__(self, u):
         if isinstance(u, self.__class__):
@@ -98,7 +109,7 @@ class Unit(object):
         if isinstance(u, (int, float, long)):
             return self.__class__(u + self._v)
         assert u.absolute == self.absolute, "Cannot add relative and absolute values"
-        return self.__class__(pt=u.pt + self.pt) # Supports mm(2) + pt(4) + inch(3)
+        return self.__class__(u.pt + self.pt) # Supports mm(2) + pt(4) + inch(3)
         
     def __sub__(self, u):
         if isinstance(u, self.__class__):
@@ -131,14 +142,10 @@ class mm(Unit):
     def _set_u(self, v):
         self._v = v * MM
     u = property(_get_u, _set_u)
-                        
+
 class px(Unit):
-    def __repr__(self):
-        u = self.u
-        if int(round(u)) != u:
-            return '%0.2f%s' % (u, self.__class__.__name__.lower())
-        return '%d%s' % (u, self.__class__.__name__.lower())
-         
+    pass
+        
 class pt(Unit):
     pass
 
@@ -162,13 +169,8 @@ class fr(RelativeUnit):
 class em(RelativeUnit):
     u"""Em size is based on the current setting of the fontSize. 
     Used in CSS export."""
+    pass
 
-    def __repr__(self):
-        u = self.u
-        if int(round(u)) != u:
-            return '%0.2f%s' % (u, self.__class__.__name__.lower())
-        return '%d%s' % (u, self.__class__.__name__.lower())
-  
 class perc(RelativeUnit):
     def __repr__(self):
         if isinstance(self._v, (int, long)):
@@ -176,3 +178,7 @@ class perc(RelativeUnit):
         return '%0.2f%%' % self._v
 
 
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
