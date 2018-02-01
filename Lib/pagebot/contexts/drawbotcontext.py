@@ -27,7 +27,7 @@ try:
 except ImportError:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
-    Variable = BezierPath = None
+    Variable = None
     drawBotBuilder = None
 
 from basecontext import BaseContext
