@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -14,33 +15,29 @@
 #
 from __future__ import division
 
-import pagebot
+from pagebot import getFontPath
 from pagebot.contexts import defaultContext as context
 from pagebot.style import getRootStyle
 from pagebot.document import Document
 from pagebot.elements.pbpage import Template
 # For Variation Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font
-
 from pagebot.publications.typespecimen import TypeSpecimen
 #from pagebot.fonttoolbox.elements.variationcircle import VariationCircle
 
-#====================
-from math import pi, sin, cos
 import os
+from math import pi, sin, cos
 from random import random, choice
 from copy import copy
 from fontTools.ttLib import TTFont
 from pagebot.elements import Element
 from pagebot.style import makeStyle
 #from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
-from drawBot import fill, rect, oval, stroke, strokeWidth, installFont, installedFonts, FormattedString, moveTo, lineTo, newPath, drawPath
-#====================
 
 DEBUG = False # Make True to see grid and element frames.
 
 
-FONT_PATH = pagebot.getFontPath()
+FONT_PATH = getFontPath()
 #fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
 #fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'
 #fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'
@@ -50,7 +47,7 @@ fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
 #fontPath = FONT_PATH + 'BitcountGridVar.ttf'
 EXPORT_PATH = '_export/'+ fontPath.split('/')[-1].replace('ttf', 'pdf')
 varFont = Font(fontPath)
-varFontName = varFont.install() # Do DrawBot font install.
+varFontName = varFont.install()
 
 axes = varFont.axes
 print axes
@@ -108,10 +105,10 @@ class VariationCircle(Element):
 
     def _drawGlyphMarker(self, mx, my, glyphName, fontSize, location, strokeW=2):
         # Middle circle 
-        fill(1)
-        stroke(0)
-        strokeWidth(strokeW)
-        oval(mx-fontSize*self.R, my-fontSize*self.R, fontSize*2*self.R, fontSize*2*self.R)
+        c.fill(1)
+        c.stroke(0)
+        c.strokeWidth(strokeW)
+        c.oval(mx-fontSize*self.R, my-fontSize*self.R, fontSize*2*self.R, fontSize*2*self.R)
 
         glyphPathScale = fontSize/self.font.info.unitsPerEm
         drawGlyphPath(self.font.ttFont, glyphName, mx, my-fontSize/4, location, s=glyphPathScale, fillColor=0)
@@ -132,8 +129,10 @@ class VariationCircle(Element):
         
         # Draw name of the font
         b.fill(0)
-        b.text(FormattedString(self.font.info.familyName, font=self.style['labelFont'],
-            fontSize=self.style['axisNameFontSize']), (x-fontSize/2, y+self.h+fontSize/2))
+        b.text(b.newString(self.font.info.familyName,
+                           style=dict(font=self.style['labelFont'],
+                                      fontSize=self.style['axisNameFontSize'])),
+               (x-fontSize/2, y+self.h+fontSize/2))
 
         # Draw spokes
         b.fill(None)
@@ -172,8 +171,10 @@ class VariationCircle(Element):
                 valueFontSize = self.style.get('valueFontSize', 12)
                 axisNameFontSize = self.style.get('axisNameFontSize', 12)
                 markerX, markerY = self._angle2XY(angle, self.w/2)
-                fs = FormattedString(makeAxisName(axisName), font=self.style.get('labelFont', 'Verdana'),
-                    fontSize=axisNameFontSize, fill=self.style.get('axisNameColor', 0))
+                fs = b.newString(makeAxisName(axisName),
+                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                            fontSize=axisNameFontSize,
+                                            fill=self.style.get('axisNameColor', 0)))
                 tw, th = textSize(fs)
                 b.fill(0.7, 0.7, 0.7, 0.6)
                 b.stroke(None)
@@ -185,8 +186,10 @@ class VariationCircle(Element):
                     sMaxValue = '%0.2f' % maxValue
                 else:
                     sMaxValue = `int(round(maxValue))`
-                fs = b.FormattedString(sMaxValue, font=self.style.get('labelFont', 'Verdana'),
-                    fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
+                fs = b.newString(sMaxValue,
+                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                            fontSize=valueFontSize,
+                                            fill=self.style.get('axisValueColor', 0)))
                 tw, th = textSize(fs)
                 b.fill(0.7, 0.7, 0.7, 0.6)
                 b.stroke(None)
@@ -199,8 +202,10 @@ class VariationCircle(Element):
                     sValue = '%0.2f' % interpolationValue
                 else:
                     sValue = `int(round(interpolationValue))`
-                fs = FormattedString(sValue, font=self.style.get('labelFont', 'Verdana'),
-                    fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
+                fs = b.newString(sValue,
+                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                            fontSize=valueFontSize,
+                                            fill=self.style.get('axisValueColor', 0)))
                 tw, th = textSize(fs)
                 b.fill(0.7, 0.7, 0.7, 0.6)
                 b.stroke(None)
@@ -212,8 +217,10 @@ class VariationCircle(Element):
                     sValue = '%0.2f' % minValue
                 else:
                     sValue = `int(round(minValue))`
-                fs = FormattedString(sValue, font=self.style.get('labelFont', 'Verdana'),
-                    fontSize=valueFontSize, fill=self.style.get('axisValueColor', 0))
+                fs = b.newString(sValue,
+                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                            fontSize=valueFontSize,
+                                            fill=self.style.get('axisValueColor', 0)))
                 tw, th = textSize(fs)
                 b.fill(0.7, 0.7, 0.7, 0.6)
                 b.stroke(None)
@@ -238,7 +245,7 @@ if 1:
             args=dict(value=angle, minValue=-90, maxValue=270)))
         globals()[axisName] = axes[axisName][1]
         angle += 360/len(axes)
-    context.Variable(VARIABLES, globals())
+    c.Variable(VARIABLES, globals())
 
 
     def makeDocument(rs):
