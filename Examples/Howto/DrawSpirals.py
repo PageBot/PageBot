@@ -14,7 +14,7 @@
 #     drawSpirals.py
 #
 from __future__ import division # Make integer division result in float.
-from pagebot.contexts import defaultContext as context as c
+from pagebot.contexts import defaultContext as c
 #import pagebot # Import to know the path of non-Python resources.
 
 X = 0
@@ -24,6 +24,12 @@ Sx = 10
 Sy = 10
 Exy = 0.58
 D = 0.5
+
+# hardcoded constants:
+W = H = 1000
+M = 20
+w = W - 2*M
+h = H - 2*H
 
 #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
 c.Variable(
@@ -43,17 +49,13 @@ c.Variable(
         args=dict(minValue=0.1, value=0.5, maxValue=5))
   ], globals())
 
-# hardcoded constants:
-W = H = 1000
-M = 20
-w = W - 2*M
-h = H - 2*H
 
 def drawSpiral():
     mx = W/2+X
     my = H/2+Y
     runs = False
-    path = c.BezierPath()
+    c.newPath()
+    c.moveTo((mx, my))
     for n in range(0, int(N), 4):
         dx1 = n*Sx*D
         dy1 = n*Sy*D
@@ -66,17 +68,18 @@ def drawSpiral():
         #dx5 = (n+4)*Sx*D
         #dy5 = (n+4)*Sy*D
         if not runs:
-            path.moveTo((mx, my))
+            c.moveTo((mx, my))
         else:
-            path.curveTo((mx-dx1*Exy, my-dy1), (mx-dx1, my-dy1*Exy), (mx-dx1, my))
-            path.curveTo((mx-dx2, my+dy2*Exy), (mx-dx2*Exy, my+dy2), (mx, my+dy2))
-            path.curveTo((mx+dx3*Exy, my+dy3), (mx+dx3, my+dy3*Exy), (mx+dx3, my))
-            path.curveTo((mx+dx4, my-dy4*Exy), (mx+dx4*Exy, my-dy4), (mx, my-dy4))
+            c.curveTo((mx-dx1*Exy, my-dy1), (mx-dx1, my-dy1*Exy), (mx-dx1, my))
+            c.curveTo((mx-dx2, my+dy2*Exy), (mx-dx2*Exy, my+dy2), (mx, my+dy2))
+            c.curveTo((mx+dx3*Exy, my+dy3), (mx+dx3, my+dy3*Exy), (mx+dx3, my))
+            c.curveTo((mx+dx4, my-dy4*Exy), (mx+dx4*Exy, my-dy4), (mx, my-dy4))
         runs = True
-    # close the path
+
     c.fill(None)
     c.stroke(0)
-    c.strokeWidth(2)
-    c.drawPath(path)
+    c.drawPath()
 
+c.newPage(W, H)
 drawSpiral()
+c.saveImage("spiral.pdf")
