@@ -22,6 +22,7 @@
 #     TODO: Add Variable selection (color selector, checkbox, color wheel)
 #
 import os
+from random import random, choice
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 
@@ -101,26 +102,26 @@ def getFittingString(t, fontName):
     
     # Calculate the size for the given string for the selected font/spacing.
     # Then use the resulting with as source to calculate the fitting fontSize.
-    fs = context.newString(t, style=dict(font=fontName,
+    bs = context.newString(t, style=dict(font=fontName,
                                          fontSize=initialFontSize))
-    fsWidth, fsHeight = fs.size()
+    fsWidth, fsHeight = bs.size()
     fontSize =  initialFontSize * (W-3*padding) / fsWidth
     # Make new formatted string in fitting fontSize
-    fs = context.newString(t, style=dict(font=fontName,
+    bs = context.newString(t, style=dict(font=fontName,
                                          fontSize=fontSize,
                                          textFill=(r, g, b, opacity)))
-    return fs
+    return bs
         
 def drawLayers(fss):
     # Draw this layer in a couple of frame
     _, h = fss[0].size()
     h += padding
     for n in range(frameLength):
-        newPage(W, h)
-        fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
-        rect(0, 0, W, h)
+        context.newPage(W, h)
+        context.fill((backgroundColor[0],backgroundColor[1],backgroundColor[2]))
+        context.rect(0, 0, W, h)
         for fs in fss:
-            text(fs, (2*padding, 3*padding))
+            context.text(fs, (2*padding, -padding))
  
 if __name__ == '__main__': 
        
@@ -130,6 +131,6 @@ if __name__ == '__main__':
     else:
         for frame in range(frames):                
             drawSample()
-        saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+        context.saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
         
         

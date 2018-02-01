@@ -17,7 +17,7 @@
 
 from __future__ import division # Make integer division result in float.
 import pagebot # Import to know the path of non-Python resources.
-
+from pagebot.contexts import defaultContext as context
 from pagebot import x2cx, y2cy
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A3, EuropeBusinessCard, INCH, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
@@ -34,7 +34,7 @@ from pagebot.elements import *
 from pagebot.document import Document
 
 fontNames = []
-for fontName in installedFonts():
+for fontName in context.installedFonts():
     if 'BitcountMonoDouble' in fontName:
         fontNames.append(fontName)
 #print fontNames

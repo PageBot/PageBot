@@ -22,7 +22,7 @@
 #     TODO: Add Variable selection (color selector, checkbox, color wheel)
 #
 import os
-from random import choice
+from random import random, choice
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 
@@ -154,19 +154,19 @@ def getFittingString(t, fontName, c):
 def drawLayers(fss, frame, dx, dy, doNewPage):
     # Draw this layer in a couple of frame
     if doNewPage:
-        newPage(W, H)
-        fill(0)
-        rect(0, 0, W, H)
-        frameDuration(fd)
-    #fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
-    #rect(0, 0, W, H)
+        context.newPage(W, H)
+        context.fill(0)
+        context.rect(0, 0, W, H)
+        context.frameDuration(fd)
+    #context.fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
+    #context.rect(0, 0, W, H)
     y = 2*padding + dy
     for fsSingle, fsDouble in fss:
         if frame < frames/2:
             fs = fsSingle
         else:
             fs = fsDouble
-        text(fs, (dx*2*padding, y))
+        context.text(fs, (dx*2*padding, y))
 
 if __name__ == '__main__':
          
@@ -175,6 +175,6 @@ if __name__ == '__main__':
         os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
     else:
         drawSample(t1, t2)
-        saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+        context.saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
         
         
