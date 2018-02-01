@@ -16,8 +16,6 @@
 #
 import os
 
-from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
-
 try:
     from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
     from AppKit import NSFont
@@ -67,13 +65,6 @@ class DrawBotContext(BaseContext):
         # drawing calls in as used regular DrawBot scripts.   
         self.b = drawBotBuilder # cls.b builder for this canvas.
         self.name = self.__class__.__name__
-        
-    #   V A R I A B L E
-
-    def Variable(self, variableUI, globalVariables):
-        # Variable is a DrawBot context global,
-        # used to make simple UI with controls on input parameters.
-        Variable(variableUI, globalVariables)
 
     #   S C R E E N
 
@@ -118,11 +109,14 @@ class DrawBotContext(BaseContext):
 
     #   V A R I A B L E
 
-    def Variable(self, ui , variableGlobals):
+    def Variable(self, variableUI , globalVariables):
         """Offers interactive global value manipulation in DrawBot. Probably to be ignored in other contexts."""
-        from drawBot import Variable
-        Variable(ui, variableGlobals)
-
+        # Variable is a DrawBot context global, used to make simple UI with controls on input parameters.
+        try:
+            Variable(variableUI, globalVariables)
+        except self.b.misc.DrawBotError:
+            pass # Ingore if there is a DrawBot context, but not running inside DrawBot.
+  
     #   P A T H S 
 
     def getRootPath(self):
