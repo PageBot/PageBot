@@ -28,8 +28,6 @@ from pagebot.toolbox.transformer import path2ScriptId
 
 # Kinda hack, storing in empty module, to prevent globals to re-initialized, 
 # if variables are changed.
-#print __file__
-#print path2ScriptId(__file__)
 scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
 scriptGlobals.LayerCatalogGenerator = {}
 
@@ -77,7 +75,7 @@ doubleBoldPaths = {}
 typetrStoreUrl = 'https://store.typenetwork.com/foundry/typetr'
 EXPORT_DIR = '_export/BitcountLayerCatalog/'
 EXPORT_IMAGES = EXPORT_DIR + 'images/'
-EXPORT_PATH = EXPORT_IMAGES + '~TestLayerCatalogImage%04d.png'
+EXPORT_PATH = EXPORT_IMAGES + 'TestLayerCatalogImage%04d.png'
 
 # Make sure the export directory exists
 if not os.path.exists(EXPORT_IMAGES):
@@ -96,9 +94,9 @@ def collectFonts(searchName):
     # Call imported method, to find all installed Bitcount fonts.
     fontNamePaths = getFamilyFontPaths(searchName) 
         
-    for fontName in fontNamePaths:
-        if 'Prop' in fontName:
-            print fontName
+    #for fontName in fontNamePaths:
+    #    if 'Prop' in fontName:
+    #        print(fontName)
 
     if Use_BitPath:
         # Add Bitpath to selection pool of fonts
@@ -199,19 +197,19 @@ def getFittingString(t, fontName, layerIndex, fontSize=None):
     if fontSize is None:
         # Calculate the size for the given string for the selected font/spacing.
         # Then use the resulting with as source to calculate the fitting fontSize.
-        fs = context.newString(Sample_Text,
+        bs = context.newString(Sample_Text,
                                style=dict(font=fontName,
                                           fontSize=initialFontSize,
                                           openTypeFeatures=features))
-        fsWidth, fsHeight = fs.size()
+        fsWidth, fsHeight = bs.size()
         fontSize = int(round(initialFontSize * (W-2*M) / fsWidth))
     # Make new formatted string in fitting fontSize
-    fs = context.newString(Sample_Text,
+    bs = context.newString(Sample_Text,
                            style=dict(font=fontName,
                                       fontSize=fontSize,
                                       textFill=(r, g, b, opacity),
                                       openTypeFeatures=features))
-    return fontSize, fs
+    return fontSize, bs
 
 S_HEADLINES = [
     u"""## %(familyName)s %(whatIsIt)s in %(layers)d %(color)s layers.""",   
@@ -231,8 +229,8 @@ def explain(layers):
         colorLabel = 'color'
     parms = dict(familyName=familyName, layers=len(layers), whatIsIt=choice(S_WHAT_IS_IT),
         color=colorLabel)
-    print parms
-    print choice(S_HEADLINES) % parms
+    #print(parms)
+    #print(choice(S_HEADLINES) % parms)
     # MORE HERE
                  
 def drawLayers(layers):
@@ -240,14 +238,14 @@ def drawLayers(layers):
     # Calculate the pixel size. 100 units on 1000 Em. 
     #pixelSize = 
     x = M
-    y = M
+    y = 0
     _, h = layers[0]['text'].size()
     h += M/2
-    newPage(W, h)
-    fill(Background_Color)
-    rect(0, 0, W, h)
+    context.newPage(W, h)
+    context.fill(Background_Color)
+    context.rect(0, 0, W, h)
     for layerIndex, layer in sorted(layers.items()):
-        text(layer['text'], (x, y))
+        context.text(layer['text'], (x, y))
         x += layer['offsetX']
         y += layer['offsetY']
 
@@ -256,7 +254,7 @@ def export():
     for n in range(10000):
         filePath = EXPORT_PATH % n
         if not os.path.exists(filePath):
-            saveImage(filePath) # Save the sample as png.
+            context.saveImage(filePath) # Save the sample as png.
             break # Make sure to break, or else 10000 copies are created.
 
 UI = [
@@ -298,11 +296,7 @@ else:
 
 if __name__ == '__main__':
 
-    if context.isDrawBot:
-        try:
-            context.Variable(UI, globals())
-        except context.b.misc.DrawBotError:
-            pass
+    context.Variable(UI, globals())
 
     # Store Italics flag, so we can test if it changed.
     scriptGlobals.random_Features = Random_Features
@@ -311,7 +305,7 @@ if __name__ == '__main__':
     # If no Bitcount fonts could be found, open the browser on the TypeNetwork shop page and stop this script.
     fontNamePaths = collectFonts(searchName) # Collect available fonts, filter into characteristics, as weight, italic, etc.
     if not fontNamePaths:
-        print 'The %s family is not installed in your system. How about buying a license @typenetwork?' % familyName
+        print('The %s family is not installed in your system. How about buying a license @typenetwork?' % familyName)
         os.system('open %s/fonts/%s' % (typetrStoreUrl, familyName.lower()))
     else:
         drawSample()

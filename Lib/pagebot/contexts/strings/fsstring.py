@@ -197,7 +197,7 @@ class FsString(BabelString):
             fs.baselineShift((sBaselineShift or 0) + (rBaselineShift or 0) * (sFontSize or 0))
         sOpenTypeFeatures = css('openTypeFeatures', e, style)
         if sOpenTypeFeatures is not None:
-            fs.openTypeFeatures([], sOpenTypeFeatures)
+            fs.openTypeFeatures(**sOpenTypeFeatures)
         sTabs = css('tabs', e, style)
         if sTabs is not None:
             fs.tabs(*sTabs)

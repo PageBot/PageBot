@@ -40,13 +40,12 @@ else:
 
 # Unpack A4 standard A4 size.
 W, H = A4
-H = W # For now.
    
 # Get the default root style and overwrite values for this document.
 U = 7
 baselineGrid = 2*U
 listIndent = 1.5*U
-
+M = 32
 Sample_Text = u'ABCDEFGHIJLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz'
 
 RS = getRootStyle(
@@ -77,7 +76,6 @@ RS = getRootStyle(
     rTracking = 0,
     fontSize = 9
 )
-FS = context.newString("", style=RS)
 # LANGUAGE-SWITCH Language settings
 RS['language'] = 'en'
 
@@ -162,47 +160,34 @@ def makeDocument(docStyle):
     BOLD = '%s%s%s-RegularLineRound%s' % (familyName, spacing, singleDouble, italic)
     SEMIBOLD = '%s%s%s-RegularLineRound%s' % (familyName, spacing, singleDouble, italic)
      
-    # Template 1
-    template1 = Template() # Create template of main size. Front page only.
-    # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    newTextBox(FS, x=20, y=20, w=W-40, h=40, parent=template1)    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(style=docStyle, autoPages=1, template=template1) 
+    doc = Document(style=docStyle, w=W, h=H, autoPages=1) 
  
     page = doc[0]
     # Index by element id, answers ([e1, ...], (x, y)) tuple. There can be multiple elements
     # with the same Id, and there can be multiple elements on the same position).
     #page[mainId]
-    e = page.getElement(mainId)
-    
     context = doc.context
 
-    bs = context.newString(Sample_Text + u' V.T.TeY.Yjy\n',
-                               style=dict(font=BOLD,
-                                          fontSize=32,
-                                          rTracking=headlineTracking,
-                                          openTypeFeatures = features))
-    e.append(bs)
     bs = context.newString(blurb.getBlurb('sports_headline', noTags=True)+'\n',
                                style=dict(font=BOOK,
                                           fontSize=32,
                                           rTracking=headlineTracking,
                                           openTypeFeatures = features))
-    e.append(bs)
-    fs = context.newString(blurb.getBlurb('aerospace_headline', noTags=True)+'\n',
+    bs += context.newString(blurb.getBlurb('aerospace_headline', noTags=True)+'\n',
                                style=dict(font=BOOK,
-                                          fontSize=16,
+                                          fontSize=24,
                                           rTracking=headlineTracking,
                                           openTypeFeatures = features))
-    e.append(bs)
-    fs = context.newString(blurb.getBlurb('article_content', noTags=True)+'\n',
+    bs += context.newString(blurb.getBlurb('article_content', noTags=True)+'\n',
                                style=dict(font=BOOK,
-                                          fontSize=12,
+                                          fontSize=18,
                                           rTracking=bodyTracking,
                                           openTypeFeatures = features))
-    e.append(bs)
+
+    newTextBox(bs, x=M, y=H-M, w=W-2*M, h=H, parent=page)    
 
     return doc
 

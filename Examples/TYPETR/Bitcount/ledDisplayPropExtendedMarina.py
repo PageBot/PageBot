@@ -1,6 +1,7 @@
 #
 #    Running led animation, example fpr TypeNetwork site.
 #
+from pagebot.contexts import defaultContext as context
 from drawBot import installedFonts, openTypeFeatures, newPage, fill, rect
 
 bitcountNames = []
@@ -62,15 +63,15 @@ HIGHLIGHT = False # Leds appear to be more 3D
 def drawString(s, px, py, fontName, color=None, gridColor=None):
     if fontName in FONTS:
         fontName = FONTS[fontName]
-    font(fontName)
-    fontSize(FS)
-    stroke(None)
+    context.font(fontName)
+    context.fontSize(FS)
+    context.stroke(None)
     if color is not None:
         r, g, b, t = color
-        fill(r, g, b, t)
+        context.fill(r, g, b, t)
     else:
-        fill(color or 0)
-    text(s, (px, py))
+        context.fill(color or 0)
+    context.text(s, (px, py))
 
 def makeFlash(s, w, h, px, py, color1=None, color2=None, flashSpeed=4):
     if color1 is None:
@@ -82,9 +83,9 @@ def makeFlash(s, w, h, px, py, color1=None, color2=None, flashSpeed=4):
     else:
         r2, g2, b2 = color2     
     for n in range(flashSpeed):
-        newPage(w, h)
-        fill(0)
-        rect(0, 0, w, h)
+        context.newPage(w, h)
+        context.fill(0)
+        context.rect(0, 0, w, h)
         drawString(s, px, py, 'PropSingleBold', (r1, g1, b1, 0.2))
         drawString(s, px, py, 'PropSingleMedium', (r1, g1, b1, 0.5))
         if HIGHLIGHT:
@@ -94,9 +95,9 @@ def makeFlash(s, w, h, px, py, color1=None, color2=None, flashSpeed=4):
             drawString(s, px, py, 'PropSingle', (r1, g1, b1, 1))
 
     for n in range(flashSpeed):
-        newPage(w, h)
-        fill(0)
-        rect(0, 0, w, h)
+        context.newPage(w, h)
+        context.fill(0)
+        context.rect(0, 0, w, h)
         drawString(s, px, py, 'PropSingleBold', (r2, g2, b2, 0.2))
         drawString(s, px, py, 'PropSingleMedium', (r2, g2, b2, 0.5))
         if HIGHLIGHT:
@@ -106,9 +107,9 @@ def makeFlash(s, w, h, px, py, color1=None, color2=None, flashSpeed=4):
             drawString(s, px, py, 'PropSingle', (r2, g2, b2, 1))
 
 def makeRunningLeds(s, w, h, px, py, speed=1):
-    newPage(w, h)
-    fill(0)
-    rect(0, 0, w, h)
+    context.newPage(w, h)
+    context.fill(0)
+    context.rect(0, 0, w, h)
     drawString(s, px, py, 'PropSingleBoldItalic', (0.3, 0, 0, 1))
     drawString(s, px, py, 'PropSingleMediumItalic', (0.6, 0.0, 0, 1))
     if HIGHLIGHT:
@@ -119,8 +120,8 @@ def makeRunningLeds(s, w, h, px, py, speed=1):
 
 if __name__ == '__main__':
            
-    openTypeFeatures(onum=True, lnum=True, hwid=True, ss01=True, ss02=True, 
-        ss04=False, ss05=False, ss06=True, pcap=False, smcp=False, c2sc=False)
+    context.openTypeFeatures(dict(onum=True, lnum=True, hwid=True, ss01=True, ss02=True, 
+        ss04=False, ss05=False, ss06=True, pcap=False, smcp=False, c2sc=False))
       
     line1 = 'Happy Birthday To You... Happy Birthday To You...'
     line2 = '                            Happy Birthday Marina'
