@@ -46,7 +46,7 @@ The example shows two floating colums of text, where th overflow of one goes int
 ## Advanced Hyphenation
 
 A proposal for advanced hyphenation:
-For hyphenation head and tail (the minimum amound of charaters before / after a hyphenation), the FormattedString will need these arguments (headHyphenation=4, tailHyphenation=3). 
+For hyphenation head and tail (the minimum amound of charaters before / after a hyphenation), the FormattedString will need these arguments (headHyphenation=4, tailHyphenation=3).
 These values are needed in drawBot.context.baseContext.BaseContext.hyphenateAttributedString. How to get them there?
 See HowTo/AdvancedHyphenation.py
 
