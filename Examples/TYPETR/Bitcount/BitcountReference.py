@@ -19,6 +19,7 @@
 from pagebot import findMarkers
 from pagebot.style import getRootStyle, LEFT, NO_COLOR, RIGHT
 from pagebot.document import Document
+from pagebot.elements import newColTextBox
 from pagebot.elements.pbpage import Page, Template
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
@@ -129,58 +130,58 @@ def makeDocument(rs):
     pageNumberId = 'pageNumberId'
     
     # Template for Cover page
-    templateCover = Template(rs) # Create new template
-    templateCover.rect(0, 0, rs['w'], rs['h'], fill=(1, 0, 0))
+    templateCover = Template(style=rs) # Create new template
+    newColTextBox(0, 0, rs['w'], rs['h'], fill=(1, 0, 0), parent=templateCover)
     # Placement of first <h1> in the Galley, holding the Thesis title.
-    templateCover.cTextBox(FS, 1, 1, 6, 5, rs, coverTitleId, fill=BOX_COLOR)
+    newColTextBox('Title of the page', 1, 1, 6, 5, style=rs, name=coverTitleId, fill=BOX_COLOR, parent=templateCover)
     # Placement of first <h4> in the Galley, holding the author name(s)
-    templateCover.cTextBox(FS, 1, 8, 6, 5, rs, coverAuthorId, fill=BOX_COLOR)
+    newColTextBox('Subhead of the page', 1, 8, 6, 5, style=rs, name=coverAuthorId, fill=BOX_COLOR, parent=templateCover)
     
     # Template for Table of Content
     templateToc = Template(rs) # Create template for Table of Content
     # Show grid columns and paddngs if rootStyle.showGrid or rootStyle.showGridColumns are True
-    templateToc.grid(rs) 
+    newGrid(style=rs, parent=templateToc) 
     # Show baseline grid if rs.showBaselineGrid is True
-    templateToc.baselineGrid(rs)
-    templateToc.cTextBox('\nTable of Content', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32)
-    templateToc.cTextBox('', 3, 1, 4, 8, rs, tocId, fill=BOX_COLOR)
+    newBaselineGrid(style=rs, parent=templateToc)
+    newColTextBox('\nTable of Content', 3, 0, 4, 1, style=rs, fill=BOX_COLOR, fontSize=32, parent=templateToc)
+    newColTextBox('', 3, 1, 4, 8, style=rs, name=tocId, fill=BOX_COLOR, parent=templateToc)
     
     # Template for literature reference index.
     templateLiteratureIndex = Template(rs) # Create template for Table of Content
     # Show grid columns and paddings if rootStyle.showGrid or rootStyle.showGridColumns are True
-    templateLiteratureIndex.grid(rs) 
+    newGrid(style=rs, parent=templateLiteratureIndex) 
     # Show baseline grid if rs.showBaselineGrid is True
-    templateLiteratureIndex.baselineGrid(rs)
-    templateLiteratureIndex.cTextBox('\nLiterature index', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32)
-    templateLiteratureIndex.cTextBox('', 3, 1, 4, 8, rs, literatureIndexId, fill=BOX_COLOR)
+    newBaselineGrid(style=rs, parent=templateLiteratureIndex)
+    newColTextBox('\nLiterature index', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32, parent=templateLiteratureIndex)
+    newColTextBox('', 3, 1, 4, 8, rs, literatureIndexId, fill=BOX_COLOR, parent=templateLiteratureIndex)
     
     # Template for image reference index.
     templateImageIndex = Template(rs) # Create template for Table of Content
     # Show grid columns and padding if rootStyle.showGrid or rootStyle.showGridColumns are True
-    templateImageIndex.grid(rs) 
+    newGrid(style=rs, parent=templateImageIndex) 
     # Show baseline grid if rs.showBaselineGrid is True
-    templateImageIndex.baselineGrid(rs)
-    templateImageIndex.cTextBox('\nImage index', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32)
-    templateImageIndex.cTextBox('', 3, 1, 4, 8, rs, imageIndexId, fill=BOX_COLOR)
+    newBaselineGrid(style=rs, parent=templateImageIndex)
+    newColTextBox('\nImage index', 3, 0, 4, 1, rs, fill=BOX_COLOR, fontSize=32, parent=templateImageIndex)
+    newColTextBox('', 3, 1, 4, 8, rs, imageIndexId, fill=BOX_COLOR, parent=templateImageIndex)
     
     # Template 1
     template1 = Template(rs) # Create template of main size. Front page only.
     # Show grid columns and paddings if rootStyle.showGrid or rootStyle.showGridColumns are True
-    template1.grid(rs) 
+    newGrid(style=rs, parent=templateImageIndex) 
     # Show baseline grid if rs.showBaselineGrid is True
-    template1.baselineGrid(rs)
+    newBaselineGrid(style=rs, parent=templateImageIndex)
     # Create empty image place holders. To be filled by running content on the page.
     # In this templates the images fill the left column if there is a reference on the page.
-    template1.cContainer(0, 0, 3, 3, rs)  # Empty image element, cx, cy, cw, ch
-    template1.cContainer(0, 3, 3, 3, rs)
-    template1.cContainer(0, 6, 3, 3, rs)
+    newColContainer(0, 0, 3, 3, style=rs, parent=template1)  # Empty image element, cx, cy, cw, ch
+    newColContainer(0, 3, 3, 3, style=rs, parent=template1)
+    newColContainer(0, 6, 3, 3, style=rs, parent=template1)
     # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
-    template1.cTextBox(FS, 3, 0, 4, 9, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR)
-    template1.cTextBox('', 3, 9, 3, 2, rs, footnotesId, fill=BOX_COLOR)
+    newTextBox(FS, 3, 0, 4, 9, rs, flowId1, nextBox=flowId1, nextPage=1, fill=BOX_COLOR, parent=template1)
+    newTextBox('', 3, 9, 3, 2, rs, footnotesId, fill=BOX_COLOR, parent=template1)
     # Create page number box. Pattern pageNumberMarker is replaced by FormattedString of actual page number.
     # Mark the text box, so we can find it back later.
-    template1.cTextBox(rs['pageIdMarker'], 6, 9, 1, 1, eId=pageNumberId, style=rs, 
-        font=BOOK, fontSize=12, fill=BOX_COLOR, xAlign=RIGHT)
+    newTextBox(rs['pageIdMarker'], 6, 9, 1, 1, eId=pageNumberId, style=rs, 
+        font=BOOK, fontSize=12, fill=BOX_COLOR, xAlign=RIGHT, parent=template1)
    
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
@@ -386,7 +387,7 @@ def makeDocument(rs):
 
 if __name__ == '__main__':
     
-    print BitcountPaths.keys()
+    #print BitcountPaths.keys()
 
     d = makeDocument(RS)
     d.export(EXPORT_PATH) 

@@ -22,7 +22,7 @@
 #     TODO: Add Variable selection (color selector, checkbox, color wheel)
 #
 import os
-from random import choice
+from random import random, choice
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 
@@ -33,7 +33,7 @@ USE_BITPATH = False
 
 # Initial sample text. Can be altered in the text box of the popup window.
 W = 1800 # Width of the sample image. TypeNetwork preference 2040 x 1020
-H = 600 # Height of the sample image
+H = 650 # Height of the sample image
 padding = 16 # Padding between text and image side.
 #t = u'π-day' #Typetr' # Initial sample string
 t1 = 'Essentials' # Initial sample string
@@ -128,8 +128,8 @@ def drawSample(name1, name2):
             # Remove last
             fss1 = fss1[:-1]
             fss2 = fss2[:-1]
-        drawLayers(fss2, frame, 2.45, 16*padding+4, True) # Draw layers on several identical frames, using SIngle or Double.
-        drawLayers(fss1, frame, 1, 1.5*padding, False) # Draw layers on several identical frames, using SIngle or Double.
+        drawLayers(fss2, frame, 2.45, 16*padding-110, True) # Draw layers on several identical frames, using SIngle or Double.
+        drawLayers(fss1, frame, 1, 1.5*padding-110, False) # Draw layers on several identical frames, using SIngle or Double.
 
          
 def getFittingString(t, fontName, c):
@@ -153,16 +153,16 @@ def getFittingString(t, fontName, c):
 def drawLayers(fss, frame, dx, dy, doNewPage):
     # Draw this layer in a couple of frame
     if doNewPage:
-        newPage(W, H)
-        frameDuration(fd)
-    #fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
-    #rect(0, 0, W, H)
+        context.newPage(W, H)
+        context.frameDuration(fd)
+    #context.fill(backgroundColor[0],backgroundColor[1],backgroundColor[2])
+    #context.rect(0, 0, W, H)
     for fsSingle, fsDouble in fss:
         if frame < frames/2:
             fs = fsSingle
         else:
             fs = fsDouble
-        text(fs, (dx*2*padding, dy))
+        context.text(fs, (dx*2*padding, dy))
 
 if __name__ == '__main__':
          
@@ -171,6 +171,6 @@ if __name__ == '__main__':
         os.system('open %s/fonts/%s' % (typetrStoreUrl, 'productus')) #familyName.lower())
     else:
         drawSample(t1, t2)
-        saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
+        context.saveImage(EXPORT_PATH) # Save the sample as file or animated gif.
         
         
