@@ -195,13 +195,30 @@ class DrawBotContext(BaseContext):
         origins = CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
         return [(x + o.x, y + o.y) for o in origins]
 
+    def openTypeFeatures(self, features):
+        u"""Set the current of opentype features in the context canvas.
+
+        >>> context = DrawBotContext()
+        >>> context.openTypeFeatures(dict(smcp=True, zero=True))
+        """
+        self.b.openTypeFeatures(**features)
+
     #   D R A W I N G
 
     def rect(self, x, y, w, h):
+        u"""Draw a rectangle in the canvas.
+
+        >>> context = DrawBotContext()
+        >>> context.rect(0, 0, 100, 100)
+        """
         self.b.rect(x, y, w, h)
 
     def oval(self, x, y, w, h):
-        u"""Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h)."""
+        u"""Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
+
+        >>> context = DrawBotContext()
+        >>> context.oval(0, 0, 100, 100)
+        """
         self.b.oval(x, y, w, h)
 
     def circle(self, x, y, r):
