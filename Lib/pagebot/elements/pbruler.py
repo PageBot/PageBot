@@ -84,6 +84,22 @@ class Ruler(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None):
+        u"""Build the Ruler in the current context
+
+        >>> from pagebot.contexts import HtmlContext
+        >>> from pagebot.document import Document
+        >>> c = HtmlContext()
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30, originTop=False, context=c)
+        >>> page = doc[0]
+        >>> e = Ruler(parent=page, x=0, y=20, w=page.w, h=3)
+        >>> e.build(doc.getView(), (0, 0))
+        >>> e.xy
+        (0, 20)
+        >>> e.size
+        (300, 3, 1)
+        >>> view = doc.getView()
+        >>> e.build_html(view, (0, 0))
+        """
 
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
