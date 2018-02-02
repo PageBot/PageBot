@@ -88,6 +88,19 @@ def makeDocument():
 
     page = doc[0] # Get the first/single page of the document.
 
+    # Get the current view of the document. This allows setting of
+    # parameters how the document is represented on output.
+    view = doc.view
+    view.w, view.h = W, H
+    # Set view options. Full list is in elements/views/baseviews.py
+    view.padding = 30 # Showing cropmarks and registration marks
+                      # need >= 20 padding of the view.
+    view.showPageRegistrationMarks = True
+    view.showPageCropMarks = True
+    view.showPageFrame = True
+    view.showPagePadding = True
+    view.showPageNameInfo = True
+
     C1 = (random()*0.2, random()*0.2, random()*0.9)
 
     # Make background element, filling the page color and bleed.
