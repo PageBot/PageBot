@@ -29,14 +29,22 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2FontName
 
 def getMasterPath():
-    u"""Answer the path to read master fonts. Default is at the same level as pagebot module."""
+    u"""Answer the path to read master fonts. Default is at the same level as pagebot module.
+
+    >>> getMasterPath().endswith('/Fonts/')
+    True
+    """
     #return '/'.join(pagebot.__file__.split('/')[:-2])+'/fonts/'
     from os.path import expanduser
     home = expanduser("~")
     return home + '/Fonts/'
 
 def getInstancePath():
-    u"""Answer the path to write instance fonts."""
+    u"""Answer the path to write instance fonts.
+
+    >>> getInstancePath().endswith('/Fonts/_instances/')
+    True
+    """
     return getMasterPath() + '_instances/'
 
 def _iup_segment(coords, rc1, rd1, rc2, rd2):
@@ -223,3 +231,9 @@ def getVariableFont(fontOrPath, location, install=True, styleName=None, normaliz
     fontName, path = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), normalize=normalize)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName)
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
