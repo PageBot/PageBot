@@ -84,16 +84,17 @@ def makeDocument():
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(w=W, h=H, autoPages=1, context=context) # One page, just the cover.
+    doc = Document(w=W, h=H, title='A Demo Book Cover', autoPages=1, context=context) # One page, just the cover.
 
     page = doc[0] # Get the first/single page of the document.
-
+    page.name = 'Cover'
+    
     # Get the current view of the document. This allows setting of
     # parameters how the document is represented on output.
     view = doc.view
     view.w, view.h = W, H
     # Set view options. Full list is in elements/views/baseviews.py
-    view.padding = 30 # Showing cropmarks and registration marks
+    view.padding = 40 # Showing cropmarks and registration marks
                       # need >= 20 padding of the view.
     view.showPageRegistrationMarks = True
     view.showPageCropMarks = True
