@@ -302,8 +302,12 @@ table {
     def writeHtml(self, path):
         u"""Write the collected set of html chunks to path."""
         f = codecs.open(path, 'w', 'utf-8')
-        f.write(''.join(self._htmlOut))
+        f.write(self.getHtml())
         f.close()
+
+    def getHtml(self):
+        u"""Answer the cumulated html as single string."""
+        return ''.join(self._htmlOut)
 
     def resetHtml(self):
         u"""Reset the output stream, as should be done after each page export.
@@ -1220,38 +1224,42 @@ table {
 
 
     def hr(self, **args):
+        """The hr tag inserts a horizontal rule.
+        www href="http://www.w3schools.com/tags/tag_hr.asp
+
+        >>> b = HtmlBuilder()
+        >>> b.hr()
+        >>> b.getHtml()
+        u'<hr/>'
+        >>> b.resetHtml()
+        >>> b.hr(class_='wide')
+        >>> b.getHtml()
+        u'<hr class="wide"/>'
         """
-        The ``hr`` tag inserts a horizontal rule.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_hr.asp" target="external"/></seealso>
-        <python>
-        self.hr(size=15, color='green')
-        <hr size="15" color="green"/>
-        </python>
-        """
-        print '#@@#@##@@#@#', args
-        self.write('AAAAA')
         self.write_tag_noWhitespace(u'hr', False, args)
-        self.write('BBBBB')
 
     def a(self, **kwargs):
-        """
-        The ``a`` tag defines an anchor. An anchor can be used in two ways:<br/>
-        <list>
-            <sep>To create a link to another document by using the href attribute</sep>
-            <sep>To create a bookmark inside a document, by using the name or id attribute</sep>
-        </list>
-        <todo>Add missing attributes</todo>
-        <seealso><www href="http://www.w3schools.com/tags/tag_a.asp"/></seealso>
-        <python>
-        self.a(href='http://www.xierpa.com', class_='navigationlink'<br/>
-        ...<br/>
-        self._a()
-        </python>
+        """The a tag defines an anchor. An anchor can be used in two ways:
+        To create a link to another document by using the href attribute
+        To create a bookmark inside a document, by using the name or id attribute
+        href="http://www.w3schools.com/tags/tag_a.asp
+
+        >>> b = HtmlBuilder()
+        >>> b.a(href="mypage.html", target="external", class_='myClass')
+        >>> b.write('Hello')
+        >>> b._a()
+        >>> b.getHtml()
+        u'<a class="myClass" href="mypage.html" target="external">Hello</a>'
+        >>> b.resetHtml()
+        >>> b.a(name="marker")
+        >>> b.getHtml()
+        u'<a name="marker">'
         """
         self.write_tag_noWhitespace(u'a', True, kwargs)
 
     def _a(self):
         self._closeTag_noWhitespace(u'a')
+
 
     def nav(self, **kwargs):
         self.write_tag_noWhitespace(u'nav', True, kwargs)
@@ -1259,13 +1267,13 @@ table {
     def _nav(self):
         self._closeTag_noWhitespace(u'nav')
 
+
     def frameset(self, **args):
         """
         The ``frameset`` tag creates an frame set that contains frames with other documents.
         <seealso><www href="http://www.w3schools.com/tags/tag_frameset.asp"/></seealso>
         """
         self.write_tag(u'frameset', True, args)
-
 
     def _frameset(self):
         self._closeTag(u'frameset')
@@ -1654,3 +1662,9 @@ table {
     def comment(self, s):
         if s:
             self.write('<!-- %s -->' % object2SpacedString(s))
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
