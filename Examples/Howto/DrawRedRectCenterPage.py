@@ -83,5 +83,5 @@ if __name__ == '__main__':
         dict(name='RectSize', ui='Slider', args=dict(minValue=10, value=W/2, maxValue=W)),
     ], globals())
 
-    d.export('_export/DrawRedRectCenterPage.png')
+    d.export('_export/DrawRedRectCenterPage.pdf')
 
