@@ -15,16 +15,17 @@
 #
 #     Needs filling in with content.
 #
-#import pagebot # Import to know the path of non-Python resources.
+from random import random
 
 # Create random title and names
 # from pagebot.contributions.filibuster.blurb import blurb
 
+from pagebot.contexts import defaultContext as context
 from pagebot.toolbox.transformer import darker
 
 # Creation of the RootStyle (dictionary) with all
 # available default style parameters filled.
-from pagebot.style import getRootStyle, B4, CENTER # LEFT, TOP
+from pagebot.style import getRootStyle, B4, CENTER, MIDDLE, TOP 
 
 # Document is the main instance holding all information
 # about the document togethers (pages, styles, etc.)
@@ -77,18 +78,16 @@ RS = getRootStyle(
 EXPORT_PATH = '_export/ABookCover.pdf'
 
 
-def makeDocument(rootStyle):
+def makeDocument():
     u"""Demo random book cover generator."""
 
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(rootStyle, w=W, h=H,
-                   autoPages=1) # One page, just the cover.
+    doc = Document(w=W, h=H, autoPages=1, context=context) # One page, just the cover.
 
     page = doc[0] # Get the first/single page of the document.
 
-    from random import random
     C1 = (random()*0.2, random()*0.2, random()*0.9)
 
     # Make background element, filling the page color and bleed.
@@ -104,20 +103,24 @@ def makeDocument(rootStyle):
 
     #colorRect2:
     M = 64
-    newRect(z=-10, name='Frame 2', conditions=[Center2Center(),
+    newRect(z=-10, name='Frame 2', parent=colorRect1, conditions=[Center2Center(),
                                                Middle2Middle()],
             fill=darker(C1, 0.5), # Default parameter:
                                   # 50% between background color and white
             stroke=None,
             w=colorRect1.w-M, h=colorRect1.h-M,
-            xAlign=CENTER, yAlign=CENTER)
+            xAlign=CENTER, yAlign=MIDDLE)
 
+    page.pt = 200
     # Add some title (same width, different height) at the "wrongOrigin" position.
     # They will be repositioned by solving the colorConditions.
-    newText('Book Cover', style=rootStyle, parent=page, name='Other element',
-            font='Georgia', fontSize=40, fill=(0.3, 0.3, 0.5),
-            textFill=(1, 0, 0), conditions=[Top2Middle(), Top2Top()],
-            xAlign=CENTER) #yAlign=TOP)
+    title = context.newString('Book Cover\n', style=dict(font='Georgia', fontSize=40, rLeading=1.2, xAlign=CENTER, textFill=1))
+    title += context.newString('Subtitle of the book\n\n', style=dict(font='Georgia', fontSize=32, xAlign=CENTER, textFill=(1, 1, 1,0.5)))
+    title += context.newString('Author name & other' + '\n'*8, style=dict(font='Georgia', fontSize=24, xAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
+    title += context.newString('&', style=dict(font='Georgia', fontSize=400, xAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
+    newText(title, parent=page, name='Other element',
+            conditions=[Center2Center(), Top2Top()],
+            xAlign=CENTER, yAlign=TOP)
     """
     page.rect(point=wrongOrigin, style=rootStyle, w=W2, h=H2,
               name='Floating element 2',
@@ -159,18 +162,18 @@ def makeDocument(rootStyle):
     #print score.fails
     # Try to solve the problems if evaluation < 0
     if score.fails:
-        print('Solving', score.fails)
+        #print('Solving', score.fails)
         page.solve()
     #print score.fails
     # Evaluate again, result should now be >= 0
     score = page.evaluate()
-    print('Page value after solving the problems:', score)
-    for fail in score.fails:
-        print(fail)
+    #print('Page value after solving the problems:', score)
+    #for fail in score.fails:
+    #    print(fail)
 
     return doc
 
 if __name__ == '__main__':
-    d = makeDocument(RS)
+    d = makeDocument()
     d.export(EXPORT_PATH)
 
