@@ -24,6 +24,7 @@ try:
     from CoreText import CTFramesetterCreateFrame, CTFrameGetLines, CTFrameGetLineOrigins
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
     from drawBot import Variable
+    from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
 except ImportError:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
