@@ -1184,8 +1184,7 @@ table {
             self.comment(comment)
 
     def canvas(self, **args):
-        """
-        The ``canvas`` tag defines a canvas in a document.
+        """The canvas tag defines a canvas in a document.
         """
         self.write_tag(u'canvas', True, args)
         self._debugclass(u'canvas', self.getClassName(args, self.CANVAS_ATTRIBUTES))
@@ -1194,18 +1193,18 @@ table {
         self._closeTag(u'canvas')
 
     def img(self, **args):
-        """
-        The ``img`` tag defines an image. The ``img`` tag has no block.<br/>
-        To avoid compatibility problems between browser with the default ``border`` value,
-        it is set to ``0`` if not defined.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_img.asp" target="external"/></seealso>
-        **self.img(src='./_image/animage.png', width=100)**.
-        If not using online, the replace the url by a local place holder image.
+        """The img tag defines an image. The img tag has no block.
+        To avoid compatibility problems between browser with the default border value,
+        it is set to 0 if not defined.
+        http://www.w3schools.com/tags/tag_img.asp
+
+        >>> b = HtmlBuilder()
+        >>> b.img(src="myImage.png", class_="myClass", width="100%")
+        >>> b.getHtml().strip() # TODO: Remove leading newline?
+        u'<img src="myImage.png" class="myClass"/>'
         """
         if not args.get('border'):
-            args['border'] = self.C.IMG_DEFAULTBORDER
-        if not self.C.useOnline(): # If online, then use the real url. Otherwise local image placeholder
-            args['src'] = self.C.URL_IMAGEPLACEHOLDER
+            args['border'] = 0
         self.write_tag(u'img', False, args)
 
     def map(self, name):
@@ -1237,6 +1236,7 @@ table {
         u'<hr class="wide"/>'
         """
         self.write_tag_noWhitespace(u'hr', False, args)
+
 
     def a(self, **kwargs):
         """The a tag defines an anchor. An anchor can be used in two ways:
