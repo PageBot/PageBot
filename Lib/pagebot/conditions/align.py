@@ -48,10 +48,16 @@ class Fit(Condition):
 class Fit2Sides(Condition):
 	u"""Fit the element on all sides of the parent sides.
 
-
 	>>> from pagebot.elements import Element
-	>>> e1 = Element(x=20, y=20, w=50, h=50)
+	>>> conditions = [Fit2Sides()]
+	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=300, elements=[e1])
+	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
+	(20, 20, 50, 50)
+	>>> e1.solve() # Solve position and size from conditions.
+	Score: 4 Fails: 0
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
+	(0, 0, 300, 300)
 	"""
 	def _getConditions(self):
 		return [Left2LeftSide, Top2TopSide, Fit2RightSide, Fit2BottomSide]
@@ -71,6 +77,19 @@ class Bleed2Sides(Fit2Sides):
 # There are no "FitOrigin" condition, as these may result is extremely large scalings.
 
 class Fit2Left(Condition):
+	u"""Grow the element to th eleft side, until it fits the parent element.
+
+	>>> from pagebot.elements import Element
+	>>> conditions = [Fit2Left()]
+	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
+	>>> e2 = Element(w=300, h=300, elements=[e1])
+	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
+	(20, 20, 50, 50)
+	>>> e1.solve() # Solve position and size from conditions.
+	Score: 1 Fails: 0
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
+	(0, 20, 70, 50)
+	"""
 	def test(self, e):
 		return e.isLeftOnLeft(self.tolerance)
 
