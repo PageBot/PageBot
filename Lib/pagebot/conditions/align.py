@@ -46,8 +46,13 @@ class Fit(Condition):
 		self.solveAll(e, self._getConditions(), score)
 
 class Fit2Sides(Condition):
-	u"""Fit the element on all sides of the parent sides."""
+	u"""Fit the element on all sides of the parent sides.
 
+
+	>>> from pagebot.elements import Element
+	>>> e1 = Element(x=20, y=20, w=50, h=50)
+	>>> e2 = Element(w=300, h=300, elements=[e1])
+	"""
 	def _getConditions(self):
 		return [Left2LeftSide, Top2TopSide, Fit2RightSide, Fit2BottomSide]
 
@@ -795,4 +800,9 @@ class Origin2BottomSide(Condition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.origin2BottomSide(), e, score)
 
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 
