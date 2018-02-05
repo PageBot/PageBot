@@ -432,7 +432,8 @@ class Element(object):
             borders=self.borders, # Copies all borders at once.
             shadow=self.shadow, # Needs to be copied?
             gradient=self.gradient, # Needs to be copied? 
-            drawBefore=self.drawBefore, drawAfter=self.drawAfter)  
+            drawBefore=self.drawBefore,
+            drawAfter=self.drawAfter)
         # Now do the same for each child element and append it to self.
         for child in self.elements:
             e.appendElement(child.copy(parent=e)) # Add the element to child list and update self._eId dictionary

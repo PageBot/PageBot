@@ -95,13 +95,13 @@ def makeCoverTemplate(imagePath, w, h):
     coverTitle = context.newString('Fashion', style=coverTitleStyle)
     # Calculate width if single "F" for now, to align "Slow"
     # TODO: Change in example to go through the coverTitle to get positions and widths.
-    FWidth, _ = textSize(context.newString('F', style=coverTitleStyle))
+    FWidth, _ = context.textSize(context.newString('F', style=coverTitleStyle))
         
     coversubTitle = context.newString('Slow', style=coverSubTitleStyle)
     newTextBox(coversubTitle, parent=coverTemplate, pl=FWidth*0.5, 
         conditions=[Left2Left(), Fit2Width(), Top2TopSide()])
     
-    tw, th = textSize(coverTitle)
+    tw, th = context.textSize(coverTitle)
     newText(coverTitle, parent=coverTemplate, z=20, h=th*0.4, 
         textShadow=shadow, conditions=[Fit2Width(), Top2TopSide()])
 
