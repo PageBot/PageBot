@@ -31,7 +31,7 @@ def iround(value):
 class FlatContext(BaseContext):
     u"""A FlatContext instance combines the specific functions of the Flat
     library, and offers a PageBot “standard” API, so it can be swapped with the
-    DrawBotContext. This way it way it also hides e.g. the type of BabelString
+    DrawBotContext. This way it also hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created.
 
     * https://github.com/xxyxyz/flat
@@ -222,7 +222,13 @@ class FlatContext(BaseContext):
     def textSize(self, bs, w=None, h=None):
         u"""Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
         Answer the height of the string if the width w is given."""
-        return self.b.textSize(self.s, w=w, h=h)
+        # FIXME! This is a totally wrong boilerplate for now!
+        if not bs.s:
+            return (0, 0)
+        elif w is None:
+            return (100, 100)
+        else:
+            return (w, w/len(bs))
 
     def textOverflow(self, bs, bounds, align=LEFT):
         u"""Answer the overflowing of from the box (0, 0, w, h) as new FsString in
@@ -231,6 +237,37 @@ class FlatContext(BaseContext):
 
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError()
+
+    #   I M A G E
+
+    def imagePixelColor(self, path, p):
+        return self.b.imagePixelColor(path, p)
+
+    def imageSize(self, path):
+        u"""Answer the (w, h) image size of the image file at path."""
+        # FIXME!
+        return (100, 100)
+
+    def initImageSize(self):
+        u"""Initialize the image size. Note that this is done with the default/current 
+        Context, as there may not be a view availabe yet."""
+        if self.path is not None and os.path.exists(self.path):
+            self.iw, self.ih = self.context.imageSize(self.path)
+        else:
+            self.iw = self.ih = 0 # Undefined or non-existing, there is no image file.
+
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+        u"""Draw the image. If w or h is defined, then scale the image to fit."""
+        if w is None or h is None:
+            w, h = self.imageSize(path)
+
+        x, y, = p[0], p[1]
+        self.save()
+        img = self.b.image(path)
+        img.resize(width=w, height=h)
+        placed = self.page.place(img)
+        placed.position(x, y)
+        self.restore()
 
     #   D R A W I N G
 
@@ -299,7 +336,7 @@ class FlatContext(BaseContext):
 
     def closePath(self):
         assert self._pathCommands is not None
-        self._pathCommands.append(self.b.closePath())
+        self._pathCommands.append(self.b.closepath)
 
     #   S H A D O W  &  G R A D I E N T
 

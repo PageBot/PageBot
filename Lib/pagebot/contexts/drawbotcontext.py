@@ -138,71 +138,6 @@ class DrawBotContext(BaseContext):
         """
         return self.getRootPath() + '/Fonts/'
 
-    #   T E X T
-
-    def fontSize(self, fontSize):
-        u"""Set the font size in the context.
-
-        >>> context = DrawBotContext()
-        >>> context.fontSize(12)
-        """
-        self.b.fontSize(fontSize)
-
-    def font(self, font, fontSize=None):
-        self.b.font(font)
-        if fontSize is not None:
-            self.b.fontSize(fontSize)
-
-    def newBulletString(self, bullet, e=None, style=None):
-        return self.newString(bullet, e=e, style=style)
-
-    def text(self, sOrBs, p):
-        u"""Draw the sOrBs text string, can be a basestring or BabelString, including a DrawBot FormattedString
-        at position p."""
-        if not isinstance(sOrBs, basestring):
-            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        self.b.text(sOrBs, p)
-
-    def textBox(self, sOrBs, r):
-        u"""Draw the sOrBs text string, can be a basestring or BabelString, including a DrawBot FormattedString
-        in rectangle r."""
-        if not isinstance(sOrBs, basestring):
-            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        self.b.textBox(sOrBs, r)
-
-    def textSize(self, bs, w=None, h=None):
-        u"""Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
-        Answer the height of the string if the width w is given."""
-        if w is not None:
-            return self.b.textSize(bs.s, width=w)
-        if h is not None:
-            return self.b.textSize(bs.s, height=h)
-        return self.b.textSize(bs.s)
-
-    def textOverflow(self, bs, bounds, align=LEFT):
-        u"""Answer the overflowing of from the box (0, 0, w, h) as new FsString in 
-        the current context."""
-        return FsString(self.b.textOverflow(bs.s, bounds, align), self)
-
-    def textBoxBaseLines(self, txt, box):
-        x, y, w, h = box
-        attrString = txt.getNSObject()
-        setter = CTFramesetterCreateWithAttributedString(attrString)
-        path = CGPathCreateMutable()
-        CGPathAddRect(path, None, CGRectMake(*box))
-        box = CTFramesetterCreateFrame(setter, (0, 0), path, None)
-        ctLines = CTFrameGetLines(box)
-        origins = CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-        return [(x + o.x, y + o.y) for o in origins]
-
-    def openTypeFeatures(self, features):
-        u"""Set the current of opentype features in the context canvas.
-
-        >>> context = DrawBotContext()
-        >>> context.openTypeFeatures(dict(smcp=True, zero=True))
-        """
-        self.b.openTypeFeatures(**features)
-
     #   D R A W I N G
 
     def rect(self, x, y, w, h):
@@ -347,6 +282,71 @@ class DrawBotContext(BaseContext):
     def listOpenTypeFeatures(self, fontName):
         u"""Answer the list of opentype features available in the named font."""
         return self.b.listOpenTypeFeatures(fontName)
+
+    #   T E X T
+
+    def fontSize(self, fontSize):
+        u"""Set the font size in the context.
+
+        >>> context = DrawBotContext()
+        >>> context.fontSize(12)
+        """
+        self.b.fontSize(fontSize)
+
+    def font(self, font, fontSize=None):
+        self.b.font(font)
+        if fontSize is not None:
+            self.b.fontSize(fontSize)
+
+    def newBulletString(self, bullet, e=None, style=None):
+        return self.newString(bullet, e=e, style=style)
+
+    def text(self, sOrBs, p):
+        u"""Draw the sOrBs text string, can be a basestring or BabelString, including a DrawBot FormattedString
+        at position p."""
+        if not isinstance(sOrBs, basestring):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        self.b.text(sOrBs, p)
+
+    def textBox(self, sOrBs, r):
+        u"""Draw the sOrBs text string, can be a basestring or BabelString, including a DrawBot FormattedString
+        in rectangle r."""
+        if not isinstance(sOrBs, basestring):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        self.b.textBox(sOrBs, r)
+
+    def textSize(self, bs, w=None, h=None):
+        u"""Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
+        Answer the height of the string if the width w is given."""
+        if w is not None:
+            return self.b.textSize(bs.s, width=w)
+        if h is not None:
+            return self.b.textSize(bs.s, height=h)
+        return self.b.textSize(bs.s)
+
+    def textOverflow(self, bs, bounds, align=LEFT):
+        u"""Answer the overflowing of from the box (0, 0, w, h) as new FsString in 
+        the current context."""
+        return FsString(self.b.textOverflow(bs.s, bounds, align), self)
+
+    def textBoxBaseLines(self, txt, box):
+        x, y, w, h = box
+        attrString = txt.getNSObject()
+        setter = CTFramesetterCreateWithAttributedString(attrString)
+        path = CGPathCreateMutable()
+        CGPathAddRect(path, None, CGRectMake(*box))
+        box = CTFramesetterCreateFrame(setter, (0, 0), path, None)
+        ctLines = CTFrameGetLines(box)
+        origins = CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+        return [(x + o.x, y + o.y) for o in origins]
+
+    def openTypeFeatures(self, features):
+        u"""Set the current of opentype features in the context canvas.
+
+        >>> context = DrawBotContext()
+        >>> context.openTypeFeatures(dict(smcp=True, zero=True))
+        """
+        self.b.openTypeFeatures(**features)
 
     #   I M A G E
 
