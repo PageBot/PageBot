@@ -69,7 +69,6 @@ class FlatContext(BaseContext):
         self.pages = []
         self.page = None # Current open page
         self.style = None # Current open style
-        self.image = None # Current open image
         self.shape = None # Current open shape
         self.flatString = None
 
