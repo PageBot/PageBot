@@ -17,16 +17,16 @@
 #    mutator.py
 #
 from __future__ import print_function, division, absolute_import
+import os.path
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
-import os.path
-
-from drawBot import installFont
+from pagebot.contexts import defaultContext as c
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2FontName
+
 
 def getMasterPath():
     u"""Answer the path to read master fonts. Default is at the same level as pagebot module.
@@ -39,6 +39,7 @@ def getMasterPath():
     home = expanduser("~")
     return home + '/Fonts/'
 
+
 def getInstancePath():
     u"""Answer the path to write instance fonts.
 
@@ -46,6 +47,7 @@ def getInstancePath():
     True
     """
     return getMasterPath() + '_instances/'
+
 
 def _iup_segment(coords, rc1, rd1, rc2, rd2):
     # rc1 = reference coord 1
@@ -85,6 +87,7 @@ def _iup_segment(coords, rc1, rd1, rc2, rd2):
 
     return zip(*out_arrays)
 
+
 def _iup_contour(delta, coords):
     assert len(delta) == len(coords)
     if None not in delta:
@@ -119,6 +122,7 @@ def _iup_contour(delta, coords):
     assert len(delta) == len(out), (len(delta), len(out))
     return out
 
+
 def _iup_delta(delta, coords, ends):
     assert sorted(ends) == ends and len(coords) == (ends[-1]+1 if ends else 0) + 4
     n = len(coords)
@@ -132,6 +136,7 @@ def _iup_delta(delta, coords, ends):
         start = end
 
     return out
+
 
 def generateInstance(variableFontPath, location, targetDirectory, normalize=False, force=False):
 
@@ -214,7 +219,8 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=Fals
         varFont.save(outFile)
 
     # Installing the font in DrawBot. Answer font name and path.
-    return installFont(outFile), outFile
+    return c.installFont(outFile), outFile
+
 
 def getVariableFont(fontOrPath, location, install=True, styleName=None, normalize=True):
     u"""The variablesFontPath refers to the file of the source variable font.
@@ -236,4 +242,3 @@ def getVariableFont(fontOrPath, location, install=True, styleName=None, normaliz
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-

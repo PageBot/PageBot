@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -18,8 +19,6 @@
 #     which may make them incompatible with this particular example.
 #    
 from math import radians
- 
-import pagebot
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
 from pagebot.fonttoolbox.mutator import getVariableFont
