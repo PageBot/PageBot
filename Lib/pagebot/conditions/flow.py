@@ -23,7 +23,18 @@ from pagebot.conditions.condition import Condition
 # Margins
 
 class Overflow2Next(Condition):
-	u"""If there is overflow in the element, then try to solve it."""
+	u"""If there is overflow in the element, then try to solve it.
+
+	>>> from pagebot.elements import newTextBox, Element
+	>>> e1 = newTextBox('ABC ' * 4, w=200, h=200)
+	>>> e2 = Element(x=10, y=10, w=200, h=200, name='Root', elements=[e1])
+	>>> e1.context
+	
+	>>> e1.parent.name
+	'Root'
+	>>> e1.isOverflow()
+
+	"""
 	def test(self, e):
 		return e.isOverflow(self.tolerance)
 
@@ -94,4 +105,9 @@ class FloatXHeight2Top(Condition):
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.floatXHeight2Top(), e, score)
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 

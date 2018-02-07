@@ -77,7 +77,7 @@ class Bleed2Sides(Fit2Sides):
 # There are no "FitOrigin" condition, as these may result is extremely large scalings.
 
 class Fit2Left(Condition):
-	u"""Grow the element to th eleft side, until it fits the parent element.
+	u"""Grow the element to the left side, until it fits the parent element.
 
 	>>> from pagebot.elements import Element
 	>>> conditions = [Fit2Left()]
@@ -106,6 +106,19 @@ class Fit2Right(Condition):
 			self.addScore(e.fit2Right(), e, score)
 
 class Fit2Width(Condition):
+	u"""Grow the element to left and right side, until it fits the parent element.
+
+	>>> from pagebot.elements import Element
+	>>> conditions = [Fit2Width()]
+	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
+	>>> e2 = Element(w=300, h=400, elements=[e1])
+	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
+	(20, 20, 50, 50)
+	>>> e1.solve() # Solve position and size from conditions.
+	Score: 1 Fails: 0
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
+	(0, 20, 300, 50)
+	"""
 	def test(self, e):
 		return e.isLeftOnLeft(self.tolerance) and e.isRightOnRight(self.tolerance)
 
@@ -114,6 +127,19 @@ class Fit2Width(Condition):
 			self.addScore(e.left2Left() and e.fit2Right(), e, score)
 		
 class Fit2Height(Condition):
+	u"""Grow the element to top and bottom side, until it fits the parent element.
+
+	>>> from pagebot.elements import Element
+	>>> conditions = [Fit2Height()]
+	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
+	>>> e2 = Element(w=300, h=400, elements=[e1])
+	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
+	(20, 20, 50, 50)
+	>>> e1.solve() # Solve position and size from conditions.
+	Score: 1 Fails: 0
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
+	(20, 0, 50, 400)
+	"""
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance) and e.isBottomOnBottom(self.tolerance)
 
@@ -122,6 +148,19 @@ class Fit2Height(Condition):
 			self.addScore(e.top2Top() and e.fit2Bottom(), e, score)
 		
 class Fit2Top(Condition):
+	u"""Grow the element to top side, until it fits the parent element.
+
+	>>> from pagebot.elements import Element
+	>>> conditions = [Fit2Top()]
+	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
+	>>> e2 = Element(w=300, h=400, elements=[e1])
+	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
+	(20, 20, 50, 50)
+	>>> e1.solve() # Solve position and size from conditions.
+	Score: 1 Fails: 0
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
+	(20, 20, 50, 400)
+	"""
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance)
 
@@ -130,6 +169,19 @@ class Fit2Top(Condition):
 			self.addScore(e.fit2Top(), e, score)
 
 class Fit2Bottom(Condition):
+	u"""Grow the element to bottom side, until it fits the parent element.
+
+	>>> from pagebot.elements import Element
+	>>> conditions = [Fit2Bottom()]
+	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
+	>>> e2 = Element(w=300, h=400, elements=[e1])
+	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
+	(20, 20, 50, 50)
+	>>> e1.solve() # Solve position and size from conditions.
+	Score: 1 Fails: 0
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
+	(20, 0, 50, 20)
+	"""
 	def test(self, e):
 		return e.isBottomOnBottom(self.tolerance)
 
