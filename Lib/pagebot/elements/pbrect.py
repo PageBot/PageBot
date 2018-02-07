@@ -21,5 +21,5 @@ from pagebot.elements.element import Element
 class Rect(Element):
     pass
 
-    # No separate draw, default behavior is in Element.draw()
+    # No separate build, default behavior is in Element.build()
 
