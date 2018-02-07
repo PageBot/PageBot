@@ -26,8 +26,11 @@ try:
 except ImportError:
     drawBotBuilder = None
 
-# Make NoneDrawBotBuilder with the same API for docTesting, in case the platform does not support DrawBot.
 class NoneDrawBotBuilder(object):
+    """Make NoneDrawBotBuilder with the same API for docTesting, in case the platform does not support DrawBot.
+    More methods to be added here, if DrawBotContext docTests fail in non-DrawBot platforms.
+    Eventually should be a matching set of methods, compare to DrawBot itself."""
+    
     PB_ID = 'drawBot'
 
     def newDrawing(self):
