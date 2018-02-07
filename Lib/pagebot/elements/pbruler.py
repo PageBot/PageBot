@@ -43,8 +43,9 @@ class Ruler(Element):
     def build(self, view, origin):
         u"""Build the Ruler in the current context
 
-        >>> from pagebot.contexts import defaultContext as c
+        >>> from pagebot.contexts import DrawBotContext
         >>> from pagebot.document import Document
+        >>> c = DrawBotContext()
         >>> w, h = 300, 400
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[0]
