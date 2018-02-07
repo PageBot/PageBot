@@ -26,10 +26,12 @@ try:
     from drawBot import Variable
     from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
 except ImportError:
+    # If DrawBot is not available on the platform, then use a noneDrawBotBuilder instance, that
+    # can be used to run all DrawBot related docTests.
+    from pagebot.contexts.builders.drawbotbuilder import noneDrawBotBuilder as drawBotBuilder
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
     Variable = None
-    drawBotBuilder = None
 
 from basecontext import BaseContext
 from pagebot.contexts.strings.fsstring import FsString
