@@ -44,7 +44,8 @@ class Element(object):
     isFlow = False # Value is True if self.next if defined.
     isPage = False # Set to True by Page-like elements.
     isView = False
-    
+
+
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
             t=0, parent=None, context=None, name=None, class_=None, title=None, description=None, language=None,
             style=None, conditions=None, info=None, framePath=None, 
@@ -431,7 +432,8 @@ class Element(object):
             borders=self.borders, # Copies all borders at once.
             shadow=self.shadow, # Needs to be copied?
             gradient=self.gradient, # Needs to be copied? 
-            drawBefore=self.drawBefore, drawAfter=self.drawAfter)  
+            drawBefore=self.drawBefore,
+            drawAfter=self.drawAfter)
         # Now do the same for each child element and append it to self.
         for child in self.elements:
             e.appendElement(child.copy(parent=e)) # Add the element to child list and update self._eId dictionary
@@ -3889,14 +3891,50 @@ class Element(object):
         return True
 
     def fit2Right(self):
-        self.w += self.parent.w - self.parent.pr - self.right
+        u"""Make the right side of self fit the right padding of the parent, without
+        moving the left position.
+
+        >>> e1 = Element(x=100, y=20, w=100, h=50)
+        >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
+        >>> e1.x, e1.y, e1.w, e1.h # Default position and size
+        (100, 20, 100, 50)
+        >>> success = e1.fit2Right()
+        >>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
+        (100, 20, 190, 50)
+        >>> 
+        """
+        self.w = self.parent.w - self.parent.pr - self.x
         return True
 
     def fit2RightSide(self):
-        self.w += self.parent.w - self.right
+        u"""Make the right side of self fit the right side of the parent, without
+        moving the left position.
+
+        >>> e1 = Element(x=100, y=20, w=100, h=50)
+        >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
+        >>> e1.x, e1.y, e1.w, e1.h # Default position and size
+        (100, 20, 100, 50)
+        >>> success = e1.fit2RightSide()
+        >>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
+        (100, 20, 200, 50)
+        >>> 
+        """
+        self.w = self.parent.w - self.x
         return True
 
     def fit2Top(self):
+        u"""Make the top side of self fit the top padding of the parent, without
+        moving the bottom position.
+
+        >>> e1 = Element(x=100, y=20, w=100, h=50)
+        >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
+        >>> e1.x, e1.y, e1.w, e1.h # Default position and size
+        (100, 20, 100, 50)
+        >>> success = e1.fit2Top()
+        >>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
+        (100, 20, 100, 300)
+        >>> 
+        """
         if self.originTop:
             bottom = self.bottom
             self.top = self.parent.pt
