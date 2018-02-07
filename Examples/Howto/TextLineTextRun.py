@@ -18,7 +18,7 @@
 #     See gallery.
 #
 #    Implements a demo version of TextLine and TextRun.
-#    This code has been built into BabelString FsString.
+#    This code has been built into BabelString DrawBotString.
 #
 from pagebot.contexts import defaultContext as c
 import re

@@ -27,18 +27,18 @@ from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
 
-class FsString(BabelString):
+class DrawBotString(BabelString):
 
     BABEL_STRING_TYPE = 'fs'
 
-    u"""FsString is a wrapper around the standard DrawBot FormattedString."""
+    u"""DrawBotString is a wrapper around the standard DrawBot FormattedString."""
     def __init__(self, s, context):
-        u"""Constructor of the FsString, wrapper around DrawBot.FormattedString.
+        u"""Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
     
         >>> from pagebot.contexts import defaultContext as context
         >>> context.isDrawBot
         True
-        >>> bs = FsString('ABC', context)
+        >>> bs = DrawBotString('ABC', context)
         >>> bs
         ABC
         """
@@ -51,10 +51,10 @@ class FsString(BabelString):
     def _set_s(self, s):
         u"""Check on the type of s. Three types are supported here: plain strings, 
         DrawBot FormattedString and the class of self."""
-        assert isinstance(s, (FsString, basestring)) or s.__class__.__name__ == 'FormattedString'
+        assert isinstance(s, (DrawBotString, basestring)) or s.__class__.__name__ == 'FormattedString'
         if isinstance(s, basestring):
             s = self.context.b.FormattedString(s)
-        elif isinstance(s, FsString):
+        elif isinstance(s, DrawBotString):
             s = s.s
         self._s = s
     s = property(_get_s, _set_s)
@@ -126,7 +126,7 @@ class FsString(BabelString):
     @classmethod
     def newString(cls, t, context, e=None, style=None, w=None, h=None, 
         fontSize=None, styleName=None, tracking=None, rTracking=None, tagName=None):
-        u"""Answer a FsString instance from valid attributes in *style*. Set all values after testing
+        u"""Answer a DrawBotString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
         # Get the drawBotBuilder, no need to check, we already must be in context here.
