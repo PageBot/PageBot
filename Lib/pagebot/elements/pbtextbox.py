@@ -196,13 +196,17 @@ class TextBox(Element):
         return bs.textSize(w or self.w)
 
     def getOverflow(self, w=None, h=None):
-        """Figure out what the overflow of the text is, with the given (w,h) or styled
-        (self.w, self.h) of this text box. If self.style['elasticH'] is True, then by
-        definintion overflow will allways be empty."""
-        if self.css('elasticH'): # In case elasticH is True, box will aways fit the content.
+        """Figure out what the overflow of the text is, with the given (w, h) or styled
+        (self.w, self.h) of this text box. If h is None and self.h is None then by
+        definintion overflow will allways be empty, as the box is elastic."""
+        if self.h is None and h is None: # In case height is undefined, box will aways fit the content.
             return ''
-        # Otherwise test if there is overflow of text in the given size.
-        return self.bs.textOverflow(w or self.w-self.pr-self.pl, h or self.h-self.pt-self.pb, LEFT)
+        # Otherwise test if there is overflow of text in the given element size.
+        if w is None:
+            w = self.w-self.pr-self.pl
+        if h is None:
+            h = self.h-self.pt-self.pb
+        return self.bs.textOverflow(w, h, LEFT)
 
     def NOTNOW_getBaselinePositions(self, y=0, w=None, h=None):
         u"""Answer the list vertical baseline positions, relative to y (default is 0)
