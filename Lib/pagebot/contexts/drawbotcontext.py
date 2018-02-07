@@ -34,7 +34,7 @@ except ImportError:
     Variable = None
 
 from basecontext import BaseContext
-from pagebot.contexts.strings.fsstring import FsString
+from pagebot.contexts.strings.fsstring import DrawBotString
 from pagebot.style import NO_COLOR, LEFT
 
 
@@ -47,7 +47,7 @@ class DrawBotContext(BaseContext):
     isDrawBot = True
 
     # Used by the generic BaseContext.newString( )
-    STRING_CLASS = FsString
+    STRING_CLASS = DrawBotString
   
     def __init__(self):
         u"""Constructor of DrawBotContext if drawBot import exists.
@@ -327,9 +327,9 @@ class DrawBotContext(BaseContext):
         return self.b.textSize(bs.s)
 
     def textOverflow(self, bs, bounds, align=LEFT):
-        u"""Answer the overflowing of from the box (0, 0, w, h) as new FsString in 
+        u"""Answer the overflowing of from the box (0, 0, w, h) as new DrawBotString in 
         the current context."""
-        return FsString(self.b.textOverflow(bs.s, bounds, align), self)
+        return DrawBotString(self.b.textOverflow(bs.s, bounds, align), self)
 
     def textBoxBaseLines(self, txt, box):
         x, y, w, h = box

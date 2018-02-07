@@ -42,7 +42,7 @@ class Fit(Condition):
 	>>> e1.solve() # Solve position and size from conditions on 4 sides
 	Score: 4 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(12, 12, 300, 276)
+	(12, 12, 276, 276)
 	"""
 
 	def _getConditions(self):
