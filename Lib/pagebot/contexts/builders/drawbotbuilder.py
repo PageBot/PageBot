@@ -26,4 +26,29 @@ try:
 except ImportError:
     drawBotBuilder = None
 
+# Make NoneDrawBotBuilder with the same API for docTesting, in case the platform does not support DrawBot.
+class NoneDrawBotBuilder(object):
+    PB_ID = 'drawBot'
 
+    def newDrawing(self):
+        pass
+
+    def newPage(self, w, h):
+        pass
+
+    def openTypeFeatures(self, **openTypeFeatures):
+        pass
+
+    def oval(self, x, y, w, h):
+        pass
+
+    rect = oval
+
+    def sizes(self):
+        return dict(screen=(800, 600))
+
+    def fontSize(self, fontSize):
+        pass
+
+
+noneDrawBotBuilder = NoneDrawBotBuilder()
