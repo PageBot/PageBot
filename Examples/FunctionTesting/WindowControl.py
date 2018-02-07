@@ -1,13 +1,22 @@
+#!/usr/bin/env python
+# -----------------------------------------------------------------------------
+#
+#     P A G E B O T
+#
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
+#
+#     Licensed under MIT conditions
+#
+#     Supporting usage of DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+import sys
+try:
+    import AppKit
+    from vanilla import Window, Button, CheckBox
+except ImportError:
+    sys.exit('Platform does not support DrawBot.')
 
-from pagebot.builders.drawbotbuilder import drawBotBuilder as b
-from pagebot.elements.views.strings import newFsString
-if b is None:
-    print 'Platform does not support DrawBot.'
-else:
-
-import AppKit
-
-from vanilla import Window, Button, CheckBox
 
 class VariableController(object):
 

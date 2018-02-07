@@ -22,7 +22,7 @@ import os
 import pagebot
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.toolbox.transformer import path2ScriptId
-from pagebot.elements.views.strings import newFsString
+from pagebot.elements.views.strings import newDrawBotString
 
 fontNames = []
 for fontName in installedFonts():
@@ -41,11 +41,11 @@ def drawFigures():
     W, H = 860, 451
     newPage(W, H)
     LEADING = 0.9
-    fs = newFsString('ABC0123456789\n', style=dict(textFill=0, rLeading=1, font='BitcountPropSingle-RegularCircle', fontSize=90))
-    fs += newFsString('abc0123456789\n', style=dict(textFill=0, font='BitcountPropSingle-RegularCircle', rLeading=LEADING, fontSize=90, openTypeFeatures=dict(smcp=True)))
-    fs += newFsString('ABCabc0123456789\n', style=dict(textFill=0, font='BitcountPropSingle-RegularCircle', rLeading=LEADING, fontSize=90, openTypeFeatures=dict(onum=True, ss07=True)))
-    fs += newFsString('ABCabc0123456789\n', style=dict(textFill=0, font='BitcountPropSingle-RegularCircle', rLeading=LEADING, fontSize=90, openTypeFeatures=dict(ss07=True)))
-    fs += newFsString('Fraction 1/2 12345/67890\n', style=dict(textFill=0, font='BitcountPropSingle-RegularCircle', rLeading=LEADING, fontSize=90, openTypeFeatures=dict(frac=True)))
+    fs = newDrawBotString('ABC0123456789\n', style=dict(textFill=0, rLeading=1, font='BitcountPropSingle-RegularCircle', fontSize=90))
+    fs += newDrawBotString('abc0123456789\n', style=dict(textFill=0, font='BitcountPropSingle-RegularCircle', rLeading=LEADING, fontSize=90, openTypeFeatures=dict(smcp=True)))
+    fs += newDrawBotString('ABCabc0123456789\n', style=dict(textFill=0, font='BitcountPropSingle-RegularCircle', rLeading=LEADING, fontSize=90, openTypeFeatures=dict(onum=True, ss07=True)))
+    fs += newDrwaBotString('ABCabc0123456789\n', style=dict(textFill=0, font='BitcountPropSingle-RegularCircle', rLeading=LEADING, fontSize=90, openTypeFeatures=dict(ss07=True)))
+    fs += newDrawBotString('Fraction 1/2 12345/67890\n', style=dict(textFill=0, font='BitcountPropSingle-RegularCircle', rLeading=LEADING, fontSize=90, openTypeFeatures=dict(frac=True)))
     M = 30
     textBox(fs.s, (M+10, -10, W-2*M, H))
     saveImage('_export/figures.png') # Save the sample as file or animated gif.
