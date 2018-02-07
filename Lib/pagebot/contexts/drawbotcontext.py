@@ -34,7 +34,7 @@ except ImportError:
     Variable = None
 
 from basecontext import BaseContext
-from pagebot.contexts.strings.fsstring import DrawBotString
+from pagebot.contexts.strings.drawbotstring import DrawBotString
 from pagebot.style import NO_COLOR, LEFT
 
 
