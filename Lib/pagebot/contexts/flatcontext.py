@@ -230,8 +230,8 @@ class FlatContext(BaseContext):
             return (w, w/len(bs))
 
     def textOverflow(self, bs, bounds, align=LEFT):
-        u"""Answer the overflowing of from the box (0, 0, w, h) as new FsString in
-        the current context."""
+        u"""Answer the overflowing of from the box (0, 0, w, h) as new FlatString
+        in the current context."""
         return FlatString(self.b.textOverflow(bs.s, bounds, align), self)
 
     def textBoxBaseLines(self, txt, box):
