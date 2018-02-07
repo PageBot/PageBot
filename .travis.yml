@@ -16,3 +16,4 @@ script:
 - export PYLINT="pylint --disable=$WONT_FIX,$CATCHALL_MAY_FIX_LATER"
 - $PYLINT Examples/
 - $PYLINT Lib/pagebot/
+- python Lib/pagebot/conditions/align.py
