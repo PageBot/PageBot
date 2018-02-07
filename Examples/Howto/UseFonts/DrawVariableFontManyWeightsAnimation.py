@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -17,15 +18,15 @@
 #     In the future these classes will be part of the main PageBot library,
 #     which may make them incompatible with this particular example.
 #
-import pagebot
-from pagebot.contexts import defaultContext as context
+from pagebot import getRootPath
+from pagebot.contexts import defaultContext as c
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont 
 from pagebot.style import CENTER
 
 W = H = 500
 
-ROOT_PATH = pagebot.getRootPath()
+ROOT_PATH = getRootPath()
 FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
 f = Font(FONT_PATH, install=True) # Get PageBot Font instance of Variable font.
 
@@ -67,7 +68,7 @@ class FontIcon(object):
     LABEL_RTRACKING = 0.02
     LABEL_RLEADING = 1.3
 
-    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, line=None, 
+    def __init__(self, f, name=None, label=None, title=None, eId=None, char='F', s=1, line=None, 
             labelFont=None, titleFont=None, x=0, y=0, show=True):
         self.f = f # Font instance
         self.labelFont = labelFont or f
@@ -75,7 +76,7 @@ class FontIcon(object):
         self.title = title
         self.name = name # Name below the icon
         self.label = label # Optiona second label line
-        self.c = c # Character(s) in the icon.
+        self.char = char # Character(s) in the icon.
         self.scale = s
         self.line = line or self.L
         self.x = x
@@ -113,60 +114,60 @@ class FontIcon(object):
         x = self.x + orgX
         y = self.y + orgY
         
-        path = newPath()
-        moveTo((0, 0))
-        lineTo((0, h))
-        lineTo((w-e, h))
-        lineTo((w, h-e))
-        lineTo((w, 0))
-        lineTo((0, 0))
-        closePath()
-        moveTo((w-e, h))
-        lineTo((w-e, h-e))
-        lineTo((w, h-e))
+        path = c.newPath()
+        c.moveTo((0, 0))
+        c.lineTo((0, h))
+        c.lineTo((w-e, h))
+        c.lineTo((w, h-e))
+        c.lineTo((w, 0))
+        c.lineTo((0, 0))
+        c.closePath()
+        c.moveTo((w-e, h))
+        c.lineTo((w-e, h-e))
+        c.lineTo((w, h-e))
     
-        save()
-        fill(1)
-        stroke(0)
-        strokeWidth(self.line)
-        translate(x, y)
-        drawPath(path)
+        c.saveGraphicState()
+        c.fill(1)
+        c.stroke(0)
+        c.strokeWidth = self.line
+        c.moveTo((x, y))
+        c.drawPath(path)
         labelSize = e
-        fs = context.newString(self.c,
-                               style=dict(font=self.f.installedName,
-                                          textFill=0,
-                                          fontSize=h*2/3))
-        tw, th = textSize(fs)
-        text(fs, (w/2-tw/2, h/2-th/3.2))
+        fs = c.newString(self.char,
+                         style=dict(font=self.f.installedName,
+                                    textFill=0,
+                                    fontSize=h*2/3))
+        tw, th = c.textSize(fs)
+        c.text(fs, (w/2-tw/2, h/2-th/3.2))
         
         if self.title:
-            fs = context.newString(self.title,
-                                   style=dict(font=self.labelFont.installedName,
-                                   textFill=0,
-                                   rTracking=self.LABEL_RTRACKING,
-                                   fontSize=labelSize))
-            tw, th = textSize(fs)
-            text(fs, (w/2-tw/2, self.ih+th/2))
+            fs = c.newString(self.title,
+                             style=dict(font=self.labelFont.installedName,
+                             textFill=0,
+                             rTracking=self.LABEL_RTRACKING,
+                             fontSize=labelSize))
+            tw, th = c.textSize(fs)
+            c.text(fs, (w/2-tw/2, self.ih+th/2))
 
         y = -self.LABEL_RLEADING*labelSize
         if self.name:
-            fs = context.newString(self.name,
-                                   style=dict(font=self.labelFont.installedName,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = textSize(fs)
-            text(fs, (w/2-tw/2, y))
+            fs = c.newString(self.name,
+                             style=dict(font=self.labelFont.installedName,
+                                        textFill=0,
+                                        rTracking=self.LABEL_RTRACKING,
+                                        fontSize=labelSize))
+            tw, th = c.textSize(fs)
+            c.text(fs, (w/2-tw/2, y))
             y -= self.LABEL_RLEADING*labelSize
         if self.label:
-            fs = context.newString(self.label,
-                                   style=dict(font=self.labelFont.installedName,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = textSize(fs)
-            text(fs, (w/2-tw/2, y))
-        restore()
+            fs = c.newString(self.label,
+                             style=dict(font=self.labelFont.installedName,
+                                        textFill=0,
+                                        rTracking=self.LABEL_RTRACKING,
+                                        fontSize=labelSize))
+            tw, th = c.textSize(fs)
+            c.text(fs, (w/2-tw/2, y))
+        c.restoreGraphicState()
     
 class KeyFrame(object):
     def __init__(self, objects, positions, steps=None, drawBackground=None):
@@ -176,12 +177,12 @@ class KeyFrame(object):
         self.drawBackgroundHook = drawBackground
     
     def drawBackground(self):
-        fill(1)
-        rect(0, 0, W, H)
+        c.fill(1)
+        c.rect(0, 0, W, H)
             
     def draw(self):
         for n in range(self.steps):
-            newPage(W, H)
+            c.newPage(W, H)
             self.drawBackground()
             if self.drawBackgroundHook is not None:
                 self.drawBackgroundHook(self, n)
@@ -217,7 +218,7 @@ semibolIcon = FontIcon(SEMIBOLD, 'Semibold', eId='Semibold', s=S, label=FSIZE, l
 semiboldCondensedIcon = FontIcon(SEMIBOLD_CONDENSED, 'Semibold Condensed', eId='SemiboldCondensed', s=S, label=FSIZE, labelFont=LABEL_FONT)
 boldIcon = FontIcon(BOLD, 'Bold', eId='Bold', s=S, label=FSIZE, labelFont=LABEL_FONT)
 boldCondensedIcon = FontIcon(BOLD_CONDENSED, 'Bold Condensed', eId='BoldCondensed', s=S, label=FSIZE, labelFont=LABEL_FONT)
-varFontIcon = FontIcon(BOOK, 'Variable Font', eId='VarFont', s=S, c='', label='0k', labelFont=LABEL_FONT, title='No axes')
+varFontIcon = FontIcon(BOOK, 'Variable Font', eId='VarFont', s=S, char='', label='0k', labelFont=LABEL_FONT, title='No axes')
 
 fontIcons = [varFontIcon, ultraLightIcon, lightIcon, thinIcon, bookIcon, regularIcon, mediumIcon, semibolIcon, boldIcon]
 id2FontIcon = {}
@@ -243,32 +244,32 @@ def positionFontIcons():
     varFontIcon.y = H/2-varFontIcon.ih/2
 
 def drawBackground1(keyFrame, frame):
-    fs = context.newString('8 weight fonts\nTotal 400k',
-                           style=dict(font=LABEL_FONT.installedName,
-                                      rLeading=1.2,
-                                      fontSize=18,
-                                      textFill=(1, 0, 0)))
-    textBox(fs, (50, H-60, 200, 50))
+    fs = c.newString('8 weight fonts\nTotal 400k',
+                     style=dict(font=LABEL_FONT.installedName,
+                                rLeading=1.2,
+                                fontSize=18,
+                                textFill=(1, 0, 0)))
+    c.textBox(fs, (50, H-60, 200, 50))
     
 def drawBackground2(keyFrame, frame):
     drawBackground1(keyFrame, frame)
     varFontIcon = id2FontIcon['VarFont']
-    fs = context.newString('1 axis\nTotal 100k',
-                           style=dict(font=LABEL_FONT.installedName,
-                                      rLeading=1.2,
-                                      fontSize=18,
-                                      textFill=(1, 0, 0)))
-    textBox(fs, (varFontIcon.x, H-60, 200, 50))
+    fs = c.newString('1 axis\nTotal 100k',
+                     style=dict(font=LABEL_FONT.installedName,
+                                rLeading=1.2,
+                                fontSize=18,
+                                textFill=(1, 0, 0)))
+    c.textBox(fs, (varFontIcon.x, H-60, 200, 50))
     
 def drawBackground3(keyFrame, frame):
     drawBackground1(keyFrame, frame)
     varFontIcon = id2FontIcon['VarFont']
-    fs = context.newString('%d weights\nTotal 100k' % ((2**15)+1),
-                           style=dict(font=LABEL_FONT.installedName,
-                                      rLeading=1.2,
-                                      fontSize=18,
-                                      textFill=(1, 0, 0)))
-    textBox(fs, (varFontIcon.x, H-60, 200, 50))
+    fs = c.newString('%d weights\nTotal 100k' % ((2**15)+1),
+                     style=dict(font=LABEL_FONT.installedName,
+                                rLeading=1.2,
+                                fontSize=18,
+                                textFill=(1, 0, 0)))
+    c.textBox(fs, (varFontIcon.x, H-60, 200, 50))
         
 def drawAnimation():
     positionFontIcons()
@@ -318,8 +319,6 @@ def drawAnimation():
         drawBackground=drawBackground3
     ).draw()
 
-    saveImage('_export/VarFontManyWeights.gif')    
+    c.saveImage('_export/VarFontManyWeights.gif')
 
-drawAnimation()
-   
-    
+drawAnimation()    

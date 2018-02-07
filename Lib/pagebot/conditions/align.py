@@ -31,7 +31,19 @@ class SolveBlock(Condition):
 #   By fitting conditions, elements grow to match the size of parents.
 
 class Fit(Condition):
-	u"""Fit the element on all sides of the parent paddings."""
+	u"""Fit the element on all sides of the parent paddings.
+
+	>>> from pagebot.elements import Element
+	>>> conditions = [Fit()]
+	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
+	>>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
+	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
+	(20, 20, 50, 50)
+	>>> e1.solve() # Solve position and size from conditions on 4 sides
+	Score: 4 Fails: 0
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
+	(12, 12, 300, 276)
+	"""
 
 	def _getConditions(self):
 		return [Left2Left, Top2Top, Fit2Right, Fit2Bottom]
@@ -54,7 +66,7 @@ class Fit2Sides(Condition):
 	>>> e2 = Element(w=300, h=300, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
 	(20, 20, 50, 50)
-	>>> e1.solve() # Solve position and size from conditions.
+	>>> e1.solve() # Solve position and size from conditions on 4 sides
 	Score: 4 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
 	(0, 0, 300, 300)
@@ -77,18 +89,18 @@ class Bleed2Sides(Fit2Sides):
 # There are no "FitOrigin" condition, as these may result is extremely large scalings.
 
 class Fit2Left(Condition):
-	u"""Grow the element to the left side, until it fits the parent element.
+	u"""Grow the element to the left side, until it fits the parent element padding.
 
 	>>> from pagebot.elements import Element
 	>>> conditions = [Fit2Left()]
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
-	>>> e2 = Element(w=300, h=300, elements=[e1])
+	>>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
 	(20, 20, 50, 50)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
-	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(0, 20, 70, 50)
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
+	(12, 20, 58, 50)
 	"""
 	def test(self, e):
 		return e.isLeftOnLeft(self.tolerance)
@@ -98,6 +110,19 @@ class Fit2Left(Condition):
 			self.addScore(e.fit2Left(), e, score)
 
 class Fit2Right(Condition):
+	u"""Grow the element to the right side, until it fits the parent element padding.
+
+	>>> from pagebot.elements import Element
+	>>> conditions = [Fit2Right()]
+	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
+	>>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
+	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
+	(20, 20, 50, 50)
+	>>> e1.solve() # Solve position and size from conditions.
+	Score: 1 Fails: 0
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
+	(20, 20, 268, 50)
+	"""
 	def test(self, e):
 		return e.isRightOnRight(self.tolerance)
 
