@@ -12,7 +12,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     fsstring.py
+#     drawbotstring.py
 #
 import re
 try:

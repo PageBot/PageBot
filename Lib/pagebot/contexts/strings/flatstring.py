@@ -11,7 +11,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     fsstring.py
+#     flatstring.py
 #
 #     http://xxyxyz.org/flat
 
