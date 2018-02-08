@@ -678,6 +678,10 @@ class Element(object):
     #   If self.nextElement is defined, then check the condition if there is overflow.
 
     def isOverflow(self, tolerance):
+        u"""Answer the boolean flag if this element needs overflow to be solved.
+        This method is typically called by conditions such as Overflow2Next.
+        This method is redefined by inheriting classed, such as
+        TextBox, that can have overflow of text."""
         return True
 
     def overflow2Next(self):

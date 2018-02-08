@@ -17,9 +17,11 @@ script:
 - $PYLINT Examples/
 - $PYLINT Lib/pagebot/
 - python Lib/pagebot/conditions/align.py
+- python Lib/pagebot/conditions/flow.py
 - python Lib/pagebot/contexts/builders/htmlbuilder.py
 - python Lib/pagebot/contexts/drawbotcontext.py
 - python Lib/pagebot/contexts/flatcontext.py
+- python Lib/pagebot/contexts/strings/drawbotstring.py
 - python Lib/pagebot/document.py
 - python Lib/pagebot/elements/element.py
 - python Lib/pagebot/elements/pbruler.py

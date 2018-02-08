@@ -248,7 +248,7 @@ class TextBox(Element):
         if the overflow marker needs to be drawn.
         Note: There is currently not a test if text actually went into the next element. It's just
         checking if there is a name defined, not if it exists or is already filled by another flow."""
-        return self.nextElement is None and self.getOverflow()
+        return self.nextElement is None and self.getOverflow() != ''
 
     def overflow2Next(self):
         u"""Try to fix if there is overflow."""
