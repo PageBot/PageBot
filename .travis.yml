@@ -22,8 +22,19 @@ script:
 - python Lib/pagebot/contexts/drawbotcontext.py
 - python Lib/pagebot/contexts/flatcontext.py
 - python Lib/pagebot/contexts/strings/drawbotstring.py
+#FIXME: - python Lib/pagebot/contributions/filibuster/blurbwriter.py
 - python Lib/pagebot/document.py
 - python Lib/pagebot/elements/element.py
 - python Lib/pagebot/elements/pbruler.py
+#FIXME: - python Lib/pagebot/elements/pbtextbox.py
+- python Lib/pagebot/elements/views/pageview.py
+#FIXME: - python Lib/pagebot/fonttoolbox/installfont.py
 - python Lib/pagebot/fonttoolbox/mutator.py
+#FIXME: - python Lib/pagebot/fonttoolbox/otlTools.py
+#FIXME: - python Lib/pagebot/fonttoolbox/ttftools.py
+#FIXME: - python Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
+- python Lib/pagebot/toolbox/dating.py
+- python Lib/pagebot/toolbox/markers.py
+#FIXME: - python Lib/pagebot/toolbox/mathematics.py
+- python Lib/pagebot/toolbox/transformer.py
 - python Lib/pagebot/toolbox/units.py
