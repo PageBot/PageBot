@@ -26,8 +26,38 @@ class Image(Element):
     u"""The Image element is a “normal” container, which contains one (or more) PixelMap elements and zero (or more)
     caption or other elements. This way the user can add mulitple PixelMaps, a title elements, etc. 
     The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
-    applied (e.g. if the image element changes size), or the child elements can be put on fixed positions."""
-    
+    applied (e.g. if the image element changes size), or the child elements can be put on fixed positions.
+
+    >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+    >>> from pagebot.document import Document
+    >>> c = DrawBotContext()
+    >>> w, h = 300, 400
+    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+    >>> page = doc[0]
+    >>> e = Image(parent=page, x=0, y=20, w=page.w, h=300)
+    >>> #e.build(doc.getView(), (0, 0))
+    >>> e.xy
+    (0, 20)
+    >>> e.size
+    (300, 300, 1)
+    >>> view = doc.getView()
+    >>> #e.build(view, (0, 0))
+
+    >>> from pagebot.contexts.flatcontext import FlatContext 
+    >>> from pagebot.document import Document
+    >>> c = FlatContext()
+    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+    >>> page = doc[0]
+    >>> e = Image(parent=page, x=0, y=20, w=page.w, h=300)
+    >>> # Allow the context to create a new document and page canvas. Normally view does it.
+    >>> c.newPage(w, h) 
+    >>> e.build(doc.getView(), (0, 0))
+    [build_flat] Not implemented yet
+    >>> e.xy
+    (0, 20)
+    >>> e.size
+    (300, 300, 1)
+    """
     def __init__(self, path=None, style=None, pixelMap=None, title=None, caption=None, clipRect=None, 
             mask=None, imo=None, w=None, h=None, imageConditions=None, conditions=None, **kwargs):
         self.image = None # Aviud setting of self.omage.w and self.omage.h while not initialized.
@@ -251,4 +281,9 @@ class PixelMap(Element):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
 
-   
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+
