@@ -35,7 +35,8 @@ class DrawBotString(BabelString):
     def __init__(self, s, context):
         u"""Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
     
-        >>> from pagebot.contexts import defaultContext as context
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
         >>> context.isDrawBot
         True
         >>> bs = DrawBotString('ABC', context)

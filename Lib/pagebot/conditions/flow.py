@@ -28,12 +28,10 @@ class Overflow2Next(Condition):
 	>>> from pagebot.elements import newTextBox, Element
 	>>> e1 = newTextBox('ABC ' * 4, w=200, h=200)
 	>>> e2 = Element(x=10, y=10, w=200, h=200, name='Root', elements=[e1])
-	>>> e1.context
-	
 	>>> e1.parent.name
 	'Root'
 	>>> e1.isOverflow()
-
+        False
 	"""
 	def test(self, e):
 		return e.isOverflow(self.tolerance)
