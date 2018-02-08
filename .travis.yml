@@ -37,6 +37,6 @@ script:
 #FIXME: - python Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
 - python Lib/pagebot/toolbox/dating.py
 - python Lib/pagebot/toolbox/markers.py
-#FIXME: - python Lib/pagebot/toolbox/mathematics.py
+- python Lib/pagebot/toolbox/mathematics.py
 - python Lib/pagebot/toolbox/transformer.py
 - python Lib/pagebot/toolbox/units.py
