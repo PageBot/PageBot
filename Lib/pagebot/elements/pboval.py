@@ -61,7 +61,7 @@ class Oval(Element):
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
     
-        self.drawFrame(view, p) # Draw optional frame or borders.
+        self.buildFrame(view, p) # Draw optional frame or borders.
   
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -71,7 +71,7 @@ class Oval(Element):
         context.oval(px, py, self.w, self.h)
 
         if drawElements:
-            self.buildElements(view, p)
+            self.buildChildElements(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -79,4 +79,9 @@ class Oval(Element):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
         
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 
