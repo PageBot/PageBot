@@ -39,7 +39,7 @@ def lucasRange(a, z, n, minN=None, maxN=None):
     i = []
 
     for x in range(n + 2):
-        v = (a ** (n + 1 - x) * z ** x) ** (1 / (n + 1))
+        v = ((a ** (n + 1 - x)) * (z ** x)) ** (1.0 / (n + 1))
         if not None in (minN, maxN):
             v = (v - a) * (maxN - minN) / (z - a) + minN
         i.append(int(round(v)))
