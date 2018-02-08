@@ -53,7 +53,6 @@ class DrawBotContext(BaseContext):
     def __init__(self):
         u"""Constructor of DrawBotContext if drawBot import exists.
 
-        >>> import drawBot
         >>> drawBotBuilder is not None
         True
         >>> drawBotBuilder is not None and drawBotBuilder.PB_ID == 'drawBot'
@@ -126,9 +125,8 @@ class DrawBotContext(BaseContext):
         u"""Answer the root path of the pagebot module.
     
         >>> context = DrawBotContext()
-        >>> context.getRootPath().endswith('/Lib')
+        >>> context.getRootPath().endswith('Lib')
         True
-
         """
         return '/'.join(__file__.split('/')[:-3]) # Path of this file with pagebot/__init__.py(c) removed.
 
@@ -136,7 +134,7 @@ class DrawBotContext(BaseContext):
         u"""Answer the standard font path of the pagebot module.
 
         >>> context = DrawBotContext()
-        >>> context.getFontPath().endswith('/Lib/Fonts/')
+        >>> context.getFontPath().endswith('Lib/Fonts/')
         True
         """
         return self.getRootPath() + '/Fonts/'
