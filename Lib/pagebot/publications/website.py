@@ -276,12 +276,25 @@ class JS(TextBox):
 
 
 class Website(Publication):
-    """Build a default website with several template options.
+    u"""Build a default website with several template options.
     Layout and content options defined by external parameters.
     Subclassed from Document with the following optional attributes:
     rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, 
-    w=None, h=None, exportPaths=None, context=None, **kwargs)"""
+    w=None, h=None, exportPaths=None, context=None, **kwargs)
+
+    >>> website = Website(name='Home Site', pl=30, pr=30, autoPages=5)
+    >>> website
+    [Document-Website "Home Site"]
+    >>> len(website.pages)
+    5
+    >>> t = website.templates['default']
+    >>> t.size
+    (1000, 1000, 1)
+    >>> page = website.pages[0][0]
+    >>> page.template.name
+    'default'
+    """
 
     DEFAULT_CONTEXT = HtmlContext()
 
@@ -310,5 +323,9 @@ class Website(Publication):
         Main(parent=t, name='OtherMain')
         Footer(parent=t, name='Footer')
         JS(parent=t, name='JS')
-        
+   
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()     
   

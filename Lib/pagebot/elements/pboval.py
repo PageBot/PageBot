@@ -66,8 +66,8 @@ class Oval(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        context.setFillColor(self.css('fill', NO_COLOR))
-        context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        context.fill(self.css('fill', NO_COLOR))
+        context.stroke(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         context.oval(px, py, self.w, self.h)
 
         if drawElements:
