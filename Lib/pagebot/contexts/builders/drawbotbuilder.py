@@ -76,5 +76,8 @@ class NoneDrawBotBuilder(object):
     def fontSize(self, fontSize):
         pass
 
+    def FormattedString(self, s):
+        return s
+
 
 noneDrawBotBuilder = NoneDrawBotBuilder()

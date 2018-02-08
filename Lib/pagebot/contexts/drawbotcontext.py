@@ -18,7 +18,6 @@ import os
 
 try:
     #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
-    from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
     from AppKit import NSFont
     from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute
     from CoreText import kCTFontURLAttribute, CTFramesetterCreateWithAttributedString
