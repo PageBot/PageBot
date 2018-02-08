@@ -25,6 +25,8 @@ script:
 #FIXME: - python Lib/pagebot/contributions/filibuster/blurbwriter.py
 - python Lib/pagebot/document.py
 - python Lib/pagebot/elements/element.py
+- python Lib/pagebot/elements/pboval.py
+- python Lib/pagebot/elements/pbrect.py
 - python Lib/pagebot/elements/pbruler.py
 #FIXME: - python Lib/pagebot/elements/pbtextbox.py
 - python Lib/pagebot/elements/views/pageview.py
