@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -26,9 +27,14 @@ from shutil import copyfile
 from types import *
 import sys, getopt, inspect
 import doctest
-import drawBot
 import pagebot
 from pagebot.publications.publication import Publication
+
+try:
+    import drawBot
+    db = dir(drawBot)
+except ImportError:
+    db = None
 
 SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD',
         'scripts-in-progress', 'examples-in-progress',
@@ -96,7 +102,6 @@ class PageBotDoc(Publication):
         self.pagebotDocs = self.pagebotRoot.replace('Lib', DOCS)
         self.packages = {}
         self.classes = {}
-        self.db = dir(drawBot) # TODO: global.
         self.folders = None
 
     def buildNode(self, node, level=0):
@@ -361,7 +366,7 @@ class PageBotDoc(Publication):
             return True
         elif key in sys.modules.keys():
             return True
-        elif key in self.db:
+        elif key in db:
             return True
         else:
             return False
