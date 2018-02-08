@@ -12,19 +12,20 @@
 #
 #     testBabelStrings.py
 #
-from pagebot.builders.drawbotbuilder import drawBotBuilder as b
-from pagebot.elements.views.strings import newDrawBotString
-if b is None:
-    print 'Platform does not support DrawBot.'
-else:
-    view = pagebot.elements.views import drawBotView
-    # Create a new BabelString with the DrawBot FormttedString inside.
-    style=dict(font='Verdana', fontSize=50, textFill=(1, 0, 0))
-    bs = newDrawBotString('This is an DrawBotString', style=style)
-    # It prints it content.
-    print bs
-    # Adding or appending strings are added to the embedded OSX Formatted string.
-    bs += ' and more'
-    print bs
-    # Usage in DrawBot by addressing the embedded FS for drawing.
-    b.text(bs.s, (100, 100))
+from pagebot.contexts import defaultContext as c
+import sys
+try:
+    from pagebot.builders.drawbotbuilder import drawBotBuilder as b
+except ImportError:
+    sys.exit('Example only runs on DrawBot.')
+
+# Create a new BabelString with the DrawBot FormttedString inside.
+style=dict(font='Verdana', fontSize=50, textFill=(1, 0, 0))
+bs = c.newString('This is a string', style=style)
+# It prints it content.
+print bs
+# Adding or appending strings are added to the internal formatted string.
+bs += ' and more'
+print bs
+# Usage in DrawBot by addressing the embedded FS for drawing.
+b.text(bs.s, (100, 100))
