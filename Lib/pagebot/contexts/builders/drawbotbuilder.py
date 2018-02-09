@@ -70,6 +70,9 @@ class NoneDrawBotBuilder(object):
 
     setStrokeColor = stroke
 
+    def strokeWidth(self, w):
+        pass
+
     def sizes(self):
         return dict(screen=(800, 600))
 
@@ -79,5 +82,13 @@ class NoneDrawBotBuilder(object):
     def FormattedString(self, s):
         return s
 
+    def image(self, path, p, pageNumber=0, alpha=None):
+        pass
+
+    def imageSize(self, path):
+        u"""Answer the image size of our test image
+        rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
+        """
+        return 3024, 4032
 
 noneDrawBotBuilder = NoneDrawBotBuilder()
