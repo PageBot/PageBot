@@ -28,6 +28,8 @@ script:
 - python Lib/pagebot/elements/pboval.py
 - python Lib/pagebot/elements/pbrect.py
 - python Lib/pagebot/elements/pbruler.py
+- python Lib/pagebot/elements/pbimage.py
+#FIXME: - python Lib/pagebot/elements/pbplacer.py
 #FIXME: - python Lib/pagebot/elements/pbtextbox.py
 - python Lib/pagebot/elements/views/pageview.py
 #FIXME: - python Lib/pagebot/fonttoolbox/installfont.py
@@ -35,6 +37,7 @@ script:
 #FIXME: - python Lib/pagebot/fonttoolbox/otlTools.py
 #FIXME: - python Lib/pagebot/fonttoolbox/ttftools.py
 #FIXME: - python Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
+- python Lib/pagebot/publications/website.py
 - python Lib/pagebot/toolbox/dating.py
 - python Lib/pagebot/toolbox/markers.py
 - python Lib/pagebot/toolbox/mathematics.py
