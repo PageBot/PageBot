@@ -357,14 +357,6 @@ class DrawBotContext(BaseContext):
         u"""Answer the (w, h) image size of the image file at path."""
         return self.b.imageSize(path)
 
-    def initImageSize(self):
-        u"""Initialize the image size. Note that this is done with the default/current 
-        Context, as there may not be a view availabe yet."""
-        if self.path is not None and os.path.exists(self.path):
-            self.iw, self.ih = self.context.imageSize(self.path)
-        else:
-            self.iw = self.ih = 0 # Undefined or non-existing, there is no image file.
-
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         u"""Draw the image. If w or h is defined, then scale the image to fit."""
         iw, ih = self.imageSize(path)
