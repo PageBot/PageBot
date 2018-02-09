@@ -17,8 +17,8 @@
 from __future__ import division # Make integer division result in float.
 
 import os
-from pagebot.elements.element import Element
 from pagebot.elements.pbtextbox import TextBox
+from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR, ORIGIN # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset, point2D
 from pagebot.conditions import Float2TopSide, Top2TopSide, Fit2Width
@@ -82,7 +82,7 @@ class Image(Element):
         if title is not None: # Only make title element if defined content.
             if titleConditions is None:
                 titleConditions = (Top2TopSide(), Fit2Width())
-            title = newTextBox(title, style=style, conditions=titleConditions)
+            title = TextBox(title, style=style, conditions=titleConditions)
         # If defined, title can be any type of element, but most likely a text box. Other wise None
         self.title = title # Property to add to self.elements and set caption.parent to self.
 
@@ -97,7 +97,7 @@ class Image(Element):
         if caption is not None: # Only make caption element if defined content
             if captionConditions is None:
                 captionConditions = (Float2TopSide(), Fit2Width())
-            caption = newTextBox(caption, style=style, conditions=captionConditions)
+            caption = TextBox(caption, style=style, conditions=captionConditions)
         # Caption can be any type of element, but most likely a text box.
         self.caption = caption # Property to add to self.elements and set caption.parent to self.
 

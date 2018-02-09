@@ -55,6 +55,9 @@ class NoneDrawBotBuilder(object):
     def openTypeFeatures(self, **openTypeFeatures):
         pass
 
+    def line(self, p1, p2):
+        pass
+
     def oval(self, x, y, w, h):
         pass
 
