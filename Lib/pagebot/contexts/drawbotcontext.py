@@ -14,8 +14,6 @@
 #
 #     drawbotcontext.py
 #
-import os
-
 try:
     #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
     from AppKit import NSFont
