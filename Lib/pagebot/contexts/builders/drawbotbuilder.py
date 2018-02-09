@@ -63,6 +63,9 @@ class NoneDrawBotBuilder(object):
 
     rect = oval
 
+    def line(self, p1, p2):
+        pass
+        
     def fill(self, c):
         pass
 
