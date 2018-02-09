@@ -18,9 +18,10 @@ from __future__ import division # Make integer division result in float.
 
 import os
 from pagebot.elements.element import Element
+from pagebot.elements.pbtextbox import TextBox
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, NO_COLOR, ORIGIN # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset, point2D
-from pagebot.conditions import *
+from pagebot.conditions import Float2TopSide, Top2TopSide, Fit2Width
 
 class Image(Element):
     u"""The Image element is a “normal” container, which contains one (or more) PixelMap elements and zero (or more)
@@ -39,12 +40,17 @@ class Image(Element):
     >>> page = doc[0]
     >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=300)
     >>> #e.build(doc.getView(), (0, 0))
-    >>> e.xy
+    >>> e.xy # Position of the image container
     (0, 20)
     >>> e.size
     (300, 300, 1)
+    >>> pixelMap = e.image
+    >>> pixelMap.path.endswith('/images/IMG_8914.jpg')
+    True
+    >>> pixelMap.size, pixelMap.imageSize
+    ((300, 300, 1), (3024, 4032))
     >>> view = doc.getView()
-    >>> #e.build(view, (0, 0))
+    >>> e.build(view, (0, 0))
 
     >>> from pagebot.contexts.flatcontext import FlatContext 
     >>> from pagebot.document import Document
@@ -52,6 +58,11 @@ class Image(Element):
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
     >>> page = doc[0]
     >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=300)
+    >>> pixelMap = e.image
+    >>> pixelMap.path.endswith('/images/IMG_8914.jpg')
+    True
+    >>> pixelMap.size, pixelMap.imageSize
+    ((300, 300, 1), (3024, 4032))
     >>> # Allow the context to create a new document and page canvas. Normally view does it.
     >>> c.newPage(w, h) 
     >>> e.build(doc.getView(), (0, 0))
@@ -62,22 +73,36 @@ class Image(Element):
     (300, 300, 1)
     """
     def __init__(self, path=None, style=None, pixelMap=None, title=None, caption=None, clipRect=None, 
-            mask=None, imo=None, w=None, h=None, imageConditions=None, conditions=None, **kwargs):
+            mask=None, imo=None, w=None, h=None, imageConditions=None, titleConditions=None,
+            captionConditions=None, conditions=None, **kwargs):
         self.image = None # Aviud setting of self.omage.w and self.omage.h while not initialized.
         Element.__init__(self, w=w, h=h, conditions=conditions, **kwargs)
         assert path is None or pixelMap is None # One or the other or both None.
 
+        if title is not None: # Only make title element if defined content.
+            if titleConditions is None:
+                titleConditions = (Top2TopSide(), Fit2Width())
+            title = newTextBox(title, style=style, conditions=titleConditions)
+        # If defined, title can be any type of element, but most likely a text box. Other wise None
+        self.title = title # Property to add to self.elements and set caption.parent to self.
+
         if imageConditions is None:
-            imageConditions = (Top2TopSide(), Fit2Width())
-        if pixelMap is None: # Path can also be None, making PixelMap show gray rectangle of missing image.
+            imageConditions = (Float2TopSide(), Fit2Width())
+        if pixelMap is None: 
+            # Path can be None or non-existing, making PixelMap show gray rectangle of missing image.
             pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, h=h, 
                 conditions=imageConditions, **kwargs) # Default width is leading.
         self.image = pixelMap # Property to add to self.elements and set pixelMap.parent to self.
-        # Title can be any type of element, but most likely a text box.
-        self.title = title # Property to add to self.elements and set caption.parent to self.
+
+        if caption is not None: # Only make caption element if defined content
+            if captionConditions is None:
+                captionConditions = (Float2TopSide(), Fit2Width())
+            caption = newTextBox(caption, style=style, conditions=captionConditions)
         # Caption can be any type of element, but most likely a text box.
         self.caption = caption # Property to add to self.elements and set caption.parent to self.
-        self.solve() # Solve the optional conditions defined in pixelMap and caption.
+
+        # Solve the optional conditions defined in title, pixelMap and caption.
+        self.solve() 
 
     def _get_image(self):
         return self._image # Special element, as there normally is only one pixelMap. Use self.elements otherwise.
@@ -170,6 +195,11 @@ class PixelMap(Element):
             self.iw, self.ih = self.context.imageSize(self.path)
         else:
             self.iw = self.ih = 0 # Undefined or non-existing, there is no image file.
+
+    def _get_imageSize(self):
+        u"""Answer the Point2D image size in pixels."""
+        return self.iw, self.ih
+    imageSize = property(_get_imageSize)
 
     def getPixelColor(self, p, scaled=True):
         u"""Answer the color in either the scaled point (x, y) or original image size point."""

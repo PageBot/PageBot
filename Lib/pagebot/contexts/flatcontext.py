@@ -243,17 +243,17 @@ class FlatContext(BaseContext):
         return self.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-        u"""Answer the (w, h) image size of the image file at path."""
-        # FIXME!
-        return (100, 100)
+        u"""Answer the (w, h) image size of the image file at path.
 
-    def initImageSize(self):
-        u"""Initialize the image size. Note that this is done with the default/current 
-        Context, as there may not be a view availabe yet."""
-        if self.path is not None and os.path.exists(self.path):
-            self.iw, self.ih = self.context.imageSize(self.path)
-        else:
-            self.iw = self.ih = 0 # Undefined or non-existing, there is no image file.
+        >>> from pagebot import getRootPath
+        >>> rootPath = getRootPath()
+        >>> imagePath = rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
+        >>> context = FlatContext()
+        >>> context.imageSize(imagePath)
+        (3024, 4032)
+        """ 
+        img = self.b.image.open(path)
+        return img.width, img.height
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         u"""Draw the image. If w or h is defined, then scale the image to fit."""
