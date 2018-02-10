@@ -221,13 +221,9 @@ class FlatContext(BaseContext):
     def textSize(self, bs, w=None, h=None):
         u"""Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
         Answer the height of the string if the width w is given."""
-        # FIXME! This is a totally wrong boilerplate for now!
-        if not bs.s:
-            return (0, 0)
-        elif w is None:
-            return (100, 100)
-        else:
-            return (w, w/len(bs))
+        #placed = bs.s.placed(1)
+        #return (placed.width, placed.height)
+        raise NotImplementedError()
 
     def textOverflow(self, bs, bounds, align=LEFT):
         u"""Answer the overflowing of from the box (0, 0, w, h) as new FlatString

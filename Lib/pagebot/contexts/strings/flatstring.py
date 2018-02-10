@@ -17,6 +17,7 @@
 
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
+from flat.misc import inf
 
 class FlatString(BabelString):
 
@@ -41,9 +42,9 @@ class FlatString(BabelString):
 
     def textSize(self, w=None, h=None):
         u"""Answer the (w, h) size for a given width, with the current text."""
-        return 100, 20
-        # TODO: Make this work in Flat same as in DrawBot
-        #return self.b.textSize(s)
+        placed = self.s.placed(1)
+        placed.frame(0, 0, w, h or inf)
+        return (placed.width, placed.height)
  
     def textOverflow(self, w, h, align=LEFT):
         # TODO: Make this work in Flat same as in DrawBot
