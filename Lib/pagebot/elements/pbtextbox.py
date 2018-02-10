@@ -107,29 +107,30 @@ class TextBox(Element):
         u"""Answer the representation string of the element.
 
         >>> e = TextBox('ABC')
-        >>> str(e) == 'TextBox:%s (0, 0)ABC' % e.eId
+        >>> str(e) == 'TextBox:%s (0, 0)' % e.eId
         True
         >>> e = TextBox('ABC', x=100, y=100, w=200)
-        >>> str(e) == 'TextBox:%s (100, 100)ABC' % e.eId
+        >>> str(e) == 'TextBox:%s (100, 100)' % e.eId
         True
         """
+        # FIXME: also display the actual text-content of
+        # the formatted string in the __repr__
         if self.title:
-            name = ':'+self.title
+            name = self.title
         elif self.name:
-            name = ':'+self.name
+            name = self.name
         else: # No naming, show unique self.eId:
-            name = ':'+self.eId
-
-        if self.bs.s:
-            s = ' S(%d)' % len(self.bs)
-        else:
-            s = ''
+            name = self.eId
 
         if self.elements:
-            elements = ' E(%d)' % len(self.elements)
+            elements = 'E(%d)' % len(self.elements)
         else:
             elements = ''
-        return '%s%s (%d, %d)%s%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), self.bs.s, elements)
+        return ('%s:%s (%d, %d) %s' % (self.__class__.__name__,
+                                       name,
+                                       int(round(self.point[0])),
+                                       int(round(self.point[1])),
+                                       elements)).strip()
 
     # SuperString support, answering the structure that holds strings for all builder types.
   
