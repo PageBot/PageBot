@@ -239,11 +239,10 @@ class FlatContext(BaseContext):
         >>> lines = t.lines()
         >>> len(lines)
         35
-
         """
         # FIXME! This is a totally wrong boilerplate for now!
 
-        t = placedtext(bs.s)
+        #t = placedtext(bs.s)
         if not bs.s:
             return (0, 0)
         elif w is None:
