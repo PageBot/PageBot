@@ -220,8 +220,30 @@ class FlatContext(BaseContext):
 
     def textSize(self, bs, w=None, h=None):
         u"""Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
-        Answer the height of the string if the width w is given."""
+        Answer the height of the string if the width w is given.
+
+        >>> w = h = 500
+        >>> context = FlatContext()
+        >>> context.newDocument(w, h)
+        >>> context.newPage(w, h)
+        >>> bs = context.newString('ABC ' * 100)
+        >>> t = context.page.place(bs.s)
+        >>> t = t.frame(0, 0, w, h)
+        >>> t.overflow()
+        False
+        >>> bs = context.newString('ABC ' * 100000)
+        >>> t = context.page.place(bs.s)
+        >>> t = t.frame(0, 0, w, h)
+        >>> t.overflow()
+        True
+        >>> lines = t.lines()
+        >>> len(lines)
+        35
+
+        """
         # FIXME! This is a totally wrong boilerplate for now!
+
+        t = placedtext(bs.s)
         if not bs.s:
             return (0, 0)
         elif w is None:
