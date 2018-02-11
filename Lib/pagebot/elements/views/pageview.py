@@ -140,6 +140,17 @@ class PageView(BaseView):
     #   D R A W I N G  P A G E  M E T A  I N F O
 
     def drawPageMetaInfo(self, page, origin):
+        u"""Draw the meta info of the page, depending on the settings of the flags.
+
+        >>> from pagebot.contexts import defaultContext as context
+        >>> from pagebot.document import Document
+        >>> w, h = 300, 400
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
+        >>> page = doc[0]
+        >>> view = doc.getView()
+        >>> view.showGrid = True
+        >>> view.drawPageMetaInfo(page, (0, 0)) 
+        """
         self.drawPageFrame(page, origin)
         self.drawPagePadding(page, origin)
         self.drawPageNameInfo(page, origin)
@@ -433,9 +444,10 @@ class PageView(BaseView):
         # Drawing the grid as squares.
         if not self.showGrid:
             return
-        b = self.b
         #if not self.showGridColumns or not self.showGrid:
         #    return
+        context = e.context
+
         p = pointOffset(e.oPoint, origin)
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
@@ -462,20 +474,20 @@ class PageView(BaseView):
         oy = py + padB
 
         if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
-            b.fill(None)
-            b.stroke(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
-            b.newPath()
+            context.fill(None)
+            context.stroke(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
+            context.newPath()
             for cx, cw in e.getGridColumns():
-                b.moveTo((ox+cx, oy))
-                b.lineTo((ox+cx, oy + padH))
-                b.moveTo((ox+cx + cw, oy))
-                b.lineTo((ox+cx + cw, oy + padH))
+                context.moveTo((ox+cx, oy))
+                context.lineTo((ox+cx, oy + padH))
+                context.moveTo((ox+cx + cw, oy))
+                context.lineTo((ox+cx + cw, oy + padH))
             for cy, ch in e.getGridRows():
-                b.moveTo((ox, oy+cy))
-                b.lineTo((ox + padW, oy+cy))
-                b.moveTo((ox, oy+cy + ch))
-                b.lineTo((ox + padW, oy+cy + ch))
-            b.drawPath()
+                context.moveTo((ox, oy+cy))
+                context.lineTo((ox + padW, oy+cy))
+                context.moveTo((ox, oy+cy + ch))
+                context.lineTo((ox + padW, oy+cy + ch))
+            context.drawPath()
                 #text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
 
         """
