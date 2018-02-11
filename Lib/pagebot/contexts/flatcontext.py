@@ -36,6 +36,28 @@ class FlatContext(BaseContext):
 
     * https://github.com/xxyxyz/flat
     * http://xxyxyz.org/flat
+
+    Text behavior:
+    st = strike(font)
+        st.size(size, leading=0.0, units='pt')
+        st.color(color)
+        st.width(string)
+
+        sp = st.span(string)
+        par = st.paragraph(string)
+        tx = st.text(string)
+    
+    placed = page.place()
+    outl = outlines(string) 
+    
+    par = paragraph(spans)
+
+    placed = placetext()
+        placed.position(x, y)
+        placed.frame(x, y, w, h)
+        placed.overflow()
+        placed.lines()
+
     """
 
     # In case of specific builder addressing, callers can check here.
