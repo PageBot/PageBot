@@ -407,33 +407,32 @@ class PageView(BaseView):
         bounding box (if self.css('missingElementFill' is defined) and a cross, indicating
         that this element has missing content (as in unused image frames).
         Only draw if self.css('showGrid') is True."""
-        c = self.context
-        b = c.b
+        context = self.context
 
         if self.showMissingElementRect:
             p = pointOffset(e.point, origin)
             p = e._applyOrigin(self, p)
             p = e._applyScale(p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
-            c.setShadow(b)
+            context.setShadow(b)
 
             sMissingElementFill = self.css('viewMissingElementFill', NO_COLOR)
             if sMissingElementFill is not NO_COLOR:
-                c.setFillColor(sMissingElementFill)
-                c.setStrokeColor(None)
-                c.rect(px, py, self.w, self.h)
+                context.setFillColor(sMissingElementFill)
+                context.setStrokeColor(None)
+                context.rect(px, py, self.w, self.h)
             # Draw crossed rectangle.
-            c.setFillColor(None)
-            c.setStrokeColor(0, 0.5)
-            c.rect(px, py, self.w, self.h)
-            b.newPath() # TODO: Needs to become context instead of builder call.
-            b.moveTo((px, py))
-            b.lineTo((px + self.w, py + self.h))
-            b.moveTo((px + self.w, py))
-            b.lineTo((px, py + self.h))
-            b.drawPath()
+            context.setFillColor(None)
+            context.setStrokeColor(0, 0.5)
+            context.rect(px, py, self.w, self.h)
+            context.newPath() # TODO: Needs to become context instead of builder call.
+            context.moveTo((px, py))
+            context.lineTo((px + self.w, py + self.h))
+            context.moveTo((px + self.w, py))
+            context.lineTo((px, py + self.h))
+            context.drawPath()
 
-            c.resetShadow()
+            context.resetShadow()
             e._restoreScale()
 
     #    G R I D
@@ -446,7 +445,7 @@ class PageView(BaseView):
             return
         #if not self.showGridColumns or not self.showGrid:
         #    return
-        context = e.context
+        context = self.context
 
         p = pointOffset(e.oPoint, origin)
         p = self._applyScale(e, p)

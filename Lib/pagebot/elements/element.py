@@ -50,6 +50,7 @@ class Element(object):
             t=0, parent=None, context=None, name=None, class_=None, title=None, description=None, language=None,
             style=None, conditions=None, info=None, framePath=None, 
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, 
+            isLeftPage=None, isRightPage=None,
             padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
             margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
             borders=None, borderTop=None, borderRight=None, borderBottom=None, borderLeft=None, 
@@ -166,6 +167,8 @@ class Element(object):
         self.nextElement = nextElement # Name of the next flow element
         self.nextPage = nextPage # Name ot identifier of the next page that nextElement refers to,
         self.prevPage = prevPage # if a flow must run over page boundaries.
+        self._isLeftPage = isLeftPage # True/False/None. In case None, parent will be queried
+        self._isRightPage = isRightPage
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
         self.applyTemplate(template, elements) 
@@ -903,26 +906,35 @@ class Element(object):
 
     # Orientation of elements (and pages)
 
-    def isLeft(self):
+    def isLeftPage(self):
         u"""Normal elements don't know the left/right orientation of the page that they are on.
         Pass the request on to the parent, until a page is reachted."""
-        return self.parent.isLeft() 
-    def isRight(self):
+        if self._isLeftPage is not None:
+            return self._isLeftPage
+        if self.parent is not None:
+            return self.parent.isLeftPage() 
+        return False
+
+    def isRightPage(self):
         u"""Normal elements don't know the left/right orientation of the page that they are on.
         Pass the request on to the parent, until a page is reachted."""
-        return self.parent.isRight()
+        if self._isRightPage is not None:
+            return self._isRightPage
+        if self.parent is not None:
+            return self.parent.isRightPage()
+        return False
 
     def _get_gridX(self):
         u"""Answer the grid, depending on the left/right orientation of self."""
-        if self.isLeft():
+        if self.isLeftPage():
             return self.css('gridL') or self.css('gridX')
-        if self.isRight():
+        if self.isRightPage():
             return self.css('gridR') or self.css('gridX')
         return self.css('gridX')
     def _set_gridX(self, gridX):
-        if self.isLeft():
+        if self.isLeftPage():
             self.style['gridL'] = gridX  # Save locally, blocking CSS parent scope for this param.
-        elif self.isRight():
+        elif self.isRightPage():
             self.style['gridR'] = gridX
         else:
             self.style['gridX'] = gridX
@@ -946,11 +958,25 @@ class Element(object):
         u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
         Note that this is different from the gridX definition [(wx, gutter), ...]
         If there is one or more None in the grid definition, then try to fit equally on self.cw.
-        If gurtter is left None, then the default style gutter is filled there."""
+        If gurtter is left None, then the default style gutter is filled there.
+
+        >>> column, gutter = 48, 8 # Preset padding
+        >>> e = Element(w=300, h=100, cw=column, gw=gutter, isLeftPage=True)
+        >>> e.getGridColumns() # Equal devided column widths
+        [(0, 48), (56, 48), (112, 48), (168, 48), (224, 48)]
+        >>> e.cw = 64 # Change column width
+        >>> e.gw = 12 # Change gutter 
+        >>> e.getGridColumns() # Changed equal deviced columns
+        [(0, 64), (76, 64), (152, 64), (228, 64)]
+        >>> e.gridX = (30, 40, 50, 60) 
+        >>> e.getGridColumns() # Columns from value list
+        [(0, 30), (42, 40), (94, 50), (156, 60)]
+        """
         gridColumns = []
         gridX = self.gridX 
         pw = self.pw # Padded with, available space for columns.
         gw = self.gw
+
         if gridX is not None: # If there is a non-linear grid sequence defined, use that.
             undefined = 0
             usedWidth = 0
@@ -967,7 +993,7 @@ class Element(object):
                     gutter = gw
                 usedWidth += gutter
             equalWidth = (pw - usedWidth) / (undefined or 1)
-            # Now we know the divide width, scane through the grid list again, building x coordinates.
+            # Now we know the divide width, scan through the grid list again, building x coordinates.
             x = 0
             for gridValue in gridX:
                 if not isinstance(gridValue, (list, tuple)):
@@ -979,8 +1005,9 @@ class Element(object):
                     gutter = gw
                 gridColumns.append((x, cw))
                 x += cw + gutter
+        
         else: # If no grid defined, then run the squence for cw + gutter
-            cw = self.cw
+            cw = self.cw or 100
             x = 0
             for index in range(int(pw/cw)): # Roughly the amount of columns to expect. Avoid while loop
                 if x + cw > pw:
@@ -993,11 +1020,25 @@ class Element(object):
         u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
         Note that this is different from the gridX definition [(wx, gutter), ...]
         If there is one or more None in the grid definition, then try to fit equally on self.cw.
-        If gutter is left None, then the default style gutter is filled there."""
+        If gutter is left None, then the default style gutter is filled there.
+
+        >>> column, gutter = 48, 8 # Preset padding
+        >>> e = Element(w=100, h=300, ch=column, gh=gutter, isLeftPage=True)
+        >>> e.getGridRows() # Equal devided row heights
+        [(0, 48), (56, 48), (112, 48), (168, 48), (224, 48)]
+        >>> e.ch = 64 # Change row height
+        >>> e.gh = 12 # Change gutter 
+        >>> e.getGridRows() # Changed equal deviced row heights
+        [(0, 64), (76, 64), (152, 64), (228, 64)]
+        >>> e.gridY = (30, 40, 50, 60) 
+        >>> e.getGridRows() # Columns from value list
+        [(0, 30), (42, 40), (94, 50), (156, 60)]
+        """
         gridRows = []
         gridY = self.gridY 
         ph = self.ph # Padded height, available space for vertical columns.
         gh = self.gh
+
         if gridY is not None: # If there is a non-linear grid sequence defined, use that.
             undefined = 0
             usedHeight = 0

@@ -23,16 +23,17 @@ try:
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
     from drawBot import Variable
     from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
+    from pagebot.contexts.strings.drawbotstring import DrawBotString as stringClass
 except ImportError:
     # If DrawBot is not available on the platform, then use a noneDrawBotBuilder instance, that
     # can be used to run all DrawBot related docTests.
     from pagebot.contexts.builders.drawbotbuilder import noneDrawBotBuilder as drawBotBuilder
+    from pagebot.contexts.builders.drawbotstring import NoneDrawBotString as stringClass
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
     Variable = None
 
 from basecontext import BaseContext
-from pagebot.contexts.strings.drawbotstring import DrawBotString
 from pagebot.style import NO_COLOR, LEFT
 
 
@@ -45,7 +46,7 @@ class DrawBotContext(BaseContext):
     isDrawBot = True
 
     # Used by the generic BaseContext.newString( )
-    STRING_CLASS = DrawBotString
+    STRING_CLASS = stringClass
   
     def __init__(self):
         u"""Constructor of DrawBotContext if drawBot import exists.

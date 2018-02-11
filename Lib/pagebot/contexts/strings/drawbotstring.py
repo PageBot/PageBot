@@ -27,6 +27,17 @@ from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
 
+class NoneDrawBotString(object):
+    u"""Used for testing DrawBotString doctest in non-DrawBot Environment."""
+    BABEL_STRING_TYPE = 'fs'
+
+    def __init__(self, s):
+        self.s = s
+
+    @classmethod
+    def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+        return cls(s)
+
 class DrawBotString(BabelString):
 
     BABEL_STRING_TYPE = 'fs'
