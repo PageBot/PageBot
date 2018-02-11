@@ -95,9 +95,10 @@ class FlatString(BabelString):
             fontPath = context.getFontPathOfFont(cls.DEFAULT_FONT)
             font = context.b.font.open(fontPath)
         strike = context.b.strike(font)
-        strike.size(fontSize or style.get('fontSize', cls.DEFAULT_FONTSIZE), style.get('leading', cls.DEFAULT_LEADING), units='pt')
-        if w is not None:
-            strike.width = w
+        strike.size(fontSize or style.get('fontSize', cls.DEFAULT_FONTSIZE), 
+            style.get('leading', cls.DEFAULT_LEADING), units='pt')
+        #if w is not None:
+        #    strike.width = w
         return cls(strike.text(s), context) # Make real Flat flavor BabelString here.
         
         

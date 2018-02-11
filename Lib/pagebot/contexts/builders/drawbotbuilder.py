@@ -85,8 +85,11 @@ class NoneDrawBotBuilder(object):
     def fontSize(self, fontSize):
         pass
 
-    def FormattedString(self, s):
-        return s
+    def textSize(self, s):
+        return 10, 10
+
+    def hyphenation(self, language):
+        pass
 
     def image(self, path, p, pageNumber=0, alpha=None):
         pass

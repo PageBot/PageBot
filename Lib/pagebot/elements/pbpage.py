@@ -27,21 +27,23 @@ class Page(Element):
         u"""Add specific parameters for a page, besides the parameters for standard Elements.
         """
         Element.__init__(self,  **kwargs)
-        self.leftPage = leftPage # Force left/right side of a page, independen of document odd/even.
-        self.rightPage = rightPage 
         self.class_ = self.class_ or 'page' # Defined default CSS class for pages.
 
     def isLeftPage(self):
-        u"""Answer the boolean flag if this is a left page. The only one who can know that is the document."""
-        if self.leftPage is None:
-            return self.doc.isLeftPage(self) # If undefined, query parent document to decide.
-        return self.leftPage   
+        u"""Answer the boolean flag if this is a left page, if that info is stored. 
+        Note that pages can be neither left or right.
+        Otherwise, the only one who can know that is the document."""
+        if self.leftPage is not None:
+            return self.leftPage   
+        return self.doc.isLeftPage(self) # If undefined, query parent document to decide.
 
     def isRightPage(self):
-        u"""Answer the boolean flag if this is a right page. The only one who can know that is the document."""
+        u"""Answer the boolean flag if this is a right page, if that info is stored
+        Note that pages can be neither left or right.
+        Otherwise, the only one who can know that is the document."""
         if self.rightPage is None:
-            return self.doc.isRightPage(self)
-        return self.rightPage 
+            return self.rightPage 
+        return self.doc.isRightPage(self) # If undefined, query parent document to decide.
 
     #   D R A W B O T  S U P P O R T
 
