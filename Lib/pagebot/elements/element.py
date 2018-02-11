@@ -925,7 +925,15 @@ class Element(object):
         return False
 
     def _get_gridX(self):
-        u"""Answer the grid, depending on the left/right orientation of self."""
+        u"""Answer the grid, depending on the left/right orientation of self.
+
+        >>> e = Element(gridX=(10,20,30))
+        >>> e.gridX
+        (10, 20, 30)
+        >>> e.gridX = 40, 50, 60
+        >>> e.gridX
+        (40, 50, 60)
+        """
         if self.isLeftPage():
             return self.css('gridL') or self.css('gridX')
         if self.isRightPage():
@@ -941,14 +949,30 @@ class Element(object):
     gridX = property(_get_gridX, _set_gridX)
 
     def _get_gridY(self):
-        u"""Answer the grid, depending on the left/right orientation of self."""
+        u"""Answer the vertical grid, depending on the top/bottom orientation of self.
+
+        >>> e = Element(gridY=(10,20,30))
+        >>> e.gridY
+        (10, 20, 30)
+        >>> e.gridY = 40, 50, 60
+        >>> e.gridY
+        (40, 50, 60)
+        """
         return self.css('gridY')
     def _set_gridY(self, gridY):
         self.style['gridY'] = gridY  # Save locally, blocking CSS parent scope for this param.
     gridY = property(_get_gridY, _set_gridY)
 
     def _get_gridZ(self):
-        u"""Answer the grid, depending on the left/right orientation of self."""
+        u"""Answer the grid, depending on the left/right orientation of self.
+
+        >>> e = Element(gridZ=(10,20,30))
+        >>> e.gridZ
+        (10, 20, 30)
+        >>> e.gridZ = 40, 50, 60
+        >>> e.gridZ
+        (40, 50, 60)
+        """
         return self.css('gridZ')
     def _set_gridZ(self, gridZ):
         self.style['gridZ'] = gridZ  # Save locally, blocking CSS parent scope for this param.

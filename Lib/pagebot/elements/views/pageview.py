@@ -461,12 +461,12 @@ class PageView(BaseView):
         padR = e.pr # padding right
         padB = e.pb # padding bottom
         padW = e.pw # Padding width
-        padH = e.ph # Padding height
+        padH = e.ph # Padding height, space between paddingTop and paddingBottom
 
         w = e.w
         h = e.h
 
-        if e.isRight():
+        if e.isRightPage():
             ox = px + padR
         else:
             ox = px + padL

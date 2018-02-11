@@ -33,16 +33,16 @@ class Page(Element):
         u"""Answer the boolean flag if this is a left page, if that info is stored. 
         Note that pages can be neither left or right.
         Otherwise, the only one who can know that is the document."""
-        if self.leftPage is not None:
-            return self.leftPage   
+        if self._isLeftPage is not None:
+            return self._isLeftPage   
         return self.doc.isLeftPage(self) # If undefined, query parent document to decide.
 
     def isRightPage(self):
         u"""Answer the boolean flag if this is a right page, if that info is stored
         Note that pages can be neither left or right.
         Otherwise, the only one who can know that is the document."""
-        if self.rightPage is None:
-            return self.rightPage 
+        if self._isRightPage is None:
+            return self._isRightPage 
         return self.doc.isRightPage(self) # If undefined, query parent document to decide.
 
     #   D R A W B O T  S U P P O R T

@@ -56,6 +56,7 @@ def makeDocument():
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.style['fill'] = 1
+    view.style['viewGridStroke'] = (0, 0, 0.6)
     view.padding = 40 # To show cropmarks and such, make >40 or so.
     view.showPageCropMarks = True # Won't show if there is not padding in the view.
     view.showPageRegistrationMarks = True
@@ -108,7 +109,7 @@ def makeDocument():
         
     score = page.solve()
     if score.fails:
-        print 'Condition fails', score.fails 
+        print('Condition fails %s' % score.fails) 
     
     return doc # Answer the doc for further doing.
 
