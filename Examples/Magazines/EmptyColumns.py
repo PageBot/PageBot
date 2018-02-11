@@ -10,7 +10,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     UpgradePaper.py
+#     EmptyColumns.py
 #
 import copy
 import pagebot # Import to know the path of non-Python resources.
@@ -46,7 +46,7 @@ pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/BookReview001.png' 
+EXPORT_PATH = '_export/EmptyColumns.png' 
 
 def makeDocument():
     u"""Create Document instance with a single page. Fill the page with elements
@@ -100,10 +100,11 @@ def makeDocument():
                                w=page.pw,
                                style=coverTitleStyle)
     # Keep h=None, to make vertical elastic box, depending on content.
-    tb = newTextBox(fs, parent=page,  
-        showBaselines=True,
-        conditions=[Fit2Width(), Top2TopSide()] 
-    )
+    if 0:
+        tb = newTextBox(fs, parent=page,  
+            showBaselines=True,
+            conditions=[Fit2Width(), Top2TopSide()] 
+        )
         
     score = page.solve()
     if score.fails:
