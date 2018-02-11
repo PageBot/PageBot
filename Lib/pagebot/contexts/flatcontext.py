@@ -239,6 +239,10 @@ class FlatContext(BaseContext):
         >>> lines = t.lines()
         >>> len(lines)
         35
+        >>> for line in t.lines():
+        ...     print line.__class__.__name__
+
+
         """
         # FIXME! This is a totally wrong boilerplate for now!
 
