@@ -62,7 +62,13 @@ class FlatString(BabelString):
     def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
         u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
-        If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
+        If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
+
+        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> context = FlatContext()
+        >>> bs = FlatString.newString('AAA', context, style=dict(font='Verdana', fontSize=30))
+        >>> bs.s.lines()
+        """
         if style is None:
             style = {}
             
@@ -94,5 +100,10 @@ class FlatString(BabelString):
             strike.width = w
         return cls(strike.text(s), context) # Make real Flat flavor BabelString here.
         
+        
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 
+   
 
