@@ -100,6 +100,12 @@ class NoneDrawBotBuilder(object):
         """
         return 3024, 4032
 
+    def FormattedString(self, s):
+        class FS(object):
+            def __init__(self, s):
+                self.s = s
+        return FS(s)
+        
     def text(self, s, p):
         pass
 
