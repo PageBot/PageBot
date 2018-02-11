@@ -28,7 +28,7 @@ except ImportError:
     # If DrawBot is not available on the platform, then use a noneDrawBotBuilder instance, that
     # can be used to run all DrawBot related docTests.
     from pagebot.contexts.builders.drawbotbuilder import noneDrawBotBuilder as drawBotBuilder
-    from pagebot.contexts.builders.drawbotstring import NoneDrawBotString as stringClass
+    from pagebot.contexts.strings.drawbotstring import NoneDrawBotString as stringClass
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
     Variable = None

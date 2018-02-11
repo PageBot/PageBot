@@ -66,15 +66,15 @@ class NoneDrawBotBuilder(object):
     def line(self, p1, p2):
         pass
         
-    def fill(self, c):
+    def fill(self, *c):
         pass
 
-    setFillColor = fill
+    setFillColor = cmykFill = fill
 
-    def stroke(self, c, w=1):
+    def stroke(self, *c):
         pass
 
-    setStrokeColor = stroke
+    setStrokeColor = cmykStroke = stroke
 
     def strokeWidth(self, w):
         pass
@@ -99,5 +99,12 @@ class NoneDrawBotBuilder(object):
         rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
         """
         return 3024, 4032
+
+    def text(self, s, p):
+        pass
+
+    def saveImage(self, path, multipage=True):
+        pass
+
 
 noneDrawBotBuilder = NoneDrawBotBuilder()
