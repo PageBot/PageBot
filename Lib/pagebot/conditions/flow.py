@@ -31,7 +31,7 @@ class Overflow2Next(Condition):
 	>>> e1.parent.name
 	'Root'
 	>>> e1.isOverflow()
-        False
+	True
 	"""
 	def test(self, e):
 		return e.isOverflow(self.tolerance)
