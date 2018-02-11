@@ -67,7 +67,7 @@ class FlatString(BabelString):
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> bs = FlatString.newString('AAA', context, style=dict(font='Verdana', fontSize=30))
-        >>> bs.s.lines()
+        >>> #bs.s.lines()
         """
         if style is None:
             style = {}
