@@ -15,7 +15,7 @@
 #     drawbotcontext.py
 #
 try:
-    import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
+    #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
     from AppKit import NSFont
     from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute
     from CoreText import kCTFontURLAttribute, CTFramesetterCreateWithAttributedString
