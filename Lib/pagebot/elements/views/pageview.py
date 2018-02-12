@@ -414,7 +414,8 @@ class PageView(BaseView):
             p = e._applyOrigin(self, p)
             p = e._applyScale(p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
-            #context.setShadow(b)
+            context.saveGraphicState()
+            #context.setShadow(self.shadow)
 
             sMissingElementFill = self.css('viewMissingElementFill', NO_COLOR)
             if sMissingElementFill is not NO_COLOR:
@@ -425,14 +426,14 @@ class PageView(BaseView):
             context.setFillColor(None)
             context.setStrokeColor(0, 0.5)
             context.rect(px, py, self.w, self.h)
-            context.newPath() # TODO: Needs to become context instead of builder call.
+            context.newPath()
             context.moveTo((px, py))
             context.lineTo((px + self.w, py + self.h))
             context.moveTo((px + self.w, py))
             context.lineTo((px, py + self.h))
             context.drawPath()
 
-            context.resetShadow()
+            context.restoreGraphicState()
             e._restoreScale()
 
     #    G R I D

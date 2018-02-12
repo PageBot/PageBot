@@ -207,18 +207,16 @@ class DrawBotContext(BaseContext):
     #   G R A D I E N T  &  S H A D O W
 
     def setShadow(self, eShadow):
-        u"""Set the DrawBot graphics state for shadow if all parameters are set. Pair the call of this
-        method with self._resetShadow()"""
-        b = self.b
-        self.saveGraphicState()
+        u"""Set the DrawBot graphics state for shadow if all parameters are set."""
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.cmykColor is not None:
-                b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.cmykColor)
+                self.b.shadow(eShadow.offset,
+                              blur=eShadow.blur,
+                              color=eShadow.cmykColor)
             else:
-                b.shadow(eShadow.offset, blur=eShadow.blur, color=eShadow.color)
-
-    def resetShadow(self):
-        self.restoreGraphicState()
+                self.b.shadow(eShadow.offset,
+                              blur=eShadow.blur,
+                              color=eShadow.color)
 
     def setGradient(self, gradient, origin, w, h):
         u"""Define the gradient call to match the size of element e., Gradient position
@@ -324,9 +322,9 @@ class DrawBotContext(BaseContext):
         return self.b.textSize(bs.s)
 
     def textOverflow(self, bs, bounds, align=LEFT):
-        u"""Answer the overflowing of from the box (0, 0, w, h) as new DrawBotString in 
-        the current context."""
-        return DrawBotString(self.b.textOverflow(bs.s, bounds, align), self)
+        u"""Answer the overflowing of from the box (0, 0, w, h)
+        as new DrawBotString in the current context."""
+        return stringClass(self.b.textOverflow(bs.s, bounds, align), self)
 
     def textBoxBaseLines(self, txt, box):
         x, y, w, h = box
