@@ -34,6 +34,16 @@ def getFontPath():
     u"""Answer the standard font path of the pagebot module."""
     return getRootPath() + '/Fonts/'
 
+def getFontPaths(): 
+    u"""Answer all paths that contain fonts.
+    Typical to return for MaxOS: ['/Users/petr/Library/Fonts', '/Library/Fonts', '/Users/petr/git/PageBot/Fonts']
+
+    >>> getFontPaths() is not None
+    True
+    """
+    from pagebot.contexts import FONT_PATHS 
+    return FONT_PATHS
+
 # In order to let PageBot scripts and/applications exchange information, without the need to save
 # data in files, the pbglobals module supports the storage of non-persistent information.
 # This way, applications with Vanilla windows can be used as UI for scripts that perform as batch process.
@@ -336,3 +346,11 @@ def findMarkers(fs, reCompiled=None):
     if reCompiled is None:
         reCompiled= FIND_FS_MARKERS
     return reCompiled.findall(u'%s' % fs)
+
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+

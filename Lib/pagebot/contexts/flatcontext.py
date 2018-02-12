@@ -17,7 +17,7 @@
 #
 import os
 #import imageio
-from pagebot import getFontPath
+from pagebot import getFontPaths
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
@@ -188,18 +188,23 @@ class FlatContext(BaseContext):
         u"""Recursively find the default PageBot font paths. Answer the dictioanary of name-path relations."""
         if fontPaths is None:
             fontPaths = {}
-        if path is None:
-            path = getFontPath()
-        for fileName in os.listdir(path):
-            if fileName.startswith('.'):
-                continue
-            if not path.endswith('/'):
-                path += '/'
-            filePath = path + fileName
-            if os.path.isdir(filePath):
-                self._findFontPaths(filePath, fontPaths) # Recursively search in folder.
-            elif fileName.lower().endswith('.ttf') or fileName.lower().endswith('.otf'):
-                fontPaths[fileName] = filePath
+        if isinstance(path, (list, tuple)):
+            paths = path
+        elif path is None:
+            paths = getFontPaths()
+        else:
+            paths = [path] 
+        for path in paths:
+            for fileName in os.listdir(path):
+                if fileName.startswith('.'):
+                    continue
+                if not path.endswith('/'):
+                    path += '/'
+                filePath = path + fileName
+                if os.path.isdir(filePath):
+                    self._findFontPaths(filePath, fontPaths) # Recursively search in folder.
+                elif fileName.lower().endswith('.ttf') or fileName.lower().endswith('.otf'):
+                    fontPaths[fileName] = filePath
         return fontPaths
 
     def installedFonts(self):
