@@ -60,30 +60,24 @@ class Font(object):
     u"""
     Storage of font information while composing the pages.
 
-
-    >>> import pagebot
     >>> from pagebot.toolbox.transformer import *
-    >>> p = module2Path(pagebot)
-    >>> pp = path2ParentPath(p)
-    >>> p = pp + '/fonts/fontbureau/AmstelvarAlpha-Variations.ttf'
     >>> from pagebot.fonttoolbox.objects.font import Font
-    >>> f = Font(p, install=False)
+    >>> from pagebot import getFontPath
+    >>> fontPath = getFontPath()
+    >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> f = Font(path, install=False, lazy=False)
     >>> f.name
-    u'BitcountGrid'
+    u'AmstelvarAlpha Default'
     >>> len(f)
-    101
-    >>> f.keys()[-1]
-    'y'
-    >>> f.axes
-    {'rndi': (0.0, 1000.0, 1000.0), 'rndo': (0.0, 1000.0, 1000.0), 'sqri': (0.0, 1000.0, 1000.0), 'sqro': (0.0, 1000.0, 1000.0), 'line': (0.0, 1000.0, 1000.0), 'open': (0.0, 0.0, 1000.0), 'wght': (0.0, 500.0, 1000.0)}
+    115
+    >>> f.axes.keys()
+    ['YOPQ', 'YTAS', 'YTRA', 'wdth', 'YTDE', 'YTSE', 'XTCH', 'opsz', 'YTLC', 'YTCH', 'XTRA', 'XOPQ', 'GRAD', 'wght', 'YTUC']
     >>> variables = f.variables
     >>> features = f.features
     >>> f.groups
     >>> f.designSpace
     {}
     >>> f.install()
-    u'BitcountGrid-SingleCircleSquare-wght500rndi1000rndo1000line1000sqri1000sqro1000open0'
-    >>> f.save()
     """
     GLYPH_CLASS = Glyph
     FONTANALYZER_CLASS = FontAnalyzer
@@ -134,22 +128,64 @@ class Font(object):
         return 0
 
     def keys(self):
+        u"""Answer the glyph names of the font.
+
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot import getFontPath
+        >>> fontPath = getFontPath()
+        >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> f = Font(path, install=False, lazy=False)
+        >>> 'A' in f.keys()
+        True
+        """
         if 'glyf' in self.ttFont:
             return self.ttFont['glyf'].keys()
         return []
 
     def __contains__(self, glyphName):
+        u"""Allow direct testing. 
+
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot import getFontPath
+        >>> fontPath = getFontPath()
+        >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> f = Font(path, install=False, lazy=False)
+        >>> 'A' in f
+        True
+        """
         return glyphName in self.keys()
 
     def _get_analyzer(self):
-        u"""Answer the style/font analyzer if it exists. Otherwise create one."""
+        u"""Answer the style/font analyzer if it exists. Otherwise create one.
+
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot import getFontPath
+        >>> fontPath = getFontPath()
+        >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> f = Font(path, install=False, lazy=False)
+        >>> #f.analyzer.stems
+        
+        """
         if self._analyzer is None:
             self._analyzer = self.FONTANALYZER_CLASS(self)
         return self._analyzer
     analyzer = property(_get_analyzer)
 
     def _get_axes(self): 
-        u"""Answer dictionary of axes if self.ttFont is a Variable Font. Otherwise answer an empty dictioary."""
+        u"""Answer dictionary of axes if self.ttFont is a Variable Font. Otherwise answer an empty dictioary.
+
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot import getFontPath
+        >>> fontPath = getFontPath()
+        >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> f = Font(path, install=False, lazy=False)
+        >>> f.axes['XTRA']
+        (42.0, 402.0, 402.0)
+        """
         try:
             # TODO: Change value to Axis dictionary instead of list
             axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in self.ttFont['fvar'].axes}
@@ -214,3 +250,11 @@ class Font(object):
     def save(self, path=None):
         u"""Save the font to optional path or to self.path."""
         self.ttFont.save(path or self.path)
+
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+

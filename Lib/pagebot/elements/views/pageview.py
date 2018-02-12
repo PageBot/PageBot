@@ -415,7 +415,7 @@ class PageView(BaseView):
             p = e._applyScale(p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
             context.saveGraphicState()
-            #context.setShadow(self.shadow)
+            context.setShadow(self.shadow)
 
             sMissingElementFill = self.css('viewMissingElementFill', NO_COLOR)
             if sMissingElementFill is not NO_COLOR:
