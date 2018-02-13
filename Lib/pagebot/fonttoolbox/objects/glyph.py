@@ -530,3 +530,11 @@ class Glyph(object):
  |      This works on both expanded and compacted glyphs, without
  |      expanding it.
     """
+
+
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+

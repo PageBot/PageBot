@@ -166,7 +166,7 @@ class Font(object):
         >>> fontPath = getFontPath()
         >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = Font(path, install=False, lazy=False)
-        >>> #f.analyzer.stems
+        >>> #f.analyzer.stems # TODO: Needs bezier path for pixel test.
         
         """
         if self._analyzer is None:
@@ -185,7 +185,7 @@ class Font(object):
         >>> f = Font(path, install=False, lazy=False)
         >>> f.axes['XTRA']
         (42.0, 402.0, 402.0)
-        """
+         """
         try:
             # TODO: Change value to Axis dictionary instead of list
             axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in self.ttFont['fvar'].axes}
@@ -225,12 +225,35 @@ class Font(object):
     features = property(_get_features)
 
     def _get_kerning(self):
+        u"""Answer the (expanded) kerning table of the font.
+
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot import getFontPath
+        >>> fontPath = getFontPath()
+        >>> path = fontPath + 'djr/bungee/Bungee-Regular.ttf'
+        >>> f = Font(path, install=False, lazy=False)
+        >>> len(f.kerning.keys())
+        22827
+        """
         if self._kerning is None: # Lazy read.
             self._kerning = OTFKernReader(self.path).kerningPairs
         return self._kerning
     kerning =  property(_get_kerning)
 
     def _get_groups(self):
+        u"""Answer the groups dictionary of the font.
+
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot import getFontPath
+        >>> fontPath = getFontPath()
+        >>> path = fontPath + 'djr/bungee/Bungee-Regular.ttf'
+        >>> f = Font(path, install=False, lazy=False)
+        >>> g = f['A']
+        >>> f.groups is None
+        True
+        """
         return self._groups
     groups = property(_get_groups)
 
