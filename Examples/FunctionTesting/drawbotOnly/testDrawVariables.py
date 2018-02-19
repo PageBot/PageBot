@@ -11,8 +11,13 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     TestDrawVariables.py
+#     testDrawVariables.py
 #
+import sys
+from pagebot.contexts import defaultContext as context
+if not context.isDrawBot:
+    sys.exit('Example only runs on DrawBot.')
+
 # create small ui element for variables in the script
 from pagebot.contexts import defaultContext as context
 
@@ -45,10 +50,12 @@ if __name__ == '__main__':
             args=dict(value=0, minValue=0, maxValue=1000)),
         # create a variable called 'useColor'
         # and the related ui is a CheckBox.
-        dict(name="useColor", ui="CheckBox"),
+        # TODO Fix color checkbox and well
+        #dict(name="useColor", ui="CheckBox"),
+        
         # create a variable called 'c'
         # and the related ui is a ColorWell.
-        dict(name="c", ui="ColorWell")
+        #dict(name="c", ui="ColorWell")
         ], globals())
 
     # check if the 'useColor' variable is checked

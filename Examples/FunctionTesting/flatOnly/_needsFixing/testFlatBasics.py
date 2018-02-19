@@ -1,3 +1,5 @@
+
+# Only runs under Flat
 from flat import rgb, font, shape, strike, document
 
 #c = rgb(255, 0, 0)

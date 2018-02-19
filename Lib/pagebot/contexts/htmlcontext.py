@@ -31,7 +31,8 @@ class HtmlContext(BaseContext):
     #   T E X T
 
     def newBulletString(self, bullet, e=None, style=None):
-        return None # HTML does bullets automatic. Ignore answered None.
+        u"""Answer the string with a bullet. As HTML does bullets automatic. Ignore answered None"""
+        return None 
 
     #   D R A W I N G
 
@@ -70,3 +71,9 @@ class HtmlContext(BaseContext):
 
     stroke = setStrokeColor # DrawBot compatible API
        
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+  

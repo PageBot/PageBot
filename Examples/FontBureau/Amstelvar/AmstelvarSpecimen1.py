@@ -31,8 +31,8 @@ PageSize = 500
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/AmstelvarSpecimen.pdf' 
 
-FONT_PATH = pagebot.getFontPath()
-fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
+FONTS_PATH = pagebot.getFontsPath()
+fontPath = FONTS_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
 
 GLYPH_NAME = 'B'
 CIRCLE_ELEMENT_FILL = 1

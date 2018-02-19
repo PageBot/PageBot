@@ -1,11 +1,35 @@
+#!/usr/bin/env python
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     Example written by Frederik Berlaen
+#
+#     Supporting usage of DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     testCTRunLigature.py
+#
+import sys
+from pagebot.contexts import defaultContext as context
+if not context.isDrawBot:
+    sys.exit('Example only runs on DrawBot.')
+
 import CoreText
 import Quartz
 
 from fontTools.ttLib import TTFont
 
 
+#fontPath = u"Proforma-Bold"
+fontPath = u"Upgrade-Bold" # See gallery
 
-fontPath = u"Proforma-Bold"
+# Test fonts without [liga] OT-feature. Just shows warning
+#fontPath = u"Verdana-Bold"
+#fontPath = u"Georgia-Bold"
 
 
 #fontToolsFont = TTFont(fontPath)
@@ -60,3 +84,4 @@ ctRunThing(fs1, (100, 300))
 fs2 = FormattedString('Ligature fifl', font=fontPath, fontSize=100, openTypeFeatures=dict(liga=True))
 text(fs2, (100, 100))
 ctRunThing(fs2, (100, 100))
+saveImage('_gallery/testCTRunLigature.pdf')

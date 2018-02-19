@@ -48,10 +48,10 @@ class Glyph(object):
     u"""The Glyph class wraps the glyph structure of a TrueType Font and
     extracts data from the raw glyph such as point sequence and type.
     >>> import pagebot
-    >>> from pagebot.toolbox.transformer import getFontPath
-    >>> p = getFontPath('AmstelvarAlpha-VF')
     >>> from pagebot.fonttoolbox.objects.font import Font
-    >>> f = Font(p, install=False)
+    >>> from pagebot.contexts.platform import getRootFontPath
+    >>> path = getRootFontPath() + 'fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> f = Font(path, install=False)
     >>> g = f['a']
     >>> g.name
     'a'
@@ -138,7 +138,7 @@ class Glyph(object):
         if coordinates or components:
             # TODO: Needs context for DrawBot/Flex usage
             # TODO: Separate path creation from init?
-            self._path = path = context.BezierPath()
+            self._path = path = context.newPath()
 
         for index, (x, y) in enumerate(coordinates):
             minX = min(x, minX)

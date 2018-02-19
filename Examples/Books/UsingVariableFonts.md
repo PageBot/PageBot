@@ -1,38 +1,38 @@
-# Using Variable Fonts
-The **UsingVariableFonts** file contains all Markdown content, including various functions to create this Typographic Poster.
-
-## Embedded Python
-The connection between Markdown content and Python can be made from 2 different directions. 
-
-* PageBot application scripts that create a **Document** instance, with templates, element and typesetters parsing Markdown text.
-* MarkDown text files that include all Python code to create documents. It only needs a small bootstrap script to create the **Typesetter** and parse this file.
 
 ~~~Python
 cid = 'Book'
 
 # Converter from MM to points
 from pagebot.style import MM 
+
 # Import the Document-Book class.
-# No need to add any templates, they are already defined in Book
+# No need to add any templates, the onese used here
+# are already defined in the Book class
 from pagebot.publications import Book
 
-W, H = 163*MM, 244*MM # Overall size of the book pages.
+# Overall size of the book pages, defined in millimeters
+W, H = 163*MM, 244*MM 
+
 # Defing the padding for right pages. Left pages are mirrored by templates.
 
 #padding = 18*MM, 12*MM, 12*MM, 10*MM # Top, Right, Bottom, Left
 padding = 54, 36, 36, 32 # Top, Right, Bottom, Left
 # Define the grid values for left and right pages
 
+# In case defining the grid in MM, it works like this.
 #gridR = [(50*MM, 3*MM),(20*MM, 3*MM),(20*MM, 3*MM), (None, 0)]
 #gridL = [(None, 3*MM), (50*MM, 0)]
+
 gridR = [(150, 9),(60, 9),(60, 9), (None, 0)]
 gridL = [(None, 9), (150, 0)]
 
 coverBackgroundFill = (0.05, 0.07, 0.05) # Greenish black
+coverBackgroundFill = None
 
 title = 'Using Variable Fonts'
 
-# The Book instance stored as “doc”, so the typesetter can find it.
+# The Book instance stored as “doc”, so the typesetter 
+# can find it.
 # Use the predefined dynamic templates inside book.
 # No autoPages, all are created by content in this file.
 # Set the left and right grid measures.
@@ -41,28 +41,21 @@ doc = Book(w=W, h=H, autoPages=0, originTop=False, title=title, padding=padding,
 coverBackgroundFill=coverBackgroundFill)
 
 # Show some information about the doc so far.
-print doc.getInfo() 
+#print(doc.getInfo())
 
 ~~~
-
-This is text.
 
 ~~~Python
 page = doc.newPage(template='Cover')
 box = page['Title']
 ~~~
 
-Using Variable Fonts
-
-~~~Python
-page = doc.newPage(template='DEMO Page')
-~~~
-
-AAAAA
+# Using Variable Fonts
 
 ~~~Python
 page = doc.newPage(template='Title Page')
 ~~~
+
 The content of this book is an example summary of the file pagebot/resources/content/TypeNetwork/WhenFontsStartedANewWorld.md. It is published on the TN website.
 
 ~~~Python
@@ -79,6 +72,16 @@ A lot has been written and said about OpenType Variations. There are Operating S
 ~~~Python
 page = doc.newPage(name='Topic')
 ~~~
+
+
+# Using Variable Fonts
+The **UsingVariableFonts** file contains all Markdown content, including various functions to create this Typographic Poster.
+
+## Embedded Python
+The connection between Markdown content and Python can be made from 2 different directions. 
+
+* PageBot application scripts that create a **Document** instance, with templates, element and typesetters parsing Markdown text.
+* MarkDown text files that include all Python code to create documents. It only needs a small bootstrap script to create the **Typesetter** and parse this file.
 
 As described in the introduction, variations technology superficially changes nothing about the “workings” of older fonts or applications. Users still begin their work by selecting the keyboard and input method associated with their script and language, or just by clicking an icon of their national flag. From there, the OS maps the characters it’ll show on the screen to match those on the keyboard, and turns on any required OpenType features for that script and language. All the individual font files are sorted for presentation by family name, with a hyphen somewhere separating the family name from the style, treatment, and/or effect name.
 

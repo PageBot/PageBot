@@ -22,7 +22,7 @@
 #
 import copy
 from math import sin, radians
-from pagebot import getRootPath
+from pagebot.contexts.platform import getRootPath
 from pagebot.contexts import defaultContext as c
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont

@@ -19,6 +19,7 @@
 #     Feel free to use as inspiration. 
 #     Don't use exactly like this, an idenity is supposed to be unique. :)
 #
+from pagebot import getFontsPaths
 from pagebot.contexts import defaultContext as c
 from pagebot.style import getRootStyle, LEFT
 from pagebot.document import Document
@@ -95,7 +96,7 @@ VARS = True
 
 if VARS:
     # FIXME: this is a bad path for a general purpose example!
-    FONT_PATH = '../../../fonts/'
+    FONTS_PATH = getFontsPaths()
 
     FONT_LOCATIONS = {
         #'PromisePageBot-BoldCondensed': {"wght": 750, "wdth": 500, },

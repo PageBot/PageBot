@@ -15,23 +15,22 @@
 #
 import os
 from htmlcontext import HtmlContext
+
 try:
+    #import ForceImportError # Uncomment for simulate testing of other contexts/platforms
     import AppKit # Force exception on non-OSX platforms
-    from pagebot import getRootPath
+    from pagebot.contexts.platform import getRootPath
     from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
     from drawbotcontext import DrawBotContext
     defaultContext = DrawBotContext() # Test if platform is supporing DrawBot:
     FlatContext = None
 
-    FONT_PATHS = [os.path.expanduser('~/Library/Fonts'), '/Library/Fonts', getRootPath() + '/Fonts']
 
-except ImportError:
+except (ImportError, AttributeError):
+    #import ForceOtherError # Uncomment for simulate testing of other contexts/platforms
     from flatcontext import FlatContext
     DrawBotContext = None
     defaultContext = FlatContext()
 
-    if os.name == 'posix':
-        FONT_PATHS = [getRootPath() + 'Fonts'] # TODO: Is there a standard directory for Linux?
-    else: 
-        FONT_PATHS = [getRootPath() + 'Fonts'] # What to do for other OS?
-
+#except:
+#    raise NotImplementedError('Cannot decide on the platform context.')

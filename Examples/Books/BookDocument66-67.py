@@ -23,6 +23,10 @@ from pagebot.conditions import *
 from pagebot.style import A5, CENTER, DISPLAY_BLOCK
 from pagebot.fonttoolbox.objects.font import Font
 
+installedFonts = context.installedFonts()
+# Try if the Upgrade family is installed. Otherwise try an alternative font that is installed.
+print installedFonts
+
 h1Style = dict(font='Upgrade-Medium', fontSize=18, rLeading=1.4, tracking=0.2, paragraphBottomSpacing=12*0.5, display=DISPLAY_BLOCK)
 h2Style = dict(font='Upgrade-Medium', fontSize=12, rLeading=1.3, tracking=0.2, paragraphTopSpacing=12*1.3*0.5, display=DISPLAY_BLOCK)
 bodyStyle = dict(font='Upgrade-Book', fontSize=11, rLeading=1.3, tracking=0.2)

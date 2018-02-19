@@ -14,40 +14,39 @@
 #     typespecimen.py
 #
 #     Generic Type Specimen Publiction. Use straight, if the default behavior
-#     and templates are hood enough. Inherit the redefine functions otherwise.
-#     Example of an inherited publications is FBFamilySpecimen.py
+#     and templates are good enough. Inherit the redefine functions and templates
+#     otherwise. Example of an inherited publications is FBFamilySpecimen.py
 #
-from pagebot.fonttoolbox.objects.family import Family, guessFamilies
-from pagebot.fonttoolbox.objects.font import Font
-from pagebot.publications.publication import Publication
-from pagebot.style import A4
-
-# Document is the main instance holding all information about the document together 
-# (pages, styles, etc.)
-from pagebot.document import Document
+# Publication (inheriting from Document) is the main instance holding all information 
+# about the document together (pages, styles, etc.)
+from pagebot.publications.publication import Publication 
 
 # Page and Template instances are holding all elements of a page together.
 # And import all other element constructors.
-from pagebot.elements import *
+#from pagebot.elements import *
 
 # Import conditions for layout placements and other element status.
-from pagebot.conditions import *
+#from pagebot.conditions import *
  
-W, H = A4
-
 class TypeSpecimen(Publication):
     
-    MIN_STYLES = 4 # Don't show, if families have fewer amount of style.
-    
-    FONT_CLASS = Font
-    FAMILY_CLASS = Family
-    
-    def __init__(self, styleNamePattern=None, styleNames=None, pageTitle=None, showGrid=False, showGridColumns=False):
-        Publication.__init__(self)
+    '''
+    To deleted soon.
+    There should be only templates here to choose from
+    def __init__(self, styleNamePattern=None, styleNames=None, pageTitle=None, showGrid=False, showGridColumns=False, **kwargs):
+        u"""Generic base class document for type specimes.
+
+        >>> specimen = TypeSpecimen(title='MySpecimen', w=400, h=600)
+        >>> specimen.title
+        'MySpecimen'
+        >>> specimen.w, specimen.h
+        (400, 600)
+        """
+        Publication.__init__(self, **kwargs)
         # Name pattern to match available installed fonts.
         self.styleNamePattern = styleNamePattern 
         self.styleNames = []
-        for styleName in self.view.installedFonts():
+        for styleName in self.context.installedFonts():
             if styleNamePattern is None or styleNamePattern in styleName:
                 self.styleNames.append(styleName)
         
@@ -143,4 +142,9 @@ class TypeSpecimen(Publication):
             
         column.append(fs)	
 
-          
+    '''
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+         

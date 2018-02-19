@@ -12,20 +12,24 @@
 #
 #     testBabelStrings.py
 #
-from pagebot.contexts import defaultContext as c
-import sys
-try:
-    from pagebot.builders.drawbotbuilder import drawBotBuilder as b
-except ImportError:
-    sys.exit('Example only runs on DrawBot.')
+# Test BabelString both under DrawBotContext and FlatContext
+from pagebot.contexts.drawbotcontext import DrawBotContext
+from pagebot.contexts.flatcontext import FlatContext
 
-# Create a new BabelString with the DrawBot FormttedString inside.
-style=dict(font='Verdana', fontSize=50, textFill=(1, 0, 0))
-bs = c.newString('This is a string', style=style)
-# It prints it content.
-print bs
-# Adding or appending strings are added to the internal formatted string.
-bs += ' and more'
-print bs
-# Usage in DrawBot by addressing the embedded FS for drawing.
-b.text(bs.s, (100, 100))
+testContexts = (
+    (DrawBotContext(), '_export/testFlatString.pdf'),
+    # TODO: Get this to work with Flat
+    #(FlatContext(), '_export/testDrawBotString.pdf'),
+)
+for context, path in testContexts:
+    # Create a new BabelString with the DrawBot FormttedString inside.
+    style=dict(font='Verdana', fontSize=50, textFill=(1, 0, 0))
+    bs = context.newString('This is a string', style=style)
+    # It prints it content.
+    print bs
+    # Adding or appending strings are added to the internal formatted string.
+    bs += ' and more'
+    print bs
+    # Usage in DrawBot by addressing the embedded FS for drawing.
+    context.text(bs, (100, 100))
+    context.saveImage(path)

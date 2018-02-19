@@ -16,7 +16,7 @@
 #     This script generates a fake article on a single page, using Filibuster text,
 #     automatic layout template, Galley, Typesetter and Composer classes.
 #
-from pagebot import getRootPath()
+from pagebot.contexts.platform import getRootPath()
 from pagebot.style import A3
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
