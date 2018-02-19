@@ -1,11 +1,32 @@
+#!/usr/bin/env python
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     Example written by Frederik Berlaen
+#
+#     Supporting usage of DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     testFormattedStringMarkers.py
+#
+import re
+import sys
+from pagebot.contexts import defaultContext as context
+if not context.isDrawBot:
+    sys.exit('Example only runs on DrawBot.')
+
 from pagebot.style import getRootStyle
 from pagebot.contexts import defaultContext as context
 
-rs = getRootStyle()
+rs = {} # Make a style
 rs['leading'] = 10
 rs['fontSize'] = 9
 rs['font'] = 'Verdana'
-fs = context.newString('aaa', None, rs)
+fs = context.newString('aaa', style=rs)
 
 a = context.newString('',
                       style=dict(lineHeight=rs['leading'],

@@ -15,7 +15,7 @@
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 
-EXPORT_PATH = '_export/textGlyphAnalyzer.pdf'
+EXPORT_PATH = '_export/testGlyphAnalyzer.pdf'
 
 FONT_PATH = '/Library/Fonts/'
 paths = [   

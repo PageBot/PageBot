@@ -20,7 +20,7 @@ try:
     import CoreText
     import Quartz
     from drawBot import BezierPath
-except ImportError:
+except (ImportError, AttributeError):
     BezierPath = None
 
 from pagebot.contexts.basecontext import BaseContext

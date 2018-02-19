@@ -15,6 +15,7 @@
 from __future__ import division
 
 import pagebot
+from pagebot.contexts.platform import getRootFontPath
 from pagebot.elements import *
 # For Variable Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
 from pagebot.fonttoolbox.objects.font import Font
@@ -26,7 +27,7 @@ OUTPUT_FILE = '_export/AmstelvarVariableCircle.pdf'
 
 CONDITIONS = [Fit2Width(), Float2Top()] # Stacking conditions for all elements in this page.
 
-fontPath = pagebot.getFontPath() + 'fontbureau/AmstelvarAlpha-VF.ttf'
+fontPath = getRootFontPath() + 'fontbureau/AmstelvarAlpha-VF.ttf'
 varFont = Font(fontPath)
 varFontName = varFont.install() # Do DrawBot font install.
 

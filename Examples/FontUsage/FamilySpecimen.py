@@ -13,7 +13,6 @@
 #
 #     FBFamilySpecimen.py
 #
-from random import choice
 from pagebot.fonttoolbox.objects.family import getFamilies
 from pagebot.publications.typespecimen import TypeSpecimen
 # Page and Template instances are holding all elements of a page together.
@@ -25,7 +24,7 @@ from pagebot.elements import *
 DEBUG = False # Make True to see grid and element frames.
 
 # Use OSX location of fonts here.
-LIB_PATH = '/Library/Fonts/'
+
 SOME_SYSTEM_FONTS = {
     # Let's try some plain OSX system fonts, while they are still there (not variable font yet).
     'Georgia': dict(Regular=LIB_PATH+'Georgia.ttf', Bold=LIB_PATH+'Georgia Bold.ttf', 

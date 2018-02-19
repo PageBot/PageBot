@@ -17,8 +17,8 @@
 #
 import os
 #import imageio
-from pagebot import getFontPaths
 from basecontext import BaseContext
+from pagebot.contexts.platform import getFontPaths
 from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings.flatstring import FlatString
@@ -81,11 +81,10 @@ class FlatContext(BaseContext):
         self.fillColor = None
         self.strokeColor = None
         self.strokeWidth = 0
+        self._font = None # Optional setting of the current font and fontSize
+        self._fontSize = None
 
         self.b = flatBuilder # Builder for this canvas, e.g. equivalent of bare drawbot.fill( )
-
-        # Dictionary of fontName-fontPath relations. Initialize with default PageBot fonts.
-        self.fontPaths = self._findFontPaths()
 
         self.doc = None
         self.pages = []
@@ -120,7 +119,7 @@ class FlatContext(BaseContext):
         u"""Save the current document to file(s)
 
         >>> import os
-        >>> from pagebot import getRootPath
+        >>> from pagebot.contexts.platform import getRootPath
         >>> exportPath = getRootPath() + '/_export/' # _export/* Files are ignored in git
         >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
         >>> context = FlatContext()
@@ -135,6 +134,7 @@ class FlatContext(BaseContext):
         >>> context.saveDocument(exportPath + 'MyTextDocument_F.gif')
         [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
         """
+        self.checkExportPath(path) # In case path starts with "_export", make sure that the directories exist.
         extension = path.split('.')[-1]
         if extension == 'png':
             if len(self.pages) == 1 or not multiPage:
@@ -184,33 +184,10 @@ class FlatContext(BaseContext):
 
     #   F O N T S
 
-    def _findFontPaths(self, path=None, fontPaths=None):
-        u"""Recursively find the default PageBot font paths. Answer the dictioanary of name-path relations."""
-        if fontPaths is None:
-            fontPaths = {}
-        if isinstance(path, (list, tuple)):
-            paths = path
-        elif path is None:
-            paths = getFontPaths()
-        else:
-            paths = [path] 
-        for path in paths:
-            for fileName in os.listdir(path):
-                if fileName.startswith('.'):
-                    continue
-                if not path.endswith('/'):
-                    path += '/'
-                filePath = path + fileName
-                if os.path.isdir(filePath):
-                    self._findFontPaths(filePath, fontPaths) # Recursively search in folder.
-                elif fileName.lower().endswith('.ttf') or fileName.lower().endswith('.otf'):
-                    fontPaths[fileName] = filePath
-        return fontPaths
-
     def installedFonts(self):
         u"""Answer the list with names of all installed fonts in the system, as available
         for self.newString( ) style."""
-        return self.fontPaths.keys()
+        return getFontPaths().keys()
 
     def installFont(self, fontPath):
         u"""Install the font in the context and answer the font (file)name."""
@@ -219,7 +196,7 @@ class FlatContext(BaseContext):
 
     def getFontPathOfFont(self, fontName):
         u"""Answer the path that is source of the given font name. Answer None if the font cannot be found."""
-        return self.fontPaths.get(fontName)
+        return getFontPaths().get(fontName)
 
     def listOpenTypeFeatures(self, fontName):
         u"""Answer the list of opentype features available in the named font.
@@ -236,9 +213,43 @@ class FlatContext(BaseContext):
         u"""Place the babelstring instance at position p. The position can be any 2D or 3D points tuple.
         Currently the z-axis is ignored. The FlatContext version of the BabelString is supposed to contain
         Flat.text. Note that in the Flat model, the positions is an attribute of the string, so
-        strings cannot be reused to show on multiple positions."""
+        strings cannot be reused to show on multiple positions.
+
+        >>> context = FlatContext()
+        >>> bs = context.newString('ABC')
+        >>> bs.__class__.__name__
+        'FlatString'
+        >>> #context.text(bs, (100, 100))
+
+        """
+        assert isinstance(bs, FlatString)
         placedText = self.page.place(bs.s)
         placedText.position(p[0], p[1])
+
+    def font(self, fontName, fontSize=None):
+        u"""Set the current font, in case it is not defined in a formatted string.
+
+        >>> context = FlatContext()
+        >>> context.font('ThisFont')
+        >>> context._fontName
+        'ThisFont'
+        >>> context.font('OtherFont', 12)
+        >>> context._fontName, context._fontSize
+        ('OtherFont', 12)
+        """
+        self._fontName = fontName
+        if fontSize is not None:
+            self._fontSize = fontSize
+
+    def fontSize(self, fontSize):
+        u"""Set the current fontSize, in case it is not defined in a formatted string
+
+        >>> context = FlatContext()
+        >>> context.fontSize(12)
+        >>> context._fontSize
+        12
+        """
+        self._fontSize = fontSize
 
     def textBox(self, bs, rect):
         x, y, w, h = rect
@@ -298,7 +309,7 @@ class FlatContext(BaseContext):
     def imageSize(self, path):
         u"""Answer the (w, h) image size of the image file at path.
 
-        >>> from pagebot import getRootPath
+        >>> from pagebot.contexts.platform import getRootPath
         >>> rootPath = getRootPath()
         >>> imagePath = rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
         >>> context = FlatContext()

@@ -13,6 +13,7 @@
 #
 #     pagebot/contexts/__init__.py
 #
+import os
 from pagebot.style import DISPLAY_BLOCK
 
 class BaseContext(object):
@@ -27,6 +28,10 @@ class BaseContext(object):
     # To be redefined by inheriting context classes.
     STRING_CLASS = None
 
+    def __repr__(self):
+        return '<%s>' % self.__class__.__name__
+
+    
     #   S C R E E N
 
     def screenSize(self):
@@ -65,9 +70,31 @@ class BaseContext(object):
                 s += bs
         return s
 
+    #   P A T H
+
+    def checkExportPath(self, path):
+        u"""If the path starts width "_export" make sure it exits, otherwise create it.
+        The _export folders are used to local export documents, without saving them into git.
+        The _export name is included in the git .gitignore file.
+
+        >>> context = BaseContext()
+        >>> context.checkExportPath('_export/myFile.pdf')
+        >>> os.path.exists('_export')
+        True
+        """
+        if path.startswith('_export'):
+            dirPath = '/'.join(path.split('/')[:-1])
+            if not os.path.exists(dirPath):
+                os.makedirs(dirPath)
+
     #   V A R I A B L E
 
     def Variable(self, ui, globals):
         """Offers interactive global value manipulation in DrawBot. Probably to be ignored in other contexts."""
         pass
 
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+   

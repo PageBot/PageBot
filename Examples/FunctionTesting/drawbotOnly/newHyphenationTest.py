@@ -1,3 +1,23 @@
+#!/usr/bin/env python
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#     Example written by Frederik Berlaen
+#
+#     Supporting usage of DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     testAddAttrivutesToFormattedStrings.py
+#
+import sys
+from pagebot.contexts import defaultContext as context
+if not context.isDrawBot:
+    sys.exit('Example only runs on DrawBot.')
+
 from drawBot.context.baseContext import BaseContext
 import CoreText
 import AppKit

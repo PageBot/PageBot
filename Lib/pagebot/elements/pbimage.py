@@ -29,7 +29,7 @@ class Image(Element):
     The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
     applied (e.g. if the image element changes size), or the child elements can be put on fixed positions.
 
-    >>> from pagebot import getRootPath
+    >>> from pagebot.contexts.platform import getRootPath
     >>> rootPath = getRootPath()
     >>> imagePath = rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext

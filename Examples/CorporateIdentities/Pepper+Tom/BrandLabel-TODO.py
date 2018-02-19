@@ -18,6 +18,8 @@
 #
 import os
 
+
+from pagebot.context.platform import getRootFontPath
 from pagebot.style import getRootStyle, LEFT
 from pagebot.document import Document
 from pagebot.elements import newRect
@@ -78,7 +80,7 @@ P_TRACK = 0.030
 
 VARS = True
 
-FONT_PATH = '../../fonts/'
+FONT_PATHS = getRootFontPath()
 VFONT_PATH = 'PromisePageBot-GX.ttf'
 
 if VARS and os.path.exists(FONT_PATH + VFONT_PATH):
@@ -100,10 +102,10 @@ if VARS and os.path.exists(FONT_PATH + VFONT_PATH):
     FONTS = {}
     # Install the test V-font
     if not 'PromisePageBot-Bold' in installedFonts():
-        installFont(FONT_PATH + VFONT_PATH)
+        installFont(FONTS_PATH + VFONT_PATH)
     for name, location in FONT_LOCATIONS.items():
-        fontName, fontPath = generateInstance(FONT_PATH + VFONT_PATH, 
-            location, targetDirectory=FONT_PATH + 'instances')
+        fontName, fontPath = generateInstance(FONTS_PATH + VFONT_PATH, 
+            location, targetDirectory=FONTS_PATH + 'instances')
         FONTS[name] = fontName#fontPath # Instead of fontName, no need to uninstall.
     LIGHT_CONDENSED = FONTS['PromisePageBot-LightCondensed']
     LIGHT = FONTS['PromisePageBot-Light']

@@ -35,9 +35,30 @@ class FlatString(BabelString):
             s = s # TODO: Change to Flat equivalent of FormattedString.
         self._s = s
     s = property(_get_s, _set_s)
+
+    def __len__(self):
+        u"""Answer the number of characters in self.s
+
+        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> fs = FlatString('ABC', context=FlatContext())
+        >>> fs
+        ABC
+        >>> len(fs)
+        3
+        """
+        return len(str(self.s))
   
     def asText(self):
-        return self.s # TODO: To be changed to Flat string behavior.
+        u"""Answer as unicode string.
+
+        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> fs = FlatString('ABC', context=FlatContext())
+        >>> fs.s
+        'ABC'
+        >>> fs.asText()
+        'ABC'
+        """
+        return str(self.s) # TODO: To be changed to Flat string behavior.
 
     def textSize(self, w=None, h=None):
         u"""Answer the (w, h) size for a given width, with the current text."""

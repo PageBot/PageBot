@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<document><h1>Using Variable Fonts</h1>
-<p>The <strong>UsingVariableFonts</strong> file contains all Markdown content, including various functions to create this Typographic Poster.</p>
-<h2>Embedded Python</h2>
-<p>The connection between Markdown content and Python can be made from 2 different directions. </p>
-<ul>
-<li>PageBot application scripts that create a <strong>Document</strong> instance, with templates, element and typesetters parsing Markdown text.</li>
-<li>MarkDown text files that include all Python code to create documents. It only needs a small bootstrap script to create the <strong>Typesetter</strong> and parse this file.</li>
-</ul>
-<pre><code class="Python">cid = 'Book'
+<document><pre><code class="Python">cid = 'Book'
 
 # Converter from MM to points
 from pagebot.style import MM 
+
 # Import the Document-Book class.
-# No need to add any templates, they are already defined in Book
+# No need to add any templates, the onese used here
+# are already defined in the Book class
 from pagebot.publications import Book
 
-W, H = 163*MM, 244*MM # Overall size of the book pages.
+# Overall size of the book pages, defined in millimeters
+W, H = 163*MM, 244*MM 
+
 # Defing the padding for right pages. Left pages are mirrored by templates.
 
 #padding = 18*MM, 12*MM, 12*MM, 10*MM # Top, Right, Bottom, Left
 padding = 54, 36, 36, 32 # Top, Right, Bottom, Left
 # Define the grid values for left and right pages
 
+# In case defining the grid in MM, it works like this.
 #gridR = [(50*MM, 3*MM),(20*MM, 3*MM),(20*MM, 3*MM), (None, 0)]
 #gridL = [(None, 3*MM), (50*MM, 0)]
+
 gridR = [(150, 9),(60, 9),(60, 9), (None, 0)]
 gridL = [(None, 9), (150, 0)]
 
 coverBackgroundFill = (0.05, 0.07, 0.05) # Greenish black
+coverBackgroundFill = None
 
 title = 'Using Variable Fonts'
 
-# The Book instance stored as “doc”, so the typesetter can find it.
+# The Book instance stored as “doc”, so the typesetter 
+# can find it.
 # Use the predefined dynamic templates inside book.
 # No autoPages, all are created by content in this file.
 # Set the left and right grid measures.
@@ -40,20 +40,15 @@ doc = Book(w=W, h=H, autoPages=0, originTop=False, title=title, padding=padding,
 coverBackgroundFill=coverBackgroundFill)
 
 # Show some information about the doc so far.
-print doc.getInfo() 
+#print(doc.getInfo())
 
 </code></pre>
 
-<p>This is text.</p>
 <pre><code class="Python">page = doc.newPage(template='Cover')
 box = page['Title']
 </code></pre>
 
-<p>Using Variable Fonts</p>
-<pre><code class="Python">page = doc.newPage(template='DEMO Page')
-</code></pre>
-
-<p>AAAAA</p>
+<h1>Using Variable Fonts</h1>
 <pre><code class="Python">page = doc.newPage(template='Title Page')
 </code></pre>
 
@@ -69,6 +64,14 @@ box = page['Title']
 <pre><code class="Python">page = doc.newPage(name='Topic')
 </code></pre>
 
+<h1>Using Variable Fonts</h1>
+<p>The <strong>UsingVariableFonts</strong> file contains all Markdown content, including various functions to create this Typographic Poster.</p>
+<h2>Embedded Python</h2>
+<p>The connection between Markdown content and Python can be made from 2 different directions. </p>
+<ul>
+<li>PageBot application scripts that create a <strong>Document</strong> instance, with templates, element and typesetters parsing Markdown text.</li>
+<li>MarkDown text files that include all Python code to create documents. It only needs a small bootstrap script to create the <strong>Typesetter</strong> and parse this file.</li>
+</ul>
 <p>As described in the introduction, variations technology superficially changes nothing about the “workings” of older fonts or applications. Users still begin their work by selecting the keyboard and input method associated with their script and language, or just by clicking an icon of their national flag. From there, the OS maps the characters it’ll show on the screen to match those on the keyboard, and turns on any required OpenType features for that script and language. All the individual font files are sorted for presentation by family name, with a hyphen somewhere separating the family name from the style, treatment, and/or effect name.</p>
 <p>So, when the user opens an application for authoring a new document, applications present a font family, style, and size, ready for the user’s input of their own script, in the form of whatever characters they want to type; defaults for all of the selections, from script to character, must exist. This is also true of web documents: the workings cannot exist without the full satisfaction of the “mantra” — from script to font family, to style, to size — in order to function at the simplest level, with fonts today.</p>
 <p>A script is a collection of characters that may be used to compose one or more languages. A design class relates to the basic characteristics of font families like serif, sans serif, or script. A font family is a collection of font variants with common details in the terminations, shapes, internal contrasts, and angles. A font style is a variation of the family, or a combination of variations like weight and width, that do not fundamentally alter the comment characteristics of the font family, just the proportions of white and black. Font treatments include stroking the contour, filling it, drop shadows, and possible variants that change neither font family nor style, just how it is positioned, or how the contour is interpreted or augmented. Lastly, a user may choose effects, like simulated scratches and scuffs to the output type, or modification of one or multiple treatments over time, as in animation.</p>

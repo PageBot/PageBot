@@ -20,7 +20,7 @@
 #     Add statistical hyphenation per language if words or combination of words fails.
 #
 import os, codecs
-from pagebot import getRootPath
+from pagebot.contexts.platform import getRootPath
 
 DEFAULT_LANGUAGE = 'en'
 

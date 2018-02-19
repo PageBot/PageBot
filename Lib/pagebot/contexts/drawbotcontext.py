@@ -16,6 +16,7 @@
 #
 try:
     #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
+    import drawBot
     from AppKit import NSFont
     from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute
     from CoreText import kCTFontURLAttribute, CTFramesetterCreateWithAttributedString
@@ -24,14 +25,16 @@ try:
     from drawBot import Variable
     from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
     from pagebot.contexts.strings.drawbotstring import DrawBotString as stringClass
-except ImportError:
+except (ImportError, AttributeError):
     # If DrawBot is not available on the platform, then use a noneDrawBotBuilder instance, that
     # can be used to run all DrawBot related docTests.
-    from pagebot.contexts.builders.drawbotbuilder import noneDrawBotBuilder as drawBotBuilder
+    from pagebot.contexts.builders.nonedrawbotbuilder import NoneDrawBotBuilder
     from pagebot.contexts.strings.drawbotstring import NoneDrawBotString as stringClass
+    drawBotBuilder = NoneDrawBotBuilder()
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
     Variable = None
+    print('Using drawBotContext-->NoneDrawBotBuilder')
 
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR, LEFT
@@ -86,7 +89,14 @@ class DrawBotContext(BaseContext):
 
     def saveDocument(self, path, multiPage=None):
         u"""Select other than standard DrawBot export builders here.
-        Save the current image as path, rendering depending on the extension of the path file."""
+        Save the current image as path, rendering depending on the extension of the path file.
+        In case the path starts with "_export", then create it directories.
+
+        >>> context = DrawBotContext()
+        >>> context.saveImage('_export/MyFile.pdf')
+
+        """
+        self.checkExportPath(path)
         self.b.saveImage(path, multipage=multiPage)
 
     saveImage = saveDocument # Compatible API with DrawBot
@@ -160,10 +170,16 @@ class DrawBotContext(BaseContext):
         self.b.oval(x-r, y-r, r*2, r*2)
 
     def line(self, p1, p2):
+        u"""Draw a line from p1 to p2.
+
+        >>> context = DrawBotContext()
+        >>> context.line((100, 100), (200, 200))
+        """
         self.b.line(p1, p2)
 
     def newPath(self):
         self._path = self.b.newPath()
+        return self._path
 
     def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
         u"""Draw the NSBezierPath, or equivalent in other contexts. Scaled image is drawn on (x, y),
@@ -182,9 +198,26 @@ class DrawBotContext(BaseContext):
         self.restoreGraphicState()
 
     def moveTo(self, p):
+        u"""Move to point p. Create a new path if none is open.
+
+        >>> context = DrawBotContext()
+        >>> context.newPath()
+        >>> context.moveTo((100, 100))
+        """
+        if self._path is None:
+            self.newPath()
         self.b.moveTo((p[0], p[1]))
 
     def lineTo(self, p):
+        u"""Line to point p. Create a new path if none is open.
+
+        >>> context = DrawBotContext()
+        >>> context.newPath()
+        >>> context.moveTo((100, 100))
+        >>> context.lineTo((200, 200))
+        """
+        if self._path is None:
+            self.newPath()
         self.b.lineTo((p[0], p[1]))
 
     def quadTo(bcp, p):
@@ -192,7 +225,28 @@ class DrawBotContext(BaseContext):
         pass
 
     def curveTo(self, bcp1, bcp2, p):
-        pass
+        u"""Curve to point p. Create a new path if none is open.
+
+        >>> context = DrawBotContext()
+        >>> context.newPath()
+        >>> context.moveTo((100, 100))
+        >>> context.curveTo((100, 200), (200, 200), (200, 100))
+        """
+        if self._path is None:
+            self.newPath()
+        self.b.curveTo((bcp1[0], bcp1[1]), (bcp2[0], bcp2[1]), (p[0], p[1]))
+
+    def closePath(self):
+        u"""Curve to point p. Create a new path if none is open.
+
+        >>> context = DrawBotContext()
+        >>> context.newPath()
+        >>> context.moveTo((100, 100))
+        >>> context.curveTo((100, 200), (200, 200), (200, 100))
+        >>> context.closePath()
+        """
+        if self._path is not None:
+            self.b.closePath()
 
     def scale(self, sx, sy=None):
         u"""Set the drawing scale."""

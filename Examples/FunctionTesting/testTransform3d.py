@@ -1,4 +1,4 @@
-from pagebot import getRootPath
+from pagebot.contexts.platform import getRootPath
 from pagebot.toolbox.transform3d import Transform3D
 
 def circle(cpt, r):
