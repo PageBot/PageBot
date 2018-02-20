@@ -1,3 +1,18 @@
+#!/usr/bin/env python
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#
+#     Supporting usage of DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     testVariableTTFont.py
+#
+
 #for fontName in installedFonts():
 #    if 'Skia' in fontName:
 #        print fontName
