@@ -94,6 +94,9 @@ class NoneDrawBotBuilder(object):
         """
         return 3024, 4032
 
+    def transform(self, t):
+        pass
+
     def FormattedString(self, s):
         class FS(object):
             def __init__(self, s):

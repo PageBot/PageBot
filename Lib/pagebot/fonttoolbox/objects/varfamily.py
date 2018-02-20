@@ -34,7 +34,6 @@ def checkInterpolation(fonts):
         ok = []
         error = []
         report = []
-        glyphs[glyphName] = dict(ok=ok, error=error, report=report)
         # Check for interpolation compatibility for this glyph in all fonts.
         for path, font in sorted(pathFonts.items()):
             if not glyphName in font:
@@ -42,6 +41,9 @@ def checkInterpolation(fonts):
                 report.append('Glyph "%s" does not exist in font "%s"' % (glyphName, font))
                 continue
             g = font[glyphName]
+        # TODO: Needs checking of outline and component compatibility here.
+        if ok or error or report: # Error with this glyph?
+            glyphs[glyphName] = dict(ok=ok, error=error, report=report)
             
     return glyphs
  
@@ -64,6 +66,10 @@ class VarFamily(Family):
     >>> vf = VarFamily('Test-Var', paths)
     >>> len(vf)
     7
+    >>> checkInterpolation(vf.fonts.values()) # For now only glyph name compatibility check
+    {}
+    >>> vf.metrics
+    
     """
     ORIGIN_OS2_WEIGHT_CLASS = 400
     # The quality of automatic parametric axis creation depends on the type of design and if
