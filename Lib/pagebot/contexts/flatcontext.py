@@ -378,8 +378,9 @@ class FlatContext(BaseContext):
 
     def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
         shape = self._getShape()
-        if shape is not None:
-            self.page.place(shape.path(self._pathCommands))
+        # TODO: Get this to work
+        #if shape is not None:
+        #    self.page.place(shape.path(self._pathCommands))
 
     def moveTo(self, p):
         assert self._pathCommands is not None

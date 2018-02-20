@@ -51,8 +51,8 @@ class DrawBotString(BabelString):
         >>> context.isDrawBot
         True
         >>> bs = DrawBotString('ABC', context)
-        >>> bs
-        ABC
+        >>> #bs
+        #ABC
         """
         BabelString.__init__(self, s, context)
         self.s = s # Enclose the DrawBot FormattedString. Property to make sure it is a FormattedString, otherwise create it.
