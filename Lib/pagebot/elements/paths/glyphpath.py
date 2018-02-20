@@ -58,7 +58,6 @@ class GlyphPath(Path):
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         
         c = self.context # Get current context
-        b = c.b # Get context builder
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
@@ -66,7 +65,7 @@ class GlyphPath(Path):
 
         c.saveGraphicState()
         sh = 1.0*self.h/self.ih
-        b.transform((1, 0, 0, 1, px, py))
+        c.transform((1, 0, 0, 1, px, py))
         c.scale(sh)
         # If there is a path filter defined, then call that the draw and ignore regular drawing.
         if self.pathFilter is not None:
