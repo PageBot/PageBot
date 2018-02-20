@@ -34,7 +34,7 @@ except (ImportError, AttributeError):
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
     Variable = None
-    print('Using drawBotContext-->NoneDrawBotBuilder')
+    #print('Using drawBotContext-->NoneDrawBotBuilder')
 
 from basecontext import BaseContext
 from pagebot.style import NO_COLOR, LEFT
