@@ -15,8 +15,11 @@
 #
 #     Implements a VarFamily class Font instances.
 #
+import os, shutil, sys
+
 from pagebot.fonttoolbox.objects.family import Family
 from pagebot.fonttoolbox.objects.font import Font
+from pagebot.toolbox.transformer import path2Name, path2ParentPath
 
 def checkInterpolation(fonts):
     u"""This method will test if there are problems for the current set of fonts to be interpolated,
@@ -68,8 +71,14 @@ class VarFamily(Family):
     7
     >>> checkInterpolation(vf.fonts.values()) # For now only glyph name compatibility check
     {}
-    >>> vf.metrics
-    
+    >>> fontPath = sorted(vf.metrics.keys())[0]
+    >>> vf.metrics[fontPath]['path'] == fontPath
+    True
+    >>> vf.metrics[fontPath]['stems'].keys()
+    [350]
+    >>> vf.metrics[fontPath]['bars'].keys()
+    [270]
+
     """
     ORIGIN_OS2_WEIGHT_CLASS = 400
     # The quality of automatic parametric axis creation depends on the type of design and if
@@ -190,7 +199,7 @@ class VarFamily(Family):
         weightWidthClasses = {}
         for font in self._fonts.values():
             weightWidth = font.info.weightClass, font.info.widthClass
-            if not weightWidth in weightWidthClasses:
+            if weightWidth not in weightWidthClasses:
                 weightWidthClasses[weightWidth] = []
             weightWidthClasses[weightWidth].append(font)
         return weightWidthClasses
@@ -206,7 +215,7 @@ class VarFamily(Family):
             stem = min(stemValues)
             width = font[GLYPH].width
             location = stem, width
-            if not location in weightWidthLocations:
+            if location not in weightWidthLocations:
                 weightWidthLocations[location] = []
             weightWidthLocations[location].append(font)
         return weightWidthLocations
