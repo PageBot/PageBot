@@ -30,7 +30,7 @@ script:
 - python Lib/pagebot/elements/pbruler.py
 - python Lib/pagebot/elements/pbimage.py
 - python Lib/pagebot/elements/pbgalley.py
-#FIXME: - python Lib/pagebot/elements/pbplacer.py
+- python Lib/pagebot/elements/pbplacer.py
 - python Lib/pagebot/elements/pbline.py
 #FIXME: - python Lib/pagebot/elements/pbtextbox.py
 - python Lib/pagebot/elements/views/pageview.py

@@ -107,68 +107,118 @@ class VariableCircle(Element):
 
 
     def _drawFontCircle(self, px, py):
-        fontSize = self.css('fontSize', self.DEFAULT_FONT_SIZE)
-        markerSize = fontSize*self.R
-
-        # Calculate the max square size
-        w = self.w - markerSize
-        h = self.h - markerSize
-
+        context = self.context # Get context from the parent doc.
         context.fill(0.9)
         context.stroke(None)
-        mx = px + self.pw/2
-        my = py + self.ph/2
-        # Gray circle that defines the area of the axis extremes.
-        context.oval(px+markerSize/2, py+markerSize/2, w, h)
+        x, y = point2D(pointOffset(self.oPoint, origin))
+        mx = x + self.w/2
+        my = y + self.h/2
+
+        # Gray circle that defines the area of
+        context.oval(x, y, self.w, self.h)
+        
         # Draw axis spikes first, so we can cover them by the circle markers.
         axes = self.font.axes
+        fontSize = self.style.get('fontSize', self.DEFAULT_FONT_SIZE)
+        
+        # Draw name of the font   
+        bs = context.newString(self.font.info.familyName,
+                                style=dict(font=self.style['labelFont'],
+                                fontSize=self.style['axisNameFontSize'], textFill=0))     
+        context.text(bs, (x-fontSize/2, y+self.h+fontSize/2))
 
-        # Draw default glyph circle marker in middle.
-        glyphName = self.glyphNames[0]
-        varLocation = getVarLocation(self.font, self.location) # Show neutral, unless a location is requested 
-        self._drawGlyphMarker(None, mx, my, glyphName, fontSize, varLocation, strokeW=3)
+        # Draw spokes
+        context.fill(None)
+        context.stroke(0)
+        context.strokeWidth(1)
+        context.newPath()
+        for axisName, angle in self.angles.items():
+            markerX, markerY = self._angle2XY(angle, self.w/2)
+            context.moveTo((mx, my))
+            context.lineTo((mx+markerX, my+markerY))
+        context.drawPath()
 
-        # Draw 
-        angle = 0
+        # Draw default glyph marker in middle.
+        defaultLocation = {}
+        self._drawGlyphIcon(mx, my, self.glyphName, fontSize, defaultLocation, strokeW=3)
+
+        # Draw DeltaLocation circles.
         for axisName, (minValue, defaultValue, maxValue) in axes.items():
-        # Draw needles, depending on the axis values and the status of self.location
-            if self.draw3D:
-                needleStart = 0.40 # Just enough overlap with edge of neutral circle marker
-            else:
-                needleStart = 2/3 # Start at edge of neutral circle marker
-
-            rStart = fontSize
-            rEnd = w/2
-            if self.location is not None and axisName in self.location:
-                rEnd = rStart + (rEnd - rStart) * self.location[axisName]
-            rStart = fontSize*needleStart
-            #print rStart, rEnd
-            startX, startY = self._angle2XY(angle, rStart)
-            endX, endY = self._angle2XY(angle, rEnd)
-            if (w/2 + rStart) - rEnd - fontSize > fontSize:
-                startX1, startY1 = self._angle2XY(angle-180, fontSize/2)
-                endX1, endY1 = self._angle2XY(angle-180, (w/2 + rStart) - rEnd - fontSize)
-            else:
-                startX1 = None
-            context.stroke(None)
-            context.fill(0.3)
-            context.oval(mx+startX-2, my+startY-2, 4, 4)
-            
-            context.fill(None)
-            context.stroke(0)
-            context.strokeWidth(1)
-            context.newPath()
-            context.moveTo((mx+startX, my+startY))
-            context.lineTo((mx+endX, my+endY))
-            if startX1 is not None:
-                context.moveTo((mx+startX1, my+startY1))
-                context.lineTo((mx+endX1, my+endY1))
-            context.drawPath()
-
-            # Show the glyph shape as it is at the max location of the axis.
+            angle = self.angles[axisName]
+            # Outside maxValue 
             location = {axisName: maxValue}
-            self._drawGlyphMarker(axisName, mx+endX, my+endY, glyphName, fontSize, location)
-            angle += 360/len(axes)
+            markerX, markerY = self._angle2XY(angle, self.w/2)
+            self._drawGlyphIcon(mx+markerX, my+markerY, glyphName, fontSize/2, location)
+            
+            # Interpolated DeltaLocation circles.
+            location = {axisName: minValue + (maxValue - minValue)*INTERPOLATION}
+            markerX, markerY = self._angle2XY(angle, self.w/4)
+            self._drawGlyphIcon(mx+markerX*INTERPOLATION*2, my+markerY*INTERPOLATION*2, glyphName, fontSize/2, location)
+
+        # Draw axis names and DeltaLocation values
+        if self.showAxisNames:
+            for axisName, (minValue, defaultValue, maxValue) in axes.items():
+                angle = self.angles[axisName]
+                location = {axisName: maxValue}
+                valueFontSize = self.style.get('valueFontSize', 12)
+                axisNameFontSize = self.style.get('axisNameFontSize', 12)
+                markerX, markerY = self._angle2XY(angle, self.w/2)
+                fs = context.newString(self.makeAxisName(axisName),
+                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                            fontSize=axisNameFontSize,
+                                            fill=self.style.get('axisNameColor', 0)))
+                tw, th = context.textSize(fs)
+                context.fill((0.7, 0.7, 0.7, 0.6))
+                context.stroke(None)
+                context.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
+                context.text(fs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5)) 
+                
+                # DeltaLocation master value
+                if maxValue < 10:
+                    sMaxValue = '%0.2f' % maxValue
+                else:
+                    sMaxValue = `int(round(maxValue))`
+                fs = context.newString(sMaxValue,
+                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                            fontSize=valueFontSize,
+                                            fill=self.style.get('axisValueColor', 0)))
+                tw, th = context.textSize(fs)
+                context.fill((0.7, 0.7, 0.7, 0.6))
+                context.stroke(None)
+                context.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
+                context.text(fs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5)) 
+
+                # DeltaLocation value
+                interpolationValue = minValue + (maxValue - minValue)*INTERPOLATION
+                if interpolationValue < 10:
+                    sValue = '%0.2f' % interpolationValue
+                else:
+                    sValue = `int(round(interpolationValue))`
+                bs = context.newString(sValue,
+                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                            fontSize=valueFontSize,
+                                            fill=self.style.get('axisValueColor', 0)))
+                tw, th = context.textSize(bs)
+                context.fill((0.7, 0.7, 0.7, 0.6))
+                context.stroke(None)
+                context.rect(mx+markerX*INTERPOLATION-tw/2-4, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
+                context.text(fs, (mx+markerX*INTERPOLATION-tw/2, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5)) 
+
+                # DeltaLocation value
+                if minValue < 10:
+                    sValue = '%0.2f' % minValue
+                else:
+                    sValue = `int(round(minValue))`
+                bs = context.newString(sValue,
+                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                            fontSize=valueFontSize,
+                                            fill=self.style.get('axisValueColor', 0)))
+                tw, th = context.textSize(bs)
+                context.fill((0.7, 0.7, 0.7, 0.6))
+                context.stroke(None)
+                minM = 0.2
+                context.rect(mx+markerX*minM-tw/2-4, my+markerY*minM+th*0.5-4, tw+8, th)
+                context.text(fs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5)) 
 
     #   D R A W B O T  S U P P O R T
 
