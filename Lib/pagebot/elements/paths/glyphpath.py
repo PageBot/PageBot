@@ -19,7 +19,25 @@ from pagebot.toolbox.transformer import pointOffset
 from pagebot.style import NO_COLOR, DEFAULT_HEIGHT, DEFAULT_WIDTH, ORIGIN
 
 class GlyphPath(Path):
+    u"""GlyphPath is an element to show show the path of a glyph with additional features.
 
+    >>> from pagebot.contexts.platform import getRootFontPath
+    >>> from pagebot.fonttoolbox.objects.font import Font
+    >>> fontPath = getRootFontPath() + 'google/roboto/Roboto-Medium.ttf'
+    >>> font = Font(fontPath)
+    >>> from pagebot.document import Document
+    >>> W = H = 500
+    >>> M = 50
+    >>> doc = Document(w=W, h=H, autoPages=1, padding=30)
+    >>> page = doc[0]
+    >>> e = GlyphPath(font['e'], x=20, parent=page, w=125)
+    >>> page[e.eId].w # Show that this is a regular element, placed no the page.
+    125
+    >>> e.w = 150
+    >>> e.w, e.w == page[e.eId].w
+    (150, True)
+
+    """
     def __init__(self, glyph, w=None, h=None, pathFilter=None, **kwargs):
         Path.__init__(self, **kwargs)
         self.font = glyph.font # Store separate, to avoid disappearing weakref.
@@ -57,26 +75,26 @@ class GlyphPath(Path):
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         
-        c = self.context # Get current context
+        contstant = self.context # Get current context
 
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        c.saveGraphicState()
+        contstant.saveGraphicState()
         sh = 1.0*self.h/self.ih
-        c.transform((1, 0, 0, 1, px, py))
-        c.scale(sh)
+        contstant.transform((1, 0, 0, 1, px, py))
+        contstant.scale(sh)
         # If there is a path filter defined, then call that the draw and ignore regular drawing.
         if self.pathFilter is not None:
             self.pathFilter(self, self.glyph.path, view)
         elif self.css('fill') != NO_COLOR or self.css('stroke') != NO_COLOR:
             # Not path filter defined, draw by regular stroke/fill.
-            c.setFillColor(self.css('fill'))
-            c.setStrokeColor(self.css('stroke', NO_COLOR), (self.css('strokeWidth') or 20))
-            c.strokeWidth(20)
-            c.drawPath(self.glyph.path)
-        c.restoreGraphicState()
+            contstant.setFillColor(self.css('fill'))
+            contstant.setStrokeColor(self.css('stroke', NO_COLOR), (self.css('strokeWidth') or 20))
+            contstant.strokeWidth(20)
+            contstant.drawPath(self.glyph.path)
+        contstant.restoreGraphicState()
 
         if drawElements:
             for e in self.elements:
@@ -87,3 +105,10 @@ class GlyphPath(Path):
  
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+

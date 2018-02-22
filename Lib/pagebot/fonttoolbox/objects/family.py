@@ -70,6 +70,11 @@ def getSystemFontPaths():
             fontPaths.append(context.getFontPathOfFont(fontName))
     return fontPaths
 
+def findFamilyByName(familyName):
+    u"""Answer the family (from guessed families by pattern) that exactly matches the familyName.
+    Answer None if there is not an excact match in the system."""
+    return guessFamiliesByPatterns(familyName).get(familyName)
+
 def guessFamiliesByPatterns(patterns):
     u"""Answer a dictionary family instances, where the fonts are selected to have the exclusive 
     patterns in their file names. Note that this is not a guearantees safe method to combine font files

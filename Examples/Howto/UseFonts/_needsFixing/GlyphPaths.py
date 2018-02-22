@@ -17,13 +17,15 @@
 #     Implements a PageBot font classes to get info from a TTFont.
 #     NOTE: This is the first implementation of the code. It is not embedded in
 #     Glyph and GlyphAnalyzer classes.
+#
+#     DEPRECATED
 #     The code of this exmaple is DEPRECATED from more maintenance and not longer
-#     compatible with Glyph and GlyphAnalyzer
+#     compatible with Glyph and GlyphAnalyzer. For demo purpose only.
 #
 import sys
 import weakref
 from fontTools.ttLib import TTFont, TTLibError
-from pagebot.contexts import defaultContext as c
+from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.transformer import point3D
 
@@ -113,7 +115,7 @@ class Glyph(object):
         openSegment = None
         currentOnCurve = None
         if coordinates or components:
-            self._path = path = context.BezierPath() # There must be points and/or components, start path
+            self._path = path = context.newPath() # There must be points and/or components, start path
         for index, xy in enumerate(coordinates):
             p = Point(xy, flags[index])
             if p.onCurve:
@@ -335,7 +337,7 @@ except:
 
 cjkF.GLYPH_CLASS = Glyph
 print cjkF.info.familyName, cjkF.info.styleName
-print cjkF.ttFont.tables.keys()
+#print cjkF.ttFont.tables.keys()
 glyphs = []
 start = 16500
 end = 16552
@@ -346,61 +348,61 @@ GLYPHS = ('e', 'H', 'O', 'Z')
 for name in GLYPHS:
     if name.startswith('.'):
         continue
-    c.newPage(W, H)
+    context.newPage(W, H)
     glyph = cjkF[name]
-    c.save()
-    c.transform((1, 0, 0, 1, 0, 150))
-    c.fill(None)
-    c.stroke((0,0,0), 20)
-    c.drawPath(glyph.path)
-    c.line((0, 0), (1000, 0))
+    context.save()
+    context.transform((1, 0, 0, 1, 0, 150))
+    context.fill(None)
+    context.stroke((0,0,0), 20)
+    context.drawPath(glyph.path)
+    context.line((0, 0), (1000, 0))
     for index, p in enumerate(glyph.points):
         if p.onCurve:
-            fs = c.newString('index', style=dict(fill=1,
+            fs = context.newString('index', style=dict(fill=1,
                                                  stroke=None,
                                                  font='Verdana',
                                                  fontSize=18))
-            tw, th = c.textSize(fs)
-            c.fill(0)
-            c.stroke(0)
-            c.oval(p.x-10, p.y-10, 20, 20)
-            c.text(fs, (p.x-tw/2, p.y-th/4))
+            tw, th = context.textSize(fs)
+            context.fill(0)
+            context.stroke(0)
+            context.oval(p.x-10, p.y-10, 20, 20)
+            context.text(fs, (p.x-tw/2, p.y-th/4))
         else:
-            fs = c.newString('index', style=dict(fill=(1, 1, 0),
+            bs = context.newString('index', style=dict(fill=(1, 1, 0),
                                                  stroke=None,
                                                  font='Verdana',
                                                  fontSize=18))
-            tw, th = c.textSize(fs)
-            c.fill(0.4)
-            c.stroke(0.4, 0.4, 0.4, 0.9)
-            c.oval(p.x-10, p.y-10, 20, 20)
-            c.text(fs, (p.x-tw/2, p.y-th/4))
+            tw, th = context.textSize(bs)
+            context.fill(0.4)
+            context.stroke((0.4, 0.4, 0.4, 0.9))
+            context.oval(p.x-10, p.y-10, 20, 20)
+            context.text(fs, (p.x-tw/2, p.y-th/4))
     #c.stroke(None)
     #c.fill(1, 0, 0)
     #for s in glyph.segments:
     #    for p in s:
     #        c.oval(p.x-6, p.y-6, 12, 12)
-    c.restore()
+    context.restore()
             
-c.newPage(W, H)
+context.newPage(W, H)
 
 for glyphIndex, glyphName in enumerate(sorted(cjkF.keys())[start:end]):
     glyph = cjkF[glyphName]
     glyphs.append(glyph)
-    print glyph
+    #print glyph
 
         
 x = y = 0
-print len(glyphs)
+#print len(glyphs)
 #newPage(1000, 1000)
 for glyph in glyphs:
-    print glyph.name
-    print glyph.contours
-    c.save()
-    c.transform((1, 0, 0, 1, 20+x*W/5, H - (y+1)*W/5+20))
-    c.scale(0.01)
-    c.fill(None)
-    c.stroke(1, 0, 0)
+    #print glyph.name
+    #print glyph.contours
+    context.save()
+    context.transform((1, 0, 0, 1, 20+x*W/5, H - (y+1)*W/5+20))
+    context.scale(0.01)
+    context.fill(None)
+    context.stroke(1, 0, 0)
     #c.rect(x*W, y*W, H, H)
     x += 1
     if x > 5:
@@ -409,19 +411,21 @@ for glyph in glyphs:
         if y  > 5:
             y = 0
             x = 0
-            c.restore()
-            c.newPage(W, H)
-            c.save()
-            c.transform((1, 0, 0, 1, 20+x*W/5, H - (y+1)*W/5+20))
-            c.scale(0.01)
-    c.fill(0)
-    c.stroke(None)
-    c.drawPath(glyph.path)
+            context.restore()
+            context.newPage(W, H)
+            context.save()
+            context.transform((1, 0, 0, 1, 20+x*W/5, H - (y+1)*W/5+20))
+            context.scale(0.05)
+    context.fill(0)
+    context.stroke(None)
+    context.drawPath(glyph.path)
 
     #c.text(`glyph.index`, (30, 30))
     #print glyph.path
-    c.restore()
-if 0:
+    context.restore()
+
+if 1:
+    # Show glyph as pixel
     g = cjkF['H']
     for y in range(0, 1000, 20):
         for x in range(0,1000,20):

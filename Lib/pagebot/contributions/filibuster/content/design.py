@@ -122,8 +122,8 @@ content = {
                 '', '', '', '', '', '', '',
                 u', changing from <#design_work_detail#> to <#design_work_detail#>'
                 u', though the artist contends it is <#design_theory_short#>',
-                 ', it is more like <#article,design_names#> or <#article,design_names#>',
-                 ', more or less like <#design_names#> predicted at the time',
+                u', it is more like <#article,design_names#> or <#article,design_names#>',
+                u', more or less like <#design_names#> predicted at the time',
                 u', quite similar to what <#design_names#> proposed',
                 u', but that falls outside the scope of this article',
                 u', something this article will look at later on',

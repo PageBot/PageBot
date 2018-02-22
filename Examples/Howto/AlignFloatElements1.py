@@ -17,7 +17,8 @@
 #     Interactive Variable() only works in DrawBot context.
 #
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.contexts import FlatContext, DrawBotContext
+from pagebot.contexts.flatcontext import FlatContext
+from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.style import CENTER #, BOTTOM
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
@@ -131,28 +132,24 @@ def makeDocument(context):
 
 if __name__ == '__main__':
 
-    context = DrawBotContext()
-    if context.b is not None:
-        try:
-            d = makeDocument(context)
-            # Make interactive global controls. Only works in DrawBot context. Otherwise ignored.
-            d.context.Variable([
-                dict(name='ShowMeasures', ui='CheckBox', args=dict(value=True)),
-                dict(name='ShowDimensions', ui='CheckBox', args=dict(value=False)),
-                dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
-                dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-            ], globals())
-        except context.b.misc.DrawBotError:
-            pass # Not running inside DrawBot
+    context = DrawBotContext() # May contain NoneDrawBotBuilder if not running on a DrawBot platform
+    d = makeDocument(context)
+    # Make interactive global controls. Only works in DrawBot context. Otherwise ignored.
+    d.context.Variable([
+        dict(name='ShowMeasures', ui='CheckBox', args=dict(value=True)),
+        dict(name='ShowDimensions', ui='CheckBox', args=dict(value=False)),
+        dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
+        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+    ], globals())
 
-        # Export in _export folder that does not commit in Git. Force to export PDF.
-        EXPORT_PATH = '_export/AlignElements_DB.png'
-        d.export(EXPORT_PATH)
+    # Export in _export folder that does not commit in Git. Force to export PDF.
+    EXPORT_PATH = '_export/AlignElements_DB.png'
+    d.export(EXPORT_PATH)
 
     # F L A T
     context = FlatContext()
     d = makeDocument(context)
     # Export in _export folder that does not commit in Git. Force to export PDF.
-    EXPORT_PATH = '_export/AlignElements_F.png'
+    EXPORT_PATH = '_export/AlignElements_F.pdf'
     d.export(EXPORT_PATH)
 
