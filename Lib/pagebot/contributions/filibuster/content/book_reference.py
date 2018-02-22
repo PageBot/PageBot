@@ -27,7 +27,7 @@ content = {
         'Transcendental',
         'Empirical',
         'Axiological',
-        'Fundemental',
+        'Fundamental',
         'Phenomenologal',
         'Programmatic',
         'Ecological',

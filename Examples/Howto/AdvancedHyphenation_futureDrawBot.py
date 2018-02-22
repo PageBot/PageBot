@@ -15,18 +15,31 @@
 ## Works with this version of DrawBot:
 ## https://github.com/thomgb/drawbot
 ## download my DrawBot: https://www.dropbox.com/s/xsu1mz89ipo5x3y/DrawBot.dmg?dl=0
-from pagebot.contexts import defaultContext as c
+from pagebot.contexts import defaultContext as context
+from pagebot.contributions.filibuster.blurb import Blurb
 
-t = c.newString("programmatic",
+#text = Blurb().getBlurb('article_ankeiler', noTags=True)
+text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin."""
+
+t = context.newString(text,
                 style=dict(fontSize=30,
                            hyphenationHead=4,
                            hyphenationTail=3))
-c.hyphenation(True)
 
-w=200 # change width to see other hyphenations
+w=554 # change width to see other hyphenations
 
-c.newPage(1000, 2000)
-c.textBox(t, (100,100,w,600))
-c.fill(None)
-c.stroke(0)
-c.rect(100,100,w,600)
+W = 1000
+H = 2000
+context.newPage(W, H)
+
+context.hyphenation(True)
+context.textBox(t, (100,600,w,400))
+context.fill(None)
+context.stroke(0)
+context.rect(100,600,w,600)
+
+context.hyphenation(False)
+context.textBox(t, (100,100,w,400))
+context.fill(None)
+context.stroke(0)
+context.rect(100,100,w,600)

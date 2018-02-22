@@ -19,6 +19,8 @@ NO_TAGS = True # Flag to show/hide HTML tags in output
 
 w = Blurb()
 
+print w.getBlurb('news_headline', noTags=NO_TAGS)
+print
 print w.getBlurb('article_ankeiler', noTags=NO_TAGS)
 print
 print w.getBlurb('article_summary', noTags=NO_TAGS)

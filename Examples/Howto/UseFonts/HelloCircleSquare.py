@@ -12,22 +12,22 @@
 # -----------------------------------------------------------------------------
 #
 from random import random
-from pagebot.contexts import defaultContext as c
+from pagebot.contexts import defaultContext as context
 
 for p in range(20):
-    c.newPage(1000, 1000)
+    context.newPage(1000, 1000)
     for n in range(50):
-        c.fill(random(), 0, random(), 0.5 + random()*0.2)
+        context.fill((random(), 0, random(), 0.5 + random()*0.2))
         ch = random()
         x = 20 + random()*800
         y = 20 + random()*800
         if ch < 0.2:
-            c.oval(x, y, 80, 80 )
+            context.oval(x, y, 80, 80 )
         elif ch < 0.4:
-            c.rect(x, y, 80, 80 )
+            context.rect(x, y, 80, 80 )
         else:
-            fs = c.newString('Hello world on %d,%d' % (x, y),
+            bs = context.newString('Hello world on %d,%d' % (x, y),
                              style=dict(fontSize=24))
-            c.text(fs, (x, y))
+            context.text(bs, (x, y))
 
-c.saveImage('_export/OurNiceDrawing.pdf')
+context.saveImage('_export/OurNiceDrawing.pdf')

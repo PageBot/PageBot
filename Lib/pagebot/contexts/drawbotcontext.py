@@ -461,6 +461,15 @@ class DrawBotContext(BaseContext):
         """
         self.b.openTypeFeatures(**features)
 
+    def hyphenation(self, onOff=True):
+        u"""Set the hyphenation on/off flag.
+
+        >>> context = DrawBotContext()
+        >>> context.hyphenation(True)
+        >>> context.hyphenation(False)
+        """
+        self.b.hyphenation(onOff)
+
     #   I M A G E
 
     def imagePixelColor(self, path, p):
