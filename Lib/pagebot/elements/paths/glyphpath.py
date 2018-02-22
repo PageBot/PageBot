@@ -36,7 +36,7 @@ class GlyphPath(Path):
     >>> e.w = 150
     >>> e.w, e.w == page[e.eId].w
     (150, True)
-
+    
     """
     def __init__(self, glyph, w=None, h=None, pathFilter=None, **kwargs):
         Path.__init__(self, **kwargs)

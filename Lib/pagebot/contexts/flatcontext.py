@@ -15,7 +15,6 @@
 #
 #     http://xxyxyz.org/flat
 #
-import os
 #import imageio
 from basecontext import BaseContext
 from pagebot.contexts.platform import getFontPaths
