@@ -21,6 +21,7 @@ if __name__ == '__main__':
 	# Create a new specimen publications and add the list of system fonts.
 	typeSpecimen = TypeSpecimen(styleNames=getSystemFontPaths(), showGrid=DEBUG) 
 	# Build the pages of the publication, interpreting the font list.
+	# Create as  many pages as needed for the found families
 	typeSpecimen.build()
 	# Export the document of the publication to PDF.
-	typeSpecimen.export('SystemFontSpecimen.pdf')
+	typeSpecimen.export('_export/SystemFontSpecimen.pdf')

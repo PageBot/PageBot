@@ -10,3 +10,8 @@
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
+#     __init__.py
+#
+#     Special elements to show Variable Font info-graphics
+#
+from variablecircle import VariableCircle

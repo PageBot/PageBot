@@ -11,12 +11,12 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     AutomaticPageComposition.py
+#     VariableFontDesign.py
 #
 #     This script generates an article (in Dutch) of 2009 about the approach to
 #     generate automatic layouts, using Style, Galley, Typesetter and Composer classes.
 #
-from pagebot import getFontPath
+from pagebot.contexts.platform import getRootFontPath
 from pagebot.style import getRootStyle, LEFT
 from pagebot.document import Document
 from pagebot.elements.pbpage import Template
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         # Create new document with (w,h) and fixed amount of pages.
         # Make number of pages with default document size.
         # Initially make all pages default with template2
-        doc = Document(rs, autoPages=1, template=template1) 
+        #doc = Document(rs, autoPages=1, template=template1) 
         doc = Document(rs, autoPages=1) 
 
         return doc

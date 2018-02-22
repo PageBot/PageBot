@@ -15,20 +15,10 @@
 #
 from __future__ import division
 
-import os
-from math import pi, sin, cos
-from random import random, choice
-from copy import copy
-from fontTools.ttLib import TTFont
-
 from pagebot.contexts.platform import getRootFontPath
-from pagebot.contexts import defaultContext as context
-from pagebot.style import getRootStyle, makeStyle
-from pagebot.toolbox.transformer import pointOffset, point2D
-from pagebot.document import Document
-from pagebot.fonttoolbox.objects.font import Font
-from pagebot.publications.typespecimen import TypeSpecimen
 from pagebot.elements import Element, Template
+from pagebot.elements.variablefonts import VariableCircle
+
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -39,29 +29,19 @@ FONT_PATH = getRootFontPath()
 fontPath = FONT_PATH + 'fontbureau/DecovarAlpha-VF.ttf'
 
 EXPORT_PATH = '_export/'+ fontPath.split('/')[-1].replace('ttf', 'pdf')
-varFont = Font(fontPath)
-varFontName = varFont.install()
-
-axes = varFont.axes
-#print sorted(axes.keys())
 
 W = H = 600
-M = 30 # Page padding
+M = W/10 # Page padding
 
 #====================
-
-def makeAxisName(axisName):
-    if not axisName in ('wght', 'wdth', 'opsz'):
-        return axisName.upper()
-    return axisName
     
-class VariationCircle(Element):
+class VariationCircleXXX(Element):
     u"""Interpret the content of the self.font variation font and draw a circle info graphic on that info."""
 
     DEFAULT_FONT_SIZE = 64
     R = 2/3 # Fontsize factor to draw glyph markers.
 
-    def __init__(self, font, x=None, y=None, w=None, h=None, glyphNames=None, location=None, angles=None, showAxisNames=True,
+    def __init__(self, font, x=None, y=None, w=None, h=None, glyphName=None, location=None, angles=None, showAxisNames=True,
         **kwargs):
         Element.__init__(self, **kwargs)
         self.x = x
@@ -75,7 +55,7 @@ class VariationCircle(Element):
         self.showAxisNames = showAxisNames
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
-        self.glyphNames = glyphNames or 'e'
+        self.glyphName = glyphName or 'e'
     
     def initAngles(self):
         totalAxes = len(self.font.axes)
@@ -85,6 +65,11 @@ class VariationCircle(Element):
             angles[axisName] = angle + axisIndex*360/totalAxes
         return angles 
         
+    def makeAxisName(self, axisName):
+        if not axisName in ('wght', 'wdth', 'opsz'):
+            return axisName.upper()
+        return axisName
+
     def location2Recipe(self, location, start=0, end=3):
         recipe = ''
         if self.recipeAxes:
@@ -107,7 +92,9 @@ class VariationCircle(Element):
         context.drawGlyphPath(self.font, glyphName, mx, my-fontSize/4, fontSize=fontSize, fillColor=0)
            
     def build(self, view, origin):
-        u"""Draw the circle info-graphic, showing most info about the variation font as can be interpreted from the file."""
+        u"""Draw the circle info-graphic, showing axis info about the variation font as can be interpreted from self.font.
+        
+        """
         context = self.context # Get context from the parent doc.
         context.fill(0.9)
         context.stroke(None)
@@ -140,10 +127,8 @@ class VariationCircle(Element):
         context.drawPath()
 
         # Draw default glyph marker in middle.
-        print '@#@##@', self.glyphNames
-        glyphName = self.glyphNames[0]
         defaultLocation = {}
-        self._drawGlyphIcon(mx, my, glyphName, fontSize, defaultLocation, strokeW=3)
+        self._drawGlyphIcon(mx, my, self.glyphName, fontSize, defaultLocation, strokeW=3)
 
         # Draw DeltaLocation circles.
         for axisName, (minValue, defaultValue, maxValue) in axes.items():
@@ -166,7 +151,7 @@ class VariationCircle(Element):
                 valueFontSize = self.style.get('valueFontSize', 12)
                 axisNameFontSize = self.style.get('axisNameFontSize', 12)
                 markerX, markerY = self._angle2XY(angle, self.w/2)
-                fs = context.newString(makeAxisName(axisName),
+                fs = context.newString(self.makeAxisName(axisName),
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=axisNameFontSize,
                                             fill=self.style.get('axisNameColor', 0)))
@@ -227,25 +212,35 @@ class VariationCircle(Element):
 
 FONT_SIZE = VariationCircle.DEFAULT_FONT_SIZE
 INTERPOLATION = 0.5
-    
+
+# Get the font instance of the Decovar
+varFont = Font(fontPath)
+
+axes = varFont.axes
+  
 # Create new document with (w,h) and fixed amount of pages.
 # Make number of pages with default document size.
 # Initially make all pages default with template
 doc = Document(w=W, h=H, autoPages=1) 
  
-# Change template of page 1
+# Get the page of the document.
 page = doc[0]
+# This is the glyph to show in the info-graphic
 glyphName = 'A' 
+assert glyphName in varFont, 'Glyph does not exist in the varFont'
 
 #print(sorted(varFont.axes.keys()))
 # ['BLDA', 'BLDB', 'SKLA', 'SKLB', 'SKLD', 'TRMA', 'TRMB', 'TRMC', 'TRMD', 'TRME', 'TRMF', 'TRMG', 'TRMK', 'TRML', 'WMX2']
+# Location of the info-graphic. For alternative than default, change the location axis values accordingly.
 location = varFont.getDefaultVarLocation()
 
 style = dict(fontSize=FONT_SIZE, labelFont='Verdana', axisNameFontSize=14, 
     valueFontSize=10, axisNameColor=(1, 0, 0))
 
-VariationCircle(varFont, x=M, y=H+M, w=W-M*2, h=H-M*2, glyphNames=glyphName,
-    location=location, parent=page, style=style, showAxisNames=True, fill=0.8)
+# Create a VariableCircle element and position is in the padding of the page, defined by margin M
+VariationCircle(varFont, x=M, y=H-M, w=W-M*2, h=H-M*2, glyphName=glyphName,
+    location=location, parent=page, style=style, showAxisNames=True)
 
+# Export the info-graphic page to EXPORT_PATH, which defines the type of the file.
 doc.export(EXPORT_PATH) 
 

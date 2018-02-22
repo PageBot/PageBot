@@ -11,7 +11,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     FBFamilySpecimen.py
+#     FamilySpecimen.py
 #
 from pagebot.fonttoolbox.objects.family import getFamilies
 from pagebot.publications.typespecimen import TypeSpecimen
