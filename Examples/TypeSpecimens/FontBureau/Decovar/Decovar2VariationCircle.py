@@ -18,7 +18,9 @@ from __future__ import division
 from pagebot.contexts.platform import getRootFontPath
 from pagebot.elements import Element, Template
 from pagebot.elements.variablefonts import VariableCircle
-
+from pagebot.fonttoolbox.objects.font import Font
+from pagebot.document import Document
+from pagebot.toolbox.transformer import point2D, pointOffset
 
 DEBUG = False # Make True to see grid and element frames.
 
@@ -35,7 +37,7 @@ M = W/10 # Page padding
 
 #====================
     
-class VariationCircleXXX(Element):
+class VariableCircle(Element):
     u"""Interpret the content of the self.font variation font and draw a circle info graphic on that info."""
 
     DEFAULT_FONT_SIZE = 64
@@ -210,7 +212,7 @@ class VariationCircleXXX(Element):
 
 #====================
 
-FONT_SIZE = VariationCircle.DEFAULT_FONT_SIZE
+FONT_SIZE = VariableCircle.DEFAULT_FONT_SIZE
 INTERPOLATION = 0.5
 
 # Get the font instance of the Decovar
@@ -238,7 +240,7 @@ style = dict(fontSize=FONT_SIZE, labelFont='Verdana', axisNameFontSize=14,
     valueFontSize=10, axisNameColor=(1, 0, 0))
 
 # Create a VariableCircle element and position is in the padding of the page, defined by margin M
-VariationCircle(varFont, x=M, y=H-M, w=W-M*2, h=H-M*2, glyphName=glyphName,
+VariableCircle(varFont, x=M, y=H-M, w=W-M*2, h=H-M*2, glyphName=glyphName,
     location=location, parent=page, style=style, showAxisNames=True)
 
 # Export the info-graphic page to EXPORT_PATH, which defines the type of the file.
