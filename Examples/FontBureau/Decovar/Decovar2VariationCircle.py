@@ -15,47 +15,39 @@
 #
 from __future__ import division
 
-from pagebot import getFontPath
-from pagebot.contexts import defaultContext as context
-from pagebot.style import getRootStyle
-from pagebot.document import Document
-from pagebot.elements.pbpage import Template
-# For Variation Fonts we can use the plain Font-->TTFont wrapper for all styles. No need to use Family.
-from pagebot.fonttoolbox.objects.font import Font
-from pagebot.publications.typespecimen import TypeSpecimen
-#from pagebot.fonttoolbox.elements.variationcircle import VariationCircle
-
 import os
 from math import pi, sin, cos
 from random import random, choice
 from copy import copy
 from fontTools.ttLib import TTFont
-from pagebot.elements import Element
-from pagebot.style import makeStyle
-#from pagebot.fonttoolbox.variationbuilder import generateInstance, drawGlyphPath
+
+from pagebot.contexts.platform import getRootFontPath
+from pagebot.contexts import defaultContext as context
+from pagebot.style import getRootStyle, makeStyle
+from pagebot.toolbox.transformer import pointOffset, point2D
+from pagebot.document import Document
+from pagebot.fonttoolbox.objects.font import Font
+from pagebot.publications.typespecimen import TypeSpecimen
+from pagebot.elements import Element, Template
 
 DEBUG = False # Make True to see grid and element frames.
 
+SHOW_VARIABLES = False # If true, open a window with sliders on the axes.
 
-FONT_PATH = getFontPath()
-#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
-#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.subset.ttf'
-#fontPath = FONT_PATH + 'fontbureau/Decovar-VF-2axes.ttf'
-fontPath = FONT_PATH + 'fontbureau/Decovar-VF-chained3.ttf'
-#fontPath = FONT_PATH + 'fontbureau/AmstelvarAlpha-Variations.ttf'
-#fontPath = FONT_PATH + 'PromiseVar.ttf'
-#fontPath = FONT_PATH + 'BitcountGridVar.ttf'
+# Get font path in the PageBot repostory, so we know it is there.
+FONT_PATH = getRootFontPath()
+fontPath = FONT_PATH + 'fontbureau/DecovarAlpha-VF.ttf'
+
 EXPORT_PATH = '_export/'+ fontPath.split('/')[-1].replace('ttf', 'pdf')
 varFont = Font(fontPath)
 varFontName = varFont.install()
 
 axes = varFont.axes
-print axes
+#print sorted(axes.keys())
 
-RS = getRootStyle()
-RS['w'] = W = 600
-RS['h'] = H = 600
-M = 50
+W = H = 600
+M = 30 # Page padding
+
 #====================
 
 def makeAxisName(axisName):
@@ -69,7 +61,7 @@ class VariationCircle(Element):
     DEFAULT_FONT_SIZE = 64
     R = 2/3 # Fontsize factor to draw glyph markers.
 
-    def __init__(self, font, x=None, y=None, w=None, h=None, s=None, angles=None, showAxisNames=True,
+    def __init__(self, font, x=None, y=None, w=None, h=None, glyphNames=None, location=None, angles=None, showAxisNames=True,
         **kwargs):
         Element.__init__(self, **kwargs)
         self.x = x
@@ -77,20 +69,22 @@ class VariationCircle(Element):
         self.h = h
         self.w = w
         self.font = font
-        self.initAngles(angles) # Initialize the angles in equal parts if not defined.
+        if angles is None:
+            angles = self.initAngles() # Initialize the angles in equal parts if not defined.
+        self.angles = angles
         self.showAxisNames = showAxisNames
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
-        self.glyphNames = s or 'e'
+        self.glyphNames = glyphNames or 'e'
     
-    def initAngles(self, angles):
-        if angles is None:
-            angles = {}
-        self.angles = {}
+    def initAngles(self):
         totalAxes = len(self.font.axes)
-        for axisName in self.font.axes:
-            self.angles[axisName] = angles.get(axisName, 360/totalAxes)
-
+        angle = -90
+        angles = {}
+        for axisIndex, axisName in enumerate(sorted(self.font.axes)):
+            angles[axisName] = angle + axisIndex*360/totalAxes
+        return angles 
+        
     def location2Recipe(self, location, start=0, end=3):
         recipe = ''
         if self.recipeAxes:
@@ -103,52 +97,53 @@ class VariationCircle(Element):
         u"""Answer the XY position for a given angled (degrees) and r, located on the origin."""
         return cos(angle/180*pi) * r, sin(angle/180*pi) * r
 
-    def _drawGlyphMarker(self, mx, my, glyphName, fontSize, location, strokeW=2):
+    def _drawGlyphIcon(self, mx, my, glyphName, fontSize, location, strokeW=2):
         # Middle circle 
-        c.fill(1)
-        c.stroke(0)
-        c.strokeWidth(strokeW)
-        c.oval(mx-fontSize*self.R, my-fontSize*self.R, fontSize*2*self.R, fontSize*2*self.R)
+        context = self.context # Get context from the parent doc.
+        context.fill(1)
+        context.stroke(0, strokeW)
+        context.oval(mx-fontSize*self.R, my-fontSize*self.R, fontSize*2*self.R, fontSize*2*self.R)
 
-        glyphPathScale = fontSize/self.font.info.unitsPerEm
-        drawGlyphPath(self.font.ttFont, glyphName, mx, my-fontSize/4, location, s=glyphPathScale, fillColor=0)
+        context.drawGlyphPath(self.font, glyphName, mx, my-fontSize/4, fontSize=fontSize, fillColor=0)
            
-    def draw(self, origin, view, b):
+    def build(self, view, origin):
         u"""Draw the circle info-graphic, showing most info about the variation font as can be interpreted from the file."""
-        b.fill(0.9)
-        b.stroke(None)
+        context = self.context # Get context from the parent doc.
+        context.fill(0.9)
+        context.stroke(None)
+        x, y = point2D(pointOffset(self.oPoint, origin))
         mx = x + self.w/2
         my = y + self.h/2
 
         # Gray circle that defines the area of
-        b.oval(x, y, self.w, self.h)
+        context.oval(x, y, self.w, self.h)
         
         # Draw axis spikes first, so we can cover them by the circle markers.
         axes = self.font.axes
         fontSize = self.style.get('fontSize', self.DEFAULT_FONT_SIZE)
         
-        # Draw name of the font
-        b.fill(0)
-        b.text(b.newString(self.font.info.familyName,
-                           style=dict(font=self.style['labelFont'],
-                                      fontSize=self.style['axisNameFontSize'])),
-               (x-fontSize/2, y+self.h+fontSize/2))
+        # Draw name of the font   
+        bs = context.newString(self.font.info.familyName,
+                                style=dict(font=self.style['labelFont'],
+                                fontSize=self.style['axisNameFontSize'], textFill=0))     
+        context.text(bs, (x-fontSize/2, y+self.h+fontSize/2))
 
         # Draw spokes
-        b.fill(None)
-        b.stroke(0)
-        b.strokeWidth(1)
-        b.newPath()
+        context.fill(None)
+        context.stroke(0)
+        context.strokeWidth(1)
+        context.newPath()
         for axisName, angle in self.angles.items():
             markerX, markerY = self._angle2XY(angle, self.w/2)
-            b.moveTo((mx, my))
-            b.lineTo((mx+markerX, my+markerY))
-        b.drawPath()
+            context.moveTo((mx, my))
+            context.lineTo((mx+markerX, my+markerY))
+        context.drawPath()
 
         # Draw default glyph marker in middle.
+        print '@#@##@', self.glyphNames
         glyphName = self.glyphNames[0]
         defaultLocation = {}
-        self._drawGlyphMarker(mx, my, glyphName, fontSize, defaultLocation, strokeW=3)
+        self._drawGlyphIcon(mx, my, glyphName, fontSize, defaultLocation, strokeW=3)
 
         # Draw DeltaLocation circles.
         for axisName, (minValue, defaultValue, maxValue) in axes.items():
@@ -156,12 +151,12 @@ class VariationCircle(Element):
             # Outside maxValue 
             location = {axisName: maxValue}
             markerX, markerY = self._angle2XY(angle, self.w/2)
-            self._drawGlyphMarker(mx+markerX, my+markerY, glyphName, fontSize/2, location)
+            self._drawGlyphIcon(mx+markerX, my+markerY, glyphName, fontSize/2, location)
             
             # Interpolated DeltaLocation circles.
             location = {axisName: minValue + (maxValue - minValue)*INTERPOLATION}
             markerX, markerY = self._angle2XY(angle, self.w/4)
-            self._drawGlyphMarker(mx+markerX*INTERPOLATION*2, my+markerY*INTERPOLATION*2, glyphName, fontSize/2, location)
+            self._drawGlyphIcon(mx+markerX*INTERPOLATION*2, my+markerY*INTERPOLATION*2, glyphName, fontSize/2, location)
 
         # Draw axis names and DeltaLocation values
         if self.showAxisNames:
@@ -171,30 +166,30 @@ class VariationCircle(Element):
                 valueFontSize = self.style.get('valueFontSize', 12)
                 axisNameFontSize = self.style.get('axisNameFontSize', 12)
                 markerX, markerY = self._angle2XY(angle, self.w/2)
-                fs = b.newString(makeAxisName(axisName),
+                fs = context.newString(makeAxisName(axisName),
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=axisNameFontSize,
                                             fill=self.style.get('axisNameColor', 0)))
-                tw, th = textSize(fs)
-                b.fill(0.7, 0.7, 0.7, 0.6)
-                b.stroke(None)
-                b.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
-                b.text(fs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5)) 
+                tw, th = context.textSize(fs)
+                context.fill((0.7, 0.7, 0.7, 0.6))
+                context.stroke(None)
+                context.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
+                context.text(fs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5)) 
                 
                 # DeltaLocation master value
                 if maxValue < 10:
                     sMaxValue = '%0.2f' % maxValue
                 else:
                     sMaxValue = `int(round(maxValue))`
-                fs = b.newString(sMaxValue,
+                fs = context.newString(sMaxValue,
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
                                             fill=self.style.get('axisValueColor', 0)))
-                tw, th = textSize(fs)
-                b.fill(0.7, 0.7, 0.7, 0.6)
-                b.stroke(None)
-                b.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
-                b.text(fs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5)) 
+                tw, th = context.textSize(fs)
+                context.fill((0.7, 0.7, 0.7, 0.6))
+                context.stroke(None)
+                context.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
+                context.text(fs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5)) 
 
                 # DeltaLocation value
                 interpolationValue = minValue + (maxValue - minValue)*INTERPOLATION
@@ -202,76 +197,55 @@ class VariationCircle(Element):
                     sValue = '%0.2f' % interpolationValue
                 else:
                     sValue = `int(round(interpolationValue))`
-                fs = b.newString(sValue,
+                bs = context.newString(sValue,
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
                                             fill=self.style.get('axisValueColor', 0)))
-                tw, th = textSize(fs)
-                b.fill(0.7, 0.7, 0.7, 0.6)
-                b.stroke(None)
-                b.rect(mx+markerX*INTERPOLATION-tw/2-4, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
-                b.text(fs, (mx+markerX*INTERPOLATION-tw/2, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5)) 
+                tw, th = context.textSize(bs)
+                context.fill((0.7, 0.7, 0.7, 0.6))
+                context.stroke(None)
+                context.rect(mx+markerX*INTERPOLATION-tw/2-4, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
+                context.text(fs, (mx+markerX*INTERPOLATION-tw/2, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5)) 
 
                 # DeltaLocation value
                 if minValue < 10:
                     sValue = '%0.2f' % minValue
                 else:
                     sValue = `int(round(minValue))`
-                fs = b.newString(sValue,
+                bs = context.newString(sValue,
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
                                             fill=self.style.get('axisValueColor', 0)))
-                tw, th = textSize(fs)
-                b.fill(0.7, 0.7, 0.7, 0.6)
-                b.stroke(None)
+                tw, th = context.textSize(bs)
+                context.fill((0.7, 0.7, 0.7, 0.6))
+                context.stroke(None)
                 minM = 0.2
-                b.rect(mx+markerX*minM-tw/2-4, my+markerY*minM+th*0.5-4, tw+8, th)
-                b.text(fs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5)) 
+                context.rect(mx+markerX*minM-tw/2-4, my+markerY*minM+th*0.5-4, tw+8, th)
+                context.text(fs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5)) 
 
 #====================
 
-if 1:
+FONT_SIZE = VariationCircle.DEFAULT_FONT_SIZE
+INTERPOLATION = 0.5
+    
+# Create new document with (w,h) and fixed amount of pages.
+# Make number of pages with default document size.
+# Initially make all pages default with template
+doc = Document(w=W, h=H, autoPages=1) 
+ 
+# Change template of page 1
+page = doc[0]
+glyphName = 'A' 
 
-    FONT_SIZE = VariationCircle.DEFAULT_FONT_SIZE
-    INTERPOLATION = 0.5
-     
-    VARIABLES = [
-        dict(name='FONT_SIZE', ui='Slider', args=dict(value=60, minValue=24, maxValue=180)),
-        dict(name='INTERPOLATION', ui='Slider', args=dict(value=0.5, minValue=0, maxValue=1)),
-    ]
-    angle = -90
-    for axisName in axes:
-        VARIABLES.append(dict(name=axisName, ui='Slider', 
-            args=dict(value=angle, minValue=-90, maxValue=270)))
-        globals()[axisName] = axes[axisName][1]
-        angle += 360/len(axes)
-    c.Variable(VARIABLES, globals())
+#print(sorted(varFont.axes.keys()))
+# ['BLDA', 'BLDB', 'SKLA', 'SKLB', 'SKLD', 'TRMA', 'TRMB', 'TRMC', 'TRMD', 'TRME', 'TRMF', 'TRMG', 'TRMK', 'TRML', 'WMX2']
+location = varFont.getDefaultVarLocation()
 
+style = dict(fontSize=FONT_SIZE, labelFont='Verdana', axisNameFontSize=14, 
+    valueFontSize=10, axisNameColor=(1, 0, 0))
 
-    def makeDocument(rs):
-        
-        # Create new document with (w,h) and fixed amount of pages.
-        # Make number of pages with default document size.
-        # Initially make all pages default with template
-        doc = Document(rs, autoPages=1) 
-         
-        # Change template of page 1
-        page = doc[0]
-        glyphName = 'A' 
-        angles = {}
-        style = dict(fontSize=FONT_SIZE, labelFont='Verdana', axisNameFontSize=14, 
-            valueFontSize=10, axisNameColor=(1, 0, 0))
-        for axisName in axes:
-            angles[axisName] = globals()[axisName]
-        vc = VariationCircle(varFont, x=M, y=M, w=W-M*2, h=H-M*2, s=glyphName, angles=angles,
-            parent=page, style=style, showAxisNames=True)
-        print vc.x, vc.y, vc.h, vc.w  
-        
-        return doc
-            
-    d = makeDocument(RS)
-    if 1: # Not saving image
-        d.drawPages()
-    else:
-        d.export(EXPORT_PATH) 
+VariationCircle(varFont, x=M, y=H+M, w=W-M*2, h=H-M*2, glyphNames=glyphName,
+    location=location, parent=page, style=style, showAxisNames=True, fill=0.8)
+
+doc.export(EXPORT_PATH) 
 

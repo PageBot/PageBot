@@ -10,14 +10,13 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     UpgradePaper.py
+#     FontBureauOnlineType3rd.py
 #
-import copy
 import pagebot # Import to know the path of non-Python resources.
 from pagebot.contexts import defaultcontext as context
 from pagebot.contributions.filibuster.blurb import blurb
-from pagebot import Gradient, Shadow
 
+fontPaths = []
 # Make True to see the names of currently installed fonts, matching the pattern.
 if 0: 
     for fontName in installedFonts():
@@ -98,7 +97,7 @@ def makeDocument():
     italicBodyStyle['font'] = 'Verdana-Italic'
     italicBodyStyle['paragraphTopSpacing'] = 0
     
-    newRect(w=400, h=400, conditions=[Top2Top()], fill=(1, 0, 0), parent=page)
+    newRect(w=400, h=400, conditions=[ fill=(1, 0, 0), parent=page)
      
     score = page.solve()
     if score.fails:

@@ -22,6 +22,9 @@
 def findLookupTypes(otlTable):
     """Return the list of lookup types that a specific OTL table uses.
 
+    """
+    """
+        TODO: Fix docTests
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
         >>> f = TTFont(getFontPath("ProW6.otf"))
@@ -42,6 +45,9 @@ def findLookupTypes(otlTable):
 def findAlternateGlyphs(otlTable, glyphNames):
     """Given a set of input glyph names, return the set of possible output glyphs,
     as the result of GSUB glyph substitutions.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -62,6 +68,9 @@ def findAlternateGlyphs(otlTable, glyphNames):
 def findSingleSubstAlts(otlTable):
     """Find the alternate glyphs that can be accessed through any direct (non-contextual)
     GSUB SingleSubst features, listing which feature(s) may trigger the substitution.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -92,6 +101,9 @@ def findSingleSubstAlts(otlTable):
 def findAlternateGlyphsAndFeatures(otlTable, onlyDirectSingleSubst=False):
     """Find all alternate glyphs that can be accessed through GSUB features, listing which
     feature(s) may trigger the substitution.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -145,6 +157,9 @@ def deleteGlyphs(otlTable, glyphNames):
 
 def scaleGpos(otlTable, scaleFactor):
     """Scale all values in the GPOS table that are in design units.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -159,6 +174,9 @@ def scaleGpos(otlTable, scaleFactor):
 
 def mergeFeatures(table1, table2):
     """Merge the features from table2 into table1. Note this is destructive also for table2.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath

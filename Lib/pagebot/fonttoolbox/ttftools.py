@@ -26,18 +26,21 @@ def subsetFont(font, glyphsToDelete):
     """Delete the set of glyphs 'glyphsToDelete' from the font. The caller is responsible
     for the consistency of this set: eg. one should not delete a glyph that is used as a
     component while not deleting the composite glyph that references it.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from cStringIO import StringIO
         >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("CusterRE-RegularS2.ttf")
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = getRootFontPath() + 'djr/bungee/Bungee-Regular.ttf'
         >>> font = TTFont(path)
         >>> subsetFont(font, ["x"])
-        >>> path = getFontPath("Pro.ttf")
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Medium.ttf'
         >>> font = TTFont(path)
         >>> cmap = getBestCmap(font)
         >>> len(cmap)
-        20796
+        000
         >>> unicodes = sorted(cmap)
         >>> subset = unicodes[:200] + unicodes[17000:]
         >>> glyphsToKeep = findGlyphsByUnicode(font, subset)
@@ -58,11 +61,14 @@ def mergeFonts(font, otherFont, overWriteCodePoints=False):
     present in font A will be ignored. If font B defines a code point that also
     exists in font A, the code point from font A will be kept, unless
     overWriteCodePoints is True.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> pathA = getFontPath("CusterRE-RegularS2.ttf")
-        >>> pathB = getFontPath("CusterRE-BoldS2.ttf")
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> pathA = getRootFontPath() + '/djr/bungee/Bungee-Regular.ttf'
+        >>> pathB = getRootFontPath() + '/google/roboto/Roboto-Medium.ttf'
         >>> fontA = TTFont(pathA)
         >>> fontB = TTFont(pathB)
         >>> def myGlyphNameFilter(glyphName, glyphID):
@@ -81,12 +87,14 @@ def mergeFonts(font, otherFont, overWriteCodePoints=False):
 
 def scaleFont(font, desiredUnitsPerEm):
     """Resize a font to the desiredUnitsPerEm.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from cStringIO import StringIO
         >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> #path = getFontPath("Pro.ttf")
-        >>> path = getFontPath("CusterRE-RegularS2.ttf")
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = getRootFontPath() + 'djr/bungee/Bungee-Regular.ttf'
         >>> #path = getFontPath("SegoeUI-Regular-All.ttf")
         >>> font = TTFont(path)
         >>> scaleFont(font, 256)
@@ -101,11 +109,14 @@ def scaleFont(font, desiredUnitsPerEm):
 
 def convertFontToTTF(font, quadErrorMargin=0.5, cubicToQuadConverter=None):
     """Convert a CFF-based OTF to a glyf-based TTF.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from cStringIO import StringIO
         >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("Condor-Bold.otf")
+         >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = getRootFontPath() + 'djr/bungee/Bungee-Regular.ttf'
         >>> font = TTFont(path)
         >>> convertFontToTTF(font, 0.5)
         >>> outf = StringIO()
@@ -151,6 +162,9 @@ def patchGlyphNames(font, filterFunc):
     apply filterFunc() on each glyph name in the font. filterFunc() takes two
     arguments: the original glyph name and the glyph ID. It must return a glyph
     name.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -214,6 +228,9 @@ def patchGlyphNames(font, filterFunc):
 
 def stripInstructions(font):
     """Remove all TrueType instructions from the font.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -252,6 +269,9 @@ def stripInstructions(font):
 
 def findComponentGlyphs(font, glyphNames):
     """Given a set of glyph names, return the set of glyphs that are used as components for these glyphs.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -290,6 +310,9 @@ def findGlyphsByUnicode(font, unicodes):
     """Return the set of glyph names that are needed in the font to support the characters
     listed in 'unicodes'. This includes substituted glyphs from GSUB features, as well as
     glyphs needed as components in composite glyphs.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -325,6 +348,9 @@ def findGlyphsByUnicode(font, unicodes):
 def getBestCmap(font, cmapPreferences=((3, 10), (3, 1), (0, 3))):
     """Return a unicode -> glyphName dictionary from the 'best' unicode cmap that the font
     contains. In order of preference, the font will be searched for cmaps 3,10, 3,1 and 0,3.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -382,6 +408,9 @@ _pat = re.compile("[A-Za-z0-9_]")
 
 def tagToIdentifier(tag):
     """Convert a TT table tag into a Python identifier. Not as robust as fontTools.ttLib.tagToIdentifier(), but more practical.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -438,15 +467,15 @@ class TTFTraverser(object):
 class _TestTraverser(TTFTraverser):
     """
         >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("CusterRE-RegularS2.ttf")
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = getRootFontPath() + 'djr/bungee/Bungee-Regular.ttf'
         >>> font = TTFont(path)
         >>> tt = _TestTraverser(font)
         >>> tt.testIt()
         handling maxp
         handling OS/2
         handling cvt
-        ['GlyphOrder', 'head', 'hhea', 'hmtx', 'cmap', 'fpgm', 'prep', 'loca', 'glyf', 'name', 'post', 'gasp', 'DSIG']
+        ['GlyphOrder', 'head', 'hhea', 'hmtx', 'cmap', 'fpgm', 'prep', 'loca', 'glyf', 'name', 'post', 'gasp', 'GPOS', 'GSUB']
 
     """
     def testIt(self):
@@ -884,10 +913,13 @@ def _findComponentParentGlyphs(font, glyphName):
     """Return a list of glyph names that reference the named glyph as a component.
     Note that this function is VERY inefficient as it iterates through all the glyphs
     in the font. It should not be used in production code, but only for debugging.
+    """
+    """
+        TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("CusterRE-RegularS2.ttf")
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = getRootFontPath() + 'djr/bungee/Bungee-Regular.ttf'
         >>> font = TTFont(path)
         >>> _findComponentParentGlyphs(font, "a")
         ['aring', 'agrave', 'adieresis', 'atilde', 'acircumflex', 'aacute']

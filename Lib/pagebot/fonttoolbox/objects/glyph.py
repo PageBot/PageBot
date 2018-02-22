@@ -89,6 +89,7 @@ class Glyph(object):
         self.font = font # Stored as weakref
         self.dirty = True # Mark that we need initialization or something changed in the points.
 
+        self.context = context # Use default context for drawing glyph path
         self._analyzer = None # Installed upon request
         self._points = None # Same as self.points property with added 4 spacing points in TTF style.
         self._points4 = None
@@ -115,7 +116,7 @@ class Glyph(object):
 
     def _initialize(self):
         u"""Initializes the cached data, such as self.points, self.contour,
-        self.components and self.path."""
+        self.components and self.path, as side effect of drawing the path image."""
         self._points = []
         self._points4 = [] # Same as self.points property with added 4 spacing points in TTF style.
         self._contours = []

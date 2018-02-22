@@ -49,7 +49,7 @@ topT = u"""Amy's Sun paper hit by hackers. Ignoring the fact that the problem, w
 
 # Allow some interactive size changed by sliders to show responsive behavior.
 MinPageW = A3[0]*0.9 # Minimum width of the page.
-MaxPageW = A3[0]*1.2 # Maximum siwidthze of the page.
+MaxPageW = A3[0]*1.2 # Maximum width of the page.
 MinPageH = A3[1]*0.9 # Minimum height of the page.
 MaxPageH = A3[1]*1.2 # Maximum height of the page.
 
@@ -110,7 +110,7 @@ def makeDocument():
     italicBodyStyle = copy.copy(bodyStyle)
     italicBodyStyle['font'] = 'Verdana-Italic'
     italicBodyStyle['paragraphTopSpacing'] = 0
-    
+    """
     # Make new container for adding elements inside with alignment.
     newRect(z=10, w=pageAreaW, h=pageAreaH, fill=blockFill,
             parent=page, margin=0, padding=0, yAlign=MIDDLE, maxW=pageAreaW,
@@ -210,7 +210,7 @@ def makeDocument():
     fs += c.newString('\nAn addition italic line', style=italicBodyStyle)
     topText = newTextBox(fs, w=w/3-16, parent=page,
                          conditions=(Top2Top(), Right2Right()))
-
+    """
     score = page.solve()
     if score.fails:
         print 'Condition fails', score.fails
@@ -219,6 +219,8 @@ def makeDocument():
 
 if __name__ == '__main__':
     d = makeDocument()
+    # If running in DrawBot context, then create a small Varialbe UI window
+    # to alter layout parameters. 
     d.context.Variable([
         dict(name='PageWidth', ui='Slider',
              args=dict(minValue=MinPageW, value=A3[0], maxValue=MaxPageW)),

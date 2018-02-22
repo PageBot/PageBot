@@ -62,8 +62,8 @@ class Font(object):
 
     >>> from pagebot.toolbox.transformer import *
     >>> from pagebot.fonttoolbox.objects.font import Font
-    >>> from pagebot import getFontPath
-    >>> fontPath = getFontPath()
+    >>> from pagebot.contexts.platform import getRootFontPath
+    >>> fontPath = getRootFontPath()
     >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
     >>> f = Font(path, install=False, lazy=False)
     >>> f.name
@@ -132,8 +132,8 @@ class Font(object):
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot import getFontPath
-        >>> fontPath = getFontPath()
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
         >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> 'A' in f.keys()
@@ -148,8 +148,8 @@ class Font(object):
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot import getFontPath
-        >>> fontPath = getFontPath()
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
         >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> 'A' in f
@@ -162,8 +162,8 @@ class Font(object):
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot import getFontPath
-        >>> fontPath = getFontPath()
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
         >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> #f.analyzer.stems # TODO: Needs bezier path for pixel test.
@@ -179,8 +179,8 @@ class Font(object):
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot import getFontPath
-        >>> fontPath = getFontPath()
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
         >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> f.axes['XTRA']
@@ -193,6 +193,23 @@ class Font(object):
             axes = {} # This is not a variable font.
         return axes
     axes = property(_get_axes)
+
+    def getDefaultVarLocation(self):
+        u"""Answer the location dictionary with the default axes values.
+        
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
+        >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> f = Font(path, install=False, lazy=False)
+        >>> len(f.getDefaultVarLocation().keys())
+        15
+        """
+        defaultVarLocation = {}
+        for axisName, axis in self.axes.items():
+            defaultVarLocation[axisName] = axis[1]
+        return defaultVarLocation
 
     def _get_rawDeltas(self):
         u"""Answer the list of axis dictionaries with deltas for all glyphs and axes. Answer an empty dictionary
@@ -229,8 +246,8 @@ class Font(object):
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot import getFontPath
-        >>> fontPath = getFontPath()
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
         >>> path = fontPath + 'djr/bungee/Bungee-Regular.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> len(f.kerning.keys())
@@ -246,8 +263,8 @@ class Font(object):
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot import getFontPath
-        >>> fontPath = getFontPath()
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
         >>> path = fontPath + 'djr/bungee/Bungee-Regular.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> g = f['A']
