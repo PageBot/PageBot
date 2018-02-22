@@ -16,7 +16,6 @@
 #
 try:
     #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
-    import drawBot
     from AppKit import NSFont
     from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute
     from CoreText import kCTFontURLAttribute, CTFramesetterCreateWithAttributedString

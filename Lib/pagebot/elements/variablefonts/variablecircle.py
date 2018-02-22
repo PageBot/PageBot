@@ -29,16 +29,11 @@ from pagebot.toolbox.transformer import pointOffset
 """
 import os
 from math import pi, sin, cos
-from random import random, choice
-from copy import copy
 
 from pagebot.contexts import defaultContext as context
 from pagebot.style import getRootStyle, makeStyle
-from pagebot.toolbox.transformer import pointOffset, point2D
-from pagebot.document import Document
+from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements import Element
-from pagebot.fonttoolbox.objects.font import Font
-from pagebot.publications.typespecimen import TypeSpecimen
 
 class VariableCircle(Element):
     u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info.
