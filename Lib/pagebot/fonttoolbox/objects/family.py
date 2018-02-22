@@ -87,9 +87,8 @@ def guessFamiliesByPatterns(patterns):
     u'Verdana'
     >>> len(family.fonts)
     4
-    >>> for fontName, font in family.fonts.items():
-    ...     print fontName, font.path
-
+    >>> sorted(family.fonts.keys()) # This may not be the same for all platforms. Test for now.
+    ['Verdana Bold Italic.ttf', 'Verdana Bold.ttf', 'Verdana Italic.ttf', 'Verdana.ttf']
     """
     families = {}
     for fontFileName, fontPath in getFontPaths().items():
@@ -140,8 +139,17 @@ class Family(object):
         The optional fonts is a list of Font() instances.
         The optional fontPaths is a list of file paths. The optional fontStyles is a dictionary with format 
         dict(Regular=<fontPath>, Italic=<fontPath>, ...)
+        One or multiple can be defined: fonts=None, fontPaths=None, fontStyles=None
+
+        >>> # For now we assume that this testing works in all contexts on all platforms.
+        >>> familyName = 'Verdana' # Assuming this exists everywhere
+        >>> families = guessFamiliesByPatterns(familyName)
+        >>> familyName in families.keys()
+        True
+        >>> family = families[familyName]
+        >>> family.name
+        u'Verdana'
         """
-        assert fontPaths is None or fontStyles is None # If defined, cannot be defined both.
         self.name = name
         self.fonts = {} # Key is font name. Value is Font instances.
         self.fontStyles = {} # Key is font.info.styleName. Value is list of fonts (there can be overlapping style names).
@@ -150,10 +158,10 @@ class Family(object):
         if fonts is not None:
             for font in fonts:
                 self.addFont(font)
-        elif fontPaths is not None:
+        if fontPaths is not None:
             for fontPath in fontPaths:
                 self.addFont(Font(fontPath)) # Use file name as key
-        elif fontStyles is not None:
+        if fontStyles is not None:
             for fontStyle, fontPath in fontStyles.items():
                 self.addFont(Font(fontPath), fontStyle=fontStyle)
 
