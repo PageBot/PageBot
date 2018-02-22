@@ -37,7 +37,7 @@ except (ImportError, AttributeError):
     #print('Using drawBotContext-->NoneDrawBotBuilder')
 
 from basecontext import BaseContext
-from pagebot.style import NO_COLOR, LEFT
+from pagebot.style import NO_COLOR, LEFT, CENTER
 
 
 class DrawBotContext(BaseContext):
@@ -68,6 +68,7 @@ class DrawBotContext(BaseContext):
         # drawing calls in as used regular DrawBot scripts.   
         self.b = drawBotBuilder # cls.b builder for this canvas.
         self.name = self.__class__.__name__
+        self._path = None # Hold current open DrawBot path
 
     #   S C R E E N
 
@@ -178,47 +179,71 @@ class DrawBotContext(BaseContext):
         self.b.line(p1, p2)
 
     def newPath(self):
-        self._path = self.b.newPath()
+        u"""Make a new DrawBot Bezierpath() to draw in.
+
+        >>> context = DrawBotContext()
+        >>> context.path is not None
+        True
+        """
+        self._path = self.b.BezierPath()
         return self._path
+
+    def _get_path(self):
+        u"""Answer the open drawing path. Create one if it does not exist.
+
+        >>> context = DrawBotContext()
+        >>> context.path is not None
+        True
+        """
+        if self._path is None:
+            self.newPath()
+        return self._path
+    path = property(_get_path)
 
     def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
         u"""Draw the NSBezierPath, or equivalent in other contexts. Scaled image is drawn on (x, y),
         in that order."""
         if path is None:
             path = self._path
-        self.saveGraphicState()
-        if sy is None:
-            sy = sx
-        self.scale(sx, sy)
-        self.b.translate(p[0]/sx, p[1]/sy)
         if path is not None:
+            self.saveGraphicState()
+            if sy is None:
+                sy = sx
+            self.scale(sx, sy)
+            self.b.translate(p[0]/sx, p[1]/sy)
             self.b.drawPath(path)
-        else:
-            self.b.drawPath()
-        self.restoreGraphicState()
+            self.restoreGraphicState()
 
     def moveTo(self, p):
         u"""Move to point p. Create a new path if none is open.
 
         >>> context = DrawBotContext()
-        >>> context.newPath()
-        >>> context.moveTo((100, 100))
+        >>> path = context.newPath()
+        >>> path.moveTo((100, 100))
         """
         if self._path is None:
             self.newPath()
-        self.b.moveTo((p[0], p[1]))
+        self._path.moveTo((p[0], p[1]))
 
     def lineTo(self, p):
         u"""Line to point p. Create a new path if none is open.
 
         >>> context = DrawBotContext()
-        >>> context.newPath()
+        >>> # Draw directly on th epath
+        >>> # Draw on the context cached path
+        >>> _ = context.newPath()
         >>> context.moveTo((100, 100))
-        >>> context.lineTo((200, 200))
+        >>> context.curveTo((100, 200), (200, 200), (200, 100))
+        >>> context.closePath()
+        >>> path = context.newPath()
+        >>> path.moveTo((100, 100))
+        >>> path.curveTo((100, 200), (200, 200), (200, 100))
+        >>> path.closePath()
+        >>> context.drawPath(path)
         """
         if self._path is None:
             self.newPath()
-        self.b.lineTo((p[0], p[1]))
+        self._path.lineTo((p[0], p[1]))
 
     def quadTo(bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
@@ -228,25 +253,38 @@ class DrawBotContext(BaseContext):
         u"""Curve to point p. Create a new path if none is open.
 
         >>> context = DrawBotContext()
-        >>> context.newPath()
+        >>> # Draw directly on th epath
+        >>> # Draw on the context cached path
+        >>> _ = context.newPath()
         >>> context.moveTo((100, 100))
         >>> context.curveTo((100, 200), (200, 200), (200, 100))
+        >>> context.closePath()
+        >>> path = context.newPath()
+        >>> path.moveTo((100, 100))
+        >>> path.curveTo((100, 200), (200, 200), (200, 100))
+        >>> path.closePath()
         """
         if self._path is None:
             self.newPath()
-        self.b.curveTo((bcp1[0], bcp1[1]), (bcp2[0], bcp2[1]), (p[0], p[1]))
+        self._path.curveTo((bcp1[0], bcp1[1]), (bcp2[0], bcp2[1]), (p[0], p[1]))
 
     def closePath(self):
         u"""Curve to point p. Create a new path if none is open.
 
         >>> context = DrawBotContext()
-        >>> context.newPath()
+        >>> # Draw directly on th epath
+        >>> # Draw on the context cached path
+        >>> _ = context.newPath()
         >>> context.moveTo((100, 100))
         >>> context.curveTo((100, 200), (200, 200), (200, 100))
         >>> context.closePath()
+        >>> path = context.newPath()
+        >>> path.moveTo((100, 100))
+        >>> path.curveTo((100, 200), (200, 200), (200, 100))
+        >>> path.closePath()
         """
         if self._path is not None:
-            self.b.closePath()
+            self._path.closePath()
 
     def scale(self, sx, sy=None):
         u"""Set the drawing scale."""
@@ -257,6 +295,10 @@ class DrawBotContext(BaseContext):
     def translate(self, x, y):
         u"""Translate the origin to this point."""
         self.b.translate(x, y)
+
+    def transform(self, t):
+        u"""Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift over vector (dx, dy)"""
+        self.b.transform(t)
 
     #   G R A D I E N T  &  S H A D O W
 
@@ -323,9 +365,9 @@ class DrawBotContext(BaseContext):
 
     def getFontPathOfFont(self, fontName):
         u"""Answer the path that is source of the given font name. Answer None if the font cannot be found."""
-        font = NSFont.fontWithName_size_(fontName, 25)
-        if font is not None:
-            fontRef = CTFontDescriptorCreateWithNameAndSize(font.fontName(), font.pointSize())
+        nsFont = NSFont.fontWithName_size_(fontName, 25)
+        if nsFont is not None:
+            fontRef = CTFontDescriptorCreateWithNameAndSize(nsFont.fontName(), nsFont.pointSize())
             url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
             return url.path()
         return None
@@ -333,6 +375,26 @@ class DrawBotContext(BaseContext):
     def listOpenTypeFeatures(self, fontName):
         u"""Answer the list of opentype features available in the named font."""
         return self.b.listOpenTypeFeatures(fontName)
+
+    #   G L Y P H 
+
+    def drawGlyphPath(self, font, glyphName, x, y, fillColor=0, strokeColor=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
+        u"""Draw the font[glyphName] at the defined position with the defined fontSize.
+
+        """
+        s = fontSize/font.info.unitsPerEm
+        glyph = font[glyphName]
+        if xAlign == CENTER:
+            x -= (glyph.width or 0)/2*s
+        elif xAlign == RIGHT:
+            x -= glyph.width*s
+        self.save()
+        self.setFillColor(fillColor)
+        self.setStrokeColor(strokeColor, strokeWidth)
+        self.transform((1, 0, 0, 1, x, y))
+        self.scale(s)
+        self.drawPath(glyph.path)
+        self.restore()
 
     #   T E X T
 

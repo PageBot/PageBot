@@ -14,6 +14,19 @@
 #
 #     nonedrawbotbuilder.py
 #
+class NoneBezierPath(object):
+    u"""Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing texting."""
+    def moveTo(self, p):
+        pass
+
+    lineTo = moveTo
+
+    def curveTo(self, bcp1, bcp2, p):
+        pass
+
+    def closePath(self):
+        pass
+  
 class NoneDrawBotBuilder(object):
     """Make NoneDrawBotBuilder with the same API for docTesting, in case the platform does not support DrawBot.
     More methods to be added here, if DrawBotContext docTests fail in non-DrawBot platforms.
@@ -21,11 +34,13 @@ class NoneDrawBotBuilder(object):
 
     PB_ID = 'drawBot'
 
-    def newDrawing(self):
+    def newDrawing(self, path=None):
         pass
 
     restore = save = newPath = drawPath = newDrawing # Nethods without attributes
 
+    BezierPath = NoneBezierPath
+    
     def scale(self, sx, sy):
         pass
 
@@ -44,6 +59,9 @@ class NoneDrawBotBuilder(object):
         pass
         
     def openTypeFeatures(self, **openTypeFeatures):
+        pass
+
+    def closePath(self):
         pass
 
     def line(self, p1, p2):

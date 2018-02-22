@@ -16,6 +16,7 @@
 #     Implements a family collection of Font instances.
 #
 from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import getFontPaths
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2Name
 
@@ -69,6 +70,43 @@ def getSystemFontPaths():
             fontPaths.append(context.getFontPathOfFont(fontName))
     return fontPaths
 
+def guessFamiliesByPatterns(patterns):
+    u"""Answer a dictionary family instances, where the fonts are selected to have the exclusive 
+    patterns in their file names. Note that this is not a guearantees safe method to combine font files
+    into families, but it is useful of exemple purpose, in caes the available set of fonts
+    on the platform is not known. 
+    After the fonts are selected by the pattern, the family name is taken from font.info.familyName.
+
+    >>> # For now we assume that this testing works in all contexts on all platforms.
+    >>> familyName = 'Verdana' # Assuming this exists everywhere
+    >>> families = guessFamiliesByPatterns(familyName)
+    >>> familyName in families.keys()
+    True
+    >>> family = families[familyName]
+    >>> family.name
+    u'Verdana'
+    >>> len(family.fonts)
+    4
+    >>> for fontName, font in family.fonts.items():
+    ...     print fontName, font.path
+
+    """
+    families = {}
+    for fontFileName, fontPath in getFontPaths().items():
+        found = True
+        for pattern in patterns:
+            if not pattern in fontFileName:
+                found = False
+                break
+        if found:
+            font = Font(fontPath)
+            familyName = font.info.familyName
+            if not familyName in families:
+                families[familyName] = Family(familyName, fonts=[font])
+            else:
+                families[familyName].addFont(font)
+    return families
+
 def guessFamilies(styleNames):
     u"""Find the family relation of all fonts in the list. Note that this cannot be a 100% safe guess.
     Answer a dictionary with Family instances. Key is family name."""
@@ -96,9 +134,10 @@ def guessFamilies(styleNames):
     return families 
 
 class Family(object):
-    def __init__(self, name, fontPaths=None, fontStyles=None):
+    def __init__(self, name, fonts=None, fontPaths=None, fontStyles=None):
         u"""The Family instance is a container of related Font instances. There are 3 levels of access: file name, style name
         (either from font.info.styleName or defined in fontStyles attributes) and by DrawBot name if the font is installed.
+        The optional fonts is a list of Font() instances.
         The optional fontPaths is a list of file paths. The optional fontStyles is a dictionary with format 
         dict(Regular=<fontPath>, Italic=<fontPath>, ...)
         """
@@ -107,8 +146,11 @@ class Family(object):
         self.fonts = {} # Key is font name. Value is Font instances.
         self.fontStyles = {} # Key is font.info.styleName. Value is list of fonts (there can be overlapping style names).
         self.installedFonts = {} # DrawBot name as key. Value is same Font instance.
-        # If any font paths given, open the fonts.
-        if fontPaths is not None:
+        # If any font or font paths given, open the fonts.
+        if fonts is not None:
+            for font in fonts:
+                self.addFont(font)
+        elif fontPaths is not None:
             for fontPath in fontPaths:
                 self.addFont(Font(fontPath)) # Use file name as key
         elif fontStyles is not None:
@@ -166,4 +208,11 @@ class Family(object):
                regularFont = font
         return regularFont 
             
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+
   

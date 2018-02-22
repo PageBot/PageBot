@@ -11,12 +11,12 @@
 #     Supporting usage of DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 import sys
-try:
-    import AppKit
-    from vanilla import Window, Button, CheckBox
-except ImportError:
-    sys.exit('Platform does not support DrawBot.')
+from pagebot.contexts import defaultContext as context
+if not context.isDrawBot:
+    sys.exit('Example only runs on DrawBot.')
 
+import AppKit
+from vanilla import Window, Button, CheckBox
 
 class VariableController(object):
 

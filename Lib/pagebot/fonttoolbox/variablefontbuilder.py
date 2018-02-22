@@ -225,18 +225,6 @@ def getVariableFont(fontOrPath, location, install=True, styleName=None, normaliz
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName, lazy=lazy)
 
-# TODO: Remove from here.
-def drawGlyphPath(c, font, glyphName, x, y, s=0.1, fillColor=0, strokeColor=None, strokeWidth=0):
-    glyph = font[glyphName]
-    c.save()
-    c.setFillColor(fillColor)
-    c.setStrokeColor(strokeColor, strokeWidth)
-    c.transform((1, 0, 0, 1, x - glyph.width/2*s, y))
-    c.scale(s)
-    c.drawPath(glyph.path)
-    c.restore()
-
-
 def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):
     u"""
     Instantiate an instance of a variable font at the specified location.
