@@ -80,6 +80,8 @@ class VarFamily(Family):
     [270]
 
     """
+    GLYPH = 'H' # Use for base metrics analysis
+    
     ORIGIN_OS2_WEIGHT_CLASS = 400
     # The quality of automatic parametric axis creation depends on the type of design and if
     # there are interpolating sources (e.g. for compensation of stem width in 'xtra' and 'xopq'.
@@ -225,8 +227,8 @@ class VarFamily(Family):
         minWidth = sys.maxint
         maxWidth = -minWidth
         for font in self._fonts.values():
-            minWidth = min(font[GLYPH].width, minWidth)
-            maxWidth = max(font[GLYPH].width, maxWidth)
+            minWidth = min(font[self.GLYPH].width, minWidth)
+            maxWidth = max(font[self.GLYPH].width, maxWidth)
         return minWidth, maxWidth    
 
     def getMinMaxStem(self):

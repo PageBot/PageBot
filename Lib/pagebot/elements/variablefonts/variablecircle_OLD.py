@@ -12,23 +12,28 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#	  variablecircle.py
+#     variablecircle.py
 #
 #     Draw a variable space default glyph in the middle and spikes around it fir each axis.
 #     The aim is to derive as much information directly from the font, without the need
 #     for additional parameters.
 #
 from __future__ import division
+"""
 from math import pi, sin, cos
 from pagebot.contexts import defaultContext as context
 from pagebot.elements.element import Element
 from pagebot.style import MIN_WIDTH, ORIGIN
 from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath, getVariableFont
 from pagebot.toolbox.transformer import pointOffset
+"""
+import os
+from math import pi, sin, cos
 
-###DEPRECATED: remove usage:
-from pagebot.fonttoolbox.variablefontbuilder import XXXgetVarLocation as getVarLocation
-
+from pagebot.contexts import defaultContext as context
+from pagebot.style import getRootStyle, makeStyle
+from pagebot.toolbox.transformer import pointOffset
+from pagebot.elements import Element
 
 class VariableCircle(Element):
     u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info.
@@ -57,13 +62,17 @@ class VariableCircle(Element):
         self.location = location # Use to visualize a specific location, otherwise all needles are at min value.
         self.showAxisNames = showAxisNames
 
-    #   Always keep square
-
     def _get_w(self): # Width
-        return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
+        return min(self.maxW, max(self.minW, self.css('w'), self.minW)) # From self.style, don't inherit.
     def _set_w(self, w):
-        self.style['w'] = self.style['h'] = w or MIN_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
-    h = w = property(_get_w, _set_w)
+        self.style['w'] = w or self.minW # Overwrite element local style from here, parent css becomes inaccessable.
+    w = property(_get_w, _set_w)
+
+    def _get_h(self): # Height
+        return min(self.maxH, max(self.minH, self.css('h'), self.minH)) # From self.style, don't inherit.
+    def _set_h(self, h):
+        self.style['h'] = h or self.minH # Overwrite element local style from here, parent css becomes inaccessable.
+    h = property(_get_h, _set_h)
 
     def location2Recipe(self, location, start=0, end=3):
         recipe = ''
@@ -163,13 +172,11 @@ class VariableCircle(Element):
 
     #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin, drawElements=True):
         u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
-
-        self.drawFrame(p, view) # Draw optional frame or borders.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)

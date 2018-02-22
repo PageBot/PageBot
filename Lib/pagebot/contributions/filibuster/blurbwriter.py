@@ -420,149 +420,145 @@ class BlurbWriter(object):
                     self.softdefine(tg, vardef)
         return 0, text
 
-# maybe time to write some tests
-if __name__ == "__main__":
 
-    def test():
-        u"""
-        >>> # replace a single tag
-        >>> content = { 'pattern1': ['a']}
-        >>> bw = BlurbWriter(content)
-        >>> bw.write('pattern1')
-        u'a'
-        
-        >>> # replace a tag
-        >>> content = { 'pattern2': ['a'], 'pattern1': ['<#pattern2#>']}
-        >>> bw = BlurbWriter(content)
+def test():
+    u"""
+    >>> # replace a single tag
+    >>> content = { 'pattern1': ['a']}
+    >>> bw = BlurbWriter(content)
+    >>> bw.write('pattern1')
+    u'a'
+    
+    >>> # replace a tag
+    >>> content = { 'pattern2': ['a'], 'pattern1': ['<#pattern2#>']}
+    >>> bw = BlurbWriter(content)
 
-        >>> bw.write('pattern2')
-        u'a'
-        >>> bw.write('pattern1')
-        u'a'
+    >>> bw.write('pattern2')
+    u'a'
+    >>> bw.write('pattern1')
+    u'a'
 
-        >>> # to lowercasee
-        >>> content = { 'pattern2': ['AA'], 'pattern1': ['<#~,pattern2#>']}
-        >>> bw = BlurbWriter(content)
-        >>> bw.write('pattern2')
-        u'AA'
-        >>> bw.write('pattern1')
-        u'aa'
+    >>> # to lowercasee
+    >>> content = { 'pattern2': ['AA'], 'pattern1': ['<#~,pattern2#>']}
+    >>> bw = BlurbWriter(content)
+    >>> bw.write('pattern2')
+    u'AA'
+    >>> bw.write('pattern1')
+    u'aa'
 
-        >>> # white space to underscore
-        >>> content = { 'pattern2': ['A A'], 'pattern1': ['<#_,pattern2#>']}
-        >>> bw = BlurbWriter(content)
-        >>> bw.write('pattern2')
-        u'A A'
-        >>> bw.write('pattern1')
-        u'A_A'
+    >>> # white space to underscore
+    >>> content = { 'pattern2': ['A A'], 'pattern1': ['<#_,pattern2#>']}
+    >>> bw = BlurbWriter(content)
+    >>> bw.write('pattern2')
+    u'A A'
+    >>> bw.write('pattern1')
+    u'A_A'
 
-        >>> # remove nonletters
-        >>> content = { 'pattern2': ['A. A-'], 'pattern1': ['<#@,pattern2#>']}
-        >>> bw = BlurbWriter(content)
-        >>> bw.write('pattern2')
-        u'A. A-'
-        >>> bw.write('pattern1')
-        u'AA'
+    >>> # remove nonletters
+    >>> content = { 'pattern2': ['A. A-'], 'pattern1': ['<#@,pattern2#>']}
+    >>> bw = BlurbWriter(content)
+    >>> bw.write('pattern2')
+    u'A. A-'
+    >>> bw.write('pattern1')
+    u'AA'
 
-        >>> # white space to underscore and first cap
-        >>> content = { 'pattern2': ['a a'], 'pattern1': ['<#^_,pattern2#>']}
-        >>> bw = BlurbWriter(content)        
-        >>> bw.write('pattern2')
-        u'a a'
-        >>> bw.write('pattern1')
-        u'A_a'
+    >>> # white space to underscore and first cap
+    >>> content = { 'pattern2': ['a a'], 'pattern1': ['<#^_,pattern2#>']}
+    >>> bw = BlurbWriter(content)        
+    >>> bw.write('pattern2')
+    u'a a'
+    >>> bw.write('pattern1')
+    u'A_a'
 
-        >>> # make title case
-        >>> content = { 'pattern2': ['aa aa'], 'pattern1': ['<#^^,pattern2#>']}
-        >>> bw = BlurbWriter(content)        
-        >>> bw.write('pattern2')
-        u'aa aa'
-        >>> bw.write('pattern1')
-        u'Aa Aa'
+    >>> # make title case
+    >>> content = { 'pattern2': ['aa aa'], 'pattern1': ['<#^^,pattern2#>']}
+    >>> bw = BlurbWriter(content)        
+    >>> bw.write('pattern2')
+    u'aa aa'
+    >>> bw.write('pattern1')
+    u'Aa Aa'
 
-        >>> # make allcaps
-        >>> content = { 'pattern2': ['aa aa'], 'pattern1': ['<#^^^,pattern2#>']}
-        >>> bw = BlurbWriter(content)        
-        >>> bw.write('pattern2')
-        u'aa aa'
-        >>> bw.write('pattern1')
-        u'AA AA'
+    >>> # make allcaps
+    >>> content = { 'pattern2': ['aa aa'], 'pattern1': ['<#^^^,pattern2#>']}
+    >>> bw = BlurbWriter(content)        
+    >>> bw.write('pattern2')
+    u'aa aa'
+    >>> bw.write('pattern1')
+    u'AA AA'
 
-        >>> # generate a random number 
-        >>> content = { 'pattern1': ['<-randint(1, 20)->']}
-        >>> bw = BlurbWriter(content)        
-        >>> result = bw.write('pattern1')
-        >>> assert 1 <= int(result) <= 20
+    >>> # generate a random number 
+    >>> content = { 'pattern1': ['<-randint(1, 20)->']}
+    >>> bw = BlurbWriter(content)        
+    >>> result = bw.write('pattern1')
+    >>> assert 1 <= int(result) <= 20
 
-        >>> # detect spinning because of a malformed tag
-        >>> content = { 'pattern2': ['a'], 'pattern1': ['<#pattern2>']}
-        >>> bw = BlurbWriter(content)
-        >>> bw.write('pattern2')
-        u'a'
-        >>> bw.write('pattern1')
-        u'<#pattern2>'
+    >>> # detect spinning because of a malformed tag
+    >>> content = { 'pattern2': ['a'], 'pattern1': ['<#pattern2>']}
+    >>> bw = BlurbWriter(content)
+    >>> bw.write('pattern2')
+    u'a'
+    >>> bw.write('pattern1')
+    u'<#pattern2>'
 
-        >>> # replace a tag, variable
-        >>> # u'<#_aname=name#><#_aname#>’s
-        >>> content = { 'pattern2': ['a'], 'pattern1': ['<#varName=pattern2#>']}
-        >>> bw = BlurbWriter(content)
-        >>> bw.write('pattern2')
-        u'a'
-        >>> bw.write('pattern1')
-        u'a'
+    >>> # replace a tag, variable
+    >>> # u'<#_aname=name#><#_aname#>’s
+    >>> content = { 'pattern2': ['a'], 'pattern1': ['<#varName=pattern2#>']}
+    >>> bw = BlurbWriter(content)
+    >>> bw.write('pattern2')
+    u'a'
+    >>> bw.write('pattern1')
+    u''
 
-        >>> # replace a tag, whitespace
-        >>> content = { 'pattern2': ['a'], 'pattern1': ['<#    pattern2    #>']}
-        >>> bw = BlurbWriter(content)
-        >>> bw.write('pattern2')
-        u'a'
-        >>> bw.write('pattern1')
-        u'a'
+    >>> # replace a tag, whitespace
+    >>> content = { 'pattern2': ['a'], 'pattern1': ['<#    pattern2    #>']}
+    >>> bw = BlurbWriter(content)
+    >>> bw.write('pattern2')
+    u'a'
+    >>> bw.write('pattern1')
+    u'a'
 
-        # >>> # prefix an / a article for a result based on consonant / vowel
-        # >>> content = { 'pattern2': ['a'], 'pattern1': ['<#article, pattern2#>'],  'pattern4': ['b'], 'pattern3': ['<#article, pattern4#>']}
-        # >>> bw = BlurbWriter(content)
-        # >>> bw.write('pattern1')
-        # u'an a'
-        # >>> bw.write('pattern3')
-        # u'a b'
+    # >>> # prefix an / a article for a result based on consonant / vowel
+    # >>> content = { 'pattern2': ['a'], 'pattern1': ['<#article, pattern2#>'],  'pattern4': ['b'], 'pattern3': ['<#article, pattern4#>']}
+    # >>> bw = BlurbWriter(content)
+    # >>> bw.write('pattern1')
+    # u'an a'
+    # >>> bw.write('pattern3')
+    # u'a b'
 
-        # >>> # replace a nested tag
-        # >>> content = { 'pattern2': ['pattern'], 'pattern1': ['<#<#pattern2#>3#>'], 'pattern3': ['b']}
-        # >>> bw = BlurbWriter(content)
-        # >>> bw.write('pattern1')
-        # u'b'
+    # >>> # replace a nested tag
+    # >>> content = { 'pattern2': ['pattern'], 'pattern1': ['<#<#pattern2#>3#>'], 'pattern3': ['b']}
+    # >>> bw = BlurbWriter(content)
+    # >>> bw.write('pattern1')
+    # u'b'
 
-        # >>> # capitalisation of first character
-        # >>> content = { 'pattern1': ['<#^,pattern2#>'], 'pattern2': [u'aa aa']}
-        # >>> bw = BlurbWriter(content)
-        # >>> bw.write('pattern1')
-        # u'Aa aa'
+    # >>> # capitalisation of first character
+    # >>> content = { 'pattern1': ['<#^,pattern2#>'], 'pattern2': [u'aa aa']}
+    # >>> bw = BlurbWriter(content)
+    # >>> bw.write('pattern1')
+    # u'Aa aa'
 
-        # >>> # unicode content
-        # >>> content = { 'pattern1': [u'üößé']}
-        # >>> bw = BlurbWriter(content)
-        # >>> bw.write('pattern1')
-        # u'üößé'
+    # >>> # unicode content
+    # >>> content = { 'pattern1': [u'üößé']}
+    # >>> bw = BlurbWriter(content)
+    # >>> bw.write('pattern1')
+    # u'üößé'
 
-        # # u'\\xfc\\xf6\\xdf\\xe9'
-        
-        # # not sure if that is the right way
+    # # u'\\xfc\\xf6\\xdf\\xe9'
+    
+    # # not sure if that is the right way
 
-        # >>> # replace a tag
-        # >>> content = { 'pattern2': ['a'], 'pattern1': ['<#pattern2#>']}
-        # >>> bw = BlurbWriter(content, debug=True)
-        # >>> bw.write('pattern2')
-        # pattern2
-        # u'a'
-        # >>> bw.write('pattern1')
-        # pattern1
-        # pattern2
-        # u'a'
-        """
+    # >>> # replace a tag
+    # >>> content = { 'pattern2': ['a'], 'pattern1': ['<#pattern2#>']}
+    # >>> bw = BlurbWriter(content, debug=True)
+    # >>> bw.write('pattern2')
+    # pattern2
+    # u'a'
+    # >>> bw.write('pattern1')
+    # pattern1
+    # pattern2
+    # u'a'
+    """
 
-    def _test():
-        import doctest
-        doctest.testmod()
-
-    _test()
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
