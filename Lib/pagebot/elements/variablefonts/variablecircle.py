@@ -36,6 +36,7 @@ from pagebot.contexts import defaultContext as context
 from pagebot.style import getRootStyle, makeStyle
 from pagebot.toolbox.transformer import pointOffset, point2D
 from pagebot.document import Document
+from pagebot.elements import Element
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.publications.typespecimen import TypeSpecimen
 
@@ -66,13 +67,17 @@ class VariableCircle(Element):
         self.location = location # Use to visualize a specific location, otherwise all needles are at min value.
         self.showAxisNames = showAxisNames
 
-    #   Always keep square
-
     def _get_w(self): # Width
-        return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
+        return min(self.maxW, max(self.minW, self.css('w'), self.minW)) # From self.style, don't inherit.
     def _set_w(self, w):
-        self.style['w'] = self.style['h'] = w or MIN_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
-    h = w = property(_get_w, _set_w)
+        self.style['w'] = w or self.minW # Overwrite element local style from here, parent css becomes inaccessable.
+    w = property(_get_w, _set_w)
+
+    def _get_h(self): # Height
+        return min(self.maxH, max(self.minH, self.css('h'), self.minH)) # From self.style, don't inherit.
+    def _set_h(self, h):
+        self.style['h'] = h or self.minH # Overwrite element local style from here, parent css becomes inaccessable.
+    h = property(_get_h, _set_h)
 
     def location2Recipe(self, location, start=0, end=3):
         recipe = ''
@@ -172,7 +177,7 @@ class VariableCircle(Element):
 
     #   D R A W B O T  S U P P O R T
 
-    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)    

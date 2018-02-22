@@ -45,9 +45,8 @@ def makeDocument():
     u"""Make a new document."""
 
     #W = H = 120 # Get the standard a4 width and height in points.
-    #W = PageSize
-    #H = PageSize
-    W, H = A4
+    W = PageSize
+    H = PageSize
     # Hard coded SQUARE and GUTTE, just for simple demo, instead of filling padding an columns in the root style.
     # Page size decides on the amount squares that is visible.
     # Page padding is centered then.
@@ -67,6 +66,7 @@ def makeDocument():
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
+    view.showPagePadding = True
     view.showElementOrigin = True
     view.showElementDimensions = False
     

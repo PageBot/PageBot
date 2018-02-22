@@ -1453,6 +1453,9 @@ _testGlyphsToDelete = (
 
 def _test():
     """
+    """
+    """
+        #TODO: Make these docTests to work.
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
         >>> from cStringIO import StringIO

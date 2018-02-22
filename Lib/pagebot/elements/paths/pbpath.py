@@ -16,6 +16,9 @@
 from pagebot.elements.element import Element
 
 class Path(Element):
+    u"""BaseClass for elements that need to draw paths with additional information
+    such as the drawing of glyph paths with points, metrcs lines, etc.
+    """
     pass
 
 
