@@ -25,7 +25,7 @@ from pagebot.document import Document
 DoTextFlow = False   
 BoxWidth = 500
 PagePadding = 30
-PageSize = 500
+PageSize = 1000
 
 GUTTER = 8 # Distance between the squares.
 SQUARE = 10 * GUTTER # Size of the squares
