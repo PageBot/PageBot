@@ -457,86 +457,49 @@ class PageView(BaseView):
         gutterH = e.gh # Gutter height
         columnWidth = e.cw # Column width
         columnHeight = e.ch # Column height
-        padL = e.pl # Padding left
-        padT = e.pt # Padding top
-        padR = e.pr # padding right
-        padB = e.pb # padding bottom
-        padW = e.pw # Padding width
-        padH = e.ph # Padding height, space between paddingTop and paddingBottom
+        pl = e.pl # Padding left
+        pt = e.pt # Padding top
+        pr = e.pr # padding right
+        pb = e.pb # padding bottom
+        pw = e.pw # Padding width, space between paddingLeft and paddingRight
+        ph = e.ph # Padding height, space between paddingTop and paddingBottom
 
         w = e.w
         h = e.h
 
         if e.isRightPage():
-            ox = px + padR
+            ox = px + pr
         else:
-            ox = px + padL
-        oy = py + padB
+            ox = px + pl
+        oy = py + pb
 
-        if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
-            context.fill(None)
-            context.stroke(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
-            context.newPath()
-            for cx, cw in e.getGridColumns():
-                context.moveTo((ox+cx, oy))
-                context.lineTo((ox+cx, oy + padH))
-                context.moveTo((ox+cx + cw, oy))
-                context.lineTo((ox+cx + cw, oy + padH))
-            for cy, ch in e.getGridRows():
-                context.moveTo((ox, oy+cy))
-                context.lineTo((ox + padW, oy+cy))
-                context.moveTo((ox, oy+cy + ch))
-                context.lineTo((ox + padW, oy+cy + ch))
-            context.drawPath()
+        if self.showGrid:
+            gridFillColor = self.css('viewGridFill', NO_COLOR)
+            if gridFillColor != NO_COLOR:
+                context.fill(gridFillColor)
+                context.stroke(None)
+                for cx, cw in e.getGridColumns():
+                    for cy, ch in e.getGridRows():
+                        context.rect(ox+cx, oy+cy, cw, ch)
+
+            gridStrokeColor = self.css('viewGridStroke', NO_COLOR)
+            gridStrokeWidth = self.css('viewGridStrokeWidth', 0)
+            if gridStrokeColor != NO_COLOR and gridStrokeWidth:
+                context.fill(None)
+                context.stroke(gridStrokeColor, gridStrokeWidth)
+                path = context.newPath()
+                for cx, cw in e.getGridColumns():
+                    path.moveTo((ox+cx, oy))
+                    path.lineTo((ox+cx, oy + ph))
+                    path.moveTo((ox+cx+cw, oy))
+                    path.lineTo((ox+cx+cw, oy + ph))
+                for cy, ch in e.getGridRows():
+                    path.moveTo((ox, oy+cy))
+                    path.lineTo((ox+pw, oy+cy))
+                    path.moveTo((ox, oy+cy + ch))
+                    path.lineTo((ox+pw, oy+cy + ch))
+                context.drawPath()
                 #text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
-
-        """
-        if self.showGridColumns and sGridFill is not NO_COLOR:
-            self.setFillColor(sGridFill)
-            self.setStrokeColor(None)
-            ox = px + padL
-            while ox < w - padR - columnWidth:
-                oy = h - padT - columnHeight - gutterH
-                while oy >= 0:
-                    rect(ox, oy + gutterH, columnWidth, columnHeight)
-                    oy -= columnHeight + gutterH
-                ox += columnWidth + gutterW
-
-        # Drawing the grid as lines.
-        if self.showGrid and self.css('viewGridStroke', NO_COLOR) is not NO_COLOR:
-            self.setFillColor(None)
-            self.setStrokeColor(self.css('viewGridStroke', NO_COLOR), self.css('viewGridStrokeWidth'))
-            # TODO: DrawBot align and fill don't work properly now.
-            M = 16
-            fs = context.newString('',
-                                   style=dict(font='Verdana',
-                                              xTextAlign=RIGHT,
-                                              fontSize=M/2,
-                                              stroke=None,
-                                              textFill=self.css('viewGridStroke')))
-            ox = px + padL
-            for cw, gutter in e.getGridX(): # Answer the sequence or relative (column, gutter) measures.
-                    b.newPath()
-                    b.moveTo((ox, py))
-                    b.lineTo((ox, py + h))
-                    b.moveTo((ox + columnWidth, py))
-                    b.lineTo((ox + columnWidth, py + h))
-                    b.drawPath()
-                    b.text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
-                    index += 1
-                    ox += columnWidth + gutterW
-            index = 0
-            while oy > py:
-                b.newPath()
-                b.moveTo((px, oy))
-                b.lineTo((px + w, oy))
-                b.moveTo((px, oy - columnHeight))
-                b.lineTo((px+w, oy - columnHeight))
-                b.drawPath()
-                b.text(fs + repr(index), (px + padL - M / 2, oy - M * 0.6))
-                index += 1
-                oy -= columnHeight + gutterH
-        """
 
     def drawBaselineGrid(self, e, origin):
         u"""Draw baseline grid if line color is set in the style.

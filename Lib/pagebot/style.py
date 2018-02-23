@@ -180,7 +180,7 @@ FONT_WIDTH_MATCHES = {
     'Compressed': ('Compressed', 'Comp', 'Cmp', 2, 200),
     'Ultra Condensed': ('Ultra Condensed', 'UltraCondensed', 'UCond', 'Ult Cnd', 250),
     'Extra Condensed': ('Extra Condensed', 'ExtraCondensed', 'XCond', 3, 300),
-    'Condensed': ('Condensed', 'Cond', 'Cnd', 4, 400),
+    'Condensed': ('Condensed', 'Cond', 'Cnd', 'Cn', 4, 400),
     'Narrow': ('Narrow', 'Nrrw', 'Narr', 'Nar', 440),
     'Normal': ('Normal', 'Nrm', 'Norm', 'Nrml', 'Nor', 5, 500),
     'Wide': ('Wide', 'Wd', 6, 600),
@@ -318,9 +318,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         cd = 0, # Optional column "depth"
 
         # Grid definitions, used static media as well as CSS display: grid; exports.
-        # gridX, gridY and gridZ are optional lista of grid line positions, to allow the use of non-repeating grids.
+        # gridX, gridY and gridZ are optional lists of grid line positions, to allow the use of non-repeating grids.
         # The format is [(width1, gutter1), (width2, gutter2), (None, 0)] in case different gutters are needed.
-        # If the format is [width1, width2, (width3, gutter3)], then the missing gutters are used from gw ot gh.
+        # If the format is [width1, width2, (width3, gutter3)], then the missing gutters are used from gw or gh.
         # If this paramater is set, then the style values for column width "cw" and column gutter "gw" are ignored.
         # If a width is None, it is assumed to fill the rest of the available space.
         # If the width is a float between 0..1 or a string with format "50%" then these are interpreted as percentages.
