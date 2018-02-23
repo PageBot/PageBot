@@ -83,6 +83,7 @@ def guessFamiliesByPatterns(patterns):
     into families, but it is useful of exemple purpose, in caes the available set of fonts
     on the platform is not known. 
     After the fonts are selected by the pattern, the family name is taken from font.info.familyName.
+    If patterns is single string, it will be included as list.
 
     >>> familyName = 'Roboto' # We know this exists in the PageBot repository
     >>> # For now we assume that this testing works in all contexts on all platforms.
@@ -97,6 +98,8 @@ def guessFamiliesByPatterns(patterns):
     >>> sorted(family.fonts.keys())[0]
     'Roboto-Black.ttf'
     """
+    if not isinstance(patterns, (list, tuple)):
+        patterns = [patterns]
     families = {}
     for fontFileName, fontPath in getFontPaths().items():
         found = True
@@ -222,7 +225,7 @@ class Family(object):
         >>> font.info.styleName # We got the most "default" font of the family
         u'Regular'
         """
-        return self.findFont(weight=400, width=500, italic=0)
+        return self.findFont(weight='Regular', width='Normal', italic=False)
 
     def _matchWeights(self, weight, font):
         u"""Answer level of matching for the (abbreviated) weight name or number with font."""
@@ -242,6 +245,8 @@ class Family(object):
     def _matchWidths(self, width, font):
         u"""Answer level of matchting for the (abbreviated) width name or number with font."""
         match = 0
+        if width == 'Normal': # Exception: "Normal" is never in the style name for regular widths.
+            width = 5
         if isinstance(width, (float, int)):
             # Compare the width as number as max difference to what we already have.
             wf = font.info.widthClass 
@@ -262,15 +267,15 @@ class Family(object):
         u"""Answer the boolean to match the (abbreviated) italic name or number with font, and
         also decide if that would be a better match than the reference fonts."""
         match = 0
-        if isinstance(italic, (float, int)):
+        if isinstance(italic, (float, int, bool)):
             # Compare the width as number as max difference to what we already have.
-            for i in FONT_ITALIC_MATCHES.get(italic, [italic]):
-                if isinstance(i, (float, int)):
-                    match = max(match, abs(i - font.info.italicAngle)*100)
+            if italic and font.info.italicAngle != 0:
+                match = 1000
         else:
             for i in FONT_ITALIC_MATCHES.get(italic, [italic]):
-                if not isinstance(i, (float, int)) and (i in font.info.styleName or font.info.italicAngle != 0):
-                    match = max(match, font.info.italicAngle*10)
+                if i in font.info.styleName:
+                    match = 1000
+                    break
         return match
 
     def findFont(self, name=None, weight=None, width=None, italic=None):
@@ -288,31 +293,35 @@ class Family(object):
         18
         >>> sorted(family.keys())[1]
         'Roboto-BlackItalic.ttf'
-        >>> family._matchWeights('Regular', family['Roboto-Regular.ttf']) # Match on name
+        >>> regularName = 'Roboto-Regular.ttf'
+        >>> family._matchWeights('Regular', family[regularName]) # Match on name
         70
-        >>> family._matchWeights('Normal', family['Roboto-Regular.ttf']) # Match on alternative name
+        >>> family._matchWeights('Normal', family[regularName]) # Match on alternative name
         70
-        >>> family._matchWeights('Normal', family['Roboto-Bold.ttf']) # No match on alternative name with Bold
+        >>> family._matchWeights('Bold', family[regularName]) # No match on full name
         0
-        >>> family._matchWeights('Bold', family['Roboto-Regular.ttf']) # No match on full name
+        >>> family._matchWidths(5, family[regularName]) # Full match in width 5
+        1000
+        >>> family._matchWidths('Normal', family[regularName]) # Full match in normal width
+        1000
+        >>> family._matchWidths(5, family[regularName]) # Full match in width 5
+        1000
+        >>> family._matchWidths(500, family[regularName]) # Full match in width 500
+        1000
+        >>> family._matchWidths(100, family[regularName]) # Closest match (but not exact) for width 100
+        600
+        >>> boldName = 'Roboto-Bold.ttf'
+        >>> family._matchWeights('Normal', family[boldName]) # No match on alternative name with Bold
         0
-        >>> family._matchWeights('Bold', family['Roboto-Bold.ttf']) # Match on full style name
+        >>> family._matchWeights('Bold', family[boldName]) # Match on full style name
         40
-        >>> family._matchWeights('Bd', family['Roboto-Bold.ttf']) # Match on partial style name
+        >>> family._matchWeights('Bd', family[boldName]) # Match on partial style name
         40
-        >>> family._matchWidths(5, family['Roboto-Regular.ttf']) # Full match in width 5
-        1000
-        >>> family._matchWidths('Normal', family['Roboto-Regular.ttf']) # Full match in normal width
-        1000
-        >>> family._matchWidths(5, family['Roboto-Regular.ttf']) # Full match in width 5
-        1000
-        >>> family._matchWidths(500, family['Roboto-Regular.ttf']) # Full match in width 500
-        1000
         >>> font1 = family.findFont(weight='Regular')
         >>> font2 = family.findFont(weight='Normal')
         >>> font1 is font2, font1.info.styleName # Found by different style  names.
         (True, u'Regular')
-        >>> font3 = family.findFont(weight=400, italic=True)
+        >>> font3 = family.findFont(weight=800, italic=False)
         >>> font3.info.styleName
         u'Italic'
         """
@@ -328,6 +337,7 @@ class Family(object):
             if thisMatch > match or matchingFont is None:
                 matchingFont = font
                 match = thisMatch
+
         return matchingFont
 
 

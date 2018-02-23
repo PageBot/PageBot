@@ -53,7 +53,7 @@ def getFontPaths():
         if os.name == 'posix':
             # Try typical OSX font folders
 
-            paths = ('/Library/Fonts', os.path.expanduser('~/Library/Fonts/')) 
+            paths = ('/Library/Fonts', os.path.expanduser('~/Library/Fonts')) 
             for path in paths:
                 if os.path.exists(path):
                     _recursivelyCollectFontPaths(path, FONT_PATHS)
