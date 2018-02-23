@@ -33,7 +33,7 @@ if 0:
         if 'Upgrade' in fontName:
             print fontName
         
-from pagebot.style import getRootStyle, A2, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE, LEFT
+from pagebot.style import getRootStyle, A2, A3, A4, CENTER, NO_COLOR, TOP, BOTTOM, MIDDLE, INLINE, ONLINE, OUTLINE, LEFT
 # Document is the main instance holding all information about the document together (pages, views, etc.)
 from pagebot.document import Document
 # Import all element classes that can be placed on a page.
@@ -48,17 +48,23 @@ from pagebot import getGlobals
 # thought multiple runs of the script. Restart DrawBot to clean the cash and start fresh.
 scriptGlobals = getGlobals(path2ScriptId(__file__))
 # Allow some interactive size changed by sliders to show responsive behavior.
-MinPageW = A2[0]*0.9 # Minimum width of the page.
-MaxPageW = A2[0]*1.2 # Maximum siwidthze of the page.
-MinPageH = A2[1]*0.9 # Minimum height of the page.
-MaxPageH = A2[1]*1.2 # Maximum height of the page.
+W, H = PAGE_SIZE = A4 # A3 A2
+MinPageW = PAGE_SIZE[0]*0.9 # Minimum width of the page.
+MaxPageW = PAGE_SIZE[0]*1.2 # Maximum siwidthze of the page.
+MinPageH = PAGE_SIZE[1]*0.9 # Minimum height of the page.
+MaxPageH = PAGE_SIZE[1]*1.2 # Maximum height of the page.
 
-PageWidth, PageHeight = A2 # Small newspaper size
+PageWidth, PageHeight = PAGE_SIZE # Small newspaper size
 PADDING = PageWidth/18 # Padding based on size (= in book layout called margin) of the page.
 pt = pl = pr = PADDING
 pb = PADDING*1.2
 pagePadding = (pt, pr, pb, pl)
 G = 12 # Gutter
+# Column widths
+CW1 = (W - 2*PADDING - G)*3/5
+CW2 = (W - 2*PADDING - G)*2/5
+# Define grid measures for the pages. 
+gridX = ((CW1, G), (CW2, None))
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/BookReview001.png' 
@@ -67,7 +73,7 @@ def makeDocument():
     u"""Create Document instance with a single page. Fill the page with elements
     and perform a conditional layout run, until all conditions are solved."""
 
-    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=1)
+    doc = Document(w=PageWidth, h=PageHeight, originTop=False, autoPages=1, gridX=gridX)
     # Get default view from the document and set the viewing parameters.
     view = doc.getView()
     view.style['fill'] = 1
@@ -75,20 +81,16 @@ def makeDocument():
     view.showPageCropMarks = True # Won't show if there is not padding in the view.
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
+    view.showPagePadding = True
     view.showPageNameInfo = True
     view.showElementOrigin = False
     view.showElementDimensions = False #ShowDimensions
     view.showElementInfo = False
-       
+    view.showGrid = True
+    
     page = doc[0] # Get the single frint page from the document.
-    
-    # Hard coded padding, just for simple demo, instead of filling padding an columns in the root style.
-    page.margin = 0
-    page.padding = pagePadding
-    
-    pageAreaW = PageWidth-pl-pr
-    pageAreaH = PageHeight-pt-pb
-    
+    page.padding = pagePadding 
+     
     # Resources
     blockFill = None #(1, 1, 0) # Use color to debug page area
     
@@ -109,8 +111,8 @@ def makeDocument():
 
   
 context.Variable([
-    dict(name='PageWidth', ui='Slider', args=dict(minValue=MinPageW, value=A2[0], maxValue=MaxPageW)),
-    dict(name='PageHeight', ui='Slider', args=dict(minValue=MinPageH, value=A2[1], maxValue=MaxPageH)),
+    dict(name='PageWidth', ui='Slider', args=dict(minValue=MinPageW, value=PAGE_SIZE[0], maxValue=MaxPageW)),
+    dict(name='PageHeight', ui='Slider', args=dict(minValue=MinPageH, value=PAGE_SIZE[1], maxValue=MaxPageH)),
 ], globals())
 
         
