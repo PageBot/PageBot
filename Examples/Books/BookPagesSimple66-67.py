@@ -17,6 +17,14 @@
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import getFontByName
 from pagebot.style import A5, CENTER, DISPLAY_BLOCK, RIGHT, LEFT
+from pagebot.fonttoolbox.objects.family import findFamilyByName
+# Try to find if the TYPETR Upgrade family is installed, Otherwise use PageBot installed Roboto instead.
+# TYPETR Upgrade can be viewed here: https://upgrade.typenetwork.com
+# And licensed here: https://store.typenetwork.com/foundry/typetr/series/upgrade
+family = findFamilyByName('Upgrade')
+if family is None: # Upgrade not available, use Google's Roboto instead.
+    family = findFamilyByName('Roboto')
+print family
 
 h1Style = dict(font='Upgrade-Medium', fontSize=13, rLeading=1.4, tracking=0.2, paragraphBottomSpacing=13, display=DISPLAY_BLOCK)
 h2Style = dict(font='Upgrade-Medium', fontSize=11, rLeading=1.3, tracking=0.2, paragraphTopSpacing=12*1.3*0.5, display=DISPLAY_BLOCK)
