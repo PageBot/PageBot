@@ -142,6 +142,47 @@ ORIGIN = (0, 0, 0) # Default origin if location is omitted.
 
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 
+# Standard font style names, with the matching abbreviations they can have in font style
+# As reference TYPETR Upgrade is mentioned.
+# Then expand the matching table, so all entries match all other entries
+FONT_WEIGHT_MATCHES = {
+    'Hairline': ['Hairline', 'Hair', 'Hl'] + range(0, 261), # Upgrade 260
+    'Thin': ['Thin', 'Thn'] + range(260, 275), # Upgrade 270 + range(275, 295), # Upgrade 280
+    'Light': ['Light', 'Lght', 'Lt'] + range(295, 320), # Upgrade 300
+    'Semi Light': ['Semi Light', 'SemiLight', 'SLight', 'SLght', 'SLt'] + range(320, 350),
+    'Book': ['Book', 'Bk'] + range(350, 395), # Upgrade 390
+    'Regular': ['Regular', 'Standard', 'Normal', 'Regular'] + range(396, 450), # Upgrade 400
+    'Medium': ['Medium', 'Med', 'Md'] + range(450, 550), # Upgrade 500
+    'Semibold': ['Semibold', 'SemiBold', 'Semi Bold', 'SBold', 'Sbd', 'Sembold', 'SemBold', 'SBold'] + range(550, 650), # Upgrade 600
+    'Bold': ['Bold', 'Bd'] + range(650, 725), # Upgrade 700
+    'Extra Bold': ['Extra Bold', 'ExtraBold', 'XBold', 'XBd'] + range(725, 755), # 750
+    'Heavy': ['Heavy', 'Hvy'] + range(755, 780), # 760
+    'Black': ['Black', 'Blck', 'Blk'] + range(780, 825), # Upgrade 800
+    'ExtraBlack': ['ExtraBlack', 'Extra Black', 'XBlack', 'XBlck', 'XBlk'] + range(825, 875), # Upgrade 850
+    'UltraBlack': ['UltraBlack', 'Ultra Black', 'UBlack', 'UBlck', 'UBlk'] + range(857, 1000), # Upgrade 900
+}
+FONT_WIDTH_MATCHES = {
+    'Skyline': ('Skyline', 100, 1),
+    'Extra Compressed': ('Extra Compressed', 'ExtraCompressed', 'XComp', 140),
+    'Compressed': ('Compressed', 'Comp', 'Cmp', 2, 200),
+    'Extra Condensed': ('Extra Condensed', 'ExtraCondensed', 'XCond', 3, 300),
+    'Condensed': ('Condensed', 'Cond', 4, 400),
+    'Narrow': ('Narrow', 440),
+    'Normal': ('Normal', 5, 500),
+    'Wide': ('Wide', 6, 600),
+    'Extended': ('Extended', 'Ext', 7, 700),
+    'Extra Extended': ('Extra Extended', 'ExtraExtended', 'XExtended', 'XExt', 8, 800),
+    'Ultra Extended': ('Ultra Extended', 'UltraExtended', 'UExtended', 'UExt', 9, 900),
+}
+FONT_ITALIC_MATCHES = {
+    'Italic': ('Italic', 'Ita', 'It', True),
+}
+# Expand the matching table, so all entries match all other entries
+for d in (FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES):
+    for items in d.values():
+        for item in items:
+            d[item] = items
+
 def newStyle(**kwargs):
     return dict(**kwargs)
 
