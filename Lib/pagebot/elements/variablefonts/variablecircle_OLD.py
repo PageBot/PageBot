@@ -24,16 +24,14 @@ from math import pi, sin, cos
 from pagebot.contexts import defaultContext as context
 from pagebot.elements.element import Element
 from pagebot.style import MIN_WIDTH, ORIGIN
-from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath, getVariableFont
 from pagebot.toolbox.transformer import pointOffset
 """
-import os
 from math import pi, sin, cos
 
 from pagebot.contexts import defaultContext as context
-from pagebot.style import getRootStyle, makeStyle
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements import Element
+from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
 
 class VariableCircle(Element):
     u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info.
@@ -103,7 +101,7 @@ class VariableCircle(Element):
             tw, th = context.textSize(fs)
             context.text(fs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.font.info.unitsPerEm
-        drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
+        context.drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
 
 
     def _drawFontCircle(self, px, py):
@@ -125,7 +123,8 @@ class VariableCircle(Element):
 
         # Draw default glyph circle marker in middle.
         glyphName = self.glyphNames[0]
-        varLocation = getVarLocation(self.font, self.location) # Show neutral, unless a location is requested 
+        #varLocation = getVarLocation(self.font, self.location) # Show neutral, unless a location is requested 
+        varLocation = self.location # = getVarLocation(self.font, self.location) # Show neutral, unless a location is requested 
         self._drawGlyphMarker(None, mx, my, glyphName, fontSize, varLocation, strokeW=3)
 
         # Draw 
@@ -170,7 +169,7 @@ class VariableCircle(Element):
             self._drawGlyphMarker(axisName, mx+endX, my+endY, glyphName, fontSize, location)
             angle += 360/len(axes)
 
-    #   D R A W B O T  S U P P O R T
+    #   D R A W B O T / F L A T  S U P P O R T
 
     def build(self, view, origin, drawElements=True):
         u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""

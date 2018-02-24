@@ -24,16 +24,15 @@ from math import pi, sin, cos
 from pagebot.contexts import defaultContext as context
 from pagebot.elements.element import Element
 from pagebot.style import MIN_WIDTH, ORIGIN
-from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath, getVariableFont
 from pagebot.toolbox.transformer import pointOffset
 """
 import os
 from math import pi, sin, cos
 
 from pagebot.contexts import defaultContext as context
-from pagebot.style import getRootStyle, makeStyle
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements import Element
+from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
 
 class VariableCircle(Element):
     u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info.
@@ -50,6 +49,7 @@ class VariableCircle(Element):
     isText = False
     isFlow = False
 
+    INTERPOLATION = 0.5
     DEFAULT_FONT_SIZE = 64
     R = 1#2/3 # Fontsize factor to draw glyph markers.
 
@@ -96,26 +96,25 @@ class VariableCircle(Element):
         variableFont = getVariableFont(self.font, location)
         # Show axis name below circle marker?
         if self.showAxisNames and axisName is not None:
-            fs = context.newString(axisName,
+            bs = context.newString(axisName,
                                    style=dict(font=variableFont.installedName,
                                               fontSize=fontSize/4,
                                               textFill=0))
-            tw, th = context.textSize(fs)
+            tw, th = context.textSize(bs)
             context.text(fs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.font.info.unitsPerEm
-        drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
+        context.drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
 
 
     def _drawFontCircle(self, px, py):
         context = self.context # Get context from the parent doc.
         context.fill(0.9)
         context.stroke(None)
-        x, y = point2D(pointOffset(self.oPoint, origin))
-        mx = x + self.w/2
-        my = y + self.h/2
+        mx = px + self.w/2
+        my = py + self.h/2
 
         # Gray circle that defines the area of
-        context.oval(x, y, self.w, self.h)
+        context.oval(px, py, self.w, self.h)
         
         # Draw axis spikes first, so we can cover them by the circle markers.
         axes = self.font.axes
@@ -125,7 +124,7 @@ class VariableCircle(Element):
         bs = context.newString(self.font.info.familyName,
                                 style=dict(font=self.style['labelFont'],
                                 fontSize=self.style['axisNameFontSize'], textFill=0))     
-        context.text(bs, (x-fontSize/2, y+self.h+fontSize/2))
+        context.text(bs, (px-fontSize/2, py+self.h+fontSize/2))
 
         # Draw spokes
         context.fill(None)
@@ -151,9 +150,9 @@ class VariableCircle(Element):
             self._drawGlyphIcon(mx+markerX, my+markerY, glyphName, fontSize/2, location)
             
             # Interpolated DeltaLocation circles.
-            location = {axisName: minValue + (maxValue - minValue)*INTERPOLATION}
+            location = {axisName: minValue + (maxValue - minValue)*self.INTERPOLATION}
             markerX, markerY = self._angle2XY(angle, self.w/4)
-            self._drawGlyphIcon(mx+markerX*INTERPOLATION*2, my+markerY*INTERPOLATION*2, glyphName, fontSize/2, location)
+            self._drawGlyphIcon(mx+markerX*self.INTERPOLATION*2, my+markerY*self.INTERPOLATION*2, glyphName, fontSize/2, location)
 
         # Draw axis names and DeltaLocation values
         if self.showAxisNames:
@@ -163,11 +162,11 @@ class VariableCircle(Element):
                 valueFontSize = self.style.get('valueFontSize', 12)
                 axisNameFontSize = self.style.get('axisNameFontSize', 12)
                 markerX, markerY = self._angle2XY(angle, self.w/2)
-                fs = context.newString(self.makeAxisName(axisName),
+                bs = context.newString(self.makeAxisName(axisName),
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=axisNameFontSize,
                                             fill=self.style.get('axisNameColor', 0)))
-                tw, th = context.textSize(fs)
+                tw, th = context.textSize(bs)
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
@@ -178,18 +177,18 @@ class VariableCircle(Element):
                     sMaxValue = '%0.2f' % maxValue
                 else:
                     sMaxValue = `int(round(maxValue))`
-                fs = context.newString(sMaxValue,
+                bs = context.newString(sMaxValue,
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
                                             fill=self.style.get('axisValueColor', 0)))
-                tw, th = context.textSize(fs)
+                tw, th = context.textSize(bs)
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
                 context.text(fs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5)) 
 
                 # DeltaLocation value
-                interpolationValue = minValue + (maxValue - minValue)*INTERPOLATION
+                interpolationValue = minValue + (maxValue - minValue)*self.INTERPOLATION
                 if interpolationValue < 10:
                     sValue = '%0.2f' % interpolationValue
                 else:
@@ -201,8 +200,8 @@ class VariableCircle(Element):
                 tw, th = context.textSize(bs)
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
-                context.rect(mx+markerX*INTERPOLATION-tw/2-4, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
-                context.text(fs, (mx+markerX*INTERPOLATION-tw/2, my+markerY*INTERPOLATION+valueFontSize/2+th*1.5)) 
+                context.rect(mx+markerX*self.INTERPOLATION-tw/2-4, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
+                context.text(fs, (mx+markerX*self.INTERPOLATION-tw/2, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5)) 
 
                 # DeltaLocation value
                 if minValue < 10:
