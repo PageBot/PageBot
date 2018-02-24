@@ -20,7 +20,8 @@ familyName = 'Roboto' # We know this exists in the PageBot repository
 families = guessFamiliesByPatterns(familyName)
 # We can be sure the family exists, as it comes from the embedded Roboto.
 family = families[familyName]
-font = family.findFont(name='Regular')
+# TODO: Finding font by name/weight/width association does not work properly yet.
+font = family.findFont(name='Regular',width='Normal')
 print font
 
 fontPaths = []
