@@ -3204,7 +3204,7 @@ class Element(object):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin, drawElements=True):
         u"""Default drawing method just drawing the frame. 
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
