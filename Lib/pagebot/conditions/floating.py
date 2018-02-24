@@ -100,48 +100,6 @@ class Float2BottomSide(Condition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.float2BottomSide(), e, score)
 
-# Bleeding on sides of page by e.css('bleed') value
-
-class Float2LeftBleed(Condition):
-	u"""Align the element.left with max of all placed element.right or parent.leftSide.
-	Positioning includes the margin of all elements."""
-	def test(self, e):
-		return e.isFloatOnLeftBleed(self.tolerance)
-
-	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.float2LeftBleed(), e, score)
-
-class Float2RightBleed(Condition):
-	u"""Align the element.right with min of all placed element.left or parent.rightSide.
-	Positioning includes the margin of all elements."""
-	def test(self, e):
-		return e.isFloatOnRightBleed(self.tolerance)
-
-	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.float2RightBleed(), e, score)
-
-class Float2TopBleed(Condition):
-	u"""Align the element.top with max of all placed element.bottom or parent.topSide.
-	Positioning includes the margin of all elements."""
-	def test(self, e):
-		return e.isFloatOnTopBleed(self.tolerance)
-
-	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.float2TopBleed(), e, score)
-
-class Float2BottomBleed(Condition):
-	u"""Align the element.bottom with max of all placed element.top or parent.bottomSide.
-	Positioning includes the margin of all elements."""
-	def test(self, e):
-		return e.isFloatOnBottomBleed(self.tolerance)
-
-	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.float2BottomBleed(), e, score)
-
 # Combinations
 
 class Float2LeftTop(Condition):

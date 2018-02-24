@@ -50,7 +50,7 @@ class Element(object):
             t=0, parent=None, context=None, name=None, class_=None, title=None, description=None, language=None,
             style=None, conditions=None, info=None, framePath=None, 
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None, 
-            isLeftPage=None, isRightPage=None,
+            isLeftPage=None, isRightPage=None, bleed=None, 
             padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, 
             margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
             borders=None, borderTop=None, borderRight=None, borderBottom=None, borderLeft=None, 
@@ -118,6 +118,8 @@ class Element(object):
         self.d = d
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
+        if bleed is not None:
+            self.bleed = bleed # Property ignores to expand if None
         # Border info dict have format: 
         # dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
         # If not borders defined, then drawing will use the stroke and strokeWidth (if defined)
@@ -469,7 +471,7 @@ class Element(object):
             drawAfter=self.drawAfter)
         # Now do the same for each child element and append it to self.
         for child in self.elements:
-            e.appendElement(child.copy(parent=e)) # Add the element to child list and update self._eId dictionary
+            e.appendElement(child.copy()) # Add the element to child list and update self._eId dictionary
         return e
 
     def setElementByIndex(self, e, index):
@@ -1800,38 +1802,50 @@ class Element(object):
         Elements will take of the reposition/scaling themselves"""
         return self.bleedTop, self.bleedRight, self.bleedBottom, self.bleedLeft
     def _set_bleed(self, bleed):
-        self.bleedTop = self.bleedRight = self.bleedBottom = self.bleedLeft = bleed
+        if isinstance(bleed, (list, tuple)):
+            if len(bleed) == 4:
+                self.bleedTop, self.bleedRight, self.bleedBottom, self.bleedLeft = bleed
+            elif len(bleed) == 2:
+                self.bleedTop, self.bleedRight = self.bleedBottom, self.bleedLeft = bleed
+            else: # Length  
+                self.bleedTop = self.bleedRight = self.bleedBottom = self.bleedLeft = bleed[0]
+        else:
+            self.bleedTop = self.bleedRight = self.bleedBottom = self.bleedLeft = bleed
     bleed = property(_get_bleed, _set_bleed)
 
     def _get_bleedTop(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves"""
-        return self.css('bleedTop')
+        return self.css('bleedTop', 0)
     def _set_bleedTop(self, bleed):
+        assert isinstance(bleed, (int, float))
         self.style['bleedTop'] = bleed
     bleedTop = property(_get_bleedTop, _set_bleedTop)
 
     def _get_bleedBottom(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves"""
-        return self.css('bleedBottom')
+        return self.css('bleedBottom', 0)
     def _set_bleedBottom(self, bleed):
+        assert isinstance(bleed, (int, float))
         self.style['bleedBottom'] = bleed
     bleedBottom = property(_get_bleedBottom, _set_bleedBottom)
 
     def _get_bleedLeft(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves"""
-        return self.css('bleedLeft')
+        return self.css('bleedLeft', 0)
     def _set_bleedLeft(self, bleed):
+        assert isinstance(bleed, (int, float))
         self.style['bleedLeft'] = bleed
-    bleedLeft = property(_get_bleedTop, _set_bleedLeft)
+    bleedLeft = property(_get_bleedLeft, _set_bleedLeft)
 
     def _get_bleedRight(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves"""
-        return self.css('bleedRight')
+        return self.css('bleedRight', 0)
     def _set_bleedRight(self, bleed):
+        assert isinstance(bleed, (int, float))
         self.style['bleedRight'] = bleed
     bleedRight = property(_get_bleedRight, _set_bleedRight)
 
@@ -3016,6 +3030,7 @@ class Element(object):
         The self.css('fill') defines the color of the element background.
         Instead of the DrawBot stroke and strokeWidth attributes, use
         borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
+        If one of the self.bleed is defined, then shift and resize background by that size.
         """
         c = view.context
         b = c.b # Get builder from context
@@ -3034,14 +3049,19 @@ class Element(object):
             c.saveGraphicState()
             # Drawing element fill and/or frame
             if eGradient: # Gradient overwrites setting of fill.
+                # TODO: Make bleed work here too.
                 c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
             else:
                 c.setFillColor(eFill)
             c.setStrokeColor(eStroke, self.css('strokeWidth', 1))
             if self.framePath is not None: # In case defined, use instead of bounding box. 
                 c.drawPath(self.framePath)
+            elif self.originTop:
+                c.rect(p[0] - self.bleedLeft, p[1] - self.bleedTop, 
+                    self.w + self.bleedLeft + self.bleedRight, self.h + self.bleedTop + self.bleedBottom)
             else:
-                c.rect(p[0], p[1], self.w, self.h)
+                c.rect(p[0] - self.bleedLeft, p[1] - self.bleedBottom, 
+                    self.w + self.bleedLeft + self.bleedRight, self.h + self.bleedTop + self.bleedBottom)
             c.restoreGraphicState()
 
         # Instead of full frame drawing, check on separate border settings.

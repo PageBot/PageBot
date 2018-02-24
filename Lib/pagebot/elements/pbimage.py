@@ -72,11 +72,11 @@ class Image(Element):
     >>> e.size
     (300, 300, 1)
     """
-    def __init__(self, path=None, style=None, pixelMap=None, title=None, caption=None, clipRect=None, 
+    def __init__(self, path=None, style=None, pixelMap=None, name=None, title=None, caption=None, clipRect=None, 
             mask=None, imo=None, w=None, h=None, imageConditions=None, titleConditions=None,
             captionConditions=None, conditions=None, **kwargs):
         self.image = None # Aviud setting of self.omage.w and self.omage.h while not initialized.
-        Element.__init__(self, w=w, h=h, conditions=conditions, **kwargs)
+        Element.__init__(self, w=w, h=h, name=name, conditions=conditions, **kwargs)
         assert path is None or pixelMap is None # One or the other or both None.
 
         if title is not None: # Only make title element if defined content.
@@ -163,7 +163,7 @@ class Image(Element):
 class PixelMap(Element):
     u"""The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId."""
    
-    def __init__(self, path, w=None, h=None, z=0, clipRect=None, clipPath=None, mask=None, 
+    def __init__(self, path, name=None, w=None, h=None, z=0, clipRect=None, clipPath=None, mask=None, 
         imo=None, **kwargs):
         Element.__init__(self, **kwargs)
 
@@ -173,6 +173,7 @@ class PixelMap(Element):
         self.h = h
         self.z = z # Make conditions work with captions inside the image frame element.
 
+        self.name = name
         self.mask = mask # Optional mask element.
         self.clipRect = clipRect # Optional clip rectangle
         self.clipPath = clipPath # Optional clip path.

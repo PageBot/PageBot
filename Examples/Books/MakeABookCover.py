@@ -86,12 +86,13 @@ def makeDocument():
 
     # Make background element, filling the page color and bleed.
     colorRect1 = newRect(z=-10, name='Page area', parent=page,
-                         conditions=[Top2TopBleed(),
-                                     Left2LeftBleed(),
-                                     Fit2RightBleed(),
-                                     Fit2BottomBleed()],
+                         conditions=[Top2TopSide(),
+                                     Left2LeftSide(),
+                                     Fit2RightSide(),
+                                     Fit2BottomSide()],
                          fill=C1)
-    
+    colorRect1.bleed = (0, 0, 0, 40)
+    print colorRect1.bleed
     colorRect1.solve() # Solve element position, before we can make
                        # other elements depend on position and size.
 
