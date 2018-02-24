@@ -545,17 +545,17 @@ class PageView(BaseView):
             if gridStrokeColor != NO_COLOR and gridStrokeWidth:
                 context.fill(None)
                 context.stroke(gridStrokeColor, gridStrokeWidth)
-                path = context.newPath()
+                context.newPath()
                 for cx, cw in e.getGridColumns():
-                    path.moveTo((ox+cx, oy))
-                    path.lineTo((ox+cx, oy + ph))
-                    path.moveTo((ox+cx+cw, oy))
-                    path.lineTo((ox+cx+cw, oy + ph))
+                    context.moveTo((ox+cx, oy))
+                    context.lineTo((ox+cx, oy + ph))
+                    context.moveTo((ox+cx+cw, oy))
+                    context.lineTo((ox+cx+cw, oy + ph))
                 for cy, ch in e.getGridRows():
-                    path.moveTo((ox, oy+cy))
-                    path.lineTo((ox+pw, oy+cy))
-                    path.moveTo((ox, oy+cy + ch))
-                    path.lineTo((ox+pw, oy+cy + ch))
+                    context.moveTo((ox, oy+cy))
+                    context.lineTo((ox+pw, oy+cy))
+                    context.moveTo((ox, oy+cy + ch))
+                    context.lineTo((ox+pw, oy+cy + ch))
                 context.drawPath()
                 #text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
 
@@ -593,10 +593,10 @@ class PageView(BaseView):
         while oy > e.pb or 0:
             context.setFillColor(None)
             context.setStrokeColor(e.css('baselineGridStroke', NO_COLOR), e.css('gridStrokeWidth'))
-            context.b.newPath()
-            context.b.moveTo((px + e.pl, py + oy))
-            context.b.lineTo((px + e.w - e.pr, py + oy))
-            context.b.drawPath()
+            context.newPath()
+            context.moveTo((px + e.pl, py + oy))
+            context.lineTo((px + e.w - e.pr, py + oy))
+            context.drawPath()
             context.text(bs + repr(line), (px + e.pl - 2, py + oy - e.pl * 0.6))
             context.text(bs + repr(line), (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
             line += 1 # Increment line index.
