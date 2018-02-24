@@ -28,7 +28,7 @@ from pagebot.style import (makeStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH,
                            DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL,
                            INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
-                           OUTLINE, ORIGIN)
+                           OUTLINE)
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.contexts.builders.buildinfo import BuildInfo # Container with Builder flags and data/parametets

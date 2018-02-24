@@ -16,7 +16,7 @@
 #
 from pagebot import getMarker
 from pagebot.style import (LEFT, RIGHT, CENTER, MIN_WIDTH, MIDDLE,
-                           BOTTOM, DEFAULT_WIDTH, ORIGIN)
+                           BOTTOM, DEFAULT_WIDTH)
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
 
