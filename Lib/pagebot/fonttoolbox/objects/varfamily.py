@@ -105,7 +105,7 @@ class VarFamily(Family):
         # Add the fonts. Also initialize self._originFont
         for pathOrFont in pathsOrFonts or []:
             self.addFont(pathOrFont)
-        self.baseGlyphName = BASE_GLYPH_NAME
+        self.baseGlyphName = self.BASE_GLYPH_NAME
 
     def __len__(self):
         return len(self._fonts)
@@ -222,8 +222,8 @@ class VarFamily(Family):
         maxWidth = -minWidth
         for font in self._fonts.values():
             g = font[self.baseGlyphName].width or 0
-            minWidth = min(width, minWidth)
-            maxWidth = max(width, maxWidth)
+            minWidth = min(g.width, minWidth)
+            maxWidth = max(g.width, maxWidth)
         return minWidth, maxWidth    
 
     def getMinMaxStem(self):
