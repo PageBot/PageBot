@@ -19,14 +19,7 @@
 #     for additional parameters.
 #
 from __future__ import division
-"""
-from math import pi, sin, cos
-from pagebot.contexts import defaultContext as context
-from pagebot.elements.element import Element
-from pagebot.style import MIN_WIDTH, ORIGIN
-from pagebot.toolbox.transformer import pointOffset
-"""
-import os
+
 from math import pi, sin, cos
 
 from pagebot.contexts import defaultContext as context
