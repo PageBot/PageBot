@@ -18,13 +18,10 @@ from pagebot.fonttoolbox.objects.family import guessFamiliesByPatterns
 
 familyName = 'Roboto' # We know this exists in the PageBot repository
 families = guessFamiliesByPatterns(familyName)
-for familyName, family in families.items():
-    print familyName, family.name, family.fontStyles.keys()
-    #f = family['Regular']
-    #print '23323223', f.info.familyName, f.info.styleName
-print families.keys()
+# We can be sure the family exists, as it comes from the embedded Roboto.
 family = families[familyName]
-font = family.findRegularFont()
+font = family.findFont(name='Regular')
+print font
 
 fontPaths = []
 # Make True to see the names of currently installed fonts, matching the pattern.

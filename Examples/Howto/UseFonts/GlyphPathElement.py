@@ -50,7 +50,7 @@ def pathFilter(e, path, view):
 W = H = PageSize
 #W, H = A4
 
-fontPath = getRootFontPath() + 'djr/bungee/Bungee-Regular.ttf'
+fontPath = getRootFontPath() + '/djr/bungee/Bungee-Regular.ttf'
 font = Font(fontPath, install=False)
 glyphName = 'e'#'cid05405.1'
 

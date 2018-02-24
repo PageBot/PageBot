@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <document><h1>Bitcount</h1>
 <h2>Introduction</h2>
 <p>Bitcount is a family of styles, where the core shape of letters has been reduced to the minimal number of pixels possible. We need at least 5 vertical pixels of x-height to draw “a” and “e”. Adding the minumum of 1 pixel as ascender and 1 pixel as descender, the mininum grid is 5 pixels wide and 7 pixel high. Here the <em>Bitcount Single Regular</em> is shown.</p>

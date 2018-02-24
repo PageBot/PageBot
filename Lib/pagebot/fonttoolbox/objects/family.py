@@ -330,7 +330,7 @@ class Family(object):
         for font in self.fonts.values():
             thisMatch = 0
             if name is not None and name in path2Name(font.path):
-                thisMatch += name*100 # Longer names have better matching
+                thisMatch += len(name)*100 # Longer names have better matching
             thisMatch += self._matchWeights(weight or 'Regular', font)
             thisMatch += self._matchWidths(width or 500, font)
             thisMatch += self._matchItalics(italic or 0, font)

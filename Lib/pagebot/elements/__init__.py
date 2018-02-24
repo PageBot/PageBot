@@ -65,7 +65,7 @@ def newPlacer(**kwargs):
     u"""Placer occupying a space on Page or Template. Is not visible exported documets."""
     return Placer(**kwargs)
 
-def newColPlacer(cx=None, cy=None, cw=None, ch=None, *kwargs):
+def newColPlacer(cx=None, cy=None, cw=None, ch=None, **kwargs):
     u"""Placer occupying a space on Page or Template. Is not visible exported documets."""
     e = newPlacer(**kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index, based on style or parent.css

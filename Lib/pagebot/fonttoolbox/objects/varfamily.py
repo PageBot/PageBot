@@ -64,7 +64,7 @@ class VarFamily(Family):
     fontfiles and axes.
 
     >>> from pagebot.contexts.platform import getRootFontPath
-    >>> p = getRootFontPath() + 'google/roboto/'
+    >>> p = getRootFontPath() + '/google/roboto/'
     >>> paths = p+'Roboto-Black.ttf', p+'Roboto-Bold.ttf', p+'Roboto-Italic.ttf', p+'Roboto-Light.ttf', p+'Roboto-Medium.ttf', p+'Roboto-Regular.ttf', p+'Roboto-Thin.ttf'
     >>> vf = VarFamily('Test-Var', paths)
     >>> len(vf)
