@@ -22,6 +22,7 @@ from drawBot import ImageObject
 import pagebot
 from datetime import datetime # Make date fit today.
 from pagebot import Gradient, Shadow
+from pagebot.contexts.platform import getRootFontPath
 from pagebot.contexts import defaultContext as context
 from pagebot.style import getRootStyle, LEFT, TOP, A4
 from pagebot.elements import *
@@ -30,8 +31,6 @@ from pagebot.document import Document
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.toolbox.transformer import s2Color, int2Color, lighter
-# Import other than default view class, showing double pages spread
-from pagebot.elements.views.spreadview import SpreadView
 
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont, Font 
 W = H = A4[0] # Square of height of A4.
@@ -48,10 +47,9 @@ FLOWID2 = MAIN_FLOW+'2'
 FLOWID3 = MAIN_FLOW+'3'
 
 # Get the root path of open source fonts, enclosed in PageBot.
-ROOT_PATH = pagebot.getRootPath()
+FONT_PATH = getRootFontPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
 # Main Variable Font for all text in the magazine. Change this line to build with
 # another Variable Font. Using Optical Size (opsz), Weight (wght) and Width (wdth) axes.
-FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
 
 # Open the font, so we can query values that are not available in standard DrawBot functions,
 # such as stem width, overshoot of roundings, etc.
@@ -59,7 +57,7 @@ f = Font(FONT_PATH)
 #print f.axes Uncomment to see the available axes printed.
 
 # Pre-calculate instances of locations in the Variable Font.
-#BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=1, wdth=1))
+LIGHT = getVariableFont(FONT_PATH, dict(wght=1, wdth=1))
 BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=0.8))
 BOOK = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=1))
 #BOOK_ITALIC = getVariableFont(FONT_PATH, dict(wght=0.25, wdth=1))
@@ -76,7 +74,7 @@ def makeCoverTemplate(imagePath, w, h):
     textColor = 1
     # Cover
     coverTemplate = Template(w=w, h=h, padding=PADDING) # Cover template of the magazine.
-    context.newImage(imagePath, parent=coverTemplate, 
+    newImage(imagePath, parent=coverTemplate, 
                      conditions=[Fit2WidthSides(), Bottom2BottomSide()])
     # Title of the magazine cover.
     #LIGHT = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=0.34))
@@ -87,26 +85,26 @@ def makeCoverTemplate(imagePath, w, h):
                                               shadow=shadow,
                                               textFill=textColor,
                                               tracking=-3))
-    context.newText(coverTitle, parent=coverTemplate,
+    newText(coverTitle, parent=coverTemplate,
                     conditions=[Fit2Width(), Top2TopSide()], shadow=shadow)
     # Make actual date in top-right with magazine title. Draw a bit transparant on background photo.
     dt = datetime.now()
     d = dt.strftime("%B %Y")
-    fs = context.newString(d, style=dict(font=MEDIUM.installedName,
+    bs = context.newString(d, style=dict(font=MEDIUM.installedName,
                                          fontSize=18,
                                          textFill=(1, 1, 1, 0.8),
                                          tracking=0.5))
-    context.newText(fs, parent=coverTemplate,
+    newText(bs, parent=coverTemplate,
                     conditions=[Float2Top(), Fit2Width()])
 
     # Titles could come automatic from chapters in the magazine.
-    fs = context.newString('$6.95',
+    bs = context.newString('$6.95',
                            style=dict(font=BOOK.installedName,
                                       fontSize=12,
                                       textFill=textColor,
                                       tracking=1,
                                       leading=12))
-    context.newText(fs, parent=coverTemplate,
+    newText(bs, parent=coverTemplate,
                     conditions=[Float2Top(), Left2Left()])
   
     makeCoverTitles(coverTemplate)
@@ -119,59 +117,59 @@ def makeCoverTitles(coverTemplate):
 
     # TODO: Titles should come automatic from random blurb chapter titles in the magazine.
     pl = 8 # Generic offset as padding left from the page padding to aligh with cover title.
-    fs = context.newString('Skirts &\nScarves',
+    bs = context.newString('Skirts &\nScarves',
                            style=dict(font=BOOK_CONDENSED.installedName,
                                       fontSize=54,
                                       fill=1,
                                       tracking=0.5,
                                       leading=48))
-    context.newTextBox(fs, z=20, pl=15, pt=-40, parent=coverTemplate, 
+    newTextBox(bs, z=20, pl=15, pt=-40, parent=coverTemplate, 
                        conditions=[Left2Left(), Float2Top()])
 
     """
     # TODO: Titles should come automatic from random blurb chapter titles in the magazine.
-    fs = context.newString('Ideal style:\n',
+    bs = context.newString('Ideal style:\n',
                            style=dict(font=MEDIUM.installedName,
                                       fontSize=32,
                                       textFill=1,
                                       tracking=0.5,
                                       leading=50))
-    fs += context.newString('The almost nothing',
+    bs += context.newString('The almost nothing',
                             style=dict(font=BOOK.installedName,
                                        fontSize=45,
                                        textFill=1,
                                        tracking=0.5,
                                        leading=48))
-    context.newTextBox(fs, z=20, pl=8, w=400, pt=0, parent=coverTemplate, 
+    newTextBox(fs, z=20, pl=8, w=400, pt=0, parent=coverTemplate, 
                        textShadow=shadow, conditions=[Left2Left(), Float2Top()])
 
     # TODO: Titles should come automatic from random blurb chapter titles in the magazine.
-    fs = context.newString('Findings\non vineyard island',
+    bs = context.newString('Findings\non vineyard island',
                            style=dict(font=BOOK_LIGHT.installedName,
                                       fontSize=72,
                                       textFill=1,
                                       tracking=0.5,
                                       leading=74))
-    context.newTextBox(fs, z=20, pl=8, pt=40, parent=coverTemplate, 
+    newTextBox(bs, z=20, pl=8, pt=40, parent=coverTemplate, 
                        style=dict(shadowOffset=(4, -4), shadowBlur=20,
                        shadowFill=(0,0,0,0.6)), textShadow=shadow, 
                        conditions=[Left2Left(), Fit2Width(), Float2Top()])
       
     # TODO: Titles should come automatic from random blurb chapter titles in the magazine.
     c = (1, 1, 0, 1) #lighter(int2Color(0x99CBE9)) # Pick from light spot in the photo
-    fs = context.newString('Exclusive:\n',
+    bs = context.newString('Exclusive:\n',
                            style=dict(font=MEDIUM.installedName,
                                       fontSize=32,
                                       textFill=c,
                                       tracking=0.5,
                                       lineHeight=34))
-    fs += context.newString('Interview with Pepper+Tom ',
+    bs += context.newString('Interview with Pepper+Tom ',
                             style=dict(font=BOOK.installedName,
                                        fontSize=32,
                                        textFill=c,
                                        tracking=0.5,
                                        lineHeight=34))
-    context.newTextBox(fs, z=20, pl=pl, pt=20, parent=coverTemplate, 
+    newTextBox(fs, z=20, pl=pl, pt=20, parent=coverTemplate, 
                        style=dict(shadowOffset=(4, -4), shadowBlur=20,
                        shadowFill=(0,0,0,0.6)), textShadow=shadow, 
                        conditions=[Left2Left(), Fit2Width(), Float2Bottom()])
