@@ -9,7 +9,7 @@ import os
 w = Blurb()
 names = w.getBlurbTypes()
 
-dst = os.path.join(os.getcwd(), "test")
+dst = os.path.join(os.getcwd(), "_export") # Make output not write to Git.
 if not os.path.exists(dst):
 	os.makedirs(dst)
 

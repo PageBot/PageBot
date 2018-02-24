@@ -485,7 +485,11 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         viewFlowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
         
         # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
-        bleed = 8, # Bleeding images of page edge and distance of crop-marks from page frame.
+        bleedTop = 0, # Bleeding images or color rectangles over page edge.
+        bleedBottom = 0,
+        bleedRight = 0,
+        bleedLeft = 0,
+        viewCropMarkDistance = 8,  # Distance of crop-marks from page frame
         viewCropMarkSize = 40, # Length of crop marks, including bleed distance. 
         viewCropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
  

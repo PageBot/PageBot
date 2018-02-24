@@ -1795,6 +1795,46 @@ class Element(object):
         self.gw, self.gh, self.gd = gutter3D
     gutter3D = property(_get_gutter3D, _set_gutter3D)
 
+    def _get_bleed(self):
+        u"""Answer the value for bleed over the sides of parent or page objects.
+        Elements will take of the reposition/scaling themselves"""
+        return self.bleedTop, self.bleedRight, self.bleedBottom, self.bleedLeft
+    def _set_bleed(self, bleed):
+        self.bleedTop = self.bleedRight = self.bleedBottom = self.bleedLeft = bleed
+    bleed = property(_get_bleed, _set_bleed)
+
+    def _get_bleedTop(self):
+        u"""Answer the value for bleed over the sides of parent or page objects.
+        Elements will take of the reposition/scaling themselves"""
+        return self.css('bleedTop')
+    def _set_bleedTop(self, bleed):
+        self.style['bleedTop'] = bleed
+    bleedTop = property(_get_bleedTop, _set_bleedTop)
+
+    def _get_bleedBottom(self):
+        u"""Answer the value for bleed over the sides of parent or page objects.
+        Elements will take of the reposition/scaling themselves"""
+        return self.css('bleedBottom')
+    def _set_bleedBottom(self, bleed):
+        self.style['bleedBottom'] = bleed
+    bleedBottom = property(_get_bleedBottom, _set_bleedBottom)
+
+    def _get_bleedLeft(self):
+        u"""Answer the value for bleed over the sides of parent or page objects.
+        Elements will take of the reposition/scaling themselves"""
+        return self.css('bleedLeft')
+    def _set_bleedLeft(self, bleed):
+        self.style['bleedLeft'] = bleed
+    bleedLeft = property(_get_bleedTop, _set_bleedLeft)
+
+    def _get_bleedRight(self):
+        u"""Answer the value for bleed over the sides of parent or page objects.
+        Elements will take of the reposition/scaling themselves"""
+        return self.css('bleedRight')
+    def _set_bleedRight(self, bleed):
+        self.style['bleedRight'] = bleed
+    bleedRight = property(_get_bleedRight, _set_bleedRight)
+
     # Absolute positions
 
     def _get_rootX(self): 
@@ -3502,32 +3542,34 @@ class Element(object):
             return abs(self.bottom - (boxY + boxH)) <= tolerance
         return abs(self.bottom - boxY) <= tolerance
 
-    # Float conditions
+    # Float conditions to page padding
 
     def isFloatOnTop(self, view, tolerance=0):
         if self.originTop:
             return abs(max(self.getFloatTopSide(), self.parent.pt) - self.mTop) <= tolerance
         return abs(min(self.getFloatTopSide(), self.parent.h - self.parent.pt) - self.mTop) <= tolerance
 
-    def isFloatOnTopSide(self, view, tolerance=0):
-        return abs(self.getFloatTopSide() - self.mTop) <= tolerance
-
     def isFloatOnBottom(self, tolerance=0):
         if self.originTop:
             return abs(min(self.getFloatBottomSide(), self.parent.h - self.parent.pb) - self.mBottom) <= tolerance
         return abs(max(self.getFloatBottomSide(), self.parent.pb) - self.mBottom) <= tolerance
 
-    def isFloatOnBottomSide(self, tolerance=0):
-        return abs(self.getFloatBottomSide() - self.mBottom) <= tolerance
-
     def isFloatOnLeft(self, tolerance=0):
         return abs(max(self.getFloatLeftSide(), self.parent.pl) - self.mLeft) <= tolerance
 
-    def isFloatOnLeftSide(self, tolerance=0):
-        return abs(self.getFloatLeftSide() - self.mLeft) <= tolerance
-
     def isFloatOnRight(self, tolerance=0):
         return abs(min(self.getFloatRightSide(), self.parent.w - self.parent.pr) - self.mRight) <= tolerance
+
+    # Float conditions to page sides
+
+    def isFloatOnTopSide(self, view, tolerance=0):
+        return abs(self.getFloatTopSide() - self.mTop) <= tolerance
+
+    def isFloatOnBottomSide(self, tolerance=0):
+        return abs(self.getFloatBottomSide() - self.mBottom) <= tolerance
+
+    def isFloatOnLeftSide(self, tolerance=0):
+        return abs(self.getFloatLeftSide() - self.mLeft) <= tolerance
 
     def isFloatOnRightSide(self, tolerance=0):
         return abs(self.getFloatRightSide() - self.mRight) <= tolerance
@@ -3579,20 +3621,6 @@ class Element(object):
             r2 = gridRows[row + rowSpan - 1]
             return abs(self.h - (r2[0] - r1[0] + r2[1])) <= tolerance
         return False
-
-    #   Bleed conditions
-    #   TODO: To be written with bleed value from self.css('bleed')
-    def isBleedOnLeftSide(self, tolerance):
-        pass
-
-    def isBleedOnRightSide(self, tolerance):
-        pass
-
-    def isBleedOnTopSide(self, tolerance):
-        pass
-
-    def isBleedOnBottomSide(self, tolerance):
-        pass
 
     #   T R A N S F O R M A T I O N S 
 
@@ -3915,6 +3943,8 @@ class Element(object):
             self.mTop = self.parent.h
         return True
 
+    # Floating parent padding
+
     def float2Top(self):
         u"""Float the element upward, until top hits the parent top padding.
         Include margin to decide if it fits."""
@@ -3924,10 +3954,6 @@ class Element(object):
             self.mTop = min(self.getFloatTopSide(), self.parent.h - self.parent.pt)
         return True
 
-    def float2TopSide(self):
-        self.mTop = self.getFloatTopSide()
-        return True
-
     def float2Bottom(self):
         if self.originTop:
             self.mBottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
@@ -3935,20 +3961,26 @@ class Element(object):
             self.mBottom = min(self.getFloatBottomSide(), self.parent.pb)
         return True
 
-    def float2BottomSide(self):
-        self.mBottom = self.getFloatBottomSide()
-        return True
-
     def float2Left(self):
         self.mLeft = max(self.getFloatLeftSide(), self.parent.pl) # padding left
         return True
 
-    def float2LeftSide(self):
-        self.mLeft = self.getFloatLeftSide()
-        return True
-
     def float2Right(self):
         self.mRight = min(self.getFloatRightSide(), self.parent.w - self.parent.pr)
+        return True
+
+    # Floating parent sides
+
+    def float2TopSide(self):
+        self.mTop = self.getFloatTopSide()
+        return True
+
+    def float2BottomSide(self):
+        self.mBottom = self.getFloatBottomSide()
+        return True
+
+    def float2LeftSide(self):
+        self.mLeft = self.getFloatLeftSide()
         return True
 
     def float2RightSide(self):
@@ -4050,24 +4082,6 @@ class Element(object):
         else:
             self.h += self.parent.h - self.top
         return True
-
-    #   Bleeding
-    #   TODO: Need to be written.
-    def bleed2LeftSide(self):
-        pass
-        return False
-
-    def bleed2RightSide(self):
-        pass
-        return False
-
-    def bleed2TopSide(self):
-        pass
-        return False
-        
-    def bleed2BottomSide(self):
-        pass
-        return False
 
     #   Shrinking
     

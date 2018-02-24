@@ -20,7 +20,7 @@ class Blurb(object):
     
     reNoTags = re.compile('\<[^\>]*|([^\<\>]*)')
 
-    def getBlurb(self, type, cnt=None, noTags=False):
+    def getBlurb(self, type, cnt=None, noTags=True):
         u"""
         
         The ``getBlurb`` method answers a random generated blurb of ``type``.

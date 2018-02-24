@@ -49,19 +49,12 @@ def checkInterpolation(fonts):
             glyphs[glyphName] = dict(ok=ok, error=error, report=report)
             
     return glyphs
- 
-def guessVarFamilyFromPaths(basePath, name=None):
-    u"""Initialize by guessing the self._font axis locations. 
-    """
-    paths = findFontPaths(basePath)    
-    name = name or path2Name(basePath)
-    return VarFamily(name, paths)
 
 class VarFamily(Family):
-    u"""A VarFamily contains a set of font paths that potentially form masters to create a 
-    VariableFont export. But the collection may not be up for creation yet, that is why it is not
-    a "VarFont". There can be a design space file included to define the relation between the
-    fontfiles and axes.
+    u"""A VarFamily is a special kind of family that contains a set of font that potentially form 
+    the masters to create a VariableFont export. But the collection may not be up for creation yet, 
+    that is why it is not a "VarFont". There can be a design space file included to define the relation 
+    between the fontfiles and axes.
 
     >>> from pagebot.contexts.platform import getRootFontPath
     >>> p = getRootFontPath() + '/google/roboto/'
@@ -80,7 +73,7 @@ class VarFamily(Family):
     [270]
 
     """
-    GLYPH = 'H' # Use for base metrics analysis
+    BASE_GLYPH_NAME = 'H' # Use for base metrics analysis
     
     ORIGIN_OS2_WEIGHT_CLASS = 400
     # The quality of automatic parametric axis creation depends on the type of design and if
@@ -112,7 +105,8 @@ class VarFamily(Family):
         # Add the fonts. Also initialize self._originFont
         for pathOrFont in pathsOrFonts or []:
             self.addFont(pathOrFont)
-            
+        self.baseGlyphName = BASE_GLYPH_NAME
+
     def __len__(self):
         return len(self._fonts)
         
@@ -215,7 +209,7 @@ class VarFamily(Family):
             if not stemValues:
                 continue
             stem = min(stemValues)
-            width = font[GLYPH].width
+            width = font[self.baseGlyphName].width
             location = stem, width
             if location not in weightWidthLocations:
                 weightWidthLocations[location] = []
@@ -227,8 +221,9 @@ class VarFamily(Family):
         minWidth = sys.maxint
         maxWidth = -minWidth
         for font in self._fonts.values():
-            minWidth = min(font[self.GLYPH].width, minWidth)
-            maxWidth = max(font[self.GLYPH].width, maxWidth)
+            g = font[self.baseGlyphName].width or 0
+            minWidth = min(width, minWidth)
+            maxWidth = max(width, maxWidth)
         return minWidth, maxWidth    
 
     def getMinMaxStem(self):
@@ -251,7 +246,7 @@ class VarFamily(Family):
 
     def makeParametricFont_xtra(self, axisFontMin, axisFontMax):
         u"""Adjust the font outlines and other metrics to the guesse min/max, starting with self.originFont."""
-        Hg = self.originFont[GLYPH]
+        Hg = self.originFont[self.baseGlyphName]
         counters = Hg.analyzer.horizontalCounters
         stems = Hg.analyzer.stems
         axisFontMin.info.widthClass = 1

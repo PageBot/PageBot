@@ -265,7 +265,14 @@ class Family(object):
 
     def _matchItalics(self, italic, font):
         u"""Answer the boolean to match the (abbreviated) italic name or number with font, and
-        also decide if that would be a better match than the reference fonts."""
+        also decide if that would be a better match than the reference fonts.
+
+        >>> familyName = 'Roboto' # We know this exists in the PageBot repository
+        >>> families = guessFamiliesByPatterns(familyName)
+        >>> familyName in families.keys()
+        True
+        >>> family = families[familyName]
+        """
         match = 0
         if isinstance(italic, (float, int, bool)):
             # Compare the width as number as max difference to what we already have.
@@ -323,17 +330,17 @@ class Family(object):
         (True, u'Regular')
         >>> font3 = family.findFont(weight=800, italic=False)
         >>> font3.info.styleName
-        u'Italic'
+
         """
         matchingFont = None
         match = 0 # Matching value for the current matchingFont
         for font in self.fonts.values():
             thisMatch = 0
             if name is not None and name in path2Name(font.path):
-                thisMatch += len(name)*100 # Longer names have better matching
-            thisMatch += self._matchWeights(weight or 'Regular', font)
-            thisMatch += self._matchWidths(width or 500, font)
-            thisMatch += self._matchItalics(italic or 0, font)
+                thisMatch += len(name)**4 # Longer names have better matching
+            thisMatch += self._matchWeights(weight or 'Regular', font)**4
+            thisMatch += (self._matchWidths(width or 500, font)/2)**4
+            thisMatch += (self._matchItalics(italic or 0, font)/4)**4
             if thisMatch > match or matchingFont is None:
                 matchingFont = font
                 match = thisMatch
