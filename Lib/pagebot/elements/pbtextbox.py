@@ -278,7 +278,7 @@ class TextBox(Element):
 
     #   B U I L D
 
-    def build(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin, drawElements=True):
         u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
         context = view.context # Get current context
