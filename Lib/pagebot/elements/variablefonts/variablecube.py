@@ -19,7 +19,6 @@ from __future__ import division
 from copy import copy
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
 from pagebot.toolbox.transformer import pointOffset
 
 
@@ -87,7 +86,7 @@ class VariableCube(Element):
                 self.location[axisY] = indexY * RANGE / sizeY
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
 
-                drawGlyphPath(self.font.ttFont, self.glyphNames[0], ppx, ppy, self.location, s=glyphPathScale, fillColor=(0, 0, 0))
+                c.drawGlyphPath(self.font.ttFont, self.glyphNames[0], ppx, ppy, self.location, s=glyphPathScale, fillColor=(0, 0, 0))
 
                 fs = c.newString('%s %d\n%s %d' % (axisX, indexX * RANGE / sizeX, axisY, indexY * RANGE / sizeY), fontSize=6, fill=0)
                 w, h = fs.size()

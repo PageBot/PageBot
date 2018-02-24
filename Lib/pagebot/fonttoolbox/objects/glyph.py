@@ -50,7 +50,7 @@ class Glyph(object):
     >>> import pagebot
     >>> from pagebot.fonttoolbox.objects.font import Font
     >>> from pagebot.contexts.platform import getRootFontPath
-    >>> path = getRootFontPath() + 'fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> path = getRootFontPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
     >>> f = Font(path, install=False)
     >>> g = f['a']
     >>> g.name

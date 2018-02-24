@@ -23,7 +23,7 @@ def getRootPath():
 
 def getRootFontPath():
     u"""Answer the standard font path of the pagebot module."""
-    return getRootPath() + '/Fonts/'
+    return getRootPath() + '/Fonts'
 
 def _recursivelyCollectFontPaths(path, fontPaths):
     u"""Recursive helper function for getFontPaths."""

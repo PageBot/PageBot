@@ -27,7 +27,7 @@ from pagebot.contexts.platform import getRootFontPath
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
 
-FONT_PATH = getRootFontPath() + 'fontbureau/AmstelvarAlpha-VF.ttf'
+FONT_PATH = getRootFontPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
 f = Font(FONT_PATH, install=True) # Get PageBot Font instance of Variable font.
 
 def fitVariableWidth(varFont, s, w,

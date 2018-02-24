@@ -23,7 +23,7 @@ class GlyphPath(Path):
 
     >>> from pagebot.contexts.platform import getRootFontPath
     >>> from pagebot.fonttoolbox.objects.font import Font
-    >>> fontPath = getRootFontPath() + 'google/roboto/Roboto-Medium.ttf'
+    >>> fontPath = getRootFontPath() + '/google/roboto/Roboto-Medium.ttf'
     >>> font = Font(fontPath)
     >>> from pagebot.document import Document
     >>> W = H = 500

@@ -74,18 +74,11 @@ FONT_PATH = FONT_DIR + FONT_NAME
 
 # -----------------------------------------------------------------         
 def makeSpecimen(rs):
-        
-    # Template 1
-    template1 = Template(rs) # Create template of main size. Front page only.
-    # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
-    template1.grid(rs) 
-    # Show baseline grid if rs.showBaselineGrid is True
-    template1.baselineGrid(rs)
-   
+           
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template2
-    doc = Document(rs, autoPages=2, template=template1) 
+    doc = Document(rs, autoPages=2) 
 
     page1 = doc[1]
     vCube = VariableCube(FONT_PATH, w=500, h=500, s='a', fontSize=86, dimensions=dict(wght=4,rnds=4))

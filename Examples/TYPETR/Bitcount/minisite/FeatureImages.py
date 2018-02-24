@@ -23,6 +23,7 @@ except ImportError:
 
 import os
 import pagebot
+from pagebot.contexts import defaultContext as c
 from pagebot.fonttoolbox.objects.family import getFamilyFontPaths
 from pagebot.toolbox.transformer import path2ScriptId
 

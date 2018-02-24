@@ -28,7 +28,7 @@ SHOW_VARIABLES = False # If true, open a window with sliders on the axes.
 
 # Get font path in the PageBot repostory, so we know it is there.
 FONT_PATH = getRootFontPath()
-fontPath = FONT_PATH + 'fontbureau/DecovarAlpha-VF.ttf'
+fontPath = FONT_PATH + '/fontbureau/DecovarAlpha-VF.ttf'
 
 EXPORT_PATH = '_export/'+ fontPath.split('/')[-1].replace('ttf', 'pdf')
 

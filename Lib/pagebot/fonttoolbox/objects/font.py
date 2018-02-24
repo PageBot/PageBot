@@ -64,7 +64,7 @@ class Font(object):
     >>> from pagebot.fonttoolbox.objects.font import Font
     >>> from pagebot.contexts.platform import getRootFontPath
     >>> fontPath = getRootFontPath()
-    >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
     >>> f = Font(path, install=False, lazy=False)
     >>> f.name
     u'AmstelvarAlpha Default'
@@ -134,7 +134,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
-        >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> 'A' in f.keys()
         True
@@ -150,7 +150,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
-        >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> 'A' in f
         True
@@ -164,7 +164,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
-        >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> #f.analyzer.stems # TODO: Needs bezier path for pixel test.
         
@@ -181,7 +181,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
-        >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> f.axes['XTRA']
         (42.0, 402.0, 402.0)
@@ -201,7 +201,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
-        >>> path = fontPath + 'fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> len(f.getDefaultVarLocation().keys())
         15
@@ -248,7 +248,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
-        >>> path = fontPath + 'djr/bungee/Bungee-Regular.ttf'
+        >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> len(f.kerning.keys())
         22827
@@ -265,7 +265,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
-        >>> path = fontPath + 'djr/bungee/Bungee-Regular.ttf'
+        >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
         >>> f = Font(path, install=False, lazy=False)
         >>> g = f['A']
         >>> f.groups is None

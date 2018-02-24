@@ -27,7 +27,7 @@ OUTPUT_FILE = '_export/AmstelvarVariableCircle.pdf'
 
 CONDITIONS = [Fit2Width(), Float2Top()] # Stacking conditions for all elements in this page.
 
-fontPath = getRootFontPath() + 'fontbureau/AmstelvarAlpha-VF.ttf'
+fontPath = getRootFontPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
 varFont = Font(fontPath)
 varFontName = varFont.install() # Do DrawBot font install.
 
