@@ -24,6 +24,7 @@ content = {
     ],
     'book_title_adjective': [
         'Metaphysical',
+        'Hyperphysical',
         'Transcendental',
         'Empirical',
         'Axiological',
@@ -33,7 +34,7 @@ content = {
         'Ecological',
     ],
     'book_title_end': [
-        'Consciousness and Self-Consciousness:',
+        'Consciousness and Self-Consciousness',
         'Thought Rendered Defenseless',
         'Constructing the Relational Mind',
         'Husserlian Phenomenology Meets',
@@ -65,16 +66,16 @@ content = {
         'History of',
     ],
     'edition': [
-        '(<#language_version#> tr.)',
-        '(Original <#language_version#> version of the above)',
-        '(Revised)',
-        '(partial tr.)',
-        '(Commented edition)',
-        '(<#language_version#> tr.)',
-        '(pirate edition)',
-        '(with Postcript)',
-        '(The Signed First Edition)',
-        '(from the <#year#> ed.)',
+        '<#language_version#> tr.',
+        '<#language_version#> tr.',
+        'Original <#language_version#> version of the above',
+        'Revised',
+        'partial tr.',
+        'Commented edition',
+        'pirate edition',
+        'with Postcript',
+        'The Signed First Edition',
+        'from the <#year#> ed.',
         '<#figs_ord#> revised edition',
     ],
     'language_version': [
@@ -217,10 +218,10 @@ content = {
         'Izvestiya Akad. Nauk SSSR',
     ],
     'reference_english': [
-        '<#name_british_science#>, <#book_phylosophy_title#>, <#publisher_english#>, <#edition#>, <#year#>, <#page_number#>, <#num_ISBN#>',
+        '<#name_british_science#>, <#book_phylosophy_title#>, <#publisher_english#>, (<#edition#>), <#year#>, <#page_number#>, <#num_ISBN#>',
     ],
     'year': [
-        '<-randint(1486, 1999)->',
+        '<-randint(1486, 2018)->',
     ],
     'year_16century': [
         '<-randint(1501, 1599)->',

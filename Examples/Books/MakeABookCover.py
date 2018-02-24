@@ -36,7 +36,7 @@ from pagebot.document import Document
 from pagebot.conditions import *
 from pagebot.elements import newRect, newTextBox
    
-# For clarity, most of the OneValidatingPage.py example document is setup
+# For clarity, most of the MakeABookCover.py example document is setup
 # as a sequential excecution of Python functions. For complex documents
 # this is not the best method. More functions and classes will be used in the
 # real templates, which are available from the PageBotTemplates repository.
@@ -49,8 +49,12 @@ EXPORT_PATH = '_export/ABookCover.pdf'
 
 family = findFamilyByName('Roboto')
 fontRegular = family.fontStyles['Regular'][0]
+context.installFont(fontRegular.path)
+print(fontRegular.info.styleName, fontRegular.path)
 fontBold = family.fontStyles['Bold'][0]
+print(fontBold.info.styleName, fontBold.path)
 fontItalic = family.fontStyles['Italic'][0]
+print(fontItalic.info.styleName, fontItalic.path)
 
 def makeDocument():
     u"""Demo random book cover generator."""
@@ -82,10 +86,10 @@ def makeDocument():
 
     # Make background element, filling the page color and bleed.
     colorRect1 = newRect(z=-10, name='Page area', parent=page,
-                         conditions=[Top2TopSide(),
-                                     Left2LeftSide(),
-                                     Fit2RightSide(),
-                                     Fit2BottomSide()],
+                         conditions=[Top2TopBleed(),
+                                     Left2LeftBleed(),
+                                     Fit2RightBleed(),
+                                     Fit2BottomBleed()],
                          fill=C1)
     
     colorRect1.solve() # Solve element position, before we can make
@@ -101,20 +105,22 @@ def makeDocument():
             xAlign=CENTER, yAlign=MIDDLE)
 
     # Make random blurb name and titles
-    title = blurb.getBlurb('book_phylosophy_title', noTags=True)
-    subTitle = blurb.getBlurb('book_phylosophy_title', noTags=True)
+    title = blurb.getBlurb('book_phylosophy_title')
+    subTitle = blurb.getBlurb('book_pseudoscientific').capitalize()
+    if random() < 0.2: # 1/5 chance to add editions text
+        subTitle += '\nEdition '+blurb.getBlurb('edition')
     authorName = blurb.getBlurb('name', noTags=True)
     if random() < 0.33: # 1/3 chance for a second author name
-        authorName += '\n' + blurb.getBlurb('name', noTags=True)
+        authorName += '\n' + blurb.getBlurb('name')
         
     page.pt = 120 # Now the rectangles positioned automatic, alter the paddings
     page.pl = page.pr = 80
     page.pb = 30
     # Add some title (same width, different height) at the "wrongOrigin" position.
     # They will be repositioned by solving the colorConditions.
-    title = context.newString(title+'\n\n', style=dict(font='Georgia', fontSize=40, rLeading=1.2, xAlign=CENTER, textFill=1))
-    title += context.newString(subTitle + '\n\n', style=dict(font='Georgia', fontSize=32, xAlign=CENTER, textFill=(1, 1, 1,0.5)))
-    title += context.newString(authorName, style=dict(font='Georgia', fontSize=24, xAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
+    title = context.newString(title+'\n\n', style=dict(font=fontBold.path, fontSize=40, rLeading=1.2, xAlign=CENTER, textFill=1))
+    title += context.newString(subTitle + '\n\n', style=dict(font=fontRegular.path, fontSize=32, xAlign=CENTER, textFill=(1, 1, 1,0.5)))
+    title += context.newString(authorName, style=dict(font=fontItalic.path, fontSize=24, rTracking=0.025, xAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
     newTextBox(title, parent=page, name='Other element',
             conditions=[Fit2Width(), Center2Center(), Top2Top()],
             xAlign=CENTER, yAlign=TOP)
