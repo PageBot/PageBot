@@ -1,4 +1,4 @@
-This project contains seperate, aggregated works (eg, found in the directories `Lib/contributions` and `Fonts/`) which are marked with their original LICENSE.md files.
+This project contains seperate, aggregated works (eg, found in the directories `Lib/contributions` and `Fonts/`) which are marked with their original LICENSE.md or LICENSE.txt or OFL.txt files.
 
 The PageBot python source code is available under the following MIT license:
 
