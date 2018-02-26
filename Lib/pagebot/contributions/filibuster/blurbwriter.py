@@ -420,6 +420,7 @@ class BlurbWriter(object):
                     self.softdefine(tg, vardef)
         return 0, text
 
+<<<<<<< 94337a25d30ecf1f98027c124bd24c8c3de83f36
 
 def test():
     u"""
@@ -561,4 +562,5 @@ def test():
 
 if __name__ == '__main__':
     import doctest
-    doctest.testmod()
+    import sys
+    sys.exit(doctest.testmod()[0])
