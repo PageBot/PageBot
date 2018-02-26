@@ -107,5 +107,5 @@ def drawCropMarks(context, origin, w, h, bleed, cmSize, cmStrokeWidth, folds=Non
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
-
+    import sys
+    sys.exit(doctest.testmod()[0])

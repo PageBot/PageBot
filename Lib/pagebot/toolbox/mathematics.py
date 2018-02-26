@@ -208,4 +208,5 @@ def normalize(p, length=1):
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
+    import sys
+    sys.exit(doctest.testmod()[0])

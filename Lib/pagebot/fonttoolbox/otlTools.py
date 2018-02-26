@@ -1537,7 +1537,8 @@ def _runDocTests():
 
 if __name__ == "__main__":
     if True:
-        _runDocTests()
+        import sys
+        sys.exit(_runDocTests()[0])
     if False:
         gposFormats = ['SinglePosFormat1', 'SinglePosFormat2', 'PairPosFormat1', 'PairPosFormat2', 'CursivePosFormat1', 'MarkBasePosFormat1', 'MarkLigPosFormat1', 'MarkMarkPosFormat1', 'ContextPosFormat1', 'ContextPosFormat2', 'ContextPosFormat3', 'ChainContextPosFormat1', 'ChainContextPosFormat2', 'ChainContextPosFormat3', 'ExtensionPosFormat1']
         gsubFormats = ['SingleSubstFormat1', 'SingleSubstFormat2', 'MultipleSubstFormat1', 'AlternateSubstFormat1', 'LigatureSubstFormat1', 'ContextSubstFormat1', 'ContextSubstFormat2', 'ContextSubstFormat3', 'ChainContextSubstFormat1', 'ChainContextSubstFormat2', 'ChainContextSubstFormat3', 'ExtensionSubstFormat1', 'ReverseChainSingleSubstFormat1']
