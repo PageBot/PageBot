@@ -97,7 +97,8 @@ def _runDocTests():
 from pagebot.contexts import defaultContext as c
 if __name__ == "__main__":
     if True:
-        _runDocTests()
+        import sys
+        sys.exit(_runDocTests()[0])
     else:
         # Test to be run in DrawBot
         from tnTestFonts import getFontPath
