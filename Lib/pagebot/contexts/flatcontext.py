@@ -113,6 +113,7 @@ class FlatContext(BaseContext):
         (100, 100)
         """
         self.doc = self.b.document(w, h, units)
+        self.newPage(w, h)
 
     def saveDocument(self, path, multiPage=True):
         u"""Save the current document to file(s)
@@ -347,9 +348,16 @@ class FlatContext(BaseContext):
             shape.stroke(self.strokeColor).width(self.strokeWidth)
         return shape
 
+    def ensure_page(self):
+        if not self.doc:
+            self.newDocument(0, 0)
+        if not self.pages:
+            self.newPage(self.doc.w, self.doc.h)
+
     def rect(self, x, y, w, h):
         shape = self._getShape()
         if shape is not None:
+            self.ensure_page()
             self.page.place(shape.rectangle(x, y, w, h))
 
     def oval(self, x, y, w, h):
@@ -358,17 +366,20 @@ class FlatContext(BaseContext):
         if the oval. Compensate for the difference."""
         shape = self._getShape()
         if shape is not None:
+            self.ensure_page()
             self.page.place(shape.ellipse(x-w/2, y-h/2, w, h))
 
     def circle(self, x, y, r):
         u"""Draw an circle in square, with radius r and (x,y) as middle."""
         shape = self._getShape()
         if shape is not None:
+            self.ensure_page()
             self.page.place(shape.circle(x, y, r))
 
     def line(self, p0, p1):
         shape = self._getShape()
         if shape is not None:
+            self.ensure_page()
             self.page.place(shape.line(p0[0], p0[1], p1[0], p1[1]))
 
     def newPath(self):
@@ -377,9 +388,9 @@ class FlatContext(BaseContext):
 
     def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
         shape = self._getShape()
-        # TODO: Get this to work
-        #if shape is not None:
-        #    self.page.place(shape.path(self._pathCommands))
+        if shape is not None:
+            self.ensure_page()
+            self.page.place(shape.path(self._pathCommands))
 
     def moveTo(self, p):
         assert self._pathCommands is not None
