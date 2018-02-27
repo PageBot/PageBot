@@ -19,11 +19,15 @@ import os
 
 def getRootPath():
     u"""Answer the root path of the pagebot module."""
-    return '/'.join(['.'] + __file__.split('/')[:-4]) # Path of this file with pagebot/__init__.py(c) removed.
+    return '/'.join(__file__.split('/')[:-4])
 
 def getRootFontPath():
     u"""Answer the standard font path of the pagebot module."""
-    return getRootPath() + '/Fonts'
+    root = getRootPath()
+    if root == "":
+        return 'Fonts'
+    else:
+        return root + '/Fonts'
 
 def _recursivelyCollectFontPaths(path, fontPaths):
     u"""Recursive helper function for getFontPaths."""
