@@ -444,6 +444,28 @@ class Glyph(object):
         return self._components
     components = property(_get_components)
 
+    def _get_variables(self):
+        u"""Answer the axis-deltas for this glyph. Answer an None if there are no
+        deltas for this glyph or if the parent is not a Var-font.
+
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> fontPath = getRootFontPath()
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> font = Font(path)
+        >>> glyph = font['H']
+        >>> variables = glyph.variables
+        >>> sorted(glyph.variables.keys())
+        ['GRAD', 'XOPQ', 'XTRA', 'YOPQ', 'YTRA', 'YTSE', 'YTUC', 'opsz', 'wdth', 'wght']
+        >>> axis, deltas = variables['GRAD']
+        >>> axis
+        {'GRAD': (0.0, 1.0, 1.0)}
+        >>> deltas[:6]
+        [(0, 0), None, (52, 0), None, None, (89, 0)]
+        """
+        return self.font.variables.get(self.name) # Answer None if variations for this glyph don't exist.
+    variables = property(_get_variables)
+
     def _get_path(self): # Read only for now.
         if self._path is None or self.dirty:
             self._initialize()
