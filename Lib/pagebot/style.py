@@ -144,58 +144,53 @@ INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 
 
 # Standard font style names, with the matching abbreviations they can have in font style
 # As reference TYPETR Upgrade is mentioned.
-# Then expand the matching table, so all entries match all other entries
+# In normalized keys, all CamelCase is flattened.
 FONT_SIZE_MATCHES = {
     'Micro': ('Micro', 100),
-    'Reading Edge': ('Reading Edge', 'ReadingEdge', 'RE', 150),
+    'Readingedge': ('Readingedge', ('Reading','Edge'), 'RE', 150),
     'Agate': ('Agate', 200),
     'Caption': ('Caption', 300),
     'Text': ('Text', 400),
-    '': ('', 500),
+    '': ('Default', 500),
     'Deck': ('Deck', 600),
-    'Subhead': ('Subhead', 700),
-    'Display': ('Display', 800),
-    'Banner': ('Banner', 900)
+    'Subhead': ('Subhead', 700,),
+    'Display': ('Display', 800,),
+    'Banner': ('Banner', 900,)
 }
 FONT_WEIGHT_MATCHES = {
     'Hairline': ['Hairline', 'Hair', 'Hl'] + range(0, 261), # Upgrade 260
     'Thin': ['Thin', 'Thn', 'Thi'] + range(260, 275), # Upgrade 270 + range(275, 295), # Upgrade 280
-    'Ultra Light':  ['Ultra Light', 'UltraLight', 'ULight', 'ULght', 'ULt', 'Ult Lt'] + range(275, 295), 
+    'Ultralight':  ['Ultralight', ('Ultra','Light'), 'ULight', 'ULght', 'ULt', ('Ult','Lt')] + range(275, 295), 
     'Light': ['Light', 'Lght', 'Lig', 'Lt'] + range(295, 320), # Upgrade 300
-    'Semi Light': ['Semi Light', 'SemiLight', 'SLight', 'SLght', 'SLt'] + range(320, 350),
+    'Semilight': ['Semilight', ('Semi','Light'), 'SLight', 'SLght', 'SLt'] + range(320, 350),
     'Book': ['Book', 'Bk'] + range(350, 395), # Upgrade 390
     'Regular': ['Regular', 'Standard', 'Normal', 'Reg', 'Roman', 'Lean', 'Rom'] + range(396, 450), # Upgrade 400
     'Medium': ['Medium', 'Med', 'Md'] + range(450, 550), # Upgrade 500
-    'Semibold': ['Semibold', 'SemiBold', 'Semi Bold', 'Demi Bold', 'Demibold', 'DemiBold', 'Demibld', 'Sbd', 'Sembold', 'SemBold', 'SBold', 'Sem', 'Demi', 'Dem'] + range(550, 650), # Upgrade 600
+    'Semibold': ['Semibold', ('Semi','Bold'), 'Demibold', ('Demi','Bold'), 'Demibld', 'Sbd', 'Sembold', ('Sem','Bold'), 'SBold', 'Sem', 'Demi', 'Dem'] + range(550, 650), # Upgrade 600
     'Bold': ['Bold', 'Bol', 'Bd'] + range(650, 725), # Upgrade 700
-    'Extra Bold': ['Extra Bold', 'ExtraBold', 'XBold', 'XBd'] + range(725, 755), # 750
+    'Extrabold': ['Extrabold', ('Extra','Bold'), 'XBold', 'XBd'] + range(725, 755), # 750
     'Heavy': ['Heavy', 'Hvy'] + range(755, 780), # 760
     'Black': ['Black', 'Blck', 'Blk', 'Bla', 'Fat'] + range(780, 825), # Upgrade 800
-    'ExtraBlack': ['ExtraBlack', 'Extra Black', 'Extr Black', 'ExtrBlack', 'Ext Black', 'ExtBlack', 'XBlack', 'XBlck', 'XBlk', 'Ex Bla', 'ExBla'] + range(825, 875), # Upgrade 850
-    'UltraBlack': ['UltraBlack', 'Ultra Black', 'UBlack', 'UBlck', 'UBlk'] + range(857, 1000), # Upgrade 900
+    'Extrablack': ['Extrablack', ('Extra','Black'), ('Extr','Black'), ('Ext','Black'), 'XBlack', 'XBlck', 'XBlk', ('Ex','Bla')] + range(825, 875), # Upgrade 850
+    'Ultrablack': ['Ultrablack', ('Ultra','Black'), 'UBlack', 'UBlck', 'UBlk'] + range(857, 1000), # Upgrade 900
 }
 FONT_WIDTH_MATCHES = {
     'Skyline': ('Skyline', 1, 100),
-    'Extra Compressed': ('Extra Compressed', 'ExtraCompressed', 'XComp', 140),
+    'Extracompressed': ('Extracompressed', ('Extra','Compressed'), 'XComp', 140),
     'Compressed': ('Compressed', 'Comp', 'Cmp', 2, 200),
-    'Ultra Condensed': ('Ultra Condensed', 'UltraCondensed', 'UCond', 'Ult Cnd', 250),
-    'Extra Condensed': ('Extra Condensed', 'ExtraCondensed', 'XCond', 3, 300),
+    'Ultracondensed': ('Ultra Condensed', ('Ultra','Condensed'), 'UCond', 'Ult Cnd', 250),
+    'Extra Condensed': ('Extra Condensed', ('Extra','Condensed'), 'XCond', 3, 300),
     'Condensed': ('Condensed', 'Cond', 'Cnd', 'Cn', 4, 400),
     'Narrow': ('Narrow', 'Nrrw', 'Narr', 'Nar', 440),
     'Normal': ('Normal', 'Nrm', 'Norm', 'Nrml', 'Nor', 5, 500),
     'Wide': ('Wide', 'Wd', 6, 600),
     'Extended': ('Extended', 'Expanded', 'Expd', 'Ext', 7, 700),
-    'Extra Extended': ('Extra Extended', 'ExtraExtended', 'Extra Expanded', 'ExtraExpanded', 'XExpanded', 'XExtended', 'XExp', 'XExt', 8, 800),
-    'Ultra Extended': ('Ultra Extended', 'UltraExtended', 'UExtended', 'UExt', 9, 900),
+    'Extraextended': ('Extraextended', ('Extra','Extended'), 'Extraexpanded', ('Extra','Expanded'), 'XExpanded', 'XExtended', 'XExp', 'XExt', 8, 800),
+    'Ultraextended': ('Ultraextended', ('Ultra','Extended'), 'UExtended', 'UExt', 9, 900),
 }
 FONT_ITALIC_MATCHES = {
     'Italic': ('Italic', 'Ita', 'It'),
 }
-# Expand the matching table, so all entries match all other entries
-for d in (FONT_SIZE_MATCHES, FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES):
-    for items in d.values():
-        for item in items:
-            d[item] = items
 
 def newStyle(**kwargs):
     return dict(**kwargs)

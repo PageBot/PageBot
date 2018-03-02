@@ -725,11 +725,6 @@ def path2FontName(path):
     period to remove the extension, version numbers and the database download
     ID.
 
-    /xxx/yyy/zzz/Agency_FB-Compressed.ufo becomes Agency_FB-Compressed
-    /xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo becomes Agency_FB-Compressed
-    #xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo becomes Agency_FB-Bold
-
-    >>> from pagebot.toolbox.transformer import *
     >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency_FB-Compressed'
     >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')
@@ -743,6 +738,26 @@ def path2FontName(path):
     return 'Untitled'
 
 path2GlyphIdName = path2FontName
+
+styleNameParts = re.compile('[^A-Za-z]*([A-Z]*[a-z]*)')
+
+def path2StyleNameParts(pathOrName):
+    u"""Answer the fileName or name as set of unique parts that can be checked 
+    for as style e.g. by the abbreviated style names in style.py. 
+    The parts a split on Cap(+Cap)(+lc) patterns.
+    Note that the family name is also included, as often there is no difference
+    between the family name and the style parts.
+
+    >>> sorted(path2StyleNameParts('/xxx/yyy/zzz/Agency_FB-Compressed.ufo'))
+    ['Agency', 'Compressed', 'FB']
+    >>> sorted(path2StyleNameParts('Agency   FB-&&BoldCondensed.TTF'))
+    ['Agency', 'Bold', 'Condensed', 'FB']
+    >>> sorted(path2StyleNameParts('RobotoCondensed_SemiBoldItalic--.1234.UFO'))
+    ['Bold', 'Condensed', 'Italic', 'Roboto', 'Semi']
+    """
+    parts = set(styleNameParts.findall(path2FontName(pathOrName)))
+    parts.remove('')
+    return parts
 
 def path2HintPath(path):
     return path2FormatPath(path, 'autohint.ttf')
