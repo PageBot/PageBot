@@ -18,8 +18,8 @@
 import os
 from pagebot.contexts import defaultContext as context
 from pagebot.contexts.platform import getFontPaths
-from pagebot.fonttoolbox.objects.font import Font
-from pagebot.toolbox.transformer import path2FontName, isFontPath
+from pagebot.fonttoolbox.objects.font import Font, isFontPath
+from pagebot.toolbox.transformer import path2FontName
 
 
 def getFamilies(familyPaths):

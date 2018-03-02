@@ -719,6 +719,16 @@ def path2Name(path):
         return 'Untitled'
     return path.split('/')[-1]
 
+def path2Extension(path):
+    u"""Answer the file extension of path.
+
+    >>> path2Extension('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
+    'ufo'
+    >>> path2Extension('/xxx/yyy/zzz/Agency_FB-Compressed.TTF')
+    'TTF'
+    """
+    return path.split('.')[-1]
+
 def path2FontName(path):
     u"""
     Take that file part of the path, and get the chunk until the first

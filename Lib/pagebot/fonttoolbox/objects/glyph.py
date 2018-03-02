@@ -466,25 +466,40 @@ class Glyph(object):
         return self.font.variables.get(self.name) # Answer None if variations for this glyph don't exist.
     variables = property(_get_variables)
 
-    def _get_path(self): # Read only for now.
+    def _get_path(self): 
+        u"""Answer the drawn path of the glyph. For the DrawBotContext this is a OSX-BezierPath
+        the can be drawn on the DrawBot convas. 
+        TODO: Get this to work for Flat
+
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> fontPath = getRootFontPath()
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> font = Font(path)
+        >>> glyph = font['H']
+        >>> str(glyph.path) in ('<BezierPath>',)
+        True
+        """
         if self._path is None or self.dirty:
             self._initialize()
         return self._path
-    path = property(_get_path)
+    path = property(_get_path) # Read only for now.
 
-    def _get_analyzer(self): # Read only for now.
+    def _get_analyzer(self): 
         if self._analyzer is None:
             self._analyzer = self.GLYPHANALYZER_CLASS(self)
         return self._analyzer
-    analyzer = property(_get_analyzer)
+    analyzer = property(_get_analyzer) # Read only for now.
 
-    def _get_box(self): # Read only
+    def _get_box(self): 
+
         self._box = (self.ttGlyph.xMin, self.ttGlyph.yMin, self.ttGlyph.xMax, self.ttGlyph.yMax)
         return self._box
-    box = property(_get_box)
+    box = property(_get_box) # Read only for now.
 
     def onBlack(self, p):
-        u"""Answers the boolean flag is the single point (x, y) is on black."""
+        u"""Answers the boolean flag if the single point (x, y) is on black. For now this
+        only work in DrawBotContext."""
         p = point2D(p)
         return self.path._path.containsPoint_(p)
 

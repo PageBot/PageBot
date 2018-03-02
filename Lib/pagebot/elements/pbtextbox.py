@@ -106,9 +106,7 @@ class TextBox(Element):
     def __repr__(self):
         u"""Answer the representation string of the element.
 
-        >>> e = TextBox('ABC')
-        >>> str(e)
-        
+        >>> e = TextBox('ABC')        
         >>> str(e) == 'TextBox:%s (0, 0)ABC' % e.eId
         True
         >>> e = TextBox('ABC', x=100, y=100, w=200)
