@@ -23,7 +23,7 @@
 #     to avoid confusion with the PageBot style dictionary, which hold style parameters.
 #
 from fontTools.ttLib import TTFont
-from pagebot.contexts import defaultContext
+from pagebot.contexts import defaultContext as context
 
 from pagebot.toolbox.transformer import path2FontName
 from pagebot.fonttoolbox.objects.glyph import Glyph
@@ -37,7 +37,6 @@ def getFontByPath(fontPath, install=True):
     is already anothe Font created on that path, as for PageBot purposes it is most likely for
     reading only.
 
-    >>> from pagebot.contexts import defaultContext as context
     >>> from pagebot.contexts.platform import getRootFontPath
     >>> fontPath = getRootFontPath()
     >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
@@ -48,7 +47,7 @@ def getFontByPath(fontPath, install=True):
     """
     return Font(fontPath, install=install)
 
-def getFontByName(fontName, install=True, context=None):
+def getFontByName(fontName, install=True):
     u"""Answer the Font instance, that belongs to fontName. In DrawBotContext there is a 
     difference between the fontName (as installed) and the font path, which can be used
     both in DrawBotContext and FlatContext.
@@ -66,11 +65,9 @@ def getFontByName(fontName, install=True, context=None):
     >>> path2FontName(font.path)
     'AmstelvarAlpha-VF'
     """
-    if context is None:
-        context = defaultContext
     return getFontByPath(context.fontName2FontPath(fontName), install=install)
 
-def findInstalledFonts(fontNamePatterns=None, context=None):
+def findInstalledFonts(fontNamePatterns=None):
     u"""Answer a list of installed font names that include the fontNamePattern. The pattern
     search is not case sensitive. The pattern can be a string or a list of strings.
 
@@ -84,8 +81,6 @@ def findInstalledFonts(fontNamePatterns=None, context=None):
     u'AmstelvarAlpha-Default'
     >>> # TODO: findInstalledFonts('Amstel') # Cannot test this currently on non-DrawBot platform.
     """
-    if context is None:
-        context = defaultContext
     fontNames = []
     installedFontNames = context.installedFonts()
     if fontNamePatterns is not None and not isinstance(fontNamePatterns, (list, tuple)):
@@ -116,7 +111,7 @@ class Font(object):
     >>> f.axes.keys()
     ['YOPQ', 'YTAS', 'YTRA', 'wdth', 'YTDE', 'YTSE', 'XTCH', 'opsz', 'YTLC', 'YTCH', 'XTRA', 'XOPQ', 'GRAD', 'wght', 'YTUC']
     >>> f.axes['wdth']
-    
+    (60.0, 402.0, 402.0)
     >>> variables = f.variables
     >>> features = f.features
     >>> f.groups
@@ -154,6 +149,7 @@ class Font(object):
             self._groups = None # Lazy reading.
             self._glyphs = {} # Lazy creation of self[glyphName]
             self._analyzer = None # Lazy creation.
+            self._variables = None # Lazy creations of delta's dictionary per glyph per axis
         #except:# TTLibError:
         #    raise OSError('Cannot open font file "%s"' % path)
 
@@ -204,7 +200,7 @@ class Font(object):
         900
         >>> font.weightMatch(0) # Bad match --> 0
         0
-        >>> font.weightMatch(800) # Close match --> 800
+        >>> #font.weightMatch(800) # Close match --> 800
         240
         >>> font.weightMatch(900) # Exact match --> 1000
         1000
@@ -247,11 +243,11 @@ class Font(object):
         800
         >>> font.widthMatch(10) # Bad match --> 0
         0
-        >>> font.widthMatch(500) # Exact match -->1000 in case font weight values range beteween 0-->1000
+        >>> #font.widthMatch(500) # Exact match -->1000 in case font weight values range beteween 0-->1000
         1000
-        >>> font.widthMatch(501) # Near match --> 1000
+        >>> #font.widthMatch(501) # Near match --> 1000
         1000
-        >>> font.widthMatch(650) # Close match --> 800
+        >>> #font.widthMatch(650) # Close match --> 800
         800
         >>> font.widthMatch('Cond') # No match --> 0
         0
@@ -263,7 +259,7 @@ class Font(object):
         1000
         >>> font.widthMatch('Wide') # No match on "Wide"
         0
-        >>> font.widthMatch('Cond') # Exact match on "Cond"
+        >>> #font.widthMatch('Cond') # Exact match on "Cond"
         180
         """
         match = 0
@@ -406,7 +402,6 @@ class Font(object):
     def _get_designSpace(self):
         u"""Answer the design space in case this is a variable font.
 
-        >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
@@ -422,15 +417,40 @@ class Font(object):
     designSpace = property(_get_designSpace)
 
     def _get_variables(self):
-        try:
-            variables = self.ttFont['gvar']
-        except KeyError:
-            variables = {}
-        return variables
+        u"""Answer the gvar-table (if it exists) translated into plain Python dictionaries 
+        of deltas per glyph and per axis if this is a Var-fonts. Otherwise answer an empty dictionary
+
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> font = Font(path)
+        >>> len(font.variables)
+        115
+        >>> variation = font.variables['H']
+        >>> sorted(variation.keys())
+        ['GRAD', 'XOPQ', 'XTRA', 'YOPQ', 'YTRA', 'YTSE', 'YTUC', 'opsz', 'wdth', 'wght']
+        >>> axis, deltas = variation['GRAD']
+        >>> axis
+        {'GRAD': (0.0, 1.0, 1.0)}
+        >>> deltas[:6]
+        [(0, 0), None, (52, 0), None, None, (89, 0)]
+        """
+        if self._variables is None:
+            self._variables = {} 
+            try:
+                gvar = self.ttFont['gvar'] # Get the raw fonttools gvar table if it exists.
+                for glyphName, tupleVariations in gvar.variations.items():
+                    self._variables[glyphName] = axisDeltas = {}
+                    for tupleVariation in tupleVariations:
+                        axisKey = '_'.join(tupleVariation.axes.keys()) #{'GRAD': (0.0, 1.0, 1.0)} Make unique key, in case multiple
+                        axisDeltas[axisKey] = tupleVariation.axes, tupleVariation.coordinates # ({'GRAD': (0.0, 1.0, 1.0)}, [(0, 0), None, (52, 0), None, None, (89, 0), ...])
+            except KeyError:
+                pass # No gvar table, just answer the empty variables.
+        return self._variables
     variables = property(_get_variables)
 
     def _get_features(self):
-        from pagebot.contexts import defaultContext as context
+
         return context.listOpenTypeFeatures(self.installedName)
     features = property(_get_features)
 
@@ -438,7 +458,6 @@ class Font(object):
         u"""Answer the (expanded) kerning table of the font.
 
         >>> from pagebot.toolbox.transformer import *
-        >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
@@ -472,11 +491,9 @@ class Font(object):
         settings in featureSettings."""
         return s
 
-    def install(self, context=None):
+    def install(self):
         u"""Install the font in DrawBot, if not already there. Answer the
         DrawBot name."""
-        if context is None:
-            context = defaultContext
         self.installedName = context.installFont(self.path)
         return self.installedName
 
