@@ -59,6 +59,21 @@ class Typesetter(object):
     }
     def __init__(self, doc=None, context=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None,
             tryExcept=True, verbose=False):
+        u"""
+        The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
+        a Galley instance, with formatted string depending on the current context.
+
+        >>> from pagebot.contexts.platform import getRootPath
+        >>> from pagebot.elements.element import Element
+        >>> path = getRootPath() + '/README.md'
+        >>> t = Typesetter() # Create a new typesetter
+        >>> nodeTree = t.typesetFile(path) # Parase the Markdown file into HTML-->nodeTree
+        >>> nodeTree.__class__.__name__ # This is an etree root, also called "Element", different class.
+        'Element'
+        >>> e = Element()
+        >>> t.typesetNode(nodeTree, e)
+
+        """
         # Set the doc context of the typesetter. doc be None, in which case it is expected that one of the code blocks
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
@@ -644,7 +659,8 @@ class Typesetter(object):
             # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
             # reference, image index and footnote placement.
             self.typesetNode(root, e)
-
+        # Answer the root element of the etree (Note this class also is called "Element", another kind 
+        # of node than the PageBot Element.
         return root
 
 
@@ -685,4 +701,9 @@ class Typesetter(object):
         root = ET.parseString(xml) # Get the root element of the parsed XML tree.
         self.typesetNode(root, e)
 
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 

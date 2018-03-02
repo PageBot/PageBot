@@ -72,6 +72,8 @@ class Font(object):
     115
     >>> f.axes.keys()
     ['YOPQ', 'YTAS', 'YTRA', 'wdth', 'YTDE', 'YTSE', 'XTCH', 'opsz', 'YTLC', 'YTCH', 'XTRA', 'XOPQ', 'GRAD', 'wght', 'YTUC']
+    >>> f.axes['wdth']
+    
     >>> variables = f.variables
     >>> features = f.features
     >>> f.groups

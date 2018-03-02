@@ -216,16 +216,6 @@ def cd2d(cd, e):
         d = cd * (e.css('cd', 0) + e.gd) - e.gd  # Overwrite style from here.
     return d
 
-# FIX-ME: No code is currently using this method and
-#         its implementation in broken since the 'cy' var is undefined.
-#
-#def baseline2y(yIndex, e):
-#    u"""Convert columns index and line index to page position. Answered (x, y) is point position based on
-#    marginTop + yIndex*baseLine."""
-#    padT = e.pt
-#    baseline = e.css('baseline')
-#    return padT + cy * baseline
-
 class Gradient(object):
     u"""
     As linear gradient (startRadius or endRadius not set):

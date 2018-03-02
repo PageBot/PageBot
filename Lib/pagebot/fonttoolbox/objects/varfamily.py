@@ -89,6 +89,8 @@ class VarFamily(Family):
     YTDE = 'YTDE' # Variable descenders
     YTAS = 'YTAS' # Variable ascenders
     GRAD = 'GRAD' # Grades
+    XGRD = 'XGRD' # Grade in x-direction
+    YGRD = 'YGRD' # Grade in y-direction
     RNDS = 'RNDS' # Rounded corners and terminals
     STNC = 'STNC' # Stencil
     PARAMETRIC_AXES = [XTRA, XOPQ, YTRA, YTLC, YTUC, YTDE, YTAS, GRAD, RNDS, STNC]
