@@ -287,6 +287,10 @@ class DrawBotContext(BaseContext):
         if self._path is not None:
             self._path.closePath()
 
+    def bezierPathByFlatteningPath(self, path):
+        u"""Use the NSBezier flatten path."""
+        return path.getNSBezierPath().bezierPathByFlatteningPath()
+        
     def scale(self, sx, sy=None):
         u"""Set the drawing scale."""
         if sy is None:

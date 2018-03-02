@@ -23,7 +23,7 @@
 #     to avoid confusion with the PageBot style dictionary, which hold style parameters.
 #
 import os
-from fontTools.ttLib import TTFont
+from fontTools.ttLib import TTFont, TTLibError
 from pagebot.contexts import defaultContext as context
 
 from pagebot.toolbox.transformer import path2FontName, path2Extension
@@ -52,7 +52,7 @@ def isFontPath(fontPath):
     """
     return os.path.exists(fontPath) and path2Extension(fontPath) in ('ttf', 'otf') 
 
-def getFontByPath(fontPath, install=True):
+def getFont(fontPath, lazy=True):
     u"""Answer the Font instance, that connects to the fontPath. Note that there is no check if there
     is already anothe Font created on that path, as for PageBot purposes it is most likely for
     reading only.
@@ -61,58 +61,16 @@ def getFontByPath(fontPath, install=True):
     >>> fontPath = getRootFontPath()
     >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
     >>> fontName = path2FontName(path)
-    >>> font = getFontByPath(path)
+    >>> font = getFont(path)
     >>> font.path == path
     True
     """
-    return Font(fontPath, install=install)
-
-def getFontByName(fontName, install=True):
-    u"""Answer the Font instance, that belongs to fontName. In DrawBotContext there is a 
-    difference between the fontName (as installed) and the font path, which can be used
-    both in DrawBotContext and FlatContext.
-
-    >>> from pagebot.contexts.platform import getRootFontPath
-    >>> fontPath = getRootFontPath()
-    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-    >>> font = getFontByName(path)
-    >>> font.path == path
-    True
-    >>> font.name == 'AmstelvarAlpha-Default'
-    True
-    >>> font.installedName
-    u'AmstelvarAlpha-Default'
-    >>> path2FontName(font.path)
-    'AmstelvarAlpha-VF'
-    """
-    return getFontByPath(context.fontName2FontPath(fontName), install=install)
-
-def findInstalledFonts(fontNamePatterns=None):
-    u"""Answer a list of installed font names that include the fontNamePattern. The pattern
-    search is not case sensitive. The pattern can be a string or a list of strings.
-
-    >>> findInstalledFonts('Amstel')
-    ['AmstelvarAlpha-Default']
-    >>> from pagebot.contexts.platform import getRootFontPath
-    >>> fontPath = getRootFontPath()
-    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-    >>> font = getFontByName(path, install=True)
-    >>> font.installedName
-    u'AmstelvarAlpha-Default'
-    >>> # TODO: findInstalledFonts('Amstel') # Cannot test this currently on non-DrawBot platform.
-    """
-    fontNames = []
-    installedFontNames = context.installedFonts()
-    if fontNamePatterns is not None and not isinstance(fontNamePatterns, (list, tuple)):
-        fontNamePatterns = [fontNamePatterns]
-    if fontNamePatterns is not None:
-        for fontNamePattern in fontNamePatterns:
-            for fontName in installedFontNames:
-                if fontNamePattern in fontName:
-                    fontNames.append(fontName)
-    else:
-        fontNames = installedFontNames
-    return fontNames
+    try:
+        if not isFontPath(fontPath):
+            return None
+        return Font(fontPath, lazy=lazy)
+    except TTLibError: # Could not open font, due to bad font file.
+        return None
 
 class Font(object):
     u"""
@@ -123,7 +81,7 @@ class Font(object):
     >>> from pagebot.contexts.platform import getRootFontPath
     >>> fontPath = getRootFontPath()
     >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-    >>> f = Font(path, install=False, lazy=False)
+    >>> f = getFont(path, lazy=False)
     >>> f.name
     u'AmstelvarAlpha Default'
     >>> len(f)
@@ -141,43 +99,33 @@ class Font(object):
     GLYPH_CLASS = Glyph
     FONTANALYZER_CLASS = FontAnalyzer
 
-    def __init__(self, path, name=None, install=True, opticalSize=None, location=None, styleName=None, lazy=True):
-        u"""Initialize the TTFont, for which Font is a wrapper. Default is to
-        install the font in DrawBot.
+    def __init__(self, path, name=None, opticalSize=None, location=None, styleName=None, lazy=True):
+        u"""Initialize the TTFont, for which Font is a wrapper. 
 
-        self.name is supported, in case the caller wants to use a different
-        name than the DrawBot installing name."""
+        self.name is supported, in case the caller wants to use a different"""
         self.path = path # File path of the font file. 
-        if install:
-            # Installs the font in DrawBot from self.path and initializes self.installedName.
-            self.install()
-        else:
-            self.installedName = None # Set to DrawBot name, if installing later.
-        #try:
-        if 1:
-            self.ttFont = TTFont(path, lazy=lazy)
-            # TTFont is available as lazy style.info.font
-            self.info = FontInfo(self.ttFont)
-            self.info.opticalSize = opticalSize # Optional optical size, to indicate where this Variable Font is rendered for.
-            self.info.location = location # Store origina location of this instance of the font is derived from a Variable Font.
-            # Stores optional custom name, otherwise use original DrawBot name.
-            # Otherwise use from FontInfo.fullName
-            self.name = name or self.installedName or self.info.fullName
-            if styleName is not None:
-                self.info.styleName = styleName # Overwrite default style name in the ttFont or Variable Font location
-            self._kerning = None # Lazy reading.
-            self._groups = None # Lazy reading.
-            self._glyphs = {} # Lazy creation of self[glyphName]
-            self._analyzer = None # Lazy creation.
-            self._variables = None # Lazy creations of delta's dictionary per glyph per axis
-        #except:# TTLibError:
-        #    raise OSError('Cannot open font file "%s"' % path)
 
+        self.ttFont = TTFont(path, lazy=lazy)
+        # TTFont is available as lazy style.info.font
+        self.info = FontInfo(self.ttFont)
+        self.info.opticalSize = opticalSize # Optional optical size, to indicate where this Variable Font is rendered for.
+        self.info.location = location # Store origina location of this instance of the font is derived from a Variable Font.
+        # Stores optional custom name, otherwise use original DrawBot name.
+        # Otherwise use from FontInfo.fullName
+        self.name = name or self.info.fullName
+        if styleName is not None:
+            self.info.styleName = styleName # Overwrite default style name in the ttFont or Variable Font location
+        self._kerning = None # Lazy reading.
+        self._groups = None # Lazy reading.
+        self._glyphs = {} # Lazy creation of self[glyphName]
+        self._analyzer = None # Lazy creation.
+        self._variables = None # Lazy creations of delta's dictionary per glyph per axis
+    
     def __repr__(self):
         """
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
-        >>> font = Font(path)
+        >>> font = getFont(path)
         >>> str(font)
         '<Font Roboto-Black>'
         """
@@ -188,7 +136,7 @@ class Font(object):
 
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
-        >>> font = Font(path)
+        >>> font = getFont(path)
         >>> g = font['A']
         >>> g.name, g.width
         ('A', 1395)
@@ -202,7 +150,7 @@ class Font(object):
 
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
-        >>> font = Font(path)
+        >>> font = getFont(path)
         >>> len(font)
         1294
         """
@@ -215,7 +163,7 @@ class Font(object):
 
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
-        >>> font = Font(path)
+        >>> font = getFont(path)
         >>> font.info.weightClass
         900
         >>> font.weightMatch(0) # Bad match --> 0
@@ -250,7 +198,7 @@ class Font(object):
 
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
-        >>> font = Font(path)
+        >>> font = getFont(path)
         >>> font.info.widthClass
         5
         >>> font.widthMatch(0) # Bad match --> 0
@@ -307,7 +255,7 @@ class Font(object):
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = getRootFontPath() + '/google/roboto/Roboto-BlackItalic.ttf' # We know this exists in the PageBot repository
-        >>> f = Font(path, install=False)
+        >>> f = getFont(path)
         >>> f.isItalic()
         True
         """
@@ -325,7 +273,7 @@ class Font(object):
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-        >>> f = Font(path, install=False, lazy=False)
+        >>> f = getFont(path, lazy=False)
         >>> 'A' in f.keys()
         True
         """
@@ -341,7 +289,7 @@ class Font(object):
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-        >>> f = Font(path, install=False, lazy=False)
+        >>> f = getFont(path, lazy=False)
         >>> 'A' in f
         True
         """
@@ -355,7 +303,7 @@ class Font(object):
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-        >>> f = Font(path, install=False, lazy=False)
+        >>> f = getFont(path, lazy=False)
         >>> #f.analyzer.stems # TODO: Needs bezier path for pixel test.
         
         """
@@ -372,7 +320,7 @@ class Font(object):
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-        >>> f = Font(path, install=False, lazy=False)
+        >>> f = getFont(path, lazy=False)
         >>> f.axes['XTRA']
         (42.0, 402.0, 402.0)
          """
@@ -392,7 +340,7 @@ class Font(object):
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-        >>> font = Font(path, install=False)
+        >>> font = getFont(path)
         >>> len(font.getDefaultVarLocation().keys())
         15
         """
@@ -472,8 +420,9 @@ class Font(object):
     variables = property(_get_variables)
 
     def _get_features(self):
-
-        return context.listOpenTypeFeatures(self.installedName)
+        # TODO: Use TTFont for this instead.
+        #return context.listOpenTypeFeatures(self.installedName)
+        return {}
     features = property(_get_features)
 
     def _get_kerning(self):
@@ -483,7 +432,7 @@ class Font(object):
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
-        >>> f = Font(path, install=False, lazy=False)
+        >>> f = getFont(path, lazy=False)
         >>> len(f.kerning.keys())
         22827
         """
@@ -500,24 +449,13 @@ class Font(object):
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
-        >>> f = Font(path, install=False, lazy=False)
+        >>> f = getFont(path, lazy=False)
         >>> g = f['A']
         >>> f.groups is None
         True
         """
         return self._groups
     groups = property(_get_groups)
-
-    def getFeaturedString(self, s, featureSettings):
-        u"""Compile the string s into glyph names, corresponding to the
-        settings in featureSettings."""
-        return s
-
-    def install(self):
-        u"""Install the font in DrawBot, if not already there. Answer the
-        DrawBot name."""
-        self.installedName = context.installFont(self.path)
-        return self.installedName
 
     def save(self, path=None):
         u"""Save the font to optional path or to self.path."""

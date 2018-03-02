@@ -747,6 +747,18 @@ def path2FontName(path):
         return name.split('.')[0]
     return 'Untitled'
 
+familyNameParts = re.compile('([A-Za-z]*)')
+
+def path2FamilyName(path):
+    u"""Answer the first A-Za-z part of the file name.
+
+    >>> path2FamilyName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
+    'Agency'
+    >>> path2FamilyName('/xxx/yyy/zzz/Agency##@$$% _FB.TTF')
+    'Agency'
+    """
+    return familyNameParts.findall(path2Name(path))[0]
+
 path2GlyphIdName = path2FontName
 
 styleNameParts = re.compile('[^A-Za-z]*([A-Z]*[a-z]*)')

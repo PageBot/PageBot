@@ -51,7 +51,7 @@ class Glyph(object):
     >>> from pagebot.fonttoolbox.objects.font import Font
     >>> from pagebot.contexts.platform import getRootFontPath
     >>> path = getRootFontPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
-    >>> f = Font(path, install=False)
+    >>> f = getFont(path) # Keep font alive to glyph.font weakref
     >>> g = f['a']
     >>> g.name
     'a'
@@ -137,9 +137,7 @@ class Glyph(object):
         maxX = maxY = -sys.maxint
 
         if coordinates or components:
-            # TODO: Needs context for DrawBot/Flex usage
-            # TODO: Separate path creation from init?
-            self._path = path = context.newPath()
+            self._path = path = self.context.newPath()
 
         for index, (x, y) in enumerate(coordinates):
             minX = min(x, minX)
@@ -205,11 +203,9 @@ class Glyph(object):
             self._initialize()
 
     def _get_flattenedPath(self):
-        u"""Answer the flattened NSBezier path. 
-        TODO: Needs to get DrawBotContext reference, and Flex equivalent.
-        TODO: Needs some notifcation is self.path was None. """
+        u"""Answer the flattened DrawBotContext NSBezier path."""
         if self._flattenedPath is None and self.path is not None:
-            self._flattenedPath = self.path.getNSBezierPath().bezierPathByFlatteningPath()
+            self._flattenedPath = self.context.bezierPathByFlatteningPath(self.path)
         return self._flattenedPath
     flattenedPath = property(_get_flattenedPath)
 
@@ -449,10 +445,10 @@ class Glyph(object):
         deltas for this glyph or if the parent is not a Var-font.
 
         >>> from pagebot.contexts.platform import getRootFontPath
-        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-        >>> font = Font(path)
+        >>> font = getFont(path) # Keep font alive to glyph.font weakref
         >>> glyph = font['H']
         >>> variables = glyph.variables
         >>> sorted(glyph.variables.keys())
@@ -472,10 +468,10 @@ class Glyph(object):
         TODO: Get this to work for Flat
 
         >>> from pagebot.contexts.platform import getRootFontPath
-        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-        >>> font = Font(path)
+        >>> font = getFont(path)
         >>> glyph = font['H']
         >>> str(glyph.path) in ('<BezierPath>',)
         True

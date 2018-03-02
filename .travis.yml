@@ -47,6 +47,7 @@ script:
 - python Lib/pagebot/fonttoolbox/mutator.py
 - python Lib/pagebot/fonttoolbox/objects/family.py
 - python Lib/pagebot/fonttoolbox/objects/font.py
+- python Lib/pagebot/fonttoolbox/objects/fontinfo.py
 - python Lib/pagebot/fonttoolbox/objects/glyph.py
 - python Lib/pagebot/fonttoolbox/objects/varfamily.py
 - python Lib/pagebot/fonttoolbox/otlTools.py
