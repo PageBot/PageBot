@@ -175,7 +175,6 @@ FONT_WEIGHT_MATCHES = {
     'Ultrablack': ['Ultrablack', ('Ultra','Black'), 'UBlack', 'UBlck', 'UBlk'] + range(857, 1000), # Upgrade 900
 }
 FONT_WIDTH_MATCHES = {
-<<<<<<< HEAD
     'Skyline': ('Skyline', 1, 100),
     'Extracompressed': ('Extracompressed', ('Extra','Compressed'), 'XComp', 140),
     'Compressed': ('Compressed', 'Comp', 'Cmp', 2, 200),
@@ -188,20 +187,6 @@ FONT_WIDTH_MATCHES = {
     'Extended': ('Extended', 'Expanded', 'Expd', 'Ext', 7, 700),
     'Extraextended': ('Extraextended', ('Extra','Extended'), 'Extraexpanded', ('Extra','Expanded'), 'XExpanded', 'XExtended', 'XExp', 'XExt', 8, 800),
     'Ultraextended': ('Ultraextended', ('Ultra','Extended'), 'UExtended', 'UExt', 9, 900),
-=======
-    'Skyline': ['Skyline', 1] + range(11, 140),
-    'Extra Compressed': ['Extra Compressed', 'ExtraCompressed', 'XComp'] + range(140, 200),
-    'Compressed': ['Compressed', 'Comp', 'Cmp', 2] + range(200, 250),
-    'Ultra Condensed': ['Ultra Condensed', 'UltraCondensed', 'UCond', 'Ult Cnd'] + range(250, 300),
-    'Extra Condensed': ['Extra Condensed', 'ExtraCondensed', 'XCond', 3] + range(300, 400),
-    'Condensed': ['Condensed', 'Cond', 'Cnd', 'Cn', 4] + range(400, 440),
-    'Narrow': ['Narrow', 'Nrrw', 'Narr', 'Nar'] + range(440, 500),
-    'Normal': ['Regular', 'Normal', 'Nrm', 'Norm', 'Nrml', 'Nor', 5] + range(500, 600),
-    'Wide': ['Wide', 'Wd', 6] + range(600, 700),
-    'Extended': ['Extended', 'Expanded', 'Expd', 'Ext', 7] + range(700, 800),
-    'Extra Extended': ['Extra Extended', 'ExtraExtended', 'Extra Expanded', 'ExtraExpanded', 'XExpanded', 'XExtended', 'XExp', 'XExt', 8] + range(800, 900),
-    'Ultra Extended': ['Ultra Extended', 'UltraExtended', 'UExtended', 'UExt', 9] + range(900, 1000),
->>>>>>> origin/master
 }
 FONT_ITALIC_MATCHES = {
     'Italic': ('Italic', 'Ita', 'It'),
