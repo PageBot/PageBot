@@ -232,9 +232,9 @@ class Family(object):
 
         for fontName in fontNames:
             font = self.fonts.get(fontName)
-            if not fontKey in self.installedFonts: # Only if not already installed.
+            if not font.path in self.installedFonts: # Only if not already installed.
                 fontName = font.install()
-            self.installedFonts[fontName] = fontKey
+            self.installedFonts[font.path] = font
 
     def addFonts(self, fontsOrPaths):
         u"""And the fonts to the family. This can be a list of Font instances, a list of font names or
