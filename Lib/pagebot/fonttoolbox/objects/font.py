@@ -22,15 +22,35 @@
 #     We'll call this class "Font" instead of "Style" (as in other TypeNetwerk tool code),
 #     to avoid confusion with the PageBot style dictionary, which hold style parameters.
 #
+import os
 from fontTools.ttLib import TTFont
 from pagebot.contexts import defaultContext as context
 
-from pagebot.toolbox.transformer import path2FontName
+from pagebot.toolbox.transformer import path2FontName, path2Extension
+
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 from pagebot.style import FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES
+
+def isFontPath(fontPath):
+    u"""Answer the boolean flag if the path is a font path.
+    For now, PageBot only supports ('ttf', 'otf')
+
+    >>> from pagebot.contexts.platform import getRootFontPath
+    >>> fontPath = getRootFontPath()
+    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> isFontPath(path)
+    True
+    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF_XXX.ttf'
+    >>> isFontPath(path)
+    False
+    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.UFO'
+    >>> isFontPath(path)
+    False
+    """
+    return os.path.exists(fontPath) and path2Extension(fontPath) in ('ttf', 'otf') 
 
 def getFontByPath(fontPath, install=True):
     u"""Answer the Font instance, that connects to the fontPath. Note that there is no check if there
@@ -434,18 +454,20 @@ class Font(object):
         {'GRAD': (0.0, 1.0, 1.0)}
         >>> deltas[:6]
         [(0, 0), None, (52, 0), None, None, (89, 0)]
+        >>> font.variables.get('wrongGlyphName') is None
+        True
         """
         if self._variables is None:
-            self._variables = {} 
             try:
                 gvar = self.ttFont['gvar'] # Get the raw fonttools gvar table if it exists.
+                self._variables = {} 
                 for glyphName, tupleVariations in gvar.variations.items():
                     self._variables[glyphName] = axisDeltas = {}
                     for tupleVariation in tupleVariations:
                         axisKey = '_'.join(tupleVariation.axes.keys()) #{'GRAD': (0.0, 1.0, 1.0)} Make unique key, in case multiple
                         axisDeltas[axisKey] = tupleVariation.axes, tupleVariation.coordinates # ({'GRAD': (0.0, 1.0, 1.0)}, [(0, 0), None, (52, 0), None, None, (89, 0), ...])
             except KeyError:
-                pass # No gvar table, just answer the empty variables.
+                pass # No gvar table, just answer the current self._variables as None.
         return self._variables
     variables = property(_get_variables)
 

@@ -238,8 +238,9 @@ class VarFamily(Family):
         >>> #regFont = vf.findRegularFont()
         >>> #regFont
         >>> vf.checkInterpolation() # For now only glyph name compatibility check
+        The font has no kern feature.
+        The fun ends here.
         {}
-    
         """
         if fontFilter is None:
             fontFilter = []
@@ -254,6 +255,7 @@ class VarFamily(Family):
         glyphNames = set()
         path2Fonts = {} 
         for font in self.fonts.values():
+            fontName = path2Name(font.path)
             match = True
             for filterPart in fontFilter:
                 if not filterPart in fontName:

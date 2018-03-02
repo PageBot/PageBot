@@ -522,7 +522,7 @@ class FlatContext(BaseContext):
         we'll check if there is a font file related to fontName. 
         If fontName exists as file path, then answer it unchangend. Otherwise answer None.
         """
-        if os.exists(fontName): # Exists as font file?
+        if os.path.exists(fontName): # Exists as font file?
             return fontName
         for fontPath in getFontPaths():
             if fontName == path2FontName(fontPath):
