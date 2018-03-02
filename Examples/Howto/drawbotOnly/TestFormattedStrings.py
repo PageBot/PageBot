@@ -14,11 +14,18 @@
 #
 from pagebot.contexts import defaultContext as context
 
+import sys
+from pagebot.contexts import defaultContext as context
+if not context.isDrawBot:
+    sys.exit('Example only runs on DrawBot.')
+
 def run():
     aa = context.newString('Book Cover', style=dict(font='Georgia', fontSize=40))
     print textSize(aa)
 
-    aa = context.newString('')
+    # Create formatted tring.
+    bs = context.newString('') # Make BabelString, containing a DrawBot FormattedString
+    aa = bs.s
     aa.font('Georgia')
     aa.fontSize(14)
     aa += '123'
@@ -36,13 +43,13 @@ def run():
     print aa.fontDescender()
     print aa.fontAscender() - aa.fontDescender()
 
-    stroke(0)
-    fill(None)
-    rect(100, 100, 200, 200)
-    text(aa, (100, 100))
+    context.stroke(0)
+    context.fill(None)
+    context.rect(100, 100, 200, 200)
+    context.text(aa, (100, 100))
 
 if __name__ == '__main__':
-    fs = context.newString('Book Cover', style=dict(font='Georgia', fontSize=40))
-    print textSize(fs)
+    bs = context.newString('Book Cover', style=dict(font='Georgia', fontSize=40))
+    print context.textSize(bs)
     run()
 

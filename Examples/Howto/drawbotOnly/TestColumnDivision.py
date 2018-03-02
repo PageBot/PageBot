@@ -14,6 +14,11 @@
 #
 from __future__ import division
 
+import sys
+from pagebot.contexts import defaultContext as context
+if not context.isDrawBot:
+    sys.exit('Example only runs on DrawBot.')
+
 class E(object):
     def css(self, n, v):
         if n == 'gw':

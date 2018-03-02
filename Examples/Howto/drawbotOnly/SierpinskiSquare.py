@@ -15,7 +15,10 @@
 # by Petr van Blokland @petrvanblokland
 # https://twitter.com/petrvanblokland/status/860610270410018817
 
+import sys
 from pagebot.contexts import defaultContext as context
+if not context.isDrawBot:
+    sys.exit('Example only runs on DrawBot.')
 
 def drawSierpinskiSquare(px, py, w, maxW):
     if w < 1:
@@ -41,5 +44,6 @@ if __name__ == '__main__':
         w = canvasSize * factor ** frame
         drawSierpinskiSquare(0, 0, w, canvasSize)
 
+    # DrawBotContext can save as animated gif
     context.saveDocument("_export/SierpinskiSquare.gif")
     print 'Done'

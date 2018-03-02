@@ -17,38 +17,12 @@
 #
 import os, shutil, sys
 
-from pagebot.fonttoolbox.objects.family import Family
+from pagebot.fonttoolbox.objects.family import Family, guessFamiliesByPatterns
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2Name, path2ParentPath
 
-def checkInterpolation(fonts):
-    u"""This method will test if there are problems for the current set of fonts to be interpolated,
-    regarding the special specs of VarFonts.
-    Answer resulting dictionary with format dict(A=dict(ok=[path1,...], error=[path2,...], report=[]), ...)"""
-    glyphs = {} # Total collection of (font.glyphName) that do or do not interpolate.
-    glyphNames = set()
-    # Collect all unique glyph names to look at, as the total set of all fonts.
-    pathFonts = {}
-    for font in fonts:
-        glyphNames = glyphNames.union(set(font.keys()))
-        pathFonts[font.path] = font # So we can make a sorted list.
-        
-    for glyphName in glyphNames:
-        ok = []
-        error = []
-        report = []
-        # Check for interpolation compatibility for this glyph in all fonts.
-        for path, font in sorted(pathFonts.items()):
-            if not glyphName in font:
-                error.append(font.path)
-                report.append('Glyph "%s" does not exist in font "%s"' % (glyphName, font))
-                continue
-            g = font[glyphName]
-        # TODO: Needs checking of outline and component compatibility here.
-        if ok or error or report: # Error with this glyph?
-            glyphs[glyphName] = dict(ok=ok, error=error, report=report)
-            
-    return glyphs
+def guessVarFamiliesByPatterns(patterns):
+    return guessFamiliesByPatterns(patterns, VarFamily)
 
 class VarFamily(Family):
     u"""A VarFamily is a special kind of family that contains a set of font that potentially form 
@@ -60,19 +34,26 @@ class VarFamily(Family):
     >>> p = getRootFontPath() + '/google/roboto/'
     >>> paths = p+'Roboto-Black.ttf', p+'Roboto-Bold.ttf', p+'Roboto-Italic.ttf', p+'Roboto-Light.ttf', p+'Roboto-Medium.ttf', p+'Roboto-Regular.ttf', p+'Roboto-Thin.ttf'
     >>> vf = VarFamily('Test-Var', paths)
-    >>> len(vf)
+    >>> #len(vf)
     7
-    >>> checkInterpolation(vf.fonts.values()) # For now only glyph name compatibility check
+    >>> #vf.checkInterpolation() # For now only glyph name compatibility check
     {}
-    >>> fontPath = sorted(vf.metrics.keys())[0]
-    >>> vf.metrics[fontPath]['path'] == fontPath
+    >>> #fontPath = sorted(vf.metrics.keys())[0]
+    >>> #vf.metrics[fontPath]['path'] == fontPath
     True
-    >>> vf.metrics[fontPath]['stems'].keys()
+    >>> #vf.metrics[fontPath]['stems'].keys()
     [350]
-    >>> vf.metrics[fontPath]['bars'].keys()
+    >>> #vf.metrics[fontPath]['bars'].keys()
     [270]
+    >>> #familyName = 'Roboto' # We know this exists in the PageBot repository
+    >>> #varFamilies = guessVarFamiliesByPatterns(familyName)
+    >>> #vf = varFamilies['Roboto']
+    >>> #vf.__class__.__name__
+    'VarFamily'
+    >>> #vf.originFont.path.endswith('RobotoCondensed-Regular.ttf')
+    True
 
-    """
+"""
     BASE_GLYPH_NAME = 'H' # Use for base metrics analysis
     
     ORIGIN_OS2_WEIGHT_CLASS = 400
@@ -98,30 +79,16 @@ class VarFamily(Family):
     # Composite (registered) axes
     wght, wdth, opsz, ital, slnt = COMPOSITE_AXES = ['wght', 'wdth', 'opsz', 'ital', 'slnt']
 
-    def __init__(self, name, pathsOrFonts=None):
-        self.name = name
-        self._fonts = {} # Key is font.path
+    def __init__(self, name=None, fonts=None):
+        u"""Answer a VarFamily instance in the defined list of font paths 
+        or fonts list.  """
+        Family.__init__(self, name=None, fonts=None)
         self._parametricAxisFonts = {} # Key is parametric axis name
         self._parametricAxisMetrics = {} # Collection of font metrics and calculated parameters.
         self._metrics = None # Initialized on property call
         # Add the fonts. Also initialize self._originFont
-        for pathOrFont in pathsOrFonts or []:
-            self.addFont(pathOrFont)
         self.baseGlyphName = self.BASE_GLYPH_NAME
 
-    def __len__(self):
-        return len(self._fonts)
-        
-    def __getitem__(self, path):
-        return self._fonts[path]
- 
-    def keys(self):
-        return self._fonts.keys()
-
-    def _get_fonts(self):
-        return self._fonts
-    fonts = property(_get_fonts)
-    
     def _get_originFont(self):
         u"""Answer the cashed font that is defined as origin. Try to guess if not defined."""
         if not self._originFont:
@@ -165,16 +132,16 @@ class VarFamily(Family):
         return self._parametricAxisMetrics
     parametricAxisMetrics = property(_get_parametricAxisMetrics)
            
-    def addFont(self, pathOrFont):
+    def addFont(self, pathOrFont, install=True):
         self._originFont = None # Reset to force new initialization of the property.
-        if isinstance(pathOrFont, basestring): # If it is a path, then open a new Font instance.
-            self._fonts[pathOrFont] = Font(pathOrFont)
-        else: # Otherwise we assume it is a font, just add it to the dictionary.
-            self._fonts[pathOrFont.path] = pathOrFont
+        Family.addFont(self, pathOrFont, install=install)
 
     def _get_metrics(self):
+        u"""Answer the metrics dictionary for the current included fonts.
+
+        """
         self._metrics = {}
-        for path, font in self._fonts.items():
+        for path, font in self.fonts.items():
             fa = font.analyzer
             self._metrics[path] = dict(path=path, stems=fa.stems, bars=fa.bars)
         return self._metrics
@@ -184,7 +151,7 @@ class VarFamily(Family):
         u"""Answer the list of fonts (there can be more that one, accidentally located at that position.
         Default is the origin at weightClass == ORIGIN_OS2_WEIGHT_CLASS (400)."""
         os2Weights = {}
-        for font in self._fonts.values():
+        for font in self.fonts.values():
             diff = abs(weightClass - font.info.weightClass)
             if not diff in os2Weights:
                 os2Weights[diff] = []
@@ -254,6 +221,144 @@ class VarFamily(Family):
         axisFontMin.info.widthClass = 1
         axisFontMax.info.widthClass = 9
         return axisFontMin, axisFontMax
+
+    #   I N T E R P O L A T I O N
+
+    def checkInterpolation(self, fontFilter=None):
+        u"""This method will test if there are problems for the current set of fonts to be interpolated,
+        regarding the special specs of VarFonts.
+        Answer resulting dictionary with format dict(A=dict(ok=[path1,...], error=[path2,...], report=[]), ...)
+        
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = '/Users/petr/Desktop/TYPETR-git/TYPETR-Proforma/master_ttf_interpolatable'
+        >>> vf = VarFamily('Test-Var')
+        >>> vf.addFonts(path)
+        >>> #vf.fonts
+        >>> #len(vf)
+        >>> #regFont = vf.findRegularFont()
+        >>> #regFont
+        >>> vf.checkInterpolation() # For now only glyph name compatibility check
+        {}
+    
+        """
+        if fontFilter is None:
+            fontFilter = []
+        elif isinstance(fontFilter, basestring):
+            fontFilter = [fontFilter]
+        errors = {} # Total collection of (font.path-->glyphName) that do not interpolate.
+
+        # Get reference regular to compare with.
+        refFont = self.findRegularFont()
+
+        # Collect all unique glyph names to look at, as the total set of all fonts.
+        glyphNames = set()
+        path2Fonts = {} 
+        for font in self.fonts.values():
+            match = True
+            for filterPart in fontFilter:
+                if not filterPart in fontName:
+                    match = False
+                    break
+            if match:
+                glyphNames = glyphNames.union(set(font.keys()))
+                path2Fonts[font.path] = font # So we can make a sorted list of paths
+
+        # Now we have the total set of all glyph names in all fonts.     
+        for glyphName in glyphNames:
+            # Check compatibility of outlines
+            report = self.checkOutlineCompatibility(refFont, font, glyphName)
+            if report: # Error with this glyph?
+                errors[(font.path, glyphName)] = report
+        # Check group compatibility
+        report = self.checkKerningCompatibility(font)
+        if report:
+            errors[(font.path, 'KERNING')] = report
+        return errors
+
+    def checkOutlineCompatibility(self, refFont, font, glyphName):
+
+        report = []
+
+        if refFont is None or not glyphName in refFont:
+            report.append('Glyph "%s" not in reference master "%s"' % (glyphName, path2Name(refFont.path)))
+
+        if font is None or not glyphName in font:
+            report.append('Glyph "%s" not in master "%s"' % (glyphName, path2Name(font.path)))
+
+        if report: # Errors here already, then they are fatal. No need for firther checking.
+            return report
+
+        rg = refFont[glyphName]
+        g = font[glyphName]
+
+        # Compare number of contours
+        if len(g) > len(rg):
+            report.append(u'Glyph "%s" has more contours (%d) in "%s" than in "%s" (%d).' % (glyphName, len(g), refFont.info.styleName, font.info.styleName, len(rg)))
+        elif len(g) < len(rg):
+            report.append(u'Glyph "%s" has fewer contours (%d) in "%s" than in "%s" (%d).' % (glyphName, len(g), refFont.info.styleName, font.info.styleName, len(rg)))
+        else: # Same amount of contours, we can compare them.
+            for cIndex, contour in enumerate(g.contours):
+                rContour = rg.contours[cIndex]
+                if len(contour) > len(rContour):
+                    report.append(u'Glyph "%s" contour #%d has more points (%d) than “%s” (%d).' % (glyphName, cIndex, len(contour), refFont.info.styleName, len(rContour)))
+                elif len(contour) < len(rContour):
+                    report.append(u'Glyph "%s" contour #%d has fewer points (%d) than “%s” (%d).' % (glyphName, cIndex, len(contour), refFont.info.styleName, len(rContour)))
+                else: # Contour lengths are equal, now we can test on point types.
+                    # Test on contour clockwise directions.
+                    if g.isClockwise(contour) != rg.isClockwise(rContour):
+                        report.append(u'Glyph "%s" contour #%d has reversed direction of “%s”.' % (glyphName, cIndex, refFont.info.styleName))
+                    else: # Now the length and directions are the same, we can test on the type of points.
+                        pIndex = 0
+                        for p in contour:
+                            if p.onCurve != rContour[pIndex].onCurve:
+                                report.append(u'"%s" Glyph "%s" point #%d (%d,%d,%s) is not same type as point #%d (%d,%d,%s) in “%s”.' % (font.info.styleName, glyphName, pIndex, 
+                                    p.x, p.y, p.onCurve, pIndex, rContour[pIndex].x, rContour[pIndex].y, rContour[pIndex].onCurve, 
+                                    refFont.info.styleName))
+                            pIndex += 1
+
+        components = g.components
+        rComponents = rg.components
+
+        if len(components) > len(rComponents):
+            baseGlyphs = []
+            for component in components:
+                baseName = component.baseGlyph
+                if not baseName in font:
+                    baseName += self.DOES_NOT_EXIST
+                baseGlyphs.append(baseName)
+            rBaseGlyphs = []
+            for component in rComponents:
+                baseName = component.baseGlyph
+                if not baseName in refFont:
+                    baseName += self.DOES_NOT_EXIST
+                rBaseGlyphs.append(baseName)
+            report.append(u'Glyph "%s" has %d more components (%s) than %s (%s) in "%s".' % (glyphName, len(baseGlyphs) - len(rBaseGlyphs), ','.join(baseGlyphs), refFont.info.styleName, ','.join(rBaseGlyphs), refFont.info.styleName))
+        elif len(components) < len(rComponents):
+            baseGlyphs = []
+            for component in components:
+                baseName = component.baseGlyph
+                if not baseName in font:
+                    baseName += self.DOES_NOT_EXIST
+                baseGlyphs.append(baseName)
+            rBaseGlyphs = []
+            for component in rComponents:
+                baseName = component.baseGlyph
+                if not baseName in refFont:
+                    baseName += self.DOES_NOT_EXIST
+                rBaseGlyphs.append(baseName)
+            report.append(u'Glyph "%s" has %d fewer components (%d) than %s (%s) in "%s".' % (glyphName, len(rBaseGlyphs) - len(baseGlyphs), len(components), refFont.info.styleName, len(rComponents), refFont.info.styleName))
+        return report
+
+    def checkKerningCompatibility(self, font):
+        u"""Check if all kerning glyphs exist in the font."""
+        report = []
+        glyphNames = set(font.keys())
+        for c1, c2 in font.kerning.keys():
+            if not c1 in font:
+                report.append(u'Left kerning glyph "%s" does not exist in font "%s".' % (c1, font.info.styleName))
+            if not c2 in font:
+                report.append(u'Right kerning glyph "%s" does not exist in font "%s".' % (c2, font.info.styleName))
+        return report
 
 if __name__ == '__main__':
     import doctest
