@@ -19,11 +19,15 @@ import os
 
 def getRootPath():
     u"""Answer the root path of the pagebot module."""
-    return '/'.join(__file__.split('/')[:-4]) # Path of this file with pagebot/__init__.py(c) removed.
+    return '/'.join(__file__.split('/')[:-4])
 
 def getRootFontPath():
     u"""Answer the standard font path of the pagebot module."""
-    return getRootPath() + '/Fonts'
+    root = getRootPath()
+    if root == "":
+        return 'Fonts'
+    else:
+        return root + '/Fonts'
 
 def _recursivelyCollectFontPaths(path, fontPaths):
     u"""Recursive helper function for getFontPaths. If the fileName already existsin the fontPaths, then ignore."""
@@ -51,18 +55,21 @@ def getFontPaths():
     if not FONT_PATHS:
 
         if os.name == 'posix':
-            # Try typical OSX font folders
+            # Try typical OSX font folders:
+            paths = ['/Library/Fonts', os.path.expanduser('~/Library/Fonts')]
 
-            paths = ('/Library/Fonts', os.path.expanduser('~/Library/Fonts')) 
+            # Add other typical GNU+Linux font folders here to look at:
+            paths += ['/usr/share/fonts']
+
             for path in paths:
                 if os.path.exists(path):
                     _recursivelyCollectFontPaths(path, FONT_PATHS)
-            # Add other typical Linux font folders here to look at.
         elif os.name in ('nt', 'os2', 'ce', 'java', 'riscos'):
             # Add other typical Windows font folders here to look at.
             pass
         else:
             raise NotImplementedError('Unknown platform type "%s"' % os.name)
+
         # Add PageBot repository fonts, they always exist in this context.
         _recursivelyCollectFontPaths(getRootFontPath(), FONT_PATHS)
 
@@ -70,6 +77,5 @@ def getFontPaths():
 
 if __name__ == '__main__':
     import doctest
-    doctest.testmod()
-
-  
+    import sys
+    sys.exit(doctest.testmod()[0])

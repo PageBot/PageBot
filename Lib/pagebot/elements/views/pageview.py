@@ -45,9 +45,9 @@ class PageView(BaseView):
         if path.startswith(self.EXPORT_PATH) and not os.path.exists(self.EXPORT_PATH):
             os.makedirs(self.EXPORT_PATH)
 
-        context = self.context # Get current context and builder from doc. Can be DrawBot of Flat
+        context = self.context # Get current context and builder from doc. Can be DrawBot or Flat
 
-        # Find the maximum document page size to this in all pages sizes of the document.
+        # Find the maximum document page size to this in all page sizes of the document.
         w, h, _ = self.doc.getMaxPageSizes(pageSelection)
 
         context.newDocument(w, h) # Allow the context to create a new document and page canvas.
@@ -727,6 +727,6 @@ class PageView(BaseView):
         pass
 
 if __name__ == "__main__":
+    import sys
     import doctest
-    doctest.testmod()
-
+    sys.exit(doctest.testmod()[0])
