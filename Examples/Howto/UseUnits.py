@@ -20,8 +20,6 @@ def useUnits():
     2mm
     >>> mm(2).u, mm(2)._v/MM # Unified to pt value stored in _v
     (2.0, 2.0)
-    >>> (mm(2) * 2)/2
-
     >>> px(5)
     5px
     >>> px(5).u, px(5)._v
@@ -46,4 +44,5 @@ def useUnits():
 
 if __name__ == '__main__':
     import doctest
-    doctest.testmod()
+    import sys
+    sys.exit(doctest.testmod()[0])

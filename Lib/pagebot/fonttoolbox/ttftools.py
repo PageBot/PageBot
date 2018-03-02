@@ -944,7 +944,8 @@ def _runDocTests():
 
 if __name__ == "__main__":
     if True:
-        _runDocTests()
+        import sys
+        sys.exit(_runDocTests()[0])
     else:
         import os
         from fontTools.ttLib import TTFont

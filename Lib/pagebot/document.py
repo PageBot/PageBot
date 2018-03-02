@@ -255,7 +255,7 @@ class Document(object):
         then only evaluate the selected pages."""
         w = h = d = 0
         for (y, x), page in self.pages.items():
-            if pageSelection is not None and not y in pageSelection:
+            if pageSelection is not None and y not in pageSelection:
                 continue
             w = max(w, page.w)
             h = max(h, page.h)
@@ -659,5 +659,5 @@ class Document(object):
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
-
+    import sys
+    sys.exit(doctest.testmod()[0])

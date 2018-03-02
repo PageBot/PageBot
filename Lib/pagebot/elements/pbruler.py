@@ -144,4 +144,5 @@ class Ruler(Element):
 
 if __name__ == '__main__':
     import doctest
-    doctest.testmod()
+    import sys
+    sys.exit(doctest.testmod()[0])

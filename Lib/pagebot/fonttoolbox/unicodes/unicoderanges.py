@@ -458,7 +458,8 @@ def _runDocTests():
 
 
 if __name__ == "__main__":
-    _runDocTests()
+    import sys
+    sys.exit(_runDocTests()[0])
     if 0:
         from random import randint
         for i in range(100):
