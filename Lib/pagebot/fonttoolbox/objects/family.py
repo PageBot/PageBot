@@ -235,11 +235,11 @@ class Family(object):
                 fontStyles[styleName].append(font)
         return fontStyles
 
-    def findFontsByName(self, pattern):
+    def findByName(self, pattern):
         u"""Answer the font(s) that fit the pattern.
 
         >>> family = getFamily('Bungee')
-        >>> family.findFontsByName('BungeeOutline')
+        >>> family.findByName('BungeeOutline')
         [<Font BungeeOutline-Regular>]
         """
         namedFonts = []
@@ -248,11 +248,11 @@ class Family(object):
                 namedFonts.append(font)
         return namedFonts
 
-    def getFontWeights(self):
+    def getWeights(self):
         u"""Answer the dictionary {weightClass: [font, font, ...], ...]}
         
         >>> family = getFamily('Bungee')
-        >>> family.getFontWeights().keys()
+        >>> family.getWeights().keys()
         [400]
         """
         weightClasses = {}
@@ -264,14 +264,14 @@ class Family(object):
                 weightClasses[weightClass].append(font)
         return weightClasses
 
-    def getFontWidths(self):
+    def getWidths(self):
         u"""Answer the dictionary {widthClass: [font, font, ...], ...]}
         
         >>> family = getFamily('Bungee')
-        >>> family.getFontWidths().keys()
+        >>> family.getWidths().keys()
         [5]
         >>> family = getFamily('Roboto')
-        >>> family.getFontWidths().keys()
+        >>> family.getWidths().keys()
         [5]
         """
         widthClasses = {}

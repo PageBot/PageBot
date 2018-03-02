@@ -48,6 +48,7 @@ W -= 48 # Make a bit more narrow format.
 EXPORT_PATH = '_export/ABookCover.pdf'
 
 family = getFamily('Roboto')
+styles = family.getStyles()
 print family.name
 fontRegular = family.fontStyles['Regular'][0]
 context.installFont(fontRegular.path)
