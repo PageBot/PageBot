@@ -25,22 +25,65 @@
 from fontTools.ttLib import TTFont
 from pagebot.contexts import defaultContext
 
+from pagebot.toolbox.transformer import path2FontName
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
+from pagebot.style import FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES
 
 def getFontByPath(fontPath, install=True):
+    u"""Answer the Font instance, that connects to the fontPath. Note that there is no check if there
+    is already anothe Font created on that path, as for PageBot purposes it is most likely for
+    reading only.
+
+    >>> from pagebot.contexts import defaultContext as context
+    >>> from pagebot.contexts.platform import getRootFontPath
+    >>> fontPath = getRootFontPath()
+    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> fontName = path2FontName(path)
+    >>> font = getFontByPath(path)
+    >>> font.path == path
+    True
+    """
     return Font(fontPath, install=install)
 
 def getFontByName(fontName, install=True, context=None):
+    u"""Answer the Font instance, that belongs to fontName. In DrawBotContext there is a 
+    difference between the fontName (as installed) and the font path, which can be used
+    both in DrawBotContext and FlatContext.
+
+    >>> from pagebot.contexts.platform import getRootFontPath
+    >>> fontPath = getRootFontPath()
+    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> font = getFontByName(path)
+    >>> font.path == path
+    True
+    >>> font.name == 'AmstelvarAlpha-Default'
+    True
+    >>> font.installedName
+    u'AmstelvarAlpha-Default'
+    >>> path2FontName(font.path)
+    'AmstelvarAlpha-VF'
+    """
     if context is None:
         context = defaultContext
-    return getFontByPath(context.getFontPathOfFont(fontName), install=install)
+    return getFontByPath(context.fontName2FontPath(fontName), install=install)
 
 def findInstalledFonts(fontNamePatterns=None, context=None):
     u"""Answer a list of installed font names that include the fontNamePattern. The pattern
-    search is not case sensitive. The pattern can be a string or a list of strings."""
+    search is not case sensitive. The pattern can be a string or a list of strings.
+
+    >>> findInstalledFonts('Amstel')
+    ['AmstelvarAlpha-Default']
+    >>> from pagebot.contexts.platform import getRootFontPath
+    >>> fontPath = getRootFontPath()
+    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> font = getFontByName(path, install=True)
+    >>> font.installedName
+    u'AmstelvarAlpha-Default'
+    >>> # TODO: findInstalledFonts('Amstel') # Cannot test this currently on non-DrawBot platform.
+    """
     if context is None:
         context = defaultContext
     fontNames = []
@@ -77,7 +120,6 @@ class Font(object):
     >>> f.groups
     >>> f.designSpace
     {}
-    >>> f.install()
     """
     GLYPH_CLASS = Glyph
     FONTANALYZER_CLASS = FontAnalyzer
@@ -90,8 +132,7 @@ class Font(object):
         name than the DrawBot installing name."""
         self.path = path # File path of the font file. 
         if install:
-            # Installs the font in DrawBot from self.path and initializes
-            # self.installedName.
+            # Installs the font in DrawBot from self.path and initializes self.installedName.
             self.install()
         else:
             self.installedName = None # Set to DrawBot name, if installing later.
@@ -115,22 +156,153 @@ class Font(object):
         #    raise OSError('Cannot open font file "%s"' % path)
 
     def __repr__(self):
-        return '<PageBot Font %s>' % (self.path or self.name)
+        """
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> font = Font(path)
+        >>> str(font)
+        '<Font Roboto-Black>'
+        """
+        return '<Font %s>' % (path2FontName(self.path or self.name))
 
     def __getitem__(self, glyphName):
+        u"""Answer the glyph with glyphName.
+
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> font = Font(path)
+        >>> g = font['A']
+        >>> g.name, g.width
+        ('A', 1395)
+        """
         if not glyphName in self._glyphs:
             self._glyphs[glyphName] = self.GLYPH_CLASS(self, glyphName)
         return self._glyphs[glyphName]
 
     def __len__(self):
+        u"""Answer the number of glyphs in the font.
+
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> font = Font(path)
+        >>> len(font)
+        1294
+        """
         if 'glyf' in self.ttFont:
             return len(self.ttFont['glyf'])
         return 0
 
+    def weightMatch(self, weight):
+        u"""Answer level of matching for the (abbreviated) weight name or number with font.
+
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> font = Font(path)
+        >>> font.info.weightClass
+        900
+        >>> font.weightMatch(0) # Bad match --> 0
+        0
+        >>> font.weightMatch(800) # Close match --> 800
+        240
+        >>> font.weightMatch(900) # Exact match --> 1000
+        1000
+        >>> font.weightMatch(0) # Bad match --> 0
+        0
+        >>> font.weightMatch('Black') # Black --> Exact match, total depends on matching word length
+        500
+        >>> font.weightMatch('Light') # Light --> No match, total depends on matching word length
+        0
+        """
+        match = 0
+        if isinstance(weight, (float, int)): # Comparing by numbers
+            # Compare the weight as number as max difference to what we already have.
+            wf = self.info.weightClass
+            for w in FONT_WEIGHT_MATCHES.get(weight, [weight]):
+                if isinstance(w, (float, int)): # Then compare by numbers
+                    match = max(match, 1000 - abs(w - wf)*10) # Remember best normalized match
+        else: # Comparing by string
+            fileName = path2FontName(self.path)
+            for w in FONT_WEIGHT_MATCHES.get(weight, [weight]):
+                if not isinstance(w, (float, int)) and (w in fileName or w in self.info.styleName):
+                    match = max(match, len(w)*100) # Longer weight name is better match
+        return match
+
+    def widthMatch(self, width):
+        u"""Answer level of matchting for the (abbreviated) width name or number with font.
+
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> font = Font(path)
+        >>> font.info.widthClass
+        5
+        >>> font.widthMatch(0) # Bad match --> 0
+        0
+        >>> font.widthMatch(4) # Close match --> 800
+        800
+        >>> font.widthMatch(5) # Exact match --> 1000
+        1000
+        >>> font.widthMatch(6) # Close match --> 800
+        800
+        >>> font.widthMatch(10) # Bad match --> 0
+        0
+        >>> font.widthMatch(500) # Exact match -->1000 in case font weight values range beteween 0-->1000
+        1000
+        >>> font.widthMatch(501) # Near match --> 1000
+        1000
+        >>> font.widthMatch(650) # Close match --> 800
+        800
+        >>> font.widthMatch('Cond') # No match --> 0
+        0
+        >>> path = getRootFontPath() + '/google/robotocondensed/RobotoCondensed-Bold.ttf' # We know this exists in the PageBot repository
+        >>> font = Font(path)
+        >>> font.info.widthClass
+        5
+        >>> font.widthMatch(5) # Wrong exact match --> 1000 due to wrong font.info.widthClass 
+        1000
+        >>> font.widthMatch('Wide') # No match on "Wide"
+        0
+        >>> font.widthMatch('Cond') # Exact match on "Cond"
+        180
+        """
+        match = 0
+        if isinstance(width, (float, int)):
+            # Compare the width as number as max difference to what we already have.
+            wf = self.info.widthClass 
+            if wf <= 10: # Normalize to 1000
+                wf *= 10
+            for w in FONT_WIDTH_MATCHES.get(width, [width]):
+                if isinstance(w, (float, int)): 
+                    if w <= 10: # Normalize to 1000
+                        w *= 10
+                    match = max(match, 1000 - abs(w - wf)*20) # Remember best normalized match
+        else: # Comparing by string
+            fileName = path2FontName(self.path)
+            for w in FONT_WIDTH_MATCHES.get(width, [width]):
+                if not isinstance(w, (float, int)) and (w in fileName or w in self.info.styleName):
+                    match = max(match, len(w)*20) # Longer width name is better match
+        return match
+
+    def isItalic(self):
+        u"""Answer the boolean flag if this font should be considered to be italic.
+
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-BlackItalic.ttf' # We know this exists in the PageBot repository
+        >>> f = Font(path, install=False)
+        >>> f.isItalic()
+        True
+        """
+        if self.info.italicAngle:
+            return True
+        for i in FONT_ITALIC_MATCHES['Italic']:
+            if i in path2FontName(self.path) or i in self.info.styleName:
+                return True
+        return False
+
     def keys(self):
         u"""Answer the glyph names of the font.
 
-        >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
@@ -202,8 +374,8 @@ class Font(object):
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
-        >>> f = Font(path, install=False, lazy=False)
-        >>> len(f.getDefaultVarLocation().keys())
+        >>> font = Font(path, install=False)
+        >>> len(font.getDefaultVarLocation().keys())
         15
         """
         defaultVarLocation = {}
@@ -213,7 +385,16 @@ class Font(object):
 
     def _get_rawDeltas(self):
         u"""Answer the list of axis dictionaries with deltas for all glyphs and axes. Answer an empty dictionary
-        if the [gvar] table does not exist."""
+        if the [gvar] table does not exist.
+
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> font = Font(path)
+        >>> len(font.rawDeltas['A'])
+        17
+        """
         try:
             return self.ttFont['gvar'].variations
         except:
@@ -221,6 +402,16 @@ class Font(object):
     rawDeltas = property(_get_rawDeltas)
 
     def _get_designSpace(self):
+        u"""Answer the design space in case this is a variable font.
+
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath()
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> font = Font(path)
+        >>> font.designSpace # Basically the "cvar" table.
+        {}
+        """
         try:
             designSpace = self.ttFont['cvar']
         except KeyError:
@@ -237,8 +428,8 @@ class Font(object):
     variables = property(_get_variables)
 
     def _get_features(self):
-        from pagebot.contexts import defaultContext as c
-        return c.listOpenTypeFeatures(self.installedName)
+        from pagebot.contexts import defaultContext as context
+        return context.listOpenTypeFeatures(self.installedName)
     features = property(_get_features)
 
     def _get_kerning(self):

@@ -186,13 +186,13 @@ class Glyph(object):
                 currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
                 openSegment = None
 
-        # Add spacing points, as default in TTF. No index, as they cannot be written back.
+        # Add 4 spacing points, as default in TTF. No index, as they cannot be written back.
         # Instead, for writing, use self.leftMargin, self.rightMargin and self.width.
         self._points4 = self._points[:] + [
-            APoint((minX, 0), self), 
-            APoint((0, minY), self), 
-            APoint((maxX, 0), self), 
-            APoint((0, maxY), self)
+            APoint((minX, 0), glyph=self), 
+            APoint((0, minY), glyph=self), 
+            APoint((maxX, 0), glyph=self), 
+            APoint((0, maxY), glyph=self)
         ]
         self._boundingBox = (minX, minY, maxX, maxY)
         self.dirty = False # All cleaned up.
@@ -332,6 +332,16 @@ class Glyph(object):
         return self.width - self.maxX
     rightMargin = property(_get_rightMargin)
 
+    def isClockwise(self, contour):
+        u"""Answer Contour direction. Simple and fast.
+        http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
+        """
+        total = 0
+        for index, point in enumerate(contour):
+            p = contour[index-1] # Takes last point of list if index == 0 :)
+            total += (point.x - p.x) * (point.y + p.y)
+        return total > 0
+
     # Direct TTFont coordinates compatibility
 
     def _get_coordinates(self):
@@ -367,6 +377,9 @@ class Glyph(object):
     flags = property(_get_flags, _set_flags)
 
     # Kind of RoboFont glyph compatibility
+
+    def __len__(self):
+        return len(self.contours)
 
     def _get_points(self): 
         u"""Answer the list of APoint instances, representing the outline of the glyph,

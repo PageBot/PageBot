@@ -16,7 +16,7 @@
 #     Implements a PageBot font analyzer class to get info from beyond a TTFont.
 #
 import weakref
-from pagebot.toolbox.transformer import path2Name
+from pagebot.toolbox.transformer import path2FontName
 
 class FontAnalyzer(object):
 
@@ -33,7 +33,7 @@ class FontAnalyzer(object):
         return self.font[glyphName].analyzer
 
     def _get_name(self):
-        return path2Name(self.font.path)
+        return path2FontName(self.font.path)
     name = property(_get_name)
 
     # self.parent    Weakref to the parent (style) analyzer

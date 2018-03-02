@@ -14,6 +14,9 @@
 #
 #     nonedrawbotbuilder.py
 #
+import os
+from pagebot.toolbox.transformer import path2Name
+
 class NoneBezierPath(object):
     u"""Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing texting."""
     def moveTo(self, p):
@@ -33,6 +36,9 @@ class NoneDrawBotBuilder(object):
     Eventually should be a matching set of methods, compare to DrawBot itself."""
 
     PB_ID = 'drawBot'
+
+    def __init__(self):
+        self._installedFonts = []
 
     def newDrawing(self, path=None):
         pass
@@ -128,6 +134,23 @@ class NoneDrawBotBuilder(object):
         pass
 
     def installedFonts(self):
-        return []
+        return self._installedFonts
+
+    def installFont(self, fontPath):
+        self._installedFonts.append(fontPath)
+        if os.path.exists(fontPath):
+            return path2Name(fontPath)
+        return None
+
+    def fontName2FontPath(self, fontName):
+        u"""We cannot tell the relation of the font name and the font path for DrawBot without OSX
+        Unless it is a path."""
+        if os.path.exists(fontName):
+            return fontName
+        return None 
 
 
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

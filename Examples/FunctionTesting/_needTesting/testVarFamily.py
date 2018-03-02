@@ -29,7 +29,7 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.objects.varfamily import VarFamily
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 from pagebot.fonttoolbox.analyzers.stems import Stem, Bar, BlueBar, Counter, VerticalCounter, Width, DiagonalStem
-from pagebot.toolbox.transformer import asInt, path2Name, path2ParentPath
+from pagebot.toolbox.transformer import asInt, path2FontName, path2ParentPath
 
 SHOW_COORDINATES = True
 
@@ -102,7 +102,7 @@ def guessVarFamilyFromPaths(basePath, name=None):
     u"""Initialize by guessing the self._font axis locations. 
     """
     paths = findFontPaths(basePath)    
-    name = name or path2Name(basePath)
+    name = name or path2FontName(basePath)
     return VarFamily(name, paths)
 
 def drawOS2Label(varFamily, fonts, weight, width):
@@ -141,8 +141,8 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
         y -= leading+50
         
         save()
-        pathLabel = '-'.join(path2Name(f.path).split('-')[1:])
-        #label = path2Name(f.path)
+        pathLabel = '-'.join(path2FontName(f.path).split('-')[1:])
+        #label = path2FontName(f.path)
         if fAxis is not None:
             label = '@'+fAxis 
         elif fIndex is None:
@@ -198,56 +198,56 @@ def drawFamilyOverview(path):
 
     # As we can guess the origin font, there is a reference for the other
     # masters to test against.
-    #print '=== Guessed origin font:', path2Name(varFamily.originFont.path)
+    #print '=== Guessed origin font:', path2FontName(varFamily.originFont.path)
     #print checkInterpolation(varFamily.fonts)
     #print '=== Parametric axis fonts:', varFamily.parametricAxisFonts
     #print '=== Parametric axis metrics:', varFamily.parametricAxisMetrics
     
-    newPage(1200, 1200)
+    context.newPage(1200, 1200)
     # Draw design space for width/weight
-    translate(100,100)
-    stroke(0.5)
-    strokeWidth(1)
-    fill(0.9)
-    rect(0, 0, 1000, 1000)
+    context.translate(100,100)
+    context.troke(0.5)
+    context.strokeWidth(1)
+    context.fill(0.9)
+    context.rect(0, 0, 1000, 1000)
     for x in range(0, 1100, 100):
         if 0 < x < 1000:
-            line((x, 0), (x, 1000))
-        fs = FormattedString(`x`, fontSize=12)
-        tw, th = textSize(fs)
-        text(fs, (x-tw/2, -20))
+            context.line((x, 0), (x, 1000))
+        bs = context.newString(`x`, fontSize=12)
+        tw, th = context.textSize(bs)
+        context.text(bs, (x-tw/2, -20))
 
     for y in range(11):
         if 0 < y < 11:
             line((0, 1000/10*y), (1000, 1000/10*y))
         if y > 0:
-            fs = FormattedString(`y`, fontSize=12, fill=(1, 0, 0))
-            fs += FormattedString(' %s' % (y*100), fontSize=12, fill=(0, 0.5, 0))
-            tw, th = textSize(fs)
+            bs = context.newString(`y`, fontSize=12, fill=(1, 0, 0))
+            bs += context.newString(' %s' % (y*100), fontSize=12, fill=(0, 0.5, 0))
+            tw, th = context.textSize(fs)
         else:
-            fs = FormattedString(`y`, fontSize=12, fill=0)
-            tw, th = textSize(fs)
+            bs = context.newString(`y`, fontSize=12, fill=0)
+            tw, th = context.textSize(bs)
         text(fs, (-10-tw, 1000/10*y-th/2))
     
     # Draw axis labels
-    fs = FormattedString('OS/2 weight class ', fontSize=12, fill=(1, 0, 0))
-    fs += FormattedString('&', fontSize=12, fill=0)
-    fs += FormattedString(' XTRA Axis (H-stem width)', fontSize=12, fill=(0, 0.5, 0))
-    tw, th = textSize(fs)
-    text(fs, (0, -50-th/2))
+    bs = context.newString('OS/2 weight class ', fontSize=12, fill=(1, 0, 0))
+    bs += context.newString('&', fontSize=12, fill=0)
+    bs += context.newString(' XTRA Axis (H-stem width)', fontSize=12, fill=(0, 0.5, 0))
+    tw, th = context.textSize(bs)
+    context.text(bs, (0, -50-th/2))
 
-    save()
-    rotate(90)
-    fs = FormattedString('OS/2 width class ', fontSize=12, fill=(1, 0, 0))
-    fs += FormattedString('&', fontSize=12, fill=0)
-    fs += FormattedString(' XOPQ Axis + stem (H.width - H.stem - H.lsb - H.rsb)', fontSize=12, fill=(0, 0.5, 0))
-    tw, th = textSize(fs)
-    text(fs, (0, 60))
-    restore()
+    context.save()
+    context.rotate(90)
+    bs = context.newString('OS/2 width class ', fontSize=12, fill=(1, 0, 0))
+    bs += context.newString('&', fontSize=12, fill=0)
+    bs += context.newString(' XOPQ Axis + stem (H.width - H.stem - H.lsb - H.rsb)', fontSize=12, fill=(0, 0.5, 0))
+    tw, th = context.textSize(fs)
+    context.text(fs, (0, 60))
+    context.restore()
     
     # Draw family name title    
-    fs = FormattedString(varFamily.name, fontSize=24)
-    text(fs, (0, 1000+30))
+    bs = context.newString(varFamily.name, fontSize=24)
+    context.text(bs, (0, 1000+30))
 
     fIndex = 1
     # Find widths and weights as defined by OS/2 and plot them as dots + names
@@ -282,6 +282,6 @@ for path in os.listdir(BASE_PATH):#[:20]:
         continue
     drawFamilyOverview(dirPath)
     
-saveImage(EXPORT_PATH)
-#saveImage(EXPORT_GIF)
+context.saveImage(EXPORT_PATH)
+#context.saveImage(EXPORT_GIF)
      

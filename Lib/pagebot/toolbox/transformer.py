@@ -15,7 +15,7 @@
 #
 #     Implements a range of common transforms.
 #
-import json, re
+import json, re, os
 from time import time
 import datetime
 from random import randint
@@ -711,6 +711,16 @@ def path2FormatPath(path, format=None):
         return path
     return None
 
+def path2Extension(path):
+    u"""Answer the extension part of a path as lowercase.
+
+    >>> path2Extension('/xxx/yyy/zz/thisFont.OTF')
+    'otf'
+    >>> path2Extension('/xxx/yyy/zz/thisFont.01234.ttf')
+    'ttf'
+    """
+    return path.split('.')[-1].lower()
+
 def path2Name(path):
     u"""Answers the file name part of the path."""
     if path is None:
@@ -718,6 +728,16 @@ def path2Name(path):
     if not path:
         return 'Untitled'
     return path.split('/')[-1]
+
+def isFontPath(path):
+    u"""Answer the boolean flag if this file is a font.
+
+    >>> isFontPath('/xxx/yyy/zzz/thisFont.ttf')
+    True
+    >>> isFontPath('/xxx/yyy/zzz/notAPageBotFont.UFO')
+    False
+    """
+    return not os.path.isdir(path) and path2Extension(path) in ('ttf', 'otf')
 
 def path2FontName(path):
     u"""
@@ -729,7 +749,6 @@ def path2FontName(path):
     /xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo becomes Agency_FB-Compressed
     #xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo becomes Agency_FB-Bold
 
-    >>> from pagebot.toolbox.transformer import *
     >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency_FB-Compressed'
     >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')
