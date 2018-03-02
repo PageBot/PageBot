@@ -23,7 +23,7 @@ from pagebot.contributions.filibuster.blurb import blurb
 from pagebot.contexts import defaultContext as context
 from pagebot.toolbox.transformer import darker
 # Get function to find the Roboto family (in this case installed in the PageBot repository
-from pagebot.fonttoolbox.objects.family import findFamilyByName
+from pagebot.fonttoolbox.objects.family import getFamily
 # Creation of the RootStyle (dictionary) with all
 # available default style parameters filled.
 from pagebot.style import getRootStyle, B4, CENTER, MIDDLE, TOP 
@@ -47,7 +47,8 @@ W -= 48 # Make a bit more narrow format.
 # Export in folder that does not commit to Git. Force to export PDF.
 EXPORT_PATH = '_export/ABookCover.pdf'
 
-family = findFamilyByName('Roboto')
+family = getFamily('Roboto')
+print family.name
 fontRegular = family.fontStyles['Regular'][0]
 context.installFont(fontRegular.path)
 print(fontRegular.info.styleName, fontRegular.path)

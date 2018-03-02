@@ -413,6 +413,10 @@ class FlatContext(BaseContext):
         assert self._pathCommands is not None
         self._pathCommands.append(self.b.closepath)
 
+    def bezierPathByFlatteningPath(self, path):
+        u"""TODO: Make Flat version of the NSBezier flatten path function."""
+        return None #path.getNSBezierPath().bezierPathByFlatteningPath()
+
     #   S H A D O W  &  G R A D I E N T
 
     def setShadow(self, eShadow):

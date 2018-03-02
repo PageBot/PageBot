@@ -60,13 +60,45 @@ class FontInfo(object):
     def fullName(self):
         return self._getNameTableEntry(4)
 
-    @cached_property
-    def familyName(self):
-        return self._getNameTableEntry(1)
+    def _get_familyName(self):
+        """Should be this, but often wrong: return self._getNameTableEntry(1)
 
-    @cached_property
-    def styleName(self):
-        return self._getNameTableEntry(2)
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> from pagebot.fonttoolbox.objects.font import getFont
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> font = getFont(path)
+        >>> font.info.familyName
+        u'Roboto'
+        """
+        if self._getNameTableEntry(1):
+            return self._getNameTableEntry(1).split(' ')[0]
+        return ''
+    familyName = property(_get_familyName)
+
+    def _get_styleName(self):
+        u"""Answer the style name of the font. 
+        Family name should be this, but often wrong: return self._getNameTableEntry(1)
+        We take the first spaced part as family name, and fill the rest here under style.
+        So we add rest of family.
+
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> from pagebot.fonttoolbox.objects.font import getFont
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> font = getFont(path)
+        >>> font.info.styleName
+        u'Regular'
+        """
+        styleName = ''
+        if self._getNameTableEntry(1):
+            familyNameParts = ' '.split(self._getNameTableEntry(1))
+            if len(familyNameParts) > 1:
+                styleName = ' '.join(familyNameParts[1:])
+        if self._getNameTableEntry(2):
+            if styleName:
+                styleName += ' '
+            styleName += self._getNameTableEntry(2)
+        return styleName
+    styleName = property(_get_styleName)
 
     @cached_property
     def psName(self):
@@ -229,3 +261,8 @@ class FontInfo(object):
     metrics = property(_get_metrics) 
 
 
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
