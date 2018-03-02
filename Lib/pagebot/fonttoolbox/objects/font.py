@@ -426,10 +426,10 @@ class Font(object):
         >>> font = Font(path)
         >>> len(font.variables)
         115
-        >>> variation = font.variables['H']
-        >>> sorted(variation.keys())
+        >>> variables = font.variables['H']
+        >>> sorted(variables.keys())
         ['GRAD', 'XOPQ', 'XTRA', 'YOPQ', 'YTRA', 'YTSE', 'YTUC', 'opsz', 'wdth', 'wght']
-        >>> axis, deltas = variation['GRAD']
+        >>> axis, deltas = variables['GRAD']
         >>> axis
         {'GRAD': (0.0, 1.0, 1.0)}
         >>> deltas[:6]
