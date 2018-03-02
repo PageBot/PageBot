@@ -264,11 +264,13 @@ class VarFamily(Family):
                 path2Fonts[font.path] = font # So we can make a sorted list of paths
 
         # Now we have the total set of all glyph names in all fonts.     
+        '''
         for glyphName in glyphNames:
             # Check compatibility of outlines
             report = self.checkOutlineCompatibility(refFont, font, glyphName)
             if report: # Error with this glyph?
                 errors[(font.path, glyphName)] = report
+        '''
         # Check group compatibility
         report = self.checkKerningCompatibility(font)
         if report:
