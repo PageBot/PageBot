@@ -26,21 +26,21 @@ def getRootFontPath():
     return getRootPath() + '/Fonts'
 
 def _recursivelyCollectFontPaths(path, fontPaths):
-    u"""Recursive helper function for getFontPaths."""
+    u"""Recursive helper function for getFontPaths. If the fileName already existsin the fontPaths, then ignore."""
     for fileName in os.listdir(path):
         filePath = path + '/' + fileName
         if os.path.isdir(filePath):
             _recursivelyCollectFontPaths(filePath, fontPaths)
         else:
             extension = fileName.split('.')[-1].lower()
-            if extension in ('ttf', 'otf', 'svg'):
+            if extension in ('ttf', 'otf', 'svg') and not fileName in fontPaths:
                 fontPaths[fileName] = filePath
 
 FONT_PATHS = {} # Cached dictionary
 
 def getFontPaths(): 
     u"""Answer a dictionary with all available font paths on the platform, key is the single file name.
-    A typical example return for MaxOS the font paths available in directories (for user Petr): 
+    A typical example return for MaxOS the font paths available in directories (e.g. for user Petr): 
         ('/Library/Fonts', '/Users/petr/Library/Fonts', '/Users/petr/git/PageBot/Fonts')
     In this order, "local" defined fonts with the same file name, will overwrite the "deeper" located font files.
 

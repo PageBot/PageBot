@@ -14,6 +14,8 @@
 #
 #     drawbotcontext.py
 #
+import os
+
 try:
     #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
     from AppKit import NSFont
@@ -355,15 +357,38 @@ class DrawBotContext(BaseContext):
     #   F O N T S
 
     def installFont(self, fontName):
-        self.b.installFont(fontName)
+        return self.b.installFont(fontName)
 
     def installedFonts(self):
         u"""Answer the list with names of all installed fonts in the system, as available
-        for cls.newString( ) style."""
+        for cls.newString( ) style. Note that this is the internal DrawBot list of installed font names.
+        It is also possible to use fonts in PageBot by the file path of the font."""
         return self.b.installedFonts()
 
-    def getFontPathOfFont(self, fontName):
-        u"""Answer the path that is source of the given font name. Answer None if the font cannot be found."""
+    def fontPath2FontName(self, fontPath):
+        u"""Answer the font name of the font related to fontPath. This is done by installing it (again).
+        Answer None if the font cannot be installed or if the path does not exists.
+
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> context = DrawBotContext()
+        >>> context.fontPath2FontName('Aaa.ttf') is None # Dow not exist
+        True
+        >>> fontPath = getRootFontPath()
+        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> context.fontPath2FontName(path)
+        'AmstelvarAlpha-VF.ttf'
+        """
+        if os.path.exists(fontPath):
+            return self.installFont(fontPath)
+        return None
+
+    def fontName2FontPath(self, fontName):
+        u"""Answer the unchanged path, if it exists as file. Answer the path that is source of the given font name. 
+        Answer None if the font cannot be found."""
+        # If the font cannot be found by name, then test if the file exists as path and answer it.
+        if os.path.exists(fontName): #
+            return fontName
+        # Otherwise try OSX for the conversion.
         nsFont = NSFont.fontWithName_size_(fontName, 25)
         if nsFont is not None:
             fontRef = CTFontDescriptorCreateWithNameAndSize(nsFont.fontName(), nsFont.pointSize())

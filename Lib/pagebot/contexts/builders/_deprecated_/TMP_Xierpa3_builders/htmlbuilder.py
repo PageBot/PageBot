@@ -19,7 +19,7 @@ from xierpa3.builders.builderparts.htmlbuilderpart import HtmlBuilderPart
 from xierpa3.builders.builderparts.xmltransformerpart import XmlTransformerPart
 from xierpa3.builders.builderparts.svgbuilderpart import SvgBuilderPart
 from xierpa3.builders.builderparts.canvasbuilderpart import CanvasBuilderPart
-from xierpa3.toolbox.transformer import TX
+from xierpa3.toolbox.transformer import path2FontName, flatten2Class
 from xierpa3.toolbox.stack import Stack
 
 class HtmlBuilder(XmlTagBuilderPart, CanvasBuilderPart, SvgBuilderPart, 
@@ -284,9 +284,9 @@ class HtmlBuilder(XmlTagBuilderPart, CanvasBuilderPart, SvgBuilderPart,
             width = '100%'
         elif height is not None:
             width = None
-        alt = component.alt or TX.path2Name(component.url)
+        alt = component.alt or path2FontName(component.url)
         self.img(src=component.url, width_html=width, height_html=height, alt=alt,
-            class_=TX.flatten2Class(class_, component.getPrefixClass()))
+            class_=flatten2Class(class_, component.getPrefixClass()))
 
     def element(self, **kwargs):
         u"""Elements are used for local CSS definitions. Ignored by HTML output."""
