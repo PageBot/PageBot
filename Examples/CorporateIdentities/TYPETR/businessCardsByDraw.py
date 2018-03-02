@@ -54,6 +54,9 @@ def buildBusinessCard(w, h):
         bs += context.newString('buro@petr.com | @petrvanblokland', style=styleEmail)
         # Get the size of the text block, to position it centered
         tw, th = context.textSize(bs)  
+        # Draw band background rectangle.
+        context.fill((0, 0, 0, 0.5))
+        rect(0, H/2 - th/2, W, th)
         # Draw a textbox in the contextf canvas.
         context.text(bs, (w/2-tw/2, h*0.55))
 
@@ -69,5 +72,5 @@ def buildBusinessCard(w, h):
 # Draw the 4 busines cards with different backgrounds.
 buildBusinessCard(W, H)
 
-#saveImage('_export/businessCards.png', multipage=True)
+saveImage('_export/businessCards.png', multipage=True)
 saveImage('_export/businessCards.pdf', multipage=True)

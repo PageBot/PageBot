@@ -21,7 +21,7 @@ from pagebot.contexts.platform import getFontPaths
 from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings.flatstring import FlatString
-from pagebot.toolbox.transformer import path2Name
+from pagebot.toolbox.transformer import path2FontName
 from pagebot.style import NO_COLOR, LEFT
 
 def iround(value):
@@ -192,7 +192,7 @@ class FlatContext(BaseContext):
     def installFont(self, fontPath):
         u"""Install the font in the context and answer the font (file)name."""
         # TODO: To be implemented later, if there is a real need for cached fonts.
-        return path2Name(fontPath)
+        return path2FontName(fontPath)
 
     def getFontPathOfFont(self, fontName):
         u"""Answer the path that is source of the given font name. Answer None if the font cannot be found."""
@@ -509,6 +509,24 @@ class FlatContext(BaseContext):
             self.strokeWidth = w
 
     stroke = setStrokeColor # DrawBot compatible API
+
+    #   F O N T S
+
+    def installedFonts(self):
+        u"""As there are no "installed fonts", as with DrawBot, just answer the cahced list of found font paths."""
+        return getFontPaths()
+
+    def fontName2FontPath(self, fontName):
+        u"""Answer the font path, related to fontName. As there are no "installed fonts", as with DrawBot,
+        we'll check if there is a font file related to fontName. 
+        If fontName exists as file path, then answer it unchangend. Otherwise answer None.
+        """
+        if os.exists(fontName): # Exists as font file?
+            return fontName
+        for fontPath in getFontPaths():
+            if fontName == path2FontName(fontPath):
+                return fontPath
+        return None # No match.
 
     #   E X P O R T
 
