@@ -53,10 +53,13 @@ print bs.fittingFontSize
 
 tw, th = context.textSize(bs)
 bx, by, bw, bh = bs.bounds()
+print bx, by, bw, bh 
 
 context.textBox(bs, (x-bx, y+by, tw, th))
 
-context.stroke((1, 0, 0), 0.5)
 context.fill(None)
+context.stroke((1, 0, 0), 0.5)
 context.rect(x, y, bw-bx, bh-by)
+context.stroke((0, 0,5, 0), 0.5)
+context.rect(x, y, tw, th)
 
