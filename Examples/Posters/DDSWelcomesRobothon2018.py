@@ -33,7 +33,7 @@ fontMedium = family.findFont('Upgrade-Medium')
 fontBold = family.findFont('Upgrade-Bold')
 fontItalic = family.findFont('Upgrade-Italic')
  
-ddsStyle = dict(font=fontMedium.path, fontSize=300*S, textFill=1, rLeading=0.9)
+ddsStyle = dict(font=fontMedium.path, textFill=1, rLeading=0.9)
 
 # Export path to save the poster PDF.
 EXPORT_PATH = '_export/DDSWelcomesRobothon2018.pdf'
@@ -48,9 +48,9 @@ page.padding = PADDING
 
 newRect(x=0, y=0, w=W, h=H, fill=(1, 0, 0), parent=page)
 
-t = context.newString('Design\nDesign\n.Space\n', style=ddsStyle, w=W-2*M)
-tw, th = context.textSize(t)
-newTextBox(t, w=W-2*M, fill=(0, 1, 0), parent=page, conditions=[Top2Top(), Fit2Width()])
+t = context.newString('Design\nDesign\n.Space\n', style=ddsStyle, w=W)
+bx, by, bw, bh = t.bounds()
+newTextBox(t, w=bw+bx, fill=(0, 1, 0), parent=page, conditions=[Top2Top(), Center2Center()])
 
 page.solve()
 

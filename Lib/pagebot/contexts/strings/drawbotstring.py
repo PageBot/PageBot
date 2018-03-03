@@ -27,16 +27,20 @@ from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
 
-def pixelBounds(s, w=None, h=None):
+def pixelBounds(fs):
     u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
     Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
     @bh is the amount of pixels above the baseline. 
     For the total height of the pixel-map, calculate @ph - @py.
     For the total width of the pixel-map, calculate @pw - @px."""
     p = BezierPath()
-    p.text(s, (0, 0))
-    return  p.bounds() # bx, by, bw, bh 
-
+    p.text(fs, (0, 0))
+    # OSX answers bw and bh as difference with bx and by. That is not really intuitive, as the
+    # the total (width, height) then always needs to be calculated by the caller. 
+    # So, instead, the width and height answered is the complete bounding box, and the (x, y)
+    # is the position of the bounding box, compared to the (0, 0) of the string origin.
+    bx, by, bw, bh = p.bounds()
+    return bx, by, bw - bx, bh - by
 
 class NoneDrawBotString(object):
     u"""Used for testing DrawBotString doctest in non-DrawBot Environment."""
@@ -91,13 +95,13 @@ class DrawBotString(BabelString):
         # TODO: Add in case w is defined.
         return self.context.textSize(self, w=w, h=h)
 
-    def bounds(self, w=None, h=None):
+    def bounds(self):
         u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
         Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
         @bh is the amount of pixels above the baseline. 
         For the total height of the pixel-map, calculate @ph - @py.
         For the total width of the pixel-map, calculate @pw - @px."""
-        return pixelBounds(self.s, w=w, h=h)
+        return pixelBounds(self.s)
 
     def fontContainsCharacters(self, characters):
         u"""Return a bool if the current font contains the provided characters. 
@@ -259,7 +263,7 @@ class DrawBotString(BabelString):
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
             # more consistent for tracked text. context.textSize will add space to the right of the string.
             tx, _, tw, _ = pixelBounds(newt) 
-            fontSize = 1.0 * w / (tw-tx) * sFontSize
+            fontSize = 1.0 * w / (tw+tx) * sFontSize
             # Call this method again, with the calculated real size of the string to fit the width.
             # Note that this assumes a linear relation between size and width, which may not be the the case
             # with [opsz] optical size axes of Variable Fonts. 
@@ -272,7 +276,7 @@ class DrawBotString(BabelString):
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
             # more consistent for tracked text. context.textSize will add space to the right of the string.
             _, ty, _, th = pixelBounds(newt)
-            fontSize = 1.0 * h / (th-ty) * sFontSize
+            fontSize = 1.0 * h / (th+ty) * sFontSize
             # Call this method again, with the calculated real size of the string to fit the width.
             # Note that this assumes a linear relation between size and width, which may not be the the case
             # with [opsz] optical size axes of Variable Fonts. 
