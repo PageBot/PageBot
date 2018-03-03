@@ -20,6 +20,8 @@ class BabelString(object):
     def __init__(self, s, context):
         self.context = context # Store the context, in case we need it for further transformations.
         self.s = s # Enclose the Flat/Drawbot/html string in this wrapper.
+        # In case fontSize was calculated for width or height fit, context.newString( ) will store it here.
+        self.fittingFontSize = None 
 
     def __repr__(self):
         return u'%s' % self.s

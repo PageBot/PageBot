@@ -210,7 +210,7 @@ class Family(object):
                 self.fonts[fontOrPath] = font
         return font
 
-    def getFontStyles(self):
+    def getStyles(self):
         u"""Answer the dictionary {fontStyle: [font, font, ...], ...}
 
         >>> from pagebot.contexts.platform import getRootFontPath
@@ -218,7 +218,7 @@ class Family(object):
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
         >>> family = Family('MyFamily')
         >>> family.addFonts(path)
-        >>> family.getFontStyles().keys()
+        >>> family.getStyles().keys()
         [u'Regular']
         >>> family = getFamily('Bungee')
         >>> family.name
@@ -234,19 +234,6 @@ class Family(object):
             else:
                 fontStyles[styleName].append(font)
         return fontStyles
-
-    def findByName(self, pattern):
-        u"""Answer the font(s) that fit the pattern.
-
-        >>> family = getFamily('Bungee')
-        >>> family.findByName('BungeeOutline')
-        [<Font BungeeOutline-Regular>]
-        """
-        namedFonts = []
-        for font in self.fonts.values():
-            if pattern in path2FontName(font.path):
-                namedFonts.append(font)
-        return namedFonts
 
     def getWeights(self):
         u"""Answer the dictionary {weightClass: [font, font, ...], ...]}
@@ -283,14 +270,14 @@ class Family(object):
                 widthClasses[widthClass].append(font)
         return widthClasses
 
-    def romanFonts(self):
+    def getRomanFonts(self):
         u"""Answer the dictionary {romanFontPath: font, ...]}
         
         >>> family = getFamily('Bungee')
-        >>> len(family.romanFonts())
+        >>> len(family.getRomanFonts())
         5
         >>> family = getFamily('Roboto')
-        >>> len(family.romanFonts())
+        >>> len(family.getRomanFonts())
         9
         """
         romanFonts = {}
@@ -299,14 +286,14 @@ class Family(object):
                 romanFonts[fontPath] = font
         return romanFonts
 
-    def italicFonts(self):
+    def getItalicFonts(self):
         u"""Answer the dictionary {italicFontPath: font, ...]}
         
         >>> family = getFamily('Bungee')
-        >>> len(family.italicFonts())
+        >>> len(family.getItalicFonts())
         0
         >>> family = getFamily('Roboto')
-        >>> len(family.italicFonts())
+        >>> len(family.getItalicFonts())
         9
         """
         italicFonts = {}

@@ -122,7 +122,6 @@ class VariableCircleSpecimen(TypeSpecimen):
         score = page.solve()
         if score.fails:
             print score.fails
-        print vce.x, vce.y, vce.w, vce.h 
                    
 # Create a new specimen publications and add the list of system fonts.
 typeSpecimen = VariableCircleSpecimen([varFontName]) 

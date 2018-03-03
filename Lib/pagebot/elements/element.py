@@ -109,6 +109,9 @@ class Element(object):
         # Set the property for elements that need their own context. If None the property will query parent and root.
         self.context = context 
 
+        # Initilialize self._elements and self._eIds
+        self.clearElements()
+
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0
         # Initialize style values that are not supposed to inherite from parent styles.
         # Always store point in style as separate (x, y, z) values. Missing values are 0
@@ -248,7 +251,7 @@ class Element(object):
         """
         return self._template
     def _set_template(self, template):
-        self.clearElements()
+        self.clearElements() # Clear all existing child elements in self.
         self._template = template # Keep template reference to clone pages or if additional template info is needed later.
         # Copy optional template stuff
         if template is not None:
@@ -315,7 +318,7 @@ class Element(object):
         """
         return self._elements
     def _set_elements(self, elements):
-        self.clearElements()
+        self.clearElements() # Clear all existing child elements of self.
         for e in elements:
             self.appendElement(e) # Make sure to set all references.
     elements = property(_get_elements, _set_elements)

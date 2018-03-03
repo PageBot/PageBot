@@ -48,15 +48,9 @@ W -= 48 # Make a bit more narrow format.
 EXPORT_PATH = '_export/ABookCover.pdf'
 
 family = getFamily('Roboto')
-styles = family.getStyles()
-print family.name
-fontRegular = family.fontStyles['Regular'][0]
-context.installFont(fontRegular.path)
-print(fontRegular.info.styleName, fontRegular.path)
-fontBold = family.fontStyles['Bold'][0]
-print(fontBold.info.styleName, fontBold.path)
-fontItalic = family.fontStyles['Italic'][0]
-print(fontItalic.info.styleName, fontItalic.path)
+fontRegular = family.findFont('Regular')
+fontBold = family.findFont('Bold')
+fontItalic = family.findFont('Italic')
 
 def makeDocument():
     u"""Demo random book cover generator."""
