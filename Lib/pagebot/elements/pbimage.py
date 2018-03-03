@@ -276,7 +276,7 @@ class PixelMap(Element):
             
             # If there is a clipRect defined, create the bezier path
             if self.clipRect is not None:
-                clipRect = b.BezierPath()
+                clipRect = context.newPath()
                 clX, clY, clW, clH = self.clipRect
                 sclX = clX/sx
                 sclY = clY/sx

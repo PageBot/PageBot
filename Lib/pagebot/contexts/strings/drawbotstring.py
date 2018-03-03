@@ -27,6 +27,17 @@ from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
 
+def pixelBounds(s, w=None, h=None):
+    u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
+    Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
+    @bh is the amount of pixels above the baseline. 
+    For the total height of the pixel-map, calculate @ph - @py.
+    For the total width of the pixel-map, calculate @pw - @px."""
+    p = BezierPath()
+    p.text(s, (0, 0))
+    return  p.bounds() # bx, by, bw, bh 
+
+
 class NoneDrawBotString(object):
     u"""Used for testing DrawBotString doctest in non-DrawBot Environment."""
     BABEL_STRING_TYPE = 'fs'
@@ -86,9 +97,7 @@ class DrawBotString(BabelString):
         @bh is the amount of pixels above the baseline. 
         For the total height of the pixel-map, calculate @ph - @py.
         For the total width of the pixel-map, calculate @pw - @px."""
-        p = BezierPath()
-        p.text(self.s, (0, 0))
-        return  p.bounds() # bx, by, bw, bh 
+        return pixelBounds(self.s, w=w, h=h)
 
     def fontContainsCharacters(self, characters):
         u"""Return a bool if the current font contains the provided characters. 
@@ -247,24 +256,34 @@ class DrawBotString(BabelString):
 
         newt = fs + t # Format plain string t onto new formatted fs.
         if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
-            tw, _ = b.textSize(newt)
-            fontSize = 1.0 * w / tw * sFontSize
+            # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
+            # more consistent for tracked text. context.textSize will add space to the right of the string.
+            tx, _, tw, _ = pixelBounds(newt) 
+            fontSize = 1.0 * w / (tw-tx) * sFontSize
             # Call this method again, with the calculated real size of the string to fit the width.
             # Note that this assumes a linear relation between size and width, which may not be the the case
             # with [opsz] optical size axes of Variable Fonts. 
             newt = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, 
                 tracking=tracking, rTracking=rTracking, tagName=tagName)
+            newS = cls(newt, context)
+            newS.fittingFontSize = fontSize # In case calculated fontSize to fit width, inform the caller about the result.
+        
         elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
-            _, th = b.textSize(newt)
-            fontSize = 1.0 * h / th * sFontSize
+            # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
+            # more consistent for tracked text. context.textSize will add space to the right of the string.
+            _, ty, _, th = pixelBounds(newt)
+            fontSize = 1.0 * h / (th-ty) * sFontSize
             # Call this method again, with the calculated real size of the string to fit the width.
             # Note that this assumes a linear relation between size and width, which may not be the the case
             # with [opsz] optical size axes of Variable Fonts. 
             newt = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, 
                 tracking=tracking, rTacking=rTracking, tagName=tagName)
-
-        return cls(newt, context)
-
+            newS = cls(newt, context)
+            newS.fittingFontSize = fontSize # In case calculated fontSize to fith height, inform the caller about the result.
+            
+        else:
+            newS = cls(newt, context)
+        return newS
 
 class FoundPattern(object):
     def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
@@ -520,7 +539,7 @@ class TextLine(object):
     #alignment = property(_get_alignment)
             
     def _get_imageBounds(self):
-        u"""Property that answers the bounding box (actual black shape) of the line."""
+        u"""Property that answers the bounding box (actual black shape) of the text line."""
         (x, y), (w, h) = CoreText.CTLineGetImageBounds(self._ctLine, None)
         return x, y, w, h
     imageBounds = property(_get_imageBounds)

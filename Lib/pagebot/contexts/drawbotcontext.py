@@ -207,13 +207,13 @@ class DrawBotContext(BaseContext):
         if path is None:
             path = self._path
         if path is not None:
-            self.saveGraphicState()
+            self.save()
             if sy is None:
                 sy = sx
             self.scale(sx, sy)
             self.b.translate(p[0]/sx, p[1]/sy)
             self.b.drawPath(path)
-            self.restoreGraphicState()
+            self.restore()
 
     def moveTo(self, p):
         u"""Move to point p. Create a new path if none is open.

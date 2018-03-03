@@ -69,7 +69,7 @@ class BaseView(Element):
         self.showTextBoxBaselines = False
         # Flow stuff
         self.showFlowConnections = False
-        self.showTextOverflowMarker = True
+        self.showTextOverflowMarker = False # If True, a [+] marker is shown where text boxes have overflow.
         # Image stuff
         self.showImageReference = False
         # Spread stuff
