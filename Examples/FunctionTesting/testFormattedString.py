@@ -1,5 +1,6 @@
 from pagebot.contexts import defaultContext as context
-from pagebot.contexts.strings.drawbotstring import pixelBounds
+#from pagebot.contexts.strings.drawbotstring import pixelBounds
+
 
 TEXTS = {
     (0, 0): 'ABC',
@@ -24,7 +25,8 @@ for ix in range(3):
     for iy in range(4):
         
         bs = context.newString(TEXTS[(iy, ix)], style=dict(font='Georgia', fontSize=100))
-        bx, by, bw, bh = pixelBounds(bs.s)
+        #Same as bx, by, bw, bh = pixelBounds(bs.s)
+        bx, by, bw, bh = bs.bounds()
         xx, yy = x+ix*W/3, y+iy*H/4
         context.text(bs, (xx, yy))
         context.stroke((1, 0, 0), 0.5)

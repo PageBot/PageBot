@@ -223,7 +223,7 @@ class Family(object):
         >>> family = getFamily('Bungee')
         >>> family.name
         u'Bungee'
-        >>> sorted(family.getFontStyles().keys())
+        >>> sorted(family.getStyles().keys())
         [u'Regular']
         """
         fontStyles = {}
@@ -326,27 +326,25 @@ class Family(object):
         18
         >>> #family.findFont(weight=400, width=5)
 
-        >>> family.findFont(weight=400, width=3)
+        >>> family.findFont(weight='Bold')
         <Font RobotoCondensed-Regular>
         """
-        matchingFont = None
-        match = 0 # Matching value for the current matchingFont
+        nameMatches = set()
+        weightMatches = set()
+        widthMatches = set()
+        italicMatches = set()
         for font in self.fonts.values():
-            thisMatch = 0
-            if name is not None and name in path2FontName(font.path):
-                thisMatch += len(name)**4 # Longer names have better matching
-            thisMatch += font.weightMatch(weight or 'Regular')*1000
-            thisMatch += font.widthMatch(width or 5)
-            if matchingFont is None:
-                matchingFont = font
-                match = thisMatch
-            elif thisMatch > match:
-                matchingFont = font
-                match = thisMatch
-            elif thisMatch == match and italic == font.isItalic():
-                matchingFont = font
-
-        return matchingFont
+            fontName = path2FontName(font.path)
+            if name is not None and name in font and font.nameMatch(name):
+                nameMatches.add(fontName)
+            if font.weightMatch(weight or 'Regular'):
+                weightMatches.add(fontName)
+            if font.widthMatch(width or 5):
+                widthMatches.add(fontName)
+            if font.isItalic():
+                italicMatches.add(fontName)
+        print nameMatches, weightMatches, widthMatches, italicMatches
+        return []
 
 
 if __name__ == '__main__':

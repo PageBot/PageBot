@@ -166,32 +166,29 @@ class Font(object):
         >>> font = getFont(path)
         >>> font.info.weightClass
         900
-        >>> font.weightMatch(0) # Bad match --> 0
-        0
-        >>> #font.weightMatch(800) # Close match --> 800
-        240
-        >>> font.weightMatch(900) # Exact match --> 1000
-        1000
-        >>> font.weightMatch(0) # Bad match --> 0
-        0
-        >>> font.weightMatch('Black') # Black --> Exact match, total depends on matching word length
-        500
-        >>> font.weightMatch('Light') # Light --> No match, total depends on matching word length
-        0
+        >>> font.weightMatch(0) # Bad match
+        False
+        >>> font.weightMatch(800) # Bad match
+        False
+        >>> font.weightMatch(900) # Exact match 
+        True
+        >>> font.weightMatch(0) # Bad match -
+        False
+        >>> font.weightMatch('Black') # Black --> Exact match on 900
+        True
+        >>> font.weightMatch('Light') # Light --> No match on 900
+        False
         """
-        match = 0
         if isinstance(weight, (float, int)): # Comparing by numbers
             # Compare the weight as number as max difference to what we already have.
             wf = self.info.weightClass
-            for w in FONT_WEIGHT_MATCHES.get(weight, [weight]):
-                if isinstance(w, (float, int)): # Then compare by numbers
-                    match = max(match, 1000 - abs(w - wf)*10) # Remember best normalized match
+            return wf in FONT_WEIGHT_MATCHES.get(weight, [])
         else: # Comparing by string
             fileName = path2FontName(self.path)
-            for w in FONT_WEIGHT_MATCHES.get(weight, [weight]):
+            for w in FONT_WEIGHT_MATCHES.get(weight, []):
                 if not isinstance(w, (float, int)) and (w in fileName or w in self.info.styleName):
-                    match = max(match, len(w)*100) # Longer weight name is better match
-        return match
+                    return True
+        return False
 
     def widthMatch(self, width):
         u"""Answer level of matchting for the (abbreviated) width name or number with font.
@@ -261,8 +258,8 @@ class Font(object):
         """
         if self.info.italicAngle:
             return True
-        for i in FONT_ITALIC_MATCHES['Italic']:
-            if i in path2FontName(self.path) or i in self.info.styleName:
+        for altName in FONT_ITALIC_MATCHES.keys():
+            if altName in path2FontName(self.path) or altName in self.info.styleName:
                 return True
         return False
 
