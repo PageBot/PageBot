@@ -210,6 +210,15 @@ class Family(object):
                 self.fonts[fontOrPath] = font
         return font
 
+    def getFonts(self):
+        u"""Answer the unsorted list of Font instances in the family.
+
+        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
+        >>> len(family.getFonts())
+        12
+        """
+        return self.fonts.values()
+
     def getStyles(self):
         u"""Answer the dictionary {fontStyle: [font, font, ...], ...}
 
