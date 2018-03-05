@@ -245,7 +245,7 @@ class Font(object):
         0
         >>> font.widthMatch(10) # Bad match
         0
-        >>> path = getRootFontPath() + '/google/robotocondensed/RobotoCondensed-Bold.ttf' # We know this exists in the PageBot repository
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Bold.ttf' # We know this exists in the PageBot repository
         >>> font = Font(path)
         >>> font.info.widthClass
         5
@@ -281,7 +281,7 @@ class Font(object):
         >>> font = getFont(path)
         >>> font.isItalic()
         1
-        >>> path = getRootFontPath() + '/google/robotocondensed/RobotoCondensed-Bold.ttf' # We know this exists in the PageBot repository
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Bold.ttf' # We know this exists in the PageBot repository
         >>> font = Font(path)
         >>> font.isItalic()
         0
