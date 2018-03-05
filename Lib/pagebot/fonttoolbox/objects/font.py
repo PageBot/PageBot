@@ -159,7 +159,9 @@ class Font(object):
         return 0
 
     def weightMatch(self, weight):
-        u"""Answer level of matching for the (abbreviated) weight name or number with font.
+        u"""Answer level of matching for the (abbreviated) weight name or number with font, in a value between 0 and 1.
+        Currently there is only no-match (0) and full-match (1). Future implementations may give a float indicator
+        for the level of matching, so the caller can decide on the level of threshold.
 
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
@@ -167,101 +169,108 @@ class Font(object):
         >>> font.info.weightClass
         900
         >>> font.weightMatch(0) # Bad match
-        False
+        0
         >>> font.weightMatch(800) # Bad match
-        False
+        0
         >>> font.weightMatch(900) # Exact match 
-        True
+        1
         >>> font.weightMatch(0) # Bad match -
-        False
+        0
         >>> font.weightMatch('Black') # Black --> Exact match on 900
-        True
+        1
         >>> font.weightMatch('Light') # Light --> No match on 900
-        False
+        0
+        >>> path = getRootFontPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
+        >>> font = getFont(path)
+        >>> font.info.weightClass
+        400
+        >>> font.weightMatch(400) # Match
+        1
+        >>> font.weightMatch('Regular') # Match
+        1
+        >>> font.weightMatch('Condensed') # Matching with width name has no match.
+        0
         """
         if isinstance(weight, (float, int)): # Comparing by numbers
             # Compare the weight as number as max difference to what we already have.
-            wf = self.info.weightClass
-            return wf in FONT_WEIGHT_MATCHES.get(weight, [])
+            w = self.info.weightClass
+            if w in FONT_WEIGHT_MATCHES.get(weight, []):
+                return 1 # Exact match
         else: # Comparing by string
             fileName = path2FontName(self.path)
             for w in FONT_WEIGHT_MATCHES.get(weight, []):
                 if not isinstance(w, (float, int)) and (w in fileName or w in self.info.styleName):
-                    return True
-        return False
+                    return 1 # Exacly match
+        return 0 # No match
 
     def widthMatch(self, width):
         u"""Answer level of matchting for the (abbreviated) width name or number with font.
+        Currently there is only no-match (0) and full-match (1). Future implementations may give a float indicator
+        for the level of matching, so the caller can decide on the level of threshold.
 
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.widthClass
         5
-        >>> font.widthMatch(0) # Bad match --> 0
+        >>> font.widthMatch(0) # Bad match 
         0
-        >>> font.widthMatch(4) # Close match --> 800
-        800
-        >>> font.widthMatch(5) # Exact match --> 1000
-        1000
-        >>> font.widthMatch(6) # Close match --> 800
-        800
-        >>> font.widthMatch(10) # Bad match --> 0
+        >>> font.widthMatch(4) # Close match fails
         0
-        >>> #font.widthMatch(500) # Exact match -->1000 in case font weight values range beteween 0-->1000
-        1000
-        >>> #font.widthMatch(501) # Near match --> 1000
-        1000
-        >>> #font.widthMatch(650) # Close match --> 800
-        800
-        >>> font.widthMatch('Cond') # No match --> 0
+        >>> font.widthMatch(5) # Exact match
+        1
+        >>> font.widthMatch(6) # Close match fails
+        0
+        >>> font.widthMatch(10) # Bad match
         0
         >>> path = getRootFontPath() + '/google/robotocondensed/RobotoCondensed-Bold.ttf' # We know this exists in the PageBot repository
         >>> font = Font(path)
         >>> font.info.widthClass
         5
         >>> font.widthMatch(5) # Wrong exact match --> 1000 due to wrong font.info.widthClass 
-        1000
+        1
         >>> font.widthMatch('Wide') # No match on "Wide"
         0
         >>> #font.widthMatch('Cond') # Exact match on "Cond"
-        180
+        1
         """
-        match = 0
         if isinstance(width, (float, int)):
             # Compare the width as number as max difference to what we already have.
-            wf = self.info.widthClass 
-            if wf <= 10: # Normalize to 1000
-                wf *= 10
-            for w in FONT_WIDTH_MATCHES.get(width, [width]):
-                if isinstance(w, (float, int)): 
-                    if w <= 10: # Normalize to 1000
-                        w *= 10
-                    match = max(match, 1000 - abs(w - wf)*20) # Remember best normalized match
+            w = self.info.widthClass 
+            if w <= 100: # Normalize to 1000
+                w *= 100
+            if w in FONT_WIDTH_MATCHES.get(width, []):
+                return 1
         else: # Comparing by string
             fileName = path2FontName(self.path)
-            for w in FONT_WIDTH_MATCHES.get(width, [width]):
+            for w in FONT_WEIGHT_MATCHES.get(width, []):
                 if not isinstance(w, (float, int)) and (w in fileName or w in self.info.styleName):
-                    match = max(match, len(w)*20) # Longer width name is better match
-        return match
+                    return 1
+        return 0
 
     def isItalic(self):
         u"""Answer the boolean flag if this font should be considered to be italic.
+        Currently there is only no-match (0) and full-match (1). Future implementations may give a float indicator
+        for the level of matching, so the caller can decide on the level of threshold.
 
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getRootFontPath
         >>> fontPath = getRootFontPath()
         >>> path = getRootFontPath() + '/google/roboto/Roboto-BlackItalic.ttf' # We know this exists in the PageBot repository
-        >>> f = getFont(path)
-        >>> f.isItalic()
-        True
+        >>> font = getFont(path)
+        >>> font.isItalic()
+        1
+        >>> path = getRootFontPath() + '/google/robotocondensed/RobotoCondensed-Bold.ttf' # We know this exists in the PageBot repository
+        >>> font = Font(path)
+        >>> font.isItalic()
+        0
         """
         if self.info.italicAngle:
-            return True
+            return 1
         for altName in FONT_ITALIC_MATCHES.keys():
             if altName in path2FontName(self.path) or altName in self.info.styleName:
-                return True
-        return False
+                return 1
+        return 0
 
     def keys(self):
         u"""Answer the glyph names of the font.
