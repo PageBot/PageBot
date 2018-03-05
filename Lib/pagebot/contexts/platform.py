@@ -14,6 +14,7 @@
 #     pagebot/contexts/platform.py
 #
 import os
+from pagebot.toolbox.transformer import path2FontName
 
 #   P A T H S 
 
@@ -36,9 +37,11 @@ def _recursivelyCollectFontPaths(path, fontPaths):
         if os.path.isdir(filePath):
             _recursivelyCollectFontPaths(filePath, fontPaths)
         else:
-            extension = fileName.split('.')[-1].lower()
-            if extension in ('ttf', 'otf', 'svg') and not fileName in fontPaths:
-                fontPaths[fileName] = filePath
+            fontName = path2FontName(fileName) # File name without extension used as key, works for Flat and DrawBot.
+            # If fontName is None, it does not have the right extension.
+            # Note that files with the same file name will be overwritten, we expect them to be unique in the OS.
+            if fontName is not None:
+                fontPaths[fontName] = filePath
 
 FONT_PATHS = {} # Cached dictionary
 

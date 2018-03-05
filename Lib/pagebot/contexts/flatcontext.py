@@ -168,7 +168,13 @@ class FlatContext(BaseContext):
     saveImage = saveDocument # Compatible API with DrawBot
 
     def newPage(self, w, h, units='pt'):
-        u"""Other page sizes than default in self.doc, are ignored in Flat."""
+        u"""Other page sizes than default in self.doc, are ignored in Flat.
+
+        >>> context = FlatContext()
+        >>> w, h = 100, 100
+        >>> context.newDocument(w, h)
+        >>> context.newPage(w, h)
+        """
         if self.doc is None:
             self.newDocument(w, h, units)
         self.page = self.doc.addpage()
@@ -180,24 +186,29 @@ class FlatContext(BaseContext):
     def saveGraphicState(self):
         pass # Not implemented?
 
+    save = saveGraphicState
+
     def restoreGraphicState(self):
         pass # Not implemented?
 
+    restore = restoreGraphicState
+
     #   F O N T S
 
-    def installedFonts(self):
-        u"""Answer the list with names of all installed fonts in the system, as available
-        for self.newString( ) style."""
-        return getFontPaths().keys()
-
-    def installFont(self, fontPath):
-        u"""Install the font in the context and answer the font (file)name."""
-        # TODO: To be implemented later, if there is a real need for cached fonts.
-        return path2FontName(fontPath)
-
     def getFontPathOfFont(self, fontName):
-        u"""Answer the path that is source of the given font name. Answer None if the font cannot be found."""
-        return getFontPaths().get(fontName)
+        u"""Answer the path that is source of the given font name. Answer None if the font cannot be found.
+
+        >>> context = FlatContext()
+        >>> path = context.getFontPathOfFont('Skia.ttf')
+        >>> path.endswith('Skia.ttf')
+        True
+        >>> path = context.getFontPathOfFont('Verdana.ttf')
+        >>> path.endswith('Verdana.ttf')
+        True
+        """
+        if fontName is not None and not os.path.exists(fontName):
+            fontName = getFontPaths().get(fontName)
+        return fontName
 
     def listOpenTypeFeatures(self, fontName):
         u"""Answer the list of opentype features available in the named font.
@@ -229,16 +240,18 @@ class FlatContext(BaseContext):
 
     def font(self, fontName, fontSize=None):
         u"""Set the current font, in case it is not defined in a formatted string.
+        fontName can be the full font file path, or an abbreveation that can be found 
+        by family or file name.
 
         >>> context = FlatContext()
-        >>> context.font('ThisFont')
-        >>> context._fontName
-        'ThisFont'
+        >>> context.font('Verdana.ttf')
+        >>> context._fontName.endswith('/Verdana.ttf')
+        True
         >>> context.font('OtherFont', 12)
         >>> context._fontName, context._fontSize
         ('OtherFont', 12)
         """
-        self._fontName = fontName
+        self._fontName = self.getFontPathOfFont(fontName)
         if fontSize is not None:
             self._fontSize = fontSize
 
@@ -251,6 +264,19 @@ class FlatContext(BaseContext):
         12
         """
         self._fontSize = fontSize
+
+    def fontFilePath(self):
+        u"""Aswer the font file path, which in FlatContext is the same as the self._fontName
+
+        >>> context = FlatContext()
+        >>> context.font('ThisFont')
+        >>> context._fontName
+        'ThisFont'
+        >>> context.font('OtherFont', 12)
+        >>> context._fontName, context._fontSize
+        ('OtherFont', 12)
+        """
+        return self._fontName
 
     def textBox(self, bs, rect):
         x, y, w, h = rect

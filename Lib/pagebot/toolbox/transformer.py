@@ -20,6 +20,8 @@ from time import time
 import datetime
 from random import randint
 
+from pagebot.style import STYLE_REPLACEMENTS
+
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
 
@@ -712,7 +714,11 @@ def path2FormatPath(path, format=None):
     return None
 
 def path2Name(path):
-    u"""Answers the file name part of the path."""
+    u"""Answers the file name part of the path.
+
+    >>> path2Name('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
+    'Agency_FB-Compressed.ufo'
+    """
     if path is None:
         return None
     if not path:
@@ -725,27 +731,33 @@ def path2Extension(path):
     >>> path2Extension('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'ufo'
     >>> path2Extension('/xxx/yyy/zzz/Agency_FB-Compressed.TTF')
-    'TTF'
+    'ttf'
     """
-    return path.split('.')[-1]
+    return path.split('.')[-1].lower()
 
-def path2FontName(path):
+def path2FontName(path, extensions=None):
     u"""
     Take that file part of the path, and get the chunk until the first
-    period to remove the extension, version numbers and the database download
-    ID.
+    period to remove the extension, version numbers, etc.
+    If the extension is not in extensions (default id ('ttf', 'otf'))
+    then answer None
 
-    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
+    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.otf')
     'Agency_FB-Compressed'
-    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo')
+    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo') is None
+    True
+    >>> path2FontName('/xxx/yyy/zzz/Agency_FB-Compressed.version01.ufo', ['ufo'])
     'Agency_FB-Compressed'
-    >>> path2FontName('#xxx/yyy/zzz/Agency_FB-Bold.0001646411.ufo')
+    >>> path2FontName('#xxx/yyy/zzz/Agency_FB-Bold.0001646411.ttf')
     'Agency_FB-Bold'
     """
-    name = path2Name(path)
-    if name is not None:
-        return name.split('.')[0]
-    return 'Untitled'
+    if extensions is None:
+        extensions = ('ttf', 'otf')
+    if path2Extension(path) in extensions:
+        name = path2Name(path)
+        if name is not None:
+            return name.split('.')[0]
+    return None
 
 familyNameParts = re.compile('([A-Za-z]*)')
 
@@ -763,21 +775,27 @@ path2GlyphIdName = path2FontName
 
 styleNameParts = re.compile('[^A-Za-z]*([A-Z]*[a-z]*)')
 
-def path2StyleNameParts(pathOrName):
+def path2StyleNameParts(pathOrName, extensions=None):
     u"""Answer the fileName or name as set of unique parts that can be checked 
     for as style e.g. by the abbreviated style names in style.py. 
     The parts a split on Cap(+Cap)(+lc) patterns.
     Note that the family name is also included, as often there is no difference
     between the family name and the style parts.
 
-    >>> sorted(path2StyleNameParts('/xxx/yyy/zzz/Agency_FB-Compressed.ufo'))
+    >>> sorted(path2StyleNameParts('/xxx/yyy/zzz/Agency_FB-Compressed.ufo', ['ufo']))
     ['Agency', 'Compressed', 'FB']
     >>> sorted(path2StyleNameParts('Agency   FB-&&BoldCondensed.TTF'))
     ['Agency', 'Bold', 'Condensed', 'FB']
-    >>> sorted(path2StyleNameParts('RobotoCondensed_SemiBoldItalic--.1234.UFO'))
-    ['Bold', 'Condensed', 'Italic', 'Roboto', 'Semi']
+    >>> sorted(path2StyleNameParts('Roboto Condensed_SemiBoldItalic--.1234.UFO', ['ufo']))
+    ['Condensed', 'Italic', 'Roboto', 'Semibold']
     """
-    parts = set(styleNameParts.findall(path2FontName(pathOrName)))
+    fontName = path2FontName(pathOrName, extensions)
+    if fontName is None:
+        return []
+    for fromException, toException in STYLE_REPLACEMENTS:
+        if fromException in fontName:
+            fontName = fontName.replace(fromException, toException)
+    parts = set(styleNameParts.findall(fontName))
     parts.remove('')
     return parts
 
