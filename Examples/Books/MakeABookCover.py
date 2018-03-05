@@ -48,6 +48,7 @@ W -= 48 # Make a bit more narrow format.
 EXPORT_PATH = '_export/ABookCover.pdf'
 
 family = getFamily('Roboto')
+# Find fonts in the family by patterns in their names.
 fontRegular = family.findFont('Regular')
 fontBold = family.findFont('Bold')
 fontItalic = family.findFont('Italic')
@@ -87,7 +88,7 @@ def makeDocument():
                                      Fit2RightSide(),
                                      Fit2BottomSide()],
                          fill=C1)
-    colorRect1.bleed = (0, 0, 0, 40)
+    colorRect1.bleed = 0#(0, 0, 0, 40)
     print colorRect1.bleed
     colorRect1.solve() # Solve element position, before we can make
                        # other elements depend on position and size.

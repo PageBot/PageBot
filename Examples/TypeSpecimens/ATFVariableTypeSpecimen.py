@@ -21,16 +21,18 @@ import os, copy
 from pagebot.contexts import defaultContext as context
 from pagebot.style import INCH
 from pagebot.document import Document
-from pagebot.fonttoolbox.objects.font import findInstalledFonts, getFontByName
+from pagebot.fonttoolbox.objects.family import getFamily, getFamilies
 from pagebot.elements import newTextBox, newRect, newText
 from pagebot.toolbox.transformer import int2Color
-from pagebot.conditions import Bleed2Sides
+from pagebot.conditions import *
 
 W = 8.5*INCH
 H = 11*INCH
+PADDING = (60, 60 ,60, 60)
 
 # Build the specimen pages for the font names that include these patterns.
-FONT_NAME_PATTERNS = ('Bungee', 'Amstel')
+families = (getFamily('Bungee'), getFamily('AmstelvarAlpha'))
+NUM_PAGES = len(families[0]) + len(families[1])
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/ATFSpecimen-%s.pdf' 
@@ -39,32 +41,34 @@ EXPORT_PATH = '_export/ATFSpecimen-%s.pdf'
 PAPER_COLOR = int2Color(0xF4EbC9) # Approximation of paper color of original specimen.
 RED_COLOR = int2Color(0xAC1E2B) # Red color used in the original specimen
   
-def buildSpecimenPages(doc, fontNames):
-    for index, fontName in enumerate(sorted(fontNames)):
-        font = getFontByName(fontName)
+def buildSpecimenPages(doc, family):
+    for index, font in enumerate(family.getFonts()):
         page = doc[index]
+        page.padding = PADDING
         pageTitle = font.info.familyName + ' ' + font.info.styleName
         # Add filling rectangle for background color of the old paper book.
-        newRect(z=-1, parent=page, conditions=[Bleed2Sides()], fill=PAPER_COLOR)
+        newRect(z=-1, parent=page, fill=PAPER_COLOR)
         # Centered title: family name and style name of the current font.
-        titleBs = context.newString(pageTitle, style=dict(font=fontName, fontSize=24, textFill=0))
-        newText(titleBs, x=50, y=100, parent=page, w=400)
+        titleBs = context.newString(pageTitle, style=dict(font=font.path, fontSize=24, textFill=0))
+        newText(titleBs, x=50, y=100, parent=page, w=400, conditions=[Top2Top(), Fit2Width()])
 
 def makeDocument():
     u"""Create the main document in the defined size with a couple of automatic empty pages."""
-    doc = Document(w=W, h=H, title='Variable Font Sample Page', originTop=False, startPage=1, autoPages=10, context=context)
+    doc = Document(w=W, h=H, title='Variable Font Sample Page', originTop=False, startPage=1, 
+        autoPages=NUM_PAGES, context=context)
     # Get default view from the document and set the viewing parameters.
     view = doc.view
     view.padding = INCH/2 # To show cropmarks and such, make >=20*MM or INCH.
     view.showPageCropMarks = True # Won't show if there is not padding in the view.
-    view.showPageFrame = False # No frame in case PAPER_COLOR exists to be shown.
+    view.showPageFrame = True # No frame in case PAPER_COLOR exists to be shown.
+    view.showPagePadding = True # No frame in case PAPER_COLOR exists to be shown.
     view.showPageRegistrationMarks = True
     view.showPageNameInfo = True
     view.showTextOverflowMarker = False # Don't show marker in case Filibuster blurb is too long.
 
     # Build the pages for all fonts that include one of these patterns.
-    fontNames = findInstalledFonts(fontNamePatterns=FONT_NAME_PATTERNS, context=context)
-    buildSpecimenPages(doc, fontNames)
+    for family in families:
+        buildSpecimenPages(doc, family)
 
     # Solve remaining layout and size conditions.
        

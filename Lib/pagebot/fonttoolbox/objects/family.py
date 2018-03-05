@@ -34,12 +34,12 @@ def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=Fals
     True
     >>> 'Bungee' in families
     True
-    >>> families = getFamilies(useFontInfo=False, force=True) # Forced to look an fileName only, RobotoCondensed is a family
-    >>> 'RobotoCondensed' in families
+    >>> families = getFamilies(useFontInfo=False, force=True) # Forced to look an fileName only, Roboto is a family
+    >>> 'Roboto' in families
     True
     >>> families = getFamilies(useFileName=False, force=True) # Looking into font.info, Roboto is the family name.
-    >>> 'RobotoCondensed' in families
-    False
+    >>> 'Roboto' in families
+    True
     >>> #families = getFamilies(useFontInfo=False, useFileName=False) finds nothing
     """
     global FAMILIES
@@ -210,6 +210,15 @@ class Family(object):
                 self.fonts[fontOrPath] = font
         return font
 
+    def getFonts(self):
+        u"""Answer the unsorted list of Font instances in the family.
+
+        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
+        >>> len(family.getFonts())
+        12
+        """
+        return self.fonts.values()
+
     def getStyles(self):
         u"""Answer the dictionary {fontStyle: [font, font, ...], ...}
 
@@ -278,7 +287,7 @@ class Family(object):
         5
         >>> family = getFamily('Roboto')
         >>> len(family.getRomanFonts())
-        9
+        6
         """
         romanFonts = {}
         for fontPath, font in self.fonts.items():
@@ -294,7 +303,7 @@ class Family(object):
         0
         >>> family = getFamily('Roboto')
         >>> len(family.getItalicFonts())
-        9
+        6
         """
         italicFonts = {}
         for fontPath, font in self.fonts.items():
@@ -302,7 +311,7 @@ class Family(object):
                 italicFonts[fontPath] = font
         return italicFonts
 
-    def findRegularFont(self):
+    def findRegularFont(self, italic=False):
         u"""Try to find a font that is closest to style "Normal" or "Regular".
         Otherwise answer the font that has weight/width closest to (400, 5) and angle is closest to 0.
 
@@ -312,10 +321,22 @@ class Family(object):
         u'Regular'
         >>> path2FontName(font.path)
         'Roboto-Regular'
+        >>> family.findRegularFont(italic=True)
+        <Font Roboto-Italic>
         """
-        return self.findFont(weight=400, width=5, italic=False)
+        return self._findFont(weight=400, width=5, italic=italic)
 
-    def findFont(self, name=None, weight=None, width=None, italic=None):
+    def _findFont(self, name=None, weight=None, width=None, italic=False):
+        match = 0
+        matchingFont = None
+        for font in self.fonts.values():
+            thisMatch = font.match(name=name, weight=weight, width=width, italic=italic)
+            if thisMatch > match:
+                matchingFont = font
+                match = thisMatch
+        return matchingFont
+
+    def findFont(self, name=None, weight=None, width=None, italic=False):
         u"""Answer the font that is the closest match on name, weight as name or weight as number,
         width as name or width as number and italic angle as name or number, if any of these are defined.
         In case there is one or more fonts in the family then there always is a closest match.
@@ -323,29 +344,20 @@ class Family(object):
 
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> len(family)
-        18
-        >>> #family.findFont(weight=400, width=5)
-
+        12
+        >>> family.findFont(weight=400, width=5)
+        <Font Roboto-Regular>
         >>> family.findFont(weight='Bold')
-        <Font RobotoCondensed-Regular>
+        <Font Roboto-Bold>
+        >>> family.findFont(weight='Bold', italic=True)
+        <Font Roboto-BoldItalic>
+        >>> family.findFont(weight='Boldish', width='NotWide')
+        <Font Roboto-Regular>
         """
-        nameMatches = set()
-        weightMatches = set()
-        widthMatches = set()
-        italicMatches = set()
-        for font in self.fonts.values():
-            fontName = path2FontName(font.path)
-            if name is not None and name in font and font.nameMatch(name):
-                nameMatches.add(fontName)
-            if font.weightMatch(weight or 'Regular'):
-                weightMatches.add(fontName)
-            if font.widthMatch(width or 5):
-                widthMatches.add(fontName)
-            if font.isItalic():
-                italicMatches.add(fontName)
-        print nameMatches, weightMatches, widthMatches, italicMatches
-        return []
-
+        matchingFont = self._findFont(name=name, weight=weight, width=width, italic=italic)
+        if matchingFont is None: # No match, answer regular if it can be found.
+            matchingFont = self._findFont(weight=400, width=5, italic=italic)
+        return matchingFont
 
 if __name__ == '__main__':
     import doctest
