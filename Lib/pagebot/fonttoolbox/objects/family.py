@@ -324,28 +324,19 @@ class Family(object):
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> len(family)
         18
-        >>> #family.findFont(weight=400, width=5)
+        >>> family.findFont(weight=400, width=5)
 
         >>> family.findFont(weight='Bold')
         <Font RobotoCondensed-Regular>
         """
-        nameMatches = set()
-        weightMatches = set()
-        widthMatches = set()
-        italicMatches = set()
+        match = 0
+        matchingFont = None
         for font in self.fonts.values():
-            fontName = path2FontName(font.path)
-            if name is not None and name in font and font.nameMatch(name):
-                nameMatches.add(fontName)
-            if font.weightMatch(weight or 'Regular'):
-                weightMatches.add(fontName)
-            if font.widthMatch(width or 5):
-                widthMatches.add(fontName)
-            if font.isItalic():
-                italicMatches.add(fontName)
-        print nameMatches, weightMatches, widthMatches, italicMatches
-        return []
-
+            thisMatch = font.match(name=name, weight=weight, width=width, italic=italic)
+            if thisMatch > match:
+                matchingFont = font
+                match = thisMatch
+        return matchingFont
 
 if __name__ == '__main__':
     import doctest
