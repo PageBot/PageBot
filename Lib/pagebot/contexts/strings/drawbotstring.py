@@ -95,7 +95,7 @@ class DrawBotString(BabelString):
         return self._fontName
     def _set_fontName(self, fontName):
         if fontName is not None:
-            self.b.font(fontName)
+            self.context.font(fontName)
         self._fontName = fontName
     fontName = property(_get_fontName, _set_fontName)
 
@@ -103,7 +103,7 @@ class DrawBotString(BabelString):
         return self._fontSize
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
-            self.b.fontSize(fontSize)
+            self.context.fontSize(fontSize)
         self._fontSize = fontSize
     fontSize = property(_get_fontSize, _set_fontSize)
 
@@ -300,10 +300,10 @@ class DrawBotString(BabelString):
             # to fit the width.
             # Note that this assumes a linear relation between size and width, which may not always be the case
             # with [opsz] optical size axes of Variable Fonts. 
-            newt = cls.newString(t, context, e, style, fontSize=sFontSize, styleName=styleName, 
+            newS = cls.newString(t, context, e, style, fontSize=sFontSize, styleName=styleName, 
                 tracking=tracking, rTracking=rTracking, tagName=tagName)
             # In case calculating fontSize to fit height, inform the caller about the new calculated fontSize.
-            newt.fontSize(sFontSize)
+            newS.fontSize = sFontSize
 
         elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
@@ -314,9 +314,8 @@ class DrawBotString(BabelString):
             # to fit the width.
             # Note that this assumes a linear relation between size and width, which may not always be the case
             # with [opsz] optical size axes of Variable Fonts. 
-            newt = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, 
+            newS = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, 
                 tracking=tracking, rTacking=rTracking, tagName=tagName)
-            newS = cls(newt, context)
             # In case calculating fontSize to fit height, inform the caller about the new calculated fontSize.
             newS.fontSize = fontSize 
 
