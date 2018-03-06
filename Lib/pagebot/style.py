@@ -519,6 +519,10 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         viewGridStroke = (0.3, 0.3, 0.6), # Stroke of grid lines in part of a template.
         viewGridStrokeWidth = 0.5, # Line thickness of the grid.
         
+        # Page padding grid
+        viewPagePaddingStroke = (0.4, 0.4, 0.7), # Stroke of page padding lines, if view.showPagePadding is True
+        viewPagePaddingStrokeWidth = 0.5, # Line thickness of the page padding lines.
+
         # Baseline grid
         viewBaselineGridStroke = (1, 0, 0), # Stroke clor of baselines grid.
         

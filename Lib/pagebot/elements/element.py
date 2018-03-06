@@ -2242,6 +2242,8 @@ class Element(object):
         >>> e.padding = (11, 22, 33, 44, 55, 66)
         >>> e.padding
         (11, 22, 33, 44)
+        >>> e.padding3D
+        (11, 22, 33, 44, 55, 66)
         """
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
@@ -2304,6 +2306,8 @@ class Element(object):
         >>> e.style = dict(pt=14)
         >>> e.pt
         14
+        >>> e.padding # Make sure other did not change.
+        (14, 0, 0, 0)
         """
         return self.css('pt', 0)
     def _set_pt(self, pt):
@@ -2325,6 +2329,8 @@ class Element(object):
         >>> e.style = dict(pb=14)
         >>> e.pb
         14
+        >>> e.padding # Make sure other did not change.
+        (0, 0, 14, 0)
         """
         return self.css('pb', 0)
     def _set_pb(self, pb):
@@ -2346,6 +2352,8 @@ class Element(object):
         >>> e.style = dict(pl=14)
         >>> e.pl
         14
+        >>> e.padding # Make sure other did not change.
+        (0, 0, 0, 14)
         """
         return self.css('pl', 0)
     def _set_pl(self, pl):
@@ -2367,6 +2375,8 @@ class Element(object):
         >>> e.style = dict(pr=14)
         >>> e.pr
         14
+        >>> e.padding # Make sure other did not change.
+        (0, 14, 0, 0)
         """
         return self.css('pr', 0)
     def _set_pr(self, pr):
@@ -2385,6 +2395,8 @@ class Element(object):
         >>> e.style = dict(pzf=14)
         >>> e.pzf
         14
+        >>> e.padding3D # Make sure other did not change.
+        (0, 0, 0, 0, 14, 0)
         """
         return self.css('pzf', 0)
     def _set_pzf(self, pzf):
@@ -2403,6 +2415,8 @@ class Element(object):
         >>> e.style = dict(pzb=14)
         >>> e.pzb
         14
+        >>> e.padding3D # Make sure other did not change.
+        (0, 0, 0, 0, 0, 14)
         """
         return self.css('pzb', 0)
     def _set_pzb(self, pzb):
