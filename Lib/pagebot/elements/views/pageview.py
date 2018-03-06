@@ -205,9 +205,9 @@ class PageView(BaseView):
             context.setFillColor(None)
             context.setStrokeColor((0, 0, 1), 0.5)
             if page.originTop:
-                context.rect(px+pr, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
+                context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
             else:
-                context.rect(px+pr, py+pb, page.w-pl-pr, page.h-pt-pb)
+                context.rect(px+pl, py+pb, page.w-pl-pr, page.h-pt-pb)
             page._restoreScale(self)
 
     def drawPageNameInfo(self, page, origin):

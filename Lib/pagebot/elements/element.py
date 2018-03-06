@@ -2027,7 +2027,9 @@ class Element(object):
 
     def _get_margin(self): 
         u"""Tuple of paddings in CSS order, direction of clock
-        
+        Can be 123, [123], [123, 234], [123, 234, 345], [123, 234, 345, 456] 
+        or [123, 234, 345, 456, 567, 678]
+
         >>> e = Element(margin=(10, 20, 30, 40))
         >>> e.mt, e.mr, e.mb, e.ml
         (10, 20, 30, 40)
@@ -2045,6 +2047,8 @@ class Element(object):
         (11, 22, 33, 11)
         >>> e.margin = (11, 22, 33, 44)
         >>> e.margin
+        (11, 22, 33, 44)
+        >>> e.mt, e.mr, e.mb, e.ml
         (11, 22, 33, 44)
         >>> e.margin = (11, 22, 33, 44, 55, 66)
         >>> e.margin
@@ -2211,8 +2215,10 @@ class Element(object):
     # TODO: Add support of "auto" values, doing live centering.
  
     def _get_padding(self): 
-        u"""Tuple of paddings in CSS order, direction of clock
-        
+        u"""Tuple of paddings in CSS order, direction of clock starting on top
+        Can be 123, [123], [123, 234], [123, 234, 345], [123, 234, 345, 456] 
+        or [123, 234, 345, 456, 567, 678]
+
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pt, e.pr, e.pb, e.pl
         (10, 20, 30, 40)
@@ -2231,13 +2237,15 @@ class Element(object):
         >>> e.padding = (11, 22, 33, 44)
         >>> e.padding
         (11, 22, 33, 44)
+        >>> e.pt, e.pr, e.pb, e.pl
+        (11, 22, 33, 44)
         >>> e.padding = (11, 22, 33, 44, 55, 66)
         >>> e.padding
         (11, 22, 33, 44)
         """
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
-        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
+        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565]
         assert padding is not None
         if isinstance(padding, (long, int, float)):
             padding = [padding]
