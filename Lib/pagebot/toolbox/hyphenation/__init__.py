@@ -83,3 +83,16 @@ def words(language=DEFAULT_LANGUAGE):
     u"""Answer the sorted list of all words in the dictionary for this language."""
     return sorted(hyphenatedWords(language).keys())
 
+def wordsByLength(language=DEFAULT_LANGUAGE):
+    u"""Answer the dictionary with lists of words, groups by their length as key."""
+    wordsByLength = {}
+    for word in words(language):
+        l = len(word)
+        if not l in wordsByLength:
+            wordsByLength[l] = []
+        wordsByLength[l].append(word)
+    return wordsByLength
+    
+
+
+

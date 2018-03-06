@@ -515,7 +515,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # as view may locally change these values.
 
         # Grid stuff for showing
-        viewGridFill = (200/255.0, 230/255.0, 245/255.0, 0.9), # Fill color for (cw, ch) squares.
+        viewGridFill = (200/255.0, 230/255.0, 245/255.0, 0.1), # Fill color for (cw, ch) squares.
         viewGridStroke = (0.3, 0.3, 0.6), # Stroke of grid lines in part of a template.
         viewGridStrokeWidth = 0.5, # Line thickness of the grid.
         
