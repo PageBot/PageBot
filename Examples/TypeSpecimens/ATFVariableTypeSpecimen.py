@@ -41,21 +41,23 @@ EXPORT_PATH = '_export/ATFSpecimen-%s.pdf'
 PAPER_COLOR = int2Color(0xF4EbC9) # Approximation of paper color of original specimen.
 RED_COLOR = int2Color(0xAC1E2B) # Red color used in the original specimen
   
-def buildSpecimenPages(doc, family):
-    for index, font in enumerate(family.getFonts()):
-        page = doc[index]
+def buildSpecimenPages(doc, family, pn):
+    for font in family.getFonts():
+        page = doc[pn]
         page.padding = PADDING
         pageTitle = font.info.familyName + ' ' + font.info.styleName
         # Add filling rectangle for background color of the old paper book.
         newRect(z=-1, parent=page, fill=PAPER_COLOR)
         # Centered title: family name and style name of the current font.
-        titleBs = context.newString(pageTitle, style=dict(font=font.path, fontSize=24, textFill=0))
+        titleBs = context.newString(pageTitle, style=dict(font=font.path, w=W-120, textFill=0))
         newText(titleBs, x=50, y=100, parent=page, w=400, conditions=[Top2Top(), Fit2Width()])
-
+        pn += 1
+    return pn
+    
 def makeDocument():
     u"""Create the main document in the defined size with a couple of automatic empty pages."""
     doc = Document(w=W, h=H, title='Variable Font Sample Page', originTop=False, startPage=1, 
-        autoPages=NUM_PAGES, context=context)
+        autoPages=NUM_PAGES+1, context=context)
     # Get default view from the document and set the viewing parameters.
     view = doc.view
     view.padding = INCH/2 # To show cropmarks and such, make >=20*MM or INCH.
@@ -67,8 +69,9 @@ def makeDocument():
     view.showTextOverflowMarker = False # Don't show marker in case Filibuster blurb is too long.
 
     # Build the pages for all fonts that include one of these patterns.
+    pn = 1
     for family in families:
-        buildSpecimenPages(doc, family)
+        pn = buildSpecimenPages(doc, family, pn)
 
     # Solve remaining layout and size conditions.
        
