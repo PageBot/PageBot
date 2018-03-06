@@ -28,7 +28,7 @@ from pagebot.conditions import *
 
 W = 7.3*INCH
 H = 11*INCH
-PADDING = 10, 10, 10, 72
+PADDING = 36, 30, 72, 72 # Page padding top, right, bottom, left
 COLUMNS = 4
 G = 8
 GRID_X = ((200, G), (150, G), (150, G))
@@ -51,7 +51,6 @@ def buildSpecimenPages(doc, family, pn):
     for font in family.getFonts():
         page = doc[pn]
         page.padding = PADDING
-        page.pr = 72
         page.gridX = GRID_X
         pageTitle = font.info.familyName + ' ' + font.info.styleName
         # Add filling rectangle for background color of the old paper book.

@@ -203,7 +203,8 @@ class PageView(BaseView):
             px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
 
             context.setFillColor(None)
-            context.setStrokeColor((0, 0, 1), 0.5)
+            context.setStrokeColor(self.css('viewPagePaddingStroke', (0.2, 0.2, 1)), 
+                                   self.css('viewPagePaddingStrokeWidth', 0.5))
             if page.originTop:
                 context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
             else:
