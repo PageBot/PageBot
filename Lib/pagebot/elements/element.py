@@ -1004,7 +1004,7 @@ class Element(object):
         gridColumns = []
         gridX = self.gridX 
         pw = self.pw # Padded with, available space for columns.
-        gw = self.gw
+        gw = self.gw or 0
 
         if gridX is not None: # If there is a non-linear grid sequence defined, use that.
             undefined = 0
@@ -1012,7 +1012,7 @@ class Element(object):
             # Make a first pass to see how many columns (None) need equal division and what total width spare we have.
             for gridValue in gridX:
                 if not isinstance(gridValue, (list, tuple)):
-                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gutter
+                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gw gutter
                 cw, gutter = gridValue
                 if cw is None:
                     undefined += 1
@@ -1026,7 +1026,7 @@ class Element(object):
             x = 0
             for gridValue in gridX:
                 if not isinstance(gridValue, (list, tuple)):
-                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gutter
+                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gw gutter
                 cw, gutter = gridValue
                 if cw is None:
                     cw = equalWidth
@@ -1035,8 +1035,8 @@ class Element(object):
                 gridColumns.append((x, cw))
                 x += cw + gutter
         
-        else: # If no grid defined, then run the squence for cw + gutter
-            cw = self.cw or 100
+        elif self.cw: # If no grid defined, and there is a general grid width, then run the squence for cw + gw gutter
+            cw = self.cw
             x = 0
             for index in range(int(pw/cw)): # Roughly the amount of columns to expect. Avoid while loop
                 if x + cw > pw:
@@ -1066,7 +1066,7 @@ class Element(object):
         gridRows = []
         gridY = self.gridY 
         ph = self.ph # Padded height, available space for vertical columns.
-        gh = self.gh
+        gh = self.gh or 0
 
         if gridY is not None: # If there is a non-linear grid sequence defined, use that.
             undefined = 0
@@ -1075,7 +1075,7 @@ class Element(object):
             # Make a first pass to see how many columns (None) need equal division.
             for gridValue in gridY:
                 if not isinstance(gridValue, (list, tuple)):
-                    gridValue = (gridValue, None) # Only single column height defined, force fill in with default gutter
+                    gridValue = (gridValue, None) # Only single column height defined, force fill in with default gh gutter
                 ch, gutter = gridValue
                 if ch is None:
                     undefined += 1
@@ -1097,7 +1097,7 @@ class Element(object):
                     gutter = gh
                 gridRows.append((y, ch))
                 y += ch + gutter
-        else: # If no grid defined, then run the squence for ch + gutter
+        elif self.ch: # If no grid defined, and there is a general grid height, then run the squence for ch + gh gutter
             ch = self.ch
             y = 0
             for index in range(int(ph/ch)): # Roughly the amount of columns to expect. Avoid while loop
@@ -3243,7 +3243,7 @@ class Element(object):
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, origin)
+            self.buildChildElements(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

@@ -511,15 +511,12 @@ class PageView(BaseView):
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        sGridFill = e.css('viewGridFill', NO_COLOR)
+        gridFillColor = e.css('viewGridFill', NO_COLOR)
         gutterW = e.gw # Gutter width
         gutterH = e.gh # Gutter height
         columnWidth = e.cw # Column width
         columnHeight = e.ch # Column height
-        pl = e.pl # Padding left
-        pt = e.pt # Padding top
-        pr = e.pr # padding right
-        pb = e.pb # padding bottom
+        pt, pr, pb, pl = e.padding # Padding top, right, bottom, left
         pw = e.pw # Padding width, space between paddingLeft and paddingRight
         ph = e.ph # Padding height, space between paddingTop and paddingBottom
 
@@ -533,7 +530,6 @@ class PageView(BaseView):
         oy = py + pb
 
         if self.showGrid:
-            gridFillColor = self.css('viewGridFill', NO_COLOR)
             if gridFillColor != NO_COLOR:
                 context.fill(gridFillColor)
                 context.stroke(None)

@@ -50,7 +50,8 @@ class NoneDrawBotString(object):
         self.s = s
 
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+    def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True, 
+            fontSize=None, styleName=None, tagName=None):
         return cls(s)
 
 class DrawBotString(BabelString):
@@ -176,11 +177,26 @@ class DrawBotString(BabelString):
         return self.context.textOverflow(self, (0, 0, w, h), align)
 
     @classmethod
-    def newString(cls, t, context, e=None, style=None, w=None, h=None, 
+    def newString(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True,
         fontSize=None, styleName=None, tracking=None, rTracking=None, tagName=None):
         u"""Answer a DrawBotString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
-        If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
+        If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
+        In that case the pixelFit flag defines if the current width or height comes from the pixel image of em size.
+
+        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> fontPath = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> bs = context.newString('ABC', style=dict(font=fontPath, fontSize=22))
+        >>> bs
+        ABC
+        >>> bs.w, bs.
+        (43.61328125, 31.0)
+        >>> bs = context.newString('ABC', style=dict(font=fontPath), w=100)
+        >>> int(round(bs.fontSize))
+        51
+        """
         # Get the drawBotBuilder, no need to check, we already must be in context here.
         if t is None:
             t = ''
@@ -294,7 +310,10 @@ class DrawBotString(BabelString):
         if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
             # more consistent for tracked text. context.textSize will add space to the right of the string.
-            tx, _, tw, _ = pixelBounds(newt) 
+            if pixelFit:
+                tx, _, tw, _ = pixelBounds(newt) 
+            else:
+                tx, tw = 0, newt.size()[0]
             sFontSize = 1.0 * w / (tw-tx) * sFontSize
             # Recursively call this method again, without w and with the calculated real size of the string 
             # to fit the width.
@@ -308,7 +327,10 @@ class DrawBotString(BabelString):
         elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
             # more consistent for tracked text. context.textSize will add space to the right of the string.
-            _, ty, _, th = pixelBounds(newt)
+            if pixelFit:
+                _, ty, _, th = pixelBounds(newt)
+            else:
+                ty, th = 0, newt.size()[1]
             fontSize = 1.0 * h / (th-ty) * sFontSize
             # Recursivley call this method again, without h and with the calculated real size of the string 
             # to fit the width.
