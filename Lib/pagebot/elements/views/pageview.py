@@ -203,11 +203,12 @@ class PageView(BaseView):
             px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
 
             context.setFillColor(None)
-            context.setStrokeColor((0, 0, 1), 0.5)
+            context.setStrokeColor(self.css('viewPagePaddingStroke', (0.2, 0.2, 1)), 
+                                   self.css('viewPagePaddingStrokeWidth', 0.5))
             if page.originTop:
-                context.rect(px+pr, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
+                context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
             else:
-                context.rect(px+pr, py+pb, page.w-pl-pr, page.h-pt-pb)
+                context.rect(px+pl, py+pb, page.w-pl-pr, page.h-pt-pb)
             page._restoreScale(self)
 
     def drawPageNameInfo(self, page, origin):
@@ -510,15 +511,12 @@ class PageView(BaseView):
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        sGridFill = e.css('viewGridFill', NO_COLOR)
+        gridFillColor = e.css('viewGridFill', NO_COLOR)
         gutterW = e.gw # Gutter width
         gutterH = e.gh # Gutter height
         columnWidth = e.cw # Column width
         columnHeight = e.ch # Column height
-        pl = e.pl # Padding left
-        pt = e.pt # Padding top
-        pr = e.pr # padding right
-        pb = e.pb # padding bottom
+        pt, pr, pb, pl = e.padding # Padding top, right, bottom, left
         pw = e.pw # Padding width, space between paddingLeft and paddingRight
         ph = e.ph # Padding height, space between paddingTop and paddingBottom
 
@@ -532,7 +530,6 @@ class PageView(BaseView):
         oy = py + pb
 
         if self.showGrid:
-            gridFillColor = self.css('viewGridFill', NO_COLOR)
             if gridFillColor != NO_COLOR:
                 context.fill(gridFillColor)
                 context.stroke(None)

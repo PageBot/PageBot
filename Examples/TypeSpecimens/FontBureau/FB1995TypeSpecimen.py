@@ -11,10 +11,10 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     ATFVariableTypeSpecimen.py
+#     FB1995TypeSpecimen.py
 #
 #     This scripts generates a look-alike revival type specimen with an interpretation
-#     of the 1923 American Type Founders Specimen Book & Catalog.
+#     of the “Font Bureau Type Specimen“ of 1995.
 #
 #     For educational purpose in using PageBot, almost every line of code has been commented.
 #
@@ -23,10 +23,10 @@ import os # Import standard libary for accessing the file system.
 from random import choice, shuffle # Used for random selection of sample words
 
 from pagebot.contexts import defaultContext as context # Decide if running in DrawBot or Linux-Flat
-from pagebot.style import INCH, CENTER, INLINE # Import some measure and alignments constants.
+from pagebot.style import INCH, LEFT, RIGHT # Import some measure and alignments constants.
 from pagebot.document import Document # Overall container class of any PageBot script
 from pagebot.fonttoolbox.objects.family import getFamily, getFamilies # Access to installed fonts
-from pagebot.elements import newRect, newTextBox, newImage # Used elements in this specimen
+from pagebot.elements import newRect, newTextBox, newImage, newLine # Used elements in this specimen
 from pagebot.toolbox.transformer import int2Color, path2FontName # Convenient CSS color to PageBot color conversion
 from pagebot.toolbox.hyphenation import wordsByLength # Use English hyphenation dictionary as word selector
 from pagebot.conditions import * # Import layout conditions for automatic layout.
@@ -34,8 +34,8 @@ from pagebot.contributions.filibuster.blurb import Blurb
 
 # Debugging switches
 SHOW_FRAMES = False # True shows page and padding frames.
-SHOW_TEMPLATE = False # True shows the ATF scan at the back of every page to show alignment.
-SHOW_GRID = False # Show page grid and elements backgrounds in opaque colors.
+SHOW_TEMPLATE = False # True shows the FB Specimen scan at the back of every page to show alignment.
+SHOW_GRID = True # Show page grid and elements backgrounds in opaque colors.
 
 if SHOW_GRID: # Some debugging colors, used when SHOW_GRID is on.
     DEBUG_COLOR0 = (0.7, 0.3, 0.7, 0.2)
@@ -49,23 +49,25 @@ blurb = Blurb()
     
 # Basic page metrics.
 U = 8 # Page layout units, to unite baseline grid and gutter.
-W = 7.3*INCH # Copy size from original (?) ATF specimen.
-H = 11*INCH
+W = 6.34*INCH * 2 # Draw as spread, as page view does not support them (yet)
+H = 10*INCH # Copy size from the original specimen.
 # Hard coded padding sizes derived from the scan.
-PT, PR, PB, PL = PADDING = 36, 34, 75, 70 # Page padding top, right, bottom, left
+PT, PR, PB, PL = PADDING = 23, 34, 28, 28 # Page padding top, right, bottom, left
 L = 2*U # Baseline leading
-G = 3*U # Default gutter = space between the columns
+G = 2*U # Default gutter = space between the columns
+GM = 7*U # Gutter in middle of the spread.
 
 # Hard coded column sizes derived from the scan.
-C1, C2, C3 = (150, 112, 112)
+C = (W - PL - PR - GM - 4*G)/6
+C3 = 3*C + 2*G
 # Construct the grid pattern. 
 # Last value None means that there is no gutter running inside the right padding.
-GRID_X = ((C1, G), (C2, G), (C3, None))
+GRID_X = ((C, G), (C, G), (C, GM), (C, G), (C, G), (C, None))
 GRID_Y = ((H - PT - PB, None),)
 
-# 1923 American Type Founders Specimen Book & Catalog
+# “Font Bureau Type Specimen“ of 1995.
 # Path to the scan, used to show at first page of this document.
-ATF_PATH = 'images/ATFArtcraftBold.png'
+FB_PATH_L = 'images/FB1995TypeSpecimen-Proforma-L.jpg'FB_PATH_R = 'images/FB1995TypeSpecimen-Proforma-R.jpg'
 
 # Build the specimen pages for the font names that include these patterns.
 FAMILIES = (
@@ -90,8 +92,7 @@ else:
     EXPORT_PATH = '_export/ATFSpecimen.pdf' 
 
 # Some parameters from the original book
-PAPER_COLOR = int2Color(0xFBF6F1) # Approximation of paper color of original specimen.
-RED_COLOR = int2Color(0xAC1E2B) # Red color used in the original specimen
+PAPER_COLOR = int2Color(0xFEFEF7) # Approximation of paper color of original specimen.
 
 # Get the dictionary of English ("en" is default language), other choice is Dutch ("nl").
 # Danish could be made available for PageBot if requested.
@@ -126,24 +127,59 @@ def buildSpecimenPages(doc, family, pn):
         page = doc[pn]
         page.padding = PADDING
         page.gridX = GRID_X
-        pageTitle = path2FontName(font.path)
+        pageTitle = font.info.familyName
         # Add filling rectangle for background color of the old paper book.
         # Set z-azis != 0, to make floating elements not get stuck at the background
         newRect(z=-10, w=W, h=H, parent=page, fill=PAPER_COLOR)
         # During development, draw the template scan as background
         # Set z-azis != 0, to make floating elements not get stuck at the background
         if SHOW_TEMPLATE:
-            newImage(ATF_PATH, x=0, y=0, z=-10, w=W, parent=page)
+            newImage(FB_PATH_L, x=0, y=0, z=-10, w=W/2, parent=page)
+            newImage(FB_PATH_R, x=W/2, y=0, z=-10, w=W/2, parent=page)
         
-        # Centered title: family name and style name of the current font.
+        # Left and right family name the current font.
         titleBs = context.newString(pageTitle, 
-                                    style=dict(font=font.path, xTextAlign=CENTER, textFill=0))
-        titleBox = newTextBox(titleBs, parent=page, h=2*L,  
-                   conditions=[Top2Top(), Fit2Width()],
+                                    style=dict(font=font.path, xTextAlign=LEFT, textFill=0))
+        titleBox = newTextBox(titleBs, parent=page, h=3*U, w=C3, 
+                   conditions=[Top2Top(), Left2Left()],
                    fill=DEBUG_COLOR0)
-        titleBox.solve()
+
+        titleBs = context.newString(pageTitle, 
+                                    style=dict(font=font.path, xTextAlign=RIGHT, textFill=0))
+        titleBox = newTextBox(titleBs, parent=page, h=3*U, w=C3,
+                   conditions=[Top2Top(), Right2Right()],
+                   fill=DEBUG_COLOR0)
+    
+        lineL = newLine(parent=page, w=C3, h=1, strokeWidth=1, stroke=0, conditions=(Float2Top(), Left2Left()))
+        lineR = newLine(parent=page, w=C3, h=1, strokeWidth=1, stroke=0, conditions=(Float2Top(), Right2Right()))
         
-        largeSampleBox = newTextBox('', parent=page, w=C1+G/2, 
+        page.solve() # So far with conditional placement. 
+        
+        # It's easier for this example to position the elements by y-coordinate now, because there
+        # is mismatch between the position of the pixel image of the lines and the content of text
+        # boxes. Although it is possible to build by floating elements or by on single text, which
+        # will show in another proof-revival example.
+
+        y = lineL.bottom-U # Position at where this went to by solving the layout conditions.
+        # Stacked lines on the left, by separate elements, so we can squeeze them by pixel image size.
+        for n in range(100): # That's enough
+            stackLine = context.newString(blurb.getBlurb('_headline', cnt=choice((2,3,3,3,4,4,4,5,6,7,8))),
+                style=dict(font=choice(family.getFonts()).path, leading=-0.2,
+                           paragraphTopSpacing=0, paragraphBottomSpacing=0
+                ), w=C3, pixelFit=False)
+            _, by, bw, bh = stackLine.bounds()
+            tw, th = stackLine.size()
+            if y - bh < PB + 100: # Reserve space for glyph set
+                break # Filled the page.
+            newText(stackLine, parent=page, x=PL, y=y-bh-by-U, w=C3, h=th, fill=DEBUG_COLOR1)
+            y -= bh + by + U
+        
+        # Text samples on the right
+        newTextBox(parent=page, w=C3, conditions=(Right2Right(), Float2Top(), Fit2Bottom()),
+            fill=DEBUG_COLOR1)
+        
+        """
+        largeSampleBox = newTextBox('', parent=page, w=C+G/2, 
                    conditions=[Float2Top(), Left2Left(), Fit2Bottom()],
                    fill=DEBUG_COLOR1)
         largeSampleBox.solve()
@@ -158,12 +194,11 @@ def buildSpecimenPages(doc, family, pn):
                 continue
             if len(largeSampleSizes) > 10:
                 break
-            sample = context.newString(word+'\n', style=dict(font=font.path, rLeading=1), w=C1, pixelFit=False)
+            sample = context.newString(word+'\n', style=dict(font=font.path, rLeading=1), w=C, pixelFit=False)
             sampleFontSize = int(round(sample.fontSize))
             if not sampleFontSize in largeSampleSizes:
                 largeSampleSizes[sampleFontSize] = sample                
-        print sorted(largeSampleSizes.keys())
-           
+       
         largeSample = context.newString('')
         for sampleFontSize, sample in sorted(largeSampleSizes.items(), reverse=True):
             label = context.newString('%d Points\n' % round(sampleFontSize), style=labelStyle)
@@ -173,18 +208,18 @@ def buildSpecimenPages(doc, family, pn):
             
         largeSampleBox.setText(largeSample)        
         for fontSize, numChars in ((12, 8), (10, 13), (8, 16)):        
-            smallSamples = context.newString(getCapWord(numChars), style=dict(font=font.path), w=C2)
+            smallSamples = context.newString(getCapWord(numChars), style=dict(font=font.path), w=C)
             label = context.newString('%d Points\n' % round(smallSamples.fontSize), style=labelStyle)
             shortWordsSample = context.newString(getShortWordText(), 
                         style=dict(font=font.path, fontSize=smallSamples.fontSize, rLeading=1))
-            newTextBox(label + smallSamples + ' ' + shortWordsSample, parent=page, w=C2+G/2, h=80, ml=G/2, mb=L,
+            newTextBox(label + smallSamples + ' ' + shortWordsSample, parent=page, w=C+G/2, h=80, ml=G/2, mb=L,
                        conditions=[Right2Right(), Float2Top(), Float2Left()],
                        fill=DEBUG_COLOR1)
                        
             label = context.newString('%d Points\n' % fontSize, style=labelStyle)
             smallSamples = context.newString(blurb.getBlurb('article', noTags=True), 
                                              style=dict(font=font.path, fontSize=fontSize))
-            newTextBox(label + smallSamples, parent=page, w=C2-2, h=80, mb=L, ml=G/2,
+            newTextBox(label + smallSamples, parent=page, w=C-2, h=80, mb=L, ml=G/2,
                        conditions=[Right2Right(), Float2Top()], 
                        fill=DEBUG_COLOR1)
 
@@ -205,7 +240,7 @@ def buildSpecimenPages(doc, family, pn):
                              conditions=[Left2Left(), Fit2Right(), Top2Top(), 
                              Fit2Bottom() ], 
                              fill=DEBUG_COLOR3)
-        
+        """
         pn += 1
     return pn
     
@@ -225,7 +260,8 @@ def makeDocument(families):
     page.ch = 0 # No vertical grid
     page.padding = PADDING
     page.gridX = GRID_X
-    newImage(ATF_PATH, x=0, y=0, w=W, parent=page)
+    newImage(FB_PATH_L, x=0, y=0, w=W/2, parent=page)
+    newImage(FB_PATH_R, x=W/2, y=0, w=W/2, parent=page)
     
     # Get default view from the document and set the viewing parameters.
     view = doc.view

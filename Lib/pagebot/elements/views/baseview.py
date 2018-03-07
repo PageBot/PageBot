@@ -45,6 +45,7 @@ class BaseView(Element):
     def _initializeControls(self):
         # Paging
         self.showSpread = False # If True, show even pages on left of fold, odd on the right.
+        self.showSpreadMiddleAsGap = 0 # If showing as spread, this is the gap between them.
         # Document/page stuff
         self.showPageCropMarks = False
         self.showPageRegistrationMarks = False
