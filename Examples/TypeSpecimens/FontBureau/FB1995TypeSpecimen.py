@@ -71,8 +71,8 @@ FB_PATH_L = 'images/FB1995TypeSpecimen-Proforma-L.jpg'FB_PATH_R = 'images/FB199
 
 # Build the specimen pages for the font names that include these patterns.
 FAMILIES = (
-    #getFamily('Upgrade'),
-    getFamily('Bungee'), 
+    getFamily('Upgrade'),
+    #getFamily('Bungee'), 
     #getFamily('Roboto'), 
     #getFamily('AmstelvarAlpha')
 )
@@ -123,134 +123,129 @@ def getShortWordText():
     return shortWords.lower().capitalize()
     
 def buildSpecimenPages(doc, family, pn):
-    for font in family.getFonts():
-        page = doc[pn]
-        page.padding = PADDING
-        page.gridX = GRID_X
-        pageTitle = font.info.familyName
-        # Add filling rectangle for background color of the old paper book.
-        # Set z-azis != 0, to make floating elements not get stuck at the background
-        newRect(z=-10, w=W, h=H, parent=page, fill=PAPER_COLOR)
-        # During development, draw the template scan as background
-        # Set z-azis != 0, to make floating elements not get stuck at the background
-        if SHOW_TEMPLATE:
-            newImage(FB_PATH_L, x=0, y=0, z=-10, w=W/2, parent=page)
-            newImage(FB_PATH_R, x=W/2, y=0, z=-10, w=W/2, parent=page)
-        
-        # Left and right family name the current font.
-        titleBs = context.newString(pageTitle, 
-                                    style=dict(font=font.path, xTextAlign=LEFT, textFill=0))
-        titleBox = newTextBox(titleBs, parent=page, h=3*U, w=C3, 
-                   conditions=[Top2Top(), Left2Left()],
-                   fill=DEBUG_COLOR0)
-
-        titleBs = context.newString(pageTitle, 
-                                    style=dict(font=font.path, xTextAlign=RIGHT, textFill=0))
-        titleBox = newTextBox(titleBs, parent=page, h=3*U, w=C3,
-                   conditions=[Top2Top(), Right2Right()],
-                   fill=DEBUG_COLOR0)
+    page = doc[pn]
+    page.padding = PADDING
+    page.gridX = GRID_X
+    pageTitle = family.name
+    # Add filling rectangle for background color of the old paper book.
+    # Set z-azis != 0, to make floating elements not get stuck at the background
+    newRect(z=-10, w=W, h=H, parent=page, fill=PAPER_COLOR)
+    # During development, draw the template scan as background
+    # Set z-azis != 0, to make floating elements not get stuck at the background
+    if SHOW_TEMPLATE:
+        newImage(FB_PATH_L, x=0, y=0, z=-10, w=W/2, parent=page)
+        newImage(FB_PATH_R, x=W/2, y=0, z=-10, w=W/2, parent=page)
     
-        lineL = newLine(parent=page, w=C3, h=1, strokeWidth=1, stroke=0, conditions=(Float2Top(), Left2Left()))
-        lineR = newLine(parent=page, w=C3, h=1, strokeWidth=1, stroke=0, conditions=(Float2Top(), Right2Right()))
-        
-        page.solve() # So far with conditional placement. 
-        
-        # It's easier for this example to position the elements by y-coordinate now, because there
-        # is mismatch between the position of the pixel image of the lines and the content of text
-        # boxes. Although it is possible to build by floating elements or by on single text, which
-        # will show in another proof-revival example.
+    # Left and right family name the current font.
+    titleBs = context.newString(pageTitle, 
+                                style=dict(font=labelFont.path, xTextAlign=LEFT, textFill=0))
+    titleBox = newTextBox(titleBs, parent=page, h=3*U, w=C3, 
+               conditions=[Top2Top(), Left2Left()],
+               fill=DEBUG_COLOR0)
 
-        y = lineL.bottom-U # Position at where this went to by solving the layout conditions.
-        # Stacked lines on the left, by separate elements, so we can squeeze them by pixel image size.
-        for n in range(100): # That's enough
-            stackLine = context.newString(blurb.getBlurb('_headline', cnt=choice((2,3,3,3,4,4,4,5,6,7,8))),
-                style=dict(font=choice(family.getFonts()).path, leading=-0.2,
-                           paragraphTopSpacing=0, paragraphBottomSpacing=0
-                ), w=C3, pixelFit=False)
-            _, by, bw, bh = stackLine.bounds()
-            tw, th = stackLine.size()
-            if y - bh < PB + 100: # Reserve space for glyph set
-                break # Filled the page.
-            newText(stackLine, parent=page, x=PL, y=y-bh-by-U, w=C3, h=th, fill=DEBUG_COLOR1)
-            y -= bh + by + U
+    titleBs = context.newString(pageTitle, 
+                                style=dict(font=labelFont.path, xTextAlign=RIGHT, textFill=0))
+    titleBox = newTextBox(titleBs, parent=page, h=3*U, w=C3,
+               conditions=[Top2Top(), Right2Right()],
+               fill=DEBUG_COLOR0)
+
+    lineL = newLine(parent=page, w=C3, h=1, strokeWidth=1, stroke=0, conditions=(Float2Top(), Left2Left()))
+    lineR = newLine(parent=page, w=C3, h=1, strokeWidth=1, stroke=0, conditions=(Float2Top(), Right2Right()))
+    
+    page.solve() # So far with conditional placement. 
+    
+    # It's easier for this example to position the elements by y-coordinate now, because there
+    # is mismatch between the position of the pixel image of the lines and the content of text
+    # boxes. Although it is possible to build by floating elements or by on single text, which
+    # will show in another proof-revival example.
+
+    y = lineL.bottom-U # Position at where this went to by solving the layout conditions.
+    # Stacked lines on the left, by separate elements, so we can squeeze them by pixel image size.
+    for n in range(100): # That's enough
+        stackLine = context.newString(blurb.getBlurb('_headline', cnt=choice((2,3,3,3,4,4,4,5,6,7,8))),
+            style=dict(font=choice(family.getFonts()).path, leading=-0.2,
+                       paragraphTopSpacing=0, paragraphBottomSpacing=0
+            ), w=C3, pixelFit=False)
+        _, by, bw, bh = stackLine.bounds()
+        tw, th = stackLine.size()
+        if y - bh < PB + 100: # Reserve space for glyph set
+            break # Filled the page.
+        newTextBox(stackLine, parent=page, x=PL, y=y-bh-by-U, w=C3, h=th, fill=DEBUG_COLOR1)
+        y -= bh + by + U
+    
+    # Text samples on the right
+    newTextBox(parent=page, w=C3, conditions=(Right2Right(), Float2Top(), Fit2Bottom()),
+        fill=DEBUG_COLOR1)
+    
+    """
+    largeSampleBox = newTextBox('', parent=page, w=C+G/2, 
+               conditions=[Float2Top(), Left2Left(), Fit2Bottom()],
+               fill=DEBUG_COLOR1)
+    largeSampleBox.solve()
+
+    # In order to fit different words in the fixed space, they will vary in size.
+    # But as the variation in sizes is larger than the variation in size, we'll calculate the strings
+    # first for the various word lengths and then sort them by size.
+    largeSampleSizes = {}
+    for n in (4, 5, 6, 7, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 10):
+        word = getCapitalizedWord(n)
+        if word is None:
+            continue
+        if len(largeSampleSizes) > 10:
+            break
+        sample = context.newString(word+'\n', style=dict(font=font.path, rLeading=1), w=C, pixelFit=False)
+        sampleFontSize = int(round(sample.fontSize))
+        if not sampleFontSize in largeSampleSizes:
+            largeSampleSizes[sampleFontSize] = sample                
+   
+    largeSample = context.newString('')
+    for sampleFontSize, sample in sorted(largeSampleSizes.items(), reverse=True):
+        label = context.newString('%d Points\n' % round(sampleFontSize), style=labelStyle)
+        #if largeSample.h + sample.h > largeSampleBox.h:
+        #    break
+        largeSample += label + sample  
         
-        # Text samples on the right
-        newTextBox(parent=page, w=C3, conditions=(Right2Right(), Float2Top(), Fit2Bottom()),
-            fill=DEBUG_COLOR1)
-        
-        """
-        largeSampleBox = newTextBox('', parent=page, w=C+G/2, 
-                   conditions=[Float2Top(), Left2Left(), Fit2Bottom()],
+    largeSampleBox.setText(largeSample)        
+    for fontSize, numChars in ((12, 8), (10, 13), (8, 16)):        
+        smallSamples = context.newString(getCapWord(numChars), style=dict(font=font.path), w=C)
+        label = context.newString('%d Points\n' % round(smallSamples.fontSize), style=labelStyle)
+        shortWordsSample = context.newString(getShortWordText(), 
+                    style=dict(font=font.path, fontSize=smallSamples.fontSize, rLeading=1))
+        newTextBox(label + smallSamples + ' ' + shortWordsSample, parent=page, w=C+G/2, h=80, ml=G/2, mb=L,
+                   conditions=[Right2Right(), Float2Top(), Float2Left()],
                    fill=DEBUG_COLOR1)
-        largeSampleBox.solve()
+                   
+        label = context.newString('%d Points\n' % fontSize, style=labelStyle)
+        smallSamples = context.newString(blurb.getBlurb('article', noTags=True), 
+                                         style=dict(font=font.path, fontSize=fontSize))
+        newTextBox(label + smallSamples, parent=page, w=C-2, h=80, mb=L, ml=G/2,
+                   conditions=[Right2Right(), Float2Top()], 
+                   fill=DEBUG_COLOR1)
 
-        # In order to fit different words in the fixed space, they will vary in size.
-        # But as the variation in sizes is larger than the variation in size, we'll calculate the strings
-        # first for the various word lengths and then sort them by size.
-        largeSampleSizes = {}
-        for n in (4, 5, 6, 7, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 10):
-            word = getCapitalizedWord(n)
-            if word is None:
-                continue
-            if len(largeSampleSizes) > 10:
-                break
-            sample = context.newString(word+'\n', style=dict(font=font.path, rLeading=1), w=C, pixelFit=False)
-            sampleFontSize = int(round(sample.fontSize))
-            if not sampleFontSize in largeSampleSizes:
-                largeSampleSizes[sampleFontSize] = sample                
-       
-        largeSample = context.newString('')
-        for sampleFontSize, sample in sorted(largeSampleSizes.items(), reverse=True):
-            label = context.newString('%d Points\n' % round(sampleFontSize), style=labelStyle)
-            #if largeSample.h + sample.h > largeSampleBox.h:
-            #    break
-            largeSample += label + sample  
-            
-        largeSampleBox.setText(largeSample)        
-        for fontSize, numChars in ((12, 8), (10, 13), (8, 16)):        
-            smallSamples = context.newString(getCapWord(numChars), style=dict(font=font.path), w=C)
-            label = context.newString('%d Points\n' % round(smallSamples.fontSize), style=labelStyle)
-            shortWordsSample = context.newString(getShortWordText(), 
-                        style=dict(font=font.path, fontSize=smallSamples.fontSize, rLeading=1))
-            newTextBox(label + smallSamples + ' ' + shortWordsSample, parent=page, w=C+G/2, h=80, ml=G/2, mb=L,
-                       conditions=[Right2Right(), Float2Top(), Float2Left()],
-                       fill=DEBUG_COLOR1)
-                       
-            label = context.newString('%d Points\n' % fontSize, style=labelStyle)
-            smallSamples = context.newString(blurb.getBlurb('article', noTags=True), 
-                                             style=dict(font=font.path, fontSize=fontSize))
-            newTextBox(label + smallSamples, parent=page, w=C-2, h=80, mb=L, ml=G/2,
-                       conditions=[Right2Right(), Float2Top()], 
-                       fill=DEBUG_COLOR1)
-
-        glyphSetFrame = newRect(parent=page, mb=L, ml=G/2, padding=L,
-                                borders=dict(line=INLINE, stroke=0, strokeWidth=0.5), 
-                                conditions=[Right2Right(), Float2Top(), Float2Left(), 
-                                            Fit2Right(), Fit2Bottom()], 
-                                fill=DEBUG_COLOR2)
-        
-        glyphSet = context.newString('Subset of characters in Complete Font\n', 
-            style=dict(font=font.path, fontSize=8, xTextAlign=CENTER,
-            rParagraphTopSpacing=0.25,
-            rParagraphBottomSpacing=0.5))
-        glyphSet += context.newString(GLYPH_SET, 
-            style=dict(font=font.path, fontSize=23, xTextAlign=CENTER, leading=32))
-        newTextBox(glyphSet, parent=glyphSetFrame, padding=(1.5*L, L, L, L),
-                             borders=dict(line=INLINE, stroke=0, strokeWidth=0.25), 
-                             conditions=[Left2Left(), Fit2Right(), Top2Top(), 
-                             Fit2Bottom() ], 
-                             fill=DEBUG_COLOR3)
-        """
-        pn += 1
-    return pn
+    glyphSetFrame = newRect(parent=page, mb=L, ml=G/2, padding=L,
+                            borders=dict(line=INLINE, stroke=0, strokeWidth=0.5), 
+                            conditions=[Right2Right(), Float2Top(), Float2Left(), 
+                                        Fit2Right(), Fit2Bottom()], 
+                            fill=DEBUG_COLOR2)
+    
+    glyphSet = context.newString('Subset of characters in Complete Font\n', 
+        style=dict(font=font.path, fontSize=8, xTextAlign=CENTER,
+        rParagraphTopSpacing=0.25,
+        rParagraphBottomSpacing=0.5))
+    glyphSet += context.newString(GLYPH_SET, 
+        style=dict(font=font.path, fontSize=23, xTextAlign=CENTER, leading=32))
+    newTextBox(glyphSet, parent=glyphSetFrame, padding=(1.5*L, L, L, L),
+                         borders=dict(line=INLINE, stroke=0, strokeWidth=0.25), 
+                         conditions=[Left2Left(), Fit2Right(), Top2Top(), 
+                         Fit2Bottom() ], 
+                         fill=DEBUG_COLOR3)
+    """
+    return pn+1
     
 def makeDocument(families):
     u"""Create the main document in the defined size with a couple of automatic empty pages."""
     # Calculate the amount of pages to create
-    numPages = 1 # Add one of the original page scan.
-    for family in families:
-        numPages += len(family) # Length of the family is the amount of fonts.
-    #numPages = 3
+    numPages = len(families)+1 # One family per spread.
         
     doc = Document(w=W, h=H, title='Variable Font Sample Page', originTop=False, startPage=0, 
         autoPages=numPages, context=context, gridX=GRID_X, gridY=GRID_Y)
@@ -276,7 +271,7 @@ def makeDocument(families):
 
     # Build the pages for all fonts that include one of these patterns.
     pn += 1
-    for family in families[:1]:
+    for family in families:
         pn = buildSpecimenPages(doc, family, pn)
 
     doc.solve()
