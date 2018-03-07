@@ -33,7 +33,9 @@ fontMedium = family.findFont('Upgrade-Medium')
 fontBold = family.findFont('Upgrade-Bold')
 fontItalic = family.findFont('Upgrade-Italic')
  
-ddsStyle = dict(font=fontMedium.path, textFill=1, rLeading=0.9)
+ddsStyle = dict(font=fontMedium.path, textFill=1, rLeading=0.9, xTextAlign=CENTER, fontSize=205*S)
+welcomeStyle = dict(font=fontBold.path, rLeading=1.1, fontSize=90*S, rTracking=0.45, xTextAlign=CENTER),
+inDelftStyle = dict(font=fontBold.path, textFill=1, rLeading=1.1, fontSize=90*S, rTracking=0.45, xTextAlign=CENTER),
 
 # Export path to save the poster PDF.
 EXPORT_PATH = '_export/DDSWelcomesRobothon2018.pdf'
@@ -46,19 +48,19 @@ doc.view.showTextOverflowMarker = False
 page = doc[0]
 page.padding = PADDING
 
-newRect(x=0, y=0, w=W, h=H, fill=(1, 0, 0), parent=page)
+newRect(x=0, y=0, z=-100, w=W, h=H, fill=(1, 0, 0), parent=page)
 
-t = context.newString('Design\nDesign\n.Space\n', style=ddsStyle, w=W)
-bx, by, bw, bh = t.bounds()
-newTextBox(t, w=bw+bx, fill=(0, 1, 0), parent=page, conditions=[Top2Top(), Center2Center()])
+t = context.newString('Design\nDesign\n.Space\n', style=ddsStyle)
+newTextBox(t, w=page.pw, parent=page, conditions=[Left2Left(), Top2Top(), Fit2Width()], mb=40*S)
 
-page.solve()
+t = context.newString('WELCOMES', style=welcomeStyle )
+newTextBox(t, w=300, parent=page, conditions=[Left2Left(), Float2Top(), Fit2Width()], mb=80*S)
 
-t = context.newString('WELCOMES', style=dict(font=fontBold.path, rLeading=1.1, fontSize=102*S, rTracking=0.45, xAlign=CENTER), )
-tw, th = context.textSize(t)
-newTextBox(t, w=W-2*M, fill=(0, 1, 0), parent=page, conditions=[Float2Bottom(), Fit2Width()])
+newImage(IMAGE_PATH, x=M, y=M, w=W-2*M, parent=page, conditions=(Left2Left(), Float2Top()), mb=80*S)
 
-#newImage(IMAGE_PATH, x=M, y=M, w=W-2*M, parent=page, fill=(0, 0, 1))
+t = context.newString('IN DELFT', style=inDelftStyle )
+newTextBox(t, w=300, parent=page, conditions=[Left2Left(), Float2Top(), Fit2Width()], mb=40*S)
+
 
 page.solve()
 
