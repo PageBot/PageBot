@@ -35,7 +35,7 @@ fontItalic = family.findFont('Upgrade-Italic')
  
 ddsStyle = dict(font=fontMedium.path, textFill=1, rLeading=0.9, xTextAlign=CENTER, fontSize=205*S)
 welcomeStyle = dict(font=fontBold.path, rLeading=1.1, fontSize=90*S, rTracking=0.45, xTextAlign=CENTER),
-inDelftStyle = dict(font=fontBold.path, textFill=1, rLeading=1.1, fontSize=90*S, rTracking=0.45, xTextAlign=CENTER),
+inDelftStyle = dict(font=fontBold.path, textFill=0, rLeading=1.1, fontSize=90*S, rTracking=0.45, xTextAlign=CENTER),
 
 # Export path to save the poster PDF.
 EXPORT_PATH = '_export/DDSWelcomesRobothon2018.pdf'
