@@ -24,10 +24,7 @@
 #
 import os
 from fontTools.ttLib import TTFont, TTLibError
-from pagebot.contexts import defaultContext as context
-
 from pagebot.toolbox.transformer import path2FontName, path2Extension
-
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
