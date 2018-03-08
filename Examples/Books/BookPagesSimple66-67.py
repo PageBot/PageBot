@@ -12,28 +12,37 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     publications.py
+#     BookPagesSimple66-67.py
+#
+#     Create the pages 66 and 67 from an imaginary book.
 #
 from pagebot.contexts import defaultContext as context
-from pagebot.fonttoolbox.objects.font import getFontByName
 from pagebot.style import A5, CENTER, DISPLAY_BLOCK, RIGHT, LEFT
-from pagebot.fonttoolbox.objects.family import findFamilyByName
+from pagebot.fonttoolbox.objects.family import getFamily
+
 # Try to find if the TYPETR Upgrade family is installed, Otherwise use PageBot installed Roboto instead.
 # TYPETR Upgrade can be viewed here: https://upgrade.typenetwork.com
 # And licensed here: https://store.typenetwork.com/foundry/typetr/series/upgrade
-family = findFamilyByName('Upgrade')
-if family is None: # Upgrade not available, use Google's Roboto instead.
-    family = findFamilyByName('Roboto')
-print family
+family = getFamily('Upgrade')
+if family is None: 
+    # Upgrade not available, use Google's Roboto instead, which is installed 
+    # in the PageBot repository
+    family = getFamily('Roboto')
 
-h1Style = dict(font='Upgrade-Medium', fontSize=13, rLeading=1.4, tracking=0.2, paragraphBottomSpacing=13, display=DISPLAY_BLOCK)
-h2Style = dict(font='Upgrade-Medium', fontSize=11, rLeading=1.3, tracking=0.2, paragraphTopSpacing=12*1.3*0.5, display=DISPLAY_BLOCK)
-bodyStyle = dict(font='Upgrade-Book', fontSize=10, rLeading=1.3, tracking=0.2)
-pageNumberStyle = dict(font='Upgrade-Book', fontSize=9, rLeading=1.3, tracking=0.2, xTextAlign=CENTER)
-footNoteStyle = dict(font='Upgrade-BookItalic', fontSize=8, rLeading=1.3, tracking=0.2)
-footNoteRefStyle = dict(font='Upgrade-Book', fontSize=10, openTypeFeatures=dict(smcp=True))
-pageChapterStyle = dict(font='Upgrade-BookItalic', fontSize=8, rLeading=1.3, tracking=0.2, xTextAlign=RIGHT)
-pageTitleStyle = dict(font='Upgrade-BookItalic', fontSize=8, rLeading=1.3, tracking=0.2, xTextAlign=LEFT)
+# Find the indicated weight in the family. If not available, find the closest match.
+mediumFont = family.findFont(weight='Medium', italic=False)
+regularFont = family.findFont(weight='Regular', italic=False)
+regularItalicFont = family.findFont(weight='Regular', italic=True)
+
+# Create style dictionaries, using the found fonts.
+h1Style = dict(font=mediumFont.path, fontSize=13, rLeading=1.4, tracking=0.2, paragraphBottomSpacing=13, display=DISPLAY_BLOCK)
+h2Style = dict(font=mediumFont.path, fontSize=11, rLeading=1.3, tracking=0.2, paragraphTopSpacing=12*1.3*0.5, display=DISPLAY_BLOCK)
+bodyStyle = dict(font=regularFont.path, fontSize=10, rLeading=1.3, tracking=0.2)
+pageNumberStyle = dict(font=regularFont.path, fontSize=9, rLeading=1.3, tracking=0.2, xTextAlign=CENTER)
+footNoteStyle = dict(font=regularItalicFont.path, fontSize=8, rLeading=1.3, tracking=0.2)
+footNoteRefStyle = dict(font=regularFont.path, fontSize=10, openTypeFeatures=dict(smcp=True))
+pageChapterStyle = dict(font=regularItalicFont.path, fontSize=8, rLeading=1.3, tracking=0.2, xTextAlign=RIGHT)
+pageTitleStyle = dict(font=regularItalicFont.path, fontSize=8, rLeading=1.3, tracking=0.2, xTextAlign=LEFT)
 
 footNoteRef = 12
 
@@ -114,5 +123,4 @@ for path, w, h, m in IMAGES:
     m(w, h)
     imagePath = '_export/'+path
     saveImage(imagePath, multipage=True)
-    print imagePath
     

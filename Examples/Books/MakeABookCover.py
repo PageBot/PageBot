@@ -87,8 +87,7 @@ def makeDocument():
                                      Fit2RightSide(),
                                      Fit2BottomSide()],
                          fill=C1)
-    colorRect1.bleed = (0, 0, 0, 40)
-    print colorRect1.bleed
+    colorRect1.bleed = 0 #(0, 0, 0, 40) # TODO: Fix Bleed function
     colorRect1.solve() # Solve element position, before we can make
                        # other elements depend on position and size.
 

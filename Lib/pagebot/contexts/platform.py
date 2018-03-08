@@ -42,7 +42,7 @@ def _recursivelyCollectFontPaths(path, fontPaths):
 
 FONT_PATHS = {} # Cached dictionary
 
-def getFontPaths(): 
+def getFontPaths(extraPaths=None): 
     u"""Answer a dictionary with all available font paths on the platform, key is the single file name.
     A typical example return for MaxOS the font paths available in directories (e.g. for user Petr): 
         ('/Library/Fonts', '/Users/petr/Library/Fonts', '/Users/petr/git/PageBot/Fonts')
@@ -50,8 +50,20 @@ def getFontPaths():
 
     >>> len(getFontPaths()) >= 1
     True
+
+    """
+
+    """
+    >>> path = '/Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade-Var/ufo-RNDS/variable_ttf/'
+    >>> paths = getFontPaths(path)
+    >>> for path in paths.values():
+    ...     if '/TYPETR-git' in path:
+    ...         print path
+    /Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade-Var/ufo-RNDS/variable_ttf//UpgradeRomanDS-Regular-VF.ttf
     """
     global FONT_PATHS
+    if extraPaths is not None:
+        FONT_PATHS = {}
     if not FONT_PATHS:
 
         if os.name == 'posix':
@@ -72,6 +84,11 @@ def getFontPaths():
 
         # Add PageBot repository fonts, they always exist in this context.
         _recursivelyCollectFontPaths(getRootFontPath(), FONT_PATHS)
+
+        if extraPaths is not None:
+            if not isinstance(extraPaths, (list, tuple)):
+                extraPath = [extraPaths]
+            _recursivelyCollectFontPaths(extraPaths, FONT_PATHS)
 
     return FONT_PATHS
 
