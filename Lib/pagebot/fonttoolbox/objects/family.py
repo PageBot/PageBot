@@ -244,45 +244,15 @@ class Family(object):
                 fontStyles[styleName].append(font)
         return fontStyles
 
-    def getWeightClasses(self):
-        u"""Answer the dictionary {fontWeightClass: [font, font, ...], ...}
-
-        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
-        >>> sorted(family.getWeightClasses().keys())
-        [250, 300, 400, 500, 700, 900]
-        """
-        weightClasses = {}
-        for font in self.fonts.values():
-            weightClass = font.info.weightClass
-            if not weightClass in weightClasses:
-                weightClasses[weightClass] = [font]
-            else:
-                weightClasses[weightClass].append(font)
-        return weightClasses
-
-    def getWidthClasses(self):
-        u"""Answer the dictionary {fontWidthtClass: [font, font, ...], ...}
-
-        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
-        >>> widthClasses = family.getWidthClasses() # All fonts share the same width class.
-        >>> widthClasses.keys(), len(widthClasses[5])
-        ([5], 12)
-        """
-        widthClasses = {}
-        for font in self.fonts.values():
-            widthClass = font.info.widthClass
-            if not widthClass in widthClasses:
-                widthClasses[widthClass] = [font]
-            else:
-                widthClasses[widthClass].append(font)
-        return widthClasses
-
     def getWeights(self):
         u"""Answer the dictionary {weightClass: [font, font, ...], ...]}
         
         >>> family = getFamily('Bungee')
         >>> family.getWeights().keys()
         [400]
+        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
+        >>> sorted(family.getWeightClasses().keys())
+        [250, 300, 400, 500, 700, 900]
         """
         weightClasses = {}
         for font in self.fonts.values():
