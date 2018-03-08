@@ -21,7 +21,7 @@ class WoodOffice(BaseTheme):
     can be used in environments when functionality is more important than “arty”
     appearance."""
 
-	NAME = 'Wood Office'
+    NAME = 'Wood Office'
     SCSS_PATH = 'scss/office.scss'
 
     def initialize(self):

@@ -21,7 +21,7 @@ class GlassOffice(BaseTheme):
     can be used in environments when functionality is more important than “arty”
     appearance."""
 
-	NAME = 'Glass Office'
+    NAME = 'Glass Office'
     SCSS_PATH = 'scss/office.scss'
 
     def initialize(self):
