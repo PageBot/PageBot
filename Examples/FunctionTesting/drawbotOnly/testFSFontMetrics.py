@@ -18,10 +18,12 @@ from pagebot.contexts import defaultContext as context
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
+W = H = 1000
 b = context.b # Builder is DrawBot
 
+# Using global typographic settings in DrawBot by calling separate functions
 txt = "Hellog World"
-x, y = 10, 100
+x, y = W/100, H/10
 
 # set a font
 b.font("Verdana")
@@ -39,3 +41,8 @@ b.stroke(1, 0, 0)
 for metric in (0, b.fontDescender(), b.fontAscender(), b.fontXHeight(), b.fontCapHeight()):
     # draw a red line with the size of the drawn text
     b.line((x, y+metric), (x+textWidth, y+metric))
+
+# Using context.newString, which creates a FsString, embedding DrawBot FormattedString
+y += W/2
+
+fs = context.newString(txt, style=dict(font='Verdana', fontSize=300))

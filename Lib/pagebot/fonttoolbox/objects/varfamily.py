@@ -17,7 +17,7 @@
 #
 import os, shutil, sys
 
-from pagebot.fonttoolbox.objects.family import Family, guessFamiliesByPatterns
+from pagebot.fonttoolbox.objects.family import Family
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2Name, path2ParentPath
 
@@ -50,7 +50,7 @@ class VarFamily(Family):
     >>> #vf = varFamilies['Roboto']
     >>> #vf.__class__.__name__
     'VarFamily'
-    >>> #vf.originFont.path.endswith('RobotoCondensed-Regular.ttf')
+    >>> #vf.originFont.path.endswith('Roboto-Regular.ttf')
     True
 
 """
@@ -134,7 +134,7 @@ class VarFamily(Family):
            
     def addFont(self, pathOrFont, install=True):
         self._originFont = None # Reset to force new initialization of the property.
-        Family.addFont(self, pathOrFont, install=install)
+        Family.addFont(self, pathOrFont)
 
     def _get_metrics(self):
         u"""Answer the metrics dictionary for the current included fonts.

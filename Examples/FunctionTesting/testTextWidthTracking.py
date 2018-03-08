@@ -1,7 +1,7 @@
 from pagebot.contexts import defaultContext as context
 
 W = 600
-H = 300
+H = 400
 
 HEAD_LINE = """When fonts started a new world"""
 
@@ -12,54 +12,31 @@ w = 500
 x = 20
 y = 20
 
-bs = context.newString(HEAD_LINE, w=w,
-                       style=dict(font='Verdana', rTracking=0.15,
-                                  fontSize=24,
-                                  textFill=0))
-print bs.fittingFontSize
+def textBounds(s, x, y, w):
+    bs = context.newString(s, w=w,
+                           style=dict(font='Georgia', 
+                                      rTracking=0.15,
+                                      textFill=0))
 
-tw, th = context.textSize(bs)
-bx, by, bw, bh = bs.bounds()
+    tw, th = context.textSize(bs)
+    bx, by, bw, bh = bs.bounds()
 
-context.textBox(bs, (x, y, tw, th))
+    context.text(bs, (x-bx, y-by))
 
-context.stroke((1, 0, 0), 0.5)
-context.fill(None)
-context.rect(x, y, bw, bh)
+    context.fill(None)
+    context.stroke((1, 0, 0), 0.5)
+    context.rect(x, y, bw, bh)
+    context.stroke((0, 0.5, 0), 0.5)
+    context.rect(x, y, tw, th)
 
+    return bs
 
-y += 40
-bs = context.newString('When fonts...', w=w,
-                       style=dict(font='Verdana', rTracking=0.15,
-                                  fontSize=24,
-                                  textFill=0))
-print bs.fittingFontSize
-
-tw, th = context.textSize(bs)
-bx, by, bw, bh = bs.bounds()
-
-context.textBox(bs, (x-bx, y+by, tw, th))
-
-context.stroke((1, 0, 0), 0.5)
-context.fill(None)
-context.rect(x, y, bw-bx, bh-by)
-
+bs = textBounds(HEAD_LINE, x, y, w)
+print bs, bs.fittingFontSize, bs.bounds()
+y += 50
+bs = textBounds('When fonts...', x, y, w)
+print bs, bs.fittingFontSize, bs.bounds()
 y += 80
-bs = context.newString('Fonts...', w=w,
-                       style=dict(font='Verdana', rTracking=0.15,
-                                  fontSize=24,
-                                  textFill=0))
-print bs.fittingFontSize
-
-tw, th = context.textSize(bs)
-bx, by, bw, bh = bs.bounds()
-print bx, by, bw, bh 
-
-context.textBox(bs, (x-bx, y+by, tw, th))
-
-context.fill(None)
-context.stroke((1, 0, 0), 0.5)
-context.rect(x, y, bw-bx, bh-by)
-context.stroke((0, 0,5, 0), 0.5)
-context.rect(x, y, tw, th)
+bs = textBounds('Fonts...', x, y, w)
+print bs, bs.fittingFontSize, bs.bounds()
 
