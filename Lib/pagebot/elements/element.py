@@ -1004,7 +1004,7 @@ class Element(object):
         gridColumns = []
         gridX = self.gridX 
         pw = self.pw # Padded with, available space for columns.
-        gw = self.gw
+        gw = self.gw or 0
 
         if gridX is not None: # If there is a non-linear grid sequence defined, use that.
             undefined = 0
@@ -1012,7 +1012,7 @@ class Element(object):
             # Make a first pass to see how many columns (None) need equal division and what total width spare we have.
             for gridValue in gridX:
                 if not isinstance(gridValue, (list, tuple)):
-                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gutter
+                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gw gutter
                 cw, gutter = gridValue
                 if cw is None:
                     undefined += 1
@@ -1026,7 +1026,7 @@ class Element(object):
             x = 0
             for gridValue in gridX:
                 if not isinstance(gridValue, (list, tuple)):
-                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gutter
+                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gw gutter
                 cw, gutter = gridValue
                 if cw is None:
                     cw = equalWidth
@@ -1035,8 +1035,8 @@ class Element(object):
                 gridColumns.append((x, cw))
                 x += cw + gutter
         
-        else: # If no grid defined, then run the squence for cw + gutter
-            cw = self.cw or 100
+        elif self.cw: # If no grid defined, and there is a general grid width, then run the squence for cw + gw gutter
+            cw = self.cw
             x = 0
             for index in range(int(pw/cw)): # Roughly the amount of columns to expect. Avoid while loop
                 if x + cw > pw:
@@ -1066,7 +1066,7 @@ class Element(object):
         gridRows = []
         gridY = self.gridY 
         ph = self.ph # Padded height, available space for vertical columns.
-        gh = self.gh
+        gh = self.gh or 0
 
         if gridY is not None: # If there is a non-linear grid sequence defined, use that.
             undefined = 0
@@ -1075,7 +1075,7 @@ class Element(object):
             # Make a first pass to see how many columns (None) need equal division.
             for gridValue in gridY:
                 if not isinstance(gridValue, (list, tuple)):
-                    gridValue = (gridValue, None) # Only single column height defined, force fill in with default gutter
+                    gridValue = (gridValue, None) # Only single column height defined, force fill in with default gh gutter
                 ch, gutter = gridValue
                 if ch is None:
                     undefined += 1
@@ -1097,7 +1097,7 @@ class Element(object):
                     gutter = gh
                 gridRows.append((y, ch))
                 y += ch + gutter
-        else: # If no grid defined, then run the squence for ch + gutter
+        elif self.ch: # If no grid defined, and there is a general grid height, then run the squence for ch + gh gutter
             ch = self.ch
             y = 0
             for index in range(int(ph/ch)): # Roughly the amount of columns to expect. Avoid while loop
@@ -2027,7 +2027,9 @@ class Element(object):
 
     def _get_margin(self): 
         u"""Tuple of paddings in CSS order, direction of clock
-        
+        Can be 123, [123], [123, 234], [123, 234, 345], [123, 234, 345, 456] 
+        or [123, 234, 345, 456, 567, 678]
+
         >>> e = Element(margin=(10, 20, 30, 40))
         >>> e.mt, e.mr, e.mb, e.ml
         (10, 20, 30, 40)
@@ -2045,6 +2047,8 @@ class Element(object):
         (11, 22, 33, 11)
         >>> e.margin = (11, 22, 33, 44)
         >>> e.margin
+        (11, 22, 33, 44)
+        >>> e.mt, e.mr, e.mb, e.ml
         (11, 22, 33, 44)
         >>> e.margin = (11, 22, 33, 44, 55, 66)
         >>> e.margin
@@ -2211,8 +2215,10 @@ class Element(object):
     # TODO: Add support of "auto" values, doing live centering.
  
     def _get_padding(self): 
-        u"""Tuple of paddings in CSS order, direction of clock
-        
+        u"""Tuple of paddings in CSS order, direction of clock starting on top
+        Can be 123, [123], [123, 234], [123, 234, 345], [123, 234, 345, 456] 
+        or [123, 234, 345, 456, 567, 678]
+
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pt, e.pr, e.pb, e.pl
         (10, 20, 30, 40)
@@ -2231,13 +2237,17 @@ class Element(object):
         >>> e.padding = (11, 22, 33, 44)
         >>> e.padding
         (11, 22, 33, 44)
+        >>> e.pt, e.pr, e.pb, e.pl
+        (11, 22, 33, 44)
         >>> e.padding = (11, 22, 33, 44, 55, 66)
         >>> e.padding
         (11, 22, 33, 44)
+        >>> e.padding3D
+        (11, 22, 33, 44, 55, 66)
         """
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
-        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
+        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565]
         assert padding is not None
         if isinstance(padding, (long, int, float)):
             padding = [padding]
@@ -2296,6 +2306,8 @@ class Element(object):
         >>> e.style = dict(pt=14)
         >>> e.pt
         14
+        >>> e.padding # Make sure other did not change.
+        (14, 0, 0, 0)
         """
         return self.css('pt', 0)
     def _set_pt(self, pt):
@@ -2317,6 +2329,8 @@ class Element(object):
         >>> e.style = dict(pb=14)
         >>> e.pb
         14
+        >>> e.padding # Make sure other did not change.
+        (0, 0, 14, 0)
         """
         return self.css('pb', 0)
     def _set_pb(self, pb):
@@ -2338,6 +2352,8 @@ class Element(object):
         >>> e.style = dict(pl=14)
         >>> e.pl
         14
+        >>> e.padding # Make sure other did not change.
+        (0, 0, 0, 14)
         """
         return self.css('pl', 0)
     def _set_pl(self, pl):
@@ -2359,6 +2375,8 @@ class Element(object):
         >>> e.style = dict(pr=14)
         >>> e.pr
         14
+        >>> e.padding # Make sure other did not change.
+        (0, 14, 0, 0)
         """
         return self.css('pr', 0)
     def _set_pr(self, pr):
@@ -2377,6 +2395,8 @@ class Element(object):
         >>> e.style = dict(pzf=14)
         >>> e.pzf
         14
+        >>> e.padding3D # Make sure other did not change.
+        (0, 0, 0, 0, 14, 0)
         """
         return self.css('pzf', 0)
     def _set_pzf(self, pzf):
@@ -2395,6 +2415,8 @@ class Element(object):
         >>> e.style = dict(pzb=14)
         >>> e.pzb
         14
+        >>> e.padding3D # Make sure other did not change.
+        (0, 0, 0, 0, 0, 14)
         """
         return self.css('pzb', 0)
     def _set_pzb(self, pzb):
@@ -3221,7 +3243,7 @@ class Element(object):
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, origin)
+            self.buildChildElements(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

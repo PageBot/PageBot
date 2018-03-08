@@ -145,9 +145,11 @@ INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 
 # Standard font style names, with the matching abbreviations they can have in font style
 # As reference TYPETR Upgrade is mentioned.
 # In normalized keys, all CamelCase is flattened.
+# Works togehter with toolbox.transformer.path2StyleNameParts()
+
 FONT_SIZE_MATCHES = {
     'Micro': ('Micro', 100),
-    'Readingedge': ('Readingedge', ('Reading','Edge'), 'RE', 150),
+    'Readingedge': ('Readingedge', 'ReadingEdge', 'RE', 150),
     'Agate': ('Agate', 200),
     'Caption': ('Caption', 300),
     'Text': ('Text', 400),
@@ -157,40 +159,89 @@ FONT_SIZE_MATCHES = {
     'Display': ('Display', 800,),
     'Banner': ('Banner', 900,)
 }
-FONT_WEIGHT_MATCHES = {
-    'Hairline': ['Hairline', 'Hair', 'Hl'] + range(0, 261), # Upgrade 260
+
+FONT_WEIGHT_MATCHES = { # Alternative names
+    'Hairline': ['Hariline', 'HairLine', 'Hair', 'Hl'] + range(0, 261), # Upgrade 260
     'Thin': ['Thin', 'Thn', 'Thi'] + range(260, 275), # Upgrade 270 + range(275, 295), # Upgrade 280
-    'Ultralight':  ['Ultralight', ('Ultra','Light'), 'ULight', 'ULght', 'ULt', ('Ult','Lt')] + range(275, 295), 
+    'Ultralight':  ['Ultralight', 'ULight', 'ULght', 'ULt'] + range(275, 295), 
     'Light': ['Light', 'Lght', 'Lig', 'Lt'] + range(295, 320), # Upgrade 300
-    'Semilight': ['Semilight', ('Semi','Light'), 'SLight', 'SLght', 'SLt'] + range(320, 350),
+    'Semilight': ['Semilight', 'SLight', 'SLght', 'SLt'] + range(320, 350),
     'Book': ['Book', 'Bk'] + range(350, 395), # Upgrade 390
     'Regular': ['Regular', 'Standard', 'Normal', 'Reg', 'Roman', 'Lean', 'Rom'] + range(396, 450), # Upgrade 400
     'Medium': ['Medium', 'Med', 'Md'] + range(450, 550), # Upgrade 500
-    'Semibold': ['Semibold', ('Semi','Bold'), 'Demibold', ('Demi','Bold'), 'Demibld', 'Sbd', 'Sembold', ('Sem','Bold'), 'SBold', 'Sem', 'Demi', 'Dem'] + range(550, 650), # Upgrade 600
+    'Semibold': ['Semibold', 'Demibold', 'Demibld', 'Sbd', 'Sembold', 'SBold', 'Sem', 'Demi', 'Dem'] + range(550, 650), # Upgrade 600
     'Bold': ['Bold', 'Bol', 'Bd'] + range(650, 725), # Upgrade 700
-    'Extrabold': ['Extrabold', ('Extra','Bold'), 'XBold', 'XBd'] + range(725, 755), # 750
+    'Extrabold': ['Extrabold', 'XBold', 'XBd'] + range(725, 755), # 750
     'Heavy': ['Heavy', 'Hvy'] + range(755, 780), # 760
     'Black': ['Black', 'Blck', 'Blk', 'Bla', 'Fat'] + range(780, 825), # Upgrade 800
-    'Extrablack': ['Extrablack', ('Extra','Black'), ('Extr','Black'), ('Ext','Black'), 'XBlack', 'XBlck', 'XBlk', ('Ex','Bla')] + range(825, 875), # Upgrade 850
-    'Ultrablack': ['Ultrablack', ('Ultra','Black'), 'UBlack', 'UBlck', 'UBlk'] + range(857, 1000), # Upgrade 900
+    'Extrablack': ['Extrablack', 'XBlack', 'XBlck', 'XBlk', ('Ex','Bla')] + range(825, 875), # Upgrade 850
+    'Ultrablack': ['Ultrablack', 'UBlack', 'UBlck', 'UBlk'] + range(857, 1000), # Upgrade 900
 }
-FONT_WIDTH_MATCHES = {
-    'Skyline': ('Skyline', 1, 100),
-    'Extracompressed': ('Extracompressed', ('Extra','Compressed'), 'XComp', 140),
-    'Compressed': ('Compressed', 'Comp', 'Cmp', 2, 200),
-    'Ultracondensed': ('Ultra Condensed', ('Ultra','Condensed'), 'UCond', 'Ult Cnd', 250),
-    'Extra Condensed': ('Extra Condensed', ('Extra','Condensed'), 'XCond', 3, 300),
+
+FONT_WIDTH_MATCHES = {  
+    'Skyline': ('Skyline', 'SkyLine', 1, 100),
+    'Ultracompressed': ('Ultracompressed', 'UCompressed', 'Ucompressed', 'Ucomp', 'UComp', 120),
+    'Extracompressed': ('Extracompressed', 'XCompressed', 'Xcompressed', 'Xcomp', 'XComp', 140),
+    'Compressed': ('Compressed', 'Compr', 'Comp', 'Cmp', 2, 200),
+    'Ultracondensed': ('Ultracondensed', 'UCondensed', 'UCond', 250),
+    'Extracondensed': ('Extracondensed', 'XCondensed', 'XCond', 3, 300),
     'Condensed': ('Condensed', 'Cond', 'Cnd', 'Cn', 4, 400),
     'Narrow': ('Narrow', 'Nrrw', 'Narr', 'Nar', 440),
     'Normal': ('Normal', 'Nrm', 'Norm', 'Nrml', 'Nor', 5, 500),
     'Wide': ('Wide', 'Wd', 6, 600),
-    'Extended': ('Extended', 'Expanded', 'Expd', 'Ext', 7, 700),
-    'Extraextended': ('Extraextended', ('Extra','Extended'), 'Extraexpanded', ('Extra','Expanded'), 'XExpanded', 'XExtended', 'XExp', 'XExt', 8, 800),
-    'Ultraextended': ('Ultraextended', ('Ultra','Extended'), 'UExtended', 'UExt', 9, 900),
+    'Extended': ('Extended', 'Expanded', 'Expd', 'Exp', 'Ext', 'Extnd', 7, 700),
+    'Extraextended': ('Extraextended', 'Xextended', 'XExtended', 'XExp', 'XExt', 8, 800),
+    'Ultraextended': ('Ultraextended', 'Uextended', 'UExtended', 'XExt', 'UExt', 9, 900),
 }
+
 FONT_ITALIC_MATCHES = {
     'Italic': ('Italic', 'Ita', 'It'),
 }
+# Expand for the number entries:
+for d in (FONT_SIZE_MATCHES, FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES):
+    for key, values in d.items():
+        for value in values:
+            if isinstance(value, int):
+                d[value] = values
+
+STYLE_REPLACEMENTS = ( 
+    # Pre-replacement in font names, to get standard non-CamelCase style names
+    # Works togehter with toolbox.transformer.path2StyleNameParts()
+    # From --> To pattern replacement.
+    # Weight 
+    ('UltraLight', 'Ultralight'),
+    ('UltLt', 'Ultralight'),
+    ('SemiLight', 'Semilight'),
+    ('SemiBold', 'Semibold'), 
+    ('SemBold', 'Semibold'), 
+    ('ExtraBold', 'Extrabold'),
+    ('UltraBlack', 'Ultrablack'), 
+    ('Ultra Black', 'Ultrablack'), 
+    ('Ultra-Black', 'Ultrablack'), 
+    ('Ultra_Black', 'Ultrablack'), 
+    ('ExtrBlack', 'Extrablack'), 
+    ('ExtBlack', 'Extrablack'),
+
+    # Width
+    ('UltCnd', 'Ultracondensed'), 
+    ('UltraCondensed', 'Ultracondensed'),
+    ('ExtraCondensed', 'Extracondensed'),
+    ('Ultra Condensed', 'Ultracondensed'),
+    ('Extra Condensed', 'Extracondensed'),
+    ('Ultra-Condensed', 'Ultracondensed'),
+    ('Extra-Condensed', 'Extracondensed'),
+    ('Ultra_Condensed', 'Ultracondensed'),
+    ('Extra_Condensed', 'Extracondensed'),
+
+    ('ExtraExtended', 'Extraextended'),
+    ('UltraExtended', 'Ultraextended'),
+    ('Extra Extended', 'Extraextended'),
+    ('Ultra Extended', 'Ultraextended'),
+    ('Extra-Extended', 'Extraextended'),
+    ('Ultra-Extended', 'Ultraextended'),
+    ('Extra_Extended', 'Extraextended'),
+    ('Ultra_Extended', 'Ultraextended'),
+)
 
 def newStyle(**kwargs):
     return dict(**kwargs)
@@ -463,11 +514,15 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # These parameters are used by viewers, should not part of direct elements.css( ) queries
         # as view may locally change these values.
 
-        # Grid stuff
-        viewGridFill = (200/255.0, 230/255.0, 245/255.0, 0.9), # Fill color for (cw, ch) squares.
+        # Grid stuff for showing
+        viewGridFill = (200/255.0, 230/255.0, 245/255.0, 0.1), # Fill color for (cw, ch) squares.
         viewGridStroke = (0.3, 0.3, 0.6), # Stroke of grid lines in part of a template.
         viewGridStrokeWidth = 0.5, # Line thickness of the grid.
         
+        # Page padding grid
+        viewPagePaddingStroke = (0.4, 0.4, 0.7), # Stroke of page padding lines, if view.showPagePadding is True
+        viewPagePaddingStrokeWidth = 0.5, # Line thickness of the page padding lines.
+
         # Baseline grid
         viewBaselineGridStroke = (1, 0, 0), # Stroke clor of baselines grid.
         

@@ -80,7 +80,8 @@ class FlatString(BabelString):
         #    self.s += `s` # Convert to babel string, whatever it is.
 
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+    def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
+        fontSize=None, styleName=None, tracking=None, rTracking=None, tagName=None):
         u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
