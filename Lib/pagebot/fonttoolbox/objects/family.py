@@ -250,6 +250,9 @@ class Family(object):
         >>> family = getFamily('Bungee')
         >>> family.getWeights().keys()
         [400]
+        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
+        >>> sorted(family.getWeightClasses().keys())
+        [250, 300, 400, 500, 700, 900]
         """
         weightClasses = {}
         for font in self.fonts.values():

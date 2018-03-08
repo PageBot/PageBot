@@ -72,14 +72,10 @@ FB_PATH_L = 'images/FB1995TypeSpecimen-Proforma-L.jpg'FB_PATH_R = 'images/FB199
 # Build the specimen pages for the font names that include these patterns.
 FAMILIES = (
     getFamily('Upgrade'),
-    getFamily('Proforma'),
-    getFamily('Bitcount'),
-    #getFamily('Bungee'), 
-    #getFamily('Roboto'), 
+    getFamily('Bungee'), 
+    getFamily('Roboto'), 
     #getFamily('AmstelvarAlpha')
 )
-print 'Proforma',FAMILIES[1].getStyles().keys()
-
 #labelFamily = getFamily('Roboto')
 labelFamily = getFamily('Upgrade')
 labelFont = labelFamily.findRegularFont() # Ask family to find the most regular font.
@@ -96,11 +92,9 @@ GLYPH_SET = u"""ABCDEFGHIJKLMNOPQRSTUVWXYZ&$1234567890abcdefghijklmnopqrstuvwxyz
 # Export in _export folder that does not commit in Git. Force to export PDF.
 DO_OPEN = False
 if SHOW_GRID:
-    EXPORT_PATH_PDF = '_export/FB1995TypeSpecimen-Grid.pdf' 
-    EXPORT_PATH_PNG = '_export/FB1995TypeSpecimen-Grid.png' 
+    EXPORT_PATH = '_export/ATFSpecimen-Grid.pdf' 
 else:
-    EXPORT_PATH_PDF = '_export/FB1995TypeSpecimen.pdf' 
-    EXPORT_PATH_PBG = '_export/FB1995TypeSpecimen.png' 
+    EXPORT_PATH = '_export/ATFSpecimen.pdf' 
 
 # Some parameters from the original book
 PAPER_COLOR = int2Color(0xFEFEF7) # Approximation of paper color of original specimen.
@@ -132,22 +126,7 @@ def getShortWordText():
     shortWords = ' '.join(SHORT_WORDS[:40])
     shuffle(SHORT_WORDS)
     return shortWords.lower().capitalize()
- 
-def getWeightNames(family):
-    # Collect all weight names in increasing order.
-    weightClasses = family.getWeights()
-    weightNames = ''
-    index = 0
-    for weightClass, fonts in sorted(weightClasses.items()):
-        weightName = '[%d] ' % weightClass
-        for font in fonts:
-            if index > 24:
-                return weightNames
-            weightName += ' ' + path2FontName(font.path)
-            index += 1
-        weightNames += ' ' + weightName
-    return weightNames
-         
+    
 def buildSpecimenPages(doc, family, pn):
     page = doc[pn]
     page.padding = PADDING
@@ -194,7 +173,7 @@ def buildSpecimenPages(doc, family, pn):
     weightClasses = family.getWeights()
     
     # Text samples on the right
-    y = 300#lineR.bottom 
+    y = lineR.bottom 
     for weightClass, fonts in sorted(weightClasses.items()):
         for font in fonts:
             if font.isItalic():
@@ -211,13 +190,42 @@ def buildSpecimenPages(doc, family, pn):
         newTextBox(description, parent=page, w=C3, h=descriptionH, 
                    conditions=(Right2Right(), Bottom2Bottom()),
                    fill=DEBUG_COLOR1)
- 
-    weightNames = getWeightNames(family)            
- 
+                 
+    # Collect all weight names in increasing order.
+    weightNames = ''
+    for weightClass, fonts in sorted(weightClasses.items()):
+        weightName = '[%d] ' % weightClass
+        for font in fonts:
+            weightName += ' ' + path2FontName(font.path)
+        weightNames += ' ' + weightName
+    
     charSetString = context.newString(weightNames + '\n\n', style=fontSetStyle)
     charSetString += context.newString(GLYPH_SET, style=charSetStyle)
     _, charSetStringH = context.textSize(charSetString, w=C3)
+
+    stackedLines = context.newString('')
+    first = True
+    for n in range(50): # That's enough
+        h = H - PT - titleBox.h - PB - charSetStringH - 3*U
+        headline = blurb.getBlurb('_headline', cnt=choice((2,3,4,4,4,4,4,5,6,7,8)))
+        if random() <= 0.2:
+            headline = headline.upper()
+        if not first:
+            headline = '\n'+headline
+        else:
+            first = False
+        stackLine = context.newString(headline,
+            style=dict(font=choice(family.getFonts()).path, leading=-30,
+            ), w=C3, pixelFit=False)
+        _, by, bw, bh = stackLine.bounds()
+        stackedLines += stackLine
+        if context.textSize(stackedLines)[1] > h:
+            break
             
+    largeSampleBox = newTextBox(stackedLines, parent=page, w=C3, h=h,
+               conditions=[Float2Top(), Left2Left()],
+               fill=DEBUG_COLOR1)
+
     newTextBox(charSetString, parent=page, w=C3, h=charSetStringH, conditions=(Left2Left(), Bottom2Bottom()))
 
 
@@ -227,7 +235,7 @@ def buildSpecimenPages(doc, family, pn):
     # is mismatch between the position of the pixel image of the lines and the content of text
     # boxes. Although it is possible to build by floating elements or by on single text, which
     # will show in another proof-revival example.
-    
+    """
     y = lineL.bottom-U # Position at where this went to by solving the layout conditions.
     # Stacked lines on the left, by separate elements, so we can squeeze them by pixel image size.
     for n in range(100): # That's enough
@@ -242,9 +250,9 @@ def buildSpecimenPages(doc, family, pn):
         tw, th = context.textSize(charSetString)
         if y - bh < PB + th: # Reserve space for glyph set
             break # Filled the page.
-        newTextBox(stackLine, parent=page, x=PL, y=y-bh-by-U, w=C3, h=th+2, fill=DEBUG_COLOR1)
+        newTextBox(stackLine, parent=page, x=PL, y=y-bh-by-U, w=C3, h=th, fill=DEBUG_COLOR1)
         y -= bh + by + U
-    
+    """
         
     """
     largeSampleBox = newTextBox('', parent=page, w=C+G/2, 
@@ -348,8 +356,7 @@ def makeDocument(families):
     return doc
 
 doc = makeDocument(FAMILIES)
-doc.export(EXPORT_PATH_PDF) 
-doc.export(EXPORT_PATH_PNG) 
+doc.export(EXPORT_PATH) 
 if DO_OPEN:
     os.system(u'open "%s"' % EXPORT_PATH)
   
