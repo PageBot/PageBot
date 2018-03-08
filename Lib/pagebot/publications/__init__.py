@@ -13,6 +13,20 @@
 #
 #     __init__.py
 #
+#	  from pagebot.publications import Magazine, Specimen
+#
+#     class FashionMagazine(Magazine):
+#         pass
+#
+#	  fm = FashionMagazine('myFile.md')
+#     fm.export('MyMagazine.pdf')
+#
+#     class MyVariableSpecimen(Specimen):
+#		  pass
+#
+#     fm = FashionMagazine('myDataMarkDown.md')
+#     fm.export('MySpeciment.pdf')
+#
 from book import Book
 from website import Website
 from poster import Poster
