@@ -34,7 +34,11 @@ def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=Fals
     True
     >>> 'Bungee' in families
     True
+<<<<<<< HEAD
+    >>> families = getFamilies(useFontInfo=False, force=True) # Forced to look an fileName only, RobotoCondensed is a family
+=======
     >>> families = getFamilies(useFontInfo=False, force=True) # Forced to look an fileName only, Roboto is a family
+>>>>>>> origin/master
     >>> 'Roboto' in families
     True
     >>> families = getFamilies(useFileName=False, force=True) # Looking into font.info, Roboto is the family name.
@@ -348,14 +352,24 @@ class Family(object):
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> len(family)
         12
+<<<<<<< HEAD
+        >>> family.findFont(weight='Medium')
+        <Font Roboto-Medium>
+        >>> family.findFont(weight='Medium', italic=True)
+        <Font Roboto-MediumItalic>
+=======
         >>> family.findFont(weight=400, width=5)
         <Font Roboto-Regular>
+>>>>>>> origin/master
         >>> family.findFont(weight='Bold')
         <Font Roboto-Bold>
         >>> family.findFont(weight='Bold', italic=True)
         <Font Roboto-BoldItalic>
+<<<<<<< HEAD
+=======
         >>> family.findFont(weight='Boldish', width='NotWide')
         <Font Roboto-Regular>
+>>>>>>> origin/master
         """
         matchingFont = self._findFont(name=name, weight=weight, width=width, italic=italic)
         if matchingFont is None: # No match, answer regular if it can be found.
