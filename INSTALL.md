@@ -2,12 +2,12 @@
 
 ## Installing
 
-As long as PageBot is not part of the standard DrawBotApp, it needs to be installed separately. 
+Since PageBot is not part of the standard DrawBotApp, it needs to be installed separately. 
 
-Another reason for manual install is that it allows to update PageBot to the latest version, when DrawBot is not updated. 
-And developers may choose to run an alternative branche of PageBot to test specific functions before they are merged back into the github master.
+Another reason for manual installation is that it allows updating PageBot to the latest version, while DrawBot is not updated. 
+And developers may choose to run an alternative branch of PageBot to test specific functions before they are merged back into github master.
 
-The installing process is part of the development of the library itself, so it may not always work properly still.
+The installation process is part of the development of the library itself, so it may still not always work properly.
 Here are some hints to check on installation and to install without using the *setup.py* script.
 
 ### setup.py
@@ -15,11 +15,11 @@ Here are some hints to check on installation and to install without using the *s
 Run `sudo python setup.py install` to install PageBot in the default Python of the OSX.
 There are some known problems here:
 
-* The default `Python` may not be the same one a DrawBotApp is using. On some OSX system, there are multiple versions of Python installed, in which case PageBot is installed with a different one. DrawBot then cannot find the installed PageBot.
+* The default `Python` may not be the same one that DrawBotApp uses. On some OSX systems, there are multiple versions of Python installed, in which case PageBot may be installed with a different one. DrawBot then cannot find the installed PageBot.
 
 * Always restart DrawBotApp, as opening new libraries only takes place on startup.
 
-* Don't move the git-repository to another location, after it  is installed. Python builds a reference to the libary where it is located during installation. After moving, make sure to run the initializer again.
+* Don't move the git-repository to another location after it is installed. Python builds a reference to the libary where it is located during installation. After moving, make sure to run the initializer again.
 
 ### Finding the installed PageBot with the Finder
 
@@ -39,26 +39,24 @@ Open a terminal
 	>>> import pagebot
 	>>> 
 
-If there is no error, PageBot is install property for this Python.
+If there is no error, PageBot is installed properly for this Python.
 
 ### Testing in DrawBotApp
 
-Open DrawBotApp
-Open a new editor window.
-Type
-	import drawbot
-Type
-	cmd-R to run the "program"
-If there is no error, PageBit is installed property for DrawBotApp.
+* Open DrawBotApp
+* Open a new editor window.
+* Type `import pagebot`
+* Presse cmd-R to run this minimalistic one-line script
+* If there is no error then PageBot is installed properly for DrawBotApp.
 
 ### Install dependencies
 
-PageBot is using other Open Source libraries, that may be (or not yet) installed in RoboFont.
+PageBot is using other Open Source libraries that may (or may not) be already installed in RoboFont.
 Also, when running PageBot outside of DrawBot context (e.g. using Flat), these libraries need to be installed separately.
 
-https://github.com/xxyxyz/flat
-https://github.com/typesupply/compositor
-https://github.com/imageio/imageio
+* https://github.com/xxyxyz/flat
+* https://github.com/typesupply/compositor
+* https://github.com/imageio/imageio
 
 https://github.com/GoogleCloudPlatform/google-cloud-python
 
