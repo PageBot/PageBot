@@ -13,7 +13,7 @@
 # 
 #     glass_office.py
 #
-from pagebot.style import makeStyle, getRootStyle
+from pagebot.style import getRootStyle
 from basetheme import BaseTheme
 
 class GlassOffice(BaseTheme):
