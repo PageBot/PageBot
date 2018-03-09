@@ -108,9 +108,11 @@ class Family(object):
             self.addFonts(fonts) # Try to figure out what these are, and add them
 
     def __repr__(self):
+        u"""Answer the representation stirng of the family."""
         return '<PageBot Family %s (%d fonts)>' % (self.name, len(self))
 
     def __len__(self):
+        u"""Answer the length of the family, as the amount of fonts."""
         return len(self.fonts)
     
     def __contains__(self, fontPath):
@@ -250,7 +252,7 @@ class Family(object):
         >>> family.getWeights().keys()
         [400]
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
-        >>> sorted(family.getWeightClasses().keys())
+        >>> sorted(family.getWeights().keys())
         [250, 300, 400, 500, 700, 900]
         """
         weightClasses = {}
@@ -316,6 +318,7 @@ class Family(object):
     def findRegularFont(self, italic=False):
         u"""Try to find a font that is closest to style "Normal" or "Regular".
         Otherwise answer the font that has weight/width closest to (400, 5) and angle is closest to 0.
+        Default is to find the roman. The italic is optional to find the regular italic, if it exists.
 
         >>> from pagebot.toolbox.transformer import path2FontName
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
@@ -330,6 +333,7 @@ class Family(object):
         return self._findFont(weight=400, width=5, italic=italic)
 
     def _findFont(self, name=None, weight=None, width=None, italic=False):
+        u"""Private method to find the font closest to the defined parameters."""
         match = 0
         matchingFont = None
         for font in self.fonts.values():

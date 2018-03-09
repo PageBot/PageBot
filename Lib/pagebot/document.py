@@ -52,7 +52,7 @@ class Document(object):
 
     def __init__(self, rootStyle=None, styles=None, theme=None, viewId=None, name=None, 
             class_=None, title=None, pages=None, autoPages=1, template=None, templates=None, 
-            originTop=True, startPage=0, w=None, h=None, padding=None, info=None, 
+            originTop=True, startPage=0, w=None, h=None, padding=None, info=None, lib=None,
             context=None, exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
@@ -87,9 +87,12 @@ class Document(object):
         # Template is name or instance default template.
         self.initializeTemplates(templates, template) 
 
-        # Storage lib for collected content while typesetting and composing, referring to the pages
-        # they where placed on during composition.
-        self._lib = {}
+        # Property self.lib for storage of collected content while typesetting and composing, 
+        # referring to the pages they where placed on during composition. The lib can optionally
+        # be defined when constructing self.
+        if lib is None:
+            lib = {}
+        self._lib = lib
 
         # Instance to hold details flags and data to guide the self.view.b builder of this document.
         self.info = info or BuildInfo()
@@ -110,7 +113,12 @@ class Document(object):
 
     def _get_lib(self):
         u"""Answer the global storage dictionary, used by TypeSetter and others to keep track of footnotes,
-        table of content, etc. Some common entries are predefined. """
+        table of content, etc. Some common entries are predefined.
+
+        >>> doc = Document(name='TestDoc', w=300, h=400, lib=dict(a=12, b=34))
+        >>> doc.lib
+        {'a': 12, 'b': 34}
+        """
         return self._lib 
     lib = property(_get_lib)
 
@@ -119,17 +127,33 @@ class Document(object):
         return len(self.pages)
 
     def __repr__(self):
+        u"""Answering the string representation of the document.
+
+        >>> doc = Document(name='TestDoc', w=300, h=400, lib=dict(a=12, b=34))
+        >>> str(doc)
+        '[Document-Document "TestDoc"]'
+        """
         return '[Document-%s "%s"]' % (self.__class__.__name__, self.name)
 
     def _get_doc(self):
-        u"""End of the chain of element properties, looking upward in the ancestors tree."""
+        u"""Root of the chain of element properties, searching upward in the ancestors tree.
+
+        >>> doc = Document(name='TestDoc')
+        >>> doc.doc is doc
+        True
+        """
         return self
     doc = property(_get_doc)
 
     # Document[12] answers a list of pages where page.y == 12
     # This behaviour is different from regular elements, who want the page.eId as key.
     def __getitem__(self, pnIndex):
-        u"""Answer the pages with pageNumber equal to page.y. """
+        u"""Answer the pages with pageNumber equal to page.y. 
+        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=100)
+        >>> page = doc[66]
+        >>> doc.getPageNumber(page)
+        '67'
+        """
         if isinstance(pnIndex, (list, tuple)):
             pn, index = pnIndex
         else:
@@ -141,15 +165,36 @@ class Document(object):
         self.pages[pn].append(page)
    
     def _get_ancestors(self):
+        u"""Root of the chain of element properties, searching upward in the ancestors tree.
+        As the document, by definition, is the top of the tree, an empty list is answered.
+
+        >>> doc = Document(name='TestDoc')
+        >>> len(doc.ancestors) == 0
+        True
+        """
         return []
     ancestors = property(_get_ancestors)
     
     def _get_parent(self):
+        u"""Root of the chain of element properties, searching upward in the ancestors tree.
+        As the document, by definition, is the top of the tree, None is answered as parent.
+
+        >>> doc = Document(name='TestDoc')
+        >>> doc.parent is None
+        True
+        """
         return None
     parent = property(_get_parent)
 
     def getView(self, viewId=None):
-        u"""Answer the view width viewId. Otherwise answer self.view."""
+        u"""Answer the view width viewId. Otherwise answer self.view.
+
+        >>> doc = Document(name='TestDoc')
+        >>> doc.getView().isView
+        True
+        >>> doc.view is doc.getView()
+        True
+        """
         if viewId in viewClasses:
             return viewClasses[viewId]
         return self.view
@@ -171,7 +216,15 @@ class Document(object):
         return '\n'.join(info)
 
     def _get_builder(self):
-        u"""Answer the builder, as supposed to be available in the self.context."""
+        u"""Answer the builder, as supposed to be available in the self.context.
+
+        >>> from pagebot.contexts import defaultContext as context
+        >>> doc = Document(name='TestDoc', context=context)
+        >>> doc.context is context
+        True
+        >>> doc.builder is not None
+        True
+        """
         return self.context.b
     b = builder = property(_get_builder)
 
@@ -192,18 +245,41 @@ class Document(object):
         self.defaultTemplate = defaultTemplate
 
     def getTemplate(self, name=None):
-        u"""Answer the named template. If it does not exist, then answer the default template. Answer None of if there is no default."""
+        u"""Answer the named template. If it does not exist, then answer the default template. 
+        Answer None of if there is no default.
+
+        >>> doc = Document(name='TestDoc')
+        >>> doc.getTemplate()
+        Template:default (0, 0)
+        >>> doc.getTemplate() == doc.defaultTemplate
+        True
+        """
         return self.templates.get(name, self.defaultTemplate)
 
     def addTemplate(self, name, template):
-        u"""Add the template to the self.templates of dictionaries. There is no check, so caller can overwrite existing templates.
-        Answer the template as convenience of the caller."""
+        u"""Add the template to the self.templates of dictionaries. There is no check, so the
+        caller can overwrite existing templates. Answer the template as convenience of the caller.
+
+        >>> from pagebot.elements.pbpage import Template
+        >>> name ='TestTemplate'
+        >>> t = Template(w=200, h=300, name=name)
+        >>> doc = Document(name='TestDoc')
+        >>> doc.addTemplate('myTemplate', t)
+        Template:TestTemplate (0, 0)
+        >>> doc.getTemplate('myTemplate').name == name
+        True
+        """
         template.parent = self
         self.templates[name] = template
         return template
 
     def _get_defaultTemplate(self):
-        u"""Answer the default template of the document."""
+        u"""Answer the default template of the document.
+
+        >>> doc = Document(name='TestDoc')
+        >>> doc.defaultTemplate
+        Template:default (0, 0)
+        """
         return self.templates.get('default')
     def _set_defaultTemplate(self, template):
         self.addTemplate('default', template)
