@@ -16,10 +16,9 @@
 #     Implements a family collection of Font instances.
 #
 import os
-from pagebot.contexts import defaultContext as context
 from pagebot.contexts.platform import getFontPaths
-from pagebot.fonttoolbox.objects.font import Font, getFont, isFontPath
-from pagebot.toolbox.transformer import path2FontName, path2FamilyName
+from pagebot.fonttoolbox.objects.font import Font, getFont
+from pagebot.toolbox.transformer import path2FamilyName
 
 FAMILIES = {} # Cached build families
 
@@ -244,45 +243,15 @@ class Family(object):
                 fontStyles[styleName].append(font)
         return fontStyles
 
-    def getWeightClasses(self):
-        u"""Answer the dictionary {fontWeightClass: [font, font, ...], ...}
-
-        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
-        >>> sorted(family.getWeightClasses().keys())
-        [250, 300, 400, 500, 700, 900]
-        """
-        weightClasses = {}
-        for font in self.fonts.values():
-            weightClass = font.info.weightClass
-            if not weightClass in weightClasses:
-                weightClasses[weightClass] = [font]
-            else:
-                weightClasses[weightClass].append(font)
-        return weightClasses
-
-    def getWidthClasses(self):
-        u"""Answer the dictionary {fontWidthtClass: [font, font, ...], ...}
-
-        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
-        >>> widthClasses = family.getWidthClasses() # All fonts share the same width class.
-        >>> widthClasses.keys(), len(widthClasses[5])
-        ([5], 12)
-        """
-        widthClasses = {}
-        for font in self.fonts.values():
-            widthClass = font.info.widthClass
-            if not widthClass in widthClasses:
-                widthClasses[widthClass] = [font]
-            else:
-                widthClasses[widthClass].append(font)
-        return widthClasses
-
     def getWeights(self):
         u"""Answer the dictionary {weightClass: [font, font, ...], ...]}
         
         >>> family = getFamily('Bungee')
         >>> family.getWeights().keys()
         [400]
+        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
+        >>> sorted(family.getWeightClasses().keys())
+        [250, 300, 400, 500, 700, 900]
         """
         weightClasses = {}
         for font in self.fonts.values():
@@ -348,6 +317,7 @@ class Family(object):
         u"""Try to find a font that is closest to style "Normal" or "Regular".
         Otherwise answer the font that has weight/width closest to (400, 5) and angle is closest to 0.
 
+        >>> from pagebot.toolbox.transformer import path2FontName
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> font = family.findRegularFont()
         >>> font.info.styleName # We got the most "default" font of the family
@@ -378,6 +348,10 @@ class Family(object):
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> len(family)
         12
+        >>> family.findFont(weight='Medium')
+        <Font Roboto-Medium>
+        >>> family.findFont(weight='Medium', italic=True)
+        <Font Roboto-MediumItalic>
         >>> family.findFont(weight=400, width=5)
         <Font Roboto-Regular>
         >>> family.findFont(weight='Bold')
