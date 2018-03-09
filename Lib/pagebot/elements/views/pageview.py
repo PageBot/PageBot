@@ -603,7 +603,7 @@ class PageView(BaseView):
 
     def _drawPageRegistrationMark(self, page, origin, cmSize, cmStrokeWidth, vertical):
         u"""Draw registration mark as position x, y."""
-        c = page.context
+        context = page.context
         x, y = origin
         if vertical:
             dx = cmSize/2
@@ -611,17 +611,17 @@ class PageView(BaseView):
         else:
             dx = cmSize
             dy = cmSize/2
-        c.fill(None)
-        c.stroke((1,1,1,1), cmyk=True, w=cmStrokeWidth)
-        c.newPath()
+        context.fill(None)
+        context.stroke((1,1,1,1), cmyk=True, w=cmStrokeWidth)
+        context.newPath()
         # Registration circle
-        c.circle(x, y, cmSize/4)
+        context.circle(x, y, cmSize/4)
         # Registration cross, in length of direction.
-        c.moveTo((x - dx, y)) # Horizontal line.
-        c.lineTo((x + dx, y))
-        c.moveTo((x, y + dy)) # Vertical line.
-        c.lineTo((x, y - dy))
-        c.drawPath()
+        context.moveTo((x - dx, y)) # Horizontal line.
+        context.lineTo((x + dx, y))
+        context.moveTo((x, y + dy)) # Vertical line.
+        context.lineTo((x, y - dy))
+        context.drawPath()
 
     def drawPageRegistrationMarks(self, page, origin):
         u"""Draw standard registration mark, to show registration of CMYK colors.
