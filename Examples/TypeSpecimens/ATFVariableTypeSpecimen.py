@@ -69,8 +69,8 @@ ATF_PATH = 'images/ATFArtcraftBold.png'
 
 # Build the specimen pages for the font names that include these patterns.
 FAMILIES = (
-    #getFamily('Upgrade'),
-    getFamily('Bungee'), 
+    getFamily('Upgrade'),
+    #getFamily('Bungee'), 
     #getFamily('Roboto'), 
     #getFamily('AmstelvarAlpha')
 )
@@ -85,9 +85,11 @@ GLYPH_SET = ' '.join(u'ABCDEFGHIJKLMNOPQRSTUVWXYZ&$1234567890abcdefghijklmnopqrs
 # Export in _export folder that does not commit in Git. Force to export PDF.
 DO_OPEN = False
 if SHOW_GRID:
-    EXPORT_PATH = '_export/ATFSpecimen-Grid.pdf' 
+    EXPORT_PATH_PDF = '_export/ATFSpecimen-Grid.pdf' 
+    EXPORT_PATH_PNG = '_export/ATFSpecimen-Grid.png' 
 else:
-    EXPORT_PATH = '_export/ATFSpecimen.pdf' 
+    EXPORT_PATH_PDF = '_export/ATFSpecimen.pdf' 
+    EXPORT_PATH_PNG = '_export/ATFSpecimen.png' 
 
 # Some parameters from the original book
 PAPER_COLOR = int2Color(0xFBF6F1) # Approximation of paper color of original specimen.
@@ -98,7 +100,7 @@ RED_COLOR = int2Color(0xAC1E2B) # Red color used in the original specimen
 # Other hyphenation tables are appreciated to be added to PageBot.
 # WORDS key is the word length in character count and the values are lists words of
 # equal length.
-LANGUAGE = 'en' #'en'
+LANGUAGE = 'nl' #'en'
 WORDS = wordsByLength(LANGUAGE)
 SHORT_WORDS = WORDS[3]+WORDS[4]+WORDS[3]+WORDS[4]+WORDS[3]+WORDS[4]+WORDS[5]+WORDS[6]
 shuffle(SHORT_WORDS)
@@ -248,7 +250,8 @@ def makeDocument(families):
     return doc
 
 doc = makeDocument(FAMILIES)
-doc.export(EXPORT_PATH) 
+doc.export(EXPORT_PATH_PDF) 
+doc.export(EXPORT_PATH_PNG) 
 if DO_OPEN:
     os.system(u'open "%s"' % EXPORT_PATH)
   
