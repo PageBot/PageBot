@@ -53,7 +53,7 @@ t.typesetFile(MD_PATH)
 if DO_MAMP:
     # Internal CSS file may be switched of for development.
     t.doc.info.cssPath = 'sources/pagebot.css'
-    view = t.doc.setView('Mamp')
+    view = t.doc.newView('Mamp')
 
     if not os.path.exists(view.MAMP_PATH):
         print 'The local MAMP server application does not exist. Download and in stall from %s.' % view.MAMP_SHOP_URL 
@@ -65,7 +65,7 @@ if DO_MAMP:
 elif DO_GIT:
     # Make sure outside always has the right generated CSS
     t.doc.info.cssPath = 'sources/pagebot.css'
-    view = t.doc.setView('Git')
+    view = t.doc.newView('Git')
     t.doc.build(path=NAME)
     # Open the css file in the default editor of your local system.
     os.system('git pull; git add *;git commit -m "Updating website changes.";git pull; git push')
