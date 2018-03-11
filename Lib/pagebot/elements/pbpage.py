@@ -25,6 +25,13 @@ class Page(Element):
 
     def __init__(self, leftPage=None, rightPage=None, **kwargs):  
         u"""Add specific parameters for a page, besides the parameters for standard Elements.
+
+        >>> page = Page()
+        >>> page.w, page.h
+        (100, 100)
+        >>> page.w = 1111
+        >>> page.w, page.h
+        (1111, 100)
         """
         Element.__init__(self,  **kwargs)
         self.class_ = self.class_ or 'page' # Defined default CSS class for pages.
@@ -39,10 +46,10 @@ class Page(Element):
         >>> doc = Document(name='TestDoc', autoPages=8)
         >>> page = doc[5]
         >>> page.isLeft
-        
-        >>> page.isLeft = False
+        False
+        >>> page.isLeft = True
         >>> page.isLeft
-        
+        True
         """
         if self._isLeft is not None:
             return self._isLeft   
@@ -53,13 +60,28 @@ class Page(Element):
         self._isLeft = flag
     isLeft = property(_get_isLeft, _set_isLeft)
 
-    def isRightPage(self):
-        u"""Answer the boolean flag if this is a right page, if that info is stored
+    def _get_isRight(self):
+        u"""Answer the boolean flag if this is a right page, if that info is stored. 
         Note that pages can be neither left or right.
-        Otherwise, the only one who can know that is the document."""
-        if self._isRightPage is None:
-            return self._isRightPage 
-        return self.doc.isRightPage(self) # If undefined, query parent document to decide.
+        Otherwise, the only one who can know that is the document.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(name='TestDoc', autoPages=8)
+        >>> page = doc[5]
+        >>> page.isLeft
+        False
+        >>> page.isLeft = True
+        >>> page.isLeft
+        True
+        """
+        if self._isLeft is not None:
+            return self._isLeft   
+        if self.doc is not None:
+            return self.doc.isLeftPage(self) # If undefined, query parent document to decide.
+        return None
+    def _set_isRight(self, flag):
+        self._isRight = flag
+    isRight = property(_get_isRight, _set_isRight)
 
     #   D R A W B O T  S U P P O R T
 
