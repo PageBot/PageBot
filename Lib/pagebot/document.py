@@ -151,6 +151,7 @@ class Document(object):
     # This behaviour is different from regular elements, who want the page.eId as key.
     def __getitem__(self, pnIndex):
         u"""Answer the pages with pageNumber equal to page.y. 
+        
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=100)
         >>> page = doc[66]
         >>> doc.getPageNumber(page)
@@ -304,21 +305,18 @@ class Document(object):
         return rootStyle
 
     def applyStyle(self, style):
-        u"""Apply the key-value of the style onto the self.rootStyle."""
+        u"""Apply the key-value of the style onto the self.rootStyle. This overwrites existing style
+        values inthe self.rootStyle by all values in style. Cannot be undone.
+
+        >>> doc = Document(name='TestDoc', w=123)
+        >>> doc.w
+        123
+        >>> doc.applyStyle(dict(w=1234))
+        >>> doc.w
+        1234
+        """
         for key, value in style.items():
             self.rootStyle[key] = value
-
-    def getMaxPageSizes(self, pageSelection=None):
-        u"""Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
-        then only evaluate the selected pages."""
-        w = h = d = 0
-        for (y, x), page in self.pages.items():
-            if pageSelection is not None and y not in pageSelection:
-                continue
-            w = max(w, page.w)
-            h = max(h, page.h)
-            d = max(d, page.d)
-        return w, h, d
 
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
@@ -326,7 +324,12 @@ class Document(object):
         u"""If optional sId is None or style cannot found, then use the root style. 
         If the style is found from the (cascading) sId, then use that to return the requested attribute.
         Note that self.css( ) is a generic query for a named CSS value, upwards the parent tree.
-        This is different from the CSS functions as self.buildCss( ), that actually generate CSS code."""
+        This is different from the CSS functions as self.buildCss( ), that actually generate CSS code.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10)
+        >>> doc.css('w'), doc.css('h')
+        (500, 500)
+        """
         style = self.findStyle(styleId)
         if style is None:
             style = self.rootStyle
@@ -335,7 +338,11 @@ class Document(object):
     def findStyle(self, styleId):
         u"""Answer the style that fits the optional sequence naming of styleId.
         Answer None if no style can be found. styleId can have one of these formats:
-        ('main h1', 'h1 b')"""
+        ('main h1', 'h1 b')
+
+
+
+        """
         if styleId is None:
             return None
         styleId = obj2StyleId(styleId)
@@ -368,14 +375,13 @@ class Document(object):
             style[key] = value
         return style # Answer the style for convenience of the caller.
 
-    def addStyle(self, name, style):
-        u"""Add the style to the self.styles dictionary.  Make sure that styles don't get overwritten. Remove them first
-        with *self.removeStyle* or use *self.replaceStyle(name, style)* instead."""
-        assert not name in self.styles
-        self.styles[name] = style
-        # Force the name of the style to synchronize with the requested key.
-        style['name'] = name
-        return style # Answer the style for convenience of the caller.
+    def addStyle(self, name, style, force=False):
+        u"""Add the style to the self.styles dictionary.  Make sure that styles don't get overwritten, if force is False. 
+        Remove them first with *self.removeStyle* or use *self.replaceStyle(name, style)* instead."""
+        if name in self.styles:
+            assert force
+            self.removeStyle(name)
+        self.replaceStyle(name, style)
         
     def removeStyle(self, name):
         u"""Remove the style *name* if it exists. Raise an error if is does not exist."""
@@ -397,7 +403,8 @@ class Document(object):
     #   D E F A U L T  A T T R I B U T E S 
 
     def _get_originTop(self):
-        u"""Answer the document flag if rogiint
+        u"""Answer the document flag if origin is on top.
+
         >>> doc = Document(name='TestDoc', originTop=True)
         >>> doc.originTop
         True
@@ -873,11 +880,23 @@ class Document(object):
         return pages
 
     def getMaxPageSizes(self, pageSelection=None):
-        u"""Answer the max (w, h, d) for all pages. If pageSeleciton is defined as list of pageNumbers,
-        then filter on that."""
-        w = 0
-        h = 0
-        d = 0
+        u"""Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
+        then only evaluate the selected pages.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10)
+        >>> doc.getMaxPageSizes()
+        (500, 500, 1)
+        >>> page = doc[1]
+        >>> page.w, page.h
+        (500, 500)
+        >>> page.w = 2345
+        >>> page.w
+
+        >>> doc[4].h = 1111
+        >>> doc.getMaxPageSizes()
+
+        """
+        w = h = d = 0
         for pn, pnPages in self.pages.items():
             if not pageSelection is None and not pn in pageSelection:
                 continue
@@ -885,7 +904,9 @@ class Document(object):
                 w = max(page.w, w)
                 h = max(page.h, h)
                 d = max(page.d, d)
-            return w, h, d
+        return w, h, d
+
+    #   C O N D I T I O N S
 
     def solve(self, score=None):
         u"""Evaluate the content of all pages to return the total sum of conditions solving.
