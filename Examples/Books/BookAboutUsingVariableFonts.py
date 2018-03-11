@@ -50,6 +50,9 @@ class BookMaker(object):
         # Takes a galley as soruce and a document for target pages. 
         #Composer().compose(t.galley, t.doc)
 
+        # Show a "help-manual" of what the document can do.
+        help(t.doc)
+        
         # DEBUGGING Stuff
         if 0: # Print some results of the typesetter
             # Typesetter found document definition inside content.

@@ -28,14 +28,30 @@ class Page(Element):
         """
         Element.__init__(self,  **kwargs)
         self.class_ = self.class_ or 'page' # Defined default CSS class for pages.
+        self._isLeft = self._isRight = None # Undefined, lef self.doc decide.
 
-    def isLeftPage(self):
+    def _get_isLeft(self):
         u"""Answer the boolean flag if this is a left page, if that info is stored. 
         Note that pages can be neither left or right.
-        Otherwise, the only one who can know that is the document."""
-        if self._isLeftPage is not None:
-            return self._isLeftPage   
-        return self.doc.isLeftPage(self) # If undefined, query parent document to decide.
+        Otherwise, the only one who can know that is the document.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(name='TestDoc', autoPages=8)
+        >>> page = doc[5]
+        >>> page.isLeft
+        
+        >>> page.isLeft = False
+        >>> page.isLeft
+        
+        """
+        if self._isLeft is not None:
+            return self._isLeft   
+        if self.doc is not None:
+            return self.doc.isLeftPage(self) # If undefined, query parent document to decide.
+        return None
+    def _set_isLeft(self, flag):
+        self._isLeft = flag
+    isLeft = property(_get_isLeft, _set_isLeft)
 
     def isRightPage(self):
         u"""Answer the boolean flag if this is a right page, if that info is stored
@@ -147,3 +163,9 @@ class Template(Page):
  
     def draw(self, origin, view):
         raise ValueError('Templates cannot draw themselves in a view. Apply the template to a page first.')
+
+
+if __name__ == "__main__":
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
