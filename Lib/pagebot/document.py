@@ -30,12 +30,15 @@ class Document(object):
     Doctest: https://docs.python.org/2/library/doctest.html
     Run doctest in Sublime: cmd-B
 
+    >>> doc = Document(name='TestDoc', autoPages=50)
+    >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())
+    (50, 1, 50)
     >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
     >>> doc.name, doc.w, doc.h, doc.originTop, len(doc)
     ('TestDoc', 300, 400, True, 2)
     >>> doc.padding
     (30, 40, 50, 60)
-    >>> page = doc[0]
+    >>> page = doc[1] # First page is on the right
     >>> page.padding = 20
     >>> page.w, page.h, page.pw, page.ph, page.pt, page.pr, page.pb, page.pl, page.title
     (300, 400, 260, 360, 20, 20, 20, 20, 'default')
@@ -52,7 +55,7 @@ class Document(object):
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, 
             class_=None, title=None, pages=None, autoPages=1, template=None, templates=None, 
-            originTop=True, startPage=0, w=None, h=None, padding=None, info=None, lib=None,
+            originTop=True, startPage=1, w=None, h=None, padding=None, info=None, lib=None,
             context=None, exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
         without the need to send them directly to the output for "asynchronic" page filling."""
@@ -75,7 +78,7 @@ class Document(object):
 
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
         for page in pages or []: # In case there are pages defined on init, add them.
-            self.appendPage(page)
+            self.appendPage(page, startPage)
 
         # Initialize the current view of this document. All conditional checking and building
         # is done through this view. The defaultViewClass is set either to an in stance of PageView.
@@ -151,7 +154,7 @@ class Document(object):
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=100)
         >>> page = doc[66]
         >>> doc.getPageNumber(page)
-        '67'
+        '66'
         """
         if isinstance(pnIndex, (list, tuple)):
             pn, index = pnIndex
@@ -657,7 +660,7 @@ class Document(object):
 
     #   P A G E S
 
-    def appendPage(self, page):
+    def appendPage(self, page, startPage=1):
         u"""Append page to the document. Assert that it is a page element.
 
         >>> from pagebot.elements.pbpage import Page
@@ -673,13 +676,15 @@ class Document(object):
         >>> doc.appendElement(page)
         >>> len(doc)
         102
+        >>> min(doc.pages.keys()), max(doc.pages.keys())
+        (1, 102)
         """
         if page.isPage:
             page.setParent(self) # Set parent as weakref, without calling self.appendElement again.
             if self.pages.keys():
                 pn = max(self.pages.keys())+1
             else:
-                pn = 0
+                pn = startPage
             self[pn] = page
         else:
             raise TypeError, ('Cannot add element "%s" to document. Only "e.isPage == True" are supported.' % page)
@@ -687,7 +692,8 @@ class Document(object):
     appendElement = appendPage
 
     def getPage(self, pnOrName, index=0):
-        u"""Answer the page at (pn, index). Otherwise search for a page with this name. Raise index errors if it does not exist."""
+        u"""Answer the page at (pn, index). Otherwise search for a page with this name. 
+        Raise index errors if it does not exist."""
         if pnOrName in self.pages:
             if index >= len(self.pages[pnOrName]):
                 return None
@@ -724,28 +730,56 @@ class Document(object):
 
     def isLeft(self):
         u"""This is reached for e.isleft() queries, when elements are not placed on a page.
-        The Document cannot know the answer then. Always answer False."""
+        The Document cannot know the answer then. Always answer False.
+
+        >>> doc = Document(name='TestDoc')
+        >>> doc.isLeft
+        False
+        >>> doc.isRight
+        False
+        """
         return False
-    isRight = isLeft
+    isRight = isLeft = False
     
     def isLeftPage(self, page):
-        u"""Answer the boolean flag if the page is currently defined as a left page. Left page is even page number"""
+        u"""Answer the boolean flag if the page is currently defined as a left page. 
+        Left page is even page number
+
+        >>> doc = Document(name='TestDoc', autoPages=8)
+        >>> page = doc[5]
+        >>> doc.isLeftPage(page)
+        False
+        >>> page = doc[6]
+        >>> doc.isLeftPage(page)
+        True
+        """
         for pn, pnPages in self.pages.items():
             if page in pnPages:
-                return bool(pn & 0x1)
+                return pn % 2 == 0 
         return False # Page not found
 
     def isRightPage(self, page):
-        u"""Answer the boolean flag if the page is currently defined as a left page. Right page is odd page number."""
+        u"""Answer the boolean flag if the page is currently defined as a left page. 
+        Right page is odd page number.
+
+        >>> doc = Document(name='TestDoc', autoPages=8)
+        >>> page = doc[5]
+        >>> doc.isRightPage(page)
+        True
+        >>> page = doc[6]
+        >>> doc.isRightPage(page)
+        False
+        """
         for pn, pnPages in self.pages.items():
             if page in pnPages:
-                return not pn & 0x1
+                return pn % 2 == 1
         return False # Page not found
 
     def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
-        u"""Create a new page with size (self.w, self.h) unless defined otherwise. Add the pages in the row of pn, if defined.
-        Otherwise create a new row of pages at pn. If pn is undefined, add a new page row at the end.
-        If template is undefined, then use self.pageTemplate to initialize the new page."""
+        u"""Create a new page with size (self.w, self.h) unless defined otherwise. 
+        Add the pages in the row of pn, if defined. Otherwise create a new row of pages at pn. 
+        If pn is undefined, add a new page row at the end.
+        If template is undefined, then use self.defaultTemplate to initialize the new page."""
         if isinstance(template, basestring):
             template = self.templates.get(template)
         if template is None:
@@ -758,19 +792,40 @@ class Document(object):
         page.applyTemplate(template)
         return page # Answer the new page 
 
-    def makePages(self, pageCnt, pn=0, template=None, name=None, w=None, h=None, **kwargs):
-        u"""If no "point" is defined as page number pn, then we'll continue after the maximum value of page.y origin position.
-        If template is undefined, then self.newPage will use self.defaultTemplate to initialize the new pages."""
+    def makePages(self, pageCnt, pn=1, template=None, name=None, w=None, h=None, **kwargs):
+        u"""If no "point" is defined as page number pn, then we'll continue after the maximum 
+        value of page.y origin position. If template is undefined, then self.newPage will use 
+        self.defaultTemplate to initialize the new pages.
+
+        >>> doc = Document(autoPages=4)
+        >>> len(doc.pages), sorted(doc.pages.keys())
+        (4, [1, 2, 3, 4])
+        """
         for n in range(pageCnt): # First page is n + pn
-            self.newPage(pn=pn+n, template=template, name=name, w=w, h=h, **kwargs) # Parent is forced to self.
+            # Parent is forced to self.
+            self.newPage(pn=pn+n, template=template, name=name, w=w, h=h, **kwargs) 
 
     def getElementPage():
-        u"""Search ancestors for the page element. This call can only happen here if elements don't have a
-        Page ancestor. Return None to indicate that there is no Page instance found amongst the ancesters."""
+        u"""Search ancestors for the page element. This call can only happen here if elements 
+        don't have a Page ancestor. Always return None to indicate that there is no Page 
+        instance found amongst the ancesters."""
         return None
 
     def nextPage(self, page, nextPage=1, makeNew=True):
-        u"""Answer the next page of page. If it does not exist, create a new page."""
+        u"""Answer the next page of page. If it does not exist, create a new page.
+
+        >>> doc = Document(autoPages=4)
+        >>> page = doc[2]
+        >>> next = doc.nextPage(page)
+        >>> doc.getPageNumber(next)
+        '3'
+        >>> next = doc.nextPage(next)
+        >>> doc.getPageNumber(next)
+        '4'
+        >>> next = doc.nextPage(next) # Creating new page
+        >>> doc.getPageNumber(next)
+        '5'
+        """
         found = False
         for pn, pnPages in sorted(self.pages.items()):
             for index, pg in enumerate(pnPages):
@@ -792,8 +847,8 @@ class Document(object):
             for index, pg in enumerate(pnPages):
                 if pg is page:
                     if index:
-                        return '%d-%d' % (pn+1, index+1)
-                    return '%d' % (pn+1)
+                        return '%d-%d' % (pn, index)
+                    return '%d' % (pn)
         return ''
 
     def getFirstPage(self):
