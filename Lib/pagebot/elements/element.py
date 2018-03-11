@@ -188,11 +188,11 @@ class Element(object):
 
         >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120)
         >>> `e`
-        'Element:TestElement (10, 20)'
+        '<Element:TestElement (10, 20)>'
         >>> e.title = 'MyTitle'
         >>> e.x, e.y = 100, 200
         >>> `e`
-        'Element:MyTitle (100, 200)'
+        '<Element:MyTitle (100, 200)>'
         """
         if self.title:
             name = ':'+self.title
@@ -205,7 +205,7 @@ class Element(object):
             elements = ' E(%d)' % len(self.elements)
         else:
             elements = ''
-        return '%s%s (%d, %d)%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), elements)
+        return '<%s%s (%d, %d)%s>' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), elements)
 
     def __len__(self):
         u"""Answer total amount of elements, placed or not.
@@ -247,7 +247,7 @@ class Element(object):
         >>> t = Template(name='MyTemplate', x=11, y=12, w=100, h=200)
         >>> e.applyTemplate(t)
         >>> e.template
-        Template:MyTemplate (11, 12)
+        <Template:MyTemplate (11, 12)>
         """
         return self._template
     def _set_template(self, template):

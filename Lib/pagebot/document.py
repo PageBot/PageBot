@@ -234,7 +234,7 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc')
         >>> doc.getTemplate()
-        Template:default (0, 0)
+        <Template:default (0, 0)>
         >>> doc.getTemplate() == doc.defaultTemplate
         True
         """
@@ -249,7 +249,7 @@ class Document(object):
         >>> t = Template(w=200, h=300, name=name)
         >>> doc = Document(name='TestDoc')
         >>> doc.addTemplate('myTemplate', t)
-        Template:TestTemplate (0, 0)
+        <Template:TestTemplate (0, 0)>
         >>> doc.getTemplate('myTemplate').name == name
         True
         """
@@ -262,7 +262,7 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc')
         >>> doc.defaultTemplate
-        Template:default (0, 0)
+        <Template:default (0, 0)>
         """
         return self.templates.get('default')
     def _set_defaultTemplate(self, template):
@@ -883,18 +883,18 @@ class Document(object):
         u"""Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
         then only evaluate the selected pages.
 
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10)
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=100000, maxH=100000)
         >>> doc.getMaxPageSizes()
         (500, 500, 1)
         >>> page = doc[1]
         >>> page.w, page.h
         (500, 500)
         >>> page.w = 2345
-        >>> page.w
-
+        >>> page, page.w
+        (<Page:default (0, 0)>, 2345)
         >>> doc[4].h = 1111
         >>> doc.getMaxPageSizes()
-
+        (2345, 1111, 1)
         """
         w = h = d = 0
         for pn, pnPages in self.pages.items():

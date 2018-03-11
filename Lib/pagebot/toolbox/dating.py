@@ -19,27 +19,27 @@ from random import randint
 import re
 
 def uniqueLong():
-    u"""
+    u"""The uniqueLong method answers a unique number (as string) of 18 digits.
     
-    The ``uniqueLong`` method answers a unique number (as string) of 18 digits.
-    
+    >>> len(uniqueLong())
+    18
     """
     return DateTime.timestamprandomlong()
 
 def timestampLong():
-    u"""
+    u"""The timestampLong method answers the timestamp. This may not be unique.
     
-    The ``timestampLong`` method answers the timestamp. This may not be unique.
-    
+    >>> len(timestampLong()) # '152081005707'
+    12
     """
     return DateTime.timestamplong()
 
 def uniqueId(size=0):
-    u"""
-    
-    The ``uniqueId`` method answers a unique number (as string) of ``size`` length concatenated
+    u"""The uniqueId method answers a unique number (as string) of size length concatenated
     timestamps. Minimum length of the number is 18 digits, or else string will not be unique.
-    
+
+    >>> len(uniqueId())
+    18
     """
     n = ''
     size = max(size,18)
@@ -48,7 +48,19 @@ def uniqueId(size=0):
     return n[:size]
 
 def leapyear(year):
-    #most common first
+    u"""Most common first
+
+    >>> leapyear(1956)
+    True
+    >>> leapyear(1957)
+    False
+    >>> leapyear(1900)
+    False
+    >>> leapyear(2000)
+    True
+    
+
+    """
     if year % 4 != 0:
         return False
 
