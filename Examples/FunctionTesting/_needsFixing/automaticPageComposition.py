@@ -263,8 +263,8 @@ def makeDocument():
         tt = time()
     
     # Change template of page 1
-    page0 = doc[0]
-    page0.setTemplate(template1)
+    page1 = doc[1]
+    page1.setTemplate(template1)
     
     ttt = ''
     for n in range(100):
@@ -290,7 +290,7 @@ def makeDocument():
     
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
     c = Composer(doc)
-    c.compose(g, doc[0], flowId0)
+    c.compose(g, doc[1], flowId0)
     
     if SHOW_TIMER:
         print 'Time compose %0.3f' % (time()-tt)

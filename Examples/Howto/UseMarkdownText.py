@@ -35,7 +35,7 @@ def makeDocument():
     doc.addStyle('h2', dict(textFill=0), force=True)
     doc.addStyle('p', dict(textFill=0), force=True)
     
-    page = doc[0] # Get the first/single page of the document.
+    page = doc[1] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?
 
     # Make rect as page element centered with centered origin.
