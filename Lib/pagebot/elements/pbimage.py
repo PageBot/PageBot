@@ -31,13 +31,13 @@ class Image(Element):
 
     >>> from pagebot.contexts.platform import getRootPath
     >>> rootPath = getRootPath()
-    >>> imagePath = rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
+    >>> imagePath = rootPath + '/Resources/images/IMG_8914.jpg'
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
     >>> from pagebot.document import Document
     >>> c = DrawBotContext()
     >>> w, h = 300, 400
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-    >>> page = doc[0]
+    >>> page = doc[1]
     >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=300)
     >>> #e.build(doc.getView(), (0, 0))
     >>> e.xy # Position of the image container
@@ -56,7 +56,7 @@ class Image(Element):
     >>> from pagebot.document import Document
     >>> c = FlatContext()
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-    >>> page = doc[0]
+    >>> page = doc[1]
     >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=300)
     >>> pixelMap = e.image
     >>> pixelMap.path.endswith('/images/IMG_8914.jpg')

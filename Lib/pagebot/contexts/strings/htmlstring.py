@@ -47,7 +47,8 @@ class HtmlString(BabelString):
         return ''
 
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, tagName=None):
+    def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, 
+            pixelFit=None, tagName=None):
         u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
@@ -64,4 +65,9 @@ class HtmlString(BabelString):
 
         return cls(s, context)
 
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
 
