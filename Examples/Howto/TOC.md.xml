@@ -5,5 +5,84 @@
 <p><img alt="gallery/AlignElements.png" src="gallery/AlignElements.png" /><br />
 The script shows the different alignment conditions. <em>Left2Left()</em> goes to the left padding. <em>Left2LeftSide()</em> goes to the left side of the document.<br />
 <em>page.solve()</em> tries to solve any condition that does not fit the defined optimal value.</p>
-<p>AAAA</p>
-</document>
+<p><img alt="gallery/AlignElementsUI.png" src="gallery/AlignElementsUI.png" /></p>
+<p>The Variable UI window shows how to implement checkbox and slider to manipulate certain values in the page. </p>
+<h2>Scale an image (DrawBot)</h2>
+<p>Since image scaling in DrawBot needs to be done by canvas scaling, the position of the image needs to be scaled in reverse. This examples shows how to do it.</p>
+<p><img alt="gallery/cookbot1-50.png" src="gallery/cookbot1-50.png" /></p>
+<h2>Sierpinski Square (DrawBot)</h2>
+<p>Example of an animated gif in DrawBot.</p>
+<p><img alt="gallery/SierpinskiSquare.gif" src="gallery/SierpinskiSquare.gif" /></p>
+<h2>Draw Red Rectangle Center Page</h2>
+<p>Simple demo to show the positioning of a colored rectangle centered on the page. Also the alignment origin of the rectangle is centered. The view draws cropmarks, page frame and rectangle origin marker.</p>
+<p><img alt="gallery/DrawRedRectCenterPage.png" src="gallery/DrawRedRectCenterPage.png" /></p>
+<h2>Draw View Page Frame</h2>
+<p>Simple test to show the working of view and page. Option Variable checkbox to set the origin to top or bottom.</p>
+<h2>Draw Quadratic Glyph</h2>
+<p>Shows how to load a Truetype font and draw a glyph with quadratic Bézier curves with the cubic Bézier curves that PageBot uses.</p>
+<h2>Use text flows</h2>
+<p>The example shows two floating colums of text, where th overflow of one goes into the other. If the second one also overflows, the remaining text goes into a column on the third page.</p>
+<p><img alt="gallery/DrawRedRectCenterPage.png" src="gallery/UseTextFlows.png" /></p>
+<h2>Advanced Hyphenation</h2>
+<p>A proposal for advanced hyphenation:<br />
+For hyphenation head and tail (the minimum amound of charaters before / after a hyphenation), the FormattedString will need these arguments (headHyphenation=4, tailHyphenation=3).<br />
+These values are needed in drawBot.context.baseContext.BaseContext.hyphenateAttributedString. How to get them there?<br />
+See HowTo/AdvancedHyphenation.py</p>
+<h2>Use Doctests</h2>
+<p>Doctests are an implementation of unit tests in Python. They are useful to make sure your software actually works as you expect it to. You can run a doctest on a single file like this:</p>
+<pre><code>python -m doctest -v &lt;path-to-file&gt;.py
+</code></pre>
+<p>For <code>glyph.py</code>, for example, output containing errors could look something like this:</p>
+<pre><code>2 items passed all tests:
+   3 tests in glyph.Point
+  11 tests in glyph.Segment
+**********************************************************************
+1 items had failures:
+  19 of  21 in glyph.Glyph
+35 tests in 49 items.
+16 passed and 19 failed.
+***Test Failed*** 19 failures.
+</code></pre>
+
+<p>Of course, a solid piece of software should pass all the tests. By running the builddoc.py script with <code>-d</code>, we can run doctest on all the files in our library.</p>
+<h2>Builddoc</h2>
+<p>The <code>builddoc.py</code> checks the code for errors and generates the documentation files. You  can run it on the command line like this:</p>
+<pre><code>python builddoc.py
+</code></pre>
+<p>However, it takes one or more arguments:</p>
+<pre><code>./builddoc.py -ctwho
+-h, --help: prints this listing.
+-c, --clear: clears .pyc files.
+-w, --write: writes the markdown files to the doc folder.
+-d, --doctest: runs doctests on the pagebot module and HowTo files.
+-l, --log: outputs to log, takes log file name as argument.
+</code></pre>
+
+<h3>Clear</h3>
+<p>Clears all <code>.pyc</code> files to make sure no old compiles are left.</p>
+<h3>Write</h3>
+<p>The <code>-w</code> option formats and writes the docstrings to markdown files and copies handwritten markdown files to the folder that serves the documentation files, <code>Docs</code>. It will also generate the <code>mkdocs.yml</code> file next to the <code>Docs</code> folder. If the script finishes without errors, you should be ready to run</p>
+<pre><code>mkdocs serve
+</code></pre>
+<p>To preview the results on <a href="http://localhost:8000">http://localhost:8000</a>. This will return something like this:</p>
+<pre><code>INFO    -  Building documentation... 
+INFO    -  Cleaning site directory 
+[I 170705 13:14:15 server:283] Serving on http://127.0.0.1:8000
+[I 170705 13:14:15 handlers:60] Start watching changes
+[I 170705 13:14:15 handlers:62] Start detecting changes
+</code></pre>
+
+<p>Changes to the files will be updated live. Since they are generated, this means running the builddoc script again. Finally, you can deploy them to GitHub using this command:</p>
+<pre><code>mkdocs gh-deploy
+</code></pre>
+<p>If all goes well, you should be able to view the updated documentation at <a href="https://typenetwork.github.io/PageBot/">https://typenetwork.github.io/PageBot/</a> (case sensitive):</p>
+<pre><code>INFO    -  Cleaning site directory 
+INFO    -  Building documentation to directory: /Users/michiel/Code/PageBot/site 
+INFO    -  Copying '/Users/michiel/Code/PageBot/site' to 'gh-pages' branch and pushing to GitHub. 
+INFO    -  Your documentation should shortly be available at: https://TypeNetwork.github.io/PageBot/ 
+</code></pre>
+
+<h3>Doctest</h3>
+<p>See Use Doctests.</p>
+<h3>Log</h3>
+<p>Sends the output to a log file instead of standard out, a filename such as <code>out.txt</code> is required.</p></document>

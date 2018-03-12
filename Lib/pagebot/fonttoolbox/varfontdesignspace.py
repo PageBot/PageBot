@@ -181,7 +181,7 @@ if __name__ == "__main__":
                 previewCharacter=previewCharacter)
             self.w.open()
 
-    from tnTestFonts import getFontPath
-    p = getFontPath("Noordzij_e_varfont.ttf")
-    ds = TTVarFontDesignSpace.fromVarFontPath(p)
-    DesignSpaceExplorerTest(ds, "e")
+    #from tnTestFonts import getFontPath
+    #p = getFontPath("Noordzij_e_varfont.ttf")
+    #ds = TTVarFontDesignSpace.fromVarFontPath(p)
+    #DesignSpaceExplorerTest(ds, "e")

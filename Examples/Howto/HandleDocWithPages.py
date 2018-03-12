@@ -37,7 +37,7 @@ def makeDocument():
     view.showElementDimensions = True
     view.showElementOrigin = True
 
-    page = doc[0] # Get the single page from te document.
+    page = doc[1] # Get the single page from te document.
     page.name = 'First page'
     page.padding = 20
 
