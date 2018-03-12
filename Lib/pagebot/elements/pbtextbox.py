@@ -49,7 +49,7 @@ class TextBox(Element):
 
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
-        >>> page = doc[0]
+        >>> page = doc[1]
         >>> tb = TextBox(parent=page, w=125)
         >>> page[tb.eId].w
         125
@@ -69,7 +69,7 @@ class TextBox(Element):
 
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
-        >>> page = doc[0]
+        >>> page = doc[1]
         >>> style = dict(font='Verdana', fontSize=14)
         >>> tb = TextBox('This is content', parent=page, style=style, w=100, h=220)
         >>> page[tb.eId].h

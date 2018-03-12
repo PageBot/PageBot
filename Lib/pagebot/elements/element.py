@@ -79,7 +79,7 @@ class Element(object):
         >>> c = DrawBotContext()
         >>> w, h = 300, 400
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-        >>> page = doc[0]
+        >>> page = doc[1]
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
         >>> e.build(doc.getView(), (0, 0))
         >>> e.xy
@@ -93,7 +93,7 @@ class Element(object):
         >>> from pagebot.document import Document
         >>> c = FlatContext()
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-        >>> page = doc[0]
+        >>> page = doc[1] # First page is left 1
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
         >>> # Allow the context to create a new document and page canvas. Normally view does it.
         >>> c.newPage(w, h) 
@@ -188,11 +188,11 @@ class Element(object):
 
         >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120)
         >>> `e`
-        'Element:TestElement (10, 20)'
+        '<Element:TestElement (10, 20)>'
         >>> e.title = 'MyTitle'
         >>> e.x, e.y = 100, 200
         >>> `e`
-        'Element:MyTitle (100, 200)'
+        '<Element:MyTitle (100, 200)>'
         """
         if self.title:
             name = ':'+self.title
@@ -205,7 +205,7 @@ class Element(object):
             elements = ' E(%d)' % len(self.elements)
         else:
             elements = ''
-        return '%s%s (%d, %d)%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), elements)
+        return '<%s%s (%d, %d)%s>' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), elements)
 
     def __len__(self):
         u"""Answer total amount of elements, placed or not.
@@ -247,7 +247,7 @@ class Element(object):
         >>> t = Template(name='MyTemplate', x=11, y=12, w=100, h=200)
         >>> e.applyTemplate(t)
         >>> e.template
-        Template:MyTemplate (11, 12)
+        <Template:MyTemplate (11, 12)>
         """
         return self._template
     def _set_template(self, template):
@@ -911,22 +911,26 @@ class Element(object):
 
     # Orientation of elements (and pages)
 
-    def isLeftPage(self):
+    def isLeftPage(self, e=None):
         u"""Normal elements don't know the left/right orientation of the page that they are on.
-        Pass the request on to the parent, until a page is reachted."""
+        Pass the request on to the parent, until a page is reachted.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document()
+        """
         if self._isLeftPage is not None:
             return self._isLeftPage
         if self.parent is not None:
-            return self.parent.isLeftPage() 
+            return self.parent.isLeftPage(self) 
         return False
 
-    def isRightPage(self):
+    def isRightPage(self, e=None):
         u"""Normal elements don't know the left/right orientation of the page that they are on.
         Pass the request on to the parent, until a page is reachted."""
         if self._isRightPage is not None:
             return self._isRightPage
         if self.parent is not None:
-            return self.parent.isRightPage()
+            return self.parent.isRightPage(self)
         return False
 
     def _get_gridX(self):

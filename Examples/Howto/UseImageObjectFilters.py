@@ -71,8 +71,8 @@ def makeDocument():
     view.showElementOrigin = True
     
     # Get list of pages with equal y, then equal x.    
-    #page = doc[0][0] # Get the single page from te document.
-    page = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
+    #page = doc[1[0] # Get the single page from te document.
+    page = doc[1] # Get page on pageNumber, first in row (this is only one now).
     page.name = 'This is a demo page for floating child elements'
     page.padding = PagePadding
     
@@ -83,7 +83,8 @@ def makeDocument():
                    conditions=(Top2Top(),
                                Fit2Width(),
                                SolveBlock(),
-                               Shrink2BlockBottom()),
+                               #Shrink2BlockBottom()
+                               ),
                    yAlign=BOTTOM,
                    fill=(0, 1, 0, 0.3),
                    stroke=(1, 0, 0))
