@@ -48,7 +48,7 @@ class Glyph(object):
     u"""The Glyph class wraps the glyph structure of a TrueType Font and
     extracts data from the raw glyph such as point sequence and type.
     >>> import pagebot
-    >>> from pagebot.fonttoolbox.objects.font import Font
+    >>> from pagebot.fonttoolbox.objects.font import getFont
     >>> from pagebot.contexts.platform import getRootFontPath
     >>> path = getRootFontPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
     >>> f = getFont(path) # Keep font alive to glyph.font weakref
