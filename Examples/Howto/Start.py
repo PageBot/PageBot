@@ -50,7 +50,7 @@ doc.view.padding = 0 # Don't show cropmarks in this example.
 doc.view.showPagePadding = True
 
 # Get page by pageNumber, first in row (there is only one now in this row).
-page = doc[0]
+page = doc[1]
 page.padding = 30
 
 conditions = [Right2Right(), Float2Top(), Float2Left()]
