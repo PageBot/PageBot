@@ -28,6 +28,8 @@ from pagebot.elements import newRect
 # Import all layout condition classes
 from pagebot.conditions import *
 
+DO_SOLVE = True # Solving the page layout
+
 ShowOrigins = False
 ShowElementInfo = False
 ShowDimensions = False
@@ -47,7 +49,7 @@ def makeDocument():
 
     doc = Document(w=W, h=H, originTop=False, autoPages=1)
 
-    page = doc[0] # Get the single page from te document.
+    page = doc[1] # Get the single page from te document.
 
     # Hard coded padding, just for simple demo, instead of filling padding an
     # columns in the root style.
@@ -105,25 +107,27 @@ def makeDocument():
     # Solve the layout placement conditions on the pages of doc by moving the
     # elements that are not on the right positions (which is all of them,
     # because we did not add point attributes when creating them.
-    score = doc.solve() # Solves all document. page.solve() only solves page.
-    if score.fails:
-        print('Failed to solve %d conditions:' % len(score.fails))
-    for condition, e in score.fails:
-        print(e.bottom2BottomSide())
-        print(condition, e, e.bottom,
-              Bottom2BottomSide().test(e),
-              e.isBottomOnBottomSide(), e.bottom)
+    if DO_SOLVE:
+        score = doc.solve() # Solves all document. page.solve() only solves page.
+        if score.fails:
+            print('Failed to solve %d conditions:' % len(score.fails))
+        for condition, e in score.fails:
+            print(e.bottom2BottomSide())
+            print(condition, e, e.bottom,
+                  Bottom2BottomSide().test(e),
+                  e.isBottomOnBottomSide(), e.bottom)
 
 
     view = doc.getView()
     view.w, view.h = W, H
-    view.padding = 40 # Don't show cropmarks and such.
+    view.padding = 80 # Don't show cropmarks and such.
     view.showElementOrigin = ShowOrigins # Show origin alignment
                                          # markers on each element.
     view.showElementDimensions = ShowDimensions
     view.showPageFrame = True
     view.showPagePadding = True
     view.showPageCropMarks = True
+    view.showPageNameInfo = True
     view.showElementInfo = ShowElementInfo # Show baxes with element info
 
     return doc # Answer the doc for further doing.
