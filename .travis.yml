@@ -16,7 +16,7 @@ script:
 - export PYLINT="pylint --disable=$WONT_FIX,$CATCHALL_MAY_FIX_LATER"
 - $PYLINT Examples/
 - $PYLINT Lib/pagebot/
-- python Examples/Howto/UseText/Hyphenation.py
+- python Examples/Howto/UseText/AdvancedHyphenation.py
 - python Examples/Howto/UseUnits.py
 - python Lib/pagebot/__init__.py
 - python Lib/pagebot/conditions/align.py
