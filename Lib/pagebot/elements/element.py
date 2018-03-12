@@ -911,22 +911,26 @@ class Element(object):
 
     # Orientation of elements (and pages)
 
-    def isLeftPage(self):
+    def isLeftPage(self, e=None):
         u"""Normal elements don't know the left/right orientation of the page that they are on.
-        Pass the request on to the parent, until a page is reachted."""
+        Pass the request on to the parent, until a page is reachted.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document()
+        """
         if self._isLeftPage is not None:
             return self._isLeftPage
         if self.parent is not None:
-            return self.parent.isLeftPage() 
+            return self.parent.isLeftPage(self) 
         return False
 
-    def isRightPage(self):
+    def isRightPage(self, e=None):
         u"""Normal elements don't know the left/right orientation of the page that they are on.
         Pass the request on to the parent, until a page is reachted."""
         if self._isRightPage is not None:
             return self._isRightPage
         if self.parent is not None:
-            return self.parent.isRightPage()
+            return self.parent.isRightPage(self)
         return False
 
     def _get_gridX(self):
