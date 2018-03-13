@@ -17,30 +17,31 @@
 #     ImageObject filters.
 #
 from __future__ import division # Make integer division result in float.
-#import pagebot # Import to know the path of non-Python resources.
 
-from pagebot.style import TOP, BOTTOM
+from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import getResourcesPath
+from pagebot.fonttoolbox.objects.family import getFamily
+from pagebot.style import TOP, BOTTOM, A4
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
 # Document is the main instance holding all information about the
 # document together (pages, styles, etc.)
 
-PagePadding = 30
-PageSize = 400
+W, H = A4
+
+IMAGE_PATH = getResourcesPath() + '/images/peppertom_lowres.png'
+
+family = getFamily('Roboto')
+font = family.findFont(weight=400)
+fontItalic = family.findFont(weight=400, italic=True)
 
 GUTTER = 8 # Distance between the squares.
 SQUARE = 10 * GUTTER # Size of the squares
+PADDING = 20
 
 FILTER_TYPES = {
 }
-
-# The standard PageBot function getRootStyle() answers a standard Python dictionary, 
-# where all PageBot style entries are filled by their default values. The root style is kept in RS
-# as reference for the ininitialization of all elements. 
-# Each element uses the root style as copy and then modifies the values it needs. 
-# Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
-# that is very similar to what happens in CSS.
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/UseImageElements.pdf' 
@@ -48,11 +49,7 @@ EXPORT_PATH = '_export/UseImageElements.pdf'
 def makeDocument():
     u"""Make a new document."""
 
-    #W = H = 120 # Get the standard a4 width and height in points.
-    W = PageSize
-    H = PageSize
-
-    # Hard coded SQUARE and GUTTE, just for simple demo, instead of filling padding an columns in the root style.
+    # Hard coded SQUARE and GUTTER, just for simple demo, instead of filling padding an columns in the root style.
     # Page size decides on the amount squares that is visible.
     # Page padding is centered then.
     sqx = int(W/(SQUARE + GUTTER)) # Whole amount of squares that fit on the page.
@@ -64,59 +61,56 @@ def makeDocument():
     #padX = (W - sqx*(SQUARE + GUTTER) + GUTTER)/2
     my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
 
-    doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1)
+    doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1, context=context)
     
     view = doc.getView()
     view.padding = 0 # Aboid showing of crop marks, etc.
-    view.showElementOrigin = True
+    view.showElementOrigin = False
     
     # Get list of pages with equal y, then equal x.    
     #page = doc[1[0] # Get the single page from te document.
     page = doc[1] # Get page on pageNumber, first in row (this is only one now).
     page.name = 'This is a demo page for floating child elements'
-    page.padding = PagePadding
+    page.padding = PADDING
     
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    img = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0,
-                   parent=page, w=200, h=300,
-                   conditions=(Top2Top(),
-                               Fit2Width(),
-                               SolveBlock(),
-                               #Shrink2BlockBottom()
-                               ),
-                   yAlign=BOTTOM,
-                   fill=(0, 1, 0, 0.3),
-                   stroke=(1, 0, 0))
-    # Give parent on creation, to have the css chain working.
+    for n in range(4):
+        img = newImage(IMAGE_PATH, (50, 50, 10), padding=0,
+                       parent=page, w=150, h=150, #clipRect=(120, 120, 1440, 440),
+                       conditions=(Right2Right(),
+                                   Float2Top(),
+                                   Float2Left(),
+                                   SolveBlock(),
+                                   #Shrink2BlockBottom()
+                                   ),
+                       yAlign=BOTTOM,
+                       #fill=(0, 1, 0, 0.3),
+                       #stroke=(1, 0, 0)
+                       )
+        # Give parent on creation, to have the css chain working.
     
-    # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
-    fs = doc.context.newString('Captions float below the image',
-                               style=dict(font='Verdana',
-                                          fontSize=20,
-                                          textFill=1))
-    cap = newTextBox(fs, name='Caption', parent=img, z=0,
-        conditions=[Fit2Width(), Float2Top()], 
-        padding=4, font='Verdana', 
-        yAlign=TOP, fontSize=9, textFill=1, strokeWidth=0.5, 
-        fill=(0, 0, 1, 0.3), stroke=(0, 0, 1),
-    )
+        # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
+        captionStyle = dict(font=font.path, fontSize=11, textFill=0)
+        captionConditions = (Fit2Width(), Float2Top())
+        fs = context.newString('Captions float below the image', style=captionStyle)
+        img.caption = newTextBox(fs, name='Caption', z=0, conditions=captionConditions, 
+            padding=4, yAlign=TOP, 
+                #strokeWidth=0.5, 
+                #fill=(0, 0, 1, 0.3), 
+                #stroke=(0, 0, 1),
+            )
+    
     score = page.solve()
     if score.fails:
         print score.fails
 
-    print img.h
-    for e in img.elements:
-        print e.h
+    #print img.h
+    #for e in img.elements:
+    #    print e.h
 
     return doc # Answer the doc for further doing.
  
-if __name__ == '__main__':
-    d = makeDocument()
-    d.context.Variable(
-      [dict(name='PagePadding', ui='Slider', args=dict(minValue=10, value=30, maxValue=100)),
-       dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-       #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-      ], globals())
-    d.export(EXPORT_PATH) 
+d = makeDocument()
+d.export(EXPORT_PATH) 
 

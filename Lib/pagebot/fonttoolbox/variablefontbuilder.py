@@ -29,7 +29,7 @@ from fontTools.varLib.models import supportScalar, normalizeLocation
 from fontTools.varLib.mutator import iup_delta
 
 from pagebot.contexts import defaultContext as context
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import getFont
 from pagebot.toolbox.transformer import path2FontName
 
 DEBUG = False
@@ -209,7 +209,7 @@ def XXXgetVarLocation(font, location, normalize=True):
                 varLocation[axisTag] = axisValue
     return varLocation
 
-def getVariableFont(fontOrPath, location, styleName=None, normalize=True, cached=True, lazy=True):
+def getVariableFontInstance(fontOrPath, location, styleName=None, normalize=True, cached=True, lazy=True):
     u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
@@ -218,13 +218,15 @@ def getVariableFont(fontOrPath, location, styleName=None, normalize=True, cached
     The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
     location name."""
     if isinstance(fontOrPath, basestring):
-        varFont = Font(fontOrPath, name=path2FontName(fontOrPath), lazy=lazy)    
+        varFont = getFont(fontOrPath, name=path2FontName(fontOrPath), lazy=lazy)    
     else:
         varFont = fontOrPath
+    if varFont is None: # Could not read the Variable Font on that path.
+        return None
     path = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), 
                                       normalize=normalize, cached=cached, lazy=lazy)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
-    return Font(path, opticalSize=location.get('opsz'), location=location, styleName=styleName, lazy=lazy)
+    return getFont(path, opticalSize=location.get('opsz'), location=location, styleName=styleName, lazy=lazy)
 
 def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):
     u"""

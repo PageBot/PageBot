@@ -477,33 +477,6 @@ class DrawBotContext(BaseContext):
         """
         self.b.hyphenation(onOff)
 
-    #   I M A G E
-
-    def imagePixelColor(self, path, p):
-        return self.b.imagePixelColor(path, p)
-
-    def imageSize(self, path):
-        u"""Answer the (w, h) image size of the image file at path."""
-        return self.b.imageSize(path)
-
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
-        u"""Draw the image. If w or h is defined, then scale the image to fit."""
-        iw, ih = self.imageSize(path)
-        if w and not h: # Scale proportional
-            h = ih * w/iw # iw : ih = w : h 
-        elif not w and h:
-            w = iw * h/ih
-        elif not w and not h:
-            w = iw
-            h = ih
-        # else both w and h are defined, scale disproportional
-        x, y, = p[0], p[1]
-        sx, sy = w/iw, h/ih
-        self.save()
-        self.scale(sx, sy)
-        self.b.image(path, (x*sx, y*sy), alpha=alpha, pageNumber=pageNumber)
-        self.restore()
-
     #   A N I M A T I O N 
 
     def frameDuration(self, secondsPerFrame):
@@ -566,7 +539,48 @@ class DrawBotContext(BaseContext):
 
     stroke = setStrokeColor # DrawBot compatible API
 
+    #   I M A G E
+
+    def imagePixelColor(self, path, p):
+        return self.b.imagePixelColor(path, p)
+
+    def imageSize(self, path):
+        u"""Answer the (w, h) image size of the image file at path."""
+        return self.b.imageSize(path)
+
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+        u"""Draw the image. If w or h is defined, then scale the image to fit."""
+        iw, ih = self.imageSize(path)
+        if w and not h: # Scale proportional
+            h = ih * w/iw # iw : ih = w : h 
+        elif not w and h:
+            w = iw * h/ih
+        elif not w and not h:
+            w = iw
+            h = ih
+        # else both w and h are defined, scale disproportional
+        x, y, = p[0], p[1]
+        sx, sy = w/iw, h/ih
+        self.save()
+        self.scale(sx, sy)
+        self.b.image(path, (x*sx, y*sy), alpha=alpha, pageNumber=pageNumber)
+        self.restore()
+
+    def getImageObject(self, path):
+        u"""Answer the ImageObject that knows about image filters.
+        For names and parameters of filters see:
+        http://www.drawbot.com/content/image/imageObject.html
+
+        >>> from pagebot.contexts.platform import getResourcesPath
+        >>> from pabebot.contects.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> path = getResourcesPath() + '/images/peppertom_lowres.png'
+        >>> imo = context.getImageObject(path)
         
+        """
+        return self.b.ImageObject(path)
+
+
 if __name__ == '__main__':
     import doctest
     import sys
