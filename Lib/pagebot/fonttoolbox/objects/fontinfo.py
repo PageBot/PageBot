@@ -45,6 +45,7 @@ class FontInfo(object):
 
     def __init__(self, ttFont):
         self.ttFont = ttFont
+        self._styleName = None 
 
     def _getNameTableEntry(self, nameId):
         nameEntry = None
@@ -63,9 +64,9 @@ class FontInfo(object):
     def _get_familyName(self):
         """Should be this, but often wrong: return self._getNameTableEntry(1)
 
-        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> from pagebot.contexts.platform import TEST_FONTS_PATH
         >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.familyName
         u'Roboto'
@@ -81,24 +82,30 @@ class FontInfo(object):
         We take the first spaced part as family name, and fill the rest here under style.
         So we add rest of family.
 
-        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> from pagebot.contexts.platform import TEST_FONTS_PATH
         >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> path = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.styleName
         u'Regular'
+        >>> font.info.styleName = 'Bold'
+        >>> font.info.styleName
+        'Bold'
         """
-        styleName = ''
-        if self._getNameTableEntry(1):
-            familyNameParts = ' '.split(self._getNameTableEntry(1))
-            if len(familyNameParts) > 1:
-                styleName = ' '.join(familyNameParts[1:])
-        if self._getNameTableEntry(2):
-            if styleName:
-                styleName += ' '
-            styleName += self._getNameTableEntry(2)
-        return styleName
-    styleName = property(_get_styleName)
+        if self._styleName is None:
+            self._styleName = ''
+            if self._getNameTableEntry(1):
+                familyNameParts = ' '.split(self._getNameTableEntry(1))
+                if len(familyNameParts) > 1:
+                    self._styleName = ' '.join(familyNameParts[1:])
+            if self._getNameTableEntry(2):
+                if self._styleName:
+                    self._styleName += ' '
+                self._styleName += self._getNameTableEntry(2)
+        return self._styleName
+    def _set_styleName(self, styleName):
+        self._styleName = styleName
+    styleName = property(_get_styleName, _set_styleName)
 
     @cached_property
     def psName(self):

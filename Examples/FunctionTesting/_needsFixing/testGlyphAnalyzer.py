@@ -25,7 +25,7 @@ paths = [
     FONT_PATH+'Georgia.ttf',   
 ]
 for path in paths:
-    font = Font(path, install=False)
+    font = Font(path)
     EM = font.info.unitsPerEm
     gaH = GlyphAnalyzer(font['H'])
 

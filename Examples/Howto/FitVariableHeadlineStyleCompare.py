@@ -22,14 +22,13 @@
 #
 import copy
 from math import sin, radians
-from pagebot.contexts.platform import getRootPath
+from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.contexts import defaultContext as c
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
 
-ROOT_PATH = getRootPath()
-FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
-f = Font(FONT_PATH, install=True) # Get PageBot Font instance of Variable font.
+FONT_PATH = TEST_FONTS_PATH + 'fontbureau/AmstelvarAlpha-VF.ttf'
+f = Font(FONT_PATH) # Get PageBot Font instance of Variable font.
 
 def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
                      wideLocation, fixedSize=False,

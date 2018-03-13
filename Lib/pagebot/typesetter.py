@@ -29,6 +29,7 @@ except ImportError:
     sys.exit('Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown')
     markdown = None
 
+from pagebot.contexts.platform import getRootPath, getTestFontsPath
 from pagebot.contexts import defaultContext
 from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
@@ -63,9 +64,9 @@ class Typesetter(object):
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
 
-        >>> from pagebot.contexts.platform import getRootPath
+        >>> from pagebot.contexts.platform import getResourcesPath
         >>> from pagebot.elements.element import Element
-        >>> path = getRootPath() + '/README.md'
+        >>> path = getResourcesPath() + '/texts/TEST.md'
         >>> t = Typesetter() # Create a new typesetter
         >>> nodeTree = t.typesetFile(path) # Parase the Markdown file into HTML-->nodeTree
         >>> nodeTree.__class__.__name__ # This is an etree root, also called "Element", different class.

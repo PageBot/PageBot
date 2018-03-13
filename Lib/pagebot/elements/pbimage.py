@@ -29,9 +29,9 @@ class Image(Element):
     The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
     applied (e.g. if the image element changes size), or the child elements can be put on fixed positions.
 
-    >>> from pagebot.contexts.platform import getRootPath
-    >>> rootPath = getRootPath()
-    >>> imagePath = rootPath + '/Resources/images/IMG_8914.jpg'
+    >>> from pagebot.contexts.platform import RESOURCES_PATH
+    >>> imageFilePath = '/images/peppertom_lowres.png'
+    >>> imagePath = RESOURCES_PATH + imageFilePath
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
     >>> from pagebot.document import Document
     >>> c = DrawBotContext()
@@ -45,10 +45,10 @@ class Image(Element):
     >>> e.size
     (300, 300, 1)
     >>> pixelMap = e.image
-    >>> pixelMap.path.endswith('/images/IMG_8914.jpg')
+    >>> pixelMap.path.endswith(imagePath)
     True
     >>> pixelMap.size, pixelMap.imageSize
-    ((300, 300, 1), (3024, 4032))
+    ((300, 300, 1), (398, 530))
     >>> view = doc.getView()
     >>> e.build(view, (0, 0))
 
@@ -59,10 +59,10 @@ class Image(Element):
     >>> page = doc[1]
     >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=300)
     >>> pixelMap = e.image
-    >>> pixelMap.path.endswith('/images/IMG_8914.jpg')
+    >>> pixelMap.path.endswith(imageFilePath)
     True
     >>> pixelMap.size, pixelMap.imageSize
-    ((300, 300, 1), (3024, 4032))
+    ((300, 300, 1), (398, 530))
     >>> # Allow the context to create a new document and page canvas. Normally view does it.
     >>> c.newPage(w, h) 
     >>> e.build(doc.getView(), (0, 0))

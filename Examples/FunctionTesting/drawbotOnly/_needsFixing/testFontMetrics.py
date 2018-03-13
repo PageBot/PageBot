@@ -17,10 +17,10 @@ from pagebot.contexts import defaultContext as context
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
-from pagebot.contexts.platform import getRootFontPath
+from pagebot.contexts.platform import getTestFontsPath
 from pagebot.fonttoolbox.objects.font import Font
 
-fontPath = getRootFontPath() + "/fontbureau/AmstelvarAlpha-VF.ttf"
+fontPath = getTestFontsPath() + "/fontbureau/AmstelvarAlpha-VF.ttf"
 f = Font(fontPath)
 print('Family %s, style %s, em %d, ascender %d, descender: %d, capHeight %d, xHeight %d' % (
     f.info.familyName, f.info.styleName, f.info.unitsPerEm, f.info.ascender, f.info.descender, 
