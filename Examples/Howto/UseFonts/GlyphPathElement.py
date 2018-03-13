@@ -16,7 +16,7 @@
 #
 import pagebot # Import to know the path of non-Python resources.
 
-from pagebot.contexts.platform import getRootFontPath
+from pagebot.contexts.platform import getTestFontsPath
 from pagebot.contexts import defaultContext as context
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
@@ -50,7 +50,7 @@ def pathFilter(e, path, view):
 W = H = PageSize
 #W, H = A4
 
-fontPath = getRootFontPath() + '/djr/bungee/Bungee-Regular.ttf'
+fontPath = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
 font = Font(fontPath, install=False)
 glyphName = 'e'#'cid05405.1'
 

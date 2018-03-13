@@ -129,26 +129,6 @@ class DrawBotContext(BaseContext):
         except self.b.misc.DrawBotError:
             pass # Ingore if there is a DrawBot context, but not running inside DrawBot.
   
-    #   P A T H S 
-
-    def getRootPath(self):
-        u"""Answer the root path of the pagebot module.
-    
-        >>> context = DrawBotContext()
-        >>> context.getRootPath().endswith('Lib')
-        True
-        """
-        return '/'.join(__file__.split('/')[:-3]) # Path of this file with pagebot/__init__.py(c) removed.
-
-    def getFontPath(self):
-        u"""Answer the standard font path of the pagebot module.
-
-        >>> context = DrawBotContext()
-        >>> context.getFontPath().endswith('Lib/Fonts/')
-        True
-        """
-        return self.getRootPath() + '/Fonts/'
-
     #   D R A W I N G
 
     def rect(self, x, y, w, h):
@@ -373,12 +353,11 @@ class DrawBotContext(BaseContext):
         u"""Answer the font name of the font related to fontPath. This is done by installing it (again).
         Answer None if the font cannot be installed or if the path does not exists.
 
-        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> from pagebot.contexts.platform import TEST_FONTS_PATH
         >>> context = DrawBotContext()
         >>> context.fontPath2FontName('Aaa.ttf') is None # Dow not exist
         True
-        >>> fontPath = getRootFontPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf'
         >>> context.fontPath2FontName(path)
         'AmstelvarAlpha-VF.ttf'
         """

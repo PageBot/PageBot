@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -11,10 +12,5 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     phpbuilder.py
+#     fonts/__init__.py
 #
-from htmlbuilder import HtmlBuilder
-
-class PhpBuilder(HtmlBuilder):
-    # TODO: To be implemented here.
-    pass

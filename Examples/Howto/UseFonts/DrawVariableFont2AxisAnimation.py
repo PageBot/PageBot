@@ -19,15 +19,15 @@
 #
 import pagebot
 from pagebot.contexts import defaultContext as context
-from pagebot.fonttoolbox.objects.font import Font, getFontByName
+from pagebot.fonttoolbox.objects.font import Font
+from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.fonttoolbox.variablefontbuilder import getVariableFont 
 from pagebot.style import CENTER
 
 W = H = 500
 
-ROOT_PATH = pagebot.getRootPath()
-FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
-f = Font(FONT_PATH, install=True) # Get PageBot Font instance of Variable font.
+FONT_PATH = TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf'
+f = Font(FONT_PATH) # Get PageBot Font instance of Variable font.
 
 LIGHT72 = getVariableFont(FONT_PATH, dict(wght=0.5, wdth=0.6, opsz=72), styleName='Light72')
 BOOK_LIGHT = getVariableFont(FONT_PATH, dict(wght=0.5, wdth=0.7), styleName='Book Light')

@@ -93,6 +93,9 @@ class VarFontTextEditor(object):
         stor = self.w.textEditor._textView.textStorage()
         stor.setAttributes_range_(attrs, (0, stor.length()))
 
-if __name__ == '__main__':
 
-    VarFontTextEditor()
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

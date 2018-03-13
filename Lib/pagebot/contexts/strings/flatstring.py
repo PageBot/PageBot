@@ -15,6 +15,7 @@
 #
 #     http://xxyxyz.org/flat
 
+from pagebot.contexts.platform import getFontPathOfFont
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
 
@@ -40,7 +41,8 @@ class FlatString(BabelString):
         u"""Answer the number of characters in self.s
 
         >>> from pagebot.contexts.flatcontext import FlatContext
-        >>> fs = FlatString('ABC', context=FlatContext())
+        >>> context = FlatContext()
+        >>> fs = FlatString('ABC', context)
         >>> fs
         ABC
         >>> len(fs)
@@ -52,7 +54,8 @@ class FlatString(BabelString):
         u"""Answer as unicode string.
 
         >>> from pagebot.contexts.flatcontext import FlatContext
-        >>> fs = FlatString('ABC', context=FlatContext())
+        >>> context = FlatContext()
+        >>> fs = FlatString('ABC', context)
         >>> fs.s
         'ABC'
         >>> fs.asText()
@@ -80,8 +83,7 @@ class FlatString(BabelString):
         #    self.s += `s` # Convert to babel string, whatever it is.
 
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
-        fontSize=None, styleName=None, tracking=None, rTracking=None, tagName=None):
+    def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
         u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
@@ -108,16 +110,17 @@ class FlatString(BabelString):
         # using Tal's https://github.com/typesupply/compositor
         # This needs to be installed, in case PageBot is running outside of DrawBot.
 
-        fontPath = context.getFontPathOfFont(style.get('font'))
+        fontPath = getFontPathOfFont(style.get('font'))
         if fontPath is None:
-            fontPath = context.getFontPathOfFont(cls.DEFAULT_FONT)
+            fontPath = getFontPathOfFont(cls.DEFAULT_FONT)
         try:
             font = context.b.font.open(fontPath)
         except (ValueError, TypeError):
-            fontPath = context.getFontPathOfFont(cls.DEFAULT_FONT)
+            fontPath = getFontPathOfFont(cls.DEFAULT_FONT)
+            print fontPath
             font = context.b.font.open(fontPath)
         strike = context.b.strike(font)
-        strike.size(fontSize or style.get('fontSize', cls.DEFAULT_FONTSIZE), 
+        strike.size(style.get('fontSize', cls.DEFAULT_FONTSIZE), 
             style.get('leading', cls.DEFAULT_LEADING), units='pt')
         #if w is not None:
         #    strike.width = w

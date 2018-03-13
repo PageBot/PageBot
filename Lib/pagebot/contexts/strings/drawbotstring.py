@@ -15,6 +15,7 @@
 #     drawbotstring.py
 #
 import re
+from copy import copy
 try:
     import AppKit
     import CoreText
@@ -26,6 +27,8 @@ except (ImportError, AttributeError):
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
+
+DEFAULT_SIZE = 16
 
 def pixelBounds(fs):
     u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
@@ -59,8 +62,9 @@ class DrawBotString(BabelString):
     BABEL_STRING_TYPE = 'fs'
 
     u"""DrawBotString is a wrapper around the standard DrawBot FormattedString."""
-    def __init__(self, s, context,  font=None, fontSize=None):
+    def __init__(self, s, context, style=None):
         u"""Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
+        Optionally store the (latest) style that was used to produce the formatted string.
     
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -70,13 +74,12 @@ class DrawBotString(BabelString):
         >>> bs
         ABC
         """
-        self.context = context # Store the context, in case we need it for further transformations.
+        self.context = context # Store context, in case we need more of its functions.
         self.s = s # Store the DrawBot FormattedString, as property to make sure it is a FormattedString, 
         # otherwise create it.
         # In case defined, store current status here as property and set the current FormattedString
         # for future additions. Also the answered metrics will not be based on these values.
-        self.fontName = font
-        self.fontSize = fontSize 
+        self.style = style or {}
 
     def _get_s(self):
         u"""Answer the embedded FormattedString by property, to enforce checking type of the string."""
@@ -92,20 +95,22 @@ class DrawBotString(BabelString):
         self._s = s
     s = property(_get_s, _set_s)
 
-    def _get_fontName(self):
-        return self._fontName
-    def _set_fontName(self, fontName):
+    def _get_font(self):
+        u"""Answer the current state of fontName."""
+        return self.style.get('font')
+    def _set_font(self, fontName):
         if fontName is not None:
             self.context.font(fontName)
-        self._fontName = fontName
-    fontName = property(_get_fontName, _set_fontName)
+        self.style['font'] = fontName
+    font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
-        return self._fontSize
+        u"""Answer the current state of the fontSize."""
+        return self.style.get('fontSize')
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
-            self.context.fontSize(fontSize)
-        self._fontSize = fontSize
+            self.context.font(fontSize)
+        self.style['fontSize'] = fontSize
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def asText(self):
@@ -177,21 +182,48 @@ class DrawBotString(BabelString):
         return self.context.textOverflow(self, (0, 0, w, h), align)
 
     @classmethod
-    def newString(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True,
-        fontSize=None, styleName=None, tracking=None, rTracking=None, tagName=None):
+    def _newFitWidthString(cls, fs, context, e, style, w, pixelFit):
+        if pixelFit:
+            tx, _, tw, _ = pixelBounds(fs) 
+        else:
+            tx, tw = 0, fs.size()[0]
+        style = copy(style)
+        style['fontSize'] = 1.0 * w / (tw-tx) * css('fontSize', styles=style, default=DEFAULT_SIZE)
+        # Recursively call this method again, without w and with the calculated real size of the string 
+        # to fit the width.
+        # Note that this assumes a linear relation between size and width, which may not always be the case
+        # with [opsz] optical size axes of Variable Fonts. 
+        return cls.newString(fs, context, e, style, pixelFit=pixelFit)
+
+    @classmethod
+    def _newFitHeightString(cls, fs, context, e, style, h, pixelFit):
+        if pixelFit:
+            _, ty, _, th = pixelBounds(newt)
+        else:
+            ty, th = 0, newt.size()[1]
+        style = copy(style)
+        style['fontSize'] = 1.0 * h / (th-ty) * css('fontSize', style)
+        # Recursivley call this method again, without h and with the calculated real size of the string 
+        # to fit the width.
+        # Note that this assumes a linear relation between size and width, which may not always be the case
+        # with [opsz] optical size axes of Variable Fonts. 
+        return cls.newString(fs, context, e, style, pixelFit=pixelFit)
+
+    @classmethod
+    def newString(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True):
         u"""Answer a DrawBotString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
         In that case the pixelFit flag defines if the current width or height comes from the pixel image of em size.
 
-        >>> from pagebot.contexts.platform import getRootFontPath
-        >>> fontPath = getRootFontPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> fontPath = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> bs = context.newString('ABC', style=dict(font=fontPath, fontSize=22))
         >>> bs
         ABC
-        >>> bs.w, bs.
+        >>> bs.w, bs.h
         (43.61328125, 31.0)
         >>> bs = context.newString('ABC', style=dict(font=fontPath), w=100)
         >>> int(round(bs.fontSize))
@@ -215,7 +247,7 @@ class DrawBotString(BabelString):
             fontSize = 100
         # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
         # TODO: add calculation of rFontSize (relative float based on root-fontSize) here too.
-        sFontSize = fontSize or css('fontSize', e, style) or 16 # May be scaled to fit w or h if target is defined.
+        sFontSize = css('fontSize', e, style, DEFAULT_SIZE) # May be scaled to fit w or h if target is defined.
         sLeading = css('leading', e, style)
         rLeading = css('rLeading', e, style)
         if sLeading or (rLeading and sFontSize):
@@ -254,14 +286,8 @@ class DrawBotString(BabelString):
         rParagraphBottomSpacing = css('rParagraphBottomSpacing', e, style)
         if sParagraphBottomSpacing or (rParagraphBottomSpacing and sFontSize):
             fs.paragraphBottomSpacing((sParagraphBottomSpacing or 0) + (rParagraphBottomSpacing or 0) * (sFontSize or 0))
-        if tracking is not None: # Test in case this is defined for fontSize fitting, Can be force to 0.
-            sTracking = tracking
-        else:
-            sTracking = css('tracking', e, style)
-        if rTracking is not None: # Test in case this is defined for fontSize fitting. Can be forced to 0
-            srTracking = rTracking
-        else:
-            srTracking = css('rTracking', e, style)
+        sTracking = css('tracking', e, style)
+        srTracking = css('rTracking', e, style)
         if sTracking or (srTracking and sFontSize):
             fs.tracking((sTracking or 0) + (srTracking or 0) * (sFontSize or 0))
         sBaselineShift = css('baselineShift', e, style)
@@ -310,39 +336,14 @@ class DrawBotString(BabelString):
         if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
             # more consistent for tracked text. context.textSize will add space to the right of the string.
-            if pixelFit:
-                tx, _, tw, _ = pixelBounds(newt) 
-            else:
-                tx, tw = 0, newt.size()[0]
-            sFontSize = 1.0 * w / (tw-tx) * sFontSize
-            # Recursively call this method again, without w and with the calculated real size of the string 
-            # to fit the width.
-            # Note that this assumes a linear relation between size and width, which may not always be the case
-            # with [opsz] optical size axes of Variable Fonts. 
-            newS = cls.newString(t, context, e, style, fontSize=sFontSize, styleName=styleName, 
-                tracking=tracking, rTracking=rTracking, tagName=tagName)
-            # In case calculating fontSize to fit height, inform the caller about the new calculated fontSize.
-            newS.fontSize = sFontSize
+            newS = cls._newFitWidthString(newt, context, e, style, w, pixelFit)
 
         elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
             # more consistent for tracked text. context.textSize will add space to the right of the string.
-            if pixelFit:
-                _, ty, _, th = pixelBounds(newt)
-            else:
-                ty, th = 0, newt.size()[1]
-            fontSize = 1.0 * h / (th-ty) * sFontSize
-            # Recursivley call this method again, without h and with the calculated real size of the string 
-            # to fit the width.
-            # Note that this assumes a linear relation between size and width, which may not always be the case
-            # with [opsz] optical size axes of Variable Fonts. 
-            newS = cls.newString(t, context, e, style, fontSize=fontSize, styleName=styleName, 
-                tracking=tracking, rTacking=rTracking, tagName=tagName)
-            # In case calculating fontSize to fit height, inform the caller about the new calculated fontSize.
-            newS.fontSize = fontSize 
-
+            newS = cls._newFitHeightString(newt, context, e, style, h, pixelFit)
         else:
-            newS = cls(newt, context)
+            newS = cls(newt, context, style)
         return newS
 
 class FoundPattern(object):

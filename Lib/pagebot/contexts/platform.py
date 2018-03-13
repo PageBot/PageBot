@@ -14,36 +14,61 @@
 #     pagebot/contexts/platform.py
 #
 import os
-from pagebot.toolbox.transformer import path2FontName
+import pagebot
+from pagebot.toolbox.transformer import path2FontName, path2ParentPath
 
 #   P A T H S 
 
+ROOT_PATH = path2ParentPath(pagebot.__file__)
+RESOURCES_PATH = ROOT_PATH + '/resources'
+TEST_FONTS_PATH = RESOURCES_PATH + '/testfonts'
+
+# Dictionary with all available font paths on the platform, key is the single file name.
+FONT_PATHS = {} 
+
 def getRootPath():
-    u"""Answer the root path of the pagebot module."""
-    return '/'.join(__file__.split('/')[:-4])
+    u"""Answer the root path on the platform for the PageBot module."""
+    return ROOT_PATH
 
-def getRootFontPath():
-    u"""Answer the standard font path of the pagebot module."""
-    root = getRootPath()
-    if root == "":
-        return 'Fonts'
-    else:
-        return root + '/Fonts'
+def getResourcesPath():
+    u"""Answer the root path on the platform for the PageBot module."""
+    return RESOURCES_PATH
 
-def _recursivelyCollectFontPaths(path, fontPaths):
-    u"""Recursive helper function for getFontPaths. If the fileName already existsin the fontPaths, then ignore."""
-    for fileName in os.listdir(path):
-        filePath = path + '/' + fileName
-        if os.path.isdir(filePath):
-            _recursivelyCollectFontPaths(filePath, fontPaths)
+def getTestFontsPath():
+    u"""Answer the path of the PageBot test fonts."""
+    return TEST_FONTS_PATH
+
+def getFontPathOfFont(fontName):
+    u"""Answer the path that is source of the given font name. 
+    If the path is already a valid font path, then aswer it unchanged.
+    Answer None if the font cannot be found.
+
+    >>> path = getFontPathOfFont('Skia')
+    >>> path.endswith('Skia.ttf')
+    True
+    >>> path = getFontPathOfFont('Verdana')
+    >>> path.endswith('Verdana.ttf')
+    True
+
+    """
+    if fontName is not None and not os.path.exists(fontName):
+        fontName = getFontPaths().get(fontName)
+    return fontName
+
+
+def _recursivelyCollectFontPaths(path, collectedFontPaths):
+    u"""Recursive helper function for getFontPaths. If the fileName already exists in the fontPaths, then ignore."""
+    if os.path.exists(path):
+        if os.path.isdir(path):
+            for fileName in os.listdir(path):
+                dirPath = path + '/' + fileName
+                _recursivelyCollectFontPaths(dirPath, collectedFontPaths)
         else:
-            fontName = path2FontName(fileName) # File name without extension used as key, works for Flat and DrawBot.
+            fontName = path2FontName(path) # File name without extension used as key, works for Flat and DrawBot.
             # If fontName is None, it does not have the right extension.
             # Note that files with the same file name will be overwritten, we expect them to be unique in the OS.
             if fontName is not None:
-                fontPaths[fontName] = filePath
-
-FONT_PATHS = {} # Cached dictionary
+                collectedFontPaths[fontName] = path
 
 def getFontPaths(extraPaths=None): 
     u"""Answer a dictionary with all available font paths on the platform, key is the single file name.
@@ -51,24 +76,29 @@ def getFontPaths(extraPaths=None):
         ('/Library/Fonts', '/Users/petr/Library/Fonts', '/Users/petr/git/PageBot/Fonts')
     In this order, "local" defined fonts with the same file name, will overwrite the "deeper" located font files.
 
-    >>> len(getFontPaths()) >= 1
+    >>> import os
+    >>> os.path.exists(TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf')
     True
-
-    """
-
-    """
-    >>> path = '/Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade-Var/ufo-RNDS/variable_ttf/'
-    >>> paths = getFontPaths(path)
-    >>> for path in paths.values():
-    ...     if '/TYPETR-git' in path:
-    ...         print path
-    /Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade-Var/ufo-RNDS/variable_ttf//UpgradeRomanDS-Regular-VF.ttf
+    >>> fontPaths = getFontPaths() # Only default paths on the platform
+    >>> 'AmstelvarAlpha-VF' in fontPaths
+    True
+    >>> fontPaths = getFontPaths(TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf') # As single extra path
+    >>> 'AmstelvarAlpha-VF' in fontPaths 
+    True
+    >>> fontPaths = getFontPaths([TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf']) # As list of extra paths
+    >>> 'AmstelvarAlpha-VF' in fontPaths 
+    True
+    >>> fontPaths = getFontPaths(TEST_FONTS_PATH + '/OtherFont.ttf')
+    >>> 'OtherFont' in fontPaths # Ignore if extra paths don't exists.
+    False
     """
     global FONT_PATHS
     if extraPaths is not None:
-        FONT_PATHS = {}
+        FONT_PATHS = {}  # Force (new) initialization
+
     if not FONT_PATHS:
 
+        # If forced or initial call, get collect the font paths on this platform
         if os.name == 'posix':
             # Try typical OSX font folders:
             paths = ['/Library/Fonts', os.path.expanduser('~/Library/Fonts')]
@@ -86,12 +116,14 @@ def getFontPaths(extraPaths=None):
             raise NotImplementedError('Unknown platform type "%s"' % os.name)
 
         # Add PageBot repository fonts, they always exist in this context.
-        _recursivelyCollectFontPaths(getRootFontPath(), FONT_PATHS)
+        # But they can be overwritten by fonts with the same (file) name in the extraPaths.
+        _recursivelyCollectFontPaths(TEST_FONTS_PATH, FONT_PATHS)
 
         if extraPaths is not None:
             if not isinstance(extraPaths, (list, tuple)):
-                extraPath = [extraPaths]
-            _recursivelyCollectFontPaths(extraPaths, FONT_PATHS)
+                extraPaths = [extraPaths]
+            for extraPath in extraPaths:
+                _recursivelyCollectFontPaths(extraPath, FONT_PATHS)
 
     return FONT_PATHS
 

@@ -291,7 +291,7 @@ class Website(Publication):
     >>> t = website.templates['default']
     >>> t.size
     (1000, 1000, 1)
-    >>> page = website.pages[0][0]
+    >>> page = website.pages[1][0]
     >>> page.template.name
     'default'
     """

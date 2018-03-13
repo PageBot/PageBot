@@ -20,7 +20,7 @@ from copy import copy
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
 from pagebot.toolbox.transformer import pointOffset
-from pagebot.fonttoolbox.variablebuilder import drawGlyphPath
+#from pagebot.fonttoolbox.variablebuilder import drawGlyphPath
 
 class VariableCube(Element):
     # Initialize the default behavior tags as different from Element.
@@ -109,3 +109,9 @@ class VariableCube(Element):
                              fontSize=6, fill=0)
         w, h = bs.size()
         c.text(bs, px, py - 16)
+
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

@@ -831,17 +831,30 @@ class Element(object):
         return self.context.b
     b = builder = property(_get_builder)
 
-    def newString(self, bs, e=None, style=None, w=None, h=None, fontSize=None, 
-            styleName=None, tagName=None):
+    def newString(self, bs, e=None, style=None, w=None, h=None, pixelFit=True):
         u"""Create a new BabelString, using the current type of self.doc.context,
         or pagebot.contexts.defaultContext if not self.doc or self.doc.view defined, 
         if bs is a plain string. Otherwise just answer the BabelString unchanged.
         In case of a BabelString, is has to be the same as the current context would
         create, otherwise an error is raised. In other words, there is no BabelString
         conversion defined (no reliable way of doing that, they should be created 
-        in the right context from the beginning)."""
-        return self.context.newString(bs, e=e, style=style, w=w, h=h, fontSize=fontSize, 
-            styleName=styleName, tagName=tagName)
+        in the right context from the beginning).
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> e = Element(context=context)
+        >>> bs = e.newString('ABC')
+        >>> bs
+        ABC
+
+        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> context = FlatContext()
+        >>> e = Element(context=context)
+        >>> bs = e.newString('ABC')
+        >>> bs
+        ABC
+        """
+        return self.context.newString(bs, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
         
     # Most common properties
 

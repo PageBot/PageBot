@@ -1,4 +1,4 @@
-from pagebot.contexts.platform import getRootPath
+from pagebot.contexts.platform import getResourcesPath
 from pagebot.toolbox.transform3d import Transform3D
 
 def circle(cpt, r):
@@ -30,7 +30,7 @@ t = t.rotateZ(radians(--10))
 
 affine = t.getAffineTransform2D(2)
 
-imagePath = getRootPath() + "/Examples/Howto/images/cookbot1.jpg"
+imagePath = getResourcesPath() + "/images/peppertom_lowres.png"
 w, h = imageSize(imagePath)
 
 fontSize(40)

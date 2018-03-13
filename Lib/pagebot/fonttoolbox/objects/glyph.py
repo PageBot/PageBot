@@ -19,7 +19,6 @@
 import sys
 import weakref
 
-from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
 from pagebot.toolbox.transformer import point2D
 from pagebot.fonttoolbox.analyzers.apoint import APoint
@@ -49,8 +48,8 @@ class Glyph(object):
     extracts data from the raw glyph such as point sequence and type.
     >>> import pagebot
     >>> from pagebot.fonttoolbox.objects.font import getFont
-    >>> from pagebot.contexts.platform import getRootFontPath
-    >>> path = getRootFontPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> from pagebot.contexts.platform import getTestFontsPath
+    >>> path = getTestFontsPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
     >>> f = getFont(path) # Keep font alive to glyph.font weakref
     >>> g = f['a']
     >>> g.name
@@ -89,7 +88,6 @@ class Glyph(object):
         self.font = font # Stored as weakref
         self.dirty = True # Mark that we need initialization or something changed in the points.
 
-        self.context = context # Use default context for drawing glyph path
         self._analyzer = None # Installed upon request
         self._points = None # Same as self.points property with added 4 spacing points in TTF style.
         self._points4 = None
@@ -117,6 +115,8 @@ class Glyph(object):
     def _initialize(self):
         u"""Initializes the cached data, such as self.points, self.contour,
         self.components and self.path, as side effect of drawing the path image."""
+        from pagebot.contexts import defaultContext as context
+
         self._points = []
         self._points4 = [] # Same as self.points property with added 4 spacing points in TTF style.
         self._contours = []
@@ -137,7 +137,7 @@ class Glyph(object):
         maxX = maxY = -sys.maxint
 
         if coordinates or components:
-            self._path = path = self.context.newPath()
+            self._path = path = context.newPath()
 
         for index, (x, y) in enumerate(coordinates):
             minX = min(x, minX)
@@ -205,7 +205,7 @@ class Glyph(object):
     def _get_flattenedPath(self):
         u"""Answer the flattened DrawBotContext NSBezier path."""
         if self._flattenedPath is None and self.path is not None:
-            self._flattenedPath = self.context.bezierPathByFlatteningPath(self.path)
+            self._flattenedPath = context.bezierPathByFlatteningPath(self.path)
         return self._flattenedPath
     flattenedPath = property(_get_flattenedPath)
 
@@ -444,9 +444,9 @@ class Glyph(object):
         u"""Answer the axis-deltas for this glyph. Answer an None if there are no
         deltas for this glyph or if the parent is not a Var-font.
 
-        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> from pagebot.contexts.platform import getTestFontsPath
         >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> fontPath = getRootFontPath()
+        >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
         >>> font = getFont(path) # Keep font alive to glyph.font weakref
         >>> glyph = font['H']
@@ -467,9 +467,9 @@ class Glyph(object):
         the can be drawn on the DrawBot convas. 
         TODO: Get this to work for Flat
 
-        >>> from pagebot.contexts.platform import getRootFontPath
+        >>> from pagebot.contexts.platform import getTestFontsPath
         >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> fontPath = getRootFontPath()
+        >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
         >>> font = getFont(path)
         >>> glyph = font['H']
