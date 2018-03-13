@@ -71,7 +71,7 @@ class APoint(object):
 
     def __div__(self, v):
         return self.p[0] / v, self.p[1] / v
-            
+
     def _get_x(self):
         return self.p[0]
     def _set_x(self, x):
@@ -104,4 +104,3 @@ class APoint(object):
 
     def __repr__(self):
         return 'Pt(%s,%s,%s)' % (self.x, self.y,{True:'On', False:'Off'}[self.onCurve])
-
