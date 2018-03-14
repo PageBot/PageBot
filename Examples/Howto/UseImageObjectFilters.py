@@ -38,7 +38,9 @@ fontItalic = family.findFont(weight=400, italic=True)
 
 GUTTER = 8 # Distance between the squares.
 SQUARE = 10 * GUTTER # Size of the squares
-PADDING = 20
+CW = 170
+M = (W - 3*CW)/2
+PADDING = M, M, M, M
 
 FILTER_TYPES = {
 }
@@ -47,37 +49,27 @@ FILTER_TYPES = {
 EXPORT_PATH = '_export/UseImageElements.pdf' 
 
 def makeDocument():
-    u"""Make a new document."""
 
-    # Hard coded SQUARE and GUTTER, just for simple demo, instead of filling padding an columns in the root style.
-    # Page size decides on the amount squares that is visible.
-    # Page padding is centered then.
-    sqx = int(W/(SQUARE + GUTTER)) # Whole amount of squares that fit on the page.
-    sqy = int(H/(SQUARE + GUTTER))
-    # Calculate centered paddings for the amount of fitting squares.
-    # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
-    #rs['colH'] = rs['colW'] = SQUARE  # Make default colW and colH square.
-
-    #padX = (W - sqx*(SQUARE + GUTTER) + GUTTER)/2
-    my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
-
-    doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1, context=context)
+    gridX = ((CW, GUTTER), (CW, GUTTER), (CW, None))
+    doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1, context=context, gridX=gridX)
     
     view = doc.getView()
-    view.padding = 0 # Aboid showing of crop marks, etc.
+    view.padding = 0 # Avoid showing of crop marks, etc.
     view.showElementOrigin = False
+    view.showGrid = True
     
     # Get list of pages with equal y, then equal x.    
     #page = doc[1[0] # Get the single page from te document.
     page = doc[1] # Get page on pageNumber, first in row (this is only one now).
     page.name = 'This is a demo page for floating child elements'
     page.padding = PADDING
-    
-    page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    for n in range(4):
-        img = newImage(IMAGE_PATH, (50, 50, 10), padding=0,
-                       parent=page, w=150, h=150, #clipRect=(120, 120, 1440, 440),
+    group = newGroup(parent=page, conditions=[Fit()])
+    group.solve()
+    
+    for n in range(15):
+        img = newImage(IMAGE_PATH, (50, 50, 10), padding=0, mb=GUTTER,
+                       parent=group, w=CW-2, h=CW-2, #clipRect=(120, 120, 1440, 440),
                        conditions=(Right2Right(),
                                    Float2Top(),
                                    Float2Left(),
@@ -88,6 +80,55 @@ def makeDocument():
                        #fill=(0, 1, 0, 0.3),
                        #stroke=(1, 0, 0)
                        )
+                       
+        filters = [
+            #('colorClamp', ((1, 0, 0, 0.5), (0.5, 0, 0, 0.5))),
+            
+            # colorControls(saturation=None, brightness=None, contrast=None)
+            # Adjusts saturation, brightness, and contrast values.
+            # Attributes: saturation a float, brightness a float, contrast a float.
+            #('colorControls', (0.2, 0, 1)),
+            
+            # gammaAdjust(power=None)
+            # Adjusts midtone brightness.
+            # Attributes: power a float.
+            #('gammaAdjust', (10,)),
+            
+            # hueAdjust(angle=None)
+            # Changes the overall hue, or tint, of the source pixels.
+            # Attributes: angle a float in degrees.
+            #('hueAdjust', (80.2,)),
+
+            # temperatureAndTint(neutral=None, targetNeutral=None)
+            # Adapts the reference white point for an image.
+            # Attributes: neutral a tuple, targetNeutral a tuple.
+            #('temperatureAndTint', ((1, 1, 1), (0.1, 0.1, 0.5))),
+
+            # whitePointAdjust(color=None)
+            # Adjusts the reference white point for an image and maps all colors in the source using the new reference.
+            # Attributes: color RGBA tuple Color (r, g, b, a).
+            #('whitePointAdjust', ((1, 0.45, 1, 1),)),
+            
+            # colorInvert()
+            # Inverts the colors in an image.
+            #('colorInvert', []),
+
+            #('colorPosterize', (2,))
+            
+            # sepiaTone(intensity=None)
+            # Maps the colors of an image to various shades of brown.
+            # Attributes: intensity a float.
+            #('sepiaTone', (0.4,)),
+
+            #droste(insetPoint0=None, insetPoint1=None, strands=None, periodicity=None, rotation=None, zoom=None)
+            #('droste', ((0.3, 0.4), (0.8, 0.8), 0.4, 0.6, 0.7, 0.1)),
+
+            # twirlDistortion(center=None, radius=None, angle=None)
+            # Rotates pixels around a point to give a twirling effect.
+            # Attributes: center a tuple (x, y), radius a float, angle a float in degrees.
+            ('twirlDistortion', ((150, 150), 200, 0.4)), 
+        ]
+        img.addFilter(filters)
         # Give parent on creation, to have the css chain working.
     
         # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
