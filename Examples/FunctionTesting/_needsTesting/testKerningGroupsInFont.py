@@ -3,13 +3,13 @@ from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernR
 
 f = Font(u"/Library/Fonts/Upgrade-Medium.otf")
 
-print len(f.kerning)
+print(len(f.kerning))
 
 #print OTFKernReader(f.path).kerningPairs
 okr = OTFKernReader(f.path)
 okr.getClassPairs()
 okr.getSinglePairs()
-print okr.classPairs
-#print okr.singlePairs
-#print okr.pairPosList
+print(okr.classPairs)
+#print(okr.singlePairs)
+#print(okr.pairPosList)
 

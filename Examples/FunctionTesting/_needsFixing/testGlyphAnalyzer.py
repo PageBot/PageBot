@@ -37,13 +37,13 @@ for path in paths:
         text(path, (0, -EM/20))
     
         ga = GlyphAnalyzer(font[gName])
-        #print ga.glyph.points
+        #print(ga.glyph.points)
         #for contour in ga.glyph.flattenedPathPoints:
-        #    print '===Contour'
+        #    print('===Contour')
         #    for p in contour:
-        #        print '    ', p
+        #        print('    %s' % p)
         line = (-10000, 400), (10000, 400)
-        print ga.intersectWithLine(line)
+        print(ga.intersectWithLine(line))
         
         strokeWidth(3)
         stroke(0.6)
