@@ -32,11 +32,11 @@ def textBounds(s, x, y, w):
     return bs
 
 bs = textBounds(HEAD_LINE, x, y, w)
-print bs, bs.fittingFontSize, bs.bounds()
+print('%s %s %s' % (bs, bs.fittingFontSize, bs.bounds())
 y += 50
 bs = textBounds('When fonts...', x, y, w)
-print bs, bs.fittingFontSize, bs.bounds()
+print('%s %s %s' % (bs, bs.fittingFontSize, bs.bounds())
 y += 80
 bs = textBounds('Fonts...', x, y, w)
-print bs, bs.fittingFontSize, bs.bounds()
+print('%s %s %s' % (bs, bs.fittingFontSize, bs.bounds())
 

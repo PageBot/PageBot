@@ -29,10 +29,10 @@ for context, path in testContexts:
     style=dict(font='Roboto-Regular', fontSize=48, textFill=(1, 0, 0))
     bs = context.newString('This is a string', style=style)
     # It prints it content.
-    print bs
+    print(bs)
     # Adding or appending strings are added to the internal formatted string.
     bs += ' and more'
-    print bs
+    print(bs)
     # Draw grid, matching the position of the text.
     context.fill(None)
     context.stroke(0.7)

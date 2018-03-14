@@ -17,12 +17,9 @@ from pagebot.contributions.filibuster.blurb import Blurb
 
 NO_TAGS = True # Flag to show/hide HTML tags in output
 
-w = Blurb()
+blurb = Blurb()
 
-print w.getBlurb('news_headline', noTags=NO_TAGS)
-print
-print w.getBlurb('article_ankeiler', noTags=NO_TAGS)
-print
-print w.getBlurb('article_summary', noTags=NO_TAGS)
-print
-print w.getBlurb('article', noTags=NO_TAGS)
+print(blurb.getBlurb('news_headline', noTags=NO_TAGS)+'\n')
+print(blurb.getBlurb('article_ankeiler', noTags=NO_TAGS)+'\n')
+print(blurb.getBlurb('article_summary', noTags=NO_TAGS)+'\n')
+print(blurb.getBlurb('article', noTags=NO_TAGS)+'\n')

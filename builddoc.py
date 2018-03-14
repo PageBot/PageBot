@@ -55,7 +55,7 @@ class Node(object):
     >>> import pagebot
     >>> rootPath = pagebot.getRootPath()
     >>> node = Node(rootPath)
-    >>> print node
+    >>> print(node)
     """
     def __init__(self, path=None):
         self.path = path
@@ -105,7 +105,7 @@ class PageBotDoc(Publication):
         self.folders = None
 
     def buildNode(self, node, level=0):
-        print '\t'*level + `node`
+        print('\t'*level + str(node))
         for child in sorted(node.nodes):
             self.build(child, level+1)
 
@@ -130,7 +130,7 @@ class PageBotDoc(Publication):
                 self.clearPyc(filePath)
             elif fileName.endswith('.pyc'):
                 os.remove(filePath)
-                print ' * Removed', filePath
+                print(' * Removed %s' % filePath
                 continue
 
     def testDocs(self, path=None, node=None, logFile=None):
@@ -160,8 +160,8 @@ class PageBotDoc(Publication):
                     d = doctest.testfile(relPath)
                 except Exception, e:
                     # TODO: write to file.
-                    print 'doctest: an error occurred, file path is %s' % filePath
-                    print traceback.format_exc()
+                    print('doctest: an error occurred, file path is %s' % filePath)
+                    print(traceback.format_exc())
 
         return node
 
@@ -188,8 +188,8 @@ class PageBotDoc(Publication):
                 else:
                     self.classes[module_name] = mod
             except Exception, e:
-                print 'scanPackage: an error occurred, modulename is %s' % module_name
-                print traceback.format_exc()
+                print('scanPackage: an error occurred, modulename is %s' % module_name)
+                print(traceback.format_exc())
 
     def writeDocs(self, m, folder=None, level=0, logFile=None):
         """Writes config file including menu, traverses module to parse
@@ -235,7 +235,7 @@ class PageBotDoc(Publication):
                     skip = True
 
             if skip is True:
-                print 'skipping %s' % folder
+                print('skipping %s' % folder)
                 continue
 
             for part in parts:
@@ -290,8 +290,8 @@ class PageBotDoc(Publication):
                         try:
                             self.writeDocsPage(path, mod)
                         except Exception, e:
-                            print 'WriteDocsPages: an error occurred, path is %s' % path
-                            print traceback.format_exc()
+                            print('WriteDocsPages: an error occurred, path is %s' % path)
+                            print(traceback.format_exc())
                 else:
                     # Creates new folders if they do not exists yet;
                     # recurse.
@@ -462,8 +462,8 @@ class PageBotDoc(Publication):
                     try:
                         f.write('%s  \n' % line.encode('utf-8'))
                     except Exception, e:
-                        print 'An error occurred writing a doc file %s, (%s %s)' % (f, key, value)
-                        print traceback.format_exc()
+                        print('An error occurred writing a doc file %s, (%s %s)' % (f, key, value))
+                        print(traceback.format_exc())
 
         if isinstance(value, TypeType):
             level += 1
@@ -537,12 +537,12 @@ class PageBotDoc(Publication):
         return folders
 
 def printOpts():
-    print './builddoc.py -ctwho'
-    print '-h, --help: prints this listing.'
-    print '-c, --clear: clears .pyc files.'
-    print '-w, --write: writes the markdown files to the doc folder.'
-    print '-d, --doctest: runs doctests on the pagebot module and HowTo files.'
-    print '-l, --log: outputs to log, takes log file name as argument.'
+    print('./builddoc.py -ctwho')
+    print('-h, --help: prints this listing.')
+    print('-c, --clear: clears .pyc files.')
+    print('-w, --write: writes the markdown files to the doc folder.')
+    print('-d, --doctest: runs doctests on the pagebot module and HowTo files.')
+    print('-l, --log: outputs to log, takes log file name as argument.')
 
 def main(argv):
     fileName = 'log.txt'
@@ -583,11 +583,11 @@ def main(argv):
 
     if doClear:
         d.clearPyc()
-        print 'Cleared .pyc files'
+        print('Cleared .pyc files')
 
     if doWrite:
         d.writeDocs(pagebot, logFile=logFile)
-        print 'Wrote docs'
+        print('Wrote docs')
 
     if doTest:
         try:
