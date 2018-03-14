@@ -21,10 +21,29 @@ class HtmlString(BabelString):
     BABEL_STRING_TYPE = 'html'
 
     u"""HtmlString is a wrapper around an HTML tagged string."""
-    def __init__(self, s, context):
+    def __init__(self, s, context, style=None):
         self.context = context # Store the context, in case we need it.
         self.s = s # Enclose the Flat string
+        self.style = style or {}
 
+    def _get_font(self):
+        u"""Answer the current state of fontName."""
+        return self.style.get('font')
+    def _set_font(self, fontName):
+        if fontName is not None:
+            self.context.font(fontName)
+        self.style['font'] = fontName
+    font = property(_get_font, _set_font)
+
+    def _get_fontSize(self):
+        u"""Answer the current state of the fontSize."""
+        return self.style.get('fontSize')
+    def _set_fontSize(self, fontSize):
+        if fontSize is not None:
+            self.context.font(fontSize)
+        self.style['fontSize'] = fontSize
+    fontSize = property(_get_fontSize, _set_fontSize)
+       
     def _get_s(self):
         u"""Answer the embedded HTML string by property, to enforce checking type of the string."""
         return self._s

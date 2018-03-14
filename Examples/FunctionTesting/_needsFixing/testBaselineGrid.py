@@ -63,7 +63,7 @@ for context, path in testContexts:
         context.fill(None)
         context.line((x-10, y), (400+10, y))
     dy = round(baselines[0][1]/leading)*leading - baselines[0][1]
-    print dy
+    print(dy)
     box2 = (bx,by+dy, 400, 500)
     context.textBox(fs, box2)
     context.rect(bx, by+dy, bw, bh)

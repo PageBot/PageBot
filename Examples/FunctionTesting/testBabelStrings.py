@@ -16,20 +16,29 @@
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.contexts.flatcontext import FlatContext
 
+W = H = 800
+M = 100
+
 testContexts = (
-    (DrawBotContext(), '_export/testFlatString.pdf'),
-    # TODO: Get this to work with Flat
-    #(FlatContext(), '_export/testDrawBotString.pdf'),
+    (DrawBotContext(), '_export/testDrawBotString.pdf'),
+    (FlatContext(), '_export/testFlatString.pdf'),
 )
 for context, path in testContexts:
+    context.newPage(W, H)
     # Create a new BabelString with the DrawBot FormttedString inside.
-    style=dict(font='Verdana', fontSize=50, textFill=(1, 0, 0))
+    style=dict(font='Roboto-Regular', fontSize=48, textFill=(1, 0, 0))
     bs = context.newString('This is a string', style=style)
     # It prints it content.
-    print bs
+    print(bs)
     # Adding or appending strings are added to the internal formatted string.
     bs += ' and more'
-    print bs
+    print(bs)
+    # Draw grid, matching the position of the text.
+    context.fill(None)
+    context.stroke(0.7)
+    context.line((M, 0), (M, H))
+    context.line((0, M), (W, M))
     # Usage in DrawBot by addressing the embedded FS for drawing.
-    context.text(bs, (100, 100))
+    context.text(bs, (M, M))
     context.saveImage(path)
+    

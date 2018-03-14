@@ -168,8 +168,8 @@ def distributeUnicodes(unicodes):
         {'Latin-1 Supplement': [165], 'Basic Latin': [65]}
         >>> unicodes = range(65, 70) + range(6000, 6005) + [100000]
         >>> ranges = distributeUnicodes(unicodes)
-        >>> ranges
-        {None: [100000], 'Tagbanwa': [6000, 6001, 6002, 6003, 6004], 'Basic Latin': [65, 66, 67, 68, 69]}
+        >>> sorted(ranges['Basic Latin'])
+        [65, 66, 67, 68, 69]
         >>> all = set()
         >>> for unis in ranges.values():
         ...     all.update(unis)
@@ -449,7 +449,7 @@ def _testAll():
         ...         count += 1
         ...
         >>> count
-        181420
+        242860
     """
 
 def _runDocTests():

@@ -13,6 +13,8 @@
 #
 #     variables.py
 #
+#     Only works in DrwaBotContext.
+#
 from pagebot.contexts import defaultContext as context
 
 if __name__ == '__main__':

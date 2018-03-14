@@ -259,7 +259,7 @@ def makeDocument():
                  hyphenation=True)
 
     if SHOW_TIMER:
-        print 'Time styles %0.3f' % (time()-tt)
+        print('Time styles %0.3f' % (time()-tt))
         tt = time()
     
     # Change template of page 1
@@ -276,7 +276,7 @@ def makeDocument():
                   w=11*14, h=50*14, fill=(0.8, 0.8, 0.8, 0.5))
     
     if SHOW_TIMER:
-        print 'Time template %0.3f' % (time()-tt)
+        print('Time template %0.3f' % (time()-tt))
         tt = time()
     
     # Create main Galley for this page, for pasting the sequence of elements.    
@@ -285,7 +285,7 @@ def makeDocument():
     t.typesetFile(MD_PATH)
     
     if SHOW_TIMER:
-        print 'Time typesetter %0.3f' % (time()-tt)
+        print('Time typesetter %0.3f' % (time()-tt))
         tt = time()
     
     # Fill the main flow of text boxes with the ML-->XHTML formatted text. 
@@ -293,17 +293,17 @@ def makeDocument():
     c.compose(g, doc[1], flowId0)
     
     if SHOW_TIMER:
-        print 'Time compose %0.3f' % (time()-tt)
+        print('Time compose %0.3f' % (time()-tt))
     
     return doc
         
 tt = time()
 d = makeDocument()
 if SHOW_TIMER:
-    print 'Make document %0.3f' % (time()-tt)
+    print('Make document %0.3f' % (time()-tt))
 
 tt = time()
 d.export(EXPORT_PATH) 
 if SHOW_TIMER:
-    print 'Time export %0.3f' % (time()-tt)
+    print('Time export %0.3f' % (time()-tt))
 
