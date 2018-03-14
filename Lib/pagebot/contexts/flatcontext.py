@@ -18,7 +18,7 @@
 import os
 #import imageio
 from basecontext import BaseContext
-from pagebot.contexts.platform import getFontPaths
+from pagebot.contexts.platform import getRootPath, getFontPaths, getFontPathOfFont
 from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings.flatstring import FlatString
@@ -120,19 +120,18 @@ class FlatContext(BaseContext):
         u"""Save the current document to file(s)
 
         >>> import os
-        >>> from pagebot.contexts.platform import getRootPath
-        >>> exportPath = getRootPath() + '/_export/' # _export/* Files are ignored in git
+        >>> exportPath = getRootPath() + '/_export' # _export/* Files are ignored in git
         >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
         >>> context = FlatContext()
         >>> w, h = 100, 100
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
-        >>> context.fill((0, 0, 0, 0))
+        >>> context.fill((0, 0, 0))
         >>> context.rect(10, 10, w-20, h-20)
-        >>> #context.saveDocument(exportPath + 'MyTextDocument_F.jpg') # Flat is too scrict with color-format match
-        >>> #context.saveDocument(exportPath + 'MyTextDocument_F.pdf') # Flat is too scrict with color-format match
-        >>> context.saveDocument(exportPath + 'MyTextDocument_F.png')
-        >>> context.saveDocument(exportPath + 'MyTextDocument_F.gif')
+        >>> context.saveDocument(exportPath + '/MyTextDocument_F.jpg') # Flat is too scrict with color-format match
+        >>> context.saveDocument(exportPath + '/MyTextDocument_F.pdf') # Flat is too scrict with color-format match
+        >>> context.saveDocument(exportPath + '/MyTextDocument_F.png')
+        >>> context.saveDocument(exportPath + '/MyTextDocument_F.gif')
         [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
         """
         self.checkExportPath(path) # In case path starts with "_export", make sure that the directories exist.
@@ -143,7 +142,7 @@ class FlatContext(BaseContext):
             else:
                 for n, p in enumerate(self.pages):
                     pagePath = path.replace('.png', '%03d.png' % n)
-                    p.image(kind='rgba').png(pagePath)
+                    p.image(kind='rgb').png(pagePath)
         elif extension == 'jpg':
             if len(self.pages) == 1 or not multiPage:
                 self.pages[0].image(kind='rgb').jpeg(path)
@@ -195,24 +194,9 @@ class FlatContext(BaseContext):
 
     #   F O N T S
 
-    def getFontPathOfFont(self, fontName):
-        u"""Answer the path that is source of the given font name. Answer None if the font cannot be found.
-
-        >>> context = FlatContext()
-        >>> path = context.getFontPathOfFont('Skia.ttf')
-        >>> path.endswith('Skia.ttf')
-        True
-        >>> path = context.getFontPathOfFont('Verdana.ttf')
-        >>> path.endswith('Verdana.ttf')
-        True
-        """
-        if fontName is not None and not os.path.exists(fontName):
-            fontName = getFontPaths().get(fontName)
-        return fontName
-
     def listOpenTypeFeatures(self, fontName):
         u"""Answer the list of opentype features available in the named font.
-        TODO: Tobe implemented"""
+        TODO: To be implemented"""
         #return self.b.listOpenTypeFeatures(fontName)
         return []
 
@@ -228,7 +212,8 @@ class FlatContext(BaseContext):
         strings cannot be reused to show on multiple positions.
 
         >>> context = FlatContext()
-        >>> bs = context.newString('ABC')
+        >>> style = dict(font='Roboto-Regular', fontSize=12)
+        >>> bs = context.newString('ABC', style=style)
         >>> bs.__class__.__name__
         'FlatString'
         >>> #context.text(bs, (100, 100))
@@ -244,14 +229,14 @@ class FlatContext(BaseContext):
         by family or file name.
 
         >>> context = FlatContext()
-        >>> context.font('Verdana.ttf')
+        >>> context.font('Verdana')
         >>> context._fontName.endswith('/Verdana.ttf')
         True
-        >>> context.font('OtherFont', 12)
+        >>> context.font('OtherFont', 12) # Font does not exists, font path is set to None
         >>> context._fontName, context._fontSize
-        ('OtherFont', 12)
+        (None, 12)
         """
-        self._fontName = self.getFontPathOfFont(fontName)
+        self._fontName = getFontPathOfFont(fontName) # Convert name or path to font path.
         if fontSize is not None:
             self._fontSize = fontSize
 
@@ -264,19 +249,6 @@ class FlatContext(BaseContext):
         12
         """
         self._fontSize = fontSize
-
-    def fontFilePath(self):
-        u"""Aswer the font file path, which in FlatContext is the same as the self._fontName
-
-        >>> context = FlatContext()
-        >>> context.font('ThisFont')
-        >>> context._fontName
-        'ThisFont'
-        >>> context.font('OtherFont', 12)
-        >>> context._fontName, context._fontSize
-        ('OtherFont', 12)
-        """
-        return self._fontName
 
     def textBox(self, bs, rect):
         x, y, w, h = rect
@@ -291,12 +263,13 @@ class FlatContext(BaseContext):
         >>> context = FlatContext()
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
-        >>> bs = context.newString('ABC ' * 100)
+        >>> style = dict(font='Roboto-Regular', fontSize=12)
+        >>> bs = context.newString('ABC ' * 100, style=style)
         >>> t = context.page.place(bs.s)
         >>> t = t.frame(0, 0, w, h)
         >>> t.overflow()
         False
-        >>> bs = context.newString('ABC ' * 100000)
+        >>> bs = context.newString('ABC ' * 100000, style=style)
         >>> t = context.page.place(bs.s)
         >>> t = t.frame(0, 0, w, h)
         >>> t.overflow()
@@ -304,11 +277,6 @@ class FlatContext(BaseContext):
         >>> lines = t.lines()
         >>> len(lines)
         35
-        
-        for line in t.lines():
-             print line.__class__.__name__
-
-
         """
         # FIXME! This is a totally wrong boilerplate for now!
 
@@ -336,12 +304,11 @@ class FlatContext(BaseContext):
     def imageSize(self, path):
         u"""Answer the (w, h) image size of the image file at path.
 
-        >>> from pagebot.contexts.platform import getRootPath
-        >>> rootPath = getRootPath()
-        >>> imagePath = rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
+        >>> from pagebot.contexts.platform import getResourcesPath
+        >>> imagePath = getResourcesPath() + '/images/peppertom_lowres.png'
         >>> context = FlatContext()
         >>> context.imageSize(imagePath)
-        (3024, 4032)
+        (398, 530)
         """ 
         img = self.b.image.open(path)
         return img.width, img.height

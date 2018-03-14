@@ -14,13 +14,13 @@
 #
 #     Shows how to draw quadratic curves with cubic curves.
 #
+
 import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
 from drawBot import BezierPath
 from drawBot import font as DBFont
-from drawBot import translate, line, text, stroke, fill, oval, drawPath, \
-        textSize
+from drawBot import translate, line, text, stroke, fill, oval, drawPath, textSize
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.transformer import point3D
 from pagebot.fonttoolbox.objects.glyph import *
@@ -158,8 +158,13 @@ dx = 200
 x = 50
 r = 10
 
+<<<<<<< HEAD
 #PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
 PATH = u"/Users/michiel/Fonts/TypeNetwork/BIG-CASLON-ROMAN-TTF/BigCaslon-Roman.ttf"
+=======
+PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
+PATH = u"/Library/Fonts/BigCaslon.ttf"
+>>>>>>> 52abcd14cb5142b7e0b5221824ba7dc0ca378d48
 font = Font(PATH)
 glyph = font[glyphName]
 path = BezierPath()

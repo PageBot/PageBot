@@ -29,7 +29,12 @@ class NoneBezierPath(object):
 
     def closePath(self):
         pass
-  
+
+class NoneImageObject(object):
+    u"""Nabe NoneImageObject with the same API got NonDrawBotBuilder."""
+    def __init__(self, path):
+        self.path = path
+
 class NoneDrawBotBuilder(object):
     """Make NoneDrawBotBuilder with the same API for docTesting, in case the platform does not support DrawBot.
     More methods to be added here, if DrawBotContext docTests fail in non-DrawBot platforms.
@@ -149,7 +154,8 @@ class NoneDrawBotBuilder(object):
             return fontName
         return None 
 
-
+    def ImageObject(self, path):
+        return NoneImageObject(path)
 
 if __name__ == '__main__':
     import doctest

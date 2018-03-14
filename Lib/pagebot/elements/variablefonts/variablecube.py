@@ -97,3 +97,10 @@ class VariableCube(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
+
+
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

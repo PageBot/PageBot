@@ -13,15 +13,16 @@
 #
 #     babelstring.py
 #
+from pagebot.fonttoolbox.objects.font import getFont
+from pagebot.contexts.platform import getFontPaths
+
 class BabelString(object):
     u"""BabelString is the base class of various types of (formatted) string representations 
     needed for different builder classes."""
 
-    def __init__(self, s, context, fontName=None, fontSize=None):
-        self.context = context # Store the context, in case we need it for further transformations.
+    def __init__(self, s, style=None):
         self.s = s # Enclose the Flat/Drawbot/html string in this wrapper.
-        self.fontName = fontName
-        self.fontSize = fontSize
+        self.style = style # Optional style to set the context parameters.
 
     def __repr__(self):
         return u'%s' % self.s
@@ -32,7 +33,7 @@ class BabelString(object):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.contexts.strings.drawbotstring import DrawBotString
         >>> context = DrawBotContext()
-        >>> bs = DrawBotString.newString('ABC', context=context, style=dict(font='Verdana', fontSize=100))
+        >>> bs = DrawBotString.newString('ABC', context, style=dict(font='Verdana', fontSize=100))
         >>> bs
         ABC
         >>> bs.getFont()
@@ -40,14 +41,15 @@ class BabelString(object):
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> from pagebot.contexts.strings.flatstring import FlatString
         >>> context = FlatContext()
-        >>> bs = FlatString.newString('ABC', context=context, style=dict(font='Verdana', fontSize=100))
-        >>> bs
+        >>> bs = FlatString.newString('ABC', style=dict(font='Verdana', fontSize=100))
+        >>> #str(bs.s)
         ABC
         >>> bs.getFont()
         <Font Verdana>
         """
-        from pagebot.fonttoolbox.objects.font import Font
-        return Font(self.fontFilePath())
+        fontPaths = getFontPaths()
+        fontPath = getFontPaths().get(self.fontName, self.fontName)
+        return getFont(fontPath)
 
     def __add__(self, s):
         self.append(s)
