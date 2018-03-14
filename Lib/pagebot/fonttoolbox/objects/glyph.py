@@ -204,6 +204,7 @@ class Glyph(object):
 
     def _get_flattenedPath(self):
         u"""Answer the flattened DrawBotContext NSBezier path."""
+        from pagebot.contexts import defaultContext as context
         if self._flattenedPath is None and self.path is not None:
             self._flattenedPath = context.bezierPathByFlatteningPath(self.path)
         return self._flattenedPath
