@@ -83,7 +83,7 @@ def makeDocument():
     view.showElementDimensions = False
     view.showElementInfo = ShowElementInfo
 
-    page = doc[0] # Get the single page from te document.
+    page = doc[1] # Get the single page from te document.
 
     # Hard coded padding, just for simple demo, instead of
     # filling padding an columns in the root style.

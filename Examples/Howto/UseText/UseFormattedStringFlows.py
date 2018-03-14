@@ -50,7 +50,7 @@ def makeDocument():
     view.showElementDimensions = False
     
     # Get list of pages with equal y, then equal x.    
-    #page = doc[0][0] # Get the single page from te document.
+    #page = doc[1][0] # Get the single page from te document.
     page0 = doc[1] # Get page on pageNumber, first in row (this is only one now).
     page0.name = 'Page 1'
     page0.padding = PagePadding

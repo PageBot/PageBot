@@ -65,8 +65,8 @@ view.showElementOrigin = True
 view.showElementDimensions = False
 
 # Get list of pages with equal y, then equal x.    
-#page = doc[0][0] # Get the single page from te document.
-page = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
+#page = doc[1][0] # Get the single page from te document.
+page = doc.getPage(1) # Get page on pageNumber, first in row (this is only one now).
 page.name = 'This is a demo page for floating child elements'
     
 e1 = GlyphPath(font[glyphName], stroke=None, h=600,
