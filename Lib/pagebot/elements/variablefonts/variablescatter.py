@@ -19,7 +19,6 @@ from __future__ import division
 from random import random, choice
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-#from pagebot.fonttoolbox.variationbuilder import drawGlyphPath
 from pagebot.toolbox.transformer import pointOffset
 
 
@@ -99,7 +98,7 @@ class VariableScatter(Element):
                     location = self.getRandomLocation()
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
                 fillColor = self.style.get('textFill') or (0, 0, 0)
-                drawGlyphPath(self.font.ttFont, self.glyphNames[0],
+                c.drawGlyphPath(self.font.ttFont, self.glyphNames[0],
                               px, py, location, s=glyphPathScale,
                               fillColor=fillColor)
                 if self.recipeAxes:

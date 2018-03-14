@@ -20,7 +20,6 @@ from copy import copy
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
 from pagebot.toolbox.transformer import pointOffset
-#from pagebot.fonttoolbox.variablebuilder import drawGlyphPath
 
 class VariableCube(Element):
     # Initialize the default behavior tags as different from Element.
@@ -90,7 +89,7 @@ class VariableCube(Element):
                 self.location[axisY] = indexY * RANGE / sizeY
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
 
-                drawGlyphPath(c, self.font.ttFont, self.glyphNames[0],
+                c.drawGlyphPath(c, self.font.ttFont, self.glyphNames[0],
                               ppx, ppy, self.location, s=glyphPathScale,
                               fillColor=(0, 0, 0))
 
