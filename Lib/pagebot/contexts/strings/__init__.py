@@ -11,6 +11,3 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-from drawbotstring import DrawBotString
-from flatstring import FlatString
-from htmlstring import HtmlString

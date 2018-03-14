@@ -13,8 +13,6 @@
 #
 #     babelstring.py
 #
-from pagebot.fonttoolbox.objects.font import getFont
-from pagebot.contexts.platform import getFontPaths
 
 class BabelString(object):
     u"""BabelString is the base class of various types of (formatted) string representations 
@@ -47,8 +45,9 @@ class BabelString(object):
         >>> bs.getFont()
         <Font Verdana>
         """
-        fontPaths = getFontPaths()
-        fontPath = getFontPaths().get(self.fontName, self.fontName)
+        from pagebot.fonttoolbox.objects.font import getFont
+        from pagebot.contexts.platform import getFontPaths
+        fontPath = getFontPaths().get(self.font, self.font)
         return getFont(fontPath)
 
     def __add__(self, s):
