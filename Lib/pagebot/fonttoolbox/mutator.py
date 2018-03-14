@@ -222,7 +222,7 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=Fals
     return c.installFont(outFile), outFile
 
 
-def getVariableFont(fontOrPath, location, install=True, styleName=None, normalize=True):
+def getVarFontInstance(fontOrPath, location, install=True, styleName=None, normalize=True):
     u"""The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).

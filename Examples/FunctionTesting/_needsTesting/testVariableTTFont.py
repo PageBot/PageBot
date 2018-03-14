@@ -17,10 +17,14 @@
 #    if 'Skia' in fontName:
 #        print fontName
 
-from pagebot.fonttoolbox.objects.font import Font
-from pagebot.fonttoolbox.variablefontbuilder import getVariableFont, drawGlyphPath, getVarLocation
+from pagebot.contexts import defaultContext as context
+from pagebot.document import Document
+from pagebot.style import A4
+from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.elements import newText
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
-f = Font('/Library/Fonts/Skia.ttf')
+f = findFont('Skia')
 
 wghtMin, wghtDef, wghtMax = f.axes['wght']
 wdthMin, wdthDef, wdthMax = f.axes['wdth']
@@ -28,24 +32,31 @@ wdthMin, wdthDef, wdthMax = f.axes['wdth']
 #wghtMin, wghtDef, wghtMax = (-1, 0, 1)
 #wdthMin, wdthDef, wdthMax = (-1, 0, 1)
 
-print 'wght', wghtMin, wghtDef, wghtMax
-print 'wdth', wdthMin, wdthDef, wdthMax
+print('wght %s %s %s' % (wghtMin, wghtDef, wghtMax))
+print('wdth %s %s %s' % (wdthMin, wdthDef, wdthMax))
 
 
-NORMAL = getVariableFont(f, dict(wght=wghtDef, wdth=wdthDef), styleName='Normal', normalize=False)
-LIGHT = getVariableFont(f, dict(wght=wghtMin, wdth=wdthDef), styleName='Light', normalize=False)
-BOLD = getVariableFont(f, dict(wght=wghtMax, wdth=wdthDef), styleName='Bold', normalize=False)
-COND = getVariableFont(f, dict(wght=wghtDef, wdth=wdthMin), styleName='Cond', normalize=False)
-WIDE = getVariableFont(f, dict(wght=wghtDef, wdth=wdthMax), styleName='Wide', normalize=False)
+NORMAL = , textFill=0(f, dict(wght=wghtDef, wdth=wdthDef), styleName='Normal', normalize=False)
+LIGHT = getVarFontInstance(f, dict(wght=wghtMin, wdth=wdthDef), styleName='Light', normalize=False)
+BOLD = getVarFontInstance(f, dict(wght=wghtMax, wdth=wdthDef), styleName='Bold', normalize=False)
+COND = getVarFontInstance(f, dict(wght=wghtDef, wdth=wdthMin), styleName='Cond', normalize=False)
+WIDE = getVarFontInstance(f, dict(wght=wghtDef, wdth=wdthMax), styleName='Wide', normalize=False)
 
+W, H = A4
+doc = Document(w=W, h=H, autoPages=1)
+page = doc[1]
 
-fs = FormattedString('Q', fontSize=250, font=NORMAL.installedName)
-text(fs, (350, 400))
-fs = FormattedString('Q', fontSize=250, font=LIGHT.installedName)
-text(fs, (50, 400))
-fs = FormattedString('Q', fontSize=250, font=BOLD.installedName)
-text(fs, (650, 400))
-fs = FormattedString('Q', fontSize=250, font=COND.installedName)
-text(fs, (350, 700))
-fs = FormattedString('Q', fontSize=250, font=WIDE.installedName)
-text(fs, (350, 100))
+bs = context.newString('Q', style=dict(fontSize=250, font=NORMAL.path, textFill=0))
+newText(bs, x=350, y=400, parent=page)
+bs = context.newString('Q', style=dict(fontSize=250, font=LIGHT.path, textFill=0))
+newText(bs, x=50, y=400, parent=page)
+bs = context.newString('Q', style=dict(fontSize=250, font=BOLD.path, textFill=0))
+newText(bs, x=650, y=400, parent=page)
+bs = context.newString('Q', style=dict(fontSize=250, font=COND.path, textFill=0))
+newText(bs, x=350, y=700, parent=page)
+bs = context.newString('Q', style=dict(fontSize=250, font=WIDE.path, textFill=0))
+newText(bs, x=350, y=100, parent=page)
+
+doc.export('_export/TestVariableTTFont.pdf')
+
+print('Done')

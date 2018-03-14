@@ -21,7 +21,7 @@
 from math import radians
 from pagebot.contexts import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
-from pagebot.fonttoolbox.mutator import getVariableFont
+from pagebot.fonttoolbox.mutator import getVarFontInstance
 from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
 from pagebot.style import CENTER
 
@@ -41,11 +41,11 @@ print 'wght', wghtMin, wghtDef, wghtMax
 print 'wdth', wdthMin, wdthDef, wdthMax
 
 
-NORMAL = getVariableFont(f, dict(wght=wghtDef, wdth=wdthDef), styleName='Normal', normalize=True)
-LIGHT = getVariableFont(f, dict(wght=wghtMin, wdth=wdthDef), styleName='Light', normalize=True)
-BOLD = getVariableFont(f, dict(wght=wghtMax, wdth=wdthDef), styleName='Bold', normalize=True)
-COND = getVariableFont(f, dict(wght=wghtDef, wdth=wdthMin), styleName='Cond', normalize=True)
-WIDE = getVariableFont(f, dict(wght=wghtDef, wdth=wdthMax), styleName='Wide', normalize=True)
+NORMAL = getVarFontInstance(f, dict(wght=wghtDef, wdth=wdthDef), styleName='Normal', normalize=True)
+LIGHT = getVarFontInstance(f, dict(wght=wghtMin, wdth=wdthDef), styleName='Light', normalize=True)
+BOLD = getVarFontInstance(f, dict(wght=wghtMax, wdth=wdthDef), styleName='Bold', normalize=True)
+COND = getVarFontInstance(f, dict(wght=wghtDef, wdth=wdthMin), styleName='Cond', normalize=True)
+WIDE = getVarFontInstance(f, dict(wght=wghtDef, wdth=wdthMax), styleName='Wide', normalize=True)
 
 
 class FontIcon(object):
@@ -336,7 +336,7 @@ def drawAnimation():
         text(fs, (200, 480))
         
         location = dict(wght=wghtLoc, wdth=wdthLoc)
-        locFont = getVariableFont(f, location, styleName='Location', normalize=True)
+        locFont = getVarFontInstance(f, location, styleName='Location', normalize=True)
         print locFont.info.location
         #print getVarLocation(f, location, normalize=False)
         """

@@ -19,7 +19,7 @@ import pagebot
 from pagebot.contexts import defaultContext as context
 from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.fonttoolbox.objects.font import getFont
-from pagebot.fonttoolbox.variablefontbuilder import getVariableFont 
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance 
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
 
 

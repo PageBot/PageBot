@@ -25,7 +25,7 @@ from math import pi, sin, cos
 from pagebot.contexts import defaultContext as context
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements import Element
-from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
 class VariableCircle(Element):
     u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info.
@@ -86,7 +86,7 @@ class VariableCircle(Element):
         context.strokeWidth(strokeW)
         context.oval(mx-fontSize/2*self.R, my-fontSize/2*self.R, fontSize*self.R, fontSize*self.R)
 
-        variableFont = getVariableFont(self.font, location)
+        variableFont = getVarFontInstance(self.font, location)
         # Show axis name below circle marker?
         if self.showAxisNames and axisName is not None:
             bs = context.newString(axisName,

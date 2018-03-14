@@ -87,10 +87,10 @@ def getVariableAxisFonts(varFont, axisName,
     a Variable Font, or the axis does not exist in the font, then answer (varFont, varFont)."""
     if axisName in varFont.axes:
         minValue, _, maxValue = varFont.axes[axisName]
-        minInstance = getVariableFont(varFont, {axisName:minValue},
+        minInstance = getVarFontInstance(varFont, {axisName:minValue},
                                       normalize=normalize,
                                       cached=cached, lazy=lazy)
-        maxInstance = getVariableFont(varFont, {axisName:maxValue},
+        maxInstance = getVarFontInstance(varFont, {axisName:maxValue},
                                       normalize=normalize,
                                       cached=cached, lazy=lazy)
         return minInstance, maxInstance 
@@ -116,8 +116,8 @@ def fitVariableWidth(varFont, s, w, fontSize,
     # of the [wdth] axis to be user, instead of the default minValue and maxValue. E.g. for a range of widths
     # in a headline, the typographer may only want a small change before the line is wrapping, instead 
     # using the full spectrum to extreme condensed.
-    condensedFont = getVariableFont(varFont, condensedLocation, cached=cached, lazy=lazy)
-    wideFont = getVariableFont(varFont, wideLocation, cached=cached, lazy=lazy)
+    condensedFont = getVarFontInstance(varFont, condensedLocation, cached=cached, lazy=lazy)
+    wideFont = getVarFontInstance(varFont, wideLocation, cached=cached, lazy=lazy)
     # Calculate the widths of the string using these two instances.
     condensedFs = context.newString(s,
                                     style=dict(font=condensedFont.path,
@@ -153,7 +153,7 @@ def fitVariableWidth(varFont, s, w, fontSize,
         widthRange = wideLocation['wdth'] - condensedLocation['wdth'] 
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condensedWidth)/(wideWidth-condensedWidth)
-        font = getVariableFont(varFont, location, cached=cached, lazy=lazy)
+        font = getVarFontInstance(varFont, location, cached=cached, lazy=lazy)
         fs = context.newString(s,
                                style=dict(font=font.path,
                                           fontSize=fontSize,
@@ -186,31 +186,8 @@ def getConstrainedLocation(font, location):
         constrainedLocation[name] = value
     return constrainedLocation
 
-# DEPRECATED, remove usage.
-def XXXgetVarLocation(font, location, normalize=True):
-    u"""Translate the location dict (all values between (0, 1) or between (0, 1000)) 
-    to what the font expects by its min/max values for each axis.
-    Location axis tags that don't exits in the font are ignored.
-    Axis values in the font that don't exist in the location are used at their default values.
-    """
-    if location is None:
-        return {}
-    varLocation = {}
-    for axisTag, (minValue, defaultValue, maxValue) in font.axes.items():
-        if axisTag in location:
-            axisValue = location[axisTag]
-            if axisTag == 'opsz': # Exception, should come from overall axes-data dictionary.
-                varLocation[axisTag] = axisValue # Unchanged of opsz.
-            elif normalize:
-                if axisValue > 1: # Assume 1-1000 scale.
-                    axisValue /= 1000.0
-                varLocation[axisTag] = minValue + (maxValue - minValue) * (1-axisValue)
-            else: # Value already in right proportions, just copy.
-                varLocation[axisTag] = axisValue
-    return varLocation
-
-def getVariableFontInstance(fontOrPath, location, styleName=None, normalize=True, cached=True, lazy=True):
-    u"""The variablesFontPath refers to the file of the source variable font.
+def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cached=True, lazy=True):
+    u"""The getVarFontInstance refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
     Set normalize to False if the values in location already are matching the axis min/max of the font.
@@ -226,7 +203,11 @@ def getVariableFontInstance(fontOrPath, location, styleName=None, normalize=True
     path = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), 
                                       normalize=normalize, cached=cached, lazy=lazy)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
-    return getFont(path, opticalSize=location.get('opsz'), location=location, styleName=styleName, lazy=lazy)
+    instance = getFont(path, lazy=lazy)
+    instance.info.opticalSize = location.get('opsz')
+    instance.info.location = location
+    instance.info.styleName = styleName
+    return instance
 
 def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):
     u"""
