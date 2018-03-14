@@ -158,13 +158,10 @@ dx = 200
 x = 50
 r = 10
 
-<<<<<<< HEAD
-#PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
+# FIXME: use font from PageBot lib.
 PATH = u"/Users/michiel/Fonts/TypeNetwork/BIG-CASLON-ROMAN-TTF/BigCaslon-Roman.ttf"
-=======
-PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
-PATH = u"/Library/Fonts/BigCaslon.ttf"
->>>>>>> 52abcd14cb5142b7e0b5221824ba7dc0ca378d48
+#PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
+#PATH = u"/Library/Fonts/BigCaslon.ttf"
 font = Font(PATH)
 glyph = font[glyphName]
 path = BezierPath()
