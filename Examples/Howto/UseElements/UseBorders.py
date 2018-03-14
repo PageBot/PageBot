@@ -61,8 +61,8 @@ def makeDocument():
     doc.view.padding = 0 # Don't show cropmarks in this example.
 
     # Get list of pages with equal y, then equal x.    
-    #page = doc[0][0] # Get the single page from te document.
-    page = doc.getPage(0) # Get page on pageNumber, first in row (this is only one now).
+    #page = doc[1][0] # Get the single page from te document.
+    page = doc.getPage(1) # Get page on pageNumber, first in row (this is only one now).
     page.name = 'This demo page'
     
     page.w = W

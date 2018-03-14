@@ -71,8 +71,8 @@ def makeDocument():
     view.padding = 0 # Don't show cropmarks in this example.
 
     # Get list of pages with equal y, then equal x.    
-    #page = doc[0][0] # Get the single page from the document.
-    page0 = doc.getPage(0) # Get page by pageNumber, first in row (there is only one now in this row).
+    #page = [1][0] # Get the single page from the document.
+    page0 = doc.getPage(1) # Get page by pageNumber, first in row (there is only one now in this row).
     
     # Overwrite the default template by another template (in this case with different color).
     # Note that this way it is possible to mix different page sizes in one document.

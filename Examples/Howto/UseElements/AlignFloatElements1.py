@@ -43,7 +43,7 @@ def makeDocument(context):
 
     doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
 
-    page = doc[0] # Get the single page from te document.
+    page = doc[1] # Get the single page from te document.
 
     # Hard coded padding, just for simple demo,
     # instead of filling padding and columns in the root style.

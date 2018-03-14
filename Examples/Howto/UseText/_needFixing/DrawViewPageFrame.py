@@ -33,7 +33,7 @@ def makeDocument():
     # Initially make all pages default with template
     doc = Document(originTop=OriginTop, w=W, h=H, autoPages=1)
 
-    page = doc[0] # Get the first/single page of the document.
+    page = doc[1] # Get the first/single page of the document.
     page.size = W, H
     #print page.originTop
     if OriginTop:

@@ -146,7 +146,7 @@ class PageView(BaseView):
         >>> from pagebot.document import Document
         >>> w, h = 300, 400
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
-        >>> page = doc[0]
+        >>> page = doc[1]
         >>> view = doc.getView()
         >>> view.showGrid = True
         >>> view.drawPageMetaInfo(page, (0, 0)) 

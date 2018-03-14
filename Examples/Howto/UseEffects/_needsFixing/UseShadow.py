@@ -39,7 +39,7 @@ def makeDocument():
     #view.showPagePadding = True
     view.showPageCropMarks = True # Show crop marks
 
-    page = doc[0] # Get the first/single page of the document.
+    page = doc[1] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?
 
     # Make rect as page element centered with centered origin.

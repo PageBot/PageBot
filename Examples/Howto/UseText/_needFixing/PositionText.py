@@ -49,7 +49,7 @@ def makeDocument():
                    autoPages=1,
                    context=defaultContext)
 
-    page = doc[0] # Get the first/single page of the document.
+    page = doc[1] # Get the first/single page of the document.
     page.size = W, H
 
     view = doc.view
