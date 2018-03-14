@@ -3,7 +3,7 @@
 ## What is PageBot?
 
 PageBot is a page layout program, that enables designers to create high quality documents using code. 
-It is available both as Python library inside [DrawBot](https://www.drawbot.com) and as part of a collection of stand-alone desktop applications that can be created from it. 
+It is available both as Python library inside [DrawBot](http://www.drawbot.com) and as part of a collection of stand-alone desktop applications that can be created from it. 
 
 Initiated by [Type Network](https://typenetwork.com), our aim is to create a system for scriptable applications generating high quality typographic documents that support high quality fonts.
 
