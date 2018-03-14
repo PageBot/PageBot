@@ -21,7 +21,7 @@
 from pagebot.contexts.platform import getRootPath
 from pagebot.contexts import defaultContext as c
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
-from pagebot.fonttoolbox.variablefontbuilder import getVariableFont 
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance 
 from pagebot.style import CENTER
 
 W = H = 500
@@ -30,22 +30,22 @@ ROOT_PATH = getRootPath()
 FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
 f = Font(FONT_PATH, install=True) # Get PageBot Font instance of Variable font.
 
-ULTRALIGHT_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.9, wdth=0.7), styleName='Utrla Light Condensed')
-ULTRALIGHT = getVariableFont(FONT_PATH, dict(wght=1, wdth=0), styleName='Ultra Light')
-LIGHT_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.9, wdth=0.7), styleName='Light Condensed')
-LIGHT = getVariableFont(FONT_PATH, dict(wght=0.9, wdth=0), styleName='Light')
-THIN_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.8, wdth=0.7), styleName='Thin Condensed')
-THIN = getVariableFont(FONT_PATH, dict(wght=0.8, wdth=0), styleName='Thin')
-BOOK_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=0.7), styleName='Book Condensed')
-BOOK = getVariableFont(FONT_PATH, dict(wght=0.7, wdth=0), styleName='Book')
-REGULAR_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.6, wdth=0.7), styleName='Regular Condensed')
-REGULAR = getVariableFont(FONT_PATH, dict(wght=0.6, wdth=0), styleName='Regular')
-MEDIUM_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.5, wdth=0.7), styleName='Medium Condensed')
-MEDIUM = getVariableFont(FONT_PATH, dict(wght=0.5, wdth=0), styleName='Medium')
-SEMIBOLD_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.30, wdth=0.7), styleName='Semibold Condensed')
-SEMIBOLD = getVariableFont(FONT_PATH, dict(wght=0.30, wdth=0), styleName='Semibold')
-BOLD_CONDENSED = getVariableFont(FONT_PATH, dict(wght=0.0, wdth=0.7), styleName='Bold Condensed')
-BOLD = getVariableFont(FONT_PATH, dict(wght=0.0, wdth=0), styleName='Bold')
+ULTRALIGHT_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.9, wdth=0.7), styleName='Utrla Light Condensed')
+ULTRALIGHT = getVarFontInstance(FONT_PATH, dict(wght=1, wdth=0), styleName='Ultra Light')
+LIGHT_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.9, wdth=0.7), styleName='Light Condensed')
+LIGHT = getVarFontInstance(FONT_PATH, dict(wght=0.9, wdth=0), styleName='Light')
+THIN_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.8, wdth=0.7), styleName='Thin Condensed')
+THIN = getVarFontInstance(FONT_PATH, dict(wght=0.8, wdth=0), styleName='Thin')
+BOOK_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.7, wdth=0.7), styleName='Book Condensed')
+BOOK = getVarFontInstance(FONT_PATH, dict(wght=0.7, wdth=0), styleName='Book')
+REGULAR_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.6, wdth=0.7), styleName='Regular Condensed')
+REGULAR = getVarFontInstance(FONT_PATH, dict(wght=0.6, wdth=0), styleName='Regular')
+MEDIUM_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.5, wdth=0.7), styleName='Medium Condensed')
+MEDIUM = getVarFontInstance(FONT_PATH, dict(wght=0.5, wdth=0), styleName='Medium')
+SEMIBOLD_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.30, wdth=0.7), styleName='Semibold Condensed')
+SEMIBOLD = getVarFontInstance(FONT_PATH, dict(wght=0.30, wdth=0), styleName='Semibold')
+BOLD_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.0, wdth=0.7), styleName='Bold Condensed')
+BOLD = getVarFontInstance(FONT_PATH, dict(wght=0.0, wdth=0), styleName='Bold')
 
 LABEL_FONT = BOOK
 
