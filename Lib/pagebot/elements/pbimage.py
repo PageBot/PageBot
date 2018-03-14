@@ -160,6 +160,12 @@ class Image(Element):
         return os.path.exists(self.image.path)
     exists = property(_get_exists)
 
+    def addFilter(self, filter):
+        u"""Add the filter to the self.imo image object. Create the image object in case
+        it doest not exist yet."""
+        if self.image is not None:
+            self.image.addFilter(filter)
+
 class PixelMap(Element):
     u"""The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId."""
    
@@ -182,6 +188,15 @@ class PixelMap(Element):
         
     def __repr__(self):
         return '[%s eId:%s path:%s]' % (self.__class__.__name__, self.eId, self.path)
+
+    def addFilter(self, filters):
+        u"""Add the filter to the self.imo image object. Create the image object in case
+        it doest not exist yet. To be extended into a better API. More feedback needed
+        for what the DrawBot values in the filters do and what their ranges are."""
+        if self.imo is None and self.path is not None:
+            self.imo = self.context.getImageObject(self.path)
+            for filter, params in filters:
+                getattr(self.imo, filter)(**params)
 
     def setPath(self, path):
         u"""Set the path of the image. If the path exists, the get the real
@@ -269,7 +284,7 @@ class PixelMap(Element):
             print 'Cannot display pixelMap', self
             #self._drawMissingElementRect(page, px, py, self.w, self.h)
         else:
-            context.saveGraphicState()
+            context.save()
             sx = self.w / self.iw
             sy = self.h / self.ih
             context.scale(sx, sy)
@@ -301,13 +316,13 @@ class PixelMap(Element):
 
             if self.imo is not None:
                 with self.imo:
-                    b.image(self.path, (0, 0), pageNumber=0, alpha=self._getAlpha())
-                b.image(self.imo, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
+                    b.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha())
+                b.image(self.imo, (px/sx, py/sy), pageNumber=1, alpha=self._getAlpha())
             else:
                 # Store page element Id in this image, in case we want to make an image index later.
-                b.image(self.path, (px/sx, py/sy), pageNumber=0, alpha=self._getAlpha())
+                b.image(self.path, (px/sx, py/sy), pageNumber=1, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
-            context.restoreGraphicState()
+            context.restore()
 
         if drawElements:
             self.buildChildElements(view, p)

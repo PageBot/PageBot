@@ -21,6 +21,7 @@ from pagebot.elements.element import Element
 from pagebot.elements.pbtext import Text
 from pagebot.elements.pbtextbox import TextBox
 from pagebot.elements.pbrect import Rect
+from pagebot.elements.pbgroup import Group
 from pagebot.elements.pbline import Line
 from pagebot.elements.pbruler import Ruler
 from pagebot.elements.pbpolygon import Polygon
@@ -100,9 +101,19 @@ def newRect(point=None, **kwargs):
     u"""Draw the rectangle. Note that w and h can also be defined in the style. In case h is omitted,
     a square is drawn."""
     return Rect(point=point, **kwargs)
-           
+
 def newColRect(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newRect(**kwargs)
+    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+    return e
+            
+def newGroup(point=None, **kwargs):
+    u"""Create a new group. Note that w and h can also be defined in the style. In case h is omitted,
+    a square is drawn."""
+    return Group(point=point, **kwargs)
+        
+def newColGroup(cx=None, cy=None, cw=None, ch=None, **kwargs):
+    e = newGroup(**kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
     return e
             
