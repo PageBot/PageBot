@@ -138,7 +138,7 @@ class TextBox(Element):
         u"""Set the formatted string to s, using style or self.style. The bs as also be a number, in which
         case is gets converted into a string."""
         if isinstance(bs, (int, long, float)):
-            bs = `bs`
+            bs = str(bs)
         if isinstance(bs, basestring):
             bs = self.newString(bs, e=self, style=style)
         self.bs = bs
@@ -220,9 +220,8 @@ class TextBox(Element):
         u"""Answer the name and style that desctibes this run best. If there is a doc
         style, then answer that one with its name. Otherwise answer a new unique style name
         and the style dict with its parameters."""
-        print run.attrs
-        print '#++@+', run.style
-        return 'ZZZ', run.style
+        print(run.attrs)
+        return('ZZZ', run.style)
 
     def getStyledLines(self):
         u"""Answer the list with (styleName, style, textRun) tuples, reversed engeneered
@@ -371,7 +370,7 @@ class TextBox(Element):
         leadingStyle = dict(font='Verdana', fontSize=fontSize, textFill=(1, 0, 0))
 
         if view.showTextBoxY:
-            bs = self.newString(`0`, style=indexStyle)
+            bs = self.newString('0', style=indexStyle)
             _, th = c.textSize(bs)
             c.text(bs.s, (px + self.w + 3,  py + self.h - th/4))
 
@@ -382,7 +381,7 @@ class TextBox(Element):
             # TODO: Why measures not showing?
             c.line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
-                fs = self.newString(`textLine.lineIndex`, style=indexStyle)
+                fs = self.newString(str(textLine.lineIndex), style=indexStyle)
                 tw, th = c.textSize(fs) # Calculate right alignment
                 c.text(fs.s, (px-3-tw, py + y - th/4))
             if view.showTextBoxY:

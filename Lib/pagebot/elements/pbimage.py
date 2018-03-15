@@ -260,10 +260,10 @@ class PixelMap(Element):
         return alpha
 
     def build_html(self, view, origin=ORIGIN, drawElements=True):
-        print '[build_html] Not implemented yet'
+        print('[build_html] Not implemented yet')
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
-        print '[build_flat] Not implemented yet'
+        print('[build_flat] Not implemented yet')
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the image in the calculated scale. Since we need to use the image
@@ -281,7 +281,7 @@ class PixelMap(Element):
 
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
-            print 'Cannot display pixelMap', self
+            print('Cannot display pixelMap %s' % self)
             #self._drawMissingElementRect(page, px, py, self.w, self.h)
         else:
             context.save()
