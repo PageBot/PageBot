@@ -14,10 +14,10 @@
 #
 #     drawbotbuilder.py
 #
-from nonedrawbotbuilder import NoneDrawBotBuilder
+from pagebot.contexts.builders.nonedrawbotbuilder import NoneDrawBotBuilder
 
 try:
-    import drawBot # Test is drawBot is available on this platform
+    import drawBot # Test if drawBot is available on this platform
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will be calling e.build_html()
     drawBotBuilder.PB_ID = 'drawBot' 
@@ -25,9 +25,6 @@ try:
     #import CoreText, AppKit, Quartz # #pylint: disable=unused-import
 
 except (ImportError, AttributeError):
-    drawBotBuilder = None
-    print('Not using DrawBotBuilder')
-
-except:
     drawBotBuilder = NoneDrawBotBuilder()
     print('Using NoneDrawBotBuilder')
+

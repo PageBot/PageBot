@@ -24,7 +24,6 @@
 #
 import os
 from fontTools.ttLib import TTFont, TTLibError
-from pagebot.contexts.platform import getFontPaths
 from pagebot.toolbox.transformer import path2FontName, path2Extension
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
@@ -53,7 +52,7 @@ def isFontPath(fontPath):
     False
     """
     try:
-        return os.path.exists(fontPath) and path2Extension(fontPath) in ('ttf', 'otf') 
+        return os.path.exists(fontPath) and path2Extension(fontPath) in ('ttf', 'otf')
     except TypeError:
         return False
 
@@ -76,17 +75,6 @@ def getFont(fontPath, lazy=True):
         return Font(fontPath, lazy=lazy)
     except TTLibError: # Could not open font, due to bad font file.
         return None
-
-def findFont(fontPath, lazy=True):
-    u"""Answer the font the has name fontName.
-
-    >>> findFont('Roboto-Regular')
-    <Font Roboto-Regular>
-    """
-    fontPaths = getFontPaths()
-    if fontPath in fontPaths:
-        return getFont(fontPaths[fontPath])
-    return None
 
 class Font(object):
     u"""
@@ -116,10 +104,10 @@ class Font(object):
     FONTANALYZER_CLASS = FontAnalyzer
 
     def __init__(self, path, name=None, opticalSize=None, location=None, styleName=None, lazy=True):
-        u"""Initialize the TTFont, for which Font is a wrapper. 
+        u"""Initialize the TTFont, for which Font is a wrapper.
 
         self.name is supported, in case the caller wants to use a different"""
-        self.path = path # File path of the font file. 
+        self.path = path # File path of the font file.
 
         self.ttFont = TTFont(path, lazy=lazy)
         # TTFont is available as lazy style.info.font
@@ -136,7 +124,7 @@ class Font(object):
         self._glyphs = {} # Lazy creation of self[glyphName]
         self._analyzer = None # Lazy creation.
         self._variables = None # Lazy creations of delta's dictionary per glyph per axis
-    
+
     def __repr__(self):
         """
         >>> from pagebot.contexts.platform import getTestFontsPath
@@ -187,7 +175,7 @@ class Font(object):
         0
         >>> font.nameMatch(('Roboto', 'Black'))
         1.0
-        """       
+        """
         fontName = path2FontName(self.path)
         if not isinstance(pattern, (list, tuple)):
             pattern = [pattern]
@@ -210,7 +198,7 @@ class Font(object):
         0
         >>> font.weightMatch(800) # Bad match
         0
-        >>> font.weightMatch(900) # Exact match 
+        >>> font.weightMatch(900) # Exact match
         1.0
         >>> font.weightMatch(0) # Bad match -
         0
@@ -251,7 +239,7 @@ class Font(object):
         >>> font = getFont(path)
         >>> font.info.widthClass
         5
-        >>> font.widthMatch(0) # Bad match 
+        >>> font.widthMatch(0) # Bad match
         0
         >>> font.widthMatch(4) # Close match fails
         0
@@ -265,7 +253,7 @@ class Font(object):
         >>> font = Font(path)
         >>> font.info.widthClass
         5
-        >>> font.widthMatch(5) # Wrong exact match --> 1000 due to wrong font.info.widthClass 
+        >>> font.widthMatch(5) # Wrong exact match --> 1000 due to wrong font.info.widthClass
         1.0
         >>> font.widthMatch('Wide') # No match on "Wide"
         0
@@ -274,7 +262,7 @@ class Font(object):
         """
         if isinstance(width, (float, int)):
             # Compare the width as number as max difference to what we already have.
-            w = self.info.widthClass 
+            w = self.info.widthClass
             if w <= 100: # Normalize to 1000
                 w *= 100
             if w in FONT_WIDTH_MATCHES.get(width, []):
@@ -334,7 +322,7 @@ class Font(object):
         1.0
         >>> font.match(name='Robo', weight='Blackish', width=5, italic=False)
         0.75
-        """ 
+        """
         matches = []
         fontName = path2FontName(self.path)
         if name is not None:
@@ -367,7 +355,7 @@ class Font(object):
         return []
 
     def __contains__(self, glyphName):
-        u"""Allow direct testing. 
+        u"""Allow direct testing.
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
@@ -390,14 +378,14 @@ class Font(object):
         >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
         >>> f = getFont(path, lazy=False)
         >>> #f.analyzer.stems # TODO: Needs bezier path for pixel test.
-        
+
         """
         if self._analyzer is None:
             self._analyzer = self.FONTANALYZER_CLASS(self)
         return self._analyzer
     analyzer = property(_get_analyzer)
 
-    def _get_axes(self): 
+    def _get_axes(self):
         u"""Answer dictionary of axes if self.ttFont is a Variable Font. Otherwise answer an empty dictioary.
 
         >>> from pagebot.toolbox.transformer import *
@@ -419,7 +407,7 @@ class Font(object):
 
     def getDefaultVarLocation(self):
         u"""Answer the location dictionary with the default axes values.
-        
+
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getTestFontsPath
@@ -470,7 +458,7 @@ class Font(object):
     designSpace = property(_get_designSpace)
 
     def _get_variables(self):
-        u"""Answer the gvar-table (if it exists) translated into plain Python dictionaries 
+        u"""Answer the gvar-table (if it exists) translated into plain Python dictionaries
         of deltas per glyph and per axis if this is a Var-fonts. Otherwise answer an empty dictionary
 
         >>> from pagebot.contexts.platform import getTestFontsPath
@@ -493,7 +481,7 @@ class Font(object):
         if self._variables is None:
             try:
                 gvar = self.ttFont['gvar'] # Get the raw fonttools gvar table if it exists.
-                self._variables = {} 
+                self._variables = {}
                 for glyphName, tupleVariations in gvar.variations.items():
                     self._variables[glyphName] = axisDeltas = {}
                     for tupleVariation in tupleVariations:

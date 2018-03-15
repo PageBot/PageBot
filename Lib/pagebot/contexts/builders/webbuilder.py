@@ -13,7 +13,7 @@
 #
 #     webbuilder.py
 #
-from htmlbuilder import HtmlBuilder
+from pagebot.contexts.builders.htmlbuilder import HtmlBuilder
 
 class WebBuilder(HtmlBuilder):
     u"""Generic output builder container, used of collecting html, css, js, include paths and other data

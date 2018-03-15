@@ -25,7 +25,7 @@ from math import sin, radians
 from pagebot.contexts import defaultContext as c
 from pagebot.contexts.platform import getTestFontsPath
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.fonttoolbox.variablefontbuilder import getVariableFont
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
 FONT_PATH = getTestFontsPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
 f = Font(FONT_PATH, install=True) # Get PageBot Font instance of Variable font.
@@ -51,14 +51,14 @@ def fitVariableWidth(varFont, s, w,
       It one of the axes does not exist in the font, then use the default
        setting of the font.
     """
-    condFont = getVariableFont(varFont, condensedLocation)
+    condFont = getVarFontInstance(varFont, condensedLocation)
     condensedFs = c.newString(s, style=dict(font=condFont.installedName,
                                             fontSize=fontSize,
                                             tracking=tracking,
                                             rTracking=rTracking,
                                             textFill=0))
     condWidth, _ = c.textSize(condensedFs)
-    wideFont = getVariableFont(varFont, wideLocation)
+    wideFont = getVarFontInstance(varFont, wideLocation)
 
     wideFs = c.newString(s, style=dict(font=wideFont.installedName,
                                        fontSize=fontSize,
@@ -80,7 +80,7 @@ def fitVariableWidth(varFont, s, w,
         widthRange = wideLocation['wdth'] - condensedLocation['wdth'] 
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condWidth)/(wideWidth-condWidth)
-        font = getVariableFont(varFont, location)
+        font = getVarFontInstance(varFont, location)
         fs = c.newString(s, style=dict(font=font.installedName,
                                        fontSize=fontSize,
                                        tracking=tracking,

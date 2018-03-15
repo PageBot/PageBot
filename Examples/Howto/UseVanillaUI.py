@@ -13,16 +13,22 @@
 #
 #     UseVanillaUI.py
 #
+
+import sys
+from pagebot.contexts import defaultContext as context
+if not context.isDrawBot:
+    sys.exit('Example only runs on DrawBot.')
+
 import AppKit
-import vanilla
-from DrawBot.misc import DrawBotError
+from vanilla import FloatingWindow
+#from DrawBot.misc import DrawBotError
 
 class VariableController(object):
 
     def __init__(self, attributes, callback, document=None):
         self._callback = callback
         self._attributes = None
-        self.w = vanilla.FloatingWindow((250, 50))
+        self.w = FloatingWindow((250, 50))
         self.buildUI(attributes)
         self.w.open()
         if document:

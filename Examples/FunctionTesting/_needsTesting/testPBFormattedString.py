@@ -1,4 +1,5 @@
-from drawBot.context.baseContext import FormattedString
+
+from pagebot.contexts import defaultContext as context
 
 class PBFormattedString(FormattedString):
     def __init__(self, txt=None, style=None, **kwargs):
@@ -15,8 +16,7 @@ class PBFormattedString(FormattedString):
       
 fs = PBFormattedString('aaa', style=dict(fill=(1,0,0), font='Verdana', fontSize=62))
         
-print 3333, fs
+print(fs)
 
 text(fs, (100, 100))
-print fs.styles
-
+print(fs.styles)

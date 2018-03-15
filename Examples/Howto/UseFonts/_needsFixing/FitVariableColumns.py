@@ -23,13 +23,12 @@ from math import sin, radians
 
 from pagebot.contexts import defaultContext as c
 from pagebot.contexts.platform import getRootPath
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import getFont
 from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 
 ROOT_PATH = getRootPath()
 FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
-f = Font(FONT_PATH,
-         install=True) # Get PageBot Font instance of Variable font.
+f = getFont(FONT_PATH) # Get PageBot Font instance of Variable font.
 
 HEADLINE_SIZE = 36
 HEADLINE = """When fonts started a new world."""

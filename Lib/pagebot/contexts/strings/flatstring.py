@@ -117,7 +117,6 @@ class FlatString(BabelString):
             font = context.b.font.open(fontPath)
         except (ValueError, TypeError):
             fontPath = getFontPathOfFont(cls.DEFAULT_FONT)
-            print fontPath
             font = context.b.font.open(fontPath)
         strike = context.b.strike(font)
         strike.size(style.get('fontSize', cls.DEFAULT_FONTSIZE), 

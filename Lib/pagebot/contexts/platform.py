@@ -17,14 +17,14 @@ import os
 import pagebot
 from pagebot.toolbox.transformer import path2FontName, path2ParentPath
 
-#   P A T H S 
+#   P A T H S
 
 ROOT_PATH = path2ParentPath(pagebot.__file__)
 RESOURCES_PATH = ROOT_PATH + '/resources'
 TEST_FONTS_PATH = RESOURCES_PATH + '/testfonts'
 
 # Dictionary with all available font paths on the platform, key is the single file name.
-FONT_PATHS = {} 
+FONT_PATHS = {}
 
 def getRootPath():
     u"""Answer the root path on the platform for the PageBot module."""
@@ -39,7 +39,7 @@ def getTestFontsPath():
     return TEST_FONTS_PATH
 
 def getFontPathOfFont(fontName):
-    u"""Answer the path that is source of the given font name. 
+    u"""Answer the path that is source of the given font name.
     If the path is already a valid font path, then aswer it unchanged.
     Answer None if the font cannot be found.
 
@@ -55,6 +55,16 @@ def getFontPathOfFont(fontName):
         fontName = getFontPaths().get(fontName)
     return fontName
 
+def findFont(fontPath, lazy=True):
+    u"""Answer the font the has name fontName.
+
+    >>> findFont('Roboto-Regular')
+    <Font Roboto-Regular>
+    """
+    fontPaths = getFontPaths()
+    if fontPath in fontPaths:
+        return getFont(fontPaths[fontPath])
+    return None
 
 def _recursivelyCollectFontPaths(path, collectedFontPaths):
     u"""Recursive helper function for getFontPaths. If the fileName already exists in the fontPaths, then ignore."""
@@ -70,9 +80,9 @@ def _recursivelyCollectFontPaths(path, collectedFontPaths):
             if fontName is not None:
                 collectedFontPaths[fontName] = path
 
-def getFontPaths(extraPaths=None): 
+def getFontPaths(extraPaths=None):
     u"""Answer a dictionary with all available font paths on the platform, key is the single file name.
-    A typical example return for MaxOS the font paths available in directories (e.g. for user Petr): 
+    A typical example return for MaxOS the font paths available in directories (e.g. for user Petr):
         ('/Library/Fonts', '/Users/petr/Library/Fonts', '/Users/petr/git/PageBot/Fonts')
     In this order, "local" defined fonts with the same file name, will overwrite the "deeper" located font files.
 
@@ -83,10 +93,10 @@ def getFontPaths(extraPaths=None):
     >>> 'AmstelvarAlpha-VF' in fontPaths
     True
     >>> fontPaths = getFontPaths(TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf') # As single extra path
-    >>> 'AmstelvarAlpha-VF' in fontPaths 
+    >>> 'AmstelvarAlpha-VF' in fontPaths
     True
     >>> fontPaths = getFontPaths([TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf']) # As list of extra paths
-    >>> 'AmstelvarAlpha-VF' in fontPaths 
+    >>> 'AmstelvarAlpha-VF' in fontPaths
     True
     >>> fontPaths = getFontPaths(TEST_FONTS_PATH + '/OtherFont.ttf')
     >>> 'OtherFont' in fontPaths # Ignore if extra paths don't exists.

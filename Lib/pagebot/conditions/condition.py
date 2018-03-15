@@ -15,7 +15,7 @@
 #       
 class Condition(object):
     def __init__(self, value=1, tolerance=1, error=-10, verbose=False):
-    	self.value = value # Value to answer if the condition is valid
+        self.value = value # Value to answer if the condition is valid
         self.tolerance = tolerance
         self.error = error
         self.verbose = verbose
@@ -34,14 +34,14 @@ class Condition(object):
             score.fails.append((self, e))
 
     def evaluateAll(self, e, conditions, score):
-    	result = 0
-    	for conditionClass in conditions:
-    		conditionClass(self.value, self.tolerance, self.error, self.verbose).evaluate(e, score)
+        result = 0
+        for conditionClass in conditions:
+            conditionClass(self.value, self.tolerance, self.error, self.verbose).evaluate(e, score)
 
     def solveAll(self, e, conditions, score):
-    	result = 0
-    	for conditionClass in conditions:
-    		conditionClass(self.value, self.tolerance, self.error, self.verbose).solve(e, score)
+        result = 0
+        for conditionClass in conditions:
+            conditionClass(self.value, self.tolerance, self.error, self.verbose).solve(e, score)
 
     def __repr__(self):
-    	return self.__class__.__name__
+        return self.__class__.__name__

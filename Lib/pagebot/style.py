@@ -108,7 +108,7 @@ JapanBusinessCard = 91*MM, 55*MM
 # Actual location depends on value of e.originTop flag.
 ORIGIN_POINT = (0, 0, 0) 
 # Min/max values for element sizes. Make sure that elements dimensions never get 0
-XXXL = sys.maxint
+XXXL = sys.maxsize
 MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)
 MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL
@@ -161,24 +161,40 @@ FONT_SIZE_MATCHES = {
 }
 
 FONT_WEIGHT_MATCHES = { # Alternative names
-    'Hairline': ['Hariline', 'HairLine', 'Hair', 'Hl'] + range(0, 261), # Upgrade 260
-    'Thin': ['Thin', 'Thn', 'Thi'] + range(260, 275), # Upgrade 270 + range(275, 295), # Upgrade 280
-    'Ultralight':  ['Ultralight', 'ULight', 'ULght', 'ULt'] + range(275, 295), 
-    'Light': ['Light', 'Lght', 'Lig', 'Lt'] + range(295, 320), # Upgrade 300
-    'Semilight': ['Semilight', 'SLight', 'SLght', 'SLt'] + range(320, 350),
-    'Book': ['Book', 'Bk'] + range(350, 395), # Upgrade 390
-    'Regular': ['Regular', 'Standard', 'Normal', 'Reg', 'Roman', 'Lean', 'Rom'] + range(396, 450), # Upgrade 400
-    'Medium': ['Medium', 'Med', 'Md'] + range(450, 550), # Upgrade 500
-    'Semibold': ['Semibold', 'Demibold', 'Demibld', 'Sbd', 'Sembold', 'SBold', 'Sem', 'Demi', 'Dem'] + range(550, 650), # Upgrade 600
-    'Bold': ['Bold', 'Bol', 'Bd'] + range(650, 725), # Upgrade 700
-    'Extrabold': ['Extrabold', 'XBold', 'XBd'] + range(725, 755), # 750
-    'Heavy': ['Heavy', 'Hvy'] + range(755, 780), # 760
-    'Black': ['Black', 'Blck', 'Blk', 'Bla', 'Fat'] + range(780, 825), # Upgrade 800
-    'Extrablack': ['Extrablack', 'XBlack', 'XBlck', 'XBlk', ('Ex','Bla')] + range(825, 875), # Upgrade 850
-    'Ultrablack': ['Ultrablack', 'UBlack', 'UBlck', 'UBlk'] + range(857, 1000), # Upgrade 900
+    'Hairline': ('Hairline', 'HairLine', 'Hair', 'Hl'), 
+    'Thin': ('Thin', 'Thn', 'Thi'),
+    'Ultralight':  ('Ultralight', 'ULight', 'ULght', 'ULt'), 
+    'Light': ('Light', 'Lght', 'Lig', 'Lt'), 
+    'Semilight': ('Semilight', 'SLight', 'SLght', 'SLt'),
+    'Book': ('Book', 'Bk'), 
+    'Regular': ('Regular', 'Standard', 'Normal', 'Reg', 'Roman', 'Lean', 'Rom'), 
+    'Medium': ('Medium', 'Med', 'Md'),
+    'Semibold': ('Semibold', 'Demibold', 'Demibld', 'Sbd', 'Sembold', 'SBold', 'Sem', 'Demi', 'Dem'), 
+    'Bold': ('Bold', 'Bol', 'Bd'), 
+    'Extrabold': ('Extrabold', 'XBold', 'XBd'), 
+    'Heavy': ('Heavy', 'Hvy'), 
+    'Black': ('Black', 'Blck', 'Blk', 'Bla', 'Fat'), 
+    'Extrablack': ('Extrablack', 'XBlack', 'XBlck', 'XBlk'), 
+    'Ultrablack': ('Ultrablack', 'UBlack', 'UBlck', 'UBlk'),
 }
-
-FONT_WIDTH_MATCHES = {  
+FONT_WEIGHT_RANGES = { # Alternative values
+    'Hairline': range(0, 261), # Upgrade 260
+    'Thin': range(260, 275), # Upgrade 270 + list(range(275, 295)), # Upgrade 280
+    'Ultralight': range(275, 295), 
+    'Light': range(295, 320), # Upgrade 300
+    'Semilight': range(320, 350),
+    'Book': range(350, 395), # Upgrade 390
+    'Regular': range(396, 450), # Upgrade 400
+    'Medium': range(450, 550), # Upgrade 500
+    'Semibold': range(550, 650), # Upgrade 600
+    'Bold': range(650, 725), # Upgrade 700
+    'Extrabold': range(725, 755), # 750
+    'Heavy': range(755, 780), # 760
+    'Black': range(780, 825), # Upgrade 800
+    'Extrablack': range(825, 875), # Upgrade 850
+    'Ultrablack': range(857, 1000), # Upgrade 900
+}
+FONT_WIDTH_MATCHES = { # Match on exact alternative 
     'Skyline': ('Skyline', 'SkyLine', 1, 100),
     'Ultracompressed': ('Ultracompressed', 'UCompressed', 'Ucompressed', 'Ucomp', 'UComp', 120),
     'Extracompressed': ('Extracompressed', 'XCompressed', 'Xcompressed', 'Xcomp', 'XComp', 140),
@@ -193,16 +209,32 @@ FONT_WIDTH_MATCHES = {
     'Extraextended': ('Extraextended', 'Xextended', 'XExtended', 'XExp', 'XExt', 8, 800),
     'Ultraextended': ('Ultraextended', 'Uextended', 'UExtended', 'XExt', 'UExt', 9, 900),
 }
+FONT_WIDTH_RANGES = {  
+    'Skyline': range(11, 110), # 100, Reseve 1-10
+    'Ultracompressed': range(110, 130), # 120
+    'Extracompressed': range(130, 150), # 140
+    'Compressed': range(150, 220), # 200
+    'Ultracondensed': range(220, 270), # 250,
+    'Extracondensed': range(270, 350), # 300,
+    'Condensed': range(350, 420), # 400
+    'Narrow': range(420, 450), # 440,
+    'Normal':  range(450, 550), # 500
+    'Wide': range(550, 650), # 600
+    'Extended': range(650, 750), # 700
+    'Extraextended': range(750, 850), # 800
+    'Ultraextended': range(850, 999), # 900
+}
 
 FONT_ITALIC_MATCHES = {
     'Italic': ('Italic', 'Ita', 'It'),
 }
 # Expand for the number entries:
 for d in (FONT_SIZE_MATCHES, FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES):
-    for key, values in d.items():
+    for key, values in list(d.items()):
         for value in values:
             if isinstance(value, int):
                 d[value] = values
+# TODO: Add FONT_WEIGHT_RANGES and FONT_WIDTH_RANGES as keys
 
 STYLE_REPLACEMENTS = ( 
     # Pre-replacement in font names, to get standard non-CamelCase style names
@@ -221,6 +253,8 @@ STYLE_REPLACEMENTS = (
     ('Ultra_Black', 'Ultrablack'), 
     ('ExtrBlack', 'Extrablack'), 
     ('ExtBlack', 'Extrablack'),
+    ('ExBla', 'Extrablack'),
+    ('ExBlck', 'Extrablack'),
 
     # Width
     ('UltCnd', 'Ultracondensed'), 

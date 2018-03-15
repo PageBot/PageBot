@@ -51,7 +51,7 @@ class NoneDrawBotBuilder(object):
     restore = save = newPath = drawPath = newDrawing # Nethods without attributes
 
     BezierPath = NoneBezierPath
-    
+
     def scale(self, sx, sy):
         pass
 
@@ -68,7 +68,7 @@ class NoneDrawBotBuilder(object):
 
     def curveTo(self, bcp1, bcp2, p):
         pass
-        
+
     def openTypeFeatures(self, **openTypeFeatures):
         pass
 
@@ -85,7 +85,7 @@ class NoneDrawBotBuilder(object):
 
     def line(self, p1, p2):
         pass
-        
+
     def fill(self, *c):
         pass
 
@@ -131,7 +131,7 @@ class NoneDrawBotBuilder(object):
             def __init__(self, s):
                 self.s = s
         return FS(s)
-        
+
     def text(self, s, p):
         pass
 
@@ -152,7 +152,7 @@ class NoneDrawBotBuilder(object):
         Unless it is a path."""
         if os.path.exists(fontName):
             return fontName
-        return None 
+        return None
 
     def ImageObject(self, path):
         return NoneImageObject(path)
