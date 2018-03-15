@@ -464,9 +464,9 @@ if __name__ == "__main__":
         from random import randint
         for i in range(100):
             uni = randint(0, 0x10000)
-            print getUnicodeRange(uni)
+            print(getUnicodeRange(uni))
         for bit in range(123):
-            print bit, getUnicodeRangeByBit(bit)
+            print(bit, getUnicodeRangeByBit(bit))
     if 0:
         total = 0
         matches = 0
@@ -480,9 +480,9 @@ if __name__ == "__main__":
                 matches += 1
                 #print tag, unirngs
             total += 1
-        print "total number of script tags:", total
-        print "found a unicode range match:", matches
-        print "coverage: %.1f%%" % (100.0 * matches / total)
+        print("total number of script tags: %d" % total)
+        print("found a unicode range match: %d" % matches)
+        print("coverage: %.1f%%" % (100.0 * matches / total))
     if 0:
         def myTimeIt(number, func, *args, **kwargs):
             from time import time
@@ -493,7 +493,7 @@ if __name__ == "__main__":
             return time() - t
         unicodes = range(100000)
         n = 10
-        print myTimeIt(n, distributeUnicodes, unicodes)
-        print myTimeIt(n, _distributeUnicodes_ReferenceImplementation, unicodes)
-        print myTimeIt(n, getUnicodeRangeBits, unicodes)
-        print myTimeIt(n, _getUnicodeRangeBits_ReferenceImplementation, unicodes)
+        print(myTimeIt(n, distributeUnicodes, unicodes))
+        print(myTimeIt(n, _distributeUnicodes_ReferenceImplementation, unicodes))
+        print(myTimeIt(n, getUnicodeRangeBits, unicodes))
+        print(myTimeIt(n, _getUnicodeRangeBits_ReferenceImplementation, unicodes))

@@ -151,10 +151,6 @@ def insideCircle(dx, dy, r):
 
     return False
 
-def test(condition, error):
-    if not condition:
-        print '###', error
-
 def isOdd(v):
     u"""
     >>> isOdd(1)

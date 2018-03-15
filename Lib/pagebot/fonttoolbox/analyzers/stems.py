@@ -15,13 +15,13 @@
 #     stems.py
 #
 from pagebot.toolbox.mathematics import distance
-from apoint import APoint
-from apointcontext import APointContext
+from pagebot.fonttoolbox.analyzers.apoint import APoint
+from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 
 class Stem(object):
     u"""
-    <doc>The <code>Stem</code> class instant takes the CVT related to this stem, and the  left and point <code>Vertical
-    </code> instance that stem binds.</doc>
+    The <code>Stem</code> class instant takes the CVT related to this stem, and the  left and point <code>Vertical
+    </code> instance that stem binds.
     """
 
     def __init__(self, parent, point, glyphName=None, offset=None, name=None):
@@ -82,8 +82,8 @@ class Stem(object):
     # self.nearestPoint   
     def _get_nearestPoint(self):
         u"""
-        <doc>The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
-        to <code>self.parent</code>.</doc>
+        The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
+        to <code>self.parent</code>.
         """
         nearp = self.point.p
         d = abs(self.parent.y - nearp.y)
@@ -145,8 +145,8 @@ class Bar(Stem):
     
     def _get_nearestPoint(self):
         u"""
-        <doc>The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
-        to <code>self.parent</code>.</doc>
+        The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
+        to <code>self.parent</code>.
         """
         nearp = self.point.p
         d = abs(self.parent.p.x - nearp.x)
@@ -246,8 +246,8 @@ class DiagonalStem(Stem):
 
 class Serif(Stem):
     u"""
-    <doc>The <code>Serif</code> class holds the two point contexts (<code>self.parent</code> and <code>self.point</code>)
-    that span a continuous set of point contexts defining a serif.</doc>
+    The <code>Serif</code> class holds the two point contexts (<code>self.parent</code> and <code>self.point</code>)
+    that span a continuous set of point contexts defining a serif.
     """
 
     def _get_boundingBox(self):

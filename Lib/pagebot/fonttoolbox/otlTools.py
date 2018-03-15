@@ -1141,14 +1141,14 @@ class GposScaler(LookupTraverser):
 # Helpers for GlyphDeleter
 
 def _printPairPosFormat2Matrix(subTable):
-    print "value formats:", subTable.ValueFormat1, subTable.ValueFormat2
+    print("value formats: %s %s" % (subTable.ValueFormat1, subTable.ValueFormat2))
     for i, cls1 in enumerate(subTable.Class1Record):
-        print i, " ",
+        print(i)
         for j, cls2 in enumerate(cls1.Class2Record):
             if subTable.ValueFormat1 == 4:
-                print "%4d" % (cls2.Value1.XAdvance),
+                print("%4d" % (cls2.Value1.XAdvance))
             elif subTable.ValueFormat1 == 5:
-                print "(%4d,%4d)" % (cls2.Value1.XAdvance, cls2.Value1.XPlacement),
+                print("(%4d,%4d)" % (cls2.Value1.XAdvance, cls2.Value1.XPlacement))
             else:
                 raise NotImplementedError
         print
@@ -1549,12 +1549,12 @@ if __name__ == "__main__":
             if "Extension" in format:
                 continue
             if not hasattr(GlyphDeleter, "deleteGlyphs_" + format):
-                print "missing support for:", format
+                print("missing support for: %s" % format)
                 unsupported += 1
             else:
                 supported += 1
-        print "supported formats:", supported
-        print "unsupported formats:", unsupported
+        print("supported formats: %s" % supported)
+        print("unsupported formats: %s" % unsupported)
     if False:
         from fontTools.ttLib import TTFont
         from tnTestFonts import getFontPath
@@ -1566,4 +1566,4 @@ if __name__ == "__main__":
         from fontTools.ttLib import TTFont
         from tnTestFonts import getFontPath
         font = TTFont(getFontPath("MSGothic.ttf"))
-        print findAlternateGlyphsAndFeatures(font["GSUB"])
+        print(findAlternateGlyphsAndFeatures(font["GSUB"]))
