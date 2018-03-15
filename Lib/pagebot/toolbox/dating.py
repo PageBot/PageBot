@@ -195,7 +195,7 @@ class Duration:
         # Duration + Date = Date
         # Duration + Duration = Duration
         # Duration + 3 = Duration
-        if isinstance(value, (int, long)):
+        if isinstance(value, int):
             return self + Duration(days=value)
 
         if isinstance(value, Duration):
@@ -256,7 +256,7 @@ class Duration:
         # Duration - Date = Date
         # Duration - Duration = Duration
         # Duration - 3 = Duration
-        if isinstance(dt, (int, long, Duration)):
+        if isinstance(dt, (int, float, Duration)):
             return self + -dt
 
         if isinstance(dt, DateTime):
@@ -624,7 +624,7 @@ class DateTime:
         
         
         """
-        if isinstance(duration, (int, long, float)):
+        if isinstance(duration, (int, float)):
             duration = Duration(days=duration)
         assert isinstance(duration, Duration)
         return Duration.__add__(duration,self)
@@ -638,7 +638,7 @@ class DateTime:
         Date - 3 = Date
         
         """
-        if isinstance(durationordate, (int, long, float)):
+        if isinstance(durationordate, (int, float)):
             durationordate = Duration(days=durationordate)
         if isinstance(durationordate, Duration):
             # Date - Duration = Date

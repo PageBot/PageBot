@@ -435,7 +435,7 @@ class FlatContext(BaseContext):
         elif c is None:
             self.fillColor = None # No fill
             success = True
-        elif isinstance(c, (float, long, int)): # Grayscale
+        elif isinstance(c, (float, int)): # Grayscale
             self.fillColor = b.gray(iround(c))
             success = True
         elif isinstance(c, (list, tuple)):
@@ -476,7 +476,7 @@ class FlatContext(BaseContext):
         elif c is None:
             self.strokeColor = None # no stroke
             success = True
-        elif isinstance(c, (float, long, int)): # Grayscale
+        elif isinstance(c, (float, int)): # Grayscale
             self.strokeColor = b.gray(iround(c))
             success = True
         elif isinstance(c, (list, tuple)):

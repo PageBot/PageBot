@@ -300,7 +300,7 @@ class Element(object):
 
         >>> from pagebot.toolbox.transformer import hex2dec
         >>> e = Element(name='TestElement', x=100, y=200, w=100, h=120)
-        >>> isinstance(hex2dec(e.eId), (int, long)) # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
+        >>> isinstance(hex2dec(e.eId), int) # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
         True
         """
         return self._eId
@@ -1578,7 +1578,7 @@ class Element(object):
         u"""Internal method to create a dictionary with border info. If no valid border
         dictionary is defined, then use optional stroke and strokeWidth to create one.
         Otherwise answer *None*."""
-        if isinstance(borderData, (int, long, float)):
+        if isinstance(borderData, (int, float)):
             return dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
         if isinstance(borderData, dict):
             if not 'line' in borderData: # (ONLINE, INLINE, OUTLINE):
@@ -1775,7 +1775,7 @@ class Element(object):
         """
         return self.gw, self.gh
     def _set_gutter(self, gutter):
-        if isinstance(gutter, (long, int, float)):
+        if isinstance(gutter, (int, float)):
             gutter = [gutter]
         if len(gutter) == 1:
             gutter = (gutter[0], gutter[0])
@@ -1806,7 +1806,7 @@ class Element(object):
         """
         return self.gw, self.gh, self.gd
     def _set_gutter3D(self, gutter3D):
-        if isinstance(gutter3D, (long, int, float)):
+        if isinstance(gutter3D, (int, float)):
             gutter3D = [gutter3D]
         if len(gutter3D) == 1:
             gutter3D = (gutter3D[0], gutter3D[0], gutter3D[0])
@@ -2074,7 +2074,7 @@ class Element(object):
         return self.mt, self.mr, self.mb, self.ml
     def _set_margin(self, margin):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
-        if isinstance(margin, (long, int, float)):
+        if isinstance(margin, (int, float)):
             margin = [margin]
         if len(margin) == 1: # All same value
             margin = (margin[0], margin[0], margin[0], margin[0], margin[0], margin[0])
@@ -2825,7 +2825,7 @@ class Element(object):
         (100, 200, 300)
         """
         if minW and minH is None and minD is None:
-            if isinstance(minW, (int, float, long)):
+            if isinstance(minW, (int, float)):
                 self.minW = self.minH = self.minD = minW
             elif isinstance(minH, (tuple, list)):
                 if len(minH) == 1:
@@ -2872,7 +2872,7 @@ class Element(object):
 
     def setMaxSize(self, maxW, maxH=None, maxD=None):
         if maxW and maxH is None and maxD is None:
-            if isinstance(maxW, (int, float, long)):
+            if isinstance(maxW, (int, float)):
                 self.maxW = self.maxH = self.maxD = maxW
             elif isinstance(maxH, (tuple, list)):
                 if len(maxH) == 1:

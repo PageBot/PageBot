@@ -137,7 +137,7 @@ class TextBox(Element):
     def setText(self, bs, style=None):
         u"""Set the formatted string to s, using style or self.style. The bs as also be a number, in which
         case is gets converted into a string."""
-        if isinstance(bs, (int, long, float)):
+        if isinstance(bs, (int, float)):
             bs = str(bs)
         if isinstance(bs, basestring):
             bs = self.newString(bs, e=self, style=style)

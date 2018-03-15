@@ -221,11 +221,11 @@ class Document(object):
             for name, template in templates.items():
                 self.addTemplate(name, template)
         # Used as default document master template if undefined in pages.
-        if isinstance(defaultTemplate, basestring): # Make reference to existing template by name
+        if isinstance(defaultTemplate, str): # Make reference to existing template by name
             defaultTemplate = self.templates.get(defaultTemplate) # If it exists, otherwise it is None
         if defaultTemplate is None: # Only if we have one, overwrite existing default template if it was there.
             # Make sure there is at least a default template.
-            defaultTemplate = Template(w=self.w, h=self.h, name='default', padding=self.css('padding'))
+            defaultTemplate = Template(w=self.w, h=self.h, name='default', padding=self.padding)
         self.defaultTemplate = defaultTemplate
 
     def getTemplate(self, name=None):
@@ -499,7 +499,7 @@ class Document(object):
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
-        if isinstance(padding, (long, int, float)):
+        if isinstance(padding, (int, float)):
             padding = [padding]
         if len(padding) == 1: # All same value
             padding = (padding[0], padding[0], padding[0], padding[0], padding[0], padding[0])
@@ -787,7 +787,7 @@ class Document(object):
         Add the pages in the row of pn, if defined. Otherwise create a new row of pages at pn. 
         If pn is undefined, add a new page row at the end.
         If template is undefined, then use self.defaultTemplate to initialize the new page."""
-        if isinstance(template, basestring):
+        if isinstance(template, str):
             template = self.templates.get(template)
         if template is None:
             template = self.defaultTemplate
