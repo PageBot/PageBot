@@ -366,7 +366,7 @@ def getBestCmap(font, cmapPreferences=((3, 10), (3, 1), (0, 3))):
         >>> cmap = getBestCmap(font)
         >>> len(cmap)
         13641
-        >>> print hex(max(cmap))  # if result > 0xffff then it must have been a 3,10 cmap
+        >>> print(hex(max(cmap)))  # if result > 0xffff then it must have been a 3,10 cmap
         0x2f9f4
         >>> getBestCmap(font, cmapPreferences=[(123, 456)])
         Traceback (most recent call last):
@@ -377,7 +377,7 @@ def getBestCmap(font, cmapPreferences=((3, 10), (3, 1), (0, 3))):
     for platformID, platEncID in cmapPreferences:
         cmapSubtable = cmapTable.getcmap(platformID, platEncID)
         if cmapSubtable is not None:
-            #print platformID, platEncID
+            #print(platformID, platEncID)
             return cmapSubtable.cmap
     raise ValueError("None of the requested cmap subtables were found")
 
@@ -392,10 +392,10 @@ def setUnicodeRanges(font):
     if False:
         oldRangeBits = unicoderanges.unpackRangeBits(os2Table.ulUnicodeRange1, os2Table.ulUnicodeRange2,
                                                      os2Table.ulUnicodeRange3, os2Table.ulUnicodeRange4)
-        print sorted(oldRangeBits)
-        print sorted(rangeBits)
-        print "now but not before:", sorted(rangeBits - oldRangeBits)
-        print "before but not now:", sorted(oldRangeBits - rangeBits)
+        print(sorted(oldRangeBits))
+        print(sorted(rangeBits))
+        print("now but not before:", sorted(rangeBits - oldRangeBits))
+        print("before but not now:", sorted(oldRangeBits - rangeBits))
     (os2Table.ulUnicodeRange1, os2Table.ulUnicodeRange2,
      os2Table.ulUnicodeRange3, os2Table.ulUnicodeRange4) = unicoderanges.packRangeBits(rangeBits)
 
@@ -482,13 +482,13 @@ class _TestTraverser(TTFTraverser):
         return self.traverseTables("testIt")
 
     def testIt_maxp(self, table):
-        print "handling maxp"
+        print("_TestTraverser: handling maxp")
 
     def testIt_cvt(self, table):
-        print "handling cvt"
+        print("_TestTraverser: handling cvt")
 
     def testIt_OS2(self, table):
-        print "handling OS/2"
+        print("_TestTraverser: handling OS/2")
 
     def handleUnknownTable(self, tableTag):
         return [tableTag]
@@ -628,7 +628,7 @@ class FontSubsetter(TTFTraverser):
                 del table.AttachList.AttachPoint[index]
 
         if hasattr(table, "table.MarkGlyphSetsDef"):
-            print NotImplementedError
+            raise NotImplementedError("table.MarkGlyphSetsDef not in font")
 
     def subsetFont_JSTF(self, table, glyphsToDelete):
         raise NotImplementedError("JSTF table is not yet supported for subsetting")
@@ -858,7 +858,7 @@ class FontScaler(TTFTraverser):
 
     def scale_glyf(self, table, scaleFactor, scaleFunction):
         if False:
-            print "skipping glyf table for faster testing of the other tables"
+            print("scale_glyf: skipping glyf table for faster testing of the other tables")
             return
         for glyphName in table.keys():
             glyph = table[glyphName]
@@ -962,7 +962,7 @@ if __name__ == "__main__":
             compoParents = _findComponentParentGlyphs(font, glyphNameToDelete)
             if compoParents:
                 # can't delete this glyph, it is referenced elsewhere
-                print compoParents
+                print('Cannt delete glyph', compoParents)
             #otlTools.findAlternateGlyphs(font["GSUB"], [glyphNameToDelete])
             subsetFont(font, [glyphNameToDelete])
             # force post table to vers. 2 to keep glyph names for easier debugging
@@ -976,8 +976,8 @@ if __name__ == "__main__":
             unicodes = unicodes[:1800]
             glyphsToKeep = findGlyphsByUnicode(font, unicodes)
             glyphsToDelete = set(font.getGlyphOrder()) - glyphsToKeep
-            print "glyphs to keep:", len(glyphsToKeep)
-            print "glyphs to delete:", len(glyphsToDelete)
+            print("glyphs to keep: %d" % len(glyphsToKeep))
+            print("glyphs to delete: %d" % len(glyphsToDelete))
             subsetFont(font, glyphsToDelete)
         outPath = os.path.expanduser("~/Desktop/TestFont.ttf")
         font.verbose = 1

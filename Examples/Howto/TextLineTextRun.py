@@ -270,7 +270,7 @@ class TextLine(object):
 
     def findPattern(self, pattern):
         founds = []
-        if isinstance(pattern, basestring):
+        if isinstance(pattern, str):
             pattern = re.compile(pattern)
             #pattern = re.compile('([a-ZA-Z0-9\.\-\_]*])
         #print '3321123123', self.string

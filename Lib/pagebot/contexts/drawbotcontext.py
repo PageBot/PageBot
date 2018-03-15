@@ -37,7 +37,7 @@ except (ImportError, AttributeError):
     Variable = None
     #print('Using drawBotContext-->NoneDrawBotBuilder')
 
-from basecontext import BaseContext
+from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT
 
 
@@ -497,7 +497,7 @@ class DrawBotContext(BaseContext):
             b = self.b
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
+        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
             if cmyk:
                 b.cmykFill(c)
             else:
@@ -522,7 +522,7 @@ class DrawBotContext(BaseContext):
             b = self.b 
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
+        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
             if cmyk:
                 b.cmykStroke(c)
             else:
@@ -572,7 +572,7 @@ class DrawBotContext(BaseContext):
         http://www.drawbot.com/content/image/imageObject.html
 
         >>> from pagebot.contexts.platform import getResourcesPath
-        >>> from pabebot.contects.drawbotcontext import DrawBotContext
+        >>> from pabebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> path = getResourcesPath() + '/images/peppertom_lowres.png'
         >>> imo = context.getImageObject(path)

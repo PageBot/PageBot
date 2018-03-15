@@ -62,8 +62,9 @@ class OTFKernReader(object):
         self.allRightClasses = {}
 
         if kGPOStableName not in self.font:
-            print "The font has no %s table" % kGPOStableName
-            self.goodbye()
+            return False
+            #print("The font has no %s table" % kGPOStableName)
+            #self.goodbye()
 
         else:
             self.analyzeFont()
@@ -71,10 +72,11 @@ class OTFKernReader(object):
             self.getPairPos()
             self.getSinglePairs()
             self.getClassPairs()
+        return True
 
-    def goodbye(self):
-        print 'The fun ends here.'
-        return
+    #def goodbye(self):
+    #    print('The fun ends here.')
+    #    return
 
     def analyzeFont(self):
         self.gposTable = self.font[kGPOStableName].table
@@ -91,8 +93,9 @@ class OTFKernReader(object):
 
     def findKerningLookups(self):
         if not self.uniqueKernLookupIndexList:
-            print "The font has no %s feature." % kKernFeatureTag
-            self.goodbye()
+            #print "The font has no %s feature." % kKernFeatureTag
+            #self.goodbye()
+            return False
 
         'LookupList:'
         self.lookupList = self.gposTable.LookupList
@@ -118,14 +121,15 @@ class OTFKernReader(object):
             '''
 
             if lookup.LookupType not in [2, 9]:
-                print '''
+                print('''
                 Info: GPOS LookupType %s found.
                 This type is neither a pair adjustment positioning lookup (GPOS LookupType 2),
                 nor using an extension table (GPOS LookupType 9), which are the only ones supported.
-                ''' % lookup.LookupType
+                ''' % lookup.LookupType)
                 continue
             self.lookups.append(lookup)
 
+        return True
 
     def getPairPos(self):
         for lookup in self.lookups:
@@ -136,7 +140,7 @@ class OTFKernReader(object):
 
                 elif subtableItem.LookupType == 9:  # extension table
                     if subtableItem.ExtensionLookupType == 8:  # contextual
-                        print 'Contextual Kerning not (yet?) supported.'
+                        print('Contextual Kerning not (yet?) supported.')
                         continue
                     elif subtableItem.ExtensionLookupType == 2:
                         pairPos = subtableItem.ExtSubTable
@@ -144,13 +148,13 @@ class OTFKernReader(object):
 
                 # if pairPos.Coverage.Format not in [1, 2]:  # previous fontTools
                 if pairPos.Format not in [1, 2]:
-                    print "WARNING: Coverage format %d is not yet supported." % pairPos.Coverage.Format
+                    print("WARNING: Coverage format %d is not yet supported." % pairPos.Coverage.Format)
 
                 if pairPos.ValueFormat1 not in [0, 4, 5]:
-                    print "WARNING: ValueFormat1 format %d is not yet supported." % pairPos.ValueFormat1
+                    print("WARNING: ValueFormat1 format %d is not yet supported." % pairPos.ValueFormat1)
 
                 if pairPos.ValueFormat2 not in [0]:
-                    print "WARNING: ValueFormat2 format %d is not yet supported." % pairPos.ValueFormat2
+                    print("WARNING: ValueFormat2 format %d is not yet supported." % pairPos.ValueFormat2)
 
 
                 self.pairPosList.append(pairPos)
@@ -184,7 +188,7 @@ class OTFKernReader(object):
                         elif valueFormat == 4:  # LTR kerning
                             kernValue = pairValueRecordItem.Value1.XAdvance
                         else:
-                            print "\tValueFormat1 = %d" % valueFormat
+                            print("\tValueFormat1 = %d" % valueFormat)
                             continue  # skip the rest
 
                         self.kerningPairs[(firstGlyphsList[pairSetIndex], secondGlyph)] = kernValue
@@ -255,7 +259,7 @@ class OTFKernReader(object):
                                 # valueFormat zero is caused by a value of <0 0 0 0> on a class-class pair; skip these
                                 continue
                             else:
-                                print "\tValueFormat1 = %d" % valueFormat
+                                print("\tValueFormat1 = %d" % valueFormat)
                                 continue  # skip the rest
 
                             if kernValue != 0:
@@ -277,7 +281,7 @@ class OTFKernReader(object):
                                             self.kerningPairs[(l, r)] = kernValue
 
                         else:
-                            print 'ERROR'
+                            print('getClassPairs: ERROR')
 
 
 if __name__ == "__main__":
@@ -295,14 +299,13 @@ if __name__ == "__main__":
             finalList.sort()
 
             output = '\n'.join(finalList)
-            print output
+            print(output)
 
-            print '\nTotal number of kerning pairs:'
-            print len(f.kerningPairs)
+            print('\nTotal number of kerning pairs: %d' % len(f.kerningPairs))
             # for i in sorted(f.allLeftClasses):
             #     print i, f.allLeftClasses[i]
 
         else:
-            print 'That is not a valid font.'
+            print('That is not a valid font.')
     else:
-        print 'Please provide a font.'
+        print('Please provide a font.')

@@ -23,9 +23,9 @@ import weakref
 #from AppKit import NSBezierPath
 
 from pagebot.toolbox.transformer import asInt
-from apointcontextlist import Vertical, Horizontal
-from stems import Stem, Bar, Counter, VerticalCounter
-from apointcontext import APointContext
+from pagebot.fonttoolbox.analyzers.apointcontextlist import Vertical, Horizontal
+from pagebot.fonttoolbox.analyzers.stems import Stem, Bar, Counter, VerticalCounter
+from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 
 SPANSTEP = 4
 

@@ -32,6 +32,15 @@ CUBIC_OFFCURVE = None
 IMPLIED_ONCURVE = None
 G =10
 
+class Point(object):
+
+    def __init__(self, x, y, onCurve=True, smooth=False, start=False):
+        self.x = x
+        self.y = y
+        self.onCurve = onCurve
+        self.smooth = smooth
+        self.start = start
+
 def drawSegment(segment, implied, cps, verbose=False):
     u"""
     Draws a quadratic segment as a cubic Bézier curve in drawBot. Each segment
@@ -77,7 +86,7 @@ def drawSegment(segment, implied, cps, verbose=False):
         line((onCurve0.x, onCurve0.y), offCurve0)
         line(offCurve1, onCurve)
         stroke(None)
-        
+
         # Store these so they can be used in the infographic.
         cps.append(offCurve0)
         cps.append(offCurve1)
@@ -97,7 +106,7 @@ def drawSegment(segment, implied, cps, verbose=False):
 
         # Store these so they can be used in the infographic.
         implied.append(newOnCurve)
-        
+
         circle(x, y, r/2, color='pink')
         curve0.append(newOnCurve)
         curve1.insert(0, newOnCurve)
@@ -149,8 +158,10 @@ dx = 200
 x = 50
 r = 10
 
-PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
-PATH = u"/Library/Fonts/BigCaslon.ttf"
+# FIXME: use font from PageBot lib.
+PATH = u"/Users/michiel/Fonts/TypeNetwork/BIG-CASLON-ROMAN-TTF/BigCaslon-Roman.ttf"
+#PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
+#PATH = u"/Library/Fonts/BigCaslon.ttf"
 font = Font(PATH)
 glyph = font[glyphName]
 path = BezierPath()
@@ -160,6 +171,7 @@ coordinates = glyph.ttGlyph.coordinates
 
 # Move glyph up so we can see results below descender level.
 translate(0, 200)
+scale(0.5)
 
 # Converts coordinates to PageBot Points and assigns points
 # to contours.
@@ -252,7 +264,7 @@ if ONCURVE:
     p = (ONCURVE.x + d, ONCURVE.y + d)
     line(p, p1)
     stroke(None)
-    text('On-curve point', p)        
+    text('On-curve point', p)
     y -= 20
 
 if QUADRATIC_OFFCURVE:
@@ -263,7 +275,7 @@ if QUADRATIC_OFFCURVE:
     line(p, p1)
     stroke(None)
     text('Quadratic control point', p)
-    
+
 if CUBIC_OFFCURVE:
 
 

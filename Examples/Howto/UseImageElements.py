@@ -80,7 +80,8 @@ def makeDocument():
                    conditions=(Top2Top(),
                                Fit2Width(),
                                SolveBlock(),
-                               Shrink2BlockBottom()),
+                               #Shrink2BlockBottom()
+                               ),
                    yAlign=BOTTOM,
                    fill=(0, 1, 0, 0.3),
                    stroke=(1, 0, 0))

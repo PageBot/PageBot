@@ -13,7 +13,7 @@
 #
 #     vertical.py
 #
-from apointcontext import APointContext
+from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 
 class APointContextList(list):
     u"""The PointContextList us a group of related PointContext instances that can be
