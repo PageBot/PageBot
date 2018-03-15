@@ -497,7 +497,7 @@ class DrawBotContext(BaseContext):
             b = self.b
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
+        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
             if cmyk:
                 b.cmykFill(c)
             else:
@@ -522,7 +522,7 @@ class DrawBotContext(BaseContext):
             b = self.b 
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, long, int)): # Because None is a valid value.
+        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
             if cmyk:
                 b.cmykStroke(c)
             else:

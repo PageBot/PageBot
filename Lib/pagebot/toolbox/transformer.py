@@ -82,7 +82,7 @@ def pointOffset(point, offset):
     """
     if not offset:
         offset = 0
-    if isinstance(offset, (int, float, long)):
+    if isinstance(offset, (int, float)):
         offset = (offset, offset, offset)
     if not len(point) == 3:
         point = point3D(point)
@@ -245,7 +245,7 @@ def color2Hex(c):
     >>> color2Hex((0, 0, 0))
     '#000000'
     """
-    if isinstance(c, (int, long, float)):
+    if isinstance(c, (int, float)):
         if c > 1:
             return '#%06x' % c
         c = (c, c, c)
@@ -264,7 +264,7 @@ def color2HexOpacity(c):
     >>> color2HexOpacity((0.2, 0.3, 0.4, 0.1))
     ('#334c66', 0.1)
     """
-    if isinstance(c, (int, long, float)):
+    if isinstance(c, (int, float)):
         c = (c, c, c)
     if len(c) == 4: # Includes opacity
         return color2Hex(c), c[-1] # 0..1
@@ -356,17 +356,17 @@ def asFloatOrNone(value):
 def asId(v, default=0):
     u"""
     The *asId* method transforms the *value* attribute either to an instance of @
-    long@ or to @None@, so it can be used as *id* field in a @Record@
+    int@ or to @None@, so it can be used as *id* field in a @Record@
     instance. If the value cannot be converted, then the optional *default* (default value is @0
     @) is answered.
 
-    >>> asId(123) == 123L
+    >>> asId(123) == 123
     True
     >>> asId('abcd', 'ABCD')
     'ABCD'
     """
     try:
-        v = long(v)
+        v = int(v)
         if v <= 0:
             return default
         return v
@@ -483,7 +483,7 @@ def stringList2StrippedList(strings):
 def filterValue2Int(s):
     u"""Filter all numeric characters from the string and answer the resulting integer.
     Answer 0 if no digits are found. If s is already a number, then answer it as rounded int."""
-    if isinstance(s, (int, float, long)):
+    if isinstance(s, (int, float)):
         return int(round(s))
     digits = '0'
     for c in s:
@@ -525,7 +525,7 @@ def asDict(value, isRoot=True):
     if isinstance(value, dict):
         for key, v in value.items():
             d[key] = asDict(v, False)
-    elif isinstance(value, (int, float, long, basestring)):
+    elif isinstance(value, (int, float, str)):
         if isRoot:
             d = dict(value=value)
         else:
@@ -617,7 +617,7 @@ def value2IdCommaString(value):
         value = str(value).split(',')
     for item in value:
         if isInt(item):
-            t.append('%s' % item) # Avoid longs show up as 1234L
+            t.append('%s' % item) 
     return ', '.join(t)
 
 def idCommaString2IdSet(s):
@@ -896,12 +896,12 @@ def uniqueID(obj=None):
     u"""Answer unique Id as hex string, based on time and id(obj) if defined.
 
     >>> id = int('0x' + uniqueID(), base=16)
-    >>> isinstance(id, (long, int))
+    >>> isinstance(id, int)
     True
     """
     if obj is not None:
-        return '%X%X' % (long(time()) * 100, id(obj))
-    return '%x' % (long(time()) * 100000 + randint(0, 100000))
+        return '%X%X' % (int(time()) * 100, id(obj))
+    return '%x' % (int(time()) * 100000 + randint(0, 100000))
 
 # ---------------------------------------------------------------------------------------------------------
 #   T I M E
@@ -1193,12 +1193,6 @@ def xmlValue2PyValue(value, conversions):
         except ValueError:
             pass
 
-    if long in conversions:
-        try:
-            return long(strippedvalue)
-        except ValueError:
-            pass
-
     if float in conversions:
         try:
             return float(strippedvalue)
@@ -1252,7 +1246,7 @@ def xmlAttrString2PyAttr(s, conversions):
 def xmlAttr2PyAttr(par_dict, conversions):
     """Transforms an XML attribute dictionary to a Python attribute
     dictionary. The *class* attribute name is translated into *class_* and
-    all values are tested to convert into either @int@, @long@, @float@ or
+    all values are tested to convert into either @int@, @float@ or
     boolean as represented by one of @'TRUE'@, @True@, @true@, @FALSE@,
     @False@, @false@. If the conversion fails, then pass the value
     unchanged. If there the attribute name is of format

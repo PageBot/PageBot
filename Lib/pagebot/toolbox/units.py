@@ -106,7 +106,7 @@ class Unit(object):
     def __add__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v + self._v)
-        if isinstance(u, (int, float, long)):
+        if isinstance(u, (int, float)):
             return self.__class__(u + self._v)
         assert u.absolute == self.absolute, "Cannot add relative and absolute values"
         return self.__class__(u.pt + self.pt) # Supports mm(2) + pt(4) + inch(3)
@@ -114,7 +114,7 @@ class Unit(object):
     def __sub__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v - self._v)
-        if isinstance(u, (int, float, long)):
+        if isinstance(u, (int, float)):
             return self.__class__(u - self._v)
         assert u.absolute == self.absolute, "Cannot subtract relative and absolute values"
         return self.__class__(pt=u.pt - self.pt)
@@ -122,7 +122,7 @@ class Unit(object):
     def __div__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v / self._v)
-        if isinstance(u, (int, float, long)):
+        if isinstance(u, (int, float)):
             return self.__class__(u / self._v)
         assert u.absolute == self.absolute, "Cannot divide relative and absolute values"
         return self.__class__(pt=u.pt / self.pt)
@@ -130,7 +130,7 @@ class Unit(object):
     def __mul__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v * self._v)
-        if isinstance(u, (int, float, long)):
+        if isinstance(u, (int, float)):
             return self.__class__(u * self._v)
         assert u.absolute == self.absolute, "Cannot multiply relative and absolute values"
         return self.__class__(u=u.pt * self.pt)
@@ -173,7 +173,7 @@ class em(RelativeUnit):
 
 class perc(RelativeUnit):
     def __repr__(self):
-        if isinstance(self._v, (int, long)):
+        if isinstance(self._v, int):
             return '%d%%' % self._v
         return '%0.2f%%' % self._v
 
