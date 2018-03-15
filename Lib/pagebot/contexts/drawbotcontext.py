@@ -37,7 +37,7 @@ except (ImportError, AttributeError):
     Variable = None
     #print('Using drawBotContext-->NoneDrawBotBuilder')
 
-from basecontext import BaseContext
+from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT
 
 

@@ -21,7 +21,7 @@
 #
 import math
 from pagebot.toolbox.mathematics import *
-from apoint import APoint
+from pagebot.fonttoolbox.analyzers.apoint import APoint
 
 def calculateAngle(p1, p2, inDegrees=True):
     u"""Calculate the angle between points p1 and p2. Points can be either 2D or 3D 
@@ -58,8 +58,7 @@ class APointContext(object):
     def __init__(self, points, index=None, contourIndex=None, clockwise=None, glyphName=None):
         u"""Points list is supposed to contain Point instances, not point lists.
         We need the extra storage, e.g. for point type that Point holds."""
-        if len(points) != 7:
-            print points
+        assert len(points) == 7
         self.p_3, self.p_2, self.p_1, self.p, self.p1, self.p2, self.p3 = points
         self.contourIndex = contourIndex
         self.index = index
@@ -160,8 +159,8 @@ class APointContext(object):
 
     def isHorizontalExtreme(self, tolerance=0):
         u"""
-        <doc>The <code>isHorizontalExtreme</code> method answers the boolean flag if the point context is an extreme
-        (such as the side of an O).</doc>
+        The <code>isHorizontalExtreme</code> method answers the boolean flag if the point context is an extreme
+        (such as the side of an O).
         """
         # Is the point context a vertical and extreme in x-direction?
         # @@@ Also test on non-inflection point.
@@ -318,7 +317,7 @@ class APointContext(object):
 
     def inHorizontalWindow(self, pc):
         u"""
-        <doc>The <code>inHorizontalWindow</code> method checks if there is any overlap in X-direction to make
+        The <code>inHorizontalWindow</code> method checks if there is any overlap in X-direction to make
         the vertical comparison optically define as a "stem".
         
         True    self.miny-------------self.maxy

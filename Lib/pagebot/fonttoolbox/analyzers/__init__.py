@@ -11,10 +11,10 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 
-from glyphanalyzer import GlyphAnalyzer
-from fontanalyzer import FontAnalyzer
+from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
+from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 # Analyzer point and pointContect classes.
-from asegment import ASegment
-from acontour import AContour
-from apoint import APoint
-from apointcontext import APointContext
+from pagebot.fonttoolbox.analyzers.asegment import ASegment
+from pagebot.fonttoolbox.analyzers.acontour import AContour
+from pagebot.fonttoolbox.analyzers.apoint import APoint
+from pagebot.fonttoolbox.analyzers.apointcontext import APointContext

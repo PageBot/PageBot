@@ -378,7 +378,7 @@ class TextRun(object):
         self.string = u''    
         # Hack for now to find the string in repr-string if self._ctLine.
         # TODO: Make a better conversion here, not relying on the format of the repr-string.
-        for index, part in enumerate(`ctRun`.split('"')[1].split('\\u')):
+        for index, part in enumerate(str(ctRun).split('"')[1].split('\\u')):
             if index == 0:
                 self.string += part
             elif len(part) >= 4:
@@ -577,7 +577,8 @@ class TextLine(object):
     def __getitem__(self, index):
         return self.runs[index]
         
-    def getIndexForPosition(self, (x, y)):
+    def getIndexForPosition(self, xy):
+        x, y = xy
         return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
     
     def getOffsetForStringIndex(self, i):

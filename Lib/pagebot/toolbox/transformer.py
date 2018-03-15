@@ -541,7 +541,7 @@ def asDict(value, isRoot=True):
     elif hasattr(value, 'asDict'):
         d = value.asDict()
     else:
-        d = dict(value=`value`)
+        d = dict(value=str(value))
     return d
 
 # ---------------------------------------------------------------------------------------------------------
@@ -557,13 +557,13 @@ def value2Fixed(value):
 
 def float2Fixed(value):
     u"""
-    <doc>The @float2Fixed@ method translates a float into a 1/64 pixel unit-value.</doc>
+    The float2Fixed method translates a float into a 1/64 pixel unit-value.
     """
     return int(round(value * 64))
 
 def fixed2Float(value):
     u"""
-    <doc>The @fixed2Float@ method translates a fixed 1/64 pixel-unit value to float.</doc>
+    The fixed2Float method translates a fixed 1/64 pixel-unit value to float.
     """
     return float(value) / 64
 
@@ -679,7 +679,6 @@ def obj2StyleId(s):
     return ' '.join(styleId)
 
 def obj2StyleIds(s):
-    print s
     return obj2StyleId(s).split(' ')
 
 # ---------------------------------------------------------------------------------------------------------
@@ -804,8 +803,8 @@ def path2HintPath(path):
 
 def path2FontId(path):
     u"""
-    <doc>Answers the font ID for the font associated with this path. If the path does not exist, or if the font name
-    is invalid, then answer None.<doc>
+    Answers the font ID for the font associated with this path. If the path does not exist, or if the font name
+    is invalid, then answer None.
     """
     if path is not None:
         name = path2Name(path)
@@ -1113,7 +1112,7 @@ def reverseDict(d):
                 duplicateValues.append(v)
             usedValues.append(v)
 
-        print 'Warning: duplicate values found', duplicateValues
+        print('Warning: duplicate values found %s' % duplicateValues)
 
     newDict = {}
     keys = d.keys()
@@ -1281,8 +1280,8 @@ def value2TagName(value):
     The @value2TagName@ class method converts the *value* object into a value XML tag name.
     """
     tagname = []
-    if not isinstance(value, basestring):
-        value = `value`
+    if not isinstance(value, str):
+        value = str(value)
     if value.lower().startswith('xml'):
         tagname.append('_')
     for c in value:
