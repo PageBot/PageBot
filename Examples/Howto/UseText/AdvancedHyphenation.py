@@ -15,7 +15,9 @@
 ## Works with this version of DrawBot:
 ## https://github.com/thomgb/drawbot
 ## download my DrawBot: https://www.dropbox.com/s/xsu1mz89ipo5x3y/DrawBot.dmg?dl=0
+from pagebot.document import Document
 from pagebot.contexts import defaultContext as context
+from pagebot.elements import *
 from pagebot.contributions.filibuster.blurb import Blurb
 
 #text = Blurb().getBlurb('article_ankeiler', noTags=True)
@@ -29,17 +31,27 @@ t = context.newString(text,
 w=554 # change width to see other hyphenations
 
 W = 1000
-H = 2000
-context.newPage(W, H)
+H = 1000
 
-context.hyphenation(True)
-context.textBox(t, (100,600,w,400))
-context.fill(None)
-context.stroke(0)
-context.rect(100,600,w,600)
+doc = Document(w=W, h=H, autoPages=1)
+page = doc[1]
 
-context.hyphenation(False)
-context.textBox(t, (100,100,w,400))
-context.fill(None)
-context.stroke(0)
-context.rect(100,100,w,600)
+t = context.newString(text,
+                style=dict(fontSize=30,
+                           hyphenationHead=4,
+                           hyphenation=True,
+                           hyphenationTail=3))
+
+newTextBox(t, x=100, y=600, w=w, h=400, parent=page, border=1, fill=(1, 0, 0))
+
+t = context.newString(text,
+                style=dict(fontSize=30,
+                           hyphenationHead=4,
+                           hyphenation=False,
+                           hyphenationTail=3))
+
+newTextBox(t, x=100, y=100, w=w, h=400, parent=page, border=1, fill=(1, 0, 0))
+
+doc.export('_export/AdvancedHyphenation.pdf')
+
+print('Done')
