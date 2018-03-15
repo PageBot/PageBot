@@ -119,16 +119,15 @@ class Duration:
     All common arithmetic applies to a Duration instance. 
     
     >>> Duration(3)
-    
+    Duration(0m,3d,0s,0us)
     >>> Duration(seconds=10)
-    
-    >>> Duration(td=timedelta)
-    
-    
+    Duration(0m,0d,10s,0us)  
     >>> d = Duration(3)
-    >>> d * 3 # is a duration of 6 days.
-    
-    
+    >>> d * 3 # is a duration of 9 days.
+    Duration(0m,9d,0s,0us)
+    >>> d + 2 # is a duration of 6 days    
+    Duration(0m,6d,0s,0us)
+
     """
 
     #hack months and larger onto datetime.timedleta, which only goes up to weeks
@@ -160,7 +159,7 @@ class Duration:
         return self.days
 
     def __str__(self):
-        return `self`
+        return str(self)
 
     def __repr__(self):
         #repr must return ascii, so no µ for you!
@@ -278,25 +277,19 @@ class Duration:
         return self / item
 
     def min(self):
-        u"""
-        
-        Most negative timedelta object that can be represented.
-        
+        u"""Most negative timedelta object that can be represented.
+
         """
         return datetime.timedelta.min
 
     def max(self):
-        u"""
-        
-        Most positivie timedelta object that can be represented.
+        u"""Most positivie timedelta object that can be represented.
         
         """
         return datetime.timedelta.max
 
     def resolution(self):
-        u"""
-        
-        Smallest resolvable difference that a timedelta object can represent.
+        u"""Smallest resolvable difference that a timedelta object can represent.
         
         """
         return datetime.timedelta.resolution
@@ -339,31 +332,24 @@ class DateTime:
     >>> d2 = DateTime(year=2018, month=3, day=14)
     >>> d1 + Duration(123)
     2018-06-13 00:00:00
-    >>> d1 - Duration(days=2)
-    2018-02-08 00:00:00
+    >>> #d1 - Duration(days=2)
+    2018-06-11 00:00:00
     >>> p = Duration(seconds=10) * 6 / 2 # Calculate with durations, 30 seconds
     >>> p
     Duration(0m,0d,30s,0us)
-    >>> -p
-    Duration(0m,0d,-30s,0us)
+    >>> #d1 + Duration(days=10)
+    2018-06-23 00:00:00
+    >>> d1.weekday, d1.dayname, d1.month, d1.monthname
+    (5, 'Sat', 2, 'Feb')
+    >>> d1.nextworkday, d1.nextworkday.dayname
+    (2018-02-12 00:00:00, 'Mon')
+    >>> d1 + 6 # 6 days later
+    
+
 
     """
     """
-    if __name__ == "__main__":
-    #d1 = DateTime(date='now')
-    #d2 = DateTime(year=2008, month=2, day=10)
-    >>> d1 + Duration(123)
-    >>> d1.assecond()
-    >>> d1 - Duration(days=2)
-    p = Duration(seconds=10) * 6 / 2
-    >>> 'Duration', p,
-    >>> 'Negated duration', -p
-    >>> 'Duration 1 day longer', p + 1
-    print 'Duration 2 minutes longer', p + Duration(minutes=2)
-    d1 = DateTime(date='now')
-    d2 = d1 + Duration(seconds=10)
 
-    print d1.weekday, d1.dayname
     print d1.month, d1.monthname
     print d1.week, d2.week
     print 'Next working day', d1.nextworkday
@@ -566,7 +552,7 @@ class DateTime:
         dt.date + ' ' + dt.time.
         
         """
-        return `self`
+        return str(self)
 
     def __repr__(self):
         u"""

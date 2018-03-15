@@ -108,7 +108,7 @@ JapanBusinessCard = 91*MM, 55*MM
 # Actual location depends on value of e.originTop flag.
 ORIGIN_POINT = (0, 0, 0) 
 # Min/max values for element sizes. Make sure that elements dimensions never get 0
-XXXL = 2**32 #sys.maxint
+XXXL = sys.maxsize
 MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)
 MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL

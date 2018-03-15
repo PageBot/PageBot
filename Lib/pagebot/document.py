@@ -694,7 +694,7 @@ class Document(object):
                 pn = startPage
             self[pn] = page
         else:
-            raise TypeError, ('Cannot add element "%s" to document. Only "e.isPage == True" are supported.' % page)
+            raise TypeError('Cannot add element "%s" to document. Only "e.isPage == True" are supported.' % page)
     
     appendElement = appendPage
 

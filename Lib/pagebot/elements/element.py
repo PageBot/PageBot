@@ -2266,7 +2266,7 @@ class Element(object):
     def _set_padding(self, padding):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565]
         assert padding is not None
-        if isinstance(padding, (long, int, float)):
+        if isinstance(padding, (int, float)):
             padding = [padding]
         if len(padding) == 1: # All same value
             padding = (padding[0], padding[0], padding[0], padding[0], padding[0], padding[0])
