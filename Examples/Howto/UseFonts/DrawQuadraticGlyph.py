@@ -171,6 +171,7 @@ coordinates = glyph.ttGlyph.coordinates
 
 # Move glyph up so we can see results below descender level.
 translate(0, 200)
+scale(0.5)
 
 # Converts coordinates to PageBot Points and assigns points
 # to contours.
