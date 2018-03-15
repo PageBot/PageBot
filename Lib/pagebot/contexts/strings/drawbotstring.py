@@ -33,13 +33,13 @@ DEFAULT_SIZE = 16
 def pixelBounds(fs):
     u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
     Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
-    @bh is the amount of pixels above the baseline. 
+    @bh is the amount of pixels above the baseline.
     For the total height of the pixel-map, calculate @ph - @py.
     For the total width of the pixel-map, calculate @pw - @px."""
     p = BezierPath()
     p.text(fs, (0, 0))
     # OSX answers bw and bh as difference with bx and by. That is not really intuitive, as the
-    # the total (width, height) then always needs to be calculated by the caller. 
+    # the total (width, height) then always needs to be calculated by the caller.
     # So, instead, the width and height answered is the complete bounding box, and the (x, y)
     # is the position of the bounding box, compared to the (0, 0) of the string origin.
     bx, by, bw, bh = p.bounds()
@@ -53,7 +53,7 @@ class NoneDrawBotString(object):
         self.s = s
 
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True, 
+    def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
             fontSize=None, styleName=None, tagName=None):
         return cls(s)
 
@@ -65,7 +65,7 @@ class DrawBotString(BabelString):
     def __init__(self, s, context, style=None):
         u"""Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
         Optionally store the (latest) style that was used to produce the formatted string.
-    
+
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.isDrawBot
@@ -75,7 +75,7 @@ class DrawBotString(BabelString):
         ABC
         """
         self.context = context # Store context, in case we need more of its functions.
-        self.s = s # Store the DrawBot FormattedString, as property to make sure it is a FormattedString, 
+        self.s = s # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
         # otherwise create it.
         # In case defined, store current status here as property and set the current FormattedString
         # for future additions. Also the answered metrics will not be based on these values.
@@ -85,7 +85,7 @@ class DrawBotString(BabelString):
         u"""Answer the embedded FormattedString by property, to enforce checking type of the string."""
         return self._s
     def _set_s(self, s):
-        u""" Check on the type of s. Three types are supported here: plain strings, 
+        u""" Check on the type of s. Three types are supported here: plain strings,
         DrawBot FormattedString and the class of self."""
         assert isinstance(s, (DrawBotString, basestring)) or s.__class__.__name__ == 'FormattedString'
         if isinstance(s, basestring):
@@ -125,13 +125,13 @@ class DrawBotString(BabelString):
     def bounds(self):
         u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
         Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
-        @bh is the amount of pixels above the baseline. 
+        @bh is the amount of pixels above the baseline.
         For the total height of the pixel-map, calculate @ph - @py.
         For the total width of the pixel-map, calculate @pw - @px."""
         return pixelBounds(self.s)
 
     def fontContainsCharacters(self, characters):
-        u"""Return a bool if the current font contains the provided characters. 
+        u"""Return a bool if the current font contains the provided characters.
         Characters is a string containing one or more characters."""
         return self.s.fontContainsCharacters(characters)
 
@@ -169,7 +169,7 @@ class DrawBotString(BabelString):
     fontLeading = leading # Compatibility with DrawBot API
 
     def lineHeight(self):
-        u"""Returns the current line height, based on the current font and fontSize. 
+        u"""Returns the current line height, based on the current font and fontSize.
         If a lineHeight is set, this value will be returned."""
         return self.s.fontLineHeight()
     fontLineHeight = lineHeight # Compatibility with DrawBot API
@@ -184,15 +184,15 @@ class DrawBotString(BabelString):
     @classmethod
     def _newFitWidthString(cls, fs, context, e, style, w, pixelFit):
         if pixelFit:
-            tx, _, tw, _ = pixelBounds(fs) 
+            tx, _, tw, _ = pixelBounds(fs)
         else:
             tx, tw = 0, fs.size()[0]
         style = copy(style)
         style['fontSize'] = 1.0 * w / (tw-tx) * css('fontSize', styles=style, default=DEFAULT_SIZE)
-        # Recursively call this method again, without w and with the calculated real size of the string 
+        # Recursively call this method again, without w and with the calculated real size of the string
         # to fit the width.
         # Note that this assumes a linear relation between size and width, which may not always be the case
-        # with [opsz] optical size axes of Variable Fonts. 
+        # with [opsz] optical size axes of Variable Fonts.
         return cls.newString(fs, context, e, style, pixelFit=pixelFit)
 
     @classmethod
@@ -203,10 +203,10 @@ class DrawBotString(BabelString):
             ty, th = 0, newt.size()[1]
         style = copy(style)
         style['fontSize'] = 1.0 * h / (th-ty) * css('fontSize', style)
-        # Recursivley call this method again, without h and with the calculated real size of the string 
+        # Recursivley call this method again, without h and with the calculated real size of the string
         # to fit the width.
         # Note that this assumes a linear relation between size and width, which may not always be the case
-        # with [opsz] optical size axes of Variable Fonts. 
+        # with [opsz] optical size axes of Variable Fonts.
         return cls.newString(fs, context, e, style, pixelFit=pixelFit)
 
     @classmethod
@@ -276,8 +276,8 @@ class DrawBotString(BabelString):
         if sTextAlign is not None: # yTextAlign must be solved by parent container element.
             fs.align(sTextAlign)
         sUnderline = css('underline', e, style)
-        if sUnderline in ('single', None): # Only these values work in FormattedString
-            fs.underline(sUnderline)
+        #if sUnderline in ('single', None): # Only these values work in FormattedString
+        #    fs.underline(sUnderline)
         sParagraphTopSpacing = css('paragraphTopSpacing', e, style)
         rParagraphTopSpacing = css('rParagraphTopSpacing', e, style)
         if sParagraphTopSpacing or (rParagraphTopSpacing and sFontSize):
@@ -333,13 +333,13 @@ class DrawBotString(BabelString):
             s = s.capitalize()
 
         newt = fs + t # Format plain string t onto new formatted fs.
-        if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction. 
-            # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
+        if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction.
+            # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much
             # more consistent for tracked text. context.textSize will add space to the right of the string.
             newS = cls._newFitWidthString(newt, context, e, style, w, pixelFit)
 
-        elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction. 
-            # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much 
+        elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction.
+            # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much
             # more consistent for tracked text. context.textSize will add space to the right of the string.
             newS = cls._newFitHeightString(newt, context, e, style, h, pixelFit)
         else:
@@ -356,9 +356,9 @@ class FoundPattern(object):
         self.h = h
         self.line = line # TextLine instance that this was found in
         self.run = run # List of  of this strin,g
-    
+
     def __repr__(self):
-        return '[Found "%s" @ %d,%d]' % (self.s, self.x, self.y) 
+        return '[Found "%s" @ %d,%d]' % (self.s, self.x, self.y)
 
 class TextRun(object):
     def __init__(self, ctRun, runIndex):
@@ -366,7 +366,7 @@ class TextRun(object):
         self._ctRun = ctRun
         self._style = None # Property cash for constructed style from run parameters.
         self.glyphCount = gc = CoreText.CTRunGetGlyphCount(ctRun)
-        # Reverse the style from 
+        # Reverse the style from
         attrs = CoreText.CTRunGetAttributes(ctRun)
         self.nsFont = attrs['NSFont']
         #self.fontDescriptor = f.fontDescriptor()
@@ -375,7 +375,7 @@ class TextRun(object):
         self.attrs = attrs # Save, in case the caller want to query run parameters.
 
         self.iStart, self.iEnd = CoreText.CTRunGetStringRange(ctRun)
-        self.string = u''    
+        self.string = u''
         # Hack for now to find the string in repr-string if self._ctLine.
         # TODO: Make a better conversion here, not relying on the format of the repr-string.
         for index, part in enumerate(`ctRun`.split('"')[1].split('\\u')):
@@ -407,7 +407,7 @@ class TextRun(object):
         return self.glyphCount
 
     def __repr__(self):
-        return '[TextRun #%d "%s"]' % (self.runIndex, self.string) 
+        return '[TextRun #%d "%s"]' % (self.runIndex, self.string)
 
     def __getitem__(self, index):
         return self.string[index]
@@ -458,22 +458,22 @@ class TextRun(object):
         return self.nsFont.renderingMode()
     renderingMode = property(_get_renderingMode)
 
-    #   Font metrics, based on self.nsFont. This can be different from 
+    #   Font metrics, based on self.nsFont. This can be different from
     #   self.fontAswcencender and self.fontDescender, etc. which are
     #   based on the current setting in the FormattedString
 
     def _get_ascender(self):
         return self.nsFont.ascender()
     ascender = property(_get_ascender)
-    
+
     def _get_descender(self):
         return self.nsFont.descender()
     descender = property(_get_descender)
-    
+
     def _get_capHeight(self):
         return self.nsFont.capHeight()
     capHeight = property(_get_capHeight)
-    
+
     def _get_xHeight(self):
         return self.nsFont.xHeight()
     xHeight = property(_get_xHeight)
@@ -489,7 +489,7 @@ class TextRun(object):
     def _get_leading(self):
         return self.nsFont.leading()
     leading = property(_get_leading)
-    
+
     def _get_fontMatrix(self):
         return self.nsFont.matrix()
     fontMatrix = property(_get_fontMatrix)
@@ -552,7 +552,7 @@ class TextRun(object):
         return self.nsParagraphStyle.minimumLineHeight()
     minimumLineHeight = property(_get_minimumLineHeight)
 
-        
+
 class TextLine(object):
     def __init__(self, ctLine, p, lineIndex):
         self._ctLine = ctLine
@@ -560,7 +560,7 @@ class TextLine(object):
         self.lineIndex = lineIndex # Vertical line index in TextBox.
         self.glyphCount = CoreText.CTLineGetGlyphCount(ctLine)
 
-        self.string = '' 
+        self.string = ''
         self.runs = []
         #print ctLine
         for runIndex, ctRun in enumerate(CoreText.CTLineGetGlyphRuns(ctLine)):
@@ -576,40 +576,40 @@ class TextLine(object):
 
     def __getitem__(self, index):
         return self.runs[index]
-        
+
     def getIndexForPosition(self, (x, y)):
         return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
-    
+
     def getOffsetForStringIndex(self, i):
         u"""Answer the z position that is closest to glyph string index i. If i is out of bounds,
         then answer the closest x position (left and right side of the string)."""
         return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
-                
+
     def _get_stringIndex(self):
         return CoreText.CTLineGetStringRange(self._ctLine).location
     stringIndex = property(_get_stringIndex)
- 
+
     def getGlyphIndex2Run(self, glyphIndex):
         for run in self.runs:
             if run.iStart >= glyphIndex:
                 return run
         return None
-        
+
     #def _get_alignment(self):
     #    return CoreText.CTTextAlignment(self._ctLine)
     #alignment = property(_get_alignment)
-            
+
     def _get_imageBounds(self):
         u"""Property that answers the bounding box (actual black shape) of the text line."""
         (x, y), (w, h) = CoreText.CTLineGetImageBounds(self._ctLine, None)
         return x, y, w, h
     imageBounds = property(_get_imageBounds)
-    
+
     def _get_bounds(self):
         u"""Property that returns the EM bounding box of the line."""
         return CoreText.CTLineGetTypographicBounds(self._ctLine, None, None, None)
     bounds = property(_get_bounds)
-    
+
     def _get_trailingWhiteSpace(self):
         return CoreText.CTLineGetTrailingWhitespaceWidth(self._ctLine)
     trailingWhiteSpace = property(_get_trailingWhiteSpace)
@@ -693,14 +693,14 @@ def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
 
 def findPattern(textLines, pattern):
     u"""Answer the point locations where this pattern occures in the Formatted String."""
-    foundPatterns = [] # List of FoundPattern instances. 
+    foundPatterns = [] # List of FoundPattern instances.
     for lineIndex, textLine in enumerate(textLines):
         for foundPattern in textLine.findPattern(pattern):
             foundPattern.y = textLine.y
             foundPattern.z = 0
             foundPatterns.append(foundPattern)
     return foundPatterns
-            
+
 
 if __name__ == '__main__':
     import doctest
