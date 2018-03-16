@@ -62,9 +62,9 @@ class OTFKernReader(object):
         self.allRightClasses = {}
 
         if kGPOStableName not in self.font:
-            return False
             #print("The font has no %s table" % kGPOStableName)
             #self.goodbye()
+            pass
 
         else:
             self.analyzeFont()
@@ -72,7 +72,6 @@ class OTFKernReader(object):
             self.getPairPos()
             self.getSinglePairs()
             self.getClassPairs()
-        return True
 
     #def goodbye(self):
     #    print('The fun ends here.')

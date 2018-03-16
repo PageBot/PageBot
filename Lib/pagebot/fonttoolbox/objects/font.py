@@ -24,10 +24,12 @@
 #
 import os
 from fontTools.ttLib import TTFont, TTLibError
+from pagebot.contexts.platform import getFontPaths
 from pagebot.toolbox.transformer import path2FontName, path2Extension
-from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
+from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
+
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 from pagebot.style import FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES
 
@@ -75,6 +77,17 @@ def getFont(fontPath, lazy=True):
         return Font(fontPath, lazy=lazy)
     except TTLibError: # Could not open font, due to bad font file.
         return None
+
+def findFont(fontPath, lazy=True):
+    u"""Answer the font the has name fontName.
+
+    >>> findFont('Roboto-Regular')
+    <Font Roboto-Regular>
+    """
+    fontPaths = getFontPaths()
+    if fontPath in fontPaths:
+        return getFont(fontPaths[fontPath])
+    return None
 
 class Font(object):
     u"""

@@ -55,17 +55,6 @@ def getFontPathOfFont(fontName):
         fontName = getFontPaths().get(fontName)
     return fontName
 
-def findFont(fontPath, lazy=True):
-    u"""Answer the font the has name fontName.
-
-    >>> findFont('Roboto-Regular')
-    <Font Roboto-Regular>
-    """
-    fontPaths = getFontPaths()
-    if fontPath in fontPaths:
-        return getFont(fontPaths[fontPath])
-    return None
-
 def _recursivelyCollectFontPaths(path, collectedFontPaths):
     u"""Recursive helper function for getFontPaths. If the fileName already exists in the fontPaths, then ignore."""
     if os.path.exists(path):

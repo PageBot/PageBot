@@ -22,7 +22,7 @@ from pagebot.style import css, LEFT
 class FlatString(BabelString):
 
     BABEL_STRING_TYPE = 'flat'
-    DEFAULT_FONT = 'AmstelvarAlpha-VF.ttf' # Part of PageBot, we can assume it is there.
+    DEFAULT_FONT = getFontPathOfFont('Roboto-Regular') # Part of PageBot, we can assume it is there.
     DEFAULT_FONTSIZE = 12
     DEFAULT_LEADING = 0
 
@@ -117,7 +117,8 @@ class FlatString(BabelString):
             font = context.b.font.open(fontPath)
         except (ValueError, TypeError):
             fontPath = getFontPathOfFont(cls.DEFAULT_FONT)
-            font = context.b.font.open(fontPath)
+            if fontPath is not None:
+                font = context.b.font.open(fontPath)
         strike = context.b.strike(font)
         strike.size(style.get('fontSize', cls.DEFAULT_FONTSIZE), 
             style.get('leading', cls.DEFAULT_LEADING), units='pt')
