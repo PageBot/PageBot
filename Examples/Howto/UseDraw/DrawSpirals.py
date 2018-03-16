@@ -14,7 +14,7 @@
 #     drawSpirals.py
 #
 from __future__ import division # Make integer division result in float.
-from pagebot.contexts import defaultContext as c
+from pagebot.contexts.platform import defaultContext as c
 #import pagebot # Import to know the path of non-Python resources.
 
 X = 0

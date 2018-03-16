@@ -16,7 +16,7 @@
 #     It is possible to measure on the content of FormattedString instances.
 #     These show examples how to do that.
 #
-from pagebot.contexts import defaultContext as c
+from pagebot.contexts.platform import defaultContext as c
 
 def run():
 	W, H = 1000, 400

@@ -15,7 +15,7 @@
 #
 #     Needs filling in with content.
 #
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 from random import random # Used for random color palet.
 
 # Create random title and names

@@ -16,7 +16,7 @@
 #     Show the values that the GlyphAnalyzer get derive from font and glyph outline.
 #   
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.contexts import defaultContext as c
+from pagebot.contexts.platform import defaultContext as c
 
 font = Font('/Library/Fonts/Georgia.ttf')
 print font.analyzer 

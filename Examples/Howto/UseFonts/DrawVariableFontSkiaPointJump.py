@@ -19,7 +19,7 @@
 #     which may make them incompatible with this particular example.
 #    
 from math import radians
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
 from pagebot.fonttoolbox.mutator import getVarFontInstance
 from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath

@@ -115,7 +115,7 @@ class Glyph(object):
     def _initialize(self):
         u"""Initializes the cached data, such as self.points, self.contour,
         self.components and self.path, as side effect of drawing the path image."""
-        from pagebot.contexts import defaultContext as context
+        from pagebot.contexts.platform import defaultContext as context
 
         self._points = []
         self._points4 = [] # Same as self.points property with added 4 spacing points in TTF style.
@@ -204,7 +204,7 @@ class Glyph(object):
 
     def _get_flattenedPath(self):
         u"""Answer the flattened DrawBotContext NSBezier path."""
-        from pagebot.contexts import defaultContext as context
+        from pagebot.contexts.platform import defaultContext as context
         if self._flattenedPath is None and self.path is not None:
             self._flattenedPath = context.bezierPathByFlatteningPath(self.path)
         return self._flattenedPath

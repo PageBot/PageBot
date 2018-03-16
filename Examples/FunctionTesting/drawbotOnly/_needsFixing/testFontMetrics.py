@@ -13,7 +13,7 @@
 #     testFontMetrics.py
 #
 import sys
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 

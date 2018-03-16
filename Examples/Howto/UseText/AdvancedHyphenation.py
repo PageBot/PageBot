@@ -14,7 +14,7 @@
 ## https://github.com/thomgb/drawbot
 ## download my DrawBot: https://www.dropbox.com/s/xsu1mz89ipo5x3y/DrawBot.dmg?dl=0
 from pagebot.document import Document
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 from pagebot.elements import *
 from pagebot.contributions.filibuster.blurb import Blurb
 

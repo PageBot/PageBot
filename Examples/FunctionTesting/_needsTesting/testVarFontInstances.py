@@ -12,7 +12,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font
 
 f = Font("fonts/_instances/AmstelvarAlpha-Default.ttf")

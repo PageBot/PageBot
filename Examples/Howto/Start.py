@@ -23,7 +23,7 @@ USE_DRAWBOT = False
 USE_FLAT = not USE_DRAWBOT
 
 #import pagebot # Import to know the path of non-Python resources.
-from pagebot.contexts import defaultContext, FlatContext
+from pagebot.contexts.platform import defaultContext, FlatContext
 if USE_FLAT:
     EXPORT_PATH = '_export/Start_Flat'
     defaultContext = FlatContext()

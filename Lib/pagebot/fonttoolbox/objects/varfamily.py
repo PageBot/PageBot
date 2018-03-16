@@ -226,10 +226,6 @@ class VarFamily(Family):
         >>> path = '/Users/petr/Desktop/TYPETR-git/TYPETR-Proforma/master_ttf_interpolatable'
         >>> vf = VarFamily('Test-Var')
         >>> vf.addFonts(path)
-        >>> #vf.fonts
-        >>> #len(vf)
-        >>> #regFont = vf.findRegularFont()
-        >>> #regFont
         >>> vf.checkInterpolation() # For now only glyph name compatibility check
         The font has no kern feature.
         The fun ends here.
@@ -267,9 +263,11 @@ class VarFamily(Family):
                 errors[(font.path, glyphName)] = report
         '''
         # Check group compatibility
+        '''
         report = self.checkKerningCompatibility(font)
         if report:
             errors[(font.path, 'KERNING')] = report
+        '''
         return errors
 
     def checkOutlineCompatibility(self, refFont, font, glyphName):

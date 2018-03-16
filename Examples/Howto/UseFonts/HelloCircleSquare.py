@@ -12,7 +12,7 @@
 # -----------------------------------------------------------------------------
 #
 from random import random
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 
 for p in range(20):
     context.newPage(1000, 1000)

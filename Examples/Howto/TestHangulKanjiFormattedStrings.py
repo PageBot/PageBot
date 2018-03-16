@@ -13,7 +13,7 @@
 # -----------------------------------------------------------------------------
 #
 #     TestKanjiFormattedString.py
-from pagebot.contexts import defaultContext as c
+from pagebot.contexts.platform import defaultContext as c
 
 FontSize = 30
 W, H = 1000, 1000

@@ -17,7 +17,7 @@
 #    if 'Skia' in fontName:
 #        print fontName
 
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 from pagebot.document import Document
 from pagebot.style import A4
 from pagebot.fonttoolbox.objects.font import findFont
