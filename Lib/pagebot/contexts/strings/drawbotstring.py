@@ -198,9 +198,9 @@ class DrawBotString(BabelString):
     @classmethod
     def _newFitHeightString(cls, fs, context, e, style, h, pixelFit):
         if pixelFit:
-            _, ty, _, th = pixelBounds(newt)
+            _, ty, _, th = pixelBounds(fs)
         else:
-            ty, th = 0, newt.size()[1]
+            ty, th = 0, fs.size()[1]
         style = copy(style)
         style['fontSize'] = 1.0 * h / (th-ty) * css('fontSize', style)
         # Recursivley call this method again, without h and with the calculated real size of the string

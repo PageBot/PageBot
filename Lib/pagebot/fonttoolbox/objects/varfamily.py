@@ -21,9 +21,6 @@ from pagebot.fonttoolbox.objects.family import Family
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2Name, path2ParentPath
 
-def guessVarFamiliesByPatterns(patterns):
-    return guessFamiliesByPatterns(patterns, VarFamily)
-
 class VarFamily(Family):
     u"""A VarFamily is a special kind of family that contains a set of font that potentially form 
     the masters to create a VariableFont export. But the collection may not be up for creation yet, 
@@ -45,15 +42,8 @@ class VarFamily(Family):
     [350]
     >>> #vf.metrics[fontPath]['bars'].keys()
     [270]
-    >>> #familyName = 'Roboto' # We know this exists in the PageBot repository
-    >>> #varFamilies = guessVarFamiliesByPatterns(familyName)
-    >>> #vf = varFamilies['Roboto']
-    >>> #vf.__class__.__name__
-    'VarFamily'
-    >>> #vf.originFont.path.endswith('Roboto-Regular.ttf')
-    True
 
-"""
+    """
     BASE_GLYPH_NAME = 'H' # Use for base metrics analysis
     
     ORIGIN_OS2_WEIGHT_CLASS = 400

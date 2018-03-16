@@ -22,7 +22,7 @@ from __future__ import division
 from copy import copy
 from pagebot.elements import Element
 from pagebot.style import makeStyle
-#from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
+from pagebot.contexts import defaultContext as context
 from pagebot.toolbox.transformer import pointOffset
 
 
@@ -46,7 +46,7 @@ class VariableGlyphs(Element):
             location = {}
         self.location = copy(location)
     
-    def draw(self, view, origin):
+    def build(self, view, origin, drawElements=True):
 
         c = self.context
 
@@ -66,8 +66,12 @@ class VariableGlyphs(Element):
         #else:
         #    fillColor = (0, 0, 0)
         glyphPathScale = self.fontSize/self.font.info.unitsPerEm
-        drawGlyphPath(c, self.font.ttFont, self.glyphNames[0], px, py,
+        context.drawGlyphPath(c, self.font.ttFont, self.glyphNames[0], px, py,
                       self.location, glyphPathScale, fillColor)
+
+        if drawElements:
+            # If there are child elements, recursively draw them over the pixel image.
+            self.buildChildElements(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
