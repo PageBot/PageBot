@@ -17,13 +17,8 @@
 #
 import os
 #import imageio
-<<<<<<< HEAD
-from basecontext import BaseContext
-from pagebot.contexts.platform import getFontPaths, getFontPathOfFont
-=======
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.platform import getRootPath, getFontPaths, getFontPathOfFont
->>>>>>> origin/master
 from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings.flatstring import FlatString
