@@ -15,7 +15,7 @@
 #
 #     Only works in DrwaBotContext.
 #
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 
 if __name__ == '__main__':
     context.Variable([

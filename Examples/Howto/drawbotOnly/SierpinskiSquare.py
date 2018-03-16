@@ -16,7 +16,7 @@
 # https://twitter.com/petrvanblokland/status/860610270410018817
 
 import sys
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 

@@ -16,7 +16,7 @@
 from __future__ import division # Make integer division result in float.
 #import pagebot # Import to know the path of non-Python resources.
 
-from pagebot.contexts import defaultContext as c
+from pagebot.contexts.platform import defaultContext as c
 from pagebot.style import A4, LEFT, TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *

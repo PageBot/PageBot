@@ -22,7 +22,7 @@ from __future__ import division
 from copy import copy
 from pagebot.elements import Element
 from pagebot.style import makeStyle
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 from pagebot.toolbox.transformer import pointOffset
 
 

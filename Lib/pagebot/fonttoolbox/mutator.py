@@ -23,7 +23,7 @@ from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
-from pagebot.contexts import defaultContext as c
+from pagebot.contexts.platform import defaultContext as c
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2FontName
 

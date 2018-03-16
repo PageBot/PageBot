@@ -18,7 +18,7 @@
 #     which may make them incompatible with this particular example.
 #
 import pagebot
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance 

@@ -1,5 +1,5 @@
 
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 
 class PBFormattedString(FormattedString):
     def __init__(self, txt=None, style=None, **kwargs):

@@ -15,12 +15,12 @@
 #
 import re
 import sys
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
 from pagebot.style import getRootStyle
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 
 rs = {} # Make a style
 rs['leading'] = 10

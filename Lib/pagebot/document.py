@@ -15,7 +15,7 @@
 #     document.py
 #
 import copy
-from pagebot.contexts import defaultContext # Default context for this document if undefined.
+from pagebot.contexts.platform import defaultContext # Default context for this document if undefined.
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
@@ -202,7 +202,7 @@ class Document(object):
     def _get_builder(self):
         u"""Answer the builder, as supposed to be available in the self.context.
 
-        >>> from pagebot.contexts import defaultContext as context
+        >>> from pagebot.contexts.platform import defaultContext as context
         >>> doc = Document(name='TestDoc', context=context)
         >>> doc.context is context
         True

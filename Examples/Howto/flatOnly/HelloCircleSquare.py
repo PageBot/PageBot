@@ -24,7 +24,7 @@
 import os
 
 from random import random
-#from pagebot.contexts import defaultContext as context
+#from pagebot.contexts.platform import defaultContext as context
 from pagebot.contexts.flatcontext import FlatContext
 context = FlatContext()
 print 'Context class is %s' % type(context).__name__

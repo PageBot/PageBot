@@ -1,4 +1,4 @@
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 #from pagebot.contexts.strings.drawbotstring import pixelBounds
 
 

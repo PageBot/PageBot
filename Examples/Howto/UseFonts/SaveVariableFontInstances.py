@@ -13,7 +13,7 @@
 #     ModifyFonts.py
 #
 import pagebot
-from pagebot.contexts import defaultContext as c
+from pagebot.contexts.platform import defaultContext as c
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance, getConstrainedLocation
 

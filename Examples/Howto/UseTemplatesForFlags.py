@@ -23,7 +23,7 @@
 from __future__ import division # Make integer division result in float.
 #import pagebot # Import to know the path of non-Python resources.
 
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.document import Document

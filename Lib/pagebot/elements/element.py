@@ -18,7 +18,7 @@ from __future__ import division
 
 import weakref
 import copy
-from pagebot.contexts import defaultContext
+from pagebot.contexts.platform import defaultContext
 from pagebot.conditions.score import Score
 from pagebot import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z  
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID

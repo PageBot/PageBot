@@ -18,7 +18,7 @@
 import os
 from random import choice
 from pagebot.elements import newText
-from pagebot.contexts import defaultContext
+from pagebot.contexts.platform import defaultContext
 from pagebot.style import LEFT, BOTTOM
 # Document is the main instance holding all information
 # about the document togethers (pages, styles, etc.)

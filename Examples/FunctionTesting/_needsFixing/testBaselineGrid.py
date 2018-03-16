@@ -13,7 +13,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-from pagebot.contexts import defaultContext as context
+from pagebot.contexts.platform import defaultContext as context
 
 def appendS(fs1, fs2, w, baselineGrid):
     u"""Append fs2 to fs2, while keeping baseline grid locked.
