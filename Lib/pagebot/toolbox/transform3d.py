@@ -112,3 +112,10 @@ class Transform3D(object):
 
     def __repr__(self):
         return "<%s %s %s>" % (self.__class__.__name__, self.matrix, self.offset)
+
+
+if __name__ == "__main__":
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
+

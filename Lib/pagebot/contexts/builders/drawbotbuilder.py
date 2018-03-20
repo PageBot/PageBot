@@ -14,7 +14,7 @@
 #
 #     drawbotbuilder.py
 #
-from pagebot.contexts.builders.nonedrawbotbuilder import NoneDrawBotBuilder
+from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
 
 try:
     import drawBot # Test if drawBot is available on this platform

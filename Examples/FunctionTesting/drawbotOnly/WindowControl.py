@@ -11,7 +11,8 @@
 #     Supporting usage of DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 

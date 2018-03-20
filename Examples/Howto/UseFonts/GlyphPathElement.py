@@ -17,15 +17,17 @@
 import pagebot # Import to know the path of non-Python resources.
 
 from pagebot.contexts.platform import getTestFontsPath
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import getFont
 
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
+
+context = getContext()
 
 PagePadding = 32
 PageSize = 500
@@ -38,12 +40,13 @@ def pathFilter(e, path, view):
     for x in range(0, e.w*4, 30):
         for y in range(0, e.h*2, 30):
             # Use the glyph to query for color at this position.
-            if e.glyph.onBlack((x, y)):
-                context.fill((random(), random(), random())) # Color as one tuple, in context API
-                context.oval(x-r/2, y-r/2, r, r)
-            else:
-                context.fill((0, 1, 0)) # Color as one tuple, in context API
-                context.rect(x-r/4, y-r/4, r/2, r/2)
+            if e.glyph is not None:
+                if e.glyph.onBlack((x, y)):
+                    context.fill((random(), random(), random())) # Color as one tuple, in context API
+                    context.oval(x-r/2, y-r/2, r, r)
+                else:
+                    context.fill((0, 1, 0)) # Color as one tuple, in context API
+                    context.rect(x-r/4, y-r/4, r/2, r/2)
     
 
 #W = H = 120 # Get the standard a4 width and height in points.
@@ -51,7 +54,7 @@ W = H = PageSize
 #W, H = A4
 
 fontPath = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
-font = Font(fontPath, install=False)
+font = getFont(fontPath)
 glyphName = 'e'#'cid05405.1'
 
 doc = Document(w=W, h=H, originTop=False, autoPages=1)

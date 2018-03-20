@@ -16,7 +16,7 @@
 #     Show drawing of outline points and intersection beam with flattened path
 #   
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.contexts.platform import defaultContext as c
+from pagebot.contexts.platform import getContext
 
 newPage(1000, 1000)
 font = Font('/Library/Fonts/Georgia.ttf')

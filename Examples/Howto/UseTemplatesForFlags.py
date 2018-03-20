@@ -23,12 +23,14 @@
 from __future__ import division # Make integer division result in float.
 #import pagebot # Import to know the path of non-Python resources.
 
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.document import Document
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
     
+context = getContext()
+
 PageSize = 500, 400
 
 # Export in _export folder that does not commit in Git. Force to export PDF.

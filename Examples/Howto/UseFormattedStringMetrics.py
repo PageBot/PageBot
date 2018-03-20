@@ -16,28 +16,30 @@
 #     It is possible to measure on the content of FormattedString instances.
 #     These show examples how to do that.
 #
-from pagebot.contexts.platform import defaultContext as c
+from pagebot.contexts.platform import getContext
+
+context = getContext()
 
 def run():
 	W, H = 1000, 400
-	c.newPage(W, H)
+	context.newPage(W, H)
 	txt = "Hello World"
 	x, y = 10, 100
 
-        fs = c.newString(txt, style=dict(fontSize=300,
+	bs = context.newString(txt, style=dict(fontSize=300,
                                          font="Verdana"))
 	# draw the text
-	c.text(fs, (x, y))
+	context.text(bs, (x, y))
 
 	# calculate the size of the text
-	textWidth, textHeight = c.textSize(txt)
+	textWidth, textHeight = context.textSize(bs)
 
 	# set a red stroke color
-	c.stroke(1, 0, 0)
+	context.stroke(1, 0, 0)
 	# loop over all font metrics
-	for metric in (0, fs.fontDescender(), fs.fontAscender(), fs.fontXHeight(), fs.fontCapHeight()):
+	for metric in (0, bs.fontDescender(), bs.fontAscender(), bs.fontXHeight(), bs.fontCapHeight()):
 	    # draw a red line with the size of the drawn text
-	    c.line((x, y+metric), (W-2*x, y+metric))
+	    context.line((x, y+metric), (W-2*x, y+metric))
 
 if __name__ == '__main__':
 	run()

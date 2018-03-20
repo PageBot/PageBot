@@ -14,7 +14,8 @@
 #     testCTRunLigature.py
 #
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
@@ -36,7 +37,7 @@ fontPath = u"Upgrade-Bold" # See gallery
 #glyphOrder = fontToolsFont.getGlyphOrder()
 
 def ctRunThing(fs, (x, y)):
-    w, h = textSize(fs)
+    w, h = context.textSize(fs)
     box = 0, 0, w, h
     attrString = fs.getNSObject()
     setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
@@ -58,9 +59,9 @@ def ctRunThing(fs, (x, y)):
         # enumerate over all pos   
         for i, (gx, gy) in enumerate(pos):
             # draw a line
-            stroke(0)
-            line((x+gx, y+gy), (x+gx, y+gy + 100))
-            stroke(None)
+            context.stroke(0)
+            context.line((x+gx, y+gy), (x+gx, y+gy + 100))
+            context.stroke(None)
             # get the glyph name from the glyph order
             #glyphName = glyphOrder[glyphs[i]]
             # get the shift to center the name of the glyph
@@ -76,12 +77,13 @@ def ctRunThing(fs, (x, y)):
             #text(glyphName, (x+gx+centerShift-tx*.5, y+gy-20))
                         
 
-    
-fs1 = FormattedString('Ligature fifl', font=fontPath, fontSize=100, openTypeFeatures=dict(liga=False))
-text(fs1, (100, 300))
+"""
+fs1 = context.newString('Ligature fifl', style=dict(font=fontPath, fontSize=100, openTypeFeatures=dict(liga=False)))
+context.text(fs1, (100, 300))
 ctRunThing(fs1, (100, 300))
 
 fs2 = FormattedString('Ligature fifl', font=fontPath, fontSize=100, openTypeFeatures=dict(liga=True))
 text(fs2, (100, 100))
-ctRunThing(fs2, (100, 100))
+ctRunThing(fs2.s, (100, 100))
 saveImage('_gallery/testCTRunLigature.pdf')
+"""

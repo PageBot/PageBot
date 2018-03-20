@@ -12,10 +12,11 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 
-from pagebot.contexts.platform import defaultContext as context
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.contexts.platform import getContext
+from pagebot.fonttoolbox.objects.font import findFont
 
-f = Font("fonts/_instances/AmstelvarAlpha-Default.ttf")
-fs = context.newString(u'Ae', style=dict(font=f.installedName,
-                                         fontSize=500))
+context = getContext()
+
+f = findFont('Roboto-Regular')
+fs = context.newString(u'Ae', style=dict(font=f.path, fontSize=500))
 context.textBox(fs, (20, -10, 900, 900))

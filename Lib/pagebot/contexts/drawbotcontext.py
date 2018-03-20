@@ -29,7 +29,7 @@ try:
 except (ImportError, AttributeError):
     # If DrawBot is not available on the platform, then use a noneDrawBotBuilder instance, that
     # can be used to run all DrawBot related docTests.
-    from pagebot.contexts.builders.nonedrawbotbuilder import NoneDrawBotBuilder
+    from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
     from pagebot.contexts.strings.drawbotstring import NoneDrawBotString as stringClass
     drawBotBuilder = NoneDrawBotBuilder()
     NSFont = None

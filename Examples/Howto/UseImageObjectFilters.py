@@ -18,7 +18,7 @@
 #
 from __future__ import division # Make integer division result in float.
 
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 from pagebot.contexts.platform import getResourcesPath
 from pagebot.fonttoolbox.objects.family import getFamily
 from pagebot.style import TOP, BOTTOM, A4
@@ -27,6 +27,8 @@ from pagebot.elements import *
 from pagebot.document import Document
 # Document is the main instance holding all information about the
 # document together (pages, styles, etc.)
+
+context = getContext()
 
 W, H = A4
 

@@ -18,7 +18,7 @@ from __future__ import division
 
 import weakref
 import copy
-from pagebot.contexts.platform import defaultContext
+from pagebot.contexts.platform import getContext
 from pagebot.conditions.score import Score
 from pagebot import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z  
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID
@@ -822,7 +822,7 @@ class Element(object):
         if self.parent is not None:
             return self.parent.context
         # No context defined and no parent, we only can answer the default context here.
-        return defaultContext
+        return getContext()
     def _set_context(self, context):
         self._context = context
     context = property(_get_context, _set_context)
@@ -833,7 +833,7 @@ class Element(object):
 
     def newString(self, bs, e=None, style=None, w=None, h=None, pixelFit=True):
         u"""Create a new BabelString, using the current type of self.doc.context,
-        or pagebot.contexts.defaultContext if not self.doc or self.doc.view defined, 
+        or pagebot.contexts.getContext() if not self.doc or self.doc.view defined, 
         if bs is a plain string. Otherwise just answer the BabelString unchanged.
         In case of a BabelString, is has to be the same as the current context would
         create, otherwise an error is raised. In other words, there is no BabelString
@@ -2469,6 +2469,15 @@ class Element(object):
         """
         return self.d - self.pzf - self.pzb
     pd = property(_get_pd)
+
+    def _get_frameDuration(self):
+        u"""Property answer the element frameDuration parameters, used for speed when
+        exporting animated gifs. Normally only set in page or document.
+        """
+        return self.css('frameDuration')
+    def _set_frameDuration(self, frameDuration):
+        self.style['frameDuration'] = frameDuration # Overwrite as local value.
+    frameDuration = property(_get_frameDuration, _set_frameDuration)
 
     def _get_originTop(self):
         u"""Answer the style flag if all point y values should measure top-down (typographic page

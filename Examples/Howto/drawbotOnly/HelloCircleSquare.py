@@ -1,8 +1,10 @@
 
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
+
+context = getContext()
 
 for p in range(10):
     context.newPage(1000, 1000)

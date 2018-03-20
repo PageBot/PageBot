@@ -16,7 +16,7 @@
 #     But you can better use the wrapper attribute font Font.
 #
 import pagebot
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 

@@ -1,4 +1,8 @@
-from pagebot.contexts.platform import defaultContext as context
+
+
+from pagebot.contexts.platform import getContext
+
+context = getContext()
 
 W = 600
 H = 400

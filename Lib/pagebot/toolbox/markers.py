@@ -20,9 +20,9 @@ def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
     u"""Draw registration mark as position x, y.
 
     >>> from pagebot.contexts.flatcontext import FlatContext
-    >>> c = FlatContext()
-    >>> c.newPage(100, 100)
-    >>> drawRegistrationMark(c, (0,0), 20, 1, True)
+    >>> context = FlatContext()
+    >>> context.newPage(100, 100)
+    >>> drawRegistrationMark(context, (0,0), 20, 1, True)
     """
     x, y = origin
     if vertical:

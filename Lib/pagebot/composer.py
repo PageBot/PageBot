@@ -71,7 +71,7 @@ class Composer(object):
                     # Overflow in this text box, find new from (page, tbFlow)
                     page, tb = page.getNextFlowBox(tb, self.makeNewPage)
                     if tb is None: # In case here is overflow, but no next box defined in the flow.
-                        print 'Overflow in text, but no next flow column defined.', flowId
+                        print('Overflow in text, but no next flow column defined. %s' % flowId)
                         break
                 else:
                     break

@@ -19,6 +19,11 @@
 #     Add scanning for combined words by recursively splitting into parts.
 #     Add statistical hyphenation per language if words or combination of words fails.
 #
+#     Avaiable languages
+#     "en"      English
+#     "nl"      Dutch
+#     "pt-br"   Portugese-Brasilian     Contributed by 
+#
 import os, codecs
 from pagebot.contexts.platform import RESOURCES_PATH
 

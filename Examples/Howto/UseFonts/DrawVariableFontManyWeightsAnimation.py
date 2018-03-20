@@ -19,7 +19,7 @@
 #     which may make them incompatible with this particular example.
 #
 from pagebot.contexts.platform import getRootPath
-from pagebot.contexts.platform import defaultContext as c
+from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance 
 from pagebot.style import CENTER

@@ -22,9 +22,10 @@ from __future__ import division
 from copy import copy
 from pagebot.elements import Element
 from pagebot.style import makeStyle
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 from pagebot.toolbox.transformer import pointOffset
 
+context = getContext()
 
 class VariableGlyphs(Element):
     # Initialize the default behavior tags as different from Element.

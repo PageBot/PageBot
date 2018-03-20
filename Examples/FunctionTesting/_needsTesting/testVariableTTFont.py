@@ -17,12 +17,14 @@
 #    if 'Skia' in fontName:
 #        print fontName
 
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 from pagebot.document import Document
 from pagebot.style import A4
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.elements import newText
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
+
+context = getContext()
 
 f = findFont('Skia')
 
@@ -36,7 +38,7 @@ print('wght %s %s %s' % (wghtMin, wghtDef, wghtMax))
 print('wdth %s %s %s' % (wdthMin, wdthDef, wdthMax))
 
 
-NORMAL = , textFill=0(f, dict(wght=wghtDef, wdth=wdthDef), styleName='Normal', normalize=False)
+NORMAL = getVarFontInstance(f, dict(wght=wghtDef, wdth=wdthDef), styleName='Normal', normalize=False)
 LIGHT = getVarFontInstance(f, dict(wght=wghtMin, wdth=wdthDef), styleName='Light', normalize=False)
 BOLD = getVarFontInstance(f, dict(wght=wghtMax, wdth=wdthDef), styleName='Bold', normalize=False)
 COND = getVarFontInstance(f, dict(wght=wghtDef, wdth=wdthMin), styleName='Cond', normalize=False)

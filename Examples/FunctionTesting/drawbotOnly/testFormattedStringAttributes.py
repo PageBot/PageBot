@@ -14,14 +14,15 @@
 #     testFormattedStringAttributes.py
 #
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
 # TODO: Make this example work in Flat too.
 
 b = context.b # Builder is DrawBot
-f = FormattedString()
+f = context.newString('')
 
 f.fill(1, 0, 0)
 f.fontSize(100)
@@ -53,5 +54,5 @@ attr.addAttribute_value_range_("io.pageBot.tag", 'TAG_NAME', (0, len(ff)))
 fff = ff + f
 attr = fff.getNSObject()
 
-print attr
+print(attr)
 

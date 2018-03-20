@@ -253,7 +253,7 @@ def color2Hex(c):
         r, g, b, _ = c
     else: # Must be just r, g, b
         r, g, b = c
-    return '#%02x%02x%02x' % (r*255, g*255, b*255)
+    return '#%02x%02x%02x' % (int(round(r*255)), int(round(g*255)), int(round(b*255)))
 
 def color2HexOpacity(c):
     u"""Answer the tuple ((r, g, b), opacity) with CSS hex color and value for opacity from the color 
@@ -975,8 +975,8 @@ def arabic2RomanNumerals(arabic):
                5: (1, 'I')}
     roman = ''
     for (value, numeral) in numerals:
-        roman += (arabic / value) * numeral
-        arabic -= (arabic / value) * value
+        roman += (arabic // value) * numeral
+        arabic -= (arabic // value) * value
         if value in smaller and arabic >= value - smaller[value][0]:
             roman += smaller[value][1] + numeral
             arabic -= (value - smaller[value][0])
@@ -1029,14 +1029,14 @@ def hex2char(hex):
     >>> hex2dec('41')
     65
     >>> hex2char('41')
-    u'A'
+    'A'
     >>> hex2char('FFZ') is None
     True
     """
-    try:
-        return unichr(hex2dec(hex))
-    except:
-        pass
+    v = hex2dec(hex)
+    if v is not None:
+        return chr(v)
+    return None
 
 # ---------------------------------------------------------------------------------------------------------
 # Floq field name conversion between Floq attributes and database fields
@@ -1115,9 +1115,7 @@ def reverseDict(d):
         print('Warning: duplicate values found %s' % duplicateValues)
 
     newDict = {}
-    keys = d.keys()
-    keys.sort()
-    for k in keys:
+    for k in sorted(d.keys()):
         v = d[k]
         if isinstance(v, list):
             v = tuple(v)

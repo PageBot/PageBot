@@ -15,12 +15,12 @@
 #
 import re
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
 from pagebot.style import getRootStyle
-from pagebot.contexts.platform import defaultContext as context
 
 rs = {} # Make a style
 rs['leading'] = 10
@@ -37,10 +37,10 @@ for n in range(100):
     fs += 'RS%s\n' % n
     fs += context.newString('SSSS', style=dict(fontSize=18, lineHeight=20))
     fs += context.newString('DDDD\n', style=dict(fontSize=9, lineHeight=10))
-    stroke(0)
-    strokeWidth(0.5)
-    line((10, n*rs['leading']), (500, n*rs['leading']))
+    context.stroke(0)
+    context.strokeWidth(0.5)
+    context.line((10, n*rs['leading']), (500, n*rs['leading']))
 
-print textBox(a, (10, 10, 300, 800))
-print textBox(fs, (320, 10, 300, 800))
+print(context.textBox(a, (10, 10, 300, 800)))
+print(context.textBox(fs, (320, 10, 300, 800)))
 

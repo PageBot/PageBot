@@ -12,7 +12,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     nonedrawbotbuilder.py
+#     nonebuilder.py
 #
 import os
 from pagebot.toolbox.transformer import path2Name
@@ -35,17 +35,18 @@ class NoneImageObject(object):
     def __init__(self, path):
         self.path = path
 
-class NoneDrawBotBuilder(object):
-    """Make NoneDrawBotBuilder with the same API for docTesting, in case the platform does not support DrawBot.
+class NoneBuilder(object):
+    """Make NoneBuilder with the same API for docTesting, in case the platform does not support DrawBot.
     More methods to be added here, if DrawBotContext docTests fail in non-DrawBot platforms.
     Eventually should be a matching set of methods, compare to DrawBot itself."""
-
-    PB_ID = 'drawBot'
 
     def __init__(self):
         self._installedFonts = []
 
     def newDrawing(self, path=None):
+        pass
+
+    def frameDuration(self, v):
         pass
 
     restore = save = newPath = drawPath = newDrawing # Nethods without attributes
@@ -156,6 +157,18 @@ class NoneDrawBotBuilder(object):
 
     def ImageObject(self, path):
         return NoneImageObject(path)
+
+class NoneDrawBotBuilder(NoneBuilder):
+    
+    PB_ID = 'drawBot'
+
+class NoneFlatBuilder(NoneBuilder):
+
+    PB_ID = 'flat'
+
+    def document(self, w, h, units):
+        pass
+
 
 if __name__ == '__main__':
     import doctest

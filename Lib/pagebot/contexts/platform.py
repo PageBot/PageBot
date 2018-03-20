@@ -15,7 +15,29 @@
 #
 import os
 import pagebot
+
 from pagebot.toolbox.transformer import path2FontName, path2ParentPath
+
+#   C O N T E X T S
+
+DEFAULT_CONTEXT = None
+
+def getContext():
+    global DEFAULT_CONTEXT
+    if DEFAULT_CONTEXT is None:
+        try:
+            #import ForceImportError # Uncomment for simulate testing of other contexts/platforms
+            import AppKit # Force exception on non-OSX platforms
+            from pagebot.contexts.drawbotcontext import DrawBotContext
+            DEFAULT_CONTEXT = DrawBotContext() # Test if platform is supporing DrawBot:
+
+        except (ImportError, AttributeError, ModuleNotFoundError):
+            #import ForceOtherError # Uncomment for simulate testing of other contexts/platforms
+            from pagebot.contexts.flatcontext import FlatContext
+            DEFAULT_CONTEXT = FlatContext()
+        except:
+            raise NotImplementedError('Cannot decide on the platform context.')
+    return DEFAULT_CONTEXT
 
 #   P A T H S
 

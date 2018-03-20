@@ -14,10 +14,11 @@
 #     testFSBaselineCalculation.py
 #
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
-
+"""
 b = context.b # Builder is DrawBot
 spacer = b.FormattedString('a\n', lineHeight=1, fontSize=2)
 
@@ -40,3 +41,5 @@ b.textBox(t, (320, 10, 300, 500))
 b.stroke(0)
 b.fill(None)
 b.rect(320, 10, 300, 500)
+
+"""

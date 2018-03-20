@@ -15,7 +15,8 @@
 from __future__ import division
 
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
@@ -45,5 +46,5 @@ def cw2w(cw, e):
 if __name__ == '__main__':
     e = E()
 
-    print w2cw(60, e)
-    print cw2w(1, e)
+    print(w2cw(60, e))
+    print(cw2w(1, e))

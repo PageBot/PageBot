@@ -82,6 +82,10 @@ class PageView(BaseView):
                 origin = (0, 0, 0)
 
             context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
+            # If page['frameDuration'] is set and saving as movie or animated gif,
+            # then set the global frame duration.
+            context.frameDuration(page.frameDuration) # Set the duration of this page, in case exporting GIF
+
             # View may have defined a background
             fillColor = self.style.get('fill')
             if fillColor is not NO_COLOR:
@@ -120,9 +124,6 @@ class PageView(BaseView):
         MyBuilder(document).export(fileName), the builder is responsible to
         query the document, pages, elements and styles.
         """
-        # If rootStyle['frameDuration'] is set and saving as movie or animated gif,
-        # then set the global frame duration.
-        frameDuration = self.css('frameDuration')
 
         folder = path2ParentPath(path)
 
@@ -142,7 +143,8 @@ class PageView(BaseView):
     def drawPageMetaInfo(self, page, origin):
         u"""Draw the meta info of the page, depending on the settings of the flags.
 
-        >>> from pagebot.contexts.platform import defaultContext as context
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
         >>> from pagebot.document import Document
         >>> w, h = 300, 400
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
@@ -163,7 +165,8 @@ class PageView(BaseView):
         u"""Draw the page frame if the the flag is on and  if there ie padding enough to show other meta info.
         Otherwise the padding is truncated to 0: no use to draw the frame.
 
-        >>> from pagebot.contexts.platform import defaultContext as context
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values 
@@ -185,7 +188,8 @@ class PageView(BaseView):
     def drawPagePadding(self, page, origin):
         u"""Draw the page frame of its current padding.
 
-        >>> from pagebot.contexts.platform import defaultContext as context
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values 
@@ -215,7 +219,8 @@ class PageView(BaseView):
         u"""Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks.
 
-        >>> from pagebot.contexts.platform import defaultContext as context
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values 
@@ -446,7 +451,8 @@ class PageView(BaseView):
         that this element has missing content (as in unused image frames).
         Only draw if self.css('showGrid') is True.
 
-        >>> from pagebot.contexts.platform import defaultContext as context
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values 
@@ -491,7 +497,8 @@ class PageView(BaseView):
         u"""Draw grid of lines and/or rectangles if colors are set in the style.
         Normally px and py will be 0, but it's possible to give them a fixed offset.
 
-        >>> from pagebot.contexts.platform import defaultContext as context
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values 
@@ -561,7 +568,8 @@ class PageView(BaseView):
         TODO: Make fixed values part of calculation or part of grid style.
         Normally px and py will be 0, but it's possible to give them a fixed offset.
 
-        >>> from pagebot.contexts.platform import defaultContext as context
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values 
@@ -627,7 +635,8 @@ class PageView(BaseView):
         u"""Draw standard registration mark, to show registration of CMYK colors.
         https://en.wikipedia.org/wiki/Printing_registration.
 
-        >>> from pagebot.contexts.platform import defaultContext as context
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values 
@@ -649,7 +658,8 @@ class PageView(BaseView):
     def drawPageCropMarks(self, e, origin):
         u"""If the show flag is set, then draw the cropmarks or page frame.
 
-        >>> from pagebot.contexts.platform import defaultContext as context
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values 

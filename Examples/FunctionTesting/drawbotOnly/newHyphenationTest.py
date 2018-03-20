@@ -14,7 +14,8 @@
 #     testAddAttrivutesToFormattedStrings.py
 #
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
@@ -119,12 +120,12 @@ def hyphenateAttributedString(self, attrString, width=None, box=None):
 
 s = "DrawBot is a powerful, free application for MacOSX that invites you to write simple Python scripts to generate twodimensional graphics. The builtin graphics primitives support rectangles, ovals, (bezier) paths, polygons, text objects and transparency."
 
+"""
 
-
-size(300, 700)
+context.newPage(300, 700)
 fff = "Times"
-hyphenation(True)
-t = FormattedString()
+context.hyphenation(True)
+t = context.newString('')
 t.font(fff, 15)
 t.align("right")
 t.indent(22)
@@ -134,34 +135,29 @@ if True:
     t.align("justified")
 t += s
 
-
-
-
-
 b = 10, 10, 202, 202
 
-p = BezierPath()
+p = context.BezierPath()
 p.moveTo((10, 10))
 p.lineTo((212, 10))
 p.lineTo((202, 212))
 p.lineTo((14, 216))
 p.closePath()
 
-
-
 for i in b, p:
-    print textBox(t, i)
-    print
-    fill(None)
-    stroke(0)
+    print(context.textBox(t, i))
+    context.fill(None)
+    context.stroke(0)
     try:
-        rect(*i)
+        context.rect(*i)
     except:
-        drawPath(i)
+        context.drawPath(i)
     
-    translate(0, b[2]+30)
+    context.translate(0, b[2]+30)
 
-r = hyphenateAttributedString(BaseContext(), t.getNSObject(), box=p)
-g = FormattedString()
+r = context.hyphenateAttributedString(BaseContext(), t.getNSObject(), box=p)
+g = context.FormattedString()
 g._attributedString = r
-print textBox(g, p)
+print(context.textBox(g, p))
+
+"""

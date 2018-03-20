@@ -12,7 +12,9 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-from pagebot.contexts.platform import defaultContext as c
+from pagebot.contexts.platform import getContext
+
+c = getContext()
 
 c.newPage(1000, 1000)
 fs = c.newString("b", style=dict(lineHeight=74,

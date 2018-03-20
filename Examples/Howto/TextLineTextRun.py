@@ -20,9 +20,11 @@
 #    Implements a demo version of TextLine and TextRun.
 #    This code has been built into BabelString DrawBotString.
 #
-from pagebot.contexts.platform import defaultContext as c
 import re
 import sys
+
+from pagebot.contexts.platform import getContext
+from pagebot.elements import newTextBox
 
 try:
     import CoreText
@@ -30,6 +32,7 @@ try:
 except ImportError:
     sys.exit('Example only runs in DrawBot')
 
+context = getContext()
 
 class FoundPattern(object):
     def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
@@ -340,13 +343,13 @@ class TextBox(object):
         return foundPatterns
                 
     def draw(self):
-        c.textBox(self.fs, (self.x, self.y, self.w, self.h))
+        context.textBox(self.fs, (self.x, self.y, self.w, self.h))
       
     def _drawBaselines(self, showIndex=False, showY=False, showLeading=False):
         # Let's see if we can draw over them in exactly the same position.
         fontSize = 8
         if showY:
-            c.text(c.newString('0', style=dict(align='left',
+            context.text(context.newString('0', style=dict(align='left',
                                                font='Verdana',
                                                fontSize=8,
                                                fill=(0, 0, 1))),
@@ -355,16 +358,16 @@ class TextBox(object):
         prevY = 0
         for index in range(len(self)):
             _, y, _ = self.baseLines[index]
-            c.line((self.x, self.y + self.h - y),
+            context.line((self.x, self.y + self.h - y),
                    (self.x + self.w, self.y + self.h - y))
             if showIndex:
-                c.text(c.newString('index', style=dict(align='right',
+                context.text(context.newString('index', style=dict(align='right',
                                                        font='Verdana',
                                                        fontSize=fontSize,
                                                        fill=(0, 0, 1))),
                        (self.x-8, self.y + self.h - y - fontSize/3))
             if showY:
-                c.text(c.newString('%d' % round(y),
+                context.text(context.newString('%d' % round(y),
                                    style=dict(align='left',
                                               font='Verdana',
                                               fontSize=fontSize,
@@ -372,7 +375,7 @@ class TextBox(object):
                        (self.x + self.w + 3, self.y + self.h - y - fontSize/4))
             if showLeading:
                 leading = round(abs(y - prevY))
-                c.text(c.newString('%d' % leading,
+                context.text(context.newString('%d' % leading,
                                    style=dict(align='left',
                                               font='Verdana',
                                               fontSize=fontSize,
@@ -381,22 +384,22 @@ class TextBox(object):
             prevY = y
 
     def _drawFrame(self):
-        c.stroke(0, 0, 1)
-        c.fill(None)
-        c.rect(self.x, self.y, self.w, self.h)
+        context.stroke(0, 0, 1)
+        context.fill(None)
+        context.rect(self.x, self.y, self.w, self.h)
 
 
 W = 400
 H = 600
 G = 40
 
-c.Variable([
+context.Variable([
     dict(name='W', ui='Slider', args=dict(minValue=200, value=400, maxValue=1000)),
     dict(name='H', ui='Slider', args=dict(minValue=200, value=600, maxValue=1000)),
 ], globals())
 
 
-fs = c.newString(u'This åéöøa hêädliñe rúns over one or more lines.\n',
+fs = context.newString(u'This åéöøa hêädliñe rúns over one or more lines.\n',
                  style=dict(align='left',
                             font='BitcountMonoDouble-RegularCircleItalic',
                             fontSize=24,
@@ -405,44 +408,44 @@ fs = c.newString(u'This åéöøa hêädliñe rúns over one or more lines.\n',
                                                   ss06=True),
                             lineHeight=26,
                             tracking=1.2))
-fs += c.newString(('This an example of TextLines and TextRuns'
+fs += context.newString(('This an example of TextLines and TextRuns'
                    ' and more and more. '),
                   style=dict(font='Verdana', fontSize=14, lineHeight=22))
-fs += c.newString('=== Find this. === ',
+fs += context.newString('=== Find this. === ',
                   style=dict(font='Georgia-Bold', fontSize=16, lineHeight=22))
-fs += c.newString('This an example of larger TextLines and TextRuns. ',
+fs += context.newString('This an example of larger TextLines and TextRuns. ',
                   style=dict(font='Georgia', fontSize=16, lineHeight=22))
-fs += c.newString('=== Find this. === ',
+fs += context.newString('=== Find this. === ',
                   style=dict(font='Georgia-Bold', fontSize=16, lineHeight=22))
-fs += c.newString('This an example of TextLines and TextRuns. ',
+fs += context.newString('This an example of TextLines and TextRuns. ',
                   style=dict(font='Verdana', fontSize=14, lineHeight=22))
 
-fittingWord = c.newString('Word\n', style=dict(font='Georgia',
+fittingWord = context.newString('Word\n', style=dict(font='Georgia',
                                                align='left',
                                                fontSize=500))
-w, _ = c.textSize(fittingWord)
+w, _ = context.textSize(fittingWord)
 fittingSize = W/w*500
-fittingWord = c.newString('Word\n', style=dict(font='Georgia',
+fittingWord = context.newString('Word\n', style=dict(font='Georgia',
                                                align='left',
                                                fontSize=fittingSize,
                                                lineHeight=fittingSize*1.2))
 fs += fittingWord
 
-fittingWord = c.newString('ABC\n',
+fittingWord = context.newString('ABC\n',
                           style=dict(font='BitcountMonoDouble-RegularCircle',
                                      align='left',
                                      fontSize=500))
-w, _ = c.textSize(fittingWord)
+w, _ = context.textSize(fittingWord)
 fittingSize = W/w*500
-fittingWord = c.newString('ABC\n',
+fittingWord = context.newString('ABC\n',
                           style=dict(font='BitcountMonoDouble-RegularCircle',
                                      align='left',
                                      fontSize=fittingSize,
                                      lineHeight=fittingSize))
 fs += fittingWord
 
-c.newPage(W+G*2, H + G*2)
-myTextBox = c.TextBox(fs, G, G, W, H)
+context.newPage(W+G*2, H + G*2)
+myTextBox = newTextBox(fs, x=G, y=G, w=W, h=H)
 myTextBox.draw()
 myTextBox._drawFrame()
 myTextBox._drawBaselines(showIndex=True, showY=True, showLeading=True)
@@ -453,16 +456,16 @@ for pattern in myTextBox.findPattern('Find'):
     py = pattern.y
     print pattern
     print px, py[1]
-    c.stroke(1, 0, 0)
-    c.fill(None)
-    c.oval(px-10, py[1]-10, 20, 20)
+    context.stroke(1, 0, 0)
+    context.fill(None)
+    context.oval(px-10, py[1]-10, 20, 20)
 
 # Bitcount measures, pixels are 1/10 of Em
 for yy in range(-3,10):
-    c.stroke(1, 0, 0)
-    c.fill(None)
+    context.stroke(1, 0, 0)
+    context.fill(None)
     y = (myTextBox.y + myTextBox.h +
          yy*fittingSize/10 - myTextBox.baseLines[-1][1])
-    c.line((myTextBox.x, y), (myTextBox.x + myTextBox.w, y))
+    context.line((myTextBox.x, y), (myTextBox.x + myTextBox.w, y))
 
-c.saveImage('_export/testTextLineTextRun.pdf')
+context.saveImage('_export/testTextLineTextRun.pdf')

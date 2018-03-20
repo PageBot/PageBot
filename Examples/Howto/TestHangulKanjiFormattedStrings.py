@@ -13,26 +13,28 @@
 # -----------------------------------------------------------------------------
 #
 #     TestKanjiFormattedString.py
-from pagebot.contexts.platform import defaultContext as c
+from pagebot.contexts.platform import getContext
+
+context = getContext()
 
 FontSize = 30
 W, H = 1000, 1000
 def run():
     s = u"""글자가 일상이 된다 산돌커뮤니케이션 ABCD123 Latin すべての文化集団は，独自の言語，文字，書記システムを持つ．それゆえ，個々の書記システムをサイバースペースに移転することは. ABCD123 Latin included"""
-    c.newPage(W, H)
-    fsr = c.newString(s, style=dict(font='Generic-Regular', fontSize=FontSize))
-    fsb = c.newString(s, style=dict(font='Generic-Regular_Bold', fontSize=FontSize))
-    fsbRed = c.newString(s, style=dict(font='Generic-Regular_Bold',
+    context.newPage(W, H)
+    fsr = context.newString(s, style=dict(font='Generic-Regular', fontSize=FontSize))
+    fsb = context.newString(s, style=dict(font='Generic-Regular_Bold', fontSize=FontSize))
+    fsbRed = context.newString(s, style=dict(font='Generic-Regular_Bold',
                                        fill=(1, 0, 0),
                                        fontSize=FontSize))
-    c.textBox(fsr, (100, 600, 820, 350))
-    c.textBox(fsb, (100, 300, 820, 350))
-    c.textBox(fsbRed, (100, 0, 820, 350))
-    c.textBox(fsr, (100, 0, 820, 350))
+    context.textBox(fsr, (100, 600, 820, 350))
+    context.textBox(fsb, (100, 300, 820, 350))
+    context.textBox(fsbRed, (100, 0, 820, 350))
+    context.textBox(fsr, (100, 0, 820, 350))
 
 if __name__ == '__main__':    
 
-    c.Variable([
+    context.Variable([
         #dict(name='ElementOrigin', ui='CheckBox',
         #     args=dict(value=False)),
         dict(name='FontSize', ui='Slider',
@@ -40,4 +42,4 @@ if __name__ == '__main__':
     ], globals())
 
     run()
-    c.saveImage('_export/TestKanjiFormattedString.pdf')
+    context.saveImage('_export/TestKanjiFormattedString.pdf')
