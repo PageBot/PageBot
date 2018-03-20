@@ -22,7 +22,7 @@
 #     Avaiable languages
 #     "en"      English
 #     "nl"      Dutch
-#     "pt-br"   Portugese-Brasilian     Contributed by 
+#     "pt-br"   Portugese-Brasilian     Contributed by @filipenegrao
 #
 import os, codecs
 from pagebot.contexts.platform import RESOURCES_PATH

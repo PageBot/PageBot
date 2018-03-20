@@ -218,7 +218,7 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=Fals
         varFont.save(outFile)
 
     # Installing the font in DrawBot. Answer font name and path.
-    return c.installFont(outFile), outFile
+    return outFile
 
 
 def getVarFontInstance(fontOrPath, location, install=True, styleName=None, normalize=True):
@@ -233,9 +233,9 @@ def getVarFontInstance(fontOrPath, location, install=True, styleName=None, norma
         varFont = Font(fontOrPath, name=path2FontName(fontOrPath))    
     else:
         varFont = fontOrPath
-    fontName, path = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), normalize=normalize)
+    fontPath = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), normalize=normalize)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
-    return Font(path, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName)
+    return Font(fontPath, name=fontName, install=install, opticalSize=location.get('opsz'), location=location, styleName=styleName)
 
 
 if __name__ == '__main__':

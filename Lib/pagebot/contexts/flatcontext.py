@@ -19,7 +19,6 @@ import os
 #import imageio
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.platform import getFontPaths, getFontPathOfFont
-from pagebot.style import NO_COLOR
 from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings.flatstring import FlatString
 from pagebot.toolbox.transformer import path2FontName
@@ -120,6 +119,7 @@ class FlatContext(BaseContext):
         u"""Save the current document to file(s)
 
         >>> import os
+        >>> from pagebot.contexts.platform import getRootPath
         >>> exportPath = getRootPath() + '/_export' # _export/* Files are ignored in git
         >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
         >>> context = FlatContext()
@@ -228,9 +228,11 @@ class FlatContext(BaseContext):
         fontName can be the full font file path, or an abbreveation that can be found 
         by family or file name.
 
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> font = findFont('Roboto-Regular')
         >>> context = FlatContext()
-        >>> context.font('Verdana')
-        >>> context._fontName.endswith('/Verdana.ttf')
+        >>> context.font(font.path)
+        >>> context._fontName.endswith('/Roboto-Regular.ttf')
         True
         >>> context.font('OtherFont', 12) # Font does not exists, font path is set to None
         >>> context._fontName, context._fontSize

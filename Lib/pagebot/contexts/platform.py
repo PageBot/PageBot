@@ -31,7 +31,8 @@ def getContext():
             from pagebot.contexts.drawbotcontext import DrawBotContext
             DEFAULT_CONTEXT = DrawBotContext() # Test if platform is supporing DrawBot:
 
-        except (ImportError, AttributeError, ModuleNotFoundError):
+        #except (ImportError, AttributeError, ModuleNotFoundError): # Python3
+        except (ImportError, AttributeError):
             #import ForceOtherError # Uncomment for simulate testing of other contexts/platforms
             from pagebot.contexts.flatcontext import FlatContext
             DEFAULT_CONTEXT = FlatContext()
@@ -65,13 +66,19 @@ def getFontPathOfFont(fontName):
     If the path is already a valid font path, then aswer it unchanged.
     Answer None if the font cannot be found.
 
-    >>> path = getFontPathOfFont('Skia')
-    >>> path.endswith('Skia.ttf')
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> font = findFont('Roboto-Regular')
+    >>> path = getFontPathOfFont(font.path)
+    >>> path.endswith('/Roboto-Regular.ttf')
     True
-    >>> path = getFontPathOfFont('Verdana')
-    >>> path.endswith('Verdana.ttf')
+    >>> font.path == path
     True
-
+    >>> path = getFontPathOfFont('Roboto-Regular')
+    >>> path.endswith('/Roboto-Regular.ttf')
+    True
+    >>> path = getFontPathOfFont('UnknowFont.ttf')
+    >>> path is None
+    True
     """
     if fontName is not None and not os.path.exists(fontName):
         fontName = getFontPaths().get(fontName)
