@@ -12,11 +12,11 @@
 #
 #     AlterGlyphCoordinates.py
 #
-#     This script is using defaultContext, so it should be able to run it with flexContext.
+#     This script is using getContext(), so it should be able to run it with flexContext.
 #
 
 import pagebot
-from pagebot.contexts.platform import defaultContext as c
+from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import Font
 
 EXPORT_PATH = '_export/AlteredGlyphWithPoints.pdf'

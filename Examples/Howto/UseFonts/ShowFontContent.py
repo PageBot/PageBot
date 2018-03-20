@@ -14,7 +14,7 @@
 #
 # 
 import pagebot
-from pagebot.contexts.platform import defaultContext as c
+from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import Font
 
 EXPORT_PATH = '_export/UpgradeFontOverviewr.pdf'

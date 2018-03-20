@@ -14,8 +14,9 @@
 #     testPrintVariables.py
 #
 # Variable == vanilla power in DrawBot
-from pagebot.contexts.platform import defaultContext as context
-#from AppKit import NSColor
+from pagebot.contexts.platform import getContext
+
+context = getContext()
 
 if __name__ == '__main__':
 

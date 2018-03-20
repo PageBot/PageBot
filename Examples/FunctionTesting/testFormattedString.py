@@ -1,6 +1,8 @@
-from pagebot.contexts.platform import defaultContext as context
+
+from pagebot.contexts.platform import getContext
 #from pagebot.contexts.strings.drawbotstring import pixelBounds
 
+context = getContext()
 
 TEXTS = {
     (0, 0): 'ABC',

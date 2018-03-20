@@ -29,7 +29,7 @@ except ImportError:
     sys.exit('Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown')
     markdown = None
 
-from pagebot.contexts.platform import defaultContext
+from pagebot.contexts.platform import getContext
 from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
 
@@ -91,7 +91,7 @@ class Typesetter(object):
         if context is None and doc is not None:
             context = doc.context
         if context is None:
-            context = defaultContext
+            context = getContext()
 
         if galley is None:
             galley = self.GALLEY_CLASS(context=context)
@@ -255,7 +255,7 @@ class Typesetter(object):
                         # Store the content as node, so we can process it with a Typesetter in case of child nodes.
                         footnotes[index+1]['p'] = p
                     else:
-                        print '### Warning: ', index+1, 'footnote reference not found.', footnotes.keys()
+                        print('### Warning: %d footnote reference not found. %s' % (index+1, footnotes.keys()))
             result = None # Nothing to return, we handled the references
 
         elif node.attrib.get('class') == 'literature':
@@ -267,7 +267,7 @@ class Typesetter(object):
                         # Spltting fields inside the p content will be done by the calling application or Composer.
                        literatureRefs[index+1]['p'] = p
                     else:
-                        print '### Warning: ', index+1, 'literature reference not found.', literatureRefs.keys()
+                        print('### Warning: %d literature reference not found. %s' % (index+1, literatureRefs.keys()))
             result = None # Nothing to return, we handled the references
 
         else:
@@ -397,7 +397,7 @@ class Typesetter(object):
         if execute and node.text:
             if not self.tryExcept:
                 if self.verbose:
-                     print u'Typesetter: %s' % node.text
+                     print(u'Typesetter: %s' % node.text)
                 exec(node.text) in result # Exectute code block, where result goes dict.
                 codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
                 del result['__builtins__'] # We don't need this set of globals in the returned results.
@@ -417,7 +417,7 @@ class Typesetter(object):
                     error = 'AttributeError'
                 result['__error__'] = error
                 if self.verbose and error is not None:
-                    print u'### %s ### %s' % (error, node.text)
+                    print(u'### %s ### %s' % (error, node.text))
 
         # doc, page or box may have changed, store them back into the typesetter, so they are availabe for 
         # the execution of a next code block.
@@ -512,7 +512,7 @@ class Typesetter(object):
         if self.galley is not None:
             self.galley.append(bs)  
         elif self.verbose:
-            print '### Typesetter.append: Cannot append "%s"' % bs
+            print('### Typesetter.append: Cannot append "%s"' % bs)
 
     def htmlNode(self, node, end=False):
         u"""Open the tag in HTML output and copy the node attributes if there are any."""

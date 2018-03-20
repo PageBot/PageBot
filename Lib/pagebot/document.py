@@ -15,7 +15,7 @@
 #     document.py
 #
 import copy
-from pagebot.contexts.platform import defaultContext # Default context for this document if undefined.
+from pagebot.contexts.platform import getContext # Default context for this document if undefined.
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
@@ -51,7 +51,7 @@ class Document(object):
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     
     DEFAULT_VIEWID = defaultViewClass.viewId
-    DEFAULT_CONTEXT = defaultContext
+    DEFAULT_CONTEXT = getContext()
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, 
             class_=None, title=None, pages=None, autoPages=1, template=None, templates=None, 
@@ -202,12 +202,16 @@ class Document(object):
     def _get_builder(self):
         u"""Answer the builder, as supposed to be available in the self.context.
 
-        >>> from pagebot.contexts.platform import defaultContext as context
-        >>> doc = Document(name='TestDoc', context=context)
-        >>> doc.context is context
-        True
-        >>> doc.builder is not None
-        True
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> doc = Document(context=context)
+        >>> doc.context
+        <DrawBotContext>
+        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> context = FlatContext()
+        >>> doc = Document(context=context)
+        >>> doc.context
+        <FlatContext>
         """
         return self.context.b
     b = builder = property(_get_builder)
@@ -339,9 +343,6 @@ class Document(object):
         u"""Answer the style that fits the optional sequence naming of styleId.
         Answer None if no style can be found. styleId can have one of these formats:
         ('main h1', 'h1 b')
-
-
-
         """
         if styleId is None:
             return None
@@ -422,6 +423,15 @@ class Document(object):
         rs['originTop'] = flag
         rs['yAlign'] = {True:TOP, False: BOTTOM}[bool(flag)]
     originTop = property(_get_originTop, _set_originTop)
+
+    def _get_frameDuration(self):
+        u"""Property answer the document frameDuration parameters, used for speed when
+        exporting animated gifs.
+        """
+        return self.rootStyle.get('frameDuration')
+    def _set_frameDuration(self, frameDuration):
+        self.rootStyle['frameDuration'] = frameDuration
+    frameDuration = property(_get_frameDuration, _set_frameDuration)
 
     # CSS property service to children.
     def _get_w(self): # Width
@@ -977,7 +987,9 @@ class Document(object):
     def build(self, path=None, pageSelection=None, multiPage=True):
         u"""Build the document as website, using the document.view for export.
 
-        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60), context=context)
         >>> view = doc.newView('Page')
         >>> doc.build()
         """

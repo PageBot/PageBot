@@ -23,7 +23,7 @@
 #
 import os # Import module that communicates with the file system.
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 

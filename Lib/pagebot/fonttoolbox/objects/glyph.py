@@ -19,10 +19,13 @@
 import sys
 import weakref
 
+from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
 from pagebot.toolbox.transformer import point2D
 from pagebot.fonttoolbox.analyzers.apoint import APoint
 from pagebot.fonttoolbox.analyzers.asegment import ASegment
+
+context = getContext()
 
 C = 0.5
 F = 2.0 / 3.0
@@ -115,7 +118,6 @@ class Glyph(object):
     def _initialize(self):
         u"""Initializes the cached data, such as self.points, self.contour,
         self.components and self.path, as side effect of drawing the path image."""
-        from pagebot.contexts.platform import defaultContext as context
 
         self._points = []
         self._points4 = [] # Same as self.points property with added 4 spacing points in TTF style.
@@ -204,7 +206,6 @@ class Glyph(object):
 
     def _get_flattenedPath(self):
         u"""Answer the flattened DrawBotContext NSBezier path."""
-        from pagebot.contexts.platform import defaultContext as context
         if self._flattenedPath is None and self.path is not None:
             self._flattenedPath = context.bezierPathByFlatteningPath(self.path)
         return self._flattenedPath

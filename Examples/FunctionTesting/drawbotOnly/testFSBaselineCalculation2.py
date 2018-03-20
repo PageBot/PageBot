@@ -14,10 +14,11 @@
 #     testFSBaselineCalculation.py
 #
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
-
+"""
 b = context.b # Builder is DrawBot
 
 b.size(200, 200)
@@ -32,7 +33,7 @@ b.fontSize(17)
 
 b.text(fs, (10, 100))
 
-r = (66, 0, 100, 100 + fontLineHeight()+fontDescender())
+r = (66, 0, 100, 100 + b.fontLineHeight()+b.fontDescender())
 
 fs = b.FormattedString(t * 10, font="Times", fontSize=17, lineHeight=28)
 fs.fontLineHeight()
@@ -48,3 +49,4 @@ b.stroke(1, 0, 0)
 b.fill(None)
 b.rect(*r)
 
+"""

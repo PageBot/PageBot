@@ -23,10 +23,12 @@ USE_DRAWBOT = False
 USE_FLAT = not USE_DRAWBOT
 
 #import pagebot # Import to know the path of non-Python resources.
-from pagebot.contexts.platform import defaultContext, FlatContext
+from pagebot.contexts.platform import getContext
+from pagebot.contexts.flatcontext import FlatContext
+context = getContext()
 if USE_FLAT:
     EXPORT_PATH = '_export/Start_Flat'
-    defaultContext = FlatContext()
+    context = FlatContext()
 else:
     EXPORT_PATH = '_export/Start'
 
@@ -45,7 +47,7 @@ from pagebot.conditions import *
 W, H = 500, 400
 
 # Create the publication/document that holds the pages.
-doc = Document(w=W, h=H, originTop=False, autoPages=1, context=defaultContext)
+doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
 doc.view.padding = 0 # Don't show cropmarks in this example.
 doc.view.showPagePadding = True
 

@@ -23,9 +23,11 @@
 import copy
 from math import sin, radians
 from pagebot.contexts.platform import TEST_FONTS_PATH
-from pagebot.contexts.platform import defaultContext as c
+from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
+
+context = getContext()
 
 FONT_PATH = TEST_FONTS_PATH + 'fontbureau/AmstelvarAlpha-VF.ttf'
 f = Font(FONT_PATH) # Get PageBot Font instance of Variable font.

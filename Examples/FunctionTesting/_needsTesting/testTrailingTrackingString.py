@@ -4,7 +4,9 @@
 # To safely measure the real width of the string, the width of one "track"
 # needs to be subtracted.
 
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
+
+context = getContext()
 
 # Create a new page
 w, h = 400, 100

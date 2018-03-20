@@ -25,7 +25,7 @@
 import sys
 import weakref
 from fontTools.ttLib import TTFont, TTLibError
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.transformer import point3D
 

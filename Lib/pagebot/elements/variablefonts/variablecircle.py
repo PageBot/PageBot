@@ -22,10 +22,12 @@ from __future__ import division
 
 from math import pi, sin, cos
 
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements import Element
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
+
+context = getContext()
 
 class VariableCircle(Element):
     u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info.

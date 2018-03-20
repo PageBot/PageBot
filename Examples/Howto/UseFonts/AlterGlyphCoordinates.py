@@ -12,12 +12,14 @@
 #
 #     AlterGlyphCoordinates.py
 #
-#     This script is using defaultContext, so it should be able to run it with flexContext.
+#     This script is using getContext(), so it should be able to run it with flexContext.
 #
 
 import pagebot
-from pagebot.contexts.platform import defaultContext as c
+from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import Font
+
+context = getContext()
 
 EXPORT_PATH = '_export/AlteredGlyphWithPoints.pdf'
 FONT_PATH = pagebot.getFontPath() + "/fontbureau/AmstelvarAlpha-VF.ttf"
@@ -26,7 +28,7 @@ W = H = 1000
 # Scale em of 2048 back to page size.
 s = 0.5
 # Offset of drawing origin
-c.translate(100, 100)
+context.translate(100, 100)
 # Open the font and get the glyph
 f = Font(FONT_PATH)
 g = f['H']
@@ -47,18 +49,18 @@ print 'Changed point:', p, 'Glyph is dirty:', g.dirty
 g.update()
 print 'Now it is clean. Glyph is dirty:', g.dirty
 # Draw the changed path
-c.fill(None)
-c.stroke(0, 1)
-c.drawPath(g.path, (0, 0), s)
+context.fill(None)
+context.stroke(0, 1)
+context.drawPath(g.path, (0, 0), s)
 # Draw the position of the points
-c.stroke((1, 0, 0), 2)
-c.fill(None)
+context.stroke((1, 0, 0), 2)
+context.fill(None)
 for p in g.points:
     if p.onCurve:
         R = 16
     else:
         R = 6
-    c.oval(p.x*s-R/2, p.y*s-R/2, R, R)
+    context.oval(p.x*s-R/2, p.y*s-R/2, R, R)
     
-c.saveImage(EXPORT_PATH)
+context.saveImage(EXPORT_PATH)
     

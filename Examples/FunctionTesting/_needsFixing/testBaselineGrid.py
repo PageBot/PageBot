@@ -13,7 +13,9 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.drawbotcontext import DrawBotContext
+from pagebot.contexts.flatcontext import FlatContext
+
 
 def appendS(fs1, fs2, w, baselineGrid):
     u"""Append fs2 to fs2, while keeping baseline grid locked.
@@ -25,9 +27,6 @@ def appendS(fs1, fs2, w, baselineGrid):
     if baselines:
         print(1000-baselines[0][1], 1000-baselines[-1][1])
     return fs1
-
-from pagebot.contexts.drawbotcontext import DrawBotContext
-from pagebot.contexts.flatcontext import FlatContext
 
 testContexts = (
     (DrawBotContext(), '_export/testFlatString.pdf'),

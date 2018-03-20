@@ -171,8 +171,9 @@ class TextBox(Element):
         the styled width of this text box. If fs is defined as external attribute, then the
         size of the string is answers, as if it was already inside the text box.
 
-        >>> from pagebot.contexts.platform import defaultContext as c
-        >>> c.name in ('DrawBotContext', 'FlatContext')
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
+        >>> context.name in ('DrawBotContext', 'FlatContext')
         True
         >>> bs = c.newString('ABC', style=dict(font='Verdana', fontSize=124))
         >>> tb = TextBox(bs, w=100, h=None)

@@ -16,7 +16,7 @@
 #     But you can better use the wrapper attribute font Font.
 #
 import pagebot
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.fonttoolbox.objects.font import getFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance 

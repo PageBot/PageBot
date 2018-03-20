@@ -17,7 +17,7 @@
 #     OSX/IOS FormattedStrings.
 #     For FlexContext, equivalent text-formatted structures are implemented.
 #
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
 
 W = H = 1000
 M = 100

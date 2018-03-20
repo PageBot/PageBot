@@ -14,7 +14,8 @@
 #     getRectFromRange.py
 #
 import sys
-from pagebot.contexts.platform import defaultContext as context
+from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
@@ -82,7 +83,7 @@ def textSearch(self, txt, box, search, align):
     return rectangles
 
 
-
+"""
 size(300, 484)
 t = FormattedString()
 
@@ -105,3 +106,4 @@ results = textSearch(BaseContext(), t, b, "this", align="left")
 fill(1, 1, 0, .5)
 for r in results:
     rect(*r)
+"""

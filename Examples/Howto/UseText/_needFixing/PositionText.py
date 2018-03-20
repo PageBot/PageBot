@@ -18,12 +18,14 @@
 import os
 from random import choice
 from pagebot.elements import newText
-from pagebot.contexts.platform import defaultContext
+from pagebot.contexts.platform import getContext
 from pagebot.style import LEFT, BOTTOM
 # Document is the main instance holding all information
 # about the document togethers (pages, styles, etc.)
 from pagebot.document import Document
 from pagebot.toolbox.hyphenation import words
+
+context = getContext()
 
 USE_FLAT = True
 EXPORT_PATH = '_export/PositionText.png'
@@ -47,7 +49,7 @@ def makeDocument():
     doc = Document(originTop=False, title=title,
                    w=W, h=H,
                    autoPages=1,
-                   context=defaultContext)
+                   context=context)
 
     page = doc[1] # Get the first/single page of the document.
     page.size = W, H

@@ -13,6 +13,8 @@
 #
 #     flatbuilder.py
 #
+from pagebot.contexts.builders.nonebuilder import NoneFlatBuilder
+
 try: 
     import flat
     flatBuilder = flat
@@ -20,5 +22,6 @@ try:
     flatBuilder.PB_ID = 'flat' 
 
 except ImportError:
-    flatBuilder = None
+    flatBuilder = NoneFlatBuilder()
+    print('Using NoneFlatBuilder')
 

@@ -13,18 +13,3 @@
 #
 #     pagebot/contexts/__init__.py
 #
-from pagebot.contexts.drawbotcontext import DrawBotContext
-from pagebot.contexts.flatcontext import FlatContext
-from pagebot.contexts.htmlcontext import HtmlContext
-
-try:
-    #import ForceImportError # Uncomment for simulate testing of other contexts/platforms
-    import AppKit # Force exception on non-OSX platforms
-    defaultContext = DrawBotContext() # Test if platform is supporing DrawBot:
-
-except (ImportError, AttributeError):
-    #import ForceOtherError # Uncomment for simulate testing of other contexts/platforms
-    defaultContext = FlatContext()
-
-except:
-    raise NotImplementedError('Cannot decide on the platform context.')
