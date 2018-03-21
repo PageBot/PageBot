@@ -256,7 +256,7 @@ def color2Hex(c):
     return '#%02x%02x%02x' % (int(round(r*255)), int(round(g*255)), int(round(b*255)))
 
 def color2HexOpacity(c):
-    u"""Answer the tuple ((r, g, b), opacity) with CSS hex color and value for opacity from the color 
+    u"""Answer the tuple ((r, g, b), opacity) with CSS hex color and value for opacity from the color
     (r, g, b, o) or (r, g, b) tuple. This format is CSS compatible.
 
     >>> color2HexOpacity((0.2, 0.3, 0.4))
@@ -328,7 +328,7 @@ def asNumberOrNone(value):
     >>> asNumberOrNone('1234')
     1234.0
     >>> asNumberOrNone('1234ab')
-    
+
     """
     try:
         if value == int(value):
@@ -548,7 +548,7 @@ def asDict(value, isRoot=True):
 #    F I X E D
 
 def value2Fixed(value):
-    if isinstance(value, basestring):
+    if isinstance(value, str):
         if value.endswith('u'):
             value = float2Fixed(asFloat(value[:-1]))
         else:
@@ -601,7 +601,7 @@ def list2SpacedString(l):
 def list2StringList(l):
     strings = []
     for element in l:
-        if not isinstance(element, basestring):
+        if not isinstance(element, str):
             element = '%s' % element
         strings.append(element)
     return strings
@@ -617,7 +617,7 @@ def value2IdCommaString(value):
         value = str(value).split(',')
     for item in value:
         if isInt(item):
-            t.append('%s' % item) 
+            t.append('%s' % item)
     return ', '.join(t)
 
 def idCommaString2IdSet(s):
@@ -671,7 +671,7 @@ def obj2StyleId(s):
             styleId.append(obj2StyleId(sPart))
         return ' '.join(styleId)
 
-    if not isinstance(s, basestring):
+    if not isinstance(s, str):
         s = u'%s' % s
     for sPart in s.split(' '):
         if sPart:
@@ -775,8 +775,8 @@ path2GlyphIdName = path2FontName
 styleNameParts = re.compile('[^A-Za-z]*([A-Z]*[a-z]*)')
 
 def path2StyleNameParts(pathOrName, extensions=None):
-    u"""Answer the fileName or name as set of unique parts that can be checked 
-    for as style e.g. by the abbreviated style names in style.py. 
+    u"""Answer the fileName or name as set of unique parts that can be checked
+    for as style e.g. by the abbreviated style names in style.py.
     The parts a split on Cap(+Cap)(+lc) patterns.
     Note that the family name is also included, as often there is no difference
     between the family name and the style parts.
@@ -953,7 +953,7 @@ def list2Json(d):
 #    R O M A N  N U M E R A L S
 
 def arabic2RomanNumerals(arabic):
-    u"""Return the roman numeral representing n. Should work for n in (1, 4999). 
+    u"""Return the roman numeral representing n. Should work for n in (1, 4999).
     Borrowed from Nick Montfort.
 
     >>> arabic2RomanNumerals(5)
@@ -1180,7 +1180,7 @@ def xmlValue2PyValue(value, conversions):
     the appropriate Python object type, if the class is defined in the list
     *conversions*. If the *value* is not a string, it must have been
     converted before (e.g. by self.EXPR), the answer it untouched."""
-    if not isinstance(value, basestring):
+    if not isinstance(value, str):
         return value
 
     strippedvalue = value.strip()
@@ -1304,11 +1304,11 @@ def flatten2Class(*args):
     ``class_`` is a ``tuple`` or ``list``, then merge the content. Check recursively in
     case the names are nested. If the ``classes`` is empty or ``None`` or contain an empty
     element, then this is ignored.
-    
+
     """
     result = []
     for class_ in args:
-        if isinstance(class_, basestring):
+        if isinstance(class_, str):
             result.append(class_)
         elif isinstance(class_, (tuple, list)):
             s = []
@@ -1325,12 +1325,12 @@ def flatten2Class(*args):
 
 def value2Bool(v):
     u"""
-        
+
     The ``value2Bool`` method answers the interpreted value of ``v`` as boolean. The following
     values (independent of case) interpret as ``False``: ``['', '0', 'f', 'F', 'none', 'false']``.
-    If ``v`` is a list or tuple, then it is ``True`` if there is at least one element 
+    If ``v`` is a list or tuple, then it is ``True`` if there is at least one element
     the renders to ``True``, so it performs a an ``OR``.
-        
+
     """
     FALSEVALUES = ('', 0, '0', 'f', 'F', 'none', 'None', 'NONE', 'false', 'False', 'FALSE', 'n', 'N', 'no', 'No', 'NO', None, False)
     if (isinstance(v, (tuple, list))):

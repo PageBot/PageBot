@@ -45,10 +45,10 @@ class FlatContext(BaseContext):
         sp = st.span(string)
         par = st.paragraph(string)
         tx = st.text(string)
-    
+
     placed = page.place()
-    outl = outlines(string) 
-    
+    outl = outlines(string)
+
     par = paragraph(spans)
 
     placed = placetext()
@@ -225,7 +225,7 @@ class FlatContext(BaseContext):
 
     def font(self, fontName, fontSize=None):
         u"""Set the current font, in case it is not defined in a formatted string.
-        fontName can be the full font file path, or an abbreveation that can be found 
+        fontName can be the full font file path, or an abbreveation that can be found
         by family or file name.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -311,7 +311,7 @@ class FlatContext(BaseContext):
         >>> context = FlatContext()
         >>> context.imageSize(imagePath)
         (398, 530)
-        """ 
+        """
         img = self.b.image.open(path)
         return img.width, img.height
 
@@ -441,7 +441,7 @@ class FlatContext(BaseContext):
             self.fillColor = b.gray(iround(c))
             success = True
         elif isinstance(c, (list, tuple)):
-            if len(c) == 2 and isinstance(c[0], basestring) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
+            if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
                 name, (cyan, magenta, yellow, k) = c
                 self.fillColor = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
                 success = True
@@ -482,7 +482,7 @@ class FlatContext(BaseContext):
             self.strokeColor = b.gray(iround(c))
             success = True
         elif isinstance(c, (list, tuple)):
-            if len(c) == 2 and isinstance(c[0], basestring) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
+            if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
                 name, (cyan, magenta, yellow, k) = c
                 self.strokeColor = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
                 success = True
@@ -518,7 +518,7 @@ class FlatContext(BaseContext):
 
     def fontName2FontPath(self, fontName):
         u"""Answer the font path, related to fontName. As there are no "installed fonts", as with DrawBot,
-        we'll check if there is a font file related to fontName. 
+        we'll check if there is a font file related to fontName.
         If fontName exists as file path, then answer it unchangend. Otherwise answer None.
         """
         if os.path.exists(fontName): # Exists as font file?
@@ -532,7 +532,7 @@ class FlatContext(BaseContext):
 
     def create_gif(self, filenames, duration):
         """
-        #TODO: Not implement yet. 
+        #TODO: Not implement yet.
         images = []
         for filename in filenames:
             images.append(imageio.imread(filename))
@@ -543,4 +543,4 @@ class FlatContext(BaseContext):
 if __name__ == '__main__':
     import doctest
     import sys
-    sys.exit(doctest.testmod()[0]) 
+    sys.exit(doctest.testmod()[0])

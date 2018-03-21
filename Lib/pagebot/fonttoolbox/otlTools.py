@@ -353,7 +353,7 @@ class LookupTypeFinder(LookupTraverser):
 class AlternateGlyphFinder(LookupTraverser):
 
     def findAlternateGlyphs(self, glyphNames):
-        if isinstance(glyphNames, basestring):
+        if isinstance(glyphNames, str):
             glyphNames = set([glyphNames])
         elif not isinstance(glyphNames, set):
             glyphNames = set(glyphNames)
@@ -672,7 +672,7 @@ class NestedLookupFinderAndRemapper(LookupTraverser):
 class GlyphDeleter(LookupTraverser):
 
     def deleteGlyphs(self, glyphNames):
-        if isinstance(glyphNames, basestring):
+        if isinstance(glyphNames, str):
             glyphNames = set([glyphNames])
         elif not isinstance(glyphNames, set):
             glyphNames = set(glyphNames)
@@ -1458,7 +1458,7 @@ def _test():
         #TODO: Make these docTests to work.
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
-        >>> from cStringIO import StringIO
+        >>> from io import StringIO
         >>> font = TTFont(getFontPath("ProW6.otf"))
         >>> alts = sorted(findAlternateGlyphs(font["GSUB"], ["cid00962"]))
         >>> len(alts)

@@ -51,7 +51,7 @@ class DrawBotContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = stringClass
-  
+
     def __init__(self):
         u"""Constructor of DrawBotContext if drawBot import exists.
 
@@ -65,8 +65,8 @@ class DrawBotContext(BaseContext):
         >>> context.name
         'DrawBotContext'
         """
-        # The context builder "cls.b" is the main drawBot library, that contains all 
-        # drawing calls in as used regular DrawBot scripts.   
+        # The context builder "cls.b" is the main drawBot library, that contains all
+        # drawing calls in as used regular DrawBot scripts.
         self.b = drawBotBuilder # cls.b builder for this canvas.
         self.name = self.__class__.__name__
         self._path = None # Hold current open DrawBot path
@@ -83,7 +83,7 @@ class DrawBotContext(BaseContext):
         """
         return self.b.sizes().get('screen', None)
 
-    #   D O C U M E N T 
+    #   D O C U M E N T
 
     def newDocument(self, w, h):
         u"""Ignore for DrawBot, as document open automatic if first page is created."""
@@ -110,7 +110,7 @@ class DrawBotContext(BaseContext):
         >>> context.newPage(100, 100)
         """
         self.b.newPage(w, h)
-    
+
     def newDrawing(self):
         u"""Clear output canvas, start new export file.
 
@@ -128,7 +128,7 @@ class DrawBotContext(BaseContext):
             Variable(variableUI, globalVariables)
         except self.b.misc.DrawBotError:
             pass # Ingore if there is a DrawBot context, but not running inside DrawBot.
-  
+
     #   D R A W I N G
 
     def rect(self, x, y, w, h):
@@ -270,7 +270,7 @@ class DrawBotContext(BaseContext):
     def bezierPathByFlatteningPath(self, path):
         u"""Use the NSBezier flatten path."""
         return path.getNSBezierPath().bezierPathByFlatteningPath()
-        
+
     def scale(self, sx, sy=None):
         u"""Set the drawing scale."""
         if sy is None:
@@ -366,7 +366,7 @@ class DrawBotContext(BaseContext):
         return None
 
     def fontName2FontPath(self, fontName):
-        u"""Answer the unchanged path, if it exists as file. Answer the path that is source of the given font name. 
+        u"""Answer the unchanged path, if it exists as file. Answer the path that is source of the given font name.
         Answer None if the font cannot be found."""
         # If the font cannot be found by name, then test if the file exists as path and answer it.
         if os.path.exists(fontName): #
@@ -378,12 +378,12 @@ class DrawBotContext(BaseContext):
             url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
             return url.path()
         return None
-    
+
     def listOpenTypeFeatures(self, fontName):
         u"""Answer the list of opentype features available in the named font."""
         return self.b.listOpenTypeFeatures(fontName)
 
-    #   G L Y P H 
+    #   G L Y P H
 
     def drawGlyphPath(self, font, glyphName, x, y, fillColor=0, strokeColor=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
         u"""Draw the font[glyphName] at the defined position with the defined fontSize.
@@ -422,16 +422,16 @@ class DrawBotContext(BaseContext):
         return self.newString(bullet, e=e, style=style)
 
     def text(self, sOrBs, p):
-        u"""Draw the sOrBs text string, can be a basestring or BabelString, including a DrawBot FormattedString
+        u"""Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
         at position p."""
-        if not isinstance(sOrBs, basestring):
+        if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         self.b.text(sOrBs, p)
 
     def textBox(self, sOrBs, r):
-        u"""Draw the sOrBs text string, can be a basestring or BabelString, including a DrawBot FormattedString
+        u"""Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
         in rectangle r."""
-        if not isinstance(sOrBs, basestring):
+        if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         self.b.textBox(sOrBs, r)
 
@@ -477,7 +477,7 @@ class DrawBotContext(BaseContext):
         """
         self.b.hyphenation(onOff)
 
-    #   A N I M A T I O N 
+    #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
         u"""Set the frame duretion for animated gifs to a number of seconds per frame."""
@@ -519,7 +519,7 @@ class DrawBotContext(BaseContext):
     def setStrokeColor(self, c, w=1, cmyk=False, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         if b is None: # Builder can be optional DrawBot FormattedString
-            b = self.b 
+            b = self.b
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
         elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
@@ -552,7 +552,7 @@ class DrawBotContext(BaseContext):
         u"""Draw the image. If w or h is defined, then scale the image to fit."""
         iw, ih = self.imageSize(path)
         if w and not h: # Scale proportional
-            h = ih * w/iw # iw : ih = w : h 
+            h = ih * w/iw # iw : ih = w : h
         elif not w and h:
             w = iw * h/ih
         elif not w and not h:
@@ -576,7 +576,7 @@ class DrawBotContext(BaseContext):
         >>> context = DrawBotContext()
         >>> path = getResourcesPath() + '/images/peppertom_lowres.png'
         >>> imo = context.getImageObject(path)
-        
+
         """
         return self.b.ImageObject(path)
 

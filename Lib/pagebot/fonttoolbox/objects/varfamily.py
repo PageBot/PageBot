@@ -22,9 +22,9 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2Name, path2ParentPath
 
 class VarFamily(Family):
-    u"""A VarFamily is a special kind of family that contains a set of font that potentially form 
-    the masters to create a VariableFont export. But the collection may not be up for creation yet, 
-    that is why it is not a "VarFont". There can be a design space file included to define the relation 
+    u"""A VarFamily is a special kind of family that contains a set of font that potentially form
+    the masters to create a VariableFont export. But the collection may not be up for creation yet,
+    that is why it is not a "VarFont". There can be a design space file included to define the relation
     between the fontfiles and axes.
 
     >>> from pagebot.contexts.platform import getTestFontsPath
@@ -45,16 +45,16 @@ class VarFamily(Family):
 
     """
     BASE_GLYPH_NAME = 'H' # Use for base metrics analysis
-    
+
     ORIGIN_OS2_WEIGHT_CLASS = 400
     # The quality of automatic parametric axis creation depends on the type of design and if
     # there are interpolating sources (e.g. for compensation of stem width in 'xtra' and 'xopq'.
-    # Currently supporting these (automatic) parametric axes, if they can be derived from the 
+    # Currently supporting these (automatic) parametric axes, if they can be derived from the
     # available source fonts.
     XTRA = 'XTRA' # Fixed H-stems, variable H-counter, variable margins
     XOPQ = 'XOPQ' # Variable H-stems, fixed H-counter, variable margins
-    YTRA = 'YTRA' # Fixed bar heights, variable 
-    #YOPQ = 'yopq' 
+    YTRA = 'YTRA' # Fixed bar heights, variable
+    #YOPQ = 'yopq'
     YTLC = 'YTLC' # Varialbe lower case
     YTUC = 'YTUC' # Variable capHeight
     YTDE = 'YTDE' # Variable descenders
@@ -70,7 +70,7 @@ class VarFamily(Family):
     wght, wdth, opsz, ital, slnt = COMPOSITE_AXES = ['wght', 'wdth', 'opsz', 'ital', 'slnt']
 
     def __init__(self, name=None, fonts=None):
-        u"""Answer a VarFamily instance in the defined list of font paths 
+        u"""Answer a VarFamily instance in the defined list of font paths
         or fonts list.  """
         Family.__init__(self, name=None, fonts=None)
         self._parametricAxisFonts = {} # Key is parametric axis name
@@ -89,14 +89,14 @@ class VarFamily(Family):
                 self._originFont.info.weightClass = 400
         return self._originFont
     originFont = property(_get_originFont)
-    
+
     def _get_parametricAxisFonts(self):
         u"""Generate the dictionary with parametric axis fonts. Key is the parametric axis name,
         value is the font instance (there can only be one font per axis). If the fonts don't
-        exist as cached files, they are created. The font currently under self.originFont is 
+        exist as cached files, they are created. The font currently under self.originFont is
         used a neutral, for which all delta's are 0."""
         origin = self.originFont
-        
+
         # Create directory for the parametric axis fonts, if it does not exist.
         paFontDir = path2ParentPath(origin.path) + '/@axes'
         if not os.path.exists(paFontDir):
@@ -113,7 +113,7 @@ class VarFamily(Family):
             self._parametricAxisMetrics[axisName] = origin.analyzer.stems
         return self._parametricAxisFonts
     parametricAxisFonts = property(_get_parametricAxisFonts)
-    
+
     def _get_parametricAxisMetrics(self):
         u"""The parametric axis metrcs is a compilation of all measures and calculation of
         values, required to generate the parameteric axis fonts."""
@@ -121,7 +121,7 @@ class VarFamily(Family):
             self._parametricAxisMetrics = {}
         return self._parametricAxisMetrics
     parametricAxisMetrics = property(_get_parametricAxisMetrics)
-           
+
     def addFont(self, pathOrFont, install=True):
         self._originFont = None # Reset to force new initialization of the property.
         Family.addFont(self, pathOrFont)
@@ -136,7 +136,7 @@ class VarFamily(Family):
             self._metrics[path] = dict(path=path, stems=fa.stems, bars=fa.bars)
         return self._metrics
     metrics = property(_get_metrics)
-    
+
     def getClosestOS2Weight(self, weightClass=ORIGIN_OS2_WEIGHT_CLASS):
         u"""Answer the list of fonts (there can be more that one, accidentally located at that position.
         Default is the origin at weightClass == ORIGIN_OS2_WEIGHT_CLASS (400)."""
@@ -147,7 +147,7 @@ class VarFamily(Family):
                 os2Weights[diff] = []
             os2Weights[diff].append(font)
         return os2Weights[min(os2Weights.keys())] # Answer the set of fonts with the smallest difference.
-        
+
     def getOS2WeightWidthClasses(self):
         u"""Answer the (x, y) dictionary, with (OS/2 weight class, OS/2 width class) as key and fonts list as value
         (as often there are be multiple fonts on the same (x, y) if not filled with the right OS/2 value."""
@@ -174,7 +174,7 @@ class VarFamily(Family):
                 weightWidthLocations[location] = []
             weightWidthLocations[location].append(font)
         return weightWidthLocations
-            
+
     def getMinMaxWidth(self):
         u"""Answer the minimal/max widths of H."""
         minWidth = sys.maxint
@@ -183,7 +183,7 @@ class VarFamily(Family):
             g = font[self.baseGlyphName].width or 0
             minWidth = min(g.width, minWidth)
             maxWidth = max(g.width, maxWidth)
-        return minWidth, maxWidth    
+        return minWidth, maxWidth
 
     def getMinMaxStem(self):
         u"""Answer the minimal/max stems of H."""
@@ -192,10 +192,10 @@ class VarFamily(Family):
         for metrics in self.metrics.values():
             minStem = min(min(metrics['stems'].keys()), minStem)
             maxStem = max(max(metrics['stems'].keys()), maxStem)
-        return minStem, maxStem    
+        return minStem, maxStem
 
     #   C O N S T R U C T  P A R A M E T R I C  F O N T S
-    
+
     def makeParametricFonts(self, axisName):
         u"""Answer the two Font instances for calculated parametric Min and Max."""
         axisFontMin, axisFontMax = self.parametricAxisFonts[axisName]
@@ -233,7 +233,7 @@ class VarFamily(Family):
         """
         if fontFilter is None:
             fontFilter = []
-        elif isinstance(fontFilter, basestring):
+        elif isinstance(fontFilter, str):
             fontFilter = [fontFilter]
         errors = {} # Total collection of (font.path-->glyphName) that do not interpolate.
 
@@ -242,7 +242,7 @@ class VarFamily(Family):
 
         # Collect all unique glyph names to look at, as the total set of all fonts.
         glyphNames = set()
-        path2Fonts = {} 
+        path2Fonts = {}
         for font in self.fonts.values():
             fontName = path2Name(font.path)
             match = True
@@ -254,7 +254,7 @@ class VarFamily(Family):
                 glyphNames = glyphNames.union(set(font.keys()))
                 path2Fonts[font.path] = font # So we can make a sorted list of paths
 
-        # Now we have the total set of all glyph names in all fonts.     
+        # Now we have the total set of all glyph names in all fonts.
         '''
         for glyphName in glyphNames:
             # Check compatibility of outlines
@@ -306,8 +306,8 @@ class VarFamily(Family):
                         pIndex = 0
                         for p in contour:
                             if p.onCurve != rContour[pIndex].onCurve:
-                                report.append(u'"%s" Glyph "%s" point #%d (%d,%d,%s) is not same type as point #%d (%d,%d,%s) in “%s”.' % (font.info.styleName, glyphName, pIndex, 
-                                    p.x, p.y, p.onCurve, pIndex, rContour[pIndex].x, rContour[pIndex].y, rContour[pIndex].onCurve, 
+                                report.append(u'"%s" Glyph "%s" point #%d (%d,%d,%s) is not same type as point #%d (%d,%d,%s) in “%s”.' % (font.info.styleName, glyphName, pIndex,
+                                    p.x, p.y, p.onCurve, pIndex, rContour[pIndex].x, rContour[pIndex].y, rContour[pIndex].onCurve,
                                     refFont.info.styleName))
                             pIndex += 1
 

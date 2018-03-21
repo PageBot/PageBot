@@ -454,7 +454,7 @@ class DateTime:
                 time = datetimeparts[1].strip()
 
             if date is not None:
-                if isinstance(date, (basestring, unicode)):
+                if isinstance(date, str):
                     # Could one of the follovwing formats
                     # YYYY-MM-DD HH:MM:SS
                     stamp = re.compile("(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)([\-\+]\d+)?")

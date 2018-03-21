@@ -18,7 +18,7 @@ from pagebot.contexts.builders.basebuilder import BaseBuilder
 
 
 class XmlBuilder(BaseBuilder):
-        
+
     GLOBAL_ATTRIBUTES = set(['id', 'class_', 'title', 'onclick', 'style'])
 
     @classmethod
@@ -53,7 +53,7 @@ class XmlBuilder(BaseBuilder):
         """"Output tabs to the current level and add newlines, depending on the setting of @self._newline@
         (string with newlines) and ``self._tabLevel`` (number of indents)."""
         if self._verbose:
-            self.write(self._newLine + (self._tabIndent * self._tabLevel)) 
+            self.write(self._newLine + (self._tabIndent * self._tabLevel))
 
     def tabIn(self):
         if self._doIndent:
@@ -82,7 +82,7 @@ class XmlBuilder(BaseBuilder):
     def write_attributes(self, attributes, default_attributes, args, tagname):
         u"""Generic function to write HTML attributes. The new HTML5 feature to store custom data inside the attribute
         @data-xxx@ is defined as attribute name *data_xxx*. See "HTML-5 Attributes":http://ejohn.org/blog/html-5-data-attributes/
-        If the key has an attached builder type as @xxx-html@ or @xxx-css@, 
+        If the key has an attached builder type as @xxx-html@ or @xxx-css@,
         then show the attribute only with the builder type matches the type of @self@.
         """
         for key, value in args.items():
@@ -123,14 +123,14 @@ class XmlBuilder(BaseBuilder):
         elif isinstance(value, (list, tuple)):
             if key in self.CASCADING_ATTRIBUTES:
                 value = self.flatten2Class(value)
-                if isinstance(value, basestring):
+                if isinstance(value, str):
                     value = value.replace('"', '&quot;');
                 if value:
                     line = u' %s="%s"' % (key, value)
             else:
                 raise ValueError('[XmlTagBuilder.write_attribute] No list attribute value allowed for %s="%s"' % (key, value))
         elif value:
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 value = value.replace('"', '&quot;');
             line = u' %s="%s"' % (key, value)
         if line:
@@ -157,7 +157,7 @@ class XmlBuilder(BaseBuilder):
             self.write(u'/>')
 
     def write_tag_noWhitespace(self, tagname, open, args):
-        u"""Writes a normally formatted HTML tag, exceptions have a custom implementation, 
+        u"""Writes a normally formatted HTML tag, exceptions have a custom implementation,
         see respective functions. Don’t write any white space inside the block. E.g. used by <textarea>
         """
         self.write(u'<' + tagname)

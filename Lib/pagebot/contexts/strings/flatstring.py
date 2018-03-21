@@ -32,7 +32,7 @@ class FlatString(BabelString):
         u"""Answer the embedded Flat equivalent of a OSX FormattedString by property, to enforce checking type of the string."""
         return self._s
     def _set_s(self, s):
-        if isinstance(s, basestring):
+        if isinstance(s, str):
             s = s # TODO: Change to Flat equivalent of FormattedString.
         self._s = s
     s = property(_get_s, _set_s)
