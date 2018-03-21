@@ -30,7 +30,7 @@ def subsetFont(font, glyphsToDelete):
     """
         TODO: Fix docTests
 
-        >>> from cStringIO import StringIO
+        >>> from io import StringIO
         >>> from fontTools.ttLib import TTFont
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
@@ -91,7 +91,7 @@ def scaleFont(font, desiredUnitsPerEm):
     """
         TODO: Fix docTests
 
-        >>> from cStringIO import StringIO
+        >>> from io import StringIO
         >>> from fontTools.ttLib import TTFont
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
@@ -113,7 +113,7 @@ def convertFontToTTF(font, quadErrorMargin=0.5, cubicToQuadConverter=None):
     """
         TODO: Fix docTests
 
-        >>> from cStringIO import StringIO
+        >>> from io import StringIO
         >>> from fontTools.ttLib import TTFont
          >>> from pagebot.contexts.platform import getTestFontsPath
         >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
@@ -925,7 +925,7 @@ def _findComponentParentGlyphs(font, glyphName):
         ['aring', 'agrave', 'adieresis', 'atilde', 'acircumflex', 'aacute']
     """
     # XXX "...and their fathers' fathers' fathers!"
-    assert isinstance(glyphName, basestring)
+    assert isinstance(glyphName, str)
     glyfTable = font["glyf"]
     parents = []
     for gn in glyfTable.keys():

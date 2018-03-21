@@ -11,7 +11,7 @@
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
-# 
+#
 #     basetheme.py
 #
 import copy
@@ -19,14 +19,14 @@ from scss import compiler
 from pagebot.style import getRootStyle
 
 class BaseTheme(object):
-    u"""The Theme instances combines a number style dictionaries (property values), 
+    u"""The Theme instances combines a number style dictionaries (property values),
     in relation to
     a selector path for their usage. In Html/Css terms, a theme could describe the entire
     CSS file where the keys are used as CSS selector and the connected styles are used
     as property:value declaration.
 
     PageBot will support a growing number of predefined themes, that can be copied in
-    a document and then modified. Thet CSS behavior of elements will comply to the 
+    a document and then modified. Thet CSS behavior of elements will comply to the
     selected theme of a document, unless they have their own style defined.
     """
     SCSS_PATH = None # Needs to be redefined by inheriting theme classes.
@@ -78,7 +78,7 @@ class BaseTheme(object):
         to the styles, overwriting values that start with "@"."""
         for style in self.styles.values():
             for name, value in style.items():
-                if isinstance(value, basestring) and value and value[0] == '@':
+                if isinstance(value, str) and value and value[0] == '@':
                     # Replace this value if it exists by palette value.
                     orgValue = value[1:]
                     if orgValue in palette:

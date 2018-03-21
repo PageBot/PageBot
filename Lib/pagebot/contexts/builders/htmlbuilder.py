@@ -15,7 +15,7 @@
 #     htmlbuilder.py
 #
 import codecs
-from pagebot.toolbox.transformer import value2Bool 
+from pagebot.toolbox.transformer import value2Bool
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.contexts.strings.htmlstring import HtmlString
@@ -229,7 +229,7 @@ class HtmlBuilder(XmlBuilder):
 
     # Standard CSS code to reset browser specific presets.
     # http://meyerweb.com/eric/tools/css/reset/
-    RESET_CSS = (SECTION_CSS % """http://meyerweb.com/eric/tools/css/reset/ 
+    RESET_CSS = (SECTION_CSS % """http://meyerweb.com/eric/tools/css/reset/
     v2.0 | 20110126
     License: none (public domain)""") + """html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -240,8 +240,8 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
     margin: 0;
@@ -276,17 +276,17 @@ table {
 
     def __init__(self):
         self.resetHtml() # Initialize the HTML output stream.
-        self._cssOut = []  
-        self._jsOut = []  
+        self._cssOut = []
+        self._jsOut = []
         self._copyPaths = []
         self._initialize()
-        
+
     def addHtml(self, html):
         u"""Add the html chunk to self.html, the ordered list of html for output. Test if the html
         is a plain string or of type HtmlString(BabelString). Otherwise raise an error, because
         we don't want to support BabelString conversion. They should have been created of the right
         type in the context from the start."""
-        if not isinstance(html, basestring): # It's something else, test on the kind of BabelString.
+        if not isinstance(html, str): # It's something else, test on the kind of BabelString.
             assert isinstance(html, HtmlString)
             html = html.s # Get the collected html from the BabelString.
         self._htmlOut.append(html)
@@ -311,7 +311,7 @@ table {
 
     def resetHtml(self):
         u"""Reset the output stream, as should be done after each page export.
-        It is likely not to reset the CSS, because we want to collect all and 
+        It is likely not to reset the CSS, because we want to collect all and
         write to the single CSS file for the entire site."""
         self._htmlOut = []
 
@@ -354,7 +354,7 @@ table {
         self.addCss(self.RESET_CSS)
 
     def sectionCss(self, title):
-        u"""Add named section marker in CSS output. 
+        u"""Add named section marker in CSS output.
         TODO: Make optional if compact CSS is needed."""
         self.addCss(self.SECTION_CSS % title)
 
@@ -392,10 +392,10 @@ table {
 
     def XXXbuildMetaKeyWords(self, e):
         pass
-               
+
     def XXXbuildJavascript(self, e):
         pass
-    
+
     def XXXbuildFavIconLinks(self, e):
         pass
 
@@ -413,7 +413,7 @@ table {
         """
         if componentOrText is None:
             return
-        if isinstance(componentOrText, basestring):
+        if isinstance(componentOrText, str):
             if self._svgMode:
                 self.svgText(componentOrText, **kwargs)
             else:
@@ -498,7 +498,7 @@ table {
             css += '/* %s */' % message
         css += '\n'
         self.addCss(css)
-            
+
     #   H T L M
 
     def docType(self, s):

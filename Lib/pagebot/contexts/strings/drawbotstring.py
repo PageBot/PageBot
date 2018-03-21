@@ -87,8 +87,8 @@ class DrawBotString(BabelString):
     def _set_s(self, s):
         u""" Check on the type of s. Three types are supported here: plain strings,
         DrawBot FormattedString and the class of self."""
-        assert isinstance(s, (DrawBotString, basestring)) or s.__class__.__name__ == 'FormattedString'
-        if isinstance(s, basestring):
+        assert isinstance(s, (DrawBotString, str)) or s.__class__.__name__ == 'FormattedString'
+        if isinstance(s, str):
             s = self.context.b.FormattedString(s)
         elif isinstance(s, DrawBotString):
             s = s.s
@@ -617,7 +617,7 @@ class TextLine(object):
 
     def findPattern(self, pattern):
         founds = []
-        if isinstance(pattern, basestring):
+        if isinstance(pattern, str):
             pattern = re.compile(pattern)
             #pattern = re.compile('([a-ZA-Z0-9\.\-\_]*])
         for iStart, iEnd in [(m.start(0), m.end(0)) for m in re.finditer(pattern, self.string)]:

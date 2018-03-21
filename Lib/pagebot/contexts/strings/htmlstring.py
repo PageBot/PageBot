@@ -43,15 +43,15 @@ class HtmlString(BabelString):
             self.context.font(fontSize)
         self.style['fontSize'] = fontSize
     fontSize = property(_get_fontSize, _set_fontSize)
-       
+
     def _get_s(self):
         u"""Answer the embedded HTML string by property, to enforce checking type of the string."""
         return self._s
     def _set_s(self, html):
-        assert isinstance(html, basestring)
+        assert isinstance(html, str)
         self._s = html
     s = property(_get_s, _set_s)
-    
+
     def asText(self):
         return self.s # TODO: Use re to find non-tagged text to return.
 
@@ -66,7 +66,7 @@ class HtmlString(BabelString):
         return ''
 
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None, 
+    def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None,
             pixelFit=None, tagName=None):
         u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.

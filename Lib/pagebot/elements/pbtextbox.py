@@ -30,9 +30,9 @@ class TextBox(Element):
 
     def __init__(self, bs=None, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
         Element.__init__(self,  **kwargs)
-        u"""Creates a TextBox element. Default is the storage of self.s 
-        (DrawBot FormattedString or Flat equivalent), but optional it can also be ts (tagged basestring)
-        if output is mainly through build and HTML/CSS. Since both strings cannot be conversted lossless 
+        u"""Creates a TextBox element. Default is the storage of self.s
+        (DrawBot FormattedString or Flat equivalent), but optional it can also be ts (tagged str)
+        if output is mainly through build and HTML/CSS. Since both strings cannot be conversted lossless
         one into the other, it is safer to keep them both if they are available.
 
         """
@@ -64,7 +64,7 @@ class TextBox(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        u"""Answer the height of the textBox. If self.style['h'] is None, then answer the 
+        u"""Answer the height of the textBox. If self.style['h'] is None, then answer the
         vertical space that the text needs.
 
         >>> from pagebot.document import Document
@@ -96,17 +96,17 @@ class TextBox(Element):
             return []
         return self._textLines
     textLines = property(_get_textLines)
-    
+
     def __getitem__(self, lineIndex):
         return self.textLines[lineIndex]
 
     def __len__(self):
         return len(self.textLines)
-  
+
     def __repr__(self):
         u"""Answer the representation string of the element.
 
-        >>> e = TextBox('ABC')        
+        >>> e = TextBox('ABC')
         >>> str(e) == 'TextBox:%s (0, 0)ABC' % e.eId
         True
         >>> e = TextBox('ABC', x=100, y=100, w=200)
@@ -132,14 +132,14 @@ class TextBox(Element):
         return '%s%s (%d, %d)%s%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), self.bs.s, elements)
 
     # SuperString support, answering the structure that holds strings for all builder types.
-  
+
 
     def setText(self, bs, style=None):
         u"""Set the formatted string to s, using style or self.style. The bs as also be a number, in which
         case is gets converted into a string."""
         if isinstance(bs, (int, float)):
             bs = str(bs)
-        if isinstance(bs, basestring):
+        if isinstance(bs, str):
             bs = self.newString(bs, e=self, style=style)
         self.bs = bs
 
@@ -147,7 +147,7 @@ class TextBox(Element):
         u"""Answer the plain text of the current self.bs"""
         return u'%s' % self.bs
     text = property(_get_text)
-    
+
     def append(self, bs, style=None):
         u"""Append to the string type that is defined by the current view/builder type.
         Note that the string is already assumed to be styled or can be added as plain string.
@@ -157,7 +157,7 @@ class TextBox(Element):
         to force recalculation as soon as self.textLines is called again.
         If bs is not a BabelString instance, then create one, defined by the self.context,
         and based on the style of self."""
-        assert isinstance(bs, (basestring, self.context.STRING_CLASS))
+        assert isinstance(bs, (str, self.context.STRING_CLASS))
         self.bs += self.newString(bs, e=self, style=style)
 
     def appendMarker(self, markerId, arg=None):
@@ -179,11 +179,11 @@ class TextBox(Element):
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.bs
         ABC
-        >>> tb.getTextSize()[1] 
+        >>> tb.getTextSize()[1]
         454.0
         >>> bs = c.newString('ABC', style=dict(font='Verdana', fontSize=24))
         >>> tb = TextBox(bs, w=100, h=None)
-        >>> tb.getTextSize()[1] 
+        >>> tb.getTextSize()[1]
         30.0
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> c = FlatContext()
@@ -258,14 +258,14 @@ class TextBox(Element):
             result = False
             # Find the page of self
             page = self.getElementPage()
-            if page is not None:        
+            if page is not None:
                 # Try next page
                 nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
                 if nextElement is None or nextElement.bs and self.nextPage:
                     # Not found or not empty, search on next page.
                     page = self.doc.getPage(self.nextPage)
                     nextElement =  page.getElementByName(self.nextElement)
-                if nextElement is not None and not nextElement.bs: 
+                if nextElement is not None and not nextElement.bs:
                     # Finally found one empty box on this page or next page?
                     nextElement.bs = overflow
                     nextElement.prevPage = page.name
@@ -282,9 +282,9 @@ class TextBox(Element):
         context = view.context # Get current context
 
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-   
+
         # TODO: Add marker if there is overflow text in the textbox.
 
         self.buildFrame(view, p) # Draw optional background, frame or borders.
@@ -309,7 +309,7 @@ class TextBox(Element):
             context.saveGraphicState()
             context.setShadow(textShadow)
 
-        context.textBox(self.bs, (px + self.pl + xOffset, py + self.pb-yOffset, 
+        context.textBox(self.bs, (px + self.pl + xOffset, py + self.pb-yOffset,
             self.w-self.pl-self.pr, self.h-self.pb-self.pt))
 
         if textShadow:
@@ -321,7 +321,7 @@ class TextBox(Element):
 
         # Draw markers on TextLine and TextRun positions.
         self._drawBaselines_drawBot(view, px, py)
- 
+
         if view.showTextOverflowMarker and self.isOverflow():
             self._drawOverflowMarker_drawBot(view, px, py)
 
@@ -332,10 +332,10 @@ class TextBox(Element):
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
     def build_html(self, view, origin=None, showElements=True):
-        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
+        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self.
         If there are any child elements, then also included their code, using the
         level recursive indent."""
-        
+
         context = view.context # Get current context.
         b = context.b
 
@@ -356,7 +356,7 @@ class TextBox(Element):
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(self, view, origin)
 
-            b._div() 
+            b._div()
 
     def _drawBaselines_drawBot(self, view, px, py):
         # Let's see if we can draw over them in exactly the same position.
@@ -395,7 +395,7 @@ class TextBox(Element):
                 _, th = c.textSize(fs)
                 c.text(fs.s, (px + self.w + 3, py + prevY - leading/2 - th/4))
             prevY = y
- 
+
     def _drawOverflowMarker_drawBot(self, view, px, py):
         u"""Draw the optional overflow marker, if text doesn't fit in the box."""
         b = self.b # Get current builder from self.doc.context.b
@@ -431,7 +431,7 @@ class TextBox(Element):
     def baseline2Top(self):
         self.top = self.parent.h - self.parent.pt - self.textLines[0].y + self.h
         return True
-        
+
     def baseline2Bottom(self):
         self.bottom = self.parent.pb # - self.textLines[-1].y
         return True

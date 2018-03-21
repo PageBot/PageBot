@@ -83,7 +83,7 @@ def getInstancePath():
     u"""Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
     return getMasterPath() + '_instances/'
 
-def getVariableAxisFonts(varFont, axisName, 
+def getVariableAxisFonts(varFont, axisName,
                          normalize=True, cached=False, lazy=True):
     u"""Answer the two instance fonts located at minValue and maxValue of the axis. If varFont is not
     a Variable Font, or the axis does not exist in the font, then answer (varFont, varFont)."""
@@ -95,11 +95,11 @@ def getVariableAxisFonts(varFont, axisName,
         maxInstance = getVarFontInstance(varFont, {axisName:maxValue},
                                       normalize=normalize,
                                       cached=cached, lazy=lazy)
-        return minInstance, maxInstance 
+        return minInstance, maxInstance
     return varFont, varFont
 
 def fitVariableWidth(varFont, s, w, fontSize,
-                     condensedLocation, wideLocation, fixedSize=True, 
+                     condensedLocation, wideLocation, fixedSize=True,
                      tracking=None, rTracking=None, cached=True, lazy=True):
     u"""Answer the font instance that makes string s width on the given width *w* for the given *fontSize*.
     The *condensedLocation* dictionary defines the most condensed font instance (optionally including the opsz)
@@ -107,7 +107,7 @@ def fitVariableWidth(varFont, s, w, fontSize,
     The string width for s is calculated with both locations and then the [wdth] value is interpolated and iterated
     until the location is found where the string *s* fits width *w). Note that interpolation may not be enough,
     as the width axis may contain non-linear masters.
-    If the requested w outside of what is possible with two locations, then interations are performed to 
+    If the requested w outside of what is possible with two locations, then interations are performed to
     change the size. Again this cannot be done by simple interpolation, as the [opsz] also changes the width.
     It one of the axes does not exist in the font, then use the default setting of the font.
     """
@@ -116,7 +116,7 @@ def fitVariableWidth(varFont, s, w, fontSize,
 
     # Get the instances for the extreme width locations. This allows the caller to define the actual range
     # of the [wdth] axis to be user, instead of the default minValue and maxValue. E.g. for a range of widths
-    # in a headline, the typographer may only want a small change before the line is wrapping, instead 
+    # in a headline, the typographer may only want a small change before the line is wrapping, instead
     # using the full spectrum to extreme condensed.
     condensedFont = getVarFontInstance(varFont, condensedLocation, cached=cached, lazy=lazy)
     wideFont = getVarFontInstance(varFont, wideLocation, cached=cached, lazy=lazy)
@@ -133,7 +133,7 @@ def fitVariableWidth(varFont, s, w, fontSize,
                                           tracking=tracking,
                                           rTracking=rTracking,
                                           textFill=0))
-    # Calculate the widths of the strings. 
+    # Calculate the widths of the strings.
     # TODO: Handle if these lines would wrap on the given width. In that case we may want to set the wrapped
     # first line back to it's uncondensed value, to make the first wrapped line fit the width.
     condensedWidth, _ = context.textSize(condensedFs)
@@ -144,7 +144,7 @@ def fitVariableWidth(varFont, s, w, fontSize,
         font = condensedFont
         fs = condensedFs
         location = condensedLocation
-    elif w > wideWidth:  # Requested width is larger than was was possible using the extreme value of [wdth] axis.      
+    elif w > wideWidth:  # Requested width is larger than was was possible using the extreme value of [wdth] axis.
         font = wideFont
         fs = wideFs
         location = wideLocation
@@ -152,7 +152,7 @@ def fitVariableWidth(varFont, s, w, fontSize,
         # TODO: Check if the width of the new string is within tolerance of the request width.
         # This may not be the case if the range of the [wdth] is interpolating in a non-linear way.
         # In that case we may need to do a number of iterations.
-        widthRange = wideLocation['wdth'] - condensedLocation['wdth'] 
+        widthRange = wideLocation['wdth'] - condensedLocation['wdth']
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condensedWidth)/(wideWidth-condensedWidth)
         font = getVarFontInstance(varFont, location, cached=cached, lazy=lazy)
@@ -178,7 +178,7 @@ def fitVariableWidth(varFont, s, w, fontSize,
 
 def getConstrainedLocation(font, location):
     u"""Answer the location with applied min/max values for each axis. Don't change the values
-    if they are positioned between their min/max values. Don't change values for axes that are 
+    if they are positioned between their min/max values. Don't change values for axes that are
     not defined in the font."""
     constrainedLocation = {}
     axes = font.axes
@@ -196,13 +196,13 @@ def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cac
     If there is a [opsz] Optical Size value defined, then store that information in the font.info.opticalSize.
     The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
     location name."""
-    if isinstance(fontOrPath, basestring):
-        varFont = getFont(fontOrPath, name=path2FontName(fontOrPath), lazy=lazy)    
+    if isinstance(fontOrPath, str):
+        varFont = getFont(fontOrPath, name=path2FontName(fontOrPath), lazy=lazy)
     else:
         varFont = fontOrPath
     if varFont is None: # Could not read the Variable Font on that path.
         return None
-    path = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), 
+    path = generateInstance(varFont.path, location, targetDirectory=getInstancePath(),
                                       normalize=normalize, cached=cached, lazy=lazy)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     instance = getFont(path, lazy=lazy)

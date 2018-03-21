@@ -229,7 +229,7 @@ def getVarFontInstance(fontOrPath, location, install=True, styleName=None, norma
     If there is a [opsz] Optical Size value defined, then store that information in the font.info.opticalSize.
     The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
     location name."""
-    if isinstance(fontOrPath, basestring):
+    if isinstance(fontOrPath, str):
         varFont = Font(fontOrPath, name=path2FontName(fontOrPath))
     else:
         varFont = fontOrPath

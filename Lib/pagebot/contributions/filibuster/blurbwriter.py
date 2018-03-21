@@ -33,7 +33,7 @@ choice = random.choice
                 For instance, a content tag can say <#!bold, company#>
                 the formatdict can look like this: {'bold':    'CSS_my_specific_bold'}
                 If the style cmd from the tag can be found in the provided formatdict
-                format func is used to format the final resulting text. 
+                format func is used to format the final resulting text.
                     def formatfunc(text, tagname)
                 This means that Writer and Content should also be able to be used
                 to make RTF, or any other kind of formatted text without making
@@ -41,17 +41,17 @@ choice = random.choice
 
 
 3.0            added support for the Content package, added some UI
-17 1 2000    
+17 1 2000
 
 3.1            Writer can now handle nested tags, opening a whole world of metaprogramming
-evb    
+evb
 
 3.2            messed with the caching mechanism
 evb
 
 3.3            now the write() method also accepts tagged entries, simpler code, more flexible
 evb            w.write('<#name#>') and w.write('name') have the same results
-    
+
 3.4            added simpler support for initial capitals. Write '<#^,word#> for a capital of the first letter
 evb
 
@@ -92,7 +92,7 @@ class BlurbWriter(object):
         self.allkeys = self.keys()
 
         self.importcontent(content)
-    
+
     def importcontent(self, contentdict):
         # make all strings unicode here?
         for k, v in contentdict.items():
@@ -108,13 +108,13 @@ class BlurbWriter(object):
         dk = self.data.keys()
         dk.sort()
         self.keywords = dk
-    
+
     def keyindex(self, key):
         if key in self.allkeys:
             return self.allkeys.index(key)
         else:
             return -1
-        
+
     def keys(self):
         k = self.data.keys()
         k.sort()
@@ -126,10 +126,10 @@ class BlurbWriter(object):
         if self.data.has_key(key):
             return 1
         return 0
-    
+
     def alternatives(self, key):
         return self[key]
-        
+
     def choice(self, cached, key):
         if self.has_key(cached):
             return 1, self[cached][0]
@@ -144,32 +144,32 @@ class BlurbWriter(object):
 
     def getvalue(self, key):
         return self[key]
-        
+
     def __getitem__(self, key):
         if self._cache.has_key(key):
             return self._cache[key]
         if self.data.has_key(key):
             return self.data[key]
         return u'__' + key + u'__'
-        
+
     def define(self, key, value):
         if DEBUG:
             print('hard define', key, value)
         self._cache[key] = [value]
-        
+
     def softdefine(self, key, value):
         if DEBUG:
             print('soft define', key, value)
         if not self._cache.has_key(key):
             self._cache[key] = [value]
-        
+
     def clearcache(self, key=None):
         if not key:
             self._cache = {}
         else:
             if self._cache.has_key(key):
                 del self._cache[key]
-        
+
     def parsetag(self, tag):
         hard=0
         # check for styles
@@ -202,11 +202,11 @@ class BlurbWriter(object):
             cmd = []
             variable = None
             return name, cmd, variable, hard
-    
+
     def write(self, tag, formatdict=None, formatfunc=None):
         '''this assumes tag to be a direct entry in content'''
         return self.writetag(opentag+tag+closetag, formatdict, formatfunc)
-        
+
     def writetag(self, tag, formatdict=None, formatfunc=None):
         '''this will evaluate tag directly, use writetag if you want to more tags in one line to be processed.
         this is the main interface to the writer class'''
@@ -222,7 +222,7 @@ class BlurbWriter(object):
         if FILTERWHITESPACE:
             return u' '.join(item.split())
         return item
-    
+
     def replacecode(self, text):
         m = 1
         pend= 0
@@ -238,25 +238,25 @@ class BlurbWriter(object):
                 result = eval(tag)
             except:
                 result = '__error('+tag+')__'
-            if not isinstance(result, basestring):
+            if not isinstance(result, str):
                 result = str(result)
             parts = text.split(u'<-' + tag + u'->')
             text = parts[0] + result + (u'<-' + tag + u'->').join(parts[1:])
         return 1, text
-        
+
     def capsentence(self, s):
         ss = s.split(u'. ')
-        new = [] 
+        new = []
         for i in ss:
             new.append(i[0].upper() + i[1:])
         return new.join(u'. ')
-    
+
     def nextopen(self, pos, text):
         return text.find(opentag, pos)
-        
+
     def nextclosed(self, pos, text):
         return text.find(closetag, pos)
-    
+
     def nexttag(self, pos, text):
         start = self.nextopen(pos, text)
         stop = self.nextclosed(pos, text)
@@ -268,7 +268,7 @@ class BlurbWriter(object):
             return 1, start
         else:
             return 0, stop
-                    
+
     def findtag(self, text):
         p = -1
         last = None,None
@@ -288,7 +288,7 @@ class BlurbWriter(object):
                 break
             last=kind, p
         return None, None
-        
+
     def replacetag(self, level, text):
         level = level + 1
         if level > 100:
@@ -315,7 +315,7 @@ class BlurbWriter(object):
                 else:
                     tag = metatag
                 return self.replacetag(level, tag)
-                
+
             tagname, cmd, variable, hard = self.parsetag(tag)
             # process in-tag commands, if any
             cacheThis = False    # whether results should be cached
@@ -356,7 +356,7 @@ class BlurbWriter(object):
                 _, selection = self.choice(variable, tagname) # ci, selection
                 _, c = self.replacetag(level, selection) # ok, c
             else:
-                _, c = self.replacetag(level, u'__' + tagname + u'__') # ok, c 
+                _, c = self.replacetag(level, u'__' + tagname + u'__') # ok, c
             self.lasttag = c
 
             # take care of the article command
@@ -428,7 +428,7 @@ def test():
     >>> bw = BlurbWriter(content)
     >>> bw.write('pattern1')
     u'a'
-    
+
     >>> # replace a tag
     >>> content = { 'pattern2': ['a'], 'pattern1': ['<#pattern2#>']}
     >>> bw = BlurbWriter(content)
@@ -464,7 +464,7 @@ def test():
 
     >>> # white space to underscore and first cap
     >>> content = { 'pattern2': ['a a'], 'pattern1': ['<#^_,pattern2#>']}
-    >>> bw = BlurbWriter(content)        
+    >>> bw = BlurbWriter(content)
     >>> bw.write('pattern2')
     u'a a'
     >>> bw.write('pattern1')
@@ -472,7 +472,7 @@ def test():
 
     >>> # make title case
     >>> content = { 'pattern2': ['aa aa'], 'pattern1': ['<#^^,pattern2#>']}
-    >>> bw = BlurbWriter(content)        
+    >>> bw = BlurbWriter(content)
     >>> bw.write('pattern2')
     u'aa aa'
     >>> bw.write('pattern1')
@@ -480,15 +480,15 @@ def test():
 
     >>> # make allcaps
     >>> content = { 'pattern2': ['aa aa'], 'pattern1': ['<#^^^,pattern2#>']}
-    >>> bw = BlurbWriter(content)        
+    >>> bw = BlurbWriter(content)
     >>> bw.write('pattern2')
     u'aa aa'
     >>> bw.write('pattern1')
     u'AA AA'
 
-    >>> # generate a random number 
+    >>> # generate a random number
     >>> content = { 'pattern1': ['<-randint(1, 20)->']}
-    >>> bw = BlurbWriter(content)        
+    >>> bw = BlurbWriter(content)
     >>> result = bw.write('pattern1')
     >>> assert 1 <= int(result) <= 20
 
@@ -544,7 +544,7 @@ def test():
     # u'üößé'
 
     # # u'\\xfc\\xf6\\xdf\\xe9'
-    
+
     # # not sure if that is the right way
 
     # >>> # replace a tag
