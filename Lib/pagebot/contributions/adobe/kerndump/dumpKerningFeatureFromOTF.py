@@ -171,11 +171,11 @@ def makeKernFeature(fontPath):
             elif len(left) == 1 and len(right) == 1:
                 glyph_glyph.append('pos %s %s %s;'                % (' '.join(left), ' '.join(right), value))
             else:
-                print 'ERROR with (%s)' % (' '.join(left, right, value))
+                print('ERROR with (%s)' % (' '.join(left, right, value)))
 
         # Making sure all the pairs made it through the process:
         if len(compressedBoth) != len(class_glyph) + len(glyph_class) + len(glyph_glyph) + len(exploding_class_class):
-            print 'ERROR - we lost some kerning pairs.'
+            print('ERROR - we lost some kerning pairs.')
 
 
         buildOutputList(glyph_glyph, output, 'glyph to glyph')
@@ -205,7 +205,7 @@ def makeKernFeature(fontPath):
 
 
     # output
-    print '\n'.join(output)
+    print('\n'.join(output))
 
 
 
@@ -217,7 +217,7 @@ if __name__ == "__main__":
             fontPath = sys.argv[1]
             makeKernFeature(fontPath)
         else:
-            print "No valid font provided."
+            print("No valid font provided.")
 
     else:
-        print "No valid font provided."
+        print("No valid font provided.")

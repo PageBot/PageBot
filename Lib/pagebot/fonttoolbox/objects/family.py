@@ -27,7 +27,7 @@ def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=Fals
     the families from all aviable font paths found in the by the context.
     The flag useFontInfo defines if the familyName, styleName) should be taken from the font.info
     or guess from the font file name.
-    
+
     >>> families = getFamilies()
     >>> 'Roboto' in families
     True
@@ -48,7 +48,7 @@ def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=Fals
         for fontPath in getFontPaths().values():
             font = getFont(fontPath)
             if font is not None:
-                #print font.path.split('/')[-1], `font.info.familyName`, `font.info.styleName`
+                #print(font.path.split('/')[-1], `font.info.familyName`, `font.info.styleName`)
                 familyName = None
                 if useFontInfo:
                     familyName = font.info.familyName
@@ -114,7 +114,7 @@ class Family(object):
     def __len__(self):
         u"""Answer the length of the family, as the amount of fonts."""
         return len(self.fonts)
-    
+
     def __contains__(self, fontPath):
         u"""Answer the boolean flag if there is a Font instance with path fontPath.
 
@@ -142,7 +142,7 @@ class Family(object):
         True
         """
         return self.fonts[fontPath]
-    
+
     def keys(self):
         u"""Answer the paths of fonts, which are the keys in self.fonts.
 
@@ -195,7 +195,7 @@ class Family(object):
         if isinstance(fontOrPath, self.FONT_CLASS):
             self.fonts[fontOrPath.path] = font = fontOrPath
         elif os.path.isdir(fontOrPath):
-            for fileName in os.listdir(fontOrPath): 
+            for fileName in os.listdir(fontOrPath):
                 if not fontOrPath.endswith('/'):
                     fontOrPath += '/'
                 filePath = fontOrPath + fileName
@@ -247,7 +247,7 @@ class Family(object):
 
     def getWeights(self):
         u"""Answer the dictionary {weightClass: [font, font, ...], ...]}
-        
+
         >>> family = getFamily('Bungee')
         >>> family.getWeights().keys()
         [400]
@@ -266,7 +266,7 @@ class Family(object):
 
     def getWidths(self):
         u"""Answer the dictionary {widthClass: [font, font, ...], ...]}
-        
+
         >>> family = getFamily('Bungee')
         >>> family.getWidths().keys()
         [5]
@@ -285,7 +285,7 @@ class Family(object):
 
     def getRomanFonts(self):
         u"""Answer the dictionary {romanFontPath: font, ...]}
-        
+
         >>> family = getFamily('Bungee')
         >>> len(family.getRomanFonts())
         5
@@ -301,7 +301,7 @@ class Family(object):
 
     def getItalicFonts(self):
         u"""Answer the dictionary {italicFontPath: font, ...]}
-        
+
         >>> family = getFamily('Bungee')
         >>> len(family.getItalicFonts())
         0

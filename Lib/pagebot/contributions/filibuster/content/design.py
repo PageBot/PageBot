@@ -3,7 +3,7 @@
 """
         history
         A template for new submodules
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 """
 
 __version__ = '4.0'
@@ -421,4 +421,4 @@ content = {
 
 
 if __name__ == "__main__":
-    print content.keys()
+    print(content.keys())

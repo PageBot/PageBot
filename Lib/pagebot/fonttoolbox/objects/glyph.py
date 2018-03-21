@@ -65,11 +65,11 @@ class Glyph(object):
     >>> len(contours)
     2
     >>> path = g.path
-    >>> print path
+    >>> print(path)
     <BezierPath>
     >>> nspath = path.getNSBezierPath()
     >>> bounds = nspath.bounds()
-    >>> print bounds
+    >>> print(bounds)
     <NSRect origin=<NSPoint x=38.0 y=-15.0> size=<NSSize width=948.0 height=1037.0>>
     >>> len(bounds)
     2
@@ -77,7 +77,7 @@ class Glyph(object):
     2
     >>> len(bounds[1])
     2
-    >>> print bounds[0]
+    >>> print(bounds[0])
     <NSPoint x=38.0 y=-15.0>
     >>> bounds[0][0]
     38.0

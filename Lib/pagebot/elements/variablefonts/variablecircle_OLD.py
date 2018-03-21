@@ -37,7 +37,7 @@ class VariableCircle(Element):
     all axes are represented as spikes/needles on a wheel, where the amount of
     penetration in the neutral glyph defined the influence of that axis.
     In that respect is it not much better than a list of sliders, but at least this
-    model allows to show interactions between axes, by putting them on another 
+    model allows to show interactions between axes, by putting them on another
     angle on the circle.
     """
     isText = False
@@ -80,7 +80,7 @@ class VariableCircle(Element):
         return cos(angle/180*pi) * r, sin(angle/180*pi) * r
 
     def _drawGlyphMarker(self, axisName, mx, my, glyphName, fontSize, location, strokeW=2):
-        # Middle circle 
+        # Middle circle
         context.fill(1)
         context.stroke(0.7)
         context.strokeWidth(strokeW)
@@ -118,11 +118,11 @@ class VariableCircle(Element):
 
         # Draw default glyph circle marker in middle.
         glyphName = self.glyphNames[0]
-        #varLocation = getVarLocation(self.font, self.location) # Show neutral, unless a location is requested 
-        varLocation = self.location # = getVarLocation(self.font, self.location) # Show neutral, unless a location is requested 
+        #varLocation = getVarLocation(self.font, self.location) # Show neutral, unless a location is requested
+        varLocation = self.location # = getVarLocation(self.font, self.location) # Show neutral, unless a location is requested
         self._drawGlyphMarker(None, mx, my, glyphName, fontSize, varLocation, strokeW=3)
 
-        # Draw 
+        # Draw
         angle = 0
         for axisName, (minValue, defaultValue, maxValue) in axes.items():
         # Draw needles, depending on the axis values and the status of self.location
@@ -136,7 +136,7 @@ class VariableCircle(Element):
             if self.location is not None and axisName in self.location:
                 rEnd = rStart + (rEnd - rStart) * self.location[axisName]
             rStart = fontSize*needleStart
-            #print rStart, rEnd
+            #print(rStart, rEnd)
             startX, startY = self._angle2XY(angle, rStart)
             endX, endY = self._angle2XY(angle, rEnd)
             if (w/2 + rStart) - rEnd - fontSize > fontSize:
@@ -147,7 +147,7 @@ class VariableCircle(Element):
             context.stroke(None)
             context.fill(0.3)
             context.oval(mx+startX-2, my+startY-2, 4, 4)
-            
+
             context.fill(None)
             context.stroke(0)
             context.strokeWidth(1)
@@ -169,7 +169,7 @@ class VariableCircle(Element):
     def build(self, view, origin, drawElements=True):
         u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined

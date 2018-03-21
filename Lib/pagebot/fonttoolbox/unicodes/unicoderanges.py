@@ -141,7 +141,7 @@ def getUnicodeRange(uni):
         (69, 'Specials', 65520, 65535)
         >>> getUnicodeRange(1000000000)
         (None, None, None, None)
-        >>> print getUnicodeRange(0x10840)
+        >>> print(getUnicodeRange(0x10840))
         (None, None, None, None)
     """
     assert uni >= 0
@@ -475,10 +475,10 @@ if __name__ == "__main__":
                 unirngs = getUnicodeRangesByScriptTag(tag)
             except KeyError:
                 pass
-                #print "*** not matched:", tag
+                #print("*** not matched:", tag)
             else:
                 matches += 1
-                #print tag, unirngs
+                #print(tag, unirngs)
             total += 1
         print("total number of script tags: %d" % total)
         print("found a unicode range match: %d" % matches)

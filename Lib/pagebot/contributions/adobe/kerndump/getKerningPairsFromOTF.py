@@ -38,7 +38,7 @@ class myRightClass:
 def collectUniqueKernLookupListIndexes(featureRecord):
     uniqueKernLookupIndexList = []
     for featRecItem in featureRecord:
-        # print featRecItem.FeatureTag
+        # print(featRecItem.FeatureTag)
         # GPOS feature tags (e.g. kern, mark, mkmk, size) of each ScriptRecord
         if featRecItem.FeatureTag == kKernFeatureTag:
             feature = featRecItem.Feature
@@ -92,7 +92,7 @@ class OTFKernReader(object):
 
     def findKerningLookups(self):
         if not self.uniqueKernLookupIndexList:
-            #print "The font has no %s feature." % kKernFeatureTag
+            #print("The font has no %s feature." % kKernFeatureTag)
             #self.goodbye()
             return False
 
@@ -302,7 +302,7 @@ if __name__ == "__main__":
 
             print('\nTotal number of kerning pairs: %d' % len(f.kerningPairs))
             # for i in sorted(f.allLeftClasses):
-            #     print i, f.allLeftClasses[i]
+            #     print(i, f.allLeftClasses[i])
 
         else:
             print('That is not a valid font.')

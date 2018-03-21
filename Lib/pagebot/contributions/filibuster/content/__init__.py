@@ -14,6 +14,7 @@ evb        - note: only one dictionary named 'contexnt' allowed per module
 """
 
 __version__ = '4.0'
+from __future__ import print_function
 
 
 
@@ -65,7 +66,7 @@ def content():
             continue
         else:
             if DEBUG:
-                print __name__, 'submodule ', module, 'misses a content dictionary.'
+                print(__name__, 'submodule ', module, 'misses a content dictionary.')
     return content
 
 def index(tagname):
@@ -87,7 +88,7 @@ def index(tagname):
             try:
                 module = getattr(module, modname)
             except Exception, e:
-                print 'Could not import module at path, %s, mod %s, name %s' % (path, module, modname)
+                print('Could not import module at path, %s, mod %s, name %s' % (path, module, modname))
                 traceback.format_exc()
                 return
 
@@ -102,5 +103,5 @@ def index(tagname):
     return keys, usedin.keys()
 
 if __name__ == "__main__":
-    print content()
+    print(content())
 

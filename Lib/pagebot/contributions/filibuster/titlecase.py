@@ -243,7 +243,7 @@ class TitlecaseTests(unittest.TestCase):
 if __name__ == '__main__':
     if not sys.stdin.isatty():
         for line in sys.stdin:
-            print titlecase(line)
+            print(titlecase(line))
 
     else:
         suite = unittest.TestLoader().loadTestsFromTestCase(TitlecaseTests)

@@ -23,7 +23,7 @@ class APoint(object):
     >>> p = APoint(101, 303, True)
     >>> p.onCurve is False
     False
-    >>> print p
+    >>> print(p)
     Pt(101,303,On)
     """
 

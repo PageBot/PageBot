@@ -24,7 +24,7 @@ try:
     from pagebot.contributions.markdown.literature import LiteratureExtension
     from pagebot.contributions.markdown.footnotes import FootnoteExtension
 except ImportError:
-    print 'Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown'
+    print('Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown')
     markdown = None
 
 def markDown2XMLFile(path):
@@ -42,7 +42,7 @@ def markDown2XMLFile(path):
     xml = xml.replace('&nbsp;', ' ')
 
     xmlPath = path + '.xml'
-    print xmlPath
+    print(xmlPath)
     f = codecs.open(xmlPath, mode="w", encoding="utf-8")
     f.write(xml)
     f.close()

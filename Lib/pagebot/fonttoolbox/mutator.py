@@ -155,7 +155,7 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=Fals
     outFile = targetDirectory + targetFileName
 
     if force or not os.path.exists(outFile):
-        #print location
+        #print(location)
         #print("Loading variable font")
         varFont = TTFont(variableFontPath)
 
@@ -230,7 +230,7 @@ def getVarFontInstance(fontOrPath, location, install=True, styleName=None, norma
     The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
     location name."""
     if isinstance(fontOrPath, basestring):
-        varFont = Font(fontOrPath, name=path2FontName(fontOrPath))    
+        varFont = Font(fontOrPath, name=path2FontName(fontOrPath))
     else:
         varFont = fontOrPath
     fontPath = generateInstance(varFont.path, location, targetDirectory=getInstancePath(), normalize=normalize)

@@ -29,4 +29,4 @@ if SHOW_ALL_TYPES:
 	names = blurb.getBlurbTypes()
 	print(', '.join(names))
 
-print 'done'
+print('done')
