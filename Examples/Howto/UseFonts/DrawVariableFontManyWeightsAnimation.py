@@ -18,34 +18,36 @@
 #     In the future these classes will be part of the main PageBot library,
 #     which may make them incompatible with this particular example.
 #
+#     TODO: Positions of icons and var-instances don't seem to work.
+#
 from pagebot.contexts.platform import getRootPath
 from pagebot.contexts.platform import getContext
-from pagebot.fonttoolbox.objects.font import Font, getFontByName
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
 
+c = getContext()
+
 W = H = 500
 
-ROOT_PATH = getRootPath()
-FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
-f = Font(FONT_PATH, install=True) # Get PageBot Font instance of Variable font.
+f = findFont('AmstelvarAlpha-VF') # Get PageBot Font instance of Variable font.
 
-ULTRALIGHT_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.9, wdth=0.7), styleName='Utrla Light Condensed')
-ULTRALIGHT = getVarFontInstance(FONT_PATH, dict(wght=1, wdth=0), styleName='Ultra Light')
-LIGHT_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.9, wdth=0.7), styleName='Light Condensed')
-LIGHT = getVarFontInstance(FONT_PATH, dict(wght=0.9, wdth=0), styleName='Light')
-THIN_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.8, wdth=0.7), styleName='Thin Condensed')
-THIN = getVarFontInstance(FONT_PATH, dict(wght=0.8, wdth=0), styleName='Thin')
-BOOK_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.7, wdth=0.7), styleName='Book Condensed')
-BOOK = getVarFontInstance(FONT_PATH, dict(wght=0.7, wdth=0), styleName='Book')
-REGULAR_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.6, wdth=0.7), styleName='Regular Condensed')
-REGULAR = getVarFontInstance(FONT_PATH, dict(wght=0.6, wdth=0), styleName='Regular')
-MEDIUM_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.5, wdth=0.7), styleName='Medium Condensed')
-MEDIUM = getVarFontInstance(FONT_PATH, dict(wght=0.5, wdth=0), styleName='Medium')
-SEMIBOLD_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.30, wdth=0.7), styleName='Semibold Condensed')
-SEMIBOLD = getVarFontInstance(FONT_PATH, dict(wght=0.30, wdth=0), styleName='Semibold')
-BOLD_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.0, wdth=0.7), styleName='Bold Condensed')
-BOLD = getVarFontInstance(FONT_PATH, dict(wght=0.0, wdth=0), styleName='Bold')
+ULTRALIGHT_CONDENSED = getVarFontInstance(f, dict(wght=0.9, wdth=0.7), styleName='Utrla Light Condensed')
+ULTRALIGHT = getVarFontInstance(f, dict(wght=1, wdth=0), styleName='Ultra Light')
+LIGHT_CONDENSED = getVarFontInstance(f, dict(wght=0.9, wdth=0.7), styleName='Light Condensed')
+LIGHT = getVarFontInstance(f, dict(wght=0.9, wdth=0), styleName='Light')
+THIN_CONDENSED = getVarFontInstance(f, dict(wght=0.8, wdth=0.7), styleName='Thin Condensed')
+THIN = getVarFontInstance(f, dict(wght=0.8, wdth=0), styleName='Thin')
+BOOK_CONDENSED = getVarFontInstance(f, dict(wght=0.7, wdth=0.7), styleName='Book Condensed')
+BOOK = getVarFontInstance(f, dict(wght=0.7, wdth=0), styleName='Book')
+REGULAR_CONDENSED = getVarFontInstance(f, dict(wght=0.6, wdth=0.7), styleName='Regular Condensed')
+REGULAR = getVarFontInstance(f, dict(wght=0.6, wdth=0), styleName='Regular')
+MEDIUM_CONDENSED = getVarFontInstance(f, dict(wght=0.5, wdth=0.7), styleName='Medium Condensed')
+MEDIUM = getVarFontInstance(f, dict(wght=0.5, wdth=0), styleName='Medium')
+SEMIBOLD_CONDENSED = getVarFontInstance(f, dict(wght=0.30, wdth=0.7), styleName='Semibold Condensed')
+SEMIBOLD = getVarFontInstance(f, dict(wght=0.30, wdth=0), styleName='Semibold')
+BOLD_CONDENSED = getVarFontInstance(f, dict(wght=0.0, wdth=0.7), styleName='Bold Condensed')
+BOLD = getVarFontInstance(f, dict(wght=0.0, wdth=0), styleName='Bold')
 
 LABEL_FONT = BOOK
 
@@ -133,40 +135,40 @@ class FontIcon(object):
         c.moveTo((x, y))
         c.drawPath(path)
         labelSize = e
-        fs = c.newString(self.char,
-                         style=dict(font=self.f.installedName,
+        bs = c.newString(self.char,
+                         style=dict(font=self.f.path,
                                     textFill=0,
                                     fontSize=h*2/3))
-        tw, th = c.textSize(fs)
-        c.text(fs, (w/2-tw/2, h/2-th/3.2))
+        tw, th = c.textSize(bs)
+        c.text(bs, (w/2-tw/2, h/2-th/3.2))
 
         if self.title:
-            fs = c.newString(self.title,
-                             style=dict(font=self.labelFont.installedName,
+            bs = c.newString(self.title,
+                             style=dict(font=self.labelFont.path,
                              textFill=0,
                              rTracking=self.LABEL_RTRACKING,
                              fontSize=labelSize))
-            tw, th = c.textSize(fs)
-            c.text(fs, (w/2-tw/2, self.ih+th/2))
+            tw, th = c.textSize(bs)
+            c.text(bs, (w/2-tw/2, self.ih+th/2))
 
         y = -self.LABEL_RLEADING*labelSize
         if self.name:
-            fs = c.newString(self.name,
-                             style=dict(font=self.labelFont.installedName,
+            bs = c.newString(self.name,
+                             style=dict(font=self.labelFont.path,
                                         textFill=0,
                                         rTracking=self.LABEL_RTRACKING,
                                         fontSize=labelSize))
-            tw, th = c.textSize(fs)
-            c.text(fs, (w/2-tw/2, y))
+            tw, th = c.textSize(bs)
+            c.text(bs, (w/2-tw/2, y))
             y -= self.LABEL_RLEADING*labelSize
         if self.label:
-            fs = c.newString(self.label,
-                             style=dict(font=self.labelFont.installedName,
+            bs = c.newString(self.label,
+                             style=dict(font=self.labelFont.path,
                                         textFill=0,
                                         rTracking=self.LABEL_RTRACKING,
                                         fontSize=labelSize))
-            tw, th = c.textSize(fs)
-            c.text(fs, (w/2-tw/2, y))
+            tw, th = c.textSize(bs)
+            c.text(bs, (w/2-tw/2, y))
         c.restoreGraphicState()
 
 class KeyFrame(object):
@@ -244,32 +246,32 @@ def positionFontIcons():
     varFontIcon.y = H/2-varFontIcon.ih/2
 
 def drawBackground1(keyFrame, frame):
-    fs = c.newString('8 weight fonts\nTotal 400k',
-                     style=dict(font=LABEL_FONT.installedName,
+    bs = c.newString('8 weight fonts\nTotal 400k',
+                     style=dict(font=LABEL_FONT.path,
                                 rLeading=1.2,
                                 fontSize=18,
                                 textFill=(1, 0, 0)))
-    c.textBox(fs, (50, H-60, 200, 50))
+    c.textBox(bs, (50, H-60, 200, 50))
 
 def drawBackground2(keyFrame, frame):
     drawBackground1(keyFrame, frame)
     varFontIcon = id2FontIcon['VarFont']
-    fs = c.newString('1 axis\nTotal 100k',
-                     style=dict(font=LABEL_FONT.installedName,
+    bs = c.newString('1 axis\nTotal 100k',
+                     style=dict(font=LABEL_FONT.path,
                                 rLeading=1.2,
                                 fontSize=18,
                                 textFill=(1, 0, 0)))
-    c.textBox(fs, (varFontIcon.x, H-60, 200, 50))
+    c.textBox(bs, (varFontIcon.x, H-60, 200, 50))
 
 def drawBackground3(keyFrame, frame):
     drawBackground1(keyFrame, frame)
     varFontIcon = id2FontIcon['VarFont']
-    fs = c.newString('%d weights\nTotal 100k' % ((2**15)+1),
-                     style=dict(font=LABEL_FONT.installedName,
+    bs = c.newString('%d weights\nTotal 100k' % ((2**15)+1),
+                     style=dict(font=LABEL_FONT.path,
                                 rLeading=1.2,
                                 fontSize=18,
                                 textFill=(1, 0, 0)))
-    c.textBox(fs, (varFontIcon.x, H-60, 200, 50))
+    c.textBox(bs, (varFontIcon.x, H-60, 200, 50))
 
 def drawAnimation():
     positionFontIcons()

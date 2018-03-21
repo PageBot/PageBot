@@ -14,16 +14,18 @@
 #
 import pagebot
 from pagebot.contexts.platform import getContext
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance, getConstrainedLocation
 
-fontPath = pagebot.getFontPath()
-f = Font(fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf', install=False)
+c = getContext()
+
+f = findFont('AmstelvarAlpha-VF') # Get PageBot Font instance of Variable font.
+
 # Now we have a variable font open.
 print(f.axes)
 # Get an instance at a certain location
 
 location = getConstrainedLocation(f, dict(wdth=3944/10, wght=760/10))
-instance = getVarFontInstance(f, location, install=False, cached=False)
+instance = getVarFontInstance(f, location, cached=False)
 
 c.drawPath(instance['H'].path, (100, 100), sx=0.4)

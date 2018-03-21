@@ -154,6 +154,7 @@ def fitVariableWidth(varFont, s, w, fontSize,
         # In that case we may need to do a number of iterations.
         widthRange = wideLocation['wdth'] - condensedLocation['wdth']
         location = copy.copy(condensedLocation)
+        assert wideWidth != condensedWidth # Avoid division by zero.
         location['wdth'] += widthRange*(w-condensedWidth)/(wideWidth-condensedWidth)
         font = getVarFontInstance(varFont, location, cached=cached, lazy=lazy)
         fs = context.newString(s,

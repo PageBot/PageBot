@@ -22,7 +22,8 @@ __version__ = '0.8-beta'
 import re
 
 from pagebot.style import NO_COLOR, LEFT
-from pagebot.toolbox.transformer import point2D, ROOT_PAGEBOT
+from pagebot.toolbox.transformer import point2D
+from pagebot.contexts.platform import ROOT_PATH
 
 # In order to let PageBot scripts and/applications exchange information, without the need to save
 # data in files, the pbglobals module supports the storage of non-persistent information.
@@ -55,9 +56,6 @@ def getGlobals(scriptId):
     if not scriptId in pbGlobals:
         pbGlobals[scriptId] = Globals()
     return pbGlobals[scriptId]
-
-def getFontPath():
-    return ROOT_PAGEBOT + '/resources/testfonts'
 
 def x2cx(x, e):
     u"""Transform from *x* value to column *x* index value, using the *e.css('cw')* (column width)

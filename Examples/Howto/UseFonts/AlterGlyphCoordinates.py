@@ -18,12 +18,13 @@
 from __future__ import print_function
 import pagebot
 from pagebot.contexts.platform import getContext
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import findFont
 
 context = getContext()
 
 EXPORT_PATH = '_export/AlteredGlyphWithPoints.pdf'
-FONT_PATH = pagebot.getFontPath() + "/fontbureau/AmstelvarAlpha-VF.ttf"
+
+f = findFont('AmstelvarAlpha-VF') # Get PageBot Font instance of Variable font.
 
 W = H = 1000
 # Scale em of 2048 back to page size.
@@ -31,7 +32,6 @@ s = 0.5
 # Offset of drawing origin
 context.translate(100, 100)
 # Open the font and get the glyph
-f = Font(FONT_PATH)
 g = f['H']
 # These are the points we have in the H
 print('List of APoints of the glyph:', g.points)
