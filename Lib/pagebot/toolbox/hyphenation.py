@@ -110,7 +110,9 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     u'ce-fa-lor-ra-qui-di-a-no'
     >>> hyphenate('abarcarcefalorraquidiano', 'pt-br', True)
     u'a-bar-car-ce-fa-lor-ra-qui-di-a-no'
-    >>> reset()
+    """
+    """
+    TODO: Unicode not showing well in docTest feedback
     >>> # D A N I S H
     >>> hyphenate(u'adessiverne', 'dk')
     u'ades-si-ver-ne'

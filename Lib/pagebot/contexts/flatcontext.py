@@ -18,7 +18,6 @@
 import os
 #import imageio
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.contexts.platform import getFontPaths, getFontPathOfFont
 from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings.flatstring import FlatString
 from pagebot.toolbox.transformer import path2FontName
@@ -238,6 +237,8 @@ class FlatContext(BaseContext):
         >>> context._fontName, context._fontSize
         (None, 12)
         """
+        from pagebot.contexts.platform import getFontPathOfFont
+
         self._fontName = getFontPathOfFont(fontName) # Convert name or path to font path.
         if fontSize is not None:
             self._fontSize = fontSize
@@ -307,7 +308,7 @@ class FlatContext(BaseContext):
         u"""Answer the (w, h) image size of the image file at path.
 
         >>> from pagebot.contexts.platform import getResourcesPath
-        >>> imagePath = getResourcesPath() + '/images/peppertom_lowres.png'
+        >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> context = FlatContext()
         >>> context.imageSize(imagePath)
         (398, 530)
@@ -509,24 +510,6 @@ class FlatContext(BaseContext):
             self.strokeWidth = w
 
     stroke = setStrokeColor # DrawBot compatible API
-
-    #   F O N T S
-
-    def installedFonts(self):
-        u"""As there are no "installed fonts", as with DrawBot, just answer the cahced list of found font paths."""
-        return getFontPaths()
-
-    def fontName2FontPath(self, fontName):
-        u"""Answer the font path, related to fontName. As there are no "installed fonts", as with DrawBot,
-        we'll check if there is a font file related to fontName.
-        If fontName exists as file path, then answer it unchangend. Otherwise answer None.
-        """
-        if os.path.exists(fontName): # Exists as font file?
-            return fontName
-        for fontPath in getFontPaths():
-            if fontName == path2FontName(fontPath):
-                return fontPath
-        return None # No match.
 
     #   E X P O R T
 

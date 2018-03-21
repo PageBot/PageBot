@@ -30,7 +30,7 @@ t = t.rotateZ(radians(--10))
 
 affine = t.getAffineTransform2D(2)
 
-imagePath = getResourcesPath() + "/images/peppertom_lowres.png"
+imagePath = getResourcesPath() + "/images/peppertom_lowres_398x530.png"
 w, h = imageSize(imagePath)
 
 fontSize(40)

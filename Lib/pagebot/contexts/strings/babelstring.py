@@ -29,21 +29,23 @@ class BabelString(object):
         u"""Answer the Font instance for the current font.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.contexts.strings.drawbotstring import DrawBotString
         >>> context = DrawBotContext()
-        >>> bs = DrawBotString.newString('ABC', context=context, style=dict(font='Verdana', fontSize=100))
+        >>> font = findFont('Roboto-Regular')
+        >>> bs = DrawBotString.newString('ABC', context=context, style=dict(font=font.path, fontSize=100))
         >>> bs
         ABC
-        >>> bs.font
-        <Font Verdana>
+        >>> bs.font.endswith('Roboto-Regular.ttf')
+        True
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> from pagebot.contexts.strings.flatstring import FlatString
         >>> context = FlatContext()
-        >>> bs = FlatString.newString('ABC', context=context, style=dict(font='Verdana', fontSize=100))
+        >>> bs = FlatString.newString('ABC', context=context, style=dict(font=font.path, fontSize=100))
         >>> #str(bs.s)
-        ABC
-        >>> bs.getFont()
-        <Font Verdana>
+        ABC        
+        >>> bs.font.endswith('Roboto-Regular.ttf')
+        True
         """
         from pagebot.fonttoolbox.objects.font import getFont
         from pagebot.contexts.platform import getFontPaths

@@ -472,9 +472,9 @@ class _TestTraverser(TTFTraverser):
         >>> font = TTFont(path)
         >>> tt = _TestTraverser(font)
         >>> tt.testIt()
-        handling maxp
-        handling OS/2
-        handling cvt
+        _TestTraverser: handling maxp
+        _TestTraverser: handling OS/2
+        _TestTraverser: handling cvt
         ['GlyphOrder', 'head', 'hhea', 'hmtx', 'cmap', 'fpgm', 'prep', 'loca', 'glyf', 'name', 'post', 'gasp', 'GPOS', 'GSUB']
 
     """

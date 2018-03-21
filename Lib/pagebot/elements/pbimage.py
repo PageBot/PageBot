@@ -30,7 +30,7 @@ class Image(Element):
     applied (e.g. if the image element changes size), or the child elements can be put on fixed positions.
 
     >>> from pagebot.contexts.platform import RESOURCES_PATH
-    >>> imageFilePath = '/images/peppertom_lowres.png'
+    >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = RESOURCES_PATH + imageFilePath
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
     >>> from pagebot.document import Document

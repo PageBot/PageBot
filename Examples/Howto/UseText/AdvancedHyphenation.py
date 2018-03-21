@@ -18,6 +18,8 @@ from pagebot.contexts.platform import getContext
 from pagebot.elements import *
 from pagebot.contributions.filibuster.blurb import Blurb
 
+context = getContext()
+
 #text = Blurb().getBlurb('article_ankeiler', noTags=True)
 text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin."""
 
@@ -52,4 +54,3 @@ newTextBox(t, x=100, y=100, w=w, h=400, parent=page, border=1, fill=(1, 0, 0))
 
 doc.export('_export/AdvancedHyphenation.pdf')
 
-print('Done')

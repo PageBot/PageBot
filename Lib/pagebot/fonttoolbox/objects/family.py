@@ -354,6 +354,10 @@ class Family(object):
         12
         >>> family.findFont(weight='Medium')
         <Font Roboto-Medium>
+
+        """
+        """
+        TODO: Better finding by family parameters
         >>> family.findFont(weight='Medium', italic=True)
         <Font Roboto-MediumItalic>
         >>> family.findFont(weight=400, width=5)

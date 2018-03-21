@@ -32,7 +32,7 @@ context = getContext()
 
 W, H = A4
 
-IMAGE_PATH = getResourcesPath() + '/images/peppertom_lowres.png'
+IMAGE_PATH = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
 
 family = getFamily('Roboto')
 font = family.findFont(weight=400)

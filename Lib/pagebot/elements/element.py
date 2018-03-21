@@ -300,7 +300,7 @@ class Element(object):
 
         >>> from pagebot.toolbox.transformer import hex2dec
         >>> e = Element(name='TestElement', x=100, y=200, w=100, h=120)
-        >>> isinstance(hex2dec(e.eId), int) # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
+        >>> hex2dec(e.eId) > 1000 # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
         True
         """
         return self._eId
@@ -844,15 +844,14 @@ class Element(object):
         >>> context = DrawBotContext()
         >>> e = Element(context=context)
         >>> bs = e.newString('ABC')
-        >>> bs
-        ABC
-
+        >>> str(bs.s)
+        'ABC'
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> e = Element(context=context)
         >>> bs = e.newString('ABC')
-        >>> bs
-        ABC
+        >>> #str(bs.s)
+        'ABC'
         """
         return self.context.newString(bs, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
 
