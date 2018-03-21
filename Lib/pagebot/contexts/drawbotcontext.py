@@ -574,7 +574,7 @@ class DrawBotContext(BaseContext):
         >>> from pagebot.contexts.platform import getResourcesPath
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
-        >>> path = getResourcesPath() + '/images/peppertom_lowres.png'
+        >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> imo = context.getImageObject(path)
 
         """

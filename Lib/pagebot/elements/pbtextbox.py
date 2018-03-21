@@ -67,10 +67,12 @@ class TextBox(Element):
         u"""Answer the height of the textBox. If self.style['h'] is None, then answer the
         vertical space that the text needs.
 
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
         >>> page = doc[1]
-        >>> style = dict(font='Verdana', fontSize=14)
+        >>> font = findFont('Roboto-Regular')
+        >>> style = dict(font=font.path, fontSize=14)
         >>> tb = TextBox('This is content', parent=page, style=style, w=100, h=220)
         >>> page[tb.eId].h
         220
@@ -107,10 +109,10 @@ class TextBox(Element):
         u"""Answer the representation string of the element.
 
         >>> e = TextBox('ABC')
-        >>> str(e) == 'TextBox:%s (0, 0)ABC' % e.eId
+        >>> e.eId in str(e) # TextBox:236DE32AAC108A45490 (0, 0)ABC'
         True
         >>> e = TextBox('ABC', x=100, y=100, w=200)
-        >>> str(e) == 'TextBox:%s (100, 100)ABC' % e.eId
+        >>> e.eId in str(e)
         True
         """
         if self.title:
@@ -171,23 +173,25 @@ class TextBox(Element):
         the styled width of this text box. If fs is defined as external attribute, then the
         size of the string is answers, as if it was already inside the text box.
 
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
         >>> context.name in ('DrawBotContext', 'FlatContext')
         True
-        >>> bs = c.newString('ABC', style=dict(font='Verdana', fontSize=124))
+        >>> font = findFont('Roboto-Regular')
+        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=124))
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.bs
         ABC
         >>> tb.getTextSize()[1]
-        454.0
-        >>> bs = c.newString('ABC', style=dict(font='Verdana', fontSize=24))
+        436.0
+        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=24))
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.getTextSize()[1]
-        30.0
+        28.0
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> c = FlatContext()
-        >>> bs = c.newString('ABC', style=dict(font='Verdana', fontSize=124))
+        >>> bs = c.newString('ABC', style=dict(font=font.path, fontSize=124))
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.getTextSize()[1] # ???
         73.0

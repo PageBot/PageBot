@@ -16,9 +16,9 @@
 #     I N   P R O G R E S S
 #     THis will hold the Python generator version of Kirsten Langmuur's SimpleSite template.
 #
-from pagebot.contexts import HtmlContext
-from pagebot.conditions import *
+from pagebot.contexts.htmlcontext import HtmlContext
 from pagebot.publications.publication import Publication
+from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.toolbox.units import fr, px
 
@@ -328,7 +328,7 @@ class SimpleSite(Publication):
         JS(parent=t, name='JS')
 
 
-if __name__ == '__main__':
-    import doctest
-    import sys
-    sys.exit(doctest.testmod()[0])
+#if __name__ == '__main__':
+#    import doctest
+#    import sys
+#    sys.exit(doctest.testmod()[0])

@@ -62,12 +62,12 @@ class Glyph(object):
     >>> contours = g.contours
     >>> len(contours)
     2
-    >>> path = g.path
-    >>> print(path)
 
     """
     """
     TODO: Solve this for Flat.
+    >>> path = g.path
+    >>> print(path)
     <BezierPath>
     >>> nspath = path.getNSBezierPath()
     >>> bounds = nspath.bounds()

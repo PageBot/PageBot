@@ -40,11 +40,12 @@ class FlatString(BabelString):
         ABC
         """
         self.context = context # Store context, in case we need more of its functions.
-        self.s = s # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
-        # otherwise create it.
+        self.s = s # Store the Flat equivalent of the DrawBot FormattedString.
         # In case defined, store current status here as property and set the current FormattedString
         # for future additions. Also the answered metrics will not be based on these values.
-        self.style = style or {}
+        if style is None:
+            style = {}
+        self.style = style
 
     def _get_s(self):
         u"""Answer the embedded Flat equivalent of a OSX FormattedString by property, to enforce checking type of the string."""
@@ -160,7 +161,7 @@ class FlatString(BabelString):
             style.get('leading', cls.DEFAULT_LEADING), units='pt')
         #if w is not None:
         #    strike.width = w
-        return cls(strike.text(s), context) # Make real Flat flavor BabelString here.
+        return cls(strike.text(s), context=context, style=style) # Make real Flat flavor BabelString here.
 
 
 if __name__ == '__main__':
