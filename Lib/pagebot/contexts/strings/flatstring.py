@@ -49,7 +49,7 @@ class FlatString(BabelString):
         3
         """
         return len(str(self.s))
-  
+
     def asText(self):
         u"""Answer as unicode string.
 
@@ -68,7 +68,7 @@ class FlatString(BabelString):
         return 100, 20
         # TODO: Make this work in Flat same as in DrawBot
         #return self.b.textSize(s)
- 
+
     def textOverflow(self, w, h, align=LEFT):
         # TODO: Make this work in Flat same as in DrawBot
         # TODO: Some stuff needs to get here.
@@ -80,7 +80,7 @@ class FlatString(BabelString):
         #try:
         #    self.s += s.s
         #except TypeError:
-        #    self.s += `s` # Convert to babel string, whatever it is.
+        #    self.s += repr(s) # Convert to babel string, whatever it is.
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
@@ -95,7 +95,7 @@ class FlatString(BabelString):
         """
         if style is None:
             style = {}
-            
+
         sUpperCase = css('uppercase', e, style)
         sLowercase = css('lowercase', e, style)
         sCapitalized = css('capitalized', e, style)
@@ -120,13 +120,13 @@ class FlatString(BabelString):
             if fontPath is not None:
                 font = context.b.font.open(fontPath)
         strike = context.b.strike(font)
-        strike.size(style.get('fontSize', cls.DEFAULT_FONTSIZE), 
+        strike.size(style.get('fontSize', cls.DEFAULT_FONTSIZE),
             style.get('leading', cls.DEFAULT_LEADING), units='pt')
         #if w is not None:
         #    strike.width = w
         return cls(strike.text(s), context) # Make real Flat flavor BabelString here.
-        
-        
+
+
 if __name__ == '__main__':
     import doctest
     import sys

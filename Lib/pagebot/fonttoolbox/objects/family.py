@@ -48,7 +48,7 @@ def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=Fals
         for fontPath in getFontPaths().values():
             font = getFont(fontPath)
             if font is not None:
-                #print(font.path.split('/')[-1], `font.info.familyName`, `font.info.styleName`)
+                #print(font.path.split('/')[-1], repr(font.info.familyName), repr(font.info.styleName))
                 familyName = None
                 if useFontInfo:
                     familyName = font.info.familyName

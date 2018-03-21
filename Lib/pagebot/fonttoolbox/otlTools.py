@@ -450,7 +450,7 @@ class AlternateGlyphAndFeatureFinder(LookupTraverser):
         self.onlyDirectSingleSubst = onlyDirectSingleSubst
         result = self.traverseLookups("findAlternateGlyphsAndFeatures", subTableToFeatureTagMapping)
 
-        # `result` is a list of dicts that need to be merged into one dict.
+        # repr(result) is a list of dicts that need to be merged into one dict.
         mergedMapping = {}
         for mapping in result:
             for inputGlyph in mapping:

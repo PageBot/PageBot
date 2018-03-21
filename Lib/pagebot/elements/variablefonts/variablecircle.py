@@ -38,7 +38,7 @@ class VariableCircle(Element):
     all axes are represented as spikes/needles on a wheel, where the amount of
     penetration in the neutral glyph defined the influence of that axis.
     In that respect is it not much better than a list of sliders, but at least this
-    model allows to show interactions between axes, by putting them on another 
+    model allows to show interactions between axes, by putting them on another
     angle on the circle.
     """
     isText = False
@@ -82,7 +82,7 @@ class VariableCircle(Element):
         return cos(angle/180*pi) * r, sin(angle/180*pi) * r
 
     def _drawGlyphMarker(self, axisName, mx, my, glyphName, fontSize, location, strokeW=2):
-        # Middle circle 
+        # Middle circle
         context.fill(1)
         context.stroke(0.7)
         context.strokeWidth(strokeW)
@@ -110,15 +110,15 @@ class VariableCircle(Element):
 
         # Gray circle that defines the area of
         context.oval(px, py, self.w, self.h)
-        
+
         # Draw axis spikes first, so we can cover them by the circle markers.
         axes = self.font.axes
         fontSize = self.style.get('fontSize', self.DEFAULT_FONT_SIZE)
-        
-        # Draw name of the font   
+
+        # Draw name of the font
         bs = context.newString(self.font.info.familyName,
                                 style=dict(font=self.style['labelFont'],
-                                fontSize=self.style['axisNameFontSize'], textFill=0))     
+                                fontSize=self.style['axisNameFontSize'], textFill=0))
         context.text(bs, (px-fontSize/2, py+self.h+fontSize/2))
 
         # Draw spokes
@@ -139,11 +139,11 @@ class VariableCircle(Element):
         # Draw DeltaLocation circles.
         for axisName, (minValue, defaultValue, maxValue) in axes.items():
             angle = self.angles[axisName]
-            # Outside maxValue 
+            # Outside maxValue
             location = {axisName: maxValue}
             markerX, markerY = self._angle2XY(angle, self.w/2)
             self._drawGlyphIcon(mx+markerX, my+markerY, self.glyphName, fontSize/2, location)
-            
+
             # Interpolated DeltaLocation circles.
             location = {axisName: minValue + (maxValue - minValue)*self.INTERPOLATION}
             markerX, markerY = self._angle2XY(angle, self.w/4)
@@ -165,13 +165,13 @@ class VariableCircle(Element):
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
-                context.text(bs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5)) 
-                
+                context.text(bs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5))
+
                 # DeltaLocation master value
                 if maxValue < 10:
                     sMaxValue = '%0.2f' % maxValue
                 else:
-                    sMaxValue = `int(round(maxValue))`
+                    sMaxValue = repr(int(round(maxValue)))
                 bs = context.newString(sMaxValue,
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
@@ -180,14 +180,14 @@ class VariableCircle(Element):
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
-                context.text(bs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5)) 
+                context.text(bs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5))
 
                 # DeltaLocation value
                 interpolationValue = minValue + (maxValue - minValue)*self.INTERPOLATION
                 if interpolationValue < 10:
                     sValue = '%0.2f' % interpolationValue
                 else:
-                    sValue = `int(round(interpolationValue))`
+                    sValue = repr(int(round(interpolationValue)))
                 bs = context.newString(sValue,
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
@@ -196,13 +196,13 @@ class VariableCircle(Element):
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX*self.INTERPOLATION-tw/2-4, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
-                context.text(bs, (mx+markerX*self.INTERPOLATION-tw/2, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5)) 
+                context.text(bs, (mx+markerX*self.INTERPOLATION-tw/2, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5))
 
                 # DeltaLocation value
                 if minValue < 10:
                     sValue = '%0.2f' % minValue
                 else:
-                    sValue = `int(round(minValue))`
+                    sValue = repr(int(round(minValue)))
                 bs = context.newString(sValue,
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
@@ -212,14 +212,14 @@ class VariableCircle(Element):
                 context.stroke(None)
                 minM = 0.2
                 context.rect(mx+markerX*minM-tw/2-4, my+markerY*minM+th*0.5-4, tw+8, th)
-                context.text(bs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5)) 
+                context.text(bs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5))
 
     #   D R A W B O T  S U P P O R T
 
     def build(self, view, origin, drawElements=True):
         u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
