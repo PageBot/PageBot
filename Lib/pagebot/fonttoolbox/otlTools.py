@@ -24,7 +24,7 @@ def findLookupTypes(otlTable):
 
     """
     """
-        TODO: Fix docTests
+        TODO: Fix docTests working with OTF test fonts
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
         >>> f = TTFont(getFontPath("ProW6.otf"))
@@ -47,7 +47,7 @@ def findAlternateGlyphs(otlTable, glyphNames):
     as the result of GSUB glyph substitutions.
     """
     """
-        TODO: Fix docTests
+        TODO: Fix docTests working with OTF test fonts
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
