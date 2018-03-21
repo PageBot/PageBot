@@ -23,6 +23,7 @@
 import re
 import sys
 
+from __future__ import print_function
 from pagebot.contexts.platform import getContext
 from pagebot.elements import newTextBox
 
@@ -44,9 +45,9 @@ class FoundPattern(object):
         self.h = h
         self.line = line # TextLine instance that this was found in
         self.run = run # List of  of this strin,g
-    
+
     def __repr__(self):
-        return '[Found "%s" @ %s,%s]' % (self.s, self.x, self.y) 
+        return '[Found "%s" @ %s,%s]' % (self.s, self.x, self.y)
 
 class TextRun(object):
     def __init__(self, ctRun, runIndex):
@@ -62,7 +63,7 @@ class TextRun(object):
 
 
         self.iStart, self.iEnd = CoreText.CTRunGetStringRange(ctRun)
-        self.string = u''    
+        self.string = u''
         # Hack for now to find the string in repr-string if self._ctLine.
         for index, part in enumerate(`ctRun`.split('"')[1].split('\\u')):
             if index == 0:
@@ -77,14 +78,14 @@ class TextRun(object):
         self.positions = CoreText.CTRunGetPositionsPtr(ctRun)[0:gc]
         #CoreText.CTRunGetPositions(ctRun, CoreText.CFRange(0, 5), None)[4]
         #self.glyphFontIndices = CoreText.CTRunGetGlyphsPtr(ctRun)[0:gc]
-        #print CoreText.CTRunGetGlyphs(ctRun, CoreText.CFRange(0, 5), None)[0:5]
+        #print(CoreText.CTRunGetGlyphs(ctRun, CoreText.CFRange(0, 5), None)[0:5])
         self.status = CoreText.CTRunGetStatus(ctRun)
 
     def __len__(self):
         return self.glyphCount
 
     def __repr__(self):
-        return '[TextRun #%d "%s"]' % (self.runIndex, self.string) 
+        return '[TextRun #%d "%s"]' % (self.runIndex, self.string)
     # Font stuff
 
     def _get_displayName(self):
@@ -121,15 +122,15 @@ class TextRun(object):
     def _get_ascender(self):
         return self.nsFont.ascender()
     ascender = property(_get_ascender)
-    
+
     def _get_descender(self):
         return self.nsFont.descender()
     descender = property(_get_descender)
-    
+
     def _get_capHeight(self):
         return self.nsFont.capHeight()
     capHeight = property(_get_capHeight)
-    
+
     def _get_xHeight(self):
         return self.nsFont.xHeight()
     xHeight = property(_get_xHeight)
@@ -145,7 +146,7 @@ class TextRun(object):
     def _get_leading(self):
         return self.nsFont.leading()
     leading = property(_get_leading)
-    
+
     def _get_fontMatrix(self):
         return self.nsFont.matrix()
     fontMatrix = property(_get_fontMatrix)
@@ -212,7 +213,7 @@ class TextRun(object):
         return self.nsParagraphStyle.minimumLineHeight()
     minimumLineHeight = property(_get_minimumLineHeight)
 
-        
+
 class TextLine(object):
     def __init__(self, ctLine, p, lineIndex):
         self._ctLine = ctLine
@@ -220,7 +221,7 @@ class TextLine(object):
         self.lineIndex = lineIndex # Vertical line index in TextBox.
         self.glyphCount = CoreText.CTLineGetGlyphCount(ctLine)
 
-        self.string = '' 
+        self.string = ''
         self.runs = []
         for runIndex, ctRun in enumerate(CoreText.CTLineGetGlyphRuns(ctLine)):
             textRun = TextRun(ctRun, runIndex)
@@ -235,38 +236,38 @@ class TextLine(object):
 
     def getIndexForPosition(self, (x, y)):
         return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
-    
+
     def getOffsetForStringIndex(self, i):
         u"""Answer the z position that is closest to glyph string index i. If i is out of bounds,
         then answer the closest x position (left and right side of the string)."""
-        #print '=====', self._ctLine
+        #print('=====', self._ctLine)
         return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
-                
+
     def _get_stringIndex(self):
         return CoreText.CTLineGetStringRange(self._ctLine).location
     stringIndex = property(_get_stringIndex)
- 
+
     def getGlyphIndex2Run(self, glyphIndex):
         for run in self.runs:
             if run.iStart >= glyphIndex:
                 return run
         return None
-        
+
     #def _get_alignment(self):
     #    return CoreText.CTTextAlignment(self._ctLine)
     #alignment = property(_get_alignment)
-            
+
     def _get_imageBounds(self):
         u"""Property that answers the bounding box (actual black shape) of the line."""
         (x, y), (w, h) = CoreText.CTLineGetImageBounds(self._ctLine, None)
         return x, y, w, h
     imageBounds = property(_get_imageBounds)
-    
+
     def _get_bounds(self):
         u"""Property that returns the EM bounding box of the line."""
         return CoreText.CTLineGetTypographicBounds(self._ctLine, None, None, None)
     bounds = property(_get_bounds)
-    
+
     def _get_trailingWhiteSpace(self):
         return CoreText.CTLineGetTrailingWhitespaceWidth(self._ctLine)
     trailingWhiteSpace = property(_get_trailingWhiteSpace)
@@ -276,17 +277,17 @@ class TextLine(object):
         if isinstance(pattern, str):
             pattern = re.compile(pattern)
             #pattern = re.compile('([a-ZA-Z0-9\.\-\_]*])
-        #print '3321123123', self.string
+        #print('3321123123', self.string)
         for iStart, iEnd in [(m.start(0), m.end(0)) for m in re.finditer(pattern, self.string)]:
-            #print 'fsdsdffsd', iStart, iEnd
+            #print('fsdsdffsd', iStart, iEnd)
             xStart = self.getOffsetForStringIndex(iStart)
             xEnd = self.getOffsetForStringIndex(iEnd)
-            print xStart, xEnd
+            print(xStart, xEnd)
             run = self.getGlyphIndex2Run(xStart)
-            print iStart, xStart, iEnd, xEnd, run
+            print(iStart, xStart, iEnd, xEnd, run)
             founds.append(FoundPattern(self.string[iStart:iEnd], xStart, iStart, line=self, run=run))
         return founds
-                               
+
 class TextBox(object):
     u"""A TextBox holds a formatted string, as well as an ordered list of TextLine instances,
     that hold information about the sequence of TextRun instances (with their unique typographic
@@ -301,17 +302,17 @@ class TextBox(object):
         self.h = h
         self.d = 0
         self.fs = fs # Property will initialize the self.textLines upon setting self._fs
-    
+
     def __len__(self):
         return len(self.textLines)
-            
+
     def _get_fs(self):
         return self._fs
     def _set_fs(self, fs):
         self._fs = fs
         self.initializeTextLines()
     fs = property(_get_fs, _set_fs)
-       
+
     def initializeTextLines(self):
         u"""Answer an ordered list of all baseline position, starting at the top."""
         self._box = self.x, self.y, self.w, self.h
@@ -330,10 +331,10 @@ class TextBox(object):
             textLine = TextLine(ctLine, (x, y), lineIndex)
             self.textLines.append(textLine)
             self.baseLines.append((x, y, textLine.string))
-    
+
     def findPattern(self, pattern):
         u"""Answer the point locations where this pattern occures in the Formatted String."""
-        foundPatterns = [] # List of FoundPattern instances. 
+        foundPatterns = [] # List of FoundPattern instances.
         for lineIndex, textLine in enumerate(self.textLines):
             y = self.baseLines[lineIndex]
             for foundPattern in textLine.findPattern(pattern):
@@ -341,10 +342,10 @@ class TextBox(object):
                 foundPattern.z = self.z
                 foundPatterns.append(foundPattern)
         return foundPatterns
-                
+
     def draw(self):
         context.textBox(self.fs, (self.x, self.y, self.w, self.h))
-      
+
     def _drawBaselines(self, showIndex=False, showY=False, showLeading=False):
         # Let's see if we can draw over them in exactly the same position.
         fontSize = 8
@@ -451,11 +452,11 @@ myTextBox._drawFrame()
 myTextBox._drawBaselines(showIndex=True, showY=True, showLeading=True)
 
 for pattern in myTextBox.findPattern('Find'):
-    #print pattern
+    #print(pattern)
     px = pattern.x
     py = pattern.y
-    print pattern
-    print px, py[1]
+    print(pattern)
+    print(px, py[1])
     context.stroke(1, 0, 0)
     context.fill(None)
     context.oval(px-10, py[1]-10, 20, 20)

@@ -27,18 +27,18 @@ f += "hello"
 
 attr = f.getNSObject()
 
-attr.addAttribute_value_range_("com.petr.pageBot.myAttribute", "this is my data", (0, 5)) 
+attr.addAttribute_value_range_("com.petr.pageBot.myAttribute", "this is my data", (0, 5))
 
 f += " "
 f += "world"
 
 attr = f.getNSObject()
-attr.addAttribute_value_range_("com.petr.pageBot.myOtherAttibute", ["a", "list", "object"], (5, 5)) 
+attr.addAttribute_value_range_("com.petr.pageBot.myOtherAttibute", ["a", "list", "object"], (5, 5))
 
 text(f, (96, 172))
 
 
-print attr
+print(attr)
 
 
 f = FormattedString()
@@ -47,6 +47,6 @@ attr = f.getNSObject()
 l = []
 attr.addAttribute_value_range_('io.pagebot.aaa', l, (0, 10))
 l.append('aaaaaaa')
-print f.getNSObject()
+print(f.getNSObject())
 
 """

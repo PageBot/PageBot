@@ -18,6 +18,7 @@
 #
 #import pagebot # Import to know the path of non-Python resources.
 from pagebot.contributions.filibuster.blurb import blurb
+from __future__ import print_function
 
 # Creation of the RootStyle (dictionary) with all available
 # default style parameters filled.
@@ -33,7 +34,7 @@ from pagebot.toolbox.transformer import path2ScriptId
 from pagebot import getGlobals
 
 scriptGlobals = getGlobals(path2ScriptId(__file__))
- 
+
 PageSize = 700
 
 G = 8 # Distance between the squares.
@@ -91,7 +92,7 @@ def makeDocument():
     page.padding = SQ
 
     pageArea = PageSize-2*SQ
-    print PageSize, pageArea, SQ
+    print(PageSize, pageArea, SQ)
 
     # Make new container for adding elements inside with alignment.
     newRect(z=10, w=pageArea, h=pageArea, fill=(0.8, 0.8, 0.8, 0.4),
@@ -131,7 +132,7 @@ def makeDocument():
                padding=4, fill=0.7,
                maxW=pageArea, maxH=pageArea, conditions=(Left2Left(),
                                                          Float2Top()))
-    
+
     newImage('images/cookbot10.jpg', z=0, w=BlueWidth,
              parent=page, fill=0.7, padding=8,
              maxW=pageArea, maxH=pageArea, conditions=(Right2Right(),

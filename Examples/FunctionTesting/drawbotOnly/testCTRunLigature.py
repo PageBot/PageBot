@@ -46,17 +46,17 @@ def ctRunThing(fs, (x, y)):
     ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
     ctLines = CoreText.CTFrameGetLines(ctBox)
     ctRuns = CoreText.CTLineGetGlyphRuns(ctLines[0])
-    
-    
+
+
     # loop over all runs
     for run in ctRuns:
         # get all positions
         pos = CoreText.CTRunGetPositions(run, (0, CoreText.CTRunGetGlyphCount(run)), None)
         # get all glyphs
         glyphs = CoreText.CTRunGetGlyphs(run, (0, CoreText.CTRunGetGlyphCount(run)), None)
-        print pos
-        
-        # enumerate over all pos   
+        print(pos)
+
+        # enumerate over all pos
         for i, (gx, gy) in enumerate(pos):
             # draw a line
             context.stroke(0)
@@ -73,9 +73,9 @@ def ctRunThing(fs, (x, y)):
                 centerShift = w - gx
             centerShift *= .5
             #tx, _ = textSize(glyphName)
-            
+
             #text(glyphName, (x+gx+centerShift-tx*.5, y+gy-20))
-                        
+
 
 """
 fs1 = context.newString('Ligature fifl', style=dict(font=fontPath, fontSize=100, openTypeFeatures=dict(liga=False)))

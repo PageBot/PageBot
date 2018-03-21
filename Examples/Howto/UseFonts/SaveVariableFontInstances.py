@@ -20,7 +20,7 @@ from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance, getConst
 fontPath = pagebot.getFontPath()
 f = Font(fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf', install=False)
 # Now we have a variable font open.
-print f.axes
+print(f.axes)
 # Get an instance at a certain location
 
 location = getConstrainedLocation(f, dict(wdth=3944/10, wght=760/10))

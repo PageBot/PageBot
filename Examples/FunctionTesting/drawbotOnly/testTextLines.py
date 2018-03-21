@@ -17,6 +17,7 @@ import sys
 from pagebot.contexts.platform import getContext
 if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
+from __future__ import print_function
 
 import CoreText
 import Quartz
@@ -25,8 +26,8 @@ import Quartz
 
 #for name in installedFonts():
 #    if 'Bitcount' in name:
-#        print name
-        
+#        print(name)
+
 class TextRun(object):
     def __init__(self, ctRun, string):
         self.string = string
@@ -40,7 +41,7 @@ class TextRun(object):
         #CoreText.CTRunGetPositions(ctRun, CoreText.CFRange(0, 5), None)[4]
         # Get list of glyph indices.
         self.glyphFontIndices = CoreText.CTRunGetGlyphsPtr(ctRun)[0:gc]
-        #print CoreText.CTRunGetGlyphs(ctRun, CoreText.CFRange(0, 5), None)[0:5]
+        #print(CoreText.CTRunGetGlyphs(ctRun, CoreText.CFRange(0, 5), None)[0:5])
         self.status = CoreText.CTRunGetStatus(ctRun)
         attrs = CoreText.CTRunGetAttributes(ctRun)
         # Font stuff
@@ -84,7 +85,7 @@ class TextRun(object):
 
     def __len__(self):
         return self.glyphCount
-        
+
 class TextLine(object):
     def __init__(self, ctLine):
         self._ctLine = ctLine
@@ -104,38 +105,38 @@ class TextLine(object):
             self.runs.append(TextRun(ctRun, self.string))
 
     def __repr__(self):
-        print self._ctLine
+        print(self._ctLine)
 
     def __len__(self):
         return self.glyphCount
 
     def getIndexForPosition(self, (x, y)):
         return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))
-    
+
     def getOffsetForStringIndex(self, i):
         return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)
-                
+
     def _get_stringIndex(self):
         return CoreText.CTLineGetStringRange(self._ctLine).location
     stringIndex = property(_get_stringIndex)
-       
+
     #def _get_alignment(self):
     #    return CoreText.CTTextAlignment(self._ctLine)
     #alignment = property(_get_alignment)
-            
+
     def _get_imageBounds(self):
         (x, y), (w, h) = CoreText.CTLineGetImageBounds(self._ctLine,None)
         return x, y, w, h
     imageBounds = property(_get_imageBounds)
-    
+
     def _get_bounds(self):
         return CoreText.CTLineGetTypographicBounds(self._ctLine,None,None,None)
     bounds = property(_get_bounds)
-    
+
     def _get_trailingWhiteSpace(self):
         return CoreText.CTLineGetTrailingWhitespaceWidth(self._ctLine)
     trailingWhiteSpace = property(_get_trailingWhiteSpace)
-           
+
 def getTextLines(fs, w, h):
     u"""Answer an ordered list of all baseline position, starting at the top."""
     box = 0, 0, w, h
@@ -156,47 +157,47 @@ fs = FormattedString(u'This åéöøa', font='BitcountMonoDouble-MediumCircleIta
 fs = fs + FormattedString('This an example. ' * 20, font='Verdana', fontSize=16)
 
 textLines, o = getTextLines(fs, 500, 200)
-#print o
+#print(o)
 #print
 for tl in textLines:
-    #print 'Bounds:', tl.bounds, tl.imageBounds, tl.trailingWhiteSpace, 'Len:', len(tl), 'Index:', tl.stringIndex, 
+    #print('Bounds:', tl.bounds, tl.imageBounds, tl.trailingWhiteSpace, 'Len:', len(tl), 'Index:', tl.stringIndex, )
     #tl.alignment
-    #print 'Index at position (100, 10):', tl.getIndexForPosition((100, 10))
-    #print 'Offset at string index (0):', tl.runs
-    print 'Runs:', len(tl.runs)
-    print 'String:', tl.string
+    #print('Index at position (100, 10):', tl.getIndexForPosition((100, 10)))
+    #print('Offset at string index (0):', tl.runs)
+    print('Runs:', len(tl.runs))
+    print('String:', tl.string)
     for textRun in tl.runs:
         """
-        print CoreText.CTRunGetTextMatrix(ctRun._ctRun)
-        print CoreText.CTRunGetStringRange(ctRun._ctRun)
-        print CoreText.CTRunGetStringIndicesPtr(ctRun._ctRun)[20]
-        print CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
-        print CoreText.CTRunGetAdvances(ctRun._ctRun, CoreText.CFRange(0, 5), None)
-        print CoreText.CTRunGetPositionsPtr(ctRun._ctRun)[20]
-        print CoreText.CTRunGetPositions(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
-        print CoreText.CTRunGetGlyphsPtr(ctRun._ctRun)[20]
-        print CoreText.CTRunGetGlyphs(ctRun._ctRun, CoreText.CFRange(0, 5), None)[0:5]
-        print CoreText.CTRunGetStatus(ctRun._ctRun)
-        print CoreText.CTRunGetAttributes(ctRun._ctRun)['NSColor']
-        print CoreText.CTRunGetAttributes(ctRun._ctRun)['NSParagraphStyle']
-        print CoreText.CTRunGetAttributes(ctRun._ctRun)['NSFont']
-        print ctRun._ctRun
+        print(CoreText.CTRunGetTextMatrix(ctRun._ctRun))
+        print(CoreText.CTRunGetStringRange(ctRun._ctRun))
+        print(CoreText.CTRunGetStringIndicesPtr(ctRun._ctRun)[20])
+        print(CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4])
+        print(CoreText.CTRunGetAdvances(ctRun._ctRun, CoreText.CFRange(0, 5), None))
+        print(CoreText.CTRunGetPositionsPtr(ctRun._ctRun)[20])
+        print(CoreText.CTRunGetPositions(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4])
+        print(CoreText.CTRunGetGlyphsPtr(ctRun._ctRun)[20])
+        print(CoreText.CTRunGetGlyphs(ctRun._ctRun, CoreText.CFRange(0, 5), None)[0:5])
+        print(CoreText.CTRunGetStatus(ctRun._ctRun))
+        print(CoreText.CTRunGetAttributes(ctRun._ctRun)['NSColor'])
+        print(CoreText.CTRunGetAttributes(ctRun._ctRun)['NSParagraphStyle'])
+        print(CoreText.CTRunGetAttributes(ctRun._ctRun)['NSFont'])
+        print(ctRun._ctRun)
         """
-        print textRun.nsFont, textRun.glyphFontIndices, textRun.positions
-        print '========'
-        print textRun.displayName
-        print textRun.familyName
-        print textRun.fontName
-        print textRun.glyphCount
-        print textRun.fontDescriptor
-        print textRun.isFixedPitch
-        print textRun.renderingMode
-        print textRun.capHeight
-        print textRun.ascender
-        print textRun.descender
-        print textRun.fontBoundingRect
-        print textRun.italicAngle
+        print(textRun.nsFont, textRun.glyphFontIndices, textRun.positions)
+        print('========')
+        print(textRun.displayName)
+        print(textRun.familyName)
+        print(textRun.fontName)
+        print(textRun.glyphCount)
+        print(textRun.fontDescriptor)
+        print(textRun.isFixedPitch)
+        print(textRun.renderingMode)
+        print(textRun.capHeight)
+        print(textRun.ascender)
+        print(textRun.descender)
+        print(textRun.fontBoundingRect)
+        print(textRun.italicAngle)
         print
-        #print CoreText.CTLineGetGlyphRuns(tl._ctLine)
-    print #CoreText.CTLineGetStringRange(tl._ctLine)
-    #print tl.string 
+        #print(CoreText.CTLineGetGlyphRuns(tl._ctLine))
+    print(#CoreText.CTLineGetStringRange(tl._ctLine))
+    #print(tl.string )

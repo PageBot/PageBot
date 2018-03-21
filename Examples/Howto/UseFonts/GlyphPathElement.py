@@ -33,7 +33,7 @@ PagePadding = 32
 PageSize = 500
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/GlyphPathElement.pdf' 
+EXPORT_PATH = '_export/GlyphPathElement.pdf'
 
 def pathFilter(e, path, view):
     r = 24
@@ -47,7 +47,7 @@ def pathFilter(e, path, view):
                 else:
                     context.fill((0, 1, 0)) # Color as one tuple, in context API
                     context.rect(x-r/4, y-r/4, r/2, r/2)
-    
+
 
 #W = H = 120 # Get the standard a4 width and height in points.
 W = H = PageSize
@@ -67,21 +67,21 @@ view.showPageFrame = True
 view.showElementOrigin = True
 view.showElementDimensions = False
 
-# Get list of pages with equal y, then equal x.    
+# Get list of pages with equal y, then equal x.
 #page = doc[1][0] # Get the single page from te document.
 page = doc.getPage(1) # Get page on pageNumber, first in row (this is only one now).
 page.name = 'This is a demo page for floating child elements'
-    
+
 e1 = GlyphPath(font[glyphName], stroke=None, h=600,
     fill=None, pathFilter=pathFilter,
-    parent=page, font='Verdana',       
+    parent=page, font='Verdana',
     conditions=[Left2Left(), Float2Top()])
 
 score = page.solve()
 if score.fails:
-    print score.fails
+    print(score.fails)
 e1.y += 100
-#e2.y += 100 
+#e2.y += 100
 
-doc.export(EXPORT_PATH) 
+doc.export(EXPORT_PATH)
 

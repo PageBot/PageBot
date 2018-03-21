@@ -21,7 +21,7 @@ import pagebot
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts.platform import TEST_FONTS_PATH
-from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance 
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
 
 W = H = 500
@@ -49,7 +49,7 @@ LABEL_FONT = BOOK
 FAMILY = 'Georgia'
 for fontName in installedFonts():
     if FAMILY in fontName:
-        print fontName
+        print(fontName)
 LABEL_FONT = getFontByName('Verdana')
 BOOK = getFontByName(FAMILY)
 BOOK_ITALIC = getFontByName(FAMILY+'-Italic')
@@ -64,7 +64,7 @@ class FontIcon(object):
     LABEL_RTRACKING = 0.02
     LABEL_RLEADING = 1.3
 
-    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, line=None, 
+    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, line=None,
             labelFont=None, titleFont=None, x=0, y=0, show=True):
         self.f = f # Font instance
         self.labelFont = labelFont or f
@@ -83,12 +83,12 @@ class FontIcon(object):
     def _get_w(self):
         return self.W*self.scale
     w = property(_get_w)
-    
+
     def _get_ih(self):
         u"""Answer scaled height of the plain icon without name label."""
         return self.H*self.scale
     ih = property(_get_ih)
-    
+
     def _get_h(self):
         h = self.ih
         if self.name:
@@ -99,17 +99,17 @@ class FontIcon(object):
             h += self.E*self.scale*1.4 # Extra vertical space to show the name.
         return h
     h = property(_get_h)
-    
-    def draw(self, orgX, orgY):     
+
+    def draw(self, orgX, orgY):
         if not self.show:
-            return  
+            return
         w = self.w # Width of the icon
         h = self.ih # Height of the icon
         e = self.E*self.scale # Ear size
         l = self.L*self.scale # Line
         x = self.x + orgX
         y = self.y + orgY
-        
+
         path = newPath()
         moveTo((0, 0))
         lineTo((0, h))
@@ -121,7 +121,7 @@ class FontIcon(object):
         moveTo((w-e, h))
         lineTo((w-e, h-e))
         lineTo((w, h-e))
-    
+
         save()
         fill(1)
         stroke(0)
@@ -135,7 +135,7 @@ class FontIcon(object):
                                           fontSize=h*2/3))
         tw, th = textSize(fs)
         text(fs, (w/2-tw/2, h/2-th/3.2))
-        
+
         if self.title:
             fs = context.newString(self.title,
                                    style=dict(font=self.labelFont.installedName,
@@ -164,7 +164,7 @@ class FontIcon(object):
             tw, th = textSize(fs)
             text(fs, (w/2-tw/2, y))
         restore()
-    
+
 class KeyFrame(object):
     def __init__(self, objects, positions, steps=None, drawBackground=None):
         self.objects = objects
@@ -172,11 +172,11 @@ class KeyFrame(object):
         self.steps = steps or 1
         if drawBackground is not None:
             self.drawBacktround = drawBackground
-    
+
     def drawBackground(self):
         fill(1)
         rect(0, 0, W, H)
-            
+
     def draw(self):
         for n in range(self.steps):
             newPage(W, H)
@@ -194,7 +194,7 @@ class KeyFrame(object):
             if o.eId in self.positions:
                 tx, ty = self.positions[o.eId]
                 o.x = tx
-                o.y = ty            
+                o.y = ty
 S = 1.5
 
 lightIcon = FontIcon(LIGHT, 'Light', eId='Light', s=S, label='50K', labelFont=LABEL_FONT)
@@ -207,7 +207,7 @@ fontIcons = [varFontIcon, lightIcon, boldIcon, lightCondensedIcon, boldCondensed
 id2FontIcon = {}
 for fontIcon in fontIcons:
     id2FontIcon[fontIcon.eId] = fontIcon
-    
+
 def positionFontIcons():
     y = H - 110
     for iconId in ('Light', 'LightCondensed', 'Bold', 'BoldCondensed'):
@@ -223,7 +223,7 @@ def positionFontIcons():
 def drawBackground(keyFrame, frame):
     fill(1)
     rect(0, 0, W, H)
-    
+
 def drawAnimation():
     positionFontIcons()
     varFontIcon = id2FontIcon['VarFont']
@@ -232,7 +232,7 @@ def drawAnimation():
         drawBackground=drawBackground
     ).draw()
 
-    KeyFrame(fontIcons, 
+    KeyFrame(fontIcons,
         {'Light': (varFontIcon.x, varFontIcon.y), 'Bold': (varFontIcon.x, varFontIcon.y)}, 14,
         drawBackground=drawBackground
     ).draw()
@@ -240,8 +240,8 @@ def drawAnimation():
     id2FontIcon['Bold'].show = False
     varFontIcon.title = '1 axis [Weight]'
     varFontIcon.label = '75K'
-    
-    KeyFrame(fontIcons, 
+
+    KeyFrame(fontIcons,
         {'LightCondensed': (varFontIcon.x, varFontIcon.y), 'BoldCondensed': (varFontIcon.x, varFontIcon.y)}, 14,
         drawBackground=drawBackground
     ).draw()
@@ -254,8 +254,8 @@ def drawAnimation():
         drawBackground=drawBackground
     ).draw()
 
-    saveImage('_export/varFont2Axes.gif')    
+    saveImage('_export/varFont2Axes.gif')
 
 drawAnimation()
-   
-    
+
+

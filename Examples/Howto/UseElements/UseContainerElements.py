@@ -31,7 +31,7 @@ def run():
 	print('Elements:'+str(c.elements)) # Currently no elements in the container
 	print('-- None of the children are placed on default position (0, 0, 0)')
 	for e in c.elements:
-	    print e.name, e.x, e.y, e.z
+	    print(e.name, e.x, e.y, e.z)
 	print('-- Place the Child1 element on a fixed position (x,y), z is undefined/untouched')
 	child1.x = 20
 	child1.y = 30

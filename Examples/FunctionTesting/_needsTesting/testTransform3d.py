@@ -11,10 +11,10 @@ translate(width()/2, height()/2)
 
 t = Transform3D()  # identity transform
 
-print t.transformPoint((100, 200, 300))  # transform one point
-print t.transformPoints([(100, 200, 300)])  # transform a seq. of points
+print(t.transformPoint((100, 200, 300))  # transform one point)
+print(t.transformPoints([(100, 200, 300)])  # transform a seq. of points)
 
-print t
+print(t)
 
 radius = 222
 cube = []

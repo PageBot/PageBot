@@ -14,27 +14,28 @@
 #
 #     Implements a PageBot font classes to get info from a TTFont.
 #     Show drawing of outline points and intersection beam with flattened path
-#   
+#
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts.platform import getContext
+from __future__ import print_function
 
 newPage(1000, 1000)
 font = Font('/Library/Fonts/Georgia.ttf')
-print font.analyzer 
-print font.analyzer.name 
+print(font.analyzer )
+print(font.analyzer.name )
 glyphH = font['ampersand']
 gaH = glyphH.analyzer
-print gaH
-print 'H width:', gaH.width, gaH.glyph.width, glyphH.width
-print 'H bounding box:', gaH.boundingBox
+print(gaH)
+print('H width:', gaH.width, gaH.glyph.width, glyphH.width)
+print('H bounding box:', gaH.boundingBox)
 # X position of vertical lines also includes sides of serifs.
-print 'x-position of verticals:', sorted(gaH.verticals.keys())
+print('x-position of verticals:', sorted(gaH.verticals.keys()))
 # Y position of horizontal lines
-print 'y-position of horizontals:', sorted(gaH.horizontals.keys())
+print('y-position of horizontals:', sorted(gaH.horizontals.keys()))
 
 c.stroke(0)
 c.fill(None)
-print gaH.glyph.leftMargin
+print(gaH.glyph.leftMargin)
 x = y = 100
 s = 0.25
 c.drawPath(glyphH.path, (x, y), s)
@@ -44,7 +45,7 @@ c.stroke(None)
 for p in glyphH.points:
     r = {True:5, False:3}[p.onCurve]
     c.rect(x+p.x*s-r/2, x+p.y*s-r/2, r, r)
-    
+
 #c.rect(x, y, 100, 100)
 # Draw flattened path next to it on H-width distance.
 c.fill(None)
@@ -78,5 +79,5 @@ for p in gaH.intersectWithLine(beam):
 Variable([
 	dict(name="BeamY", ui='Slider', args=dict(minValue=-300, value=300, maxValue=1000)),
 ], globals())
-    
-    
+
+

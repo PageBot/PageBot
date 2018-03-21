@@ -21,7 +21,7 @@ if not context.isDrawBot:
 
 def run():
     aa = context.newString('Book Cover', style=dict(font='Georgia', fontSize=40))
-    print textSize(aa)
+    print(textSize(aa))
 
     # Create formatted tring.
     bs = context.newString('') # Make BabelString, containing a DrawBot FormattedString
@@ -32,16 +32,16 @@ def run():
     aa.fontSize(40)
     aa.lineHeight(1.3)
     aa += ('Book Cover')
-    print textSize(aa)
+    print(textSize(aa))
 
     aa = context.newString('')
     aa.font('Georgia')
     aa.fontSize(40)
     aa += 'Book Cover'
-    print textSize(aa)
-    print aa.fontAscender()
-    print aa.fontDescender()
-    print aa.fontAscender() - aa.fontDescender()
+    print(textSize(aa))
+    print(aa.fontAscender())
+    print(aa.fontDescender())
+    print(aa.fontAscender() - aa.fontDescender())
 
     context.stroke(0)
     context.fill(None)
@@ -50,6 +50,6 @@ def run():
 
 if __name__ == '__main__':
     bs = context.newString('Book Cover', style=dict(font='Georgia', fontSize=40))
-    print context.textSize(bs)
+    print(context.textSize(bs))
     run()
 

@@ -64,7 +64,7 @@ def drawSegment(segment, implied, cps, verbose=False):
         prevOnCurve = (point.x, point.y)
 
         if verbose:
-            print '     * line to %d, %d' % (point.x, point.y)
+            print('     * line to %d, %d' % (point.x, point.y))
 
     elif len(segment) == 3:
         # Quadratic offcurve is split into two cubic offcurves.
@@ -92,7 +92,7 @@ def drawSegment(segment, implied, cps, verbose=False):
         cps.append(offCurve1)
 
         if verbose:
-            print '     * curve to (%s, %s, %s)' % (offCurve0, offCurve1, onCurve)
+            print('     * curve to (%s, %s, %s)' % (offCurve0, offCurve1, onCurve))
     else:
         # Implied points are calculated and inserted. Number depends on amount
         # of consecutive offcurves.
@@ -112,7 +112,7 @@ def drawSegment(segment, implied, cps, verbose=False):
         curve1.insert(0, newOnCurve)
 
         if verbose:
-            print '     * Implied point %s' % newOnCurve
+            print('     * Implied point %s' % newOnCurve)
 
         # Recurse.
         # NOTE: PageBot implementation in glyph uses a loop instead of
