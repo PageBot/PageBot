@@ -19,30 +19,31 @@
 #
 import pagebot
 from pagebot.contexts.platform import getContext
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
 from pagebot import getFontPath
 
+c = getContext()
+
 W = H = 500
 
-FONT_PATH = getFontPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
-f = Font(FONT_PATH) # Get PageBot Font instance of Variable font.
+f = findFont('AmstelvarAlpha-VF') # Get PageBot Font instance of Variable font.
 
-LIGHT72 = getVarFontInstance(FONT_PATH, dict(wght=0.5, wdth=0.6, opsz=72), styleName='Light72')
-BOOK_LIGHT = getVarFontInstance(FONT_PATH, dict(wght=0.5, wdth=0.7), styleName='Book Light')
-BOOK_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.6, wdth=0.7), styleName='Book Condensed')
-BOOK = getVarFontInstance(FONT_PATH, dict(wght=0.6, wdth=0), styleName='Book')
-LIGHT_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.9, wdth=0.7), styleName='Light Condensed')
-LIGHT = getVarFontInstance(FONT_PATH, dict(wght=0.9, wdth=0), styleName='Light')
-BOOK_ITALIC = getVarFontInstance(FONT_PATH, dict(wght=0.25, wdth=1), styleName='Book Italic')
-MEDIUM = getVarFontInstance(FONT_PATH, dict(wght=0.40, wdth=0), styleName='Medium')
-SEMIBOLD = getVarFontInstance(FONT_PATH, dict(wght=0.40, wdth=1), styleName='Semibold')
-SEMIBOLD_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.40, wdth=0.5), styleName='Semibold Condensed')
-BOLD = getVarFontInstance(FONT_PATH, dict(wght=0.0, wdth=0), styleName='Bold')
-BOLD_CONDENSED = getVarFontInstance(FONT_PATH, dict(wght=0.0, wdth=0.7), styleName='Bold Condensed')
-BOLD_ITALIC = getVarFontInstance(FONT_PATH, dict(wght=0.7, wdth=0), styleName='Bold Italic')
+LIGHT72 = getVarFontInstance(f, dict(wght=0.5, wdth=0.6, opsz=72), styleName='Light72')
+BOOK_LIGHT = getVarFontInstance(f, dict(wght=0.5, wdth=0.7), styleName='Book Light')
+BOOK_CONDENSED = getVarFontInstance(f, dict(wght=0.6, wdth=0.7), styleName='Book Condensed')
+BOOK = getVarFontInstance(f, dict(wght=0.6, wdth=0), styleName='Book')
+LIGHT_CONDENSED = getVarFontInstance(f, dict(wght=0.9, wdth=0.7), styleName='Light Condensed')
+LIGHT = getVarFontInstance(f, dict(wght=0.9, wdth=0), styleName='Light')
+BOOK_ITALIC = getVarFontInstance(f, dict(wght=0.25, wdth=1), styleName='Book Italic')
+MEDIUM = getVarFontInstance(f, dict(wght=0.40, wdth=0), styleName='Medium')
+SEMIBOLD = getVarFontInstance(f, dict(wght=0.40, wdth=1), styleName='Semibold')
+SEMIBOLD_CONDENSED = getVarFontInstance(f, dict(wght=0.40, wdth=0.5), styleName='Semibold Condensed')
+BOLD = getVarFontInstance(f, dict(wght=0.0, wdth=0), styleName='Bold')
+BOLD_CONDENSED = getVarFontInstance(f, dict(wght=0.0, wdth=0.7), styleName='Bold Condensed')
+BOLD_ITALIC = getVarFontInstance(f, dict(wght=0.7, wdth=0), styleName='Bold Italic')
 
 LABEL_FONT = BOOK
 
@@ -111,61 +112,59 @@ class FontIcon(object):
         x = self.x + orgX
         y = self.y + orgY
 
-        path = newPath()
-        moveTo((0, 0))
-        lineTo((0, h))
-        lineTo((w-e, h))
-        lineTo((w, h-e))
-        lineTo((w, 0))
-        lineTo((0, 0))
-        closePath()
-        moveTo((w-e, h))
-        lineTo((w-e, h-e))
-        lineTo((w, h-e))
+        c.newPath()
+        c.moveTo((0, 0))
+        c.lineTo((0, h))
+        c.lineTo((w-e, h))
+        c.lineTo((w, h-e))
+        c.lineTo((w, 0))
+        c.lineTo((0, 0))
+        c.closePath()
+        c.moveTo((w-e, h))
+        c.lineTo((w-e, h-e))
+        c.lineTo((w, h-e))
 
-        save()
-        fill(1)
-        stroke(0)
-        strokeWidth(self.line)
-        translate(x, y)
-        drawPath(path)
+        c.save()
+        c.fill(1)
+        c.stroke(0, self.line)
+        c.translate(x, y)
+        c.drawPath()
         labelSize = e
-        context = getContext()
-        fs = context.newString(self.c,
-                               style=dict(font=self.f.installedName,
+        bs = c.newString(self.c,
+                               style=dict(font=self.f.path,
                                           textFill=0,
                                           fontSize=h*2/3))
-        tw, th = textSize(fs)
-        text(fs, (w/2-tw/2, h/2-th/3.2))
+        tw, th = bs.textSize()
+        text(bs, (w/2-tw/2, h/2-th/3.2))
 
         if self.title:
-            fs = context.newString(self.title,
-                                   style=dict(font=self.labelFont.installedName,
+            bs = context.newString(self.title,
+                                   style=dict(font=self.labelFont.path,
                                               textFill=0,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
-            tw, th = textSize(fs)
-            text(fs, (w/2-tw/2, self.ih+th/2))
+            tw, th = bs.textSize()
+            text(bs, (w/2-tw/2, self.ih+th/2))
 
         y = -self.LABEL_RLEADING*labelSize
         if self.name:
-            fs = context.newString(self.name,
-                                   style=dict(font=self.labelFont.installedName,
+            bs = context.newString(self.name,
+                                   style=dict(font=self.labelFont.path,
                                               textFill=0,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
-            tw, th = textSize(fs)
-            text(fs, (w/2-tw/2, y))
+            tw, th = bs.textSize()
+            text(bs, (w/2-tw/2, y))
             y -= self.LABEL_RLEADING*labelSize
         if self.label:
-            fs = context.newString(self.label,
-                                   style=dict(font=self.labelFont.installedName,
+            bs = context.newString(self.label,
+                                   style=dict(font=self.labelFont.path,
                                               textFill=0,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
-            tw, th = textSize(fs)
-            text(fs, (w/2-tw/2, y))
-        restore()
+            tw, th = bs.textSize()
+            text(bs, (w/2-tw/2, y))
+        c.restore()
 
 class KeyFrame(object):
     def __init__(self, objects, positions, steps=None, drawBackground=None):

@@ -18,17 +18,19 @@
 #     For real use, import the function as:
 #     from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 #
+#     TODO: Solve division by zero error
+
 from random import random
 from math import sin, radians
 
 from pagebot.contexts.platform import getContext
 from pagebot.contexts.platform import getRootPath
-from pagebot.fonttoolbox.objects.font import getFont
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 
-ROOT_PATH = getRootPath()
-FONT_PATH = ROOT_PATH + '/Fonts/fontbureau/AmstelvarAlpha-VF.ttf'
-f = getFont(FONT_PATH) # Get PageBot Font instance of Variable font.
+context = getContext()
+
+f = findFont('AmstelvarAlpha-VF') # Get PageBot Font instance of Variable font.
 
 HEADLINE_SIZE = 36
 HEADLINE = """When fonts started a new world."""
@@ -62,23 +64,22 @@ for n in range(20):
 PAGE_FRAME = None
 
 def drawPageFrame(w):
-    c.fill(1)
-    c.stroke(0)
-    c.newPath()
-    c.moveTo((PADDING, H-PADDING))
-    c.lineTo((PADDING+w, H-PADDING))
-    c.lineTo((PADDING+w, H/2+PADDING))
-    c.curveTo((PADDING+w/2, H/2+PADDING),
+    context.fill(1)
+    context.stroke(0)
+    context.newPath()
+    context.moveTo((PADDING, H-PADDING))
+    context.lineTo((PADDING+w, H-PADDING))
+    context.lineTo((PADDING+w, H/2+PADDING))
+    context.curveTo((PADDING+w/2, H/2+PADDING),
               (PADDING+w/2, H/2+PADDING-M/2),
               (PADDING, H/2+PADDING-M/2))
-    c.closePath()
-    c.drawPath()
-    c.fill(None)
-    c.stroke(0.5)
-    c.strokeWidth(4)
+    context.closePath()
+    context.drawPath()
+    context.fill(None)
+    context.stroke(0.5, 4)
     leading = 14
     for n in range(10):
-        c.line((PADDING+M, H-5*PADDING-n*leading),
+        context.line((PADDING+M, H-5*PADDING-n*leading),
                (PADDING+w-M-LINE_ENDINGS[n], H-5*PADDING-n*leading))
 
 def draw(w, y, drawVariable):
@@ -91,16 +92,16 @@ def draw(w, y, drawVariable):
     d = fitVariableWidth(f, HEADLINE, w, HEADLINE_SIZE,
                          condensedLocation, wideLocation)
     # move the canvas
-    c.save()
+    context.save()
     if not drawVariable:
-        c.translate(0, -H/2+PADDING/2)
+        context.translate(0, -H/2+PADDING/2)
     drawPageFrame(d['width']+2*M)
-    c.restore()
+    context.restore()
 
     minWidth = d['condensedWidth']
     maxWidth = d['wideWidth']
     fixedWidth = minWidth + (maxWidth - minWidth)/2
-    dFixed = c.fitVariableWidth(f, HEADLINE, fixedWidth, HEADLINE_SIZE,
+    dFixed = fitVariableWidth(f, HEADLINE, fixedWidth, HEADLINE_SIZE,
                                 condensedLocation, wideLocation)
 
     if drawVariable:
@@ -108,15 +109,15 @@ def draw(w, y, drawVariable):
     else:
         # Draw the instance choice of 3
         if w < fixedWidth:
-            c.text(d['condensedFs'], (PADDING+M, y-PADDING-M))
+            context.text(d['condensedFs'], (PADDING+M, y-PADDING-M))
         elif w < maxWidth:
-            c.text(dFixed['fs'], (PADDING+M, y-PADDING-M))
+            context.text(dFixed['fs'], (PADDING+M, y-PADDING-M))
         else:
-            c.text(d['wideFs'], (PADDING+M, y-PADDING-M))
+            context.text(d['wideFs'], (PADDING+M, y-PADDING-M))
 
 if INTERACTIVE:
     #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    c.Variable(
+    context.Variable(
         [dict(name='Width',
               ui='Slider',
               args=dict(minValue=PADDING,
@@ -129,13 +130,13 @@ else:
     pageFrame = None
     angle = 0
     while angle < 360:
-        c.newPage(W, H)
-        c.fill(0.8)
-        c.rect(0, 0, W, H)
+        context.newPage(W, H)
+        context.fill(0.8)
+        context.rect(0, 0, W, H)
         dx = sin(radians(angle))*0.5+0.5
         w = W/2 + (W-2*PADDING-W/2) * dx
         draw(w, H-PADDING, True)
         draw(w, (H-PADDING)/2, False)
         angle += 360/FRAMES
-    c.saveImage('_export/fitVariableColumns.gif')
+    context.saveImage('_export/fitVariableColumns.gif')
 
