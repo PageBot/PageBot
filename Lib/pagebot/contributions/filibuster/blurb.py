@@ -2,9 +2,9 @@
 #
 #    blurb.py
 #
+from __future__ import print_function
 import re
 import blurbwriter
-from __future__ import print_function
 
 class Blurb(object):
     """

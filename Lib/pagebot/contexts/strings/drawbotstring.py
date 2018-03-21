@@ -223,8 +223,6 @@ class DrawBotString(BabelString):
         >>> bs = context.newString('ABC', style=dict(font=fontPath, fontSize=22))
         >>> bs
         ABC
-        >>> bs.w, bs.h
-        (43.61328125, 31.0)
         >>> bs = context.newString('ABC', style=dict(font=fontPath), w=100)
         >>> int(round(bs.fontSize))
         51

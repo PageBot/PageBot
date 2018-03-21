@@ -31,15 +31,15 @@ class BabelString(object):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.contexts.strings.drawbotstring import DrawBotString
         >>> context = DrawBotContext()
-        >>> bs = DrawBotString.newString('ABC', context, style=dict(font='Verdana', fontSize=100))
+        >>> bs = DrawBotString.newString('ABC', context=context, style=dict(font='Verdana', fontSize=100))
         >>> bs
         ABC
-        >>> bs.getFont()
+        >>> bs.font
         <Font Verdana>
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> from pagebot.contexts.strings.flatstring import FlatString
         >>> context = FlatContext()
-        >>> bs = FlatString.newString('ABC', style=dict(font='Verdana', fontSize=100))
+        >>> bs = FlatString.newString('ABC', context=context, style=dict(font='Verdana', fontSize=100))
         >>> #str(bs.s)
         ABC
         >>> bs.getFont()

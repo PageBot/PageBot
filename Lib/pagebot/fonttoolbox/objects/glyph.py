@@ -49,11 +49,9 @@ class AxisDeltas(object):
 class Glyph(object):
     u"""The Glyph class wraps the glyph structure of a TrueType Font and
     extracts data from the raw glyph such as point sequence and type.
-    >>> import pagebot
-    >>> from pagebot.fonttoolbox.objects.font import getFont
-    >>> from pagebot.contexts.platform import getTestFontsPath
-    >>> path = getTestFontsPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
-    >>> f = getFont(path) # Keep font alive to glyph.font weakref
+
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> f = findFont('AmstelvarAlpha-VF') # Keep font alive to glyph.font weakref
     >>> g = f['a']
     >>> g.name
     'a'
@@ -66,6 +64,10 @@ class Glyph(object):
     2
     >>> path = g.path
     >>> print(path)
+
+    """
+    """
+    TODO: Solve this for Flat.
     <BezierPath>
     >>> nspath = path.getNSBezierPath()
     >>> bounds = nspath.bounds()

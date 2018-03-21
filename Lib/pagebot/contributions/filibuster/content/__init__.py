@@ -13,18 +13,14 @@ evb        - note: only one dictionary named 'contexnt' allowed per module
 4.0     2016 public release
 """
 
-__version__ = '4.0'
 from __future__ import print_function
-
-
-
 import glob
 import os, string
 import traceback
 
+_version__ = '4.0'
 
-
-__path__ == __file__ #@NoEffect
+#__path__ == __file__ #@NoEffect
 
 
 DEBUG=1
@@ -102,6 +98,6 @@ def index(tagname):
                         usedin[(m, k)] = 1
     return keys, usedin.keys()
 
-if __name__ == "__main__":
-    print(content())
+#if __name__ == "__main__":
+#    print(content())
 

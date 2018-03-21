@@ -286,9 +286,13 @@ table {
         is a plain string or of type HtmlString(BabelString). Otherwise raise an error, because
         we don't want to support BabelString conversion. They should have been created of the right
         type in the context from the start."""
-        if not isinstance(html, str): # It's something else, test on the kind of BabelString.
-            assert isinstance(html, HtmlString)
+        
+        #if not isinstance(html, str): # It's something else, test on the kind of BabelString.
+        #    assert isinstance(html, HtmlString)
+        try:
             html = html.s # Get the collected html from the BabelString.
+        except AttributeError:
+            pass
         self._htmlOut.append(html)
 
     write = addHtml

@@ -13,11 +13,11 @@
 #
 #    dating.py
 #
+from __future__ import print_function
 import datetime
 from time import localtime
 from random import randint
 import re
-from __future__ import print_function
 
 def uniqueLong():
     u"""The uniqueLong method answers a unique number (as string) of 18 digits.
@@ -127,7 +127,7 @@ class Duration:
     >>> d * 3 # is a duration of 9 days.
     Duration(0m,9d,0s,0us)
     >>> d + 2 # is a duration of 6 days
-    Duration(0m,6d,0s,0us)
+    Duration(0m,5d,0s,0us)
 
     """
 
@@ -345,7 +345,7 @@ class DateTime:
     >>> d1.nextworkday, d1.nextworkday.dayname
     (2018-02-12 00:00:00, 'Mon')
     >>> d1 + 6 # 6 days later
-
+    2018-02-16 00:00:00
 
 
     """

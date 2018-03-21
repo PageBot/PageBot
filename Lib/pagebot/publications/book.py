@@ -12,10 +12,10 @@
 #
 #     book.py
 #
+from __future__ import print_function
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
-from __future__ import print_function
 
 
 class Book(Publication):

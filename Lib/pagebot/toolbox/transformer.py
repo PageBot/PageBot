@@ -23,8 +23,6 @@ from pagebot.style import STYLE_REPLACEMENTS
 
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
-import pagebot
-ROOT_PAGEBOT = pagebot.__path__[0]
 
 # P O I N T
 
@@ -240,7 +238,7 @@ def color2Hex(c):
     This format is CSS compatible.
 
     >>> color2Hex((0.2, 0.3, 0.4))
-    '#334c66'
+    '#334d66'
     >>> color2Hex((1, 1, 1))
     '#ffffff'
     >>> color2Hex((0, 0, 0))
@@ -261,9 +259,9 @@ def color2HexOpacity(c):
     (r, g, b, o) or (r, g, b) tuple. This format is CSS compatible.
 
     >>> color2HexOpacity((0.2, 0.3, 0.4))
-    ('#334c66', 1)
+    ('#334d66', 1)
     >>> color2HexOpacity((0.2, 0.3, 0.4, 0.1))
-    ('#334c66', 0.1)
+    ('#334d66', 0.1)
     """
     if isinstance(c, (int, float)):
         c = (c, c, c)
