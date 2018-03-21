@@ -23,6 +23,7 @@
 #     "en"      English
 #     "nl"      Dutch
 #     "pt-br"   Portugese-Brasilian     Contributed by @filipenegrao
+#     "dk"      Danish                  Contributed by Torben Wilhemsem
 #
 import os, codecs
 from pagebot.contexts.platform import RESOURCES_PATH
@@ -31,6 +32,10 @@ DEFAULT_LANGUAGE = 'en'
 
 # Key is language id (2 letters), value is dictionary of word-->hyphenated
 languages = {} 
+
+def reset():
+    global languages
+    languages = {}
 
 def hyphenatedWords(language=DEFAULT_LANGUAGE):
     u"""Answer the dictionary of hyphenated words for this language (default is English)."""
@@ -57,23 +62,30 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     171942
     >>> len(hyphenatedWords('nl')) # Dutch hyphenated words in the library
     235916
+    >>> len(hyphenatedWords('pt-br')) # Brazilian-Portugese hyphenated words in the library
+    27437
+    >>> len(hyphenatedWords('dk')) # Danish hyphenated words in the library
+    183426
+    >>> # E N G L I S H
     >>> hyphenate('housing', 'en')
     u'hous-ing'
     >>> # Single English words
     >>> hyphenate('Tutankhamun'), hyphenate('Tutankhamun', 'en') # English is default
     (u'Tut-ankh-a-mun', u'Tut-ankh-a-mun')
-    >>> # Combined Dutch words
+    >>> # D U T C H Typically testing the hypenation of combined Dutch words
     >>> hyphenate('marmerplaatjes', 'nl')
     u'mar-mer-plaat-jes'
     >>> # Hyphenates as plaat-staal (sheet of steel) where plaats-taal (regional language) also would have been valid
     >>> hyphenate('plaatstaal', 'nl') 
     u'plaat-staal'
     >>> # Combined dutch words, hyphenating between valid words.
-    >>> hyphenate('marmer', 'nl', True)
+    >>> hyphenate('marmer', 'nl')
     u'mar-mer'
-    >>> hyphenate('plaats', 'nl', True)
+    >>> hyphenate('plaats', 'nl')
     u'plaats'
-    >>> hyphenate('marmerplaats', 'nl', True) # Find combination, although the word itself is not part of the library.
+    >>> hyphenate('marmerplaats', 'nl') is None # Without recursively searching combinations, does not find this word..
+    True
+    >>> hyphenate('marmerplaats', 'nl', True) # Find combination (slower), although the word itself is not part of the library.
     u'mar-mer-plaats'
     >>> hyphenate('marmerplaatsbepaling', 'nl', True)
     u'mar-mer-plaats-be-pa-ling'
@@ -91,7 +103,21 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     >>> # First [100:105] words of the sorted list of all language words in the dictionary.
     >>> words('nl')[100:105] 
     [u'aanaardt', u'aanademing', u'aanbad', u'aanbak', u'aanbakken']
-
+    >>> # P O R T U G E S E
+    >>> hyphenate('abarcar', 'pt-br')
+    u'a-bar-car'
+    >>> hyphenate('cefalorraquidiano', 'pt-br')
+    u'ce-fa-lor-ra-qui-di-a-no'
+    >>> hyphenate('abarcarcefalorraquidiano', 'pt-br', True)
+    u'a-bar-car-ce-fa-lor-ra-qui-di-a-no'
+    >>> reset()
+    >>> # D A N I S H
+    >>> hyphenate(u'adessiverne', 'dk')
+    u'ades-si-ver-ne'
+    >>> hyphenate(u'ablationsområder', 'dk')
+    u'ab-la-tions-om-rå-der'
+    >>> hyphenate(u'adfærdsforstyrrelse', 'dk')
+    u'ad-færds-for-styr-rel-se'
     """
     #
     # Dutch combination check:

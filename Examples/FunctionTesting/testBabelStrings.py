@@ -17,7 +17,7 @@ from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.contexts.flatcontext import FlatContext
 from pagebot.fonttoolbox.objects.font import findFont
 
-W = H = 800
+W, H = 800, 220
 M = 100
 
 font = findFont('Roboto-Regular')
@@ -30,7 +30,7 @@ testContexts = (
 for context, path in testContexts:
     context.newPage(W, H)
     # Create a new BabelString with the DrawBot FormttedString inside.
-    style=dict(font=font.path, fontSize=48, textFill=(1, 0, 0))
+    style=dict(font=font.path, fontSize=40, textFill=(1, 0, 0))
     bs = context.newString('This is a string', style=style)
     # It prints it content.
     print(bs)
