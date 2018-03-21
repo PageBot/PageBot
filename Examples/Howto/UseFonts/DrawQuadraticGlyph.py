@@ -22,7 +22,8 @@ from drawBot import BezierPath
 from drawBot import font as DBFont
 from drawBot import translate, line, text, stroke, fill, oval, drawPath, textSize
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
-from pagebot.toolbox.transformer import point3D, ROOT_PAGEBOT
+from pagebot.toolbox.transformer import point3D
+from pagebot import getFontPath
 from pagebot.fonttoolbox.objects.glyph import *
 from pagebot.fonttoolbox.objects.font import Font
 
@@ -78,8 +79,8 @@ def drawSegment(segment, implied, cps, verbose=False):
         x1 = onCurve1.x - (onCurve1.x - offCurve.x) * F
         y1 = onCurve1.y - (onCurve1.y - offCurve.y) * F
         offCurve1 = (x1, y1)
-        circle(x0, y0, r/4, color='blue')
-        circle(x1, y1, r/4, color='blue')
+        circle(x0, y0, r/2, color='blue')
+        circle(x1, y1, r/2, color='blue')
         onCurve = (onCurve1.x, onCurve1.y)
         path.curveTo(offCurve0, offCurve1, onCurve)
         stroke(0, 0, 0, 0.4)
@@ -107,7 +108,7 @@ def drawSegment(segment, implied, cps, verbose=False):
         # Store these so they can be used in the infographic.
         implied.append(newOnCurve)
 
-        circle(x, y, r/2, color='red')
+        circle(x, y, r, color='red')
         curve0.append(newOnCurve)
         curve1.insert(0, newOnCurve)
 
@@ -157,11 +158,11 @@ C = 0.5
 F = 2 / 3
 glyphName = 'Q'
 x = 50
-r = 50
+r = 12
 
 size('A1')
 DBFont('LucidaGrande', 24)
-PATH = "%s/resources/testfonts/google/roboto/Roboto-Light.ttf" % ROOT_PAGEBOT
+PATH = "%s/google/roboto/Roboto-Light.ttf" % getFontPath()
 font = Font(PATH)
 glyph = font[glyphName]
 path = BezierPath()
@@ -205,12 +206,12 @@ for contour in contours:
         if point.onCurve:
             if ONCURVE is None:
                 ONCURVE = point
-            circle(x, y, r/2)
+            circle(x, y, r)
         else:
             if QUADRATIC_OFFCURVE is None:
                 QUADRATIC_OFFCURVE = point
             # Quadratic offcurves.
-            circle(x, y, r/ 2, color='green')
+            circle(x, y, r, color='green')
 
 segments = []
 implied = []

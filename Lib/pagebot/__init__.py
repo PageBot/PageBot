@@ -22,7 +22,7 @@ __version__ = '0.8-beta'
 import re
 
 from pagebot.style import NO_COLOR, LEFT
-from pagebot.toolbox.transformer import point2D 
+from pagebot.toolbox.transformer import point2D, ROOT_PAGEBOT
 
 # In order to let PageBot scripts and/applications exchange information, without the need to save
 # data in files, the pbglobals module supports the storage of non-persistent information.
@@ -55,6 +55,9 @@ def getGlobals(scriptId):
     if not scriptId in pbGlobals:
         pbGlobals[scriptId] = Globals()
     return pbGlobals[scriptId]
+
+def getFontPath():
+    return ROOT_PAGEBOT + '/resources/testfonts'
 
 def x2cx(x, e):
     u"""Transform from *x* value to column *x* index value, using the *e.css('cw')* (column width)
@@ -102,7 +105,7 @@ def cy2y(cy, e):
     return y
 
 def z2cz(z, e):
-    u"""Transform from *z* value to column *z* index value, using the *e.css('cd')* (column depth) 
+    u"""Transform from *z* value to column *z* index value, using the *e.css('cd')* (column depth)
     as column measure."""
     cd = e.css('cd', 0) # Column width
     cz = 0
@@ -133,7 +136,7 @@ def cols2w(w, e): # Answer the col width for the give amount of colums
     cw = e.css('cw', 0)
     if cw + gw:
         return int((e.w - e.pl - e.pr + gw) / (cw + gw))
-    
+
 def w2rows(w, e): # Answer the rounded amount of rows that fit in the given width.
     gh = e.gh
     ch = e.css('ch', 0)
@@ -145,7 +148,7 @@ def rows2w(w, e): # Answer the row width for the give amount of colums
     ch = e.css('ch', 0)
     if ch + gh:
         return int((e.h - e.pt - e.pr + e.gw) / (cw + gw))
-    
+
 def w2cols(w, e): # Answer the rounded amount of columns that fit in the given width.
     gw = e.gw
     cw = e.css('cw', 0)
@@ -157,12 +160,12 @@ def cols2w(w, e): # Answer the col with for the give amount of colums
     cw = e.css('cw', 0)
     if cw + gw:
         return int((e.w - e.pl - e.pr + e.gw) / (cw + gw))
-"""    
+"""
 
 # Size
 
 def w2cw(w, e):
-    u"""Transform from *w* value to column *w* count value, using the *e.css('cw')* (column width) 
+    u"""Transform from *w* value to column *w* count value, using the *e.css('cw')* (column width)
     as column measure."""
     gw = e.gw
     cw = e.css('cw', 0)
@@ -181,7 +184,7 @@ def cw2w(cw, e):
     return w
 
 def h2ch(h, e):
-    u"""Transform from *h* value to column *w* count value, using the *e.css('ch')* (column height) 
+    u"""Transform from *h* value to column *w* count value, using the *e.css('ch')* (column height)
     as column measure."""
     gh = e.gh
     ch = e.css('ch', 0)
@@ -200,7 +203,7 @@ def ch2h(ch, e):
     return h
 
 def d2cd(d, e):
-    u"""Transform from *d* value to column *cd* count value, using the *e.css('cd')* (column depth) 
+    u"""Transform from *d* value to column *cd* count value, using the *e.css('cd')* (column depth)
     as column measure."""
     cd = e.css('cd', 0)
     if cd + e.gd: # Test for division by 0
