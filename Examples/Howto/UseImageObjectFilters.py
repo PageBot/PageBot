@@ -48,19 +48,19 @@ FILTER_TYPES = {
 }
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/UseImageElements.pdf' 
+EXPORT_PATH = '_export/UseImageElements.pdf'
 
 def makeDocument():
 
     gridX = ((CW, GUTTER), (CW, GUTTER), (CW, None))
     doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1, context=context, gridX=gridX)
-    
+
     view = doc.getView()
     view.padding = 0 # Avoid showing of crop marks, etc.
     view.showElementOrigin = False
     view.showGrid = True
-    
-    # Get list of pages with equal y, then equal x.    
+
+    # Get list of pages with equal y, then equal x.
     #page = doc[1[0] # Get the single page from te document.
     page = doc[1] # Get page on pageNumber, first in row (this is only one now).
     page.name = 'This is a demo page for floating child elements'
@@ -68,7 +68,7 @@ def makeDocument():
 
     group = newGroup(parent=page, conditions=[Fit()])
     group.solve()
-    
+
     for n in range(15):
         img = newImage(IMAGE_PATH, (50, 50, 10), padding=0, mb=GUTTER,
                        parent=group, w=CW-2, h=CW-2, #clipRect=(120, 120, 1440, 440),
@@ -82,20 +82,20 @@ def makeDocument():
                        #fill=(0, 1, 0, 0.3),
                        #stroke=(1, 0, 0)
                        )
-                       
+
         filters = [
             #('colorClamp', ((1, 0, 0, 0.5), (0.5, 0, 0, 0.5))),
-            
+
             # colorControls(saturation=None, brightness=None, contrast=None)
             # Adjusts saturation, brightness, and contrast values.
             # Attributes: saturation a float, brightness a float, contrast a float.
             #('colorControls', (0.2, 0, 1)),
-            
+
             # gammaAdjust(power=None)
             # Adjusts midtone brightness.
             # Attributes: power a float.
             #('gammaAdjust', (10,)),
-            
+
             # hueAdjust(angle=None)
             # Changes the overall hue, or tint, of the source pixels.
             # Attributes: angle a float in degrees.
@@ -110,13 +110,13 @@ def makeDocument():
             # Adjusts the reference white point for an image and maps all colors in the source using the new reference.
             # Attributes: color RGBA tuple Color (r, g, b, a).
             #('whitePointAdjust', ((1, 0.45, 1, 1),)),
-            
+
             # colorInvert()
             # Inverts the colors in an image.
             #('colorInvert', []),
 
             #('colorPosterize', (2,))
-            
+
             # sepiaTone(intensity=None)
             # Maps the colors of an image to various shades of brown.
             # Attributes: intensity a float.
@@ -128,32 +128,32 @@ def makeDocument():
             # twirlDistortion(center=None, radius=None, angle=None)
             # Rotates pixels around a point to give a twirling effect.
             # Attributes: center a tuple (x, y), radius a float, angle a float in degrees.
-            ('twirlDistortion', ((150, 150), 200, 0.4)), 
+            ('twirlDistortion', ((150, 150), 200, 0.4)),
         ]
         img.addFilter(filters)
         # Give parent on creation, to have the css chain working.
-    
-        # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
+
+        # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()
         captionStyle = dict(font=font.path, fontSize=11, textFill=0)
         captionConditions = (Fit2Width(), Float2Top())
         fs = context.newString('Captions float below the image', style=captionStyle)
-        img.caption = newTextBox(fs, name='Caption', z=0, conditions=captionConditions, 
-            padding=4, yAlign=TOP, 
-                #strokeWidth=0.5, 
-                #fill=(0, 0, 1, 0.3), 
+        img.caption = newTextBox(fs, name='Caption', z=0, conditions=captionConditions,
+            padding=4, yAlign=TOP,
+                #strokeWidth=0.5,
+                #fill=(0, 0, 1, 0.3),
                 #stroke=(0, 0, 1),
             )
-    
+
     score = page.solve()
     if score.fails:
-        print score.fails
+        print(score.fails)
 
-    #print img.h
+    #print(img.h)
     #for e in img.elements:
-    #    print e.h
+    #    print(e.h)
 
     return doc # Answer the doc for further doing.
- 
+
 d = makeDocument()
-d.export(EXPORT_PATH) 
+d.export(EXPORT_PATH)
 

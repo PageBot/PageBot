@@ -35,7 +35,7 @@ def makeDocument():
 
     page = doc[1] # Get the first/single page of the document.
     page.size = W, H
-    #print page.originTop
+    #print(page.originTop)
     if OriginTop:
         s = u'Origin on top'
         conditions = (Center2Center(), Top2Top())
@@ -47,12 +47,12 @@ def makeDocument():
                                              textFill=(1, 0, 0),
                                              xTextAlign=CENTER))
     nt = newTextBox(bs, x=100, y=100, conditions=conditions, parent=page, fill=(1, 1, 0))
-    print bs.s
-    #print nt.x, nt.y, nt.w, nt.h
+    print(bs.s)
+    #print(nt.x, nt.y, nt.w, nt.h)
     score = page.solve()
     #if score.fails:
-    #    print score.fails
-    #print nt.x, nt.y, nt.w, nt.h
+    #    print(score.fails)
+    #print(nt.x, nt.y, nt.w, nt.h)
 
     # Set the view parameters for the required output.
     view = doc.getView()

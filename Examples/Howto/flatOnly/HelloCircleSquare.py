@@ -26,7 +26,7 @@ import os
 from random import random
 from pagebot.contexts.flatcontext import FlatContext
 context = FlatContext()
-print 'Context class is %s' % type(context).__name__
+print('Context class is %s' % type(context).__name__)
 
 FONTNAME = 'AmstelvarAlpha-VF.ttf'
 

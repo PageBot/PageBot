@@ -25,10 +25,10 @@ def run():
 
 	tms.append(TimeMark(4, 'TimeMark@4'))
 	tms.append(TimeMark(100, 'TimeMark@100'))
-	print 'Unsorted after append', tms
+	print('Unsorted after append', tms)
 	tms.sort()
-	print 'Sorted TimeMark list', tms
-	print
+	print('Sorted TimeMark list', tms)
+	print()
 
 	def findTimeMarks(t, tms):
 	    for index, tm in enumerate(tms):
@@ -38,7 +38,7 @@ def run():
 
 	# Search what is valid in t=5
 	t = 102
-	print findTimeMarks(t, tms)
+	print(findTimeMarks(t, tms))
 
 
 if __name__ == '__main__':

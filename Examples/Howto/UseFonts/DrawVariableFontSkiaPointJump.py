@@ -17,13 +17,14 @@
 #     all code for for FontIcon class and KeyFrame class is here.
 #     In the future these classes will be part of the main PageBot library,
 #     which may make them incompatible with this particular example.
-#    
+#
 from math import radians
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import Font, getFontByName
 from pagebot.fonttoolbox.mutator import getVarFontInstance
 from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
 from pagebot.style import CENTER
+from __future__ import print_function
 
 W = H = 500
 
@@ -31,14 +32,14 @@ FRAMES = 120
 
 #for fontName in installedFonts():
 #    if 'Skia' in fontName:
-#        print fontName
+#        print(fontName)
 f = Font('/Library/Fonts/Skia.ttf')
 
 wghtMin, wghtDef, wghtMax = f.axes['wght']
 wdthMin, wdthDef, wdthMax = f.axes['wdth']
 
-print 'wght', wghtMin, wghtDef, wghtMax
-print 'wdth', wdthMin, wdthDef, wdthMax
+print('wght', wghtMin, wghtDef, wghtMax)
+print('wdth', wdthMin, wdthDef, wdthMax)
 
 
 NORMAL = getVarFontInstance(f, dict(wght=wghtDef, wdth=wdthDef), styleName='Normal', normalize=True)
@@ -56,7 +57,7 @@ class FontIcon(object):
     LABEL_RTRACKING = 0.02
     LABEL_RLEADING = 1.1
 
-    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, line=None, 
+    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, line=None,
             labelSize=10, labelFont=None, titleFont=None, x=0, y=0, show=True):
         self.f = f # Font instance
         self.labelFont = labelFont or f
@@ -76,12 +77,12 @@ class FontIcon(object):
     def _get_w(self):
         return self.W*self.scale
     w = property(_get_w)
-    
+
     def _get_ih(self):
         u"""Answer scaled height of the plain icon without name label."""
         return self.H*self.scale
     ih = property(_get_ih)
-    
+
     def _get_h(self):
         h = self.ih
         if self.name:
@@ -92,17 +93,17 @@ class FontIcon(object):
             h += self.E*self.scale*1.4 # Extra vertical space to show the name.
         return h
     h = property(_get_h)
-    
-    def draw(self, orgX, orgY, drawLabel=True):     
+
+    def draw(self, orgX, orgY, drawLabel=True):
         if not self.show:
-            return  
+            return
         w = self.w # Width of the icon
         h = self.ih # Height of the icon
         e = self.E*self.scale # Ear size
         l = self.L*self.scale # Line
         x = self.x + orgX
         y = self.y + orgY
-            
+
         path = newPath()
         moveTo((0, 0))
         lineTo((0, h))
@@ -114,7 +115,7 @@ class FontIcon(object):
         moveTo((w-e, h))
         lineTo((w-e, h-e))
         lineTo((w, h-e))
-    
+
         save()
         fill(1)
         stroke(0)
@@ -127,7 +128,7 @@ class FontIcon(object):
                                           fontSize=h*2/3))
         tw, th = textSize(fs)
         text(fs, (w/2-tw/2, h/2-th/3.2))
-        
+
         if drawLabel:
             if self.title:
                 fs = context.newString(self.title,
@@ -157,7 +158,7 @@ class FontIcon(object):
                 tw, th = textSize(fs)
                 text(fs, (w/2-tw/2, y))
         restore()
-    
+
 class KeyFrame(object):
     def __init__(self, objects, positions, steps=None, drawBackground=None):
         self.objects = objects
@@ -165,11 +166,11 @@ class KeyFrame(object):
         self.steps = steps or 1
         if drawBackground is not None:
             self.drawBacktround = drawBackground
-    
+
     def drawBackground(self):
         fill(1)
         rect(0, 0, W, H)
-            
+
     def draw(self):
         for n in range(self.steps):
             newPage(W, H)
@@ -187,11 +188,11 @@ class KeyFrame(object):
             if o.eId in self.positions:
                 tx, ty = self.positions[o.eId]
                 o.x = tx
-                o.y = ty            
+                o.y = ty
 S = 1
 labelSize = 12
 C = 'Q'
-print f.axes
+print(f.axes)
 skiaIcon = FontIcon(NORMAL, 'Skia', eId='Regular', c=C, s=S, labelSize=labelSize, labelFont=f, label='(1,1)')
 lightIcon = FontIcon(LIGHT, 'Light', eId='Regular', c=C, s=S, labelSize=labelSize, labelFont=f, label='(0.5,1)')
 boldIcon = FontIcon(BOLD, 'Bold', eId='Regular', c=C, s=S, labelSize=labelSize, labelFont=f, label='(3.2,1)')
@@ -206,7 +207,7 @@ def drawBackground(keyFrame=None, frame=None):
     rect(0, 0, W, H)
     fill(0.9)
     rect(d, d, W-2*d, H-2*d)
-    
+
 def drawAnimation():
     for angle in range(0, 360, int(360/FRAMES)):
         newPage(W, H)
@@ -218,10 +219,10 @@ def drawAnimation():
         radY = cos(radians(-angle))
         locRadX = -sin(radians(-angle+45))
         locRadY = cos(radians(-angle+45))
-        
+
         # Reset scale drawing of all icons.
         for icon in icons:
-            icon.scale = S 
+            icon.scale = S
         # Grid
         fill(None)
         stroke(0.6)
@@ -229,7 +230,7 @@ def drawAnimation():
         rect(x+skiaIcon.w/2, y-dSquare+skiaIcon.w/2, dSquare, dSquare)
         rect(x-dSquare+skiaIcon.w/2, y+skiaIcon.w/2, dSquare, dSquare)
         rect(x+skiaIcon.w/2, y+skiaIcon.w/2, dSquare, dSquare)
-               
+
         # Draw icons
         skiaIcon.draw(x, y)
         lightIcon.draw(x-dSquare, y)
@@ -240,8 +241,8 @@ def drawAnimation():
         fill(1, 0, 0, 0.5)
         stroke(None)
         markerSize = 8
-        oval(x+skiaIcon.w/2+dSquare*locRadX*0.9-markerSize/2, y+skiaIcon.w/2+dSquare*locRadY*0.9-markerSize/2, markerSize, markerSize) 
- 
+        oval(x+skiaIcon.w/2+dSquare*locRadX*0.9-markerSize/2, y+skiaIcon.w/2+dSquare*locRadY*0.9-markerSize/2, markerSize, markerSize)
+
         px, py = 280, 220
         d = 250
         sy = 0.5
@@ -296,15 +297,15 @@ def drawAnimation():
         oval(px-(px-xl)*0.6, (py-(py-yb)*0.6-markerSize/2)*sy, (xr-xl)*0.6, (yt-yb)*0.6)
 
         lx, ly = px + radX*dd, sy*(py + radY*dd)
-        
+
         fill(1, 0, 0)
         stroke(None)
-        oval(lx-markerSize/2, ly-markerSize/2*sy, markerSize, markerSize*sy) 
-        
+        oval(lx-markerSize/2, ly-markerSize/2*sy, markerSize, markerSize*sy)
+
         stroke(1, 0, 0)
         fill(None)
         line((lx, ly), (lx, ly+20))
-        
+
         for icon in icons:
             icon.scale = 0.6
         skiaIcon.draw(px-skiaIcon.w/2, py*sy, drawLabel=False)
@@ -312,7 +313,7 @@ def drawAnimation():
         boldIcon.draw((xr+xb)/2-boldIcon.w/2, (yr+yb)/2, drawLabel=False)
         condIcon.draw((xl+xb)/2-condIcon.w/2, (yl+yb)/2, drawLabel=False)
         wideIcon.draw((xt+xr)/2-wideIcon.w/2, (yt+yr)/2, drawLabel=False)
-        
+
         if locRadX < 0:
             wdthLoc = wdthDef + (wdthDef-wdthMin)*locRadX
         else:
@@ -321,10 +322,10 @@ def drawAnimation():
             wghtLoc = wghtDef + (wghtDef-wghtMin)*locRadY
         else:
             wghtLoc = wghtDef + (wghtMax-wghtDef)*locRadY
-        
+
         #wdthLoc = 1#wghtDef#locRadX
         #wghtLoc = locRadY
-        
+
         fs = context.newString(('angle %0.2f rx %0.2f'
                                 ' ry %0.2f wdth %0.2f'
                                 ' wght %0.2f') % (angle, locRadX, locRadY,
@@ -334,11 +335,11 @@ def drawAnimation():
                                           rTracking=0.02,
                                           fontSize=12))
         text(fs, (200, 480))
-        
+
         location = dict(wght=wghtLoc, wdth=wdthLoc)
         locFont = getVarFontInstance(f, location, styleName='Location', normalize=True)
-        print locFont.info.location
-        #print getVarLocation(f, location, normalize=False)
+        print(locFont.info.location)
+        #print(getVarLocation(f, location, normalize=False))
         """
         stroke(None)
         fill(0)
@@ -350,8 +351,8 @@ def drawAnimation():
                                           rTracking=0.02,
                                           fontSize=80))
         tw, th = textSize(fs)
-        text(fs, (lx-tw/2, ly+20)) 
-                
+        text(fs, (lx-tw/2, ly+20))
+
         fs = context.newString('#PageBot',
                                style=dict(font=f.installedName,
                                           textFill=0.5,
@@ -359,9 +360,9 @@ def drawAnimation():
                                           fontSize=10))
         tw, th = textSize(fs)
         text(fs, (W-tw-10, 10))
-                 
-    saveImage('_export/SkiaPointJump.gif')    
+
+    saveImage('_export/SkiaPointJump.gif')
 
 drawAnimation()
-   
-    
+
+

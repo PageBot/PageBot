@@ -13,7 +13,7 @@
 #     ScalingAnImage.py
 #
 #     How to scale an image (without being an element) in plain DrawBot?
-#     Since the core DrawBot does not support w/h attrbiutes for images, 
+#     Since the core DrawBot does not support w/h attrbiutes for images,
 #     it needs to be done by using the scale() function.
 #
 #     Unfortunately this also changes to x/y position scale, so when
@@ -28,7 +28,7 @@ if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
 if __name__ == '__main__':
-		
+
 	# Define the path where to find the example image.
 	path = 'images/cookbot1.jpg'
 	# Use the standard DrawBot function to get the width/height of the image from the file.
@@ -56,5 +56,5 @@ if __name__ == '__main__':
 	context.saveImage('_export/cookbot1-%d.gif' % (newScale*100)) # 346Kb size
 	# Restore the graphics state, so DrawBot scaling is back to 100% after this.
 	context.restore()
-	print 'Done'
+	print('Done')
 

@@ -32,9 +32,9 @@ if __name__ == '__main__':
 	    dict(name="aRadioGroup", ui="RadioGroup", args=dict(titles=['I', 'II', 'III'], isVertical=False)),
 	], globals())
 
-	print aList
-	print aText
-	print aSlider
-	print aCheckBox
-	print aColorWell
-	print aRadioGroup
+	print(aList)
+	print(aText)
+	print(aSlider)
+	print(aCheckBox)
+	print(aColorWell)
+	print(aRadioGroup)

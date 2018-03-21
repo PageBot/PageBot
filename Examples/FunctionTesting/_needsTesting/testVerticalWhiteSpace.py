@@ -1,3 +1,4 @@
+from __future__ import print_function
 L = 15
 
 def grid():
@@ -7,7 +8,7 @@ def grid():
     for y in range(0, 1600, L):
         line((0, y), (1000, y))
 
-def col(f, x):   
+def col(f, x):
     s1 = 'AAAAAAA\n'
     s3 = 'bbbbbbb\n---------------\n'
 
@@ -15,8 +16,8 @@ def col(f, x):
         tracking=5)
     s += FormattedString(s1, fontSize=60)
     #s += FormattedString(s3, fontSize=20, paragraphTopSpacing=20)
-    print f, 'Ascender', s.fontAscender()
-    print f, 'Descender', s.fontDescender()
+    print(f, 'Ascender', s.fontAscender())
+    print(f, 'Descender', s.fontDescender())
     textBox(s, (x+10, 10, 400, 900))
 
     stroke(0)

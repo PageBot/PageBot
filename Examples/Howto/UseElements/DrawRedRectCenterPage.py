@@ -21,6 +21,7 @@ from pagebot.style import getRootStyle, A5, CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import newRect
 from pagebot.conditions import *
+from __future__ import print_function
 
 W, H = A5
 W = 400
@@ -56,7 +57,7 @@ def makeDocument():
     # Show if one of the conditions failed to solve.
     score = page.solve()
     if score.fails:
-        print 'Failed conditions', score.fails
+        print('Failed conditions', score.fails)
 
     # Set the view parameters for the required output.
     view = doc.getView()

@@ -46,4 +46,4 @@ if __name__ == '__main__':
 
     # DrawBotContext can save as animated gif
     context.saveDocument("_export/SierpinskiSquare.gif")
-    print 'Done'
+    print('Done')

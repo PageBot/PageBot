@@ -19,8 +19,9 @@ import pagebot
 from pagebot.contexts.platform import getContext
 from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.fonttoolbox.objects.font import getFont
-from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance 
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
+from __future__ import print_function
 
 
 SHOW_DIRECT = False
@@ -41,12 +42,12 @@ for (minValue, defaultValue, maxValue), deltas in axisDeltas.deltas.items():
 
 if 1:
     # Using PageBot Font wrapper.
-    print 'Axis count and names', len(f.axes), f.axes.keys()
-    print 'Font.rawDeltas[%s]:' % c, len(f.rawDeltas[c]) 
+    print('Axis count and names', len(f.axes), f.axes.keys())
+    print('Font.rawDeltas[%s]:' % c, len(f.rawDeltas[c]) )
     for deltas in f.rawDeltas[c]:
-        print deltas.axes
-        print deltas.coordinates
-        print
+        print(deltas.axes)
+        print(deltas.coordinates)
+        print()
 
 context.translate(200, 200)
 context.scale(0.75)
@@ -73,21 +74,20 @@ for pIndex, point in enumerate(f[c].points4):
         color += 1
         stroke(rc, gc, bc)
         line((point.x, point.y), (point.x + dx, point.y + dy))
-        
+
 stroke(0.5)
 strokeWidth(2)
 line((0, 0), (0, 1500))
 line((g.width, 0), (g.width, 1500))
 
-if SHOW_DIRECT:    
-    # Direct on fonttools ttFont['gvar'] table. 
-    print 'Keys in [gvar] table:', f.ttFont['gvar'].__dict__.keys()
-    print 'Axis count:', f.ttFont['gvar'].axisCount
-    print 'Deltas of "a" points per axis:', f.ttFont['gvar'].variations['a'][0]
-    print 'Flags:', f.ttFont['gvar'].flags
-    print 'tableTag:', f.ttFont['gvar'].tableTag
-    print 'glyphCount:', f.ttFont['gvar'].glyphCount, len(f)
-    print
+if SHOW_DIRECT:
+    # Direct on fonttools ttFont['gvar'] table.
+    print('Keys in [gvar] table:', f.ttFont['gvar'].__dict__.keys())
+    print('Axis count:', f.ttFont['gvar'].axisCount)
+    print('Deltas of "a" points per axis:', f.ttFont['gvar'].variations['a'][0])
+    print('Flags:', f.ttFont['gvar'].flags)
+    print('tableTag:', f.ttFont['gvar'].tableTag)
+    print('glyphCount:', f.ttFont['gvar'].glyphCount, len(f))
+    print()
 
 saveImage('_export/findVariableFontDeltas.pdf')
-

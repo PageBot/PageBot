@@ -28,18 +28,18 @@ from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.document import Document
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
-    
+
 context = getContext()
 
 PageSize = 500, 400
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/UseTemplates.pdf' 
+EXPORT_PATH = '_export/UseTemplates.pdf'
 
 def makeTemplate(w, h, french=False):
     u"""Make template for the main page (flag), for the given (w, h) size.
     The optional **french** flag creates a French flag, otherwise Italian."""
-    
+
     # Creat enew Template instance for the given size.
     template = Template(w=w, h=h) # Create template.
     # Add named text box to template for main specimen text.
@@ -52,10 +52,10 @@ def makeTemplate(w, h, french=False):
     fsRight = context.newString('Template box right', style=dict(textFill=1))
 
     newTextBox(fsLeft, w=w/3, fill=(1, 0, 0), padding=10,
-        parent=template, conditions=[Left2Left(), Top2Top(), Fit2Height()])       
+        parent=template, conditions=[Left2Left(), Top2Top(), Fit2Height()])
 
     newTextBox(fsRight, w=w/3, fill=rightColor, padding=10,
-        parent=template, conditions=[Right2Right(), Top2Top(), Fit2Height()])       
+        parent=template, conditions=[Right2Right(), Top2Top(), Fit2Height()])
     return template
 
 def makeDocument():
@@ -68,14 +68,14 @@ def makeDocument():
     template = makeTemplate(W, H)
 
     doc = Document(title='Color Squares', w=W, h=H, originTop=False, autoPages=3, defaultTemplate=template)
-    
+
     view = doc.getView()
     view.padding = 0 # Don't show cropmarks in this example.
 
-    # Get list of pages with equal y, then equal x.    
+    # Get list of pages with equal y, then equal x.
     #page = [1][0] # Get the single page from the document.
     page0 = doc.getPage(1) # Get page by pageNumber, first in row (there is only one now in this row).
-    
+
     # Overwrite the default template by another template (in this case with different color).
     # Note that this way it is possible to mix different page sizes in one document.
     # The elements are copied from the template page, so not reference to the
@@ -85,15 +85,15 @@ def makeDocument():
     # to a specific page.
     page1 = doc.getPage(1)
     page1.applyTemplate(makeTemplate(W, H, True))
-     
+
     # Recursively solve the conditions in all pages.
     # If there are failing conditions, then the status is returned in the Score instance.
     score = doc.solve()
     if score.fails:
-        print score.fails
-             
+        print(score.fails)
+
     return doc # Answer the doc for further doing.
- 
+
 d = makeDocument()
-d.export(EXPORT_PATH) 
+d.export(EXPORT_PATH)
 

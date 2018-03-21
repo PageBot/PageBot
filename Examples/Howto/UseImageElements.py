@@ -25,22 +25,22 @@ from pagebot.elements import *
 from pagebot.document import Document
 # Document is the main instance holding all information about the
 # document together (pages, styles, etc.)
-    
+
 PagePadding = 30
 PageSize = 400
 
 GUTTER = 8 # Distance between the squares.
 SQUARE = 10 * GUTTER # Size of the squares
 
-# The standard PageBot function getRootStyle() answers a standard Python dictionary, 
+# The standard PageBot function getRootStyle() answers a standard Python dictionary,
 # where all PageBot style entries are filled by their default values. The root style is kept in RS
-# as reference for the ininitialization of all elements. 
-# Each element uses the root style as copy and then modifies the values it needs. 
+# as reference for the ininitialization of all elements.
+# Each element uses the root style as copy and then modifies the values it needs.
 # Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
 # that is very similar to what happens in CSS.
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/UseImageElements.pdf' 
+EXPORT_PATH = '_export/UseImageElements.pdf'
 
 def makeDocument():
     u"""Make a new document."""
@@ -62,17 +62,17 @@ def makeDocument():
     my = (H - sqy*(SQUARE + GUTTER) + GUTTER)/2
 
     doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1)
-    
+
     view = doc.getView()
     view.padding = 0 # Aboid showing of crop marks, etc.
     view.showElementOrigin = True
-    
-    # Get list of pages with equal y, then equal x.    
+
+    # Get list of pages with equal y, then equal x.
     #page = doc[1][0] # Get the single page from te document.
     page = doc.getPage(1) # Get page on pageNumber, first in row (this is only one now).
     page.name = 'This is a demo page for floating child elements'
     page.padding = PagePadding
-    
+
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
     img = newImage('images/cookbot10.jpg', (50, 50, 10), padding=0,
@@ -86,28 +86,28 @@ def makeDocument():
                    fill=(0, 1, 0, 0.3),
                    stroke=(1, 0, 0))
     # Give parent on creation, to have the css chain working.
-    
-    # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()    
+
+    # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()
     fs = doc.context.newString('Captions float below the image',
                                style=dict(font='Verdana',
                                           fontSize=20,
                                           textFill=1))
     cap = newTextBox(fs, name='Caption', parent=img, z=0,
-        conditions=[ Fit2Width(), Float2Top()], 
-        padding=4, font='Verdana', 
-        yAlign=TOP, fontSize=9, textFill=1, strokeWidth=0.5, 
+        conditions=[ Fit2Width(), Float2Top()],
+        padding=4, font='Verdana',
+        yAlign=TOP, fontSize=9, textFill=1, strokeWidth=0.5,
         fill=(0, 0, 1, 0.3), stroke=(0, 0, 1),
     )
     score = page.solve()
     if score.fails:
-        print score.fails
+        print(score.fails)
 
-    print img.h
+    print(img.h)
     for e in img.elements:
-        print e.h
+        print(e.h)
 
     return doc # Answer the doc for further doing.
- 
+
 if __name__ == '__main__':
     d = makeDocument()
     d.context.Variable(
@@ -115,5 +115,5 @@ if __name__ == '__main__':
        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
       #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
       ], globals())
-    d.export(EXPORT_PATH) 
+    d.export(EXPORT_PATH)
 

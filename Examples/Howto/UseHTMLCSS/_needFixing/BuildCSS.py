@@ -92,7 +92,7 @@ def makeDocument():
 
     score = doc.solve() # Try to solve all pages.
     if score.fails:
-        print score.fails
+        print(score.fails)
 
     return doc # Answer the doc for further doing.
 

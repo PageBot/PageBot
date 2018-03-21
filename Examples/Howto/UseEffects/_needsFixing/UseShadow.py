@@ -18,6 +18,7 @@ from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot import Shadow
+from __future__ import print_function
 
 W = 400
 H = 480
@@ -28,8 +29,8 @@ ShadowTextOffset = 0
 ShadowTextBlur = 10
 
 def makeDocument():
-    
-    doc = Document(originTop=False, w=W, h=H, autoPages=1) 
+
+    doc = Document(originTop=False, w=W, h=H, autoPages=1)
 
     # Set the view parameters for the required output.
     view = doc.view
@@ -63,7 +64,7 @@ def makeDocument():
     # Show if one of the conditions failed to solve.
     score = page.solve()
     if score.fails:
-        print 'Failed conditions', score.fails
+        print('Failed conditions', score.fails)
 
     return doc
 

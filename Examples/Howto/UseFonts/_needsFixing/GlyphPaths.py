@@ -28,6 +28,7 @@ from fontTools.ttLib import TTFont, TTLibError
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.transformer import point3D
+from __future__ import print_function
 
 C = 0.5
 
@@ -35,7 +36,7 @@ class Point(object):
     def __init__(self, p, onCurve):
         self.p = list(point3D(p))
         self.onCurve = bool(onCurve)
-   
+
     def __repr__(self):
         return 'Pt(%s,%s,%s)' % (self.x, self.y,{True:'On', False:'Off'}[self.onCurve])
 
@@ -43,25 +44,25 @@ class Point(object):
         return self.p[index]
     def __setitem__(self, index, value):
         self.p[index] = value
-        
+
     def _get_x(self):
         return self.p[0]
     def _set_x(self, x):
         self.p[0] = x
     x = property(_get_x, _set_x)
-    
+
     def _get_y(self):
         return self.p[1]
     def _set_y(self, y):
         self.p[1] = y
     y = property(_get_y, _set_y)
-    
+
     def _get_z(self):
         return self.p[2]
     def _set_z(self, z):
         self.p[2] = z
     z = property(_get_z, _set_z)
-    
+
 class Segment(object):
     def __init__(self, points=None):
         if points is None:
@@ -70,10 +71,10 @@ class Segment(object):
 
     def __len__(self):
         return len(self.points)
-        
+
     def __repr__(self):
         return 'Sg(%s)' % self.points
-        
+
     def append(self, p):
         self.points.append(p)
 
@@ -97,9 +98,9 @@ class Glyph(object):
         return not self.parent is g.parent or self.name != g.name
 
     def __repr__(self):
-        return '<PageBot Glyph %s P:%d/C:%d/Cmp:%d>' % (self.name, 
+        return '<PageBot Glyph %s P:%d/C:%d/Cmp:%d>' % (self.name,
             len(self.coordinates), len(self.endPtsOfContours), len(self.components))
-    
+
     def _initialize(self):
         u"""Initialize the cached data, such as self.points, self.contour, self.components and self.path."""
         self._points = []
@@ -131,7 +132,7 @@ class Glyph(object):
             openSegment.append(p)
             openContour.append(p)
             if index in endPtsOfContours and openContour:
-                # If there is an open segment, it may contain mutliple quadratics. 
+                # If there is an open segment, it may contain mutliple quadratics.
                 # Split into cubics.
                 if openSegment:
                     currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
@@ -145,13 +146,13 @@ class Glyph(object):
     def _drawSegment(self, cp, segment, path):
         u"""Draw the Segment instance into the path. It may contain multiple quadratics.
         Split into cubics and lines."""
-        print self.name, segment
+        print(self.name, segment)
         if len(segment) == 1:
             p1 = segment.points[-1]
             path.lineTo((p1.x, p1.y))
             cp = p1
         elif len(segment) == 2: # 1:1 Convert of Quadratic to Cubic
-            p1, p2 = segment.points 
+            p1, p2 = segment.points
             #p1, cp, p1 = p1, p2, cp
             self._drawQuadratic2Cubic(cp, p1, p2, path)
             cp = p2
@@ -170,19 +171,19 @@ class Glyph(object):
                 self._drawQuadratic2Cubic(cp, p1, p2, path)
                 cp = m
         return cp
-                
+
     def _drawQuadratic2Cubic(self, p0, p1, p2, path):
         pp0x = p0.x + (p1.x - p0.x)*C
         pp0y = p0.y + (p1.y - p0.y)*C
         pp1x = p2.x + (p1.x - p2.x)*C
         pp1y = p2.y + (p1.y - p2.y)*C
         path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2.x, p2.y))
-    
+
     def pointInside(self, p):
         u"""Answer the boolean if the point is inside the path (black) of the letter."""
         px, py, _ = point3D(p)
-        return self.path._path.containsPoint_((x, y)) 
-                           
+        return self.path._path.containsPoint_((x, y))
+
     def _get_ttGlyph(self):
         return self.parent.ttFont['glyf'][self.name]
     ttGlyph = property(_get_ttGlyph)
@@ -206,7 +207,7 @@ class Glyph(object):
     # Direct TTFont cooridinates compatibility
 
     def _get_coordinates(self):
-        u"""Answer the ttFont.coordinates, if it exists. Otherwise answer None. Note that this is the 
+        u"""Answer the ttFont.coordinates, if it exists. Otherwise answer None. Note that this is the
         “raw” list of (x, y) positions, without information on contour index or if the point is on/off curve.
         This information is stored ttFont.endPtsOfContours and ttFont.flags. This property is only for low-level
         access of the cootdinates. For regular use, self.points and self.contours are available.
@@ -255,7 +256,7 @@ class Glyph(object):
         return self._contours
     segments = property(_get_contours)
 
-    def _get_components(self): # Read only for now. List Contour instances. 
+    def _get_components(self): # Read only for now. List Contour instances.
         if self._components is None:
             self._initialize()
         return self._components
@@ -271,53 +272,53 @@ class Glyph(object):
     TTGlyph Functions to implement
 
  |  Methods defined here:
- |  
+ |
  |  __getitem__(self, componentIndex)
- |  
+ |
  |  __init__(self, data='')
- |  
-  |  
+ |
+  |
  |  compact(self, glyfTable, recalcBBoxes=True)
- |  
+ |
  |  compile(self, glyfTable, recalcBBoxes=True)
- |  
+ |
  |  compileComponents(self, glyfTable)
- |  
+ |
  |  compileCoordinates(self)
- |  
+ |
  |  compileDeltasGreedy(self, flags, deltas)
- |  
+ |
  |  compileDeltasOptimal(self, flags, deltas)
- |  
+ |
  |  decompileComponents(self, data, glyfTable)
- |  
+ |
  |  decompileCoordinates(self, data)
- |  
+ |
  |  decompileCoordinatesRaw(self, nCoordinates, data)
- |  
+ |
  |  draw(self, pen, glyfTable, offset=0)
- |  
+ |
  |  expand(self, glyfTable)
- |  
+ |
  |  fromXML(self, name, attrs, content, ttFont)
- |  
+ |
  |  getComponentNames(self, glyfTable)
- |  
+ |
  |  getCompositeMaxpValues(self, glyfTable, maxComponentDepth=1)
- |  
+ |
  |  getCoordinates(self, glyfTable)
- |  
+ |
  |  getMaxpValues(self)
- |  
+ |
  |  isComposite(self)
  |      Can be called on compact or expanded glyph.
- |  
+ |
  |  recalcBounds(self, glyfTable)
- |  
+ |
  |  removeHinting(self)
- |  
+ |
  |  toXML(self, writer, ttFont)
- |  
+ |
  |  trim(self, remove_hinting=False)
  |      Remove padding and, if requested, hinting, from a glyph.
  |      This works on both expanded and compacted glyphs, without
@@ -336,8 +337,8 @@ except:
     cjkF = Font("/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf", install=False)
 
 cjkF.GLYPH_CLASS = Glyph
-print cjkF.info.familyName, cjkF.info.styleName
-#print cjkF.ttFont.tables.keys()
+print(cjkF.info.familyName, cjkF.info.styleName)
+#print(cjkF.ttFont.tables.keys())
 glyphs = []
 start = 16500
 end = 16552
@@ -383,21 +384,21 @@ for name in GLYPHS:
     #    for p in s:
     #        c.oval(p.x-6, p.y-6, 12, 12)
     context.restore()
-            
+
 context.newPage(W, H)
 
 for glyphIndex, glyphName in enumerate(sorted(cjkF.keys())[start:end]):
     glyph = cjkF[glyphName]
     glyphs.append(glyph)
-    #print glyph
+    #print(glyph)
 
-        
+
 x = y = 0
-#print len(glyphs)
+#print(len(glyphs))
 #newPage(1000, 1000)
 for glyph in glyphs:
-    #print glyph.name
-    #print glyph.contours
+    #print(glyph.name)
+    #print(glyph.contours)
     context.save()
     context.transform((1, 0, 0, 1, 20+x*W/5, H - (y+1)*W/5+20))
     context.scale(0.01)
@@ -421,7 +422,7 @@ for glyph in glyphs:
     context.drawPath(glyph.path)
 
     #c.text(`glyph.index`, (30, 30))
-    #print glyph.path
+    #print(glyph.path)
     context.restore()
 
 if 1:
@@ -430,7 +431,7 @@ if 1:
     for y in range(0, 1000, 20):
         for x in range(0,1000,20):
             if g.pointInside((x, y)):
-                print '*',
+                print('*',)
             else:
-                print '.',
+                print('.',)
         print

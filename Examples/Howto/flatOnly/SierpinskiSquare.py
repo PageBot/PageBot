@@ -25,7 +25,7 @@ from random import random
 from pagebot.contexts.flatcontext import FlatContext
 
 context = FlatContext()
-print 'Context class is %s' % type(context).__name__
+print('Context class is %s' % type(context).__name__)
 W = H = 500
 
 def drawSierpinskiSquare(px, py, w, maxW):
@@ -36,7 +36,7 @@ def drawSierpinskiSquare(px, py, w, maxW):
             if x == 1 and y == 1:
                 c = max(0, 0.5 - 0.5*w/W)
                 context.fill((random(), c, c))
-                #print x, y, w, 0.5*w/W
+                #print(x, y, w, 0.5*w/W)
                 context.rect(px+w, py+w, w, w)
             elif px <= maxW and py <= maxW:
                 drawSierpinskiSquare(px+x*w, py+y*w, w/3.0, maxW)
@@ -59,5 +59,5 @@ for extension in ('pdf', 'jpg'):
     context.saveDocument(exportPath)
     os.system(u'open "%s"' % exportPath)
 
-print ('Done')
+print(('Done'))
 

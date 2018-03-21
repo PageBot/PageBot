@@ -111,12 +111,12 @@ class VariableController(object):
 def do(sender):
     controller = getController()
     controller.runCode()
-    
+
 def getController():
     nsdc = AppKit.NSDocumentController
     document = nsdc.sharedDocumentController().currentDocument()
-    print document
-    
+    print(document)
+
     if not document:
       raise DrawBotError("There is no document open")
     controller = document.vanillaWindowController

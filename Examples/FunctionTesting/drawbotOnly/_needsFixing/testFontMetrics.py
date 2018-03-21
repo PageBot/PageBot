@@ -24,9 +24,9 @@ from pagebot.fonttoolbox.objects.font import Font
 fontPath = getTestFontsPath() + "/fontbureau/AmstelvarAlpha-VF.ttf"
 f = Font(fontPath)
 print('Family %s, style %s, em %d, ascender %d, descender: %d, capHeight %d, xHeight %d' % (
-    f.info.familyName, f.info.styleName, f.info.unitsPerEm, f.info.ascender, f.info.descender, 
+    f.info.familyName, f.info.styleName, f.info.unitsPerEm, f.info.ascender, f.info.descender,
     f.info.capHeight, f.info.xHeight))
-    
+
 spacer = context.newString('-----\n ', style=dict(lineHeight=1,
                                             font=f.installedName,
                                             fontSize=12))
@@ -46,7 +46,7 @@ Y = 1000 - M
 BASE = (f.info.ascender + f.info.descender + f.info.lineGap)/2
 print('%s %s %s %s' % (f.info.familyName, f.info.styleName, 'Ascender + Descender + lineGap =', BASE))
 YS = (BASE,)
-print YS
+print(YS)
 for y in YS:
     context.stroke(0)
     context.strokeWidth(0.5)

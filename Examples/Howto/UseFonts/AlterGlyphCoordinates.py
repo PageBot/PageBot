@@ -15,6 +15,7 @@
 #     This script is using getContext(), so it should be able to run it with flexContext.
 #
 
+from __future__ import print_function
 import pagebot
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import Font
@@ -33,21 +34,21 @@ context.translate(100, 100)
 f = Font(FONT_PATH)
 g = f['H']
 # These are the points we have in the H
-print 'List of APoints of the glyph:', g.points
+print('List of APoints of the glyph:', g.points)
 # Get the 4th APoint instance, that has reference back to the glyph.points[p.index]
 p = g.points[3]
 # This is the point we got.
-print 'glyph.points[3]:', p.x, p.y, 'Glyph:', p.glyph.name, 'Index:', p.index
+print('glyph.points[3]:', p.x, p.y, 'Glyph:', p.glyph.name, 'Index:', p.index)
 # Change the point position. In DrawBot this works interactive while holding cmd-drag in selected d.
 d = -80
 p.x += d
 p.y += d
 p.onCurve = False
 # Now the glyph is dirty
-print 'Changed point:', p, 'Glyph is dirty:', g.dirty
+print('Changed point:', p, 'Glyph is dirty:', g.dirty)
 # Update the cached data, such as glyph.points, glyph.path
 g.update()
-print 'Now it is clean. Glyph is dirty:', g.dirty
+print('Now it is clean. Glyph is dirty:', g.dirty)
 # Draw the changed path
 context.fill(None)
 context.stroke(0, 1)
@@ -61,6 +62,6 @@ for p in g.points:
     else:
         R = 6
     context.oval(p.x*s-R/2, p.y*s-R/2, R, R)
-    
+
 context.saveImage(EXPORT_PATH)
-    
+
