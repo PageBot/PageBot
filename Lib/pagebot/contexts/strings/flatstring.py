@@ -27,6 +27,24 @@ class FlatString(BabelString):
     DEFAULT_LEADING = 0
 
     u"""FlatString is a wrapper around the Flat string."""
+    def __init__(self, s, context, style=None):
+        u"""Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
+        Optionally store the (latest) style that was used to produce the formatted string.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.isDrawBot
+        True
+        >>> bs = FlatString('ABC', context)
+        >>> bs
+        ABC
+        """
+        self.context = context # Store context, in case we need more of its functions.
+        self.s = s # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
+        # otherwise create it.
+        # In case defined, store current status here as property and set the current FormattedString
+        # for future additions. Also the answered metrics will not be based on these values.
+        self.style = style or {}
 
     def _get_s(self):
         u"""Answer the embedded Flat equivalent of a OSX FormattedString by property, to enforce checking type of the string."""
@@ -36,6 +54,24 @@ class FlatString(BabelString):
             s = s # TODO: Change to Flat equivalent of FormattedString.
         self._s = s
     s = property(_get_s, _set_s)
+
+    def _get_font(self):
+        u"""Answer the current state of fontName."""
+        return self.style.get('font')
+    def _set_font(self, fontName):
+        if fontName is not None:
+            self.context.font(fontName)
+        self.style['font'] = fontName
+    font = property(_get_font, _set_font)
+
+    def _get_fontSize(self):
+        u"""Answer the current state of the fontSize."""
+        return self.style.get('fontSize')
+    def _set_fontSize(self, fontSize):
+        if fontSize is not None:
+            self.context.font(fontSize)
+        self.style['fontSize'] = fontSize
+    fontSize = property(_get_fontSize, _set_fontSize)
 
     def __len__(self):
         u"""Answer the number of characters in self.s

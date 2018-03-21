@@ -30,7 +30,6 @@ from fontTools.varLib.mutator import iup_delta
 
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import getFont
-from pagebot.toolbox.transformer import path2FontName
 
 context = getContext()
 

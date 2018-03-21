@@ -14,6 +14,11 @@
 #
 #         variableeditor.py
 #
+from pagebot.contexts.platform import getContext
+context = getContext()
+if not context.isDrawBot:
+    sys.exit('Example only runs on DrawBot.')
+
 import AppKit
 import CoreText
 from vanilla import Window, Slider, TextEditor #, Button
