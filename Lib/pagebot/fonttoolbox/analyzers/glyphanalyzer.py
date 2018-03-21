@@ -44,7 +44,7 @@ class GlyphAnalyzer(object):
         self.glyph = glyph # Set weakref to glyph
         self.reset()
 
-    def reset(self): 
+    def reset(self):
         u"""Clear all cached value to force recalculation."""
         # Get cache initialize on first access by any property.
         self._horizontals = None
@@ -53,7 +53,7 @@ class GlyphAnalyzer(object):
         self._roundStems = None # Recognized round stems, not filtered by FloqMemes
         self._straightRoundStems = None
         self._allStems = None
-        self._allHorizontalCounters = None 
+        self._allHorizontalCounters = None
 
         self._verticals = None
         self._bars = None # Recognized bars, so not filtered by FloqMemes
@@ -147,7 +147,7 @@ class GlyphAnalyzer(object):
                     continue # Skip if boundings boxes don't overlap.
 
                 xdiff = (line[0][0] - line[1][0], pLine[0][0] - pLine[1][0])
-                ydiff = (line[0][1] - line[1][1], pLine[0][1] - pLine[1][1]) 
+                ydiff = (line[0][1] - line[1][1], pLine[0][1] - pLine[1][1])
 
                 div = det(xdiff, ydiff)
                 if div == 0:
@@ -423,7 +423,7 @@ class GlyphAnalyzer(object):
         # but for limited use that should not make a difference for entry in a Stem
         p0 = ap0 = None
         for n in range(0, len(intersections)):
-            # Add this stem or counter to the result. Create point contexts, simulating vertical 
+            # Add this stem or counter to the result. Create point contexts, simulating vertical
             # We cannot just check on odd/even, as a line may pass exactly on the top/bottom of a curve.
             p = intersections[n]
             pUp = p[0], p[1]+10
@@ -434,7 +434,7 @@ class GlyphAnalyzer(object):
                 p0 = p
                 ap0 = ap
                 continue
-            
+
             p1 = p0
             ap1 = ap0
             p0 = p
@@ -525,10 +525,10 @@ class GlyphAnalyzer(object):
         u"""Answers the boolean flag is the connection between pc0.x and pc1.x
         is running entirely over white, and they both are some sort of
         horizontal extreme. The connection is a “white stem”."""
-        #print 'pc0', pc0, pc0.isHorizontalRoundExtreme(tolerance), pc0.isVertical(tolerance)
-        #print 'pc1', pc1, pc1.isHorizontalRoundExtreme(tolerance), pc1.isVertical(tolerance)
-        #print '===', pc0.inHorizontalWindow(pc1)
-        #print '---', self.lineOnWhite(pc0, pc1, 50), self.lineOnWhite(pc1, pc0, 50)
+        #print('pc0', pc0, pc0.isHorizontalRoundExtreme(tolerance), pc0.isVertical(tolerance))
+        #print('pc1', pc1, pc1.isHorizontalRoundExtreme(tolerance), pc1.isVertical(tolerance))
+        #print('===', pc0.inHorizontalWindow(pc1))
+        #print('---', self.lineOnWhite(pc0, pc1, 50), self.lineOnWhite(pc1, pc0, 50))
         if not (pc0.isHorizontalRoundExtreme(tolerance) or pc0.isVertical(tolerance)):
             return False
         if not (pc1.isHorizontalRoundExtreme(tolerance) or pc1.isVertical(tolerance)):
@@ -666,7 +666,7 @@ class GlyphAnalyzer(object):
                                 # then assume this is a counter.
                                 counter = self.VERTICAL_COUNTER_CLASS(pc0, pc1, self.glyph.name)
                                 size = asInt(counter.size)
-                                
+
                                 if pc0.isHorizontalExtreme() and pc1.isHorizontalExtreme():
                                     if not size in verticalCounters:
                                         verticalCounters[size] = []
@@ -679,7 +679,7 @@ class GlyphAnalyzer(object):
                                     if not size in verticalMixedCounters:
                                         verticalMixedCounters[size] = []
                                     verticalMixedCounters[size].append(counter)
-                                   
+
                                 if not size in allVerticalCounters:
                                     allVerticalCounters[size] = []
                                 allVerticalCounters[size].append(counter)
@@ -792,12 +792,12 @@ class GlyphAnalyzer(object):
         self._get_blueBars() # Make sure they are initialized.
         return self._bottomBlueBar
     bottomBlueBar = property(_get_bottomBlueBar)
-    
+
     def _get_baselineBlueBar(self):
         self._get_blueBars() # Make sure they are initialized.
         return self._baselineBlueBar
     baselineBlueBar = property(_get_baselineBlueBar)
-    
+
     def _get_topBlueBar(self):
         self._get_blueBars() # Make sure they are initialized.
         return self._topBlueBar
@@ -827,4 +827,4 @@ class GlyphAnalyzer(object):
         return self.glyph.minX
     minX = property(_get_minX)
 
- 
+

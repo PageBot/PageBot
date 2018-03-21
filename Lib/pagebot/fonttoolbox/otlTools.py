@@ -395,7 +395,7 @@ class AlternateGlyphFinder(LookupTraverser):
     def findAlternateGlyphs_LigatureSubstFormat1(self, subTable, glyphNames):
         alts = []
         for initialGlyph, ligatures in subTable.ligatures.items():
-            #print initialGlyph
+            #print(initialGlyph)
             for lig in ligatures:
                 if initialGlyph in glyphNames or glyphNames & set(lig.Component):
                     alts.append(lig.LigGlyph)
@@ -753,7 +753,7 @@ class GlyphDeleter(LookupTraverser):
         _remapClassDefs(subTable.ClassDef1, classes1remap)
         _remapClassDefs(subTable.ClassDef2, classes2remap)
 
-        #print "classes1delete:", classes1delete, "classes2delete:", classes2delete
+        #print("classes1delete:", classes1delete, "classes2delete:", classes2delete)
         #_printPairPosFormat2Matrix(subTable)
 
         # 8.

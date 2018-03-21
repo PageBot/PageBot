@@ -27,15 +27,15 @@ class Composer(object):
         The style of all document pages and elements may contain conditions that define the weigh
         value for the quality if their status."""
         self.makeNewPage = makeNewPage
-        
+
     def compose(self, galley, doc):
         u"""Compose the galley element, starting with the flowId text box on page.
         The composer negotiates between what the galley needs a sequential space
         for its elements, and what the page has to offer.
         If flowId is omitted, then let the page find the entry point for the first flow."""
-        #print doc, galley
+        #print(doc, galley)
         pass
-        
+
     def XXXcompose(self, galley, page, flowId=None):
         u"""Compose the galley element, starting with the flowId text box on page.
         The composer negotiates between what the galley needs a sequential space
@@ -87,7 +87,7 @@ class Composer(object):
         else:
             print('Could not find placement for element %s.' % element)
         #else:
-        #    print 'TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber
+        #    print('TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber)
 
     #    Validation, evaludating conditions.
-    
+

@@ -515,7 +515,7 @@ class FontSubsetter(TTFTraverser):
             table = self.font[tag]
 
         unhandledTables = self.traverseTables("subsetFont", glyphsToDelete)
-        #print "unhandledTables", unhandledTables
+        #print("unhandledTables", unhandledTables)
         self.font.setGlyphOrder([glyphName for glyphName in self.font.getGlyphOrder() if glyphName not in glyphsToDelete])
         if hasattr(self.font, "_reverseGlyphOrderDict"):
             del self.font._reverseGlyphOrderDict  # FontTools bug: font.setGlyphOrder() should take care of that, but it doesn't
@@ -685,7 +685,7 @@ class FontMerger(TTFTraverser):
         if hasattr(self.font, "_reverseGlyphOrderDict"):
             del self.font._reverseGlyphOrderDict  # FontTools bug: font.setGlyphOrder() should take care of that, but it doesn't
 
-        #print unhandledTables
+        #print(unhandledTables)
 
     def mergeFonts_hmtx(self, table, otherFont, glyphsToMerge):
         otherMetrics = otherFont[table.tableTag].metrics
@@ -762,7 +762,7 @@ class FontScaler(TTFTraverser):
             return int(round(value * scaleFactor))
 
         unhandledTables = self.traverseTables("scale", scaleFactor, scaleFunction)
-        #print unhandledTables
+        #print(unhandledTables)
 
     def _scaleAttrs(self, obj, scaleFunction, attrsToScale):
         for attrName in attrsToScale:
@@ -841,9 +841,9 @@ class FontScaler(TTFTraverser):
                             setattr(obj, n, scaleFunction(sub))
                         else:
                             #if isinstance(sub, list):
-                            #    print level * "  " + n + "[%s]" % len(sub)
+                            #    print(level * "  " + n + "[%s]" % len(sub))
                             #else:
-                            #    print level * "  " + n
+                            #    print(level * "  " + n)
                             recurse(sub, level+1)
         recurse(table.table)
 

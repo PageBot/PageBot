@@ -385,7 +385,7 @@ class TextRun(object):
                 self.string += unichr(int(part[0:4], 16))
                 self.string += part[4:]
 
-        #print gc, len(CoreText.CTRunGetStringIndicesPtr(ctRun)), CoreText.CTRunGetStringIndicesPtr(ctRun), ctRun
+        #print(gc, len(CoreText.CTRunGetStringIndicesPtr(ctRun)), CoreText.CTRunGetStringIndicesPtr(ctRun), ctRun)
         try:
             self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
         except TypeError:
@@ -395,7 +395,7 @@ class TextRun(object):
         #self.positions = CoreText.CTRunGetPositionsPtr(ctRun)[0:gc]
         #CoreText.CTRunGetPositions(ctRun, CoreText.CFRange(0, 5), None)[4]
         #self.glyphFontIndices = CoreText.CTRunGetGlyphsPtr(ctRun)[0:gc]
-        #print CoreText.CTRunGetGlyphs(ctRun, CoreText.CFRange(0, 5), None)[0:5]
+        #print(CoreText.CTRunGetGlyphs(ctRun, CoreText.CFRange(0, 5), None)[0:5])
         self.status = CoreText.CTRunGetStatus(ctRun)
 
         # get all positions
@@ -562,7 +562,7 @@ class TextLine(object):
 
         self.string = ''
         self.runs = []
-        #print ctLine
+        #print(ctLine)
         for runIndex, ctRun in enumerate(CoreText.CTLineGetGlyphRuns(ctLine)):
             textRun = TextRun(ctRun, runIndex)
             self.runs.append(textRun)
@@ -576,7 +576,7 @@ class TextLine(object):
 
     def __getitem__(self, index):
         return self.runs[index]
-        
+
     def getIndexForPosition(self, xy):
         x, y = xy
         return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
@@ -623,9 +623,9 @@ class TextLine(object):
         for iStart, iEnd in [(m.start(0), m.end(0)) for m in re.finditer(pattern, self.string)]:
             xStart = self.getOffsetForStringIndex(iStart)
             xEnd = self.getOffsetForStringIndex(iEnd)
-            #print 'xStart, xEnd', xStart, xEnd
+            #print('xStart, xEnd', xStart, xEnd)
             run = self.getGlyphIndex2Run(xStart)
-            #print 'iStart, xStart', iStart, xStart, iEnd, xEnd, run
+            #print('iStart, xStart', iStart, xStart, iEnd, xEnd, run)
             founds.append(FoundPattern(self.string[iStart:iEnd], xStart, iStart, line=self, run=run))
         return founds
 

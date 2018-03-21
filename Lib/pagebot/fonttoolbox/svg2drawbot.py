@@ -152,7 +152,7 @@ def contourToPath(contour):
             if previousCommand in ('c', 's'):
                 cp = reflect(pPrev2, pPrev)
             else:
-                print 'TODO: implement, test'
+                print('TODO: implement, test')
                 #copyPoint(cp, points[0])
             path.curveTo(cp, *points)
 
