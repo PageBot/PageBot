@@ -22,7 +22,7 @@ from drawBot import BezierPath
 from drawBot import font as DBFont
 from drawBot import translate, line, text, stroke, fill, oval, drawPath, textSize
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
-from pagebot.toolbox.transformer import point3D
+from pagebot.toolbox.transformer import point3D, ROOT_PAGEBOT
 from pagebot.fonttoolbox.objects.glyph import *
 from pagebot.fonttoolbox.objects.font import Font
 
@@ -107,7 +107,7 @@ def drawSegment(segment, implied, cps, verbose=False):
         # Store these so they can be used in the infographic.
         implied.append(newOnCurve)
 
-        circle(x, y, r/2, color='pink')
+        circle(x, y, r/2, color='red')
         curve0.append(newOnCurve)
         curve1.insert(0, newOnCurve)
 
@@ -132,6 +132,8 @@ def circle(x, y, r, color='pink'):
         fill(0, 1, 0, 0.5)
     elif color == 'blue':
         fill(0, 0.5, 1, 0.5)
+    elif color == 'red':
+        fill(1, 0, 0, 0.5)
     oval(x - r, y - r, r*2, r*2)
     stroke(1)
 
@@ -154,14 +156,12 @@ def cross(x, y, d, r=1, g=0, b=0, a=1):
 C = 0.5
 F = 2 / 3
 glyphName = 'Q'
-dx = 200
 x = 50
-r = 10
+r = 50
 
-# FIXME: use font from PageBot lib.
-PATH = u"/Users/michiel/Fonts/TypeNetwork/BIG-CASLON-ROMAN-TTF/BigCaslon-Roman.ttf"
-#PATH = u"/Library/Fonts/F5MultiLanguageFontVar.ttf"
-#PATH = u"/Library/Fonts/BigCaslon.ttf"
+size('A1')
+DBFont('LucidaGrande', 24)
+PATH = "%s/resources/testfonts/google/roboto/Roboto-Light.ttf" % ROOT_PAGEBOT
 font = Font(PATH)
 glyph = font[glyphName]
 path = BezierPath()
@@ -170,8 +170,7 @@ contour = None
 coordinates = glyph.ttGlyph.coordinates
 
 # Move glyph up so we can see results below descender level.
-translate(0, 200)
-scale(0.5)
+translate(50, 500)
 
 # Converts coordinates to PageBot Points and assigns points
 # to contours.
@@ -192,7 +191,7 @@ for i, (x, y) in enumerate(coordinates):
         contour.append(contour[0])
         contours.append(contour)
 
-    d = 3
+    d = 10
     x += d
     y += d
     text('%d' % i, (x, y))
@@ -206,13 +205,12 @@ for contour in contours:
         if point.onCurve:
             if ONCURVE is None:
                 ONCURVE = point
-            circle(x, y, r)
+            circle(x, y, r/2)
         else:
             if QUADRATIC_OFFCURVE is None:
                 QUADRATIC_OFFCURVE = point
             # Quadratic offcurves.
-            circle(x, y, r/ 4, color='green')
-
+            circle(x, y, r/ 2, color='green')
 
 segments = []
 implied = []
@@ -237,12 +235,12 @@ for n, contour in enumerate(contours):
         # drawPath(path) (see below.)
         drawSegment(segment, implied, cps)
 
+
 if len(implied) > 0:
     IMPLIED_ONCURVE = implied[0]
 
 if len(cps) > 0:
     CUBIC_OFFCURVE = cps[0]
-
 
 # Enable to draw path as built by PageBot glyph.
 c = glyph.contours
@@ -250,7 +248,6 @@ pbSegments = glyph._segments
 fill(0, 0, 0, 0.3)
 stroke(0, 1, 0)
 drawPath(glyph._path)
-DBFont('LucidaGrande', 16)
 stroke(None)
 fill(0)
 
@@ -268,7 +265,6 @@ if ONCURVE:
     y -= 20
 
 if QUADRATIC_OFFCURVE:
-
     stroke(0, 1, 1)
     p1 = (QUADRATIC_OFFCURVE.x, QUADRATIC_OFFCURVE.y)
     p = (QUADRATIC_OFFCURVE.x + d, QUADRATIC_OFFCURVE.y + d)
@@ -277,8 +273,6 @@ if QUADRATIC_OFFCURVE:
     text('Quadratic control point', p)
 
 if CUBIC_OFFCURVE:
-
-
     stroke(0, 1, 1)
     p1 = (CUBIC_OFFCURVE[0], CUBIC_OFFCURVE[1])
     p = (CUBIC_OFFCURVE[0] + d, CUBIC_OFFCURVE[1]+ d)

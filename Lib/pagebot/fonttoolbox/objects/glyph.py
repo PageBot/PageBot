@@ -135,8 +135,8 @@ class Glyph(object):
         currentOnCurve = None
         p0 = None
 
-        minX = minY = sys.maxint # Store bounding box as we process the coordinate.
-        maxX = maxY = -sys.maxint
+        minX = minY = sys.maxsize # Store bounding box as we process the coordinate.
+        maxX = maxY = -sys.maxsize
 
         if coordinates or components:
             self._path = path = context.newPath()

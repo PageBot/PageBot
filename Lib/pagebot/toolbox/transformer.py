@@ -19,11 +19,12 @@ import json, re
 from time import time
 import datetime
 from random import randint
-
 from pagebot.style import STYLE_REPLACEMENTS
 
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
+import pagebot
+ROOT_PAGEBOT = pagebot.__path__[0]
 
 # P O I N T
 

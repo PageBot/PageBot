@@ -18,7 +18,7 @@
 #
 import sys
 import copy
-from pagebot.toolbox.units import MM, INCH 
+from pagebot.toolbox.units import MM, INCH
 
 NO_COLOR = -1
 
@@ -74,7 +74,7 @@ Tabloid = 11*INCH, 17*INCH
 # Other rounded definintions compatible to DrawBot
 #Screen = getContext().screenSize() # Current screen size. TODO: fix this
 Ledger = 1224, 792
-Statement = 396, 612 
+Statement = 396, 612
 Executive = 540, 720
 Folio = 612, 936
 Quarto = 610, 780
@@ -106,7 +106,7 @@ JapanBusinessCard = 91*MM, 55*MM
 
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
-ORIGIN_POINT = (0, 0, 0) 
+ORIGIN_POINT = (0, 0, 0)
 # Min/max values for element sizes. Make sure that elements dimensions never get 0
 XXXL = sys.maxsize
 MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
@@ -161,26 +161,26 @@ FONT_SIZE_MATCHES = {
 }
 
 FONT_WEIGHT_MATCHES = { # Alternative names
-    'Hairline': ('Hairline', 'HairLine', 'Hair', 'Hl'), 
+    'Hairline': ('Hairline', 'HairLine', 'Hair', 'Hl'),
     'Thin': ('Thin', 'Thn', 'Thi'),
-    'Ultralight':  ('Ultralight', 'ULight', 'ULght', 'ULt'), 
-    'Light': ('Light', 'Lght', 'Lig', 'Lt'), 
+    'Ultralight':  ('Ultralight', 'ULight', 'ULght', 'ULt'),
+    'Light': ('Light', 'Lght', 'Lig', 'Lt'),
     'Semilight': ('Semilight', 'SLight', 'SLght', 'SLt'),
-    'Book': ('Book', 'Bk'), 
-    'Regular': ('Regular', 'Standard', 'Normal', 'Reg', 'Roman', 'Lean', 'Rom'), 
+    'Book': ('Book', 'Bk'),
+    'Regular': ('Regular', 'Standard', 'Normal', 'Reg', 'Roman', 'Lean', 'Rom'),
     'Medium': ('Medium', 'Med', 'Md'),
-    'Semibold': ('Semibold', 'Demibold', 'Demibld', 'Sbd', 'Sembold', 'SBold', 'Sem', 'Demi', 'Dem'), 
-    'Bold': ('Bold', 'Bol', 'Bd'), 
-    'Extrabold': ('Extrabold', 'XBold', 'XBd'), 
-    'Heavy': ('Heavy', 'Hvy'), 
-    'Black': ('Black', 'Blck', 'Blk', 'Bla', 'Fat'), 
-    'Extrablack': ('Extrablack', 'XBlack', 'XBlck', 'XBlk'), 
+    'Semibold': ('Semibold', 'Demibold', 'Demibld', 'Sbd', 'Sembold', 'SBold', 'Sem', 'Demi', 'Dem'),
+    'Bold': ('Bold', 'Bol', 'Bd'),
+    'Extrabold': ('Extrabold', 'XBold', 'XBd'),
+    'Heavy': ('Heavy', 'Hvy'),
+    'Black': ('Black', 'Blck', 'Blk', 'Bla', 'Fat'),
+    'Extrablack': ('Extrablack', 'XBlack', 'XBlck', 'XBlk'),
     'Ultrablack': ('Ultrablack', 'UBlack', 'UBlck', 'UBlk'),
 }
 FONT_WEIGHT_RANGES = { # Alternative values
     'Hairline': range(0, 261), # Upgrade 260
     'Thin': range(260, 275), # Upgrade 270 + list(range(275, 295)), # Upgrade 280
-    'Ultralight': range(275, 295), 
+    'Ultralight': range(275, 295),
     'Light': range(295, 320), # Upgrade 300
     'Semilight': range(320, 350),
     'Book': range(350, 395), # Upgrade 390
@@ -194,7 +194,7 @@ FONT_WEIGHT_RANGES = { # Alternative values
     'Extrablack': range(825, 875), # Upgrade 850
     'Ultrablack': range(857, 1000), # Upgrade 900
 }
-FONT_WIDTH_MATCHES = { # Match on exact alternative 
+FONT_WIDTH_MATCHES = { # Match on exact alternative
     'Skyline': ('Skyline', 'SkyLine', 1, 100),
     'Ultracompressed': ('Ultracompressed', 'UCompressed', 'Ucompressed', 'Ucomp', 'UComp', 120),
     'Extracompressed': ('Extracompressed', 'XCompressed', 'Xcompressed', 'Xcomp', 'XComp', 140),
@@ -209,7 +209,7 @@ FONT_WIDTH_MATCHES = { # Match on exact alternative
     'Extraextended': ('Extraextended', 'Xextended', 'XExtended', 'XExp', 'XExt', 8, 800),
     'Ultraextended': ('Ultraextended', 'Uextended', 'UExtended', 'XExt', 'UExt', 9, 900),
 }
-FONT_WIDTH_RANGES = {  
+FONT_WIDTH_RANGES = {
     'Skyline': range(11, 110), # 100, Reseve 1-10
     'Ultracompressed': range(110, 130), # 120
     'Extracompressed': range(130, 150), # 140
@@ -236,28 +236,28 @@ for d in (FONT_SIZE_MATCHES, FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES):
                 d[value] = values
 # TODO: Add FONT_WEIGHT_RANGES and FONT_WIDTH_RANGES as keys
 
-STYLE_REPLACEMENTS = ( 
+STYLE_REPLACEMENTS = (
     # Pre-replacement in font names, to get standard non-CamelCase style names
     # Works togehter with toolbox.transformer.path2StyleNameParts()
     # From --> To pattern replacement.
-    # Weight 
+    # Weight
     ('UltraLight', 'Ultralight'),
     ('UltLt', 'Ultralight'),
     ('SemiLight', 'Semilight'),
-    ('SemiBold', 'Semibold'), 
-    ('SemBold', 'Semibold'), 
+    ('SemiBold', 'Semibold'),
+    ('SemBold', 'Semibold'),
     ('ExtraBold', 'Extrabold'),
-    ('UltraBlack', 'Ultrablack'), 
-    ('Ultra Black', 'Ultrablack'), 
-    ('Ultra-Black', 'Ultrablack'), 
-    ('Ultra_Black', 'Ultrablack'), 
-    ('ExtrBlack', 'Extrablack'), 
+    ('UltraBlack', 'Ultrablack'),
+    ('Ultra Black', 'Ultrablack'),
+    ('Ultra-Black', 'Ultrablack'),
+    ('Ultra_Black', 'Ultrablack'),
+    ('ExtrBlack', 'Extrablack'),
     ('ExtBlack', 'Extrablack'),
     ('ExBla', 'Extrablack'),
     ('ExBlck', 'Extrablack'),
 
     # Width
-    ('UltCnd', 'Ultracondensed'), 
+    ('UltCnd', 'Ultracondensed'),
     ('UltraCondensed', 'Ultracondensed'),
     ('ExtraCondensed', 'Extracondensed'),
     ('Ultra Condensed', 'Ultracondensed'),
@@ -318,7 +318,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Basic page/template measures
         x = 0, # Default local origin, relative to parent.
         y = 0,
-        z = 0, 
+        z = 0,
         w = w, #ons Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
@@ -350,7 +350,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Margins
         mt = 0, # Margin top
         ml = 0, # Margin left
-        mr = 0, # Margin right 
+        mr = 0, # Margin right
         mb = 0, # Margin bottom
         mzf = 0, # Margin “near” front in z-axis direction, closest to viewer.
         mzb = 0, # Margin “far” back in z-axis direction.
@@ -362,17 +362,17 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         pl = 7*u, # Padding left
         pr = 6*u, # Padding right
         pb = 6*u, # Padding bottom
-        pzf = 0, # Padding “near” front in z-axis direction, closest to viewer. 
+        pzf = 0, # Padding “near” front in z-axis direction, closest to viewer.
         pzb = 0, # Padding ”far” back in z-axis direction.
 
         # Borders, independent for all sides, value is thickness of the line.
         # None will show no border. Single value > 0 shows black line of that thickness.
         # Other options need to be store in dictionary value.
-        # Borders hold dictionaries of format 
+        # Borders hold dictionaries of format
         # border = dict(strokeWidth=3, line=lineType, stroke=(1, 0, 0, 0,5), dash=(4,4))
         # where lineType is one of (INLINE, ONLINE, OUTLINE)
 
-        borderTop = None, # Border top. 
+        borderTop = None, # Border top.
         borderLeft = None, # Border left
         borderRight = None, # Border right
         borderBottom = None, # Border bottom
@@ -383,7 +383,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         gw = gutter, # Main gutter width of page columns. Based on U.
         gh = gutter, # Gutter height
         gd = gutter, # Optional gutter depth, in z-direction
-        
+
         # Column width for column-point-to-point cp2p() and column-rect-to-point cr2p() calculations.
         # Column width, based on multiples of gutter. If uneven, this allows the column to be interpreted
         # as two smaller columns of [5 +1+ 5] or even [2+1+2 +1+ 2+1+2], e.g. for micro-layouts in tables.
@@ -391,7 +391,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # e.g. for micro-layouts in tables.
         # 11*gutter is one of the best values, as the smallest micro-column is 2 instead  of scaling back to 1.
         # Note that element.colW is calculating property. Different from element.css('cw'), which is the column size.
-        # e.cols, e.row and e.lanes properties get/set the number of columns/rows/lanes, adjusting the 
+        # e.cols, e.row and e.lanes properties get/set the number of columns/rows/lanes, adjusting the
         # e.cw, e.ch and e.cd.
         cw = 77*gutter, # 77 columns width
         ch = 6*baselineGrid - u, # Approximately square with cw + gutter: 77
@@ -408,21 +408,21 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # It is up to the caller to make sure that the grid values fit the width of the current element.
         #
         # HTML/CSS builders convert to:
-        # grid-template-columns, grid-template-rows, grid-auto-rows, grid-column-gap, grid-row-gap, 
+        # grid-template-columns, grid-template-rows, grid-auto-rows, grid-column-gap, grid-row-gap,
         gridX = None,
         # Optional list of vertical grid line positions, to force the use of non-repeating grids.
         # Format is [(height1, gutter1), (None, gutter2), (None, 0)]
         gridY = None,
-        gridZ = None, # Similar to gridX and gridY. 
-        # Flags indicating on which side of the fold this element (e.g. page template) is used. 
-        left = True, 
+        gridZ = None, # Similar to gridX and gridY.
+        # Flags indicating on which side of the fold this element (e.g. page template) is used.
+        left = True,
         right = True,
 
         # Minimum size
         minW = 0, # Default minimal width of elements.
         minH = 0, # Default minimal height of elements.
         minD = 0, # Default minimal depth of elements.
-        maxW = MAX_WIDTH, # No maximum limits, sys.maxint
+        maxW = MAX_WIDTH, # No maximum limits, sys.maxsize
         maxH = MAX_HEIGHT,
         maxD = MAX_DEPTH,
 
@@ -463,7 +463,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
         tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...]
-        firstLineIndent = 0, # Indent of first line of a paragraph in a text tag. 
+        firstLineIndent = 0, # Indent of first line of a paragraph in a text tag.
         rFirstLineIndent = 0, # First line indent as factor if font size.
         firstParagraphIndent = 0, # Indent of first line of first paragraph in a text tag.
         rFirstParagraphIndent = 0, # Indent of first line of first paragraph, relative to font size.
@@ -499,7 +499,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Check if this relative fontSize space is available below, to get amount of text lines below headings.
         rNeedsBelow = 0,
         # CSS-behavior as <div> and <span>, adding trailing \n to block context is value set to DISPLAY_BLOCK
-        # Interpreted by 
+        # Interpreted by
         display = DISPLAY_INLINE,
 
         # Language and hyphenation
@@ -510,7 +510,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # if they are not None. Set to e.g. newline(s) "\n" or empty string, if tags need to glue together.
         # Make None for no stripping
         prefix = '', # Default is to strip white space from a block. Make None for no stripping.
-        postfix = '', # Default is to strip white space from tail of XML tag block into a single space. 
+        postfix = '', # Default is to strip white space from tail of XML tag block into a single space.
 
         # Paging
         pageIdMarker = '#??#', # Text pattern that will be replaced by current page id.
@@ -528,7 +528,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         cmykFill = NO_COLOR, # Flag to ignore, None is valid value for color.
         cmykStroke = NO_COLOR, # Flag to ignore, None is valid value for color.
         strokeWidth = None, # Stroke thickness for drawing element, not text.
-        
+
         # Text color
         textFill = 0, # Separate between the fill of a text box and the color of the text itself.
         textStroke = None, # Stroke color of text.
@@ -539,7 +539,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         textGradient = None,
         xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT), independent of inside FS.
         yTextAlign = TOP, # Alignment of text inside text boxes, one of (TOP, MIDDLE, BOTTOM)
-        
+
         underlinePosition = None, # Underline position and thickness of BabelString/FormattedString
         underlineThickness = None,
 
@@ -552,14 +552,14 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         viewGridFill = (200/255.0, 230/255.0, 245/255.0, 0.1), # Fill color for (cw, ch) squares.
         viewGridStroke = (0.3, 0.3, 0.6), # Stroke of grid lines in part of a template.
         viewGridStrokeWidth = 0.5, # Line thickness of the grid.
-        
+
         # Page padding grid
         viewPagePaddingStroke = (0.4, 0.4, 0.7), # Stroke of page padding lines, if view.showPagePadding is True
         viewPagePaddingStrokeWidth = 0.5, # Line thickness of the page padding lines.
 
         # Baseline grid
         viewBaselineGridStroke = (1, 0, 0), # Stroke clor of baselines grid.
-        
+
         # Draw connection arrows between the flow boxes on a page.
         viewFlowConnectionStroke1 = (0.2, 0.5, 0.1, 1), # Stroke color of flow lines inside column,
         viewFlowConnectionStroke2 = (1, 0, 0, 1), # Stroke color of flow lines between columns.
@@ -567,19 +567,19 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         viewFlowMarkerFill = (0.8, 0.8, 0.8, 0.5), # Fill of flow curve marker circle.
         viewFlowMarkerSize = 8, # Size of flow marker circle.
         viewFlowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
-        
+
         # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
         bleedTop = 0, # Bleeding images or color rectangles over page edge.
         bleedBottom = 0,
         bleedRight = 0,
         bleedLeft = 0,
         viewCropMarkDistance = 8,  # Distance of crop-marks from page frame
-        viewCropMarkSize = 40, # Length of crop marks, including bleed distance. 
+        viewCropMarkSize = 40, # Length of crop marks, including bleed distance.
         viewCropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
- 
+
         viewPageNameFont = DEFAULT_FONT, # Name of the page outside frame.
         viewPageNameFontSize = 6,
-         
+
         # Element info box
         viewInfoFont = DEFAULT_FONT, # Font of text in element infoBox.
         viewInfoFontSize = 4, # Font size of text in element info box.
@@ -614,4 +614,4 @@ def css(name, e=None, styles=None, default=None):
     return default
 
 
-  
+

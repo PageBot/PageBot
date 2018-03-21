@@ -177,7 +177,7 @@ class VarFamily(Family):
 
     def getMinMaxWidth(self):
         u"""Answer the minimal/max widths of H."""
-        minWidth = sys.maxint
+        minWidth = sys.maxsize
         maxWidth = -minWidth
         for font in self._fonts.values():
             g = font[self.baseGlyphName].width or 0
@@ -187,7 +187,7 @@ class VarFamily(Family):
 
     def getMinMaxStem(self):
         u"""Answer the minimal/max stems of H."""
-        minStem = sys.maxint
+        minStem = sys.maxsize
         maxStem = -minStem
         for metrics in self.metrics.values():
             minStem = min(min(metrics['stems'].keys()), minStem)
