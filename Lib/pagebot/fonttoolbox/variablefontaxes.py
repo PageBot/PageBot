@@ -14,7 +14,7 @@
 #
 #     variablefontaxes.py
 #
-from sys import maxint
+from sys import maxsize
 
 # Types of axes
 PRIMARY_AXIS = 'Primary'
@@ -29,8 +29,8 @@ axisDefinitions = {
     # https://www.typenetwork.com/brochure/opentype-variable-fonts-moving-right-along/
     # Registered axes
     'wght': dict(name='Weight', tag='wght', description='Used to vary stroke thicknesses to give variation from lighter to blacker.',
-        minValue=0, maxValue=1000, defaultValue=500, 
-        scale=u"Values must be in the range 1 to 1000. Values can be interpreted in direct comparison to values for usWeightClass (in the 'OS/2' table), or the CSS font-weight property — see the note below.", 
+        minValue=0, maxValue=1000, defaultValue=500,
+        scale=u"Values must be in the range 1 to 1000. Values can be interpreted in direct comparison to values for usWeightClass (in the 'OS/2' table), or the CSS font-weight property — see the note below.",
         programInteractions='',
         userInteractions='',
         relatedAxesDescription='',
@@ -39,7 +39,7 @@ axisDefinitions = {
         images=[]),
     'wdth': dict(name='Width', tag='wdth', description='Used to vary width of text from narrower to wider.',
         minValue=0, maxValue=1000, defaultValue=100,
-        scale='Values can be interpreted as a percentage of whatever the font designer considers “normal” for that font design. Values must be strictly greater than zero.', 
+        scale='Values can be interpreted as a percentage of whatever the font designer considers “normal” for that font design. Values must be strictly greater than zero.',
         programInteractions='',
         userInteractions='',
         relatedAxesDescription='',
@@ -48,7 +48,7 @@ axisDefinitions = {
         images=[]),
     'slnt': dict(name='Slant', tag='slnt', description='Used to vary between upright and slanted text.',
         minValue=0, maxValue=1000, defaultValue=0,
-        scale=u'Values can be interpreted as the angle, in counter-clockwise degrees, of oblique slant from whatever the designer considers to be upright for that font design. Values must be greater than -90 and less than +90.', 
+        scale=u'Values can be interpreted as the angle, in counter-clockwise degrees, of oblique slant from whatever the designer considers to be upright for that font design. Values must be greater than -90 and less than +90.',
         programInteractions='',
         userInteractions='',
         relatedAxesDescription='',
@@ -57,7 +57,7 @@ axisDefinitions = {
         images=[]),
     'opsz': dict(name='Optical size', tag='opsz', description='Used to vary design to suit different text sizes.',
         minValue=8, maxValue=72, defaultValue=12,
-        scale='Values can be interpreted as text size, in points. (Text size can be as determined in an application and is not necessarily physical size on a display surface.) Values must be strictly greater than zero.', 
+        scale='Values can be interpreted as text size, in points. (Text size can be as determined in an application and is not necessarily physical size on a display surface.) Values must be strictly greater than zero.',
         programInteractions='',
         userInteractions='',
         relatedAxesDescription='',
@@ -66,7 +66,7 @@ axisDefinitions = {
         images=[]),
     'ital': dict(name='Italic', tag='ital', description='Used to vary between non-italic and italic.',
         minValue=0, maxValue=1, defaultValue=0,
-        scale='Values must be in the range 0 to 1. A value of 0 can be interpreted as “Roman” (non-italic); a value of 1 can be interpreted as (fully) italic.', 
+        scale='Values must be in the range 0 to 1. A value of 0 can be interpreted as “Roman” (non-italic); a value of 1 can be interpreted as (fully) italic.',
         programInteractions='',
         userInteractions='',
         relatedAxesDescription='',
@@ -409,7 +409,7 @@ axisDefinitions = {
         type=CJK_AXIS,
         images=['animation-xtch.gif'],
     ),
-    'rxad': dict(name='Relative x advance', tag='rxad', description='Assigns a distance value per mille to the motion of a glyph', 
+    'rxad': dict(name='Relative x advance', tag='rxad', description='Assigns a distance value per mille to the motion of a glyph',
         minValue=-1000, maxValue=1000, scale='Normal value 0', defaultValue=0,
         programInteractions='Applications may enable plotting the number of loops of an animation required for the time and distance defined by the user.',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
@@ -418,7 +418,7 @@ axisDefinitions = {
         type=MOTION_AXIS,
         images=['animation-rxad.gif'],
     ),
-    'ryad': dict(name='Relative y advance', tag='ryad', description='Assigns a distance value per mille to the motion of a glyph', 
+    'ryad': dict(name='Relative y advance', tag='ryad', description='Assigns a distance value per mille to the motion of a glyph',
         minValue=-1000, maxValue=1000, scale='Normal value 0', defaultValue=0,
         programInteractions='Applications may enable plotting the number of loops of an animation required for the time and distance defined by the user',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
@@ -427,7 +427,7 @@ axisDefinitions = {
         type=MOTION_AXIS,
         images=['animation-ryad.gif'],
     ),
-    'rsec': dict(name='Relative second', tag='rsec', description='Value can be interpreted as a recommendation for one second of animation time', 
+    'rsec': dict(name='Relative second', tag='rsec', description='Value can be interpreted as a recommendation for one second of animation time',
         minValue=-1000, maxValue=1000, scale='Normal value 1', defaultValue=1,
         programInteractions='Applications may plot the relative time of a glyph, or a glyph to other glyphs, and play them in relative or absolute time',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection. ',
@@ -436,8 +436,8 @@ axisDefinitions = {
         type=MOTION_AXIS,
         images=['animation-rsec.gif'],
     ),
-    'vuid': dict(name='Unicode variation axis', tag='vuid', description='Value can be interpreted as a recommendation for one second of animation time', 
-        minValue=-1000, maxValue=maxint, scale='Any Unicode value can be used', defaultValue=1,
+    'vuid': dict(name='Unicode variation axis', tag='vuid', description='Value can be interpreted as a recommendation for one second of animation time',
+        minValue=-1000, maxValue=maxsize, scale='Any Unicode value can be used', defaultValue=1,
         programInteractions='Applications may choose to present a variation in connection to an input Unicode id',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection.',
         relatedAxesDescription='Users may choose to program a variant in connection to direct or conjunctive input for a page description language, or via a user interface',
@@ -445,7 +445,7 @@ axisDefinitions = {
         type=GLYPH_AXIS,
         images=['animation-vuid.gif'],
     ),
-    'votf': dict(name='Feature variation axis', tag='votf', description=u'Instances represent changes to a glyph’s feature', 
+    'votf': dict(name='Feature variation axis', tag='votf', description=u'Instances represent changes to a glyph’s feature',
         minValue=-0, maxValue=1000, scale='Any common feature', defaultValue=0,
         programInteractions='Applications may choose to select a variation in connection to an input feature tag id.',
         userInteractions='Users may choose to program a variant for direct input, or via a user interface connection.',

@@ -412,7 +412,7 @@ class GlyphAnalyzer(object):
         beamCounters = {}
         if y is None:
             y = (self.maxY - self.minY)/2
-        line = ((-sys.maxint, y), (sys.maxint, y))
+        line = ((-sys.maxsize, y), (sys.maxsize, y))
         # Get intersections with this line. We can assume they are sorted set by x value
         intersections = self.intersectWithLine(line)
         # If could not make path or flattened path or no intersections or just one, give up.
