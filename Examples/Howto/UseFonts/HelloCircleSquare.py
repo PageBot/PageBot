@@ -14,6 +14,8 @@
 from random import random
 from pagebot.contexts.platform import getContext
 
+context = getContext()
+
 for p in range(20):
     context.newPage(1000, 1000)
     for n in range(50):

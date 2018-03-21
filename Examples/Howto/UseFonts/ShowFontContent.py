@@ -13,14 +13,15 @@
 #     ShowFontContent.py
 #
 #
+from __future__ import print_function
 import pagebot
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import Font
-from __future__ import print_function
+
 
 EXPORT_PATH = '_export/UpgradeFontOverviewr.pdf'
 FONT_PATH = pagebot.getFontPath() + "/fontbureau/AmstelvarAlpha-VF.ttf"
-FONT_PATH = u"/Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade/scripts/export/ttf/Upgrade-Medium.ttf"
+#ONT_PATH = u"/Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade/scripts/export/ttf/Upgrade-Medium.ttf"
 
 L = 50
 f = Font(FONT_PATH)
@@ -47,7 +48,7 @@ print('OS/2 Width class:', f.info.widthClass)
 print('OS/2 Weight class:', f.info.weightClass)
 print('subscriptXOffset:', f.info.subscriptXOffset)
 print('strikeoutPosition:', f.info.strikeoutPosition)
-print('(ubscriptXSize:', f.info.subscriptXSize))
+print('SubscriptXSize:', f.info.subscriptXSize)
 print('superscriptYOffset:', f.info.superscriptYOffset)
 print('strikeoutSize:', f.info.strikeoutSize)
 print('subscriptYSize:', f.info.subscriptYSize)
@@ -71,6 +72,7 @@ M = 50
 # Scale em of 2048 back to page size.
 glyphIndex = 1
 s = 0.04
+
 for y in range(GY):
     for x in range(GX):
         # Offset of drawing origin

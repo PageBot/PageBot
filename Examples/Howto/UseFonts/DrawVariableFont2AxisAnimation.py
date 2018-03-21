@@ -23,10 +23,11 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
+from pagebot import getFontPath
 
 W = H = 500
 
-FONT_PATH = TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf'
+FONT_PATH = getFontPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
 f = Font(FONT_PATH) # Get PageBot Font instance of Variable font.
 
 LIGHT72 = getVarFontInstance(FONT_PATH, dict(wght=0.5, wdth=0.6, opsz=72), styleName='Light72')
@@ -129,6 +130,7 @@ class FontIcon(object):
         translate(x, y)
         drawPath(path)
         labelSize = e
+        context = getContext()
         fs = context.newString(self.c,
                                style=dict(font=self.f.installedName,
                                           textFill=0,
