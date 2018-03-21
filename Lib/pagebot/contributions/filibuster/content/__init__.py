@@ -87,7 +87,7 @@ def index(tagname):
         for modname in path[1:]:
             try:
                 module = getattr(module, modname)
-            except Exception, e:
+            except Exception as e:
                 print('Could not import module at path, %s, mod %s, name %s' % (path, module, modname))
                 traceback.format_exc()
                 return

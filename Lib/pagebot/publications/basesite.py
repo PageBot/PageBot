@@ -28,7 +28,7 @@ class MobileNavigation(TextBox):
         TextBox.__init__(self, '', **kwargs)
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
-   
+
     def build_html(self, view, origin=None):
         b = self.context.b
         self.build_css(view)
@@ -58,7 +58,7 @@ class MobileNavigation(TextBox):
 class Navigation(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
-  
+
     def build_html(self, view, origin=None):
         b = self.context.b
         self.build_css(view)
@@ -71,7 +71,7 @@ class Navigation(TextBox):
         b._a()
         b._div() # .logo
         b._div() # .fivecol
-        
+
         b.div(class_='sevencol last')
         b.nav(id='navigation-wrap')
         b.ol()
@@ -85,7 +85,7 @@ class Navigation(TextBox):
         b._ol()
         b._nav()
         b._div() # .sevencol last
-        
+
         b._div() # .row
         b._div() # .container .top
 
@@ -94,7 +94,7 @@ class Introduction(TextBox):
         TextBox.__init__(self, '', **kwargs)
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
-      
+
     def build_html(self, view, origin=None):
         u"""Build a page wide in intoduction box for large type, if there is any content."""
         if not self.bs.s:
@@ -109,7 +109,7 @@ class Introduction(TextBox):
             e.build_html(view, origin)
         b._div() # .twelvecol last
         b._div() # .row
-        b._div() # .container .introduction        
+        b._div() # .container .introduction
 
 class Featured(Rect):
     u"""The Featured elements is a container of an image on the left and side column on the right.
@@ -121,7 +121,7 @@ class Featured(Rect):
         TextBox('', parent=self, name='Side')
         # Default class (e.g. for CSS usage) name of not defined as attribute.
         self.class_ = self.class_ or self.__class__.__name__.lower()
-  
+
     def build_html(self, view, origin=None):
         u"""Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
@@ -180,22 +180,22 @@ class Section(Rect):
     The self['Title'] container runs over the entire width of both columns. If there
     is no title defined, it will be ignored. If there is not content at all, then the
     container <div> is not created."""
-    def __init__(self, rows=5, **kwargs):        
+    def __init__(self, rows=5, **kwargs):
         Rect.__init__(self,  **kwargs)
         # Default class (e.g. for CSS usage) name of not defined as attribute.
-        self.class_ = self.class_ or self.__class__.__name__.lower() 
+        self.class_ = self.class_ or self.__class__.__name__.lower()
         self._sectionRows = rows
         TextBox('', parent=self, name='Title')
         for row in range(0, rows):
-            TextBox('', parent=self, name=`row*2`)
-            TextBox('', parent=self, name=`row*2+1`)
+            TextBox('', parent=self, name=repr(row*2))
+            TextBox('', parent=self, name=repr(row*2+1))
 
     def build_html(self, view, origin=None):
         b = self.context.b
         title = self['Title']
         hasContent = bool(title.bs.s)
         for row in range(0, self._sectionRows):
-            hasContent |= bool(self[`row*2`].bs.s) or bool(self[`row*2+1`].bs.s)
+            hasContent |= bool(self[repr(row*2)].bs.s) or bool(self[repr(row*2+1)].bs.s)
         if hasContent: # Onle start the container if there is any content.
             self.build_css(view)
             b.div(class_='container %s' % self.class_)
@@ -209,8 +209,8 @@ class Section(Rect):
                 b._div() # .row
 
             for row in range(0, self._sectionRows):
-                e1 = self[`row*2`]
-                e2 = self[`row*2+1`]
+                e1 = self[repr(row*2)]
+                e2 = self[repr(row*2+1)]
                 if e1.bs.s and e2.bs.s: # Only output if both are filled.
                     b.div(class_='row')
                     b.div(class_='sixcol')
@@ -220,21 +220,21 @@ class Section(Rect):
                     b.addHtml(e2.bs.s)
                     b._div() # 'sixcol last
                     b._div() # .row
-            
+
             b._div() # .container .section
-            
+
 class Footer(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
         # Default class (e.g. for CSS usage) name of not defined as attribute.
-        self.class_ = self.class_ or self.__class__.__name__.lower() 
+        self.class_ = self.class_ or self.__class__.__name__.lower()
 
     def build_html(self, view, origin=None):
         b = self.context.b
         self.build_css(view)
         b.div(class_="container %s" % self.class_)
         b.div(class_='row')
-        
+
         b.div(class_='eightcol')
         # Build flat navivation for this simple site
         b.nav(id='navigation-wrap')
@@ -253,14 +253,14 @@ class Footer(TextBox):
         b.div(class_='fourcol last')
         b.addHtml(self.bs.s)
         b._div() # class: fourcol last
-        
+
         b._div() # class: row
         b._div() # class: container footer
 
 class JS(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
-    
+
     def build_html(self, view, origin=None):
         b = self.context.b
         b.script(type="text/javascript")
@@ -268,7 +268,7 @@ class JS(TextBox):
     jQuery(document).ready(function($){
       /* prepend menu icon */
       $('#nav-wrap').prepend('<div id="menu-icon"><img src="images/menu_icon.png"/></div>');
-      
+
       /* toggle nav */
       $("#menu-icon").on("click", function(){
         $("#nav").slideToggle();
@@ -282,8 +282,8 @@ class SimpleSite(Publication):
     u"""Build a simple default website with several template options.
     Layout and content options defined by external parameters.
     Subclassed from Document with the following optional attributes:
-    rootStyle=None, styles=None, views=None, name=None, class_=None, title=None, 
-    autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, 
+    rootStyle=None, styles=None, views=None, name=None, class_=None, title=None,
+    autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0,
     w=None, h=None, exportPaths=None, context=None, **kwargs)
 
     >>> simpleSite = SimpleSite(name='Home Site', pl=30, pr=30, autoPages=5)
@@ -303,7 +303,7 @@ class SimpleSite(Publication):
 
     def initialize(self, **kwargs):
         u"""Initialize the generic base website templates. """
-        
+
         padding = self.css('pt'), self.css('pr'), self.css('pb'), self.css('pl')
         w, h = self.w, self.h
         self.gw = self.gh = px(8)
@@ -326,7 +326,7 @@ class SimpleSite(Publication):
         Main(parent=t, name='OtherMain')
         Footer(parent=t, name='Footer')
         JS(parent=t, name='JS')
-   
+
 
 if __name__ == '__main__':
     import doctest

@@ -558,7 +558,7 @@ class DateTime:
     def __repr__(self):
         u"""
 
-        The function repr(dt) (or `dt`) answers the string representation of the date,
+        The function repr(dt) answers the string representation of the date,
         typically identical to dt.date + ' ' + dt.time.
 
         """
