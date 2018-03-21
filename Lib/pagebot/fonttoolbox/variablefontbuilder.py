@@ -197,7 +197,7 @@ def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cac
     The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
     location name."""
     if isinstance(fontOrPath, str):
-        varFont = getFont(fontOrPath, name=path2FontName(fontOrPath), lazy=lazy)
+        varFont = getFont(fontOrPath, lazy=lazy)
     else:
         varFont = fontOrPath
     if varFont is None: # Could not read the Variable Font on that path.
