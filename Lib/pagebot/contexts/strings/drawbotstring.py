@@ -27,6 +27,7 @@ except (ImportError, AttributeError):
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
+from pagebot.fonttoolbox.objects.font import findFont
 
 DEFAULT_SIZE = 16
 
@@ -45,17 +46,21 @@ def pixelBounds(fs):
     bx, by, bw, bh = p.bounds()
     return bx, by, bw - bx, bh - by
 
-class NoneDrawBotString(object):
+class NoneDrawBotString(BabelString):
     u"""Used for testing DrawBotString doctest in non-DrawBot Environment."""
     BABEL_STRING_TYPE = 'fs'
 
-    def __init__(self, s):
+    def __init__(self, s, context, style=None):
+        self.context = context # Store context, in case we need more of its functions.
         self.s = s
+        self.fontSize = 10
+        self.font = findFont('Roboto-Regular').path
+        self.style = style
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
-            fontSize=None, styleName=None, tagName=None):
-        return cls(s)
+            fontSize=None, font=None, tagName=None):
+        return cls(s, context=context, e=e, style=style)
 
 class DrawBotString(BabelString):
 

@@ -100,7 +100,7 @@ class Font(object):
     >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
     >>> f = getFont(path, lazy=False)
     >>> f.name
-    u'AmstelvarAlpha Default'
+    u'Amstelvar Roman'
     >>> len(f)
     115
     >>> f.axes.keys()
