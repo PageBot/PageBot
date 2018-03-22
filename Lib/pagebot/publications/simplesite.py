@@ -13,7 +13,7 @@
 #
 #     simplesite.py
 #
-from pagebot.contexts import HtmlContext
+from pagebot.contexts.htmlcontext import HtmlContext
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.elements import *

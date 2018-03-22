@@ -18,7 +18,6 @@ import codecs
 from pagebot.toolbox.transformer import value2Bool
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
-from pagebot.contexts.strings.htmlstring import HtmlString
 from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, color2Hex, object2SpacedString
 
 class HtmlBuilder(XmlBuilder):
