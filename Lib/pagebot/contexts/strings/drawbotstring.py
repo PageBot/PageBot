@@ -229,6 +229,10 @@ class DrawBotString(BabelString):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> font = findFont('Roboto-Black')
         >>> context = DrawBotContext()
+        """
+
+        """
+        TODO: Get more docTests to work
         >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=22))
         >>> bs
         ABC

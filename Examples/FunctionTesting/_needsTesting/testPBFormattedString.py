@@ -3,7 +3,8 @@ from pagebot.contexts.platform import getContext
 
 context = getContext()
 if not context.isDrawBot:
-    sys.exit('Example only runs on DrawBot.')
+    print('Example only runs on DrawBot.')
+    sys.exit()
 
 class PBFormattedString(FormattedString):
     def __init__(self, txt=None, style=None, **kwargs):
@@ -18,8 +19,7 @@ class PBFormattedString(FormattedString):
                 if not name in kwargs:
                     kwargs[name] = value
       
-fs = context.PBFormattedString('aaa', style=dict(fill=(1,0,0), font='Verdana', fontSize=62))
-        
+fs = context.PBFormattedString('aaa', style=dict(fill=(1,0,0), font='Verdana', fontSize=62))  
 print(fs)
 
 context.text(fs, (100, 100))

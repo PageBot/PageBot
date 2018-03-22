@@ -18,7 +18,8 @@ import sys
 from pagebot.contexts.platform import getContext
 context = getContext()
 if not context.isDrawBot:
-    sys.exit('Example only runs on DrawBot.')
+    print('Example only runs on DrawBot.')
+    sys.exit()
 
 class E(object):
     def css(self, n, v):

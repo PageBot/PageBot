@@ -17,7 +17,8 @@ from pagebot.contexts.platform import getContext
 import sys
 from pagebot.contexts.platform import getContext
 if not context.isDrawBot:
-    sys.exit('Example only runs on DrawBot.')
+    print('Example only runs on DrawBot.')
+    sys.exit()
 
 def run():
     aa = context.newString('Book Cover', style=dict(font='Georgia', fontSize=40))
