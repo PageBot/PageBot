@@ -285,7 +285,7 @@ class SimpleSite(Publication):
 
     >>> simpleSite = SimpleSite(name='Home Site', pl=30, pr=30, autoPages=5)
     >>> simpleSite
-    [Document-Website "Home Site"]
+    [Document-Simplesite "Home Site"]
     >>> len(simpleSite.pages)
     5
     >>> t = simpleSite.templates['default']
