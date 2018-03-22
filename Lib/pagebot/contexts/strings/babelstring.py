@@ -18,9 +18,10 @@ class BabelString(object):
     u"""BabelString is the base class of various types of (formatted) string representations 
     needed for different builder classes."""
 
-    def __init__(self, s, style=None):
+    def __init__(self, s, context, style=None):
         self.s = s # Enclose the Flat/Drawbot/html string in this wrapper.
         self.style = style # Optional style to set the context parameters.
+        self.context = context
 
     def __repr__(self):
         return u'%s' % self.s
