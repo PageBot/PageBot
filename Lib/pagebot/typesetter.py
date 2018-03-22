@@ -26,8 +26,8 @@ try:
     from pagebot.contributions.markdown.literature import LiteratureExtension
     from pagebot.contributions.markdown.footnotes import FootnoteExtension
 except ImportError:
-    sys.exit('Typesetter: Install Python markdown from https://pypi.python.org/pypi/Markdown')
-    markdown = None
+    print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
+    sys.exit()
 
 from pagebot.contexts.platform import getContext
 from pagebot import getMarker
