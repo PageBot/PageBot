@@ -18,6 +18,8 @@ from pagebot.contexts.platform import getContext
 from pagebot.elements import *
 from pagebot.contributions.filibuster.blurb import Blurb
 
+#from pagebot.contexts.flatcontext import FlatContext
+#context = FlatContext()
 context = getContext()
 
 #text = Blurb().getBlurb('article_ankeiler', noTags=True)
