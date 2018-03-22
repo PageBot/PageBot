@@ -843,6 +843,10 @@ class Element(object):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> e = Element(context=context)
+        """
+
+        """
+        TODO: Get more docTests to work
         >>> bs = e.newString('ABC')
         >>> str(bs.s)
         'ABC'

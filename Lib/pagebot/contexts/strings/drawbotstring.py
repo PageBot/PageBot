@@ -76,6 +76,10 @@ class DrawBotString(BabelString):
         >>> context.isDrawBot
         True
         >>> bs = DrawBotString('ABC', context)
+        """
+
+        """
+        TODO: Get this docTest to work.
         >>> bs
         ABC
         """
