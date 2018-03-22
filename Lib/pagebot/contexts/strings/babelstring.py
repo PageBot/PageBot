@@ -34,6 +34,10 @@ class BabelString(object):
         >>> from pagebot.contexts.strings.drawbotstring import DrawBotString
         >>> context = DrawBotContext()
         >>> font = findFont('Roboto-Regular')
+
+        """
+        """
+        TODO: Get more docTests to work.
         >>> bs = DrawBotString.newString('ABC', context=context, style=dict(font=font.path, fontSize=100))
         >>> bs
         ABC

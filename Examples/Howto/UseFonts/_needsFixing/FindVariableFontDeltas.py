@@ -19,7 +19,8 @@ from __future__ import print_function
 import pagebot
 from pagebot.contexts.platform import getContext
 if not context.isDrawBot:
-    sys.exit('Example only runs on DrawBot.')
+    print('Example only runs on DrawBot.')
+    sys.exit()
 
 from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.fonttoolbox.objects.font import findFont
