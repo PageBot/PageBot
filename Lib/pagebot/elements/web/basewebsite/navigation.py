@@ -22,6 +22,12 @@ class Navigation(TextBox):
     u"""Draw rectangle, default identical to Element itself.
 
     """
+    def __init__(self, bs=None, class_=None, **kwargs):
+        # Always fill default class (e.g. for CSS usage) name if not defined as attribute.
+        if class_ is None:
+            class_ = self.__class__.__name__.lower()
+        TextBox.__init__(self, bs=bs, class_=class_, **kwargs)
+
     def build(self, view, origin=None, drawElements=True):
         u"""Build non-HTML/CSS representation of the navigation menu here,
         depending on the pages in the root document, e.g. as Table Of Context.
@@ -31,7 +37,10 @@ class Navigation(TextBox):
     def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 
-        Typical HTML export
+        Typical HTML export:
+        """
+        b = self.context.b
+        b.addHtml("""
         <!-- main navigation -->
         <nav id="topnav" role="navigation">
         <div class="menu-toggle">Menu</div>  
@@ -69,9 +78,9 @@ class Navigation(TextBox):
                 </li>   
             </ul>     
         </nav><!-- end main navigation -->
-        """
+        """)
 
-    def build_html(self, view, origin=None):
+    def XXXbuild_html(self, view, origin=None):
         b = self.context.b
         self.build_css(view)
         b.div(class_='container top')
@@ -102,11 +111,6 @@ class Navigation(TextBox):
         b._div() # .container .top
 
 class MobileNavigation(Navigation):
-
-    def __init__(self, **kwargs):
-        TextBox.__init__(self, '', **kwargs)
-        # Default class (e.g. for CSS usage) name of not defined as attribute.
-        self.class_ = self.class_ or self.__class__.__name__.lower()
 
     def build_html(self, view, origin=None):
         b = self.context.b
