@@ -20,7 +20,7 @@ from pagebot.fonttoolbox.objects.font import findFont
 
 c = getContext()
 
-f = findFont('AmstelvarAlpha-VF') # Get PageBot Font instance of Variable font.
+f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 EXPORT_PATH = '_export/ShowFontContent.pdf'
 
 L = 50

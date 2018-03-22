@@ -90,7 +90,7 @@ class VariableCircle(Element):
         # Show axis name below circle marker?
         if self.showAxisNames and axisName is not None:
             fs = context.newString(axisName,
-                                   style=dict(font=variableFont.installedName,
+                                   style=dict(font=variableFont.path,
                                               fontSize=fontSize/4,
                                               textFill=0))
             tw, th = context.textSize(fs)

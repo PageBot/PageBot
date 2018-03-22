@@ -120,7 +120,7 @@ class Family(object):
 
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> family = Family('MyFamily')
         >>> font = family.addFont(path)
         >>> path in family
@@ -133,7 +133,7 @@ class Family(object):
 
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> family = Family('MyFamily')
         >>> family.addFonts(path)
         >>> len(family)
@@ -148,7 +148,7 @@ class Family(object):
 
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> family = Family('MyFamily')
         >>> family.addFonts(path)
         >>> family.keys()[0] == path
@@ -162,7 +162,7 @@ class Family(object):
 
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> families = getFamilies()
         >>> family = newFamily('MyOtherFamily')
         >>> family.addFonts(path)
@@ -181,7 +181,7 @@ class Family(object):
 
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> families = getFamilies()
         >>> family = newFamily('MyOtherFamily')
         >>> font = family.addFont(path)
@@ -225,7 +225,7 @@ class Family(object):
 
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> family = Family('MyFamily')
         >>> family.addFonts(path)
         >>> family.getStyles().keys()

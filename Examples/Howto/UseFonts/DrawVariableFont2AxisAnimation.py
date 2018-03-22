@@ -29,7 +29,7 @@ c = getContext()
 
 W = H = 500
 
-f = findFont('AmstelvarAlpha-VF') # Get PageBot Font instance of Variable font.
+f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
 LIGHT72 = getVarFontInstance(f, dict(wght=0.5, wdth=0.6, opsz=72), styleName='Light72')
 BOOK_LIGHT = getVarFontInstance(f, dict(wght=0.5, wdth=0.7), styleName='Book Light')

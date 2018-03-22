@@ -39,13 +39,13 @@ def isFontPath(fontPath):
 
     >>> from pagebot.contexts.platform import getTestFontsPath
     >>> fontPath = getTestFontsPath()
-    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
     >>> isFontPath(path)
     True
-    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF_XXX.ttf'
+    >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF_XXX.ttf'
     >>> isFontPath(path)
     False
-    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.UFO'
+    >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.UFO'
     >>> isFontPath(path)
     False
     >>> isFontPath(None) is None
@@ -65,7 +65,7 @@ def getFont(fontPath, lazy=True):
 
     >>> from pagebot.contexts.platform import getTestFontsPath
     >>> fontPath = getTestFontsPath()
-    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
     >>> fontName = path2FontName(path)
     >>> font = getFont(path)
     >>> font.path == path
@@ -97,7 +97,7 @@ class Font(object):
     >>> from pagebot.fonttoolbox.objects.font import Font
     >>> from pagebot.contexts.platform import getTestFontsPath
     >>> fontPath = getTestFontsPath()
-    >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+    >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
     >>> f = getFont(path, lazy=False)
     >>> f.name
     u'AmstelvarAlpha Default'
@@ -358,7 +358,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> f = getFont(path, lazy=False)
         >>> 'A' in f.keys()
         True
@@ -374,7 +374,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> f = getFont(path, lazy=False)
         >>> 'A' in f
         True
@@ -388,7 +388,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> f = getFont(path, lazy=False)
         >>> #f.analyzer.stems # TODO: Needs bezier path for pixel test.
 
@@ -405,7 +405,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> f = getFont(path, lazy=False)
         >>> f.axes['XTRA']
         (42.0, 402.0, 402.0)
@@ -425,7 +425,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = getFont(path)
         >>> len(font.getDefaultVarLocation().keys())
         15
@@ -442,7 +442,7 @@ class Font(object):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = Font(path)
         >>> len(font.rawDeltas['A'])
         17
@@ -458,7 +458,7 @@ class Font(object):
 
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = Font(path)
         >>> font.designSpace # Basically the "cvar" table.
         {}
@@ -476,7 +476,7 @@ class Font(object):
 
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = Font(path)
         >>> len(font.variables)
         115
@@ -507,7 +507,7 @@ class Font(object):
 
     def _get_features(self):
         # TODO: Use TTFont for this instead.
-        #return context.listOpenTypeFeatures(self.installedName)
+        #return context.listOpenTypeFeatures(self.path)
         return {}
     features = property(_get_features)
 

@@ -357,9 +357,9 @@ class DrawBotContext(BaseContext):
         >>> context = DrawBotContext()
         >>> context.fontPath2FontName('Aaa.ttf') is None # Dow not exist
         True
-        >>> path = TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> context.fontPath2FontName(path)
-        'AmstelvarAlpha-VF.ttf'
+        'Amstelvar-Roman-VF.ttf'
         """
         if os.path.exists(fontPath):
             return self.installFont(fontPath)

@@ -19,20 +19,19 @@ if not context.isDrawBot:
     sys.exit('Example only runs on DrawBot.')
 
 from pagebot.contexts.platform import getTestFontsPath
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import findFont
 
-fontPath = getTestFontsPath() + "/fontbureau/AmstelvarAlpha-VF.ttf"
-f = Font(fontPath)
+f = findFont('Amstelvar-Roman-VF')
 print('Family %s, style %s, em %d, ascender %d, descender: %d, capHeight %d, xHeight %d' % (
     f.info.familyName, f.info.styleName, f.info.unitsPerEm, f.info.ascender, f.info.descender,
     f.info.capHeight, f.info.xHeight))
 
 spacer = context.newString('-----\n ', style=dict(lineHeight=1,
-                                            font=f.installedName,
+                                            font=f.path,
                                             fontSize=12))
 
 # Create DrawBotString, inheriting from BabelString, based on view type.
-bs = context.newString('Hlxg', style=dict(font=f.installedName,
+bs = context.newString('Hlxg', style=dict(font=f.path,
                                     textFill=(1, 0, 0),
                                     fontSize=300,
                                     leading=320,

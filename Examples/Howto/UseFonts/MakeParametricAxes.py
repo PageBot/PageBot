@@ -17,10 +17,10 @@
 
 import pagebot
 from pagebot.contexts.platform import getContext
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import findFont
 
 EXPORT_PATH = '_export/AlteredGlyphWithPoints.pdf'
-FONT_PATH = pagebot.getFontPath() + "/fontbureau/AmstelvarAlpha-VF.ttf"
+f = findFont('Amstelvar-Roman-VF')
 
 W = H = 1000
 # Scale em of 2048 back to page size.
@@ -28,7 +28,6 @@ s = 0.5
 # Offset of drawing origin
 c.translate(100, 100)
 # Open the font and get the glyph
-f = Font(FONT_PATH)
 g = f['H']
 print(g.analyzer.stems)
 """

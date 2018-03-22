@@ -105,16 +105,16 @@ def getFontPaths(extraPaths=None):
     In this order, "local" defined fonts with the same file name, will overwrite the "deeper" located font files.
 
     >>> import os
-    >>> os.path.exists(TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf')
+    >>> os.path.exists(TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf')
     True
     >>> fontPaths = getFontPaths() # Only default paths on the platform
-    >>> 'AmstelvarAlpha-VF' in fontPaths
+    >>> 'Amstelvar-Roman-VF' in fontPaths
     True
-    >>> fontPaths = getFontPaths(TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf') # As single extra path
-    >>> 'AmstelvarAlpha-VF' in fontPaths
+    >>> fontPaths = getFontPaths(TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf') # As single extra path
+    >>> 'Amstelvar-Roman-VF' in fontPaths
     True
-    >>> fontPaths = getFontPaths([TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf']) # As list of extra paths
-    >>> 'AmstelvarAlpha-VF' in fontPaths
+    >>> fontPaths = getFontPaths([TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf']) # As list of extra paths
+    >>> 'Amstelvar-Roman-VF' in fontPaths
     True
     >>> fontPaths = getFontPaths(TEST_FONTS_PATH + '/OtherFont.ttf')
     >>> 'OtherFont' in fontPaths # Ignore if extra paths don't exists.

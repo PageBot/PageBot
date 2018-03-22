@@ -24,11 +24,10 @@ import copy
 from math import sin, radians
 from pagebot.contexts.platform import getContext
 from pagebot.contexts.platform import getTestFontsPath
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
-FONT_PATH = getTestFontsPath() + '/fontbureau/AmstelvarAlpha-VF.ttf'
-f = Font(FONT_PATH, install=True) # Get PageBot Font instance of Variable font.
+f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
 def fitVariableWidth(varFont, s, w,
                      fontSize, condensedLocation,
@@ -52,7 +51,7 @@ def fitVariableWidth(varFont, s, w,
        setting of the font.
     """
     condFont = getVarFontInstance(varFont, condensedLocation)
-    condensedFs = c.newString(s, style=dict(font=condFont.installedName,
+    condensedFs = c.newString(s, style=dict(font=condFont.path,
                                             fontSize=fontSize,
                                             tracking=tracking,
                                             rTracking=rTracking,
@@ -60,7 +59,7 @@ def fitVariableWidth(varFont, s, w,
     condWidth, _ = c.textSize(condensedFs)
     wideFont = getVarFontInstance(varFont, wideLocation)
 
-    wideFs = c.newString(s, style=dict(font=wideFont.installedName,
+    wideFs = c.newString(s, style=dict(font=wideFont.path,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        rTracking=rTracking,
@@ -81,7 +80,7 @@ def fitVariableWidth(varFont, s, w,
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condWidth)/(wideWidth-condWidth)
         font = getVarFontInstance(varFont, location)
-        fs = c.newString(s, style=dict(font=font.installedName,
+        fs = c.newString(s, style=dict(font=font.path,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        rTracking=rTracking,
