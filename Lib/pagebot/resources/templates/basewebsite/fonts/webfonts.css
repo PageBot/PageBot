@@ -1,0 +1,39 @@
+
+
+@font-face {
+  font-family: "Upgrade-RegularItalic";
+  src: url("Upgrade-Book_Italic.eot") format("eot"),
+  url("Upgrade-Book_Italic.woff2") format("woff2"),
+  url("Upgrade-Book_Italic.woff") format("woff");
+}
+@font-face {
+  font-family: "Upgrade-Regular";
+  src: url("Upgrade-Book.eot") format("eot"),
+  url("Upgrade-Book.woff2") format("woff2"),
+  url("Upgrade-Book.woff") format("woff");
+}
+@font-face {
+  font-family: "Upgrade-SemiboldItalic";
+  src: url("Upgrade-Medium_Italic.eot") format("eot"),
+  url("Upgrade-Medium_Italic.woff2") format("woff2"),
+  url("Upgrade-Medium_Italic.woff") format("woff");
+}
+@font-face {
+  font-family: "Upgrade-Semibold";
+  src: url("Upgrade-Medium.eot") format("eot"),
+  url("Upgrade-Medium.woff2") format("woff2"),
+  url("Upgrade-Medium.woff") format("woff");
+}
+@font-face {
+  font-family: "Upgrade-BoldItalic";
+  src: url("Upgrade-Bold_Italic.eot") format("eot"),
+  url("Upgrade-Bold_Italic.woff2") format("woff2"),
+  url("Upgrade-Bold_Italic.woff") format("woff"),
+}
+@font-face {
+  font-family: "Upgrade-Bold";
+  src: url("Upgrade-Bold.eot") format("eot"),
+  url("Upgrade-Bold.woff2") format("woff2"),
+  url("Upgrade-Bold.woff") format("woff");
+}
+ 
