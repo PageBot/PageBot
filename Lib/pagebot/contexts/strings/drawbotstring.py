@@ -221,14 +221,14 @@ class DrawBotString(BabelString):
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
         In that case the pixelFit flag defines if the current width or height comes from the pixel image of em size.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
-        >>> fontPath = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> font = findFont('Roboto-Black')
         >>> context = DrawBotContext()
-        >>> bs = context.newString('ABC', style=dict(font=fontPath, fontSize=22))
+        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=22))
         >>> bs
         ABC
-        >>> bs = context.newString('ABC', style=dict(font=fontPath), w=100)
+        >>> bs = context.newString('ABC', style=dict(font=font.path), w=100)
         >>> int(round(bs.fontSize))
         51
         """

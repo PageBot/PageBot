@@ -48,7 +48,8 @@ class HtmlString(BabelString):
         u"""Answer the embedded HTML string by property, to enforce checking type of the string."""
         return self._s
     def _set_s(self, html):
-        assert isinstance(html, str)
+        # TODO: Test later if html is the right type
+        #assert isinstance(html, str)
         self._s = html
     s = property(_get_s, _set_s)
 

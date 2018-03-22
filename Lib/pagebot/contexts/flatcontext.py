@@ -15,12 +15,10 @@
 #
 #     http://xxyxyz.org/flat
 #
-import os
 #import imageio
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings.flatstring import FlatString
-from pagebot.toolbox.transformer import path2FontName
 from pagebot.style import NO_COLOR, LEFT
 
 def iround(value):
@@ -81,6 +79,7 @@ class FlatContext(BaseContext):
         self.strokeWidth = 0
         self._font = None # Optional setting of the current font and fontSize
         self._fontSize = None
+        self._frameDuration = 0
 
         self.b = flatBuilder # Builder for this canvas, e.g. equivalent of bare drawbot.fill( )
 
@@ -198,6 +197,11 @@ class FlatContext(BaseContext):
         TODO: To be implemented"""
         #return self.b.listOpenTypeFeatures(fontName)
         return []
+
+    #   F R A M E S
+    def frameDuration(self, secondsPerFrame):
+        u"""Set the frame duretion for animated gifs to a number of seconds per frame."""
+        self._frameDuration = secondsPerFrame
 
     #   T E X T
 

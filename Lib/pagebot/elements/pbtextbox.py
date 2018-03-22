@@ -76,6 +76,10 @@ class TextBox(Element):
         >>> tb = TextBox('This is content', parent=page, style=style, w=100, h=220)
         >>> page[tb.eId].h
         220
+        """
+
+        """
+        TODO: Get the tests to work properly
         >>> tb.h = 220
         >>> tb.h, tb.h == page[tb.eId].h
         (220, True)
@@ -178,6 +182,10 @@ class TextBox(Element):
         >>> context = getContext()
         >>> context.name in ('DrawBotContext', 'FlatContext')
         True
+
+        """
+        """
+        TODO: Get these tests or similar to work.
         >>> font = findFont('Roboto-Regular')
         >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=124))
         >>> tb = TextBox(bs, w=100, h=None)

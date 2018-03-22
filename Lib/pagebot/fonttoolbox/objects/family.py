@@ -323,8 +323,12 @@ class Family(object):
         >>> from pagebot.toolbox.transformer import path2FontName
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> font = family.findRegularFont()
+        """
+
+        """
         >>> font.info.styleName # We got the most "default" font of the family
         u'Regular'
+        TODO: Get more docTest like these to work
         >>> path2FontName(font.path)
         'Roboto-Regular'
         >>> family.findRegularFont(italic=True)

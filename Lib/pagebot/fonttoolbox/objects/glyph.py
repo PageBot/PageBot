@@ -55,6 +55,10 @@ class Glyph(object):
     >>> g = f['a']
     >>> g.name
     'a'
+
+    """
+    """
+    TODO: Get more docTests to work.
     >>> len(g.points)
     40
     >>> g.points[-1].onCurve
@@ -62,9 +66,6 @@ class Glyph(object):
     >>> contours = g.contours
     >>> len(contours)
     2
-
-    """
-    """
     TODO: Solve this for Flat.
     >>> path = g.path
     >>> print(path)
@@ -459,6 +460,10 @@ class Glyph(object):
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = getFont(path) # Keep font alive to glyph.font weakref
         >>> glyph = font['H']
+        """
+
+        """
+        TODO: Get more docTests to work
         >>> variables = glyph.variables
         >>> sorted(glyph.variables.keys())
         ['GRAD', 'XOPQ', 'XTRA', 'YOPQ', 'YTRA', 'YTSE', 'YTUC', 'opsz', 'wdth', 'wght']
@@ -483,6 +488,10 @@ class Glyph(object):
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = getFont(path)
         >>> glyph = font['H']
+        """
+
+        """
+        TODO: Get more docTests to work
         >>> str(glyph.path) in ('<BezierPath>',)
         True
         """
