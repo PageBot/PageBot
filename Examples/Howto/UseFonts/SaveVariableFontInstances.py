@@ -19,7 +19,7 @@ from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance, getConst
 
 c = getContext()
 
-f = findFont('AmstelvarAlpha-VF') # Get PageBot Font instance of Variable font.
+f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
 # Now we have a variable font open.
 print(f.axes)

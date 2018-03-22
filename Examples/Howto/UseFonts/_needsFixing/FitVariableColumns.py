@@ -30,7 +30,7 @@ from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 
 context = getContext()
 
-f = findFont('AmstelvarAlpha-VF') # Get PageBot Font instance of Variable font.
+f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
 HEADLINE_SIZE = 36
 HEADLINE = """When fonts started a new world."""

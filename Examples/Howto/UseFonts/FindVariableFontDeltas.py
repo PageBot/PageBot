@@ -18,7 +18,7 @@
 import pagebot
 from pagebot.contexts.platform import getContext
 from pagebot.contexts.platform import TEST_FONTS_PATH
-from pagebot.fonttoolbox.objects.font import getFont
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
 from __future__ import print_function
@@ -28,8 +28,7 @@ SHOW_DIRECT = False
 
 context.newPage(1500, 1500)
 
-FONT_PATH = TEST_FONTS_PATH + '/fontbureau/AmstelvarAlpha-VF.ttf'
-f = getFont(FONT_PATH) # Get PageBot Font instance of Variable font.
+f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
 c = 'e'
 g = f[c]

@@ -51,7 +51,7 @@ class Glyph(object):
     extracts data from the raw glyph such as point sequence and type.
 
     >>> from pagebot.fonttoolbox.objects.font import findFont
-    >>> f = findFont('AmstelvarAlpha-VF') # Keep font alive to glyph.font weakref
+    >>> f = findFont('Amstelvar-Roman-VF') # Keep font alive to glyph.font weakref
     >>> g = f['a']
     >>> g.name
     'a'
@@ -456,7 +456,7 @@ class Glyph(object):
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = getFont(path) # Keep font alive to glyph.font weakref
         >>> glyph = font['H']
         >>> variables = glyph.variables
@@ -480,7 +480,7 @@ class Glyph(object):
         >>> from pagebot.contexts.platform import getTestFontsPath
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/AmstelvarAlpha-VF.ttf'
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = getFont(path)
         >>> glyph = font['H']
         >>> str(glyph.path) in ('<BezierPath>',)

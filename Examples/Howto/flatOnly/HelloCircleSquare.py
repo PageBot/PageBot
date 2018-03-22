@@ -28,7 +28,9 @@ from pagebot.contexts.flatcontext import FlatContext
 context = FlatContext()
 print('Context class is %s' % type(context).__name__)
 
-FONTNAME = 'AmstelvarAlpha-VF.ttf'
+from pagebot.fonttoolbox.objects.font import findFont
+
+f = findFont('Amstelvar-Roman-VF')
 
 EXPORT_PATH = '_export/HelloCircleSquare.pdf'
 

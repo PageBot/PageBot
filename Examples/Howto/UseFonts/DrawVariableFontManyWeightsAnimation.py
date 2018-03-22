@@ -30,7 +30,7 @@ c = getContext()
 
 W = H = 500
 
-f = findFont('AmstelvarAlpha-VF') # Get PageBot Font instance of Variable font.
+f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
 ULTRALIGHT_CONDENSED = getVarFontInstance(f, dict(wght=0.9, wdth=0.7), styleName='Utrla Light Condensed')
 ULTRALIGHT = getVarFontInstance(f, dict(wght=1, wdth=0), styleName='Ultra Light')
