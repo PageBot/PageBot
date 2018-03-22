@@ -163,7 +163,7 @@ class TextBox(Element):
         to force recalculation as soon as self.textLines is called again.
         If bs is not a BabelString instance, then create one, defined by the self.context,
         and based on the style of self."""
-        assert isinstance(bs, (str, self.context.STRING_CLASS))
+        #assert isinstance(bs, (str, self.context.STRING_CLASS))
         self.bs += self.newString(bs, e=self, style=style)
 
     def appendMarker(self, markerId, arg=None):
