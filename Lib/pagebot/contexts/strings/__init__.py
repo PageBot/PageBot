@@ -11,6 +11,3 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-from pagebot.contexts.strings.drawbotstring import DrawBotString
-from pagebot.contexts.strings.flatstring import FlatString
-from pagebot.contexts.strings.htmlstring import HtmlString
