@@ -296,6 +296,11 @@ class Website(Publication):
     'default'
     >>> website.padding
     (49, 30, 42, 30)
+    >>> page.elements # No elements on these pages.
+    []
+    >>> mn = MobileNavigation(parent=page, name='My Mobile Page Navigation')
+    >>> page.elements
+    [MobileNavigation:My Mobile Page Navigation (0, 0)]
     """
 
     DEFAULT_CONTEXT = HtmlContext()
@@ -317,8 +322,8 @@ class Website(Publication):
         t.info.mediaQueriesUrl = None
         # Add page elements.
         MobileNavigation(parent=t, name='MobileNavigation')
+        Introduction(parent=t, name='Introduction')        
         Navigation(parent=t, name='Navigation')
-        Introduction(parent=t, name='Introduction')
         Featured(parent=t, name='Featured')
         Main(parent=t, name='Main')
         Section(parent=t, name='Section')
