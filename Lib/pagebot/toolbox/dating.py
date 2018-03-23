@@ -546,62 +546,105 @@ class DateTime:
 
         return self.__dict__[key]
 
-    def __str__(self):
-        u"""
+    def __repr__(self):
+        u"""The function repr(dt) answers the string representation of the date,
+        typically identical to dt.date + ' ' + dt.time.
 
-        The function str(dt) answers the string representation of the date. Typically the identical to
-        dt.date + ' ' + dt.time.
-
+        >>> dt = DateTime(date='2018-11-23')
+        >>> '%s' % dt
+        '2018-11-23 00:00:00'
         """
         return str(self)
 
-    def __repr__(self):
-        u"""
-
-        The function repr(dt) answers the string representation of the date,
+    def __str__(self):
+        u"""The function repr(dt) answers the string representation of the date,
         typically identical to dt.date + ' ' + dt.time.
 
+        >>> dt = DateTime(date='2018-11-23')
+        >>> str(dt)
+        '2018-11-23 00:00:00'
         """
         return self.date + ' ' + self.time
 
     def __nonzero__(self):
-        u"""
-
-        Always answer True indicating that a DateTime instance can never be zero.
+        u"""Always answer True indicating that a DateTime instance can never be zero.
 
         """
         return True
 
     def __lt__(self, dt):
-        u"""
-
-        Answers True if self is in the past of date dt as in self &lt; dt.
+        u"""Answers True if self is in the past of date dt as in self < dt.
         Note that in evaluating the condition the difference in time is taken into account as well.
         Use self.datenumber &amp;lt; dt.datenumber to test on date comparison only instead of dy &amp;lt; self.</br>
 
+        >>> dt1 = DateTime(date='2019-11-23')
+        >>> dt2 = DateTime(date='2018-11-23')
+        >>> dt2 < dt1
+        True
         """
         return self.datetime < dt.datetime
 
     def __le__(self, dt):
-        u"""
-
-        Answers True if self is in the past of or equal to date dt as in self &lt;=< dt/code>.
+        u"""Answers True if self is in the past of or equal to date dt as in self <= dt.
         Note that in evaluating the condition the difference in time is taken into account as well.
         Use self.datenumber &amp;lt; dt.datenumber to test on date comparison only instead of dy &amp;lt;= self.</br>
 
+        >>> dt1 = DateTime(date='2018-11-25')
+        >>> dt2 = DateTime(date='2018-11-23')
+        >>> dt2 <= dt1
+        True
         """
         return self.datetime <= dt.datetime
 
     def __gt__(self, dt):
+        u"""Answers True if self is in the future of or equal to date dt as in self > dt.
+        Note that in evaluating the condition the difference in time is taken into account as well.
+        Use self.datenumber &amp;lt; dt.datenumber to test on date comparison only instead of dy &amp;lt;= self.</br>
+
+        >>> dt1 = DateTime(date='2019-11-25')
+        >>> dt2 = DateTime(date='2018-11-23')
+        >>> dt2 > dt1
+        False
+        """
         return self.datetime > dt.datetime
 
     def __ge__(self, dt):
+        u"""Answers True if self is in the future of or equal to date dt as in self >= dt.
+        Note that in evaluating the condition the difference in time is taken into account as well.
+        Use self.datenumber &amp;lt; dt.datenumber to test on date comparison only instead of dy &amp;lt;= self.</br>
+
+        >>> dt1 = DateTime(date='2019-11-25')
+        >>> dt2 = DateTime(date='2018-11-23')
+        >>> dt2 >= dt1
+        False
+        """
         return self.datetime >= dt.datetime
 
     def __ne__(self, dt):
+        u"""Answers True if self is in the past of or equal to date dt as in self != dt.
+        Note that in evaluating the condition the difference in time is taken into account as well.
+        Use self.datenumber &amp;lt; dt.datenumber to test on date comparison only instead of dy &amp;lt;= self.</br>
+
+        >>> dt1 = DateTime(date='2019-11-25')
+        >>> dt2 = DateTime(date='2018-11-23')
+        >>> dt2 != dt1
+        True
+        """
         return not self == dt
 
     def __eq__(self, dt):
+        u"""Answers True if self is equal to date dt as in self == dt.
+        Note that in evaluating the condition the difference in time is taken into account as well.
+        Use self.datenumber &amp;lt; dt.datenumber to test on date comparison only instead of dy &amp;lt;= self.</br>
+
+        >>> dt1 = DateTime(date='2019-11-25')
+        >>> dt2 = DateTime(date='2018-11-23')
+        >>> dt2 == dt1
+        False
+        >>> dt3 = DateTime(date='2018-11-23')
+        >>> dt2 == dt3
+        True
+        """
         if isinstance(dt, DateTime):
             return self.datetime == dt.datetime
         return False

@@ -49,9 +49,11 @@ class MampView(HtmlView):
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
-
+                # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + b.PB_ID
-                getattr(page, hook)(self, ORIGIN) # Typically calling page.build_drawBot or page.build_flat
+                if not hasattr(page, hook):
+                    hook = 'build'
+                getattr(page, hook)(self, ORIGIN) # Typically calling page.build_html
 
                 fileName = page.name
                 if not fileName:

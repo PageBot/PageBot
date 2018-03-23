@@ -106,7 +106,7 @@ class Page(Element):
         b = context.b # This is a bit more efficient than self.b once we got context
        
         self.build_css(view)
-        info = self.info # Contains flags and parameter to Builder "b"
+        info = self.info # Contains flags and parameterss for Builder "b"
         if info.htmlPath is not None:
             b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
@@ -158,7 +158,7 @@ class Page(Element):
                 b.importHtml(info.bodyPath) # Add HTML content of file, if path is not None and the file exists.
             else:
                 b.body()
-                b.div(class_=self.class_) # Us standard 'page' if self.class_ is undefined as None.
+                b.div(class_=self.class_) # Class is standard 'page' if self.class_ is undefined as None.
                 if drawElements:
                     for e in self.elements:
                         e.build_html(view, origin)
