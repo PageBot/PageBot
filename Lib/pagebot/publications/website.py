@@ -294,6 +294,8 @@ class Website(Publication):
     >>> page = website.pages[1][0]
     >>> page.template.name
     'default'
+    >>> website.padding
+    (49, 30, 42, 30)
     """
 
     DEFAULT_CONTEXT = HtmlContext()
@@ -301,7 +303,7 @@ class Website(Publication):
     def initialize(self, **kwargs):
         u"""Initialize the generic website templates. """
 
-        padding = self.css('pt'), self.css('pr'), self.css('pb'), self.css('pl')
+        padding = self.padding
         w, h = self.w, self.h
         self.gw = self.gh = px(8)
         gridX = (fr(1), fr(1))
