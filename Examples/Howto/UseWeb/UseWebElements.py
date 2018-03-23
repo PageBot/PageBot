@@ -15,11 +15,19 @@
 from __future__ import print_function
 from pagebot.elements import *
 
-from pagebot.publications.website import Website
+from pagebot.publications.website import Website, Navigation
 
 
 website = Website(autoPages=4)
 website.newView('Mamp')
 website.info.cssPath = None
+website.info.htmlPath = None
+website.info.bodyPath = None
+
+page = website[1]
+page.name = 'ABCDE'
+newRect(w=300, h=200, parent=page)
+Navigation(parent=page, name='Navigation')
+print(page.elements)
 
 website.export('_export/UseWebElements')

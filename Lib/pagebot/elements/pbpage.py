@@ -83,7 +83,7 @@ class Page(Element):
         self._isRight = flag
     isRight = property(_get_isRight, _set_isRight)
 
-    #   D R A W B O T  S U P P O R T
+    #   D R A W B O T  & F L A T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw all elements of this page in DrawBot."""
@@ -99,11 +99,19 @@ class Page(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self. 
-        If there are any child elements, then also included their code, using the
-        level recursive indent."""
+        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation 
+        of self. If there are any child elements, then also included their code, using the
+        level recursive indent.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(name='TestDoc', autoPages=4)
+        >>> view = doc.newView('Mamp')
+        >>> page = doc[1]
+        >>> view.build()
+
+        """
         context = self.context # Get current context and builder.
-        b = context.b # This is a bit more efficient than self.b once we got context
+        b = context.b # This is a bit more efficient than self.b once we got the context fixed.
        
         self.build_css(view)
         info = self.info # Contains flags and parameterss for Builder "b"
