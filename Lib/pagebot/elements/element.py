@@ -3316,6 +3316,7 @@ class Element(object):
         # Petr: we need to think what the value of a positon is here, since the
         # (x,y) in a web page ie relative and responsive. One way to appeach is
         # to ignore the position of the elememt and leave it up to relative conditions.
+        #
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)
         p = self._applyAlignment(p)

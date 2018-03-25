@@ -19,16 +19,16 @@ from pagebot.contexts.builders.basebuilder import BaseBuilder
 
 class XmlBuilder(BaseBuilder):
 
-    GLOBAL_ATTRIBUTES = set(['id', 'class_', 'title', 'onclick', 'style'])
+    GLOBAL_ATTRIBUTES = set(['id', 'cssClass', 'title', 'onclick', 'style'])
 
     @classmethod
-    def class2SpaceString(cls, class_):
+    def class2SpaceString(cls, cssClass):
         # Format the class to comma separated output. Takes any construction of strings and lists.
-        # class_ can be ['name', 'name'] or 'name name' or 'name, name' or ['name', ('name', 'name')]
-        if not isinstance(class_, (list, tuple)):
-            class_ = [class_]
+        # cssClass can be ['name', 'name'] or 'name name' or 'name, name' or ['name', ('name', 'name')]
+        if not isinstance(cssClass, (list, tuple)):
+            cssClass = [cssClass]
         s = []
-        for classNames in class_:
+        for classNames in cssClass:
             if isinstance(classNames, (list, tuple)):
                 s.append(cls.class2SpaceString(classNames))
                 continue
@@ -111,11 +111,11 @@ class XmlBuilder(BaseBuilder):
         inheriting application class.
         If the *key* is in @self.CASCADING_ATTRIBUTES@ and the *value* is tuple or
         a list, then join the *value*, separated by spaces. This feature is especially used to build flexible
-        cascading *class_* attributes.
+        cascading *cssClass* attributes.
         If the attribute has no value, then the output is skipped.
         """
         line = None
-        if key == 'class_':
+        if key == 'cssClass':
             key = 'class'
             value = self.class2SpaceString(value)
         if key in self.SINGLE_ATTRIBUTES:

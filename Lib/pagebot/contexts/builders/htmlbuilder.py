@@ -34,7 +34,7 @@ class HtmlBuilder(XmlBuilder):
     SINGLE_ATTRIBUTES = []
     # Attributes that allow attributes to be tuple or list and joined
     # on tag output with separating spaces.
-    CASCADING_ATTRIBUTES = ('class_', 'class')
+    CASCADING_ATTRIBUTES = ('cssClass', 'class')
 
     HTML_ATTRIBUTES = set(['dir', 'lang', 'xmllang', 'manifest'])
 
@@ -103,7 +103,7 @@ class HtmlBuilder(XmlBuilder):
 
     SUB_ATTRIBUTES = SUP_ATTRIBUTES = set([])
 
-    BR_ATTRIBUTES = set(['class_', 'id', 'title', 'style', 'clear' ])
+    BR_ATTRIBUTES = set(['cssClass', 'id', 'title', 'style', 'clear' ])
 
     TABLE_ATTRIBUTES = set([
         'align', 'bgcolor', 'border', 'cellpadding', 'cellspacing',
@@ -466,7 +466,7 @@ table {
             # Some exceptions.
             if key.startswith('html'):
                 key = key[3:]
-            if key == 'class_':
+            if key == 'cssClass':
                 key = 'class'
             # elif key == 'src':
             #    value = self.e.getPath(value)
@@ -641,7 +641,7 @@ table {
         ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
         <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
         <python>
-        self.h1(class_='chapter')<br/>
+        self.h1(cssClass='chapter')<br/>
         ...<br/>
         self._h1()
         </python>
@@ -667,7 +667,7 @@ table {
         ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
         <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
         <python>
-        self.h2(class_='head')<br/>
+        self.h2(cssClass='head')<br/>
         ...<br/>
         self._h2()
         </python>
@@ -693,7 +693,7 @@ table {
         ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
         <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
         <python>
-        self.h3(class_='subhead')<br/>
+        self.h3(cssClass='subhead')<br/>
         ...<br/>
         self._h3()
         </python>
@@ -719,7 +719,7 @@ table {
         ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
         <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
         <python>
-        self.h4(class_='subsubhead')<br/>
+        self.h4(cssClass='subsubhead')<br/>
         ...<br/>
         self._h4()
         </python>
@@ -746,7 +746,7 @@ table {
         ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
          <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
         <python>
-        self.h5(class_='caption')<br/>
+        self.h5(cssClass='caption')<br/>
         ...<br/>
         self._h5()
         </python>
@@ -771,7 +771,7 @@ table {
         ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
         <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
         <python>
-        self.h6(class_='footnote')<br/>
+        self.h6(cssClass='footnote')<br/>
         ...<br/>
         self._h6()
         </python>
@@ -1048,7 +1048,7 @@ table {
         """
         The ``br`` tag inserts a single line break.<br/>
         The count attribute is not standard XHTML. It indicates the number of ``br`` to repeat.<br/>
-        The ``class_`` can define the amount of leading in ``px`` of the break.<br/>
+        The ``cssClass`` can define the amount of leading in ``px`` of the break.<br/>
         <seealso><www href="http://www.w3schools.com/tags/tag_br.asp" target="external"/></seealso>
         <python>
         self.br()<br/>
@@ -1078,8 +1078,8 @@ table {
         #self._debugclass(u'table', self.getClassName(args, self.TABLE_ATTRIBUTES))
 
     def getClassName(self, args, attributes):
-        if 'class_' in args:
-            return self.class_2SpaceString(args['class_'])
+        if 'cssClass' in args:
+            return self.cssClass2SpaceString(args['cssClass'])
         else:
             return None
 
@@ -1257,7 +1257,7 @@ table {
         >>> b.getHtml()
         u'<hr/>'
         >>> b.resetHtml()
-        >>> b.hr(class_='wide')
+        >>> b.hr(cssClass='wide')
         >>> b.getHtml()
         u'<hr class="wide"/>'
         """
@@ -1271,7 +1271,7 @@ table {
         href="http://www.w3schools.com/tags/tag_a.asp
 
         >>> b = HtmlBuilder()
-        >>> b.a(href="mypage.html", target="external", class_='myClass')
+        >>> b.a(href="mypage.html", target="external", cssClass='myClass')
         >>> b.write('Hello')
         >>> b._a()
         >>> b.getHtml()
@@ -1496,7 +1496,7 @@ table {
     #     F O R M things
     #
 
-    def form(self, class_=None, name=None, enctype="multipart/form-data", action=None, role=None, method=None,
+    def form(self, cssClass=None, name=None, enctype="multipart/form-data", action=None, role=None, method=None,
              onsubmit=None, onreset=None, target=None, style=None, id=None):
         u"""
         The form element creates a form for user input. A form can contain elements such as textfields, checkboxes and
@@ -1525,8 +1525,8 @@ table {
         if action is None:
             action = self.e['path']
         self.write(u'<form method="%s" action="%s"' % (method, action))
-        if class_ is not None:
-            self.write(u' class="%s"' % class_)
+        if cssClass is not None:
+            self.write(u' class="%s"' % cssClass)
         if id is not None:
             self.write(u' id="%s"' % id)
         if role is not None:

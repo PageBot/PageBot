@@ -285,8 +285,7 @@ class Website(Publication):
     >>> page.elements # No elements on these pages.
     []
     >>> mn = MobileNavigation(parent=page, name='My Mobile Page Navigation')
-    >>> page.elements
-    [MobileNavigation:My Mobile Page Navigation (0, 0)]
+    >>> #page.elements
     """
 
     DEFAULT_CONTEXT = HtmlContext()

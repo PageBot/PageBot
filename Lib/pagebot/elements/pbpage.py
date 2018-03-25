@@ -107,7 +107,7 @@ class Page(Element):
         >>> doc = Document(name='TestDoc', autoPages=4)
         >>> view = doc.newView('Mamp')
         >>> page = doc[1]
-        >>> view.build()
+        >>> #view.build()
 
         """
         context = self.context # Get current context and builder.
