@@ -262,10 +262,10 @@ class PixelMap(Element):
         return alpha
 
     def build_html(self, view, origin=ORIGIN, drawElements=True):
-        print('[build_html] Not implemented yet')
+        print('[PixelMap.build_html] Not implemented yet')
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
-        print('[build_flat] Not implemented yet')
+        print('[PixelMap.build_flat] Not implemented yet')
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the image in the calculated scale. Since we need to use the image

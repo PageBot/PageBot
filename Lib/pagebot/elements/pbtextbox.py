@@ -355,7 +355,7 @@ class TextBox(Element):
         if self.info.htmlPath is not None:
             b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.div(class_=self.class_)
+            b.div(class_=self.cssClass) # Use self.cssClass if defined. Ignore if None.
             b.addHtml(self.bs.s) # Get HTML from BabelString in HtmlString context.
 
             if self.drawBefore is not None: # Call if defined

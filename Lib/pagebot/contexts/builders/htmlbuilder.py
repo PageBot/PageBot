@@ -26,7 +26,8 @@ class HtmlBuilder(XmlBuilder):
     The HtmlBuilder class implements the standard XHTML tag set with all attributes. No additional
     whitespace is added.
     """
-    PB_ID = 'html' # Id to make builder hook name. Views will be calling e.build_html()
+    PB_ID = 'html' # Id to make build_html hook name. Views will be calling e.build_html()
+    
     # Names of attributes that are written without their value.
     # Since this breaks XML validation, this list is empty by default,
     # but it can be redefined by the inheriting application class.
@@ -1224,7 +1225,7 @@ table {
         http://www.w3schools.com/tags/tag_img.asp
 
         >>> b = HtmlBuilder()
-        >>> b.img(src="myImage.png", class_="myClass", width="100%")
+        >>> b.img(src="myImage.png", cssClass="myClass", width="100%")
         >>> b.getHtml().strip() # TODO: Remove leading newline?
         u'<img src="myImage.png" class="myClass"/>'
         """

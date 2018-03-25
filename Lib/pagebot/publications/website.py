@@ -13,6 +13,12 @@
 #
 #     website.py
 #
+#     I N   P R O G R E S S
+#     This will hold the Python generator version of Kirsten Langmuur's SimpleSite template.
+#     These classes will be replaced by usage of the BaseWebSite class, once that is funtional
+#     and stable. Currently the elements below are not generic enough an bound to a fixed CSS.
+#     The designdesign.space site it using them to generate the code. 
+#
 from pagebot.contexts.htmlcontext import HtmlContext
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
@@ -21,15 +27,11 @@ from pagebot.toolbox.units import fr, px
 
 
 class MobileNavigation(TextBox):
-    def __init__(self, **kwargs):
-        TextBox.__init__(self, '', **kwargs)
-        # Default class (e.g. for CSS usage) name of not defined as attribute.
-        self.class_ = self.class_ or self.__class__.__name__.lower()
 
     def build_html(self, view, origin=None):
         b = self.context.b
         self.build_css(view)
-        b.div(class_='container %s' % self.class_)
+        b.div(class_='container %s' % (self.cssClass or 'mobilenavigation'))
         b.div(class_='row')
         b.div(class_='twelvecol last')
         b.nav(id='nav-wrap')
@@ -53,8 +55,6 @@ class MobileNavigation(TextBox):
         b._div() # .container .mobilenavigation
 
 class Navigation(TextBox):
-    def __init__(self, **kwargs):
-        TextBox.__init__(self, '', **kwargs)
 
     def build_html(self, view, origin=None):
         b = self.context.b
@@ -87,10 +87,6 @@ class Navigation(TextBox):
         b._div() # .container .top
 
 class Introduction(TextBox):
-    def __init__(self, **kwargs):
-        TextBox.__init__(self, '', **kwargs)
-        # Default class (e.g. for CSS usage) name of not defined as attribute.
-        self.class_ = self.class_ or self.__class__.__name__.lower()
 
     def build_html(self, view, origin=None):
         u"""Build a page wide in intoduction box for large type, if there is any content."""
@@ -98,7 +94,7 @@ class Introduction(TextBox):
             return
         b = self.context.b
         self.build_css(view)
-        b.div(class_='container %s' % self.class_)
+        b.div(class_='container %s' % (self.cssClass or 'introduction'))
         b.div(class_='row')
         b.div(class_='twelvecol last')
         b.addHtml(self.bs.s)
@@ -116,8 +112,6 @@ class Featured(Rect):
         u"""Initialize the generic featured item, adding and image text box and side text box."""
         TextBox('', parent=self, name='Image')
         TextBox('', parent=self, name='Side')
-        # Default class (e.g. for CSS usage) name of not defined as attribute.
-        self.class_ = self.class_ or self.__class__.__name__.lower()
 
     def build_html(self, view, origin=None):
         u"""Build the featured topic, image on the left and side column on the right."""
@@ -127,7 +121,7 @@ class Featured(Rect):
             return
         b = self.context.b
         self.build_css(view)
-        b.div(class_='container %s' % self.class_)
+        b.div(class_='container %s' % (self.cssClass or 'featured'))
         b.div(class_='row')
         b.div(class_='eightcol')
         image.build_html(view, origin)
@@ -145,8 +139,6 @@ class Main(Rect):
         u"""Initialize the generic featured item, adding and image text box and side text box."""
         TextBox('', parent=self, name='Content') # Note that child elements should not have the same name as parent to find them.
         TextBox('', parent=self, name='Side')
-        # Default class (e.g. for CSS usage) name of not defined as attribute.
-        self.class_ = self.class_ or 'mainContent'
 
     def append(self, bs):
         u"""Add FormattedString to main content."""
@@ -159,7 +151,7 @@ class Main(Rect):
             return
         b = self.context.b
         self.build_css(view)
-        b.div(class_='container %s' % self.class_)
+        b.div(class_='container %s' % (self.cssClass or 'mainContent'))
         b.div(class_='row')
         b.div(class_='eightcol')
         content.build_html(view, origin)
@@ -179,8 +171,6 @@ class Section(Rect):
     container <div> is not created."""
     def __init__(self, rows=5, **kwargs):
         Rect.__init__(self,  **kwargs)
-        # Default class (e.g. for CSS usage) name of not defined as attribute.
-        self.class_ = self.class_ or self.__class__.__name__.lower()
         self._sectionRows = rows
         TextBox('', parent=self, name='Title')
         for row in range(0, rows):
@@ -195,7 +185,7 @@ class Section(Rect):
             hasContent |= bool(self[repr(row*2)].bs.s) or bool(self[repr(row*2+1)].bs.s)
         if hasContent: # Onle start the container if there is any content.
             self.build_css(view)
-            b.div(class_='container %s' % self.class_)
+            b.div(class_='container %s' % (self.cssClass or 'section'))
             if title.bs.s:
                 b.div(class_='row')
                 b.div(class_='tencol')
@@ -221,19 +211,15 @@ class Section(Rect):
             b._div() # .container .section
 
 class Footer(TextBox):
-    def __init__(self, **kwargs):
-        TextBox.__init__(self, '', **kwargs)
-        # Default class (e.g. for CSS usage) name of not defined as attribute.
-        self.class_ = self.class_ or self.__class__.__name__.lower()
 
     def build_html(self, view, origin=None):
         b = self.context.b
         self.build_css(view)
-        b.div(class_="container %s" % self.class_)
+        b.div(class_="container %s" % (self.cssClass or 'footer'))
         b.div(class_='row')
 
         b.div(class_='eightcol')
-        # Build flat navivation for this simple site
+        # Build flat navigation for this simple site
         b.nav(id='navigation-wrap')
         b.ol()
         for pn, pages in sorted(view.doc.pages.items(), reverse=True):

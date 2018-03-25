@@ -22,18 +22,6 @@ class Featured(Group):
     u"""Draw rectangle, default identical to Element itself.
 
     """
-    def __init__(self, bs=None, class_=None, **kwargs):
-        # Always fill default class (e.g. for CSS usage) name if not defined as attribute.
-        if class_ is None:
-            class_ = self.__class__.__name__.lower()
-        Group.__init__(self, bs=bs, class_=class_, **kwargs)
-
-    def build(self, view, origin=None, drawElements=True):
-        u"""Build non-HTML/CSS representation of the navigation menu here,
-        depending on the pages in the root document, e.g. as Table Of Context.
-
-        """
-
     def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 

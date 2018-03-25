@@ -32,12 +32,27 @@ class MampView(HtmlView):
     SITE_PATH = 'docs/'
     DEFAULT_HTML_FILE = 'index.html'
     DEFAULT_HTML_PATH = SITE_PATH + DEFAULT_HTML_FILE
-    DEFAULT_CSS_PATH = SITE_PATH + 'css/pagebot.css'
+    DEFAULT_CSS_PATH = SITE_PATH + 'css/style.css'
 
     #   B U I L D  H T M L  /  C S S
 
     def build(self, path=None, pageSelection=None, multiPage=True):
+        """
 
+        >>> from pagebot.contexts.htmlcontext import HtmlContext
+        >>> from pagebot.document import Document
+        >>> context = HtmlContext()
+        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60), context=context)
+        >>> view = doc.newView('Mamp')
+        >>> view.doExport = False # View flag to avoid exporting to files.
+        >>> view
+        <MampView:Mamp (0, 0)>
+        >>> doc.build()
+        >>> 'WebBuilder' in str(view.b)
+        True
+        >>> len(view.b._htmlOut) > 0 # Check that there is generated HTML output.
+        True
+        """
         doc = self.doc 
 
         sitePath = self.SITE_PATH
@@ -45,14 +60,13 @@ class MampView(HtmlView):
             sitePath += '/'
             
         b = self.b # Get builder from self.doc.context of this view.
-        doc.build_css(self) # Make doc build the main/overall CSS.
+        # SOLVE THIS LATER
+        #self.build_css(self) # Make doc build the main/overall CSS, based on all page styles.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
                 # Building for HTML, try the hook. Otherwise call by main page.build.
-                hook = 'build_' + b.PB_ID
-                if not hasattr(page, hook):
-                    hook = 'build'
+                hook = 'build_' + b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, ORIGIN) # Typically calling page.build_html
 
                 fileName = page.name
@@ -60,17 +74,23 @@ class MampView(HtmlView):
                     fileName = self.DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
-                b.writeHtml(sitePath + fileName)
+                if self.doExport: # View flag to avoid writing, in case of testing.
+                    b.writeHtml(sitePath + fileName)
         # Write all collected CSS into one file
-        b.writeCss(self.DEFAULT_CSS_PATH)
+        #b.writeCss(self.DEFAULT_CSS_PATH)
 
-        mampPath = self.MAMP_PATH + (path or '')
-        if os.path.exists(mampPath):
-            shutil.rmtree(mampPath)
-        shutil.copytree(self.SITE_PATH, mampPath)
+        if self.doExport: # View flag to avoid writing, in case of testing.
+            mampPath = self.MAMP_PATH + (path or '')
+            if os.path.exists(mampPath):
+                shutil.rmtree(mampPath)
+            shutil.copytree(self.SITE_PATH, mampPath)
 
     def getUrl(self, name):
+        u"""Answer the local URL for Mamp Pro to find the copied website."""
         return 'http://localhost:8888/%s/%s' % (name, self.DEFAULT_HTML_FILE)
 
 
-
+if __name__ == "__main__":
+    import sys
+    import doctest
+    sys.exit(doctest.testmod()[0])
