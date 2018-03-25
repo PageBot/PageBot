@@ -132,7 +132,7 @@ class Ruler(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        b.hr(class_=self.class_)
+        b.hr(class_=self.cssClass) # Use self.cssClass if defined. Ignore if None.
 
         self.buildChildElements(view, p)
 

@@ -78,7 +78,9 @@ class BaseView(Element):
         self.showSpreadMiddleAsGap = True # Show the spread with single crop marks. False glues pages togethers as in real spread.
         # CSS flags
         self.cssVerbose = True # Adds information comments with original values to CSS export.
-
+        # Exporting 
+        self.doExport = True # Flag to turn off any export, e.g. in case of testing with docTest
+        
     def setControls(self):
         u"""Inheriting views can redefine to alter showing parameters."""
         pass

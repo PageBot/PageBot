@@ -36,11 +36,16 @@ class BuildInfo(object):
             'http://fonts.googleapis.com/css?family=Bree+Serif',
             'http://fonts.googleapis.com/css?family=Droid+Sans:400,700',
         ]
-        # Define file paths where to read content, instead of constructing by the builder.
-        self.cssPath = None
-        self.htmlPath = None
-        self.headPath = None
-        self.bodyPath = None
+        # Define string or file paths where to read content, instead of constructing by the builder.
+        self.htmlPath = None # Set to string in case the full HTML is defined in a single file.
+        self.cssCode = None # Set to string, if CSS is available as single source.
+        self.cssPath = None # Set to path, if CSS is available in a single file.
+        self.headPath = None # Optional set to string that contains the page <head>...</head>, excluding the tags.
+        self.headHtml = None # Set to path, if head is available in a single file, excluding the tags.
+        self.bodyHtml = None # Optional set to string that contains the page <body>...</body>, excluding the tags.
+        self.bodyPath = None # Set to path, if body is available in a single file, excluding the tags.
+        self.jsPath = None # Optional javascript, to be added at the end of the page, inside <body>...</body> tag.
+        self.jsCode = None # Set to path, if JS is available in a single file, excluding the tags.
 
         for name, value in kwargs.items():
             assert hasattr(self, name) # Check only to set attributes that are supported by default value.

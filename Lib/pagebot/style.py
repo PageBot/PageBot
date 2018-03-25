@@ -313,8 +313,10 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
     rs = dict( # Answer the default root style. Style is a clean dictionary
 
         name = 'root', # Name of the style, key in document.getRootstyle( )
+        cssClass = None, # Optional CSS class of local element. Ignored if None.
         tag = None, # Optional marker to match the style with the running tag.
         show = True, # If set to False, then the element does not evaluate in the self.elements loop.
+        
         # Basic page/template measures
         x = 0, # Default local origin, relative to parent.
         y = 0,
@@ -322,13 +324,15 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         w = w, #ons Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
-
+        # In "time-dimension" this is an overall value for export. This works independent from
+        # the time-marks of element attributes.
         frameDuration = None, # In case saving as .mov or .gif, this value defines 1/frames_per_second
-        # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
-        folds = None,
 
         # Resolution in dpi for pixel based publications and elements.
         resolution = 72,
+
+        # Optional folds. Keep None if no folds. Otherwise list of [(x1, None)] for vertical fold
+        folds = None,
 
         # Position of origin. DrawBot has y on bottom-left. In PageBot it is optional. Default is top-left.
         # Note that the direcion of display is always upwards. This means that the position of text and elements

@@ -20,3 +20,17 @@ from pagebot.elements.views.baseview import BaseView
 class HtmlView(BaseView):
     u"""Abstract class for HTML/CSS generating views."""
  
+    def build_css(self, view):
+        u"""Build the CSS for this document. Default behavior is to import the content of the file
+        if there is a path reference, otherwise build the CSS from the available values and parameters
+        in self.style and self.css()."""
+        b = view.context.b
+        if self.info.cssCode is not None:
+            b.addHtml(self.info.cssCode)
+        elif self.info.cssPath is not None:
+            b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
+        else:
+            b.headerCss(self.name or self.title)
+            b.resetCss() # Add CSS to reset specific default behavior of browsers.
+            b.sectionCss('Document root style')
+            b.css('body', self.rootStyle) # <body> selector and style output

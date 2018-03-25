@@ -45,9 +45,8 @@ class Element(object):
     isPage = False # Set to True by Page-like elements.
     isView = False
 
-
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH,
-            t=0, parent=None, context=None, name=None, class_=None, title=None, description=None, language=None,
+            t=0, parent=None, context=None, name=None, cssClass=None, title=None, description=None, language=None,
             style=None, conditions=None, info=None, framePath=None,
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None,
             isLeftPage=None, isRightPage=None, bleed=None,
@@ -152,7 +151,7 @@ class Element(object):
             self.margin = margin
 
         self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
-        self.class_ = class_ # Optional class name. Ignored if None, not to overwrite CSS of parents.
+        self.cssClass = cssClass # Optional CSS class name. Ignored if None, not to overwrite cssClass of parents.
         self.title = title or name # Optional to make difference between title name, style property
         self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value.
         self._parent = None # Preset, so it exists for checking when appending parent.
@@ -457,7 +456,7 @@ class Element(object):
             t=self.t, # Copy type frame.
             parent=parent, # Allow to keep reference to current parent context and style.
             context=self._context, # Copy local context, None most cases, where reference to parent->doc context is required.
-            name=self.name, class_=self.class_, title=self.title, description=self.description, language=self.language,
+            name=self.name, cssClass=self.cssClass, title=self.title, description=self.description, language=self.language,
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
             info=copy.deepcopy(self.info), # Info may be modified by the element of ascestors.
@@ -633,7 +632,6 @@ class Element(object):
                 positions[point] = []
             positions[point].append(e)
         return positions
-
 
     #   F L O W
 
@@ -3301,8 +3299,8 @@ class Element(object):
         b = view.context.b # Get the build of the current context.
         if self.info.cssPath is not None:
             b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
-        elif self.class_: # For now, we only can generate CSS if the element has a class name defined.
-            b.css('.'+self.class_, self.style)
+        elif self.cssClass: # For now, we only can generate CSS if the element has a class name defined.
+            b.css('.'+self.cssClass, self.style)
         else:
             b.css(message='No CSS for element %s\n' % self.__class__.__name__)
 
@@ -3315,6 +3313,9 @@ class Element(object):
         # Since the 'p' variable in the drawBefor and drawAfter
         # calls bellow was undefined, I have added here the three following
         # lines of code copied from the Element.build method implementation:
+        # Petr: we need to think what the value of a positon is here, since the
+        # (x,y) in a web page ie relative and responsive. One way to appeach is
+        # to ignore the position of the elememt and leave it up to relative conditions.
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)
         p = self._applyAlignment(p)
@@ -3325,7 +3326,7 @@ class Element(object):
         if info.htmlPath is not None:
             b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.div(class_=self.class_) # No default class, ignore if not defined.
+            b.div(class_=self.cssClass, style='red:#FF0000;') # No default class, ignore if not defined.
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(self, view, p)

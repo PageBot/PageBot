@@ -13,21 +13,23 @@
 #     UseWebElements.py
 #
 from __future__ import print_function
+import os
 from pagebot.elements import *
 
-from pagebot.publications.website import Website, Navigation
+from pagebot.publications.simplesite import SimpleSite, Navigation
+from pagebot.contexts.htmlcontext import HtmlContext
 
+context = HtmlContext()
 
-website = Website(autoPages=4)
-website.newView('Mamp')
-website.info.cssPath = None
-website.info.htmlPath = None
-website.info.bodyPath = None
+NAME = "UseWebElements"
+
+website = SimpleSite(autoPages=4, name=NAME, context=context)
+view = website.newView('Mamp')
 
 page = website[1]
-page.name = 'ABCDE'
+page.name = 'index.html'
 newRect(w=300, h=200, parent=page)
 Navigation(parent=page, name='Navigation')
 print(page.elements)
-
-website.export('_export/UseWebElements')
+website.export('docs/UseWebElements')
+os.system(u'open "%s"' % view.getUrl(NAME))

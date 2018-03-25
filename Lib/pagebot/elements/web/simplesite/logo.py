@@ -16,18 +16,12 @@
 #
 from __future__ import division # Make integer division result in float.
 
-from pagebot.elements.web.banner import Banner
+from pagebot.elements.web.simplesite.banner import Banner
 
 class Logo(Banner):
     u"""Draw rectangle, default identical to Element itself.
 
     """
-    def build(self, view, origin=None, drawElements=True):
-        u"""Build non-HTML/CSS representation of the navigation menu here,
-        depending on the pages in the root document, e.g. as Table Of Context.
-
-        """
-
     def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 

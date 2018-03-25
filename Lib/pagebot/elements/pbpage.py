@@ -34,7 +34,7 @@ class Page(Element):
         (1111, 100)
         """
         Element.__init__(self,  **kwargs)
-        self.class_ = self.class_ or 'page' # Defined default CSS class for pages.
+        self.cssClass = self.cssClass or 'page' # Defined default CSS class for pages.
         self._isLeft = self._isRight = None # Undefined, lef self.doc decide.
 
     def _get_isLeft(self):
@@ -120,10 +120,20 @@ class Page(Element):
         else:
             b.docType('html')
             b.html()#lang="%s" itemtype="http://schema.org/">\n' % self.css('language'))
-            if info.headPath is not None:
+            #
+            #   H E A D
+            #
+            # Build the page head. There are 3 option (all not including the <head>...</head>)
+            # 1 As html string (info.headHtml is defined as not None)
+            # 2 As path a html file, containing the string between <head>...</head>.
+            # 3 Constructed from info contect, page attributes and styles.
+            #
+            b.head()
+            if info.headHtml is not None:
+                b.addHtml(info.headHtml)
+            elif info.headPath is not None:
                 b.importHtml(info.headPath) # Add HTML content of file, if path is not None and the file exists.
             else:
-                b.head()
                 b.meta(charset=self.css('encoding'))
                 # Try to find the page name, in sequence order of importance. Note that self.info gets copied from
                 # templates (supplying a generic title or name), which can be overwritted by the direct self.title
@@ -143,7 +153,11 @@ class Page(Element):
                 # CSS
                 if info.webFontsUrl:
                     b.link(rel='stylesheet', type="text/css", href=info.webFontsUrl, media='all')
-                if info.cssPath is not None:
+                if info.cssCode is not None:
+                    b.style()
+                    b.addHtml(info.cssCode)
+                    b._style()
+                elif info.cssPath is not None:
                     cssPath = 'css/' + info.cssPath.split('/')[-1]
                 else:
                     cssPath = 'css/pagebot.css'
@@ -160,18 +174,42 @@ class Page(Element):
                     b.meta(name='description', content=info.description)
                 if info.keyWords:
                     b.meta(name='keywords', content=info.keyWords)
-                b._head()
-
-            if info.bodyPath is not None:
+            b._head()
+            #
+            #   B O D Y
+            #
+            # Build the page body. There are 3 option (all excluding the <body>...</body>)
+            # 1 As html string (info.bodyHtml is defined as not None)
+            # 2 As path a html file, containing the string between <body>...</body>, excluding the tags
+            # 3 Constructed from info contect, page attributes and styles.
+            #
+            b.body()
+            if info.bodyHtml is not None:
+                b.addHtml(info.bodyHtml)
+            elif info.bodyPath is not None:
                 b.importHtml(info.bodyPath) # Add HTML content of file, if path is not None and the file exists.
             else:
-                b.body()
-                b.div(class_=self.class_) # Class is standard 'page' if self.class_ is undefined as None.
+                b.div(class_=self.cssClass) # Class is standard 'page' if self.cssClass is undefined as None.
                 if drawElements:
                     for e in self.elements:
                         e.build_html(view, origin)
                 b._div()
-                b._body()
+            #
+            #   J A V A S C R I P T
+            #
+            # Build the LS body. There are 3 option (all not including the <body>...</body>)
+            # 1 As html string (info.headHtml is defined as not None)
+            # 2 As path a html file, containing the string between <head>...</head>.
+            # 3 Constructed from info contect, page attributes and styles.
+            #
+            if info.jsCode is not None:
+                b.addHtml(info.jsCode)
+            elif info.jsPath is not None:
+                b.importHtml(info.jsPath) # Add JS content of file, if path is not None and the file exists.
+            #else no default JS. To be added by the calling application.
+
+            # Close the document
+            b._body()
             b._html()
 
 class Template(Page):

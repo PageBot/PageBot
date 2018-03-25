@@ -54,7 +54,7 @@ class Document(object):
     DEFAULT_CONTEXT = getContext()
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, 
-            class_=None, title=None, pages=None, autoPages=1, template=None, templates=None, 
+            cssClass=None, title=None, pages=None, autoPages=1, template=None, templates=None, 
             originTop=True, startPage=1, w=None, h=None, padding=None, info=None, lib=None,
             context=None, exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
@@ -64,7 +64,8 @@ class Document(object):
 
         # Apply the theme if defined or create default styles, to make sure they are there.
         self.rootStyle = self.makeRootStyle(**kwargs)
-        self.class_ = class_ or self.__class__.__name__ # Optional class name, e.g. to group elements together in HTML/CSS export.
+        # Optional CSS class name, e.g. to group elements together in HTML/CSS export. Ignored if None.
+        self.cssClass = cssClass
         self.initializeStyles(theme, styles) # May or may not overwrite the root style.
 
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
@@ -192,7 +193,7 @@ class Document(object):
     def getInfo(self):
         u"""Answer a string with most representing info about the document."""
         info = []
-        info.append('Document-%s "%s"' % (self.__class__.__name__, self.name))
+        info.append('Document-%s "%s"' % (self.cssClass or self.__class__.__name__, self.name))
         info.append('\tPages: %d' % len(self.pages))
         info.append('\tTemplates: %s' % ', '.join(sorted(self.templates.keys())))
         info.append('\tStyles: %s' % ', '.join(sorted(self.styles.keys())))
@@ -204,9 +205,9 @@ class Document(object):
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
-        >>> doc = Document(context=context)
-        >>> doc.context
-        <DrawBotContext>
+        >>> doc = Document(context=context, title='MySite', cssClass='MyWebSite')
+        >>> doc, doc.context, doc.cssClass, doc.title
+        ([Document-Document "MySite"], <DrawBotContext>, 'MyWebSite', 'MySite')
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> doc = Document(context=context)
@@ -971,19 +972,6 @@ class Document(object):
     
     #   D R A W I N G  &  B U I L D I N G
 
-    def build_css(self, view):
-        u"""Build the CSS for this document. Default behavior is to import the content of the file
-        if there is a path reference, otherwise build the CSS from the available values and parameters
-        in self.style and self.css()."""
-        b = view.context.b
-        if self.info.cssPath is not None:
-            b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
-        else: 
-            b.headerCss(self.name or self.title)
-            b.resetCss() # Add CSS to reset specific default behavior of browsers.
-            b.sectionCss('Document root style')
-            b.css('body', self.rootStyle) # <body> selector and style output
-
     def build(self, path=None, pageSelection=None, multiPage=True):
         u"""Build the document as website, using the document.view for export.
 
@@ -991,7 +979,17 @@ class Document(object):
         >>> context = DrawBotContext()
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60), context=context)
         >>> view = doc.newView('Page')
+        >>> doc.view
+        <PageView:Page (0, 0)>
+        >>> doc.build()        
+        >>> from pagebot.contexts.htmlcontext import HtmlContext
+        >>> context = HtmlContext()
+        >>> doc.context = context # Change context of this document.
+        >>> view = doc.newView('Mamp')
+        >>> doc.view
+        <MampView:Mamp (0, 0)>
         >>> doc.build()
+        
         """
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 

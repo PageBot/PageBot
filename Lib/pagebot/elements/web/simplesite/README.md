@@ -1,4 +1,4 @@
-# Base website template
+# SimpleSite template
 
 ## Created by 
 
