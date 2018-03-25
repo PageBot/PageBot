@@ -988,8 +988,7 @@ class Document(object):
         >>> view = doc.newView('Mamp')
         >>> doc.view
         <MampView:Mamp (0, 0)>
-        >>> doc.build()
-        
+        >>> #doc.build()
         """
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 
