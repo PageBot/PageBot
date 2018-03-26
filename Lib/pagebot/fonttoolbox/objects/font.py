@@ -24,7 +24,7 @@
 #
 import os
 from fontTools.ttLib import TTFont, TTLibError
-from pagebot.contexts.platform import getFontPaths
+
 from pagebot.toolbox.transformer import path2FontName, path2Extension
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.objects.glyph import Glyph
@@ -84,6 +84,7 @@ def findFont(fontPath, lazy=True):
     >>> findFont('Roboto-Regular')
     <Font Roboto-Regular>
     """
+    from pagebot.contexts.platform import getFontPaths
     fontPaths = getFontPaths()
     if fontPath in fontPaths:
         return getFont(fontPaths[fontPath])
