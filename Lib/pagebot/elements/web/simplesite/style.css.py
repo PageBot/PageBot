@@ -1,3 +1,4 @@
+css = """
 body{
 	background:#fff;
 	color:#706670;
@@ -514,4 +515,5 @@ PRINT STYLESHEET
   @page { margin: 0.5cm; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
-}
+} """
+
