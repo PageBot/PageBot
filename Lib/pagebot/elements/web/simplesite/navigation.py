@@ -27,7 +27,7 @@ class Navigation(TextBox):
 
         Typical HTML export:
         """
-        b = self.context.b
+        b = view.context.b
         b.addHtml("""
         <!-- main navigation -->
         <nav id="topnav" role="navigation">

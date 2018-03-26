@@ -26,19 +26,15 @@ class SimpleSite(Publication):
     u"""Build a simple default website with several template options.
     Layout and content options defined by external parameters, e.g from a Markdown file.
 
-    >>> simpleSite = SimpleSite(name='Home Site', viewId='Site', pl=30, pr=30, autoPages=5)
+    >>> simpleSite = SimpleSite(name='Home Site', viewId='Site', padding=30, autoPages=2)
     >>> simpleSite
     [Document-SimpleSite "Home Site"]
     >>> len(simpleSite.pages)
-    5
+    2
     >>> page = simpleSite[1]
     >>> page.name = 'index'
-    >>> t = simpleSite.templates['default']
-    >>> t.size
-    (1000, 1000, 1)
-    >>> page = simpleSite.pages[1][0]
-    >>> page.template.name
-    'default'
+    >>> template = simpleSite.getTemplate('home')
+    >>> page.applyTemplate(template)
     >>> simpleSite.export('_export/SimpleSite')
     """
 

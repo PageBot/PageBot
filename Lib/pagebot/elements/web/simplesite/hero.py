@@ -26,7 +26,7 @@ class Hero(Group):
         u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 
         """
-        b = self.context.b
+        b = view.context.b
         b.addHtml("""
         <!-- hero area (with the slider) -->
         <section id="hero" class="clearfix">    

@@ -41,7 +41,7 @@ class Header(Group):
         >>> doc.export('_export/HeaderTest')
 
         """
-        b = self.context.b
+        b = view.context.b
         self.build_css(view)
         b.header(cssClass=self.cssClass or self.__class__.__name__.lower())
 
