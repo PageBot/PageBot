@@ -19,7 +19,7 @@ from pagebot.contexts.builders.basebuilder import BaseBuilder
 
 class XmlBuilder(BaseBuilder):
 
-    GLOBAL_ATTRIBUTES = set(['id', 'cssClass', 'title', 'onclick', 'style'])
+    GLOBAL_ATTRIBUTES = set(['cssId', 'cssClass', 'title', 'onclick', 'style'])
 
     @classmethod
     def class2SpaceString(cls, cssClass):

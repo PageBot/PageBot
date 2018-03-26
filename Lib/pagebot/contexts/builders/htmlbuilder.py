@@ -103,7 +103,7 @@ class HtmlBuilder(XmlBuilder):
 
     SUB_ATTRIBUTES = SUP_ATTRIBUTES = set([])
 
-    BR_ATTRIBUTES = set(['cssClass', 'id', 'title', 'style', 'clear' ])
+    BR_ATTRIBUTES = set(['cssClass', 'cssId', 'title', 'style', 'clear' ])
 
     TABLE_ATTRIBUTES = set([
         'align', 'bgcolor', 'border', 'cellpadding', 'cellspacing',
