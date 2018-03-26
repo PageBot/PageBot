@@ -25,9 +25,9 @@ class Introduction(TextBox):
         if self.bs.s: # Ignore if no content.
             b = self.context.b
             self.build_css(view)
-            b.div(class_='container %s' % (self.cssClass or 'introduction'))
-            b.div(class_='row')
-            b.div(class_='twelvecol last')
+            b.div(cssClass='container %s' % (self.cssClass or 'introduction'))
+            b.div(cssClass='row')
+            b.div(cssClass='twelvecol last')
 
             b.addHtml(self.bs.s)
             for e in self.elements:

@@ -29,10 +29,21 @@ class Banner(Group):
         <div id="banner">   
             ...     
         </div>
-          """
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import newTextBox
+        >>> doc = Document(viewId='Site')
+        >>> page = doc[1]
+        >>> page.title = 'Banner Test'
+        >>> page.name = 'index'
+        >>> banner = Banner(parent=page, cssId='ThisId')
+        >>> tb = newTextBox('This is a banner.', parent=banner)
+        >>> doc.export('_export/BannerTest')
+
+        """
         b = self.context.b
         self.build_css(view)
-        b.div(id='banner')
+        b.div(cssClass=self.cssClass, cssId=self.cssId)
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, origin)
 

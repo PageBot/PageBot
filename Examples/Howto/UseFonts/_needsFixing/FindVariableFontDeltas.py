@@ -18,6 +18,7 @@
 from __future__ import print_function
 import pagebot
 from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()

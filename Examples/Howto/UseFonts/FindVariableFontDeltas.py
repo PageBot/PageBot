@@ -15,14 +15,16 @@
 #     Delta are stored per glyph in the Font.ttFont.
 #     But you can better use the wrapper attribute font Font.
 #
-import pagebot
+from __future__ import print_function
 from pagebot.contexts.platform import getContext
 from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
-from __future__ import print_function
 
+# TODO: Needs variable font with predictable axes.
+
+context = getContext()
 
 SHOW_DIRECT = False
 
@@ -32,7 +34,8 @@ f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
 c = 'e'
 g = f[c]
-axisDeltas = g.getAxisDeltas()['wght']
+print(f.axes.keys())
+axisDeltas = g.getAxisDeltas()['opsz']
 
 for (minValue, defaultValue, maxValue), deltas in axisDeltas.deltas.items():
     print(minValue, defaultValue, maxValue)

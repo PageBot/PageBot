@@ -190,11 +190,16 @@ class FlatContext(BaseContext):
 
     restore = restoreGraphicState
 
+    def translate(self, ox, soy):
+        u"""Shift the origin of the canvas by (ox, oy).
+        TODO: To be implenented."""
+        pass
+
     #   F O N T S
 
     def listOpenTypeFeatures(self, fontName):
         u"""Answer the list of opentype features available in the named font.
-        TODO: To be implemented"""
+        TODO: To be implemented."""
         #return self.b.listOpenTypeFeatures(fontName)
         return []
 

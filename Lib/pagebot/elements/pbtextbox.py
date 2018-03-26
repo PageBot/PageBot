@@ -355,7 +355,8 @@ class TextBox(Element):
         if self.info.htmlPath is not None:
             b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.div(class_=self.cssClass) # Use self.cssClass if defined. Ignore if None.
+            # Use self.cssClass if defined, otherwise self class. #id is ignored if None
+            b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId) 
             b.addHtml(self.bs.s) # Get HTML from BabelString in HtmlString context.
 
             if self.drawBefore is not None: # Call if defined
@@ -368,7 +369,7 @@ class TextBox(Element):
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(self, view, origin)
 
-            b._div()
+            b._div() # self.cssClass or self.__class__.__name__
 
     def _drawBaselines_drawBot(self, view, px, py):
         # Let's see if we can draw over them in exactly the same position.

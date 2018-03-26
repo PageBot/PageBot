@@ -384,76 +384,9 @@ table {
         TODO: Make optional if compact CSS is needed."""
         self.addCss(self.SECTION_CSS % title)
 
-    def XXXsetViewPort(self):
-        self.meta(name='viewport', content='width=device-width, initial-scale=1.0')
-
-    def XXXbuildFontLinks(self, e):
-        u"""Build the webfont links of they are defined in **components.fonts**.
-        Ignore if **self.C.useOnline()** is **False**."""
-        if self._useOnline:
-            """
-            for fontUrl in e.fonts: # Should always be defined, default is an empty list
-                self.link(href=fontUrl, type="text/css", charset="UTF-8", rel="stylesheet", media="screen")
-            """
-            pass
-
-    def XXXjsUrl(self, js):
-        u"""Add url to external Javascript includes."""
-        if not isinstance(js, (tuple, list)):
-            js = [js]
-        for url in js:
-            self.script(type="text/javascript", src=url)
-            self.newline()
-
-    def XXXbuildCssLinks(self, e):
-        u"""Create the CSS links inside the head. /css-<SASS_STYLENAME> defines the type of CSS output from the Sass
-        compiler. The CSS parameter must be one of ['nested', 'expanded', 'compact', 'compressed']
-        """
-        cssUrl = 'main.css' # For now.
-        self.link(href=cssUrl, type="text/css", charset="UTF-8", rel="stylesheet", media="screen")
-        self.newline()
-
-    def XXXbuildMetaDescription(self, e):
-        pass
-
-    def XXXbuildMetaKeyWords(self, e):
-        pass
-
-    def XXXbuildJavascript(self, e):
-        pass
-
-    def XXXbuildFavIconLinks(self, e):
-        pass
-
-    def XXXieExceptions(self):
-        self.comment("1140px Grid styles for <= IE9")
-        self.newline()
-        self.text("""<!--[if lte IE 9]><link rel="stylesheet" href="/cssie/ie9.css" type="text/css" media="screen" /><![endif]-->""")
-        # self.text("""<link rel="stylesheet" href="cssie/ie9.css" type="text/css" media="screen,projection" />""")
-        self.newline()
-
-    def XXXtext(self, componentOrText, **kwargs):
-        u"""
-        If in **self._svgMode** output as SVG tags. Otherwise just output if plain text string.
-        If it is a components, then get it’s text string.
-        """
-        if componentOrText is None:
-            return
-        if isinstance(componentOrText, str):
-            if self._svgMode:
-                self.svgText(componentOrText, **kwargs)
-            else:
-                self.write(componentOrText)
-        else: # Otherwise it must be of type component
-            if componentOrText.id:
-                self.span(id=id, contentEditable=componentOrText.editable)
-            self.write(componentOrText.text)
-            if componentOrText.id:
-                self._span()
-
     def get_attribute_exceptions(self, key, value):
         u"""
-        The ``get_attribute_exceptions`` method writes the attribute and checks on naming differences between
+        The get_attribute_exceptions method writes the attribute and checks on naming differences between
         the element attributes and HTML attributes.
         """
         # Boolean attributes.
@@ -468,6 +401,8 @@ table {
                 key = key[3:]
             if key == 'cssClass':
                 key = 'class'
+            if key == 'cssId':
+                key = 'id'
             # elif key == 'src':
             #    value = self.e.getPath(value)
             elif key == 'rowspan':
@@ -532,7 +467,7 @@ table {
 
     def html(self, xmlns=None, **args):
         """
-        <seealso><www href="http://www.w3schools.com/tags/tag_html.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_html.asp" target="external"/>
         <python>
         self.html(xmlns="http://www.w3.org/1999/xhtml", dir=ltr, lang=no, xmllang=no)<br/>
         ...<br/>
@@ -553,9 +488,9 @@ table {
     def head(self, **args):
         u"""
         The head element can contain information about the document.¬†The browser does not display the
-        "head information" to the user. The following tags can be in the head section: ``base``,
-        ``link``, ``meta``, ``script``, ``style`` and ``title``.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_head.asp" target="external"/></seealso>
+        "head information" to the user. The following tags can be in the head section: base,
+        link, meta, script, style and title.<br/>
+        <www href="http://www.w3schools.com/tags/tag_head.asp" target="external"/>
         <python>
         self.head()<br/>
         ...<br/>
@@ -578,7 +513,7 @@ table {
     def title(self):
         """
         This tag defines the title of the document.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_title.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_title.asp" target="external"/>
         <python>
         self.title()<br/>
         ...<br/>
@@ -602,10 +537,10 @@ table {
 
     def link(self, **args):
         """
-        The ``link`` tag defines the relationship between two linked documents.<br/>
-        Note that this tag is defined by ``XierpaBuilder``. When using an inheriting class
-        from ``XierpaBuilder`` then use the ``rellink`` tag name instead.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_link.asp" target="external"/></seealso>
+        The link tag defines the relationship between two linked documents.<br/>
+        Note that this tag is defined by XierpaBuilder. When using an inheriting class
+        from XierpaBuilder then use the rellink tag name instead.<br/>
+        <www href="http://www.w3schools.com/tags/tag_link.asp" target="external"/>
         <python>
         self.head()<br/>
         ...<br/>
@@ -621,7 +556,7 @@ table {
         """
         The body element defines the documents' body. It contains all the contents
         of the document (like text, images, colors, graphics, etc.).<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_body.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_body.asp" target="external"/>
         <python>
         self.body(onload='javascript:loadpage()')<br/>
         ...<br/>
@@ -637,9 +572,9 @@ table {
 
     def h1(self, **args):
         u"""
-        The ``h1`` to ``h6`` tags define headers.
-        ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
+        The h1 to h6 tags define headers.
+        h1 defines the largest header. h6 defines the smallest header.<br/>
+        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
         <python>
         self.h1(cssClass='chapter')<br/>
         ...<br/>
@@ -654,8 +589,8 @@ table {
 
     def h1_(self, s, **args):
         u"""
-        The ``h1_`` to ``h6_`` tags define headers, combining the opening and closing tag
-        where the ``s`` attribute is the block content.
+        The h1_ to h6_ tags define headers, combining the opening and closing tag
+        where the s attribute is the block content.
         """
         self.h1(**args)
         self.text(s)
@@ -663,9 +598,9 @@ table {
 
     def h2(self, **args):
         u"""
-        The ``h1`` to ``h6`` tags define headers.
-        ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
+        The h1 to h6 tags define headers.
+        h1 defines the largest header. h6 defines the smallest header.<br/>
+        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
         <python>
         self.h2(cssClass='head')<br/>
         ...<br/>
@@ -680,8 +615,8 @@ table {
 
     def h2_(self, s, **args):
         u"""
-        The ``h1_`` to ``h6_`` tags define headers, combining the opening and closing tag
-        where the ``s`` attribute is the block content.
+        The h1_ to h6_ tags define headers, combining the opening and closing tag
+        where the s attribute is the block content.
         """
         self.h2(**args)
         self.text(s)
@@ -689,9 +624,9 @@ table {
 
     def h3(self, **args):
         u"""
-        The ``h1`` to ``h6`` tags define headers.
-        ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
+        The h1 to h6 tags define headers.
+        h1 defines the largest header. h6 defines the smallest header.<br/>
+        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
         <python>
         self.h3(cssClass='subhead')<br/>
         ...<br/>
@@ -706,8 +641,8 @@ table {
 
     def h3_(self, s, **args):
         u"""
-        The ``h1_`` to ``h6_`` tags define headers, combining the opening and closing tag
-        where the ``s`` attribute is the block content.
+        The h1_ to h6_ tags define headers, combining the opening and closing tag
+        where the s attribute is the block content.
         """
         self.h3(**args)
         self.text(s)
@@ -715,9 +650,9 @@ table {
 
     def h4(self, **args):
         u"""
-        The ``h1`` to ``h6`` tags define headers.
-        ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
+        The h1 to h6 tags define headers.
+        h1 defines the largest header. h6 defines the smallest header.<br/>
+        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
         <python>
         self.h4(cssClass='subsubhead')<br/>
         ...<br/>
@@ -733,8 +668,8 @@ table {
 
     def h4_(self, s, **args):
         u"""
-        The ``h1_`` to ``h6_`` tags define headers, combining the opening and closing tag
-        where the ``s`` attribute is the block content.
+        The h1_ to h6_ tags define headers, combining the opening and closing tag
+        where the s attribute is the block content.
         """
         self.h4(**args)
         self.text(s)
@@ -742,9 +677,9 @@ table {
 
     def h5(self, **args):
         u"""
-        The ``h1`` to ``h6`` tags define headers.
-        ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
-         <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
+        The h1 to h6 tags define headers.
+        h1 defines the largest header. h6 defines the smallest header.<br/>
+         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
         <python>
         self.h5(cssClass='caption')<br/>
         ...<br/>
@@ -758,8 +693,8 @@ table {
 
     def h5_(self, s, **args):
         u"""
-        The ``h1_`` to ``h6_`` tags define headers, combining the opening and closing tag
-        where the ``s`` attribute is the block content.
+        The h1_ to h6_ tags define headers, combining the opening and closing tag
+        where the s attribute is the block content.
         """
         self.h5(**args)
         self.text(s)
@@ -767,9 +702,9 @@ table {
 
     def h6(self, **args):
         u"""
-        The ``h1`` to ``h6`` tags define headers.
-        ``h1`` defines the largest header. ``h6`` defines the smallest header.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/></seealso>
+        The h1 to h6 tags define headers.
+        h1 defines the largest header. h6 defines the smallest header.<br/>
+        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
         <python>
         self.h6(cssClass='footnote')<br/>
         ...<br/>
@@ -783,8 +718,8 @@ table {
 
     def h6_(self, s, **args):
         u"""
-        The ``h1_`` to ``h6_`` tags define headers, combining the opening and closing tag
-        where the ``s`` attribute is the block content.
+        The h1_ to h6_ tags define headers, combining the opening and closing tag
+        where the s attribute is the block content.
         """
         self.h6(**args)
         self.text(s)
@@ -792,7 +727,7 @@ table {
 
     def figure(self, **args):
         u"""
-        The ``figure`` method (HTML5) is used for annotating illustrations, diagrams, photos, code listings, etc.
+        The figure method (HTML5) is used for annotating illustrations, diagrams, photos, code listings, etc.
         You can use the tag to associate a caption together with some embedded content, such as a graphic or video.
         You can use the tag in conjunction with the <tag>figcaption</tag> element to provide a caption for the contents
         of your <tag>figure</tag> element.
@@ -804,7 +739,7 @@ table {
 
     def figcaption(self, **args):
         u"""
-        The ``figure`` method (HTML5) is used for annotating illustrations, diagrams, photos, code listings, etc.
+        The figure method (HTML5) is used for annotating illustrations, diagrams, photos, code listings, etc.
         You can use the tag to associate a caption together with some embedded content, such as a graphic or video.
         You can use the tag in conjunction with the <tag>figcaption</tag> element to provide a caption for the contents
         of your <tag>figure</tag> element.
@@ -816,7 +751,7 @@ table {
 
     def hgroup(self, **args):
         u"""
-        The ``hgroup`` method (HTML5) defines the heading of a section or a document.
+        The hgroup method (HTML5) defines the heading of a section or a document.
         The hgroup element is used to group headers, <tag>h1</tag> to <tag>h6</tag>, where the largest
         is the main heading of the section, and the others are sub-headings.
         """
@@ -827,7 +762,7 @@ table {
 
     def article(self, **args):
         u"""
-        The ``article`` method (HTML5) defines external content.
+        The article method (HTML5) defines external content.
         The external content could be a news-article from an external provider, or a text from a web log
         (blog), or a text from a forum, or any other content from an external source.
         """
@@ -837,17 +772,25 @@ table {
         self._closeTag(u'article')
 
     def header(self, **args):
-        u"""
-        The ``article`` method (HTML5) defines an introduction to the document.
+        u"""The header method (HTML5) defines an introduction to the document.
         """
         self.write_tag(u'header', True, args)
 
     def _header(self):
         self._closeTag(u'header')
 
+    def footer(self, **args):
+        u"""The footer method (HTML5) defines a footer to the document.
+        """
+        self.write_tag(u'footer', True, args)
+
+    def _footer(self):
+        self._closeTag(u'footer')
+
     def section(self, **args):
         u"""
-        The ``section`` method (HTML5) defines defines sections in a document. Such as chapters, headers, footers, or any other sections of the document.
+        The section method (HTML5) defines defines sections in a document. Such as chapters, headers, footers, 
+        or any other sections of the document.
         """
         self.write_tag(u'section', True, args)
 
@@ -866,7 +809,7 @@ table {
 
     def blockquote(self, **args):
         u"""
-        The ``blockquote`` tag is the standard XHTML tag.
+        The blockquote tag is the standard XHTML tag.
         """
         self.write_tag(u'blockquote', True, args)
 
@@ -875,7 +818,7 @@ table {
 
     def cite(self, **args):
         u"""
-        The ``cite`` tag is the standard XHTML tag.
+        The cite tag is the standard XHTML tag.
         """
         self.write_tag(u'cite', True, args)
 
@@ -884,11 +827,8 @@ table {
 
     def p(self, **args):
         """
-        The ``p`` tag is the standard XHTML paragraph.
-        <todo>Add the other attributes to the ``p`` tag such as: id, class, title, style, dir, lang,
-        onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
-        onkeyup</todo>
-        <seealso><www href="http://www.w3schools.com/tags/tag_p.asp" target="external"/></seealso>
+        The p tag is the standard XHTML paragraph.
+        http://www.w3schools.com/tags/tag_p.asp
         """
         self.write_tag_noWhitespace(u'p', True, args)
 
@@ -897,7 +837,7 @@ table {
 
     def tt(self, **args):
         u"""
-        The ``tt`` method is showing the old teletype font.
+        The tt method is showing the old teletype font.
         """
         self.write_tag_noWhitespace(u'tt', True, args)
 
@@ -906,7 +846,7 @@ table {
 
     def code(self, **args):
         u"""
-        The ``code`` method is the standard XHTML tag, for showing computer code in fixed width font.
+        The code method is the standard XHTML tag, for showing computer code in fixed width font.
         """
         self.write_tag_noWhitespace(u'code', True, args)
 
@@ -915,12 +855,12 @@ table {
 
     def strong(self, **args):
         """
-        The ``strong`` tag is the standard XHTML strong.  Note that nowadays it is better to implement this
-        typographic behavior through ``span`` and CSS.<para/>
-        <todo>Add the other attributes to the ``b`` tag such as: id, class, title, style, dir, lang,
+        The strong tag is the standard XHTML strong.  Note that nowadays it is better to implement this
+        typographic behavior through span and CSS.<para/>
+        <todo>Add the other attributes to the b tag such as: id, class, title, style, dir, lang,
         onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
         onkeyup</todo>
-        <seealso><www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/>
         """
         self.write_tag_noWhitespace(u'strong', True, args)
 
@@ -929,7 +869,7 @@ table {
 
     def em(self, **args):
         """
-        The ``em`` tag is the standard XHTML emphasis.
+        The em tag is the standard XHTML emphasis.
         """
         self.write_tag_noWhitespace(u'em', True, args)
 
@@ -938,12 +878,12 @@ table {
 
     def b(self, **args):
         """
-        The ``b`` tag is the standard XHTML bold.  Note that nowadays it is better to implement this
-        typographic behavior through ``span`` and CSS.<para/>
-        <todo>Add the other attributes to the ``b`` tag such as: id, class, title, style, dir, lang,
+        The b tag is the standard XHTML bold.  Note that nowadays it is better to implement this
+        typographic behavior through span and CSS.<para/>
+        <todo>Add the other attributes to the b tag such as: id, class, title, style, dir, lang,
         onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
         onkeyup</todo>
-        <seealso><www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/>
         """
         self.write_tag_noWhitespace(u'b', True, args)
 
@@ -952,12 +892,12 @@ table {
 
     def u(self, **args):
         """
-        The ``u`` tag is the standard XHTML underline.  Note that nowadays it is better to implement
-        this typographic behavior through ``span`` and CSS.<para/>
-        <todo>Add the other attributes to the ``u`` tag such as: id, class, title, style, dir, lang,
+        The u tag is the standard XHTML underline.  Note that nowadays it is better to implement
+        this typographic behavior through span and CSS.<para/>
+        <todo>Add the other attributes to the u tag such as: id, class, title, style, dir, lang,
         onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
         onkeyup</todo>
-        <seealso><www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/>
         """
         self.write_tag_noWhitespace(u'u', True, args)
 
@@ -966,12 +906,12 @@ table {
 
     def i(self, **args):
         """
-        The ``i`` tag is the standard XHTML italic. Note that nowadays it is better to implement
-        this typographic behavior through ``span`` and CSS.<para/>
-        <todo>Add the other attributes to the ``p`` tag such as: id, class, title, style, dir, lang,
+        The i tag is the standard XHTML italic. Note that nowadays it is better to implement
+        this typographic behavior through span and CSS.<para/>
+        <todo>Add the other attributes to the p tag such as: id, class, title, style, dir, lang,
         onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
         onkeyup</todo>
-        <seealso><www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/>
         """
         self.write_tag_noWhitespace(u'i', True, args)
 
@@ -980,12 +920,12 @@ table {
 
     def s(self, **args):
         """
-        The ``s`` tag is the standard XHTML strike. Note that nowadays it is better to implement
-        this typographic behavior through ``span`` and CSS.<para/>
-        <todo>Add the other attributes to the ``p`` tag such as: id, class, title, style, dir, lang,
+        The s tag is the standard XHTML strike. Note that nowadays it is better to implement
+        this typographic behavior through span and CSS.<para/>
+        <todo>Add the other attributes to the p tag such as: id, class, title, style, dir, lang,
         onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
         onkeyup</todo>
-        <seealso><www href="http://www.w3schools.com/tags/tag_strike.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_strike.asp" target="external"/>
         """
         self.write_tag_noWhitespace(u's', True, args)
 
@@ -999,12 +939,12 @@ table {
     def q(self, **args):
         """
 
-        The ``q`` tag defines the start of a short quotation. Note that nowadays it is better to implement
-        this typographic behavior through ``span`` and CSS.<para/>
-        <todo>Add the other attributes to the ``p`` tag such as: id, class, title, style, dir, lang,
+        The q tag defines the start of a short quotation. Note that nowadays it is better to implement
+        this typographic behavior through span and CSS.<para/>
+        <todo>Add the other attributes to the p tag such as: id, class, title, style, dir, lang,
         onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
         onkeyup</todo>
-        <seealso><www href="http://www.w3schools.com/tags/tag_q.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_q.asp" target="external"/>
 
         """
         self.write_tag_noWhitespace(u'q', True, args)
@@ -1014,7 +954,7 @@ table {
 
     def sup(self, **args):
         """
-        The ``sup`` tag implements the standard XTHML tag for superior (superscript) text.
+        The sup tag implements the standard XTHML tag for superior (superscript) text.
         <python>
         self.text(u'Normal text')<br/>
         self.sup()<br/>
@@ -1030,7 +970,7 @@ table {
 
     def sub(self, **args):
         """
-        The ``sub`` tag implements the standard XTHML tag for inferior (subscript) text.
+        The sub tag implements the standard XTHML tag for inferior (subscript) text.
         <python>
         self.text(u'Normal text')<br/>
         self.sub()<br/>
@@ -1046,10 +986,10 @@ table {
 
     def br(self, count=1, **args):
         """
-        The ``br`` tag inserts a single line break.<br/>
-        The count attribute is not standard XHTML. It indicates the number of ``br`` to repeat.<br/>
-        The ``cssClass`` can define the amount of leading in ``px`` of the break.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_br.asp" target="external"/></seealso>
+        The br tag inserts a single line break.<br/>
+        The count attribute is not standard XHTML. It indicates the number of br to repeat.<br/>
+        The cssClass can define the amount of leading in px of the break.<br/>
+        <www href="http://www.w3schools.com/tags/tag_br.asp" target="external"/>
         <python>
         self.br()<br/>
         </python>
@@ -1059,15 +999,15 @@ table {
 
     def nbsp(self, count=1):
         """
-        The ``nbsp`` generates the ``count`` (default is 1) amound of non-breaking-spaces.
+        The nbsp generates the count (default is 1) amound of non-breaking-spaces.
         """
         self.write('&nbsp;'*count)
 
     def table(self, **args):
         u"""
-        The ``table`` tag defines a table.¬†Inside a ``table`` tag you can put table headers,
+        The table tag defines a table.¬†Inside a table tag you can put table headers,
         table rows, table cells, and other tables.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_table.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_table.asp" target="external"/>
         <python>
         self.table()<br/>
         ...<br/>
@@ -1122,7 +1062,7 @@ table {
     def tr(self, **args):
         u"""
         Defines a row in a table.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_tr.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_tr.asp" target="external"/>
         <python>
         self.tr()<br/>
         ...<br/>
@@ -1136,9 +1076,9 @@ table {
 
     def td(self, **args):
         """
-        Defines a cell in a table. If the ``rolspan`` or ``colspan`` are not defined or if their value is ``1``
+        Defines a cell in a table. If the rolspan or colspan are not defined or if their value is 1
         then the output is ignored.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_td.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_td.asp" target="external"/>
         <python>
         self.td()<br/>
         ...<br/>
@@ -1153,10 +1093,10 @@ table {
 
     def th(self, **args):
         """
-        Defines a table header cell in a table. The text within the th element usually renders in bold. If the ``rolspan
-        `` or ``colspan`` are not defined or if their value is ``1`` then the output is ignored.
+        Defines a table header cell in a table. The text within the th element usually renders in bold. If the rolspan
+         or colspan are not defined or if their value is 1 then the output is ignored.
         <br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_th.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_th.asp" target="external"/>
         <python>
         self.th()<br/>
         ...<br/>
@@ -1171,9 +1111,9 @@ table {
     def style(self, type='text/css', **args):
         """
         Defines a style in a document. The style element goes in the head section. If you want to include a style sheet in
-        your page, you should define the style sheet externally, and link to it using XHTML ``link`` (note that
+        your page, you should define the style sheet externally, and link to it using XHTML link (note that
         this tag is redefined in XierpaBuilder.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_style.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_style.asp" target="external"/>
         <python>
         self.style()<br/>
         ...<br/>
@@ -1193,9 +1133,9 @@ table {
 
     def div(self, **args):
         """
-        The ``div`` tag defines a division/section in a document.<br/>
+        The div tag defines a division/section in a document.<br/>
         <note>Browsers usually place a line break before and after the div element.</note>
-        <seealso><www href="http://www.w3schools.com/tags/tag_div.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_div.asp" target="external"/>
         <python>
         self.div()<br/>
         ...<br/>
@@ -1296,8 +1236,8 @@ table {
 
     def frameset(self, **args):
         """
-        The ``frameset`` tag creates an frame set that contains frames with other documents.
-        <seealso><www href="http://www.w3schools.com/tags/tag_frameset.asp"/></seealso>
+        The frameset tag creates an frame set that contains frames with other documents.
+        <www href="http://www.w3schools.com/tags/tag_frameset.asp"/>
         """
         self.write_tag(u'frameset', True, args)
 
@@ -1307,9 +1247,9 @@ table {
 
     def frame(self, **args):
         """
-        The ``frame`` tag defines one particular window (frame) within a frameset.
+        The frame tag defines one particular window (frame) within a frameset.
         Each frame in a frameset can have different attributes, such as border, scrolling, the ability to resize, etc.
-        <seealso><www href="http://www.w3schools.com/tags/tag_frame.asp"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_frame.asp"/>
         """
         self.write_tag(u'frame', True, args)
         self._debugclass(u'frame', self.getClassName(args, self.FRAME_ATTRIBUTES))
@@ -1321,13 +1261,13 @@ table {
 
     def noframes(self, **args):
         """
-        The ``noframes`` tag is used for browsers that do not handle frames.<br/>
+        The noframes tag is used for browsers that do not handle frames.<br/>
         The noframes element can contain all the elements that you can find inside the body element of a normal HTML
         page.<br/>
         The noframes element is most used to link to a non-frameset version of the web site or to display a message to
         users that frames are required.<br/>
         The noframes element goes inside the frameset element.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_noframes.asp"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_noframes.asp"/>
         """
         self.write_tag(u'noframes', False, args)
         self._debugclass(u'noframes', self.getClassName(args, self.NOFRAMES_ATTRIBUTES))
@@ -1337,8 +1277,8 @@ table {
 
     def iframe(self, src, **args):
         """
-        The ``iframe`` tag creates an inline frame that contains another document.
-        <seealso><www href="http://www.w3schools.com/tags/tag_iframe.asp"/></seealso>
+        The iframe tag creates an inline frame that contains another document.
+        <www href="http://www.w3schools.com/tags/tag_iframe.asp"/>
         """
         r = self.result
         r.write(u'<iframe src="%s"' % src)
@@ -1356,10 +1296,10 @@ table {
 
     def script(self, charset='UTF-8', type='text/javascript', **args):
         """
-        The ``br`` tag inserts a single line break.<br/>
-        Defines a script, such as a JavaScript. Note that if @src is used, then no ``self._script()`` must be used.
-        The count attribute is not standard XHTML. It indicates the number of ``br`` to repeat.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_script.asp" target="external"/></seealso>
+        The br tag inserts a single line break.<br/>
+        Defines a script, such as a JavaScript. Note that if @src is used, then no self._script() must be used.
+        The count attribute is not standard XHTML. It indicates the number of br to repeat.<br/>
+        <www href="http://www.w3schools.com/tags/tag_script.asp" target="external"/>
         <python>
         self.script()<br/>
         ...<br/>
@@ -1398,8 +1338,8 @@ table {
 
     def ul(self, **args):
         """
-        The ``ul`` tag defines an unordered list.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_ul.asp" target="external"/></seealso>
+        The ul tag defines an unordered list.<br/>
+        <www href="http://www.w3schools.com/tags/tag_ul.asp" target="external"/>
         <python>
         self.ul()<br/>
         ...<br/>
@@ -1413,8 +1353,8 @@ table {
 
     def ol(self, **args):
         """
-        The ``ol`` tag defines the start of a definition list.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_ol.asp" target="external"/></seealso>
+        The ol tag defines the start of a definition list.<br/>
+        <www href="http://www.w3schools.com/tags/tag_ol.asp" target="external"/>
         <python>
         self.ol()<br/>
         ...<br/>
@@ -1430,9 +1370,9 @@ table {
 
     def li(self, **args):
         """
-        The ``li`` tag defines the start of a list item. The ``li`` tag is used in both ordered
-        (``ol``) and unordered lists (``ul``).
-        <seealso><www href="http://www.w3schools.com/tags/tag_li.asp" target="external"/></seealso>
+        The li tag defines the start of a list item. The li tag is used in both ordered
+        (ol) and unordered lists (ul).
+        <www href="http://www.w3schools.com/tags/tag_li.asp" target="external"/>
         <python>
         self.li()<br/>
         ...<br/>
@@ -1446,8 +1386,8 @@ table {
 
     def dl(self, **args):
         """
-        The ``dl`` tag defines an unordered list.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_dl.asp" target="external"/></seealso>
+        The dl tag defines an unordered list.<br/>
+        <www href="http://www.w3schools.com/tags/tag_dl.asp" target="external"/>
         <python>
         self.dl()<br/>
         ...<br/>
@@ -1461,9 +1401,9 @@ table {
 
     def dt(self, **args):
         """
-        The ``dt`` tag defines the start of a definition list term.
-        The ``dt`` tag is used only in definition lists (``dl``).
-        <seealso><www href="http://www.w3schools.com/tags/tag_dt.asp" target="external"/></seealso>
+        The dt tag defines the start of a definition list term.
+        The dt tag is used only in definition lists (dl).
+        <www href="http://www.w3schools.com/tags/tag_dt.asp" target="external"/>
         <python>
         self.dt()<br/>
         ...<br/>
@@ -1477,9 +1417,9 @@ table {
 
     def dd(self, **args):
         """
-        The ``dd`` tag defines the start of a definition list term.
-        The ``dd`` tag is used only in definition lists (``dl``).
-        <seealso><www href="http://www.w3schools.com/tags/tag_dd.asp" target="external"/></seealso>
+        The dd tag defines the start of a definition list term.
+        The dd tag is used only in definition lists (dl).
+        <www href="http://www.w3schools.com/tags/tag_dd.asp" target="external"/>
         <python>
         self.dd()<br/>
         ...<br/>
@@ -1497,14 +1437,14 @@ table {
     #
 
     def form(self, cssClass=None, name=None, enctype="multipart/form-data", action=None, role=None, method=None,
-             onsubmit=None, onreset=None, target=None, style=None, id=None):
+             onsubmit=None, onreset=None, target=None, style=None, cssId=None):
         u"""
         The form element creates a form for user input. A form can contain elements such as textfields, checkboxes and
         radio-buttons. Forms are used to pass user data to a specified URL.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_form.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_form.asp" target="external"/>
 
-        If an upload tag is used in the form, then the ``enctype`` attribute should be set to ``
-        enctype="multipart/form-data"``
+        If an upload tag is used in the form, then the enctype attribute should be set to 
+        enctype="multipart/form-data"
         <python>
         self.form(action=e['path'])<br/>
         ...<br/>
@@ -1527,8 +1467,8 @@ table {
         self.write(u'<form method="%s" action="%s"' % (method, action))
         if cssClass is not None:
             self.write(u' class="%s"' % cssClass)
-        if id is not None:
-            self.write(u' id="%s"' % id)
+        if cssId is not None:
+            self.write(u' id="%s"' % cssId)
         if role is not None:
             self.write(u' role="%s"' % role)
         if name is not None:
@@ -1548,10 +1488,10 @@ table {
 
     def input(self, **args):
         """
-        The ``input`` tag defines the start of an input field where the user can enter data.<br/>
-        The attribute ``type`` can be one of ``button | checkbox | file | hidden | image | password | radio |
-        reset | submit | text``.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_input.asp" target="external"/></seealso>
+        The input tag defines the start of an input field where the user can enter data.<br/>
+        The attribute type can be one of button | checkbox | file | hidden | image | password | radio |
+        reset | submit | text.<br/>
+        <www href="http://www.w3schools.com/tags/tag_input.asp" target="external"/>
         <python>
         self.input(type='checkbox', name='mycheckbox')<br/>
         </python>
@@ -1560,11 +1500,11 @@ table {
 
     def label(self, **args):
         """
-        The ``label`` tag associates a block of plain text with a form input, usually a check or radio box.
+        The label tag associates a block of plain text with a form input, usually a check or radio box.
         This way the user can click anywhere in the label text to toggle the input on or off.
-        It can be implemented two ways: ``<label><input…> Text</label>``, or ``<label for='id_of_input'>
-        Text</label>…<input id='id_of_input' …>``.
-        <seealso><www href="http://www.w3schools.com/tags/tag_label.asp" target="external"/></seealso>
+        It can be implemented two ways: <label><input…> Text</label>, or <label for='id_of_input'>
+        Text</label>…<input id='id_of_input' …>.
+        <www href="http://www.w3schools.com/tags/tag_label.asp" target="external"/>
         """
         self.write_tag(u'label', True, args)
 
@@ -1574,7 +1514,7 @@ table {
     def select(self, **args):
         """
         The select element creates a drop-down list.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_select.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_select.asp" target="external"/>
         <python>
         self.select()<br/>
         ...<br/>
@@ -1588,8 +1528,8 @@ table {
 
     def option(self, **args):
         """
-        The ``option`` tag defines an option in the drop-down list.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_option.asp" target="external"/></seealso>
+        The option tag defines an option in the drop-down list.<br/>
+        <www href="http://www.w3schools.com/tags/tag_option.asp" target="external"/>
         <python>
         self.option()<br/>
         ...<br/>
@@ -1603,8 +1543,8 @@ table {
 
     def optgroup(self, **args):
         """
-        The ``optgroup`` tag defines an option group in the drop-down list.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_optgroup.asp" target="external"/></seealso>
+        The optgroup tag defines an option group in the drop-down list.<br/>
+        <www href="http://www.w3schools.com/tags/tag_optgroup.asp" target="external"/>
         <python>
         self.optgroup()<br/>
         ...<br/>
@@ -1618,9 +1558,9 @@ table {
 
     def button(self, **args):
         """
-        ``button`` is the standard XHTML control. It is much like ``input type="button"`` but more
+        button is the standard XHTML control. It is much like input type="button" but more
         versatile. It has open and close tags, and can take almost any non-form HTML structure inside.
-        <seealso><www href="http://xhtml.com/en/xhtml/reference/button/" target="external"/></seealso>
+        <www href="http://xhtml.com/en/xhtml/reference/button/" target="external"/>
         """
         self.write_tag(u'button', True, args)
 
@@ -1631,7 +1571,7 @@ table {
         """
         Defines a text area (a multi-line text input control). A user can write text in the text area. In a text
         area you can write an unlimited number of characters. The default font in the text area is fixed pitch.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_textarea.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_textarea.asp" target="external"/>
         <python>
         self.textarea()<br/>
         ...<br/>
@@ -1645,9 +1585,9 @@ table {
 
     def meta(self, **args):
         """
-        The ``meta`` element provides meta-information about your page, such as descriptions and keywords for
+        The meta element provides meta-information about your page, such as descriptions and keywords for
         search engines and refresh rates.<br/>
-        <seealso><www href="http://www.w3schools.com/tags/tag_meta.asp" target="external"/></seealso>
+        <www href="http://www.w3schools.com/tags/tag_meta.asp" target="external"/>
         <python>
         self.meta()<br/>
         ...<br/>
@@ -1657,7 +1597,7 @@ table {
         self.write_tag(u'meta', False, args)
 
     def object(self, **args):
-        u"""The ``object`` defines an embedded object. Use this element to add
+        u"""The object defines an embedded object. Use this element to add
         multimedia to your XHTML page. This element allows you to specify the data and
         parameters for objects inserted into HTML documents, and the code that can be used to
         display/manipulate that data."""

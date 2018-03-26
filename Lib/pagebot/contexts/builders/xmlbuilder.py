@@ -51,7 +51,7 @@ class XmlBuilder(BaseBuilder):
 
     def tabs(self):
         """"Output tabs to the current level and add newlines, depending on the setting of @self._newline@
-        (string with newlines) and ``self._tabLevel`` (number of indents)."""
+        (string with newlines) and self._tabLevel (number of indents)."""
         if self._verbose:
             self.write(self._newLine + (self._tabIndent * self._tabLevel))
 

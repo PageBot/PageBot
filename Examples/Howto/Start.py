@@ -19,18 +19,7 @@
 from __future__ import division # Make integer division result in float.
 from random import random
 
-USE_DRAWBOT = False
-USE_FLAT = not USE_DRAWBOT
-
-#import pagebot # Import to know the path of non-Python resources.
-from pagebot.contexts.platform import getContext
-from pagebot.contexts.flatcontext import FlatContext
-context = getContext()
-if USE_FLAT:
-    EXPORT_PATH = '_export/Start_Flat'
-    context = FlatContext()
-else:
-    EXPORT_PATH = '_export/Start'
+EXPORT_PATH = '_export/Start'
 
 # Export in _export folder that does not commit in Git.
 # Force to export to a few file formats:
@@ -47,7 +36,7 @@ from pagebot.conditions import *
 W, H = 500, 400
 
 # Create the publication/document that holds the pages.
-doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
+doc = Document(w=W, h=H, originTop=False, autoPages=1)
 doc.view.padding = 0 # Don't show cropmarks in this example.
 doc.view.showPagePadding = True
 

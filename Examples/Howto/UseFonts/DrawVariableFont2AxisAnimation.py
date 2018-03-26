@@ -23,7 +23,6 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.platform import TEST_FONTS_PATH
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
-from pagebot import getFontPath
 
 c = getContext()
 
@@ -135,35 +134,35 @@ class FontIcon(object):
                                           textFill=0,
                                           fontSize=h*2/3))
         tw, th = bs.textSize()
-        text(bs, (w/2-tw/2, h/2-th/3.2))
+        c.text(bs, (w/2-tw/2, h/2-th/3.2))
 
         if self.title:
-            bs = context.newString(self.title,
+            bs = c.newString(self.title,
                                    style=dict(font=self.labelFont.path,
                                               textFill=0,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
-            text(bs, (w/2-tw/2, self.ih+th/2))
+            c.text(bs, (w/2-tw/2, self.ih+th/2))
 
         y = -self.LABEL_RLEADING*labelSize
         if self.name:
-            bs = context.newString(self.name,
+            bs = c.newString(self.name,
                                    style=dict(font=self.labelFont.path,
                                               textFill=0,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
-            text(bs, (w/2-tw/2, y))
+            c.text(bs, (w/2-tw/2, y))
             y -= self.LABEL_RLEADING*labelSize
         if self.label:
-            bs = context.newString(self.label,
+            bs = c.newString(self.label,
                                    style=dict(font=self.labelFont.path,
                                               textFill=0,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
-            text(bs, (w/2-tw/2, y))
+            c.text(bs, (w/2-tw/2, y))
         c.restore()
 
 class KeyFrame(object):
@@ -175,12 +174,12 @@ class KeyFrame(object):
             self.drawBacktround = drawBackground
 
     def drawBackground(self):
-        fill(1)
-        rect(0, 0, W, H)
+        c.fill(1)
+        c.rect(0, 0, W, H)
 
     def draw(self):
         for n in range(self.steps):
-            newPage(W, H)
+            c.newPage(W, H)
             self.drawBackground()
             for o in self.objects:
                 offsetX = 0
@@ -255,7 +254,7 @@ def drawAnimation():
         drawBackground=drawBackground
     ).draw()
 
-    saveImage('_export/varFont2Axes.gif')
+    c.saveImage('_export/varFont2Axes.gif')
 
 drawAnimation()
 

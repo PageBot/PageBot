@@ -15,8 +15,6 @@
 #
 #     Needs filling in with content.
 #
-from pagebot.contexts.platform import getContext
-
 from random import random # Used for random color palet.
 
 # Create random title and names
@@ -56,13 +54,11 @@ fontItalic = family.findFont('Italic')
 def makeDocument():
     u"""Demo random book cover generator."""
 
-    context = getContext()
-
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.
     # Initially make all pages default with template
-    doc = Document(w=W, h=H, title='A Demo Book Cover', autoPages=1, context=context,
-        originTop=False) # One page, just the cover.
+    # One page, just the cover.
+    doc = Document(w=W, h=H, title='A Demo Book Cover', autoPages=1, originTop=False) 
 
     page = doc[1] # Get the first/single page of the document.
     page.name = 'Cover'
@@ -80,6 +76,8 @@ def makeDocument():
     view.showPagePadding = False
     view.showPageNameInfo = True
     view.showTextOverflowMarker = False
+    
+    context = view.context
     
     C1 = (random()*0.2, random()*0.2, random()*0.9)
 
