@@ -18,7 +18,6 @@
 #
 from __future__ import division # Make integer division result in float.
 
-from pagebot.contexts.platform import getContext
 from pagebot.contexts.platform import getResourcesPath
 from pagebot.fonttoolbox.objects.family import getFamily
 from pagebot.style import TOP, BOTTOM, A4
@@ -27,8 +26,6 @@ from pagebot.elements import *
 from pagebot.document import Document
 # Document is the main instance holding all information about the
 # document together (pages, styles, etc.)
-
-context = getContext()
 
 W, H = A4
 
@@ -53,12 +50,15 @@ EXPORT_PATH = '_export/UseImageElements.pdf'
 def makeDocument():
 
     gridX = ((CW, GUTTER), (CW, GUTTER), (CW, None))
-    doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1, context=context, gridX=gridX)
+    doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1, gridX=gridX)
 
     view = doc.getView()
     view.padding = 0 # Avoid showing of crop marks, etc.
     view.showElementOrigin = False
     view.showGrid = True
+
+    # The current view holds the context
+    context = view.context
 
     # Get list of pages with equal y, then equal x.
     #page = doc[1[0] # Get the single page from te document.

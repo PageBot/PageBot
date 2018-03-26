@@ -46,8 +46,8 @@ class Element(object):
     isView = False
 
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH,
-            t=0, parent=None, context=None, name=None, cssClass=None, title=None, description=None, language=None,
-            style=None, conditions=None, info=None, framePath=None,
+            t=0, parent=None, context=None, name=None, cssClass=None, cssId=None, title=None, description=None, 
+            language=None, style=None, conditions=None, info=None, framePath=None,
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None,
             isLeftPage=None, isRightPage=None, bleed=None,
             padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
@@ -105,7 +105,8 @@ class Element(object):
         """
         assert point is None or isinstance(point, (tuple, list))
 
-        # Set the property for elements that need their own context. If None the property will query parent and root.
+        # Optionally set the property for elements that need their own context. 
+        # If None the property will query parent --> root document --> view.
         self.context = context
 
         # Initilialize self._elements and self._eIds
@@ -150,14 +151,21 @@ class Element(object):
         if margin is not None:
             self.margin = margin
 
-        self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
+        # Class and #Id attributes for HtmlContext usage.
         self.cssClass = cssClass # Optional CSS class name. Ignored if None, not to overwrite cssClass of parents.
+        self.cssId = cssId # Optional id name. Ignored if None.
+
+        # Generic naming and title. 
+        self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
         self.title = title or name # Optional to make difference between title name, style property
         self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value.
+        
+        # Element tree
         self._parent = None # Preset, so it exists for checking when appending parent.
         if parent is not None:
             # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
             self.parent = parent # Set referecnes in both directions. Remove any previous parent links
+        
         # Conditional placement stuff
         if not conditions is None and not isinstance(conditions, (list, tuple)): # Allow singles
             conditions = [conditions]
@@ -456,7 +464,8 @@ class Element(object):
             t=self.t, # Copy type frame.
             parent=parent, # Allow to keep reference to current parent context and style.
             context=self._context, # Copy local context, None most cases, where reference to parent->doc context is required.
-            name=self.name, cssClass=self.cssClass, title=self.title, description=self.description, language=self.language,
+            name=self.name, cssClass=self.cssClass, #cssId is not copied.
+            title=self.title, description=self.description, language=self.language,
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
             info=copy.deepcopy(self.info), # Info may be modified by the element of ascestors.
@@ -813,13 +822,14 @@ class Element(object):
 
     def _get_context(self):
         u"""Answer the context of this element. In general the self._context will be None, to allow
-        searching the parent-->doc tree. But there may be exceptions where elements+children need their own."""
+        searching the parents --> document --> view. But there may be exceptions where elements+children 
+        need their own."""
         if self._context is not None:
             return self._context
         # Context not defined for this element, try parent.
         if self.parent is not None:
             return self.parent.context
-        # No context defined and no parent, we only can answer the default context here.
+        # No context defined and no parent, we cannot do any better now than answering the default context here.
         return getContext()
     def _set_context(self, context):
         self._context = context
@@ -3280,7 +3290,7 @@ class Element(object):
 
     def buildChildElements(self, view, origin):
         u"""Draw child elements, dispatching depending on the implementation of context specific build elements.
-        If not specific builder_<context.b.PB_ID> is implemented, call default. e.build(view, origin)"""
+        If not specific builder_<context.b.PB_ID> is implemented, call default e.build(view, origin)"""
         hook = 'build_' + self.context.b.PB_ID
         for e in self.elements:
             if not e.show:
@@ -3299,7 +3309,9 @@ class Element(object):
         b = view.context.b # Get the build of the current context.
         if self.info.cssPath is not None:
             b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
-        elif self.cssClass: # For now, we only can generate CSS if the element has a class name defined.
+        elif self.cssId: # If the #id is defined, then use that as CSS reference.
+            b.css('#'+self.cssId, self.style)
+        elif self.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
             b.css('.'+self.cssClass, self.style)
         else:
             b.css(message='No CSS for element %s\n' % self.__class__.__name__)
@@ -3327,7 +3339,7 @@ class Element(object):
         if info.htmlPath is not None:
             b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.div(class_=self.cssClass, style='red:#FF0000;') # No default class, ignore if not defined.
+            b.div(cssClass=self.cssClass, cssId=self.cssId, style='red:#FF0000;') # No default class, ignore if not defined.
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(self, view, p)

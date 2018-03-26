@@ -15,7 +15,6 @@
 #     document.py
 #
 import copy
-from pagebot.contexts.platform import getContext # Default context for this document if undefined.
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
@@ -51,21 +50,16 @@ class Document(object):
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     
     DEFAULT_VIEWID = defaultViewClass.viewId
-    DEFAULT_CONTEXT = getContext()
 
-    def __init__(self, styles=None, theme=None, viewId=None, name=None, 
-            cssClass=None, title=None, pages=None, autoPages=1, template=None, templates=None, 
-            originTop=True, startPage=1, w=None, h=None, padding=None, info=None, lib=None,
-            context=None, exportPaths=None, **kwargs):
-        u"""Contains a set of Page elements and other elements used for display in thumbnail mode. Allows to compose the pages
-        without the need to send them directly to the output for "asynchronic" page filling."""
-        # Set the context. Initialize from default if not defined.
-        self.context = context or self.DEFAULT_CONTEXT
+    def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None, autoPages=1, 
+            template=None, templates=None, originTop=True, startPage=1, w=None, h=None, padding=None, 
+            info=None, lib=None, context=None, exportPaths=None, **kwargs):
+        u"""Contains a set of Page elements and other elements used for display in thumbnail mode. 
+        Allows to compose the pages without the need to send them directly to the output for 
+        "asynchronic" page filling."""
 
         # Apply the theme if defined or create default styles, to make sure they are there.
         self.rootStyle = self.makeRootStyle(**kwargs)
-        # Optional CSS class name, e.g. to group elements together in HTML/CSS export. Ignored if None.
-        self.cssClass = cssClass
         self.initializeStyles(theme, styles) # May or may not overwrite the root style.
 
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
@@ -85,7 +79,11 @@ class Document(object):
         # is done through this view. The defaultViewClass is set either to an in stance of PageView.
         self.views = {} # Key is the viewId. Value is a view instance.
         # Set the self.view to an instance of viewId or defaultViewClass.viewId and store in self.views.
-        self.newView(viewId or self.DEFAULT_VIEWID)
+        # Add the optional context, if defined. Otherwise use the result of default getContext.
+        # A context is an instance of e.g. one of DrawBotContext, FlatContext or HtmlContext, which then
+        # hold the instance of a builder (respectively DrawBot, Flat and one of the HtmlBuilders, such
+        # as GitBuilder or MampBuilder)
+        self.newView(viewId or self.DEFAULT_VIEWID, context=context)
 
         # Template is name or instance default template.
         self.initializeTemplates(templates, template) 
@@ -147,6 +145,11 @@ class Document(object):
         """
         return self
     doc = property(_get_doc)
+
+    def _get_context(self):
+        u"""Answer the context of the current view, to allow searching the parents --> document --> view. """
+        return self.view.context
+    context = property(_get_context)
 
     # Document[12] answers a list of pages where page.y == 12
     # This behaviour is different from regular elements, who want the page.eId as key.
@@ -951,22 +954,28 @@ class Document(object):
             return self.views[viewId]
         return self.view
 
-    def newView(self, viewId=None, name=None):
+    def newView(self, viewId=None, name=None, context=None):
         u"""Create a new view instance and set self.view default view, that will be used for 
         checking on view parameters, before any element rendering is done, such as layout conditions 
         and creating the right type of strings. 
+        If context is not defined, then use the result of getView()
 
         >>> from pagebot.elements.views import viewClasses
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2)
         >>> sorted(viewClasses.keys())
-        ['Git', 'Mamp', 'Page']
+        ['Git', 'Mamp', 'Page', 'Site']
         >>> view = doc.newView('Page', 'myView')
+        >>> str(view.context) in ('<DrawBotContext>', 'FlatContext')
+        True
         >>> view.w, view.h
         (300, 400)
+        >>> view = doc.newView('Site')
+        >>> view.context
+        <HtmlContext>
         """
         if viewId is None:
             viewId = self.DEFAULT_VIEWID
-        view = self.view = self.views[viewId] = viewClasses[viewId](name=name or viewId, w=self.w, h=self.h)
+        view = self.view = self.views[viewId] = viewClasses[viewId](name=name or viewId, w=self.w, h=self.h, context=context)
         view.setParent(self) # Just set parent, without all functionality of self.addElement()
         return view
     
@@ -975,24 +984,29 @@ class Document(object):
     def build(self, path=None, pageSelection=None, multiPage=True):
         u"""Build the document as website, using the document.view for export.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> context = DrawBotContext()
-        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60), context=context)
-        >>> view = doc.newView('Page')
-        >>> doc.view
+        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
+        >>> doc.view # PageView is default.
         <PageView:Page (0, 0)>
-        >>> doc.build()        
-        >>> from pagebot.contexts.htmlcontext import HtmlContext
-        >>> context = HtmlContext()
-        >>> doc.context = context # Change context of this document.
-        >>> view = doc.newView('Mamp')
+        >>> doc.build('_export/TestBuildDoc.pdf')        
+        >>> view = doc.newView('Site')
         >>> doc.view
-        <MampView:Mamp (0, 0)>
-        >>> #doc.build()
+        <SiteView:Site (0, 0)>
         """
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 
     def export(self, path=None, multiPage=True):
+        u"""Export the document as website, using the document.view for export.
+
+        >>> from pagebot.elements import newRect
+        >>> from pagebot.conditions import *
+        >>> w = h = 400
+        >>> doc = Document(name='TestDoc', w=w, h=h, autoPages=1, padding=40)
+        >>> r = newRect(fill=(1,0,0), parent=doc[1], conditions=[Fit()])
+        >>> score = doc.solve()
+        >>> doc.view # PageView is default.
+        <PageView:Page (0, 0)>
+        >>> doc.export('_export/TestExportDoc.pdf')        
+        """
         self.build(path=path, multiPage=multiPage)
 
 if __name__ == "__main__":

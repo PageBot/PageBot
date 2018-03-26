@@ -12,7 +12,10 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     mampview.py
+#     siteview.py
+#
+#     The SiteView exports the site into a local docs/ folders. This way the
+#     the generated site can be copied by MampView or GitView to their own paths.
 #
 import os
 import shutil
@@ -20,17 +23,11 @@ import shutil
 from pagebot.elements.views.htmlview import HtmlView
 from pagebot.style import ORIGIN
 
-class MampView(HtmlView):
+class SiteView(HtmlView):
     
-    viewId = 'Mamp'
+    viewId = 'Site'
 
-    # self.build exports in MAMP folder that does not commit in Git. 
-    MAMP_PATH = '/Applications/MAMP/htdocs/'
-    # If the MAMP server application not installed, a browser is opened on the MAMP website to download it.
-    # There is a free demo version can be installed.
-    MAMP_SHOP_URL = 'https://www.mamp.info/en/' 
-
-    SITE_PATH = 'docs/'
+    SITE_PATH = 'docs/' # Will copy and publish by Git
     DEFAULT_HTML_FILE = 'index.html'
     DEFAULT_HTML_PATH = SITE_PATH + DEFAULT_HTML_FILE
     DEFAULT_CSS_PATH = SITE_PATH + 'css/style.css'
@@ -40,26 +37,31 @@ class MampView(HtmlView):
     def build(self, path=None, pageSelection=None, multiPage=True):
         """
 
-        >>> from pagebot.contexts.htmlcontext import HtmlContext
         >>> from pagebot.document import Document
-        >>> context = HtmlContext()
-        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60), context=context)
-        >>> view = doc.newView('Mamp')
-        >>> view.doExport = False # View flag to avoid exporting to files.
+        >>> doc = Document(name='TestDoc', viewId='Site', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
+        >>> view = doc.view
         >>> view
-        <MampView:Mamp (0, 0)>
-        >>> doc.build('/tmp/TextMampView')
+        <SiteView:Site (0, 0)>
+        >>> page = doc[1]
+        >>> page.name = 'index' # Home page is index.
+        >>> page.cssClass ='MyGeneratedPage'
+        >>> doc.build('/tmp/PageBot/SiteView_docTest')
         >>> 'WebBuilder' in str(view.b)
         True
-        >>> len(view.b._htmlOut) > 0 # Check that there is generated HTML output.
+        >>> len(view.b._htmlOut) > 0 # Check that there is actual generated HTML output (_htmlOut is a list).
+        True
+        >>> 'class="MyGeneratedPage"' in ''.join(view.b._htmlOut) # Page div contains this class attribute.
         True
         """
         doc = self.doc 
 
-        sitePath = self.SITE_PATH
-        if not sitePath.endswith('/'):
-            sitePath += '/'
-            
+        if path is None:
+            path = self.SITE_PATH
+        if not path.endswith('/'):
+            path += '/'
+        if not os.path.exists(path):
+            os.makedirs(path)
+
         b = self.b # Get builder from self.doc.context of this view.
         # SOLVE THIS LATER
         #self.build_css(self) # Make doc build the main/overall CSS, based on all page styles.
@@ -76,16 +78,9 @@ class MampView(HtmlView):
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
                 if self.doExport: # View flag to avoid writing, in case of testing.
-                    b.writeHtml(sitePath + fileName)
+                    b.writeHtml(path + fileName)
         # Write all collected CSS into one file
         #b.writeCss(self.DEFAULT_CSS_PATH)
-
-        if self.doExport: # View flag to avoid writing, in case of testing.
-            mampPath = self.MAMP_PATH + (path or '')
-            if os.path.exists(mampPath):
-                shutil.rmtree(mampPath)
-            print('### Copy', self.SITE_PATH, mampPath)
-            #shutil.copytree(self.SITE_PATH, mampPath)
 
     def getUrl(self, name):
         u"""Answer the local URL for Mamp Pro to find the copied website."""

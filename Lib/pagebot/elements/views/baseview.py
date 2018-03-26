@@ -16,18 +16,20 @@
 #
 from __future__ import division
 
+from pagebot.contexts.platform import getContext
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import *
 
 class BaseView(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation 
     of the enclosed page/element tree. Views support services, such as answering the size of a formatted
-    string (of possible), how much overflow there is for a certain box, etc."""
+    string (of possible), how much overflow there is for a certain box, etc. The view is also the only
+    place where the current context should be stored."""
     viewId = 'View'
 
     isView = True
 
-    def __init__(self, w=None, h=None, parent=None, **kwargs):
+    def __init__(self, w=None, h=None, contect=None, parent=None, context=None, **kwargs):
         Element.__init__(self, parent=parent, **kwargs)
         
         if not w and self.parent:
@@ -36,6 +38,9 @@ class BaseView(Element):
             h = self.parent.h
         self.w = w
         self.h = h
+        if context is None:
+            context = self._getContext() # Use the default context for this view, if not defined.
+        self.context = context
         self._initializeControls()
         self.setControls()
         # List of collected elements that need to draw their info on top of the main drawing,
@@ -80,7 +85,11 @@ class BaseView(Element):
         self.cssVerbose = True # Adds information comments with original values to CSS export.
         # Exporting 
         self.doExport = True # Flag to turn off any export, e.g. in case of testing with docTest
-        
+    
+    def _getContext(self):
+        u"""Answer the best/default context for this type of view."""
+        return getContext() # Default is DrawBotContext or FlatContext instance.
+
     def setControls(self):
         u"""Inheriting views can redefine to alter showing parameters."""
         pass

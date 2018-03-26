@@ -11,12 +11,15 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
+#     buildinfo.py
+#
 class BuildInfo(object):
     u"""Container with builder flags and data, as stored in elements, to guide conditional 
     e.build( ) and e.buildCss( ) and e.buildFlat( ) calls.
     Note that these attribute and flags can be defined specifically per element, so they
     cannot be part of a view.
     """
+    
     def __init__(self, **kwargs):
         self.title = None # Can be used to overwrite the standard name/title of an element.
         self.description = None
@@ -24,18 +27,20 @@ class BuildInfo(object):
         # Urls for <link>
         self.webFontsUrl = 'fonts/webfonts.css'
         self.favIconUrl = None
-        self.jsUrls = None
         self.appleTouchIconUrl = None
-        self.jQueryUrl = 'http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
-        self.jQueryUrlSecure = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
-        self.mediaQueriesUrl = 'http://code.google.com/p/css3-mediaqueries-js'
+        # Make None for force unsecure version to load instead.
+        self.jsUrls = (
+            'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
+            #'http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
+            'http://code.google.com/p/css3-mediaqueries-js'
+        )
         # Device
         self.viewPort = "width=device-width, initial-scale=1.0"
         # Fonts
-        self.webFonts = [
+        self.webFonts = (
             'http://fonts.googleapis.com/css?family=Bree+Serif',
             'http://fonts.googleapis.com/css?family=Droid+Sans:400,700',
-        ]
+        )
         # Define string or file paths where to read content, instead of constructing by the builder.
         self.htmlPath = None # Set to string in case the full HTML is defined in a single file.
         self.cssCode = None # Set to string, if CSS is available as single source.

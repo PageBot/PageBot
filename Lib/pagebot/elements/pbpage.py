@@ -104,13 +104,13 @@ class Page(Element):
         level recursive indent.
 
         >>> from pagebot.document import Document
-        >>> doc = Document(name='TestDoc', autoPages=4)
+        >>> doc = Document(name='TestDoc', autoPages=1)
         >>> view = doc.newView('Mamp')
         >>> page = doc[1]
         >>> #view.build()
 
         """
-        context = self.context # Get current context and builder.
+        context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
        
         self.build_css(view)
@@ -143,12 +143,8 @@ class Page(Element):
                 # Devices
                 b.meta(name='viewport', content=info.viewPort) # Cannot be None
                 # Javascript
-                if info.jQueryUrl:
-                    b.script(type="text/javascript", src=info.jQueryUrl)
-                if info.jQueryUrlSecure:
-                    b.script(type="text/javascript", src=info.jQueryUrlSecure)
-                if info.mediaQueriesUrl: # Enables media queries in some unsupported browsers-->
-                    b.script(type="text/javascript", src=info.mediaQueriesUrl)
+                for jsUrl in info.jsUrls:
+                    b.script(type="text/javascript", src=jsUrl)
 
                 # CSS
                 if info.webFontsUrl:
@@ -189,7 +185,7 @@ class Page(Element):
             elif info.bodyPath is not None:
                 b.importHtml(info.bodyPath) # Add HTML content of file, if path is not None and the file exists.
             else:
-                b.div(class_=self.cssClass) # Class is standard 'page' if self.cssClass is undefined as None.
+                b.div(cssClass=self.cssClass) # Class is standard 'page' if self.cssClass is undefined as None.
                 if drawElements:
                     for e in self.elements:
                         e.build_html(view, origin)

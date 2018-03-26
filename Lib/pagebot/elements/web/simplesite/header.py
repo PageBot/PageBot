@@ -29,19 +29,25 @@ class Header(Group):
         <header class="wrapper clearfix">
             ...
         </header>
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import newTextBox
+        >>> doc = Document(viewId='Site')
+        >>> page = doc[1]
+        >>> page.title = 'Header Test'
+        >>> page.name = 'index'
+        >>> header = Header(parent=page)
+        >>> tb = newTextBox('This is a header.', parent=header)
+        >>> doc.export('_export/HeaderTest')
+
         """
         b = self.context.b
         self.build_css(view)
-        b.header(class_='wrapper clearfix')
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, origin)
+        b.header(cssClass=self.cssClass or self.__class__.__name__.lower())
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
             self.buildChildElements(view, origin)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, origin)
 
         b._header()
 

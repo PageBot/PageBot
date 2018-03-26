@@ -12,8 +12,6 @@
 #
 #     DB_TestFormattedStrings.py
 #
-from pagebot.contexts.platform import getContext
-
 import sys
 from pagebot.contexts.platform import getContext
 if not context.isDrawBot:

@@ -31,9 +31,9 @@ class MobileNavigation(TextBox):
     def build_html(self, view, origin=None):
         b = self.context.b
         self.build_css(view)
-        b.div(class_='container %s' % (self.cssClass or 'mobilenavigation'))
-        b.div(class_='row')
-        b.div(class_='twelvecol last')
+        b.div(cssClass='container %s' % (self.cssClass or 'mobilenavigation'))
+        b.div(cssClass='row')
+        b.div(cssClass='twelvecol last')
         b.nav(id='nav-wrap')
         b.ul(id="nav")
         for pn, pages in sorted(view.doc.pages.items()):
@@ -59,17 +59,17 @@ class Navigation(TextBox):
     def build_html(self, view, origin=None):
         b = self.context.b
         self.build_css(view)
-        b.div(class_='container top')
-        b.div(class_='row')
-        b.div(class_='fivecol')
-        b.div(class_='logo')
+        b.div(cssClass='container top')
+        b.div(cssClass='row')
+        b.div(cssClass='fivecol')
+        b.div(cssClass='logo')
         b.a(href="index.html")
         b.addHtml(view.doc.title)
         b._a()
         b._div() # .logo
         b._div() # .fivecol
 
-        b.div(class_='sevencol last')
+        b.div(cssClass='sevencol last')
         b.nav(id='navigation-wrap')
         b.ol()
         for pn, pages in sorted(view.doc.pages.items(), reverse=True): # Reverse: builds from right to left.
@@ -94,9 +94,9 @@ class Introduction(TextBox):
             return
         b = self.context.b
         self.build_css(view)
-        b.div(class_='container %s' % (self.cssClass or 'introduction'))
-        b.div(class_='row')
-        b.div(class_='twelvecol last')
+        b.div(cssClass='container %s' % (self.cssClass or 'introduction'))
+        b.div(cssClass='row')
+        b.div(cssClass='twelvecol last')
         b.addHtml(self.bs.s)
         for e in self.elements:
             e.build_html(view, origin)
@@ -121,12 +121,12 @@ class Featured(Rect):
             return
         b = self.context.b
         self.build_css(view)
-        b.div(class_='container %s' % (self.cssClass or 'featured'))
-        b.div(class_='row')
-        b.div(class_='eightcol')
+        b.div(cssClass='container %s' % (self.cssClass or 'featured'))
+        b.div(cssClass='row')
+        b.div(cssClass='eightcol')
         image.build_html(view, origin)
         b._div() # .eightcol
-        b.div(class_="fourcol last")
+        b.div(cssClass="fourcol last")
         side.build_html(view, origin)
         b._div() # .fourcol last
         b._div() # .row
@@ -151,12 +151,12 @@ class Main(Rect):
             return
         b = self.context.b
         self.build_css(view)
-        b.div(class_='container %s' % (self.cssClass or 'mainContent'))
-        b.div(class_='row')
-        b.div(class_='eightcol')
+        b.div(cssClass='container %s' % (self.cssClass or 'mainContent'))
+        b.div(cssClass='row')
+        b.div(cssClass='eightcol')
         content.build_html(view, origin)
         b._div() # .eightcol
-        b.div(class_='fourcol')
+        b.div(cssClass='fourcol')
         # TODO: We could do something to fill here, if there is not side content.
         side.build_html(view, origin)
         b._div() # .fourcol
@@ -185,13 +185,13 @@ class Section(Rect):
             hasContent |= bool(self[repr(row*2)].bs.s) or bool(self[repr(row*2+1)].bs.s)
         if hasContent: # Onle start the container if there is any content.
             self.build_css(view)
-            b.div(class_='container %s' % (self.cssClass or 'section'))
+            b.div(cssClass='container %s' % (self.cssClass or 'section'))
             if title.bs.s:
-                b.div(class_='row')
-                b.div(class_='tencol')
+                b.div(cssClass='row')
+                b.div(cssClass='tencol')
                 b.addHtml(title.bs.s)
                 b._div() # .tencol
-                b.div(class_='twocol last')
+                b.div(cssClass='twocol last')
                 b._div() # .twocol last
                 b._div() # .row
 
@@ -199,11 +199,11 @@ class Section(Rect):
                 e1 = self[repr(row*2)]
                 e2 = self[repr(row*2+1)]
                 if e1.bs.s and e2.bs.s: # Only output if both are filled.
-                    b.div(class_='row')
-                    b.div(class_='sixcol')
+                    b.div(cssClass='row')
+                    b.div(cssClass='sixcol')
                     b.addHtml(e1.bs.s)
                     b._div() # .sixcol
-                    b.div(class_='sixcol last')
+                    b.div(cssClass='sixcol last')
                     b.addHtml(e2.bs.s)
                     b._div() # 'sixcol last
                     b._div() # .row
@@ -215,10 +215,10 @@ class Footer(TextBox):
     def build_html(self, view, origin=None):
         b = self.context.b
         self.build_css(view)
-        b.div(class_="container %s" % (self.cssClass or 'footer'))
-        b.div(class_='row')
+        b.div(cssClass="container %s" % (self.cssClass or 'footer'))
+        b.div(cssClass='row')
 
-        b.div(class_='eightcol')
+        b.div(cssClass='eightcol')
         # Build flat navigation for this simple site
         b.nav(id='navigation-wrap')
         b.ol()
@@ -233,7 +233,7 @@ class Footer(TextBox):
         b._nav()
         b._div() # class: eightcol
 
-        b.div(class_='fourcol last')
+        b.div(cssClass='fourcol last')
         b.addHtml(self.bs.s)
         b._div() # class: fourcol last
 
@@ -265,7 +265,7 @@ class Website(Publication):
     u"""Build a default website with several template options.
     Layout and content options defined by external parameters.
     Subclassed from Document with the following optional attributes:
-    rootStyle=None, styles=None, views=None, name=None, class_=None, title=None,
+    rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0,
     w=None, h=None, exportPaths=None, context=None, **kwargs)
 

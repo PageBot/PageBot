@@ -15,8 +15,6 @@ W, H = A4
 PAD = 40
 doc = Document(w=W, h=H, title="Demo pages", originTop=False, autoPages=1)
 
-print(page)
-
 view = doc.view
 view.padding = 50
 view.showPageCropMarks = True

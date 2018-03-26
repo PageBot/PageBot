@@ -35,9 +35,11 @@ class PageView(BaseView):
     def build(self, path=None, pageSelection=None, multiPage=True):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw.
 
-        >>> e = PageView(name='MyPageView')
-        >>> e.w, e.h, e.name
+        >>> view = PageView(name='MyPageView')
+        >>> view.w, view.h, view.name # Size is initialze to default.
         (100, 100, 'MyPageView')
+        >>> str(view.context) in ('<DrawBotContext>' or '<FlatContext>')
+        True
         """
         if not path:
             path = self.EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
