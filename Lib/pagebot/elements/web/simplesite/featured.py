@@ -26,7 +26,7 @@ class Featured(Group):
         u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 
         """
-        b = self.context.b
+        b = view.context.b
         b.addHtml("""
         <!-- colored section -->
         <section id="features"  class="blueelement vertical-padding">

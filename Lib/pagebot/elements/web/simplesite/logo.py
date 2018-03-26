@@ -29,20 +29,26 @@ class Logo(Banner):
         <div id="logo">
             <a href="index.html"><h1>PageBot</h1></a>
         </div> 
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import newTextBox
+        >>> doc = Document(viewId='Site')
+        >>> page = doc[1]
+        >>> page.title = 'Banner Test'
+        >>> page.name = 'index'
+        >>> banner = Banner(parent=page, cssId='ThisBannerId')
+        >>> tb = newTextBox('This is a banner.', parent=banner)
+        >>> doc.export('_export/LogoTest')
+
         """
-        b = self.context.b
+        b = view.context.b
         self.build_css(view)
         b.div(id='logo')
         b.a(href='index.html')
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, origin)
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
             self.buildChildElements(view, origin)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, origin)
 
         b._a()
         b._div()
