@@ -36,10 +36,9 @@ class Banner(Group):
         >>> page = doc[1]
         >>> page.title = 'Banner Test'
         >>> page.name = 'index'
-        >>> banner = Banner(parent=page, cssId='ThisId')
+        >>> banner = Banner(parent=page, cssId='ThisBannerId')
         >>> tb = newTextBox('This is a banner.', parent=banner)
         >>> doc.export('_export/BannerTest')
-
         """
         b = self.context.b
         self.build_css(view)
