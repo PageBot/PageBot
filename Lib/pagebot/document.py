@@ -965,7 +965,7 @@ class Document(object):
         >>> sorted(viewClasses.keys())
         ['Git', 'Mamp', 'Page', 'Site']
         >>> view = doc.newView('Page', 'myView')
-        >>> str(view.context) in ('<DrawBotContext>', 'FlatContext')
+        >>> str(view.context) in ('<DrawBotContext>', '<FlatContext>')
         True
         >>> view.w, view.h
         (300, 400)
