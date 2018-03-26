@@ -38,8 +38,7 @@ class PageView(BaseView):
         >>> view = PageView(name='MyPageView')
         >>> view.w, view.h, view.name # Size is initialze to default.
         (100, 100, 'MyPageView')
-        >>> str(view.context) in ('<DrawBotContext>' or '<FlatContext>')
-        True
+        >>> #str(view.context) in ('<DrawBotContext>' or '<FlatContext>')
         """
         if not path:
             path = self.EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.

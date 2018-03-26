@@ -106,6 +106,7 @@ class Element(object):
         assert point is None or isinstance(point, (tuple, list))
 
         # Optionally set the property for elements that need their own context. 
+        # Mostly these are only set for views (which are also Elements)
         # If None the property will query parent --> root document --> view.
         self.context = context
 
@@ -3291,7 +3292,7 @@ class Element(object):
     def buildChildElements(self, view, origin):
         u"""Draw child elements, dispatching depending on the implementation of context specific build elements.
         If not specific builder_<context.b.PB_ID> is implemented, call default e.build(view, origin)"""
-        hook = 'build_' + self.context.b.PB_ID
+        hook = 'build_' + view.context.b.PB_ID
         for e in self.elements:
             if not e.show:
                 continue
@@ -3334,12 +3335,12 @@ class Element(object):
         p = self._applyAlignment(p)
 
         self.build_css(view)
-        b = self.context.b # Use the current context builder to write the HTML/CSS code.
+        b = view.context.b # Use the current context builder to write the HTML/CSS code.
         info = self.info # Contains builder parameters and flags for Builder "b"
         if info.htmlPath is not None:
             b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.div(cssClass=self.cssClass, cssId=self.cssId, style='red:#FF0000;') # No default class, ignore if not defined.
+            b.div(cssClass=self.cssClass, cssId=self.cssId) # No default class, ignore if not defined.
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(self, view, p)

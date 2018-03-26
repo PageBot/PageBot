@@ -208,9 +208,9 @@ class Document(object):
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
-        >>> doc = Document(context=context, title='MySite', cssClass='MyWebSite')
-        >>> doc, doc.context, doc.cssClass, doc.title
-        ([Document-Document "MySite"], <DrawBotContext>, 'MyWebSite', 'MySite')
+        >>> doc = Document(context=context, title='MySite')
+        >>> doc, doc.context, doc.title
+        ([Document-Document "MySite"], <DrawBotContext>, 'MySite')
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> doc = Document(context=context)

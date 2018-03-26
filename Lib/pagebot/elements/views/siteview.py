@@ -18,7 +18,6 @@
 #     the generated site can be copied by MampView or GitView to their own paths.
 #
 import os
-import shutil
 
 from pagebot.elements.views.htmlview import HtmlView
 from pagebot.style import ORIGIN
