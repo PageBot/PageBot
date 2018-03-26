@@ -15,14 +15,13 @@
 #
 #     http://xxyxyz.org/flat
 
-from pagebot.contexts.platform import getFontPathOfFont
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
 
 class FlatString(BabelString):
 
     BABEL_STRING_TYPE = 'flat'
-    DEFAULT_FONT = getFontPathOfFont('Roboto-Regular') # Part of PageBot, we can assume it is there.
+    DEFAULT_FONT_NAME = 'Roboto-Regular'
     DEFAULT_FONTSIZE = 12
     DEFAULT_LEADING = 0
 
@@ -127,9 +126,11 @@ class FlatString(BabelString):
 
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
-        >>> bs = FlatString.newString('AAA', context, style=dict(font='Verdana', fontSize=30))
+        >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=30))
         >>> #bs.s.lines()
         """
+        from pagebot.fonttoolbox.objects.font import findFont
+
         if style is None:
             style = {}
 
@@ -147,16 +148,11 @@ class FlatString(BabelString):
         # using Tal's https://github.com/typesupply/compositor
         # This needs to be installed, in case PageBot is running outside of DrawBot.
 
-        fontPath = getFontPathOfFont(style.get('font'))
-        if fontPath is None:
-            fontPath = getFontPathOfFont(cls.DEFAULT_FONT)
-        try:
-            font = context.b.font.open(fontPath)
-        except (ValueError, TypeError):
-            fontPath = getFontPathOfFont(cls.DEFAULT_FONT)
-            if fontPath is not None:
-                font = context.b.font.open(fontPath)
-        strike = context.b.strike(font)
+        font = findFont(style.get('font'))
+        if font is None: 
+            font = findFont(cls.DEFAULT_FONT_NAME)
+        flatFont = context.b.font.open(font.path)
+        strike = context.b.strike(flatFont)
         strike.size(style.get('fontSize', cls.DEFAULT_FONTSIZE),
             style.get('leading', cls.DEFAULT_LEADING), units='pt')
         #if w is not None:

@@ -35,7 +35,7 @@ class Footer(Group):
         >>> page.title = 'Footer Test'
         >>> page.name = 'index'
         >>> banner = Footer(parent=page)
-        >>> tb = newTextBox('This is a footer.', parent=banner)
+        >>> tb = newTextBox('This is a footer.', parent=banner, cssId='colophon', cssClass='wrapper clearfix')
         >>> doc.export('_export/FooterTest')
 
         """
