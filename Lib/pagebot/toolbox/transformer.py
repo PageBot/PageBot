@@ -1149,24 +1149,28 @@ def pyAttrName2XmlAttrName(key):
     u"""
     The @pyAttrName2XmlAttrName@ converts the Python XML attribute name @key@ to an
     appropriate XML attribute identifier.
-    If the *key* is @'class_'@ then it is translated into @'class'@.
+    If the *key* is 'cssClass' then it is translated into 'class'.
     If there is an HTML5 attribute *data_xxxx* used, then change that to *data-xxxx*.
     """
-    if key == 'class_':
+    if key == 'cssClass':
         key = 'class'
-    if key.startswith('data'):
+    elif key == 'cssId':
+        key = 'id'
+    elif key.startswith('data'):
         key = key.replace('_', '-')
     return key
 
 def xmlAttrName2PyAttrName(key):
     u"""The @xmlAttrName2PyAttrName@ method converts the XML attribute name
     *key* to an appropriate Python attribute identifier.
-    If the *key* is @'class'@ then it is translated into @'class_'@. If a
+    If the *key* is @'class'@ then it is translated into 'class_'. If a
     namespace is defined (to be recognized on {...}, then replace that by
     prefix @'ns_'@. If there is an HTML5 attribute *data-xxxx* used,
     then change that to *data_xxxx*."""
     if key == 'class':
-        key = 'class_'
+        key = 'cssClass'
+    elif key == 'id':
+        key = 'cssId'
     elif key.startswith('{'):
         key = 'ns_' + key.split('}')[-1]
     elif '-' in key:
@@ -1300,7 +1304,7 @@ def flatten2Class(*args):
     u"""
 
     The flatten2Class method answers the class string, made from space separated class names. If
-    class_ is a tuple or list, then merge the content. Check recursively in
+    cssClass is a tuple or list, then merge the content. Check recursively in
     case the names are nested. If the classes is empty or None or contain an empty
     element, then this is ignored.
 
@@ -1308,7 +1312,7 @@ def flatten2Class(*args):
     result = []
     for cssClass in args:
         if isinstance(cssClass, str):
-            result.append(class_)
+            result.append(cssClass)
         elif isinstance(cssClass, (tuple, list)):
             s = []
             for part in cssClass:
