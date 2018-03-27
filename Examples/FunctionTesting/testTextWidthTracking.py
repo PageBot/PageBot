@@ -34,13 +34,13 @@ def textBounds(s, x, y, w):
     context.rect(x, y, tw, th)
 
     return bs
-
+y = 200
 bs = textBounds(HEAD_LINE, x, y, w)
-print('%s %s %s' % (bs, bs.fittingFontSize, bs.bounds())
+#print('%s %s %s' % (bs, bs.fittingFontSize, bs.bounds()))
 y += 50
 bs = textBounds('When fonts...', x, y, w)
-print('%s %s %s' % (bs, bs.fittingFontSize, bs.bounds())
+#print('%s %s %s' % (bs, bs.fittingFontSize, bs.bounds()))
 y += 80
 bs = textBounds('Fonts...', x, y, w)
-print('%s %s %s' % (bs, bs.fittingFontSize, bs.bounds())
+#print('%s %s %s' % (bs, bs.fittingFontSize, bs.bounds()))
 

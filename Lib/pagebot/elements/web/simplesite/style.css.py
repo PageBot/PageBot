@@ -1,15 +1,30 @@
+theme = dict(
+	regularFont='Upgrade-Regular',
+	textDocurationColor='#2E8DB6',
+	textHoverColor='#2BC88A',
+	headerPadding='15px 0',
+	menuBackground='#2C8CB7',
+	menuTextColor='#fff',
+	srtMenuColor='#666',
+	srtMenuBackground='#DADADA',
+	srtMenuHoverBackground='#2C8CB7',
+	srtMenuHoverBackground2='#E8E8E8',
+	srtMenuHoverBackground3='#EFEFEF',
+	srtMenuHover='#fff',
+
+)
 css = """
 body{
 	background:#fff;
 	color:#706670;
-	font-family:'Upgrade-Regular', sans-serif; 
+	font-family: %(regularFont)s, sans-serif; 
 	font-size:1.10em;
 	line-height:1.4em; 
 	font-weight:normal;
 }
 h1, h2, h3, h4, h5, h6{
 	font-weight:normal;
-	font-family:'Upgrade-Regular', sans-serif; 
+	font-family:%(regularFont)s, sans-serif; 
 	line-height:1.5em;
 	margin:.45em 0;
 	padding:0;
@@ -18,11 +33,11 @@ h1, h2, h3, h4, h5, h6{
 
 
 /* links */
-a{text-decoration:none; color:#2E8DB6;
+a{text-decoration:none; color:%(textDecorationColor)s;
 },
 a:visited{text-decoration:none;},
 a:active{text-decoration:none;},
-a:hover{color:#2BC88A; text-decoration:none;}
+a:hover{color:%(textHoverColor)s; text-decoration:none;}
 a:hover{ text-decoration:none;}
 
 
@@ -36,7 +51,7 @@ a:hover{ text-decoration:none;}
 	margin: 0 auto;
 }
 header{ 
-	padding:15px 0;
+	padding:%(headerPadding)s;
 }
 #banner{ 
 	text-align:center;
@@ -73,9 +88,9 @@ img{ max-width:100%; height:auto;}
 	display:block;
 	padding:10px;
 	margin:20px 0 0;
-	background:#2C8CB7;
+	background:%(menuBackground)s;
 	letter-spacing:0.2em;
-	color:#fff;
+	color:%(menuTextColor)s;
 	cursor:pointer;
 	text-transform:uppercase;
 	font-size:20px;
@@ -98,8 +113,8 @@ img{ max-width:100%; height:auto;}
 	
 }
 .srt-menu li a {
-	color:#666;
-	background:#dadada;
+	color:%(srtMenuColor)s;
+	background:%(srtMenuBackground)s;
 	display:block;
 	margin:1px 0; 
 	padding:10px;
@@ -109,15 +124,15 @@ img{ max-width:100%; height:auto;}
 	font-size:.8em;
 }
 .srt-menu li a:hover{
-	background:#2C8CB7;
-	color:#fff;
+	background:%(srtMenuHoverBackground)s;
+	color:%(srtMenuHover)s;
 }
 .srt-menu li li a {
-	background:#e8e8e8;
+	background:%(srtMenuHoverBackground2)s;
 	padding-left:40px;
 }
 .srt-menu li li li a {
-	background:#efefef;
+	background:%(srtMenuHoverBackground3)s;
 	padding-left:80px;
 }
 
