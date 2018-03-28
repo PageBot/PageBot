@@ -26,37 +26,6 @@ class BabelString(object):
     def __repr__(self):
         return u'%s' % self.s
 
-    def getFont(self):
-        u"""Answer the Font instance for the current font.
-
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> from pagebot.contexts.strings.drawbotstring import DrawBotString
-        >>> context = DrawBotContext()
-        >>> font = findFont('Roboto-Regular')
-
-        """
-        """
-        TODO: Get more docTests to work.
-        >>> bs = DrawBotString.newString('ABC', context=context, style=dict(font=font.path, fontSize=100))
-        >>> bs
-        ABC
-        >>> bs.font.endswith('Roboto-Regular.ttf')
-        True
-        >>> from pagebot.contexts.flatcontext import FlatContext
-        >>> from pagebot.contexts.strings.flatstring import FlatString
-        >>> context = FlatContext()
-        >>> bs = FlatString.newString('ABC', context=context, style=dict(font=font.path, fontSize=100))
-        >>> #str(bs.s)
-        ABC        
-        >>> bs.font.endswith('Roboto-Regular.ttf')
-        True
-        """
-        from pagebot.fonttoolbox.objects.font import getFont
-        from pagebot.fonttoolbox.fontpaths import getFontPaths
-        fontPath = getFontPaths().get(self.font, self.font)
-        return getFont(fontPath)
-
     def __add__(self, s):
         self.append(s)
         return self
