@@ -17,7 +17,7 @@
 import re
 from copy import copy
 try:
-    import AppKit
+    #import AppKit
     import CoreText
     import Quartz
     from drawBot import BezierPath

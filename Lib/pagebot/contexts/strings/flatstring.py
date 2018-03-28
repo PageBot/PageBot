@@ -15,6 +15,7 @@
 #
 #     http://xxyxyz.org/flat
 #
+import os
 import re
 
 from pagebot import getResourcesPath
