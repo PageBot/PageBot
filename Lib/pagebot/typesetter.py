@@ -63,7 +63,7 @@ class Typesetter(object):
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
 
-        >>> from pagebot.contexts.platform import getResourcesPath
+        >>> from pagebot import getResourcesPath
         >>> from pagebot.elements.element import Element
         >>> path = getResourcesPath() + '/texts/TEST.md'
         >>> t = Typesetter() # Create a new typesetter

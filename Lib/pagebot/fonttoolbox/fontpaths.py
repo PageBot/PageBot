@@ -16,7 +16,7 @@
 import os
 
 from pagebot.toolbox.transformer import path2FontName
-from pagebot.contexts.platform import getResourcesPath
+from pagebot import getResourcesPath
 
 #   P A T H S
 

@@ -14,6 +14,8 @@
 #     flatstring.py
 #
 #     http://xxyxyz.org/flat
+#
+import re
 
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
@@ -117,6 +119,18 @@ class FlatString(BabelString):
         #    self.s += s.s
         #except TypeError:
         #    self.s += repr(s) # Convert to babel string, whatever it is.
+
+    MARKER_PATTERN = '==%s@%s=='
+    FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\@([^=]*)\=\=')
+
+    def appendMarker(self, markerId, arg):
+        u"""Append an invisible marker string."""
+
+    def findMarkers(self, reCompiled=None):
+        u"""Answer a dictionary of markers with their arguments in self.s."""
+        if reCompiled is None:
+            reCompiled= self.FIND_FS_MARKERS
+        return reCompiled.findall(u'%s' % self.s)
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
