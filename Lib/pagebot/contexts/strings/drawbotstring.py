@@ -24,7 +24,8 @@ try:
 except (ImportError, AttributeError):
     BezierPath = None
 
-from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
+from pagebot import getResourcesPath
+#from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
 
@@ -683,6 +684,7 @@ def getBaseLines(txt, box):
     origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
     return [(x + o.x, y + o.y) for o in origins]
 
+'''
 def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
     u"""
     """
@@ -730,7 +732,7 @@ def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
                 minx = 0
 
     return rectangles
-
+'''
     #   F I N D
 
 def findPattern(textLines, pattern):
