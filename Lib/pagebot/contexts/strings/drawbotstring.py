@@ -24,12 +24,12 @@ try:
 except (ImportError, AttributeError):
     BezierPath = None
 
-from pagebot.contexts.basecontext import BaseContext
+from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT
-from pagebot.fonttoolbox.objects.font import findFont
 
-DEFAULT_SIZE = 16
+DEFAULT_FONT_SIZE = 16
+DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
 
 def pixelBounds(fs):
     u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
@@ -53,8 +53,8 @@ class NoneDrawBotString(BabelString):
     def __init__(self, s, context, style=None):
         self.context = context # Store context, in case we need more of its functions.
         self.s = s
-        self.fontSize = 10
-        self.font = findFont('Roboto-Regular').path
+        self.fontSize = DEFAULT_FONT_SIZE
+        self.font = DEFAULT_FONT_PATH
         self.style = style
 
     @classmethod
@@ -227,7 +227,7 @@ class DrawBotString(BabelString):
         else:
             tx, tw = 0, fs.size()[0]
         style = copy(style)
-        style['fontSize'] = 1.0 * w / (tw-tx) * css('fontSize', styles=style, default=DEFAULT_SIZE)
+        style['fontSize'] = 1.0 * w / (tw-tx) * css('fontSize', styles=style, default=DEFAULT_FONT_SIZE)
         # Recursively call this method again, without w and with the calculated real size of the string
         # to fit the width.
         # Note that this assumes a linear relation between size and width, which may not always be the case
@@ -288,7 +288,7 @@ class DrawBotString(BabelString):
             fontSize = 100
         # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
         # TODO: add calculation of rFontSize (relative float based on root-fontSize) here too.
-        sFontSize = css('fontSize', e, style, DEFAULT_SIZE) # May be scaled to fit w or h if target is defined.
+        sFontSize = css('fontSize', e, style, DEFAULT_FONT_SIZE) # May be scaled to fit w or h if target is defined.
         sLeading = css('leading', e, style)
         rLeading = css('rLeading', e, style)
         if sLeading or (rLeading and sFontSize):
