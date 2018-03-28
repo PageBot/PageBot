@@ -16,7 +16,7 @@
 #     Implements a family collection of Font instances.
 #
 import os
-from pagebot.contexts.platform import getFontPaths
+from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.font import Font, getFont
 from pagebot.toolbox.transformer import path2FamilyName
 
