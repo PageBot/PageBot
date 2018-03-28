@@ -158,7 +158,7 @@ class TextBox(Element):
         u"""Append to the string type that is defined by the current view/builder type.
         Note that the string is already assumed to be styled or can be added as plain string.
         Don't calculate the overflow here, as this is slow/expensive operation.
-        Also we don't want to calcualte the textLines/runs for every string appended,
+        Also we don't want to calculate the textLines/runs for every string appended,
         as we don't know how much more the caller will add. self._textLines is set to None
         to force recalculation as soon as self.textLines is called again.
         If bs is not a BabelString instance, then create one, defined by the self.context,
@@ -167,10 +167,7 @@ class TextBox(Element):
         self.bs += self.newString(bs, e=self, style=style)
 
     def appendMarker(self, markerId, arg=None):
-        marker = getMarker(markerId, arg=arg)
-        if self.bs.type == 'html':
-            marker = '<!-- %s -->' % marker
-        self.append(marker)
+        self.bs.appendMarker(markerId, arg)
 
     def getTextSize(self, bs=None, w=None):
         """Figure out what the width/height of the text self.bs is, with or given width or

@@ -66,6 +66,19 @@ class HtmlString(BabelString):
         # TODO: Some stuff needs to get here.
         return ''
 
+    def append(self, s):
+        self.s += s
+
+    MARKER_PATTERN = '<!-- ==%s@%s== -->'
+
+    def appendMarker(self, markerId, arg):
+        u"""Append a comment string with markerId that can be used as non-display marker.
+        This way the Composer can find the position of markers in text boxes.
+
+        """
+        marker = self.MARKER_PATTERN % (markerId, arg or '')
+        self.append(marker)
+
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None,
             pixelFit=None, tagName=None):
@@ -84,7 +97,6 @@ class HtmlString(BabelString):
             s = s.capitalize()
 
         return cls(s, context)
-
 
 if __name__ == '__main__':
     import doctest

@@ -571,7 +571,7 @@ class DrawBotContext(BaseContext):
         For names and parameters of filters see:
         http://www.drawbot.com/content/image/imageObject.html
 
-        >>> from pagebot.contexts.platform import getResourcesPath
+        >>> from pagebot import getResourcesPath
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
