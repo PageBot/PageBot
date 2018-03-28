@@ -219,32 +219,20 @@ class DrawBotString(BabelString):
         return self.context.textOverflow(self, (0, 0, w, h), align)
 
     @classmethod
-    def _newFitWidthString(cls, fs, context, e, style, w, pixelFit):
+    def _newFitWidthString(cls, fs, context, fontSize, w, pixelFit):
         if pixelFit:
             tx, _, tw, _ = pixelBounds(fs)
         else:
-            tx, tw = 0, fs.size()[0]
-        style = copy(style)
-        style['fontSize'] = 1.0 * w / (tw-tx) * css('fontSize', styles=style, default=DEFAULT_FONT_SIZE)
-        # Recursively call this method again, without w and with the calculated real size of the string
-        # to fit the width.
-        # Note that this assumes a linear relation between size and width, which may not always be the case
-        # with [opsz] optical size axes of Variable Fonts.
-        return cls.newString(fs, context, e, style, pixelFit=pixelFit)
+            tx, tw = 0, context.b.textSize(fs)[0]
+        return w * fontSize / (tw-tx)
 
     @classmethod
-    def _newFitHeightString(cls, fs, context, e, style, h, pixelFit):
+    def _newFitHeightString(cls, fs, context, fontSize, h, pixelFit):
         if pixelFit:
             _, ty, _, th = pixelBounds(fs)
         else:
-            ty, th = 0, fs.size()[1]
-        style = copy(style)
-        style['fontSize'] = 1.0 * h / (th-ty) * css('fontSize', style)
-        # Recursivley call this method again, without h and with the calculated real size of the string
-        # to fit the width.
-        # Note that this assumes a linear relation between size and width, which may not always be the case
-        # with [opsz] optical size axes of Variable Fonts.
-        return cls.newString(fs, context, e, style, pixelFit=pixelFit)
+            ty, th = 0, context.b.textSize(fs)[1]
+        return h * fontSize / (th-ty)
 
     @classmethod
     def newString(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True):
@@ -375,12 +363,16 @@ class DrawBotString(BabelString):
         if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction.
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much
             # more consistent for tracked text. context.textSize will add space to the right of the string.
-            newS = cls._newFitWidthString(newt, context, e, style, w, pixelFit)
+            style = copy(style)
+            style['fontSize'] = cls._newFitWidthString(newt, context, sFontSize, w, pixelFit)
+            newS = cls.newString(t, context, style=style)
 
         elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction.
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much
             # more consistent for tracked text. context.textSize will add space to the right of the string.
-            newS = cls._newFitHeightString(newt, context, e, style, h, pixelFit)
+            style = copy(style)
+            style['fontSize'] = cls._newFitHeightString(newt, context, sFontSize, h, pixelFit)
+            newS = cls.newString(t, context, style=style)
         else:
             newS = cls(newt, context, style)
         return newS

@@ -25,10 +25,6 @@ import Quartz
 
 #    NOTE: Assumes TYPETR-Bitcount to be installed.
 
-#for name in installedFonts():
-#    if 'Bitcount' in name:
-#        print(name)
-
 class TextRun(object):
     def __init__(self, ctRun, string):
         self.string = string

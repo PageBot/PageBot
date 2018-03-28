@@ -104,8 +104,6 @@ if VARS:
     }
     FONTS = {}
     # Install the test V-font
-    if not 'Promise-Bold' in installedFonts():
-        installFont(FONT_PATH + 'Promise-GX.ttf')
     for name, location in FONT_LOCATIONS.items():
         fontName, fontPath = generateInstance(FONT_PATH + 'Promise-GX.ttf', 
         location, targetDirectory=FONT_PATH + 'instances')

@@ -18,22 +18,19 @@
 #     In the future these classes will be part of the main PageBot library,
 #     which may make them incompatible with this particular example.
 #
+from __future__ import print_function
 from math import radians
 from pagebot.contexts.platform import getContext
-from pagebot.fonttoolbox.objects.font import Font, getFontByName
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.mutator import getVarFontInstance
 from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
 from pagebot.style import CENTER
-from __future__ import print_function
 
 W = H = 500
 
 FRAMES = 120
 
-#for fontName in installedFonts():
-#    if 'Skia' in fontName:
-#        print(fontName)
-f = Font('/Library/Fonts/Skia.ttf')
+f = findFont('Skia')
 
 wghtMin, wghtDef, wghtMax = f.axes['wght']
 wdthMin, wdthDef, wdthMax = f.axes['wdth']

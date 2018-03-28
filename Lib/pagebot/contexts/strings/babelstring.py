@@ -65,6 +65,7 @@ class BabelString(object):
         u"""Answer the size tuple (w, h) of the string."""
         return self.context.textSize(self)
 
+
 if __name__ == '__main__':
     import doctest
     import sys

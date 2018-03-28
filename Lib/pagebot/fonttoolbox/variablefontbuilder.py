@@ -35,44 +35,6 @@ context = getContext()
 
 DEBUG = False
 
-"""Normalizes location based on axis min/default/max values from axes.
->>> axes = {"wght": (100, 400, 900)}
->>> normalizeLocation({"wght": 400}, axes)
-{'wght': 0}
->>> normalizeLocation({"wght": 100}, axes)
-{'wght': -1.0}
->>> normalizeLocation({"wght": 900}, axes)
-{'wght': 1.0}
->>> normalizeLocation({"wght": 650}, axes)
-{'wght': 0.5}
->>> normalizeLocation({"wght": 1000}, axes)
-{'wght': 1.0}
->>> normalizeLocation({"wght": 0}, axes)
-{'wght': -1.0}
->>> axes = {"wght": (0, 0, 1000)}
->>> normalizeLocation({"wght": 0}, axes)
-{'wght': 0}
->>> normalizeLocation({"wght": -1}, axes)
-{'wght': 0}
->>> normalizeLocation({"wght": 1000}, axes)
-{'wght': 1.0}
->>> normalizeLocation({"wght": 500}, axes)
-{'wght': 0.5}
->>> normalizeLocation({"wght": 1001}, axes)
-{'wght': 1.0}
->>> axes = {"wght": (0, 1000, 1000)}
->>> normalizeLocation({"wght": 0}, axes)
-{'wght': -1.0}
->>> normalizeLocation({"wght": -1}, axes)
-{'wght': -1.0}
->>> normalizeLocation({"wght": 500}, axes)
-{'wght': -0.5}
->>> normalizeLocation({"wght": 1000}, axes)
-{'wght': 0}
->>> normalizeLocation({"wght": 1001}, axes)
-{'wght': 0}
-"""
-
 def getMasterPath():
     u"""Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
     Default is at the same level as pagebot module."""
@@ -208,7 +170,7 @@ def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cac
     instance = getFont(path, lazy=lazy)
     instance.info.opticalSize = location.get('opsz')
     instance.info.location = location
-    instance.info.styleName = styleName
+    instance.info.varStyleName = styleName
     return instance
 
 def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):
