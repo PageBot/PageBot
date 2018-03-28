@@ -184,9 +184,6 @@ class DrawBotString(BabelString):
         return self.s.fontLineHeight()
     fontLineHeight = lineHeight # Compatibility with DrawBot API
 
-    def append(self, s):
-        self.s += s
-
     def appendGlyph(self, *glyphNames):
         u"""Append a glyph by his glyph name using the current font. Multiple glyph names are possible."""
         self.s.appendGlyph(glyphNames)

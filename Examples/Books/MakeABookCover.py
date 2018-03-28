@@ -23,6 +23,7 @@ from pagebot.contributions.filibuster.blurb import blurb
 from pagebot.toolbox.transformer import darker
 # Get function to find the Roboto family (in this case installed in the PageBot repository
 from pagebot.fonttoolbox.objects.family import getFamily
+from pagebot.fonttoolbox.objects.font import findFont
 # Creation of the RootStyle (dictionary) with all
 # available default style parameters filled.
 from pagebot.style import getRootStyle, B4, CENTER, MIDDLE, TOP 
@@ -50,6 +51,7 @@ family = getFamily('Roboto')
 fontRegular = family.findFont('Regular')
 fontBold = family.findFont('Bold')
 fontItalic = family.findFont('Italic')
+ampersandFont = findFont('Georgia')
 
 def makeDocument():
     u"""Demo random book cover generator."""
@@ -110,19 +112,19 @@ def makeDocument():
     if random() < 0.33: # 1/3 chance for a second author name
         authorName += '\n' + blurb.getBlurb('name')
         
-    page.pt = 120 # Now the rectangles positioned automatic, alter the paddings
+    page.pt = 100 # Now the rectangles positioned automatic, alter the paddings
     page.pl = page.pr = 80
     page.pb = 30
     # Add some title (same width, different height) at the "wrongOrigin" position.
     # They will be repositioned by solving the colorConditions.
-    title = context.newString(title+'\n\n', style=dict(font=fontBold.path, fontSize=40, rLeading=1.2, xAlign=CENTER, textFill=1))
-    title += context.newString(subTitle + '\n\n', style=dict(font=fontRegular.path, fontSize=32, xAlign=CENTER, textFill=(1, 1, 1,0.5)))
-    title += context.newString(authorName, style=dict(font=fontItalic.path, fontSize=24, rTracking=0.025, xAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
+    title = context.newString(title+'\n\n', style=dict(font=fontBold.path, fontSize=40, rLeading=1.2, xTextAlign=CENTER, textFill=1))
+    title += context.newString(subTitle + '\n\n', style=dict(font=fontRegular.path, fontSize=32, xTextAlign=CENTER, textFill=(1, 1, 1,0.5)))
+    title += context.newString(authorName, style=dict(font=fontItalic.path, fontSize=24, rTracking=0.025, xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
     newTextBox(title, parent=page, name='Other element',
             conditions=[Fit2Width(), Center2Center(), Top2Top()],
             xAlign=CENTER, yAlign=TOP)
     
-    typoIllustration = context.newString('&', style=dict(font='Georgia', fontSize=400, xAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
+    typoIllustration = context.newString('&', style=dict(font=ampersandFont.path, fontSize=500, xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
     newTextBox(typoIllustration, parent=page,
             conditions=[Fit2Width(), Center2Center(), Bottom2Bottom()],
             xAlign=CENTER, yAlign=TOP)
