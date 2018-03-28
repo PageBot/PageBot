@@ -27,7 +27,7 @@ class VarFamily(Family):
     that is why it is not a "VarFont". There can be a design space file included to define the relation
     between the fontfiles and axes.
 
-    >>> from pagebot.contexts.platform import getTestFontsPath
+    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> p = getTestFontsPath() + '/google/roboto/'
     >>> paths = p+'Roboto-Black.ttf', p+'Roboto-Bold.ttf', p+'Roboto-Italic.ttf', p+'Roboto-Light.ttf', p+'Roboto-Medium.ttf', p+'Roboto-Regular.ttf', p+'Roboto-Thin.ttf'
     >>> vf = VarFamily('Test-Var', paths)
@@ -222,7 +222,7 @@ class VarFamily(Family):
 
         """
         TODO: Get some interpolating examples in the test fonts folder.
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = '/Users/petr/Desktop/TYPETR-git/TYPETR-Proforma/master_ttf_interpolatable'
         >>> vf = VarFamily('Test-Var')
         >>> vf.addFonts(path)

@@ -37,7 +37,7 @@ def isFontPath(fontPath):
     u"""Answer the boolean flag if the path is a font path.
     For now, PageBot only supports ('ttf', 'otf')
 
-    >>> from pagebot.contexts.platform import getTestFontsPath
+    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> fontPath = getTestFontsPath()
     >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
     >>> isFontPath(path)
@@ -63,7 +63,7 @@ def getFont(fontPath, lazy=True):
     is already anothe Font created on that path, as for PageBot purposes it is most likely for
     reading only.
 
-    >>> from pagebot.contexts.platform import getTestFontsPath
+    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> fontPath = getTestFontsPath()
     >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
     >>> fontName = path2FontName(path)
@@ -96,7 +96,7 @@ class Font(object):
 
     >>> from pagebot.toolbox.transformer import *
     >>> from pagebot.fonttoolbox.objects.font import Font
-    >>> from pagebot.contexts.platform import getTestFontsPath
+    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> fontPath = getTestFontsPath()
     >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
     >>> f = getFont(path, lazy=False)
@@ -141,7 +141,7 @@ class Font(object):
 
     def __repr__(self):
         """
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> str(font)
@@ -152,7 +152,7 @@ class Font(object):
     def __getitem__(self, glyphName):
         u"""Answer the glyph with glyphName.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> g = font['A']
@@ -166,7 +166,7 @@ class Font(object):
     def __len__(self):
         u"""Answer the number of glyphs in the font.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> len(font)
@@ -180,7 +180,7 @@ class Font(object):
         u"""Answer level of matching between pattern and the font file name or font.info.fullName.
         Pattern can be a single string or a list of string.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.nameMatch('Black')
@@ -203,7 +203,7 @@ class Font(object):
         Currently there is only no-match (0) and full-match (1). Future implementations may give a float indicator
         for the level of matching, so the caller can decide on the level of threshold.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.weightClass
@@ -253,7 +253,7 @@ class Font(object):
         Currently there is only no-match (0) and full-match (1). Future implementations may give a float indicator
         for the level of matching, so the caller can decide on the level of threshold.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.widthClass
@@ -298,7 +298,7 @@ class Font(object):
         Currently there is only no-match (0) and full-match (1). Future implementations may give a float indicator
         for the level of matching, so the caller can decide on the level of threshold.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-BlackItalic.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
@@ -320,7 +320,7 @@ class Font(object):
         u"""Answer a value between 0 and 1 to the amount that self matches the defined parameters.
         Only defined values count in the matching.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.widthClass, font.info.weightClass
@@ -367,7 +367,7 @@ class Font(object):
         u"""Answer the glyph names of the font.
 
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> f = getFont(path, lazy=False)
@@ -383,7 +383,7 @@ class Font(object):
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> f = getFont(path, lazy=False)
@@ -397,7 +397,7 @@ class Font(object):
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> f = getFont(path, lazy=False)
@@ -445,7 +445,7 @@ class Font(object):
         if the [gvar] table does not exist.
 
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = Font(path)
@@ -461,7 +461,7 @@ class Font(object):
     def _get_designSpace(self):
         u"""Answer the design space in case this is a variable font.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = Font(path)
@@ -524,7 +524,7 @@ class Font(object):
         u"""Answer the (expanded) kerning table of the font.
 
         >>> from pagebot.toolbox.transformer import *
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
         >>> f = getFont(path, lazy=False)
@@ -541,7 +541,7 @@ class Font(object):
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
         >>> f = getFont(path, lazy=False)

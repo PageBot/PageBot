@@ -64,7 +64,7 @@ class FontInfo(object):
     def _get_familyName(self):
         """Should be this, but often wrong: return self._getNameTableEntry(1)
 
-        >>> from pagebot.contexts.platform import TEST_FONTS_PATH
+        >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
@@ -82,7 +82,7 @@ class FontInfo(object):
         We take the first spaced part as family name, and fill the rest here under style.
         So we add rest of family.
 
-        >>> from pagebot.contexts.platform import TEST_FONTS_PATH
+        >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)

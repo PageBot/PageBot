@@ -32,7 +32,7 @@ def subsetFont(font, glyphsToDelete):
 
         >>> from io import StringIO
         >>> from fontTools.ttLib import TTFont
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
         >>> font = TTFont(path)
         >>> subsetFont(font, ["x"])
@@ -66,7 +66,7 @@ def mergeFonts(font, otherFont, overWriteCodePoints=False):
         TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> pathA = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
         >>> pathB = getTestFontsPath() + '/google/roboto/Roboto-Medium.ttf'
         >>> fontA = TTFont(pathA)
@@ -93,7 +93,7 @@ def scaleFont(font, desiredUnitsPerEm):
 
         >>> from io import StringIO
         >>> from fontTools.ttLib import TTFont
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
         >>> #path = getFontPath("SegoeUI-Regular-All.ttf")
         >>> font = TTFont(path)
@@ -115,7 +115,7 @@ def convertFontToTTF(font, quadErrorMargin=0.5, cubicToQuadConverter=None):
 
         >>> from io import StringIO
         >>> from fontTools.ttLib import TTFont
-         >>> from pagebot.contexts.platform import getTestFontsPath
+         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
         >>> font = TTFont(path)
         >>> convertFontToTTF(font, 0.5)
@@ -467,7 +467,7 @@ class TTFTraverser(object):
 class _TestTraverser(TTFTraverser):
     """
         >>> from fontTools.ttLib import TTFont
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
         >>> font = TTFont(path)
         >>> tt = _TestTraverser(font)
@@ -918,7 +918,7 @@ def _findComponentParentGlyphs(font, glyphName):
         TODO: Fix docTests
 
         >>> from fontTools.ttLib import TTFont
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
         >>> font = TTFont(path)
         >>> _findComponentParentGlyphs(font, "a")

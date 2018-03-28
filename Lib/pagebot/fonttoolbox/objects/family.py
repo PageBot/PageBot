@@ -97,7 +97,7 @@ class Family(object):
         The fonts attribute can be a list of Font instances, a list of font file paths or directories.
 
         Test with a limited set of patsj:
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> familyName = 'Roboto' # We know this exists in the PageBot repository
         >>> fontPath = getTestFontsPath() + '/google/roboto'
         >>> family = Family(familyName, fontPath)
@@ -118,7 +118,7 @@ class Family(object):
     def __contains__(self, fontPath):
         u"""Answer the boolean flag if there is a Font instance with path fontPath.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> family = Family('MyFamily')
@@ -131,7 +131,7 @@ class Family(object):
     def __getitem__(self, fontPath):
         u"""Answer the Font instance by this fontPath.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> family = Family('MyFamily')
@@ -146,7 +146,7 @@ class Family(object):
     def keys(self):
         u"""Answer the paths of fonts, which are the keys in self.fonts.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> family = Family('MyFamily')
@@ -160,7 +160,7 @@ class Family(object):
         u"""And the fonts to the family. This can be a list of Font instances, a list of font names or
         a list of font paths.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> families = getFamilies()
@@ -179,7 +179,7 @@ class Family(object):
         u"""And the fonts to the family. This can be a list of Font instances, a list of font names or
         a list of font paths.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> families = getFamilies()
@@ -223,7 +223,7 @@ class Family(object):
     def getStyles(self):
         u"""Answer the dictionary {fontStyle: [font, font, ...], ...}
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> family = Family('MyFamily')

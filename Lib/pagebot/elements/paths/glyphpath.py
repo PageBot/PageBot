@@ -21,7 +21,7 @@ from pagebot.style import NO_COLOR, DEFAULT_HEIGHT, DEFAULT_WIDTH, ORIGIN
 class GlyphPath(Path):
     u"""GlyphPath is an element to show show the path of a glyph with additional features.
 
-    >>> from pagebot.contexts.platform import getTestFontsPath
+    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> from pagebot.fonttoolbox.objects.font import Font
     >>> fontPath = getTestFontsPath() + '/google/roboto/Roboto-Medium.ttf'
     >>> font = Font(fontPath)

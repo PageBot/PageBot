@@ -246,7 +246,7 @@ class FlatContext(BaseContext):
         >>> context._fontName, context._fontSize
         (None, 12)
         """
-        from pagebot.contexts.platform import getFontPathOfFont
+        from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 
         self._fontName = getFontPathOfFont(fontName) # Convert name or path to font path.
         if fontSize is not None:

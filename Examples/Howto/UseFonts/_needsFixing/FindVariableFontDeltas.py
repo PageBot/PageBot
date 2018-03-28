@@ -23,7 +23,7 @@ if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
 
-from pagebot.contexts.platform import TEST_FONTS_PATH
+from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.fonttoolbox.varfontdesignspace import TTVarFontGlyphSet
