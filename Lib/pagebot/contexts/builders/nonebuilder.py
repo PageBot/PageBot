@@ -41,7 +41,7 @@ class NoneBuilder(object):
     Eventually should be a matching set of methods, compare to DrawBot itself."""
 
     def __init__(self):
-        self._installedFonts = []
+        pass
 
     def newDrawing(self, path=None):
         pass
@@ -138,9 +138,6 @@ class NoneBuilder(object):
 
     def saveImage(self, path, multipage=True):
         pass
-
-    def installedFonts(self):
-        return self._installedFonts
 
     def installFont(self, fontPath):
         self._installedFonts.append(fontPath)

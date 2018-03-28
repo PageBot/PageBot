@@ -46,6 +46,10 @@ class FontInfo(object):
     def __init__(self, ttFont):
         self.ttFont = ttFont
         self._styleName = None 
+        # Optional informaiton, set if instance is created from a VarFont
+        self.opticalSize = None
+        self.location = None
+        self.varStyleName = None
 
     def _getNameTableEntry(self, nameId):
         nameEntry = None

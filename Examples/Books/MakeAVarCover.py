@@ -11,7 +11,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     MakeABookCover.py
+#     MakeAVarCover.py
 #
 #     Needs filling in with content.
 #
@@ -22,8 +22,8 @@ from pagebot.contributions.filibuster.blurb import blurb
 
 from pagebot.toolbox.transformer import darker
 # Get function to find the Roboto family (in this case installed in the PageBot repository
-from pagebot.fonttoolbox.objects.family import getFamily
 from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance, fitVariableWidth
 # Creation of the RootStyle (dictionary) with all
 # available default style parameters filled.
 from pagebot.style import getRootStyle, B4, CENTER, MIDDLE, TOP 
@@ -49,10 +49,11 @@ BLEED = 8
 # Export in folder that does not commit to Git. Force to export PDF.
 EXPORT_PATH = '_export/ABookCover.pdf'
 
-family = getFamily('Roboto')
-fontRegular = family.findFont('Regular')
-fontBold = family.findFont('Bold')
-fontItalic = family.findFont('Italic')
+varFont = findFont('RobotoDelta-VF')
+fontRegular = getVarFontInstance(varFont, dict(wdth=75))
+print varFont.axes
+fontBold = varFont#family.findFont('Bold')
+fontItalic = varFont#family.findFont('Italic')
 ampersandFont = findFont('Georgia')
 
 def makeDocument():
@@ -83,7 +84,7 @@ def makeDocument():
     
     context = view.context
     
-    C1 = (random()*0.2, random()*0.2, random()*0.9)
+    C1 = (0.2+random()*0.8, random()*0.2, 0.4+random()*0.2)
 
     # Make background element, filling the page color and bleed.
     colorRect1 = newRect(z=-10, name='Page area', parent=page,
@@ -96,13 +97,21 @@ def makeDocument():
     colorRect1.solve() # Solve element position, before we can make
                        # other elements depend on position and size.
 
-    M = BLEED + 64
-    newRect(z=-10, name='Frame 2', parent=colorRect1, 
+    M = 64
+    colorRect2 =newRect(z=-10, name='Frame 2', parent=colorRect1, 
             conditions=[Center2Center(), Middle2Middle()],
             fill=darker(C1, 0.5), # Default parameter:
                                   # 50% between background color and white
             stroke=None,
-            w=colorRect1.w-M, h=colorRect1.h-M,
+            w=colorRect1.w-M-BLEED, h=colorRect1.h-M-BLEED,
+            xAlign=CENTER, yAlign=MIDDLE)
+
+    newRect(z=-10, name='Frame 3', parent=colorRect2, 
+            conditions=[Center2Center(), Middle2Middle()],
+            fill=darker(C1, 0.3), # Default parameter:
+                                  # 50% between background color and white
+            stroke=None,
+            w=colorRect1.w-2*M, h=colorRect1.h-2*M,
             xAlign=CENTER, yAlign=MIDDLE)
 
     # Make random blurb name and titles
@@ -119,23 +128,20 @@ def makeDocument():
     page.pb = 20
     # Add some title (same width, different height) at the "wrongOrigin" position.
     # They will be repositioned by solving the colorConditions.
-    title = context.newString(title+'\n\n', style=dict(font=fontBold.path, fontSize=40, rLeading=1.2, xTextAlign=CENTER, textFill=1))
-    title += context.newString(subTitle + '\n\n', style=dict(font=fontRegular.path, fontSize=32, xTextAlign=CENTER, textFill=(1, 1, 1,0.5)))
-    title += context.newString(authorName, style=dict(font=fontItalic.path, fontSize=24, rTracking=0.025, xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
-    newTextBox(title, parent=page, name='Other element',
+    titleS = context.newString('')
+    for word in title.split(' '):
+        titleS += context.newString(' '+word, style=dict(font=fontRegular.path, fontSize=50, w=page.pw, rLeading=1.2, xTextAlign=CENTER, textFill=1))
+    #title += context.newString(subTitle + '\n\n', style=dict(font=fontRegular.path, fontSize=32, xTextAlign=CENTER, textFill=(1, 1, 1,0.5)))
+    #title += context.newString(authorName, style=dict(font=fontItalic.path, fontSize=24, rTracking=0.025, xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
+    newTextBox(titleS, parent=page, name='Title',
             conditions=[Fit2Width(), Center2Center(), Top2Top()],
             xAlign=CENTER, yAlign=TOP)
 
-    typoIllustration = context.newString('&', style=dict(font=ampersandFont.path, fontSize=300, xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
-    newTextBox(typoIllustration, parent=page,
-            conditions=[Fit2Width(), Center2Center(), Bottom2Bottom()],
-            xAlign=CENTER, yAlign=TOP)
-
-    # Evaluate again, result should now be >= 0
     score = page.evaluate()
-    if score.fails: # There is new "failing" elements. Solve their layout.
+    if score.fails:
         page.solve()
     
+    # Evaluate again, result should now be >= 0
     return doc
 
 d = makeDocument()

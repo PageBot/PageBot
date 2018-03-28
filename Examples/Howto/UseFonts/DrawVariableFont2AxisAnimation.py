@@ -46,17 +46,6 @@ BOLD_ITALIC = getVarFontInstance(f, dict(wght=0.7, wdth=0), styleName='Bold Ital
 
 LABEL_FONT = BOOK
 
-"""
-FAMILY = 'Georgia'
-for fontName in installedFonts():
-    if FAMILY in fontName:
-        print(fontName)
-LABEL_FONT = getFontByName('Verdana')
-BOOK = getFontByName(FAMILY)
-BOOK_ITALIC = getFontByName(FAMILY+'-Italic')
-BOLD = getFontByName(FAMILY+'-Bold')
-BOLD_ITALIC = getFontByName(FAMILY+'-BoldItalic')
-"""
 class FontIcon(object):
     W = 30
     H = 40

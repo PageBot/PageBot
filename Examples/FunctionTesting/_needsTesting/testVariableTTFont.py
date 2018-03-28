@@ -12,11 +12,6 @@
 #
 #     testVariableTTFont.py
 #
-
-#for fontName in installedFonts():
-#    if 'Skia' in fontName:
-#        print(fontName)
-
 from pagebot.contexts.platform import getContext
 from pagebot.document import Document
 from pagebot.style import A4
