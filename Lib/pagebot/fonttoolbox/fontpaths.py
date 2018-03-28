@@ -16,23 +16,14 @@
 import os
 
 from pagebot.toolbox.transformer import path2FontName
-from pagebot.contexts.platform import ROOT_PATH
+from pagebot.contexts.platform import getResourcesPath
 
 #   P A T H S
 
-RESOURCES_PATH = ROOT_PATH + '/resources'
-TEST_FONTS_PATH = RESOURCES_PATH + '/testfonts'
+TEST_FONTS_PATH = getResourcesPath() + '/testfonts'
 
 # Dictionary with all available font paths on the platform, key is the single file name.
 FONT_PATHS = {}
-
-def getRootPath():
-    u"""Answer the root path on the platform for the PageBot module."""
-    return ROOT_PATH
-
-def getResourcesPath():
-    u"""Answer the root path on the platform for the PageBot module."""
-    return RESOURCES_PATH
 
 def getTestFontsPath():
     u"""Answer the path of the PageBot test fonts."""
