@@ -13,21 +13,6 @@
 #
 #     pagebot/contexts/platform.py
 #
-import pagebot
-from pagebot.toolbox.transformer import path2ParentPath
-
-ROOT_PATH = path2ParentPath(pagebot.__file__)
-RESOURCES_PATH = ROOT_PATH + '/resources'
-
-def getRootPath():
-    u"""Answer the root path on the platform for the PageBot module."""
-    return ROOT_PATH
-
-def getResourcesPath():
-    u"""Answer the root path on the platform for the PageBot module."""
-    return RESOURCES_PATH
-
-#   C O N T E X T S
 
 DEFAULT_CONTEXT = None
 
