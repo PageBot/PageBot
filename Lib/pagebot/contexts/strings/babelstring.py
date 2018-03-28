@@ -53,7 +53,7 @@ class BabelString(object):
         True
         """
         from pagebot.fonttoolbox.objects.font import getFont
-        from pagebot.contexts.platform import getFontPaths
+        from pagebot.fonttoolbox.fontpaths import getFontPaths
         fontPath = getFontPaths().get(self.font, self.font)
         return getFont(fontPath)
 

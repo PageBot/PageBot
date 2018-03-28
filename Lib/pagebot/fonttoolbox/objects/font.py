@@ -84,7 +84,7 @@ def findFont(fontPath, lazy=True):
     >>> findFont('Roboto-Regular')
     <Font Roboto-Regular>
     """
-    from pagebot.contexts.platform import getFontPaths
+    from pagebot.fonttoolbox.fontpaths import getFontPaths
     fontPaths = getFontPaths()
     if fontPath in fontPaths:
         return getFont(fontPaths[fontPath])
