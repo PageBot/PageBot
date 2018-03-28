@@ -340,15 +340,6 @@ class DrawBotContext(BaseContext):
 
     #   F O N T S
 
-    def installFont(self, fontName):
-        return self.b.installFont(fontName)
-
-    def installedFonts(self):
-        u"""Answer the list with names of all installed fonts in the system, as available
-        for cls.newString( ) style. Note that this is the internal DrawBot list of installed font names.
-        It is also possible to use fonts in PageBot by the file path of the font."""
-        return self.b.installedFonts()
-
     def fontPath2FontName(self, fontPath):
         u"""Answer the font name of the font related to fontPath. This is done by installing it (again).
         Answer None if the font cannot be installed or if the path does not exists.
@@ -362,7 +353,7 @@ class DrawBotContext(BaseContext):
         'Amstelvar-Roman-VF.ttf'
         """
         if os.path.exists(fontPath):
-            return self.installFont(fontPath)
+            return self.b.installFont(fontPath)
         return None
 
     def fontName2FontPath(self, fontName):
