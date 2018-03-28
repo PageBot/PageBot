@@ -14,7 +14,6 @@
 #
 #     textbox.py
 #
-from pagebot import getMarker
 from pagebot.style import (LEFT, RIGHT, CENTER, MIN_WIDTH, MIDDLE,
                            BOTTOM, DEFAULT_WIDTH)
 from pagebot.elements.element import Element
