@@ -20,12 +20,13 @@ import re
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
 
+DEFAULT_FONT_SIZE = 16
+DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
+DEFAULT_LEADING = 0
+
 class FlatString(BabelString):
 
     BABEL_STRING_TYPE = 'flat'
-    DEFAULT_FONT_NAME = 'Roboto-Regular'
-    DEFAULT_FONTSIZE = 12
-    DEFAULT_LEADING = 0
 
     u"""FlatString is a wrapper around the Flat string."""
     def __init__(self, s, context, style=None):
@@ -143,8 +144,6 @@ class FlatString(BabelString):
         >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=30))
         >>> #bs.s.lines()
         """
-        from pagebot.fonttoolbox.objects.font import findFont
-
         if style is None:
             style = {}
 
@@ -162,13 +161,13 @@ class FlatString(BabelString):
         # using Tal's https://github.com/typesupply/compositor
         # This needs to be installed, in case PageBot is running outside of DrawBot.
 
-        font = findFont(style.get('font'))
-        if font is None: 
-            font = findFont(cls.DEFAULT_FONT_NAME)
-        flatFont = context.b.font.open(font.path)
+        font = style.get('font')
+        if not os.path.exists:
+            font = DEFAULT_FONT_PATH
+        flatFont = context.b.font.open(font)
         strike = context.b.strike(flatFont)
-        strike.size(style.get('fontSize', cls.DEFAULT_FONTSIZE),
-            style.get('leading', cls.DEFAULT_LEADING), units='pt')
+        strike.size(style.get('fontSize', DEFAULT_FONT_SIZE),
+            style.get('leading', DEFAULT_LEADING), units='pt')
         #if w is not None:
         #    strike.width = w
         return cls(strike.text(s), context=context, style=style) # Make real Flat flavor BabelString here.
