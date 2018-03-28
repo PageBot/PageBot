@@ -44,6 +44,8 @@ from pagebot.elements import newRect, newTextBox
 W, H = B4
 W -= 48 # Make a bit more narrow format.
 
+BLEED = 8
+
 # Export in folder that does not commit to Git. Force to export PDF.
 EXPORT_PATH = '_export/ABookCover.pdf'
 
@@ -90,11 +92,11 @@ def makeDocument():
                                      Fit2RightSide(),
                                      Fit2BottomSide()],
                          fill=C1)
-    colorRect1.bleed = 0 #(0, 0, 0, 40) # TODO: Fix Bleed function
+    colorRect1.bleed = BLEED
     colorRect1.solve() # Solve element position, before we can make
                        # other elements depend on position and size.
 
-    M = 64
+    M = BLEED + 64
     newRect(z=-10, name='Frame 2', parent=colorRect1, 
             conditions=[Center2Center(), Middle2Middle()],
             fill=darker(C1, 0.5), # Default parameter:
