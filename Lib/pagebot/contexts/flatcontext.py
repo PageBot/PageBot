@@ -117,7 +117,7 @@ class FlatContext(BaseContext):
         u"""Save the current document to file(s)
 
         >>> import os
-        >>> from pagebot.contexts.platform import getRootPath
+        >>> from pagebot import getRootPath
         >>> exportPath = getRootPath() + '/_export' # _export/* Files are ignored in git
         >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
         >>> context = FlatContext()
