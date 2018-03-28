@@ -454,7 +454,7 @@ class Glyph(object):
         u"""Answer the axis-deltas for this glyph. Answer an None if there are
         no deltas for this glyph or if the parent is not a Var-font.
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
@@ -482,7 +482,7 @@ class Glyph(object):
 
         TODO: Get this to work for Flat
 
-        >>> from pagebot.contexts.platform import getTestFontsPath
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'

@@ -19,7 +19,7 @@ if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
 
-from pagebot.contexts.platform import getTestFontsPath
+from pagebot.fonttoolbox.fontpaths import getTestFontsPath
 from pagebot.fonttoolbox.objects.font import findFont
 
 f = findFont('Amstelvar-Roman-VF')

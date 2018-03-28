@@ -353,7 +353,7 @@ class DrawBotContext(BaseContext):
         u"""Answer the font name of the font related to fontPath. This is done by installing it (again).
         Answer None if the font cannot be installed or if the path does not exists.
 
-        >>> from pagebot.contexts.platform import TEST_FONTS_PATH
+        >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
         >>> context = DrawBotContext()
         >>> context.fontPath2FontName('Aaa.ttf') is None # Dow not exist
         True

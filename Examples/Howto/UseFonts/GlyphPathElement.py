@@ -16,7 +16,7 @@
 #
 import pagebot # Import to know the path of non-Python resources.
 
-from pagebot.contexts.platform import getTestFontsPath
+from pagebot.fonttoolbox.fontpaths import getTestFontsPath
 from pagebot.contexts.platform import getContext
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT, NO_COLOR,TOP, BOTTOM, MM

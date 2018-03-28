@@ -14,7 +14,6 @@
 #     pagebot/contexts/platform.py
 #
 import os
-import pagebot
 
 from pagebot.toolbox.transformer import path2FontName
 from pagebot.contexts.platform import ROOT_PATH
