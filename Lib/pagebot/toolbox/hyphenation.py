@@ -26,7 +26,7 @@
 #     "dk"      Danish                  Contributed by Torben Wilhemsem
 #
 import os, codecs
-from pagebot.contexts.platform import RESOURCES_PATH
+from pagebot import getResourcesPath
 
 DEFAULT_LANGUAGE = 'en'
 
@@ -41,7 +41,7 @@ def hyphenatedWords(language=DEFAULT_LANGUAGE):
     u"""Answer the dictionary of hyphenated words for this language (default is English)."""
     if language not in languages:
         # Not initialized yet, try to read.
-        path = RESOURCES_PATH + '/languages/%s.txt' % language
+        path = getResourcesPath() + '/languages/%s.txt' % language
         if os.path.exists(path):
             languages[language] = words = {}
             f = codecs.open(path, mode="r", encoding="utf-8")

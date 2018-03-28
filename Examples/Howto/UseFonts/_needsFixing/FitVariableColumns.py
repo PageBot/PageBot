@@ -24,7 +24,7 @@ from random import random
 from math import sin, radians
 
 from pagebot.contexts.platform import getContext
-from pagebot.contexts.platform import getRootPath
+from pagebot import getRootPath
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import fitVariableWidth
 
