@@ -11,7 +11,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     UseUnits.py
+#     units.py
 #
 #     Implements basic intelligent spacing units with build-in conversions.
 #

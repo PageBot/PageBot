@@ -20,7 +20,7 @@ import weakref
 import copy
 from pagebot.contexts.platform import getContext
 from pagebot.conditions.score import Score
-from pagebot import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
+from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID
 from pagebot.style import (makeStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS,
@@ -426,6 +426,58 @@ class Element(object):
             if found is not None:
                 return found
         return None
+
+    def deepFind(self, name=None, pattern=None, result=None):
+        u"""Perform a dynamic recursive deep find for all elements with the name. 
+        Don't include self. Either *name* or *pattern* should be defined, 
+        otherwise an error is raised.
+
+        >>> e1 = Element(name='DeeperChild')
+        >>> e2 = Element(name='DeeperChild', elements=[e1])
+        >>> e3 = Element(name='Child', elements=[e2])
+        >>> e = Element(name='Parent', elements=[e3])
+        >>> elements = e.deepFind(name='DeeperChild') # Get all child elements matching name
+        >>> len(elements)
+        2
+        >>> elements = e.deepFind(pattern='Child') # Get all child elements matching pattern
+        >>> len(elements)
+        3
+        """
+        assert name or pattern
+        if result is None:
+            result = []
+        for e in self.elements:
+            if pattern is not None and pattern in e.name: # Simple pattern match
+                result.append(e)
+            elif name is not None and name == e.name:
+                result.append(e)
+            e.deepFind(name, pattern, result)
+        return result
+
+    def find(self, name=None, pattern=None, result=None):
+        u"""Perform a dynamic find for the named element(s) in self.elements. 
+        Don't include self. Either name or pattern should be defined, otherwise 
+        an error is raised. Return the collected list of matching child elements.
+
+        >>> e1 = Element(name='OtherChild')
+        >>> e2 = Element(name='OtherChild')
+        >>> e3 = Element(name='Child')
+        >>> e = Element(name='Parent', elements=[e1, e2, e3])
+        >>> elements = e.find(name='OtherChild') # Get all child element matching name
+        >>> len(elements)
+        2
+        >>> elements = e.find(pattern='Child') # Get all child element matching name
+        >>> len(elements)
+        3
+        """
+        assert name or pattern
+        result = []
+        for e in self.elements:
+            if pattern is not None and pattern in e.name: # Simple pattern match
+                result.append(e)
+            elif name is not None and name == e.name:
+                result.append(e)
+        return result
 
     def clearElements(self):
         u"""Properly initializes self._elements and self._eIds.

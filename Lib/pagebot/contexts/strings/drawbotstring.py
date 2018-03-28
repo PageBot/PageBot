@@ -46,6 +46,34 @@ def pixelBounds(fs):
     bx, by, bw, bh = p.bounds()
     return bx, by, bw - bx, bh - by
 
+#   M A R K E R  TODO: Get markers to work again
+
+MARKER_PATTERN = '==%s--%s=='
+FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\-\-([^=]*)\=\=')
+
+def getMarker(b, markerId, arg=None):
+    u"""Answer a formatted string with markerId that can be used as non-display marker.
+    This way the Composer can find the position of markers in text boxes, after
+    FS-slicing has been done. Note there is always a very small "white-space"
+    added to the string, so there is a potential difference in width that matters.
+    For that reason markers should not be changed after slicing (which would theoretically
+    alter the flow of the FormattedString in an box) and the markerId and amount/length
+    of args should be kept as small as possible.
+    Note that there is a potential problem of slicing through the argument string at
+    the end of a textBox. That is another reason to keep the length of the arguments short.
+    And not to use any spaces, etc. inside the markerId.
+    Possible slicing through line-endings is not a problem, as the raw string ignores them."""
+    marker = MARKER_PATTERN % (markerId, arg or '')
+    return b.FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)
+    ###return FormattedString(marker, fill=(1, 0, 0), stroke=None, fontSize=10)
+
+def findMarkers(fs, reCompiled=None):
+    u"""Answer a dictionary of markers with their arguments in a given FormattedString."""
+    if reCompiled is None:
+        reCompiled= FIND_FS_MARKERS
+    return reCompiled.findall(u'%s' % fs)
+
+
 class NoneDrawBotString(BabelString):
     u"""Used for testing DrawBotString doctest in non-DrawBot Environment."""
     BABEL_STRING_TYPE = 'fs'
