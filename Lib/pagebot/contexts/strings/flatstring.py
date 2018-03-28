@@ -17,6 +17,7 @@
 #
 import re
 
+from pagebot import getResourcesPath
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
 
