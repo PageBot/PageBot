@@ -164,7 +164,7 @@ class FlatString(BabelString):
         # This needs to be installed, in case PageBot is running outside of DrawBot.
 
         font = style.get('font')
-        if not os.path.exists:
+        if font is None or not os.path.exists(font):
             font = DEFAULT_FONT_PATH
         flatFont = context.b.font.open(font)
         strike = context.b.strike(flatFont)
