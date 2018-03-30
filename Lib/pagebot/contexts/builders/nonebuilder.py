@@ -41,7 +41,7 @@ class NoneBuilder(object):
     Eventually should be a matching set of methods, compare to DrawBot itself."""
 
     def __init__(self):
-        pass
+        self._installedFonts = []
 
     def newDrawing(self, path=None):
         pass
