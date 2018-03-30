@@ -81,7 +81,7 @@ class VarFamily(Family):
         self._parametricAxisFonts = {} # Key is parametric axis name
         self._parametricAxisMetrics = {} # Collection of font metrics and calculated parameters.
         self._metrics = None # Initialized on property call
-        self._originFonts = None
+        self._originFont = None
         # Add the fonts. Also initialize self.originFont
         self.baseGlyphName = self.BASE_GLYPH_NAME
 
@@ -94,7 +94,9 @@ class VarFamily(Family):
                 self._originFont.info.widthClass = 5
                 self._originFont.info.weightClass = 400
         return self._originFont
-    originFont = property(_get_originFont)
+    def _set_originFont(self, font):
+        self._originFont = font
+    originFont = property(_get_originFont, _set_originFont)
 
     def _get_parametricAxisFonts(self):
         u"""Generate the dictionary with parametric axis fonts. Key is the parametric axis name,
@@ -102,6 +104,8 @@ class VarFamily(Family):
         exist as cached files, they are created. The font currently under self.originFont is
         used a neutral, for which all delta's are 0."""
         origin = self.originFont
+        if origin is None:
+            return None
 
         # Create directory for the parametric axis fonts, if it does not exist.
         paFontDir = path2ParentPath(origin.path) + '/@axes'
@@ -145,13 +149,16 @@ class VarFamily(Family):
 
     def getClosestOS2Weight(self, weightClass=ORIGIN_OS2_WEIGHT_CLASS):
         u"""Answer the list of fonts (there can be more that one, accidentally located at that position.
-        Default is the origin at weightClass == ORIGIN_OS2_WEIGHT_CLASS (400)."""
+        Default is the origin at weightClass == ORIGIN_OS2_WEIGHT_CLASS (400).
+        Answer None if no matching font could be found."""
         os2Weights = {}
         for font in self.fonts.values():
             diff = abs(weightClass - font.info.weightClass)
             if not diff in os2Weights:
                 os2Weights[diff] = []
             os2Weights[diff].append(font)
+        if not os2Weights:
+            return None # Could not find one.
         return os2Weights[min(os2Weights.keys())] # Answer the set of fonts with the smallest difference.
 
     def getOS2WeightWidthClasses(self):
@@ -204,7 +211,10 @@ class VarFamily(Family):
 
     def makeParametricFonts(self, axisName):
         u"""Answer the two Font instances for calculated parametric Min and Max."""
-        axisFontMin, axisFontMax = self.parametricAxisFonts[axisName]
+        parametricAxisFonts = self.parametricAxisFonts
+        if parametricAxisFonts is None:
+            return None
+        axisFontMin, axisFontMax = parametricAxisFonts[axisName]
         hook = 'makeParametricFont_'+axisName
         assert hasattr(self, hook)
         return getattr(self, hook)(axisFontMin, axisFontMax)

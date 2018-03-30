@@ -51,6 +51,7 @@ class SvgContext(BaseContext):
         self._ox = 0 # Origin set by self.translate()
         self._oy = 0
         self._rotate = 0
+        
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
 
