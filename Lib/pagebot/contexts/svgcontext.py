@@ -265,7 +265,7 @@ class SvgContext(BaseContext):
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         x, y, w, h = r
-        t = self._drawing.text(sOrBs, insert=(x, y), 
+        t = self._drawing.text(sOrBs, insert=(x, y),
                                stroke=self._stroke, stroke_width=self._strokeWidth,
                                fill=self._fill, font_size=self._fontSize, font_family=self._font)
         self._drawing.add(t)
