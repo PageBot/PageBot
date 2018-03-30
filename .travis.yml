@@ -9,6 +9,7 @@ install:
 - pip install flat
 - pip install fontTools
 - pip install pylint
+- pip install svgwrite
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme
