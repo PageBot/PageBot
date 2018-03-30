@@ -48,6 +48,8 @@ class SvgContext(BaseContext):
         self._frameDuration = 1
         self._fontSize = DEFAULT_FONT_SIZE = 16
         self._font = DEFAULT_FONT_PATH
+        self._gState = [] # Stack of graphic states.
+        self.save() # Save current set of values on gState stack.
 
         self.newDrawing()
 
@@ -98,7 +100,7 @@ class SvgContext(BaseContext):
         >>> context.fill((0.4, 0.1, 0.9))
         >>> context.rect(300, 150, 400, 600)
         >>> context.saveDocument(path)
-        >>> r = os.system('open %s' % path)
+        >>> #r = os.system('open %s' % path)
         """
         rect = self._drawing.rect(insert=(x, y), size=(w, h), 
                            stroke_width=self._strokeWidth,
@@ -116,7 +118,7 @@ class SvgContext(BaseContext):
         >>> context.fill((0.4, 0.1, 0.9))
         >>> context.oval(300, 150, 400, 600)
         >>> context.saveDocument(path)
-        >>> r = os.system('open %s' % path)
+        >>> #r = os.system('open %s' % path)
         """
         oval = self._drawing.ellipse(center=(x+w/2, y+h/2), r=(w/2, h/2), 
                                              stroke_width=self._strokeWidth,
@@ -134,7 +136,7 @@ class SvgContext(BaseContext):
         >>> context.fill((0.6, 0.1, 0.5))
         >>> context.circle(300, 150, 200)
         >>> context.saveDocument(path)
-        >>> r = os.system('open %s' % path)
+        >>> #r = os.system('open %s' % path)
         """
         circle = self._drawing.circle(center=(x+r, y+r), r=r, 
                                       stroke_width=self._strokeWidth, 
@@ -151,7 +153,7 @@ class SvgContext(BaseContext):
         >>> context.stroke((0.6, 0.1, 0.5), 20)
         >>> context.line((300, 150), (200, 100))
         >>> context.saveDocument(path)
-        >>> r = os.system('open %s' % path)
+        >>> #r = os.system('open %s' % path)
         """
         line = self._drawing.line(p1, p2, 
                                   stroke_width=self._strokeWidth, 
@@ -182,21 +184,53 @@ class SvgContext(BaseContext):
     stroke = setStrokeColor
 
     def saveGraphicState(self):
-        pass
+        u"""Save the current graphic state.
+
+        >>> context = SvgContext()
+        >>> context.font('Verdana')
+        >>> context._font
+        'Verdana'
+        >>> context.save()
+        >>> context.font('Verdana-Bold')
+        >>> context._font
+        'Verdana-Bold'
+        >>> context.restore()
+        >>> context._font
+        'Verdana'
+        """
+        gState = dict(
+            font=self._font,
+            fontSize=self._fontSize,
+            fill=self._fill,
+            stroke=self._stroke,
+            strokeWidth=self._strokeWidth
+        )
+        self._gState.append(gState)
 
     save = saveGraphicState
 
     def restoreGraphicState(self):
-        pass
+        gState = self._gState.pop()
+        self._font = gState['font']
+        self._fontSize = gState['fontSize']
+        self._fill = gState['fill']
+        self._stroke = gState['stroke']
+        self._strokeWidth = gState['strokeWidth']
 
     restore = restoreGraphicState
     
     #   T E X T 
 
     def fontSize(self, fontSize):
+        u"""Set the current graphic state to fontSize.
+
+        """
         self._fontSize = fontSize
 
     def font(self, font):
+        u"""Set the current graphic state to font. 
+        TODO: Make this match the font.path.
+        """
         self._font = font
 
     def text(self, sOrBs, p):
@@ -213,7 +247,7 @@ class SvgContext(BaseContext):
         >>> context.stroke((0.5, 0, 0.5), 5)
         >>> context.text('ABCDEF', (100, 300))
         >>> context.saveDocument(path)
-        >>> r = os.system('open %s' % path)
+        >>> #r = os.system('open %s' % path)
 
         """
         if not isinstance(sOrBs, str):
