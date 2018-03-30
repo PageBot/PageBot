@@ -20,6 +20,9 @@ from pagebot.style import A4
 from pagebot.document import Document
 from pagebot.elements import newRect
 from pagebot.conditions import *
+from pagebot.contexts.svgcontext import SvgContext
+
+context = SvgContext()
 
 W, H = A4 # Standard page size
 # To see how the "responsive" layout works in landscape, swap W and H
@@ -27,7 +30,7 @@ W, H = A4 # Standard page size
 
 PAD = 50 # Page padding
 # Create a Document instance of the defined size and one automatic page.
-doc = Document(w=W, h=H, title="Demo pages", originTop=False)
+doc = Document(w=W, h=H, title="Demo pages", originTop=False, context=context)
 # Get the view of the document. By default this is a PageView, writing
 # on a DrawBotContext or FlatContext, whatever is avaialbe as default.
 view = doc.view

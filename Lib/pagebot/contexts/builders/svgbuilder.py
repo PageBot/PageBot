@@ -13,7 +13,10 @@
 #
 #     svgbuilder.py
 #
-from pagebot.contexts.builders.nonedrawbotbuilder import NoneDrawBotBuilder
+#     https://svgwrite.readthedocs.io/en/master/
+#     sudo pip install svgwrite
+#
+from pagebot.contexts.builders.nonebuilder import NoneSvgBuilder
 
 try: 
 	import svgwrite
@@ -22,6 +25,6 @@ try:
 	svgBuilder.PB_ID = 'svg' 
 
 except ImportError:
-    svgBuilder = NoneDrawBotBuilder()
-    print('Using NoneDrawBotBuilder instead of svgwriter')
+    svgBuilder = NoneSvgBuilder()
+    print('Using NoneSvgBuilder instead of svgwriter')
 
