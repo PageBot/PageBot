@@ -25,7 +25,7 @@ class BaseContext(object):
     isDrawBot = False
     isFlat = False
     isSvg = False
-    
+
     # To be redefined by inheriting context classes.
     STRING_CLASS = None
 
@@ -46,6 +46,7 @@ class BaseContext(object):
         using e or style as typographic paramters. Ignore and just answer s if it is already a DrawBotString.
 
         """
+        print(self.STRING_CLASS)
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
             s = self.STRING_CLASS.newString(u'%s' % s, context=self, e=e, style=style, w=w, h=h, 
@@ -89,7 +90,8 @@ class BaseContext(object):
     #   V A R I A B L E
 
     def Variable(self, ui, globals):
-        """Offers interactive global value manipulation in DrawBot. Probably to be ignored in other contexts."""
+        """Offers interactive global value manipulation in DrawBot. 
+        Probably to be ignored in other contexts."""
         pass
 
 if __name__ == '__main__':
