@@ -48,6 +48,9 @@ class SvgContext(BaseContext):
         self._frameDuration = 1
         self._fontSize = DEFAULT_FONT_SIZE
         self._font = DEFAULT_FONT_PATH
+        self._ox = 0 # Origin set by self.translate()
+        self._oy = 0
+        self._rotate = 0
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
 
@@ -102,7 +105,7 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        rect = self._drawing.rect(insert=(x, y), size=(w, h), 
+        rect = self._drawing.rect(insert=(self._ox+x, self._oy+y), size=(w, h), 
                            stroke_width=self._strokeWidth,
                            stroke=self._stroke, fill=self._fill)
         self._drawing.add(rect)
@@ -120,7 +123,7 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        oval = self._drawing.ellipse(center=(x+w/2, y+h/2), r=(w/2, h/2), 
+        oval = self._drawing.ellipse(center=(self._ox+x+w/2, self._oy+y+h/2), r=(w/2, h/2), 
                                              stroke_width=self._strokeWidth,
                                              stroke=self._stroke, fill=self._fill)
         self._drawing.add(oval)
@@ -138,7 +141,7 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        circle = self._drawing.circle(center=(x+r, y+r), r=r, 
+        circle = self._drawing.circle(center=(self._ox+x+r, self._oy+y+r), r=r, 
                                       stroke_width=self._strokeWidth, 
                                       stroke=self._stroke, fill=self._fill)
         self._drawing.add(circle)
@@ -155,7 +158,7 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        line = self._drawing.line(p1, p2, 
+        line = self._drawing.line((self._ox+p1[0], self._oy+p1[1]), (self._ox+p2[0], self._oy+p2[1]), 
                                   stroke_width=self._strokeWidth, 
                                   stroke=self._stroke, )
         self._drawing.add(line)
@@ -203,7 +206,10 @@ class SvgContext(BaseContext):
             fontSize=self._fontSize,
             fill=self._fill,
             stroke=self._stroke,
-            strokeWidth=self._strokeWidth
+            strokeWidth=self._strokeWidth,
+            ox=self._ox,
+            oy=self._oy,
+            rotate=self._rotate,
         )
         self._gState.append(gState)
 
@@ -216,6 +222,9 @@ class SvgContext(BaseContext):
         self._fill = gState['fill']
         self._stroke = gState['stroke']
         self._strokeWidth = gState['strokeWidth']
+        self._ox = gState['ox']
+        self._oy = gState['oy']
+        self._rotate = gState['rotate']
 
     restore = restoreGraphicState
     
@@ -269,6 +278,18 @@ class SvgContext(BaseContext):
                                stroke=self._stroke, stroke_width=self._strokeWidth,
                                fill=self._fill, font_size=self._fontSize, font_family=self._font)
         self._drawing.add(t)
+
+    def translate(self, dx, dy):
+        u"""Translate the origin by (dx, dy)."""
+        self._ox += dx
+        self._oy += dy
+
+    def rotate(self, angle):
+        u"""Rotate by angle."""
+        self._rotate = angle
+
+    def textSize(self, s):
+        return 100, 20
 
     #   A N I M A T I O N
 

@@ -277,9 +277,9 @@ class DrawBotContext(BaseContext):
             sy = sx
         self.b.scale(sx, sy)
 
-    def translate(self, x, y):
+    def translate(self, dx, dy):
         u"""Translate the origin to this point."""
-        self.b.translate(x, y)
+        self.b.translate(dx, dy)
 
     def transform(self, t):
         u"""Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift over vector (dx, dy)"""
@@ -529,6 +529,10 @@ class DrawBotContext(BaseContext):
             b.strokeWidth(w)
 
     stroke = setStrokeColor # DrawBot compatible API
+
+    def rotate(self, angle):
+        u"""Rotate the canvas by angle."""
+        self.b.rotate(angle)
 
     #   I M A G E
 

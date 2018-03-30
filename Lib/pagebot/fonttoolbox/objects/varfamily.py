@@ -17,9 +17,15 @@
 #
 import os, shutil, sys
 
-from pagebot.fonttoolbox.objects.family import Family
+from pagebot.fonttoolbox.objects.family import Family, getFamily
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2Name, path2ParentPath
+
+def getVarFamily(name):
+    family = getFamily(name)
+    if family is not None:
+        return VarFamily(name, family.fonts.values)
+    return None
 
 class VarFamily(Family):
     u"""A VarFamily is a special kind of family that contains a set of font that potentially form
@@ -70,13 +76,13 @@ class VarFamily(Family):
     wght, wdth, opsz, ital, slnt = COMPOSITE_AXES = ['wght', 'wdth', 'opsz', 'ital', 'slnt']
 
     def __init__(self, name=None, fonts=None):
-        u"""Answer a VarFamily instance in the defined list of font paths
-        or fonts list.  """
+        u"""Answer a VarFamily instance in the defined list of font paths or fonts list.  """
         Family.__init__(self, name=None, fonts=None)
         self._parametricAxisFonts = {} # Key is parametric axis name
         self._parametricAxisMetrics = {} # Collection of font metrics and calculated parameters.
         self._metrics = None # Initialized on property call
-        # Add the fonts. Also initialize self._originFont
+        self._originFonts = None
+        # Add the fonts. Also initialize self.originFont
         self.baseGlyphName = self.BASE_GLYPH_NAME
 
     def _get_originFont(self):
@@ -152,7 +158,7 @@ class VarFamily(Family):
         u"""Answer the (x, y) dictionary, with (OS/2 weight class, OS/2 width class) as key and fonts list as value
         (as often there are be multiple fonts on the same (x, y) if not filled with the right OS/2 value."""
         weightWidthClasses = {}
-        for font in self._fonts.values():
+        for font in self.fonts.values():
             weightWidth = font.info.weightClass, font.info.widthClass
             if weightWidth not in weightWidthClasses:
                 weightWidthClasses[weightWidth] = []
@@ -163,7 +169,7 @@ class VarFamily(Family):
         u"""Answer the (x, y) dictionary, with (H-stem width, H-width) as key and fonts list as value
         (theoretically there can be multiple fonts on the same (x, y)."""
         weightWidthLocations = {}
-        for font in self._fonts.values():
+        for font in self.fonts.values():
             stemValues = font.analyzer.stems.keys()
             if not stemValues:
                 continue

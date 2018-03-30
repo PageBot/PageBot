@@ -72,8 +72,10 @@ class HtmlString(BabelString):
         # TODO: Some stuff needs to get here.
         return ''
 
-    def append(self, s):
-        self.s += s
+    def append(self, sOrBs):
+        if not isinstance(sOrBs, str):
+            sOrBs = sOrBs.s
+        self.s += sOrBs
 
     MARKER_PATTERN = '<!-- ==%s@%s== -->'
 
