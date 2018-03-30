@@ -46,7 +46,6 @@ class BaseContext(object):
         (converted to plain unicode string), using e or style as typographic parameters. 
         Ignore and just answer s if it is already a self.STRING_CLASS instance.
         """
-        print(self.STRING_CLASS)
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
             s = self.STRING_CLASS.newString(u'%s' % s, context=self, e=e, style=style, w=w, h=h, 
