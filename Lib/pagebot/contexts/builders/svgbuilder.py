@@ -11,17 +11,17 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     flatbuilder.py
+#     svgbuilder.py
 #
-from pagebot.contexts.builders.nonebuilder import NoneFlatBuilder
+from pagebot.contexts.builders.nonedrawbotbuilder import NoneDrawBotBuilder
 
 try: 
-    import flat
-    flatBuilder = flat
-    # Id to make builder hook name. Views will try to call e.build_flat()
-    flatBuilder.PB_ID = 'flat' 
+	import svgwrite
+	svgBuilder = svgwrite
+	# Id to make builder hook name. Views will try to call e.build_svg()
+	svgBuilder.PB_ID = 'svg' 
 
 except ImportError:
-    flatBuilder = NoneFlatBuilder()
-    print('Using NoneFlatBuilder')
+    svgBuilder = NoneDrawBotBuilder()
+    print('Using NoneDrawBotBuilder instead of svgwriter')
 

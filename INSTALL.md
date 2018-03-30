@@ -60,3 +60,9 @@ Also, when running PageBot outside of DrawBot context (e.g. using Flat), these l
 
 https://github.com/GoogleCloudPlatform/google-cloud-python
 
+### Install dependencies in the terminal
+
+sudo pip install svgwrite
+sudo pip install imageio
+
+
