@@ -10,23 +10,27 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     testVarFamily6.py
+#     testVarFamily.py
 #
 #     TODO: Started using context for drawing.
 #     TODO: Not done for all drawing functions yet.
 #
 #     https://www.typenetwork.com/brochure/opentype-font-variations/
 #     https://variationsguide.typenetwork.com/#xopq
-#    "wght" 134, "wdth" 369, "opsz" 36, “GRAD” 88 , ”XOPQ" 88, "XTRA" 402, "YOPQ" 50, "YTLC" 500, "YTSE" 18;
+#     "wght" 134, "wdth" 369, "opsz" 36, “GRAD” 88 , ”XOPQ" 88, "XTRA" 402, "YOPQ" 50, "YTLC" 500, "YTSE" 18;
 #
 #     STAT table
 #     https://www.microsoft.com/typography/otspec/stat.htm
 
 import os, sys, shutil
 
-from pagebot.contexts import defaultContext as c
-from pagebot.fonttoolbox.objects.font import Font
-from pagebot.fonttoolbox.objects.family import Family
+if 0:
+    from pagebot.contexts.platform import getContext
+    context = getContext()
+else:
+    from pagebot.contexts.svgcontext import SvgContext
+    context = SvgContext()
+from pagebot.fonttoolbox.objects.varfamily import getVarFamily, Family
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 from pagebot.fonttoolbox.analyzers.stems import Stem, Bar, BlueBar, Counter, VerticalCounter, Width, DiagonalStem
 from pagebot.toolbox.transformer import asInt, path2Name, path2ParentPath
@@ -37,23 +41,9 @@ ORIGIN_OS2_WEIGHT_CLASS = 400
 
 GLYPH = 'H'
 
-#EXPORT_PATH = '_export/FontBureauFamilies.pdf'
-#BASE_PATH = u"/FontDevelopment/Fontbureau/TN-admin-2017-10-10T05_34_28.861995/"
-
-EXPORT_PATH = '_export/TYPETR-Upgrade.pdf'
-BASE_PATH = u"/Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade/scripts/export/"
+EXPORT_PATH = '_export/RobotoDelta-VF.svg'
     
-#EXPORT_PATH = '_export/GoogleFontFamilies.pdf'
-#BASE_PATH = u"/Users/petr/Desktop/git/fonts/ofl/"
-
-#EXPORT_PATH = '_export/WindowsFamilies.pdf'
-#BASE_PATH = u"/FontDevelopment/Microsoft/MSFonts/"
-
-# Old data
-#EXPORT_GIF = '_export/FontBureauFamilies.gif'
-#BASE_PATH = '/FontDevelopment/TypeNetwork/WebType-Raw/WT-TTF/'
-
-def findFontPaths(basePath, paths=None):
+def XXXXfindFontPaths(basePath, paths=None):
     u"""Answer the recursive list of TTF non-Italic font paths that are in directory basePath."""
     if paths is None:
         paths = []
@@ -98,14 +88,14 @@ def checkInterpolation(fonts):
             
     return glyphs
  
-def guessVarFamilyFromPaths(basePath, name=None):
+def XXXXguessVarFamilyFromPaths(basePath, name=None):
     u"""Initialize by guessing the self._font axis locations. 
     """
     paths = findFontPaths(basePath)    
     name = name or path2Name(basePath)
     return VarFamily(name, paths)
 
-class VarFamily(Family):
+class XXXVarFamily(Family):
     u"""A VarFamily contains a set of font paths that potentially form that masters to create a 
     VariableFont export. But the collection may not be up for creation yet, that is why it is not
     a "VarFont".
@@ -303,16 +293,16 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
             
         s = 0.05 * 1000/f.info.unitsPerEm
         leading = 2048/f.info.unitsPerEm
-        stroke(None)
-        fill(0)
-        save()
-        translate(x-glyphH.width/2*s, y-leading-50)
-        scale(s)
-        drawPath(glyphH.path)
-        restore()
+        context.stroke(None)
+        context.fill(0)
+        context.save()
+        context.translate(x-glyphH.width/2*s, y-leading-50)
+        context.scale(s)
+        context.drawPath(glyphH.path)
+        context.restore()
         y -= leading+50
         
-        save()
+        context.save()
         pathLabel = '-'.join(path2Name(f.path).split('-')[1:])
         #label = path2Name(f.path)
         if fAxis is not None:
@@ -322,10 +312,10 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
         else:
             label = '#%d ' % fIndex 
         label += '%s\n(%s)\n%d' % (pathLabel.replace('.ttf', '').replace('_','\n').replace('-','\n'), f.info.styleName, f.info.weightClass)
-        fs = FormattedString(label, fontSize=10, align='center')
-        tw, th = textSize(fs)
-        text(fs, (x-tw/2, y-14))
-        restore()
+        bs = context.newString(label, style=dict(fontSize=10, xTextAlign=CENTER))
+        tw, th = context.textSize(bs)
+        context.text(bs, (x-tw/2, y-14))
+        context.restore()
         y -= leading + th-22
 
         # Draw marker on actual position of H.stem and H.weight as green dot
@@ -335,11 +325,11 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
             # XOPQ (counter) + H.stem == H.width - H.stem - H.lsb - H.rsb
             width = glyphH.width - stem - glyphH.leftMargin - glyphH.rightMargin 
     
-            c.fill((0, 0.5, 0))
-            c.stroke(None)
+            context.fill((0, 0.5, 0))
+            context.stroke(None)
             R = 16
             weightLoc, widthLoc = stem, width/2
-            c.oval(weightLoc-R/2, widthLoc-R/2, R, R)
+            context.oval(weightLoc-R/2, widthLoc-R/2, R, R)
             if fAxis is not None:
                 label = '@'+fAxis 
             elif fIndex is None:
@@ -361,12 +351,7 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
             pass
             #print 'No stem for', glyphH.font
         
-def drawFamilyOverview(path):
-    varFamily = guessVarFamilyFromPaths(path)
-    if not varFamily: # No TTF fonts there?
-        #print 'No TTF fonts found in', path
-        return None
-
+def drawFamilyOverview(name):
 
     # As we can guess the origin font, there is a reference for the other
     # masters to test against.
@@ -375,52 +360,53 @@ def drawFamilyOverview(path):
     #print '=== Parametric axis fonts:', varFamily.parametricAxisFonts
     #print '=== Parametric axis metrics:', varFamily.parametricAxisMetrics
     
-    newPage(1200, 1200)
+    varFamily = getVarFamily(name)#varFamily = getVarFamily(name)
+    
+    context.newPage(1200, 1200)
     # Draw design space for width/weight
-    translate(100,100)
-    stroke(0.5)
-    strokeWidth(1)
-    fill(0.9)
-    rect(0, 0, 1000, 1000)
+    context.translate(100,100)
+    context.stroke(0.5, 1)
+    context.fill(0.9)
+    context.rect(0, 0, 1000, 1000)
     for x in range(0, 1100, 100):
         if 0 < x < 1000:
-            line((x, 0), (x, 1000))
-        fs = FormattedString(`x`, fontSize=12)
-        tw, th = textSize(fs)
-        text(fs, (x-tw/2, -20))
+            context.line((x, 0), (x, 1000))
+        fs = context.newString(str(x), style=dict(fontSize=12))
+        tw, th = context.textSize(fs)
+        context.text(fs, (x-tw/2, -20))
 
     for y in range(11):
         if 0 < y < 11:
-            line((0, 1000/10*y), (1000, 1000/10*y))
+            context.line((0, 1000/10*y), (1000, 1000/10*y))
         if y > 0:
-            fs = FormattedString(`y`, fontSize=12, fill=(1, 0, 0))
-            fs += FormattedString(' %s' % (y*100), fontSize=12, fill=(0, 0.5, 0))
-            tw, th = textSize(fs)
+            bs = context.newString(str(y), style=dict(fontSize=12, textFill=(1, 0, 0)))
+            bs += context.newString(' %s' % (y*100), style=dict(fontSize=12, textFill=(0, 0.5, 0)))
+            tw, th = context.textSize(bs)
         else:
-            fs = FormattedString(`y`, fontSize=12, fill=0)
-            tw, th = textSize(fs)
-        text(fs, (-10-tw, 1000/10*y-th/2))
+            bs = context.newString(str(y), style=dict(fontSize=12, textFill=0))
+            tw, th = context.textSize(bs)
+        context.text(bs, (-10-tw, 1000/10*y-th/2))
     
     # Draw axis labels
-    fs = FormattedString('OS/2 weight class ', fontSize=12, fill=(1, 0, 0))
-    fs += FormattedString('&', fontSize=12, fill=0)
-    fs += FormattedString(' XTRA Axis (H-stem width)', fontSize=12, fill=(0, 0.5, 0))
-    tw, th = textSize(fs)
-    text(fs, (0, -50-th/2))
+    bs = context.newString('OS/2 weight class ', style=dict(fontSize=12, textFill=(1, 0, 0)))
+    bs += context.newString('&', style=dict(fontSize=12, textFill=0))
+    bs += context.newString(' XTRA Axis (H-stem width)', style=dict(fontSize=12, textFill=(0, 0.5, 0)))
+    tw, th = context.textSize(bs)
+    context.text(bs, (0, -50-th/2))
 
-    save()
-    rotate(90)
-    fs = FormattedString('OS/2 width class ', fontSize=12, fill=(1, 0, 0))
-    fs += FormattedString('&', fontSize=12, fill=0)
-    fs += FormattedString(' XOPQ Axis + stem (H.width - H.stem - H.lsb - H.rsb)', fontSize=12, fill=(0, 0.5, 0))
-    tw, th = textSize(fs)
-    text(fs, (0, 60))
-    restore()
+    context.save()
+    context.rotate(90)
+    bs = context.newString('OS/2 width class ', style=dict(fontSize=12, textFill=(1, 0, 0)))
+    bs += context.newString('&', style=dict(fontSize=12, textFill=0))
+    bs += context.newString(' XOPQ Axis + stem (H.width - H.stem - H.lsb - H.rsb)', style=dict(fontSize=12, textFill=(0, 0.5, 0)))
+    tw, th = context.textSize(bs)
+    context.text(bs, (0, 60))
+    context.restore()
     
     # Draw family name title    
-    fs = FormattedString(varFamily.name, fontSize=24)
-    text(fs, (0, 1000+30))
-
+    bs = context.newString(name, style=dict(fontSize=24))
+    context.text(bs, (0, 1000+30))
+    
     fIndex = 1
     # Find widths and weights as defined by OS/2 and plot them as dots + names
     for (weight, width), fonts in varFamily.getOS2WeightWidthClasses().items():
@@ -444,16 +430,8 @@ def drawFamilyOverview(path):
             
     return varFamily
     
+#'RobotoDelta-VF'
+drawFamilyOverview('Roboto')
     
-#for path in PATHS:
-for path in os.listdir(BASE_PATH):#[:20]:
-    if path.startswith('.'):
-        continue
-    dirPath = BASE_PATH + path
-    if not os.path.isdir(dirPath):
-        continue
-    drawFamilyOverview(dirPath)
-    
-saveImage(EXPORT_PATH)
-#saveImage(EXPORT_GIF)
-     
+context.saveImage(EXPORT_PATH)
+os.system('open %s' % EXPORT_PATH)
