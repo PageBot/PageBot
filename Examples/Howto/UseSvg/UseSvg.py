@@ -13,6 +13,7 @@
 #     UseSvg.py
 #
 import os
+from random import random
 from pagebot.elements import *
 
 from pagebot.document import Document
@@ -25,7 +26,13 @@ EXPORT_PATH = '_export/useSvg.svg'
 doc = Document(autoPages=1, context=context)
 
 page = doc[1]
-newRect(x=100, y=200, w=300, h=400, fill=(1, 0, 0), parent=page)
+
+column = 100
+row = 30
+gutter = 8
+for x in range(0, 600, column):
+    for y in range(0, 800, row):
+        newRect(x=x, y=y, w=column-gutter, h=row-gutter, fill=(random(), random(), random()), parent=page)
 
 doc.export(EXPORT_PATH)
 os.system('open %s' % EXPORT_PATH)
