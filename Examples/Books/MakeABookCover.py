@@ -17,6 +17,9 @@
 #
 from random import random # Used for random color palet.
 
+from pagebot.contexts.svgcontext import SvgContext
+context = SvgContext()
+
 # Create random title and names
 from pagebot.contributions.filibuster.blurb import blurb
 
@@ -62,7 +65,7 @@ def makeDocument():
     # Make number of pages with default document size.
     # Initially make all pages default with template
     # One page, just the cover.
-    doc = Document(w=W, h=H, title='A Demo Book Cover', autoPages=1, originTop=False) 
+    doc = Document(w=W, h=H, title='A Demo Book Cover', autoPages=1, originTop=False, context=context) 
 
     page = doc[1] # Get the first/single page of the document.
     page.name = 'Cover'
