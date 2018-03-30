@@ -28,11 +28,13 @@ class HtmlString(BabelString):
     def __init__(self, s, context, style=None):
         self.context = context # Store the context, in case we need it.
         self.s = s # Enclose the Flat string
-        self.style = style or {}
+        if style is None:
+            style = {}
+        self.style = style
 
     def _get_font(self):
         u"""Answer the current state of fontName."""
-        return self.style.get('font')
+        return self.style.get('font') or self.context.getFont()
     def _set_font(self, fontName):
         if fontName is not None:
             self.context.font(fontName)
@@ -41,10 +43,10 @@ class HtmlString(BabelString):
 
     def _get_fontSize(self):
         u"""Answer the current state of the fontSize."""
-        return self.style.get('fontSize')
+        return self.style.get('fontSize') or self.context.getFontSize()
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
-            self.context.font(fontSize)
+            self.context.fontSize(fontSize)
         self.style['fontSize'] = fontSize
     fontSize = property(_get_fontSize, _set_fontSize)
 
@@ -60,7 +62,7 @@ class HtmlString(BabelString):
     def asText(self):
         return self.s # TODO: Use re to find non-tagged text to return.
 
-    def textSize(self, w):
+    def textSize(self, w=None, h=None):
         u"""Answer the (w, h) size for a given width, with the current text.
         For html this probably won't be an accurate guess. Let's think about something else."""
         return len(self.s)*10, 12
