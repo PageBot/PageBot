@@ -20,9 +20,13 @@ from pagebot.style import A4
 from pagebot.document import Document
 from pagebot.elements import newRect
 from pagebot.conditions import *
-from pagebot.contexts.svgcontext import SvgContext
 
-context = SvgContext()
+if 0:
+    from pagebot.contexts.platform import getContext
+    context = getContext()
+else:
+    from pagebot.contexts.svgcontext import SvgContext
+    context = SvgContext()
 
 W, H = A4 # Standard page size
 # To see how the "responsive" layout works in landscape, swap W and H

@@ -46,7 +46,7 @@ class SvgContext(BaseContext):
         self._stroke = 'none'
         self._strokeWidth = 0
         self._frameDuration = 1
-        self._fontSize = DEFAULT_FONT_SIZE = 16
+        self._fontSize = DEFAULT_FONT_SIZE
         self._font = DEFAULT_FONT_PATH
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
