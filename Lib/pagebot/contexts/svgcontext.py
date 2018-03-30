@@ -8,8 +8,6 @@
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
 #     Supperting usage of Svg, https://pypi.python.org/pypi/svgwrite
 # -----------------------------------------------------------------------------
 #
@@ -22,6 +20,7 @@ import os
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.svgbuilder import svgBuilder
+from pagebot.contexts.strings.htmlstring import HtmlString, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 
 class SvgContext(BaseContext):
     u"""An SvgContext uses svgwrite to export as SVG drawing."""
@@ -30,6 +29,9 @@ class SvgContext(BaseContext):
     isSvg = True
 
     TMP_PATH = '/tmp/pagebot%s.svg'
+
+    # Used by the generic BaseContext.newString( )
+    STRING_CLASS = HtmlString
 
     def __init__(self):
         u"""Constructor of SvgContext.
@@ -44,6 +46,9 @@ class SvgContext(BaseContext):
         self._stroke = 'none'
         self._strokeWidth = 0
         self._frameDuration = 1
+        self._fontSize = DEFAULT_FONT_SIZE = 16
+        self._font = DEFAULT_FONT_PATH
+
         self.newDrawing()
 
         self._path = None # Hold current open SVG path
@@ -186,6 +191,45 @@ class SvgContext(BaseContext):
 
     restore = restoreGraphicState
     
+    #   T E X T 
+
+    def fontSize(self, fontSize):
+        self._fontSize = fontSize
+
+    def font(self, font):
+        self._font = font
+
+    def text(self, sOrBs, p):
+        u"""Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
+        at position p.
+
+        >>> path = '~/SvgContext_text.svg'
+        >>> context = SvgContext()
+        >>> context.fontSize(100)
+        >>> context.font('Verdana-Bold') # TODO: Match with font path.
+        >>> context.fill((1, 0, 0.5))
+        >>> context.text('ABCDEF', (100, 200))
+        >>> context.fill((1, 0, 1))
+        >>> context.stroke((0.5, 0, 0.5), 5)
+        >>> context.text('ABCDEF', (100, 300))
+        >>> context.saveDocument(path)
+        >>> r = os.system('open %s' % path)
+
+        """
+        if not isinstance(sOrBs, str):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        t = self._drawing.text(sOrBs, insert=(p[0], p[1]), 
+                               stroke=self._stroke, stroke_width=self._strokeWidth,
+                               fill=self._fill, font_size=self._fontSize, font_family=self._font)
+        self._drawing.add(t)
+
+    def textBox(self, sOrBs, r):
+        u"""Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
+        in rectangle r."""
+        if not isinstance(sOrBs, str):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        self.b.textBox(sOrBs, r)
+
     #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
