@@ -42,9 +42,9 @@ class BaseContext(object):
     #   T E X T
 
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
-        u"""Create a new styles BabelString(HtmlString) instance from s (converted to plain unicode string), 
-        using e or style as typographic paramters. Ignore and just answer s if it is already a DrawBotString.
-
+        u"""Create a new styles BabelString instance of self.STRING_CLASS from s 
+        (converted to plain unicode string), using e or style as typographic parameters. 
+        Ignore and just answer s if it is already a self.STRING_CLASS instance.
         """
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.

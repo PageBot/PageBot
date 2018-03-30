@@ -62,7 +62,7 @@ class FlatString(BabelString):
 
     def _get_font(self):
         u"""Answer the current state of fontName."""
-        return self.style.get('font')
+        return self.style.get('font') 
     def _set_font(self, fontName):
         if fontName is not None:
             self.context.font(fontName)

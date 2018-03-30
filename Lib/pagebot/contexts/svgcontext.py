@@ -227,11 +227,13 @@ class SvgContext(BaseContext):
         """
         self._fontSize = fontSize
 
-    def font(self, font):
+    def font(self, font, fontSize=None):
         u"""Set the current graphic state to font. 
         TODO: Make this match the font.path.
         """
         self._font = font
+        if fontSize is not None:
+            self.fontSize(fontSize)
 
     def text(self, sOrBs, p):
         u"""Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
@@ -262,7 +264,11 @@ class SvgContext(BaseContext):
         in rectangle r."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        self.b.textBox(sOrBs, r)
+        x, y, w, h = r
+        t = self._drawing.text(sOrBs, insert=(x, y), 
+                               stroke=self._stroke, stroke_width=self._strokeWidth,
+                               fill=self._fill, font_size=self._fontSize, font_family=self._font)
+        self._drawing.add(t)
 
     #   A N I M A T I O N
 

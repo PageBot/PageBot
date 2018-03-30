@@ -26,6 +26,9 @@ doc = Document(autoPages=1, context=context)
 
 page = doc[1]
 newRect(x=100, y=200, w=300, h=400, fill=(1, 0, 0), parent=page)
+bs = context.newString('ABCDEF', style=dict(fontSize=100))
+print(bs.__class__.__name__)
+tb = newText(bs, x=100, y=400, fill=(1, 0, 1), parent=page, )
 
 doc.export(EXPORT_PATH)
 os.system('open %s' % EXPORT_PATH)
