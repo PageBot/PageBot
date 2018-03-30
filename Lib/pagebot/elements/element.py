@@ -933,7 +933,7 @@ class Element(object):
 
     def _get_parent(self):
         u"""Answer the parent of the element, if it exists, by weakref reference. Answer None of there
-        is not parent defined or if the parent not longer exists."""
+        is not parent defined or if the parent not longer exdef ists."""
         if self._parent is not None:
             return self._parent()
         return None

@@ -1,0 +1,31 @@
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#
+#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+# -----------------------------------------------------------------------------
+#
+#     UseSvg.py
+#
+import os
+from pagebot.elements import *
+
+from pagebot.document import Document
+from pagebot.contexts.svgcontext import SvgContext
+
+context = SvgContext()
+
+EXPORT_PATH = '_export/useSvg.svg'
+
+doc = Document(autoPages=1, context=context)
+
+page = doc[1]
+newRect(x=100, y=200, w=300, h=400, fill=(1, 0, 0), parent=page)
+
+doc.export(EXPORT_PATH)
+os.system('open %s' % EXPORT_PATH)

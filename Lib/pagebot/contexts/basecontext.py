@@ -24,7 +24,8 @@ class BaseContext(object):
     # In case of specific builder addressing, callers can check here.
     isDrawBot = False
     isFlat = False
-
+    isSvg = False
+    
     # To be redefined by inheriting context classes.
     STRING_CLASS = None
 
