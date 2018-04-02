@@ -51,6 +51,7 @@ class DrawBotContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = stringClass
+    EXPORT_TYPES = ('pdf', 'svg', 'png', 'jpg', 'gif', 'mov')
 
     def __init__(self):
         u"""Constructor of DrawBotContext if drawBot import exists.

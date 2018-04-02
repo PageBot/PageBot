@@ -21,7 +21,7 @@ from pagebot.document import Document
 from pagebot.elements import newRect
 from pagebot.conditions import *
 
-if 0:
+if 1:
     from pagebot.contexts.platform import getContext
     context = getContext()
 else:

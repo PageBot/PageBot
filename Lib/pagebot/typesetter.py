@@ -30,7 +30,7 @@ except ImportError:
     sys.exit()
 
 from pagebot.contexts.platform import getContext
-from pagebot import getMarker
+#from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox
 
 class Typesetter(object):
@@ -58,16 +58,19 @@ class Typesetter(object):
         'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
     }
     def __init__(self, doc=None, context=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None,
-            tryExcept=True, verbose=False):
+            tryExcept=True, verbose=False, writeTags=True):
         u"""
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
 
+        >>> from pagebot.contexts.platform import getContext
         >>> from pagebot import getResourcesPath
+        >>> from pagebot.document import Document
         >>> from pagebot.elements.element import Element
         >>> path = getResourcesPath() + '/texts/TEST.md'
-        >>> t = Typesetter() # Create a new typesetter
-        >>> nodeTree = t.typesetFile(path) # Parase the Markdown file into HTML-->nodeTree
+        >>> doc = Document(autoPages=1, context=getContext())
+        >>> t = Typesetter(doc=doc) # Create a new typesetter for this document
+        >>> nodeTree = t.typesetFile(path) # Parse the Markdown file into HTML-->nodeTree
         >>> nodeTree.__class__.__name__ # This is an etree root, also called "Element", different class.
         'Element'
         >>> e = Element()
@@ -92,6 +95,7 @@ class Typesetter(object):
             context = doc.context
         if context is None:
             context = getContext()
+        self.context = context
 
         if galley is None:
             galley = self.GALLEY_CLASS(context=context)
@@ -107,6 +111,7 @@ class Typesetter(object):
         # Save some flags in case the typesetter is running in Python try-except mode.
         self.tryExcept = tryExcept
         self.verbose = verbose
+        self.writeTags = writeTags
 
     def _get_box(self):
         return self.galley
@@ -217,7 +222,7 @@ class Typesetter(object):
                 footnotes[index] = dict(nodeId=nodeId, index=index, node=node, e=e, p=None)
                 # Add invisible mark, so we can scan the text after page composition to find
                 # on which page it ended up.
-                self.galley.append(getMarker('footnote', index))
+                #self.galley.append(getMarker('footnote', index))
 
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
@@ -236,7 +241,7 @@ class Typesetter(object):
                 assert not nodeId in literatureRefs
                 # Make literature reference entry. Content <p> and split fields will be added later.
                 literatureRefs[index] = dict(nodeId=nodeId, node=node, e=e, p=None, pageIds=[])
-                self.galley.append(getMarker('literature', index))
+                #self.galley.append(getMarker('literature', index))
 
         # Typeset the block of the tag. 
         self.typesetNode(node, e)
@@ -376,7 +381,7 @@ class Typesetter(object):
         doc = Document(w=300, h=500)
         ~~~
         block code. In this case the MacDown and MarkDown extension libraries 
-        convert this codeblock into 
+        convert this codeblock to 
         <pre><code class="Python">
         cid = 'NameOfBlock'
         doc = Document(w=300, h=500)
@@ -419,13 +424,13 @@ class Typesetter(object):
                 if self.verbose and error is not None:
                     print(u'### %s ### %s' % (error, node.text))
 
-        # doc, page or box may have changed, store them back into the typesetter, so they are availabe for 
-        # the execution of a next code block.
+        # doc, page or box may have changed, store them back into the typesetter, 
+        # so they are available for the execution of a next code block.
         self.doc = result.get(self.globalDocName)
         self.page = result.get(self.globalPageName)
         self.box = result.get(self.globalBoxName)
         # TODO: insert more possible exec() errors here.
-        
+
         # For convenience, store the source code of the block in the result dict.
         if '__code__' not in result:
             result['__code__'] = node.text
@@ -557,10 +562,11 @@ class Typesetter(object):
         #if codeResult is not None:
         #    return
 
-        # Open the node in HTML export for this node
-        self.htmlNode(node)
-        # Add this tag to the tag-history line
-        self.addHistory(node.tag)
+        if self.writeTags:
+            # Open the node in HTML export for this node
+            self.htmlNode(node)
+            # Add this tag to the tag-history line
+            self.addHistory(node.tag)
 
         # If e is undefined, then we make sure that the stack contains the doc.rootStyle on top.
         # If e is defined then root queries for style should follow the e.parent path. 
@@ -578,7 +584,7 @@ class Typesetter(object):
         if nodeText: # Not None and still has content after stripping?
             # Don't cache the context from self.galley as variable, as it may become dynamically updated by code blocks.
             # The galley context will define the type of BabelStrings generated by the Typesetter.
-            bs = self.galley.newString(nodeText, e=e, style=nodeStyle)
+            bs = self.context.newString(nodeText, e=e, style=nodeStyle)
             self.append(bs)
 
         # Type set all child node in the current node, by recursive call.
@@ -599,11 +605,12 @@ class Typesetter(object):
             childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
             if childTail: # Any tail left after stripping, then append to the galley.
                 # Don't cache the context from self.galley as variable, as it may become dynamically updated by code blocks.
-                bs = self.galley.newString(childTail, e=e, style=nodeStyle)
+                bs = self.context.newString(childTail, e=e, style=nodeStyle)
                 self.append(bs)
 
-        # Close the HTML tag of this node.
-        self._htmlNode(node)
+        if self.writeTags:
+            # Close the HTML tag of this node.
+            self._htmlNode(node)
         
         # Now restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text. Back to the style of the parent, 

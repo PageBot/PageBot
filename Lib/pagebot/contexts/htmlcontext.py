@@ -24,9 +24,10 @@ class HtmlContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = HtmlString
+    EXPORT_TYPES = ('html', 'css', 'js')
 
     def __init__(self):
-        self.b = WebBuilder()
+           self.b = WebBuilder()
 
     #   T E X T
 

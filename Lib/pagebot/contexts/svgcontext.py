@@ -32,6 +32,7 @@ class SvgContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = HtmlString
+    EXPORT_TYPES = ('svg',)
 
     def __init__(self):
         u"""Constructor of SvgContext.

@@ -17,11 +17,16 @@ from random import random
 from pagebot.elements import *
 
 from pagebot.document import Document
-from pagebot.contexts.svgcontext import SvgContext
+if 0:
+    from pagebot.contexts.svgcontext import SvgContext
+    context = SvgContext()
+    EXPORT_PATH = '_export/useSvg.svg'
+else:
+    from pagebot.contexts.platform import getContext
+    context = getContext()
+    EXPORT_PATH = '_export/useSvg.pdf'
 
-context = SvgContext()
 
-EXPORT_PATH = '_export/useSvg.svg'
 
 doc = Document(autoPages=1, context=context)
 

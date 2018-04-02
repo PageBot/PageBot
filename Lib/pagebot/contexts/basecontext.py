@@ -28,7 +28,8 @@ class BaseContext(object):
 
     # To be redefined by inheriting context classes.
     STRING_CLASS = None
-
+    EXPORT_TYPES = None
+    
     def __repr__(self):
         return '<%s>' % self.__class__.__name__
 
