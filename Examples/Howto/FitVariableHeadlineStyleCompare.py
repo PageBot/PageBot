@@ -54,19 +54,19 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
       setting of the font.
     """
     condFont = getVarFontInstance(varFont, condensedLocation)
-    condensedFs = c.newString(s, style=dict(font=condFont.path,
+    condensedFs = context.newString(s, style=dict(font=condFont.path,
                                             fontSize=fontSize,
                                             tracking=tracking,
                                             rTracking=rTracking,
                                             textFill=0))
-    condWidth, _ = c.textSize(condensedFs)
+    condWidth, _ = context.textSize(condensedFs)
     wideFont = getVarFontInstance(varFont, wideLocation)
-    wideFs = c.newString(s, style=dict(font=wideFont.path,
+    wideFs = context.newString(s, style=dict(font=wideFont.path,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        rTracking=rTracking,
                                        textFill=0))
-    wideWidth, _ = c.textSize(wideFs)
+    wideWidth, _ = context.textSize(wideFs)
     # Check if the requested with is inside the boundaries of the font width axis
     if w < condWidth:
         font = condFont
@@ -80,9 +80,9 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
         # Now interpolation the fitting location
         widthRange = wideLocation['wdth'] - condensedLocation['wdth']
         location = copy.copy(condensedLocation)
-        location['wdth'] += widthRange*(w-condWidth)/(wideWidth-condWidth)
+        location['wdth'] += widthRange*(w-condWidth)/(1+wideWidth-condWidth)
         font = getVarFontInstance(varFont, location)
-        fs = c.newString(s, style=dict(font=font.path,
+        fs = context.newString(s, style=dict(font=font.path,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        rTracking=rTracking,
@@ -96,7 +96,7 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
                 wideWidth=wideWidth,
                 wideLocation=wideLocation,
                 font=font, fs=fs,
-                width=c.textSize(fs)[0],
+                width=context.textSize(fs)[0],
                 location=location)
 
 HEADLINE_SIZE = 36
@@ -139,68 +139,68 @@ def draw(w):
     dFixed = fitVariableWidth(f, HEADLINE, fixedWidth, HEADLINE_SIZE,
                               condensedLocation, wideLocation)
 
-    c.newPage(W, H)
+    context.newPage(W, H)
     y = 2*PADDING
-    c.fill(1)
-    c.rect(0, 0, W, H)
+    context.fill(1)
+    context.rect(0, 0, W, H)
 
     # Draw calculated fitting instance and the two boundary instances.
-    c.text(d['condensedFs'], (PADDING, y+LEADING))
-    c.text(d['fs'], (PADDING, y+2*LEADING))
-    c.text(d['wideFs'], (PADDING, y+3*LEADING))
+    context.text(d['condensedFs'], (PADDING, y+LEADING))
+    context.text(d['fs'], (PADDING, y+2*LEADING))
+    context.text(d['wideFs'], (PADDING, y+3*LEADING))
 
     # Draw the instance choice of 3
     if w < fixedWidth:
-        c.text(d['condensedFs'], (PADDING, y))
+        context.text(d['condensedFs'], (PADDING, y))
     elif w < maxWidth:
-        c.text(dFixed['fs'], (PADDING, y))
+        context.text(dFixed['fs'], (PADDING, y))
     else:
-        c.text(d['wideFs'], (PADDING, y))
+        context.text(d['wideFs'], (PADDING, y))
 
-    c.fill(0.5)
-    c.fontSize(12)
-    c.text('Variable Font Amstelvar (Maximum width)', (PADDING, y+3*LEADING+40))
-    c.text('Variable Font Amstelvar (Calculated width)',
+    context.fill(0.5)
+    context.fontSize(12)
+    context.text('Variable Font Amstelvar (Maximum width)', (PADDING, y+3*LEADING+40))
+    context.text('Variable Font Amstelvar (Calculated width)',
            (PADDING, y+2*LEADING+40))
-    c.text('Variable Font Amstelvar (Minimum width)', (PADDING, y+LEADING+40))
-    c.text('Traditional fixed font styles', (PADDING, y+40))
+    context.text('Variable Font Amstelvar (Minimum width)', (PADDING, y+LEADING+40))
+    context.text('Traditional fixed font styles', (PADDING, y+40))
 
 
     # Draw vertical lines, marking the text headline widths and in read the
     # requested column width. Also draw the values of the column width and
     # the [wdth] axis value for that fitting location.
-    c.fill(None)
-    c.stroke(0)
-    c.line((PADDING, PADDING), (PADDING, H-PADDING))
-    c.line((PADDING+d['condensedWidth'], PADDING),
+    context.fill(None)
+    context.stroke(0)
+    context.line((PADDING, PADDING), (PADDING, H-PADDING))
+    context.line((PADDING+d['condensedWidth'], PADDING),
            (PADDING+d['condensedWidth'], H-PADDING))
-    c.line((PADDING+d['width'], PADDING),
+    context.line((PADDING+d['width'], PADDING),
            (PADDING+d['width'], H-PADDING))
-    c.line((PADDING+d['wideWidth'], PADDING),
+    context.line((PADDING+d['wideWidth'], PADDING),
            (PADDING+d['wideWidth'], H-PADDING))
-    c.stroke(None)
-    c.fill(0)
-    c.text('%d %0.2f' % (round(d['condensedWidth']),
+    context.stroke(None)
+    context.fill(0)
+    context.text('%d %0.2f' % (round(d['condensedWidth']),
                          d['condensedLocation']['wdth']),
            (PADDING+d['condensedWidth']+5, PADDING))
 
-    c.text('%d %0.2f' % (round(d['width']),
+    context.text('%d %0.2f' % (round(d['width']),
                          d['location']['wdth']),
            (PADDING+d['width']+5, PADDING))
 
-    c.text('%d %0.2f' % (round(d['wideWidth']),
+    context.text('%d %0.2f' % (round(d['wideWidth']),
                          d['wideLocation']['wdth']),
            (PADDING+d['wideWidth']+5, PADDING))
 
-    c.stroke(1, 0, 0)
-    c.line((PADDING+w, PADDING), (PADDING+w, H-PADDING))
-    c.stroke(None)
-    c.fill(1, 0, 0)
-    c.text('w=%d' % w, (PADDING+w+5, H-PADDING-5))
+    context.stroke((1, 0, 0))
+    context.line((PADDING+w, PADDING), (PADDING+w, H-PADDING))
+    context.stroke(None)
+    context.fill((1, 0, 0))
+    context.text('w=%d' % w, (PADDING+w+5, H-PADDING-5))
 
 if INTERACTIVE:
     #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    c.Variable([dict(name='Width', ui='Slider',
+    context.Variable([dict(name='Width', ui='Slider',
                      args=dict(minValue=PADDING,
                                value=200,
                                maxValue=W-2*PADDING))
@@ -213,5 +213,5 @@ else:
         dx = sin(radians(angle))*0.5 + 0.5
         draw(160 + (W-2*PADDING-160) * dx)
         angle += 360/FRAMES
-    c.saveImage('_export/fitVariableHeadlineStyleCompare.gif')
+    context.saveImage('_export/fitVariableHeadlineStyleCompare.gif')
 
