@@ -61,6 +61,7 @@ class FlatContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FlatString
+    EXPORT_TYPES = ('pdf', 'svg', 'png', 'jpg')
 
     def __init__(self):
         u"""Constructor of Flat context.

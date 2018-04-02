@@ -156,14 +156,16 @@ class TextBox(Element):
     def append(self, bs, style=None):
         u"""Append to the string type that is defined by the current view/builder type.
         Note that the string is already assumed to be styled or can be added as plain string.
-        Don't calculate the overflow here, as this is slow/expensive operation.
+        Don't calculate the overflow here, as this is a slow/expensive operation.
         Also we don't want to calculate the textLines/runs for every string appended,
-        as we don't know how much more the caller will add. self._textLines is set to None
-        to force recalculation as soon as self.textLines is called again.
+        as we don't know how much more the caller will add. bs._textLines is set to None
+        to force recalculation as soon as bs.textLines is called again.
         If bs is not a BabelString instance, then create one, defined by the self.context,
         and based on the style of self."""
         #assert isinstance(bs, (str, self.context.STRING_CLASS))
-        self.bs += self.newString(bs, e=self, style=style)
+        #self.bs += self.newString(bs, e=self, style=style)
+        self.bs += bs
+        #self.bs = self.newString(bs, e=self, style=style)
 
     def appendMarker(self, markerId, arg=None):
         self.bs.appendMarker(markerId, arg)
@@ -176,7 +178,7 @@ class TextBox(Element):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
-        >>> context.name in ('DrawBotContext', 'FlatContext')
+        >>> context.name in ('DrawBotContext', 'FlatContext', 'SvgContext')
         True
 
         """
