@@ -19,7 +19,6 @@
 #
 from pagebot.elements.web.simplesite.header import Header
 from pagebot.elements.web.simplesite.navigation import Navigation
-from pagebot.elements.web.simplesite.mobilenavigation import MobileNavigation
 from pagebot.elements.web.simplesite.banner import Banner
 from pagebot.elements.web.simplesite.logo import Logo
 from pagebot.elements.web.simplesite.introduction import Introduction
