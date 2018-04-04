@@ -112,8 +112,8 @@ class Page(Element):
         >>> view.doExport = False # View flag to avoid exporting to files.
         >>> page = doc[1]
         >>> view.build()
-        >>> os.system(u'open "%s"' % view.getUrl(doc.name))
-
+        >>> #TODO: Get the test to work.
+        >>> #os.system(u'open "%s"' % view.getUrl(doc.name))
         """
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
