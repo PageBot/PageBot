@@ -140,7 +140,7 @@ class XmlBuilder(BaseBuilder):
         self.write(' ')
         self.write(value)
 
-    def write_tag(self, tagname, open, args):
+    def write_tag(self, tagname, open, args, newLine=False):
         u"""
         Writes a normally formatted HTML tag, exceptions have a custom implementation, see respective functions.
         """
@@ -155,8 +155,10 @@ class XmlBuilder(BaseBuilder):
             self.tabIn()
         else:
             self.write(u'/>')
+        if newLine:
+            self.newLine()
 
-    def write_tag_noWhitespace(self, tagname, open, args):
+    def write_tag_noWhitespace(self, tagname, open, args, newLine=False):
         u"""Writes a normally formatted HTML tag, exceptions have a custom implementation,
         see respective functions. Don’t write any white space inside the block. E.g. used by <textarea>
         """
@@ -169,6 +171,8 @@ class XmlBuilder(BaseBuilder):
             self._pushTag(tagname)
         else:
             self.write(u'/>')
+        if newLine:
+            self.write('\n')
 
     # ---------------------------------------------------------------------------------------------------------
     #     B L O C K
@@ -190,22 +194,28 @@ class XmlBuilder(BaseBuilder):
         u"""Push the tag name to the stack of open stags."""
         self._tagStack.append(tag)
 
-    def _closeTag(self, tag):
+    def _closeTag(self, tag, newLine=False):
         self.tabOut()
         self.tabs()
         self.write(u'</%s>' % tag)
+        if newLine:
+            self.newLine()
         self._popTag(tag)
 
-    def _closeTag_noWhitespace(self, tag):
+    def _closeTag_noWhitespace(self, tag, newLine=False):
         u"""Close the tag. Don’t write any white space inside the block. E.g. used by <textarea>."""
         self.write(u'</%s>' % tag)
+        if newLine:
+            self.newLine()
         self._popTag(tag)
 
-    def _popTag(self, tag):
+    def _popTag(self, tag, newLine=False):
         u"""Pop tag from the tag stack."""
         runningTag = self._tagStack.pop()
         if runningTag is None or not runningTag == tag:
             self.write('<div color="#FF0000">Mismatch in closing tag "%s", expected "%s" in tree "%s".</div>' % (tag, runningTag, self._tagStack))
+            if newLine:
+                self.newLine()
 
     def _peekTag(self):
         u"""Answer the name of the current tag."""

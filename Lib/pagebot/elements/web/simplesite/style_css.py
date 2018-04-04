@@ -1,6 +1,7 @@
-theme = dict(
+
+simpleTheme = dict(
 	regularFont='Upgrade-Regular',
-	textDocurationColor='#2E8DB6',
+	textDecorationColor='#2E8DB6',
 	textHoverColor='#2BC88A',
 	headerPadding='15px 0',
 	menuBackground='#2C8CB7',
@@ -11,9 +12,8 @@ theme = dict(
 	srtMenuHoverBackground2='#E8E8E8',
 	srtMenuHoverBackground3='#EFEFEF',
 	srtMenuHover='#fff',
-
 )
-css = """
+simpleCss = """
 body{
 	background:#fff;
 	color:#706670;
@@ -47,7 +47,7 @@ a:hover{ text-decoration:none;}
   
 /* structure */   
 .wrapper{
-	width: 92%; 
+	width: 92%%; 
 	margin: 0 auto;
 }
 header{ 
@@ -80,7 +80,7 @@ p{ margin:0 0 1.5em;}
 
 
 /* RESPONSIVE IMAGES  */
-img{ max-width:100%; height:auto;}
+img{ max-width:100%%; height:auto;}
 
 
 /*MAIN MENU*/
@@ -183,11 +183,11 @@ img{ max-width:100%; height:auto;}
 footer{  
 	background:#333;
 	color:#ccc;
-	font-size:80%;
+	font-size:80%%;
 	padding:20px 0;
 }
 footer ul{
-	margin:0 0 0 8%;
+	margin:0 0 0 8%%;
 	padding:0;
 }
 
@@ -297,14 +297,14 @@ header{
 
 #content {  
 	float:left;
-	width:65%;
+	width:65%%;
 }
 #content.wide-content{
 	float:none;
-	width:80%;
+	width:80%%;
 	margin-bottom:2em;
-	margin-left:10%;
-	margin-right:10%;
+	margin-left:10%%;
+	margin-right:10%%;
 }
 
 .flexslider{
@@ -317,7 +317,7 @@ margin: 0;
 
 aside { 
 	float:right;
-	width:30%;
+	width:30%%;
 }
 
 /*** MAIN MENU - ESSENTIAL STYLES ***/
@@ -335,7 +335,7 @@ aside {
 	width:			12em; /* left offset of submenus need to match (see below) */
 }
 .srt-menu ul li {
-	width:			100%;
+	width:			100%%;
 }
 .srt-menu li:hover {
 	visibility:		inherit; 
@@ -436,18 +436,18 @@ ul.srt-menu li li li.sfHover ul {
      margin-right: -15px;
 }
  
-.grid_1 { width: 8.33333333%; }
-.grid_2 { width: 16.66666667%; }
-.grid_3 { width: 25%; }
-.grid_4 { width: 33.33333333%; }
-.grid_5 { width: 41.66666667%; }
-.grid_6 { width: 50%; }
-.grid_7 { width: 58.33333333%; }
-.grid_8 { width: 66.66666667%; }
-.grid_9 { width: 75%; }
-.grid_10 { width: 83.33333333%; }
-.grid_11 { width: 91.66666667%; }
-.grid_12 { width: 100%; }
+.grid_1 { width: 8.33333333%%; }
+.grid_2 { width: 16.66666667%%; }
+.grid_3 { width: 25%%; }
+.grid_4 { width: 33.33333333%%; }
+.grid_5 { width: 41.66666667%%; }
+.grid_6 { width: 50%%; }
+.grid_7 { width: 58.33333333%%; }
+.grid_8 { width: 66.66666667%%; }
+.grid_9 { width: 75%%; }
+.grid_10 { width: 83.33333333%%; }
+.grid_11 { width: 91.66666667%%; }
+.grid_12 { width: 100%%; }
 
 .grid_1,
 .grid_2,
@@ -526,9 +526,15 @@ PRINT STYLESHEET
   pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
   thead { display: table-header-group; } /* h5bp.com/t */
   tr, img { page-break-inside: avoid; }
-  img { max-width: 100% !important; }
+  img { max-width: 100%% !important; }
   @page { margin: 0.5cm; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
-} """
+} """ 
 
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    simpleCss % simpleTheme
+    sys.exit(doctest.testmod()[0])

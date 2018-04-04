@@ -16,8 +16,11 @@
 #     I N   P R O G R E S S
 #     This will hold the basic Python generator version of Kirsten Langmuur's SimpleSite template.
 #
+import os
+
 from pagebot.elements import *
-from pagebot.elements.web.simplesite import *
+from pagebot.elements.web.simplesite import MobileNavigation, Navigation, Introduction, Featured, \
+    WideContent, Hero, Footer, simpleTheme, simpleCss
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.toolbox.units import px, fr
@@ -26,16 +29,21 @@ class SimpleSite(Publication):
     u"""Build a simple default website with several template options.
     Layout and content options defined by external parameters, e.g from a Markdown file.
 
-    >>> simpleSite = SimpleSite(name='Home Site', viewId='Site', padding=30, autoPages=2)
-    >>> simpleSite
-    [Document-SimpleSite "Home Site"]
-    >>> len(simpleSite.pages)
-    2
-    >>> page = simpleSite[1]
+ 
+    >>> from pagebot.contributions.filibuster.blurb import Blurb
+    >>> blurb = Blurb()
+    >>> doc = SimpleSite(name='TestDoc', viewId='Site', padding=30, autoPages=1)
+    >>> doc
+    [Document-SimpleSite "TestDoc"]
+    >>> view = doc.newView('Mamp')
+    >>> page = doc[1]
     >>> page.name = 'index'
-    >>> template = simpleSite.getTemplate('home')
+    >>> template = doc.getTemplate('home')
     >>> page.applyTemplate(template)
-    >>> simpleSite.export('_export/SimpleSite')
+    >>> view.info.cssCode = template.info.cssCode
+    >>> doc.build()
+    >>> # Try to open in browser. It works if a local server (like MAMP) runs for view.LOCAL_HOST_URL url.
+    >>> #result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, view.DEFAULT_HTML_FILE)))
     """
 
     def initialize(self, **kwargs):
@@ -57,12 +65,13 @@ class SimpleSite(Publication):
         <!--link rel="stylesheet" href="js/flexslider/flexslider.css"> -->
         <link rel="stylesheet" href="css/style.css">
         <!-- end CSS-->            
+        """
+
+        # For now, just supply the full JS links as code.
+        jsCode = """
         <!-- JS-->
         <script src="js/libs/modernizr-2.6.2.min.js"></script>
         <!-- end JS-->
-        """
-
-        jsCode = """
         <!-- jQuery -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/libs/jquery-1.9.0.min.js">\x3C/script>')</script>
@@ -83,10 +92,9 @@ class SimpleSite(Publication):
         # Set template <head> building parameters. # Page element definition in pbpage.py
         t.info.headHtml = headHtml % dict(title=self.title, description='', keywords='')
         t.info.favIconUrl = 'images/favicon.gif'
-        t.info.mediaQueriesUrl = None
         t.info.jsCode = jsCode
+        t.info.cssCode = simpleCss % simpleTheme
         # Add page template elements.
-        MobileNavigation(parent=t, name='MobileNavigation')
         Navigation(parent=t, name='Navigation')
         Introduction(parent=t, name='Introduction')
         Featured(parent=t, name='Featured')

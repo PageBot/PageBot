@@ -17,49 +17,65 @@
 import os
 import shutil
 
+from pagebot.contexts.platform import getMampPath
 from pagebot.elements.views.htmlview import HtmlView
 from pagebot.style import ORIGIN
+
 
 class MampView(HtmlView):
     
     viewId = 'Mamp'
 
-    # self.build exports in MAMP folder that does not commit in Git. 
-    MAMP_PATH = '/Applications/MAMP/htdocs/'
     # If the MAMP server application not installed, a browser is opened on the MAMP website to download it.
     # There is a free demo version can be installed.
     MAMP_SHOP_URL = 'https://www.mamp.info/en/' 
+    LOCAL_HOST_URL = 'http://localhost:8888/%s/%s'
 
-    SITE_PATH = 'docs/'
     DEFAULT_HTML_FILE = 'index.html'
-    DEFAULT_HTML_PATH = SITE_PATH + DEFAULT_HTML_FILE
-    DEFAULT_CSS_PATH = SITE_PATH + 'css/style.css'
+    DEFAULT_CSS_PATH = 'css/'
+    DEFAULT_CSS_FILE = 'style.css'
 
     #   B U I L D  H T M L  /  C S S
 
-    def build(self, path=None, pageSelection=None, multiPage=True):
+    def build(self, path=None, pageSelection=None, multiPage=True, doInit=False):
         """
 
+        >>> from pagebot.contributions.filibuster.blurb import Blurb
+        >>> blurb = Blurb()
+        >>> from pagebot.elements.web.simplesite import Introduction, Navigation, Logo, simpleCss, simpleTheme
         >>> from pagebot.contexts.htmlcontext import HtmlContext
         >>> from pagebot.document import Document
         >>> context = HtmlContext()
-        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60), context=context)
+        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60), context=context)
         >>> view = doc.newView('Mamp')
-        >>> view.doExport = False # View flag to avoid exporting to files.
         >>> view
         <MampView:Mamp (0, 0)>
-        >>> doc.build('/tmp/TextMampView')
+        >>> view.doExport = True # View flag to avoid exporting to files.
+        >>> view.info.cssCode = simpleCss % simpleTheme
+        >>> page = doc[1]
+        >>> page.name = view.DEFAULT_HTML_FILE
+        >>> e = Navigation (parent=page)
+        >>> e = Introduction(blurb.getBlurb('article'), parent=page)
+        >>> doc.build()
         >>> 'WebBuilder' in str(view.b)
         True
         >>> len(view.b._htmlOut) > 0 # Check that there is generated HTML output.
         True
+        >>> len(view.b._cssOut) > 0
+        True
+        >>> #Try to open in a browser, assuming that there is a running local Mamp server.
+        >>> #result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, view.DEFAULT_HTML_FILE)))
         """
         doc = self.doc 
 
-        sitePath = self.SITE_PATH
-        if not sitePath.endswith('/'):
-            sitePath += '/'
-            
+        siteName = doc.name or 'UntitledSite'
+        sitePath = getMampPath() + doc.name + '/'
+        cssPath = sitePath + self.DEFAULT_CSS_PATH
+        cssFilePath = cssPath + self.DEFAULT_CSS_FILE
+
+        if doInit and self.doExport and os.path.exists(sitePath):
+            shutil.rmtree(sitePath)
+
         b = self.b # Get builder from self.doc.context of this view.
         # SOLVE THIS LATER
         #self.build_css(self) # Make doc build the main/overall CSS, based on all page styles.
@@ -76,20 +92,19 @@ class MampView(HtmlView):
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
                 if self.doExport: # View flag to avoid writing, in case of testing.
+                    if not os.path.exists(sitePath):
+                        os.makedirs(sitePath)
                     b.writeHtml(sitePath + fileName)
         # Write all collected CSS into one file
-        #b.writeCss(self.DEFAULT_CSS_PATH)
-
-        if self.doExport: # View flag to avoid writing, in case of testing.
-            mampPath = self.MAMP_PATH + (path or '')
-            if os.path.exists(mampPath):
-                shutil.rmtree(mampPath)
-            print('### Copy', self.SITE_PATH, mampPath)
-            #shutil.copytree(self.SITE_PATH, mampPath)
+        if self.info.cssCode:
+            if not os.path.exists(cssPath):
+                os.makedirs(cssPath)
+            b.addCss(self.info.cssCode)
+            b.writeCss(cssFilePath)
 
     def getUrl(self, name):
         u"""Answer the local URL for Mamp Pro to find the copied website."""
-        return 'http://localhost:8888/%s/%s' % (name, self.DEFAULT_HTML_FILE)
+        return self.LOCAL_HOST_URL % (name, self.DEFAULT_HTML_FILE)
 
 
 if __name__ == "__main__":

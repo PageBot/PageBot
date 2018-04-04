@@ -23,7 +23,7 @@ class GitView(HtmlView):
     GIT_PATH = 'docs/'
     DEFAULT_HTML_FILE = 'index.html'
     DEFAULT_HTML_PATH = GIT_PATH + DEFAULT_HTML_FILE
-    DEFAULT_CSS_PATH = GIT_PATH + 'css/pagebot.css'
+    DEFAULT_CSS_PATH = GIT_PATH + 'css/style.css'
     
     #   B U I L D  H T M L  /  C S S
 

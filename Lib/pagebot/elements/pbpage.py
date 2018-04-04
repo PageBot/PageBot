@@ -103,11 +103,16 @@ class Page(Element):
         of self. If there are any child elements, then also included their code, using the
         level recursive indent.
 
+        >>> import os
+        >>> from pagebot.contexts.htmlcontext import HtmlContext
+        >>> context = HtmlContext()
         >>> from pagebot.document import Document
-        >>> doc = Document(name='TestDoc', autoPages=1)
+        >>> doc = Document(name='TestDoc', autoPages=1, context=context)
         >>> view = doc.newView('Mamp')
+        >>> view.doExport = False # View flag to avoid exporting to files.
         >>> page = doc[1]
-        >>> #view.build()
+        >>> view.build()
+        >>> os.system(u'open "%s"' % view.getUrl(NAME))
 
         """
         context = view.context # Get current context and builder from this view.
@@ -142,13 +147,16 @@ class Page(Element):
                 
                 # Devices
                 b.meta(name='viewport', content=info.viewPort) # Cannot be None
+
                 # Javascript
-                for jsUrl in info.jsUrls:
+                for jsUrl in info.jsUrls.values():
                     b.script(type="text/javascript", src=jsUrl)
 
-                # CSS
+                # Webfonts
                 if info.webFontsUrl:
                     b.link(rel='stylesheet', type="text/css", href=info.webFontsUrl, media='all')
+                
+                # CSS
                 if info.cssCode is not None:
                     b.style()
                     b.addHtml(info.cssCode)
@@ -156,7 +164,7 @@ class Page(Element):
                 elif info.cssPath is not None:
                     cssPath = 'css/' + info.cssPath.split('/')[-1]
                 else:
-                    cssPath = 'css/pagebot.css'
+                    cssPath = 'css/style.css'
                 b.link(rel='stylesheet', href=cssPath, type='text/css', media='all')
 
                 # Icons
