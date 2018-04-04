@@ -12,6 +12,10 @@ class Blurb(object):
     The Content is a wrapper around the filibuster BlurbWriter
     of Erik van Blokland and Jonathan Hoefler. There is supposed to be only one instance of
     the writer installed in the system.
+
+    b = Blurb()
+    print(b.getBlurb('article'))
+    
     """
     def __init__(self, content=None):
         if content is None:
@@ -22,10 +26,9 @@ class Blurb(object):
     reNoTags = re.compile('\<[^\>]*|([^\<\>]*)')
 
     def getBlurb(self, type, cnt=None, noTags=True):
-        u"""
-
-        The getBlurb method answers a random generated blurb of type.
+        u"""The getBlurb method answers a random generated blurb of type.
         The full list of available types get be obtained by calling self.getContentType().
+
 
         """
         if cnt is not None:

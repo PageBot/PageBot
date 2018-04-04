@@ -346,7 +346,7 @@ table {
             f.write(''.join(self._cssOut))
             f.close()
         except IOError:
-            print('Cannot write CSS file "%s"' % path)
+            print('[HtmlBuilder.writeCss] Cannot write CSS file "%s"' % path)
 
     def addJs(self, js):
         self._jsOut.append(js)
@@ -550,6 +550,7 @@ table {
         </python>
         """
         self.write_tag(u'link', False, args)
+        self.newline()
 
 
     def body(self, **args):
