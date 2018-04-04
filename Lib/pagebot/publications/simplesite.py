@@ -16,10 +16,8 @@
 #     I N   P R O G R E S S
 #     This will hold the basic Python generator version of Kirsten Langmuur's SimpleSite template.
 #
-import os
-
 from pagebot.elements import *
-from pagebot.elements.web.simplesite import MobileNavigation, Navigation, Introduction, Featured, \
+from pagebot.elements.web.simplesite import Navigation, Introduction, Featured, \
     WideContent, Hero, Footer, simpleTheme, simpleCss
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
