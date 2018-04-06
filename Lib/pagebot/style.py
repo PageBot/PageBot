@@ -19,6 +19,7 @@
 import sys
 import copy
 from pagebot.toolbox.units import MM, INCH
+from pagebot import getResourcesPath
 
 NO_COLOR = -1
 
@@ -135,8 +136,9 @@ XALIGNS = set((None, LEFT, RIGHT, CENTER, JUSTIFIED))
 YALIGNS = set((None, TOP, BOTTOM, MIDDLE))
 ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 
-DEFAULT_FONT = 'Verdana'
-DEFAULT_FALLBACK_FONT = 'LucidaGrande'
+DEFAULT_FONT_SIZE = 16
+DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
+DEFAULT_FALLBACK_FONT_PATH = DEFAULT_FONT_PATH # We know for sure this one is there.
 
 ORIGIN = (0, 0, 0) # Default origin if location is omitted.
 
@@ -440,8 +442,8 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         gradient = None, # Contains optional Gradient instance.
 
         # Typographic defaults
-        font = DEFAULT_FONT, # Default is to avoid existing font and fontSize in the graphic state.
-        fallbackFont = DEFAULT_FALLBACK_FONT,
+        font = DEFAULT_FONT_PATH, # Default is to avoid existing font and fontSize in the graphic state.
+        fallbackFont = DEFAULT_FALLBACK_FONT_PATH,
         fontSize = u * 7/10, # Default font size in points, related to U. If FIT, size is elastic to width.
         rFontSize = 1, # Relative font size as relative fraction of current root font size.
         uppercase = False, # All text in upper case
@@ -581,11 +583,11 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         viewCropMarkSize = 40, # Length of crop marks, including bleed distance.
         viewCropMarkStrokeWidth = 0.25, # Stroke width of crop-marks, registration crosses, etc.
 
-        viewPageNameFont = DEFAULT_FONT, # Name of the page outside frame.
+        viewPageNameFont = DEFAULT_FONT_PATH, # Name of the page outside frame.
         viewPageNameFontSize = 6,
 
         # Element info box
-        viewInfoFont = DEFAULT_FONT, # Font of text in element infoBox.
+        viewInfoFont = DEFAULT_FONT_PATH, # Font of text in element infoBox.
         viewInfoFontSize = 4, # Font size of text in element info box.
         viewInfoLeading = 5, # Leading of text in element info box.
         viewInfoFill = (0.8, 0.8, 0.8, 0.9), # Color of text in element info box.
