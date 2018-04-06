@@ -15,7 +15,8 @@
 #     style.py
 #
 #     Holds the main style definintion and constants of PageBot.
-#
+
+import copy
 from pagebot.constants import *
 
 def newStyle(**kwargs):
@@ -47,7 +48,8 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
     >>> rs = getRootStyle()
     >>> rs['name']
     'root'
-    >>> rs['pt'] # Padding top
+    >>> rs['pt'] # Padding top: 7*U
+    49
     """
     # Some calculations to show dependencies.
     baselineGrid = BASELINE_GRID
