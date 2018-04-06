@@ -11,7 +11,8 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-from pagebot.toolbox.units import Unit, mm, px, pt, fr, em, perc, INCH, MM
+from pagebot.constants import INCH, MM
+from pagebot.toolbox.units import Unit, mm, px, pt, fr, em, perc
 
 def useUnits():
     u"""
