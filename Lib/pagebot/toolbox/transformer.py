@@ -19,6 +19,7 @@ import json, re
 from time import time
 import datetime
 from random import randint
+from pagebot.constants import STYLE_REPLACEMENTS
 
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
@@ -786,7 +787,6 @@ def path2StyleNameParts(pathOrName, extensions=None):
     >>> sorted(path2StyleNameParts('Roboto Condensed_SemiBoldItalic--.1234.UFO', ['ufo']))
     ['Condensed', 'Italic', 'Roboto', 'Semibold']
     """
-    from pagebot.style import STYLE_REPLACEMENTS
     fontName = path2FontName(pathOrName, extensions)
     if fontName is None:
         return []

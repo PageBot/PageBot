@@ -21,9 +21,7 @@ __version__ = '0.8-beta'
 
 import re
 
-from pagebot.toolbox.transformer import point2D, path2ParentPath
-
-ROOT_PATH = path2ParentPath(__file__)
+ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 RESOURCES_PATH = ROOT_PATH + '/resources'
 
 def getRootPath():
