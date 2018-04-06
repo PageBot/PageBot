@@ -21,7 +21,6 @@ __version__ = '0.8-beta'
 
 import re
 
-from pagebot.style import NO_COLOR, LEFT
 from pagebot.toolbox.transformer import point2D, path2ParentPath
 
 ROOT_PATH = path2ParentPath(__file__)

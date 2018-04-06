@@ -11,12 +11,13 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     pagebot/contexts/platform.py
+#     fontpaths.py
 #
 import os
 
 from pagebot.toolbox.transformer import path2FontName
 from pagebot import getResourcesPath
+from pagebot.style import DEFAULT_FONT_PATH
 
 #   P A T H S
 
@@ -29,28 +30,37 @@ def getTestFontsPath():
     u"""Answer the path of the PageBot test fonts."""
     return TEST_FONTS_PATH
 
-def getFontPathOfFont(fontName):
+def getFontPathOfFont(font, default=None):
     u"""Answer the path that is source of the given font name.
     If the path is already a valid font path, then aswer it unchanged.
     Answer None if the font cannot be found.
 
     >>> from pagebot.fonttoolbox.objects.font import findFont
     >>> font = findFont('Roboto-Regular')
-    >>> path = getFontPathOfFont(font.path)
+    >>> path = getFontPathOfFont(font.path) # Set as font path
     >>> path.endswith('/Roboto-Regular.ttf')
     True
     >>> font.path == path
     True
-    >>> path = getFontPathOfFont('Roboto-Regular')
+    >>> path = getFontPathOfFont(font) # Set as Font instance
     >>> path.endswith('/Roboto-Regular.ttf')
     True
-    >>> path = getFontPathOfFont('UnknowFont.ttf')
-    >>> path is None
+    >>> font.path == path
+    True
+    >>> path = getFontPathOfFont('Roboto-Regular') # Set as font name
+    >>> path.endswith('/Roboto-Regular.ttf')
+    True
+    >>> path = getFontPathOfFont('UnknowFont.ttf') # Unknown font is set to DEFAULT_FONT_PATH
+    >>> path == DEFAULT_FONT_PATH
     True
     """
-    if fontName is not None and not os.path.exists(fontName):
-        fontName = getFontPaths().get(fontName)
-    return fontName
+    if hasattr(font, 'path'): # In case it is a Font instance, get its path.
+        font = font.path
+    if font is not None and not os.path.exists(font):
+        font = getFontPaths().get(font)
+    if font is None:
+        font = default or DEFAULT_FONT_PATH
+    return font
 
 def _recursivelyCollectFontPaths(path, collectedFontPaths):
     u"""Recursive helper function for getFontPaths. If the fileName already exists in the fontPaths, then ignore."""

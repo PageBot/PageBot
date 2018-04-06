@@ -19,7 +19,7 @@
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder
 from pagebot.contexts.strings.flatstring import FlatString
-from pagebot.style import NO_COLOR, LEFT
+from pagebot.style import NO_COLOR, LEFT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
 
 def iround(value):
     return min(255, max(0, int(round(value*255.0))))
@@ -75,12 +75,18 @@ class FlatContext(BaseContext):
         """
         # Keep status of last color, to make difference between fill and stroke colors.
         self.name = self.__class__.__name__
-        self.fillColor = None
-        self.strokeColor = None
-        self.strokeWidth = 0
-        self._font = None # Optional setting of the current font and fontSize
-        self._fontSize = None
+        self._fill = None
+        self._stroke = None
+        self._strokeWidth = 0
+        self._font = DEFAULT_FONT_PATH # Optional setting of the current font and fontSize
+        self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
+        self._ox = 0 # Origin set by self.translate()
+        self._oy = 0
+        self._rotate = 0
+        
+        self._gState = [] # Stack of graphic states.
+        self.save() # Save current set of values on gState stack.
 
         self.b = flatBuilder # Builder for this canvas, e.g. equivalent of bare drawbot.fill( )
 
@@ -182,12 +188,45 @@ class FlatContext(BaseContext):
     #   C A N V A S
 
     def saveGraphicState(self):
-        pass # Not implemented?
+        u"""Save the current graphic state.
+
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> context = FlatContext()
+        >>> context._font.endswith('Roboto-Regular.ttf')
+        True
+        >>> context.save()
+        >>> boldFont = findFont('Roboto-Bold') 
+        >>> context.font(boldFont) # Set by Font instance
+        >>> context._font.endswith('Roboto-Bold.ttf')
+        True
+        >>> context.restore() # Restore to original graphic state values
+        >>> context._font.endswith('Roboto-Regular.ttf')
+        True
+        """
+        gState = dict(
+            font=self._font,
+            fontSize=self._fontSize,
+            fill=self._fill,
+            stroke=self._stroke,
+            strokeWidth=self._strokeWidth,
+            ox=self._ox,
+            oy=self._oy,
+            rotate=self._rotate,
+        )
+        self._gState.append(gState)
 
     save = saveGraphicState
 
     def restoreGraphicState(self):
-        pass # Not implemented?
+        gState = self._gState.pop()
+        self._font = gState['font']
+        self._fontSize = gState['fontSize']
+        self._fill = gState['fill']
+        self._stroke = gState['stroke']
+        self._strokeWidth = gState['strokeWidth']
+        self._ox = gState['ox']
+        self._oy = gState['oy']
+        self._rotate = gState['rotate']
 
     restore = restoreGraphicState
 
@@ -232,24 +271,26 @@ class FlatContext(BaseContext):
         placedText = self.page.place(bs.s)
         placedText.position(p[0], p[1])
 
-    def font(self, fontName, fontSize=None):
+    def font(self, font, fontSize=None):
         u"""Set the current font, in case it is not defined in a formatted string.
-        fontName can be the full font file path, or an abbreveation that can be found
-        by family or file name.
+        font can be a Font instance, or a full font file path, or an abbreveation that can be found
+        by family or by findFont.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> font = findFont('Roboto-Regular')
         >>> context = FlatContext()
         >>> context.font(font.path)
-        >>> context._fontName.endswith('/Roboto-Regular.ttf')
+        >>> context._font.endswith('/Roboto-Regular.ttf')
         True
-        >>> context.font('OtherFont', 12) # Font does not exists, font path is set to None
-        >>> context._fontName, context._fontSize
-        (None, 12)
+        >>> context.font('OtherFont', 12) # Font does not exists, font path is set to DEFAULT_FONT_PATH
+        >>> context._font == DEFAULT_FONT_PATH
+        True
+        >>> context._fontSize
+        12
         """
         from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 
-        self._fontName = getFontPathOfFont(fontName) # Convert name or path to font path.
+        self._font = getFontPathOfFont(font) # Convert name or path to font path.
         if fontSize is not None:
             self._fontSize = fontSize
 
@@ -342,17 +383,17 @@ class FlatContext(BaseContext):
     #   D R A W I N G
 
     def _getShape(self):
-        if self.fillColor == NO_COLOR and self.strokeColor == NO_COLOR:
+        if self._fill == NO_COLOR and self._stroke == NO_COLOR:
             return None
         shape = self.b.shape()
-        if self.fillColor is None:
+        if self._fill is None:
             shape.nofill()
-        elif self.fillColor != NO_COLOR:
-            shape.fill(self.fillColor)
-        if self.strokeColor is None:
+        elif self._fill != NO_COLOR:
+            shape.fill(self._fill)
+        if self._stroke is None:
             shape.nostroke()
-        elif self.strokeColor != NO_COLOR:
-            shape.stroke(self.strokeColor).width(self.strokeWidth)
+        elif self._stroke != NO_COLOR:
+            shape.stroke(self._stroke).width(self._strokeWidth)
         return shape
 
     def ensure_page(self):
@@ -443,35 +484,35 @@ class FlatContext(BaseContext):
         b = self.b
         success = False
         if c is NO_COLOR:
-            self.fillColor = NO_COLOR # Ignore drawing
+            self._fill = NO_COLOR # Ignore drawing
             success = True # Color is undefined, do nothing.
         elif c is None:
-            self.fillColor = None # No fill
+            self._fill = None # No fill
             success = True
         elif isinstance(c, (float, int)): # Grayscale
-            self.fillColor = b.gray(iround(c))
+            self._fill = b.gray(iround(c))
             success = True
         elif isinstance(c, (list, tuple)):
             if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
                 name, (cyan, magenta, yellow, k) = c
-                self.fillColor = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
+                self._fill = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
                 success = True
             # Not supported in PDF, leave out for general compatibility?
             #elif len(c) == 2:
             #    gray, a = c
-            #    self.fillColor = b.ga(gray, a)
+            #    self._fill = b.ga(gray, a)
             #    success = True
             elif cmyk:
                 cyan, magenta, yellow, k = c
-                self.fillColor = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
+                self._fill = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
                 success = True
             elif len(c) == 4: # rgb and opaque
                 red, green, blue, a = c
-                self.fillColor = b.rgba(iround(red), iround(green), iround(blue), iround(a))
+                self._fill = b.rgba(iround(red), iround(green), iround(blue), iround(a))
                 success = True
             elif len(c) == 3:
                 red, green, blue = c
-                self.fillColor = b.rgb(iround(red), iround(green), iround(blue))
+                self._fill = b.rgb(iround(red), iround(green), iround(blue))
                 success = True
         if not success:
             raise ValueError('FlatContext.setFillColor: Error in color format "%s"' % repr(c))
@@ -484,42 +525,51 @@ class FlatContext(BaseContext):
         b = self.b
         success = False
         if c is NO_COLOR:
-            self.strokeColor = NO_COLOR # Ignore drawing
+            self._stroke = NO_COLOR # Ignore drawing
             success = True # Color is undefined, do nothing.
         elif c is None:
-            self.strokeColor = None # no stroke
+            self._stroke = None # no stroke
             success = True
         elif isinstance(c, (float, int)): # Grayscale
-            self.strokeColor = b.gray(iround(c))
+            self._stroke = b.gray(iround(c))
             success = True
         elif isinstance(c, (list, tuple)):
             if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
                 name, (cyan, magenta, yellow, k) = c
-                self.strokeColor = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
+                self._stroke = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
                 success = True
             # Not supported in PDF, leave out for general compatibility?
             #elif len(c) == 2:
             #    gray, a = c
-            #    self.strokeColor = b.ga(gray, a)
+            #    self._stroke = b.ga(gray, a)
             #    success = True
             elif cmyk:
                 cyan, magenta, yellow, k = c
-                self.strokeColor = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
+                self._stroke = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
                 success = True
             elif len(c) == 4: # rgb and opaque
                 red, green, blue, a = c
-                self.strokeColor = b.rgba(iround(red), iround(green), iround(blue), iround(a))
+                self._stroke = b.rgba(iround(red), iround(green), iround(blue), iround(a))
                 success = True
             elif len(c) == 3:
                 red, green, blue = c
-                self.strokeColor = b.rgb(iround(red), iround(green), iround(blue))
+                self._stroke = b.rgb(iround(red), iround(green), iround(blue))
                 success = True
         if not success:
             raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
         if w is not None:
-            self.strokeWidth = w
+            self._strokeWidth = w
 
     stroke = setStrokeColor # DrawBot compatible API
+
+    def translate(self, dx, dy):
+        u"""Translate the origin by (dx, dy)."""
+        self._ox += dx
+        self._oy += dy
+
+    def rotate(self, angle):
+        u"""Rotate by angle."""
+        self._rotate = angle
 
     #   E X P O R T
 

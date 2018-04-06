@@ -24,13 +24,9 @@ try:
 except (ImportError, AttributeError):
     BezierPath = None
 
-from pagebot import getResourcesPath
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css, NO_COLOR, LEFT
-
-DEFAULT_FONT_SIZE = 16
-DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
+from pagebot.style import css, NO_COLOR, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 
 def pixelBounds(fs):
     u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).

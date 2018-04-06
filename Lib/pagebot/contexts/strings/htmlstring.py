@@ -15,10 +15,7 @@
 #
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
-from pagebot import getResourcesPath
-
-DEFAULT_FONT_SIZE = 16
-DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
+from pagebot.style import DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 
 class HtmlString(BabelString):
 
