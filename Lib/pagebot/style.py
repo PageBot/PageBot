@@ -43,6 +43,11 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
     They can be copied on other style attributes.
     Note that if the overall unit style.u is changed by the calling application, also the
     U-based values must be recalculated for proper measures.
+
+    >>> rs = getRootStyle()
+    >>> rs['name']
+    'root'
+    >>> rs['pt'] # Padding top
     """
     # Some calculations to show dependencies.
     baselineGrid = BASELINE_GRID
@@ -358,5 +363,11 @@ def css(name, e=None, styles=None, default=None):
         return e.css(name)
     return default
 
+
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 
 
