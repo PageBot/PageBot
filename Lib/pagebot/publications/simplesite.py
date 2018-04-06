@@ -27,7 +27,6 @@ class SimpleSite(Publication):
     u"""Build a simple default website with several template options.
     Layout and content options defined by external parameters, e.g from a Markdown file.
 
- 
     >>> from pagebot.contributions.filibuster.blurb import Blurb
     >>> blurb = Blurb()
     >>> doc = SimpleSite(name='TestDoc', viewId='Site', padding=30, autoPages=1)
@@ -41,7 +40,12 @@ class SimpleSite(Publication):
     >>> view.info.cssCode = template.info.cssCode
     >>> doc.build()
     >>> # Try to open in browser. It works if a local server (like MAMP) runs for view.LOCAL_HOST_URL url.
+    >>> #import os
     >>> #result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, view.DEFAULT_HTML_FILE)))
+    >>> from pagebot.style import A4
+    >>> page.w, page.h = doc.w, doc.h = A4
+    >>> view = doc.newView('Page')
+    >>> doc.export('_export/SimpleSite.pdf')
     """
 
     def initialize(self, **kwargs):
@@ -72,11 +76,11 @@ class SimpleSite(Publication):
         <!-- end JS-->
         <!-- jQuery -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/libs/jquery-1.9.0.min.js">\x3C/script>')</script>
         <script defer src="js/flexslider/jquery.flexslider-min.js"></script>
         <!-- fire ups - read this file!  -->   
         <script src="js/main.js"></script>
         """
+        #<script>window.jQuery || document.write('<script src="js/libs/jquery-1.9.0.min.js"></script>')</script>
 
         padding = self.padding
         w, h = self.w, self.h
@@ -94,7 +98,7 @@ class SimpleSite(Publication):
         t.info.cssCode = simpleCss % simpleTheme
         # Add page template elements.
         Navigation(parent=t, name='Navigation')
-        Introduction(parent=t, name='Introduction')
+        #Introduction(parent=t, name='Introduction')
         Featured(parent=t, name='Featured')
         WideContent(parent=t, name='WideContent')
         Hero(parent=t, name='Hero')
