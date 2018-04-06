@@ -18,7 +18,7 @@
 #     U N D E R  D E V E L O P M E N T
 #     (Needs case testing when generating CSS)
 #
-from pagebot.constants import MM, INCH
+from pagebot.constants import MM
 
 class Unit(object):
     u"""Base class for units, implementing most of the logic.

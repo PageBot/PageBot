@@ -17,7 +17,6 @@
 #     Holds the (style) constants of PageBot.
 #
 import sys
-import copy
 from pagebot import getResourcesPath
 
 INCH = 72
