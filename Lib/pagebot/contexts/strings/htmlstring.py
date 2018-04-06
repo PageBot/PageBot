@@ -15,7 +15,6 @@
 #
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
-from pagebot.style import DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 
 class HtmlString(BabelString):
 
