@@ -15,15 +15,16 @@
 #
 #     Implements basic intelligent spacing units with build-in conversions.
 #
-#     U N D E R  D E V E L O P M E N T
-#     (Needs case testing when generating CSS)
-#
 from pagebot.constants import MM
 from pagebot.toolbox.transformer import asNumberOrNone
 
 class Unit(object):
     u"""Base class for units, implementing most of the logic.
 
+        >>> mm(1)
+        1mm
+        >>> mm(10)*8
+        80mm
         >>> fr(2) * fr(3)
         6fr
         >>> px(5) + 2    
@@ -35,111 +36,134 @@ class Unit(object):
         6px
         >>> px(12) + px(10)
         22px
-        >>> mm(12) + px(12)
-        46.02mm
-        >>> mm(12) + pt(5)
-        39.02mm
+        >>> mm(10) + px(1)
+        12.83mm
         >>> perc(20) + 8
         28%
     """
     absolute = True
-    def __init__(self, v=None, u=None):
-        if v is not None: 
-            self.u = v # Value is defined in this class units , convert internal to class units
-        elif u is not None:
-            self._v = u # Already in class units, keep value unchanged
-        else:
-            self._v = 0
-
-    def _get_u(self): # Default px == pt == class units
-        return self._v
-    def _set_u(self, v):
-        self._v = v or 0 # Assume that value is already class units
-    u = property(_get_u, _set_u)
-
-    pt = u
+    def __init__(self, v):
+        self._v = v or 0
 
     def _get_css(self):
         # Assuming that px == pt == class inits
-        u = self.u
         if int(round(u)) != self._v:
-            return '%0.2fpx' % self._v
-        return '%dpx' % self._v
+            return '%0.2fpx' % self.px
+        return '%dpx' % self.px
     css = property(_get_css)
               
     def __repr__(self):
-        u = self.u
-        if int(round(u)) != u:
-            return '%0.2f%s' % (u, self.__class__.__name__)
-        return '%d%s' % (u, self.__class__.__name__)
+        if int(round(self._v)) != self._v:
+            return '%0.2f%s' % (self._v, self.__class__.__name__)
+        return '%d%s' % (self._v, self.__class__.__name__)
    
     def __eq__(self, u):
         if isinstance(u, self.__class__):
             return self._v == u._v
-        return self._v == u
+        assert self.absolute, "Cannot compare relative values %s == %s." % (self, u)
+        if isinstance(u, (int, float)):
+            return self._v == u
+        assert u.absolute, "Cannot compare relative values %s == %s." % (self, u)
+        return self.asPt() == u.asPt()
 
     def __ne__(self, u):
         if isinstance(u, self.__class__):
             return self._v != u._v
-        return self._v != u
+        assert self.absolute, "Cannot compare relative values %s != %s." % (self, u)
+        if isinstance(u, (int, float)):
+            return self._v != u
+        assert u.absolute, "Cannot compare relative values %s != %s." % (self, u)
+        return self.asPt() != u.asPt()
 
     def __le__(self, u):
         if isinstance(u, self.__class__):
             return self._v <= u._v
-        return self._v <= u
+        assert self.absolute, "Cannot compare relative values %s <= %s." % (self, u)
+        if isinstance(u, (int, float)):
+            return self._v <= u
+        assert u.absolute, "Cannot compare relative values %s <= %s." % (self, u)
+        return self.asPt() <= u.asPt()
 
     def __lt__(self, u):
         if isinstance(u, self.__class__):
             return self._v < u._v
-        return self._v < u
+        assert self.absolute, "Cannot compare relative values %s < %s." % (self, u)
+        if isinstance(u, (int, float)):
+            return self._v < u
+        assert u.absolute, "Cannot compare relative values %s < %s." % (self, u)
+        return self.asPt() < u.asPt()
 
     def __ge__(self, u):
         if isinstance(u, self.__class__):
             return self._v >= u._v
-        return self._v >= u
+        assert self.absolute, "Cannot compare relative values %s >= %s." % (self, u)
+        if isinstance(u, (int, float)):
+            return self._v >= u
+        assert u.absolute, "Cannot compare relative values %s >= %s." % (self, u)
+        return self.asPt() >= u.asPt()
 
     def __gt__(self, u):
         if isinstance(u, self.__class__):
             return self._v > u._v
-        return self._v > u
+        assert self.absolute, "Cannot compare relative values %s > %s." % (self, u)
+        if isinstance(u, (int, float)):
+            return self._v > u
+        assert u.absolute, "Cannot compare relative values %s > %s." % (self, u)
+        return self.asPt() > u.asPt()
 
     def __add__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v + self._v)
         if isinstance(u, (int, float)):
             return self.__class__(self._v + u)
-        assert u.absolute == self.absolute, "Cannot add relative and absolute values"
-        return self.__class__(u.pt + self.pt) # Supports mm(2) + pt(4) + inch(3)
+        assert u.absolute and self.absolute, "Cannot add relative values %s - %s" % (self, u)
+        return self.__class__.fromPt(u.asPt() + self.asPt()) # Supports mm(2) + pt(4) + inch(3)
         
     def __sub__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v - self._v)
         if isinstance(u, (int, float)):
             return self.__class__(self._v - u)
-        assert u.absolute == self.absolute, "Cannot subtract relative and absolute values"
-        return self.__class__(pt=u.pt - self.pt)
+        assert u.absolute and self.absolute, "Cannot subtract relative values %s - %s" % (self, u)
+        return self.__class__.fromPt(u.asPt() - self.asPt())
         
     def __div__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v / self._v)
         if isinstance(u, (int, float)):
             return self.__class__(self._v / u)
-        assert u.absolute == self.absolute, "Cannot divide relative and absolute values"
-        return self.__class__(pt=u.pt / self.pt)
+        assert u.absolute and self.absolute, "Cannot divide relative values %s / %s" % (self, u)
+        return self.__class__.fromPt(u.asPt() / self.asPt())
         
     def __mul__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v * self._v)
         if isinstance(u, (int, float)):
             return self.__class__(self._v * u)
-        assert u.absolute == self.absolute, "Cannot multiply relative and absolute values"
-        return self.__class__(u=u.pt * self.pt)
+        assert u.absolute and self.absolute, "Cannot multiply relative values %s * %s" % (self, u)
+        return self.__class__.fromPt(u.asPt() * self.asPt())
   
-    def getValue(self, masterValue=None):
-        u"""For non-relative values, answer the self._v unchanged."""
-        return self._v
-
 class mm(Unit):
+    u"""Answer the mm instance. 
+
+    >>> u = mm.make(210)
+    >>> u
+    210mm
+    >>> u = mm.make('297mm') # A4
+    >>> u
+    297mm
+    >>> u/2
+    148mm
+    >>> u-100
+    197mm
+    >>> u+100
+    397mm
+    >>> u._v
+    297
+    >>> round(u.asPt()) # Rounded A4 --> pts
+    842.0
+    """
+
     @classmethod
     def make(cls, v):
         if isinstance(v, (int, float)):
@@ -152,13 +176,29 @@ class mm(Unit):
                     return cls(v)
         return None
 
-    def _get_u(self):
+    def asPt(self, _=None):
         return self._v / MM
-    def _set_u(self, v):
-        self._v = v * MM
-    u = property(_get_u, _set_u)
+    @classmethod
+    def fromPt(cls, pt):
+        return cls(pt * MM)
 
 class px(Unit):
+    u"""Answer the px (pixel) instance. 
+
+    >>> u = px.make(0.2)
+    >>> u
+    0.20px
+    >>> u = px.make('0.4px')
+    >>> u
+    0.40px
+    >>> u/2
+    0.20px
+    >>> u-0.1
+    0.30px
+    >>> u.asPt(100) # Answer px value, relative to master value.
+    40.0
+    """
+
     @classmethod
     def make(cls, v):
         if isinstance(v, (int, float)):
@@ -170,7 +210,13 @@ class px(Unit):
                 if v is not None:
                     return cls(v)
         return None
-        
+
+    def asPt(self, factor=1):
+        return self._v * factor
+    @classmethod
+    def fromPt(cls, pt, factor=1):
+        return cls(pt / factor)
+
 class pt(Unit):
     u"""pt is the base unit size of all PageBot measures. 
 
@@ -181,8 +227,8 @@ class pt(Unit):
     0.20pt
     >>> u-0.1
     0.30pt
-    >>> u.getValue(100) # Answer fr value, relative to master value.
-    0.4
+    >>> u.asPt(100) # Answer pt value, relative to master value.
+    40.0
     """
     @classmethod
     def make(cls, v):
@@ -196,6 +242,12 @@ class pt(Unit):
                     return cls(v)
         return None
 
+    def asPt(self, factor=1):
+        return self._v * factor
+    @classmethod
+    def fromPt(cls, pt, factor=1):
+        return cls(pt / factor)
+
 #   Relative Units (e.g. for use in CSS)
 
 class RelativeUnit(Unit):
@@ -207,8 +259,12 @@ class RelativeUnit(Unit):
         return str(self)
     css = property(_get_css)
 
-    def getValue(self, masterValue):
+    def asPt(self, masterValue):
+        u"""Answer the value in points, relative to the master value."""
         return self._v * masterValue
+    @classmethod
+    def fromPt(cls, pt, masterValue):
+        return cls(pt / masterValue)
 
 class fr(RelativeUnit):
     u"""fractional units, used in CSS-grid. 
@@ -224,7 +280,7 @@ class fr(RelativeUnit):
     0.20fr
     >>> u-0.1
     0.30fr
-    >>> u.getValue(100) # Answer fr value, relative to master value.
+    >>> u.asPt(100) # Answer fr value as points, relative to master value.
     40.0
     """
     @classmethod
@@ -250,7 +306,7 @@ class em(RelativeUnit):
     5em
     >>> u-8
     2em
-    >>> u.getValue(12) # Answer em value, relative to master value.
+    >>> u.asPt(12) # Answer em value in points, relative to master value.
     120
     """
     @classmethod
@@ -278,7 +334,7 @@ class perc(RelativeUnit):
     >>> u-30.5
     69.50%
     >>> u = perc.make('66%')
-    >>> u.getValue(500) # Answer percentage value relative to master value
+    >>> u.asPoints(500) # Answer percentage value relative to master value
     330
     """ 
     @classmethod
@@ -297,9 +353,17 @@ class perc(RelativeUnit):
                     return cls(v)
         return None
 
-    def getValue(self, masterValue):
-        u"""Percentage has a different relative master calculation."""
+    def asPoints(self, masterValue):
+        u"""Convert to points. Percentage has a different relative master calculation."""
         return self._v * masterValue / 100
+
+
+    def asPt(self, masterValue):
+        u"""Convert to points. Percentage has a different relative master calculation."""
+        return self._v * masterValue / 100
+    @classmethod
+    def fromPt(cls, pt, masterValue):
+        return cls(pt / masterValue * 100)
 
     def __repr__(self):
         if isinstance(self._v, int):
@@ -324,7 +388,13 @@ def getUnits(v):
     30pt
     >>> getUnits('1.4em')
     1.40em
+    >>> getUnits(0.33)
+    0.33
+    >>> getUnits('SomethingElse')
+    'SomethingElse'
     """
+    if isinstance(v, (int, float)):
+        return v
     for unitClass in UNIT_CLASSES:
         u = unitClass.make(v)
         if u is not None:
