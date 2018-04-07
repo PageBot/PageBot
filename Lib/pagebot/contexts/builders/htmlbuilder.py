@@ -468,11 +468,9 @@ table {
     def html(self, xmlns=None, **args):
         """
         <www href="http://www.w3schools.com/tags/tag_html.asp" target="external"/>
-        <python>
-        self.html(xmlns="http://www.w3.org/1999/xhtml", dir=ltr, lang=no, xmllang=no)<br/>
-        ...<br/>
+        self.html(xmlns="http://www.w3.org/1999/xhtml", dir=ltr, lang=no, xmllang=no)
+            ...
         self._html()
-        </python>
         Default value for xmlns is "http://www.w3.org/1999/xhtml".
         """
         self.write(u'<html xmlns="%s"' % (xmlns or 'http://www.w3.org/1999/xhtml'))
@@ -489,21 +487,17 @@ table {
         u"""
         The head element can contain information about the document.¬†The browser does not display the
         "head information" to the user. The following tags can be in the head section: base,
-        link, meta, script, style and title.<br/>
+        link, meta, script, style and title.
         <www href="http://www.w3schools.com/tags/tag_head.asp" target="external"/>
-        <python>
-        self.head()<br/>
-        ...<br/>
+        self.head()
+            ...
         self._head()
-        </python>
         """
         self.tabs()
         self.tabIn()
         self.write(u'<head')
         self.getandwrite_attributes(u'head', args)
         self.write(u'>')
-        # Automatic meta charset tag, so we don't forget we only want to work in UTF-8
-        self.meta(httpequiv='Content-Type', content='text/html;charset=UTF-8')
         # Push as last, so we can see the current tag on the stack
         self._pushTag(u'head')
 
@@ -512,13 +506,11 @@ table {
 
     def title(self):
         """
-        This tag defines the title of the document.<br/>
+        This tag defines the title of the document.
         <www href="http://www.w3schools.com/tags/tag_title.asp" target="external"/>
-        <python>
-        self.title()<br/>
-        ...<br/>
+        self.title()
+            ...
         self._title()
-        </python>
         """
         self.tabs()
         self.tabIn()
@@ -530,24 +522,22 @@ table {
         self._closeTag(u'title')
 
     def title_(self, s):
-        u"""Write the stripped string s as <title> tag."""
+        u"""Write the stripped string s as <title>...</title> tag."""
         self.title()
         self.write(s.strip())
         self._title()
 
     def link(self, **args):
         """
-        The link tag defines the relationship between two linked documents.<br/>
+        The link tag defines the relationship between two linked documents.
         Note that this tag is defined by XierpaBuilder. When using an inheriting class
-        from XierpaBuilder then use the rellink tag name instead.<br/>
+        from XierpaBuilder then use the rellink tag name instead.
         <www href="http://www.w3schools.com/tags/tag_link.asp" target="external"/>
-        <python>
-        self.head()<br/>
-        ...<br/>
-        self.link(href='/_images/favicon.ico', rel='shortcut icon')<br/>
-        ...<br/>
+        self.head()
+            ...
+            self.link(href='/_images/favicon.ico', rel='shortcut icon')
+            ...
         self._head()
-        </python>
         """
         self.write_tag(u'link', False, args)
         self.newline()
@@ -556,13 +546,11 @@ table {
     def body(self, **args):
         """
         The body element defines the documents' body. It contains all the contents
-        of the document (like text, images, colors, graphics, etc.).<br/>
+        of the document (like text, images, colors, graphics, etc.).
         <www href="http://www.w3schools.com/tags/tag_body.asp" target="external"/>
-        <python>
-        self.body(onload='javascript:loadpage()')<br/>
-        ...<br/>
+        self.body(onload='javascript:loadpage()')
+            ...
         self._body()
-        </python>
         """
         self.write_tag(u'body', True, args)
 
@@ -574,13 +562,11 @@ table {
     def h1(self, **args):
         u"""
         The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.<br/>
+        h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
-        <python>
-        self.h1(cssClass='chapter')<br/>
-        ...<br/>
+        self.h1(cssClass='chapter')
+            ...
         self._h1()
-        </python>
         """
         self.write_tag_noWhitespace(u'h1', True, args)
 
@@ -600,13 +586,11 @@ table {
     def h2(self, **args):
         u"""
         The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.<br/>
+        h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
-        <python>
-        self.h2(cssClass='head')<br/>
-        ...<br/>
+        self.h2(cssClass='head')
+            ...
         self._h2()
-        </python>
         """
         self.write_tag_noWhitespace(u'h2', True, args)
 
@@ -626,13 +610,11 @@ table {
     def h3(self, **args):
         u"""
         The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.<br/>
+        h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
-        <python>
-        self.h3(cssClass='subhead')<br/>
-        ...<br/>
+        self.h3(cssClass='subhead')
+            ...
         self._h3()
-        </python>
         """
         self.write_tag_noWhitespace(u'h3', True, args)
 
@@ -652,13 +634,11 @@ table {
     def h4(self, **args):
         u"""
         The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.<br/>
+        h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
-        <python>
-        self.h4(cssClass='subsubhead')<br/>
-        ...<br/>
+        self.h4(cssClass='subsubhead')
+            ...
         self._h4()
-        </python>
         """
         self.write_tag_noWhitespace(u'h4', True, args)
 
@@ -679,13 +659,11 @@ table {
     def h5(self, **args):
         u"""
         The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.<br/>
+        h1 defines the largest header. h6 defines the smallest header.
          <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
-        <python>
-        self.h5(cssClass='caption')<br/>
-        ...<br/>
+        self.h5(cssClass='caption')
+            ...
         self._h5()
-        </python>
         """
         self.write_tag_noWhitespace(u'h5', True, args)
 
@@ -704,13 +682,11 @@ table {
     def h6(self, **args):
         u"""
         The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.<br/>
+        h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
-        <python>
-        self.h6(cssClass='footnote')<br/>
-        ...<br/>
+        self.h6(cssClass='footnote')
+            ...
         self._h6()
-        </python>
         """
         self.write_tag_noWhitespace(u'h6', True, args)
 
@@ -956,12 +932,10 @@ table {
     def sup(self, **args):
         """
         The sup tag implements the standard XTHML tag for superior (superscript) text.
-        <python>
-        self.text(u'Normal text')<br/>
-        self.sup()<br/>
-        self.text(u'and superior')<br/>
-        self._sup()<br/>
-        </python>
+        self.text(u'Normal text')
+        self.sup()
+        self.text(u'and superior')
+        self._sup()
         Normal text <sup>and suporior</sup>
         """
         self.write_tag_noWhitespace(u'sup', True, args)
@@ -972,12 +946,10 @@ table {
     def sub(self, **args):
         """
         The sub tag implements the standard XTHML tag for inferior (subscript) text.
-        <python>
-        self.text(u'Normal text')<br/>
-        self.sub()<br/>
-        self.text(u'and inferior')<br/>
-        self._sub()<br/>
-        </python>
+        self.text(u'Normal text')
+        self.sub()
+        self.text(u'and inferior')
+        self._sub()
         Normal text <sub>and inferior</sub>
         """
         self.write_tag_noWhitespace(u'sub', True, args)
@@ -987,13 +959,11 @@ table {
 
     def br(self, count=1, **args):
         """
-        The br tag inserts a single line break.<br/>
-        The count attribute is not standard XHTML. It indicates the number of br to repeat.<br/>
-        The cssClass can define the amount of leading in px of the break.<br/>
+        The br tag inserts a single line break.
+        The count attribute is not standard XHTML. It indicates the number of br to repeat.
+        The cssClass can define the amount of leading in px of the break.
         <www href="http://www.w3schools.com/tags/tag_br.asp" target="external"/>
-        <python>
-        self.br()<br/>
-        </python>
+        self.br()
         """
         for _ in range(count):
             self.write_tag_noWhitespace(u'br', False, args)
@@ -1007,13 +977,11 @@ table {
     def table(self, **args):
         u"""
         The table tag defines a table.¬†Inside a table tag you can put table headers,
-        table rows, table cells, and other tables.<br/>
+        table rows, table cells, and other tables.
         <www href="http://www.w3schools.com/tags/tag_table.asp" target="external"/>
-        <python>
-        self.table()<br/>
-        ...<br/>
+        self.table()
+            ...
         self._table()
-        </python>
         """
         self.write_tag_noWhitespace(u'table', True, args)
         #self._debugclass(u'table', self.getClassName(args, self.TABLE_ATTRIBUTES))
@@ -1062,13 +1030,11 @@ table {
 
     def tr(self, **args):
         u"""
-        Defines a row in a table.<br/>
+        Defines a row in a table.
         <www href="http://www.w3schools.com/tags/tag_tr.asp" target="external"/>
-        <python>
-        self.tr()<br/>
-        ...<br/>
+        self.tr()
+            ...
         self._tr()
-        </python>
         """
         self.write_tag(u'tr', True, args)
 
@@ -1078,13 +1044,11 @@ table {
     def td(self, **args):
         """
         Defines a cell in a table. If the rolspan or colspan are not defined or if their value is 1
-        then the output is ignored.<br/>
+        then the output is ignored.
         <www href="http://www.w3schools.com/tags/tag_td.asp" target="external"/>
-        <python>
-        self.td()<br/>
-        ...<br/>
+        self.td()
+            ...
         self._td()
-        </python>
         """
         self.write_tag_noWhitespace(u'td', True, args)
         #self._debugclass(u'td', self.getClassName(args, self.TD_ATTRIBUTES))
@@ -1096,13 +1060,11 @@ table {
         """
         Defines a table header cell in a table. The text within the th element usually renders in bold. If the rolspan
          or colspan are not defined or if their value is 1 then the output is ignored.
-        <br/>
+        
         <www href="http://www.w3schools.com/tags/tag_th.asp" target="external"/>
-        <python>
-        self.th()<br/>
-        ...<br/>
+        self.th()
+            ...
         self._th()
-        </python>
         """
         self.write_tag_noWhitespace(u'th', True, args)
 
@@ -1113,13 +1075,11 @@ table {
         """
         Defines a style in a document. The style element goes in the head section. If you want to include a style sheet in
         your page, you should define the style sheet externally, and link to it using XHTML link (note that
-        this tag is redefined in XierpaBuilder.<br/>
+        this tag is redefined in XierpaBuilder.
         <www href="http://www.w3schools.com/tags/tag_style.asp" target="external"/>
-        <python>
-        self.style()<br/>
-        ...<br/>
+        self.style()
+            ...
         self._style()
-        </python>
         """
         self.write_tag('style', True, args)
 
@@ -1134,14 +1094,12 @@ table {
 
     def div(self, **args):
         """
-        The div tag defines a division/section in a document.<br/>
+        The div tag defines a division/section in a document.
         <note>Browsers usually place a line break before and after the div element.</note>
         <www href="http://www.w3schools.com/tags/tag_div.asp" target="external"/>
-        <python>
-        self.div()<br/>
-        ...<br/>
+        self.div()
+            ...
         self._div()
-        </python>
         """
         self.write_tag_noWhitespace(u'div', True, args)
 
@@ -1262,12 +1220,12 @@ table {
 
     def noframes(self, **args):
         """
-        The noframes tag is used for browsers that do not handle frames.<br/>
+        The noframes tag is used for browsers that do not handle frames.
         The noframes element can contain all the elements that you can find inside the body element of a normal HTML
-        page.<br/>
+        page.
         The noframes element is most used to link to a non-frameset version of the web site or to display a message to
-        users that frames are required.<br/>
-        The noframes element goes inside the frameset element.<br/>
+        users that frames are required.
+        The noframes element goes inside the frameset element.
         <www href="http://www.w3schools.com/tags/tag_noframes.asp"/>
         """
         self.write_tag(u'noframes', False, args)
@@ -1289,23 +1247,19 @@ table {
     def embed(self, **args):
         """
         <error>Does not seem to be defined in w3schools??</error>
-        <python>
         self.embed(src='./_images/amovie.qt')
-        </python>
         """
         self.write_tag(u'embed', False, args)
 
     def script(self, charset='UTF-8', type='text/javascript', **args):
         """
-        The br tag inserts a single line break.<br/>
+        The br tag inserts a single line break.
         Defines a script, such as a JavaScript. Note that if @src is used, then no self._script() must be used.
-        The count attribute is not standard XHTML. It indicates the number of br to repeat.<br/>
+        The count attribute is not standard XHTML. It indicates the number of br to repeat.
         <www href="http://www.w3schools.com/tags/tag_script.asp" target="external"/>
-        <python>
-        self.script()<br/>
-        ...<br/>
+        self.script()
+            ...
         self._script()
-        </python>
         """
         #
         #     Build script. Note that if @src is used, then no self._script()
@@ -1339,13 +1293,11 @@ table {
 
     def ul(self, **args):
         """
-        The ul tag defines an unordered list.<br/>
+        The ul tag defines an unordered list.
         <www href="http://www.w3schools.com/tags/tag_ul.asp" target="external"/>
-        <python>
-        self.ul()<br/>
-        ...<br/>
+        self.ul()
+            ...
         self._ul()
-        </python>
         """
         self.write_tag(u'ul', True, args)
 
@@ -1354,13 +1306,11 @@ table {
 
     def ol(self, **args):
         """
-        The ol tag defines the start of a definition list.<br/>
+        The ol tag defines the start of a definition list.
         <www href="http://www.w3schools.com/tags/tag_ol.asp" target="external"/>
-        <python>
-        self.ol()<br/>
-        ...<br/>
+        self.ol()
+            ...
         self._ol()
-        </python>
         """
         self.write_tag(u'ol', True, args)
 
@@ -1374,11 +1324,9 @@ table {
         The li tag defines the start of a list item. The li tag is used in both ordered
         (ol) and unordered lists (ul).
         <www href="http://www.w3schools.com/tags/tag_li.asp" target="external"/>
-        <python>
-        self.li()<br/>
-        ...<br/>
+        self.li()
+            ...
         self._li()
-        </python>
         """
         self.write_tag_noWhitespace(u'li', True, args)
 
@@ -1387,13 +1335,11 @@ table {
 
     def dl(self, **args):
         """
-        The dl tag defines an unordered list.<br/>
+        The dl tag defines an unordered list.
         <www href="http://www.w3schools.com/tags/tag_dl.asp" target="external"/>
-        <python>
-        self.dl()<br/>
-        ...<br/>
+        self.dl()
+            ...
         self._dl()
-        </python>
         """
         self.write_tag(u'dl', True, args)
 
@@ -1405,11 +1351,9 @@ table {
         The dt tag defines the start of a definition list term.
         The dt tag is used only in definition lists (dl).
         <www href="http://www.w3schools.com/tags/tag_dt.asp" target="external"/>
-        <python>
-        self.dt()<br/>
-        ...<br/>
+        self.dt()
+            ...
         self._dt()
-        </python>
         """
         self.write_tag(u'dt', True, args)
 
@@ -1421,11 +1365,9 @@ table {
         The dd tag defines the start of a definition list term.
         The dd tag is used only in definition lists (dl).
         <www href="http://www.w3schools.com/tags/tag_dd.asp" target="external"/>
-        <python>
-        self.dd()<br/>
-        ...<br/>
+        self.dd()
+            ...
         self._dd()
-        </python>
         """
         self.write_tag(u'dd', True, args)
 
@@ -1441,16 +1383,14 @@ table {
              onsubmit=None, onreset=None, target=None, style=None, cssId=None):
         u"""
         The form element creates a form for user input. A form can contain elements such as textfields, checkboxes and
-        radio-buttons. Forms are used to pass user data to a specified URL.<br/>
+        radio-buttons. Forms are used to pass user data to a specified URL.
         <www href="http://www.w3schools.com/tags/tag_form.asp" target="external"/>
 
         If an upload tag is used in the form, then the enctype attribute should be set to 
         enctype="multipart/form-data"
-        <python>
-        self.form(action=e['path'])<br/>
-        ...<br/>
+        self.form(action=e['path'])
+            ...
         self._form()
-        </python>
         """
         #
         #     @class_
@@ -1489,13 +1429,11 @@ table {
 
     def input(self, **args):
         """
-        The input tag defines the start of an input field where the user can enter data.<br/>
+        The input tag defines the start of an input field where the user can enter data.
         The attribute type can be one of button | checkbox | file | hidden | image | password | radio |
-        reset | submit | text.<br/>
+        reset | submit | text.
         <www href="http://www.w3schools.com/tags/tag_input.asp" target="external"/>
-        <python>
-        self.input(type='checkbox', name='mycheckbox')<br/>
-        </python>
+        self.input(type='checkbox', name='mycheckbox')
         """
         self.write_tag(u'input', False, args)
 
@@ -1514,13 +1452,11 @@ table {
 
     def select(self, **args):
         """
-        The select element creates a drop-down list.<br/>
+        The select element creates a drop-down list.
         <www href="http://www.w3schools.com/tags/tag_select.asp" target="external"/>
-        <python>
-        self.select()<br/>
-        ...<br/>
+        self.select()
+            ...
         self._select()
-        </python>
         """
         self.write_tag(u'select', True, args)
 
@@ -1529,13 +1465,11 @@ table {
 
     def option(self, **args):
         """
-        The option tag defines an option in the drop-down list.<br/>
+        The option tag defines an option in the drop-down list.
         <www href="http://www.w3schools.com/tags/tag_option.asp" target="external"/>
-        <python>
-        self.option()<br/>
-        ...<br/>
+        self.option()
+            ...
         self._option()
-        </python>
         """
         self.write_tag(u'option', True, args)
 
@@ -1544,13 +1478,11 @@ table {
 
     def optgroup(self, **args):
         """
-        The optgroup tag defines an option group in the drop-down list.<br/>
+        The optgroup tag defines an option group in the drop-down list.
         <www href="http://www.w3schools.com/tags/tag_optgroup.asp" target="external"/>
-        <python>
-        self.optgroup()<br/>
-        ...<br/>
+        self.optgroup()
+            ...
         self._optgroup()
-        </python>
         """
         self.write_tag(u'optgroup', True, args)
 
@@ -1571,13 +1503,11 @@ table {
     def textarea(self, **args):
         """
         Defines a text area (a multi-line text input control). A user can write text in the text area. In a text
-        area you can write an unlimited number of characters. The default font in the text area is fixed pitch.<br/>
+        area you can write an unlimited number of characters. The default font in the text area is fixed pitch.
         <www href="http://www.w3schools.com/tags/tag_textarea.asp" target="external"/>
-        <python>
-        self.textarea()<br/>
-        ...<br/>
+        self.textarea()
+            ...
         self._textarea()
-        </python>
         """
         self.write_tag_noWhitespace(u'textarea', True, args) # No tabbing inside the <textarea> tag.
 
@@ -1587,13 +1517,11 @@ table {
     def meta(self, **args):
         """
         The meta element provides meta-information about your page, such as descriptions and keywords for
-        search engines and refresh rates.<br/>
+        search engines and refresh rates.
         <www href="http://www.w3schools.com/tags/tag_meta.asp" target="external"/>
-        <python>
-        self.meta()<br/>
-        ...<br/>
+        self.meta()
+            ...
         self._meta()
-        </python>
         """
         self.write_tag(u'meta', False, args)
 

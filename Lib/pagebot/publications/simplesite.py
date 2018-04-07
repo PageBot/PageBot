@@ -40,8 +40,8 @@ class SimpleSite(Publication):
     >>> view.info.cssCode = template.info.cssCode
     >>> doc.build()
     >>> # Try to open in browser. It works if a local server (like MAMP) runs for view.LOCAL_HOST_URL url.
-    >>> #import os
-    >>> #result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, view.DEFAULT_HTML_FILE)))
+    >>> import os
+    >>> result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, view.DEFAULT_HTML_FILE)))
     >>> from pagebot.style import A4
     >>> page.w, page.h = doc.w, doc.h = A4
     >>> view = doc.newView('Page')
@@ -53,8 +53,8 @@ class SimpleSite(Publication):
         u"""Initialize the generic base website templates. """
 
         # For now, just supply the full head code here.
-        headHtml = """
-        <meta charset="utf-8">
+        headHtml = """       
+        <meta content="text/html;charset=UTF-8" http-equiv="Content-Type"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>%(title)s</title>
         <meta name="description" content="%(description)s">

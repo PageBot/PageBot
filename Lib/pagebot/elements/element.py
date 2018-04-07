@@ -19,6 +19,7 @@ from __future__ import division
 import weakref
 import copy
 from pagebot.contexts.platform import getContext
+from pagebot.toolbox.units import Unit, getUnits
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID
@@ -1994,30 +1995,36 @@ class Element(object):
         >>> e.w = 101
         >>> e.w
         101
-        >>> e.w = e.maxW + 10000
-        >>> e.w
-        1000
-        >>> e.w = 0
+        >>> e.w = e.maxW + 10000 # Width too large, crops to self.maxW
+        >>> e.w, e.maxW
+        (1000, 1000)
+        >>> e.w = e.minW - 10000 # Width too small, crops to self.minW
+        >>> e.w, e.minW
+        (1, 1)
+        >>> e.w = 0 # Zero width expands to DEFAULT_WIDTH (100)
         >>> e.w, e.w == DEFAULT_WIDTH
         (100, True)
         """
-        return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
+        w = self.style['w']
+        if isinstance(w, Unit)
+            w = w.getValue(self.parent) # In case percentage or fraction, answer value in relation to self.parent
+        return min(self.maxW, max(self.minW, w, MIN_WIDTH)) # From self.style, don't inherit.
     def _set_w(self, w):
-        self.style['w'] = w or DEFAULT_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['w'] = getUnits(w or DEFAULT_WIDTH) # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
 
     def _get_mw(self): # Width, including margins
-        u"""Width property for self.mw style.
+        u"""Width property for self.mw style. Answers the width of the elements with added left/right margins.
 
         >>> e = Element(w=10, ml=22, mr=33)
         >>> e.mw
         65
         >>> e = Element()
-        >>> e.w = 10
-        >>> e.ml = 22
-        >>> e.mr = 33
-        >>> e.mw
-        65
+        >>> e.w = 100
+        >>> e.ml = 44
+        >>> e.mr = 55
+        >>> e.mw # e.ml + e.w + e.mr
+        199
         """
         return self.w + self.ml + self.mr # Add margins to width
     def _set_mw(self, w):
@@ -2033,10 +2040,13 @@ class Element(object):
         >>> e.h = 101
         >>> e.h
         101
-        >>> e.h = e.maxH + 10000
-        >>> e.h
-        1000
-        >>> e.h = 0
+        >>> e.h = e.maxH + 10000 # Height too large, crops to self.maxH
+        >>> e.h, e.maxH
+        (1000, 1000)
+        >>> e.h = e.minH - 10000 # Height too small, crops to self.minH
+        >>> e.h, e.minH
+        (1, 1)
+        >>> e.h = 0 # Zero height expands to DEFAULT_HEIGHT (100)
         >>> e.h, e.h == DEFAULT_HEIGHT
         (100, True)
         """
@@ -2046,17 +2056,17 @@ class Element(object):
     h = property(_get_h, _set_h)
 
     def _get_mh(self): # Height, including margins
-        u"""Width property for self.mh style.
+        u"""Height property for self.mh style.
 
         >>> e = Element(h=10, mt=22, mb=33)
         >>> e.mh
         65
         >>> e = Element()
-        >>> e.h = 10
-        >>> e.mt = 22
-        >>> e.mb = 33
-        >>> e.mh
-        65
+        >>> e.h = 100
+        >>> e.mt = 44
+        >>> e.mb = 55
+        >>> e.mh # e.mt + e.h + e.mb
+        199
         """
         return self.h + self.mt + self.mb # Add margins to height
     def _set_mh(self, h):

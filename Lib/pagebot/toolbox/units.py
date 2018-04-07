@@ -19,6 +19,7 @@
 #     (Needs case testing when generating CSS)
 #
 from pagebot.constants import MM
+from pagebot.toolbox.transformer import asNumberOrNone
 
 class Unit(object):
     u"""Base class for units, implementing most of the logic.
@@ -106,7 +107,7 @@ class Unit(object):
         if isinstance(u, self.__class__):
             return self.__class__(u._v + self._v)
         if isinstance(u, (int, float)):
-            return self.__class__(u + self._v)
+            return self.__class__(self._v + u)
         assert u.absolute == self.absolute, "Cannot add relative and absolute values"
         return self.__class__(u.pt + self.pt) # Supports mm(2) + pt(4) + inch(3)
         
@@ -114,7 +115,7 @@ class Unit(object):
         if isinstance(u, self.__class__):
             return self.__class__(u._v - self._v)
         if isinstance(u, (int, float)):
-            return self.__class__(u - self._v)
+            return self.__class__(self._v - u)
         assert u.absolute == self.absolute, "Cannot subtract relative and absolute values"
         return self.__class__(pt=u.pt - self.pt)
         
@@ -122,7 +123,7 @@ class Unit(object):
         if isinstance(u, self.__class__):
             return self.__class__(u._v / self._v)
         if isinstance(u, (int, float)):
-            return self.__class__(u / self._v)
+            return self.__class__(self._v / u)
         assert u.absolute == self.absolute, "Cannot divide relative and absolute values"
         return self.__class__(pt=u.pt / self.pt)
         
@@ -130,11 +131,26 @@ class Unit(object):
         if isinstance(u, self.__class__):
             return self.__class__(u._v * self._v)
         if isinstance(u, (int, float)):
-            return self.__class__(u * self._v)
+            return self.__class__(self._v * u)
         assert u.absolute == self.absolute, "Cannot multiply relative and absolute values"
         return self.__class__(u=u.pt * self.pt)
-        
+  
+    def getValue(self, masterValue=None):
+        u"""For non-relative values, answer the self._v unchanged."""
+        return self._v
+
 class mm(Unit):
+    @classmethod
+    def make(cls, v):
+        if isinstance(v, (int, float)):
+            return cls(v)
+        if isinstance(v, str):
+            v = v.strip().lower()
+            if v.endswith('mm'):
+                v = asNumberOrNone(v[:-2])
+                if v is not None:
+                    return cls(v)
+        return None
 
     def _get_u(self):
         return self._v / MM
@@ -143,12 +159,44 @@ class mm(Unit):
     u = property(_get_u, _set_u)
 
 class px(Unit):
-    pass
+    @classmethod
+    def make(cls, v):
+        if isinstance(v, (int, float)):
+            return cls(v)
+        if isinstance(v, str):
+            v = v.strip().lower()
+            if v.endswith('px'):
+                v = asNumberOrNone(v[:-2])
+                if v is not None:
+                    return cls(v)
+        return None
         
 class pt(Unit):
-    pass
+    u"""pt is the base unit size of all PageBot measures. 
 
-#   Relative  C S S  Units
+    >>> u = pt.make('0.4pt')
+    >>> u
+    0.40pt
+    >>> u/2
+    0.20pt
+    >>> u-0.1
+    0.30pt
+    >>> u.getValue(100) # Answer fr value, relative to master value.
+    0.4
+    """
+    @classmethod
+    def make(cls, v):
+        if isinstance(v, (int, float)):
+            return cls(v)
+        if isinstance(v, str):
+            v = v.strip().lower()
+            if v.endswith('pt'):
+                v = asNumberOrNone(v[:-2])
+                if v is not None:
+                    return cls(v)
+        return None
+
+#   Relative Units (e.g. for use in CSS)
 
 class RelativeUnit(Unit):
     u"""Abstract class to avoid artihmetic between absolute and relative units.
@@ -159,23 +207,129 @@ class RelativeUnit(Unit):
         return str(self)
     css = property(_get_css)
 
+    def getValue(self, masterValue):
+        return self._v * masterValue
+
 class fr(RelativeUnit):
     u"""fractional units, used in CSS-grid. 
     https://gridbyexample.com/video/series-the-fr-unit/
+
+    >>> u = fr.make(0.35)
+    >>> u
+    0.35fr
+    >>> u = fr.make('0.4fr')
+    >>> u
+    0.40fr
+    >>> u/2
+    0.20fr
+    >>> u-0.1
+    0.30fr
+    >>> u.getValue(100) # Answer fr value, relative to master value.
+    40.0
     """
-    pass
-    
+    @classmethod
+    def make(cls, v):
+        if isinstance(v, (int, float)):
+            return cls(v)
+        if isinstance(v, str):
+            v = v.strip().lower()
+            if v.endswith('fr'):
+                v = asNumberOrNone(v[:-2])
+                if v is not None:
+                    return cls(v)
+        return None
+
 class em(RelativeUnit):
     u"""Em size is based on the current setting of the fontSize. 
-    Used in CSS export."""
-    pass
+    Used in CSS export.
+
+    >>> u = em.make('10em')
+    >>> u
+    10em
+    >>> u/2
+    5em
+    >>> u-8
+    2em
+    >>> u.getValue(12) # Answer em value, relative to master value.
+    120
+    """
+    @classmethod
+    def make(cls, v):
+        if isinstance(v, (int, float)):
+            return cls(v)
+        if isinstance(v, str):
+            v = v.strip().lower()
+            if v.endswith('em'):
+                v = asNumberOrNone(v[:-2])
+                if v is not None:
+                    return cls(v)
+        return None
 
 class perc(RelativeUnit):
+    u"""Answer the relative percentage unit, if parsing as percentage (ending with % order "perc").
+
+    >>> u = perc.make('100%')
+    >>> u
+    100%
+    >>> u/2
+    50%
+    >>> u/10*2
+    20%
+    >>> u-30.5
+    69.50%
+    >>> u = perc.make('66%')
+    >>> u.getValue(500) # Answer percentage value relative to master value
+    330
+    """ 
+    @classmethod
+    def make(cls, v):
+        if isinstance(v, (int, float)):
+            return cls(v)
+        if isinstance(v, str):
+            v = v.strip().lower()
+            if v.endswith('%'):
+                v = asNumberOrNone(v[:-1])
+                if v is not None:
+                    return cls(v)
+            if v.endswith('perc'):
+                v = asNumberOrNone(v[:-4])
+                if v is not None:
+                    return cls(v)
+        return None
+
+    def getValue(self, masterValue):
+        u"""Percentage has a different relative master calculation."""
+        return self._v * masterValue / 100
+
     def __repr__(self):
         if isinstance(self._v, int):
             return '%d%%' % self._v
         return '%0.2f%%' % self._v
 
+UNIT_CLASSES = (mm, px, pt, fr, em, perc)
+
+def getUnits(v):
+    u"""If value is a string, then try to guess what type of units value is 
+    and answer the right instance.
+
+    >>> getUnits('100%')
+    100%
+    >>> getUnits('80  perc  ')
+    80%
+    >>> getUnits('12pt')
+    12pt
+    >>> getUnits('140mm')
+    140mm
+    >>> getUnits('30pt')
+    30pt
+    >>> getUnits('1.4em')
+    1.40em
+    """
+    for unitClass in UNIT_CLASSES:
+        u = unitClass.make(v)
+        if u is not None:
+            return u
+    return v
 
 
 if __name__ == '__main__':
