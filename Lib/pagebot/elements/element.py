@@ -1197,52 +1197,88 @@ class Element(object):
     def _get_x(self):
         u"""Answer the x position of self.
 
-        >>> e = Element(x=100)
+        >>> e = Element(x=100, w=400)
         >>> e.x, e.y, e.z
         (100, 0, 0)
-        >>> e.x = 101
+        >>> e.x = 200
         >>> e.x, e.y, e.z
-        (101, 0, 0)
+        (200, 0, 0)
+        >>> child = Element(x='40%', parent=e)
+        >>> child.x # 40% of 400
+        160
+        >>> e.w = 500
+        >>> child.x # 40% of 500 dynamic calculation
+        200
         """
-        return self.style['x'] # Direct from style. Not CSS lookup.
+        x = self.style['x'] # Direct from style. Not CSS lookup.
+        if isinstance(x, (fr, perc)):
+            assert self.parent is not None, 'Relative values only allowed if parent is set: %s' % x
+            x = x.asPt(self.parent.w) # In case percentage or fraction, answer value in relation to self.parent.w
+        elif isinstance(x, em):
+            x = x.asPt(self.css('fontSize'))
+        return x 
     def _set_x(self, x):
-        self.style['x'] = x
+        self.style['x'] = getUnits(x)
     x = property(_get_x, _set_x)
 
     def _get_y(self):
         u"""Answer the y position of self.
 
-        >>> e = Element(y=100)
+        >>> e = Element(y=100, h=400)
         >>> e.x, e.y, e.z
         (0, 100, 0)
-        >>> e.y = 101
+        >>> e.y = 200
         >>> e.x, e.y, e.z
-        (0, 101, 0)
+        (0, 200, 0)
+        >>> child = Element(y='40%', parent=e)
+        >>> child.y # 40% of 400
+        160
+        >>> e.h = 500
+        >>> child.y # 40% of 500 dynamic calculation
+        200
         """
-        return self.style['y'] # Direct from style. Not CSS lookup.
+        y = self.style['y'] # Direct from style. Not CSS lookup.
+        if isinstance(y, (fr, perc)):
+            assert self.parent is not None, 'Relative values only allowed if parent is set: %s' % y
+            y = y.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
+        elif isinstance(y, em):
+            y = y.asPt(self.css('fontSize'))
+        return y
     def _set_y(self, y):
-        self.style['y'] = y
+        self.style['y'] = getUnits(y)
     y = property(_get_y, _set_y)
 
     def _get_z(self):
         u"""Answer the z position of self.
 
-        >>> e = Element(z=100)
+        >>> e = Element(z=100, d=400)
         >>> e.x, e.y, e.z
         (0, 0, 100)
-        >>> e.z = 101
+        >>> e.z = 200
         >>> e.x, e.y, e.z
-        (0, 0, 101)
+        (0, 0, 200)
+        >>> child = Element(z='40%', parent=e)
+        >>> child.z # 40% of 400
+        160
+        >>> e.d = 500
+        >>> child.z # 40% of 500 dynamic calculation
+        200
         """
-        return self.style['z'] # Direct from style. Not CSS lookup.
+        z = self.style['z'] # Direct from style. Not CSS lookup.
+        if isinstance(z, (fr, perc)):
+            assert self.parent is not None, 'Relative values only allowed if parent is set: %s' % z
+            z = z.asPt(self.parent.d) # In case percentage or fraction, answer value in relation to self.parent.h
+        elif isinstance(z, em):
+            z = z.asPt(self.css('fontSize'))
+        return z
     def _set_z(self, z):
-        self.style['z'] = z
+        self.style['z'] = getUnits(z)
     z = property(_get_z, _set_z)
 
     def _get_xy(self):
         u"""Answer ther Point2D tuple.
 
-        >>> e = Element(x=10, y=20)
+        >>> e = Element(x=10, y=20, w=400, h=400)
         >>> e.xy
         (10, 20)
         >>> e.xy = 11, 21
@@ -1254,6 +1290,9 @@ class Element(object):
         >>> e.y += 100
         >>> e.xy
         (12, 122)
+        >>> child = Element(x='50%', y='50%', parent=e)
+        >>> child.xy # Position in middle of parent square
+        (200, 200)
         """
         return self.x, self.y
     def _set_xy(self, p):
@@ -1264,7 +1303,7 @@ class Element(object):
     def _get_xyz(self):
         u"""Answer ther Point3D tuple.
 
-        >>> e = Element(x=10, y=20, z=30)
+        >>> e = Element(x=10, y=20, z=30, w=400, h=400, d=400)
         >>> e.xyz
         (10, 20, 30)
         >>> e.xyz = 11, 21, 31
@@ -1276,6 +1315,9 @@ class Element(object):
         >>> e.x += 100
         >>> e.xyz
         (112, 22, 32)
+        >>> child = Element(x='50%', y='50%', z='50%', parent=e)
+        >>> child.xyz # Position in middle of parent cube
+        (200, 200, 200)
         """
         return self.x, self.y, self.z
     def _set_xyz(self, p):
