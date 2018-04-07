@@ -307,32 +307,27 @@ def asNumber(v):
     >>> asNumber('1234a')
     0
     """
-    try:
-        iv = int(v)
-        fv = float(v)
-        if iv == fv:
-            return iv
-        return fv
-    except (ValueError, TypeError):
-        pass
-    try:
-        return float(v)
-    except (ValueError, TypeError):
-        pass
-    return 0
+    return asNumberOrNone(v) or 0
 
-def asNumberOrNone(value):
+def asNumberOrNone(v):
     u"""
 
+    >>> asNumberOrNone('1234.5')
+    1234.5
+    >>> asNumberOrNone('1234.0')
+    1234
     >>> asNumberOrNone('1234')
-    1234.0
-    >>> asNumberOrNone('1234ab')
+    1234
+    >>> asNumberOrNone('1234ab') is None
+    True
 
     """
     try:
-        if value == int(value):
-            return asIntOrNone(value)
-        return asFloatOrNone(value)
+        iValue = asIntOrNone(v)
+        fValue = asFloatOrNone(v)
+        if iValue == fValue:
+            return iValue
+        return fValue
     except (ValueError, TypeError):
         pass
     return None

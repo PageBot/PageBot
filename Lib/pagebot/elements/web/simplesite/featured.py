@@ -19,7 +19,7 @@ from __future__ import division # Make integer division result in float.
 from pagebot.elements.pbgroup import Group
 
 class Featured(Group):
-    u"""Draw rectangle, default identical to Element itself.
+    u"""Draw container with text box element.
 
     """
     def build_html(self, view, origin=None, drawElements=True):
@@ -57,9 +57,7 @@ class Featured(Group):
                   <p><a href="#" class="buttonlinkdiap">Use Pagebot</a> </p>
             
             
-             </div>
-                
-          
+                </div>
             </div><!-- #end div .wrapper -->
         </section><!-- #end colored section -->
         """)

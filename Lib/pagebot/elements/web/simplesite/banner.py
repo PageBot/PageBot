@@ -64,6 +64,7 @@ class Banner(Group):
             ...     
         </div>
 
+        >>> import os
         >>> from pagebot.document import Document
         >>> from pagebot.elements import newTextBox
         >>> doc = Document(viewId='Site')
@@ -72,7 +73,9 @@ class Banner(Group):
         >>> page.name = 'index'
         >>> banner = Banner(parent=page, cssId='ThisBannerId')
         >>> tb = newTextBox('This is a banner.', parent=banner)
-        >>> doc.export('_export/BannerTest')
+        >>> sitePath = '_export/BannerTest'
+        >>> doc.export(sitePath)
+        >>> result = os.system('open %s/index.html' % sitePath)
         """
         b = view.context.b
         self.build_css(view)
