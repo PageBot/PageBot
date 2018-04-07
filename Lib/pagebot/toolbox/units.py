@@ -15,7 +15,7 @@
 #
 #     Implements basic intelligent spacing units with build-in conversions.
 #
-from pagebot.constants import MM
+from pagebot.constants import MM, INCH
 from pagebot.toolbox.transformer import asNumberOrNone
 
 class Unit(object):
@@ -42,6 +42,8 @@ class Unit(object):
         30mm
         >>> perc(20) + 8
         28%
+        >>> inch(4), inch(4).asPt()
+        (4", 288)
     """
     absolute = True
     def __init__(self, v):
@@ -178,11 +180,11 @@ class mm(Unit):
                     return cls(v)
         return None
 
-    def asPt(self, _=None):
-        return self._v * MM
+    def asPt(self, factor=MM):
+        return self._v * factor
     @classmethod
-    def fromPt(cls, pt):
-        return cls(pt / MM)
+    def fromPt(cls, pt, factor=MM):
+        return cls(pt / factor)
 
 class px(Unit):
     u"""Answer the px (pixel) instance. 
@@ -222,6 +224,9 @@ class px(Unit):
 class pt(Unit):
     u"""pt is the base unit size of all PageBot measures. 
 
+    >>> u = pt.make(0.4)
+    >>> u
+    0.40pt
     >>> u = pt.make('0.4pt')
     >>> u
     0.40pt
@@ -250,6 +255,52 @@ class pt(Unit):
     def fromPt(cls, pt, factor=1):
         return cls(pt / factor)
 
+class inch(Unit):
+    u"""inch 72 * the base unit size of all PageBot measures. 
+
+    >>> getUnits('0.4"')
+    0.40"
+    >>> inch(0.4)
+    0.40"
+    >>> inch.make('0.4"')
+    0.40"
+    >>> u = inch.make('0.4inch')
+    >>> u
+    0.40"
+    >>> u/2
+    0.20"
+    >>> u-0.1
+    0.30"
+    >>> u.asPt(100) # Answer pt value, relative to master value.
+    40.0
+    """
+    @classmethod
+    def make(cls, v):
+        if isinstance(v, (int, float)):
+            return cls(v)
+        if isinstance(v, str):
+            v = v.strip().lower()
+            if v.endswith('"'):
+                v = asNumberOrNone(v[:-1])
+                if v is not None:
+                    return cls(v)
+            if v.endswith('inch'):
+                v = asNumberOrNone(v[:-4])
+                if v is not None:
+                    return cls(v)
+        return None
+
+    def asPt(self, factor=INCH):
+        return self._v * factor
+    @classmethod
+    def fromPt(cls, pt, factor=INCH):
+        return cls(pt / factor)
+
+    def __repr__(self):
+        if isinstance(self._v, int):
+            return '%d"' % self._v
+        return '%0.2f"' % self._v
+
 #   Relative Units (e.g. for use in CSS)
 
 class RelativeUnit(Unit):
@@ -272,8 +323,9 @@ class fr(RelativeUnit):
     u"""fractional units, used in CSS-grid. 
     https://gridbyexample.com/video/series-the-fr-unit/
 
-    >>> u = fr.make(0.35)
-    >>> u
+    >>> getUnits('0.35fr')
+    0.35fr
+    >>> fr.make(0.35)
     0.35fr
     >>> u = fr.make('0.4fr')
     >>> u
@@ -301,6 +353,10 @@ class em(RelativeUnit):
     u"""Em size is based on the current setting of the fontSize. 
     Used in CSS export.
 
+    >>> getUnits('10em')
+    10em
+    >>> em.make(10)
+    10em
     >>> u = em.make('10em')
     >>> u
     10em
@@ -326,6 +382,10 @@ class em(RelativeUnit):
 class perc(RelativeUnit):
     u"""Answer the relative percentage unit, if parsing as percentage (ending with % order "perc").
 
+    >>> getUnits('100%')
+    100%
+    >>> perc.make(100)
+    100%
     >>> u = perc.make('100%')
     >>> u
     100%
@@ -336,7 +396,7 @@ class perc(RelativeUnit):
     >>> u-30.5
     69.50%
     >>> u = perc.make('66%')
-    >>> u.asPoints(500) # Answer percentage value relative to master value
+    >>> u.asPt(500) # Answer percentage value relative to master value
     330
     """ 
     @classmethod
@@ -355,11 +415,6 @@ class perc(RelativeUnit):
                     return cls(v)
         return None
 
-    def asPoints(self, masterValue):
-        u"""Convert to points. Percentage has a different relative master calculation."""
-        return self._v * masterValue / 100
-
-
     def asPt(self, masterValue):
         u"""Convert to points. Percentage has a different relative master calculation."""
         return self._v * masterValue / 100
@@ -372,7 +427,7 @@ class perc(RelativeUnit):
             return '%d%%' % self._v
         return '%0.2f%%' % self._v
 
-UNIT_CLASSES = (mm, px, pt, fr, em, perc)
+UNIT_CLASSES = (mm, px, pt, inch, fr, em, perc)
 
 def getUnits(v):
     u"""If value is a string, then try to guess what type of units value is 
@@ -384,6 +439,10 @@ def getUnits(v):
     80%
     >>> getUnits('12pt')
     12pt
+    >>> getUnits('10"')
+    10"
+    >>> getUnits('10 inch  ')
+    10"
     >>> getUnits('140mm')
     140mm
     >>> getUnits('30pt')

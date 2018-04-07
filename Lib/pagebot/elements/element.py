@@ -1227,7 +1227,7 @@ class Element(object):
     def _get_ux(self):
         u""" Answer x position of self as stored units. """
         return self.style['x']
-    ux = property(_get_ux, _set_x)
+    ux = property(_get_ux, _set_x) # Setting is same as self.x
 
     def _get_y(self):
         u"""Answer the y position of self.
@@ -1259,7 +1259,7 @@ class Element(object):
     def _get_uy(self):
         u""" Answer y position of self as stored units. """
         return self.style['y']
-    uy = property(_get_uy, _set_y)
+    uy = property(_get_uy, _set_y) # Setting is same as self.y
 
     def _get_z(self):
         u"""Answer the z position of self.
@@ -1291,7 +1291,7 @@ class Element(object):
     def _get_uz(self):
         u""" Answer z position of self as stored units. """
         return self.style['z']
-    uz = property(_get_uz, _set_z)
+    uz = property(_get_uz, _set_z) # Setting is same as self.z
 
     def _get_xy(self):
         u"""Answer ther Point2D tuple.
@@ -1327,7 +1327,7 @@ class Element(object):
         (10%, 20%)
         """
         return self.ux, self.uy
-    uxy = property(_get_uxy, _set_xy)
+    uxy = property(_get_uxy, _set_xy) # Setting is same as self.xy
 
     def _get_xyz(self):
         u"""Answer ther Point3D tuple.
@@ -1364,7 +1364,7 @@ class Element(object):
         (10%, 20%, 30%)
         """
         return self.ux, self.uy, self.uz
-    uxyz = property(_get_uxyz, _set_xyz)
+    uxyz = property(_get_uxyz, _set_xyz) # Setting is same as self.xyz
 
 
     #   T I M E
@@ -2098,7 +2098,7 @@ class Element(object):
         >>> child.w
         45.0
         """
-        w = self.style['w']
+        w = self.uw # Get uninterpreted unit instance if it exists.
         if isinstance(w, (fr, perc)):
             w = w.asPt(self.parent.w) # In case percentage or fraction, answer value in relation to self.parent
         elif isinstance(w, em):
@@ -2107,6 +2107,22 @@ class Element(object):
     def _set_w(self, w):
         self.style['w'] = getUnits(w or DEFAULT_WIDTH) # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
+
+    def _get_uw(self):
+        u"""Answer the uninterpreted unit width instanse if it exists and otherwise the single value.
+
+        >>> e = Element(w='22%')
+        >>> e.uw
+        22%
+        >>> e = Element(w='22fr')
+        >>> e.uw
+        22fr
+        >>> e = Element(w=220)
+        >>> e.uw
+        220
+        """
+        return self.style['w']
+    uw = property(_get_uw, _set_w) # Setting same as self.w
 
     def _get_mw(self): # Width, including margins
         u"""Width property for self.mw style. Answers the width of the elements with added left/right margins.
@@ -2155,7 +2171,7 @@ class Element(object):
         >>> child.h
         45.0
         """
-        h = self.style['h']
+        h = self.uh
         if isinstance(h, (fr, perc)):
             h = h.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent
         elif isinstance(h, em):
@@ -2165,6 +2181,22 @@ class Element(object):
         self.style['h'] = getUnits(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
 
+    def _get_uh(self):
+        u"""Answer the uninterpreted unit height instanse if it exists and otherwise the single value.
+
+        >>> e = Element(h='22%')
+        >>> e.uh
+        22%
+        >>> e = Element(h='22fr')
+        >>> e.uh
+        22fr
+        >>> e = Element(h=220)
+        >>> e.uh
+        220
+        """
+        return self.style['h']
+    uh = property(_get_uh, _set_h) # Setting same as self.h
+    
     def _get_mh(self): # Height, including margins
         u"""Height property for self.mh style.
 
@@ -2199,7 +2231,7 @@ class Element(object):
         >>> e.d, e.d == MIN_DEPTH
         (1, True)
         """
-        d = self.style['d']
+        d = self.ud
         if isinstance(d, (fr, perc)):
             d = d.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent
         elif isinstance(d, em):
@@ -2209,6 +2241,22 @@ class Element(object):
         self.style['d'] = getUnits(d or MIN_DEPTH) # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
 
+    def _get_ud(self):
+        u"""Answer the uninterpreted unit depth instanse if it exists and otherwise the single value.
+
+        >>> e = Element(d='22%')
+        >>> e.ud
+        22%
+        >>> e = Element(d='22fr')
+        >>> e.ud
+        22fr
+        >>> e = Element(d=220)
+        >>> e.ud
+        220
+        """
+        return self.style['d']
+    ud = property(_get_ud, _set_d) # Setting same as self.d
+    
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
         u"""Width property for self.md style.
 
