@@ -35,11 +35,11 @@ class FlatString(BabelString):
         u"""Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
         Optionally store the (latest) style that was used to produce the formatted string.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> context = DrawBotContext()
-        >>> context.isDrawBot
+        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> context = FlatContext()
+        >>> context.isFlat
         True
-        >>> bs = FlatString('ABC', context)
+        >>> bs = context.newString('ABC', context)
         >>> bs
         ABC
         """
