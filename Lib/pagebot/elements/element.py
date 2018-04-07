@@ -1209,6 +1209,9 @@ class Element(object):
         >>> e.w = 500
         >>> child.x # 40% of 500 dynamic calculation
         200
+        >>> child.x = fr(0.5)
+        >>> child.x
+        250.0
         """
         x = self.style['x'] # Direct from style. Not CSS lookup.
         if isinstance(x, (fr, perc)):
@@ -1220,6 +1223,11 @@ class Element(object):
     def _set_x(self, x):
         self.style['x'] = getUnits(x)
     x = property(_get_x, _set_x)
+
+    def _get_ux(self):
+        u""" Answer x position of self as stored units. """
+        return self.style['x']
+    ux = property(_get_ux, _set_x)
 
     def _get_y(self):
         u"""Answer the y position of self.
@@ -1248,6 +1256,11 @@ class Element(object):
         self.style['y'] = getUnits(y)
     y = property(_get_y, _set_y)
 
+    def _get_uy(self):
+        u""" Answer y position of self as stored units. """
+        return self.style['y']
+    uy = property(_get_uy, _set_y)
+
     def _get_z(self):
         u"""Answer the z position of self.
 
@@ -1275,6 +1288,11 @@ class Element(object):
         self.style['z'] = getUnits(z)
     z = property(_get_z, _set_z)
 
+    def _get_uz(self):
+        u""" Answer z position of self as stored units. """
+        return self.style['z']
+    uz = property(_get_uz, _set_z)
+
     def _get_xy(self):
         u"""Answer ther Point2D tuple.
 
@@ -1299,6 +1317,17 @@ class Element(object):
         self.x = p[0]
         self.y = p[1] # Ignore any z
     xy = property(_get_xy, _set_xy)
+
+    def _get_uxy(self):
+        u"""Answer the e.xy as tuple of stored units. As long as not deriving the self.x 
+        as points, no parent is needed.
+
+        >>> e = Element(x='10%', y='20%')
+        >>> e.uxy
+        (10%, 20%)
+        """
+        return self.ux, self.uy
+    uxy = property(_get_uxy, _set_xy)
 
     def _get_xyz(self):
         u"""Answer ther Point3D tuple.
@@ -1325,6 +1354,17 @@ class Element(object):
         self.y = p[1]
         self.z = p[2]
     xyz = property(_get_xyz, _set_xyz)
+
+    def _get_uxyz(self):
+        u"""Answer the e.xyz as tuple of stored units. As long as not deriving the self.x 
+        as points, no parent is needed.
+
+        >>> e = Element(x='10%', y='20%', z='30%')
+        >>> e.uxyz
+        (10%, 20%, 30%)
+        """
+        return self.ux, self.uy, self.uz
+    uxyz = property(_get_uxyz, _set_xyz)
 
 
     #   T I M E
