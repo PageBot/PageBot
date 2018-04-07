@@ -19,7 +19,7 @@ from __future__ import division
 import weakref
 import copy
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.units import Unit, getUnits, fr, perc, em
+from pagebot.toolbox.units import getUnits, fr, perc, em
 
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
@@ -2117,9 +2117,14 @@ class Element(object):
         >>> e.d, e.d == MIN_DEPTH
         (1, True)
         """
-        return min(self.maxD, max(self.minD, self.style['d'], MIN_DEPTH)) # From self.style, don't inherit.
+        d = self.style['d']
+        if isinstance(d, (fr, perc)):
+            d = d.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent
+        elif isinstance(d, em):
+            d = d.asPt(self.css('fontSize'))
+        return min(self.maxD, max(self.minD, d, MIN_DEPTH)) # From self.style, don't inherit.
     def _set_d(self, d):
-        self.style['d'] = d or MIN_DEPTH # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['d'] = getUnits(d or MIN_DEPTH) # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
 
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
