@@ -19,9 +19,8 @@
 import os
 import re
 
-from pagebot import getResourcesPath
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css, NO_COLOR, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
+from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 DEFAULT_LEADING = 0
 
 class FlatString(BabelString):
