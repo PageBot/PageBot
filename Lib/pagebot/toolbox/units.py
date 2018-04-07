@@ -37,7 +37,9 @@ class Unit(object):
         >>> px(12) + px(10)
         22px
         >>> mm(10) + px(1)
-        12.83mm
+        10.35mm
+        >>> (mm(10) + mm(5)) * 2
+        30mm
         >>> perc(20) + 8
         28%
     """
@@ -177,10 +179,10 @@ class mm(Unit):
         return None
 
     def asPt(self, _=None):
-        return self._v / MM
+        return self._v * MM
     @classmethod
     def fromPt(cls, pt):
-        return cls(pt * MM)
+        return cls(pt / MM)
 
 class px(Unit):
     u"""Answer the px (pixel) instance. 
