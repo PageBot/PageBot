@@ -13,17 +13,15 @@
 #
 #     flatstring.py
 #
+#     https://github.com/xxyxyz/flat
 #     http://xxyxyz.org/flat
-#
+
 import os
 import re
 
 from pagebot import getResourcesPath
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css, LEFT
-
-DEFAULT_FONT_SIZE = 16
-DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
+from pagebot.style import css, NO_COLOR, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 DEFAULT_LEADING = 0
 
 class FlatString(BabelString):
@@ -39,8 +37,8 @@ class FlatString(BabelString):
         >>> context = FlatContext()
         >>> context.isFlat
         True
-        >>> bs = context.newString('ABC', context)
-        >>> bs
+        >>> bs = context.newString('ABC')
+        >>> #bs
         ABC
         """
         self.context = context # Store context, in case we need more of its functions.
@@ -52,7 +50,8 @@ class FlatString(BabelString):
         self.style = style
 
     def _get_s(self):
-        u"""Answer the embedded Flat equivalent of a OSX FormattedString by property, to enforce checking type of the string."""
+        u"""Answer the embedded Flat equivalent of a OSX FormattedString by property, to enforce 
+        checking type of the string."""
         return self._s
     def _set_s(self, s):
         if isinstance(s, str):
@@ -134,6 +133,7 @@ class FlatString(BabelString):
         if reCompiled is None:
             reCompiled= self.FIND_FS_MARKERS
         return reCompiled.findall(u'%s' % self.s)
+
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
