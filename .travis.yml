@@ -67,7 +67,7 @@ script:
 - python Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
 - python Lib/pagebot/publications/simplesite.py
 - python Lib/pagebot/publications/typespecimen.py
-- python Lib/pagebot/publications/website.
+- python Lib/pagebot/publications/website.py
 - python Lib/pagebot/style.py
 - python Lib/pagebot/toolbox/dating.py
 - python Lib/pagebot/toolbox/hyphenation.py

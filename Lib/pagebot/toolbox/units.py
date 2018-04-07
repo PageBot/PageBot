@@ -51,9 +51,9 @@ class Unit(object):
 
     def _get_css(self):
         # Assuming that px == pt == class inits
-        if int(round(u)) != self._v:
-            return '%0.2fpx' % self.px
-        return '%dpx' % self.px
+        if int(round(self._v)) != self._v:
+            return '%0.2fpx' % self.asPt()
+        return '%dpx' % self.asPt()
     css = property(_get_css)
               
     def __repr__(self):
