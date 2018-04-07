@@ -19,7 +19,8 @@ from __future__ import division
 import weakref
 import copy
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.units import Unit, getUnits
+from pagebot.toolbox.units import Unit, getUnits, fr, perc, em
+
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID
@@ -2004,10 +2005,22 @@ class Element(object):
         >>> e.w = 0 # Zero width expands to DEFAULT_WIDTH (100)
         >>> e.w, e.w == DEFAULT_WIDTH
         (100, True)
+        >>> child = Element(w='20%', parent=e)
+        >>> child.w
+        20
+        >>> child.w = '0.5fr'
+        >>> child.w
+        50.0
+        >>> e.style['fontSize'] = 10
+        >>> child.w = '4.5em' # Multiplication with current e.style['fontSize']
+        >>> child.w
+        45.0
         """
         w = self.style['w']
-        if isinstance(w, Unit)
-            w = w.getValue(self.parent) # In case percentage or fraction, answer value in relation to self.parent
+        if isinstance(w, (fr, perc)):
+            w = w.asPt(self.parent.w) # In case percentage or fraction, answer value in relation to self.parent
+        elif isinstance(w, em):
+            w = w.asPt(self.css('fontSize'))
         return min(self.maxW, max(self.minW, w, MIN_WIDTH)) # From self.style, don't inherit.
     def _set_w(self, w):
         self.style['w'] = getUnits(w or DEFAULT_WIDTH) # Overwrite element local style from here, parent css becomes inaccessable.
@@ -2049,10 +2062,25 @@ class Element(object):
         >>> e.h = 0 # Zero height expands to DEFAULT_HEIGHT (100)
         >>> e.h, e.h == DEFAULT_HEIGHT
         (100, True)
+        >>> child = Element(h='20%', parent=e)
+        >>> child.h
+        20
+        >>> child.h = '0.5fr'
+        >>> child.h
+        50.0
+        >>> e.style['fontSize'] = 10
+        >>> child.h = '4.5em' # Multiplication with current e.style['fontSize']
+        >>> child.h
+        45.0
         """
-        return min(self.maxH, max(self.minH, self.style['h'], MIN_HEIGHT)) # From self.style, don't inherit.
+        h = self.style['h']
+        if isinstance(h, (fr, perc)):
+            h = h.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent
+        elif isinstance(h, em):
+            h = h.asPt(self.css('fontSize'))
+        return min(self.maxH, max(self.minH, h, MIN_HEIGHT)) # From self.style, don't inherit.
     def _set_h(self, h):
-        self.style['h'] = h or DEFAULT_HEIGHT # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['h'] = getUnits(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
 
     def _get_mh(self): # Height, including margins
