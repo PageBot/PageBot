@@ -25,6 +25,16 @@ class Hero(Group):
     def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import newTextBox
+        >>> doc = Document(viewId='Site')
+        >>> page = doc[1]
+        >>> page.title = 'Hero Test'
+        >>> page.name = 'index'
+        >>> hero = Hero(parent=page, cssId='ThisHeroId')
+        >>> tb = newTextBox('This is a hero.', parent=hero)
+        >>> doc.export('_export/HeroTest')
+
         """
         b = view.context.b
         b.addHtml("""

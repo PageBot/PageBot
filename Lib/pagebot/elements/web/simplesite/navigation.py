@@ -25,8 +25,17 @@ class Navigation(TextBox):
     def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 
-        Typical HTML export:
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import newTextBox
+        >>> doc = Document(viewId='Site')
+        >>> page = doc[1]
+        >>> page.title = 'Navigation Test'
+        >>> page.name = 'index'
+        >>> navigation  = Navigation(parent=page, cssId='ThisNavigationId')
+        >>> doc.export('_export/NavigationTest')
+
         """
+        #Typical HTML export:
         b = view.context.b
         b.addHtml("""
         <!-- main navigation -->
