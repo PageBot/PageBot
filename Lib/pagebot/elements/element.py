@@ -2380,7 +2380,7 @@ class Element(object):
     margin3D = property(_get_margin3D, _set_margin)
 
     def _get_mt(self):
-        u"""Margin top property
+        u"""Margin top property. Relative unit values refer to self.h.
 
         >>> e = Element(mt=12)
         >>> e.mt
@@ -2388,13 +2388,16 @@ class Element(object):
         >>> e.mt = 13
         >>> e.mt
         13
-        >>> e.style = dict(mt=14)
+        >>> e.style = dict(mt=14, h=500)
         >>> e.mt
         14
+        >>> e.mt = '10%'
+        >>> e.mt
+        50
         """
         mt = self.umt # Don't inherit
         if isinstance(mt, (fr, perc)):
-            mt = mt.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
+            mt = mt.asPt(self.h) # In case percentage or fraction, answer value in relation to self.h
         elif isinstance(mt, em):
             mt = mt.asPt(self.css('fontSize'))
         return mt # From self.style, don't inherit.
@@ -2404,7 +2407,6 @@ class Element(object):
 
     def _get_umt(self):
         u"""Answer the uninterpreted unit margin top instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(mt='22%')
         >>> e.umt
@@ -2421,7 +2423,7 @@ class Element(object):
 
 
     def _get_mb(self): # Margin bottom
-        u"""Margin bottom property
+        u"""Margin bottom property. Relative unit values refer to self.h.
 
         >>> e = Element(mb=12)
         >>> e.mb
@@ -2429,13 +2431,16 @@ class Element(object):
         >>> e.mb = 13
         >>> e.mb
         13
-        >>> e.style = dict(mb=14)
+        >>> e.style = dict(mb=14, h=500)
         >>> e.mb
         14
+        >>> e.mb = '10%'
+        >>> e.mb
+        50
         """
         mb = self.umb # Don't inherit
         if isinstance(mb, (fr, perc)):
-            mb = mb.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
+            mb = mb.asPt(self.h) # In case percentage or fraction, answer value in relation to self.h
         elif isinstance(mb, em):
             mb = mb.asPt(self.css('fontSize'))
         return mb
@@ -2445,7 +2450,6 @@ class Element(object):
 
     def _get_umb(self):
         u"""Answer the uninterpreted unit margin bottom instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(mb='22%')
         >>> e.umb
@@ -2461,7 +2465,7 @@ class Element(object):
     umb = property(_get_umb, _set_mb) # Setting same as self.mb
 
     def _get_ml(self): # Margin left
-        u"""Margin left property
+        u"""Margin left property. Relative unit values refer to self.w.
 
         >>> e = Element(ml=12)
         >>> e.ml
@@ -2469,13 +2473,16 @@ class Element(object):
         >>> e.ml = 13
         >>> e.ml
         13
-        >>> e.style = dict(ml=14)
+        >>> e.style = dict(ml=14, w=500)
         >>> e.ml
         14
+        >>> e.ml = '10%'
+        >>> e.ml
+        50
         """
         ml = self.uml # Don't inherit
         if isinstance(ml, (fr, perc)):
-            ml = ml.asPt(self.parent.w) # In case percentage or fraction, answer value in relation to self.parent.w
+            ml = ml.asPt(self.w) # In case percentage or fraction, answer value in relation to self.w
         elif isinstance(ml, em):
             ml = ml.asPt(self.css('fontSize'))
         return ml
@@ -2485,7 +2492,6 @@ class Element(object):
 
     def _get_uml(self):
         u"""Answer the uninterpreted unit margin left instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(ml='22%')
         >>> e.uml
@@ -2502,7 +2508,7 @@ class Element(object):
 
 
     def _get_mr(self): # Margin right
-        u"""Margin right property
+        u"""Margin right property. Relative unit values refer to self.w.
 
         >>> e = Element(mr=12)
         >>> e.mr
@@ -2510,13 +2516,16 @@ class Element(object):
         >>> e.mr = 13
         >>> e.mr
         13
-        >>> e.style = dict(mr=14)
+        >>> e.style = dict(mr=14, w=500)
         >>> e.mr
         14
+        >>> e.mr = '10%'
+        >>> e.mr
+        50
         """
         mr = self.umr # Don't inherit
         if isinstance(mr, (fr, perc)):
-            mr = mr.asPt(self.parent.w) # In case percentage or fraction, answer value in relation to self.parent.w
+            mr = mr.asPt(self.w) # In case percentage or fraction, answer value in relation to self.w
         elif isinstance(mr, em):
             mr = mr.asPt(self.css('fontSize'))
         return mr
@@ -2526,7 +2535,6 @@ class Element(object):
 
     def _get_umr(self):
         u"""Answer the uninterpreted unit margin right instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(mr='22%')
         >>> e.umr
@@ -2543,7 +2551,7 @@ class Element(object):
 
 
     def _get_mzf(self): # Margin z-axis front
-        u"""Margin z-axis front property (closest to view point)
+        u"""Margin z-axis front property (closest to view point). Relative unit values refer to self.d.
 
         >>> e = Element(mzf=12)
         >>> e.mzf
@@ -2551,13 +2559,16 @@ class Element(object):
         >>> e.mzf = 13
         >>> e.mzf
         13
-        >>> e.style = dict(mzf=14)
+        >>> e.style = dict(mzf=14, d=500)
         >>> e.mzf
         14
+        >>> e.mzf = '10%'
+        >>> e.mzf
+        50
         """
         mzf = self.umzf # Don't inherit
         if isinstance(mzf, (fr, perc)):
-            mzf = mzf.asPt(self.parent.d) # In case percentage or fraction, answer value in relation to self.parent.d
+            mzf = mzf.asPt(self.d) # In case percentage or fraction, answer value in relation to self.d
         elif isinstance(mzf, em):
             mzf = mzf.asPt(self.css('fontSize'))
         return mzf
@@ -2567,7 +2578,6 @@ class Element(object):
 
     def _get_umzf(self):
         u"""Answer the uninterpreted unit margin front instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(mzf='22%')
         >>> e.umzf
@@ -2584,7 +2594,7 @@ class Element(object):
 
 
     def _get_mzb(self): # Margin z-axis back
-        u"""Margin z-axis back property (most distant to view point)
+        u"""Margin z-axis back property (most distant to view point). Relative unit values refer to self.d.
 
         >>> e = Element(mzb=12)
         >>> e.mzb
@@ -2592,13 +2602,16 @@ class Element(object):
         >>> e.mzb = 13
         >>> e.mzb
         13
-        >>> e.style = dict(mzb=14)
+        >>> e.style = dict(mzb=14, d=500)
         >>> e.mzb
         14
+        >>> e.mzb = '10%'
+        >>> e.mzb
+        50
         """
         mzb = self.umzb # Don't inherit
         if isinstance(mzb, (fr, perc)):
-            mzb = mzb.asPt(self.parent.d) # In case percentage or fraction, answer value in relation to self.parent.d
+            mzb = mzb.asPt(self.d) # In case percentage or fraction, answer value in relation to self.d
         elif isinstance(mzb, em):
             mzb = mzb.asPt(self.css('fontSize'))
         return mzb
@@ -2608,7 +2621,6 @@ class Element(object):
 
     def _get_umzb(self):
         u"""Answer the uninterpreted unit margin back instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(mzb='22%')
         >>> e.umzb
@@ -2708,7 +2720,7 @@ class Element(object):
     padding3D = property(_get_padding3D, _set_padding)
 
     def _get_pt(self):
-        u"""Padding top property
+        u"""Padding top property. Relative unit values refer to self.h.
 
         >>> e = Element(pt=12)
         >>> e.pt
@@ -2716,15 +2728,18 @@ class Element(object):
         >>> e.pt = 13
         >>> e.pt
         13
-        >>> e.style = dict(pt=14)
+        >>> e.style = dict(pt=14, h=500)
         >>> e.pt
         14
         >>> e.padding # Verify that other padding did not change.
         (14, 0, 0, 0)
+        >>> e.pt = '10%'
+        >>> e.pt
+        50
         """
         pt = self.upt 
         if isinstance(pt, (fr, perc)):
-            pt = pt.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
+            pt = pt.asPt(self.h) # In case percentage or fraction, answer value in relation to self.h
         elif isinstance(pt, em):
             pt = pt.asPt(self.css('fontSize'))
         return pt
@@ -2734,7 +2749,6 @@ class Element(object):
 
     def _get_upt(self):
         u"""Answer the uninterpreted unit padding top instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(pt='5%')
         >>> e.upt
@@ -2751,7 +2765,7 @@ class Element(object):
 
 
     def _get_pb(self): # Padding bottom
-        u"""Padding bottom property
+        u"""Padding bottom property. Relative unit values refer to self.h.
 
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pb
@@ -2762,15 +2776,18 @@ class Element(object):
         >>> e.pb = 13
         >>> e.pb
         13
-        >>> e.style = dict(pb=14)
+        >>> e.style = dict(pb=14, h=500)
         >>> e.pb
         14
         >>> e.padding # Make sure other did not change.
         (0, 0, 14, 0)
+        >>> e.pb = '10%'
+        >>> e.pb
+        50
         """
         pb = self.upb 
         if isinstance(pb, (fr, perc)):
-            pb = pb.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
+            pb = pb.asPt(self.h) # In case percentage or fraction, answer value in relation to self.h
         elif isinstance(pb, em):
             pb = pb.asPt(self.css('fontSize'))
         return pb
@@ -2780,7 +2797,6 @@ class Element(object):
 
     def _get_upb(self):
         u"""Answer the uninterpreted unit padding bottom instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(pb='5%')
         >>> e.upb
@@ -2797,7 +2813,7 @@ class Element(object):
 
 
     def _get_pl(self):
-        u"""Padding left property
+        u"""Padding left property. Relative unit values refer to self.w.
 
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pl
@@ -2808,15 +2824,18 @@ class Element(object):
         >>> e.pl = 13
         >>> e.pl
         13
-        >>> e.style = dict(pl=14)
+        >>> e.style = dict(pl=14, w=500)
         >>> e.pl
         14
         >>> e.padding # Make sure other did not change.
         (0, 0, 0, 14)
+        >>> e.pl = '10%'
+        >>> e.pl
+        50
         """
         pl = self.upl 
         if isinstance(pl, (fr, perc)):
-            pl = pl.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.w
+            pl = pl.asPt(self.w) # In case percentage or fraction, answer value in relation to self.w
         elif isinstance(pl, em):
             pl = pl.asPt(self.css('fontSize'))
         return pl
@@ -2843,7 +2862,7 @@ class Element(object):
 
 
     def _get_pr(self): # Margin right
-        u"""Padding right property
+        u"""Padding right property. Relative unit values refer to self.w.
 
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pr
@@ -2854,15 +2873,18 @@ class Element(object):
         >>> e.pr = 13
         >>> e.pr
         13
-        >>> e.style = dict(pr=14)
+        >>> e.style = dict(pr=14, w=500)
         >>> e.pr
         14
         >>> e.padding # Make sure other did not change.
         (0, 14, 0, 0)
+        >>> e.pr = '10%'
+        >>> e.pr
+        50
         """
         pr = self.upr 
         if isinstance(pr, (fr, perc)):
-            pr = pr.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.w
+            pr = pr.asPt(self.w) # In case percentage or fraction, answer value in relation to self.w
         elif isinstance(pr, em):
             pr = pr.asPt(self.css('fontSize'))
         return pr
@@ -2872,7 +2894,6 @@ class Element(object):
 
     def _get_upr(self):
         u"""Answer the uninterpreted unit padding right instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(pr='5%')
         >>> e.upr
@@ -2889,7 +2910,7 @@ class Element(object):
 
 
     def _get_pzf(self):
-        u"""Padding z-axis front property
+        u"""Padding z-axis front property. Relative unit values refer to self.d.
 
         >>> e = Element(pzf=12)
         >>> e.pzf
@@ -2897,15 +2918,18 @@ class Element(object):
         >>> e.pzf = 13
         >>> e.pzf
         13
-        >>> e.style = dict(pzf=14)
+        >>> e.style = dict(pzf=14, d=500)
         >>> e.pzf
         14
         >>> e.padding3D # Make sure other did not change.
         (0, 0, 0, 0, 14, 0)
+        >>> e.pzf = '10%'
+        >>> e.pzf
+        50
         """
         pzf = self.upzf
         if isinstance(pzf, (fr, perc)):
-            pzf = pzf.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.d
+            pzf = pzf.asPt(self.d) # In case percentage or fraction, answer value in relation to self.d
         elif isinstance(pzf, em):
             pzf = pzf.asPt(self.css('fontSize'))
         return pzf
@@ -2915,7 +2939,6 @@ class Element(object):
 
     def _get_upzf(self):
         u"""Answer the uninterpreted unit padding right instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(pzf='5%')
         >>> e.upzf
@@ -2932,7 +2955,7 @@ class Element(object):
 
 
     def _get_pzb(self):
-        u"""Padding z-axis back property
+        u"""Padding z-axis back property. Relative values refer to self.d.
 
         >>> e = Element(pzb=12)
         >>> e.pzb
@@ -2940,15 +2963,18 @@ class Element(object):
         >>> e.pzb = 13
         >>> e.pzb
         13
-        >>> e.style = dict(pzb=14)
+        >>> e.style = dict(pzb=14, d=500)
         >>> e.pzb
         14
         >>> e.padding3D # Make sure other did not change.
         (0, 0, 0, 0, 0, 14)
+        >>> e.pzb = '10%'
+        >>> e.pzb
+        50
         """
         pzb = self.upzb
         if isinstance(pzb, (fr, perc)):
-            pzb = pzb.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.d
+            pzb = pzb.asPt(self.d) # In case percentage or fraction, answer value in relation to self.d
         elif isinstance(pzb, em):
             pzb = pzb.asPt(self.css('fontSize'))
         return pzb
@@ -2958,7 +2984,6 @@ class Element(object):
 
     def _get_upzb(self):
         u"""Answer the uninterpreted unit padding right instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(pzb='5%')
         >>> e.upzb
@@ -2980,6 +3005,11 @@ class Element(object):
         >>> e = Element(w=400, pl=22, pr=33)
         >>> e.pw
         345
+        >>> e.pl = e.pr = '10%'
+        >>> e.upl, e.pl, e.upr, e.pr
+        (10%, 40, 10%, 40)
+        >>> e.pw
+        320
         """
         return self.w - self.pl - self.pr
     pw = property(_get_pw)
@@ -2990,6 +3020,11 @@ class Element(object):
         >>> e = Element(h=400, pb=22, pt=33)
         >>> e.ph
         345
+        >>> e.pb = e.pt = '10%'
+        >>> e.upb, e.pb, e.upt, e.pt
+        (10%, 40, 10%, 40)
+        >>> e.ph
+        320
         """
         return self.h - self.pb - self.pt
     ph = property(_get_ph)
@@ -3000,6 +3035,11 @@ class Element(object):
         >>> e = Element(d=400, pzf=22, pzb=33)
         >>> e.pd
         345
+        >>> e.pzf = e.pzb = '10%'
+        >>> e.upzf, e.pzf, e.upzb, e.pzb
+        (10%, 40, 10%, 40)
+        >>> e.pd
+        320
         """
         return self.d - self.pzf - self.pzb
     pd = property(_get_pd)
