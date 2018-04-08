@@ -20,6 +20,9 @@
 from __future__ import division # Make integer division result in float.
 
 from pagebot.elements import Rect
+from pagebot.toolbox.transformer import color2Hex
+from pagebot.style import RIGHT
+from pagebot.toolbox.units import px
 
 class BarChart(Rect):
     u"""Draw a bar chart based on data.
@@ -29,11 +32,7 @@ class BarChart(Rect):
     def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 
-        Typical HTML export
-        <div id="banner">   
-            ...     
-        </div>
-
+        >>> from random import shuffle
         >>> from pagebot.document import Document
         >>> from pagebot.elements import newTextBox
         >>> doc = Document(title='BarChart', viewId='Site')
@@ -41,8 +40,11 @@ class BarChart(Rect):
         >>> page = doc[1]
         >>> page.title = 'Barchart Test'
         >>> page.name = 'index'
-        >>> barChart = BarChart(parent=page, cssId='ThisBarChartId')
-        >>> barChart.data = range(2, 51, 2)
+        >>> barChart = BarChart(parent=page, cssId='ThisBarChartId', xTextAlign=RIGHT, textFill=0.9, fontSize=px(12))
+        >>> barChart.padding = px(30)
+        >>> data = range(2, 21)
+        >>> shuffle(data)
+        >>> barChart.data = data
         >>> #tb = newTextBox('This is a bar chart.', parent=barChart)
         >>> doc.build()
         >>> import os
@@ -50,22 +52,33 @@ class BarChart(Rect):
         >>> #doc.export('_export/BarChartTest')
         """
         cssClass = self.__class__.__name__
-        d = dict(cssClass=cssClass, data='%s' % list(self.data))
+        d = dict(cssClass=cssClass, 
+            border=self.css('border', 'black solid 1px'),
+            fill=color2Hex(self.css('fill'), '#F0F0F0'),
+            barFill=color2Hex(self.css('barFill'), '#3040F0'),
+            textAlign=self.css('xTextAlign', RIGHT),
+            textFill=color2Hex(self.css('textFill'), '#FF00FF'),
+            fontSize=self.css('fontSize', 10),
+            padding=self.padding,
+            data='%s' % list(self.data),
+        )
         b = view.context.b
-        self.build_css(view)
+        # TODO: Make CSS-attribute collection be stored in file or <head> instead of middle of page.
+        #self.build_css(view)
         b.style()
         b.addHtml("""
         .%(cssClass)s {
-          border: black solid 1px;
-          background-color: #F0F0F0;
+          border: %(border)s;
+          background-color: %(fill)s;
         }
         .%(cssClass)s div {
-          font: 10px sans-serif;
-          background-color: steelblue;
-          text-align: right;
-          padding: 3px;
+          font-family: Upgrade-Regular, sans-serif;
+          font-size: %(fontSize)s;
+          background-color: %(barFill)s;
+          text-align: %(textAlign)s;
+          padding: %(padding)s;
           margin: 1px;
-          color: white;
+          color: %(textFill)s;
         }
         """ % d)
         b._style()

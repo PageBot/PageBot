@@ -233,7 +233,7 @@ def s2Color(s):
     except ValueError:
         return None
 
-def color2Hex(c):
+def color2Hex(c, default=None):
     u"""Answer the CSS hex color string from the color (r, g, b, o) or (r, g, b) tuple.
     This format is CSS compatible.
 
@@ -243,7 +243,11 @@ def color2Hex(c):
     '#ffffff'
     >>> color2Hex((0, 0, 0))
     '#000000'
+    >>> color2Hex(None) is None
+    True
     """
+    if c is None:
+        return default
     if isinstance(c, (int, float)):
         if c > 1:
             return '#%06x' % c
