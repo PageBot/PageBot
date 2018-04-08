@@ -125,7 +125,7 @@ class Galley(Element):
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(view, p)
+            self.drawBefore(self, view, p)
 
         context.setFillColor(self.OLD_PAPER_COLOR) # Color of old paper: #F8ECC2
         gw, gh = self.getSize()
@@ -145,7 +145,7 @@ class Galley(Element):
                 gy += e.h
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(view, p)
+            self.drawAfter(self, view, p)
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
@@ -154,18 +154,14 @@ class Galley(Element):
 
     def build_html(self, view, origin=None, drawElements=True):
 
-        p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)    
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(view, p)
+            self.drawBefore(self, view)
 
         if drawElements:
-            self.buildElements(view, p)
+            self.buildElements(self, view)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(view, p)
+            self.drawAfter(self, view)
 
 
 if __name__ == '__main__':

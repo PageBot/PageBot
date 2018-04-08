@@ -36,17 +36,15 @@ class BarChart(Rect):
         >>> from pagebot.elements import newTextBox
         >>> doc = Document(viewId='Site')
         >>> page = doc[1]
-        >>> page.title = 'Banner Test'
+        >>> page.title = 'Barchart Test'
         >>> page.name = 'index'
-        >>> banner = Banner(parent=page, cssId='ThisBannerId')
-        >>> tb = newTextBox('This is a banner.', parent=banner)
-        >>> doc.export('_export/BannerTest')
+        >>> barChart = BarChart(parent=page, cssId='ThisBarChartId')
+        >>> tb = newTextBox('This is a bar chart.', parent=barChart)
+        >>> doc.export('_export/BarChartTest')
         """
         b = view.context.b
         self.build_css(view)
         b.div(cssClass=self.cssClass, cssId=self.cssId)
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, origin)
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.

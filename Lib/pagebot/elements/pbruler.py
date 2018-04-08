@@ -82,7 +82,7 @@ class Ruler(Element):
         w = self.w - sIndent - sTailIndent
  
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(view, p)
+            self.drawBefore(self, view, p)
 
         context.setFillColor(None)
         context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
@@ -99,7 +99,7 @@ class Ruler(Element):
       
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_html(self, view, origin=None):
+    def build_html(self, view, origin=None, drawElements=True):
         u"""Build the Ruler in the current context
 
         >>> from pagebot.contexts.htmlcontext import HtmlContext
@@ -121,23 +121,19 @@ class Ruler(Element):
         b = context.b # This is a bit more efficient than self.b once we got context
  
         self.build_css(view)
-        p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)    
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
         context.setFillColor(None)
         context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
         #b.line((px + sIndent, py), (px + w, py))
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
+            self.drawBefore(self, view)
 
         b.hr(cssClass=self.cssClass) # Use self.cssClass if defined. Ignore if None.
 
-        self.buildChildElements(view, p)
+        self.buildChildElements(view)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
+            self.drawAfter(self, view)
 
         self._restoreScale(view)
         #view.drawElementMetaInfo(self, origin)

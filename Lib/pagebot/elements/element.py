@@ -134,9 +134,9 @@ class Element(object):
 
         # Drawing hooks is same for 3 types of view/builders. Seperation must be done by caller.
         # Optional method to draw before child elements are drawn.
-        self.drawBefore = drawBefore
+        self.drawBefore = drawBefore # Call as: self.drawBefore(e, view)
         # Optional method to draw right after child elements are drawn.
-        self.drawAfter = drawAfter
+        self.drawAfter = drawAfter # Call as: self.drawAfter(e, view)
 
         # Shadow and gradient, if defined
         self.shadow = shadow
@@ -3978,20 +3978,9 @@ class Element(object):
     def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self.
         If there are any child elements, then also included their code, using the
-        level recursive indent."""
-
-        # REVIEW THIS!
-        # Since the 'p' variable in the drawBefor and drawAfter
-        # calls bellow was undefined, I have added here the three following
-        # lines of code copied from the Element.build method implementation:
-        # Petr: we need to think what the value of a positon is here, since the
-        # (x,y) in a web page ie relative and responsive. One way to appeach is
-        # to ignore the position of the elememt and leave it up to relative conditions.
-        #
-        p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)
-        p = self._applyAlignment(p)
-
+        level recursive indent.
+        For HTML builder the origin is ignored, as all position is relative.
+        """
         self.build_css(view)
         b = view.context.b # Use the current context builder to write the HTML/CSS code.
         info = self.info # Contains builder parameters and flags for Builder "b"
@@ -4001,13 +3990,13 @@ class Element(object):
             b.div(cssClass=self.cssClass, cssId=self.cssId) # No default class, ignore if not defined.
 
             if self.drawBefore is not None: # Call if defined
-                self.drawBefore(self, view, p)
+                self.drawBefore(self, view)
 
             if drawElements: # Build child elements, dispatch if they implemented generic or context specific build method.
-                self.buildChildElements(view, origin)
+                self.buildChildElements(view)
 
             if self.drawAfter is not None: # Call if defined
-                self.drawAfter(self, view, p)
+                self.drawAfter(self, view)
 
             b._div()
 
@@ -4640,6 +4629,17 @@ class Element(object):
         return True
 
     def right2CenterSides(self):
+        u"""Position the right side to the center sides of the parent.
+
+        >>> e = Element(w=500)
+        >>> child = Element(x=0, w=100, align=LEFT, parent=e)
+        >>> child.x, child.left, child.right
+        (0, 0)
+        >>> #child.right2CenterSides()
+        True
+        >>> #child.x, child.right
+
+        """
         self.right = self.parent.w/2
         return True
 
