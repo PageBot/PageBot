@@ -130,7 +130,8 @@ class Ruler(Element):
 
         b.hr(cssClass=self.cssClass) # Use self.cssClass if defined. Ignore if None.
 
-        self.buildChildElements(view)
+        if drawElements:
+            self.buildChildElements(view)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view)

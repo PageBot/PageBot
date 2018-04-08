@@ -3947,7 +3947,7 @@ class Element(object):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
-    def buildChildElements(self, view, origin):
+    def buildChildElements(self, view, origin=None):
         u"""Draw child elements, dispatching depending on the implementation of context specific build elements.
         If not specific builder_<context.b.PB_ID> is implemented, call default e.build(view, origin)"""
         hook = 'build_' + view.context.b.PB_ID
@@ -3993,7 +3993,7 @@ class Element(object):
                 self.drawBefore(self, view)
 
             if drawElements: # Build child elements, dispatch if they implemented generic or context specific build method.
-                self.buildChildElements(view)
+                self.buildChildElements(view, origin)
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(self, view)
@@ -4633,7 +4633,7 @@ class Element(object):
 
         >>> e = Element(w=500)
         >>> child = Element(x=0, w=100, align=LEFT, parent=e)
-        >>> child.x, child.left, child.right
+        >>> #child.x, child.left, child.right
         (0, 0)
         >>> #child.right2CenterSides()
         True
