@@ -2135,9 +2135,9 @@ class Element(object):
         >>> e = Element(w='22%')
         >>> e.uw
         22%
-        >>> e = Element(w='22fr')
+        >>> e = Element(w='0.5fr')
         >>> e.uw
-        22fr
+        0.50fr
         >>> e = Element(w=220)
         >>> e.uw
         220
@@ -2209,9 +2209,9 @@ class Element(object):
         >>> e = Element(h='22%')
         >>> e.uh
         22%
-        >>> e = Element(h='22fr')
+        >>> e = Element(h='0.5fr')
         >>> e.uh
-        22fr
+        0.50fr
         >>> e = Element(h=220)
         >>> e.uh
         220
@@ -2270,9 +2270,9 @@ class Element(object):
         >>> e = Element(d='22%')
         >>> e.ud
         22%
-        >>> e = Element(d='22fr')
+        >>> e = Element(d='0.5fr')
         >>> e.ud
-        22fr
+        0.50fr
         >>> e = Element(d=220)
         >>> e.ud
         220
@@ -2409,9 +2409,9 @@ class Element(object):
         >>> e = Element(mt='22%')
         >>> e.umt
         22%
-        >>> e = Element(mt='22fr')
+        >>> e = Element(mt='0.5fr')
         >>> e.umt
-        22fr
+        0.50fr
         >>> e = Element(mt=220)
         >>> e.umt
         220
@@ -2450,9 +2450,9 @@ class Element(object):
         >>> e = Element(mb='22%')
         >>> e.umb
         22%
-        >>> e = Element(mb='22fr')
+        >>> e = Element(mb='0.5fr')
         >>> e.umb
-        22fr
+        0.50fr
         >>> e = Element(mb=220)
         >>> e.umb
         220
@@ -2490,9 +2490,9 @@ class Element(object):
         >>> e = Element(ml='22%')
         >>> e.uml
         22%
-        >>> e = Element(ml='22fr')
+        >>> e = Element(ml='0.5fr')
         >>> e.uml
-        22fr
+        0.50fr
         >>> e = Element(ml=220)
         >>> e.uml
         220
@@ -2531,9 +2531,9 @@ class Element(object):
         >>> e = Element(mr='22%')
         >>> e.umr
         22%
-        >>> e = Element(mr='22fr')
+        >>> e = Element(mr='0.5fr')
         >>> e.umr
-        22fr
+        0.50fr
         >>> e = Element(mr=220)
         >>> e.umr
         220
@@ -2572,9 +2572,9 @@ class Element(object):
         >>> e = Element(mzf='22%')
         >>> e.umzf
         22%
-        >>> e = Element(mzf='22fr')
+        >>> e = Element(mzf='0.5fr')
         >>> e.umzf
-        22fr
+        0.50fr
         >>> e = Element(mzf=220)
         >>> e.umzf
         220
@@ -2613,9 +2613,9 @@ class Element(object):
         >>> e = Element(mzb='22%')
         >>> e.umzb
         22%
-        >>> e = Element(mzb='22fr')
+        >>> e = Element(mzb='0.5fr')
         >>> e.umzb
-        22fr
+        0.50fr
         >>> e = Element(mzb=220)
         >>> e.umzb
         220
@@ -2719,13 +2719,36 @@ class Element(object):
         >>> e.style = dict(pt=14)
         >>> e.pt
         14
-        >>> e.padding # Make sure other did not change.
+        >>> e.padding # Verify that other padding did not change.
         (14, 0, 0, 0)
         """
-        return self.css('pt', 0)
+        pt = self.upt 
+        if isinstance(pt, (fr, perc)):
+            pt = pt.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
+        elif isinstance(pt, em):
+            pt = pt.asPt(self.css('fontSize'))
+        return pt
     def _set_pt(self, pt):
-        self.style['pt'] = pt  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pt'] = getUnits(pt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
+
+    def _get_upt(self):
+        u"""Answer the uninterpreted unit padding top instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(pt='5%')
+        >>> e.upt
+        5%
+        >>> e = Element(pt='0.5fr')
+        >>> e.upt
+        0.50fr
+        >>> e = Element(pt=30)
+        >>> e.upt
+        30
+        """
+        return self.css('pt', 0)
+    upt = property(_get_upt, _set_pt) # Setting same as self.pt
+
 
     def _get_pb(self): # Padding bottom
         u"""Padding bottom property
@@ -2745,10 +2768,33 @@ class Element(object):
         >>> e.padding # Make sure other did not change.
         (0, 0, 14, 0)
         """
-        return self.css('pb', 0)
+        pb = self.upb 
+        if isinstance(pb, (fr, perc)):
+            pb = pb.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
+        elif isinstance(pb, em):
+            pb = pb.asPt(self.css('fontSize'))
+        return pb
     def _set_pb(self, pb):
-        self.style['pb'] = pb  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pb'] = getUnits(pb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pb = property(_get_pb, _set_pb)
+
+    def _get_upb(self):
+        u"""Answer the uninterpreted unit padding bottom instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(pb='5%')
+        >>> e.upb
+        5%
+        >>> e = Element(pb='0.5fr')
+        >>> e.upb
+        0.50fr
+        >>> e = Element(pb=30)
+        >>> e.upb
+        30
+        """
+        return self.css('pb', 0)
+    upb = property(_get_upb, _set_pb) # Setting same as self.pb
+
 
     def _get_pl(self):
         u"""Padding left property
@@ -2768,10 +2814,33 @@ class Element(object):
         >>> e.padding # Make sure other did not change.
         (0, 0, 0, 14)
         """
-        return self.css('pl', 0)
+        pl = self.upl 
+        if isinstance(pl, (fr, perc)):
+            pl = pl.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.w
+        elif isinstance(pl, em):
+            pl = pl.asPt(self.css('fontSize'))
+        return pl
     def _set_pl(self, pl):
-        self.style['pl'] = pl # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pl'] = getUnits(pl or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pl = property(_get_pl, _set_pl)
+
+    def _get_upl(self):
+        u"""Answer the uninterpreted unit padding left instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(pl='5%')
+        >>> e.upl
+        5%
+        >>> e = Element(pl='0.5fr')
+        >>> e.upl
+        0.50fr
+        >>> e = Element(pl=30)
+        >>> e.upl
+        30
+        """
+        return self.css('pl', 0)
+    upl = property(_get_upl, _set_pl) # Setting same as self.pl
+
 
     def _get_pr(self): # Margin right
         u"""Padding right property
@@ -2791,10 +2860,33 @@ class Element(object):
         >>> e.padding # Make sure other did not change.
         (0, 14, 0, 0)
         """
-        return self.css('pr', 0)
+        pr = self.upr 
+        if isinstance(pr, (fr, perc)):
+            pr = pr.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.w
+        elif isinstance(pr, em):
+            pr = pr.asPt(self.css('fontSize'))
+        return pr
     def _set_pr(self, pr):
-        self.style['pr'] = pr  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pr'] = getUnits(pr or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pr = property(_get_pr, _set_pr)
+
+    def _get_upr(self):
+        u"""Answer the uninterpreted unit padding right instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(pr='5%')
+        >>> e.upr
+        5%
+        >>> e = Element(pr='0.5fr')
+        >>> e.upr
+        0.50fr
+        >>> e = Element(pr=30)
+        >>> e.upr
+        30
+        """
+        return self.css('pr', 0)
+    upr = property(_get_upr, _set_pr) # Setting same as self.pr
+
 
     def _get_pzf(self):
         u"""Padding z-axis front property
@@ -2811,10 +2903,33 @@ class Element(object):
         >>> e.padding3D # Make sure other did not change.
         (0, 0, 0, 0, 14, 0)
         """
-        return self.css('pzf', 0)
+        pzf = self.upzf
+        if isinstance(pzf, (fr, perc)):
+            pzf = pzf.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.d
+        elif isinstance(pzf, em):
+            pzf = pzf.asPt(self.css('fontSize'))
+        return pzf
     def _set_pzf(self, pzf):
-        self.style['pzf'] = pzf  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pzf'] = getUnits(pzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pzf = property(_get_pzf, _set_pzf)
+
+    def _get_upzf(self):
+        u"""Answer the uninterpreted unit padding right instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(pzf='5%')
+        >>> e.upzf
+        5%
+        >>> e = Element(pzf='0.5fr')
+        >>> e.upzf
+        0.50fr
+        >>> e = Element(pzf=30)
+        >>> e.upzf
+        30
+        """
+        return self.css('pzf', 0)
+    upzf = property(_get_upzf, _set_pzf) # Setting same as self.pzf
+
 
     def _get_pzb(self):
         u"""Padding z-axis back property
@@ -2831,10 +2946,33 @@ class Element(object):
         >>> e.padding3D # Make sure other did not change.
         (0, 0, 0, 0, 0, 14)
         """
-        return self.css('pzb', 0)
+        pzb = self.upzb
+        if isinstance(pzb, (fr, perc)):
+            pzb = pzb.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.d
+        elif isinstance(pzb, em):
+            pzb = pzb.asPt(self.css('fontSize'))
+        return pzb
     def _set_pzb(self, pzb):
-        self.style['pzb'] = pzb  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pzb'] = getUnits(pzb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)
+
+    def _get_upzb(self):
+        u"""Answer the uninterpreted unit padding right instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(pzb='5%')
+        >>> e.upzb
+        5%
+        >>> e = Element(pzb='0.5fr')
+        >>> e.upzb
+        0.50fr
+        >>> e = Element(pzb=30)
+        >>> e.upzb
+        30
+        """
+        return self.css('pzb', 0)
+    upzb = property(_get_upzb, _set_pzb) # Setting same as self.pzb
+
 
     def _get_pw(self):
         u"""Padded width read-only property of the element block.
