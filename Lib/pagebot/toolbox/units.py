@@ -284,7 +284,7 @@ class inch(Unit):
                 v = asNumberOrNone(v[:-1])
                 if v is not None:
                     return cls(v)
-            if v.endswith('inch'):
+            elif v.endswith('inch'):
                 v = asNumberOrNone(v[:-4])
                 if v is not None:
                     return cls(v)
@@ -409,7 +409,7 @@ class perc(RelativeUnit):
                 v = asNumberOrNone(v[:-1])
                 if v is not None:
                     return cls(v)
-            if v.endswith('perc'):
+            elif v.endswith('perc'):
                 v = asNumberOrNone(v[:-4])
                 if v is not None:
                     return cls(v)
@@ -454,7 +454,7 @@ def getUnits(v):
     >>> getUnits('SomethingElse')
     'SomethingElse'
     """
-    if isinstance(v, (int, float)):
+    if v is None or isinstance(v, (int, float)):
         return v
     for unitClass in UNIT_CLASSES:
         u = unitClass.make(v)

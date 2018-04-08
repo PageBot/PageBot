@@ -19,7 +19,7 @@ from __future__ import division
 import weakref
 import copy
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.units import getUnits, fr, perc, em
+from pagebot.toolbox.units import Unit, getUnits, fr, perc, em
 
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
@@ -1206,14 +1206,14 @@ class Element(object):
         >>> child = Element(x='40%', parent=e)
         >>> child.x # 40% of 400
         160
-        >>> e.w = 500
-        >>> child.x # 40% of 500 dynamic calculation
+        >>> e.w = 500 # Child percentage changes dynamically
+        >>> child.x # 40% of 500 
         200
         >>> child.x = fr(0.5)
         >>> child.x
         250.0
         """
-        x = self.style['x'] # Direct from style. Not CSS lookup.
+        x = self.ux # Direct from style. Not CSS lookup.
         if isinstance(x, (fr, perc)):
             assert self.parent is not None, 'Relative values only allowed if parent is set: %s' % x
             x = x.asPt(self.parent.w) # In case percentage or fraction, answer value in relation to self.parent.w
@@ -1251,7 +1251,7 @@ class Element(object):
         >>> child.y # 40% of 500 dynamic calculation
         200
         """
-        y = self.style['y'] # Direct from style. Not CSS lookup.
+        y = self.uy # Direct from style. Not CSS lookup.
         if isinstance(y, (fr, perc)):
             assert self.parent is not None, 'Relative values only allowed if parent is set: %s' % y
             y = y.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
@@ -1289,7 +1289,7 @@ class Element(object):
         >>> child.z # 40% of 500 dynamic calculation
         200
         """
-        z = self.style['z'] # Direct from style. Not CSS lookup.
+        z = self.uz # Direct from style. Not CSS lookup.
         if isinstance(z, (fr, perc)):
             assert self.parent is not None, 'Relative values only allowed if parent is set: %s' % z
             z = z.asPt(self.parent.d) # In case percentage or fraction, answer value in relation to self.parent.h
@@ -2330,11 +2330,18 @@ class Element(object):
         >>> e.margin = (11, 22, 33, 44, 55, 66)
         >>> e.margin
         (11, 22, 33, 44)
+        >>> e.w = e.h = e.d = 500
+        >>> e.margin = '10%'
+        >>> e.margin
+        (50, 50, 50, 50)
+        >>> e.margin = perc(15)
+        >>> e.margin
+        (75, 75, 75, 75)
         """
         return self.mt, self.mr, self.mb, self.ml
     def _set_margin(self, margin):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
-        if isinstance(margin, (int, float)):
+        if isinstance(margin, (Unit, str, int, float)):
             margin = [margin]
         if len(margin) == 1: # All same value
             margin = (margin[0], margin[0], margin[0], margin[0], margin[0], margin[0])
@@ -2375,6 +2382,13 @@ class Element(object):
         >>> e.margin3D = (11, 22, 33, 44, 55, 66)
         >>> e.margin3D
         (11, 22, 33, 44, 55, 66)
+        >>> e.w = e.h = e.d = 500
+        >>> e.margin3D = '10%'
+        >>> e.margin3D
+        (50, 50, 50, 50, 50, 50)
+        >>> e.margin3D = perc(15)
+        >>> e.margin3D
+        (75, 75, 75, 75, 75, 75)
         """
         return self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb
     margin3D = property(_get_margin3D, _set_margin)
@@ -2669,12 +2683,19 @@ class Element(object):
         (11, 22, 33, 44)
         >>> e.padding3D
         (11, 22, 33, 44, 55, 66)
+        >>> e.w = e.h = e.d = 500
+        >>> e.padding = '10%'
+        >>> e.padding
+        (50, 50, 50, 50)
+        >>> e.padding = perc(15)
+        >>> e.padding
+        (75, 75, 75, 75)
         """
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565]
         assert padding is not None
-        if isinstance(padding, (int, float)):
+        if isinstance(padding, (Unit, str, int, float)):
             padding = [padding]
         if len(padding) == 1: # All same value
             padding = (padding[0], padding[0], padding[0], padding[0], padding[0], padding[0])
@@ -2715,6 +2736,13 @@ class Element(object):
         >>> e.padding3D = (11, 22, 33, 44, 55, 66)
         >>> e.padding3D
         (11, 22, 33, 44, 55, 66)
+        >>> e.w = e.h = e.d = 500
+        >>> e.padding3D = '10%'
+        >>> e.padding3D
+        (50, 50, 50, 50, 50, 50)
+        >>> e.padding3D = perc(15)
+        >>> e.padding3D
+        (75, 75, 75, 75, 75, 75)
         """
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
     padding3D = property(_get_padding3D, _set_padding)
@@ -3093,6 +3121,9 @@ class Element(object):
         >>> e.size = (101, 201, 301)
         >>> e.size
         (101, 201, 301)
+        >>> child = Element(w='50%', h='75%', d=fr(0.1), parent=e) # Size relative to parent
+        >>> child.size
+        (50, 150, 30.1)
         """
         return self.getSize3D()
     def _set_size(self, size):
@@ -3107,6 +3138,9 @@ class Element(object):
         >>> e = Element(w=100, h=200)
         >>> e.getSize()
         (100, 200)
+        >>> child = Element(w='50%', h='75%', parent=e) # Size relative to parent
+        >>> child.getSize()
+        (50, 150)
         """
         return self.w, self.h
 
@@ -3116,6 +3150,9 @@ class Element(object):
         >>> e = Element(w=100, h=200, d=300)
         >>> e.getSize3D() # Same as e.size
         (100, 200, 300)
+        >>> child = Element(w='50%', h='75%', d=fr(0.1), parent=e) # Size relative to parent
+        >>> child.getSize3D()
+        (50, 150, 30.0)
         """
         return self.w, self.h, self.d
 
@@ -3139,6 +3176,10 @@ class Element(object):
         >>> e.setSize((101, 201)) # Set by size tuple
         >>> e.size
         (101, 201, 1)
+        >>> child = Element(parent=e)
+        >>> child.setSize('20%', '75%')
+        >>> child.getSize()
+        (20, 150)
         """
         if isinstance(w, (list, tuple)):
             if len(w) == 2:
@@ -3147,6 +3188,8 @@ class Element(object):
                 w, h, d = w
             else:
                 raise ValueError
+        elif isinstance(w, str):
+            w = getUnits(w)
         self.w = w # Set by property
         self.h = h
         self.d = d # By default elements have 0 depth.
@@ -3183,33 +3226,57 @@ class Element(object):
     box3D = property(_get_box3D)
 
     def _get_box(self):
-        u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties."""
+        u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties.
+
+        >>> e = Element(x=50, y=50, w=200, h=300)
+        >>> e.box
+        (50, 50, 200, 300)
+        >>> child = Element(x='10%', y='20%', w='50%', h='40%', parent=e)
+        >>> child.box
+        (20, 60, 100, 120)
+        """
         return self.x or 0, self.y or 0, self.w or 0, self.h or 0
     box = property(_get_box)
 
     def _get_marginBox(self):
         u"""Calculate the margin position and margin resized box of the element, after applying the
-        option style margin."""
+        option style margin.
+
+        >>> e = Element(w=500, h=500)
+        >>> e.margin = 10
+        >>> e.marginBox
+        (-10, -10, 520, 520)
+        >>> e.margin = '10%'
+        >>> e.marginBox
+        (-50, -50, 600, 600)
+        """
         mt = self.mt
         mb = self.mb
         ml = self.ml
         if self.originTop:
-            y = self.y - mt
+            y = self.y + mt
         else:
             y = self.y - mb
-        return (self.x - ml, y,
-            self.w + ml + self.mr,
-            self.h + mt - mb)
+        return (self.x - ml, y, self.w + ml + self.mr, self.h + mt + mb)
     marginBox = property(_get_marginBox)
 
     def _get_paddedBox(self):
         u"""Calculate the padded position and padded resized box of the element, after applying the
-        style padding. Answered format (x, y, w, h)."""
+        style padding. Answered format (x, y, w, h).
+
+        >>> e = Element(w=500, h=500)
+        >>> e.padding = 10
+        >>> e.paddedBox
+        (10, 10, 480, 480)
+        >>> e.padding = '10%'
+        >>> e.paddedBox
+        (50, 50, 400, 400)
+        """
         pl = self.pl
         pt = self.pt
         pb = self.pb
         if self.originTop:
-            y = self.y + pt
+            y = self.y - pt
         else:
             y = self.y + pb
         return (self.x + pl, y, self.w - pl - self.pr, self.h - pt - pb)
@@ -3217,7 +3284,16 @@ class Element(object):
 
     def _get_paddedBox3D(self):
         u"""Calculate the padded position and padded resized box in 3D of the lement, after applying
-        the style padding. Answered format (x, y, z, w, h, d)."""
+        the style padding. Answered format (x, y, z, w, h, d).
+
+        >>> e = Element(w=500, h=500, d=500)
+        >>> e.padding3D = 10
+        >>> e.paddedBox3D
+        (10, 10, 10, 480, 480, 480)
+        >>> e.padding3D = '10%'
+        >>> e.paddedBox3D
+        (50, 50, 50, 400, 400, 400)
+        """
         x, y, w, h = self.paddedBox
         pzf = self.pzf
         return x, y, self.z + pzf, w, h, self.d - pzf - self.pzb
