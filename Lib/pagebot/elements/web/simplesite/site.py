@@ -43,7 +43,7 @@ class Site(Group):
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, origin)
+            self.buildChildElements(view)
 
         b._header()
 

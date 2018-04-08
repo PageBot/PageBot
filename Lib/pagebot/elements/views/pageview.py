@@ -715,7 +715,7 @@ class PageView(BaseView):
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(view, p)
+            self.drawBefore(self, view, p)
 
         self.drawElementFrame(view, p)
         for page in self.elements:
@@ -723,7 +723,7 @@ class PageView(BaseView):
             page.build(view, p)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(view, p)
+            self.drawAfter(self, view, p)
 
         self._restoreScale(view)
         #view.drawElementMetaInfo(self, origin)

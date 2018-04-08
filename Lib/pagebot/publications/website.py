@@ -28,7 +28,7 @@ from pagebot.toolbox.units import fr, px
 
 class MobileNavigation(TextBox):
 
-    def build_html(self, view, origin=None):
+    def build_html(self, view, origin=None, drawElements=True):
         b = self.context.b
         self.build_css(view)
         b.div(cssClass='container %s' % (self.cssClass or 'mobilenavigation'))
@@ -56,7 +56,7 @@ class MobileNavigation(TextBox):
 
 class Navigation(TextBox):
 
-    def build_html(self, view, origin=None):
+    def build_html(self, view, origin=None, drawElements=True):
         b = self.context.b
         self.build_css(view)
         b.div(cssClass='container top')
@@ -88,7 +88,7 @@ class Navigation(TextBox):
 
 class Introduction(TextBox):
 
-    def build_html(self, view, origin=None):
+    def build_html(self, view, origin=None, drawElements=True):
         u"""Build a page wide in intoduction box for large type, if there is any content."""
         if not self.bs.s:
             return
@@ -113,7 +113,7 @@ class Featured(Rect):
         TextBox('', parent=self, name='Image')
         TextBox('', parent=self, name='Side')
 
-    def build_html(self, view, origin=None):
+    def build_html(self, view, origin=None, drawElements=True):
         u"""Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
         side = self['Side']
@@ -144,7 +144,7 @@ class Main(Rect):
         u"""Add FormattedString to main content."""
         self['Content'].append(bs)
 
-    def build_html(self, view, origin=None):
+    def build_html(self, view, origin=None, drawElements=True):
         content = self['Content']
         side = self['Side']
         if not content.bs.s: # If there is nothing in the main part, then also ignore the side.
@@ -177,7 +177,7 @@ class Section(Rect):
             TextBox('', parent=self, name=repr(row*2))
             TextBox('', parent=self, name=repr(row*2+1))
 
-    def build_html(self, view, origin=None):
+    def build_html(self, view, origin=None, drawElements=True):
         b = self.context.b
         title = self['Title']
         hasContent = bool(title.bs.s)
@@ -212,7 +212,7 @@ class Section(Rect):
 
 class Footer(TextBox):
 
-    def build_html(self, view, origin=None):
+    def build_html(self, view, origin=None, drawElements=True):
         b = self.context.b
         self.build_css(view)
         b.div(cssClass="container %s" % (self.cssClass or 'footer'))
@@ -244,7 +244,7 @@ class JS(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
 
-    def build_html(self, view, origin=None):
+    def build_html(self, view, origin=None, drawElements=True):
         b = self.context.b
         b.script(type="text/javascript")
         b.addHtml(u"""

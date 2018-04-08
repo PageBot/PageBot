@@ -261,7 +261,7 @@ class PixelMap(Element):
             alpha = 1
         return alpha
 
-    def build_html(self, view, origin=ORIGIN, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True):
         print('[PixelMap.build_html] Not implemented yet')
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):

@@ -20,7 +20,7 @@ from pagebot.elements.pbtextbox import TextBox
 
 class Introduction(TextBox):
 
-    def build_html(self, view, origin=None):
+    def build_html(self, view, origin=None, drawElements=True):
         u"""Build a page wide in introduction box for large type, if there is any content."""
         if self.bs.s: # Ignore if no content.
             b = self.context.b
@@ -30,8 +30,9 @@ class Introduction(TextBox):
             b.div(cssClass='twelvecol last')
 
             b.addHtml(self.bs.s)
-            for e in self.elements:
-                e.build_html(view, origin)
+            if drawElements:
+                for e in self.elements:
+                    e.build_html(view, origin)
             b._div() # .twelvecol last
             b._div() # .row
             b._div() # .container .introduction

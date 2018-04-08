@@ -300,7 +300,7 @@ class TextBox(Element):
         self.buildFrame(view, p) # Draw optional background, frame or borders.
 
         if self.drawBefore is not None: # Call if defined
-            self.drawBefore(view, p)
+            self.drawBefore(self, view, p)
 
         # Draw the text with horizontal and vertical alignment
         tw, th = self.bs.textSize()
@@ -336,7 +336,7 @@ class TextBox(Element):
             self._drawOverflowMarker_drawBot(view, px, py)
 
         if self.drawAfter is not None: # Call if defined
-            self.drawAfter(view, p)
+            self.drawAfter(self, view, p)
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
@@ -358,14 +358,14 @@ class TextBox(Element):
             b.addHtml(self.bs.s) # Get HTML from BabelString in HtmlString context.
 
             if self.drawBefore is not None: # Call if defined
-                self.drawBefore(self, view, origin)
+                self.drawBefore(self, view)
 
             if showElements:
                 for e in self.elements:
                     e.build_html(view, origin)
 
             if self.drawAfter is not None: # Call if defined
-                self.drawAfter(self, view, origin)
+                self.drawAfter(self, view)
 
             b._div() # self.cssClass or self.__class__.__name__
 
