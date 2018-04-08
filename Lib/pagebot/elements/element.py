@@ -1225,7 +1225,13 @@ class Element(object):
     x = property(_get_x, _set_x)
 
     def _get_ux(self):
-        u""" Answer x position of self as stored units. """
+        u""" Answer x position of self as stored units. 
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(x='22%')
+        >>> e.ux
+        22%
+        """
         return self.style['x']
     ux = property(_get_ux, _set_x) # Setting is same as self.x
 
@@ -1257,7 +1263,13 @@ class Element(object):
     y = property(_get_y, _set_y)
 
     def _get_uy(self):
-        u""" Answer y position of self as stored units. """
+        u""" Answer y position of self as stored units.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(y='22%')
+        >>> e.uy
+        22%
+        """
         return self.style['y']
     uy = property(_get_uy, _set_y) # Setting is same as self.y
 
@@ -1289,7 +1301,13 @@ class Element(object):
     z = property(_get_z, _set_z)
 
     def _get_uz(self):
-        u""" Answer z position of self as stored units. """
+        u""" Answer z position of self as stored units. 
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(z='22%')
+        >>> e.uz
+        22%
+        """ 
         return self.style['z']
     uz = property(_get_uz, _set_z) # Setting is same as self.z
 
@@ -1321,6 +1339,7 @@ class Element(object):
     def _get_uxy(self):
         u"""Answer the e.xy as tuple of stored units. As long as not deriving the self.x 
         as points, no parent is needed.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(x='10%', y='20%')
         >>> e.uxy
@@ -1358,6 +1377,7 @@ class Element(object):
     def _get_uxyz(self):
         u"""Answer the e.xyz as tuple of stored units. As long as not deriving the self.x 
         as points, no parent is needed.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(x='10%', y='20%', z='30%')
         >>> e.uxyz
@@ -2109,7 +2129,8 @@ class Element(object):
     w = property(_get_w, _set_w)
 
     def _get_uw(self):
-        u"""Answer the uninterpreted unit width instanse if it exists and otherwise the single value.
+        u"""Answer the uninterpreted unit width instance if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(w='22%')
         >>> e.uw
@@ -2182,7 +2203,8 @@ class Element(object):
     h = property(_get_h, _set_h)
 
     def _get_uh(self):
-        u"""Answer the uninterpreted unit height instanse if it exists and otherwise the single value.
+        u"""Answer the uninterpreted unit height instance if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(h='22%')
         >>> e.uh
@@ -2233,7 +2255,7 @@ class Element(object):
         """
         d = self.ud
         if isinstance(d, (fr, perc)):
-            d = d.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent
+            d = d.asPt(self.parent.d) # In case percentage or fraction, answer value in relation to self.parent
         elif isinstance(d, em):
             d = d.asPt(self.css('fontSize'))
         return min(self.maxD, max(self.minD, d, MIN_DEPTH)) # From self.style, don't inherit.
@@ -2242,7 +2264,8 @@ class Element(object):
     d = property(_get_d, _set_d)
 
     def _get_ud(self):
-        u"""Answer the uninterpreted unit depth instanse if it exists and otherwise the single value.
+        u"""Answer the uninterpreted unit depth instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
 
         >>> e = Element(d='22%')
         >>> e.ud
@@ -2369,10 +2392,33 @@ class Element(object):
         >>> e.mt
         14
         """
-        return self.style['mt'] # Don't inherit
+        mt = self.umt # Don't inherit
+        if isinstance(mt, (fr, perc)):
+            mt = mt.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
+        elif isinstance(mt, em):
+            mt = mt.asPt(self.css('fontSize'))
+        return mt # From self.style, don't inherit.
     def _set_mt(self, mt):
-        self.style['mt'] = mt  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['mt'] = getUnits(mt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
     mt = property(_get_mt, _set_mt)
+
+    def _get_umt(self):
+        u"""Answer the uninterpreted unit margin top instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(mt='22%')
+        >>> e.umt
+        22%
+        >>> e = Element(mt='22fr')
+        >>> e.umt
+        22fr
+        >>> e = Element(mt=220)
+        >>> e.umt
+        220
+        """
+        return self.style['mt']
+    umt = property(_get_umt, _set_mt) # Setting same as self.mt
+
 
     def _get_mb(self): # Margin bottom
         u"""Margin bottom property
@@ -2387,10 +2433,32 @@ class Element(object):
         >>> e.mb
         14
         """
-        return self.style['mb'] # Don't inherit
+        mb = self.umb # Don't inherit
+        if isinstance(mb, (fr, perc)):
+            mb = mb.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
+        elif isinstance(mb, em):
+            mb = mb.asPt(self.css('fontSize'))
+        return mb
     def _set_mb(self, mb):
-        self.style['mb'] = mb  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['mb'] = getUnits(mb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     mb = property(_get_mb, _set_mb)
+
+    def _get_umb(self):
+        u"""Answer the uninterpreted unit margin bottom instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(mb='22%')
+        >>> e.umb
+        22%
+        >>> e = Element(mb='22fr')
+        >>> e.umb
+        22fr
+        >>> e = Element(mb=220)
+        >>> e.umb
+        220
+        """
+        return self.style['mb']
+    umb = property(_get_umb, _set_mb) # Setting same as self.mb
 
     def _get_ml(self): # Margin left
         u"""Margin left property
@@ -2405,10 +2473,33 @@ class Element(object):
         >>> e.ml
         14
         """
-        return self.style['ml'] # Don't inherit
+        ml = self.uml # Don't inherit
+        if isinstance(ml, (fr, perc)):
+            ml = ml.asPt(self.parent.w) # In case percentage or fraction, answer value in relation to self.parent.w
+        elif isinstance(ml, em):
+            ml = ml.asPt(self.css('fontSize'))
+        return ml
     def _set_ml(self, ml):
-        self.style['ml'] = ml # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['ml'] = getUnits(ml or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     ml = property(_get_ml, _set_ml)
+
+    def _get_uml(self):
+        u"""Answer the uninterpreted unit margin left instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(ml='22%')
+        >>> e.uml
+        22%
+        >>> e = Element(ml='22fr')
+        >>> e.uml
+        22fr
+        >>> e = Element(ml=220)
+        >>> e.uml
+        220
+        """
+        return self.style['ml']
+    uml = property(_get_uml, _set_ml) # Setting same as self.ml
+
 
     def _get_mr(self): # Margin right
         u"""Margin right property
@@ -2423,10 +2514,33 @@ class Element(object):
         >>> e.mr
         14
         """
-        return self.style['mr'] # Don't inherit
+        mr = self.umr # Don't inherit
+        if isinstance(mr, (fr, perc)):
+            mr = mr.asPt(self.parent.w) # In case percentage or fraction, answer value in relation to self.parent.w
+        elif isinstance(mr, em):
+            mr = mr.asPt(self.css('fontSize'))
+        return mr
     def _set_mr(self, mr):
-        self.style['mr'] = mr  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['mr'] = getUnits(mr or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     mr = property(_get_mr, _set_mr)
+
+    def _get_umr(self):
+        u"""Answer the uninterpreted unit margin right instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(mr='22%')
+        >>> e.umr
+        22%
+        >>> e = Element(mr='22fr')
+        >>> e.umr
+        22fr
+        >>> e = Element(mr=220)
+        >>> e.umr
+        220
+        """
+        return self.style['mr']
+    umr = property(_get_umr, _set_mr) # Setting same as self.mr
+
 
     def _get_mzf(self): # Margin z-axis front
         u"""Margin z-axis front property (closest to view point)
@@ -2441,10 +2555,33 @@ class Element(object):
         >>> e.mzf
         14
         """
-        return self.style['mzf'] # Don't inherit
+        mzf = self.umzf # Don't inherit
+        if isinstance(mzf, (fr, perc)):
+            mzf = mzf.asPt(self.parent.d) # In case percentage or fraction, answer value in relation to self.parent.d
+        elif isinstance(mzf, em):
+            mzf = mzf.asPt(self.css('fontSize'))
+        return mzf
     def _set_mzf(self, mzf):
-        self.style['mzf'] = mzf  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['mzf'] = getUnits(mzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     mzf = property(_get_mzf, _set_mzf)
+
+    def _get_umzf(self):
+        u"""Answer the uninterpreted unit margin front instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(mzf='22%')
+        >>> e.umzf
+        22%
+        >>> e = Element(mzf='22fr')
+        >>> e.umzf
+        22fr
+        >>> e = Element(mzf=220)
+        >>> e.umzf
+        220
+        """
+        return self.style['mzf']
+    umzf = property(_get_umzf, _set_mzf) # Setting same as self.mzf
+
 
     def _get_mzb(self): # Margin z-axis back
         u"""Margin z-axis back property (most distant to view point)
@@ -2459,10 +2596,32 @@ class Element(object):
         >>> e.mzb
         14
         """
-        return self.style['mzb'] # Don't inherit
+        mzb = self.umzb # Don't inherit
+        if isinstance(mzb, (fr, perc)):
+            mzb = mzb.asPt(self.parent.d) # In case percentage or fraction, answer value in relation to self.parent.d
+        elif isinstance(mzb, em):
+            mzb = mzb.asPt(self.css('fontSize'))
+        return mzb
     def _set_mzb(self, mzb):
-        self.style['mzb'] = mzb  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['mzb'] = getUnits(mzb or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
     mzb = property(_get_mzb, _set_mzb)
+
+    def _get_umzb(self):
+        u"""Answer the uninterpreted unit margin back instance, if it exists and otherwise the single value.
+        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
+
+        >>> e = Element(mzb='22%')
+        >>> e.umzb
+        22%
+        >>> e = Element(mzb='22fr')
+        >>> e.umzb
+        22fr
+        >>> e = Element(mzb=220)
+        >>> e.umzb
+        220
+        """
+        return self.style['mzb']
+    umzb = property(_get_umzb, _set_mzb) # Setting same as self.mzb
 
     # Padding properties
 

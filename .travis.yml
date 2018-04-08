@@ -56,6 +56,7 @@ script:
 - python Lib/pagebot/elements/variablefonts/variableglyphs.py
 - python Lib/pagebot/elements/variablefonts/variablescatter.py
 - python Lib/pagebot/elements/views/pageview.py
+- python Lib/pagebot/elements/web/simplesite/site.py
 - python Lib/pagebot/fonttoolbox/mutator.py
 - python Lib/pagebot/fonttoolbox/objects/family.py
 - python Lib/pagebot/fonttoolbox/objects/font.py

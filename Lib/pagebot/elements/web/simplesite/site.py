@@ -27,6 +27,7 @@ class Site(Group):
 
         >>> from pagebot.document import Document
         >>> from pagebot.elements import newTextBox
+        >>> from pagebot.elements.web.simplesite.header import Header
         >>> doc = Document(viewId='Site')
         >>> page = doc[1]
         >>> page.title = 'Header Test'
