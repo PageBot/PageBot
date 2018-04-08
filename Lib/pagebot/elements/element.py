@@ -969,7 +969,17 @@ class Element(object):
     ancestors = property(_get_ancestors)
 
     def _get_point(self):
-        u"""Answer the 2D point tuple of the relative local position of self."""
+        u"""Answer the 2D point tuple of the relative local position of self.
+
+        >>> e = Element(x=100, y=100)
+        >>> e.point
+        (100, 100)
+        >>> e.x, e.y
+        (100, 100)
+        >>> e.point = 120, 130
+        >>> e.point
+        (120, 130)
+        """
         return self.x, self.y # Answer as 2D
     def _set_point(self, point):
         self.x = point[0]
@@ -977,7 +987,17 @@ class Element(object):
     point = property(_get_point, _set_point)
 
     def _get_point3D(self):
-        u"""Answer the 3D point tuple of the relative local position of self."""
+        u"""Answer the 3D point tuple of the relative local position of self.
+
+        >>> e = Element(x=100, y=100, z=100)
+        >>> e.point3D
+        (100, 100, 100)
+        >>> e.x, e.y, e.z
+        (100, 100, 100)
+        >>> e.point3D = 120, 130, 140
+        >>> e.point3D
+        (120, 130, 140)
+        """
         return self.x, self.y, self.z
     def _set_point3D(self, point):
         self.x, self.y, self.z = point3D(point) # Always store as 3D-point, z = 0 if missing.

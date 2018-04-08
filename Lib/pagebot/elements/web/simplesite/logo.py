@@ -34,10 +34,10 @@ class Logo(Banner):
         >>> from pagebot.elements import newTextBox
         >>> doc = Document(viewId='Site')
         >>> page = doc[1]
-        >>> page.title = 'Banner Test'
+        >>> page.title = 'Logo Test'
         >>> page.name = 'index'
-        >>> banner = Banner(parent=page, cssId='ThisBannerId')
-        >>> tb = newTextBox('This is a banner.', parent=banner)
+        >>> logo = Logo(parent=page, cssId='ThisLogoId')
+        >>> tb = newTextBox('This is a logo.', parent=logo)
         >>> doc.export('_export/LogoTest')
 
         """
