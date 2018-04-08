@@ -65,13 +65,15 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         tag = None, # Optional marker to match the style with the running tag.
         show = True, # If set to False, then the element does not evaluate in the self.elements loop.
         
-        # Basic page/template measures
-        x = 0, # Default local origin, relative to parent.
+        # Basic page/template/element positions. Can contain number values or Unit instances.
+        x = 0, # Default local origin, relative to parent. 
         y = 0,
         z = 0,
-        w = w, #ons Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
+        # Basic page/template/element proportions of box. Can contain number values or Unit instances.
+        w = w, # Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
+        
         # In "time-dimension" this is an overall value for export. This works independent from
         # the time-marks of element attributes.
         frameDuration = None, # In case saving as .mov or .gif, this value defines 1/frames_per_second
@@ -99,7 +101,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Margins define the space outside an element (or page) around the object.
         # Padding defines the space inside the element.
 
-        # Margins
+        # Margins, outside element box. Can contain number values or Unit instances.
         mt = 0, # Margin top
         ml = 0, # Margin left
         mr = 0, # Margin right
@@ -109,7 +111,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         u = u, # Base unit for Dutch/Swiss typography :)
 
-        # Padding where needed.
+        # Padding where needed, inside elemen box. Can contain number values or Unit instances.
         pt = 7*u, # Padding top
         pl = 7*u, # Padding left
         pr = 6*u, # Padding right
