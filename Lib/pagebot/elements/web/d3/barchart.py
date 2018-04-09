@@ -41,8 +41,9 @@ class BarChart(Rect):
         >>> page.title = 'Barchart Test'
         >>> page.name = 'index'
         >>> barChart = BarChart(parent=page, cssId='ThisBarChartId', xTextAlign=RIGHT, textFill=0.9, fontSize=px(12))
-        >>> barChart.padding = px(30)
-        >>> data = range(2, 21)
+        >>> barChart.padding = 1, 4, 1, 4
+        >>> barChart.margin = 1
+        >>> data = range(2, 90, 4)
         >>> shuffle(data)
         >>> barChart.data = data
         >>> #tb = newTextBox('This is a bar chart.', parent=barChart)
@@ -55,11 +56,14 @@ class BarChart(Rect):
         d = dict(cssClass=cssClass, 
             border=self.css('border', 'black solid 1px'),
             fill=color2Hex(self.css('fill'), '#F0F0F0'),
-            barFill=color2Hex(self.css('barFill'), '#3040F0'),
+            barFill=color2Hex(self.css('barFill'), '#2030A0'),
             textAlign=self.css('xTextAlign', RIGHT),
             textFill=color2Hex(self.css('textFill'), '#FF00FF'),
             fontSize=self.css('fontSize', 10),
-            padding=self.padding,
+            padding='%s %s %s %s' % (px(self.pt), px(self.pr), px(self.pb), px(self.pl)),
+            margin='%s %s %s %s' % (px(self.mt), px(self.mr), px(self.mb), px(self.ml)),
+            scale=1,
+            unit='%',
             data='%s' % list(self.data),
         )
         b = view.context.b
@@ -77,7 +81,7 @@ class BarChart(Rect):
           background-color: %(barFill)s;
           text-align: %(textAlign)s;
           padding: %(padding)s;
-          margin: 1px;
+          margin: %(margin)s;
           color: %(textFill)s;
         }
         """ % d)
@@ -100,7 +104,7 @@ class BarChart(Rect):
             .selectAll("div")
             .data(data)
             .enter().append("div")
-            .style("width", function(d) { return d * 10 + "px"; })
+            .style("width", function(d) { return d * %(scale)s + "%(unit)s"; })
             .text(function(d) { return d; });
         """ % d)
         b._script()
