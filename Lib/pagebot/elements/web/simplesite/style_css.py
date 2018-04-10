@@ -1,31 +1,103 @@
 
 simpleTheme = dict(
+
+	""" General """
 	regularFont='Upgrade-Regular',
+	fontWeight='normal',
 	textDecorationColor='#2E8DB6',
 	textHoverColor='#2BC88A',
+	textColor='#706670',
+	lineHeight='1.4em',
 	headerPadding='15px 0',
+	bodyBackgroundColor='#FFFFFF',
+	bodyFontSize='1.10em',
+	wrapperWidth='92%',
+	wrapperMargin='0 auto',
+	contentVerticalPadding='3em 0',
+	paragraphMargin='0 0 1.5em',
+	
+	""" (Logo) banner """
+	bannerTextAlign='center',
+	
+	""" Responsive images """
+	imageMaxWidth='100%',
+	imageHeight='auto',
+	
+	""" Hero """	
+	heroPadding='20px 0',
+	heroBackgroundColor='#f3f3f3',
+	heroBorderTop='1px solid #e2e2e2',
+	heroBorderBottom='1px solid #e2e2e2',
+	heroFontSize='1.1em',
+
+	""" Menu """	
+	menuToggleFontSize='20px',
+	menuToggleLetterSpacing='0.2em',
 	menuBackground='#2C8CB7',
+	menuTextTransform='uppercase',
 	menuTextColor='#fff',
+	srtMenuFontSize='0.8em',
+	srtMenuLetterSpacing='0.10em',
+	srtMenuPaddingLeft='80px',
+	srtMenuMarginBottom='60px',
 	srtMenuColor='#666',
 	srtMenuBackground='#DADADA',
 	srtMenuHoverBackground='#2C8CB7',
 	srtMenuHoverBackground2='#E8E8E8',
 	srtMenuHoverBackground3='#EFEFEF',
 	srtMenuHover='#fff',
+	secondaryMenuMarginBottom='60px',
+	secondaryMenuMarginUl='0',
+	secondaryMenuPaddingUl='0',
+	secondaryNavBackground='#E6E6E6;',
+	secondaryNavBackgroundHover='#2C8CB7;',
+	secondaryNavTextLinkColor='#666666',
+	secondaryNavTextLinkHoverColor='#FFFFFF',
+	secondaryNavTextLinkPadding='10px',
+	menuTogglePadding='10px',
+	menuToggleMargin='20px 0 0',
+	menuToggleOnBackgroundColor='#2C8CB7',
+	
+	""" Buttons """
+	buttonLinkBackground='#2C8CB7;',
+	buttonLinkTextColor='#FFFFFF;',
+	buttonPadding='10px',
+	buttonMargin='10px 15px 10px 0',
+	buttonLinkHoverColor='#353132;',
+	buttonLinkBackground='#2C8CB7;',
+
+	""" Buttons diap """
+	buttonLinkBackgroundDiap='#FFFFFF;',
+	buttonLinkTextColorDiap='#2C8CB7;',
+	buttonLinkTextHoverColorDiap='#FFFFFF;',
+	buttonLinkBackgroundColorDiap='#353132;',
+
+	""" Footer """
+	footerBackgroundColor='#333;',
+	footerTextColor='#ccc;',
+	footerFontSize='80%;',
+	footerPadding='20px 0;',
+	
+	""" @media | Tablet & smaller laptops """
+	atMediaTabletMinWidth='920px',
+	atMediaTabletWrapperTabletMaxWidth='1200px',
+	atMediaTabletWrapperMargin='.75em auto',
+	atMediaTabletContentWidth='65%',
+	atMediaTabletWideContentWidth='80%',
 )
 simpleCss = """
 body{
-	background:#fff;
-	color:#706670;
+	background:%(bodyBackgroundColor)s;
+	color:%(textColor)s;
 	font-family: %(regularFont)s, sans-serif; 
-	font-size:1.10em;
-	line-height:1.4em; 
-	font-weight:normal;
+	font-size:%(bodyFontSize)s;
+	line-height:%(lineHeight)s; 
+	font-weight:%(fontWeight)s;
 }
 h1, h2, h3, h4, h5, h6{
 	font-weight:normal;
 	font-family:%(regularFont)s, sans-serif; 
-	line-height:1.5em;
+	line-height:%(lineHeight)s;
 	margin:.45em 0;
 	padding:0;
 } 
@@ -47,22 +119,21 @@ a:hover{ text-decoration:none;}
   
 /* structure */   
 .wrapper{
-	width: 92%%; 
-	margin: 0 auto;
+	width:%(wrapperWidth)s; 
+	margin:%(wrapperMargin)s;
 }
 header{ 
 	padding:%(headerPadding)s;
 }
 #banner{ 
-	text-align:center;
+	text-align:%(bannerTextAlign)s;
 }	
-#hero,
-#page-header{
-	background:#f3f3f3;
-	border-top:1px solid #e2e2e2;
-	border-bottom:1px solid #e2e2e2;
-	padding:20px 0;
-	font-size:1.1em;
+#hero,#page-header{
+	background:%(heroBackgroundColor)s;
+	border-top:%(heroBorderTop)s;
+	border-bottom:%(heroBorderBottom)s;
+	padding:%(heroPadding)s;
+	font-size:%(heroFontSize)s;
 }
 
 #page-header h1{
@@ -74,29 +145,29 @@ header{
 #content,
 aside,
 .vertical-padding{  
-	padding:3em 0;
+	padding:%(contentVerticalPadding)s;
 }
-p{ margin:0 0 1.5em;}
+p{ margin:%(paragraphMargin)s;}
 
 
 /* RESPONSIVE IMAGES  */
-img{ max-width:100%%; height:auto;}
+img{ max-width:%(imageMaxWidth)s; height:%(imageHeight)s;}
 
 
 /*MAIN MENU*/
 .menu-toggle{
 	display:block;
-	padding:10px;
-	margin:20px 0 0;
+	padding:%(menuTogglePadding)s;
+	margin:%(menuToggleMargin)s;
 	background:%(menuBackground)s;
-	letter-spacing:0.2em;
+	letter-spacing:%(menuToggleLetterSpacing)s;
 	color:%(menuTextColor)s;
 	cursor:pointer;
-	text-transform:uppercase;
-	font-size:20px;
+	text-transform:%(menuTextTransform)s;
+	font-size:%(menuToggleFontSize)s;
 }
 .menu-toggle.toggled-on{
-	background:#2C8CB7;
+	background:%(menuToggleOnBackgroundColor)s;
 }
 .srt-menu{
 	display:none;
@@ -109,7 +180,7 @@ img{ max-width:100%%; height:auto;}
 
 .srt-menu{
 	clear:both;
-	margin-bottom:60px;
+	margin-bottom:%(srtMenuMarginBottom)s;
 	
 }
 .srt-menu li a {
@@ -119,9 +190,9 @@ img{ max-width:100%%; height:auto;}
 	margin:1px 0; 
 	padding:10px;
 	text-decoration:none;
-	text-transform:uppercase;
-	letter-spacing:0.10em;
-	font-size:.8em;
+	text-transform:%(menuTextTransform)s;
+	letter-spacing:%(srtMenuLetterSpacing)s;
+	font-size:%(srtMenuFontSize)s;
 }
 .srt-menu li a:hover{
 	background:%(srtMenuHoverBackground)s;
@@ -133,29 +204,29 @@ img{ max-width:100%%; height:auto;}
 }
 .srt-menu li li li a {
 	background:%(srtMenuHoverBackground3)s;
-	padding-left:80px;
+	padding-left:%(srtMenuPaddingLeft)s;
 }
 
 /*SECONDARY MENU*/
 #secondary-navigation{
-	margin-bottom:60px;
+	margin-bottom:%(secondaryMenuMarginBottom)s;
 }
 #secondary-navigation ul{
-	margin:0;
-	padding:0;
+	margin:%(secondaryMenuMarginUl)s;
+	padding:%(secondaryMenuPaddingUl)s;
 }
 #secondary-navigation ul li a{ 
-	background:#E6E6E6;
-	color:#666;
+	background:%(secondaryNavBackground)s;
+	color:%(secondaryNavTextLinkColor)s;
 	display:block;
 	margin:5px 0; 
-	padding:10px;
+	padding:%(secondaryNavTextLinkPadding)s;
 	text-decoration:none;
 }
 #secondary-navigation ul li a:hover,
 #secondary-navigation ul li.current a{
-	background:#2C8CB7;
-	color:#fff;
+	background:%(secondaryNavBackgroundHover)s;
+	color:%(secondaryNavTextLinkHoverColor)s;
 }
 
 /*SPACE GRID ELEMENTS VERTICALLY, SINCE THEY ARE ONE UNDER ANOTHER*/
@@ -181,44 +252,44 @@ img{ max-width:100%%; height:auto;}
 
 /*FOOTER*/
 footer{  
-	background:#333;
-	color:#ccc;
-	font-size:80%%;
-	padding:20px 0;
+	background:%(footerBackgroundColor)s;
+	color:%(footerTextColor)s;
+	font-size:%(footerFontSize)s;
+	padding:%(footerPadding)s;
 }
 footer ul{
-	margin:0 0 0 8%%;
+	margin:0 0 0 8%;
 	padding:0;
 }
 
 
 /*Some more colored elements*/
 a.buttonlink{ 
-	background:#2C8CB7; 
+	background:%(buttonLinkBackground)s; 
 	border-radius:7px; 
-	color:#fff;
+	color:%(buttonLinkTextColor)s;
 	display:block;
 	float:left; 
-	margin:10px 15px 10px 0; 
-	padding:10px;
+	margin:%(buttonMargin)s; 
+	padding:%(buttonPadding)s;
 	text-decoration:none;
 }
 a.buttonlink:hover{
-	background:#353132;
+	background:%(buttonLinkHoverColor)s;
 }
 a.buttonlinkdiap{ 
-	background:#FFFFFF; 
+	background:%(buttonLinkBackgroundDiap)s; 
 	border-radius:7px; 
-	color:#2C8CB7;
+	color:%(buttonLinkTextColorDiap)s;
 	display:block;
 	float:left; 
-	margin:10px 15px 10px 0; 
-	padding:10px;
+	margin:%(buttonMargin)s; 
+	padding:%(buttonPadding)s;
 	text-decoration:none;
 }
 a.buttonlinkdiap:hover{
-	background:#353132;
-	color:#FFFFFF;
+	background:%(buttonLinkBackgroundColorDiap)s;
+	color:%(buttonLinkTextHoverColorDiap)s;
 }
 .blueelement{
 	background:#2A8BB8;
@@ -276,11 +347,11 @@ This is for mobile devices with a bit larger screens.
 TABLET & SMALLER LAPTOPS
 
 */
-@media only screen and (min-width: 920px) {
+@media only screen and (min-width: %(atMediaTabletMinWidth)s) {
 
 .wrapper{
-	max-width: 1200px; 
-	margin: .75em auto;
+	max-width: %(atMediaTabletWrapperTabletMaxWidth)s; 
+	margin: %(atMediaTabletWrapperMargin)s;
 }
 header{
 	padding:0;
@@ -297,14 +368,14 @@ header{
 
 #content {  
 	float:left;
-	width:65%%;
+	width:%(atMediaTabletContentWidth)s;
 }
 #content.wide-content{
 	float:none;
-	width:80%%;
+	width:%(atMediaTabletWideContentWidth)s;
 	margin-bottom:2em;
-	margin-left:10%%;
-	margin-right:10%%;
+	margin-left:10%;
+	margin-right:10%;
 }
 
 .flexslider{
@@ -317,7 +388,7 @@ margin: 0;
 
 aside { 
 	float:right;
-	width:30%%;
+	width:30%;
 }
 
 /*** MAIN MENU - ESSENTIAL STYLES ***/
@@ -335,7 +406,7 @@ aside {
 	width:			12em; /* left offset of submenus need to match (see below) */
 }
 .srt-menu ul li {
-	width:			100%%;
+	width:			100%;
 }
 .srt-menu li:hover {
 	visibility:		inherit; 
@@ -436,18 +507,18 @@ ul.srt-menu li li li.sfHover ul {
      margin-right: -15px;
 }
  
-.grid_1 { width: 8.33333333%%; }
-.grid_2 { width: 16.66666667%%; }
-.grid_3 { width: 25%%; }
-.grid_4 { width: 33.33333333%%; }
-.grid_5 { width: 41.66666667%%; }
-.grid_6 { width: 50%%; }
-.grid_7 { width: 58.33333333%%; }
-.grid_8 { width: 66.66666667%%; }
-.grid_9 { width: 75%%; }
-.grid_10 { width: 83.33333333%%; }
-.grid_11 { width: 91.66666667%%; }
-.grid_12 { width: 100%%; }
+.grid_1 { width: 8.33333333%; }
+.grid_2 { width: 16.66666667%; }
+.grid_3 { width: 25%; }
+.grid_4 { width: 33.33333333%; }
+.grid_5 { width: 41.66666667%; }
+.grid_6 { width: 50%; }
+.grid_7 { width: 58.33333333%; }
+.grid_8 { width: 66.66666667%; }
+.grid_9 { width: 75%; }
+.grid_10 { width: 83.33333333%; }
+.grid_11 { width: 91.66666667%; }
+.grid_12 { width: 100%; }
 
 .grid_1,
 .grid_2,
@@ -526,11 +597,11 @@ PRINT STYLESHEET
   pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
   thead { display: table-header-group; } /* h5bp.com/t */
   tr, img { page-break-inside: avoid; }
-  img { max-width: 100%% !important; }
+  img { max-width: 100% !important; }
   @page { margin: 0.5cm; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
-} """ 
+} """
 
 
 if __name__ == '__main__':
