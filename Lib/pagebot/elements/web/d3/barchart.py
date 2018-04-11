@@ -28,7 +28,12 @@ class BarChart(Rect):
     u"""Draw a bar chart based on data.
 
     """
-    
+    def __init__(self, data=None, **kwargs):
+        Rect.__init__(self,  **kwargs)
+        if data is None:
+            data = range(20, 100, 10) # Some random data to start with
+        self.data = data
+
     def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 

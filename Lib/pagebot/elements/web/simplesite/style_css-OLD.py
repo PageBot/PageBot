@@ -1,51 +1,22 @@
+
 simpleTheme = dict(
-	
-	# General 
 	regularFont='Upgrade-Regular',
 	textDecorationColor='#2E8DB6',
 	textHoverColor='#2BC88A',
-	textColor='#706670',
 	headerPadding='15px 0',
-	
-	# Hero 
-	heroPadding='20px 0',
-	heroBackgroundColor='#f3f3f3',
-	heroBorderTop='1px solid #e2e2e2',
-	heroBorderBottom='1px solid #e2e2e2',
-	heroFontSize='1.1em',
-
-	# Menu 
 	menuBackground='#2C8CB7',
 	menuTextColor='#fff',
-	srtMenuMarginBottom='60px',
 	srtMenuColor='#666',
 	srtMenuBackground='#DADADA',
 	srtMenuHoverBackground='#2C8CB7',
-	srtMenuHoverBackgroundTwo='#E8E8E8',
-	srtMenuHoverBackgroundThree='#EFEFEF',
-	srtMenuHover='#FFFFFF',
-	menuTogglePadding='10px',
-	menuToggleMargin='20px 0 0',
-	menuToggleOnBackgroundColor='#2C8CB7',
-	
-	# Buttons
-	buttonLinkBackground='#2C8CB7',
-	buttonLinkTextColor='#FFFFFF',
-	buttonPadding='10px',
-	buttonMargin='10px 15px 10px 0',
-	buttonLinkHoverColor='#353132',
-
-	# Buttons diap 
-	buttonLinkBackgroundDiap='#FFFFFF',
-	buttonLinkTextColorDiap='#2C8CB7',
-	buttonLinkTextHoverColorDiap='#FFFFFF',
-	buttonLinkBackgroundColorDiap='#353132',
+	srtMenuHoverBackground2='#E8E8E8',
+	srtMenuHoverBackground3='#EFEFEF',
+	srtMenuHover='#fff',
 )
-
 simpleCss = """
 body{
 	background:#fff;
-	color:%(textColor)s;
+	color:#706670;
 	font-family: %(regularFont)s, sans-serif; 
 	font-size:1.10em;
 	line-height:1.4em; 
@@ -85,12 +56,13 @@ header{
 #banner{ 
 	text-align:center;
 }	
-#hero,#page-header{
-	background:%(heroBackgroundColor)s;
-	border-top:%(heroBorderTop)s;
-	border-bottom:%(heroBorderBottom)s;
-	padding:%(heroPadding)s;
-	font-size:%(heroFontSize)s;
+#hero,
+#page-header{
+	background:#f3f3f3;
+	border-top:1px solid #e2e2e2;
+	border-bottom:1px solid #e2e2e2;
+	padding:20px 0;
+	font-size:1.1em;
 }
 
 #page-header h1{
@@ -114,8 +86,8 @@ img{ max-width:100%%; height:auto;}
 /*MAIN MENU*/
 .menu-toggle{
 	display:block;
-	padding:%(menuTogglePadding)s;
-	margin:%(menuToggleMargin)s;
+	padding:10px;
+	margin:20px 0 0;
 	background:%(menuBackground)s;
 	letter-spacing:0.2em;
 	color:%(menuTextColor)s;
@@ -124,7 +96,7 @@ img{ max-width:100%%; height:auto;}
 	font-size:20px;
 }
 .menu-toggle.toggled-on{
-	background:%(menuToggleOnBackgroundColor)s;
+	background:#2C8CB7;
 }
 .srt-menu{
 	display:none;
@@ -137,7 +109,7 @@ img{ max-width:100%%; height:auto;}
 
 .srt-menu{
 	clear:both;
-	margin-bottom:%(srtMenuMarginBottom)s;
+	margin-bottom:60px;
 	
 }
 .srt-menu li a {
@@ -156,15 +128,15 @@ img{ max-width:100%%; height:auto;}
 	color:%(srtMenuHover)s;
 }
 .srt-menu li li a {
-	background:%(srtMenuHoverBackgroundTwo)s;
+	background:%(srtMenuHoverBackground2)s;
 	padding-left:40px;
 }
 .srt-menu li li li a {
-	background:%(srtMenuHoverBackgroundThree)s;
+	background:%(srtMenuHoverBackground3)s;
 	padding-left:80px;
 }
 
-/* SECONDARY MENU */
+/*SECONDARY MENU*/
 #secondary-navigation{
 	margin-bottom:60px;
 }
@@ -222,31 +194,31 @@ footer ul{
 
 /*Some more colored elements*/
 a.buttonlink{ 
-	background:%(buttonLinkBackground)s; 
+	background:#2C8CB7; 
 	border-radius:7px; 
-	color:%(buttonLinkTextColor)s;
+	color:#fff;
 	display:block;
 	float:left; 
-	margin:%(buttonMargin)s; 
-	padding:%(buttonPadding)s;
+	margin:10px 15px 10px 0; 
+	padding:10px;
 	text-decoration:none;
 }
 a.buttonlink:hover{
-	background:%(buttonLinkHoverColor)s;
+	background:#353132;
 }
 a.buttonlinkdiap{ 
-	background:%(buttonLinkBackgroundDiap)s; 
+	background:#FFFFFF; 
 	border-radius:7px; 
-	color:%(buttonLinkTextColorDiap)s;
+	color:#2C8CB7;
 	display:block;
 	float:left; 
-	margin:%(buttonMargin)s; 
-	padding:%(buttonPadding)s;
+	margin:10px 15px 10px 0; 
+	padding:10px;
 	text-decoration:none;
 }
 a.buttonlinkdiap:hover{
-	background:%(buttonLinkBackgroundColorDiap)s;
-	color:%(buttonLinkTextHoverColorDiap)s;
+	background:#353132;
+	color:#FFFFFF;
 }
 .blueelement{
 	background:#2A8BB8;
@@ -255,7 +227,9 @@ a.buttonlinkdiap:hover{
 
 
 
-/* Contain floats */ 
+
+
+/* Contain floats*/ 
 .clearfix:before,
 .clearfix:after,
 .row:before,
@@ -556,10 +530,11 @@ PRINT STYLESHEET
   @page { margin: 0.5cm; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
-} """
-
+} """ 
 
 
 if __name__ == '__main__':
-	simpleCss % simpleTheme
-
+    import doctest
+    import sys
+    simpleCss % simpleTheme
+    sys.exit(doctest.testmod()[0])
