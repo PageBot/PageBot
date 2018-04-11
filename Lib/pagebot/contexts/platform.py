@@ -41,7 +41,7 @@ def getContext():
 
 def getMampPath():
     if MAMP_PATH is None:
-        getContext()
+        getContext() # Make sure MAMP_PATH is initialized depending on current type of context.
     return MAMP_PATH
     
 if __name__ == '__main__':

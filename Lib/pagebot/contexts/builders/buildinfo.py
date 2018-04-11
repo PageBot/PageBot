@@ -24,6 +24,7 @@ class BuildInfo(object):
         self.title = None # Can be used to overwrite the standard name/title of an element.
         self.description = None
         self.keyWords = None
+        self.resourcePaths = [] # Directory paths with resource files to be copied to the site.
         # Urls for <link>
         self.webFontsUrl = 'fonts/webfonts.css'
         self.favIconUrl = None
@@ -48,7 +49,7 @@ class BuildInfo(object):
         self.jsCode = None # Set to path, if JS is available in a single file, excluding the tags.
         
         # Make None for force unsecure version to load instead.
-        # TODO: Needs a better way (query elements?) to collect the needed JS imports.
+        # TODO: Needs a better way (query elements?) to collect the needed JS imports from the element tree.
         self.jsUrls = dict(
             jquery='https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
             #jquery='http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',

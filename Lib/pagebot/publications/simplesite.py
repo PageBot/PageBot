@@ -16,6 +16,7 @@
 #     I N   P R O G R E S S
 #     This will hold the basic Python generator version of Kirsten Langmuur's SimpleSite template.
 #
+from pagebot import getRootPath
 from pagebot.elements import *
 from pagebot.elements.web.simplesite import Navigation, Featured, WideContent, Hero, \
     Footer, simpleTheme, simpleCss
@@ -38,6 +39,7 @@ class SimpleSite(Publication):
     >>> template = doc.getTemplate('home')
     >>> page.applyTemplate(template)
     >>> view.info.cssCode = template.info.cssCode
+    >>> view.info.resourcePaths = template.info.resourcePaths # Paths js, images, fonts and css to copy.
     >>> doc.build()
     >>> # Try to open in browser. It works if a local server (like MAMP) runs for view.LOCAL_HOST_URL url.
     >>> import os
@@ -97,6 +99,8 @@ class SimpleSite(Publication):
         t.info.favIconUrl = 'images/favicon.gif'
         t.info.jsCode = jsCode
         t.info.cssCode = simpleCss % simpleTheme
+        rp = getRootPath()
+        t.info.resourcePaths = (rp+'js', rp+'images', rp+'fonts', 'rp+css') # Directorie to be copied to Mamp.
         # Add page template elements.
         Navigation(parent=t, name='Navigation')
         #Introduction(parent=t, name='Introduction')

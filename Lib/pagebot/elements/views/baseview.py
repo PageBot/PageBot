@@ -29,7 +29,7 @@ class BaseView(Element):
 
     isView = True
 
-    def __init__(self, w=None, h=None, contect=None, parent=None, context=None, **kwargs):
+    def __init__(self, w=None, h=None, contect=None, parent=None, context=None, verbose=False, **kwargs):
         Element.__init__(self, parent=parent, **kwargs)
         
         if not w and self.parent:
@@ -38,6 +38,7 @@ class BaseView(Element):
             h = self.parent.h
         self.w = w
         self.h = h
+        self.verbose = verbose # If set to Trye, views may decide to add more information while building.
         if context is None:
             context = self._getContext() # Use the default context for this view, if not defined.
         self.context = context
