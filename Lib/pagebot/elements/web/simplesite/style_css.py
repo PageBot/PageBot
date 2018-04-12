@@ -1,88 +1,34 @@
 simpleTheme = dict(
-<<<<<<< HEAD
 	
 	# General 
-=======
-
-	""" General """
->>>>>>> origin/master
 	regularFont='Upgrade-Regular',
-	fontWeight='normal',
 	textDecorationColor='#2E8DB6',
 	textHoverColor='#2BC88A',
 	textColor='#706670',
-<<<<<<< HEAD
 	headerPadding='15px 0',
 	
 	# Hero 
-=======
-	lineHeight='1.4em',
-	headerPadding='15px 0',
-	bodyBackgroundColor='#FFFFFF',
-	bodyFontSize='1.10em',
-	wrapperWidth='92%',
-	wrapperMargin='0 auto',
-	contentVerticalPadding='3em 0',
-	paragraphMargin='0 0 1.5em',
-	
-	""" (Logo) banner """
-	bannerTextAlign='center',
-	
-	""" Responsive images """
-	imageMaxWidth='100%',
-	imageHeight='auto',
-	
-	""" Hero """	
->>>>>>> origin/master
 	heroPadding='20px 0',
 	heroBackgroundColor='#f3f3f3',
 	heroBorderTop='1px solid #e2e2e2',
 	heroBorderBottom='1px solid #e2e2e2',
 	heroFontSize='1.1em',
 
-<<<<<<< HEAD
-	# Menu 
-=======
-	""" Menu """	
-	menuToggleFontSize='20px',
-	menuToggleLetterSpacing='0.2em',
->>>>>>> origin/master
+	# Menu	
 	menuBackground='#2C8CB7',
-	menuTextTransform='uppercase',
 	menuTextColor='#fff',
-<<<<<<< HEAD
-=======
-	srtMenuFontSize='0.8em',
-	srtMenuLetterSpacing='0.10em',
-	srtMenuPaddingLeft='80px',
->>>>>>> origin/master
 	srtMenuMarginBottom='60px',
 	srtMenuColor='#666',
 	srtMenuBackground='#DADADA',
 	srtMenuHoverBackground='#2C8CB7',
-<<<<<<< HEAD
 	srtMenuHoverBackgroundTwo='#E8E8E8',
 	srtMenuHoverBackgroundThree='#EFEFEF',
-	srtMenuHover='#FFFFFF',
-=======
-	srtMenuHoverBackground2='#E8E8E8',
-	srtMenuHoverBackground3='#EFEFEF',
 	srtMenuHover='#fff',
-	secondaryMenuMarginBottom='60px',
-	secondaryMenuMarginUl='0',
-	secondaryMenuPaddingUl='0',
-	secondaryNavBackground='#E6E6E6;',
-	secondaryNavBackgroundHover='#2C8CB7;',
-	secondaryNavTextLinkColor='#666666',
-	secondaryNavTextLinkHoverColor='#FFFFFF',
-	secondaryNavTextLinkPadding='10px',
->>>>>>> origin/master
 	menuTogglePadding='10px',
 	menuToggleMargin='20px 0 0',
 	menuToggleOnBackgroundColor='#2C8CB7',
 	
-<<<<<<< HEAD
-	# Buttons
+	# Buttons 
 	buttonLinkBackground='#2C8CB7',
 	buttonLinkTextColor='#FFFFFF',
 	buttonPadding='10px',
@@ -94,53 +40,22 @@ simpleTheme = dict(
 	buttonLinkTextColorDiap='#2C8CB7',
 	buttonLinkTextHoverColorDiap='#FFFFFF',
 	buttonLinkBackgroundColorDiap='#353132',
-=======
-	""" Buttons """
-	buttonLinkBackground='#2C8CB7;',
-	buttonLinkTextColor='#FFFFFF;',
-	buttonPadding='10px',
-	buttonMargin='10px 15px 10px 0',
-	buttonLinkHoverColor='#353132;',
-	buttonLinkBackground='#2C8CB7;',
 
-	""" Buttons diap """
-	buttonLinkBackgroundDiap='#FFFFFF;',
-	buttonLinkTextColorDiap='#2C8CB7;',
-	buttonLinkTextHoverColorDiap='#FFFFFF;',
-	buttonLinkBackgroundColorDiap='#353132;',
 
-	""" Footer """
-	footerBackgroundColor='#333;',
-	footerTextColor='#ccc;',
-	footerFontSize='80%;',
-	footerPadding='20px 0;',
-	
-	""" @media | Tablet & smaller laptops """
-	atMediaTabletMinWidth='920px',
-	atMediaTabletWrapperTabletMaxWidth='1200px',
-	atMediaTabletWrapperMargin='.75em auto',
-	atMediaTabletContentWidth='65%',
-	atMediaTabletWideContentWidth='80%',
->>>>>>> origin/master
 )
-
 simpleCss = """
 body{
-<<<<<<< HEAD
 	background:#fff;
-=======
-	background:%(bodyBackgroundColor)s;
->>>>>>> origin/master
 	color:%(textColor)s;
 	font-family: %(regularFont)s, sans-serif; 
-	font-size:%(bodyFontSize)s;
-	line-height:%(lineHeight)s; 
-	font-weight:%(fontWeight)s;
+	font-size:1.10em;
+	line-height:1.4em; 
+	font-weight:normal;
 }
 h1, h2, h3, h4, h5, h6{
 	font-weight:normal;
 	font-family:%(regularFont)s, sans-serif; 
-	line-height:%(lineHeight)s;
+	line-height:1.5em;
 	margin:.45em 0;
 	padding:0;
 } 
@@ -162,14 +77,14 @@ a:hover{ text-decoration:none;}
   
 /* structure */   
 .wrapper{
-	width:%(wrapperWidth)s; 
-	margin:%(wrapperMargin)s;
+	width: 92%%; 
+	margin: 0 auto;
 }
 header{ 
 	padding:%(headerPadding)s;
 }
 #banner{ 
-	text-align:%(bannerTextAlign)s;
+	text-align:center;
 }	
 #hero,#page-header{
 	background:%(heroBackgroundColor)s;
@@ -188,13 +103,13 @@ header{
 #content,
 aside,
 .vertical-padding{  
-	padding:%(contentVerticalPadding)s;
+	padding:3em 0;
 }
-p{ margin:%(paragraphMargin)s;}
+p{ margin:0 0 1.5em;}
 
 
 /* RESPONSIVE IMAGES  */
-img{ max-width:%(imageMaxWidth)s; height:%(imageHeight)s;}
+img{ max-width:100%%; height:auto;}
 
 
 /*MAIN MENU*/
@@ -203,11 +118,11 @@ img{ max-width:%(imageMaxWidth)s; height:%(imageHeight)s;}
 	padding:%(menuTogglePadding)s;
 	margin:%(menuToggleMargin)s;
 	background:%(menuBackground)s;
-	letter-spacing:%(menuToggleLetterSpacing)s;
+	letter-spacing:0.2em;
 	color:%(menuTextColor)s;
 	cursor:pointer;
-	text-transform:%(menuTextTransform)s;
-	font-size:%(menuToggleFontSize)s;
+	text-transform:uppercase;
+	font-size:20px;
 }
 .menu-toggle.toggled-on{
 	background:%(menuToggleOnBackgroundColor)s;
@@ -233,9 +148,9 @@ img{ max-width:%(imageMaxWidth)s; height:%(imageHeight)s;}
 	margin:1px 0; 
 	padding:10px;
 	text-decoration:none;
-	text-transform:%(menuTextTransform)s;
-	letter-spacing:%(srtMenuLetterSpacing)s;
-	font-size:%(srtMenuFontSize)s;
+	text-transform:uppercase;
+	letter-spacing:0.10em;
+	font-size:.8em;
 }
 .srt-menu li a:hover{
 	background:%(srtMenuHoverBackground)s;
@@ -246,35 +161,30 @@ img{ max-width:%(imageMaxWidth)s; height:%(imageHeight)s;}
 	padding-left:40px;
 }
 .srt-menu li li li a {
-<<<<<<< HEAD
 	background:%(srtMenuHoverBackgroundThree)s;
 	padding-left:80px;
-=======
-	background:%(srtMenuHoverBackground3)s;
-	padding-left:%(srtMenuPaddingLeft)s;
->>>>>>> origin/master
 }
 
-/* SECONDARY MENU */
+/*SECONDARY MENU*/
 #secondary-navigation{
-	margin-bottom:%(secondaryMenuMarginBottom)s;
+	margin-bottom:60px;
 }
 #secondary-navigation ul{
-	margin:%(secondaryMenuMarginUl)s;
-	padding:%(secondaryMenuPaddingUl)s;
+	margin:0;
+	padding:0;
 }
 #secondary-navigation ul li a{ 
-	background:%(secondaryNavBackground)s;
-	color:%(secondaryNavTextLinkColor)s;
+	background:#E6E6E6;
+	color:#666;
 	display:block;
 	margin:5px 0; 
-	padding:%(secondaryNavTextLinkPadding)s;
+	padding:10px;
 	text-decoration:none;
 }
 #secondary-navigation ul li a:hover,
 #secondary-navigation ul li.current a{
-	background:%(secondaryNavBackgroundHover)s;
-	color:%(secondaryNavTextLinkHoverColor)s;
+	background:#2C8CB7;
+	color:#fff;
 }
 
 /*SPACE GRID ELEMENTS VERTICALLY, SINCE THEY ARE ONE UNDER ANOTHER*/
@@ -300,13 +210,13 @@ img{ max-width:%(imageMaxWidth)s; height:%(imageHeight)s;}
 
 /*FOOTER*/
 footer{  
-	background:%(footerBackgroundColor)s;
-	color:%(footerTextColor)s;
-	font-size:%(footerFontSize)s;
-	padding:%(footerPadding)s;
+	background:#333;
+	color:#ccc;
+	font-size:80%%;
+	padding:20px 0;
 }
 footer ul{
-	margin:0 0 0 8%;
+	margin:0 0 0 8%%;
 	padding:0;
 }
 
@@ -346,7 +256,9 @@ a.buttonlinkdiap:hover{
 
 
 
-/* Contain floats */ 
+
+
+/* Contain floats*/ 
 .clearfix:before,
 .clearfix:after,
 .row:before,
@@ -393,11 +305,11 @@ This is for mobile devices with a bit larger screens.
 TABLET & SMALLER LAPTOPS
 
 */
-@media only screen and (min-width: %(atMediaTabletMinWidth)s) {
+@media only screen and (min-width: 920px) {
 
 .wrapper{
-	max-width: %(atMediaTabletWrapperTabletMaxWidth)s; 
-	margin: %(atMediaTabletWrapperMargin)s;
+	max-width: 1200px; 
+	margin: .75em auto;
 }
 header{
 	padding:0;
@@ -414,14 +326,14 @@ header{
 
 #content {  
 	float:left;
-	width:%(atMediaTabletContentWidth)s;
+	width:65%%;
 }
 #content.wide-content{
 	float:none;
-	width:%(atMediaTabletWideContentWidth)s;
+	width:80%%;
 	margin-bottom:2em;
-	margin-left:10%;
-	margin-right:10%;
+	margin-left:10%%;
+	margin-right:10%%;
 }
 
 .flexslider{
@@ -434,7 +346,7 @@ margin: 0;
 
 aside { 
 	float:right;
-	width:30%;
+	width:30%%;
 }
 
 /*** MAIN MENU - ESSENTIAL STYLES ***/
@@ -452,7 +364,7 @@ aside {
 	width:			12em; /* left offset of submenus need to match (see below) */
 }
 .srt-menu ul li {
-	width:			100%;
+	width:			100%%;
 }
 .srt-menu li:hover {
 	visibility:		inherit; 
@@ -553,18 +465,18 @@ ul.srt-menu li li li.sfHover ul {
      margin-right: -15px;
 }
  
-.grid_1 { width: 8.33333333%; }
-.grid_2 { width: 16.66666667%; }
-.grid_3 { width: 25%; }
-.grid_4 { width: 33.33333333%; }
-.grid_5 { width: 41.66666667%; }
-.grid_6 { width: 50%; }
-.grid_7 { width: 58.33333333%; }
-.grid_8 { width: 66.66666667%; }
-.grid_9 { width: 75%; }
-.grid_10 { width: 83.33333333%; }
-.grid_11 { width: 91.66666667%; }
-.grid_12 { width: 100%; }
+.grid_1 { width: 8.33333333%%; }
+.grid_2 { width: 16.66666667%%; }
+.grid_3 { width: 25%%; }
+.grid_4 { width: 33.33333333%%; }
+.grid_5 { width: 41.66666667%%; }
+.grid_6 { width: 50%%; }
+.grid_7 { width: 58.33333333%%; }
+.grid_8 { width: 66.66666667%%; }
+.grid_9 { width: 75%%; }
+.grid_10 { width: 83.33333333%%; }
+.grid_11 { width: 91.66666667%%; }
+.grid_12 { width: 100%%; }
 
 .grid_1,
 .grid_2,
@@ -643,17 +555,13 @@ PRINT STYLESHEET
   pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
   thead { display: table-header-group; } /* h5bp.com/t */
   tr, img { page-break-inside: avoid; }
-  img { max-width: 100% !important; }
+  img { max-width: 100%% !important; }
   @page { margin: 0.5cm; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 } """
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
 
 
 if __name__ == '__main__':
-	simpleCss % simpleTheme
+    simpleCss % simpleTheme
 
