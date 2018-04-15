@@ -28,6 +28,7 @@ class SimpleSite(Publication):
     u"""Build a simple default website with several template options.
     Layout and content options defined by external parameters, e.g from a Markdown file.
 
+    >>> from pagebot.elements.web.d3.barchart import BarChart
     >>> from pagebot.contributions.filibuster.blurb import Blurb
     >>> blurb = Blurb()
     >>> doc = SimpleSite(name='TestDoc', viewId='Site', padding=30, autoPages=1)
@@ -37,6 +38,7 @@ class SimpleSite(Publication):
     >>> page = doc[1]
     >>> page.name = 'index'
     >>> template = doc.getTemplate('home')
+    >>> e = BarChart(parent=template)
     >>> page.applyTemplate(template)
     >>> view.info.cssCode = template.info.cssCode
     >>> view.info.resourcePaths = template.info.resourcePaths # Paths js, images, fonts and css to copy.

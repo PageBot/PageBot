@@ -179,9 +179,10 @@ class Family(object):
         u"""And the fonts to the family. This can be a list of Font instances, a list of font names or
         a list of font paths.
 
-        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> font = findFont('Roboto')
+        >>> font.path
+
         >>> families = getFamilies()
         >>> family = newFamily('MyOtherFamily')
         >>> font = family.addFont(path)

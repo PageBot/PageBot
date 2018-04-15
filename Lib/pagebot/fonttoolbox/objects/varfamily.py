@@ -77,11 +77,11 @@ class VarFamily(Family):
 
     def __init__(self, name=None, fonts=None):
         u"""Answer a VarFamily instance in the defined list of font paths or fonts list.  """
-        Family.__init__(self, name=None, fonts=None)
+        Family.__init__(self, name=name, fonts=fonts)
         self._parametricAxisFonts = {} # Key is parametric axis name
         self._parametricAxisMetrics = {} # Collection of font metrics and calculated parameters.
         self._metrics = None # Initialized on property call
-        self._originFont = None
+        self._originFont = None # Initialized on property call
         # Add the fonts. Also initialize self.originFont
         self.baseGlyphName = self.BASE_GLYPH_NAME
 
@@ -153,6 +153,7 @@ class VarFamily(Family):
         Answer None if no matching font could be found."""
         os2Weights = {}
         for font in self.fonts.values():
+            print('ewewee', font.path)
             diff = abs(weightClass - font.info.weightClass)
             if not diff in os2Weights:
                 os2Weights[diff] = []
@@ -210,10 +211,11 @@ class VarFamily(Family):
     #   C O N S T R U C T  P A R A M E T R I C  F O N T S
 
     def makeParametricFonts(self, axisName):
-        u"""Answer the two Font instances for calculated parametric Min and Max."""
+        u"""Answer the two Font instances for calculated parametric Min and Max.
+        If one of the extreme is equal to the origin, then answer None for that instance."""
         parametricAxisFonts = self.parametricAxisFonts
         if parametricAxisFonts is None:
-            return None
+            return None, None
         axisFontMin, axisFontMax = parametricAxisFonts[axisName]
         hook = 'makeParametricFont_'+axisName
         assert hasattr(self, hook)

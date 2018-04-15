@@ -102,8 +102,9 @@ class MampView(HtmlView):
             #shutil.copytree(resourcePath, dstPath)
 
         b = self.b # Get builder from self.doc.context of this view.
-        # SOLVE THIS LATER
-        #self.build_css(self) # Make doc build the main/overall CSS, based on all page styles.
+        # Add info CSS as a start.
+        b.addCss(self.info.cssCode)
+
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
@@ -125,7 +126,6 @@ class MampView(HtmlView):
         if self.info.cssCode:
             if not os.path.exists(cssPath):
                 os.makedirs(cssPath)
-            b.addCss(self.info.cssCode)
             b.writeCss(cssFilePath)
 
     def getUrl(self, name):
