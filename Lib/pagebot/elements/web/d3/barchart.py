@@ -58,24 +58,7 @@ class BarChart(Rect):
         >>> #doc.export('_export/BarChartTest')
         """
         cssClass = self.__class__.__name__
-        d = dict(cssClass=cssClass, 
-            border=self.css('border', 'black solid 1px'),
-            fill=color2Hex(self.css('fill'), '#F0F0F0'),
-            barFill=color2Hex(self.css('barFill'), '#2030A0'),
-            textAlign=self.css('xTextAlign', RIGHT),
-            textFill=color2Hex(self.css('textFill'), '#FF00FF'),
-            fontSize=self.css('fontSize', 10),
-            padding='%s %s %s %s' % (px(self.pt), px(self.pr), px(self.pb), px(self.pl)),
-            margin='%s %s %s %s' % (px(self.mt), px(self.mr), px(self.mb), px(self.ml)),
-            scale=1,
-            unit='%',
-            data='%s' % list(self.data),
-        )
-        b = view.context.b
-        # TODO: Make CSS-attribute collection be stored in file or <head> instead of middle of page.
-        #self.build_css(view)
-        b.style()
-        b.addHtml("""
+        cssCode = """
         .%(cssClass)s {
           border: %(border)s;
           background-color: %(fill)s;
@@ -89,8 +72,23 @@ class BarChart(Rect):
           margin: %(margin)s;
           color: %(textFill)s;
         }
-        """ % d)
-        b._style()
+        """
+        d = dict(cssClass=cssClass, 
+            border=self.css('border', 'black solid 1px'),
+            fill=color2Hex(self.css('fill'), '#F0F0F0'),
+            barFill=color2Hex(self.css('barFill'), '#2030A0'),
+            textAlign=self.css('xTextAlign', RIGHT),
+            textFill=color2Hex(self.css('textFill'), '#FF00FF'),
+            fontSize=self.css('fontSize', 10),
+            padding='%s %s %s %s' % (px(self.pt), px(self.pr), px(self.pb), px(self.pl)),
+            margin='%s %s %s %s' % (px(self.mt), px(self.mr), px(self.mb), px(self.ml)),
+            scale=1,
+            unit='%',
+            data='%s' % list(self.data),
+        )
+        self.info.cssCode = cssCode % d
+
+        b = view.context.b
 
         b.div(cssClass=cssClass, cssId=self.cssId)
 
@@ -102,8 +100,7 @@ class BarChart(Rect):
             self.drawAfter(self, view, origin)
 
         b._div()
-        b.script()
-        b.addHtml("""
+        b.addJs("""
         var data = %(data)s;
         d3.select(".%(cssClass)s")
             .selectAll("div")
@@ -112,7 +109,6 @@ class BarChart(Rect):
             .style("width", function(d) { return d * %(scale)s + "%(unit)s"; })
             .text(function(d) { return d; });
         """ % d)
-        b._script()
 
 if __name__ == '__main__':
     import doctest

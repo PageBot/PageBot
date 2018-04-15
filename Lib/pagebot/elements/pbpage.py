@@ -208,8 +208,12 @@ class Page(Element):
             #
             if info.jsCode is not None:
                 b.addHtml(info.jsCode)
-            elif info.jsPath is not None:
+            if info.jsPath is not None:
                 b.importHtml(info.jsPath) # Add JS content of file, if path is not None and the file exists.
+            if b._jsOut:
+                b.script()
+                b.addHtml('\n'.join(b._jsOut))
+                b._script()
             #else no default JS. To be added by the calling application.
 
             # Close the document
