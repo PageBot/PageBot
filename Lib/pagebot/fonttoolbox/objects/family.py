@@ -180,9 +180,8 @@ class Family(object):
         a list of font paths.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> font = findFont('Roboto')
-        >>> font.path
-
+        >>> font = findFont('Roboto-Regular')
+        >>> path = font.path
         >>> families = getFamilies()
         >>> family = newFamily('MyOtherFamily')
         >>> font = family.addFont(path)
