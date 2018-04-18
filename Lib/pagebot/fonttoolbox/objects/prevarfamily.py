@@ -17,7 +17,7 @@
 #
 import os, shutil, sys
 from fontTools.designspaceLib import DesignSpaceDocument
-from pagebot.fonttoolbox.objects.family import Family, getFamily
+from pagebot.fonttoolbox.objects.family import Family
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2Name, path2ParentPath
 
@@ -30,7 +30,7 @@ class PreVarFamily(Family):
     the defines the relation between fontfiles and axes.
 
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-    >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+    >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
     >>> pvf = PreVarFamily('Roboto', path)
     >>> sorted(pvf.axes.keys())
     ['slnt', 'wdth', 'wght']
@@ -83,7 +83,7 @@ class PreVarFamily(Family):
         if it does not exits yet.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
         >>> pvf = PreVarFamily('Roboto', path)
         >>> 'A' in pvf.glyphNames
         True
@@ -102,7 +102,7 @@ class PreVarFamily(Family):
         u"""Answer the cashed font that is defined as origin. Try to guess if not defined.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace' # On TTF files
         >>> pvf = PreVarFamily('Roboto', path)
         >>> pvf.defaultFont
         <Font Roboto-Regular>
@@ -130,7 +130,7 @@ class PreVarFamily(Family):
             return None
 
         # Create directory for the parametric axis fonts, if it does not exist.
-        paFontDir = path2ParentPath(origin.path) + '/@axes'
+        paFontDir = path2ParentPath(origin.path) + '/_export/@axes'
         if not os.path.exists(paFontDir):
             os.makedirs(paFontDir)
         for axisName in self.PARAMETRIC_AXES:
@@ -162,7 +162,7 @@ class PreVarFamily(Family):
         u"""Answer the metrics dictionary for the current included fonts.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
         >>> pvf = PreVarFamily('Roboto', path)
         >>> len(pvf.metrics)
         18
@@ -181,7 +181,7 @@ class PreVarFamily(Family):
         u"""Answer the font that is on the design space location with all axes as default.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
         >>> pvf = PreVarFamily('Roboto', path)
         >>> pvf.getDefaultFont()
         <Font Roboto-Regular>
@@ -236,7 +236,7 @@ class PreVarFamily(Family):
         u"""Answer the minimal/maximal widths of H.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
         >>> pvf = PreVarFamily('Roboto', path)
         >>> pvf.getMinMaxWidth() 
         (1219, 1461)
@@ -253,7 +253,7 @@ class PreVarFamily(Family):
         u"""Answer the minimal/max stems of H.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
         >>> pvf = PreVarFamily('Roboto', path)
         >>> pvf.getMinMaxStem() 
         (54, 350)
@@ -304,7 +304,7 @@ class PreVarFamily(Family):
         )
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
         >>> pvf = PreVarFamily('Roboto', path)
         >>> pvf.checkInterpolation() # For now only glyph name compatibility check
         {}
