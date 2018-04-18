@@ -34,7 +34,7 @@ class HtmlBuilder(XmlBuilder):
     >>> b.addCss('body{background-color: #AAA;}')
     >>> b._body()
     >>> b._html()
-    >>> ''.join(b._htmlOut)
+    >>> b.getHtml()
     u'<html xmlns="http://www.w3.org/1999/xhtml"><body>Hello world</body></html>'
     >>> ''.join(b._cssOut)
     'body{background-color: #AAA;}'
@@ -500,7 +500,7 @@ table {
         >>> b.compact = True
         >>> b.html()
         >>> b._html()
-        >>> ''.join(b._htmlOut)
+        >>> b.getHtml()
         u'<html xmlns="http://www.w3.org/1999/xhtml"></html>'
         """
         self.write(u'<html xmlns="%s"' % (xmlns or 'http://www.w3.org/1999/xhtml'))
@@ -551,7 +551,7 @@ table {
         >>> b._title()
         >>> b._head()
         >>> b._html()
-        >>> ''.join(b._htmlOut)
+        >>> b.getHtml()
         u'<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Title of the page</title></head></html>'
         """
         self.tabs()
@@ -854,6 +854,16 @@ table {
         You can use the tag to associate a caption together with some embedded content, such as a graphic or video.
         You can use the tag in conjunction with the <tag>figcaption</tag> element to provide a caption for the contents
         of your <tag>figure</tag> element.
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.figure()
+        >>> b.figcaption()
+        >>> b.addHtml('Hello world')
+        >>> b._figcaption()
+        >>> b._figure()
+        >>> b.getHtml()
+        u'<figure><figcaption>Hello world</figcaption></figure>'
         """
         self.write_tag(u'figcaption', True, args)
 
@@ -865,6 +875,14 @@ table {
         The hgroup method (HTML5) defines the heading of a section or a document.
         The hgroup element is used to group headers, <tag>h1</tag> to <tag>h6</tag>, where the largest
         is the main heading of the section, and the others are sub-headings.
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.hgroup()
+        >>> b.addHtml('Hello world')
+        >>> b._hgroup()
+        >>> b.getHtml()
+        u'<hgroup>Hello world</hgroup>'
         """
         self.write_tag(u'hgroup', True, args)
 
