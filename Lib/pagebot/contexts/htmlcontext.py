@@ -18,10 +18,9 @@ from pagebot.contexts.builders.webbuilder import WebBuilder
 from pagebot.contexts.strings.htmlstring import HtmlString
 
 class HtmlContext(BaseContext):
-    u"""A HtmlContext instance combines the specific functions of the Flat library
-    This way it way it hides e.g. the type of BabelString
-    instance needed, and the type of HTML/CSS file structure to be created."""
-
+    u"""A HtmlContext instance builds all necessary for a website, taking the element.
+    """
+    
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = HtmlString
     EXPORT_TYPES = ('html', 'css', 'js')

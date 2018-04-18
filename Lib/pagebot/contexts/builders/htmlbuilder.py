@@ -609,6 +609,14 @@ table {
         self.h1(cssClass='chapter')
             ...
         self._h1()
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h1()
+        >>> b.addHtml('Hello world')
+        >>> b._h1()
+        >>> b.getHtml()
+        u'<h1>Hello world</h1>'
         """
         self.write_tag_noWhitespace(u'h1', True, args)
 
@@ -620,9 +628,15 @@ table {
         u"""
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h1_('Hello world')
+        >>> b.getHtml()
+        u'<h1>Hello world</h1>'
         """
         self.h1(**args)
-        self.text(s)
+        self.addHtml(s)
         self._h1()
 
     def h2(self, **args):
@@ -633,6 +647,14 @@ table {
         self.h2(cssClass='head')
             ...
         self._h2()
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h2()
+        >>> b.addHtml('Hello world')
+        >>> b._h2()
+        >>> b.getHtml()
+        u'<h2>Hello world</h2>'
         """
         self.write_tag_noWhitespace(u'h2', True, args)
 
@@ -644,9 +666,15 @@ table {
         u"""
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
+ 
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h2_('Hello world')
+        >>> b.getHtml()
+        u'<h2>Hello world</h2>'
         """
         self.h2(**args)
-        self.text(s)
+        self.addHtml(s)
         self._h2()
 
     def h3(self, **args):
@@ -657,6 +685,14 @@ table {
         self.h3(cssClass='subhead')
             ...
         self._h3()
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h3()
+        >>> b.addHtml('Hello world')
+        >>> b._h3()
+        >>> b.getHtml()
+        u'<h3>Hello world</h3>'
         """
         self.write_tag_noWhitespace(u'h3', True, args)
 
@@ -668,9 +704,15 @@ table {
         u"""
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h3_('Hello world')
+        >>> b.getHtml()
+        u'<h3>Hello world</h3>'
         """
         self.h3(**args)
-        self.text(s)
+        self.addHtml(s)
         self._h3()
 
     def h4(self, **args):
@@ -681,6 +723,14 @@ table {
         self.h4(cssClass='subsubhead')
             ...
         self._h4()
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h4()
+        >>> b.addHtml('Hello world')
+        >>> b._h4()
+        >>> b.getHtml()
+        u'<h4>Hello world</h4>'
         """
         self.write_tag_noWhitespace(u'h4', True, args)
 
@@ -693,9 +743,15 @@ table {
         u"""
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h4_('Hello world')
+        >>> b.getHtml()
+        u'<h4>Hello world</h4>'
         """
         self.h4(**args)
-        self.text(s)
+        self.addHtml(s)
         self._h4()
 
     def h5(self, **args):
@@ -706,6 +762,14 @@ table {
         self.h5(cssClass='caption')
             ...
         self._h5()
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h5()
+        >>> b.addHtml('Hello world')
+        >>> b._h5()
+        >>> b.getHtml()
+        u'<h5>Hello world</h5>'
         """
         self.write_tag_noWhitespace(u'h5', True, args)
 
@@ -716,9 +780,15 @@ table {
         u"""
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h5_('Hello world')
+        >>> b.getHtml()
+        u'<h5>Hello world</h5>'
         """
         self.h5(**args)
-        self.text(s)
+        self.addHtml(s)
         self._h5()
 
     def h6(self, **args):
@@ -729,6 +799,14 @@ table {
         self.h6(cssClass='footnote')
             ...
         self._h6()
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h6()
+        >>> b.addHtml('Hello world')
+        >>> b._h6()
+        >>> b.getHtml()
+        u'<h6>Hello world</h6>'
         """
         self.write_tag_noWhitespace(u'h6', True, args)
 
@@ -739,9 +817,15 @@ table {
         u"""
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.h6_('Hello world')
+        >>> b.getHtml()
+        u'<h6>Hello world</h6>'
         """
         self.h6(**args)
-        self.text(s)
+        self.addHtml(s)
         self._h6()
 
     def figure(self, **args):
@@ -750,6 +834,14 @@ table {
         You can use the tag to associate a caption together with some embedded content, such as a graphic or video.
         You can use the tag in conjunction with the <tag>figcaption</tag> element to provide a caption for the contents
         of your <tag>figure</tag> element.
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.figure()
+        >>> b.addHtml('Hello world')
+        >>> b._figure()
+        >>> b.getHtml()
+        u'<figure>Hello world</figure>'
         """
         self.write_tag(u'figure', True, args)
 
