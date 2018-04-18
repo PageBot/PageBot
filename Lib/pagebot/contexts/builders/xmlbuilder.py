@@ -40,31 +40,32 @@ class XmlBuilder(BaseBuilder):
         return ' '.join(s)
 
     def _initialize(self):
+        self.compact = False
+        self._newLine = '\n' # Add in case self.compact is False
         self._doIndent = True
         self._tabLevel = 0
         self._tabIndent = '\t'
         self._tagStack = [] # Stack with running tags for closing and XML validation
         self._verbose = True
-        self._newLine = '\n'
         self._svgMode = False
         self._useOnline = True
 
     def tabs(self):
-        """"Output tabs to the current level and add newlines, depending on the setting of @self._newline@
+        """"Output tabs to the current level and add newlines, depending on the setting of self._newKine
         (string with newlines) and self._tabLevel (number of indents)."""
-        if self._verbose:
+        if not self.compact and self._verbose:
             self.write(self._newLine + (self._tabIndent * self._tabLevel))
 
     def tabIn(self):
-        if self._doIndent:
+        if not self.compact and self._doIndent:
             self._tabLevel += 1
 
     def tabOut(self):
-        if self._doIndent:
+        if not self.compact and self._doIndent:
             self._tabLevel = max(0, self._tabLevel - 1)
 
-    def newline(self, count=1):
-        if self._verbose:
+    def newLine(self, count=1):
+        if not self.compact:
             self.write(self._newLine * count)
 
     def getandwrite_attributes(self, tagname, args):
@@ -140,7 +141,7 @@ class XmlBuilder(BaseBuilder):
         self.write(' ')
         self.write(value)
 
-    def write_tag(self, tagname, open, args, newLine=False):
+    def write_tag(self, tagname, open, args):
         u"""
         Writes a normally formatted HTML tag, exceptions have a custom implementation, see respective functions.
         """
@@ -155,10 +156,9 @@ class XmlBuilder(BaseBuilder):
             self.tabIn()
         else:
             self.write(u'/>')
-        if newLine:
-            self.newLine()
+        self.newLine() # Optional write newline if not self.compat
 
-    def write_tag_noWhitespace(self, tagname, open, args, newLine=False):
+    def write_tag_noWhitespace(self, tagname, open, args):
         u"""Writes a normally formatted HTML tag, exceptions have a custom implementation,
         see respective functions. Don’t write any white space inside the block. E.g. used by <textarea>
         """
@@ -171,8 +171,7 @@ class XmlBuilder(BaseBuilder):
             self._pushTag(tagname)
         else:
             self.write(u'/>')
-        if newLine:
-            self.write('\n')
+        self.newLine() # Optional write newline if not self.compat
 
     # ---------------------------------------------------------------------------------------------------------
     #     B L O C K
@@ -194,28 +193,25 @@ class XmlBuilder(BaseBuilder):
         u"""Push the tag name to the stack of open stags."""
         self._tagStack.append(tag)
 
-    def _closeTag(self, tag, newLine=False):
+    def _closeTag(self, tag):
         self.tabOut()
         self.tabs()
         self.write(u'</%s>' % tag)
-        if newLine:
-            self.newLine()
+        self.newLine() # Optional write newline if not self.compat
         self._popTag(tag)
 
-    def _closeTag_noWhitespace(self, tag, newLine=False):
+    def _closeTag_noWhitespace(self, tag):
         u"""Close the tag. Don’t write any white space inside the block. E.g. used by <textarea>."""
         self.write(u'</%s>' % tag)
-        if newLine:
-            self.newLine()
+        self.newLine() # Optional write newline if not self.compat
         self._popTag(tag)
 
-    def _popTag(self, tag, newLine=False):
+    def _popTag(self, tag):
         u"""Pop tag from the tag stack."""
         runningTag = self._tagStack.pop()
         if runningTag is None or not runningTag == tag:
             self.write('<div color="#FF0000">Mismatch in closing tag "%s", expected "%s" in tree "%s".</div>' % (tag, runningTag, self._tagStack))
-            if newLine:
-                self.newLine()
+            self.newLine() # Optional write newline if not self.compat
 
     def _peekTag(self):
         u"""Answer the name of the current tag."""

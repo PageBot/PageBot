@@ -11,50 +11,37 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     varfamily.py
+#     prevarfamily.py
 #
 #     Implements a VarFamily class Font instances.
 #
 import os, shutil, sys
-
+from fontTools.designspaceLib import DesignSpaceDocument
 from pagebot.fonttoolbox.objects.family import Family, getFamily
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2Name, path2ParentPath
 
-def getVarFamily(name):
-    family = getFamily(name)
-    if family is not None:
-        return VarFamily(name, family.fonts.values)
-    return None
+ERROR_MISSING_GLYPH = 'MissingGlyph'
 
-class VarFamily(Family):
-    u"""A VarFamily is a special kind of family that contains a set of font that potentially form
+class PreVarFamily(Family):
+    u"""A PreVarFamily is a special kind of family that contains a set of font that potentially form
     the masters to create a VariableFont export. But the collection may not be up for creation yet,
-    that is why it is not a "VarFont". There can be a design space file included to define the relation
-    between the fontfiles and axes.
+    that is why it is not a "VarFont". The PreVarFamily is created from an existing design space file 
+    the defines the relation between fontfiles and axes.
 
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-    >>> p = getTestFontsPath() + '/google/roboto/'
-    >>> paths = p+'Roboto-Black.ttf', p+'Roboto-Bold.ttf', p+'Roboto-Italic.ttf', p+'Roboto-Light.ttf', p+'Roboto-Medium.ttf', p+'Roboto-Regular.ttf', p+'Roboto-Thin.ttf'
-    >>> vf = VarFamily('Test-Var', paths)
-    >>> #len(vf)
-    7
-    >>> #vf.checkInterpolation() # For now only glyph name compatibility check
-    {}
-    >>> #fontPath = sorted(vf.metrics.keys())[0]
-    >>> #vf.metrics[fontPath]['path'] == fontPath
+    >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+    >>> pvf = PreVarFamily('Roboto', path)
+    >>> sorted(pvf.axes.keys())
+    ['slnt', 'wdth', 'wght']
+    >>> len(pvf.designSpace.sources) == len(pvf.fonts) == 18
     True
-    >>> #vf.metrics[fontPath]['stems'].keys()
-    [350]
-    >>> #vf.metrics[fontPath]['bars'].keys()
-    [270]
-
     """
     BASE_GLYPH_NAME = 'H' # Use for base metrics analysis
 
     ORIGIN_OS2_WEIGHT_CLASS = 400
     # The quality of automatic parametric axis creation depends on the type of design and if
-    # there are interpolating sources (e.g. for compensation of stem width in 'xtra' and 'xopq'.
+    # there are interpolating sources (e.g. for compensation of stem width in 'XTRA' and 'XOPQ'.
     # Currently supporting these (automatic) parametric axes, if they can be derived from the
     # available source fonts.
     XTRA = 'XTRA' # Fixed H-stems, variable H-counter, variable margins
@@ -66,8 +53,6 @@ class VarFamily(Family):
     YTDE = 'YTDE' # Variable descenders
     YTAS = 'YTAS' # Variable ascenders
     GRAD = 'GRAD' # Grades
-    XGRD = 'XGRD' # Grade in x-direction
-    YGRD = 'YGRD' # Grade in y-direction
     RNDS = 'RNDS' # Rounded corners and terminals
     STNC = 'STNC' # Stencil
     PARAMETRIC_AXES = [XTRA, XOPQ, YTRA, YTLC, YTUC, YTDE, YTAS, GRAD, RNDS, STNC]
@@ -75,28 +60,65 @@ class VarFamily(Family):
     # Composite (registered) axes
     wght, wdth, opsz, ital, slnt = COMPOSITE_AXES = ['wght', 'wdth', 'opsz', 'ital', 'slnt']
 
-    def __init__(self, name=None, fonts=None):
-        u"""Answer a VarFamily instance in the defined list of font paths or fonts list.  """
+    def __init__(self, name, path):
+        u"""Answer a PreVarFamily instance from the defined design space path."""
+        self.designSpace = ds = DesignSpaceDocument()
+        ds.read(path)
+        self.axes = {}
+        for axis in self.designSpace.axes:
+            self.axes[axis.tag] = axis
+        fonts = {}
+        for source in ds.sources:
+            fonts[source.path] = Font(source.path)
         Family.__init__(self, name=name, fonts=fonts)
         self._parametricAxisFonts = {} # Key is parametric axis name
         self._parametricAxisMetrics = {} # Collection of font metrics and calculated parameters.
         self._metrics = None # Initialized on property call
-        self._originFont = None # Initialized on property call
-        # Add the fonts. Also initialize self.originFont
+        self._defaultFont = None # Initialized on property call
+        self._glyphNames = None # Set of all unique glyph names in all design space fonts
         self.baseGlyphName = self.BASE_GLYPH_NAME
 
-    def _get_originFont(self):
-        u"""Answer the cashed font that is defined as origin. Try to guess if not defined."""
-        if not self._originFont:
-            originFonts = self.getClosestOS2Weight(self.ORIGIN_OS2_WEIGHT_CLASS)
-            if originFonts:
-                self._originFont = originFonts[0] # Should be sorted by name or parameteric XOPQ
-                self._originFont.info.widthClass = 5
-                self._originFont.info.weightClass = 400
-        return self._originFont
-    def _set_originFont(self, font):
-        self._originFont = font
-    originFont = property(_get_originFont, _set_originFont)
+    def _get_glyphNames(self):
+        u"""Answer the set of all unique glyph names in all design space fonts. Initialize 
+        if it does not exits yet.
+
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> pvf = PreVarFamily('Roboto', path)
+        >>> 'A' in pvf.glyphNames
+        True
+        >>> len(pvf.glyphNames)
+        3387
+        """
+        if self._glyphNames is None:
+        # Collect all unique glyph names to look at, as the total set of all fonts in the design space.
+            self._glyphNames = set()
+            for font in self.fonts.values():
+                self._glyphNames = self._glyphNames.union(set(font.keys()))
+        return self._glyphNames
+    glyphNames = property(_get_glyphNames)
+
+    def _get_defaultFont(self):
+        u"""Answer the cashed font that is defined as origin. Try to guess if not defined.
+
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> pvf = PreVarFamily('Roboto', path)
+        >>> pvf.defaultFont
+        <Font Roboto-Regular>
+        """
+        if not self._defaultFont:
+            self._defaultFont = self.getDefaultFont()
+            if not self._defaultFont:
+                defaultFonts = self.getClosestOS2Weight(self.ORIGIN_OS2_WEIGHT_CLASS)
+                if defaultFonts:
+                    self._defaultFont = defaultFonts[0] # Should be sorted by name or parameteric XOPQ
+                    self._defaultFont.info.widthClass = 5
+                    self._defaultFont.info.weightClass = 400
+        return self._defaultFont
+    def _set_defaultFont(self, font):
+        self._defaultFont = font
+    defaultFont = property(_get_defaultFont, _set_defaultFont)
 
     def _get_parametricAxisFonts(self):
         u"""Generate the dictionary with parametric axis fonts. Key is the parametric axis name,
@@ -110,7 +132,7 @@ class VarFamily(Family):
         # Create directory for the parametric axis fonts, if it does not exist.
         paFontDir = path2ParentPath(origin.path) + '/@axes'
         if not os.path.exists(paFontDir):
-            os.makedirs(paFontPath)
+            os.makedirs(paFontDir)
         for axisName in self.PARAMETRIC_AXES:
             self._parametricAxisFonts[axisName] = []
             for extreme in ('_min', '_max'):
@@ -139,6 +161,14 @@ class VarFamily(Family):
     def _get_metrics(self):
         u"""Answer the metrics dictionary for the current included fonts.
 
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> pvf = PreVarFamily('Roboto', path)
+        >>> len(pvf.metrics)
+        18
+        >>> metrics = pvf.metrics[pvf.defaultFont.path]
+        >>> metrics['stems'].keys()[0]
+        193
         """
         self._metrics = {}
         for path, font in self.fonts.items():
@@ -147,13 +177,26 @@ class VarFamily(Family):
         return self._metrics
     metrics = property(_get_metrics)
 
+    def getDefaultFont(self):
+        u"""Answer the font that is on the design space location with all axes as default.
+
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> pvf = PreVarFamily('Roboto', path)
+        >>> pvf.getDefaultFont()
+        <Font Roboto-Regular>
+        """
+        if self.designSpace.default is None: # Not yet initialized
+            self.designSpace.checkDefault()
+        path = self.designSpace.default.path
+        return self.fonts.get(path)
+
     def getClosestOS2Weight(self, weightClass=ORIGIN_OS2_WEIGHT_CLASS):
         u"""Answer the list of fonts (there can be more that one, accidentally located at that position.
         Default is the origin at weightClass == ORIGIN_OS2_WEIGHT_CLASS (400).
         Answer None if no matching font could be found."""
         os2Weights = {}
         for font in self.fonts.values():
-            print('ewewee', font.path)
             diff = abs(weightClass - font.info.weightClass)
             if not diff in os2Weights:
                 os2Weights[diff] = []
@@ -190,17 +233,31 @@ class VarFamily(Family):
         return weightWidthLocations
 
     def getMinMaxWidth(self):
-        u"""Answer the minimal/max widths of H."""
+        u"""Answer the minimal/maximal widths of H.
+
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> pvf = PreVarFamily('Roboto', path)
+        >>> pvf.getMinMaxWidth() 
+        (1219, 1461)
+        """
         minWidth = sys.maxsize
         maxWidth = -minWidth
-        for font in self._fonts.values():
-            g = font[self.baseGlyphName].width or 0
-            minWidth = min(g.width, minWidth)
-            maxWidth = max(g.width, maxWidth)
+        for font in self.fonts.values():
+            width = font[self.baseGlyphName].width or 0
+            minWidth = min(width, minWidth)
+            maxWidth = max(width, maxWidth)
         return minWidth, maxWidth
 
     def getMinMaxStem(self):
-        u"""Answer the minimal/max stems of H."""
+        u"""Answer the minimal/max stems of H.
+
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> pvf = PreVarFamily('Roboto', path)
+        >>> pvf.getMinMaxStem() 
+        (54, 350)
+        """
         minStem = sys.maxsize
         maxStem = -minStem
         for metrics in self.metrics.values():
@@ -218,11 +275,11 @@ class VarFamily(Family):
             return None, None
         axisFontMin, axisFontMax = parametricAxisFonts[axisName]
         hook = 'makeParametricFont_'+axisName
-        assert hasattr(self, hook)
+        assert hasattr(self, hook), ('VarFamily.makeParametricFonts "%s" not implemented' % hook)
         return getattr(self, hook)(axisFontMin, axisFontMax)
 
-    def makeParametricFont_xtra(self, axisFontMin, axisFontMax):
-        u"""Adjust the font outlines and other metrics to the guesse min/max, starting with self.originFont."""
+    def makeParametricFont_XTRA(self, axisFontMin, axisFontMax):
+        u"""Adjust the font outlines and other metrics to the guess min/max, starting with self.originFont."""
         Hg = self.originFont[self.baseGlyphName]
         counters = Hg.analyzer.horizontalCounters
         stems = Hg.analyzer.stems
@@ -232,47 +289,44 @@ class VarFamily(Family):
 
     #   I N T E R P O L A T I O N
 
-    def checkInterpolation(self, fontFilter=None):
-        u"""This method will test if there are problems for the current set of fonts to be interpolated,
-        regarding the special specs of VarFonts.
-        Answer resulting dictionary with format dict(A=dict(ok=[path1,...], error=[path2,...], report=[]), ...)
-        """
+    def checkInterpolation(self):
+        u"""This method will test if there are interpolation problems for the fonts in the design space.
+        The comparing is done against the default font (therefor not included in the error messages)
+        Answer resulting dictionary with Error instances, showing the type of error.
 
-        """
-        TODO: Get some interpolating examples in the test fonts folder.
+        dict(
+            A=dict(
+                ok=[fontPath1, ...], 
+                error=[fontPath2, ...], 
+                report=[]
+            ), 
+            ...
+        )
+
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = '/Users/petr/Desktop/TYPETR-git/TYPETR-Proforma/master_ttf_interpolatable'
-        >>> vf = VarFamily('Test-Var')
-        >>> vf.addFonts(path)
-        >>> vf.checkInterpolation() # For now only glyph name compatibility check
-        The font has no kern feature.
-        The fun ends here.
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+        >>> pvf = PreVarFamily('Roboto', path)
+        >>> pvf.checkInterpolation() # For now only glyph name compatibility check
         {}
+        >>> pvf.glyphNames.add('BadGlyph') # Insert error in total set of glyphNames
+        >>> len(pvf.checkInterpolation()['BadGlyph'][ERROR_MISSING_GLYPH])
+        18
         """
-        if fontFilter is None:
-            fontFilter = []
-        elif isinstance(fontFilter, str):
-            fontFilter = [fontFilter]
         errors = {} # Total collection of (font.path-->glyphName) that do not interpolate.
+            
+        # Test compatibility of the total set of all glyph names in the design space.
+        for glyphName in self.glyphNames: # Get glyphs names of all fonts combined
+            for font in self.fonts.values():
+                if not glyphName in font:
+                    if not glyphName in errors:
+                        errors[glyphName] = {}
+                    if not ERROR_MISSING_GLYPH in errors[glyphName]:
+                        errors[glyphName][ERROR_MISSING_GLYPH] = []
+                    errors[glyphName][ERROR_MISSING_GLYPH].append(font.path)
 
         # Get reference regular to compare with.
-        refFont = self.findRegularFont()
+        refFont = self.defaultFont
 
-        # Collect all unique glyph names to look at, as the total set of all fonts.
-        glyphNames = set()
-        path2Fonts = {}
-        for font in self.fonts.values():
-            fontName = path2Name(font.path)
-            match = True
-            for filterPart in fontFilter:
-                if not filterPart in fontName:
-                    match = False
-                    break
-            if match:
-                glyphNames = glyphNames.union(set(font.keys()))
-                path2Fonts[font.path] = font # So we can make a sorted list of paths
-
-        # Now we have the total set of all glyph names in all fonts.
         '''
         for glyphName in glyphNames:
             # Check compatibility of outlines

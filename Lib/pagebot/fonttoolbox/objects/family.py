@@ -170,6 +170,8 @@ class Family(object):
         1
         >>> del families[family.name]
         """
+        if isinstance(fontsOrPaths, dict):
+            fontsOrPaths = fontsOrPaths.values()
         if not isinstance(fontsOrPaths, (tuple, list)): # Only if not None and not empty.
             fontsOrPaths = [fontsOrPaths]
         for fontOrPath in fontsOrPaths:
@@ -216,7 +218,7 @@ class Family(object):
 
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> len(family.getFonts())
-        12
+        18
         """
         return self.fonts.values()
 
@@ -291,7 +293,7 @@ class Family(object):
         5
         >>> family = getFamily('Roboto')
         >>> len(family.getRomanFonts())
-        6
+        9
         """
         romanFonts = {}
         for fontPath, font in self.fonts.items():
@@ -307,7 +309,7 @@ class Family(object):
         0
         >>> family = getFamily('Roboto')
         >>> len(family.getItalicFonts())
-        6
+        9
         """
         italicFonts = {}
         for fontPath, font in self.fonts.items():
@@ -355,7 +357,7 @@ class Family(object):
 
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> len(family)
-        12
+        18
         >>> family.findFont(weight='Medium')
         <Font Roboto-Medium>
 

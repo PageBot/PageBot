@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='utf-8'?>
+<designspace format="3">
+    <axes>
+        <axis default="400" maximum="900" minimum="100" name="weight" tag="wght">
+            <labelname xml:lang="en">Weight</labelname>
+        </axis>
+        <axis default="100" maximum="100" minimum="75" name="width" tag="wdth">
+            <labelname xml:lang="en">Width</labelname>
+        </axis>
+        <axis default="0" maximum="12" minimum="0" name="slant" tag="slnt">
+            <labelname xml:lang="en">Slant</labelname>
+        </axis>
+    </axes>
+    <sources>
+        <source familyname="Roboto" filename="Roboto-Thin.ttf" name="Roboto-Thin.ttf" stylename="Thin">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="0" />
+                <dimension name="weight" xvalue="100" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-Light.ttf" name="Roboto-Light.ttf" stylename="Light">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="0" />
+                <dimension name="weight" xvalue="300" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-Regular.ttf" name="Roboto-Regular.ttf" stylename="Regular">
+            <info copy="1" />
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="0" />
+                <dimension name="weight" xvalue="400" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-Medium.ttf" name="Roboto-Medium.ttf" stylename="Medium">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="0" />
+                <dimension name="weight" xvalue="500" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-Bold.ttf" name="Roboto-Bold.ttf" stylename="Bold">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="0" />
+                <dimension name="weight" xvalue="700" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-Black.ttf" name="Roboto-Black.ttf" stylename="Black">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="0" />
+                <dimension name="weight" xvalue="900" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-ThinItalic.ttf" name="Roboto-ThinItalic.ttf" stylename="Thin Italic">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="12" />
+                <dimension name="weight" xvalue="100" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-LightItalic.ttf" name="Roboto-LightItalic.ttf" stylename="Light Italic">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="12" />
+                <dimension name="weight" xvalue="300" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-Italic.ttf" name="Roboto-Italic.ttf" stylename="Italic">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="12" />
+                <dimension name="weight" xvalue="400" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-MediumItalic.ttf" name="Roboto-MediumItalic.ttf" stylename="Medium Italic">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="12" />
+                <dimension name="weight" xvalue="500" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-BoldItalic.ttf" name="Roboto-BoldItalic.ttf" stylename="Bold Italic">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="12" />
+                <dimension name="weight" xvalue="700" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="Roboto-BlackItalic.ttf" name="Roboto-BlackItalic.ttf" stylename="Black Italic">
+            <location>
+                <dimension name="width" xvalue="100" />
+                <dimension name="slant" xvalue="12" />
+                <dimension name="weight" xvalue="900" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="RobotoCondensed-Light.ttf" name="RobotoCondensed-Light.ttf" stylename="Condensed Light">
+            <location>
+                <dimension name="width" xvalue="75" />
+                <dimension name="slant" xvalue="0" />
+                <dimension name="weight" xvalue="300" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="RobotoCondensed-Regular.ttf" name="RobotoCondensed-Regular.ttf" stylename="Condensed Regular">
+            <location>
+                <dimension name="width" xvalue="75" />
+                <dimension name="slant" xvalue="0" />
+                <dimension name="weight" xvalue="400" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="RobotoCondensed-Bold.ttf" name="RobotoCondensed-Bold.ttf" stylename="Condensed Bold">
+            <location>
+                <dimension name="width" xvalue="75" />
+                <dimension name="slant" xvalue="0" />
+                <dimension name="weight" xvalue="700" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="RobotoCondensed-LightItalic.ttf" name="RobotoCondensed-LightItalic.ttf" stylename="Condensed Light Italic">
+            <location>
+                <dimension name="width" xvalue="75" />
+                <dimension name="slant" xvalue="12" />
+                <dimension name="weight" xvalue="300" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="RobotoCondensed-Italic.ttf" name="RobotoCondensed-Italic.ttf" stylename="Condensed Italic">
+            <location>
+                <dimension name="width" xvalue="75" />
+                <dimension name="slant" xvalue="12" />
+                <dimension name="weight" xvalue="400" />
+            </location>
+        </source>
+        <source familyname="Roboto" filename="RobotoCondensed-BoldItalic.ttf" name="RobotoCondensed-BoldItalic.ttf" stylename="Condensed Bold Italic">
+            <location>
+                <dimension name="width" xvalue="75" />
+                <dimension name="slant" xvalue="12" />
+                <dimension name="weight" xvalue="700" />
+            </location>
+        </source>
+    </sources>
+</designspace>
