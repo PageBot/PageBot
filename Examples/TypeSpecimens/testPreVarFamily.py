@@ -10,11 +10,8 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     testVarFamily.py
-#
-#     TODO: Started using context for drawing.
-#     TODO: Not done for all drawing functions yet.
-#
+#     testPreVarFamily.py
+##
 #     https://www.typenetwork.com/brochure/opentype-font-variations/
 #     https://variationsguide.typenetwork.com/#xopq
 #     "wght" 134, "wdth" 369, "opsz" 36, “GRAD” 88 , ”XOPQ" 88, "XTRA" 402, "YOPQ" 50, "YTLC" 500, "YTSE" 18;
@@ -30,10 +27,16 @@ if 1:
 else:
     from pagebot.contexts.svgcontext import SvgContext
     context = SvgContext()
-from pagebot.fonttoolbox.objects.varfamily import getVarFamily, Family
+from pagebot.style import CENTER
+
+from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+from pagebot.fonttoolbox.objects.prevarfamily import PreVarFamily
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 from pagebot.fonttoolbox.analyzers.stems import Stem, Bar, BlueBar, Counter, VerticalCounter, Width, DiagonalStem
 from pagebot.toolbox.transformer import asInt, path2Name, path2ParentPath
+
+path = getTestFontsPath() + '/google/roboto/Roboto.designspace'
+usedPositions = {}
 
 SHOW_COORDINATES = True
 
@@ -41,7 +44,7 @@ ORIGIN_OS2_WEIGHT_CLASS = 400
 
 GLYPH = 'H'
 
-EXPORT_PATH = '_export/RobotoDelta-VF.svg'
+EXPORT_PATH = '_export/RobotoDelta-VF.pdf'
 
 def checkInterpolation(fonts):
     u"""This method will test if there are problems for the current set of fonts to be interpolated,
@@ -71,23 +74,28 @@ def checkInterpolation(fonts):
     return glyphs
 
 def drawOS2Label(varFamily, fonts, weight, width):
-    fill(1, 0, 0)
-    stroke(None)
+    context.fill((1, 0, 0))
+    context.stroke(None)
     R = 20
     x, y = weight, width * 100 # Scale OS/2 width to 1000
-    oval(x-R/2, y-R/2, R, R)
+
+    context.oval(x-R/2, y-R/2, R, R)
+    
     if varFamily.originFont in fonts: 
         # If one of these is the guessed origin font, then draw marker
-        fill(None)
-        stroke(1, 0, 0)
-        strokeWidth(2)
+        context.fill(None)
+        context.stroke(1, 0, 0)
+        context.strokeWidth(2)
         R = 27
-        oval(x-R/2, y-R/2, R, R)
+        context.oval(x-R/2, y-R/2, R, R)
     return x, y    
 
-def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
+def drawFontLabel(p, prevarFamily, f, fIndex=None, fAxis=None):
         x, y = p
-        print f.info.styleName, f.info.weightClass, f.info.widthClass
+        #print f.info.styleName, f.info.weightClass, f.info.widthClass
+        while (x, y) in usedPositions:
+            y -= 80
+        usedPositions[(x, y)] = f
         
         glyphH = f[GLYPH]
         if not glyphH.width:
@@ -139,16 +147,16 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
                 label = ''               
             else:
                 label = '#%d\n' % fIndex
-            bs = c.newString(label + ('S:%d\nW:%d\n%d' % (weightLoc, widthLoc, f.info.weightClass)), style=dict(fontSize=10, xTextAlign='center', textFill=0))
-            tw, th = c.textSize(bs)
-            c.text(bs, (weightLoc-tw/2, widthLoc-24))
+            bs = context.newString(label + ('S:%d\nW:%d\n%d' % (weightLoc, widthLoc, f.info.weightClass)), style=dict(fontSize=10, xTextAlign='center', textFill=0))
+            tw, th = context.textSize(bs)
+            context.text(bs, (weightLoc-tw/2, widthLoc-24))
 
-            if varFamily.originFont is f: 
+            if prevarFamily.originFont is f: 
                 # If one of these is the guessed origin font, then draw marker
-                c.fill(None)
-                c.stroke((0, 0.5, 0), 2) # Stroke color and width
+                context.fill(None)
+                context.stroke((0, 0.5, 0), 2) # Stroke color and width
                 R = 23
-                c.oval(weightLoc-R/2, widthLoc-R/2, R, R)
+                context.oval(weightLoc-R/2, widthLoc-R/2, R, R)
 
         else:
             pass
@@ -158,12 +166,12 @@ def drawFamilyOverview(name):
 
     # As we can guess the origin font, there is a reference for the other
     # masters to test against.
-    #print '=== Guessed origin font:', path2Name(varFamily.originFont.path)
-    #print checkInterpolation(varFamily.fonts)
-    #print '=== Parametric axis fonts:', varFamily.parametricAxisFonts
-    #print '=== Parametric axis metrics:', varFamily.parametricAxisMetrics
+    #print '=== Guessed origin font:', path2Name(prevarFamily.originFont.path)
+    #print checkInterpolation(prevarFamily.fonts)
+    #print '=== Parametric axis fonts:', prevarFamily.parametricAxisFonts
+    #print '=== Parametric axis metrics:', prevarFamily.parametricAxisMetrics
     
-    varFamily = getVarFamily(name)#varFamily = getVarFamily(name)
+    prevarFamily = PreVarFamily('Roboto', path)
     
     context.newPage(1200, 1200)
     # Draw design space for width/weight
@@ -212,31 +220,29 @@ def drawFamilyOverview(name):
     
     fIndex = 1
     # Find widths and weights as defined by OS/2 and plot them as dots + names
-    for (weight, width), fonts in varFamily.getOS2WeightWidthClasses().items():
+    for (weight, width), fonts in prevarFamily.getOS2WeightWidthClasses().items():
     
         # Draw positions according to OS/2 values
-        x, y = drawOS2Label(varFamily, fonts, weight, width)
+        x, y = drawOS2Label(prevarFamily, fonts, weight, width)
 
-        # Draw H and labels, stacked under the dot.
+        # Draw H and labels, stacked under the dot in case there are fonts 
+        # on the same position.
         for f in fonts:
-            drawFontLabel((x, y), varFamily, f, fIndex)
+            drawFontLabel((x, y), prevarFamily, f, fIndex)
             fIndex += 1
 
-    if varFamily is not None:
-        print(varFamily.fonts)
-        print(varFamily.originFont)
-        print(varFamily.getClosestOS2Weight())
+    if prevarFamily is not None:
         
-        xtraFonts = varFamily.makeParametricFonts(varFamily.XTRA)
-        print xtraFonts
+        xtraFonts = prevarFamily.makeParametricFonts(prevarFamily.XTRA)
         xtraMinFont, xtraMaxFont = xtraFonts
-        x, y = drawOS2Label(varFamily, [xtraMinFont], xtraMinFont.info.weightClass, xtraMinFont.info.widthClass)
-        drawFontLabel((x, y), varFamily, xtraMinFont, fAxis=varFamily.XTRA+'_min')
-
-        x, y = drawOS2Label(varFamily, [xtraMaxFont], xtraMaxFont.info.weightClass, xtraMaxFont.info.widthClass)
-        drawFontLabel((x, y), varFamily, xtraMaxFont, fAxis=varFamily.XTRA+'_max')
+        x, y = drawOS2Label(prevarFamily, [xtraMinFont], xtraMinFont.info.weightClass, xtraMinFont.info.widthClass)
             
-    return varFamily
+        drawFontLabel((x, y), prevarFamily, xtraMinFont, fAxis=prevarFamily.XTRA+'_min')
+
+        x, y = drawOS2Label(prevarFamily, [xtraMaxFont], xtraMaxFont.info.weightClass, xtraMaxFont.info.widthClass)
+        drawFontLabel((x, y), prevarFamily, xtraMaxFont, fAxis=prevarFamily.XTRA+'_max')
+            
+    return prevarFamily
     
 #'RobotoDelta-VF'
 drawFamilyOverview('Roboto')
