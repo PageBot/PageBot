@@ -958,6 +958,14 @@ table {
         """
         The p tag is the standard XHTML paragraph.
         http://www.w3schools.com/tags/tag_p.asp
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.p()
+        >>> b.addHtml('Hello world')
+        >>> b._p()
+        >>> b.getHtml()
+        u'<p>Hello world</p>'
         """
         self.write_tag_noWhitespace(u'p', True, args)
 
@@ -990,6 +998,14 @@ table {
         onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
         onkeyup</todo>
         <www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/>
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.strong()
+        >>> b.addHtml('Hello world')
+        >>> b._strong()
+        >>> b.getHtml()
+        u'<strong>Hello world</strong>'
         """
         self.write_tag_noWhitespace(u'strong', True, args)
 
@@ -1009,10 +1025,15 @@ table {
         """
         The b tag is the standard XHTML bold.  Note that nowadays it is better to implement this
         typographic behavior through span and CSS.<para/>
-        <todo>Add the other attributes to the b tag such as: id, class, title, style, dir, lang,
-        onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
-        onkeyup</todo>
         <www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/>
+
+        >>> b = HtmlBuilder()
+        >>> b.compact = True
+        >>> b.b()
+        >>> b.addHtml('Hello world')
+        >>> b._b()
+        >>> b.getHtml()
+        u'<b>Hello world</b>'
         """
         self.write_tag_noWhitespace(u'b', True, args)
 
