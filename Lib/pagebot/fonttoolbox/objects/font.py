@@ -170,7 +170,7 @@ class Font(object):
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> len(font)
-        1294
+        3387
         """
         if 'glyf' in self.ttFont:
             return len(self.ttFont['glyf'])
