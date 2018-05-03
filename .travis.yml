@@ -62,7 +62,7 @@ script:
 - python Lib/pagebot/fonttoolbox/objects/font.py
 - python Lib/pagebot/fonttoolbox/objects/fontinfo.py
 - python Lib/pagebot/fonttoolbox/objects/glyph.py
-- python Lib/pagebot/fonttoolbox/objects/varfamily.py
+- python Lib/pagebot/fonttoolbox/objects/prevarfamily.py
 - python Lib/pagebot/fonttoolbox/otlTools.py
 - python Lib/pagebot/fonttoolbox/ttftools.py
 - python Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
