@@ -38,7 +38,7 @@ class HtmlBuilder(XmlBuilder):
     >>> b.getHtml()
     u'<html xmlns="http://www.w3.org/1999/xhtml"><body>Hello world</body></html>'
     >>> ''.join(b._cssOut)
-    'body {background-color: #ffff00;}'
+    'body {background-color: #FFFF00;}'
     """
     PB_ID = 'html' # Id to make build_html hook name. Views will be calling e.build_html()
     
