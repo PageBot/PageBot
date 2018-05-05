@@ -16,7 +16,8 @@
 #
 from pagebot.style import ORIGIN
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset, int2Color
+from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.color import Color
 
 class Galley(Element):
     u"""A Galley is sticky sequential flow of elements, where the parts can have
@@ -31,7 +32,7 @@ class Galley(Element):
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
         
-    OLD_PAPER_COLOR = int2Color(0xF8ECC2) # Color of old paper: #F8ECC2
+    OLD_PAPER_COLOR = Color(rgb=0xF8ECC2).css # Color of old paper: #F8ECC2
 
     def __init__(self, **kwargs):
         Element.__init__(self,  **kwargs)

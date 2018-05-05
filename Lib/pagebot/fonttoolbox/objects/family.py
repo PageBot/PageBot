@@ -218,7 +218,7 @@ class Family(object):
 
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> len(family.getFonts())
-        18
+        38
         """
         return self.fonts.values()
 
@@ -293,7 +293,7 @@ class Family(object):
         5
         >>> family = getFamily('Roboto')
         >>> len(family.getRomanFonts())
-        9
+        29
         """
         romanFonts = {}
         for fontPath, font in self.fonts.items():
