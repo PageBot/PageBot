@@ -20,7 +20,7 @@
 from __future__ import division # Make integer division result in float.
 
 from pagebot.elements import Rect
-from pagebot.toolbox.transformer import color2Hex
+from pagebot.toolbox.color import Color
 from pagebot.style import RIGHT
 from pagebot.toolbox.units import px
 
@@ -77,10 +77,10 @@ class BarChart(Rect):
         """
         d = dict(cssClass=cssClass, 
             border=self.css('border', 'black solid 1px'),
-            fill=color2Hex(self.css('fill'), '#F0F0F0'),
-            barFill=color2Hex(self.css('barFill'), '#2030A0'),
+            fill=Color(rgb=self.css('fill', 0xF0F0F0)).css,
+            barFill=Color(rgb=self.css('barFill', 0x2030A0)).css,
             textAlign=self.css('xTextAlign', RIGHT),
-            textFill=color2Hex(self.css('textFill'), '#FF00FF'),
+            textFill=Color(rgb=self.css('textFill', 0xFF00FF)).css,
             fontSize=self.css('fontSize', 10),
             padding='%s %s %s %s' % (px(self.pt), px(self.pr), px(self.pb), px(self.pl)),
             margin='%s %s %s %s' % (px(self.mt), px(self.mr), px(self.mb), px(self.ml)),
