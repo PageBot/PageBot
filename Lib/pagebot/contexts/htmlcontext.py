@@ -14,11 +14,14 @@
 #     htmlcontext.py
 #
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.contexts.builders.webbuilder import WebBuilder
+from pagebot.contexts.builders.htmlbuilder import HtmlBuilder
 from pagebot.contexts.strings.htmlstring import HtmlString
 
 class HtmlContext(BaseContext):
     u"""A HtmlContext instance builds all necessary for a website, taking the element.
+    Most of the building is done by the HtmlBuilder instance, stored as self.b.
+    Still we need this HtmlContext layer, as not all drawing can be done in html, so 
+    this context can decide to include SVG or pixel images for certain types of elements.
     """
     
     # Used by the generic BaseContext.newString( )
@@ -26,7 +29,7 @@ class HtmlContext(BaseContext):
     EXPORT_TYPES = ('html', 'css', 'js')
 
     def __init__(self):
-           self.b = WebBuilder()
+           self.b = HtmlBuilder()
 
     #   T E X T
 

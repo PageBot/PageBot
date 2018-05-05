@@ -123,9 +123,9 @@ class PreVarFamily(Family):
     def _get_parametricAxisFonts(self):
         u"""Generate the dictionary with parametric axis fonts. Key is the parametric axis name,
         value is the font instance (there can only be one font per axis). If the fonts don't
-        exist as cached files, they are created. The font currently under self.originFont is
+        exist as cached files, they are created. The font currently under self.defaultFont is
         used a neutral, for which all delta's are 0."""
-        origin = self.originFont
+        origin = self.defaultFont
         if origin is None:
             return None
 
@@ -155,7 +155,7 @@ class PreVarFamily(Family):
     parametricAxisMetrics = property(_get_parametricAxisMetrics)
 
     def addFont(self, pathOrFont, install=True):
-        self._originFont = None # Reset to force new initialization of the property.
+        self._defaultFont = None # Reset to force new initialization of the property.
         Family.addFont(self, pathOrFont)
 
     def _get_metrics(self):
@@ -279,8 +279,8 @@ class PreVarFamily(Family):
         return getattr(self, hook)(axisFontMin, axisFontMax)
 
     def makeParametricFont_XTRA(self, axisFontMin, axisFontMax):
-        u"""Adjust the font outlines and other metrics to the guess min/max, starting with self.originFont."""
-        Hg = self.originFont[self.baseGlyphName]
+        u"""Adjust the font outlines and other metrics to the guess min/max, starting with self.defaultFont."""
+        Hg = self.defaultFont[self.baseGlyphName]
         counters = Hg.analyzer.horizontalCounters
         stems = Hg.analyzer.stems
         axisFontMin.info.widthClass = 1

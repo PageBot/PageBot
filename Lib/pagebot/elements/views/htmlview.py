@@ -19,7 +19,7 @@ from pagebot.contexts.htmlcontext import HtmlContext
 
 class HtmlView(BaseView):
     u"""Abstract class for HTML/CSS generating views."""
- 
+
     def _getContext(self):
         u"""Answer the default context for this type of view."""
         return HtmlContext()
@@ -29,10 +29,10 @@ class HtmlView(BaseView):
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
         b = view.context.b
-        if self.info.cssCode is not None:
-            b.addHtml(self.info.cssCode)
+        if self.cssCode is not None:
+            b.addHtml(self.cssCode)
         elif self.info.cssPath is not None:
-            b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
+            b.importCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
         else:
             b.headerCss(self.name or self.title)
             b.resetCss() # Add CSS to reset specific default behavior of browsers.

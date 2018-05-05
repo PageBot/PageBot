@@ -25,7 +25,8 @@ from pagebot.style import NO_COLOR, RIGHT
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
-    u"""A View is just another kind of container, kept by document to make a certain presentation 
+    u"""The PageView is contains the parameters to export the pages as documents.
+    A View is just another kind of container, kept by document to make a certain presentation 
     of the page tree. Views use the current Context.b builder for export."""
     viewId = 'Page'
 

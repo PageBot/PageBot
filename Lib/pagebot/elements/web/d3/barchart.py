@@ -57,6 +57,8 @@ class BarChart(Rect):
         >>> result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, view.DEFAULT_HTML_FILE)))
         >>> #doc.export('_export/BarChartTest')
         """
+        b = view.context.b
+
         cssClass = self.__class__.__name__
         cssCode = """
         .%(cssClass)s {
@@ -86,10 +88,7 @@ class BarChart(Rect):
             unit='%',
             data='%s' % list(self.data),
         )
-        self.info.cssCode = cssCode % d
-
-        b = view.context.b
-
+        b.addCss(cssCode % d)
         b.div(cssClass=cssClass, cssId=self.cssId)
 
         if drawElements:

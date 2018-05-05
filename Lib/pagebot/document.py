@@ -21,7 +21,6 @@ from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.style import getRootStyle, TOP, BOTTOM
 from pagebot.toolbox.transformer import obj2StyleId
-from pagebot.contexts.builders.buildinfo import BuildInfo # Container with Builder flags and data/parametets
 
 class Document(object):
     u"""A Document is just another kind of container.
@@ -32,6 +31,7 @@ class Document(object):
     >>> doc = Document(name='TestDoc', autoPages=50)
     >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())
     (50, 1, 50)
+    
     >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
     >>> doc.name, doc.w, doc.h, doc.originTop, len(doc)
     ('TestDoc', 300, 400, True, 2)
@@ -41,10 +41,13 @@ class Document(object):
     >>> page.padding = 20
     >>> page.w, page.h, page.pw, page.ph, page.pt, page.pr, page.pb, page.pl, page.title
     (300, 400, 260, 360, 20, 20, 20, 20, 'default')
+
     >>> pages = (Page(), Page(), Page())
-    >>> doc = Document(name='TestDoc', w=300, h=400, pages=pages, autoPages=0)
+    >>> doc = Document(name='TestDoc', w=300, h=400, pages=pages, autoPages=0, viewId='Mamp')
     >>> len(doc)
     3
+    >>> doc.context
+    <HtmlContext>
 
     """    
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
@@ -94,9 +97,6 @@ class Document(object):
         if lib is None:
             lib = {}
         self._lib = lib
-
-        # Instance to hold details flags and data to guide the self.view.b builder of this document.
-        self.info = info or BuildInfo()
 
         # Document (w, h) size is default from page, but will modified by the type of display mode. 
         if autoPages:

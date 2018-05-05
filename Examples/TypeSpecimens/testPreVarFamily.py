@@ -81,7 +81,7 @@ def drawOS2Label(varFamily, fonts, weight, width):
 
     context.oval(x-R/2, y-R/2, R, R)
     
-    if varFamily.originFont in fonts: 
+    if varFamily.defaultFont in fonts: 
         # If one of these is the guessed origin font, then draw marker
         context.fill(None)
         context.stroke(1, 0, 0)
@@ -151,7 +151,7 @@ def drawFontLabel(p, prevarFamily, f, fIndex=None, fAxis=None):
             tw, th = context.textSize(bs)
             context.text(bs, (weightLoc-tw/2, widthLoc-24))
 
-            if prevarFamily.originFont is f: 
+            if prevarFamily.defaultFont is f: 
                 # If one of these is the guessed origin font, then draw marker
                 context.fill(None)
                 context.stroke((0, 0.5, 0), 2) # Stroke color and width
@@ -166,7 +166,7 @@ def drawFamilyOverview(name):
 
     # As we can guess the origin font, there is a reference for the other
     # masters to test against.
-    #print '=== Guessed origin font:', path2Name(prevarFamily.originFont.path)
+    #print '=== Guessed origin font:', path2Name(prevarFamily.defaultFont.path)
     #print checkInterpolation(prevarFamily.fonts)
     #print '=== Parametric axis fonts:', prevarFamily.parametricAxisFonts
     #print '=== Parametric axis metrics:', prevarFamily.parametricAxisMetrics

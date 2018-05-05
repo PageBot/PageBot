@@ -19,7 +19,8 @@ import codecs
 from pagebot.toolbox.transformer import value2Bool
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
-from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, color2Hex, object2SpacedString
+from pagebot.toolbox.color import Color
+from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, object2SpacedString
 
 class HtmlBuilder(XmlBuilder):
     """
@@ -31,13 +32,13 @@ class HtmlBuilder(XmlBuilder):
     >>> b.html()
     >>> b.body()
     >>> b.addHtml('Hello world')
-    >>> b.addCss('body{background-color: #AAA;}')
+    >>> b.addCss('body {background-color: %s;}' % Color('yellow').css)
     >>> b._body()
     >>> b._html()
     >>> b.getHtml()
     u'<html xmlns="http://www.w3.org/1999/xhtml"><body>Hello world</body></html>'
     >>> ''.join(b._cssOut)
-    'body{background-color: #AAA;}'
+    'body {background-color: #ffff00;}'
     """
     PB_ID = 'html' # Id to make build_html hook name. Views will be calling e.build_html()
     
@@ -407,7 +408,7 @@ table {
         self.addCss(self.SECTION_CSS % title)
 
     def css(self, selector=None, style=None, message=None):
-        u"""Build the CSS output from the defined selector and style."""
+        u"""Build the CSS output for the defined selector and style."""
         css = ''
         attributes = []
         if style:
@@ -421,10 +422,12 @@ table {
                 attributes.append('font-weight: %s;' % style['fontWeight'])
             if style.get('tracking') is not None:
                 attributes.append('letter-spacing: %s;' % style['tracking'])
+            elif style.get('rTracking') is not None:
+                attributes.append('letter-spacing: %sem;' % style['rTracking'])
             if style.get('fill') is not None:
-                attributes.append('background-color: %s;' % color2Hex(style['fill']))
-            if style.get('color') is not None:
-                attributes.append('color: %s;' % color2Hex(style['textFill']))
+                attributes.append('background-color: %s;' % Color(style['fill']).css)
+            if style.get('textFill') is not None:
+                attributes.append('color: %s;' % Color(style['textFill'].css))
             value = style.get('transition')
             if value is not None:
                 attributes.append('transition=%s;' % value)
@@ -595,7 +598,6 @@ table {
         self._body()
         """
         self.write_tag(u'body', True, args)
-
 
     def _body(self):
         self._closeTag(u'body')
