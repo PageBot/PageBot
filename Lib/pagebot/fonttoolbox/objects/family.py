@@ -357,7 +357,7 @@ class Family(object):
 
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> len(family)
-        18
+        38
         >>> family.findFont(weight='Medium')
         <Font Roboto-Medium>
 
