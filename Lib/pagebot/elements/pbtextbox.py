@@ -350,7 +350,7 @@ class TextBox(Element):
         b = context.b
 
         self.build_css(view)
-        if self.info.htmlPath is not None:
+        if view.htmlPath is not None:
             b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             # Use self.cssClass if defined, otherwise self class. #id is ignored if None

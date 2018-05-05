@@ -18,11 +18,11 @@ import os
 import shutil
 
 from pagebot.contexts.platform import getMampPath
-from pagebot.elements.views.htmlview import HtmlView
+from pagebot.elements.views.siteview import SiteView
 from pagebot.style import ORIGIN
 
 
-class MampView(HtmlView):
+class MampView(SiteView):
     
     viewId = 'Mamp'
 
@@ -35,6 +35,7 @@ class MampView(HtmlView):
     DEFAULT_CSS_PATH = 'css/'
     DEFAULT_CSS_FILE = 'style.css'
 
+
     #   B U I L D  H T M L  /  C S S
 
     def build(self, path=None, pageSelection=None, multiPage=True):
@@ -43,33 +44,28 @@ class MampView(HtmlView):
         >>> from pagebot import getRootPath
         >>> from pagebot.contributions.filibuster.blurb import Blurb
         >>> blurb = Blurb()
-        >>> from pagebot.elements.web.simplesite import Introduction, Navigation, Logo, simpleCss, simpleTheme
-        >>> from pagebot.contexts.htmlcontext import HtmlContext
-        >>> from pagebot.elements.web.d3.barchart import BarChart
+        >>> from pagebot.elements.web.simplesite import Banner
+        >>> from pagebot.elements import newTextBox
         >>> from pagebot.document import Document
-        >>> context = HtmlContext()
         >>> siteName = 'TestDoc'
         >>> sitePath = '_export/' + siteName
-        >>> doc = Document(name=siteName, w=300, h=400, autoPages=1, padding=(30, 40, 50, 60), context=context)
-        >>> view = doc.newView('Mamp')
+        >>> doc = Document(name=siteName, w=300, h=400, autoPages=1, padding=(30, 40, 50, 60), viewId='Mamp')
+        >>> view = doc.view
         >>> view
         <MampView:Mamp (0, 0)>
         >>> view.doExport = True # View flag to avoid exporting to files.
-        >>> view.info.cssCode = simpleCss % simpleTheme
         >>> rp = getRootPath() + '/elements/web/simplesite/resources/'
-        >>> view.info.resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directories to be copied to Mamp.
+        >>> view.resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directories to be copied to Mamp.        
+        >>> view.webFontsUrl = None
         >>> page = doc[1]
         >>> page.name = view.DEFAULT_HTML_FILE
-        >>> e = Navigation (parent=page)
-        >>> e = Introduction(blurb.getBlurb('article'), parent=page)
-        >>> e = BarChart(parent=page)
-        >>> doc.build()
-        >>> 'WebBuilder' in str(view.b)
-        True
-        >>> len(view.b._htmlOut) > 0 # Check that there is generated HTML output.
-        True
-        >>> len(view.b._cssOut) > 0
-        True
+        >>> banner = Banner(parent=page, cssId='Banner', fill=(0, 1, 0))
+        >>> e = newTextBox('Hello world', parent=banner, cssClass='bannerContent', textFill=(1, 0, 0))
+        >>> page.elements[0].cssId
+        'Banner'
+        >>> doc.export()
+        >>> view.b._cssOut
+
         >>> #Try to open in a browser, assuming that there is a running local Mamp server.
         >>> result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, view.DEFAULT_HTML_FILE)))
         """
@@ -92,7 +88,7 @@ class MampView(HtmlView):
         cssFilePath = cssPath + self.DEFAULT_CSS_FILE
 
         # Copy resources to output
-        for resourcePath in self.info.resourcePaths:
+        for resourcePath in self.resourcePaths:
             dstPath = path
             if os.path.isdir(resourcePath):
                 dstPath += resourcePath.split('/')[-1] + '/'
@@ -103,7 +99,7 @@ class MampView(HtmlView):
 
         b = self.b # Get builder from self.doc.context of this view.
         # Add info CSS as a start.
-        b.addCss(self.info.cssCode)
+        b.addCss(self.cssCode)
 
         for pn, pages in doc.pages.items():
             for page in pages:
@@ -123,7 +119,7 @@ class MampView(HtmlView):
                     b.writeHtml(path + fileName)
         
         # Write all collected CSS into one file at destination
-        if self.info.cssCode:
+        if self.cssCode:
             if not os.path.exists(cssPath):
                 os.makedirs(cssPath)
             b.writeCss(cssFilePath)

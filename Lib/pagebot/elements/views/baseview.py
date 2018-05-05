@@ -23,7 +23,7 @@ from pagebot.toolbox.transformer import *
 class BaseView(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation 
     of the enclosed page/element tree. Views support services, such as answering the size of a formatted
-    string (of possible), how much overflow there is for a certain box, etc. The view is also the only
+    string (if possible), how much overflow there is for a certain box, etc. The view is also the only
     place where the current context should be stored."""
     viewId = 'View'
 
@@ -49,6 +49,7 @@ class BaseView(Element):
         self._isDrawn = False # Automatic call self.drawPages if build is called without drawing.
 
     def _initializeControls(self):
+        u"""Initialize show flags for the view."""
         # Paging
         self.showSpread = False # If True, show even pages on left of fold, odd on the right.
         self.showSpreadMiddleAsGap = 0 # If showing as spread, this is the gap between them.

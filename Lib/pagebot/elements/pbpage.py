@@ -119,8 +119,7 @@ class Page(Element):
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
        
         self.build_css(view)
-        info = self.info # Contains flags and parameterss for Builder "b"
-        if info.htmlPath is not None:
+        if view.htmlPath is not None:
             b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.docType('html')
@@ -134,64 +133,62 @@ class Page(Element):
             # 3 Constructed from info contect, page attributes and styles.
             #
             b.head()
-            if info.headHtml is not None:
-                b.addHtml(info.headHtml)
-            elif info.headPath is not None:
-                b.importHtml(info.headPath) # Add HTML content of file, if path is not None and the file exists.
+            if view.headHtml is not None:
+                b.addHtml(view.headHtml)
+            elif view.headPath is not None:
+                b.importHtml(view.headPath) # Add HTML content of file, if path is not None and the file exists.
             else:
                 b.meta(charset=self.css('encoding'))
-                # Try to find the page name, in sequence order of importance. Note that self.info gets copied from
-                # templates (supplying a generic title or name), which can be overwritted by the direct self.title
-                # and self.name of the the page element.
-                b.title_(self.title or self.name or info.title or info.name)
+                # Try to find the page name, in sequence order of importance. 
+                b.title_(self.title or self.name)
                 
                 # Devices
-                b.meta(name='viewport', content=info.viewPort) # Cannot be None
+                b.meta(name='viewport', content=view.viewPort) # Cannot be None
 
                 # Javascript
-                for jsUrl in info.jsUrls.values():
+                for jsUrl in view.jsUrls.values():
                     b.script(type="text/javascript", src=jsUrl)
 
                 # Webfonts
-                if info.webFontsUrl:
-                    b.link(rel='stylesheet', type="text/css", href=info.webFontsUrl, media='all')
+                if view.webFontsUrl:
+                    b.link(rel='stylesheet', type="text/css", href=view.webFontsUrl, media='all')
                 
                 # CSS
-                if info.cssCode is not None:
+                if view.cssCode is not None:
                     b.style()
-                    b.addHtml(info.cssCode)
+                    b.addHtml(view.cssCode)
                     b._style()
-                elif info.cssPath is not None:
-                    cssPath = 'css/' + info.cssPath.split('/')[-1]
+                elif view.cssPath is not None:
+                    cssPath = 'css/' + view.cssPath.split('/')[-1]
                 else:
                     cssPath = 'css/style.css'
-                b.link(rel='stylesheet', href=cssPath, type='text/css', media='all')
+                b.link(rel='stylesheet', href=view.cssPath, type='text/css', media='all')
 
                 # Icons
-                if info.favIconUrl: # Add the icon link and let the type follow the image extension.
-                    b.link(rel='icon', href=info.favIconUrl, type='image/%s' % info.favIconUrl.split('.')[-1])
-                if info.appleTouchIconUrl: # Add the icon link and let the type follow the image extension.
-                    b.link(rel='apple-touch-icon-precomposed', href=info.appleTouchIconUrl, type='image/%s' % info.appleTouchIconUrl.split('.')[-1])
+                if view.favIconUrl: # Add the icon link and let the type follow the image extension.
+                    b.link(rel='icon', href=view.favIconUrl, type='image/%s' % view.favIconUrl.split('.')[-1])
+                if view.appleTouchIconUrl: # Add the icon link and let the type follow the image extension.
+                    b.link(rel='apple-touch-icon-precomposed', href=view.appleTouchIconUrl, type='image/%s' % info.appleTouchIconUrl.split('.')[-1])
                 
                 # Description and keywords
-                if info.description:
-                    b.meta(name='description', content=info.description)
-                if info.keyWords:
-                    b.meta(name='keywords', content=info.keyWords)
+                if view.description:
+                    b.meta(name='description', content=view.description)
+                if view.keyWords:
+                    b.meta(name='keywords', content=view.keyWords)
             b._head()
             #
             #   B O D Y
             #
             # Build the page body. There are 3 option (all excluding the <body>...</body>)
-            # 1 As html string (info.bodyHtml is defined as not None)
+            # 1 As html string (view.bodyHtml is defined as not None)
             # 2 As path a html file, containing the string between <body>...</body>, excluding the tags
-            # 3 Constructed from info contect, page attributes and styles.
+            # 3 Constructed from view parameter context, page attributes and styles.
             #
             b.body()
-            if info.bodyHtml is not None:
-                b.addHtml(info.bodyHtml)
-            elif info.bodyPath is not None:
-                b.importHtml(info.bodyPath) # Add HTML content of file, if path is not None and the file exists.
+            if view.bodyHtml is not None:
+                b.addHtml(view.bodyHtml)
+            elif view.bodyPath is not None:
+                b.importHtml(view.bodyPath) # Add HTML content of file, if path is not None and the file exists.
             else:
                 b.div(cssClass=self.cssClass) # Class is standard 'page' if self.cssClass is undefined as None.
                 if drawElements:
@@ -206,10 +203,10 @@ class Page(Element):
             # 2 As path a html file, containing the string between <head>...</head>.
             # 3 Constructed from info contect, page attributes and styles.
             #
-            if info.jsCode is not None:
-                b.addHtml(info.jsCode)
-            if info.jsPath is not None:
-                b.importHtml(info.jsPath) # Add JS content of file, if path is not None and the file exists.
+            if view.jsCode is not None:
+                b.addHtml(view.jsCode)
+            if view.jsPath is not None:
+                b.importHtml(view.jsPath) # Add JS content of file, if path is not None and the file exists.
             if b._jsOut:
                 b.script()
                 b.addHtml('\n'.join(b._jsOut))

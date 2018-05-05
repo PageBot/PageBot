@@ -33,7 +33,6 @@ from pagebot.style import (makeStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            OUTLINE)
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
-from pagebot.contexts.builders.buildinfo import BuildInfo # Container with Builder flags and data/parametets
 
 class Element(object):
 
@@ -48,7 +47,8 @@ class Element(object):
     isView = False
 
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH,
-            t=0, parent=None, context=None, name=None, cssClass=None, cssId=None, title=None, description=None, 
+            t=0, parent=None, context=None, name=None, cssClass=None, cssId=None, title=None, 
+            description=None, keyWords=None,
             language=None, style=None, conditions=None, info=None, framePath=None,
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None,
             isLeftPage=None, isRightPage=None, bleed=None,
@@ -61,11 +61,11 @@ class Element(object):
         u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
         If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
         not inheriting from one of the parent styles.
-        Ignore setting of setting eId as attribute, guaranteed to be unique.
+        Ignore setting of eId as attribute, guaranteed to be unique.
 
         >>> import sys
         >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, maxH=1000, pl=11, pt=22, margin=(33,44,55,66))
-        >>> e.name, e.info.description is None
+        >>> e.name, e.description is None
         ('TestElement', True)
         >>> e.maxW == sys.maxsize, e.maxH
         (True, 1000)
@@ -176,6 +176,7 @@ class Element(object):
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
         # Optional description of this element or its content. Otherwise None. Can be string or BabelString
         self.description = description
+        self.keyWords = keyWords # Optional used for web pages
         self.language = language # Optional language code from HTML standard. Otherwise None.
         # Save flow reference names
         self.prevElement = prevElement # Name of the prev flow element
@@ -189,9 +190,6 @@ class Element(object):
         self.applyTemplate(template, elements)
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isFlow = not None in (prevElement, nextElement, nextPage)
-        # Instance to hold details flags and data to direct the builder of this element.
-        # Reference directory paths for source files, as used by building Html/Css templates and self.build
-        self.info = info or BuildInfo()
 
     def __repr__(self):
         u"""Object as string.
@@ -273,7 +271,6 @@ class Element(object):
             self.prevElement = template.prevElement
             self.nextElement = template.nextElement
             self.nextPage = template.nextPage
-            self.info = copy.copy(template.info)
             # Copy style items
             for  name, value in template.style.items():
                 self.style[name] = value
@@ -523,7 +520,6 @@ class Element(object):
             title=self.title, description=self.description, language=self.language,
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
-            info=copy.deepcopy(self.info), # Info may be modified by the element of ascestors.
             framePath=self.framePath,
             elements=None, # Will be copied separately.
             template=self.template, nextElement=self.nextElement, prevElement=self.prevElement,
@@ -3966,12 +3962,12 @@ class Element(object):
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
         b = view.context.b # Get the build of the current context.
-        if self.info.cssPath is not None:
-            b.importCss(self.info.cssPath) # Add CSS content of file, if path is not None and the file exists.
-        elif self.cssId: # If the #id is defined, then use that as CSS reference.
+        if self.cssId: # If the #id is defined, then use that as CSS reference.
             b.css('#'+self.cssId, self.style)
         elif self.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
             b.css('.'+self.cssClass, self.style)
+        elif view.cssPath is not None:
+            b.importCss(view.cssPath) # Add CSS content of file, if path is not None and the file exists.
         else:
             b.css(message='No CSS for element %s\n' % self.__class__.__name__)
 
@@ -3983,8 +3979,7 @@ class Element(object):
         """
         self.build_css(view)
         b = view.context.b # Use the current context builder to write the HTML/CSS code.
-        info = self.info # Contains builder parameters and flags for Builder "b"
-        if info.htmlPath is not None:
+        if view.htmlPath is not None:
             b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.div(cssClass=self.cssClass, cssId=self.cssId) # No default class, ignore if not defined.

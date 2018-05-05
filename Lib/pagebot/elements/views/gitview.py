@@ -14,10 +14,10 @@
 #
 #     gitview.py
 #
-from pagebot.elements.views.htmlview import HtmlView
+from pagebot.elements.views.siteview import SiteView
 from pagebot.style import ORIGIN
 
-class GitView(HtmlView):
+class GitView(SiteView):
     viewId = 'Git'
     
     GIT_PATH = 'docs/'

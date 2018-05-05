@@ -27,6 +27,7 @@ class Banner(Group):
         u"""Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes.
 
+        >>> import os
         >>> from pagebot.document import Document
         >>> from pagebot.elements import newTextBox
         >>> doc = Document(viewId='Page')
@@ -67,15 +68,18 @@ class Banner(Group):
         >>> import os
         >>> from pagebot.document import Document
         >>> from pagebot.elements import newTextBox
-        >>> doc = Document(viewId='Site')
+        >>> doc = Document(viewId='Mamp')
         >>> page = doc[1]
         >>> page.title = 'Banner Test'
         >>> page.name = 'index'
         >>> banner = Banner(parent=page, cssId='ThisBannerId')
         >>> tb = newTextBox('This is a banner.', parent=banner)
-        >>> sitePath = '_export/BannerTest'
-        >>> doc.export(sitePath)
-        >>> result = os.system('open %s/index.html' % sitePath)
+        >>> doc.export()
+        >>> # Try to open in browser. It works if a local server (like MAMP) runs for view.LOCAL_HOST_URL url.
+        >>> result = os.system('open %s' % (doc.view.LOCAL_HOST_URL % (doc.name, doc.view.DEFAULT_HTML_FILE)))
+        >>> #sitePath = '_export/BannerTest'
+        >>> #doc.export(sitePath)
+        >>> #result = os.system('open %s/index.html' % sitePath)
         """
         b = view.context.b
         self.build_css(view)
