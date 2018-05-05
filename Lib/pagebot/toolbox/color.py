@@ -127,6 +127,22 @@ class Color(object):
     rgb = property(_get_rgb, _set_rgb)
 
     def _get_rgba(self):
+        u"""Set and get the (r,g,b,a) values of the color. If self is not in RGB mode,
+        then convert values from CMYK or spot color value.
+
+        >>> Color(0.4, 0.5, 0.6, 0.9).rgba
+        (0.4, 0.5, 0.6, 0.9)
+        >>> c = Color(0.1, 0.2, 0.3) # Create a color with default opacity as 1
+        >>> c.rgba # Answer the rgba tuple of the color
+        (0.1, 0.2, 0.3, 1)
+        >>> c.rgba = 0.6, 0.7, 0.8, 0.1 # Set the RGB and opacity values
+        >>> c
+        Color(r=0.6, g=0.7, b=0.8, a=0.1)
+        >>> Color(c=0.1, m=0.2, y=0, k=0.4).rgba
+        (0.54, 0.48, 0.6, 1)
+        >>> Color(rgb=Color(spot=110).rgba).spot # Bi-directional test.
+        110
+        """
         r, g, b = self.rgb
         return r, g, b, self.a
     def _set_rgba(self, rgba):
@@ -135,6 +151,19 @@ class Color(object):
     rgba = property(_get_rgba, _set_rgba)
 
     def _get_cmyk(self):
+        u"""Set and get the (r,g,b,a) values of the color. If self is not in CMYK mode,
+        then convert values from CMYK or spot color value.
+
+        >>> Color(c=0.4, m=0.5, y=0.6, k=0.9).cmyk
+        (0.4, 0.5, 0.6, 0.9)
+        >>> '%0.2f, %0.2f, %0.2f, %0.2f' % Color(0.1, 0.2, 0.3).cmyk # Create an RGB color with default opacity as 1
+        '0.20, 0.10, 0.00, 0.70'
+        >>> rgba = Color(spot=300).rgba
+        >>> c = Color()
+        >>> c.rgba = rgba
+        >>> c.spot
+        300
+        """
         cmyk = self.c, self.m, self.y, self.k
         if not None in cmyk:
             return cmyk
@@ -150,6 +179,16 @@ class Color(object):
     cmyk = property(_get_cmyk, _set_cmyk)
 
     def _get_spot(self):
+        u"""Set and get the spot value of the color. If self is not in spot mode,
+        then convert values from RGB or CMYK value.
+
+        >>> Color(spot=450).spot
+        450
+        >>> c = Color()
+        >>> c.spot = 110
+        >>> '%0.2f, %0.2f, %0.2f' % c.rgb
+        '0.85, 0.71, 0.07'
+        """
         if self._spot is not None:
             return self._spot
         if not None in (self.r, self.g, self.b):
