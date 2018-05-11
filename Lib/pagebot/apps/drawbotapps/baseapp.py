@@ -25,13 +25,26 @@ class BaseApp(object):
     that then build into PDF documents, websites or identity stationary.
     """
     W, H = 400, 400
-
+    DEFAULT_NAME = 'Publication'
+    
     def __init__(self):
         self.w = Window((100, 100, self.W, self.H), self.__class__.__name__)
         self.buildAppUI()
+        self.initialize()
         self.w.open()
 
     def buildAppUI(self):
         u"""To be implemented by inheriting app classes."""
 
+    def initialize(self):
+    	u"""To be implemente by inheriting app classes.
+    	Should initialize the self._doc Publication instance.
+    	"""
+
+    def buildPublication(self, sender=None):
+    	u"""Default behavior, building the publications. To be redefined by
+    	inheriting classes if additional functions are needed."""
+    	self._doc.solve()
+    	self._doc.export('_export/%s.pdf' % self.DEFAULT_NAME)
+   
 
