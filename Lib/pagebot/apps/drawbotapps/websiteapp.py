@@ -24,10 +24,7 @@ class WebsiteApp(BaseApp):
     """
     def buildAppUI(self):
         u"""Build the UI controls for this app."""
-        self.w.buildButton = Button((-100, -30, 90, 20), 'Build', callback=self.buildWebsite)
-
-    def buildWebsite(self, sender):
-        print('Building website')
+        self.w.buildButton = Button((-100, -30, 90, 20), 'Build', callback=self.buildPublication)
 
 if __name__ == '__main__':
     app = WebsiteApp()
