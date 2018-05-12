@@ -582,6 +582,15 @@ class Left2Right(Condition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.left2Right(), e, score)
 
+class Left2RightSide(Condition):
+	u"""Align left of e bounding box on parent right side."""
+	def test(self, e):
+		return e.isLeftOnRightSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails. 
+			self.addScore(e.left2RightSide(), e, score)
+
 class Right2Right(Condition):
 	u"""Align right of e bounding box to parent right margin."""
 	def test(self, e):
