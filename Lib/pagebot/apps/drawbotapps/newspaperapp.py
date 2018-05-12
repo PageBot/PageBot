@@ -11,16 +11,16 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     identityapp.py
+#     newspaperapp.py
 #
 from pagebot.apps.drawbotapps.baseapp import BaseApp
-from pagebot.publications.identity import Identity
+from pagebot.publications.newspaper import Newspaper
 
-class IdentityApp(BaseApp):
+class NewspaperApp(BaseApp):
 	u"""Will be developed."""
-    PUBLICATION_CLASS = Identity
-
+	PUBLICATION_CLASS = Newspaper
+ 	
 if __name__ == '__main__':
-    app = IdentityApp()
-    app.build()
+	app = NewspaperApp()
+	app.build()
     

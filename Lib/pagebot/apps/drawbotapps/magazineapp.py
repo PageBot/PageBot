@@ -13,40 +13,15 @@
 #
 #     magazineapp.py
 #
-from vanilla import Button
-from random import random
-
 from pagebot.apps.drawbotapps.baseapp import BaseApp
-from pagebot.style import A4
-from pagebot.elements import newRect
-from pagebot.conditions import *
-from pagebot.document import Document
+from pabebot.publications.magazine import Magazine
 
 class MagazineApp(BaseApp):
-    W, H = 400, 400 # Sie of the UI window, not the publication.
-    PAGES = 5
-    DEFAULT_NAME = 'Magazine'
-
-    u"""Build a magazine, from the specifications selected in the window UI.
-
-    """
-    def buildAppUI(self):
-        u"""Build the UI controls for this app."""
-        self.w.buildButton = Button((-100, -30, 90, 20), 'Build', callback=self.buildPublication)
-
-    def initialize(self):
-    	w, h = A4
-    	self._doc = Document(w=w, h=h, title=self.DEFAULT_NAME, autoPages=self.PAGES)
-
-    def buildPublication(self, sender=None):
-    	for n in range(self.PAGES):
-    		page = self._doc[n+1]	
-    		newRect(fill=(random(), 0, random()), conditions=[Fit()], parent=page)
-    	self._doc.solve()
-    	self._doc.export('_export/%s.pdf' % self.DEFAULT_NAME)
-    	
+	u"""Will be developed."""
+    PUBLICATION_CLASS = Magazine
+ 	
 if __name__ == '__main__':
     app = MagazineApp()
-    app.buildPublication()
+    app.build()
     
     

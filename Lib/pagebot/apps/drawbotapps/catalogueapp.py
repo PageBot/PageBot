@@ -14,13 +14,13 @@
 #     identityapp.py
 #
 from pagebot.apps.drawbotapps.baseapp import BaseApp
-from pagebot.publications.identity import Identity
+from pagebot.publications.catalogue import Catalogue
 
-class IdentityApp(BaseApp):
+class CatalogueApp(BaseApp):
 	u"""Will be developed."""
-    PUBLICATION_CLASS = Identity
+    PUBLICATION_CLASS = Catalogue
 
 if __name__ == '__main__':
-    app = IdentityApp()
+    app = CatalogueApp()
     app.build()
     

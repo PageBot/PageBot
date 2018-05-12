@@ -136,8 +136,20 @@ class TextBox(Element):
             elements = ''
         return '%s%s (%d, %d)%s%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), self.bs.s, elements)
 
-    # SuperString support, answering the structure that holds strings for all builder types.
+    def copy(self, parent=None):
+        u"""Answer a full copy of self, where the "unique" fields are set to default.
+        Also perform a deep copy on all child elements.
 
+        >>> e = TextBox('Hello world', name='Child', w=100)
+        >>> copyE = e.copy() # Copy the element attribute, including the string of self.
+        >>> copyE.bs
+        Hello world
+        """
+        e = Element.copy(self, parent=parent)
+        e.bs = self.bs # Copy the string separately.
+        return e
+
+    # BabelString support, answering the structure that holds strings for all builder types.
 
     def setText(self, bs, style=None):
         u"""Set the formatted string to s, using style or self.style. The bs as also be a number, in which

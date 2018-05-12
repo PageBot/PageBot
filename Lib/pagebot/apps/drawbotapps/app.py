@@ -13,7 +13,7 @@
 #
 #     baseapp.py
 #
-from vanilla import Window, Button
+from vanilla import Window
 
 class BaseApp(object):
     u"""The BaseApp class implements generic functions for more specialize App classes.
@@ -36,12 +36,8 @@ class BaseApp(object):
     	u"""To be implemente by inheriting app classes.
     	Should initialize the self._doc Publication instance.
     	"""
-        self._doc = self.PUBLICATION_CLASS()
-        self.buildUI(self._doc.getAPI())
-
-    def buildUI(self, api):
-    	u"""Build the app UI from the api-parameters, answered the publication self._doc."""
-        self.w.buildButton = Button((-100, -30, 90, 20), 'Build', callback=self.build)    	
+        self._doc = self.PUBLICATIONS_CLASS()
+        self.buildUI(self._doc.getUIParameters())
 
     def build(self, sender=None):
     	u"""Default behavior, building the publications. To be redefined by

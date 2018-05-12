@@ -14,13 +14,8 @@
 #     identityapp.py
 #
 from pagebot.apps.drawbotapps.baseapp import BaseApp
-from pagebot.publications.identity import Identity
+from pagebot.publications.poster import Poster
 
-class IdentityApp(BaseApp):
+class PosterApp(BaseApp):
 	u"""Will be developed."""
-    PUBLICATION_CLASS = Identity
-
-if __name__ == '__main__':
-    app = IdentityApp()
-    app.build()
-    
+    PUBLICATION_CLASS = Poster
