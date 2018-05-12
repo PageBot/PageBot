@@ -345,8 +345,9 @@ class PageView(BaseView):
     #   D R A W I N G  E L E M E N T
 
     def drawElementFrame(self, e, origin):
-        if self.showElementFrame:
+        if self.showElementFrame and not e.isPage:
             # Get the method for e to draw the frame. Flag not to recursively draw children.
+            # Don't draw, in case e is a page. 
             getattr(e, 'buildFrame_' + self.b.PB_ID)(origin, self, False) 
 
     def drawElementMetaInfo(self, e, origin):
