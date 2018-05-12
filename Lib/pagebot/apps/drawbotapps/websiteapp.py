@@ -13,18 +13,13 @@
 #
 #     websiteapp.py
 #
-from vanilla import Button
 from pagebot.apps.drawbotapps.baseapp import BaseApp
-      
+from pabebot.publications.website import Website
+
 class WebsiteApp(BaseApp):
-    W, H = 400, 400
-
-    u"""Build a website, from the specifications selected in the window UI.
-
-    """
-    def buildAppUI(self):
-        u"""Build the UI controls for this app."""
-        self.w.buildButton = Button((-100, -30, 90, 20), 'Build', callback=self.buildPublication)
-
+    PUBLICATION_CLASS = Website
+ 	
 if __name__ == '__main__':
     app = WebsiteApp()
+    app.build()
+    

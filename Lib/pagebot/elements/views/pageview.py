@@ -212,7 +212,8 @@ class PageView(BaseView):
             context.setStrokeColor(self.css('viewPagePaddingStroke', (0.2, 0.2, 1)), 
                                    self.css('viewPagePaddingStrokeWidth', 0.5))
             if page.originTop:
-                context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
+                pass
+                #context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
             else:
                 context.rect(px+pl, py+pb, page.w-pl-pr, page.h-pt-pb)
             page._restoreScale(self)
