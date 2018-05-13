@@ -152,6 +152,9 @@ class Table(Element):
 
         self.drawFrame(view, p) # Draw optional frame or borders.
 
+        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
+
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 

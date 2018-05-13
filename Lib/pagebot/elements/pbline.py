@@ -109,6 +109,9 @@ class Line(Element):
         context.lineTo((px + self.w, py + self.h))
         context.drawPath()
 
+        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
+
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 

@@ -1570,7 +1570,7 @@ class Element(object):
         >>> int(e.mRight)
         180
         """
-        return self.right - self.mr
+        return self.right + self.mr
     def _set_mRight(self, x):
         self.right = x + self.mr
     mRight = property(_get_mRight, _set_mRight)
@@ -3535,8 +3535,10 @@ class Element(object):
         maxH = self.style.get('maxH')
         if self.parent:
             maxH = maxH or self.parent.h
-        return maxH or MAX_HEIGHT # Unless defined local, take current parent.w as maxW
+        return maxH or MAX_HEIGHT # Unless defined local, take current parent.w as maxH
     def _set_maxH(self, maxH):
+        print(maxH)
+        aa = dd
         self.style['maxH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, maxH)) # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
 
@@ -3544,7 +3546,7 @@ class Element(object):
         maxD = self.style.get('maxD')
         if self.parent:
             maxD = maxD or self.parent.d
-        return maxD or MAX_DEPTH # Unless defined local, take current parent.w as maxW
+        return maxD or MAX_DEPTH # Unless defined local, take current parent.w as maxD
     def _set_maxD(self, maxD):
         self.style['maxD'] = max(MIN_DEPTH, min(MAX_DEPTH, maxD)) # Set on local style, shielding parent self.css value.
     maxD = property(_get_maxD, _set_maxD)
@@ -3553,6 +3555,8 @@ class Element(object):
         return self.maxW, self.maxH, self.maxD # No limit if value is None
 
     def setMaxSize(self, maxW, maxH=None, maxD=None):
+        print('3232322323', maxW, maxH, maxD)
+        aa = ss
         if maxW and maxH is None and maxD is None:
             if isinstance(maxW, (int, float)):
                 self.maxW = self.maxH = self.maxD = maxW
@@ -3594,7 +3598,7 @@ class Element(object):
         u"""Answer the max y that can float to top, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection between (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared.
-        Comparison of available spave, includes the margins of the elements."""
+        Comparison of available space, includes the margins of the elements."""
         if self.originTop:
             y = 0
         else:
@@ -3614,7 +3618,7 @@ class Element(object):
         u"""Answer the max y that can float to bottom, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared.
-        Comparison of available spave, includes the margins of the elements."""
+        Comparison of available space, includes the margins of the elements."""
         if self.originTop:
             y = self.parent.h
         else:
@@ -3634,7 +3638,7 @@ class Element(object):
         u"""Answer the max x that can float to the left, without overlapping previous sibling elements.
         This means we are just looking at the horizontal projection of (self.top, self.bottom).
         Note that the x may be outside the parent box. Only elements with identical z-value are compared.
-        Comparison of available spave, includes the margins of the elements."""
+        Comparison of available space, includes the margins of the elements."""
         x = 0
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
@@ -3654,7 +3658,7 @@ class Element(object):
         u"""Answer the max Y that can float to the right, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared.
-        Comparison of available spave, includes the margins of the elements."""
+        Comparison of available space, includes the margins of the elements."""
         x = self.parent.w
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
@@ -3937,6 +3941,9 @@ class Element(object):
 
         self.buildFrame(view, p) # Draw optional frame or borders.
 
+        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
+
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
@@ -4170,12 +4177,12 @@ class Element(object):
     def isOriginOnTopSide(self, tolerance=0):
         u"""Answer the boolean test if the origin of self is on the top side of self.parent.
 
-        >>> e1 = Element(w=200, h=200, x=0, y=500)
+        >>> e1 = Element(w=200, h=200, x=0, y=500, originOnTop=False)
         >>> e2 = Element(w=500, h=500, elements=[e1])
-        >>> e1.isOriginOnTopSide(None)
+        >>> e1.isOriginOnTopSide()
         True
         >>> e1.y = 400
-        >>> e1.isOriginOnTopSide(None)
+        >>> e1.isOriginOnTopSide()
         False
         >>>
         """
