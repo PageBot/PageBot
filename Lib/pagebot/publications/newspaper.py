@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -18,6 +19,7 @@ from pagebot.elements import Group, newRect, newTextBox
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.elements.pbpage import Template
 from pagebot.conditions import *
+from pagebot.fonttoolbox.objects.family import getFamily, getFontPaths
 
 class Title(Group):
     pass
@@ -47,7 +49,7 @@ class Newspaper(Publication):
     >>> #view.showGrid = True
     >>> #view.showGridColumns = True
     >>> #view.showBaselineGrid = True
-    >>> view.showElementFrame = True
+    >>> #view.showElementFrame = True
     >>> templateFront = np.getTemplate('Front')
     >>> templateMainPage = np.getTemplate('MainPage')
     >>> np[1].applyTemplate(templateFront)
@@ -61,12 +63,16 @@ class Newspaper(Publication):
     GUTTER = 18
     PADDING = 48
 
-    def getHeadline(self, cnt=None):
-        u"""Answer a blurb headline. Make sure it does not end with '.,:;-'"""
-        headline = Blurb().getBlurb('news_headline', cnt=cnt)
-        while headline and headline[-1] in '.,:;-':
-            headline = headline[:-1]
-        return headline
+    def getHeadline(self, s, style, cnt=None, w=None):
+        u"""Answer a styled BabelString instance, with some checking on the content.
+        Create a blurb headline if s is None. Make sure it does not end with '.,:;-'.
+        If w is not None, then force the fontsize of the headline to fit the width."""
+        if s is None:
+            s = Blurb().getBlurb('news_headline', cnt=cnt)
+            while s and s[-1] in '.,:;-':
+                s = s[:-1]
+        formattedHeadline = self.view.newString(s, style=style, w=w)
+        return formattedHeadline
 
     def getAnkeiler(self, cnt=None):
         u"""Answer a blurb ankeiler. Make sure it does end with '.'"""
@@ -101,9 +107,16 @@ class Newspaper(Publication):
         lineW = 4
 
         # Max amount of words return by the blurb generator.
-        maxHeadline = 12
+        maxHeadline = 6
+        maxHeadlineShort = 4
         maxAnkeiler = 30
 
+        fontPaths = getFontPaths()
+        #for fontName, path in getFontPaths().items():
+        #    if 'Escrow' in fontName:
+        #        print(fontName, path)
+        #newspaperTitleFont = fontPaths['Escrow-Black']
+        #newspaperTitleFont = 'Proforma Book'
         newspaperTitleFont = 'Upgrade Semibold'
         h1Font = 'Upgrade Medium'
         bodyFont = 'Upgrade Book'
@@ -129,6 +142,7 @@ class Newspaper(Publication):
         
         t = Template(w=w, h=h, name='Front', padding=padding, gridX=gridX, gridY=gridY)  
         # Newspaper name with border lines on top and bottom
+        #self.title = 'NORTHAMPTON GLOBE'
         bs = self.view.newString(self.title.upper(), style=titleStyle) 
         _, nameHeight = bs.size()      
         title = Title(parent=t, mb=2*gutter, h=nameHeight,
@@ -140,13 +154,13 @@ class Newspaper(Publication):
         # Place article 3 columns
 
         cc = 3 # Column width of this article.
-        article = Article(parent=t, w=cc*cwg-gutter, mr=gutter, h=h/3, mb=gutter,
+        article = Article(parent=t, h=h/3, w=cc*cwg-gutter, mr=gutter, mb=gutter,
             fill=fillColor1,
             conditions=[Left2Left(), Float2Top()])
         
-        headLine = self.getHeadline(maxHeadline)
-        bs = self.view.newString(headLine, style=h2Style)
-        newTextBox(bs, parent=article, w=cc*cwg-gutter, 
+        s = None #'Happy birthday, Jill'
+        headLine = self.getHeadline(s, h2Style, cnt=maxHeadline, w=cc*cwg-gutter)
+        newTextBox(headLine, parent=article, w=cc*cwg-gutter, 
             fill=fillColor2,
             conditions=[Left2Left(), Float2Top()])
         
@@ -165,13 +179,13 @@ class Newspaper(Publication):
         
 
         cc = 3 # Column width of this article.
-        article = Article(parent=t, w=cc*cwg-gutter, mr=gutter, h=h/4, pt=gutter, mb=gutter,
+        article = Article(parent=t, h=h/4, w=cc*cwg-gutter, mr=gutter, mb=gutter, pt=gutter,
             borderTop=titleLine, 
             conditions=[Left2Left(), Float2Top()])
         
-        headLine = self.getHeadline(maxHeadline)
-        bs = self.view.newString(headLine, style=h2Style)
-        newTextBox(bs, parent=article, pr=gutter, w=cc*cwg, 
+        s = None #'Explore Northampton in spring'
+        headLine = self.getHeadline(s, h2Style, cnt=maxHeadline, w=cc*cwg-2*gutter)
+        newTextBox(headLine, parent=article, pr=gutter, w=cc*cwg, 
             conditions=[Left2Left(), Float2Top()])
         
         intro = blurb.getBlurb('article_ankeiler', cnt=maxAnkeiler)
@@ -182,22 +196,23 @@ class Newspaper(Publication):
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.view.newString(dummyArticle, style=bodyStyle)
-            newTextBox(bs, parent=article, pr=gutter, w=cw, mr=gutter,
+            newTextBox(bs, parent=article, w=cw, mr=gutter,
                 conditions=[Left2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
         
         cc = 3 # Column width of this article.
-        article = Article(parent=t, w=cc*cwg, pt=gutter, borderTop=titleLine, mb=gutter,
+        article = Article(parent=t, h=h/4, w=cc*cwg-gutter, mr=gutter, mb=gutter, pt=gutter,
+            borderTop=titleLine, 
             borderBottom=titleLine,
             conditions=[Left2Left(), Float2Top(), Fit2Bottom()])
         
-        headLine = self.getHeadline(maxHeadline)
-        bs = self.view.newString(headLine, style=h2Style)
-        newTextBox(bs, parent=article, pr=gutter, w=cc*cwg, 
+        s = None #'Mothersday for Sara & Jill'
+        headLine = self.getHeadline(s, h2Style, cnt=maxHeadline, w=cc*cwg-2*gutter)
+        newTextBox(headLine, parent=article, pr=gutter, w=cc*cwg, 
             conditions=[Left2Left(), Float2Top()])
         
         intro = self.getAnkeiler(cnt=maxAnkeiler)
         bs = self.view.newString(intro, style=h2IntroStyle)
-        newTextBox(bs, parent=article, pr=gutter, w=cc*cwg, mt=gutter, mb=gutter, 
+        newTextBox(bs, parent=article, w=cc*cwg, mt=gutter, mb=gutter, 
             conditions=[Left2Left(), Float2Top()])
         
         for n in range(cc):
@@ -215,16 +230,21 @@ class Newspaper(Publication):
             fill=0.8, stroke=0, strokeWidth=0.5, 
             conditions=[Left2Left(), Top2Top(), Fit2Width()])
         
-        headLine = self.getHeadline(5)
-        bs = self.view.newString(headLine, style=h1Style)
-        newTextBox(bs, parent=article, pr=gutter, w=cc*cwg, 
+        s = None #'Petr & Claudia visiting soon'
+        headLine = self.getHeadline(s, h1Style, cnt=5, w=cc*cwg-2*gutter)
+        newTextBox(headLine, parent=article, pr=gutter, w=cc*cwg, pb=gutter, 
             conditions=[Left2Left(), Float2Top(), Fit2Width()])
         
         for n in range(cc):
-            dummyArticle = blurb.getBlurb('article', newLines=True)
-            bs = self.view.newString(dummyArticle, style=bodyStyle)
-            newTextBox(bs, parent=article, pr=gutter, w=cw, mr=gutter, h=10,
-                conditions=[Right2Right(), Float2Top(), Float2Left(), Fit2Bottom()])
+            if n == 3:
+                newRect(mb=gutter, parent=article, w=cw, 
+                    fill=0.8, stroke=0, strokeWidth=0.5, 
+                    conditions=[Right2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
+            else:
+                dummyArticle = blurb.getBlurb('article', newLines=True)
+                bs = self.view.newString(dummyArticle, style=bodyStyle)
+                newTextBox(bs, parent=article, pr=gutter, w=cw, mr=gutter, h=10,
+                    conditions=[Right2Right(), Float2Top(), Float2Left(), Fit2Bottom()])
 
 
         cc = 2 # Column width of this article.
@@ -232,9 +252,9 @@ class Newspaper(Publication):
             borderBottom=titleLine,
             conditions=[Right2Right(), Float2Top(), Float2Left(), Fit2Bottom()])
         
-        headLine = self.getHeadline(maxHeadline)
-        bs = self.view.newString(headLine, style=h2Style)
-        newTextBox(bs, parent=article, pr=gutter, w=cc*cwg, pt=gutter, 
+        s = None #'AirB&B stock up 450%'
+        headLine = self.getHeadline(s, h2Style, cnt=maxHeadlineShort, w=cc*cwg-gutter)
+        newTextBox(headLine, parent=article, pr=gutter, w=cc*cwg, pt=gutter, 
             conditions=[Left2Left(), Float2Top()])
         
         intro = self.getAnkeiler(cnt=maxAnkeiler)
@@ -247,16 +267,15 @@ class Newspaper(Publication):
             bs = self.view.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, pr=gutter, w=cwg,
                 conditions=[Left2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
-        
-
+    
         cc = 2 # Column width of this article.
         article = Article(parent=t, w=cc*cwg, borderTop=titleLine, mb=gutter,
             borderBottom=titleLine,
             conditions=[Right2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
         
-        headLine = self.getHeadline(maxHeadline)
-        bs = self.view.newString(headLine, style=h2Style)
-        newTextBox(bs, parent=article, pr=gutter, w=cc*cwg, pt=gutter,
+        s = None #u'Tay & Lan’s best moms'
+        headLine = self.getHeadline(s, h2Style, cnt=maxHeadlineShort, w=cc*cwg-gutter)
+        newTextBox(headLine, parent=article, pr=gutter, w=cc*cwg, pt=gutter,
             conditions=[Left2Left(), Float2Top()])
         
         intro = self.getAnkeiler(cnt=maxAnkeiler)
@@ -265,20 +284,16 @@ class Newspaper(Publication):
             mr=gutter, mt=gutter, mb=gutter, 
             conditions=[Left2Left(), Float2Top()])
   
-        r = newRect(mb=gutter, parent=article, h=200, 
+        newRect(mb=gutter, parent=article, h=200, 
             maxH=MAX_HEIGHT, # TODO: Why need to set this, as r.maxH is 100 here.
             fill=0.8, stroke=0, strokeWidth=0.5, 
             conditions=[Left2Left(), Float2Top(), Fit2Width()])
-        #print(r.h, r.w, r.uh, r.uw, r.style['h'])
-        #r.h = 304
-        #print(r.h, r.w, r.uh, r.uw, r.style['h'])
-        #print(r.maxH, r.minH, MAX_HEIGHT, min(r.maxH, max(r.minH, h, MAX_HEIGHT)))
 
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.view.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, pr=gutter, w=cwg,
-                conditions=[Right2Right(), Float2Top(), Float2Left(), Fit2Bottom()])
+                conditions=[Left2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
         
         self.addTemplate(t.name, t)
 
@@ -288,9 +303,8 @@ class Newspaper(Publication):
         for n in range(columns):
             if n == 0:
                 cc = 3
-                headLine = self.getHeadline(maxHeadline)
-                bs = self.view.newString(headLine, style=h2Style)
-                newTextBox(bs, parent=t, pr=gutter, w=cc*cwg, 
+                headLine = self.getHeadline(None, h2Style, cnt=maxHeadline)
+                newTextBox(headLine, parent=t, pr=gutter, w=cc*cwg, 
                     conditions=[Left2Left(), Float2Top()])
                 intro = self.getAnkeiler(cnt=maxAnkeiler)
                 bs = self.view.newString(intro, style=h2IntroStyle)
