@@ -114,7 +114,7 @@ Berliner = 12.4*INCH, 18.5*INCH
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
 ORIGIN_POINT = (0, 0, 0)
-# Min/max values for element sizes. Make sure that elements dimensions never get 0
+# Min/max values for element sizes. Makes sure that elements dimensions never get 0
 XXXL = sys.maxsize
 MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)
