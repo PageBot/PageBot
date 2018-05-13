@@ -61,7 +61,7 @@ def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=Fals
     return FAMILIES
 
 def getFamily(familyName, useFontInfo=True, useFileName=True):
-    u"""Create a new Family instance and fill it with available fonts that fit  the name.
+    u"""Create a new Family instance and fill it with available fonts that fit the name.
 
     >>> families = getFamilies()
     >>> family = families.get('Bungee')
