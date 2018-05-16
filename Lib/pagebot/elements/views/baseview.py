@@ -62,7 +62,7 @@ class BaseView(Element):
         self.showPageMetaInfo = False
         # Element info showing
         self.showElementInfo = False
-        self.showElementFrame = False
+        self.showElementFrame = False # Show the frame of elements that are not pages.
         self.showElementOrigin = False
         self.showElementDimensions = False # TODO: Does not work if there is view padding.
         self.showMissingElementRect = True
