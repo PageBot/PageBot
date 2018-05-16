@@ -68,7 +68,7 @@ C8 = 57*MM, 81*MM
 C9 = 40*MM, 57*MM
 C10 = 28*MM, 40*MM
 # American Sizes as non-rounded values
-HalfLetter = 5.5*INCH, 8.5*INCH
+HalfLetter = 8.5*INCH, 5.5*INCH
 Letter = 8.5*INCH, 11*INCH
 Legal = 8.5*INCH, 14*INCH
 JuniorLegal = 5*INCH, 8*INCH
