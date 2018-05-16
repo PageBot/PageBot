@@ -14,18 +14,15 @@
 #     newspaper.py
 #
 from pagebot.publications.publication import Publication
+from pagebot.publications.newspaper.title import Title
+from pagebot.publications.newspaper.article import Article
 from pagebot.constants import Broadsheet, CENTER, MAX_HEIGHT
-from pagebot.elements import Group, newRect, newTextBox
+from pagebot.elements import newRect, newTextBox
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.elements.pbpage import Template
 from pagebot.conditions import *
 from pagebot.fonttoolbox.objects.family import getFamily, getFontPaths
 
-class Title(Group):
-    pass
-
-class Article(Group):
-    pass
 
 class Newspaper(Publication):
     """Create a default newspaper, with layout and content options defined by external parameters.
@@ -141,6 +138,7 @@ class Newspaper(Publication):
         # Template 'Front'
         
         t = Template(w=w, h=h, name='Front', padding=padding, gridX=gridX, gridY=gridY)  
+        
         # Newspaper name with border lines on top and bottom
         #self.title = 'NORTHAMPTON GLOBE'
         bs = self.view.newString(self.title.upper(), style=titleStyle) 
