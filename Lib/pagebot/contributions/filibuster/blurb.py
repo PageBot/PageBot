@@ -25,7 +25,7 @@ class Blurb(object):
 
     reNoTags = re.compile('\<[^\>]*|([^\<\>]*)')
 
-    def getBlurb(self, type, cnt=None, noTags=True):
+    def getBlurb(self, type, cnt=None, noTags=True, newLines=False):
         u"""The getBlurb method answers a random generated blurb of type.
         The full list of available types get be obtained by calling self.getContentType().
 
@@ -36,6 +36,8 @@ class Blurb(object):
         else:
             content = self.writer.write(type)
         if noTags:
+            if newLines:
+                content = content.replace('<p>','').replace('</p>','\n')
             content = ''.join(self.reNoTags.findall(content))
         return content
 

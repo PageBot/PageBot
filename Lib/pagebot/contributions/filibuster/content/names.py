@@ -41,7 +41,7 @@ content = {
     ],
     'name_english': [
         'Gibbs', 'McLaren', 'Miller', 'Kwon', 'Little', 'Reage', 'Keaney', 'Muller', 'Chou',
-        'Lamberti', 'Feldman', 'Michaelson', 'Cho', 'Davis', 'Hoffman', 'Marsh', 'Suh',
+        'Lamberti', 'Feldman', 'Michaelson', 'Cho', 'Davis', 'Hoffman', 'Marsh', 'Suh', 'Trump',
         'Fernandez', 'Fitzpatrick', 'Lin', 'Vanderbeck', 'Lee', 'Larssen','Vanderkeere',
         'Nobelman','Frime','Mustcado','Fnimble','Handersjen','Devries','Naaktgeboren',
         'McNaville','Stormby','Stromby','McMillen','Wrombley',u'Zóchi',u'Ångstrøm',
@@ -427,6 +427,7 @@ content = {
         'Charles',
         'Michael',
         'Ted',
+        'Donald',
         'Eugene',
         'Victor',
         'Tomasso',
@@ -524,6 +525,7 @@ content = {
     'names_first_purewhitetrash': [
         'Cletus',
         'Dallas',
+        'Donald',
         'Shasta',
         'Billy Rae',
         'Booker',
@@ -634,6 +636,7 @@ content = {
         'Dunbar',
         'Emerson',
         'Bryant',
+        'Trump',
         'Stanley',
         'Sinclair',
         'Forbes',

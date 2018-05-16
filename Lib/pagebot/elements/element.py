@@ -1570,7 +1570,7 @@ class Element(object):
         >>> int(e.mRight)
         180
         """
-        return self.right - self.mr
+        return self.right + self.mr
     def _set_mRight(self, x):
         self.right = x + self.mr
     mRight = property(_get_mRight, _set_mRight)
@@ -1796,6 +1796,13 @@ class Element(object):
     border = borders = property(_get_borders, _set_borders)
 
     def _get_borderTop(self):
+        u"""Set the border data on top of the element.
+
+        >>> e = Element()
+        >>> e.borderTop = dict(strokeWidth=5, stroke=0)
+        >>> sorted(e.borderTop.items())
+        [('dash', None), ('line', 'online'), ('stroke', 0), ('strokeWidth', 5)]
+        """
         return self.css('borderTop')
     def _set_borderTop(self, border):
         self.style['borderTop'] = self._borderDict(border)
@@ -3528,8 +3535,10 @@ class Element(object):
         maxH = self.style.get('maxH')
         if self.parent:
             maxH = maxH or self.parent.h
-        return maxH or MAX_HEIGHT # Unless defined local, take current parent.w as maxW
+        return maxH or MAX_HEIGHT # Unless defined local, take current parent.w as maxH
     def _set_maxH(self, maxH):
+        print(maxH)
+        aa = dd
         self.style['maxH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, maxH)) # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
 
@@ -3537,7 +3546,7 @@ class Element(object):
         maxD = self.style.get('maxD')
         if self.parent:
             maxD = maxD or self.parent.d
-        return maxD or MAX_DEPTH # Unless defined local, take current parent.w as maxW
+        return maxD or MAX_DEPTH # Unless defined local, take current parent.w as maxD
     def _set_maxD(self, maxD):
         self.style['maxD'] = max(MIN_DEPTH, min(MAX_DEPTH, maxD)) # Set on local style, shielding parent self.css value.
     maxD = property(_get_maxD, _set_maxD)
@@ -3546,6 +3555,8 @@ class Element(object):
         return self.maxW, self.maxH, self.maxD # No limit if value is None
 
     def setMaxSize(self, maxW, maxH=None, maxD=None):
+        print('3232322323', maxW, maxH, maxD)
+        aa = ss
         if maxW and maxH is None and maxD is None:
             if isinstance(maxW, (int, float)):
                 self.maxW = self.maxH = self.maxD = maxW
@@ -3587,7 +3598,7 @@ class Element(object):
         u"""Answer the max y that can float to top, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection between (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared.
-        Comparison of available spave, includes the margins of the elements."""
+        Comparison of available space, includes the margins of the elements."""
         if self.originTop:
             y = 0
         else:
@@ -3607,7 +3618,7 @@ class Element(object):
         u"""Answer the max y that can float to bottom, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared.
-        Comparison of available spave, includes the margins of the elements."""
+        Comparison of available space, includes the margins of the elements."""
         if self.originTop:
             y = self.parent.h
         else:
@@ -3627,7 +3638,7 @@ class Element(object):
         u"""Answer the max x that can float to the left, without overlapping previous sibling elements.
         This means we are just looking at the horizontal projection of (self.top, self.bottom).
         Note that the x may be outside the parent box. Only elements with identical z-value are compared.
-        Comparison of available spave, includes the margins of the elements."""
+        Comparison of available space, includes the margins of the elements."""
         x = 0
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
@@ -3647,7 +3658,7 @@ class Element(object):
         u"""Answer the max Y that can float to the right, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared.
-        Comparison of available spave, includes the margins of the elements."""
+        Comparison of available space, includes the margins of the elements."""
         x = self.parent.w
         for e in self.parent.elements: # All elements that share self.parent, except self.
             if previousOnly and e is self: # Only look at siblings that are previous in the list.
@@ -3930,6 +3941,9 @@ class Element(object):
 
         self.buildFrame(view, p) # Draw optional frame or borders.
 
+        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
+
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
@@ -4025,49 +4039,49 @@ class Element(object):
 
     #   C O N D I T I O N S
 
-    def isBottomOnBottom(self, view, tolerance=0):
+    def isBottomOnBottom(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.parent.pb - self.bottom) <= tolerance
         return abs(self.parent.pb - self.bottom) <= tolerance
 
-    def isBottomOnBottomSide(self, view, tolerance=0):
+    def isBottomOnBottomSide(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.bottom) <= tolerance
         return abs(self.bottom) <= tolerance
 
-    def isBottomOnTop(self, view, tolerance=0):
+    def isBottomOnTop(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.bottom) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.bottom) <= tolerance
 
-    def isCenterOnCenter(self, view, tolerance=0):
+    def isCenterOnCenter(self, tolerance=0):
         pl = self.parent.pl # Get parent padding left
         center = (self.parent.w - self.parent.pr - pl)/2
         return abs(pl + center - self.center) <= tolerance
 
-    def isCenterOnCenterSides(self, view, tolerance=0):
+    def isCenterOnCenterSides(self, tolerance=0):
         return abs(self.parent.w/2 - self.center) <= tolerance
 
-    def isCenterOnLeft(self, view, tolerance=0):
+    def isCenterOnLeft(self, tolerance=0):
         return abs(self.parent.pl - self.center) <= tolerance
 
-    def isCenterOnRight(self, view, tolerance=0):
+    def isCenterOnRight(self, tolerance=0):
         return abs(self.parent.w - self.parent.pr - self.center) <= tolerance
 
-    def isCenterOnRightSide(self, view, tolerance=0):
+    def isCenterOnRightSide(self, tolerance=0):
         return abs(self.parent.w - self.center) <= tolerance
 
-    def isMiddleOnBottom(self, view, tolerance=0):
+    def isMiddleOnBottom(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.parent.pb - self.middle) <= tolerance
         return abs(self.parent.pb - self.middle) <= tolerance
 
-    def isMiddleOnBottomSide(self, view, tolerance=0):
+    def isMiddleOnBottomSide(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.middle) <= tolerance
         return abs(self.middle) <= tolerance
 
-    def isMiddleOnTop(self, view, tolerance=0):
+    def isMiddleOnTop(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.middle) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.middle) <= tolerance
@@ -4077,7 +4091,7 @@ class Element(object):
             return abs(self.middle) <= tolerance
         return abs(self.parent.h - self.middle) <= tolerance
 
-    def isMiddleOnMiddle(self, view, tolerance=0):
+    def isMiddleOnMiddle(self, tolerance=0):
         pt = self.parent.pt # Get parent padding top
         pb = self.parent.pb
         middle = (self.parent.h - pt - pb)/2
@@ -4085,32 +4099,35 @@ class Element(object):
             return abs(pt + middle - self.middle) <= tolerance
         return abs(pb + middle - self.middle) <= tolerance
 
-    def isMiddleOnMiddleSides(self, view, tolerance=0):
+    def isMiddleOnMiddleSides(self, tolerance=0):
         if self.originTop:
             return abs(self.middle) <= tolerance
         return abs(self.parent.h - self.middle) <= tolerance
 
-    def isLeftOnCenter(self, view, tolerance=0):
+    def isLeftOnCenter(self, tolerance=0):
         pl = self.parent.pl # Get parent padding left
         center = (self.parent.w - self.parent.pr - pl)/2
         return abs(pl + center - self.left) <= tolerance
 
-    def isLeftOnCenterSides(self, view, tolerance=0):
+    def isLeftOnCenterSides(self, tolerance=0):
         return abs(self.parent.w/2 - self.left) <= tolerance
 
-    def isLeftOnLeft(self, view, tolerance=0):
+    def isLeftOnLeft(self, tolerance=0):
         return abs(self.parent.pl - self.left) <= tolerance
 
-    def isLeftOnLeftSide(self, view, tolerance=0):
+    def isLeftOnLeftSide(self, tolerance=0):
         return abs(self.left) <= tolerance
 
-    def isLeftOnRight(self, view, tolerance=0):
+    def isLeftOnRight(self, tolerance=0):
         return abs(self.parent.w - self.parent.pr - self.left) <= tolerance
 
-    def isCenterOnLeftSide(self, view, tolerance=0):
+    def isLeftOnRightSide(self, tolerance=0):
+        return abs(self.parent.w - self.left) <= tolerance
+
+    def isCenterOnLeftSide(self, tolerance=0):
         return abs(self.parent.left - self.center) <= tolerance
 
-    def isTopOnMiddle(self, view, tolerance=0):
+    def isTopOnMiddle(self, tolerance=0):
         pt = self.parent.pt # Get parent padding top
         pb = self.parent.pb
         middle = (self.parent.h - pb - pt)/2
@@ -4118,54 +4135,54 @@ class Element(object):
             return abs(pt + middle - self.top) <= tolerance
         return abs(pb + middle - self.top) <= tolerance
 
-    def isTopOnMiddleSides(self, view, tolerance=0):
+    def isTopOnMiddleSides(self, tolerance=0):
         return abs(self.parent.h/2 - self.top) <= tolerance
 
-    def isOriginOnBottom(self, view, tolerance=0):
+    def isOriginOnBottom(self, tolerance=0):
         pb = self.parent.pb # Get parent padding left
         if self.originTop:
             return abs(self.parent.h - pb - self.y) <= tolerance
         return abs(pb - self.y) <= tolerance
 
-    def isOriginOnBottomSide(self, view, tolerance=0):
+    def isOriginOnBottomSide(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.y) <= tolerance
         return abs(self.y) <= tolerance
 
-    def isOriginOnCenter(self, view, tolerance=0):
+    def isOriginOnCenter(self, tolerance=0):
         pl = self.parent.pl # Get parent padding left
         center = (self.parent.w - self.parent.pr - pl)/2
         return abs(pl + center - self.x) <= tolerance
 
-    def isOriginOnCenterSides(self, view, tolerance=0):
+    def isOriginOnCenterSides(self, tolerance=0):
         return abs(self.parent.w/2 - self.x) <= tolerance
 
-    def isOriginOnLeft(self, view, tolerance=0):
+    def isOriginOnLeft(self, tolerance=0):
         return abs(self.parent.pl - self.x) <= tolerance
 
-    def isOriginOnLeftSide(self, view, tolerance=0):
+    def isOriginOnLeftSide(self, tolerance=0):
         return abs(self.x) <= tolerance
 
-    def isOriginOnRight(self, view, tolerance=0):
+    def isOriginOnRight(self, tolerance=0):
         return abs(self.parent.w - self.parent.pr - self.x) <= tolerance
 
-    def isOriginOnRightSide(self, view, tolerance=0):
+    def isOriginOnRightSide(self, tolerance=0):
         return abs(self.parent.w - self.x) <= tolerance
 
-    def isOriginOnTop(self, view, tolerance=0):
+    def isOriginOnTop(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.y) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.y) <= tolerance
 
-    def isOriginOnTopSide(self, view, tolerance=0):
+    def isOriginOnTopSide(self, tolerance=0):
         u"""Answer the boolean test if the origin of self is on the top side of self.parent.
 
-        >>> e1 = Element(w=200, h=200, x=0, y=500)
+        >>> e1 = Element(w=200, h=200, x=0, y=500, originOnTop=False)
         >>> e2 = Element(w=500, h=500, elements=[e1])
-        >>> e1.isOriginOnTopSide(None)
+        >>> e1.isOriginOnTopSide()
         True
         >>> e1.y = 400
-        >>> e1.isOriginOnTopSide(None)
+        >>> e1.isOriginOnTopSide()
         False
         >>>
         """
@@ -4173,17 +4190,17 @@ class Element(object):
             return abs(self.y) <= tolerance
         return abs(self.parent.h - self.y) <= tolerance
 
-    def isOriginOnMiddle(self, view, tolerance=0):
+    def isOriginOnMiddle(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.mt + (self.parent.h - self.parent.pb - self.parent.pt)/2 - self.y) <= tolerance
         return abs(self.parent.mb + (self.parent.h - self.parent.pb - self.parent.pt)/2 - self.y) <= tolerance
 
-    def isOriginOnMiddleSides(self, view, tolerance=0):
+    def isOriginOnMiddleSides(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h/2 - self.y) <= tolerance
         return abs(self.parent.h/2 - self.y) <= tolerance
 
-    def isRightOnCenter(self, view=None, tolerance=0):
+    def isRightOnCenter(self, tolerance=0):
         u"""Answer the boolean flag if the right size of self is on the middle of the parent.
 
         >>> e1 = Element(x=100, w=200) # e1.right == 300
@@ -4192,19 +4209,19 @@ class Element(object):
         """
         return abs(self.parent.w - self.x) <= tolerance
 
-    def isRightOnCenterSides(self, view, tolerance=0):
+    def isRightOnCenterSides(self, tolerance=0):
         return abs(self.parent.w/2 - self.right) <= tolerance
 
-    def isRightOnLeft(self, view, tolerance=0):
+    def isRightOnLeft(self, tolerance=0):
         return abs(self.parent.pl - self.right) <= tolerance
 
-    def isRightOnRight(self, view, tolerance=0):
+    def isRightOnRight(self, tolerance=0):
         return abs(self.parent.w - self.parent.pr - self.right) <= tolerance
 
-    def isRightOnRightSide(self, view, tolerance=0):
+    def isRightOnRightSide(self, tolerance=0):
         return abs(self.parent.w - self.right) <= tolerance
 
-    def isBottomOnMiddle(self, view, tolerance=0):
+    def isBottomOnMiddle(self, tolerance=0):
         pt = self.parent.pt # Get parent padding top
         pb = self.parent.pb
         middle = (self.parent.h - pb - pt)/2
@@ -4215,59 +4232,59 @@ class Element(object):
     def isBottomOnMiddleSides(self, tolerance=0):
         return abs(self.parent.h/2 - self.bottom) <= tolerance
 
-    def isTopOnBottom(self, view, tolerance=0):
+    def isTopOnBottom(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.h - self.parent.pb - self.top) <= tolerance
         return abs(self.parent.pb - self.top) <= tolerance
 
-    def isTopOnTop(self, view, tolerance=0):
+    def isTopOnTop(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.top) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.top) <= tolerance
 
-    def isTopOnTopSide(self, view, tolerance=0):
+    def isTopOnTopSide(self, tolerance=0):
         if self.originTop:
             return abs(self.top) <= tolerance
         return abs(self.parent.h - self.top) <= tolerance
 
     # Shrink block conditions
 
-    def isSchrunkOnBlockLeft(self, view, tolerance):
+    def isSchrunkOnBlockLeft(self, tolerance):
         boxX, _, _, _ = self.marginBox
         return abs(self.left + self.pl - boxX) <= tolerance
 
-    def isShrunkOnBlockRight(self, view, tolerance):
+    def isShrunkOnBlockRight(self, tolerance):
         boxX, _, boxW, _ = self.marginBox
         return abs(self.right - self.pr - (boxX + boxW)) <= tolerance
 
-    def isShrunkOnBlockTop(self, view, tolerance):
+    def isShrunkOnBlockTop(self, tolerance):
         _, boxY, _, boxH = self.marginBox
         if self.originTop:
             return abs(self.top + self.pt - boxY) <= tolerance
         return self.top - self.pt - (boxY + boxH) <= tolerance
 
-    def isShrunkOnBlockBottom(self, view, tolerance):
+    def isShrunkOnBlockBottom(self, tolerance):
         u"""Test if the bottom of self is shrunk to the bottom position of the block."""
         _, boxY, _, boxH = self.marginBox
         if self.originTop:
             return abs(self.h - self.pb - (boxY + boxH)) <= tolerance
         return abs(self.pb - boxY) <= tolerance
 
-    def isShrunkOnBlockLeftSide(self, view, tolerance):
+    def isShrunkOnBlockLeftSide(self, tolerance):
         boxX, _, _, _ = self.box
         return abs(self.left - boxX) <= tolerance
 
-    def isShrunkOnBlockRightSide(self, view, tolerance):
+    def isShrunkOnBlockRightSide(self, tolerance):
         boxX, _, boxW, _ = self.mbox
         return abs(self.right - (boxX + boxW)) <= tolerance
 
-    def isShrunkOnBlockTopSide(self, view, tolerance):
+    def isShrunkOnBlockTopSide(self, tolerance):
         _, boxY, _, boxH = self.box
         if self.originTop:
             return abs(self.top - boxY) <= tolerance
         return self.top - (boxY + boxH) <= tolerance
 
-    def isShrunkOnBlockBottomSide(self, view, tolerance):
+    def isShrunkOnBlockBottomSide(self, tolerance):
         _, boxY, _, boxH = self.marginBox
         if self.originTop:
             return abs(self.bottom - (boxY + boxH)) <= tolerance
@@ -4275,7 +4292,7 @@ class Element(object):
 
     # Float conditions to page padding
 
-    def isFloatOnTop(self, view, tolerance=0):
+    def isFloatOnTop(self, tolerance=0):
         if self.originTop:
             return abs(max(self.getFloatTopSide(), self.parent.pt) - self.mTop) <= tolerance
         return abs(min(self.getFloatTopSide(), self.parent.h - self.parent.pt) - self.mTop) <= tolerance
@@ -4293,7 +4310,7 @@ class Element(object):
 
     # Float conditions to page sides
 
-    def isFloatOnTopSide(self, view, tolerance=0):
+    def isFloatOnTopSide(self, tolerance=0):
         return abs(self.getFloatTopSide() - self.mTop) <= tolerance
 
     def isFloatOnBottomSide(self, tolerance=0):
@@ -4532,6 +4549,10 @@ class Element(object):
 
     def left2Right(self):
         self.left = self.parent.w - self.parent.pr
+        return True
+
+    def left2RightSide(self):
+        self.left = self.parent.w
         return True
 
     def left2LeftSide(self):

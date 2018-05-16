@@ -106,10 +106,15 @@ AustraliaBusinessCard = 90*MM, 55*MM # Australia, New Zealand
 ChinaBusinessCard = 90*MM, 54*MM
 JapanBusinessCard = 91*MM, 55*MM
 
+# Newspapers
+Tabloid = 11*INCH, 16.9*INCH
+Broadsheet = 23.5*INCH, 29.5*INCH
+Berliner = 12.4*INCH, 18.5*INCH
+
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
 ORIGIN_POINT = (0, 0, 0)
-# Min/max values for element sizes. Make sure that elements dimensions never get 0
+# Min/max values for element sizes. Makes sure that elements dimensions never get 0
 XXXL = sys.maxsize
 MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)

@@ -81,6 +81,9 @@ class Ruler(Element):
         sTailIndent = self.css('tailIndent')
         w = self.w - sIndent - sTailIndent
  
+         # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
+
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 

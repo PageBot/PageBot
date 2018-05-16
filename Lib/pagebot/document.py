@@ -145,7 +145,7 @@ class Document(object):
         """
         return self
     doc = property(_get_doc)
-
+    
     def _get_context(self):
         u"""Answer the context of the current view, to allow searching the parents --> document --> view. """
         return self.view.context

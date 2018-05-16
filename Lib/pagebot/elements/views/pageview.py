@@ -17,6 +17,7 @@
 from __future__ import division
 
 import os
+from random import random
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
@@ -212,7 +213,8 @@ class PageView(BaseView):
             context.setStrokeColor(self.css('viewPagePaddingStroke', (0.2, 0.2, 1)), 
                                    self.css('viewPagePaddingStrokeWidth', 0.5))
             if page.originTop:
-                context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
+                pass
+                #context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
             else:
                 context.rect(px+pl, py+pb, page.w-pl-pr, page.h-pt-pb)
             page._restoreScale(self)
@@ -344,9 +346,19 @@ class PageView(BaseView):
     #   D R A W I N G  E L E M E N T
 
     def drawElementFrame(self, e, origin):
-        if self.showElementFrame:
-            # Get the method for e to draw the frame. Flag not to recursively draw children.
-            getattr(e, 'buildFrame_' + self.b.PB_ID)(origin, self, False) 
+        u"""If e is not a page and the self.showElementFrame == True, then draw
+        the frame of the element. If one or more margins > 0, then draw these as
+        transparant rectangles instead of frame line."""
+        if self.showElementFrame and not e.isPage:
+            x = origin[0]
+            y = origin[1]
+            mt, mr, mb, ml = e.margin
+            context = self.context
+            context.setFillColor((random(), random(), random(), 0.3))
+            context.rect(x-ml, y, max(2,ml), e.h)
+            context.rect(x+e.w, y, max(1,mr), e.h)
+            context.rect(x-ml, y-mb, ml+e.w+mr, max(1,mb))
+            context.rect(x-ml, y+e.h, ml+e.w+mr, max(1,mt))
 
     def drawElementMetaInfo(self, e, origin):
         self.drawElementInfo(e, origin)

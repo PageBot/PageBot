@@ -91,6 +91,7 @@ content = {
             '<#name_somewhiteguy#>',
             'Larry Flynt',
             'Howard Hughes',
+            'Donald Trump',
             'Bill F. Gates',
             'Franklin D. Roosevelt',
             
