@@ -55,7 +55,7 @@ class FontIcon(Element):
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> fi = FontIcon(font, w=120, h=160, parent=page)
-        >>> doc.export('_export/FontIconTest.png')
+        >>> doc.export('_export/FontIconTest.pdf')
         """
 
         Element.__init__(self,  **kwargs)
