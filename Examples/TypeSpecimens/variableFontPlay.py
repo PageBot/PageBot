@@ -35,7 +35,7 @@ view.showPageNameInfo = True
 view.showPageMetaInfo = True
 page = document[1]
 page.padding = 30
-vfp = VariableFontPlay(fill=0.9, parent=page, padding=20, conditions=[Top2Top(), Left2Left(), Fit()])
+vfp = VariableFontPlay(fill=0, parent=page, padding=20, conditions=[Top2Top(), Left2Left(), Fit()])
 for n in range(5):
     newRect(parent=vfp, w=30, h=40, margin=10, fill=(1,0,0), stroke=0,  conditions=[Right2Right(), Bottom2Bottom(), Float2Left(), Float2Top()])
 document.solve()

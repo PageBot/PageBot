@@ -16,8 +16,24 @@
 #
 #     Draw the icon with optional information of the included font.
 #
+from pagebot.elements import Element
+from pagebot.toolbox.transformer import pointOffset
 
-class FontIcon(Element):
+class FontIcon(Element): 
+    u"""Showing the specified font(sub variable font) in the form of an icon 
+    showing optional information in different sizes and styles.
+    
+    >>> from pagebot.fonttoolbox.objects.font import getFont
+    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+    >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
+    >>> font = getFont(path)
+    >>> fi = FontIcon(font, w=120, h=160)
+    >>> fi.title
+    u'Roboto Regular'
+    >>> fi.size
+    (120, 160, 1)
+
+    """
     W = 30
     H = 40
     L = 2
@@ -26,40 +42,64 @@ class FontIcon(Element):
     LABEL_RLEADING = 1.3
 
     def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, line=None,
-            labelFont=None, titleFont=None, x=0, y=0, show=True):
+            labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
+        u"""    
+        >>> from pagebot.fonttoolbox.objects.font import getFont
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebot.document import Document
+        >>> c = DrawBotContext()
+        >>> w, h = 300, 400
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> page = doc[1]
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
+        >>> font = getFont(path)
+        >>> fi = FontIcon(font, w=120, h=160, parent=page)
+        >>> doc.export('_export/FontIconTest.png')
+        """
+
+        Element.__init__(self,  **kwargs)
         self.f = f # Font instance
+        self.title = title or "%s %s" % (f.info.familyName, f.info.styleName) 
+        self.titleFont = titleFont, labelFont or f 
+        self.titleFontSize = 28
         self.labelFont = labelFont or f
-        self.titleFont = titleFont, labelFont or f
-        self.title = title
-        self.name = name # Name below the icon
+        self.labelFontSize = labelFontSize or 10
         self.label = label # Optiona second label line
         self.c = c # Character(s) in the icon.
         self.scale = s
-        self.line = line or self.L
-        self.x = x
-        self.y = y
         self.show = show
-        self.eId = eId
-
-    def _get_w(self):
-        return self.W*self.scale
-    w = property(_get_w)
 
     def _get_ih(self):
         u"""Answer scaled height of the plain icon without name label."""
         return self.H*self.scale
     ih = property(_get_ih)
 
-    def _get_h(self):
-        h = self.ih
-        if self.name:
-            h += self.E*self.scale*1.4 # Extra vertical space to show the name.
-        if self.label:
-            h += self.E*self.scale*1.4 # Extra vertical space to show the name.
-        if self.title:
-            h += self.E*self.scale*1.4 # Extra vertical space to show the name.
-        return h
-    h = property(_get_h)
+    def build(self, view, origin, drawElements=True):
+        u"""Default drawing method just drawing the frame.
+        Probably will be redefined by inheriting element classes."""
+        p = pointOffset(self.oPoint, origin)
+        p = self._applyScale(view, p)
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        self.buildFrame(view, p) # Draw optional frame or borders.
+
+        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
+        self.context.fill(0)
+        self.context.rect(0, 0, 100, 100)
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, view, p)
+
+        if drawElements:
+            # If there are child elements, recursively draw them over the pixel image.
+            self.buildChildElements(view, p)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view, p)
+
+        self._restoreScale(view)
+        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def draw(self, orgX, orgY):
         if not self.show:
