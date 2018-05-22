@@ -327,6 +327,17 @@ class DrawBotContext(BaseContext):
     def lineDash(self, *lineDash):
         self.b.lineDash(*lineDash)
 
+    def miterLimit(self, value):
+        self.b.miterLimit(value)
+
+    def lineJoin(self, value):
+        """option value"""
+        self.b.lineJoin(value)
+        
+    def lineCap(self, value):
+        """Possible values are butt, square and round."""
+        self.b.lineCap(value)
+
     #   C A N V A S
 
     def saveGraphicState(self):
