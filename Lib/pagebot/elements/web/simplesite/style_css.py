@@ -43,7 +43,7 @@ simpleTheme = dict(
 
 
 )
-simpleCss = """
+simpleCssCode = """
 body{
 	background:#fff;
 	color:%(textColor)s;
