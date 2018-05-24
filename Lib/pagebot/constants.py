@@ -128,7 +128,7 @@ iPadPro = 1024, 1366 # 2048 x 2732
 iPadThirdGeneration = iPadFourthGeneration = 768, 1024 # 1536 x 2048
 iPadAir1 = iPadAir2 = 768, 1024 # 1536 x 2048
 iPadMini = 768, 1024 #  768 x 1024
-iPadMini2 = iPadMini3 = 768 x 1024 # 1536 x 2048
+iPadMini2 = iPadMini3 = 768, 1024 # 1536 x 2048
 
 # Android
 Nexus6P = 411, 731 # 1440 x 2560 
@@ -148,7 +148,7 @@ SamsungGalaxyS7 = 360, 640 # 1440 x 2560
 SamsungGalaxyS7Edge = 360, 640 # 1440 x 2560
 Nexus7 = 600, 960 # 1200 x 1920
 Nexus9 = 768, 1024 # 1536 x 2048
-SamsungGalaxyTab10 = 800 x 1280 # 800 x 1280 
+SamsungGalaxyTab10 = 800, 1280 # 800 x 1280 
 ChromebookPixel = 1280, 850 # 2560 x 1700 
 
 # Default initialize point as long as elements don't have a defined position.
