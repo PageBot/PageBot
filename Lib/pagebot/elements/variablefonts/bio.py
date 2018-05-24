@@ -15,7 +15,6 @@
 #     bio.py
 #
 from pagebot.elements import TextBox
-from pagebot.toolbox.transformer import pointOffset
 
 class Bio(TextBox): 
     u"""Showing the specified (variable) font with its name as headline 
@@ -38,7 +37,7 @@ class Bio(TextBox):
         >>> m = 80
         >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)
         >>> page = doc[1]
-        >>> font = findFont('Amstelvar-Roman-VF')
+        >>> font = findFont('AmstelvarAlpha-VF')
         >>> foundryName = 'Google Fonts'
         >>> description = blurb.getBlurb('article', newLines=True, cnt=120)
         >>> bio = Bio(font, x=m, w=w-2*m, foundryName=foundryName, description=description, parent=page, context=c)
