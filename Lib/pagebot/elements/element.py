@@ -3537,8 +3537,6 @@ class Element(object):
             maxH = maxH or self.parent.h
         return maxH or MAX_HEIGHT # Unless defined local, take current parent.w as maxH
     def _set_maxH(self, maxH):
-        print(maxH)
-        aa = dd
         self.style['maxH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, maxH)) # Set on local style, shielding parent self.css value.
     maxH = property(_get_maxH, _set_maxH)
 
@@ -3555,8 +3553,6 @@ class Element(object):
         return self.maxW, self.maxH, self.maxD # No limit if value is None
 
     def setMaxSize(self, maxW, maxH=None, maxD=None):
-        print('3232322323', maxW, maxH, maxD)
-        aa = ss
         if maxW and maxH is None and maxD is None:
             if isinstance(maxW, (int, float)):
                 self.maxW = self.maxH = self.maxD = maxW
@@ -3994,7 +3990,7 @@ class Element(object):
         self.build_css(view)
         b = view.context.b # Use the current context builder to write the HTML/CSS code.
         if view.htmlPath is not None:
-            b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+            b.importHtml(view.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.div(cssClass=self.cssClass, cssId=self.cssId) # No default class, ignore if not defined.
 

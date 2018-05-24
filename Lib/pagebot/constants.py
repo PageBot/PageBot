@@ -86,7 +86,7 @@ Size10x14 = 720, 1008
 # International generic fit for stationary
 A4Letter = A4[0], Letter[1] # 210mm width and 11" height will always fit printer and fax.
 W, H = A4Letter # Default size.
-# Overzized (depending on requirement of printer, including 36pt view padding for crop marks
+# Oversized (depending on requirement of printer, including 36pt view padding for crop marks
 A4Oversized = A4[0]+INCH, A4[1]+INCH
 A3Oversized = A3[0]+INCH, A3[1]+INCH
 # International Postcard Size
