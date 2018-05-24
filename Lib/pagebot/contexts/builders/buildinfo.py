@@ -159,7 +159,7 @@ class BuildInfo(object):
     def _get_cssUrls(self):
     	return self._d.get('cssUrls')
     def _set_cssUrls(self, cssUrls):
-    	assert isinstance(jsUrls, (tuple, list))
+    	assert isinstance(cssUrls, (tuple, list))
     	self._d['cssUrls'] = cssUrls
     cssUrls = property(_get_cssUrls, _set_cssUrls)
 

@@ -201,7 +201,7 @@ class Page(Element):
             #   J A V A S C R I P T
             #
             # Build the LS body. There are 3 option (all not including the <body>...</body>)
-            # 1 As html string (info.headHtml is defined as not None)
+            # 1 As html string (info.headHtmlCode is defined as not None)
             # 2 As path a html file, containing the string between <head>...</head>.
             # 3 Constructed from info contect, page attributes and styles.
             #
