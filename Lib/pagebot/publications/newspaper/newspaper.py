@@ -31,7 +31,7 @@ class Newspaper(Publication):
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
     exportPaths=None, **kwargs)
 
-    >>> from pagebot.contants import Broadsheet
+    >>> from pagebot.constants import Broadsheet
     >>> blurb = Blurb()
     >>> name = blurb.getBlurb('news_newspapername')
     >>> w, h = Broadsheet
