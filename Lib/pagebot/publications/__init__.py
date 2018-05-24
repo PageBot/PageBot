@@ -30,3 +30,6 @@
 from book import Book
 from website import Website
 from poster import Poster
+from brochure.brochure import Brochure
+from newspaper.newspaper import Newspaper
+
