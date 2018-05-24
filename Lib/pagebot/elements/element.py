@@ -49,7 +49,7 @@ class Element(object):
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH,
             t=0, parent=None, context=None, name=None, cssClass=None, cssId=None, title=None, 
             description=None, keyWords=None,
-            language=None, style=None, conditions=None, info=None, framePath=None,
+            language=None, style=None, conditions=None, framePath=None,
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None,
             isLeftPage=None, isRightPage=None, bleed=None,
             padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
@@ -1562,13 +1562,13 @@ class Element(object):
 
         >>> e = Element(x=100, w=248, mr=44, xAlign=LEFT)
         >>> e.mRight
-        304
+        392
         >>> e.xAlign = RIGHT
         >>> e.mRight
-        56
+        144
         >>> e.xAlign = CENTER
         >>> int(e.mRight)
-        180
+        268
         """
         return self.right + self.mr
     def _set_mRight(self, x):

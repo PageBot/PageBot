@@ -16,12 +16,12 @@
 from pagebot.publications.publication import Publication
 from pagebot.publications.newspaper.title import Title
 from pagebot.publications.newspaper.article import Article
-from pagebot.constants import Broadsheet, CENTER, MAX_HEIGHT
+from pagebot.constants import CENTER, MAX_HEIGHT
 from pagebot.elements import newRect, newTextBox
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.elements.pbpage import Template
 from pagebot.conditions import *
-from pagebot.fonttoolbox.objects.family import getFamily, getFontPaths
+from pagebot.fonttoolbox.objects.family import getFontPaths
 
 
 class Newspaper(Publication):
@@ -31,6 +31,7 @@ class Newspaper(Publication):
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
     exportPaths=None, **kwargs)
 
+    >>> from pagebot.contants import Broadsheet
     >>> blurb = Blurb()
     >>> name = blurb.getBlurb('news_newspapername')
     >>> w, h = Broadsheet

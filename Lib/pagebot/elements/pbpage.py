@@ -120,7 +120,7 @@ class Page(Element):
        
         self.build_css(view)
         if view.htmlPath is not None:
-            b.importHtml(info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+            b.importHtml(view.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.docType('html')
             b.html()#lang="%s" itemtype="http://schema.org/">\n' % self.css('language'))
@@ -168,7 +168,7 @@ class Page(Element):
                 if view.favIconUrl: # Add the icon link and let the type follow the image extension.
                     b.link(rel='icon', href=view.favIconUrl, type='image/%s' % view.favIconUrl.split('.')[-1])
                 if view.appleTouchIconUrl: # Add the icon link and let the type follow the image extension.
-                    b.link(rel='apple-touch-icon-precomposed', href=view.appleTouchIconUrl, type='image/%s' % info.appleTouchIconUrl.split('.')[-1])
+                    b.link(rel='apple-touch-icon-precomposed', href=view.appleTouchIconUrl, type='image/%s' % view.appleTouchIconUrl.split('.')[-1])
                 
                 # Description and keywords
                 if view.description:
