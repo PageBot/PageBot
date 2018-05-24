@@ -94,7 +94,9 @@ class BaseView(Element):
         self.mediaQueriesUrl = None
         self.cssPath = None
         self.htmlPath = None
-   
+        self.resourcePaths = None
+        self.jsCode = None
+        
     def _getContext(self):
         u"""Answer the best/default context for this type of view."""
         return getContext() # Default is DrawBotContext or FlatContext instance.
