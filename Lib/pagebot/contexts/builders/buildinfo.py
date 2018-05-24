@@ -50,6 +50,12 @@ class BuildInfo(object):
     def items(self):
     	return self._d.items()
 
+    def __getitem__(self, key):
+    	return self._d.get(key)
+
+    def __setitem__(self, key, value):
+    	self._d[key] = value
+    	
     def _get_favIconUrl(self):
     	return self._d.get('favIconUrl')
     def _set_favIconUrl(self, favIconUrl):

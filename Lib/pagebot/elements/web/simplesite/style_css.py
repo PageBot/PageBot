@@ -563,5 +563,5 @@ PRINT STYLESHEET
 
 
 if __name__ == '__main__':
-    simpleCss % simpleTheme
+    simpleCssCode % simpleTheme
 

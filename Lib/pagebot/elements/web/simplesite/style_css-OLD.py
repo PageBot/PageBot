@@ -13,7 +13,7 @@ simpleTheme = dict(
 	srtMenuHoverBackground3='#EFEFEF',
 	srtMenuHover='#fff',
 )
-simpleCss = """
+simpleCssCode = """
 body{
 	background:#fff;
 	color:#706670;
@@ -536,5 +536,5 @@ PRINT STYLESHEET
 if __name__ == '__main__':
     import doctest
     import sys
-    simpleCss % simpleTheme
+    simpleCssCode % simpleTheme
     sys.exit(doctest.testmod()[0])

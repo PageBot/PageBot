@@ -18,7 +18,7 @@
 #
 from pagebot.elements import *
 from pagebot.elements.web.simplesite import Navigation, Featured, WideContent, Hero, \
-    Footer, simpleTheme, simpleCss
+    Footer, simpleTheme, simpleCssCode
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.toolbox.units import px, fr
@@ -96,7 +96,7 @@ class D3GraphSite(Publication):
         t.info.headHtml = headHtml % dict(title=self.title, description='', keywords='')
         t.info.favIconUrl = 'images/favicon.gif'
         t.info.jsCode = jsCode
-        t.info.cssCode = simpleCss % simpleTheme
+        t.info.cssCode = simpleCssCode % simpleTheme
         # Add page template elements.
         Navigation(parent=t, name='Navigation')
         #Introduction(parent=t, name='Introduction')
