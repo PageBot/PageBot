@@ -87,7 +87,13 @@ class BaseView(Element):
         self.cssVerbose = True # Adds information comments with original values to CSS export.
         # Exporting 
         self.doExport = True # Flag to turn off any export, e.g. in case of testing with docTest
-    
+ 
+        # Web resources
+        self.favIconUrl = 'images/favicon.gif'
+        self.mediaQueriesUrl = None
+        self.cssPath = None
+        self.htmlPath = None
+   
     def _getContext(self):
         u"""Answer the best/default context for this type of view."""
         return getContext() # Default is DrawBotContext or FlatContext instance.
