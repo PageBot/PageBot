@@ -189,13 +189,14 @@ class Element(object):
         self.prevPage = prevPage # if a flow must run over page boundaries.
         self._isLeftPage = isLeftPage # True/False/None. In case None, parent will be queried
         self._isRightPage = isRightPage
+        # BuilderInfo instance to store special resources for the builders to use.
+        self.info = newBuildInfo(info)
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
+        # Overwrite the self.info for data that is defined in the template.
         self.applyTemplate(template, elements)
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isFlow = not None in (prevElement, nextElement, nextPage)
-        # BuilderInfo instance to store special resources for the builders to use.
-        self.info = newBuildInfo(info)
 
     def __repr__(self):
         u"""Object as string.
