@@ -15,7 +15,6 @@
 #     stacked.py
 #
 from pagebot.elements import Group, newTextBox
-from pagebot.constants import RIGHT
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
