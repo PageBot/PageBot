@@ -103,15 +103,29 @@ class Page(Element):
         of self. If there are any child elements, then also included their code, using the
         level recursive indent.
 
+        Single page site, exporting to html source, with CSS inside.
         >>> import os
-        >>> from pagebot.contexts.htmlcontext import HtmlContext
-        >>> context = HtmlContext()
         >>> from pagebot.document import Document
-        >>> doc = Document(name='TestDoc', autoPages=1, context=context)
-        >>> view = doc.newView('Mamp')
-        >>> view.doExport = False # View flag to avoid exporting to files.
+        >>> doc = Document(name='SinglePageSite')
+        >>> view = doc.newView('Site')
         >>> page = doc[1]
-        >>> view.build()
+        >>> page.info.title = 'Home'
+        >>> page.info.cssCode = 'body {background-color:black}'
+        >>> page.info._d
+        >>> exportPath = '_export/Home' # No extension for site folder if exporting to a website
+        >>> doc.export(exportPath)
+        >>> result = os.system('open %s/default.html' % exportPath)
+        """
+
+        """
+        >>> import os
+        >>> from pagebot.document import Document
+        >>> doc = Document(name='TestDoc')
+        >>> view = doc.newView('Mamp')
+        >>> view.doExport = True # WHen testing, set view flag to avoid exporting to files.
+        >>> page = doc[1]
+        >>> page.info.title = 'Home'
+        >>> doc.export('_export/DemoSite') # No extension to export a site.
         >>> #TODO: Get the test to work.
         >>> #os.system(u'open "%s"' % view.getUrl(doc.name))
         """
@@ -162,10 +176,14 @@ class Page(Element):
                     b.link(rel='stylesheet', href=cssPath, type='text/css', media='all')
 
                 if self.info.cssCode is not None:
+                    b.style()
                     b.addCss(self.info.cssCode)
+                    b._style()
                 if self.info.cssPath is not None:
+                    b.style()
                     b.importCss(self.info.cssPath) # Add HTML content of file, if path is not None and the file exists.
-
+                    b._style()
+                    
                 # Icons
                 if self.info.favIconUrl: # Add the icon link and let the type follow the image extension.
                     b.link(rel='icon', href=self.info.favIconUrl, type='image/%s' % self.info.favIconUrl.split('.')[-1])

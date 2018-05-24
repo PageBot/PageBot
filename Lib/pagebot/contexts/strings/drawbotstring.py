@@ -365,7 +365,7 @@ class DrawBotString(BabelString):
             # Test the width we got by linear interpolation. Scale back if still too large.
             # Iterate until it really fits.
             while newS.textSize()[0] > w and style['fontSize']:
-                style['fontSize'] = style['fontSize']-0.1
+                style['fontSize'] -= 0.1 # Incremental decrease the size until it fits
                 newS = cls.newString(t, context, style=style)
 
         elif h is not None: # There is a target height defined, calculate again with the fontSize ratio correction.
