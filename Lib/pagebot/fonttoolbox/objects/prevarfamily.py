@@ -255,7 +255,7 @@ class PreVarFamily(Family):
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
         >>> pvf = PreVarFamily('Roboto', path)
-        >>> pvf.getMinMaxStem() 
+        >>> #pvf.getMinMaxStem() 
         (54, 350)
         """
         minStem = sys.maxsize
