@@ -55,12 +55,46 @@ class BuildInfo(object):
 
     def __setitem__(self, key, value):
     	self._d[key] = value
-    	
+
+    # Icon stuff
+
     def _get_favIconUrl(self):
     	return self._d.get('favIconUrl')
     def _set_favIconUrl(self, favIconUrl):
     	self._d['favIconUrl'] = favIconUrl
     favIconUrl = property(_get_favIconUrl, _set_favIconUrl)
+
+    def _get_appleTouchIconUrl(self):
+    	return self._d.get('appleTouchIconUrl')
+    def _set_appleTouchIconUrl(self, appleTouchIconUrl):
+    	self._d['favIappleTouchIconUrlconUrl'] = appleTouchIconUrl
+    appleTouchIconUrl = property(_get_appleTouchIconUrl, _set_appleTouchIconUrl)
+
+    # Page meta info
+
+    def _get_title(self):
+    	return self._d.get('title')
+    def _set_title(self, title):
+    	self._d['title'] = title
+    title = property(_get_title, _set_title)
+
+    def _get_viewPort(self):
+    	return self._d.get('viewPort')
+    def _set_viewPort(self, viewPort):
+    	self._d['viewPort'] = viewPort
+    viewPort = property(_get_viewPort, _set_viewPort)
+
+    def _get_description(self):
+    	return self._d.get('description')
+    def _set_description(self, description):
+    	self._d['description'] = description
+    description = property(_get_description, _set_description)
+
+    def _get_keyWords(self):
+    	return self._d.get('keyWords')
+    def _set_keyWords(self, keyWords):
+    	self._d['keyWords'] = keyWords
+    keyWords = property(_get_keyWords, _set_keyWords)
 
     # Info defined a code chunks
 
@@ -108,19 +142,33 @@ class BuildInfo(object):
     	self._d['htmlPath'] = htmlPath
     htmlPath = property(_get_htmlPath, _set_htmlPath)
 
+    def _get_headHtmlPath(self):
+    	return self._d.get('headHtmlPath')
+    def _set_headHtmlPath(self, headHtmlPath):
+    	self._d['headHtmlPath'] = headHtmlPath
+    headHtmlPath = property(_get_headHtmlPath, _set_headHtmlPath)
+
+    def _get_bodyHtmlPath(self):
+    	return self._d.get('bodyHtmlPath')
+    def _set_bodyHtmlPath(self, bodyHtmlPath):
+    	self._d['bodyHtmlPath'] = bodyHtmlPath
+    bodyHtmlPath = property(_get_bodyHtmlPath, _set_bodyHtmlPath)
+
     # Info defined as url 
 
-    def _get_cssUrl(self):
-    	return self._d.get('cssUrl')
-    def _set_cssUrl(self, cssUrl):
-    	self._d['cssUrl'] = cssUrl
-    cssUrl = property(_get_cssUrl, _set_cssUrl)
+    def _get_cssUrls(self):
+    	return self._d.get('cssUrls')
+    def _set_cssUrls(self, cssUrls):
+    	assert isinstance(jsUrls, (tuple, list))
+    	self._d['cssUrls'] = cssUrls
+    cssUrls = property(_get_cssUrls, _set_cssUrls)
 
-    def _get_jsUrl(self):
-    	return self._d.get('jsUrl')
-    def _set_jsUrl(self, jsUrl):
-    	self._d['jsUrl'] = jsUrl
-    jsUrl = property(_get_jsUrl, _set_jsUrl)
+    def _get_jsUrls(self):
+    	return self._d.get('jsUrls')
+    def _set_jsUrls(self, jsUrls):
+    	assert isinstance(jsUrls, (tuple, list))
+    	self._d['jsUrls'] = jsUrls
+    jsUrls = property(_get_jsUrls, _set_jsUrls)
 
     def _get_webFontsUrl(self):
     	return self._d.get('webFontsUrl')

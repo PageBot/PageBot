@@ -39,9 +39,7 @@ class SimpleSite(Publication):
     >>> page.name = 'index'
     >>> template = doc.getTemplate('home')
     >>> e = BarChart(parent=template)
-    >>> page.applyTemplate(template)
-    >>> view.info.cssCode = template.info.cssCode
-    >>> view.info.resourcePaths = template.info.resourcePaths # Paths js, images, fonts and css to copy.
+    >>> page.applyTemplate(template)    
     >>> doc.build()
     >>> # Try to open in browser. It works if a local server (like MAMP) runs for view.LOCAL_HOST_URL url.
     >>> import os
