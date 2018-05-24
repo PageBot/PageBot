@@ -10,7 +10,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     magazine.py
+#     brochure.py
 #
 from __future__ import print_function
 from pagebot.conditions import *
@@ -18,20 +18,26 @@ from pagebot.publications.publication import Publication
 from pagebot.elements import *
 
 
-class Magazine(Publication):
-    """Create a default magazine, with cover, articles on different template
-    layouts, table of content, Layout and content options defined by external parameters.
+class Brochure(Publication):
+    """Create a default brochure, with cover/home page, article pages in different 
+    template layouts, table of content, navigation. Layout and content options defined 
+    by external parameters.
+    The brochure should be optimized to export as PDF as well as website.
+
     Subclassed from Document-->Publication with the following optional attributes:
     rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0,
-    w=None, h=None, exportPaths=None, **kwargs)"""
+    w=None, h=None, exportPaths=None, **kwargs)
+
+    >>> from pagebot.constants import A4
+    >>> br = Brochure()
+    >>> br.export('_export/Brochure.pdf')
+    """
 
     DEFAULT_COVERBACKGROUND = (0.3, 0.6, 0.3)
 
     def initialize(self, coverBackgroundFill=None, **kwargs):
-        u"""Initialize the generic magazine templates. """
-
-        # TODO: Solve for left/right templates.
+        u"""Initialize the generic brochure templates. """
 
         padding = self.css('pt'), self.css('pr'), self.css('pb'), self.css('pl')
         w, h = self.w, self.h

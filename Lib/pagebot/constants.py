@@ -111,6 +111,46 @@ Tabloid = 11*INCH, 16.9*INCH
 Broadsheet = 23.5*INCH, 29.5*INCH
 Berliner = 12.4*INCH, 18.5*INCH
 
+# Standard view port sizes.
+# http://mediag.com/news/popular-screen-resolutions-designing-for-all/
+
+# Apple
+iPhoneeX = 375, 812 # Pixelsize: 1125 x 2436
+iPhone8Plus = 414, 736 # 1080 x 1920 
+iPhone8 = 375, 667 # 750 x 1334  
+iPhone7Plus = 414, 736 # 1080 x 1920
+iPhone7 = 375, 667 # 750 x 1334
+iPhone6Plus = iPhone6SPlus = 414, 736 # 1080 x 1920 
+iPhone6 = 375, 667 # 750 x 1334
+iPHone5 = 320, 568 # 640 x 1136        
+iPodTouch = 320, 568 # 640 x 1136  
+iPadPro = 1024, 1366 # 2048 x 2732
+iPadThirdGeneration = iPadFourthGeneration = 768, 1024 # 1536 x 2048
+iPadAir1 = iPadAir2 = 768, 1024 # 1536 x 2048
+iPadMini = 768, 1024 #  768 x 1024
+iPadMini2 = iPadMini3 = 768 x 1024 # 1536 x 2048
+
+# Android
+Nexus6P = 411, 731 # 1440 x 2560 
+Nexus5X = 411, 731 # 1080 x 1920 
+GooglePixel = 411, 731 # 1080 x 1920 
+GooglePixelXL = 411, 731 # 1440 x 2560 
+GooglePixel2 = 411, 731 # 1080 x 1920
+GooglePixel2XL = 411, 731 # 1440 x 2560 
+SamsungGalaxyNote5 = 480, 853 # 1440 x 2560
+LGG5 = 480, 853 # 1440 x 2560 
+OnePlus3 = 480, 853 # 1080 x 1920 
+SamsungGalaxyS9 = 360, 740 # 1440 x 2960 
+SamsungGalaxyS9Plus = 360, 740 # 1440 x 2960 
+SamsungGalaxyS8 = 360, 740 # 1440 x 2960
+SamsungGalaxyS8Plus = 360, 740 # 1440 x 2960 
+SamsungGalaxyS7 = 360, 640 # 1440 x 2560 
+SamsungGalaxyS7Edge = 360, 640 # 1440 x 2560
+Nexus7 = 600, 960 # 1200 x 1920
+Nexus9 = 768, 1024 # 1536 x 2048
+SamsungGalaxyTab10 = 800 x 1280 # 800 x 1280 
+ChromebookPixel = 1280, 850 # 2560 x 1700 
+
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
 ORIGIN_POINT = (0, 0, 0)
