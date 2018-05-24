@@ -54,7 +54,7 @@ class Newspaper(Publication):
     >>> #np[2].applyTemplate(templateMainPage)
     >>> #np[3].applyTemplate(templateMainPage)
     >>> #np[4].applyTemplate(templateMainPage)
-    >>> result = np.solve()
+    >>> result = np.solve() # Drill down to all elements positions themselves.
     >>> np.export('_export/Newspaper.pdf')
     """
     COLUMNS = 7

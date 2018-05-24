@@ -118,9 +118,8 @@ class Page(Element):
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
        
-        self.build_css(view)
-        if view.htmlPath is not None:
-            b.importHtml(view.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+        if self.info.htmlPath is not None:
+            b.importHtml(self.info.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.docType('html')
             b.html()#lang="%s" itemtype="http://schema.org/">\n' % self.css('language'))
