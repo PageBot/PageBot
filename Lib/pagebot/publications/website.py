@@ -303,8 +303,9 @@ class Website(Publication):
         t = Template(w=w, h=h, name='home', padding=padding, gridX=gridX, gridY=gridY)
         self.addTemplate(t.name, t)
         # Set template <head> building parameters. # Page element definition in pbpage.py
-        t.info.favIconUrl = 'images/favicon.gif'
-        t.info.mediaQueriesUrl = None
+        view = self.view
+        view.favIconUrl = 'images/favicon.gif'
+        view.mediaQueriesUrl = None
         # Add page elements.
         MobileNavigation(parent=t, name='MobileNavigation')
         Introduction(parent=t, name='Introduction')        

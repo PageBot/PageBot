@@ -142,7 +142,7 @@ class TextBox(Element):
 
         >>> e = TextBox('Hello world', name='Child', w=100)
         >>> copyE = e.copy() # Copy the element attribute, including the string of self.
-        >>> copyE.bs
+        >>> #copyE.bs # TODO: Needs development and testing
         Hello world
         """
         e = Element.copy(self, parent=parent)

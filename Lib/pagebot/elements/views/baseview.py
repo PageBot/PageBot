@@ -89,6 +89,7 @@ class BaseView(Element):
         self.doExport = True # Flag to turn off any export, e.g. in case of testing with docTest
  
         # Web resources
+        self.appleTouchIconUrl = None
         self.favIconUrl = 'images/favicon.gif'
         self.mediaQueriesUrl = None
         self.cssPath = None
