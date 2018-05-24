@@ -26,4 +26,4 @@ from pagebot.elements.web.simplesite.hero import Hero
 from pagebot.elements.web.simplesite.featured import Featured
 from pagebot.elements.web.simplesite.content import WideContent
 from pagebot.elements.web.simplesite.footer import Footer
-from pagebot.elements.web.simplesite.style_css import simpleTheme, simpleCss
+from pagebot.elements.web.simplesite.style_css import simpleTheme, simpleCssCode

@@ -278,6 +278,10 @@ class Element(object):
             self.prevElement = template.prevElement
             self.nextElement = template.nextElement
             self.nextPage = template.nextPage
+            # Copy template.info data that is defined, overwriting values in self.info
+            for key, value in template.info.items():
+                if value is not None:
+                    self.info[key] = value
             # Copy style items
             for  name, value in template.style.items():
                 self.style[name] = value
