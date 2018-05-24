@@ -16,7 +16,6 @@
 #
 from pagebot.elements import TextBox
 from pagebot.constants import RIGHT
-from pagebot.toolbox.transformer import pointOffset
 
 class Title(TextBox): 
     u"""Showing the specified (variable) font with its name as headline 
@@ -40,9 +39,9 @@ class Title(TextBox):
         >>> m = 80
         >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)
         >>> page = doc[1]
-        >>> font = findFont('Amstelvar-Roman-VF')
+        >>> font = findFont('AmstelvarAlpha-VF')
         >>> foundryName = 'Google Fonts'
-        >>> designer = blurb.getBlurb('name')
+        >>> designer = blurb.getBlurb('name_japanese')
         >>> title = Title(font, x=m, w=w-2*m, foundryName=foundryName, designer=designer, parent=page, context=c)
         >>> tw, th = title.getTextSize()
         >>> title.y = (h - th)*2/3

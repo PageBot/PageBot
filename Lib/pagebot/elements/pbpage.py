@@ -111,7 +111,6 @@ class Page(Element):
         >>> page = doc[1]
         >>> page.info.title = 'Home'
         >>> page.info.cssCode = 'body {background-color:black}'
-        >>> page.info._d
         >>> exportPath = '_export/Home' # No extension for site folder if exporting to a website
         >>> doc.export(exportPath)
         >>> result = os.system('open %s/default.html' % exportPath)
@@ -183,7 +182,7 @@ class Page(Element):
                     b.style()
                     b.importCss(self.info.cssPath) # Add HTML content of file, if path is not None and the file exists.
                     b._style()
-                    
+
                 # Icons
                 if self.info.favIconUrl: # Add the icon link and let the type follow the image extension.
                     b.link(rel='icon', href=self.info.favIconUrl, type='image/%s' % self.info.favIconUrl.split('.')[-1])
