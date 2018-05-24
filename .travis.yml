@@ -66,7 +66,8 @@ script:
 - python Lib/pagebot/fonttoolbox/otlTools.py
 - python Lib/pagebot/fonttoolbox/ttftools.py
 - python Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
-- python Lib/pagebot/publications/simplesite.py
+- python Lib/pagebot/publications/simplesite/simplesite.py
+- python Lib/pagebot/publications/newspaper/newspaper.py
 - python Lib/pagebot/publications/typespecimen.py
 - python Lib/pagebot/publications/website.py
 - python Lib/pagebot/style.py
