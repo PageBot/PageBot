@@ -40,8 +40,8 @@ class SimpleSite(Publication):
     >>> template = doc.getTemplate('home')
     >>> e = BarChart(parent=template)
     >>> page.applyTemplate(template)
-    >>> #view.cssCode = template.cssCode
-    >>> #view.resourcePaths = template.resourcePaths # Paths js, images, fonts and css to copy.
+    >>> view.info.cssCode = template.info.cssCode
+    >>> view.info.resourcePaths = template.info.resourcePaths # Paths js, images, fonts and css to copy.
     >>> doc.build()
     >>> # Try to open in browser. It works if a local server (like MAMP) runs for view.LOCAL_HOST_URL url.
     >>> import os
@@ -87,6 +87,8 @@ class SimpleSite(Publication):
         """
         #<script>window.jQuery || document.write('<script src="js/libs/jquery-1.9.0.min.js"></script>')</script>
 
+        rp = getRootPath()
+
         padding = self.padding
         w, h = self.w, self.h
         self.gw = self.gh = px(8)
@@ -96,14 +98,12 @@ class SimpleSite(Publication):
         # Default page template
         t = Template(w=w, h=h, name='home', padding=padding, gridX=gridX, gridY=gridY)
         self.addTemplate(t.name, t)
-        view = t.view
         # Set template <head> building parameters. # Page element definition in pbpage.py
-        view.headHtml = headHtml % dict(title=self.title, description='', keywords='')
-        view.favIconUrl = 'images/favicon.gif'
-        view.jsCode = jsCode
-        view.cssCode = simpleCss % simpleTheme
-        rp = getRootPath()
-        view.resourcePaths = (rp+'js', rp+'images', rp+'fonts', 'rp+css') # Directorie to be copied to Mamp.
+        t.info.headHtml = headHtml % dict(title=self.title, description='', keywords='')
+        t.info.favIconUrl = 'images/favicon.gif'
+        t.info.jsCode = jsCode
+        t.info.cssCode = simpleCss % simpleTheme
+        t.info.resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directorie to be copied to Mamp.
         # Add page template elements.
         Navigation(parent=t, name='Navigation')
         #Introduction(parent=t, name='Introduction')

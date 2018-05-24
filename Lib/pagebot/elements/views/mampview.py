@@ -55,8 +55,8 @@ class MampView(SiteView):
         <MampView:Mamp (0, 0)>
         >>> view.doExport = True # View flag to avoid exporting to files.
         >>> rp = getRootPath() + '/elements/web/simplesite/resources/'
-        >>> view.resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directories to be copied to Mamp.        
-        >>> view.webFontsUrl = None
+        >>> view.info.resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directories to be copied to Mamp.        
+        >>> view.info.webFontsUrl = None
         >>> page = doc[1]
         >>> page.name = view.DEFAULT_HTML_FILE
         >>> banner = Banner(parent=page, cssId='Banner', fill=(0, 1, 0))

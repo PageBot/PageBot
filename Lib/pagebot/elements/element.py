@@ -20,6 +20,7 @@ import weakref
 import copy
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import Unit, getUnits, fr, perc, em
+from pagebot.contexts.builders.buildinfo import newBuildInfo
 
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
@@ -48,7 +49,7 @@ class Element(object):
 
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH,
             t=0, parent=None, context=None, name=None, cssClass=None, cssId=None, title=None, 
-            description=None, keyWords=None,
+            description=None, keyWords=None, info=None,
             language=None, style=None, conditions=None, framePath=None,
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None,
             isLeftPage=None, isRightPage=None, bleed=None,
@@ -74,6 +75,9 @@ class Element(object):
         >>> e = Element()
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (0, 0, 100, 100, (0, 0, 0, 0), (0, 0, 0, 0))
+        >>> e.info.resources = 'Resource String'
+        >>> e.info.resources
+        'Resource String'
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.document import Document
@@ -190,6 +194,8 @@ class Element(object):
         self.applyTemplate(template, elements)
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isFlow = not None in (prevElement, nextElement, nextPage)
+        # BuilderInfo instance to store special resources for the builders to use.
+        self.info = newBuildInfo(info)
 
     def __repr__(self):
         u"""Object as string.
@@ -495,10 +501,11 @@ class Element(object):
 
     def copy(self, parent=None):
         u"""Answer a full copy of self, where the "unique" fields are set to default.
-        Also perform a deep copy on all child elements.
+        Also perform a deep copy on all child elements and copy self.info
 
         >>> e1 = Element(name='Child', w=100)
         >>> e = Element(name='Parent', elements=[e1], w=200)
+        >>> e.info.cssCode = 'abc {}'
         >>> copyE = e.copy()
         >>> len(copyE) == len(e) == 1
         True
@@ -506,6 +513,10 @@ class Element(object):
         (False, False)
         >>> copyE.name == e.name, copyE.w == e.w == 200, copyE['Child'].w == e['Child'].w == 100 # Values are copied
         (True, True, True)
+        >>> e.info.cssCode = 'xyz {}' # Change info of original element
+        >>> copyE.info.cssCode # Copied info did not change
+        'abc {}'
+
         """
         # This also initializes the child element tree as empty list.
         # Style is supposed to be a deep-copyable dictionary.
@@ -521,9 +532,13 @@ class Element(object):
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
             framePath=self.framePath,
-            elements=None, # Will be copied separately.
-            template=self.template, nextElement=self.nextElement, prevElement=self.prevElement,
-            nextPage=self.nextPage, prevPage=self.prevPage,
+            info=self.info.copy(), # Copy the resource storage for this element.
+            elements=None, # Will be copied separately, if there are child elements
+            template=self.template, 
+            nextElement=self.nextElement, 
+            prevElement=self.prevElement,
+            nextPage=self.nextPage, 
+            prevPage=self.prevPage,
             padding=self.padding, # Copies all padding values at once
             margin=self.margin, # Copies all margin values at once,
             borders=self.borders, # Copies all borders at once.
