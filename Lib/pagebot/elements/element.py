@@ -3991,8 +3991,8 @@ class Element(object):
             b.css('#'+self.cssId, self.style)
         elif self.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
             b.css('.'+self.cssClass, self.style)
-        elif view.cssPath is not None:
-            b.importCss(view.cssPath) # Add CSS content of file, if path is not None and the file exists.
+        elif self.info.cssPath is not None:
+            b.importCss(self.info.cssPath) # Add CSS content from file, if path is not None and the file exists.
         else:
             b.css(message='No CSS for element %s\n' % self.__class__.__name__)
 
@@ -4004,8 +4004,8 @@ class Element(object):
         """
         self.build_css(view)
         b = view.context.b # Use the current context builder to write the HTML/CSS code.
-        if view.htmlPath is not None:
-            b.importHtml(view.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+        if self.info.htmlPath is not None:
+            b.importHtml(self.info.htmlPath) # Add HTML content from file, if path is not None and the file exists.
         else:
             b.div(cssClass=self.cssClass, cssId=self.cssId) # No default class, ignore if not defined.
 
