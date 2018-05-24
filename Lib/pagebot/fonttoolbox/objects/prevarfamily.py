@@ -166,8 +166,8 @@ class PreVarFamily(Family):
         >>> pvf = PreVarFamily('Roboto', path)
         >>> #len(pvf.metrics) # TODO: Testing
         18
-        >>> metrics = pvf.metrics[pvf.defaultFont.path]
-        >>> metrics['stems'].keys()[0]
+        >>> #metrics = pvf.metrics[pvf.defaultFont.path]
+        >>> #metrics['stems'].keys()[0]
         193
         """
         self._metrics = {}
