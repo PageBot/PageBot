@@ -122,7 +122,7 @@ class BuildInfo(object):
 
     def _get_resourcePaths(self):
     	return self.d.get('resourcePaths')
-    def _set_resourcePaths(self, bodyHtml):
+    def _set_resourcePaths(self, resourcePaths):
     	self.d['resourcePaths'] = resourcePaths
     resourcePaths = property(_get_resourcePaths, _set_resourcePaths)
 

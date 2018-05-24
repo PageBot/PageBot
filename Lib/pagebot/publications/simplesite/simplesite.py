@@ -19,7 +19,7 @@
 from pagebot import getRootPath
 from pagebot.elements import *
 from pagebot.elements.web.simplesite import Navigation, Featured, WideContent, Hero, \
-    Footer, simpleTheme, simpleCss
+    Footer, simpleTheme, simpleCssCode
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.toolbox.units import px, fr
@@ -57,7 +57,7 @@ class SimpleSite(Publication):
         u"""Initialize the generic base website templates. """
 
         # For now, just supply the full head code here.
-        headHtml = """       
+        headHtmlCode = """       
         <meta content="text/html;charset=UTF-8" http-equiv="Content-Type"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>%(title)s</title>
@@ -99,10 +99,10 @@ class SimpleSite(Publication):
         t = Template(w=w, h=h, name='home', padding=padding, gridX=gridX, gridY=gridY)
         self.addTemplate(t.name, t)
         # Set template <head> building parameters. # Page element definition in pbpage.py
-        t.info.headHtml = headHtml % dict(title=self.title, description='', keywords='')
+        t.info.headHtmlCode = headHtmlCode % dict(title=self.title, description='', keywords='')
         t.info.favIconUrl = 'images/favicon.gif'
         t.info.jsCode = jsCode
-        t.info.cssCode = simpleCss % simpleTheme
+        t.info.cssCode = simpleCssCode % simpleTheme
         t.info.resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directorie to be copied to Mamp.
         # Add page template elements.
         Navigation(parent=t, name='Navigation')
