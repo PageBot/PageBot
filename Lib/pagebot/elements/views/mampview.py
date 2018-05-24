@@ -64,7 +64,6 @@ class MampView(SiteView):
         >>> page.elements[0].cssId
         'Banner'
         >>> doc.export()
-        >>> view.b._cssOut
 
         >>> #Try to open in a browser, assuming that there is a running local Mamp server.
         >>> result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, view.DEFAULT_HTML_FILE)))

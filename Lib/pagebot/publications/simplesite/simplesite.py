@@ -37,6 +37,7 @@ class SimpleSite(Publication):
     >>> view = doc.newView('Mamp')
     >>> page = doc[1]
     >>> page.name = 'index'
+    >>> page.info.title = 'Home'
     >>> template = doc.getTemplate('home')
     >>> e = BarChart(parent=template)
     >>> page.applyTemplate(template)    
