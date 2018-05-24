@@ -19,7 +19,7 @@ def newBuildInfo(info=None, **kwargs):
 	u"""Answer a filled BuildInfo instance.
 
 	>>> url = 'images/favIcon.ico'
-	>>> bi = newInfo(favIconUrl=url)
+	>>> bi = newBuildInfo(favIconUrl=url)
 	>>> bi.favIconUrl == url
 	True
 	"""
@@ -44,6 +44,7 @@ class BuildInfo(object):
     		setattr(self, key, value)
 
     def copy(self):
+    	u"""Answer a deep copy of self."""
     	return copy.deepcopy(self)
 
     def _get_favIconUrl(self):

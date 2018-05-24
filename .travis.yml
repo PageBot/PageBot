@@ -27,6 +27,7 @@ script:
 - python Lib/pagebot/contexts/basecontext.py
 - python Lib/pagebot/contexts/builders/htmlbuilder.py
 - python Lib/pagebot/contexts/builders/nonebuilder.py
+- python Lib/pagebot/contexts/builders/buildinfo.py
 - python Lib/pagebot/contexts/drawbotcontext.py
 - python Lib/pagebot/contexts/flatcontext.py
 - python Lib/pagebot/contexts/htmlcontext.py
