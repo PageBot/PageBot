@@ -39,13 +39,14 @@ class Title(TextBox):
         >>> m = 80
         >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)
         >>> page = doc[1]
+        >>> #font = findFont('RobotoDelta-VF')
         >>> font = findFont('AmstelvarAlpha-VF')
         >>> foundryName = 'Google Fonts'
-        >>> designer = blurb.getBlurb('name_japanese')
+        >>> designer = 'David Berlow'
         >>> title = Title(font, x=m, w=w-2*m, foundryName=foundryName, designer=designer, parent=page, context=c)
         >>> tw, th = title.getTextSize()
         >>> title.y = (h - th)*2/3
-        >>> doc.export('_export/TypeNetworkTitle.pdf')
+        >>> doc.export('_export/%sTitle.pdf' % font.info.familyName)
         """
         TextBox.__init__(self, '', **kwargs)
 
