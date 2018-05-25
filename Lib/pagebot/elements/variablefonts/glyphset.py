@@ -12,188 +12,191 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#	  fonticon.py
+#     glyphset.py
 #
-#     Draw the icon with optional information of the included font.
-#
-from pagebot.elements import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.elements import Group, newTextBox
+from pagebot.constants import JUSTIFIED
+from pagebot.contributions.filibuster.blurb import Blurb
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
-class FontIcon(Element): 
-    u"""Showing the specified font(sub variable font) in the form of an icon 
-    showing optional information in different sizes and styles.
-    
-    >>> from pagebot.fonttoolbox.objects.font import getFont
-    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-    >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
-    >>> font = getFont(path)
-    >>> fi = FontIcon(font, w=120, h=160, title="Roboto Regular")
-    >>> fi.title
-    'Roboto Regular'
-    >>> fi.size
-    (120, 160, 1)
+class GlyphSet(Group): 
+    u"""Showing the specified (variable) font as full pages of stacked adjusted lines.
 
     """
-    LABEL_RTRACKING = 0.02
-    LABEL_RLEADING = 1.3
+    BODY_SIZE = 11
+    NAME_SIZE = 24
+    RLEADING = 0.3 # Points between stacked pixel bounds
+    MAX_LEADING = 4
+    GUTTER = 12
 
-    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=None,
-            earSize=None, earLeft=True, earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
-            labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
-        u"""    
-        >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> from pagebot.elements import newRect
-        >>> from pagebot.document import Document
-        >>> c = DrawBotContext()
-        >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-        >>> page = doc[1]
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
-        >>> font = getFont(path)
-        >>> iw, ih = w/4, h/4
-        >>> x, y = w/8, h/8
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", earSize=0.3, earLeft=True, parent=page, stroke=0, strokeWidth=3)
-        >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=0,parent=page)
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=0.5, earSize=0.3, earLeft=True, earFill=None, fill=(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
-        >>> doc.export('_export/FontIconTest.pdf')
+    def __init__(self, f, w, h, **kwargs):
+        u"""   
+
+
         """
-
-        Element.__init__(self,  **kwargs)
-        self.f = f # Font instance
-        if title is not None:
-            self.title = title or "%s %s" % (f.info.familyName, f.info.styleName) 
-        self.titleFont = titleFont, labelFont or f 
-        self.titleFontSize = 28
-        self.labelFont = labelFont or f
-        self.labelFontSize = labelFontSize or 10
-        self.label = label # Optiona second label line
-        self.c = c # Character(s) in the icon.
-        self.cFill = cFill
-        self.cStroke = cStroke
-        self.cStrokeWidth = cStrokeWidth
-        self.scale = s
-        self.show = show
-        if stroke is not None:
-            self.style["stroke"] = stroke
-        if strokeWidth is not None:
-            self.style["strokeWidth"] = strokeWidth
-        self.earSize = earSize or 0.25 # 1/4 of width
-        self.earLeft = earLeft
-        if earFill is None:
-            earFill = self.css("fill")
-        self.earFill = earFill 
-
-
-    def build(self, view, origin, drawElements=True):
-        u"""Default drawing method just drawing the frame.
-        Probably will be redefined by inheriting element classes."""
-        p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
-        self.draw(view, p)
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
-        self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
-
-    def draw(self, view, p):
-        if not self.show:
-            return
-        w = self.w # Width of the icon
-        h = self.h # Height of the icon
-        e = self.earSize*w # Ear size fraction of the width
-
-        x,y = p[0], p[1]
+        """ 
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> from pagebot.document import Document
+        >>> from pagebot.constants import Letter
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> c = DrawBotContext()
+        >>> w, h = Letter
+        >>> m = 80
+        >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)
+        >>> page = doc[1]
+        >>> font = findFont('RobotoDelta-VF')
+        >>> #font = findFont('AmstelvarAlpha-VF')
+        >>> stacked = Stacked(font, x=m, y=m, w=w-2*m, h=h-2*m, parent=page, context=c)
+        >>> doc.export('_export/%sStacked.pdf' % font.info.familyName)
+        """
+        assert w and h # Make sure there is a size defined.
+        Group.__init__(self, w=w, h=h, **kwargs)
         c = self.context
+        blurb = Blurb() # Random content creator
+        self.f = f # Font instance
+        # Add semi-random generated content, styles of fitting.
+        x = 0
+        y = self.h
+        for n in range(100): # As long as they fit in height
+            if n == 0: # Some large headline thing
+                s = blurb.getBlurb('news_headline', cnt=2, charCnt=10).upper()
+                x, y = self.buildStackedLine(s, x, y, wght=1, wdth=-0.3)
 
-        c.newPath()
-        c.moveTo((0, 0))
-        if self.earLeft: 
-            c.lineTo((0, h-e))
-            c.lineTo((e, h))
-            c.lineTo((w, h))
-            
-        else:
-            c.lineTo((0, h))
-            c.lineTo((w-e, h))
-            c.lineTo((w, h-e))
-        c.lineTo((w, 0))
-        c.lineTo((0, 0))
-        c.closePath()
-        c.save()
-        c.fill(self.css("fill"))
-        c.stroke(self.css("stroke"), self.css("strokeWidth"))
-        c.translate(x, y)
-        c.drawPath()
+            elif n == 1: # Some large headline thing
+                s = blurb.getBlurb('design_headline', cnt=2, charCnt=16).upper()
+                x, y = self.buildStackedLine(s, x, y, wght=0.3)
 
-        c.newPath()
-        if self.earLeft:
-            #draw ear
-            c.moveTo((e, h))
-            c.lineTo((e, h-e))
-            c.lineTo((0, h-e))
-            c.lineTo((e, h))
+            elif n == 2: # Some large headline thing
+                s = blurb.getBlurb('design_headline', cnt=3, charCnt=18)
+                x, y = self.buildStackedLine(s, x, y, wght=0.9, wdth=-0.4)
+                y -= 6
 
-        else:
-            #draw ear
-            c.moveTo((w-e, h))
-            c.lineTo((w-e, h-e))
-            c.lineTo((w, h-e))
-            c.lineTo((w-e, h))
-        c.closePath()
-        c.fill(self.earFill)
-        c.lineJoin("bevel")
-        c.drawPath()
+            elif n == 3: # Body text 16/24
+                P = 16
+                L = 1.5*P
+                s = blurb.getBlurb('da_text', cnt=20)
+                instance = self.getInstance(wght=0, wdth=0, opsz=P)
+                style = dict(font=instance.path, fontSize=P, leading=L, 
+                    hyphenation='en', xTextAlign=JUSTIFIED)
+                bs = c.newString(s, style=style)
+                tw, th = bs.textSize(w=self.w)
+                newTextBox(bs, x=x, y=y-th-12, w=self.w, parent=self)
+                y -= th+12
 
-        labelSize = e
-        bs = c.newString(self.c,
-                               style=dict(font=self.f.path,
-                                          textFill=self.cFill,
-                                          textStroke=self.cStroke,
-                                          textStrokeWidth=self.cStrokeWidth,
-                                          fontSize=h*2/3))
-        tw, th = bs.textSize()
-        c.text(bs, (w/2-tw/2, h/2-th/3.2))
+            elif n == 4: # Body text 12/18
+                P = 12
+                L = 1.5*P
+                s = blurb.getBlurb('da_text', cnt=60)
+                instance = self.getInstance(wght=0, wdth=0, opsz=P)
+                style = dict(font=instance.path, fontSize=P, leading=L, 
+                    hyphenation='en', xTextAlign=JUSTIFIED)
+                bs = c.newString(s, style=style)
+                tw, th = bs.textSize(w=self.w)
+                newTextBox(bs, x=x, y=y-th-12, w=self.w, parent=self)
+                y -= th+12
 
-        if self.title:
-            bs = c.newString(self.title,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, self.h+th/2))
+            elif n == 5: # Body text 10/15
+                P = 10
+                L = 1.5*P
+                s = blurb.getBlurb('design_headline')
+                instance = self.getInstance(wght=0.56, wdth=0, opsz=P)
+                style = dict(font=instance.path, fontSize=P, leading=L, 
+                    hyphenation='en', xTextAlign=JUSTIFIED)
+                bs = c.newString(s, style=style)
 
-        y = -self.LABEL_RLEADING*labelSize
-        if self.name:
-            bs = c.newString(self.name,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, y))
-            y -= self.LABEL_RLEADING*labelSize
-        if self.label:
-            bs = c.newString(self.label,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, y))
-        c.restore()
+                s = blurb.getBlurb('da_text', cnt=60)
+                instance = self.getInstance(wght=0, wdth=0, opsz=P)
+                style = dict(font=instance.path, fontSize=P, leading=L, 
+                    hyphenation='en', xTextAlign=JUSTIFIED)
+                bs += c.newString(s, style=style)
+                tw, th = bs.textSize(w=self.w)
+                newTextBox(bs, x=x, y=y-th-12, w=self.w, parent=self)
+                y -= th+12
+
+            elif n == 6: # Body test 9/13.5
+                P = 9
+                L = 1.5*P
+                s = blurb.getBlurb('design_headline')
+                instance = self.getInstance(wght=0.56, wdth=0, opsz=P)
+                style = dict(font=instance.path, fontSize=P, leading=L, 
+                    hyphenation='en', xTextAlign=JUSTIFIED)
+                bs = c.newString(s, style=style)
+
+                s = blurb.getBlurb('da_text')
+                instance = self.getInstance(wght=0, wdth=0, opsz=P)
+                style = dict(font=instance.path, fontSize=P, leading=L, xTextAlign=JUSTIFIED)
+                bs += c.newString((' '+s)*5, style=style)
+
+                cw = self.w/2-self.GUTTER/2
+                tw, th = bs.textSize(w=cw)
+                newTextBox(bs, x=x, y=0, h=y-12, w=cw, parent=self)
+
+            elif n == 7: # Body test 10/15
+                P = 8
+                L = 1.5*P
+                s = blurb.getBlurb('design_headline')
+                instance = self.getInstance(wght=0.56, wdth=0, opsz=P)
+                style = dict(font=instance.path, fontSize=P, leading=L, 
+                    hyphenation='en', xTextAlign=JUSTIFIED)
+                bs = c.newString(s, style=style)
+
+                s = blurb.getBlurb('da_text')
+                instance = self.getInstance(wght=0, wdth=0, opsz=P)
+                style = dict(font=instance.path, fontSize=P, leading=L, 
+                    hyphenation='en', xTextAlign=JUSTIFIED)
+                bs += c.newString((' '+s)*5, style=style)
+
+                cw = self.w/2-self.GUTTER/2
+                tw, th = bs.textSize(w=cw)
+                newTextBox(bs, x=x+cw+self.GUTTER, y=0, h=y-12, w=cw, parent=self)
+
+            if y < 0:
+                break
+
+        #print(self.f.axes.keys())
+
+    def getAxisValue(self, tag, value):
+        if not tag in self.f.axes:
+            return 0
+        minValue, defaultValue, maxValue = self.f.axes[tag]
+        if not value:
+            return defaultValue
+        if value < 0:
+            return defaultValue - (defaultValue - minValue)*value
+        # else wdth > 0:
+        return defaultValue + (maxValue - defaultValue)*value
+
+    def getInstance(self, wght=None, wdth=None, opsz=None):
+        u"""Answer the instance of self, corresponding to the normalized location.
+        (-1, 0, 1) values for axes.
+        """
+        # Get real axis values.
+        wght = self.getAxisValue('wght', wght)        
+        wdth = self.getAxisValue('wdth', wdth)        
+
+        # Make location dictionary
+        location = dict(wght=wght, wdth=wdth, opsz=opsz)
+        # Return the instance font at this location. The font is stored as file,
+        # so it correspondents to normal instance.path behavior,
+        return getVarFontInstance(self.f, location)
+
+    def buildStackedLine(self, s, x, y, wght=None, wdth=None):
+        u"""Add a textbox to self that fits the string s for the instance indicated by
+        the locations-axis values. Then answer the position of the stacked boxes
+        based on the bounds of the pixels (not the bounds of the em).
+        """
+        c = self.context
+        # Get the instance for this location. 
+        instance = self.getInstance(wght=wght, wdth=wdth)
+        style = dict(font=instance.path)
+        stackLine = c.newString(s, style=style, w=self.w)
+        tx, ty, tw, th = stackLine.bounds()
+        # TODO: Fix baseline problem with textbox
+        #print(stackLine.fittingFontSize, tx, ty, tw, th)
+        y = y - th - min(self.MAX_LEADING, stackLine.fittingFontSize*self.RLEADING)
+        newTextBox(stackLine, x=tx, y=y, w=self.w, parent=self)
+        return x, y-ty
+
 
 if __name__ == '__main__':
     import doctest

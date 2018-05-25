@@ -86,7 +86,8 @@ class DrawBotString(BabelString):
         # In case defined, store current status here as property and set the current FormattedString
         # for future additions. Also the answered metrics will not be based on these values.
         self.style = style or {}
-
+        self.fittingFontSize = 0 # Set to fitting font size, in case the size iterated to find width.
+        
     def _get_s(self):
         u"""Answer the embedded FormattedString by property, to enforce checking type of the string."""
         return self._s
@@ -115,7 +116,7 @@ class DrawBotString(BabelString):
         return self.style.get('fontSize')
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
-            self.context.font(fontSize)
+            self.context.fontSize(fontSize)
         self.style['fontSize'] = fontSize
     fontSize = property(_get_fontSize, _set_fontSize)
 
@@ -376,6 +377,7 @@ class DrawBotString(BabelString):
             newS = cls.newString(t, context, style=style)
         else:
             newS = cls(newt, context, style)
+        newS.fittingFontSize = style['fontSize']
         return newS
 
 class FoundPattern(object):

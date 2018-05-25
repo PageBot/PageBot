@@ -91,7 +91,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # originTop often goes with yAlign = TOP.
         originTop = False, # TODO: Setting to  default True has currently positioning bugs.
         # Alignment of origin on element. Note that formatted text string are aligned by the xTextAlign attribute.
-        xAlign = LEFT, # Default alignment, one of ('left', 'justified', 'center'. 'right')
+        xAlign = LEFT, # Default alignment, one of ('left', 'center'. 'right')
         yAlign = TOP, # Default alignment for elements like image, that float in their designated space.
         zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
 
@@ -291,7 +291,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         textStrokeWidth = None,
         textShadow = None,
         textGradient = None,
-        xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT), independent of inside FS.
+        xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT, JUSTIFIED), independent of inside FS.
         yTextAlign = TOP, # Alignment of text inside text boxes, one of (TOP, MIDDLE, BOTTOM)
 
         underlinePosition = None, # Underline position and thickness of BabelString/FormattedString
