@@ -16,9 +16,6 @@
 #
 import struct
 from pagebot.elements import Element
-from pagebot.constants import JUSTIFIED
-from pagebot.contributions.filibuster.blurb import Blurb
-from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.transformer import pointOffset
 
 def unichar(i):
