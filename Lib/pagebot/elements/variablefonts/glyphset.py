@@ -18,21 +18,15 @@ import struct
 from pagebot.elements import Element
 from pagebot.toolbox.transformer import pointOffset
 
-def unichar(i):
-    try:
-        return chr(i)
-    except ValueError:
-        return struct.pack('i', i).decode('utf-32')
-
 class GlyphSet(Element): 
     u"""Showing the specified (variable) font as full page with a matrix
     of all glyphs in the font.
 
     """
-    COLS = 32
-    ROWS = 32
+    COLS = 28
+    ROWS = 28
     GUTTER = 12
-    FONTSIZE = 18
+    FONTSIZE = 24
 
     def __init__(self, f, **kwargs):
         u"""   
@@ -45,8 +39,8 @@ class GlyphSet(Element):
         >>> m = 80
         >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)
         >>> page = doc[1]
-        >>> #font = findFont('RobotoDelta-VF')
-        >>> font = findFont('AmstelvarAlpha-VF')
+        >>> font = findFont('RobotoDelta-VF')
+        >>> #font = findFont('AmstelvarAlpha-VF')
         >>> stacked = GlyphSet(font, x=m, y=m, w=w-2*m, h=h-2*m, parent=page, context=c)
         >>> doc.export('_export/%sGlyphSet.pdf' % font.info.familyName)
         """
@@ -88,11 +82,11 @@ class GlyphSet(Element):
             if u <= 1: 
                 continue
             bs = c.newString(unichr(u), style=dict(font=self.f.path, fontSize=self.FONTSIZE))
-            c.text(bs, (x+mx+self.COLS, y+my-self.COLS))
+            c.text(bs, (x+mx, y+my-self.ROWS))
             mx += self.COLS
-            if mx >= self.w-self.COLS:
+            if mx >= self.w:
                 mx = 0
-                my -= self.COLS
+                my -= self.ROWS
             if my < 0:
                 break
 
