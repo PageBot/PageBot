@@ -14,7 +14,6 @@
 #
 #     glyphset.py
 #
-import struct
 from pagebot.elements import Element
 from pagebot.toolbox.transformer import pointOffset
 
@@ -41,7 +40,7 @@ class GlyphSet(Element):
         >>> page = doc[1]
         >>> font = findFont('RobotoDelta-VF')
         >>> #font = findFont('AmstelvarAlpha-VF')
-        >>> stacked = GlyphSet(font, x=m, y=m, w=w-2*m, h=h-2*m, parent=page, context=c)
+        >>> gs = GlyphSet(font, x=m, y=m, w=w-2*m, h=h-2*m, parent=page, context=c)
         >>> doc.export('_export/%sGlyphSet.pdf' % font.info.familyName)
         """
         Element.__init__(self, **kwargs)
@@ -79,7 +78,7 @@ class GlyphSet(Element):
         mx = 0
         my = self.h
         for u, glyphName in sorted(self.f.cmap.items()):
-            if u <= 1: 
+            if u <= 20: # Skip any control characters and space 
                 continue
             bs = c.newString(unichr(u), style=dict(font=self.f.path, fontSize=self.FONTSIZE))
             c.text(bs, (x+mx, y+my-self.ROWS))
