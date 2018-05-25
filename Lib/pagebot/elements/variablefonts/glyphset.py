@@ -38,13 +38,12 @@ class GlyphSet(Element):
         >>> m = 80
         >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)
         >>> page = doc[1]
-        >>> font = findFont('RobotoDelta-VF')
-        >>> #font = findFont('AmstelvarAlpha-VF')
+        >>> #font = findFont('RobotoDelta-VF')
+        >>> font = findFont('AmstelvarAlpha-VF')
         >>> gs = GlyphSet(font, x=m, y=m, w=w-2*m, h=h-2*m, parent=page, context=c)
         >>> doc.export('_export/%sGlyphSet.pdf' % font.info.familyName)
         """
         Element.__init__(self, **kwargs)
-        c = self.context
         self.f = f # Font instance
 
 
@@ -78,7 +77,7 @@ class GlyphSet(Element):
         mx = 0
         my = self.h
         for u, glyphName in sorted(self.f.cmap.items()):
-            if u <= 20: # Skip any control characters and space 
+            if u <= 32: # Skip any control characters and space 
                 continue
             bs = c.newString(unichr(u), style=dict(font=self.f.path, fontSize=self.FONTSIZE))
             c.text(bs, (x+mx, y+my-self.ROWS))
