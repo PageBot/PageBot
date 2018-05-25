@@ -378,6 +378,22 @@ class Font(object):
             return self.ttFont['glyf'].keys()
         return []
 
+    def _get_cmap(self):
+        """Answer the dictionary of sorted {unicode: glyphname, ...} in the font.
+
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> fontPath = getTestFontsPath()
+        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
+        >>> f = getFont(path, lazy=False)
+        >>> f.cmap[65]
+        'A'
+        """
+        if 'cmap' in self.ttFont:
+            return self.ttFont['cmap'].getBestCmap()
+        return {}
+    cmap = property(_get_cmap)
+    
     def __contains__(self, glyphName):
         u"""Allow direct testing.
 
