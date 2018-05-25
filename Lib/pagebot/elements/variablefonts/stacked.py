@@ -40,8 +40,8 @@ class Stacked(Group):
         >>> m = 80
         >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)
         >>> page = doc[1]
-        >>> font = findFont('RobotoDelta-VF')
-        >>> #font = findFont('AmstelvarAlpha-VF')
+        >>> #font = findFont('RobotoDelta-VF')
+        >>> font = findFont('AmstelvarAlpha-VF')
         >>> stacked = Stacked(font, x=m, y=m, w=w-2*m, h=h-2*m, parent=page, context=c)
         >>> doc.export('_export/%sStacked.pdf' % font.info.familyName)
         """
