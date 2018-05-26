@@ -10,7 +10,12 @@ __version__ = '4.0'
 __author__ = "evb"
 
 content = {
-        'design_headline':[u'<#^,design_claim#>',u'<#^,design_names#>',u'<#^,design_question#>',u'<#^,design_conclusion#>'],
+        'design_headline':[
+                u'<#^,design_claim#>',
+                #u'<#^,design_names#>',
+                u'<#^,design_question#>',
+                u'<#^,design_conclusion#>'
+                ],
         'design_section':[u'Design', u'Design', u'Design', u'Design', u'New design', u'Goodies', u'Nice to haves', u'Typography'],
         'design_ankeiler':[u'<#^,design_question#>',u'<#^,design_claim#>',u'<#^,design_work_description#>',],
         'design_sentence':[
