@@ -25,7 +25,7 @@ from pagebot.contexts.builders.buildinfo import newBuildInfo
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
 from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID
-from pagebot.style import (makeStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
+from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS,
                            MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT,
                            MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH,
@@ -838,8 +838,18 @@ class Element(object):
     def css(self, name, default=None):
         u"""In case we are looking for a plain css value, cascading from the main ancestor styles
         of self, then follow the parent links until document or root, if self does not contain
-        the requested value."""
-        if name in self.style:
+        the requested value.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document()
+        >>> page = doc[1]
+        >>> e = Element(fontSize=24, parent=page)
+        >>> e.css('fontSize') # Find local style value
+        24
+        >>> e.css('rLeading') # Find value in root style
+        1.2
+        """
+        if name in self.style and self.style[name] is not None:
             return self.style[name]
         if self.parent is not None:
             return self.parent.css(name, default)
@@ -848,10 +858,35 @@ class Element(object):
     def getNamedStyle(self, styleName):
         u"""In case we are looking for a named style (e.g. used by the Typesetter to build a stack
         of cascading tag style, then query the ancestors for the named style. Default behavior
-        of all elements is that they pass the request on to the root, which is nornally the document."""
+        of all elements is that they pass the request on to the root, which is nornally the document.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document()
+        >>> page = doc[1]
+        >>> e = Element(parent=page)
+        >>> e.getNamedStyle('body') is not None
+        True
+        """
         if self.parent:
             return self.parent.getNamedStyle(styleName)
         return None
+
+    def getFlattenedStyle(self):
+        u"""Answer the flattened dictionary with all self.css(...) values, from the perspecive of 
+        self and upward on the parent tree. Evaluate for every value that is in the root style.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document()
+        >>> page = doc[1]
+        >>> e = Element(fill=(0.1, 0.2, 0.3), parent=page)
+        >>> style = e.getFlattenedStyle()
+        >>> style['fill'], style['fontSize'], style['rLeading'], style['xAlign'], style['rLeading']
+        ((0.1, 0.2, 0.3), 10.0, 1.2, 'left', 1.2)
+        """
+        flattenedStyle = {} # Create a dict with all keys from root style and values from self.css()
+        for key in getRootStyle().keys():
+            flattenedStyle[key] = self.css(key)
+        return flattenedStyle
 
     #   L I B --> Document.lib
 

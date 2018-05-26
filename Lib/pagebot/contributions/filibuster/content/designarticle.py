@@ -8,6 +8,7 @@
 
 __version__ = '4.0'
 
+from random import choice
 
 content = {
         'da_text':    [
@@ -17,7 +18,7 @@ content = {
                 '<#da_statement#> <#da_statement#>',
                 '<#da_statement#>',
                 ],
-        'da_illustration': ['','','','',' [ill. @@]',],
+        'da_illustration': ['','','','',' [ill. %d]' % choice(range(100)),],
         'da_statement':    [
                 '<#^,design_sentence#><#da_illustration#>',
                 '<#^,design_sentence#>',

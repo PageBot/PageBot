@@ -14,51 +14,67 @@
 #
 #     stacked.py
 #
-from pagebot.elements import Element
+from random import choice
+from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.constants import JUSTIFIED, LEFT
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.transformer import pointOffset, asFormatted
 
-class Stacked(Element): 
+class Stacked(BaseFontShow): 
     u"""Showing the specified (variable) font as full page with a matrix
     of all glyphs in the font.
 
-    """
-    V_GUTTER = 12
+    Usage of standard style parameters
+    fill        Fill color for the background of the element
+    stroke      Draw frame around the element
+    textFill    Color of the text. Default is black.
+    padding     Use in case of background color or frame. Default is 0
 
-    def __init__(self, f, **kwargs):
+    """
+    def __init__(self, f, words=None, labelFontSize=None, **kwargs):
         u"""   
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebot.conditions import *
         >>> c = DrawBotContext()
         >>> w, h = Letter
-        >>> m = 80
-        >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)
+        >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
+        >>> style = dict(gh=16, fill=0.95, rLeading=1.4)
+        >>> conditions = [Fit()]
         >>> page = doc[1]
-        >>> #font = findFont('RobotoDelta-VF')
-        >>> font = findFont('AmstelvarAlpha-VF')
-        >>> font = findFont('Upgrade-Regular')
-        >>> font = findFont('Bitcount_Mono_Double-Line_Circle')
-        >>> font = findFont('Bitcount_Mono_Double-Book_Plus')
-        >>> font = findFont('Escrow-Bold')
-        >>> gs = Stacked(font, x=m, y=m, w=w-2*m, h=h-2*m, gh=6, parent=page, context=c)
-        >>> doc.export('_export/%sStacked.pdf' % font.info.familyName)
+        >>> font1 = findFont('AmstelvarAlpha-VF')
+        >>> gs = Stacked(font1, parent=page, conditions=conditions, padding=40, style=style, context=c)
+        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, rLeading=1.4)
+        >>> page = doc[2]
+        >>> font2 = findFont('RobotoDelta-VF')
+        >>> #font2 = findFont('Upgrade-Regular')
+        >>> #font2 = findFont('Escrow-Bold')
+        >>> gs = Stacked(font2, parent=page, conditions=conditions, style=style, padding=40, context=c)
+        >>> score = doc.solve()
+        >>> doc.export('_export/%sStacked.pdf' % font1.info.familyName)
         """
-        Element.__init__(self, **kwargs)
+        BaseFontShow.__init__(self, **kwargs)
         self.f = f # Font instance
-
+        self.words = words or {} # Optional dictionary for headline words. Keys is frame index number.
+        self.usedText = set() # Avoid double use of headline words.
+        # Add semi-random generated content, styles of fitting.
+        self.blurb = Blurb() # Random content creator, in case there is no content supplied.
+        self.lineTag = 'design_headline' # Default label where to find random word choices.
+        self.headlineTag = 'design_headline' # Default label where to find (or create) random headline text.
+        self.textTag = 'da_text' # Default label where to find (or create) random body text.
 
     def build(self, view, origin, drawElements=True):
         u"""Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
+        c = self.context
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)
         p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.buildFrame(view, p) # Draw optional frame or borders.
+        self.buildFrame(view, p) # Draw optional background fill, frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showElementFrame == True
         view.drawElementFrame(self, p) 
@@ -66,6 +82,7 @@ class Stacked(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
+        # Draw that actual content of the element by stacked specimen rectangles.
         self.drawStacked(view, p)
 
         if self.drawAfter is not None: # Call if defined
@@ -74,111 +91,66 @@ class Stacked(Element):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
+    def getText(self, tag, cnt=None, charCnt=None):
+        u"""If the tag type of text is in self.words, then take a random choice from there.
+        Otherwise use the tag to create a blurb with the specified length."""
+        if tag in self.words:
+            text = choice(self.words[tag])
+            if text in self.usedText: # Already used, try once more.
+                text = choice(self.words[tag])
+        else:
+            text = self.blurb.getBlurb(tag, cnt=cnt, charCnt=charCnt)
+        self.usedText.add(text)
+        return text
 
     def drawStacked(self, view, origin):
-        c = self.context
-        blurb = Blurb() # Random content creator
-        # Add semi-random generated content, styles of fitting.
-        x = 0
-        y = self.h
+        u"""Draw the content of the element, responding to size, styles, font and content."""
 
-        # Top headline. (x,y) is top-left of the box
-        s = blurb.getBlurb('news_headline', cnt=2, charCnt=10).upper()
-        x, y = self.buildStackedLine(s, origin, x, y, wght=1, wdth=-0.3)
+        c = self.context
+
+        # Start on top left, with respect to optional padding value.
+        x = self.pl
+        y = self.h-self.pt
+
+        # Top headline. (x,y) is top-left of the box, passed on for the position of the next box.
+        s = self.getText(self.lineTag, charCnt=10).upper()
+        x, y = self.buildStackedLine(s, origin, x, y, self.pw, wght=0.7, wdth=-0.4)
 
         # Second headline
-        s = blurb.getBlurb('design_headline', cnt=2, charCnt=12).upper()
-        x, y = self.buildStackedLine(s, origin, x, y, wght=0.3)
+        s = self.getText(self.lineTag, 4, 18)
+        x, y = self.buildStackedLine(s, origin, x, y, self.pw, wght=-0.7)
 
         # Some large headline thing
-        s = blurb.getBlurb('design_headline', cnt=3, charCnt=12)
-        x, y = self.buildStackedLine(s, origin, x, y, wght=0.9, wdth=-0.4)
+        s = self.getText(self.lineTag, 5, 24)
+        x, y = self.buildStackedLine(s, origin, x, y, self.pw, wght=0.3, wdth=-0.4)
 
-        L = 1.5
         # Body text 16/24
-        s = blurb.getBlurb('da_text', cnt=20)
-        x, y = self.buildStackedText(None, s, origin, x, y, self.w, None, 16, L, JUSTIFIED)        
+        s = self.getText(self.textTag, 20)
+        x, y = self.buildStackedText(None, s, origin, x, y, self.pw, None, 16, None, JUSTIFIED)        
 
         # Body text 12/18
-        s = blurb.getBlurb('da_text', cnt=30)
-        x, y = self.buildStackedText(None, s, origin, x, y, self.w, None, 12, L, JUSTIFIED)        
+        s = self.getText(self.textTag, 30)
+        x, y = self.buildStackedText(None, s, origin, x, y, self.pw, None, 12, None, JUSTIFIED)        
 
         # Body text 10/15
-        s1 = blurb.getBlurb('design_headline')
-        s2 = blurb.getBlurb('da_text', cnt=20)
-        x, y = self.buildStackedText(s1, s2, origin, x, y, self.w, None, 10, L, JUSTIFIED, Bwght=0.56)        
+        s1 = self.getText(self.headlineTag)
+        s2 = self.getText(self.textTag, cnt=20)
+        x, y = self.buildStackedText(s1, s2, origin, x, y, self.pw, None, 10, None, JUSTIFIED, Bwght=0.7, Bwdth=-0.1)        
 
         # Body text 9/13.5
-        s1 = blurb.getBlurb('design_headline')
-        s2 = blurb.getBlurb('da_text') + ' ' + blurb.getBlurb('da_text') + ' ' + blurb.getBlurb('da_text')
-        x, _ = self.buildStackedText(s1, s2, origin, x, y, (self.w-self.gw)/2, y, 9, L, LEFT, Bwght=0.56)        
+        # Don't update to the new y, next colomn needs to be on the right, starting at the same y.
+        s1 = self.getText(self.headlineTag)
+        s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
+        x, _ = self.buildStackedText(s1, s2, origin, x, y, (self.pw-self.gw)/2, y-self.pb, 
+            9, 7, LEFT, Bwght=0.6, Bwdth=-0.1)       
 
         # Body text 8/12
-        s1 = blurb.getBlurb('design_headline')
-        s2 = blurb.getBlurb('da_text') + ' ' + blurb.getBlurb('da_text') + ' ' + blurb.getBlurb('da_text')
-        x, y = self.buildStackedText(s1, s2, origin, x+(self.w+self.gw)/2, y, (self.w-self.gw)/2, y, 8, L, LEFT, Bwght=0.56)        
+        s1 = self.getText(self.headlineTag)
+        s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
+        x, y = self.buildStackedText(s1, s2, origin, x+(self.pw+self.gw)/2, y, (self.pw-self.gw)/2, y-self.pb, 
+            8, 7, LEFT, Bwght=0.6, Bwdth=-0.1)        
 
 
-    def getAxisValue(self, tag, value):
-        if not tag in self.f.axes:
-            return 0
-        minValue, defaultValue, maxValue = self.f.axes[tag]
-        if not value:
-            return defaultValue
-        if value < 0:
-            return defaultValue - (defaultValue - minValue)*value
-        # else wdth > 0:
-        return defaultValue + (maxValue - defaultValue)*value
-
-    def getInstance(self, wght=None, wdth=None, opsz=None):
-        u"""Answer the instance of self, corresponding to the normalized location.
-        (-1, 0, 1) values for axes.
-        """
-        if not self.f.axes:
-            return self.f
-
-        # Get real axis values.
-        wght = self.getAxisValue('wght', wght)        
-        wdth = self.getAxisValue('wdth', wdth)        
-
-        # Make location dictionary
-        location = dict(wght=wght, wdth=wdth, opsz=opsz)
-        # Return the instance font at this location. The font is stored as file,
-        # so it correspondents to normal instance.path behavior,
-        return getVarFontInstance(self.f, location)
-
-    def buildStackedLine(self, s, origin, x, y, wght=None, wdth=None):
-        u"""Draw a textbox to self that fits the string s for the instance indicated by
-        the locations-axis values. Then answer the (x,y) position of the next box.
-        based on the bounds of the pixels (not the bounds of the em).
-
-        """
-        c = self.context
-        ox, oy, _ = origin
-        # Get the instance for this location. 
-        instance = self.getInstance(wght=wght, wdth=wdth)
-        style = dict(font=instance.path)
-        stackLine = c.newString(s, style=style, w=self.w)
-        capHeight = float(instance.info.capHeight)/instance.info.unitsPerEm * stackLine.fittingFontSize
-        tx, ty, tw, th = stackLine.bounds()
-        c.text(stackLine, (ox+x-tx, oy+y-capHeight))
-        return x, y-capHeight+ty-self.gh
-
-    def buildStackedText(self, s1, s2, origin, x, y, w, h, fontSize, rLeading, alignment, Bwght=0, Bwdth=0, Rwght=0, Rwdth=0):      
-        c = self.context
-        ox, oy, _ = origin
-        instance = self.getInstance(wght=Bwght, wdth=Bwdth, opsz=fontSize)
-        style = dict(font=instance.path, fontSize=fontSize, leading=fontSize*rLeading, 
-            hyphenation='en', xTextAlign=alignment)
-        bs = c.newString((s1 or '')+' ', style=style)
- 
-        instance = self.getInstance(wght=Rwght, wdth=Rwdth, opsz=fontSize)
-        style = dict(font=instance.path, fontSize=fontSize, leading=fontSize*rLeading, 
-            hyphenation='en', xTextAlign=alignment)
-        bs += c.newString(s2, style=style)
-        tw, th = bs.textSize(w=w)
-        c.textBox(bs, (ox+x, oy+y-(h or th)-self.gh, w, h or th))
-        return x, y-th+self.gh-self.V_GUTTER
 
 if __name__ == '__main__':
     import doctest
