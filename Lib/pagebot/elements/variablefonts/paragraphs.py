@@ -16,7 +16,7 @@
 #
 from random import choice
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
-from pagebot.constants import JUSTIFIED, LEFT
+from pagebot.constants import LEFT
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.transformer import pointOffset
 
@@ -103,7 +103,12 @@ class Paragraphs(BaseFontShow):
         return text
 
     def drawStacked(self, view, origin):
-        u"""Draw the content of the element, responding to size, styles, font and content."""
+        u"""Draw the content of the element, responding to size, styles, font and content.
+        Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
+        if the axis exists.
+
+        TODO: If the axis does not exist, do something else with the right column
+        """
 
         c = self.context
 
@@ -122,7 +127,7 @@ class Paragraphs(BaseFontShow):
                 w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh, 
                 fontSize=fontSize, alignment=LEFT, labelSize=7, Bwght=0.4, Bwdth=-0.1)       
 
-            # Same text without optical size axis used
+            # Same text in same fontSize, without optical size axis used
             _, y = self.buildTextBox(s1, s2, origin, x+(self.pw+self.gw)/2, y, 
                 w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh, 
                 fontSize=fontSize, alignment=LEFT, labelSize=7, label='No optical size axis used.\n\n', 
