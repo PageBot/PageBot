@@ -42,7 +42,7 @@ class BaseFontShow(Element):
         u"""Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
         ratio in (minValue, defaultValue, maxValue)."""
         if not tag in self.f.axes:
-            return 0
+            return None
         minValue, defaultValue, maxValue = self.f.axes[tag]
         if not value:
             return defaultValue
@@ -54,7 +54,8 @@ class BaseFontShow(Element):
     def getInstance(self, wght=None, wdth=None, opsz=None):
         u"""Answer the instance of self, corresponding to the normalized location.
         (-1, 0, 1) values for axes [wght] and [wdth].
-        The optical size [opsz] is supposed to contain the font size, so it is not normalize.
+        The optical size [opsz] is supposed to contain the font size, so it is not normalized.
+        If [opsz] is not defined, then set it to default, if the axis exist.
         """
         if not self.f.axes:
             return self.f
@@ -63,6 +64,9 @@ class BaseFontShow(Element):
         wght = self.getAxisValue('wght', wght)        
         wdth = self.getAxisValue('wdth', wdth)        
 
+        if not opsz and 'opsz' in self.f.axes:
+            opsz = self.f.axes['opsz'][1] # Use default value
+
         # Make location dictionary
         location = dict(wght=wght, wdth=wdth, opsz=opsz)
         # Return the instance font at this location. The font is stored as file,
@@ -70,7 +74,7 @@ class BaseFontShow(Element):
         instance = getVarFontInstance(self.f, location)
         return instance
 
-    def buildStackedLine(self, s, origin, x, y, w, h=None, fontSize=None, wght=None, wdth=None):
+    def buildStackedLine(self, s, origin, x, y, w, h=None, fontSize=None, wght=None, wdth=None, useOpsz=True):
         u"""Draw a textbox to self that fits the string s for the instance indicated by
         the locations-axis values. 
         Then answer the (x,y) position of the next box, based on the bounds of the pixels 
@@ -80,8 +84,12 @@ class BaseFontShow(Element):
         """
         c = self.context
         ox, oy, _ = origin
+        if useOpsz: # Using [opsz] then set to fontSize
+            opsz = fontSize
+        else:
+            opsz = None # Otherwise ignore.
         # Get the instance for this location. 
-        instance = self.getInstance(wght=wght, wdth=wdth)
+        instance = self.getInstance(wght=wght, wdth=wdth, opsz=opsz)
         style = self.getTextStyle(instance, fontSize)
         stackLine = c.newString(s, style=style, w=w)
         capHeight = float(instance.info.capHeight)/instance.info.unitsPerEm * stackLine.fittingFontSize
@@ -89,32 +97,37 @@ class BaseFontShow(Element):
         c.text(stackLine, (ox+x-tx, oy+y-capHeight))
         return x, y-capHeight+ty-self.gh
 
-    def buildStackedText(self, s1, s2, origin, x, y, w, h, fontSize, labelSize, alignment=None, Bwght=0, Bwdth=0, Rwght=0, Rwdth=0):      
+    def buildTextBox(self, s1, s2, origin, x, y, w, h, fontSize, alignment=None, 
+            labelSize=None, label=None, Bwght=0, Bwdth=0, Rwght=0, Rwdth=0, useOpsz=True):      
         u"""Make a new instance for the bold and roman locations (if self.f is a Variable Font).
         Draw a textbox fitting the content ot otherwise forced to (w,h) size.
         Answer the (x, y) position of the next stacked block.
+
+        If labelSize defined then show the defaul label: Font family name fontSize/leading
+        If label is defined, then use that label in the defined font font size.
         """
         c = self.context
         ox, oy, _ = origin
-
+        if useOpsz: # Using [opsz] then set to fontSize
+            opsz = fontSize
+        else:
+            opsz = None # Otherwise ignore.
         # Labels by default in default roman, showing font family name, fontSize and rounded leading.
-        instance = self.getInstance(opsz=fontSize) # Get Roman for labels, using default axis values.
+        instance = self.getInstance(opsz=opsz) # Get Roman for labels, using default axis values.
         style = self.getTextStyle(instance, labelSize or 7, LEFT, 0.8)
-        if labelSize:
+        if labelSize is not None and label is None:
             label = '%s %s/%s\n\n' % (self.f.info.familyName, 
                 asFormatted(fontSize), 
                 asFormatted(self.css('leading', 0)+self.css('rLeading', 1)*fontSize, format='%0.1f'))
-        else:
-            label = ''
-        bs = c.newString(label, style=style) # Create BabelString/FormattedString if content.
+        bs = c.newString(label or '', style=style) # Create BabelString/FormattedString if content.
  
         if s1: # In case s1 lead is defined, then use that for the bold version of self.f
-            instance = self.getInstance(wght=Bwght, wdth=Bwdth, opsz=fontSize)
+            instance = self.getInstance(wght=Bwght, wdth=Bwdth, opsz=opsz)
             style = self.getTextStyle(instance, fontSize, alignment)
             bs += c.newString((s1 or '')+' ', style=style) # Create BabelString/FormattedString if content.
  
         # Make Roman style. Use font size of [opsz] axis, if it exists.
-        instance = self.getInstance(wght=Rwght, wdth=Rwdth, opsz=fontSize)
+        instance = self.getInstance(wght=Rwght, wdth=Rwdth, opsz=opsz)
         style = self.getTextStyle(instance, fontSize, alignment)
         # Add roman formatted string to what we already had.
         bs += c.newString(s2, style=style) 
@@ -123,7 +136,7 @@ class BaseFontShow(Element):
         c.textBox(bs, (ox+x, oy+y-(h or th)-self.gh, w, h or th)) # Use h if defined, otherwise text height.
 
         # Answer the new position (x, y) for the next block, using self.gh (gutter height) as distance.
-        return x, y-th-self.gh 
+        return x, y-(h or th)-self.gh 
 
 if __name__ == '__main__':
     import doctest

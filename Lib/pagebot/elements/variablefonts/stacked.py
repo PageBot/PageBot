@@ -125,29 +125,29 @@ class Stacked(BaseFontShow):
 
         # Body text 16/24
         s = self.getText(self.textTag, 20)
-        x, y = self.buildStackedText(None, s, origin, x, y, self.pw, None, 16, None, JUSTIFIED)        
+        x, y = self.buildTextBox(None, s, origin, x, y, self.pw, None, 16, JUSTIFIED)        
 
         # Body text 12/18
         s = self.getText(self.textTag, 30)
-        x, y = self.buildStackedText(None, s, origin, x, y, self.pw, None, 12, None, JUSTIFIED)        
+        x, y = self.buildTextBox(None, s, origin, x, y, self.pw, None, 12, JUSTIFIED)        
 
         # Body text 10/15
         s1 = self.getText(self.headlineTag)
         s2 = self.getText(self.textTag, cnt=20)
-        x, y = self.buildStackedText(s1, s2, origin, x, y, self.pw, None, 10, None, JUSTIFIED, Bwght=0.7, Bwdth=-0.1)        
+        x, y = self.buildTextBox(s1, s2, origin, x, y, self.pw, None, 10, JUSTIFIED, Bwght=0.7, Bwdth=-0.1)        
 
         # Body text 9/13.5
         # Don't update to the new y, next colomn needs to be on the right, starting at the same y.
         s1 = self.getText(self.headlineTag)
         s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
-        x, _ = self.buildStackedText(s1, s2, origin, x, y, (self.pw-self.gw)/2, y-self.pb, 
-            9, 7, LEFT, Bwght=0.6, Bwdth=-0.1)       
+        x, _ = self.buildTextBox(s1, s2, origin, x, y, (self.pw-self.gw)/2, y-self.pb, 
+            9, LEFT, labelSize=7, Bwght=0.6, Bwdth=-0.1)       
 
         # Body text 8/12
         s1 = self.getText(self.headlineTag)
         s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
-        x, y = self.buildStackedText(s1, s2, origin, x+(self.pw+self.gw)/2, y, (self.pw-self.gw)/2, y-self.pb, 
-            8, 7, LEFT, Bwght=0.6, Bwdth=-0.1)        
+        x, y = self.buildTextBox(s1, s2, origin, x+(self.pw+self.gw)/2, y, (self.pw-self.gw)/2, y-self.pb, 
+            8, LEFT, labelSize=7, Bwght=0.6, Bwdth=-0.1)        
 
 
 

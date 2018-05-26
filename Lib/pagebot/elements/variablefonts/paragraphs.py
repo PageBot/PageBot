@@ -12,94 +12,77 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#	  fonticon.py
+#     paragraphs.py
 #
-#     Draw the icon with optional information of the included font.
-#
-from pagebot.elements import Element
+from random import choice
+from pagebot.elements.variablefonts.basefontshow import BaseFontShow
+from pagebot.constants import JUSTIFIED, LEFT
+from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.transformer import pointOffset
 
-class FontIcon(Element): 
-    u"""Showing the specified font(sub variable font) in the form of an icon 
-    showing optional information in different sizes and styles.
-    
-    >>> from pagebot.fonttoolbox.objects.font import getFont
-    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-    >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
-    >>> font = getFont(path)
-    >>> fi = FontIcon(font, w=120, h=160, title="Roboto Regular")
-    >>> fi.title
-    'Roboto Regular'
-    >>> fi.size
-    (120, 160, 1)
+class Paragraphs(BaseFontShow): 
+    u"""Showing the specified (variable) font as full page with a matrix
+    of all glyphs in the font.
+
+    Usage of standard style parameters
+    fill        Fill color for the background of the element
+    stroke      Draw frame around the element
+    textFill    Color of the text. Default is black.
+    padding     Use in case of background color or frame. Default is 0
 
     """
-    LABEL_RTRACKING = 0.02
-    LABEL_RLEADING = 1.3
-
-    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=None,
-            earSize=None, earLeft=True, earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
-            labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
-        u"""    
-        >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> from pagebot.elements import newRect
+    def __init__(self, f, words=None, labelFontSize=None, **kwargs):
+        u"""   
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
+        >>> from pagebot.constants import Letter
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebot.conditions import *
         >>> c = DrawBotContext()
-        >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> w, h = Letter
+        >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
+        >>> style = dict(gh=16, fill=0.95, rLeading=1.4)
+        >>> conditions = [Fit()]
         >>> page = doc[1]
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
-        >>> font = getFont(path)
-        >>> iw, ih = w/4, h/4
-        >>> x, y = w/8, h/8
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", earSize=0.3, earLeft=True, parent=page, stroke=0, strokeWidth=3)
-        >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=0,parent=page)
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=0.5, earSize=0.3, earLeft=True, earFill=None, fill=(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
-        >>> doc.export('_export/FontIconTest.pdf')
+        >>> font1 = findFont('AmstelvarAlpha-VF')
+        >>> gs = Paragraphs(font1, parent=page, conditions=conditions, padding=40, style=style, context=c)
+        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, rLeading=1.4)
+        >>> page = doc[2]
+        >>> font2 = findFont('RobotoDelta-VF')
+        >>> #font2 = findFont('Upgrade-Regular')
+        >>> #font2 = findFont('Escrow-Bold')
+        >>> gs = Paragraphs(font2, parent=page, conditions=conditions, style=style, padding=40, context=c)
+        >>> score = doc.solve()
+        >>> doc.export('_export/%sParagraphs.pdf' % font1.info.familyName)
         """
-
-        Element.__init__(self,  **kwargs)
+        BaseFontShow.__init__(self, **kwargs)
         self.f = f # Font instance
-        if title is not None:
-            self.title = title or "%s %s" % (f.info.familyName, f.info.styleName) 
-        self.titleFont = titleFont, labelFont or f 
-        self.titleFontSize = 28
-        self.labelFont = labelFont or f
-        self.labelFontSize = labelFontSize or 10
-        self.label = label # Optiona second label line
-        self.c = c # Character(s) in the icon.
-        self.cFill = cFill
-        self.cStroke = cStroke
-        self.cStrokeWidth = cStrokeWidth
-        self.scale = s
-        self.show = show
-        if stroke is not None:
-            self.style["stroke"] = stroke
-        if strokeWidth is not None:
-            self.style["strokeWidth"] = strokeWidth
-        self.earSize = earSize or 0.25 # 1/4 of width
-        self.earLeft = earLeft
-        if earFill is None:
-            earFill = self.css("fill")
-        self.earFill = earFill 
-
+        self.words = words or {} # Optional dictionary for headline words. Keys is frame index number.
+        self.usedText = set() # Avoid double use of headline words.
+        # Add semi-random generated content, styles of fitting.
+        self.blurb = Blurb() # Random content creator, in case there is no content supplied.
+        self.lineTag = 'design_headline' # Default label where to find random word choices.
+        self.headlineTag = 'design_headline' # Default label where to find (or create) random headline text.
+        self.textTag = 'da_text' # Default label where to find (or create) random body text.
 
     def build(self, view, origin, drawElements=True):
         u"""Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
+        c = self.context
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.draw(view, p)
+        self.buildFrame(view, p) # Draw optional background fill, frame or borders.
+
+        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
+
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
+        # Draw that actual content of the element by stacked specimen rectangles.
+        self.drawStacked(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -107,93 +90,45 @@ class FontIcon(Element):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
-    def draw(self, view, p):
-        if not self.show:
-            return
-        w = self.w # Width of the icon
-        h = self.h # Height of the icon
-        e = self.earSize*w # Ear size fraction of the width
+    def getText(self, tag, cnt=None, charCnt=None):
+        u"""If the tag type of text is in self.words, then take a random choice from there.
+        Otherwise use the tag to create a blurb with the specified length."""
+        if tag in self.words:
+            text = choice(self.words[tag])
+            if text in self.usedText: # Already used, try once more.
+                text = choice(self.words[tag])
+        else:
+            text = self.blurb.getBlurb(tag, cnt=cnt, charCnt=charCnt)
+        self.usedText.add(text)
+        return text
 
-        x,y = p[0], p[1]
+    def drawStacked(self, view, origin):
+        u"""Draw the content of the element, responding to size, styles, font and content."""
+
         c = self.context
 
-        c.newPath()
-        c.moveTo((0, 0))
-        if self.earLeft: 
-            c.lineTo((0, h-e))
-            c.lineTo((e, h))
-            c.lineTo((w, h))
-            
-        else:
-            c.lineTo((0, h))
-            c.lineTo((w-e, h))
-            c.lineTo((w, h-e))
-        c.lineTo((w, 0))
-        c.lineTo((0, 0))
-        c.closePath()
-        c.save()
-        c.fill(self.css("fill"))
-        c.stroke(self.css("stroke"), self.css("strokeWidth"))
-        c.translate(x, y)
-        c.drawPath()
+        # Start on top left, with respect to optional padding value.
+        x = self.pl
+        y = self.h-self.pt
 
-        c.newPath()
-        if self.earLeft:
-            #draw ear
-            c.moveTo((e, h))
-            c.lineTo((e, h-e))
-            c.lineTo((0, h-e))
-            c.lineTo((e, h))
+        fontSizes = (7, 8, 9, 10, 11)
+        for fontSize in fontSizes:
+            # Don't update to the new y, next colomn needs to be on the right, starting at the same y.
+            s1 = self.getText(self.headlineTag, cnt=6)
+            if not s1[-1] in ',.!?':
+                s1 += '.'
+            s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
+            x, _ = self.buildTextBox(s1, s2, origin, x, y, 
+                w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh, 
+                fontSize=fontSize, alignment=LEFT, labelSize=7, Bwght=0.4, Bwdth=-0.1)       
 
-        else:
-            #draw ear
-            c.moveTo((w-e, h))
-            c.lineTo((w-e, h-e))
-            c.lineTo((w, h-e))
-            c.lineTo((w-e, h))
-        c.closePath()
-        c.fill(self.earFill)
-        c.lineJoin("bevel")
-        c.drawPath()
+            # Same text without optical size axis used
+            _, y = self.buildTextBox(s1, s2, origin, x+(self.pw+self.gw)/2, y, 
+                w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh, 
+                fontSize=fontSize, alignment=LEFT, labelSize=7, label='No optical size axis used.\n\n', 
+                Bwght=0.6, Bwdth=-0.1, useOpsz=False)        
 
-        labelSize = e
-        bs = c.newString(self.c,
-                               style=dict(font=self.f.path,
-                                          textFill=self.cFill,
-                                          textStroke=self.cStroke,
-                                          textStrokeWidth=self.cStrokeWidth,
-                                          fontSize=h*2/3))
-        tw, th = bs.textSize()
-        c.text(bs, (w/2-tw/2, h/2-th/3.2))
 
-        if self.title:
-            bs = c.newString(self.title,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, self.h+th/2))
-
-        y = -self.LABEL_RLEADING*labelSize
-        if self.name:
-            bs = c.newString(self.name,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, y))
-            y -= self.LABEL_RLEADING*labelSize
-        if self.label:
-            bs = c.newString(self.label,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, y))
-        c.restore()
 
 if __name__ == '__main__':
     import doctest
