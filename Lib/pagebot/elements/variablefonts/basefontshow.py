@@ -14,10 +14,8 @@
 #
 #     basefontshow.py
 #
-from random import choice
 from pagebot.elements import Element
-from pagebot.constants import JUSTIFIED, LEFT
-from pagebot.contributions.filibuster.blurb import Blurb
+from pagebot.constants import LEFT
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.transformer import asFormatted
 
