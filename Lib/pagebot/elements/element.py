@@ -20,7 +20,6 @@ import weakref
 import copy
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import Unit, getUnits, fr, perc, em
-from pagebot.contexts.builders.buildinfo import newBuildInfo
 
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
@@ -49,7 +48,7 @@ class Element(object):
 
     def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH,
             t=0, parent=None, context=None, name=None, cssClass=None, cssId=None, title=None, 
-            description=None, keyWords=None, info=None,
+            description=None, keyWords=None, 
             language=None, style=None, conditions=None, framePath=None,
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None,
             isLeftPage=None, isRightPage=None, bleed=None,
@@ -75,9 +74,6 @@ class Element(object):
         >>> e = Element()
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (0, 0, 100, 100, (0, 0, 0, 0), (0, 0, 0, 0))
-        >>> e.info.resources = 'Resource String'
-        >>> e.info.resources
-        'Resource String'
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.document import Document
@@ -119,9 +115,10 @@ class Element(object):
         # Initilialize self._elements and self._eIds
         self.clearElements()
 
-        self.style = makeStyle(style, **kwargs) # Make default style for t == 0
+        self.style = makeStyle(style, **kwargs) # Make default style for t == 0 from args
         # Initialize style values that are not supposed to inherite from parent styles.
         # Always store point in style as separate (x, y, z) values. Missing values are 0
+        # Note that position, w, h, d, padding and margin are not inherited by style.
         self.point3D = point or (x, y, z)
         self.w = w
         self.h = h
@@ -189,11 +186,8 @@ class Element(object):
         self.prevPage = prevPage # if a flow must run over page boundaries.
         self._isLeftPage = isLeftPage # True/False/None. In case None, parent will be queried
         self._isRightPage = isRightPage
-        # BuilderInfo instance to store special resources for the builders to use.
-        self.info = newBuildInfo(info)
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
-        # Overwrite the self.info for data that is defined in the template.
         self.applyTemplate(template, elements)
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isFlow = not None in (prevElement, nextElement, nextPage)
@@ -278,10 +272,6 @@ class Element(object):
             self.prevElement = template.prevElement
             self.nextElement = template.nextElement
             self.nextPage = template.nextPage
-            # Copy template.info data that is defined, overwriting values in self.info
-            for key, value in template.info.items():
-                if value is not None:
-                    self.info[key] = value
             # Copy style items
             for  name, value in template.style.items():
                 self.style[name] = value
@@ -506,11 +496,10 @@ class Element(object):
 
     def copy(self, parent=None):
         u"""Answer a full copy of self, where the "unique" fields are set to default.
-        Also perform a deep copy on all child elements and copy self.info
+        Also perform a deep copy on all child elements.
 
         >>> e1 = Element(name='Child', w=100)
         >>> e = Element(name='Parent', elements=[e1], w=200)
-        >>> e.info.cssCode = 'abc {}'
         >>> copyE = e.copy()
         >>> len(copyE) == len(e) == 1
         True
@@ -518,10 +507,6 @@ class Element(object):
         (False, False)
         >>> copyE.name == e.name, copyE.w == e.w == 200, copyE['Child'].w == e['Child'].w == 100 # Values are copied
         (True, True, True)
-        >>> e.info.cssCode = 'xyz {}' # Change info of original element
-        >>> copyE.info.cssCode # Copied info did not change
-        'abc {}'
-
         """
         # This also initializes the child element tree as empty list.
         # Style is supposed to be a deep-copyable dictionary.
@@ -537,7 +522,6 @@ class Element(object):
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
             framePath=self.framePath,
-            info=self.info.copy(), # Copy the resource storage for this element.
             elements=None, # Will be copied separately, if there are child elements
             template=self.template, 
             nextElement=self.nextElement, 
@@ -4028,11 +4012,11 @@ class Element(object):
         in self.style and self.css()."""
         b = view.context.b # Get the build of the current context.
         if self.cssId: # If the #id is defined, then use that as CSS reference.
-            b.css('#'+self.cssId, self.style)
+            b.css('#'+self.cssId, e=self)
         elif self.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
-            b.css('.'+self.cssClass, self.style)
-        elif self.info.cssPath is not None:
-            b.importCss(self.info.cssPath) # Add CSS content from file, if path is not None and the file exists.
+            b.css('.'+self.cssClass, e=self)
+        elif self.cssPath is not None:
+            b.importCss(self.cssPath) # Add CSS content from file, if path is not None and the file exists.
         else:
             b.css(message='No CSS for element %s\n' % self.__class__.__name__)
 
@@ -4044,8 +4028,8 @@ class Element(object):
         """
         self.build_css(view)
         b = view.context.b # Use the current context builder to write the HTML/CSS code.
-        if self.info.htmlPath is not None:
-            b.importHtml(self.info.htmlPath) # Add HTML content from file, if path is not None and the file exists.
+        if self.htmlPath is not None:
+            b.importHtml(self.htmlPath) # Add HTML content from file, if path is not None and the file exists.
         else:
             b.div(cssClass=self.cssClass, cssId=self.cssId) # No default class, ignore if not defined.
 

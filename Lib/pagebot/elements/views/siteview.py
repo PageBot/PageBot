@@ -19,6 +19,7 @@
 #
 import os
 
+from pagebot import getRootPath
 from pagebot.elements.views.htmlview import HtmlView
 from pagebot.style import ORIGIN
 
@@ -26,64 +27,47 @@ class SiteView(HtmlView):
     
     viewId = 'Site'
 
-    SITE_PATH = 'docs/' # Will copy and publish by Git
-    DEFAULT_HTML_FILE = 'index.html'
-    DEFAULT_HTML_PATH = SITE_PATH + DEFAULT_HTML_FILE
-    DEFAULT_CSS_PATH = SITE_PATH + 'css/style.css'
+    #   B U I L D  H T M L  /  C S S
 
-    VIEW_PORT = "width=device-width, initial-scale=1.0"
+    SITE_ROOT_PATH = '_export/' # Redefine by inheriting website view classes.
+    CSS_PATH = 'style.css'
 
-    FONTS_CSS_URL = 'fonts/webfonts.css'
-    FONT_URLS = (
-        'http://fonts.googleapis.com/css?family=Bree+Serif',
-        'http://fonts.googleapis.com/css?family=Droid+Sans:400,700',
-    )
-    JS_URLS = dict(
-        jquery='https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
-        #jquery='http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
-        mediaqueries='http://code.google.com/p/css3-mediaqueries-js',
-        d3='https://d3js.org/d3.v5.min.js',
-    )
-
-    def __init__(self, resourcePaths=None,  **kwargs):
+    def __init__(self, resourcePaths=None, cssCode=None, cssPath=None, cssUrls=None, jsUrls=None, webFontUrls=None,
+        **kwargs):
+        u"""Abstract class for views that build websites."""
         HtmlView.__init__(self, **kwargs)
 
-        # Directory paths with resource files to be copied to the siteself.
+        # Url's and paths
+        self.siteRootPath = self.SITE_ROOT_PATH
+
         if resourcePaths is None:
-            resourcePaths = []
+            rp = getRootPath() + '/elements/web/simplesite/resources/'
+            resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directories to be copied to Mamp.        
         self.resourcePaths = resourcePaths
-        # Urls for <link>
-        self.webFontsUrl = self.FONTS_CSS_URL
-        self.favIconUrl = None
-        self.appleTouchIconUrl = None
-        # Device
-        self.viewPort = self.VIEW_PORT
-        # Fonts
-        self.webFonts = self.FONT_URLS
-        # Define string or file paths where to read content, instead of constructing by the builder.
-        self.htmlPath = None # Set to string in case the full HTML is defined in a single file.
-        self.cssCode = None # Set to string, if CSS is available as single source. Exported as css file once.
-        self.cssPath = None # Set to path, if CSS is available in a single file.
-        self.headPath = None # Optional set to string that contains the page <head>...</head>, excluding the tags.
-        self.headHtml = None # Set to path, if head is available in a single file, excluding the tags.
-        self.bodyHtml = None # Optional set to string that contains the page <body>...</body>, excluding the tags.
-        self.bodyPath = None # Set to path, if body is available in a single file, excluding the tags.
+     
+        # Default WebFonts urls to include:
+        self.webFontUrls = webFontUrls
 
-        self.jsPath = None # Optional javascript, to be added at the end of the page, inside <body>...</body> tag.
-        self.jsCode = None # Set to path, if JS is available in a single file, excluding the tags.
-        
-        # Make None for force unsecure version to load instead.
-        # TODO: Needs a better way (query elements?) to collect the needed JS imports from the element tree.
-        self.jsUrls = self.JS_URLS
+        # Default CSS urls to inclide 
+        self.cssCode = cssCode # Optional CSS code to be added to all pages.
+        self.cssPath = cssPath or self.CSS_PATH
+        self.cssUrls = cssUrls or [self.CSS_PATH]
 
+        # Default JS Urls to include
+        self.jsUrls = jsUrls or dict(
+            jquery='https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
+            #jquery='http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
+            mediaqueries='http://code.google.com/p/css3-mediaqueries-js',
+            d3='https://d3js.org/d3.v5.min.js',
+        )
 
-    #   B U I L D  H T M L  /  C S S
 
     def build(self, path=None, pageSelection=None, multiPage=True):
         """
+        Default building to non-website media.
 
         >>> from pagebot.document import Document
-        >>> doc = Document(name='TestDoc', viewId='Site', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
+        >>> doc = Document(name='TestDoc', viewId='Site', w=300, h=400, padding=(30, 40, 50, 60))
         >>> view = doc.view
         >>> view
         <SiteView:Site (0, 0)>
@@ -91,8 +75,6 @@ class SiteView(HtmlView):
         >>> page.name = 'index' # Home page is index.
         >>> page.cssClass ='MyGeneratedPage'
         >>> doc.build('/tmp/PageBot/SiteView_docTest')
-        >>> 'WebBuilder' in str(view.b)
-        True
         >>> len(view.b._htmlOut) > 0 # Check that there is actual generated HTML output (_htmlOut is a list).
         True
         >>> 'class="MyGeneratedPage"' in ''.join(view.b._htmlOut) # Page div contains this class attribute.

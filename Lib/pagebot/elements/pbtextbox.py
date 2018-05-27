@@ -365,24 +365,21 @@ class TextBox(Element):
         b = context.b
 
         self.build_css(view)
-        if view.htmlPath is not None:
-            b.includeHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
-        else:
-            # Use self.cssClass if defined, otherwise self class. #id is ignored if None
-            b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId) 
-            b.addHtml(self.bs.s) # Get HTML from BabelString in HtmlString context.
+        # Use self.cssClass if defined, otherwise self class. #id is ignored if None
+        b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId) 
+        b.addHtml(self.bs.s) # Get HTML from BabelString in HtmlString context.
 
-            if self.drawBefore is not None: # Call if defined
-                self.drawBefore(self, view)
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, view)
 
-            if showElements:
-                for e in self.elements:
-                    e.build_html(view, origin)
+        if showElements:
+            for e in self.elements:
+                e.build_html(view, origin)
 
-            if self.drawAfter is not None: # Call if defined
-                self.drawAfter(self, view)
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view)
 
-            b._div() # self.cssClass or self.__class__.__name__
+        b._div() # self.cssClass or self.__class__.__name__
 
     def _drawBaselines_drawBot(self, view, px, py):
         # Let's see if we can draw over them in exactly the same position.

@@ -73,16 +73,13 @@ class Banner(Group):
         >>> from pagebot.elements import newTextBox
         >>> doc = Document(viewId='Mamp')
         >>> page = doc[1]
-        >>> page.title = 'Banner Test'
+        >>> page.info.title = 'Banner Test'
         >>> page.name = 'index'
         >>> banner = Banner(parent=page, cssId='ThisBannerId')
-        >>> tb = newTextBox('This is a banner.', parent=banner)
+        >>> tb = newTextBox('This is a banner.', fontSize=24, parent=banner)
         >>> doc.export()
         >>> # Try to open in browser. It works if a local server (like MAMP) runs for view.LOCAL_HOST_URL url.
         >>> result = os.system('open %s' % (doc.view.LOCAL_HOST_URL % (doc.name, doc.view.DEFAULT_HTML_FILE)))
-        >>> #sitePath = '_export/BannerTest'
-        >>> #doc.export(sitePath)
-        >>> #result = os.system('open %s/index.html' % sitePath)
         """
         b = view.context.b
         self.build_css(view)

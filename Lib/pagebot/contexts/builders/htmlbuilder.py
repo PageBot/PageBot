@@ -342,6 +342,9 @@ table {
     def addJs(self, js):
         self._jsOut.append(js)
 
+    def hasJs(self):
+        return len(self._jsOut)
+
     def importJs(self, path):
         u"""Import a chunk of UTF-8 CSS code from the path."""
         if os.path.exists(path):
@@ -355,11 +358,15 @@ table {
         u"""Collect path of files to copy to the output website."""
         self._copyPaths.append(path)
 
+    def getJs(self):
+        u"""Answer the flat string of JS."""
+        return ''.join(self._jsOut)
+    
     def writeJs(self, path):
         u"""Write the collected set of css JS to path."""
         try:
             f = codecs.open(path, 'w', 'utf-8')
-            f.write(''.join(self._jsOut))
+            f.write(self.getJs())
             f.close()
         except IOError:
             print('[HtmlBuilder.writeCss] Cannot write JS file "%s"' % path)
@@ -367,8 +374,18 @@ table {
     #   C S S
 
     def addCss(self, css):
-        u"""Add the css chunk to self.css, the ordered list of css for output."""
-        self._cssOut.append(css)
+        u"""Add the css chunk to self.css, the ordered list of css for output.
+        Don't write if empty or None."""
+        if css:
+            self._cssOut.append(css)
+
+    def getCss(self):
+        """Answer the joined content of sel._cssOut."""
+        return ''.join(self._cssOut)
+
+    def hasCss(self):
+        u"""Answer the boolean flag if there is any cumulated CSS in self._cssOut."""
+        return len(self._cssOut)
 
     def importCss(self, path):
         u"""Import a chunk of UTF-8 CSS code from the path."""
@@ -383,7 +400,7 @@ table {
         u"""Write the collected set of css chunks to path."""
         try:
             f = codecs.open(path, 'w', 'utf-8')
-            f.write(''.join(self._cssOut))
+            f.write(self.getCss())
             f.close()
         except IOError:
             print('[HtmlBuilder.writeCss] Cannot write CSS file "%s"' % path)
@@ -407,11 +424,28 @@ table {
         TODO: Make optional if compact CSS is needed."""
         self.addCss(self.SECTION_CSS % title)
 
-    def css(self, selector=None, style=None, message=None):
+    def css(self, selector=None, e=None, message=None):
         u"""Build the CSS output for the defined selector and style."""
         css = ''
         attributes = []
-        if style:
+        if e:
+            style = e.style
+            if e.ml:
+                attributes.append('margin-left: %s;' % e.ml)
+            if e.mt:
+                attributes.append('margin-top: %s;' % e.mt)
+            if e.mb:
+                attributes.append('margin-bottom: %s;' % e.mb)
+            if e.mr:
+                attributes.append('margin-right: %s;' % e.mr)
+            if e.pl:
+                attributes.append('padding-left: %s;' % e.pl)
+            if e.pt:
+                attributes.append('padding-top: %s;' % e.pt)
+            if e.pb:
+                attributes.append('padding-bottom: %s;' % e.pb)
+            if e.pr:
+                attributes.append('padding-right: %s;' % e.pr)
             if style.get('font') is not None:
                 attributes.append('font-family: %s;' % style['font'])
             if style.get('fontSize') is not None:
@@ -427,7 +461,7 @@ table {
             if style.get('fill') is not None:
                 attributes.append('background-color: %s;' % Color(style['fill']).css)
             if style.get('textFill') is not None:
-                attributes.append('color: %s;' % Color(style['textFill'].css))
+                attributes.append('color: %s;' % Color(style['textFill']).css)
             value = style.get('transition')
             if value is not None:
                 attributes.append('transition=%s;' % value)
