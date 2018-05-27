@@ -16,8 +16,9 @@
 #
 from pagebot.elements import Element
 from pagebot.toolbox.transformer import pointOffset
+from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 
-class GlyphSet(Element): 
+class GlyphSet(BaseFontShow): 
     u"""Showing the specified (variable) font as full page with a matrix
     of all glyphs in the font.
 
@@ -33,15 +34,23 @@ class GlyphSet(Element):
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebot.conditions import *
         >>> c = DrawBotContext()
         >>> w, h = Letter
-        >>> m = 80
-        >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)
+        >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
+        >>> style = dict(gh=16, fill=0.95, rLeading=1.4)
+        >>> conditions = [Fit()]
         >>> page = doc[1]
-        >>> #font = findFont('RobotoDelta-VF')
-        >>> font = findFont('AmstelvarAlpha-VF')
-        >>> gs = GlyphSet(font, x=m, y=m, w=w-2*m, h=h-2*m, parent=page, context=c)
-        >>> doc.export('_export/%sGlyphSet.pdf' % font.info.familyName)
+        >>> font1 = findFont('AmstelvarAlpha-VF')
+        >>> gs = GlyphSet(font1, parent=page, conditions=conditions, padding=40, style=style, context=c)
+        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, rLeading=1.4)
+        >>> page = doc[2]
+        >>> font2 = findFont('RobotoDelta-VF')
+        >>> #font2 = findFont('Upgrade-Regular')
+        >>> #font2 = findFont('Escrow-Bold')
+        >>> gs = GlyphSet(font2, parent=page, conditions=conditions, style=style, padding=40, context=c)
+        >>> score = doc.solve()
+        >>> doc.export('_export/%sGlyphSet.pdf' % font1.info.familyName)
         """
         Element.__init__(self, **kwargs)
         self.f = f # Font instance
@@ -71,21 +80,22 @@ class GlyphSet(Element):
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
 
-    def drawMatrix(self, view, p):
+    def drawMatrix(self, view, origin):
         c = self.context
-        x, y, _ = p
-        mx = 0
-        my = self.h
+        ox, oy, _ = origin
+        x = 0
+        y = self.h - self.pt - self.COLS
         for u, glyphName in sorted(self.f.cmap.items()):
             if u <= 32: # Skip any control characters and space 
                 continue
             bs = c.newString(unichr(u), style=dict(font=self.f.path, fontSize=self.FONTSIZE))
-            c.text(bs, (x+mx, y+my-self.ROWS))
-            mx += self.COLS
-            if mx >= self.w:
-                mx = 0
-                my -= self.ROWS
-            if my < 0:
+            tw, th = bs.textSize()
+            c.text(bs, (ox+x+self.pl-tw/2, oy+y))
+            x += self.COLS
+            if x >= self.pw:
+                x = 0
+                y -= self.ROWS
+            if y < 0:
                 break
 
 

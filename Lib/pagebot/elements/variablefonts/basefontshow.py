@@ -24,6 +24,7 @@ class BaseFontShow(Element):
     specimes of a font instance of Variable Font.
 
     """
+    DEFAULT_LABEL_SIZE = 7
 
     def getTextStyle(self, font, fontSize=None, alignment=None, rLeading=None):
         u"""Answer a copy of self.style with modified parameters (if defined)"""
@@ -51,14 +52,14 @@ class BaseFontShow(Element):
         # else wdth > 0:  Relative scale between default and maxValue
         return defaultValue + (maxValue - defaultValue)*value
 
-    def getInstance(self, wght=None, wdth=None, opsz=None):
+    def getLocation(self, wght=None, wdth=None, opsz=None):
         u"""Answer the instance of self, corresponding to the normalized location.
         (-1, 0, 1) values for axes [wght] and [wdth].
         The optical size [opsz] is supposed to contain the font size, so it is not normalized.
         If [opsz] is not defined, then set it to default, if the axis exist.
         """
         if not self.f.axes:
-            return self.f
+            return {}
 
         # Get real axis values.
         wght = self.getAxisValue('wght', wght)        
@@ -68,11 +69,14 @@ class BaseFontShow(Element):
             opsz = self.f.axes['opsz'][1] # Use default value
 
         # Make location dictionary
-        location = dict(wght=wght, wdth=wdth, opsz=opsz)
-        # Return the instance font at this location. The font is stored as file,
-        # so it correspondents to normal instance.path behavior,
-        instance = getVarFontInstance(self.f, location)
-        return instance
+        return dict(wght=wght, wdth=wdth, opsz=opsz)
+
+    def getInstance(self, location):
+        u"""Return the instance font at this location. The font is stored as file,
+        # so it correspondents to normal instance.path behavior."""
+        if self.f.axes:
+            return getVarFontInstance(self.f, location)
+        return self.f
 
     def buildStackedLine(self, s, origin, x, y, w, h=None, fontSize=None, wght=None, wdth=None, useOpsz=True):
         u"""Draw a textbox to self that fits the string s for the instance indicated by
@@ -88,8 +92,10 @@ class BaseFontShow(Element):
             opsz = fontSize
         else:
             opsz = None # Otherwise ignore.
+        # Construct the location
+        location = self.getLocation(wght=wght, wdth=wdth, opsz=opsz)
         # Get the instance for this location. 
-        instance = self.getInstance(wght=wght, wdth=wdth, opsz=opsz)
+        instance = self.getInstance(location)
         style = self.getTextStyle(instance, fontSize)
         stackLine = c.newString(s, style=style, w=w)
         capHeight = float(instance.info.capHeight)/instance.info.unitsPerEm * stackLine.fittingFontSize
@@ -112,9 +118,11 @@ class BaseFontShow(Element):
             opsz = fontSize
         else:
             opsz = None # Otherwise ignore.
+        # Construct the location
+        location = self.getLocation(opsz=opsz)
+        instance = self.getInstance(location) # Get Roman for labels, using default axis values.
         # Labels by default in default roman, showing font family name, fontSize and rounded leading.
-        instance = self.getInstance(opsz=opsz) # Get Roman for labels, using default axis values.
-        style = self.getTextStyle(instance, labelSize or 7, LEFT, 0.8)
+        style = self.getTextStyle(instance, labelSize or self.DEFAULT_LABEL_SIZE, LEFT, 0.8)
         if labelSize is not None and label is None:
             label = '%s %s/%s\n\n' % (self.f.info.familyName, 
                 asFormatted(fontSize), 
@@ -122,12 +130,16 @@ class BaseFontShow(Element):
         bs = c.newString(label or '', style=style) # Create BabelString/FormattedString if content.
  
         if s1: # In case s1 lead is defined, then use that for the bold version of self.f
-            instance = self.getInstance(wght=Bwght, wdth=Bwdth, opsz=opsz)
+            # Construct the location
+            location = self.getLocation(wght=Bwght, wdth=Bwdth, opsz=opsz)
+            instance = self.getInstance(location)
             style = self.getTextStyle(instance, fontSize, alignment)
             bs += c.newString((s1 or '')+' ', style=style) # Create BabelString/FormattedString if content.
  
         # Make Roman style. Use font size of [opsz] axis, if it exists.
-        instance = self.getInstance(wght=Rwght, wdth=Rwdth, opsz=opsz)
+        # Construct the location
+        location = self.getLocation(wght=Rwght, wdth=Rwdth, opsz=opsz)
+        instance = self.getInstance(location)
         style = self.getTextStyle(instance, fontSize, alignment)
         # Add roman formatted string to what we already had.
         bs += c.newString(s2, style=style) 
