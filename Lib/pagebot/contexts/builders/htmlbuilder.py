@@ -431,21 +431,21 @@ table {
         if e:
             style = e.style
             if e.ml:
-                attributes.append('margin-left: %s;' % e.ml)
+                attributes.append('margin-left: %spt;' % e.ml)
             if e.mt:
-                attributes.append('margin-top: %s;' % e.mt)
+                attributes.append('margin-top: %spt;' % e.mt)
             if e.mb:
-                attributes.append('margin-bottom: %s;' % e.mb)
+                attributes.append('margin-bottom: %spt;' % e.mb)
             if e.mr:
-                attributes.append('margin-right: %s;' % e.mr)
+                attributes.append('margin-right: %spt;' % e.mr)
             if e.pl:
-                attributes.append('padding-left: %s;' % e.pl)
+                attributes.append('padding-left: %spt;' % e.pl)
             if e.pt:
-                attributes.append('padding-top: %s;' % e.pt)
+                attributes.append('padding-top: %spt;' % e.pt)
             if e.pb:
-                attributes.append('padding-bottom: %s;' % e.pb)
+                attributes.append('padding-bottom: %spt;' % e.pb)
             if e.pr:
-                attributes.append('padding-right: %s;' % e.pr)
+                attributes.append('padding-right: %spt;' % e.pr)
             if style.get('font') is not None:
                 attributes.append('font-family: %s;' % style['font'])
             if style.get('fontSize') is not None:

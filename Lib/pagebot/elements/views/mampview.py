@@ -49,8 +49,8 @@ class MampView(SiteView):
         >>> #view.verbose = True
         >>> #view.doExport = False # View flag to avoid exporting to files.
         >>> page = doc[1]
-        >>> banner = Banner(parent=page, cssId='Banner', fill=0.8, font='Verdana')
-        >>> e = newTextBox(article, parent=banner, cssClass='bannerContent', margin=20, textFill=(1, 0, 1))
+        >>> banner = Banner(parent=page, cssId='Banner', fill=0.8,  margin=20, padding=30, font='Verdana')
+        >>> e = newTextBox(article, parent=banner, cssClass='bannerContent', textFill=(1, 0, 1))
         >>> page.elements[0].cssId
         'Banner'
         >>> doc.export()
