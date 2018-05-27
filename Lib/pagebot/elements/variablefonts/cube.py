@@ -16,10 +16,8 @@
 #
 from __future__ import division # Make integer division result in float.
 
-from random import choice
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.constants import LEFT, RIGHT, TOP, CENTER # Used for axis direction in the cube
-from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.transformer import pointOffset
 
 class Cube(BaseFontShow): 
@@ -137,8 +135,8 @@ class Cube(BaseFontShow):
                 if yStep == self.steps-1: # Cover the top row
                     # TODO: Make the drawing of toplayer work.
                     tx = ox + mx + xzStep * dx 
-                    ty = oy + my + xyStep * dy + 2 * self.steps * dy
-                    location = self.getLocation(wght=-xzStep/2+1, wdth=-zStep/2+1, opsz=opsz)
+                    ty = oy + my + xzStep * dy + 2 * self.steps * dy
+                    location = self.getLocation(wght=-xzStep/2+1, wdth=-yStep/2+1, opsz=opsz)
                     instance = self.getInstance(location)
                     style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
                     bs = c.newString(self.label, style=style)

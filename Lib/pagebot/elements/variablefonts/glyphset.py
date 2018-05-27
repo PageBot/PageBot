@@ -14,7 +14,6 @@
 #
 #     glyphset.py
 #
-from pagebot.elements import Element
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 
@@ -52,7 +51,7 @@ class GlyphSet(BaseFontShow):
         >>> score = doc.solve()
         >>> doc.export('_export/%sGlyphSet.pdf' % font1.info.familyName)
         """
-        Element.__init__(self, **kwargs)
+        BaseFontShow.__init__(self, **kwargs)
         self.f = f # Font instance
 
 
