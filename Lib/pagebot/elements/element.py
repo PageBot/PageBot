@@ -4015,10 +4015,8 @@ class Element(object):
             b.css('#'+self.cssId, e=self)
         elif self.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
             b.css('.'+self.cssClass, e=self)
-        elif self.cssPath is not None:
-            b.importCss(self.cssPath) # Add CSS content from file, if path is not None and the file exists.
-        else:
-            b.css(message='No CSS for element %s\n' % self.__class__.__name__)
+        #else:
+        #    b.css(message='No CSS for element %s\n' % self.__class__.__name__)
 
     def build_html(self, view, origin=None, drawElements=True):
         u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self.

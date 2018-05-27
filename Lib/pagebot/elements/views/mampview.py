@@ -49,12 +49,11 @@ class MampView(SiteView):
         >>> #view.verbose = True
         >>> #view.doExport = False # View flag to avoid exporting to files.
         >>> page = doc[1]
-        >>> banner = Banner(parent=page, cssId='Banner', fill=0.8,  margin=20, padding=30, font='Verdana')
+        >>> banner = Banner(parent=page, cssId='Banner', fill=0.8,  margin=10, padding=10, font='Verdana')
         >>> e = newTextBox(article, parent=banner, cssClass='bannerContent', textFill=(1, 0, 1))
         >>> page.elements[0].cssId
         'Banner'
-        >>> doc.export()
-
+        >>> doc.export() # Export as website and open it as running in Mamp
         >>> #Try to open in a browser, assuming that there is a running local Mamp server.
         >>> result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, page.url)))
         """
