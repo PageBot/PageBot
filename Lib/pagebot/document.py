@@ -17,7 +17,6 @@
 import copy
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
-from pagebot.contexts.builders.buildinfo import newBuildInfo
 from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.style import getRootStyle, TOP, BOTTOM
@@ -56,7 +55,7 @@ class Document(object):
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None, autoPages=1, 
-            template=None, templates=None, info=None, originTop=True, startPage=1, w=None, h=None, 
+            template=None, templates=None, originTop=True, startPage=1, w=None, h=None, 
             padding=None, lib=None, context=None, exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. 
         Allows to compose the pages without the need to send them directly to the output for 
@@ -88,9 +87,6 @@ class Document(object):
         # hold the instance of a builder (respectively DrawBot, Flat and one of the HtmlBuilders, such
         # as GitBuilder or MampBuilder)
         self.newView(viewId or self.DEFAULT_VIEWID, context=context)
-
-        # BuilderInfo instance to store special resources for the builders to use.
-        self.info = newBuildInfo(info)
 
         # Template is name or instance default template.
         self.initializeTemplates(templates, template) 

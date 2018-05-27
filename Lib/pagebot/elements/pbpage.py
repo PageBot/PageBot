@@ -201,7 +201,7 @@ class Page(Element):
                 for webFontUrls in (view.webFontUrls, self.webFontUrls):
                     if webFontUrls is not None:
                         for webFontUrl in webFontUrls:
-                            b.link(rel='stylesheet', type="text/css", href=webFontsUrl, media='all')
+                            b.link(rel='stylesheet', type="text/css", href=webFontUrl, media='all')
                 
                 # View and pages can both implements CSS paths
                 for cssUrls in (view.cssUrls, self.cssUrls):
