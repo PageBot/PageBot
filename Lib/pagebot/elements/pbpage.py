@@ -155,6 +155,7 @@ class Page(Element):
                 b.title_(self.info.title or self.title or self.name)
                 
                 # Devices
+                assert self.info.viewPort is not None
                 b.meta(name='viewport', content=self.info.viewPort) # Cannot be None
 
                 # Javascript
