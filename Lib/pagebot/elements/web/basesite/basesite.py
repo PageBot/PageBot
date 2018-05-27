@@ -21,18 +21,11 @@ from pagebot.publications.publication import Publication
 class BaseSite(Publication):
     u"""Build a basic website to show the core principles.
 
-    >>> baseSite = BaseSite(name='Home Site', pl=30, pr=30)
-    >>> view = baseSite.newView('Mamp')
-    >>> baseSite
-    [Document-BaseSite "Home Site"]
-    >>> len(baseSite.pages)
-    1
-    >>> baseSite.export('_export/BaseSite')
+    >>> doc = BaseSite(name='Home', padding=30, viewId='Mamp')
+    >>> view = doc.view
+    >>> page = doc[1]
+    >>> doc.export()
     """
-
-    def initialize(self, **kwargs):
-        u"""Initialize the generic website templates. """
-
 
 if __name__ == '__main__':
     import doctest

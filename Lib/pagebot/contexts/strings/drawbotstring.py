@@ -267,11 +267,12 @@ class DrawBotString(BabelString):
         # If there is a target (pixel) width or height defined, ignore the requested fontSize and try the width or
         # height first for fontSize = 100. The resulting width or height is then used as base value to
         # calculate the needed point size.
-        if w is not None or h is not None:
-            fontSize = 100
         # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
         # TODO: add calculation of rFontSize (relative float based on root-fontSize) here too.
-        sFontSize = css('fontSize', e, style, DEFAULT_FONT_SIZE) # May be scaled to fit w or h if target is defined.
+        if w is not None or h is not None:
+            sFontSize = 100
+        else:
+            sFontSize = css('fontSize', e, style, DEFAULT_FONT_SIZE) # May be scaled to fit w or h if target is defined.
         sLeading = css('leading', e, style)
         rLeading = css('rLeading', e, style)
         if sLeading or (rLeading and sFontSize):
@@ -355,6 +356,9 @@ class DrawBotString(BabelString):
             s = s.lower()
         elif sCapitalized:
             s = s.capitalize()
+
+        if style is None:
+            style = dict(fontSize=sFontSize)
 
         newt = fs + t # Format plain string t onto new formatted fs.
         if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction.

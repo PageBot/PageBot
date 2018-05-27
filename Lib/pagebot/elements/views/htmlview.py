@@ -31,10 +31,10 @@ class HtmlView(BaseView):
         b = view.context.b
         if self.cssCode is not None:
             b.addHtml(self.cssCode)
-        elif self.info.cssPath is not None:
+        elif self.cssPath is not None:
             b.importCss(self.cssPath) # Add CSS content of file, if path is not None and the file exists.
         else:
-            b.headerCss(self.name or self.title)
+            b.headerCss(self.into.title or self.name or self.title)
             b.resetCss() # Add CSS to reset specific default behavior of browsers.
             b.sectionCss('Document root style')
-            b.css('body', self.rootStyle) # <body> selector and style output
+            b.css('body', e=view) # <body> selector and style output

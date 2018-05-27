@@ -198,8 +198,8 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         lowercase = False, # All text in lower case (only if uppercase is False
         capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase)
 
-        # Axis location of the Variable font to create the font instance (in case "font" is a Variable font)
-        variableLocation = None,
+        # Axis location of the Variable Font to create the font instance. E.g. dict(wght=45, opsz=12)
+        variableLocation = None, 
 
         # List of supported OpenType features.
         # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf,
