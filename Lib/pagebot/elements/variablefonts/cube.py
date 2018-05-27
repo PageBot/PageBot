@@ -12,94 +12,78 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#	  fonticon.py
+#     cube.py
 #
-#     Draw the icon with optional information of the included font.
-#
-from pagebot.elements import Element
+from __future__ import division # Make integer division result in float.
+
+from random import choice
+from pagebot.elements.variablefonts.basefontshow import BaseFontShow
+from pagebot.constants import LEFT, RIGHT, TOP, CENTER # Used for axis direction in the cube
+from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.transformer import pointOffset
 
-class FontIcon(Element): 
-    u"""Showing the specified font(sub variable font) in the form of an icon 
-    showing optional information in different sizes and styles.
-    
-    >>> from pagebot.fonttoolbox.objects.font import getFont
-    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-    >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
-    >>> font = getFont(path)
-    >>> fi = FontIcon(font, w=120, h=160, title="Roboto Regular")
-    >>> fi.title
-    'Roboto Regular'
-    >>> fi.size
-    (120, 160, 1)
+class Cube(BaseFontShow): 
+    u"""Showing the specified (variable) font as full page with a matrix
+    of all glyphs in the font.
+
+    Usage of standard style parameters
+    fill        Fill color for the background of the element
+    stroke      Draw frame around the element
+    textFill    Color of the text. Default is black.
+    padding     Use in case of background color or frame. Default is 0
 
     """
-    LABEL_RTRACKING = 0.02
-    LABEL_RLEADING = 1.3
-
-    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=None,
-            earSize=None, earLeft=True, earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
-            labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
-        u"""    
-        >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> from pagebot.elements import newRect
+    def __init__(self, f, label=None, dx=None, dy=None, steps=None, axes=None, **kwargs):
+        u"""   
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
+        >>> from pagebot.constants import Letter
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebot.conditions import *
         >>> c = DrawBotContext()
-        >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> w, h = Letter
+        >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
+        >>> style = dict(fill=0.95, rLeading=1.4, fontSize=28)
+        >>> conditions = [Fit()]
         >>> page = doc[1]
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
-        >>> font = getFont(path)
-        >>> iw, ih = w/4, h/4
-        >>> x, y = w/8, h/8
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", earSize=0.3, earLeft=True, parent=page, stroke=0, strokeWidth=3)
-        >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=0,parent=page)
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=0.5, earSize=0.3, earLeft=True, earFill=None, fill=(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
-        >>> doc.export('_export/FontIconTest.pdf')
+        >>> font1 = findFont('AmstelvarAlpha-VF')
+        >>> gs = Cube(font1, parent=page, conditions=conditions, padding=50, style=style, context=c)
+        >>> style = dict(stroke=0, strokeWidth=0.25, fontSize=20, rLeading=1.4)
+        >>> page = doc[2]
+        >>> font2 = findFont('RobotoDelta-VF')
+        >>> gs = Cube(font2, parent=page, conditions=conditions, style=style, steps=7, padding=40, context=c)
+        >>> score = doc.solve()
+        >>> doc.export('_export/%sCube.pdf' % font1.info.familyName)
         """
-
-        Element.__init__(self,  **kwargs)
+        BaseFontShow.__init__(self, **kwargs)
         self.f = f # Font instance
-        if title is not None:
-            self.title = title or "%s %s" % (f.info.familyName, f.info.styleName) 
-        self.titleFont = titleFont, labelFont or f 
-        self.titleFontSize = 28
-        self.labelFont = labelFont or f
-        self.labelFontSize = labelFontSize or 10
-        self.label = label # Optiona second label line
-        self.c = c # Character(s) in the icon.
-        self.cFill = cFill
-        self.cStroke = cStroke
-        self.cStrokeWidth = cStrokeWidth
-        self.scale = s
-        self.show = show
-        if stroke is not None:
-            self.style["stroke"] = stroke
-        if strokeWidth is not None:
-            self.style["strokeWidth"] = strokeWidth
-        self.earSize = earSize or 0.25 # 1/4 of width
-        self.earLeft = earLeft
-        if earFill is None:
-            earFill = self.css("fill")
-        self.earFill = earFill 
-
+        self.label = label or 'Hn'
+        self.steps = steps or 5
+        self.dx = dx 
+        self.dy = dy
+        # Set the relation between the axes and the cube ribs
+        if axes is None:
+            axes = {LEFT: 'wght', RIGHT: 'wdth', TOP: 'opsz'}
+        self.axes = axes
 
     def build(self, view, origin, drawElements=True):
         u"""Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
+        c = self.context
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.draw(view, p)
+        self.buildFrame(view, p) # Draw optional background fill, frame or borders.
+
+        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
+
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
+        # Draw that actual content of the element by stacked specimen rectangles.
+        self.drawCube(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -107,93 +91,62 @@ class FontIcon(Element):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
-    def draw(self, view, p):
-        if not self.show:
-            return
-        w = self.w # Width of the icon
-        h = self.h # Height of the icon
-        e = self.earSize*w # Ear size fraction of the width
+    def drawCube(self, view, origin):
+        u"""Draw the content of the element, responding to size, styles, font and content.
+        Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
+        if the axis exists.
 
-        x,y = p[0], p[1]
+        TODO: If the axis does not exist, do something else with the right column
+        """
+
         c = self.context
 
-        c.newPath()
-        c.moveTo((0, 0))
-        if self.earLeft: 
-            c.lineTo((0, h-e))
-            c.lineTo((e, h))
-            c.lineTo((w, h))
-            
-        else:
-            c.lineTo((0, h))
-            c.lineTo((w-e, h))
-            c.lineTo((w, h-e))
-        c.lineTo((w, 0))
-        c.lineTo((0, 0))
-        c.closePath()
-        c.save()
-        c.fill(self.css("fill"))
-        c.stroke(self.css("stroke"), self.css("strokeWidth"))
-        c.translate(x, y)
-        c.drawPath()
+        r = 20
+        ox, oy, _ = origin
+        mx = self.w/2
+        my = self.pb
+        dx = self.dx or self.pw/(2*self.steps-2)
+        dy = self.dy or dx/2 + 6
 
-        c.newPath()
-        if self.earLeft:
-            #draw ear
-            c.moveTo((e, h))
-            c.lineTo((e, h-e))
-            c.lineTo((0, h-e))
-            c.lineTo((e, h))
+        fontSize = self.css('fontSize', 24)
+        opszRange = (8, 12, 20, 30, 45, 64, 96, 144)
 
-        else:
-            #draw ear
-            c.moveTo((w-e, h))
-            c.lineTo((w-e, h-e))
-            c.lineTo((w, h-e))
-            c.lineTo((w-e, h))
-        c.closePath()
-        c.fill(self.earFill)
-        c.lineJoin("bevel")
-        c.drawPath()
+        for xzStep in range(self.steps):
+            for yStep in range(self.steps):
+                opsz = opszRange[yStep]
+                x = ox + mx + xzStep * dx 
+                y = oy + my + xzStep * dy + 2 * yStep * dy
+                # Calculate the location
+                location = self.getLocation(wght=-xzStep/2+1, wdth=1, opsz=opsz)
+                instance = self.getInstance(location)
+                style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
+                bs = c.newString(self.label, style=style)
+                tw, th = bs.textSize()
+                c.text(bs, (x-tw/2, y))
 
-        labelSize = e
-        bs = c.newString(self.c,
-                               style=dict(font=self.f.path,
-                                          textFill=self.cFill,
-                                          textStroke=self.cStroke,
-                                          textStrokeWidth=self.cStrokeWidth,
-                                          fontSize=h*2/3))
-        tw, th = bs.textSize()
-        c.text(bs, (w/2-tw/2, h/2-th/3.2))
+                if xzStep > 0:
+                    x = ox + mx - xzStep * dx 
+                    location = self.getLocation(wght=1, wdth=-xzStep/2+1, opsz=opsz)
+                    instance = self.getInstance(location)
+                    style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
+                    bs = c.newString(self.label, style=style)
+                    tw, th = bs.textSize()
+                    c.text(bs, (x-tw/2, y))
 
-        if self.title:
-            bs = c.newString(self.title,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, self.h+th/2))
 
-        y = -self.LABEL_RLEADING*labelSize
-        if self.name:
-            bs = c.newString(self.name,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, y))
-            y -= self.LABEL_RLEADING*labelSize
-        if self.label:
-            bs = c.newString(self.label,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, y))
-        c.restore()
+                if yStep == self.steps-1: # Cover the top row
+                    
+                    tx = ox + mx + xzStep * dx 
+                    ty = oy + my + xyStep * dy + 2 * self.steps * dy
+                    location = self.getLocation(wght=-xzStep/2+1, wdth=-zStep/2+1, opsz=opsz)
+                    instance = self.getInstance(location)
+                    style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
+                    bs = c.newString(self.label, style=style)
+                    tw, th = bs.textSize()
+                    c.text(bs, (x-tw/2, y))
+
+
+
 
 if __name__ == '__main__':
     import doctest

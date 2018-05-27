@@ -31,7 +31,7 @@ class Paragraphs(BaseFontShow):
     padding     Use in case of background color or frame. Default is 0
 
     """
-    def __init__(self, f, words=None, labelFontSize=None, **kwargs):
+    def __init__(self, f, words=None, labelSize=None, **kwargs):
         u"""   
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
@@ -64,6 +64,7 @@ class Paragraphs(BaseFontShow):
         self.lineTag = 'design_headline' # Default label where to find random word choices.
         self.headlineTag = 'design_headline' # Default label where to find (or create) random headline text.
         self.textTag = 'da_text' # Default label where to find (or create) random body text.
+        self.labelSize = labelSize # If undefined, then don't draw labels.
 
     def build(self, view, origin, drawElements=True):
         u"""Default drawing method just drawing the frame.
@@ -125,13 +126,14 @@ class Paragraphs(BaseFontShow):
             s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
             x, _ = self.buildTextBox(s1, s2, origin, x, y, 
                 w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh, 
-                fontSize=fontSize, alignment=LEFT, labelSize=7, Bwght=0.4, Bwdth=-0.1)       
+                fontSize=fontSize, alignment=LEFT, labelSize=self.labelSize or self.DEFAULT_LABEL_SIZE, 
+                Bwght=0.4, Bwdth=-0.1)       
 
             # Same text in same fontSize, without optical size axis used
             _, y = self.buildTextBox(s1, s2, origin, x+(self.pw+self.gw)/2, y, 
                 w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh, 
-                fontSize=fontSize, alignment=LEFT, labelSize=7, label='No optical size axis used.\n\n', 
-                Bwght=0.6, Bwdth=-0.1, useOpsz=False)        
+                fontSize=fontSize, alignment=LEFT, labelSize=self.labelSize or self.DEFAULT_LABEL_SIZE, 
+                label='No optical size axis used.\n\n', Bwght=0.6, Bwdth=-0.1, useOpsz=False)        
 
 
 
