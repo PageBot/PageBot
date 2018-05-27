@@ -135,7 +135,7 @@ class Cube(BaseFontShow):
 
 
                 if yStep == self.steps-1: # Cover the top row
-                    
+                    # TODO: Make the drawing of toplayer work.
                     tx = ox + mx + xzStep * dx 
                     ty = oy + my + xyStep * dy + 2 * self.steps * dy
                     location = self.getLocation(wght=-xzStep/2+1, wdth=-zStep/2+1, opsz=opsz)

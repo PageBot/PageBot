@@ -554,23 +554,27 @@ table {
         >>> b._title()
         >>> b._head()
         >>> b._html()
-        >>> b.getHtml()
-        u'<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Title of the page</title></head></html>'
+        >>> b.getHtml().startswith('<html')
+        True
         """
         self.tabs()
         self.tabIn()
-        self.write(u'<title>')
-        # Push as last, so we can see the current tag on the stack
-        self._pushTag(u'title')
+        self.write_tag(u'link', True, {})
 
     def _title(self):
         self._closeTag(u'title')
 
     def title_(self, s):
-        u"""Write the stripped string s as <title>...</title> tag."""
-        self.title()
-        self.write(s.strip())
-        self._title()
+        u"""Write the stripped string s as <title>...</title> tag.
+
+        >>> b = HtmlBuilder()
+        >>> b.title_('This is a title')
+        >>> b.getHtml().strip()
+        u'<title>This is a title</title>'
+        """
+        self.tabs()
+        self.tabIn()
+        self.write(u'<title>%s</title>' % s.strip())
 
     def link(self, **args):
         """

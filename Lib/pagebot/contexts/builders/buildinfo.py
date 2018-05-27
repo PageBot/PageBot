@@ -38,7 +38,32 @@ class BuildInfo(object):
     """
     
     def __init__(self, **kwargs):
-    	self._d = {}
+    	self._d = dict(
+            viewPort="width=device-width, initial-scale=1.0, user-scalable=yes",
+            description='PageBot generated website for responsive web design',
+            keywords="PageBot BaseSite",
+        )
+        """
+        <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+
+<link rel="shortcut icon" href="images/favicon.ico"  type="image/x-icon">
+
+<!-- CSS-->
+<link media="all" href="fonts/webfonts.css" type="text/css" rel="stylesheet"/>
+<link rel="stylesheet" href="css/normalize.css">
+<link rel="stylesheet" href="js/flexslider/flexslider.css">
+<link rel="stylesheet" href="css/style.css">
+
+<!-- end CSS-->
+    
+<!-- JS-->
+<script src="js/libs/modernizr-2.6.2.min.js"></script>
+<!-- end JS-->
+
+        """
     	for key, value in kwargs.items():
     		assert hasattr(self, key)
     		setattr(self, key, value)
