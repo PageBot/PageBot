@@ -28,35 +28,32 @@ class SimpleSite(Publication):
     u"""Build a simple default website with several template options.
     Layout and content options defined by external parameters, e.g from a Markdown file.
 
+    >>> import os
     >>> from pagebot.elements.web.d3.barchart import BarChart
     >>> from pagebot.contributions.filibuster.blurb import Blurb
     >>> blurb = Blurb()
-    >>> doc = SimpleSite(name='TestDoc', viewId='Site', padding=30, autoPages=1)
-    >>> doc
-    [Document-SimpleSite "TestDoc"]
-    >>> view = doc.newView('Mamp')
+    >>> doc = SimpleSite(name='TestDoc', padding=30, viewId='Mamp')
+    >>> view = doc.view
     >>> page = doc[1]
     >>> page.name = 'index'
-    >>> page.info.title = 'Home'
+    >>> page.title = 'Home'
     >>> template = doc.getTemplate('home')
     >>> e = BarChart(parent=template)
     >>> page.applyTemplate(template)    
-    >>> doc.build()
+    >>> doc.export()
     >>> # Try to open in browser. It works if a local server (like MAMP) runs for view.LOCAL_HOST_URL url.
-    >>> import os
-    >>> result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, view.DEFAULT_HTML_FILE)))
+    >>> result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, page.url)))
     >>> from pagebot.style import A4
     >>> page.w, page.h = doc.w, doc.h = A4
     >>> view = doc.newView('Page')
-    >>> # TODO: Needs solving for FlatContext
-    >>> #doc.export('_export/SimpleSite.pdf')
+    >>> doc.export('_export/SimpleSite.pdf')
     """
 
     def initialize(self, **kwargs):
         u"""Initialize the generic base website templates. """
 
         # For now, just supply the full head code here.
-        headHtmlCode = """       
+        headCode = """       
         <meta content="text/html;charset=UTF-8" http-equiv="Content-Type"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>%(title)s</title>
@@ -98,11 +95,11 @@ class SimpleSite(Publication):
         t = Template(w=w, h=h, name='home', padding=padding, gridX=gridX, gridY=gridY)
         self.addTemplate(t.name, t)
         # Set template <head> building parameters. # Page element definition in pbpage.py
-        t.info.headHtmlCode = headHtmlCode % dict(title=self.title, description='', keywords='')
-        t.info.favIconUrl = 'images/favicon.gif'
-        t.info.jsCode = jsCode
-        t.info.cssCode = simpleCssCode % simpleTheme
-        t.info.resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directorie to be copied to Mamp.
+        t.headCode = headCode % dict(title=self.title, description='', keywords='')
+        t.favIconUrl = 'images/favicon.gif'
+        t.jsCode = jsCode
+        t.cssCode = simpleCssCode % simpleTheme
+        t.resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directorie to be copied to Mamp.
         # Add page template elements.
         Navigation(parent=t, name='Navigation')
         #Introduction(parent=t, name='Introduction')
