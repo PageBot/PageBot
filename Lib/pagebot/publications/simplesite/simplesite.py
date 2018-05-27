@@ -45,8 +45,8 @@ class SimpleSite(Publication):
     >>> result = os.system('open %s' % (view.LOCAL_HOST_URL % (doc.name, page.url)))
     >>> from pagebot.style import A4
     >>> page.w, page.h = doc.w, doc.h = A4
-    >>> view = doc.newView('Page')
-    >>> doc.export('_export/SimpleSite.pdf')
+    >>> #view = doc.newView('Page')
+    >>> #doc.export('_export/SimpleSite.pdf')
     """
 
     def initialize(self, **kwargs):
