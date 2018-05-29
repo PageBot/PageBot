@@ -14,9 +14,8 @@
 #
 #     sampler.py
 #
-from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements import TextBox
-from pagebot.constants import Letter, CENTER
+from pagebot.constants import CENTER
 
 class Sampler(TextBox): 
     u"""Showing the specified (variable) font as full page with a samples of glyphs.
