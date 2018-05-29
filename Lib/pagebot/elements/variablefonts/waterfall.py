@@ -14,9 +14,8 @@
 #
 #     waterfall.py
 #
-from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements import TextBox
-from pagebot.constants import Letter, RIGHT, LEFT
+from pagebot.constants import LEFT
 from pagebot.toolbox.transformer import asFormatted
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
