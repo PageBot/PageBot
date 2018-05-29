@@ -46,12 +46,14 @@ class Cube(BaseFontShow):
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
         >>> gs = Cube(font1, parent=page, conditions=conditions, padding=50, style=style, context=c)
-        >>> style = dict(stroke=0, strokeWidth=0.25, fontSize=20, rLeading=1.4)
+        >>> style = dict(stroke=0, strokeWidth=0.25, fontSize=24, rLeading=1.4)
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> gs = Cube(font2, parent=page, conditions=conditions, style=style, steps=7, padding=40, context=c)
         >>> score = doc.solve()
         >>> doc.export('_export/%sCube.pdf' % font1.info.familyName)
+        >>> doc.export('_export/%sCube.svg' % font1.info.familyName)
+        >>> doc.export('_export/%sCube.gif' % font1.info.familyName)
         """
         BaseFontShow.__init__(self, **kwargs)
         self.f = f # Font instance
@@ -94,7 +96,15 @@ class Cube(BaseFontShow):
         Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
         if the axis exists.
 
-        TODO: If the axis does not exist, do something else with the right column
+        TODO: 
+        If the axis does not exist or not selected, do something else with the right column
+        Add optional relation between VF-axes and cube ribs
+        Automatic calculation of incrementing opsz range
+        Add axis labels and/or values
+        Draw the cube as lines and panes.
+        Auto center vertical and horizontal
+        Auto fontSize calculation
+        Export as animation of rotating cube.
         """
 
         c = self.context
@@ -108,9 +118,11 @@ class Cube(BaseFontShow):
 
         fontSize = self.css('fontSize', 24)
         opszRange = (8, 12, 20, 30, 45, 64, 96, 144)
+        #opszRange = (8, 10, 12, 14, 16, 18, 22, 24, 28, 32, 36, 42, 48, 56, 64)
 
         for xzStep in range(self.steps):
             for yStep in range(self.steps):
+                # Draw right side of the cube.
                 opsz = opszRange[yStep]
                 x = ox + mx + xzStep * dx 
                 y = oy + my + xzStep * dy + 2 * yStep * dy
@@ -122,7 +134,8 @@ class Cube(BaseFontShow):
                 tw, th = bs.textSize()
                 c.text(bs, (x-tw/2, y))
 
-                if xzStep > 0:
+                if xzStep > 0: 
+                    # Draw left side of the cube. Avoid double drawing on front axis
                     x = ox + mx - xzStep * dx 
                     location = self.getLocation(wght=1, wdth=-xzStep/2+1, opsz=opsz)
                     instance = self.getInstance(location)
@@ -131,12 +144,13 @@ class Cube(BaseFontShow):
                     tw, th = bs.textSize()
                     c.text(bs, (x-tw/2, y))
 
-
-                if yStep == self.steps-1: # Cover the top row
-                    # TODO: Make the drawing of toplayer work.
-                    tx = ox + mx + xzStep * dx 
-                    ty = oy + my + xzStep * dy + 2 * self.steps * dy
-                    location = self.getLocation(wght=-xzStep/2+1, wdth=-yStep/2+1, opsz=opsz)
+        # Draw top part of the cube
+        for xStep in range(1, self.steps):
+            for zStep in range(1, self.steps):
+                    x = ox + mx + xStep * dx - zStep * dx 
+                    y = oy + my + (2 * self.steps - 2) * dy + xStep * dy + zStep * dy
+                    
+                    location = self.getLocation(wght=-xStep/2+1, wdth=-zStep/2+1, opsz=opsz)
                     instance = self.getInstance(location)
                     style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
                     bs = c.newString(self.label, style=style)

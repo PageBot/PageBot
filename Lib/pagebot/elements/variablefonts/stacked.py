@@ -41,16 +41,16 @@ class Stacked(BaseFontShow):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(gh=16, fill=0.95, rLeading=1.4)
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
+        >>> style = dict(gh=16, fill=0.95, rLeading=1.4)
         >>> gs = Stacked(font1, parent=page, conditions=conditions, padding=40, style=style, context=c)
-        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, rLeading=1.4)
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> #font2 = findFont('Upgrade-Regular')
         >>> #font2 = findFont('Escrow-Bold')
+        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, rLeading=1.4)
         >>> gs = Stacked(font2, parent=page, conditions=conditions, style=style, padding=40, context=c)
         >>> score = doc.solve()
         >>> doc.export('_export/%sStacked.pdf' % font1.info.familyName)

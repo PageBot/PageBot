@@ -12,189 +12,129 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#	  fonticon.py
+#     waterfall.py
 #
-#     Draw the icon with optional information of the included font.
-#
-from pagebot.elements import Element
 from pagebot.toolbox.transformer import pointOffset
+from pagebot.elements import TextBox
+from pagebot.constants import Letter, RIGHT, LEFT
+from pagebot.toolbox.transformer import asFormatted
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
-class FontIcon(Element): 
-    u"""Showing the specified font(sub variable font) in the form of an icon 
-    showing optional information in different sizes and styles.
-    
-    >>> from pagebot.fonttoolbox.objects.font import getFont
-    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-    >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
-    >>> font = getFont(path)
-    >>> fi = FontIcon(font, w=120, h=160, title="Roboto Regular")
-    >>> fi.title
-    'Roboto Regular'
-    >>> fi.size
-    (120, 160, 1)
+class Waterfall(TextBox): 
+    u"""Showing the specified (variable) font as waterfall.
 
     """
-    LABEL_RTRACKING = 0.02
-    LABEL_RLEADING = 1.3
+    SAMPLE = 'Jabberwocky'
 
-    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=None,
-            earSize=None, earLeft=True, earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
-            labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
-        u"""    
-        >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> from pagebot.elements import newRect
+    def __init__(self, f, showLabel=True, labelSize=7, sampleText=None, factor=0.9, location=None, useOpsz=True, **kwargs):
+        u"""   
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
+        >>> from pagebot.constants import Letter
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebot.conditions import *
         >>> c = DrawBotContext()
-        >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> w, h = Letter
+        >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
+        >>> style = dict(fill=0.95, rLeading=1.3, fontSize=48, xTextAlign=LEFT)  
+        >>> conditions = [Fit()] # FIX: Does not seem to work for TextBox
         >>> page = doc[1]
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
-        >>> font = getFont(path)
-        >>> iw, ih = w/4, h/4
-        >>> x, y = w/8, h/8
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", earSize=0.3, earLeft=True, parent=page, stroke=0, strokeWidth=3)
-        >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=0,parent=page)
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=0.5, earSize=0.3, earLeft=True, earFill=None, fill=(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
-        >>> doc.export('_export/FontIconTest.pdf')
+        >>> font1 = findFont('AmstelvarAlpha-VF')
+        >>> loc = dict(wght=1)
+        >>> useOpsz = False
+        >>> gs = Waterfall(font1, parent=page, conditions=conditions, padding=20, style=style, w=page.pw, h=page.ph, location=loc, useOpsz=useOpsz, context=c)
+        >>> style = dict(stroke=0, strokeWidth=0.25, rLeading=1.3, fontSize=48, xTextAlign=LEFT) 
+        >>> page = doc[2]
+        >>> font2 = findFont('RobotoDelta-VF')
+        >>> #font2 = findFont('Upgrade-Regular')
+        >>> #font2 = findFont('Escrow-Bold')
+        >>> gs = Waterfall(font2, parent=page, conditions=conditions, style=style, w=page.pw, h=page.ph, padding=20, location=loc, useOpsz=useOpsz, context=c)
+        >>> score = doc.solve()
+        >>> doc.export('_export/%sWaterfall_opsz_%s.pdf' % (font1.info.familyName, useOpsz))
+        
+        TODO: Make self.css('xTextAlign') work for CENTER
         """
-
-        Element.__init__(self,  **kwargs)
-        self.f = f # Font instance
-        if title is not None:
-            self.title = title or "%s %s" % (f.info.familyName, f.info.styleName) 
-        self.titleFont = titleFont, labelFont or f 
-        self.titleFontSize = 28
-        self.labelFont = labelFont or f
-        self.labelFontSize = labelFontSize or 10
-        self.label = label # Optiona second label line
-        self.c = c # Character(s) in the icon.
-        self.cFill = cFill
-        self.cStroke = cStroke
-        self.cStrokeWidth = cStrokeWidth
-        self.scale = s
-        self.show = show
-        if stroke is not None:
-            self.style["stroke"] = stroke
-        if strokeWidth is not None:
-            self.style["strokeWidth"] = strokeWidth
-        self.earSize = earSize or 0.25 # 1/4 of width
-        self.earLeft = earLeft
-        if earFill is None:
-            earFill = self.css("fill")
-        self.earFill = earFill 
-
-
-    def build(self, view, origin, drawElements=True):
-        u"""Default drawing method just drawing the frame.
-        Probably will be redefined by inheriting element classes."""
-        p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
-        self.draw(view, p)
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
-        self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
-
-    def draw(self, view, p):
-        if not self.show:
-            return
-        w = self.w # Width of the icon
-        h = self.h # Height of the icon
-        e = self.earSize*w # Ear size fraction of the width
-
-        x,y = p[0], p[1]
+        TextBox.__init__(self, **kwargs)
         c = self.context
+        self.useOpsz = useOpsz # Only for the sample lines. Labels always have opsz.
+        self.f = f
+        if not location:
+            location = {}
+        self.factor = factor # Decreasing multiplication factor for fontSize
+        style = self.style.copy()
+        labelStyle = self.style.copy()
+        labelStyle['font'] = self.getInstance(f, dict(opsz=labelSize)).path
+        labelStyle['fontSize'] = labelSize
+        labelStyle['rLeading'] = 1
 
-        c.newPath()
-        c.moveTo((0, 0))
-        if self.earLeft: 
-            c.lineTo((0, h-e))
-            c.lineTo((e, h))
-            c.lineTo((w, h))
-            
-        else:
-            c.lineTo((0, h))
-            c.lineTo((w-e, h))
-            c.lineTo((w, h-e))
-        c.lineTo((w, 0))
-        c.lineTo((0, 0))
-        c.closePath()
-        c.save()
-        c.fill(self.css("fill"))
-        c.stroke(self.css("stroke"), self.css("strokeWidth"))
-        c.translate(x, y)
-        c.drawPath()
+        w = self.pw # Initial with to fit top sample
+        location['opsz'] = None
+        style['font'] = self.getInstance(self.f, self.getLocation(self.f, location)).path
+        sampleText = sampleText or self.SAMPLE
+        matchingLine = c.newString(sampleText+'\n', style=style, w=w)
+        style['fontSize'] = fontSize = matchingLine.fittingFontSize // 8 * 8
 
-        c.newPath()
-        if self.earLeft:
-            #draw ear
-            c.moveTo((e, h))
-            c.lineTo((e, h-e))
-            c.lineTo((0, h-e))
-            c.lineTo((e, h))
-
-        else:
-            #draw ear
-            c.moveTo((w-e, h))
-            c.lineTo((w-e, h-e))
-            c.lineTo((w, h-e))
-            c.lineTo((w-e, h))
-        c.closePath()
-        c.fill(self.earFill)
-        c.lineJoin("bevel")
-        c.drawPath()
-
-        labelSize = e
-        bs = c.newString(self.c,
-                               style=dict(font=self.f.path,
-                                          textFill=self.cFill,
-                                          textStroke=self.cStroke,
-                                          textStrokeWidth=self.cStrokeWidth,
-                                          fontSize=h*2/3))
-        tw, th = bs.textSize()
-        c.text(bs, (w/2-tw/2, h/2-th/3.2))
-
-        if self.title:
-            bs = c.newString(self.title,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
+        bs = c.newString('', style=style)
+        while fontSize >= 12:
+            # Still fitting? Otherwise stop the loop
+            # TODO: Measure both lines (label + samleText) for fitting.
             tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, self.h+th/2))
+            if th > self.ph:
+                break
+            # Make the optional label
+            if showLabel:
+                label = '%s %spt | opsz = %s\n' % (self.f.info.familyName, asFormatted(fontSize, '%0.1f'), self.useOpsz)
+                bs += c.newString(label, style=labelStyle)
+            style['fontSize'] = fontSize = int(round(fontSize * self.factor))
+            location['opsz'] = {True: fontSize, False: None}[self.useOpsz]
+            style['font'] = self.getInstance(self.f, self.getLocation(self.f, location)).path
+            bs += c.newString(sampleText+'\n', style=style)
 
-        y = -self.LABEL_RLEADING*labelSize
-        if self.name:
-            bs = c.newString(self.name,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, y))
-            y -= self.LABEL_RLEADING*labelSize
-        if self.label:
-            bs = c.newString(self.label,
-                                   style=dict(font=self.labelFont.path,
-                                              textFill=0,
-                                              rTracking=self.LABEL_RTRACKING,
-                                              fontSize=labelSize))
-            tw, th = bs.textSize()
-            c.text(bs, (w/2-tw/2, y))
-        c.restore()
+        self.bs = bs
 
+    def getAxisValue(self, vf, tag, value):
+        u"""Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
+        ratio in (minValue, defaultValue, maxValue)."""
+        if not tag in vf.axes:
+            return None
+        minValue, defaultValue, maxValue = vf.axes[tag]
+        if not value:
+            return defaultValue
+        if value < 0: # Realative scale between minValue and default
+            return defaultValue + (defaultValue - minValue)*value
+        # else wdth > 0:  Relative scale between default and maxValue
+        return defaultValue + (maxValue - defaultValue)*value
+
+    def getLocation(self, vf, location):
+        u"""Answer the instance of self, corresponding to the normalized location.
+        (-1, 0, 1) values for axes [wght] and [wdth].
+        The optical size [opsz] is supposed to contain the font size, so it is not normalized.
+        If [opsz] is not defined, then set it to default, if the axis exist.
+        """
+        if not vf.axes:
+            return {}
+        if location is None:
+            location = {}
+
+        # Get real axis values.
+        wght = self.getAxisValue(vf, 'wght', location.get('wght'))        
+        wdth = self.getAxisValue(vf, 'wdth', location.get('wdth'))        
+        opsz = location.get('opsz')
+
+        if not opsz and 'opsz' in vf.axes:
+            opsz = vf.axes['opsz'][1] # Use default value
+
+        # Make location dictionary
+        return dict(wght=wght, wdth=wdth, opsz=opsz)
+
+    def getInstance(self, vf, location):
+        u"""Return the instance font at this location. The font is stored as file,
+        # so it correspondents to normal instance.path behavior."""
+        if vf.axes:
+            return getVarFontInstance(vf, location)
+        return vf
+
+ 
 if __name__ == '__main__':
     import doctest
     import sys
