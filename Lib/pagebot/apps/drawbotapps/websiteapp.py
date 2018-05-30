@@ -18,8 +18,8 @@ from pabebot.publications.website import Website
 
 class WebsiteApp(BaseApp):
     PUBLICATION_CLASS = Website
- 	
+
 if __name__ == '__main__':
     app = WebsiteApp()
     app.build()
-    
+

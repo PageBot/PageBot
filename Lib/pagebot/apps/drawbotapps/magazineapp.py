@@ -17,11 +17,9 @@ from pagebot.apps.drawbotapps.baseapp import BaseApp
 from pabebot.publications.magazine import Magazine
 
 class MagazineApp(BaseApp):
-	u"""Will be developed."""
+    u"""Will be developed."""
     PUBLICATION_CLASS = Magazine
- 	
+
 if __name__ == '__main__':
     app = MagazineApp()
     app.build()
-    
-    

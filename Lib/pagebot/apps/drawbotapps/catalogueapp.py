@@ -11,16 +11,16 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     identityapp.py
+#     catalogueapp.py
 #
 from pagebot.apps.drawbotapps.baseapp import BaseApp
 from pagebot.publications.catalogue import Catalogue
 
 class CatalogueApp(BaseApp):
-	u"""Will be developed."""
+    u"""Will be developed."""
     PUBLICATION_CLASS = Catalogue
 
 if __name__ == '__main__':
     app = CatalogueApp()
     app.build()
-    
+
