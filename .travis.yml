@@ -11,6 +11,7 @@ install:
 - pip install pylint
 - pip install svgwrite
 - pip install markdown
+- pip install lxml
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme
@@ -79,3 +80,6 @@ script:
 - python Lib/pagebot/toolbox/transformer.py
 - python Lib/pagebot/toolbox/units.py
 - python Lib/pagebot/typesetter.py
+addons:
+    apt:
+        update: true

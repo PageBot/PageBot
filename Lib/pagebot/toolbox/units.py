@@ -27,7 +27,7 @@ class Unit(object):
         80mm
         >>> fr(2) * fr(3)
         6fr
-        >>> px(5) + 2    
+        >>> px(5) + 2
         7px
         >>> perc(12.4) + 4
         16.40%
@@ -55,12 +55,12 @@ class Unit(object):
             return '%0.2fpx' % self.asPt()
         return '%dpx' % self.asPt()
     css = property(_get_css)
-              
+
     def __repr__(self):
         if int(round(self._v)) != self._v:
             return '%0.2f%s' % (self._v, self.__class__.__name__)
         return '%d%s' % (self._v, self.__class__.__name__)
-   
+
     def __eq__(self, u):
         if isinstance(u, self.__class__):
             return self._v == u._v
@@ -122,7 +122,7 @@ class Unit(object):
             return self.__class__(self._v + u)
         assert u.absolute and self.absolute, "Cannot add relative values %s - %s" % (self, u)
         return self.__class__.fromPt(u.asPt() + self.asPt()) # Supports mm(2) + pt(4) + inch(3)
-        
+
     def __sub__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v - self._v)
@@ -130,7 +130,7 @@ class Unit(object):
             return self.__class__(self._v - u)
         assert u.absolute and self.absolute, "Cannot subtract relative values %s - %s" % (self, u)
         return self.__class__.fromPt(u.asPt() - self.asPt())
-        
+
     def __div__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v / self._v)
@@ -138,7 +138,7 @@ class Unit(object):
             return self.__class__(self._v / u)
         assert u.absolute and self.absolute, "Cannot divide relative values %s / %s" % (self, u)
         return self.__class__.fromPt(u.asPt() / self.asPt())
-        
+
     def __mul__(self, u):
         if isinstance(u, self.__class__):
             return self.__class__(u._v * self._v)
@@ -146,9 +146,9 @@ class Unit(object):
             return self.__class__(self._v * u)
         assert u.absolute and self.absolute, "Cannot multiply relative values %s * %s" % (self, u)
         return self.__class__.fromPt(u.asPt() * self.asPt())
-  
+
 class mm(Unit):
-    u"""Answer the mm instance. 
+    u"""Answer the mm instance.
 
     >>> u = mm.make(210)
     >>> u
@@ -187,7 +187,7 @@ class mm(Unit):
         return cls(pt / factor)
 
 class px(Unit):
-    u"""Answer the px (pixel) instance. 
+    u"""Answer the px (pixel) instance.
 
     >>> u = px.make(0.2)
     >>> u
@@ -222,7 +222,7 @@ class px(Unit):
         return cls(pt / factor)
 
 class pt(Unit):
-    u"""pt is the base unit size of all PageBot measures. 
+    u"""pt is the base unit size of all PageBot measures.
 
     >>> u = pt.make(0.4)
     >>> u
@@ -256,7 +256,7 @@ class pt(Unit):
         return cls(pt / factor)
 
 class inch(Unit):
-    u"""inch 72 * the base unit size of all PageBot measures. 
+    u"""inch 72 * the base unit size of all PageBot measures.
 
     >>> getUnits('0.4"')
     0.40"
@@ -320,7 +320,7 @@ class RelativeUnit(Unit):
         return cls(pt / masterValue)
 
 class fr(RelativeUnit):
-    u"""fractional units, used in CSS-grid. 
+    u"""fractional units, used in CSS-grid.
     https://gridbyexample.com/video/series-the-fr-unit/
 
     >>> getUnits('0.35fr')
@@ -350,7 +350,7 @@ class fr(RelativeUnit):
         return None
 
 class em(RelativeUnit):
-    u"""Em size is based on the current setting of the fontSize. 
+    u"""Em size is based on the current setting of the fontSize.
     Used in CSS export.
 
     >>> getUnits('10em')
@@ -398,7 +398,7 @@ class perc(RelativeUnit):
     >>> u = perc.make('66%')
     >>> u.asPt(500) # Answer percentage value relative to master value
     330
-    """ 
+    """
     @classmethod
     def make(cls, v):
         if isinstance(v, (int, float)):
@@ -430,7 +430,7 @@ class perc(RelativeUnit):
 UNIT_CLASSES = (mm, px, pt, inch, fr, em, perc)
 
 def getUnits(v):
-    u"""If value is a string, then try to guess what type of units value is 
+    u"""If value is a string, then try to guess what type of units value is
     and answer the right instance.
 
     >>> getUnits('100%')
@@ -461,7 +461,6 @@ def getUnits(v):
         if u is not None:
             return u
     return v
-
 
 if __name__ == '__main__':
     import doctest
