@@ -15,7 +15,7 @@ from vanilla.dialogs import getFile, putFile
 
 from drawBot import *
 from drawBot.drawBotDrawingTools import _drawBotDrawingTool, DrawBotDrawingTool
-from drawBot.scriptTools import ScriptRunner, DrawBotNamespace, StdOutput
+from drawBot.scriptTools import ScriptRunner, StdOutput #, DrawBotNamespace
 from drawBot.context.drawBotContext import DrawBotContext
 from drawBot.context import getContextForFileExt
 from drawBot.ui.drawView import DrawView
@@ -92,8 +92,10 @@ class PageBotApp(object):
             return
 
         _drawBotDrawingTool.newDrawing()
-        namespace = DrawBotNamespace(_drawBotDrawingTool, _drawBotDrawingTool._magicVariables)
+        #namespace = DrawBotNamespace(_drawBotDrawingTool, _drawBotDrawingTool._magicVariables)
+        namespace = {}
         _drawBotDrawingTool._addToNamespace(namespace)
+        #namespace = DrawBotNamespace(_drawBotDrawingTool, _drawBotDrawingTool._magicVariables)
 
         # Creates a new standard output, catching all print statements and tracebacks.
         self.output = []
