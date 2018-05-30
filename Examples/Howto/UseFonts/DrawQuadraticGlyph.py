@@ -23,7 +23,7 @@ from drawBot import font as DBFont
 from drawBot import translate, line, text, stroke, fill, oval, drawPath, textSize
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.transformer import point3D
-from pagebot import getFontPath
+from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.glyph import *
 from pagebot.fonttoolbox.objects.font import Font
 
@@ -162,7 +162,7 @@ r = 12
 
 size('A1')
 DBFont('LucidaGrande', 24)
-PATH = "%s/google/roboto/Roboto-Light.ttf" % getFontPath()
+PATH = getFontPaths()['Roboto-Black']
 font = Font(PATH)
 glyph = font[glyphName]
 path = BezierPath()
