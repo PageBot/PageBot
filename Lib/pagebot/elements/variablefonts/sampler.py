@@ -15,7 +15,7 @@
 #     sampler.py
 #
 from pagebot.elements import TextBox
-from pagebot.constants import CENTER
+from pagebot.constants import CENTER, RIGHT
 
 class Sampler(TextBox): 
     u"""Showing the specified (variable) font as full page with a samples of glyphs.
@@ -33,12 +33,12 @@ class Sampler(TextBox):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(fill=0.95, rLeading=1.4, fontSize=48, xTextAlign=CENTER)  
+        >>> style = dict(fill=0.95, rLeading=1.4, fontSize=48, xTextAlign=RIGHT)  
         >>> conditions = [Fit()] # FIX: Does not seem to work for TextBox
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
         >>> gs = Sampler(font1, parent=page, conditions=conditions, padding=20, style=style, w=page.pw, h=page.ph, context=c)
-        >>> style = dict(stroke=0, strokeWidth=0.25, rLeading=1.4, fontSize=48) 
+        >>> style = dict(stroke=0, strokeWidth=0.25, rLeading=1.4, fontSize=48, xTextAlign=RIGHT) 
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> #font2 = findFont('Upgrade-Regular')

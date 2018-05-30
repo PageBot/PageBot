@@ -15,7 +15,7 @@
 #     waterfall.py
 #
 from pagebot.elements import TextBox
-from pagebot.constants import LEFT
+from pagebot.constants import LEFT, RIGHT
 from pagebot.toolbox.transformer import asFormatted
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
@@ -35,20 +35,22 @@ class Waterfall(TextBox):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(fill=0.95, rLeading=1.3, fontSize=48, xTextAlign=LEFT)  
+        >>> style = dict(fill=0.95, rLeading=1.3, fontSize=48, xTextAlign=RIGHT)  
         >>> conditions = [Fit()] # FIX: Does not seem to work for TextBox
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
         >>> loc = dict(wght=1)
         >>> useOpsz = False
+        >>> page.pw, page.w, 500
+
         >>> gs = Waterfall(font1, parent=page, conditions=conditions, padding=20, style=style, w=page.pw, h=page.ph, location=loc, useOpsz=useOpsz, context=c)
-        >>> style = dict(stroke=0, strokeWidth=0.25, rLeading=1.3, fontSize=48, xTextAlign=LEFT) 
+        >>> style = dict(stroke=0, strokeWidth=0.25, rLeading=1.3, fontSize=48, xTextAlign=RIGHT) 
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> #font2 = findFont('Upgrade-Regular')
         >>> #font2 = findFont('Escrow-Bold')
         >>> gs = Waterfall(font2, parent=page, conditions=conditions, style=style, w=page.pw, h=page.ph, padding=20, location=loc, useOpsz=useOpsz, context=c)
-        >>> score = doc.solve()
+        >>> #score = doc.solve()
         >>> doc.export('_export/%sWaterfall_opsz_%s.pdf' % (font1.info.familyName, useOpsz))
         
         TODO: Make self.css('xTextAlign') work for CENTER
