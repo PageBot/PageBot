@@ -27,6 +27,7 @@ except (ImportError, AttributeError):
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
+from pagebot.toolbox.future import chr
 
 def pixelBounds(fs):
     u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
@@ -87,7 +88,7 @@ class DrawBotString(BabelString):
         # for future additions. Also the answered metrics will not be based on these values.
         self.style = style or {}
         self.fittingFontSize = 0 # Set to fitting font size, in case the size iterated to find width.
-        
+
     def _get_s(self):
         u"""Answer the embedded FormattedString by property, to enforce checking type of the string."""
         return self._s
@@ -420,7 +421,7 @@ class TextRun(object):
             if index == 0:
                 self.string += part
             elif len(part) >= 4:
-                self.string += unichr(int(part[0:4], 16))
+                self.string += chr(int(part[0:4], 16))
                 self.string += part[4:]
 
         #print(gc, len(CoreText.CTRunGetStringIndicesPtr(ctRun)), CoreText.CTRunGetStringIndicesPtr(ctRun), ctRun)

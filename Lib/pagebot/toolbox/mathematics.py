@@ -16,6 +16,7 @@
 import math
 import operator
 from pagebot.toolbox.transformer import point2D
+from functools import reduce
 
 def lucasRange(a, z, n, minN=None, maxN=None):
     u"""Answers the range stem widths for interpolation, according to

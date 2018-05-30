@@ -16,14 +16,15 @@
 #
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
+from pagebot.toolbox.future import chr
 
-class GlyphSet(BaseFontShow): 
+class GlyphSet(BaseFontShow):
     u"""Showing the specified (variable) font as full page with a matrix
     of all glyphs in the font.
 
     """
     def __init__(self, f, **kwargs):
-        u"""   
+        u"""
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -32,7 +33,7 @@ class GlyphSet(BaseFontShow):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(gh=16, fill=0.95, rLeading=1.4, fontSize=24)  
+        >>> style = dict(gh=16, fill=0.95, rLeading=1.4, fontSize=24)
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
@@ -60,7 +61,7 @@ class GlyphSet(BaseFontShow):
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showElementFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -91,13 +92,13 @@ class GlyphSet(BaseFontShow):
         c = self.context
         ox, oy, _ = origin
         fontSize = self.css('fontSize')
-        cw = fontSize*1.6 # TODO: This should be optional as style attribute 
+        cw = fontSize*1.6 # TODO: This should be optional as style attribute
         x = 0
         y = self.h - self.pt - cw
         for u, glyphName in sorted(self.f.cmap.items()):
-            if u <= 32: # Skip any control characters and space 
+            if u <= 32: # Skip any control characters and space
                 continue
-            bs = c.newString(unichr(u), style=dict(font=self.f.path, fontSize=fontSize))
+            bs = c.newString(chr(u), style=dict(font=self.f.path, fontSize=fontSize))
             tw, th = bs.textSize()
             c.text(bs, (ox+x+self.pl-tw/2, oy+y))
             x += cw
@@ -106,7 +107,6 @@ class GlyphSet(BaseFontShow):
                 y -= cw
             if y < 0:
                 break
-
 
 if __name__ == '__main__':
     import doctest

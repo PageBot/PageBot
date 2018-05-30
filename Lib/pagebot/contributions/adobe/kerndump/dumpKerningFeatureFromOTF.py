@@ -6,7 +6,7 @@ import os
 import sys
 import string
 import getKerningPairsFromOTF
-reload(getKerningPairsFromOTF)
+#reload(getKerningPairsFromOTF)
 
 __doc__ ='''\
 
