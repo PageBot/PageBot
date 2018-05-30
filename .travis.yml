@@ -12,7 +12,7 @@ install:
 - pip install svgwrite
 - pip install markdown
 - pip install lxml
-- pip install pyobjc
+  #- pip install pyobjc
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme
