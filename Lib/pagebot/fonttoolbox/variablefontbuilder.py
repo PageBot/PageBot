@@ -173,6 +173,7 @@ def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cac
     instance.info.varStyleName = styleName
     return instance
 
+
 def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):
     u"""
     Instantiate an instance of a variable font at the specified location.

@@ -145,8 +145,11 @@ class Element(object):
         self.framePath = framePath # Optiona frame path to draw instead of bounding box element rectangle.
 
         # Set timer of this element.
-        self.timeMarks = [TimeMark(0, self.style), TimeMark(XXXL, self.style)] # Default TimeMarks from t == 0 until infinite of time.
-        self._tm0 = self._tm1 = None # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
+        # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
+        self._tm0 = 0 #DateTime.beginningOfTime
+        self._tm1 = XXXL #None # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
+        # The default timeMarks between from DateTime.beginningOfTime to infinite.
+        self.timeMarks = [TimeMark(self._tm0, {}}), TimeMark(self._tm1, {}})] # Default TimeMarks from t == 0 until infinite of time.
         self.t = t # Initialize self.style from t = 0
         self.timeKeys = INTERPOLATING_TIME_KEYS # List of names of style entries that can interpolate in time.
 
