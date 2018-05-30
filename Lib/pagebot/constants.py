@@ -160,6 +160,8 @@ MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)
 MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL
 
+DEFAULT_FRAME_DURATION = 1 # Default duration of a gif frame.
+
 FIT = 'fit' # Special fontsize that makes text fitting on element width.
 
 ONLINE = 'online' # Positions of borders

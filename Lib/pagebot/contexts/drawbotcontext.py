@@ -38,7 +38,7 @@ except (ImportError, AttributeError):
     #print('Using drawBotContext-->NoneDrawBotBuilder')
 
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT
+from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
 
 
 class DrawBotContext(BaseContext):
@@ -483,8 +483,9 @@ class DrawBotContext(BaseContext):
     #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
-        u"""Set the frame duretion for animated gifs to a number of seconds per frame."""
-        self.b.frameDuration(secondsPerFrame)
+        u"""Set the self._frameDuretion for animated gifs to a number of seconds per frame.
+        Used when initializing a new page."""
+        self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
 
     #   C O L O R
 

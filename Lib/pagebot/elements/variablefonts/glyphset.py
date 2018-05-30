@@ -22,11 +22,6 @@ class GlyphSet(BaseFontShow):
     of all glyphs in the font.
 
     """
-    COLS = 28
-    ROWS = 28
-    GUTTER = 12
-    FONTSIZE = 24
-
     def __init__(self, f, **kwargs):
         u"""   
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -37,12 +32,12 @@ class GlyphSet(BaseFontShow):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(gh=16, fill=0.95, rLeading=1.4)
+        >>> style = dict(gh=16, fill=0.95, rLeading=1.4, fontSize=24)  
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
         >>> gs = GlyphSet(font1, parent=page, conditions=conditions, padding=40, style=style, context=c)
-        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, rLeading=1.4)
+        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, rLeading=1.4, fontSize=18) # Smaller fontSize and grid.
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> #font2 = findFont('Upgrade-Regular')
@@ -80,20 +75,35 @@ class GlyphSet(BaseFontShow):
 
 
     def drawMatrix(self, view, origin):
+        u"""Draw the matrix of available glyphs in the font, in font.cmap order and
+        starting at the first sorted glyph after the space.
+
+        TODO
+        Check for overflow on multiple pages
+        Optional to iterate over the font size until all glyphs fit (grow and shrink)
+        Add optional filtering by glyph set or unicode range or filter function or regular expression
+        Make self.COLS and self.ROWS respond to the request font size.
+        Add optional showing of name and/or unicode
+        Show Variable Fonts by location
+        Show relations by features and/or GSUB substitution.
+        Show in Fontographer or Ikarus layout for legacy fun.
+        """
         c = self.context
         ox, oy, _ = origin
+        fontSize = self.css('fontSize')
+        cw = fontSize*1.6 # TODO: This should be optional as style attribute 
         x = 0
-        y = self.h - self.pt - self.COLS
+        y = self.h - self.pt - cw
         for u, glyphName in sorted(self.f.cmap.items()):
             if u <= 32: # Skip any control characters and space 
                 continue
-            bs = c.newString(unichr(u), style=dict(font=self.f.path, fontSize=self.FONTSIZE))
+            bs = c.newString(unichr(u), style=dict(font=self.f.path, fontSize=fontSize))
             tw, th = bs.textSize()
             c.text(bs, (ox+x+self.pl-tw/2, oy+y))
-            x += self.COLS
+            x += cw
             if x >= self.pw:
                 x = 0
-                y -= self.ROWS
+                y -= cw
             if y < 0:
                 break
 

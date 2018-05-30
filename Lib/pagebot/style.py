@@ -76,7 +76,8 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         
         # In "time-dimension" this is an overall value for export. This works independent from
         # the time-marks of element attributes.
-        frameDuration = None, # In case saving as .mov or .gif, this value defines 1/frames_per_second
+        # In case saving as .mov or .gif, this value defines 1/frames_per_second
+        frameDuration = DEFAULT_FRAME_DURATION, 
 
         # Resolution in dpi for pixel based publications and elements.
         resolution = 72,
