@@ -20,13 +20,13 @@ class BaseApp(object):
     The main function of apps is to create applications (with window UI) that
     offers an interface to PageBot publication building scripts. This way
     apps can be stored and standalone desktop applications, offering more
-    interactive feedback to non-scripting users. 
+    interactive feedback to non-scripting users.
     Also it hides code form the user, just presenting a coherent set of choices,
     that then build into PDF documents, websites or identity stationary.
     """
     W, H = 400, 400
-    PUBLICATION_CLASS = None # Defined by inheriting publication App classes. 
-    
+    PUBLICATION_CLASS = None # Defined by inheriting publication App classes.
+
     def __init__(self):
         self.w = Window((100, 100, self.W, self.H), self.__class__.__name__)
         self.initialize() # Initialize UI and Publication instance.
@@ -41,7 +41,7 @@ class BaseApp(object):
 
     def buildUI(self, api):
     	u"""Build the app UI from the api-parameters, answered the publication self._doc."""
-        self.w.buildButton = Button((-100, -30, 90, 20), 'Build', callback=self.build)    	
+        self.w.buildButton = Button((-100, -30, 90, 20), 'Build', callback=self.build)
 
     def build(self, sender=None):
     	u"""Default behavior, building the publications. To be redefined by
@@ -49,5 +49,3 @@ class BaseApp(object):
     	self._doc.solve()
         fileName = self._doc.title.replace(' ', '_')
     	self._doc.export('_export/%s.pdf' % fileName)
-   
-

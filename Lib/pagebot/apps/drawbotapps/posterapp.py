@@ -11,11 +11,11 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     identityapp.py
+#     posterapp.py
 #
 from pagebot.apps.drawbotapps.baseapp import BaseApp
 from pagebot.publications.poster import Poster
 
 class PosterApp(BaseApp):
-	u"""Will be developed."""
+    u"""Will be developed."""
     PUBLICATION_CLASS = Poster
