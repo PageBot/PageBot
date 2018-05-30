@@ -14,8 +14,6 @@
 #    future.py
 #
 
-import platform
-
 try:
     import builtins
 except:
