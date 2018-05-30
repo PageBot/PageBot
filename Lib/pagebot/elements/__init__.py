@@ -94,7 +94,7 @@ def newColText(bs='', cx=None, cy=None, cw=None, ch=None, **kwargs):
     We don't need w and h here, as it is made by the text and style combinations.
     Caller must supply formatted string."""
     e = newText(bs, **kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
     return e
             
 def newRect(point=None, **kwargs):
@@ -104,7 +104,7 @@ def newRect(point=None, **kwargs):
 
 def newColRect(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newRect(**kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
     return e
             
 def newGroup(point=None, **kwargs):
@@ -114,7 +114,7 @@ def newGroup(point=None, **kwargs):
         
 def newColGroup(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newGroup(**kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
     return e
             
 def newOval(point=None, **kwargs):
@@ -132,7 +132,7 @@ def newLine(point=None, **kwargs):
             
 def newColLine(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newLine(**kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
     return e
 
 def newPolygon(point=None, **kwargs):
@@ -152,7 +152,7 @@ def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs)
     The optional imo attribute is an ImageObject() with filters in place. 
     The Image element is answered for convenience of the caller"""
     e = newImage(path, **kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
     return e
 
 def newTable(cols=1, rows=1, **kwargs):
