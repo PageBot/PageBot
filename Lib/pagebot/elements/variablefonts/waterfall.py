@@ -15,18 +15,17 @@
 #     waterfall.py
 #
 from pagebot.elements import TextBox
-from pagebot.constants import LEFT, RIGHT
 from pagebot.toolbox.transformer import asFormatted
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
-class Waterfall(TextBox): 
+class Waterfall(TextBox):
     u"""Showing the specified (variable) font as waterfall.
 
     """
     SAMPLE = 'Jabberwocky'
 
     def __init__(self, f, showLabel=True, labelSize=7, sampleText=None, factor=0.9, location=None, useOpsz=True, **kwargs):
-        u"""   
+        u"""
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -35,7 +34,7 @@ class Waterfall(TextBox):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(fill=0.95, rLeading=1.3, fontSize=48, xTextAlign=RIGHT)  
+        >>> style = dict(fill=0.95, rLeading=1.3, fontSize=48, xTextAlign=RIGHT)
         >>> conditions = [Fit()] # FIX: Does not seem to work for TextBox
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
@@ -44,7 +43,7 @@ class Waterfall(TextBox):
         >>> page.pw, page.w, 500
 
         >>> gs = Waterfall(font1, parent=page, conditions=conditions, padding=20, style=style, w=page.pw, h=page.ph, location=loc, useOpsz=useOpsz, context=c)
-        >>> style = dict(stroke=0, strokeWidth=0.25, rLeading=1.3, fontSize=48, xTextAlign=RIGHT) 
+        >>> style = dict(stroke=0, strokeWidth=0.25, rLeading=1.3, fontSize=48, xTextAlign=RIGHT)
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> #font2 = findFont('Upgrade-Regular')
@@ -52,7 +51,7 @@ class Waterfall(TextBox):
         >>> gs = Waterfall(font2, parent=page, conditions=conditions, style=style, w=page.pw, h=page.ph, padding=20, location=loc, useOpsz=useOpsz, context=c)
         >>> #score = doc.solve()
         >>> doc.export('_export/%sWaterfall_opsz_%s.pdf' % (font1.info.familyName, useOpsz))
-        
+
         TODO: Make self.css('xTextAlign') work for CENTER
         """
         TextBox.__init__(self, **kwargs)
@@ -118,8 +117,8 @@ class Waterfall(TextBox):
             location = {}
 
         # Get real axis values.
-        wght = self.getAxisValue(vf, 'wght', location.get('wght'))        
-        wdth = self.getAxisValue(vf, 'wdth', location.get('wdth'))        
+        wght = self.getAxisValue(vf, 'wght', location.get('wght'))
+        wdth = self.getAxisValue(vf, 'wdth', location.get('wdth'))
         opsz = location.get('opsz')
 
         if not opsz and 'opsz' in vf.axes:
@@ -135,7 +134,7 @@ class Waterfall(TextBox):
             return getVarFontInstance(vf, location)
         return vf
 
- 
+
 if __name__ == '__main__':
     import doctest
     import sys

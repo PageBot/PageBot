@@ -13,7 +13,7 @@
 #
 #     __init__.py
 #
-#     New Elements to be added   
+#     New Elements to be added
 #     Graphs, Maps, 3Dto2DContainers.
 #
 from pagebot.elements.element import Element
@@ -83,7 +83,7 @@ def newColTextBox(bs='', cx=None, cy=None, cw=None, ch=None, **kwargs):
     return e
 
 def newText(bs='', point=None, **kwargs):
-    u"""Draw formatted string. Normally we don't need w and h here, as it is made by the text and 
+    u"""Draw formatted string. Normally we don't need w and h here, as it is made by the text and
     style combinations. But in case the defined font is a Variable Font, then we can use the
     width and height to interpolate a font that fits the space for the given string and weight.
     Caller must supply formatted string. Support both (x, y) and x, y as position."""
@@ -96,7 +96,7 @@ def newColText(bs='', cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newText(bs, **kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
     return e
-            
+
 def newRect(point=None, **kwargs):
     u"""Draw the rectangle. Note that w and h can also be defined in the style. In case h is omitted,
     a square is drawn."""
@@ -106,17 +106,17 @@ def newColRect(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newRect(**kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
     return e
-            
+
 def newGroup(point=None, **kwargs):
     u"""Create a new group. Note that w and h can also be defined in the style. In case h is omitted,
     a square is drawn."""
     return Group(point=point, **kwargs)
-        
+
 def newColGroup(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newGroup(**kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
     return e
-            
+
 def newOval(point=None, **kwargs):
     u"""Draw the oval. Note that w and h can also be defined in the style. In case h is omitted,
     a circle is drawn."""
@@ -124,12 +124,12 @@ def newOval(point=None, **kwargs):
 
 def newColOval(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newOval(**kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch, # Correct position from column index.
+    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
     return e
 
 def newLine(point=None, **kwargs):
     return Line(point=point, **kwargs)
-            
+
 def newColLine(cx=None, cy=None, cw=None, ch=None, **kwargs):
     e = newLine(**kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
@@ -142,14 +142,14 @@ def newImage(path, point=None, **kwargs):
     u"""Create Image element as position (x, y) and optional width, height (w, h) of which
     at least one of them should be defined. The path can be None, to be filled later.
     If the image is drawn with an empty path, a missingImage cross-frame is shown.
-    The optional imo attribute is an ImageObject() with filters in place. 
+    The optional imo attribute is an ImageObject() with filters in place.
     The Image element is answered for convenience of the caller."""
     return Image(path, point=point, **kwargs)
-      
+
 def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs):
-    u"""Convert the column size into point size, depending on the column settings of the 
+    u"""Convert the column size into point size, depending on the column settings of the
     current template, when drawing images "hard-coded" directly on a certain page.
-    The optional imo attribute is an ImageObject() with filters in place. 
+    The optional imo attribute is an ImageObject() with filters in place.
     The Image element is answered for convenience of the caller"""
     e = newImage(path, **kwargs)
     e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
