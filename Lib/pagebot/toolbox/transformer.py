@@ -886,7 +886,7 @@ def formatBinaryForTTX(b, length=32, segments=8):
     s = str(b)[2:]
     prefix = '0' * (length - len(s))
     s = prefix + s
-    sWithSpaces = "".join(s[i:i + segments] + " " for i in xrange(0, len(s), segments))
+    sWithSpaces = "".join(s[i:i + segments] + " " for i in range(0, len(s), segments))
     return string.strip(sWithSpaces)
 
 # ----------------------------------------------------------------------------------------------------------
