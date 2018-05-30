@@ -298,13 +298,13 @@ class Document(object):
             self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
         # Make sure that the default styles for document and page are always there.
         name = 'root'
-        if not name in self.styles:
+        if name not in self.styles:
             self.addStyle(name, self.rootStyle)
         name = 'document'
-        if not name in self.styles: # Default dict styles as placeholder, if nothing is defined.
+        if name not in self.styles: # Default dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
         name = 'page'
-        if not name in self.styles: # Default dict styles as placeholder, if nothing is defined.
+        if name not in self.styles: # Default dict styles as placeholder, if nothing is defined.
             self.addStyle(name, dict(name=name))
 
     def makeRootStyle(self, **kwargs):
