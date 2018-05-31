@@ -79,6 +79,8 @@ class GlyphDimensions(BaseFontShow):
         """
         c = self.context
         ox, oy, _ = origin
+        for fontSize in (7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20):
+            
         glyph = self.f['H']
         c.save()
         c.stroke(0, 0.25)
