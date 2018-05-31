@@ -176,11 +176,15 @@ def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cac
 
 def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):
     u"""
+    D E P R E C A T E D
+    Use pagebot.fonttoolbox.objects.font.instantiateVariableFont instead (calling fontTools)
+
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
         varfilename -- a variable font file path
         location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
     """
+    print('Deprecated: generateInstance() Use fonttoolbox.objects.font.instantiateVariableFont instead')
     # make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
     instanceName = ""
 

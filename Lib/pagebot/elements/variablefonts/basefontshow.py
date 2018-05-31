@@ -39,44 +39,6 @@ class BaseFontShow(Element):
             style['xTextAlign'] = alignment
         return style
 
-    def getAxisValue(self, tag, value):
-        u"""Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
-        ratio in (minValue, defaultValue, maxValue)."""
-        if not tag in self.f.axes:
-            return None
-        minValue, defaultValue, maxValue = self.f.axes[tag]
-        if not value:
-            return defaultValue
-        if value < 0: # Realative scale between minValue and default
-            return defaultValue + (defaultValue - minValue)*value
-        # else wdth > 0:  Relative scale between default and maxValue
-        return defaultValue + (maxValue - defaultValue)*value
-
-    def getLocation(self, wght=None, wdth=None, opsz=None):
-        u"""Answer the instance of self, corresponding to the normalized location.
-        (-1, 0, 1) values for axes [wght] and [wdth].
-        The optical size [opsz] is supposed to contain the font size, so it is not normalized.
-        If [opsz] is not defined, then set it to default, if the axis exist.
-        """
-        if not self.f.axes:
-            return {}
-
-        # Get real axis values.
-        wght = self.getAxisValue('wght', wght)        
-        wdth = self.getAxisValue('wdth', wdth)        
-
-        if not opsz and 'opsz' in self.f.axes:
-            opsz = self.f.axes['opsz'][1] # Use default value
-
-        # Make location dictionary
-        return dict(wght=wght, wdth=wdth, opsz=opsz)
-
-    def getInstance(self, location):
-        u"""Return the instance font at this location. The font is stored as file,
-        # so it correspondents to normal instance.path behavior."""
-        if self.f.axes:
-            return getVarFontInstance(self.f, location)
-        return self.f
 
     def buildStackedLine(self, s, origin, x, y, w, h=None, fontSize=None, wght=None, wdth=None, useOpsz=True):
         u"""Draw a textbox to self that fits the string s for the instance indicated by
