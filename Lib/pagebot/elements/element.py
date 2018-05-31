@@ -149,7 +149,7 @@ class Element(object):
         self._tm0 = 0 #DateTime.beginningOfTime
         self._tm1 = XXXL #None # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
         # The default timeMarks between from DateTime.beginningOfTime to infinite.
-        self.timeMarks = [TimeMark(self._tm0, {}}), TimeMark(self._tm1, {}})] # Default TimeMarks from t == 0 until infinite of time.
+        self.timeMarks = [TimeMark(self._tm0, {}), TimeMark(self._tm1, {})] # Default TimeMarks from t == 0 until infinite of time.
         self.t = t # Initialize self.style from t = 0
         self.timeKeys = INTERPOLATING_TIME_KEYS # List of names of style entries that can interpolate in time.
 

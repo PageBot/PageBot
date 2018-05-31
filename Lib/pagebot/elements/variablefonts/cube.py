@@ -19,6 +19,7 @@ from __future__ import division # Make integer division result in float.
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.constants import LEFT, RIGHT, TOP, CENTER # Used for axis direction in the cube
 from pagebot.toolbox.transformer import pointOffset
+from pagebot.fonttoolbox.objects.font import getInstance
 
 class Cube(BaseFontShow): 
     u"""Showing the specified (variable) font as full page with a matrix
@@ -45,15 +46,15 @@ class Cube(BaseFontShow):
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
-        >>> gs = Cube(font1, parent=page, conditions=conditions, padding=50, style=style, context=c)
+        >>> gs = Cube(font1, parent=page, conditions=conditions, padding=50, steps=4, style=style, label="An", context=c)
         >>> style = dict(stroke=0, strokeWidth=0.25, fontSize=24, rLeading=1.4)
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
-        >>> gs = Cube(font2, parent=page, conditions=conditions, style=style, steps=7, padding=40, context=c)
+        >>> gs = Cube(font2, parent=page, conditions=conditions, style=style, steps=3, padding=40, context=c)
         >>> score = doc.solve()
         >>> doc.export('_export/%sCube.pdf' % font1.info.familyName)
-        >>> doc.export('_export/%sCube.svg' % font1.info.familyName)
-        >>> doc.export('_export/%sCube.gif' % font1.info.familyName)
+        >>> #doc.export('_export/%sCube.svg' % font1.info.familyName)
+        >>> #doc.export('_export/%sCube.gif' % font1.info.familyName)
         """
         BaseFontShow.__init__(self, **kwargs)
         self.f = f # Font instance
@@ -128,7 +129,8 @@ class Cube(BaseFontShow):
                 y = oy + my + xzStep * dy + 2 * yStep * dy
                 # Calculate the location
                 location = self.getLocation(wght=-xzStep/2+1, wdth=1, opsz=opsz)
-                instance = self.getInstance(location)
+                instance = getInstance(self.f, location)
+                print(instance.location)
                 style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
                 bs = c.newString(self.label, style=style)
                 tw, th = bs.textSize()
@@ -138,7 +140,7 @@ class Cube(BaseFontShow):
                     # Draw left side of the cube. Avoid double drawing on front axis
                     x = ox + mx - xzStep * dx 
                     location = self.getLocation(wght=1, wdth=-xzStep/2+1, opsz=opsz)
-                    instance = self.getInstance(location)
+                    instance = getInstance(self.f, location)
                     style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
                     bs = c.newString(self.label, style=style)
                     tw, th = bs.textSize()
@@ -151,7 +153,7 @@ class Cube(BaseFontShow):
                     y = oy + my + (2 * self.steps - 2) * dy + xStep * dy + zStep * dy
                     
                     location = self.getLocation(wght=-xStep/2+1, wdth=-zStep/2+1, opsz=opsz)
-                    instance = self.getInstance(location)
+                    instance = getInstance(self.f, location)
                     style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
                     bs = c.newString(self.label, style=style)
                     tw, th = bs.textSize()

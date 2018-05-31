@@ -24,9 +24,9 @@
 #
 import os
 from fontTools.ttLib import TTFont, TTLibError
-from fontTools.varLib.mutator import instantiateVariableFont as instantiateVF
+from fontTools.varLib.mutator import instantiateVariableFont
 
-from pagebot.toolbox.transformer import path2FontName, path2Extension
+from pagebot.toolbox.transformer import path2FontName, path2Extension, asFormatted
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
@@ -91,24 +91,73 @@ def findFont(fontPath, lazy=True):
         return getFont(fontPaths[fontPath])
     return None
 
-def instantiateVariableFont(vf, location=None, path=None, name=None, opticalSize=None, styleName=None, lazy=True):
+def getMasterPath():
+    u"""Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
+    Default is at the same level as pagebot module."""
+    return os.path.expanduser("~") + '/Fonts/'
+
+def getInstancePath():
+    u"""Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
+    return getMasterPath() + '_instances/'
+
+def getScaledValue(vf, tag, value):
+    u"""Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
+    ratio in (minValue, defaultValue, maxValue)."""
+    if not tag in vf.axes:
+        return None
+    assert -1 <= value <= 1
+    minValue, defaultValue, maxValue = vf.axes[tag]
+    if not value:
+        return defaultValue
+    if value < 0: # Realative scale between minValue and default
+        return defaultValue + (defaultValue - minValue)*value
+    # else wdth > 0:  Relative scale between default and maxValue
+    return defaultValue + (maxValue - defaultValue)*value
+
+def getScaledLocation(vf, normalizedLocation):
+    u"""Answer the instance of self, corresponding to the normalized location.
+    (-1, 0, 1) values for axes as e.g. [wght] and [wdth].
+    The optical size [opsz] is supposed to contain the font size, so it is not scaled.
+    If [opsz] is not defined, then set it to default, if the axis exist.
+    
+
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> font = findFont('AmstelvarAlpha-VF')
+    >>> getScaledLocation(font, dict(wght=0, opsz=24))['wght']
+    400.0
+    """
+    scaledLocation = {}
+    if normalizedLocation and vf.axes:
+
+        for tag, value in normalizedLocation.items():
+            if tag != 'opsz':
+                value = getScaledValue(vf, tag, value)
+            scaledLocation[tag] = value
+
+        for axisTag, (_, defaultValue, _) in vf.axes.items():
+            if axisTag not in scaledLocation:
+                scaledLocation[axisTag] = defaultValue
+
+    return scaledLocation
+
+def getInstance(vf, location=None, path=None, name=None, opticalSize=None, styleName=None, cached=True, lazy=True):
     """Answer the VF-TTFont instance at location (created by fontTools.varLib.mutator.instantiateVariableFont)
     packed as Font instance.  
 
     >>> vf = findFont('Amstelvar-Roman-VF')
-    >>> instance = instantiateVariableFont(vf, opticalSize=8)
+    >>> instance = getInstance(vf, opticalSize=8)
     >>> instance
-    <Font Amstelvar Roman>
+    <Font Amstelvar-Roman-VF-opsz8>
     >>> instance.location
     {'opsz': 8}
     >>> instance['H'].width
     1740
-    >>> instance = instantiateVariableFont(vf, location=dict(wght=300), opticalSize=150)
+    >>> instance = getInstance(vf, location=dict(wght=300), cached=False, opticalSize=150)
     >>> instance.location
     {'wght': 300, 'opsz': 150}
     >>> instance['H'].width
     1740
-    >>> instance = instantiateVariableFont(vf, path='/tmp/TestVariableFontInstance.ttf', opticalSize=8)
+    >>> instance = getInstance(vf, path='/tmp/TestVariableFontInstance.ttf', opticalSize=8)
     >>> instance
     <Font TestVariableFontInstance>
     """
@@ -116,9 +165,32 @@ def instantiateVariableFont(vf, location=None, path=None, name=None, opticalSize
         location = {}
     if opticalSize is not None:
         location['opsz'] = opticalSize
-    ttFont = instantiateVF(vf.ttFont, location)
-    return Font(ttFont=ttFont, path=path, name=name, location=location, opticalSize=opticalSize,
-        styleName=styleName, lazy=lazy)
+
+    if path is None and cached:        
+        # Make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
+        # Only add axis values to the name that are not default.
+        instanceName = ""
+        for tag, value in sorted(location.items()):
+            if value != vf.axes[tag][1]:
+                instanceName += "-%s%s" % (tag, asFormatted(value))
+        instanceFileName = '.'.join(vf.path.split('/')[-1].split('.')[:-1]) + instanceName + '.ttf'
+
+        targetDirectory = getInstancePath()
+        if not os.path.exists(targetDirectory):
+            os.makedirs(targetDirectory)
+        path = targetDirectory + instanceFileName
+    
+    if cached and os.path.exists(path):
+        #print('Found in cache', path)
+        instance = Font(path=path, name=name, location=location, opticalSize=opticalSize)
+    else:
+        ttFont = instantiateVariableFont(vf.ttFont, location) # Get instance from fontTools
+        instance = Font(path=path, ttFont=ttFont, name=name, location=location, opticalSize=opticalSize,
+            styleName=styleName, lazy=lazy)
+        if instance.path.endswith('.ttf'):
+            instance.save()
+
+    return instance
 
 class Font(object):
     u"""
@@ -161,7 +233,6 @@ class Font(object):
         else: # There is a path for this font, save it there.
             self.ttFont = ttFont
             self.path = path
-            ttFont.save(path)
         # Store location, incase this was a created VF instance
         self.location = location
         # TTFont is available as lazy style.info.font
