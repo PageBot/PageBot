@@ -42,19 +42,19 @@ about = {'title': 'About %s' % appName, 'id': '58',
         'modifierMask': "keyEquivalentModifierMask",
         'action': {'selector': 'orderFrontStandardAboutPanel:', 'target': '-2', 'id': "142"}}
 
-hide = {'title': 'Hide %s' % appName,
+hide = {'title': 'Hide %s' % appName, 'id': '134',
         'action': {'selector':"hide:", 'target':"-1", 'id':"367"}}
 
-preferences = {'title': 'Preferences...'}
-services = {'title': 'Services'}
+preferences = {'title': 'Preferences...', 'id': '143'}
+services = {'title': 'Services', 'id': '131'}
 hideOthers = {'title': 'Hide Others', 'modifierMask':
-        "keyEquivalentModifierMask",}
-showAll = {'title': 'Show All'}
+        "keyEquivalentModifierMask", 'id': '145'}
+showAll = {'title': 'Show All', 'id': '150'}
 
 quit = {'title': 'Quit %s' % appName, 'keyEquivalent': "q", 'id': '136',
         'action': {'selector':"terminate:", 'target':"-3", 'id':"Fad-te-kKi"}}
 
-menuPageBot = [about, quit]
+menuPageBot = [about, hide, preferences, services, hideOthers, showAll, quit]
 menuFile = []
 menuEdit = []
 menuHelp = []
@@ -82,13 +82,17 @@ def mainMenu():
 
     # Application objects.
     objects = etree.SubElement(root, 'objects')
-    co1 = etree.Element('customObject', id='-2', userLabel="File's Owner", customClass="NSApplication")
-    co2 = etree.Element('customObject', id='-1', userLabel="First Responder", customClass="FirstResponder")
-    co3 = etree.Element('customObject', id='-3', userLabel="Application", customClass="NSObject")
+    co1 = etree.Element('customObject', id='-2', userLabel="File's Owner",
+            customClass="NSApplication")
+    co2 = etree.Element('customObject', id='-1', userLabel="First Responder",
+            customClass="FirstResponder")
+    co3 = etree.Element('customObject', id='-3', userLabel="Application",
+            customClass="NSObject")
 
     # Connection to PyObjC AppDelegate class.
     connections = etree.Element('connections')
-    outlet = etree.Element('outlet', property='delegate', destination=str(delegateID), id="M3r-9y-AZh")
+    outlet = etree.Element('outlet', property='delegate',
+            destination=str(delegateID), id="M3r-9y-AZh")
     connections.append(outlet)
     co3.append(connections)
     objects.append(co1)
@@ -98,7 +102,8 @@ def mainMenu():
     objects.append(menu)
 
     # PyObjC AppDelegate class.
-    delegate = etree.Element('customObject', id=str(delegateID), userLabel="AppDelegate", customClass="AppDelegate")
+    delegate = etree.Element('customObject', id=str(delegateID),
+            userLabel="AppDelegate", customClass="AppDelegate")
     objects.append(delegate)
     writeFile(root, path)
 
@@ -144,10 +149,13 @@ def menuItem(v):
         # TODO: ID's for separators.
         itemID = 500
         i = etree.Element('menuItem', isSeparatorItem="YES", id=str(itemID))
-        mm = etree.Element('modifierMask', key='keyEquivalentModifierMask', commmand='YES')
+        mm = etree.Element('modifierMask', key='keyEquivalentModifierMask',
+                commmand='YES')
         i.append(mm)
     elif isinstance(v, dict):
         itemID = v['id']
+        # TODO: add keyEquivalent etc... Copy all attributes from menu
+        # dictionary to etree element.
         i = etree.Element('menuItem', title=v['title'], id=str(itemID))
 
         if 'modifierMask' in v:
