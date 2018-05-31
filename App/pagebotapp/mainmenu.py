@@ -54,14 +54,16 @@ showAll = {'title': 'Show All', 'id': '150'}
 quit = {'title': 'Quit %s' % appName, 'keyEquivalent': "q", 'id': '136',
         'action': {'selector':"terminate:", 'target':"-3", 'id':"Fad-te-kKi"}}
 
+open_ = {'title':"New", 'keyEquivalent':"n", 'id':"83", 'userLabel':'New'}
+
 menuPageBot = [about, hide, preferences, services, hideOthers, showAll, quit]
-menuFile = []
+menuFile = [open_]
 menuEdit = []
 menuHelp = []
 
 menuList = [
-        {'title': appName, 'systemMenu': 'apple', 'menu': menuPageBot, 'id': '56'},
-    #{'title': 'File', 'menu': []},
+    {'title': appName, 'systemMenu': 'apple', 'menu': menuPageBot, 'id': '56'},
+    {'title': 'File', 'menu': menuFile, 'id': '81'},
     #{'title': 'Edit', 'menu': []},
     #{'title': 'Help', 'menu': []}
 ]
