@@ -17,29 +17,54 @@ delegateID = 373
 ibType = "com.apple.InterfaceBuilder3.Cocoa.XIB"
 pluginIdentifier = "com.apple.InterfaceBuilder.CocoaPlugin"
 version = '3.0'
-toolsVersion="12118"
-systemVersion="16E195"
+toolsVersion="11542"
+systemVersion="16B2657"
 targetRuntime="MacOSX.Cocoa"
 propertyAccessControl="none"
 s = 'separator'
 
-about = {'title': 'About %s' % appName, 'selector':
-        'orderFrontStandardAboutPanel:', target='-2', selectorID="142"}
-hide = {'title': 'Hide %s' % appName}
+'''
+{title':"About PageBot", id:"58", 'modifierMask': "keyEquivalentModifierMask"
+'selector':"orderFrontStandardAboutPanel:", 'target':"-2", id:"142"}
+{'title':"Preferences…", keyEquivalent:",", id:"129", userLabel:"Preferences"}
+{'title':"Services", id:"131"}
+{menu key:"submenu", 'title':"Services", systemMenu:"services", id:"130"}
+{'title':"Hide PageBot", keyEquivalent:"h", id:"134": 'selector':"hide:",
+'target':"-1", id:"367"}
+{'title':"Hide Others", keyEquivalent:"h", id:"145", 'modifierMask':
+"keyEquivalentModifierMask", 'option':"YES", 'command':"YES",
+'selector':"hideOtherApplications:", 'target':"-1", id:"368"}
+{'title':"Show All", 'selector':"unhideAllApplications:", 'target':"-1", id:"370"}
+{'title':"Quit PageBot", keyEquivalent:"q", id:"136", userLabel:"Quit PageBot", 'selector':"terminate:", 'target':"-3", id:"Fad-te-kKi"}
+'''
+
+about = {'title': 'About %s' % appName, 'id': '58',
+        'modifierMask': "keyEquivalentModifierMask",
+        'action': {'selector': 'orderFrontStandardAboutPanel:', 'target': '-2', 'id': "142"}}
+
+hide = {'title': 'Hide %s' % appName,
+        'action': {'selector':"hide:", 'target':"-1", 'id':"367"}}
+
 preferences = {'title': 'Preferences...'}
 services = {'title': 'Services'}
-hideOthers = {'title': 'Hide Others'}
+hideOthers = {'title': 'Hide Others', 'modifierMask':
+        "keyEquivalentModifierMask",}
 showAll = {'title': 'Show All'}
-quit = {'title': 'Quit %s' % appName}
 
-menuDict = {appName:
-        [about, s,
-            preferences, s,
-            services, s,
-            hide,
-            hideOthers,
-            showAll, s,
-            quit]}
+quit = {'title': 'Quit %s' % appName, 'keyEquivalent': "q", 'id': '136',
+        'action': {'selector':"terminate:", 'target':"-3", 'id':"Fad-te-kKi"}}
+
+menuPageBot = [about, quit]
+menuFile = []
+menuEdit = []
+menuHelp = []
+
+menuList = [
+        {'title': appName, 'systemMenu': 'apple', 'menu': menuPageBot, 'id': '56'},
+    #{'title': 'File', 'menu': []},
+    #{'title': 'Edit', 'menu': []},
+    #{'title': 'Help', 'menu': []}
+]
 
 def mainMenu():
     """Writes design space XML file using the lxml library.."""
@@ -77,31 +102,67 @@ def mainMenu():
     objects.append(delegate)
     writeFile(root, path)
 
+
 def buildMenu():
+
+    # Main menu wrapper.
     menu = etree.Element('menu', title="MainMenu", systemMenu="main",
             showsStateColumn="NO", autoenablesItems="NO", id="29",
             userLabel="MainMenu")
     items = etree.SubElement(menu, 'items')
-    id = 56
 
-    for key, value in menuDict.items():
-        m = etree.Element('menuItem', title=key, id=str(id))
+    # The menu columns.
+    for menuDict in menuList:
+        t = menuDict['title']
+        itemID = menuDict['id']
+
+        # Wraps a column.
+        m = etree.Element('menuItem', title=t, id=str(itemID))
+        if 'systemMenu' in menuDict:
+            sm = menuDict['systemMenu']
+            mm = etree.Element('menu', key='submenu', systemMenu=sm, title=t,
+                    id=str(int(itemID) + 1))
+        else:
+            mm = etree.Element('menu', key='submenu', title=t, id=str(int(itemID) + 1))
+        m.append(mm)
+        subitems = etree.SubElement(menu, 'items')
+        mm.append(subitems)
         items.append(m)
-        id += 1
 
-        if isinstance(value, list):
-            for v in value:
-                if v == s:
-                    i = etree.Element('menuItem', isSeparatorItem="YES", id=str(id))
-                    mm = etree.Element('modifierMask', key='keyEquivalentModifierMask', commmand='YES')
-                    i.append(mm)
-                    m.append(i)
-                    id += 1
-                elif isinstance(v, dict):
-                    i = etree.Element('menuItem', title=v['title'], id=str(id))
-                    m.append(i)
-                    id += 1
+        # Now upack the list.
+        submenuList = menuDict['menu']
+
+        for v in submenuList:
+            i = menuItem(v)
+            subitems.append(i)
     return menu
+
+def menuItem(v):
+    i = None
+    if v == s:
+
+        # TODO: ID's for separators.
+        itemID = 500
+        i = etree.Element('menuItem', isSeparatorItem="YES", id=str(itemID))
+        mm = etree.Element('modifierMask', key='keyEquivalentModifierMask', commmand='YES')
+        i.append(mm)
+    elif isinstance(v, dict):
+        itemID = v['id']
+        i = etree.Element('menuItem', title=v['title'], id=str(itemID))
+
+        if 'modifierMask' in v:
+            mm = etree.Element('modifierMask', key='keyEquivalentModifierMask')
+            i.append(mm)
+
+        if 'action' in v:
+            a = v['action']
+
+            c = etree.SubElement(i, 'connections')
+            action = etree.Element('action', selector=a['selector'], target=a['target'],
+                    id=a['id'])
+            c.append(action)
+
+    return i
 
 def writeFile(root, path):
     f = open(path, 'wb')

@@ -17,13 +17,13 @@
 from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 
-class GlyphDimensions(BaseFontShow): 
+class GlyphDimensions(BaseFontShow):
     u"""Showing the specified (variable) font large glyphs with a variety
     of optional measures and indicator.
 
     """
     def __init__(self, f, **kwargs):
-        u"""   
+        u"""
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -32,7 +32,7 @@ class GlyphDimensions(BaseFontShow):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(gh=16, fill=0.95, rLeading=1.4, fontSize=24)  
+        >>> style = dict(gh=16, fill=0.95, rLeading=1.4, fontSize=24)
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
@@ -60,7 +60,7 @@ class GlyphDimensions(BaseFontShow):
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showElementFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -79,16 +79,16 @@ class GlyphDimensions(BaseFontShow):
         """
         c = self.context
         ox, oy, _ = origin
+
         for fontSize in (7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20):
-            
-        glyph = self.f['H']
-        c.save()
-        c.stroke(0, 0.25)
-        c.fill((0.7, 0.7, 0.7, 0.6))
-        s = (self.pw/glyph.width)
-        c.scale(s)
-        c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/3)/s))
-        c.restore()
+            glyph = self.f['H']
+            c.save()
+            c.stroke(0, 0.25)
+            c.fill((0.7, 0.7, 0.7, 0.6))
+            s = (self.pw/glyph.width)
+            c.scale(s)
+            c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/3)/s))
+            c.restore()
 
 if __name__ == '__main__':
     import doctest
