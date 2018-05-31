@@ -10,8 +10,7 @@ try:
 except:
     print('lxml is not installed, can\'t write XML')
 
-# TODO: to en.proj
-path = './MainMenu.xib'
+path = './en.lproj/MainMenu.xib'
 
 appName = 'PageBot'
 delegateID = 373
@@ -24,14 +23,23 @@ targetRuntime="MacOSX.Cocoa"
 propertyAccessControl="none"
 s = 'separator'
 
+about = {'title': 'About %s' % appName, 'selector':
+        'orderFrontStandardAboutPanel:', target='-2', selectorID="142"}
+hide = {'title': 'Hide %s' % appName}
+preferences = {'title': 'Preferences...'}
+services = {'title': 'Services'}
+hideOthers = {'title': 'Hide Others'}
+showAll = {'title': 'Show All'}
+quit = {'title': 'Quit %s' % appName}
+
 menuDict = {appName:
-        ['About %s' % appName, s,
-        'Preferences...', s,
-        'Services', s,
-        'Hide %s' % appName,
-        'Hide Others',
-        'Show All', s,
-        'Quit %s' % appName]}
+        [about, s,
+            preferences, s,
+            services, s,
+            hide,
+            hideOthers,
+            showAll, s,
+            quit]}
 
 def mainMenu():
     """Writes design space XML file using the lxml library.."""
@@ -89,8 +97,8 @@ def buildMenu():
                     i.append(mm)
                     m.append(i)
                     id += 1
-                else:
-                    i = etree.Element('menuItem', title=v, id=str(id))
+                elif isinstance(v, dict):
+                    i = etree.Element('menuItem', title=v['title'], id=str(id))
                     m.append(i)
                     id += 1
     return menu
