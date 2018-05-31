@@ -16,7 +16,6 @@
 #
 from pagebot.elements import Element
 from pagebot.constants import LEFT
-from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.transformer import asFormatted
 
 class BaseFontShow(Element): 
