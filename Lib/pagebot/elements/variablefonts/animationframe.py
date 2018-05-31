@@ -15,11 +15,10 @@
 #     animationframe.py
 #
 from __future__ import division # Make integer division result in float.
-from random import choice
 
 from pagebot.elements import Rect
 from pagebot.toolbox.transformer import pointOffset
-from pagebot.fonttoolbox.objects.font import getInstance, getScaledLocation
+from pagebot.fonttoolbox.objects.font import getInstance
 
 class AnimationFrame(Rect):
     u"""Showing one frame of an animation, supporting different states of a VariableFont 
