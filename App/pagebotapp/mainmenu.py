@@ -13,6 +13,7 @@ except:
 # TODO: to en.proj
 path = './MainMenu.xib'
 
+appName = 'PageBot'
 delegateID = 373
 ibType = "com.apple.InterfaceBuilder3.Cocoa.XIB"
 pluginIdentifier = "com.apple.InterfaceBuilder.CocoaPlugin"
@@ -21,6 +22,16 @@ toolsVersion="12118"
 systemVersion="16E195"
 targetRuntime="MacOSX.Cocoa"
 propertyAccessControl="none"
+s = 'separator'
+
+menuDict = {appName:
+        ['About %s' % appName, s,
+        'Preferences...', s,
+        'Services', s,
+        'Hide %s' % appName,
+        'Hide Others',
+        'Show All', s,
+        'Quit %s' % appName]}
 
 def mainMenu():
     """Writes design space XML file using the lxml library.."""
@@ -41,6 +52,7 @@ def mainMenu():
     co1 = etree.Element('customObject', id='-2', userLabel="File's Owner", customClass="NSApplication")
     co2 = etree.Element('customObject', id='-1', userLabel="First Responder", customClass="FirstResponder")
     co3 = etree.Element('customObject', id='-3', userLabel="Application", customClass="NSObject")
+
     # Connection to PyObjC AppDelegate class.
     connections = etree.Element('connections')
     outlet = etree.Element('outlet', property='delegate', destination=str(delegateID), id="M3r-9y-AZh")
@@ -51,6 +63,7 @@ def mainMenu():
     objects.append(co3)
     menu = buildMenu()
     objects.append(menu)
+
     # PyObjC AppDelegate class.
     delegate = etree.Element('customObject', id=str(delegateID), userLabel="AppDelegate", customClass="AppDelegate")
     objects.append(delegate)
@@ -60,7 +73,26 @@ def buildMenu():
     menu = etree.Element('menu', title="MainMenu", systemMenu="main",
             showsStateColumn="NO", autoenablesItems="NO", id="29",
             userLabel="MainMenu")
-    items = etree.SubElement('items', menu)
+    items = etree.SubElement(menu, 'items')
+    id = 56
+
+    for key, value in menuDict.items():
+        m = etree.Element('menuItem', title=key, id=str(id))
+        items.append(m)
+        id += 1
+
+        if isinstance(value, list):
+            for v in value:
+                if v == s:
+                    i = etree.Element('menuItem', isSeparatorItem="YES", id=str(id))
+                    mm = etree.Element('modifierMask', key='keyEquivalentModifierMask', commmand='YES')
+                    i.append(mm)
+                    m.append(i)
+                    id += 1
+                else:
+                    i = etree.Element('menuItem', title=v, id=str(id))
+                    m.append(i)
+                    id += 1
     return menu
 
 def writeFile(root, path):
