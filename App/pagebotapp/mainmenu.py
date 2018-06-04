@@ -154,11 +154,15 @@ def menuItem(v):
         mm = etree.Element('modifierMask', key='keyEquivalentModifierMask',
                 commmand='YES')
         i.append(mm)
+
     elif isinstance(v, dict):
-        itemID = v['id']
-        # TODO: add keyEquivalent etc... Copy all attributes from menu
-        # dictionary to etree element.
-        i = etree.Element('menuItem', title=v['title'], id=str(itemID))
+        attrib = {}
+
+        for key in ('id', 'title', 'keyEquivalent', 'userLabel', 'option', 'command'):
+            if key in v:
+                attrib[key] = v[key]
+
+        i = etree.Element('menuItem', attrib=attrib)
 
         if 'modifierMask' in v:
             mm = etree.Element('modifierMask', key='keyEquivalentModifierMask')
