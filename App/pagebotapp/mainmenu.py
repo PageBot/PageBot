@@ -23,36 +23,29 @@ targetRuntime="MacOSX.Cocoa"
 propertyAccessControl="none"
 s = 'separator'
 
-'''
-{title':"About PageBot", id:"58", 'modifierMask': "keyEquivalentModifierMask"
-'selector':"orderFrontStandardAboutPanel:", 'target':"-2", id:"142"}
-{'title':"Preferences…", keyEquivalent:",", id:"129", userLabel:"Preferences"}
-{'title':"Services", id:"131"}
-{menu key:"submenu", 'title':"Services", systemMenu:"services", id:"130"}
-{'title':"Hide PageBot", keyEquivalent:"h", id:"134": 'selector':"hide:",
-'target':"-1", id:"367"}
-{'title':"Hide Others", keyEquivalent:"h", id:"145", 'modifierMask':
-"keyEquivalentModifierMask", 'option':"YES", 'command':"YES",
-'selector':"hideOtherApplications:", 'target':"-1", id:"368"}
-{'title':"Show All", 'selector':"unhideAllApplications:", 'target':"-1", id:"370"}
-{'title':"Quit PageBot", keyEquivalent:"q", id:"136", userLabel:"Quit PageBot", 'selector':"terminate:", 'target':"-3", id:"Fad-te-kKi"}
-'''
-
 about = {'title': 'About %s' % appName, 'id': '58',
         'modifierMask': "keyEquivalentModifierMask",
         'action': {'selector': 'orderFrontStandardAboutPanel:', 'target': '-2', 'id': "142"}}
 
-hide = {'title': 'Hide %s' % appName, 'id': '134',
+hide = {'title': 'Hide %s' % appName, 'id': '134', 'keyEquivalent': 'h',
         'action': {'selector':"hide:", 'target':"-1", 'id':"367"}}
 
-preferences = {'title': 'Preferences...', 'id': '143'}
-services = {'title': 'Services', 'id': '131'}
+preferences = {'title': 'Preferences...', 'id': '143', 'keyEquivalent': ',',
+        'userLabel': 'Preferences'}
+
+servicesMenu = {'key':"submenu", 'title':"Services", 'systemMenu':"services", 'id':"130"}
+services = {'title': 'Services', 'id': '131', 'menu': servicesMenu}
+
 hideOthers = {'title': 'Hide Others', 'modifierMask':
-        "keyEquivalentModifierMask", 'id': '145'}
-showAll = {'title': 'Show All', 'id': '150'}
+        "keyEquivalentModifierMask", 'keyEquivalent': 'h', 'option': 'YES',
+        'command': 'YES', 'id': '145'}
+
+showAll = {'title': 'Show All', 'id': '150', 'action':
+        {'selector':"unhideAllApplications:", 'target':"-1", 'id': "370"}}
 
 quit = {'title': 'Quit %s' % appName, 'keyEquivalent': "q", 'id': '136',
-        'action': {'selector':"terminate:", 'target':"-3", 'id':"Fad-te-kKi"}}
+        'userLabel': "Quit PageBot", 'action': {'selector':"terminate:",
+            'target':"-3", 'id':"Fad-te-kKi"}}
 
 open_ = {'title':"New", 'keyEquivalent':"n", 'id':"83", 'userLabel':'New'}
 
@@ -140,11 +133,11 @@ def buildMenu():
         submenuList = menuDict['menu']
 
         for v in submenuList:
-            i = menuItem(v)
+            i = getMenuItem(v)
             subitems.append(i)
     return menu
 
-def menuItem(v):
+def getMenuItem(v):
     i = None
     if v == s:
 
@@ -162,21 +155,31 @@ def menuItem(v):
             if key in v:
                 attrib[key] = v[key]
 
-        i = etree.Element('menuItem', attrib=attrib)
+        menuItem = etree.Element('menuItem', attrib=attrib)
 
         if 'modifierMask' in v:
-            mm = etree.Element('modifierMask', key='keyEquivalentModifierMask')
-            i.append(mm)
+            modifierMask = etree.Element('modifierMask', key='keyEquivalentModifierMask')
+            menuItem.append(modifierMask)
 
         if 'action' in v:
             a = v['action']
 
-            c = etree.SubElement(i, 'connections')
+            connections = etree.SubElement(menuItem, 'connections')
             action = etree.Element('action', selector=a['selector'], target=a['target'],
                     id=a['id'])
-            c.append(action)
+            connections.append(action)
 
-    return i
+        if 'menu' in v:
+            subMenu = getSubMenu(v['menu'])
+            menuItem.append(subMenu)
+
+    return menuItem
+
+def getSubMenu(d):
+    attrib = {}
+    # TODO: recursion?
+    e = etree.Element('menu', attrib=attrib)
+    return e
 
 def writeFile(root, path):
     f = open(path, 'wb')
