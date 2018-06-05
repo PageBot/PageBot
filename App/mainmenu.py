@@ -5,13 +5,13 @@
 #
 # Script to write MainMenu.xib XML.
 
+import traceback
 try:
     from lxml import etree
 except:
     print('lxml is not installed, can\'t write XML')
 
 path = './en.lproj/MainMenu.xib'
-
 appName = 'PageBot'
 delegateID = 373
 ibType = "com.apple.InterfaceBuilder3.Cocoa.XIB"
@@ -21,44 +21,60 @@ toolsVersion="11542"
 systemVersion="16B2657"
 targetRuntime="MacOSX.Cocoa"
 propertyAccessControl="none"
-s = 'separator'
 
-about = {'title': 'About %s' % appName, 'id': '58',
-        'modifierMask': "keyEquivalentModifierMask",
-        'action': {'selector': 'orderFrontStandardAboutPanel:', 'target': '-2', 'id': "142"}}
+# Keys that are directly copied to the XML element.
+flatKeys = ('isSeparator', 'id', 'title', 'keyEquivalent', 'userLabel', 'option', 'command')
 
+about = {'title': 'About %s' % appName, 'id': '58', 'modifierMask':
+        'keyEquivalentModifierMask', 'action': {'selector':
+            'orderFrontStandardAboutPanel:', 'target': '-2', 'id': '142'}}
+sep0 = {'isSeparator': 'YES', 'id': '236'}
 hide = {'title': 'Hide %s' % appName, 'id': '134', 'keyEquivalent': 'h',
-        'action': {'selector':"hide:", 'target':"-1", 'id':"367"}}
+        'action': {'selector':'hide:', 'target':'-1', 'id':'367'}}
 
 preferences = {'title': 'Preferences...', 'id': '143', 'keyEquivalent': ',',
         'userLabel': 'Preferences'}
 
-servicesMenu = {'key':"submenu", 'title':"Services", 'systemMenu':"services", 'id':"130"}
+servicesMenu = {'key':'submenu', 'title':'Services', 'systemMenu':'services',
+        'id':'130'}
 services = {'title': 'Services', 'id': '131', 'menu': servicesMenu}
 
 hideOthers = {'title': 'Hide Others', 'modifierMask':
-        "keyEquivalentModifierMask", 'keyEquivalent': 'h', 'option': 'YES',
+        'keyEquivalentModifierMask', 'keyEquivalent': 'h', 'option': 'YES',
         'command': 'YES', 'id': '145'}
 
 showAll = {'title': 'Show All', 'id': '150', 'action':
-        {'selector':"unhideAllApplications:", 'target':"-1", 'id': "370"}}
+        {'selector':'unhideAllApplications:', 'target':'-1', 'id': '370'}}
 
-quit = {'title': 'Quit %s' % appName, 'keyEquivalent': "q", 'id': '136',
-        'userLabel': "Quit PageBot", 'action': {'selector':"terminate:",
-            'target':"-3", 'id':"Fad-te-kKi"}}
+quit = {'title': 'Quit %s' % appName, 'keyEquivalent': 'q', 'id': '136',
+        'userLabel': 'Quit PageBot', 'action': {'selector':'terminate:',
+            'target':'-3', 'id':'Fad-te-kKi'}}
 
-open_ = {'title':"New", 'keyEquivalent':"n", 'id':"83", 'userLabel':'New'}
+new = {'title':'New', 'keyEquivalent':'n', 'id':'83', 'userLabel':'New'}
+open_ = {'title':'Open...', 'keyEquivalent': 'o', 'id':'3rG-1J-ytm'}
+openRecent = {'title':"Open Recent", 'id':"124"}
 
-menuPageBot = [about, hide, preferences, services, hideOthers, showAll, quit]
-menuFile = [open_]
+'''
+{menu key:"submenu", 'title': "Open Recent", 'systemMenu': "recentDocuments", 'id': "125"}
+{'title':"Clear Menu", state: "on", 'id': "126"}
+{action 'selector': "clearRecentDocuments:", 'target':"-1", 'id': "127"}
+{menu}
+'''
+
+sep10 = {'isSeparatorItem': 'YES', 'id':'79', 'userLabel': 'Separator'}
+close = {'title':'Close', 'keyEquivalent':'w', 'id':'73', 'userLabel':'Close'}
+
+menuPageBot = [about, sep0, hide, preferences, services, hideOthers, showAll,
+        quit]
+menuFile = [new, open_, openRecent, sep10]
 menuEdit = []
 menuHelp = []
 
 menuList = [
     {'title': appName, 'systemMenu': 'apple', 'menu': menuPageBot, 'id': '56'},
     {'title': 'File', 'menu': menuFile, 'id': '81'},
-    #{'title': 'Edit', 'menu': []},
-    #{'title': 'Help', 'menu': []}
+    #{'title': 'Edit', 'menu': menuEdit, 'id'217'},
+    #{'title': 'Help', 'menu': menuHelp}
 ]
 
 def mainMenu():
@@ -102,7 +118,6 @@ def mainMenu():
     objects.append(delegate)
     writeFile(root, path)
 
-
 def buildMenu():
 
     # Main menu wrapper.
@@ -133,45 +148,42 @@ def buildMenu():
         submenuList = menuDict['menu']
 
         for v in submenuList:
-            i = getMenuItem(v)
+            try:
+                i = getMenuItem(v)
+            except Exception as e:
+                print(traceback.format_exc())
             subitems.append(i)
     return menu
 
 def getMenuItem(v):
-    i = None
-    if v == s:
+    assert isinstance(v, dict)
+    attrib = {}
 
-        # TODO: ID's for separators.
-        itemID = 500
-        i = etree.Element('menuItem', isSeparatorItem="YES", id=str(itemID))
-        mm = etree.Element('modifierMask', key='keyEquivalentModifierMask',
-                commmand='YES')
-        i.append(mm)
+    for key in flatKeys:
+        if key in v:
+            attrib[key] = v[key]
 
-    elif isinstance(v, dict):
-        attrib = {}
-
-        for key in ('id', 'title', 'keyEquivalent', 'userLabel', 'option', 'command'):
-            if key in v:
-                attrib[key] = v[key]
-
+    try:
         menuItem = etree.Element('menuItem', attrib=attrib)
+    except Exception as e:
+        print("Error creating Element %s" % v['title'])
+        raise(e)
 
-        if 'modifierMask' in v:
-            modifierMask = etree.Element('modifierMask', key='keyEquivalentModifierMask')
-            menuItem.append(modifierMask)
+    if 'modifierMask' in v:
+        modifierMask = etree.Element('modifierMask', key='keyEquivalentModifierMask')
+        menuItem.append(modifierMask)
 
-        if 'action' in v:
-            a = v['action']
+    if 'action' in v:
+        a = v['action']
 
-            connections = etree.SubElement(menuItem, 'connections')
-            action = etree.Element('action', selector=a['selector'], target=a['target'],
-                    id=a['id'])
-            connections.append(action)
+        connections = etree.SubElement(menuItem, 'connections')
+        action = etree.Element('action', selector=a['selector'], target=a['target'],
+                id=a['id'])
+        connections.append(action)
 
-        if 'menu' in v:
-            subMenu = getSubMenu(v['menu'])
-            menuItem.append(subMenu)
+    if 'menu' in v:
+        subMenu = getSubMenu(v['menu'])
+        menuItem.append(subMenu)
 
     return menuItem
 
