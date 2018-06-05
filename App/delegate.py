@@ -19,7 +19,6 @@ import datetime
 import objc
 from AppKit import NSObject
 from PyObjCTools import AppHelper
-
 from pagebotapp import PageBotApp
 
 class AppDelegate(NSObject):
@@ -36,5 +35,8 @@ class AppDelegate(NSObject):
     def applicationShouldTerminate_(self, sender):
         self.pagebotapp.terminate()
         return True
+
+    def new_(self, sender):
+        self.pagebotapp.new()
 
 AppHelper.runEventLoop()
