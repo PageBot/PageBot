@@ -23,12 +23,13 @@ targetRuntime="MacOSX.Cocoa"
 propertyAccessControl="none"
 
 # Keys that are directly copied to the XML element.
-flatKeys = ('isSeparator', 'id', 'title', 'keyEquivalent', 'userLabel', 'option', 'command')
+flatKeys = ('isSeparatorItem', 'id', 'title', 'keyEquivalent', 'userLabel', 'option', 'command')
 
 about = {'title': 'About %s' % appName, 'id': '58', 'modifierMask':
-        'keyEquivalentModifierMask', 'action': {'selector':
+        {'key': 'keyEquivalentModifierMask'}, 'action': {'selector':
             'orderFrontStandardAboutPanel:', 'target': '-2', 'id': '142'}}
-sep0 = {'isSeparator': 'YES', 'id': '236'}
+sep0 = {'isSeparatorItem': 'YES', 'id': '236', 'userLabel': 'Separator',
+        'modifierMask': {'key': 'keyEquivalentModifierMask', 'command': 'YES'}}
 hide = {'title': 'Hide %s' % appName, 'id': '134', 'keyEquivalent': 'h',
         'action': {'selector':'hide:', 'target':'-1', 'id':'367'}}
 
@@ -40,7 +41,7 @@ servicesMenu = {'key':'submenu', 'title':'Services', 'systemMenu':'services',
 services = {'title': 'Services', 'id': '131', 'menu': servicesMenu}
 
 hideOthers = {'title': 'Hide Others', 'modifierMask':
-        'keyEquivalentModifierMask', 'keyEquivalent': 'h', 'option': 'YES',
+        {'key': 'keyEquivalentModifierMask'}, 'keyEquivalent': 'h', 'option': 'YES',
         'command': 'YES', 'id': '145'}
 
 showAll = {'title': 'Show All', 'id': '150', 'action':
@@ -50,7 +51,7 @@ quit = {'title': 'Quit %s' % appName, 'keyEquivalent': 'q', 'id': '136',
         'userLabel': 'Quit PageBot', 'action': {'selector':'terminate:',
             'target':'-3', 'id':'Fad-te-kKi'}}
 
-new = {'title':'New', 'keyEquivalent':'n', 'id':'83', 'userLabel':'New'}
+new = {'title':'New', 'keyEquivalent':'n', 'id':'82', 'userLabel':'New'}
 open_ = {'title':'Open...', 'keyEquivalent': 'o', 'id':'3rG-1J-ytm'}
 openRecent = {'title':"Open Recent", 'id':"124"}
 
@@ -61,7 +62,8 @@ openRecent = {'title':"Open Recent", 'id':"124"}
 {menu}
 '''
 
-sep10 = {'isSeparatorItem': 'YES', 'id':'79', 'userLabel': 'Separator'}
+sep10 = {'isSeparatorItem': 'YES', 'id':'79', 'userLabel': 'Separator',
+        'modifierMask': {'key': 'keyEquivalentModifierMask', 'command': 'YES'}}
 close = {'title':'Close', 'keyEquivalent':'w', 'id':'73', 'userLabel':'Close'}
 
 menuPageBot = [about, sep0, hide, preferences, services, hideOthers, showAll,
@@ -71,10 +73,11 @@ menuEdit = []
 menuHelp = []
 
 menuList = [
-    {'title': appName, 'systemMenu': 'apple', 'menu': menuPageBot, 'id': '56'},
-    {'title': 'File', 'menu': menuFile, 'id': '81'},
-    #{'title': 'Edit', 'menu': menuEdit, 'id'217'},
-    #{'title': 'Help', 'menu': menuHelp}
+    {'title': appName, 'systemMenu': 'apple', 'menu': menuPageBot, 'id': '56',
+        'subMenuId': '57'},
+    {'title': 'File', 'menu': menuFile, 'id': '83', 'subMenuId': '81'},
+    {'title': 'Edit', 'menu': menuEdit, 'id': '217', 'subMenuId': '205'},
+    {'title': 'Help', 'menu': menuHelp, 'id': '103', 'subMenuId': '106'}
 ]
 
 def mainMenu():
@@ -127,25 +130,26 @@ def buildMenu():
     items = etree.SubElement(menu, 'items')
 
     # The menu columns.
-    for menuDict in menuList:
-        t = menuDict['title']
-        itemID = menuDict['id']
+    for d in menuList:
+        t = d['title']
 
         # Wraps a column.
-        m = etree.Element('menuItem', title=t, id=str(itemID))
-        if 'systemMenu' in menuDict:
-            sm = menuDict['systemMenu']
+        m = etree.Element('menuItem', title=t, id=d['id'])
+
+        if 'systemMenu' in d:
+            sm = d['systemMenu']
             mm = etree.Element('menu', key='submenu', systemMenu=sm, title=t,
-                    id=str(int(itemID) + 1))
+                    id=d['subMenuId'])
         else:
-            mm = etree.Element('menu', key='submenu', title=t, id=str(int(itemID) + 1))
+            mm = etree.Element('menu', key='submenu', title=t, id=d['subMenuId'])
+
         m.append(mm)
         subitems = etree.SubElement(menu, 'items')
         mm.append(subitems)
         items.append(m)
 
         # Now upack the list.
-        submenuList = menuDict['menu']
+        submenuList = d['menu']
 
         for v in submenuList:
             try:
@@ -170,7 +174,8 @@ def getMenuItem(v):
         raise(e)
 
     if 'modifierMask' in v:
-        modifierMask = etree.Element('modifierMask', key='keyEquivalentModifierMask')
+        attrib = v['modifierMask']
+        modifierMask = etree.Element('modifierMask', attrib=attrib)
         menuItem.append(modifierMask)
 
     if 'action' in v:
@@ -188,9 +193,11 @@ def getMenuItem(v):
     return menuItem
 
 def getSubMenu(d):
-    attrib = {}
-    # TODO: recursion?
-    e = etree.Element('menu', attrib=attrib)
+    # TODO: recursion.
+    # if 'menu' in d:
+    #     pop submenu
+    #     do recursion.
+    e = etree.Element('menu', attrib=d)
     return e
 
 def writeFile(root, path):
