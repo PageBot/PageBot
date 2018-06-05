@@ -140,3 +140,6 @@ class PageBotApp(object):
     def terminate(self):
         pass
 
+    def new(self):
+        print('something new')
+
