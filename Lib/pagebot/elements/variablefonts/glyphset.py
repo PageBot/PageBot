@@ -98,7 +98,7 @@ class GlyphSet(BaseFontShow):
         for u, glyphName in sorted(self.f.cmap.items()):
             if u <= 32: # Skip any control characters and space
                 continue
-            bs = c.newString(chr(u), style=dict(font=self.f.path, fontSize=fontSize))
+            bs = c.newString(unichr(u), style=dict(font=self.f.path, fontSize=fontSize))
             tw, th = bs.textSize()
             c.text(bs, (ox+x+self.pl-tw/2, oy+y))
             x += cw

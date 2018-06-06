@@ -53,6 +53,9 @@ class PageView(BaseView):
         # Find the maximum document page size to this in all page sizes of the document.
         w, h, _ = self.doc.getMaxPageSizes(pageSelection)
 
+        # Make sure that canvas is empty, there may have been another document building in this context.
+        context.newDrawing()
+
         context.newDocument(w, h) # Allow the context to create a new document and page canvas.
         for pn, pages in self.doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:
