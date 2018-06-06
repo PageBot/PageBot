@@ -333,7 +333,7 @@ class DrawBotContext(BaseContext):
     def lineJoin(self, value):
         """option value"""
         self.b.lineJoin(value)
-        
+
     def lineCap(self, value):
         """Possible values are butt, square and round."""
         self.b.lineCap(value)
