@@ -157,11 +157,11 @@ class NoneBuilder(object):
 
 
 class NoneDrawBotBuilder(NoneBuilder):
-    
+
     PB_ID = 'drawBot'
 
 class NoneSvgBuilder(NoneBuilder):
-    
+
     PB_ID = 'svg'
 
 class NoneFlatBuilder(NoneBuilder):

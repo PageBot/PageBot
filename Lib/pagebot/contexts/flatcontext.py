@@ -84,7 +84,7 @@ class FlatContext(BaseContext):
         self._ox = 0 # Origin set by self.translate()
         self._oy = 0
         self._rotate = 0
-        
+
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
 
@@ -185,6 +185,17 @@ class FlatContext(BaseContext):
         self.page.size(w, h, units='pt')
         self.pages.append(self.page)
 
+    def newDrawing(self):
+        u"""Clear output canvas, start new export file.
+
+        >>> context = FlatContext()
+        >>> context.newDocument()
+        """
+        # FIXME: needs a width and height, so different from DrawBot?
+        #context = FlatContext()
+        #context.newDrawing(w, h)
+        pass
+
     #   C A N V A S
 
     def saveGraphicState(self):
@@ -195,7 +206,7 @@ class FlatContext(BaseContext):
         >>> context._font.endswith('Roboto-Regular.ttf')
         True
         >>> context.save()
-        >>> boldFont = findFont('Roboto-Bold') 
+        >>> boldFont = findFont('Roboto-Bold')
         >>> context.font(boldFont) # Set by Font instance
         >>> context._font.endswith('Roboto-Bold.ttf')
         True

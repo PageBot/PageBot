@@ -27,7 +27,7 @@ from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
     u"""The PageView is contains the parameters to export the pages as documents.
-    A View is just another kind of container, kept by document to make a certain presentation 
+    A View is just another kind of container, kept by document to make a certain presentation
     of the page tree. Views use the current Context.b builder for export."""
     viewId = 'Page'
 
@@ -60,7 +60,7 @@ class PageView(BaseView):
         for pn, pages in self.doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
-            
+
             # TODO: Some options here for layout of the combined pages, depending on the spread view option.
             # self.showSpreadPages # Show even/odd pages as spread, as well as pages that share the same pagenumber.
             # self.showSpreadMiddleAsGap # Show the spread with single crop marks. False glues pages togethers as in real spread.
@@ -71,7 +71,7 @@ class PageView(BaseView):
             # Size depends on the size of the larges pages + optional decument padding.
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered.
-            
+
             if self.pl > self.MIN_PADDING and \
                self.pt > self.MIN_PADDING and \
                self.pb > self.MIN_PADDING and \
@@ -103,12 +103,12 @@ class PageView(BaseView):
 
             # Use the (docW, docH) as offset, in case cropmarks need to be displayed.
             # Recursively call all elements in the tree to build themselves.
-            # Note that is independent from the context. If there is a difference, the elements should 
+            # Note that is independent from the context. If there is a difference, the elements should
             # make the switch themselves.
             page.buildChildElements(self, origin)
 
             self.drawPageMetaInfo(page, origin)
-            
+
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, self, origin)
 
@@ -157,7 +157,7 @@ class PageView(BaseView):
         >>> page = doc[1]
         >>> view = doc.getView()
         >>> view.showGrid = True
-        >>> view.drawPageMetaInfo(page, (0, 0)) 
+        >>> view.drawPageMetaInfo(page, (0, 0))
         """
         self.drawPageFrame(page, origin)
         self.drawPagePadding(page, origin)
@@ -175,7 +175,7 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values 
+        >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showPageFrame = True
@@ -198,7 +198,7 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values 
+        >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showPageFrame = True
@@ -213,7 +213,7 @@ class PageView(BaseView):
             px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
 
             context.setFillColor(None)
-            context.setStrokeColor(self.css('viewPagePaddingStroke', (0.2, 0.2, 1)), 
+            context.setStrokeColor(self.css('viewPagePaddingStroke', (0.2, 0.2, 1)),
                                    self.css('viewPagePaddingStrokeWidth', 0.5))
             if page.originTop:
                 pass
@@ -230,7 +230,7 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values 
+        >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showPageNameInfo = True
@@ -324,7 +324,7 @@ class PageView(BaseView):
         ay1 = yt + sin(hookedAngle+arrowAngle) * arrowSize
         ax2 = xt - cos(hookedAngle-arrowAngle) * arrowSize
         ay2 = yt + sin(hookedAngle-arrowAngle) * arrowSize
-        
+
         b = self.b
         b.newPath()
         self.setFillColor(None)
@@ -405,7 +405,7 @@ class PageView(BaseView):
                 # TODO: Make separate arrow functio and better positions
                 # Draw width and height measures
                 context.setFillColor(None)
-                context.setStrokeColor(0, 0.25) 
+                context.setStrokeColor(0, 0.25)
                 S = self.css('viewInfoOriginMarkerSize', 4)
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
@@ -472,7 +472,7 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values 
+        >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showMissingElementRect = True
@@ -518,7 +518,7 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values 
+        >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showGrid = True
@@ -589,7 +589,7 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values 
+        >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showBaselineGrid = True
@@ -656,7 +656,7 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values 
+        >>> style = getRootStyle() # Get default values
         >>> e = Element() # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showPageRegistrationMarks = True
@@ -679,7 +679,7 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values 
+        >>> style = getRootStyle() # Get default values
         >>> e = Element()
         >>> view = PageView(context=context, style=style)
         >>> view.showPageCropMarks = True
@@ -727,7 +727,7 @@ class PageView(BaseView):
         u"""This method is called if the view is used as a placable element inside
         another element, such as a Page or Template. """
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
