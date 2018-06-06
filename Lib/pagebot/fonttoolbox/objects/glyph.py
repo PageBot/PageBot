@@ -26,6 +26,7 @@ from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
 from pagebot.toolbox.transformer import point2D
 from pagebot.fonttoolbox.analyzers.apoint import APoint
 from pagebot.fonttoolbox.analyzers.asegment import ASegment
+from pagebot.fonttoolbox.analyzers.acomponent import AComponent
 
 context = getContext()
 
@@ -53,41 +54,24 @@ class Glyph(object):
     extracts data from the raw glyph such as point sequence and type.
 
     >>> from pagebot.fonttoolbox.objects.font import findFont
-    >>> f = findFont('Amstelvar-Roman-VF') # Keep font alive to glyph.font weakref
+    >>> f = findFont('RobotoDelta-VF') # Keep font alive to glyph.font weakref
     >>> g = f['a']
     >>> g.name
     'a'
-
-    """
-    """
-    TODO: Get more docTests to work.
     >>> len(g.points)
-    40
+    46
     >>> g.points[-1].onCurve
     False
     >>> contours = g.contours
     >>> len(contours)
     2
-    TODO: Solve this for Flat.
-    >>> path = g.path
-    >>> print(path)
-    <BezierPath>
-    >>> nspath = path.getNSBezierPath()
-    >>> bounds = nspath.bounds()
-    >>> print(bounds)
-    <NSRect origin=<NSPoint x=38.0 y=-15.0> size=<NSSize width=948.0 height=1037.0>>
-    >>> len(bounds)
-    2
-    >>> len(bounds[0])
-    2
-    >>> len(bounds[1])
-    2
-    >>> print(bounds[0])
-    <NSPoint x=38.0 y=-15.0>
-    >>> bounds[0][0]
-    38.0
-    """
+    >>> g = f['agrave']
+    >>> g.components
+    [Cmp(a, 0, 0), Cmp(grave, 51, 0)]
+    >>> g.getComponentNames()
+    ['a', 'grave']
 
+    """
     GLYPHANALYZER_CLASS = GlyphAnalyzer
     AXIS_DELTAS_CLASS = AxisDeltas
 
@@ -120,6 +104,11 @@ class Glyph(object):
         return '<PageBot Glyph %s Pts:%d/Cnt:%d/Cmp:%d>' % (self.name,
             len(self.coordinates), len(self.endPtsOfContours), len(self.components))
 
+    def __getitem__(self, contourIndex):
+        if self._contours is None:
+            self._initialize()
+        return self._contours[contourIndex]
+
     def _initialize(self):
         u"""Initializes the cached data, such as self.points, self.contour,
         self.components and self.path, as side effect of drawing the path image."""
@@ -131,8 +120,14 @@ class Glyph(object):
         self._segments = []
         self._boundingBox = None
 
+        self.ttGlyph.expand(self.font.ttFont['glyf'])
+
+        # Initialize the AComponent wrappers
+        if hasattr(self.ttGlyph, 'components'):
+            for ttComponent in self.ttGlyph.components:
+                self._components.append(AComponent(ttComponent))
+
         coordinates = self.coordinates # Get list from the font.
-        components = self._components # No property call to avoid infinite recursion.
         flags = self.flags
         endPtsOfContours = set(self.endPtsOfContours)
         openContour = False
@@ -143,8 +138,17 @@ class Glyph(object):
         minX = minY = sys.maxsize # Store bounding box as we process the coordinate.
         maxX = maxY = -sys.maxsize
 
-        if coordinates or components:
+        if coordinates or self._components:
             self._path = path = context.newPath()
+
+        for component in self._components:
+            componentName = component.baseGlyph
+            if componentName in self.font.keys():
+                componentPath = self.font[componentName].path
+                componentPath.transform((1, 0, 0, 1, component.x, component.y))
+                path.appendPath(componentPath)
+                componentPath.transform((1, 0, 0, 1, -component.x, -component.y))
+
 
         for index, (x, y) in enumerate(coordinates):
             minX = min(x, minX)
@@ -452,6 +456,12 @@ class Glyph(object):
         return self._components
     components = property(_get_components)
 
+    def getComponentNames(self):
+        componentNames = []
+        for component in self.components:
+            componentNames.append(component.baseGlyph)
+        return componentNames
+
     def _get_variables(self):
         u"""Answer the axis-deltas for this glyph. Answer an None if there are
         no deltas for this glyph or if the parent is not a Var-font.
@@ -490,11 +500,7 @@ class Glyph(object):
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = getFont(path)
         >>> glyph = font['H']
-        """
-
-        """
-        TODO: Get more docTests to work
-        >>> str(glyph.path) in ('<BezierPath>',)
+        >>> glyph.path is not None
         True
         """
         if self._path is None or self.dirty:

@@ -11,6 +11,7 @@
 # -----------------------------------------------------------------------------
 #
 from random import random
+from math import sin, cos, radians
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.elements.variablefonts.animationframe import AnimationFrame
 from pagebot.document import Document
@@ -119,14 +120,14 @@ pn = 1
 for axisTag in font.axes.keys():
     axisFrames = 
     minValue, defaultValue, maxValue = font.axes[axisTag]
-    for frameIndex in range(1, len(font.axes)):
+    for axisFrameIndex in range(axisFrames):
         page = doc[pn]
         axisRange = maxValue - minValue
-        phisin = sin(radians(frameIndex/self.frames * 360))
-        phicos = cos(radians(self.frameIndex/self.frames * 360))
+        phisin = sin(radians(axisFrameIndex/axisFrames * 360))
         
-        location = {phisin*wdthRange/2+wdthRange/2+wdthMin, wght=phisin*wghtRange/2+wghtRange/2+wghtMin)
+        location = {axisTag: phisin*axisRange/2+axisRange/2+minValue)
         style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, fill=0)
+        
         af = AnimatedBannerFrame(font, frames, pn, parent=page, padding=20, style=style, 
             sampleText=sample, w=page.pw, h=page.ph, context=c)
         pn += 1
