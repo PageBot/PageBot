@@ -36,7 +36,48 @@ class AppDelegate(NSObject):
         self.pagebotapp.terminate()
         return True
 
+    @objc.IBAction
     def new_(self, sender):
         self.pagebotapp.new()
+
+    @objc.IBAction
+    def open_(self, sender):
+        self.pagebotapp.open()
+
+    @objc.IBAction
+    def close_(self, sender):
+        self.pagebotapp.close()
+
+    @objc.IBAction
+    def save_(self, sender):
+        self.pagebotapp.save()
+
+    @objc.IBAction
+    def saveAs_(self, sender):
+        self.pagebotapp.saveAs()
+
+    @objc.IBAction
+    def cut_(self, sender):
+        self.pagebotapp.cut()
+
+    @objc.IBAction
+    def copy_(self, sender):
+        self.pagebotapp.copy()
+
+    @objc.IBAction
+    def paste_(self, sender):
+        self.pagebotapp.paste()
+
+    @objc.IBAction
+    def delete_(self, sender):
+        self.pagebotapp.delete()
+
+    @objc.IBAction
+    def undo_(self, sender):
+        self.pagebotapp.undo()
+
+    @objc.IBAction
+    def redo_(self, sender):
+        self.pagebotapp.redo()
 
 AppHelper.runEventLoop()

@@ -13,7 +13,10 @@ except:
 
 path = './en.lproj/MainMenu.xib'
 appName = 'PageBot'
-delegateID = 373
+filesOwnerID = '-2'
+firstResponderID = '-1'
+applicationID = '-3'
+delegateID = 373 # Can probably be anything, really.
 ibType = "com.apple.InterfaceBuilder3.Cocoa.XIB"
 pluginIdentifier = "com.apple.InterfaceBuilder.CocoaPlugin"
 version = '3.0'
@@ -30,18 +33,37 @@ def getSeparator(sid):
     return {'isSeparatorItem': 'YES', 'id': str(sid), 'userLabel': 'Separator',
             'modifierMask': {'key': 'keyEquivalentModifierMask', 'command': 'YES'}}
 
-'''
-Menu as a dictionary. This part should be edited.
+def getAction(callback, aid=None, target=delegateID):
+    """Callback should have the Objective-C syntax ending with a colon, for
+    example:
 
-'''
+        new:
+
+    The target should implement a corresponding function conforming to the PyObjC syntax:
+
+        def new_(self, sender):
+            ...
+
+    """
+    cb = callback.replace('_', ':')
+
+    if aid is None:
+        aid = callback.replace('_', '')
+
+    return {'selector': cb, 'target': str(target), 'id': str(aid)}
+
+'''Menu as a dictionary. This part should be edited to change the menu structure.
+Make sure all ID's are unique, otherwise the application will give an error and
+crash. Custom callbacks can be added through the action option, which will try
+to link the button to a selector conforming to the PyObjC syntax.'''
 
 # Pagebot menu items.
 about = {'title': 'About %s' % appName, 'id': '58', 'modifierMask':
         {'key': 'keyEquivalentModifierMask'}, 'action': {'selector':
-            'orderFrontStandardAboutPanel:', 'target': '-2', 'id': '142'}}
+            'orderFrontStandardAboutPanel:', 'target': filesOwnerID, 'id': '142'}}
 s236 = getSeparator(236)
 hide = {'title': 'Hide %s' % appName, 'id': '134', 'keyEquivalent': 'h',
-        'action': {'selector':'hide:', 'target':'-1', 'id':'367'}}
+        'action': getAction('hide:', target=firstResponderID, aid=367)}
 preferences = {'title': 'Preferences...', 'id': '129', 'keyEquivalent': ',',
         'userLabel': 'Preferences'}
 s143 = getSeparator(143)
@@ -52,23 +74,24 @@ s144 = getSeparator(144)
 hideOthers = {'title': 'Hide Others', 'modifierMask':
         {'key': 'keyEquivalentModifierMask'}, 'keyEquivalent': 'h', 'option': 'YES',
         'command': 'YES', 'id': '145'}
-showAll = {'title': 'Show All', 'id': '150', 'action':
-        {'selector':'unhideAllApplications:', 'target':'-1', 'id': '370'}}
+showAll = {'title': 'Show All', 'id': '150',
+        'action': getAction('unhideAllApplications:', target=firstResponderID, aid=370)}
 s149 = getSeparator(149)
 quit = {'title': 'Quit %s' % appName, 'keyEquivalent': 'q', 'id': '136',
-        'userLabel': 'Quit PageBot', 'action': {'selector':'terminate:',
-            'target':'-3', 'id':'Fad-te-kKi'}}
+        'userLabel': 'Quit PageBot', 'action': getAction('terminate:',
+            target=applicationID, aid='Fad-te-kKi')}
 
 menuPageBot = [about, s236, hide, preferences, s143, services, s144,
         hideOthers, showAll, s149, quit]
 
 # File menu items.
-new = {'title':'New', 'keyEquivalent':'n', 'id':'82', 'userLabel':'New'}
-        #'action': {'selector':'new:', 'target':'-3', 'id':'bla'}}
-open_ = {'title':'Open...', 'keyEquivalent': 'o', 'id':'3rG-1J-ytm'}
+new = {'title':'New', 'keyEquivalent':'n', 'id':'82', 'userLabel':'New',
+        'action': getAction('new_')}
+open_ = {'title':'Open...', 'keyEquivalent': 'o', 'id':'3rG-1J-ytm',
+        'action': getAction('open_')}
 
 clearMenu = {'title':"Clear Menu", 'state': "on", 'id': "126", 'action':
-        {'selector': "clearRecentDocuments:", 'target':"-1", 'id': "127"}}
+        {'selector': "clearRecentDocuments:", 'target':firstResponderID, 'id': "127"}}
 
 recentMenu = {'key': "submenu", 'title': "Open Recent", 'systemMenu':
         "recentDocuments", 'id': "125", 'items': [clearMenu]}
@@ -76,14 +99,17 @@ recentMenu = {'key': "submenu", 'title': "Open Recent", 'systemMenu':
 openRecent = {'title':"Open Recent", 'id':"124", 'menu': recentMenu}
 s79 = {'isSeparatorItem': 'YES', 'id':'79', 'userLabel': 'Separator',
         'modifierMask': {'key': 'keyEquivalentModifierMask', 'command': 'YES'}}
-close = {'title':'Close', 'keyEquivalent':'w', 'id':'73', 'userLabel':'Close'}
-save = {'title':"Save", 'keyEquivalent':"s", 'id':"75", 'userLabel':"Save"}
+close = {'title':'Close', 'keyEquivalent':'w', 'id':'73', 'userLabel':'Close',
+        'action': getAction('close')}
+save = {'title':"Save", 'keyEquivalent':"s", 'id':"75", 'userLabel':"Save",
+        'action': getAction('save')}
 saveAs = {'title':'Save As...', 'keyEquivalent': "S", 'id': "80", 'userLabel':
         "Save As...", 'modifierMask': {'key': "keyEquivalentModifierMask",
-            'shift': "YES", 'command': "YES"}}
+            'shift': "YES", 'command': "YES"}, 'action': getAction('saveAs')}
 revert = {'title':"Revert to Saved", 'id':"112", 'userLabel':"Revert to Saved",
         'modifierMask': { 'key':"keyEquivalentModifierMask"}, 'action':
-        {'selector':"revertDocumentToSaved:", 'target':"-1", 'id':"364"}}
+        getAction("revertDocumentToSaved:", target=firstResponderID, aid=364)}
+
 export = {'title':"Export...", 'keyEquivalent':"X", 'id':"4Lj-dJ-kqz"}
 info = {'title':"Info...", 'keyEquivalent':"I", 'id':"Caq-rH-He2",
         'modifierMask': {'key':"keyEquivalentModifierMask"}}
@@ -92,28 +118,30 @@ s74 = {'isSeparatorItem':"YES", 'id':"74", 'userLabel':"Separator",
 pageSetup = {'title':"Page Setup...", 'keyEquivalent':"P", 'id':"77",
         'userLabel':"Page Setup...", 'modifierMask':
         {'key':"keyEquivalentModifierMask", 'shift':"YES", 'command':"YES"},
-        'action': {'selector':"runPageLayout:", 'target':"-1", 'id':"87"}}
+        'action': getAction("runPageLayout:", target=firstResponderID, aid=87)}
 print_ = {'title':"Print...", 'keyEquivalent':"p", 'id':"78",
-        'userLabel':"Print...", 'action': {'selector':"print:", 'target':"-1",
-            'id':"86"}}
+        'userLabel':"Print...", 'action': getAction("print:", target=firstResponderID,
+            aid=86)}
 
 menuFile = [new, open_, openRecent, s79, close, save, saveAs, revert, export, info,
         s74, pageSetup, print_]
 
 # Edit menu items.
 redo = {'title':"Redo", 'keyEquivalent':"Z", 'id':"215", 'modifierMask':
-        {'key':"keyEquivalentModifierMask", 'shift':"YES", 'command':"YES"}}
-undo = {'title':"Undo", 'keyEquivalent':"z", 'id':"207"}
+        {'key':"keyEquivalentModifierMask", 'shift':"YES", 'command':"YES"},
+        'action': getAction('redo')}
+undo = {'title':"Undo", 'keyEquivalent':"z", 'id':"207",
+        'action': getAction('undo')}
 s206 = {'isSeparatorItem':"YES", 'id':"206", 'modifierMask':
         {'key':"keyEquivalentModifierMask", 'command':"YES"}}
 cut = {'title':"Cut", 'keyEquivalent':"x", 'id':"199", 'action':
-        {'selector':"cut:", 'target':"-1", 'id':"228"}}
+        getAction("cut:", target=delegateID, aid=228)}
 copy = {'title':"Copy", 'keyEquivalent':"c", 'id':"197", 'action':
-        {'selector':"copy:", 'target':"-1", 'id':"224"}}
+        getAction("copy:", target=delegateID, aid=224)}
 paste = {'title':"Paste", 'keyEquivalent':"v", 'id':"203", 'action':
-        {'selector':"paste:", 'target':"-1", 'id':"226"}}
-delete = {'title':"Delete", 'id':"202", 'action': {'selector':"delete:",
-    'target':"-1", 'id':"235"}}
+        getAction("paste:", target=delegateID, aid=226)}
+delete = {'title':"Delete", 'id':"202", 'action': getAction("delete:",
+    target=delegateID, aid=235)}
 selectAll = {'title':"Select All", 'id':"198", 'modifierMask':
         {'key':"keyEquivalentModifierMask"}}
 s214 = {'isSeparatorItem':"YES", 'id':"214", 'modifierMask':
@@ -124,8 +152,8 @@ menuEdit = [redo, undo, s206, cut, copy, paste, delete, selectAll, s214]
 # Find menu items.
 
 find_ = {'title':"Find...", 'tag':"1", 'keyEquivalent':"f", 'id':"209",
-        'action': {'selector':"performFindPanelAction:", 'target':"-1",
-            'id':"241"}}
+        'action': getAction("performFindPanelAction:", target=firstResponderID,
+            aid=241)}
 findNext = {'title':"Find Next", 'tag':"2", 'keyEquivalent':"g", 'id':"208"}
 findPrevious = {'title':"Find Previous", 'tag':"3", 'keyEquivalent':"G",
         'id':"213", 'modifierMask': {'key':"keyEquivalentModifierMask"},
@@ -133,15 +161,15 @@ findPrevious = {'title':"Find Previous", 'tag':"3", 'keyEquivalent':"G",
 useSelection = {'title':"Use Selection for Find", 'tag':"7",
         'keyEquivalent':"e", 'id':"221"}
 jumpTo = {'title':"Jump to Selection", 'keyEquivalent':"j", 'id':"210",
-        'action': {'selector':"centerSelectionInVisibleArea:", 'target':"-1",
-            'id':"245"}}
+        'action': getAction("centerSelectionInVisibleArea:", target=firstResponderID,
+            aid=245)}
 
 menuFind = [find_, findNext, findPrevious, useSelection, jumpTo]
 
 # Help menu items.
 pagebotHelp = {'title':"PageBot Help", 'keyEquivalent':"?", 'id':"111",
-        'userLabel':"PageBot Help", 'action': {'selector':"showHelp:",
-            'target':"-1", 'id':"360"}}
+        'userLabel':"PageBot Help", 'action': getAction("showHelp:",
+            target=firstResponderID, aid=360)}
 
 menuHelp = [pagebotHelp]
 
@@ -171,11 +199,11 @@ def mainMenu():
 
     # Application objects.
     objects = etree.SubElement(root, 'objects')
-    co1 = etree.Element('customObject', id='-2', userLabel="File's Owner",
+    co1 = etree.Element('customObject', id=filesOwnerID, userLabel="File's Owner",
             customClass="NSApplication")
-    co2 = etree.Element('customObject', id='-1', userLabel="First Responder",
+    co2 = etree.Element('customObject', id=firstResponderID, userLabel="First Responder",
             customClass="FirstResponder")
-    co3 = etree.Element('customObject', id='-3', userLabel="Application",
+    co3 = etree.Element('customObject', id=applicationID, userLabel="Application",
             customClass="NSObject")
 
     # Connection to PyObjC AppDelegate class.
