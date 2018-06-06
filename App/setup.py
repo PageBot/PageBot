@@ -19,7 +19,7 @@ Usage:
 from setuptools import setup
 
 setup(
-    app=['delegate.py'],
+    app=['appdelegate.py'],
     name="PageBot",
     data_files=['en.lproj'],#, '../fonts'],
     setup_requires=['py2app'],
