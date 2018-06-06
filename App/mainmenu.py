@@ -26,35 +26,45 @@ propertyAccessControl="none"
 flatKeys = ('isSeparatorItem', 'id', 'title', 'keyEquivalent', 'userLabel',
         'option', 'command', 'state', 'shift')
 
+def getSeparator(sid):
+    return {'isSeparatorItem': 'YES', 'id': str(sid), 'userLabel': 'Separator',
+            'modifierMask': {'key': 'keyEquivalentModifierMask', 'command': 'YES'}}
+
+'''
+Menu as a dictionary. This part should be edited.
+
+'''
+
 # Pagebot menu items.
 about = {'title': 'About %s' % appName, 'id': '58', 'modifierMask':
         {'key': 'keyEquivalentModifierMask'}, 'action': {'selector':
             'orderFrontStandardAboutPanel:', 'target': '-2', 'id': '142'}}
-s236 = {'isSeparatorItem': 'YES', 'id': '236', 'userLabel': 'Separator',
-        'modifierMask': {'key': 'keyEquivalentModifierMask', 'command': 'YES'}}
+s236 = getSeparator(236)
 hide = {'title': 'Hide %s' % appName, 'id': '134', 'keyEquivalent': 'h',
         'action': {'selector':'hide:', 'target':'-1', 'id':'367'}}
-preferences = {'title': 'Preferences...', 'id': '143', 'keyEquivalent': ',',
+preferences = {'title': 'Preferences...', 'id': '129', 'keyEquivalent': ',',
         'userLabel': 'Preferences'}
-
+s143 = getSeparator(143)
 servicesMenu = {'key':'submenu', 'title':'Services', 'systemMenu':'services',
         'id':'130'}
 services = {'title': 'Services', 'id': '131', 'menu': servicesMenu}
-
+s144 = getSeparator(144)
 hideOthers = {'title': 'Hide Others', 'modifierMask':
         {'key': 'keyEquivalentModifierMask'}, 'keyEquivalent': 'h', 'option': 'YES',
         'command': 'YES', 'id': '145'}
-
 showAll = {'title': 'Show All', 'id': '150', 'action':
         {'selector':'unhideAllApplications:', 'target':'-1', 'id': '370'}}
-
+s149 = getSeparator(149)
 quit = {'title': 'Quit %s' % appName, 'keyEquivalent': 'q', 'id': '136',
         'userLabel': 'Quit PageBot', 'action': {'selector':'terminate:',
             'target':'-3', 'id':'Fad-te-kKi'}}
 
+menuPageBot = [about, s236, hide, preferences, s143, services, s144,
+        hideOthers, showAll, s149, quit]
+
 # File menu items.
-new = {'title':'New', 'keyEquivalent':'n', 'id':'82', 'userLabel':'New',
-        'action': {'selector':'new:', 'target':'-3', 'id':'bla'}}
+new = {'title':'New', 'keyEquivalent':'n', 'id':'82', 'userLabel':'New'}
+        #'action': {'selector':'new:', 'target':'-3', 'id':'bla'}}
 open_ = {'title':'Open...', 'keyEquivalent': 'o', 'id':'3rG-1J-ytm'}
 
 clearMenu = {'title':"Clear Menu", 'state': "on", 'id': "126", 'action':
@@ -77,7 +87,6 @@ revert = {'title':"Revert to Saved", 'id':"112", 'userLabel':"Revert to Saved",
 export = {'title':"Export...", 'keyEquivalent':"X", 'id':"4Lj-dJ-kqz"}
 info = {'title':"Info...", 'keyEquivalent':"I", 'id':"Caq-rH-He2",
         'modifierMask': {'key':"keyEquivalentModifierMask"}}
-
 s74 = {'isSeparatorItem':"YES", 'id':"74", 'userLabel':"Separator",
         'modifierMask': {'key':"keyEquivalentModifierMask", 'command':"YES"}}
 pageSetup = {'title':"Page Setup...", 'keyEquivalent':"P", 'id':"77",
@@ -88,6 +97,8 @@ print_ = {'title':"Print...", 'keyEquivalent':"p", 'id':"78",
         'userLabel':"Print...", 'action': {'selector':"print:", 'target':"-1",
             'id':"86"}}
 
+menuFile = [new, open_, openRecent, s79, close, save, saveAs, revert, export, info,
+        s74, pageSetup, print_]
 
 # Edit menu items.
 redo = {'title':"Redo", 'keyEquivalent':"Z", 'id':"215", 'modifierMask':
@@ -108,6 +119,8 @@ selectAll = {'title':"Select All", 'id':"198", 'modifierMask':
 s214 = {'isSeparatorItem':"YES", 'id':"214", 'modifierMask':
         {'key':"keyEquivalentModifierMask", 'command':"YES"}}
 
+menuEdit = [redo, undo, s206, cut, copy, paste, delete, selectAll, s214]
+
 # Find menu items.
 
 find_ = {'title':"Find...", 'tag':"1", 'keyEquivalent':"f", 'id':"209",
@@ -123,18 +136,13 @@ jumpTo = {'title':"Jump to Selection", 'keyEquivalent':"j", 'id':"210",
         'action': {'selector':"centerSelectionInVisibleArea:", 'target':"-1",
             'id':"245"}}
 
+menuFind = [find_, findNext, findPrevious, useSelection, jumpTo]
 
 # Help menu items.
 pagebotHelp = {'title':"PageBot Help", 'keyEquivalent':"?", 'id':"111",
         'userLabel':"PageBot Help", 'action': {'selector':"showHelp:",
             'target':"-1", 'id':"360"}}
 
-menuPageBot = [about, s236, hide, preferences, services, hideOthers, showAll,
-        quit]
-menuFile = [new, open_, openRecent, s79, close, save, saveAs, revert, export, info,
-        s74, pageSetup, print_]
-menuEdit = [redo, undo, s206, cut, copy, paste, delete, selectAll, s214]
-menuFind = [find_, findNext, findPrevious, useSelection, jumpTo]
 menuHelp = [pagebotHelp]
 
 # TODO: 'items' instead of 'menu' for full recursion from top level.
@@ -288,7 +296,7 @@ def writeFile(root, path):
             pretty_print=True)
     f.write(lines)
     f.close()
-
+    print('Wrote menu to %s' % path)
 
 if __name__ == '__main__':
     mainMenu()
