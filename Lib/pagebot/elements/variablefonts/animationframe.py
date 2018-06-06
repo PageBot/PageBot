@@ -16,9 +16,11 @@
 #
 from __future__ import division # Make integer division result in float.
 
+from math import sin, cos, radians
+
 from pagebot.elements import Rect
 from pagebot.toolbox.transformer import pointOffset
-from pagebot.fonttoolbox.objects.font import getInstance
+from pagebot.fonttoolbox.objects.font import getInstance, Font
 
 class AnimationFrame(Rect):
     u"""Showing one frame of an animation, supporting different states of a VariableFont 
@@ -39,12 +41,13 @@ class AnimationFrame(Rect):
         >>> duration = 3 # Seconds
         >>> framesPerSecond = 10
         >>> frames = duration * framesPerSecond
-        >>> doc = Document(w=w, h=h, padding=10, originTop=False, frameDuration=1/framesPerSecond, autoPages=frames, context=c)
-        >>> font = findFont('AmstelvarAlpha-VF')
+        >>> doc = Document(w=w, h=h, padding=10, originTop=False, glyphName='Agrave', frameDuration=1/framesPerSecond, autoPages=frames, context=c)
+        >>> font = findFont('RobotoDelta-VF')
+        >>> sample = 'Bitcount'
         >>> for pn in range(1, frames+1):
         ...     page = doc[pn]
-        ...     style = dict(rLeading=1.4, fontSize=48, xTextAlign=RIGHT)
-        ...     gs = AnimationFrame(font, frames, pn, parent=page, padding=20, style=style, w=page.pw, h=page.ph, context=c)
+        ...     style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, fill=0)
+        ...     gs = AnimationFrame(font, frames, pn, parent=page, padding=20, style=style, sampleText='Claire', w=page.pw, h=page.ph, context=c)
         >>> doc.export('_export/%sAnimation.gif' % font.info.familyName)
 
         TODO: Make self.css('xTextAlign') work for CENTER
@@ -86,29 +89,61 @@ class AnimationFrame(Rect):
         if the axis exists.
 
         """
+        wdthMin, wdthDefault, wdthMax = self.f.axes['wdth']
+        wghtMin, wghtDefault, wghtMax = self.f.axes['wght']
+
         ox, oy, _ = origin
         c = self.context
         style = self.style.copy()
         #location = getScaledLocation(self.f, dict(wght=self.frameIndex/self.frames))
         #instance = getInstance(self.f, location)
-        style['textFill'] = 1/self.frames * self.frameIndex
+        phisin = sin(radians(self.frameIndex/self.frames * 360))
+        phicos = cos(radians(self.frameIndex/self.frames * 360))
+
+        style['textFill'] = 1-phicos*0.3+0.5 
         # TODO: Not the right instance-weight is shown in export.
-        instance = getInstance(self.f, dict(wdth=self.frameIndex/self.frames*(600-100)+100, wght=self.frameIndex/self.frames*(900-200)+200))#instance.path
+        wdthRange = wdthMax - wdthMin
+        wghtRange = wghtMax - wghtMin
+        location = dict(wdth=phisin*wdthRange/2+wdthRange/2+wdthMin, wght=phisin*wghtRange/2+wghtRange/2+wghtMin)
+        instance = self.f.getInstance(location)#instance.path
         style['font'] = instance.path
         #print(self.frameIndex, style['font'])
-        style['fontSize'] = self.h/2
+        #style['fontSize'] = self.h/3
         bs = c.newString(self.sampleText, style=style)
         tw, th = bs.textSize()
         c.text(bs, (self.w/2 - tw/2, self.h/2))
 
-        glyph = instance['H']
+
+
+        glyph = instance['ampersand']
         c.save()
         c.stroke(0, 0.25)
-        c.fill((0.7, 0.7, 0.7, 0.6))
-        s = 0.45
+        gray = phisin*0.3+0.5 
+        c.fill((gray, gray, 1-gray, 0.6))
+        s = 0.4
         c.scale(s)
-        c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/3)/s))
+        c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/4)/s))
         c.restore()
+
+
+        path = "/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/variable_ttf/BitcountTest_DoubleCircleSquare4-VF.ttf"
+        f = Font(path)
+        SHPEMin, SHPEDefault, SHPEMax = f.axes['SHPE']
+        SHPERange = SHPEMax - SHPEMin
+        wghtMin, wghtDefault, wghtMax = self.f.axes['wght']
+        wghtRange = wghtMax - wghtMin
+        location = dict(SHPE=phisin*SHPERange/2+SHPERange/2+SHPEMin, wght=phicos*wghtRange/2+wghtRange/2+wghtMin)
+        instance = f.getInstance(location)#instance.path
+        glyph = instance['A']
+        c.save()
+        c.stroke((1, 0, 0), 0.25)
+        gray = phisin*0.3+0.7
+        c.fill((gray, gray, gray, 0.8))
+        s = 1
+        c.scale(s)
+        c.drawPath(glyph.path, ((ox+self.w/2+self.pl)/s, (oy+self.ph/4)/s))
+        c.restore()
+
 
 if __name__ == '__main__':
     import doctest
