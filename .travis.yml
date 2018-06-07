@@ -51,12 +51,13 @@ script:
 - python Lib/pagebot/elements/pbrect.py
 - python Lib/pagebot/elements/pbruler.py
 - python Lib/pagebot/elements/pbtextbox.py
-- python Lib/pagebot/elements/variablefonts/variablecircle.py
-- python Lib/pagebot/elements/variablefonts/variablecube.py
-- python Lib/pagebot/elements/variablefonts/variablecube2.py
-- python Lib/pagebot/elements/variablefonts/variableeditor.py
-- python Lib/pagebot/elements/variablefonts/variableglyphs.py
-- python Lib/pagebot/elements/variablefonts/variablescatter.py
+  #- python Lib/pagebot/elements/variablefonts/variablecircle.py
+  #- python Lib/pagebot/elements/variablefonts/variablecube.py
+  #- python Lib/pagebot/elements/variablefonts/variablecube2.py
+  #- python Lib/pagebot/elements/variablefonts/variableeditor.py
+  #- python Lib/pagebot/elements/variablefonts/variableglyphs.py
+  #- python Lib/pagebot/elements/variablefonts/variablescatter.py
+- python Lib/pagebot/elements/variablefonts/*.py
 - python Lib/pagebot/elements/views/pageview.py
 - python Lib/pagebot/elements/web/simplesite/site.py
 - python Lib/pagebot/fonttoolbox/mutator.py
