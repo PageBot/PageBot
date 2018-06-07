@@ -233,7 +233,7 @@ def makeInstance(path, location, dstPath=None, normalize=True, cached=True, lazy
     >>> len(instance['H'].points)
     12
     >>> len(instance['Egrave'].components)
-    
+    2
     """
 
     # make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
