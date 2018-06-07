@@ -19,11 +19,11 @@ from __future__ import division # Make integer division result in float.
 from pagebot.elements.pbgroup import Group
 
 class Site(Group):
-    """Build a page, similar to the original template.
+    u"""Build a page, similar to the original template.
 
     """
     def build_html(self, view, origin=None, drawElements=True):
-        """Build the HTML/CSS navigation, depending on the pages in the root document.
+        u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 
         >>> from pagebot.document import Document
         >>> from pagebot.elements import newTextBox

@@ -19,7 +19,7 @@ from pagebot.toolbox.transformer import point2D
 from functools import reduce
 
 def lucasRange(a, z, n, minN=None, maxN=None):
-    """Answers the range stem widths for interpolation, according to
+    u"""Answers the range stem widths for interpolation, according to
     Lucas’ formula.
 
     http://www.lucasfonts.com/about/interpolation-theory/
@@ -47,7 +47,7 @@ def lucasRange(a, z, n, minN=None, maxN=None):
     return i
 
 def intersection(p1, p2, p3, p4):
-    """Returns 2D intersection point if it exists. Otherwise (None, None,
+    u"""Returns 2D intersection point if it exists. Otherwise (None, None,
     None) is answered. Different from the RoboFont intersection tool, we
     intersect on infinite line lengths. See also:
 
@@ -66,7 +66,7 @@ def intersection(p1, p2, p3, p4):
     return None, None
 
 def isBetween(p1, p2, p):
-    """Checks if point is on line between line endpoints. Uses epsilon
+    u"""Checks if point is on line between line endpoints. Uses epsilon
     margin for float values, can be substituted by zero for integer
     values."""
     x1, y1 = point2D(p1)
@@ -85,17 +85,17 @@ def isBetween(p1, p2, p):
     return True
 
 def squareDistance(p1, p2):
-    """Answers the square of the distance for relative comparison and to
+    u"""Answers the square of the distance for relative comparison and to
     save the time of the <b>sqrt</b>."""
     tx, ty = p2[0]-p1[0], p2[1]-p1[1]
     return tx*tx + ty*ty
 
 def distance(p1, p2):
-    """Answers the distance between the points."""
+    u"""Answers the distance between the points."""
     return math.sqrt(squareDistance(p1, p2))
 
 def point2Line(p1, p2, p):
-    """Answers the distance from point <i>(px, py)</i> to line <i>((x1,
+    u"""Answers the distance from point <i>(px, py)</i> to line <i>((x1,
     y1), (x2, y2))</i>."""
     x1, y1 = point2D(p1)
     x2, y2 = point2D(p2)
@@ -108,7 +108,7 @@ def dotProduct(v1, v2):
     return reduce(operator.add, map(operator.mul, v1, v2))
 
 def pointProjectedOnLine(p1, p2, p):
-    """Answers the projected point <b>(px, py)</b> on line <b>((x1, y1), (x2,
+    u"""Answers the projected point <b>(px, py)</b> on line <b>((x1, y1), (x2,
     y2))</b>.  Answers <b>(x1, y1)</b> if there is not distance between the two
     points of the line."""
     # Line vector.
@@ -133,7 +133,7 @@ def pointProjectedOnLine(p1, p2, p):
     return  x1 + (dot * tx) / dd, y1 + (dot * ty) / dd
 
 def insideCircle(dx, dy, r):
-    """
+    u"""
     >>> insideCircle(1, 1, 5)
     True
     >>> insideCircle(3, 3, 3)
@@ -153,7 +153,7 @@ def insideCircle(dx, dy, r):
     return False
 
 def isOdd(v):
-    """
+    u"""
     >>> isOdd(1)
     True
     >>> isOdd(2)
@@ -162,7 +162,7 @@ def isOdd(v):
     return v%2 != 0
 
 def isEven(v):
-    """
+    u"""
     import pagebot.toolbox.mathematics.*
     >>> isEven(2)
     True
@@ -182,7 +182,7 @@ def vectorLength(v):
 
 @classmethod
 def normalizedVector(p, length=1):
-    """
+    u"""
     Normalize the vector @(x,y). The <i>length</i> defines
     the length of the normalized vector, default is @1@.
     ###    Freetype XXX: UNDOCUMENTED! It seems that it is possible to try   */

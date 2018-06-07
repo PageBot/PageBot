@@ -128,7 +128,7 @@ else:
     BOLD = SEMIBOLD = 'Verdana-Bold'
 # -----------------------------------------------------------------         
 def makeDocument():
-    """Demo page composer."""
+    u"""Demo page composer."""
     tt = time() # Keep track of time, in case SHOW_TIMER is True
 
     # Set some values of the default template

@@ -422,7 +422,7 @@ class BlurbWriter(object):
 
 
 def test():
-    """
+    u"""
     >>> # replace a single tag
     >>> content = { 'pattern1': ['a']}
     >>> bw = BlurbWriter(content)

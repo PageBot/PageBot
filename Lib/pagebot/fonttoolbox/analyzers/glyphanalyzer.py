@@ -45,7 +45,7 @@ class GlyphAnalyzer(object):
         self.reset()
 
     def reset(self):
-        """Clear all cached value to force recalculation."""
+        u"""Clear all cached value to force recalculation."""
         # Get cache initialize on first access by any property.
         self._horizontals = None
         self._stems = None # Recognized stems, so not filtered by FloqMemes
@@ -90,7 +90,7 @@ class GlyphAnalyzer(object):
     font = property(_get_font)
 
     def _get_parent(self):
-        """Answer the analyzer of the parent font."""
+        u"""Answer the analyzer of the parent font."""
         font = self.font
         if font is not None:
             return font.analyzer
@@ -125,7 +125,7 @@ class GlyphAnalyzer(object):
         return a[0] * b[1] - a[1] * b[0]
 
     def intersectWithLine(self, line):
-        """Answer the sorted set of intersecting points between the straight line and the flatteded glyph path."""
+        u"""Answer the sorted set of intersecting points between the straight line and the flatteded glyph path."""
         intersections = set() # As set,  make sure to remove any doubles.
 
         def det(a, b):
@@ -169,7 +169,7 @@ class GlyphAnalyzer(object):
     verticals = property(_get_verticals)
 
     def findVerticals(self):
-        """The findVerticals method answers a list of verticals."""
+        u"""The findVerticals method answers a list of verticals."""
         self._verticals = verticals = {}
 
         for pc in sorted(self.glyph.pointContexts):
@@ -188,7 +188,7 @@ class GlyphAnalyzer(object):
     horizontals = property(_get_horizontals)
 
     def findHorizontals(self):
-        """
+        u"""
         The findHorizontals method answers a list of horizontals where the
         main point is on curve."""
         self._horizontals = horizontals = {}
@@ -202,7 +202,7 @@ class GlyphAnalyzer(object):
     #   B L A C K
 
     def spanRoundsOnBlack(self, pc0, pc1):
-        """Answers the boolean flag if the line between <i>pc0</i> and
+        u"""Answers the boolean flag if the line between <i>pc0</i> and
         <i>pc1</i> just spans black area."""
         return self.lineOnBlack(pc0, pc1)
 
@@ -212,17 +212,17 @@ class GlyphAnalyzer(object):
         return self.spanBlack(m0, m1, step)
 
     def lineOnBlack(self, p0, p1, step=SPANSTEP):
-        """Answers the boolean flag if the line between point p0 and p1
+        u"""Answers the boolean flag if the line between point p0 and p1
         is entirely running on black, except for the end point. To
         test if the line is entirely on black, use <b>self.lineInBlack()"""
         return self.spanBlack(p0, p1, step)
 
     def onBlack(self, p):
-        """Answers the boolean flag is the single point (x, y) is on black."""
+        u"""Answers the boolean flag is the single point (x, y) is on black."""
         return self.glyph.onBlack(p)
 
     def spanBlack(self, p0, p1, step=SPANSTEP):
-        """The spanBlack method answers the boolean flag if the number
+        u"""The spanBlack method answers the boolean flag if the number
         of recursive steps between p1 and p2 are on black area
         of the glyph. If step is smaller than the distance between the points,
         then just check in the middle of the line.  The method does not check
@@ -241,7 +241,7 @@ class GlyphAnalyzer(object):
     #   W H I T E
 
     def spanWhite(self, p0, p1, step=SPANSTEP):
-        """The <b>spanWhite</b> method answers the boolean flag if the number
+        u"""The <b>spanWhite</b> method answers the boolean flag if the number
         of recursive steps between <i>pc0</i> and <i>pc1</i> are all on white
         area of the glyph. If step is smaller than the distance between the
         points, then just check in the middle of the line.  """
@@ -256,16 +256,16 @@ class GlyphAnalyzer(object):
         return result
 
     def lineOnWhite(self, pc0, pc1, step=SPANSTEP):
-        """Answers the boolean flag if the line is just spanning white area."""
+        u"""Answers the boolean flag if the line is just spanning white area."""
         return self.spanWhite(pc0, pc1, step)
 
     def onWhite(self, p):
-        """Answers the boolean flag if the single point <b>(x, y)</b> is on
+        u"""Answers the boolean flag if the single point <b>(x, y)</b> is on
         white."""
         return not self.onBlack(p)
 
     def overlappingLinesInWindowOnBlack(self, pc0, pc1, step=SPANSTEP):
-        """Answers the boolean flag if the vertical span between <i>pc0</i>
+        u"""Answers the boolean flag if the vertical span between <i>pc0</i>
         and <i>pc1</i> just spans black area, by stepping from a point on one
         line to a point on the other line. The trick is to fine the right
         points. If the line it too angled (e.g. under certain circumstances the
@@ -278,7 +278,7 @@ class GlyphAnalyzer(object):
         return not None in (pp0, pp1) and self.lineOnBlack(pp0, pp1, step)
 
     def overlappingLinesInWindowOnWhite(self, pc0, pc1, step=SPANSTEP):
-        """See <b>self.overlappingLinesInWindowOnBlack</b>."""
+        u"""See <b>self.overlappingLinesInWindowOnBlack</b>."""
         pp0, pp1 = pc0.getProjectedWindowLine(pc1)
         return not None in (pp0, pp1) and self.lineOnWhite(pp0, pp1, step)
 
@@ -292,7 +292,7 @@ class GlyphAnalyzer(object):
     stems = property(_get_stems)
 
     def findStems(self):
-        """
+        u"""
         The @findStems@ method finds the stems in the current glyph and assigns
         them as dictionary to @self._stems@. Since we cannot use the CVT of the
         glyph (the analyzer is used to find these values, not to use them),
@@ -376,7 +376,7 @@ class GlyphAnalyzer(object):
         return self._stems
 
     def isStem(self, pc0, pc1, tolerance=0):
-        """The isStem method takes the point contexts pc0 and
+        u"""The isStem method takes the point contexts pc0 and
         pc1 to compare if the can be defined as a “stem”: if they are
         not round extremes, if the two point contexts have overlap in the
         vertical directions (being part of the same window) that runs on black
@@ -405,7 +405,7 @@ class GlyphAnalyzer(object):
     straightRoundStems = property(_get_straightRoundStems)
 
     def getBeamStemCounters(self, y=None):
-        """Calculate the stems and counters by a horizontal beam through the middle of the bounding box.
+        u"""Calculate the stems and counters by a horizontal beam through the middle of the bounding box.
         This works best with the capital I. The value is uncached and should only be used if
         normal stem detection fails. Or in case of italic."""
         beamStems = {}
@@ -457,12 +457,12 @@ class GlyphAnalyzer(object):
         return beamStems, beamCounters
 
     def isPortrait(self, pc0, pc1):
-        """Stems are supposed to be portrait within the FUZZ range. May not
+        u"""Stems are supposed to be portrait within the FUZZ range. May not
         work in all extremely wide or narrow glyphs."""
         return not self.isLandscape(pc0, pc1)
 
     def isRoundStem(self, pc0, pc1):
-        """The <b>isRoundStem</b> method answers the boolean flag if the
+        u"""The <b>isRoundStem</b> method answers the boolean flag if the
         <i>pc0</i> and <i>pc1</i> define a round stem. This is @True@ if one of
         both of point contexts are extremes and if both, they must “bend” in
         the same direction.<br/> Also there should be overlap in horizontal
@@ -472,7 +472,7 @@ class GlyphAnalyzer(object):
             and self.spanRoundsOnBlack(pc0, pc1)
 
     def isStraightRoundStem(self, pc0, pc1):
-        """Answers the boolean flag if one of (pc0, pc1) is a straight extreme
+        u"""Answers the boolean flag if one of (pc0, pc1) is a straight extreme
         and the other is a curve extreme.  The stem is only valid if the y of
         the curve extreme is between the y of the 2 vertical on-curves."""
         if not self.spanRoundsOnBlack(pc0, pc1):
@@ -489,7 +489,7 @@ class GlyphAnalyzer(object):
 
     # self.allStems      Answers the combination dict of stems and round stems
     def _get_allStems(self):
-        """Collect all stems in the dictionary with their value as key."""
+        u"""Collect all stems in the dictionary with their value as key."""
         if self._allStems is None:
             self.findStems()
             self._allStems = {}
@@ -509,7 +509,7 @@ class GlyphAnalyzer(object):
     allStems = property(_get_allStems)
 
     def _get_stem(self):
-        """Answer left stem. Answer None if no stems can be found."""
+        u"""Answer left stem. Answer None if no stems can be found."""
         if self._stem is None:
             self.findStems()
             for stems in self.allStems.values():
@@ -522,7 +522,7 @@ class GlyphAnalyzer(object):
     #   H O R I Z O N T A L  C O U N T E R
 
     def isHorizontalCounter(self, pc0, pc1, tolerance=0):
-        """Answers the boolean flag is the connection between pc0.x and pc1.x
+        u"""Answers the boolean flag is the connection between pc0.x and pc1.x
         is running entirely over white, and they both are some sort of
         horizontal extreme. The connection is a “white stem”."""
         #print('pc0', pc0, pc0.isHorizontalRoundExtreme(tolerance), pc0.isVertical(tolerance))
@@ -547,7 +547,7 @@ class GlyphAnalyzer(object):
     horizontalCounters = property(_get_horizontalCounters)
 
     def _get_hotizontalCounter(self):
-        """Answer single horizontal counter value, which by definintion is the smallest straight counter found.
+        u"""Answer single horizontal counter value, which by definintion is the smallest straight counter found.
         Answer None if no counters can be found."""
         counters = self.horizontalCounters.keys()
         if counters:
@@ -558,7 +558,7 @@ class GlyphAnalyzer(object):
     #   V E R T I C A L  C O U N T E R
 
     def isVerticalCounter(self, pc0, pc1, tolerance=0):
-        """Answers the boolean flag is the connection between pc0.y and pc1.y
+        u"""Answers the boolean flag is the connection between pc0.y and pc1.y
         is running entirely over white, and they both are some sort of
         horizontal extreme. The connection is a “white bar”."""
         if not (pc0.isVerticalRoundExtreme(tolerance) or pc0.isHorizontal(tolerance)):
@@ -588,7 +588,7 @@ class GlyphAnalyzer(object):
     bars = property(_get_bars)
 
     def findBars(self):
-        """The @findBars@ method finds the bars in the current glyph and
+        u"""The @findBars@ method finds the bars in the current glyph and
         assigns them as dictionary to @self._bars@. Since we cannot use the CVT
         of the glyph (the analyzer is user to find these values, not to use
         them), we'll make an assumption about the pattern of vertices found. It
@@ -687,7 +687,7 @@ class GlyphAnalyzer(object):
         return self._bars
 
     def isBar(self, pc0, pc1):
-        """
+        u"""
         The <b>isBar</b> method takes the point contexts <i>pc0</i> and
         <i>pc1</i> to compare if the can be defined as a “bar”: if two point
         contexts have overlap in the horizontal directions if the line between
@@ -717,11 +717,11 @@ class GlyphAnalyzer(object):
     straightRoundBars = property(_get_straightRoundBars)
 
     def isVerticalSpanInRange(self, pc0, pc1, dy):
-        """Check for vertical spans to be within dy range."""
+        u"""Check for vertical spans to be within dy range."""
         return abs(pc0.p.y - pc1.p.y) < dy
 
     def isLandscape(self, pc0, pc1):
-        """Bars are supposed to be landscape within the FUZZ range. May not
+        u"""Bars are supposed to be landscape within the FUZZ range. May not
         work in all extremely wide or narrow glyphs."""
         if pc0.isVerticalExtreme() or pc1.isVerticalExtreme():
             return True
@@ -734,7 +734,7 @@ class GlyphAnalyzer(object):
             and self.spanRoundsOnBlack(pc0, pc1)
 
     def isStraightRoundBar(self, pc0, pc1):
-        """Answers the boolean flag if one of (pc0, pc1) is a straight extreme
+        u"""Answers the boolean flag if one of (pc0, pc1) is a straight extreme
         and the other is a curve extreme.  The stem is only valid if the y of
         the curve extreme is between the y of the 2 vertical on-curves."""
         if not self.spanRoundsOnBlack(pc0, pc1):
@@ -751,7 +751,7 @@ class GlyphAnalyzer(object):
 
     # self.allBars      Answers the combination dict of bars and round bars
     def _get_allBars(self):
-        """Collect all bars in the dictionary with their value as key.
+        u"""Collect all bars in the dictionary with their value as key.
         BlueBars are not added to self._allBars, to be addressed separately from self.blueBars """
         if self._allBars is None:
             self.findBars()
@@ -774,7 +774,7 @@ class GlyphAnalyzer(object):
     #   B L U E B A R S
 
     def _get_blueBars(self):
-        """If not self._blueBars defined, make the 3: minY->up, baseline->up and maxY->down."""
+        u"""If not self._blueBars defined, make the 3: minY->up, baseline->up and maxY->down."""
         if self._blueBars is None:
             gaH = self['H'] # Seperate from blueBars property, so no recursion problem.
             if gaH.bars: # Check if there were any bars found for 'H'

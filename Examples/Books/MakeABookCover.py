@@ -56,7 +56,7 @@ fontItalic = family.findFont('Italic')
 ampersandFont = findFont('Georgia')
 
 def makeDocument():
-    """Demo random book cover generator."""
+    u"""Demo random book cover generator."""
 
     # Create new document with (w,h) and fixed amount of pages.
     # Make number of pages with default document size.

@@ -34,7 +34,7 @@ class SiteView(HtmlView):
 
     def __init__(self, resourcePaths=None, cssCode=None, cssPath=None, cssUrls=None, jsUrls=None, webFontUrls=None,
         **kwargs):
-        """Abstract class for views that build websites."""
+        u"""Abstract class for views that build websites."""
         HtmlView.__init__(self, **kwargs)
 
         # Url's and paths
@@ -110,7 +110,7 @@ class SiteView(HtmlView):
         #b.writeCss(self.DEFAULT_CSS_PATH)
 
     def getUrl(self, name):
-        """Answer the local URL for Mamp Pro to find the copied website."""
+        u"""Answer the local URL for Mamp Pro to find the copied website."""
         return 'http://localhost:8888/%s/%s' % (name, self.DEFAULT_HTML_FILE)
 
 

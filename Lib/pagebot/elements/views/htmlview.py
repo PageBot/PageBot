@@ -18,14 +18,14 @@ from pagebot.elements.views.baseview import BaseView
 from pagebot.contexts.htmlcontext import HtmlContext
 
 class HtmlView(BaseView):
-    """Abstract class for HTML/CSS generating views."""
+    u"""Abstract class for HTML/CSS generating views."""
 
     def _getContext(self):
-        """Answer the default context for this type of view."""
+        u"""Answer the default context for this type of view."""
         return HtmlContext()
 
     def build_css(self, view):
-        """Build the CSS for this document. Default behavior is to import the content of the file
+        u"""Build the CSS for this document. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
         b = view.context.b

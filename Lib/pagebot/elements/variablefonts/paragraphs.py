@@ -21,7 +21,7 @@ from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.transformer import pointOffset
 
 class Paragraphs(BaseFontShow): 
-    """Showing the specified (variable) font as full page with a matrix
+    u"""Showing the specified (variable) font as full page with a matrix
     of all glyphs in the font.
 
     Usage of standard style parameters
@@ -32,7 +32,7 @@ class Paragraphs(BaseFontShow):
 
     """
     def __init__(self, f, words=None, labelSize=None, **kwargs):
-        """   
+        u"""   
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -67,7 +67,7 @@ class Paragraphs(BaseFontShow):
         self.labelSize = labelSize # If undefined, then don't draw labels.
 
     def build(self, view, origin, drawElements=True):
-        """Default drawing method just drawing the frame.
+        u"""Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context
         p = pointOffset(self.oPoint, origin)
@@ -92,7 +92,7 @@ class Paragraphs(BaseFontShow):
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def getText(self, tag, cnt=None, charCnt=None):
-        """If the tag type of text is in self.words, then take a random choice from there.
+        u"""If the tag type of text is in self.words, then take a random choice from there.
         Otherwise use the tag to create a blurb with the specified length."""
         if tag in self.words:
             text = choice(self.words[tag])
@@ -104,7 +104,7 @@ class Paragraphs(BaseFontShow):
         return text
 
     def drawStacked(self, view, origin):
-        """Draw the content of the element, responding to size, styles, font and content.
+        u"""Draw the content of the element, responding to size, styles, font and content.
         Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
         if the axis exists.
 

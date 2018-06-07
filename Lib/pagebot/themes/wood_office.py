@@ -17,7 +17,7 @@ from pagebot.style import getRootStyle
 from basetheme import BaseTheme
 
 class WoodOffice(BaseTheme):
-    """The WoodOffice theme is a generic “woody cool gray” theme, with settings that
+    u"""The WoodOffice theme is a generic “woody cool gray” theme, with settings that
     can be used in environments when functionality is more important than “arty”
     appearance."""
 
@@ -25,7 +25,7 @@ class WoodOffice(BaseTheme):
     SCSS_PATH = 'scss/office.scss'
 
     def initialize(self):
-        """Theme styles are created here by inheriting them classes. If srcTheme is not None,
+        u"""Theme styles are created here by inheriting them classes. If srcTheme is not None,
         start initialize with a copy of that one."""
         self.name = self.NAME
         self[self.ROOT] = getRootStyle()

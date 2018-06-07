@@ -29,7 +29,7 @@ class TextBox(Element):
 
     def __init__(self, bs=None, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
         Element.__init__(self,  **kwargs)
-        """Creates a TextBox element. Default is the storage of self.s
+        u"""Creates a TextBox element. Default is the storage of self.s
         (DrawBot FormattedString or Flat equivalent), but optional it can also be ts (tagged str)
         if output is mainly through build and HTML/CSS. Since both strings cannot be conversted lossless
         one into the other, it is safer to keep them both if they are available.
@@ -44,7 +44,7 @@ class TextBox(Element):
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
-        """Property for self.w, holding the width of the textbox.
+        u"""Property for self.w, holding the width of the textbox.
 
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
@@ -63,7 +63,7 @@ class TextBox(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        """Answer the height of the textBox. If self.style['h'] is None, then answer the
+        u"""Answer the height of the textBox. If self.style['h'] is None, then answer the
         vertical space that the text needs.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -109,7 +109,7 @@ class TextBox(Element):
         return len(self.textLines)
 
     def __repr__(self):
-        """Answer the representation string of the element.
+        u"""Answer the representation string of the element.
 
         >>> e = TextBox('ABC')
         >>> e.eId in str(e) # TextBox:236DE32AAC108A45490 (0, 0)ABC'
@@ -137,7 +137,7 @@ class TextBox(Element):
         return '%s%s (%d, %d)%s%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), self.bs.s, elements)
 
     def copy(self, parent=None):
-        """Answer a full copy of self, where the "unique" fields are set to default.
+        u"""Answer a full copy of self, where the "unique" fields are set to default.
         Also perform a deep copy on all child elements.
 
         >>> e = TextBox('Hello world', name='Child', w=100)
@@ -152,7 +152,7 @@ class TextBox(Element):
     # BabelString support, answering the structure that holds strings for all builder types.
 
     def setText(self, bs, style=None):
-        """Set the formatted string to s, using style or self.style. The bs as also be a number, in which
+        u"""Set the formatted string to s, using style or self.style. The bs as also be a number, in which
         case is gets converted into a string."""
         if isinstance(bs, (int, float)):
             bs = str(bs)
@@ -161,12 +161,12 @@ class TextBox(Element):
         self.bs = bs
 
     def _get_text(self):
-        """Answer the plain text of the current self.bs"""
+        u"""Answer the plain text of the current self.bs"""
         return u'%s' % self.bs
     text = property(_get_text)
 
     def append(self, bs, style=None):
-        """Append to the string type that is defined by the current view/builder type.
+        u"""Append to the string type that is defined by the current view/builder type.
         Note that the string is already assumed to be styled or can be added as plain string.
         Don't calculate the overflow here, as this is a slow/expensive operation.
         Also we don't want to calculate the textLines/runs for every string appended,
@@ -232,7 +232,7 @@ class TextBox(Element):
         return self.bs.textOverflow(w, h, LEFT)
 
     def NOTNOW_getBaselinePositions(self, y=0, w=None, h=None):
-        """Answer the list vertical baseline positions, relative to y (default is 0)
+        u"""Answer the list vertical baseline positions, relative to y (default is 0)
         for the given width and height. If omitted use (self.w, self.h)"""
         baselines = []
         for _, baselineY in self.bs.baseLines(0, y, w or self.w, h or self.h):
@@ -240,14 +240,14 @@ class TextBox(Element):
         return baselines
 
     def _findStyle(self, run):
-        """Answer the name and style that desctibes this run best. If there is a doc
+        u"""Answer the name and style that desctibes this run best. If there is a doc
         style, then answer that one with its name. Otherwise answer a new unique style name
         and the style dict with its parameters."""
         print(run.attrs)
         return('ZZZ', run.style)
 
     def getStyledLines(self):
-        """Answer the list with (styleName, style, textRun) tuples, reversed engeneered
+        u"""Answer the list with (styleName, style, textRun) tuples, reversed engeneered
         from the FormattedString self.bs. This list can be used to query the style parameters
         used in the textBox, or to create CSS styles from its content."""
         styledLines = []
@@ -265,7 +265,7 @@ class TextBox(Element):
     #   F L O W
 
     def isOverflow(self, tolerance=0):
-        """Answer the boolean flag if this element needs overflow to be solved.
+        u"""Answer the boolean flag if this element needs overflow to be solved.
         This method is typically called by conditions such as Overflow2Next or during drawing
         if the overflow marker needs to be drawn.
         Note: There is currently not a test if text actually went into the next element. It's just
@@ -273,7 +273,7 @@ class TextBox(Element):
         return self.nextElement is None and self.getOverflow() != ''
 
     def overflow2Next(self):
-        """Try to fix if there is overflow."""
+        u"""Try to fix if there is overflow."""
         result = True
         overflow = self.getOverflow()
         if overflow and self.nextElement: # If there is text overflow and there is a next element?
@@ -299,7 +299,7 @@ class TextBox(Element):
     #   B U I L D
 
     def build(self, view, origin, drawElements=True):
-        """Draw the text on position (x, y). Draw background rectangle and/or frame if
+        u"""Draw the text on position (x, y). Draw background rectangle and/or frame if
         fill and/or stroke are defined."""
         context = view.context # Get current context
 
@@ -357,7 +357,7 @@ class TextBox(Element):
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
     def build_html(self, view, origin=None, showElements=True):
-        """Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self.
+        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self.
         If there are any child elements, then also included their code, using the
         level recursive indent."""
 
@@ -420,7 +420,7 @@ class TextBox(Element):
             prevY = y
 
     def _drawOverflowMarker_drawBot(self, view, px, py):
-        """Draw the optional overflow marker, if text doesn't fit in the box."""
+        u"""Draw the optional overflow marker, if text doesn't fit in the box."""
         b = self.b # Get current builder from self.doc.context.b
         fs = self.newString('[+]', style=dict(textFill=(1, 0, 0), font='Verdana-Bold', fontSize=8))
         tw, th = b.textSize(fs.s)
@@ -434,11 +434,11 @@ class TextBox(Element):
     # Text conditions
 
     def isBaselineOnTop(self, tolerance):
-        """Answer the boolean if the top baseline is located at self.parent.pt."""
+        u"""Answer the boolean if the top baseline is located at self.parent.pt."""
         return abs(self.top - (self.parent.h - self.parent.pt - self.textLines[0].y + self.h)) <= tolerance
 
     def isBaselineOnBottom(self, tolerance):
-        """Answer the boolean if the bottom baseline is located at self.parent.pb."""
+        u"""Answer the boolean if the bottom baseline is located at self.parent.pb."""
         return abs(self.bottom - self.parent.pb) <= tolerance
 
     def isAscenderOnTop(self, tolerance):

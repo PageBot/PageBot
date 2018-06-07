@@ -16,7 +16,7 @@
 from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 
 class APointContextList(list):
-    """The PointContextList us a group of related PointContext instances that can be
+    u"""The PointContextList us a group of related PointContext instances that can be
     queried and selected on their attributes."""
     def __repr__(self):
         return '[%s %s]' % (self.__class__.__name__, list(self))
@@ -26,7 +26,7 @@ class APointContextList(list):
         list.append(self, pc)
  
 class Vertical(APointContextList):
-    """The Vertical class is a list of point contexts that share the same x-value
+    u"""The Vertical class is a list of point contexts that share the same x-value
     self.append, self.x, self.y, self.alternates, self.minYPoint, self.maxYPoint"""
     # self.x
     
@@ -42,7 +42,7 @@ class Vertical(APointContextList):
     y = property(_get_y)
 
     def _get_minYPoint(self):
-        """Answer the point context with the minimum Y of all vertical point contexts."""
+        u"""Answer the point context with the minimum Y of all vertical point contexts."""
         bottomPC = None
         for pc in self:
             if bottomPC is None or pc.y < bottomPC.y:
@@ -51,7 +51,7 @@ class Vertical(APointContextList):
     minYPoint = property(_get_minYPoint)
         
     def _get_maxYPoint(self):
-        """Answer the point context with the maximum Y of all vertical point contexts."""
+        u"""Answer the point context with the maximum Y of all vertical point contexts."""
         topPC = None
         for pc in self:
             if topPC is None or pc.y > topPC.y:
@@ -60,7 +60,7 @@ class Vertical(APointContextList):
     maxYPoint = property(_get_maxYPoint)
     
     def _get_alternates(self):
-        """Answer the list of points that are not top or bottom."""
+        u"""Answer the list of points that are not top or bottom."""
         alternates = []
         topBottom = (self.minYPoint, self.maxYPoint)
         for pc in self:
@@ -70,7 +70,7 @@ class Vertical(APointContextList):
     alternates = property(_get_alternates)
     
 class Horizontal(APointContextList):
-    """The Horizontal class is a list of point contexts that share the same y-value
+    u"""The Horizontal class is a list of point contexts that share the same y-value
     self.append, self.x, self.y, self.alternates, self.minXPoint, self.maxXPoint."""
     
     def _get_x(self):
@@ -85,7 +85,7 @@ class Horizontal(APointContextList):
     y = property(_get_y)
     
     def _get_minXPoint(self):
-        """Answer the point context with the minimum X of all horizontal point contexts."""
+        u"""Answer the point context with the minimum X of all horizontal point contexts."""
         leftPC = None
         for pc in self:
             if leftPC is None or pc.x < leftPC.x:
@@ -94,7 +94,7 @@ class Horizontal(APointContextList):
     minXPoint = property(_get_minXPoint)
         
     def _get_maxXPoint(self):
-        """Answer the point context with the maximum X of all horizontal point contexts."""
+        u"""Answer the point context with the maximum X of all horizontal point contexts."""
         rightPC = None
         for pc in self:
             if rightPC is None or pc.x > rightPC.x:
@@ -105,7 +105,7 @@ class Horizontal(APointContextList):
     # self.alternates
     
     def _get_alternates(self):
-        """Answer the list of points that are not left or right extremes."""
+        u"""Answer the list of points that are not left or right extremes."""
         alternates = []
         leftRight = (self.minX, self.maxX)
         for pc in self:

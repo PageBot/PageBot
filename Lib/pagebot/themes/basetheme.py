@@ -19,7 +19,7 @@ from scss import compiler
 from pagebot.style import getRootStyle
 
 class BaseTheme(object):
-    """The Theme instances combines a number style dictionaries (property values),
+    u"""The Theme instances combines a number style dictionaries (property values),
     in relation to
     a selector path for their usage. In Html/Css terms, a theme could describe the entire
     CSS file where the keys are used as CSS selector and the connected styles are used
@@ -46,7 +46,7 @@ class BaseTheme(object):
         self.initialize() # Call in inheriting Theme classes, to define their own valeus.
 
     def initialize(self, srcTheme):
-        """Theme styles are created here by inheriting them classes. If srcTheme is not None,
+        u"""Theme styles are created here by inheriting them classes. If srcTheme is not None,
         start initialize with a copy of that one."""
         self[self.ROOT] = getRootStyle()
         for headName in self.HEADS:
@@ -62,19 +62,19 @@ class BaseTheme(object):
         self.styles[selector] = style
 
     def getStyles(self):
-        """Answer the theme as a dictionary of styles."""
+        u"""Answer the theme as a dictionary of styles."""
         self.applyPalette() # In case it was not executed before, substitute the palette values
         return self.styles
 
     def getCss(self):
-        """Answer the theme as a CSS source, compiled from the available styles, the palette,
+        u"""Answer the theme as a CSS source, compiled from the available styles, the palette,
         and the optional file at self.SCSS_PATH.
         Construct the SCSS variable files, and compile the result into CSS."""
         if self.SCSS_PATH is not None:
             compiler(self.CSS_PATH)
 
     def applyPalette(self, palette=None):
-        """After setting style values, named typographic values and colors, apply them
+        u"""After setting style values, named typographic values and colors, apply them
         to the styles, overwriting values that start with "@"."""
         for style in self.styles.values():
             for name, value in style.items():

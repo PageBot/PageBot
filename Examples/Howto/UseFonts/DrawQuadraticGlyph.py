@@ -43,7 +43,7 @@ class Point(object):
         self.start = start
 
 def drawSegment(segment, implied, cps, verbose=False):
-    """
+    u"""
     Draws a quadratic segment as a cubic Bézier curve in drawBot. Each segment
     starts and ends with an oncurve point with 0 ... n offcurve control points.
 
@@ -122,7 +122,7 @@ def drawSegment(segment, implied, cps, verbose=False):
         drawSegment(curve1, implied, cps)
 
 def circle(x, y, r, color='pink'):
-    """
+    u"""
     >>> circle(100, 100, 5, color='green')
     """
     stroke(None)
@@ -139,7 +139,7 @@ def circle(x, y, r, color='pink'):
     stroke(1)
 
 def cross(x, y, d, r=1, g=0, b=0, a=1):
-    """
+    u"""
     >>> cross(100, 100, 5, r=0.5, g=0.3, b=0.2, a=0.4)
     """
     x0 = x - d

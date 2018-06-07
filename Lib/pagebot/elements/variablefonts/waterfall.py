@@ -19,13 +19,13 @@ from pagebot.toolbox.transformer import asFormatted
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
 class Waterfall(TextBox):
-    """Showing the specified (variable) font as waterfall.
+    u"""Showing the specified (variable) font as waterfall.
 
     """
     SAMPLE = 'Jabberwocky'
 
     def __init__(self, f, showLabel=True, labelSize=7, sampleText=None, factor=0.9, location=None, useOpsz=True, **kwargs):
-        """
+        u"""
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter, RIGHT
@@ -93,7 +93,7 @@ class Waterfall(TextBox):
         self.bs = bs
 
     def getAxisValue(self, vf, tag, value):
-        """Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
+        u"""Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
         ratio in (minValue, defaultValue, maxValue)."""
         if not tag in vf.axes:
             return None
@@ -106,7 +106,7 @@ class Waterfall(TextBox):
         return defaultValue + (maxValue - defaultValue)*value
 
     def getLocation(self, vf, location):
-        """Answer the instance of self, corresponding to the normalized location.
+        u"""Answer the instance of self, corresponding to the normalized location.
         (-1, 0, 1) values for axes [wght] and [wdth].
         The optical size [opsz] is supposed to contain the font size, so it is not normalized.
         If [opsz] is not defined, then set it to default, if the axis exist.
@@ -128,7 +128,7 @@ class Waterfall(TextBox):
         return dict(wght=wght, wdth=wdth, opsz=opsz)
 
     def getInstance(self, vf, location):
-        """Return the instance font at this location. The font is stored as file,
+        u"""Return the instance font at this location. The font is stored as file,
         # so it correspondents to normal instance.path behavior."""
         if vf.axes:
             return getVarFontInstance(vf, location)

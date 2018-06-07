@@ -15,21 +15,21 @@
 #     composer.py
 #
 class Composer(object):
-    """A Composer takes a galley and tries to make a “nice” layout (on existing or new document pages),
+    u"""A Composer takes a galley and tries to make a “nice” layout (on existing or new document pages),
     by taking the elements from the galley pasteboard and finding the best place in pages, e.g. in
     page-flows that are copied from their templates.
     If necessary elements can be split, new elements can be made on the page and element can be
     reshaped byt width and height, if that results in better placements.
     """
     def __init__(self, validators=None, makeNewPage=False):
-        """The page, document includes
+        u"""The page, document includes
         the pages that already exist, and it defined the baseStyle for all other cascading styles.
         The style of all document pages and elements may contain conditions that define the weigh
         value for the quality if their status."""
         self.makeNewPage = makeNewPage
 
     def compose(self, galley, doc):
-        """Compose the galley element, starting with the flowId text box on page.
+        u"""Compose the galley element, starting with the flowId text box on page.
         The composer negotiates between what the galley needs a sequential space
         for its elements, and what the page has to offer.
         If flowId is omitted, then let the page find the entry point for the first flow."""
@@ -37,7 +37,7 @@ class Composer(object):
         pass
 
     def XXXcompose(self, galley, page, flowId=None):
-        """Compose the galley element, starting with the flowId text box on page.
+        u"""Compose the galley element, starting with the flowId text box on page.
         The composer negotiates between what the galley needs a sequential space
         for its elements, and what the page has to offer.
         If flowId is omitted, then let the page find the entry point for the first flow."""
@@ -77,7 +77,7 @@ class Composer(object):
                     break
 
     def tryPlacement(self, page, tb, element):
-        """Try to place the element on page, in relation to the current filling of tb.
+        u"""Try to place the element on page, in relation to the current filling of tb.
         Try to pass on the template-element w/h by doing a proportional resize of the component."""
         container = page.findPlacementFor(element)
         if container is not None:

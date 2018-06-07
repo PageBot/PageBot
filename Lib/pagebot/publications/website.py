@@ -89,7 +89,7 @@ class Navigation(TextBox):
 class Introduction(TextBox):
 
     def build_html(self, view, origin=None, drawElements=True):
-        """Build a page wide in intoduction box for large type, if there is any content."""
+        u"""Build a page wide in intoduction box for large type, if there is any content."""
         if not self.bs.s:
             return
         b = self.context.b
@@ -105,16 +105,16 @@ class Introduction(TextBox):
         b._div() # .container .introduction
 
 class Featured(Rect):
-    """The Featured elements is a container of an image on the left and side column on the right.
+    u"""The Featured elements is a container of an image on the left and side column on the right.
     On mobile the side text appears below the images."""
     def __init__(self, **kwargs):
         Rect.__init__(self, **kwargs)
-        """Initialize the generic featured item, adding and image text box and side text box."""
+        u"""Initialize the generic featured item, adding and image text box and side text box."""
         TextBox('', parent=self, name='Image')
         TextBox('', parent=self, name='Side')
 
     def build_html(self, view, origin=None, drawElements=True):
-        """Build the featured topic, image on the left and side column on the right."""
+        u"""Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
         side = self['Side']
         if not image.bs.s or not side.bs.s: # No HTML in any of the BabelStrings?
@@ -136,12 +136,12 @@ class Main(Rect):
 
     def __init__(self, **kwargs):
         Rect.__init__(self,  **kwargs)
-        """Initialize the generic featured item, adding and image text box and side text box."""
+        u"""Initialize the generic featured item, adding and image text box and side text box."""
         TextBox('', parent=self, name='Content') # Note that child elements should not have the same name as parent to find them.
         TextBox('', parent=self, name='Side')
 
     def append(self, bs):
-        """Add FormattedString to main content."""
+        u"""Add FormattedString to main content."""
         self['Content'].append(bs)
 
     def build_html(self, view, origin=None, drawElements=True):
@@ -164,7 +164,7 @@ class Main(Rect):
         b._div() # .container .mainContnet
 
 class Section(Rect):
-    """Implements a stack of rows, each holding 2 text boxes. Content should be filled
+    u"""Implements a stack of rows, each holding 2 text boxes. Content should be filled
     in even amount. Uneven rows and empty rows will be omitted from the output.
     The self['Title'] container runs over the entire width of both columns. If there
     is no title defined, it will be ignored. If there is not content at all, then the
@@ -247,7 +247,7 @@ class JS(TextBox):
     def build_html(self, view, origin=None, drawElements=True):
         b = self.context.b
         b.script(type="text/javascript")
-        b.addHtml("""
+        b.addHtml(u"""
     jQuery(document).ready(function($){
       /* prepend menu icon */
       $('#nav-wrap').prepend('<div id="menu-icon"><img src="images/menu_icon.png"/></div>');
@@ -262,7 +262,7 @@ class JS(TextBox):
 
 
 class Website(Publication):
-    """Build a default website with several template options.
+    u"""Build a default website with several template options.
     Layout and content options defined by external parameters.
     Subclassed from Document with the following optional attributes:
     rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
@@ -291,7 +291,7 @@ class Website(Publication):
     DEFAULT_CONTEXT = HtmlContext()
 
     def initialize(self, **kwargs):
-        """Initialize the generic website templates. """
+        u"""Initialize the generic website templates. """
 
         padding = self.padding
         w, h = self.w, self.h

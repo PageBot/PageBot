@@ -14,7 +14,7 @@
 #     basebuilder.py
 #
 class BaseBuilder(object):
-    """The BaseBuilder is the abstract builder class, for all builders that need
+    u"""The BaseBuilder is the abstract builder class, for all builders that need
     to import and write files in a directory, or draw on their builders, besides the binary 
     export formats that are already supported by e.g. DrawBot."""
     pass

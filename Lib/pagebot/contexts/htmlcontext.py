@@ -18,7 +18,7 @@ from pagebot.contexts.builders.htmlbuilder import HtmlBuilder
 from pagebot.contexts.strings.htmlstring import HtmlString
 
 class HtmlContext(BaseContext):
-    """A HtmlContext instance builds all necessary for a website, taking the element.
+    u"""A HtmlContext instance builds all necessary for a website, taking the element.
     Most of the building is done by the HtmlBuilder instance, stored as self.b.
     Still we need this HtmlContext layer, as not all drawing can be done in html, so 
     this context can decide to include SVG or pixel images for certain types of elements.
@@ -34,7 +34,7 @@ class HtmlContext(BaseContext):
     #   T E X T
 
     def newBulletString(self, bullet, e=None, style=None):
-        """Answer the string with a bullet. As HTML does bullets automatic. Ignore answered None"""
+        u"""Answer the string with a bullet. As HTML does bullets automatic. Ignore answered None"""
         return None 
 
     #   D R A W I N G
@@ -58,7 +58,7 @@ class HtmlContext(BaseContext):
         #return cls.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-        """Answer the (w, h) image size of the image file at path."""
+        u"""Answer the (w, h) image size of the image file at path."""
         return (0, 0)
         #return cls.b.imageSize(path)
 

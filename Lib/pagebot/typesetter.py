@@ -59,7 +59,7 @@ class Typesetter(object):
     }
     def __init__(self, doc=None, context=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None,
             tryExcept=True, verbose=False, writeTags=True):
-        """
+        u"""
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
 
@@ -120,12 +120,12 @@ class Typesetter(object):
     box = property(_get_box, _set_box)
 
     def getTextBox(self, e=None):
-        """Answer the current text box, if the width fits the current style.
+        u"""Answer the current text box, if the width fits the current style.
         If style is omitted, then always answer the current latest text box."""
         return self.galley.getTextBox(e)
 
     def node_h1(self, node, e):
-        """Collect the page-node-pageNumber connection."""
+        u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before.
         # Add invisible h1-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -134,7 +134,7 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_h2(self, node, e):
-        """Collect the page-node-pageNumber connection."""
+        u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before.
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -143,7 +143,7 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_h3(self, node, e):
-        """Collect the page-node-pageNumber connection."""
+        u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before.
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -152,7 +152,7 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_h4(self, node, e):
-        """Collect the page-node-pageNumber connection."""
+        u"""Collect the page-node-pageNumber connection."""
         # Add line break to whatever style/content there was before.
         # Add invisible h4-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -161,15 +161,15 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_em(self, node, e):
-        """Handle the <em> tag"""
+        u"""Handle the <em> tag"""
         self.typesetNode(node, e)
 
     def node_p(self, node, e):
-        """Handle the <p> tag."""
+        u"""Handle the <p> tag."""
         self.typesetNode(node, e)
 
     def node_hr(self, node, e):
-        """Add Ruler instance to the Galley."""
+        u"""Add Ruler instance to the Galley."""
         if self.peekStyle() is None and e is not None:
             # Root of stack is empty style, to force searching on the e.parent line.
             self.pushStyle({}) # Define top level for styles.
@@ -177,7 +177,7 @@ class Typesetter(object):
         self.galley.appendElement(self.RULER_CLASS(e, style=hrStyle)) # Make a new Ruler instance in the Galley
 
     def getStyleValue(self, name, e=None, style=None, default=None):
-        """Answer the best style value match for *name*, depending on the status of *style*, *e* and *default*,
+        u"""Answer the best style value match for *name*, depending on the status of *style*, *e* and *default*,
         on that order. Answer None if everything failes."""
         value = None
         if style is not None:
@@ -191,7 +191,7 @@ class Typesetter(object):
     # Solve <br/> best by simple style with: doc.newStyle(name='br', postfix='\n')
 
     def node_br(self, node, e):
-        """Add newline instance to the Galley."""
+        u"""Add newline instance to the Galley."""
         # For now, just ignore, as <br/> already get a break in MarkDown, as part of the exclosing tag.
         # TODO: now <br/> makes the same vertical spacing as <p>
         """
@@ -204,12 +204,12 @@ class Typesetter(object):
         self.galley.append(fs) # Add newline in the current setting of FormattedString
         """
     def node_a(self, node, e):
-        """Ignore links, but process the block"""
+        u"""Ignore links, but process the block"""
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
     def node_sup(self, node, e):
-        """Collect footnote references on their page number.
+        u"""Collect footnote references on their page number.
         And typeset the superior footnote index reference."""
         nodeId = node.attrib.get('id')
         # Check if this is a footnote reference
@@ -228,7 +228,7 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_literatureref(self, node, e):
-        """Collect literature references."""
+        u"""Collect literature references."""
         # Typeset the block of the tag.
         # Check if this is a literature reference
         nodeId = node.attrib.get('id')
@@ -247,7 +247,7 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_div(self, node, e):
-        """MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
+        u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
         as output at the end of the HTML export. We will handle them separately by looking them up
         in the XML-tree. So we'll skip them in the regular flow process."""
 
@@ -281,7 +281,7 @@ class Typesetter(object):
         return result
 
     def node_li(self, node, e):
-        """Generate bullet/Numbered list item."""
+        u"""Generate bullet/Numbered list item."""
         context = self.galley.context
         if self.doc is not None:
             bullet = self.doc.css('listBullet')
@@ -294,7 +294,7 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_img(self, node, e):
-        """Process the image. Find nearby empty space on the page to place it,
+        u"""Process the image. Find nearby empty space on the page to place it,
         possibly intended to fit the w/h ratio of the image and the optional caption.
         A new Image element is created with a PixelMap element and TextBox caption
         element inside. The Image will use style based conditions to define the layout
@@ -327,26 +327,26 @@ class Typesetter(object):
         #self.popStyleTag()
 
     def pushStyle(self, tag):
-        """Push the cascaded style on the gState stack. Make sure that the style is not None and that it
+        u"""Push the cascaded style on the gState stack. Make sure that the style is not None and that it
         is a cascaded style, otherwise it cannot be used as source for child styles. Answer the cascaded
         style as convenience for the caller. """
         self.gState.append(tag)
 
     def popStyle(self):
-        """Pop the cascaded style from the gState stack and answer the next style that is on top.
+        u"""Pop the cascaded style from the gState stack and answer the next style that is on top.
         Make sure that there still is a style to pop, otherwise raise an error. """
         assert self.gState
         self.gState.pop()
         return self.peekStyle()
 
     def peekStyle(self):
-        """Answer the top cascaded style, without changing the stack."""
+        u"""Answer the top cascaded style, without changing the stack."""
         if not self.gState: # It's empty, answer None
             return None
         return self.gState[-1]
 
     def addHistory(self, tag):
-        """Add the *tag* to the history."""
+        u"""Add the *tag* to the history."""
         if not self.tagHistory or tag != self.tagHistory[-1]:
             self.tagHistory.append(tag)
 
@@ -354,7 +354,7 @@ class Typesetter(object):
         return self.tagHistory
 
     def getFootnotes(self, e):
-        """Answer the footnotes dictionary from the e.lib (derived from the root document)"""
+        u"""Answer the footnotes dictionary from the e.lib (derived from the root document)"""
         if self.doc is not None:
             lib = self.doc.lib
             if lib is not None:
@@ -364,7 +364,7 @@ class Typesetter(object):
         return None
 
     def getLiteratureRefs(self, e):
-        """Answer the literature reference dictionary from the e.lib (derived from the root document)"""
+        u"""Answer the literature reference dictionary from the e.lib (derived from the root document)"""
         if self.doc is not None:
             lib = self.doc.lib
             if lib is not None:
@@ -374,7 +374,7 @@ class Typesetter(object):
         return None
 
     def runCodeBlock(self, node, execute=True):
-        """Answer a set of compiled methods, as found in the <code class="Python">...</code>,
+        u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with
         ~~~Python
         cid = 'NameOfBlock'
@@ -450,7 +450,7 @@ class Typesetter(object):
         return codeId, result
 
     def getImageRefs(self, e):
-        """Answer the image reference dictionary from the e.lib (derived from the root document)
+        u"""Answer the image reference dictionary from the e.lib (derived from the root document)
         if it exists. Otherwise create an empty e.lib['imageRefs'] and answer it as empty dictionary.
         Answer None if e.lib does not exist."""
         lib = e.lib
@@ -461,7 +461,7 @@ class Typesetter(object):
         return None
 
     def _strip(self, s, prefix=None, postfix=None, forceRightStrip=False):
-        """Strip the white space from string *s* if *prefix* and/or *postfix* are not None.
+        u"""Strip the white space from string *s* if *prefix* and/or *postfix* are not None.
         Otherwise answer the untouched *s*."""
         if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
             s = prefix + (s or '').lstrip() # Force s to empty string in case it is None, to add prefix.
@@ -472,7 +472,7 @@ class Typesetter(object):
         return s
 
     def getMatchingStyleNames(self, tag):
-        """Answer the list of matching style, with decreasing relevance."""
+        u"""Answer the list of matching style, with decreasing relevance."""
         #parents = self.TAG_MATCHING.get(tag)
         revHistory = self.tagHistory[:]
         revHistory.reverse()
@@ -487,7 +487,7 @@ class Typesetter(object):
         return matches
 
     def getNamedStyle(self, styleName):
-        """Answer the named style and otherwise an empty style dict if the named style
+        u"""Answer the named style and otherwise an empty style dict if the named style
         does not exist."""
         if self.doc is not None:
             if styleName == 'root':
@@ -496,7 +496,7 @@ class Typesetter(object):
         return {}
 
     def getNodeStyle(self, tag):
-        """Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style."""
+        u"""Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style."""
         if self.peekStyle() is None: # Not an initialized stack, use doc.rootStyle as default.
             self.pushStyle(self.getNamedStyle('root')) # Happens if calling directly, without check on e
         mergedStyle = copy.copy(self.peekStyle())
@@ -511,7 +511,7 @@ class Typesetter(object):
         return mergedStyle
 
     def append(self, bs):
-        """Append the string (or BabelString instance) to the current box,
+        u"""Append the string (or BabelString instance) to the current box,
         if it is defined and it has a context. Otherwise add to the existing galley."""
         # Add the tail formatted string to the textBox or galley. Equivalent to self.box.
         if self.galley is not None:
@@ -520,7 +520,7 @@ class Typesetter(object):
             print('### Typesetter.append: Cannot append "%s"' % bs)
 
     def htmlNode(self, node, end=False):
-        """Open the tag in HTML output and copy the node attributes if there are any."""
+        u"""Open the tag in HTML output and copy the node attributes if there are any."""
         htmlTag = u'<%s' % node.tag
         attrs = []
         for name, value in node.items():
@@ -535,15 +535,15 @@ class Typesetter(object):
         self.append(htmlTag)
 
     def _htmlNode(self, node):
-        """Close the html tag of node."""
+        u"""Close the html tag of node."""
         self.append('</%s>' % node.tag)
 
     def htmlNode_(self, node):
-        """Opem+close the html tag of node."""
+        u"""Opem+close the html tag of node."""
         self.htmlNode(node, end=True)
 
     def typesetString(self, sOrBs, e=None, style=None):
-        """If s is a formatted string, then it is placed untouched. If it is a plain string, then
+        u"""If s is a formatted string, then it is placed untouched. If it is a plain string, then
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters.
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
         # Only convert if not yet BabelString instance.
@@ -552,7 +552,7 @@ class Typesetter(object):
         return bs
 
     def typesetNode(self, node, e=None):
-        """Recursively typeset the etree *node*, using a reference to element *e* or the cascading *style*.
+        u"""Recursively typeset the etree *node*, using a reference to element *e* or the cascading *style*.
         If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
 
@@ -633,7 +633,7 @@ class Typesetter(object):
         """
 
     def typesetFile(self, fileName, e=None, xPath=None):
-        """Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
+        u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
         start at page pageNumber and find the name of the flow in the page template.
         The optional filter can be a list of tag names that need to be included in the
         composition, ignoring the rest.
@@ -672,7 +672,7 @@ class Typesetter(object):
 
 
     def DEPRECATED_makeXMLFile(self, fileName):
-        """If fileName is pointing to a non-XML file, then try to convert. This needs to be
+        u"""If fileName is pointing to a non-XML file, then try to convert. This needs to be
         extended in the future e.g. to support Word documents or other text resources.
         If the document is already an XML document, then ignore."""
         xml = None # Check is something changed.
@@ -695,7 +695,7 @@ class Typesetter(object):
         return fileName # Return altered fileName if converted. Otherwise return original fileName
 
     def DEPRECATED_typesetFilibuster(self, e, blurbNames=None):
-        """The typesetFilibuster answers the parsed typeset nodes from a Filibuster blurb. If the blurb
+        u"""The typesetFilibuster answers the parsed typeset nodes from a Filibuster blurb. If the blurb
         instances is not given, then create a default Filibuster article."""
         if blurbNames is None: # Nothing supplied: at least create some standard content as article to parse.
             blurbNames = (('h3', 'article_ankeiler'), ('h1', 'article_summary'), ('p', 'article'))

@@ -23,7 +23,7 @@ from pagebot.style import getRootStyle, TOP, BOTTOM
 from pagebot.toolbox.transformer import obj2StyleId
 
 class Document(object):
-    """A Document is just another kind of container.
+    u"""A Document is just another kind of container.
 
     Doctest: https://docs.python.org/2/library/doctest.html
     Run doctest in Sublime: cmd-B
@@ -57,7 +57,7 @@ class Document(object):
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None, autoPages=1, 
             template=None, templates=None, originTop=True, startPage=1, w=None, h=None, 
             padding=None, lib=None, context=None, exportPaths=None, **kwargs):
-        """Contains a set of Page elements and other elements used for display in thumbnail mode. 
+        u"""Contains a set of Page elements and other elements used for display in thumbnail mode. 
         Allows to compose the pages without the need to send them directly to the output for 
         "asynchronic" page filling."""
 
@@ -108,12 +108,12 @@ class Document(object):
         self.initialize(**kwargs)
 
     def initialize(self, **kwargs):
-        """Default implementation of publication initialized. Can be redefined by inheriting classed.
+        u"""Default implementation of publication initialized. Can be redefined by inheriting classed.
         All **kwargs are available to allow access for inheriting Publication documents."""
         pass
 
     def _get_lib(self):
-        """Answer the global storage dictionary, used by TypeSetter and others to keep track of footnotes,
+        u"""Answer the global storage dictionary, used by TypeSetter and others to keep track of footnotes,
         table of content, etc. Some common entries are predefined.
 
         >>> doc = Document(name='TestDoc', w=300, h=400, lib=dict(a=12, b=34))
@@ -124,11 +124,11 @@ class Document(object):
     lib = property(_get_lib)
 
     def __len__(self):
-        """Answer the amount of pages in the document."""
+        u"""Answer the amount of pages in the document."""
         return len(self.pages)
 
     def __repr__(self):
-        """Answering the string representation of the document.
+        u"""Answering the string representation of the document.
 
         >>> doc = Document(name='TestDoc', w=300, h=400, lib=dict(a=12, b=34))
         >>> str(doc)
@@ -137,7 +137,7 @@ class Document(object):
         return '[Document-%s "%s"]' % (self.__class__.__name__, self.name)
 
     def _get_doc(self):
-        """Root of the chain of element properties, searching upward in the ancestors tree.
+        u"""Root of the chain of element properties, searching upward in the ancestors tree.
 
         >>> doc = Document(name='TestDoc')
         >>> doc.doc is doc
@@ -147,14 +147,14 @@ class Document(object):
     doc = property(_get_doc)
     
     def _get_context(self):
-        """Answer the context of the current view, to allow searching the parents --> document --> view. """
+        u"""Answer the context of the current view, to allow searching the parents --> document --> view. """
         return self.view.context
     context = property(_get_context)
 
     # Document[12] answers a list of pages where page.y == 12
     # This behaviour is different from regular elements, who want the page.eId as key.
     def __getitem__(self, pnIndex):
-        """Answer the pages with pageNumber equal to page.y. 
+        u"""Answer the pages with pageNumber equal to page.y. 
         
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=100)
         >>> page = doc[66]
@@ -172,7 +172,7 @@ class Document(object):
         self.pages[pn].append(page)
    
     def _get_ancestors(self):
-        """Root of the chain of element properties, searching upward in the ancestors tree.
+        u"""Root of the chain of element properties, searching upward in the ancestors tree.
         As the document, by definition, is the top of the tree, an empty list is answered.
 
         >>> doc = Document(name='TestDoc')
@@ -183,7 +183,7 @@ class Document(object):
     ancestors = property(_get_ancestors)
     
     def _get_parent(self):
-        """Root of the chain of element properties, searching upward in the ancestors tree.
+        u"""Root of the chain of element properties, searching upward in the ancestors tree.
         As the document, by definition, is the top of the tree, None is answered as parent.
 
         >>> doc = Document(name='TestDoc')
@@ -194,7 +194,7 @@ class Document(object):
     parent = property(_get_parent)
 
     def getGlossary(self):
-        """Answer a string glossary with most representing info about the document.
+        u"""Answer a string glossary with most representing info about the document.
 
         >>> doc = Document(name='DemoDoc')
         >>> doc.getGlossary().startswith('Document "DemoDoc"')
@@ -209,7 +209,7 @@ class Document(object):
         return '\n'.join(glossary)
 
     def _get_builder(self):
-        """Answer the builder, as supposed to be available in the self.context.
+        u"""Answer the builder, as supposed to be available in the self.context.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -228,7 +228,7 @@ class Document(object):
     #   T E M P L A T E
 
     def initializeTemplates(self, templates, defaultTemplate):
-        """Initialize the document templates.""" 
+        u"""Initialize the document templates.""" 
         self.templates = {} # Store defined dictionary of templates or empty dict.
         if templates is not None:
             for name, template in templates.items():
@@ -242,7 +242,7 @@ class Document(object):
         self.defaultTemplate = defaultTemplate
 
     def getTemplate(self, name=None):
-        """Answer the named template. If it does not exist, then answer the default template. 
+        u"""Answer the named template. If it does not exist, then answer the default template. 
         Answer None of if there is no default.
 
         >>> doc = Document(name='TestDoc')
@@ -254,7 +254,7 @@ class Document(object):
         return self.templates.get(name, self.defaultTemplate)
 
     def addTemplate(self, name, template):
-        """Add the template to the self.templates of dictionaries. There is no check, so the
+        u"""Add the template to the self.templates of dictionaries. There is no check, so the
         caller can overwrite existing templates. Answer the template as convenience of the caller.
 
         >>> from pagebot.elements.pbpage import Template
@@ -271,7 +271,7 @@ class Document(object):
         return template
 
     def _get_defaultTemplate(self):
-        """Answer the default template of the document.
+        u"""Answer the default template of the document.
 
         >>> doc = Document(name='TestDoc')
         >>> doc.defaultTemplate
@@ -285,7 +285,7 @@ class Document(object):
     #   S T Y L E
 
     def initializeStyles(self, theme, styles):
-        """Make sure that the default styles always exist."""
+        u"""Make sure that the default styles always exist."""
         if theme is not None:
             self.styles = copy.copy(theme.styles)
             # Additional styles defined? Let them overwrite the theme.
@@ -308,7 +308,7 @@ class Document(object):
             self.addStyle(name, dict(name=name))
 
     def makeRootStyle(self, **kwargs):
-        """Create a rootStyle, then set the arguments from **kwargs, if their entry name already exists.
+        u"""Create a rootStyle, then set the arguments from **kwargs, if their entry name already exists.
         This is similar (but not identical) to the makeStyle in Elements. There any value entry is 
         copied, even if that is not defined in the root style."""
         rootStyle = getRootStyle()
@@ -318,7 +318,7 @@ class Document(object):
         return rootStyle
 
     def applyStyle(self, style):
-        """Apply the key-value of the style onto the self.rootStyle. This overwrites existing style
+        u"""Apply the key-value of the style onto the self.rootStyle. This overwrites existing style
         values inthe self.rootStyle by all values in style. Cannot be undone.
 
         >>> doc = Document(name='TestDoc', w=123)
@@ -334,7 +334,7 @@ class Document(object):
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
     def css(self, name, default=None, styleId=None):
-        """If optional sId is None or style cannot found, then use the root style. 
+        u"""If optional sId is None or style cannot found, then use the root style. 
         If the style is found from the (cascading) sId, then use that to return the requested attribute.
         Note that self.css( ) is a generic query for a named CSS value, upwards the parent tree.
         This is different from the CSS functions as self.buildCss( ), that actually generate CSS code.
@@ -349,7 +349,7 @@ class Document(object):
         return style.get(name, default)
 
     def findStyle(self, styleId):
-        """Answer the style that fits the optional sequence naming of styleId.
+        u"""Answer the style that fits the optional sequence naming of styleId.
         Answer None if no style can be found. styleId can have one of these formats:
         ('main h1', 'h1 b')
         """
@@ -363,21 +363,21 @@ class Document(object):
         return None
 
     def getNamedStyle(self, styleName):
-        """In case we are looking for a named style (e.g. used by the Typesetter to build a stack
+        u"""In case we are looking for a named style (e.g. used by the Typesetter to build a stack
         of cascading tag style, then query the ancestors for the named style. Default behavior
         of all elements is that they pass the request on to the root, which is nornally the document."""
         return self.getStyle(styleName)
 
     def getStyle(self, name):
-        """Answer the names style. If that does not exist, answer the default root style."""
+        u"""Answer the names style. If that does not exist, answer the default root style."""
         return self.styles.get(name)
     
     def getRootStyle(self):
-        """Answer the default root style, used by the Typesetter as default for all other stacked styles."""
+        u"""Answer the default root style, used by the Typesetter as default for all other stacked styles."""
         return self.rootStyle
 
     def add2Style(self, name, addStyle):
-        """Add (overwrite) the values in the existing style *name* with the values in *addStyle*.
+        u"""Add (overwrite) the values in the existing style *name* with the values in *addStyle*.
         Raise an error if the *name* style does not exist. Answer the named target style for convenience of the caller."""
         assert name in self.styles
         style = self.styles[name]
@@ -386,7 +386,7 @@ class Document(object):
         return style # Answer the style for convenience of the caller.
 
     def addStyle(self, name, style, force=False):
-        """Add the style to the self.styles dictionary.  Make sure that styles don't get overwritten, if force is False. 
+        u"""Add the style to the self.styles dictionary.  Make sure that styles don't get overwritten, if force is False. 
         Remove them first with *self.removeStyle* or use *self.replaceStyle(name, style)* instead."""
         if name in self.styles:
             assert force
@@ -394,18 +394,18 @@ class Document(object):
         self.replaceStyle(name, style)
         
     def removeStyle(self, name):
-        """Remove the style *name* if it exists. Raise an error if is does not exist."""
+        u"""Remove the style *name* if it exists. Raise an error if is does not exist."""
         del self.styles[name]
 
     def replaceStyle(self, name, style):
-        """Set the style by name. Overwrite the style with that name if it already exists."""
+        u"""Set the style by name. Overwrite the style with that name if it already exists."""
         self.styles[name] = style
         # Force the name of the style to synchronize with the requested key.
         style['name'] = name
         return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
 
     def newStyle(self, **kwargs):
-        """Create a new style with the supplied arguments as attributes. Force the style in self.styles,
+        u"""Create a new style with the supplied arguments as attributes. Force the style in self.styles,
         even if already exists. Forst the name of the style to be the same as the style key.
         Answer the new style."""
         return self.replaceStyle(kwargs['name'], dict(**kwargs))
@@ -413,7 +413,7 @@ class Document(object):
     #   D E F A U L T  A T T R I B U T E S 
 
     def _get_originTop(self):
-        """Answer the document flag if origin is on top.
+        u"""Answer the document flag if origin is on top.
 
         >>> doc = Document(name='TestDoc', originTop=True)
         >>> doc.originTop
@@ -434,7 +434,7 @@ class Document(object):
     originTop = property(_get_originTop, _set_originTop)
 
     def _get_frameDuration(self):
-        """Property answer the document frameDuration parameters, used for speed when
+        u"""Property answer the document frameDuration parameters, used for speed when
         exporting animated gifs.
         """
         return self.rootStyle.get('frameDuration')
@@ -444,7 +444,7 @@ class Document(object):
 
     # CSS property service to children.
     def _get_w(self): # Width
-        """Property answering the global (intended) width of the document as defined by
+        u"""Property answering the global (intended) width of the document as defined by
         self.rootStyle['w']. This may not represent the actual width of the document, 
         which comes from the maximum width of all child pages together and if the current
         view is defined as spread.
@@ -465,7 +465,7 @@ class Document(object):
     w = property(_get_w, _set_w)
 
     def _get_h(self): # Height
-        """Property answering the global (intended) height of the document as defined by
+        u"""Property answering the global (intended) height of the document as defined by
         self.rootStyle['h']. This may not represent the actual height of the document, 
         which comes from the maximum height of all child pages together.
 
@@ -485,7 +485,7 @@ class Document(object):
     h = property(_get_h, _set_h)
 
     def _get_d(self): # Depth
-        """Property answering the global (intended) depth of the document as defined by
+        u"""Property answering the global (intended) depth of the document as defined by
         self.rootStyle['d']. This may not represent the actual depth of the document, 
         which comes from the maximum depth of all child pages together.
 
@@ -505,7 +505,7 @@ class Document(object):
     d = property(_get_d, _set_d)
 
     def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
-        """Answer the document global padding, as defined in the root style.
+        u"""Answer the document global padding, as defined in the root style.
         Intercace is identical to Element.padding
 
         >>> doc = Document(name='TestDoc', padding=(10, 20, 30, 40))
@@ -536,7 +536,7 @@ class Document(object):
     padding = property(_get_padding, _set_padding)
 
     def _get_padding3D(self): 
-        """Tuple of padding in CSS order + (front, back), direction of clock.
+        u"""Tuple of padding in CSS order + (front, back), direction of clock.
         Interface is identical to Element.padding3d.
         
         >>> doc = Document(name='TestDoc', padding=(10, 20, 30, 40, 50, 60))
@@ -565,7 +565,7 @@ class Document(object):
     padding3D = property(_get_padding3D, _set_padding)
 
     def _get_pt(self): # Padding top
-        """Padding top property
+        u"""Padding top property
         Interface is identical to Element.pt.
 
         >>> doc = Document(name='TestDoc', pt=12)
@@ -585,7 +585,7 @@ class Document(object):
     pt = property(_get_pt, _set_pt)
 
     def _get_pb(self): # Padding bottom
-        """Padding bottom property
+        u"""Padding bottom property
         Interface is identical to Element.pb.
 
         >>> doc = Document(name='TestDoc', pb=12)
@@ -605,7 +605,7 @@ class Document(object):
     pb = property(_get_pb, _set_pb)
     
     def _get_pl(self): # Padding left
-        """Padding left property
+        u"""Padding left property
         Interface is identical to Element.pl.
 
         >>> doc = Document(name='Testoc', pl=12)
@@ -625,7 +625,7 @@ class Document(object):
     pl = property(_get_pl, _set_pl)
     
     def _get_pr(self): # Margin right
-        """Padding right property
+        u"""Padding right property
         Interface is identical to Element.pr.
 
         >>> doc = Document(name='Testoc', pr=12)
@@ -645,7 +645,7 @@ class Document(object):
     pr = property(_get_pr, _set_pr)
 
     def _get_pzf(self): # Padding z-axis front
-        """Padding padding z-front property
+        u"""Padding padding z-front property
         Interface is identical to Element.pzf.
 
         >>> doc = Document(name='Testoc', pzf=12)
@@ -665,7 +665,7 @@ class Document(object):
     pzf = property(_get_pzf, _set_pzf)
     
     def _get_pzb(self): # Padding z-axis back
-        """Padding padding z-front property
+        u"""Padding padding z-front property
         Interface is identical to Element.pzb.
 
         >>> doc = Document(name='Testoc', pzb=12)
@@ -687,7 +687,7 @@ class Document(object):
     #   P A G E S
 
     def appendPage(self, page, startPage=1):
-        """Append page to the document. Assert that it is a page element.
+        u"""Append page to the document. Assert that it is a page element.
 
         >>> from pagebot.elements.pbpage import Page
         >>> from pagebot.elements.views.pageview import PageView
@@ -718,7 +718,7 @@ class Document(object):
     appendElement = appendPage
 
     def getPage(self, pnOrName, index=0):
-        """Answer the page at (pn, index). Otherwise search for a page with this name. 
+        u"""Answer the page at (pn, index). Otherwise search for a page with this name. 
         Raise index errors if it does not exist."""
         if pnOrName in self.pages:
             if index >= len(self.pages[pnOrName]):
@@ -730,7 +730,7 @@ class Document(object):
         return None
 
     def getPages(self, pn):
-        """Answer all pages that share the same page number. Rase KeyError if non exist.
+        u"""Answer all pages that share the same page number. Rase KeyError if non exist.
 
         >>> from pagebot.elements.pbpage import Page
         >>> from pagebot.elements.views.pageview import PageView
@@ -741,7 +741,7 @@ class Document(object):
         return self.pages[pn]
 
     def findPages(self, eId=None, name=None, pattern=None, pageSelection=None):
-        """Various ways to find pages from their attributes."""
+        u"""Various ways to find pages from their attributes."""
         pages = []
         for pn, pnPages in sorted(self.pages.items()):
             if not pageSelection is None and not pn in pageSelection:
@@ -755,7 +755,7 @@ class Document(object):
         return pages
 
     def isLeft(self):
-        """This is reached for e.isleft() queries, when elements are not placed on a page.
+        u"""This is reached for e.isleft() queries, when elements are not placed on a page.
         The Document cannot know the answer then. Always answer False.
 
         >>> doc = Document(name='TestDoc')
@@ -768,7 +768,7 @@ class Document(object):
     isRight = isLeft = False
     
     def isLeftPage(self, page):
-        """Answer the boolean flag if the page is currently defined as a left page. 
+        u"""Answer the boolean flag if the page is currently defined as a left page. 
         Left page is even page number
 
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -785,7 +785,7 @@ class Document(object):
         return False # Page not found
 
     def isRightPage(self, page):
-        """Answer the boolean flag if the page is currently defined as a left page. 
+        u"""Answer the boolean flag if the page is currently defined as a left page. 
         Right page is odd page number.
 
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -802,7 +802,7 @@ class Document(object):
         return False # Page not found
 
     def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
-        """Create a new page with size (self.w, self.h) unless defined otherwise. 
+        u"""Create a new page with size (self.w, self.h) unless defined otherwise. 
         Add the pages in the row of pn, if defined. Otherwise create a new row of pages at pn. 
         If pn is undefined, add a new page row at the end.
         If template is undefined, then use self.defaultTemplate to initialize the new page."""
@@ -819,7 +819,7 @@ class Document(object):
         return page # Answer the new page 
 
     def makePages(self, pageCnt, pn=1, template=None, name=None, w=None, h=None, **kwargs):
-        """If no "point" is defined as page number pn, then we'll continue after the maximum 
+        u"""If no "point" is defined as page number pn, then we'll continue after the maximum 
         value of page.y origin position. If template is undefined, then self.newPage will use 
         self.defaultTemplate to initialize the new pages.
 
@@ -832,13 +832,13 @@ class Document(object):
             self.newPage(pn=pn+n, template=template, name=name, w=w, h=h, **kwargs) 
 
     def getElementPage():
-        """Search ancestors for the page element. This call can only happen here if elements 
+        u"""Search ancestors for the page element. This call can only happen here if elements 
         don't have a Page ancestor. Always return None to indicate that there is no Page 
         instance found amongst the ancesters."""
         return None
 
     def nextPage(self, page, nextPage=1, makeNew=True):
-        """Answer the next page of page. If it does not exist, create a new page.
+        u"""Answer the next page of page. If it does not exist, create a new page.
 
         >>> doc = Document(autoPages=4)
         >>> page = doc[2]
@@ -865,7 +865,7 @@ class Document(object):
         return None
 
     def getPageNumber(self, page):
-        """Answer a string with the page number pn, if the page can be found. If the page has index > 0:
+        u"""Answer a string with the page number pn, if the page can be found. If the page has index > 0:
         then answer page format "pn-index". pn and index are incremented by 1.
         TODO: Make a reversed table if this squential search shows to be slow in the future with large docs.
         """
@@ -878,19 +878,19 @@ class Document(object):
         return ''
 
     def getFirstPage(self):
-        """Answer the list of pages with the lowest sorted page.y. Answer empty list if there are no pages."""
+        u"""Answer the list of pages with the lowest sorted page.y. Answer empty list if there are no pages."""
         for pn, pnPages in sorted(self.pages.items()):
             for index, page in enumerate(pnPages):
                 return page
         return None
 
     def getLastPage(self):
-        """Answer last page with the highest sorted page.y. Answer empty list if there are no pages."""
+        u"""Answer last page with the highest sorted page.y. Answer empty list if there are no pages."""
         pn = sorted(self.pages.keys())[-1]
         return self.pages[pn][-1]
 
     def getSortedPages(self, pageSelection=None):
-        """Answer the dynamic list of pages, sorted by y, x and index."""
+        u"""Answer the dynamic list of pages, sorted by y, x and index."""
         pages = [] # List of (pn, pnPages) tuples of pages with the same page number.
         for pn, pnPages in sorted(self.pages.items()):
             if pageSelection is not None and not pn in pageSelection:
@@ -899,7 +899,7 @@ class Document(object):
         return pages
 
     def getMaxPageSizes(self, pageSelection=None):
-        """Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
+        u"""Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
         then only evaluate the selected pages.
 
         >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=100000, maxH=100000)
@@ -928,7 +928,7 @@ class Document(object):
     #   C O N D I T I O N S
 
     def solve(self, score=None):
-        """Evaluate the content of all pages to return the total sum of conditions solving.
+        u"""Evaluate the content of all pages to return the total sum of conditions solving.
         If necessary, the builder for solving specific text conditions, such as
         run length of text and overflow of text boxes, is found by the current self.view.b.
 
@@ -946,7 +946,7 @@ class Document(object):
     #   V I E W S
 
     def getView(self, viewId=None, create=True):
-        """Answer the view viewId exists. Otherwise if create is True and viewId is a known
+        u"""Answer the view viewId exists. Otherwise if create is True and viewId is a known
         class of view, then create a new instance and answers it. Otherwise answer self.view.
 
         >>> doc = Document(name='TestDoc')
@@ -960,7 +960,7 @@ class Document(object):
         return self.view
 
     def newView(self, viewId=None, name=None, context=None):
-        """Create a new view instance and set self.view default view, that will be used for 
+        u"""Create a new view instance and set self.view default view, that will be used for 
         checking on view parameters, before any element rendering is done, such as layout conditions 
         and creating the right type of strings. 
         If context is not defined, then use the result of getView()
@@ -987,7 +987,7 @@ class Document(object):
     #   D R A W I N G  &  B U I L D I N G
 
     def build(self, path=None, pageSelection=None, multiPage=True):
-        """Build the document as website, using the document.view for export.
+        u"""Build the document as website, using the document.view for export.
 
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
         >>> doc.view # PageView is default.
@@ -1000,7 +1000,7 @@ class Document(object):
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 
     def export(self, path=None, multiPage=True):
-        """Export the document as website, using the document.view for export.
+        u"""Export the document as website, using the document.view for export.
 
         >>> from pagebot.elements import newRect
         >>> from pagebot.conditions import *

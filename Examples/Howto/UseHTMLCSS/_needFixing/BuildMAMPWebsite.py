@@ -43,7 +43,7 @@ MAMP_SHOP_URL = 'https://www.mamp.info/en/' # In cade MAMP does not exist,
                                             # download and install.
 
 def makeDocument():
-    """Make a new document."""
+    u"""Make a new document."""
 
     W = H = PageSize
 
