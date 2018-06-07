@@ -64,20 +64,20 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         cssClass = None, # Optional CSS class of local element. Ignored if None.
         tag = None, # Optional marker to match the style with the running tag.
         show = True, # If set to False, then the element does not evaluate in the self.elements loop.
-        
+
         # Basic page/template/element positions. Can contain number values or Unit instances.
-        x = 0, # Default local origin, relative to parent. 
+        x = 0, # Default local origin, relative to parent.
         y = 0,
         z = 0,
         # Basic page/template/element proportions of box. Can contain number values or Unit instances.
         w = w, # Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = 0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
-        
+
         # In "time-dimension" this is an overall value for export. This works independent from
         # the time-marks of element attributes.
         # In case saving as .mov or .gif, this value defines 1/frames_per_second
-        frameDuration = DEFAULT_FRAME_DURATION, 
+        frameDuration = DEFAULT_FRAME_DURATION,
 
         # Resolution in dpi for pixel based publications and elements.
         resolution = 72,
@@ -200,7 +200,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase)
 
         # Axis location of the Variable Font to create the font instance. E.g. dict(wght=45, opsz=12)
-        variableLocation = None, 
+        variableLocation = None,
 
         # List of supported OpenType features.
         # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf,
@@ -374,5 +374,3 @@ def css(name, e=None, styles=None, default=None):
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-
-

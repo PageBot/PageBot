@@ -362,6 +362,7 @@ class DrawBotString(BabelString):
             style = dict(fontSize=sFontSize)
 
         newt = fs + t # Format plain string t onto new formatted fs.
+
         if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction.
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much
             # more consistent for tracked text. context.textSize will add space to the right of the string.

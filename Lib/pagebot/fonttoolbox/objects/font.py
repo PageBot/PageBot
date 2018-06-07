@@ -28,9 +28,9 @@ from fontTools.ttLib import TTFont, TTLibError
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
-from fontTools.varLib.mutator import iup_delta, instantiateVariableFont
+from fontTools.varLib.mutator import iup_delta#, instantiateVariableFont
 
-from pagebot.toolbox.transformer import path2FontName, path2Extension, asFormatted
+from pagebot.toolbox.transformer import path2FontName, path2Extension#, asFormatted
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
@@ -123,7 +123,7 @@ def getScaledLocation(vf, normalizedLocation):
     (-1, 0, 1) values for axes as e.g. [wght] and [wdth].
     The optical size [opsz] is supposed to contain the font size, so it is not scaled.
     If [opsz] is not defined, then set it to default, if the axis exist.
-    
+
 
     >>> from pagebot.fonttoolbox.objects.font import findFont
     >>> font = findFont('AmstelvarAlpha-VF')
@@ -146,7 +146,7 @@ def getScaledLocation(vf, normalizedLocation):
 
 def FIXME_getInstance(vf, location=None, dstPath=None, name=None, opticalSize=None, styleName=None, cached=True, lazy=True):
     u"""Answer the VF-TTFont instance at location (created by fontTools.varLib.mutator.instantiateVariableFont)
-    packed as Font instance.  
+    packed as Font instance.
     """
 
     u"""
@@ -174,7 +174,7 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None, opticalSize=No
     if opticalSize is not None:
         location['opsz'] = opticalSize
 
-    if path is None and cached:        
+    if path is None and cached:
         # Make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
         # Only add axis values to the name that are not default.
         instanceName = ""
@@ -187,7 +187,7 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None, opticalSize=No
         if not os.path.exists(targetDirectory):
             os.makedirs(targetDirectory)
         path = targetDirectory + instanceFileName
-    
+
     if cached and os.path.exists(path):
         #print('Found in cache', path)
         instance = Font(path=path, name=name, location=location, opticalSize=opticalSize)
@@ -225,7 +225,7 @@ def makeInstance(path, location, dstPath=None, normalize=True, cached=True, lazy
     Keyword arguments:
         varfilename -- a variable font file path
         location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
-    
+
     >>> vf = findFont('RobotoDelta-VF')
     >>> instance = makeInstance(vf.path, dict(opsz=8))
     >>> instance
@@ -361,7 +361,7 @@ class Font(object):
     FONTANALYZER_CLASS = FontAnalyzer
 
     def __init__(self, path=None, ttFont=None, name=None, opticalSize=None, location=None, styleName=None, lazy=True):
-        u"""Initialize the TTFont, for which Font is a wrapper. 
+        u"""Initialize the TTFont, for which Font is a wrapper.
 
         self.name is supported, in case the caller wants to use a different"""
         assert path is not None or ttFont is not None
@@ -589,7 +589,7 @@ class Font(object):
 
         """
         TODO: Fix these tests
-        
+
         >>> font.match(name='Robo', weight=900, width=5)
         1.0
         >>> font.match(name='Robo', weight=900, width=5, italic=True)
@@ -645,7 +645,7 @@ class Font(object):
             return self.ttFont['cmap'].getBestCmap()
         return {}
     cmap = property(_get_cmap)
-    
+
     def __contains__(self, glyphName):
         u"""Allow direct testing.
 
@@ -782,7 +782,7 @@ class Font(object):
         return self._variables
     variables = property(_get_variables)
 
-    def getInstance(self, location=None, dstPath=None, opticalSize=None, 
+    def getInstance(self, location=None, dstPath=None, opticalSize=None,
             styleName=None, cached=True, lazy=True):
         u"""Answer the instance of self at location. If the cache file already exists, then
         just answer a Font instance to that font file.

@@ -16,16 +16,16 @@
 #
 from pagebot.elements import TextBox
 
-class Bio(TextBox): 
-    u"""Showing the specified (variable) font with its name as headline 
+class Bio(TextBox):
+    u"""Showing the specified (variable) font with its name as headline
     with the bio text about the font.
 
     """
     BODY_SIZE = 11
 
-    def __init__(self, f, foundryName=None, description=None, foundryStyle=None, 
+    def __init__(self, f, foundryName=None, description=None, foundryStyle=None,
             fontNameStyle=None, bodyStyle=None, **kwargs):
-        u"""    
+        u"""
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -49,18 +49,18 @@ class Bio(TextBox):
 
         c = self.context
         if foundryStyle is None:
-            foundryStyle = dict(font=f.path, fontsize=self.BODY_SIZE, rLeading=0.6)
+            foundryStyle = dict(font=f.path, fontSize=self.BODY_SIZE, rLeading=0.6)
         if fontNameStyle is None:
             fontNameStyle = dict(font=f.path, rLeading=1.9)
         if bodyStyle is None:
-            bodyStyle = dict(font=f.path, fontsize=self.BODY_SIZE, rLeading=1.4)
+            bodyStyle = dict(font=f.path, fontSize=self.BODY_SIZE, rLeading=1.4)
 
         self.f = f # Font instance
         foundryName = foundryName or f.info.designer or 'Unknown foundry'
         familyName = f.info.familyName or 'Unknown family'
         bio = c.newString(foundryName+'\n', style=foundryStyle)
         bio += c.newString(familyName+'\n', style=fontNameStyle, w=self.w*2/3)
-        bio += c.newString(description or f.info.description or 'Unknown description ' * 40, 
+        bio += c.newString(description or f.info.description or 'Unknown description ' * 40,
             style=bodyStyle)
         self.bs = bio
 

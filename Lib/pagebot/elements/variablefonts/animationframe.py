@@ -17,13 +17,12 @@
 from __future__ import division # Make integer division result in float.
 
 from math import sin, cos, radians
-
 from pagebot.elements import Rect
 from pagebot.toolbox.transformer import pointOffset
-from pagebot.fonttoolbox.objects.font import getInstance, Font
+from pagebot.fonttoolbox.objects.font import findFont
 
 class AnimationFrame(Rect):
-    u"""Showing one frame of an animation, supporting different states of a VariableFont 
+    u"""Showing one frame of an animation, supporting different states of a VariableFont
 
     """
     SAMPLE = 'Sample'
@@ -70,7 +69,7 @@ class AnimationFrame(Rect):
         self.buildFrame(view, p) # Draw optional background fill, frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showElementFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -101,7 +100,7 @@ class AnimationFrame(Rect):
         phisin = sin(radians(self.frameIndex/self.frames * 360))
         phicos = cos(radians(self.frameIndex/self.frames * 360))
 
-        style['textFill'] = 1-phicos*0.3+0.5 
+        style['textFill'] = 1-phicos*0.3+0.5
         # TODO: Not the right instance-weight is shown in export.
         wdthRange = wdthMax - wdthMin
         wghtRange = wghtMax - wghtMin
@@ -113,20 +112,32 @@ class AnimationFrame(Rect):
         bs = c.newString(self.sampleText, style=style)
         tw, th = bs.textSize()
         c.text(bs, (self.w/2 - tw/2, self.h/2))
-
-
-
         glyph = instance['ampersand']
         c.save()
         c.stroke(0, 0.25)
-        gray = phisin*0.3+0.5 
+        gray = phisin*0.3+0.5
         c.fill((gray, gray, 1-gray, 0.6))
         s = 0.4
         c.scale(s)
         c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/4)/s))
         c.restore()
 
+        # FIXME: should get local path using findFont(), but axis seem to be specific to
+        # Bitcount.
+        #path = "/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/variable_ttf/BitcountTest_DoubleCircleSquare4-VF.ttf"
+        #f = Font(path)
+        f = findFont('RobotoDelta-VF')
 
+        if 'SHPE' in f.axes:
+            SHPEMin, SHPEDefault, SHPEMax = f.axes['SHPE']
+            SHPERange = SHPEMax - SHPEMin
+            wghtMin, wghtDefault, wghtMax = self.f.axes['wght']
+            wghtRange = wghtMax - wghtMin
+            location = dict(SHPE=phisin*SHPERange/2+SHPERange/2+SHPEMin, wght=phicos*wghtRange/2+wghtRange/2+wghtMin)
+            instance = f.getInstance(location)#instance.path
+            glyph = instance['A']
+
+        """
         path = "/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/variable_ttf/BitcountTest_DoubleCircleSquare2-VF.ttf"
         f = Font(path)
         SHPEMin, SHPEDefault, SHPEMax = f.axes['SHPE']
@@ -136,6 +147,7 @@ class AnimationFrame(Rect):
         location = dict(SHPE=phisin*SHPERange/2+SHPERange/2+SHPEMin, wght=phicos*wghtRange/2+wghtRange/2+wghtMin)
         instance = f.getInstance(location)#instance.path
         glyph = instance['A']
+        """
         c.save()
         c.stroke((1, 0, 0), 0.25)
         gray = phisin*0.3+0.7
