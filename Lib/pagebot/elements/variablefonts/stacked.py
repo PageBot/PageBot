@@ -20,7 +20,7 @@ from pagebot.constants import JUSTIFIED, LEFT
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.transformer import pointOffset
 
-class Stacked(BaseFontShow): 
+class Stacked(BaseFontShow):
     u"""Showing the specified (variable) font as full page with a matrix
     of all glyphs in the font.
 
@@ -32,7 +32,7 @@ class Stacked(BaseFontShow):
 
     """
     def __init__(self, f, words=None, labelFontSize=None, **kwargs):
-        u"""   
+        u"""
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -76,7 +76,7 @@ class Stacked(BaseFontShow):
         self.buildFrame(view, p) # Draw optional background fill, frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showElementFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -125,29 +125,29 @@ class Stacked(BaseFontShow):
 
         # Body text 16/24
         s = self.getText(self.textTag, 20)
-        x, y = self.buildTextBox(None, s, origin, x, y, self.pw, None, 16, JUSTIFIED)        
+        x, y = self.buildTextBox(None, s, origin, x, y, self.pw, None, 16, JUSTIFIED)
 
         # Body text 12/18
         s = self.getText(self.textTag, 30)
-        x, y = self.buildTextBox(None, s, origin, x, y, self.pw, None, 12, JUSTIFIED)        
+        x, y = self.buildTextBox(None, s, origin, x, y, self.pw, None, 12, JUSTIFIED)
 
         # Body text 10/15
         s1 = self.getText(self.headlineTag)
         s2 = self.getText(self.textTag, cnt=20)
-        x, y = self.buildTextBox(s1, s2, origin, x, y, self.pw, None, 10, JUSTIFIED, Bwght=0.7, Bwdth=-0.1)        
+        x, y = self.buildTextBox(s1, s2, origin, x, y, self.pw, None, 10, JUSTIFIED, Bwght=0.7, Bwdth=-0.1)
 
         # Body text 9/13.5
         # Don't update to the new y, next colomn needs to be on the right, starting at the same y.
         s1 = self.getText(self.headlineTag)
         s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
-        x, _ = self.buildTextBox(s1, s2, origin, x, y, (self.pw-self.gw)/2, y-self.pb, 
-            9, LEFT, labelSize=7, Bwght=0.6, Bwdth=-0.1)       
+        x, _ = self.buildTextBox(s1, s2, origin, x, y, (self.pw-self.gw)/2, y-self.pb,
+            9, LEFT, labelSize=7, Bwght=0.6, Bwdth=-0.1)
 
         # Body text 8/12
         s1 = self.getText(self.headlineTag)
         s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
-        x, y = self.buildTextBox(s1, s2, origin, x+(self.pw+self.gw)/2, y, (self.pw-self.gw)/2, y-self.pb, 
-            8, LEFT, labelSize=7, Bwght=0.6, Bwdth=-0.1)        
+        x, y = self.buildTextBox(s1, s2, origin, x+(self.pw+self.gw)/2, y, (self.pw-self.gw)/2, y-self.pb,
+            8, LEFT, labelSize=7, Bwght=0.6, Bwdth=-0.1)
 
 
 

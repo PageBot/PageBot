@@ -25,7 +25,7 @@ class GlyphDimensions(BaseFontShow):
     def __init__(self, f, glyphName=None, **kwargs):
 
         u"""
- 
+
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -55,18 +55,17 @@ class GlyphDimensions(BaseFontShow):
         >>> from pagebot.conditions import *
         >>> c = DrawBotContext()
         >>> w, h = Letter
-        >>> path = "/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/variable_ttf/BitcountTest_DoubleCircleSquare4-VF.ttf"
-        >>> font = Font(path)
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> font = findFont('RobotoDelta-VF')
         >>> location = dict(SHPE=360, wght=500)
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=1, context=c)
         >>> style = dict(gh=16, fill=0.95, rLeading=1.4, fontSize=24)
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> instance = font.getInstance(location=location)
-        >>> gs = GlyphDimensions(instance, parent=page, glyphName='px', conditions=conditions, padding=40, style=style, context=c)
+        >>> gs = GlyphDimensions(instance, parent=page, glyphName='H', conditions=conditions, padding=40, style=style, context=c)
         >>> score = doc.solve()
         >>> doc.export('_export/%sGlyphDimensions.pdf' % font.info.familyName)
-
         """
         BaseFontShow.__init__(self, **kwargs)
         self.f = f # Font instance
@@ -107,9 +106,11 @@ class GlyphDimensions(BaseFontShow):
             c.save()
             c.stroke(0, 0.25)
             c.fill((0.7, 0.7, 0.7, 0.6))
-            s = (self.pw/glyph.width)
-            c.scale(s)
-            c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/3)/s))
+            # FIXME: no self.pw
+            #s = (self.pw/glyph.width)
+            #c.scale(s)
+            #c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/3)/s))
+            c.drawPath(glyph.path, ((ox+self.pl), (oy+self.ph/3)))
             c.restore()
 
 if __name__ == '__main__':
