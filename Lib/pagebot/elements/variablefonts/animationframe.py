@@ -28,7 +28,7 @@ class AnimationFrame(Rect):
     """
     SAMPLE = 'Sample'
 
-    def __init__(self, f, frames, frameIndex, sampleText=None, **kwargs):
+    def __init__(self, f, frames, frameIndex, phases=None, sampleText=None, **kwargs):
         u"""
         >>> from random import random
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -57,6 +57,7 @@ class AnimationFrame(Rect):
         self.frames = frames # Total amount of expected frames in the animation part
         self.frameIndex = frameIndex
         self.sampleText = sampleText or self.SAMPLE
+        self.phases = phases or {} # Dictionary for phasing values depending on frame index.
 
     def build(self, view, origin, drawElements=True):
         u"""Default drawing method just drawing the frame.
@@ -126,7 +127,7 @@ class AnimationFrame(Rect):
         c.restore()
 
 
-        path = "/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/variable_ttf/BitcountTest_DoubleCircleSquare4-VF.ttf"
+        path = "/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/variable_ttf/BitcountTest_DoubleCircleSquare2-VF.ttf"
         f = Font(path)
         SHPEMin, SHPEDefault, SHPEMax = f.axes['SHPE']
         SHPERange = SHPEMax - SHPEMin
