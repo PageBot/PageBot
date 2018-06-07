@@ -22,7 +22,7 @@ from pagebot.toolbox.units import getUnits, fr, perc, em
 class Line(Element):
 
     def _get_w(self):
-        u"""Answer the width of the Line element.
+        """Answer the width of the Line element.
 
         >>> e = Line(w=100, maxW=1000)
         >>> e.w
@@ -42,7 +42,7 @@ class Line(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        u"""Answer the height of the Line element.
+        """Answer the height of the Line element.
 
         >>> e = Line(h=100, maxH=1000)
         >>> e.h
@@ -64,7 +64,7 @@ class Line(Element):
     #   D R A W B O T / F L A T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, drawElements=True):
-        u"""Draw a line on the current context canvas.
+        """Draw a line on the current context canvas.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.document import Document

@@ -16,7 +16,7 @@
 from pagebot.elements.element import Element
 
 class Placer(Element):
-    u"""Draw an area showing to be a place holder, e.g. reserved places of images in a template.
+    """Draw an area showing to be a place holder, e.g. reserved places of images in a template.
 
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
     >>> from pagebot.document import Document

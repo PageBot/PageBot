@@ -27,11 +27,11 @@ TEST_FONTS_PATH = getResourcesPath() + '/testfonts'
 FONT_PATHS = {}
 
 def getTestFontsPath():
-    u"""Answer the path of the PageBot test fonts."""
+    """Answer the path of the PageBot test fonts."""
     return TEST_FONTS_PATH
 
 def getFontPathOfFont(font, default=None):
-    u"""Answer the path that is source of the given font name.
+    """Answer the path that is source of the given font name.
     If the path is already a valid font path, then aswer it unchanged.
     Answer None if the font cannot be found.
 
@@ -63,7 +63,7 @@ def getFontPathOfFont(font, default=None):
     return font
 
 def _recursivelyCollectFontPaths(path, collectedFontPaths):
-    u"""Recursive helper function for getFontPaths. If the fileName already exists in the fontPaths, then ignore."""
+    """Recursive helper function for getFontPaths. If the fileName already exists in the fontPaths, then ignore."""
     if os.path.exists(path):
         if os.path.isdir(path):
             for fileName in os.listdir(path):
@@ -77,7 +77,7 @@ def _recursivelyCollectFontPaths(path, collectedFontPaths):
                 collectedFontPaths[fontName] = path
 
 def getFontPaths(extraPaths=None):
-    u"""Answer a dictionary with all available font paths on the platform, key is the single file name.
+    """Answer a dictionary with all available font paths on the platform, key is the single file name.
     A typical example return for MaxOS the font paths available in directories (e.g. for user Petr):
         ('/Library/Fonts', '/Users/petr/Library/Fonts', '/Users/petr/git/PageBot/Fonts')
     In this order, "local" defined fonts with the same file name, will overwrite the "deeper" located font files.

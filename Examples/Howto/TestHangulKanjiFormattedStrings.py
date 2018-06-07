@@ -20,7 +20,7 @@ context = getContext()
 FontSize = 30
 W, H = 1000, 1000
 def run():
-    s = u"""글자가 일상이 된다 산돌커뮤니케이션 ABCD123 Latin すべての文化集団は，独自の言語，文字，書記システムを持つ．それゆえ，個々の書記システムをサイバースペースに移転することは. ABCD123 Latin included"""
+    s = """글자가 일상이 된다 산돌커뮤니케이션 ABCD123 Latin すべての文化集団は，独自の言語，文字，書記システムを持つ．それゆえ，個々の書記システムをサイバースペースに移転することは. ABCD123 Latin included"""
     context.newPage(W, H)
     fsr = context.newString(s, style=dict(font='Generic-Regular', fontSize=FontSize))
     fsb = context.newString(s, style=dict(font='Generic-Regular_Bold', fontSize=FontSize))

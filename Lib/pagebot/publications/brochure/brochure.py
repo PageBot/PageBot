@@ -37,7 +37,7 @@ class Brochure(Publication):
     DEFAULT_COVERBACKGROUND = (0.3, 0.6, 0.3)
 
     def initialize(self, coverBackgroundFill=None, **kwargs):
-        u"""Initialize the generic brochure templates. """
+        """Initialize the generic brochure templates. """
 
         padding = self.css('pt'), self.css('pr'), self.css('pb'), self.css('pl')
         w, h = self.w, self.h

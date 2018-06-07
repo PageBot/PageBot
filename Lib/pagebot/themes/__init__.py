@@ -18,7 +18,7 @@ from wood_office import WoodOffice
 Themes = {}
 
 def addTheme(theme):
-	u"""Add the theme, making sure its name is define and unique."""
+	"""Add the theme, making sure its name is define and unique."""
 	n = 0
 	while True:
 		name = theme.name

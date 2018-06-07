@@ -24,7 +24,7 @@ content = {
         u'I’ve spent several years in Hollywood, and I still think the movie heroes are in the audience. ~Wilson Mizner',
         u'Fiction reveals truths that reality obscures. ~Jessamyn West',
         u'Most horror movies are certainly that. ~Brendan Francis',
-        u"""You know, when I first went into the movies Lionel Barrymore played my grandfather.  
+        """You know, when I first went into the movies Lionel Barrymore played my grandfather.  
             Later he played my father and finally he played my husband.  If he had lived I’m sure I would have played his mother.  
             That's the way it is in Hollywood.  The men get younger and the women get older. ~Lillian Gish""",
         u'What puzzles most of us are the things which have been left in the movies rather than the things which have been taken out. ~Agnes Repplier',
@@ -32,7 +32,7 @@ content = {
         u'There are only three ages for women in Hollywood - Babe, District Attorney, and Driving Miss Daisy. ~Goldie Hawn',
         u'Acting is like a Halloween mask that you put on. ~River Phoenix',
         u'Why should people go out and pay money to see bad films when they can stay home and see bad television for nothing? ~Samuel Goldwyn',
-        u"""The chief difference between horror fans and science fiction fans lies in why they won’t walk backwards.  
+        """The chief difference between horror fans and science fiction fans lies in why they won’t walk backwards.  
             A horror fan won’t walk backwards because he knows he’ll be knifed by a madman.  
             A science fiction fan won’t walk backwards because he knows he‘ll step on the cat. ~Aaron Allston""",
         u'It would have been more logical if silent pictures had grown out of the talkies instead of the other way around. ~Mary Pickford',

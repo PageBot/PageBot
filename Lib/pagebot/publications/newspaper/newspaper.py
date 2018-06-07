@@ -62,7 +62,7 @@ class Newspaper(Publication):
     PADDING = 48
 
     def getHeadline(self, s, style, cnt=None, w=None):
-        u"""Answer a styled BabelString instance, with some checking on the content.
+        """Answer a styled BabelString instance, with some checking on the content.
         Create a blurb headline if s is None. Make sure it does not end with '.,:;-'.
         If w is not None, then force the fontsize of the headline to fit the width."""
         if s is None:
@@ -73,7 +73,7 @@ class Newspaper(Publication):
         return formattedHeadline
 
     def getAnkeiler(self, cnt=None):
-        u"""Answer a blurb ankeiler. Make sure it does end with '.'"""
+        """Answer a blurb ankeiler. Make sure it does end with '.'"""
         ankeiler = Blurb().getBlurb('article_ankeiler', cnt=cnt)
         while ankeiler and ankeiler[-1] in ',:;-':
             ankeiler = ankeiler[:-1]
@@ -82,7 +82,7 @@ class Newspaper(Publication):
         return ankeiler
 
     def initialize(self, padding=None, gutter=None, columns=None, **kwargs):
-        u"""Initialize the generic book templates. """
+        """Initialize the generic book templates. """
         blurb = Blurb()
 
         # TODO: Solve for left/right templates.

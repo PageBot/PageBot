@@ -15,7 +15,7 @@
 #
 
 class BabelString(object):
-    u"""BabelString is the base class of various types of (formatted) string representations 
+    """BabelString is the base class of various types of (formatted) string representations 
     needed for different builder classes."""
 
     def __init__(self, s, context, style=None):
@@ -42,14 +42,14 @@ class BabelString(object):
         return len(self.s)
 
     def append(self, s):
-        u"""Append string or FlatString to self."""
+        """Append string or FlatString to self."""
         try:
             self.s += s.s
         except (TypeError, AttributeError):
             self.s += s # Convert to babel string, whatever it is.
 
     def type(self):
-        u"""Answer the id of the class, in case a caller wants to know what kind of 
+        """Answer the id of the class, in case a caller wants to know what kind of 
         BabelString this is."""
         return self.BABEL_STRING_TYPE
 
@@ -62,7 +62,7 @@ class BabelString(object):
     h = property(_get_h)
 
     def size(self):
-        u"""Answer the size tuple (w, h) of the string."""
+        """Answer the size tuple (w, h) of the string."""
         return self.context.textSize(self)
 
 

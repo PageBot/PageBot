@@ -25,7 +25,7 @@ from pagebot.style import RIGHT
 from pagebot.toolbox.units import px
 
 class BarChart(Rect):
-    u"""Draw a bar chart based on data.
+    """Draw a bar chart based on data.
 
     """
     def __init__(self, data=None, **kwargs):
@@ -35,7 +35,7 @@ class BarChart(Rect):
         self.data = data
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build the HTML/CSS navigation, depending on the pages in the root document.
+        """Build the HTML/CSS navigation, depending on the pages in the root document.
 
         >>> from random import shuffle
         >>> from pagebot.document import Document

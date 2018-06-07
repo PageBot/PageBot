@@ -19,11 +19,11 @@ from __future__ import division # Make integer division result in float.
 from pagebot.elements.pbgroup import Group
 
 class WideContent(Group):
-    u"""Draw rectangle, default identical to Element itself.
+    """Draw rectangle, default identical to Element itself.
 
     """
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build the HTML/CSS navigation, depending on the pages in the root document.
+        """Build the HTML/CSS navigation, depending on the pages in the root document.
 
         """
         b = self.context.b

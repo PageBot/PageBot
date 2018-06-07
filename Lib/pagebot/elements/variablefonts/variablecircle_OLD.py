@@ -29,7 +29,7 @@ from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 context = getContext()
 
 class VariableCircle(Element):
-    u"""Interpret the content of the self.font variable font and draw a circle info graphic on that info.
+    """Interpret the content of the self.font variable font and draw a circle info graphic on that info.
     Information is derived from the Variable Font and automatic converted into
     an info-graphic, showing a simplified model of the design space.
     To show all possible interpolation, it would need to visualize an n-dimensional
@@ -76,7 +76,7 @@ class VariableCircle(Element):
         return recipe
 
     def _angle2XY(self, angle, r):
-        u"""Answer the XY position for a given angled (degrees) and r, located on the origin."""
+        """Answer the XY position for a given angled (degrees) and r, located on the origin."""
         return cos(angle/180*pi) * r, sin(angle/180*pi) * r
 
     def _drawGlyphMarker(self, axisName, mx, my, glyphName, fontSize, location, strokeW=2):
@@ -167,7 +167,7 @@ class VariableCircle(Element):
     #   D R A W B O T / F L A T  S U P P O R T
 
     def build(self, view, origin, drawElements=True):
-        u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
+        """Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.

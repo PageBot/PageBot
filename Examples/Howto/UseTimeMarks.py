@@ -15,7 +15,7 @@
 from pagebot.toolbox.timemark import TimeMark
 
 def run():
-	u"""TimeMarks are use to control the change of element values over time.
+	"""TimeMarks are use to control the change of element values over time.
 	This way movement can be defined in time based documents, such as animations.
 	But also generation of specific document based on a time of date can be
 	defined this way,

@@ -16,7 +16,7 @@
 #     Column --> measure transformers.
 
 def x2cx(x, e):
-    u"""Transform from *x* value to column *x* index value, using the *e.css('cw')* (column width)
+    """Transform from *x* value to column *x* index value, using the *e.css('cw')* (column width)
     as column measure."""
     gw = e.gw # Gutter
     cw = e.css('cw', 0)
@@ -25,7 +25,7 @@ def x2cx(x, e):
     return 0
 
 def cx2x(cx, e):
-    u"""Transform from *x* index value to *x* index value, using the *e.css('cw')* (column width)
+    """Transform from *x* index value to *x* index value, using the *e.css('cw')* (column width)
     as column measure."""
     if cx is None:
         x = 0
@@ -34,7 +34,7 @@ def cx2x(cx, e):
     return x
 
 def y2cy(y, e):
-    u"""Transform from *y* value to column *y* index value, using the *e.css('ch')* (column height)
+    """Transform from *y* value to column *y* index value, using the *e.css('ch')* (column height)
     as column measure."""
     gh = e.gh # Gutter
     ch = e.css('ch', 0)
@@ -48,7 +48,7 @@ def y2cy(y, e):
     return cy
 
 def cy2y(cy, e):
-    u"""Transform from *y* index value to *y* index value, using the *e.css('ch')* (column height)
+    """Transform from *y* index value to *y* index value, using the *e.css('ch')* (column height)
     as column measure."""
     if cy is None:
         y = 0
@@ -61,7 +61,7 @@ def cy2y(cy, e):
     return y
 
 def z2cz(z, e):
-    u"""Transform from *z* value to column *z* index value, using the *e.css('cd')* (column depth)
+    """Transform from *z* value to column *z* index value, using the *e.css('cd')* (column depth)
     as column measure."""
     cd = e.css('cd', 0) # Column width
     cz = 0
@@ -70,7 +70,7 @@ def z2cz(z, e):
     return cz
 
 def cz2z(cz, e):
-    u"""Transform from *z* index value to *z* index value, using the *e.css('cd')* (column depth)
+    """Transform from *z* index value to *z* index value, using the *e.css('cd')* (column depth)
     as column measure."""
     if cz is None:
         z = 0
@@ -121,7 +121,7 @@ def cols2w(w, e): # Answer the col with for the give amount of colums
 # Size
 
 def w2cw(w, e):
-    u"""Transform from *w* value to column *w* count value, using the *e.css('cw')* (column width)
+    """Transform from *w* value to column *w* count value, using the *e.css('cw')* (column width)
     as column measure."""
     gw = e.gw
     cw = e.css('cw', 0)
@@ -130,7 +130,7 @@ def w2cw(w, e):
     return 0 # Undefined, not info about column width and gutter or zero division
 
 def cw2w(cw, e):
-    u"""Transform from *w* index value to *w* count value, using the *e.css('cd')* (column width)
+    """Transform from *w* index value to *w* count value, using the *e.css('cd')* (column width)
     as column measure."""
     if cw is None:
         w = 0
@@ -140,7 +140,7 @@ def cw2w(cw, e):
     return w
 
 def h2ch(h, e):
-    u"""Transform from *h* value to column *w* count value, using the *e.css('ch')* (column height)
+    """Transform from *h* value to column *w* count value, using the *e.css('ch')* (column height)
     as column measure."""
     gh = e.gh
     ch = e.css('ch', 0)
@@ -149,7 +149,7 @@ def h2ch(h, e):
     return 0 # Undefined, no info about column height and gutter or zero division
 
 def ch2h(ch, e):
-    u"""Transform from *h* index value to *w* count value, using the *e.css('ch')* (column height)
+    """Transform from *h* index value to *w* count value, using the *e.css('ch')* (column height)
     as column measure."""
     if ch is None:
         h = 0
@@ -159,7 +159,7 @@ def ch2h(ch, e):
     return h
 
 def d2cd(d, e):
-    u"""Transform from *d* value to column *cd* count value, using the *e.css('cd')* (column depth)
+    """Transform from *d* value to column *cd* count value, using the *e.css('cd')* (column depth)
     as column measure."""
     cd = e.css('cd', 0)
     if cd + e.gd: # Test for division by 0
@@ -167,7 +167,7 @@ def d2cd(d, e):
     return 0 # Undefined, no info about column depth and gutter or zero division
 
 def cd2d(cd, e):
-    u"""Transform from *cd* index value to *d* count value, using the *e.css('ch')* (column depth)
+    """Transform from *cd* index value to *d* count value, using the *e.css('ch')* (column depth)
     as column measure."""
     if cd is None:
         d = 0

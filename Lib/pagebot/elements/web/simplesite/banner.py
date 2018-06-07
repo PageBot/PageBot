@@ -20,11 +20,11 @@ from pagebot.elements.pbgroup import Group
 from pagebot.toolbox.transformer import pointOffset
 
 class Banner(Group):
-    u"""Draw rectangle, default identical to Element itself.
+    """Draw rectangle, default identical to Element itself.
 
     """
     def build(self, view, origin, drawElements=True):
-        u"""Default drawing method just drawing the frame.
+        """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes.
 
         >>> import os
@@ -61,7 +61,7 @@ class Banner(Group):
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build the HTML/CSS navigation, depending on the pages in the root document.
+        """Build the HTML/CSS navigation, depending on the pages in the root document.
 
         Typical HTML export
         <div id="banner">   

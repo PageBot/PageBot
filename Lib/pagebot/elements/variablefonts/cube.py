@@ -22,7 +22,7 @@ from pagebot.toolbox.transformer import pointOffset
 from pagebot.fonttoolbox.objects.font import getInstance
 
 class Cube(BaseFontShow): 
-    u"""Showing the specified (variable) font as full page with a matrix
+    """Showing the specified (variable) font as full page with a matrix
     of all glyphs in the font.
 
     Usage of standard style parameters
@@ -33,7 +33,7 @@ class Cube(BaseFontShow):
 
     """
     def __init__(self, f, label=None, dx=None, dy=None, steps=None, axes=None, **kwargs):
-        u"""   
+        """   
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -68,7 +68,7 @@ class Cube(BaseFontShow):
         self.axes = axes
 
     def build(self, view, origin, drawElements=True):
-        u"""Default drawing method just drawing the frame.
+        """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context
         p = pointOffset(self.oPoint, origin)
@@ -93,7 +93,7 @@ class Cube(BaseFontShow):
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def drawCube(self, view, origin):
-        u"""Draw the content of the element, responding to size, styles, font and content.
+        """Draw the content of the element, responding to size, styles, font and content.
         Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
         if the axis exists.
 

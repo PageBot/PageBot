@@ -18,7 +18,7 @@ from pagebot.elements import TextBox
 from pagebot.constants import RIGHT
 
 class Title(TextBox): 
-    u"""Showing the specified (variable) font with its name as headline 
+    """Showing the specified (variable) font with its name as headline 
     and designer name.
 
     """
@@ -27,7 +27,7 @@ class Title(TextBox):
 
     def __init__(self, f, foundryName=None, designer=None, foundryStyle=None, 
             fontNameStyle=None, designerStyle=None, **kwargs):
-        u"""    
+        """    
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter

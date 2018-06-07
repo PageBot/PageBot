@@ -21,7 +21,7 @@ from pagebot.elements.pbtextbox import TextBox
 class Introduction(TextBox):
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build a page wide in introduction box for large type, if there is any content."""
+        """Build a page wide in introduction box for large type, if there is any content."""
         if self.bs.s: # Ignore if no content.
             b = self.context.b
             self.build_css(view)

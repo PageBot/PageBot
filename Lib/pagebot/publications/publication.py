@@ -16,7 +16,7 @@
 from pagebot.document import Document
       
 class Publication(Document):
-    u"""Subclass of Document, implementing templates for generic publications.
+    """Subclass of Document, implementing templates for generic publications.
     See also other – more specific – implementations, such as Poster, Brochure and Manaziner.
 
     Originally Publication was an abstract class, holding multiple documents. But since the split 
@@ -24,7 +24,7 @@ class Publication(Document):
     to have a "top-class" containing multiple documents."""
 
     def getAPI(self):
-    	u"""Answer the API dictionary for this class that can be used by calling apps,
+    	"""Answer the API dictionary for this class that can be used by calling apps,
     	e.g. for construction and behavior of the scope of app UI parameter controls.
 		This method needs to be redefined by inheriting publications classes to answer
 		different than the default empty dictionary."""

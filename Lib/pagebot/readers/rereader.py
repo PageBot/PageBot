@@ -18,7 +18,7 @@
 import codecs
 
 def readRE(path, pattern):
-    u"""If fileName is pointing to a non-XML file, then try to read and apply the pattern on the content.
+    """If fileName is pointing to a non-XML file, then try to read and apply the pattern on the content.
     Answer the result of the pattern match."""
     f = codecs.open(path, mode="r", encoding="utf-8")
     text = f.read()

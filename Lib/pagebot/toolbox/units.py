@@ -19,7 +19,7 @@ from pagebot.constants import MM, INCH
 from pagebot.toolbox.transformer import asNumberOrNone
 
 class Unit(object):
-    u"""Base class for units, implementing most of the logic.
+    """Base class for units, implementing most of the logic.
 
         >>> mm(1)
         1mm
@@ -148,7 +148,7 @@ class Unit(object):
         return self.__class__.fromPt(u.asPt() * self.asPt())
 
 class mm(Unit):
-    u"""Answer the mm instance.
+    """Answer the mm instance.
 
     >>> u = mm.make(210)
     >>> u
@@ -187,7 +187,7 @@ class mm(Unit):
         return cls(pt / factor)
 
 class px(Unit):
-    u"""Answer the px (pixel) instance.
+    """Answer the px (pixel) instance.
 
     >>> u = px.make(0.2)
     >>> u
@@ -222,7 +222,7 @@ class px(Unit):
         return cls(pt / factor)
 
 class pt(Unit):
-    u"""pt is the base unit size of all PageBot measures.
+    """pt is the base unit size of all PageBot measures.
 
     >>> u = pt.make(0.4)
     >>> u
@@ -256,7 +256,7 @@ class pt(Unit):
         return cls(pt / factor)
 
 class inch(Unit):
-    u"""inch 72 * the base unit size of all PageBot measures.
+    """inch 72 * the base unit size of all PageBot measures.
 
     >>> getUnits('0.4"')
     0.40"
@@ -304,7 +304,7 @@ class inch(Unit):
 #   Relative Units (e.g. for use in CSS)
 
 class RelativeUnit(Unit):
-    u"""Abstract class to avoid artihmetic between absolute and relative units.
+    """Abstract class to avoid artihmetic between absolute and relative units.
     Needs absolute reference to convert to absolute units."""
     absolute = False # Cannot do arithmetic with absolute units.
 
@@ -313,14 +313,14 @@ class RelativeUnit(Unit):
     css = property(_get_css)
 
     def asPt(self, masterValue):
-        u"""Answer the value in points, relative to the master value."""
+        """Answer the value in points, relative to the master value."""
         return self._v * masterValue
     @classmethod
     def fromPt(cls, pt, masterValue):
         return cls(pt / masterValue)
 
 class fr(RelativeUnit):
-    u"""fractional units, used in CSS-grid.
+    """fractional units, used in CSS-grid.
     https://gridbyexample.com/video/series-the-fr-unit/
 
     >>> getUnits('0.35fr')
@@ -350,7 +350,7 @@ class fr(RelativeUnit):
         return None
 
 class em(RelativeUnit):
-    u"""Em size is based on the current setting of the fontSize.
+    """Em size is based on the current setting of the fontSize.
     Used in CSS export.
 
     >>> getUnits('10em')
@@ -380,7 +380,7 @@ class em(RelativeUnit):
         return None
 
 class perc(RelativeUnit):
-    u"""Answer the relative percentage unit, if parsing as percentage (ending with % order "perc").
+    """Answer the relative percentage unit, if parsing as percentage (ending with % order "perc").
 
     >>> getUnits('100%')
     100%
@@ -416,7 +416,7 @@ class perc(RelativeUnit):
         return None
 
     def asPt(self, masterValue):
-        u"""Convert to points. Percentage has a different relative master calculation."""
+        """Convert to points. Percentage has a different relative master calculation."""
         return self._v * masterValue / 100
     @classmethod
     def fromPt(cls, pt, masterValue):
@@ -430,7 +430,7 @@ class perc(RelativeUnit):
 UNIT_CLASSES = (mm, px, pt, inch, fr, em, perc)
 
 def getUnits(v):
-    u"""If value is a string, then try to guess what type of units value is
+    """If value is a string, then try to guess what type of units value is
     and answer the right instance.
 
     >>> getUnits('100%')

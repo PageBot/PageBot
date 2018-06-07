@@ -73,7 +73,7 @@ EXPORT_PATH = '_export/FloatElements.pdf'
 # Export in _export folder that does not commit in Git. Force to export PDF.
 
 def makeDocument():
-    u"""Make a new document."""
+    """Make a new document."""
 
     doc = Document(w=PageSize, h=PageSize, originTop=False, autoPages=1)
 

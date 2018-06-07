@@ -19,7 +19,7 @@
 import xml.etree.ElementTree as ET
 
 def readXML(path, xPath=None):
-    u"""Read the XML from path and answer the compiled etree."""
+    """Read the XML from path and answer the compiled etree."""
     fileExtension = path.split('.')[-1].lower()
     assert fileExtension.lower() in ('xml', 'xsl', 'html')
     tree = ET.parse(path)
@@ -30,5 +30,5 @@ def readXML(path, xPath=None):
     return root
 
 def readHTML(path, xPath=None):
-    u"""Read the HTML body tag from path and answer the compiled etree."""
+    """Read the HTML body tag from path and answer the compiled etree."""
     return readXML(path, xPath='body')

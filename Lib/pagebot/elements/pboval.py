@@ -24,7 +24,7 @@ class Oval(Element):
     #   G E N E R I C  C O N T E X T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, drawElements=True):
-        u"""Draw the oval in the current context canvas.
+        """Draw the oval in the current context canvas.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.document import Document

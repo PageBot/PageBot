@@ -35,7 +35,7 @@ class RowCondition(Condition):
     	self.rowSpan = rowSpan
 
 class Left2Col(ColCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
 		return e.isLeftOnCol(self.col, self.tolerance)
 
@@ -44,7 +44,7 @@ class Left2Col(ColCondition):
 			self.addScore(e.left2Col(self.col), e, score)
 
 class Right2Col(ColCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
 		return e.isRightOnCol(self.col, self.tolerance)
 
@@ -53,7 +53,7 @@ class Right2Col(ColCondition):
 			self.addScore(e.right2Col(self.col), e, score)
 
 class Fit2Colspan(ColCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
 		return e.isLefOnCol(self.col, self.tolerance) and e.isFitOnColspan(self.col, self.colSpan, self.tolerance)
 
@@ -63,7 +63,7 @@ class Fit2Colspan(ColCondition):
 			self.addScore(e.fit2Colspan(self.col, self.colSpan), e, score)
 
 class Top2Row(RowCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
 		return e.isTopOnRow(self.row, self.tolerance)
 
@@ -72,7 +72,7 @@ class Top2Row(RowCondition):
 			self.addScore(e.top2Row(self.row), e, score)
 
 class Bottom2Row(RowCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
 		return e.isBottomOnRow(self.row, self.tolerance)
 
@@ -81,7 +81,7 @@ class Bottom2Row(RowCondition):
 			self.addScore(e.bottom2Row(self.row), e, score)
 
 class Fit2Rowspan(RowCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
 		return e.isTopOnCol(self.row, self.tolerance) and e.isFitOnRowspan(self.row, self.rowSpan, self.tolerance)
 
