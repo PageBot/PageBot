@@ -23,13 +23,13 @@ from pagebot.toolbox.transformer import pointOffset
 from pagebot.fonttoolbox.objects.font import Font
 
 class AnimationFrame(Rect):
-    u"""Showing one frame of an animation, supporting different states of a VariableFont
+    """Showing one frame of an animation, supporting different states of a VariableFont
 
     """
     SAMPLE = 'Sample'
 
     def __init__(self, f, frames, frameIndex, sampleText=None, **kwargs):
-        u"""
+        """
         >>> from random import random
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
@@ -59,7 +59,7 @@ class AnimationFrame(Rect):
         self.sampleText = sampleText or self.SAMPLE
 
     def build(self, view, origin, drawElements=True):
-        u"""Default drawing method just drawing the frame.
+        """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context
         p = pointOffset(self.oPoint, origin)
@@ -84,7 +84,7 @@ class AnimationFrame(Rect):
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def drawAnimatedFrame(self, view, origin):
-        u"""Draw the content of the element, responding to size, styles, font and content.
+        """Draw the content of the element, responding to size, styles, font and content.
         Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
         if the axis exists.
 

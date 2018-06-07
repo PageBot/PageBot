@@ -19,7 +19,7 @@ from pagebot.conditions.condition import Condition
 # Margins
 
 class Float2Left(Condition):
-	u"""Align the element.left with max of all placed element.right or parent.left.
+	"""Align the element.left with max of all placed element.right or parent.left.
 	Positioning includes the margin of all elements."""
 	def test(self, e):
 		return e.isFloatOnLeft(self.tolerance)
@@ -29,7 +29,7 @@ class Float2Left(Condition):
 			self.addScore(e.float2Left(), e, score)
 
 class Float2Right(Condition):
-	u"""Align the element.right with min of all placed element.left or parent.right.
+	"""Align the element.right with min of all placed element.left or parent.right.
 	Positioning includes the margin of all elements."""
 	def test(self, e):
 		return e.isFloatOnRight(self.tolerance)
@@ -39,7 +39,7 @@ class Float2Right(Condition):
 			self.addScore(e.float2Right(), e, score)
 
 class Float2Top(Condition):
-	u"""Align the element.top with max of all placed element.bottom or parent.top.
+	"""Align the element.top with max of all placed element.bottom or parent.top.
 	Positioning includes the margin of all elements."""
 	def test(self, e):
 		return e.isFloatOnTop(self.tolerance)
@@ -49,7 +49,7 @@ class Float2Top(Condition):
 			self.addScore(e.float2Top(), e, score)
 
 class Float2Bottom(Condition):
-	u"""Align the element.bottom with max of all placed element.top or parent.bottom.
+	"""Align the element.bottom with max of all placed element.top or parent.bottom.
 	Positioning includes the margin of all elements."""
 	def test(self, e):
 		return e.isFloatOnBottom(self.tolerance)
@@ -61,7 +61,7 @@ class Float2Bottom(Condition):
 # Sides
 
 class Float2LeftSide(Condition):
-	u"""Align the element.left with max of all placed element.right or parent.leftSide.
+	"""Align the element.left with max of all placed element.right or parent.leftSide.
 	Positioning includes the margin of all elements."""
 	def test(self, e):
 		return e.isFloatOnLeftSide(self.tolerance)
@@ -71,7 +71,7 @@ class Float2LeftSide(Condition):
 			self.addScore(e.float2LeftSide(), e, score)
 
 class Float2RightSide(Condition):
-	u"""Align the element.right with min of all placed element.left or parent.rightSide.
+	"""Align the element.right with min of all placed element.left or parent.rightSide.
 	Positioning includes the margin of all elements."""
 	def test(self, e):
 		return e.isFloatOnRightSide(self.tolerance)
@@ -81,7 +81,7 @@ class Float2RightSide(Condition):
 			self.addScore(e.float2RightSide(), e, score)
 
 class Float2TopSide(Condition):
-	u"""Align the element.top with max of all placed element.bottom or parent.topSide.
+	"""Align the element.top with max of all placed element.bottom or parent.topSide.
 	Positioning includes the margin of all elements."""
 	def test(self, e):
 		return e.isFloatOnTopSide(self.tolerance)
@@ -91,7 +91,7 @@ class Float2TopSide(Condition):
 			self.addScore(e.float2TopSide(), e, score)
 
 class Float2BottomSide(Condition):
-	u"""Align the element.bottom with max of all placed element.top or parent.bottomSide.
+	"""Align the element.bottom with max of all placed element.top or parent.bottomSide.
 	Positioning includes the margin of all elements."""
 	def test(self, e):
 		return e.isFloatOnBottomSide(self.tolerance)

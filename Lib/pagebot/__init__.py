@@ -25,11 +25,11 @@ ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 RESOURCES_PATH = ROOT_PATH + '/resources'
 
 def getRootPath():
-    u"""Answer the root path on the platform for the PageBot module."""
+    """Answer the root path on the platform for the PageBot module."""
     return ROOT_PATH
 
 def getResourcesPath():
-    u"""Answer the root path on the platform for the PageBot module."""
+    """Answer the root path on the platform for the PageBot module."""
     return RESOURCES_PATH
 
 # In order to let PageBot scripts and/applications exchange information, without the need to save
@@ -55,7 +55,7 @@ class Globals(object):
         return getattr(self, key)
 
 def getGlobals(scriptId):
-    u"""In order to let PageBot scripts and/applications exchange information, without the
+    """In order to let PageBot scripts and/applications exchange information, without the
     need to save as files, the pbglobals module supports the storage of non-persistent information.
     This way, applications with Vanilla windows can be used as UI for scripts that perform as batch process.
     Note that it is up to the responsibilty of individual scripts to create uniqued ids for

@@ -35,7 +35,7 @@ BoxWidth = W
 EXPORT_PATH = '_export/useTextBoxLinesRuns.png'
 
 def makeDocument():
-    u"""Make a new document."""
+    """Make a new document."""
 
     # Create a new document, default to the defined page size.
     doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)

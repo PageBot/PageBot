@@ -24,7 +24,7 @@ from pagebot.toolbox.transformer import pointOffset, point2D
 from pagebot.conditions import Float2TopSide, Top2TopSide, Fit2Width
 
 class Image(Element):
-    u"""The Image element is a “normal” container, which contains one (or more) PixelMap elements and zero (or more)
+    """The Image element is a “normal” container, which contains one (or more) PixelMap elements and zero (or more)
     caption or other elements. This way the user can add mulitple PixelMaps, a title elements, etc. 
     The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
     applied (e.g. if the image element changes size), or the child elements can be put on fixed positions.
@@ -158,18 +158,18 @@ class Image(Element):
     h = property(_get_h, _set_h)
 
     def _get_exists(self):
-        u"""Answer the boolean flag if the *self.image.path* image file really exists."""
+        """Answer the boolean flag if the *self.image.path* image file really exists."""
         return os.path.exists(self.image.path)
     exists = property(_get_exists)
 
     def addFilter(self, filter):
-        u"""Add the filter to the self.imo image object. Create the image object in case
+        """Add the filter to the self.imo image object. Create the image object in case
         it doest not exist yet."""
         if self.image is not None:
             self.image.addFilter(filter)
 
 class PixelMap(Element):
-    u"""The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId."""
+    """The PixelMap contains the reference to the actual binary image data. eId can be (unique) file path or eId."""
    
     def __init__(self, path, name=None, w=None, h=None, z=0, clipRect=None, clipPath=None, mask=None, 
         imo=None, **kwargs):
@@ -192,7 +192,7 @@ class PixelMap(Element):
         return '[%s eId:%s path:%s]' % (self.__class__.__name__, self.eId, self.path)
 
     def addFilter(self, filters):
-        u"""Add the filter to the self.imo image object. Create the image object in case
+        """Add the filter to the self.imo image object. Create the image object in case
         it doest not exist yet. To be extended into a better API. More feedback needed
         for what the DrawBot values in the filters do and what their ranges are."""
         if self.imo is None and self.path is not None:
@@ -201,13 +201,13 @@ class PixelMap(Element):
                 getattr(self.imo, filter)(**params)
 
     def setPath(self, path):
-        u"""Set the path of the image. If the path exists, the get the real
+        """Set the path of the image. If the path exists, the get the real
         image size and store as self.iw, self.ih."""
         self.path = path
         self.initImageSize() # Get real size from the file.
 
     def initImageSize(self):
-        u"""Initialize the image size. Note that this is done with the default/current 
+        """Initialize the image size. Note that this is done with the default/current 
         Context, as there may not be a view availabe yet."""
         if self.path is not None and os.path.exists(self.path):
             self.iw, self.ih = self.context.imageSize(self.path)
@@ -215,12 +215,12 @@ class PixelMap(Element):
             self.iw = self.ih = 0 # Undefined or non-existing, there is no image file.
 
     def _get_imageSize(self):
-        u"""Answer the Point2D image size in pixels."""
+        """Answer the Point2D image size in pixels."""
         return self.iw, self.ih
     imageSize = property(_get_imageSize)
 
     def getPixelColor(self, p, scaled=True):
-        u"""Answer the color in either the scaled point (x, y) or original image size point."""
+        """Answer the color in either the scaled point (x, y) or original image size point."""
         assert self.path is not None
         x, y = point2D(p)
         if scaled:
@@ -253,7 +253,7 @@ class PixelMap(Element):
     h = property(_get_h, _set_h)
 
     def _getAlpha(self):
-        u"""Use alpha channel of the fill color as opacity of the image."""
+        """Use alpha channel of the fill color as opacity of the image."""
         sFill = self.css('fill', NO_COLOR)
         if isinstance(sFill, (tuple, list)) and len(sFill) == 4:
             _, _, _, alpha = sFill
@@ -268,7 +268,7 @@ class PixelMap(Element):
         print('[PixelMap.build_flat] Not implemented yet')
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
-        u"""Draw the image in the calculated scale. Since we need to use the image
+        """Draw the image in the calculated scale. Since we need to use the image
         by scale transform, all other measure (position, lineWidth) are scaled
         back to their original proportions.
         If stroke is defined, then use that to draw a frame around the image.

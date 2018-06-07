@@ -37,7 +37,7 @@ PageSize = 500
 EXPORT_PATH = '_export/ExportCSS.css'
 
 def makeDocument():
-    u"""Make a new document."""
+    """Make a new document."""
 
     W = H = PageSize
 

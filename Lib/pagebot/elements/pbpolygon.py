@@ -20,7 +20,7 @@ from pagebot.toolbox.transformer import pointOffset
 
 
 class Polygon(Element):
-    u"""The Polygon element is a simple implementation of the polygon DrawBot function.
+    """The Polygon element is a simple implementation of the polygon DrawBot function.
     More complex path-like elements inherit from the Path element."""
     def __init__(self, fs, points=None, **kwargs):
         Element.__init__(self, **kwargs)
@@ -98,7 +98,7 @@ class Polygon(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Drawing HTML Polygon through SVG?"""
+        """Drawing HTML Polygon through SVG?"""
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
         # TODO: Needs a solution, SVG or pixels?

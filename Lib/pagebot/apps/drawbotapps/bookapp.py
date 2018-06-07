@@ -17,7 +17,7 @@ from pagebot.apps.drawbotapps.baseapp import BaseApp
 from pagebot.publications.book import Book
 
 class BookApp(BaseApp):
-    u"""Will be developed."""
+    """Will be developed."""
     PUBLICATION_CLASS = Book
 
 if __name__ == '__main__':

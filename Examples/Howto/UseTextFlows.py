@@ -33,7 +33,7 @@ PageSize = 500
 EXPORT_PATH = '_export/UseTextFlows.png'
 
 def makeDocument():
-    u"""Make a new document."""
+    """Make a new document."""
 
     W = H = PageSize
 

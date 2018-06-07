@@ -23,14 +23,14 @@ from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.transformer import asFormatted
 
 class BaseFontShow(Element): 
-    u"""Abstract base class for elements that show aspects, values, info-graphics and
+    """Abstract base class for elements that show aspects, values, info-graphics and
     specimes of a font instance of Variable Font.
 
     """
     DEFAULT_LABEL_SIZE = 7
 
     def getTextStyle(self, vf, fontSize=None, alignment=None, rLeading=None):
-        u"""Answer a copy of self.style with modified parameters (if defined)"""
+        """Answer a copy of self.style with modified parameters (if defined)"""
         # Make a copy of the entire cascading style from self perspective
         style = self.getFlattenedStyle() 
         style['font'] = vf.path
@@ -43,7 +43,7 @@ class BaseFontShow(Element):
         return style
 
     def getAxisValue(self, vf, tag, value):
-        u"""Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
+        """Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
         ratio in (minValue, defaultValue, maxValue)."""
         if not tag in vf.axes:
             return None
@@ -56,7 +56,7 @@ class BaseFontShow(Element):
         return defaultValue + (maxValue - defaultValue)*value
 
     def getLocation(self, vf, wght=None, wdth=None, opsz=None):
-        u"""Answer the instance of self, corresponding to the normalized location.
+        """Answer the instance of self, corresponding to the normalized location.
         (-1, 0, 1) values for axes [wght] and [wdth].
         The optical size [opsz] is supposed to contain the font size, so it is not normalized.
         If [opsz] is not defined, then set it to default, if the axis exist.
@@ -75,7 +75,7 @@ class BaseFontShow(Element):
         return dict(wght=wght, wdth=wdth, opsz=opsz)
 
     def buildStackedLine(self, vf, s, origin, x, y, w, h=None, fontSize=None, wght=None, wdth=None, useOpsz=True):
-        u"""Draw a textbox to self that fits the string s for the instance indicated by
+        """Draw a textbox to self that fits the string s for the instance indicated by
         the locations-axis values. 
         Then answer the (x,y) position of the next box, based on the bounds of the pixels 
         (not the bounds of the em).
@@ -101,7 +101,7 @@ class BaseFontShow(Element):
 
     def buildTextBox(self, s1, s2, origin, x, y, w, h, vf, fontSize, alignment=None, 
             labelSize=None, label=None, Bwght=0, Bwdth=0, Rwght=0, Rwdth=0, useOpsz=True):      
-        u"""Make a new instance for the bold and roman locations (if self.f is a Variable Font).
+        """Make a new instance for the bold and roman locations (if self.f is a Variable Font).
         Draw a textbox fitting the content ot otherwise forced to (w,h) size.
         Answer the (x, y) position of the next stacked block.
 

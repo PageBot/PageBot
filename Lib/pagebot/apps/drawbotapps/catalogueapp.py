@@ -17,7 +17,7 @@ from pagebot.apps.drawbotapps.baseapp import BaseApp
 from pagebot.publications.catalogue import Catalogue
 
 class CatalogueApp(BaseApp):
-    u"""Will be developed."""
+    """Will be developed."""
     PUBLICATION_CLASS = Catalogue
 
 if __name__ == '__main__':

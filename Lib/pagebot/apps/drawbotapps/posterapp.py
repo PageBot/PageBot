@@ -17,5 +17,5 @@ from pagebot.apps.drawbotapps.baseapp import BaseApp
 from pagebot.publications.poster import Poster
 
 class PosterApp(BaseApp):
-    u"""Will be developed."""
+    """Will be developed."""
     PUBLICATION_CLASS = Poster

@@ -27,7 +27,7 @@ W, H = 200, 250
 EXPORT_PATH = '_export/HandleDocWithPages.pdf'
 
 def makeDocument():
-    u"""Make a new document."""
+    """Make a new document."""
 
     doc = Document(w=W, h=H, originTop=False, autoPages=1)
     print('One page in the document', doc.pages)

@@ -19,7 +19,7 @@ from __future__ import division # Make integer division result in float.
 from pagebot.elements.element import Element
 
 class Rect(Element):
-    u"""Draw rectangle, default identical to Element itself.
+    """Draw rectangle, default identical to Element itself.
 
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
     >>> from pagebot.document import Document

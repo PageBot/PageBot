@@ -20,7 +20,7 @@ from drawBot.context.baseContext import BezierPath
 from xml.dom import minidom
 
 def getSvgPaths(fileName):
-    u"""Extracts path strings from XML."""
+    """Extracts path strings from XML."""
     doc = minidom.parse(fileName)  # parseString also exists
     svgPaths = [path.getAttribute('d') for path
                 in doc.getElementsByTagName('path')]
@@ -28,7 +28,7 @@ def getSvgPaths(fileName):
     return svgPaths
 
 def parseSVG(strings):
-    u"""Takes a list of path strings and converts them to a list of SVG-command
+    """Takes a list of path strings and converts them to a list of SVG-command
     tuples."""
     cmd =['m', 'l', 'v', 'c', 'h', 'z', 's']
 
@@ -74,14 +74,14 @@ def parseSVG(strings):
     return paths
 
 def reflect(point0, point1):
-    u"""Reflects off-curve control point in relation to on-curve one. Used for
+    """Reflects off-curve control point in relation to on-curve one. Used for
     smooth curves."""
     px = point1[0] + (point1[0] - point0[0])
     py = point1[1] + (point1[1] - point0[1])
     return (px, py)
 
 def getRelative(points, pPrevious):
-    u"""Calculates absolute coordinates by adding the previous point to the
+    """Calculates absolute coordinates by adding the previous point to the
     relative coordinates."""
     newPoints = []
 
@@ -92,12 +92,12 @@ def getRelative(points, pPrevious):
     return newPoints
 
 def copyPoint(previousPoint, currentPoint):
-    u"""Deep copies previous point."""
+    """Deep copies previous point."""
     previousPoint[0] = currentPoint[0]
     previousPoint[1] = currentPoint[1]
 
 def contourToPath(contour):
-    u"""Converts SVG contour to a path in DrawBot."""
+    """Converts SVG contour to a path in DrawBot."""
     path = BezierPath()
     pPrev = [0.0, 0.0]
     pPrev2 = None
@@ -173,7 +173,7 @@ def contourToPath(contour):
     return path
 
 def addValueToPoints(valuestring, points):
-    u"""Adds the collected character string to the last coordinate
+    """Adds the collected character string to the last coordinate
     in the points list."""
     if not valuestring:
         return

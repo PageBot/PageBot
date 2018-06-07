@@ -16,7 +16,7 @@
 from vanilla import Window
 
 class BaseApp(object):
-    u"""The BaseApp class implements generic functions for more specialize App classes.
+    """The BaseApp class implements generic functions for more specialize App classes.
     The main function of apps is to create applications (with window UI) that
     offers an interface to PageBot publication building scripts. This way
     apps can be stored and standalone desktop applications, offering more
@@ -33,14 +33,14 @@ class BaseApp(object):
         self.w.open() # Open the application window.
 
     def initialize(self):
-    	u"""To be implemente by inheriting app classes.
+    	"""To be implemente by inheriting app classes.
     	Should initialize the self._doc Publication instance.
     	"""
         self._doc = self.PUBLICATIONS_CLASS()
         self.buildUI(self._doc.getUIParameters())
 
     def build(self, sender=None):
-    	u"""Default behavior, building the publications. To be redefined by
+    	"""Default behavior, building the publications. To be redefined by
     	inheriting classes if additional functions are needed."""
     	self._doc.solve()
         fileName = self._doc.title.replace(' ', '_')

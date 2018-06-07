@@ -20,7 +20,7 @@ from pagebot.elements import Element
 from pagebot.toolbox.transformer import pointOffset
 
 class FontIcon(Element): 
-    u"""Showing the specified font(sub variable font) in the form of an icon 
+    """Showing the specified font(sub variable font) in the form of an icon 
     showing optional information in different sizes and styles.
     
     >>> from pagebot.fonttoolbox.objects.font import getFont
@@ -40,7 +40,7 @@ class FontIcon(Element):
     def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=None,
             earSize=None, earLeft=True, earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
             labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
-        u"""    
+        """    
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -92,7 +92,7 @@ class FontIcon(Element):
 
 
     def build(self, view, origin, drawElements=True):
-        u"""Default drawing method just drawing the frame.
+        """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(view, p)

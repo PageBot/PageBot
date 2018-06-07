@@ -34,15 +34,15 @@ content = {
                 u'<#sportsheadline_us#>',
                 u'<#sportsheadline_generic#>',
                 u'<#sportsheadline_soccer#>'
-                u"""<#sportsheadline_football#>""",
-                u"""<#sportsheadline_football#>""",
-                u"""<#sportsheadline_football#>""",
+                """<#sportsheadline_football#>""",
+                """<#sportsheadline_football#>""",
+                """<#sportsheadline_football#>""",
                 ],
         'sports_blurb':    ['<#sportsheadline_us#>', '<#sportsheadline_us#>', '<#sportsheadline_us#>', '<#sportsheadline_us#>',
                 '<#sportsheadline_generic#>', '<#sportsblurb_soccer#>'],
         'sports_ankeiler': [
-                u"""<#^,sports_soccer_highlight#>""",
-                u"""<#^,sportsheadline_us#>""",
+                """<#^,sports_soccer_highlight#>""",
+                """<#^,sportsheadline_us#>""",
                 ],
         'sports_summary': [
                 u'<#sports_soccer_highlight#>',
@@ -53,8 +53,8 @@ content = {
                 u'<#sports_soccer_roundoff#>',
                 u'<#sports_soccer_roundoff#>',
                 u'<#sports_soccer_roundoff#>',
-                u"""<#name_male#> addressed a wide range of topics in a <#figs_rand_2digit#>-minute session with the news media on <#time_days#> morning.""",
-                u"""<#amount_more#> of players and agents have taken to <#i_socialmedia#>, giving fans an unvarnished view of their thoughts.""",
+                """<#name_male#> addressed a wide range of topics in a <#figs_rand_2digit#>-minute session with the news media on <#time_days#> morning.""",
+                """<#amount_more#> of players and agents have taken to <#i_socialmedia#>, giving fans an unvarnished view of their thoughts.""",
                 ],
         # football
         'sportsheadline_football':    [
