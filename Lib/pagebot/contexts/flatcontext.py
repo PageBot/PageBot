@@ -189,7 +189,7 @@ class FlatContext(BaseContext):
         u"""Clear output canvas, start new export file.
 
         >>> context = FlatContext()
-        >>> context.newDocument()
+        >>> context.newDocument(100, 100)
         """
         # FIXME: needs a width and height, so different from DrawBot?
         #context = FlatContext()

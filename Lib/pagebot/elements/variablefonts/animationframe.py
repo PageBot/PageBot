@@ -20,10 +20,10 @@ from math import sin, cos, radians
 
 from pagebot.elements import Rect
 from pagebot.toolbox.transformer import pointOffset
-from pagebot.fonttoolbox.objects.font import getInstance, Font
+from pagebot.fonttoolbox.objects.font import Font
 
 class AnimationFrame(Rect):
-    u"""Showing one frame of an animation, supporting different states of a VariableFont 
+    u"""Showing one frame of an animation, supporting different states of a VariableFont
 
     """
     SAMPLE = 'Sample'
@@ -69,7 +69,7 @@ class AnimationFrame(Rect):
         self.buildFrame(view, p) # Draw optional background fill, frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showElementFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -100,7 +100,7 @@ class AnimationFrame(Rect):
         phisin = sin(radians(self.frameIndex/self.frames * 360))
         phicos = cos(radians(self.frameIndex/self.frames * 360))
 
-        style['textFill'] = 1-phicos*0.3+0.5 
+        style['textFill'] = 1-phicos*0.3+0.5
         # TODO: Not the right instance-weight is shown in export.
         wdthRange = wdthMax - wdthMin
         wghtRange = wghtMax - wghtMin
@@ -118,7 +118,7 @@ class AnimationFrame(Rect):
         glyph = instance['ampersand']
         c.save()
         c.stroke(0, 0.25)
-        gray = phisin*0.3+0.5 
+        gray = phisin*0.3+0.5
         c.fill((gray, gray, 1-gray, 0.6))
         s = 0.4
         c.scale(s)
