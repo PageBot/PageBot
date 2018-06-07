@@ -19,7 +19,7 @@ from __future__ import division # Make integer division result in float.
 from math import sin, cos, radians
 from pagebot.elements import Rect
 from pagebot.toolbox.transformer import pointOffset
-from pagebot.fonttoolbox.objects.font import Font, findFont
+from pagebot.fonttoolbox.objects.font import findFont
 
 class AnimationFrame(Rect):
     u"""Showing one frame of an animation, supporting different states of a VariableFont
