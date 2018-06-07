@@ -17,10 +17,9 @@
 from __future__ import division # Make integer division result in float.
 
 from math import sin, cos, radians
-
 from pagebot.elements import Rect
 from pagebot.toolbox.transformer import pointOffset
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import Font, findFont
 
 class AnimationFrame(Rect):
     u"""Showing one frame of an animation, supporting different states of a VariableFont
@@ -112,9 +111,6 @@ class AnimationFrame(Rect):
         bs = c.newString(self.sampleText, style=style)
         tw, th = bs.textSize()
         c.text(bs, (self.w/2 - tw/2, self.h/2))
-
-
-
         glyph = instance['ampersand']
         c.save()
         c.stroke(0, 0.25)
@@ -125,16 +121,21 @@ class AnimationFrame(Rect):
         c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/4)/s))
         c.restore()
 
-        # FIXME: should get local path using findFont().
-        path = "/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/variable_ttf/BitcountTest_DoubleCircleSquare4-VF.ttf"
-        f = Font(path)
-        SHPEMin, SHPEDefault, SHPEMax = f.axes['SHPE']
-        SHPERange = SHPEMax - SHPEMin
-        wghtMin, wghtDefault, wghtMax = self.f.axes['wght']
-        wghtRange = wghtMax - wghtMin
-        location = dict(SHPE=phisin*SHPERange/2+SHPERange/2+SHPEMin, wght=phicos*wghtRange/2+wghtRange/2+wghtMin)
-        instance = f.getInstance(location)#instance.path
-        glyph = instance['A']
+        # FIXME: should get local path using findFont(), but axis seem to be specific to
+        # Bitcount.
+        #path = "/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/variable_ttf/BitcountTest_DoubleCircleSquare4-VF.ttf"
+        #f = Font(path)
+        f = findFont('RobotoDelta-VF')
+
+        if 'SHPE' in f.axes:
+            SHPEMin, SHPEDefault, SHPEMax = f.axes['SHPE']
+            SHPERange = SHPEMax - SHPEMin
+            wghtMin, wghtDefault, wghtMax = self.f.axes['wght']
+            wghtRange = wghtMax - wghtMin
+            location = dict(SHPE=phisin*SHPERange/2+SHPERange/2+SHPEMin, wght=phicos*wghtRange/2+wghtRange/2+wghtMin)
+            instance = f.getInstance(location)#instance.path
+            glyph = instance['A']
+
         c.save()
         c.stroke((1, 0, 0), 0.25)
         gray = phisin*0.3+0.7
