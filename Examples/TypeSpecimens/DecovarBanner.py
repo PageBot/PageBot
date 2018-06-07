@@ -32,7 +32,17 @@ class AnimatedBannerFrame(AnimationFrame):
             ox, oy, _ = origin
             c = self.context
             style = self.style.copy()
-            instance = self.f.getInstance(self.style['location'])#instance.path
+
+            instance = self.f.getInstance({}) # Get neutral instance
+            style['font'] = instance.path
+            style['textFill'] = (0.5, 0.5, 0.5, 0.7) # Opaque gray as background
+            bs = c.newString(self.sampleText, style=style)
+            tw, th = bs.textSize()
+            c.text(bs, (self.w/2 - tw/2, self.h/3+20))
+            
+            # Now make instance and draw over regular and add to new copy of the style
+            style = self.style.copy()
+            instance = self.f.getInstance(self.style['location'])
             style['font'] = instance.path
             #print(self.frameIndex, style['font'])
             #style['fontSize'] = self.h/3
