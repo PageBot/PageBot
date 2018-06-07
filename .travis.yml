@@ -22,10 +22,8 @@ script:
 - $PYLINT Lib/pagebot/
 - python Examples/Howto/UseText/AdvancedHyphenation.py
 - python Examples/Howto/UseUnits.py
-- python Lib/pagebot/__init__.py
-- python Lib/pagebot/conditions/align.py
-- python Lib/pagebot/constants.py
-- python Lib/pagebot/conditions/flow.py
+- python Lib/pagebot/*.py
+- python Lib/pagebot/conditions/*.py
 - python Lib/pagebot/contexts/basecontext.py
 - python Lib/pagebot/contexts/builders/htmlbuilder.py
 - python Lib/pagebot/contexts/builders/nonebuilder.py
@@ -38,7 +36,6 @@ script:
 - python Lib/pagebot/contexts/strings/flatstring.py
 - python Lib/pagebot/contexts/strings/htmlstring.py
 - python Lib/pagebot/contributions/filibuster/blurbwriter.py
-- python Lib/pagebot/document.py
 - python Lib/pagebot/elements/element.py
 - python Lib/pagebot/elements/paths/glyphpath.py
 - python Lib/pagebot/elements/pbgalley.py
@@ -51,12 +48,6 @@ script:
 - python Lib/pagebot/elements/pbrect.py
 - python Lib/pagebot/elements/pbruler.py
 - python Lib/pagebot/elements/pbtextbox.py
-  #- python Lib/pagebot/elements/variablefonts/variablecircle.py
-  #- python Lib/pagebot/elements/variablefonts/variablecube.py
-  #- python Lib/pagebot/elements/variablefonts/variablecube2.py
-  #- python Lib/pagebot/elements/variablefonts/variableeditor.py
-  #- python Lib/pagebot/elements/variablefonts/variableglyphs.py
-  #- python Lib/pagebot/elements/variablefonts/variablescatter.py
 - python Lib/pagebot/elements/variablefonts/*.py
 - python Lib/pagebot/elements/views/pageview.py
 - python Lib/pagebot/elements/web/simplesite/site.py
@@ -73,7 +64,6 @@ script:
 - python Lib/pagebot/publications/newspaper/newspaper.py
 - python Lib/pagebot/publications/typespecimen.py
 - python Lib/pagebot/publications/website.py
-- python Lib/pagebot/style.py
 - python Lib/pagebot/toolbox/dating.py
 - python Lib/pagebot/toolbox/hyphenation.py
 - python Lib/pagebot/toolbox/markers.py
@@ -81,7 +71,6 @@ script:
 - python Lib/pagebot/toolbox/transform3d.py
 - python Lib/pagebot/toolbox/transformer.py
 - python Lib/pagebot/toolbox/units.py
-- python Lib/pagebot/typesetter.py
 addons:
     apt:
         update: true

@@ -125,7 +125,7 @@ class AnimationFrame(Rect):
         c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/4)/s))
         c.restore()
 
-
+        # FIXME: should get local path using findFont().
         path = "/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/variable_ttf/BitcountTest_DoubleCircleSquare4-VF.ttf"
         f = Font(path)
         SHPEMin, SHPEDefault, SHPEMax = f.axes['SHPE']
