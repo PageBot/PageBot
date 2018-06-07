@@ -34,7 +34,7 @@ C = 0.5
 F = 2.0 / 3.0
 
 class AxisDeltas(object):
-    """Hold the list of axis parts with their minValue, defaultValue, maxValue and list of deltas."""
+    u"""Hold the list of axis parts with their minValue, defaultValue, maxValue and list of deltas."""
     def __init__(self, name):
         self.name = name
         self.deltas = {}
@@ -50,7 +50,7 @@ class AxisDeltas(object):
         return self.deltas[key]
 
 class Glyph(object):
-    """The Glyph class wraps the glyph structure of a TrueType Font and
+    u"""The Glyph class wraps the glyph structure of a TrueType Font and
     extracts data from the raw glyph such as point sequence and type.
 
     >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -110,7 +110,7 @@ class Glyph(object):
         return self._contours[contourIndex]
 
     def _initialize(self):
-        """Initializes the cached data, such as self.points, self.contour,
+        u"""Initializes the cached data, such as self.points, self.contour,
         self.components and self.path, as side effect of drawing the path image."""
 
         self._points = []
@@ -207,21 +207,21 @@ class Glyph(object):
         self.dirty = False # All cleaned up.
 
     def update(self):
-        """Update the font if it became dirty by changing cooridinates.
+        u"""Update the font if it became dirty by changing cooridinates.
         Otherwise ignore.  Note that in case the caller cache points, contours,
         components, etc. these are no longer valid."""
         if self.dirty:
             self._initialize()
 
     def _get_flattenedPath(self):
-        """Answer the flattened DrawBotContext NSBezier path."""
+        u"""Answer the flattened DrawBotContext NSBezier path."""
         if self._flattenedPath is None and self.path is not None:
             self._flattenedPath = context.bezierPathByFlatteningPath(self.path)
         return self._flattenedPath
     flattenedPath = property(_get_flattenedPath)
 
     def _get_flattenedContours(self):
-        """Answer the flattened NSBezier path As contour list [contour,
+        u"""Answer the flattened NSBezier path As contour list [contour,
         contour, ...] where contours are lists of point2D() points.
 
         TODO: Needs to get DrawBotContext reference, and Flex equivalent."""
@@ -241,7 +241,7 @@ class Glyph(object):
     flattenedContours = property(_get_flattenedContours)
 
     def getAxisDeltas(self):
-        """Answer dictionary of axis-delta relations. Key is axis name, value
+        u"""Answer dictionary of axis-delta relations. Key is axis name, value
         is an *AxisDeltas* instance.  The instance containse (minValue,
         defaultValue, maxValue) keys, holding the sets of deltas for the glyph
         points."""
@@ -260,7 +260,7 @@ class Glyph(object):
         return self._axisDeltas
 
     def _drawSegment(self, cp, segment, path):
-        """Draws the Segment instance into the path. It may contain multiple
+        u"""Draws the Segment instance into the path. It may contain multiple
         quadratics. Split into cubics and lines."""
 
         if len(segment) == 1:
@@ -295,7 +295,7 @@ class Glyph(object):
         return cp
 
     def _drawQuadratic2Cubic(self, p0x, p0y, p1x, p1y, p2x, p2y, path):
-        """Converts a quatratic control point into a cubic.
+        u"""Converts a quatratic control point into a cubic.
 
         p0 = onCurve0
         p1 = offCurve
@@ -327,7 +327,7 @@ class Glyph(object):
         except KeyError:
             return None # Glyph is undefined in hmtx table.
     def _set_width(self, width):
-        """TODO: Does not seem to work. How about saving the font?"""
+        u"""TODO: Does not seem to work. How about saving the font?"""
         hmtx = list(self.font.ttFont['hmtx'][self.name]) # Keep vertical value
         hmtx[0] = width
         self.font.ttFont['hmtx'][self.name] = hmtx
@@ -342,7 +342,7 @@ class Glyph(object):
     rightMargin = property(_get_rightMargin)
 
     def isClockwise(self, contour):
-        """Answer Contour direction. Simple and fast.
+        u"""Answer Contour direction. Simple and fast.
 
         http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
         """
@@ -355,7 +355,7 @@ class Glyph(object):
     # Direct TTFont coordinates compatibility
 
     def _get_coordinates(self):
-        """Answers the ttFont.coordinates, if it exists, as GlyphCoordinates
+        u"""Answers the ttFont.coordinates, if it exists, as GlyphCoordinates
         instance. Otherwise answer None. Note that this is the “raw” list of
         (x, y) positions, without information on contour index or if the point
         is on/off curve. This information is stored in ttFont.endPtsOfContours
@@ -392,7 +392,7 @@ class Glyph(object):
         return len(self.contours)
 
     def _get_points(self):
-        """Answer the list of APoint instances, representing the outline of
+        u"""Answer the list of APoint instances, representing the outline of
         the glyph, not including the standard 4 spacing points at the end of
         the list in TTF style.  Read only for now. Although APoints are
         constructed from the self.ttFont coordinates, they keep a weakref to
@@ -404,7 +404,7 @@ class Glyph(object):
     points = property(_get_points)
 
     def _get_points4(self):
-        """Answer the list of APoints instances, representing the outline of
+        u"""Answer the list of APoints instances, representing the outline of
         the glyph, including the standard 4 spacing points at the end of the
         list in TTF style.  Read only for now. Although APoints are constructed
         from the self.ttFont coordinates, they keep a weakref to the glyph and
@@ -463,7 +463,7 @@ class Glyph(object):
         return componentNames
 
     def _get_variables(self):
-        """Answer the axis-deltas for this glyph. Answer an None if there are
+        u"""Answer the axis-deltas for this glyph. Answer an None if there are
         no deltas for this glyph or if the parent is not a Var-font.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -489,7 +489,7 @@ class Glyph(object):
     variables = property(_get_variables)
 
     def _get_path(self):
-        """Answer the drawn path of the glyph. For the DrawBotContext this is
+        u"""Answer the drawn path of the glyph. For the DrawBotContext this is
         a OSX-BezierPath the can be drawn on the DrawBot convas.
 
         TODO: Get this to work for Flat
@@ -521,7 +521,7 @@ class Glyph(object):
     box = property(_get_box) # Read only for now.
 
     def onBlack(self, p):
-        """Answers the boolean flag if the single point (x, y) is on black.
+        u"""Answers the boolean flag if the single point (x, y) is on black.
         For now this only work in DrawBotContext."""
         p = point2D(p)
         return self.path._path.containsPoint_(p)

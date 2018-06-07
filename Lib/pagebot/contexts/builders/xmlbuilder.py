@@ -81,7 +81,7 @@ class XmlBuilder(BaseBuilder):
         return key
 
     def write_attributes(self, attributes, default_attributes, args, tagname):
-        """Generic function to write HTML attributes. The new HTML5 feature to store custom data inside the attribute
+        u"""Generic function to write HTML attributes. The new HTML5 feature to store custom data inside the attribute
         @data-xxx@ is defined as attribute name *data_xxx*. See "HTML-5 Attributes":http://ejohn.org/blog/html-5-data-attributes/
         If the key has an attached builder type as @xxx-html@ or @xxx-css@,
         then show the attribute only with the builder type matches the type of @self@.
@@ -105,7 +105,7 @@ class XmlBuilder(BaseBuilder):
                 self.get_attribute_exceptions(key, value)
 
     def write_attribute(self, key, value):
-        """
+        u"""
         Auxiliary function to write each attribute to @self.result@. If the *key* is defined in
         @self.SINGLE_ATTRIBUTES@ then only output the single key name (even if this breaks XML
         validation). By default the @self.SINGLE_ATTRIBUTES@ is empty, but it can be redefined by the
@@ -142,7 +142,7 @@ class XmlBuilder(BaseBuilder):
         self.write(value)
 
     def write_tag(self, tagname, open, args):
-        """
+        u"""
         Writes a normally formatted HTML tag, exceptions have a custom implementation, see respective functions.
         """
         self.tabs()
@@ -159,7 +159,7 @@ class XmlBuilder(BaseBuilder):
         self.newLine() # Optional write newline if not self.compat
 
     def write_tag_noWhitespace(self, tagname, open, args):
-        """Writes a normally formatted HTML tag, exceptions have a custom implementation,
+        u"""Writes a normally formatted HTML tag, exceptions have a custom implementation,
         see respective functions. Don’t write any white space inside the block. E.g. used by <textarea>
         """
         self.write(u'<' + tagname)
@@ -190,7 +190,7 @@ class XmlBuilder(BaseBuilder):
     #     N O D E S T A C K
 
     def _pushTag(self, tag):
-        """Push the tag name to the stack of open stags."""
+        u"""Push the tag name to the stack of open stags."""
         self._tagStack.append(tag)
 
     def _closeTag(self, tag):
@@ -201,24 +201,24 @@ class XmlBuilder(BaseBuilder):
         self._popTag(tag)
 
     def _closeTag_noWhitespace(self, tag):
-        """Close the tag. Don’t write any white space inside the block. E.g. used by <textarea>."""
+        u"""Close the tag. Don’t write any white space inside the block. E.g. used by <textarea>."""
         self.write(u'</%s>' % tag)
         self.newLine() # Optional write newline if not self.compat
         self._popTag(tag)
 
     def _popTag(self, tag):
-        """Pop tag from the tag stack."""
+        u"""Pop tag from the tag stack."""
         runningTag = self._tagStack.pop()
         if runningTag is None or not runningTag == tag:
             self.write('<div color="#FF0000">Mismatch in closing tag "%s", expected "%s" in tree "%s".</div>' % (tag, runningTag, self._tagStack))
             self.newLine() # Optional write newline if not self.compat
 
     def _peekTag(self):
-        """Answer the name of the current tag."""
+        u"""Answer the name of the current tag."""
         return self._tagStack[-1]
 
     def getTagStack(self):
-        """Answer the stack of current tag names."""
+        u"""Answer the stack of current tag names."""
         return self._tagStack
 
 

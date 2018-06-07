@@ -21,7 +21,7 @@ from pagebot.elements.pbgroup import Group
 class Footer(Group):
 
     def build_html(self, view, origin=None, drawElements=True):
-        """Build the HTML/CSS navigation, depending on the pages in the root document.
+        u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 
         Typical HTML export
         <footer>

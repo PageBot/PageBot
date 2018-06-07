@@ -21,7 +21,7 @@ from pagebot.style import NO_COLOR
 class Ruler(Element):
 
     def _get_h(self):
-        """Poperty for the self.h height value 
+        u"""Poperty for the self.h height value 
 
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
@@ -41,7 +41,7 @@ class Ruler(Element):
     #   D R A W B O T / F L A T  S U P P O R T
 
     def build(self, view, origin):
-        """Build the Ruler in the current context
+        u"""Build the Ruler in the current context
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.document import Document
@@ -103,7 +103,7 @@ class Ruler(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
-        """Build the Ruler in the current context
+        u"""Build the Ruler in the current context
 
         >>> from pagebot.contexts.htmlcontext import HtmlContext
         >>> from pagebot.document import Document

@@ -18,7 +18,7 @@ from pagebot.contexts.flatcontext import FlatContext
 
 
 def appendS(fs1, fs2, w, baselineGrid):
-    """Append fs2 to fs2, while keeping baseline grid locked.
+    u"""Append fs2 to fs2, while keeping baseline grid locked.
     Assumed is that the top fs1 textBox is already on the baseline grid."""
     h = 1000
     box = 0, 0, w, h

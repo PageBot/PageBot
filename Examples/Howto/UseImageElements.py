@@ -43,7 +43,7 @@ SQUARE = 10 * GUTTER # Size of the squares
 EXPORT_PATH = '_export/UseImageElements.pdf'
 
 def makeDocument():
-    """Make a new document."""
+    u"""Make a new document."""
 
     #W = H = 120 # Get the standard a4 width and height in points.
     W = PageSize

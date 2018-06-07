@@ -19,7 +19,7 @@ from __future__ import division # Make integer division result in float.
 from pagebot.publications.publication import Publication
 
 class BaseSite(Publication):
-    """Build a basic website to show the core principles.
+    u"""Build a basic website to show the core principles.
 
     >>> doc = BaseSite(name='Home', padding=30, viewId='Mamp')
     >>> view = doc.view

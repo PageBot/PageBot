@@ -23,7 +23,7 @@ if not context.isDrawBot:
 b = context.b # DrawBot is builder
 
 def getMarker(markerId, args=None):
-    """Answer a formatted string with markerId that can be used as non-display marker.
+    u"""Answer a formatted string with markerId that can be used as non-display marker.
     This way the Composer can find the position of markers in text boxes, after
     FS-slicing has been done. Note there is always a very small "white-space"
     added to the string, so there is a potential difference in width that matters.
@@ -36,7 +36,7 @@ def getMarker(markerId, args=None):
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_]*)\-\-([^=]*)\=\=')
 
 def findMarkers(fs):
-    """Answer a dictionary of markers with their arguments that exist in a given FormattedString."""
+    u"""Answer a dictionary of markers with their arguments that exist in a given FormattedString."""
     markers = {}
     for markerId, args in FIND_FS_MARKERS.findall(`fs`):
         if not markerId in markers:

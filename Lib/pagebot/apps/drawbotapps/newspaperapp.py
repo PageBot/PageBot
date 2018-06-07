@@ -17,7 +17,7 @@ from pagebot.apps.drawbotapps.baseapp import BaseApp
 from pagebot.publications.newspaper import Newspaper
 
 class NewspaperApp(BaseApp):
-	"""Will be developed."""
+	u"""Will be developed."""
 	PUBLICATION_CLASS = Newspaper
 
 if __name__ == '__main__':

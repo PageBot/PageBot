@@ -15,7 +15,7 @@ from pagebot.constants import INCH, MM
 from pagebot.toolbox.units import Unit, mm, px, pt, fr, em, perc
 
 def useUnits():
-    """
+    u"""
 
     >>> mm(2), mm(2)._v # Unified to pt value stored in _v
     (2mm, 2)

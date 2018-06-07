@@ -24,7 +24,7 @@ from pagebot.publications.publication import Publication
 from pagebot.toolbox.units import px, fr
 
 class D3GraphSite(Publication):
-    """Build a simple default website with several template options, using d3 graphs
+    u"""Build a simple default website with several template options, using d3 graphs
     Eventually layout and content options defined by external parameters, e.g from a Markdown file.
 
     >>> from pagebot.contributions.filibuster.blurb import Blurb
@@ -50,7 +50,7 @@ class D3GraphSite(Publication):
     """
 
     def initialize(self, **kwargs):
-        """Initialize the generic base website templates. """
+        u"""Initialize the generic base website templates. """
 
         # For now, just supply the full head code here.
         headHtml = """       

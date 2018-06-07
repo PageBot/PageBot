@@ -135,7 +135,7 @@ class TextLine(object):
     trailingWhiteSpace = property(_get_trailingWhiteSpace)
 
 def getTextLines(fs, w, h):
-    """Answer an ordered list of all baseline position, starting at the top."""
+    u"""Answer an ordered list of all baseline position, starting at the top."""
     box = 0, 0, w, h
     attrString = fs.getNSObject()
     setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)

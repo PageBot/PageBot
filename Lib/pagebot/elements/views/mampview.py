@@ -113,7 +113,7 @@ class MampView(SiteView):
             b.writeCss(path + self.cssPath)
 
     def getUrl(self, name):
-        """Answer the local URL for Mamp Pro to find the copied website."""
+        u"""Answer the local URL for Mamp Pro to find the copied website."""
         return self.LOCAL_HOST_URL % (name, self.DEFAULT_HTML_FILE)
 
 

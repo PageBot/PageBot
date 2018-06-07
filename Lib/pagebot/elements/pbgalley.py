@@ -20,19 +20,18 @@ from pagebot.toolbox.transformer import pointOffset
 from pagebot.toolbox.color import Color
 
 class Galley(Element):
-    """A Galley is a sticky sequential flow of elements, where parts can have
-    different widths (such as the width of headlines, images and tables) or
-    responsive widths, such as the width of images and formatted text volumes.
-    Size is calculated dynamically, because one of the enclosed elements may
-    change width or height at any time during the composition process. The
-    sequence may also change due to slicing, adding or removing elements by the
-    Composer. Because the Galley is fully compatible with Element, it can
-    contain other galley instances recursively."""
+    u"""A Galley is sticky sequential flow of elements, where the parts can have
+    different widths (like headlines, images and tables) or responsive width, such as images
+    and formatted text volumes. Size is calculated dynamically, since one of the enclosed
+    elements may change width/height at any time during the composition process.
+    Also the sequence may change by slicing, adding or removing elements by the Composer.
+    Since the Galley is a full compatible Element, it can contain other galley instances
+    recursively."""
     from pagebot.elements.pbtextbox import TextBox
     from pagebot.elements.pbruler import Ruler
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
-
+        
     OLD_PAPER_COLOR = Color(rgb=0xF8ECC2).css # Color of old paper: #F8ECC2
 
     def __init__(self, **kwargs):
@@ -42,14 +41,14 @@ class Galley(Element):
         self.lastTextBox = None
 
     def append(self, bs):
-        """Add the string to the last text box. Create a new textbox if not found."""
+        u"""Add the string to the last text box. Create a new textbox if not found."""
         if self.lastTextBox is None:
-            self.newTextBox(bs) # Also sets self.lastTextBox
+            self.newTextBox(bs) # Also sets self.lastTextBox 
         else:
             self.lastTextBox.append(bs)
 
     def getMinSize(self):
-        """Cumulation of the maximum minSize of all enclosed elements."""
+        u"""Cumulation of the maximum minSize of all enclosed elements."""
         minW = minH = 0 # Let's see if we need bigger than this.
         for e in self.elements:
             eMinW, eMinH = e.getMinSize()
@@ -58,11 +57,11 @@ class Galley(Element):
         return minW, minH
 
     def appendElement(self, e):
-        """Add element to the list of child elements. Note that elements can be added multiple times.
+        u"""Add element to the list of child elements. Note that elements can be added multiple times.
         If the element is alread placed in another container, then remove it from its current parent.
         This relation and position is lost. The position e is supposed to be filled already in local position."""
         eParent = e.parent
-        if not eParent is None:
+        if not eParent is None: 
             eParent.removeElement(e) # Remove from current parent, if there is one.
         self._elements.append(e) # Possibly add to self again, will move it to the top of the element stack.
         e.setParent(self) # Set parent of element without calling this method again.
@@ -74,7 +73,7 @@ class Galley(Element):
         return len(self._elements)-1 # Answer the element index for e.
 
     def getSize(self):
-        """Answer the enclosing rectangle of all elements in the galley."""
+        u"""Answer the enclosing rectangle of all elements in the galley."""
         w = self.w or 0
         h = self.h or 0
         if w and h: # Galley has fixed/forced size:
@@ -93,28 +92,28 @@ class Galley(Element):
         return self.getSize()[1]
 
     def getLastElement(self):
-        """Answer the last element in the sequence."""
+        u"""Answer the last element in the sequence."""
         elements = self.elements
         if not elements:
             return None
         return elements[-1]
 
     def newTextBox(self, fs, html=None):
-        """Create a new *self.TEXTBOX_CLASS* instance, filled with the *fs* FormattedString.
+        u"""Create a new *self.TEXTBOX_CLASS* instance, filled with the *fs* FormattedString.
         Append the element to *self* (also setting self.lastTextBox) and answer the element."""
         tb = self.TEXTBOX_CLASS('', parent=self, html=html)
         self.appendElement(tb) # Will set the self.lastTextBox by local self.appendElement(tb)
         return tb
 
     def newRuler(self, style):
-        """Add a new Ruler instance, depending on style."""
+        u"""Add a new Ruler instance, depending on style."""
         ruler = self.RULER_CLASS(style=style)
         self.appendElement(ruler)
 
     #   D R A W B O T / F L A T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, drawElements=True):
-        """Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep
+        u"""Like "rolled pasteboard" galleys can draw themselves, if the Composer decides to keep
         them in tact, instead of select, pick & choose elements, until the are all
         part of a page. In that case the w/h must have been set by the Composer to fit the
         containing page."""
@@ -123,11 +122,11 @@ class Galley(Element):
         b = context.b # This is a bit more efficient than self.b once we got context
 
         p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(view, p)
+        p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         # Let the view draw frame info for debugging, in case view.showElementFrame == True
-        view.drawElementFrame(self, p)
+        view.drawElementFrame(self, p) 
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -154,7 +153,7 @@ class Galley(Element):
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
-
+      
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):

@@ -21,7 +21,7 @@ from pagebot.conditions import *
 class AnimatedBannerFrame(AnimationFrame):
 
      def drawAnimatedFrame(self, view, origin):
-            """Draw the content of the element, responding to size, styles, font and content.
+            u"""Draw the content of the element, responding to size, styles, font and content.
             Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
             if the axis exists.
 

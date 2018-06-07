@@ -35,7 +35,7 @@ G = 10
 M = 20 # Margin
 
 def makeDocument():
-    """Create new document with (w,h) and fixed amount of pages.
+    u"""Create new document with (w,h) and fixed amount of pages.
     Make number of pages with default document size.
     Initially make all pages default with template."""
 

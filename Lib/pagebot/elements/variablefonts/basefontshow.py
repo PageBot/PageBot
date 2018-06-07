@@ -19,14 +19,14 @@ from pagebot.constants import LEFT
 from pagebot.toolbox.transformer import asFormatted
 
 class BaseFontShow(Element): 
-    """Abstract base class for elements that show aspects, values, info-graphics and
+    u"""Abstract base class for elements that show aspects, values, info-graphics and
     specimes of a font instance of Variable Font.
 
     """
     DEFAULT_LABEL_SIZE = 7
 
     def getTextStyle(self, font, fontSize=None, alignment=None, rLeading=None):
-        """Answer a copy of self.style with modified parameters (if defined)"""
+        u"""Answer a copy of self.style with modified parameters (if defined)"""
         # Make a copy of the entire cascading style from self perspective
         style = self.getFlattenedStyle() 
         style['font'] = font.path
@@ -40,7 +40,7 @@ class BaseFontShow(Element):
 
 
     def buildStackedLine(self, s, origin, x, y, w, h=None, fontSize=None, wght=None, wdth=None, useOpsz=True):
-        """Draw a textbox to self that fits the string s for the instance indicated by
+        u"""Draw a textbox to self that fits the string s for the instance indicated by
         the locations-axis values. 
         Then answer the (x,y) position of the next box, based on the bounds of the pixels 
         (not the bounds of the em).
@@ -66,7 +66,7 @@ class BaseFontShow(Element):
 
     def buildTextBox(self, s1, s2, origin, x, y, w, h, fontSize, alignment=None, 
             labelSize=None, label=None, Bwght=0, Bwdth=0, Rwght=0, Rwdth=0, useOpsz=True):      
-        """Make a new instance for the bold and roman locations (if self.f is a Variable Font).
+        u"""Make a new instance for the bold and roman locations (if self.f is a Variable Font).
         Draw a textbox fitting the content ot otherwise forced to (w,h) size.
         Answer the (x, y) position of the next stacked block.
 

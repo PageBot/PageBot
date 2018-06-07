@@ -47,7 +47,7 @@ EXPORT_PATH = '_export/FloatTextOnTopOfElement.pdf'
 
 
 def makeDocument():
-    """Make a new document."""
+    u"""Make a new document."""
 
     W = H = PageSize
 

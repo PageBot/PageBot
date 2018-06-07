@@ -19,11 +19,11 @@ from __future__ import division # Make integer division result in float.
 from pagebot.elements.pbgroup import Group
 
 class Header(Group):
-    """Draw rectangle, default identical to Element itself.
+    u"""Draw rectangle, default identical to Element itself.
 
     """
     def build_html(self, view, origin=None, drawElements=True):
-        """Build the HTML/CSS navigation, depending on the pages in the root document.
+        u"""Build the HTML/CSS navigation, depending on the pages in the root document.
 
         Typical HTML export
         <header class="wrapper clearfix">

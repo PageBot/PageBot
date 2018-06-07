@@ -45,7 +45,7 @@ EXPORT_PATH = '_export/AlignElements.pdf'
 
 
 def makeDocument():
-    """Make a new document."""
+    u"""Make a new document."""
 
     doc = Document(w=W, h=H, originTop=False, autoPages=1)
 

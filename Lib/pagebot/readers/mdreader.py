@@ -28,7 +28,7 @@ except ImportError:
     markdown = None
 
 def markDown2XMLFile(path):
-    """If fileName is pointing to a non-XML file, then try to convert. This needs to be
+    u"""If fileName is pointing to a non-XML file, then try to convert. This needs to be
     extended in the future e.g. to support Word documents or other text resources.
     If the document is already an XML document, then ignore."""
     fileExtension = path.split('.')[-1].lower()
@@ -49,7 +49,7 @@ def markDown2XMLFile(path):
     return xmlPath # Return altered fileName if converted. Otherwise return original fileName
 
 def readMD(path):
-    """Read the markdown from path and answer the compiled etree."""
+    u"""Read the markdown from path and answer the compiled etree."""
     xmlPath = markDown2XMLFile(path)
     return readXML(xmlPath)
 

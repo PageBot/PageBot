@@ -21,7 +21,7 @@ from pagebot.toolbox.transformer import path2FontName
 class FontAnalyzer(object):
 
     def __init__(self, font):
-        """Initially the variable font instance is equal to the original."""
+        u"""Initially the variable font instance is equal to the original."""
         self.font = font
         self.reset()
 
@@ -29,7 +29,7 @@ class FontAnalyzer(object):
         return '<Analyzer of %s>' % self.font.info.fullName
 
     def __getitem__(self, glyphName):
-        """Answer the glyph analyzer of glyphName."""
+        u"""Answer the glyph analyzer of glyphName."""
         return self.font[glyphName].analyzer
 
     def _get_name(self):
@@ -45,7 +45,7 @@ class FontAnalyzer(object):
     font = property(_get_font, _set_font)
 
     def reset(self):
-        """Reset cached values in case self.font changed."""
+        u"""Reset cached values in case self.font changed."""
         # Cached stems
         self._stems = None # Collect stems from H on property call.
         self._horizontalCounters = None
@@ -75,7 +75,7 @@ class FontAnalyzer(object):
     #    C O U N T E R S
 
     def _get_horizontalCounters(self):
-        """Answer the counters of the H."""
+        u"""Answer the counters of the H."""
         if 'H' in self.font:
             self._horizontalCounters = self['H'].horizontalCounters
             # If not counters found in the 'H' this way, or more than 1, then second guess beaming the 'H' on 0,25 height

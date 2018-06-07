@@ -19,7 +19,7 @@ from pagebot.elements import *
 class StackedTypography(Template):
     
     def initialize(self, **kwargs):
-        """Allow inheriting element classes to do extra initialization stuff. Default behavior is to do nothing. 
+        u"""Allow inheriting element classes to do extra initialization stuff. Default behavior is to do nothing. 
         Inheriting classes can implmenet their own version."""
         # Create a visible rect for debugging.
         self.w = self.parent.w

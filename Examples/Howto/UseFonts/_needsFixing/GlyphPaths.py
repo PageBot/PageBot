@@ -79,7 +79,7 @@ class Segment(object):
         self.points.append(p)
 
 class Glyph(object):
-    """This Glyph class is a wrapper around the glyph structure of a ttFont.
+    u"""This Glyph class is a wrapper around the glyph structure of a ttFont.
     It is supposed to copy the functions of the RoboFont raw glyph, for all needed functions
     in PageBot. It is not complete, will be added to when needed."""
     def __init__(self, font, name):
@@ -102,7 +102,7 @@ class Glyph(object):
             len(self.coordinates), len(self.endPtsOfContours), len(self.components))
 
     def _initialize(self):
-        """Initialize the cached data, such as self.points, self.contour, self.components and self.path."""
+        u"""Initialize the cached data, such as self.points, self.contour, self.components and self.path."""
         self._points = []
         self._contours = []
         self._components = []
@@ -144,7 +144,7 @@ class Glyph(object):
                 openSegment = None
 
     def _drawSegment(self, cp, segment, path):
-        """Draw the Segment instance into the path. It may contain multiple quadratics.
+        u"""Draw the Segment instance into the path. It may contain multiple quadratics.
         Split into cubics and lines."""
         print(self.name, segment)
         if len(segment) == 1:
@@ -180,7 +180,7 @@ class Glyph(object):
         path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2.x, p2.y))
 
     def pointInside(self, p):
-        """Answer the boolean if the point is inside the path (black) of the letter."""
+        u"""Answer the boolean if the point is inside the path (black) of the letter."""
         px, py, _ = point3D(p)
         return self.path._path.containsPoint_((x, y))
 
@@ -207,7 +207,7 @@ class Glyph(object):
     # Direct TTFont cooridinates compatibility
 
     def _get_coordinates(self):
-        """Answer the ttFont.coordinates, if it exists. Otherwise answer None. Note that this is the
+        u"""Answer the ttFont.coordinates, if it exists. Otherwise answer None. Note that this is the
         “raw” list of (x, y) positions, without information on contour index or if the point is on/off curve.
         This information is stored ttFont.endPtsOfContours and ttFont.flags. This property is only for low-level
         access of the cootdinates. For regular use, self.points and self.contours are available.

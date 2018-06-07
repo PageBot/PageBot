@@ -14,7 +14,7 @@
 #     timemark.py
 #
 class TimeMark(object):
-    """TimeMarks are used by elements to keep style attributes sorted in a time line."""
+    u"""TimeMarks are used by elements to keep style attributes sorted in a time line."""
     def __init__(self, t, style):
         self.t = t
         self.style = style

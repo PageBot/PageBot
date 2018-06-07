@@ -34,7 +34,7 @@ f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
                      wideLocation, fixedSize=False,
                      tracking=None, rTracking=None):
-    """
+    u"""
       Answer the font instance that makes string s width on the given width
       *w* for the given *fontSize*. The *condensedLocation* dictionary defines
       the most condensed font instance (optionally including the opsz) and
@@ -124,7 +124,7 @@ FRAMES = 60
 LEADING = 70
 
 def draw(w):
-    """
+    u"""
       Draw 3 lines of text: the boundaries of with the width axis and
        the interpolated width from the slider value.
       If the slider goes of the extremes, then the middle line stops

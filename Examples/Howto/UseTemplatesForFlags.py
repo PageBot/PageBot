@@ -37,7 +37,7 @@ PageSize = 500, 400
 EXPORT_PATH = '_export/UseTemplates.pdf'
 
 def makeTemplate(w, h, french=False):
-    """Make template for the main page (flag), for the given (w, h) size.
+    u"""Make template for the main page (flag), for the given (w, h) size.
     The optional **french** flag creates a French flag, otherwise Italian."""
 
     # Creat enew Template instance for the given size.
@@ -59,7 +59,7 @@ def makeTemplate(w, h, french=False):
     return template
 
 def makeDocument():
-    """Make a new document, using the rs as root style."""
+    u"""Make a new document, using the rs as root style."""
 
     #W = H = 120 # Get the standard a4 width and height in points.
     W, H = PageSize

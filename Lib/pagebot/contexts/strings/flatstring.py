@@ -27,9 +27,9 @@ class FlatString(BabelString):
 
     BABEL_STRING_TYPE = 'flat'
 
-    """FlatString is a wrapper around the Flat string."""
+    u"""FlatString is a wrapper around the Flat string."""
     def __init__(self, s, context, style=None):
-        """Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
+        u"""Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
         Optionally store the (latest) style that was used to produce the formatted string.
 
         >>> from pagebot.contexts.flatcontext import FlatContext
@@ -49,7 +49,7 @@ class FlatString(BabelString):
         self.style = style
 
     def _get_s(self):
-        """Answer the embedded Flat equivalent of a OSX FormattedString by property, to enforce 
+        u"""Answer the embedded Flat equivalent of a OSX FormattedString by property, to enforce 
         checking type of the string."""
         return self._s
     def _set_s(self, s):
@@ -59,7 +59,7 @@ class FlatString(BabelString):
     s = property(_get_s, _set_s)
 
     def _get_font(self):
-        """Answer the current state of fontName."""
+        u"""Answer the current state of fontName."""
         return self.style.get('font') 
     def _set_font(self, fontName):
         if fontName is not None:
@@ -68,7 +68,7 @@ class FlatString(BabelString):
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
-        """Answer the current state of the fontSize."""
+        u"""Answer the current state of the fontSize."""
         return self.style.get('fontSize')
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
@@ -77,7 +77,7 @@ class FlatString(BabelString):
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def __len__(self):
-        """Answer the number of characters in self.s
+        u"""Answer the number of characters in self.s
 
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
@@ -90,7 +90,7 @@ class FlatString(BabelString):
         return len(str(self.s))
 
     def asText(self):
-        """Answer as unicode string.
+        u"""Answer as unicode string.
 
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
@@ -103,7 +103,7 @@ class FlatString(BabelString):
         return str(self.s) # TODO: To be changed to Flat string behavior.
 
     def textSize(self, w=None, h=None):
-        """Answer the (w, h) size for a given width, with the current text."""
+        u"""Answer the (w, h) size for a given width, with the current text."""
         return 100, 20
         # TODO: Make this work in Flat same as in DrawBot
         #return self.b.textSize(s)
@@ -114,7 +114,7 @@ class FlatString(BabelString):
         return ''
 
     def append(self, s):
-        """Append string or FlatString to self."""
+        u"""Append string or FlatString to self."""
         # TODO: Make this to work.
         #try:
         #    self.s += s.s
@@ -125,10 +125,10 @@ class FlatString(BabelString):
     FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\@([^=]*)\=\=')
 
     def appendMarker(self, markerId, arg):
-        """Append an invisible marker string."""
+        u"""Append an invisible marker string."""
 
     def findMarkers(self, reCompiled=None):
-        """Answer a dictionary of markers with their arguments in self.s."""
+        u"""Answer a dictionary of markers with their arguments in self.s."""
         if reCompiled is None:
             reCompiled= self.FIND_FS_MARKERS
         return reCompiled.findall(u'%s' % self.s)
@@ -136,7 +136,7 @@ class FlatString(BabelString):
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Answer a FlatString instance from valid attributes in *style*. Set all values after testing
+        u"""Answer a FlatString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
 

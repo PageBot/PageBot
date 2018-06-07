@@ -23,7 +23,7 @@ from pagebot.toolbox.transformer import path2FamilyName
 FAMILIES = {} # Cached build families
 
 def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=False):
-    """Construct a dictionary of Family instances from dictionary familyPaths. If omitted, then create
+    u"""Construct a dictionary of Family instances from dictionary familyPaths. If omitted, then create
     the families from all aviable font paths found in the by the context.
     The flag useFontInfo defines if the familyName, styleName) should be taken from the font.info
     or guess from the font file name.
@@ -61,7 +61,7 @@ def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=Fals
     return FAMILIES
 
 def getFamily(familyName, useFontInfo=True, useFileName=True):
-    """Create a new Family instance and fill it with available fonts that fit the name.
+    u"""Create a new Family instance and fill it with available fonts that fit the name.
 
     >>> families = getFamilies()
     >>> family = families.get('Bungee')
@@ -73,7 +73,7 @@ def getFamily(familyName, useFontInfo=True, useFileName=True):
     return getFamilies(useFontInfo=useFontInfo, useFileName=useFileName).get(familyName)
 
 def newFamily(familyName, fonts=None):
-    """Create a new family with this name. If the family already exists, then raise an error.
+    u"""Create a new family with this name. If the family already exists, then raise an error.
 
     >>> families = getFamilies()
     >>> family = newFamily('MyFamily')
@@ -92,7 +92,7 @@ class Family(object):
     FONT_CLASS = Font
 
     def __init__(self, name=None, fonts=None):
-        """The Family instance is a container of related Font instances. There are various levels of access: file name, style name,
+        u"""The Family instance is a container of related Font instances. There are various levels of access: file name, style name,
         width and weight OS/values by DrawBot name if the font is installed.
         The fonts attribute can be a list of Font instances, a list of font file paths or directories.
 
@@ -108,15 +108,15 @@ class Family(object):
             self.addFonts(fonts) # Try to figure out what these are, and add them
 
     def __repr__(self):
-        """Answer the representation stirng of the family."""
+        u"""Answer the representation stirng of the family."""
         return '<PageBot Family %s (%d fonts)>' % (self.name, len(self))
 
     def __len__(self):
-        """Answer the length of the family, as the amount of fonts."""
+        u"""Answer the length of the family, as the amount of fonts."""
         return len(self.fonts)
 
     def __contains__(self, fontPath):
-        """Answer the boolean flag if there is a Font instance with path fontPath.
+        u"""Answer the boolean flag if there is a Font instance with path fontPath.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
@@ -129,7 +129,7 @@ class Family(object):
         return fontPath in self.fonts
 
     def __getitem__(self, fontPath):
-        """Answer the Font instance by this fontPath.
+        u"""Answer the Font instance by this fontPath.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
@@ -144,7 +144,7 @@ class Family(object):
         return self.fonts[fontPath]
 
     def keys(self):
-        """Answer the paths of fonts, which are the keys in self.fonts.
+        u"""Answer the paths of fonts, which are the keys in self.fonts.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
@@ -157,7 +157,7 @@ class Family(object):
         return self.fonts.keys()
 
     def addFonts(self, fontsOrPaths):
-        """And the fonts to the family. This can be a list of Font instances, a list of font names or
+        u"""And the fonts to the family. This can be a list of Font instances, a list of font names or
         a list of font paths.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -178,7 +178,7 @@ class Family(object):
             self.addFont(fontOrPath)
 
     def addFont(self, fontOrPath):
-        """And the fonts to the family. This can be a list of Font instances, a list of font names or
+        u"""And the fonts to the family. This can be a list of Font instances, a list of font names or
         a list of font paths.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -214,7 +214,7 @@ class Family(object):
         return font
 
     def getFonts(self):
-        """Answer the unsorted list of Font instances in the family.
+        u"""Answer the unsorted list of Font instances in the family.
 
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> len(family.getFonts())
@@ -223,7 +223,7 @@ class Family(object):
         return self.fonts.values()
 
     def getStyles(self):
-        """Answer the dictionary {fontStyle: [font, font, ...], ...}
+        u"""Answer the dictionary {fontStyle: [font, font, ...], ...}
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
@@ -248,7 +248,7 @@ class Family(object):
         return fontStyles
 
     def getWeights(self):
-        """Answer the dictionary {weightClass: [font, font, ...], ...]}
+        u"""Answer the dictionary {weightClass: [font, font, ...], ...]}
 
         >>> family = getFamily('Bungee')
         >>> family.getWeights().keys()
@@ -267,7 +267,7 @@ class Family(object):
         return weightClasses
 
     def getWidths(self):
-        """Answer the dictionary {widthClass: [font, font, ...], ...]}
+        u"""Answer the dictionary {widthClass: [font, font, ...], ...]}
 
         >>> family = getFamily('Bungee')
         >>> family.getWidths().keys()
@@ -286,7 +286,7 @@ class Family(object):
         return widthClasses
 
     def getRomanFonts(self):
-        """Answer the dictionary {romanFontPath: font, ...]}
+        u"""Answer the dictionary {romanFontPath: font, ...]}
 
         >>> family = getFamily('Bungee')
         >>> len(family.getRomanFonts())
@@ -302,7 +302,7 @@ class Family(object):
         return romanFonts
 
     def getItalicFonts(self):
-        """Answer the dictionary {italicFontPath: font, ...]}
+        u"""Answer the dictionary {italicFontPath: font, ...]}
 
         >>> family = getFamily('Bungee')
         >>> len(family.getItalicFonts())
@@ -318,7 +318,7 @@ class Family(object):
         return italicFonts
 
     def findRegularFont(self, italic=False):
-        """Try to find a font that is closest to style "Normal" or "Regular".
+        u"""Try to find a font that is closest to style "Normal" or "Regular".
         Otherwise answer the font that has weight/width closest to (400, 5) and angle is closest to 0.
         Default is to find the roman. The italic is optional to find the regular italic, if it exists.
 
@@ -339,7 +339,7 @@ class Family(object):
         return self._findFont(weight=400, width=5, italic=italic)
 
     def _findFont(self, name=None, weight=None, width=None, italic=False):
-        """Private method to find the font closest to the defined parameters."""
+        u"""Private method to find the font closest to the defined parameters."""
         match = 0
         matchingFont = None
         for font in self.fonts.values():
@@ -350,7 +350,7 @@ class Family(object):
         return matchingFont
 
     def findFont(self, name=None, weight=None, width=None, italic=False):
-        """Answer the font that is the closest match on name, weight as name or weight as number,
+        u"""Answer the font that is the closest match on name, weight as name or weight as number,
         width as name or width as number and italic angle as name or number, if any of these are defined.
         In case there is one or more fonts in the family then there always is a closest match.
         If the family is empty, None is anwere.

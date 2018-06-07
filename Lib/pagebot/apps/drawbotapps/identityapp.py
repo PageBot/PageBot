@@ -17,7 +17,7 @@ from pagebot.apps.drawbotapps.baseapp import BaseApp
 from pagebot.publications.identity import Identity
 
 class IdentityApp(BaseApp):
-    """Will be developed."""
+    u"""Will be developed."""
     PUBLICATION_CLASS = Identity
 
 if __name__ == '__main__':

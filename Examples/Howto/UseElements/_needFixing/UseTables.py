@@ -29,7 +29,7 @@ PageSize = 500
 EXPORT_PATH = '_export/UseTables.pdf'
 
 def makeDocument():
-    """Make a new document."""
+    u"""Make a new document."""
 
     W = H = PageSize
 

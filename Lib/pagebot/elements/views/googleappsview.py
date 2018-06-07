@@ -19,7 +19,7 @@
 from pagebot.elements.views.htmlview import HtmlView
 
 class GoogleAppsView(HtmlView):
-    """The GoogleAppsView implements a live Python server.
+    u"""The GoogleAppsView implements a live Python server.
     For this PageBot + HtmlContext + FlatContext are deplyed and are running as 
     live server generating HTML/CSS pages. Similar to Xierpa3.
     

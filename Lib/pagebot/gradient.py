@@ -16,7 +16,7 @@
 #
 
 class Gradient(object):
-    """
+    u"""
     As linear gradient (startRadius or endRadius not set):
     startPoint as (x, y)
     endPoint as (x, y)
