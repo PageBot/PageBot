@@ -27,7 +27,7 @@ class AnimationFrame(Rect):
     """
     SAMPLE = 'Sample'
 
-    def __init__(self, f, frames, frameIndex, phases=None, sampleText=None, **kwargs):
+    def __init__(self, s, f, frames, frameIndex, phases=None, **kwargs):
         u"""
         >>> from random import random
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -46,7 +46,7 @@ class AnimationFrame(Rect):
         >>> for pn in range(1, frames+1):
         ...     page = doc[pn]
         ...     style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, fill=0)
-        ...     gs = AnimationFrame(font, frames, pn, parent=page, padding=20, style=style, sampleText='Claire', w=page.pw, h=page.ph, context=c)
+        ...     gs = AnimationFrame('Claire', font, frames, pn, parent=page, padding=20, style=style, w=page.pw, h=page.ph, context=c)
         >>> doc.export('_export/%sAnimation.gif' % font.info.familyName)
 
         TODO: Make self.css('xTextAlign') work for CENTER
@@ -55,7 +55,7 @@ class AnimationFrame(Rect):
         self.f = f
         self.frames = frames # Total amount of expected frames in the animation part
         self.frameIndex = frameIndex
-        self.sampleText = sampleText or self.SAMPLE
+        self.sampleText = s or self.SAMPLE
         self.phases = phases or {} # Dictionary for phasing values depending on frame index.
 
     def build(self, view, origin, drawElements=True):
