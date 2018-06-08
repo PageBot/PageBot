@@ -61,4 +61,8 @@ class BezierPath(object):
     	# TODO Seems to be a problem in direct closing, not storing as command?
     	#self.commands.append(self.b.closepath
 
+	def appendPath(self, path):
+		self.commands += path.commands
+
+		
 

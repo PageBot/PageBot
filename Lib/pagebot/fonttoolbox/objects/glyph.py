@@ -21,14 +21,11 @@ import weakref
 
 # Use default drawing context for generating the glyphs path.
 # This is independent from the current main context, e.g. HtmlContext.
-from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
 from pagebot.toolbox.transformer import point2D
 from pagebot.fonttoolbox.analyzers.apoint import APoint
 from pagebot.fonttoolbox.analyzers.asegment import ASegment
 from pagebot.fonttoolbox.analyzers.acomponent import AComponent
-
-context = getContext()
 
 C = 0.5
 F = 2.0 / 3.0
@@ -132,14 +129,15 @@ class Glyph(object):
         maxX = maxY = -sys.maxsize
 
         if coordinates or components:
-            self._path = context.newPath()
+            from pagebot.contexts.platform import getContext
+            self._path = getContext().newPath()
 
         for component in components:
             componentName = component.baseGlyph
             if componentName in self.font.keys():
                 componentPath = self.font[componentName].path
                 componentPath.transform((1, 0, 0, 1, component.x, component.y))
-                path.appendPath(componentPath)
+                self._path.appendPath(componentPath)
                 componentPath.transform((1, 0, 0, 1, -component.x, -component.y))
 
 

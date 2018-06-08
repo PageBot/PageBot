@@ -34,6 +34,10 @@ class NoneBezierPath(object):
     def closePath(self):
         pass
 
+    def appendPath(self, path):
+        pass
+
+        
 class NoneImageObject(object):
     u"""Nabe NoneImageObject with the same API got NonDrawBotBuilder."""
     def __init__(self, path):
