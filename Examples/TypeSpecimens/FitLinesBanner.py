@@ -45,9 +45,9 @@ font = findFont('Fit-Variable_1')
 # Define tag list for axes to be part of the animation as sequence
 sequenceAxes = ['wdth']
 sequenceLength = 3 # Seconds per sequence
-sequences = 4 # Amount of sequences in choreography
+sequences = 2 # Amount of sequences in choreography
 duration = sequenceLength * sequences # Total duration of the animation in seconds
-framesPerSecond = 10 # 2 for testing
+framesPerSecond = 15 # 2 for testing
 frameCnt = duration * framesPerSecond # Total number of frames
 axisFrames = sequenceLength * framesPerSecond # Number of frames per axis sequence.
 
@@ -55,7 +55,9 @@ axisFrames = sequenceLength * framesPerSecond # Number of frames per axis sequen
 doc = Document(w=W, h=H, originTop=False, frameDuration=1.0/framesPerSecond, 
     autoPages=frameCnt, context=c)
 # Sample text to show in the animation
-sample = 'Fitting' 
+sample1 = 'Fitting' 
+sample2 = 'in with'
+sample3 = 'Fit'
 
 frameIndex = 1 # Same as page index in the document
 for sequenceIndex in range(sequences):
@@ -71,13 +73,38 @@ for sequenceIndex in range(sequences):
         pw = page.pw # Usable page/frame area, without paddind
         ph = page.ph
         if sequenceIndex == 0:
-            x = y = 0
-            ww = pw/4 + pw*3/4*phicos
-            hh = ph
+            x1 = 0
+            y1 = ph/3 + M + ph/3*phicos
+            ww1 = pw
+            hh1 = ph - y1
+            x2 = 0
+            y2 = 0
+            ww2 = pw*3/4
+            hh2 = ph - hh1 - M
+            x3 = ww2 + M
+            y3 = 0
+            ww3 = pw - x3
+            hh3 = hh2
         elif sequenceIndex == 1:
-            x = y = 0
-            ww = pw
-            hh = ph/4 + ph*3/4*phicos
+            x1 = 0
+            y1 = ph/3 + M + ph/3*phicos
+            ww1 = pw/3 + ph*2/3*phicos
+            hh1 = ph - y1
+            x2 = 0
+            y2 = 0
+            hh2 = ph - hh1 - M
+            if ww1 < pw*2/3:
+                ww2 = ww1
+                x3 = ww2 + M
+                y3 = 0
+                ww3 = pw - x3
+                hh3 = ph
+            else:            
+                ww2 = pw/2 + pw/4*phicos
+                x3 = ww2 + M
+                y3 = 0
+                ww3 = pw - x3
+                hh3 = hh2
         elif sequenceIndex == 2:
             x = 0
             y = ph/2 - ph/2*phicos
@@ -92,9 +119,13 @@ for sequenceIndex in range(sequences):
         style = dict(rLeading=1.4, font=font, xTextAlign=RIGHT, textFill=1, 
             fill=0, roundVariableFitLocation=False)
 
-        af = AnimatedBannerFrame(sample, font, frameCnt, frameIndex, parent=page, style=style, 
-            x=x+M, y=y+M, w=ww, h=hh, context=c)
+        AnimatedBannerFrame(sample1, font, frameCnt, frameIndex, parent=page, style=style, 
+            x=x1+M, y=y1+M, w=ww1, h=hh1, context=c)
+        AnimatedBannerFrame(sample2, font, frameCnt, frameIndex, parent=page, style=style, 
+            x=x2+M, y=y2+M, w=ww2, h=hh2, context=c)
+        AnimatedBannerFrame(sample3, font, frameCnt, frameIndex, parent=page, style=style, 
+            x=x3+M, y=y3+M, w=ww3, h=hh3, context=c)
         frameIndex += 1 # Prepare for the next frame
 
 doc.solve()
-doc.export('_export/%s_%s.gif' % (font.info.familyName, sample))
+doc.export('_export/%s_%s%s%s.gif' % (font.info.familyName, sample1, sample2, sample3))

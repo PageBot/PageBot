@@ -55,6 +55,10 @@ class Glyph(object):
     >>> g = f['a']
     >>> g.name
     'a'
+    """
+
+    """
+    TODO: Separate path creation from Glyph._initialize
     >>> len(g.points)
     46
     >>> g.points[-1].onCurve
@@ -73,6 +77,9 @@ class Glyph(object):
     AXIS_DELTAS_CLASS = AxisDeltas
 
     def __init__(self, font, name):
+        from pagebot.contexts.platform import getContext
+        self.context = getContext()
+
         self.name = name
         self.font = font # Stored as weakref
         self.dirty = True # Mark that we need initialization or something changed in the points.
@@ -108,7 +115,10 @@ class Glyph(object):
 
     def _initialize(self):
         u"""Initializes the cached data, such as self.points, self.contour,
-        self.components and self.path, as side effect of drawing the path image."""
+        self.components and self.path, as side effect of drawing the path image.
+
+        TODO: Separate path creation from initialize, so we no longer need self.context here.
+        """
 
         self._points = []
         self._points4 = [] # Same as self.points property with added 4 spacing points in TTF style.
@@ -129,8 +139,7 @@ class Glyph(object):
         maxX = maxY = -sys.maxsize
 
         if coordinates or components:
-            from pagebot.contexts.platform import getContext
-            self._path = getContext().newPath()
+            self._path = self.context.newPath()
 
         for component in components:
             componentName = component.baseGlyph

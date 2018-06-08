@@ -59,7 +59,7 @@ class NoneDrawBotString(BabelString):
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
             fontSize=None, font=None, tagName=None):
-        return cls(s, context=context, e=e, style=style)
+        return cls(s, context=context, style=style)
 
 class DrawBotString(BabelString):
 
@@ -251,12 +251,20 @@ class DrawBotString(BabelString):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> font = findFont('RobotoDelta-VF')
+        >>> #font = findFont('RobotoDelta-VF')
+        >>> font = findFont('Fit-Variable_1')        
         >>> style = dict(font=font)
-        >>> 'wdth' in font.axes.keys() and 'XTRA' in font.axes.keys() # Both are there
+        >>> 'wdth' in font.axes.keys() or 'XTRA' in font.axes.keys() # One of them is there
         True
-        >>> s = DrawBotString.fitString('Hello', context, style=style, w=400, h=200)
-
+        >>> s = DrawBotString.newString('Hello', context, style=style, w=300)
+        >>> int(round(s.bounds()[2])), int(round(s.fittingFontSize)) # Rounded width
+        (297, 195)
+        >>> s = DrawBotString.fitString('Hello', context, style=style, w=400, h=220)
+        >>> int(round(s.bounds()[2]-s.bounds()[0])) # Rounded pixel width
+        399
+        >>> int(round(s.bounds()[3]-s.bounds()[1])) # Rounded pixel height
+        220
+        >>> #s.bounds()
 
         """
         style = copy(style)
@@ -265,73 +273,77 @@ class DrawBotString(BabelString):
         if isinstance(font, str): # Assuming it's a path, get the Font instance.
             font = getFont(font) # Make sure we gave a real Font instance.
         style['font'] = font
+        # Get the flag if fit locations should be rounded (less cached instance) or accurate.
+        roundVariableFitLocation = style.get('roundVariableFitLocation', True)
         # In case font is not a variable font, or not [wdth] or [XTRA] present, then using normal 
         # string fit is the best we can do. 
         if not 'wdth' in font.axes and not 'XTRA' in font.axes:
             return cls.newString(t, context, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
 
         # Decide which axis to use for width adjustments and get the axis values.
-        axisTag = {True: 'wdth', False: 'XTRA'}[not useXTRA and 'wdth' in font.axes]
+        if not useXTRA or not 'XTRA' in font.axes: # Try to force usage of [XTRA] if it exists, otherwise use[wdth]
+            axisTag = 'wdth'
+        else:
+            axisTag = 'XTRA'
         minValue, defaultValue, maxValue = font.axes[axisTag]
-
+        #print(0, minValue, defaultValue, maxValue )
         if h is not None: # Fitting in heigt, calculate/iterate for the fitting font size.
-            fs = cls.newString(t, context, e=e, style=style, h=h, pixelFit=pixelFit)
-            style['fontSize'] = fs.fittingFontSize
+            bs = cls.newString(t, context, e=e, style=style, h=h, pixelFit=pixelFit)
+            style['fontSize'] = bs.fittingFontSize
         else: # Assuming there is a fontSize set, we'll use that as vertical requirement
-            fs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
+            bs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
         
         # Now we have a formatted string with a given fontSize, guess to fit on the width. 
-        print('@#@@@@#', fs)
-        tx, _, tw, _ = pixelBounds(fs.s)
+        tx, _, tw, _ = bs.bounds() # Get pixel bounds of the string
         tw = tw - tx # Pixel width of the current string.
-        fsMin = twMin = fsMax = twMax = None # Fill by calculated width instances.
-        prevMin = prevMax = None # Testing if something changed, for extreme of axes.
+        #print(0, tw, w, h)
+        prevW = None # Testing if something changed, for extreme of axes.
+        axisValue = defaultValue
 
-        for n in range(1000): # Limit the maximum amount of iterations as safeguard
+        for n in range(100): # Limit the maximum amount of iterations as safeguard
             if tw > w: # Too wide, try iterate smaller in ratio of wdth/XTRA axis values
-
-                if twMin is None: # We didn't init the right extreme yet, do with maxValue
-                    axisValue = minValue
-                    prevMin = twMin
-                else:
-                    axisValue = (axisValue - minValue)/2 + minValue
+                #print(1, tw, w)
+                maxValue = axisValue # Clip wide range to current
+                # Guess the new axisvalue from the ratio of tw/w
+                axisValue = (axisValue - minValue)/2 + minValue
+                if roundVariableFitLocation:
+                    axisValue = int(round(axisValue))
+                #print(2, axisValue, minValue, defaultValue, maxValue)
                 loc = copy(location)
                 loc[axisTag] = axisValue
-                loc['opsz'] = style['fontSize']
+                loc['opsz'] = int(style['fontSize'])
+                #print(3, loc, font.axes.keys())
                 style['font'] = getInstance(font, loc)
-                fs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
-                txMin, _, twMin, _ = pixelBounds(fs)
-                twMin = twMin - txMin # Total width for the current 
-                
-                if twMin == prevMin and twMin > w: # Can't get narrower, best we can do. Back out with current string.
+                bs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
+                tx, ty, tw, th = bs.bounds() # Get pixel bounds of the string
+                tw = tw - tx # Total width for the current 
+                #print(5, tw, w, th-ty, h)
+                if prevW == tw: # Did not change, probably not able to get more condensed
                     break
-                # This is better than we had, but still too small, use these values next time.
-                prevMin = twMin
-                maxValue = axisValue
+                prevW = tw
 
-            elif w - tw < cls.FITTING_TOLERANCE: # Too condensed, try to make wider.
-                if twMax is None: # We didn't init the right extreme yet, do with maxValue
-                    axisValue = maxValue
-                    prevMax = twMax
-                else:
-                    axisValue = (maxValue - axisValue)/2 + axisValue
+            elif tw < w - cls.FITTING_TOLERANCE: # Too condensed, try to make wider.
+                #print(11, tw, w)
+                minValue = axisValue # Clip narrow range to current
+                axisValue = (maxValue - axisValue)/2 + axisValue
+                if roundVariableFitLocation:
+                    axisValue = int(round(axisValue))
                 loc = copy(location)
                 loc[axisTag] = axisValue
-                loc['opsz'] = style['fontSize']
+                loc['opsz'] = int(style['fontSize'])
                 style['font'] = getInstance(font, loc)
-                fs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
-                txMax, _, twMax, _ = pixelBounds(fs)
-                twMax = twMax - txMax # Total width for the current 
-                
-                if twMax == prevMax and twMax < w: # Can't get wider, best we can do. Back out with current string.
+                bs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
+                tx, ty, tw, th = bs.bounds() # Get pixel bounds of the string
+                tw = tw - tx # Total width for the current 
+                #print(15, tw, w, th-ty, h)
+                if prevW == tw: # Did not change, probably not able to get more condensed
                     break
-                # This is better than we had, but still too small, use these values next time.
-                prevMax = twMax
-                minValue = axisValue
+                prevW = tw
 
             else: # We found a fitting VF-location within tolerance. Back out.
                 break
-        return fs
+        #print('Number of iterations', n)
+        return bs
 
     @classmethod
     def newString(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True):

@@ -54,6 +54,20 @@ class BaseContext(object):
         assert isinstance(s, self.STRING_CLASS)
         return s
 
+    def fitString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
+        u"""Create a new styles BabelString instance of self.STRING_CLASS from s 
+        assuming that style['font'] is a Variable Font instnace, or a path pointing to one.
+        If the for is not a VF, then behavior is the same as newString.
+        (converted to plain unicode string), using e or style as typographic parameters. 
+        Ignore and just answer s if it is already a self.STRING_CLASS instance.
+        """
+        if not isinstance(s, self.STRING_CLASS):
+            # Otherwise convert s into plain string, from whatever it is now.
+            s = self.STRING_CLASS.fitString(u'%s' % s, context=self, e=e, style=style, w=w, h=h, 
+                pixelFit=pixelFit)
+        assert isinstance(s, self.STRING_CLASS)
+        return s
+
     def newText(self, textStyles, e=None, w=None, h=None, newLine=False):
         u"""Answer the BabelString, as combination of all text and style in textStyles, which is supposed to
         have format [(baseString, style), (baseString, style), ...]. Add return \n to the string is the
