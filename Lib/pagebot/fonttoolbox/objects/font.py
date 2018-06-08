@@ -242,10 +242,9 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
 
     # make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
     instanceName = ""
-    if not isinstance(pathOrVarFont, Font):
-        varFont = Font(pathOrVarFont, lazy=lazy)
-    else:
-        varFont = pathOrVarFont
+    if isinstance(pathOrVarFont, Font):
+        pathOrVarFont = pathOrVarFont.path
+    varFont = Font(pathOrVarFont, lazy=lazy)
     ttFont = varFont.ttFont
 
     for k, v in sorted(location.items()):
