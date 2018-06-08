@@ -303,13 +303,13 @@ class DrawBotString(BabelString):
                 txMin, _, twMin, _ = pixelBounds(fs)
                 twMin = twMin - txMin # Total width for the current 
                 
-                if twMmin == prevMin and twMin > w: # Can't get narrower, best we can do. Back out with current string.
+                if twMin == prevMin and twMin > w: # Can't get narrower, best we can do. Back out with current string.
                     break
                 # This is better than we had, but still too small, use these values next time.
                 prevMin = twMin
                 maxValue = axisValue
 
-            elif w - tw < self.FITTING_TOLERANCE: # Too condensed, try to make wider.
+            elif w - tw < cls.FITTING_TOLERANCE: # Too condensed, try to make wider.
                 if twMax is None: # We didn't init the right extreme yet, do with maxValue
                     axisValue = maxValue
                     prevMax = twMax

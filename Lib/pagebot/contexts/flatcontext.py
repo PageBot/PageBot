@@ -97,7 +97,7 @@ class FlatContext(BaseContext):
         self.shape = None # Current open shape
         self.flatString = None
 
-        self._pathCommands = None # Collect path commnands here before drawing the path.
+        self._path = None # Collect path commnands here before drawing the path.
 
     #   V A R I A B L E
 
@@ -461,16 +461,16 @@ class FlatContext(BaseContext):
         self._path.lineTo(p)
 
     def quadTo(self, bcp, p):
-        assert self._pathCommands is not None
+        assert self._path is not None
         self._path.quadTo(bcp, p)
 
     def curveTo(self, bcp1, bcp2, p):
-        assert self._pathCommands is not None
-        self._path.curveTo(bcp1, bcp2, p)
+        assert self._path is not None
+        self._path.curveTo(bcp1, bcp1, bcp2, p)
 
     def closePath(self):
-        assert self._pathCommands is not None
-        self._path.closePath(bcp1, bcp2, p)
+        assert self._path is not None
+        self._path.closePath()
 
     def bezierPathByFlatteningPath(self, path):
         u"""TODO: Make Flat version of the NSBezier flatten path function."""

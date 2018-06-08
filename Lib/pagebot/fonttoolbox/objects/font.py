@@ -75,7 +75,7 @@ def getFont(fontOrPath, lazy=True):
     >>> font = getFont(path)
     >>> font.path == path
     True
-    >>> font2 == getFont(font) # Answer the same font, if it is already one
+    >>> font == getFont(font) # Answer the same font, if it is already one
     True
     """
     try:
@@ -215,10 +215,7 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
     location name."""
     if opticalSize is None: # If forcing flag is undefined, then get info from location.
         opticalSize = location.get('opsz')
-    if isinstance(pathOrFont, Font):
-        instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached, lazy=lazy)
-    else:
-        instance = pathOrFont
+    instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached, lazy=lazy)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     instance.info.opticalSize = opticalSize
     instance.info.location = location
@@ -226,7 +223,7 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
     return instance
 
 
-def makeInstance(path, location, dstPath=None, normalize=True, cached=True, lazy=True):
+def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=True, lazy=True):
     u"""
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
@@ -245,7 +242,10 @@ def makeInstance(path, location, dstPath=None, normalize=True, cached=True, lazy
 
     # make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
     instanceName = ""
-    varFont = Font(path, lazy=lazy)
+    if not isinstance(pathOrVarFont, Font):
+        varFont = Font(pathOrVarFont, lazy=lazy)
+    else:
+        varFont = pathOrVarFont
     ttFont = varFont.ttFont
 
     for k, v in sorted(location.items()):
@@ -255,7 +255,7 @@ def makeInstance(path, location, dstPath=None, normalize=True, cached=True, lazy
         instanceName += "-%s%s" % (k, v)
 
     if dstPath is None:
-        targetFileName = '.'.join(path.split('/')[-1].split('.')[:-1]) + instanceName + '.ttf'
+        targetFileName = '.'.join(varFont.path.split('/')[-1].split('.')[:-1]) + instanceName + '.ttf'
         targetDirectory = getInstancePath()
         if not targetDirectory.endswith('/'):
             targetDirectory += '/'
