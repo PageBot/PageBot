@@ -19,10 +19,14 @@ from pagebot.toolbox.transformer import path2Name
 
 class NoneBezierPath(object):
     u"""Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing texting."""
+
     def moveTo(self, p):
         pass
 
     lineTo = moveTo
+
+    def quadTo(self, pcp, p):
+        pass
 
     def curveTo(self, bcp1, bcp2, p):
         pass
@@ -49,9 +53,12 @@ class NoneBuilder(object):
     def frameDuration(self, v):
         pass
 
-    restore = save = newPath = drawPath = newDrawing # Nethods without attributes
+    restore = save = drawPath = newDrawing # Methods without attributes
 
     BezierPath = NoneBezierPath
+
+    def newPath(self):
+        return NoneBezierPath()
 
     def scale(self, sx, sy):
         pass

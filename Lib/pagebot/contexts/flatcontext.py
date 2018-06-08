@@ -17,7 +17,7 @@
 #
 #import imageio
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.contexts.builders.flatbuilder import flatBuilder
+from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
 from pagebot.style import NO_COLOR, LEFT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
 
@@ -443,33 +443,34 @@ class FlatContext(BaseContext):
 
     def newPath(self):
         u"""Create a new path list, o collect the path commands."""
-        self._pathCommands = [] # Collect path commands here.
+        self._path = BezierPath(self.b) # Collect path commands here.
+        return self._path
 
     def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.path(self._pathCommands))
+            self.page.place(shape.path(self._path.commands))
 
     def moveTo(self, p):
-        assert self._pathCommands is not None
-        self._pathCommands.append(self.b.moveto(p[0], p[1]))
+        assert self._path is not None
+        self._path.moveTo(p)
 
     def lineTo(self, p):
-        assert self._pathCommands is not None
-        self._pathCommands.append(self.b.lineto(p[0], p[1]))
+        assert self._path is not None
+        self._path.lineTo(p)
 
     def quadTo(self, bcp, p):
         assert self._pathCommands is not None
-        self._pathCommands.append(self.b.quadto(bcp[0], bcp[1], p[0], p[1]))
+        self._path.quadTo(bcp, p)
 
     def curveTo(self, bcp1, bcp2, p):
         assert self._pathCommands is not None
-        self._pathCommands.append(self.b.curveto(bcp1[0], bcp1[1], bcp2[0], bcp2[1], p[0], p[1]))
+        self._path.curveTo(bcp1, bcp2, p)
 
     def closePath(self):
         assert self._pathCommands is not None
-        self._pathCommands.append(self.b.closepath)
+        self._path.closePath(bcp1, bcp2, p)
 
     def bezierPathByFlatteningPath(self, path):
         u"""TODO: Make Flat version of the NSBezier flatten path function."""

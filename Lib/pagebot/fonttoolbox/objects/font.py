@@ -63,7 +63,7 @@ def isFontPath(fontPath):
     except TypeError:
         return False
 
-def getFont(fontPath, lazy=True):
+def getFont(fontOrPath, lazy=True):
     u"""Answer the Font instance, that connects to the fontPath. Note that there is no check if there
     is already anothe Font created on that path, as for PageBot purposes it is most likely for
     reading only.
@@ -75,11 +75,15 @@ def getFont(fontPath, lazy=True):
     >>> font = getFont(path)
     >>> font.path == path
     True
+    >>> font2 == getFont(font) # Answer the same font, if it is already one
+    True
     """
     try:
-        if not isFontPath(fontPath):
+        if isinstance(fontOrPath, Font):
+            return fontOrPath
+        if not isFontPath(fontOrPath):
             return None
-        return Font(fontPath, lazy=lazy)
+        return Font(fontOrPath, lazy=lazy)
     except TTLibError: # Could not open font, due to bad font file.
         return None
 
@@ -201,7 +205,7 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None, opticalSize=No
     return instance
     """
 
-def getInstance(path, location, dstPath=None, styleName=None, opticalSize=None, normalize=True, cached=True, lazy=True):
+def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=None, normalize=True, cached=True, lazy=True):
     u"""The getInstance refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
@@ -211,7 +215,10 @@ def getInstance(path, location, dstPath=None, styleName=None, opticalSize=None, 
     location name."""
     if opticalSize is None: # If forcing flag is undefined, then get info from location.
         opticalSize = location.get('opsz')
-    instance = makeInstance(path, location, dstPath=None, normalize=normalize, cached=cached, lazy=lazy)
+    if isinstance(pathOrFont, Font):
+        instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached, lazy=lazy)
+    else:
+        instance = pathOrFont
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     instance.info.opticalSize = opticalSize
     instance.info.location = location

@@ -28,6 +28,7 @@ except (ImportError, AttributeError):
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, NO_COLOR, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 from pagebot.toolbox.future import chr
+from pagebot.fonttoolbox.objects.font import getFont, getInstance
 
 def pixelBounds(fs):
     u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
@@ -232,10 +233,110 @@ class DrawBotString(BabelString):
             ty, th = 0, context.b.textSize(fs)[1]
         return h * fontSize / (th-ty)
 
+    FITTING_TOLERANCE = 3
+
+    @classmethod
+    def fitString(cls, t, context, e=None, style=None, w=None, h=None, useXTRA=True, pixelFit=True):
+        u"""Answer the DrawBotString instance from valid attributes in style. Set all values after testing
+        their existence, so they can inherit from previous style formats in the string.
+        If the target width w and height are defined, and if there is a [wdth] or [XTRA] axis in the
+        current Variable Font, then values are iterated to make the best location/instance for the
+        rectangle fit.
+        In case the fontSize is set and the width w is set, then just use the [wdth] or [XTRA] to 
+        make a horizontal fit, keeping the size. If the axes run to extreme, the string is return 
+        without changing width.
+        In case the a font path was supplied, then try to get a Font instance for that path, as we
+        need to test it for existing axes as Variable Font.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> font = findFont('RobotoDelta-VF')
+        >>> style = dict(font=font)
+        >>> 'wdth' in font.axes.keys() and 'XTRA' in font.axes.keys() # Both are there
+        True
+        >>> s = DrawBotString.fitString('Hello', context, style=style, w=400, h=200)
+
+
+        """
+        style = copy(style)
+        location = copy(css('', e, style, {})) # In case the used already supplied a VF location, use it.
+        font = css('font', e, style)
+        if isinstance(font, str): # Assuming it's a path, get the Font instance.
+            font = getFont(font) # Make sure we gave a real Font instance.
+        style['font'] = font
+        # In case font is not a variable font, or not [wdth] or [XTRA] present, then using normal 
+        # string fit is the best we can do. 
+        if not 'wdth' in font.axes and not 'XTRA' in font.axes:
+            return cls.newString(t, context, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
+
+        # Decide which axis to use for width adjustments and get the axis values.
+        axisTag = {True: 'wdth', False: 'XTRA'}[not useXTRA and 'wdth' in font.axes]
+        minValue, defaultValue, maxValue = font.axes[axisTag]
+
+        if h is not None: # Fitting in heigt, calculate/iterate for the fitting font size.
+            fs = cls.newString(t, context, e=e, style=style, h=h, pixelFit=pixelFit)
+            style['fontSize'] = fs.fittingFontSize
+        else: # Assuming there is a fontSize set, we'll use that as vertical requirement
+            fs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
+        
+        # Now we have a formatted string with a given fontSize, guess to fit on the width. 
+        print('@#@@@@#', fs)
+        tx, _, tw, _ = pixelBounds(fs.s)
+        tw = tw - tx # Pixel width of the current string.
+        fsMin = twMin = fsMax = twMax = None # Fill by calculated width instances.
+        prevMin = prevMax = None # Testing if something changed, for extreme of axes.
+
+        for n in range(1000): # Limit the maximum amount of iterations as safeguard
+            if tw > w: # Too wide, try iterate smaller in ratio of wdth/XTRA axis values
+
+                if twMin is None: # We didn't init the right extreme yet, do with maxValue
+                    axisValue = minValue
+                    prevMin = twMin
+                else:
+                    axisValue = (axisValue - minValue)/2 + minValue
+                loc = copy(location)
+                loc[axisTag] = axisValue
+                loc['opsz'] = style['fontSize']
+                style['font'] = getInstance(font, loc)
+                fs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
+                txMin, _, twMin, _ = pixelBounds(fs)
+                twMin = twMin - txMin # Total width for the current 
+                
+                if twMmin == prevMin and twMin > w: # Can't get narrower, best we can do. Back out with current string.
+                    break
+                # This is better than we had, but still too small, use these values next time.
+                prevMin = twMin
+                maxValue = axisValue
+
+            elif w - tw < self.FITTING_TOLERANCE: # Too condensed, try to make wider.
+                if twMax is None: # We didn't init the right extreme yet, do with maxValue
+                    axisValue = maxValue
+                    prevMax = twMax
+                else:
+                    axisValue = (maxValue - axisValue)/2 + axisValue
+                loc = copy(location)
+                loc[axisTag] = axisValue
+                loc['opsz'] = style['fontSize']
+                style['font'] = getInstance(font, loc)
+                fs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
+                txMax, _, twMax, _ = pixelBounds(fs)
+                twMax = twMax - txMax # Total width for the current 
+                
+                if twMax == prevMax and twMax < w: # Can't get wider, best we can do. Back out with current string.
+                    break
+                # This is better than we had, but still too small, use these values next time.
+                prevMax = twMax
+                minValue = axisValue
+
+            else: # We found a fitting VF-location within tolerance. Back out.
+                break
+        return fs
+
     @classmethod
     def newString(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True):
         u"""Answer a DrawBotString instance from valid attributes in *style*. Set all values after testing
-        their existence, so they can inherit from previous style formats.
+        their existence, so they can inherit from previous style formats in the string.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
         In that case the pixelFit flag defines if the current width or height comes from the pixel image of em size.
 
@@ -253,6 +354,9 @@ class DrawBotString(BabelString):
         >>> bs = context.newString('ABC', style=dict(font=font.path), w=100)
         >>> int(round(bs.fontSize))
         51
+        >>> bs = context.newString('ABC', style=dict(font=font), w=100) # Use the font instance instead of path.
+        >>> int(round(bs.fontSize))
+        51
         """
         # Get the drawBotBuilder, no need to check, we already must be in context here.
         if t is None:
@@ -264,6 +368,8 @@ class DrawBotString(BabelString):
         fs = b.FormattedString('') # Make an empty OSX-DrawBot FormattedString
         sFont = css('font', e, style)
         if sFont is not None:
+            if hasattr(sFont, 'path'): # If the Font instance was supplied, then use it's path.
+                sFont = sFont.path
             fs.font(sFont)
         # If there is a target (pixel) width or height defined, ignore the requested fontSize and try the width or
         # height first for fontSize = 100. The resulting width or height is then used as base value to
@@ -383,7 +489,11 @@ class DrawBotString(BabelString):
             newS = cls.newString(t, context, style=style)
         else:
             newS = cls(newt, context, style)
-        newS.fittingFontSize = style['fontSize']
+        # Store any aajust fitting parameters in the string, in case the caller wants to know.
+        newS.fittingFontSize = style.get('fontSize')
+        newS.fittingFont = style.get('font') # In case we are sampling with a Variable Font.
+        newS.fittingLocation = style.get('location')
+        
         return newS
 
 class FoundPattern(object):

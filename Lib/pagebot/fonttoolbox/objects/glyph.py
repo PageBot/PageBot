@@ -116,16 +116,9 @@ class Glyph(object):
         self._points = []
         self._points4 = [] # Same as self.points property with added 4 spacing points in TTF style.
         self._contours = []
-        self._components = []
         self._segments = []
         self._boundingBox = None
-
-        self.ttGlyph.expand(self.font.ttFont['glyf'])
-
-        # Initialize the AComponent wrappers
-        if hasattr(self.ttGlyph, 'components'):
-            for ttComponent in self.ttGlyph.components:
-                self._components.append(AComponent(ttComponent))
+        components = self.components
 
         coordinates = self.coordinates # Get list from the font.
         flags = self.flags
@@ -138,10 +131,10 @@ class Glyph(object):
         minX = minY = sys.maxsize # Store bounding box as we process the coordinate.
         maxX = maxY = -sys.maxsize
 
-        if coordinates or self._components:
-            self._path = path = context.newPath()
+        if coordinates or components:
+            self._path = context.newPath()
 
-        for component in self._components:
+        for component in components:
             componentName = component.baseGlyph
             if componentName in self.font.keys():
                 componentPath = self.font[componentName].path
@@ -161,7 +154,8 @@ class Glyph(object):
             self._points.append(p)
 
             if not openContour:
-                path.moveTo((x, y))
+                assert self._path is not None
+                self._path.moveTo((x, y))
                 p0 = p
                 currentOnCurve = p
                 openContour = []
@@ -184,15 +178,15 @@ class Glyph(object):
                     if not p.onCurve:
                         openSegment.append(p0)
 
-                    currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
+                    currentOnCurve = self._drawSegment(currentOnCurve, openSegment, self._path)
 
-                path.closePath()
+                self._path.closePath()
                 openContour = None
                 openSegment = None
 
             elif p.onCurve:
                 # Inside contour.
-                currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
+                currentOnCurve = self._drawSegment(currentOnCurve, openSegment, self._path)
                 openSegment = None
 
         # Add 4 spacing points, as default in TTF. No index, as they cannot be written back.
@@ -452,7 +446,13 @@ class Glyph(object):
 
     def _get_components(self): # Read only for now. List Contour instances.
         if self._components is None or self.dirty:
-            self._initialize()
+            self._components = []
+            self.ttGlyph.expand(self.font.ttFont['glyf'])
+            # Initialize the AComponent wrappers
+            if hasattr(self.ttGlyph, 'components'):
+                for ttComponent in self.ttGlyph.components:
+                    self._components.append(AComponent(ttComponent))
+
         return self._components
     components = property(_get_components)
 
@@ -491,8 +491,6 @@ class Glyph(object):
     def _get_path(self):
         u"""Answer the drawn path of the glyph. For the DrawBotContext this is
         a OSX-BezierPath the can be drawn on the DrawBot convas.
-
-        TODO: Get this to work for Flat
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> from pagebot.fonttoolbox.objects.font import getFont
