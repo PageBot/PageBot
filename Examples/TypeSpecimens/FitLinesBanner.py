@@ -105,16 +105,6 @@ for sequenceIndex in range(sequences):
                 y3 = 0
                 ww3 = pw - x3
                 hh3 = hh2
-        elif sequenceIndex == 2:
-            x = 0
-            y = ph/2 - ph/2*phicos
-            ww = pw
-            hh = ph - y
-        else:
-            x = pw/2 - pw/2*phicos
-            y = 0
-            ww = pw - x
-            hh = ph
             
         style = dict(rLeading=1.4, font=font, xTextAlign=RIGHT, textFill=1, 
             fill=0, roundVariableFitLocation=False)
