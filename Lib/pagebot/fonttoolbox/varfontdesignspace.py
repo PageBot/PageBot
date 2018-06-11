@@ -14,6 +14,8 @@
 #
 #     varfontdesignspace.py
 #
+#     D E P R E C A T E D
+#
 from __future__ import division
 
 from fontTools.ttLib import TTFont

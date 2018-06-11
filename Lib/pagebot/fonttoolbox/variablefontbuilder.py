@@ -17,6 +17,8 @@
 #
 #     variablefontbuilder.py
 #
+#     D E P R E C A T E D
+
 from __future__ import division
 import copy
 import os
