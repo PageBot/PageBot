@@ -201,6 +201,8 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         # Axis location of the Variable Font to create the font instance. E.g. dict(wght=45, opsz=12)
         variableLocation = None,
+        # If True, round the location values for fitString to whole numbers, to avoid too many cached instances.
+        roundVariableLocation = True, 
 
         # List of supported OpenType features.
         # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf,
