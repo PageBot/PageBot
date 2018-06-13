@@ -222,15 +222,15 @@ class DesignSpace(object):
         xml.append('\t<sources>\n')
         nameId = 0
         processedMasterPaths = set()
-        for master in self.sources:
-            masterPath = master['filename']
+        for master in self.masterList:
+            masterPath = master.path.split('/')[-1] # TODO: Compare the relative position of DS-file and font.
             if masterPath in processedMasterPaths:
                 continue
             processedMasterPaths.add(masterPath)
             # Check if there are any working axes in this location
             relevantAxes = []
             for axisName in self.axes:
-                if axisName in location:
+                if axisName in master.location:
                     relevantAxes.append(axisName)
             if not relevantAxes:
                 continue
@@ -238,7 +238,7 @@ class DesignSpace(object):
             nameId += 1
             for axisName in relevantAxes:
                 axis = self.axes[axisName]
-                value = location.get(axisName, axis.default)
+                value = master.location.get(axisName, axis.default)
                 xml.append("""\t\t\t\t<dimension name="%s" xvalue="%s"/>\n""" % (axis.name, value))
             xml.append("""\t\t\t</location>\n""")
             if location.get('origin'):
