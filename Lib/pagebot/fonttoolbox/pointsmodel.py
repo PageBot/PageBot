@@ -24,12 +24,13 @@ class DesignSpace(object):
     u"""DesignSpace wrapper file. It can read from a design space source (path), 
     and it can be used to dynamically build from setting separate parameters.
 
-    >>> ds = DesignSpace() # Start empty design space (not reading from a file)
-
+    >>> fName = 'TestFont'
+    >>> ds = DesignSpace(familyName=fName) # Start empty design space (not reading from a file)
+    >>> ds
+    <PageBot DesignSpace TestFont>
     >>> # Construct axes
     >>> ds.axisList = [{'tag': 'wght', 'name': 'Weight', 'minimum': 8, 'default': 80, 'maximum': 300}]
     >>> ds.axisList.append({'tag': 'RNDS', 'name': 'Rounds', 'minimum': 0, 'default': 0, 'maximum': 1})
-    >>> fName = 'TestFont'
     >>> styleName = fName+'Org'
     >>> loc = dict(wght=80, RNDS=0)
     
@@ -53,11 +54,22 @@ class DesignSpace(object):
     'TestFont'
     >>> ds.validate()
     True
+    >>> #ds.save()
+
+    >>> path = '/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/BitcountTest_DoubleCircleSquare2.designspace'
+    >>> #ds = DesignSpace(path)
+    >>> #ds.locations
+    >>> #ds.tripleAxes
+    >>> #ds.normalizedLocations
+    >>> #ds.sources
 
     """
     def __init__(self, path=None, familyName=None):
         self.familyName = familyName
         self.path = path
+
+    def __repr__(self):
+        return '<PageBot %s %s>' % (self.__class__.__name__, self.familyName)
 
     def _get_path(self):
         return self._path
@@ -67,7 +79,7 @@ class DesignSpace(object):
             self._ds = designspace.load(path)
             self._axes = self._ds['axes']
             self._sources = self._ds['sources']
-            self._instances = self._ds['instances']
+            self._instances = self._ds.get('instances', [])
         else:
             self._ds = None
             self._axes = []
@@ -127,6 +139,15 @@ class DesignSpace(object):
         self._sources = sources
     sources = property(_get_sources, _set_sources)
 
+    def _get_sourcePaths(self):
+        sourcePaths = []
+        for source in self.sources:
+            sourcePath = source.get('filename')
+            if sourcePath is not None:
+                sourcePaths.append(sourcePath)
+        return sourcePaths
+    sourcePaths = property(_get_sourcePaths)
+
     def addSource(self, source):
         self.sources.append(source)
 
@@ -178,89 +199,118 @@ class DesignSpace(object):
         if path is None:
             path = self.path
         if path is None:
-            fileName = '%sVF' % defaultFont.info.familyName
-        for axisName in sorted(axes):
-            fileName += '-%s' % axes[axisName].tag
-        assert path is not None
-        f 
-    def _getXML(self):
+            path = '_export/%sVF' % self.familyName
+            for axisName in sorted(self.axisOrder):
+                path += '-%s' % self.axes[axisName]['tag']
+            path += '.designspace'
 
-        fileName += '.designspace'
-        fileDir = '/'.join(defaultFont.path.split('/')[:-1])
-        filePath = fileDir + '/' + fileName
-        ds = open(filePath, 'w')
-        ds.write("""<?xml version='1.0' encoding='utf-8'?>\n<designspace format="3">\n\t<axes>\n""")
-        for axisName, axis in sorted(axes.items()):
-            axis = axes[axisName]
-            ds.write("""\t\t<axis default="%s" maximum="%s" minimum="%s" name="%s" tag="%s"/>\n""" % (axis.default, axis.maximum, axis.minimum, axis.name, axis.tag))
-        ds.write('\t</axes>\n')
+        assert path is not None
+
+        #fileDir = '/'.join(defaultFont.path.split('/')[:-1])
+        #filePath = fileDir + '/' + fileName
+        f = open(path, 'w')
+        f.write(self._getXML())
+        f.close()
+        
+    def _getXML(self):
+        xml = []
+        xml.append("""<?xml version='1.0' encoding='utf-8'?>\n<designspace format="3">\n\t<axes>\n""")
+        for axisName, axis in sorted(self.axes.items()):
+            xml.append("""\t\t<axis default="%s" maximum="%s" minimum="%s" name="%s" tag="%s"/>\n""" % (axis['default'], axis['maximum'], axis['minimum'], axis['name'], axis['tag']))
+        xml.append('\t</axes>\n')
     
-        ds.write('\t<sources>\n')
+        xml.append('\t<sources>\n')
         nameId = 0
         processedMasterPaths = set()
-        for master, location in self.selectableMasterLocations:
-            masterPath = master.path
+        for master in self.sources:
+            masterPath = master['filename']
             if masterPath in processedMasterPaths:
                 continue
             processedMasterPaths.add(masterPath)
             # Check if there are any working axes in this location
             relevantAxes = []
-            for axisName in axes:
+            for axisName in self.axes:
                 if axisName in location:
                     relevantAxes.append(axisName)
             if not relevantAxes:
                 continue
-            ds.write("""\t\t<source familyname="%s" filename="%s" name="%s-%s" stylename="%s %s">\n\t\t\t<location>\n""" % (defaultFont.info.familyName, masterPath.split('/')[-1], master.info.styleName, nameId, master.info.styleName, ' '.join(location.keys()) ))
+            xml.append("""\t\t<source familyname="%s" filename="%s" name="%s-%s" stylename="%s %s">\n\t\t\t<location>\n""" % (self.familyName, masterPath.split('/')[-1], master['styleName'], nameId, master['styleName'], ' '.join(location.keys()) ))
             nameId += 1
             for axisName in relevantAxes:
-                axis = axes[axisName]
+                axis = self.axes[axisName]
                 value = location.get(axisName, axis.default)
-                ds.write("""\t\t\t\t<dimension name="%s" xvalue="%s"/>\n""" % (axis.name, value))
-            ds.write("""\t\t\t</location>\n""")
+                xml.append("""\t\t\t\t<dimension name="%s" xvalue="%s"/>\n""" % (axis.name, value))
+            xml.append("""\t\t\t</location>\n""")
             if location.get('origin'):
-                ds.write("""\t\t\t<info copy="1"/>\n""")
-            ds.write("""\t\t</source>\n""")
-        ds.write("""\t</sources>\n</designspace>\n""")
-        ds.close()
+                xml.append("""\t\t\t<info copy="1"/>\n""")
+            xml.append("""\t\t</source>\n""")
+        # TODO: Add instances export here.
+        xml.append("""\t</sources>\n</designspace>\n""")
 
-        return filePath
+        return ''.join(xml)
            
 
 class PointsModel(object):
+    """
+    See: https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview
 
-    def __init__(self, designSpace):
+    >>> #model = Model(ds)
+    >>> #model.getScalars(dict(SHPE=0.25, wght=0.25))
+
+    >>> masterValues = [0, 100, 200, 100, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100]
+    >>> location = dict(SHPE=0.5, wght=0.5)
+    >>> #model.interpolatePoints(location, masters)
+    25.0
+
+    """
+
+    def __init__(self, designSpace, masters):
         self.ds = designSpace
         self.vm = VariationModel(self.ds.normalizedLocations, axisOrder=self.ds.axisOrder)
+        self.masters = masters # List of master fonts, in the right order.
+        self._masterValues = {} # Cache of master values. Keys id
+
+    def __repr__(self):
+        return '<PageBot %s %s>' % (self.__class__.__name__, self.ds.familyName)
 
     def getScalars(self, location):
         return self.vm.getScalars(location)
 
-    def interpolateFromMasters(self, location, masterValues):
-        return self.vm.interpolateFromMasters(location, masterValues)
-
-    def interpolatePoints(self, glyph, masters):
-        """
-        See: https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview
-        """
-
-        """
-        >>> path = '/Users/petr/Desktop/TYPETR-git/TYPETR-Bitcount-Var/BitcountTest_DoubleCircleSquare2.designspace'
-        >>> #ds = DesignSpace(path)
-        >>> #ds.locations
-        >>> #ds.tripleAxes
-        >>> #ds.normalizedLocations
-        >>> #ds.sources
-
-        >>> #model = Model(ds)
-        >>> #model.getScalars(dict(SHPE=0.25, wght=0.25))
-
-        >>> masterValues = [0, 100, 200, 100, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100]
-        >>> location = dict(SHPE=0.5, wght=0.5)
-        >>> model.interpolateFromMasters(location, masterValues)
-        25.0
-
-        """
-
+    def getDeltas(self, glyphName):
+        deltas = []
+        mvsX, mvsY = self.getMasterValues(glyphName)
+        #print(len(self.vm.deltaWeights), len(mvsX))
+        for index in range(len(mvsX)):
+            deltas.append((
+                self.vm.getDeltas(mvsX[index]),
+                self.vm.getDeltas(mvsY[index]) 
+            ))
+        return deltas
+        
+    def getMasterValues(self, glyphName):
+        if self._masterValues is None:
+            mvx = []
+            mvy = []
+            self._masterValues = mvx, mvy
+            for master in self.masters:
+                points = getPoints(master[glyphName])
+                for pIndex, point in enumerate(points):
+                    if len(mvx) <= pIndex:
+                        mvx.append([])
+                        mvy.append([])
+                    mvx[pIndex].append(point.x)
+                    mvy[pIndex].append(point.y)
+        return self._masterValues
+            
+    def interpolatePoints(self, glyphName, location):
+        interpolatedPoints = []
+        mvsX, mvsY = self.getMasterValues(glyphName)
+        for index in range(len(mvsX)):
+            interpolatedPoints.append((
+                self.vm.interpolateFromMasters(location, mvsX[index]),
+                self.vm.interpolateFromMasters(location, mvsY[index]) 
+            ))
+        return interpolatedPoints
 
 if __name__ == '__main__':
     import doctest
