@@ -61,6 +61,11 @@ class NoneDrawBotString(BabelString):
             fontSize=None, font=None, tagName=None):
         return cls(s, context=context, style=style)
 
+    def textSize(self, w=None, h=None):
+        u"""Answer the (w, h) size for a given width, with the current text, measured from bottom em-size
+        to top-emsize (including ascender+ and descender+) and the string width (including margins)."""
+        return w or 100, h or 100
+
 class DrawBotString(BabelString):
 
     BABEL_STRING_TYPE = 'fs'
