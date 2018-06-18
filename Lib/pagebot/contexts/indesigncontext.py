@@ -10,7 +10,7 @@
 #
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
-#     Supporting usage of Indesign
+#     Supporting usage of InDesign API-scripting
 # -----------------------------------------------------------------------------
 #
 #     indesigncontext.py
@@ -24,71 +24,86 @@
 import os
 
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.contexts.builders.indesignbuilder import IndesignBuilder
+from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.constants import LEFT, CENTER, RIGHT
+from pagebot.constants import LEFT, CENTER, RIGHT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
 
-class IndesignContext(BaseContext):
-    u"""A IndesignContext instance combines the specific functions of the Indesign JS-API
+class InDesignContext(BaseContext):
+    u"""A InDesignContext instance combines the specific functions of the InDesign JS-API
     This way it way it hides e.g. the type of BabelString
     """
 
     # In case of specific builder addressing, callers can check here.
-    isIndesign = True
+    isInDesign = True
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = BabelString
     EXPORT_TYPES = ('indd.js',)
 
     def __init__(self):
-        u"""Constructor of IndesignContext.
+        u"""Constructor of InDesignContext.
 
-        >>> context = IndesignContext()
-        >>> context.isIndesign
+        >>> context = InDesignContext()
+        >>> context.isInDesign
         True
         """
-        self.b = IndesignBuilder() # cls.b builder for this canvas.
+        self.b = InDesignBuilder() # cls.b builder for this canvas.
         self.name = self.__class__.__name__
         self._path = None # Hold current open polygon path
+
+        self._fill = None
+        self._stroke = None
+        self._strokeWidth = 0
+        self._font = DEFAULT_FONT_PATH # Optional setting of the current font and fontSize
+        self._fontSize = DEFAULT_FONT_SIZE
+        self._frameDuration = 0
+        self._ox = 0 # Origin set by self.translate()
+        self._oy = 0
+        self._rotate = 0
+        self._hyphenation = None
+        self._openTypeFeatures = None
+
+        self._gState = [] # Stack of graphic states.
+        self.save() # Save current set of values on gState stack.
 
     #   S C R E E N
 
     def screenSize(self):
-        u"""Answer the current screen size. Otherwise default is to do nothing.
-
-        >>> context = IndesignContext()
-        >>> size = context.screenSize()
-        >>> size[0] > 100 and size[1] > 100
-        True
-        """
-        return self.b.sizes().get('screen', None)
+        u"""Answer the current screen size. Otherwise default is to do nothing."""
+        return None
 
     #   D O C U M E N T
 
-    def newDocument(self, w, h):
+    def newDocument(self, w, h, title=None, pageCount=None, units='pt'):
         u"""Create a new document"""
-        self.b.newDocument()
+        self.title = title
+        self.pageCount = pageCount
+        self.units = units
+        self.b.newDocument(w, h, title, pageCount)
 
     def saveDocument(self, path, multiPage=None):
-        u"""Select other than standard Indesign export builders here.
+        u"""Select other than standard InDesign export builders here.
         Save the current image as path, rendering depending on the extension of the path file.
         In case the path starts with "_export", then create it directories.
 
-        >>> context = IndesignContent()
-        >>> context.saveImage('_export/MyFile.pdf')
+        >>> from pagebot.constants import A4Rounded
+        >>> H, W = A4Rounded # Initialize as landscape
+        >>> context = InDesignContext() 
+        >>> context.newDocument(W, H)       
+        >>> context.saveImage('_export/MyFile.'+context.EXPORT_TYPES[0])
 
         """
         if not path.endswith(self.EXPORT_TYPES[0]):
             path += '.'+self.EXPORT_TYPES[0]
         self.checkExportPath(path)
-        self.b.save(path)
+        self.b.writeJs(path)
 
-    saveImage = saveDocument # Compatible API with Indesign
+    saveImage = saveDocument # Compatible API with InDesign
 
     def newPage(self, w, h):
-        u"""Create a new Indesign page.
+        u"""Create a new InDesign page.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> context.newPage(100, 100)
         """
         self.b.newPage(w, h)
@@ -96,7 +111,7 @@ class IndesignContext(BaseContext):
     def newDrawing(self):
         u"""Clear output canvas, start new export file.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> context.newDrawing()
         """
         self.b.newDrawing()
@@ -104,7 +119,7 @@ class IndesignContext(BaseContext):
     #   V A R I A B L E
 
     def Variable(self, variableUI , globalVariables):
-        """Offers interactive global value manipulation in IndesignContext. 
+        """Offers interactive global value manipulation in InDesignContext. 
         Probably to be ignored in other contexts."""
         pass
 
@@ -113,7 +128,7 @@ class IndesignContext(BaseContext):
     def rect(self, x, y, w, h):
         u"""Draw a rectangle in the canvas.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> context.rect(0, 0, 100, 100)
         """
         self.b.rect(x, y, w, h)
@@ -121,27 +136,27 @@ class IndesignContext(BaseContext):
     def oval(self, x, y, w, h):
         u"""Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> context.oval(0, 0, 100, 100)
         """
         self.b.oval(x, y, w, h)
 
     def circle(self, x, y, r):
-        u"""Circle draws an Indesign oval with (x,y) as middle point and radius r."""
+        u"""Circle draws an InDesign oval with (x,y) as middle point and radius r."""
         self.b.oval(x-r, y-r, r*2, r*2)
 
     def line(self, p1, p2):
         u"""Draw a line from p1 to p2.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> context.line((100, 100), (200, 200))
         """
         self.b.line(p1, p2)
 
     def newPath(self):
-        u"""Make a new Indesign Bezierpath to draw in.
+        u"""Make a new InDesign Bezierpath to draw in.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> context.path is not None
         True
         """
@@ -151,7 +166,7 @@ class IndesignContext(BaseContext):
     def _get_path(self):
         u"""Answer the open drawing path. Create one if it does not exist.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> context.path is not None
         True
         """
@@ -161,23 +176,23 @@ class IndesignContext(BaseContext):
     path = property(_get_path)
 
     def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
-        u"""Draw the NSBezierPath, or equivalent in other contexts. Scaled image is drawn on (x, y),
+        u"""Draw the path, or equivalent in other contexts. Scaled image is drawn on (x, y),
         in that order."""
         if path is None:
             path = self._path
         if path is not None:
             self.save()
-            if sy is None:
-                sy = sx
-            self.scale(sx, sy)
-            self.b.translate(p[0]/sx, p[1]/sy)
-            self.b.drawPath(path)
-            self.restore()
+        if sy is None:
+            sy = sx
+            #self.scale(sx, sy)
+            #self._translate(p[0]/sx, p[1]/sy)
+            #self.b.drawPath(path)
+            #self.restore()
 
     def moveTo(self, p):
         u"""Move to point p. Create a new path if none is open.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> path = context.newPath()
         >>> path.moveTo((100, 100))
         """
@@ -188,7 +203,7 @@ class IndesignContext(BaseContext):
     def lineTo(self, p):
         u"""Line to point p. Create a new path if none is open.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> # Draw directly on th epath
         >>> # Draw on the context cached path
         >>> _ = context.newPath()
@@ -212,7 +227,7 @@ class IndesignContext(BaseContext):
     def curveTo(self, bcp1, bcp2, p):
         u"""Curve to point p. Create a new path if none is open.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> # Draw directly on th epath
         >>> # Draw on the context cached path
         >>> _ = context.newPath()
@@ -231,7 +246,7 @@ class IndesignContext(BaseContext):
     def closePath(self):
         u"""Curve to point p. Create a new path if none is open.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> # Draw directly on th epath
         >>> # Draw on the context cached path
         >>> _ = context.newPath()
@@ -267,7 +282,7 @@ class IndesignContext(BaseContext):
     #   G R A D I E N T  &  S H A D O W
 
     def setShadow(self, eShadow):
-        u"""Set the Indesign graphics state for shadow if all parameters are set."""
+        u"""Set the InDesign graphics state for shadow if all parameters are set."""
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.cmykColor is not None:
                 self.b.shadow(eShadow.offset,
@@ -319,50 +334,56 @@ class IndesignContext(BaseContext):
     #   C A N V A S
 
     def saveGraphicState(self):
-        self.b.save()
+        u"""Save the current graphic state.
 
-    save = saveGraphicState # Compatible with Indesign API
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> context = InDesignContext()
+        >>> context._font.endswith('Roboto-Regular.ttf')
+        True
+        >>> context.save()
+        >>> boldFont = findFont('Roboto-Bold')
+        >>> context.font(boldFont) # Set by Font instance
+        >>> context._font.path.endswith('Roboto-Bold.ttf')
+        True
+        >>> context.restore() # Restore to original graphic state values
+        >>> context._font.endswith('Roboto-Regular.ttf')
+        True
+        """
+        gState = dict(
+            font=self._font,
+            fontSize=self._fontSize,
+            fill=self._fill,
+            stroke=self._stroke,
+            strokeWidth=self._strokeWidth,
+            ox=self._ox,
+            oy=self._oy,
+            rotate=self._rotate,
+            hyphenation=self._hyphenation,
+            openTypeFeatures=self._openTypeFeatures,
+        )
+        self._gState.append(gState)
+
+    save = saveGraphicState
 
     def restoreGraphicState(self):
-        self.b.restore()
-
-    restore = restoreGraphicState # Compatible with Indesign API
+        gState = self._gState.pop()
+        self._font = gState['font']
+        self._fontSize = gState['fontSize']
+        self._fill = gState['fill']
+        self._stroke = gState['stroke']
+        self._strokeWidth = gState['strokeWidth']
+        self._ox = gState['ox']
+        self._oy = gState['oy']
+        self._rotate = gState['rotate']
+        self._hyphenation = gState['hyphenation']
+        self._openTypeFeatures = gState['openTypeFeatures']
+    restore = restoreGraphicState
 
     #   F O N T S
 
-    def fontPath2FontName(self, fontPath):
-        u"""Answer the font name of the font related to fontPath. This is done by installing it (again).
-        Answer None if the font cannot be installed or if the path does not exists.
-
-        >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
-        >>> context = IndesignContext()
-        >>> context.fontPath2FontName('Aaa.ttf') is None # Dow not exist
-        True
-        >>> path = TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf'
-        >>> context.fontPath2FontName(path)
-        'Amstelvar-Roman-VF.ttf'
-        """
-        if os.path.exists(fontPath):
-            return self.b.installFont(fontPath)
-        return None
-
-    def fontName2FontPath(self, fontName):
-        u"""Answer the unchanged path, if it exists as file. Answer the path that is source of the given font name.
-        Answer None if the font cannot be found."""
-        # If the font cannot be found by name, then test if the file exists as path and answer it.
-        if os.path.exists(fontName): #
-            return fontName
-        # Otherwise try OSX for the conversion.
-        nsFont = NSFont.fontWithName_size_(fontName, 25)
-        if nsFont is not None:
-            fontRef = CTFontDescriptorCreateWithNameAndSize(nsFont.fontName(), nsFont.pointSize())
-            url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
-            return url.path()
-        return None
-
     def listOpenTypeFeatures(self, fontName):
         u"""Answer the list of opentype features available in the named font."""
-        return self.b.listOpenTypeFeatures(fontName)
+        return [] #self.b.listOpenTypeFeatures(fontName)
 
     #   G L Y P H
 
@@ -389,28 +410,30 @@ class IndesignContext(BaseContext):
     def fontSize(self, fontSize):
         u"""Set the font size in the context.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> context.fontSize(12)
+        >>> context._fontSize
+        12
         """
-        self.b.fontSize(fontSize)
+        self._fontSize = fontSize
 
     def font(self, font, fontSize=None):
-        self.b.font(font)
+        self._font = font
         if fontSize is not None:
-            self.b.fontSize(fontSize)
+            self._fontSize = fontSize
 
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, e=e, style=style)
 
     def text(self, sOrBs, p):
-        u"""Draw the sOrBs text string, can be a str or BabelString, including a Indesign FormattedString
+        u"""Draw the sOrBs text string, can be a str or BabelString, including a InDesign FormattedString
         at position p."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         self.b.text(sOrBs, p)
 
     def textBox(self, sOrBs, r):
-        u"""Draw the sOrBs text string, can be a str or BabelString, including a Indesign FormattedString
+        u"""Draw the sOrBs text string, can be a str or BabelString, including a InDesign FormattedString
         in rectangle r."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
@@ -427,44 +450,31 @@ class IndesignContext(BaseContext):
 
     def textOverflow(self, bs, bounds, align=LEFT):
         u"""Answer the overflowing of from the box (0, 0, w, h)
-        as new IndesignString in the current context."""
+        as new InDesignString in the current context."""
         return stringClass(self.b.textOverflow(bs.s, bounds, align), self)
-
-    def textBoxBaseLines(self, txt, box):
-        x, y, w, h = box
-        attrString = txt.getNSObject()
-        setter = CTFramesetterCreateWithAttributedString(attrString)
-        path = CGPathCreateMutable()
-        CGPathAddRect(path, None, CGRectMake(*box))
-        box = CTFramesetterCreateFrame(setter, (0, 0), path, None)
-        ctLines = CTFrameGetLines(box)
-        origins = CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-        return [(x + o.x, y + o.y) for o in origins]
 
     def openTypeFeatures(self, features):
         u"""Set the current of opentype features in the context canvas.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> context.openTypeFeatures(dict(smcp=True, zero=True))
         """
-        self.b.openTypeFeatures(**features)
+        self._openTypeFeatures = features
 
     def hyphenation(self, onOff=True):
         u"""Set the hyphenation on/off flag.
 
-        >>> context = IndesignContext()
+        >>> context = InDesignContext()
         >>> context.hyphenation(True)
         >>> context.hyphenation(False)
         """
-        self.b.hyphenation(onOff)
+        self._hyphenation = onOff
 
     #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
-        u"""Set the self._frameDuretion for animated gifs to a number of seconds per frame.
-        Used when initializing a new page."""
-        self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
-
+        u"""Nothing to do in InDesignContext."""
+        
     #   C O L O R
 
     def setTextFillColor(self, fs, c, cmyk=False):
@@ -475,7 +485,7 @@ class IndesignContext(BaseContext):
 
     def setFillColor(self, c, cmyk=False, b=None):
         u"""Set the color for global or the color of the formatted string."""
-        if b is None: # Builder can be optional Indesign FormattedString
+        if b is None: # Builder can be optional InDesign FormattedString
             b = self.b
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
@@ -490,9 +500,9 @@ class IndesignContext(BaseContext):
             else:
                 b.fill(*c)
         else:
-            raise ValueError('IndesignContext.setFillColor: Error in color format "%s"' % repr(c))
+            raise ValueError('InDesignContext.setFillColor: Error in color format "%s"' % repr(c))
 
-    fill = setFillColor # Indesign compatible API
+    fill = setFillColor # InDesign compatible API
 
     def strokeWidth(self, w):
         u"""Set the current stroke width."""
@@ -500,7 +510,7 @@ class IndesignContext(BaseContext):
 
     def setStrokeColor(self, c, w=1, cmyk=False, b=None):
         u"""Set global stroke color or the color of the formatted string."""
-        if b is None: # Builder can be optional Indesign FormattedString
+        if b is None: # Builder can be optional InDesign FormattedString
             b = self.b
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
@@ -515,11 +525,11 @@ class IndesignContext(BaseContext):
             else:
                 b.stroke(*c)
         else:
-            raise ValueError('IndesignContext.setStrokeColor: Error in color format "%s"' % repr(c))
+            raise ValueError('InDesignContext.setStrokeColor: Error in color format "%s"' % repr(c))
         if w is not None:
             b.strokeWidth(w)
 
-    stroke = setStrokeColor # Indesign compatible API
+    stroke = setStrokeColor # InDesign compatible API
 
     def rotate(self, angle):
         u"""Rotate the canvas by angle."""
@@ -556,13 +566,13 @@ class IndesignContext(BaseContext):
         u"""Answer the ImageObject that knows about image filters.
 
         >>> from pagebot import getResourcesPath
-        >>> from pagebot.contexts.indesigncontext import IndesignContext
-        >>> context = IndesignContext()
+        >>> from pagebot.contexts.indesigncontext import InDesignContext
+        >>> context = InDesignContext()
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> imo = context.getImageObject(path)
 
         """
-        return self.b.ImageObject(path)
+        #return self.b.ImageObject(path)
 
 
 if __name__ == '__main__':
