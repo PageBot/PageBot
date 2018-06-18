@@ -18,6 +18,11 @@
 from pagebot.constants import MM, INCH
 from pagebot.toolbox.transformer import asNumberOrNone
 
+# Name and abbreviations
+UNIT_PT = 'pt'
+UNIT_MM = 'mm'
+UNIT_PERC = 'perc'
+
 class Unit(object):
     u"""Base class for units, implementing most of the logic.
 
@@ -174,7 +179,7 @@ class mm(Unit):
             return cls(v)
         if isinstance(v, str):
             v = v.strip().lower()
-            if v.endswith('mm'):
+            if v.endswith(UNIT_MM):
                 v = asNumberOrNone(v[:-2])
                 if v is not None:
                     return cls(v)
@@ -243,7 +248,7 @@ class pt(Unit):
             return cls(v)
         if isinstance(v, str):
             v = v.strip().lower()
-            if v.endswith('pt'):
+            if v.endswith(UNIT_PT):
                 v = asNumberOrNone(v[:-2])
                 if v is not None:
                     return cls(v)
@@ -409,7 +414,7 @@ class perc(RelativeUnit):
                 v = asNumberOrNone(v[:-1])
                 if v is not None:
                     return cls(v)
-            elif v.endswith('perc'):
+            elif v.endswith(UNIT_PERC):
                 v = asNumberOrNone(v[:-4])
                 if v is not None:
                     return cls(v)

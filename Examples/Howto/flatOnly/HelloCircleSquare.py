@@ -30,9 +30,10 @@ print('Context class is %s' % type(context).__name__)
 
 from pagebot.fonttoolbox.objects.font import findFont
 
-f = findFont('Amstelvar-Roman-VF')
+font = findFont('Amstelvar-Roman-VF')
 
-EXPORT_PATH = '_export/HelloCircleSquare.pdf'
+TITLE = 'HelloCircleSquare'
+EXPORT_PATH = '_export/%s.pdf' % TITLE
 
 W = H = 500
 PAGES = 3
@@ -40,7 +41,7 @@ RECTS = 150
 R = 20 # Diameter of circle or square
 M = 20 # Page margin
 
-context.newDocument(w=W, h=H)
+context.newDocument(w=W, h=H, title=TITLE, pageCount=3)
 for p in range(PAGES):
     context.newPage(W, H)
     for n in range(RECTS):
@@ -59,7 +60,7 @@ for p in range(PAGES):
         else:
             # Make formatted Flat flavor BabelString instance.
             bs = context.newString('Hello world on %d,%d' % (x, y),
-                                   style=dict(font=FONTNAME,
+                                   style=dict(font=font,
                                               fontSize=10))
             context.text(bs, (x, y))
 
