@@ -120,7 +120,7 @@ def makeDocument():
 
     view = doc.getView()
     view.w, view.h = W, H
-    view.padding = 80 # Don't show cropmarks and such.
+    view.padding = 30 # Don't show cropmarks and such.
     view.showElementOrigin = ShowOrigins # Show origin alignment
                                          # markers on each element.
     view.showElementDimensions = ShowDimensions

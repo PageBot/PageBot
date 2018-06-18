@@ -25,7 +25,8 @@ class BaseContext(object):
     isDrawBot = False
     isFlat = False
     isSvg = False
-
+    isInDesign = False
+    
     # To be redefined by inheriting context classes.
     STRING_CLASS = None
     EXPORT_TYPES = None

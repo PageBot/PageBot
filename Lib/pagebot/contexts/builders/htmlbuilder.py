@@ -369,7 +369,7 @@ table {
             f.write(self.getJs())
             f.close()
         except IOError:
-            print('[HtmlBuilder.writeCss] Cannot write JS file "%s"' % path)
+            print('[%s.writeCss] Cannot write JS file "%s"' % (self.__class__.__name__, path))
 
     #   C S S
 

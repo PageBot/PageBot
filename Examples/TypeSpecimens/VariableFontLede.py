@@ -29,6 +29,7 @@ class AnimatedBannerFrame(AnimationFrame):
             Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
             if the axis exists.
 
+            TODO: Make animation work on SVG output: https://css-tricks.com/animating-svg-css/
             """
             ox, oy, _ = origin
             c = self.context
