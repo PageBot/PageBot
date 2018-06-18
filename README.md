@@ -1,9 +1,10 @@
 # What is PageBot?
 
 PageBot is a page layout program, that enables designers to create high quality documents using code. 
-It is available both as Python library inside [DrawBot](http://www.drawbot.com) and as part of a collection of stand-alone desktop applications that can be created from it. 
+It is available both as Python library working with [DrawBot](http://www.drawbot.com) and as part of a collection of stand-alone desktop applications that can be created from it. 
+The DrawbotContext class is one of the “context” that make PageBot can run under [DrawBot]. Others contexts are under development, such as FlatContex, which will unltimatedly allow PageBot to run on webservers, outside Mac OSX environments.
 
-Initiated by [Type Network](https://typenetwork.com), our aim is to create a system for scriptable applications generating high quality typographic documents that support high quality fonts.
+Initiated by [Type Network](https://typenetwork.com), it is the aim to create a system for scriptable applications generating high quality typographic documents that support high quality fonts.
 
 PageBot is available under MIT Open Source license from [github.com/TypeNetwork/PageBot](https://github.com/TypeNetwork/PageBot)
 
