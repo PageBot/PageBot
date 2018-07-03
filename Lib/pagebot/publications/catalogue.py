@@ -10,12 +10,12 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     newspaper.py
+#     catalogue.py
 #
 from pagebot.publications.publication import Publication
 
-class Newspaper(Publication):
-    """Create a default newspaper, with layout and content options defined by external parameters.
+class Catalogue(Publication):
+    """Create a default catalogue, with layout and content options defined by external parameters.
     Inheriting from Document with the following optional attribures:
     rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None, 
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None, 

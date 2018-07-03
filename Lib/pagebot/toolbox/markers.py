@@ -15,14 +15,16 @@
 #     markers.py
 #
 from pagebot.toolbox.transformer import point3D
+from pagebot.toolbox.color import Color, noneColor
 
 def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
     u"""Draw registration mark as position x, y.
 
+    >>> from pagebot.toolbox.units import pt
     >>> from pagebot.contexts.flatcontext import FlatContext
     >>> context = FlatContext()
-    >>> context.newPage(100, 100)
-    >>> drawRegistrationMark(context, (0,0), 20, 1, True)
+    >>> context.newPage(pt(100), pt(100))
+    >>> drawRegistrationMark(context, pt(0,0), pt(20), pt(1), True)
     """
     x, y = origin
     if vertical:
@@ -31,8 +33,8 @@ def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
     else:
         dx = cmSize
         dy = cmSize/2
-    context.fill(None)
-    context.stroke((1,1,1,1), cmyk=True, w=cmStrokeWidth)
+    context.fill(noneColor)
+    context.stroke(Color(c=1, m=1, y=1, k=1), w=cmStrokeWidth)
     context.newPath()
     # Registration circle
     context.oval(x - cmSize/4, y - cmSize/4, cmSize/2, cmSize/2)
@@ -47,10 +49,11 @@ def drawRegistrationMarks(context, origin, w, h, cmSize, cmStrokeWidth):
     u"""Draw standard registration mark, to show registration of CMYK colors.
     https://en.wikipedia.org/wiki/Printing_registration.
 
+    >>> from pagebot.toolbox.units import pt
     >>> from pagebot.contexts.flatcontext import FlatContext
     >>> c = FlatContext()
-    >>> c.newPage(100, 100)
-    >>> drawRegistrationMarks(c, (0,0), 100, 100, 20, 1)
+    >>> c.newPage(pt(100), pt(100))
+    >>> drawRegistrationMarks(c, pt(0,0), pt(100), pt(100), pt(20), pt(1))
     """
     x, y, _ = point3D(origin)
     drawRegistrationMark(context, (x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
@@ -61,10 +64,11 @@ def drawRegistrationMarks(context, origin, w, h, cmSize, cmStrokeWidth):
 def drawCropMarks(context, origin, w, h, bleed, cmSize, cmStrokeWidth, folds=None):
     u"""If the show flag is set, then draw the cropmarks or page frame.
 
+    >>> from pagebot.toolbox.units import pt
     >>> from pagebot.contexts.flatcontext import FlatContext
     >>> c = FlatContext()
-    >>> c.newPage(100, 100)
-    >>> drawCropMarks(c, (0,0), 100, 100, False, 20, 1)
+    >>> c.newPage(pt(100), pt(100))
+    >>> drawCropMarks(c, pt(0,0), pt(100), pt(100), False, pt(20), 1)
     """
     x, y, _ = point3D(origin) # Ignore z-axus for now.
     context.fill(None)

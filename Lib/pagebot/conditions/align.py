@@ -38,11 +38,11 @@ class Fit(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions on 4 sides
 	Score: 4 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(12, 12, 276, 276)
+	(12pt, 12pt, 276pt, 276pt)
 	"""
 
 	def _getConditions(self):
@@ -65,11 +65,11 @@ class Fit2Sides(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=300, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions on 4 sides
 	Score: 4 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(0, 0, 300, 300)
+	(0pt, 0pt, 300pt, 350pt)
 	"""
 	def _getConditions(self):
 		return [Left2LeftSide, Top2TopSide, Fit2RightSide, Fit2BottomSide]
@@ -90,11 +90,11 @@ class Fit2Left(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
-	(12, 20, 58, 50)
+	(12pt, 20pt, 58pt, 50pt)
 	"""
 	def test(self, e):
 		return e.isLeftOnLeft(self.tolerance)
@@ -111,11 +111,11 @@ class Fit2Right(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
-	(20, 20, 268, 50)
+	(20pt, 20pt, 268pt, 50pt)
 	"""
 	def test(self, e):
 		return e.isRightOnRight(self.tolerance)
@@ -132,11 +132,11 @@ class Fit2Width(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=400, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(0, 20, 300, 50)
+	(0pt, 20pt, 300pt, 50pt)
 	"""
 	def test(self, e):
 		return e.isLeftOnLeft(self.tolerance) and e.isRightOnRight(self.tolerance)
@@ -153,11 +153,11 @@ class Fit2Height(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=400, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(20, 0, 50, 400)
+	(20pt, 0pt, 50pt, 400pt)
 	"""
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance) and e.isBottomOnBottom(self.tolerance)
@@ -174,11 +174,11 @@ class Fit2Top(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=400, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(20, 20, 50, 400)
+	(20pt, 20pt, 50pt, 430pt)
 	"""
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance)
@@ -195,11 +195,11 @@ class Fit2Bottom(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=400, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(20, 0, 50, 20)
+	(20pt, 0pt, 50pt, 20pt)
 	"""
 	def test(self, e):
 		return e.isBottomOnBottom(self.tolerance)

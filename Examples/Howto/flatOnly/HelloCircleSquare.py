@@ -41,7 +41,7 @@ RECTS = 150
 R = 20 # Diameter of circle or square
 M = 20 # Page margin
 
-context.newDocument(w=W, h=H, title=TITLE, pageCount=3)
+context.newDocument(w=W, h=H)
 for p in range(PAGES):
     context.newPage(W, H)
     for n in range(RECTS):

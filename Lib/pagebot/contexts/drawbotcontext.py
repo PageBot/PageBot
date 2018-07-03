@@ -38,7 +38,10 @@ except (ImportError, AttributeError):
     #print('Using drawBotContext-->NoneDrawBotBuilder')
 
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
+from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
+from pagebot.toolbox.color import Color, noneColor
+from pagebot.toolbox.units import isUnit, units
+from pagebot.constants import *
 
 
 class DrawBotContext(BaseContext):
@@ -51,7 +54,7 @@ class DrawBotContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = stringClass
-    EXPORT_TYPES = ('pdf', 'svg', 'png', 'jpg', 'gif', 'mov')
+    EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG, FILETYPE_GIF, FILETYPE_MOV)
 
     def __init__(self):
         u"""Constructor of DrawBotContext if drawBot import exists.
@@ -71,6 +74,7 @@ class DrawBotContext(BaseContext):
         self.b = drawBotBuilder # cls.b builder for this canvas.
         self.name = self.__class__.__name__
         self._path = None # Hold current open DrawBot path
+        self.fileType = DEFAULT_FILETYPE # Holds the extension as soon as the export file path is defined.
 
     #   S C R E E N
 
@@ -82,15 +86,12 @@ class DrawBotContext(BaseContext):
         >>> size[0] > 100 and size[1] > 100
         True
         """
-        return self.b.sizes().get('screen', None)
+        return pt(self.b.sizes().get('screen', None))
 
     #   D O C U M E N T
 
-    def newDocument(self, w, h, title=None, pageCount=None, units='pt'):
+    def newDocument(self, w, h):
         u"""Ignore for DrawBot, as document open automatic if first page is created."""
-        self.title = title
-        self.pageCount = pageCount
-        self.units = units
 
     def saveDocument(self, path, multiPage=None):
         u"""Select other than standard DrawBot export builders here.
@@ -110,9 +111,9 @@ class DrawBotContext(BaseContext):
         u"""Create a new drawbot page.
 
         >>> context = DrawBotContext()
-        >>> context.newPage(100, 100)
+        >>> context.newPage(pt(100), pt(100))
         """
-        self.b.newPage(w, h)
+        self.b.newPage(w.r, h.r)
 
     def newDrawing(self):
         u"""Clear output canvas, start new export file.
@@ -293,14 +294,14 @@ class DrawBotContext(BaseContext):
     def setShadow(self, eShadow):
         u"""Set the DrawBot graphics state for shadow if all parameters are set."""
         if eShadow is not None and eShadow.offset is not None:
-            if eShadow.cmykColor is not None:
+            if eShadow.color.isCmyk:
                 self.b.shadow(eShadow.offset,
                               blur=eShadow.blur,
-                              color=eShadow.cmykColor)
+                              color=eShadow.color.cmyk)
             else:
                 self.b.shadow(eShadow.offset,
                               blur=eShadow.blur,
-                              color=eShadow.color)
+                              color=eShadow.color.rgb)
 
     def setGradient(self, gradient, origin, w, h):
         u"""Define the gradient call to match the size of element e., Gradient position
@@ -310,20 +311,24 @@ class DrawBotContext(BaseContext):
         end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
 
         if gradient.linear:
-            if gradient.cmykColors is None:
+            if not gradient.colors[0].isCmyk:
+                colors = [color.rgb for color in gradient.colors]
                 b.linearGradient(startPoint=start, endPoint=end,
-                    colors=gradient.colors, locations=gradient.locations)
+                    colors=colors, locations=gradient.locations)
             else:
+                colors = [color.cmyk for color in gradient.colors]
                 b.cmykLinearGradient(startPoint=start, endPoint=end,
-                    colors=gradient.cmykColors, locations=gradient.locations)
+                    colors=colors, locations=gradient.locations)
         else: # Gradient must be radial.
-            if gradient.cmykColors is None:
+            if not gradient.colors[0].isCmyk:
+                colors = [color.rgb for color in gradient.colors]
                 b.radialGradient(startPoint=start, endPoint=end,
-                    colors=gradient.colors, locations=gradient.locations,
+                    colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
             else:
+                colors = [color.cmyk for color in gradient.colors]
                 b.cmykRadialGradient(startPoint=start, endPoint=end,
-                    colors=gradient.cmykColors, locations=gradient.locations,
+                    colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 
     def lineDash(self, *lineDash):
@@ -390,7 +395,7 @@ class DrawBotContext(BaseContext):
 
     #   G L Y P H
 
-    def drawGlyphPath(self, font, glyphName, x, y, fillColor=0, strokeColor=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
+    def drawGlyphPath(self, font, glyphName, x, y, fill=None, stroke=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
         u"""Draw the font[glyphName] at the defined position with the defined fontSize.
 
         """
@@ -401,8 +406,8 @@ class DrawBotContext(BaseContext):
         elif xAlign == RIGHT:
             x -= glyph.width*s
         self.save()
-        self.setFillColor(fillColor)
-        self.setStrokeColor(strokeColor, strokeWidth)
+        self.setFillColor(fill)
+        self.setStrokeColor(stroke, w=strokeWidth)
         self.transform((1, 0, 0, 1, x, y))
         self.scale(s)
         self.drawPath(glyph.path)
@@ -491,57 +496,96 @@ class DrawBotContext(BaseContext):
 
     #   C O L O R
 
-    def setTextFillColor(self, fs, c, cmyk=False):
-        self.setFillColor(c, cmyk, fs)
+    def setTextFillColor(self, fs, r=None, g=None, b=None, **kwargs):
+        u"""Set the color for global or the color of the formatted string.
 
-    def setTextStrokeColor(self, fs, c, w=1, cmyk=False):
-        self.setStrokeColor(c, w, cmyk, fs)
+        >>> context = DrawBotContext()
+        >>> fs = context.newString('Hello')
+        >>> context.textFill(fs, Color(r=0.5)) # Same as setTextFillColor
+        >>> context.textFill(fs, Color('red'))
+        """
+        self.setFillColor(r=r, g=g, b=b, builder=fs, **kwargs)
 
-    def setFillColor(self, c, cmyk=False, b=None):
-        u"""Set the color for global or the color of the formatted string."""
-        if b is None: # Builder can be optional DrawBot FormattedString
-            b = self.b
-        if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykFill(c)
-            else:
-                b.fill(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykFill(*c)
-            else:
-                b.fill(*c)
+    textFill = setTextFillColor
+
+    def setTextStrokeColor(self, fs, r=None, g=None, b=None, **kwargs):
+        u"""Set the color for global or the color of the formatted string.
+
+        >>> context = DrawBotContext()
+        >>> fs = context.newString('Hello')
+        >>> context.textStroke(fs, r=0.5) # Same as setTextStrokeColor
+        >>> context.textStroke(fs, Color('red'), w=pt(10))
+        """
+        self.setStrokeColor(r=r, g=g, b=b, builder=fs, **kwargs)
+
+    textStroke = setTextStrokeColor
+
+    def setFillColor(self, r=None, g=None, b=None, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None, ral=None, name=None, builder=None):
+        u"""Set the color for global or the color of the formatted string.
+
+        >>> context = DrawBotContext()
+        >>> context.fill(r=0.5) # Same as setFillColor
+        >>> context.fill(Color('red'))
+        >>> context.fill()
+        >>> context.fill(noneColor)
+        """
+        if isinstance(r, Color): # First attribute can be a Color instance.
+            color = r
+        elif r is None and rgb is None and c is None and cmyk is None and spot is None and name is None:
+            color = noneColor
         else:
-            raise ValueError('DrawBotContext.setFillColor: Error in color format "%s"' % repr(c))
+            color = Color(r=r, g=g, b=b, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk, spot=spot, ral=ral, name=name)
+        if builder is None: # Builder can be optional DrawBot FormattedString
+            builder = self.b
+        if color is noneColor:
+            builder.fill(None) # Set color to no-color
+        if color.isRgb or color.isSpot: # No spot color support in DrawBot, conver to closest RGB
+            builder.fill(color.rgb)
+        elif color.isCmyk:
+            builder.cmykFill(color.cmyk)
+        else:
+            raise ValueError('DrawBotContext.setFillColor: Error in color format "%s"' % color)
 
     fill = setFillColor # DrawBot compatible API
 
     def strokeWidth(self, w):
-        u"""Set the current stroke width."""
-        self.b.strokeWidth(w)
+        u"""Set the current stroke width.
 
-    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
-        u"""Set global stroke color or the color of the formatted string."""
-        if b is None: # Builder can be optional DrawBot FormattedString
-            b = self.b
-        if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykStroke(c)
-            else:
-                b.stroke(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykStroke(*c)
-            else:
-                b.stroke(*c)
+        >>> from pagebot.toolbox.units import unit, pt, mm
+        >>> context = DrawBotContext()
+        >>> context.strokeWidth(pt(0.5)) 
+        >>> context.strokeWidth(mm(0.5))
+
+        """
+        self.b.strokeWidth(w.r)
+
+    def setStrokeColor(self, r=None, g=None, b=None, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None, ral=None, name=None, w=None, builder=None):
+        u"""Set the color for global or the color of the formatted string.
+
+        >>> context = DrawBotContext()
+        >>> context.stroke(r=0.5) # Same as setStrokeColor
+        >>> context.stroke(Color('red'))
+        >>> context.stroke()
+        >>> context.stroke(noneColor)
+        """
+        if isinstance(r, Color): # First attribute can be a Color instance.
+            color = r
+        elif r is None and rgb is None and c is None and cmyk is None and spot is None and name is None:
+            color = noneColor
         else:
-            raise ValueError('DrawBotContext.setStrokeColor: Error in color format "%s"' % repr(c))
+            color = Color(r=r, g=g, b=b, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk, spot=spot, ral=ral, name=name)
+        if builder is None: # Builder can be optional DrawBot FormattedString
+            builder = self.b
+        if color is noneColor:
+            builder.stroke(None) # Set color to no-color
+        if color.isRgb or color.isSpot: # No spot color support in DrawBot, conver to closest RGB
+            builder.stroke(color.rgb)
+        elif color.isCmyk:
+            builder.cmykStroke(color.cmyk)
+        else:
+            raise ValueError('DrawBotContext.setStrokeColor: Error in color format "%s"' % color)
         if w is not None:
-            b.strokeWidth(w)
+            self.strokeWidth(w)
 
     stroke = setStrokeColor # DrawBot compatible API
 
@@ -556,7 +600,7 @@ class DrawBotContext(BaseContext):
 
     def imageSize(self, path):
         u"""Answer the (w, h) image size of the image file at path."""
-        return self.b.imageSize(path)
+        return pt(self.b.imageSize(path))
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         u"""Draw the image. If w or h is defined, then scale the image to fit."""
@@ -573,7 +617,7 @@ class DrawBotContext(BaseContext):
         sx, sy = w/iw, h/ih
         self.save()
         self.scale(sx, sy)
-        self.b.image(path, (x*sx, y*sy), alpha=alpha, pageNumber=pageNumber)
+        self.b.image(path, ((x*sx).r, (y*sy).r), alpha=alpha, pageNumber=pageNumber)
         self.restore()
 
     def getImageObject(self, path):

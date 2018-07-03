@@ -21,8 +21,10 @@ from random import random
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
+from pagebot.toolbox.color import noneColor
 from pagebot.elements.views.baseview import BaseView
-from pagebot.style import NO_COLOR, RIGHT
+from pagebot.style import RIGHT
+from pagebot.constants import ORIGIN
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
@@ -39,7 +41,7 @@ class PageView(BaseView):
 
         >>> view = PageView(name='MyPageView')
         >>> view.w, view.h, view.name # Size is initialze to default.
-        (100, 100, 'MyPageView')
+        (100pt, 100pt, 'MyPageView')
         >>> #str(view.context) in ('<DrawBotContext>' or '<FlatContext>')
         """
         if not path:
@@ -49,6 +51,9 @@ class PageView(BaseView):
             os.makedirs(self.EXPORT_PATH)
 
         context = self.context # Get current context and builder from doc. Can be DrawBot or Flat
+
+        # Save the intended extension into the context, so it knows what we'll be saving to.
+        context.fileType = path.split('.')[-1]
 
         # Find the maximum document page size to this in all page sizes of the document.
         w, h, _ = self.doc.getMaxPageSizes(pageSelection)
@@ -85,7 +90,7 @@ class PageView(BaseView):
             else:
                 pw = page.w # No padding defined, follow the size of the page.
                 ph = page.h
-                origin = (0, 0, 0)
+                origin = ORIGIN
 
             context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
             # If page['frameDuration'] is set and saving as movie or animated gif,
@@ -94,7 +99,7 @@ class PageView(BaseView):
 
             # View may have defined a background
             fillColor = self.style.get('fill')
-            if fillColor is not NO_COLOR:
+            if fillColor is not noneColor:
                 context.setFillColor(fillColor)
                 context.rect(0, 0, pw, ph)
 
@@ -296,16 +301,16 @@ class PageView(BaseView):
 
         if stroke is None:
             if onText == 1:
-                stroke = self.css('viewFlowConnectionStroke2', NO_COLOR)
+                stroke = self.css('viewFlowConnectionStroke2', noneColor)
             else:
-                stroke = self.css('viewFlowConnectionStroke1', NO_COLOR)
+                stroke = self.css('viewFlowConnectionStroke1', noneColor)
         if strokeWidth is None:
             strokeWidth = self.css('viewFlowConnectionStrokeWidth', 0.5)
 
         self.setStrokeColor(stroke, strokeWidth)
         if startMarker:
             if fill is None:
-                fill = self.css('viewFlowMarkerFill', NO_COLOR)
+                fill = self.css('viewFlowMarkerFill', noneColor)
             self.setFillColor(fill)
             self.context.oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
 
@@ -343,7 +348,7 @@ class PageView(BaseView):
         b.drawPath()
 
         if endMarker:
-            self.setFillColor(self.css('viewFlowMarkerFill', NO_COLOR))
+            self.setFillColor(self.css('viewFlowMarkerFill', noneColor))
             b.oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 
     #   D R A W I N G  E L E M E N T
@@ -489,8 +494,8 @@ class PageView(BaseView):
             context.saveGraphicState()
             context.setShadow(self.shadow)
 
-            sMissingElementFill = self.css('viewMissingElementFill', NO_COLOR)
-            if sMissingElementFill is not NO_COLOR:
+            sMissingElementFill = self.css('viewMissingElementFill', noneColor)
+            if sMissingElementFill is not noneColor:
                 context.setFillColor(sMissingElementFill)
                 context.setStrokeColor(None)
                 context.rect(px, py, self.w, self.h)
@@ -535,7 +540,7 @@ class PageView(BaseView):
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        gridFillColor = e.css('viewGridFill', NO_COLOR)
+        gridFillColor = e.css('viewGridFill', noneColor)
         gutterW = e.gw # Gutter width
         gutterH = e.gh # Gutter height
         columnWidth = e.cw # Column width
@@ -554,16 +559,16 @@ class PageView(BaseView):
         oy = py + pb
 
         if self.showGrid:
-            if gridFillColor != NO_COLOR:
+            if gridFillColor != noneColor:
                 context.fill(gridFillColor)
                 context.stroke(None)
                 for cx, cw in e.getGridColumns():
                     for cy, ch in e.getGridRows():
                         context.rect(ox+cx, oy+cy, cw, ch)
 
-            gridStrokeColor = self.css('viewGridStroke', NO_COLOR)
+            gridStrokeColor = self.css('viewGridStroke', noneColor)
             gridStrokeWidth = self.css('viewGridStrokeWidth', 0)
-            if gridStrokeColor != NO_COLOR and gridStrokeWidth:
+            if gridStrokeColor != noneColor and gridStrokeWidth:
                 context.fill(None)
                 context.stroke(gridStrokeColor, gridStrokeWidth)
                 context.newPath()
@@ -614,7 +619,7 @@ class PageView(BaseView):
             fontSize=M/2, stroke=None, textFill=e.css('gridStroke')))
         while oy > e.pb or 0:
             context.setFillColor(None)
-            context.setStrokeColor(e.css('baselineGridStroke', NO_COLOR), e.css('gridStrokeWidth'))
+            context.setStrokeColor(e.css('baselineGridStroke', noneColor), e.css('gridStrokeWidth'))
             context.newPath()
             context.moveTo((px + e.pl, py + oy))
             context.lineTo((px + e.w - e.pr, py + oy))

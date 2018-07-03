@@ -66,21 +66,9 @@ def newPlacer(**kwargs):
     u"""Placer occupying a space on Page or Template. Is not visible exported documets."""
     return Placer(**kwargs)
 
-def newColPlacer(cx=None, cy=None, cw=None, ch=None, **kwargs):
-    u"""Placer occupying a space on Page or Template. Is not visible exported documets."""
-    e = newPlacer(**kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index, based on style or parent.css
-    return e
-
 def newTextBox(bs='', point=None, **kwargs):
     u"""Caller must supply formatted string. Note that w and h can also be defined in the style."""
     return TextBox(bs, point=point, **kwargs)
-
-def newColTextBox(bs='', cx=None, cy=None, cw=None, ch=None, **kwargs):
-    u"""Caller must supply formatted string."""
-    e = newTextBox(bs, **kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index, based on style or parent.css
-    return e
 
 def newText(bs='', point=None, **kwargs):
     u"""Draw formatted string. Normally we don't need w and h here, as it is made by the text and
@@ -89,51 +77,23 @@ def newText(bs='', point=None, **kwargs):
     Caller must supply formatted string. Support both (x, y) and x, y as position."""
     return Text(bs, point=point, **kwargs)
 
-def newColText(bs='', cx=None, cy=None, cw=None, ch=None, **kwargs):
-    u"""Draw formatted string.
-    We don't need w and h here, as it is made by the text and style combinations.
-    Caller must supply formatted string."""
-    e = newText(bs, **kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
-    return e
-
 def newRect(point=None, **kwargs):
     u"""Draw the rectangle. Note that w and h can also be defined in the style. In case h is omitted,
     a square is drawn."""
     return Rect(point=point, **kwargs)
-
-def newColRect(cx=None, cy=None, cw=None, ch=None, **kwargs):
-    e = newRect(**kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
-    return e
 
 def newGroup(point=None, **kwargs):
     u"""Create a new group. Note that w and h can also be defined in the style. In case h is omitted,
     a square is drawn."""
     return Group(point=point, **kwargs)
 
-def newColGroup(cx=None, cy=None, cw=None, ch=None, **kwargs):
-    e = newGroup(**kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
-    return e
-
 def newOval(point=None, **kwargs):
     u"""Draw the oval. Note that w and h can also be defined in the style. In case h is omitted,
     a circle is drawn."""
     return Oval(point=point, **kwargs)
 
-def newColOval(cx=None, cy=None, cw=None, ch=None, **kwargs):
-    e = newOval(**kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
-    return e
-
 def newLine(point=None, **kwargs):
     return Line(point=point, **kwargs)
-
-def newColLine(cx=None, cy=None, cw=None, ch=None, **kwargs):
-    e = newLine(**kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
-    return e
 
 def newPolygon(point=None, **kwargs):
     return Polygon(point=point, **kwargs)
@@ -145,15 +105,6 @@ def newImage(path, point=None, **kwargs):
     The optional imo attribute is an ImageObject() with filters in place.
     The Image element is answered for convenience of the caller."""
     return Image(path, point=point, **kwargs)
-
-def newColImage(path, cx=None, cy=None, cw=None, ch=None, parent=None, **kwargs):
-    u"""Convert the column size into point size, depending on the column settings of the
-    current template, when drawing images "hard-coded" directly on a certain page.
-    The optional imo attribute is an ImageObject() with filters in place.
-    The Image element is answered for convenience of the caller"""
-    e = newImage(path, **kwargs)
-    e.cx, e.cy, e.cw, e.ch = cx, cy, cw, ch # Correct position from column index.
-    return e
 
 def newTable(cols=1, rows=1, **kwargs):
     u"""Answer a new Table instanec."""

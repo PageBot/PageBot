@@ -19,8 +19,10 @@ from pagebot.stylelib import styleLib # Library with named, predefined style dic
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import viewClasses, defaultViewClass
-from pagebot.style import getRootStyle, TOP, BOTTOM
+from pagebot.constants import TOP, BOTTOM, DEFAULT_FONT_SIZE
+from pagebot.style import getRootStyle
 from pagebot.toolbox.transformer import obj2StyleId
+from pagebot.toolbox.units import pt, units
 
 class Document(object):
     u"""A Document is just another kind of container.
@@ -36,11 +38,11 @@ class Document(object):
     >>> doc.name, doc.w, doc.h, doc.originTop, len(doc)
     ('TestDoc', 300, 400, True, 2)
     >>> doc.padding
-    (30, 40, 50, 60)
+    (30pt, 40pt, 50pt, 60pt)
     >>> page = doc[1] # First page is on the right
     >>> page.padding = 20
     >>> page.w, page.h, page.pw, page.ph, page.pt, page.pr, page.pb, page.pl, page.title
-    (300, 400, 260, 360, 20, 20, 20, 20, 'default')
+    (300pt, 400pt, 260pt, 360pt, 20pt, 20pt, 20pt, 20pt, 'default')
 
     >>> pages = (Page(), Page(), Page())
     >>> doc = Document(name='TestDoc', w=300, h=400, pages=pages, autoPages=0, viewId='Mamp')
@@ -247,7 +249,7 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc')
         >>> doc.getTemplate()
-        <Template:default (0, 0)>
+        <Template:default (0pt, 0pt)>
         >>> doc.getTemplate() == doc.defaultTemplate
         True
         """
@@ -262,7 +264,7 @@ class Document(object):
         >>> t = Template(w=200, h=300, name=name)
         >>> doc = Document(name='TestDoc')
         >>> doc.addTemplate('myTemplate', t)
-        <Template:TestTemplate (0, 0)>
+        <Template:TestTemplate (0pt, 0pt)>
         >>> doc.getTemplate('myTemplate').name == name
         True
         """
@@ -275,7 +277,7 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc')
         >>> doc.defaultTemplate
-        <Template:default (0, 0)>
+        <Template:default (0pt, 0pt)>
         """
         return self.templates.get('default')
     def _set_defaultTemplate(self, template):
@@ -341,7 +343,7 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10)
         >>> doc.css('w'), doc.css('h')
-        (500, 500)
+        (500pt, 500pt)
         """
         style = self.findStyle(styleId)
         if style is None:
@@ -443,6 +445,16 @@ class Document(object):
     frameDuration = property(_get_frameDuration, _set_frameDuration)
 
     # CSS property service to children.
+
+    def _get_em(self):
+        u"""Answer the current em value (for use in relative units), as value of 
+        self.css('fontSize', DEFAULT_FONT_SIZE)."""
+        return self.rootStyle.get('fontSize', DEFAULT_FONT_SIZE)
+    def _set_em(self, em):
+        u"""Store the em size (as fontSize) in the local style."""
+        self.rootStyle['fontSize'] = em
+    em = property(_get_em, _set_em)
+
     def _get_w(self): # Width
         u"""Property answering the global (intended) width of the document as defined by
         self.rootStyle['w']. This may not represent the actual width of the document, 
@@ -510,10 +522,10 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc', padding=(10, 20, 30, 40))
         >>> doc.padding
-        (10, 20, 30, 40)
+        (10pt, 20pt, 30pt, 40pt)
         >>> doc.padding = (11, 21, 31, 41)
         >>> doc.padding3D
-        (11, 21, 31, 41, 0, 0)
+        (11pt, 21pt, 31pt, 41pt, 0pt, 0pt)
         """
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
@@ -541,25 +553,25 @@ class Document(object):
         
         >>> doc = Document(name='TestDoc', padding=(10, 20, 30, 40, 50, 60))
         >>> doc.pt, doc.pr, doc.pb, doc.pl, doc.pzf, doc.pzb
-        (10, 20, 30, 40, 50, 60)
+        (10pt, 20pt, 30pt, 40pt, 50pt, 60pt)
         >>> doc.pl = 123
         >>> doc.padding3D
-        (10, 20, 30, 123, 50, 60)
+        (10pt, 20pt, 30pt, 123pt, 50pt, 60pt)
         >>> doc.padding3D = 11
         >>> doc.padding3D
-        (11, 11, 11, 11, 11, 11)
+        (11pt, 11pt, 11pt, 11pt, 11pt, 11pt)
         >>> doc.padding3D = (11, 22)
         >>> doc.padding3D
-        (11, 22, 11, 22, 11, 22)
+        (11pt, 22pt, 11pt, 22pt, 11pt, 22pt)
         >>> doc.padding3D = (11, 22, 33)
         >>> doc.padding3D
-        (11, 22, 33, 11, 22, 33)
+        (11pt, 22pt, 33pt, 11pt, 22pt, 33pt)
         >>> doc.padding3D = (11, 22, 33, 44)
         >>> doc.padding3D
-        (11, 22, 33, 44, 0, 0)
+        (11pt, 22pt, 33pt, 44pt, 0pt, 0pt)
         >>> doc.padding3D = (11, 22, 33, 44, 55, 66)
         >>> doc.padding3D
-        (11, 22, 33, 44, 55, 66)
+        (11pt, 22pt, 33pt, 44pt, 55pt, 66pt)
         """
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
     padding3D = property(_get_padding3D, _set_padding)
@@ -567,21 +579,23 @@ class Document(object):
     def _get_pt(self): # Padding top
         u"""Padding top property
         Interface is identical to Element.pt.
+        In this method "pt" is abbreviation of padding-top, not units point.
 
         >>> doc = Document(name='TestDoc', pt=12)
         >>> doc.pt
-        12
+        12pt
         >>> doc.pt = 13
         >>> doc.pt
-        13
+        13pt
         >>> doc.padding # Taking over default value of root style.
-        (13, 42, 42, 49)
+        (13pt, 42pt, 42pt, 49pt)
         >>> doc.padding3D # Taking over default value of root style.
-        (13, 42, 42, 49, 0, 0)
+        (13pt, 42pt, 42pt, 49pt, 0pt, 0pt)
         """
-        return self.css('pt', 0)
+        h = self.h
+        return units(self.rootStyle.get('pt', 0), base=h, em=self.em, min=0, max=h)
     def _set_pt(self, pt):
-        self.rootStyle['pt'] = pt  
+        self.rootStyle['pt'] = units(pt)  
     pt = property(_get_pt, _set_pt)
 
     def _get_pb(self): # Padding bottom
@@ -590,18 +604,19 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc', pb=12)
         >>> doc.pb
-        12
+        12pt
         >>> doc.pb = 13
         >>> doc.pb
-        13
+        13pt
         >>> doc.padding # Taking over default value of root style.
-        (49, 42, 13, 49)
+        (49pt, 42pt, 13pt, 49pt)
         >>> doc.padding3D # Taking over default value of root style.
-        (49, 42, 13, 49, 0, 0)
+        (49pt, 42pt, 13pt, 49pt, 0pt, 0pt)
         """
-        return self.css('pb', 0)
+        h = self.h
+        return units(self.rootStyle.get('pb', 0), base=h, em=self.em, min=0, max=h)
     def _set_pb(self, pb):
-        self.rootStyle['pb'] = pb  
+        self.rootStyle['pb'] = units(pb)  
     pb = property(_get_pb, _set_pb)
     
     def _get_pl(self): # Padding left
@@ -610,18 +625,19 @@ class Document(object):
 
         >>> doc = Document(name='Testoc', pl=12)
         >>> doc.pl
-        12
+        12pt
         >>> doc.pl = 13
         >>> doc.pl
-        13
+        13pt
         >>> doc.padding # Taking over default value of root style.
-        (49, 42, 42, 13)
+        (49pt, 42pt, 42pt, 13pt)
         >>> doc.padding3D # Taking over default value of root style.
-        (49, 42, 42, 13, 0, 0)
+        (49pt, 42pt, 42pt, 13pt, 0pt, 0pt)
         """
-        return self.css('pl', 0)
+        h = self.h
+        return units(self.rootStyle.get('pl', 0), base=h, em=self.em, min=0, max=h)
     def _set_pl(self, pl):
-        self.rootStyle['pl'] = pl 
+        self.rootStyle['pl'] = units(pl) 
     pl = property(_get_pl, _set_pl)
     
     def _get_pr(self): # Margin right
@@ -630,18 +646,19 @@ class Document(object):
 
         >>> doc = Document(name='Testoc', pr=12)
         >>> doc.pr
-        12
+        12pt
         >>> doc.pr = 13
         >>> doc.pr
-        13
+        13pt
         >>> doc.padding # Taking over default value of root style.
-        (49, 13, 42, 49)
+        (49pt, 13pt, 42pt, 49pt)
         >>> doc.padding3D # Taking over default value of root style.
-        (49, 13, 42, 49, 0, 0)
+        (49pt, 13pt, 42pt, 49pt, 0pt, 0pt)
         """
-        return self.css('pr', 0)
+        h = self.h
+        return units(self.rootStyle.get('pr', 0), base=h, em=self.em, min=0, max=h)
     def _set_pr(self, pr):
-        self.rootStyle['pr'] = pr  
+        self.rootStyle['pr'] = units(pr)  
     pr = property(_get_pr, _set_pr)
 
     def _get_pzf(self): # Padding z-axis front
@@ -650,18 +667,19 @@ class Document(object):
 
         >>> doc = Document(name='Testoc', pzf=12)
         >>> doc.pzf
-        12
+        12pt
         >>> doc.pzf = 13
         >>> doc.pzf
-        13
+        13pt
         >>> doc.padding # Taking over default value of root style.
-        (49, 42, 42, 49)
+        (49pt, 42pt, 42pt, 49pt)
         >>> doc.padding3D # Taking over default value of root style.
-        (49, 42, 42, 49, 13, 0)
+        (49pt, 42pt, 42pt, 49pt, 13pt, 0pt)
         """
-        return self.css('pzf', 0)
+        h = self.h
+        return units(self.rootStyle.get('pzf', 0), base=h, em=self.em, min=0, max=h)
     def _set_pzf(self, pzf):
-        self.rootStyle['pzf'] = pzf  
+        self.rootStyle['pzf'] = units(pzf)  
     pzf = property(_get_pzf, _set_pzf)
     
     def _get_pzb(self): # Padding z-axis back
@@ -670,18 +688,19 @@ class Document(object):
 
         >>> doc = Document(name='Testoc', pzb=12)
         >>> doc.pzb
-        12
+        12pt
         >>> doc.pzb = 13
         >>> doc.pzb
-        13
+        13pt
         >>> doc.padding # Taking over default value of root style.
-        (49, 42, 42, 49)
+        (49pt, 42pt, 42pt, 49pt)
         >>> doc.padding3D # Taking over default value of root style.
-        (49, 42, 42, 49, 0, 13)
+        (49pt, 42pt, 42pt, 49pt, 0pt, 13pt)
         """
-        return self.css('pzb', 0)
+        h = self.h
+        return units(self.rootStyle.get('pzb', 0), h, em=self.em, min=0, max=h)
     def _set_pzb(self, pzb):
-        self.rootStyle['pzb'] = pzb  
+        self.rootStyle['pzb'] = units(pzb)  
     pzb = property(_get_pzb, _set_pzb)
 
     #   P A G E S
@@ -904,16 +923,16 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=100000, maxH=100000)
         >>> doc.getMaxPageSizes()
-        (500, 500, 1)
+        (500pt, 500pt, 0pt)
         >>> page = doc[1]
         >>> page.w, page.h
-        (500, 500)
+        (500pt, 500pt)
         >>> page.w = 2345
         >>> page, page.w
-        (<Page:default (0, 0)>, 2345)
+        (<Page:default (0pt, 0pt)>, 2345pt)
         >>> doc[4].h = 1111
         >>> doc.getMaxPageSizes()
-        (2345, 1111, 1)
+        (2345pt, 1111pt, 0pt)
         """
         w = h = d = 0
         for pn, pnPages in self.pages.items():
@@ -973,7 +992,7 @@ class Document(object):
         >>> str(view.context) in ('<DrawBotContext>', '<FlatContext>')
         True
         >>> view.w, view.h
-        (300, 400)
+        (300pt, 400pt)
         >>> view = doc.newView('Site')
         >>> view.context
         <HtmlContext>
@@ -991,11 +1010,11 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
         >>> doc.view # PageView is default.
-        <PageView:Page (0, 0)>
+        <PageView:Page (0pt, 0pt)>
         >>> doc.build('_export/TestBuildDoc.pdf')        
         >>> view = doc.newView('Site')
         >>> doc.view
-        <SiteView:Site (0, 0)>
+        <SiteView:Site (0pt, 0pt)>
         """
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 
@@ -1009,7 +1028,7 @@ class Document(object):
         >>> r = newRect(fill=(1,0,0), parent=doc[1], conditions=[Fit()])
         >>> score = doc.solve()
         >>> doc.view # PageView is default.
-        <PageView:Page (0, 0)>
+        <PageView:Page (0pt, 0pt)>
         >>> doc.export('_export/TestExportDoc.pdf')        
         """
         self.build(path=path, multiPage=multiPage)

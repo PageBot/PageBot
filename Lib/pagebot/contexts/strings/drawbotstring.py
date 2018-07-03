@@ -26,9 +26,10 @@ except (ImportError, AttributeError):
 
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css, NO_COLOR, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
+from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 from pagebot.toolbox.future import chr
 from pagebot.fonttoolbox.objects.font import getFont, getInstance
+from pagebot.toolbox.color import Color, noneColor
 
 def pixelBounds(fs):
     u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
@@ -37,13 +38,13 @@ def pixelBounds(fs):
     For the total height of the pixel-map, calculate @ph - @py.
     For the total width of the pixel-map, calculate @pw - @px."""
     p = BezierPath()
-    p.text(fs, (0, 0))
+    p.text(fs, pt(0, 0))
     # OSX answers bw and bh as difference with bx and by. That is not really intuitive, as the
     # the total (width, height) then always needs to be calculated by the caller.
     # So, instead, the width and height answered is the complete bounding box, and the (x, y)
     # is the position of the bounding box, compared to the (0, 0) of the string origin.
     bx, by, bw, bh = p.bounds()
-    return bx, by, bw - bx, bh - by
+    return pt(bx, by, bw - bx, bh - by)
 
 class NoneDrawBotString(BabelString):
     u"""Used for testing DrawBotString doctest in non-DrawBot Environment."""
@@ -66,6 +67,16 @@ class NoneDrawBotString(BabelString):
         to top-emsize (including ascender+ and descender+) and the string width (including margins)."""
         return w or 100, h or 100
 
+    def setFillColor(self, color):
+        pass
+
+    fill = setFillColor
+
+    def setStrokeColor(self, color):
+        pass
+
+    stroke = setStrokeColor
+    
 class DrawBotString(BabelString):
 
     BABEL_STRING_TYPE = 'fs'
@@ -408,19 +419,16 @@ class DrawBotString(BabelString):
         sFallbackFont = css('fallbackFont', e, style)
         if sFallbackFont is not None:
             fs.fallbackFont(sFallbackFont)
-        sFill = css('textFill', e, style, 0) # Default is black, not None or NO_COLOR
-        if sFill != NO_COLOR: # Test on this flag, None is valid value
-            context.setTextFillColor(fs, sFill)
-        sCmykFill = css('cmykFill', e, style, NO_COLOR)
-        if sCmykFill != NO_COLOR:
-            context.setTextFillColor(fs, sCmykFill, cmyk=True)
-        sStroke = css('textStroke', e, style, NO_COLOR)
+
+        sFill = css('textFill', e, style, Color(0)) # Default is Color(0)-->black, not noneColor
+        if sFill != noneColor: # Test on this flag, None is valid value
+            assert isinstance(sFill, Color)
+            context.setTextFillColor(fs, sFill.rgb)
+        sStroke = css('textStroke', e, style, noneColor)
         sStrokeWidth = css('textStrokeWidth', e, style)
-        if sStroke != NO_COLOR and sStrokeWidth is not None:
-            context.setTextStrokeColor(fs, sStroke, sStrokeWidth)
-        sCmykStroke = css('cmykStroke', e, style, NO_COLOR)
-        if sCmykStroke != NO_COLOR:
-            context.setTextStrokeColor(fs, sCmykStroke, sStrokeWidth, cmyk=True)
+        if sStroke != noneColor and sStrokeWidth is not None:
+            assert isinstance(sStroke, Color)
+            context.setTextStrokeColor(fs, sStroke.rgb, w=sStrokeWidth)
         sTextAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
         if sTextAlign is not None: # yTextAlign must be solved by parent container element.
             fs.align(sTextAlign)

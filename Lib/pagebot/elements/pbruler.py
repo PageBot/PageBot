@@ -16,7 +16,7 @@
 #
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import pointOffset
-from pagebot.style import NO_COLOR
+from pagebot.toolbox.color import noneColor
 
 class Ruler(Element):
 
@@ -88,7 +88,7 @@ class Ruler(Element):
             self.drawBefore(self, view, p)
 
         context.setFillColor(None)
-        context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        context.setStrokeColor(self.css('stroke', noneColor), self.css('strokeWidth'))
         context.line((px + sIndent, py), (px + w, py))
 
         # If there are child elements, recursively draw them over the pixel image.
@@ -125,7 +125,7 @@ class Ruler(Element):
  
         self.build_css(view)
         context.setFillColor(None)
-        context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        context.setStrokeColor(self.css('stroke', noneColor), self.css('strokeWidth'))
         #b.line((px + sIndent, py), (px + w, py))
 
         if self.drawBefore is not None: # Call if defined

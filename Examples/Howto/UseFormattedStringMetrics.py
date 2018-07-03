@@ -17,17 +17,18 @@
 #     These show examples how to do that.
 #
 from pagebot.contexts.platform import getContext
+from pagebot.toolbox.units import pt
+from pagebot.toolbox.color import Color
 
 context = getContext()
 
 def run():
-	W, H = 1000, 400
+	w, h = pt(1000, 400) # Make a list of Unit pt instance and unpack the.
 	context.newPage(W, H)
 	txt = "Hello World"
-	x, y = 10, 100
+	x, y = pt(10, 100) # Position of the text
 
-	bs = context.newString(txt, style=dict(fontSize=300,
-                                         font="Verdana"))
+	bs = context.newString(txt, style=dict(fontSize=pt(300), font="Verdana"))
 	# draw the text
 	context.text(bs, (x, y))
 
@@ -35,11 +36,15 @@ def run():
 	textWidth, textHeight = context.textSize(bs)
 
 	# set a red stroke color
-	context.stroke(1, 0, 0)
+	strokeColor = Color(1, 0, 0) # Color instance can translate into any other color type.
+	context.stroke(strokeColor)
 	# loop over all font metrics
 	for metric in (0, bs.fontDescender(), bs.fontAscender(), bs.fontXHeight(), bs.fontCapHeight()):
-	    # draw a red line with the size of the drawn text
-	    context.line((x, y+metric), (W-2*x, y+metric))
+	    # Draw a red line with the size of the drawn text
+	    # Context drawing functions expect measures to be Unit instances.
+	    p1 = pt(x, y+metric) # Make a list of 2 Pt instances.
+	    p2 = pt(W-2*x, y+metric)
+	    context.line(p1, p2)
 
 if __name__ == '__main__':
 	run()
