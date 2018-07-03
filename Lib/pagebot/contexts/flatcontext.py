@@ -17,7 +17,7 @@
 #
 #import imageio
 from pagebot.toolbox.units import pt, Pt, units, ru
-from pagebot.toolbox.color import noneColor, Color
+from pagebot.toolbox.color import noColor, color, blackColor
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
@@ -77,9 +77,9 @@ class FlatContext(BaseContext):
         """
         # Keep status of last color, to make difference between fill and stroke colors.
         self.name = self.__class__.__name__
-        self._fill = noneColor
-        self._stroke = noneColor
-        self._strokeWidth = Color(0)
+        self._fill = noColor
+        self._stroke = noColor
+        self._strokeWidth = blackColor
         self._font = DEFAULT_FONT_PATH # Optional setting of the current font and fontSize
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
@@ -137,7 +137,7 @@ class FlatContext(BaseContext):
         >>> context = FlatContext()
         >>> w = h = pt(100)
         >>> x = y = pt(0)
-        >>> c = Color(0)
+        >>> c = blackColor
         >>> context.fileType = FILETYPE_JPG
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
@@ -429,16 +429,16 @@ class FlatContext(BaseContext):
         return c.rgb
 
     def _getShape(self):
-        if self._fill is noneColor and self._stroke is noneColor:
+        if self._fill is noColor and self._stroke is noColor:
             return None
         shape = self.b.shape()
         if self._fill is None:
             shape.nofill()
-        elif self._fill != noneColor:
+        elif self._fill != noColor:
             shape.fill(self._getValidColor(self._fill))
         if self._stroke is None:
             shape.nostroke()
-        elif self._stroke != noneColor:
+        elif self._stroke != noColor:
             shape.stroke(self._getValidColor(self._stroke)).width(self._strokeWidth)
         return shape
 
@@ -530,8 +530,8 @@ class FlatContext(BaseContext):
         See: http://xxyxyz.org/flat, color.py."""
         b = self.b
         success = False
-        if c is noneColor:
-            self._fill = noneColor # Ignore drawing
+        if c is noColor:
+            self._fill = noColor # Ignore drawing
             success = True # Color is undefined, do nothing.
         elif c is None:
             self._fill = None # No fill
@@ -571,7 +571,7 @@ class FlatContext(BaseContext):
         # TODO: Make this work in Flat
         b = self.b
         success = False
-        if c is noneColor or c is None:
+        if c is noColor or c is None:
             self._stroke = None # no stroke
             success = True # Color is undefined, do nothing.
         elif isinstance(c, (float, int)): # Grayscale

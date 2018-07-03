@@ -14,10 +14,19 @@
 #
 #     color.py
 #
+#     Implementing a generic Color class, that keeps track of its original format.
+#     From there it converts between RGB, CMYK, Spot and RAL.
+#     Not all conversion are direct (e.g. CMYK-->RGB-->Spot has 2 conversion).
+#     TODO:
+#       Test validity of the conversion tables
+#       Add exceptions where necessary
+#       Add more names (e.g. the Spot color table)
+#       Add profiles for printers, paper, printing methods.
+#
 from __future__ import division # Make integer division result in float.
 
 from copy import copy
-from pagebot.constants import CSS_COLOR_NAMES, SPOT_RGB, RAL_NAMERGB, RALNAME_RGB
+from pagebot.constants import CSS_COLOR_NAMES, SPOT_RGB, RAL_NAMERGB, NAME_RALRGB
 
 def value01(v):
     u"""Round float to 0 or 1 int if equal.
@@ -50,11 +59,11 @@ def int2Rgb(v):
     (0, 0, 1)
     >>> int2Rgb(255**2 + 255)
     (0, 1, 0)
-    >>> Color('#FFFFFF').int
+    >>> color('#FFFFFF').int
     16777215
-    >>> Color('#888888').int
+    >>> color('#888888').int
     8947848
-    >>> Color('#0000FF').int
+    >>> color('#0000FF').int
     255
     """ 
     return value01(((v >> 16) & 255)/255.0), value01(((v >> 8) & 255)/255.0), value01((v & 255)/255.0)
@@ -113,40 +122,64 @@ def rgb2Cmyk(rgb):
     return value01(c), value01(m), value01(y), value01(k)
 
 def ral2NameRgb(ral, default=None):
-    u"""Anseer the RGB of RAL color number or name. If the value does not exist, answer default or black.
+    u"""Answer the RGB of RAL color number or name. If the value does not exist, answer default or black.
 
-    >>> '%0.2f, %0.2f, %0.2f' % ral2NameRgb(9002)[1]
-    '0.94, 0.93, 0.90'
-    >>> '%0.2f, %0.2f, %0.2f' % ral2NameRgb('light green')[1]
-    '0.49, 0.80, 0.74'
-    >>> '%0.2f, %0.2f, %0.2f' % ral2NameRgb('dustygray')[1]
-    '0.47, 0.49, 0.50'
-    >>> ral2NameRgb('lightgreen')[1] == ral2NameRgb('light green')[1]
-    True
-    >>> ral2NameRgb('gray')[1] == ral2NameRgb('grey')[1]
-    True
+    >>> ral2NameRgb('red')
+    ('rubyred', (0.5411764705882353, 0.07058823529411765, 0.0784313725490196))
     """
     nameRgb = None
+    if isinstance(ral, str):
+        ral = ral.lower()
     if ral in RAL_NAMERGB:
         nameRgb = RAL_NAMERGB[ral]
-    elif ral in RALNAME_RGB:
-        nameRgb = ral, RALNAME_RGB[ral][1]
+    elif ral in NAME_RALRGB:
+        nameRgb = ral, NAME_RALRGB[ral][1]
+    if isinstance(ral, str): 
+        # It's a name but not matching. Try smallest name that includes it.
+        # Note that for "gray" and "grey" search, this may result in different findings.
+        length = None
+        for name, (_, rgb) in NAME_RALRGB.items():
+            if ral in name and (length is None or len(name) < length):
+                nameRgb = name, rgb
+                length = len(name)
     if nameRgb is None:
         nameRgb = default or ('black', (0, 0, 0))
     return nameRgb
 
-def rgb2ralName(rgb):
+def ral2Rgb(ral, default=None):
+    u"""Answer the RGB or RAL color number or name. 
+
+    >>> '%0.2f, %0.2f, %0.2f' % ral2Rgb(9002)
+    '0.94, 0.93, 0.90'
+    >>> '%0.2f, %0.2f, %0.2f' % ral2Rgb('light green')
+    '0.49, 0.80, 0.74'
+    >>> '%0.2f, %0.2f, %0.2f' % ral2Rgb('dustygray')
+    '0.47, 0.49, 0.50'
+    >>> ral2Rgb('lightgreen') == ral2Rgb('light green')
+    True
+    >>> ral2Rgb('umbra grey') == ral2Rgb('umbra gray')
+    True
+    >>> ral2Rgb('grey') == ral2Rgb('gray') # Partial name finds other result
+    False
+    >>> '%0.2f, %0.2f, %0.2f' % ral2Rgb('red')
+    '0.54, 0.07, 0.08'
+    >>> ral2NameRgb('red')[0]
+    'rubyred'
+    """
+    return ral2NameRgb(ral, default)[1]
+
+def rgb2RalName(rgb):
     u"""Answer the closest spot value that fits the RGB value.
 
-    >>> rgb2ralName((0.49, 0.80, 0.74))
+    >>> rgb2RalName((0.49, 0.80, 0.74))
     (6027, 'light green')
-    >>> rgb2ralName((0, 0, 0))
+    >>> rgb2RalName((0, 0, 0))
     (9005, 'jet black')
-    >>> rgb2ralName((1, 1, 1))
+    >>> rgb2RalName((1, 1, 1))
     (9003, 'signal white')
-    >>> rgb2ralName((1, 1, 1))
+    >>> rgb2RalName((1, 1, 1))
     (9003, 'signal white')
-    >>> rgb2ralName((0.5, 0.5, 0.5))
+    >>> rgb2RalName((0.5, 0.5, 0.5))
     (7037, 'dusty grey')
     """
     foundRal = None
@@ -167,17 +200,19 @@ def spot2Rgb(spot, default=None):
     >>> spot2Rgb(10000000) # Non-existend spot colors map to default or black.
     (0, 0, 0)
     """
+    if isinstance(spot, str): # No spot color name defined. Take closest rgb to this name.
+        return name2Rgb(spot)
     return SPOT_RGB.get(spot, default or (0, 0, 0))
 
 def rgb2Spot(rgb):
     u"""Answer the closest spot value that fits the RGB value.
 
-    >>> Color(0.98, 0.89, 0.5).spot
+    >>> color(0.98, 0.89, 0.5).spot
     120
-    >>> rgb = Color(spot=300).rgb
-    >>> Color(rgb=rgb).spot
+    >>> rgb = color(spot=300).rgb
+    >>> color(rgb=rgb).spot
     300
-    >>> Color(rgb=Color(spot=110).rgb).spot # Double direction conversion test.
+    >>> color(rgb=Color(spot=110).rgb).spot # Double direction conversion test.
     110
     """
     foundSpot = None
@@ -205,13 +240,13 @@ def cmyk2Spot(cmyk):
     u"""Answer the closest spot value that fits the CMYK value.
     Note that this is a double conversion: cmyk-->rgb-->spot
 
-    >>> Color(c=0.25, m=0.24, y=0.00, k=0.67).spot
+    >>> color(c=0.25, m=0.24, y=0.00, k=0.67).spot
     533
-    >>> Color(spot=533).cmyk == spot2Cmyk(533)
+    >>> color(spot=533).cmyk == spot2Cmyk(533)
     True
-    >>> Color(c=0.25, m=0.24, y=0.00, k=0.67).spot
+    >>> color(c=0.25, m=0.24, y=0.00, k=0.67).spot
     533
-    >>> cmyk = Color(spot=300).cmyk
+    >>> cmyk = color(spot=300).cmyk
     >>> #Color(cmyk=cmyk).spot # TODO: answers 285. Roundings?
     300
     >>> #Color(cmyk=Color(spot=110).cmyk).spot # Double direction conversion test.
@@ -240,16 +275,16 @@ def rgb2Name(rgb):
 
     >>> rgb2Name((0.2, 0.3, 0.4))
     'darkslategrey'
-    >>> Color(spot=300).name
+    >>> color(spot=300).name
     'darkcyan'
-    >>> Color(spot=0).name
+    >>> color(spot=0).name
     'black'
-    >>> Color(rgb=(0.4, 0.5, 0.6)).name
+    >>> color(rgb=(0.4, 0.5, 0.6)).name
     'slategrey'
-    >>> Color(cmyk=(0.2, 0.2, 0.6, 0.2)).name
+    >>> color(cmyk=(0.2, 0.2, 0.6, 0.2)).name
     'darkkhaki'
     >>> rgb = (0.4, 0.5, 0.6)
-    >>> Color(rgb=rgb).name == rgb2Name(rgb)
+    >>> color(rgb=rgb).name == rgb2Name(rgb)
     True
     """
     rgbName = None
@@ -283,7 +318,7 @@ class Color(object):
 
     Options to defined the color:
 
-    >>> c = Color(g=1)
+    >>> c = color(g=1)
     >>> c.fullString
     'Color(r=0, g=1, b=0, c=None, m=None, y=None, k=None, spot=None, ral=None, name=None)'
     >>> c
@@ -292,50 +327,54 @@ class Color(object):
     Color(r=0.5, g=1, b=0.5)
     >>> c.lighter(0.7)
     Color(r=0.7, g=1, b=0.7)
-    >>> Color(r=1, g=0, b=0)
+    >>> color(r=1, g=0, b=0)
     Color(r=1, g=0, b=0)
-    >>> c = Color(name='red')
+    >>> c = color(name='red')
     >>> c.fullString
     'Color(r=None, g=None, b=None, c=None, m=None, y=None, k=None, spot=None, ral=None, name=red)'
     >>> c
     Color(name="red")
-    >>> Color(rgb='red') # Same result
+    >>> color(rgb='red') # Same result
     Color(name="red")
-    >>> Color('red').lighter() # This is a method (not property) as it may contain attributes.
+    >>> color('red').lighter() # This is a method (not property) as it may contain attributes.
     Color(r=1, g=0.5, b=0.5)
-    >>> c = Color('YELLOW') # Color names as capitals are interpreted as lower case.
+    >>> c = color('YELLOW') # Color names as capitals are interpreted as lower case.
     >>> c.name
     'yellow'
-    >>> Color((1, 0, 1)).rgb
+    >>> yellowColor
+    Color(c=0, m=0, y=1, k=0)
+    >>> color((1, 0, 1)).rgb
     (1, 0, 1)
-    >>> c = Color(spot=120)
+    >>> c = color(spot=120)
     >>> '%0.2f, %0.2f, %0.2f' % c.rgb # Get nearest rounded (r,g,b) for this spot color
     '0.98, 0.89, 0.50'
     >>> '%0.2f, %0.2f, %0.2f, %0.2f' % c.cmyk # Get nearest rounded (c,m,y,k) for this spot color
     '0.00, 0.09, 0.48, 0.02'
-    >>> Color(0.98, 0.89, 0.50).spot # Guess nearest spot color for these RGB values.
+    >>> color(0.98, 0.89, 0.50).spot # Guess nearest spot color for these RGB values.
     120
-    >>> Color(c=0, m=0.09, y=0.48, k=0.02).spot # Guess nearest spot color for these RGB values.
+    >>> color(c=0, m=0.09, y=0.48, k=0.02).spot # Guess nearest spot color for these RGB values.
     120
     >>> 
-    >>> Color(ral=9002), '%0.2f, %0.2f, %0.2f' % Color(ral=9002).rgb
+    >>> color(ral=9002), '%0.2f, %0.2f, %0.2f' % color(ral=9002).rgb
     (Color(ral=9002), '0.94, 0.93, 0.90')
     >>> # Showing as a conversion matrix
-    >>> C = Color
+    >>> C = color
     >>> C(rgb=(0,1,0)).rgb, C(rgb=(0,1,0)).cmyk, C(rgb=(0,1,0)).spot, C(rgb=(0,1,0)).ral
-
+    ((0, 1, 0), (1, 0, 1, 0), 3682, 1001)
     >>> C(rgb='red').rgb, C(rgb='red').cmyk, C(rgb='red').spot, C(rgb='red').ral
-    
+    ((1, 0, 0), (0, 0, 0, 1), 4852, 3024)
     >>> C(cmyk=(0,1,0,0)).rgb, C(cmyk=(0,1,0,0)).cmyk, C(cmyk=(0,1,0,0)).spot, C(cmyk=(0,1,0,0)).ral
-
+    ((1, 0, 1), (0, 1, 0, 0), 806, 4003)
     >>> C(cmyk='red').rgb, C(cmyk='red').cmyk, C(cmyk='red').spot, C(cmyk='red').ral
-
-    >>> C(spot='red').rgb, C(spot='red').cmyk, C(spot='red').spot, C(spot='red').ral
-
+    ((1, 0, 0), (0, 0, 0, 1), 4852, 3024)
+    >>> C(spot=4852).rgb, C(spot=4852).cmyk, C(spot=4852).spot, C(spot=4852).ral
+    ((0.8, 0.047058823529411764, 0.0), (0, 0.7529411764705882, 0.8, 0.19999999999999996), 4852, 3020)
     >>> C(ral=9002).rgb, C(ral=9002).cmyk, C(ral=9002).spot, C(ral=9002).ral
-
+    ((0.9411764705882353, 0.9294117647058824, 0.9019607843137255), (0, 0, 0, 1), 196, 9002)
     >>> C(ral='red').rgb, C(ral='red').cmyk, C(ral='red').spot, C(ral='red').ral
-
+    ((0.5411764705882353, 0.07058823529411765, 0.0784313725490196), (0, 0, 0, 1), 1810, 'red')
+    >>> C(ral=3024).rgb, C(ral=3024).cmyk, C(ral=3024).spot, C(ral=3024).ral
+    ((0.984313725490196, 0.0392156862745098, 0.10980392156862745), (0, 0, 0, 1), 185, 3024)
     """
     def __init__(self, r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None, ral=None, name=None):
         self.a = a
@@ -438,15 +477,16 @@ class Color(object):
     def _get_fullString(self):
         u"""Show all internal parameter for debugging.
 
-        >>> Color('green').fullString
+        >>> from pagebot.toolbox.color import blackColor, whiteColor
+        >>> color('green').fullString
         'Color(r=None, g=None, b=None, c=None, m=None, y=None, k=None, spot=None, ral=None, name=green)'
-        >>> Color(cmyk=0.5).fullString
+        >>> color(cmyk=0.5).fullString
         'Color(r=None, g=None, b=None, c=0.5, m=0.5, y=0.5, k=0.5, spot=None, ral=None, name=None)'
-        >>> Color(1).fullString
+        >>> whiteColor.fullString
         'Color(r=1, g=1, b=1, c=None, m=None, y=None, k=None, spot=None, ral=None, name=None)'
-        >>> Color(0).fullString
+        >>> blackColor.fullString
         'Color(r=0, g=0, b=0, c=None, m=None, y=None, k=None, spot=None, ral=None, name=None)'
-        >>> Color(g=0.5).fullString
+        >>> color(g=0.5).fullString
         'Color(r=0, g=0.5, b=0, c=None, m=None, y=None, k=None, spot=None, ral=None, name=None)'
         """
         return '%s(r=%s, g=%s, b=%s, c=%s, m=%s, y=%s, k=%s, spot=%s, ral=%s, name=%s)' % (self.__class__.__name__, self.r, self.g, self.b, self.c, self.m, self.y, self.k, self._spot, self._ral, self._name)
@@ -455,13 +495,13 @@ class Color(object):
     def _get_isRgb(self):
         u"""Answer the boolean flag if the base of this color is defined as rgb or if an (rgb) name is defined.
 
-        >>> Color(rgb=0.5).isRgb
+        >>> color(rgb=0.5).isRgb
         True
-        >>> Color(name='blue').isRgb
+        >>> color(name='blue').isRgb
         True
-        >>> Color(cmyk=0.5).isRgb
+        >>> color(cmyk=0.5).isRgb
         False
-        >>> Color(spot=300).isRgb
+        >>> color(spot=300).isRgb
         False
         """
         return self.r is not None or self.g is not None or self.b is not None or self._name is not None
@@ -470,13 +510,13 @@ class Color(object):
     def _get_isCmyk(self):
         u"""Answer the boolean flag if the base of this color is defined as cmyk.
 
-        >>> Color(rgb=0.5).isCmyk
+        >>> color(rgb=0.5).isCmyk
         False
-        >>> Color(name='blue').isCmyk
+        >>> color(name='blue').isCmyk
         False
-        >>> Color(cmyk=0.5).isCmyk
+        >>> color(cmyk=0.5).isCmyk
         True
-        >>> Color(spot=300).isCmyk
+        >>> color(spot=300).isCmyk
         False
         """
         return self.c is not None or self.m is not None or self.y is not None or self.k is not None
@@ -485,13 +525,13 @@ class Color(object):
     def _get_isSpot(self):
         u"""Answer the boolean flag if the base of this color is defined as spot color.
 
-        >>> Color(rgb=0.5).isSpot
+        >>> color(rgb=0.5).isSpot
         False
-        >>> Color(name='blue').isSpot
+        >>> color(name='blue').isSpot
         False
-        >>> Color(cmyk=0.5).isSpot
+        >>> color(cmyk=0.5).isSpot
         False
-        >>> Color(spot=300).isSpot
+        >>> color(spot=300).isSpot
         True
         """
         return self._spot is not None
@@ -500,13 +540,13 @@ class Color(object):
     def _get_isRal(self):
         u"""Answer the boolean flag if the base of this color is defined as RAL color.
 
-        >>> Color(rgb=0.5).isRal
+        >>> color(rgb=0.5).isRal
         False
-        >>> Color(name='blue').isRal
+        >>> color(name='blue').isRal
         False
-        >>> Color(cmyk=0.5).isRal
+        >>> color(cmyk=0.5).isRal
         False
-        >>> Color(ral=9002).isRal
+        >>> color(ral=9002).isRal
         True
         """
         return self._ral is not None
@@ -517,16 +557,16 @@ class Color(object):
         CMYK or spot, non-destructive to the original values. Setting to rgb will clear 
         the values of other color modes, except opacity self.a.
 
-        >>> Color(name='yellow').rgb
+        >>> color(name='yellow').rgb
         (1, 1, 0)
-        >>> Color(1, 0, 1).rgb
+        >>> color(1, 0, 1).rgb
         (1, 0, 1)
-        >>> '%0.2f, %0.2f, %0.2f' % Color(c=1, m=0, y=0.5, k=0.2).rgb
+        >>> '%0.2f, %0.2f, %0.2f' % color(c=1, m=0, y=0.5, k=0.2).rgb
         '0.00, 0.80, 0.40'
-        >>> Color(spot='red').rgb
-
-        >>> Color(ral='red').rgb
-
+        >>> color(spot='red').rgb
+        (1, 0, 0)
+        >>> '%0.2f, %0.2f, %0.2f' % color(ral='red').rgb
+        '0.54, 0.07, 0.08'
         """
         if self._name is not None:
             return name2Rgb(self._name)
@@ -549,17 +589,17 @@ class Color(object):
         u"""Set and get the (r,g,b,a) values of the color. If self is not in RGB mode,
         then convert values from CMYK or spot color value.
 
-        >>> Color(0.4, 0.5, 0.6, 0.9).rgba
+        >>> color(0.4, 0.5, 0.6, 0.9).rgba
         (0.4, 0.5, 0.6, 0.9)
-        >>> c = Color(0.1, 0.2, 0.3) # Create a color with default opacity as 1
+        >>> c = color(0.1, 0.2, 0.3) # Create a color with default opacity as 1
         >>> c.rgba # Answer the rgba tuple of the color
         (0.1, 0.2, 0.3, 1)
         >>> c.rgba = 0.6, 0.7, 0.8, 0.1 # Set the RGB and opacity values
         >>> c
         Color(r=0.6, g=0.7, b=0.8, a=0.1)
-        >>> Color(c=0.1, m=0.2, y=0, k=0.4).rgba
+        >>> color(c=0.1, m=0.2, y=0, k=0.4).rgba
         (0.54, 0.48, 0.6, 1)
-        >>> Color(rgb=Color(spot=110).rgba).spot # Bi-directional test.
+        >>> color(rgb=Color(spot=110).rgba).spot # Bi-directional test.
         110
         """
         r, g, b = self.rgb
@@ -573,12 +613,12 @@ class Color(object):
         u"""Set and get the (r,g,b,a) values of the color. If self is not in CMYK mode,
         then convert values from CMYK or spot color value.
 
-        >>> Color(c=0.4, m=0.5, y=0.6, k=0.9).cmyk
+        >>> color(c=0.4, m=0.5, y=0.6, k=0.9).cmyk
         (0.4, 0.5, 0.6, 0.9)
-        >>> '%0.2f, %0.2f, %0.2f, %0.2f' % Color(0.1, 0.2, 0.3).cmyk # Create an RGB color with default opacity as 1
+        >>> '%0.2f, %0.2f, %0.2f, %0.2f' % color(0.1, 0.2, 0.3).cmyk # Create an RGB color with default opacity as 1
         '0.20, 0.10, 0.00, 0.70'
-        >>> rgba = Color(spot=300).rgba
-        >>> c = Color()
+        >>> rgba = color(spot=300).rgba
+        >>> c = color()
         >>> c.rgba = rgba
         >>> c.spot
         300
@@ -601,9 +641,10 @@ class Color(object):
         u"""Set and get the spot value of the color. If self is not in spot mode,
         then convert values from RGB or CMYK value.
 
-        >>> Color(spot=450).spot
+        >>> color(spot=450).spot
         450
-        >>> Color(rgb=(1, 0, 0)).spot
+        >>> color(rgb=(1, 0, 0)).spot
+        4852
         """
         if self._spot is not None: # spot --> spot
             return self._spot
@@ -626,19 +667,23 @@ class Color(object):
         u"""Set and get the ral value of the color. If self is not in ral mode,
         then convert values from RGB or CMYK value.
 
-        >>> Color(ral=9002).ral
+        >>> color(ral=9002).ral
         9002
-        >>> Color(rgb=(1, 0, 0)).ral
-
+        >>> color(rgb=(1, 0, 0)).ral
+        3024
+        >>> '%0.2f, %0.2f, %0.2f' % color(ral=3024).rgb # Not symmetric
+        '0.98, 0.04, 0.11'
+        >>> color(rgb=(0.98, 0.04, 0.11)).ral # Now it finds it too
+        3024
         """
         if self._ral is not None:
             return self._ral
         rgb = self.rgb
         if not None in rgb:
-            return rgb2Spot(rgb)
+            return rgb2RalName(rgb)[0]
         cmyk = self.cmyk
         if not None in (cmyk):
-            return cmyk2Spot(cmyk)
+            return rgb2RalName(cmyk2rgb(cmyk))[0]
         return  # If all fails, answer black
     def _set_ral(self, ral):
         self._ral = ral # Keep ral color (number or name) as base
@@ -648,20 +693,22 @@ class Color(object):
     def _get_int(self):
         u"""Answer the unique RGB integer value of self, based on 3 x 8 = 24 bits
 
-        >>> Color(0.2, 0.3, 0.4).int
+        >>> color(0.2, 0.3, 0.4).int
         3362150
-        >>> Color(0, 0, 0).int
+        >>> color(0, 0, 0).int
         0
-        >>> Color(1, 1, 1).int # 2^24
+        >>> color(1, 1, 1).int # 2^24
         16777215
-        >>> Color(c=0.2, m=0.3, y=0.4, k=0.1).int
+        >>> color(c=0.2, m=0.3, y=0.4, k=0.1).int
         12099978
-        >>> Color(spot=300).int # Conversion via spot-->rgb
+        >>> color(spot=300).int # Conversion via spot-->rgb
         29382
-        >>> Color(spot='black').int
+        >>> color(rgb='black').int
         0
-        >>> Color(spot='blue').int
-        0
+        >>> color(rgb='blue').int
+        255
+        >>> color(rgb=0xFF00FF).int
+        16711935
         """
         r, g, b = self.rgb # Make conversion, in case color base is not rgb
         return int(round(r * 255)) << 16 | int(round(g * 255)) << 8 | int(round(b * 255))
@@ -671,13 +718,13 @@ class Color(object):
         u"""Answer the CSS hex color string from the color (r, g, b, o) or (r, g, b) tuple.
         This format is CSS compatible.
 
-        >>> Color(0.2, 0.3, 0.4).hex
+        >>> color(0.2, 0.3, 0.4).hex
         '334D66'
-        >>> Color(1).hex
+        >>> color(1).hex
         'FFFFFF'
-        >>> Color(c=1, m=0, y=0.5, k=0.1).hex # Conversion of cmyk via rgb to hex code.
+        >>> color(c=1, m=0, y=0.5, k=0.1).hex # Conversion of cmyk via rgb to hex code.
         '00E673'
-        >>> Color(0).hex
+        >>> color(0).hex
         '000000'
         """
         r, g, b = self.rgb # Make conversion, in case color base is not rgb
@@ -688,13 +735,13 @@ class Color(object):
         u"""Answer the CSS hex color string from the color (r, g, b, o) or (r, g, b) tuple.
         This format is CSS compatible.
 
-        >>> Color(0.2, 0.3, 0.4).css # Conversion of plain RGB color to CSS hex code
+        >>> color(0.2, 0.3, 0.4).css # Conversion of plain RGB color to CSS hex code
         '#334D66'
-        >>> Color('white').css # Conversion of CSS name to CSS hex code
+        >>> color('white').css # Conversion of CSS name to CSS hex code
         '#FFFFFF'
-        >>> Color(c=1, m=0, y=0.5, k=0.1).css # Convertsion of CMYK to CSS hex code.
+        >>> color(c=1, m=0, y=0.5, k=0.1).css # Convertsion of CMYK to CSS hex code.
         '#00E673'
-        >>> Color((0, 0, 0)).css
+        >>> color((0, 0, 0)).css
         '#000000'
         """
         return ('#%s' % self.hex).upper()
@@ -703,126 +750,126 @@ class Color(object):
     def moreRed(self, v=0.5):
         u"""Answer the color more red than self. This converts to internal rgb storage.
 
-        >>> Color(0.1, 0.2, 0.3).moreRed()
+        >>> color(0.1, 0.2, 0.3).moreRed()
         Color(r=0.55, g=0.2, b=0.3)
-        >>> Color(0.1, 0.2, 0.3).moreRed(0.1)
+        >>> color(0.1, 0.2, 0.3).moreRed(0.1)
         Color(r=0.19, g=0.2, b=0.3)
-        >>> '%0.2f' % Color(0.1, 0.2, 0.3, 0.4).moreRed(0.8).r
+        >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).moreRed(0.8).r
         '0.82'
-        >>> Color(c=0.1, m=0.2, y=0.3, k=0.4).moreRed() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreRed() # Color changes conver to RGB mode.
         Color(r=0.77, g=0.48, b=0.42)
         """
         r, g, b = self.rgb
-        return Color(min(1, r + (1 - r)*v), g, b, self.a)
+        return color(min(1, r + (1 - r)*v), g, b, self.a)
 
     def moreGreen(self, v=0.5):
         u"""Answer the color more green than self. This converts to internal rgb storage.
 
-        >>> Color(0.1, 0, 0.3).moreGreen()
+        >>> color(0.1, 0, 0.3).moreGreen()
         Color(r=0.1, g=0.5, b=0.3)
-        >>> Color(0.1, 0.2, 0.3).moreGreen(0.1)
+        >>> color(0.1, 0.2, 0.3).moreGreen(0.1)
         Color(r=0.1, g=0.28, b=0.3)
-        >>> '%0.2f' % Color(0.1, 0.2, 0.3, 0.4).moreGreen(0.8).g
+        >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).moreGreen(0.8).g
         '0.84'
-        >>> Color(c=0.1, m=0.2, y=0.3, k=0.4).moreGreen() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreGreen() # Color changes conver to RGB mode.
         Color(r=0.54, g=0.74, b=0.42)
         """
         r, g, b = self.rgb
-        return Color(r=r, g=min(1, g + (1 - g)*v), b=b, a=self.a)
+        return color(r=r, g=min(1, g + (1 - g)*v), b=b, a=self.a)
 
     def moreBlue(self, v=0.5):
         u"""Answer the color more blue than self. This converts to internal rgb storage.
 
-        >>> Color(0.1, 0, 0).moreBlue()
+        >>> color(0.1, 0, 0).moreBlue()
         Color(r=0.1, g=0, b=0.5)
-        >>> Color(0.1, 0.2, 0.3).moreBlue(0.1)
+        >>> color(0.1, 0.2, 0.3).moreBlue(0.1)
         Color(r=0.1, g=0.2, b=0.37)
-        >>> '%0.2f' % Color(0.1, 0.2, 0.3, 0.4).moreBlue(0.8).b
+        >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).moreBlue(0.8).b
         '0.86'
-        >>> Color(c=0.1, m=0.2, y=0.3, k=0.4).moreBlue() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreBlue() # Color changes conver to RGB mode.
         Color(r=0.54, g=0.48, b=0.71)
         """
         r, g, b = self.rgb
-        return Color(r=r, g=g, b=min(1, b + (1 - b)*v), a=self.a)
+        return color(r=r, g=g, b=min(1, b + (1 - b)*v), a=self.a)
 
     def lighter(self, v=0.5):
         u"""Answer the color lighter than self. This converts to internal rgb storage.
 
-        >>> Color(0).lighter()
+        >>> color(0).lighter()
         Color(r=0.5, g=0.5, b=0.5)
-        >>> Color(0).lighter(0.8)
+        >>> color(0).lighter(0.8)
         Color(r=0.8, g=0.8, b=0.8)
-        >>> Color(c=0.1, m=0.2, y=0.3, k=0.4).lighter() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lighter() # Color changes conver to RGB mode.
         Color(r=0.77, g=0.74, b=0.71)
         """
         rgb = self.moreRed(v).r, self.moreGreen(v).g, self.moreBlue(v).b
-        return Color(rgb=rgb, a=self.a)
+        return color(rgb=rgb, a=self.a)
 
     def lessRed(self, v=0.5):
         u"""Answer the color less red than self. This converts to internal rgb storage.
 
-        >>> Color(1).lessRed()
+        >>> color(1).lessRed()
         Color(r=0.5, g=1, b=1)
-        >>> Color(0.1, 0.2, 0.3).lessRed(0.3)
+        >>> color(0.1, 0.2, 0.3).lessRed(0.3)
         Color(r=0.03, g=0.2, b=0.3)
-        >>> '%0.2f' % Color(0.1, 0.2, 0.3, 0.4).lessRed(0.8).r
+        >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).lessRed(0.8).r
         '0.08'
-        >>> Color(c=0.1, m=0.2, y=0.3, k=0.4).lessRed() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessRed() # Color changes conver to RGB mode.
         Color(r=0.27, g=0.48, b=0.42)
         """
         r, g, b = self.rgb
-        return Color(r=min(1, max(0, r*v)), g=g, b=b, a=self.a)
+        return color(r=min(1, max(0, r*v)), g=g, b=b, a=self.a)
 
     def lessGreen(self, v=0.5):
         u"""Answer the color less green than self. This converts to internal rgb storage.
 
-        >>> Color(1).lessGreen()
+        >>> color(1).lessGreen()
         Color(r=1, g=0.5, b=1)
-        >>> Color(0.1, 0.2, 0.3).lessGreen(0.3)
+        >>> color(0.1, 0.2, 0.3).lessGreen(0.3)
         Color(r=0.1, g=0.06, b=0.3)
         >>> '%0.2f' %Color(0.1, 0.2, 0.3, 0.4).lessGreen(0.8).g
         '0.16'
-        >>> Color(c=0.1, m=0.2, y=0.3, k=0.4).lessGreen() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessGreen() # Color changes conver to RGB mode.
         Color(r=0.54, g=0.24, b=0.42)
         """
         r, g, b = self.rgb
-        return Color(r=r, g=min(1, max(0, g*v)), b=b, a=self.a)
+        return color(r=r, g=min(1, max(0, g*v)), b=b, a=self.a)
 
     def lessBlue(self, v=0.5):
         u"""Answer the color less blue than self. This converts to internal rgb storage.
 
-        >>> Color(1).lessBlue()
+        >>> color(1).lessBlue()
         Color(r=1, g=1, b=0.5)
-        >>> Color(0.1, 0.2, 0.3).lessBlue(0.3)
+        >>> color(0.1, 0.2, 0.3).lessBlue(0.3)
         Color(r=0.1, g=0.2, b=0.09)
-        >>> '%0.2f' % Color(0.1, 0.2, 0.3, 0.4).lessBlue(0.8).b
+        >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).lessBlue(0.8).b
         '0.24'
-        >>> Color(c=0.1, m=0.2, y=0.3, k=0.4).lessBlue() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessBlue() # Color changes conver to RGB mode.
         Color(r=0.54, g=0.48, b=0.21)
         """
         r, g, b = self.rgb
-        return Color(r=r, g=g, b=min(1, max(0, b*v)), a=self.a)
+        return color(r=r, g=g, b=min(1, max(0, b*v)), a=self.a)
 
     def darker(self, v=0.5):
         u"""Answer a darker color of self. v = 0 gives black, v = 1 gives same color
         This converts to internal rgb storage.
 
-        >>> Color(1).darker()
+        >>> color(1).darker()
         Color(r=0.5, g=0.5, b=0.5)
-        >>> Color('black').darker() # Black does not go any darker
+        >>> color('black').darker() # Black does not go any darker
         Color(r=0, g=0, b=0)
-        >>> Color(c=0.1, m=0.2, y=0.3, k=0.4).darker() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).darker() # Color changes conver to RGB mode.
         Color(r=0.27, g=0.24, b=0.21)
         """
         c = copy(self)
         rgb = self.lessRed(v).r, self.lessGreen(v).g, self.lessBlue(v).b
-        return Color(rgb=rgb, a=self.a)
+        return color(rgb=rgb, a=self.a)
 
     def lessOpaque(self, v=0.5):
         u"""Answer a less opaque color of self. v = 0 gives full transparant.
         This converts to internal rgb storage.
 
-        >>> Color(1).lessOpaque()
+        >>> color(1).lessOpaque()
         Color(r=1, g=1, b=1, a=0.5)
         """
         c = copy(self)
@@ -832,7 +879,7 @@ class Color(object):
     def moreOpaque(self, v=0.5):
         u"""Answer a more opaque color of self. v = 1 gives full opaque.
 
-        >>> Color(0, a=0).moreOpaque()
+        >>> color(0, a=0).moreOpaque()
         Color(r=0, g=0, b=0, a=0.5)
         """
         c = copy(self)
@@ -842,15 +889,15 @@ class Color(object):
     def _get_name(self):
         u"""Answer the name of the CSS color that is closest to the current self.rgb
 
-        >>> Color('red').name
+        >>> color('red').name
         'red'
-        >>> Color(0x00fa9a).name
+        >>> color(0x00fa9a).name
         'mediumspringgreen'
-        >>> Color(0x800000).name
+        >>> color(0x800000).name
         'maroon'
-        >>> Color(0x828085).name # Real value for 'gray' is 0x808080
+        >>> color(0x828085).name # Real value for 'gray' is 0x808080
         'gray'
-        >>> Color(0xffe4e1).name, Color(0xffe4f1).name, Color(0xffe4f8).name
+        >>> color(0xffe4e1).name, color(0xffe4f1).name, color(0xffe4f8).name
         ('mistyrose', 'mistyrose', 'lavenderblush')
         """
         if self._name is None:
@@ -858,11 +905,25 @@ class Color(object):
         return self._name
     name = property(_get_name)
 
-class NoneColor(Color):
-    def __init__(self, r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None):
-        Color.__init__(self) # Force all values to None
+def color(r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None, ral=None, name=None):
+    return Color(r=r, g=g, b=b, a=a, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk, spot=spot, ral=ral, name=name)
 
-noneColor = NoneColor() 
+# Some predefined Color instances that are often used.
+noColor = color(a=0) # Set to no-drawing (DrawBot fill(None) setting)
+inheritColor = color(a=-1) # Complete transparent, ignore setting the color. Draw color as previously.
+blackColor = color(0)
+lightGrayColor = color(0.25)
+grayColor = color(0.5)
+darkGrayColor = color(0.75)
+whiteColor = color(1)
+# RGB
+redColor = color(1, 0, 0)
+greenColor = color(0, 1, 0)
+blueColor = color(0, 0, 1)
+# CMYK
+yellowColor = color(c=0, m=0, y=1, k=0)
+magentaColor = color(c=0, m=1, y=0, k=0)
+cyanColor = color(c=1, m=0, y=0, k=0)
 
 if __name__ == "__main__":
     import doctest

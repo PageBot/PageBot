@@ -39,7 +39,7 @@ except (ImportError, AttributeError):
 
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
-from pagebot.toolbox.color import Color, noneColor
+from pagebot.toolbox.color import Color, color, noColor, inheritColor
 from pagebot.toolbox.units import isUnit, units
 from pagebot.constants import *
 
@@ -501,8 +501,8 @@ class DrawBotContext(BaseContext):
 
         >>> context = DrawBotContext()
         >>> fs = context.newString('Hello')
-        >>> context.textFill(fs, Color(r=0.5)) # Same as setTextFillColor
-        >>> context.textFill(fs, Color('red'))
+        >>> context.textFill(fs, color(r=0.5)) # Same as setTextFillColor
+        >>> context.textFill(fs, color('red'))
         """
         self.setFillColor(r=r, g=g, b=b, builder=fs, **kwargs)
 
@@ -514,7 +514,7 @@ class DrawBotContext(BaseContext):
         >>> context = DrawBotContext()
         >>> fs = context.newString('Hello')
         >>> context.textStroke(fs, r=0.5) # Same as setTextStrokeColor
-        >>> context.textStroke(fs, Color('red'), w=pt(10))
+        >>> context.textStroke(fs, color('red'), w=pt(10))
         """
         self.setStrokeColor(r=r, g=g, b=b, builder=fs, **kwargs)
 
@@ -525,26 +525,28 @@ class DrawBotContext(BaseContext):
 
         >>> context = DrawBotContext()
         >>> context.fill(r=0.5) # Same as setFillColor
-        >>> context.fill(Color('red'))
+        >>> context.fill(color('red'))
         >>> context.fill()
-        >>> context.fill(noneColor)
+        >>> context.fill(noColor)
         """
         if isinstance(r, Color): # First attribute can be a Color instance.
-            color = r
-        elif r is None and rgb is None and c is None and cmyk is None and spot is None and name is None:
-            color = noneColor
-        else:
-            color = Color(r=r, g=g, b=b, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk, spot=spot, ral=ral, name=name)
+            fColor = r
+        else: # Answer Color or noColor or inheritColor
+            fColor = color(r=r, g=g, b=b, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk, spot=spot, ral=ral, name=name)
+        
         if builder is None: # Builder can be optional DrawBot FormattedString
             builder = self.b
-        if color is noneColor:
+        
+        if fColor is inheritColor: # Keep color setting as it is.
+            pass
+        elif fColor is noColor:
             builder.fill(None) # Set color to no-color
-        if color.isRgb or color.isSpot: # No spot color support in DrawBot, conver to closest RGB
-            builder.fill(color.rgb)
-        elif color.isCmyk:
-            builder.cmykFill(color.cmyk)
+        if fColor.isRgb or fColor.isSpot: # No spot color support in DrawBot, conver to closest RGB
+            builder.fill(fColor.rgb)
+        elif fColor.isCmyk:
+            builder.cmykFill(fColor.cmyk)
         else:
-            raise ValueError('DrawBotContext.setFillColor: Error in color format "%s"' % color)
+            raise ValueError('DrawBotContext.setFillColor: Error in color format "%s"' % fColor)
 
     fill = setFillColor # DrawBot compatible API
 
@@ -564,26 +566,28 @@ class DrawBotContext(BaseContext):
 
         >>> context = DrawBotContext()
         >>> context.stroke(r=0.5) # Same as setStrokeColor
-        >>> context.stroke(Color('red'))
+        >>> context.stroke(color('red'))
         >>> context.stroke()
-        >>> context.stroke(noneColor)
+        >>> context.stroke(noColor)
         """
         if isinstance(r, Color): # First attribute can be a Color instance.
-            color = r
-        elif r is None and rgb is None and c is None and cmyk is None and spot is None and name is None:
-            color = noneColor
-        else:
-            color = Color(r=r, g=g, b=b, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk, spot=spot, ral=ral, name=name)
+            sColor = r
+        else: # Answer Color or noColor or inheritColor
+            sColor = color(r=r, g=g, b=b, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk, spot=spot, ral=ral, name=name)
+        
         if builder is None: # Builder can be optional DrawBot FormattedString
             builder = self.b
-        if color is noneColor:
+        
+        if sColor is inheritColor: # Keep color setting as it is.
+            pass
+        if sColor is noColor:
             builder.stroke(None) # Set color to no-color
-        if color.isRgb or color.isSpot: # No spot color support in DrawBot, conver to closest RGB
-            builder.stroke(color.rgb)
-        elif color.isCmyk:
-            builder.cmykStroke(color.cmyk)
+        if sColor.isRgb or sColor.isSpot: # No spot color support in DrawBot, conver to closest RGB
+            builder.stroke(sColor.rgb)
+        elif sColor.isCmyk:
+            builder.cmykStroke(sColor.cmyk)
         else:
-            raise ValueError('DrawBotContext.setStrokeColor: Error in color format "%s"' % color)
+            raise ValueError('DrawBotContext.setStrokeColor: Error in color format "%s"' % sColor)
         if w is not None:
             self.strokeWidth(w)
 

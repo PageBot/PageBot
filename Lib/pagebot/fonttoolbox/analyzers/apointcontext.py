@@ -70,6 +70,109 @@ class APointContext(object):
     def __getitem__(self, index):
         return self.p[index]
 
+    def __lt__(self, p):
+        u"""Compare the points.
+
+        >>> o = APoint((0, 0))
+        >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o))
+        >>> pc2 = APointContext((o, o, o, APoint((200, 200)), o, o, o))
+        >>> pc3 = APointContext((o, o, o, APoint((200, 200)), o, o, o))
+        >>> pc1 < pc2
+        True
+        >>> pc2 < pc3
+        False
+        """
+        return self.p < p.p
+        
+    def __le__(self, p):
+        u"""Compare the points.
+
+        >>> o = APoint((0, 0))
+        >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o))
+        >>> pc2 = APointContext((o, o, o, APoint((200, 200)), o, o, o))
+        >>> pc3 = APointContext((o, o, o, APoint((200, 199)), o, o, o))
+        >>> pc1 < pc2
+        True
+        >>> pc2 <= pc3
+        False
+        """
+        return self.p <= p.p
+        
+    def __gt__(self, p):
+        u"""Compare the points.
+
+        >>> o = APoint((0, 0))
+        >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o))
+        >>> pc2 = APointContext((o, o, o, APoint((200, 200)), o, o, o))
+        >>> pc3 = APointContext((o, o, o, APoint((200, 199)), o, o, o))
+        >>> pc1 > pc2
+        False
+        >>> pc2 > pc3
+        True
+        """
+        return self.p > p.p
+        
+    def __ge__(self, p):
+        u"""Compare the points.
+
+        >>> o = APoint((0, 0))
+        >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o))
+        >>> pc2 = APointContext((o, o, o, APoint((200, 200)), o, o, o))
+        >>> pc3 = APointContext((o, o, o, APoint((200, 199)), o, o, o))
+        >>> pc1 >= pc2
+        False
+        >>> pc2 >= pc3
+        True
+        """
+        return self.p >= p.p
+        
+    def __sub__(self, p):
+        u"""Subtract the points. Result is a point3D tuple.
+
+        >>> APoint((200, 500)) - APoint((100, 300))
+        (100, 200, 0)
+        >>> APoint((200, 500, 10)) - APoint((100, 300))
+        (100, 200, 10)
+        >>> APoint((200, 500, 10)) - APoint((-100, -300, -100))
+        (300, 800, 110)
+        """
+        return self.p[0] - p[0], self.p[1] - p[1], self.p[2] - p[2]
+
+    def __add__(self, p):
+        u"""Add the points. Result is a point3D tuple.
+
+        >>> APoint((200, 500)) + APoint((100, 300))
+        (300, 800, 0)
+        >>> APoint((200, 500, 10)) + APoint((100, 300))
+        (300, 800, 10)
+        >>> APoint((200, 500, 10)) + APoint((-100, -300, -100))
+        (100, 200, -90)
+        """
+        return self.p[0] + p[0], self.p[1] + p[1], self.p[2] + p[2]
+
+    def __mul__(self, v):
+        u"""Multiple the point with a scalar. Result is a point3D tuple.
+
+        >>> APoint((200, 500)) * 2
+        (400, 1000, 0)
+        >>> APoint((200, 500, 10)) * 2
+        (400, 1000, 20)
+        """
+        assert isinstance(v, (int, float))
+        return self.p[0] * v, self.p[1] * v, self.p[2] * v
+
+    def __div__(self, v):
+        u"""Divide the point by a scalar. Result is a point3D tuple.
+
+        >>> APoint((200, 500)) / 2
+        (100, 250, 0)
+        >>> APoint((200, 500, 10)) / 2
+        (100, 250, 5)
+        """
+        assert isinstance(v, (int, float))
+        return self.p[0] / v, self.p[1] / v, self.p[2] / v
+
+
     def _get_x(self):
         return self.p.x
     x = property(_get_x)
@@ -451,3 +554,12 @@ class APointContext(object):
         return None
 
     prevOnCurvePoint = property(_get_prevOnCurvePoint)
+
+
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
+
+

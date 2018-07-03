@@ -15,7 +15,7 @@
 #     markers.py
 #
 from pagebot.toolbox.transformer import point3D
-from pagebot.toolbox.color import Color, noneColor
+from pagebot.toolbox.color import Color, noColor
 
 def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
     u"""Draw registration mark as position x, y.
@@ -33,8 +33,8 @@ def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
     else:
         dx = cmSize
         dy = cmSize/2
-    context.fill(noneColor)
-    context.stroke(Color(c=1, m=1, y=1, k=1), w=cmStrokeWidth)
+    context.fill(noColor)
+    context.stroke(color(c=1, m=1, y=1, k=1), w=cmStrokeWidth)
     context.newPath()
     # Registration circle
     context.oval(x - cmSize/4, y - cmSize/4, cmSize/2, cmSize/2)

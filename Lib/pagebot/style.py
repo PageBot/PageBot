@@ -21,7 +21,7 @@
 import copy
 from pagebot.constants import *
 from pagebot.toolbox.units import pt, em, isUnit
-from pagebot.toolbox.color import Color, noneColor
+from pagebot.toolbox.color import color, noColor, blackColor, redColor
 
 def newStyle(**kwargs):
     return dict(**kwargs)
@@ -292,13 +292,13 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         verbose = True,
 
         # Element color
-        fill = noneColor, # Default is no color for filling rectangle. Instead textFill color is set default black.
-        stroke = noneColor, # Default is to have no stroke on drawing elements. Not for text.
+        fill = noColor, # Default is no color for filling rectangle. Instead textFill color is set default black.
+        stroke = noColor, # Default is to have no stroke on drawing elements. Not for text.
         strokeWidth = None, # Stroke thickness for drawing element, not text.
 
         # Text color
-        textFill = Color(0), # Separate between the fill of a text box and the color of the text itself.
-        textStroke = noneColor, # Stroke color of text.
+        textFill = blackColor, # Separate between the fill of a text box and the color of the text itself.
+        textStroke = noColor, # No stroke of color text by default.
         textStrokeWidth = None,
         textShadow = None,
         textGradient = None,
@@ -314,22 +314,22 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # as view may locally change these values.
 
         # Grid stuff for showing
-        viewGridFill = Color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.1), # Fill color for (cw, ch) squares.
-        viewGridStroke = Color(r=0.3, g=0.3, b=0.6), # Stroke of grid lines in part of a template.
+        viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.1), # Fill color for (cw, ch) squares.
+        viewGridStroke = color(r=0.3, g=0.3, b=0.6), # Stroke of grid lines in part of a template.
         viewGridStrokeWidth = pt(0.5), # Line thickness of the grid.
 
         # Page padding grid
-        viewPagePaddingStroke = Color(r=0.4, g=0.4, b=0.7), # Stroke of page padding lines, if view.showPagePadding is True
+        viewPagePaddingStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page padding lines, if view.showPagePadding is True
         viewPagePaddingStrokeWidth = pt(0.5), # Line thickness of the page padding lines.
 
         # Baseline grid
-        viewBaselineGridStroke = Color('red'), # Stroke color of baselines grid.
+        viewBaselineGridStroke = redColor, # Stroke color of baselines grid.
 
         # Draw connection arrows between the flow boxes on a page.
-        viewFlowConnectionStroke1 = Color(r=0.2, g=0.5, b=0.1, a=1), # Stroke color of flow lines inside column,
-        viewFlowConnectionStroke2 = Color(r=1, g=0, b=0, a=1), # Stroke color of flow lines between columns.
+        viewFlowConnectionStroke1 = color(r=0.2, g=0.5, b=0.1, a=1), # Stroke color of flow lines inside column,
+        viewFlowConnectionStroke2 = color(r=1, g=0, b=0, a=1), # Stroke color of flow lines between columns.
         viewFlowConnectionStrokeWidth = pt(1.5), # Line width of curved flow lines.
-        viewFlowMarkerFill = Color(r=0.8, g=0.8, b=0.8, a=0.5), # Fill of flow curve marker circle.
+        viewFlowMarkerFill = color(r=0.8, g=0.8, b=0.8, a=0.5), # Fill of flow curve marker circle.
         viewFlowMarkerSize = pt(8), # Size of flow marker circle.
         viewFlowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
 
@@ -349,12 +349,12 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         viewInfoFont = DEFAULT_FONT_PATH, # Font of text in element infoBox.
         viewInfoFontSize = pt(4), # Font size of text in element info box.
         viewInfoLeading = pt(5), # Leading of text in element info box.
-        viewInfoFill = Color(r=0.8, g=0.8, b=0.8, a=0.9), # Color of text in element info box.
-        viewInfoTextFill = Color(r=0.1, g=0.1, b=0.1), # Color of text in element info box.
+        viewInfoFill = color(r=0.8, g=0.8, b=0.8, a=0.9), # Color of text in element info box.
+        viewInfoTextFill = color(r=0.1, g=0.1, b=0.1), # Color of text in element info box.
         viewInfoOriginMarkerSize = pt(4), # Radius of the info origin crosshair marker.
 
         # Generic element stuff
-        viewMissingElementFill = Color(r=0.7, g=0.7, b=0.7, a=0.8), # Background color of missing element rectangles.
+        viewMissingElementFill = color(r=0.7, g=0.7, b=0.7, a=0.8), # Background color of missing element rectangles.
 
 
     )

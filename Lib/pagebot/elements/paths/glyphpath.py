@@ -16,7 +16,7 @@
 #
 from pagebot.elements.paths.pbpath import Path
 from pagebot.toolbox.transformer import pointOffset
-from pagebot.toolbox.color import noneColor
+from pagebot.toolbox.color import noColor
 from pagebot.style import DEFAULT_HEIGHT, DEFAULT_WIDTH, ORIGIN
 
 class GlyphPath(Path):
@@ -89,10 +89,10 @@ class GlyphPath(Path):
         # If there is a path filter defined, then call that the draw and ignore regular drawing.
         if self.pathFilter is not None:
             self.pathFilter(self, self.glyph.path, view)
-        elif self.css('fill') is not noneColor or self.css('stroke') is not noneColor:
+        elif self.css('fill') is not noColor or self.css('stroke') is not noColor:
             # Not path filter defined, draw by regular stroke/fill.
             context.setFillColor(self.css('fill'))
-            context.setStrokeColor(self.css('stroke', noneColor), (self.css('strokeWidth') or 20))
+            context.setStrokeColor(self.css('stroke', noColor), (self.css('strokeWidth') or 20))
             context.strokeWidth(20)
             context.drawPath(self.glyph.path)
         context.restore()

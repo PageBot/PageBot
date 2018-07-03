@@ -36,7 +36,7 @@ def run():
 	textWidth, textHeight = context.textSize(bs)
 
 	# set a red stroke color
-	strokeColor = Color(1, 0, 0) # Color instance can translate into any other color type.
+	strokeColor = color(1, 0, 0) # Color instance can translate into any other color type.
 	context.stroke(strokeColor)
 	# loop over all font metrics
 	for metric in (0, bs.fontDescender(), bs.fontAscender(), bs.fontXHeight(), bs.fontCapHeight()):

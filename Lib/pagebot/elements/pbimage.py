@@ -22,7 +22,7 @@ from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN # In case no image is defined.
 from pagebot.toolbox.transformer import pointOffset, point2D
 from pagebot.conditions import Float2TopSide, Top2TopSide, Fit2Width
-from pagebot.toolbox.color import noneColor
+from pagebot.toolbox.color import noColor
 
 class Image(Element):
     u"""The Image element is a “normal” container, which contains one (or more) PixelMap elements and zero (or more)
@@ -255,7 +255,7 @@ class PixelMap(Element):
 
     def _getAlpha(self):
         u"""Use alpha channel of the fill color as opacity of the image."""
-        sFill = self.css('fill', noneColor)
+        sFill = self.css('fill', noColor)
         if isinstance(sFill, (tuple, list)) and len(sFill) == 4:
             _, _, _, alpha = sFill
         else:

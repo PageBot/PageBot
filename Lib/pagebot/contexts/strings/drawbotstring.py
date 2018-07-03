@@ -29,7 +29,7 @@ from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 from pagebot.toolbox.future import chr
 from pagebot.fonttoolbox.objects.font import getFont, getInstance
-from pagebot.toolbox.color import Color, noneColor
+from pagebot.toolbox.color import Color, color, noColor, inheritColor, blackColor
 
 def pixelBounds(fs):
     u"""Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
@@ -90,11 +90,11 @@ class DrawBotString(BabelString):
         >>> context = DrawBotContext()
         >>> context.isDrawBot
         True
-        >>> bs = DrawBotString('ABC', context)
         """
 
         """
         TODO: Get this docTest to work.
+        >>> bs = DrawBotString('ABC', context)
         >>> bs
         ABC
         """
@@ -420,15 +420,30 @@ class DrawBotString(BabelString):
         if sFallbackFont is not None:
             fs.fallbackFont(sFallbackFont)
 
-        sFill = css('textFill', e, style, Color(0)) # Default is Color(0)-->black, not noneColor
-        if sFill != noneColor: # Test on this flag, None is valid value
-            assert isinstance(sFill, Color)
-            context.setTextFillColor(fs, sFill.rgb)
-        sStroke = css('textStroke', e, style, noneColor)
+        # Color values for text fill
+        # Color: Fill the text with this color instance
+        # noColor: Set the value to None, no fill will be drawn
+        # inheritColor: Don't set color, inherit the current setting for fill
+        sFill = css('textFill', e, style, blackColor) # Default is blackColor, not noColor
+        if sFill != inheritColor: # Test on this flag, None is valid value
+            if sFill is noColor: # None is value to disable fill drawing.
+                context.setTextFillColor(fs, None)
+            else:
+                assert isinstance(sFill, Color)
+                context.setTextFillColor(fs, sFill.rgb)
+
+        # Color values for text stroke
+        # Color: Stroke the text with this color instance
+        # noColor: Set the value to None, no stroke will be drawn
+        # inheritColor: Don't set color, inherit the current setting for stroke
+        sStroke = css('textStroke', e, style, noColor)
         sStrokeWidth = css('textStrokeWidth', e, style)
-        if sStroke != noneColor and sStrokeWidth is not None:
-            assert isinstance(sStroke, Color)
-            context.setTextStrokeColor(fs, sStroke.rgb, w=sStrokeWidth)
+        if sStroke != inheritColor and sStrokeWidth is not None:
+            if sStroke is noColor: # None is value to disable stroke drawing
+                context.setTextStrokeColor(fs, None)
+            else:
+                assert isinstance(sStroke, Color)
+                context.setTextStrokeColor(fs, sStroke.rgb, w=sStrokeWidth)
         sTextAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
         if sTextAlign is not None: # yTextAlign must be solved by parent container element.
             fs.align(sTextAlign)

@@ -24,7 +24,7 @@ from pagebot.contexts.strings.htmlstring import HtmlString
 from pagebot.style import DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 from pagebot.constants import *
 from pagebot.toolbox.dating import seconds
-from pagebot.toolbox.color import noneColor
+from pagebot.toolbox.color import noColor
 
 class SvgContext(BaseContext):
     u"""An SvgContext uses svgwrite to export as SVG drawing."""
@@ -47,8 +47,8 @@ class SvgContext(BaseContext):
         """
         self.b = svgBuilder
         self._filePath = self.TMP_PATH % uniqueID()
-        self._fill = noneColor
-        self._stroke = noneColor
+        self._fill = noColor
+        self._stroke = noColor
         self._strokeWidth = pt(0)
         self._frameDuration = seconds(1)
         self._fontSize = DEFAULT_FONT_SIZE
@@ -104,10 +104,10 @@ class SvgContext(BaseContext):
         >>> from pagebot.toolbox.color import Color
         >>> path = '~/SvgContext_rect.svg'
         >>> context = SvgContext()
-        >>> context.fill((Color(r=1, g=0, b=0.5)))
+        >>> context.fill((color(r=1, g=0, b=0.5)))
         >>> context.rect(pt(0), pt(100), pt(600), pt(200))
         >>> context.stroke(pt(0), pt(20))
-        >>> context.fill((Color(r=0.4, g=0.1, b=0.9)))
+        >>> context.fill((color(r=0.4, g=0.1, b=0.9)))
         >>> context.rect(pt(300), pt(150), pt(400), pt(600))
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
@@ -120,13 +120,13 @@ class SvgContext(BaseContext):
     def oval(self, x, y, w, h):
         u"""Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
 
-        >>> from pagebot.toolbox.color import Color
+        >>> from pagebot.toolbox.color import color, blackColor
         >>> path = '~/SvgContext_oval.svg'
         >>> context = SvgContext()
-        >>> context.fill(Color(r=1, g=0, b=0.5))
+        >>> context.fill(color(r=1, g=0, b=0.5))
         >>> context.oval(pt(0), pt(100), pt(600), pt(200))
-        >>> context.stroke(Color(0), pt(20))
-        >>> context.fill(Color(r=0.4, g=0.1, b=0.9))
+        >>> context.stroke(blackColor, pt(20))
+        >>> context.fill(color(r=0.4, g=0.1, b=0.9))
         >>> context.oval(pt(300), pt(150), pt(400), pt(600))
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
@@ -139,13 +139,13 @@ class SvgContext(BaseContext):
     def circle(self, x, y, r):
         u"""Circle draws a DrawBot oval with (x,y) as middle point and radius r.
 
-        >>> from pagebot.toolbox.color import Color
+        >>> from pagebot.toolbox.color import color, blackColor
         >>> path = '~/SvgContext_circle.svg'
         >>> context = SvgContext()
-        >>> context.fill(Color(r=1, g=0, b=0.5))
+        >>> context.fill(color(r=1, g=0, b=0.5))
         >>> context.circle(pt(0), pt(100), pt(300))
-        >>> context.stroke(Color(0), pt(20))
-        >>> context.fill(Color(r=0.6, g=0.1, b=0.5))
+        >>> context.stroke(blackColor, pt(20))
+        >>> context.fill(color(r=0.6, g=0.1, b=0.5))
         >>> context.circle(pt(300), pt(150), pt(200))
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
@@ -173,7 +173,7 @@ class SvgContext(BaseContext):
         self._drawing.add(line)
 
     def setFillColor(self, c):
-        if c is noneColor:
+        if c is noColor:
             self._fill = 'none'
         else:
             r, g, b = c.rgb
@@ -182,7 +182,7 @@ class SvgContext(BaseContext):
     fill = setFillColor
 
     def setStrokeColor(self, c, strokeWidth=None):
-        if c is noneColor:
+        if c is noColor:
             self._fill = 'none'
         else:
             r, g, b = c.rgb
@@ -257,10 +257,10 @@ class SvgContext(BaseContext):
         >>> context = SvgContext()
         >>> context.fontSize(pt(100))
         >>> context.font('Verdana-Bold') # TODO: Match with font path.
-        >>> context.fill(Color(r=1, g=0, b=0.5))
+        >>> context.fill(color(r=1, g=0, b=0.5))
         >>> context.text('ABCDEF', (pt(100), pt(200)))
-        >>> context.fill(Color(r=1, g=0, b=1))
-        >>> context.stroke(Color(r=0.5, g=0, b=0.5), pt(5))
+        >>> context.fill(color(r=1, g=0, b=1))
+        >>> context.stroke(color(r=0.5, g=0, b=0.5), pt(5))
         >>> context.text('ABCDEF', (pt(100), pt(300)))
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)

@@ -20,16 +20,17 @@
 #
 #     Absolute units
 #     Millimeters MM = 0.0393701 * INCH
+#     mm, Mm       Millimeters
 #     p, P         Picas 1/6"
 #     pt, Pt       Points 1/72"
 #     inch, Inch 
-#     px, Px       Equal to points (for now)
 #
 #     Relative units, using base and gutter as reference
 #     em, Em       Relative to e.fontSize as base
 #     perc, Perc   Relative to 100%
 #     fr, Fr       Fraction columns for CSS-grid, without gutter
 #     col, Col     Same as fr, using gutter. Works vertical as rows as well.
+#     px, Px       Equal to points (for now)
 
 from __future__ import division # Make integer division result in float.
 
@@ -153,7 +154,7 @@ class Unit(object):
 
         >>> mm(1)
         1mm
-        >>> mm(10)*8
+        >>> mm(10) * 8
         80mm
         >>> fr(2) * 3
         6fr
@@ -164,6 +165,8 @@ class Unit(object):
         >>> perc(12.4) * 2
         24.8%
         >>> u = perc(15) + 5
+        >>> u
+        20%
         >>> u.base = pt(440)
         >>> u, u.r # Respectively: instance to str, rendered to u.base
         (20%, 88pt)
@@ -415,7 +418,7 @@ class Unit(object):
         elif isUnit(u):
             u0.pt += u.pt # Adding units, calculate via points
         else:
-            raise ValueError, ('Cannot Add "%s" by "%s"' % (self, u))
+            raise ValueError('Cannot Add "%s" by "%s"' % (self, u))
         return u0
 
     def __sub__(self, u):
@@ -435,7 +438,7 @@ class Unit(object):
         elif isUnit(u):
             u0.pt -= u.pt # Subtracting units, calculate via points
         else:
-            raise ValueError, ('Cannot Subtract "%s" by "%s"' % (self, u))
+            raise ValueError('Cannot Subtract "%s" by "%s"' % (self, u))
         return u0
 
     def __div__(self, u):
@@ -459,7 +462,7 @@ class Unit(object):
             assert upt, ('Zero division "%s/%s"' % (u0, u))
             u0 = u0.pt / upt # Dividing units, create ratio float number.
         else:
-            raise ValueError, ('Cannot divide "%s" by "%s"' % (u0, u))
+            raise ValueError('Cannot divide "%s" by "%s"' % (u0, u))
         return u0
 
     __truediv__ = __div__
@@ -481,7 +484,7 @@ class Unit(object):
         if isinstance(u, (int, float)): # One is a scalar, just multiply
             u0.v *= u
         else:
-            raise ValueError, ('Cannot multiply "%s" by "%s"' % (u0, u))
+            raise ValueError('Cannot multiply "%s" by "%s"' % (u0, u))
         return u0
 
     def __neg__(self):
