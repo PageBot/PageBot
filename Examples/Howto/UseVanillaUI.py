@@ -16,12 +16,13 @@
 
 import sys
 from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
 
 import AppKit
-from vanilla import FloatingWindow
+from vanilla import FloatingWindow, Window, CheckBox, Button
 #from DrawBot.misc import DrawBotError
 
 class VariableController(object):
@@ -131,7 +132,8 @@ def getController():
 #                                                          document)
     return controller
 
-w = vanilla.Window((978, 388, 400, 400), 'Test Vanilla in DrawBot')
-w.button = vanilla.Button((10, 10, 150, 30), 'Do', callback=do)
-w.checkbox = vanilla.CheckBox((10, 150, 150, 30), 'Check', callback=do)
+
+w = Window((978, 388, 400, 400), 'Test Vanilla in DrawBot')
+w.button = Button((10, 10, 150, 30), 'Do', callback=do)
+w.checkbox = CheckBox((10, 150, 150, 30), 'Check', callback=do)
 w.open()

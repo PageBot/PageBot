@@ -27,6 +27,7 @@ from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.constants import LEFT, CENTER, RIGHT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
+from pagebot.toolbox.units import Pt
 
 class InDesignContext(BaseContext):
     u"""A InDesignContext instance combines the specific functions of the InDesign JS-API
@@ -38,7 +39,7 @@ class InDesignContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = BabelString
-    EXPORT_TYPES = ('indd.js',)
+    EXPORT_TYPES = ('jsx',)
 
     def __init__(self):
         u"""Constructor of InDesignContext.
@@ -66,6 +67,16 @@ class InDesignContext(BaseContext):
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
 
+    def getInDesignScriptPath(self):
+        u"""Answer the user local script path. For now this assumes one version of InDesign. 
+        TODO: Should be made more generic.
+
+        >>> context = InDesignContext()
+        >>> context.getInDesignScriptPath().endswith('/PageBot/')
+        True
+        """
+        return self.b.getInDesignScriptPath()
+
     #   S C R E E N
 
     def screenSize(self):
@@ -74,12 +85,10 @@ class InDesignContext(BaseContext):
 
     #   D O C U M E N T
 
-    def newDocument(self, w, h, title=None, pageCount=None, units='pt'):
+    def newDocument(self, w, h):
         u"""Create a new document"""
-        self.title = title
-        self.pageCount = pageCount
-        self.units = units
-        self.b.newDocument(w, h, title, pageCount)
+        self.units = Pt.UNIT
+        self.b.newDocument(w, h)
 
     def saveDocument(self, path, multiPage=None):
         u"""Select other than standard InDesign export builders here.

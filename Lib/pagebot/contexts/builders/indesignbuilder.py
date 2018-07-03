@@ -26,10 +26,11 @@ import codecs
 from pagebot.contexts.builders.basebuilder import BaseBuilder
 from pagebot.toolbox.transformer import value2Bool
 from pagebot.toolbox.dating import now
-from pagebot.toolbox.units import UNIT_PT
+from pagebot.toolbox.units import Pt
 from pagebot.toolbox.color import Color
 from pagebot.toolbox.transformer import object2SpacedString, asFormatted
 from pagebot.constants import A4Rounded
+from pagebot.toolbox.units import us # Render unit value
 
 class BezierPath(object):
     u"""Make BezierPath with the same API for DrawBotBuilder drawing.
@@ -81,43 +82,50 @@ class InDesignBuilder(BaseBuilder):
     >>> W, H = A4Rounded
     >>> b = InDesignBuilder()
     >>> b.compact = True
-    >>> b.newDocument(W, H, 'My Document', 23, 'pt')
+    >>> b.newDocument(W, H)
     >>> b.getJs(newLine=False).startswith('/* Created by PageBot */')
     True
     >>> b.newPage()
-    >>> b.oval(100, 100, 200, 200)
-    >>> scriptPath = '_export/InDesign.indd.js'
+    >>> b.oval(100, 100, 200, 200) # x, y, w, h
+    >>> b.rect(300, 100, 100, 200)
+    >>> b.rect(100, 300, 200, 100)
+    >>> b.oval(300, 300, 100, 100)
+    >>> scriptPath = '_export/InDesign.jsx'
     >>> b.writeJs(scriptPath)
-    >>> inDesignPath = '/Applications/Adobe InDesign CC 2018/Adobe InDesign CC 2018.app/Contents/MacOS/Adobe InDesign CC 2018'
-    >>> #if os.path.exists(indesignPath):
-    >>> #    os.system('%s %s' % (inDesignPath, scriptPath))
+    >>> scriptPath = b.getInDesignScriptPath()
+    >>> if not os.path.exists(scriptPath):
+    ...     os.makedirs(scriptPath)
+    >>> scriptPath += 'InDesignExample2.jsx'
+    >>> b.writeJs(scriptPath)
     """
     PB_ID = 'indesign' # Id to make build_indesign hook name. Views will be calling e.build_html()
-    
+    INDESIGN_SCRIPT_PATH = '~/Library/Preferences/Adobe InDesign/Version 13.0/en_US/Scripts/Scripts Panel/PageBot/'
+
     def __init__(self):
+        self.openDocument = True # Set to False if document creation should run in background.
         self.title = None
         self._jsOut = []
         self._initialize()
         self.w, self.h = A4Rounded
         self._path = None
         self._hyphenation = False
-        self.units = UNIT_PT 
 
     def _initialize(self):
         self.comment('Created by PageBot')
 
     #   Chunks of InDesign functions
 
-    def newDocument(self, w, h):
+    def newDocument(self, w, h, units='pt'):
         u"""Create a new document. Store the (w, h) for the moment that pages are created."""
         self.w = w
         self.h = h
+        self.units = units
         # Creates a new document without showing the document window.
         # The first parameter (showingWindow) controls the visibility of the document.
         # Hidden documents are not minimized, and will not appear until you add a new window to the document.
         if self.title:
             self.comment('--- %s ---' % (self.title or 'Untitled'))
-        self.addJs('var myDocument = app.documents.add(false);') # Make document in background
+        self.addJs('var myDocument = app.documents.add(%s);' % str(self.openDocument).lower()) # Make document in background
         self.addJs('var myPage;') # Storage of current page
         self.addJs('var myElement;') # Storage of current parent element
         self.addJs('var myTextFrame;') # Storage of current text frame.
@@ -145,13 +153,20 @@ class InDesignBuilder(BaseBuilder):
     #   E L E M E N T S
 
     def line(self, p1, p2):
-        self.addJs('myElement = myPage.lines.add();')
-      
+        u = self.units
+        self.addJs('myElement = myPage.paths.add();')
+        self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (us(p1[0],u), us(p1[1],u), us(p2[0],u), us(p2[1],u)))
+        
     def oval(self, x, y, w, h):
-        self.addJs('myElement = myPage.ellipses.add();')
+        u"""Export the InDesign bounding box for the Oval."""
+        u = self.units
+        self.addJs('myElement = myPage.ovals.add();')
+        self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
 
     def rect(self, x, y, w, h):
-        self.addJs('myElement = myPage.rects.add();')
+        u = self.units
+        self.addJs('myElement = myPage.rectangles.add();')
+        self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
 
     #   J S
 
@@ -190,6 +205,16 @@ class InDesignBuilder(BaseBuilder):
             f.close()
         except IOError:
             print('[%s.writeCss] Cannot write JS file "%s"' % (self.__class__.__name__, path))
+
+    def getInDesignScriptPath(self):
+        u"""Answer the user local script path. For now this assumes one version of InDesign. 
+        TODO: Should be made more generic.
+
+        >>> b = InDesignBuilder()
+        >>> b.getInDesignScriptPath().endswith('/PageBot/')
+        True
+        """
+        return os.path.expanduser(self.INDESIGN_SCRIPT_PATH)
 
     # N O N - J S
 

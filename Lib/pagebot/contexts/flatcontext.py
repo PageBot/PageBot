@@ -16,10 +16,12 @@
 #     http://xxyxyz.org/flat
 #
 #import imageio
+from pagebot.toolbox.units import pt, Pt, units, ru
+from pagebot.toolbox.color import noneColor, Color
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
-from pagebot.style import NO_COLOR, LEFT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
+from pagebot.constants import *
 
 def iround(value):
     return min(255, max(0, int(round(value*255.0))))
@@ -35,7 +37,7 @@ class FlatContext(BaseContext):
 
     Text behavior:
     st = strike(font)
-        st.size(size, leading=0.0, units='pt')
+        st.size(size, leading=0.0, units=Pt.UNIT)
         st.color(color)
         st.width(string)
 
@@ -61,7 +63,7 @@ class FlatContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FlatString
-    EXPORT_TYPES = ('pdf', 'svg', 'png', 'jpg')
+    EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
 
     def __init__(self):
         u"""Constructor of Flat context.
@@ -69,20 +71,20 @@ class FlatContext(BaseContext):
         >>> context = FlatContext()
         >>> context.isFlat
         True
-        >>> context.newDocument(100, 100)
+        >>> context.newDocument(pt(100), pt(100))
         >>> context.doc.__class__.__name__
         'document'
         """
         # Keep status of last color, to make difference between fill and stroke colors.
         self.name = self.__class__.__name__
-        self._fill = None
-        self._stroke = None
-        self._strokeWidth = 0
+        self._fill = noneColor
+        self._stroke = noneColor
+        self._strokeWidth = Color(0)
         self._font = DEFAULT_FONT_PATH # Optional setting of the current font and fontSize
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
-        self._ox = 0 # Origin set by self.translate()
-        self._oy = 0
+        self._ox = pt(0) # Origin set by self.translate()
+        self._oy = pt(0)
         self._rotate = 0
 
         self._gState = [] # Stack of graphic states.
@@ -96,6 +98,8 @@ class FlatContext(BaseContext):
         self.style = None # Current open style
         self.shape = None # Current open shape
         self.flatString = None
+        self.unit = pt # Default is point document. Changed by w.
+        self.fileType = DEFAULT_FILETYPE
 
         self._path = None # Collect path commnands here before drawing the path.
 
@@ -107,17 +111,19 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
-    def newDocument(self, w, h, units='pt'):
+    def newDocument(self, w, h):
         u"""Create a new self.doc Flat canvas to draw on.
 
         >>> context = FlatContext()
         >>> context.isFlat
         True
-        >>> context.newDocument(100, 100)
+        >>> context.newDocument(pt(100), pt(100))
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)
         """
-        self.doc = self.b.document(w, h, units)
+        assert w.UNIT == h.UNIT
+        self.unit = w.UNIT
+        self.doc = self.b.document(w.r, h.r, w.UNIT)
         self.newPage(w, h)
 
     def saveDocument(self, path, multiPage=True):
@@ -125,71 +131,89 @@ class FlatContext(BaseContext):
 
         >>> import os
         >>> from pagebot import getRootPath
+        >>> from pagebot.toolbox.color import Color
         >>> exportPath = getRootPath() + '/_export' # _export/* Files are ignored in git
         >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
         >>> context = FlatContext()
-        >>> w, h = 100, 100
+        >>> w = h = pt(100)
+        >>> x = y = pt(0)
+        >>> c = Color(0)
+        >>> context.fileType = FILETYPE_JPG
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
-        >>> context.fill((0, 0, 0))
-        >>> context.rect(10, 10, w-20, h-20)
-        >>> context.saveDocument(exportPath + '/MyTextDocument_F.jpg') # Flat is too scrict with color-format match
-        >>> context.saveDocument(exportPath + '/MyTextDocument_F.pdf') # Flat is too scrict with color-format match
-        >>> context.saveDocument(exportPath + '/MyTextDocument_F.png')
+        >>> context.fill(c)
+        >>> context.rect(x, y, w-20, h-20)
+        >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_JPG) # Flat is too scrict with color-format match
+        >>> context.fileType = FILETYPE_PDF
+        >>> context.newDocument(w, h)
+        >>> context.newPage(w, h)
+        >>> context.fill(c)
+        >>> context.rect(x, y, w-20, h-20)
+        >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PDF) # Flat is too scrict with color-format match
+        >>> context.fileType = FILETYPE_PNG
+        >>> context.newDocument(w, h)
+        >>> context.newPage(w, h)
+        >>> context.fill(c)
+        >>> context.rect(x, y, w-20, h-20)
+        >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PNG)
         >>> context.saveDocument(exportPath + '/MyTextDocument_F.gif')
         [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
         """
         self.checkExportPath(path) # In case path starts with "_export", make sure that the directories exist.
-        extension = path.split('.')[-1]
-        if extension == 'png':
+        
+        RGB = 'rgb'
+        RGBA = 'rgba'
+
+        if self.fileType == FILETYPE_PNG:
             if len(self.pages) == 1 or not multiPage:
                 self.pages[0].image(kind='rgba').png(path)
             else:
                 for n, p in enumerate(self.pages):
-                    pagePath = path.replace('.png', '%03d.png' % n)
-                    p.image(kind='rgb').png(pagePath)
-        elif extension == 'jpg':
+                    pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
+                    p.image(kind=RGB).png(pagePath)
+        elif self.fileType == FILETYPE_JPG:
             if len(self.pages) == 1 or not multiPage:
-                self.pages[0].image(kind='rgb').jpeg(path)
+                self.pages[0].image(kind=RGB).jpeg(path)
             else:
                 for n, p in enumerate(self.pages):
-                    pagePath = path.replace('.png', '%03d.png' % n)
-                    p.image(kind='rgb').jpeg(pagePath)
-        elif extension == 'svg':
+                    pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
+                    p.image(kind=RGB).jpeg(pagePath)
+        elif self.fileType == FILETYPE_SVG:
             if len(self.pages) == 1 or not multiPage:
                 self.pages[0].svg(path)
             else:
                 for n, p in enumerate(self.pages):
-                    pagePath = path.replace('.png', '%03d.png' % n)
+                    pagePath = path.replace('.'+FILETYPE_SVG, '%03d.%s' % (n, FILETYPE_SVG))
                     p.svg(pagePath)
-        elif extension == 'pdf':
+        elif self.fileType == FILETYPE_PDF:
             self.doc.pdf(path)
-        elif extension == 'gif':
+        elif self.fileType == FILETYPE_GIF:
             print('[FlatContext] Gif not yet implemented for "%s"' % path.split('/')[-1])
         else:
             raise NotImplementedError('[FlatContext] File format "%s" is not implemented' % path.split('/')[-1])
 
     saveImage = saveDocument # Compatible API with DrawBot
 
-    def newPage(self, w, h, units='pt'):
+    def newPage(self, w, h):
         u"""Other page sizes than default in self.doc, are ignored in Flat.
 
         >>> context = FlatContext()
-        >>> w, h = 100, 100
+        >>> w = h = pt(100)
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
         """
         if self.doc is None:
-            self.newDocument(w, h, units)
+            self.newDocument(w, h)
         self.page = self.doc.addpage()
-        self.page.size(w, h, units='pt')
+        self.page.size(w.r, h.r)
         self.pages.append(self.page)
 
     def newDrawing(self):
         u"""Clear output canvas, start new export file.
 
         >>> context = FlatContext()
-        >>> context.newDocument(100, 100)
+        >>> w = h = pt(100)
+        >>> context.newDocument(w, h)
         """
         # FIXME: needs a width and height, so different from DrawBot?
         #context = FlatContext()
@@ -293,11 +317,11 @@ class FlatContext(BaseContext):
         >>> context.font(font.path)
         >>> context._font.endswith('/Roboto-Regular.ttf')
         True
-        >>> context.font('OtherFont', 12) # Font does not exists, font path is set to DEFAULT_FONT_PATH
+        >>> context.font('OtherFont', pt(12)) # Font does not exists, font path is set to DEFAULT_FONT_PATH
         >>> context._font == DEFAULT_FONT_PATH
         True
         >>> context._fontSize
-        12
+        12pt
         """
         from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 
@@ -308,35 +332,37 @@ class FlatContext(BaseContext):
     def fontSize(self, fontSize):
         u"""Set the current fontSize, in case it is not defined in a formatted string
 
+        >>> fontSize = pt(12)
         >>> context = FlatContext()
-        >>> context.fontSize(12)
+        >>> context.fontSize(fontSize)
         >>> context._fontSize
-        12
+        12pt
         """
         self._fontSize = fontSize
 
     def textBox(self, bs, rect):
         x, y, w, h = rect
         placedText = self.page.place(bs.s)
-        placedText.position(x, y)
+        placedText.position(x.r, y.r)
 
     def textSize(self, bs, w=None, h=None):
-        u"""Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
+        u"""Answer the size tuple (w, h) of the current text. Answer pt(0, 0) if there is no text defined.
         Answer the height of the string if the width w is given.
 
-        >>> w = h = 500
+        >>> w = h = pt(500)
+        >>> x = y = pt(0)
         >>> context = FlatContext()
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
-        >>> style = dict(font='Roboto-Regular', fontSize=12)
+        >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
         >>> bs = context.newString('ABC ' * 100, style=style)
         >>> t = context.page.place(bs.s)
-        >>> t = t.frame(0, 0, w, h)
+        >>> t = t.frame(x.r, y.r, w.r, h.r)
         >>> t.overflow()
         False
         >>> bs = context.newString('ABC ' * 100000, style=style)
         >>> t = context.page.place(bs.s)
-        >>> t = t.frame(0, 0, w, h)
+        >>> t = t.frame(x.r, y.r, w.r, h.r)
         >>> t.overflow()
         True
         >>> lines = t.lines()
@@ -347,9 +373,9 @@ class FlatContext(BaseContext):
 
         #t = placedtext(bs.s)
         if not bs.s:
-            return (0, 0)
+            return (pt(0), pt(0))
         elif w is None:
-            return (100, 100)
+            return (pt(100), pt(100))
         else:
             return (w, w/len(bs))
 
@@ -373,43 +399,52 @@ class FlatContext(BaseContext):
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> context = FlatContext()
         >>> context.imageSize(imagePath)
-        (398, 530)
+        (398pt, 530pt)
         """
         img = self.b.image.open(path)
-        return img.width, img.height
+        # Answer units of the same time as the document.w was defined.
+        return units(img.width, maker=self.unit), units(img.height, maker=self.unit)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
-        u"""Draw the image. If w or h is defined, then scale the image to fit."""
+        u"""Draw the image. If w or h is defined, then scale the image to fit.
+        The returned (w, h) are of type unit that document.w was defined."""
         if w is None or h is None:
             w, h = self.imageSize(path)
 
         x, y, = p[0], p[1]
         self.save()
         img = self.b.image(path)
-        img.resize(width=w, height=h)
+        img.resize(width=w.r, height=h.r)
         placed = self.page.place(img)
-        placed.position(x, y)
+        placed.position(x.r, y.r)
         self.restore()
 
     #   D R A W I N G
 
+    def _getValidColor(self, c):
+        u"""Answer the color tuple that is valid for self.fileType, otherwise Flat gives an error."""
+        # TODO: Make better match for all file types, transparance and spot color
+        if self.fileType in (FILETYPE_JPG, FILETYPE_PNG):
+            return c.rgb
+        return c.rgb
+
     def _getShape(self):
-        if self._fill == NO_COLOR and self._stroke == NO_COLOR:
+        if self._fill is noneColor and self._stroke is noneColor:
             return None
         shape = self.b.shape()
         if self._fill is None:
             shape.nofill()
-        elif self._fill != NO_COLOR:
-            shape.fill(self._fill)
+        elif self._fill != noneColor:
+            shape.fill(self._getValidColor(self._fill))
         if self._stroke is None:
             shape.nostroke()
-        elif self._stroke != NO_COLOR:
-            shape.stroke(self._stroke).width(self._strokeWidth)
+        elif self._stroke != noneColor:
+            shape.stroke(self._getValidColor(self._stroke)).width(self._strokeWidth)
         return shape
 
     def ensure_page(self):
         if not self.doc:
-            self.newDocument(0, 0)
+            self.newDocument(pt(0), pt(0))
         if not self.pages:
             self.newPage(self.doc.w, self.doc.h)
 
@@ -417,29 +452,29 @@ class FlatContext(BaseContext):
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.rectangle(x, y, w, h))
+            self.page.place(shape.rectangle(x.r, y.r, w.r, h.r))
 
     def oval(self, x, y, w, h):
-        u"""Draw an oval in rectangle, where (x,y) is the bottom left origin and (w,h) is the size.
-        This default DrawBot behavior, different from default Flat, where the (x,y) is the middle
+        u"""Draw an oval in rectangle, where (x, y) is the bottom left origin and (w, h) is the size.
+        This default DrawBot behavior, different from default Flat, where the (x, y) is the middle
         if the oval. Compensate for the difference."""
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.ellipse(x-w/2, y-h/2, w, h))
+            self.page.place(shape.ellipse((x-w/2).r, (y-h/2).r, w.r, h.r))
 
     def circle(self, x, y, r):
         u"""Draw an circle in square, with radius r and (x,y) as middle."""
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.circle(x, y, r))
+            self.page.place(shape.circle(x.r, y.r, r.r))
 
     def line(self, p0, p1):
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.line(p0[0], p0[1], p1[0], p1[1]))
+            self.page.place(shape.line(p0[0].r, p0[1].r, p1[0].r, p1[1].r))
 
     def newPath(self):
         u"""Create a new path list, o collect the path commands."""
@@ -454,19 +489,19 @@ class FlatContext(BaseContext):
 
     def moveTo(self, p):
         assert self._path is not None
-        self._path.moveTo(p)
+        self._path.moveTo(ru(p))
 
     def lineTo(self, p):
         assert self._path is not None
-        self._path.lineTo(p)
+        self._path.lineTo(ru(p))
 
     def quadTo(self, bcp, p):
         assert self._path is not None
-        self._path.quadTo(bcp, p)
+        self._path.quadTo(ru(bcp), ru(p))
 
     def curveTo(self, bcp1, bcp2, p):
         assert self._path is not None
-        self._path.curveTo(bcp1, bcp1, bcp2, p)
+        self._path.curveTo(ru(bcp1), ru(bcp1), ru(bcp2), ru(p))
 
     def closePath(self):
         assert self._path is not None
@@ -490,13 +525,13 @@ class FlatContext(BaseContext):
 
     #   C O L O R
 
-    def setFillColor(self, c, cmyk=False, spot=False, overprint=False):
+    def setFillColor(self, r=None, g=None, b=None, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None, name=None, builder=None):
         u"""Set the color for global or the color of the formatted string.
         See: http://xxyxyz.org/flat, color.py."""
         b = self.b
         success = False
-        if c is NO_COLOR:
-            self._fill = NO_COLOR # Ignore drawing
+        if c is noneColor:
+            self._fill = noneColor # Ignore drawing
             success = True # Color is undefined, do nothing.
         elif c is None:
             self._fill = None # No fill
@@ -536,12 +571,9 @@ class FlatContext(BaseContext):
         # TODO: Make this work in Flat
         b = self.b
         success = False
-        if c is NO_COLOR:
-            self._stroke = NO_COLOR # Ignore drawing
-            success = True # Color is undefined, do nothing.
-        elif c is None:
+        if c is noneColor or c is None:
             self._stroke = None # no stroke
-            success = True
+            success = True # Color is undefined, do nothing.
         elif isinstance(c, (float, int)): # Grayscale
             self._stroke = b.gray(iround(c))
             success = True

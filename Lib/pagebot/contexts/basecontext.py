@@ -101,6 +101,7 @@ class BaseContext(object):
             dirPath = '/'.join(path.split('/')[:-1])
             if not os.path.exists(dirPath):
                 os.makedirs(dirPath)
+        
 
     #   V A R I A B L E
 

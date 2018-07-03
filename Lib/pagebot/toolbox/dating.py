@@ -101,6 +101,119 @@ def checkdatetime(date):
 def now():
     return DateTime(date='now')
 
+def milliseconds(milliseconds):
+    u"""Answer the Duration instance for this amount of milliseconds
+
+    >>> milliseconds(5) # Shown as the amount of days and seconds
+    Duration(0m,0d,0s,5000us)
+    """
+    return Duration(milliseconds=milliseconds)
+
+def microseconds(microseconds):
+    u"""Answer the Duration instance for this amount of microseconds
+
+    >>> microseconds(5) # Shown as the amount of days and seconds
+    Duration(0m,0d,0s,5us)
+    """
+    return Duration(microseconds=microseconds)
+
+def seconds(seconds):
+    u"""Answer the Duration instance for this amount of seconds
+
+    >>> seconds(5) # Shown as the amount of days and seconds
+    Duration(0m,0d,5s,0us)
+    """
+    return Duration(seconds=seconds)
+
+def minutes(minutes):
+    u"""Answer the Duration instance for this amount of minutes
+
+    >>> minutes(5) # Shown as the amount of days and seconds
+    Duration(0m,0d,300s,0us)
+    >>> minutes(100) # Shown as the amount of days and seconds
+    Duration(0m,0d,6000s,0us)
+    >>> minutes(1000) # Shown as the amount of days and seconds
+    Duration(0m,0d,60000s,0us)
+    >>> minutes(10000) # Shown as the amount of days and seconds
+    Duration(0m,6d,81600s,0us)
+    """
+    return Duration(minutes=minutes)
+
+def hours(hours):
+    u"""Answer the Duration instance for this amount of hours
+
+    >>> hours(5) # Shown as the amount of seconds
+    Duration(0m,0d,18000s,0us)
+    >>> hours(100) # Shown as the amount of seconds
+    Duration(0m,4d,14400s,0us)
+    """
+    return Duration(hours=hours)
+
+def days(days):
+    u"""Answer the Duration instance for this amount of days
+
+    >>> days(5) # Shown as the amount of months
+    Duration(0m,5d,0s,0us)
+    """
+    return Duration(days=days)
+
+def months(months):
+    u"""Answer the Duration instance for this amount of months
+
+    >>> months(5) # Shown as the amount of months
+    Duration(5m,0d,0s,0us)
+    """
+    return Duration(months=months)
+
+def years(years):
+    u"""Answer the Duration instance for this amount of years
+
+    >>> years(1) # Shown as the amount of months
+    Duration(12m,0d,0s,0us)
+    >>> years(5) # Shown as the amount of months
+    Duration(60m,0d,0s,0us)
+    """
+    return Duration(years=years)
+
+def decades(decades):
+    u"""Answer the Duration instance for this amount of decades
+
+    >>> decades(1) # Shown as the amount of months
+    Duration(120m,0d,0s,0us)
+    >>> decades(5) # Shown as the amount of months
+    Duration(600m,0d,0s,0us)
+    """
+    return Duration(decades=decades)
+
+def centuries(centuries):
+    u"""Answer the Duration instance for this amount of centuries
+
+    >>> centuries(1) # Shown as the amount of months
+    Duration(1200m,0d,0s,0us)
+    >>> centuries(5) # Shown as the amount of months
+    Duration(6000m,0d,0s,0us)
+    """
+    return Duration(centuries=centuries)
+
+def millennia(millennia):
+    u"""Answer the Duration instance for this amount of millennia
+
+    >>> millennia(1) # Shown as the amount of months
+    Duration(12000m,0d,0s,0us)
+    >>> millennia(5) # Shown as the amount of months
+    Duration(60000m,0d,0s,0us)
+    """
+    return Duration(millennia=millennia)
+
+
+def year(year):
+    u"""Answer the DateTime instance of that year
+
+    >>> year(2019)
+    2019-01-01 00:00:00
+    """
+    return DateTime(year=year,month=1,day=1)
+
 def newdatetime(date):
     u"""
     The newdate method answers a new DateTime instance. If the date is
@@ -135,16 +248,16 @@ class Duration:
     months = None
     timedelta = None
 
-    def __init__(self, days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0, months=0, years=0, decades=0, centuries=0, millenia=0, td=None):
+    def __init__(self, days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0, months=0, years=0, decades=0, centuries=0, millennia=0, td=None):
         u"""
 
-        An extension of the builtin datetime.timedelta class, extending to millenia to match SQL's INTERVAL type
+        An extension of the builtin datetime.timedelta class, extending to millennia to match SQL's INTERVAL type
         Note that by itself, a duration of months is meaningless due to diffing month lengths.
         But when doing date arithmetic, we can figure it out.
 
         """
-        #convert everything larger than months into months
-        self.months = float(months + years*12 + decades*120 + centuries*1200 + millenia*12000)
+        # Convert everything larger than months into months
+        self.months = float(months + years*12 + decades*120 + centuries*1200 + millennia*12000)
 
         if td is not None:
             self.timedelta = td
@@ -163,8 +276,7 @@ class Duration:
         return str(self)
 
     def __repr__(self):
-        #repr must return ascii, so no µ for you!
-        return u'Duration(%dm,%dd,%ds,%dus)' % (self.months, self.days, self.seconds, self.microseconds)
+        return 'Duration(%dm,%dd,%ds,%dus)' % (self.months, self.days, self.seconds, self.microseconds)
 
     # To be added __iter__
 

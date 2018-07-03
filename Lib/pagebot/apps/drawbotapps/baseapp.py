@@ -18,16 +18,17 @@ from vanilla import Window, Button
 class BaseApp(object):
     u"""The BaseApp class implements generic functions for more specialize App classes.
     The main function of apps is to create applications (with window UI) that
-    offers an interface to PageBot publication building scripts. This way
-    apps can be stored and standalone desktop applications, offering more
+    offer an interface to PageBot publication building scripts. Without scripting. 
+    This way apps can be stored as standalone desktop applications, offering more
     interactive feedback to non-scripting users.
     Also it hides code form the user, just presenting a coherent set of choices,
-    that then build into PDF documents, websites or identity stationary.
+    that then build into PDF documents, websites, InDesign documents or identity stationary.
     """
     W, H = 400, 400
     PUBLICATION_CLASS = None # Defined by inheriting publication App classes.
 
     def __init__(self):
+        # TODO: Read the window position from application preferences.
         self.w = Window((100, 100, self.W, self.H), self.__class__.__name__)
         self.initialize() # Initialize UI and Publication instance.
         self.w.open() # Open the application window.

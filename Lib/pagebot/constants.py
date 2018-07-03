@@ -16,150 +16,147 @@
 #
 #     Holds the (style) constants of PageBot.
 #
+from __future__ import division # Make integer division result in float.
+
 import sys
 from pagebot import getResourcesPath
-
-INCH = 72
-MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
-
-NO_COLOR = -1
-
-# Basic layout measures
-U = 7
-BASELINE_GRID = 2*U
+from pagebot.toolbox.units import U, BASELINE_GRID, pt, mm, inch, MM, INCH, EM_FONT_SIZE
 
 # These sizes are all portrait. For Landscape simply reverse to (H, W) usage.
+# All measure are defined in Unit instances, to make conversion easier.
+# 
 # ISO A Sizes
-# The values are calculated as floats points, not using the more specifc fr(v) or px(v), needed for CSS output.
 #
-A0 = 841*MM, 1189*MM # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
-A1 = 594*MM, 841*MM
-A2 = 420*MM, 594*MM
-A3 = 297*MM, 420*MM
-A4 = 210*MM, 297*MM 
-A4Rounded = round(210*MM), round(297*MM) # Rounded to points 595 * 842 to fit exact columns measures
-A5 = 148*MM, 210*MM
-A6 = 105*MM, 148*MM
-A7 = 74*MM, 105*MM
-A8 = 52*MM, 74*MM
-A9 = 37*MM, 52*MM
-A10 = 26*MM, 37*MM
+A0 = mm(841),   mm(1189) # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
+A1 = mm(594),   mm(841)
+A2 = mm(420),   mm(594)
+A3 = mm(297),   mm(420)
+A4 = mm(210),   mm(297) 
+A4Rounded = pt(mm(210)).round(), pt(mm(297)).round() # Rounded to points 595 * 842 to fit exact columns measures
+A5 = mm(148),   mm(210)
+A6 = mm(105),   mm(148)
+A7 = mm(74),    mm(105)
+A8 = mm(52),    mm(74)
+A9 = mm(37),    mm(52)
+A10 = mm(26),   mm(37)
 # ISO B Sizes
-B0 = 1000*MM, 1414*MM
-B1 = 707*MM, 1000*MM
-B2 = 500*MM, 707*MM
-B3 = 353*MM, 500*MM
-B4 = 250*MM, 353*MM
-B5 = 176*MM, 250*MM
-B6 = 125*MM, 176*MM
-B7 = 88*MM, 125*MM
-B8 = 62*MM, 88*MM
-B9 = 44*MM, 62*MM
-B10 = 31*MM, 44*MM
+B0 = mm(1000),  mm(1414)
+B1 = mm(707),   mm(1000)
+B2 = mm(500),   mm(707)
+B3 = mm(353),   mm(500)
+B4 = mm(250),   mm(353)
+B5 = mm(176),   mm(250)
+B6 = mm(125),   mm(176)
+B7 = mm(88),    mm(125)
+B8 = mm(62),    mm(88)
+B9 = mm(44),    mm(62)
+B10 = mm(31),   mm(44)
 # ISO C Envelop Sizes
-C0 = 917*MM, 1297*MM
-C1 = 648*MM, 917*MM
-C2 = 458*MM, 648*MM
-C3 = 324*MM, 458*MM
-C4 = 229*MM, 324*MM
-C5 = 162*MM, 229*MM
-C6 = 114*MM, 162*MM
-C7 = 81*MM, 114*MM
-C8 = 57*MM, 81*MM
-C9 = 40*MM, 57*MM
-C10 = 28*MM, 40*MM
+C0 = mm(917),   mm(1297)
+C1 = mm(648),   mm(917)
+C2 = mm(458),   mm(648)
+C3 = mm(324),   mm(458)
+C4 = mm(229),   mm(324)
+C5 = mm(162),   mm(229)
+C6 = mm(114),   mm(162)
+C7 = mm(81),    mm(114)
+C8 = mm(57),    mm(81)
+C9 = mm(40),    mm(57)
+C10 = mm(28),   mm(40)
 # American Sizes as non-rounded values
-HalfLetter = 8.5*INCH, 5.5*INCH
-Letter = 8.5*INCH, 11*INCH
-Legal = 8.5*INCH, 14*INCH
-JuniorLegal = 5*INCH, 8*INCH
-Tabloid = 11*INCH, 17*INCH
+HalfLetter = inch(8.5), inch(5.5)
+Letter = inch(8.5), inch(11)
+Legal = inch(8.5), inch(14)
+JuniorLegal = inch(5), inch(8)
+Tabloid = inch(11), inch(17)
 # Other rounded definintions compatible to DrawBot
 #Screen = getContext().screenSize() # Current screen size. TODO: fix this
-Ledger = 1224, 792
-Statement = 396, 612
-Executive = 540, 720
-Folio = 612, 936
-Quarto = 610, 780
-Size10x14 = 720, 1008
+Ledger = pt(1224), pt(792)
+Statement = pt(396), pt(612)
+Executive = pt(540), pt(720)
+Folio = pt(612), pt(936)
+Quarto = pt(610), pt(780)
+Size10x14 = pt(720), pt(1008)
 
 # Hybrid sizes
 # International generic fit for stationary
 A4Letter = A4[0], Letter[1] # 210mm width and 11" height will always fit printer and fax.
-W, H = A4Letter # Default size.
 # Oversized (depending on requirement of printer, including 36pt view padding for crop marks
-A4Oversized = A4[0]+INCH, A4[1]+INCH
-A3Oversized = A3[0]+INCH, A3[1]+INCH
+A4Oversized = A4[0]+inch(1), A4[1]+inch(1)
+A3Oversized = A3[0]+inch(1), A3[1]+inch(1)
 # International Postcard Size
-IntPostcardMax = 235*MM, 120*MM
-IntPostcardMin = 140*MM, 90*MM
-AnsichtCard = int(round(A6[1])), int(round(A6[0])) # Landscape Rounded A6
+IntPostcardMax = mm(235), mm(120)
+IntPostcardMin = mm(140), mm(90)
+AnsichtCard = pt(A6[1]).round(), pt(A6[0]).round() # Landscape Rounded A6
 # US Postal Postcard Size
-USPostcardMax = 6*INCH, 4.25*INCH
-USPostcardMin = 5*INCH, 3.5*INCH
+USPostcardMax = inch(6), inch(4.25)
+USPostcardMin = inch(5), inch(3.5)
 # Business card, https://nl.wikipedia.org/wiki/Visitekaartje
-ISOCreditCard = 85.60*MM, 53.98*MM
+ISOCreditCard = mm(85.60), mm(53.98)
 ISO216 = A8
-USBusinessCard = 3.5*INCH, 2*INCH # USA, Canada
-EuropeBusinessCard = 85*MM, 55*MM # Germany, France, Italy, Spain, UK, Netherlands, Portugal
-EastEuropeBusinessCard = 90*MM, 50*MM # Hungary, Check.
-AustraliaBusinessCard = 90*MM, 55*MM # Australia, New Zealand
-ChinaBusinessCard = 90*MM, 54*MM
-JapanBusinessCard = 91*MM, 55*MM
+USBusinessCard = inch(3.5), inch(2) # USA, Canada
+EuropeBusinessCard = mm(85), mm(55) # Germany, France, Italy, Spain, UK, Netherlands, Portugal
+EastEuropeBusinessCard = mm(90), mm(50) # Hungary, Check.
+AustraliaBusinessCard = mm(90), mm(55) # Australia, New Zealand
+ChinaBusinessCard = mm(90), mm(54)
+JapanBusinessCard = mm(91), mm(55)
 
 # Newspapers
-Tabloid = 11*INCH, 16.9*INCH
-Broadsheet = 23.5*INCH, 29.5*INCH
-Berliner = 12.4*INCH, 18.5*INCH
+Tabloid = inch(11), inch(16.9)
+Broadsheet = inch(23.5), inch(29.5)
+Berliner = inch(12.4), inch(18.5)
 
 # Standard view port sizes.
 # http://mediag.com/news/popular-screen-resolutions-designing-for-all/
 
 # Apple
-iPhoneeX = 375, 812 # Pixelsize: 1125 x 2436
-iPhone8Plus = 414, 736 # 1080 x 1920 
-iPhone8 = 375, 667 # 750 x 1334  
-iPhone7Plus = 414, 736 # 1080 x 1920
-iPhone7 = 375, 667 # 750 x 1334
-iPhone6Plus = iPhone6SPlus = 414, 736 # 1080 x 1920 
-iPhone6 = 375, 667 # 750 x 1334
-iPHone5 = 320, 568 # 640 x 1136        
-iPodTouch = 320, 568 # 640 x 1136  
-iPadPro = 1024, 1366 # 2048 x 2732
-iPadThirdGeneration = iPadFourthGeneration = 768, 1024 # 1536 x 2048
-iPadAir1 = iPadAir2 = 768, 1024 # 1536 x 2048
-iPadMini = 768, 1024 #  768 x 1024
-iPadMini2 = iPadMini3 = 768, 1024 # 1536 x 2048
+iPhoneeX = pt(375), pt(812) # Pixelsize: 1125 x 2436
+iPhone8Plus = pt(414), pt(736) # 1080 x 1920 
+iPhone8 = pt(375), pt(667) # 750 x 1334  
+iPhone7Plus = pt(414), pt(736) # 1080 x 1920
+iPhone7 = pt(375), pt(667) # 750 x 1334
+iPhone6Plus = iPhone6SPlus = pt(414), pt(736) # 1080 x 1920 
+iPhone6 = pt(375), pt(667) # 750 x 1334
+iPHone5 = pt(320), pt(568) # 640 x 1136        
+iPodTouch = pt(320), pt(568) # 640 x 1136  
+iPadPro = pt(1024), pt(1366) # 2048 x 2732
+iPadThirdGeneration = iPadFourthGeneration = pt(768), pt(1024) # 1536 x 2048
+iPadAir1 = iPadAir2 = pt(768), pt(1024) # 1536 x 2048
+iPadMini = pt(768), pt(1024) #  768 x 1024
+iPadMini2 = iPadMini3 = pt(768), pt(1024) # 1536 x 2048
 
 # Android
-Nexus6P = 411, 731 # 1440 x 2560 
-Nexus5X = 411, 731 # 1080 x 1920 
-GooglePixel = 411, 731 # 1080 x 1920 
-GooglePixelXL = 411, 731 # 1440 x 2560 
-GooglePixel2 = 411, 731 # 1080 x 1920
-GooglePixel2XL = 411, 731 # 1440 x 2560 
-SamsungGalaxyNote5 = 480, 853 # 1440 x 2560
-LGG5 = 480, 853 # 1440 x 2560 
-OnePlus3 = 480, 853 # 1080 x 1920 
-SamsungGalaxyS9 = 360, 740 # 1440 x 2960 
-SamsungGalaxyS9Plus = 360, 740 # 1440 x 2960 
-SamsungGalaxyS8 = 360, 740 # 1440 x 2960
-SamsungGalaxyS8Plus = 360, 740 # 1440 x 2960 
-SamsungGalaxyS7 = 360, 640 # 1440 x 2560 
-SamsungGalaxyS7Edge = 360, 640 # 1440 x 2560
-Nexus7 = 600, 960 # 1200 x 1920
-Nexus9 = 768, 1024 # 1536 x 2048
-SamsungGalaxyTab10 = 800, 1280 # 800 x 1280 
-ChromebookPixel = 1280, 850 # 2560 x 1700 
+Nexus6P = pt(411), pt(731) # 1440 x 2560 
+Nexus5X = pt(411), pt(731) # 1080 x 1920 
+GooglePixel = pt(411), pt(731) # 1080 x 1920 
+GooglePixelXL = pt(411), pt(731) # 1440 x 2560 
+GooglePixel2 = pt(411), pt(731) # 1080 x 1920
+GooglePixel2XL = pt(411), pt(731) # 1440 x 2560 
+SamsungGalaxyNote5 = pt(480), pt(853) # 1440 x 2560
+LGG5 = pt(480), pt(853) # 1440 x 2560 
+OnePlus3 = pt(480), pt(853) # 1080 x 1920 
+SamsungGalaxyS9 = pt(360), pt(740) # 1440 x 2960 
+SamsungGalaxyS9Plus = pt(360), pt(740) # 1440 x 2960 
+SamsungGalaxyS8 = pt(360), pt(740) # 1440 x 2960
+SamsungGalaxyS8Plus = pt(360), pt(740) # 1440 x 2960 
+SamsungGalaxyS7 = pt(360), pt(640) # 1440 x 2560 
+SamsungGalaxyS7Edge = pt(360), pt(640) # 1440 x 2560
+Nexus7 = pt(600), pt(960) # 1200 x 1920
+Nexus9 = pt(768), pt(1024) # 1536 x 2048
+SamsungGalaxyTab10 = pt(800), pt(1280) # 800 x 1280 
+ChromebookPixel = pt(1280), pt(850) # 2560 x 1700 
 
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
-ORIGIN_POINT = (0, 0, 0)
-# Min/max values for element sizes. Makes sure that elements dimensions never get 0
+ORIGIN = (pt(0), pt(0), pt(0)) # Default origin if location is omitted.
+
+# Min/max values for element sizes. Makes sure that elements dimensions for (w,h) never get 0
 XXXL = sys.maxsize
-MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = 1
-DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = (100, 100, 0)
-MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = XXXL
+MIN_WIDTH = MIN_HEIGHT = MIN_DEPTH = pt(1)
+DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = pt(100), pt(100), pt(0)
+MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = pt(XXXL)
+# Default page size: Rounded A4 width, Letter 11" height, and pt(1) deep.
+W, H, D = A4Letter[0], A4Letter[1], DEFAULT_DEPTH
 
 DEFAULT_FRAME_DURATION = 1 # Default duration of a gif frame.
 
@@ -185,13 +182,23 @@ XALIGNS = set((None, LEFT, RIGHT, CENTER, JUSTIFIED))
 YALIGNS = set((None, TOP, BOTTOM, MIDDLE))
 ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 
-DEFAULT_FONT_SIZE = 16
+DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
+DEFAULT_LEADING = DEFAULT_FONT_SIZE*1.4
 DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
 DEFAULT_FALLBACK_FONT_PATH = DEFAULT_FONT_PATH # We know for sure this one is there.
 
-ORIGIN = (0, 0, 0) # Default origin if location is omitted.
-
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
+
+FILETYPE_PDF = DEFAULT_FILETYPE = 'pdf'
+FILETYPE_JPG = 'jpg'
+FILETYPE_PNG = 'png'
+FILETYPE_SVG = 'svg'
+FILETYPE_GIF = 'gif'
+FILETYPE_MOV = 'mov'
+FILETYPE_APP = 'app'
+FILETYPE_UFO = 'ufo'
+FILETYPE_TTF = 'ttf'
+FILETYPE_OTF = 'otf'
 
 # Standard font style names, with the matching abbreviations they can have in font style
 # As reference TYPETR Upgrade is mentioned.
@@ -327,6 +334,219 @@ STYLE_REPLACEMENTS = (
     ('Extra_Extended', 'Extraextended'),
     ('Ultra_Extended', 'Ultraextended'),
 )
+# Note that any conversion between RAL (paint) and RGB can only be a approximation.
+# Material colors by definition have a different range of possible colors than RGB.
+RAL_NAMERGB = {
+    # http://rgb.to/ral/1000
+    # http://www.pats.ch/formulaire/unites/unites11.aspx
+    # Numbers are recalculated as floats 0..1
+    1000: ('green beige', (204, 204, 153)), # cccc99    
+    1001: ('beige', (10, 170, 90)), # d2aa5a 
+    1002: ('sand yellow', (208, 168, 24)), # d0a818 
+    1003: ('signal yellow', (255, 204, 0)), # ffcc00 
+    1004: ('golden yellow', (224, 176, 0)), # e0b000 
+    1005: ('honey yellow', (201, 135, 33)), # c98721 
+    1006: ('maize yellow', (227, 167, 41)), # e3a729 
+    1007: ('daffodil yellow', (221, 159, 35)), # dd9f23 
+    1011: ('brown beige', (173, 121, 41)), # ad7a29 
+    1012: ('lemon yellow', (227, 184, 56)), # e3b838 
+    1013: ('oyster white', (255, 245, 227)), # fff5e3 
+    1014: ('ivory', (240, 214, 171)), # f0d6ab 
+    1015: ('light ivory', (251, 235, 204)), # fcebcc 
+    1016: ('sulfur yellow', (255, 245, 66)), # fff541 
+    1017: ('saffron yellow', (255, 171, 89)), # ffab59 
+    1018: ('zinc yellow', (255, 214, 77)), # ffd64d 
+    1019: ('grey beige', (163, 140, 121)), # a38c7a 
+    1020: ('olive yellow', (156, 143, 97)), # 9c8f61 
+    1021: ('rape yellow', (251, 189, 31)), # fcbd1f 
+    1023: ('traffic yellow', (251, 189, 31)), # fcbd1f 
+    1024: ('ochre yellow', (181, 140, 79)), # b58c4f 
+    1026: ('luminous yellow', (255, 255, 10)), # ffff0a 
+    1027: ('curry', (153, 117, 33)), # 997521 
+    1028: ('melon yellow', (255, 140, 26)), # ff8c1a 
+    1032: ('broom yellow', (227, 163, 41)), # e3a329 
+    1033: ('dahlia yellow', (255, 148, 54)), # ff9436 
+    1034: ('pastel yellow', (247, 153, 91)), # f7995c 
+    2000: ('yellow orange', (224, 94, 31)), # e05e1f 
+    2001: ('red orange', (186, 46, 33)), # ba2e21 
+    2002: ('vermilion', (204, 36, 28)), # cc241c 
+    2003: ('pastel orange', (255, 99, 54)), # ff6336 
+    2004: ('pure orange', (241, 59, 28)), # f23b1c 
+    2005: ('luminous orange', (251, 28, 20)), # fc1c14 
+    2007: ('luminous bright orange', (255, 117, 33)), # ff7521 
+    2008: ('bright red orange', (250, 79, 41)), # fa4f29 
+    2009: ('traffic orange', (235, 59, 28)), # eb3b1c 
+    2010: ('signal orange', (211, 69, 41)), # d44529 
+    2011: ('deep orange', (237, 91, 0)), # ed5c00 
+    2012: ('salmon orange', (221, 81, 71)), # de5247 
+    3000: ('flame red', (171, 31, 28)), # ab1f1c 
+    3001: ('signal red', (163, 23, 26)), # a3171a 
+    3002: ('carmine red', (163, 26, 26)), # a31a1a 
+    3003: ('ruby red', (138, 18, 20)), # 8a1214 
+    3004: ('purple red', (105, 15, 20)), # 690f14 
+    3005: ('wine red', (79, 18, 26)), # 4f121a 
+    3007: ('black red', (46, 18, 26)), # 2e121a 
+    3009: ('oxide red', (94, 33, 33)), # 5e2121 
+    3011: ('brown red', (120, 20, 23)), # 781417 
+    3012: ('beige red', (204, 130, 115)), # cc8273 
+    3013: ('tomato red', (150, 31, 28)), # 961f1c 
+    3014: ('antique pink', (217, 101, 117)), # d96675 
+    3015: ('light pink', (231, 156, 181)), # e89cb5 
+    3016: ('coral red', (166, 36, 38)), # a62426 
+    3017: ('rose', (209, 54, 84)), # d13654 
+    3018: ('strawberry red', (207, 41, 66)), # cf2941 
+    3020: ('traffic red', (199, 23, 18)), # c71711 
+    3022: ('salmon pink', (217, 89, 79)), # d9594f 
+    3024: ('luminous red', (251, 10, 28)), # fc0a1c 
+    3026: ('luminous bright red', (251, 20, 20)), # fc1414 
+    3027: ('raspberry red', (181, 18, 51)), # b51233 
+    3031: ('orient red', (166, 28, 46)), # a61c2e 
+    4001: ('red lilac', (130, 64, 48)), # 824030 
+    4002: ('red violet', (143, 38, 64)), # 8f2640 
+    4003: ('heather violet', (201, 56, 140)), # c9388c 
+    4004: ('claret violet', (91, 8, 43)), # 5c082b 
+    4005: ('blue lilac', (99, 61, 156)), # 633d9c 
+    4006: ('traffic purple', (145, 15, 101)), # 910f66 
+    4007: ('purple violet', (56, 10, 46)), # 380a2e 
+    4008: ('signal violet', (125, 31, 121)), # 7d1f7a 
+    4009: ('pastel violet', (158, 115, 148)), # 9e7394 
+    4010: ('telemagenta', (191, 23, 115)), # bf1773 
+    5000: ('violet blue', (23, 51, 107)), # 17336b 
+    5001: ('green blue', (10, 51, 84)), # 0a3354 
+    5002: ('ultramarine blue', (0, 15, 117)), # 000f75 
+    5003: ('sapphire blue', (0, 23, 69)), # 001745 
+    5004: ('black blue', (3, 13, 31)), # 030d1f 
+    5005: ('signal blue', (0, 46, 121)), # 002e7a 
+    5007: ('brillant blue', (38, 79, 135)), # 264f87 
+    5008: ('gray blue', (26, 41, 56)), # 1a2938 
+    5009: ('azure blue', (23, 69, 111)), # 174570 
+    5011: ('steel blue', (0, 43, 111)), # 002b70 
+    5012: ('light blue', (41, 115, 184)), # 2973b8 
+    5013: ('cobalt blue', (0, 18, 69)), # 001245 
+    5014: ('pigeon blue', (77, 105, 153)), # 4d6999 
+    5015: ('sky blue', (23, 97, 171)), # 1761ab 
+    5017: ('traffic blue', (0, 59, 128)), # 003b80 
+    5018: ('turquoise blue', (56, 148, 130)), # 389481 
+    5019: ('capri blue', (10, 66, 120)), # 0a4278 
+    5020: ('steel blue', (5, 51, 51)), # 053333 
+    5021: ('water blue', (26, 121, 99)), # 1a7a63 
+    5022: ('night blue', (0, 8, 79)), # 00084f 
+    5023: ('distant blue', (46, 81, 143)), # 2e528f 
+    5024: ('pastel blue', (87, 140, 171)), # 578cab 
+    6000: ('patina green', (51, 120, 84)), # 337854 
+    6001: ('emerald green', (38, 101, 81)), # 266651 
+    6002: ('leaf green', (38, 87, 33)), # 265721 
+    6003: ('olive green', (61, 69, 46)), # 3d452e 
+    6004: ('blue green', (13, 59, 46)), # 0d3b2e 
+    6005: ('moss green', (10, 56, 31)), # 0a381f 
+    6006: ('grey olive', (41, 43, 46)), # 292b2e 
+    6007: ('bottle green', (28, 38, 23)), # 1c2617 
+    6008: ('brown green', (33, 33, 26)), # 21211a 
+    6009: ('fir green', (23, 41, 28)), # 17291c 
+    6010: ('grass green', (54, 105, 38)), # 366926 
+    6011: ('reseda green', (94, 125, 79)), # 5e7d4f 
+    6012: ('black green', (31, 46, 43)), # 1f2e2b 
+    6013: ('reed green', (117, 115, 79)), # 75734f 
+    6014: ('yellow olive', (51, 48, 38)), # 333026 
+    6015: ('black olive', (41, 43, 38)), # 292b26 
+    6016: ('turquoise green', (15, 111, 51)), # 0f7033 
+    6017: ('yellow green', (64, 130, 54)), # 408236 
+    6018: ('may green', (79, 168, 51)), # 4fa833 
+    6019: ('pastel green', (191, 227, 186)), # bfe3ba 
+    6020: ('chrome green', (38, 56, 41)), # 263829 
+    6021: ('pale green', (133, 166, 121)), # 85a67a 
+    6022: ('olive drab', (43, 38, 28)), # 2b261c 
+    6024: ('traffic green', (36, 145, 64)), # 249140 
+    6025: ('fern green', (74, 110, 51)), # 4a6e33 
+    6026: ('opal green', (10, 91, 51)), # 0a5c33 
+    6027: ('light green', (125, 204, 189)), # 7dccbd 
+    6028: ('pine green', (38, 74, 51)), # 264a33 
+    6029: ('mint green', (18, 120, 38)), # 127826 
+    6032: ('signal green', (41, 138, 64)), # 298a40 
+    6033: ('mint turquoise', (66, 140, 120)), # 428c78 
+    6034: ('pastel turquoise', (125, 189, 181)), # 7dbdb5 
+    7000: ('squirrel grey', (115, 133, 145)), # 738591 
+    7001: ('silver grey', (135, 148, 166)), # 8794a6 
+    7002: ('olive grey', (121, 117, 97)), # 7a7561 
+    7003: ('moss grey', (111, 111, 97)), # 707061 
+    7004: ('signal grey', (156, 156, 166)), # 9c9ca6 
+    7005: ('mouse grey', (97, 105, 105)), # 616969 
+    7006: ('beige grey', (107, 97, 87)), # 6b6157 
+    7008: ('khaki grey', (105, 84, 56)), # 695438 
+    7009: ('green grey', (77, 81, 74)), # 4d524a 
+    7010: ('tarpaulin grey', (74, 79, 74)), # 4a4f4a 
+    7011: ('iron grey', (64, 74, 84)), # 404a54 
+    7012: ('basalt grey', (74, 84, 89)), # 4a5459 
+    7013: ('brown grey', (71, 66, 56)), # 474238 
+    7015: ('slate grey', (61, 66, 81)), # 3d4251 
+    7016: ('anthracite grey', (38, 46, 56)), # 262e38 
+    7021: ('black grey', (26, 33, 41)), # 1a2129 
+    7022: ('umbra grey', (61, 61, 59)), # 3d3d3b 
+    7023: ('concrete grey', (121, 125, 117)), # 7a7d75 
+    7024: ('graphite grey', (48, 56, 69)), # 303845 
+    7026: ('granite grey', (38, 51, 56)), # 263338 
+    7030: ('stone grey', (145, 143, 135)), # 918f87 
+    7031: ('blue grey', (77, 91, 107)), # 4d5c6b 
+    7032: ('pebble grey', (189, 186, 171)), # bdbaab 
+    7033: ('cement grey', (121, 130, 117)), # 7a8275 
+    7034: ('yellow grey', (143, 135, 111)), # 8f8770 
+    7035: ('light grey', (211, 217, 219)), # d4d9db 
+    7036: ('platinum grey', (158, 150, 156)), # 9e969c 
+    7037: ('dusty grey', (121, 125, 128)), # 7a7d80 
+    7038: ('agate grey', (186, 189, 186)), # babdba 
+    7039: ('quartz grey', (97, 94, 89)), # 615e59 
+    7040: ('window grey', (158, 163, 176)), # 9ea3b0 
+    7042: ('verkehrsgrau a', (143, 150, 153)), # 8f9699 
+    7043: ('verkehrsgrau b', (64, 69, 69)), # 404545 
+    7044: ('silk grey', (194, 191, 184)), # c2bfb8 
+    7045: ('telegrau 1', (143, 148, 158)), # 8f949e 
+    7046: ('telegrau 1', (120, 130, 140)), # 78828c 
+    7047: ('telegrau 4', (217, 214, 219)), # d9d6db 
+    8000: ('green brown', (125, 91, 56)), # 7d5c38 
+    8001: ('ocher brown', (145, 81, 46)), # 91522e 
+    8002: ('signal brown', (110, 59, 58)), # 6e3b3a 
+    8003: ('clay brown', (115, 59, 36)), # 733b24 
+    8004: ('copper brown', (133, 56, 43)), # 85382b 
+    8007: ('fawn brown', (94, 51, 33)), # 5e3321 
+    8008: ('olive brown', (99, 61, 36)), # 633d24 
+    8011: ('nut brown', (71, 38, 28)), # 47261c 
+    8012: ('red brown', (84, 31, 31)), # 541f1f 
+    8014: ('sepia brown', (56, 38, 28)), # 38261c 
+    8015: ('chestnut brown', (77, 31, 28)), # 4d1f1c 
+    8016: ('mahogany brown', (61, 31, 28)), # 3d1f1c 
+    8017: ('chocolate brown', (46, 28, 28)), # 2e1c1c 
+    8019: ('grey brown', (43, 38, 41)), # 2b2629 
+    8022: ('black brown', (13, 8, 13)), # 0d080d 
+    8023: ('orange brown', (156, 69, 41)), # 9c4529 
+    8024: ('beige brown', (110, 64, 48)), # 6e4030 
+    8025: ('pale brown', (101, 74, 61)), # 664a3d 
+    8028: ('terra brown', (64, 46, 33)), # 402e21 
+    9001: ('cream', (251, 251, 240)), # fcfcf0 
+    9002: ('grey white', (240, 237, 230)), # f0ede6 
+    9003: ('signal white', (255, 255, 255)), # ffffff 
+    9004: ('signal black', (28, 28, 33)), # 1c1c21 
+    9005: ('jet black', (3, 5, 10)), # 03050a 
+    9006: ('white aluminium', (166, 171, 181)), # a6abb5 
+    9007: ('grey aluminium', (125, 121, 120)), # 7d7a78 
+    9010: ('pure white', (250, 255, 255)), # faffff 
+    9011: ('graphite black', (13, 18, 26)), # 0d121a 
+    9016: ('traffic white', (251, 255, 255)), # fcffff 
+    9017: ('traffic black', (20, 23, 28)), # 14171c 
+    9018: ('papyrus white', (219, 227, 221)), # dbe3de
+}
+RALNAME_RGB = {}
+for ral, (nameSpace, (ri, gi, bi)) in RAL_NAMERGB.items():
+    rgb = ri/255, gi/255, bi/255
+    RAL_NAMERGB[ral] = nameSpace, rgb # Overwrite with float numbers
+    # Make name alterations also accessable (space and grey --> gray)
+    ralRgb = ral, rgb
+    RALNAME_RGB[nameSpace] = ralRgb
+    name = nameSpace.replace(' ', '')
+    RALNAME_RGB[name] = ralRgb
+    nameSpace = nameSpace.replace('grey', 'gray')
+    RALNAME_RGB[nameSpace] = ralRgb
+    name = name.replace('grey', 'gray')
+    RALNAME_RGB[name] = ralRgb
 
 CSS_COLOR_NAMES = {
     'aliceblue': 0xf0f8ff,
@@ -480,6 +700,7 @@ CSS_COLOR_NAMES = {
 }
 
 SPOT_RGB = {
+    # Numbers are recalculated as 0..1
     0: (0, 0, 0), #000000
     100: (244, 237, 124), #F4ED7C                    
     101: (244, 237, 71), #F4ED47            
@@ -1578,8 +1799,9 @@ SPOT_RGB = {
     814: (140, 96, 193), #8C60C1            
     814.2: (112, 63, 175), #703FAF
 }
+# Replace integers by float numbers.
 for spot, (r, g, b) in SPOT_RGB.items():
-    SPOT_RGB[spot] = r/255.0, g/255.0, b/255.0
+    SPOT_RGB[spot] = r/255, g/255, b/255
 
 if __name__ == '__main__':
     import doctest

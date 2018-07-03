@@ -93,10 +93,10 @@ class D3GraphSite(Publication):
         t = Template(w=w, h=h, name='home', padding=padding, gridX=gridX, gridY=gridY)
         self.addTemplate(t.name, t)
         # Set template <head> building parameters. # Page element definition in pbpage.py
-        t.info.headHtml = headHtml % dict(title=self.title, description='', keywords='')
-        t.info.favIconUrl = 'images/favicon.gif'
-        t.info.jsCode = jsCode
-        t.info.cssCode = simpleCssCode % simpleTheme
+        t.headHtml = headHtml % dict(title=self.title, description='', keywords='')
+        t.favIconUrl = 'images/favicon.gif'
+        t.jsCode = jsCode
+        t.cssCode = simpleCssCode % simpleTheme
         # Add page template elements.
         Navigation(parent=t, name='Navigation')
         #Introduction(parent=t, name='Introduction')

@@ -19,7 +19,7 @@ from drawBot.misc import DrawBotError
 
 import pagebot # Import to know the path of non-Python resources.
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, NO_COLOR,TOP, BOTTOM, MM,\
+from pagebot.style import getRootStyle, A4, CENTER,TOP, BOTTOM, MM,\
     INLINE, OUTLINE, ONLINE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements import *

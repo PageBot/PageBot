@@ -20,8 +20,7 @@ import os
 import re
 
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
-DEFAULT_LEADING = 0
+from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, DEFAULT_LEADING
 
 class FlatString(BabelString):
 
@@ -140,9 +139,10 @@ class FlatString(BabelString):
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
 
+        >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
-        >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=30))
+        >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=pt(30)))
         >>> #bs.s.lines()
         """
         if style is None:
@@ -169,8 +169,8 @@ class FlatString(BabelString):
             font = DEFAULT_FONT_PATH
         flatFont = context.b.font.open(font)
         strike = context.b.strike(flatFont)
-        strike.size(style.get('fontSize', DEFAULT_FONT_SIZE),
-            style.get('leading', DEFAULT_LEADING), units='pt')
+        strike.size(style.get('fontSize', DEFAULT_FONT_SIZE).r,
+            style.get('leading', DEFAULT_LEADING).r, units='pt')
         #if w is not None:
         #    strike.width = w
         return cls(strike.text(s), context=context, style=style) # Make real Flat flavor BabelString here.

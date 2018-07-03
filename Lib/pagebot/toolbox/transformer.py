@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -15,11 +16,12 @@
 #
 #     Implements a range of common transforms.
 #
+from __future__ import division # Make integer division result in float.
+
 import json, re
 from time import time
 import datetime
 from random import randint
-from pagebot.constants import STYLE_REPLACEMENTS
 
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
@@ -28,7 +30,8 @@ ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5,
 
 def point3D(p=None):
     u"""Answer p as 3D point. If it already is a list of 3 elements, then don't change
-    and answer the original.
+    and answer the original. 
+    Note that in normal usage the elements probably will be Unit instances.
 
     >>> point3D() # Default 3D origin
     [0, 0, 0]
@@ -53,6 +56,7 @@ def point3D(p=None):
 
 def point2D(p=None):
     u"""Answer the 2D point from a 2D or 3D point.
+    Note that in normal usage the elements probably will be Unit instances.
 
     >>> point2D() # Default 2D origin
     [0, 0]
@@ -67,6 +71,7 @@ def point2D(p=None):
 
 def pointOffset(point, offset):
     u"""Answer new 3D point, shifted by offset.
+    Note that in normal usage the elements probably will be Unit instances.
 
     >>> pointOffset((20, 30, 10), 12)
     (32, 42, 22)
@@ -91,6 +96,7 @@ def pointOffset(point, offset):
 
 def point2S(p):
     u"""Answer the point as string of rounded integers. Ignore z value if it is 0.
+    Note that in normal usage the elements probably will be Unit instances.
 
     >>> point2S((22.4, 33.5, 44.6))
     '22 34 45'
@@ -262,12 +268,63 @@ def asFloat(value, default=None):
     except (ValueError, TypeError):
         return default
 
+def asIntOrFloat(value):
+    u"""Answer value converted to int if same value, otherwise answer float.
+
+    >>> asIntOrFloat(100.00)
+    100
+    >>> asIntOrFloat(100)
+    100
+    >>> asIntOrFloat(100.12)
+    100.12
+    """
+    iValue = int(value)
+    if iValue == value:
+        return iValue
+    return value
+
 def asFormatted(value, default=None, format=None):
+    u"""Answer the formatted string of value. Use the format string if defined.
+    Otherwise answer the cleanest representation, eating all 0 and /. from the 
+    right side. 
+
+    >>> asFormatted(100)
+    '100'
+    >>> asFormatted(100.00)
+    '100'
+    >>> asFormatted(100.100000) # Eats trailing zero, until non-zero decimal
+    '100.1'
+    >>> asFormatted(100.12789) # Round to 2 digits
+    '100.13'
+    >>> asFormatted(100.99) # Round to 2 digits, then eats zeros
+    '100.99'
+    >>> asFormatted(100.999) # Round to 2 digits, then eats zeros
+    '101'
+    >>> asFormatted(100.100002345) # Round to 2 digits, then eats zeros
+    '100.1'
+    >>> asFormatted(100.000001) # Eats the decimal point, not the integer zeros
+    '100'
+    >>> asFormatted(None, 100.00) # Use formatted default
+    '100'
+    >>> asFormatted(200/3) # Default rounds to 2 digits.
+    '66.67'
+    >>> asFormatted(200/3, format='%0.10f') # Overwrite behavior by supplied format string
+    '66.6666666667'
+    """
     if value is None:
-        return default
-    if int(round(value)) == value: # Same as rounded whole number
-        return '%d' % value
-    return (format or '%0.2f') % value # Otherwise show as float with 2 digits.
+        value = default
+    if format is None:
+        iNumber = asNumber(value)
+        if isinstance(iNumber, int): # Check on rounded by 0.00
+            return '%d' % iNumber 
+        value = '%0.2f' % value # Round to 2 digits
+        # Then remove any trailing zeros (there there is a decimal point) 
+        while value and '.' in value and value.endswith('0'):
+            value = value[:-1]
+        if value and value.endswith('.'):
+            value = value[:-1] # Eat remaining period on the right.
+        return value or '0' # Answer value. If all eaten, then just answer 0
+    return format % value # Otherwise show as float with 2 digits.
 
 def asBool(value, default=None):
     if value is None:
@@ -615,6 +672,7 @@ def path2StyleNameParts(pathOrName, extensions=None):
     >>> sorted(path2StyleNameParts('Roboto Condensed_SemiBoldItalic--.1234.UFO', ['ufo']))
     ['Condensed', 'Italic', 'Roboto', 'Semibold']
     """
+    from pagebot.constants import STYLE_REPLACEMENTS
     fontName = path2FontName(pathOrName, extensions)
     if fontName is None:
         return []

@@ -19,7 +19,7 @@ from __future__ import division
 import weakref
 import copy
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.units import Unit, getUnits, fr, perc, em
+from pagebot.toolbox.units import isUnit, units, Fr, Perc, Em, ru, pt
 
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
@@ -27,7 +27,7 @@ from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS,
                            MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT,
-                           MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH,
+                           MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_FONT_SIZE,
                            DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL,
                            INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
                            OUTLINE)
@@ -65,44 +65,48 @@ class Element(object):
 
         >>> import sys
         >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, maxH=1000, pl=11, pt=22, margin=(33,44,55,66))
-        >>> e.name, e.description is None
-        ('TestElement', True)
-        >>> e.maxW == sys.maxsize, e.maxH
-        (True, 1000)
+        >>> e.name
+        'TestElement'
+        >>> e.description is None
+        True
+        >>> e.maxW == sys.maxsize
+        True
+        >>> e.maxH
+        1000
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
-        (10, 20, 100, 120, (22, 0, 0, 11), (33, 44, 55, 66))
-        >>> e = Element()
+        (10pt, 20pt, 100pt, 120pt, (22pt, 0pt, 0pt, 11pt), (33pt, 44pt, 55pt, 66pt))
+        >>> e = Element() # Default element has default proportions
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
-        (0, 0, 100, 100, (0, 0, 0, 0), (0, 0, 0, 0))
+        (0pt, 0pt, 100pt, 100pt, (0pt, 0pt, 0pt, 0pt), (0pt, 0pt, 0pt, 0pt))
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.document import Document
         >>> c = DrawBotContext()
-        >>> w, h = 300, 400
+        >>> w, h = pt(300, 400)
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1]
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
         >>> e.build(doc.getView(), (0, 0))
         >>> e.xy
-        (0, 20)
+        (0pt, 20pt)
         >>> e.size
-        (300, 3, 1)
+        (300pt, 3pt, 0pt)
         >>> view = doc.getView()
-        >>> e.build(view, (0, 0))
+        >>> e.build(view, (pt(0), pt(0)))
 
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> from pagebot.document import Document
         >>> c = FlatContext()
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1] # First page is left 1
-        >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
+        >>> e = Element(parent=page, x=pt(0), y=pt(20), w=page.w, h=pt(3))
         >>> # Allow the context to create a new document and page canvas. Normally view does it.
         >>> c.newPage(w, h)
-        >>> e.build(doc.getView(), (0, 0))
+        >>> e.build(doc.getView(), pt(0, 0))
         >>> e.xy
-        (0, 20)
+        (0pt, 20pt)
         >>> e.size
-        (300, 3, 1)
+        (300pt, 3pt, 0pt)
 
         """
         assert point is None or isinstance(point, (tuple, list))
@@ -198,13 +202,14 @@ class Element(object):
     def __repr__(self):
         u"""Object as string.
 
+        >>> from pagebot.toolbox.units import mm
         >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120)
         >>> repr(e)
-        '<Element:TestElement (10, 20)>'
+        '<Element:TestElement (10pt, 20pt)>'
         >>> e.title = 'MyTitle'
-        >>> e.x, e.y = 100, 200
+        >>> e.x, e.y = 100, mm(200)
         >>> repr(e)
-        '<Element:MyTitle (100, 200)>'
+        '<Element:MyTitle (100pt, 200mm)>'
         """
         if self.title:
             name = ':'+self.title
@@ -217,7 +222,7 @@ class Element(object):
             elements = ' E(%d)' % len(self.elements)
         else:
             elements = ''
-        return '<%s%s (%d, %d)%s>' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), elements)
+        return '<%s%s (%s, %s)%s>' % (self.__class__.__name__, name, self.x, self.y, elements)
 
     def __len__(self):
         u"""Answer total amount of elements, placed or not.
@@ -259,7 +264,7 @@ class Element(object):
         >>> t = Template(name='MyTemplate', x=11, y=12, w=100, h=200)
         >>> e.applyTemplate(t)
         >>> e.template
-        <Template:MyTemplate (11, 12)>
+        <Template:MyTemplate (11pt, 12pt)>
         """
         return self._template
     def _set_template(self, template):
@@ -830,11 +835,11 @@ class Element(object):
         >>> from pagebot.document import Document
         >>> doc = Document()
         >>> page = doc[1]
-        >>> e = Element(fontSize=24, parent=page)
+        >>> e = Element(fontSize=pt(24), parent=page)
         >>> e.css('fontSize') # Find local style value
-        24
+        24pt
         >>> e.css('rLeading') # Find value in root style
-        1.2
+        1.2em
         """
         if name in self.style and self.style[name] is not None:
             return self.style[name]
@@ -862,18 +867,28 @@ class Element(object):
         u"""Answer the flattened dictionary with all self.css(...) values, from the perspecive of 
         self and upward on the parent tree. Evaluate for every value that is in the root style.
 
+        >>> from pagebot.toolbox.color import Color
         >>> from pagebot.document import Document
         >>> doc = Document()
         >>> page = doc[1]
-        >>> e = Element(fill=(0.1, 0.2, 0.3), parent=page)
+        >>> e = Element(fill=Color(0.1, 0.2, 0.3), parent=page)
         >>> style = e.getFlattenedStyle()
         >>> style['fill'], style['fontSize'], style['rLeading'], style['xAlign'], style['rLeading']
-        ((0.1, 0.2, 0.3), 10.0, 1.2, 'left', 1.2)
+        (Color(r=0.1, g=0.2, b=0.3), 16pt, 1.2em, 'left', 1.2em)
         """
         flattenedStyle = {} # Create a dict with all keys from root style and values from self.css()
         for key in getRootStyle().keys():
             flattenedStyle[key] = self.css(key)
         return flattenedStyle
+
+    def _get_em(self):
+        u"""Answer the current em value (for use in relative units), as value of 
+        self.css('fontSize', DEFAULT_FONT_SIZE)."""
+        return self.css('fontSize', DEFAULT_FONT_SIZE)
+    def _set_em(self, em):
+        u"""Store the em size (as fontSize) in the local style."""
+        self.style['fontSize'] = em
+    em = property(_get_em, _set_em)
 
     #   L I B --> Document.lib
 
@@ -1011,12 +1026,12 @@ class Element(object):
 
         >>> e = Element(x=100, y=100)
         >>> e.point
-        (100, 100)
+        (100pt, 100pt)
         >>> e.x, e.y
-        (100, 100)
+        (100pt, 100pt)
         >>> e.point = 120, 130
         >>> e.point
-        (120, 130)
+        (120pt, 130pt)
         """
         return self.x, self.y # Answer as 2D
     def _set_point(self, point):
@@ -1029,12 +1044,12 @@ class Element(object):
 
         >>> e = Element(x=100, y=100, z=100)
         >>> e.point3D
-        (100, 100, 100)
+        (100pt, 100pt, 100pt)
         >>> e.x, e.y, e.z
-        (100, 100, 100)
+        (100pt, 100pt, 100pt)
         >>> e.point3D = 120, 130, 140
         >>> e.point3D
-        (120, 130, 140)
+        (120pt, 130pt, 140pt)
         """
         return self.x, self.y, self.z
     def _set_point3D(self, point):
@@ -1250,180 +1265,197 @@ class Element(object):
 
     # No getGrid in Z-direction for now.
 
-    # Plain coordinates
+    # Properties for unit access.
+
+    def _get_parentW(self):
+        u"""Answer the width if the parent element. If there is not parent, answer DEFAULT_WIDTH.
+
+        >>> e0 = Element(w=500)
+        >>> e1 = Element()
+        >>> e1.parentW
+        100pt
+        >>> e1.parent = e0
+        >>> e1.parentW
+        500pt
+        """
+        if self.parent is None:
+            return DEFAULT_WIDTH
+        return self.parent.w # Answer total width as reference for relative units.
+    parentW = property(_get_parentW)
+
+    def _get_parentH(self):
+        u"""Answer the height if the parent element. If there is not parent, answer DEFAULT_HEIGHT.
+
+        >>> e0 = Element(h=500)
+        >>> e1 = Element()
+        >>> e1.parentH
+        100pt
+        >>> e1.parent = e0
+        >>> e1.parentH
+        500pt
+        """
+        if self.parent is None:
+            return DEFAULT_HEIGHT
+        return self.parent.h # Answer total height as reference for relative units.
+    parentH = property(_get_parentH)
+
+    def _get_parentD(self):
+        u"""Answer the depth if the parent element. If there is not parent, answer DEFAULT_DEPTH.
+
+        >>> e0 = Element(d=500)
+        >>> e1 = Element()
+        >>> e1.parentD
+        0pt
+        >>> e1.parent = e0
+        >>> e1.parentD
+        500pt
+        """
+        if self.parent is None:
+            return DEFAULT_DEPTH
+        return self.parent.d # Answer total depth as reference for relative units.
+    parentD = property(_get_parentD)
+
+    def _get_em(self):
+        u"""Answer the current value for fontSize, used as reference for the relative Em Unit.
+
+        >>> e = Element(fontSize=13)
+        >>> e.em
+        13
+        """
+        return self.css('fontSize', DEFAULT_FONT_SIZE)
+    em = property(_get_em)
+
+    # Plain coordinates        
 
     def _get_x(self):
-        u"""Answer the x position of self.
+        u"""Answer the x position of self as Unit instance. In case it is a relative unit
+        (such as Fr, Perc or Em), we just set the current parent total and em as reference.
+        By not freezing or rendering the value yet, the caller can decide to change 
+        parent value, and then render the value as with u.get(optionalTotal).
+        Some situations require the rendered value, by in case of CSS, the relative value
+        should be maintained. Then the current parent total reference is not important.
 
+        >>> from pagebot.toolbox.units import fr
         >>> e = Element(x=100, w=400)
         >>> e.x, e.y, e.z
-        (100, 0, 0)
+        (100pt, 0pt, 0pt)
         >>> e.x = 200
         >>> e.x, e.y, e.z
-        (200, 0, 0)
+        (200pt, 0pt, 0pt)
+        >>> isUnit(e.x) # These are Unit instances, not hard values.
+        True
         >>> child = Element(x='40%', parent=e)
-        >>> child.x # 40% of 400
+        >>> child.x.pt # 40% of 400
         160
-        >>> e.w = 500 # Child percentage changes dynamically
-        >>> child.x # 40% of 500 
+        >>> e.w = 500 # Child percentage changes dynamically from parent
+        >>> child.x.pt # 40% of 500 
         200
         >>> child.x = fr(0.5)
         >>> child.x
-        250.0
+        0.5fr
         """
-        x = self.ux # Direct from style. Not CSS lookup.
-        if isinstance(x, (fr, perc)):
-            assert self.parent is not None, 'Relative values only allowed if parent is set: %s' % x
-            x = x.asPt(self.parent.w) # In case percentage or fraction, answer value in relation to self.parent.w
-        elif isinstance(x, em):
-            x = x.asPt(self.css('fontSize'))
-        return x 
+        # Retrieve as Unit instance and adjust attributes to current settings.
+        return units(self.style.get('x'), base=self.parentW, em=self.em)
     def _set_x(self, x):
-        self.style['x'] = getUnits(x)
+        """Convert to units, if x is not already a Unit instance."""
+        self.style['x'] = units(x) 
     x = property(_get_x, _set_x)
-
-    def _get_ux(self):
-        u""" Answer x position of self as stored units. 
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
-
-        >>> e = Element(x='22%')
-        >>> e.ux
-        22%
-        """
-        return self.style['x']
-    ux = property(_get_ux, _set_x) # Setting is same as self.x
 
     def _get_y(self):
         u"""Answer the y position of self.
 
         >>> e = Element(y=100, h=400)
         >>> e.x, e.y, e.z
-        (0, 100, 0)
+        (0pt, 100pt, 0pt)
         >>> e.y = 200
         >>> e.x, e.y, e.z
-        (0, 200, 0)
+        (0pt, 200pt, 0pt)
         >>> child = Element(y='40%', parent=e)
-        >>> child.y # 40% of 400
-        160
+        >>> child.y, child.y.pt # 40% of 400
+        (40%, 160)
         >>> e.h = 500
-        >>> child.y # 40% of 500 dynamic calculation
-        200
+        >>> child.y, child.y.pt # 40% of 500 dynamic calculation
+        (40%, 200)
         """
-        y = self.uy # Direct from style. Not CSS lookup.
-        if isinstance(y, (fr, perc)):
-            assert self.parent is not None, 'Relative values only allowed if parent is set: %s' % y
-            y = y.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent.h
-        elif isinstance(y, em):
-            y = y.asPt(self.css('fontSize'))
-        return y
+        # Retrieve as Unit instance and adjust attributes to current settings.
+        return units(self.style.get('y'), base=self.parentH, em=self.em)
     def _set_y(self, y):
-        self.style['y'] = getUnits(y)
+        """Convert to units, if y is not already a Unit instance."""
+        self.style['y'] = units(y) 
     y = property(_get_y, _set_y)
-
-    def _get_uy(self):
-        u""" Answer y position of self as stored units.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
-
-        >>> e = Element(y='22%')
-        >>> e.uy
-        22%
-        """
-        return self.style['y']
-    uy = property(_get_uy, _set_y) # Setting is same as self.y
 
     def _get_z(self):
         u"""Answer the z position of self.
 
         >>> e = Element(z=100, d=400)
         >>> e.x, e.y, e.z
-        (0, 0, 100)
-        >>> e.z = 200
+        (0pt, 0pt, 100pt)
+        >>> e.z = 200 # Auto conversion to point units.
         >>> e.x, e.y, e.z
-        (0, 0, 200)
+        (0pt, 0pt, 200pt)
+        >>> e.z = '20mm'
+        >>> e.x, e.y, e.z
+        (0pt, 0pt, 20mm)
         >>> child = Element(z='40%', parent=e)
-        >>> child.z # 40% of 400
-        160
+        >>> child.z, child.z.pt # 40% of 400
+        (40%, 160)
         >>> e.d = 500
-        >>> child.z # 40% of 500 dynamic calculation
-        200
+        >>> child.z, child.z.pt # 40% of 500 dynamic calculation. Should have value or pt as result?
+        (40%, 200)
         """
-        z = self.uz # Direct from style. Not CSS lookup.
-        if isinstance(z, (fr, perc)):
-            assert self.parent is not None, 'Relative values only allowed if parent is set: %s' % z
-            z = z.asPt(self.parent.d) # In case percentage or fraction, answer value in relation to self.parent.h
-        elif isinstance(z, em):
-            z = z.asPt(self.css('fontSize'))
-        return z
+        # Retrieve as Unit instance and adjust attributes to current settings.
+        return units(self.style.get('z'), base=self.parentD, em=self.em)
     def _set_z(self, z):
-        self.style['z'] = getUnits(z)
+        """Convert to units, if z is not already a Unit instance."""
+        self.style['z'] = units(z) 
     z = property(_get_z, _set_z)
-
-    def _get_uz(self):
-        u""" Answer z position of self as stored units. 
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
-
-        >>> e = Element(z='22%')
-        >>> e.uz
-        22%
-        """ 
-        return self.style['z']
-    uz = property(_get_uz, _set_z) # Setting is same as self.z
 
     def _get_xy(self):
         u"""Answer ther Point2D tuple.
 
         >>> e = Element(x=10, y=20, w=400, h=400)
         >>> e.xy
-        (10, 20)
+        (10pt, 20pt)
         >>> e.xy = 11, 21
         >>> e.xy
-        (11, 21)
+        (11pt, 21pt)
         >>> e.xy = 12, 22, 32 # Ignore the z-value
         >>> e.xy
-        (12, 22)
+        (12pt, 22pt)
         >>> e.y += 100
         >>> e.xy
-        (12, 122)
+        (12pt, 122pt)
         >>> child = Element(x='50%', y='50%', parent=e)
-        >>> child.xy # Position in middle of parent square
-        (200, 200)
+        >>> child.xy, ru(child.xy) # Position in middle of parent square
+        ((50%, 50%), (200, 200))
         """
         return self.x, self.y
     def _set_xy(self, p):
-        self.x = p[0]
+        self.x = p[0] # Convert values to Unit instance if needed.
         self.y = p[1] # Ignore any z
     xy = property(_get_xy, _set_xy)
-
-    def _get_uxy(self):
-        u"""Answer the e.xy as tuple of stored units. As long as not deriving the self.x 
-        as points, no parent is needed.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
-
-        >>> e = Element(x='10%', y='20%')
-        >>> e.uxy
-        (10%, 20%)
-        """
-        return self.ux, self.uy
-    uxy = property(_get_uxy, _set_xy) # Setting is same as self.xy
 
     def _get_xyz(self):
         u"""Answer ther Point3D tuple.
 
         >>> e = Element(x=10, y=20, z=30, w=400, h=400, d=400)
         >>> e.xyz
-        (10, 20, 30)
+        (10pt, 20pt, 30pt)
         >>> e.xyz = 11, 21, 31
         >>> e.xyz
-        (11, 21, 31)
+        (11pt, 21pt, 31pt)
         >>> e.xyz = 12, 22, 32
         >>> e.xyz
-        (12, 22, 32)
-        >>> e.x += 100
-        >>> e.xyz
-        (112, 22, 32)
+        (12pt, 22pt, 32pt)
         >>> child = Element(x='50%', y='50%', z='50%', parent=e)
-        >>> child.xyz # Position in middle of parent cube
-        (200, 200, 200)
+        >>> child.xyz = units('12%'), 22, 32
+        >>> child.xyz
+        (12%, 22pt, 32pt)
+        >>> child.x += 100
+        >>> child.xyz
+        (112%, 22pt, 32pt)
+        >>> child.xyz, ru(child.xyz) # Position in middle of parent cube
+        ((112%, 22pt, 32pt), (448, 22, 32))
         """
         return self.x, self.y, self.z
     def _set_xyz(self, p):
@@ -1431,19 +1463,6 @@ class Element(object):
         self.y = p[1]
         self.z = p[2]
     xyz = property(_get_xyz, _set_xyz)
-
-    def _get_uxyz(self):
-        u"""Answer the e.xyz as tuple of stored units. As long as not deriving the self.x 
-        as points, no parent is needed.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
-
-        >>> e = Element(x='10%', y='20%', z='30%')
-        >>> e.uxyz
-        (10%, 20%, 30%)
-        """
-        return self.ux, self.uy, self.uz
-    uxyz = property(_get_uxyz, _set_xyz) # Setting is same as self.xyz
-
 
     #   T I M E
 
@@ -1503,18 +1522,20 @@ class Element(object):
     def _get_left(self):
         u"""Answer the position of the left side of the element, depending on alignment.
 
+        >>> from pagebot.toolbox.units import mm
         >>> e = Element(x=100, w=248, xAlign=LEFT)
         >>> e.left
-        100
-        >>> e.left = 100
+        100pt
+        >>> e.left = mm(100)
         >>> e.left
-        100
+        100mm
+        >>> e.w = mm(120)
         >>> e.xAlign = CENTER
-        >>> int(e.left)
-        -24
+        >>> e.left
+        40mm
         >>> e.xAlign = RIGHT
         >>> e.left
-        -148
+        -20mm
         """
         xAlign = self.xAlign
         if xAlign == CENTER:
@@ -1542,17 +1563,17 @@ class Element(object):
         u"""Answer the position of the horizontal center of the element, depending on alignment.
 
         >>> e = Element(x=100, w=248, xAlign=LEFT)
-        >>> int(e.center)
-        224
+        >>> e.center
+        224pt
         >>> e.center = 224
-        >>> int(e.center)
-        224
+        >>> e.center
+        224pt
         >>> e.xAlign = CENTER
-        >>> int(e.center)
-        100
+        >>> e.center
+        100pt
         >>> e.xAlign = RIGHT
-        >>> int(e.center)
-        -24
+        >>> e.center
+        -24pt
         """
         xAlign = self.xAlign
         if xAlign == LEFT:
@@ -1563,9 +1584,9 @@ class Element(object):
     def _set_center(self, x):
         xAlign = self.xAlign
         if xAlign == LEFT:
-            self.x = x - self.w/2
+            self.x = units(x) - self.w/2
         elif xAlign == RIGHT:
-            self.x = x + self.w/2
+            self.x = units(x) + self.w/2
         else:
             self.x = x
     center = property(_get_center, _set_center)
@@ -1575,13 +1596,13 @@ class Element(object):
 
         >>> e = Element(x=100, w=248, xAlign=LEFT)
         >>> e.right
-        348
+        348pt
         >>> e.xAlign = CENTER
-        >>> int(e.right)
-        224
+        >>> e.right
+        224pt
         >>> e.xAlign = RIGHT
         >>> e.right
-        100
+        100pt
         """
         xAlign = self.xAlign
         if xAlign == LEFT:
@@ -1604,13 +1625,13 @@ class Element(object):
 
         >>> e = Element(x=100, w=248, mr=44, xAlign=LEFT)
         >>> e.mRight
-        392
+        392pt
         >>> e.xAlign = RIGHT
         >>> e.mRight
-        144
+        144pt
         >>> e.xAlign = CENTER
-        >>> int(e.mRight)
-        268
+        >>> e.mRight
+        268pt
         """
         return self.right + self.mr
     def _set_mRight(self, x):
@@ -1624,13 +1645,13 @@ class Element(object):
 
         >>> e = Element(y=100, h=248, yAlign=TOP)
         >>> e.top
-        100
+        100pt
         >>> e.yAlign = BOTTOM
         >>> e.top
-        348
+        348pt
         >>> e.yAlign = MIDDLE
-        >>> int(e.top)
-        -24
+        >>> e.top
+        -24pt
         """
         yAlign = self.yAlign
         if yAlign == MIDDLE:
@@ -1669,14 +1690,14 @@ class Element(object):
         u"""On bounding box, not including margins.
 
         >>> e = Element(y=100, h=248, yAlign=TOP)
-        >>> int(e.middle)
-        -24
+        >>> e.middle
+        -24pt
         >>> e.yAlign = BOTTOM
-        >>> int(e.middle)
-        224
+        >>> e.middle
+        224pt
         >>> e.yAlign = MIDDLE
-        >>> int(e.middle)
-        100
+        >>> e.middle
+        100pt
         """
         yAlign = self.yAlign
         if yAlign == TOP:
@@ -1709,12 +1730,12 @@ class Element(object):
 
         >>> e = Element(y=100, h=248, yAlign=TOP)
         >>> e.bottom
-        -148
+        -148pt
         >>> e.yAlign = BOTTOM
         >>> e.bottom
-        100
+        100pt
         >>> e.yAlign = MIDDLE
-        >>> int(e.bottom)
+        >>> e.bottom.pt # Get the integer value
         224
         """
         yAlign = self.yAlign
@@ -2068,38 +2089,54 @@ class Element(object):
 
     def _get_bleedTop(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
-        Elements will take of the reposition/scaling themselves"""
-        return self.css('bleedTop', 0)
+        Elements will take of the reposition/scaling themselves.
+
+        >>> e = Element(bleedTop=20)
+        >>> e.bleedTop
+        20pt
+        """
+        return units(self.css('bleedTop', 0), base=self.h, em=self.em, min=0)
     def _set_bleedTop(self, bleed):
-        assert isinstance(bleed, (int, float))
-        self.style['bleedTop'] = bleed
+        self.style['bleedTop'] = units(bleed)
     bleedTop = property(_get_bleedTop, _set_bleedTop)
 
     def _get_bleedBottom(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
-        Elements will take of the reposition/scaling themselves"""
-        return self.css('bleedBottom', 0)
+        Elements will take of the reposition/scaling themselves.
+
+        >>> e = Element(bleedBottom=20)
+        >>> e.bleedBottom
+        20pt
+        """
+        return units(self.css('bleedBottom', 0), base=self.h, em=self.em, min=0)
     def _set_bleedBottom(self, bleed):
-        assert isinstance(bleed, (int, float))
-        self.style['bleedBottom'] = bleed
+        self.style['bleedBottom'] = units(bleed)
     bleedBottom = property(_get_bleedBottom, _set_bleedBottom)
 
     def _get_bleedLeft(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
-        Elements will take of the reposition/scaling themselves"""
-        return self.css('bleedLeft', 0)
+        Elements will take of the reposition/scaling themselves.
+
+        >>> e = Element(bleedLeft=20)
+        >>> e.bleedLeft
+        20pt
+        """
+        return units(self.css('bleedLeft', 0), base=self.w, em=self.em, min=0)
     def _set_bleedLeft(self, bleed):
-        assert isinstance(bleed, (int, float))
-        self.style['bleedLeft'] = bleed
+        self.style['bleedLeft'] = units(bleed)
     bleedLeft = property(_get_bleedLeft, _set_bleedLeft)
 
     def _get_bleedRight(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
-        Elements will take of the reposition/scaling themselves"""
-        return self.css('bleedRight', 0)
+        Elements will take of the reposition/scaling themselves.
+
+        >>> e = Element(bleedRight=20)
+        >>> e.bleedRight
+        20pt
+        """
+        return units(self.css('bleedRight', 0), base=self.w, em=self.em, min=0)
     def _set_bleedRight(self, bleed):
-        assert isinstance(bleed, (int, float))
-        self.style['bleedRight'] = bleed
+        self.style['bleedRight'] = units(bleed)
     bleedRight = property(_get_bleedRight, _set_bleedRight)
 
     # Absolute positions
@@ -2112,7 +2149,7 @@ class Element(object):
         >>> e2 = Element(x=20, elements=[e1])
         >>> e3 = Element(x=44, elements=[e2])
         >>> e1.x, e1.rootX, e2.x, e2.rootX, e3.x, e3.rootX
-        (10, 74, 20, 64, 44, 44)
+        (10pt, 74pt, 20pt, 64pt, 44pt, 44pt)
         """
         parent = self.parent
         if parent is not None:
@@ -2128,7 +2165,7 @@ class Element(object):
         >>> e2 = Element(y=20, elements=[e1])
         >>> e3 = Element(y=44, elements=[e2])
         >>> e1.y, e1.rootY, e2.y, e2.rootY, e3.y, e3.rootY
-        (10, 74, 20, 64, 44, 44)
+        (10pt, 74pt, 20pt, 64pt, 44pt, 44pt)
         """
         parent = self.parent
         if parent is not None:
@@ -2144,7 +2181,7 @@ class Element(object):
         >>> e2 = Element(z=20, elements=[e1])
         >>> e3 = Element(z=44, elements=[e2])
         >>> e1.z, e1.rootZ, e2.z, e2.rootZ, e3.z, e3.rootZ
-        (10, 74, 20, 64, 44, 44)
+        (10pt, 74pt, 20pt, 64pt, 44pt, 44pt)
         """
         parent = self.parent
         if parent is not None:
@@ -2159,69 +2196,41 @@ class Element(object):
 
         >>> e = Element(w=100, maxW=1000)
         >>> e.w
-        100
+        100pt
         >>> e.w = 101
         >>> e.w
-        101
-        >>> e.w = e.maxW + 10000 # Width too large, crops to self.maxW
-        >>> e.w, e.maxW
-        (1000, 1000)
-        >>> e.w = e.minW - 10000 # Width too small, crops to self.minW
-        >>> e.w, e.minW
-        (1, 1)
+        101pt
         >>> e.w = 0 # Zero width expands to DEFAULT_WIDTH (100)
         >>> e.w, e.w == DEFAULT_WIDTH
-        (100, True)
+        (100pt, True)
         >>> child = Element(w='20%', parent=e)
-        >>> child.w
-        20
-        >>> child.w = '0.5fr'
-        >>> child.w
-        50.0
+        >>> child.w, child.w.pt
+        (20%, 20)
+        >>> child.w = '2fr' # Set as string get interpreted.
+        >>> child.w, child.w.pt
+        (2fr, 50)
         >>> e.style['fontSize'] = 10
-        >>> child.w = '4.5em' # Multiplication with current e.style['fontSize']
-        >>> child.w
-        45.0
+        >>> child.w = '4.5em' # Multiplication with current e.style['fontSize'] (e.fontSize)
+        >>> child.w, child.w.pt
+        (4.5em, 45)
         """
-        w = self.uw # Get uninterpreted unit instance if it exists.
-        if isinstance(w, (fr, perc)):
-            w = w.asPt(self.parent.w) # In case percentage or fraction, answer value in relation to self.parent
-        elif isinstance(w, em):
-            w = w.asPt(self.css('fontSize'))
-        return min(self.maxW, max(self.minW, w, MIN_WIDTH)) # From self.style, don't inherit.
+        return units(self.css('w', 0), base=self.parentW, em=self.em, min=self.minW, max=self.maxW)
     def _set_w(self, w):
-        self.style['w'] = getUnits(w or DEFAULT_WIDTH) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['w'] = units(w or DEFAULT_WIDTH) 
     w = property(_get_w, _set_w)
-
-    def _get_uw(self):
-        u"""Answer the uninterpreted unit width instance if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
-
-        >>> e = Element(w='22%')
-        >>> e.uw
-        22%
-        >>> e = Element(w='0.5fr')
-        >>> e.uw
-        0.50fr
-        >>> e = Element(w=220)
-        >>> e.uw
-        220
-        """
-        return self.style['w']
-    uw = property(_get_uw, _set_w) # Setting same as self.w
 
     def _get_mw(self): # Width, including margins
         u"""Width property for self.mw style. Answers the width of the elements with added left/right margins.
 
         >>> e = Element(w=10, ml=22, mr=33)
         >>> e.mw
-        65
+        65pt
         >>> e = Element()
         >>> e.w = 100
         >>> e.ml = 44
         >>> e.mr = 55
         >>> e.mw # e.ml + e.w + e.mr
-        199
+        199pt
         """
         return self.w + self.ml + self.mr # Add margins to width
     def _set_mw(self, w):
@@ -2233,69 +2242,41 @@ class Element(object):
 
         >>> e = Element(h=100, maxH=1000)
         >>> e.h
-        100
+        100pt
         >>> e.h = 101
         >>> e.h
-        101
-        >>> e.h = e.maxH + 10000 # Height too large, crops to self.maxH
-        >>> e.h, e.maxH
-        (1000, 1000)
-        >>> e.h = e.minH - 10000 # Height too small, crops to self.minH
-        >>> e.h, e.minH
-        (1, 1)
+        101pt
         >>> e.h = 0 # Zero height expands to DEFAULT_HEIGHT (100)
         >>> e.h, e.h == DEFAULT_HEIGHT
-        (100, True)
+        (100pt, True)
         >>> child = Element(h='20%', parent=e)
         >>> child.h
-        20
+        20%
         >>> child.h = '0.5fr'
         >>> child.h
-        50.0
-        >>> e.style['fontSize'] = 10
+        0.5fr
+        >>> e.style['fontSize'] = 12
         >>> child.h = '4.5em' # Multiplication with current e.style['fontSize']
-        >>> child.h
-        45.0
+        >>> child.h, child.h.pt
+        (4.5em, 54)
         """
-        h = self.uh
-        if isinstance(h, (fr, perc)):
-            h = h.asPt(self.parent.h) # In case percentage or fraction, answer value in relation to self.parent
-        elif isinstance(h, em):
-            h = h.asPt(self.css('fontSize'))
-        return min(self.maxH, max(self.minH, h, MIN_HEIGHT)) # From self.style, don't inherit.
+        return units(self.css('h', 0), base=self.parentH, em=self.em, min=self.minH, max=self.maxH)
     def _set_h(self, h):
-        self.style['h'] = getUnits(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['h'] = units(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
-
-    def _get_uh(self):
-        u"""Answer the uninterpreted unit height instance if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
-
-        >>> e = Element(h='22%')
-        >>> e.uh
-        22%
-        >>> e = Element(h='0.5fr')
-        >>> e.uh
-        0.50fr
-        >>> e = Element(h=220)
-        >>> e.uh
-        220
-        """
-        return self.style['h']
-    uh = property(_get_uh, _set_h) # Setting same as self.h
-    
+  
     def _get_mh(self): # Height, including margins
         u"""Height property for self.mh style.
 
         >>> e = Element(h=10, mt=22, mb=33)
         >>> e.mh
-        65
+        65pt
         >>> e = Element()
         >>> e.h = 100
         >>> e.mt = 44
         >>> e.mb = 55
         >>> e.mh # e.mt + e.h + e.mb
-        199
+        199pt
         """
         return self.h + self.mt + self.mb # Add margins to height
     def _set_mh(self, h):
@@ -2307,56 +2288,34 @@ class Element(object):
 
         >>> e = Element(d=100, maxD=1000)
         >>> e.d
-        100
+        100pt
         >>> e.d = 101
         >>> e.d
-        101
+        101pt
         >>> e.d = e.maxD + 10000
-        >>> e.d
-        1000
+        >>> e.d, e.d.pt # Clipping on pt conversion
+        (11000pt, 1000)
         >>> e.d = 0
         >>> e.d, e.d == MIN_DEPTH
-        (1, True)
+        (1pt, True)
         """
-        d = self.ud
-        if isinstance(d, (fr, perc)):
-            d = d.asPt(self.parent.d) # In case percentage or fraction, answer value in relation to self.parent
-        elif isinstance(d, em):
-            d = d.asPt(self.css('fontSize'))
-        return min(self.maxD, max(self.minD, d, MIN_DEPTH)) # From self.style, don't inherit.
+        return units(self.css('d', 0), base=self.parentD, em=self.em, min=self.minD, max=self.maxD)
     def _set_d(self, d):
-        self.style['d'] = getUnits(d or MIN_DEPTH) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['d'] = units(d or MIN_DEPTH) # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
-
-    def _get_ud(self):
-        u"""Answer the uninterpreted unit depth instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
-
-        >>> e = Element(d='22%')
-        >>> e.ud
-        22%
-        >>> e = Element(d='0.5fr')
-        >>> e.ud
-        0.50fr
-        >>> e = Element(d=220)
-        >>> e.ud
-        220
-        """
-        return self.style['d']
-    ud = property(_get_ud, _set_d) # Setting same as self.d
-    
+ 
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
         u"""Width property for self.md style.
 
         >>> e = Element(d=10, mzb=22, mzf=33)
         >>> e.md
-        65
+        65pt
         >>> e = Element()
         >>> e.d = 10
         >>> e.mzb = 22
         >>> e.mzf = 33
         >>> e.md
-        65
+        65pt
         """
         return self.d + self.mzb + self.mzf # Add front and back margins to depth
     def _set_md(self, d):
@@ -2372,41 +2331,42 @@ class Element(object):
         Can be 123, [123], [123, 234], [123, 234, 345], [123, 234, 345, 456]
         or [123, 234, 345, 456, 567, 678]
 
+        >>> from pagebot.toolbox.units import mm, perc
         >>> e = Element(margin=(10, 20, 30, 40))
         >>> e.mt, e.mr, e.mb, e.ml
-        (10, 20, 30, 40)
+        (10pt, 20pt, 30pt, 40pt)
         >>> e.ml = 123
         >>> e.margin
-        (10, 20, 30, 123)
-        >>> e.margin = 11
+        (10pt, 20pt, 30pt, 123pt)
+        >>> e.margin = mm(20) # Works in other types of units too. 
         >>> e.margin
-        (11, 11, 11, 11)
+        (20mm, 20mm, 20mm, 20mm)
         >>> e.margin = (11, 22)
         >>> e.margin
-        (11, 22, 11, 22)
+        (11pt, 22pt, 11pt, 22pt)
         >>> e.margin = (11, 22, 33)
         >>> e.margin
-        (11, 22, 33, 11)
+        (11pt, 22pt, 33pt, 11pt)
         >>> e.margin = (11, 22, 33, 44)
         >>> e.margin
-        (11, 22, 33, 44)
+        (11pt, 22pt, 33pt, 44pt)
         >>> e.mt, e.mr, e.mb, e.ml
-        (11, 22, 33, 44)
+        (11pt, 22pt, 33pt, 44pt)
         >>> e.margin = (11, 22, 33, 44, 55, 66)
-        >>> e.margin
-        (11, 22, 33, 44)
+        >>> e.margin, ru(e.margin)
+        ((11pt, 22pt, 33pt, 44pt), (11, 22, 33, 44))
         >>> e.w = e.h = e.d = 500
         >>> e.margin = '10%'
         >>> e.margin
-        (50, 50, 50, 50)
+        (10%, 10%, 10%, 10%)
         >>> e.margin = perc(15)
         >>> e.margin
-        (75, 75, 75, 75)
+        (15%, 15%, 15%, 15%)
         """
         return self.mt, self.mr, self.mb, self.ml
     def _set_margin(self, margin):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
-        if isinstance(margin, (Unit, str, int, float)):
+        if not isinstance(margin, (list, tuple)):
             margin = [margin]
         if len(margin) == 1: # All same value
             margin = (margin[0], margin[0], margin[0], margin[0], margin[0], margin[0])
@@ -2420,39 +2380,43 @@ class Element(object):
             pass
         else:
             raise ValueError
+        # Conversion to units is done by the properties
         self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb = margin
     margin = property(_get_margin, _set_margin)
 
     def _get_margin3D(self):
         u"""Tuple of margin in CSS order + (front, back), direction of clock
 
+        >>> from pagebot.toolbox.units import perc
         >>> e = Element(margin=(10, 20, 30, 40))
         >>> e.mt, e.mr, e.mb, e.ml
-        (10, 20, 30, 40)
+        (10pt, 20pt, 30pt, 40pt)
         >>> e.ml = 123
         >>> e.margin3D
-        (10, 20, 30, 123, 0, 0)
+        (10pt, 20pt, 30pt, 123pt, 0pt, 0pt)
         >>> e.margin3D = 11
         >>> e.margin3D
-        (11, 11, 11, 11, 11, 11)
+        (11pt, 11pt, 11pt, 11pt, 11pt, 11pt)
         >>> e.margin3D = (11, 22)
         >>> e.margin3D
-        (11, 22, 11, 22, 11, 22)
+        (11pt, 22pt, 11pt, 22pt, 11pt, 22pt)
         >>> e.margin3D = (11, 22, 33)
         >>> e.margin3D
-        (11, 22, 33, 11, 22, 33)
+        (11pt, 22pt, 33pt, 11pt, 22pt, 33pt)
         >>> e.margin3D = (11, 22, 33, 44)
         >>> e.margin3D
-        (11, 22, 33, 44, 0, 0)
+        (11pt, 22pt, 33pt, 44pt, 0pt, 0pt)
         >>> e.margin3D = (11, 22, 33, 44, 55, 66)
         >>> e.margin3D
-        (11, 22, 33, 44, 55, 66)
+        (11pt, 22pt, 33pt, 44pt, 55pt, 66pt)
         >>> e.w = e.h = e.d = 500
         >>> e.margin3D = '10%'
-        >>> e.margin3D
-        (50, 50, 50, 50, 50, 50)
+        >>> e.margin3D, ru(e.margin3D)
+        ((10%, 10%, 10%, 10%, 10%, 10%), (50, 50, 50, 50, 50, 50))
         >>> e.margin3D = perc(15)
         >>> e.margin3D
+        (15%, 15%, 15%, 15%, 15%, 15%)
+        >>> ru(e.margin3D)
         (75, 75, 75, 75, 75, 75)
         """
         return self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb
@@ -2463,256 +2427,142 @@ class Element(object):
 
         >>> e = Element(mt=12)
         >>> e.mt
-        12
+        12pt
         >>> e.mt = 13
         >>> e.mt
-        13
+        13pt
         >>> e.style = dict(mt=14, h=500)
         >>> e.mt
-        14
+        14pt
         >>> e.mt = '10%'
         >>> e.mt
+        10%
+        >>> e.mt.pt
         50
         """
-        mt = self.umt # Don't inherit
-        if isinstance(mt, (fr, perc)):
-            mt = mt.asPt(self.h) # In case percentage or fraction, answer value in relation to self.h
-        elif isinstance(mt, em):
-            mt = mt.asPt(self.css('fontSize'))
-        return mt # From self.style, don't inherit.
+        return units(self.css('mt', 0), base=self.h, em=self.em, min=0)
     def _set_mt(self, mt):
-        self.style['mt'] = getUnits(mt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['mt'] = units(mt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
     mt = property(_get_mt, _set_mt)
 
-    def _get_umt(self):
-        u"""Answer the uninterpreted unit margin top instance, if it exists and otherwise the single value.
-
-        >>> e = Element(mt='22%')
-        >>> e.umt
-        22%
-        >>> e = Element(mt='0.5fr')
-        >>> e.umt
-        0.50fr
-        >>> e = Element(mt=220)
-        >>> e.umt
-        220
-        """
-        return self.style['mt']
-    umt = property(_get_umt, _set_mt) # Setting same as self.mt
-
-
     def _get_mb(self): # Margin bottom
-        u"""Margin bottom property. Relative unit values refer to self.h.
+        u"""Margin bottom property. Relative unit values refer to the current self.h or self.em.
 
         >>> e = Element(mb=12)
         >>> e.mb
+        12pt
+        >>> e.mb.pt
         12
         >>> e.mb = 13
         >>> e.mb
-        13
+        13pt
         >>> e.style = dict(mb=14, h=500)
         >>> e.mb
-        14
+        14pt
         >>> e.mb = '10%'
         >>> e.mb
+        10%
+        >>> e.mb.pt
         50
         """
-        mb = self.umb # Don't inherit
-        if isinstance(mb, (fr, perc)):
-            mb = mb.asPt(self.h) # In case percentage or fraction, answer value in relation to self.h
-        elif isinstance(mb, em):
-            mb = mb.asPt(self.css('fontSize'))
-        return mb
+        return units(self.css('mb', 0), base=self.h, em=self.em, min=0)
     def _set_mb(self, mb):
-        self.style['mb'] = getUnits(mb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
+        u"""Precompile as Unit instance from whatever format mb has."""
+        self.style['mb'] = units(mb) # Overwrite element local style from here, parent css becomes inaccessable.
     mb = property(_get_mb, _set_mb)
-
-    def _get_umb(self):
-        u"""Answer the uninterpreted unit margin bottom instance, if it exists and otherwise the single value.
-
-        >>> e = Element(mb='22%')
-        >>> e.umb
-        22%
-        >>> e = Element(mb='0.5fr')
-        >>> e.umb
-        0.50fr
-        >>> e = Element(mb=220)
-        >>> e.umb
-        220
-        """
-        return self.style['mb']
-    umb = property(_get_umb, _set_mb) # Setting same as self.mb
 
     def _get_ml(self): # Margin left
         u"""Margin left property. Relative unit values refer to self.w.
 
         >>> e = Element(ml=12)
         >>> e.ml
-        12
+        12pt
         >>> e.ml = 13
         >>> e.ml
-        13
+        13pt
         >>> e.style = dict(ml=14, w=500)
         >>> e.ml
-        14
+        14pt
         >>> e.ml = '10%'
         >>> e.ml
+        10%
+        >>> e.ml.pt
         50
         """
-        ml = self.uml # Don't inherit
-        if isinstance(ml, (fr, perc)):
-            ml = ml.asPt(self.w) # In case percentage or fraction, answer value in relation to self.w
-        elif isinstance(ml, em):
-            ml = ml.asPt(self.css('fontSize'))
-        return ml
+        return units(self.css('ml', 0), base=self.w, em=self.em, min=0)
     def _set_ml(self, ml):
-        self.style['ml'] = getUnits(ml or 0) # Overwrite element local style from here, parent css becomes inaccessable.
+        # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['ml'] = units(ml) 
     ml = property(_get_ml, _set_ml)
-
-    def _get_uml(self):
-        u"""Answer the uninterpreted unit margin left instance, if it exists and otherwise the single value.
-
-        >>> e = Element(ml='22%')
-        >>> e.uml
-        22%
-        >>> e = Element(ml='0.5fr')
-        >>> e.uml
-        0.50fr
-        >>> e = Element(ml=220)
-        >>> e.uml
-        220
-        """
-        return self.style['ml']
-    uml = property(_get_uml, _set_ml) # Setting same as self.ml
-
 
     def _get_mr(self): # Margin right
         u"""Margin right property. Relative unit values refer to self.w.
 
         >>> e = Element(mr=12)
         >>> e.mr
-        12
+        12pt
         >>> e.mr = 13
         >>> e.mr
-        13
+        13pt
         >>> e.style = dict(mr=14, w=500)
         >>> e.mr
-        14
+        14pt
         >>> e.mr = '10%'
         >>> e.mr
+        10%
+        >>> e.mr.pt
         50
         """
-        mr = self.umr # Don't inherit
-        if isinstance(mr, (fr, perc)):
-            mr = mr.asPt(self.w) # In case percentage or fraction, answer value in relation to self.w
-        elif isinstance(mr, em):
-            mr = mr.asPt(self.css('fontSize'))
-        return mr
+        return units(self.css('mr', 0), base=self.w, em=self.em, min=0)
     def _set_mr(self, mr):
-        self.style['mr'] = getUnits(mr or 0) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['mr'] = units(mr) # Overwrite element local style from here, parent css becomes inaccessable.
     mr = property(_get_mr, _set_mr)
-
-    def _get_umr(self):
-        u"""Answer the uninterpreted unit margin right instance, if it exists and otherwise the single value.
-
-        >>> e = Element(mr='22%')
-        >>> e.umr
-        22%
-        >>> e = Element(mr='0.5fr')
-        >>> e.umr
-        0.50fr
-        >>> e = Element(mr=220)
-        >>> e.umr
-        220
-        """
-        return self.style['mr']
-    umr = property(_get_umr, _set_mr) # Setting same as self.mr
-
 
     def _get_mzf(self): # Margin z-axis front
         u"""Margin z-axis front property (closest to view point). Relative unit values refer to self.d.
 
         >>> e = Element(mzf=12)
         >>> e.mzf
-        12
+        12pt
         >>> e.mzf = 13
         >>> e.mzf
-        13
+        13pt
         >>> e.style = dict(mzf=14, d=500)
         >>> e.mzf
-        14
+        14pt
         >>> e.mzf = '10%'
         >>> e.mzf
+        10%
+        >>> e.mzf.pt
         50
         """
-        mzf = self.umzf # Don't inherit
-        if isinstance(mzf, (fr, perc)):
-            mzf = mzf.asPt(self.d) # In case percentage or fraction, answer value in relation to self.d
-        elif isinstance(mzf, em):
-            mzf = mzf.asPt(self.css('fontSize'))
-        return mzf
+        return units(self.css('mzf', 0), base=self.d, em=self.em, min=0)
     def _set_mzf(self, mzf):
-        self.style['mzf'] = getUnits(mzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['mzf'] = units(mzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     mzf = property(_get_mzf, _set_mzf)
-
-    def _get_umzf(self):
-        u"""Answer the uninterpreted unit margin front instance, if it exists and otherwise the single value.
-
-        >>> e = Element(mzf='22%')
-        >>> e.umzf
-        22%
-        >>> e = Element(mzf='0.5fr')
-        >>> e.umzf
-        0.50fr
-        >>> e = Element(mzf=220)
-        >>> e.umzf
-        220
-        """
-        return self.style['mzf']
-    umzf = property(_get_umzf, _set_mzf) # Setting same as self.mzf
-
 
     def _get_mzb(self): # Margin z-axis back
         u"""Margin z-axis back property (most distant to view point). Relative unit values refer to self.d.
 
         >>> e = Element(mzb=12)
         >>> e.mzb
-        12
+        12pt
         >>> e.mzb = 13
         >>> e.mzb
-        13
+        13pt
         >>> e.style = dict(mzb=14, d=500)
         >>> e.mzb
-        14
+        14pt
         >>> e.mzb = '10%'
         >>> e.mzb
+        10%
+        >>> e.mzb.pt
         50
         """
-        mzb = self.umzb # Don't inherit
-        if isinstance(mzb, (fr, perc)):
-            mzb = mzb.asPt(self.d) # In case percentage or fraction, answer value in relation to self.d
-        elif isinstance(mzb, em):
-            mzb = mzb.asPt(self.css('fontSize'))
-        return mzb
+        return units(self.css('mzb', 0), base=self.d, em=self.em, min=0)
     def _set_mzb(self, mzb):
-        self.style['mzb'] = getUnits(mzb or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['mzb'] = units(mzb)  # Overwrite element local style from here, parent css becomes inaccessable.
     mzb = property(_get_mzb, _set_mzb)
-
-    def _get_umzb(self):
-        u"""Answer the uninterpreted unit margin back instance, if it exists and otherwise the single value.
-
-        >>> e = Element(mzb='22%')
-        >>> e.umzb
-        22%
-        >>> e = Element(mzb='0.5fr')
-        >>> e.umzb
-        0.50fr
-        >>> e = Element(mzb=220)
-        >>> e.umzb
-        220
-        """
-        return self.style['mzb']
-    umzb = property(_get_umzb, _set_mzb) # Setting same as self.mzb
 
     # Padding properties
 
@@ -2723,44 +2573,45 @@ class Element(object):
         Can be 123, [123], [123, 234], [123, 234, 345], [123, 234, 345, 456]
         or [123, 234, 345, 456, 567, 678]
 
+        >>> from pagebot.toolbox.units import perc
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pt, e.pr, e.pb, e.pl
-        (10, 20, 30, 40)
+        (10pt, 20pt, 30pt, 40pt)
         >>> e.pl = 123
         >>> e.padding
-        (10, 20, 30, 123)
+        (10pt, 20pt, 30pt, 123pt)
         >>> e.padding = 11
         >>> e.padding
-        (11, 11, 11, 11)
+        (11pt, 11pt, 11pt, 11pt)
         >>> e.padding = (11, 22)
         >>> e.padding
-        (11, 22, 11, 22)
+        (11pt, 22pt, 11pt, 22pt)
         >>> e.padding = (11, 22, 33)
         >>> e.padding
-        (11, 22, 33, 11)
+        (11pt, 22pt, 33pt, 11pt)
         >>> e.padding = (11, 22, 33, 44)
         >>> e.padding
-        (11, 22, 33, 44)
+        (11pt, 22pt, 33pt, 44pt)
         >>> e.pt, e.pr, e.pb, e.pl
-        (11, 22, 33, 44)
+        (11pt, 22pt, 33pt, 44pt)
         >>> e.padding = (11, 22, 33, 44, 55, 66)
         >>> e.padding
-        (11, 22, 33, 44)
+        (11pt, 22pt, 33pt, 44pt)
         >>> e.padding3D
-        (11, 22, 33, 44, 55, 66)
+        (11pt, 22pt, 33pt, 44pt, 55pt, 66pt)
         >>> e.w = e.h = e.d = 500
         >>> e.padding = '10%'
-        >>> e.padding
-        (50, 50, 50, 50)
+        >>> e.padding, ru(e.padding)
+        ((10%, 10%, 10%, 10%), (50, 50, 50, 50))
         >>> e.padding = perc(15)
-        >>> e.padding
-        (75, 75, 75, 75)
+        >>> e.padding, ru(e.padding)
+        ((15%, 15%, 15%, 15%), (75, 75, 75, 75))
         """
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565]
         assert padding is not None
-        if isinstance(padding, (Unit, str, int, float)):
+        if not isinstance(padding, (list, tuple)):
             padding = [padding]
         if len(padding) == 1: # All same value
             padding = (padding[0], padding[0], padding[0], padding[0], padding[0], padding[0])
@@ -2774,350 +2625,241 @@ class Element(object):
             pass
         else:
             raise ValueError
+        # Conversion to units is done in the properties.
         self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb = padding
     padding = property(_get_padding, _set_padding)
 
     def _get_padding3D(self):
         u"""Tuple of padding in CSS order + (front, back), direction of clock
 
+        >>> from pagebot.toolbox.units import perc
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pt, e.pr, e.pb, e.pl
-        (10, 20, 30, 40)
+        (10pt, 20pt, 30pt, 40pt)
         >>> e.pl = 123
         >>> e.padding3D
-        (10, 20, 30, 123, 0, 0)
+        (10pt, 20pt, 30pt, 123pt, 0pt, 0pt)
         >>> e.padding3D = 11
         >>> e.padding3D
-        (11, 11, 11, 11, 11, 11)
+        (11pt, 11pt, 11pt, 11pt, 11pt, 11pt)
         >>> e.padding3D = (11, 22)
         >>> e.padding3D
-        (11, 22, 11, 22, 11, 22)
+        (11pt, 22pt, 11pt, 22pt, 11pt, 22pt)
         >>> e.padding3D = (11, 22, 33)
         >>> e.padding3D
-        (11, 22, 33, 11, 22, 33)
+        (11pt, 22pt, 33pt, 11pt, 22pt, 33pt)
         >>> e.padding3D = (11, 22, 33, 44)
         >>> e.padding3D
-        (11, 22, 33, 44, 0, 0)
+        (11pt, 22pt, 33pt, 44pt, 0pt, 0pt)
         >>> e.padding3D = (11, 22, 33, 44, 55, 66)
         >>> e.padding3D
-        (11, 22, 33, 44, 55, 66)
+        (11pt, 22pt, 33pt, 44pt, 55pt, 66pt)
         >>> e.w = e.h = e.d = 500
         >>> e.padding3D = '10%'
-        >>> e.padding3D
-        (50, 50, 50, 50, 50, 50)
+        >>> e.padding3D, ru(e.padding3D)
+        ((10%, 10%, 10%, 10%, 10%, 10%), (50pt, 50pt, 50pt, 50pt, 50pt, 50pt))
         >>> e.padding3D = perc(15)
-        >>> e.padding3D
-        (75, 75, 75, 75, 75, 75)
+        >>> e.padding3D, ru(e.padding3D)
+        ((15%, 15%, 15%, 15%, 15%, 15%), (75, 75, 75, 75, 75, 75))
         """
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
     padding3D = property(_get_padding3D, _set_padding)
 
     def _get_pt(self):
-        u"""Padding top property. Relative unit values refer to self.h.
+        u"""Padding top property. Relative unit values refer to self.h. 
+        (Note that this "pt" is abbreviation for padding-top, not point units.)
 
         >>> e = Element(pt=12)
         >>> e.pt
-        12
+        12pt
         >>> e.pt = 13
         >>> e.pt
-        13
+        13pt
         >>> e.style = dict(pt=14, h=500)
         >>> e.pt
-        14
+        14pt
         >>> e.padding # Verify that other padding did not change.
-        (14, 0, 0, 0)
+        (14pt, 0pt, 0pt, 0pt)
         >>> e.pt = '10%'
         >>> e.pt
+        10%
+        >>> e.pt.pt # e.pt is abbreviation for padding-top. .pt is the property that converts to points.
         50
         """
-        pt = self.upt 
-        if isinstance(pt, (fr, perc)):
-            pt = pt.asPt(self.h) # In case percentage or fraction, answer value in relation to self.h
-        elif isinstance(pt, em):
-            pt = pt.asPt(self.css('fontSize'))
-        return pt
+        return units(self.css('pt', 0), base=self.h, em=self.em, min=0, max=self.h)
     def _set_pt(self, pt):
-        self.style['pt'] = getUnits(pt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pt'] = units(pt)  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
-
-    def _get_upt(self):
-        u"""Answer the uninterpreted unit padding top instance, if it exists and otherwise the single value.
-
-        >>> e = Element(pt='5%')
-        >>> e.upt
-        5%
-        >>> e = Element(pt='0.5fr')
-        >>> e.upt
-        0.50fr
-        >>> e = Element(pt=30)
-        >>> e.upt
-        30
-        """
-        return self.css('pt', 0)
-    upt = property(_get_upt, _set_pt) # Setting same as self.pt
-
 
     def _get_pb(self): # Padding bottom
         u"""Padding bottom property. Relative unit values refer to self.h.
 
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pb
-        30
+        30pt
         >>> e = Element(pb=12)
         >>> e.pb
-        12
+        12pt
         >>> e.pb = 13
         >>> e.pb
-        13
+        13pt
         >>> e.style = dict(pb=14, h=500)
         >>> e.pb
-        14
+        14pt
         >>> e.padding # Make sure other did not change.
-        (0, 0, 14, 0)
+        (0pt, 0pt, 14pt, 0pt)
         >>> e.pb = '10%'
         >>> e.pb
+        10%
+        >>> e.pb.pt
         50
         """
-        pb = self.upb 
-        if isinstance(pb, (fr, perc)):
-            pb = pb.asPt(self.h) # In case percentage or fraction, answer value in relation to self.h
-        elif isinstance(pb, em):
-            pb = pb.asPt(self.css('fontSize'))
-        return pb
+        return units(self.css('pb', 0), base=self.h, em=self.em, min=0, max=self.maxH)
     def _set_pb(self, pb):
-        self.style['pb'] = getUnits(pb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pb'] = units(pb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pb = property(_get_pb, _set_pb)
-
-    def _get_upb(self):
-        u"""Answer the uninterpreted unit padding bottom instance, if it exists and otherwise the single value.
-
-        >>> e = Element(pb='5%')
-        >>> e.upb
-        5%
-        >>> e = Element(pb='0.5fr')
-        >>> e.upb
-        0.50fr
-        >>> e = Element(pb=30)
-        >>> e.upb
-        30
-        """
-        return self.css('pb', 0)
-    upb = property(_get_upb, _set_pb) # Setting same as self.pb
-
 
     def _get_pl(self):
         u"""Padding left property. Relative unit values refer to self.w.
+        Clip lowest value on max(0, self.minW)
 
-        >>> e = Element(padding=(10, 20, 30, 40))
-        >>> e.pl
-        40
-        >>> e = Element(pl=12)
-        >>> e.pl
-        12
-        >>> e.pl = 13
-        >>> e.pl
-        13
-        >>> e.style = dict(pl=14, w=500)
-        >>> e.pl
-        14
-        >>> e.padding # Make sure other did not change.
-        (0, 0, 0, 14)
-        >>> e.pl = '10%'
-        >>> e.pl
-        50
+        >>> e1 = Element(w=300)
+        >>> e2 = Element(padding=(10, 20, 30, 40), parent=e1)
+        >>> e2.pl
+        40pt
+        >>> e2 = Element(pl=12, parent=e1)
+        >>> e2.pl
+        12pt
+        >>> e2.pl = 13
+        >>> e2.pl
+        13pt
+        >>> e2.style = dict(pl=14, w=500)
+        >>> e2.pl
+        14pt
+        >>> e2.padding # Make sure other did not change.
+        (0pt, 0pt, 0pt, 14pt)
+        >>> e2.pl = '10%' # Relating Unit instance
+        >>> e2.pl
+        10%
+        >>> e2.pl.pt
+        30
         """
-        pl = self.upl 
-        if isinstance(pl, (fr, perc)):
-            pl = pl.asPt(self.w) # In case percentage or fraction, answer value in relation to self.w
-        elif isinstance(pl, em):
-            pl = pl.asPt(self.css('fontSize'))
-        return pl
+        return units(self.css('pl', 0), base=self.w, em=self.em, min=0, max=self.maxW)
     def _set_pl(self, pl):
-        self.style['pl'] = getUnits(pl or 0) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pl'] = units(pl or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pl = property(_get_pl, _set_pl)
 
-    def _get_upl(self):
-        u"""Answer the uninterpreted unit padding left instance, if it exists and otherwise the single value.
-        Note that not evaluating the relative unit values, doesn't need the existence of a parent element.
-
-        >>> e = Element(pl='5%')
-        >>> e.upl
-        5%
-        >>> e = Element(pl='0.5fr')
-        >>> e.upl
-        0.50fr
-        >>> e = Element(pl=30)
-        >>> e.upl
-        30
-        """
-        return self.css('pl', 0)
-    upl = property(_get_upl, _set_pl) # Setting same as self.pl
-
-
     def _get_pr(self): # Margin right
-        u"""Padding right property. Relative unit values refer to self.w.
+        u"""Padding right property. Relative unit values refer to self.w. 
+        Clip lowest value on max(0, self.minW)
 
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pr
-        20
+        20pt
         >>> e = Element(pr=12)
         >>> e.pr
-        12
+        12pt
         >>> e.pr = 13
         >>> e.pr
-        13
+        13pt
         >>> e.style = dict(pr=14, w=500)
         >>> e.pr
-        14
+        14pt
         >>> e.padding # Make sure other did not change.
-        (0, 14, 0, 0)
+        (0pt, 14pt, 0pt, 0pt)
         >>> e.pr = '10%'
         >>> e.pr
+        10%
+        >>> e.pr.pt
         50
         """
-        pr = self.upr 
-        if isinstance(pr, (fr, perc)):
-            pr = pr.asPt(self.w) # In case percentage or fraction, answer value in relation to self.w
-        elif isinstance(pr, em):
-            pr = pr.asPt(self.css('fontSize'))
-        return pr
+        return units(self.css('pr', 0), base=self.w, em=self.em, min=0, max=self.maxW)
     def _set_pr(self, pr):
-        self.style['pr'] = getUnits(pr or 0) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pr'] = units(pr or 0) 
     pr = property(_get_pr, _set_pr)
-
-    def _get_upr(self):
-        u"""Answer the uninterpreted unit padding right instance, if it exists and otherwise the single value.
-
-        >>> e = Element(pr='5%')
-        >>> e.upr
-        5%
-        >>> e = Element(pr='0.5fr')
-        >>> e.upr
-        0.50fr
-        >>> e = Element(pr=30)
-        >>> e.upr
-        30
-        """
-        return self.css('pr', 0)
-    upr = property(_get_upr, _set_pr) # Setting same as self.pr
-
 
     def _get_pzf(self):
         u"""Padding z-axis front property. Relative unit values refer to self.d.
 
-        >>> e = Element(pzf=12)
-        >>> e.pzf
-        12
-        >>> e.pzf = 13
-        >>> e.pzf
-        13
-        >>> e.style = dict(pzf=14, d=500)
-        >>> e.pzf
-        14
-        >>> e.padding3D # Make sure other did not change.
-        (0, 0, 0, 0, 14, 0)
-        >>> e.pzf = '10%'
-        >>> e.pzf
+        >>> e1 = Element(d=300)
+        >>> e2 = Element(pzf=12, parent=e1)
+        >>> e2.pzf
+        12pt
+        >>> e2.pzf = 13
+        >>> e2.pzf
+        13pt
+        >>> e2.pzf = 14
+        >>> e2.d = 500
+        >>> e2.pzf
+        14pt
+        >>> e2.padding3D # Make sure other did not change.
+        (0pt, 0pt, 0pt, 0pt, 14pt, 0pt)
+        >>> e2.pzf = '10%'
+        >>> e2.pzf
+        10%
+        >>> e2.pzf.pt
         50
         """
-        pzf = self.upzf
-        if isinstance(pzf, (fr, perc)):
-            pzf = pzf.asPt(self.d) # In case percentage or fraction, answer value in relation to self.d
-        elif isinstance(pzf, em):
-            pzf = pzf.asPt(self.css('fontSize'))
-        return pzf
-    def _set_pzf(self, pzf):
-        self.style['pzf'] = getUnits(pzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
+        return units(self.css('pzf', 0), base=self.d, em=self.em, min=0, max=self.maxD)
+    def _set_pzf(self, pzf): # padding z-axis front
+        self.style['pzf'] = units(pzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pzf = property(_get_pzf, _set_pzf)
 
-    def _get_upzf(self):
-        u"""Answer the uninterpreted unit padding right instance, if it exists and otherwise the single value.
-
-        >>> e = Element(pzf='5%')
-        >>> e.upzf
-        5%
-        >>> e = Element(pzf='0.5fr')
-        >>> e.upzf
-        0.50fr
-        >>> e = Element(pzf=30)
-        >>> e.upzf
-        30
-        """
-        return self.css('pzf', 0)
-    upzf = property(_get_upzf, _set_pzf) # Setting same as self.pzf
-
-
     def _get_pzb(self):
-        u"""Padding z-axis back property. Relative values refer to self.d.
+        u"""Padding z-axis back property. Relative unit values refer to self.d.
 
-        >>> e = Element(pzb=12)
-        >>> e.pzb
-        12
-        >>> e.pzb = 13
-        >>> e.pzb
-        13
-        >>> e.style = dict(pzb=14, d=500)
-        >>> e.pzb
-        14
-        >>> e.padding3D # Make sure other did not change.
-        (0, 0, 0, 0, 0, 14)
-        >>> e.pzb = '10%'
-        >>> e.pzb
+        >>> e1 = Element(d=300)
+        >>> e2 = Element(pzb=12, parent=e1)
+        >>> e2.pzb
+        12pt
+        >>> e2.pzb = 13
+        >>> e2.pzb
+        13pt
+        >>> e2.pzb, e2.d
+        (13pt, 0pt)
+        >>> e2.pzb=14
+        >>> e2.d = 500
+        >>> e2.pzb, e2.d
+        (14pt, 500pt)
+        >>> e2.padding3D # Make sure other did not change.
+        (0pt, 0pt, 0pt, 0pt, 0pt, 14pt)
+        >>> e2.pzb = '10%'
+        >>> e2.pzb #, e2.pzb.base
+        10%
+        >>> e2.pzb.pt
         50
         """
-        pzb = self.upzb
-        if isinstance(pzb, (fr, perc)):
-            pzb = pzb.asPt(self.d) # In case percentage or fraction, answer value in relation to self.d
-        elif isinstance(pzb, em):
-            pzb = pzb.asPt(self.css('fontSize'))
-        return pzb
+        return units(self.css('pzb', 0), base=self.d, em=self.em, min=0, max=self.maxD)
     def _set_pzb(self, pzb):
-        self.style['pzb'] = getUnits(pzb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pzb'] = units(pzb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)
 
-    def _get_upzb(self):
-        u"""Answer the uninterpreted unit padding right instance, if it exists and otherwise the single value.
-
-        >>> e = Element(pzb='5%')
-        >>> e.upzb
-        5%
-        >>> e = Element(pzb='0.5fr')
-        >>> e.upzb
-        0.50fr
-        >>> e = Element(pzb=30)
-        >>> e.upzb
-        30
-        """
-        return self.css('pzb', 0)
-    upzb = property(_get_upzb, _set_pzb) # Setting same as self.pzb
-
-
     def _get_pw(self):
-        u"""Padded width read-only property of the element block.
+        u"""Padded width (space between the horizontal paddings) read-only property of the element block.
 
         >>> e = Element(w=400, pl=22, pr=33)
         >>> e.pw
-        345
+        345pt
         >>> e.pl = e.pr = '10%'
-        >>> e.upl, e.pl, e.upr, e.pr
+        >>> e.pl, e.pl.pt, e.pr, e.pr.pt
         (10%, 40, 10%, 40)
         >>> e.pw
-        320
+        320pt
         """
         return self.w - self.pl - self.pr
     pw = property(_get_pw)
 
     def _get_ph(self):
-        u"""Padded height read-only property of the element block.
+        u"""Padded height (space between the vertical paddings) read-only property of the element block.
 
         >>> e = Element(h=400, pb=22, pt=33)
         >>> e.ph
-        345
+        345pt
         >>> e.pb = e.pt = '10%'
-        >>> e.upb, e.pb, e.upt, e.pt
+        >>> e.pb, e.pb.pt, e.pt, e.pt.pt # e.pt is Abbreviation of padding-top, .pt is points
         (10%, 40, 10%, 40)
         >>> e.ph
-        320
+        320pt
         """
         return self.h - self.pb - self.pt
     ph = property(_get_ph)
@@ -3127,12 +2869,12 @@ class Element(object):
 
         >>> e = Element(d=400, pzf=22, pzb=33)
         >>> e.pd
-        345
+        345pt
         >>> e.pzf = e.pzb = '10%'
-        >>> e.upzf, e.pzf, e.upzb, e.pzb
+        >>> e.pzf, e.pzf.pt, e.pzb, e.pzb.pt
         (10%, 40, 10%, 40)
         >>> e.pd
-        320
+        320pt
         """
         return self.d - self.pzf - self.pzb
     pd = property(_get_pd)
@@ -3174,21 +2916,22 @@ class Element(object):
     def _get_size(self):
         u"""Answer the 3D size tuple.
 
+        >>> from pagebot.toolbox.units import fr
         >>> e = Element(w=100, h=200)
         >>> e.size
-        (100, 200, 1)
+        (100pt, 200pt, 0pt)
         >>> e.d = 111
         >>> e.size
-        (100, 200, 111)
+        (100pt, 200pt, 111pt)
         >>> e.d = 300
         >>> e.size
-        (100, 200, 300)
+        (100pt, 200pt, 300pt)
         >>> e.size = (101, 201, 301)
         >>> e.size
-        (101, 201, 301)
+        (101pt, 201pt, 301pt)
         >>> child = Element(w='50%', h='75%', d=fr(0.1), parent=e) # Size relative to parent
         >>> child.size
-        (50, 150, 30.1)
+        (50%, 75%, 0.1fr)
         """
         return self.getSize3D()
     def _set_size(self, size):
@@ -3202,19 +2945,21 @@ class Element(object):
 
         >>> e = Element(w=100, h=200)
         >>> e.getSize()
-        (100, 200)
+        (100pt, 200pt)
         >>> child = Element(w='50%', h='75%', parent=e) # Size relative to parent
-        >>> child.getSize()
-        (50, 150)
+        >>> w, h = child.getSize()
+        >>> w, w.pt, h, h.pt
+        (50%, 150%)
         """
         return self.w, self.h
 
     def getSize3D(self):
         u"""Answer the 3D size of the element.
 
+        >>> from pagebot.toolbox.units import fr
         >>> e = Element(w=100, h=200, d=300)
         >>> e.getSize3D() # Same as e.size
-        (100, 200, 300)
+        (100pt, 200pt, 300pt)
         >>> child = Element(w='50%', h='75%', d=fr(0.1), parent=e) # Size relative to parent
         >>> child.getSize3D()
         (50, 150, 30.0)
@@ -3228,23 +2973,25 @@ class Element(object):
         >>> e = Element()
         >>> e.setSize(100, 200, 300)
         >>> e.size
-        (100, 200, 300)
+        (100pt, 200pt, 300pt)
         >>> e.setSize(101) # Set h to default and d to 1
         >>> e.size
-        (101, 100, 1)
+        (101pt, 100pt, 1pt)
         >>> e.setSize(101, 201)
         >>> e.size
-        (101, 201, 1)
+        (101pt, 201pt, 1pt)
         >>> e.setSize((101, 201, 301)) # Set by size tuple
         >>> e.size
-        (101, 201, 301)
+        (101pt, 201pt, 301pt)
         >>> e.setSize((101, 201)) # Set by size tuple
         >>> e.size
-        (101, 201, 1)
+        (101pt, 201pt, 1pt)
         >>> child = Element(parent=e)
         >>> child.setSize('20%', '75%')
         >>> child.getSize()
-        (20, 150)
+        (20%, 150%)
+        >>> child.getSize()[0].pt
+        20.2
         """
         if isinstance(w, (list, tuple)):
             if len(w) == 2:
@@ -3254,7 +3001,7 @@ class Element(object):
             else:
                 raise ValueError
         elif isinstance(w, str):
-            w = getUnits(w)
+            w = units(w)
         self.w = w # Set by property
         self.h = h
         self.d = d # By default elements have 0 depth.
@@ -3287,21 +3034,26 @@ class Element(object):
 
     def _get_box3D(self):
         u"""Answer the 3D bounding box of self from (self.x, self.y, self.w, self.h) properties."""
-        return self.x or 0, self.y or 0, self.z or 0, self.w or 0, self.h or 0, self.d or 0
+        return self.x, self.y, self.z, self.w, self.h, self.d
     box3D = property(_get_box3D)
 
     def _get_box(self):
         u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties.
 
-        >>> e = Element(x=50, y=50, w=200, h=300)
+        >>> e = Element(x=150, y=150, w=300, h=400)
         >>> e.box
-        (50, 50, 200, 300)
+        (150pt, 150pt, 300pt, 400pt)
+        >>> e.box = 50, 50, 200, 300
+        >>> e.box
+        (50pt, 50pt, 200pt, 300pt)
         >>> child = Element(x='10%', y='20%', w='50%', h='40%', parent=e)
         >>> child.box
-        (20, 60, 100, 120)
+        (10%, 20%, 50%, 40%)
         """
-        return self.x or 0, self.y or 0, self.w or 0, self.h or 0
-    box = property(_get_box)
+        return self.x, self.y, self.w, self.h
+    def _set_box(self, box):
+        self.x, self.y, self.w, self.h = box
+    box = property(_get_box, _set_box)
 
     def _get_marginBox(self):
         u"""Calculate the margin position and margin resized box of the element, after applying the
@@ -3309,11 +3061,11 @@ class Element(object):
 
         >>> e = Element(w=500, h=500)
         >>> e.margin = 10
-        >>> e.marginBox
-        (-10, -10, 520, 520)
+        >>> e.marginBox, ru(e.marginBox)
+        ((-10pt, -10pt, 520pt, 520pt), (-10, -10, 520, 520))
         >>> e.margin = '10%'
-        >>> e.marginBox
-        (-50, -50, 600, 600)
+        >>> e.marginBox, ru(e.marginBox)
+        ((-50pt, -50pt, 600pt, 600pt), (-50, -50, 600, 600))
         """
         mt = self.mt
         mb = self.mb
@@ -3332,13 +3084,15 @@ class Element(object):
         >>> e = Element(w=500, h=500)
         >>> e.padding = 10
         >>> e.paddedBox
-        (10, 10, 480, 480)
+        (10pt, 10pt, 480pt, 480pt)
         >>> e.padding = '10%'
-        >>> e.paddedBox
-        (50, 50, 400, 400)
+        >>> e.padding
+        (10%, 10%, 10%, 10%)
+        >>> e.paddedBox, ru(e.paddedBox)
+        ((50pt, 50pt, 400pt, 400pt), (50, 50, 400, 400))
         """
         pl = self.pl
-        pt = self.pt
+        pt = self.pt # pt is abbreviation from padding-top here, not points.
         pb = self.pb
         if self.originTop:
             y = self.y - pt
@@ -3353,17 +3107,19 @@ class Element(object):
 
         >>> e = Element(w=500, h=500, d=500)
         >>> e.padding3D = 10
-        >>> e.paddedBox3D
-        (10, 10, 10, 480, 480, 480)
+        >>> e.paddedBox3D, ru(e.paddedBox3D)
+        ((10pt, 10pt, 10pt, 480pt, 480pt, 480pt), (10, 10, 10, 480, 480, 480))
         >>> e.padding3D = '10%'
-        >>> e.paddedBox3D
-        (50, 50, 50, 400, 400, 400)
+        >>> e.padding3D
+        (10%, 10%, 10%, 10%, 10%, 10%)
+        >>> e.paddedBox3D, ru(e.paddedBox3D)
+        ((50pt, 50pt, 50pt, 400pt, 400pt, 400pt), (50, 50, 50, 400, 400, 400))
         """
         x, y, w, h = self.paddedBox
         pzf = self.pzf
         return x, y, self.z + pzf, w, h, self.d - pzf - self.pzb
     paddedBox3D = property(_get_paddedBox3D)
-
+  
     # PDF naming: MediaBox is highlighted with a magenta rectangle, the BleedBox with a cyan
     # one while dark blue is used for the TrimBox.
     # https://www.prepressure.com/pdf/basics/page-boxes
@@ -3501,21 +3257,27 @@ class Element(object):
     # Size limits
 
     def _get_minW(self):
+        u"""Answer the minW if elements. Default is MIN_WIDTH.
+
+        >>> e = Element(minW=100)
+        >>> e.minW
+        100
+        """
         return self.css('minW') or MIN_WIDTH
     def _set_minW(self, minW): # Clip values
-        self.style['minW'] = max(MIN_WIDTH, min(MAX_WIDTH, minW)) # Set on local style, shielding parent self.css value.
+        self.style['minW'] = max(MIN_WIDTH, 0, min(MAX_WIDTH, minW)) # Set on local style, shielding parent self.css value.
     minW = property(_get_minW, _set_minW)
 
     def _get_minH(self):
         return self.css('minH') or MIN_HEIGHT
     def _set_minH(self, minH):
-        self.style['minH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, minH)) # Set on local style, shielding parent self.css value.
+        self.style['minH'] = max(MIN_HEIGHT, 0, min(MAX_HEIGHT, minH)) # Set on local style, shielding parent self.css value.
     minH = property(_get_minH, _set_minH)
 
     def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
         return self.css('minD') or MIN_DEPTH
     def _set_minD(self, minD):
-        self.style['minD'] = max(MIN_DEPTH, min(MAX_DEPTH, minD)) # Set on local style, shielding parent self.css value.
+        self.style['minD'] = max(MIN_DEPTH, 0, min(MAX_DEPTH, minD)) # Set on local style, shielding parent self.css value.
     minD = property(_get_minD, _set_minD)
 
     def getMinSize(self):
@@ -3523,7 +3285,7 @@ class Element(object):
 
         >>> e = Element()
         >>> e.getMinSize()
-        (1, 1)
+        (1pt, 1pt)
         """
         return self.minW, self.minH
 
@@ -3532,37 +3294,31 @@ class Element(object):
 
         >>> e = Element()
         >>> e.getMinSize3D()
-        (1, 1, 1)
+        (1pt, 1pt, 1pt)
         """
         return self.minW, self.minH, self.minD
 
     def setMinSize(self, minW, minH=None, minD=None):
-        u"""Set the min size vaues.
+        u"""Set the min size values.
 
         >>> e = Element()
         >>> e.getMinSize()
-        (1, 1)
+        (1pt, 1pt)
         >>> e.setMinSize(100, 200, 300)
         >>> e.getMinSize()
-        (100, 200)
+        (100pt, 200pt)
         >>> e.getMinSize3D()
-        (100, 200, 300)
+        (100pt, 200pt, 300pt)
         """
-        if minW and minH is None and minD is None:
-            if isinstance(minW, (int, float)):
-                self.minW = self.minH = self.minD = minW
-            elif isinstance(minH, (tuple, list)):
-                if len(minH) == 1:
-                    self.minW = self.minH = self.minD = minW
-                elif len(minH) == 2:
-                    self.minW = self.minH = minW
-                    self.minD = 0
-                elif len(minH) == 3:
-                    self.minW, self.minH, self.minD = minW
-        else:
-            self.minW = minW
-            self.minH = minH
-            self.minD = minD or 0 # Optional minimum depth of the element.
+        if isinstance(minW, (list, tuple)):
+            minW, minH, minD = minW
+        if minH is None:
+            minH = minW
+        if minD is None:
+            minD = pt(0) # Optional default minimum depth of the element.
+        self.minW = minW
+        self.minH = minH
+        self.minD = minD
 
     def _get_maxW(self):
         maxW = self.style.get('maxW')
@@ -4486,7 +4242,7 @@ class Element(object):
         >>> e2 = Element(elements=[e1])
         >>> success = e1.bottom2BottomSide()
         >>> e1.bottom # Move bottom of e1 down to padding-bottom position of e2
-        0
+        0pt
         """
         if self.originTop:
             self.bottom = self.parent.h
@@ -4827,10 +4583,10 @@ class Element(object):
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
         >>> e1.x, e1.y, e1.w, e1.h # Default position and size
-        (100, 20, 100, 50)
+        (100pt, 20pt, 100pt, 50pt)
         >>> success = e1.fit2Right()
         >>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
-        (100, 20, 190, 50)
+        (100pt, 20pt, 190pt, 50pt)
         >>>
         """
         self.w = self.parent.w - self.parent.pr - self.x
@@ -4843,10 +4599,10 @@ class Element(object):
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
         >>> e1.x, e1.y, e1.w, e1.h # Default position and size
-        (100, 20, 100, 50)
+        (100pt, 20pt, 100pt, 50pt)
         >>> success = e1.fit2RightSide()
         >>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
-        (100, 20, 200, 50)
+        (100pt, 20pt, 200pt, 50pt)
         >>>
         """
         self.w = self.parent.w - self.x
@@ -4859,10 +4615,10 @@ class Element(object):
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
         >>> e1.x, e1.y, e1.w, e1.h # Default position and size
-        (100, 20, 100, 50)
+        (100pt, 20pt, 100pt, 50pt)
         >>> success = e1.fit2Top()
         >>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
-        (100, 20, 100, 300)
+        (100pt, 20pt, 100pt, 320pt)
         >>>
         """
         if self.originTop:

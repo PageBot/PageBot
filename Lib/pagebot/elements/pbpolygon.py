@@ -15,7 +15,7 @@
 #     polygon.py
 #
 from pagebot.elements.element import Element
-from pagebot.style import XXXL, NO_COLOR
+from pagebot.style import XXXL
 from pagebot.toolbox.transformer import pointOffset
 
 
@@ -73,7 +73,7 @@ class Polygon(Element):
             self.drawBefore(self, view, p)
 
         context.setFillColor(self.css('fill'))
-        context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        context.setStrokeColor(self.css('stroke', noneColor), self.css('strokeWidth'))
         b.newPath()
         for index, (ppx, ppy) in enumerate(self.points):
             if index == 0:

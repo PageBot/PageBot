@@ -13,6 +13,7 @@
 #
 #     babelstring.py
 #
+from pagebot.toolbox.units import pt
 
 class BabelString(object):
     u"""BabelString is the base class of various types of (formatted) string representations 
@@ -54,16 +55,18 @@ class BabelString(object):
         return self.BABEL_STRING_TYPE
 
     def _get_w(self):
-        return self.size()[0]
+        u"""Answer measure as point units."""
+        return pt(self.size()[0])
     w = property(_get_w)
 
     def _get_h(self):
-        return self.size()[1]
+        u"""Answer measure as point units."""
+        return pt(self.size()[1])
     h = property(_get_h)
 
     def size(self):
         u"""Answer the size tuple (w, h) of the string."""
-        return self.context.textSize(self)
+        return pt(self.context.textSize(self))
 
 
 if __name__ == '__main__':

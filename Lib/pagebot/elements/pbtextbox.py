@@ -197,19 +197,19 @@ class TextBox(Element):
         """
         TODO: Get these tests or similar to work.
         >>> font = findFont('Roboto-Regular')
-        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=124))
+        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=pt(124)))
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.bs
         ABC
         >>> tb.getTextSize()[1]
         436.0
-        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=24))
+        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=pt(24)))
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.getTextSize()[1]
         28.0
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> c = FlatContext()
-        >>> bs = c.newString('ABC', style=dict(font=font.path, fontSize=124))
+        >>> bs = c.newString('ABC', style=dict(font=font.path, fontSize=pt(124)))
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.getTextSize()[1] # ???
         73.0
@@ -389,9 +389,9 @@ class TextBox(Element):
         c = self.context # Get current context and builder
 
         fontSize = self.css('baseLineMarkerSize')
-        indexStyle = dict(font='Verdana', fontSize=8, textFill=(0, 0, 1))
-        yStyle = dict(font='Verdana', fontSize=fontSize, textFill=(0, 0, 1))
-        leadingStyle = dict(font='Verdana', fontSize=fontSize, textFill=(1, 0, 0))
+        indexStyle = dict(font='Verdana', fontSize=pt(8), textFill=Color(r=0, g=0, b=1))
+        yStyle = dict(font='Verdana', fontSize=fontSize, textFill=Color(r=0, g=0, b=1))
+        leadingStyle = dict(font='Verdana', fontSize=fontSize, textFill=Color(r=1, g=0, b=0))
 
         if view.showTextBoxY:
             bs = self.newString('0', style=indexStyle)
@@ -422,7 +422,7 @@ class TextBox(Element):
     def _drawOverflowMarker_drawBot(self, view, px, py):
         u"""Draw the optional overflow marker, if text doesn't fit in the box."""
         b = self.b # Get current builder from self.doc.context.b
-        fs = self.newString('[+]', style=dict(textFill=(1, 0, 0), font='Verdana-Bold', fontSize=8))
+        fs = self.newString('[+]', style=dict(textFill=Color(r=1, g=0, b=0), font='Verdana-Bold', fontSize=pt(8)))
         tw, th = b.textSize(fs.s)
         if self.originTop:
             pass
