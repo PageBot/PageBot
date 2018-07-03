@@ -874,7 +874,7 @@ class Element(object):
         >>> e = Element(fill=Color(0.1, 0.2, 0.3), parent=page)
         >>> style = e.getFlattenedStyle()
         >>> style['fill'], style['fontSize'], style['rLeading'], style['xAlign'], style['rLeading']
-        (Color(r=0.1, g=0.2, b=0.3), 16pt, 1.2em, 'left', 1.2em)
+        (color(r=0.1, g=0.2, b=0.3), 16pt, 1.2em, 'left', 1.2em)
         """
         flattenedStyle = {} # Create a dict with all keys from root style and values from self.css()
         for key in getRootStyle().keys():

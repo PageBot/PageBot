@@ -14,7 +14,7 @@
 #
 #     drawPart.py
 #
-from pagebot.toolbox.color import noneColor
+from pagebot.toolbox.color import noColor
 from math import sin, cos, atan2, radians, degrees
 
 def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
@@ -26,12 +26,12 @@ def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endM
     fms = e.css('flowMarkerSize')
     fmf = e.css('flowCurvatureFactor')
     if onText == 1:
-        c = e.css('flowConnectionStroke2', noneColor)
+        c = e.css('flowConnectionStroke2', noColor)
     else:
-        c = e.css('flowConnectionStroke1', noneColor)
+        c = e.css('flowConnectionStroke1', noColor)
     context.setStrokeColor(c, e.css('flowConnectionStrokeWidth'))
     if startMarker:
-        context.setFillColor(e.css('flowMarkerFill', noneColor))
+        context.setFillColor(e.css('flowMarkerFill', noColor))
         context.oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
     xm = (xt + xs)/2
     ym = (yt + ys)/2

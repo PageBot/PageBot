@@ -39,7 +39,7 @@ class Gradient(object):
         startRadius=None, endRadius=None):
         self.start = start or (0.5, 0) # Default to start a center of bottom.
         self.end = end or (0.5, 1) # Default to end at center of top.
-        self.colors = colors or (Color(r=0,g=0, b=0), Color(r=1, g=1, b=1)) # Default to run between black and white.
+        self.colors = colors or (color(r=0,g=0, b=0), color(r=1, g=1, b=1)) # Default to run between black and white.
         self.cmykColors = None
         self.locations = locations or [0,1]
         self.startRadius = startRadius

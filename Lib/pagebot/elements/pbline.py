@@ -17,7 +17,7 @@ from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements.element import Element
 from pagebot.style import ORIGIN
 from pagebot.toolbox.units import units, fr, perc, em
-from pagebot.toolbox.color import noneColor
+from pagebot.toolbox.color import noColor
 
 class Line(Element):
 
@@ -103,7 +103,7 @@ class Line(Element):
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
  
-        context.setStrokeColor(self.css('stroke', noneColor), self.css('strokeWidth'))
+        context.setStrokeColor(self.css('stroke', noColor), self.css('strokeWidth'))
         context.newPath()
         context.moveTo((px, py))
         context.lineTo((px + self.w, py + self.h))

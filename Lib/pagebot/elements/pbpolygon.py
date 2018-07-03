@@ -73,7 +73,7 @@ class Polygon(Element):
             self.drawBefore(self, view, p)
 
         context.setFillColor(self.css('fill'))
-        context.setStrokeColor(self.css('stroke', noneColor), self.css('strokeWidth'))
+        context.setStrokeColor(self.css('stroke', noColor), self.css('strokeWidth'))
         b.newPath()
         for index, (ppx, ppy) in enumerate(self.points):
             if index == 0:

@@ -21,7 +21,7 @@ from random import random
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.toolbox.color import noneColor
+from pagebot.toolbox.color import noColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.style import RIGHT
 from pagebot.constants import ORIGIN
@@ -99,7 +99,7 @@ class PageView(BaseView):
 
             # View may have defined a background
             fillColor = self.style.get('fill')
-            if fillColor is not noneColor:
+            if fillColor is not noColor:
                 context.setFillColor(fillColor)
                 context.rect(0, 0, pw, ph)
 
@@ -301,16 +301,16 @@ class PageView(BaseView):
 
         if stroke is None:
             if onText == 1:
-                stroke = self.css('viewFlowConnectionStroke2', noneColor)
+                stroke = self.css('viewFlowConnectionStroke2', noColor)
             else:
-                stroke = self.css('viewFlowConnectionStroke1', noneColor)
+                stroke = self.css('viewFlowConnectionStroke1', noColor)
         if strokeWidth is None:
             strokeWidth = self.css('viewFlowConnectionStrokeWidth', 0.5)
 
         self.setStrokeColor(stroke, strokeWidth)
         if startMarker:
             if fill is None:
-                fill = self.css('viewFlowMarkerFill', noneColor)
+                fill = self.css('viewFlowMarkerFill', noColor)
             self.setFillColor(fill)
             self.context.oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
 
@@ -348,7 +348,7 @@ class PageView(BaseView):
         b.drawPath()
 
         if endMarker:
-            self.setFillColor(self.css('viewFlowMarkerFill', noneColor))
+            self.setFillColor(self.css('viewFlowMarkerFill', noColor))
             b.oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 
     #   D R A W I N G  E L E M E N T
@@ -494,8 +494,8 @@ class PageView(BaseView):
             context.saveGraphicState()
             context.setShadow(self.shadow)
 
-            sMissingElementFill = self.css('viewMissingElementFill', noneColor)
-            if sMissingElementFill is not noneColor:
+            sMissingElementFill = self.css('viewMissingElementFill', noColor)
+            if sMissingElementFill is not noColor:
                 context.setFillColor(sMissingElementFill)
                 context.setStrokeColor(None)
                 context.rect(px, py, self.w, self.h)
@@ -540,7 +540,7 @@ class PageView(BaseView):
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        gridFillColor = e.css('viewGridFill', noneColor)
+        gridFillColor = e.css('viewGridFill', noColor)
         gutterW = e.gw # Gutter width
         gutterH = e.gh # Gutter height
         columnWidth = e.cw # Column width
@@ -559,16 +559,16 @@ class PageView(BaseView):
         oy = py + pb
 
         if self.showGrid:
-            if gridFillColor != noneColor:
+            if gridFillColor != noColor:
                 context.fill(gridFillColor)
                 context.stroke(None)
                 for cx, cw in e.getGridColumns():
                     for cy, ch in e.getGridRows():
                         context.rect(ox+cx, oy+cy, cw, ch)
 
-            gridStrokeColor = self.css('viewGridStroke', noneColor)
+            gridStrokeColor = self.css('viewGridStroke', noColor)
             gridStrokeWidth = self.css('viewGridStrokeWidth', 0)
-            if gridStrokeColor != noneColor and gridStrokeWidth:
+            if gridStrokeColor != noColor and gridStrokeWidth:
                 context.fill(None)
                 context.stroke(gridStrokeColor, gridStrokeWidth)
                 context.newPath()
@@ -619,7 +619,7 @@ class PageView(BaseView):
             fontSize=M/2, stroke=None, textFill=e.css('gridStroke')))
         while oy > e.pb or 0:
             context.setFillColor(None)
-            context.setStrokeColor(e.css('baselineGridStroke', noneColor), e.css('gridStrokeWidth'))
+            context.setStrokeColor(e.css('baselineGridStroke', noColor), e.css('gridStrokeWidth'))
             context.newPath()
             context.moveTo((px + e.pl, py + oy))
             context.lineTo((px + e.w - e.pr, py + oy))

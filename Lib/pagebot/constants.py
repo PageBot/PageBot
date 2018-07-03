@@ -340,6 +340,7 @@ RAL_NAMERGB = {
     # http://rgb.to/ral/1000
     # http://www.pats.ch/formulaire/unites/unites11.aspx
     # Numbers are recalculated as floats 0..1
+    # {1024: ('ochre yellow', (0.7098039215686275, 0.5490196078431373, 0.30980392156862746)), ...}
     1000: ('green beige', (204, 204, 153)), # cccc99    
     1001: ('beige', (10, 170, 90)), # d2aa5a 
     1002: ('sand yellow', (208, 168, 24)), # d0a818 
@@ -534,19 +535,21 @@ RAL_NAMERGB = {
     9017: ('traffic black', (20, 23, 28)), # 14171c 
     9018: ('papyrus white', (219, 227, 221)), # dbe3de
 }
-RALNAME_RGB = {}
-for ral, (nameSpace, (ri, gi, bi)) in RAL_NAMERGB.items():
+NAME_RALRGB = {}
+# { 'firgreen': (6009, (0.09019607843137255, 0.1607843137254902, 0.10980392156862745)), 
+#   'fir green': (6009, (0.09019607843137255, 0.1607843137254902, 0.10980392156862745)), ...}
+for ral, (spacedName, (ri, gi, bi)) in RAL_NAMERGB.items():
     rgb = ri/255, gi/255, bi/255
-    RAL_NAMERGB[ral] = nameSpace, rgb # Overwrite with float numbers
-    # Make name alterations also accessable (space and grey --> gray)
+    RAL_NAMERGB[ral] = spacedName, rgb # Overwrite with float numbers
+    # Make name alterations also accessable (remove space and grey --> gray)
     ralRgb = ral, rgb
-    RALNAME_RGB[nameSpace] = ralRgb
-    name = nameSpace.replace(' ', '')
-    RALNAME_RGB[name] = ralRgb
-    nameSpace = nameSpace.replace('grey', 'gray')
-    RALNAME_RGB[nameSpace] = ralRgb
+    NAME_RALRGB[spacedName] = ralRgb
+    name = spacedName.replace(' ', '')
+    NAME_RALRGB[name] = ralRgb
+    spacedName = spacedName.replace('grey', 'gray')
+    NAME_RALRGB[spacedName] = ralRgb
     name = name.replace('grey', 'gray')
-    RALNAME_RGB[name] = ralRgb
+    NAME_RALRGB[name] = ralRgb
 
 CSS_COLOR_NAMES = {
     'aliceblue': 0xf0f8ff,
@@ -1216,7 +1219,7 @@ SPOT_RGB = {
     366: (196, 229, 142), #C4E58E                    
     367: (170, 221, 109), #AADD6D                    
     368: (91, 191, 33), #5BBF21            
-    368.2: (0, 158, 15), #009E0F                    
+    3682: (0, 158, 15), #009E0F                    
     369: (86, 170, 28), #56AA1C                    
 
     370: (86, 142, 20), #568E14            
@@ -1235,7 +1238,7 @@ SPOT_RGB = {
 
     381: (204, 226, 38), #CCE226            
     382: (186, 216, 10), #BAD80A                    
-    382.2: (158, 196, 0), #9EC400            
+    3822: (158, 196, 0), #9EC400            
     383: (163, 175, 7), #A3AF07            
     384: (147, 153, 5), #939905            
     385: (112, 112, 20), #707014            
@@ -1392,7 +1395,7 @@ SPOT_RGB = {
 
     484: (155, 48, 28), #9B301C                    
     485: (216, 30, 5), #D81E05            
-    485.2: (204, 12, 0), #CC0C00            
+    4852: (204, 12, 0), #CC0C00            
     486: (237, 158, 132), #ED9E84            
     487: (239, 181, 160), #EFB5A0            
     488: (242, 196, 175), #F2C4AF                    

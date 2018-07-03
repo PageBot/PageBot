@@ -19,7 +19,7 @@ import codecs
 from pagebot.toolbox.transformer import value2Bool
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import noColor, inheritColor
 from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, object2SpacedString
 
 class HtmlBuilder(XmlBuilder):
@@ -27,12 +27,13 @@ class HtmlBuilder(XmlBuilder):
     The HtmlBuilder class implements the standard XHTML tag set with all attributes. No additional
     whitespace is added. 
 
+    >>> from pagebot.toolbox.color import color
     >>> b = HtmlBuilder()
     >>> b.compact = True
     >>> b.html()
     >>> b.body()
     >>> b.addHtml('Hello world')
-    >>> b.addCss('body {background-color: %s;}' % Color('yellow').css)
+    >>> b.addCss('body {background-color: %s;}' % color('yellow').css)
     >>> b._body()
     >>> b._html()
     >>> b.getHtml()
@@ -458,10 +459,10 @@ table {
                 attributes.append('letter-spacing: %s;' % style['tracking'])
             elif style.get('rTracking') is not None:
                 attributes.append('letter-spacing: %sem;' % style['rTracking'])
-            if style.get('fill') is not None:
-                attributes.append('background-color: %s;' % Color(style['fill']).css)
-            if style.get('textFill') is not None:
-                attributes.append('color: %s;' % Color(style['textFill']).css)
+            if style.get('fill') not in (noColor, None): # Must Color instance
+                attributes.append('background-color: %s;' % style['fill'].css) 
+            if style.get('textFill') not in (noColor, None): # Must be Color instance
+                attributes.append('color: %s;' % style['textFill'].css)
             value = style.get('transition')
             if value is not None:
                 attributes.append('transition=%s;' % value)
