@@ -581,7 +581,7 @@ class DrawBotContext(BaseContext):
         >>> context.strokeWidth(mm(0.5))
 
         """
-        self.b.strokeWidth(w.r)
+        self.b.strokeWidth(w)
 
     def rotate(self, angle):
         u"""Rotate the canvas by angle."""

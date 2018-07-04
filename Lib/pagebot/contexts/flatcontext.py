@@ -17,7 +17,7 @@
 #
 #import imageio
 from pagebot.toolbox.units import pt, Pt, units, ru
-from pagebot.toolbox.color import noColor, color, blackColor
+from pagebot.toolbox.color import Color, noColor, color, blackColor
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
@@ -551,7 +551,7 @@ class FlatContext(BaseContext):
 
     stroke = setStrokeColor # DrawBot compatible API
 
-    def strokeWidth(self, w)
+    def strokeWidth(self, w):
         self._strokeWidth = w
 
     def translate(self, dx, dy):
