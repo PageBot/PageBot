@@ -20,7 +20,7 @@ from random import random # Used for random color palet.
 # Create random title and names
 from pagebot.contributions.filibuster.blurb import blurb
 
-from pagebot.toolbox.transformer import darker
+#from pagebot.toolbox.color import darker
 # Get function to find the Roboto family (in this case installed in the PageBot repository
 from pagebot.fonttoolbox.objects.family import getFamily
 from pagebot.fonttoolbox.objects.font import findFont
@@ -99,7 +99,7 @@ def makeDocument():
     M = BLEED + 64
     newRect(z=-10, name='Frame 2', parent=colorRect1, 
             conditions=[Center2Center(), Middle2Middle()],
-            fill=darker(C1, 0.5), # Default parameter:
+            fill=C1.darker(0.5), # Default parameter:
                                   # 50% between background color and white
             stroke=None,
             w=colorRect1.w-M, h=colorRect1.h-M,
