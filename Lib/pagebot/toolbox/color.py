@@ -17,7 +17,7 @@
 from pagebot.constants import CSS_COLOR_NAMES, SPOT_RGB
 
 class Color(object):
-    u"""The Color class implements a generic color storage, that is capable of 
+    u"""The Color class implements a generic color storage, that is capable of
     tranforming one type of color to another. One of the reasons to use Color
     instances, is that some contexts (such as FlatContext) are very specific
     in what kind of color is possible depending on the selected output format.
@@ -101,7 +101,7 @@ class Color(object):
 
     def _get_rgb(self):
         u"""Answer the rbg tuple of self. If self is not in RGB mode, then transform from
-        CMYK or spot, non-destructive to the original values. Setting to rgb will clear 
+        CMYK or spot, non-destructive to the original values. Setting to rgb will clear
         the values of other color modes, except opacity self.a.
 
         >>> Color(1, 0, 0).rgb
@@ -219,7 +219,7 @@ class Color(object):
         8947848
         >>> Color('#0000FF').int
         255
-        """ 
+        """
         return ((v >> 16) & 255)/255.0, ((v >> 8) & 255)/255.0, (v & 255)/255.0
 
     @classmethod
@@ -268,8 +268,8 @@ class Color(object):
         # extract out k [0,1]
         min_cmy = min(c, m, y)
         c -= min_cmy
-        m -= min_cmy 
-        y -= min_cmy 
+        m -= min_cmy
+        y -= min_cmy
         k = min_cmy
 
         # rescale to the range [0,cmyk_scale]
