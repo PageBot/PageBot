@@ -28,6 +28,7 @@ from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.constants import LEFT, CENTER, RIGHT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
 from pagebot.toolbox.units import Pt
+from pagebot.toolbox.color import noColor, blackColor
 
 class InDesignContext(BaseContext):
     u"""A InDesignContext instance combines the specific functions of the InDesign JS-API
@@ -52,9 +53,12 @@ class InDesignContext(BaseContext):
         self.name = self.__class__.__name__
         self._path = None # Hold current open polygon path
 
-        self._fill = None
-        self._stroke = None
+        self._fill = blackColor
+        self._stroke = noColor
         self._strokeWidth = 0
+        self._textFill = blackColor
+        self._textStroke = noColor
+        self._textStrokeWidth = 0
         self._font = DEFAULT_FONT_PATH # Optional setting of the current font and fontSize
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
@@ -157,8 +161,10 @@ class InDesignContext(BaseContext):
     def line(self, p1, p2):
         u"""Draw a line from p1 to p2.
 
+        >>> from pagebot.toolbox.units import pt, mm
         >>> context = InDesignContext()
-        >>> context.line((100, 100), (200, 200))
+        >>> context.line(pt(100, 100), pt(200, 200))
+        >>> context.line(mm(100, 100), mm(200, 200))
         """
         self.b.line(p1, p2)
 
@@ -487,17 +493,16 @@ class InDesignContext(BaseContext):
     #   C O L O R
 
     def setTextFillColor(self, fs, c):
-        self.setFillColor(c, fs)
+        self._textFill = c
 
     def setTextStrokeColor(self, fs, c, w=None):
-        self.setStrokeColor(c, w, fs)
+        self._textStroke = c
+        self.setStrokeWidth(w)
 
     def setFillColor(self, c, b=None):
         u"""Set the color for global or the color of the formatted string."""
         assert isinstance(c, Color)
-        if b is None: # Builder can be optional InDesign FormattedString
-            b = self.b
-        b.fill(c.rgb)
+        self._fill = c
 
     fill = setFillColor # InDesign compatible API
 
@@ -508,14 +513,14 @@ class InDesignContext(BaseContext):
     def setStrokeColor(self, c, w=None, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         assert isinstance(c, Color)
-        if b is None: # Builder can be optional InDesign FormattedString
-            b = self.b
-        b.stroke(c)
+        self._stroke = c
 
-        if w is not None:
-            b.strokeWidth(w)
+        self.strokeWidth(w)
 
     stroke = setStrokeColor # InDesign compatible API
+
+    def setStrokeWidth(self, w):
+        self._strokeWidth = w
 
     def rotate(self, angle):
         u"""Rotate the canvas by angle."""

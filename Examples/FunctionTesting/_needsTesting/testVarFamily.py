@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -21,10 +22,12 @@
 #
 #     STAT table
 #     https://www.microsoft.com/typography/otspec/stat.htm
-
-import os, sys, shutil
+#
 from __future__ import print_function
 
+import os, sys, shutil
+
+from pagebot.toolbox.color import whiteColor, blackColor
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.objects.varfamily import VarFamily
@@ -209,9 +212,9 @@ def drawFamilyOverview(path):
     context.newPage(1200, 1200)
     # Draw design space for width/weight
     context.translate(100,100)
-    context.troke(0.5)
+    context.stroke(grayColor)
     context.strokeWidth(1)
-    context.fill(0.9)
+    context.fill(color(0.9))
     context.rect(0, 0, 1000, 1000)
     for x in range(0, 1100, 100):
         if 0 < x < 1000:

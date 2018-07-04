@@ -27,7 +27,7 @@ from pagebot.contexts.builders.basebuilder import BaseBuilder
 from pagebot.toolbox.transformer import value2Bool
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.units import Pt
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import Color, blackColor, noColor
 from pagebot.toolbox.transformer import object2SpacedString, asFormatted
 from pagebot.constants import A4Rounded
 from pagebot.toolbox.units import us # Render unit value
@@ -104,12 +104,6 @@ class InDesignBuilder(BaseBuilder):
     def __init__(self):
         self.openDocument = True # Set to False if document creation should run in background.
         self.title = None
-        self._fill = blackColor
-        self._stroke = noColor
-        self._strokeWidth = None
-        self._textFill = blackColor
-        self._textStroke = noColor
-        self._textStrokeWidth = None
         self._jsOut = []
         self._initialize()
         self.w, self.h = A4Rounded
@@ -159,18 +153,15 @@ class InDesignBuilder(BaseBuilder):
     #   E L E M E N T S
 
     def line(self, p1, p2):
-        u = self.units
         self.addJs('myElement = myPage.paths.add();')
-        self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (us(p1[0],u), us(p1[1],u), us(p2[0],u), us(p2[1],u)))
+        self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (p1[0].v, p1[1].v, p2[0].v, p2[1].v))
         
     def oval(self, x, y, w, h):
         u"""Export the InDesign bounding box for the Oval."""
-        u = self.units
         self.addJs('myElement = myPage.ovals.add();')
         self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
 
     def rect(self, x, y, w, h):
-        u = self.units
         self.addJs('myElement = myPage.rectangles.add();')
         self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
 

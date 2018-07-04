@@ -269,9 +269,10 @@ class DrawBotString(BabelString):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> #font = findFont('RobotoDelta-VF')
         >>> font = findFont('Fit-Variable_1')        
-        >>> style = dict(font=font)
+        >>> style = dict(font=font, textFill=blackColor, textStroke=noColor)
         >>> 'wdth' in font.axes.keys() or 'XTRA' in font.axes.keys() # One of them is there
         True
+
         >>> s = DrawBotString.newString('Hello', context, style=style, w=300)
         >>> int(round(s.bounds()[2])), int(round(s.fittingFontSize)) # Rounded width
         (297, 195)
@@ -387,7 +388,6 @@ class DrawBotString(BabelString):
         51
         """
         # Get the drawBotBuilder, no need to check, we already must be in context here.
-        print('@#@#@#@##', t)
         if t is None:
             t = ''
         elif isinstance(t, str):
@@ -428,30 +428,26 @@ class DrawBotString(BabelString):
         # noColor: Set the value to None, no fill will be drawn
         # inheritColor: Don't set color, inherit the current setting for fill
         sFill = css('textFill', e, style, blackColor) # Default is blackColor, not noColor
-        print('FFFFFFF', sFill)
-        """
         if sFill not in (None, inheritColor): # Test on this flag, None is valid value
             if sFill is noColor: # None is value to disable fill drawing.
                 context.setTextFillColor(fs, None)
             else:
                 assert isinstance(sFill, Color)
-                context.setTextFillColor(fs, sFill.rgb)
-        """
+                context.setTextFillColor(fs, sFill)
+        
         # Color values for text stroke
         # Color: Stroke the text with this color instance
         # noColor: Set the value to None, no stroke will be drawn
         # inheritColor: Don't set color, inherit the current setting for stroke
         sStroke = css('textStroke', e, style, noColor)
-        print('SAASSASAAS', sStroke)
-        """
         sStrokeWidth = css('textStrokeWidth', e, style)
-        if sStroke not in(None, inheritColor) and sStrokeWidth is not None:
+        if sStroke not in(None, inheritColor) and sStrokeWidth:
             if sStroke is noColor: # None is value to disable stroke drawing
                 context.setTextStrokeColor(fs, None)
             else:
                 assert isinstance(sStroke, Color)
-                context.setTextStrokeColor(fs, sStroke.rgb, w=sStrokeWidth)
-        """
+                context.setTextStrokeColor(fs, sStroke, w=sStrokeWidth)
+        
         sTextAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
         if sTextAlign is not None: # yTextAlign must be solved by parent container element.
             fs.align(sTextAlign)
@@ -515,7 +511,7 @@ class DrawBotString(BabelString):
         if style is None:
             style = dict(fontSize=sFontSize)
 
-        newt = fs + t # Format plain string t onto new formatted fs.
+        newt = fs # + t # Format plain string t onto new formatted fs.
 
         if w is not None: # There is a target width defined, calculate again with the fontSize ratio correction.
             # We use the enclosing pixel bounds instead of the context.textSide(newt) here, because it is much
