@@ -52,7 +52,7 @@ def content():
         if m[:2] == '__':
             continue
         modname = __name__ + '.' + m[:-3]
-        path = string.split(modname, '.')
+        path = modname.split('.')
         module = __import__(modname)
         # find the deepest submodule
         for modname in path[1:]:
@@ -76,7 +76,7 @@ def index(tagname):
         if m[:2] == '__':
             continue
         modname = __name__ + '.' + m[:-3]
-        path = string.split(modname, '.')
+        path = modname.split('.')
         module = __import__(modname)
 
         # find the deepest submodule

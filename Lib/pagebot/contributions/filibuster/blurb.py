@@ -4,7 +4,7 @@
 #
 from __future__ import print_function
 import re
-import blurbwriter
+import pagebot.contributions.filibuster.blurbwriter as blurbwriter
 
 class Blurb(object):
     """
@@ -15,7 +15,7 @@ class Blurb(object):
 
     b = Blurb()
     print(b.getBlurb('article'))
-    
+
     """
     def __init__(self, content=None):
         if content is None:
@@ -37,7 +37,7 @@ class Blurb(object):
 
         if cnt is not None: # If word count defined, slice by wordspace.
             content = ' '.join(content.split(' ')[:cnt])
-        
+
         if charCnt is not None and len(content) > charCnt:
             # Shorten the string to the requested amount of glyphs.
             content = self.writer.write(type)[:charCnt].strip()
