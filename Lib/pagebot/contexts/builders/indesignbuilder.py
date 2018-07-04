@@ -104,6 +104,12 @@ class InDesignBuilder(BaseBuilder):
     def __init__(self):
         self.openDocument = True # Set to False if document creation should run in background.
         self.title = None
+        self._fill = blackColor
+        self._stroke = noColor
+        self._strokeWidth = None
+        self._textFill = blackColor
+        self._textStroke = noColor
+        self._textStrokeWidth = None
         self._jsOut = []
         self._initialize()
         self.w, self.h = A4Rounded
@@ -168,6 +174,7 @@ class InDesignBuilder(BaseBuilder):
         self.addJs('myElement = myPage.rectangles.add();')
         self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
 
+    #   C O L E 
     #   J S
 
     def addJs(self, js):

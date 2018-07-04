@@ -64,12 +64,12 @@ class HtmlContext(BaseContext):
 
     #   C O L O R
 
-    def setFillColor(self, c, cmyk=False, b=None):
+    def setFillColor(self, c, b=None):
         pass
 
     fill = setFillColor # DrawBot compatible API
       
-    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
+    def setStrokeColor(self, c, w=None, b=None):
         pass
 
     stroke = setStrokeColor # DrawBot compatible API
