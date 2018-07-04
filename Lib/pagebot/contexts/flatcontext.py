@@ -77,9 +77,12 @@ class FlatContext(BaseContext):
         """
         # Keep status of last color, to make difference between fill and stroke colors.
         self.name = self.__class__.__name__
-        self._fill = noColor
+        self._fill = blackColor
         self._stroke = noColor
-        self._strokeWidth = blackColor
+        self._strokeWidth = noColor
+        self._textFill = blackColor
+        self._textStroke = noColor
+        self._textStrokeWidth = noColor
         self._font = DEFAULT_FONT_PATH # Optional setting of the current font and fontSize
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
@@ -525,86 +528,31 @@ class FlatContext(BaseContext):
 
     #   C O L O R
 
-    def setFillColor(self, r=None, g=None, b=None, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None, name=None, builder=None):
+    def setTextFillColor(self, c):
+        self.fill(c)
+
+    def setFillColor(self, c, builder=None):
         u"""Set the color for global or the color of the formatted string.
         See: http://xxyxyz.org/flat, color.py."""
-        b = self.b
-        success = False
-        if c is noColor:
-            self._fill = noColor # Ignore drawing
-            success = True # Color is undefined, do nothing.
-        elif c is None:
-            self._fill = None # No fill
-            success = True
-        elif isinstance(c, (float, int)): # Grayscale
-            self._fill = b.gray(iround(c))
-            success = True
-        elif isinstance(c, (list, tuple)):
-            if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
-                name, (cyan, magenta, yellow, k) = c
-                self._fill = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
-                success = True
-            # Not supported in PDF, leave out for general compatibility?
-            #elif len(c) == 2:
-            #    gray, a = c
-            #    self._fill = b.ga(gray, a)
-            #    success = True
-            elif cmyk:
-                cyan, magenta, yellow, k = c
-                self._fill = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
-                success = True
-            elif len(c) == 4: # rgb and opaque
-                red, green, blue, a = c
-                self._fill = b.rgba(iround(red), iround(green), iround(blue), iround(a))
-                success = True
-            elif len(c) == 3:
-                red, green, blue = c
-                self._fill = b.rgb(iround(red), iround(green), iround(blue))
-                success = True
-        if not success:
-            raise ValueError('FlatContext.setFillColor: Error in color format "%s"' % repr(c))
+        assert isinstance(c, Color)
+        self._fill = c
 
     fill = setFillColor # DrawBot compatible API
 
-    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
+    def setTextStrokeColor(self, c, w=None):
+        self.stroke(c, w)
+
+    def setStrokeColor(self, c, w=None, b=None):
         u"""Set global stroke color or the color of the formatted string."""
-        # TODO: Make this work in Flat
-        b = self.b
-        success = False
-        if c is noColor or c is None:
-            self._stroke = None # no stroke
-            success = True # Color is undefined, do nothing.
-        elif isinstance(c, (float, int)): # Grayscale
-            self._stroke = b.gray(iround(c))
-            success = True
-        elif isinstance(c, (list, tuple)):
-            if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
-                name, (cyan, magenta, yellow, k) = c
-                self._stroke = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
-                success = True
-            # Not supported in PDF, leave out for general compatibility?
-            #elif len(c) == 2:
-            #    gray, a = c
-            #    self._stroke = b.ga(gray, a)
-            #    success = True
-            elif cmyk:
-                cyan, magenta, yellow, k = c
-                self._stroke = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
-                success = True
-            elif len(c) == 4: # rgb and opaque
-                red, green, blue, a = c
-                self._stroke = b.rgba(iround(red), iround(green), iround(blue), iround(a))
-                success = True
-            elif len(c) == 3:
-                red, green, blue = c
-                self._stroke = b.rgb(iround(red), iround(green), iround(blue))
-                success = True
-        if not success:
-            raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
+        assert isinstance(c, Color)
+        self._stroke = c
         if w is not None:
             self._strokeWidth = w
 
     stroke = setStrokeColor # DrawBot compatible API
+
+    def strokeWidth(self, w)
+        self._strokeWidth = w
 
     def translate(self, dx, dy):
         u"""Translate the origin by (dx, dy)."""
