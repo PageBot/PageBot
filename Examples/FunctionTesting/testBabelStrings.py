@@ -12,7 +12,8 @@
 #
 #     testBabelStrings.py
 #
-# Test BabelString both under DrawBotContext and FlatContext
+# Test BabelString in both DrawBotContext and FlatContext
+
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.contexts.flatcontext import FlatContext
 from pagebot.fonttoolbox.objects.font import findFont
@@ -51,4 +52,4 @@ for context, path in testContexts:
     # Usage in DrawBot by addressing the embedded FS for drawing.
     context.text(bs, (M, M))
     context.saveImage(path)
-    
+
