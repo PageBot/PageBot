@@ -496,57 +496,52 @@ class DrawBotContext(BaseContext):
 
     #   C O L O R
 
-    def setTextFillColor(self, fs, r=None, g=None, b=None, **kwargs):
+    def setTextFillColor(self, fs, c, **kwargs):
         u"""Set the color for global or the color of the formatted string.
 
         >>> context = DrawBotContext()
         >>> fs = context.newString('Hello')
-        >>> context.textFill(fs, color(r=0.5)) # Same as setTextFillColor
+        >>> context.textFill(fs, color(0.5)) # Same as setTextFillColor
         >>> context.textFill(fs, color('red'))
         """
-        self.setFillColor(r=r, g=g, b=b, builder=fs, **kwargs)
+        self.setFillColor(c, builder=fs, **kwargs)
 
     textFill = setTextFillColor
 
-    def setTextStrokeColor(self, fs, r=None, g=None, b=None, **kwargs):
+    def setTextStrokeColor(self, fs, c, **kwargs):
         u"""Set the color for global or the color of the formatted string.
 
         >>> context = DrawBotContext()
         >>> fs = context.newString('Hello')
-        >>> context.textStroke(fs, r=0.5) # Same as setTextStrokeColor
+        >>> context.textStroke(fs, color(0.5)) # Same as setTextStrokeColor
         >>> context.textStroke(fs, color('red'), w=pt(10))
         """
-        self.setStrokeColor(r=r, g=g, b=b, builder=fs, **kwargs)
+        self.setStrokeColor(c, builder=fs, **kwargs)
 
     textStroke = setTextStrokeColor
 
-    def setFillColor(self, r=None, g=None, b=None, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None, ral=None, name=None, builder=None):
+    def setFillColor(self, c, builder=None):
         u"""Set the color for global or the color of the formatted string.
 
         >>> context = DrawBotContext()
-        >>> context.fill(r=0.5) # Same as setFillColor
+        >>> context.fill(color(0.5)) # Same as setFillColor
         >>> context.fill(color('red'))
-        >>> context.fill()
+        >>> context.fill(inheritColor)
         >>> context.fill(noColor)
         """
-        if isinstance(r, Color): # First attribute can be a Color instance.
-            fColor = r
-        else: # Answer Color or noColor or inheritColor
-            fColor = color(r=r, g=g, b=b, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk, spot=spot, ral=ral, name=name)
-        
+        assert isinstance(c, Color)
+     
         if builder is None: # Builder can be optional DrawBot FormattedString
             builder = self.b
         
-        if fColor is inheritColor: # Keep color setting as it is.
+        if c is inheritColor: # Keep color setting as it is.
             pass
-        elif fColor is noColor:
+        elif c is noColor:
             builder.fill(None) # Set color to no-color
-        if fColor.isRgb or fColor.isSpot: # No spot color support in DrawBot, conver to closest RGB
-            builder.fill(fColor.rgb)
-        elif fColor.isCmyk:
-            builder.cmykFill(fColor.cmyk)
+        elif c.isCmyk:
+            builder.cmykFill(c.cmyk)
         else:
-            raise ValueError('DrawBotContext.setFillColor: Error in color format "%s"' % fColor)
+            builder.fill(c.rgb)
 
     fill = setFillColor # DrawBot compatible API
 
@@ -561,33 +556,28 @@ class DrawBotContext(BaseContext):
         """
         self.b.strokeWidth(w.r)
 
-    def setStrokeColor(self, r=None, g=None, b=None, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None, ral=None, name=None, w=None, builder=None):
+    def setStrokeColor(self, c, w=None, builder=None):
         u"""Set the color for global or the color of the formatted string.
 
         >>> context = DrawBotContext()
-        >>> context.stroke(r=0.5) # Same as setStrokeColor
+        >>> context.stroke(color(0.5)) # Same as setStrokeColor
         >>> context.stroke(color('red'))
-        >>> context.stroke()
+        >>> context.stroke(inheritColor)
         >>> context.stroke(noColor)
         """
-        if isinstance(r, Color): # First attribute can be a Color instance.
-            sColor = r
-        else: # Answer Color or noColor or inheritColor
-            sColor = color(r=r, g=g, b=b, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk, spot=spot, ral=ral, name=name)
-        
+        assert isinstance(c, Color)
+
         if builder is None: # Builder can be optional DrawBot FormattedString
             builder = self.b
         
-        if sColor is inheritColor: # Keep color setting as it is.
+        if c is inheritColor: # Keep color setting as it is.
             pass
-        if sColor is noColor:
+        if c is noColor:
             builder.stroke(None) # Set color to no-color
-        if sColor.isRgb or sColor.isSpot: # No spot color support in DrawBot, conver to closest RGB
-            builder.stroke(sColor.rgb)
-        elif sColor.isCmyk:
-            builder.cmykStroke(sColor.cmyk)
+        elif c.isCmyk:
+            builder.cmykStroke(c.cmyk)
         else:
-            raise ValueError('DrawBotContext.setStrokeColor: Error in color format "%s"' % sColor)
+            builder.stroke(c.rgb)
         if w is not None:
             self.strokeWidth(w)
 

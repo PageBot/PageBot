@@ -223,6 +223,8 @@ class Unit(object):
     def __init__(self, v=0, base=None, g=0, min=None, max=None):
         assert isinstance(v, (int, float)) # Otherwise do a cast first as pt(otherUnit)
         self._v = v
+        # Base can be a unit value, ot a dictionary, where self.UNIT is the key.
+        # This way units(...) can decide on the type of unit, where the base has multiple entries.
         if base is None:
             base = self.BASE
         self.base = base # Default base value for reference by relative units.
@@ -841,6 +843,7 @@ class RelativeUnit(Unit):
     """
     BASE = 1 # Default "base reference for relative units."
     GUTTER = U*2 # Used as default gutter measure for Col units.
+    BASE_KEY = 'base' # Key in optional base of relative units.
     isAbsolute = False # Cannot do arithmetic with absolute Unit instances.
     isRelative = True
 
@@ -915,10 +918,17 @@ class RelativeUnit(Unit):
         200pt
         >>> u.pt # 20% for 200pt
         40
+        >>> u = units('5em', base=dict(em=pt(12), perc=pt(50)))
+        >>> u.pt # Rendered to base selection pt(12)
+        60
         """
+        if isinstance(self._base, dict):
+            return self._base[self.BASE_KEY]
         return self._base
     def _set_base(self, base):  
-        if not isUnit(base):
+        if isinstance(base, dict):
+            assert self.BASE_KEY in base
+        elif not isinstance(base, dict) and not isUnit(base):
             base = units(base)
         self._base = base
     base = property(_get_base, _set_base)
@@ -1188,8 +1198,9 @@ class Em(RelativeUnit):
     >>> em(1, 2, 3, 4)
     (1em, 2em, 3em, 4em)
     """
-    UNIT = 'em'
     isEm = True
+    UNIT = 'em'
+    BASE_KEY = 'em' # Key in optional base of relative units.
 
     def _get_pt(self):
         u"""Answer the rendered value in pt. Base value for absolute unit values is ignored.
