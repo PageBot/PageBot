@@ -486,24 +486,18 @@ class InDesignContext(BaseContext):
         
     #   C O L O R
 
-    def setTextFillColor(self, fs, c, cmyk=False):
-        self.setFillColor(c, cmyk, fs)
+    def setTextFillColor(self, fs, c):
+        self.setFillColor(c, fs)
 
-    def setTextStrokeColor(self, fs, c, w=1, cmyk=False):
-        self.setStrokeColor(c, w, cmyk, fs)
+    def setTextStrokeColor(self, fs, c, w=None):
+        self.setStrokeColor(c, w, fs)
 
     def setFillColor(self, c, b=None):
         u"""Set the color for global or the color of the formatted string."""
+        assert isinstance(c, Color)
         if b is None: # Builder can be optional InDesign FormattedString
             b = self.b
-        if c is inheritColor:
-            pass # Color is undefined, do nothing.
-        elif c is noColor: 
-            c.fill(None)
-        elif c.isCmky:
-            b.cmykFill(c.cmyk)
-        else:
-            b.fill(c.rgb)
+        b.fill(c.rgb)
 
     fill = setFillColor # InDesign compatible API
 
@@ -511,18 +505,12 @@ class InDesignContext(BaseContext):
         u"""Set the current stroke width."""
         self.b.strokeWidth(w)
 
-    def setStrokeColor(self, c, w=1, b=None):
+    def setStrokeColor(self, c, w=None, b=None):
         u"""Set global stroke color or the color of the formatted string."""
+        assert isinstance(c, Color)
         if b is None: # Builder can be optional InDesign FormattedString
             b = self.b
-        if c is inheritColor:
-            pass # Color is undefined, do nothing.
-        elif c is noColor: 
-            c.fill(None)
-        elif c.isCmky:
-            b.cmykStroke(*c.cmyk)
-        else:
-            b.stroke(*c.rgb)
+        b.stroke(c)
 
         if w is not None:
             b.strokeWidth(w)

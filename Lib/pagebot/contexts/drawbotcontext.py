@@ -496,7 +496,7 @@ class DrawBotContext(BaseContext):
 
     #   C O L O R
 
-    def setTextFillColor(self, fs, c, **kwargs):
+    def setTextFillColor(self, fs, c):
         u"""Set the color for global or the color of the formatted string.
 
         >>> context = DrawBotContext()
@@ -504,11 +504,11 @@ class DrawBotContext(BaseContext):
         >>> context.textFill(fs, color(0.5)) # Same as setTextFillColor
         >>> context.textFill(fs, color('red'))
         """
-        self.setFillColor(c, builder=fs, **kwargs)
+        self.setFillColor(c, builder=fs)
 
     textFill = setTextFillColor
 
-    def setTextStrokeColor(self, fs, c, **kwargs):
+    def setTextStrokeColor(self, fs, c, w=None):
         u"""Set the color for global or the color of the formatted string.
 
         >>> context = DrawBotContext()
@@ -516,7 +516,7 @@ class DrawBotContext(BaseContext):
         >>> context.textStroke(fs, color(0.5)) # Same as setTextStrokeColor
         >>> context.textStroke(fs, color('red'), w=pt(10))
         """
-        self.setStrokeColor(c, builder=fs, **kwargs)
+        self.setStrokeColor(c, builder=fs)
 
     textStroke = setTextStrokeColor
 
@@ -545,17 +545,6 @@ class DrawBotContext(BaseContext):
 
     fill = setFillColor # DrawBot compatible API
 
-    def strokeWidth(self, w):
-        u"""Set the current stroke width.
-
-        >>> from pagebot.toolbox.units import unit, pt, mm
-        >>> context = DrawBotContext()
-        >>> context.strokeWidth(pt(0.5)) 
-        >>> context.strokeWidth(mm(0.5))
-
-        """
-        self.b.strokeWidth(w.r)
-
     def setStrokeColor(self, c, w=None, builder=None):
         u"""Set the color for global or the color of the formatted string.
 
@@ -582,6 +571,17 @@ class DrawBotContext(BaseContext):
             self.strokeWidth(w)
 
     stroke = setStrokeColor # DrawBot compatible API
+
+    def strokeWidth(self, w):
+        u"""Set the current stroke width.
+
+        >>> from pagebot.toolbox.units import unit, pt, mm
+        >>> context = DrawBotContext()
+        >>> context.strokeWidth(pt(0.5)) 
+        >>> context.strokeWidth(mm(0.5))
+
+        """
+        self.b.strokeWidth(w.r)
 
     def rotate(self, angle):
         u"""Rotate the canvas by angle."""
