@@ -38,7 +38,7 @@ def pixelBounds(fs):
     For the total height of the pixel-map, calculate @ph - @py.
     For the total width of the pixel-map, calculate @pw - @px."""
     p = BezierPath()
-    p.text(fs, pt(0, 0))
+    p.text(fs, (0, 0))
     # OSX answers bw and bh as difference with bx and by. That is not really intuitive, as the
     # the total (width, height) then always needs to be calculated by the caller.
     # So, instead, the width and height answered is the complete bounding box, and the (x, y)
@@ -387,8 +387,11 @@ class DrawBotString(BabelString):
         51
         """
         # Get the drawBotBuilder, no need to check, we already must be in context here.
+        print('@#@#@#@##', t)
         if t is None:
             t = ''
+        elif isinstance(t, str):
+            t = str(t)
 
         b = context.b
         b.hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
@@ -425,25 +428,30 @@ class DrawBotString(BabelString):
         # noColor: Set the value to None, no fill will be drawn
         # inheritColor: Don't set color, inherit the current setting for fill
         sFill = css('textFill', e, style, blackColor) # Default is blackColor, not noColor
-        if sFill != inheritColor: # Test on this flag, None is valid value
+        print('FFFFFFF', sFill)
+        """
+        if sFill not in (None, inheritColor): # Test on this flag, None is valid value
             if sFill is noColor: # None is value to disable fill drawing.
                 context.setTextFillColor(fs, None)
             else:
                 assert isinstance(sFill, Color)
                 context.setTextFillColor(fs, sFill.rgb)
-
+        """
         # Color values for text stroke
         # Color: Stroke the text with this color instance
         # noColor: Set the value to None, no stroke will be drawn
         # inheritColor: Don't set color, inherit the current setting for stroke
         sStroke = css('textStroke', e, style, noColor)
+        print('SAASSASAAS', sStroke)
+        """
         sStrokeWidth = css('textStrokeWidth', e, style)
-        if sStroke != inheritColor and sStrokeWidth is not None:
+        if sStroke not in(None, inheritColor) and sStrokeWidth is not None:
             if sStroke is noColor: # None is value to disable stroke drawing
                 context.setTextStrokeColor(fs, None)
             else:
                 assert isinstance(sStroke, Color)
                 context.setTextStrokeColor(fs, sStroke.rgb, w=sStrokeWidth)
+        """
         sTextAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
         if sTextAlign is not None: # yTextAlign must be solved by parent container element.
             fs.align(sTextAlign)

@@ -492,24 +492,18 @@ class InDesignContext(BaseContext):
     def setTextStrokeColor(self, fs, c, w=1, cmyk=False):
         self.setStrokeColor(c, w, cmyk, fs)
 
-    def setFillColor(self, c, cmyk=False, b=None):
+    def setFillColor(self, c, b=None):
         u"""Set the color for global or the color of the formatted string."""
         if b is None: # Builder can be optional InDesign FormattedString
             b = self.b
-        if c is NO_COLOR:
+        if c is inheritColor:
             pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykFill(c)
-            else:
-                b.fill(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykFill(*c)
-            else:
-                b.fill(*c)
+        elif c is noColor: 
+            c.fill(None)
+        elif c.isCmky:
+            b.cmykFill(c.cmyk)
         else:
-            raise ValueError('InDesignContext.setFillColor: Error in color format "%s"' % repr(c))
+            b.fill(c.rgb)
 
     fill = setFillColor # InDesign compatible API
 
@@ -517,24 +511,19 @@ class InDesignContext(BaseContext):
         u"""Set the current stroke width."""
         self.b.strokeWidth(w)
 
-    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
+    def setStrokeColor(self, c, w=1, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         if b is None: # Builder can be optional InDesign FormattedString
             b = self.b
-        if c is NO_COLOR:
+        if c is inheritColor:
             pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykStroke(c)
-            else:
-                b.stroke(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykStroke(*c)
-            else:
-                b.stroke(*c)
+        elif c is noColor: 
+            c.fill(None)
+        elif c.isCmky:
+            b.cmykStroke(*c.cmyk)
         else:
-            raise ValueError('InDesignContext.setStrokeColor: Error in color format "%s"' % repr(c))
+            b.stroke(*c.rgb)
+
         if w is not None:
             b.strokeWidth(w)
 

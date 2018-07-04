@@ -1355,7 +1355,8 @@ class Element(object):
         0.5fr
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        return units(self.style.get('x'), base=self.parentW, em=self.em)
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('x'), base=base)
     def _set_x(self, x):
         """Convert to units, if x is not already a Unit instance."""
         self.style['x'] = units(x) 
@@ -1378,7 +1379,8 @@ class Element(object):
         (40%, 200)
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        return units(self.style.get('y'), base=self.parentH, em=self.em)
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('y'), base=base)
     def _set_y(self, y):
         """Convert to units, if y is not already a Unit instance."""
         self.style['y'] = units(y) 
@@ -1404,7 +1406,8 @@ class Element(object):
         (40%, 200)
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        return units(self.style.get('z'), base=self.parentD, em=self.em)
+        base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('z'), base=base)
     def _set_z(self, z):
         """Convert to units, if z is not already a Unit instance."""
         self.style['z'] = units(z) 
@@ -1427,7 +1430,7 @@ class Element(object):
         (12pt, 122pt)
         >>> child = Element(x='50%', y='50%', parent=e)
         >>> child.xy, ru(child.xy) # Position in middle of parent square
-        ((50%, 50%), (200, 200))
+        ((50%, 50%), (200pt, 200pt))
         """
         return self.x, self.y
     def _set_xy(self, p):
@@ -1455,7 +1458,7 @@ class Element(object):
         >>> child.xyz
         (112%, 22pt, 32pt)
         >>> child.xyz, ru(child.xyz) # Position in middle of parent cube
-        ((112%, 22pt, 32pt), (448, 22, 32))
+        ((112%, 22pt, 32pt), (448pt, 22, 32))
         """
         return self.x, self.y, self.z
     def _set_xyz(self, p):
@@ -1736,7 +1739,7 @@ class Element(object):
         100pt
         >>> e.yAlign = MIDDLE
         >>> e.bottom.pt # Get the integer value
-        224
+        224.0
         """
         yAlign = self.yAlign
         if yAlign == TOP:
@@ -2095,7 +2098,8 @@ class Element(object):
         >>> e.bleedTop
         20pt
         """
-        return units(self.css('bleedTop', 0), base=self.h, em=self.em, min=0)
+        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
+        return units(self.css('bleedTop', 0), base=base, min=0)
     def _set_bleedTop(self, bleed):
         self.style['bleedTop'] = units(bleed)
     bleedTop = property(_get_bleedTop, _set_bleedTop)
@@ -2108,7 +2112,8 @@ class Element(object):
         >>> e.bleedBottom
         20pt
         """
-        return units(self.css('bleedBottom', 0), base=self.h, em=self.em, min=0)
+        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
+        return units(self.css('bleedBottom', 0), base=base, min=0)
     def _set_bleedBottom(self, bleed):
         self.style['bleedBottom'] = units(bleed)
     bleedBottom = property(_get_bleedBottom, _set_bleedBottom)
@@ -2121,7 +2126,8 @@ class Element(object):
         >>> e.bleedLeft
         20pt
         """
-        return units(self.css('bleedLeft', 0), base=self.w, em=self.em, min=0)
+        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
+        return units(self.css('bleedLeft', 0), base=base, min=0)
     def _set_bleedLeft(self, bleed):
         self.style['bleedLeft'] = units(bleed)
     bleedLeft = property(_get_bleedLeft, _set_bleedLeft)
@@ -2134,7 +2140,8 @@ class Element(object):
         >>> e.bleedRight
         20pt
         """
-        return units(self.css('bleedRight', 0), base=self.w, em=self.em, min=0)
+        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
+        return units(self.css('bleedRight', 0), base=base, min=0)
     def _set_bleedRight(self, bleed):
         self.style['bleedRight'] = units(bleed)
     bleedRight = property(_get_bleedRight, _set_bleedRight)
@@ -2214,7 +2221,8 @@ class Element(object):
         >>> child.w, child.w.pt
         (4.5em, 45)
         """
-        return units(self.css('w', 0), base=self.parentW, em=self.em, min=self.minW, max=self.maxW)
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('w', 0), base=base, min=self.minW, max=self.maxW)
     def _set_w(self, w):
         self.style['w'] = units(w or DEFAULT_WIDTH) 
     w = property(_get_w, _set_w)
@@ -2260,7 +2268,8 @@ class Element(object):
         >>> child.h, child.h.pt
         (4.5em, 54)
         """
-        return units(self.css('h', 0), base=self.parentH, em=self.em, min=self.minH, max=self.maxH)
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('h', 0), base=base, min=self.minH, max=self.maxH)
     def _set_h(self, h):
         self.style['h'] = units(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
@@ -2299,7 +2308,8 @@ class Element(object):
         >>> e.d, e.d == MIN_DEPTH
         (1pt, True)
         """
-        return units(self.css('d', 0), base=self.parentD, em=self.em, min=self.minD, max=self.maxD)
+        base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('d', 0), base=base, min=self.minD, max=self.maxD)
     def _set_d(self, d):
         self.style['d'] = units(d or MIN_DEPTH) # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
@@ -2440,7 +2450,8 @@ class Element(object):
         >>> e.mt.pt
         50
         """
-        return units(self.css('mt', 0), base=self.h, em=self.em, min=0)
+        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('mt', 0), base=base, min=0)
     def _set_mt(self, mt):
         self.style['mt'] = units(mt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
     mt = property(_get_mt, _set_mt)
@@ -2465,7 +2476,8 @@ class Element(object):
         >>> e.mb.pt
         50
         """
-        return units(self.css('mb', 0), base=self.h, em=self.em, min=0)
+        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('mb', 0), base=base, min=0)
     def _set_mb(self, mb):
         u"""Precompile as Unit instance from whatever format mb has."""
         self.style['mb'] = units(mb) # Overwrite element local style from here, parent css becomes inaccessable.
@@ -2489,7 +2501,8 @@ class Element(object):
         >>> e.ml.pt
         50
         """
-        return units(self.css('ml', 0), base=self.w, em=self.em, min=0)
+        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('ml', 0), base=base, min=0)
     def _set_ml(self, ml):
         # Overwrite element local style from here, parent css becomes inaccessable.
         self.style['ml'] = units(ml) 
@@ -2513,7 +2526,8 @@ class Element(object):
         >>> e.mr.pt
         50
         """
-        return units(self.css('mr', 0), base=self.w, em=self.em, min=0)
+        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('mr', 0), base=base, min=0)
     def _set_mr(self, mr):
         self.style['mr'] = units(mr) # Overwrite element local style from here, parent css becomes inaccessable.
     mr = property(_get_mr, _set_mr)
@@ -2536,7 +2550,8 @@ class Element(object):
         >>> e.mzf.pt
         50
         """
-        return units(self.css('mzf', 0), base=self.d, em=self.em, min=0)
+        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('mzf', 0), base=base, min=0)
     def _set_mzf(self, mzf):
         self.style['mzf'] = units(mzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     mzf = property(_get_mzf, _set_mzf)
@@ -2559,7 +2574,8 @@ class Element(object):
         >>> e.mzb.pt
         50
         """
-        return units(self.css('mzb', 0), base=self.d, em=self.em, min=0)
+        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('mzb', 0), base=base, min=0)
     def _set_mzb(self, mzb):
         self.style['mzb'] = units(mzb)  # Overwrite element local style from here, parent css becomes inaccessable.
     mzb = property(_get_mzb, _set_mzb)
@@ -2686,7 +2702,8 @@ class Element(object):
         >>> e.pt.pt # e.pt is abbreviation for padding-top. .pt is the property that converts to points.
         50
         """
-        return units(self.css('pt', 0), base=self.h, em=self.em, min=0, max=self.h)
+        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('pt', 0), base=base, min=0, max=self.h)
     def _set_pt(self, pt):
         self.style['pt'] = units(pt)  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
@@ -2714,7 +2731,8 @@ class Element(object):
         >>> e.pb.pt
         50
         """
-        return units(self.css('pb', 0), base=self.h, em=self.em, min=0, max=self.maxH)
+        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('pb', 0), base=base, min=0, max=self.maxH)
     def _set_pb(self, pb):
         self.style['pb'] = units(pb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pb = property(_get_pb, _set_pb)
@@ -2744,7 +2762,8 @@ class Element(object):
         >>> e2.pl.pt
         30
         """
-        return units(self.css('pl', 0), base=self.w, em=self.em, min=0, max=self.maxW)
+        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('pl', 0), base=base, min=0, max=self.maxW)
     def _set_pl(self, pl):
         self.style['pl'] = units(pl or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pl = property(_get_pl, _set_pl)
@@ -2773,7 +2792,8 @@ class Element(object):
         >>> e.pr.pt
         50
         """
-        return units(self.css('pr', 0), base=self.w, em=self.em, min=0, max=self.maxW)
+        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('pr', 0), base=base, min=0, max=self.maxW)
     def _set_pr(self, pr):
         self.style['pr'] = units(pr or 0) 
     pr = property(_get_pr, _set_pr)
@@ -2800,7 +2820,8 @@ class Element(object):
         >>> e2.pzf.pt
         50
         """
-        return units(self.css('pzf', 0), base=self.d, em=self.em, min=0, max=self.maxD)
+        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('pzf', 0), base=base, min=0, max=self.maxD)
     def _set_pzf(self, pzf): # padding z-axis front
         self.style['pzf'] = units(pzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pzf = property(_get_pzf, _set_pzf)
@@ -2829,7 +2850,8 @@ class Element(object):
         >>> e2.pzb.pt
         50
         """
-        return units(self.css('pzb', 0), base=self.d, em=self.em, min=0, max=self.maxD)
+        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('pzb', 0), base=base, min=0, max=self.maxD)
     def _set_pzb(self, pzb):
         self.style['pzb'] = units(pzb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)

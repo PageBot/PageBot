@@ -593,7 +593,8 @@ class Document(object):
         (13pt, 42pt, 42pt, 49pt, 0pt, 0pt)
         """
         h = self.h
-        return units(self.rootStyle.get('pt', 0), base=h, em=self.em, min=0, max=h)
+        base = dict(base=h, em=self.em) # In case relative units, use this as base.        
+        return units(self.rootStyle.get('pt', 0), base=base, min=0, max=h)
     def _set_pt(self, pt):
         self.rootStyle['pt'] = units(pt)  
     pt = property(_get_pt, _set_pt)
@@ -614,7 +615,8 @@ class Document(object):
         (49pt, 42pt, 13pt, 49pt, 0pt, 0pt)
         """
         h = self.h
-        return units(self.rootStyle.get('pb', 0), base=h, em=self.em, min=0, max=h)
+        base = dict(base=h, em=self.em) # In case relative units, use this as base.        
+        return units(self.rootStyle.get('pb', 0), base=base, min=0, max=h)
     def _set_pb(self, pb):
         self.rootStyle['pb'] = units(pb)  
     pb = property(_get_pb, _set_pb)
@@ -634,8 +636,9 @@ class Document(object):
         >>> doc.padding3D # Taking over default value of root style.
         (49pt, 42pt, 42pt, 13pt, 0pt, 0pt)
         """
-        h = self.h
-        return units(self.rootStyle.get('pl', 0), base=h, em=self.em, min=0, max=h)
+        w = self.w
+        base = dict(base=w, em=self.em) # In case relative units, use this as base.        
+        return units(self.rootStyle.get('pl', 0), base=base, min=0, max=w)
     def _set_pl(self, pl):
         self.rootStyle['pl'] = units(pl) 
     pl = property(_get_pl, _set_pl)
@@ -655,8 +658,9 @@ class Document(object):
         >>> doc.padding3D # Taking over default value of root style.
         (49pt, 13pt, 42pt, 49pt, 0pt, 0pt)
         """
-        h = self.h
-        return units(self.rootStyle.get('pr', 0), base=h, em=self.em, min=0, max=h)
+        w = self.w
+        base = dict(base=w, em=self.em) # In case relative units, use this as base.        
+        return units(self.rootStyle.get('pr', 0), base=base, min=0, max=w)
     def _set_pr(self, pr):
         self.rootStyle['pr'] = units(pr)  
     pr = property(_get_pr, _set_pr)
@@ -676,8 +680,9 @@ class Document(object):
         >>> doc.padding3D # Taking over default value of root style.
         (49pt, 42pt, 42pt, 49pt, 13pt, 0pt)
         """
-        h = self.h
-        return units(self.rootStyle.get('pzf', 0), base=h, em=self.em, min=0, max=h)
+        d = self.d
+        base = dict(base=d, em=self.em) # In case relative units, use this as base.        
+        return units(self.rootStyle.get('pzf', 0), base=base, min=0, max=d)
     def _set_pzf(self, pzf):
         self.rootStyle['pzf'] = units(pzf)  
     pzf = property(_get_pzf, _set_pzf)
@@ -697,8 +702,9 @@ class Document(object):
         >>> doc.padding3D # Taking over default value of root style.
         (49pt, 42pt, 42pt, 49pt, 0pt, 13pt)
         """
-        h = self.h
-        return units(self.rootStyle.get('pzb', 0), h, em=self.em, min=0, max=h)
+        d = self.d
+        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.        
+        return units(self.rootStyle.get('pzb', 0), base=base, min=0, max=d)
     def _set_pzb(self, pzb):
         self.rootStyle['pzb'] = units(pzb)  
     pzb = property(_get_pzb, _set_pzb)
