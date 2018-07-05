@@ -299,13 +299,8 @@ def rgb2Name(rgb):
     return rgbName
 
 class Color(object):
-<<<<<<< HEAD
-    u"""The Color class implements a generic color storage, that is capable of 
-    transforming any one type of color to any other. One of the reasons to use Color
-=======
     u"""The Color class implements a generic color storage, that is capable of
     tranforming one type of color to another. One of the reasons to use Color
->>>>>>> master
     instances, is that some contexts (such as FlatContext) are very specific
     in what kind of color is possible depending on the selected output format.
     As the intension of PageBot is to define evert aspect of documents, without
@@ -672,7 +667,6 @@ class Color(object):
         u"""Set and get the ral value of the color. If self is not in ral mode,
         then convert values from RGB or CMYK value.
 
-<<<<<<< HEAD
         >>> color(ral=9002).ral
         9002
         >>> color(rgb=(1, 0, 0)).ral
@@ -681,104 +675,6 @@ class Color(object):
         '0.98, 0.04, 0.11'
         >>> color(rgb=(0.98, 0.04, 0.11)).ral # Now it finds it too
         3024
-=======
-    @classmethod
-    def int2Rgb(cls, v):
-        u"""Convert an integer (basically the value of the hex string) into (r, g, b)
-
-        >>> '%0.2f, %0.2f, %0.2f' % Color.int2Rgb(12345)
-        '0.00, 0.19, 0.22'
-        >>> '%0.2f, %0.2f, %0.2f' % Color.int2Rgb(65281)
-        '0.00, 1.00, 0.00'
-        >>> Color.int2Rgb(255)
-        (0.0, 0.0, 1.0)
-        >>> Color.int2Rgb(255**2 + 255)
-        (0.0, 1.0, 0.0)
-        >>> Color('#FFFFFF').int
-        16777215
-        >>> Color('#888888').int
-        8947848
-        >>> Color('#0000FF').int
-        255
-        """
-        return ((v >> 16) & 255)/255.0, ((v >> 8) & 255)/255.0, (v & 255)/255.0
-
-    @classmethod
-    def cmyk2Rgb(cls,  c, m, y, k) :
-        u"""Simple straight conversion from (c, m, y, k) to (r, g, b),
-        not using any profiles.
-
-        >>> Color.cmyk2Rgb(1, 1, 0, 0)
-        (0.0, 0.0, 1.0)
-        >>> c, m, y, k = Color.rgb2Cmyk(1, 1, 0) # Bi-direcional conversion test
-        >>> Color.cmyk2Rgb(c, m, y, k)
-        (1.0, 1.0, 0.0)
-        >>> c, m, y, k = Color.rgb2Cmyk(1, 0.5, 0) # Bi-direcional conversion test
-        >>> Color.cmyk2Rgb(c, m, y, k)
-        (1.0, 0.5, 0.0)
-        """
-        r = 1.0 - ((min(1.0, c * (1 - k) + k)))
-        g = 1.0 - ((min(1.0, m * (1 - k) + k)))
-        b = 1.0 - ((min(1.0, y * (1 - k) + k)))
-        return r, g, b
-
-    @classmethod
-    def rgb2Cmyk(cls, r, g, b):
-        u"""Simple straignt conversion from (r, g, b) to (c, m, y, k),
-        not using any profiles)
-
-        >>> Color.rgb2Cmyk(0, 0, 0)
-        (0, 0, 0, 1)
-        >>> Color.rgb2Cmyk(1, 0, 0)
-        (0, 1, 1, 0)
-        >>> Color.rgb2Cmyk(1, 1, 0)
-        (0, 0, 1, 0)
-        >>> Color.rgb2Cmyk(1, 1, 1)
-        (0, 0, 0, 0)
-        >>> Color.rgb2Cmyk(0.5, 0.5, 0.5)
-        (0.0, 0.0, 0.0, 0.5)
-        """
-        if r == 0 and g == 0 and b == 0: # black
-            return 0, 0, 0, 1 # K = cmyk scale
-
-        # rgb [0,1] -> cmy [0,1]
-        c = 1 - r
-        m = 1 - g
-        y = 1 - b
-
-        # extract out k [0,1]
-        min_cmy = min(c, m, y)
-        c -= min_cmy
-        m -= min_cmy
-        y -= min_cmy
-        k = min_cmy
-
-        # rescale to the range [0,cmyk_scale]
-        return c, m, y, k
-
-    @classmethod
-    def spot2Rgb(cls, spot, default=None):
-        u"""Answer the RGB value of spot color. If the value does not exist, answer default of black.
-
-        >>> '%0.2f, %0.2f, %0.2f' % Color.spot2Rgb(300)
-        '0.00, 0.45, 0.78'
-        >>> Color.spot2Rgb(10000000) # Non-existend spot colors map to default or black.
-        (0, 0, 0)
-        """
-        return SPOT_RGB.get(spot, default or (0, 0, 0))
-
-    @classmethod
-    def rgb2Spot(cls, r, g, b):
-        u"""Answer the closest spot value that fits the RGB value.
-
-        >>> Color(0.98, 0.89, 0.5).spot
-        120
-        >>> rgb = Color(spot=300).rgb
-        >>> Color(rgb=rgb).spot
-        300
-        >>> Color(rgb=Color(spot=110).rgb).spot # Double direction conversion test.
-        110
->>>>>>> master
         """
         if self._ral is not None:
             return self._ral
