@@ -19,9 +19,10 @@ from random import random # Used for random color palet.
 
 # Create random title and names
 from pagebot.contributions.filibuster.blurb import blurb
+from pagebot.toolbox.color import Color
 
-#from pagebot.toolbox.color import darker
-# Get function to find the Roboto family (in this case installed in the PageBot repository
+# Get function to find the Roboto family (in this case installed in the
+# PageBot repository).
 from pagebot.fonttoolbox.objects.family import getFamily
 from pagebot.fonttoolbox.objects.font import findFont
 # Creation of the RootStyle (dictionary) with all
@@ -83,7 +84,7 @@ def makeDocument():
     
     context = view.context
     
-    C1 = (random()*0.2, random()*0.2, random()*0.9)
+    C1 = Color(r=random()*0.2, g=random()*0.2, b=random()*0.9)
 
     # Make background element, filling the page color and bleed.
     colorRect1 = newRect(z=-10, name='Page area', parent=page,
@@ -140,4 +141,3 @@ def makeDocument():
 
 d = makeDocument()
 d.export(EXPORT_PATH)
-

@@ -15,6 +15,7 @@
 #
 
 import sys
+import vanilla
 from pagebot.contexts.platform import getContext
 context = getContext()
 if not context.isDrawBot:
