@@ -12,11 +12,12 @@
 #
 #     UseMarkDownText.py
 #
+from __future__ import print_function
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.typesetter import Typesetter
-from __future__ import print_function
+
 
 W = 400
 H = 480

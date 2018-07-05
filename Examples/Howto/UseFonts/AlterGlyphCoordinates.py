@@ -12,7 +12,7 @@
 #
 #     AlterGlyphCoordinates.py
 #
-#     This script is using getContext(), so it should be able to run it with flexContext.
+#     This script is using getContext(), so it should be able to run it with flatContext.
 #
 
 from __future__ import print_function
