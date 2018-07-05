@@ -69,10 +69,10 @@ class Element(object):
         'TestElement'
         >>> e.description is None
         True
-        >>> e.maxW == sys.maxsize
+        >>> e.maxW == MAX_WIDTH == pt(XXXL) == pt(sys.maxsize)
         True
-        >>> e.maxH
-        1000
+        >>> e.maxH == MAX_HEIGHT == pt(XXXL) == pt(sys.maxsize)
+        True
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (10pt, 20pt, 100pt, 120pt, (22pt, 0pt, 0pt, 11pt), (33pt, 44pt, 55pt, 66pt))
         >>> e = Element() # Default element has default proportions
@@ -651,6 +651,8 @@ class Element(object):
         >>> e1 = Element(name='Child1', x=20, y=30)
         >>> e2 = Element(name='Child2', x=20, y=40)
         >>> e = Element(name='Parent', elements=[e1, e2])
+        >>> e1.p 
+
         >>> e.getElementsAtPoint((20, 30)) == [e1]
         True
         >>> e.getElementsAtPoint((None, 40)) == [e2] # Search on wildcard x
@@ -693,7 +695,7 @@ class Element(object):
         >>> e = Element(name='Parent', elements=[e1, e2])
         >>> d = e.getPositions()
         >>> sorted(d.keys())
-        [(20, 30), (20, 40)]
+        [(20pt, 30pt), (20pt, 40pt)]
         >>> d[(20, 30)] == [e1], d[(20, 40)] == [e2]
         (True, True)
         """
@@ -770,19 +772,24 @@ class Element(object):
     def _get_baselineGrid(self):
         u"""Answer the baseline grid distance, as defined in the (parent)style.
 
+        >>> from pagebot.toolbox.units import mm, p
         >>> e = Element()
         >>> e.baselineGrid is None # Undefined without style or parent style.
         True
         >>> e.baselineGrid = 12
         >>> e.baselineGrid
-        12
+        12pt
+        >>> e.baselineGrid = mm(13.5)
+        >>> e.baselineGrid
+        13.5mm
         >>> e = Element(style=dict(baselineGrid=14))
         >>> e.baselineGrid
-        14
+        14pt
         """
-        return self.css('baselineGrid')
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %       
+        return units(self.css('baselineGrid', 0), base=base, min=self.minH, max=self.maxH)
     def _set_baselineGrid(self, baselineGrid):
-        self.style['baselineGrid'] = baselineGrid
+        self.style['baselineGrid'] = units(baselineGrid)
     baselineGrid = property(_get_baselineGrid, _set_baselineGrid)
 
     def _get_baselineGridStart(self):
@@ -798,9 +805,10 @@ class Element(object):
         >>> e.baselineGridStart
         15
         """
-        return self.css('baselineGridStart')
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %       
+        return units(self.css('baselineGridStart', 0), base=base, min=self.minH, max=self.maxH)
     def _set_baselineGridStart(self, baselineGridStart):
-        self.style['baselineGridStart'] = baselineGridStart
+        self.style['baselineGridStart'] = units(baselineGridStart)
     baselineGridStart = property(_get_baselineGridStart, _set_baselineGridStart)
 
     # Text conditions, always True for non-text elements.
@@ -874,7 +882,7 @@ class Element(object):
         >>> e = Element(fill=Color(0.1, 0.2, 0.3), parent=page)
         >>> style = e.getFlattenedStyle()
         >>> style['fill'], style['fontSize'], style['rLeading'], style['xAlign'], style['rLeading']
-        (color(r=0.1, g=0.2, b=0.3), 16pt, 1.2em, 'left', 1.2em)
+        (color(r=0.1, g=0.2, b=0.3), 12pt, 1.2em, 'left', 1.2em)
         """
         flattenedStyle = {} # Create a dict with all keys from root style and values from self.css()
         for key in getRootStyle().keys():
@@ -1922,77 +1930,6 @@ class Element(object):
         self.style['zAlign'] = self._validateZAlign(zAlign) # Save locally, blocking CSS parent scope for this param.
     zAlign = property(_get_zAlign, _set_zAlign)
 
-    # Position by column + gutter size index.
-
-    def _get_cx(self): # Answer the x-position, defined in columns. Can be fractional for elements not on grid.
-        return x2cx(self.x, self)
-    def _set_cx(self, cx): # Set the x-position, defined in columns.
-        x = cx2x(cx, self)
-        if x is not None:
-            self.x = x
-    cx = property(_get_cx, _set_cx)
-
-    def _get_cy(self): # Answer the y-position, defined in columns. Can be fractional for elements not on grid.
-        return y2cy(self.y, self)
-    def _set_cy(self, cy): # Set the x-position, defined in columns.
-        y = cy2y(cy, self)
-        if y is not None:
-            self.y = y
-    cy = property(_get_cy, _set_cy)
-
-    def _get_cz(self): # Answer the z-position, defined in columns. Can be fractional for elements not on 3D-grid.
-        return z2cz(self.y, self)
-    def _set_cz(self, cz): # Set the z-position, defined in style['cz'] columns.
-        z = cz2z(cz, self)
-        if z is not None:
-            self.z = z
-    cz = property(_get_cz, _set_cz)
-
-    # TODO: Make this work
-    """
-    def _get_cols(self): # Number of columns in the given self.w and self.colW
-        return w2cols(self.w, self) # Using self.cw and self.gw
-    def _set_cols(self, cols):
-        w = cols2w(cw, self)
-        if w is not None:
-            self.w = w
-    cols = property(_get_cols, _set_cols)
-
-    def _get_rows(self): # Number of vertical rows, in the given self.h and self.colH
-        return h2rows(self.h, self) # Using self.ch and self.gw
-    def _set_rows(self, rows):
-        h = rows2h(ch, self)
-        if h is not None:
-            self.h = h
-    rows = property(_get_rows, _set_rows)
-
-    def _get_lanes(self): # z-axis name for rows and cols.
-        return d2lanes(self.d, self) # Using self.cd and self.gw
-    def _set_lanes(self, cd):
-        d = lanes2d(cd, self)
-        if d is not None:
-            self.d = d
-    lanes = property(_get_lanes, _set_lanes)
-    """
-
-    def _get_cw(self): # Column width
-        return self.css('cw')
-    def _set_cw(self, cw):
-        self.style['cw'] = cw
-    cw = property(_get_cw, _set_cw)
-
-    def _get_ch(self): # Column height (row height)
-        return self.css('ch')
-    def _set_ch(self, ch):
-        self.style['ch'] = ch
-    ch = property(_get_ch, _set_ch)
-
-    def _get_cd(self): # Column depth (slice?)
-        return self.css('cd')
-    def _set_cd(self, cd):
-        self.style['cd'] = cd
-    cd = property(_get_cd, _set_cd)
-
 
     def _get_gw(self): # Gutter width
         return self.css('gw', 0)
@@ -2331,6 +2268,40 @@ class Element(object):
     def _set_md(self, d):
         self.style['d'] = max(0, d - self.mzf - self.mzb) # Cannot become < 0, behind viewer?
     md = property(_get_md, _set_md)
+
+    def _get_wh(self): # Width and height tuple
+        u"""Tuple aswered (self.w, self.h, self.d), for convenience usage.
+
+        >>> from pagebot.toolbox.units import p, mm
+        >>> e = Element(w=100, h=200)
+        >>> e.wh
+        (100pt, 200pt)
+        >>> e.wh = 300, mm(400)
+        >>> e.wh
+        (300pt, 400mm)
+        """
+        return self.w, self.h
+    def _set_wh(self, wh):
+        self.w, self.h = wh
+    wh = property(_get_wh, _set_wh)
+
+    def _get_whd(self): # Width and height and dept tuple
+        u"""Width property for self.whd style.
+
+        >>> from pagebot.toolbox.units import p, mm
+        >>> e = Element(w=100, h=200, d=p(8))
+        >>> e.whd
+        (100pt, 200pt, 8p)
+        >>> e.whd = 300, p(6), mm(400)
+        >>> e.whd
+        (300pt, 6p, 400mm)
+        """
+        return self.w, self.h, self.d
+    def _set_whd(self, whd):
+        self.w, self.h, self.d = whd
+    whd = property(_get_whd, _set_whd)
+
+
 
     # Margin properties
 
@@ -2787,9 +2758,9 @@ class Element(object):
         >>> e.padding # Make sure other did not change.
         (0pt, 14pt, 0pt, 0pt)
         >>> e.pr = '10%'
-        >>> e.pr
+        >>> e.pr # Padding right as Unit instance
         10%
-        >>> e.pr.pt
+        >>> e.pr.pt # Get padding-right, cast to points
         50
         """
         base = dict(base=self.w, em=self.em) # In case relative units, use this as base.        
@@ -2817,7 +2788,7 @@ class Element(object):
         >>> e2.pzf = '10%'
         >>> e2.pzf
         10%
-        >>> e2.pzf.pt
+        >>> e2.pzf.pt # Padding-front, cast to point
         50
         """
         base = dict(base=self.d, em=self.em) # In case relative units, use this as base.        
@@ -2936,97 +2907,42 @@ class Element(object):
     originTop = property(_get_originTop, _set_originTop)
 
     def _get_size(self):
-        u"""Answer the 3D size tuple.
-
-        >>> from pagebot.toolbox.units import fr
-        >>> e = Element(w=100, h=200)
-        >>> e.size
-        (100pt, 200pt, 0pt)
-        >>> e.d = 111
-        >>> e.size
-        (100pt, 200pt, 111pt)
-        >>> e.d = 300
-        >>> e.size
-        (100pt, 200pt, 300pt)
-        >>> e.size = (101, 201, 301)
-        >>> e.size
-        (101pt, 201pt, 301pt)
-        >>> child = Element(w='50%', h='75%', d=fr(0.1), parent=e) # Size relative to parent
-        >>> child.size
-        (50%, 75%, 0.1fr)
-        """
-        return self.getSize3D()
-    def _set_size(self, size):
-        self.setSize(size)
-    size = property(_get_size, _set_size)
-
-    def getSize(self):
-        u"""Answer the size of the element by calling properties self.w and self.h.
-        This allows element to dynamically calculate the size if necessary, by redefining the
-        self.w and/or self.h properties.
-
-        >>> e = Element(w=100, h=200)
-        >>> e.getSize()
-        (100pt, 200pt)
-        >>> child = Element(w='50%', h='75%', parent=e) # Size relative to parent
-        >>> w, h = child.getSize()
-        >>> w, w.pt, h, h.pt
-        (50%, 150%)
-        """
-        return self.w, self.h
-
-    def getSize3D(self):
-        u"""Answer the 3D size of the element.
-
-        >>> from pagebot.toolbox.units import fr
-        >>> e = Element(w=100, h=200, d=300)
-        >>> e.getSize3D() # Same as e.size
-        (100pt, 200pt, 300pt)
-        >>> child = Element(w='50%', h='75%', d=fr(0.1), parent=e) # Size relative to parent
-        >>> child.getSize3D()
-        (50, 150, 30.0)
-        """
-        return self.w, self.h, self.d
-
-    def setSize(self, w, h=0, d=0):
         u"""Set the size of the element by calling by properties self.w and self.h.
         If set, then overwrite access from style width and height. self.d is optional attribute.
 
         >>> e = Element()
-        >>> e.setSize(100, 200, 300)
+        >>> e.size = 100, 200, 300
         >>> e.size
         (100pt, 200pt, 300pt)
-        >>> e.setSize(101) # Set h to default and d to 1
+        >>> e.size = 101 # Set h to default and d to 1. Depth must be set explicitedly
         >>> e.size
-        (101pt, 100pt, 1pt)
-        >>> e.setSize(101, 201)
-        >>> e.size
-        (101pt, 201pt, 1pt)
-        >>> e.setSize((101, 201, 301)) # Set by size tuple
-        >>> e.size
-        (101pt, 201pt, 301pt)
-        >>> e.setSize((101, 201)) # Set by size tuple
-        >>> e.size
-        (101pt, 201pt, 1pt)
+        (101pt, 101pt)
+        >>> e.size = 101, 201
+        >>> e.size3D
+        (101pt, 201pt, 0pt)
         >>> child = Element(parent=e)
-        >>> child.setSize('20%', '75%')
-        >>> child.getSize()
-        (20%, 150%)
-        >>> child.getSize()[0].pt
+        >>> child.size = '20%', '75%'
+        >>> child.size
+        20%, 150%
+        >>> child.size[0].pt
         20.2
         """
-        if isinstance(w, (list, tuple)):
-            if len(w) == 2:
-                w, h = w
-            elif len(w) == 3:
-                w, h, d = w
+        return self.w, self.h
+    def _set_size(self, size):
+        if isinstance(size, (tuple, list)):
+            assert len(size) in (2,3)
+            if len(size) == 2:
+                self.w, self.h = size
+                self.d = MIN_DEPTH
             else:
-                raise ValueError
-        elif isinstance(w, str):
-            w = units(w)
-        self.w = w # Set by property
-        self.h = h
-        self.d = d # By default elements have 0 depth.
+                self.w, self.h, self.d = size
+        else:
+            self.w = self.h = self.d = size
+    size = property(_get_size, _set_size)
+
+    def _get_size3D(self):
+        return self.w, self.h, self.d
+    size3D = property(_get_size3D, _set_size) # Setting is idential for self.size3D and self.size
 
     #   S H A D O W   &  G R A D I E N T
 
@@ -3278,116 +3194,138 @@ class Element(object):
 
     # Size limits
 
-    def _get_minW(self):
-        u"""Answer the minW if elements. Default is MIN_WIDTH.
+    def _get_minW(self): # Set/get the minimal height.
+        u"""Answer the minW the limit child elements. Default is MIN_WIDTH.
 
         >>> e = Element(minW=100)
         >>> e.minW
-        100
+        100pt
+        >>> e.minW = mm(50)
+        >>> e.minW
+        50mm
         """
-        return self.css('minW') or MIN_WIDTH
-    def _set_minW(self, minW): # Clip values
-        self.style['minW'] = max(MIN_WIDTH, 0, min(MAX_WIDTH, minW)) # Set on local style, shielding parent self.css value.
+        if self.parent:
+            minW = self.parent.minW
+            maxW = self.parent.maxW
+        else:
+            minW = 0
+            maxW = self.parentW
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %       
+        return units(self.css('minW', 0), base=base, min=minW, max=maxW)
+    def _set_minW(self, minW):
+        self.style['minW'] = units(minW, min=MIN_WIDTH, max=MAX_WIDTH) # Set on local style, shielding parent self.css value.
     minW = property(_get_minW, _set_minW)
 
-    def _get_minH(self):
-        return self.css('minH') or MIN_HEIGHT
+    def _get_minH(self): # Set/get the minimal height.
+        if self.parent:
+            minH = self.parent.minH
+            maxH = self.parent.maxH
+        else:
+            minH = 0
+            maxH = self.parentH
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %       
+        return units(self.css('minH', 0), base=base, min=minH, max=maxH)
     def _set_minH(self, minH):
-        self.style['minH'] = max(MIN_HEIGHT, 0, min(MAX_HEIGHT, minH)) # Set on local style, shielding parent self.css value.
+        self.style['minH'] = units(minH, min=MIN_HEIGHT, max=MAX_HEIGHT) # Set on local style, shielding parent self.css value.
     minH = property(_get_minH, _set_minH)
 
     def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
-        return self.css('minD') or MIN_DEPTH
+        if self.parent:
+            minD = self.parent.minD
+            maxD = self.parent.maxD
+        else:
+            minD = 0
+            maxD = self.parentH
+        base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base for %       
+        return units(self.css('minD', 0), base=base, min=minD, max=maxD)
     def _set_minD(self, minD):
-        self.style['minD'] = max(MIN_DEPTH, 0, min(MAX_DEPTH, minD)) # Set on local style, shielding parent self.css value.
+        self.style['minD'] = units(minD, min=MIN_DEPTH, max=MAX_DEPTH) # Set on local style, shielding parent self.css value.
     minD = property(_get_minD, _set_minD)
 
-    def getMinSize(self):
+    def _get_minSize(self):
         u"""Answer the (minW, minH) of this element.
 
         >>> e = Element()
-        >>> e.getMinSize()
+        >>> e.minSize()
         (1pt, 1pt)
         """
         return self.minW, self.minH
-
-    def getMinSize3D(self):
-        u"""Answer the (minW, minH, minD) of this element.
-
-        >>> e = Element()
-        >>> e.getMinSize3D()
-        (1pt, 1pt, 1pt)
-        """
-        return self.minW, self.minH, self.minD
-
-    def setMinSize(self, minW, minH=None, minD=None):
+    def _set_minSize(self, minSize):
         u"""Set the min size values.
 
         >>> e = Element()
-        >>> e.getMinSize()
+        >>> e.minSize
         (1pt, 1pt)
-        >>> e.setMinSize(100, 200, 300)
-        >>> e.getMinSize()
+        >>> e.minSize(100, 200, 300) # Takes 2D and 3D
+        >>> e.minSize # Deafult give 2D
         (100pt, 200pt)
-        >>> e.getMinSize3D()
+        >>> e.minSize3D
         (100pt, 200pt, 300pt)
         """
-        if isinstance(minW, (list, tuple)):
-            minW, minH, minD = minW
-        if minH is None:
-            minH = minW
-        if minD is None:
-            minD = pt(0) # Optional default minimum depth of the element.
-        self.minW = minW
-        self.minH = minH
-        self.minD = minD
+        if isinstance(minSize, (list, tuple)):
+            assert len(minSize) in (2,3)
+            if len(minSize) == 2:
+                self.minW, self.minH = minSize
+                self.minD = pt(0) # Optional default minimum depth of the element.
+            else:
+                self.min, self.minH, self.minD = minSize
+        else:
+            self.minW = self.minH = self.minD = minSize
+    minSize = property(_get_minSize, _set_minSize)
 
-    def _get_maxW(self):
-        maxW = self.style.get('maxW')
-        if self.parent:
-            maxW = maxW or self.parent.w
-        return maxW or MAX_WIDTH # Unless defined local, take current parent.w as maxW
+    def _get_minSize3D(self):
+        return self.minW, self.minH, self.minD
+    minSize3D = property(_get_minSize3D, _set_minSize) # Setting is identical to 3D
+
+    def _get_maxW(self): # Set/get the maximal width.
+        u"""Answer the maxW limit for child elements. Default is MAX_WIDTH.
+        Min/max values must be absolute units.
+
+        >>> e = Element(minW=100)
+        >>> e.maxW
+        100pt
+        >>> e.maxW = mm(50)
+        >>> e.maxW
+        50mm
+        """
+        return self.css('maxW')
     def _set_maxW(self, maxW):
-        self.style['maxW'] = max(MIN_WIDTH, min(MAX_WIDTH, maxW)) # Set on local style, shielding parent self.css value.
+        self.style['maxW'] = units(maxW, min=MIN_WIDTH, max=MAX_WIDTH) # Set on local style, shielding parent self.css value.
     maxW = property(_get_maxW, _set_maxW)
 
-    def _get_maxH(self):
-        maxH = self.style.get('maxH')
-        if self.parent:
-            maxH = maxH or self.parent.h
-        return maxH or MAX_HEIGHT # Unless defined local, take current parent.w as maxH
-    def _set_maxH(self, maxH):
-        self.style['maxH'] = max(MIN_HEIGHT, min(MAX_HEIGHT, maxH)) # Set on local style, shielding parent self.css value.
-    maxH = property(_get_maxH, _set_maxH)
+    def _get_maxH(self): # Set/get the maximal height.
+        u"""Answer the maxH limit for child elements. Default is MAX_HEIGHT.
+        Min/max values must be absolute units.
 
-    def _get_maxD(self):
-        maxD = self.style.get('maxD')
-        if self.parent:
-            maxD = maxD or self.parent.d
-        return maxD or MAX_DEPTH # Unless defined local, take current parent.w as maxD
+        >>> e = Element(maxH=100)
+        >>> e.maxH
+        100pt
+        >>> e.maxH = mm(50)
+        >>> e.maxH
+        50mm
+        """
+        return self.css('maxH')
+    def _set_maxH(self, maxH):
+        self.style['maxH'] = units(maxW, min=MIN_WIDTH, max=MAX_WIDTH) # Set on local style, shielding parent self.css value.
+    maxH = property(_get_maxW, _set_maxW)
+
+    def _get_maxD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
+        u"""Answer the maxD limit for child elements. Default is MAX_DEPTH.
+        Min/max values must be absolute units.
+
+        >>> e = Element(maxD=100)
+        >>> e.maxD
+        100pt
+        >>> e.maxD = mm(50)
+        >>> e.maxD
+        50mm
+        """
+        return self.css('maxD')
     def _set_maxD(self, maxD):
-        self.style['maxD'] = max(MIN_DEPTH, min(MAX_DEPTH, maxD)) # Set on local style, shielding parent self.css value.
+        self.style['maxD'] = units(maxD, min=MIN_DEPTH, max=MAX_DEPTH) # Set on local style, shielding parent self.css value.
     maxD = property(_get_maxD, _set_maxD)
 
-    def getMaxSize(self):
-        return self.maxW, self.maxH, self.maxD # No limit if value is None
-
-    def setMaxSize(self, maxW, maxH=None, maxD=None):
-        if maxW and maxH is None and maxD is None:
-            if isinstance(maxW, (int, float)):
-                self.maxW = self.maxH = self.maxD = maxW
-            elif isinstance(maxH, (tuple, list)):
-                if len(maxH) == 1:
-                    self.maxW = self.maxH = self.maxD = maxW
-                elif len(maxH) == 2:
-                    self.maxW = self.maxH = maxW
-                    self.maxD = 0
-                elif len(maxH) == 3:
-                    self.maxW, self.maxH, self.maxD = maxW
-        else:
-            self.maxW = maxW
-            self.maxH = maxH
-            self.maxD = maxD or 0 # Optional maximum depth of the element.
+    # Scale
 
     def _get_scaleX(self):
         return self.css('scaleX', 1)
@@ -3397,7 +3335,7 @@ class Element(object):
     scaleX = property(_get_scaleX, _set_scaleX)
 
     def _get_scaleY(self):
-        return self.css('scaleX', 1)
+        return self.css('scaleY', 1)
     def _set_scaleY(self, scaleY):
         assert scaleY != 0
         self.style['scaleY'] = scaleY # Set on local style, shielding parent self.css value.
@@ -3409,6 +3347,8 @@ class Element(object):
         assert scaleZ != 0
         self.style['scaleZ'] = scaleZ # Set on local style, shielding parent self.css value.
     scaleZ = property(_get_scaleZ, _set_scaleZ)
+
+    # Element positions 
 
     def getFloatTopSide(self, previousOnly=True, tolerance=0):
         u"""Answer the max y that can float to top, without overlapping previous sibling elements.

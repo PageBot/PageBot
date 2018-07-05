@@ -38,6 +38,7 @@ class Image(Element):
     >>> c = DrawBotContext()
     >>> w, h = 300, 400
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+    >>> (doc.w, doc.h)
     >>> page = doc[1]
     >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=300)
     >>> #e.build(doc.getView(), (0, 0))
@@ -48,7 +49,7 @@ class Image(Element):
     >>> pixelMap = e.image
     >>> pixelMap.path.endswith(imagePath)
     True
-    >>> #TODO: pixelMap.size, pixelMap.imageSize # Strange difference between locel run and Travis
+    >>> #TODO: pixelMap.size, pixelMap.imageSize # Strange difference between local run and Travis
     >>> #((300, 300, 1), (398, 530))
     >>> #((300, 300, 1), (3024, 4032))
     >>> view = doc.getView()
