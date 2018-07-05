@@ -376,7 +376,8 @@ class Color(object):
     >>> C(ral=3024).rgb, C(ral=3024).cmyk, C(ral=3024).spot, C(ral=3024).ral
     ((0.984313725490196, 0.0392156862745098, 0.10980392156862745), (0, 0, 0, 1), 185, 3024)
     """
-    def __init__(self, r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None, ral=None, name=None):
+    def __init__(self, r=None, g=None, b=None, a=1, rgb=None, c=None, m=None,
+            y=None, k=None, cmyk=None, ral=None, spot=None):
         self.a = a
         self.r = self.g = self.b = self.c = self.m = self.y = self.k = self._spot = self._ral = self._name = None
         # Some reposition of attributes, in case used as rgb='red' or cmy='magenta'
@@ -553,9 +554,10 @@ class Color(object):
     isRal = property(_get_isRal)
 
     def _get_rgb(self):
-        u"""Answer the rbg tuple of self. If self is not in RGB mode, then transform from
-        CMYK or spot, non-destructive to the original values. Setting to rgb will clear
-        the values of other color modes, except opacity self.a.
+        u"""Answers the RBG-tuple of self. If self is not in RGB mode, then
+        transform from CMYK or spot, non-destructive to the original values.
+        Setting to RGB will clear the values of other color modes, except
+        opacity self.a.
 
         >>> color(name='yellow').rgb
         (1, 1, 0)
@@ -851,8 +853,7 @@ class Color(object):
         return color(r=r, g=g, b=min(1, max(0, b*v)), a=self.a)
 
     def darker(self, v=0.5):
-        u"""Answer a darker color of self. v = 0 gives black, v = 1 gives same color
-        This converts to internal rgb storage.
+        u"""Answer a darker color of self. v = 0 gives black, v = 1 gives same color.
 
         >>> color(1).darker()
         Color(r=0.5, g=0.5, b=0.5)
@@ -887,7 +888,8 @@ class Color(object):
         return c
 
     def _get_name(self):
-        u"""Answer the name of the CSS color that is closest to the current self.rgb
+        u"""Answer the name of the CSS color that is closest to the current
+        self.rgb
 
         >>> color('red').name
         'red'
