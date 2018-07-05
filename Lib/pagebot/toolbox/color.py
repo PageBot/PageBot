@@ -17,10 +17,10 @@
 from pagebot.constants import CSS_COLOR_NAMES, SPOT_RGB
 
 class Color(object):
-    u"""The Color class implements a generic color storage, that is capable of
-    tranforming one type of color to another. One of the reasons to use Color
-    instances, is that some contexts (such as FlatContext) are very specific
-    in what kind of color is possible depending on the selected output format.
+    u"""The Color class implements a generic color storage that is capable of
+    tranforming one type of color into another. One of the reasons to use Color
+    instances is that contexts such as Flat are limited in what type of colors
+    are possible, depending on the selected output format.
 
     >>> Color(0)
     Color(r=0, g=0, b=0)
@@ -41,7 +41,8 @@ class Color(object):
     >>> Color(0.98, 0.89, 0.50).spot # Guess nearest spot color for these RGB values.
     120
     """
-    def __init__(self, r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None):
+    def __init__(self, r=None, g=None, b=None, a=1, rgb=None, c=None, m=None,
+            y=None, k=None, cmyk=None, spot=None):
         self.a = a
         self.r = self.g = self.b = self.c = self.m = self.y = self.k = self._spot = None
         if isinstance(r, str):
@@ -100,9 +101,10 @@ class Color(object):
         return '%s(rgb=0)' % self.__class__.__name__
 
     def _get_rgb(self):
-        u"""Answer the rbg tuple of self. If self is not in RGB mode, then transform from
-        CMYK or spot, non-destructive to the original values. Setting to rgb will clear
-        the values of other color modes, except opacity self.a.
+        u"""Answers the RBG-tuple of self. If self is not in RGB mode, then
+        transform from CMYK or spot, non-destructive to the original values.
+        Setting to RGB will clear the values of other color modes, except
+        opacity self.a.
 
         >>> Color(1, 0, 0).rgb
         (1, 0, 0)
@@ -459,7 +461,8 @@ class Color(object):
         return Color(r=r, g=g, b=min(1, max(0, b*v)), a=self.a)
 
     def darker(self, v=0.5):
-        u"""Answer a darker color of self. v = 0 gives black, v = 1 gives same color
+        u"""Answer a darker color of self. v = 0 gives black, v = 1 gives same
+        color.
 
         >>> Color(1).darker()
         Color(r=0.5, g=0.5, b=0.5)
@@ -487,7 +490,8 @@ class Color(object):
         return Color(r=self.r, g=self.g, b=self.b, a=(1 - self.a)*v)
 
     def _get_name(self):
-        u"""Answer the name of the CSS color that is closest to the current self.rgb
+        u"""Answer the name of the CSS color that is closest to the current
+        self.rgb
 
         >>> Color('red').name
         'red'
