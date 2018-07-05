@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import re
 import random
-from titlecase import titlecase
+from pagebot.contributions.filibuster.titlecase import titlecase
 
 choice = random.choice
 
@@ -105,7 +105,7 @@ class BlurbWriter(object):
             self.data[unicode(k)] = [unicode(name) for name in v]
         #self.data.update(contentdict)
 
-        dk = self.data.keys()
+        dk = list(self.data.keys())
         dk.sort()
         self.keywords = dk
 
@@ -116,9 +116,9 @@ class BlurbWriter(object):
             return -1
 
     def keys(self):
-        k = self.data.keys()
-        k.sort()
-        return self.data.keys()
+        k = list(self.data.keys())
+        return k.sort()
+        #return self.data.keys()
 
     def has_key(self, key):
         if self._cache.has_key(key):
@@ -292,7 +292,7 @@ class BlurbWriter(object):
     def replacetag(self, level, text):
         level = level + 1
         if level > 100:
-            raise 'recursion error? too many nested instructions!', self.lasttag
+            raise('recursion error? too many nested instructions! last tag: %' % self.lasttag)
         #pend = 0
         m = 1
         while m != None:

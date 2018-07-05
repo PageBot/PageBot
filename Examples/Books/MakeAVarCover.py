@@ -19,8 +19,6 @@ from random import random # Used for random color palet.
 
 # Create random title and names
 from pagebot.contributions.filibuster.blurb import blurb
-
-from pagebot.toolbox.transformer import darker
 # Get function to find the Roboto family (in this case installed in the PageBot repository
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance, fitVariableWidth

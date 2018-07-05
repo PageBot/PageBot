@@ -11,7 +11,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     fitVariableHeadlineStyleCompare.py
+#     FitVariableHeadlineStyleCompare.py
 #
 #     Demo version of
 #      pagebot.fonttoolbox.variablefontbuilder.fitVariableWidth

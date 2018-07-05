@@ -1,6 +1,20 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#
+#     Supporting usage of DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     testFormattedString.py
+#
 
 from pagebot.contexts.platform import getContext
-#from pagebot.contexts.strings.drawbotstring import pixelBounds
 
 context = getContext()
 
@@ -17,15 +31,16 @@ TEXTS = {
     (1, 2): '[Bot]',
     (2, 2): '$123',
     (3, 2): 'Abc',
-}  
+}
+
 EXPORT_PATH = '_export/testFormattedStringBounds.pdf'
 D = 2
 W = H = 1000
-newPage(W, H) 
+newPage(W, H)
 x = y = 60
+
 for ix in range(3):
     for iy in range(4):
-        
         bs = context.newString(TEXTS[(iy, ix)], style=dict(font='Georgia', fontSize=100))
         #Same as bx, by, bw, bh = pixelBounds(bs.s)
         bx, by, bw, bh = bs.bounds()

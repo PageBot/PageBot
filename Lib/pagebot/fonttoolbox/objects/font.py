@@ -28,7 +28,11 @@ from fontTools.ttLib import TTFont, TTLibError
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
-from fontTools.varLib.mutator import iup_delta#, instantiateVariableFont
+
+try:
+    from fontTools.varLib.iup import iup_delta
+except:
+    from fontTools.varLib.mutator import iup_delta
 
 from pagebot.toolbox.transformer import path2FontName, path2Extension#, asFormatted
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer

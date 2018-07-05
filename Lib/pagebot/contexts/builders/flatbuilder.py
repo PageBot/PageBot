@@ -15,11 +15,11 @@
 #
 from pagebot.contexts.builders.nonebuilder import NoneFlatBuilder
 
-try: 
+try:
     import flat
     flatBuilder = flat
     # Id to make builder hook name. Views will try to call e.build_flat()
-    flatBuilder.PB_ID = 'flat' 
+    flatBuilder.PB_ID = 'flat'
 
 except ImportError:
     flatBuilder = NoneFlatBuilder()
@@ -61,8 +61,5 @@ class BezierPath(object):
     	# TODO Seems to be a problem in direct closing, not storing as command?
     	#self.commands.append(self.b.closepath
 
-	def appendPath(self, path):
-		self.commands += path.commands
-
-		
-
+    def appendPath(self, path):
+        self.commands += path.commands
