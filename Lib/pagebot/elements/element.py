@@ -2393,7 +2393,7 @@ class Element(object):
         >>> e.w = e.h = e.d = 500
         >>> e.margin3D = '10%'
         >>> e.margin3D, ru(e.margin3D)
-        ((10%, 10%, 10%, 10%, 10%, 10%), (50, 50, 50, 50, 50, 50))
+        ((10%, 10%, 10%, 10%, 10%, 10%), (50pt, 50pt, 50pt, 50pt, 50pt, 50pt))
         >>> e.margin3D = perc(15)
         >>> e.margin3D
         (15%, 15%, 15%, 15%, 15%, 15%)
@@ -2647,7 +2647,7 @@ class Element(object):
         ((10%, 10%, 10%, 10%, 10%, 10%), (50pt, 50pt, 50pt, 50pt, 50pt, 50pt))
         >>> e.padding3D = perc(15)
         >>> e.padding3D, ru(e.padding3D)
-        ((15%, 15%, 15%, 15%, 15%, 15%), (75, 75, 75, 75, 75, 75))
+        ((15%, 15%, 15%, 15%, 15%, 15%), (75pt, 75pt, 75pt, 75pt, 75pt, 75pt))
         """
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
     padding3D = property(_get_padding3D, _set_padding)
