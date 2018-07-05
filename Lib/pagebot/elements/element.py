@@ -245,10 +245,10 @@ class Element(object):
 
         >>> from pagebot.elements import Template
         >>> e = Element(name='TestElement')
-        >>> t = Template(x=11, y=12, w=100, h=200)
+        >>> t = Template(x=11, y=12, w=100, h=mm(200))
         >>> e.applyTemplate(t)
         >>> e.x, e.y, e.w, e.h
-        (11, 12, 100, 200)
+        (11pt, 12pt, 100pt, 200mm)
         """
         self.template = template # Set template value by property call, copying all template elements and attributes.
         if elements is not None:
@@ -2618,10 +2618,10 @@ class Element(object):
         >>> e.w = e.h = e.d = 500
         >>> e.padding = '10%'
         >>> e.padding, ru(e.padding)
-        ((10%, 10%, 10%, 10%), (50, 50, 50, 50))
+        ((10%, 10%, 10%, 10%), (50pt, 50pt, 50pt, 50pt))
         >>> e.padding = perc(15)
         >>> e.padding, ru(e.padding)
-        ((15%, 15%, 15%, 15%), (75, 75, 75, 75))
+        ((15%, 15%, 15%, 15%, 15%, 15%), (75pt, 75pt, 75pt, 75pt, 75pt, 75pt))
         """
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
