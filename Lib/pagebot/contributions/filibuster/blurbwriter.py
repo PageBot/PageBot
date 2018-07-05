@@ -91,10 +91,14 @@ class BlurbWriter(object):
         self.pstatement = re.compile(p, re.IGNORECASE)
         self.allkeys = self.keys()
 
-        self.importcontent(content)
+        # Switch between Py2 with unicode() and Py3 that is already unicode.
+        try:
+            self.importcontentPy2(content)
+        except:
+            self.importcontent(content)
 
-    def importcontent(self, contentdict):
-        # make all strings unicode here?
+    def importcontentPy2(self, contentdict):
+        '''make all strings unicode here?'''
         for k, v in contentdict.items():
             bb = []
             for name in v:
@@ -103,7 +107,19 @@ class BlurbWriter(object):
                 except UnicodeDecodeError:
                     print("UnicodeDecodeError importcontent", name)
             self.data[unicode(k)] = [unicode(name) for name in v]
-        #self.data.update(contentdict)
+
+        dk = list(self.data.keys())
+        dk.sort()
+        self.keywords = dk
+
+    def importcontent(self, contentdict):
+        for k, v in contentdict.items():
+            bb = []
+
+            for name in v:
+                bb.append(name)
+
+            self.data[k] = [name for name in v]
 
         dk = list(self.data.keys())
         dk.sort()
