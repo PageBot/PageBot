@@ -10,7 +10,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     DB_TestColumnDivision.py
+#     TestColumnDivision.py
 #
 from __future__ import division
 
