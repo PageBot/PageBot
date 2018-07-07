@@ -30,22 +30,24 @@ class Image(Element):
     The layout of the Image elements is defined in the same way as any other layout. Conditional rules can be 
     applied (e.g. if the image element changes size), or the child elements can be put on fixed positions.
 
+    >>> from pagebot.toolbox.units import pt
     >>> from pagebot import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = getResourcesPath() + imageFilePath
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
     >>> from pagebot.document import Document
     >>> c = DrawBotContext()
-    >>> w, h = 300, 400
+    >>> w, h = pt(300), pt(400)
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-    >>> (doc.w, doc.h)
+    >>> doc.w, doc.h
+    (300pt, 400pt)
     >>> page = doc[1]
     >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=300)
-    >>> #e.build(doc.getView(), (0, 0))
+    >>> e.build(doc.getView(), pt(0))
     >>> e.xy # Position of the image container
-    (0, 20)
-    >>> e.size
-    (300, 300, 1)
+    (0pt, 20pt)
+    >>> e.wh, e.size # Identical result
+    (300pt, 300pt), (300pt, 300pt)
     >>> pixelMap = e.image
     >>> pixelMap.path.endswith(imagePath)
     True
@@ -53,14 +55,14 @@ class Image(Element):
     >>> #((300, 300, 1), (398, 530))
     >>> #((300, 300, 1), (3024, 4032))
     >>> view = doc.getView()
-    >>> e.build(view, (0, 0))
+    >>> e.build(view, pt(0, 0))
 
     >>> from pagebot.contexts.flatcontext import FlatContext 
     >>> from pagebot.document import Document
     >>> c = FlatContext()
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
     >>> page = doc[1]
-    >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=300)
+    >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=pt(300))
     >>> pixelMap = e.image
     >>> pixelMap.path.endswith(imageFilePath)
     True
@@ -69,12 +71,12 @@ class Image(Element):
     >>> #((300, 300, 1), (3024, 4032))
     >>> # Allow the context to create a new document and page canvas. Normally view does it.
     >>> c.newPage(w, h) 
-    >>> e.build(doc.getView(), (0, 0))
+    >>> e.build(doc.getView(), pt(0, 0))
     [PixelMap.build_flat] Not implemented yet
     >>> e.xy
-    (0, 20)
+    (0pt, 20pt)
     >>> e.size
-    (300, 300, 1)
+    (300pt, 300pt)
     """
     def __init__(self, path=None, style=None, pixelMap=None, name=None, title=None, caption=None, clipRect=None, 
             mask=None, imo=None, w=None, h=None, imageConditions=None, titleConditions=None,

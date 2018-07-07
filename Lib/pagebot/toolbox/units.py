@@ -50,7 +50,7 @@ U = 6 # Some basic unit grid to use as default.
 EM_FONT_SIZE = U*2 # 12pt
 BASELINE_GRID = U*2+3 # 2.5U = 15pt 
 
-def ru(uu, *args, **kwargs):
+def ru(u, *args, **kwargs):
     u"""Render to uu.r or (u1.r, u2.r, ...) if uu is a list or tuple.
     If maker is defined, then use that to render towards.
 
@@ -58,30 +58,77 @@ def ru(uu, *args, **kwargs):
     (100, 120)
     >>> ru(pt(100), 121, (p(5), p(6), units('5"')), maker=pt)
     (100, 121, (60, 72, 360))
+    >>> ru(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
+    (100, 121, (60, 72, 360))
     """
-    maker = kwargs.get('maker')
-    if not isinstance(uu, (list, tuple)):
-        uu = [uu]
     if args:
-        uu += args
-    ruu = []
-    for u in uu:
-        if isinstance(u, (list, tuple)):
-            ruu.append(ru(u, maker=maker))
-        elif maker is not None:
-            ruu.append(units(u, maker=maker).r)
-        else:
-            ruu.append(u.r)
-    return tuple(ruu)
+        if not isinstance(u, (list, tuple)):
+            u = [u]
+        for arg in args:
+            u.append(arg)
+    if isinstance(u, (list, tuple)):
+        ruu = []
+        for uu in u:
+            uu = ru(uu, **kwargs)
+            ruu.append(uu)
+        return tuple(ruu)
+    else:
+        uu = units(u, **kwargs)
+        if uu is not None:
+            uu = uu.r
+        return uu
 
-def isUnit(u):
-    u"""Answer the boolean flag is u is a Unit instance.
+def uv(u, *args, **kwargs):
+    u"""Answer the clipped value of u. Otherwise use u. Convert to int if whole number.
+
+    >>> uv(3)
+    3
+    >>> uv(Pt(10))
+    10
+    >>> uv(Em(2, min=10, max=20))
+    10
+    >>> uv(pt(100), 121, (p(5), p(6), units('5"')), maker=p) # Render units
+    """
+    if args:
+        if not isinstance(u, (list, tuple)):
+            u = [u]
+        for arg in args:
+            u.append(arg)
+    if isinstance(u, (list, tuple)):
+        ruu = []
+        for uu in u:
+            uu = uv(uu, **kwargs)
+            ruu.append(uu)
+        return tuple(ruu)
+    else:
+        uu = units(u, **kwargs)
+        if uu is not None:
+            uu = uu.v
+        return uu
+
+def isUnit(u, *args):
+    u"""Answer the boolean flag is u (and all of the other items in the argument list)
+    are a Unit instance.
 
     >>> isUnit(Em(2))
     True
     >>> isUnit(2)
     False
+    >>> isUnit(pt(1), pt(2), pt(3))
+    True
+    >>> isUnit(pt(1), pt(2), 3, pt(4))
+    False
     """
+    if args:
+        if not isinstance(u, (list, tuple)):
+            u = [u]
+        for arg in args:
+            u.append(arg)
+    if isinstance(u, (list, tuple)):
+        for uu in u:
+            if not isUnit(uu):
+                return False
+        return True
     # isinstance(u, Unit) # Does not seem to work right for units created in other sources such as A4
     return hasattr(u, '_v') and hasattr(u, 'base')
 
@@ -122,30 +169,6 @@ def uString(u, maker=None):
     return str(units(u, maker))
 
 us = uString # Convenience abbreviaion
-
-def uValue(u):
-    u"""Answer the clipped value of u. Otherwise use u. Convert to int if whole number.
-
-    >>> uValue(3)
-    3
-    >>> uValue(Pt(10))
-    10
-    >>> uValue(Em(2, min=10, max=20))
-    10
-    """
-    if isUnit(u):
-        u = u.v
-    return asIntOrFloat(u)
-
-uv = uValue # Convenience abbreviaion
-
-def rValue(u):
-    u"""Answer the clipped and rendered value of u. Otherwise use u. Convert to int if whole number."""
-    if isUnit(u):
-        u = u.r
-    return asIntOrFloat(u)
-
-rv = rValue # Convenience abbreviaion
 
 class Unit(object):
     u"""Base class for units, implementing most of the logic.
@@ -1384,7 +1407,7 @@ def value2Maker(v):
                 maker = UNIT_MAKERS[unit]
     return maker
 
-def units(v, maker=None, base=None, g=None, min=None, max=None):
+def units(v, *args, **kwargs):
     u"""If value is a string, then try to guess what type of units value is
     and answer the right instance. Answer None if not valid transformation could be done.
 
@@ -1406,6 +1429,12 @@ def units(v, maker=None, base=None, g=None, min=None, max=None):
     1.4em
     >>> units('0.5col')
     0.5col
+    >>> units(10, maker=p) # All types of makers work: method, name, class
+    10p
+    >>> units(10, maker='p')
+    10p
+    >>> units(10, maker=P)
+    10p
     >>> units(12) # Default for plain number is pt if no class defined.
     12pt
     >>> units('SomethingElse') is None
@@ -1417,28 +1446,43 @@ def units(v, maker=None, base=None, g=None, min=None, max=None):
     >>> u1 = units('10pt')
     >>> u1 is units(u1) # Creates copy of u1
     False
+    >>> units(pt(0), 12) # Create a recursive list of units
     """
+    if args:
+        if not isinstance(v, (list, tuple)):
+            v = [v]
+        for arg in args:
+            v.append(arg)
+    if isinstance(v, (list, tuple)):
+        ruu = []
+        for uu in v:
+            ruu.append(ru(uu, **kwargs))
+        return tuple(ruu)
+
     u = None
+    maker = kwargs.get('maker')
     makerF = value2Maker(maker)
-    assert makerF is None or makerF in MAKERS, ('Cannot find unit maker for "%s"' % maker)
+    assert maker is None or makerF in MAKERS, ('Cannot find unit maker for "%s"' % maker)
 
     if isUnit(v):
         if makerF in (None, UNIT_MAKERS[v.UNIT]):
             u = copy(v) # Make sure to copy, avoiding overwriting local values of units.
         else:
-            u = makerF(v)
+            u = makerF(v, **kwargs)
     elif v is not None:
         # Plain values are interpreted as point Units
         if makerF is None:
             makerF = value2Maker(v)        
         # makerF is now supposed to be a maker or real Unit class, use it
         if makerF:
-            u = makerF(v, base=base, g=g, min=min, max=max)
+            u = makerF(v, **kwargs)
 
     # In case we got a valid unit, then try to set the paremeters if not None.
     if u is not None:
+        base = kwargs.get('base')
         if base is not None: # Base can be unit or number.
             u.base = base # Recursive force base to be unit instance
+        g = kwargs.get('g')
         if g is not None: # Optional gutter can be unit or number
             u.g = g # Recursive force gutter to be unit instance.
     

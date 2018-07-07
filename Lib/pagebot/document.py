@@ -58,7 +58,7 @@ class Document(object):
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None, autoPages=1, 
-            template=None, templates=None, originTop=True, startPage=1, w=None, h=None, 
+            template=None, templates=None, originTop=True, startPage=1, w=None, h=None, d=None,
             padding=None, lib=None, context=None, exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. 
         Allows to compose the pages without the need to send them directly to the output for 
@@ -68,14 +68,15 @@ class Document(object):
         self.rootStyle = self.makeRootStyle(**kwargs)
         self.initializeStyles(theme, styles) # May or may not overwrite the root style.
 
-        self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
-        self.w = w or 1000 # Always needs a value. Take 1000 if 0 or None defined.
-        self.h = h or 1000 # These values overwrite the self.rootStyle['w'] and self.rootStyle['h']
-        if padding is not None:
-            self.padding = padding
-
         self.name = name or title or 'Untitled'
         self.title = title or self.name
+
+        self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
+        self.w = w or DEFAULT_DOC_WIDTH # Always needs a value. Take 1000 if 0 or None defined.
+        self.h = h or DEFAULT_DOC_HEIGHT # These values overwrite the self.rootStyle['w'] and self.rootStyle['h']
+        self.d = d or DEFAULT_DOC_DEPTH
+        if padding is not None:
+            self.padding = padding
 
         # Set defaults of doc for minW, maxW, etc. Can be queried by relative
         # units of pages and child elements.
@@ -336,7 +337,7 @@ class Document(object):
         123pt
         >>> doc.applyStyle(dict(w=pt(1234)))
         >>> doc.w
-        1234
+        1234pt
         """
         for key, value in style.items():
             self.rootStyle[key] = value
@@ -477,9 +478,9 @@ class Document(object):
         200pt
         >>> doc.w = 300
         >>> doc.w
-        300
+        300pt
         """
-        return self.rootStyle['w'] 
+        return units(self.rootStyle['w']) 
     def _set_w(self, w):
         self.rootStyle['w'] = units(w) # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
@@ -499,7 +500,7 @@ class Document(object):
         >>> doc.h
         300pt
         """
-        return self.rootStyle['h'] 
+        return units(self.rootStyle['h'])
     def _set_h(self, h):
         self.rootStyle['h'] = units(h) # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
@@ -519,7 +520,7 @@ class Document(object):
         >>> doc.d
         300pt
         """
-        return self.rootStyle['d'] # From self.style, don't inherit.
+        return units(self.rootStyle['d']) # From self.style, don't inherit.
     def _set_d(self, d):
         self.rootStyle['d'] = units(d) # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
@@ -677,9 +678,9 @@ class Document(object):
         u"""Padding padding z-front property
         Interface is identical to Element.pzf.
 
-        >>> doc = Document(name='Testoc', pzf=12)
-        >>> doc.pzf
-        12pt
+        >>> doc = Document(name='Testoc', d=100, pzf=12)
+        >>> doc.d, doc.pzf # Needs some depth > 1, for padding not to be clipped.
+        (100pt, 12pt)
         >>> doc.pzf = 13
         >>> doc.pzf
         13pt
@@ -699,9 +700,9 @@ class Document(object):
         u"""Padding padding z-front property
         Interface is identical to Element.pzb.
 
-        >>> doc = Document(name='Testoc', pzb=12)
-        >>> doc.pzb
-        12pt
+        >>> doc = Document(name='Testoc', d=100, pzb=12)
+        >>> doc.d, doc.pzb # Needs some depth > 1, for padding not to be clipped.
+        (100pt, 12pt)
         >>> doc.pzb = 13
         >>> doc.pzb
         13pt
@@ -932,10 +933,12 @@ class Document(object):
         return pages
 
     def getMaxPageSizes(self, pageSelection=None):
-        u"""Answer the (w, h, d) size of all pages together. If the optional pageSelection is defined (set of y-values),
+        u"""Answer the (w, h, d) size of all pages together. 
+        If the optional pageSelection is defined (set of y-values),
         then only evaluate the selected pages.
+        Clip the found values against the document min/max proportions.
 
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=100000, maxH=100000)
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=1000, maxH=1000)
         >>> doc.getMaxPageSizes()
         (500pt, 500pt, 0pt)
         >>> page = doc[1]
@@ -948,14 +951,15 @@ class Document(object):
         >>> doc.getMaxPageSizes()
         (2345pt, 1111pt, 0pt)
         """
-        w = h = d = 0
+        w, h, d = minW, minH, minD = self.minW, self.minH, self.minD
+        maxW, maxH, maxD = self.maxW, self.maxH, self.maxD
         for pn, pnPages in self.pages.items():
             if not pageSelection is None and not pn in pageSelection:
                 continue
             for page in pnPages:
-                w = max(page.w, w)
-                h = max(page.h, h)
-                d = max(page.d, d)
+                w = min(maxW, max(page.w, w, minW))
+                h = min(maxH, max(page.h, h, minH))
+                d = min(maxD, max(page.d, d, minD))
         return w, h, d
 
     #   C O N D I T I O N S

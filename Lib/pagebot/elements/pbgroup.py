@@ -19,20 +19,19 @@ from pagebot.elements.pbrect import Rect
 class Group(Rect):
     u"""Draw rectangle, default identacal to Element itself.
 
+    >>> from pagebot.toolbox.units import pt
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
     >>> from pagebot.elements.element import Element
     >>> from pagebot.document import Document
     >>> c = DrawBotContext()
-    >>> w, h = 300, 400
+    >>> w, h = pt(300), pt(400)
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
     >>> page = doc[1]
     >>> e1, e2, e3 = Element(w=123),Element(w=234),Element(w=345)
     >>> e = Group(parent=page, x=0, y=20, w=page.w, elements=(e1, e2, e3))
     >>> e.build(doc.getView(), (0, 0))
-    >>> e.xy
-    (0, 20)
-    >>> e.size
-    (300, 100, 1)
+    >>> e.xy, e.wh, e.wh == e.size
+    ((0pt, 20pt), (300pt, 100pt), True)
     >>> view = doc.getView()
     >>> e.build(view, (0, 0))
 
@@ -47,9 +46,9 @@ class Group(Rect):
     >>> c.newPage(w, h) 
     >>> e.build(doc.getView(), (0, 0))
     >>> e.xy
-    (0, 20)
+    (0pt, 20pt)
     >>> e.size
-    (300, 100, 1)
+    (300pt, 100pt)
     """
 
     # No separate build, default behavior is in Element.build()
