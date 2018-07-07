@@ -21,10 +21,11 @@ from random import random
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.toolbox.color import noColor
+from pagebot.toolbox.color import color, noColor, grayColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.style import RIGHT
 from pagebot.constants import ORIGIN
+from pagebot.toolbox.units import pt
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
@@ -84,9 +85,9 @@ class PageView(BaseView):
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
                 if self.originTop:
-                    origin = self.pl, self.pt, 0
+                    origin = self.pl, self.pt, pt(0)
                 else:
-                    origin = self.pl, self.pb, 0
+                    origin = self.pl, self.pb, pt(0)
             else:
                 pw = page.w # No padding defined, follow the size of the page.
                 ph = page.h
@@ -98,7 +99,7 @@ class PageView(BaseView):
             context.frameDuration(page.frameDuration) # Set the duration of this page, in case exporting GIF
 
             # View may have defined a background
-            fillColor = self.style.get('fill')
+            fillColor = self.style.get('fill', noColor)
             if fillColor is not noColor:
                 context.setFillColor(fillColor)
                 context.rect(0, 0, pw, ph)
@@ -598,7 +599,7 @@ class PageView(BaseView):
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showBaselineGrid = True
-        >>> view.drawBaselineGrid(e, (0, 0))
+        >>> view.drawBaselineGrid(e, pt(0, 0))
         """
         if not self.showBaselineGrid:
             return
@@ -607,7 +608,7 @@ class PageView(BaseView):
         p = pointOffset(self.oPoint, origin)
         p = self._applyScale(e, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
-        M = 16
+        M = pt(16)
         startY = e.css('baselineGridStart')
         if startY is None:
             startY = e.pt # Otherwise use the top padding as start Y.
@@ -616,10 +617,11 @@ class PageView(BaseView):
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
         bs = context.newString('', self, dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
-            fontSize=M/2, stroke=None, textFill=e.css('gridStroke')))
+            fontSize=M/2, stroke=noColor, textFill=e.css('gridStroke', grayColor)))
+        baselineGrid = e.css('baselineGrid', pt(DEFAULT_))
         while oy > e.pb or 0:
-            context.setFillColor(None)
-            context.setStrokeColor(e.css('baselineGridStroke', noColor), e.css('gridStrokeWidth'))
+            context.setFillColor(noColor)
+            context.setStrokeColor(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
             context.newPath()
             context.moveTo((px + e.pl, py + oy))
             context.lineTo((px + e.w - e.pr, py + oy))
@@ -665,7 +667,7 @@ class PageView(BaseView):
         >>> e = Element() # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showPageRegistrationMarks = True
-        >>> view.drawPageRegistrationMarks(e, (0, 0))
+        >>> view.drawPageRegistrationMarks(e, pt(0, 0))
         """
         if self.showPageRegistrationMarks:
             cmSize = min(self.pl/2, self.css('viewCropMarkSize')) # TODO: Make cropmark go closer to page edge and disappear if too small.
@@ -688,7 +690,7 @@ class PageView(BaseView):
         >>> e = Element()
         >>> view = PageView(context=context, style=style)
         >>> view.showPageCropMarks = True
-        >>> view.drawPageCropMarks(e, (0, 0))
+        >>> view.drawPageCropMarks(e, pt(0, 0))
         """
         if self.showPageCropMarks:
             context = self.context
@@ -697,11 +699,11 @@ class PageView(BaseView):
             w, h = e.w, e.h
             folds = self.css('folds')
             cmDistance = self.css('viewCropMarkDistance') # From the side
-            cmSize = min(self.css('viewCropMarkSize', 32), self.pl)
+            cmSize = min(self.css('viewCropMarkSize', pt(32)), self.pl)
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
 
-            context.setFillColor(None)
-            context.setStrokeColor((1,1,1,1), w=cmStrokeWidth, cmyk=True)
+            context.setFillColor(noColor)
+            context.setStrokeColor(color(cmyk=1), w=cmStrokeWidth)
             # Bottom left
             context.line((x - cmDistance, y), (x - cmSize, y))
             context.line((x, y - cmDistance), (x, y - cmSize))

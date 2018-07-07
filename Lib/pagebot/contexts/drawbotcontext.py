@@ -40,7 +40,7 @@ except (ImportError, AttributeError):
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import Color, color, noColor, inheritColor
-from pagebot.toolbox.units import isUnit, units
+from pagebot.toolbox.units import isUnit, units, ur
 from pagebot.constants import *
 
 
@@ -139,7 +139,7 @@ class DrawBotContext(BaseContext):
         u"""Draw a rectangle in the canvas.
 
         >>> context = DrawBotContext()
-        >>> context.rect(0, 0, 100, 100)
+        >>> context.rect(pt(0), pt(0), pt(100), pt(100))
         """
         self.b.rect(x, y, w, h)
 
@@ -147,21 +147,21 @@ class DrawBotContext(BaseContext):
         u"""Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
 
         >>> context = DrawBotContext()
-        >>> context.oval(0, 0, 100, 100)
+        >>> context.oval(pt(0), pt(0), pt(100), pt(100))
         """
-        self.b.oval(x, y, w, h)
+        self.b.oval(x.r, y.r, w.r, h.r)
 
     def circle(self, x, y, r):
         u"""Circle draws a DrawBot oval with (x,y) as middle point and radius r."""
-        self.b.oval(x-r, y-r, r*2, r*2)
+        self.b.oval((x-r).r, (y-r).r, (r*2).r, (r*2).r) # Render the unit values
 
     def line(self, p1, p2):
         u"""Draw a line from p1 to p2.
 
         >>> context = DrawBotContext()
-        >>> context.line((100, 100), (200, 200))
+        >>> context.line(pt(100, 100), pt(200, 200))
         """
-        self.b.line(p1, p2)
+        self.b.line(ur(p1), ur(p2)) # Unit render of point tuples
 
     def newPath(self):
         u"""Make a new DrawBot Bezierpath() to draw in.
@@ -202,13 +202,14 @@ class DrawBotContext(BaseContext):
     def moveTo(self, p):
         u"""Move to point p. Create a new path if none is open.
 
+        >>> from pagebot.toolbox.units import pt
         >>> context = DrawBotContext()
         >>> path = context.newPath()
-        >>> path.moveTo((100, 100))
+        >>> path.moveTo(pt(100, 100))
         """
         if self._path is None:
             self.newPath()
-        self._path.moveTo((p[0], p[1]))
+        self._path.moveTo((p[0].r, p[1].r))
 
     def lineTo(self, p):
         u"""Line to point p. Create a new path if none is open.
@@ -217,12 +218,12 @@ class DrawBotContext(BaseContext):
         >>> # Draw directly on th epath
         >>> # Draw on the context cached path
         >>> _ = context.newPath()
-        >>> context.moveTo((100, 100))
-        >>> context.curveTo((100, 200), (200, 200), (200, 100))
+        >>> context.moveTo(pt(100, 100))
+        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
         >>> path = context.newPath()
-        >>> path.moveTo((100, 100))
-        >>> path.curveTo((100, 200), (200, 200), (200, 100))
+        >>> path.moveTo(pt(100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
         >>> context.drawPath(path)
         """
@@ -241,12 +242,12 @@ class DrawBotContext(BaseContext):
         >>> # Draw directly on th epath
         >>> # Draw on the context cached path
         >>> _ = context.newPath()
-        >>> context.moveTo((100, 100))
-        >>> context.curveTo((100, 200), (200, 200), (200, 100))
+        >>> context.moveTo(pt(100, 100))
+        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
         >>> path = context.newPath()
-        >>> path.moveTo((100, 100))
-        >>> path.curveTo((100, 200), (200, 200), (200, 100))
+        >>> path.moveTo(pt(100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
         """
         if self._path is None:
@@ -260,12 +261,12 @@ class DrawBotContext(BaseContext):
         >>> # Draw directly on th epath
         >>> # Draw on the context cached path
         >>> _ = context.newPath()
-        >>> context.moveTo((100, 100))
-        >>> context.curveTo((100, 200), (200, 200), (200, 100))
+        >>> context.moveTo(pt(100, 100))
+        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
         >>> path = context.newPath()
-        >>> path.moveTo((100, 100))
-        >>> path.curveTo((100, 200), (200, 200), (200, 100))
+        >>> path.moveTo(pt(100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
         """
         if self._path is not None:
@@ -418,8 +419,9 @@ class DrawBotContext(BaseContext):
     def fontSize(self, fontSize):
         u"""Set the font size in the context.
 
+        >>> from pagebot.toolbox.units import pt
         >>> context = DrawBotContext()
-        >>> context.fontSize(12)
+        >>> context.fontSize(pt(12))
         """
         self.b.fontSize(fontSize)
 

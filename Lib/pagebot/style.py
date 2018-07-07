@@ -126,7 +126,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         # Padding where needed, inside elemen box. Can contain number values or Unit instances.
         # Multiplication order (u*7 instead of 7*u) matters, in case u is a Unit instance.
-        pt = u*7, # Padding top
+        pt = u*7, # Padding top, identical to default start of baseline grid
         pl = u*7, # Padding left
         pr = u*6, # Padding right
         pb = u*6, # Padding bottom
@@ -246,7 +246,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         # Vertical spacing for absolute and fontsize-related measures
         baselineGrid = baselineGrid,
-        baselineGridStart = None, # Optional baselineGridStart if different from top padding.
+        baselineGridStart = u*7, # Optional baselineGridStart if different from top padding.
         baseLineMarkerSize = pt(8), # FontSize of markers showing base line grid info.
         leading = pt0, # Absolute leading value (can be used complementary to rLeading).
         rLeading = em(1.2), # Relative factor to current fontSize.
