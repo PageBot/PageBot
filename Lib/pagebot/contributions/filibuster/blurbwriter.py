@@ -127,7 +127,7 @@ class BlurbWriter(object):
 
     def keyindex(self, key):
         if key in self.allkeys:
-            return list(self.allkeys.index(key))
+            return list(self.allkeys).index(key)
         else:
             return -1
 
