@@ -17,11 +17,10 @@
 #    mutator.py
 #
 from fontTools.varLib import designspace
-from fontTools.varLib.iup import iup_delta
 from fontTools.varLib.models import VariationModel, normalizeLocation
 
 class DesignSpace(object):
-    u"""DesignSpace wrapper file. It can read from a design space source (path), 
+    u"""DesignSpace wrapper file. It can read from a design space source (path),
     and it can be used to dynamically build from setting separate parameters.
 
     >>> fName = 'TestFont'
@@ -33,21 +32,21 @@ class DesignSpace(object):
     >>> ds.axisList.append({'tag': 'RNDS', 'name': 'Rounds', 'minimum': 0, 'default': 0, 'maximum': 1})
     >>> styleName = fName+'Org'
     >>> loc = dict(wght=80, RNDS=0)
-    
+
     >>> # Construct sources
     >>> source1 = dict(info=dict(copy=True), name=styleName, familyname=fName, filename=styleName+'.ufo', location=loc, stylename=styleName)
     >>> styleName = fName+'Bold'
     >>> loc = dict(wght=300, RNDS=0)
-    >>> source2 = dict(name=styleName, familyname=fName, filename=styleName+'.ufo', location=loc, stylename=styleName) 
+    >>> source2 = dict(name=styleName, familyname=fName, filename=styleName+'.ufo', location=loc, stylename=styleName)
     >>> styleName = fName+'Light'
     >>> loc = dict(wght=8, RNDS=0)
-    >>> source3 = dict(name=styleName, familyname=fName, filename=styleName+'.ufo', location=loc, stylename=styleName) 
+    >>> source3 = dict(name=styleName, familyname=fName, filename=styleName+'.ufo', location=loc, stylename=styleName)
     >>> styleName = fName+'Round'
     >>> loc = dict(wght=80, RNDS=1)
-    >>> source4 = dict(name=styleName, familyname=fName, filename=styleName+'.ufo', location=loc, stylename=styleName) 
-    
+    >>> source4 = dict(name=styleName, familyname=fName, filename=styleName+'.ufo', location=loc, stylename=styleName)
+
     >>> ds.sources = [source1, source2, source3] # Set list of sources
-    >>> ds.addSource(source4) # Appending source 
+    >>> ds.addSource(source4) # Appending source
     >>> len(ds.sources)
     4
     >>> ds.familyName
@@ -111,11 +110,11 @@ class DesignSpace(object):
         u"""Answer the dictionay of raw axes, with their name as key."""
         axesByName = {}
         for axis in self._axes:
-            axesByName[axis['name']]= axis 
+            axesByName[axis['name']]= axis
         return axesByName
     axesByName = property(_get_axesByName)
 
-    def _get_axes(self): 
+    def _get_axes(self):
         u"""Answer the dictionary of raw axes, with their tag as key."""
         axes = {}
         for axis in self._axes:
@@ -127,7 +126,7 @@ class DesignSpace(object):
         u"""Answer the list of raw axes."""
         return self._axes
     def _set_axisList(self, axes):
-        u"""Set from raw axes list with format     
+        u"""Set from raw axes list with format
         [{'tag': 'wght', 'name': 'Weight', 'minimum': 0.0, 'default': 500.0, 'maximum': 1000.0},...]
         """
         self._axes = axes
@@ -211,17 +210,18 @@ class DesignSpace(object):
         f = open(path, 'w')
         f.write(self._getXML())
         f.close()
-        
+
     def _getXML(self):
         xml = []
         xml.append("""<?xml version='1.0' encoding='utf-8'?>\n<designspace format="3">\n\t<axes>\n""")
         for axisName, axis in sorted(self.axes.items()):
             xml.append("""\t\t<axis default="%s" maximum="%s" minimum="%s" name="%s" tag="%s"/>\n""" % (axis['default'], axis['maximum'], axis['minimum'], axis['name'], axis['tag']))
         xml.append('\t</axes>\n')
-    
+
         xml.append('\t<sources>\n')
         nameId = 0
         processedMasterPaths = set()
+
         for master in self.masterList:
             masterPath = master.path.split('/')[-1] # TODO: Compare the relative position of DS-file and font.
             if masterPath in processedMasterPaths:
@@ -232,23 +232,28 @@ class DesignSpace(object):
             for axisName in self.axes:
                 if axisName in master.location:
                     relevantAxes.append(axisName)
+
             if not relevantAxes:
                 continue
-            xml.append("""\t\t<source familyname="%s" filename="%s" name="%s-%s" stylename="%s %s">\n\t\t\t<location>\n""" % (self.familyName, masterPath.split('/')[-1], master['styleName'], nameId, master['styleName'], ' '.join(location.keys()) ))
+
+            xml.append("""\t\t<source familyname="%s" filename="%s" name="%s-%s" stylename="%s %s">\n\t\t\t<location>\n""" % (self.familyName, masterPath.split('/')[-1], master['styleName'], nameId, master['styleName'], ' '.join(master.location.keys()) ))
             nameId += 1
+
             for axisName in relevantAxes:
                 axis = self.axes[axisName]
                 value = master.location.get(axisName, axis.default)
                 xml.append("""\t\t\t\t<dimension name="%s" xvalue="%s"/>\n""" % (axis.name, value))
             xml.append("""\t\t\t</location>\n""")
-            if location.get('origin'):
+
+            if master.location.get('origin'):
                 xml.append("""\t\t\t<info copy="1"/>\n""")
+
             xml.append("""\t\t</source>\n""")
         # TODO: Add instances export here.
         xml.append("""\t</sources>\n</designspace>\n""")
 
         return ''.join(xml)
-           
+
 
 class PointsModel(object):
     """
@@ -283,10 +288,10 @@ class PointsModel(object):
         for index in range(len(mvsX)):
             deltas.append((
                 self.vm.getDeltas(mvsX[index]),
-                self.vm.getDeltas(mvsY[index]) 
+                self.vm.getDeltas(mvsY[index])
             ))
         return deltas
-        
+
     def getMasterValues(self, glyphName):
         if self._masterValues is None:
             mvx = []
@@ -301,14 +306,14 @@ class PointsModel(object):
                     mvx[pIndex].append(point.x)
                     mvy[pIndex].append(point.y)
         return self._masterValues
-            
+
     def interpolatePoints(self, glyphName, location):
         interpolatedPoints = []
         mvsX, mvsY = self.getMasterValues(glyphName)
         for index in range(len(mvsX)):
             interpolatedPoints.append((
                 self.vm.interpolateFromMasters(location, mvsX[index]),
-                self.vm.interpolateFromMasters(location, mvsY[index]) 
+                self.vm.interpolateFromMasters(location, mvsY[index])
             ))
         return interpolatedPoints
 

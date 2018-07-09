@@ -10,7 +10,7 @@
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
-#     UseTemplates.py
+#     UseTemplatesForFlags.py
 #
 #     Shows the usage of templates, both as default in the document as well
 #     as applying on an existing page.
