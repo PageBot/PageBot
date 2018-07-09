@@ -15,12 +15,10 @@
 from pagebot.toolbox.timemark import TimeMark
 
 def run():
-	u"""TimeMarks are use to control the change of element values over time.
+	"""TimeMarks are use to control the change of element values over time.
 	This way movement can be defined in time based documents, such as animations.
 	But also generation of specific document based on a time of date can be
-	defined this way,
-
-	"""
+	defined this way."""
 	tms = [TimeMark(0, 'aaaa'), TimeMark(10000, 'vvv')]
 
 	tms.append(TimeMark(4, 'TimeMark@4'))

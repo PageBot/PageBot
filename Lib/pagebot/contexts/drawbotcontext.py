@@ -16,6 +16,7 @@
 #
 import os
 
+# FIXME: bad exception usage.
 try:
     #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
     from AppKit import NSFont
@@ -35,14 +36,19 @@ except (ImportError, AttributeError):
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
     Variable = None
-    #print('Using drawBotContext-->NoneDrawBotBuilder')
+    print('Using drawBotContext-->NoneDrawBotBuilder')
 
 from pagebot.contexts.basecontext import BaseContext
+<<<<<<< HEAD
 from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import Color, color, noColor, inheritColor
 from pagebot.toolbox.units import isUnit, units, ur
 from pagebot.constants import *
 
+=======
+from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
+from pagebot.toolbox.color import Color
+>>>>>>> master
 
 class DrawBotContext(BaseContext):
     u"""A DrawBotContext instance combines the specific functions of the DrawBot library
@@ -498,6 +504,7 @@ class DrawBotContext(BaseContext):
 
     #   C O L O R
 
+<<<<<<< HEAD
     def setTextFillColor(self, fs, c):
         u"""Set the color for global or the color of the formatted string.
 
@@ -542,6 +549,37 @@ class DrawBotContext(BaseContext):
             builder.fill(None) # Set color to no-color
         elif c.isCmyk:
             builder.cmykFill(c.cmyk)
+=======
+    def setTextFillColor(self, fs, c, cmyk=False):
+        self.setFillColor(c, cmyk, fs)
+
+    def setTextStrokeColor(self, fs, c, w=1, cmyk=False):
+        self.setStrokeColor(c, w, cmyk, fs)
+
+    def setFillColor(self, c, cmyk=False, b=None):
+        u"""Set the color for global or the color of the formatted string."""
+        if b is None: # Builder can be optional DrawBot FormattedString
+            b = self.b
+
+        if c is NO_COLOR:
+            pass # Color is undefined, do nothing.
+
+        elif isinstance(c, Color):
+            #from pprint import pprint
+            #pprint(vars(c))
+            b.fill(c.r, c.g, c.b)
+
+        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
+            if cmyk:
+                b.cmykFill(c)
+            else:
+                b.fill(c)
+        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
+            if cmyk:
+                b.cmykFill(*c)
+            else:
+                b.fill(*c)
+>>>>>>> master
         else:
             builder.fill(c.rgb)
 

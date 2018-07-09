@@ -13,7 +13,7 @@
 #
 #     HandleDocWithPages.py
 #
-#     Test handling of pages in a doc.
+#     Test handling of pages in a document.
 #
 #import pagebot # Import to know the path of non-Python resources.
 
