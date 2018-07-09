@@ -14,9 +14,8 @@ from vanilla import Button, TextBox, Window
 from vanilla.dialogs import getFile, putFile
 
 from drawBot import *
-from drawBot.drawBotDrawingTools import _drawBotDrawingTool, DrawBotDrawingTool
+from drawBot.drawBotDrawingTools import _drawBotDrawingTool
 from drawBot.scriptTools import ScriptRunner, StdOutput
-from drawBot.context.drawBotContext import DrawBotContext
 from drawBot.context import getContextForFileExt
 from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
