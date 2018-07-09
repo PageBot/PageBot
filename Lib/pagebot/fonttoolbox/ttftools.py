@@ -26,21 +26,21 @@ def subsetFont(font, glyphsToDelete):
     """Delete the set of glyphs 'glyphsToDelete' from the font. The caller is responsible
     for the consistency of this set: eg. one should not delete a glyph that is used as a
     component while not deleting the composite glyph that references it.
+
+    >>> from io import StringIO
+    >>> from fontTools.ttLib import TTFont
+    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+    >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
+    >>> font = TTFont(path)
+    >>> subsetFont(font, ["x"])
+    >>> path = getTestFontsPath() + '/google/roboto/Roboto-Medium.ttf'
+    >>> font = TTFont(path)
+    >>> cmap = getBestCmap(font)
+    >>> len(cmap)
+    2772
     """
     """
         TODO: Fix docTests
-
-        >>> from io import StringIO
-        >>> from fontTools.ttLib import TTFont
-        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
-        >>> font = TTFont(path)
-        >>> subsetFont(font, ["x"])
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Medium.ttf'
-        >>> font = TTFont(path)
-        >>> cmap = getBestCmap(font)
-        >>> len(cmap)
-        000
         >>> unicodes = sorted(cmap)
         >>> subset = unicodes[:200] + unicodes[17000:]
         >>> glyphsToKeep = findGlyphsByUnicode(font, subset)
