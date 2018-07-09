@@ -16,6 +16,7 @@
 #
 import os
 
+# FIXME: bad exception usage.
 try:
     #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
     from AppKit import NSFont
@@ -35,11 +36,11 @@ except (ImportError, AttributeError):
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = CTFontDescriptorCopyAttribute = kCTFontURLAttribute = None
     Variable = None
-    #print('Using drawBotContext-->NoneDrawBotBuilder')
+    print('Using drawBotContext-->NoneDrawBotBuilder')
 
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
-
+from pagebot.toolbox.color import Color
 
 class DrawBotContext(BaseContext):
     u"""A DrawBotContext instance combines the specific functions of the DrawBot library
@@ -501,8 +502,15 @@ class DrawBotContext(BaseContext):
         u"""Set the color for global or the color of the formatted string."""
         if b is None: # Builder can be optional DrawBot FormattedString
             b = self.b
+
         if c is NO_COLOR:
             pass # Color is undefined, do nothing.
+
+        elif isinstance(c, Color):
+            #from pprint import pprint
+            #pprint(vars(c))
+            b.fill(c.r, c.g, c.b)
+
         elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
             if cmyk:
                 b.cmykFill(c)
