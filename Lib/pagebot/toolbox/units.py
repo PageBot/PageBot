@@ -87,7 +87,7 @@ def uv(u, *args, **kwargs):
     10
     >>> uv(Em(2, min=10, max=20))
     10
-    >>> uv(pt(100), 121, (p(5), p(6), units('5"')), maker=p) # Render units
+    >>> uv(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
     """
     if args:
         if not isinstance(u, (list, tuple)):
@@ -135,7 +135,7 @@ def isUnit(u, *args):
 def uRound(u):
     u"""Anwer a unit with rounded value. Or the rounded value if u is not a Unit instance.
 
-    >>> uRound(u = Em(3.2))
+    >>> uRound(Em(3.2))
     3em
     >>> uRound(4.2)
     4
@@ -671,7 +671,7 @@ def p(v, *args, **kwargs):
     9p
     >>> p(inch(1.6))
     9p7.2
-    >>> p(pt(36))
+    >>> p(pt(36)) # 12
     3p
     >>> pica(20)
     20p
