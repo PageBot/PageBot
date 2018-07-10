@@ -118,7 +118,6 @@ class FlatContext(BaseContext):
         (100, 100)
         """
         self.doc = self.b.document(w, h, units)
-        self.newPage(w, h)
 
     def saveDocument(self, path, multiPage=True):
         u"""Save the current document to file(s)

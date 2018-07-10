@@ -37,16 +37,16 @@ class NoneBezierPath(object):
     def appendPath(self, path):
         pass
 
-        
 class NoneImageObject(object):
-    u"""Nabe NoneImageObject with the same API got NonDrawBotBuilder."""
+    u"""Make NoneImageObject with the same API got NonDrawBotBuilder."""
     def __init__(self, path):
         self.path = path
 
 class NoneBuilder(object):
-    """Make NoneBuilder with the same API for docTesting, in case the platform does not support DrawBot.
-    More methods to be added here, if DrawBotContext docTests fail in non-DrawBot platforms.
-    Eventually should be a matching set of methods, compare to DrawBot itself."""
+    """Make NoneBuilder with the same API for docTesting, in case the platform
+    does not support DrawBot. More methods to be added here, if DrawBotContext
+    docTests fail in non-DrawBot platforms.  Eventually should be a matching
+    set of methods, compare to DrawBot itself."""
 
     def __init__(self):
         self._installedFonts = []
