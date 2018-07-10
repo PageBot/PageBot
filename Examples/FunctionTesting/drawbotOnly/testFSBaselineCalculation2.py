@@ -19,9 +19,8 @@ context = getContext()
 if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
-"""
-b = context.b # Builder is DrawBot
 
+b = context.b # Builder is DrawBot
 b.size(200, 200)
 t = "hello world "
 fs = b.FormattedString(t, font="Times", fontSize=17, lineHeight=28)
@@ -49,5 +48,3 @@ b.line((0, 100), (200, 100))
 b.stroke(1, 0, 0)
 b.fill(None)
 b.rect(*r)
-
-"""
