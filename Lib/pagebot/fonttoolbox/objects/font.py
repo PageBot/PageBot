@@ -152,11 +152,11 @@ def getScaledLocation(vf, normalizedLocation):
 
     return scaledLocation
 
-def FIXME_getInstance(vf, location=None, dstPath=None, name=None, opticalSize=None, styleName=None, cached=True, lazy=True):
-    u"""Answer the VF-TTFont instance at location (created by fontTools.varLib.mutator.instantiateVariableFont)
-    packed as Font instance.
+def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
+        opticalSize=None, styleName=None, cached=True, lazy=True):
+    u"""Answers the VF-TTFont instance at location (created by
+    fontTools.varLib.mutator.instantiateVariableFont) packed as Font instance.
     """
-
     u"""
     >>> vf = findFont('Amstelvar-Roman-VF')
     >>> instance = getInstance(vf, opticalSize=8)
@@ -214,9 +214,11 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
     Set normalize to False if the values in location already are matching the axis min/max of the font.
-    If there is a [opsz] Optical Size value defined, then store that information in the font.info.opticalSize.
-    The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
-    location name."""
+    If there is a [opsz] Optical Size value defined, then store that
+    information in the font.info.opticalSize.
+
+    The optional *styleName* overwrites the *font.info.styleName* of the
+    *ttFont* or the automatic location name."""
     if opticalSize is None: # If forcing flag is undefined, then get info from location.
         opticalSize = location.get('opsz')
     instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached, lazy=lazy)

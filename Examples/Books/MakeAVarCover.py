@@ -25,6 +25,7 @@ from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance, fitVaria
 # Creation of the RootStyle (dictionary) with all
 # available default style parameters filled.
 from pagebot.style import getRootStyle, B4, CENTER, MIDDLE, TOP 
+from pagebot.toolbox.color import Color
 
 # Document is the main instance holding all information
 # about the document togethers (pages, styles, etc.)
@@ -49,7 +50,7 @@ EXPORT_PATH = '_export/ABookCover.pdf'
 
 varFont = findFont('RobotoDelta-VF')
 fontRegular = getVarFontInstance(varFont, dict(wdth=75))
-print varFont.axes
+print(varFont.axes)
 fontBold = varFont#family.findFont('Bold')
 fontItalic = varFont#family.findFont('Italic')
 ampersandFont = findFont('Georgia')
@@ -82,7 +83,7 @@ def makeDocument():
     
     context = view.context
     
-    C1 = (0.2+random()*0.8, random()*0.2, 0.4+random()*0.2)
+    C1 = Color(r=0.2+random()*0.8, g=random()*0.2, b=0.4+random()*0.2)
 
     # Make background element, filling the page color and bleed.
     colorRect1 = newRect(z=-10, name='Page area', parent=page,
@@ -98,7 +99,7 @@ def makeDocument():
     M = 64
     colorRect2 =newRect(z=-10, name='Frame 2', parent=colorRect1, 
             conditions=[Center2Center(), Middle2Middle()],
-            fill=darker(C1, 0.5), # Default parameter:
+            fill=C1.darker(0.5), # Default parameter:
                                   # 50% between background color and white
             stroke=None,
             w=colorRect1.w-M-BLEED, h=colorRect1.h-M-BLEED,
@@ -106,7 +107,7 @@ def makeDocument():
 
     newRect(z=-10, name='Frame 3', parent=colorRect2, 
             conditions=[Center2Center(), Middle2Middle()],
-            fill=darker(C1, 0.3), # Default parameter:
+            fill=C1.darker(0.3), # Default parameter:
                                   # 50% between background color and white
             stroke=None,
             w=colorRect1.w-2*M, h=colorRect1.h-2*M,
