@@ -41,7 +41,7 @@ EXPORT_PATH = '_export/UseElasticTextBox.pdf'
 
 
 def makeDocument():
-    u"""Make a new document."""
+    """Make a new document."""
 
     #W = H = 120 # Get the standard a4 width and height in points.
     W = PageSize

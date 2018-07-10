@@ -18,7 +18,7 @@ import os
 from pagebot.toolbox.transformer import path2Name
 
 class NoneBezierPath(object):
-    u"""Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing texting."""
+    """Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing texting."""
 
     def moveTo(self, p):
         pass
@@ -38,7 +38,7 @@ class NoneBezierPath(object):
         pass
 
 class NoneImageObject(object):
-    u"""Make NoneImageObject with the same API got NonDrawBotBuilder."""
+    """Make NoneImageObject with the same API got NonDrawBotBuilder."""
     def __init__(self, path):
         self.path = path
 
@@ -130,7 +130,7 @@ class NoneBuilder(object):
         pass
 
     def imageSize(self, path):
-        u"""Answer the image size of our test image
+        """Answer the image size of our test image
         rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
         """
         return 3024, 4032
@@ -157,7 +157,7 @@ class NoneBuilder(object):
         return None
 
     def fontName2FontPath(self, fontName):
-        u"""We cannot tell the relation of the font name and the font path for DrawBot without OSX
+        """We cannot tell the relation of the font name and the font path for DrawBot without OSX
         Unless it is a path."""
         if os.path.exists(fontName):
             return fontName

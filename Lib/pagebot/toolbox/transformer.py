@@ -27,7 +27,7 @@ ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5,
 # P O I N T
 
 def point3D(p=None):
-    u"""Answer p as 3D point. If it already is a list of 3 elements, then don't change
+    """Answer p as 3D point. If it already is a list of 3 elements, then don't change
     and answer the original.
 
     >>> point3D() # Default 3D origin
@@ -52,7 +52,7 @@ def point3D(p=None):
     return p
 
 def point2D(p=None):
-    u"""Answer the 2D point from a 2D or 3D point.
+    """Answer the 2D point from a 2D or 3D point.
 
     >>> point2D() # Default 2D origin
     [0, 0]
@@ -66,7 +66,7 @@ def point2D(p=None):
     return point3D(p)[:2]
 
 def pointOffset(point, offset):
-    u"""Answer new 3D point, shifted by offset.
+    """Answer new 3D point, shifted by offset.
 
     >>> pointOffset((20, 30, 10), 12)
     (32, 42, 22)
@@ -90,7 +90,7 @@ def pointOffset(point, offset):
     return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
 
 def point2S(p):
-    u"""Answer the point as string of rounded integers. Ignore z value if it is 0.
+    """Answer the point as string of rounded integers. Ignore z value if it is 0.
 
     >>> point2S((22.4, 33.5, 44.6))
     '22 34 45'
@@ -103,7 +103,7 @@ def point2S(p):
     return '%d %d' % (round(x), round(y))
 
 def value2Tuple4(v):
-    u"""Answer a tuple of 4 values. Can be used for colors and rectangles.
+    """Answer a tuple of 4 values. Can be used for colors and rectangles.
 
     >>> value2Tuple4(123)
     (123, 123, 123, 123)
@@ -143,7 +143,7 @@ def asNumber(v):
     return asNumberOrNone(v) or 0
 
 def asNumberOrNone(v):
-    u"""
+    """
 
     >>> asNumberOrNone('1234.5')
     1234.5
@@ -166,7 +166,7 @@ def asNumberOrNone(v):
     return None
 
 def asFloatOrNone(value):
-    u"""Answer a float if it can be converted. Answer None otherwise.
+    """Answer a float if it can be converted. Answer None otherwise.
 
     >>> asFloatOrNone(123)
     123.0
@@ -181,7 +181,7 @@ def asFloatOrNone(value):
         return None
 
 def asId(v, default=0):
-    u"""
+    """
     The *asId* method transforms the *value* attribute either to an instance of @
     int@ or to @None@, so it can be used as *id* field in a @Record@
     instance. If the value cannot be converted, then the optional *default* (default value is @0
@@ -201,7 +201,7 @@ def asId(v, default=0):
         return default
 
 def asIntOrNone(v):
-    u"""Answer v converted to int. Answer None if the conversion raised an error.
+    """Answer v converted to int. Answer None if the conversion raised an error.
 
     >>> asIntOrNone(1234)
     1234
@@ -215,7 +215,7 @@ def asIntOrNone(v):
     return asIntOrDefault(v)
 
 def asIntOrDefault(v, default=None):
-    u"""Answer v converted to int. Answer None if the conversion raised an error.
+    """Answer v converted to int. Answer None if the conversion raised an error.
 
     >>> asIntOrNone(1234)
     1234
@@ -289,7 +289,7 @@ def asSet(value):
     return value
 
 def interpolate(a, b, v, doRound=False):
-    u"""Answer the interpolated value of factor v between a and b. If doRound is True (default is False), then
+    """Answer the interpolated value of factor v between a and b. If doRound is True (default is False), then
     round the result before answering it."""
     i = a + (b-a) * v
     if doRound:
@@ -308,7 +308,7 @@ def stringList2StrippedList(strings):
     return l
 
 def filterValue2Int(s):
-    u"""Filter all numeric characters from the string and answer the resulting integer.
+    """Filter all numeric characters from the string and answer the resulting integer.
     Answer 0 if no digits are found. If s is already a number, then answer it as rounded int."""
     if isinstance(s, (int, float)):
         return int(round(s))
@@ -342,7 +342,7 @@ def none2Empty(value):
     return value
 
 def asDict(value, isRoot=True):
-    u"""Answer the value as dict as root. If the value itself is not a dict,
+    """Answer the value as dict as root. If the value itself is not a dict,
     answer it as dict(value=value). For lower levels than root, answer
     the plain value if is it a string or a number. Basic classed don't get
     translated when not called as root.
@@ -383,13 +383,13 @@ def value2Fixed(value):
     return value
 
 def float2Fixed(value):
-    u"""
+    """
     The float2Fixed method translates a float into a 1/64 pixel unit-value.
     """
     return int(round(value * 64))
 
 def fixed2Float(value):
-    u"""
+    """
     The fixed2Float method translates a fixed 1/64 pixel-unit value to float.
     """
     return float(value) / 64
@@ -414,7 +414,7 @@ def shrink(s):
     return (s or '').strip().replace(' ', '').replace('\t', '')
 
 def removeWhiteSpace(s):
-    u"""Vacuum s by removing all white space."""
+    """Vacuum s by removing all white space."""
     for c in WHITESPACE:
         s = s.replace(c, '')
     return s
@@ -437,7 +437,7 @@ def list2CommaString(l):
     return list2String(l, ',')
 
 def value2IdCommaString(value):
-    u"""Transform a list with numbers into a comma separated string. This can be used to convert a list of record ids
+    """Transform a list with numbers into a comma separated string. This can be used to convert a list of record ids
     into a SQL compatible list of ids, without integers showing up as @1234L@."""
     t = []
     if not isinstance(value, (set, list, tuple)):
@@ -448,7 +448,7 @@ def value2IdCommaString(value):
     return ', '.join(t)
 
 def idCommaString2IdSet(s):
-    u"""Transform a string with comma separated items into a set of id integers."""
+    """Transform a string with comma separated items into a set of id integers."""
     t = set()
     if s is not None:
         for value in s.split(','):
@@ -489,7 +489,7 @@ def words2WordsKey(words):
 #    S T Y L E
 
 def obj2StyleId(s):
-    u"""Make sure s is styleId format, other recursively transform into string with space separators.
+    """Make sure s is styleId format, other recursively transform into string with space separators.
     Parts can be CSS-like #id and .class identifiers.
     Note that this may change in the future if more compatibility with CSS is necessary."""
     styleId = []
@@ -515,7 +515,7 @@ def module2Path(module):
     return '/'.join((module.__file__).split('/')[:-1])
 
 def path2ParentPath(path):
-    u"""
+    """
     >>> path2ParentPath('/xxx/yyy/zzz/')
     '/xxx/yyy/zzz'
     >>> path2ParentPath('/xxx/yyy/zzz')
@@ -526,11 +526,11 @@ def path2ParentPath(path):
     return '/'.join(path.split('/')[:-1])
 
 def path2ScriptId(path):
-    u"""Answer the scriptId, derived from the __file__ of the main source."""
+    """Answer the scriptId, derived from the __file__ of the main source."""
     return path.split('/src/')[-1]
 
 def path2FormatPath(path, format=None):
-    u"""Answers the path where the extension is changed to format If format is
+    """Answers the path where the extension is changed to format If format is
     None, then the extension is removed."""
     if path is not None:
         path = '.'.join(path.split('.')[:-1])
@@ -540,7 +540,7 @@ def path2FormatPath(path, format=None):
     return None
 
 def path2Name(path):
-    u"""Answers the file name part of the path.
+    """Answers the file name part of the path.
 
     >>> path2Name('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency_FB-Compressed.ufo'
@@ -552,7 +552,7 @@ def path2Name(path):
     return path.split('/')[-1]
 
 def path2Extension(path):
-    u"""Answer the file extension of path.
+    """Answer the file extension of path.
 
     >>> path2Extension('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'ufo'
@@ -562,7 +562,7 @@ def path2Extension(path):
     return path.split('.')[-1].lower()
 
 def path2FontName(path, extensions=None):
-    u"""
+    """
     Take that file part of the path, and get the chunk until the first
     period to remove the extension, version numbers, etc.
     If the extension is not in extensions (default id ('ttf', 'otf'))
@@ -588,7 +588,7 @@ def path2FontName(path, extensions=None):
 familyNameParts = re.compile('([A-Za-z]*)')
 
 def path2FamilyName(path):
-    u"""Answer the first A-Za-z part of the file name.
+    """Answer the first A-Za-z part of the file name.
 
     >>> path2FamilyName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency'
@@ -602,7 +602,7 @@ path2GlyphIdName = path2FontName
 styleNameParts = re.compile('[^A-Za-z]*([A-Z]*[a-z]*)')
 
 def path2StyleNameParts(pathOrName, extensions=None):
-    u"""Answer the fileName or name as set of unique parts that can be checked
+    """Answer the fileName or name as set of unique parts that can be checked
     for as style e.g. by the abbreviated style names in style.py.
     The parts a split on Cap(+Cap)(+lc) patterns.
     Note that the family name is also included, as often there is no difference
@@ -629,7 +629,7 @@ def path2HintPath(path):
     return path2FormatPath(path, 'autohint.ttf')
 
 def path2FontId(path):
-    u"""
+    """
     Answers the font ID for the font associated with this path. If the path does not exist, or if the font name
     is invalid, then answer None.
     """
@@ -657,7 +657,7 @@ def font2Name(font):
     return name
 
 def font2FileName(font):
-    u"""Answer the font file name. In case of a new unsaved font,
+    """Answer the font file name. In case of a new unsaved font,
     answer *"Untitled"*."""
     return (font.path or 'Untitled').split('/')[-1]
 
@@ -672,12 +672,12 @@ def font2Path(font):
     return font.path
 
 def font2ID(font):
-    u"""Answer the unique record/adapter ID of the font/style. This can be the unique database record id
+    """Answer the unique record/adapter ID of the font/style. This can be the unique database record id
     or the unique file path. For now we just answer the file path."""
     return font2Path(font)
 
 def font2FamilyID(font):
-    u"""Answer the unique record/adapter ID of the family of *font*. This can be the unique database
+    """Answer the unique record/adapter ID of the family of *font*. This can be the unique database
     record id of the font parent or the unique directory path of the font. For now we just answer the
     the location of the family plist file.
     Special situation is if the font is not saved yet. In that case it does not have a path."""
@@ -693,7 +693,7 @@ def font2StyleName(font):
     return fontName2StyleName(font2Name(font))
 
 def fontName2FamilyName(name):
-    u"""For now take the chunk up till "-" in the filename and ignore the family name as set in the font.info
+    """For now take the chunk up till "-" in the filename and ignore the family name as set in the font.info
     Also make sure that the extension is removed, if the font has no "-" it isn't name. Relay-Medium_Italic.ufo
     becomes Relay. ThisFont.ufo becomes ThisFont.
     """
@@ -720,7 +720,7 @@ def family2UfoQueryName(font):
 #    G E N E R A T O R
 
 def uniqueID(obj=None):
-    u"""Answer unique Id as hex string, based on time and id(obj) if defined.
+    """Answer unique Id as hex string, based on time and id(obj) if defined.
 
     >>> id = int('0x' + uniqueID(), base=16)
     >>> isinstance(id, int)
@@ -734,7 +734,7 @@ def uniqueID(obj=None):
 #   T I M E
 
 def seconds2Date(seconds, year=1904):
-    u"""Answer TTF seconds converted to a datetime instance.
+    """Answer TTF seconds converted to a datetime instance.
 
     >>> seconds2Date(20, year=2018)
     datetime.datetime(2018, 1, 1, 0, 0, 20)
@@ -744,7 +744,7 @@ def seconds2Date(seconds, year=1904):
     return datetime.datetime(year, 1, 1, 0, 0, 0) + datetime.timedelta(seconds=seconds)
 
 def date2Seconds(dt):
-    u"""Answer the datetime converted to TTF seconds.
+    """Answer the datetime converted to TTF seconds.
 
     >>> dt = seconds2Date(20, year=2018)
     >>> date2Seconds(dt)
@@ -780,7 +780,7 @@ def list2Json(d):
 #    R O M A N  N U M E R A L S
 
 def arabic2RomanNumerals(arabic):
-    u"""Return the roman numeral representing n. Should work for n in (1, 4999).
+    """Return the roman numeral representing n. Should work for n in (1, 4999).
     Borrowed from Nick Montfort.
 
     >>> arabic2RomanNumerals(5)
@@ -813,7 +813,7 @@ def arabic2RomanNumerals(arabic):
 #    U N I C O D E
 
 def dec2hex(n, uni=1):
-    u"""Convert decimal number to hex string with 4 digits, and more digits if the number is larger.
+    """Convert decimal number to hex string with 4 digits, and more digits if the number is larger.
 
     >>> dec2hex(12)
     '000C'
@@ -831,7 +831,7 @@ def dec2hex(n, uni=1):
     return hex
 
 def hex2dec(s):
-    u""" Convert hex string to decimal number. Answer None if conversion raises an error.
+    """ Convert hex string to decimal number. Answer None if conversion raises an error.
 
     >>> hex2dec('0064')
     100
@@ -849,7 +849,7 @@ def hex2dec(s):
     return None
 
 def hex2char(hex):
-    u"""Answer the unicode char that matcher the hex value. Answer None if conversion fails.
+    """Answer the unicode char that matcher the hex value. Answer None if conversion fails.
 
     >>> hex(ord('A'))
     '0x41'
@@ -924,7 +924,7 @@ def isUniqueDict(d):
         return False
 
 def reverseDict(d):
-    u"""Reverse key-values of d.
+    """Reverse key-values of d.
 
     >>> d = dict(a=1, b=2, c=3)
     >>> reverseDict(d)
@@ -950,7 +950,7 @@ def reverseDict(d):
     return newDict
 
 def bash(cmd, cwd=None):
-    u"""
+    """
     Runs a command in the bash shell.
     """
     import subprocess
@@ -965,7 +965,7 @@ def bash(cmd, cwd=None):
 # XML  transformers.
 
 def dataAttribute2Html5Attribute(key):
-    u"""The @dataAttribute2Html5Attribute@ method converts an *key*
+    """The @dataAttribute2Html5Attribute@ method converts an *key*
     attribute that starts with @'data_'@ to the HTML5 attribute that starts
     with @'data-'@. Otherwise the *key* attribute is answered unchanged.
     """
@@ -974,7 +974,7 @@ def dataAttribute2Html5Attribute(key):
     return key
 
 def pyAttrName2XmlAttrName(key):
-    u"""
+    """
     The @pyAttrName2XmlAttrName@ converts the Python XML attribute name @key@ to an
     appropriate XML attribute identifier.
     If the *key* is 'cssClass' then it is translated into 'class'.
@@ -989,7 +989,7 @@ def pyAttrName2XmlAttrName(key):
     return key
 
 def xmlAttrName2PyAttrName(key):
-    u"""The @xmlAttrName2PyAttrName@ method converts the XML attribute name
+    """The @xmlAttrName2PyAttrName@ method converts the XML attribute name
     *key* to an appropriate Python attribute identifier.
     If the *key* is @'class'@ then it is translated into 'class_'. If a
     namespace is defined (to be recognized on {...}, then replace that by
@@ -1007,7 +1007,7 @@ def xmlAttrName2PyAttrName(key):
     return key
 
 def xmlValue2PyValue(value, conversions):
-    u"""The @xmlValue2PyValue@ method converts the XML string attribute to
+    """The @xmlValue2PyValue@ method converts the XML string attribute to
     the appropriate Python object type, if the class is defined in the list
     *conversions*. If the *value* is not a string, it must have been
     converted before (e.g. by self.EXPR), the answer it untouched."""
@@ -1054,7 +1054,7 @@ def stripTags(xml):
     return REMOVETAGS.sub('', xml)
 
 def addHtmlBreaks(s, isXhtml=True):
-    u"""Replace all returns by <br/> or <br>."""
+    """Replace all returns by <br/> or <br>."""
     tag = {True:'<br/>\n', False:'<br>\n'}[isXhtml]
     return s.replace('\n',tag)
 
@@ -1099,7 +1099,7 @@ def tableField2JoinedField(table, field):
     return '%s_%s' % (table, field)
 
 def value2TagName(value):
-    u"""
+    """
     The @value2TagName@ class method converts the *value* object into a value XML tag name.
     """
     tagname = []
@@ -1117,7 +1117,7 @@ def value2TagName(value):
     return ''.join(tagname)
 
 def object2SpacedString(o):
-    u"""Answer the object as string.
+    """Answer the object as string.
 
     >>> object2SpacedString(2)
     '2'
@@ -1129,7 +1129,7 @@ def object2SpacedString(o):
     return str(o)
 
 def flatten2Class(*args):
-    u"""
+    """
 
     The flatten2Class method answers the class string, made from space separated class names. If
     cssClass is a tuple or list, then merge the content. Check recursively in
@@ -1155,7 +1155,7 @@ def flatten2Class(*args):
 
 
 def value2Bool(v):
-    u"""
+    """
 
     The value2Bool method answers the interpreted value of v as boolean. The following
     values (independent of case) interpret as False: ['', '0', 'f', 'F', 'none', 'false'].

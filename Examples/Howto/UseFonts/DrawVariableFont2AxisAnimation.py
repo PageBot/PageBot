@@ -75,7 +75,7 @@ class FontIcon(object):
     w = property(_get_w)
 
     def _get_ih(self):
-        u"""Answer scaled height of the plain icon without name label."""
+        """Answer scaled height of the plain icon without name label."""
         return self.H*self.scale
     ih = property(_get_ih)
 
