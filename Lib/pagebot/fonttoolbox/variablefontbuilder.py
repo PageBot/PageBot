@@ -176,17 +176,20 @@ def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cac
     return instance
 
 
-def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):
+def generateInstance(variableFontPath, location, targetDirectory,
+        normalize=True, cached=True, lazy=True):
     u"""
     D E P R E C A T E D
-    Use pagebot.fonttoolbox.objects.font.instantiateVariableFont instead (calling fontTools)
+
+    Use pagebot.fonttoolbox.objects.font.instantiateVariableFont instead
+    (calling fontTools)
 
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
         varfilename -- a variable font file path
-        location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
+        location -- a dictionary of axis tag and value {"wght": 0.75, "wdth":
+        -0.5}
     """
-    print('Deprecated: generateInstance() Use fonttoolbox.objects.font.instantiateVariableFont instead')
     # make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
     instanceName = ""
 
@@ -195,6 +198,7 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
         v = min(v, 1000)
         v = max(v, 0)
         instanceName += "-%s%s" % (k, v)
+
     targetFileName = '.'.join(variableFontPath.split('/')[-1].split('.')[:-1]) + instanceName + '.ttf'
 
     if not targetDirectory.endswith('/'):
@@ -284,5 +288,4 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
 
     # Answer the font name path.
     return outFile
-
 
