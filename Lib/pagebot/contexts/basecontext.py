@@ -17,24 +17,24 @@ import os
 from pagebot.style import DISPLAY_BLOCK
 
 class BaseContext(object):
-    u"""A BaseContext instance combines the specific functions of a platform, 
+    u"""A BaseContext instance combines the specific functions of a platform,
     such as DrawBot, Flat or HTML. This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
-    
+
     # In case of specific builder addressing, callers can check here.
     isDrawBot = False
     isFlat = False
     isSvg = False
     isInDesign = False
-    
+
     # To be redefined by inheriting context classes.
     STRING_CLASS = None
     EXPORT_TYPES = None
-    
+
     def __repr__(self):
         return '<%s>' % self.__class__.__name__
 
-    
+
     #   S C R E E N
 
     def screenSize(self):
@@ -44,27 +44,27 @@ class BaseContext(object):
     #   T E X T
 
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
-        u"""Create a new styles BabelString instance of self.STRING_CLASS from s 
-        (converted to plain unicode string), using e or style as typographic parameters. 
+        u"""Create a new styles BabelString instance of self.STRING_CLASS from s
+        (converted to plain unicode string), using e or style as typographic parameters.
         Ignore and just answer s if it is already a self.STRING_CLASS instance.
         """
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
-            s = self.STRING_CLASS.newString(u'%s' % s, context=self, e=e, style=style, w=w, h=h, 
+            s = self.STRING_CLASS.newString(u'%s' % s, context=self, e=e, style=style, w=w, h=h,
                 pixelFit=pixelFit)
         assert isinstance(s, self.STRING_CLASS)
         return s
 
     def fitString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
-        u"""Create a new styles BabelString instance of self.STRING_CLASS from s 
+        u"""Create a new styles BabelString instance of self.STRING_CLASS from s
         assuming that style['font'] is a Variable Font instnace, or a path pointing to one.
         If the for is not a VF, then behavior is the same as newString.
-        (converted to plain unicode string), using e or style as typographic parameters. 
+        (converted to plain unicode string), using e or style as typographic parameters.
         Ignore and just answer s if it is already a self.STRING_CLASS instance.
         """
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
-            s = self.STRING_CLASS.fitString(u'%s' % s, context=self, e=e, style=style, w=w, h=h, 
+            s = self.STRING_CLASS.fitString(u'%s' % s, context=self, e=e, style=style, w=w, h=h,
                 pixelFit=pixelFit)
         assert isinstance(s, self.STRING_CLASS)
         return s
@@ -105,7 +105,7 @@ class BaseContext(object):
     #   V A R I A B L E
 
     def Variable(self, ui, globals):
-        """Offers interactive global value manipulation in DrawBot. 
+        """Offers interactive global value manipulation in DrawBot.
         Probably to be ignored in other contexts."""
         pass
 
