@@ -13,12 +13,15 @@
 #
 #     testTextLines.py
 #
+from __future__ import print_function
 import sys
 from pagebot.contexts.platform import getContext
+context = getContext()
+
 if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
-from __future__ import print_function
+
 
 import CoreText
 import Quartz
@@ -89,7 +92,7 @@ class TextLine(object):
         self.glyphCount = CoreText.CTLineGetGlyphCount(ctLine)
         # Hack for now to find the string.
         s = []
-        for index, part in enumerate(`self._ctLine`.split('"')[1].split('\\u')):
+        for index, part in enumerate(repr(self._ctLine).split('"')[1].split('\\u')):
             if index == 0:
                 s.append(part)
             elif len(part) >= 4:
@@ -107,7 +110,8 @@ class TextLine(object):
     def __len__(self):
         return self.glyphCount
 
-    def getIndexForPosition(self, (x, y)):
+    def getIndexForPosition(self, pos):
+        x, y = pos
         return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))
 
     def getOffsetForStringIndex(self, i):
@@ -135,7 +139,7 @@ class TextLine(object):
     trailingWhiteSpace = property(_get_trailingWhiteSpace)
 
 def getTextLines(fs, w, h):
-    u"""Answer an ordered list of all baseline position, starting at the top."""
+    """Answer an ordered list of all baseline position, starting at the top."""
     box = 0, 0, w, h
     attrString = fs.getNSObject()
     setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
@@ -196,5 +200,5 @@ for tl in textLines:
         print(textRun.italicAngle)
         print
         #print(CoreText.CTLineGetGlyphRuns(tl._ctLine))
-    print(#CoreText.CTLineGetStringRange(tl._ctLine))
+    #print(CoreText.CTLineGetStringRange(tl._ctLine))
     #print(tl.string )

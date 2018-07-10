@@ -26,7 +26,7 @@ except ImportError:
     print('Using NoneFlatBuilder')
 
 class BezierPath(object):
-    u"""Make BezierPath with the same API for DrawBotBuilder drawing.
+    """Make BezierPath with the same API for DrawBotBuilder drawing.
 
     >>> path = BezierPath(flatBuilder)
     >>> path.moveTo((0, 0))

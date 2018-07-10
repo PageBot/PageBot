@@ -20,7 +20,7 @@ from fontTools.varLib import designspace
 from fontTools.varLib.models import VariationModel, normalizeLocation
 
 class DesignSpace(object):
-    u"""DesignSpace wrapper file. It can read from a design space source (path),
+    """DesignSpace wrapper file. It can read from a design space source (path),
     and it can be used to dynamically build from setting separate parameters.
 
     >>> fName = 'TestFont'
@@ -88,7 +88,7 @@ class DesignSpace(object):
     path = property(_get_path, _set_path)
 
     def _get_familyName(self):
-        u"""Answer the family name as stored, and otherwise from the first master in the list."""
+        """Answer the family name as stored, and otherwise from the first master in the list."""
         if self._familyName is None:
             for source in self.sources:
                 if 'familyname' in source: # Note: name is in all lc.
@@ -99,7 +99,7 @@ class DesignSpace(object):
     familyName = property(_get_familyName, _set_familyName)
 
     def _get_axisOrder(self):
-        u"""Answer the list of tags, in the order of self.axisList."""
+        """Answer the list of tags, in the order of self.axisList."""
         axisOrder = []
         for axis in self._axes:
             axisOrder.append(axis['tag'])
@@ -107,7 +107,7 @@ class DesignSpace(object):
     axisOrder = property(_get_axisOrder)
 
     def _get_axesByName(self):
-        u"""Answer the dictionay of raw axes, with their name as key."""
+        """Answer the dictionay of raw axes, with their name as key."""
         axesByName = {}
         for axis in self._axes:
             axesByName[axis['name']]= axis
@@ -115,7 +115,7 @@ class DesignSpace(object):
     axesByName = property(_get_axesByName)
 
     def _get_axes(self):
-        u"""Answer the dictionary of raw axes, with their tag as key."""
+        """Answer the dictionary of raw axes, with their tag as key."""
         axes = {}
         for axis in self._axes:
             axes[axis['tag']] = axis
@@ -123,10 +123,10 @@ class DesignSpace(object):
     axes = property(_get_axes)
 
     def _get_axisList(self):
-        u"""Answer the list of raw axes."""
+        """Answer the list of raw axes."""
         return self._axes
     def _set_axisList(self, axes):
-        u"""Set from raw axes list with format
+        """Set from raw axes list with format
         [{'tag': 'wght', 'name': 'Weight', 'minimum': 0.0, 'default': 500.0, 'maximum': 1000.0},...]
         """
         self._axes = axes
@@ -160,7 +160,7 @@ class DesignSpace(object):
         self.instance.append(instance)
 
     def _get_tripleAxes(self):
-        u"""Aswer dictionary of triple axis values, with their tag as key."""
+        """Aswer dictionary of triple axis values, with their tag as key."""
         axes = {}
         for axis in self._axes:
             axes[axis['tag']] = axis['minimum'], axis['default'], axis['maximum']
@@ -168,7 +168,7 @@ class DesignSpace(object):
     tripleAxes = property(_get_tripleAxes)
 
     def _get_locations(self):
-        u"""Answer the list of locations from all masters. The axes names in source locations
+        """Answer the list of locations from all masters. The axes names in source locations
         are converted to axes tags."""
         locations = []
         axesByName = self.axesByName
@@ -181,7 +181,7 @@ class DesignSpace(object):
     locations = property(_get_locations)
 
     def _get_normalizedLocations(self):
-        u"""Answer the list of locations from all masters, normalized to the normalized axes."""
+        """Answer the list of locations from all masters, normalized to the normalized axes."""
         normalizedLocations = []
         axes = self.tripleAxes
         for location in self.locations:
@@ -191,7 +191,7 @@ class DesignSpace(object):
     normalizedLocations = property(_get_normalizedLocations)
 
     def validate(self):
-        u"""Answer the boolean flag checking if all data is valid: testing"""
+        """Answer the boolean flag checking if all data is valid: testing"""
         return True
 
     def save(self, path=None):

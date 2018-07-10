@@ -84,14 +84,13 @@ def textSearch(self, txt, box, search, align):
     return rectangles
 
 
-"""
 size(300, 484)
 t = FormattedString()
 
 t.font("Times", 30)
-t += "hello world this is"
+t += "Hello world! This is"
 t.font("Helvetica", 20)
-t += " cool super cool and this is also cool..."
+t += " cool, super cool and this is also cool..."
  
 b = (16, 6, 162, 292)
 
@@ -107,4 +106,3 @@ results = textSearch(BaseContext(), t, b, "this", align="left")
 fill(1, 1, 0, .5)
 for r in results:
     rect(*r)
-"""

@@ -18,7 +18,7 @@ from pagebot.toolbox.transformer import point3D
 from pagebot.toolbox.color import Color, color, noColor
 
 def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
-    u"""Draw registration mark as position x, y.
+    """Draw registration mark as position x, y.
 
     >>> from pagebot.toolbox.units import pt
     >>> from pagebot.contexts.flatcontext import FlatContext
@@ -46,7 +46,7 @@ def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
     context.drawPath()
 
 def drawRegistrationMarks(context, origin, w, h, cmSize, cmStrokeWidth):
-    u"""Draw standard registration mark, to show registration of CMYK colors.
+    """Draw standard registration mark, to show registration of CMYK colors.
     https://en.wikipedia.org/wiki/Printing_registration.
 
     >>> from pagebot.toolbox.units import pt
@@ -62,7 +62,7 @@ def drawRegistrationMarks(context, origin, w, h, cmSize, cmStrokeWidth):
     drawRegistrationMark(context, (x + w/2, y + h + cmSize), cmSize, cmStrokeWidth, False) # Top registration mark
 
 def drawCropMarks(context, origin, w, h, bleed, cmSize, cmStrokeWidth, folds=None):
-    u"""If the show flag is set, then draw the cropmarks or page frame.
+    """If the show flag is set, then draw the cropmarks or page frame.
 
     >>> from pagebot.toolbox.units import pt
     >>> from pagebot.contexts.flatcontext import FlatContext

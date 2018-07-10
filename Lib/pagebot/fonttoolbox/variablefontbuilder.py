@@ -38,17 +38,17 @@ context = getContext()
 DEBUG = False
 
 def getMasterPath():
-    u"""Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
+    """Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
     Default is at the same level as pagebot module."""
     return os.path.expanduser("~") + '/Fonts/'
 
 def getInstancePath():
-    u"""Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
+    """Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
     return getMasterPath() + '_instances/'
 
 def getVariableAxisFonts(varFont, axisName,
                          normalize=True, cached=False, lazy=True):
-    u"""Answer the two instance fonts located at minValue and maxValue of the axis. If varFont is not
+    """Answer the two instance fonts located at minValue and maxValue of the axis. If varFont is not
     a Variable Font, or the axis does not exist in the font, then answer (varFont, varFont)."""
     if axisName in varFont.axes:
         minValue, _, maxValue = varFont.axes[axisName]
@@ -64,7 +64,7 @@ def getVariableAxisFonts(varFont, axisName,
 def fitVariableWidth(varFont, s, w, fontSize,
                      condensedLocation, wideLocation, fixedSize=True,
                      tracking=None, rTracking=None, cached=True, lazy=True):
-    u"""Answer the font instance that makes string s width on the given width *w* for the given *fontSize*.
+    """Answer the font instance that makes string s width on the given width *w* for the given *fontSize*.
     The *condensedLocation* dictionary defines the most condensed font instance (optionally including the opsz)
     and the *wideLocation* dictionary defines the most wide font instance (optionally including the opsz).
     The string width for s is calculated with both locations and then the [wdth] value is interpolated and iterated
@@ -141,7 +141,7 @@ def fitVariableWidth(varFont, s, w, fontSize,
                 location=location)
 
 def getConstrainedLocation(font, location):
-    u"""Answer the location with applied min/max values for each axis. Don't change the values
+    """Answer the location with applied min/max values for each axis. Don't change the values
     if they are positioned between their min/max values. Don't change values for axes that are
     not defined in the font."""
     constrainedLocation = {}
@@ -153,7 +153,7 @@ def getConstrainedLocation(font, location):
     return constrainedLocation
 
 def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cached=True, lazy=True):
-    u"""The getVarFontInstance refers to the file of the source variable font.
+    """The getVarFontInstance refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
     Set normalize to False if the values in location already are matching the axis min/max of the font.
@@ -176,17 +176,20 @@ def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cac
     return instance
 
 
-def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):
-    u"""
+def generateInstance(variableFontPath, location, targetDirectory,
+        normalize=True, cached=True, lazy=True):
+    """
     D E P R E C A T E D
-    Use pagebot.fonttoolbox.objects.font.instantiateVariableFont instead (calling fontTools)
+
+    Use pagebot.fonttoolbox.objects.font.instantiateVariableFont instead
+    (calling fontTools)
 
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
         varfilename -- a variable font file path
-        location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
+        location -- a dictionary of axis tag and value {"wght": 0.75, "wdth":
+        -0.5}
     """
-    print('Deprecated: generateInstance() Use fonttoolbox.objects.font.instantiateVariableFont instead')
     # make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
     instanceName = ""
 
@@ -195,6 +198,7 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
         v = min(v, 1000)
         v = max(v, 0)
         instanceName += "-%s%s" % (k, v)
+
     targetFileName = '.'.join(variableFontPath.split('/')[-1].split('.')[:-1]) + instanceName + '.ttf'
 
     if not targetDirectory.endswith('/'):
@@ -284,5 +288,4 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
 
     # Answer the font name path.
     return outFile
-
 

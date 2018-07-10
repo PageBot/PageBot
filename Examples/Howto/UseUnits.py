@@ -17,7 +17,7 @@ from pagebot.constants import INCH, MM
 from pagebot.toolbox.units import Unit, mm, px, pt, fr, em, perc, col, units
 
 def useUnits():
-    u"""
+    """
 
     >>> mm(2), mm(2).r # Showing the unit as instance and as rendered value
     (2mm, 2)
