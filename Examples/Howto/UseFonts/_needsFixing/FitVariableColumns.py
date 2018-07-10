@@ -83,7 +83,7 @@ def drawPageFrame(w):
                (PADDING+w-M-LINE_ENDINGS[n], H-5*PADDING-n*leading))
 
 def draw(w, y, drawVariable):
-    u"""
+    """
       Draw 3 lines of text: the boundaries of with the width axis and
       the interpolated width from the slider value.
       If the slider goes of the extremes, then the middle line

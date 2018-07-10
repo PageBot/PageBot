@@ -33,7 +33,7 @@ from pagebot.constants import A4Rounded
 from pagebot.toolbox.units import us # Render unit value
 
 class BezierPath(object):
-    u"""Make BezierPath with the same API for DrawBotBuilder drawing.
+    """Make BezierPath with the same API for DrawBotBuilder drawing.
 
     >>> from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
     >>> indesignBuilder = InDesignBuilder()
@@ -115,8 +115,13 @@ class InDesignBuilder(BaseBuilder):
 
     #   Chunks of InDesign functions
 
+<<<<<<< HEAD
     def newDocument(self, w, h, units='pt'):
         u"""Create a new document. Store the (w, h) for the moment that pages are created."""
+=======
+    def newDocument(self, w, h):
+        """Create a new document. Store the (w, h) for the moment that pages are created."""
+>>>>>>> master
         self.w = w
         self.h = h
         self.units = units
@@ -175,7 +180,7 @@ class InDesignBuilder(BaseBuilder):
         return len(self._jsOut)
 
     def importJs(self, path):
-        u"""Import a chunk of UTF-8 CSS code from the path."""
+        """Import a chunk of UTF-8 CSS code from the path."""
         if os.path.exists(path):
             f = codecs.open(path, 'r', 'utf-8')
             self.addJs(f.read())
@@ -184,11 +189,11 @@ class InDesignBuilder(BaseBuilder):
             self.comment('Cannot find JS file "%s"' % path)
 
     def copyPath(self, path):
-        u"""Collect path of files to copy to the output website."""
+        """Collect path of files to copy to the output website."""
         self._copyPaths.append(path)
 
     def getJs(self, newLine=True):
-        u"""Answer the flat string of JS."""
+        """Answer the flat string of JS."""
         if newLine:
             newLine = '\n'
         else:
@@ -196,7 +201,7 @@ class InDesignBuilder(BaseBuilder):
         return newLine.join(self._jsOut)
     
     def writeJs(self, path):
-        u"""Write the collected set of css JS to path."""
+        """Write the collected set of css JS to path."""
         try:
             f = codecs.open(path, 'w', 'utf-8')
             f.write(self.getJs())

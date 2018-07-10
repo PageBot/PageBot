@@ -20,7 +20,7 @@ try:
     import drawBot # Test if drawBot is available on this platform
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will try to call e.build_html()
-    drawBotBuilder.PB_ID = 'drawBot' 
+    drawBotBuilder.PB_ID = 'drawBot'
     # Test by import if MacOS specific imports are available.
     #import CoreText, AppKit, Quartz # #pylint: disable=unused-import
 

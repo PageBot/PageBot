@@ -43,7 +43,7 @@ from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernR
 from pagebot.style import FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES
 
 def isFontPath(fontPath):
-    u"""Answer the boolean flag if the path is a font path.
+    """Answer the boolean flag if the path is a font path.
     For now, PageBot only supports ('ttf', 'otf')
 
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -68,7 +68,7 @@ def isFontPath(fontPath):
         return False
 
 def getFont(fontOrPath, lazy=True):
-    u"""Answer the Font instance, that connects to the fontPath. Note that there is no check if there
+    """Answer the Font instance, that connects to the fontPath. Note that there is no check if there
     is already anothe Font created on that path, as for PageBot purposes it is most likely for
     reading only.
 
@@ -92,7 +92,7 @@ def getFont(fontOrPath, lazy=True):
         return None
 
 def findFont(fontPath, lazy=True):
-    u"""Answer the font the has name fontName.
+    """Answer the font the has name fontName.
 
     >>> findFont('Roboto-Regular')
     <Font Roboto-Regular>
@@ -104,16 +104,16 @@ def findFont(fontPath, lazy=True):
     return None
 
 def getMasterPath():
-    u"""Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
+    """Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
     Default is at the same level as pagebot module."""
     return os.path.expanduser("~") + '/Fonts/'
 
 def getInstancePath():
-    u"""Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
+    """Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
     return getMasterPath() + '_instances/'
 
 def getScaledValue(vf, tag, value):
-    u"""Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
+    """Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
     ratio in (minValue, defaultValue, maxValue)."""
     if not tag in vf.axes:
         return None
@@ -127,7 +127,7 @@ def getScaledValue(vf, tag, value):
     return defaultValue + (maxValue - defaultValue)*value
 
 def getScaledLocation(vf, normalizedLocation):
-    u"""Answer the instance of self, corresponding to the normalized location.
+    """Answer the instance of self, corresponding to the normalized location.
     (-1, 0, 1) values for axes as e.g. [wght] and [wdth].
     The optical size [opsz] is supposed to contain the font size, so it is not scaled.
     If [opsz] is not defined, then set it to default, if the axis exist.
@@ -152,12 +152,12 @@ def getScaledLocation(vf, normalizedLocation):
 
     return scaledLocation
 
-def FIXME_getInstance(vf, location=None, dstPath=None, name=None, opticalSize=None, styleName=None, cached=True, lazy=True):
-    u"""Answer the VF-TTFont instance at location (created by fontTools.varLib.mutator.instantiateVariableFont)
-    packed as Font instance.
+def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
+        opticalSize=None, styleName=None, cached=True, lazy=True):
+    """Answers the VF-TTFont instance at location (created by
+    fontTools.varLib.mutator.instantiateVariableFont) packed as Font instance.
     """
-
-    u"""
+    """
     >>> vf = findFont('Amstelvar-Roman-VF')
     >>> instance = getInstance(vf, opticalSize=8)
     >>> instance
@@ -210,13 +210,15 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None, opticalSize=No
     """
 
 def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=None, normalize=True, cached=True, lazy=True):
-    u"""The getInstance refers to the file of the source variable font.
+    """The getInstance refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
     Set normalize to False if the values in location already are matching the axis min/max of the font.
-    If there is a [opsz] Optical Size value defined, then store that information in the font.info.opticalSize.
-    The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
-    location name."""
+    If there is a [opsz] Optical Size value defined, then store that
+    information in the font.info.opticalSize.
+
+    The optional *styleName* overwrites the *font.info.styleName* of the
+    *ttFont* or the automatic location name."""
     if opticalSize is None: # If forcing flag is undefined, then get info from location.
         opticalSize = location.get('opsz')
     instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached, lazy=lazy)
@@ -228,7 +230,7 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
 
 
 def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=True, lazy=True):
-    u"""
+    """
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
         varfilename -- a variable font file path
@@ -348,7 +350,7 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
 
 
 class Font(object):
-    u"""
+    """
     Storage of font information while composing the pages.
 
     >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -371,7 +373,7 @@ class Font(object):
     FONTANALYZER_CLASS = FontAnalyzer
 
     def __init__(self, path=None, ttFont=None, name=None, opticalSize=None, location=None, styleName=None, lazy=True):
-        u"""Initialize the TTFont, for which Font is a wrapper.
+        """Initialize the TTFont, for which Font is a wrapper.
 
         self.name is supported, in case the caller wants to use a different"""
         assert path is not None or ttFont is not None
@@ -412,7 +414,7 @@ class Font(object):
         return '<Font %s>' % (path2FontName(self.path) or self.name or 'Untitled')
 
     def __getitem__(self, glyphName):
-        u"""Answer the glyph with glyphName.
+        """Answer the glyph with glyphName.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
@@ -426,7 +428,7 @@ class Font(object):
         return self._glyphs[glyphName]
 
     def __len__(self):
-        u"""Answer the number of glyphs in the font.
+        """Answer the number of glyphs in the font.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
@@ -439,7 +441,7 @@ class Font(object):
         return 0
 
     def nameMatch(self, pattern):
-        u"""Answer level of matching between pattern and the font file name or font.info.fullName.
+        """Answer level of matching between pattern and the font file name or font.info.fullName.
         Pattern can be a single string or a list of string.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -461,7 +463,7 @@ class Font(object):
         return 1.0
 
     def weightMatch(self, weight):
-        u"""Answer level of matching for the (abbreviated) weight name or number with font, in a value between 0 and 1.
+        """Answer level of matching for the (abbreviated) weight name or number with font, in a value between 0 and 1.
         Currently there is only no-match (0) and full-match (1). Future implementations may give a float indicator
         for the level of matching, so the caller can decide on the level of threshold.
 
@@ -511,7 +513,7 @@ class Font(object):
         return 0 # No match
 
     def widthMatch(self, width):
-        u"""Answer level of matchting for the (abbreviated) width name or number with font.
+        """Answer level of matchting for the (abbreviated) width name or number with font.
         Currently there is only no-match (0) and full-match (1). Future implementations may give a float indicator
         for the level of matching, so the caller can decide on the level of threshold.
 
@@ -556,7 +558,7 @@ class Font(object):
         return 0
 
     def isItalic(self):
-        u"""Answer the boolean flag if this font should be considered to be italic.
+        """Answer the boolean flag if this font should be considered to be italic.
         Currently there is only no-match (0) and full-match (1). Future implementations may give a float indicator
         for the level of matching, so the caller can decide on the level of threshold.
 
@@ -579,7 +581,7 @@ class Font(object):
         return 0
 
     def match(self, name=None, weight=None, width=None, italic=None):
-        u"""Answer a value between 0 and 1 to the amount that self matches the defined parameters.
+        """Answer a value between 0 and 1 to the amount that self matches the defined parameters.
         Only defined values count in the matching.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -626,7 +628,7 @@ class Font(object):
         return sum(matches)/len(matches) # Normalize to value between 0..1
 
     def keys(self):
-        u"""Answer the glyph names of the font.
+        """Answer the glyph names of the font.
 
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -657,7 +659,7 @@ class Font(object):
     cmap = property(_get_cmap)
 
     def __contains__(self, glyphName):
-        u"""Allow direct testing.
+        """Allow direct testing.
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
@@ -671,7 +673,7 @@ class Font(object):
         return glyphName in self.keys()
 
     def _get_analyzer(self):
-        u"""Answer the style/font analyzer if it exists. Otherwise create one.
+        """Answer the style/font analyzer if it exists. Otherwise create one.
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
@@ -688,7 +690,7 @@ class Font(object):
     analyzer = property(_get_analyzer)
 
     def _get_axes(self):
-        u"""Answer dictionary of axes if self.ttFont is a Variable Font. Otherwise answer an empty dictioary.
+        """Answer dictionary of axes if self.ttFont is a Variable Font. Otherwise answer an empty dictioary.
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -705,7 +707,7 @@ class Font(object):
     axes = property(_get_axes)
 
     def getDefaultVarLocation(self):
-        u"""Answer the location dictionary with the default axes values.
+        """Answer the location dictionary with the default axes values.
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -719,7 +721,7 @@ class Font(object):
         return defaultVarLocation
 
     def _get_rawDeltas(self):
-        u"""Answer the list of axis dictionaries with deltas for all glyphs and axes. Answer an empty dictionary
+        """Answer the list of axis dictionaries with deltas for all glyphs and axes. Answer an empty dictionary
         if the [gvar] table does not exist.
 
         >>> from pagebot.fonttoolbox.objects.font import Font
@@ -737,7 +739,7 @@ class Font(object):
     rawDeltas = property(_get_rawDeltas)
 
     def _get_designSpace(self):
-        u"""Answer the design space in case this is a variable font.
+        """Answer the design space in case this is a variable font.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
@@ -754,7 +756,7 @@ class Font(object):
     designSpace = property(_get_designSpace)
 
     def _get_variables(self):
-        u"""Answer the gvar-table (if it exists) translated into plain Python dictionaries
+        """Answer the gvar-table (if it exists) translated into plain Python dictionaries
         of deltas per glyph and per axis if this is a Var-fonts. Otherwise answer an empty dictionary
 
 
@@ -794,7 +796,7 @@ class Font(object):
 
     def getInstance(self, location=None, dstPath=None, opticalSize=None,
             styleName=None, cached=True, lazy=True):
-        u"""Answer the instance of self at location. If the cache file already exists, then
+        """Answer the instance of self at location. If the cache file already exists, then
         just answer a Font instance to that font file.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -833,7 +835,7 @@ class Font(object):
     features = property(_get_features)
 
     def _get_kerning(self):
-        u"""Answer the (expanded) kerning table of the font.
+        """Answer the (expanded) kerning table of the font.
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -849,7 +851,7 @@ class Font(object):
     kerning =  property(_get_kerning)
 
     def _get_groups(self):
-        u"""Answer the groups dictionary of the font.
+        """Answer the groups dictionary of the font.
 
         >>> from pagebot.toolbox.transformer import *
         >>> from pagebot.fonttoolbox.objects.font import Font
@@ -865,7 +867,7 @@ class Font(object):
     groups = property(_get_groups)
 
     def save(self, path=None):
-        u"""Save the font to optional path or to self.path."""
+        """Save the font to optional path or to self.path."""
         self.ttFont.save(path or self.path)
 
 

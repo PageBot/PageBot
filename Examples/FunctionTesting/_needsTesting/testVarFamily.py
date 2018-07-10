@@ -60,7 +60,7 @@ BASE_PATH = u"/Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade/scripts/export/"
 #BASE_PATH = '/FontDevelopment/TypeNetwork/WebType-Raw/WT-TTF/'
 
 def findFontPaths(basePath, paths=None):
-    u"""Answer the recursive list of TTF non-Italic font paths that are in directory basePath."""
+    """Answer the recursive list of TTF non-Italic font paths that are in directory basePath."""
     if paths is None:
         paths = []
     for fileName in os.listdir(basePath):
@@ -78,7 +78,7 @@ def findFontPaths(basePath, paths=None):
     return paths
 
 def checkInterpolation(fonts):
-    u"""This method will test if there are problems for the current set of fonts to be interpolated,
+    """This method will test if there are problems for the current set of fonts to be interpolated,
     regarding the special specs of VarFonts.
     Answer resulting dictionary with format dict(A=dict(ok=[path1,...], error=[path2,...], report=[]), ...)"""
     glyphs = {} # Total collection of (font.glyphName) that do or do not interpolate.
@@ -105,7 +105,7 @@ def checkInterpolation(fonts):
     return glyphs
 
 def guessVarFamilyFromPaths(basePath, name=None):
-    u"""Initialize by guessing the self._font axis locations.
+    """Initialize by guessing the self._font axis locations.
     """
     paths = findFontPaths(basePath)
     name = name or path2FontName(basePath)

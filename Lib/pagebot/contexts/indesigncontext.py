@@ -31,7 +31,7 @@ from pagebot.toolbox.units import Pt
 from pagebot.toolbox.color import noColor, blackColor
 
 class InDesignContext(BaseContext):
-    u"""A InDesignContext instance combines the specific functions of the InDesign JS-API
+    """A InDesignContext instance combines the specific functions of the InDesign JS-API
     This way it way it hides e.g. the type of BabelString
     """
 
@@ -43,7 +43,7 @@ class InDesignContext(BaseContext):
     EXPORT_TYPES = ('jsx',)
 
     def __init__(self):
-        u"""Constructor of InDesignContext.
+        """Constructor of InDesignContext.
 
         >>> context = InDesignContext()
         >>> context.isInDesign
@@ -84,18 +84,27 @@ class InDesignContext(BaseContext):
     #   S C R E E N
 
     def screenSize(self):
-        u"""Answer the current screen size. Otherwise default is to do nothing."""
+        """Answer the current screen size. Otherwise default is to do nothing."""
         return None
 
     #   D O C U M E N T
 
+<<<<<<< HEAD
     def newDocument(self, w, h):
         u"""Create a new document"""
         self.units = Pt.UNIT
         self.b.newDocument(w, h)
+=======
+    def newDocument(self, w, h, title=None, pageCount=None, units='pt'):
+        """Create a new document"""
+        self.title = title
+        self.pageCount = pageCount
+        self.units = units
+        self.b.newDocument(w, h, title, pageCount)
+>>>>>>> master
 
     def saveDocument(self, path, multiPage=None):
-        u"""Select other than standard InDesign export builders here.
+        """Select other than standard InDesign export builders here.
         Save the current image as path, rendering depending on the extension of the path file.
         In case the path starts with "_export", then create it directories.
 
@@ -114,7 +123,7 @@ class InDesignContext(BaseContext):
     saveImage = saveDocument # Compatible API with InDesign
 
     def newPage(self, w, h):
-        u"""Create a new InDesign page.
+        """Create a new InDesign page.
 
         >>> context = InDesignContext()
         >>> context.newPage(100, 100)
@@ -122,7 +131,7 @@ class InDesignContext(BaseContext):
         self.b.newPage(w, h)
 
     def newDrawing(self):
-        u"""Clear output canvas, start new export file.
+        """Clear output canvas, start new export file.
 
         >>> context = InDesignContext()
         >>> context.newDrawing()
@@ -139,7 +148,7 @@ class InDesignContext(BaseContext):
     #   D R A W I N G
 
     def rect(self, x, y, w, h):
-        u"""Draw a rectangle in the canvas.
+        """Draw a rectangle in the canvas.
 
         >>> context = InDesignContext()
         >>> context.rect(0, 0, 100, 100)
@@ -147,7 +156,7 @@ class InDesignContext(BaseContext):
         self.b.rect(x, y, w, h)
 
     def oval(self, x, y, w, h):
-        u"""Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
+        """Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
 
         >>> context = InDesignContext()
         >>> context.oval(0, 0, 100, 100)
@@ -155,11 +164,11 @@ class InDesignContext(BaseContext):
         self.b.oval(x, y, w, h)
 
     def circle(self, x, y, r):
-        u"""Circle draws an InDesign oval with (x,y) as middle point and radius r."""
+        """Circle draws an InDesign oval with (x,y) as middle point and radius r."""
         self.b.oval(x-r, y-r, r*2, r*2)
 
     def line(self, p1, p2):
-        u"""Draw a line from p1 to p2.
+        """Draw a line from p1 to p2.
 
         >>> from pagebot.toolbox.units import pt, mm
         >>> context = InDesignContext()
@@ -169,7 +178,7 @@ class InDesignContext(BaseContext):
         self.b.line(p1, p2)
 
     def newPath(self):
-        u"""Make a new InDesign Bezierpath to draw in.
+        """Make a new InDesign Bezierpath to draw in.
 
         >>> context = InDesignContext()
         >>> context.path is not None
@@ -179,7 +188,7 @@ class InDesignContext(BaseContext):
         return self._path
 
     def _get_path(self):
-        u"""Answer the open drawing path. Create one if it does not exist.
+        """Answer the open drawing path. Create one if it does not exist.
 
         >>> context = InDesignContext()
         >>> context.path is not None
@@ -191,7 +200,7 @@ class InDesignContext(BaseContext):
     path = property(_get_path)
 
     def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
-        u"""Draw the path, or equivalent in other contexts. Scaled image is drawn on (x, y),
+        """Draw the path, or equivalent in other contexts. Scaled image is drawn on (x, y),
         in that order."""
         if path is None:
             path = self._path
@@ -205,7 +214,7 @@ class InDesignContext(BaseContext):
             #self.restore()
 
     def moveTo(self, p):
-        u"""Move to point p. Create a new path if none is open.
+        """Move to point p. Create a new path if none is open.
 
         >>> context = InDesignContext()
         >>> path = context.newPath()
@@ -216,7 +225,7 @@ class InDesignContext(BaseContext):
         self._path.moveTo((p[0], p[1]))
 
     def lineTo(self, p):
-        u"""Line to point p. Create a new path if none is open.
+        """Line to point p. Create a new path if none is open.
 
         >>> context = InDesignContext()
         >>> # Draw directly on th epath
@@ -240,7 +249,7 @@ class InDesignContext(BaseContext):
         pass
 
     def curveTo(self, bcp1, bcp2, p):
-        u"""Curve to point p. Create a new path if none is open.
+        """Curve to point p. Create a new path if none is open.
 
         >>> context = InDesignContext()
         >>> # Draw directly on th epath
@@ -259,7 +268,7 @@ class InDesignContext(BaseContext):
         self._path.curveTo((bcp1[0], bcp1[1]), (bcp2[0], bcp2[1]), (p[0], p[1]))
 
     def closePath(self):
-        u"""Curve to point p. Create a new path if none is open.
+        """Curve to point p. Create a new path if none is open.
 
         >>> context = InDesignContext()
         >>> # Draw directly on th epath
@@ -277,27 +286,27 @@ class InDesignContext(BaseContext):
             self._path.closePath()
 
     def bezierPathByFlatteningPath(self, path):
-        u"""Use the NSBezier flatten path."""
+        """Use the NSBezier flatten path."""
         return path.getNSBezierPath().bezierPathByFlatteningPath()
 
     def scale(self, sx, sy=None):
-        u"""Set the drawing scale."""
+        """Set the drawing scale."""
         if sy is None:
             sy = sx
         self.b.scale(sx, sy)
 
     def translate(self, dx, dy):
-        u"""Translate the origin to this point."""
+        """Translate the origin to this point."""
         self.b.translate(dx, dy)
 
     def transform(self, t):
-        u"""Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift over vector (dx, dy)"""
+        """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift over vector (dx, dy)"""
         self.b.transform(t)
 
     #   G R A D I E N T  &  S H A D O W
 
     def setShadow(self, eShadow):
-        u"""Set the InDesign graphics state for shadow if all parameters are set."""
+        """Set the InDesign graphics state for shadow if all parameters are set."""
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.cmykColor is not None:
                 self.b.shadow(eShadow.offset,
@@ -309,7 +318,7 @@ class InDesignContext(BaseContext):
                               color=eShadow.color)
 
     def setGradient(self, gradient, origin, w, h):
-        u"""Define the gradient call to match the size of element e., Gradient position
+        """Define the gradient call to match the size of element e., Gradient position
         is from the origin of the page, so we need the current origin of e."""
         b = self.b
         start = origin[0] + gradient.start[0] * w, origin[1] + gradient.start[1] * h
@@ -349,7 +358,7 @@ class InDesignContext(BaseContext):
     #   C A N V A S
 
     def saveGraphicState(self):
-        u"""Save the current graphic state.
+        """Save the current graphic state.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> context = InDesignContext()
@@ -397,13 +406,13 @@ class InDesignContext(BaseContext):
     #   F O N T S
 
     def listOpenTypeFeatures(self, fontName):
-        u"""Answer the list of opentype features available in the named font."""
+        """Answer the list of opentype features available in the named font."""
         return [] #self.b.listOpenTypeFeatures(fontName)
 
     #   G L Y P H
 
     def drawGlyphPath(self, font, glyphName, x, y, fillColor=0, strokeColor=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
-        u"""Draw the font[glyphName] at the defined position with the defined fontSize.
+        """Draw the font[glyphName] at the defined position with the defined fontSize.
 
         """
         s = fontSize/font.info.unitsPerEm
@@ -423,7 +432,7 @@ class InDesignContext(BaseContext):
     #   T E X T
 
     def fontSize(self, fontSize):
-        u"""Set the font size in the context.
+        """Set the font size in the context.
 
         >>> context = InDesignContext()
         >>> context.fontSize(12)
@@ -441,21 +450,21 @@ class InDesignContext(BaseContext):
         return self.newString(bullet, e=e, style=style)
 
     def text(self, sOrBs, p):
-        u"""Draw the sOrBs text string, can be a str or BabelString, including a InDesign FormattedString
+        """Draw the sOrBs text string, can be a str or BabelString, including a InDesign FormattedString
         at position p."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         self.b.text(sOrBs, p)
 
     def textBox(self, sOrBs, r):
-        u"""Draw the sOrBs text string, can be a str or BabelString, including a InDesign FormattedString
+        """Draw the sOrBs text string, can be a str or BabelString, including a InDesign FormattedString
         in rectangle r."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         self.b.textBox(sOrBs, r)
 
     def textSize(self, bs, w=None, h=None):
-        u"""Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
+        """Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
         Answer the height of the string if the width w is given."""
         if w is not None:
             return self.b.textSize(bs.s, width=w)
@@ -464,12 +473,12 @@ class InDesignContext(BaseContext):
         return self.b.textSize(bs.s)
 
     def textOverflow(self, bs, bounds, align=LEFT):
-        u"""Answer the overflowing of from the box (0, 0, w, h)
+        """Answer the overflowing of from the box (0, 0, w, h)
         as new InDesignString in the current context."""
         return stringClass(self.b.textOverflow(bs.s, bounds, align), self)
 
     def openTypeFeatures(self, features):
-        u"""Set the current of opentype features in the context canvas.
+        """Set the current of opentype features in the context canvas.
 
         >>> context = InDesignContext()
         >>> context.openTypeFeatures(dict(smcp=True, zero=True))
@@ -477,7 +486,7 @@ class InDesignContext(BaseContext):
         self._openTypeFeatures = features
 
     def hyphenation(self, onOff=True):
-        u"""Set the hyphenation on/off flag.
+        """Set the hyphenation on/off flag.
 
         >>> context = InDesignContext()
         >>> context.hyphenation(True)
@@ -488,7 +497,7 @@ class InDesignContext(BaseContext):
     #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
-        u"""Nothing to do in InDesignContext."""
+        """Nothing to do in InDesignContext."""
         
     #   C O L O R
 
@@ -499,23 +508,67 @@ class InDesignContext(BaseContext):
         self._textStroke = c
         self.setStrokeWidth(w)
 
+<<<<<<< HEAD
     def setFillColor(self, c, b=None):
         u"""Set the color for global or the color of the formatted string."""
         assert isinstance(c, Color)
         self._fill = c
+=======
+    def setFillColor(self, c, cmyk=False, b=None):
+        """Set the color for global or the color of the formatted string."""
+        if b is None: # Builder can be optional InDesign FormattedString
+            b = self.b
+        if c is NO_COLOR:
+            pass # Color is undefined, do nothing.
+        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
+            if cmyk:
+                b.cmykFill(c)
+            else:
+                b.fill(c)
+        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
+            if cmyk:
+                b.cmykFill(*c)
+            else:
+                b.fill(*c)
+        else:
+            raise ValueError('InDesignContext.setFillColor: Error in color format "%s"' % repr(c))
+>>>>>>> master
 
     fill = setFillColor # InDesign compatible API
 
     def strokeWidth(self, w):
-        u"""Set the current stroke width."""
+        """Set the current stroke width."""
         self.b.strokeWidth(w)
 
+<<<<<<< HEAD
     def setStrokeColor(self, c, w=None, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         assert isinstance(c, Color)
         self._stroke = c
 
         self.strokeWidth(w)
+=======
+    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
+        """Set global stroke color or the color of the formatted string."""
+        if b is None: # Builder can be optional InDesign FormattedString
+            b = self.b
+        if c is NO_COLOR:
+            pass # Color is undefined, do nothing.
+        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
+            if cmyk:
+                b.cmykStroke(c)
+            else:
+                b.stroke(c)
+        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
+            if cmyk:
+                b.cmykStroke(*c)
+            else:
+                b.stroke(*c)
+        else:
+            raise ValueError('InDesignContext.setStrokeColor: Error in color format "%s"' % repr(c))
+        if w is not None:
+            b.strokeWidth(w)
+>>>>>>> master
 
     stroke = setStrokeColor # InDesign compatible API
 
@@ -523,7 +576,7 @@ class InDesignContext(BaseContext):
         self._strokeWidth = w
 
     def rotate(self, angle):
-        u"""Rotate the canvas by angle."""
+        """Rotate the canvas by angle."""
         self.b.rotate(angle)
 
     #   I M A G E
@@ -532,11 +585,11 @@ class InDesignContext(BaseContext):
         return self.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-        u"""Answer the (w, h) image size of the image file at path."""
+        """Answer the (w, h) image size of the image file at path."""
         return self.b.imageSize(path)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
-        u"""Draw the image. If w or h is defined, then scale the image to fit."""
+        """Draw the image. If w or h is defined, then scale the image to fit."""
         iw, ih = self.imageSize(path)
         if w and not h: # Scale proportional
             h = ih * w/iw # iw : ih = w : h
@@ -554,7 +607,7 @@ class InDesignContext(BaseContext):
         self.restore()
 
     def getImageObject(self, path):
-        u"""Answer the ImageObject that knows about image filters.
+        """Answer the ImageObject that knows about image filters.
 
         >>> from pagebot import getResourcesPath
         >>> from pagebot.contexts.indesigncontext import InDesignContext

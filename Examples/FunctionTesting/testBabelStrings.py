@@ -26,14 +26,15 @@ bold = findFont('Roboto-Bold')
 
 testContexts = (
     (DrawBotContext(), '_export/testDrawBotString.pdf'),
-    #(FlatContext(), '_export/testFlatString.pdf'),
+    (FlatContext(), '_export/testFlatString.pdf'),
 )
+
 for context, path in testContexts:
     context.newPage(W, H)
     # Create a new BabelString with the DrawBot FormttedString inside.
     style=dict(font=font.path, fontSize=40, textFill=(1, 0, 0))
     bs = context.newString('This is a string', style=style)
-    # It prints it content.
+    # It prints its content.
     print(bs)
     # Adding or appending strings are added to the internal formatted string.
     # Adding plain strings take over the existing style.
@@ -52,4 +53,3 @@ for context, path in testContexts:
     # Usage in DrawBot by addressing the embedded FS for drawing.
     context.text(bs, (M, M))
     context.saveImage(path)
-

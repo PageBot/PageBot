@@ -38,7 +38,7 @@ LineType = ONLINE
 EXPORT_PATH = '_export/UseBorders.pdf' # Export in _export folder that does not commit in Git. Force to export PDF.
 
 def makeDocument():
-    u"""Make a new document, using the rs as root style."""
+    """Make a new document, using the rs as root style."""
 
     #W = H = 120 # Get the standard a4 width and height in points.
     W = H = PageSize

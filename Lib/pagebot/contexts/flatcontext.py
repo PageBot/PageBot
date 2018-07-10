@@ -27,7 +27,7 @@ def iround(value):
     return min(255, max(0, int(round(value*255.0))))
 
 class FlatContext(BaseContext):
-    u"""A FlatContext instance combines the specific functions of the Flat
+    """A FlatContext instance combines the specific functions of the Flat
     library, and offers a PageBot “standard” API, so it can be swapped with the
     DrawBotContext. This way it also hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created.
@@ -66,7 +66,7 @@ class FlatContext(BaseContext):
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
 
     def __init__(self):
-        u"""Constructor of Flat context.
+        """Constructor of Flat context.
 
         >>> context = FlatContext()
         >>> context.isFlat
@@ -114,8 +114,13 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
+<<<<<<< HEAD
     def newDocument(self, w, h):
         u"""Create a new self.doc Flat canvas to draw on.
+=======
+    def newDocument(self, w, h, units='pt'):
+        """Create a new self.doc Flat canvas to draw on.
+>>>>>>> master
 
         >>> context = FlatContext()
         >>> context.isFlat
@@ -124,13 +129,17 @@ class FlatContext(BaseContext):
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)
         """
+<<<<<<< HEAD
         assert w.UNIT == h.UNIT
         self.unit = w.UNIT
         self.doc = self.b.document(w.r, h.r, w.UNIT)
         self.newPage(w, h)
+=======
+        self.doc = self.b.document(w, h, units)
+>>>>>>> master
 
     def saveDocument(self, path, multiPage=True):
-        u"""Save the current document to file(s)
+        """Save the current document to file(s)
 
         >>> import os
         >>> from pagebot import getRootPath
@@ -197,8 +206,13 @@ class FlatContext(BaseContext):
 
     saveImage = saveDocument # Compatible API with DrawBot
 
+<<<<<<< HEAD
     def newPage(self, w, h):
         u"""Other page sizes than default in self.doc, are ignored in Flat.
+=======
+    def newPage(self, w, h, units='pt'):
+        """Other page sizes than default in self.doc, are ignored in Flat.
+>>>>>>> master
 
         >>> context = FlatContext()
         >>> w = h = pt(100)
@@ -212,7 +226,7 @@ class FlatContext(BaseContext):
         self.pages.append(self.page)
 
     def newDrawing(self):
-        u"""Clear output canvas, start new export file.
+        """Clear output canvas, start new export file.
 
         >>> context = FlatContext()
         >>> w = h = pt(100)
@@ -226,7 +240,7 @@ class FlatContext(BaseContext):
     #   C A N V A S
 
     def saveGraphicState(self):
-        u"""Save the current graphic state.
+        """Save the current graphic state.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> context = FlatContext()
@@ -269,21 +283,21 @@ class FlatContext(BaseContext):
     restore = restoreGraphicState
 
     def translate(self, ox, soy):
-        u"""Shift the origin of the canvas by (ox, oy).
+        """Shift the origin of the canvas by (ox, oy).
         TODO: To be implenented."""
         pass
 
     #   F O N T S
 
     def listOpenTypeFeatures(self, fontName):
-        u"""Answer the list of opentype features available in the named font.
+        """Answer the list of opentype features available in the named font.
         TODO: To be implemented."""
         #return self.b.listOpenTypeFeatures(fontName)
         return []
 
     #   F R A M E S
     def frameDuration(self, secondsPerFrame):
-        u"""Set the frame duretion for animated gifs to a number of seconds per frame."""
+        """Set the frame duretion for animated gifs to a number of seconds per frame."""
         self._frameDuration = secondsPerFrame
 
     #   T E X T
@@ -292,7 +306,7 @@ class FlatContext(BaseContext):
         return self.newString(bullet, e=e, style=style)
 
     def text(self, bs, p):
-        u"""Place the babelstring instance at position p. The position can be any 2D or 3D points tuple.
+        """Place the babelstring instance at position p. The position can be any 2D or 3D points tuple.
         Currently the z-axis is ignored. The FlatContext version of the BabelString is supposed to contain
         Flat.text. Note that in the Flat model, the positions is an attribute of the string, so
         strings cannot be reused to show on multiple positions.
@@ -310,7 +324,7 @@ class FlatContext(BaseContext):
         placedText.position(p[0], p[1])
 
     def font(self, font, fontSize=None):
-        u"""Set the current font, in case it is not defined in a formatted string.
+        """Set the current font, in case it is not defined in a formatted string.
         font can be a Font instance, or a full font file path, or an abbreveation that can be found
         by family or by findFont.
 
@@ -333,7 +347,7 @@ class FlatContext(BaseContext):
             self._fontSize = fontSize
 
     def fontSize(self, fontSize):
-        u"""Set the current fontSize, in case it is not defined in a formatted string
+        """Set the current fontSize, in case it is not defined in a formatted string
 
         >>> fontSize = pt(12)
         >>> context = FlatContext()
@@ -349,7 +363,11 @@ class FlatContext(BaseContext):
         placedText.position(x.r, y.r)
 
     def textSize(self, bs, w=None, h=None):
+<<<<<<< HEAD
         u"""Answer the size tuple (w, h) of the current text. Answer pt(0, 0) if there is no text defined.
+=======
+        """Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
+>>>>>>> master
         Answer the height of the string if the width w is given.
 
         >>> w = h = pt(500)
@@ -383,7 +401,7 @@ class FlatContext(BaseContext):
             return (w, w/len(bs))
 
     def textOverflow(self, bs, bounds, align=LEFT):
-        u"""Answer the overflowing of from the box (0, 0, w, h) as new FlatString
+        """Answer the overflowing of from the box (0, 0, w, h) as new FlatString
         in the current context."""
         return FlatString(self.b.textOverflow(bs.s, bounds, align), self)
 
@@ -396,7 +414,7 @@ class FlatContext(BaseContext):
         return self.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-        u"""Answer the (w, h) image size of the image file at path.
+        """Answer the (w, h) image size of the image file at path.
 
         >>> from pagebot import getResourcesPath
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
@@ -409,8 +427,12 @@ class FlatContext(BaseContext):
         return units(img.width, maker=self.unit), units(img.height, maker=self.unit)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+<<<<<<< HEAD
         u"""Draw the image. If w or h is defined, then scale the image to fit.
         The returned (w, h) are of type unit that document.w was defined."""
+=======
+        """Draw the image. If w or h is defined, then scale the image to fit."""
+>>>>>>> master
         if w is None or h is None:
             w, h = self.imageSize(path)
 
@@ -458,8 +480,13 @@ class FlatContext(BaseContext):
             self.page.place(shape.rectangle(x.r, y.r, w.r, h.r))
 
     def oval(self, x, y, w, h):
+<<<<<<< HEAD
         u"""Draw an oval in rectangle, where (x, y) is the bottom left origin and (w, h) is the size.
         This default DrawBot behavior, different from default Flat, where the (x, y) is the middle
+=======
+        """Draw an oval in rectangle, where (x,y) is the bottom left origin and (w,h) is the size.
+        This default DrawBot behavior, different from default Flat, where the (x,y) is the middle
+>>>>>>> master
         if the oval. Compensate for the difference."""
         shape = self._getShape()
         if shape is not None:
@@ -467,7 +494,7 @@ class FlatContext(BaseContext):
             self.page.place(shape.ellipse((x-w/2).r, (y-h/2).r, w.r, h.r))
 
     def circle(self, x, y, r):
-        u"""Draw an circle in square, with radius r and (x,y) as middle."""
+        """Draw an circle in square, with radius r and (x,y) as middle."""
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
@@ -480,7 +507,7 @@ class FlatContext(BaseContext):
             self.page.place(shape.line(p0[0].r, p0[1].r, p1[0].r, p1[1].r))
 
     def newPath(self):
-        u"""Create a new path list, o collect the path commands."""
+        """Create a new path list, o collect the path commands."""
         self._path = BezierPath(self.b) # Collect path commands here.
         return self._path
 
@@ -511,13 +538,13 @@ class FlatContext(BaseContext):
         self._path.closePath()
 
     def bezierPathByFlatteningPath(self, path):
-        u"""TODO: Make Flat version of the NSBezier flatten path function."""
+        """TODO: Make Flat version of the NSBezier flatten path function."""
         return None #path.getNSBezierPath().bezierPathByFlatteningPath()
 
     #   S H A D O W  &  G R A D I E N T
 
     def setShadow(self, eShadow):
-        u"""Set the DrawBot graphics state for shadow if all parameters are set."""
+        """Set the DrawBot graphics state for shadow if all parameters are set."""
         pass # Not implemented?
 
     def setGradient(self, gradient, origin, w, h):
@@ -528,17 +555,23 @@ class FlatContext(BaseContext):
 
     #   C O L O R
 
+<<<<<<< HEAD
     def setTextFillColor(self, c):
         self.fill(c)
 
     def setFillColor(self, c, builder=None):
         u"""Set the color for global or the color of the formatted string.
+=======
+    def setFillColor(self, c, cmyk=False, spot=False, overprint=False):
+        """Set the color for global or the color of the formatted string.
+>>>>>>> master
         See: http://xxyxyz.org/flat, color.py."""
         assert isinstance(c, Color)
         self._fill = c
 
     fill = setFillColor # DrawBot compatible API
 
+<<<<<<< HEAD
     def setTextStrokeColor(self, c, w=None):
         self.stroke(c, w)
 
@@ -546,6 +579,46 @@ class FlatContext(BaseContext):
         u"""Set global stroke color or the color of the formatted string."""
         assert isinstance(c, Color)
         self._stroke = c
+=======
+    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
+        """Set global stroke color or the color of the formatted string."""
+        # TODO: Make this work in Flat
+        b = self.b
+        success = False
+        if c is NO_COLOR:
+            self._stroke = NO_COLOR # Ignore drawing
+            success = True # Color is undefined, do nothing.
+        elif c is None:
+            self._stroke = None # no stroke
+            success = True
+        elif isinstance(c, (float, int)): # Grayscale
+            self._stroke = b.gray(iround(c))
+            success = True
+        elif isinstance(c, (list, tuple)):
+            if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
+                name, (cyan, magenta, yellow, k) = c
+                self._stroke = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
+                success = True
+            # Not supported in PDF, leave out for general compatibility?
+            #elif len(c) == 2:
+            #    gray, a = c
+            #    self._stroke = b.ga(gray, a)
+            #    success = True
+            elif cmyk:
+                cyan, magenta, yellow, k = c
+                self._stroke = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
+                success = True
+            elif len(c) == 4: # rgb and opaque
+                red, green, blue, a = c
+                self._stroke = b.rgba(iround(red), iround(green), iround(blue), iround(a))
+                success = True
+            elif len(c) == 3:
+                red, green, blue = c
+                self._stroke = b.rgb(iround(red), iround(green), iround(blue))
+                success = True
+        if not success:
+            raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
+>>>>>>> master
         if w is not None:
             self._strokeWidth = w
 
@@ -555,12 +628,12 @@ class FlatContext(BaseContext):
         self._strokeWidth = w
 
     def translate(self, dx, dy):
-        u"""Translate the origin by (dx, dy)."""
+        """Translate the origin by (dx, dy)."""
         self._ox += dx
         self._oy += dy
 
     def rotate(self, angle):
-        u"""Rotate by angle."""
+        """Rotate by angle."""
         self._rotate = angle
 
     #   E X P O R T

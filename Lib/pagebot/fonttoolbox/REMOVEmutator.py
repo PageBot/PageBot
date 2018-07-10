@@ -28,7 +28,7 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2FontName
 
 def getMasterPath():
-    u"""Answer the path to read master fonts. Default is at the same level as pagebot module.
+    """Answer the path to read master fonts. Default is at the same level as pagebot module.
 
     >>> getMasterPath().endswith('/Fonts/')
     True
@@ -40,7 +40,7 @@ def getMasterPath():
 
 
 def getInstancePath():
-    u"""Answer the path to write instance fonts.
+    """Answer the path to write instance fonts.
 
     >>> getInstancePath().endswith('/Fonts/_instances/')
     True
@@ -222,7 +222,7 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=Fals
 
 
 def getVarFontInstance(fontOrPath, location, install=True, styleName=None, normalize=True):
-    u"""The variablesFontPath refers to the file of the source variable font.
+    """The variablesFontPath refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
     Set normalize to False if the values in location already are matching the axis min/max of the font.
