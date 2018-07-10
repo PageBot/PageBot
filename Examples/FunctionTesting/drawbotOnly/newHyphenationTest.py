@@ -119,26 +119,26 @@ def hyphenateAttributedString(self, attrString, width=None, box=None):
   
     
 
-s = "DrawBot is a powerful, free application for MacOSX that invites you to write simple Python scripts to generate twodimensional graphics. The builtin graphics primitives support rectangles, ovals, (bezier) paths, polygons, text objects and transparency."
-
-"""
+s = " is a powerful, free application for MacOSX that invites you to write simple Python scripts to generate twodimensional graphics. The builtin graphics primitives support rectangles, ovals, (bezier) paths, polygons, text objects and transparency."
 
 context.newPage(300, 700)
 fff = "Times"
 context.hyphenation(True)
-t = context.newString('')
-t.font(fff, 15)
-t.align("right")
-t.indent(22)
-t.language("en")
+t = context.newString('DrawBot')
+print(type(t))
+#t.font(fff, 15)
+#t.align("right")
+#t.indent(22)
+#t.language("en")
 
-if True:
-    t.align("justified")
+#if True:
+#    t.align("justified")
 t += s
 
 b = 10, 10, 202, 202
 
-p = context.BezierPath()
+p = context.newPath()
+
 p.moveTo((10, 10))
 p.lineTo((212, 10))
 p.lineTo((202, 212))
@@ -156,9 +156,7 @@ for i in b, p:
     
     context.translate(0, b[2]+30)
 
-r = context.hyphenateAttributedString(BaseContext(), t.getNSObject(), box=p)
-g = context.FormattedString()
-g._attributedString = r
-print(context.textBox(g, p))
-
-"""
+#r = context.hyphenateAttributedString(BaseContext(), t.getNSObject(), box=p)
+#g = context.FormattedString()
+#g._attributedString = r
+#print(context.textBox(g, p))

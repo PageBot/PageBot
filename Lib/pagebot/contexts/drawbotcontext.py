@@ -174,6 +174,7 @@ class DrawBotContext(BaseContext):
         self._path = self.b.BezierPath()
         return self._path
 
+
     def _get_path(self):
         """Answer the open drawing path. Create one if it does not exist.
 
