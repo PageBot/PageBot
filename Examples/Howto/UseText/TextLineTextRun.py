@@ -238,7 +238,7 @@ class TextLine(object):
         return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
 
     def getOffsetForStringIndex(self, i):
-        u"""Answer the z position that is closest to glyph string index i. If i is out of bounds,
+        """Answer the z position that is closest to glyph string index i. If i is out of bounds,
         then answer the closest x position (left and right side of the string)."""
         #print('=====', self._ctLine)
         return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
@@ -258,13 +258,13 @@ class TextLine(object):
     #alignment = property(_get_alignment)
 
     def _get_imageBounds(self):
-        u"""Property that answers the bounding box (actual black shape) of the line."""
+        """Property that answers the bounding box (actual black shape) of the line."""
         (x, y), (w, h) = CoreText.CTLineGetImageBounds(self._ctLine, None)
         return x, y, w, h
     imageBounds = property(_get_imageBounds)
 
     def _get_bounds(self):
-        u"""Property that returns the EM bounding box of the line."""
+        """Property that returns the EM bounding box of the line."""
         return CoreText.CTLineGetTypographicBounds(self._ctLine, None, None, None)
     bounds = property(_get_bounds)
 
@@ -289,7 +289,7 @@ class TextLine(object):
         return founds
 
 class TextBox(object):
-    u"""A TextBox holds a formatted string, as well as an ordered list of TextLine instances,
+    """A TextBox holds a formatted string, as well as an ordered list of TextLine instances,
     that hold information about the sequence of TextRun instances (with their unique typographic
     properties). Also self.baseLines is available, ordered list of baseLine positions, relative
     to the origin of the TextBox element."""
@@ -314,7 +314,7 @@ class TextBox(object):
     fs = property(_get_fs, _set_fs)
 
     def initializeTextLines(self):
-        u"""Answer an ordered list of all baseline position, starting at the top."""
+        """Answer an ordered list of all baseline position, starting at the top."""
         self._box = self.x, self.y, self.w, self.h
         attrString = fs.getNSObject()
         setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
@@ -333,7 +333,7 @@ class TextBox(object):
             self.baseLines.append((x, y, textLine.string))
 
     def findPattern(self, pattern):
-        u"""Answer the point locations where this pattern occures in the Formatted String."""
+        """Answer the point locations where this pattern occures in the Formatted String."""
         foundPatterns = [] # List of FoundPattern instances.
         for lineIndex, textLine in enumerate(self.textLines):
             y = self.baseLines[lineIndex]

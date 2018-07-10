@@ -24,7 +24,7 @@ from pagebot.contexts.strings.htmlstring import HtmlString
 from pagebot.style import DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 
 class SvgContext(BaseContext):
-    u"""An SvgContext uses svgwrite to export as SVG drawing."""
+    """An SvgContext uses svgwrite to export as SVG drawing."""
 
     # In case of specific builder addressing, callers can check here.
     isSvg = True
@@ -36,7 +36,7 @@ class SvgContext(BaseContext):
     EXPORT_TYPES = ('svg',)
 
     def __init__(self):
-        u"""Constructor of SvgContext.
+        """Constructor of SvgContext.
 
         >>> context = SvgContext()
         >>> context.saveDocument('~/SvgContext.svg')
@@ -62,11 +62,11 @@ class SvgContext(BaseContext):
         self._path = None # Hold current open SVG path
 
     def newDocument(self, w, h):
-        u"""Ignore for SvgContext, as Drawing open automatic if first page is created."""
+        """Ignore for SvgContext, as Drawing open automatic if first page is created."""
         pass
 
     def saveDocument(self, path, multiPage=None):
-        u"""Select other than standard DrawBot export builders here.
+        """Select other than standard DrawBot export builders here.
         Save the current image as path, rendering depending on the extension of the path file.
         In case the path starts with "_export", then create it directories.
 
@@ -81,14 +81,14 @@ class SvgContext(BaseContext):
     saveImage = saveDocument # Compatible API with DrawBot
 
     def newPage(self, w, h):
-        u"""Create a new SVG page.
+        """Create a new SVG page.
 
         >>> context = SvgContext()
         >>> context.newPage(100, 100)
         """
 
     def newDrawing(self):
-        u"""Clear output canvas, start new export file.
+        """Clear output canvas, start new export file.
 
         >>> context = SvgContext()
         >>> context.newDrawing()
@@ -96,7 +96,7 @@ class SvgContext(BaseContext):
         self._drawing = self.b.Drawing(self._filePath, profile='tiny')
 
     def rect(self, x, y, w, h):
-        u"""Draw a rectangle in the canvas.
+        """Draw a rectangle in the canvas.
 
         >>> path = '~/SvgContext_rect.svg'
         >>> context = SvgContext()
@@ -114,7 +114,7 @@ class SvgContext(BaseContext):
         self._drawing.add(rect)
 
     def oval(self, x, y, w, h):
-        u"""Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
+        """Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
 
         >>> path = '~/SvgContext_oval.svg'
         >>> context = SvgContext()
@@ -132,7 +132,7 @@ class SvgContext(BaseContext):
         self._drawing.add(oval)
 
     def circle(self, x, y, r):
-        u"""Circle draws a DrawBot oval with (x,y) as middle point and radius r.
+        """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
 
         >>> path = '~/SvgContext_circle.svg'
         >>> context = SvgContext()
@@ -150,7 +150,7 @@ class SvgContext(BaseContext):
         self._drawing.add(circle)
 
     def line(self, p1, p2):
-        u"""Draw a line from p1 to p2.
+        """Draw a line from p1 to p2.
 
         >>> path = '~/SvgContext_line.svg'
         >>> context = SvgContext()
@@ -190,7 +190,7 @@ class SvgContext(BaseContext):
     stroke = setStrokeColor
 
     def saveGraphicState(self):
-        u"""Save the current graphic state.
+        """Save the current graphic state.
 
         >>> context = SvgContext()
         >>> context.font('Verdana')
@@ -234,13 +234,13 @@ class SvgContext(BaseContext):
     #   T E X T 
 
     def fontSize(self, fontSize):
-        u"""Set the current graphic state to fontSize.
+        """Set the current graphic state to fontSize.
 
         """
         self._fontSize = fontSize
 
     def font(self, font, fontSize=None):
-        u"""Set the current graphic state to font. 
+        """Set the current graphic state to font. 
         TODO: Make this match the font.path.
         """
         self._font = font
@@ -248,7 +248,7 @@ class SvgContext(BaseContext):
             self.fontSize(fontSize)
 
     def text(self, sOrBs, p):
-        u"""Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
+        """Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
         at position p.
 
         >>> path = '~/SvgContext_text.svg'
@@ -272,7 +272,7 @@ class SvgContext(BaseContext):
         self._drawing.add(t)
 
     def textBox(self, sOrBs, r):
-        u"""Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
+        """Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
         in rectangle r."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
@@ -283,12 +283,12 @@ class SvgContext(BaseContext):
         self._drawing.add(t)
 
     def translate(self, dx, dy):
-        u"""Translate the origin by (dx, dy)."""
+        """Translate the origin by (dx, dy)."""
         self._ox += dx
         self._oy += dy
 
     def rotate(self, angle):
-        u"""Rotate by angle."""
+        """Rotate by angle."""
         self._rotate = angle
 
     def textSize(self, s):
@@ -297,7 +297,7 @@ class SvgContext(BaseContext):
     #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
-        u"""Set the frame duretion for animated gifs to a number of seconds per frame."""
+        """Set the frame duretion for animated gifs to a number of seconds per frame."""
         self._frameDuration = secondsPerFrame
 
 if __name__ == '__main__':

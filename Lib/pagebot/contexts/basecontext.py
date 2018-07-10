@@ -17,7 +17,7 @@ import os
 from pagebot.style import DISPLAY_BLOCK
 
 class BaseContext(object):
-    u"""A BaseContext instance combines the specific functions of a platform,
+    """A BaseContext instance combines the specific functions of a platform,
     such as DrawBot, Flat or HTML. This way it way it hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created."""
 
@@ -38,13 +38,13 @@ class BaseContext(object):
     #   S C R E E N
 
     def screenSize(self):
-        u"""Answer the current screen size in DrawBot. Otherwise default is to do nothing."""
+        """Answer the current screen size in DrawBot. Otherwise default is to do nothing."""
         return None
 
     #   T E X T
 
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
-        u"""Create a new styles BabelString instance of self.STRING_CLASS from s
+        """Create a new styles BabelString instance of self.STRING_CLASS from s
         (converted to plain unicode string), using e or style as typographic parameters.
         Ignore and just answer s if it is already a self.STRING_CLASS instance.
         """
@@ -56,7 +56,7 @@ class BaseContext(object):
         return s
 
     def fitString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
-        u"""Create a new styles BabelString instance of self.STRING_CLASS from s
+        """Create a new styles BabelString instance of self.STRING_CLASS from s
         assuming that style['font'] is a Variable Font instnace, or a path pointing to one.
         If the for is not a VF, then behavior is the same as newString.
         (converted to plain unicode string), using e or style as typographic parameters.
@@ -70,7 +70,7 @@ class BaseContext(object):
         return s
 
     def newText(self, textStyles, e=None, w=None, h=None, newLine=False):
-        u"""Answer the BabelString, as combination of all text and style in textStyles, which is supposed to
+        """Answer the BabelString, as combination of all text and style in textStyles, which is supposed to
         have format [(baseString, style), (baseString, style), ...]. Add return \n to the string is the
         newLine attribute is True or if a style has style.get('display') == DISPLAY_BLOCK."""
         assert isinstance(textStyles, (tuple, list))
@@ -88,7 +88,7 @@ class BaseContext(object):
     #   P A T H
 
     def checkExportPath(self, path):
-        u"""If the path starts width "_export" make sure it exits, otherwise create it.
+        """If the path starts width "_export" make sure it exits, otherwise create it.
         The _export folders are used to local export documents, without saving them into git.
         The _export name is included in the git .gitignore file.
 

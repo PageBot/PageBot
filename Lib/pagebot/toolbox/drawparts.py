@@ -18,7 +18,7 @@ from pagebot.style import NO_COLOR
 from math import sin, cos, atan2, radians, degrees
 
 def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
-    u"""Draw curved arrow marker between the two points.
+    """Draw curved arrow marker between the two points.
     TODO: Add drawing of real arrow-heads, rotated in the right direction."""
     context = view.context # Get current context
     b = context.b

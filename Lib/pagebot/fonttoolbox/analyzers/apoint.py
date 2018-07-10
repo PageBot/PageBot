@@ -17,7 +17,7 @@ import weakref
 from pagebot.toolbox.transformer import point3D
 
 class APoint(object):
-    u"""Analyzer Point, used if addition information (like its type) needs to be stored.
+    """Analyzer Point, used if addition information (like its type) needs to be stored.
     Otherwise just use the point2D() and point3D() which are simple tuples.
 
     >>> p = APoint(101, 303, True)
@@ -34,7 +34,7 @@ class APoint(object):
         self.onCurve = bool(onCurve)
 
     def __getitem__(self, i):
-        u"""Allow APoint to x and y attributes to be indexed like a point2D tuple."""
+        """Allow APoint to x and y attributes to be indexed like a point2D tuple."""
         return self.p[i]
     def __setitem__(self, i, value):
         self.p[i] = value
@@ -91,7 +91,7 @@ class APoint(object):
     z = property(_get_z, _set_z)
 
     def _get_glyph(self):
-        u"""Answer the parent glyph, if the weakref is still allive."""
+        """Answer the parent glyph, if the weakref is still allive."""
         if self._glyph is not None:
             return self._glyph()
         return None
