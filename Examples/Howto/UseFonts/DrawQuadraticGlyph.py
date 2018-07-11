@@ -31,7 +31,7 @@ ONCURVE = None
 QUADRATIC_OFFCURVE = None
 CUBIC_OFFCURVE = None
 IMPLIED_ONCURVE = None
-G =10
+G = 10
 
 class Point(object):
 
@@ -83,7 +83,7 @@ def drawSegment(segment, implied, cps, verbose=False):
         circle(x1, y1, r/2, color='blue')
         onCurve = (onCurve1.x, onCurve1.y)
         path.curveTo(offCurve0, offCurve1, onCurve)
-        stroke(0, 0, 0, 0.4)
+        stroke(0.7)
         line((onCurve0.x, onCurve0.y), offCurve0)
         line(offCurve1, onCurve)
         stroke(None)
@@ -128,13 +128,13 @@ def circle(x, y, r, color='pink'):
     stroke(None)
     # Draws on/offcurve dots.
     if color == 'pink':
-        fill(1, 0, 1, 0.5)
+        fill(1, 0, 1)
     elif color == 'green':
-        fill(0, 1, 0, 0.5)
+        fill(0, 1, 0)
     elif color == 'blue':
-        fill(0, 0.5, 1, 0.5)
+        fill(0, 0.5, 1)
     elif color == 'red':
-        fill(1, 0, 0, 0.5)
+        fill(1, 0, 0)
     oval(x - r, y - r, r*2, r*2)
     stroke(1)
 
@@ -169,9 +169,19 @@ path = BezierPath()
 contours = []
 contour = None
 coordinates = glyph.ttGlyph.coordinates
-
+fill(1, 1, 0)
+rect(0, 0, width(), height())
 # Move glyph up so we can see results below descender level.
 translate(50, 500)
+
+# Draws the glyph.
+c = glyph.contours
+pbSegments = glyph._segments
+fill(0, 0, 0)
+stroke(0, 1, 0)
+drawPath(glyph._path)
+stroke(None)
+fill(0)
 
 # Converts coordinates to PageBot Points and assigns points
 # to contours.
@@ -197,22 +207,6 @@ for i, (x, y) in enumerate(coordinates):
     y += d
     text('%d' % i, (x, y))
 
-# Draws oncurve points (pink) and offcurve control points (green).
-for contour in contours:
-    for i, point in enumerate(contour):
-        x = point.x
-        y = point.y
-
-        if point.onCurve:
-            if ONCURVE is None:
-                ONCURVE = point
-            circle(x, y, r)
-        else:
-            if QUADRATIC_OFFCURVE is None:
-                QUADRATIC_OFFCURVE = point
-            # Quadratic offcurves.
-            circle(x, y, r, color='green')
-
 segments = []
 implied = []
 cps = []
@@ -236,25 +230,32 @@ for n, contour in enumerate(contours):
         # drawPath(path) (see below.)
         drawSegment(segment, implied, cps)
 
+# Draws oncurve points (pink) and offcurve control points (green).
+for contour in contours:
+    for i, point in enumerate(contour):
+        x = point.x
+        y = point.y
+
+        if point.onCurve:
+            if ONCURVE is None:
+                ONCURVE = point
+            circle(x, y, r)
+        else:
+            if QUADRATIC_OFFCURVE is None:
+                QUADRATIC_OFFCURVE = point
+            # Quadratic offcurves.
+            circle(x, y, r, color='green')
+
+x = 500
+y = 400
+d = 30
+fill(0.7)
 
 if len(implied) > 0:
     IMPLIED_ONCURVE = implied[0]
 
 if len(cps) > 0:
     CUBIC_OFFCURVE = cps[0]
-
-# Enable to draw path as built by PageBot glyph.
-c = glyph.contours
-pbSegments = glyph._segments
-fill(0, 0, 0, 0.3)
-stroke(0, 1, 0)
-drawPath(glyph._path)
-stroke(None)
-fill(0)
-
-x = 500
-y = 400
-d = 30
 
 if ONCURVE:
     stroke(0, 1, 1)
