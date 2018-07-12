@@ -6,8 +6,8 @@
 #
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     FindVariableFontDeltas.py
@@ -31,7 +31,6 @@ SHOW_DIRECT = False
 context.newPage(1500, 1500)
 
 f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
-
 c = 'e'
 g = f[c]
 print(f.axes.keys())

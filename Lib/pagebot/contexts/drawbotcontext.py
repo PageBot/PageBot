@@ -8,8 +8,8 @@
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     drawbotcontext.py
@@ -592,8 +592,6 @@ class DrawBotContext(BaseContext):
             pass # Color is undefined, do nothing.
 
         elif isinstance(c, Color):
-            #from pprint import pprint
-            #pprint(vars(c))
             b.fill(c.r, c.g, c.b)
 
         elif c is None or isinstance(c, (float, int)): # Because None is a valid value.

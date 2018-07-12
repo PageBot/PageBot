@@ -6,8 +6,8 @@
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     UseGlyphBeamIntersection.py
@@ -15,9 +15,10 @@
 #     Implements a PageBot font classes to get info from a TTFont.
 #     Show drawing of outline points and intersection beam with flattened path
 #
+from __future__ import print_function
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts.platform import getContext
-from __future__ import print_function
+
 
 newPage(1000, 1000)
 font = Font('/Library/Fonts/Georgia.ttf')

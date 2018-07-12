@@ -7,13 +7,13 @@
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     flatcontext.py
 #
-#     http://xxyxyz.org/flat
+#     xxyxyz.org/flat
 #
 #import imageio
 from pagebot.toolbox.units import pt, Pt, units, ru
@@ -32,8 +32,8 @@ class FlatContext(BaseContext):
     DrawBotContext. This way it also hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created.
 
-    * https://github.com/xxyxyz/flat
-    * http://xxyxyz.org/flat
+    * xxyxyz.org/flat
+    * xxyxyz.org/flat
 
     Text behavior:
     st = strike(font)
@@ -114,13 +114,8 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
-<<<<<<< HEAD
-    def newDocument(self, w, h):
-        u"""Create a new self.doc Flat canvas to draw on.
-=======
-    def newDocument(self, w, h, units='pt'):
+    def newDocument(self, w, h, title=None, pageCount=None, units='pt'):
         """Create a new self.doc Flat canvas to draw on.
->>>>>>> master
 
         >>> context = FlatContext()
         >>> context.isFlat
@@ -129,14 +124,12 @@ class FlatContext(BaseContext):
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)
         """
-<<<<<<< HEAD
         assert w.UNIT == h.UNIT
         self.unit = w.UNIT
+        self.title = title
+        self.pageCount = pageCount
         self.doc = self.b.document(w.r, h.r, w.UNIT)
         self.newPage(w, h)
-=======
-        self.doc = self.b.document(w, h, units)
->>>>>>> master
 
     def saveDocument(self, path, multiPage=True):
         """Save the current document to file(s)
@@ -172,7 +165,7 @@ class FlatContext(BaseContext):
         [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
         """
         self.checkExportPath(path) # In case path starts with "_export", make sure that the directories exist.
-        
+
         RGB = 'rgb'
         RGBA = 'rgba'
 
@@ -206,13 +199,8 @@ class FlatContext(BaseContext):
 
     saveImage = saveDocument # Compatible API with DrawBot
 
-<<<<<<< HEAD
-    def newPage(self, w, h):
-        u"""Other page sizes than default in self.doc, are ignored in Flat.
-=======
     def newPage(self, w, h, units='pt'):
         """Other page sizes than default in self.doc, are ignored in Flat.
->>>>>>> master
 
         >>> context = FlatContext()
         >>> w = h = pt(100)
@@ -363,12 +351,9 @@ class FlatContext(BaseContext):
         placedText.position(x.r, y.r)
 
     def textSize(self, bs, w=None, h=None):
-<<<<<<< HEAD
-        u"""Answer the size tuple (w, h) of the current text. Answer pt(0, 0) if there is no text defined.
-=======
-        """Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
->>>>>>> master
-        Answer the height of the string if the width w is given.
+        """Answer the size tuple (w, h) of the current text. Answer (0, 0) if
+        there is no text defined.  Answer the height of the string if the width
+        w is given.
 
         >>> w = h = pt(500)
         >>> x = y = pt(0)
@@ -427,12 +412,7 @@ class FlatContext(BaseContext):
         return units(img.width, maker=self.unit), units(img.height, maker=self.unit)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
-<<<<<<< HEAD
-        u"""Draw the image. If w or h is defined, then scale the image to fit.
-        The returned (w, h) are of type unit that document.w was defined."""
-=======
         """Draw the image. If w or h is defined, then scale the image to fit."""
->>>>>>> master
         if w is None or h is None:
             w, h = self.imageSize(path)
 
@@ -480,14 +460,10 @@ class FlatContext(BaseContext):
             self.page.place(shape.rectangle(x.r, y.r, w.r, h.r))
 
     def oval(self, x, y, w, h):
-<<<<<<< HEAD
-        u"""Draw an oval in rectangle, where (x, y) is the bottom left origin and (w, h) is the size.
-        This default DrawBot behavior, different from default Flat, where the (x, y) is the middle
-=======
-        """Draw an oval in rectangle, where (x,y) is the bottom left origin and (w,h) is the size.
-        This default DrawBot behavior, different from default Flat, where the (x,y) is the middle
->>>>>>> master
-        if the oval. Compensate for the difference."""
+        """Draw an oval in rectangle, where (x,y) is the bottom left origin and
+        (w,h) is the size.  This default DrawBot behavior, different from
+        default Flat, where the (x,y) is the middle if the oval. Compensate for
+        the difference."""
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
@@ -555,23 +531,57 @@ class FlatContext(BaseContext):
 
     #   C O L O R
 
-<<<<<<< HEAD
     def setTextFillColor(self, c):
         self.fill(c)
 
-    def setFillColor(self, c, builder=None):
-        u"""Set the color for global or the color of the formatted string.
-=======
+    #def setFillColor(self, c, builder=None):
     def setFillColor(self, c, cmyk=False, spot=False, overprint=False):
-        """Set the color for global or the color of the formatted string.
->>>>>>> master
+        u"""Set the color for global or the color of the formatted string.
         See: http://xxyxyz.org/flat, color.py."""
         assert isinstance(c, Color)
         self._fill = c
 
+        '''
+        b = self.b
+        success = False
+
+        if c is NO_COLOR:
+            self._fill = NO_COLOR # Ignore drawing
+            success = True # Color is undefined, do nothing.
+        elif c is None:
+            self._fill = None # No fill
+            success = True
+        elif isinstance(c, (float, int)): # Grayscale
+            self._fill = b.gray(iround(c))
+            success = True
+        elif isinstance(c, (list, tuple)):
+            if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
+                name, (cyan, magenta, yellow, k) = c
+                self._fill = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
+                success = True
+            # Not supported in PDF, leave out for general compatibility?
+            #elif len(c) == 2:
+            #    gray, a = c
+            #    self._fill = b.ga(gray, a)
+            #    success = True
+            elif cmyk:
+                cyan, magenta, yellow, k = c
+                self._fill = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
+                success = True
+            elif len(c) == 4: # rgb and opaque
+                red, green, blue, a = c
+                self._fill = b.rgba(iround(red), iround(green), iround(blue), iround(a))
+                success = True
+            elif len(c) == 3:
+                red, green, blue = c
+                self._fill = b.rgb(iround(red), iround(green), iround(blue))
+                success = True
+        if not success:
+            raise ValueError('FlatContext.setFillColor: Error in color format "%s"' % repr(c))
+        '''
+
     fill = setFillColor # DrawBot compatible API
 
-<<<<<<< HEAD
     def setTextStrokeColor(self, c, w=None):
         self.stroke(c, w)
 
@@ -579,46 +589,48 @@ class FlatContext(BaseContext):
         u"""Set global stroke color or the color of the formatted string."""
         assert isinstance(c, Color)
         self._stroke = c
-=======
-    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
-        """Set global stroke color or the color of the formatted string."""
-        # TODO: Make this work in Flat
-        b = self.b
-        success = False
-        if c is NO_COLOR:
-            self._stroke = NO_COLOR # Ignore drawing
-            success = True # Color is undefined, do nothing.
-        elif c is None:
-            self._stroke = None # no stroke
-            success = True
-        elif isinstance(c, (float, int)): # Grayscale
-            self._stroke = b.gray(iround(c))
-            success = True
-        elif isinstance(c, (list, tuple)):
-            if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
-                name, (cyan, magenta, yellow, k) = c
-                self._stroke = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
+
+        '''
+        def setStrokeColor(self, c, w=1, cmyk=False, b=None):
+            """Set global stroke color or the color of the formatted string."""
+            # TODO: Make this work in Flat
+            b = self.b
+            success = False
+            if c is NO_COLOR:
+                self._stroke = NO_COLOR # Ignore drawing
+                success = True # Color is undefined, do nothing.
+            elif c is None:
+                self._stroke = None # no stroke
                 success = True
-            # Not supported in PDF, leave out for general compatibility?
-            #elif len(c) == 2:
-            #    gray, a = c
-            #    self._stroke = b.ga(gray, a)
-            #    success = True
-            elif cmyk:
-                cyan, magenta, yellow, k = c
-                self._stroke = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
+            elif isinstance(c, (float, int)): # Grayscale
+                self._stroke = b.gray(iround(c))
                 success = True
-            elif len(c) == 4: # rgb and opaque
-                red, green, blue, a = c
-                self._stroke = b.rgba(iround(red), iround(green), iround(blue), iround(a))
-                success = True
-            elif len(c) == 3:
-                red, green, blue = c
-                self._stroke = b.rgb(iround(red), iround(green), iround(blue))
-                success = True
-        if not success:
-            raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
->>>>>>> master
+            elif isinstance(c, (list, tuple)):
+                if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
+                    name, (cyan, magenta, yellow, k) = c
+                    self._stroke = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
+                    success = True
+                # Not supported in PDF, leave out for general compatibility?
+                #elif len(c) == 2:
+                #    gray, a = c
+                #    self._stroke = b.ga(gray, a)
+                #    success = True
+                elif cmyk:
+                    cyan, magenta, yellow, k = c
+                    self._stroke = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
+                    success = True
+                elif len(c) == 4: # rgb and opaque
+                    red, green, blue, a = c
+                    self._stroke = b.rgba(iround(red), iround(green), iround(blue), iround(a))
+                    success = True
+                elif len(c) == 3:
+                    red, green, blue = c
+                    self._stroke = b.rgb(iround(red), iround(green), iround(blue))
+                    success = True
+            if not success:
+                raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
+        '''
+
         if w is not None:
             self._strokeWidth = w
 

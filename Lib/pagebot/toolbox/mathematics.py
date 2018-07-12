@@ -7,8 +7,8 @@
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     mathematics.py
@@ -86,7 +86,7 @@ def isBetween(p1, p2, p):
 
 def squareDistance(p1, p2):
     """Answers the square of the distance for relative comparison and to
-    save the time of the <b>sqrt</b>."""
+    save the time of the **sqrt**."""
     tx, ty = p2[0]-p1[0], p2[1]-p1[1]
     return tx*tx + ty*ty
 
@@ -95,8 +95,8 @@ def distance(p1, p2):
     return math.sqrt(squareDistance(p1, p2))
 
 def point2Line(p1, p2, p):
-    """Answers the distance from point <i>(px, py)</i> to line <i>((x1,
-    y1), (x2, y2))</i>."""
+    """Answers the distance from point *(px, py)* to line *((x1, y1), (x2,
+    y2))*."""
     x1, y1 = point2D(p1)
     x2, y2 = point2D(p2)
     px, py = point2D(p)
@@ -108,8 +108,8 @@ def dotProduct(v1, v2):
     return reduce(operator.add, map(operator.mul, v1, v2))
 
 def pointProjectedOnLine(p1, p2, p):
-    """Answers the projected point <b>(px, py)</b> on line <b>((x1, y1), (x2,
-    y2))</b>.  Answers <b>(x1, y1)</b> if there is not distance between the two
+    """Answers the projected point **(px, py)** on line **((x1, y1), (x2,
+    y2))**.  Answers **(x1, y1)** if there is not distance between the two
     points of the line."""
     # Line vector.
     x1, y1 = point2D(p1)
@@ -183,7 +183,7 @@ def vectorLength(v):
 @classmethod
 def normalizedVector(p, length=1):
     """
-    Normalize the vector @(x,y). The <i>length</i> defines
+    Normalize the vector @(x,y). The *length* defines
     the length of the normalized vector, default is @1@.
     ###    Freetype XXX: UNDOCUMENTED! It seems that it is possible to try   */
     ###    to normalize the vector (0,0).  Return immediately. */
