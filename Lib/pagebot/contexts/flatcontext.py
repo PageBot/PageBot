@@ -107,7 +107,7 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
-    def newDocument(self, w, h, units='pt'):
+    def newDocument(self, w, h, title=None, pageCount=None, units='pt'):
         """Create a new self.doc Flat canvas to draw on.
 
         >>> context = FlatContext()
@@ -117,6 +117,8 @@ class FlatContext(BaseContext):
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)
         """
+        self.title = title
+        self.pageCount = pageCount
         self.doc = self.b.document(w, h, units)
 
     def saveDocument(self, path, multiPage=True):

@@ -15,6 +15,7 @@
 #
 from __future__ import division # Make integer division result in float.
 from pagebot.contexts.platform import getContext
+c = getContext()
 #import pagebot # Import to know the path of non-Python resources.
 
 X = 0
