@@ -1,11 +1,12 @@
 
 import sys
 from pagebot.contexts.platform import getContext
+
+context = getContext()
+
 if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
-
-context = getContext()
 
 for p in range(10):
     context.newPage(1000, 1000)
@@ -22,6 +23,5 @@ for p in range(10):
             context.fontSize(24)
             context.text('Hello world on %d,%d' % (x, y), (x, y))
 
-
-
 context.saveImage('_export/HelloCircleSquare.gif')
+

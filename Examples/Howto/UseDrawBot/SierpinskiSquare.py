@@ -18,7 +18,7 @@
 import sys
 from pagebot.contexts.platform import getContext
 context = getContext()
-
+print(type(context))
 
 if not context.isDrawBot:
     print('Example only runs on DrawBot.')
