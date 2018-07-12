@@ -31,7 +31,6 @@ SHOW_DIRECT = False
 context.newPage(1500, 1500)
 
 f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
-
 c = 'e'
 g = f[c]
 print(f.axes.keys())
