@@ -10,7 +10,7 @@
 #
 #     Supporting usage of d3 https://github.com/d3/d3/wiki/Tutorials
 #     Supporting DrawBot, www.drawbot.com
-#     Supporting Flat, https://github.com/xxyxyz/flat
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     barchart.py

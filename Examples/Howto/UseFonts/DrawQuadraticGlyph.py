@@ -7,7 +7,7 @@
 #     Licensed under MIT conditions
 #
 #     Supporting DrawBot, www.drawbot.com
-#     Supporting Flat, https://github.com/xxyxyz/flat
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     DrawQuadraticGlyph.py
@@ -18,9 +18,8 @@
 import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
-from drawBot import BezierPath
+from drawBot import BezierPath, translate, line, text, stroke, fill, oval, drawPath, textSize
 from drawBot import font as DBFont
-from drawBot import translate, line, text, stroke, fill, oval, drawPath, textSize
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.transformer import point3D
 from pagebot.fonttoolbox.fontpaths import getFontPaths
@@ -181,7 +180,7 @@ fill(0, 0, 0)
 stroke(0, 1, 0)
 drawPath(glyph._path)
 stroke(None)
-fill(0)
+fill(0.7)
 
 # Converts coordinates to PageBot Points and assigns points
 # to contours.

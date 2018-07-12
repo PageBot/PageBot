@@ -9,13 +9,14 @@
 #     Licensed under MIT conditions
 #
 #     Supporting DrawBot, www.drawbot.com
-#     Supporting Flat, https://github.com/xxyxyz/flat
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     drawbotbuilder.py
 #
 from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
 
+# FIXME: bad exception usage.t
 try:
     import drawBot # Test if drawBot is available on this platform
     drawBotBuilder = drawBot
@@ -23,7 +24,6 @@ try:
     drawBotBuilder.PB_ID = 'drawBot'
     # Test by import if MacOS specific imports are available.
     #import CoreText, AppKit, Quartz # #pylint: disable=unused-import
-
 except (ImportError, AttributeError):
     drawBotBuilder = NoneDrawBotBuilder()
     print('Using NoneDrawBotBuilder')
