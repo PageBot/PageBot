@@ -72,7 +72,7 @@ class InDesignContext(BaseContext):
         self.save() # Save current set of values on gState stack.
 
     def getInDesignScriptPath(self):
-        u"""Answer the user local script path. For now this assumes one version of InDesign. 
+        u"""Answer the user local script path. For now this assumes one version of InDesign.
         TODO: Should be made more generic.
 
         >>> context = InDesignContext()
@@ -89,19 +89,10 @@ class InDesignContext(BaseContext):
 
     #   D O C U M E N T
 
-<<<<<<< HEAD
     def newDocument(self, w, h):
         u"""Create a new document"""
         self.units = Pt.UNIT
         self.b.newDocument(w, h)
-=======
-    def newDocument(self, w, h, title=None, pageCount=None, units='pt'):
-        """Create a new document"""
-        self.title = title
-        self.pageCount = pageCount
-        self.units = units
-        self.b.newDocument(w, h, title, pageCount)
->>>>>>> master
 
     def saveDocument(self, path, multiPage=None):
         """Select other than standard InDesign export builders here.
@@ -110,8 +101,8 @@ class InDesignContext(BaseContext):
 
         >>> from pagebot.constants import A4Rounded
         >>> H, W = A4Rounded # Initialize as landscape
-        >>> context = InDesignContext() 
-        >>> context.newDocument(W, H)       
+        >>> context = InDesignContext()
+        >>> context.newDocument(W, H)
         >>> context.saveImage('_export/MyFile.'+context.EXPORT_TYPES[0])
 
         """
@@ -141,7 +132,7 @@ class InDesignContext(BaseContext):
     #   V A R I A B L E
 
     def Variable(self, variableUI , globalVariables):
-        """Offers interactive global value manipulation in InDesignContext. 
+        """Offers interactive global value manipulation in InDesignContext.
         Probably to be ignored in other contexts."""
         pass
 
@@ -498,7 +489,7 @@ class InDesignContext(BaseContext):
 
     def frameDuration(self, secondsPerFrame):
         """Nothing to do in InDesignContext."""
-        
+
     #   C O L O R
 
     def setTextFillColor(self, fs, c):
@@ -508,31 +499,10 @@ class InDesignContext(BaseContext):
         self._textStroke = c
         self.setStrokeWidth(w)
 
-<<<<<<< HEAD
     def setFillColor(self, c, b=None):
         u"""Set the color for global or the color of the formatted string."""
         assert isinstance(c, Color)
         self._fill = c
-=======
-    def setFillColor(self, c, cmyk=False, b=None):
-        """Set the color for global or the color of the formatted string."""
-        if b is None: # Builder can be optional InDesign FormattedString
-            b = self.b
-        if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykFill(c)
-            else:
-                b.fill(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykFill(*c)
-            else:
-                b.fill(*c)
-        else:
-            raise ValueError('InDesignContext.setFillColor: Error in color format "%s"' % repr(c))
->>>>>>> master
 
     fill = setFillColor # InDesign compatible API
 
@@ -540,35 +510,12 @@ class InDesignContext(BaseContext):
         """Set the current stroke width."""
         self.b.strokeWidth(w)
 
-<<<<<<< HEAD
     def setStrokeColor(self, c, w=None, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         assert isinstance(c, Color)
         self._stroke = c
 
         self.strokeWidth(w)
-=======
-    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
-        """Set global stroke color or the color of the formatted string."""
-        if b is None: # Builder can be optional InDesign FormattedString
-            b = self.b
-        if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykStroke(c)
-            else:
-                b.stroke(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykStroke(*c)
-            else:
-                b.stroke(*c)
-        else:
-            raise ValueError('InDesignContext.setStrokeColor: Error in color format "%s"' % repr(c))
-        if w is not None:
-            b.strokeWidth(w)
->>>>>>> master
 
     stroke = setStrokeColor # InDesign compatible API
 

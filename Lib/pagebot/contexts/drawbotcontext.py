@@ -43,21 +43,10 @@ except (ImportError, AttributeError):
     Variable = None
     print('Using drawBotContext-->NoneDrawBotBuilder')
 
-<<<<<<< HEAD
 from pagebot.contexts.basecontext import BaseContext
-<<<<<<< HEAD
-from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
-from pagebot.toolbox.color import Color, color, noColor, inheritColor
-from pagebot.toolbox.units import isUnit, units, ur
-from pagebot.constants import *
-
-=======
 from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import Color
->>>>>>> master
 
-=======
->>>>>>> master
 class DrawBotContext(BaseContext):
     """A DrawBotContext instance combines the specific functions of the
     DrawBot library This way it way it hides e.g. the type of BabelString
@@ -104,16 +93,8 @@ class DrawBotContext(BaseContext):
 
     #   D O C U M E N T
 
-<<<<<<< HEAD
     def newDocument(self, w, h):
         u"""Ignore for DrawBot, as document open automatic if first page is created."""
-=======
-    def newDocument(self, w, h, title=None, pageCount=None, units='pt'):
-        """Ignore for DrawBot, as document open automatic if first page is created."""
-        self.title = title
-        self.pageCount = pageCount
-        self.units = units
->>>>>>> master
 
     def saveDocument(self, path, multiPage=None):
         """Select other than standard DrawBot export builders here.
@@ -174,13 +155,8 @@ class DrawBotContext(BaseContext):
         self.b.oval(x.r, y.r, w.r, h.r)
 
     def circle(self, x, y, r):
-<<<<<<< HEAD
         u"""Circle draws a DrawBot oval with (x,y) as middle point and radius r."""
         self.b.oval((x-r).r, (y-r).r, (r*2).r, (r*2).r) # Render the unit values
-=======
-        """Circle draws a DrawBot oval with (x,y) as middle point and radius r."""
-        self.b.oval(x-r, y-r, r*2, r*2)
->>>>>>> master
 
     def line(self, p1, p2):
         """Draw a line from p1 to p2.
@@ -424,13 +400,8 @@ class DrawBotContext(BaseContext):
 
     #   G L Y P H
 
-<<<<<<< HEAD
     def drawGlyphPath(self, font, glyphName, x, y, fill=None, stroke=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
         u"""Draw the font[glyphName] at the defined position with the defined fontSize.
-=======
-    def drawGlyphPath(self, font, glyphName, x, y, fillColor=0, strokeColor=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
-        """Draw the font[glyphName] at the defined position with the defined fontSize.
->>>>>>> master
 
         """
         s = fontSize/font.info.unitsPerEm
@@ -531,7 +502,6 @@ class DrawBotContext(BaseContext):
 
     #   C O L O R
 
-<<<<<<< HEAD
     def setTextFillColor(self, fs, c):
         u"""Set the color for global or the color of the formatted string.
 
@@ -566,51 +536,21 @@ class DrawBotContext(BaseContext):
         >>> context.fill(noColor)
         """
         assert isinstance(c, Color)
-     
+
         if builder is None: # Builder can be optional DrawBot FormattedString
             builder = self.b
-        
+
         if c is inheritColor: # Keep color setting as it is.
             pass
         elif c is noColor:
             builder.fill(None) # Set color to no-color
         elif c.isCmyk:
             builder.cmykFill(c.cmyk)
-=======
-    def setTextFillColor(self, fs, c, cmyk=False):
-        self.setFillColor(c, cmyk, fs)
-
-    def setTextStrokeColor(self, fs, c, w=1, cmyk=False):
-        self.setStrokeColor(c, w, cmyk, fs)
-
-    def setFillColor(self, c, cmyk=False, b=None):
-        """Set the color for global or the color of the formatted string."""
-        if b is None: # Builder can be optional DrawBot FormattedString
-            b = self.b
-
-        if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-
-        elif isinstance(c, Color):
-            b.fill(c.r, c.g, c.b)
-
-        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykFill(c)
-            else:
-                b.fill(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykFill(*c)
-            else:
-                b.fill(*c)
->>>>>>> master
         else:
             builder.fill(c.rgb)
 
     fill = setFillColor # DrawBot compatible API
 
-<<<<<<< HEAD
     def setStrokeColor(self, c, w=None, builder=None):
         u"""Set the color for global or the color of the formatted string.
 
@@ -624,35 +564,13 @@ class DrawBotContext(BaseContext):
 
         if builder is None: # Builder can be optional DrawBot FormattedString
             builder = self.b
-        
+
         if c is inheritColor: # Keep color setting as it is.
             pass
         if c is noColor:
             builder.stroke(None) # Set color to no-color
         elif c.isCmyk:
             builder.cmykStroke(c.cmyk)
-=======
-    def strokeWidth(self, w):
-        """Set the current stroke width."""
-        self.b.strokeWidth(w)
-
-    def setStrokeColor(self, c, w=1, cmyk=False, b=None):
-        """Set global stroke color or the color of the formatted string."""
-        if b is None: # Builder can be optional DrawBot FormattedString
-            b = self.b
-        if c is NO_COLOR:
-            pass # Color is undefined, do nothing.
-        elif c is None or isinstance(c, (float, int)): # Because None is a valid value.
-            if cmyk:
-                b.cmykStroke(c)
-            else:
-                b.stroke(c)
-        elif isinstance(c, (list, tuple)) and len(c) in (3, 4):
-            if cmyk:
-                b.cmykStroke(*c)
-            else:
-                b.stroke(*c)
->>>>>>> master
         else:
             builder.stroke(c.rgb)
         if w is not None:
@@ -665,7 +583,7 @@ class DrawBotContext(BaseContext):
 
         >>> from pagebot.toolbox.units import unit, pt, mm
         >>> context = DrawBotContext()
-        >>> context.strokeWidth(pt(0.5)) 
+        >>> context.strokeWidth(pt(0.5))
         >>> context.strokeWidth(mm(0.5))
 
         """
@@ -681,13 +599,8 @@ class DrawBotContext(BaseContext):
         return self.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-<<<<<<< HEAD
         u"""Answer the (w, h) image size of the image file at path."""
         return pt(self.b.imageSize(path))
-=======
-        """Answer the (w, h) image size of the image file at path."""
-        return self.b.imageSize(path)
->>>>>>> master
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         """Draw the image. If w or h is defined, then scale the image to fit."""

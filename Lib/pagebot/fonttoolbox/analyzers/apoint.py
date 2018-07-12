@@ -34,18 +34,14 @@ class APoint(object):
         self.onCurve = bool(onCurve)
 
     def __getitem__(self, i):
-<<<<<<< HEAD
         u"""Allow APoint to x and y attributes to be indexed like a point2D tuple.
 
         >>> ap = APoint((100, 200))
         >>> ap, ap[0], ap[1]
         (APoint(100,200,On), 100, 200)
         """
-=======
-        """Allow APoint to x and y attributes to be indexed like a point2D tuple."""
->>>>>>> master
         return self.p[i]
-    
+
     def __setitem__(self, i, value):
         u"""Allow APoint to x and y attributes to be indexed like a point2D or point3D tuple.
 
@@ -88,7 +84,7 @@ class APoint(object):
         False
         """
         return self.p < p.p
-        
+
     def __le__(self, p):
         u"""Compare the points.
 
@@ -102,7 +98,7 @@ class APoint(object):
         False
         """
         return self.p <= p.p
-        
+
     def __gt__(self, p):
         u"""Compare the points.
 
@@ -116,7 +112,7 @@ class APoint(object):
         False
         """
         return self.p > p.p
-        
+
     def __ge__(self, p):
         u"""Compare the points.
 
@@ -130,7 +126,7 @@ class APoint(object):
         False
         """
         return self.p >= p.p
-        
+
     def __sub__(self, p):
         u"""Subtract the points. Result is a point3D tuple.
 
@@ -234,7 +230,7 @@ class APoint(object):
         if self.z:
             s += ',%s' % self.z
         return s + ',%s)' % ({True:'On', False:'Off'}[self.onCurve])
-    
+
 
 
 if __name__ == '__main__':

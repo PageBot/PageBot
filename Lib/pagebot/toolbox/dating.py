@@ -248,13 +248,8 @@ class Duration:
     months = None
     timedelta = None
 
-<<<<<<< HEAD
     def __init__(self, days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0, months=0, years=0, decades=0, centuries=0, millennia=0, td=None):
         u"""
-=======
-    def __init__(self, days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0, months=0, years=0, decades=0, centuries=0, millenia=0, td=None):
-        """
->>>>>>> master
 
         An extension of the builtin datetime.timedelta class, extending to millennia to match SQL's INTERVAL type
         Note that by itself, a duration of months is meaningless due to diffing month lengths.
