@@ -193,7 +193,7 @@ class GlyphAnalyzer(object):
         main point is on curve."""
         self._horizontals = horizontals = {}
 
-        for pc in sorted(self.glyph.pointContexts):
+        for pc in self.glyph.pointContexts:
             if pc.isHorizontal():
                 if not pc.y in horizontals:
                     horizontals[pc.y] = self.HORIZONTAL_CLASS()
