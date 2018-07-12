@@ -10,7 +10,7 @@
 #     Licensed under MIT conditions
 #     Example written by Frederik Berlaen
 #
-#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
 #     testFiliBusterArticle.py

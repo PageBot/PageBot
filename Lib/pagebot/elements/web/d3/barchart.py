@@ -9,8 +9,8 @@
 #     Licensed under MIT conditions
 #
 #     Supporting usage of d3 https://github.com/d3/d3/wiki/Tutorials
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
 #
 #     barchart.py
