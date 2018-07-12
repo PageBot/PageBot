@@ -8,7 +8,7 @@
 #     Licensed under MIT conditions
 #
 #     Supporting DrawBot, www.drawbot.com
-#     Supporting Flat, https://github.com/xxyxyz/flat
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     HelloCircleSquare.py
@@ -16,7 +16,7 @@
 #     Example to run in plain Python.
 #     Dependencies: pabebot, flat, fonttools.
 #
-#     http://xxyxyz.org/flat#tutorial
+#     xxyxyz.org/flat#tutorial
 #
 #     Run as cmd-line:
 #     --> python HelloCircleSquare.py

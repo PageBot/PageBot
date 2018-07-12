@@ -7,7 +7,7 @@
 #     Licensed under MIT conditions
 #
 #     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting usage of Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     setup.py

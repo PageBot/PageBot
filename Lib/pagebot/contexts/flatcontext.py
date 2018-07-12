@@ -8,12 +8,12 @@
 #     Licensed under MIT conditions
 #
 #     Supporting DrawBot, www.drawbot.com
-#     Supporting Flat, https://github.com/xxyxyz/flat
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     flatcontext.py
 #
-#     http://xxyxyz.org/flat
+#     xxyxyz.org/flat
 #
 #import imageio
 from pagebot.contexts.basecontext import BaseContext
@@ -30,8 +30,8 @@ class FlatContext(BaseContext):
     DrawBotContext. This way it also hides e.g. the type of BabelString
     instance needed, and the type of HTML/CSS file structure to be created.
 
-    * https://github.com/xxyxyz/flat
-    * http://xxyxyz.org/flat
+    * xxyxyz.org/flat
+    * xxyxyz.org/flat
 
     Text behavior:
     st = strike(font)
@@ -493,7 +493,7 @@ class FlatContext(BaseContext):
 
     def setFillColor(self, c, cmyk=False, spot=False, overprint=False):
         """Set the color for global or the color of the formatted string.
-        See: http://xxyxyz.org/flat, color.py."""
+        See: xxyxyz.org/flat, color.py."""
         b = self.b
         success = False
         if c is NO_COLOR:

@@ -8,13 +8,13 @@
 #     Licensed under MIT conditions
 #
 #     Supporting DrawBot, www.drawbot.com
-#     Supporting Flat, https://github.com/xxyxyz/flat
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     flatstring.py
 #
-#     https://github.com/xxyxyz/flat
-#     http://xxyxyz.org/flat
+#     xxyxyz.org/flat
+#     xxyxyz.org/flat
 
 import os
 import re
