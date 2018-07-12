@@ -18,6 +18,7 @@
 import pagebot
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import findFont
+c = getContext()
 
 EXPORT_PATH = '_export/AlteredGlyphWithPoints.pdf'
 f = findFont('Amstelvar-Roman-VF')
@@ -30,7 +31,7 @@ c.translate(100, 100)
 # Open the font and get the glyph
 g = f['H']
 print(g.analyzer.stems)
-"""
+
 # These are the points we have in the H
 print('List of APoints of the glyph:', g.points)
 # Get the 4th APoint instance, that has reference back to the glyph.points[p.index]
@@ -62,4 +63,4 @@ for p in g.points:
     c.oval(p.x*s-R/2, p.y*s-R/2, R, R)
 
 c.saveImage(EXPORT_PATH)
-"""
+

@@ -125,7 +125,8 @@ class GlyphAnalyzer(object):
         return a[0] * b[1] - a[1] * b[0]
 
     def intersectWithLine(self, line):
-        """Answer the sorted set of intersecting points between the straight line and the flatteded glyph path."""
+        """Answers the sorted set of intersecting points between the straight
+        line and the flatteded glyph path."""
         intersections = set() # As set,  make sure to remove any doubles.
 
         def det(a, b):
@@ -172,7 +173,7 @@ class GlyphAnalyzer(object):
         """The findVerticals method answers a list of verticals."""
         self._verticals = verticals = {}
 
-        for pc in sorted(self.glyph.pointContexts):
+        for pc in self.glyph.pointContexts:
             if pc.isVertical():
                 if not pc.x in verticals:
                     verticals[pc.x] = self.VERTICAL_CLASS()
@@ -188,8 +189,7 @@ class GlyphAnalyzer(object):
     horizontals = property(_get_horizontals)
 
     def findHorizontals(self):
-        """
-        The findHorizontals method answers a list of horizontals where the
+        """The findHorizontals method answers a list of horizontals where the
         main point is on curve."""
         self._horizontals = horizontals = {}
 
@@ -202,8 +202,8 @@ class GlyphAnalyzer(object):
     #   B L A C K
 
     def spanRoundsOnBlack(self, pc0, pc1):
-        """Answers the boolean flag if the line between <i>pc0</i> and
-        <i>pc1</i> just spans black area."""
+        """Answers the boolean flag if the line between *pc0* and
+        *pc1* just spans black area."""
         return self.lineOnBlack(pc0, pc1)
 
     def middleLineOnBlack(self, pc0, pc1, step=SPANSTEP):
@@ -214,7 +214,7 @@ class GlyphAnalyzer(object):
     def lineOnBlack(self, p0, p1, step=SPANSTEP):
         """Answers the boolean flag if the line between point p0 and p1
         is entirely running on black, except for the end point. To
-        test if the line is entirely on black, use <b>self.lineInBlack()"""
+        test if the line is entirely on black, use **self.lineInBlack()"""
         return self.spanBlack(p0, p1, step)
 
     def onBlack(self, p):
@@ -241,8 +241,8 @@ class GlyphAnalyzer(object):
     #   W H I T E
 
     def spanWhite(self, p0, p1, step=SPANSTEP):
-        """The <b>spanWhite</b> method answers the boolean flag if the number
-        of recursive steps between <i>pc0</i> and <i>pc1</i> are all on white
+        """The **spanWhite** method answers the boolean flag if the number
+        of recursive steps between *pc0* and *pc1* are all on white
         area of the glyph. If step is smaller than the distance between the
         points, then just check in the middle of the line.  """
         dx = p1[0] - p0[0]
@@ -260,13 +260,13 @@ class GlyphAnalyzer(object):
         return self.spanWhite(pc0, pc1, step)
 
     def onWhite(self, p):
-        """Answers the boolean flag if the single point <b>(x, y)</b> is on
+        """Answers the boolean flag if the single point **(x, y)** is on
         white."""
         return not self.onBlack(p)
 
     def overlappingLinesInWindowOnBlack(self, pc0, pc1, step=SPANSTEP):
-        """Answers the boolean flag if the vertical span between <i>pc0</i>
-        and <i>pc1</i> just spans black area, by stepping from a point on one
+        """Answers the boolean flag if the vertical span between *pc0*
+        and *pc1* just spans black area, by stepping from a point on one
         line to a point on the other line. The trick is to fine the right
         points. If the line it too angled (e.g. under certain circumstances the
         line between the middle points is almost parallel to the line, then our
@@ -278,7 +278,7 @@ class GlyphAnalyzer(object):
         return not None in (pp0, pp1) and self.lineOnBlack(pp0, pp1, step)
 
     def overlappingLinesInWindowOnWhite(self, pc0, pc1, step=SPANSTEP):
-        """See <b>self.overlappingLinesInWindowOnBlack</b>."""
+        """See **self.overlappingLinesInWindowOnBlack**."""
         pp0, pp1 = pc0.getProjectedWindowLine(pc1)
         return not None in (pp0, pp1) and self.lineOnWhite(pp0, pp1, step)
 
@@ -292,13 +292,12 @@ class GlyphAnalyzer(object):
     stems = property(_get_stems)
 
     def findStems(self):
-        """
-        The @findStems@ method finds the stems in the current glyph and assigns
-        them as dictionary to @self._stems@. Since we cannot use the CVT of the
-        glyph (the analyzer is used to find these values, not to use them),
-        we'll make an assumption about the pattern of vertices found. It is up
-        to the caller to make sure that the current glyph is relevant in the
-        kind of vertices that we are looking for.<br/>
+        """The @findStems@ method finds the stems in the current glyph and
+        assigns them as dictionary to @self._stems@. Since we cannot use the
+        CVT of the glyph (the analyzer is used to find these values, not to use
+        them), we'll make an assumption about the pattern of vertices found. It
+        is up to the caller to make sure that the current glyph is relevant in
+        the kind of vertices that we are looking for.
 
         NOTE: An alternative approach could be to make a Fourier analysis of all
         stem distances of the font, and so find out which are likely to have a
@@ -376,12 +375,11 @@ class GlyphAnalyzer(object):
         return self._stems
 
     def isStem(self, pc0, pc1, tolerance=0):
-        """The isStem method takes the point contexts pc0 and
-        pc1 to compare if the can be defined as a “stem”: if they are
-        not round extremes, if the two point contexts have overlap in the
-        vertical directions (being part of the same window) that runs on black
-        and if both lines are not entirely covered in black.
-        """
+        """The isStem method takes the point contexts pc0 and pc1 to compare if
+        the can be defined as a “stem”: if they are not round extremes, if the
+        two point contexts have overlap in the vertical directions (being part
+        of the same window) that runs on black and if both lines are not
+        entirely covered in black."""
         return not pc0.isHorizontalRoundExtreme(tolerance) \
             and not pc1.isHorizontalRoundExtreme(tolerance)\
             and pc0.isVertical(tolerance) and pc1.isVertical(tolerance)\
@@ -462,11 +460,13 @@ class GlyphAnalyzer(object):
         return not self.isLandscape(pc0, pc1)
 
     def isRoundStem(self, pc0, pc1):
-        """The <b>isRoundStem</b> method answers the boolean flag if the
-        <i>pc0</i> and <i>pc1</i> define a round stem. This is @True@ if one of
+        """The **isRoundStem** method answers the boolean flag if the
+        *pc0* and *pc1* define a round stem. This is @True@ if one of
         both of point contexts are extremes and if both, they must “bend” in
-        the same direction.<br/> Also there should be overlap in horizontal
-        direction and the point context should span black only.  """
+        the same direction.
+
+        Also there should be overlap in horizontal direction and the point
+        context should span black only.  """
         return pc0.isHorizontalRoundExtreme()\
             and pc1.isHorizontalRoundExtreme()\
             and self.spanRoundsOnBlack(pc0, pc1)
@@ -687,13 +687,11 @@ class GlyphAnalyzer(object):
         return self._bars
 
     def isBar(self, pc0, pc1):
-        """
-        The <b>isBar</b> method takes the point contexts <i>pc0</i> and
-        <i>pc1</i> to compare if the can be defined as a “bar”: if two point
-        contexts have overlap in the horizontal directions if the line between
-        them is entirely on black, and if the lines are not entirely covered in
-        black.
-        """
+        """The **isBar** method takes the point contexts *pc0* and *pc1* to
+        compare if the can be defined as a “bar”: if two point contexts have
+        overlap in the horizontal directions if the line between them is
+        entirely on black, and if the lines are not entirely covered in
+        black."""
         return not pc0.isVerticalRoundExtreme()\
             and not pc1.isVerticalRoundExtreme()\
             and pc0.isHorizontal() and pc1.isHorizontal()\
