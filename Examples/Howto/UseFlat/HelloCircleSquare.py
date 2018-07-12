@@ -42,6 +42,7 @@ R = 20 # Diameter of circle or square
 M = 20 # Page margin
 
 context.newDocument(w=W, h=H, title=TITLE, pageCount=3)
+
 for p in range(PAGES):
     context.newPage(W, H)
     for n in range(RECTS):
