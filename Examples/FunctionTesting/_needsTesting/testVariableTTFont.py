@@ -7,7 +7,7 @@
 #
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
+#     Supporting DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
 #     testVariableTTFont.py

@@ -7,8 +7,8 @@
 #
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     HelloCircleSquare.py
@@ -16,7 +16,7 @@
 #     Example to run in plain Python.
 #     Dependencies: pabebot, flat, fonttools.
 #
-#     http://xxyxyz.org/flat#tutorial
+#     xxyxyz.org/flat#tutorial
 #
 #     Run as cmd-line:
 #     --> python HelloCircleSquare.py
@@ -41,7 +41,8 @@ RECTS = 150
 R = 20 # Diameter of circle or square
 M = 20 # Page margin
 
-context.newDocument(w=W, h=H)
+context.newDocument(w=W, h=H, title=TITLE, pageCount=3)
+
 for p in range(PAGES):
     context.newPage(W, H)
     for n in range(RECTS):

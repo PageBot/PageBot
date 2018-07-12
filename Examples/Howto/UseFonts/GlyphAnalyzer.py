@@ -6,8 +6,8 @@
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     UseGlyphAnalyzer.py
@@ -19,7 +19,6 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.platform import getContext
 
 context = getContext()
-
 font = findFont('Georgia')
 print(font.analyzer) 
 print(font.analyzer.name) 

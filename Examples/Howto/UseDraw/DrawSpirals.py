@@ -7,14 +7,15 @@
 #
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     drawSpirals.py
 #
 from __future__ import division # Make integer division result in float.
 from pagebot.contexts.platform import getContext
+c = getContext()
 #import pagebot # Import to know the path of non-Python resources.
 
 X = 0
