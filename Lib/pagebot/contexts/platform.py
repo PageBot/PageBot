@@ -13,27 +13,31 @@
 #
 #     pagebot/contexts/platform.py
 #
-
+import traceback
 DEFAULT_CONTEXT = None
 MAMP_PATH = None
 
 def getContext():
     global DEFAULT_CONTEXT, MAMP_PATH
+
     if DEFAULT_CONTEXT is None:
         try:
             #import ForceImportError # Uncomment for simulate testing of other contexts/platforms
             import AppKit # Force exception on non-OSX platforms
             from pagebot.contexts.drawbotcontext import DrawBotContext
             DEFAULT_CONTEXT = DrawBotContext() # Test if platform is supporing DrawBot:
-            # MampView.build exports in MAMP folder that does not commit in Git. 
+            print('bla')
+            # MampView.build exports in MAMP folder that does not commit in Git.
             MAMP_PATH = '/Applications/MAMP/htdocs/'
 
         #except (ImportError, AttributeError, ModuleNotFoundError): # Python3
-        except (ImportError, AttributeError):
+        except (ImportError, AttributeError) as e:
+            print(traceback.format_exc())
+
             #import ForceOtherError # Uncomment for simulate testing of other contexts/platforms
             from pagebot.contexts.flatcontext import FlatContext
             DEFAULT_CONTEXT = FlatContext()
-            # MampView.build exports in MAMP folder that does not commit in Git. 
+            # MampView.build exports in MAMP folder that does not commit in Git.
             MAMP_PATH = '/tmp/MAMP_PATH/' # TODO: Where is it located for Linux?
         except:
             raise NotImplementedError('Cannot decide on the platform context.')
@@ -43,7 +47,7 @@ def getMampPath():
     if MAMP_PATH is None:
         getContext() # Make sure MAMP_PATH is initialized depending on current type of context.
     return MAMP_PATH
-    
+
 if __name__ == '__main__':
     import doctest
     import sys

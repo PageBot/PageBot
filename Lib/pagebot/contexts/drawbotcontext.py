@@ -48,9 +48,9 @@ from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import Color
 
 class DrawBotContext(BaseContext):
-    """A DrawBotContext instance combines the specific functions of the
-    DrawBot library This way it way it hides e.g. the type of BabelString
-    instance needed, and the type of HTML/CSS file structure to be created."""
+    """A DrawBotContext instance combines the specific functions of the DrawBot
+    library This way it way it hides e.g. the type of BabelString instance
+    needed, and the type of HTML/CSS file structure to be created."""
 
     # In case of specific builder addressing, callers can check here.
     isDrawBot = True
