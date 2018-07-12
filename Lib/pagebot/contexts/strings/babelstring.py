@@ -16,7 +16,7 @@
 from pagebot.toolbox.units import pt
 
 class BabelString(object):
-    """BabelString is the base class of various types of (formatted) string representations 
+    """BabelString is the base class of various types of (formatted) string representations
     needed for different builder classes."""
 
     def __init__(self, s, context, style=None):
@@ -36,7 +36,7 @@ class BabelString(object):
         for n in range(d-1):
             s += self.s
         self.s = s
-        # Something to do with the html? 
+        # Something to do with the html?
         return self
 
     def __len__(self):
@@ -50,7 +50,7 @@ class BabelString(object):
             self.s += s # Convert to babel string, whatever it is.
 
     def type(self):
-        """Answer the id of the class, in case a caller wants to know what kind of 
+        """Answer the id of the class, in case a caller wants to know what kind of
         BabelString this is."""
         return self.BABEL_STRING_TYPE
 
@@ -65,13 +65,8 @@ class BabelString(object):
     h = property(_get_h)
 
     def size(self):
-<<<<<<< HEAD
         u"""Answer the size tuple (w, h) of the string."""
         return pt(self.context.textSize(self))
-=======
-        """Answer the size tuple (w, h) of the string."""
-        return self.context.textSize(self)
->>>>>>> master
 
 
 if __name__ == '__main__':

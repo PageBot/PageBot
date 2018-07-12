@@ -23,7 +23,7 @@
 #     mm, Mm       Millimeters
 #     p, P         Picas 1/6"
 #     pt, Pt       Points 1/72"
-#     inch, Inch 
+#     inch, Inch
 #
 #     Relative units, using base and gutter as reference
 #     em, Em       Relative to e.fontSize as base
@@ -48,7 +48,7 @@ MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
 # Basic layout measures
 U = 6 # Some basic unit grid to use as default.
 EM_FONT_SIZE = U*2 # 12pt
-BASELINE_GRID = U*2+3 # 2.5U = 15pt 
+BASELINE_GRID = U*2+3 # 2.5U = 15pt
 
 def ru(u, *args, **kwargs):
     u"""Render to uu.r or (u1.r, u2.r, ...) if uu is a list or tuple.
@@ -171,13 +171,9 @@ def uString(u, maker=None):
 us = uString # Convenience abbreviaion
 
 class Unit(object):
-<<<<<<< HEAD
-    u"""Base class for units, implementing most of the logic.
-        Unit classes can be absolute (Pt, Px, Pica/P, Mm, Inch) and relative, which need the definintion of a
-        base reference value (Perc, Fr) or em (Em).
-=======
-    """Base class for units, implementing most of the logic.
->>>>>>> master
+    u"""Base class for units, implementing most of the logic.  Unit classes can
+    be absolute (Pt, Px, Pica/P, Mm, Inch) and relative, which need the
+    definintion of a base reference value (Perc, Fr) or em (Em).
 
         >>> mm(1)
         1mm
@@ -197,7 +193,7 @@ class Unit(object):
         >>> u.base = pt(440)
         >>> u, u.r # Respectively: instance to str, rendered to u.base
         (20%, 88pt)
-        >>> # 3 + px(3) # Gives error. 
+        >>> # 3 + px(3) # Gives error.
         >>> px(3) + 3
         6px
         >>> px(12) + px(10)
@@ -266,7 +262,7 @@ class Unit(object):
             min = units(min)
         if isUnit(min):
             min = min.pt
-        if min is None: 
+        if min is None:
             min = -XXXL
         self._min = min
     min = property(_get_min, _set_min)
@@ -281,7 +277,7 @@ class Unit(object):
         if max is None:
             max = XXXL
         self._max = max
-    max = property(_get_max, _set_max)  
+    max = property(_get_max, _set_max)
 
     def _get_uName(self):
         return self.__class__.__name__
@@ -298,7 +294,7 @@ class Unit(object):
         u = copy(self)
         u._v = int(round(self._v))
         return u
-        
+
     def __repr__(self):
         v = asIntOrFloat(self.v) # Clip to min/max.
         if isinstance(v, int):
@@ -322,7 +318,7 @@ class Unit(object):
         return asIntOrFloat(self.v * self.PT_FACTOR) # Factor to points
     def _set_pt(self, v):
         self._v = v / self.PT_FACTOR
-    pt = property(_get_pt, _set_pt) 
+    pt = property(_get_pt, _set_pt)
 
     def _get_px(self):
         u"""Answer the clipped value in px. Base value for absolute unit values is ignored.
@@ -338,7 +334,7 @@ class Unit(object):
         """
         return px(self.pt).v
     px = property(_get_px)
-    
+
     def _get_inch(self):
         return inch(self.pt).v
     inch = property(_get_inch)
@@ -346,7 +342,7 @@ class Unit(object):
     def _get_p(self):
         return p(self.pt).v
     p = property(_get_p)
-        
+
     def _get_v(self):
         u"""Answer the raw unit value, clipped to the self.min and self.max local values.
         For absolute inits u.v and u.r are identical.
@@ -521,7 +517,6 @@ class Unit(object):
 
 #   Mm
 
-<<<<<<< HEAD
 def mm(v, *args, **kwargs):
     u = None
     minV = kwargs.get('min')
@@ -550,10 +545,6 @@ def mm(v, *args, **kwargs):
 
 class Mm(Unit):
     u"""Answer the mm instance.
-=======
-class mm(Unit):
-    """Answer the mm instance.
->>>>>>> master
 
     >>> u = Mm(210)
     >>> u
@@ -583,32 +574,9 @@ class mm(Unit):
     PT_FACTOR = MM # mm <---> points
     UNIT = 'mm'
 
-<<<<<<< HEAD
     def _get_mm(self):
         return self.v
     mm = property(_get_mm)
-=======
-    @classmethod
-    def make(cls, v):
-        if isinstance(v, (int, float)):
-            return cls(v)
-        if isinstance(v, str):
-            v = v.strip().lower()
-            if v.endswith(UNIT_MM):
-                v = asNumberOrNone(v[:-2])
-                if v is not None:
-                    return cls(v)
-        return None
-
-    def asPt(self, factor=MM):
-        return self._v * factor
-    @classmethod
-    def fromPt(cls, pt, factor=MM):
-        return cls(pt / factor)
-
-class px(Unit):
-    """Answer the px (pixel) instance.
->>>>>>> master
 
 #   Pt
 
@@ -637,37 +605,14 @@ def pt(v, *args, **kwargs):
             u = pt(units(v), min=minV, max=maxV)
     return u
 
-<<<<<<< HEAD
 class Pt(Unit):
     u"""pt is the base unit size of all PageBot measures.
-=======
-    @classmethod
-    def make(cls, v):
-        if isinstance(v, (int, float)):
-            return cls(v)
-        if isinstance(v, str):
-            v = v.strip().lower()
-            if v.endswith('px'):
-                v = asNumberOrNone(v[:-2])
-                if v is not None:
-                    return cls(v)
-        return None
-
-    def asPt(self, factor=1):
-        return self._v * factor
-    @classmethod
-    def fromPt(cls, pt, factor=1):
-        return cls(pt / factor)
-
-class pt(Unit):
-    """pt is the base unit size of all PageBot measures.
->>>>>>> master
 
     >>> Pt(6) # Create directly as class, only takes numbers or Unit instances
     6pt
     >>> pt(6) # Create through interpreting values (int, float, Unit, str)
     6pt
-    >>> pt('6pt') 
+    >>> pt('6pt')
     6pt
     >>> u = units('6pt') # unit function auto-detects matching unit class.
     >>> u
@@ -693,7 +638,6 @@ class pt(Unit):
     >>> pt(10, 12, 13, (20, 21)) # Nested lists, created nested list of pt
     (10pt, 12pt, 13pt, (20pt, 21pt))
     """
-<<<<<<< HEAD
     PT_FACTOR = 1 # pt <--> pt factor
     UNIT = 'pt'
 
@@ -706,7 +650,7 @@ class pt(Unit):
 #   P(ica)
 
 def p(v, *args, **kwargs):
-    u"""Create a new instance of P, using v as source value. In case v is already 
+    u"""Create a new instance of P, using v as source value. In case v is already
     a Unit instance, then convert to that P needs, through the amount of points.
 
     >>> p(20)
@@ -758,7 +702,7 @@ def p(v, *args, **kwargs):
         u = P(v, min=minV, max=maxV)
     elif isUnit(v):
         u = P(min=minV, max=maxV) # Make new Pica and convert via pt
-        u.pt = v.pt 
+        u.pt = v.pt
     elif isinstance(v, str):
         v = v.strip().lower().replace('pica', P.UNIT)
         if not 'pt' in v: # Hack to avoid confusion with '10pt')
@@ -823,7 +767,7 @@ def inch(v, *args, **kwargs):
         return Inch(v, min=minV, max=maxV)
     elif isUnit(v):
         u = Inch(min=minV, max=maxV) # New Inch and convert via pt
-        u.pt = v.pt 
+        u.pt = v.pt
     elif isinstance(v, str):
         v = v.strip().lower()
         if v.endswith(Inch.UNITC): # "-character
@@ -842,30 +786,6 @@ class Inch(Unit):
     u"""Inch 72 * the base unit size of all PageBot measures.
 
     >>> units('0.4"')
-=======
-    @classmethod
-    def make(cls, v):
-        if isinstance(v, (int, float)):
-            return cls(v)
-        if isinstance(v, str):
-            v = v.strip().lower()
-            if v.endswith(UNIT_PT):
-                v = asNumberOrNone(v[:-2])
-                if v is not None:
-                    return cls(v)
-        return None
-
-    def asPt(self, factor=1):
-        return self._v * factor
-    @classmethod
-    def fromPt(cls, pt, factor=1):
-        return cls(pt / factor)
-
-class inch(Unit):
-    """inch 72 * the base unit size of all PageBot measures.
-
-    >>> getUnits('0.4"')
->>>>>>> master
     0.40"
     >>> Inch(0.4)
     0.40"
@@ -938,12 +858,11 @@ class Formula(Unit):
 #   Relative Units (e.g. for use in CSS)
 
 class RelativeUnit(Unit):
-<<<<<<< HEAD
     u"""Abstract class to avoid artihmetic between absolute and relative units.
     Needs absolute reference to convert to absolute units.
 
     >>> u = units('12%')
-    >>> 
+    >>>
     """
     BASE = 1 # Default "base reference for relative units."
     GUTTER = U*2 # Used as default gutter measure for Col units.
@@ -969,27 +888,27 @@ class RelativeUnit(Unit):
     r = property(_get_r)
 
     def _get_pt(self):
-        u"""Answer the rendered value in pt. 
+        u"""Answer the rendered value in pt.
 
         >>> u = fr(2, base=12)
         >>> u, u.pt
         (2fr, 6)
         """
         return asIntOrFloat(pt(self.r).v) # Clip rendered value to min/max and factor to points
-    pt = property(_get_pt) 
+    pt = property(_get_pt)
 
     def _get_mm(self):
-        u"""Answer the rendered value in mm. 
+        u"""Answer the rendered value in mm.
 
         >>> u = fr(2, base=mm(10))
         >>> u, u.mm, mm(u)
         (2fr, 5, 5mm)
         """
         return asIntOrFloat(mm(self.r).v) # Clip rendered value to min/max and factor to mm
-    mm = property(_get_mm) 
+    mm = property(_get_mm)
 
     def _get_p(self):
-        u"""Answer the rendered value in picas. 
+        u"""Answer the rendered value in picas.
 
         >>> u = fr(2, base=p(12))
         >>> u, u.p
@@ -999,10 +918,10 @@ class RelativeUnit(Unit):
         (75%, 54, 4p6)
         """
         return asIntOrFloat(p(self.r).v) # Clip rendered value to min/max and factor to mm
-    p = property(_get_p) 
+    p = property(_get_p)
 
     def _get_inch(self):
-        u"""Answer the rendered value in inch. 
+        u"""Answer the rendered value in inch.
 
         >>> fr(2, base='4"').inch
         2
@@ -1012,7 +931,7 @@ class RelativeUnit(Unit):
         2.5
         """
         return asIntOrFloat(inch(self.r).v) # Clip rendered value to min/max and factor to mm
-    inch = property(_get_inch) 
+    inch = property(_get_inch)
 
     def _get_base(self):
         u"""Optional base value as reference for relative units. Save as Unit instance.
@@ -1029,7 +948,7 @@ class RelativeUnit(Unit):
         if isinstance(self._base, dict):
             return self._base[self.BASE_KEY]
         return self._base
-    def _set_base(self, base):  
+    def _set_base(self, base):
         if isinstance(base, dict):
             assert self.BASE_KEY in base
         elif not isinstance(base, dict) and not isUnit(base):
@@ -1043,7 +962,7 @@ class RelativeUnit(Unit):
         >>> u = col(0.25, base=mm(200), g=mm(8))
         >>> u.base
         200mm
-        >>> u.mm # (200 + 8)/4 - 8 --> 44 + 8 + 44 + 8 + 44 + 8 + 44 = 200 
+        >>> u.mm # (200 + 8)/4 - 8 --> 44 + 8 + 44 + 8 + 44 + 8 + 44 = 200
         44
         >>> from pagebot.constants import A4
         >>> margin = 15
@@ -1052,7 +971,7 @@ class RelativeUnit(Unit):
         (0.5col, 86mm)
         """
         return self._g
-    def _set_g(self, g):  
+    def _set_g(self, g):
         if not isUnit(g):
             g = units(g)
         self._g = g
@@ -1088,11 +1007,6 @@ def px(v, *args, **kwargs):
 
 class Px(RelativeUnit):
     u"""Answer the px (pixel) instance.
-=======
-    """Abstract class to avoid artihmetic between absolute and relative units.
-    Needs absolute reference to convert to absolute units."""
-    absolute = False # Cannot do arithmetic with absolute units.
->>>>>>> master
 
     >>> Px(12) # Direct creation of class instance, only for (int, float, Unit)
     12px
@@ -1117,7 +1031,6 @@ class Px(RelativeUnit):
         return self.v
     px = property(_get_px)
 
-<<<<<<< HEAD
 #   Fr
 
 def fr(v, *args, **kwargs):
@@ -1148,17 +1061,6 @@ def fr(v, *args, **kwargs):
 
 class Fr(RelativeUnit):
     u"""fractional units, used in CSS-grid.
-=======
-    def asPt(self, masterValue):
-        """Answer the value in points, relative to the master value."""
-        return self._v * masterValue
-    @classmethod
-    def fromPt(cls, pt, masterValue):
-        return cls(pt / masterValue)
-
-class fr(RelativeUnit):
-    """fractional units, used in CSS-grid.
->>>>>>> master
     https://gridbyexample.com/video/series-the-fr-unit/
 
     >>> units('5fr')
@@ -1247,7 +1149,6 @@ class Col(RelativeUnit):
     >>> u, pt(u) # Answer col value as points, relative to base master value and gutter.
     (0.5col, 246pt)
     """
-<<<<<<< HEAD
     UNIT = 'col'
 
     def _get_r(self):
@@ -1296,22 +1197,6 @@ def em(v, *args, **kwargs):
 
 class Em(RelativeUnit):
     u"""Em size is based on the current setting of the fontSize.
-=======
-    @classmethod
-    def make(cls, v):
-        if isinstance(v, (int, float)):
-            return cls(v)
-        if isinstance(v, str):
-            v = v.strip().lower()
-            if v.endswith('fr'):
-                v = asNumberOrNone(v[:-2])
-                if v is not None:
-                    return cls(v)
-        return None
-
-class em(RelativeUnit):
-    """Em size is based on the current setting of the fontSize.
->>>>>>> master
     Used in CSS export.
 
     >>> units('10em')
@@ -1328,7 +1213,7 @@ class em(RelativeUnit):
     >>> u-8
     2em
     >>> u.base = 12 # Caller can set the base reference value
-    >>> pt(u) 
+    >>> pt(u)
     120pt
     >>> u.base = 24
     >>> pt(u)
@@ -1347,7 +1232,7 @@ class em(RelativeUnit):
         >>> u = units('10em', base=12)
         >>> u, u.r
         (10em, 120pt)
-        >>> u.base = 8 # Alter the base em. 
+        >>> u.base = 8 # Alter the base em.
         >>> u # Full representation
         10em
         >>> u.base # Defined base for the em (often set in pt units)
@@ -1362,12 +1247,12 @@ class em(RelativeUnit):
         return asIntOrFloat((self.base * self.v).v) # Clip to min/max and factor to points
     def _set_pt(self, v):
         self._v = v / self.base
-    pt = property(_get_pt, _set_pt) 
+    pt = property(_get_pt, _set_pt)
 
 #   Perc
 
 def perc(v, *args, **kwargs):
-    u"""Convert value v to a Perc instance or list or Perc instances. 
+    u"""Convert value v to a Perc instance or list or Perc instances.
 
     >>> perc(12)
     12%
@@ -1378,7 +1263,6 @@ def perc(v, *args, **kwargs):
     >>> perc('10%', '11%', '12%', '13%')
     (10%, 11%, 12%, 13%)
     """
-<<<<<<< HEAD
     u = None
     base = kwargs.get('base')
     g = kwargs.get('g', 0) # Default not used by Perc
@@ -1410,22 +1294,6 @@ def perc(v, *args, **kwargs):
 
 class Perc(RelativeUnit):
     u"""Answer the relative percentage unit, if parsing as percentage (ending with % order "perc").
-=======
-    @classmethod
-    def make(cls, v):
-        if isinstance(v, (int, float)):
-            return cls(v)
-        if isinstance(v, str):
-            v = v.strip().lower()
-            if v.endswith('em'):
-                v = asNumberOrNone(v[:-2])
-                if v is not None:
-                    return cls(v)
-        return None
-
-class perc(RelativeUnit):
-    """Answer the relative percentage unit, if parsing as percentage (ending with % order "perc").
->>>>>>> master
 
     >>> units('100%')
     100%
@@ -1451,37 +1319,12 @@ class perc(RelativeUnit):
     >>> Perc(1.2) + 1.2
     2.4%
     """
-<<<<<<< HEAD
     BASE = 100 # Default "base reference for relative units."
     UNIT = 'perc'
     UNITC = '%'
-=======
-    @classmethod
-    def make(cls, v):
-        if isinstance(v, (int, float)):
-            return cls(v)
-        if isinstance(v, str):
-            v = v.strip().lower()
-            if v.endswith('%'):
-                v = asNumberOrNone(v[:-1])
-                if v is not None:
-                    return cls(v)
-            elif v.endswith(UNIT_PERC):
-                v = asNumberOrNone(v[:-4])
-                if v is not None:
-                    return cls(v)
-        return None
-
-    def asPt(self, masterValue):
-        """Convert to points. Percentage has a different relative master calculation."""
-        return self._v * masterValue / 100
-    @classmethod
-    def fromPt(cls, pt, masterValue):
-        return cls(pt / masterValue * 100)
->>>>>>> master
 
     def __repr__(self):
-        v = asIntOrFloat(self.v) # Clip to min/max 
+        v = asIntOrFloat(self.v) # Clip to min/max
         if isinstance(v, int):
             return u'%d%%' % v
         return u'%s%%' % asFormatted(v)
@@ -1499,9 +1342,8 @@ class perc(RelativeUnit):
         return asIntOrFloat(self.base.v * self.v / self.BASE) # Clip to min/max and factor to points
     def _set_pt(self, v):
         self._v = v / self.base.v * self.BASE
-    pt = property(_get_pt) 
+    pt = property(_get_pt)
 
-<<<<<<< HEAD
 UNIT_MAKERS = dict(px=px, pt=pt, mm=mm, inch=inch, p=p, pica=pica, em=em, fr=fr, col=col, perc=perc)
 MAKER_UNITS = dict([[maker, unit] for unit, maker in UNIT_MAKERS.items()])
 MAKERS = set((pt, px, mm, inch, p, em, fr, col, perc))
@@ -1561,18 +1403,13 @@ def value2Maker(v):
                     unit = Inch.UNIT
                 elif unit == Perc.UNITC: # '%'
                     unit = Perc.UNIT
-            if unit in UNIT_MAKERS:                                                                                                                          
+            if unit in UNIT_MAKERS:
                 maker = UNIT_MAKERS[unit]
     return maker
 
 def units(v, *args, **kwargs):
     u"""If value is a string, then try to guess what type of units value is
     and answer the right instance. Answer None if not valid transformation could be done.
-=======
-def getUnits(v):
-    """If value is a string, then try to guess what type of units value is
-    and answer the right instance.
->>>>>>> master
 
     >>> units('100%')
     100%
@@ -1635,7 +1472,7 @@ def getUnits(v):
     elif v is not None:
         # Plain values are interpreted as point Units
         if makerF is None:
-            makerF = value2Maker(v)        
+            makerF = value2Maker(v)
         # makerF is now supposed to be a maker or real Unit class, use it
         if makerF:
             u = makerF(v, **kwargs)
@@ -1648,7 +1485,7 @@ def getUnits(v):
         g = kwargs.get('g')
         if g is not None: # Optional gutter can be unit or number
             u.g = g # Recursive force gutter to be unit instance.
-    
+
     return u # If possible to create, answer u. Otherwise result is None
 
 

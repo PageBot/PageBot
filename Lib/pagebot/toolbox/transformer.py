@@ -29,14 +29,10 @@ ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5,
 # P O I N T
 
 def point3D(p=None):
-<<<<<<< HEAD
-    u"""Answer p as 3D point. If it already is a list of 3 elements, then don't change
-    and answer the original. 
+    u"""Answer p as 3D point. If it already is a list of 3 elements, then don't
+    change and answer the original.
+
     Note that in normal usage the elements probably will be Unit instances.
-=======
-    """Answer p as 3D point. If it already is a list of 3 elements, then don't change
-    and answer the original.
->>>>>>> master
 
     >>> point3D() # Default 3D origin
     [0, 0, 0]
@@ -60,12 +56,9 @@ def point3D(p=None):
     return p
 
 def point2D(p=None):
-<<<<<<< HEAD
     u"""Answer the 2D point from a 2D or 3D point.
+
     Note that in normal usage the elements probably will be Unit instances.
-=======
-    """Answer the 2D point from a 2D or 3D point.
->>>>>>> master
 
     >>> point2D() # Default 2D origin
     [0, 0]
@@ -79,12 +72,9 @@ def point2D(p=None):
     return point3D(p)[:2]
 
 def pointOffset(point, offset):
-<<<<<<< HEAD
     u"""Answer new 3D point, shifted by offset.
+
     Note that in normal usage the elements probably will be Unit instances.
-=======
-    """Answer new 3D point, shifted by offset.
->>>>>>> master
 
     >>> pointOffset((20, 30, 10), 12)
     (32, 42, 22)
@@ -108,12 +98,9 @@ def pointOffset(point, offset):
     return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
 
 def point2S(p):
-<<<<<<< HEAD
     u"""Answer the point as string of rounded integers. Ignore z value if it is 0.
+
     Note that in normal usage the elements probably will be Unit instances.
-=======
-    """Answer the point as string of rounded integers. Ignore z value if it is 0.
->>>>>>> master
 
     >>> point2S((22.4, 33.5, 44.6))
     '22 34 45'
@@ -302,8 +289,8 @@ def asIntOrFloat(value):
 
 def asFormatted(value, default=None, format=None):
     u"""Answer the formatted string of value. Use the format string if defined.
-    Otherwise answer the cleanest representation, eating all 0 and /. from the 
-    right side. 
+    Otherwise answer the cleanest representation, eating all 0 and /. from the
+    right side.
 
     >>> asFormatted(100)
     '100'
@@ -333,9 +320,9 @@ def asFormatted(value, default=None, format=None):
     if format is None:
         iNumber = asNumber(value)
         if isinstance(iNumber, int): # Check on rounded by 0.00
-            return '%d' % iNumber 
+            return '%d' % iNumber
         value = '%0.2f' % value # Round to 2 digits
-        # Then remove any trailing zeros (there there is a decimal point) 
+        # Then remove any trailing zeros (there there is a decimal point)
         while value and '.' in value and value.endswith('0'):
             value = value[:-1]
         if value and value.endswith('.'):

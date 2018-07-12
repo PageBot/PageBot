@@ -72,13 +72,8 @@ class Image(Element):
     >>> #((300, 300, 1), (398, 530))
     >>> #((300, 300, 1), (3024, 4032))
     >>> # Allow the context to create a new document and page canvas. Normally view does it.
-<<<<<<< HEAD
-    >>> c.newPage(w, h) 
-    >>> e.build(doc.getView(), pt(0, 0))
-=======
     >>> c.newPage(w, h)
-    >>> e.build(doc.getView(), (0, 0))
->>>>>>> master
+    >>> e.build(doc.getView(), pt(0, 0))
     [PixelMap.build_flat] Not implemented yet
     >>> e.xy
     (0pt, 20pt)
