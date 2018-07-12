@@ -15,9 +15,10 @@
 #     Implements a PageBot font classes to get info from a TTFont.
 #     Show drawing of outline points and intersection beam with flattened path
 #
+from __future__ import print_function
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts.platform import getContext
-from __future__ import print_function
+
 
 newPage(1000, 1000)
 font = Font('/Library/Fonts/Georgia.ttf')

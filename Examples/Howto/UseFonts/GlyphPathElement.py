@@ -37,8 +37,8 @@ EXPORT_PATH = '_export/GlyphPathElement.pdf'
 
 def pathFilter(e, path, view):
     r = 24
-    for x in range(0, e.w*4, 30):
-        for y in range(0, e.h*2, 30):
+    for x in range(0, int(e.w)*4, 30):
+        for y in range(0, int(e.h)*2, 30):
             # Use the glyph to query for color at this position.
             if e.glyph is not None:
                 if e.glyph.onBlack((x, y)):
@@ -47,7 +47,6 @@ def pathFilter(e, path, view):
                 else:
                     context.fill((0, 1, 0)) # Color as one tuple, in context API
                     context.rect(x-r/4, y-r/4, r/2, r/2)
-
 
 #W = H = 120 # Get the standard a4 width and height in points.
 W = H = PageSize
@@ -84,4 +83,3 @@ e1.y += 100
 #e2.y += 100
 
 doc.export(EXPORT_PATH)
-

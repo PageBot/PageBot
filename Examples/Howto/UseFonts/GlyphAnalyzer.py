@@ -19,7 +19,6 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.platform import getContext
 
 context = getContext()
-
 font = findFont('Georgia')
 print(font.analyzer) 
 print(font.analyzer.name) 
