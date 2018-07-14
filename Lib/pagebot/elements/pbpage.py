@@ -44,12 +44,13 @@ class Page(Element):
 
         >>> page = Page()
         >>> page.w, page.h
-        (100, 100)
+        (100pt, 100pt)
         >>> page.w = 1111
         >>> page.w, page.h
-        (1111, 100)
+        (1111pt, 100pt)
         """
         Element.__init__(self,  **kwargs)
+
         self.cssClass = self.cssClass or 'page' # Defined default CSS class for pages.
         self._isLeft = leftPage # Undefined if None, let self.doc decide instead
         self._isRight = rightPage 
@@ -82,6 +83,38 @@ class Page(Element):
         self.jsUrls = jsUrls # Optional Javascript Urls, if different from what is defined by the view.
 
         self.webFontUrls = webFontUrls # Optional set of webfont urls if different from what is in the view.
+
+    def __repr__(self):
+        u"""Page as string. Similar to general Element.__repr__, except showing the (pagenNumber, index)
+        as it is stored in the parent document. And not showing (self.x, self.y), as most pages will not
+        be part of another page (although it is allowed and there could be situations to do so, e.g.
+        if a page is used as illustration in another page.)
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.constants import A4
+        >>> doc = Document(name='TestDoc', autoPages=8, wh=A4)
+        >>> doc[5] # Remembers original unit size.
+        <Page:default 5:0 (210mm, 297mm)>
+        """
+        if self.title:
+            name = ':'+self.title
+        elif self.name:
+            name = ':'+self.name
+        else: # No naming, show unique self.eId:
+            name = ':'+self.eId
+
+        if self.elements:
+            elements = ' E(%d)' % len(self.elements)
+        else:
+            elements = ''
+
+        pn = ''
+        if self.parent: # If there is a parent, get the (pageNumber, index) tuple.
+            pn_index = self.parent.getPageNumber(self)
+            if pn_index is not None:
+                pn = ' %d:%d' % pn_index
+
+        return '<%s%s%s (%s, %s)%s>' % (self.__class__.__name__, name, pn, self.w, self.h, elements)
 
 
     def _get_isLeft(self):
@@ -129,6 +162,22 @@ class Page(Element):
     def _set_isRight(self, flag):
         self._isRight = flag
     isRight = property(_get_isRight, _set_isRight)
+
+    def _get_pn(self):
+        u"""Answer the page number by which self is stored in the parent document."
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(name='TestDoc', autoPages=8)
+        >>> sorted(doc.pages.keys())
+        [1, 2, 3, 4, 5, 6, 7, 8]
+        >>> page = doc[5]
+        >>> page.pn
+        (5, 0)
+        """
+        if self.parent is None:
+            return None # Not placed directly in a document. No page number known.
+        return self.parent.getPageNumber(self)
+    pn = property(_get_pn)
 
     #   D R A W B O T  & F L A T  S U P P O R T
 

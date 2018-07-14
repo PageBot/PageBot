@@ -46,7 +46,7 @@ class Element(object):
     isPage = False # Set to True by Page-like elements.
     isView = False
 
-    def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH,
+    def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, wh=None,
             t=0, parent=None, context=None, name=None, cssClass=None, cssId=None, title=None, 
             description=None, keyWords=None, 
             language=None, style=None, conditions=None, framePath=None,
@@ -82,8 +82,8 @@ class Element(object):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.document import Document
         >>> c = DrawBotContext()
-        >>> w, h = pt(300, 400)
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> wh = pt(300, 400)
+        >>> doc = Document(wh=wh, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1]
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
         >>> e.build(doc.getView(), (0, 0))
@@ -97,7 +97,8 @@ class Element(object):
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> from pagebot.document import Document
         >>> c = FlatContext()
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> wh = pt(320, 420)
+        >>> doc = Document(wh=wh, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1] # First page is left 1
         >>> e = Element(parent=page, x=pt(0), y=pt(20), w=page.w, h=pt(3))
         >>> # Allow the context to create a new document and page canvas. Normally view does it.
@@ -106,9 +107,9 @@ class Element(object):
         >>> e.xy
         (0pt, 20pt)
         >>> e.size
-        (300pt, 3pt)
+        (320pt, 3pt)
         >>> e.size3D
-        (300pt, 3pt, 0pt)
+        (320pt, 3pt, 0pt)
         """
         assert point is None or isinstance(point, (tuple, list))
 
@@ -125,6 +126,8 @@ class Element(object):
         # Always store point in style as separate (x, y, z) values. Missing values are 0
         # Note that position, w, h, d, padding and margin are not inherited by style.
         self.point3D = point or (x, y, z)
+        if wh is not None:
+            w, h = wh
         self.w = w
         self.h = h
         self.d = d
@@ -206,11 +209,11 @@ class Element(object):
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120)
         >>> repr(e)
-        '<Element:TestElement (10pt, 20pt)>'
+        '<Element:TestElement (10pt, 20pt, 100pt, 120pt)>'
         >>> e.title = 'MyTitle'
         >>> e.x, e.y = 100, mm(200)
         >>> repr(e)
-        '<Element:MyTitle (100pt, 200mm)>'
+        '<Element:MyTitle (100pt, 200mm, 100pt, 120pt)>'
         """
         if self.title:
             name = ':'+self.title
@@ -223,7 +226,7 @@ class Element(object):
             elements = ' E(%d)' % len(self.elements)
         else:
             elements = ''
-        return '<%s%s (%s, %s)%s>' % (self.__class__.__name__, name, self.x, self.y, elements)
+        return '<%s%s (%s, %s, %s, %s)%s>' % (self.__class__.__name__, name, self.x, self.y, self.w, self.h, elements)
 
     def __len__(self):
         u"""Answer total amount of elements, placed or not.
@@ -265,7 +268,7 @@ class Element(object):
         >>> t = Template(name='MyTemplate', x=11, y=12, w=100, h=200)
         >>> e.applyTemplate(t)
         >>> e.template
-        <Template:MyTemplate (11pt, 12pt)>
+        <Template:MyTemplate (11pt, 12pt, 100pt, 200pt)>
         """
         return self._template
     def _set_template(self, template):
@@ -775,7 +778,7 @@ class Element(object):
 
         >>> from pagebot.toolbox.units import mm, p
         >>> e = Element()
-        >>> e.baselineGrid
+        >>> e.baselineGrid is None # Undefined without style or parent style.
         True
         >>> e.baselineGrid = 12
         >>> e.baselineGrid
@@ -788,7 +791,7 @@ class Element(object):
         14pt
         """
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %       
-        return units(self.css('baselineGrid', 0), base=base, min=self.minH, max=self.maxH)
+        return units(self.css('baselineGrid'), base=base, min=self.minH, max=self.maxH)
     def _set_baselineGrid(self, baselineGrid):
         self.style['baselineGrid'] = units(baselineGrid)
     baselineGrid = property(_get_baselineGrid, _set_baselineGrid)
@@ -801,13 +804,13 @@ class Element(object):
         True
         >>> e.baselineGridStart = 17
         >>> e.baselineGridStart
-        17
+        17pt
         >>> e = Element(style=dict(baselineGridStart=15))
         >>> e.baselineGridStart
-        15
+        15pt
         """
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %       
-        return units(self.css('baselineGridStart', 0), base=base, min=self.minH, max=self.maxH)
+        return units(self.css('baselineGridStart'), base=base, min=self.minH, max=self.maxH)
     def _set_baselineGridStart(self, baselineGridStart):
         self.style['baselineGridStart'] = units(baselineGridStart)
     baselineGridStart = property(_get_baselineGridStart, _set_baselineGridStart)
@@ -2399,7 +2402,7 @@ class Element(object):
         >>> e.margin3D
         (15%, 15%, 15%, 15%, 15%, 15%)
         >>> ru(e.margin3D)
-        (75, 75, 75, 75, 75, 75)
+        (75pt, 75pt, 75pt, 75pt, 75pt, 75pt)
         """
         return self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb
     margin3D = property(_get_margin3D, _set_margin)
@@ -2657,13 +2660,13 @@ class Element(object):
         u"""Padding top property. Relative unit values refer to self.h. 
         (Note that this "pt" is abbreviation for padding-top, not point units.)
 
-        >>> e = Element(pt=12)
+        >>> e = Element(pt=12, h=500)
         >>> e.pt
         12pt
         >>> e.pt = 13
         >>> e.pt
         13pt
-        >>> e.style = dict(pt=14, h=500)
+        >>> e.pt = pt(14)
         >>> e.pt
         14pt
         >>> e.padding # Verify that other padding did not change.
@@ -2675,7 +2678,7 @@ class Element(object):
         50
         """
         base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
-        return units(self.css('pt', 0), base=base, min=0, max=self.h)
+        return units(self.css('pt'), base=base, min=0, max=self.h)
     def _set_pt(self, pt):
         self.style['pt'] = units(pt)  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
@@ -2686,13 +2689,13 @@ class Element(object):
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pb
         30pt
-        >>> e = Element(pb=12)
+        >>> e = Element(pb=12, h=500)
         >>> e.pb
         12pt
         >>> e.pb = 13
         >>> e.pb
         13pt
-        >>> e.style = dict(pb=14, h=500)
+        >>> e.pb = pt(14)
         >>> e.pb
         14pt
         >>> e.padding # Make sure other did not change.
@@ -2700,7 +2703,7 @@ class Element(object):
         >>> e.pb = '10%'
         >>> e.pb
         10%
-        >>> e.pb.pt
+        >>> e.pb.pt # 10% of base 500pt
         50
         """
         base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
@@ -2723,9 +2726,6 @@ class Element(object):
         >>> e2.pl = 13
         >>> e2.pl
         13pt
-        >>> e2.style = dict(pl=14, w=500)
-        >>> e2.pl
-        14pt
         >>> e2.padding # Make sure other did not change.
         (0pt, 0pt, 0pt, 14pt)
         >>> e2.pl = '10%' # Relating Unit instance
@@ -3283,6 +3283,7 @@ class Element(object):
         u"""Answer the maxW limit for child elements. Default is MAX_WIDTH.
         Min/max values must be absolute units.
 
+        >>> from pagebot.toolbox.units import mm
         >>> e = Element(minW=100)
         >>> e.maxW
         100pt
@@ -3301,6 +3302,7 @@ class Element(object):
         u"""Answer the maxH limit for child elements. Default is MAX_HEIGHT.
         Min/max values must be absolute units.
 
+        >>> from pagebot.toolbox.units import mm
         >>> e = Element(maxH=100)
         >>> e.maxH
         100pt
@@ -3319,6 +3321,7 @@ class Element(object):
         u"""Answer the maxD limit for child elements. Default is MAX_DEPTH.
         Min/max values must be absolute units.
 
+        >>> from pagebot.toolbox.units import mm
         >>> e = Element(maxD=100)
         >>> e.maxD
         100pt
