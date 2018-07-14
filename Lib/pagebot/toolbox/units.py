@@ -59,7 +59,9 @@ def ru(u, *args, **kwargs):
     >>> ru(pt(100), 121, (p(5), p(6), units('5"')), maker=pt)
     (100, 121, (60, 72, 360))
     >>> ru(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
-    (100, 121, (60, 72, 360))
+    (5.0, 121, (5, 6, 30.0))
+    >>> ru(mm(10), mm(20), (mm(30), mm(40)), maker=mm) # Render units
+    (10, 20, (30, 40))
     """
     if args:
         if not isinstance(u, (list, tuple)):
@@ -88,6 +90,7 @@ def uv(u, *args, **kwargs):
     >>> uv(Em(2, min=10, max=20))
     10
     >>> uv(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
+    (5.0, 121, (5, 6, 30.0))
     """
     if args:
         if not isinstance(u, (list, tuple)):
@@ -508,6 +511,9 @@ class Unit(object):
         u0 = copy(self) # Keep values of self
         if isinstance(u, (int, float)): # One is a scalar, just multiply
             u0.v *= u
+        elif isUnit(u) and e.isEm: 
+            u0.base = u.r
+            u0 = u0.r
         else:
             raise ValueError('Cannot multiply "%s" by "%s"' % (u0, u))
         return u0
@@ -1407,7 +1413,7 @@ def value2Maker(v):
                 maker = UNIT_MAKERS[unit]
     return maker
 
-def units(v, *args, **kwargs):
+def units(v, maker=None, g=None, base=None, em=None, min=None, max=None):
     u"""If value is a string, then try to guess what type of units value is
     and answer the right instance. Answer None if not valid transformation could be done.
 
@@ -1446,21 +1452,17 @@ def units(v, *args, **kwargs):
     >>> u1 = units('10pt')
     >>> u1 is units(u1) # Creates copy of u1
     False
-    >>> units(pt(0), 12) # Create a recursive list of units
+    >>> uu = pt(0), 12, (pt(13), pt(14))
+    >>> units(uu) # Create a recursive list of units
+    (0pt, 12pt, (13pt, 14pt))
     """
-    if args:
-        if not isinstance(v, (list, tuple)):
-            v = [v]
-        for arg in args:
-            v.append(arg)
     if isinstance(v, (list, tuple)):
-        ruu = []
-        for uu in v:
-            ruu.append(ru(uu, **kwargs))
-        return tuple(ruu)
+        uu = []
+        for vv in v:
+            uu.append(units(vv, maker=maker, g=g, base=base, min=min, max=max))
+        return tuple(uu)
 
     u = None
-    maker = kwargs.get('maker')
     makerF = value2Maker(maker)
     assert maker is None or makerF in MAKERS, ('Cannot find unit maker for "%s"' % maker)
 
@@ -1468,24 +1470,25 @@ def units(v, *args, **kwargs):
         if makerF in (None, UNIT_MAKERS[v.UNIT]):
             u = copy(v) # Make sure to copy, avoiding overwriting local values of units.
         else:
-            u = makerF(v, **kwargs)
+            u = makerF(v)
     elif v is not None:
         # Plain values are interpreted as point Units
         if makerF is None:
             makerF = value2Maker(v)
         # makerF is now supposed to be a maker or real Unit class, use it
         if makerF:
-            u = makerF(v, **kwargs)
+            u = makerF(v)
 
     # In case we got a valid unit, then try to set the paremeters if not None.
     if u is not None:
-        base = kwargs.get('base')
         if base is not None: # Base can be unit or number.
             u.base = base # Recursive force base to be unit instance
-        g = kwargs.get('g')
         if g is not None: # Optional gutter can be unit or number
             u.g = g # Recursive force gutter to be unit instance.
-
+        if min is not None:
+            u.min = min
+        if max is not None:
+            u.max = max
     return u # If possible to create, answer u. Otherwise result is None
 
 

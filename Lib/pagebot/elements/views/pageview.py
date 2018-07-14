@@ -192,8 +192,8 @@ class PageView(BaseView):
                 self.pl > self.MIN_PADDING and self.pr > self.MIN_PADDING and \
                 self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
             context = self.context
-            context.setFillColor(None)
-            context.setStrokeColor((0, 0, 1), 0.5)
+            context.setFillColor(noColor)
+            context.setStrokeColor(color(0, 0, 1), 0.5)
             context.rect(origin[0], origin[1], page.w, page.h)
             #page.drawFrame(origin, self)
 
@@ -218,8 +218,8 @@ class PageView(BaseView):
             p = page._applyScale(self, p)
             px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
 
-            context.setFillColor(None)
-            context.setStrokeColor(self.css('viewPagePaddingStroke', (0.2, 0.2, 1)),
+            context.setFillColor(noColor)
+            context.setStrokeColor(self.css('viewPagePaddingStroke', color(0.2, 0.2, 1)),
                                    self.css('viewPagePaddingStrokeWidth', 0.5))
             if page.originTop:
                 pass
@@ -333,7 +333,7 @@ class PageView(BaseView):
 
         b = self.b
         b.newPath()
-        self.setFillColor(None)
+        self.setFillColor(noColor)
         b.moveTo((xs, ys))
         b.curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
         b.drawPath()
@@ -341,7 +341,7 @@ class PageView(BaseView):
         #  Draw the arrow head.
         b.newPath()
         self.setFillColor(stroke)
-        self.setStrokeColor(None)
+        self.setStrokeColor(noColor)
         b.moveTo((xt, yt))
         b.lineTo((ax1, ay1))
         b.lineTo((ax2, ay2))
@@ -398,20 +398,20 @@ class PageView(BaseView):
                 tpy = py + e.h - th - Pd
 
                 # Tiny shadow
-                context.setFillColor((0.3, 0.3, 0.3, 0.5))
-                context.setStrokeColor(None)
+                context.setFillColor(color(0.3, 0.3, 0.3, a=0.5))
+                context.setStrokeColor(noColor)
                 b.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
                 # Frame
                 context.setFillColor(self.css('viewInfoFill'))
-                context.setStrokeColor(0.3, 0.25)
+                context.setStrokeColor(rgb=0.3, w=0.25)
                 b.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
                 b.text(fs, (tpx+Pd, tpy+th))
 
             if self.showElementDimensions:
                 # TODO: Make separate arrow functio and better positions
                 # Draw width and height measures
-                context.setFillColor(None)
-                context.setStrokeColor(0, 0.25)
+                context.setFillColor(noColor)
+                context.setStrokeColor(rgb=0, w=0.25)
                 S = self.css('viewInfoOriginMarkerSize', 4)
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
@@ -530,6 +530,9 @@ class PageView(BaseView):
         >>> view.showGrid = True
         >>> view.drawGrid(e, (0, 0))
         """
+        return
+        # TODO: Make grid work from grid style
+        """
         # Drawing the grid as squares.
         if not self.showGrid:
             return
@@ -585,7 +588,8 @@ class PageView(BaseView):
                     context.lineTo((ox+pw, oy+cy + ch))
                 context.drawPath()
                 #text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
-
+        """
+        
     def drawBaselineGrid(self, e, origin):
         u"""Draw baseline grid if line color is set in the style.
         TODO: Make fixed values part of calculation or part of grid style.
