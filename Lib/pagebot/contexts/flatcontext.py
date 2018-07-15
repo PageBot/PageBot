@@ -114,7 +114,7 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
-    def newDocument(self, w, h, title=None, pageCount=None, units='pt'):
+    def newDocument(self, w, h, size=None, title=None, pageCount=None):
         """Create a new self.doc Flat canvas to draw on.
 
         >>> context = FlatContext()
@@ -124,6 +124,8 @@ class FlatContext(BaseContext):
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)
         """
+        if size is not None:
+            w, h = size
         assert w.UNIT == h.UNIT
         self.unit = w.UNIT
         self.title = title
@@ -199,7 +201,7 @@ class FlatContext(BaseContext):
 
     saveImage = saveDocument # Compatible API with DrawBot
 
-    def newPage(self, w, h, units='pt'):
+    def newPage(self, w, h, size=None):
         """Other page sizes than default in self.doc, are ignored in Flat.
 
         >>> context = FlatContext()
@@ -207,6 +209,8 @@ class FlatContext(BaseContext):
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
         """
+        if size is not None:
+            w, h = size
         if self.doc is None:
             self.newDocument(w, h)
         self.page = self.doc.addpage()
@@ -309,7 +313,7 @@ class FlatContext(BaseContext):
         """
         assert isinstance(bs, FlatString)
         placedText = self.page.place(bs.s)
-        placedText.position(p[0], p[1])
+        placedText.position(ru(p)) # Render unit tuple to value tuple
 
     def font(self, font, fontSize=None):
         """Set the current font, in case it is not defined in a formatted string.

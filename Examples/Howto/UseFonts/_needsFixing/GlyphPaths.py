@@ -27,7 +27,7 @@ import weakref
 from fontTools.ttLib import TTFont, TTLibError
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
-from pagebot.toolbox.transformer import point3D
+from pagebot.toolbox.units import point3D
 from __future__ import print_function
 
 C = 0.5

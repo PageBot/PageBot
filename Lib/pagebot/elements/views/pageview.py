@@ -25,7 +25,7 @@ from pagebot.toolbox.color import color, noColor, grayColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.style import RIGHT
 from pagebot.constants import ORIGIN
-from pagebot.toolbox.units import pt
+from pagebot.toolbox.units import pt, pointOffset, point3D
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
@@ -258,7 +258,7 @@ class PageView(BaseView):
             s = 'Page %s | %s | %s' % (pn, d, title)
             if page.name:
                 s += ' | ' + page.name
-            bs = context.newString(s, style=dict(font=self.css('viewPageNameFont'), textFill=0, fontSize=fontSize))
+            bs = context.newString(s, style=dict(font=self.css('viewPageNameFont'), textFill=color(0), fontSize=fontSize))
             self.context.text(bs, (self.pl + cmDistance, self.pb + page.h + cmSize - fontSize*2)) # Draw on top of page.
 
     #   D R A W I N G  F L O W S
@@ -363,7 +363,7 @@ class PageView(BaseView):
             y = origin[1]
             mt, mr, mb, ml = e.margin
             context = self.context
-            context.setFillColor((random(), random(), random(), 0.3))
+            context.setFillColor(color(random(), random(), random(), 0.3))
             context.rect(x-ml, y, max(2,ml), e.h)
             context.rect(x+e.w, y, max(1,mr), e.h)
             context.rect(x-ml, y-mb, ml+e.w+mr, max(1,mb))
@@ -391,19 +391,19 @@ class PageView(BaseView):
             if self.showElementInfo:
                 # Draw box with element info.
                 bs = context.newString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'),
-                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
                 tw, th = context.textSize(bs)
                 Pd = 4 # Padding in box and shadow offset.
                 tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
                 tpy = py + e.h - th - Pd
 
                 # Tiny shadow
-                context.setFillColor(color(0.3, 0.3, 0.3, a=0.5))
+                context.setFillColor(color(0.3, 0.3, 0.3, 0.5))
                 context.setStrokeColor(noColor)
                 b.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
                 # Frame
                 context.setFillColor(self.css('viewInfoFill'))
-                context.setStrokeColor(rgb=0.3, w=0.25)
+                context.setStrokeColor(color(0.3), w=0.25)
                 b.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
                 b.text(fs, (tpx+Pd, tpy+th))
 
@@ -411,7 +411,7 @@ class PageView(BaseView):
                 # TODO: Make separate arrow functio and better positions
                 # Draw width and height measures
                 context.setFillColor(noColor)
-                context.setStrokeColor(rgb=0, w=0.25)
+                context.setStrokeColor(color(0), w=0.25)
                 S = self.css('viewInfoOriginMarkerSize', 4)
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
@@ -429,7 +429,7 @@ class PageView(BaseView):
                                        style=dict(font=self.css('viewInfoFont'),
                                                   fontSize=self.css('viewInfoFontSize'),
                                                   leading=self.css('viewInfoLeading'),
-                                                  textFill=0.1))
+                                                  textFill=color(0.1)))
                 tw, th = b.textSize(fs.s)
                 b.text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
 
@@ -444,7 +444,7 @@ class PageView(BaseView):
                 b.line((x2+2*S, y1), (x2+1.5*S, y1+S))
 
                 bs = context.newString(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'),
-                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
                 tw, th = context.textSize(bs)
                 b.text(fs, (x2+2*S-tw/2, (y2+y1)/2))
 
@@ -456,15 +456,15 @@ class PageView(BaseView):
         S = self.css('viewInfoOriginMarkerSize', 4)
         if self.showElementOrigin:
             # Draw origin of the element
-            context.setFillColor((0.5,0.5,0.5,0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
-            context.setStrokeColor(0, 0.25)
+            context.setFillColor(color(0.5, 0.5, 0.5, 0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
+            context.setStrokeColor(color(0), 0.25)
             context.oval(px-S, py-S, 2*S, 2*S)
             context.line((px-S, py), (px+S, py))
             context.line((px, py-S), (px, py+S))
 
         if self.showElementDimensions:
             bs = context.newString(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'),
-                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
             w, h = context.textSize(bs)
             context.text(bs, (px - w/2, py + S*1.5))
 
@@ -498,11 +498,11 @@ class PageView(BaseView):
             sMissingElementFill = self.css('viewMissingElementFill', noColor)
             if sMissingElementFill is not noColor:
                 context.setFillColor(sMissingElementFill)
-                context.setStrokeColor(None)
+                context.setStrokeColor(noColor)
                 context.rect(px, py, self.w, self.h)
             # Draw crossed rectangle.
-            context.setFillColor(None)
-            context.setStrokeColor(0, 0.5)
+            context.setFillColor(noColor)
+            context.setStrokeColor(color(0), pt(0.5))
             context.rect(px, py, self.w, self.h)
             context.newPath()
             context.moveTo((px, py))
@@ -565,15 +565,15 @@ class PageView(BaseView):
         if self.showGrid:
             if gridFillColor != noColor:
                 context.fill(gridFillColor)
-                context.stroke(None)
+                context.stroke(noColor)
                 for cx, cw in e.getGridColumns():
                     for cy, ch in e.getGridRows():
                         context.rect(ox+cx, oy+cy, cw, ch)
 
             gridStrokeColor = self.css('viewGridStroke', noColor)
-            gridStrokeWidth = self.css('viewGridStrokeWidth', 0)
+            gridStrokeWidth = self.css('viewGridStrokeWidth', color(0))
             if gridStrokeColor != noColor and gridStrokeWidth:
-                context.fill(None)
+                context.fill(noColor)
                 context.stroke(gridStrokeColor, gridStrokeWidth)
                 context.newPath()
                 for cx, cw in e.getGridColumns():
@@ -620,9 +620,11 @@ class PageView(BaseView):
         line = 0
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
-        bs = context.newString('', self, dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
-            fontSize=M/2, stroke=noColor, textFill=e.css('gridStroke', grayColor)))
-        baselineGrid = e.css('baselineGrid', pt(DEFAULT_))
+        style = dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
+            fontSize=M/2, stroke=noColor, textFill=e.css('viewGridStroke', grayColor))
+        print('@##EWWEEW', style)
+        bs = context.newString('', e=self, style=style)
+        baselineGrid = e.css('baselineGrid', )
         while oy > e.pb or 0:
             context.setFillColor(noColor)
             context.setStrokeColor(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
@@ -647,8 +649,8 @@ class PageView(BaseView):
         else:
             dx = cmSize
             dy = cmSize/2
-        context.fill(None)
-        context.stroke((1,1,1,1), cmyk=True, w=cmStrokeWidth)
+        context.fill(noColor)
+        context.stroke(color(c=1, m=1, y=1, k=1), w=cmStrokeWidth)
         context.newPath()
         # Registration circle
         context.circle(x, y, cmSize/4)

@@ -56,6 +56,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
     42pt
     """
     # Some calculations to show dependencies.
+    defaultLeading = DEFAULT_LEADING
     baselineGrid = BASELINE_GRID
     # Indent of lists. Needs to be the same as in tabs, to position rightly after bullets
     if not isUnit(u):
@@ -207,7 +208,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         font = DEFAULT_FONT_PATH, # Default is to avoid existing font and fontSize in the graphic state.
         fallbackFont = DEFAULT_FALLBACK_FONT_PATH,
         fontSize = DEFAULT_FONT_SIZE, # Default font size in points, related to U. If FIT, size is elastic to width.
-        rFontSize = em(1), # Relative font size as relative fraction of current root font size.
         uppercase = False, # All text in upper case
         lowercase = False, # All text in lower case (only if uppercase is False
         capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase)
@@ -225,7 +225,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         # Horizontal spacing for absolute and fontsize-related measures
         tracking = pt0, # Absolute tracking value. Note that this is different from standard name definition.
-        rTracking = em0, # Tracking as factor of the fontSize.
         # Set tabs,tuples of (float, alignment) Alignment can be “left”, “center”, “right”
         # or any other character. If a character is provided the alignment will be right and
         # centered on the specified character.
@@ -234,30 +233,21 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
         tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...]
         firstLineIndent = pt0, # Indent of first line of a paragraph in a text tag.
-        rFirstLineIndent = pt0, # First line indent as factor if font size.
         firstParagraphIndent = pt0, # Indent of first line of first paragraph in a text tag.
-        rFirstParagraphIndent = pt0, # Indent of first line of first paragraph, relative to font size.
         firstColumnIndent = pt0, # Indent of first line in a column, after start of new column (e.g. by overflow)
-        rFirstColumnIndent = pt0, # Indent of first line in a colum, after start of new column, relative to font size.
         indent = pt0, # Left indent (for left-right based scripts)
-        rIndent = pt0, # Left indent as factor of font size.
         tailIndent = pt0, # Tail/right indent (for left-right based scripts)
-        rTailIndent = pt0, # Tail/right Indent as factor of font size
 
         # Vertical spacing for absolute and fontsize-related measures
         baselineGrid = baselineGrid,
         baselineGridStart = u*7, # Optional baselineGridStart if different from top padding.
         baseLineMarkerSize = pt(8), # FontSize of markers showing base line grid info.
-        leading = pt0, # Absolute leading value (can be used complementary to rLeading).
-        rLeading = em(1.2), # Relative factor to current fontSize.
+        leading = defaultLeading, # Relative factor to current fontSize.
         paragraphTopSpacing = pt0, # Only works if there is a prefix style value != 0
-        rParagraphTopSpacing = em0,  # Only works if there is a prefix style value != 0
         paragraphBottomSpacing = pt0,  # Only works if there is a postfix style value != 0
-        rParagraphBottomSpacing = em0,  # Only works if there is a postfix style value != 0
         baselineGridfit = False,
         firstLineGridfit = True,
         baselineShift = pt0, # Absolute baseline shift in points. Positive value is upward.
-        rBaselineShift = em0, # Relative baseline shift, multiplier to current self.fontSize
         # Keep all of the lines of the node text block in the same column.
         keepInColumn = False,
         # Check if this space is available above, to get amount of text lines above headings.
@@ -266,8 +256,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         rNeedsAbove = em0,
         # Check if this point space is available below, to get amount of text lines below headings.
         needsBelow = pt0,
-        # Check if this relative fontSize space is available below, to get amount of text lines below headings.
-        rNeedsBelow = em0,
         # CSS-behavior as <div> and <span>, adding trailing \n to block context is value set to DISPLAY_BLOCK
         # Interpreted by
         display = DISPLAY_INLINE,
@@ -314,7 +302,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # as view may locally change these values.
 
         # Grid stuff for showing
-        viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.1), # Fill color for (cw, ch) squares.
+        viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.1), # Fill color for column/row squares.
         viewGridStroke = color(r=0.3, g=0.3, b=0.6), # Stroke of grid lines in part of a template.
         viewGridStrokeWidth = pt(0.5), # Line thickness of the grid.
 

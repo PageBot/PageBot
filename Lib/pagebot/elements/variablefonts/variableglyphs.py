@@ -23,7 +23,7 @@ from copy import copy
 from pagebot.elements import Element
 from pagebot.style import makeStyle
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 
 context = getContext()
 

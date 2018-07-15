@@ -22,7 +22,7 @@ import weakref
 # Use default drawing context for generating the glyphs path.
 # This is independent from the current main context, e.g. HtmlContext.
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
-from pagebot.toolbox.transformer import point2D
+from pagebot.toolbox.units import point2D
 from pagebot.fonttoolbox.analyzers.apoint import APoint
 from pagebot.fonttoolbox.analyzers.asegment import ASegment
 from pagebot.fonttoolbox.analyzers.acomponent import AComponent

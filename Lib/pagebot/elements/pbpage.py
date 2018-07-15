@@ -16,7 +16,7 @@
 #
 import weakref
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 from pagebot.style import ORIGIN
 
 class Page(Element):
@@ -48,8 +48,10 @@ class Page(Element):
         >>> page.w = 1111
         >>> page.w, page.h
         (1111pt, 100pt)
+        >>> page
+        <Page Unplaced (100pt, 100pt)>
         """
-        Element.__init__(self,  **kwargs)
+        Element.__init__(self, **kwargs)
 
         self.cssClass = self.cssClass or 'page' # Defined default CSS class for pages.
         self._isLeft = leftPage # Undefined if None, let self.doc decide instead
@@ -100,8 +102,8 @@ class Page(Element):
             name = ':'+self.title
         elif self.name:
             name = ':'+self.name
-        else: # No naming, show unique self.eId:
-            name = ':'+self.eId
+        else: # No name
+            name = ' Unplaced'
 
         if self.elements:
             elements = ' E(%d)' % len(self.elements)
@@ -112,7 +114,10 @@ class Page(Element):
         if self.parent: # If there is a parent, get the (pageNumber, index) tuple.
             pn_index = self.parent.getPageNumber(self)
             if pn_index is not None:
-                pn = ' %d:%d' % pn_index
+                if pn_index[1]: # Index > 1, then show.
+                    pn = ' %d:%d' % pn_index
+                else:
+                    pn = ' %d' % pn_index[0]
 
         return '<%s%s%s (%s, %s)%s>' % (self.__class__.__name__, name, pn, self.w, self.h, elements)
 
