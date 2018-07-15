@@ -19,11 +19,11 @@ from __future__ import division
 import weakref
 import copy
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.units import isUnit, units, Fr, Perc, Em, ru, pt
+from pagebot.toolbox.units import isUnit, units, Fr, Perc, Em, ru, pt, point3D, pointOffset
 
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
-from pagebot.toolbox.transformer import point3D, pointOffset, uniqueID
+from pagebot.toolbox.transformer import uniqueID
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS,
                            MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT,
@@ -33,6 +33,7 @@ from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, 
                            OUTLINE)
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
+from pagebot.toolbox.dating import now, seconds, years, Duration
 
 class Element(object):
 
@@ -46,9 +47,9 @@ class Element(object):
     isPage = False # Set to True by Page-like elements.
     isView = False
 
-    def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, wh=None,
-            t=0, parent=None, context=None, name=None, cssClass=None, cssId=None, title=None, 
-            description=None, keyWords=None, 
+    def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
+            size=None, size3D=None, t=None, parent=None, context=None, name=None, cssClass=None, cssId=None, 
+            title=None, description=None, keyWords=None, 
             language=None, style=None, conditions=None, framePath=None,
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None,
             isLeftPage=None, isRightPage=None, bleed=None,
@@ -64,15 +65,13 @@ class Element(object):
         Ignore setting of eId as attribute, guaranteed to be unique.
 
         >>> import sys
-        >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, maxH=1000, pl=11, pt=22, margin=(33,44,55,66))
+        >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, maxW=822, maxH=933, pl=11, pt=22, margin=(33,44,55,66))
         >>> e.name
         'TestElement'
         >>> e.description is None
         True
-        >>> e.maxW == DEFAULT_WIDTH
-        True
-        >>> e.maxH == DEFAULT_HEIGHT
-        True
+        >>> e.maxW, e.maxH
+        (822pt, 822pt)
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (10pt, 20pt, 100pt, 120pt, (22pt, 0pt, 0pt, 11pt), (33pt, 44pt, 55pt, 66pt))
         >>> e = Element() # Default element has default proportions
@@ -82,8 +81,8 @@ class Element(object):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.document import Document
         >>> c = DrawBotContext()
-        >>> wh = pt(300, 400)
-        >>> doc = Document(wh=wh, autoPages=1, padding=30, originTop=False, context=c)
+        >>> size = pt(300, 400)
+        >>> doc = Document(size=size, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1]
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
         >>> e.build(doc.getView(), (0, 0))
@@ -92,19 +91,23 @@ class Element(object):
         >>> e.size
         (300pt, 3pt)
         >>> view = doc.getView()
-        >>> e.build(view, (pt(0), pt(0)))
+        >>> e.build(view, pt(0, 0))
 
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> from pagebot.document import Document
         >>> c = FlatContext()
-        >>> wh = pt(320, 420)
-        >>> doc = Document(wh=wh, autoPages=1, padding=30, originTop=False, context=c)
+        >>> size = pt(320, 420)
+        >>> doc = Document(size=size, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1] # First page is left 1
-        >>> e = Element(parent=page, x=pt(0), y=pt(20), w=page.w, h=pt(3))
-        >>> # Allow the context to create a new document and page canvas. Normally view does it.
-        >>> c.newPage(w, h)
+        >>> page.size
+        (320pt, 420pt)
+        >>> e = Element(parent=page, xy=pt(0, 20), w=page.w, h=pt(3))
+        >>> e.x, e.y, e.xy
+        (0pt, 20pt, (0pt, 20pt))
+        >>> # Allow the context to create a new document and page canvas. Normally view or doc does it.
+        >>> c.newPage(size=size)
         >>> e.build(doc.getView(), pt(0, 0))
-        >>> e.xy
+        >>> e.x, e.y, e.xy
         (0pt, 20pt)
         >>> e.size
         (320pt, 3pt)
@@ -126,8 +129,10 @@ class Element(object):
         # Always store point in style as separate (x, y, z) values. Missing values are 0
         # Note that position, w, h, d, padding and margin are not inherited by style.
         self.point3D = point or (x, y, z)
-        if wh is not None:
-            w, h = wh
+        if size3D is not None: # Convenience attributes
+            w, h, d = size3D
+        elif size is not None:
+            w, h = size
         self.w = w
         self.h = h
         self.d = d
@@ -154,10 +159,12 @@ class Element(object):
 
         # Set timer of this element.
         # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
-        self._tm0 = 0 #DateTime.beginningOfTime
-        self._tm1 = XXXL #None # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
+        self._tm0 = seconds(0)
+        self._tm1 = years(1) # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
         # The default timeMarks between from DateTime.beginningOfTime to infinite.
         self.timeMarks = [TimeMark(self._tm0, {}), TimeMark(self._tm1, {})] # Default TimeMarks from t == 0 until infinite of time.
+        if t is None:
+            t = self._tm0
         self.t = t # Initialize self.style from t = 0
         self.timeKeys = INTERPOLATING_TIME_KEYS # List of names of style entries that can interpolate in time.
 
@@ -230,10 +237,11 @@ class Element(object):
 
     def __len__(self):
         u"""Answer total amount of elements, placed or not.
+        Note the various ways units, x, y, w and h can be defined.
 
-        >>> e = Element(name='TestElement', x=100, y=200, w=100, h=120)
-        >>> childE1 = Element(name='E1', x=0, y=0, w=21, h=22)
-        >>> childE2 = Element(name='E2', x=100, y=0, w=11, h=12)
+        >>> e = Element(name='TestElement', x=100, y=200, w=pt(100), h=pt(120)) # Set as separate units
+        >>> childE1 = Element(name='E1', x=pt(0), y=pt(0), size=pt(21, 22))
+        >>> childE2 = Element(name='E2', xy=pt(100, 0), size=pt(11, 12)) # E.g. set as tuple of units
         >>> i1 = e.appendElement(childE1)
         >>> i2 = e.appendElement(childE2)
         >>> i1, i2, len(e) # Index of appended elements and length of parent
@@ -249,7 +257,7 @@ class Element(object):
 
         >>> from pagebot.elements import Template
         >>> e = Element(name='TestElement')
-        >>> t = Template(x=11, y=12, w=100, h=mm(200))
+        >>> t = Template(xy=pt(11, 12), w=100, h=mm(200))
         >>> e.applyTemplate(t)
         >>> e.x, e.y, e.w, e.h
         (11pt, 12pt, 100pt, 200mm)
@@ -268,7 +276,7 @@ class Element(object):
         >>> t = Template(name='MyTemplate', x=11, y=12, w=100, h=200)
         >>> e.applyTemplate(t)
         >>> e.template
-        <Template:MyTemplate (11pt, 12pt, 100pt, 200pt)>
+        <Template:MyTemplate (100pt, 200pt)>
         """
         return self._template
     def _set_template(self, template):
@@ -301,8 +309,8 @@ class Element(object):
         Elements behave as a semi-dictionary for child elements.
         For retrieval by index, use e.elements[index]
 
-        >>> e = Element(name='TestElement', x=100, y=200, w=100, h=120)
-        >>> childE1 = Element(name='E1', x=0, y=0, w=21, h=22)
+        >>> e = Element(name='TestElement', xy=(100, 200), size=pt(100, 120)) # E.g. set a tuples of units
+        >>> childE1 = Element(name='E1', xy=pt(0, 0), size=pt(21, 22))
         >>> i = e.appendElement(childE1)
         >>> e['E1'] is childE1
         True
@@ -319,7 +327,7 @@ class Element(object):
         Set self._eId if really necessary, as hex string.
 
         >>> from pagebot.toolbox.transformer import hex2dec
-        >>> e = Element(name='TestElement', x=100, y=200, w=100, h=120)
+        >>> e = Element(name='TestElement', xy=pt(100, 200), size=pt(100, 120))
         >>> hex2dec(e.eId) > 1000 # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
         True
         """
@@ -1065,7 +1073,7 @@ class Element(object):
         """
         return self.x, self.y, self.z
     def _set_point3D(self, point):
-        self.x, self.y, self.z = point3D(point) # Always store as 3D-point, z = 0 if missing.
+        self.x, self.y, self.z = point3D(point) # Always store as 3D-point, z = pt(0) if missing.
     point3D = property(_get_point3D, _set_point3D)
 
     def _get_oPoint(self):
@@ -1161,13 +1169,11 @@ class Element(object):
         >>> e = Element(w=300, h=100, cw=column, gw=gutter, isLeftPage=True)
         >>> e.getGridColumns() # Equal devided column widths
         [(0, 48), (56, 48), (112, 48), (168, 48), (224, 48)]
-        >>> e.cw = 64 # Change column width
-        >>> e.gw = 12 # Change gutter
         >>> e.getGridColumns() # Changed equal deviced columns
         [(0, 64), (76, 64), (152, 64), (228, 64)]
         >>> e.gridX = (30, 40, 50, 60)
         >>> e.getGridColumns() # Columns from value list
-        [(0, 30), (42, 40), (94, 50), (156, 60)]
+        [(0, 30), (38, 40), (86, 50), (144, 60)]
         """
         gridColumns = []
         gridX = self.gridX
@@ -1489,12 +1495,13 @@ class Element(object):
         >>> e = Element()
         >>> e.t
         0
-        >>> e.t = 16
+        >>> e.t = seconds(16)
         >>> e.t
         16
         """
         return self._t
     def _set_t(self, t):
+        assert isinstance(t, Duration)
         self._t = t
         # @@@ NOT YET
         #if self._tm0 is None or self._tm1 is None or t < self._tm0.t or self._tm1.t < t:
@@ -2163,7 +2170,7 @@ class Element(object):
         (4.5em, 45)
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.        
-        return units(self.css('w', 0), base=base, min=self.minW, max=self.maxW)
+        return units(self.css('w'), base=base, min=self.minW, max=self.maxW)
     def _set_w(self, w):
         self.style['w'] = units(w or DEFAULT_WIDTH) 
     w = property(_get_w, _set_w)
@@ -2272,39 +2279,6 @@ class Element(object):
     def _set_md(self, d):
         self.style['d'] = max(0, d - self.mzf - self.mzb) # Cannot become < 0, behind viewer?
     md = property(_get_md, _set_md)
-
-    def _get_wh(self): # Width and height tuple
-        u"""Tuple aswered (self.w, self.h, self.d), for convenience usage.
-
-        >>> from pagebot.toolbox.units import p, mm
-        >>> e = Element(w=100, h=200)
-        >>> e.wh
-        (100pt, 200pt)
-        >>> e.wh = 300, mm(400)
-        >>> e.wh
-        (300pt, 400mm)
-        """
-        return self.w, self.h
-    def _set_wh(self, wh):
-        self.w, self.h = wh
-    wh = property(_get_wh, _set_wh)
-
-    def _get_whd(self): # Width and height and dept tuple
-        u"""Width property for self.whd style.
-
-        >>> from pagebot.toolbox.units import p, mm
-        >>> e = Element(w=100, h=200, d=p(8))
-        >>> e.whd
-        (100pt, 200pt, 8p)
-        >>> e.whd = 300, p(6), mm(400)
-        >>> e.whd
-        (300pt, 6p, 400mm)
-        """
-        return self.w, self.h, self.d
-    def _set_whd(self, whd):
-        self.w, self.h, self.d = whd
-    whd = property(_get_whd, _set_whd)
-
 
 
     # Margin properties
@@ -2663,7 +2637,7 @@ class Element(object):
         >>> e = Element(pt=12, h=500)
         >>> e.pt
         12pt
-        >>> e.pt = 13
+        >>> e.pt = 13 # Default conversion from numberts to points
         >>> e.pt
         13pt
         >>> e.pt = pt(14)
@@ -2727,7 +2701,7 @@ class Element(object):
         >>> e2.pl
         13pt
         >>> e2.padding # Make sure other did not change.
-        (0pt, 0pt, 0pt, 14pt)
+        (0pt, 0pt, 0pt, 13pt)
         >>> e2.pl = '10%' # Relating Unit instance
         >>> e2.pl
         10%
@@ -3209,46 +3183,53 @@ class Element(object):
         >>> e.minW
         50mm
         """
-        if self.parent:
-            minW = self.parent.minW
-        else:
-            minW = MIN_WIDTH
-        maxW = self.parentW
-        base = dict(base=maxW, em=self.em) # In case relative units, use this as base for %       
-        return units(self.css('minW', minW), base=base)
+        return units(self.css('minW', MIN_WIDTH))
     def _set_minW(self, minW):
-        self.style['minW'] = units(minW) # Set on local style, shielding parent self.css value.
+        self.style['minW'] = u = units(minW) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.minW "%s" must be an absolute unit.' % minW)
     minW = property(_get_minW, _set_minW)
 
     def _get_minH(self): # Set/get the minimal height.
-        if self.parent:
-            minH = self.parent.minH
-        else:
-            minH = MIN_HEIGHT
-        maxH = self.parentH
-        base = dict(base=maxH, em=self.em) # In case relative units, use this as base for %       
-        return units(self.css('minH', minH), base=base)
+        u"""Answer the minH limit of self. In case it is relative unit, 
+        then use parent as reference.
+
+        >>> from pagebot.toolbox.units import mm
+        >>> e = Element(minH=100)
+        >>> e.minH
+        100pt
+        >>> e.minH = mm(50)
+        >>> e.minH
+        50mm
+        """
+        return units(self.css('minH', MIN_HEIGHT))
     def _set_minH(self, minH):
-        self.style['minH'] = units(minH) # Set on local style, shielding parent self.css value.
+        self.style['minH'] = u = units(minH) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.minH "%s" must be an absolute unit.' % minH)
     minH = property(_get_minH, _set_minH)
 
     def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
-        if self.parent:
-            minD = self.parent.minD
-        else:
-            minD = MIN_DEPTH
-        maxD = self.parentD
-        base = dict(base=maxD, em=self.em) # In case relative units, use this as base for %       
-        return units(self.css('minD', minD), base=base)
+        u"""Answer the minD limit of self. In case it is relative unit, 
+        then use parent as reference.
+
+        >>> from pagebot.toolbox.units import mm
+        >>> e = Element(minD=100)
+        >>> e.minD
+        100pt
+        >>> e.minD = mm(50)
+        >>> e.minD
+        50mm
+        """
+        return units(self.css('minD', MIN_DEPTH))
     def _set_minD(self, minD):
-        self.style['minD'] = units(minD) # Set on local style, shielding parent self.css value.
+        self.style['minD'] = u = units(minD) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.minD "%s" must be an absolute unit.' % minD)
     minD = property(_get_minD, _set_minD)
 
     def _get_minSize(self):
         u"""Answer the (minW, minH) of this element.
 
         >>> e = Element()
-        >>> e.minSize()
+        >>> e.minSize
         (1pt, 1pt)
         """
         return self.minW, self.minH
@@ -3268,7 +3249,7 @@ class Element(object):
             assert len(minSize) in (2,3)
             if len(minSize) == 2:
                 self.minW, self.minH = minSize
-                self.minD = pt(0) # Optional default minimum depth of the element.
+                self.minD = 0 # Optional default minimum depth of the element.
             else:
                 self.min, self.minH, self.minD = minSize
         else:
@@ -3291,11 +3272,10 @@ class Element(object):
         >>> e.maxW
         50mm
         """
-        maxW = self.parentW
-        base = dict(base=maxW, em=self.em) # In case relative units, use this as base for %       
-        return units(self.css('maxW', maxW), base=base)
+        return units(self.css('maxW', MAX_WIDTH))
     def _set_maxW(self, maxW):
-        self.style['maxW'] = units(maxW, min=MIN_WIDTH, max=MAX_WIDTH) # Set on local style, shielding parent self.css value.
+        self.style['maxW'] = u = units(maxW) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.maxW "%s" must be an absolute unit.' % maxW)
     maxW = property(_get_maxW, _set_maxW)
 
     def _get_maxH(self): # Set/get the maximal height.
@@ -3310,11 +3290,10 @@ class Element(object):
         >>> e.maxH
         50mm
         """
-        maxH = self.parentH
-        base = dict(base=maxH, em=self.em) # In case relative units, use this as base for %       
-        return units(self.css('maxW', maxH), base=base)
+        return units(self.css('maxH', MAX_HEIGHT))
     def _set_maxH(self, maxH):
-        self.style['maxH'] = units(maxW, min=MIN_HEIGHT, max=MAX_HEIGHT) # Set on local style, shielding parent self.css value.
+        self.style['maxH'] = u = units(maxW) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.maxH "%s" must be an absolute unit.' % maxH)
     maxH = property(_get_maxW, _set_maxW)
 
     def _get_maxD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
@@ -3329,11 +3308,10 @@ class Element(object):
         >>> e.maxD
         50mm
         """
-        maxD = self.parentD
-        base = dict(base=maxD, em=self.em) # In case relative units, use this as base for %       
-        return units(self.css('maxD', maxD), base=base)
+        return units(self.css('maxD', MIN_HEIGHT))
     def _set_maxD(self, maxD):
-        self.style['maxD'] = units(maxD, min=MIN_DEPTH, max=MAX_DEPTH) # Set on local style, shielding parent self.css value.
+        self.style['maxD'] = u = units(maxD) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.maxD "%s" must be an absolute unit.' % maxD)
     maxD = property(_get_maxD, _set_maxD)
 
     # Scale

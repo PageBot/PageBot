@@ -50,6 +50,107 @@ U = 6 # Some basic unit grid to use as default.
 EM_FONT_SIZE = U*2 # 12pt
 BASELINE_GRID = U*2+3 # 2.5U = 15pt
 
+# P O I N T
+
+def point3D(p=None):
+    u"""Answer p as 3D point. If it already is a list of 3 elements, then don't
+    change and answer the original.
+
+    Note that in normal usage the elements probably will be Unit instances.
+
+    >>> point3D() # Default 3D origin
+    (0pt, 0pt, 0pt)
+    >>> point3D(pt(20, -40)) # Add z = pt(0)
+    (20pt, -40pt, 0pt)
+    >>> point3D(mm(30)) # One value defaults to x == y
+    (30mm, 30mm, 0pt)
+    >>> point3D(p(2,3,4,5)) # Trim tuple to 3 coordinates.
+    (2p, 3p, 4p)
+    """
+    if not p: # None or zero.
+        return pt(0, 0, 0) # Undefined 3D point as list.
+    if isinstance(p, (list, tuple)):
+        if len(p) > 3:
+            p = p[:3]
+        p = tuple(p)
+    else:
+        p = p, p
+    while len(p) < 3:
+        p += (pt(0),) # Value undefined, add origin as z value.
+    return p
+
+def point2D(p=None):
+    u"""Answer the 2D point from a 2D or 3D point.
+
+    Note that in normal usage the elements probably will be Unit instances.
+
+    >>> point2D() # Default 2D origin
+    (0pt, 0pt)
+    >>> point2D(pt(20, -40))
+    (20pt, -40pt)
+    >>> point2D(pt(20))
+    (20pt, 20pt)
+    >>> point2D(mm(2,3,4,5,6))
+    (2mm, 3mm)
+    """
+    return point3D(p)[:2]
+
+def pointOffset(point, offset):
+    u"""Answer new 3D point, shifted by offset.
+
+    Note that in normal usage the elements probably will be Unit instances.
+
+    >>> pointOffset(pt(20, 30, 10), 12)
+    (32pt, 42pt, 22pt)
+    >>> pointOffset(p(20, 30, 40), pt(2, 3, 4))
+    (20p2, 30p3, 40p4)
+    >>> pointOffset(inch(12, 13), p(10))
+    (13.67", 14.67", 120pt)
+    >>> pointOffset(mm(12, 13), mm(100)) # Adding z = pt(0)
+    (112mm, 113mm, 283.46pt)
+    >>> pointOffset(mm(12, 13, 14), mm(100))
+    (112mm, 113mm, 114mm)
+    >>> pointOffset(pt(10, 20, 30), None) # None is interpreted as offset == 0
+    (10pt, 20pt, 30pt)
+    """
+    if not offset:
+        offset = pt(0)
+    if not isinstance(offset, (tuple, list)):
+        offset = (offset, offset, offset)
+    if not len(offset) == 3:
+        offset = point3D(offset)
+
+    assert isinstance(point, (tuple, list))
+    if not len(point) == 3:
+        point = point3D(point)
+    return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
+
+def point2S(p):
+    u"""Answer the point as string of units. Ignore z value if it renders to 0.
+
+    >>> point2S(pt(22.4, 33.5, 44.6))
+    '22.4pt 33.5pt 44.6pt'
+    >>> point2S(pt(33.6, 44.7))
+    '33.6pt 44.7pt'
+    """
+    x, y, z = point3D(p)
+    if z.r:
+        return '%s %s %s' % (x, y, z)
+    return '%s %s' % (x, y)
+
+def point2roundedS(p):
+    u"""Answer the point as string of rounded units. Ignore z value if it renders to 0.
+
+    >>> point2roundedS(pt(22.4, 33.5, 44.6))
+    '22 34 45'
+    >>> point2roundedS(pt(33.6, 44.7))
+    '34 45'
+    """
+    x, y, z = point3D(p)
+    if z.r:
+        return '%d %d %d' % (x.rounded, y.rounded, z.rounded)
+    return '%d %d' % (x.rounded, y.rounded)
+
 def ru(u, *args, **kwargs):
     u"""Render to uu.r or (u1.r, u2.r, ...) if uu is a list or tuple.
     If maker is defined, then use that to render towards.
@@ -144,7 +245,7 @@ def uRound(u):
     4
     """
     if isUnit(u):
-        return u.round()
+        return u.rounded
     return int(round(u))
 
 def classOf(u):
@@ -286,17 +387,18 @@ class Unit(object):
         return self.__class__.__name__
     uName = property(_get_uName)
 
-    def round(self):
+    def _get_rounded(self):
         u"""Answer a new instance of self with rounded value.
 
         >>> u = pt(12.2)
-        >>> ru = u.round()
-        >>> u, ru # Did not change original
+        >>> ru = u.rounded
+        >>> u, ru # Did not change original u 
         (12.2pt, 12pt)
         """
         u = copy(self)
         u._v = int(round(self._v))
         return u
+    rounded = property(_get_rounded)
 
     def __repr__(self):
         v = asIntOrFloat(self.v) # Clip to min/max.
@@ -372,6 +474,32 @@ class Unit(object):
     v = property(_get_v, _set_v)
     r = property(_get_v) # Read only
 
+    def __int__(self):
+        u"""Answer self as rounded int, converted to points.
+
+        >>> int(pt(20.2))
+        20
+        """
+        return int(round(self.pt))
+
+    def __float__(self):
+        u"""Answer self as float, converted to points.
+
+        >>> float(pt(20.2))
+        20.2
+        """
+        return self.pt
+
+    def __coerce__(self, v):
+        u"""Convert to type of v.
+
+        >>> '%dpoints' % pt(10)
+        '10points'
+        """
+        if isinstance(v, (int, float)):
+            return self, pt(v)
+        return self, units(v)
+
     def __abs__(self):
         u"""Answer the an absolute value copy of self.
 
@@ -379,6 +507,8 @@ class Unit(object):
         10pt
         >>> abs(mm(-1000))
         1000mm
+        >>> abs(-pt(2))
+        2pt
         """
         u = copy(self)
         u.v = abs(u.v)
@@ -511,7 +641,7 @@ class Unit(object):
         u0 = copy(self) # Keep values of self
         if isinstance(u, (int, float)): # One is a scalar, just multiply
             u0.v *= u
-        elif isUnit(u) and e.isEm: 
+        elif isUnit(u) and u.isEm: 
             u0.base = u.r
             u0 = u0.r
         else:
@@ -519,7 +649,16 @@ class Unit(object):
         return u0
 
     def __neg__(self):
-        return self.__class__(-self._v)
+        u"""Reverse sign of self, answer as copied unit.
+
+        >>> -pt(-20)
+        20pt
+        >>> -pt(20) - pt(10)
+        -30pt
+        """
+        u = copy(self) # Keep values of self
+        u.v = -self._v
+        return u
 
 #   Mm
 
@@ -568,8 +707,8 @@ class Mm(Unit):
     297
     >>> isinstance(u.v, (int, float))
     True
-    >>> round(u.pt) # Rounded A4 --> pts
-    842.0
+    >>> pt(u).rounded # Rounded A4 --> pts
+    842pt
     >>> mm(10, 11, 12) # Multiple arguments create a list of tuple mm
     (10mm, 11mm, 12mm)
     >>> mm((10, 11, 12, 13)) # Arguments can be submitted as list or tuple
@@ -1413,7 +1552,7 @@ def value2Maker(v):
                 maker = UNIT_MAKERS[unit]
     return maker
 
-def units(v, maker=None, g=None, base=None, em=None, min=None, max=None):
+def units(v, maker=None, g=None, base=None, min=None, max=None):
     u"""If value is a string, then try to guess what type of units value is
     and answer the right instance. Answer None if not valid transformation could be done.
 
@@ -1470,14 +1609,14 @@ def units(v, maker=None, g=None, base=None, em=None, min=None, max=None):
         if makerF in (None, UNIT_MAKERS[v.UNIT]):
             u = copy(v) # Make sure to copy, avoiding overwriting local values of units.
         else:
-            u = makerF(v)
+            u = makerF(v, g=g, base=base, min=min, max=max)
     elif v is not None:
         # Plain values are interpreted as point Units
         if makerF is None:
             makerF = value2Maker(v)
         # makerF is now supposed to be a maker or real Unit class, use it
         if makerF:
-            u = makerF(v)
+            u = makerF(v, g=g, base=base, min=min, max=max)
 
     # In case we got a valid unit, then try to set the paremeters if not None.
     if u is not None:
@@ -1485,10 +1624,6 @@ def units(v, maker=None, g=None, base=None, em=None, min=None, max=None):
             u.base = base # Recursive force base to be unit instance
         if g is not None: # Optional gutter can be unit or number
             u.g = g # Recursive force gutter to be unit instance.
-        if min is not None:
-            u.min = min
-        if max is not None:
-            u.max = max
     return u # If possible to create, answer u. Otherwise result is None
 
 

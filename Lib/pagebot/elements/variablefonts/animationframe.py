@@ -18,7 +18,7 @@ from __future__ import division # Make integer division result in float.
 
 from math import sin, cos, radians
 from pagebot.elements import Rect
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 from pagebot.fonttoolbox.objects.font import findFont
 
 class AnimationFrame(Rect):

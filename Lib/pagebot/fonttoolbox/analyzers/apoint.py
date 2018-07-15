@@ -14,7 +14,7 @@
 #     apoint.py
 #
 import weakref
-from pagebot.toolbox.transformer import point3D
+from pagebot.toolbox.units import point3D
 
 class APoint(object):
     """Analyzer Point, used if addition information (like its type) needs to be stored.

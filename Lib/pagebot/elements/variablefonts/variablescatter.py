@@ -19,7 +19,7 @@ from __future__ import division
 from random import random, choice
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 
 
 class VariableScatter(Element):

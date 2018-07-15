@@ -13,10 +13,9 @@
 #
 #     line.py
 #
-from pagebot.toolbox.transformer import pointOffset
 from pagebot.elements.element import Element
 from pagebot.style import ORIGIN
-from pagebot.toolbox.units import units, fr, perc, em
+from pagebot.toolbox.units import units, fr, perc, em, pointOffset
 from pagebot.toolbox.color import noColor
 
 class Line(Element):
