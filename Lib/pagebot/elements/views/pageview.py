@@ -621,9 +621,8 @@ class PageView(BaseView):
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
         style = dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
-            fontSize=M/2, stroke=noColor, textFill=e.css('viewGridStroke', grayColor))
-        print('@##EWWEEW', style)
-        bs = context.newString('', e=self, style=style)
+            fontSize=M/2, stroke=noColor, 
+            textFill=e.css('viewGridStroke', grayColor))
         baselineGrid = e.css('baselineGrid', )
         while oy > e.pb or 0:
             context.setFillColor(noColor)
@@ -632,8 +631,9 @@ class PageView(BaseView):
             context.moveTo((px + e.pl, py + oy))
             context.lineTo((px + e.w - e.pr, py + oy))
             context.drawPath()
-            context.text(bs + repr(line), (px + e.pl - 2, py + oy - e.pl * 0.6))
-            context.text(bs + repr(line), (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
+            bs = context.newString(repr(line), e=self, style=style)
+            context.text(bs, (px + e.pl - 2, py + oy - e.pl * 0.6))
+            context.text(bs, (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
             line += 1 # Increment line index.
             oy -= e.css('baselineGrid') # Next vertical line position of baseline grid.
 
