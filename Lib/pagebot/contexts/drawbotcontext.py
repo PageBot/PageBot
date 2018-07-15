@@ -512,7 +512,7 @@ class DrawBotContext(BaseContext):
         >>> context.textFill(fs, color(0.5)) # Same as setTextFillColor
         >>> context.textFill(fs, color('red'))
         """
-        self.setFillColor(c, builder=fs)
+        self.fill(c, builder=fs)
 
     textFill = setTextFillColor
 
@@ -524,7 +524,7 @@ class DrawBotContext(BaseContext):
         >>> context.textStroke(fs, color(0.5)) # Same as setTextStrokeColor
         >>> context.textStroke(fs, color('red'), w=pt(10))
         """
-        self.setStrokeColor(c, w=w, builder=fs)
+        self.stroke(c, w=w, builder=fs)
 
     textStroke = setTextStrokeColor
 

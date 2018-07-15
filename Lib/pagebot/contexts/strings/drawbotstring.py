@@ -70,15 +70,15 @@ class NoneDrawBotString(BabelString):
         to top-emsize (including ascender+ and descender+) and the string width (including margins)."""
         return w or 100, h or 100
 
-    def setFillColor(self, color):
+    def fill(self, color):
         pass
 
-    fill = setFillColor
+    setFillColor = fill
 
-    def setStrokeColor(self, color):
+    def stroke(self, color):
         pass
 
-    stroke = setStrokeColor
+    setStrokeColor = stroke
     
     def setStrokeWidth(self, w):
         pass
@@ -456,7 +456,7 @@ class DrawBotString(BabelString):
             if cFill is noColor: # None is value to disable fill drawing.
                 context.setTextFillColor(fs, noColor)
             else:
-                assert isinstance(cFill, Color), ('DrawBotString.newString] Fill color "%s" is not Color' % cFill)
+                assert isinstance(cFill, Color), ('DrawBotString.newString] Fill color "%s" is not Color in style %s' % (cFill, style))
                 context.setTextFillColor(fs, cFill)
         
         # Color values for text stroke
@@ -466,13 +466,13 @@ class DrawBotString(BabelString):
         cStroke = css('textStroke', e, style, noColor)
         uStrokeWidth = css('textStrokeWidth', e, style)
         if uStrokeWidth is not None:
-            uStrokeWidth_r = uStrokeWidth.r
+            uStrokeWidth = uStrokeWidth.r
         if cStroke is not inheritColor:
             if cStroke is noColor: # None is value to disable stroke drawing
                 context.setTextStrokeColor(fs, noColor)
-            elif uStrokeWidth_r > 0:
-                assert isinstance(cStroke, Color), ('DrawBotString.newString] Stroke color "%s" is not Color' % cStroke)
-                context.setTextStrokeColor(fs, cStroke, w=uStrokeWidth_r)
+            else:
+                assert isinstance(cStroke, Color), ('DrawBotString.newString] Stroke color "%s" is not Color in style %s' % (cStroke, style))
+                context.setTextStrokeColor(fs, cStroke, w=uStrokeWidth)
         
         textAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
         if textAlign is not None: # yTextAlign must be solved by parent container element.
