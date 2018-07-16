@@ -61,7 +61,7 @@ class Line(Element):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.document import Document
         >>> c = DrawBotContext()
-        >>> w, h = 300, 400
+        >>> w, h = pt(300, 400)
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1]
         >>> e = Line(parent=page, x=0, y=20, w=page.w, h=0)
@@ -86,8 +86,8 @@ class Line(Element):
         >>> e.build(doc.getView(), (0, 0))
         >>> e.xy
         (0pt, 20pt)
-        >>> e.size, e.wh
-        (300pt, 3pt, 1pt)
+        >>> e.size3D
+        (300pt, 3pt, 0pt)
         """
         context = self.context # Get current context and builder.
                
