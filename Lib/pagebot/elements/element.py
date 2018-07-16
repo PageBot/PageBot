@@ -47,8 +47,9 @@ class Element(object):
     isPage = False # Set to True by Page-like elements.
     isView = False
 
-    def __init__(self, point=None, x=0, y=0, z=0, w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, 
-            size=None, size3D=None, t=None, parent=None, context=None, name=None, cssClass=None, cssId=None, 
+    def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, 
+            w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None,
+            t=None, parent=None, context=None, name=None, cssClass=None, cssId=None, 
             title=None, description=None, keyWords=None, 
             language=None, style=None, conditions=None, framePath=None,
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None,
@@ -101,9 +102,11 @@ class Element(object):
         >>> page = doc[1] # First page is left 1
         >>> page.size
         (320pt, 420pt)
-        >>> e = Element(parent=page, xy=pt(0, 20), w=page.w, h=pt(3))
+        >>> pt(12, 20)
+        (12pt, 20pt)
+        >>> e = Element(parent=page, xy=pt(12, 20), w=page.w, h=pt(3))
         >>> e.x, e.y, e.xy
-        (0pt, 20pt, (0pt, 20pt))
+        (12pt, 20pt, (12pt, 20pt))
         >>> # Allow the context to create a new document and page canvas. Normally view or doc does it.
         >>> c.newPage(size=size)
         >>> e.build(doc.getView(), pt(0, 0))
@@ -114,12 +117,11 @@ class Element(object):
         >>> e.size3D
         (320pt, 3pt, 0pt)
         """
-        assert point is None or isinstance(point, (tuple, list))
-
         # Optionally set the property for elements that need their own context. 
         # Mostly these are only set for views (which are also Elements)
         # If None the property will query parent --> root document --> view.
         self.context = context
+        self._parent = None
 
         # Initilialize self._elements and self._eIds
         self.clearElements()
@@ -127,15 +129,19 @@ class Element(object):
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0 from args
         # Initialize style values that are not supposed to inherite from parent styles.
         # Always store point in style as separate (x, y, z) values. Missing values are 0
-        # Note that position, w, h, d, padding and margin are not inherited by style.
-        self.point3D = point or (x, y, z)
-        if size3D is not None: # Convenience attributes
-            w, h, d = size3D
-        elif size is not None:
-            w, h = size
-        self.w = w
-        self.h = h
-        self.d = d
+        # Note that x, y, z, w, h, d, padding and margin are not inherited by style.
+        if xyz is not None:
+            x, y, z = xyz
+        elif xy is not None:
+            x, y = xy
+        self.point3D = x, y, z
+
+        if size is not None: # Convenience attribute, setting self.w, self.h, self.d
+            self.size = size # Works for (w, h) and (w, h, d)
+        else:
+            self.w = w
+            self.h = h
+            self.d = d
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
         if bleed is not None:
@@ -186,7 +192,7 @@ class Element(object):
         self._parent = None # Preset, so it exists for checking when appending parent.
         if parent is not None:
             # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
-            self.parent = parent # Set referecnes in both directions. Remove any previous parent links
+            self.parent = parent # Set references in both directions. Remove any previous parent links
         
         # Conditional placement stuff
         if not conditions is None and not isinstance(conditions, (list, tuple)): # Allow singles
@@ -241,7 +247,7 @@ class Element(object):
 
         >>> e = Element(name='TestElement', x=100, y=200, w=pt(100), h=pt(120)) # Set as separate units
         >>> childE1 = Element(name='E1', x=pt(0), y=pt(0), size=pt(21, 22))
-        >>> childE2 = Element(name='E2', xy=pt(100, 0), size=pt(11, 12)) # E.g. set as tuple of units
+        >>> childE2 = Element(name='E2', size=pt(100, 0), size=pt(11, 12)) # E.g. set as tuple of units
         >>> i1 = e.appendElement(childE1)
         >>> i2 = e.appendElement(childE2)
         >>> i1, i2, len(e) # Index of appended elements and length of parent
@@ -257,7 +263,7 @@ class Element(object):
 
         >>> from pagebot.elements import Template
         >>> e = Element(name='TestElement')
-        >>> t = Template(xy=pt(11, 12), w=100, h=mm(200))
+        >>> t = Template(size=pt(11, 12), w=100, h=mm(200))
         >>> e.applyTemplate(t)
         >>> e.x, e.y, e.w, e.h
         (11pt, 12pt, 100pt, 200mm)
@@ -1452,6 +1458,7 @@ class Element(object):
         """
         return self.x, self.y
     def _set_xy(self, p):
+        print('+4334343434', p)
         self.x = p[0] # Convert values to Unit instance if needed.
         self.y = p[1] # Ignore any z
     xy = property(_get_xy, _set_xy)
@@ -2165,14 +2172,14 @@ class Element(object):
         >>> child.w, child.w.pt
         (2fr, 50)
         >>> e.style['fontSize'] = 10
-        >>> child.w = '4.5em' # Multiplication with current e.style['fontSize'] (e.fontSize)
+        >>> child.w = '4.5em' # Multiplication factor with current e.style['fontSize'] (e.fontSize)
         >>> child.w, child.w.pt
         (4.5em, 45)
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.        
         return units(self.css('w'), base=base, min=self.minW, max=self.maxW)
     def _set_w(self, w):
-        self.style['w'] = units(w or DEFAULT_WIDTH) 
+        self.style['w'] = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
     w = property(_get_w, _set_w)
 
     def _get_mw(self): # Width, including margins
@@ -2182,7 +2189,7 @@ class Element(object):
         >>> e.mw
         65pt
         >>> e = Element()
-        >>> e.w = 100
+        >>> e.w = 100 # Numbers convert to points by default
         >>> e.ml = 44
         >>> e.mr = 55
         >>> e.mw # e.ml + e.w + e.mr
@@ -2190,7 +2197,7 @@ class Element(object):
         """
         return self.w + self.ml + self.mr # Add margins to width
     def _set_mw(self, w):
-        self.style['w'] = max(0, w - self.ml - self.mr) # Cannot become < 0
+        self.w = max(0, w - self.ml - self.mr) # Cannot become < 0
     mw = property(_get_mw, _set_mw)
 
     def _get_h(self):
@@ -2219,7 +2226,7 @@ class Element(object):
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.        
         return units(self.css('h', 0), base=base, min=self.minH, max=self.maxH)
     def _set_h(self, h):
-        self.style['h'] = units(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['h'] = units(h or DEFAULT_HEIGHT, min=self.minH, max=self.maxH) # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
   
     def _get_mh(self): # Height, including margins
@@ -2237,7 +2244,7 @@ class Element(object):
         """
         return self.h + self.mt + self.mb # Add margins to height
     def _set_mh(self, h):
-        self.style['h'] = max(0, h - self.mt - self.mb) # Cannot become < 0
+        self.h = max(0, h - self.mt - self.mb) # Cannot become < 0
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self):
@@ -2259,7 +2266,7 @@ class Element(object):
         base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.        
         return units(self.css('d', 0), base=base, min=self.minD, max=self.maxD)
     def _set_d(self, d):
-        self.style['d'] = units(d or MIN_DEPTH) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['d'] = units(d or MIN_DEPTH, min=self.minD, max=self.maxD) # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
  
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
@@ -2277,7 +2284,7 @@ class Element(object):
         """
         return self.d + self.mzb + self.mzf # Add front and back margins to depth
     def _set_md(self, d):
-        self.style['d'] = max(0, d - self.mzf - self.mzb) # Cannot become < 0, behind viewer?
+        self.d = max(0, d - self.mzf - self.mzb) # Cannot become < 0, behind viewer?
     md = property(_get_md, _set_md)
 
 
@@ -3045,15 +3052,16 @@ class Element(object):
     def _get_block3D(self):
         u"""Answer the vacuum 3D bounding box around all child elements.
 
-        >>> e1 = Element(x=10, y=10, z=10, w=100, h=100, d=101)
-        >>> e2 = Element(x=50, y=50, z=50, w=200, h=100, d=401)
-        >>> e3 = Element(x=70, y=30, z=50, w=801, h=10, d=100)
-        >>> #e1.w, e1.h
-
+        >>> e1 = Element(x=10, y=52, z=14, w=100, h=110, d=801)
+        >>> e2 = Element(x=50, y=12, z=54, w=200, h=210, d=401)
+        >>> e3 = Element(x=70, y=72, z=74, w=300, h=310, d=101)
+        >>> e1.w, e1.h
+        (100pt, 100pt)
         >>> e = Element(elements=[e1, e2, e3])
-        >>> #e1.left, e1.right
-
-        >>> #e.block3D
+        >>> e1.left, e1.right
+        (10pt, 110pt)
+        >>> e.block3D
+        (10pt, 12pt, 14pt, 0, 0, 0)
         """
         x1 = y1 = z1 = XXXL
         x2 = y2 = z2 = -XXXL

@@ -31,7 +31,7 @@ class Document(object):
     Doctest: https://docs.python.org/2/library/doctest.html
     Run doctest in Sublime: cmd-B
 
-    >>> doc = Document(name='TestDoc', autoPages=50)
+    >>> doc = Document(name='TestDoc', startPage=12, autoPages=50)
     >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())
     (50, 1, 50)
     
@@ -137,9 +137,12 @@ class Document(object):
 
     def _get_lib(self):
         u"""Answer the global storage dictionary, used by TypeSetter and others to keep track of footnotes,
-        table of content, etc. Some common entries are predefined.
+        table of content, etc. Some common entries are predefined. In the future this lib could be saved
+        into JSON, in case it needs to be shared between documents. E.g. this could happen if a publication
+        is generated from multiple independents documents, that need to exchange information across
+        applications.
 
-        >>> doc = Document(name='TestDoc', w=300, h=400, lib=dict(a=12, b=34))
+        >>> doc = Document(name='TestDoc', lib=dict(a=12, b=34))
         >>> doc.lib
         {'a': 12, 'b': 34}
         """
@@ -147,20 +150,36 @@ class Document(object):
     lib = property(_get_lib)
 
     def __len__(self):
-        u"""Answer the amount of pages in the document."""
+        u"""Answer the amount of pages in the document.
+
+        >>> doc = Document(name='TestDoc', startPage=13, autoPages=42)
+        >>> len(doc) == len(doc.pages) == 42
+        True
+        """
         return len(self.pages)
 
     def __repr__(self):
         u"""Answering the string representation of the document.
 
-        >>> doc = Document(name='TestDoc', w=300, h=400, lib=dict(a=12, b=34))
+        >>> doc = Document(name='TestDoc', autoPages=41)
+        >>> t = doc.addTemplate('Template1', Template())
+        >>> v = doc.getView('Mamp') # Creating the view if it does not exist.
         >>> str(doc)
-        '[Document-Document "TestDoc"]'
+        '<Document-Document "TestDoc" Pages=41 Templates=2 Views=1>'
         """
-        return '[Document-%s "%s"]' % (self.__class__.__name__, self.name)
+        s = '<Document-%s "%s"' % (self.__class__.__name__, self.name)
+        if self.pages:
+            s += ' Pages=%d' % len(self.pages)
+        if self.templates:
+            s += ' Templates=%d' % len(self.templates)
+        if self.views:
+            s += ' Views=%d' % len(self.views)
+        s += '>'
+        return s
 
     def _get_doc(self):
         u"""Root of the chain of element properties, searching upward in the ancestors tree.
+        It refers to itself, to make the call compatible with any child page or element.
 
         >>> doc = Document(name='TestDoc')
         >>> doc.doc is doc
@@ -241,7 +260,7 @@ class Document(object):
         >>> context = DrawBotContext()
         >>> doc = Document(context=context, title='MySite')
         >>> doc, doc.context, doc.title
-        ([Document-Document "MySite"], <DrawBotContext>, 'MySite')
+        (<Document-Document "MySite" Pages=1 Templates=1 Views=1>, <DrawBotContext>, 'MySite')
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> doc = Document(context=context)
@@ -954,7 +973,12 @@ class Document(object):
         return None # Cannot find this page
 
     def getFirstPage(self):
-        u"""Answer the list of pages with the lowest sorted page.y. Answer empty list if there are no pages."""
+        u"""Answer the list of pages with the lowest sorted page.y. Answer empty list if there are no pages.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, startPage=624, autoPages=10)
+        >>> doc.getFirstPage()
+        <Page:default 624 (500pt, 500pt)>
+        """
         for pn, pnPages in sorted(self.pages.items()):
             for index, page in enumerate(pnPages):
                 return page
@@ -963,9 +987,9 @@ class Document(object):
     def getLastPage(self):
         u"""Answer last page with the highest sorted page.y. Answer empty list if there are no pages.
 
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10)
+        >>> doc = Document(name='TestDoc', w=500, h=500, startPage=5, autoPages=10)
         >>> doc.getLastPage()
-
+        <Page:default 15 (500pt, 500pt)>
         """
         pn = sorted(self.pages.keys())[-1]
         return self.pages[pn][-1]

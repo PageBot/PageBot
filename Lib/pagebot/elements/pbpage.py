@@ -45,11 +45,13 @@ class Page(Element):
         >>> page = Page()
         >>> page.w, page.h
         (100pt, 100pt)
-        >>> page.w = 1111
+        >>> page.maxW = 500
+        >>> page.maxH = 600
+        >>> page.size = 1111, 2222
         >>> page.w, page.h
-        (1111pt, 100pt)
+        (500pt, 600pt) # Clipped by page.maxW
         >>> page
-        <Page Unplaced (100pt, 100pt)>
+        <Page Unplaced (500pt, 100pt)>
         """
         Element.__init__(self, **kwargs)
 
@@ -344,7 +346,6 @@ class Template(Page):
         self._parent = parent
     parent = property(_get_parent, _set_parent)
 
- 
     def draw(self, origin, view):
         raise ValueError('Templates cannot draw themselves in a view. Apply the template to a page first.')
 
