@@ -27,6 +27,11 @@ from pagebot.constants import *
 try:
     #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
     from AppKit import NSFont
+    usingDrawBot = True
+except (ImportError):
+    usingDrawBot = False
+
+if usingDrawBot:
     from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute
     from CoreText import kCTFontURLAttribute, CTFramesetterCreateWithAttributedString
     from CoreText import CTFramesetterCreateFrame, CTFrameGetLines, CTFrameGetLineOrigins
@@ -34,7 +39,7 @@ try:
     from drawBot import Variable
     from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
     from pagebot.contexts.strings.drawbotstring import DrawBotString as stringClass
-except (ImportError, AttributeError):
+else:
     # If DrawBot is not available on the platform, then use a noneDrawBotBuilder instance, that
     # can be used to run all DrawBot related docTests.
     from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
@@ -115,8 +120,11 @@ class DrawBotContext(BaseContext):
     def newPage(self, w, h):
         """Create a new drawbot page.
 
+        >>> from pagebot.toolbox.units import px
         >>> context = DrawBotContext()
         >>> context.newPage(pt(100), pt(100))
+        >>> context = DrawBotContext()
+        >>> context.newPage(px(100), px(100))
         """
         self.b.newPage(w.r, h.r)
 
