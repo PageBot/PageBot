@@ -200,7 +200,7 @@ class FlatContext(BaseContext):
 
     saveImage = saveDocument # Compatible API with DrawBot
 
-    def newPage(self, w, h, size=None):
+    def newPage(self, w=None, h=None, size=None):
         """Other page sizes than default in self.doc, are ignored in Flat.
 
         >>> context = FlatContext()
@@ -210,6 +210,7 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
+        assert None not in (w, h)
         if self.doc is None:
             self.newDocument(w, h)
         self.page = self.doc.addpage()
@@ -452,11 +453,12 @@ class FlatContext(BaseContext):
 
     def ensure_page(self):
         if not self.doc:
-            self.newDocument(pt(0), pt(0))
+            self.newDocument(pt(100), pt(100))
         if not self.pages:
             self.newPage(self.doc.w, self.doc.h)
 
     def rect(self, x, y, w, h):
+        assert isUnit(x, y, w, h), ('FlatContext.rect: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
@@ -467,6 +469,7 @@ class FlatContext(BaseContext):
         (w,h) is the size.  This default DrawBot behavior, different from
         default Flat, where the (x,y) is the middle if the oval. Compensate for
         the difference."""
+        assert isUnit(x, y, w, h), ('FlatContext.oval: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
@@ -474,12 +477,14 @@ class FlatContext(BaseContext):
 
     def circle(self, x, y, r):
         """Draw an circle in square, with radius r and (x,y) as middle."""
+        assert isUnit(x, y, r), ('FlatContext.circle: Values (%s, %s, %s) must all be of type Unit' % (x, y, r))
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
             self.page.place(shape.circle(x.r, y.r, r.r))
 
     def line(self, p0, p1):
+        assert isUnit(p0, p1), ('FlatContext.line: Values (%s, %s) must all be of type Unit' % (p0, p1))
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()

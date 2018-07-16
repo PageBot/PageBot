@@ -213,17 +213,17 @@ def uv(u, *args, **kwargs):
             uu = uu.v
         return uu
 
-def isUnit(u, *args):
+def isUnits(u, *args):
     u"""Answer the boolean flag is u (and all of the other items in the argument list)
     are a Unit instance.
 
-    >>> isUnit(Em(2))
+    >>> isUnits(Em(2))
     True
-    >>> isUnit(2)
+    >>> isUnits(2)
     False
-    >>> isUnit(pt(1), pt(2), pt(3))
+    >>> isUnits(pt(1), pt(2), pt(3))
     True
-    >>> isUnit(pt(1), pt(2), 3, pt(4))
+    >>> isUnits(pt(1), pt(2), 3, pt(4))
     False
     """
     if args:
@@ -231,11 +231,25 @@ def isUnit(u, *args):
             u = [u]
         for arg in args:
             u.append(arg)
+    if isUnit(u):
+        return True
     if isinstance(u, (list, tuple)):
         for uu in u:
             if not isUnit(uu):
                 return False
         return True
+    return False
+
+def isUnit(u):
+    u"""Answer the boolean flag if u is an instance of Unit.
+
+    >>> isUnit(pt(20))
+    True
+    >>> isUnit(pt(20, 21))
+    False
+    >>> isUnit(2)
+    False
+    """
     # isinstance(u, Unit) # Does not seem to work right for units created in other sources such as A4
     return hasattr(u, '_v') and hasattr(u, 'base')
 
@@ -523,46 +537,150 @@ class Unit(object):
         return u
 
     def __eq__(self, u):
-        if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v == u
-        if isinstance(u, self.__class__):
-            return self._v == u.v
-        return self.pt == u.pt # Incompatible unit types, compare via points
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u == 20
+        True
+        >>> u == 21
+        False
+        >>> u == pt(20) # Compare with different instance
+        True
+        >>> u == mm(20)
+        False
+        >>> u == []
+        False
+        """
+        if isinstance(u, (int, float)): # One is a scalar, just compare with rendered value
+            return self.r == u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r == u.r # Same class, compare rendered result may differe from base or min/max)
+            return self.pt == u.pt # Incompatible unit types, compare via points
+        return False
 
     def __ne__(self, u):
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u != 20
+        False
+        >>> u != 21
+        True
+        >>> u != pt(20) # Compare with different unit instances of same class
+        False
+        >>> u != mm(20) # Compare with unit instance of different class.
+        True
+        >>> u != [] # All other situations are not matching
+        True
+        """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v != u
-        if isinstance(u, self.__class__):
-            return self._v != u.v
-        return self.pt != u.pt # Incompatible unit types, compare via points
+            return self.r != u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r != u.r
+            return self.pt != u.pt # Incompatible unit types, compare via points
+        return True
 
     def __le__(self, u):
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u <= 20
+        True
+        >>> u <= 19
+        False
+        >>> u <= pt(20) # Compare with different unit instances of same class
+        True
+        >>> u <= mm(20) # Compare with unit instance of different class.
+        True
+        >>> u <= mm(2) # Compare with unit instance of different class.
+        False
+        >>> u <= [] # All other situations are not matching
+        False
+        """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v <= u
-        if isinstance(u, self.__class__):
-            return self._v <= u.v
-        return self.pt <= u.pt # Incompatible unit types, compare via points
+            return self.r <= u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r <= u.r
+            return self.pt <= u.pt # Incompatible unit types, compare via points
+        return False
 
     def __lt__(self, u):
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u < 21
+        True
+        >>> u < 20
+        False
+        >>> u < pt(21) # Compare with different unit instances of same class
+        True
+        >>> u < mm(20) # Compare with unit instance of different class.
+        True
+        >>> u < mm(2) # Compare with unit instance of different class.
+        False
+        >>> u < [] # All other situations are not matching
+        False
+        """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v < u
-        if isinstance(u, self.__class__):
-            return self._v < u.v
-        return self.pt < u.pt # Incompatible unit types, compare via points
+            return self.r < u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r < u.r
+            return self.pt < u.pt # Incompatible unit types, compare via points
+        return False
 
     def __ge__(self, u):
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u >= 20
+        True
+        >>> u >= 21
+        False
+        >>> u >= pt(20) # Compare with different unit instances of same class
+        True
+        >>> u >= mm(2) # Compare with unit instance of different class.
+        True
+        >>> u >= mm(200) # Compare with unit instance of different class.
+        False
+        >>> u >= [] # All other situations are not matching
+        False
+        """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v >= u
-        if isinstance(u, self.__class__):
-            return self._v >= u.v
-        return self.pt >= u.pt # Incompatible unit types, compare via points
+            return self.r >= u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r >= u.r
+            return self.pt >= u.pt # Incompatible unit types, compare via points
+        return False
 
     def __gt__(self, u):
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u > 19
+        True
+        >>> u > 20
+        False
+        >>> u > pt(19) # Compare with different unit instances of same class
+        True
+        >>> u > mm(2) # Compare with unit instance of different class.
+        True
+        >>> u > mm(200) # Compare with unit instance of different class.
+        False
+        >>> u > [] # All other situations are not matching
+        False
+        """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v > u
-        if isinstance(u, self.__class__):
-            return self._v > u.v
-        return self.pt > u.pt # Incompatible unit types, compare via points
+            return self.r > u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r > u.r
+            return self.pt > u.pt # Incompatible unit types, compare via points
+        return False
 
     def __add__(self, u):
         u"""Adds self to `u`, creating a new Unit instance with the same type
