@@ -126,10 +126,8 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
-
-        assert w.UNIT == h.UNIT
-        self.unit = w.UNIT
-        self.doc = self.b.document(w.r, h.r, w.UNIT)
+        assert isUnits(w, h), ('FlatContext.newDocument: Size values (%s %s) to be of type Unit' % (w, h))
+        self.doc = self.b.document(w.pt, h.pt, units='pt')
         self.newPage(w, h)
 
     def saveDocument(self, path, multiPage=True):
@@ -217,7 +215,7 @@ class FlatContext(BaseContext):
         if self.doc is None:
             self.newDocument(w, h)
         self.page = self.doc.addpage()
-        self.page.size(w.r, h.r)
+        self.page.size(w.pt, h.pt, units='pt') # Default units render to pt-units
         self.pages.append(self.page)
 
     def newDrawing(self):
@@ -456,7 +454,7 @@ class FlatContext(BaseContext):
 
     def ensure_page(self):
         if not self.doc:
-            self.newDocument(pt(100), pt(100), units='pt') # Standardize FlatContext document on pt.
+            self.newDocument(pt(100), pt(100)) # Standardize FlatContext document on pt.
         if not self.pages:
             self.newPage(self.doc.w, self.doc.h)
 
@@ -543,7 +541,7 @@ class FlatContext(BaseContext):
         pass # Not implemented?
 
     def setGradient(self, gradient, origin, w, h):
-        assert isUnits(w, h), ('FlatContext.setGradient: Values %s must all be of type Unit' % (w, h))
+        assert isUnits(w, h), ('FlatContext.setGradient: Values %s must all be of type Unit' % str((w, h)))
         pass # Not implemented?
 
     def lineDash(self, *lineDash):
@@ -558,7 +556,7 @@ class FlatContext(BaseContext):
     def setFillColor(self, c, cmyk=False, spot=False, overprint=False):
         u"""Set the color for global or the color of the formatted string.
         See: http://xxyxyz.org/flat, color.py."""
-        assert isinstance(c, Color), ('FlatContext.fill: Color "%s" is not Color instance' % c)
+        assert isinstance(c, Color), ('FlatContext.fill: Color "%s" is not Color instance' % str(c))
         self._fill = c
 
         '''

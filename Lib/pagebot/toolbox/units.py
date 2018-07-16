@@ -227,7 +227,9 @@ def isUnits(u, *args):
     False
     """
     if args:
-        if not isinstance(u, (list, tuple)):
+        if isinstance(u, (list, tuple)):
+            u = list(u)
+        else:
             u = [u]
         for arg in args:
             u.append(arg)
@@ -235,7 +237,7 @@ def isUnits(u, *args):
         return True
     if isinstance(u, (list, tuple)):
         for uu in u:
-            if not isUnit(uu):
+            if not isUnits(uu): # Can be nested tuples.
                 return False
         return True
     return False
@@ -253,18 +255,38 @@ def isUnit(u):
     # isinstance(u, Unit) # Does not seem to work right for units created in other sources such as A4
     return hasattr(u, '_v') and hasattr(u, 'base')
 
-def uRound(u):
-    u"""Anwer a unit with rounded value. Or the rounded value if `u` is not a
-    Unit instance.
+def uRound(u, *args):
+    u"""Answer the list with rounded units (and all of the other items in the argument list)
+    are a Unit instance.
 
-    >>> uRound(Em(3.2))
-    3em
+    >>> uRound(Em(2.3))
+    2em
     >>> uRound(4.2)
-    4
+    4pt
+    >>> uRound(2, 2.4, pt(14.5), (20.9, pt(19.8)))
+    [2pt, 2pt, 15pt, [21pt, 20pt]]
+    >>> uRound(pt(1.3), pt(2.4), pt(3.5))
+    [1pt, 2pt, 4pt]
+    >>> uRound(pt(1.000001), pt(2.44444449), 3, pt(mm(4)))
+    [1pt, 2pt, 3pt, 11pt]
     """
+    if args:
+        if isinstance(u, (list, tuple)):
+            u = list(u)
+        else:
+            u = [u]
+        for arg in args:
+            u.append(arg)
     if isUnit(u):
-        return u.rounded
-    return int(round(u))
+        u = u.rounded
+    elif isinstance(u, (int, float)):
+        u = pt(u).rounded
+    elif isinstance(u, (list, tuple)):
+        ruu = []
+        for uu in u:
+            ruu.append(uRound(uu)) # Can be nested tuples.
+        u = ruu
+    return u
 
 def classOf(u):
     u"""Answer the class of the Unit instance. Otherwise answer None.
@@ -407,7 +429,8 @@ class Unit(object):
     uName = property(_get_uName)
 
     def _get_rounded(self):
-        u"""Answer a new instance of self with rounded value.
+        u"""Answer a new instance of self with rounded value. 
+        Note that we are rounding the self.v here, not the rendered result.
 
         >>> u = pt(12.2)
         >>> ru = u.rounded
@@ -415,7 +438,7 @@ class Unit(object):
         (12.2pt, 12pt)
         """
         u = copy(self)
-        u._v = int(round(self._v))
+        u._v = int(round(self.r))
         return u
     rounded = property(_get_rounded)
 

@@ -15,9 +15,9 @@
 #     textbox.py
 #
 from pagebot.style import (LEFT, RIGHT, CENTER, MIN_WIDTH, MIDDLE,
-                           BOTTOM, DEFAULT_WIDTH)
+                            BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 from pagebot.elements.element import Element
-from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.units import pointOffset, pt, units, uRound
 
 class TextBox(Element):
 
@@ -27,7 +27,7 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, bs=None, minW=None, w=DEFAULT_WIDTH, h=None, showBaselines=False, **kwargs):
+    def __init__(self, bs=None, minW=None, w=None, h=None, size=None, showBaselines=False, **kwargs):
         Element.__init__(self,  **kwargs)
         u"""Creates a TextBox element. Default is the storage of self.s
         (DrawBot FormattedString or Flat equivalent), but optional it can also be ts (tagged str)
@@ -37,9 +37,12 @@ class TextBox(Element):
         """
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
-        self.minW = max(minW or 0, MIN_WIDTH, self.TEXT_MIN_WIDTH)
+        self.minW = max(minW or pt(0), MIN_WIDTH, self.TEXT_MIN_WIDTH)
         self._textLines = self._baseLines = None # Force initiaize upon first usage.
-        self.size = w, h
+        if size is not None:
+            self.size = size
+        else:
+            self.size = w or DEFAULT_WIDTH, h
         self.bs = self.newString(bs) # Source can be any type: BabelString instance or plain unicode string.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
@@ -51,14 +54,15 @@ class TextBox(Element):
         >>> page = doc[1]
         >>> tb = TextBox(parent=page, w=125)
         >>> page[tb.eId].w
-        125
+        125pt
         >>> tb.w = 150
         >>> tb.w, tb.w == page[tb.eId].w
-        (150, True)
+        (150pt, True)
         """
-        return min(self.maxW, max(self.minW, self.style['w'], MIN_WIDTH)) # From self.style, don't inherit.
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.        
+        return units(self.css('w'), base=base, min=self.minW, max=self.maxW)
     def _set_w(self, w):
-        self.style['w'] = w or MIN_WIDTH # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['w'] = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
         self._textLines = None # Force reset if being called
     w = property(_get_w, _set_w)
 
@@ -74,7 +78,7 @@ class TextBox(Element):
         >>> style = dict(font=font.path, fontSize=14)
         >>> tb = TextBox('This is content', parent=page, style=style, w=100, h=220)
         >>> page[tb.eId].h
-        220
+        220pt
         """
 
         """
@@ -87,14 +91,18 @@ class TextBox(Element):
         (37.0, True)
         """
         if self.style['h'] is None: # Elastic height
-            h = self.getTextSize(w=self.w)[1] + self.pt + self.pb # Add paddings
+            h = self.getTextSize(w=self.w)[1]
         else:
-            h = self.style['h']
-        return min(self.maxH, max(self.minH, h)) # Should not be 0 or None
+            base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.        
+            h = units(self.css('h', 0), base=base, min=self.minH, max=self.maxH)
+        return h
     def _set_h(self, h):
         # Overwrite style from here, unless self.style['elasticH'] is True
-        self.style['h'] = h # If None, then self.h is elastic defined by content
+        if h is not None: # If None, then self.h is elastic defined by content
+            h = units(h or DEFAULT_HEIGHT, min=self.minH, max=self.maxH) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['h'] = h 
     h = property(_get_h, _set_h)
+
 
     def _get_textLines(self):
         if self._textLines is None:
@@ -134,7 +142,7 @@ class TextBox(Element):
             elements = ' E(%d)' % len(self.elements)
         else:
             elements = ''
-        return '%s%s (%d, %d)%s%s' % (self.__class__.__name__, name, int(round(self.point[0])), int(round(self.point[1])), self.bs.s, elements)
+        return '%s%s (%s, %s)%s%s' % (self.__class__.__name__, name, uRound(self.xy), uRound(self.size), s, elements)
 
     def copy(self, parent=None):
         u"""Answer a full copy of self, where the "unique" fields are set to default.
@@ -192,7 +200,6 @@ class TextBox(Element):
         >>> context = getContext()
         >>> context.name in ('DrawBotContext', 'FlatContext', 'SvgContext')
         True
-
         """
         """
         TODO: Get these tests or similar to work.
@@ -216,7 +223,9 @@ class TextBox(Element):
         """
         if bs is None:
             bs = self.bs
-        return bs.textSize(w or self.w)
+        if w is None:
+            w = self.w
+        return bs.textSize(units(w).pt)
 
     def getOverflow(self, w=None, h=None):
         """Figure out what the overflow of the text is, with the given (w, h) or styled
