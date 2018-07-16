@@ -28,7 +28,7 @@ try:
     #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
     from AppKit import NSFont
     usingDrawBot = True
-except (ImportError):
+except (ImportError, AttributeError):
     usingDrawBot = False
 
 if usingDrawBot:
@@ -571,9 +571,9 @@ class DrawBotContext(BaseContext):
         elif c is noColor:
             builder.fill(None) # Set color to no-color
         elif c.isCmyk:
-            builder.cmykFill(*c.cmyk)
+            builder.cmykFill(c.cmyk)
         else:
-            builder.fill(*c.rgb)
+            builder.fill(c.rgb)
 
     setFillColor = fill # DrawBot compatible API
 
