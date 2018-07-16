@@ -82,7 +82,8 @@ class DrawBotContext(BaseContext):
     #   S C R E E N
 
     def screenSize(self):
-        """Answer the current screen size in DrawBot. Otherwise default is to do nothing.
+        """Answer the current screen size in DrawBot. Otherwise default is to
+        do nothing.
 
         >>> context = DrawBotContext()
         >>> size = context.screenSize()
@@ -95,11 +96,12 @@ class DrawBotContext(BaseContext):
 
     def newDocument(self, w, h):
         u"""Ignore for DrawBot, as document open automatic if first page is created."""
+        pass
 
     def saveDocument(self, path, multiPage=None):
-        """Select other than standard DrawBot export builders here.
-        Save the current image as path, rendering depending on the extension of the path file.
-        In case the path starts with "_export", then create it directories.
+        """Select non-standard DrawBot export builders here. Save the current
+        image as path, rendering depending on the extension of the path file.
+        In case the path starts with "_export", create its directories.
 
         >>> context = DrawBotContext()
         >>> context.saveImage('_export/MyFile.pdf')
@@ -144,10 +146,11 @@ class DrawBotContext(BaseContext):
         >>> context = DrawBotContext()
         >>> context.rect(pt(0), pt(0), pt(100), pt(100))
         """
-        self.b.rect(x, y, w, h)
+        self.b.rect(x.r, y.r, w.r, h.r)
 
     def oval(self, x, y, w, h):
-        """Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
+        """Draw an oval in rectangle, where (x,y) is the bottom-left and size
+        (w,h).
 
         >>> context = DrawBotContext()
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
@@ -178,7 +181,7 @@ class DrawBotContext(BaseContext):
 
 
     def _get_path(self):
-        """Answer the open drawing path. Create one if it does not exist.
+        """Answers the open drawing path. Create one if it does not exist.
 
         >>> context = DrawBotContext()
         >>> context.path is not None
@@ -365,8 +368,9 @@ class DrawBotContext(BaseContext):
     #   F O N T S
 
     def fontPath2FontName(self, fontPath):
-        """Answer the font name of the font related to fontPath. This is done by installing it (again).
-        Answer None if the font cannot be installed or if the path does not exists.
+        """Answers the font name of the font related to fontPath. This is done
+        by installing it (again). Answers None if the font cannot be installed
+        or if the path does not exists.
 
         >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
         >>> context = DrawBotContext()
@@ -381,8 +385,9 @@ class DrawBotContext(BaseContext):
         return None
 
     def fontName2FontPath(self, fontName):
-        """Answer the unchanged path, if it exists as file. Answer the path that is source of the given font name.
-        Answer None if the font cannot be found."""
+        """Answers the unchanged path, if it exists as file. Answers the path
+        that is source of the given font name. Answers None if the font cannot
+        be found."""
         # If the font cannot be found by name, then test if the file exists as path and answer it.
         if os.path.exists(fontName): #
             return fontName
@@ -440,8 +445,8 @@ class DrawBotContext(BaseContext):
         return self.newString(bullet, e=e, style=style)
 
     def text(self, sOrBs, p):
-        """Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
-        at position p."""
+        """Draw the sOrBs text string, can be a str or BabelString, including a
+        DrawBot FormattedString at position p."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         self.b.text(sOrBs, ru(p)) # Render point units to value tuple
@@ -556,9 +561,9 @@ class DrawBotContext(BaseContext):
         elif c is noColor:
             builder.fill(None) # Set color to no-color
         elif c.isCmyk:
-            builder.cmykFill(c.cmyk)
+            builder.cmykFill(*c.cmyk)
         else:
-            builder.fill(c.rgb)
+            builder.fill(*c.rgb)
 
     setFillColor = fill # DrawBot compatible API
 
