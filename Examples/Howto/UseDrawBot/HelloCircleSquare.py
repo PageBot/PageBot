@@ -5,7 +5,6 @@ from pagebot.toolbox.units import *
 from pagebot.toolbox.color import Color
 
 context = getContext()
-#print(context)
 
 if not context.isDrawBot:
     print('Example only runs on DrawBot.')
@@ -28,5 +27,6 @@ for p in range(10):
         else:
             context.fontSize(pt(24))
             context.text('Hello world on %d,%d' % (x, y), (x, y))
+            
 context.saveImage('_export/HelloCircleSquare.gif')
 
