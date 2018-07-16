@@ -45,13 +45,14 @@ class Page(Element):
         >>> page = Page()
         >>> page.w, page.h
         (100pt, 100pt)
-        >>> page.maxW = 500
-        >>> page.maxH = 600
+        >>> page.maxW, page.maxH = 500, 600 # Get auto-converted to pt-units
+        >>> page.maxW, page.maxH
+        (500pt, 600pt)
         >>> page.size = 1111, 2222
-        >>> page.w, page.h
-        (500pt, 600pt) # Clipped by page.maxW
+        >>> page.w, page.h # Clipped by page.maxW
+        (500pt, 600pt)
         >>> page
-        <Page Unplaced (500pt, 100pt)>
+        <Page Unplaced (500pt, 600pt)>
         """
         Element.__init__(self, **kwargs)
 
@@ -96,9 +97,9 @@ class Page(Element):
 
         >>> from pagebot.document import Document
         >>> from pagebot.constants import A4
-        >>> doc = Document(name='TestDoc', autoPages=8, wh=A4)
+        >>> doc = Document(name='TestDoc', autoPages=8, size=A4)
         >>> doc[5] # Remembers original unit size.
-        <Page:default 5:0 (210mm, 297mm)>
+        <Page:default 5 (210mm, 297mm)>
         """
         if self.title:
             name = ':'+self.title
@@ -155,13 +156,16 @@ class Page(Element):
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
         >>> page = doc[5]
-        >>> page.isLeft
+        >>> page.isLeft # Uneven is automatic right page.
         False
-        >>> page.isLeft = True
+        >>> page.isLeft = True # Unless forced to be left.
         >>> page.isLeft
         True
+        >>> page.isLeft = None # Reset to automatic behavior by setting as None
+        >>> page.isLeft
+        False
         """
-        if self._isLeft is not None:
+        if self._isLeft is not None: # Overwritted by external call.
             return self._isLeft   
         if self.doc is not None:
             return self.doc.isLeftPage(self) # If undefined, query parent document to decide.
@@ -171,7 +175,9 @@ class Page(Element):
     isRight = property(_get_isRight, _set_isRight)
 
     def _get_pn(self):
-        u"""Answer the page number by which self is stored in the parent document."
+        u"""Answer the page number by which self is stored in the parent document.
+        This property is readonly. To move or remove pages, use Document.movePage()
+        or Document.removePage()
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
