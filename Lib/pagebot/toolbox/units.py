@@ -1029,7 +1029,7 @@ class RelativeUnit(Unit):
         u"""Answer the rendered clipped value, clipped to the self.min and self.max local values.
         For absolute inits u.v and u.r are identical.
         For relative units u.v answers the clipped value and u.r answers the value rendered by self.base.
-        self.base can be a unit or a number.
+        self.base can be another unit or a number.
 
         >>> u = Inch(2)
         >>> u.v

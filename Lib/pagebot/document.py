@@ -192,9 +192,10 @@ class Document(object):
             pn, index = pnIndex, 0 # Default is left page on pn row.
         return self.pages[pn][index]
     def __setitem__(self, pn, page):
-        if not pn in self.pages:
+        if not pn in self.pages: # Add list as 
             self.pages[pn] = []
         self.pages[pn].append(page)
+        page.setParent(self)
    
     def _get_ancestors(self):
         u"""Root of the chain of element properties, searching upward in the ancestors tree.
@@ -741,9 +742,9 @@ class Document(object):
 
         >>> from pagebot.elements.pbpage import Page
         >>> from pagebot.elements.views.pageview import PageView
-        >>> doc = Document(name='TestDoc', autoPages=100)
-        >>> len(doc)
-        100
+        >>> doc = Document(name='TestDoc', startPage=50, autoPages=100)
+        >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())
+        (100, 50, 149)
         >>> page = Page()
         >>> doc.appendPage(page)
         >>> len(doc)
@@ -756,12 +757,12 @@ class Document(object):
         (1, 102)
         """
         if page.isPage:
-            page.setParent(self) # Set parent as weakref, without calling self.appendElement again.
             if pn is None:
                 if self.pages.keys():
                     pn = max(self.pages.keys())+1
                 else:
                     pn = 1
+            # Set parent as weakref, without calling self.appendElement again.
             self[pn] = page # Create self.pages[pn] = [] if not exists. Then append page to the list.
         else:
             raise TypeError('Cannot add element "%s" to document. Only "e.isPage == True" are supported.' % page)
@@ -960,7 +961,12 @@ class Document(object):
         return None
 
     def getLastPage(self):
-        u"""Answer last page with the highest sorted page.y. Answer empty list if there are no pages."""
+        u"""Answer last page with the highest sorted page.y. Answer empty list if there are no pages.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10)
+        >>> doc.getLastPage()
+
+        """
         pn = sorted(self.pages.keys())[-1]
         return self.pages[pn][-1]
 
@@ -994,7 +1000,7 @@ class Document(object):
         (<Page:default 1:0 (1000pt, 500pt)>, 1000pt)
         >>> doc[4].h = 1111
         >>> doc.getMaxPageSizes() # Clipped to max size
-        (900, 950, 0pt)
+        (900pt, 950pt, 0pt)
         """
         w, h, d = minW, minH, minD = self.minW, self.minH, self.minD
         maxW, maxH, maxD = self.maxW, self.maxH, self.maxD
@@ -1086,7 +1092,7 @@ class Document(object):
 
         >>> from pagebot.elements import newRect
         >>> from pagebot.conditions import *
-        >>> w = h = 400
+        >>> w = h = 400 # Auto-convert plain numbers to default pt-units.
         >>> doc = Document(name='TestDoc', w=w, h=h, autoPages=1, padding=40)
         >>> r = newRect(fill=redColor, parent=doc[1], conditions=[Fit()])
         >>> score = doc.solve()
