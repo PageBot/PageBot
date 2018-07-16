@@ -21,7 +21,7 @@ from fontTools.ttLib import TTFont, TTLibError
 from drawBot import BezierPath, translate, line, text, stroke, fill, oval, drawPath, textSize
 from drawBot import font as DBFont
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
-from pagebot.toolbox.transformer import point3D
+from pagebot.toolbox.units import point3D
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.glyph import *
 from pagebot.fonttoolbox.objects.font import Font

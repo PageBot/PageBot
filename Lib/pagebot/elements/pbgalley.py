@@ -16,7 +16,7 @@
 #
 from pagebot.style import ORIGIN
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import color
 
 class Galley(Element):

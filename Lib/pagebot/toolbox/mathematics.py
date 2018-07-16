@@ -15,7 +15,7 @@
 #
 import math
 import operator
-from pagebot.toolbox.transformer import point2D
+from pagebot.toolbox.units import point2D
 from functools import reduce
 
 def lucasRange(a, z, n, minN=None, maxN=None):

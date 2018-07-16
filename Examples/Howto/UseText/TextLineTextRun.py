@@ -240,7 +240,6 @@ class TextLine(object):
     def getOffsetForStringIndex(self, i):
         """Answer the z position that is closest to glyph string index i. If i is out of bounds,
         then answer the closest x position (left and right side of the string)."""
-        #print('=====', self._ctLine)
         return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
 
     def _get_stringIndex(self):

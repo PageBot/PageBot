@@ -49,25 +49,26 @@ class BabelString(object):
         except (TypeError, AttributeError):
             self.s += s # Convert to babel string, whatever it is.
 
-    def type(self):
+    def _get_type(self):
         """Answer the id of the class, in case a caller wants to know what kind of
         BabelString this is."""
         return self.BABEL_STRING_TYPE
+    type = property(_get_type)
 
     def _get_w(self):
         u"""Answer measure as point units."""
-        return pt(self.size()[0])
+        return pt(self.size[0])
     w = property(_get_w)
 
     def _get_h(self):
         u"""Answer measure as point units."""
-        return pt(self.size()[1])
+        return pt(self.size[1])
     h = property(_get_h)
 
-    def size(self):
+    def _get_size(self):
         u"""Answer the size tuple (w, h) of the string."""
         return pt(self.context.textSize(self))
-
+    size = property(_get_size)
 
 if __name__ == '__main__':
     import doctest

@@ -14,7 +14,7 @@
 #
 #     glyphdimensions.py
 #
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 
 class GlyphDimensions(BaseFontShow):

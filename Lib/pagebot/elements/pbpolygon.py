@@ -16,7 +16,7 @@
 #
 from pagebot.elements.element import Element
 from pagebot.style import XXXL
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 
 
 class Polygon(Element):

@@ -26,7 +26,6 @@ def getContext():
             import AppKit # Force exception on non-OSX platforms
             from pagebot.contexts.drawbotcontext import DrawBotContext
             DEFAULT_CONTEXT = DrawBotContext() # Test if platform is supporing DrawBot:
-            print('bla')
             # MampView.build exports in MAMP folder that does not commit in Git.
             MAMP_PATH = '/Applications/MAMP/htdocs/'
 

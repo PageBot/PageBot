@@ -32,7 +32,7 @@ A1 = mm(594),   mm(841)
 A2 = mm(420),   mm(594)
 A3 = mm(297),   mm(420)
 A4 = mm(210),   mm(297) 
-A4Rounded = pt(mm(210)).round(), pt(mm(297)).round() # Rounded to points 595 * 842 to fit exact columns measures
+A4Rounded = mm(210).rounded.pt, mm(297).rounded.pt # Rounded to points 595 * 842 to fit exact columns measures
 A5 = mm(148),   mm(210)
 A6 = mm(105),   mm(148)
 A7 = mm(74),    mm(105)
@@ -87,7 +87,7 @@ A3Oversized = A3[0]+inch(1), A3[1]+inch(1)
 # International Postcard Size
 IntPostcardMax = mm(235), mm(120)
 IntPostcardMin = mm(140), mm(90)
-AnsichtCard = pt(A6[1]).round(), pt(A6[0]).round() # Landscape Rounded A6
+AnsichtCard = A6[1].rounded.pt, A6[0].rounded.pt # Landscape Rounded A6
 # US Postal Postcard Size
 USPostcardMax = inch(6), inch(4.25)
 USPostcardMin = inch(5), inch(3.5)

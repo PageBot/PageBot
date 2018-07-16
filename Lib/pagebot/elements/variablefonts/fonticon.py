@@ -17,7 +17,7 @@
 #     Draw the icon with optional information of the included font.
 #
 from pagebot.elements import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 
 class FontIcon(Element): 
     u"""Showing the specified font(sub variable font) in the form of an icon 

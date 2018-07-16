@@ -17,7 +17,7 @@ from __future__ import division # Make integer division result in float.
 
 from pagebot.style import ORIGIN
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
 
 class Oval(Element):

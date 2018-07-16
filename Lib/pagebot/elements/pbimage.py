@@ -20,7 +20,7 @@ import os
 from pagebot.elements.pbtextbox import TextBox
 from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN # In case no image is defined.
-from pagebot.toolbox.transformer import pointOffset, point2D
+from pagebot.toolbox.units import pointOffset, point2D
 from pagebot.conditions import Float2TopSide, Top2TopSide, Fit2Width
 from pagebot.toolbox.color import noColor
 

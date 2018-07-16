@@ -23,7 +23,7 @@ from __future__ import division
 from math import pi, sin, cos
 
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 from pagebot.elements import Element
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
