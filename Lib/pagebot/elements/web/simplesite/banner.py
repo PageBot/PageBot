@@ -17,7 +17,7 @@
 from __future__ import division # Make integer division result in float.
 
 from pagebot.elements.pbgroup import Group
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 
 class Banner(Group):
     u"""Draw rectangle, default identical to Element itself.

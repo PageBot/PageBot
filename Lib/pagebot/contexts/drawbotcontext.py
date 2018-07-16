@@ -17,9 +17,13 @@
 import os
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import color, Color, noColor, inheritColor
+from pagebot.toolbox.units import ru, isUnit # Render units
+from pagebot.constants import *
 
-# FIXME: bad exception usage.
+# FIXME: bad exception usage. (How to check otherwise if running in DrawBot context?)
+#import ForceErrorHere # When debugging: Uncheck in case of forcing noneDrawBotBuilder testing
+
 try:
     #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
     from AppKit import NSFont
@@ -160,7 +164,7 @@ class DrawBotContext(BaseContext):
         >>> context = DrawBotContext()
         >>> context.line(pt(100, 100), pt(200, 200))
         """
-        self.b.line(ur(p1), ur(p2)) # Unit render of point tuples
+        self.b.line(ru(p1), ru(p2)) # Render tuple of units point
 
     def newPath(self):
         """Make a new DrawBot Bezierpath() to draw in.
@@ -209,7 +213,7 @@ class DrawBotContext(BaseContext):
         """
         if self._path is None:
             self.newPath()
-        self._path.moveTo((p[0].r, p[1].r))
+        self._path.moveTo(ru(p)) # Render units point tuple to tuple of values
 
     def lineTo(self, p):
         """Line to point p. Create a new path if none is open.
@@ -229,7 +233,7 @@ class DrawBotContext(BaseContext):
         """
         if self._path is None:
             self.newPath()
-        self._path.lineTo((p[0], p[1]))
+        self._path.lineTo(ru(p)) # Render units point tuple to tuple of values
 
     def quadTo(bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
@@ -252,7 +256,7 @@ class DrawBotContext(BaseContext):
         """
         if self._path is None:
             self.newPath()
-        self._path.curveTo((bcp1[0], bcp1[1]), (bcp2[0], bcp2[1]), (p[0], p[1]))
+        self._path.curveTo(ru(bcp1), ru(bcp2), ru(p)) # Render units tuples to value tuples
 
     def closePath(self):
         """Curve to point p. Create a new path if none is open.
@@ -423,12 +427,14 @@ class DrawBotContext(BaseContext):
         >>> context = DrawBotContext()
         >>> context.fontSize(pt(12))
         """
-        self.b.fontSize(fontSize)
+        assert isUnit(fontSize)
+        self.b.fontSize(fontSize.r) # Render fontSize unit to value
 
     def font(self, font, fontSize=None):
         self.b.font(font)
         if fontSize is not None:
-            self.b.fontSize(fontSize)
+            assert isUnit(fontSize)
+            self.b.fontSize(fontSize.r) # Render fontSize unit to value
 
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, e=e, style=style)
@@ -438,14 +444,14 @@ class DrawBotContext(BaseContext):
         at position p."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        self.b.text(sOrBs, p)
+        self.b.text(sOrBs, ru(p)) # Render point units to value tuple
 
     def textBox(self, sOrBs, r):
         """Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
         in rectangle r."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        self.b.textBox(sOrBs, r)
+        self.b.textBox(sOrBs, ru(r)) # Render rectangle units to value tuple
 
     def textSize(self, bs, w=None, h=None):
         """Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
@@ -499,30 +505,39 @@ class DrawBotContext(BaseContext):
     #   C O L O R
 
     def setTextFillColor(self, fs, c):
-        u"""Set the color for global or the color of the formatted string.
+        u"""Set the fill color of the formatted string.
 
         >>> context = DrawBotContext()
         >>> fs = context.newString('Hello')
         >>> context.textFill(fs, color(0.5)) # Same as setTextFillColor
         >>> context.textFill(fs, color('red'))
         """
-        self.setFillColor(c, builder=fs)
+        self.fill(c, builder=fs)
 
     textFill = setTextFillColor
 
     def setTextStrokeColor(self, fs, c, w=None):
-        u"""Set the color for global or the color of the formatted string.
+        u"""Set the stroke color of the formatted string.
 
         >>> context = DrawBotContext()
         >>> fs = context.newString('Hello')
         >>> context.textStroke(fs, color(0.5)) # Same as setTextStrokeColor
         >>> context.textStroke(fs, color('red'), w=pt(10))
         """
-        self.setStrokeColor(c, builder=fs)
+        self.stroke(c, w=w, builder=fs)
 
     textStroke = setTextStrokeColor
 
-    def setFillColor(self, c, builder=None):
+    def setTextStrokeWidth(self, fs, w):
+        u"""Set the stroke width of the formatted string.
+
+        >>> context = DrawBotContext()
+        >>> fs = context.newString('Hello')
+        >>> context.setTextStrokeWidth(fs, pt(10))
+        """
+        self.setStrokeWidth(w, builder=fs)
+
+    def fill(self, c, builder=None):
         u"""Set the color for global or the color of the formatted string.
 
         >>> context = DrawBotContext()
@@ -545,9 +560,9 @@ class DrawBotContext(BaseContext):
         else:
             builder.fill(c.rgb)
 
-    fill = setFillColor # DrawBot compatible API
+    setFillColor = fill # DrawBot compatible API
 
-    def setStrokeColor(self, c, w=None, builder=None):
+    def stroke(self, c, w=None, builder=None):
         u"""Set the color for global or the color of the formatted string.
 
         >>> context = DrawBotContext()
@@ -570,20 +585,23 @@ class DrawBotContext(BaseContext):
         else:
             builder.stroke(c.rgb)
         if w is not None:
-            self.strokeWidth(w)
+            self.setStrokeWidth(w)
 
-    stroke = setStrokeColor # DrawBot compatible API
+    setStrokeColor = stroke # DrawBot compatible API
 
-    def strokeWidth(self, w):
+    def setStrokeWidth(self, w, builder=None):
         u"""Set the current stroke width.
 
         >>> from pagebot.toolbox.units import unit, pt, mm
         >>> context = DrawBotContext()
-        >>> context.strokeWidth(pt(0.5))
-        >>> context.strokeWidth(mm(0.5))
+        >>> context.setStrokeWidth(pt(0.5))
+        >>> context.setStrokeWidth(mm(0.5))
 
         """
-        self.b.strokeWidth(w)
+        if builder is None: # Builder can be optional DrawBot FormattedString
+            builder = self.b
+
+        builder.strokeWidth(w)
 
     def rotate(self, angle):
         """Rotate the canvas by angle."""
@@ -622,7 +640,6 @@ class DrawBotContext(BaseContext):
         http://www.drawbot.com/content/image/imageObject.html
 
         >>> from pagebot import getResourcesPath
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> imo = context.getImageObject(path)

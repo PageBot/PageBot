@@ -17,7 +17,8 @@
 #     Draw the icon with optional information of the included font.
 #
 from pagebot.elements import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset, pt
+from pagebot.toolbox.color import color
 
 class FontIcon(Element): 
     u"""Showing the specified font(sub variable font) in the form of an icon 
@@ -27,18 +28,18 @@ class FontIcon(Element):
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
     >>> font = getFont(path)
-    >>> fi = FontIcon(font, w=120, h=160, title="Roboto Regular")
+    >>> fi = FontIcon(font, w=120, h=160, title="Roboto Regular") # Numbers for (w, h) convert to pt.
     >>> fi.title
     'Roboto Regular'
     >>> fi.size
-    (120, 160, 1)
+    (120pt, 160pt)
 
     """
     LABEL_RTRACKING = 0.02
     LABEL_RLEADING = 1.3
 
     def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=None,
-            earSize=None, earLeft=True, earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
+            earSize=None, earLeft=True, earFill=None, cFill=None, cStroke=None, cStrokeWidth=None,
             labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
         u"""    
         >>> from pagebot.fonttoolbox.objects.font import getFont
@@ -54,9 +55,9 @@ class FontIcon(Element):
         >>> font = getFont(path)
         >>> iw, ih = w/4, h/4
         >>> x, y = w/8, h/8
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", earSize=0.3, earLeft=True, parent=page, stroke=0, strokeWidth=3)
-        >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=0,parent=page)
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=0.5, earSize=0.3, earLeft=True, earFill=None, fill=(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
+        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", earSize=0.3, earLeft=True, parent=page, stroke=color(0), strokeWidth=3)
+        >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=color(0),parent=page)
+        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=color(0.5), earSize=0.3, earLeft=True, earFill=None, fill=color(1,0,0,0.5), parent=bg, stroke=color(1), strokeWidth=3)
         >>> doc.export('_export/FontIconTest.pdf')
         """
 
@@ -65,14 +66,18 @@ class FontIcon(Element):
         if title is not None:
             self.title = title or "%s %s" % (f.info.familyName, f.info.styleName) 
         self.titleFont = titleFont, labelFont or f 
-        self.titleFontSize = 28
+        self.titleFontSize = pt(28)
         self.labelFont = labelFont or f
-        self.labelFontSize = labelFontSize or 10
+        self.labelFontSize = labelFontSize or pt(10)
         self.label = label # Optiona second label line
         self.c = c # Character(s) in the icon.
+        if cFill is None:
+            cFill = color(0)
         self.cFill = cFill
+        if cStroke is None:
+            cStroke = color(0)
         self.cStroke = cStroke
-        self.cStrokeWidth = cStrokeWidth
+        self.cStrokeWidth = cStrokeWidth or pt(1)
         self.scale = s
         self.show = show
         if stroke is not None:
@@ -112,7 +117,7 @@ class FontIcon(Element):
             return
         w = self.w # Width of the icon
         h = self.h # Height of the icon
-        e = self.earSize*w # Ear size fraction of the width
+        e = w*self.earSize # Ear size fraction of the width
 
         x,y = p[0], p[1]
         c = self.context
@@ -169,17 +174,17 @@ class FontIcon(Element):
         if self.title:
             bs = c.newString(self.title,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=0,
+                                              textFill=color(0),
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
             c.text(bs, (w/2-tw/2, self.h+th/2))
 
-        y = -self.LABEL_RLEADING*labelSize
+        y = -labelSize * self.LABEL_RLEADING
         if self.name:
             bs = c.newString(self.name,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=0,
+                                              textFill=color(0),
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
@@ -188,7 +193,7 @@ class FontIcon(Element):
         if self.label:
             bs = c.newString(self.label,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=0,
+                                              textFill=color(0),
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()

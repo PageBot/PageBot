@@ -14,7 +14,7 @@
 #
 #     glyphset.py
 #
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.toolbox.future import chr
 

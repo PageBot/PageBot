@@ -18,7 +18,7 @@ from random import choice
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.constants import JUSTIFIED, LEFT
 from pagebot.contributions.filibuster.blurb import Blurb
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 
 class Stacked(BaseFontShow):
     u"""Showing the specified (variable) font as full page with a matrix

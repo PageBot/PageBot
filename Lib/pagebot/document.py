@@ -47,8 +47,8 @@ class Document(object):
 
     >>> pages = (Page(), Page(), Page())
     >>> doc = Document(name='TestDoc', w=300, h=400, pages=pages, autoPages=0, viewId='Mamp')
-    >>> len(doc)
-    3
+    >>> len(doc), sorted(doc.pages.keys()), len(doc.pages[1])
+    (3, [1, 2, 3], 1)
     >>> doc.context
     <HtmlContext>
 
@@ -58,7 +58,9 @@ class Document(object):
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None, autoPages=1, 
-            template=None, templates=None, originTop=True, startPage=1, w=None, h=None, d=None,
+            template=None, templates=None, originTop=True, startPage=None, 
+            w=None, h=None, d=None, size=None, size3D=None,
+            minW=None, maxW=None, minH=None, maxH=None, minD=None, maxD=None,
             padding=None, lib=None, context=None, exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. 
         Allows to compose the pages without the need to send them directly to the output for 
@@ -72,6 +74,10 @@ class Document(object):
         self.title = title or self.name
 
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
+        if size3D is not None: # For convenience of the caller, also accept size3D and size tuples. 
+            w, h, d = size3D
+        elif size is not None:
+            w, h = size
         self.w = w or DEFAULT_DOC_WIDTH # Always needs a value. Take 1000 if 0 or None defined.
         self.h = h or DEFAULT_DOC_HEIGHT # These values overwrite the self.rootStyle['w'] and self.rootStyle['h']
         self.d = d or DEFAULT_DOC_DEPTH
@@ -80,9 +86,15 @@ class Document(object):
 
         # Set defaults of doc for minW, maxW, etc. Can be queried by relative
         # units of pages and child elements.
-        self.minW, self.maxW = MIN_WIDTH, MAX_WIDTH
-        self.minH, self.maxH = MIN_HEIGHT, MAX_HEIGHT
-        self.minD, self.maxD = MIN_DEPTH, MAX_DEPTH
+        if minW is None: minW = MIN_WIDTH
+        if maxW is None: maxW = MAX_WIDTH
+        self.minW, self.maxW = units(minW), units(maxW)
+        if minH is None: minH = MIN_HEIGHT
+        if maxH is None: maxH = MAX_HEIGHT
+        self.minH, self.maxH = units(minH), units(maxH)
+        if minD is None: minD = MIN_DEPTH
+        if maxD is None: maxD = MAX_DEPTH
+        self.minD, self.maxD = units(minD), units(maxD)
 
         # Initialize the dictionary of pages.
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
@@ -169,8 +181,10 @@ class Document(object):
         
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=100)
         >>> page = doc[66]
+        >>> page, page.pn
+        (<Page:default 66 (300pt, 400pt)>, (66, 0))
         >>> doc.getPageNumber(page)
-        '66'
+        (66, 0)
         """
         if isinstance(pnIndex, (list, tuple)):
             pn, index = pnIndex
@@ -256,9 +270,10 @@ class Document(object):
         u"""Answer the named template. If it does not exist, then answer the default template. 
         Answer None of if there is no default.
 
-        >>> doc = Document(name='TestDoc')
+        >>> from pagebot.constants import A6
+        >>> doc = Document(name='TestDoc', size=A6)
         >>> doc.getTemplate()
-        <Template:default (0pt, 0pt)>
+        <Template:default (105mm, 148mm)>
         >>> doc.getTemplate() == doc.defaultTemplate
         True
         """
@@ -273,7 +288,7 @@ class Document(object):
         >>> t = Template(w=200, h=300, name=name)
         >>> doc = Document(name='TestDoc')
         >>> doc.addTemplate('myTemplate', t)
-        <Template:TestTemplate (0pt, 0pt)>
+        <Template:TestTemplate (200pt, 300pt)>
         >>> doc.getTemplate('myTemplate').name == name
         True
         """
@@ -284,9 +299,10 @@ class Document(object):
     def _get_defaultTemplate(self):
         u"""Answer the default template of the document.
 
-        >>> doc = Document(name='TestDoc')
+        >>> from pagebot.constants import Legal
+        >>> doc = Document(name='TestDoc', size=Legal)
         >>> doc.defaultTemplate
-        <Template:default (0pt, 0pt)>
+        <Template:default (8.50", 14")>
         """
         return self.templates.get('default')
     def _set_defaultTemplate(self, template):
@@ -603,7 +619,7 @@ class Document(object):
         """
         h = self.h
         base = dict(base=h, em=self.em) # In case relative units, use this as base.        
-        return units(self.rootStyle.get('pt', 0), base=base, min=0, max=h)
+        return units(self.rootStyle.get('pt'), base=base, min=0, max=h)
     def _set_pt(self, pt):
         self.rootStyle['pt'] = units(pt)  
     pt = property(_get_pt, _set_pt)
@@ -625,7 +641,7 @@ class Document(object):
         """
         h = self.h
         base = dict(base=h, em=self.em) # In case relative units, use this as base.        
-        return units(self.rootStyle.get('pb', 0), base=base, min=0, max=h)
+        return units(self.rootStyle.get('pb'), base=base, min=0, max=h)
     def _set_pb(self, pb):
         self.rootStyle['pb'] = units(pb)  
     pb = property(_get_pb, _set_pb)
@@ -647,7 +663,7 @@ class Document(object):
         """
         w = self.w
         base = dict(base=w, em=self.em) # In case relative units, use this as base.        
-        return units(self.rootStyle.get('pl', 0), base=base, min=0, max=w)
+        return units(self.rootStyle.get('pl'), base=base, min=0, max=w)
     def _set_pl(self, pl):
         self.rootStyle['pl'] = units(pl) 
     pl = property(_get_pl, _set_pl)
@@ -720,7 +736,7 @@ class Document(object):
 
     #   P A G E S
 
-    def appendPage(self, page, startPage=1):
+    def appendPage(self, page, pn=None):
         u"""Append page to the document. Assert that it is a page element.
 
         >>> from pagebot.elements.pbpage import Page
@@ -741,11 +757,12 @@ class Document(object):
         """
         if page.isPage:
             page.setParent(self) # Set parent as weakref, without calling self.appendElement again.
-            if self.pages.keys():
-                pn = max(self.pages.keys())+1
-            else:
-                pn = startPage
-            self[pn] = page
+            if pn is None:
+                if self.pages.keys():
+                    pn = max(self.pages.keys())+1
+                else:
+                    pn = 1
+            self[pn] = page # Create self.pages[pn] = [] if not exists. Then append page to the list.
         else:
             raise TypeError('Cannot add element "%s" to document. Only "e.isPage == True" are supported.' % page)
     
@@ -763,11 +780,19 @@ class Document(object):
             return pages[0]
         return None
 
-    def getPages(self, pn):
-        u"""Answer all pages that share the same page number. Rase KeyError if non exist.
+    def removePage(self, page):
+        u"""Remove the page from the document and return the object.
 
-        >>> from pagebot.elements.pbpage import Page
-        >>> from pagebot.elements.views.pageview import PageView
+        >>> from pagebot.constants import A5
+        >>> doc = Document(name='TestDoc', autoPages=5, size=A5)
+        >>> page = doc[3]
+        >>> page
+        <Page:default 3 (148mm, 210mm)>
+        """
+
+    def getPages(self, pn):
+        u"""Answer all pages that share the same page number. Rase KeyError if none exist.
+
         >>> doc = Document(name='TestDoc', autoPages=100)
         >>> doc[66] == doc.getPages(66)[0]
         True
@@ -847,20 +872,30 @@ class Document(object):
         
         if not name and template is not None:
             name = template.name
-
-        page = self.PAGE_CLASS(parent=self, w=None, h=None, name=name, **kwargs)
+        
+        # If undefined, copy the new page size from the document preset size.
+        if w is None:
+            w = self.w
+        if h is None:
+            h = self.h
+        
+        page = self.PAGE_CLASS(w=w, h=h, name=name, parent=self, **kwargs)
+        self.appendPage(page, pn) # Add the page to the document, before applying the template.
         page.applyTemplate(template)
-        return page # Answer the new page 
+        return page # Answer the new page for convenience of the caller.
 
-    def makePages(self, pageCnt, pn=1, template=None, name=None, w=None, h=None, **kwargs):
+    def makePages(self, pageCnt, pn=None, template=None, name=None, w=None, h=None, **kwargs):
         u"""If no "point" is defined as page number pn, then we'll continue after the maximum 
         value of page.y origin position. If template is undefined, then self.newPage will use 
         self.defaultTemplate to initialize the new pages.
 
-        >>> doc = Document(autoPages=4)
+        >>> doc = Document(autoPages=2)
+        >>> doc.makePages(2)
         >>> len(doc.pages), sorted(doc.pages.keys())
         (4, [1, 2, 3, 4])
         """
+        if pn is None:
+            pn = max(self.pages.keys() or [0])+1
         for n in range(pageCnt): # First page is n + pn
             # Parent is forced to self.
             self.newPage(pn=pn+n, template=template, name=name, w=w, h=h, **kwargs) 
@@ -874,17 +909,24 @@ class Document(object):
     def nextPage(self, page, nextPage=1, makeNew=True):
         u"""Answer the next page of page. If it does not exist, create a new page.
 
-        >>> doc = Document(autoPages=4)
+        >>> from pagebot.constants import Tabloid
+        >>> doc = Document(autoPages=4, size=Tabloid)
+        >>> len(doc.pages), len(doc)
+        (4, 4)
         >>> page = doc[2]
         >>> next = doc.nextPage(page)
+        >>> next
+        <Page:default 2 (11", 16.90")>
         >>> doc.getPageNumber(next)
-        '3'
+        (3, 0)
         >>> next = doc.nextPage(next)
         >>> doc.getPageNumber(next)
-        '4'
-        >>> next = doc.nextPage(next) # Creating new page
+        (4, 0)
+        >>> doc.nextPage(next, makeNew=False) is None
+        True
+        >>> next = doc.nextPage(next) # Creating new page of makeNew is True
         >>> doc.getPageNumber(next)
-        '5'
+        (5, 0)
         """
         found = False
         for pn, pnPages in sorted(self.pages.items()):
@@ -896,20 +938,19 @@ class Document(object):
         # Not found, create new one?
         if makeNew:
             return self.newPage()
-        return None
+        return None # No next page found and none created.
 
     def getPageNumber(self, page):
-        u"""Answer a string with the page number pn, if the page can be found. If the page has index > 0:
-        then answer page format "pn-index". pn and index are incremented by 1.
+        u"""Answer a string with the page number (pn, index), if the page can be found and there are multiple. 
+        Pages are organized as dict of lists (allowing multiple pages on the same page number)
+        {1:[page, page, ...], 2}
         TODO: Make a reversed table if this squential search shows to be slow in the future with large docs.
         """
         for pn, pnPages in sorted(self.pages.items()):
             for index, pg in enumerate(pnPages):
-                if pg is page:
-                    if index:
-                        return '%d-%d' % (pn, index)
-                    return '%d' % (pn)
-        return ''
+                if page is pg:
+                    return (pn, 0)
+        return None # Cannot find this page
 
     def getFirstPage(self):
         u"""Answer the list of pages with the lowest sorted page.y. Answer empty list if there are no pages."""
@@ -938,18 +979,22 @@ class Document(object):
         then only evaluate the selected pages.
         Clip the found values against the document min/max proportions.
 
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=1000, maxH=1000)
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=900, maxH=950)
+        >>> doc.minW, doc.maxW, doc.minH, doc.maxH
+        (1pt, 900pt, 1pt, 950pt)
         >>> doc.getMaxPageSizes()
         (500pt, 500pt, 0pt)
         >>> page = doc[1]
-        >>> page.w, page.h
+        >>> page.minW, page.maxW, page.minH, page.maxH # Inheriting from doc parent
+        
+        >>> page.size
         (500pt, 500pt)
         >>> page.w = 2345
         >>> page, page.w
-        (<Page:default (0pt, 0pt)>, 2345pt)
+        (<Page:default 1:0 (1000pt, 500pt)>, 1000pt)
         >>> doc[4].h = 1111
-        >>> doc.getMaxPageSizes()
-        (2345pt, 1111pt, 0pt)
+        >>> doc.getMaxPageSizes() # Clipped to max size
+        (900, 950, 0pt)
         """
         w, h, d = minW, minH, minD = self.minW, self.minH, self.minD
         maxW, maxH, maxD = self.maxW, self.maxH, self.maxD
@@ -1028,11 +1073,11 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
         >>> doc.view # PageView is default.
-        <PageView:Page (0pt, 0pt)>
+        <PageView:Page (0pt, 0pt, 300pt, 400pt)>
         >>> doc.build('_export/TestBuildDoc.pdf')        
         >>> view = doc.newView('Site')
         >>> doc.view
-        <SiteView:Site (0pt, 0pt)>
+        <SiteView:Site (0pt, 0pt, 300pt, 400pt)>
         """
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 
@@ -1046,7 +1091,7 @@ class Document(object):
         >>> r = newRect(fill=redColor, parent=doc[1], conditions=[Fit()])
         >>> score = doc.solve()
         >>> doc.view # PageView is default.
-        <PageView:Page (0pt, 0pt)>
+        <PageView:Page (0pt, 0pt, 400pt, 400pt)>
         >>> doc.export('_export/TestExportDoc.pdf')        
         """
         self.build(path=path, multiPage=multiPage)

@@ -15,7 +15,7 @@
 #     glyphpath.py
 #
 from pagebot.elements.paths.pbpath import Path
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
 from pagebot.style import DEFAULT_HEIGHT, DEFAULT_WIDTH, ORIGIN
 
