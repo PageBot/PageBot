@@ -21,6 +21,7 @@ import re
 
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, DEFAULT_LEADING
+from pagebot.toolbox.units import isUnit
 
 class FlatString(BabelString):
 
@@ -144,6 +145,8 @@ class FlatString(BabelString):
         >>> context = FlatContext()
         >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=pt(30)))
         >>> #bs.s.lines()
+        >>> 'flat.text.text' in str(bs)
+        True
         """
         if style is None:
             style = {}
@@ -167,10 +170,13 @@ class FlatString(BabelString):
             font = font.path
         if font is None or not os.path.exists(font):
             font = DEFAULT_FONT_PATH
+        fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
+        assert isUnit(fontSize), ('FlatString.newString: FontSize %s must be of type Unit' % fontSize)
+        leading = style.get('leading', DEFAULT_LEADING)
+        assert isUnit(leading), ('FlatString.newString: Leading %s must be of type Unit' % leading)
         flatFont = context.b.font.open(font)
         strike = context.b.strike(flatFont)
-        strike.size(style.get('fontSize', DEFAULT_FONT_SIZE).r,
-            style.get('leading', DEFAULT_LEADING).r, units='pt')
+        strike.size(fontSize.pt, leading.pt, units='pt')
         #if w is not None:
         #    strike.width = w
         return cls(strike.text(s), context=context, style=style) # Make real Flat flavor BabelString here.

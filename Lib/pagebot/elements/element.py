@@ -3191,7 +3191,7 @@ class Element(object):
         >>> e.minW
         50mm
         """
-        return units(self.css('minW', MIN_WIDTH))
+        return units(self.css('minW'))
     def _set_minW(self, minW):
         self.style['minW'] = u = units(minW) # Set on local style, shielding parent self.css value.
         assert u.isAbsolute, ('Element.minW "%s" must be an absolute unit.' % minW)
@@ -3209,7 +3209,7 @@ class Element(object):
         >>> e.minH
         50mm
         """
-        return units(self.css('minH', MIN_HEIGHT))
+        return units(self.css('minH'))
     def _set_minH(self, minH):
         self.style['minH'] = u = units(minH) # Set on local style, shielding parent self.css value.
         assert u.isAbsolute, ('Element.minH "%s" must be an absolute unit.' % minH)
@@ -3227,7 +3227,7 @@ class Element(object):
         >>> e.minD
         50mm
         """
-        return units(self.css('minD', MIN_DEPTH))
+        return units(self.css('minD'))
     def _set_minD(self, minD):
         self.style['minD'] = u = units(minD) # Set on local style, shielding parent self.css value.
         assert u.isAbsolute, ('Element.minD "%s" must be an absolute unit.' % minD)
@@ -3239,6 +3239,9 @@ class Element(object):
         >>> e = Element()
         >>> e.minSize
         (1pt, 1pt)
+        >>> e = Element(minW=100)
+        >>> e.minSize
+        (100pt, 1pt)
         """
         return self.minW, self.minH
     def _set_minSize(self, minSize):
@@ -3247,8 +3250,11 @@ class Element(object):
         >>> e = Element()
         >>> e.minSize
         (1pt, 1pt)
-        >>> e.minSize(100, 200, 300) # Takes 2D and 3D
-        >>> e.minSize # Deafult give 2D
+        size2D = 100, 200
+        >>> e.minSize(size2D) # Takes 2D and 3D
+        size3D = 100, 200, 300
+        >>> e.minSize(size3D) # Takes 2D and 3D
+        >>> e.minSize # Default give 2D
         (100pt, 200pt)
         >>> e.minSize3D
         (100pt, 200pt, 300pt)
