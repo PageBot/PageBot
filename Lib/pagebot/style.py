@@ -16,7 +16,7 @@
 #
 #     Holds the main style definintion and constants of PageBot.
 #     Note that each value of a style (inheriting from the root) can be redefined
-#     to be used local in an element or string. 
+#     to be used local in an element or string.
 #
 import copy
 from pagebot.constants import *
@@ -62,7 +62,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         u = pt(u)
     listIndent = u*0.8 # The order or multiplication matters, in case u is a Unit instance.
     gutter = u # Make default gutter equal to the page unit.
-    
+
     pt0 = pt(0) # Standard initialize on Unit zero
     em0 = em(0)
 
@@ -120,8 +120,8 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
         # Basic grid units in 3 directions. In case it holds a number it interprets as pt(value), points as 1/72".
         # Otherwise a Unit instance should be used.
-        xUnits = u, # Base unit for Dutch/Swiss typography :) 
-        yUnits = u, 
+        xUnits = u, # Base unit for Dutch/Swiss typography :)
+        yUnits = u,
         zUnits = u,
 
         # Padding where needed, inside elemen box. Can contain number values or Unit instances.
@@ -215,7 +215,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Axis location of the Variable Font to create the font instance. E.g. dict(wght=45, opsz=12)
         variableLocation = None,
         # If True, round the location values for fitString to whole numbers, to avoid too many cached instances.
-        roundVariableLocation = True, 
+        roundVariableLocation = True,
 
         # List of supported OpenType features.
         # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf,

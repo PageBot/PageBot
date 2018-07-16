@@ -16,7 +16,7 @@
 #
 import os
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
+from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import Color
 
 # FIXME: bad exception usage.
@@ -42,10 +42,6 @@ except (ImportError, AttributeError):
     kCTFontURLAttribute = None
     Variable = None
     print('Using drawBotContext-->NoneDrawBotBuilder')
-
-from pagebot.contexts.basecontext import BaseContext
-from pagebot.style import NO_COLOR, LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
-from pagebot.toolbox.color import Color
 
 class DrawBotContext(BaseContext):
     """A DrawBotContext instance combines the specific functions of the DrawBot
