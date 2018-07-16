@@ -126,7 +126,8 @@ def pointOffset(point, offset):
     return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
 
 def point2S(p):
-    u"""Answer the point as string of units. Ignore z value if it renders to 0.
+    u"""Answer the point as string of units. Ignore `z`-value if it renders to
+    0.
 
     >>> point2S(pt(22.4, 33.5, 44.6))
     '22.4pt 33.5pt 44.6pt'
@@ -139,7 +140,8 @@ def point2S(p):
     return '%s %s' % (x, y)
 
 def point2roundedS(p):
-    u"""Answer the point as string of rounded units. Ignore z value if it renders to 0.
+    u"""Answer the point as string of rounded units. Ignore `z`-value if it
+    renders to 0.
 
     >>> point2roundedS(pt(22.4, 33.5, 44.6))
     '22 34 45'
@@ -182,7 +184,8 @@ def ru(u, *args, **kwargs):
         return uu
 
 def uv(u, *args, **kwargs):
-    u"""Answer the clipped value of u. Otherwise use u. Convert to int if whole number.
+    u"""Answer the clipped value of `u`. Otherwise use `u`. Convert to *int* if
+    whole number.
 
     >>> uv(3)
     3
@@ -237,7 +240,8 @@ def isUnit(u, *args):
     return hasattr(u, '_v') and hasattr(u, 'base')
 
 def uRound(u):
-    u"""Anwer a unit with rounded value. Or the rounded value if u is not a Unit instance.
+    u"""Anwer a unit with rounded value. Or the rounded value if `u` is not a
+    Unit instance.
 
     >>> uRound(Em(3.2))
     3em
@@ -260,7 +264,8 @@ def classOf(u):
     return None
 
 def uString(u, maker=None):
-    u"""Answer the unit u as string. In case it is not a Unit instance, convert to Unit first.
+    u"""Answer the unit `u` as a string. In case it is not a Unit instance,
+    convert to Unit first.
 
     >>> u = Em(2)
     >>> uString(u)
@@ -392,7 +397,7 @@ class Unit(object):
 
         >>> u = pt(12.2)
         >>> ru = u.rounded
-        >>> u, ru # Did not change original u 
+        >>> u, ru # Did not change original u
         (12.2pt, 12pt)
         """
         u = copy(self)
@@ -407,7 +412,8 @@ class Unit(object):
         return '%s%s' % (asFormatted(v), self.uName.lower())
 
     def _get_pt(self):
-        u"""Answer the clipped value in pt. Base value for absolute unit values is ignored.
+        u"""Answer the clipped value in *pt*. Base value for absolute unit
+        values is ignored.
 
         >>> p(1).pt
         12
@@ -426,7 +432,8 @@ class Unit(object):
     pt = property(_get_pt, _set_pt)
 
     def _get_px(self):
-        u"""Answer the clipped value in px. Base value for absolute unit values is ignored.
+        u"""Answers the clipped value in *px*. Base value for absolute unit values
+        is ignored.
 
         >>> p(1).px
         12
@@ -449,9 +456,10 @@ class Unit(object):
     p = property(_get_p)
 
     def _get_v(self):
-        u"""Answer the raw unit value, clipped to the self.min and self.max local values.
-        For absolute inits u.v and u.r are identical.
-        For relative units u.v answers the clipped value and u.r answers the value rendered by u.base
+        u"""Answers the raw unit value, clipped to the self.min and self.max
+        local values. For absolute inits u.v and u.r are identical. For
+        relative units u.v answers the clipped value and u.r answers the value
+        rendered by u.base.
 
         >>> u = Inch(2)
         >>> u.v
@@ -475,7 +483,7 @@ class Unit(object):
     r = property(_get_v) # Read only
 
     def __int__(self):
-        u"""Answer self as rounded int, converted to points.
+        u"""Answers self as rounded int, converted to points.
 
         >>> int(pt(20.2))
         20
@@ -483,7 +491,7 @@ class Unit(object):
         return int(round(self.pt))
 
     def __float__(self):
-        u"""Answer self as float, converted to points.
+        u"""Answers self as float, converted to points.
 
         >>> float(pt(20.2))
         20.2
@@ -491,7 +499,7 @@ class Unit(object):
         return self.pt
 
     def __coerce__(self, v):
-        u"""Convert to type of v.
+        u"""Converts to type of v.
 
         >>> '%dpoints' % pt(10)
         '10points'
@@ -501,7 +509,7 @@ class Unit(object):
         return self, units(v)
 
     def __abs__(self):
-        u"""Answer the an absolute value copy of self.
+        u"""Answers an absolute-value copy of self.
 
         >>> abs(units('-10pt'))
         10pt
@@ -557,7 +565,8 @@ class Unit(object):
         return self.pt > u.pt # Incompatible unit types, compare via points
 
     def __add__(self, u):
-        u"""Add self to u, creating a new Unit instance with the same type as self.
+        u"""Adds self to `u`, creating a new Unit instance with the same type
+        as self.
 
         >>> u = units('10pt')
         >>> u + 20 # Create a new Unit instance of the same type
@@ -580,7 +589,8 @@ class Unit(object):
         return u0
 
     def __sub__(self, u):
-        u"""Subract u from self, creating a new Unit instance with the same type as self.
+        u"""Subtracts `u` from self, creating a new Unit instance with the same
+        type as self.
 
         >>> u = units('50pt')
         >>> u - 20 # Create a new Unit instance of the same type
@@ -600,8 +610,8 @@ class Unit(object):
         return u0
 
     def __div__(self, u):
-        u"""Divide self by u, creating a new Unit instance with the same type as self.
-        Unit / Unit creates a float number.
+        u"""Divide self by u, creating a new Unit instance with the same type
+        as self.  Unit / Unit creates a float number.
 
         >>> u = units('60pt')
         >>> u / 2 # Create a new Unit instance of the same type
@@ -626,9 +636,9 @@ class Unit(object):
     __truediv__ = __div__
 
     def __mul__(self, u):
-        u"""Multiply self by u, creating a new Unit instance with the same type as self.
-        Units can only be multiplied by numbers.
-        Unit * Unit raises a ValueError.
+        u"""Multiply self by u, creating a new Unit instance with the same type
+        as self. Units can only be multiplied by numbers. Unit * Unit raises a
+        ValueError.
 
         >>> u = units('60pt')
         >>> u / 2 # Create a new Unit instance of the same type
@@ -641,7 +651,7 @@ class Unit(object):
         u0 = copy(self) # Keep values of self
         if isinstance(u, (int, float)): # One is a scalar, just multiply
             u0.v *= u
-        elif isUnit(u) and u.isEm: 
+        elif isUnit(u) and u.isEm:
             u0.base = u.r
             u0 = u0.r
         else:
