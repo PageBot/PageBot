@@ -551,7 +551,9 @@ class DrawBotContext(BaseContext):
         >>> context.fill(inheritColor)
         >>> context.fill(noColor)
         """
-        assert isinstance(c, Color)
+        if not isinstance(c, Color):
+            print('Error in DrawBotContext.fill(): c should be of type Color')
+            raise AssertionError
 
         if builder is None: # Builder can be optional DrawBot FormattedString
             builder = self.b
