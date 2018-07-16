@@ -370,12 +370,12 @@ class FlatContext(BaseContext):
         >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
         >>> bs = context.newString('ABC ' * 100, style=style)
         >>> t = context.page.place(bs.s)
-        >>> t = t.frame(x.r, y.r, w.r, h.r)
+        >>> t = t.frame(x.pt, y.pt, w.pt, h.pt)
         >>> t.overflow()
         False
         >>> bs = context.newString('ABC ' * 100000, style=style)
         >>> t = context.page.place(bs.s)
-        >>> t = t.frame(x.r, y.r, w.r, h.r)
+        >>> t = t.frame(x.pt, y.pt, w.pt, h.pt)
         >>> t.overflow()
         True
         >>> lines = t.lines()
@@ -456,7 +456,7 @@ class FlatContext(BaseContext):
 
     def ensure_page(self):
         if not self.doc:
-            self.newDocument(pt(100), pt(100))
+            self.newDocument(pt(100), pt(100), units='pt') # Standardize FlatContext document on pt.
         if not self.pages:
             self.newPage(self.doc.w, self.doc.h)
 
@@ -465,7 +465,7 @@ class FlatContext(BaseContext):
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.rectangle(x.r, y.r, w.r, h.r))
+            self.page.place(shape.rectangle(x.pt, y.pt, w.pt, h.pt))
 
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom left origin and
@@ -476,7 +476,7 @@ class FlatContext(BaseContext):
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.ellipse((x-w/2).r, (y-h/2).r, w.r, h.r))
+            self.page.place(shape.ellipse((x-w/2).pt, (y-h/2).pt, w.pt, h.pt))
 
     def circle(self, x, y, r):
         """Draw an circle in square, with radius r and (x,y) as middle."""
@@ -484,14 +484,14 @@ class FlatContext(BaseContext):
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.circle(x.r, y.r, r.r))
+            self.page.place(shape.circle(x.pt, y.pt, r.pt))
 
     def line(self, p0, p1):
         assert isUnits(p0, p1), ('FlatContext.line: Values (%s, %s) must all be of type Unit' % (p0, p1))
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.line(p0[0].r, p0[1].r, p1[0].r, p1[1].r))
+            self.page.place(shape.line(p0[0].pt, p0[1].pt, p1[0].pt, p1[1].pt))
 
     def newPath(self):
         """Create a new path list, o collect the path commands."""
@@ -510,22 +510,22 @@ class FlatContext(BaseContext):
     def moveTo(self, p):
         assert isUnits(p), ('FlatContext.moveTo: Values %s must all be of type Unit' % p)
         assert self._path is not None
-        self._path.moveTo(ru(p))
+        self._path.moveTo(ru(p, maker=pt))
 
     def lineTo(self, p):
         assert isUnits(p), ('FlatContext.lineTo: Values %s must all be of type Unit' % p)
         assert self._path is not None
-        self._path.lineTo(ru(p))
+        self._path.lineTo(ru(p, maker=pt))
 
     def quadTo(self, bcp, p):
         assert isUnits(p), ('FlatContext.quadTo: Values %s must all be of type Unit' % p)
         assert self._path is not None
-        self._path.quadTo(ru(bcp), ru(p))
+        self._path.quadTo(ru(bcp, maker=pt), ru(p, maker=pt))
 
     def curveTo(self, bcp1, bcp2, p):
         assert isUnits(p), ('FlatContext.curveTo: Values %s must all be of type Unit' % p)
         assert self._path is not None
-        self._path.curveTo(ru(bcp1), ru(bcp1), ru(bcp2), ru(p))
+        self._path.curveTo(ru(bcp1, maker=pt), ru(bcp1, maker=pt), ru(bcp2, maker=pt), ru(p, maker=pt))
 
     def closePath(self):
         assert isUnits(p), ('FlatContext.closePath: Values %s must all be of type Unit' % p)

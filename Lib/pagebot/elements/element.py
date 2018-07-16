@@ -72,7 +72,7 @@ class Element(object):
         >>> e.description is None
         True
         >>> e.maxW, e.maxH
-        (822pt, 822pt)
+        (822pt, 933pt)
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (10pt, 20pt, 100pt, 120pt, (22pt, 0pt, 0pt, 11pt), (33pt, 44pt, 55pt, 66pt))
         >>> e = Element() # Default element has default proportions
@@ -111,7 +111,7 @@ class Element(object):
         >>> c.newPage(size=size)
         >>> e.build(doc.getView(), pt(0, 0))
         >>> e.x, e.y, e.xy
-        (0pt, 20pt)
+        (12pt, 20pt, (12pt, 20pt))
         >>> e.size
         (320pt, 3pt)
         >>> e.size3D
@@ -247,7 +247,7 @@ class Element(object):
 
         >>> e = Element(name='TestElement', x=100, y=200, w=pt(100), h=pt(120)) # Set as separate units
         >>> childE1 = Element(name='E1', x=pt(0), y=pt(0), size=pt(21, 22))
-        >>> childE2 = Element(name='E2', size=pt(100, 0), size=pt(11, 12)) # E.g. set as tuple of units
+        >>> childE2 = Element(name='E2', xy=pt(100, 0), size=pt(11, 12)) # E.g. set as tuple of units
         >>> i1 = e.appendElement(childE1)
         >>> i2 = e.appendElement(childE2)
         >>> i1, i2, len(e) # Index of appended elements and length of parent
@@ -1416,14 +1416,18 @@ class Element(object):
         >>> e = Element(z=100, d=400)
         >>> e.x, e.y, e.z
         (0pt, 0pt, 100pt)
+        >>> e.size3D
+        (100pt, 100pt, 1pt)
         >>> e.z = 200 # Auto conversion to point units.
         >>> e.x, e.y, e.z
         (0pt, 0pt, 200pt)
         >>> e.z = '20mm'
         >>> e.x, e.y, e.z
         (0pt, 0pt, 20mm)
+        >>> e.size3D
+        (100pt, 100pt, 1pt)
         >>> child = Element(z='40%', parent=e)
-        >>> child.z, child.z.pt # 40% of 400
+        >>> child.z, child.z.base # 40% of 400
         (40%, 160)
         >>> e.d = 500
         >>> child.z, child.z.pt # 40% of 500 dynamic calculation. Should have value or pt as result?
@@ -1440,6 +1444,7 @@ class Element(object):
     def _get_xy(self):
         u"""Answer ther Point2D tuple.
 
+        >>> from pagebot.toolbox.units import perc
         >>> e = Element(x=10, y=20, w=400, h=400)
         >>> e.xy
         (10pt, 20pt)
@@ -1452,13 +1457,12 @@ class Element(object):
         >>> e.y += 100
         >>> e.xy
         (12pt, 122pt)
-        >>> child = Element(x='50%', y='50%', parent=e)
+        >>> child = Element(xy=perc('50%', '50%'), parent=e)
         >>> child.xy, ru(child.xy) # Position in middle of parent square
         ((50%, 50%), (200pt, 200pt))
         """
         return self.x, self.y
     def _set_xy(self, p):
-        print('+4334343434', p)
         self.x = p[0] # Convert values to Unit instance if needed.
         self.y = p[1] # Ignore any z
     xy = property(_get_xy, _set_xy)
@@ -1501,10 +1505,10 @@ class Element(object):
 
         >>> e = Element()
         >>> e.t
-        0
+        Duration(0m,0d,0s,0us)
         >>> e.t = seconds(16)
         >>> e.t
-        16
+        Duration(0m,0d,16s,0us)
         """
         return self._t
     def _set_t(self, t):
@@ -1623,7 +1627,10 @@ class Element(object):
     def _get_right(self):
         u"""Answer the position of the right side of the element, depending on alignment.
 
-        >>> e = Element(x=100, w=248, xAlign=LEFT)
+        >>> e = Element(x=50, w=248, xAlign=LEFT)
+        >>> e.right
+        298pt
+        >>> e.x += 50 # Move x by 50, e.right moves by 50 too
         >>> e.right
         348pt
         >>> e.xAlign = CENTER
@@ -1632,6 +1639,13 @@ class Element(object):
         >>> e.xAlign = RIGHT
         >>> e.right
         100pt
+        >>> e.right = 500 # Numbers get converted to default pt units
+        >>> e.x # Right align, so e.x is on 500pt too.
+        500pt
+        >>> e.xAlign = LEFT
+        >>> e.right = 500
+        >>> e.x # Left aligh, so e.x is now on 500pt - 248pt = 252pt
+        252pt
         """
         xAlign = self.xAlign
         if xAlign == LEFT:
@@ -1642,11 +1656,11 @@ class Element(object):
     def _set_right(self, x):
         xAlign = self.xAlign
         if xAlign == LEFT:
-            self.x = x - self.w
+            self.x = -self.w + x # This order, in case x is a number.
         elif xAlign == CENTER:
-            self.x = x - self.w/2
+            self.x = -self.w/2 + x # This order, in case x is a number
         else:
-            self.x = x
+            self.x = x # Automatic conversion to pt-units, in case x is a number.
     right = property(_get_right, _set_right)
 
     def _get_mRight(self):
@@ -3056,7 +3070,7 @@ class Element(object):
         >>> e2 = Element(x=50, y=12, z=54, w=200, h=210, d=401)
         >>> e3 = Element(x=70, y=72, z=74, w=300, h=310, d=101)
         >>> e1.w, e1.h
-        (100pt, 100pt)
+        (100pt, 110pt)
         >>> e = Element(elements=[e1, e2, e3])
         >>> e1.left, e1.right
         (10pt, 110pt)
@@ -3306,9 +3320,9 @@ class Element(object):
         """
         return units(self.css('maxH', MAX_HEIGHT))
     def _set_maxH(self, maxH):
-        self.style['maxH'] = u = units(maxW) # Set on local style, shielding parent self.css value.
+        self.style['maxH'] = u = units(maxH) # Set on local style, shielding parent self.css value.
         assert u.isAbsolute, ('Element.maxH "%s" must be an absolute unit.' % maxH)
-    maxH = property(_get_maxW, _set_maxW)
+    maxH = property(_get_maxH, _set_maxH)
 
     def _get_maxD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
         u"""Answer the maxD limit for child elements. Default is MAX_DEPTH.

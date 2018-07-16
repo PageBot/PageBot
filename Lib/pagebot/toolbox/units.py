@@ -497,7 +497,7 @@ class Unit(object):
     r = property(_get_v) # Read only
 
     def __int__(self):
-        u"""Answers self as rounded int, converted to points.
+        u"""Answers self as rounded int, rendered and converted to points.
 
         >>> int(pt(20.2))
         20
@@ -505,7 +505,7 @@ class Unit(object):
         return int(round(self.pt))
 
     def __float__(self):
-        u"""Answers self as float, converted to points.
+        u"""Answers self as float, rendered and converted to points.
 
         >>> float(pt(20.2))
         20.2
@@ -694,6 +694,8 @@ class Unit(object):
         >>> u = p(2)
         >>> u + 1, u + pt(1) # Numbers are interpeted as adding picas. Otherwise use pt(1)
         (3p, 2p1)
+        >>> 10 + pt(10) # Thanks to implementation of __radd__ the reverse also works.
+        20pt
         """
         u0 = copy(self) # Keep values of self
         if isinstance(u, (int, float)): # One is a scalar, just add
@@ -705,6 +707,8 @@ class Unit(object):
         else:
             raise ValueError('Cannot Add "%s" by "%s"' % (self, u))
         return u0
+
+    __radd__ = __add__
 
     def __sub__(self, u):
         u"""Subtracts `u` from self, creating a new Unit instance with the same
@@ -726,6 +730,14 @@ class Unit(object):
         else:
             raise ValueError('Cannot Subtract "%s" by "%s"' % (self, u))
         return u0
+
+    def __rsub__(self, u):
+        u"""Subtract in reversed order.
+
+        >>> 30 - pt(10) # Thanks to implementation of __rsub__ the reverse also works.
+        20pt
+        """
+        return -self + u
 
     def __div__(self, u):
         u"""Divide self by u, creating a new Unit instance with the same type
@@ -753,6 +765,17 @@ class Unit(object):
 
     __truediv__ = __div__
 
+    def __rtruediv__(self, u):
+        u"""Dividing non-unit by unit is not supported.
+
+        >>> (2 / pt(20)) is None
+        True
+        """
+        #raise ValueError('Cannot divide non-unit "%s" by unit "%s"' % (u, self))
+        return None
+
+    __itruediv__ = __rtruediv__
+    
     def __mul__(self, u):
         u"""Multiply self by u, creating a new Unit instance with the same type
         as self. Units can only be multiplied by numbers. Unit * Unit raises a
@@ -765,6 +788,8 @@ class Unit(object):
         '14.11'
         >>> u / units('120pt') # Unit / Unit create a float ratio number.
         0.5
+        >>> 10 * mm(10) # Thanks to implementation of __rmul__ the reverse also works.
+        100mm
         """
         u0 = copy(self) # Keep values of self
         if isinstance(u, (int, float)): # One is a scalar, just multiply
@@ -775,6 +800,8 @@ class Unit(object):
         else:
             raise ValueError('Cannot multiply "%s" by "%s"' % (u0, u))
         return u0
+
+    __rmul__ = __mul__
 
     def __neg__(self):
         u"""Reverse sign of self, answer as copied unit.
@@ -1542,7 +1569,10 @@ def perc(v, *args, **kwargs):
     minV = kwargs.get('min')
     maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
-        v = [v]+list(args)
+        if not isinstance(v, (tuple, list)):
+            v = [v]
+        for arg in args:
+            v.append(arg)
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
