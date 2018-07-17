@@ -123,14 +123,15 @@ def getController():
     if not document:
       raise DrawBotError("There is no document open")
     controller = document.vanillaWindowController
-# TODO: the 'variables' var below is undefined:
-#    try:
-#      controller._variableController.buildUI(variables)
-#      controller._variableController.show()
-#    except:
-#      controller._variableController = VariableController(variables,
-#                                                          controller.runCode,
-#                                                          document)
+    
+    # TODO: the 'variables' var below is undefined:
+    # try:
+    #      controller._variableController.buildUI(variables)
+    #      controller._variableController.show()
+    #    except:
+    # controller._variableController = VariableController(variables,
+    #                                                      controller.runCode,
+    #                                                      document)
     return controller
 
 
