@@ -70,12 +70,17 @@ class NoneDrawBotString(BabelString):
         to top-emsize (including ascender+ and descender+) and the string width (including margins)."""
         return w or 100, h or 100
 
-    def fill(self, color):
+    def fill(self, r, g=None, b=None, a=None, alpha=None):
         pass
 
     setFillColor = fill
 
-    def stroke(self, color):
+    def cmykFill(self, c, m=None, y=None, k=None, a=None, alpha=None):
+        pass
+
+    cmykStroke = cmykFill
+    
+    def stroke(self, r, g=None, b=None, a=None, alpha=None):
         pass
 
     setStrokeColor = stroke
@@ -449,13 +454,13 @@ class DrawBotString(BabelString):
             uFontSize = pt(css('fontSize', e, style, DEFAULT_FONT_SIZE))
 
         if uFontSize is not None:
-            fs.fontSize(uFontSize.r) # For some reason fontSize must be set after leading.
-
+            assert isUnit(uFontSize), ('DrawBotString.newString: uFontSize %s must of type Unit' % uFontSize)
+            fs.fontSize(uFontSize.pt) # For some reason fontSize must be set after leading.
         uLeading = css('leading', e, style)
 
         if uLeading is not None:
-            fs.lineHeight(uLeading.r)
-
+            assert isUnit(uLeading), ('DrawBotString.newString: uLeading %s must of type Unit' % uLeading)
+            fs.lineHeight(uLeading.pt)
         sFallbackFont = css('fallbackFont', e, style)
 
         if sFallbackFont is not None:
@@ -468,12 +473,11 @@ class DrawBotString(BabelString):
         # noColor: Set the value to None, no fill will be drawn
         # inheritColor: Don't set color, inherit the current setting for fill
         cFill = css('textFill', e, style, blackColor) # Default is blackColor, not noColor
-
-        if cFill is not inheritColor:
+        if cFill is not inheritColor: 
+            assert isinstance(cFill, Color), ('DrawBotString.newString] Fill color "%s" is not Color in style %s' % (cFill, style))
             if cFill is noColor: # None is value to disable fill drawing.
                 context.setTextFillColor(fs, noColor)
             else:
-                assert isinstance(cFill, Color), ('DrawBotString.newString] Fill color "%s" is not Color in style %s' % (cFill, style))
                 context.setTextFillColor(fs, cFill)
 
         # Color values for text stroke
@@ -481,55 +485,71 @@ class DrawBotString(BabelString):
         # noColor: Set the value to None, no stroke will be drawn
         # inheritColor: Don't set color, inherit the current setting for stroke
         cStroke = css('textStroke', e, style, noColor)
-        uStrokeWidth = css('textStrokeWidth', e, style)
-
-        if uStrokeWidth is not None:
-            uStrokeWidth = uStrokeWidth.r
-
+        strokeWidth = css('textStrokeWidth', e, style)
+        if strokeWidth is not None:
+            assert isUnit(strokeWidth), ('DrawBotString.newString: uStrokeWidth %s must of type Unit' % strokeWidth)
+            strokeWidth = strokeWidth.pt
         if cStroke is not inheritColor:
+            assert isinstance(cStroke, Color), ('DrawBotString.newString] Stroke color "%s" is not Color in style %s' % (cStroke, style))
             if cStroke is noColor: # None is value to disable stroke drawing
                 context.setTextStrokeColor(fs, noColor)
             else:
-                assert isinstance(cStroke, Color), ('DrawBotString.newString] Stroke color "%s" is not Color in style %s' % (cStroke, style))
-                context.setTextStrokeColor(fs, cStroke, w=uStrokeWidth)
-
+                context.setTextStrokeColor(fs, cStroke, w=strokeWidth)
         textAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
         if textAlign is not None: # yTextAlign must be solved by parent container element.
             fs.align(textAlign)
+        
         sUnderline = css('underline', e, style)
         if sUnderline in ('single', None): # Only these values work in FormattedString
             fs.underline(sUnderline)
+        
         uParagraphTopSpacing = css('paragraphTopSpacing', e, style)
         if uParagraphTopSpacing is not None:
-            fs.paragraphTopSpacing(uParagraphTopSpacing.r)
+            assert isUnit(uParagraphTopSpacing), ('DrawBotString.newString: uParagraphTopSpacing %s must of type Unit' % uParagraphTopSpacing)
+            fs.paragraphTopSpacing(uParagraphTopSpacing.pt)
+        
         uParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
         if uParagraphBottomSpacing:
-            fs.paragraphBottomSpacing(uParagraphBottomSpacing.r)
+            assert isUnit(uParagraphBottomSpacing), ('DrawBotString.newString: uParagraphBottomSpacing %s must of type Unit' % uParagraphBottomSpacing)
+            fs.paragraphBottomSpacing(uParagraphBottomSpacing.pt)
+        
         uTracking = css('tracking', e, style)
         if uTracking is not None:
-            fs.tracking(uTracking.r)
+            assert isUnit(uTracking), ('DrawBotString.newString: uTracking %s must of type Unit' % uTracking)
+            fs.tracking(uTracking.pt)
+        
         uBaselineShift = css('baselineShift', e, style)
         if uBaselineShift is not None:
+            assert isUnit(uBaselineShift), ('DrawBotString.newString: uBaselineShift %s must of type Unit' % uBaselineShift)
             fs.baselineShift(uBaselineShift.r)
+        
         openTypeFeatures = css('openTypeFeatures', e, style)
         if openTypeFeatures is not None:
             fs.openTypeFeatures(**openTypeFeatures)
+        
         tabs = css('tabs', e, style)
         if tabs is not None:
             fs.tabs(*tabs)
+        
         uFirstLineIndent = css('firstLineIndent', e, style)
         # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
         # sFirstParagraphIndent = style.get('firstParagraphIndent')
         # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
         # TODO: Use this value instead, if currently on top of a new string.
         if uFirstLineIndent is not None:
-            fs.firstLineIndent(uFirstLineIndent.r)
+            assert isUnit(uStrokeWidth), ('DrawBotString.newString: uFirstLineIndent %s must of type Unit' % uFirstLineIndent)
+            fs.firstLineIndent(uFirstLineIndent.pt)
+        
         uIndent = css('indent', e, style)
         if uIndent is not None:
-            fs.indent(uIndent.r)
+            assert isUnit(uIndent), ('DrawBotString.newString: uIndent %s must of type Unit' % uIndent)
+            fs.indent(uIndent.pt)
+        
         uTailIndent = css('tailldIndent', e, style)
         if uTailIndent is not None:
+            assert isUnit(uTailIndent), ('DrawBotString.newString: uTailIndent %s must of type Unit' % uTailIndent)
             fs.tailIndent(uTailIndent.r)
+        
         sLanguage = css('language', e, style)
         if sLanguage is not None:
             fs.language(sLanguage)

@@ -100,10 +100,15 @@ class NoneBuilder(object):
     def line(self, p1, p2):
         pass
 
-    def fill(self, *fill):
+    def fill(self, r, g=None, b=None, a=None, alpha=None): # Covering API inconsistencies in DrawBot
         pass
 
-    setFillColor = cmykFill = setStrokeColor = cmykStroke = stroke = fill
+    setFillColor = setStrokeColor = stroke = fill
+
+    def cmykFill(self, c, m=None, y=None, k=None, a=None, alpha=None): # Covering API inconsistencies in DrawBot
+        pass
+
+    cmykStroke = cmykFill
 
     def strokeWidth(self, w):
         pass
