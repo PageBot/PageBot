@@ -107,15 +107,14 @@ class Element(object):
         >>> e = Element(parent=page, xy=pt(12, 20), w=page.w, h=pt(3))
         >>> e.x, e.y, e.xy
         (12pt, 20pt, (12pt, 20pt))
-        >>> # Allow the context to create a new document and page canvas. Normally view or doc does it.
-        >>> c.newPage(size=size)
         >>> e.build(doc.getView(), pt(0, 0))
+
         >>> e.x, e.y, e.xy
         (12pt, 20pt, (12pt, 20pt))
         >>> e.size
         (320pt, 3pt)
         >>> e.size3D
-        (320pt, 3pt, 0pt)
+        (320pt, 3pt, 100pt)
         """
         # Optionally set the property for elements that need their own context. 
         # Mostly these are only set for views (which are also Elements)
@@ -1559,7 +1558,8 @@ class Element(object):
     # where the positioning can be compenssaring the element alignment type.
 
     def _get_left(self):
-        u"""Answer the position of the left side of the element, depending on alignment.
+        u"""Answer the position of the left side of the element, in relation to self.x
+        and depending on horiontal alignment.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(x=100, w=248, xAlign=LEFT)
@@ -1599,7 +1599,8 @@ class Element(object):
     mLeft = property(_get_mLeft, _set_mLeft)
 
     def _get_center(self):
-        u"""Answer the position of the horizontal center of the element, depending on alignment.
+        u"""Answer the position of the horizontal center of the element, in relation to self.x
+        and depending on horiontal alignment.
 
         >>> e = Element(x=100, w=248, xAlign=LEFT)
         >>> e.center
@@ -1631,7 +1632,8 @@ class Element(object):
     center = property(_get_center, _set_center)
 
     def _get_right(self):
-        u"""Answer the position of the right side of the element, depending on alignment.
+        u"""Answer the position of the right side of the element, in relation to self.x
+        and depending on horiontal alignment.
 
         >>> e = Element(x=50, w=248, xAlign=LEFT)
         >>> e.right
@@ -1910,9 +1912,9 @@ class Element(object):
     def _get_borderTop(self):
         u"""Set the border data on top of the element.
 
-        >>> from pagebot.toolbox.color import color
+        >>> from pagebot.toolbox.color import color, blackColor
         >>> e = Element()
-        >>> e.borderTop = dict(strokeWidth=pt(5), stroke=blackColor
+        >>> e.borderTop = dict(strokeWidth=pt(5), stroke=blackColor)
         >>> sorted(e.borderTop.items())
         [('dash', None), ('line', 'online'), ('stroke', Color(r=0, g=0, b=0)), ('strokeWidth', 5pt)]
         """
@@ -2269,20 +2271,22 @@ class Element(object):
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self):
-        u"""Answer the depth of the element.
+        u"""Answer and set the depth of the element.
 
-        >>> e = Element(d=100, maxD=1000)
+        >>> e = Element()
+        >>> e.d, e.minD, e.maxD # Default values
+
         >>> e.d
         100pt
-        >>> e.d = 101
+        >>> e.d = 101 # Set depth value
         >>> e.d
         101pt
-        >>> e.d = e.maxD + 10000
+        >>> e.d = 80000
         >>> e.d, e.d.pt # Clipping on pt conversion
-        (11000pt, 1000)
-        >>> e.d = 0
-        >>> e.d, e.d == MIN_DEPTH
-        (1pt, True)
+        (11000pt, 1010)
+        >>> e.d = -10 # Imaginary negative thickness
+        >>> e.d, e.d == MIN_DEPTH # Corrects by lists
+        (10pt, True)
         """
         base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.        
         return units(self.css('d', 0), base=base, min=self.minD, max=self.maxD)
@@ -2915,6 +2919,8 @@ class Element(object):
 
         >>> e = Element()
         >>> e.size = 100, 200, 300
+        >>> e.w, e.h, e.d
+
         >>> e.size
         (100pt, 200pt)
         >>> e.size3D
@@ -2937,8 +2943,7 @@ class Element(object):
         if isinstance(size, (tuple, list)):
             assert len(size) in (2,3)
             if len(size) == 2:
-                self.w, self.h = size
-                self.d = MIN_DEPTH
+                self.w, self.h = size # Don't touch self.d
             else:
                 self.w, self.h, self.d = size
         else:
@@ -3212,7 +3217,7 @@ class Element(object):
         >>> e.minW
         50mm
         """
-        return units(self.css('minW'))
+        return units(self.css('minW', MIN_WIDTH))
     def _set_minW(self, minW):
         self.style['minW'] = u = units(minW) # Set on local style, shielding parent self.css value.
         assert u.isAbsolute, ('Element.minW "%s" must be an absolute unit.' % minW)
@@ -3230,7 +3235,7 @@ class Element(object):
         >>> e.minH
         50mm
         """
-        return units(self.css('minH'))
+        return units(self.css('minH', MIN_HEIGHT))
     def _set_minH(self, minH):
         self.style['minH'] = u = units(minH) # Set on local style, shielding parent self.css value.
         assert u.isAbsolute, ('Element.minH "%s" must be an absolute unit.' % minH)
@@ -3248,7 +3253,7 @@ class Element(object):
         >>> e.minD
         50mm
         """
-        return units(self.css('minD'))
+        return units(self.css('minD', MIN_DEPTH))
     def _set_minD(self, minD):
         self.style['minD'] = u = units(minD) # Set on local style, shielding parent self.css value.
         assert u.isAbsolute, ('Element.minD "%s" must be an absolute unit.' % minD)
@@ -3343,7 +3348,7 @@ class Element(object):
         >>> e.maxD
         50mm
         """
-        return units(self.css('maxD', MIN_HEIGHT))
+        return units(self.css('maxD', MIN_DEPTH))
     def _set_maxD(self, maxD):
         self.style['maxD'] = u = units(maxD) # Set on local style, shielding parent self.css value.
         assert u.isAbsolute, ('Element.maxD "%s" must be an absolute unit.' % maxD)
