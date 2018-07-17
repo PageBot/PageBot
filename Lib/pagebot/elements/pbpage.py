@@ -60,12 +60,17 @@ class Page(Element):
         self._isLeft = leftPage # Undefined if None, let self.doc decide instead
         self._isRight = rightPage 
 
+        #   F I L E  S T U F F
+
+        self.fileName = fileName or self.INDEX_HTML
+
+        #   H T M L  S T U F F 
+
         # Site stuff
         self.viewPort = viewPort or self.VIEW_PORT
         self.appleTouchIconUrl = None
         self.favIconUrl = favIconUrl or self.FAVICON_PATH
 
-        self.fileName = fileName or self.INDEX_HTML
         self.url = url or self.INDEX_HTML_URL # Used for links to home or current page url
 
         # Optional resources to be included
@@ -124,11 +129,10 @@ class Page(Element):
 
         return '<%s%s%s (%s, %s)%s>' % (self.__class__.__name__, name, pn, self.w, self.h, elements)
 
-
     def _get_isLeft(self):
-        u"""Answer the boolean flag if this is a left page, if that info is stored. 
-        Note that pages can be neither left or right.
-        Otherwise, the only one who can know that is the document.
+        u"""Answer the boolean flag if this is a left page (even pagenumber), 
+        unless the self._isLeft is overwritter by a boolean flag, other than None.
+        Note that pages can be both left or right.
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -138,11 +142,14 @@ class Page(Element):
         >>> page.isLeft = True
         >>> page.isLeft
         True
+        >>> page.isLeft = None # Reset to automatic behavior by setting as None
+        >>> page.isLeft
+        False
         """
         if self._isLeft is not None:
             return self._isLeft   
-        if self.doc is not None:
-            return self.doc.isLeftPage(self) # If undefined, query parent document to decide.
+        if self.parent is not None:
+            return self.parent.getPageNumber(self)[0] % 2 == 0
         return None
     def _set_isLeft(self, flag):
         self._isLeft = flag
@@ -165,10 +172,10 @@ class Page(Element):
         >>> page.isLeft
         False
         """
-        if self._isLeft is not None: # Overwritted by external call.
-            return self._isLeft   
+        if self._isRight is not None: # Overwritted by external call.
+            return self._isRight   
         if self.doc is not None:
-            return self.doc.isLeftPage(self) # If undefined, query parent document to decide.
+            return self.parent.getPageNumber(self)[0] % 2 == 1
         return None
     def _set_isRight(self, flag):
         self._isRight = flag

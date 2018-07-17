@@ -20,10 +20,10 @@ import weakref
 import copy
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import isUnit, units, Fr, Perc, Em, ru, pt, point3D, pointOffset
+from pagebot.toolbox.color import noColor
 
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
-from pagebot.toolbox.transformer import uniqueID
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS,
                            MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT,
@@ -147,7 +147,7 @@ class Element(object):
         if bleed is not None:
             self.bleed = bleed # Property ignores to expand if None
         # Border info dict have format:
-        # dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
+        # dict(line=ONLINE, dash=None, stroke=blackColor, strokeWidth=borderData)
         # If not borders defined, then drawing will use the stroke and strokeWidth (if defined)
         # for intuitive compatibility with DrawBot.
         self.borders = borders or (borderTop, borderRight, borderBottom, borderLeft)
@@ -893,14 +893,14 @@ class Element(object):
         u"""Answer the flattened dictionary with all self.css(...) values, from the perspecive of 
         self and upward on the parent tree. Evaluate for every value that is in the root style.
 
-        >>> from pagebot.toolbox.color import Color
+        >>> from pagebot.toolbox.color import color
         >>> from pagebot.document import Document
         >>> doc = Document()
         >>> page = doc[1]
-        >>> e = Element(fill=Color(0.1, 0.2, 0.3), parent=page)
+        >>> e = Element(fill=color(0.1, 0.2, 0.3), parent=page)
         >>> style = e.getFlattenedStyle()
-        >>> style['fill'], style['fontSize'], style['rLeading'], style['xAlign'], style['rLeading']
-        (color(r=0.1, g=0.2, b=0.3), 12pt, 1.2em, 'left', 1.2em)
+        >>> style['fill'], style['fontSize'], style['leading'], style['xAlign']
+        (color(r=0.1, g=0.2, b=0.3), 12pt, 1.2em, 'left')
         """
         flattenedStyle = {} # Create a dict with all keys from root style and values from self.css()
         for key in getRootStyle().keys():
@@ -1171,6 +1171,9 @@ class Element(object):
         If there is one or more None in the grid definition, then try to fit equally on self.cw.
         If gurtter is left None, then the default style gutter is filled there.
 
+        """
+        """
+        FIX Grids
         >>> column, gutter = 48, 8 # Preset padding
         >>> e = Element(w=300, h=100, cw=column, gw=gutter, isLeftPage=True)
         >>> e.getGridColumns() # Equal devided column widths
@@ -1231,6 +1234,9 @@ class Element(object):
         If there is one or more None in the grid definition, then try to fit equally on self.cw.
         If gutter is left None, then the default style gutter is filled there.
 
+        """
+        """
+        FIXME: grid must not be derived from grid units.
         >>> column, gutter = 48, 8 # Preset padding
         >>> e = Element(w=100, h=300, ch=column, gh=gutter, isLeftPage=True)
         >>> e.getGridRows() # Equal devided row heights
@@ -1656,9 +1662,9 @@ class Element(object):
     def _set_right(self, x):
         xAlign = self.xAlign
         if xAlign == LEFT:
-            self.x = -self.w + x # This order, in case x is a number.
+            self.x = x - self.w # Creates a unit, even wht x is a number.
         elif xAlign == CENTER:
-            self.x = -self.w/2 + x # This order, in case x is a number
+            self.x = x - self.w/2 # Creates a unit, even wht x is a number.
         else:
             self.x = x # Automatic conversion to pt-units, in case x is a number.
     right = property(_get_right, _set_right)
@@ -1869,21 +1875,21 @@ class Element(object):
         dictionary is defined, then use optional stroke and strokeWidth to create one.
         Otherwise answer *None*."""
         if isinstance(borderData, (int, float)):
-            return dict(line=ONLINE, dash=None, stroke=0, strokeWidth=borderData)
+            return dict(line=ONLINE, dash=None, stroke=blackColor, strokeWidth=borderData)
         if isinstance(borderData, dict):
             if not 'line' in borderData: # (ONLINE, INLINE, OUTLINE):
                 borderData['line'] = ONLINE
             if not 'dash' in borderData:
                 borderData['dash'] = None
             if not 'strokeWidth' in borderData:
-                borderData['strokeWidth'] = 1
+                borderData['strokeWidth'] = pt(1)
             if not 'stroke' in borderData:
-                borderData['stroke'] = 0
+                borderData['stroke'] = blackColor
             return borderData
         # TODO: Solve this, error on initialize of element, _parent does not yet exist.
         #stroke = self.css('stroke')
         #strokeWidth = self.css('strokeWidht')
-        #if stroke is not None and strokeWidth:
+        #if stroke is not noColor and strokeWidth:
         #     return dict(line=ONLINE, dash=None, stroke=stroke, strokeWidth=strokeWidth)
         return None
 
@@ -1904,10 +1910,11 @@ class Element(object):
     def _get_borderTop(self):
         u"""Set the border data on top of the element.
 
+        >>> from pagebot.toolbox.color import color
         >>> e = Element()
-        >>> e.borderTop = dict(strokeWidth=5, stroke=0)
+        >>> e.borderTop = dict(strokeWidth=pt(5), stroke=blackColor
         >>> sorted(e.borderTop.items())
-        [('dash', None), ('line', 'online'), ('stroke', 0), ('strokeWidth', 5)]
+        [('dash', None), ('line', 'online'), ('stroke', Color(r=0, g=0, b=0)), ('strokeWidth', 5pt)]
         """
         return self.css('borderTop')
     def _set_borderTop(self, border):
@@ -3543,18 +3550,18 @@ class Element(object):
             c.rect(p[0], p[1], self.w, self.h)
             c.restoreGraphicState()
 
-        eFill = self.css('fill', None)
-        eStroke = self.css('stroke', None)
+        eFill = self.css('fill', noColor)
+        eStroke = self.css('stroke', noColor)
         eGradient = self.gradient
-        if eStroke is not None or eFill is not None or eGradient:
+        if eStroke is not noColor or eFill is not noColor or eGradient:
             c.saveGraphicState()
             # Drawing element fill and/or frame
             if eGradient: # Gradient overwrites setting of fill.
                 # TODO: Make bleed work here too.
                 c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
             else:
-                c.setFillColor(eFill)
-            c.setStrokeColor(eStroke, self.css('strokeWidth', 1))
+                c.fill(eFill)
+            c.stroke(eStroke, self.css('strokeWidth', pt(1)))
             if self.framePath is not None: # In case defined, use instead of bounding box.
                 c.drawPath(self.framePath)
             elif self.originTop:
@@ -3575,17 +3582,17 @@ class Element(object):
             c.saveGraphicState()
             if borderTop['dash']:
                 c.lineDash(*borderTop['dash'])
-            c.setStrokeColor(borderTop['stroke'], borderTop['strokeWidth'])
+            c.stroke(borderTop['stroke'], borderTop['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
-            if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
+            if borderLeft and (borderLeft['strokeWidth'] or pt(0)) > 1:
                 if borderLeft['line'] == ONLINE:
                     oLeft = borderLeft['strokeWidth']/2
                 elif borderLeft['line'] == OUTLINE:
                     oLeft = borderLeft['strokeWidth']
 
             oRight = 0 # Extra offset on right, if there is a right border.
-            if borderRight and (borderRight['strokeWidth'] or 0) > 1:
+            if borderRight and (borderRight['strokeWidth'] or pt(0)) > 1:
                 if borderRight['line'] == ONLINE:
                     oRight = borderRight['strokeWidth']/2
                 elif borderRight['line'] == OUTLINE:
@@ -3608,17 +3615,17 @@ class Element(object):
             c.saveGraphicState()
             if borderBottom['dash']:
                 c.lineDash(*borderBottom['dash'])
-            c.setStrokeColor(borderBottom['stroke'], borderBottom['strokeWidth'])
+            c.stroke(borderBottom['stroke'], borderBottom['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
-            if borderLeft and (borderLeft['strokeWidth'] or 0) > 1:
+            if borderLeft and (borderLeft['strokeWidth'] or pt(0)) > 1:
                 if borderLeft['line'] == ONLINE:
                     oLeft = borderLeft['strokeWidth']/2
                 elif borderLeft['line'] == OUTLINE:
                     oLeft = borderLeft['strokeWidth']
 
             oRight = 0 # Extra offset on right, if there is a right border.
-            if borderRight and (borderRight['strokeWidth'] or 0) > 1:
+            if borderRight and (borderRight['strokeWidth'] or pt(0)) > 1:
                 if borderRight['line'] == ONLINE:
                     oRight = borderRight['strokeWidth']/2
                 elif borderRight['line'] == OUTLINE:
@@ -3641,17 +3648,17 @@ class Element(object):
             c.saveGraphicState()
             if borderRight['dash']:
                 c.lineDash(*borderRight['dash'])
-            c.setStrokeColor(borderRight['stroke'], borderRight['strokeWidth'])
+            c.stroke(borderRight['stroke'], borderRight['strokeWidth'])
 
             oTop = 0 # Extra offset on top, if there is a top border.
-            if borderTop and (borderTop['strokeWidth'] or 0) > 1:
+            if borderTop and (borderTop['strokeWidth'] or pt(0)) > 1:
                 if borderTop['line'] == ONLINE:
                     oTop = borderTop['strokeWidth']/2
                 elif borderLeft['line'] == OUTLINE:
                     oTop = borderTop['strokeWidth']
 
             oBottom = 0 # Extra offset on bottom, if there is a bottom border.
-            if borderBottom and (borderBottom['strokeWidth'] or 0) > 1:
+            if borderBottom and (borderBottom['strokeWidth'] or pt(0)) > 1:
                 if borderBottom['line'] == ONLINE:
                     oBottom = borderBottom['strokeWidth']/2
                 elif borderBottom['line'] == OUTLINE:
@@ -3674,17 +3681,17 @@ class Element(object):
             c.saveGraphicState()
             if borderLeft['dash']:
                 c.lineDash(*borderLeft['dash'])
-            c.setStrokeColor(borderLeft['stroke'], borderLeft['strokeWidth'])
+            c.stroke(borderLeft['stroke'], borderLeft['strokeWidth'])
 
             oTop = 0 # Extra offset on top, if there is a top border.
-            if borderTop and (borderTop['strokeWidth'] or 0) > 1:
+            if borderTop and (borderTop['strokeWidth'] or pt(0)) > 1:
                 if borderTop['line'] == ONLINE:
                     oTop = borderTop['strokeWidth']/2
                 elif borderLeft['line'] == OUTLINE:
                     oTop = borderTop['strokeWidth']
 
             oBottom = 0 # Extra offset on bottom, if there is a bottom border.
-            if borderBottom and (borderBottom['strokeWidth'] or 0) > 1:
+            if borderBottom and (borderBottom['strokeWidth'] or pt(0)) > 1:
                 if borderBottom['line'] == ONLINE:
                     oBottom = borderBottom['strokeWidth']/2
                 elif borderBottom['line'] == OUTLINE:

@@ -33,7 +33,7 @@ class Document(object):
 
     >>> doc = Document(name='TestDoc', startPage=12, autoPages=50)
     >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())
-    (50, 1, 50)
+    (50, 12, 61)
     
     >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
     >>> doc.name, doc.w, doc.h, doc.originTop, len(doc)
@@ -60,14 +60,13 @@ class Document(object):
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None, autoPages=1, 
             template=None, templates=None, originTop=True, startPage=None, 
             w=None, h=None, d=None, size=None, size3D=None,
-            minW=None, maxW=None, minH=None, maxH=None, minD=None, maxD=None,
             padding=None, lib=None, context=None, exportPaths=None, **kwargs):
         u"""Contains a set of Page elements and other elements used for display in thumbnail mode. 
         Allows to compose the pages without the need to send them directly to the output for 
         "asynchronic" page filling."""
 
         # Apply the theme if defined or create default styles, to make sure they are there.
-        self.rootStyle = self.makeRootStyle(**kwargs)
+        self.rootStyle = rs = self.makeRootStyle(**kwargs)
         self.initializeStyles(theme, styles) # May or may not overwrite the root style.
 
         self.name = name or title or 'Untitled'
@@ -83,18 +82,6 @@ class Document(object):
         self.d = d or DEFAULT_DOC_DEPTH
         if padding is not None:
             self.padding = padding
-
-        # Set defaults of doc for minW, maxW, etc. Can be queried by relative
-        # units of pages and child elements.
-        if minW is None: minW = MIN_WIDTH
-        if maxW is None: maxW = MAX_WIDTH
-        self.minW, self.maxW = units(minW), units(maxW)
-        if minH is None: minH = MIN_HEIGHT
-        if maxH is None: maxH = MAX_HEIGHT
-        self.minH, self.maxH = units(minH), units(maxH)
-        if minD is None: minD = MIN_DEPTH
-        if maxD is None: maxD = MAX_DEPTH
-        self.minD, self.maxD = units(minD), units(maxD)
 
         # Initialize the dictionary of pages.
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
@@ -773,7 +760,7 @@ class Document(object):
         >>> len(doc)
         102
         >>> min(doc.pages.keys()), max(doc.pages.keys())
-        (1, 102)
+        (50, 151)
         """
         if page.isPage:
             if pn is None:
@@ -781,8 +768,9 @@ class Document(object):
                     pn = max(self.pages.keys())+1
                 else:
                     pn = 1
-            # Set parent as weakref, without calling self.appendElement again.
-            self[pn] = page # Create self.pages[pn] = [] if not exists. Then append page to the list.
+            # Create self.pages[pn] = [] if not exists. Then append page to the list.
+            # Also call page.setParent(self) as weakref, without calling self.appendElement again.
+            self[pn] = page 
         else:
             raise TypeError('Cannot add element "%s" to document. Only "e.isPage == True" are supported.' % page)
     
@@ -846,40 +834,6 @@ class Document(object):
         return False
     isRight = isLeft = False
     
-    def isLeftPage(self, page):
-        u"""Answer the boolean flag if the page is currently defined as a left page. 
-        Left page is even page number
-
-        >>> doc = Document(name='TestDoc', autoPages=8)
-        >>> page = doc[5]
-        >>> doc.isLeftPage(page)
-        False
-        >>> page = doc[6]
-        >>> doc.isLeftPage(page)
-        True
-        """
-        for pn, pnPages in self.pages.items():
-            if page in pnPages:
-                return pn % 2 == 0 
-        return False # Page not found
-
-    def isRightPage(self, page):
-        u"""Answer the boolean flag if the page is currently defined as a left page. 
-        Right page is odd page number.
-
-        >>> doc = Document(name='TestDoc', autoPages=8)
-        >>> page = doc[5]
-        >>> doc.isRightPage(page)
-        True
-        >>> page = doc[6]
-        >>> doc.isRightPage(page)
-        False
-        """
-        for pn, pnPages in self.pages.items():
-            if page in pnPages:
-                return pn % 2 == 1
-        return False # Page not found
-
     def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
         u"""Create a new page with size (self.w, self.h) unless defined otherwise. 
         Add the pages in the row of pn, if defined. Otherwise create a new row of pages at pn. 
@@ -899,7 +853,9 @@ class Document(object):
         if h is None:
             h = self.h
         
-        page = self.PAGE_CLASS(w=w, h=h, name=name, parent=self, **kwargs)
+        # Don't set parent to self yet, as this will make the page create a #1.
+        # Setting of page.parent is done by self.appendPage, for the right page number.
+        page = self.PAGE_CLASS(w=w, h=h, name=name, **kwargs)
         self.appendPage(page, pn) # Add the page to the document, before applying the template.
         page.applyTemplate(template)
         return page # Answer the new page for convenience of the caller.
@@ -936,7 +892,7 @@ class Document(object):
         >>> page = doc[2]
         >>> next = doc.nextPage(page)
         >>> next
-        <Page:default 2 (11", 16.90")>
+        <Page:default 3 (11", 16.90")>
         >>> doc.getPageNumber(next)
         (3, 0)
         >>> next = doc.nextPage(next)
@@ -989,7 +945,7 @@ class Document(object):
 
         >>> doc = Document(name='TestDoc', w=500, h=500, startPage=5, autoPages=10)
         >>> doc.getLastPage()
-        <Page:default 15 (500pt, 500pt)>
+        <Page:default 14 (500pt, 500pt)>
         """
         pn = sorted(self.pages.keys())[-1]
         return self.pages[pn][-1]
@@ -1009,19 +965,19 @@ class Document(object):
         then only evaluate the selected pages.
         Clip the found values against the document min/max proportions.
 
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=900, maxH=950)
-        >>> doc.minW, doc.maxW, doc.minH, doc.maxH
-        (1pt, 900pt, 1pt, 950pt)
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=900, maxH=950, maxD=955)
+        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
+        (1pt, 900pt, 1pt, 950pt, 0pt, 955pt)
         >>> doc.getMaxPageSizes()
         (500pt, 500pt, 0pt)
         >>> page = doc[1]
-        >>> page.minW, page.maxW, page.minH, page.maxH # Inheriting from doc parent
-        
+        >>> page.minW, page.maxW, page.minH, page.maxH, page.minD, page.maxD # Inheriting from doc parent
+        (1pt, 900pt, 1pt, 950pt, 0pt, 955pt)
         >>> page.size
         (500pt, 500pt)
         >>> page.w = 2345
         >>> page, page.w
-        (<Page:default 1:0 (1000pt, 500pt)>, 1000pt)
+        (<Page:default 1 (900pt, 500pt)>, 900pt)
         >>> doc[4].h = 1111
         >>> doc.getMaxPageSizes() # Clipped to max size
         (900pt, 950pt, 0pt)
@@ -1036,6 +992,92 @@ class Document(object):
                 h = min(maxH, max(page.h, h, minH))
                 d = min(maxD, max(page.d, d, minD))
         return w, h, d
+
+    def _get_minW(self): # Set/get the minimal height.
+        u"""Answer the minW limit of self. Min/Max values cannot be relative units.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=900, minW=121, maxH=800, maxD=700)
+        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
+        (121pt, 900pt, 1pt, 800pt, 0pt, 700pt)
+
+        """
+        return units(self.css('minW'))
+    def _set_minW(self, minW):
+        self.rootStyle['minW'] = u = units(minW) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.minW "%s" must be an absolute unit.' % minW)
+    minW = property(_get_minW, _set_minW)
+
+    def _get_minH(self): # Set/get the minimal height.
+        u"""Answer the minH limit of self. Min/Max values cannot be relative units.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, minH=232, maxW=900, maxH=800, maxD=700)
+        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
+        (1pt, 900pt, 232pt, 800pt, 0pt, 700pt)
+        """
+        return units(self.css('minH'))
+    def _set_minH(self, minH):
+        self.rootStyle['minH'] = u = units(minH) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.minH "%s" must be an absolute unit.' % minH)
+    minH = property(_get_minH, _set_minH)
+
+    def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
+        u"""Answer the minD limit of self. In case it is relative unit, 
+        then use parent as reference.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, minD=343, maxW=900, maxH=800, maxD=700)
+        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
+        (1pt, 900pt, 1pt, 800pt, 343pt, 700pt)
+
+        """
+        return units(self.css('minD'))
+    def _set_minD(self, minD):
+        self.rootStyle['minD'] = u = units(minD) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.minD "%s" must be an absolute unit.' % minD)
+    minD = property(_get_minD, _set_minD)
+
+    def _get_maxW(self): # Set/get the maximal width.
+        u"""Answer the maxW limit for child elements. Min/Max values cannot be relative units.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=901, maxH=802, maxD=703)
+        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
+        (1pt, 901pt, 1pt, 802pt, 0pt, 703pt)
+
+        """
+        return units(self.css('maxW', MAX_WIDTH))
+    def _set_maxW(self, maxW):
+        self.rootStyle['maxW'] = u = units(maxW) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.maxW "%s" must be an absolute unit.' % maxW)
+    maxW = property(_get_maxW, _set_maxW)
+
+    def _get_maxH(self): # Set/get the maximal height.
+        u"""Answer the maxH limit for child elements. Default is MAX_HEIGHT.
+        Min/max values must be absolute units.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=901, maxH=802, maxD=703)
+        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
+        (1pt, 901pt, 1pt, 802pt, 0pt, 703pt)
+
+        """
+        return units(self.css('maxH', MAX_HEIGHT))
+    def _set_maxH(self, maxH):
+        self.rootStyle['maxH'] = u = units(maxH) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.maxH "%s" must be an absolute unit.' % maxH)
+    maxH = property(_get_maxH, _set_maxH)
+
+    def _get_maxD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
+        u"""Answer the maxD limit for child elements. Min/Max values cannot be relative units.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=901, maxH=802, maxD=703)
+        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
+        (1pt, 901pt, 1pt, 802pt, 0pt, 703pt)
+
+        """
+        return units(self.css('maxD', MIN_HEIGHT))
+    def _set_maxD(self, maxD):
+        self.rootStyle['maxD'] = u = units(maxD) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.maxD "%s" must be an absolute unit.' % maxD)
+    maxD = property(_get_maxD, _set_maxD)
+
 
     #   C O N D I T I O N S
 
@@ -1115,10 +1157,11 @@ class Document(object):
         u"""Export the document as website, using the document.view for export.
 
         >>> from pagebot.elements import newRect
+        >>> from pagebot.toolbox.color import redColor, noColor, color
         >>> from pagebot.conditions import *
         >>> w = h = 400 # Auto-convert plain numbers to default pt-units.
-        >>> doc = Document(name='TestDoc', w=w, h=h, autoPages=1, padding=40)
-        >>> r = newRect(fill=redColor, parent=doc[1], conditions=[Fit()])
+        >>> doc = Document(name='TestDoc', size=(w, h), autoPages=1, padding=40)
+        >>> r = newRect(fill=color(1, 0, 0), stroke=noColor, parent=doc[1], conditions=[Fit()])
         >>> score = doc.solve()
         >>> doc.view # PageView is default.
         <PageView:Page (0pt, 0pt, 400pt, 400pt)>
