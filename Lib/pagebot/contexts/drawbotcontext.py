@@ -489,6 +489,7 @@ class DrawBotContext(BaseContext):
         DrawBot FormattedString at position p."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+
         self.b.text(sOrBs, ru(p)) # Render point units to value tuple
 
     def textBox(self, sOrBs, r):
@@ -496,6 +497,7 @@ class DrawBotContext(BaseContext):
         in rectangle r."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+
         self.b.textBox(sOrBs, ru(r)) # Render rectangle units to value tuple
 
     def textSize(self, bs, w=None, h=None):
