@@ -537,7 +537,7 @@ class DrawBotString(BabelString):
         # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
         # TODO: Use this value instead, if currently on top of a new string.
         if uFirstLineIndent is not None:
-            assert isUnit(uStrokeWidth), ('DrawBotString.newString: uFirstLineIndent %s must of type Unit' % uFirstLineIndent)
+            assert isUnit(uFirstLineIndent), ('DrawBotString.newString: uFirstLineIndent %s must of type Unit' % uFirstLineIndent)
             fs.firstLineIndent(uFirstLineIndent.pt)
 
         uIndent = css('indent', e, style)

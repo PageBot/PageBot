@@ -99,11 +99,12 @@ class PageView(BaseView):
             # then set the global frame duration.
             context.frameDuration(page.frameDuration) # Set the duration of this page, in case exporting GIF
 
-            # View may have defined a background
+            # View may have defined a background. Build with page bleed, if it is defined.
             fillColor = self.style.get('fill', noColor)
             if fillColor is not noColor:
+                bt, br, bb, bl = page.bleed
                 context.setFillColor(fillColor)
-                context.rect(pt(0), pt(0), pw, ph)
+                context.rect(page.leftBleed, page.bottomBleed, pw+br+bl, ph+bt+bb)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)

@@ -81,10 +81,10 @@ class Image(Element):
     (300pt, 300pt)
     """
     def __init__(self, path=None, style=None, pixelMap=None, name=None, title=None, caption=None, clipRect=None,
-            mask=None, imo=None, w=None, h=None, imageConditions=None, titleConditions=None,
+            mask=None, imo=None, w=None, h=None, size=None, imageConditions=None, titleConditions=None,
             captionConditions=None, conditions=None, **kwargs):
         self.image = None # Aviod setting of self.omage.w and self.omage.h while not initialized.
-        Element.__init__(self, w=w, h=h, name=name, conditions=conditions, **kwargs)
+        Element.__init__(self, w=w, h=h, size=size, name=name, conditions=conditions, **kwargs)
         assert path is None or pixelMap is None # One or the other or both None.
 
         if title is not None: # Only make title element if defined content.
