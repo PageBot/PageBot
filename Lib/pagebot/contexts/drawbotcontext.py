@@ -493,16 +493,17 @@ class DrawBotContext(BaseContext):
         self.b.text(sOrBs, ru(p)) # Render point units to value tuple
 
     def textBox(self, sOrBs, r):
-        """Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
-        in rectangle r."""
+        """Draw the sOrBs text string, can be a str or BabelString, including a
+        DrawBot FormattedString in rectangle r."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
 
         self.b.textBox(sOrBs, ru(r)) # Render rectangle units to value tuple
 
     def textSize(self, bs, w=None, h=None):
-        """Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
-        Answer the height of the string if the width w is given."""
+        """Answer the size tuple (w, h) of the current text. Answer (0, 0) if
+        there is no text defined.  Answer the height of the string if the width
+        w is given."""
         if w is not None:
             return self.b.textSize(bs.s, width=w)
         if h is not None:
@@ -545,8 +546,8 @@ class DrawBotContext(BaseContext):
     #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
-        """Set the self._frameDuretion for animated gifs to a number of seconds per frame.
-        Used when initializing a new page."""
+        """Set the self._frameDuretion for animated gifs to a number of seconds
+        per frame. Used when initializing a new page."""
         self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
 
     #   C O L O R

@@ -32,34 +32,24 @@ def run():
 
     # Contains a DrawBot FormattedString.
     aa = bs.s
-    aa.font('Georgia')
-    aa.fontSize(14)
-    aa += 'bla'
-    aa += '123'
-    aa.fontSize(40)
-    aa.lineHeight(1.3)
-    aa += ('Book Cover')
-    print('Text size book cover: (%f, %f)' % textSize(aa))
-    
-    #aa = context.newString('bla')
-    #aa.font('Georgia')
-    #aa.fontSize(40)
-    #aa += 'Book Cover'
-    #print(context.textSize(aa))
-    
+
+    print(type(aa))
+    aa.append("123", font="Helvetica", fontSize=100, fill=(1, 0, 0))
+    aa.fontSize(80)
+    aa.append("Book Cover", font="Georgia", fill=(0, 1, 0))
+    print(aa)
+    print('Text size: (%f, %f)' % textSize(aa))
+
     print('Ascender: %f' % aa.fontAscender())
     print('Descender: %f' % aa.fontDescender())
     print('Difference: %f' % (aa.fontAscender() - aa.fontDescender()))
 
     context.stroke(blackColor)
     context.fill(noColor)
-    context.rect(pt(100), pt(100), pt(200), pt(200))
-    print(aa)
+    w, h = textSize(aa)
+    context.rect(pt(100), pt(100), pt(w), pt(h))
     context.fill(blackColor)
-    context.fontSize(pt(80))
-    context.text('bla', (100, 100))
-    
-    # FIXME
+    context.fontSize(pt(80))    
     context.text(bs, (100, 100))
 
 if __name__ == '__main__':
