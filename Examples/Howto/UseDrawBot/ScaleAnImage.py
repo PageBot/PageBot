@@ -23,7 +23,10 @@
 #
 import os # Import module that communicates with the file system.
 import sys
+from pagebot.toolbox.units import pt
 from pagebot.contexts.platform import getContext
+context = getContext()
+
 if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
@@ -31,7 +34,7 @@ if not context.isDrawBot:
 if __name__ == '__main__':
 
 	# Define the path where to find the example image.
-	path = 'images/cookbot1.jpg'
+	path = '../images/cookbot1.jpg'
 	# Use the standard DrawBot function to get the width/height of the image from the file.
 	w, h = context.imageSize(path)
 
@@ -39,7 +42,7 @@ if __name__ == '__main__':
 	newScale = 0.5
 
 	# Make a page with the size of the scaled image, rounded to whole pixels.
-	context.newPage(int(w*newScale), int(h*newScale))
+	context.newPage(pt(int(w*newScale)), pt(int(h*newScale)))
 
 	# Save the “graphics state“, just in case the script is extended later, where other
 	# operation need to work in 100%.
