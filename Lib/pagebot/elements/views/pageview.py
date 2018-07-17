@@ -215,7 +215,7 @@ class PageView(BaseView):
         if self.showPagePadding and (pt or pr or pb or pl):
             context = self.context
 
-            p = pointOffset(page.oPoint, origin)
+            p = pointOffset(page.origin, origin)
             p = page._applyScale(self, p)
             px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
 
@@ -386,7 +386,7 @@ class PageView(BaseView):
         b = self.b
         context = self.context
         for e, origin in self.elementsNeedingInfo.values():
-            p = pointOffset(e.oPoint, origin)
+            p = pointOffset(e.origin, origin)
             p = e._applyScale(self, p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
             if self.showElementInfo:
@@ -453,7 +453,7 @@ class PageView(BaseView):
 
     def drawElementOrigin(self, e, origin):
         context = self.context
-        px, py, _ = pointOffset(e.oPoint, origin)
+        px, py, _ = pointOffset(e.origin, origin)
         S = self.css('viewInfoOriginMarkerSize', 4)
         if self.showElementOrigin:
             # Draw origin of the element
@@ -489,7 +489,7 @@ class PageView(BaseView):
 
         if self.showMissingElementRect:
 
-            p = pointOffset(e.oPoint, origin)
+            p = pointOffset(e.origin, origin)
             p = self._applyScale(e, p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
@@ -541,7 +541,7 @@ class PageView(BaseView):
         #    return
         context = self.context
 
-        p = pointOffset(e.oPoint, origin)
+        p = pointOffset(e.origin, origin)
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
