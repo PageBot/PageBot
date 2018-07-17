@@ -29,9 +29,10 @@ from pagebot.toolbox.units import pt, pointOffset, point3D
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
-    u"""The PageView is contains the parameters to export the pages as documents.
-    A View is just another kind of container, kept by document to make a certain presentation
-    of the page tree. Views use the current Context.b builder for export."""
+    u"""The PageView is contains the parameters to export the pages as
+    documents.  A View is just another kind of container, kept by document to
+    make a certain presentation of the page tree. Views use the current
+    Context.b builder for export."""
     viewId = 'Page'
 
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
@@ -589,7 +590,7 @@ class PageView(BaseView):
                 context.drawPath()
                 #text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
         """
-        
+
     def drawBaselineGrid(self, e, origin):
         u"""Draw baseline grid if line color is set in the style.
         TODO: Make fixed values part of calculation or part of grid style.
@@ -621,7 +622,7 @@ class PageView(BaseView):
         # Format of line numbers.
         # TODO: DrawBot align and fill don't work properly now.
         style = dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
-            fontSize=M/2, stroke=noColor, 
+            fontSize=M/2, stroke=noColor,
             textFill=e.css('viewGridStroke', grayColor))
         baselineGrid = e.css('baselineGrid', )
         while oy > e.pb or 0:
