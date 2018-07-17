@@ -49,7 +49,7 @@ if useDrawBot and useAppKit:
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will try to call e.build_html()
     drawBotBuilder.PB_ID = 'drawBot'
-    print('Using DrawBotContext with DrawBot.')
+    print('Using DrawBotContext with DrawBot as builder.')
 else:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = None

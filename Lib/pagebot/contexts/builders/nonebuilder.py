@@ -100,7 +100,7 @@ class NoneBuilder(object):
     def line(self, p1, p2):
         pass
 
-    def fill(self, *args):
+    def fill(self, *fill):
         pass
 
     setFillColor = cmykFill = setStrokeColor = cmykStroke = stroke = fill
