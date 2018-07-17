@@ -49,7 +49,7 @@ if useDrawBot and useAppKit:
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will try to call e.build_html()
     drawBotBuilder.PB_ID = 'drawBot'
-    print('Using DrawBotContext with DrawBot as builder.')
+    #print('Using DrawBotContext with DrawBot.')
 else:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = None
@@ -62,7 +62,7 @@ else:
     # If DrawBot is not available on the platform, the noneDrawBotBuilder
     # instance is used to run DrawBot related docTests.
     drawBotBuilder = NoneDrawBotBuilder()
-    print('Using DrawBotContext with a NoneDrawBotBuilder.')
+    #print('Using DrawBotContext with a NoneDrawBotBuilder.')
 
 class DrawBotContext(BaseContext):
     """A DrawBotContext instance combines the specific functions of the DrawBot
@@ -604,6 +604,7 @@ class DrawBotContext(BaseContext):
         >>> fs = context.newString('Hello')
         >>> context.setTextStrokeWidth(fs, pt(10))
         """
+        assert isUnit(w), ('DrawBotContext.textStrokeWidth: Strokewidth value %s should be of type Unit' % w)
         fs.strokeWidth(w.pt)
 
     setTextStrokeWidth = textStrokeWidth
@@ -654,11 +655,11 @@ class DrawBotContext(BaseContext):
             r, g, b = c.rgb # DrawBot.stroke has slight API difference with FormattedString.stroke
             self.b.stroke(r, g, b, alpha=c.a)
         if w is not None:
-            self.setStrokeWidth(w)
+            self.strokeWidth(w)
 
     setStrokeColor = stroke # DrawBot compatible API
 
-    def setStrokeWidth(self, w):
+    def strokeWidth(self, w):
         u"""Set the current stroke width.
 
         >>> from pagebot.toolbox.units import unit, pt, mm
@@ -666,7 +667,10 @@ class DrawBotContext(BaseContext):
         >>> context.setStrokeWidth(pt(0.5))
         >>> context.setStrokeWidth(mm(0.5))
         """
+        assert isUnit(w), ('DrawBotContext.strokeWidth: Strokewidth value %s should be of type Unit' % w)
         self.b.strokeWidth(w.pt)
+
+    setStrokeWidth = strokeWidth
 
     def rotate(self, angle):
         """Rotate the canvas by angle."""

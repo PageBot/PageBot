@@ -194,7 +194,7 @@ class PageView(BaseView):
                 self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
             context = self.context
             context.setFillColor(noColor)
-            context.setStrokeColor(color(0, 0, 1), 0.5)
+            context.setStrokeColor(color(0, 0, 1), pt(0.5))
             context.rect(origin[0], origin[1], page.w, page.h)
             #page.drawFrame(origin, self)
 
