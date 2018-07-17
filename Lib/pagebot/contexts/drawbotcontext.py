@@ -624,10 +624,10 @@ class DrawBotContext(BaseContext):
         elif c is noColor:
             self.b.fill(None) # Set color to no-color
         elif c.isCmyk:
-            c, m, y, k = c.cmyk # DrawBot.fill has slight API difference with FormattedString.fill 
+            c, m, y, k = c.cmyk # DrawBot.fill has slight API difference with FormattedString.fill
             self.b.cmykFill(c, m, y, k, alpha=c.a)
         else:
-            r, g, b = c.rgb # DrawBot.fill has slight API difference with FormattedString.fill 
+            r, g, b = c.rgb # DrawBot.fill has slight API difference with FormattedString.fill
             self.b.fill(r, g, b, alpha=c.a) # Convert to rgb, whatever the type of color
 
     setFillColor = fill # DrawBot compatible API
@@ -648,10 +648,10 @@ class DrawBotContext(BaseContext):
         if c is noColor:
             self.b.stroke(None) # Set color to no-color
         elif c.isCmyk:
-            cc, cm, cy, ck = c.cmyk # DrawBot.stroke has slight API difference with FormattedString.stroke 
+            cc, cm, cy, ck = c.cmyk # DrawBot.stroke has slight API difference with FormattedString.stroke
             self.b.cmykStroke(cc, cm, cy, ck, alpha=c.a)
         else:
-            r, g, b = c.rgb # DrawBot.stroke has slight API difference with FormattedString.stroke 
+            r, g, b = c.rgb # DrawBot.stroke has slight API difference with FormattedString.stroke
             self.b.stroke(r, g, b, alpha=c.a)
         if w is not None:
             self.setStrokeWidth(w)
@@ -684,6 +684,7 @@ class DrawBotContext(BaseContext):
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         """Draw the image. If w or h is defined, then scale the image to fit."""
         iw, ih = self.imageSize(path)
+
         if w and not h: # Scale proportional
             h = ih * w/iw # iw : ih = w : h
         elif not w and h:
@@ -691,12 +692,14 @@ class DrawBotContext(BaseContext):
         elif not w and not h:
             w = iw
             h = ih
+
         # else both w and h are defined, scale disproportional
         x, y, = p[0], p[1]
         sx, sy = w/iw, h/ih
         self.save()
         self.scale(sx, sy)
-        self.b.image(path, ((x*sx).r, (y*sy).r), alpha=alpha, pageNumber=pageNumber)
+        #self.b.image(path, ((x*sx).r, (y*sy).r), alpha=alpha, pageNumber=pageNumber)
+        self.b.image(path, ((x*sx), (y*sy)), alpha=alpha, pageNumber=pageNumber)
         self.restore()
 
     def getImageObject(self, path):
