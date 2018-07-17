@@ -18,7 +18,8 @@ import os
 from pagebot.toolbox.transformer import path2Name
 
 class NoneBezierPath(object):
-    """Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing texting."""
+    """Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing
+    texting."""
 
     def moveTo(self, p):
         pass
@@ -43,10 +44,11 @@ class NoneImageObject(object):
         self.path = path
 
 class NoneBuilder(object):
-    """Make NoneBuilder with the same API for docTesting, in case the platform
-    does not support DrawBot. More methods to be added here, if DrawBotContext
-    docTests fail in non-DrawBot platforms.  Eventually should be a matching
-    set of methods, compare to DrawBot itself."""
+    """Make NoneBuilder with a general builder API for docTesting. Used for
+    example when the platform does not support DrawBot. Methods need to be
+    added here when DrawBotContext docTests fail with non-DrawBot platforms.
+
+    NOTE: when completed this set of methods should match with DrawBot itself."""
 
     def __init__(self):
         self._installedFonts = []
@@ -131,6 +133,7 @@ class NoneBuilder(object):
 
     def imageSize(self, path):
         """Answer the image size of our test image
+
         rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
         """
         return 3024, 4032
@@ -157,15 +160,14 @@ class NoneBuilder(object):
         return None
 
     def fontName2FontPath(self, fontName):
-        """We cannot tell the relation of the font name and the font path for DrawBot without OSX
-        Unless it is a path."""
+        """We cannot tell the relation of the font name and the font path for
+        DrawBot without OS X unless it is a path."""
         if os.path.exists(fontName):
             return fontName
         return None
 
     def ImageObject(self, path):
         return NoneImageObject(path)
-
 
 class NoneDrawBotBuilder(NoneBuilder):
 
@@ -181,7 +183,6 @@ class NoneFlatBuilder(NoneBuilder):
 
     def document(self, w, h, units):
         pass
-
 
 if __name__ == '__main__':
     import doctest

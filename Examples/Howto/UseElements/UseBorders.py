@@ -24,7 +24,8 @@ from pagebot.style import getRootStyle, A4, CENTER,TOP, BOTTOM, MM,\
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements import *
 from pagebot.document import Document
-    
+from pagebot.toolbox.color import Color
+
 ViewPadding = 64
 PageSize = 500
 
@@ -76,8 +77,8 @@ def makeDocument():
     for ix in range(sqx): # Run through the range of (0, 1, ...) number of horizontal squares
         for iy in range(sqy): # Same with vertical squares  
             # Place squares in random colors
-            color1 = (random()*0.5+0.5, 0.1, 0.6)
-            color2 = (random()*0.5+0.5, 0.1, 0.6)
+            color1 = Color(random()*0.5+0.5, 0.1, 0.6)
+            color2 = Color(random()*0.5+0.5, 0.1, 0.6)
             # Calculate the position for each square as combination 
             # of paddings and (ix, iy)
             p = padX + ix * (SQUARE + GUTTER), my + iy * (SQUARE + GUTTER) # Make 2-dimensional point tuple.
@@ -88,21 +89,21 @@ def makeDocument():
             lineType = {-1:ONLINE, 0:INLINE, 1:ONLINE, 2:OUTLINE}[LineType]
             e.borderLeft['strokeWidth'] = (ix+1)*4
             e.borderLeft['line'] = lineType
-            e.borderLeft['stroke'] = (0, 0, 0, 0.5)
+            e.borderLeft['stroke'] = Color(0, 0, 0, 0.5)
             e.borderLeft['dash'] = (DashWhite, DashBlack)
  
             e.borderBottom['strokeWidth'] = (ix+1)*4
             e.borderBottom['line'] = lineType
-            e.borderBottom['stroke'] = (0, 1, 0)
+            e.borderBottom['stroke'] = Color(0, 1, 0)
             e.borderBottom['dash'] = (DashWhite, DashBlack)
             
             e.borderTop['strokeWidth'] = (iy+1)*4
             e.borderTop['line'] = lineType
-            e.borderTop['stroke'] = (1, 1, 0, 0.5)
+            e.borderTop['stroke'] = Color(1, 1, 0, 0.5)
             
             e.borderRight['strokeWidth'] = (iy+1)*4
             e.borderRight['line'] = lineType
-            e.borderRight['stroke'] = (0, 0, 1, 0.5)
+            e.borderRight['stroke'] = Color(0, 0, 1, 0.5)
             
             # Create Rect object and place it in the page on position p
     return doc # Answer the doc for further doing.

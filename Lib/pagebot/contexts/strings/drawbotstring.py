@@ -84,12 +84,12 @@ class NoneDrawBotString(BabelString):
         pass
 
     setStrokeColor = stroke
-    
+
     def setStrokeWidth(self, w):
         pass
 
     strokeWidth = setStrokeWidth
-    
+
 class DrawBotString(BabelString):
 
     BABEL_STRING_TYPE = 'fs'
@@ -97,7 +97,8 @@ class DrawBotString(BabelString):
     """DrawBotString is a wrapper around the standard DrawBot FormattedString."""
     def __init__(self, s, context, style=None):
         """Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
-        Optionally store the (latest) style that was used to produce the formatted string.
+        Optionally store the (latest) style that was used to produce the
+        formatted string.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -120,7 +121,8 @@ class DrawBotString(BabelString):
         self.fittingFontSize = pt(0) # Set to fitting font size, in case the size iterated to find width.
 
     def _get_s(self):
-        """Answer the embedded FormattedString by property, to enforce checking type of the string."""
+        """Answer the embedded FormattedString by property, to enforce checking
+        type of the string."""
         return self._s
     def _set_s(self, s):
         """ Check on the type of s. Three types are supported here: plain strings,
@@ -280,8 +282,8 @@ class DrawBotString(BabelString):
         If the target width w and height are defined, and if there is a [wdth] or [XTRA] axis in the
         current Variable Font, then values are iterated to make the best location/instance for the
         rectangle fit.
-        In case the fontSize is set and the width w is set, then just use the [wdth] or [XTRA] to 
-        make a horizontal fit, keeping the size. If the axes run to extreme, the string is return 
+        In case the fontSize is set and the width w is set, then just use the [wdth] or [XTRA] to
+        make a horizontal fit, keeping the size. If the axes run to extreme, the string is return
         without changing width.
         In case the a font path was supplied, then try to get a Font instance for that path, as we
         need to test it for existing axes as Variable Font.
@@ -290,7 +292,7 @@ class DrawBotString(BabelString):
         >>> context = DrawBotContext()
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> #font = findFont('RobotoDelta-VF')
-        >>> font = findFont('Fit-Variable_1')        
+        >>> font = findFont('Fit-Variable_1')
         >>> style = dict(font=font, textFill=blackColor, textStroke=noColor)
 
         >>> 'wdth' in font.axes.keys() or 'XTRA' in font.axes.keys() # One of them is there
@@ -322,8 +324,8 @@ class DrawBotString(BabelString):
         style['font'] = font
         # Get the flag if fit locations should be rounded (less cached instance) or accurate.
         roundVariableFitLocation = style.get('roundVariableFitLocation', True)
-        # In case font is not a variable font, or not [wdth] or [XTRA] present, then using normal 
-        # string fit is the best we can do. 
+        # In case font is not a variable font, or not [wdth] or [XTRA] present, then using normal
+        # string fit is the best we can do.
         if not 'wdth' in font.axes and not 'XTRA' in font.axes:
             return cls.newString(t, context, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
 
@@ -339,8 +341,8 @@ class DrawBotString(BabelString):
             style['fontSize'] = bs.fittingFontSize
         else: # Assuming there is a fontSize set, we'll use that as vertical requirement
             bs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
-        
-        # Now we have a formatted string with a given fontSize, guess to fit on the width. 
+
+        # Now we have a formatted string with a given fontSize, guess to fit on the width.
         tx, _, tw, _ = bs.bounds() # Get pixel bounds of the string
         tw = tw - tx # Pixel width of the current string.
         #print(0, tw, w, h)
@@ -363,7 +365,7 @@ class DrawBotString(BabelString):
                 style['font'] = getInstance(font, loc)
                 bs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
                 tx, ty, tw, th = bs.bounds() # Get pixel bounds of the string
-                tw = tw - tx # Total width for the current 
+                tw = tw - tx # Total width for the current
                 #print(5, tw, w, th-ty, h)
                 if prevW == tw: # Did not change, probably not able to get more condensed
                     break
@@ -381,7 +383,7 @@ class DrawBotString(BabelString):
                 style['font'] = getInstance(font, loc)
                 bs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
                 tx, ty, tw, th = bs.bounds() # Get pixel bounds of the string
-                tw = tw - tx # Total width for the current 
+                tw = tw - tx # Total width for the current
                 #print(15, tw, w, th-ty, h)
                 if prevW == tw: # Did not change, probably not able to get more condensed
                     break
@@ -394,10 +396,14 @@ class DrawBotString(BabelString):
 
     @classmethod
     def newString(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Answer a DrawBotString instance from valid attributes in *style*. Set all values after testing
-        their existence, so they can inherit from previous style formats in the string.
-        If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
-        In that case the pixelFit flag defines if the current width or height comes from the pixel image of em size.
+        """Answers a DrawBotString instance from valid attributes in *style*.
+        Set all values after testing their existence, so they can inherit from
+        previous style formats in the string.
+
+        If target width *w* or height *h* is defined, then *fontSize* is scaled
+        to make the string fit *w* or *h*.  In that case the pixelFit flag
+        defines if the current width or height comes from the pixel image of em
+        size.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -428,30 +434,38 @@ class DrawBotString(BabelString):
 
         fs = b.FormattedString('') # Make an empty OSX-DrawBot FormattedString
         sFont = css('font', e, style)
+
         if sFont is not None:
             if hasattr(sFont, 'path'): # If the Font instance was supplied, then use it's path.
                 sFont = sFont.path
             fs.font(sFont)
-        # If there is a target (pixel) width or height defined, ignore the requested fontSize and try the width or
-        # height first for fontSize = 100. The resulting width or height is then used as base value to
+
+        # If there is a target (pixel) width or height defined, ignore the
+        # requested fontSize and try the width or height first for fontSize =
+        # 100. The resulting width or height is then used as base value to
         # calculate the needed point size.
-        # Forced fontSize, then this overwrites the style['fontSize'] if it is there.
-        # TODO: add calculation of rFontSize (relative float based on root-fontSize) here too.
+        # Forced fontSize, then this overwrites the style['fontSize'] if it is
+        # there.  TODO: add calculation of rFontSize (relative float based on
+        # root-fontSize) here too.
         if w is not None or h is not None:
             uFontSize = pt(100)
         else:
-            uFontSize = css('fontSize', e, style, DEFAULT_FONT_SIZE) # May be scaled to fit w or h if target is defined.
+            # May be scaled to fit w or h if target is defined.
+            uFontSize = pt(css('fontSize', e, style, DEFAULT_FONT_SIZE))
+
         if uFontSize is not None:
             assert isUnit(uFontSize), ('DrawBotString.newString: uFontSize %s must of type Unit' % uFontSize)
             fs.fontSize(uFontSize.pt) # For some reason fontSize must be set after leading.
         uLeading = css('leading', e, style)
+
         if uLeading is not None:
             assert isUnit(uLeading), ('DrawBotString.newString: uLeading %s must of type Unit' % uLeading)
             fs.lineHeight(uLeading.pt)
         sFallbackFont = css('fallbackFont', e, style)
+
         if sFallbackFont is not None:
             if isinstance(sFallbackFont, Font):
-                sFallbackFont = sFallbackFont.path 
+                sFallbackFont = sFallbackFont.path
             fs.fallbackFont(sFallbackFont)
 
         # Color values for text fill
@@ -465,7 +479,7 @@ class DrawBotString(BabelString):
                 context.setTextFillColor(fs, noColor)
             else:
                 context.setTextFillColor(fs, cFill)
-        
+
         # Color values for text stroke
         # Color: Stroke the text with this color instance
         # noColor: Set the value to None, no stroke will be drawn
@@ -481,7 +495,6 @@ class DrawBotString(BabelString):
                 context.setTextStrokeColor(fs, noColor)
             else:
                 context.setTextStrokeColor(fs, cStroke, w=strokeWidth)
-        
         textAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
         if textAlign is not None: # yTextAlign must be solved by parent container element.
             fs.align(textAlign)
@@ -544,6 +557,7 @@ class DrawBotString(BabelString):
         sUpperCase = css('uppercase', e, style)
         sLowercase = css('lowercase', e, style)
         sCapitalized = css('capitalized', e, style)
+
         if sUpperCase:
             s = s.upper()
         elif sLowercase:

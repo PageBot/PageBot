@@ -21,36 +21,49 @@ from pagebot.toolbox.color import color, Color, noColor, inheritColor
 from pagebot.toolbox.units import ru, isUnit, isUnits # Render units
 from pagebot.constants import *
 
-# FIXME: bad exception usage. (How to check otherwise if running in DrawBot context?)
-#import ForceErrorHere # When debugging: Uncheck in case of forcing noneDrawBotBuilder testing
+try:
+    # Test if drawBot is installed.
+    import drawBot
+    useDrawBot = True
+    # Uncheck to test noneDrawBotBuilder with DrawBot installed.
+    #import ForceErrorHere
+except (ImportError, AttributeError):
+    useDrawBot = False
 
 try:
-    #import ForceErrorHere # Uncheck in case of forcing noneDrawBotBuilder testing
-    from AppKit import NSFont
-    usingDrawBot = True
+    #from AppKit import NSFont
+    import AppKit
+    useAppKit = True
 except (ImportError, AttributeError):
-    usingDrawBot = False
+    useAppKit = False
 
-if usingDrawBot:
-    from CoreText import CTFontDescriptorCreateWithNameAndSize, CTFontDescriptorCopyAttribute
-    from CoreText import kCTFontURLAttribute, CTFramesetterCreateWithAttributedString
-    from CoreText import CTFramesetterCreateFrame, CTFrameGetLines, CTFrameGetLineOrigins
+if useDrawBot and useAppKit:
+    from CoreText import CTFontDescriptorCreateWithNameAndSize, \
+        CTFontDescriptorCopyAttribute, kCTFontURLAttribute, \
+        CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
+        CTFrameGetLines, CTFrameGetLineOrigins
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
     from drawBot import Variable
-    from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
+
     from pagebot.contexts.strings.drawbotstring import DrawBotString as stringClass
+    drawBotBuilder = drawBot
+    # Id to make builder hook name. Views will try to call e.build_html()
+    drawBotBuilder.PB_ID = 'drawBot'
+    #from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
+    print('Using DrawBotContext with a DrawBotBuilder.')
 else:
-    # If DrawBot is not available on the platform, then use a noneDrawBotBuilder instance, that
-    # can be used to run all DrawBot related docTests.
-    from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
-    from pagebot.contexts.strings.drawbotstring import NoneDrawBotString as stringClass
-    drawBotBuilder = NoneDrawBotBuilder()
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = None
     CTFontDescriptorCopyAttribute = None
     kCTFontURLAttribute = None
     Variable = None
-    print('Using drawBotContext-->NoneDrawBotBuilder')
+    from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
+    from pagebot.contexts.strings.drawbotstring import NoneDrawBotString as stringClass
+
+    # If DrawBot is not available on the platform, the noneDrawBotBuilder
+    # instance is used to run DrawBot related docTests.
+    drawBotBuilder = NoneDrawBotBuilder()
+    print('Using DrawBotContext with a NoneDrawBotBuilder.')
 
 class DrawBotContext(BaseContext):
     """A DrawBotContext instance combines the specific functions of the DrawBot
@@ -118,7 +131,7 @@ class DrawBotContext(BaseContext):
     saveImage = saveDocument # Compatible API with DrawBot
 
     def newPage(self, w, h):
-        """Create a new drawbot page.
+        """Creates a new drawbot page.
 
         >>> from pagebot.toolbox.units import px
         >>> context = DrawBotContext()
