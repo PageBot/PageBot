@@ -695,7 +695,7 @@ class Element(object):
         >>> len(d)
         2
         >>> d[e1.eId], d[e2.eId]
-        ((20pt, 30pt), (20pt, 40pt))
+        ((20pt, 30pt, 0pt), (20pt, 40pt, 0pt))
         """
         elements = {}
         for e in self.elements:
@@ -714,16 +714,16 @@ class Element(object):
         ((20pt, 30pt, 0pt), (20pt, 40pt, 0pt))
         >>> d = e.getPositions()
         >>> sorted(d.keys())
-        [(20pt, 30pt, 0pt), (20pt, 40pt, 0pt)]
-        >>> d[(20pt, 30pt, 0pt)] == [e1], d[(20pt, 40pt, 0pt)] == [e2]
+        [(20, 30, 0), (20, 40, 0)]
+        >>> d[(20, 30, 0)] == [e1], d[(20, 40, 0)] == [e2]
         (True, True)
         """
         positions = {}
         for e in self.elements:
-            xyz = e.xyz # Point needs to be tuple to be used a key.
-            if xyz not in positions:
-                positions[xyz] = []
-            positions[xyz].append(e)
+            rxyz = ru(e.xyz) # Point needs to be tuple to be used a key.
+            if rxyz not in positions:
+                positions[rxyz] = []
+            positions[rxyz].append(e)
         return positions
 
     #   F L O W
@@ -1417,7 +1417,7 @@ class Element(object):
     z = property(_get_z, _set_z)
 
     def _get_xy(self):
-        u"""Answer ther Point2D tuple.
+        u"""Answer the Point2D tuple.
 
         >>> from pagebot.toolbox.units import perc
         >>> e = Element(x=10, y=20, w=400, h=400)
@@ -1443,7 +1443,7 @@ class Element(object):
     xy = property(_get_xy, _set_xy)
 
     def _get_xyz(self):
-        u"""Answer ther Point3D tuple.
+        u"""Answer the Point3D tuple.
 
         >>> e = Element(x=10, y=20, z=30, w=400, h=400, d=400)
         >>> e.xyz
@@ -2259,8 +2259,8 @@ class Element(object):
         101pt
         >>> e.d = 80000
         >>> e.d, e.d.pt # Clipping on pt conversion
-        ZZZZZ(11000pt, 1010)
-        >>> e.d = -10 # Imaginary negative thickness
+        (2000pt, 2000)
+        >>> e.d = 0 # Imaginary negative thickness
         >>> e.d, e.d = e.minD, e.d == MIN_DEPTH # Corrected my e.minD
         (10pt, True, False)
         """
@@ -3254,14 +3254,14 @@ class Element(object):
         >>> e = Element()
         >>> e.minSize
         (1pt, 1pt)
-        >>> e.minSize = 100, 200 # Takes 2D and 3D
+        >>> e.minSize = 101, 202 # Takes 2D and 3D
         >>> e.minSize
-        ======
-        >>> e.minSize = 100, 200, 300 # Takes 2D and 3D
+        (101pt, 202pt)
+        >>> e.minSize = 401, 502, 603 # Takes 2D and 3D
         >>> e.minSize # Default answers 2D
-        (100pt, 200pt)
+        (401pt, 502pt)
         >>> e.minSize3D
-        (100pt, 200pt, 300pt)
+        (401pt, 502pt, 603pt)
         """
         if isinstance(minSize, (list, tuple)):
             assert len(minSize) in (2,3)
