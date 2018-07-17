@@ -107,7 +107,7 @@ class NoneBuilder(object):
 
     def cmykFill(self, c, m=None, y=None, k=None, a=None, alpha=None): # Covering API inconsistencies in DrawBot
         pass
-    
+
     cmykStroke = cmykFill
 
     def strokeWidth(self, w):
