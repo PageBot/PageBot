@@ -140,7 +140,6 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         # Borders hold dictionaries of format
         # border = dict(strokeWidth=3, line=lineType, stroke=(1, 0, 0, 0,5), dash=(4,4))
         # where lineType is one of (INLINE, ONLINE, OUTLINE)
-
         borderTop = None, # Border top.
         borderLeft = None, # Border left
         borderRight = None, # Border right
@@ -166,7 +165,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         ch = -u + baselineGrid*6, # Approximately square with cw + gutter: 77. Order matters in case u is Unit
         cd = pt0, # Optional column "depth"
 
-        # Grid definitions, used static media as well as CSS display: grid; exports.
+        # Grid definitions, used by static media as well as CSS display: grid; exports.
         # gridX, gridY and gridZ are optional lists of grid line positions, to allow the use of non-repeating grids.
         # The format is [(width1, gutter1), (width2, gutter2), (None, 0)] in case different gutters are needed.
         # If the format is [width1, width2, (width3, gutter3)], then the missing gutters are used from gw or gh.

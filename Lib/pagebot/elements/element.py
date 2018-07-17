@@ -145,7 +145,7 @@ class Element(object):
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
         if bleed is not None:
-            self.bleed = bleed # Property ignores to expand if None
+            self.bleed = bleed # Property tuple (bt, br, bb, bl) ignores to expand into if None
         # Border info dict have format:
         # dict(line=ONLINE, dash=None, stroke=blackColor, strokeWidth=borderData)
         # If not borders defined, then drawing will use the stroke and strokeWidth (if defined)
@@ -264,7 +264,7 @@ class Element(object):
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot.elements import Template
         >>> e = Element(name='TestElement')
-        >>> t = Template(size=pt(11, 12), w=100, h=mm(200))
+        >>> t = Template(xy=pt(11, 12), size=(100, mm(200)))
         >>> e.applyTemplate(t)
         >>> e.x, e.y, e.w, e.h
         (11pt, 12pt, 100pt, 200mm)
@@ -859,14 +859,18 @@ class Element(object):
         of self, then follow the parent links until document or root, if self does not contain
         the requested value.
 
+        >>> from pagebot.toolbox.units import em
         >>> from pagebot.document import Document
         >>> doc = Document()
         >>> page = doc[1]
         >>> e = Element(fontSize=pt(24), parent=page)
         >>> e.css('fontSize') # Find local style value
         24pt
-        >>> e.css('rLeading') # Find value in root style
-        1.2em
+        >>> e.css('leading') # Find value in root style. Default is absolute unit. Can be changed to em.
+        16.8pt
+        >>> e = Element(fontSize=pt(24), leading=em(1.4))
+        >>> e.css('leading'), round(e.css('leading').pt) # Show unit and rendered compared to 
+        (1.4em, 17.0)
         """
         if name in self.style and self.style[name] is not None:
             return self.style[name]
@@ -1301,13 +1305,13 @@ class Element(object):
     def _get_parentD(self):
         u"""Answer the depth if the parent element. If there is not parent, answer DEFAULT_DEPTH.
 
-        >>> e0 = Element(d=500)
+        >>> e0 = Element(d=502)
         >>> e1 = Element()
+        >>> e1.parentD # No parent, answer default value
+        100pt
+        >>> e1.parent = e0 # Set parent, now width of parent is answered.
         >>> e1.parentD
-        0pt
-        >>> e1.parent = e0
-        >>> e1.parentD
-        500pt
+        502pt
         """
         if self.parent is None:
             return DEFAULT_DEPTH
@@ -1317,9 +1321,9 @@ class Element(object):
     def _get_em(self):
         u"""Answer the current value for fontSize, used as reference for the relative Em Unit.
 
-        >>> e = Element(fontSize=13)
+        >>> e = Element(fontSize=pt(13))
         >>> e.em
-        13
+        13pt
         """
         return self.css('fontSize', DEFAULT_FONT_SIZE)
     em = property(_get_em)
@@ -1438,8 +1442,10 @@ class Element(object):
         """
         return self.x, self.y
     def _set_xy(self, p):
+        assert len(p) >= 2
         self.x = p[0] # Convert values to Unit instance if needed.
         self.y = p[1] # Ignore any z
+        self.z = DEFAULT_DEPTH
     xy = property(_get_xy, _set_xy)
 
     def _get_xyz(self):
@@ -1466,6 +1472,7 @@ class Element(object):
         """
         return self.x, self.y, self.z
     def _set_xyz(self, p):
+        assert len(p) == 3
         self.x = p[0]
         self.y = p[1]
         self.z = p[2]
@@ -1762,7 +1769,7 @@ class Element(object):
         100pt
         >>> e.yAlign = MIDDLE
         >>> e.bottom.pt # Get the integer value
-        224.0
+        224
         """
         yAlign = self.yAlign
         if yAlign == TOP:
@@ -2029,7 +2036,22 @@ class Element(object):
 
     def _get_bleed(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
-        Elements will take of the reposition/scaling themselves"""
+        Elements will take of the reposition/scaling themselves
+
+        >>> from pagebot.toolbox.units import mm
+        >>> e = Element(bleed=21)
+        >>> e.bleed
+        (21pt, 21pt, 21pt, 21pt)
+        >>> e.bleed = 22 # Auto-convert to pt-units
+        >>> e.bleed
+        (22pt, 22pt, 22pt, 22pt)
+        >>> e.bleed = mm(3)
+        >>> e.style['bleedTop']
+        ####@@@
+        >>> e.bleed
+        (22mm, 22mm, 22mm, 22mm)
+        >>> 
+        """
         return self.bleedTop, self.bleedRight, self.bleedBottom, self.bleedLeft
     def _set_bleed(self, bleed):
         if isinstance(bleed, (list, tuple)):
@@ -2037,9 +2059,9 @@ class Element(object):
                 self.bleedTop, self.bleedRight, self.bleedBottom, self.bleedLeft = bleed
             elif len(bleed) == 2:
                 self.bleedTop, self.bleedRight = self.bleedBottom, self.bleedLeft = bleed
-            else: # Length
+            else: # Any other length, we just take the first one and copy
                 self.bleedTop = self.bleedRight = self.bleedBottom = self.bleedLeft = bleed[0]
-        else:
+        else: # If there's only one value, copy onto all sides.
             self.bleedTop = self.bleedRight = self.bleedBottom = self.bleedLeft = bleed
     bleed = property(_get_bleed, _set_bleed)
 
@@ -2047,57 +2069,120 @@ class Element(object):
         u"""Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves.
 
+        >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedTop=20)
         >>> e.bleedTop
         20pt
+        >>> e.bleed = 6
+        >>> e.bleedTop = mm(5)
+        >>> e.bleed
+        (24pt, 6pt, 6pt, 6pt)
         """
         base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
         return units(self.css('bleedTop', 0), base=base, min=0)
     def _set_bleedTop(self, bleed):
-        self.style['bleedTop'] = units(bleed)
+        self.style['bleedTop'] = units(bleed, 0)
     bleedTop = property(_get_bleedTop, _set_bleedTop)
 
     def _get_bleedBottom(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves.
 
+        >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedBottom=20)
+        >>> units(mm(5), 0)
+
         >>> e.bleedBottom
         20pt
+        >>> e.bleed = 6
+        >>> e.bleedBottom = mm(5)
+        >>> e.bleed
+        (6pt, 6pt, 24pt, 6pt)
         """
         base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
         return units(self.css('bleedBottom', 0), base=base, min=0)
     def _set_bleedBottom(self, bleed):
-        self.style['bleedBottom'] = units(bleed)
+        self.style['bleedBottom'] = units(bleed, 0)
     bleedBottom = property(_get_bleedBottom, _set_bleedBottom)
 
     def _get_bleedLeft(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves.
 
+        >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedLeft=20)
         >>> e.bleedLeft
         20pt
+        >>> e.bleed = 6
+        >>> e.bleedLeft = mm(5)
+        >>> e.bleed
+        (6pt, 6pt, 6pt, 24pt)
         """
         base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
         return units(self.css('bleedLeft', 0), base=base, min=0)
     def _set_bleedLeft(self, bleed):
-        self.style['bleedLeft'] = units(bleed)
+        self.style['bleedLeft'] = units(bleed, 0)
     bleedLeft = property(_get_bleedLeft, _set_bleedLeft)
 
     def _get_bleedRight(self):
         u"""Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves.
 
+        >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedRight=20)
         >>> e.bleedRight
         20pt
+        >>> e.bleed = 21
+        >>> e.bleedRight = mm(5)
+        >>> e.bleed
+        (21pt, 24pt, 21pt, 21pt)
         """
         base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
         return units(self.css('bleedRight', 0), base=base, min=0)
     def _set_bleedRight(self, bleed):
-        self.style['bleedRight'] = units(bleed)
+        self.style['bleedRight'] = units(bleed, 0)
     bleedRight = property(_get_bleedRight, _set_bleedRight)
+
+    def _get_bleedW(self):
+        u"""Answer the width of the element, including the bleed left and right, if defined.
+
+        >>> from pagebot.toolbox.units import p
+        >>> e = Element(w=p(100), bleed=p(1))
+        >>> e.bleedW
+        102p
+        >>> e.w, e.bleedLeft, e.bleedRight
+        (100p, 12pt, 12pt)
+        """
+        return self.w + self.bleedLeft + self.bleedRight
+    bleedW = property(_get_bleedW)
+    
+    def _get_bleedH(self):
+        u"""Answer the height of the element, including the bleed top and bottom, if defined.
+
+        >>> from pagebot.toolbox.units import p
+        >>> e = Element(h=p(100), bleed=p(1.5))
+        >>> e.bleedH
+        103p
+        >>> e.h, e.bleedTop, e.bleedBottom
+        (100p, 18pt, 18pt)
+        """
+        return self.h + self.bleedTop + self.bleedBottom
+    bleedH = property(_get_bleedH)
+    
+    def _get_bleedOrigin(self):
+        u"""Answer the origin of the element, shifted by the defined bleed.
+
+        >>> from pagebot.toolbox.units import p, pt
+        >>> e = Element(size=pt(500, 800), bleed=p(1))
+        >>> e.bleedOrigin
+        (-12pt, -12pt)
+        """
+        if self.originTop:
+            y = self.top + self.bleedTop
+        else:
+            y = self.bottom - self.bleedBottom
+        return self.x - self.bleedLeft, y
+    bleedOrigin = property(_get_bleedOrigin)
 
     # Absolute positions
 
@@ -2255,13 +2340,13 @@ class Element(object):
         >>> e.d, e.minD, e.maxD # Show clipped values.
         (200pt, 200pt, 2000pt)
         >>> e.d = 101 # Set depth value
-        >>> e.d
-        101pt
+        >>> e.d # Show clipped to e.minD
+        200pt
         >>> e.d = 80000
         >>> e.d, e.d.pt # Clipping on pt conversion
         (2000pt, 2000)
         >>> e.d = 0 # Imaginary negative thickness
-        >>> e.d, e.d = e.minD, e.d == MIN_DEPTH # Corrected my e.minD
+        >>> e.d, e.d = e.minD, e.d == MIN_DEPTH # Corrected by e.minD
         (10pt, True, False)
         """
         base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.        
@@ -2341,8 +2426,8 @@ class Element(object):
             margin = (margin[0], margin[1], margin[0], margin[1], margin[0], margin[1])
         elif len(margin) == 3: # mt == ml == mzf, mb == mr == mzb
             margin = (margin[0], margin[1], margin[2], margin[0], margin[1], margin[2])
-        elif len(margin) == 4: # mt, mr, mb, ml, 0, 0
-            margin = (margin[0], margin[1], margin[2], margin[3], 0, 0)
+        elif len(margin) == 4: # mt, mr, mb, ml, pt(0), pt(0)
+            margin = (margin[0], margin[1], margin[2], margin[3], pt(0), pt(0))
         elif len(margin) == 6:
             pass
         else:
@@ -2592,8 +2677,8 @@ class Element(object):
             padding = (padding[0], padding[1], padding[0], padding[1], padding[0], padding[1])
         elif len(padding) == 3: # pt == pl == pzf, pb == pr == pzb
             padding = (padding[0], padding[1], padding[2], padding[0], padding[1], padding[2])
-        elif len(padding) == 4: # pt, pr, pb, pl, 0, 0
-            padding = (padding[0], padding[1], padding[2], padding[3], 0, 0)
+        elif len(padding) == 4: # pt, pr, pb, pl, pt(0), pt(0)
+            padding = (padding[0], padding[1], padding[2], padding[3], pt(0), pt(0))
         elif len(padding) == 6:
             pass
         else:
@@ -2654,15 +2739,13 @@ class Element(object):
         >>> e.padding # Verify that other padding did not change.
         (14pt, 0pt, 0pt, 0pt)
         >>> e.pt = '10%'
-        >>> e.pt
-        10%
-        >>> e.pt.pt # e.pt is abbreviation for padding-top. .pt is the property that converts to points.
-        50
+        >>> e.pt, e.pt.pt # e.pt is abbreviation for padding-top. .pt is the property that converts to points.
+        (10%, 50)
         """
         base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
-        return units(self.css('pt'), base=base, min=0, max=self.h)
+        return units(self.css('pt', 0), base=base, min=0, max=self.h)
     def _set_pt(self, pt):
-        self.style['pt'] = units(pt)  # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['pt'] = units(pt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
 
     def _get_pb(self): # Padding bottom
@@ -2700,7 +2783,7 @@ class Element(object):
         u"""Padding left property. Relative unit values refer to self.w.
         Clip lowest value on max(0, self.minW)
 
-        >>> e1 = Element(w=300)
+        >>> e1 = Element(w=660)
         >>> e2 = Element(padding=(10, 20, 30, 40), parent=e1)
         >>> e2.pl
         40pt
@@ -2713,10 +2796,8 @@ class Element(object):
         >>> e2.padding # Make sure other did not change.
         (0pt, 0pt, 0pt, 13pt)
         >>> e2.pl = '10%' # Relating Unit instance
-        >>> e2.pl
-        10%
-        >>> e2.pl.pt
-        30
+        >>> e2.pl, e2.pl.pt
+        (10%, 66)
         """
         base = dict(base=self.w, em=self.em) # In case relative units, use this as base.        
         return units(self.css('pl', 0), base=base, min=0, max=self.maxW)
@@ -2740,6 +2821,8 @@ class Element(object):
         >>> e.style = dict(pr=14, w=500)
         >>> e.pr
         14pt
+        >>> e.pt, e.pr, e.pb, e.pl # Make sure others did not change.
+        (0pt, 14pt, 0pt, 0pt)
         >>> e.padding # Make sure other did not change.
         (0pt, 14pt, 0pt, 0pt)
         >>> e.pr = '10%'
@@ -2906,15 +2989,19 @@ class Element(object):
         >>> e.size = 101 # Set all w, h, d to the same value.
         >>> e.size3D
         (101pt, 101pt, 101pt)
-        >>> e.size = 501, 201 # e.d is untouched.
+        >>> e.size = 660, 201 # e.d is untouched.
         >>> e.size3D
-        (501pt, 201pt, 101pt)
+        (660pt, 201pt, 101pt)
         >>> child = Element(parent=e)
         >>> child.size = '20%', '75%'
+        >>> child.w, child.h, child.d
+        (20%, 75%, 100pt)
+        >>> child.size3D
+        (20%, 75%, 100pt)
         >>> child.size
-        20%, 150%
-        >>> child.size[0].pt
-        20.2
+        (20%, 75%)
+        >>> child.w.pt, child.size[0].pt # Render to pt by 20% of parent.w --> 0.2 * 660 = 132
+        (132, 132)
         """
         return self.w, self.h
     def _set_size(self, size):
@@ -3269,7 +3356,7 @@ class Element(object):
                 self.minW, self.minH = minSize
                 self.minD = 0 # Optional default minimum depth of the element.
             else:
-                self.min, self.minH, self.minD = minSize
+                self.minW, self.minH, self.minD = minSize
         else:
             self.minW = self.minH = self.minD = minSize
     minSize = property(_get_minSize, _set_minSize)
@@ -3723,7 +3810,7 @@ class Element(object):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
-    def buildChildElements(self, view, origin=None):
+    def buildChildElements(self, view, origin):
         u"""Draw child elements, dispatching depending on the implementation of context specific build elements.
         If not specific builder_<context.b.PB_ID> is implemented, call default e.build(view, origin)"""
         hook = 'build_' + view.context.b.PB_ID
@@ -3737,7 +3824,7 @@ class Element(object):
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_css(self, view, origin=None):
+    def build_css(self, view, origin):
         u"""Build the css for this element. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
@@ -4199,7 +4286,7 @@ class Element(object):
         >>> e2 = Element(elements=[e1], pb=20)
         >>> success = e1.bottom2Bottom()
         >>> e1.bottom # Move bottom of e1 down to padding-bottom position of e2
-        20
+        20pt
         """
         if self.originTop:
             self.bottom = self.parent.h - self.parent.pb
