@@ -71,7 +71,7 @@ class VariableScatter(Element):
     def draw(self, view, origin):
         c = self.doc.context
 
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 

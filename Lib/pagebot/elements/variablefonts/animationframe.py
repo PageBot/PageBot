@@ -62,7 +62,7 @@ class AnimationFrame(Rect):
         u"""Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         p = self._applyAlignment(p) # Ignore z-axis for now.
 

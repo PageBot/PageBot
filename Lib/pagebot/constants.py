@@ -151,7 +151,7 @@ ChromebookPixel = pt(1280), pt(850) # 2560 x 1700
 ORIGIN = (pt(0), pt(0), pt(0)) # Default origin if location is omitted.
 
 # Min/max values for element sizes. Makes sure that elements dimensions for (w,h) never get 0
-XXXL = sys.maxsize
+XXXL = 2**32 # Arbitraty large size that is not system dependent, such as sys.maxsize
 MIN_WIDTH, MIN_HEIGHT, MIN_DEPTH = pt(1), pt(1), pt(0)
 # For document, using imaginary depth for layers and shadow
 DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, DEFAULT_DOC_DEPTH = pt(1000), pt(1000), pt(100) 

@@ -610,7 +610,7 @@ class PageView(BaseView):
             return
         b = self.b
         context = self.context
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(e, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         M = pt(16)
@@ -740,7 +740,7 @@ class PageView(BaseView):
     def build_drawBot(self, view, origin):
         u"""This method is called if the view is used as a placable element inside
         another element, such as a Page or Template. """
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 

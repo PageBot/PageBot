@@ -91,7 +91,7 @@ class Line(Element):
         """
         context = self.context # Get current context and builder.
                
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
  

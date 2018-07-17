@@ -54,7 +54,7 @@ class GlyphSet(BaseFontShow):
     def build(self, view, origin, drawElements=True):
         u"""Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 

@@ -86,7 +86,7 @@ class Element(object):
         >>> doc = Document(size=size, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1]
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
-        >>> e.build(doc.getView(), (0, 0))
+        >>> e.build(doc.getView(), pt(0, 0))
         >>> e.xy
         (0pt, 20pt)
         >>> e.size
@@ -130,10 +130,11 @@ class Element(object):
         # Always store point in style as separate (x, y, z) values. Missing values are 0
         # Note that x, y, z, w, h, d, padding and margin are not inherited by style.
         if xyz is not None:
-            x, y, z = xyz
+            self.xyz = xyz
         elif xy is not None:
-            x, y = xy
-        self.point3D = x, y, z
+            self.xy = xy # self.z is set to DEFAULT_DEPTH
+        else:
+            self.xyz = x, y, z
 
         if size is not None: # Convenience attribute, setting self.w, self.h, self.d
             self.size = size # Works for (w, h) and (w, h, d)
@@ -260,6 +261,7 @@ class Element(object):
         u"""Copy relevant info from template: w, h, elements, style, conditions when element is created.
         Don't call later.
 
+        >>> from pagebot.toolbox.units import mm
         >>> from pagebot.elements import Template
         >>> e = Element(name='TestElement')
         >>> t = Template(size=pt(11, 12), w=100, h=mm(200))
@@ -668,8 +670,6 @@ class Element(object):
         >>> e1 = Element(name='Child1', x=20, y=30)
         >>> e2 = Element(name='Child2', x=20, y=40)
         >>> e = Element(name='Parent', elements=[e1, e2])
-        >>> e1.p 
-
         >>> e.getElementsAtPoint((20, 30)) == [e1]
         True
         >>> e.getElementsAtPoint((None, 40)) == [e2] # Search on wildcard x
@@ -678,9 +678,9 @@ class Element(object):
         True
         """
         elements = []
-        px, py, pz = point3D(point)
+        px, py, pz = point3D(point) # Add z if tuple is only (x,y)
         for e in self.elements:
-            ex, ey, ez = point3D(e.point)
+            ex, ey, ez = e.xyz
             if (ex == px or px is None) and (ey == py or py is None) and (ez == pz or pz is None):
                 elements.append(e)
         return elements
@@ -695,12 +695,12 @@ class Element(object):
         >>> len(d)
         2
         >>> d[e1.eId], d[e2.eId]
-        ((20, 30), (20, 40))
+        ((20pt, 30pt), (20pt, 40pt))
         """
         elements = {}
         for e in self.elements:
             if e.eId:
-                elements[e.eId] = e.point
+                elements[e.eId] = e.xyz
         return elements
 
     def getPositions(self):
@@ -710,18 +710,20 @@ class Element(object):
         >>> e1 = Element(name='Child1', x=20, y=30)
         >>> e2 = Element(name='Child2', x=20, y=40)
         >>> e = Element(name='Parent', elements=[e1, e2])
+        >>> e1.xyz, e2.xyz
+        ((20pt, 30pt, 0pt), (20pt, 40pt, 0pt))
         >>> d = e.getPositions()
         >>> sorted(d.keys())
-        [(20pt, 30pt), (20pt, 40pt)]
-        >>> d[(20, 30)] == [e1], d[(20, 40)] == [e2]
+        [(20pt, 30pt, 0pt), (20pt, 40pt, 0pt)]
+        >>> d[(20pt, 30pt, 0pt)] == [e1], d[(20pt, 40pt, 0pt)] == [e2]
         (True, True)
         """
         positions = {}
         for e in self.elements:
-            point = tuple(e.point) # Point needs to be tuple to be used a key.
-            if point not in positions:
-                positions[point] = []
-            positions[point].append(e)
+            xyz = e.xyz # Point needs to be tuple to be used a key.
+            if xyz not in positions:
+                positions[xyz] = []
+            positions[xyz].append(e)
         return positions
 
     #   F L O W
@@ -899,7 +901,7 @@ class Element(object):
         >>> e = Element(fill=color(0.1, 0.2, 0.3), parent=page)
         >>> style = e.getFlattenedStyle()
         >>> style['fill'], style['fontSize'], style['leading'], style['xAlign']
-        (color(r=0.1, g=0.2, b=0.3), 12pt, 1.2em, 'left')
+        (Color(r=0.1, g=0.2, b=0.3), 12pt, 16.8pt, 'left')
         """
         flattenedStyle = {} # Create a dict with all keys from root style and values from self.css()
         for key in getRootStyle().keys():
@@ -908,7 +910,15 @@ class Element(object):
 
     def _get_em(self):
         u"""Answer the current em value (for use in relative units), as value of 
-        self.css('fontSize', DEFAULT_FONT_SIZE)."""
+        self.css('fontSize', DEFAULT_FONT_SIZE).
+
+        >>> e = Element(style=dict(fontSize=pt(12)))
+        >>> e.em
+        @@@
+        >>> e.em = pt(21)
+        >>> e.em, e.style['fontSize']
+        $$$
+        """
         return self.css('fontSize', DEFAULT_FONT_SIZE)
     def _set_em(self, em):
         u"""Store the em size (as fontSize) in the local style."""
@@ -1045,46 +1055,6 @@ class Element(object):
             parent = parent.parent
         return ancestors
     ancestors = property(_get_ancestors)
-
-    def _get_point(self):
-        u"""Answer the 2D point tuple of the relative local position of self.
-
-        >>> e = Element(x=100, y=100)
-        >>> e.point
-        (100pt, 100pt)
-        >>> e.x, e.y
-        (100pt, 100pt)
-        >>> e.point = 120, 130
-        >>> e.point
-        (120pt, 130pt)
-        """
-        return self.x, self.y # Answer as 2D
-    def _set_point(self, point):
-        self.x = point[0]
-        self.y = point[1]
-    point = property(_get_point, _set_point)
-
-    def _get_point3D(self):
-        u"""Answer the 3D point tuple of the relative local position of self.
-
-        >>> e = Element(x=100, y=100, z=100)
-        >>> e.point3D
-        (100pt, 100pt, 100pt)
-        >>> e.x, e.y, e.z
-        (100pt, 100pt, 100pt)
-        >>> e.point3D = 120, 130, 140
-        >>> e.point3D
-        (120pt, 130pt, 140pt)
-        """
-        return self.x, self.y, self.z
-    def _set_point3D(self, point):
-        self.x, self.y, self.z = point3D(point) # Always store as 3D-point, z = pt(0) if missing.
-    point3D = property(_get_point3D, _set_point3D)
-
-    def _get_oPoint(self):
-        u"""Answer the self.point, where y can be flipped, depending on the self.originTop flag."""
-        return self._applyOrigin(self.point)
-    oPoint3D = oPoint = property(_get_oPoint)
 
     # Orientation of elements (and pages)
 
@@ -1422,7 +1392,7 @@ class Element(object):
         >>> e.x, e.y, e.z
         (0pt, 0pt, 100pt)
         >>> e.size3D
-        (100pt, 100pt, 1pt)
+        (100pt, 100pt, 400pt)
         >>> e.z = 200 # Auto conversion to point units.
         >>> e.x, e.y, e.z
         (0pt, 0pt, 200pt)
@@ -1430,10 +1400,10 @@ class Element(object):
         >>> e.x, e.y, e.z
         (0pt, 0pt, 20mm)
         >>> e.size3D
-        (100pt, 100pt, 1pt)
+        (100pt, 100pt, 400pt)
         >>> child = Element(z='40%', parent=e)
-        >>> child.z, child.z.base # 40% of 400
-        (40%, 160)
+        >>> child.z, child.z.base, child.z.r # 40% of 400
+        (40%, 400pt, 160pt)
         >>> e.d = 500
         >>> child.z, child.z.pt # 40% of 500 dynamic calculation. Should have value or pt as result?
         (40%, 200)
@@ -1500,6 +1470,11 @@ class Element(object):
         self.y = p[1]
         self.z = p[2]
     xyz = property(_get_xyz, _set_xyz)
+
+    def _get_origin(self):
+        u"""Answer the self.xyz, where y can be flipped, depending on the self.originTop flag."""
+        return self._applyOrigin(self.xyz)
+    origin = property(_get_origin)
 
     #   T I M E
 
@@ -2275,23 +2250,24 @@ class Element(object):
 
         >>> e = Element()
         >>> e.d, e.minD, e.maxD # Default values
-
-        >>> e.d
-        100pt
+        (100pt, 0pt, 4294967296pt)
+        >>> e = Element(d=100, minD=200, maxD=2000) # Set min/max of element with constructor
+        >>> e.d, e.minD, e.maxD # Show clipped values.
+        (200pt, 200pt, 2000pt)
         >>> e.d = 101 # Set depth value
         >>> e.d
         101pt
         >>> e.d = 80000
         >>> e.d, e.d.pt # Clipping on pt conversion
-        (11000pt, 1010)
+        ZZZZZ(11000pt, 1010)
         >>> e.d = -10 # Imaginary negative thickness
-        >>> e.d, e.d == MIN_DEPTH # Corrects by lists
-        (10pt, True)
+        >>> e.d, e.d = e.minD, e.d == MIN_DEPTH # Corrected my e.minD
+        (10pt, True, False)
         """
         base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.        
         return units(self.css('d', 0), base=base, min=self.minD, max=self.maxD)
     def _set_d(self, d):
-        self.style['d'] = units(d or MIN_DEPTH, min=self.minD, max=self.maxD) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['d'] = units(d or DEFAULT_DEPTH, min=self.minD, max=self.maxD) # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
  
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
@@ -2664,7 +2640,7 @@ class Element(object):
 
     def _get_pt(self):
         u"""Padding top property. Relative unit values refer to self.h. 
-        (Note that this "pt" is abbreviation for padding-top, not point units.)
+        (Note that in usage, the "pt" is abbreviation for padding-top, not point units.)
 
         >>> e = Element(pt=12, h=500)
         >>> e.pt
@@ -2704,7 +2680,9 @@ class Element(object):
         >>> e.pb = pt(14)
         >>> e.pb
         14pt
-        >>> e.padding # Make sure other did not change.
+        >>> e.pt, e.pr, e.pb, e.pl # Make sure other did not change.
+        (0pt, 0pt, 14pt, 0pt)
+        >>> e.padding
         (0pt, 0pt, 14pt, 0pt)
         >>> e.pb = '10%'
         >>> e.pb
@@ -2815,7 +2793,7 @@ class Element(object):
         >>> e2.pzb
         13pt
         >>> e2.pzb, e2.d
-        (13pt, 0pt)
+        (13pt, 100pt)
         >>> e2.pzb=14
         >>> e2.d = 500
         >>> e2.pzb, e2.d
@@ -2918,19 +2896,19 @@ class Element(object):
         If set, then overwrite access from style width and height. self.d is optional attribute.
 
         >>> e = Element()
-        >>> e.size = 100, 200, 300
+        >>> e.size = 101, 202, 303
         >>> e.w, e.h, e.d
-
+        (101pt, 202pt, 303pt)
         >>> e.size
-        (100pt, 200pt)
+        (101pt, 202pt)
         >>> e.size3D
-        (100pt, 200pt, 300pt)
-        >>> e.size = 101 # Set h to default and d to 1. Depth must be set explicitedly
-        >>> e.size
-        (101pt, 101pt)
-        >>> e.size = 101, 201
+        (101pt, 202pt, 303pt)
+        >>> e.size = 101 # Set all w, h, d to the same value.
         >>> e.size3D
-        (101pt, 201pt, 0pt)
+        (101pt, 101pt, 101pt)
+        >>> e.size = 501, 201 # e.d is untouched.
+        >>> e.size3D
+        (501pt, 201pt, 101pt)
         >>> child = Element(parent=e)
         >>> child.size = '20%', '75%'
         >>> child.size
@@ -3276,11 +3254,11 @@ class Element(object):
         >>> e = Element()
         >>> e.minSize
         (1pt, 1pt)
-        size2D = 100, 200
-        >>> e.minSize(size2D) # Takes 2D and 3D
-        size3D = 100, 200, 300
-        >>> e.minSize(size3D) # Takes 2D and 3D
-        >>> e.minSize # Default give 2D
+        >>> e.minSize = 100, 200 # Takes 2D and 3D
+        >>> e.minSize
+        ======
+        >>> e.minSize = 100, 200, 300 # Takes 2D and 3D
+        >>> e.minSize # Default answers 2D
         (100pt, 200pt)
         >>> e.minSize3D
         (100pt, 200pt, 300pt)
@@ -3305,12 +3283,15 @@ class Element(object):
         Min/max values must be absolute units.
 
         >>> from pagebot.toolbox.units import mm
-        >>> e = Element(minW=100)
+        >>> e = Element()
+        >>> e.maxW # Default maximum space
+        4294967296pt
+        >>> e = Element(maxW=177)
         >>> e.maxW
-        100pt
-        >>> e.maxW = mm(50)
+        177pt
+        >>> e.maxW = mm(59)
         >>> e.maxW
-        50mm
+        59mm
         """
         return units(self.css('maxW', MAX_WIDTH))
     def _set_maxW(self, maxW):
@@ -3348,7 +3329,7 @@ class Element(object):
         >>> e.maxD
         50mm
         """
-        return units(self.css('maxD', MIN_DEPTH))
+        return units(self.css('maxD', MAX_DEPTH))
     def _set_maxD(self, maxD):
         self.style['maxD'] = u = units(maxD) # Set on local style, shielding parent self.css value.
         assert u.isAbsolute, ('Element.maxD "%s" must be an absolute unit.' % maxD)
@@ -3720,7 +3701,7 @@ class Element(object):
     def build(self, view, origin, drawElements=True):
         u"""Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 

@@ -203,7 +203,7 @@ class Page(Element):
 
     def build(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw all elements of this page in DrawBot."""
-        p = pointOffset(self.oPoint, origin) # Ignoe z-axis for now.
+        p = pointOffset(self.origin, origin) # Ignoe z-axis for now.
         # If there are child elements, draw them over the text.
         if drawElements:
             self.buildChildElements(view, p) # Build child elements, depending in context build implementations.
