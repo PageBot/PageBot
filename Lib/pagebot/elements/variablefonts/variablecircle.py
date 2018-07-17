@@ -218,7 +218,7 @@ class VariableCircle(Element):
 
     def build(self, view, origin, drawElements=True):
         u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 

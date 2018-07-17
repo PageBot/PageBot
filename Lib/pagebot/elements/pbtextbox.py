@@ -312,7 +312,7 @@ class TextBox(Element):
         fill and/or stroke are defined."""
         context = view.context # Get current context
 
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 

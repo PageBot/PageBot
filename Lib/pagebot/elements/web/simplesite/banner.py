@@ -38,7 +38,7 @@ class Banner(Group):
         >>> tb = newTextBox('This is a banner.', parent=banner)
         >>> doc.export('_export/BannerTest.pdf')
         """
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
