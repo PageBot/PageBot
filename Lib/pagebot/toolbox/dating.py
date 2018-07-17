@@ -55,9 +55,9 @@ def leapyear(year):
     True
     >>> leapyear(1957)
     False
-    >>> leapyear(1900)
+    >>> leapyear(1900) # No leapday on century crossings.
     False
-    >>> leapyear(2000)
+    >>> leapyear(2000) # But there is a leapday on millemium crossings.
     True
     """
     if year % 4 != 0:

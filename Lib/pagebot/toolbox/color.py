@@ -377,9 +377,10 @@ class Color(object):
     ((0.984313725490196, 0.0392156862745098, 0.10980392156862745), (0, 0, 0, 1), 185, 3024)
     """
     def __init__(self, r=None, g=None, b=None, a=1, rgb=None, c=None, m=None,
-            y=None, k=None, cmyk=None, ral=None, spot=None, name=None):
+            y=None, k=None, cmyk=None, ral=None, spot=None, overPrint=False, name=None):
         self.a = a
         self.r = self.g = self.b = self.c = self.m = self.y = self.k = self._spot = self._ral = self._name = None
+        self.overPrint = overPrint # Used by FlatBuilder
         # Some reposition of attributes, in case used as rgb='red' or cmy='magenta'
         if isinstance(rgb, str):
             name = rgb
