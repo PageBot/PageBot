@@ -16,7 +16,7 @@
 #     xxyxyz.org/flat
 #
 #import imageio
-from pagebot.toolbox.units import pt, Pt, units, ru
+from pagebot.toolbox.units import pt, Pt, units, ru, isUnit, isUnits
 from pagebot.toolbox.color import Color, noColor, color, blackColor
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
@@ -126,10 +126,8 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
-
-        assert w.UNIT == h.UNIT
-        self.unit = w.UNIT
-        self.doc = self.b.document(w.r, h.r, w.UNIT)
+        assert isUnits(w, h), ('FlatContext.newDocument: Size values (%s %s) to be of type Unit' % (w, h))
+        self.doc = self.b.document(w.pt, h.pt, units='pt')
         self.newPage(w, h)
 
     def saveDocument(self, path, multiPage=True):
@@ -141,7 +139,10 @@ class FlatContext(BaseContext):
         >>> exportPath = getRootPath() + '/_export' # _export/* Files are ignored in git
         >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
         >>> context = FlatContext()
-        >>> w = h = pt(100)
+        """
+
+
+        """>>> w = h = pt(100)
         >>> x = y = pt(0)
         >>> c = blackColor
         >>> context.fileType = FILETYPE_JPG
@@ -200,7 +201,7 @@ class FlatContext(BaseContext):
 
     saveImage = saveDocument # Compatible API with DrawBot
 
-    def newPage(self, w, h, size=None):
+    def newPage(self, w=None, h=None, size=None):
         """Other page sizes than default in self.doc, are ignored in Flat.
 
         >>> context = FlatContext()
@@ -210,10 +211,11 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
+        assert None not in (w, h)
         if self.doc is None:
             self.newDocument(w, h)
         self.page = self.doc.addpage()
-        self.page.size(w.r, h.r)
+        self.page.size(w.pt, h.pt, units='pt') # Default units render to pt-units
         self.pages.append(self.page)
 
     def newDrawing(self):
@@ -303,7 +305,7 @@ class FlatContext(BaseContext):
         strings cannot be reused to show on multiple positions.
 
         >>> context = FlatContext()
-        >>> style = dict(font='Roboto-Regular', fontSize=12)
+        >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
         >>> bs = context.newString('ABC', style=style)
         >>> bs.__class__.__name__
         'FlatString'
@@ -366,16 +368,16 @@ class FlatContext(BaseContext):
         >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
         >>> bs = context.newString('ABC ' * 100, style=style)
         >>> t = context.page.place(bs.s)
-        >>> t = t.frame(x.r, y.r, w.r, h.r)
+        >>> t = t.frame(x.pt, y.pt, w.pt, h.pt)
         >>> t.overflow()
         False
         >>> bs = context.newString('ABC ' * 100000, style=style)
         >>> t = context.page.place(bs.s)
-        >>> t = t.frame(x.r, y.r, w.r, h.r)
+        >>> t = t.frame(x.pt, y.pt, w.pt, h.pt)
         >>> t.overflow()
         True
         >>> lines = t.lines()
-        >>> len(lines)
+        >>> #len(lines)
         35
         """
         # FIXME! This is a totally wrong boilerplate for now!
@@ -452,67 +454,79 @@ class FlatContext(BaseContext):
 
     def ensure_page(self):
         if not self.doc:
-            self.newDocument(pt(0), pt(0))
+            self.newDocument(pt(100), pt(100)) # Standardize FlatContext document on pt.
         if not self.pages:
             self.newPage(self.doc.w, self.doc.h)
 
     def rect(self, x, y, w, h):
+        assert isUnits(x, y, w, h), ('FlatContext.rect: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.rectangle(x.r, y.r, w.r, h.r))
+            self.page.place(shape.rectangle(x.pt, y.pt, w.pt, h.pt))
 
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom left origin and
         (w,h) is the size.  This default DrawBot behavior, different from
         default Flat, where the (x,y) is the middle if the oval. Compensate for
         the difference."""
+        assert isUnits(x, y, w, h), ('FlatContext.oval: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.ellipse((x-w/2).r, (y-h/2).r, w.r, h.r))
+            self.page.place(shape.ellipse((x-w/2).pt, (y-h/2).pt, w.pt, h.pt))
 
     def circle(self, x, y, r):
         """Draw an circle in square, with radius r and (x,y) as middle."""
+        assert isUnits(x, y, r), ('FlatContext.circle: Values (%s, %s, %s) must all be of type Unit' % (x, y, r))
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.circle(x.r, y.r, r.r))
+            self.page.place(shape.circle(x.pt, y.pt, r.pt))
 
     def line(self, p0, p1):
+        assert isUnits(p0, p1), ('FlatContext.line: Values (%s, %s) must all be of type Unit' % (p0, p1))
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.line(p0[0].r, p0[1].r, p1[0].r, p1[1].r))
+            self.page.place(shape.line(p0[0].pt, p0[1].pt, p1[0].pt, p1[1].pt))
 
     def newPath(self):
         """Create a new path list, o collect the path commands."""
         self._path = BezierPath(self.b) # Collect path commands here.
         return self._path
 
-    def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
+    def drawPath(self, path=None, p=None, sx=1, sy=None):
+        if p is None:
+            p = pt(0, 0)
+        assert isUnits(p), ('FlatContext.drawPath: Values %s must all be of type Unit' % p)
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
             self.page.place(shape.path(self._path.commands))
 
     def moveTo(self, p):
+        assert isUnits(p), ('FlatContext.moveTo: Values %s must all be of type Unit' % p)
         assert self._path is not None
-        self._path.moveTo(ru(p))
+        self._path.moveTo(ru(p, maker=pt))
 
     def lineTo(self, p):
+        assert isUnits(p), ('FlatContext.lineTo: Values %s must all be of type Unit' % p)
         assert self._path is not None
-        self._path.lineTo(ru(p))
+        self._path.lineTo(ru(p, maker=pt))
 
     def quadTo(self, bcp, p):
+        assert isUnits(p), ('FlatContext.quadTo: Values %s must all be of type Unit' % p)
         assert self._path is not None
-        self._path.quadTo(ru(bcp), ru(p))
+        self._path.quadTo(ru(bcp, maker=pt), ru(p, maker=pt))
 
     def curveTo(self, bcp1, bcp2, p):
+        assert isUnits(p), ('FlatContext.curveTo: Values %s must all be of type Unit' % p)
         assert self._path is not None
-        self._path.curveTo(ru(bcp1), ru(bcp1), ru(bcp2), ru(p))
+        self._path.curveTo(ru(bcp1, maker=pt), ru(bcp1, maker=pt), ru(bcp2, maker=pt), ru(p, maker=pt))
 
     def closePath(self):
+        assert isUnits(p), ('FlatContext.closePath: Values %s must all be of type Unit' % p)
         assert self._path is not None
         self._path.closePath()
 
@@ -527,6 +541,7 @@ class FlatContext(BaseContext):
         pass # Not implemented?
 
     def setGradient(self, gradient, origin, w, h):
+        assert isUnits(w, h), ('FlatContext.setGradient: Values %s must all be of type Unit' % str((w, h)))
         pass # Not implemented?
 
     def lineDash(self, *lineDash):
@@ -541,7 +556,7 @@ class FlatContext(BaseContext):
     def setFillColor(self, c, cmyk=False, spot=False, overprint=False):
         u"""Set the color for global or the color of the formatted string.
         See: http://xxyxyz.org/flat, color.py."""
-        assert isinstance(c, Color)
+        assert isinstance(c, Color), ('FlatContext.fill: Color "%s" is not Color instance' % str(c))
         self._fill = c
 
         '''
@@ -586,11 +601,14 @@ class FlatContext(BaseContext):
     fill = setFillColor # DrawBot compatible API
 
     def setTextStrokeColor(self, c, w=None):
+        assert isinstance(c, Color), ('FlatContext.stroke: Color "%s" is not Color instance' % c)
+        assert w is None or isUnit(w), ('FlatContext.stroke: Value %s must of type Unit' % w)
         self.stroke(c, w)
 
     def setStrokeColor(self, c, w=None, b=None):
         u"""Set global stroke color or the color of the formatted string."""
-        assert isinstance(c, Color)
+        assert isinstance(c, Color), ('FlatContext.stroke: Color "%s" is not Color instance' % c)
+        assert w is None or isUnit(w), ('FlatContext.stroke: Value %s must of type Unit' % w)
         self._stroke = c
 
         '''
@@ -633,14 +651,15 @@ class FlatContext(BaseContext):
             if not success:
                 raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
         '''
-
         if w is not None:
-            self._strokeWidth = w
+            self._strokeWidth = w.r
 
     stroke = setStrokeColor # DrawBot compatible API
 
     def strokeWidth(self, w):
-        self._strokeWidth = w
+        assert w is None or isUnit(w), ('FlatContext.strokeWidth: Value %s must of type Unit' % w)
+        if w is not None:
+            self._strokeWidth = w.r
 
     def translate(self, dx, dy):
         """Translate the origin by (dx, dy)."""

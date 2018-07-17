@@ -20,7 +20,7 @@ import os
 from pagebot.elements.pbtextbox import TextBox
 from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN # In case no image is defined.
-from pagebot.toolbox.units import pointOffset, point2D
+from pagebot.toolbox.units import pointOffset, point2D, units
 from pagebot.conditions import Float2TopSide, Top2TopSide, Fit2Width
 from pagebot.toolbox.color import noColor
 
@@ -45,11 +45,11 @@ class Image(Element):
     (300pt, 400pt)
     >>> page = doc[1]
     >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=300)
-    >>> e.build(doc.getView(), pt(0))
+    >>> e.build(doc.getView(), pt(0, 0))
     >>> e.xy # Position of the image container
     (0pt, 20pt)
-    >>> e.wh, e.size # Identical result
-    (300pt, 300pt), (300pt, 300pt)
+    >>> (e.w, e.h), e.size # Identical result
+    ((300pt, 300pt), (300pt, 300pt))
     >>> pixelMap = e.image
     >>> pixelMap.path.endswith(imagePath)
     True
@@ -83,7 +83,7 @@ class Image(Element):
     def __init__(self, path=None, style=None, pixelMap=None, name=None, title=None, caption=None, clipRect=None,
             mask=None, imo=None, w=None, h=None, imageConditions=None, titleConditions=None,
             captionConditions=None, conditions=None, **kwargs):
-        self.image = None # Aviud setting of self.omage.w and self.omage.h while not initialized.
+        self.image = None # Aviod setting of self.omage.w and self.omage.h while not initialized.
         Element.__init__(self, w=w, h=h, name=name, conditions=conditions, **kwargs)
         assert path is None or pixelMap is None # One or the other or both None.
 
@@ -140,26 +140,30 @@ class Image(Element):
 
     def _get_w(self):
         if self._w is None: # Undefined elastic, get size from pixelmap
-            return self.image.w
-        return self._w
-
+            w = self.image.w
+        else:
+            w = self._w
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use the right kind of base.        
+        return units(w, base=base, min=self.minW, max=self.maxW)
     def _set_w(self, w):
-        self._w = w
+        self._w = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
         #if w != self._w: # Only when changed
         #    self.solve() # Rearrange the layout of the elements inside
         #    #if self.image is not None:
         #    #    self.image.w = w - self.pl - self.pr
         #    _, _, _, self._h = self.paddedBox()
-
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        if self._h is None:
-            return self.image.h
-        return self._h
+        if self._h is None: # Undefined elastic, get size from pixelmap
+            h = self.image.h
+        else:
+            h = self._h
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.        
+        return units(h, base=base, min=self.minH, max=self.maxH)
     def _set_h(self, h):
         #if h != self._h: # Only when changed
-        self._h = h
+        self._h = units(h or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
         #    self.solve() # Rearrange the layout of elements inside.
         #    #if self.image is not None:
         #    #    self.image.h = h - self.pb - self.pt
@@ -183,14 +187,17 @@ class PixelMap(Element):
     u"""The PixelMap contains the reference to the actual binary image data.
     eId can be (unique) file path or eId."""
 
-    def __init__(self, path, name=None, w=None, h=None, z=0, clipRect=None, clipPath=None, mask=None,
+    def __init__(self, path, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
         imo=None, **kwargs):
         Element.__init__(self, **kwargs)
 
         # One of the two needs to be defined, the other can be None.
         # If both are set, then the image scales disproportional.
-        self.w = w
-        self.h = h
+        if size is not None:
+            self.size = size
+        else:
+            self.w = w
+            self.h = h
         self.z = z # Make conditions work with captions inside the image frame element.
 
         self.name = name
@@ -251,9 +258,11 @@ class PixelMap(Element):
             if self._h and self.ih:
                 return self.iw * self._h / self.ih  # Height is lead, calculate width.
             return DEFAULT_WIDTH # Undefined and without parent, answer default width.
-        return self._w # Width is lead and defined as not 0 or None.
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use the right kind of base.        
+        return units(self._w, base=base, min=self.minW, max=self.maxW) # Width is lead and defined as not 0 or None.
     def _set_w(self, w):
-        self._w = w # If self._h is set too, do disproportional sizing. Otherwise set to 0 or None.
+        # If self._h is set too, do disproportional sizing. Otherwise set to 0 or None.
+        self._w = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -261,9 +270,11 @@ class PixelMap(Element):
             if self._w and self.iw:
                 return self.ih * self._w / self.iw  # Width is lead, calculate height.
             return DEFAULT_HEIGHT # Undefined and without parent, answer default width.
-        return self._h # Height is lead and defined as not 0 or None.
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.        
+        return units(self._h, base=base, min=self.minH, max=self.maxH) # Height is lead and defined as not 0 or None.
     def _set_h(self, h):
-        self._h = h # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
+        # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
+        self._h = units(h or DEFAULT_WIDTH, min=self.minH, max=self.maxH) 
     h = property(_get_h, _set_h)
 
     def _getAlpha(self):
