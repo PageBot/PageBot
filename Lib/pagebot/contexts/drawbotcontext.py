@@ -49,8 +49,7 @@ if useDrawBot and useAppKit:
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will try to call e.build_html()
     drawBotBuilder.PB_ID = 'drawBot'
-    #from pagebot.contexts.builders.drawbotbuilder import drawBotBuilder
-    print('Using DrawBotContext with a DrawBotBuilder.')
+    print('Using DrawBotContext with DrawBot.')
 else:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = None
@@ -584,9 +583,9 @@ class DrawBotContext(BaseContext):
         elif c is noColor:
             builder.fill(None) # Set color to no-color
         elif c.isCmyk:
-            builder.cmykFill(c.cmyk)
+            builder.cmykFill(*c.cmyk)
         else:
-            builder.fill(c.rgb)
+            builder.fill(*c.rgb)
 
     setFillColor = fill # DrawBot compatible API
 
@@ -611,9 +610,9 @@ class DrawBotContext(BaseContext):
         if c is noColor:
             builder.stroke(None) # Set color to no-color
         elif c.isCmyk:
-            builder.cmykStroke(c.cmyk)
+            builder.cmykStroke(*c.cmyk)
         else:
-            builder.stroke(c.rgb)
+            builder.stroke(*c.rgb)
         if w is not None:
             self.setStrokeWidth(w)
 
