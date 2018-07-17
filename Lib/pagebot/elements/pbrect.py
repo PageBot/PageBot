@@ -21,18 +21,19 @@ from pagebot.elements.element import Element
 class Rect(Element):
     u"""Draw rectangle, default identical to Element itself.
 
+    >>> from pagebot.toolbox.units import pt
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
     >>> from pagebot.document import Document
     >>> c = DrawBotContext()
-    >>> w, h = 300, 400
+    >>> w, h = pt(300, 400)
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
     >>> page = doc[1]
     >>> e = Rect(parent=page, x=0, y=20, w=page.w, h=3)
     >>> e.build(doc.getView(), (0, 0))
     >>> e.xy
-    (0, 20)
+    (0pt, 20pt)
     >>> e.size
-    (300, 3, 1)
+    (300pt, 3pt)
     >>> view = doc.getView()
     >>> e.build(view, (0, 0))
 
@@ -46,9 +47,9 @@ class Rect(Element):
     >>> c.newPage(w, h) 
     >>> e.build(doc.getView(), (0, 0))
     >>> e.xy
-    (0, 20)
+    (0pt, 20pt)
     >>> e.size
-    (300, 3, 1)
+    (300pt, 3pt)
     """
 
     # No separate build, default behavior is in Element.build()

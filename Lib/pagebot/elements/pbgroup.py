@@ -30,8 +30,8 @@ class Group(Rect):
     >>> e1, e2, e3 = Element(w=123),Element(w=234),Element(w=345)
     >>> e = Group(parent=page, x=0, y=20, w=page.w, elements=(e1, e2, e3))
     >>> e.build(doc.getView(), (0, 0))
-    >>> e.xy, e.wh, e.wh == e.size
-    ((0pt, 20pt), (300pt, 100pt), True)
+    >>> e.xy,  e.size
+    ((0pt, 20pt), (300pt, 100pt))
     >>> view = doc.getView()
     >>> e.build(view, (0, 0))
 
@@ -40,15 +40,16 @@ class Group(Rect):
     >>> c = FlatContext()
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
     >>> page = doc[1]
-    >>> e1, e2, e3 = Element(w=123),Element(w=234),Element(w=345)
+    >>> e1, e2, e3 = Element(w=123), Element(w=234), Element(w=345)
     >>> e = Group(parent=page, x=0, y=20, w=page.w, elements=(e1, e2, e3))
     >>> # Allow the context to create a new document and page canvas. Normally view does it.
     >>> c.newPage(w, h) 
     >>> e.build(doc.getView(), (0, 0))
-    >>> e.xy
-    (0pt, 20pt)
-    >>> e.size
-    (300pt, 100pt)
+    >>> e.xy, e.xyz
+    ((0pt, 20pt), (0pt, 20pt, 0pt))
+    >>> e.size, e.size3D
+    ((300pt, 100pt), (300pt, 100pt, 0pt))
+
     """
 
     # No separate build, default behavior is in Element.build()

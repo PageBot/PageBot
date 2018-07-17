@@ -213,44 +213,80 @@ def uv(u, *args, **kwargs):
             uu = uu.v
         return uu
 
-def isUnit(u, *args):
+def isUnits(u, *args):
     u"""Answer the boolean flag is u (and all of the other items in the argument list)
     are a Unit instance.
 
-    >>> isUnit(Em(2))
+    >>> isUnits(Em(2))
     True
-    >>> isUnit(2)
+    >>> isUnits(2)
     False
-    >>> isUnit(pt(1), pt(2), pt(3))
+    >>> isUnits(pt(1), pt(2), pt(3))
     True
-    >>> isUnit(pt(1), pt(2), 3, pt(4))
+    >>> isUnits(pt(1), pt(2), 3, pt(4))
     False
     """
     if args:
-        if not isinstance(u, (list, tuple)):
+        if isinstance(u, (list, tuple)):
+            u = list(u)
+        else:
             u = [u]
         for arg in args:
             u.append(arg)
+    if isUnit(u):
+        return True
     if isinstance(u, (list, tuple)):
         for uu in u:
-            if not isUnit(uu):
+            if not isUnits(uu): # Can be nested tuples.
                 return False
         return True
+    return False
+
+def isUnit(u):
+    u"""Answer the boolean flag if u is an instance of Unit.
+
+    >>> isUnit(pt(20))
+    True
+    >>> isUnit(pt(20, 21))
+    False
+    >>> isUnit(2)
+    False
+    """
     # isinstance(u, Unit) # Does not seem to work right for units created in other sources such as A4
     return hasattr(u, '_v') and hasattr(u, 'base')
 
-def uRound(u):
-    u"""Anwer a unit with rounded value. Or the rounded value if `u` is not a
-    Unit instance.
+def uRound(u, *args):
+    u"""Answer the list with rounded units (and all of the other items in the argument list)
+    are a Unit instance.
 
-    >>> uRound(Em(3.2))
-    3em
+    >>> uRound(Em(2.3))
+    2em
     >>> uRound(4.2)
-    4
+    4pt
+    >>> uRound(2, 2.4, pt(14.5), (20.9, pt(19.8)))
+    [2pt, 2pt, 15pt, [21pt, 20pt]]
+    >>> uRound(pt(1.3), pt(2.4), pt(3.5))
+    [1pt, 2pt, 4pt]
+    >>> uRound(pt(1.000001), pt(2.44444449), 3, pt(mm(4)))
+    [1pt, 2pt, 3pt, 11pt]
     """
+    if args:
+        if isinstance(u, (list, tuple)):
+            u = list(u)
+        else:
+            u = [u]
+        for arg in args:
+            u.append(arg)
     if isUnit(u):
-        return u.rounded
-    return int(round(u))
+        u = u.rounded
+    elif isinstance(u, (int, float)):
+        u = pt(u).rounded
+    elif isinstance(u, (list, tuple)):
+        ruu = []
+        for uu in u:
+            ruu.append(uRound(uu)) # Can be nested tuples.
+        u = ruu
+    return u
 
 def classOf(u):
     u"""Answer the class of the Unit instance. Otherwise answer None.
@@ -393,7 +429,8 @@ class Unit(object):
     uName = property(_get_uName)
 
     def _get_rounded(self):
-        u"""Answer a new instance of self with rounded value.
+        u"""Answer a new instance of self with rounded value. 
+        Note that we are rounding the self.v here, not the rendered result.
 
         >>> u = pt(12.2)
         >>> ru = u.rounded
@@ -401,7 +438,7 @@ class Unit(object):
         (12.2pt, 12pt)
         """
         u = copy(self)
-        u._v = int(round(self._v))
+        u._v = int(round(self.r))
         return u
     rounded = property(_get_rounded)
 
@@ -483,7 +520,7 @@ class Unit(object):
     r = property(_get_v) # Read only
 
     def __int__(self):
-        u"""Answers self as rounded int, converted to points.
+        u"""Answers self as rounded int, rendered and converted to points.
 
         >>> int(pt(20.2))
         20
@@ -491,7 +528,7 @@ class Unit(object):
         return int(round(self.pt))
 
     def __float__(self):
-        u"""Answers self as float, converted to points.
+        u"""Answers self as float, rendered and converted to points.
 
         >>> float(pt(20.2))
         20.2
@@ -523,46 +560,150 @@ class Unit(object):
         return u
 
     def __eq__(self, u):
-        if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v == u
-        if isinstance(u, self.__class__):
-            return self._v == u.v
-        return self.pt == u.pt # Incompatible unit types, compare via points
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u == 20
+        True
+        >>> u == 21
+        False
+        >>> u == pt(20) # Compare with different instance
+        True
+        >>> u == mm(20)
+        False
+        >>> u == []
+        False
+        """
+        if isinstance(u, (int, float)): # One is a scalar, just compare with rendered value
+            return self.r == u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r == u.r # Same class, compare rendered result may differe from base or min/max)
+            return self.pt == u.pt # Incompatible unit types, compare via points
+        return False
 
     def __ne__(self, u):
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u != 20
+        False
+        >>> u != 21
+        True
+        >>> u != pt(20) # Compare with different unit instances of same class
+        False
+        >>> u != mm(20) # Compare with unit instance of different class.
+        True
+        >>> u != [] # All other situations are not matching
+        True
+        """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v != u
-        if isinstance(u, self.__class__):
-            return self._v != u.v
-        return self.pt != u.pt # Incompatible unit types, compare via points
+            return self.r != u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r != u.r
+            return self.pt != u.pt # Incompatible unit types, compare via points
+        return True
 
     def __le__(self, u):
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u <= 20
+        True
+        >>> u <= 19
+        False
+        >>> u <= pt(20) # Compare with different unit instances of same class
+        True
+        >>> u <= mm(20) # Compare with unit instance of different class.
+        True
+        >>> u <= mm(2) # Compare with unit instance of different class.
+        False
+        >>> u <= [] # All other situations are not matching
+        False
+        """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v <= u
-        if isinstance(u, self.__class__):
-            return self._v <= u.v
-        return self.pt <= u.pt # Incompatible unit types, compare via points
+            return self.r <= u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r <= u.r
+            return self.pt <= u.pt # Incompatible unit types, compare via points
+        return False
 
     def __lt__(self, u):
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u < 21
+        True
+        >>> u < 20
+        False
+        >>> u < pt(21) # Compare with different unit instances of same class
+        True
+        >>> u < mm(20) # Compare with unit instance of different class.
+        True
+        >>> u < mm(2) # Compare with unit instance of different class.
+        False
+        >>> u < [] # All other situations are not matching
+        False
+        """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v < u
-        if isinstance(u, self.__class__):
-            return self._v < u.v
-        return self.pt < u.pt # Incompatible unit types, compare via points
+            return self.r < u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r < u.r
+            return self.pt < u.pt # Incompatible unit types, compare via points
+        return False
 
     def __ge__(self, u):
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u >= 20
+        True
+        >>> u >= 21
+        False
+        >>> u >= pt(20) # Compare with different unit instances of same class
+        True
+        >>> u >= mm(2) # Compare with unit instance of different class.
+        True
+        >>> u >= mm(200) # Compare with unit instance of different class.
+        False
+        >>> u >= [] # All other situations are not matching
+        False
+        """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v >= u
-        if isinstance(u, self.__class__):
-            return self._v >= u.v
-        return self.pt >= u.pt # Incompatible unit types, compare via points
+            return self.r >= u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r >= u.r
+            return self.pt >= u.pt # Incompatible unit types, compare via points
+        return False
 
     def __gt__(self, u):
+        u"""Answers the boolean result how self compares to rendered u.
+
+        >>> u = pt(20)
+        >>> u > 19
+        True
+        >>> u > 20
+        False
+        >>> u > pt(19) # Compare with different unit instances of same class
+        True
+        >>> u > mm(2) # Compare with unit instance of different class.
+        True
+        >>> u > mm(200) # Compare with unit instance of different class.
+        False
+        >>> u > [] # All other situations are not matching
+        False
+        """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self._v > u
-        if isinstance(u, self.__class__):
-            return self._v > u.v
-        return self.pt > u.pt # Incompatible unit types, compare via points
+            return self.r > u
+        if isUnit(u):
+            if isinstance(u, self.__class__):
+                return self.r > u.r
+            return self.pt > u.pt # Incompatible unit types, compare via points
+        return False
 
     def __add__(self, u):
         u"""Adds self to `u`, creating a new Unit instance with the same type
@@ -576,6 +717,8 @@ class Unit(object):
         >>> u = p(2)
         >>> u + 1, u + pt(1) # Numbers are interpeted as adding picas. Otherwise use pt(1)
         (3p, 2p1)
+        >>> 10 + pt(10) # Thanks to implementation of __radd__ the reverse also works.
+        20pt
         """
         u0 = copy(self) # Keep values of self
         if isinstance(u, (int, float)): # One is a scalar, just add
@@ -587,6 +730,8 @@ class Unit(object):
         else:
             raise ValueError('Cannot Add "%s" by "%s"' % (self, u))
         return u0
+
+    __radd__ = __add__
 
     def __sub__(self, u):
         u"""Subtracts `u` from self, creating a new Unit instance with the same
@@ -608,6 +753,14 @@ class Unit(object):
         else:
             raise ValueError('Cannot Subtract "%s" by "%s"' % (self, u))
         return u0
+
+    def __rsub__(self, u):
+        u"""Subtract in reversed order.
+
+        >>> 30 - pt(10) # Thanks to implementation of __rsub__ the reverse also works.
+        20pt
+        """
+        return -self + u
 
     def __div__(self, u):
         u"""Divide self by u, creating a new Unit instance with the same type
@@ -635,6 +788,17 @@ class Unit(object):
 
     __truediv__ = __div__
 
+    def __rtruediv__(self, u):
+        u"""Dividing non-unit by unit is not supported.
+
+        >>> (2 / pt(20)) is None
+        True
+        """
+        #raise ValueError('Cannot divide non-unit "%s" by unit "%s"' % (u, self))
+        return None
+
+    __itruediv__ = __rtruediv__
+    
     def __mul__(self, u):
         u"""Multiply self by u, creating a new Unit instance with the same type
         as self. Units can only be multiplied by numbers. Unit * Unit raises a
@@ -647,6 +811,8 @@ class Unit(object):
         '14.11'
         >>> u / units('120pt') # Unit / Unit create a float ratio number.
         0.5
+        >>> 10 * mm(10) # Thanks to implementation of __rmul__ the reverse also works.
+        100mm
         """
         u0 = copy(self) # Keep values of self
         if isinstance(u, (int, float)): # One is a scalar, just multiply
@@ -657,6 +823,8 @@ class Unit(object):
         else:
             raise ValueError('Cannot multiply "%s" by "%s"' % (u0, u))
         return u0
+
+    __rmul__ = __mul__
 
     def __neg__(self):
         u"""Reverse sign of self, answer as copied unit.
@@ -1424,7 +1592,10 @@ def perc(v, *args, **kwargs):
     minV = kwargs.get('min')
     maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
-        v = [v]+list(args)
+        if not isinstance(v, (tuple, list)):
+            v = [v]
+        for arg in args:
+            v.append(arg)
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
