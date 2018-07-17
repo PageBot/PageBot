@@ -64,6 +64,7 @@ class FlatContext(BaseContext):
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FlatString
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
+    UNITS = 'pt' # Default is point document, should not be changed. Units render to there.
 
     def __init__(self):
         """Constructor of Flat context.
@@ -79,10 +80,10 @@ class FlatContext(BaseContext):
         self.name = self.__class__.__name__
         self._fill = blackColor
         self._stroke = noColor
-        self._strokeWidth = noColor
+        self._strokeWidth = 0
         self._textFill = blackColor
         self._textStroke = noColor
-        self._textStrokeWidth = noColor
+        self._textStrokeWidth = 0
         self._font = DEFAULT_FONT_PATH # Optional setting of the current font and fontSize
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
@@ -101,7 +102,6 @@ class FlatContext(BaseContext):
         self.style = None # Current open style
         self.shape = None # Current open shape
         self.flatString = None
-        self.unit = pt # Default is point document. Changed by w.
         self.fileType = DEFAULT_FILETYPE
 
         self._path = None # Collect path commnands here before drawing the path.
@@ -127,7 +127,7 @@ class FlatContext(BaseContext):
         if size is not None:
             w, h = size
         assert isUnits(w, h), ('FlatContext.newDocument: Size values (%s %s) to be of type Unit' % (w, h))
-        self.doc = self.b.document(w.pt, h.pt, units='pt')
+        self.doc = self.b.document(w.pt, h.pt, units=self.UNITS)
         self.newPage(w, h)
 
     def saveDocument(self, path, multiPage=True):
@@ -215,7 +215,7 @@ class FlatContext(BaseContext):
         if self.doc is None:
             self.newDocument(w, h)
         self.page = self.doc.addpage()
-        self.page.size(w.pt, h.pt, units='pt') # Default units render to pt-units
+        self.page.size(w.pt, h.pt, units=self.UNITS) # Default units render to pt-units
         self.pages.append(self.page)
 
     def newDrawing(self):
@@ -414,7 +414,7 @@ class FlatContext(BaseContext):
         """
         img = self.b.image.open(path)
         # Answer units of the same time as the document.w was defined.
-        return units(img.width, maker=self.unit), units(img.height, maker=self.unit)
+        return units(img.width, maker=pt), units(img.height, maker=pt)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         """Draw the image. If w or h is defined, then scale the image to fit."""
@@ -549,11 +549,13 @@ class FlatContext(BaseContext):
 
     #   C O L O R
 
-    def setTextFillColor(self, c):
+    def textFill(self, c):
         self.fill(c)
 
+    setTextFillColor = textFill
+
     #def setFillColor(self, c, builder=None):
-    def setFillColor(self, c, cmyk=False, spot=False, overprint=False):
+    def fill(self, c):
         u"""Set the color for global or the color of the formatted string.
         See: http://xxyxyz.org/flat, color.py."""
         assert isinstance(c, Color), ('FlatContext.fill: Color "%s" is not Color instance' % str(c))
@@ -563,6 +565,7 @@ class FlatContext(BaseContext):
         b = self.b
         success = False
 
+        overPrint = c.overPrint
         if c is NO_COLOR:
             self._fill = NO_COLOR # Ignore drawing
             success = True # Color is undefined, do nothing.
@@ -598,20 +601,23 @@ class FlatContext(BaseContext):
             raise ValueError('FlatContext.setFillColor: Error in color format "%s"' % repr(c))
         '''
 
-    fill = setFillColor # DrawBot compatible API
+    setFillColor = fill # DrawBot compatible API
 
-    def setTextStrokeColor(self, c, w=None):
+    def textStroke(self, c, w=None):
         assert isinstance(c, Color), ('FlatContext.stroke: Color "%s" is not Color instance' % c)
         assert w is None or isUnit(w), ('FlatContext.stroke: Value %s must of type Unit' % w)
         self.stroke(c, w)
 
-    def setStrokeColor(self, c, w=None, b=None):
+    setTextStrokeColor = textStroke
+
+    def stroke(self, c, w=None, b=None):
         u"""Set global stroke color or the color of the formatted string."""
         assert isinstance(c, Color), ('FlatContext.stroke: Color "%s" is not Color instance' % c)
         assert w is None or isUnit(w), ('FlatContext.stroke: Value %s must of type Unit' % w)
         self._stroke = c
 
         '''
+        overPrint = c.overPrint
         def setStrokeColor(self, c, w=1, cmyk=False, b=None):
             """Set global stroke color or the color of the formatted string."""
             # TODO: Make this work in Flat
@@ -652,14 +658,14 @@ class FlatContext(BaseContext):
                 raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
         '''
         if w is not None:
-            self._strokeWidth = w.r
+            self._strokeWidth = w.pt
 
-    stroke = setStrokeColor # DrawBot compatible API
+    setStrokeColor = stroke # DrawBot compatible API
 
     def strokeWidth(self, w):
         assert w is None or isUnit(w), ('FlatContext.strokeWidth: Value %s must of type Unit' % w)
         if w is not None:
-            self._strokeWidth = w.r
+            self._strokeWidth = w.pt
 
     def translate(self, dx, dy):
         """Translate the origin by (dx, dy)."""

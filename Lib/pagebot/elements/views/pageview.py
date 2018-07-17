@@ -102,7 +102,7 @@ class PageView(BaseView):
             fillColor = self.style.get('fill', noColor)
             if fillColor is not noColor:
                 context.setFillColor(fillColor)
-                context.rect(0, 0, pw, ph)
+                context.rect(pt(0), pt(0), pw, ph)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)

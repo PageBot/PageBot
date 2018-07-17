@@ -355,7 +355,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 def css(name, e=None, styles=None, default=None):
     u"""Answer the named style values. Search in optional style dict first, otherwise up the
     parent tree of styles in element e. Both e and style can be None. In that case None is answered.
-    Note that this is a generic "Cacascading style request", outside the realm of HTML/CSS."""
+    Note that this is a generic "Cascading style request", outside the realm of HTML/CSS."""
     if styles is not None: # Can be single style or stack of styles.
         if not isinstance(styles, (tuple, list)):
             styles = [styles] # Make stack of styles.

@@ -26,13 +26,15 @@ from pagebot.style import CENTER, TOP
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
-    
-RedSize = 100
-YellowSize = 30
-PagePadding = 30
-PageSize = 400
+from pagebot.toolbox.units import pt
+from pagebot.toolbox.color import color
 
-GUTTER = 8 # Distance between the squares.
+RedSize = pt(100)
+YellowSize = pt(30)
+PagePadding = pt(30)
+PageSize = pt(400)
+
+GUTTER = pt(8) # Distance between the squares.
 SQUARE = 10 * GUTTER # Size of the squares
 
 # The standard PageBot function getRootStyle() answers a standard Python dictionary, 
@@ -54,7 +56,7 @@ def makeDocument():
     doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1)
     
     view = doc.getView()
-    view.padding = 0 # Aboid showing of crop marks, etc.
+    view.padding = pt(0) # Aboid showing of crop marks, etc.
     view.showElementOrigin = False
     view.showTextOverflowMarker = False
     
@@ -66,14 +68,14 @@ def makeDocument():
     
     # Show margin of page, can also be done by
     # view.showPagePadding = True
-    newRect(fill=0.9, parent=page, margin=0, 
+    newRect(fill=color(0.9), parent=page, margin=0, 
             conditions=(Left2Left(), Fit2Right(), Bottom2Bottom(), Fit2Height()))
     
-    redContainer = newRect(fill=(1, 0, 0), pb=10, w=RedSize, h=RedSize, padding=10,
+    redContainer = newRect(fill=color(1, 0, 0), pb=pt(10), w=RedSize, h=RedSize, padding=pt(10),
                            conditions=(Left2Left(), Bottom2Bottom()), parent=page)
     
     # Yellow square
-    yellowSquare = newRect(fill=(1, 1, 0), z=8, w=YellowSize, 
+    yellowSquare = newRect(fill=color(1, 1, 0), z=pt(8), w=YellowSize, 
                            h=YellowSize, parent=redContainer, xAlign=CENTER, yAlign=TOP,
                            conditions=(Center2Center(), Bottom2Bottom()))
          

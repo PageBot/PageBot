@@ -18,7 +18,7 @@ import os
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import color, Color, noColor, inheritColor
-from pagebot.toolbox.units import ru, isUnit # Render units
+from pagebot.toolbox.units import ru, isUnit, isUnits # Render units
 from pagebot.constants import *
 
 # FIXME: bad exception usage. (How to check otherwise if running in DrawBot context?)
@@ -126,7 +126,8 @@ class DrawBotContext(BaseContext):
         >>> context = DrawBotContext()
         >>> context.newPage(px(100), px(100))
         """
-        self.b.newPage(w.r, h.r)
+        assert isUnits(w, h), ('DrawBotContext.newPage: Values (%s, %s) must all be of type Unit' % (w, h))
+        self.b.newPage(w.pt, h.pt)
 
     def newDrawing(self):
         """Clear output canvas, start new export file.
@@ -153,8 +154,10 @@ class DrawBotContext(BaseContext):
 
         >>> context = DrawBotContext()
         >>> context.rect(pt(0), pt(0), pt(100), pt(100))
+        >>> #context.rect(0, 0, 100, 100)
         """
-        self.b.rect(x.r, y.r, w.r, h.r)
+        assert isUnits(x, y, w, h), ('DrawBotContext.rect: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
+        self.b.rect(x.pt, y.pt, w.pt, h.pt) # Render units to points for DrawBot.
 
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom-left and size
@@ -162,20 +165,29 @@ class DrawBotContext(BaseContext):
 
         >>> context = DrawBotContext()
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
+        >>> #context.oval(0, 0, 100, 100)
         """
-        self.b.oval(x.r, y.r, w.r, h.r)
+        assert isUnits(x, y, w, h), ('DrawBotContext.oval: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
+        self.b.oval(x.pt, y.pt, w.pt, h.pt) # Render units to points for DrawBot.
 
     def circle(self, x, y, r):
-        u"""Circle draws a DrawBot oval with (x,y) as middle point and radius r."""
-        self.b.oval((x-r).r, (y-r).r, (r*2).r, (r*2).r) # Render the unit values
+        u"""Circle draws a DrawBot oval with (x,y) as middle point and radius r.
+        >>> context = DrawBotContext()
+        >>> context.circle(pt(100), pt(200), pt(50))
+        >>> #context.circle(100, 200, 50)
+        """
+        assert isUnits(x, y, r), ('DrawBotContext.circle: Values (%s, %s, %s) must all be of type Unit' % (x, y, r))
+        self.b.oval((x-r).pt, (y-r).pt, (r*2).pt, (r*2).pt) # Render the unit values
 
     def line(self, p1, p2):
         """Draw a line from p1 to p2.
 
         >>> context = DrawBotContext()
         >>> context.line(pt(100, 100), pt(200, 200))
+        >>> #context.line((100, 100), (200, 200))
         """
-        self.b.line(ru(p1), ru(p2)) # Render tuple of units point
+        assert isUnits(p1, p2), ('DrawBotContext.line: Values (%s, %s) must all be of type Unit' % (p1, p2))
+        self.b.line(ru(p1, maker=pt), ru(p2, maker=pt)) # Render tuple of units point
 
     def newPath(self):
         """Make a new DrawBot Bezierpath() to draw in.
@@ -200,7 +212,7 @@ class DrawBotContext(BaseContext):
         return self._path
     path = property(_get_path)
 
-    def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
+    def drawPath(self, path=None, p=None, sx=1, sy=None):
         """Draw the NSBezierPath, or equivalent in other contexts. Scaled image is drawn on (x, y),
         in that order."""
         if path is None:
@@ -209,8 +221,11 @@ class DrawBotContext(BaseContext):
             self.save()
             if sy is None:
                 sy = sx
+            if p is None:
+                p = pt(0, 0)
+            assert isUnits(p), ('DrawBotContext.drawPath: Values %s must all be of type Unit' % str(p))
             self.scale(sx, sy)
-            self.b.translate(p[0]/sx, p[1]/sy)
+            self.b.translate(p[0].pt/sx, p[1].pt/sy)
             self.b.drawPath(path)
             self.restore()
 
@@ -224,7 +239,8 @@ class DrawBotContext(BaseContext):
         """
         if self._path is None:
             self.newPath()
-        self._path.moveTo(ru(p)) # Render units point tuple to tuple of values
+        assert isUnits(p), ('DrawBotContext.moveTo: Values %s must all be of type Unit' % str(p))
+        self._path.moveTo(ru(p, maker=pt)) # Render units point tuple to tuple of values
 
     def lineTo(self, p):
         """Line to point p. Create a new path if none is open.
@@ -244,7 +260,8 @@ class DrawBotContext(BaseContext):
         """
         if self._path is None:
             self.newPath()
-        self._path.lineTo(ru(p)) # Render units point tuple to tuple of values
+        assert isUnits(p), ('DrawBotContext.curveTo: Values %s must all be of type Unit' % str(p))
+        self._path.lineTo(ru(p, maker=pt)) # Render units point tuple to tuple of values
 
     def quadTo(bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
@@ -267,7 +284,8 @@ class DrawBotContext(BaseContext):
         """
         if self._path is None:
             self.newPath()
-        self._path.curveTo(ru(bcp1), ru(bcp2), ru(p)) # Render units tuples to value tuples
+        assert isUnits(bcp1, bcp2, p), ('DrawBotContext.curveTo: Values (%s, %s, %s) must all be of type Unit' % (bcp1, bcp2, p))
+        self._path.curveTo(ru(bcp1, maker=pt), ru(bcp2, maker=pt), ru(p, maker=pt)) # Render units tuples to value tuples
 
     def closePath(self):
         """Curve to point p. Create a new path if none is open.
@@ -295,11 +313,13 @@ class DrawBotContext(BaseContext):
         """Set the drawing scale."""
         if sy is None:
             sy = sx
+        assert isinstance(sx, (int, float)) and isinstance(sy, (int, float)), ('DrawBotContext.scale: Values (%s, %s) must all be of numbers' % (sx, sy))
         self.b.scale(sx, sy)
 
     def translate(self, dx, dy):
         """Translate the origin to this point."""
-        self.b.translate(dx, dy)
+        assert isUnits(dx, dy), ('DrawBotContext.translate: Values (%s, %s) must all be of type Unit' % (dx, dy))
+        self.b.translate(dx.pt, dy.pt)
 
     def transform(self, t):
         """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift over vector (dx, dy)"""
@@ -525,7 +545,19 @@ class DrawBotContext(BaseContext):
         >>> context.textFill(fs, color(0.5)) # Same as setTextFillColor
         >>> context.textFill(fs, color('red'))
         """
-        self.fill(c, builder=fs)
+        assert isinstance(c, Color), ('DrawBotContext.fill: %s should be of type Color' % c)
+        if c is inheritColor: # Keep color setting as it is.
+            pass
+        elif c is noColor:
+            fs.fill(None) # Set color to no-color
+        elif c.isCmyk:
+            cmyk = list(c.cmyk)
+            cmyk.append(c.a)
+            fs.cmykFill(cmyk) # FormattedString.cmykStroke has slight API difference with DrawBot.cmykStroke
+        else:
+            rgb = list(c.rgb)
+            rgb.append(c.a) # FormattedString.stroke has slight API difference with DrawBot.stroke
+            fs.fill(rgb) # Convert to rgb, whatever the type of color
 
     textFill = setTextFillColor
 
@@ -537,20 +569,34 @@ class DrawBotContext(BaseContext):
         >>> context.textStroke(fs, color(0.5)) # Same as setTextStrokeColor
         >>> context.textStroke(fs, color('red'), w=pt(10))
         """
-        self.stroke(c, w=w, builder=fs)
+        assert isinstance(c, Color), ('DrawBotContext.fill: %s should be of type Color' % c)
+        if c is inheritColor: # Keep color setting as it is.
+            pass
+        elif c is noColor:
+            fs.fill(None) # Set color to no-color
+        elif c.isCmyk:
+            cmyk = list(c.cmyk)
+            cmyk.append(c.a)
+            fs.cmykStroke(cmyk) # FormattedString.cmykStroke has slight API difference with DrawBot.cmykStroke
+        else:
+            rgb = list(c.rgb)
+            rgb.append(c.a) # FormattedString.stroke has slight API difference with DrawBot.stroke
+            fs.stroke(rgb) # Convert to rgb, whatever the type of color
 
     textStroke = setTextStrokeColor
 
-    def setTextStrokeWidth(self, fs, w):
+    def textStrokeWidth(self, fs, w):
         u"""Set the stroke width of the formatted string.
 
         >>> context = DrawBotContext()
         >>> fs = context.newString('Hello')
         >>> context.setTextStrokeWidth(fs, pt(10))
         """
-        self.setStrokeWidth(w, builder=fs)
+        fs.strokeWidth(w.pt)
 
-    def fill(self, c, builder=None):
+    setTextStrokeWidth = textStrokeWidth
+
+    def fill(self, c):
         u"""Set the color for global or the color of the formatted string.
 
         >>> context = DrawBotContext()
@@ -558,26 +604,23 @@ class DrawBotContext(BaseContext):
         >>> context.fill(color('red'))
         >>> context.fill(inheritColor)
         >>> context.fill(noColor)
+        >>> #context.fill(123)
         """
-        if not isinstance(c, Color):
-            print('Error in DrawBotContext.fill(): c should be of type Color')
-            raise AssertionError
-
-        if builder is None: # Builder can be optional DrawBot FormattedString
-            builder = self.b
-
+        assert isinstance(c, Color), ('DrawBotContext.fill: %s should be of type Color' % c)
         if c is inheritColor: # Keep color setting as it is.
             pass
         elif c is noColor:
-            builder.fill(None) # Set color to no-color
+            self.b.fill(None) # Set color to no-color
         elif c.isCmyk:
-            builder.cmykFill(c.cmyk)
+            c, m, y, k = c.cmyk # DrawBot.fill has slight API difference with FormattedString.fill 
+            self.b.cmykFill(c, m, y, k, alpha=c.a)
         else:
-            builder.fill(c.rgb)
+            r, g, b = c.rgb # DrawBot.fill has slight API difference with FormattedString.fill 
+            self.b.fill(r, g, b, alpha=c.a) # Convert to rgb, whatever the type of color
 
     setFillColor = fill # DrawBot compatible API
 
-    def stroke(self, c, w=None, builder=None):
+    def stroke(self, c, w=None):
         u"""Set the color for global or the color of the formatted string.
 
         >>> context = DrawBotContext()
@@ -585,38 +628,33 @@ class DrawBotContext(BaseContext):
         >>> context.stroke(color('red'))
         >>> context.stroke(inheritColor)
         >>> context.stroke(noColor)
+        >>> #context.stroke(123)
         """
-        assert isinstance(c, Color)
-
-        if builder is None: # Builder can be optional DrawBot FormattedString
-            builder = self.b
-
+        assert isinstance(c, Color), ('DrawBotContext.stroke: %s should be of type Color' % c)
         if c is inheritColor: # Keep color setting as it is.
             pass
         if c is noColor:
-            builder.stroke(None) # Set color to no-color
+            self.b.stroke(None) # Set color to no-color
         elif c.isCmyk:
-            builder.cmykStroke(c.cmyk)
+            cc, cm, cy, ck = c.cmyk # DrawBot.stroke has slight API difference with FormattedString.stroke 
+            self.b.cmykStroke(cc, cm, cy, ck, alpha=c.a)
         else:
-            builder.stroke(c.rgb)
+            r, g, b = c.rgb # DrawBot.stroke has slight API difference with FormattedString.stroke 
+            self.b.stroke(r, g, b, alpha=c.a)
         if w is not None:
             self.setStrokeWidth(w)
 
     setStrokeColor = stroke # DrawBot compatible API
 
-    def setStrokeWidth(self, w, builder=None):
+    def setStrokeWidth(self, w):
         u"""Set the current stroke width.
 
         >>> from pagebot.toolbox.units import unit, pt, mm
         >>> context = DrawBotContext()
         >>> context.setStrokeWidth(pt(0.5))
         >>> context.setStrokeWidth(mm(0.5))
-
         """
-        if builder is None: # Builder can be optional DrawBot FormattedString
-            builder = self.b
-
-        builder.strokeWidth(w)
+        self.b.strokeWidth(w.pt)
 
     def rotate(self, angle):
         """Rotate the canvas by angle."""
