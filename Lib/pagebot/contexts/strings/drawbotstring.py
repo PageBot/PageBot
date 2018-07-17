@@ -17,7 +17,7 @@
 import re
 from copy import copy
 try:
-    #import AppKit
+    import AppKit
     import CoreText
     import Quartz
     from drawBot import BezierPath
@@ -487,7 +487,7 @@ class DrawBotString(BabelString):
         cStroke = css('textStroke', e, style, noColor)
         strokeWidth = css('textStrokeWidth', e, style)
         if strokeWidth is not None:
-            assert isUnit(strokeWidth), ('DrawBotString.newString: uStrokeWidth %s must of type Unit' % strokeWidth)
+            assert isUnit(strokeWidth), ('DrawBotString.newString: strokeWidth %s must of type Unit' % strokeWidth)
             strokeWidth = strokeWidth.pt
         if cStroke is not inheritColor:
             assert isinstance(cStroke, Color), ('DrawBotString.newString] Stroke color "%s" is not Color in style %s' % (cStroke, style))
