@@ -77,7 +77,7 @@ class PageView(BaseView):
             # pages can draw their crop-marks. Otherwise make DrawBot pages of the size of each page.
             # Size depends on the size of the larges pages + optional decument padding.
             page = pages[0] # TODO: make this work for pages that share the same page number
-            pw, ph = w, h  # Copy from main (w, h), since they may be altered.
+            pw, ph = w, h  # Copy from main (w, h), since they may be altered, from the orgiinal document size..
 
             if self.pl > self.MIN_PADDING and \
                self.pt > self.MIN_PADDING and \

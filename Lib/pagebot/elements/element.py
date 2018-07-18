@@ -2168,6 +2168,8 @@ class Element(object):
         """
         return self.h + self.bleedTop + self.bleedBottom
     bleedH = property(_get_bleedH)
+
+    # Absolute positions
     
     def _get_bleedOrigin(self):
         u"""Answer the origin of the element, shifted by the defined bleed.
@@ -2183,8 +2185,6 @@ class Element(object):
             y = self.bottom - self.bleedBottom
         return self.x - self.bleedLeft, y
     bleedOrigin = property(_get_bleedOrigin)
-
-    # Absolute positions
 
     def _get_rootX(self):
         u"""Answer the read-only property root value of local self.x,
