@@ -20,7 +20,7 @@ import weakref
 import copy
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import isUnit, units, Fr, Perc, Em, ru, pt, point3D, pointOffset
-from pagebot.toolbox.color import noColor, Color
+from pagebot.toolbox.color import noColor, Color, blackColor
 
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
@@ -266,7 +266,6 @@ class Element(object):
             assert isinstance(d['fill'], Color), 'fill should be of type Color'
         if 'stroke' in d:
             assert isinstance(d['stroke'], Color), 'stroke should be of type Color'
-        print(d)
 
     #   T E M P L A T E
 

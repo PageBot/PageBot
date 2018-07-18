@@ -24,7 +24,8 @@ from pagebot.style import getRootStyle, A4, CENTER,TOP, BOTTOM, MM,\
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements import *
 from pagebot.document import Document
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import Color, noColor
+from pagebot.toolbox.units import pt
 
 ViewPadding = 64
 PageSize = 500
@@ -85,23 +86,23 @@ def makeDocument():
             # Create Rect object and place it in the page on position p
             # Initialize the borders dicts on lineWidth == 0
             e = newRect(p, w=SQUARE, h=SQUARE, parent=page, 
-                fill=color1, stroke=None, borders=1) # border=1 also works, identical.
+                fill=color1, stroke=noColor, borders=1) # border=1 also works, identical.
             lineType = {-1:ONLINE, 0:INLINE, 1:ONLINE, 2:OUTLINE}[LineType]
-            e.borderLeft['strokeWidth'] = (ix+1)*4
+            e.borderLeft['strokeWidth'] = pt((ix+1)*4)
             e.borderLeft['line'] = lineType
             e.borderLeft['stroke'] = Color(0, 0, 0, 0.5)
             e.borderLeft['dash'] = (DashWhite, DashBlack)
  
-            e.borderBottom['strokeWidth'] = (ix+1)*4
+            e.borderBottom['strokeWidth'] = pt((ix+1)*4)
             e.borderBottom['line'] = lineType
             e.borderBottom['stroke'] = Color(0, 1, 0)
             e.borderBottom['dash'] = (DashWhite, DashBlack)
             
-            e.borderTop['strokeWidth'] = (iy+1)*4
+            e.borderTop['strokeWidth'] = pt((iy+1)*4)
             e.borderTop['line'] = lineType
             e.borderTop['stroke'] = Color(1, 1, 0, 0.5)
             
-            e.borderRight['strokeWidth'] = (iy+1)*4
+            e.borderRight['strokeWidth'] = pt((iy+1)*4)
             e.borderRight['line'] = lineType
             e.borderRight['stroke'] = Color(0, 0, 1, 0.5)
             

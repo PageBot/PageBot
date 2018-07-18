@@ -22,6 +22,7 @@ from pagebot.style import getRootStyle, A5, CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import newRect
 from pagebot.conditions import *
+from pagebot.toolbox.color import Color
 
 
 W, H = A5
@@ -48,9 +49,10 @@ def makeDocument():
 
     # Make rect as page element centered with centered origin.
     if RedRect:
-        c = 1, 0, 0
+        c = Color(1, 0, 0)
     else:
-        c = 0.5
+        c = Color(0.5)
+
     conditions = (Center2Center(), Middle2Middle())
     newRect(fill=c, parent=page, w=RectSize, h=RectSize,
             conditions=conditions, xAlign=CENTER, yAlign=MIDDLE)
