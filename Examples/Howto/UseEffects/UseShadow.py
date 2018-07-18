@@ -13,12 +13,14 @@
 #
 #     UseShadow.py
 #
+from __future__ import print_function
 from pagebot.style import CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
-from pagebot import Shadow
-from __future__ import print_function
+from pagebot.gradient import Shadow
+from pagebot.toolbox.color import Color
+
 
 W = 400
 H = 480
@@ -48,16 +50,16 @@ def makeDocument():
                   Middle2Middle())
     shadow = Shadow(offset=(ShadowOffset, -ShadowOffset),
                     blur=ShadowBlur,
-                    color=(0.2, 0.2, 0.2, 0.5))
+                    color=Color(0.2, 0.2, 0.2, 0.5))
     textShadow = Shadow(offset=(ShadowTextOffset, -ShadowTextOffset),
                         blur=ShadowTextBlur,
-                        color=(0.2, 0.2, 0.2, 0.5))
+                        color=Color(0.2, 0.2, 0.2, 0.5))
     fs = c.newString('This is text with a shadow',
                      style=dict(font='Verdana',
                                 fontSize=30,
                                 textFill=0,
                                 rLeading=1.2))
-    newTextBox(fs, fill=0.8, parent=page,
+    newTextBox(fs, fill=Color(0.8), parent=page,
                w=RectSize, h=RectSize, shadow=shadow, textShadow=textShadow,
                conditions=conditions, xAlign=CENTER, yAlign=MIDDLE)
     # Solve the layout conditions of the red rectangle.
