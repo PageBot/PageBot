@@ -247,7 +247,7 @@ class DrawBotString(BabelString):
         return reCompiled.findall(u'%s' % self.s)
 
     def textOverflow(self, w, h, align=LEFT):
-        return self.context.textOverflow(self, (0, 0, w, h), align)
+        return self.context.textOverflow(self, (0, 0, w.pt, h.pt), align)
 
     @classmethod
     def _newFitWidthString(cls, fs, context, fontSize, w, pixelFit):
