@@ -917,18 +917,24 @@ class Color(object):
 def color(r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None, k=None, cmyk=None, spot=None, ral=None, name=None):
     return Color(r=r, g=g, b=b, a=a, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk, spot=spot, ral=ral, name=name)
 
-# Some predefined Color instances that are often used.
-noColor = color(a=0) # Set to no-drawing (DrawBot fill(None) setting)
-inheritColor = color(a=-1) # Complete transparent, ignore setting the color. Draw color as previously.
+# Some predefined Color instances that are used often.
+
+# Set to no-drawing (DrawBot fill(None) setting).
+noColor = color(a=0)
+
+# Completely transparent, ignore setting the color. Draw color as previously.
+inheritColor = color(a=-1)
 blackColor = color(0)
 lightGrayColor = color(0.25)
 grayColor = color(0.5)
 darkGrayColor = color(0.75)
 whiteColor = color(1)
+
 # RGB
 redColor = color(1, 0, 0)
 greenColor = color(0, 1, 0)
 blueColor = color(0, 0, 1)
+
 # CMYK
 yellowColor = color(c=0, m=0, y=1, k=0)
 magentaColor = color(c=0, m=1, y=0, k=0)

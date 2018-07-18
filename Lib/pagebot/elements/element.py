@@ -37,20 +37,20 @@ from pagebot.toolbox.dating import now, seconds, years, Duration
 
 class Element(object):
 
-    # Initialize the default Element behavior flags.
-    # These flags can be overwritten by inheriting classes, or dynamically in instances,
-    # e.g. where the settings of TextBox.nextBox and TextBox.nextPage define if a TextBox
-    # instance can operate as a flow.
+    # Initialize the default Element behavior flags. These flags can be
+    # overwritten by inheriting classes, or dynamically in instances, e.g.
+    # where the settings of TextBox.nextBox and TextBox.nextPage define if a
+    # TextBox instance can operate as a flow.
     isText = False
     isTextBox = False
     isFlow = False # Value is True if self.next if defined.
     isPage = False # Set to True by Page-like elements.
     isView = False
 
-    def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, 
+    def __init__(self, x=0, y=0, z=0, xy=None, xyz=None,
             w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None,
-            t=None, parent=None, context=None, name=None, cssClass=None, cssId=None, 
-            title=None, description=None, keyWords=None, 
+            t=None, parent=None, context=None, name=None, cssClass=None, cssId=None,
+            title=None, description=None, keyWords=None,
             language=None, style=None, conditions=None, framePath=None,
             elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None,
             isLeftPage=None, isRightPage=None, bleed=None,
@@ -60,9 +60,11 @@ class Element(object):
             shadow=None, gradient=None,
             drawBefore=None, drawAfter=None,
             **kwargs):
-        u"""Basic initialize for every Element constructor. Element always have a location, even if not defined here.
-        If values are added to the contructor parameter, instead of part in **kwargs, this forces them to have values,
-        not inheriting from one of the parent styles.
+        """Basic initialize for every Element constructor. Element always have
+        a location, even if not defined here.  If values are added to the
+        contructor parameter, instead of part in **kwargs, this forces them to
+        have values, not inheriting from one of the parent styles.
+
         Ignore setting of eId as attribute, guaranteed to be unique.
 
         >>> import sys
@@ -116,7 +118,7 @@ class Element(object):
         >>> e.size3D
         (320pt, 3pt, 100pt)
         """
-        # Optionally set the property for elements that need their own context. 
+        # Optionally set the property for elements that need their own context.
         # Mostly these are only set for views (which are also Elements)
         # If None the property will query parent --> root document --> view.
         self.context = context
@@ -183,17 +185,17 @@ class Element(object):
         self.cssClass = cssClass # Optional CSS class name. Ignored if None, not to overwrite cssClass of parents.
         self.cssId = cssId # Optional id name. Ignored if None.
 
-        # Generic naming and title. 
+        # Generic naming and title.
         self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
         self.title = title or name # Optional to make difference between title name, style property
         self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value.
-        
+
         # Element tree
         self._parent = None # Preset, so it exists for checking when appending parent.
         if parent is not None:
             # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
             self.parent = parent # Set references in both directions. Remove any previous parent links
-        
+
         # Conditional placement stuff
         if not conditions is None and not isinstance(conditions, (list, tuple)): # Allow singles
             conditions = [conditions]
@@ -217,7 +219,7 @@ class Element(object):
         self.isFlow = not None in (prevElement, nextElement, nextPage)
 
     def __repr__(self):
-        u"""Object as string.
+        """Object as string.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120)
@@ -242,8 +244,8 @@ class Element(object):
         return '<%s%s (%s, %s, %s, %s)%s>' % (self.__class__.__name__, name, self.x, self.y, self.w, self.h, elements)
 
     def __len__(self):
-        u"""Answer total amount of elements, placed or not.
-        Note the various ways units, x, y, w and h can be defined.
+        """Answer total amount of elements, placed or not. Note the various
+        ways units, x, y, w and h can be defined.
 
         >>> e = Element(name='TestElement', x=100, y=200, w=pt(100), h=pt(120)) # Set as separate units
         >>> childE1 = Element(name='E1', x=pt(0), y=pt(0), size=pt(21, 22))
@@ -258,8 +260,8 @@ class Element(object):
     #   T E M P L A T E
 
     def applyTemplate(self, template, elements=None):
-        u"""Copy relevant info from template: w, h, elements, style, conditions when element is created.
-        Don't call later.
+        """Copy relevant info from template: w, h, elements, style, conditions
+        when element is created. Don't call later.
 
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot.elements import Template
@@ -276,7 +278,7 @@ class Element(object):
                 self.appendElement(e) # Add cross reference searching for eId of elements.
 
     def _get_template(self):
-        u"""Property get/set for e.template.
+        """Property get/set for e.template.
 
         >>> from pagebot.elements import Template
         >>> e = Element(name='TestElement')
@@ -312,7 +314,7 @@ class Element(object):
     #   Every element is potentioally a container of other elements.
 
     def __getitem__(self, eIdOrName):
-        u"""Answer the element with eIdOrName. Answer None if the element does not exist.
+        """Answer the element with eIdOrName. Answer None if the element does not exist.
         Elements behave as a semi-dictionary for child elements.
         For retrieval by index, use e.elements[index]
 
@@ -330,7 +332,7 @@ class Element(object):
         self._eIds[eId] = e
 
     def _get_eId(self):
-        u"""Answer the unique element Id. Cannot set self._eId through self.eId property.
+        """Answer the unique element Id. Cannot set self._eId through self.eId property.
         Set self._eId if really necessary, as hex string.
 
         >>> from pagebot.toolbox.transformer import hex2dec
@@ -342,7 +344,7 @@ class Element(object):
     eId = property(_get_eId)
 
     def _get_elements(self):
-        u"""Property to get/set elements to parent self.
+        """Property to get/set elements to parent self.
 
         >>> e = Element()
         >>> len(e), len(e.elements)
@@ -359,7 +361,7 @@ class Element(object):
     elements = property(_get_elements, _set_elements)
 
     def _get_elementIds(self): # Answer the x-ref dictionary with elements by their e.eIds
-        u"""Answer the list with child.eId
+        """Answer the list with child.eId
 
         >>> e = Element()
         >>> e.elements = (Element(), Element(), Element())
@@ -370,8 +372,9 @@ class Element(object):
     elementIds = property(_get_elementIds)
 
     def get(self, eIdOrName, default=None):
-        u"""Answer the element by eId or name. Answer the same selection for default, if the element cannot be found.
-        Answer None if it does not exist.
+        """Answer the element by eId or name. Answer the same selection for
+        default, if the element cannot be found. Answer None if it does not
+        exist.
 
         >>> e = Element(name='Parent')
         >>> e1 = Element(name='Child')
@@ -397,7 +400,8 @@ class Element(object):
         return None
 
     def getElement(self, eId):
-        u"""Answer the page element, if it has a unique element Id. Answer None if the eId does not exist as child.
+        """Answer the page element, if it has a unique element Id. Answer None
+        if the eId does not exist as child.
 
         >>> e1 = Element(name='Child')
         >>> e = Element(name='Parent', elements=[e1])
@@ -410,8 +414,9 @@ class Element(object):
         return self._eIds.get(eId)
 
     def getElementPage(self):
-        u"""Recursively answer the page of this element. This can be several layers above self.
-        If there element has not a parent in the line of parents, then answer None.
+        """Recursively answer the page of this element. This can be several
+        layers above self. If there element has not a parent in the line of
+        parents, then answer None.
 
         >>> from pagebot.elements.pbpage import Page
         >>> eb = Element(name='Bottom')
@@ -434,7 +439,8 @@ class Element(object):
         return None
 
     def getElementByName(self, name):
-        u"""Answer the first element in the offspring list that fits the name. Answer None if it cannot be found.
+        """Answer the first element in the offspring list that fits the name.
+        Answer None if it cannot be found.
 
         >>> e1 = Element(name='Deeper')
         >>> e2 = Element(name='Deeper')
@@ -455,8 +461,8 @@ class Element(object):
         return None
 
     def deepFind(self, name=None, pattern=None, result=None):
-        u"""Perform a dynamic recursive deep find for all elements with the name. 
-        Don't include self. Either *name* or *pattern* should be defined, 
+        """Perform a dynamic recursive deep find for all elements with the name.
+        Don't include self. Either *name* or *pattern* should be defined,
         otherwise an error is raised.
 
         >>> e1 = Element(name='DeeperChild')
@@ -482,9 +488,10 @@ class Element(object):
         return result
 
     def find(self, name=None, pattern=None, result=None):
-        u"""Perform a dynamic find for the named element(s) in self.elements. 
-        Don't include self. Either name or pattern should be defined, otherwise 
-        an error is raised. Return the collected list of matching child elements.
+        """Perform a dynamic find for the named element(s) in self.elements.
+        Don't include self. Either name or pattern should be defined, otherwise
+        an error is raised. Return the collected list of matching child
+        elements.
 
         >>> e1 = Element(name='OtherChild')
         >>> e2 = Element(name='OtherChild')
@@ -507,9 +514,11 @@ class Element(object):
         return result
 
     def clearElements(self):
-        u"""Properly initializes self._elements and self._eIds.
-        Any existing elements get their parent weakrefs become None and will garbage collect.        >>> e1 = Element(name='Child')
+        """Properly initializes self._elements and self._eIds. Any existing
+        element will get its parent weakrefs become None and will be garbage
+        collected.
 
+        >>> e1 = Element(name='Child')
         >>> e1 = Element(name='Child')
         >>> e = Element(name='Parent', elements=[e1])
         >>> len(e)
@@ -522,8 +531,8 @@ class Element(object):
         self._eIds = {}
 
     def copy(self, parent=None):
-        u"""Answer a full copy of self, where the "unique" fields are set to default.
-        Also perform a deep copy on all child elements.
+        """Answer a full copy of self, where the "unique" fields are set to
+        default. Also perform a deep copy on all child elements.
 
         >>> e1 = Element(name='Child', w=100)
         >>> e = Element(name='Parent', elements=[e1], w=200)
@@ -550,10 +559,10 @@ class Element(object):
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
             framePath=self.framePath,
             elements=None, # Will be copied separately, if there are child elements
-            template=self.template, 
-            nextElement=self.nextElement, 
+            template=self.template,
+            nextElement=self.nextElement,
             prevElement=self.prevElement,
-            nextPage=self.nextPage, 
+            nextPage=self.nextPage,
             prevPage=self.prevPage,
             padding=self.padding, # Copies all padding values at once
             margin=self.margin, # Copies all margin values at once,
@@ -568,8 +577,9 @@ class Element(object):
         return e
 
     def setElementByIndex(self, e, index):
-        u"""Replace the element, if there is already one at index. Otherwise append it to self.elements
-        and answer the index number that it got. If index < 0, just answer None and do nothing.
+        """Replace the element, if there is already one at index. Otherwise
+        append it to self.elements and answer the index number that is assigned
+        to it. If index < 0, just answer None and do nothing.
 
         >>> e1 = Element(name='Child1')
         >>> e2 = Element(name='Child2')
@@ -594,9 +604,11 @@ class Element(object):
         return self.appendElement(e)
 
     def appendElement(self, e):
-        u"""Add element to the list of child elements. Note that elements can be added multiple times.
-        If the element is alread placed in another container, then remove it from its current parent.
-        This relation and position is lost. The position e is supposed to be filled already in local position.
+        """Add element to the list of child elements. Note that elements can be
+        added multiple times. If the element is already placed in another
+        container, then remove it from its current parent. The parent relation
+        and the position are lost. The position `e` is supposed to be filled
+        already in local position.
 
         >>> e1 = Element(name='Child1')
         >>> e2 = Element(name='Child2')
@@ -619,7 +631,8 @@ class Element(object):
         return len(self._elements)-1 # Answer the element index for e.
 
     def removeElement(self, e):
-        u"""If the element is placed in self, then remove it. Don't touch the position.
+        """If the element is placed in self, then remove it. Don't touch the
+        position.
 
         >>> e1 = Element(name='Child1')
         >>> e2 = Element(name='Child2')
@@ -638,7 +651,7 @@ class Element(object):
         return e # Answer the unlinked elements for convenience of the caller.
 
     def _get_show(self):
-        u"""Set flag for drawing or interpretation with conditional.
+        """Set flag for drawing or interpretation with conditional.
 
         >>> e = Element(show=False) # Set a separate attribute
         >>> e.show
@@ -664,8 +677,9 @@ class Element(object):
     #   C H I L D  E L E M E N T  P O S I T I O N S
 
     def getElementsAtPoint(self, point):
-        u"""Answer the list with elements that fit the point. Note None in the point will match any
-        value in the element position. Where None in the element position with not fit any xyz of the point.
+        """Answer the list with elements that fit the point. Note None in the
+        point will match any value in the element position. Where None in the
+        element position with not fit any xyz of the point.
 
         >>> e1 = Element(name='Child1', x=20, y=30)
         >>> e2 = Element(name='Child2', x=20, y=40)
@@ -686,7 +700,8 @@ class Element(object):
         return elements
 
     def getElementsPosition(self):
-        u"""Answer the dictionary of element Ids as key and their position as value.
+        """Answer the dictionary of element Ids as key and their position as
+        value.
 
         >>> e1 = Element(name='Child1', x=20, y=30)
         >>> e2 = Element(name='Child2', x=20, y=40)
@@ -704,8 +719,8 @@ class Element(object):
         return elements
 
     def getPositions(self):
-        u""""Answer the dictionary of positions of elements.
-        Key is the local point of the child element. Value is list of elements.
+        """"Answer the dictionary of positions of elements. Key is the local
+        point of the child element. Value is list of elements.
 
         >>> e1 = Element(name='Child1', x=20, y=30)
         >>> e2 = Element(name='Child2', x=20, y=40)
@@ -731,7 +746,7 @@ class Element(object):
     # If the element is part of a flow, then answer the squence.
 
     def NOTNOW_getFlows(self):
-        u"""Answer the set of flow element sequences on the page."""
+        """Answer the set of flow element sequences on the page."""
         flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
         for e in self.elements:
             if not e.isFlow:
@@ -751,8 +766,9 @@ class Element(object):
         return flows
 
     def NOTNOW_getNextFlowBox(self, tb, makeNew=True):
-        u"""Answer the next textBox that tb is pointing to. This can be on the same page or a next
-        page, depending how the page (and probably its template) is defined."""
+        """Answer the next textBox that tb is pointing to. This can be on the
+        same page or a next page, depending how the page (and probably its
+        template) is defined."""
         if tb.nextPage: # Page number or name
             # The flow textBox is pointing to another page. Try to get it, and otherwise create one,
             # if makeNew is set to True.
@@ -777,19 +793,20 @@ class Element(object):
     #   If self.nextElement is defined, then check the condition if there is overflow.
 
     def isOverflow(self, tolerance):
-        u"""Answer the boolean flag if this element needs overflow to be solved.
+        """Answer the boolean flag if this element needs overflow to be solved.
         This method is typically called by conditions such as Overflow2Next.
-        This method is redefined by inheriting classed, such as
-        TextBox, that can have overflow of text."""
+        This method is redefined by inheriting classed, such as TextBox, that
+        can have overflow of text."""
         return True
 
     def overflow2Next(self):
-        u"""Try to fix if there is overflow. Default behavior is to do nothing. This method
-        is redefined by inheriting classed, such as TextBox, that can have overflow of text."""
+        """Try to fix if there is overflow. Default behavior is to do nothing.
+        This method is redefined by inheriting classed, such as TextBox, that
+        can have overflow of text."""
         return True
 
     def _get_baselineGrid(self):
-        u"""Answer the baseline grid distance, as defined in the (parent)style.
+        """Answer the baseline grid distance, as defined in the (parent)style.
 
         >>> from pagebot.toolbox.units import mm, p
         >>> e = Element()
@@ -805,14 +822,14 @@ class Element(object):
         >>> e.baselineGrid
         14pt
         """
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %       
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %
         return units(self.css('baselineGrid'), base=base, min=self.minH, max=self.maxH)
     def _set_baselineGrid(self, baselineGrid):
         self.style['baselineGrid'] = units(baselineGrid)
     baselineGrid = property(_get_baselineGrid, _set_baselineGrid)
 
     def _get_baselineGridStart(self):
-        u"""Answer the baseline grid startf, as defined in the (parent)style.
+        """Answer the baseline grid startf, as defined in the (parent)style.
 
         >>> e = Element()
         >>> e.baselineGridStart is None # Undefined without style or parent style.
@@ -824,7 +841,7 @@ class Element(object):
         >>> e.baselineGridStart
         15pt
         """
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %       
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %
         return units(self.css('baselineGridStart'), base=base, min=self.minH, max=self.maxH)
     def _set_baselineGridStart(self, baselineGridStart):
         self.style['baselineGridStart'] = units(baselineGridStart)
@@ -855,7 +872,7 @@ class Element(object):
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
     def css(self, name, default=None):
-        u"""In case we are looking for a plain css value, cascading from the main ancestor styles
+        """In case we are looking for a plain css value, cascading from the main ancestor styles
         of self, then follow the parent links until document or root, if self does not contain
         the requested value.
 
@@ -869,7 +886,7 @@ class Element(object):
         >>> e.css('leading') # Find value in root style. Default is absolute unit. Can be changed to em.
         16.8pt
         >>> e = Element(fontSize=pt(24), leading=em(1.4))
-        >>> e.css('leading'), round(e.css('leading').pt) # Show unit and rendered compared to 
+        >>> e.css('leading'), round(e.css('leading').pt) # Show unit and rendered compared to
         (1.4em, 17.0)
         """
         if name in self.style and self.style[name] is not None:
@@ -879,7 +896,7 @@ class Element(object):
         return default
 
     def getNamedStyle(self, styleName):
-        u"""In case we are looking for a named style (e.g. used by the Typesetter to build a stack
+        """In case we are looking for a named style (e.g. used by the Typesetter to build a stack
         of cascading tag style, then query the ancestors for the named style. Default behavior
         of all elements is that they pass the request on to the root, which is nornally the document.
 
@@ -895,7 +912,7 @@ class Element(object):
         return None
 
     def getFlattenedStyle(self):
-        u"""Answer the flattened dictionary with all self.css(...) values, from the perspecive of 
+        """Answer the flattened dictionary with all self.css(...) values, from the perspecive of
         self and upward on the parent tree. Evaluate for every value that is in the root style.
 
         >>> from pagebot.toolbox.color import color
@@ -913,7 +930,7 @@ class Element(object):
         return flattenedStyle
 
     def _get_em(self):
-        u"""Answer the current em value (for use in relative units), as value of 
+        """Answer the current em value (for use in relative units), as value of
         self.css('fontSize', DEFAULT_FONT_SIZE).
 
         >>> e = Element(style=dict(fontSize=pt(12)))
@@ -925,14 +942,14 @@ class Element(object):
         """
         return self.css('fontSize', DEFAULT_FONT_SIZE)
     def _set_em(self, em):
-        u"""Store the em size (as fontSize) in the local style."""
+        """Store the em size (as fontSize) in the local style."""
         self.style['fontSize'] = em
     em = property(_get_em, _set_em)
 
     #   L I B --> Document.lib
 
     def _get_lib(self):
-        u"""Answer the shared document.lib dictionary by property, used for share global entry by elements.
+        """Answer the shared document.lib dictionary by property, used for share global entry by elements.
         Elements query their self.parent.lib until the root document is reached.
 
         >>> from pagebot.document import Document
@@ -953,14 +970,14 @@ class Element(object):
     lib = property(_get_lib)
 
     def _get_doc(self):
-        u"""Answer the root Document of this element by property, looking upward in the ancestor tree."""
+        """Answer the root Document of this element by property, looking upward in the ancestor tree."""
         if self.parent is not None:
             return self.parent.doc
         return None
     doc = property(_get_doc)
 
     def _get_view(self):
-        u"""Answer the self.doc.view, currently set for reference and building this element."""
+        """Answer the self.doc.view, currently set for reference and building this element."""
         doc = self.doc
         if doc is not None:
             return doc.view
@@ -968,8 +985,8 @@ class Element(object):
     view = property(_get_view)
 
     def _get_context(self):
-        u"""Answer the context of this element. In general the self._context will be None, to allow
-        searching the parents --> document --> view. But there may be exceptions where elements+children 
+        """Answer the context of this element. In general the self._context will be None, to allow
+        searching the parents --> document --> view. But there may be exceptions where elements+children
         need their own."""
         if self._context is not None:
             return self._context
@@ -987,7 +1004,7 @@ class Element(object):
     b = builder = property(_get_builder)
 
     def newString(self, bs, e=None, style=None, w=None, h=None, pixelFit=True):
-        u"""Create a new BabelString, using the current type of self.doc.context,
+        """Create a new BabelString, using the current type of self.doc.context,
         or pagebot.contexts.getContext() if not self.doc or self.doc.view defined,
         if bs is a plain string. Otherwise just answer the BabelString unchanged.
         In case of a BabelString, is has to be the same as the current context would
@@ -1017,7 +1034,7 @@ class Element(object):
     # Most common properties
 
     def setParent(self, parent):
-        u"""Set the parent of self as weakref if it is not None. Don't call self.appendElement().
+        """Set the parent of self as weakref if it is not None. Don't call self.appendElement().
         Calling setParent is not the main way to add an element to a parent, because the original
         parent would not know that the element disappeared. Call self.appendElement(e), which will
         call this method. """
@@ -1026,7 +1043,7 @@ class Element(object):
         self._parent = parent # Can be None if self needs to be unlinked from a parent tree. E.g. when moving it.
 
     def _get_parent(self):
-        u"""Answer the parent of the element, if it exists, by weakref reference. Answer None of there
+        """Answer the parent of the element, if it exists, by weakref reference. Answer None of there
         is not parent defined or if the parent not longer exdef ists."""
         if self._parent is not None:
             return self._parent()
@@ -1041,7 +1058,7 @@ class Element(object):
     parent = property(_get_parent, _set_parent)
 
     def _get_siblings(self):
-        u"""Answer all elements that share self.parent, not including self in the list."""
+        """Answer all elements that share self.parent, not including self in the list."""
         siblings = []
         for e in self.parent.elements:
             if not e is self:
@@ -1050,7 +1067,7 @@ class Element(object):
     siblings = property(_get_siblings)
 
     def _get_ancestors(self):
-        u"""Answer the list of anscestors of self, including the document root. Self is not included."""
+        """Answer the list of anscestors of self, including the document root. Self is not included."""
         ancestors = []
         parent = self.parent
         while parent is not None:
@@ -1063,7 +1080,7 @@ class Element(object):
     # Orientation of elements (and pages)
 
     def isLeftPage(self, e=None):
-        u"""Normal elements don't know the left/right orientation of the page that they are on.
+        """Normal elements don't know the left/right orientation of the page that they are on.
         Pass the request on to the parent, until a page is reachted.
 
         >>> from pagebot.document import Document
@@ -1076,7 +1093,7 @@ class Element(object):
         return False
 
     def isRightPage(self, e=None):
-        u"""Normal elements don't know the left/right orientation of the page that they are on.
+        """Normal elements don't know the left/right orientation of the page that they are on.
         Pass the request on to the parent, until a page is reachted."""
         if self._isRightPage is not None:
             return self._isRightPage
@@ -1085,7 +1102,7 @@ class Element(object):
         return False
 
     def _get_gridX(self):
-        u"""Answer the grid, depending on the left/right orientation of self.
+        """Answer the grid, depending on the left/right orientation of self.
 
         >>> e = Element(gridX=(10,20,30))
         >>> e.gridX
@@ -1109,7 +1126,7 @@ class Element(object):
     gridX = property(_get_gridX, _set_gridX)
 
     def _get_gridY(self):
-        u"""Answer the vertical grid, depending on the top/bottom orientation of self.
+        """Answer the vertical grid, depending on the top/bottom orientation of self.
 
         >>> e = Element(gridY=(10,20,30))
         >>> e.gridY
@@ -1124,7 +1141,7 @@ class Element(object):
     gridY = property(_get_gridY, _set_gridY)
 
     def _get_gridZ(self):
-        u"""Answer the grid, depending on the left/right orientation of self.
+        """Answer the grid, depending on the left/right orientation of self.
 
         >>> e = Element(gridZ=(10,20,30))
         >>> e.gridZ
@@ -1139,7 +1156,7 @@ class Element(object):
     gridZ = property(_get_gridZ, _set_gridZ)
 
     def getGridColumns(self):
-        u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
+        """Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
         Note that this is different from the gridX definition [(wx, gutter), ...]
         If there is one or more None in the grid definition, then try to fit equally on self.cw.
         If gurtter is left None, then the default style gutter is filled there.
@@ -1202,7 +1219,7 @@ class Element(object):
         return gridColumns
 
     def getGridRows(self):
-        u"""Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
+        """Answer the constructed sequence of [(columnX, columnW), ...] in the block of the element.
         Note that this is different from the gridX definition [(wx, gutter), ...]
         If there is one or more None in the grid definition, then try to fit equally on self.cw.
         If gutter is left None, then the default style gutter is filled there.
@@ -1271,7 +1288,7 @@ class Element(object):
     # Properties for unit access.
 
     def _get_parentW(self):
-        u"""Answer the width if the parent element. If there is not parent, answer DEFAULT_WIDTH.
+        """Answer the width if the parent element. If there is not parent, answer DEFAULT_WIDTH.
 
         >>> e0 = Element(w=500)
         >>> e1 = Element()
@@ -1287,7 +1304,7 @@ class Element(object):
     parentW = property(_get_parentW)
 
     def _get_parentH(self):
-        u"""Answer the height if the parent element. If there is not parent, answer DEFAULT_HEIGHT.
+        """Answer the height if the parent element. If there is not parent, answer DEFAULT_HEIGHT.
 
         >>> e0 = Element(h=500)
         >>> e1 = Element()
@@ -1303,7 +1320,7 @@ class Element(object):
     parentH = property(_get_parentH)
 
     def _get_parentD(self):
-        u"""Answer the depth if the parent element. If there is not parent, answer DEFAULT_DEPTH.
+        """Answer the depth if the parent element. If there is not parent, answer DEFAULT_DEPTH.
 
         >>> e0 = Element(d=502)
         >>> e1 = Element()
@@ -1319,7 +1336,7 @@ class Element(object):
     parentD = property(_get_parentD)
 
     def _get_em(self):
-        u"""Answer the current value for fontSize, used as reference for the relative Em Unit.
+        """Answer the current value for fontSize, used as reference for the relative Em Unit.
 
         >>> e = Element(fontSize=pt(13))
         >>> e.em
@@ -1328,12 +1345,12 @@ class Element(object):
         return self.css('fontSize', DEFAULT_FONT_SIZE)
     em = property(_get_em)
 
-    # Plain coordinates        
+    # Plain coordinates
 
     def _get_x(self):
-        u"""Answer the x position of self as Unit instance. In case it is a relative unit
+        """Answer the x position of self as Unit instance. In case it is a relative unit
         (such as Fr, Perc or Em), we just set the current parent total and em as reference.
-        By not freezing or rendering the value yet, the caller can decide to change 
+        By not freezing or rendering the value yet, the caller can decide to change
         parent value, and then render the value as with u.get(optionalTotal).
         Some situations require the rendered value, by in case of CSS, the relative value
         should be maintained. Then the current parent total reference is not important.
@@ -1351,7 +1368,7 @@ class Element(object):
         >>> child.x.pt # 40% of 400
         160
         >>> e.w = 500 # Child percentage changes dynamically from parent
-        >>> child.x.pt # 40% of 500 
+        >>> child.x.pt # 40% of 500
         200
         >>> child.x = fr(0.5)
         >>> child.x
@@ -1362,11 +1379,11 @@ class Element(object):
         return units(self.style.get('x'), base=base)
     def _set_x(self, x):
         """Convert to units, if x is not already a Unit instance."""
-        self.style['x'] = units(x) 
+        self.style['x'] = units(x)
     x = property(_get_x, _set_x)
 
     def _get_y(self):
-        u"""Answer the y position of self.
+        """Answer the y position of self.
 
         >>> e = Element(y=100, h=400)
         >>> e.x, e.y, e.z
@@ -1386,11 +1403,11 @@ class Element(object):
         return units(self.style.get('y'), base=base)
     def _set_y(self, y):
         """Convert to units, if y is not already a Unit instance."""
-        self.style['y'] = units(y) 
+        self.style['y'] = units(y)
     y = property(_get_y, _set_y)
 
     def _get_z(self):
-        u"""Answer the z position of self.
+        """Answer the z position of self.
 
         >>> e = Element(z=100, d=400)
         >>> e.x, e.y, e.z
@@ -1417,11 +1434,11 @@ class Element(object):
         return units(self.style.get('z'), base=base)
     def _set_z(self, z):
         """Convert to units, if z is not already a Unit instance."""
-        self.style['z'] = units(z) 
+        self.style['z'] = units(z)
     z = property(_get_z, _set_z)
 
     def _get_xy(self):
-        u"""Answer the Point2D tuple.
+        """Answer the Point2D tuple.
 
         >>> from pagebot.toolbox.units import perc
         >>> e = Element(x=10, y=20, w=400, h=400)
@@ -1449,7 +1466,7 @@ class Element(object):
     xy = property(_get_xy, _set_xy)
 
     def _get_xyz(self):
-        u"""Answer the Point3D tuple.
+        """Answer the Point3D tuple.
 
         >>> e = Element(x=10, y=20, z=30, w=400, h=400, d=400)
         >>> e.xyz
@@ -1479,14 +1496,14 @@ class Element(object):
     xyz = property(_get_xyz, _set_xyz)
 
     def _get_origin(self):
-        u"""Answer the self.xyz, where y can be flipped, depending on the self.originTop flag."""
+        """Answer the self.xyz, where y can be flipped, depending on the self.originTop flag."""
         return self._applyOrigin(self.xyz)
     origin = property(_get_origin)
 
     #   T I M E
 
     def _get_t(self):
-        u"""The self._t status is the time status, interpolating between the values in
+        """The self._t status is the time status, interpolating between the values in
         self.tStyles[t1] and self.tStyles[t2] where t1 <= t <= t2 and these styles contain
         the requested parameters.
 
@@ -1516,7 +1533,7 @@ class Element(object):
     # FIX-ME: The 'timers' var below is undefined. Was it intended to be self.timeMarks perhaps ?
     #
     #def NOTNOW_getExpandedTimeMarks(self, t):
-    #    u"""Answer a new interpolated TimeState instance, from the enclosing time states for t."""
+    #    """Answer a new interpolated TimeState instance, from the enclosing time states for t."""
     #    timeValueNames = self.timeKeys
     #    rootStyleKeys = self.timeMarks[0].keys()
     #    for n in range(1, len(timers)):
@@ -1540,7 +1557,7 @@ class Element(object):
     # where the positioning can be compenssaring the element alignment type.
 
     def _get_left(self):
-        u"""Answer the position of the left side of the element, in relation to self.x
+        """Answer the position of the left side of the element, in relation to self.x
         and depending on horiontal alignment.
 
         >>> from pagebot.toolbox.units import mm
@@ -1581,7 +1598,7 @@ class Element(object):
     mLeft = property(_get_mLeft, _set_mLeft)
 
     def _get_center(self):
-        u"""Answer the position of the horizontal center of the element, in relation to self.x
+        """Answer the position of the horizontal center of the element, in relation to self.x
         and depending on horiontal alignment.
 
         >>> e = Element(x=100, w=248, xAlign=LEFT)
@@ -1614,7 +1631,7 @@ class Element(object):
     center = property(_get_center, _set_center)
 
     def _get_right(self):
-        u"""Answer the position of the right side of the element, in relation to self.x
+        """Answer the position of the right side of the element, in relation to self.x
         and depending on horiontal alignment.
 
         >>> e = Element(x=50, w=248, xAlign=LEFT)
@@ -1654,7 +1671,7 @@ class Element(object):
     right = property(_get_right, _set_right)
 
     def _get_mRight(self):
-        u"""Right position, including right margin.
+        """Right position, including right margin.
 
         >>> e = Element(x=100, w=248, mr=44, xAlign=LEFT)
         >>> e.mRight
@@ -1674,7 +1691,7 @@ class Element(object):
     # Vertical
 
     def _get_top(self):
-        u"""Answer the top position (relative to self.parent) of self.
+        """Answer the top position (relative to self.parent) of self.
 
         >>> e = Element(y=100, h=248, yAlign=TOP)
         >>> e.top
@@ -1695,7 +1712,7 @@ class Element(object):
             return self.y + self.h
         return self.y
     def _set_top(self, y):
-        u"""Shift the element so self.top == y."""
+        """Shift the element so self.top == y."""
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             self.y = y + self.h/2
@@ -1720,7 +1737,7 @@ class Element(object):
     mTop = property(_get_mTop, _set_mTop)
 
     def _get_middle(self):
-        u"""On bounding box, not including margins.
+        """On bounding box, not including margins.
 
         >>> e = Element(y=100, h=248, yAlign=TOP)
         >>> e.middle
@@ -1759,7 +1776,7 @@ class Element(object):
     middle = property(_get_middle, _set_middle)
 
     def _get_bottom(self):
-        u"""On bounding box, not including margins.
+        """On bounding box, not including margins.
 
         >>> e = Element(y=100, h=248, yAlign=TOP)
         >>> e.bottom
@@ -1855,7 +1872,7 @@ class Element(object):
     # Borders
 
     def _borderDict(self, borderData):
-        u"""Internal method to create a dictionary with border info. If no valid border
+        """Internal method to create a dictionary with border info. If no valid border
         dictionary is defined, then use optional stroke and strokeWidth to create one.
         Otherwise answer *None*."""
         if isinstance(borderData, (int, float)):
@@ -1892,7 +1909,7 @@ class Element(object):
     border = borders = property(_get_borders, _set_borders)
 
     def _get_borderTop(self):
-        u"""Set the border data on top of the element.
+        """Set the border data on top of the element.
 
         >>> from pagebot.toolbox.color import color, blackColor
         >>> e = Element()
@@ -1973,7 +1990,7 @@ class Element(object):
     gd = property(_get_gd, _set_gd)
 
     def _get_gutter(self): # Tuple of (w, h) gutters
-        u"""Gutter property for (e.gw, e.gh)
+        """Gutter property for (e.gw, e.gh)
 
         >>> e = Element()
         >>> e.gutter
@@ -2004,7 +2021,7 @@ class Element(object):
     gutter = property(_get_gutter, _set_gutter)
 
     def _get_gutter3D(self): # Tuple of (gw, gh, gd) gutters
-        u"""Gutter 3D property for (e.gw, e.gh, e.gd)
+        """Gutter 3D property for (e.gw, e.gh, e.gd)
 
         >>> e = Element()
         >>> e.gutter3D
@@ -2035,7 +2052,7 @@ class Element(object):
     gutter3D = property(_get_gutter3D, _set_gutter3D)
 
     def _get_bleed(self):
-        u"""Answer the value for bleed over the sides of parent or page objects.
+        """Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves
 
         >>> from pagebot.toolbox.units import mm
@@ -2050,7 +2067,7 @@ class Element(object):
         ####@@@
         >>> e.bleed
         (22mm, 22mm, 22mm, 22mm)
-        >>> 
+        >>>
         """
         return self.bleedTop, self.bleedRight, self.bleedBottom, self.bleedLeft
     def _set_bleed(self, bleed):
@@ -2066,7 +2083,7 @@ class Element(object):
     bleed = property(_get_bleed, _set_bleed)
 
     def _get_bleedTop(self):
-        u"""Answer the value for bleed over the sides of parent or page objects.
+        """Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
@@ -2085,7 +2102,7 @@ class Element(object):
     bleedTop = property(_get_bleedTop, _set_bleedTop)
 
     def _get_bleedBottom(self):
-        u"""Answer the value for bleed over the sides of parent or page objects.
+        """Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
@@ -2106,7 +2123,7 @@ class Element(object):
     bleedBottom = property(_get_bleedBottom, _set_bleedBottom)
 
     def _get_bleedLeft(self):
-        u"""Answer the value for bleed over the sides of parent or page objects.
+        """Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
@@ -2125,7 +2142,7 @@ class Element(object):
     bleedLeft = property(_get_bleedLeft, _set_bleedLeft)
 
     def _get_bleedRight(self):
-        u"""Answer the value for bleed over the sides of parent or page objects.
+        """Answer the value for bleed over the sides of parent or page objects.
         Elements will take of the reposition/scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
@@ -2144,7 +2161,7 @@ class Element(object):
     bleedRight = property(_get_bleedRight, _set_bleedRight)
 
     def _get_bleedW(self):
-        u"""Answer the width of the element, including the bleed left and right, if defined.
+        """Answer the width of the element, including the bleed left and right, if defined.
 
         >>> from pagebot.toolbox.units import p
         >>> e = Element(w=p(100), bleed=p(1))
@@ -2155,9 +2172,9 @@ class Element(object):
         """
         return self.w + self.bleedLeft + self.bleedRight
     bleedW = property(_get_bleedW)
-    
+
     def _get_bleedH(self):
-        u"""Answer the height of the element, including the bleed top and bottom, if defined.
+        """Answer the height of the element, including the bleed top and bottom, if defined.
 
         >>> from pagebot.toolbox.units import p
         >>> e = Element(h=p(100), bleed=p(1.5))
@@ -2170,9 +2187,9 @@ class Element(object):
     bleedH = property(_get_bleedH)
 
     # Absolute positions
-    
+
     def _get_bleedOrigin(self):
-        u"""Answer the origin of the element, shifted by the defined bleed.
+        """Answer the origin of the element, shifted by the defined bleed.
 
         >>> from pagebot.toolbox.units import p, pt
         >>> e = Element(size=pt(500, 800), bleed=p(1))
@@ -2187,7 +2204,7 @@ class Element(object):
     bleedOrigin = property(_get_bleedOrigin)
 
     def _get_rootX(self):
-        u"""Answer the read-only property root value of local self.x,
+        """Answer the read-only property root value of local self.x,
         from the whole tree of ancestors.
 
         >>> e1 = Element(x=10)
@@ -2203,7 +2220,7 @@ class Element(object):
     rootX = property(_get_rootX)
 
     def _get_rootY(self):
-        u"""Answer the read-only property root value of local self.y,
+        """Answer the read-only property root value of local self.y,
         from the whole tree of ancestors.
 
         >>> e1 = Element(y=10)
@@ -2219,7 +2236,7 @@ class Element(object):
     rootY = property(_get_rootY)
 
     def _get_rootZ(self):
-        u"""Answer the read-only property root value of local self.z,
+        """Answer the read-only property root value of local self.z,
         from the whole tree of ancestors.
 
         >>> e1 = Element(z=10)
@@ -2237,7 +2254,7 @@ class Element(object):
     # (w, h, d) size of the element.
 
     def _get_w(self):
-        u"""Answer the width of the element.
+        """Answer the width of the element.
 
         >>> e = Element(w=100, maxW=1000)
         >>> e.w
@@ -2259,14 +2276,14 @@ class Element(object):
         >>> child.w, child.w.pt
         (4.5em, 45)
         """
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
         return units(self.css('w'), base=base, min=self.minW, max=self.maxW)
     def _set_w(self, w):
-        self.style['w'] = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
+        self.style['w'] = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW)
     w = property(_get_w, _set_w)
 
     def _get_mw(self): # Width, including margins
-        u"""Width property for self.mw style. Answers the width of the elements with added left/right margins.
+        """Width property for self.mw style. Answers the width of the elements with added left/right margins.
 
         >>> e = Element(w=10, ml=22, mr=33)
         >>> e.mw
@@ -2284,7 +2301,7 @@ class Element(object):
     mw = property(_get_mw, _set_mw)
 
     def _get_h(self):
-        u"""Answer the height of the element.
+        """Answer the height of the element.
 
         >>> e = Element(h=100, maxH=1000)
         >>> e.h
@@ -2306,14 +2323,14 @@ class Element(object):
         >>> child.h, child.h.pt
         (4.5em, 54)
         """
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
         return units(self.css('h', 0), base=base, min=self.minH, max=self.maxH)
     def _set_h(self, h):
         self.style['h'] = units(h or DEFAULT_HEIGHT, min=self.minH, max=self.maxH) # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
-  
+
     def _get_mh(self): # Height, including margins
-        u"""Height property for self.mh style.
+        """Height property for self.mh style.
 
         >>> e = Element(h=10, mt=22, mb=33)
         >>> e.mh
@@ -2331,7 +2348,7 @@ class Element(object):
     mh = property(_get_mh, _set_mh)
 
     def _get_d(self):
-        u"""Answer and set the depth of the element.
+        """Answer and set the depth of the element.
 
         >>> e = Element()
         >>> e.d, e.minD, e.maxD # Default values
@@ -2349,14 +2366,14 @@ class Element(object):
         >>> e.d, e.d = e.minD, e.d == MIN_DEPTH # Corrected by e.minD
         (10pt, True, False)
         """
-        base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
         return units(self.css('d', 0), base=base, min=self.minD, max=self.maxD)
     def _set_d(self, d):
         self.style['d'] = units(d or DEFAULT_DEPTH, min=self.minD, max=self.maxD) # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
- 
+
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
-        u"""Width property for self.md style.
+        """Width property for self.md style.
 
         >>> e = Element(d=10, mzb=22, mzf=33)
         >>> e.md
@@ -2379,7 +2396,7 @@ class Element(object):
     # TODO: Add support of "auto" values, doing live centering.
 
     def _get_margin(self):
-        u"""Tuple of paddings in CSS order, direction of clock
+        """Tuple of paddings in CSS order, direction of clock
         Can be 123, [123], [123, 234], [123, 234, 345], [123, 234, 345, 456]
         or [123, 234, 345, 456, 567, 678]
 
@@ -2390,7 +2407,7 @@ class Element(object):
         >>> e.ml = 123
         >>> e.margin
         (10pt, 20pt, 30pt, 123pt)
-        >>> e.margin = mm(20) # Works in other types of units too. 
+        >>> e.margin = mm(20) # Works in other types of units too.
         >>> e.margin
         (20mm, 20mm, 20mm, 20mm)
         >>> e.margin = (11, 22)
@@ -2437,7 +2454,7 @@ class Element(object):
     margin = property(_get_margin, _set_margin)
 
     def _get_margin3D(self):
-        u"""Tuple of margin in CSS order + (front, back), direction of clock
+        """Tuple of margin in CSS order + (front, back), direction of clock
 
         >>> from pagebot.toolbox.units import perc
         >>> e = Element(margin=(10, 20, 30, 40))
@@ -2475,7 +2492,7 @@ class Element(object):
     margin3D = property(_get_margin3D, _set_margin)
 
     def _get_mt(self):
-        u"""Margin top property. Relative unit values refer to self.h.
+        """Margin top property. Relative unit values refer to self.h.
 
         >>> e = Element(mt=12)
         >>> e.mt
@@ -2492,14 +2509,14 @@ class Element(object):
         >>> e.mt.pt
         50
         """
-        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
         return units(self.css('mt', 0), base=base, min=0)
     def _set_mt(self, mt):
         self.style['mt'] = units(mt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
     mt = property(_get_mt, _set_mt)
 
     def _get_mb(self): # Margin bottom
-        u"""Margin bottom property. Relative unit values refer to the current self.h or self.em.
+        """Margin bottom property. Relative unit values refer to the current self.h or self.em.
 
         >>> e = Element(mb=12)
         >>> e.mb
@@ -2518,15 +2535,15 @@ class Element(object):
         >>> e.mb.pt
         50
         """
-        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
         return units(self.css('mb', 0), base=base, min=0)
     def _set_mb(self, mb):
-        u"""Precompile as Unit instance from whatever format mb has."""
+        """Precompile as Unit instance from whatever format mb has."""
         self.style['mb'] = units(mb) # Overwrite element local style from here, parent css becomes inaccessable.
     mb = property(_get_mb, _set_mb)
 
     def _get_ml(self): # Margin left
-        u"""Margin left property. Relative unit values refer to self.w.
+        """Margin left property. Relative unit values refer to self.w.
 
         >>> e = Element(ml=12)
         >>> e.ml
@@ -2543,15 +2560,15 @@ class Element(object):
         >>> e.ml.pt
         50
         """
-        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
         return units(self.css('ml', 0), base=base, min=0)
     def _set_ml(self, ml):
         # Overwrite element local style from here, parent css becomes inaccessable.
-        self.style['ml'] = units(ml) 
+        self.style['ml'] = units(ml)
     ml = property(_get_ml, _set_ml)
 
     def _get_mr(self): # Margin right
-        u"""Margin right property. Relative unit values refer to self.w.
+        """Margin right property. Relative unit values refer to self.w.
 
         >>> e = Element(mr=12)
         >>> e.mr
@@ -2568,14 +2585,14 @@ class Element(object):
         >>> e.mr.pt
         50
         """
-        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
         return units(self.css('mr', 0), base=base, min=0)
     def _set_mr(self, mr):
         self.style['mr'] = units(mr) # Overwrite element local style from here, parent css becomes inaccessable.
     mr = property(_get_mr, _set_mr)
 
     def _get_mzf(self): # Margin z-axis front
-        u"""Margin z-axis front property (closest to view point). Relative unit values refer to self.d.
+        """Margin z-axis front property (closest to view point). Relative unit values refer to self.d.
 
         >>> e = Element(mzf=12)
         >>> e.mzf
@@ -2592,14 +2609,14 @@ class Element(object):
         >>> e.mzf.pt
         50
         """
-        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
         return units(self.css('mzf', 0), base=base, min=0)
     def _set_mzf(self, mzf):
         self.style['mzf'] = units(mzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     mzf = property(_get_mzf, _set_mzf)
 
     def _get_mzb(self): # Margin z-axis back
-        u"""Margin z-axis back property (most distant to view point). Relative unit values refer to self.d.
+        """Margin z-axis back property (most distant to view point). Relative unit values refer to self.d.
 
         >>> e = Element(mzb=12)
         >>> e.mzb
@@ -2616,7 +2633,7 @@ class Element(object):
         >>> e.mzb.pt
         50
         """
-        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
         return units(self.css('mzb', 0), base=base, min=0)
     def _set_mzb(self, mzb):
         self.style['mzb'] = units(mzb)  # Overwrite element local style from here, parent css becomes inaccessable.
@@ -2627,7 +2644,7 @@ class Element(object):
     # TODO: Add support of "auto" values, doing live centering.
 
     def _get_padding(self):
-        u"""Tuple of paddings in CSS order, direction of clock starting on top
+        """Tuple of paddings in CSS order, direction of clock starting on top
         Can be 123, [123], [123, 234], [123, 234, 345], [123, 234, 345, 456]
         or [123, 234, 345, 456, 567, 678]
 
@@ -2688,7 +2705,7 @@ class Element(object):
     padding = property(_get_padding, _set_padding)
 
     def _get_padding3D(self):
-        u"""Tuple of padding in CSS order + (front, back), direction of clock
+        """Tuple of padding in CSS order + (front, back), direction of clock
 
         >>> from pagebot.toolbox.units import perc
         >>> e = Element(padding=(10, 20, 30, 40))
@@ -2724,7 +2741,7 @@ class Element(object):
     padding3D = property(_get_padding3D, _set_padding)
 
     def _get_pt(self):
-        u"""Padding top property. Relative unit values refer to self.h. 
+        """Padding top property. Relative unit values refer to self.h.
         (Note that in usage, the "pt" is abbreviation for padding-top, not point units.)
 
         >>> e = Element(pt=12, h=500)
@@ -2742,14 +2759,14 @@ class Element(object):
         >>> e.pt, e.pt.pt # e.pt is abbreviation for padding-top. .pt is the property that converts to points.
         (10%, 50)
         """
-        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
         return units(self.css('pt', 0), base=base, min=0, max=self.h)
     def _set_pt(self, pt):
         self.style['pt'] = units(pt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
 
     def _get_pb(self): # Padding bottom
-        u"""Padding bottom property. Relative unit values refer to self.h.
+        """Padding bottom property. Relative unit values refer to self.h.
 
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pb
@@ -2773,14 +2790,14 @@ class Element(object):
         >>> e.pb.pt # 10% of base 500pt
         50
         """
-        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
         return units(self.css('pb', 0), base=base, min=0, max=self.maxH)
     def _set_pb(self, pb):
         self.style['pb'] = units(pb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pb = property(_get_pb, _set_pb)
 
     def _get_pl(self):
-        u"""Padding left property. Relative unit values refer to self.w.
+        """Padding left property. Relative unit values refer to self.w.
         Clip lowest value on max(0, self.minW)
 
         >>> e1 = Element(w=660)
@@ -2799,14 +2816,14 @@ class Element(object):
         >>> e2.pl, e2.pl.pt
         (10%, 66)
         """
-        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
         return units(self.css('pl', 0), base=base, min=0, max=self.maxW)
     def _set_pl(self, pl):
         self.style['pl'] = units(pl or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pl = property(_get_pl, _set_pl)
 
     def _get_pr(self): # Margin right
-        u"""Padding right property. Relative unit values refer to self.w. 
+        """Padding right property. Relative unit values refer to self.w.
         Clip lowest value on max(0, self.minW)
 
         >>> e = Element(padding=(10, 20, 30, 40))
@@ -2831,14 +2848,14 @@ class Element(object):
         >>> e.pr.pt # Get padding-right, cast to points
         50
         """
-        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
         return units(self.css('pr', 0), base=base, min=0, max=self.maxW)
     def _set_pr(self, pr):
-        self.style['pr'] = units(pr or 0) 
+        self.style['pr'] = units(pr or 0)
     pr = property(_get_pr, _set_pr)
 
     def _get_pzf(self):
-        u"""Padding z-axis front property. Relative unit values refer to self.d.
+        """Padding z-axis front property. Relative unit values refer to self.d.
 
         >>> e1 = Element(d=300)
         >>> e2 = Element(pzf=12, parent=e1)
@@ -2859,14 +2876,14 @@ class Element(object):
         >>> e2.pzf.pt # Padding-front, cast to point
         50
         """
-        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
         return units(self.css('pzf', 0), base=base, min=0, max=self.maxD)
     def _set_pzf(self, pzf): # padding z-axis front
         self.style['pzf'] = units(pzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pzf = property(_get_pzf, _set_pzf)
 
     def _get_pzb(self):
-        u"""Padding z-axis back property. Relative unit values refer to self.d.
+        """Padding z-axis back property. Relative unit values refer to self.d.
 
         >>> e1 = Element(d=300)
         >>> e2 = Element(pzb=12, parent=e1)
@@ -2889,14 +2906,14 @@ class Element(object):
         >>> e2.pzb.pt
         50
         """
-        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
         return units(self.css('pzb', 0), base=base, min=0, max=self.maxD)
     def _set_pzb(self, pzb):
         self.style['pzb'] = units(pzb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)
 
     def _get_pw(self):
-        u"""Padded width (space between the horizontal paddings) read-only property of the element block.
+        """Padded width (space between the horizontal paddings) read-only property of the element block.
 
         >>> e = Element(w=400, pl=22, pr=33)
         >>> e.pw
@@ -2911,7 +2928,7 @@ class Element(object):
     pw = property(_get_pw)
 
     def _get_ph(self):
-        u"""Padded height (space between the vertical paddings) read-only property of the element block.
+        """Padded height (space between the vertical paddings) read-only property of the element block.
 
         >>> e = Element(h=400, pb=22, pt=33)
         >>> e.ph
@@ -2926,7 +2943,7 @@ class Element(object):
     ph = property(_get_ph)
 
     def _get_pd(self):
-        u"""Padded depth read-only property of the element block.
+        """Padded depth read-only property of the element block.
 
         >>> e = Element(d=400, pzf=22, pzb=33)
         >>> e.pd
@@ -2941,7 +2958,7 @@ class Element(object):
     pd = property(_get_pd)
 
     def _get_frameDuration(self):
-        u"""Property answer the element frameDuration parameters, used for speed when
+        """Property answer the element frameDuration parameters, used for speed when
         exporting animated gifs. Normally only set in page or document.
         """
         return self.css('frameDuration')
@@ -2950,7 +2967,7 @@ class Element(object):
     frameDuration = property(_get_frameDuration, _set_frameDuration)
 
     def _get_originTop(self):
-        u"""Answer the style flag if all point y values should measure top-down (typographic page
+        """Answer the style flag if all point y values should measure top-down (typographic page
         orientation), instead of bottom-up (mathematical orientation). For Y-axis only.
         The axes in X and Z directions are fixed.
 
@@ -2975,7 +2992,7 @@ class Element(object):
     originTop = property(_get_originTop, _set_originTop)
 
     def _get_size(self):
-        u"""Set the size of the element by calling by properties self.w and self.h.
+        """Set the size of the element by calling by properties self.w and self.h.
         If set, then overwrite access from style width and height. self.d is optional attribute.
 
         >>> e = Element()
@@ -3046,12 +3063,12 @@ class Element(object):
     textGradient = property(_get_textGradient, _set_textGradient)
 
     def _get_box3D(self):
-        u"""Answer the 3D bounding box of self from (self.x, self.y, self.w, self.h) properties."""
+        """Answer the 3D bounding box of self from (self.x, self.y, self.w, self.h) properties."""
         return self.x, self.y, self.z, self.w, self.h, self.d
     box3D = property(_get_box3D)
 
     def _get_box(self):
-        u"""Construct the bounding box from (self.x, self.y, self.w, self.h) properties.
+        """Construct the bounding box from (self.x, self.y, self.w, self.h) properties.
 
         >>> e = Element(x=150, y=150, w=300, h=400)
         >>> e.box
@@ -3069,7 +3086,7 @@ class Element(object):
     box = property(_get_box, _set_box)
 
     def _get_marginBox(self):
-        u"""Calculate the margin position and margin resized box of the element, after applying the
+        """Calculate the margin position and margin resized box of the element, after applying the
         option style margin.
 
         >>> e = Element(w=500, h=500)
@@ -3091,7 +3108,7 @@ class Element(object):
     marginBox = property(_get_marginBox)
 
     def _get_paddedBox(self):
-        u"""Calculate the padded position and padded resized box of the element, after applying the
+        """Calculate the padded position and padded resized box of the element, after applying the
         style padding. Answered format (x, y, w, h).
 
         >>> e = Element(w=500, h=500)
@@ -3115,7 +3132,7 @@ class Element(object):
     paddedBox = property(_get_paddedBox)
 
     def _get_paddedBox3D(self):
-        u"""Calculate the padded position and padded resized box in 3D of the lement, after applying
+        """Calculate the padded position and padded resized box in 3D of the lement, after applying
         the style padding. Answered format (x, y, z, w, h, d).
 
         >>> e = Element(w=500, h=500, d=500)
@@ -3132,7 +3149,7 @@ class Element(object):
         pzf = self.pzf
         return x, y, self.z + pzf, w, h, self.d - pzf - self.pzb
     paddedBox3D = property(_get_paddedBox3D)
-  
+
     # PDF naming: MediaBox is highlighted with a magenta rectangle, the BleedBox with a cyan
     # one while dark blue is used for the TrimBox.
     # https://www.prepressure.com/pdf/basics/page-boxes
@@ -3141,7 +3158,7 @@ class Element(object):
     # "Block" is here used as bounding box of a group of elements.
 
     def _get_block3D(self):
-        u"""Answer the vacuum 3D bounding box around all child elements.
+        """Answer the vacuum 3D bounding box around all child elements.
 
         >>> e1 = Element(x=10, y=52, z=14, w=100, h=110, d=801)
         >>> e2 = Element(x=50, y=12, z=54, w=200, h=210, d=401)
@@ -3174,7 +3191,7 @@ class Element(object):
     block3D = property(_get_block3D)
 
     def _get_block(self):
-        u"""Answer the vacuum bounding box around all child elements in 2D
+        """Answer the vacuum bounding box around all child elements in 2D
 
         >>> e1 = Element(x=10, y=10, w=100, h=100)
         >>> e2 = Element(x=50, y=50, w=200, h=100)
@@ -3188,7 +3205,7 @@ class Element(object):
     block = property(_get_block)
 
     def _get_marginBlock3D(self):
-        u"""Answer the vacuum 3D bounding box around all child elements."""
+        """Answer the vacuum 3D bounding box around all child elements."""
         x1 = y1 = z1 = XXXL
         x2 = y2 = z2 = -XXXL
         if not self.elements:
@@ -3209,13 +3226,13 @@ class Element(object):
     marginBlock3D = property(_get_marginBlock3D)
 
     def _get_marginBlock(self):
-        u"""Answer the vacuum bounding box around all child elements in 2D"""
+        """Answer the vacuum bounding box around all child elements in 2D"""
         x, y, _, w, h, _ = self._get_marginBlock3D()
         return x, y, w, h
     marginBlock = property(_get_marginBlock)
 
     def _get_paddedBlock3D(self):
-        u"""Answer the vacuum 3D bounding box around all child elements,
+        """Answer the vacuum 3D bounding box around all child elements,
         subtracting their paddings. Sizes cannot become nextive."""
         x1 = y1 = z1 = XXXL
         x2 = y2 = z2 = -XXXL
@@ -3244,13 +3261,13 @@ class Element(object):
     paddedBlock3D = property(_get_paddedBlock3D)
 
     def _get_paddedBlock(self):
-        u"""Answer the vacuum bounding box around all child elements in 2D"""
+        """Answer the vacuum bounding box around all child elements in 2D"""
         x, y, _, w, h, _ = self._get_paddedBlock3D()
         return x, y, w, h
     paddedBlock = property(_get_paddedBlock)
 
     def _get_originsBlock3D(self):
-        u"""Answer (minX, minY, maxX, maxY, minZ, maxZ) for all element origins."""
+        """Answer (minX, minY, maxX, maxY, minZ, maxZ) for all element origins."""
         minX = minY = XXXL
         maxX = maxY = -XXXL
         for e in self.elements:
@@ -3271,7 +3288,7 @@ class Element(object):
     # Size limits
 
     def _get_minW(self): # Set/get the minimal height.
-        u"""Answer the minW limit of self. In case it is relative unit, 
+        """Answer the minW limit of self. In case it is relative unit,
         then use parent as reference.
 
         >>> from pagebot.toolbox.units import mm
@@ -3289,7 +3306,7 @@ class Element(object):
     minW = property(_get_minW, _set_minW)
 
     def _get_minH(self): # Set/get the minimal height.
-        u"""Answer the minH limit of self. In case it is relative unit, 
+        """Answer the minH limit of self. In case it is relative unit,
         then use parent as reference.
 
         >>> from pagebot.toolbox.units import mm
@@ -3307,7 +3324,7 @@ class Element(object):
     minH = property(_get_minH, _set_minH)
 
     def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
-        u"""Answer the minD limit of self. In case it is relative unit, 
+        """Answer the minD limit of self. In case it is relative unit,
         then use parent as reference.
 
         >>> from pagebot.toolbox.units import mm
@@ -3325,7 +3342,7 @@ class Element(object):
     minD = property(_get_minD, _set_minD)
 
     def _get_minSize(self):
-        u"""Answer the (minW, minH) of this element.
+        """Answer the (minW, minH) of this element.
 
         >>> e = Element()
         >>> e.minSize
@@ -3336,7 +3353,7 @@ class Element(object):
         """
         return self.minW, self.minH
     def _set_minSize(self, minSize):
-        u"""Set the min size values.
+        """Set the min size values.
 
         >>> e = Element()
         >>> e.minSize
@@ -3366,7 +3383,7 @@ class Element(object):
     minSize3D = property(_get_minSize3D, _set_minSize) # Setting is identical to 3D
 
     def _get_maxW(self): # Set/get the maximal width.
-        u"""Answer the maxW limit for child elements. Default is MAX_WIDTH.
+        """Answer the maxW limit for child elements. Default is MAX_WIDTH.
         Min/max values must be absolute units.
 
         >>> from pagebot.toolbox.units import mm
@@ -3387,7 +3404,7 @@ class Element(object):
     maxW = property(_get_maxW, _set_maxW)
 
     def _get_maxH(self): # Set/get the maximal height.
-        u"""Answer the maxH limit for child elements. Default is MAX_HEIGHT.
+        """Answer the maxH limit for child elements. Default is MAX_HEIGHT.
         Min/max values must be absolute units.
 
         >>> from pagebot.toolbox.units import mm
@@ -3405,7 +3422,7 @@ class Element(object):
     maxH = property(_get_maxH, _set_maxH)
 
     def _get_maxD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
-        u"""Answer the maxD limit for child elements. Default is MAX_DEPTH.
+        """Answer the maxD limit for child elements. Default is MAX_DEPTH.
         Min/max values must be absolute units.
 
         >>> from pagebot.toolbox.units import mm
@@ -3445,10 +3462,10 @@ class Element(object):
         self.style['scaleZ'] = scaleZ # Set on local style, shielding parent self.css value.
     scaleZ = property(_get_scaleZ, _set_scaleZ)
 
-    # Element positions 
+    # Element positions
 
     def getFloatTopSide(self, previousOnly=True, tolerance=0):
-        u"""Answer the max y that can float to top, without overlapping previous sibling elements.
+        """Answer the max y that can float to top, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection between (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared.
         Comparison of available space, includes the margins of the elements."""
@@ -3468,7 +3485,7 @@ class Element(object):
         return y
 
     def getFloatBottomSide(self, previousOnly=True, tolerance=0):
-        u"""Answer the max y that can float to bottom, without overlapping previous sibling elements.
+        """Answer the max y that can float to bottom, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared.
         Comparison of available space, includes the margins of the elements."""
@@ -3488,7 +3505,7 @@ class Element(object):
         return y
 
     def getFloatLeftSide(self, previousOnly=True, tolerance=0):
-        u"""Answer the max x that can float to the left, without overlapping previous sibling elements.
+        """Answer the max x that can float to the left, without overlapping previous sibling elements.
         This means we are just looking at the horizontal projection of (self.top, self.bottom).
         Note that the x may be outside the parent box. Only elements with identical z-value are compared.
         Comparison of available space, includes the margins of the elements."""
@@ -3508,7 +3525,7 @@ class Element(object):
         return x
 
     def getFloatRightSide(self, previousOnly=True, tolerance=0):
-        u"""Answer the max Y that can float to the right, without overlapping previous sibling elements.
+        """Answer the max Y that can float to the right, without overlapping previous sibling elements.
         This means we are just looking at the vertical projection of (self.left, self.right).
         Note that the y may be outside the parent box. Only elements with identical z-value are compared.
         Comparison of available space, includes the margins of the elements."""
@@ -3522,7 +3539,7 @@ class Element(object):
         return x
 
     def _applyAlignment(self, p):
-        u"""Answer the p according to the alignment status in the css."""
+        """Answer the p according to the alignment status in the css."""
         px, py, pz = point3D(p)
         # Horizontal
         xAlign = self.xAlign
@@ -3540,7 +3557,7 @@ class Element(object):
         return px, py, pz
 
     def _applyOrigin(self, p):
-        u"""If self.originTop is False, then the y-value is interpreted as mathematics,
+        """If self.originTop is False, then the y-value is interpreted as mathematics,
         starting at the bottom of the parent element, moving up.
         If the flag is True, then move from top down, where the origin of the element becomes
         top-left of the parent."""
@@ -3550,17 +3567,17 @@ class Element(object):
         return px, py, pz
 
     def _applyRotation(self, view, mx, my, angle):
-        u"""Apply the rotation for angle, where (mx, my) is the rotation center."""
+        """Apply the rotation for angle, where (mx, my) is the rotation center."""
         view.saveGraphicState()
         # TODO: Working on this.
 
     def _restoreRotation(self, view):
-        u"""Reset graphics state from rotation mode."""
+        """Reset graphics state from rotation mode."""
         if self.css('rotationX') and self.css('rotationY') and self.css('rotationAngle'):
             view.restoreGraphicState()
 
     def _applyScale(self, view, p):
-        u"""Internal method to apply the scale, if both *self.scaleX* and *self.scaleY* are set. Use this
+        """Internal method to apply the scale, if both *self.scaleX* and *self.scaleY* are set. Use this
         method paired with self._restoreScale(). The (x, y) answered as reversed scaled tuple,
         so drawing elements can still draw on "real size", while the other element is in scaled mode."""
         sx = self.scaleX
@@ -3574,7 +3591,7 @@ class Element(object):
         return p
 
     def _restoreScale(self, view):
-        u"""Reset graphics state from svaed scale mode. Make sure to match the call of self._applyScale.
+        """Reset graphics state from svaed scale mode. Make sure to match the call of self._applyScale.
         If one of (self.scaleX, self.scaleY, self.scaleZ) is not 0 or 1, then do the restore."""
         sx = self.scaleX
         sy = self.scaleY
@@ -3585,7 +3602,7 @@ class Element(object):
     #   D R A W I N G  S U P P O R T
 
     def getMetricsString(self, view=None):
-        u"""Answer a single string with metrics info about the element. Default is to show the posiiton
+        """Answer a single string with metrics info about the element. Default is to show the posiiton
         and size (in points and columns). This method can be redefined by inheriting elements
         that want to show additional information."""
         s = '%s\nPosition: %s, %s, %s\nSize: %s, %s\nColumn point: %s, %s\nColumn size: %s, %s' % \
@@ -3607,7 +3624,7 @@ class Element(object):
         return s
 
     def buildFrame(self, view, p):
-        u"""Draw fill of the rectangular element space.
+        """Draw fill of the rectangular element space.
         The self.css('fill') defines the color of the element background.
         Instead of the DrawBot stroke and strokeWidth attributes, use
         borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
@@ -3786,7 +3803,7 @@ class Element(object):
     #   D R A W B O T / F L A T  S U P P O R T
 
     def build(self, view, origin, drawElements=True):
-        u"""Default drawing method just drawing the frame.
+        """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
@@ -3795,7 +3812,7 @@ class Element(object):
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showElementFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -3811,7 +3828,7 @@ class Element(object):
         view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def buildChildElements(self, view, origin):
-        u"""Draw child elements, dispatching depending on the implementation of context specific build elements.
+        """Draw child elements, dispatching depending on the implementation of context specific build elements.
         If not specific builder_<context.b.PB_ID> is implemented, call default e.build(view, origin)"""
         hook = 'build_' + view.context.b.PB_ID
         for e in self.elements:
@@ -3825,7 +3842,7 @@ class Element(object):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_css(self, view, origin):
-        u"""Build the css for this element. Default behavior is to import the content of the file
+        """Build the css for this element. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
         b = view.context.b # Get the build of the current context.
@@ -3837,7 +3854,7 @@ class Element(object):
         #    b.css(message='No CSS for element %s\n' % self.__class__.__name__)
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self.
+        """Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self.
         If there are any child elements, then also included their code, using the
         level recursive indent.
         For HTML builder the origin is ignored, as all position is relative.
@@ -3863,7 +3880,7 @@ class Element(object):
     #   V A L I D A T I O N
 
     def evaluate(self, score=None):
-        u"""Evaluate the content of element e with the total sum of conditions."""
+        """Evaluate the content of element e with the total sum of conditions."""
         if score is None:
             score = Score()
         if self.conditions: # Can be None or empty
@@ -3875,7 +3892,7 @@ class Element(object):
         return score
 
     def solve(self, score=None):
-        u"""Evaluate the content of element e with the total sum of conditions.
+        """Evaluate the content of element e with the total sum of conditions.
         The view is passed, as it (or its builder) may be needed to solve specific text
         conditions, such as run length of text and overflow of text boxes."""
         if score is None:
@@ -4026,7 +4043,7 @@ class Element(object):
         return abs(self.parent.h - self.parent.pt - self.y) <= tolerance
 
     def isOriginOnTopSide(self, tolerance=0):
-        u"""Answer the boolean test if the origin of self is on the top side of self.parent.
+        """Answer the boolean test if the origin of self is on the top side of self.parent.
 
         >>> e1 = Element(w=200, h=200, x=0, y=500, originOnTop=False)
         >>> e2 = Element(w=500, h=500, elements=[e1])
@@ -4052,7 +4069,7 @@ class Element(object):
         return abs(self.parent.h/2 - self.y) <= tolerance
 
     def isRightOnCenter(self, tolerance=0):
-        u"""Answer the boolean flag if the right size of self is on the middle of the parent.
+        """Answer the boolean flag if the right size of self is on the middle of the parent.
 
         >>> e1 = Element(x=100, w=200) # e1.right == 300
         >>> e2 = Element(w=600, elements=[e1])
@@ -4115,7 +4132,7 @@ class Element(object):
         return self.top - self.pt - (boxY + boxH) <= tolerance
 
     def isShrunkOnBlockBottom(self, tolerance):
-        u"""Test if the bottom of self is shrunk to the bottom position of the block."""
+        """Test if the bottom of self is shrunk to the bottom position of the block."""
         _, boxY, _, boxH = self.marginBox
         if self.originTop:
             return abs(self.h - self.pb - (boxY + boxH)) <= tolerance
@@ -4176,14 +4193,14 @@ class Element(object):
     #   Column/Row conditions
 
     def isLeftOnCol(self, col, tolerance):
-        u"""Move top of the element to col index position."""
+        """Move top of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
             return abs(self.left - gridColumns[col][0]) <= tolerance
         return False # row is not in range of gridColumns
 
     def isRightOnCol(self, col, tolerance):
-        u"""Move top of the element to col index position."""
+        """Move top of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
             return abs(self.right - gridColumns[col][0]) <= tolerance
@@ -4199,14 +4216,14 @@ class Element(object):
         return False
 
     def isTopOnRow(self, row, tolerance):
-        u"""Move top of the element to row."""
+        """Move top of the element to row."""
         gridRows = self.getGridRows()
         if row in range(len(gridRows)):
             return abs(self.top - gridRows[row][0]) <= tolerance
         return False # row is not in range of gridColumns
 
     def isBottomOnRow(self, row, tolerance):
-        u"""Move top of the element to row."""
+        """Move top of the element to row."""
         gridRows = self.getGridRows()
         if row in range(len(gridRows)):
             return abs(self.bottom - gridRows[row][0]) <= tolerance
@@ -4226,7 +4243,7 @@ class Element(object):
     #   Column/Row alignment
 
     def left2Col(self, col):
-        u"""Move top of the element to col index position."""
+        """Move top of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
             self.left = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
@@ -4234,7 +4251,7 @@ class Element(object):
         return False # row is not in range of gridColumns
 
     def right2Col(self, col):
-        u"""Move right of the element to col index position."""
+        """Move right of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
             self.right = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
@@ -4252,7 +4269,7 @@ class Element(object):
         return False
 
     def top2Row(self, row):
-        u"""Move top of the element to row."""
+        """Move top of the element to row."""
         gridRows = self.getGridRows()
         if row in range(len(gridRows)):
             self.top = self.parent.pb + gridRows[row][0] # @@@ FIX GUTTER
@@ -4260,7 +4277,7 @@ class Element(object):
         return False # row is not in range of gridColumns
 
     def bottom2Row(self, row):
-        u"""Move top of the element to row."""
+        """Move top of the element to row."""
         gridRows = self.getGridRows()
         if row in range(len(gridRows)):
             self.bottom = self.parent.pb + gridRows[row][0] # @@@ FIX GUTTER
@@ -4280,7 +4297,7 @@ class Element(object):
     #   Page block and Page side alignments
 
     def bottom2Bottom(self):
-        u"""Move bottom of the element to the bottom of the parent block.
+        """Move bottom of the element to the bottom of the parent block.
 
         >>> e1 = Element(y=300)
         >>> e2 = Element(elements=[e1], pb=20)
@@ -4295,7 +4312,7 @@ class Element(object):
         return True
 
     def bottom2BottomSide(self):
-        u"""Move bottom of the element to the bottom of the parent side.
+        """Move bottom of the element to the bottom of the parent side.
 
         >>> e1 = Element(y=300)
         >>> e2 = Element(elements=[e1])
@@ -4310,7 +4327,7 @@ class Element(object):
         return True
 
     def bottom2Top(self):
-        u"""Move bottom of the element to the top of the parent block."""
+        """Move bottom of the element to the top of the parent block."""
         if self.originTop:
             self.bottom = self.parent.pt
         else:
@@ -4318,7 +4335,7 @@ class Element(object):
         return True
 
     def middle2Bottom(self):
-        u"""Move middle of the element to the bottom of the parent block."""
+        """Move middle of the element to the bottom of the parent block."""
         if self.originTop:
             self.middle = self.parent.h - self.parent.pb
         else:
@@ -4326,7 +4343,7 @@ class Element(object):
         return True
 
     def middle2BottomSide(self):
-        u"""Move middle of the element to the bottom parent side."""
+        """Move middle of the element to the bottom parent side."""
         if self.originTop:
             self.middle = self.parent.h
         else:
@@ -4496,7 +4513,7 @@ class Element(object):
         return True
 
     def right2CenterSides(self):
-        u"""Position the right side to the center sides of the parent.
+        """Position the right side to the center sides of the parent.
 
         >>> e = Element(w=500)
         >>> child = Element(x=0, w=100, align=LEFT, parent=e)
@@ -4560,7 +4577,7 @@ class Element(object):
     # Floating parent padding
 
     def float2Top(self):
-        u"""Float the element upward, until top hits the parent top padding.
+        """Float the element upward, until top hits the parent top padding.
         Include margin to decide if it fits."""
         if self.originTop:
             self.mTop = min(self.getFloatTopSide(), self.parent.pt)
@@ -4636,7 +4653,7 @@ class Element(object):
         return True
 
     def fit2Right(self):
-        u"""Make the right side of self fit the right padding of the parent, without
+        """Make the right side of self fit the right padding of the parent, without
         moving the left position.
 
         >>> e1 = Element(x=100, y=20, w=100, h=50)
@@ -4652,7 +4669,7 @@ class Element(object):
         return True
 
     def fit2RightSide(self):
-        u"""Make the right side of self fit the right side of the parent, without
+        """Make the right side of self fit the right side of the parent, without
         moving the left position.
 
         >>> e1 = Element(x=100, y=20, w=100, h=50)
@@ -4668,7 +4685,7 @@ class Element(object):
         return True
 
     def fit2Top(self):
-        u"""Make the top side of self fit the top padding of the parent, without
+        """Make the top side of self fit the top padding of the parent, without
         moving the bottom position.
 
         >>> e1 = Element(x=100, y=20, w=100, h=50)
