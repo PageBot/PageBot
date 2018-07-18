@@ -27,12 +27,12 @@ def newStyle(**kwargs):
     return dict(**kwargs)
 
 def makeStyle(style=None, **kwargs):
-    u"""Make style from a copy of style dict (providing all necessary default values for the
-    element to operate) and then overwrite these values with any specific arguments.
-    If style is None, then create a new style dict. In that case all the element style values need
-    to be defined by argument. The calling element must test if its minimum set
-    (such as self.w and self.h) are properly defined.
-    """
+    """Make style from a copy of style dict (providing all necessary default
+    values for the element to operate) and then overwrite these values with any
+    specific arguments. If style is None, then create a new style dict. In
+    that case all the element style values need to be defined by argument. The
+    calling element must test if its minimum set (such as self.w and self.h)
+    are properly defined."""
     if style is None:
         style = newStyle(**kwargs)  # Copy arguments in new style.
     else:
@@ -42,11 +42,11 @@ def makeStyle(style=None, **kwargs):
     return style
 
 def getRootStyle(u=U, w=W, h=H, **kwargs):
-    u"""Answer the main root style tha contains all default style attributes of PageBot.
-    To be overwritten when needed by calling applications.
-    CAPITALIZED attribute names are for reference only. Not used directly from styles.
-    They can be copied on other style attributes.
-    Note that if the overall unit style.u is changed by the calling application, also the
+    """Answer the main root style tha contains all default style attributes of
+    PageBot. To be overwritten when needed by calling applications.
+    CAPITALIZED attribute names are for reference only. Not used directly from
+    styles. They can be copied on other style attributes. Note that if the
+    overall unit style.u is changed by the calling application, also the
     U-based values must be recalculated for proper measures.
 
     >>> rs = getRootStyle()
@@ -352,9 +352,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
 
 def css(name, e=None, styles=None, default=None):
-    u"""Answer the named style values. Search in optional style dict first,
+    """Answer the named style values. Search in optional style dict first,
     otherwise up the parent tree of styles in element e. Both e and style can
-    be None. In that case None is answered.  Note that this is a generic
+    be None. In that case None is answered. Note that this is a generic
     "Cascading style request", outside the realm of HTML/CSS."""
     if styles is not None: # Can be single style or stack of styles.
         if not isinstance(styles, (tuple, list)):
