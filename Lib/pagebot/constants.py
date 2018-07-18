@@ -84,22 +84,53 @@ A4Letter = A4[0], Letter[1] # 210mm width and 11" height will always fit printer
 # Oversized (depending on requirement of printer, including 36pt view padding for crop marks
 A4Oversized = A4[0]+inch(1), A4[1]+inch(1)
 A3Oversized = A3[0]+inch(1), A3[1]+inch(1)
+
 # International Postcard Size
 IntPostcardMax = mm(235), mm(120)
 IntPostcardMin = mm(140), mm(90)
 AnsichtCard = A6[1].rounded.pt, A6[0].rounded.pt # Landscape Rounded A6
+
 # US Postal Postcard Size
 USPostcardMax = inch(6), inch(4.25)
 USPostcardMin = inch(5), inch(3.5)
+
 # Business card, https://nl.wikipedia.org/wiki/Visitekaartje
-ISOCreditCard = mm(85.60), mm(53.98)
 ISO216 = A8
-USBusinessCard = inch(3.5), inch(2) # USA, Canada
-EuropeBusinessCard = mm(85), mm(55) # Germany, France, Italy, Spain, UK, Netherlands, Portugal
-EastEuropeBusinessCard = mm(90), mm(50) # Hungary, Check.
-AustraliaBusinessCard = mm(90), mm(55) # Australia, New Zealand
-ChinaBusinessCard = mm(90), mm(54)
-JapanBusinessCard = mm(91), mm(55)
+BusinessCard = ISOCreditCard = mm(85.60), mm(53.98)
+# USA, Canada
+BusinessCardUS = inch(3.5), inch(2) 
+# Germany, France, Italy, Spain, UK, Netherlands, Portugal, Iceland IS
+BusinessCardEurope = mm(85), mm(55) 
+# Poland PL, Czech Republic CZ, Slovakia SK, Hungary HU, Croatia HR, Bosnia and Herzegovina BA, 
+# Serbia, Montenegro, Albania AL, Macedonia MK, Bulgaria BG, Romania RO, Moldova MD, Ukraine UA, 
+# Belarus BY, Lithuania LT, Latvia LV, Estonia EE, Finland FI, Georgia GE, Armenia AM, Azerbaijan AZ,
+# Sri Lanka LK, South Korea KR, South Africa ZA, Namibia NA, Israel IL,
+# Mexico MX, Brazil BR, Argentina AR, Venezuela VE, Russia RU, Kazakhstan KZ, Uzbekistan UZ
+BusinessCardEastEurope = BusinessCardWorld = mm(90), mm(50) 
+# Iran IR
+BusinessCardIran = mm(85), mm(48) 
+# Australia, New Zealand, India IN, Taiwan TW, Vietnam VN, Thailand TH, Cambodia KH, Laos LA, 
+# Myanmar (Burma) MM, Bangladesh BD, Bhutan BT, Nepal NP, Colombia CO,
+# Norway NO, Sweden SE, Denmark DK, Greece GR
+BusinessCardAustralia = mm(90), mm(55) 
+# Turkey TR
+BusinessCardTurkey = mm(85), mm(50) 
+# Egypt EG
+BusinessCardTurkey = mm(87), mm(57)
+# China CN, Hong Kong HK, Singapore SG, Mongolia MN, Malaysia MY
+BusinessCardChina = mm(90), mm(54)
+BusinessCardJapan = mm(91), mm(55)
+
+# Popular Online Business Card Printers
+# Vistaprint
+BusinessCardVistaprint = mm(87), mm(49)
+# Moo Cards
+BusinessCardMoo = mm(84), mm(55)
+BusinessCardMooMini = mm(70), mm(28)
+# Zazzle Cards
+BusinessCardZazzle = inch(3.5), inch(2)
+BusinessCardZazzleChubby = inch(3.5), inch(2.5)
+BusinessCardZazzleSkinny = inch(3.5), inch(1)
 
 # Newspapers
 Tabloid = inch(11), inch(16.9)

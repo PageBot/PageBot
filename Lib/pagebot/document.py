@@ -87,12 +87,7 @@ class Document(object):
         self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
         for page in pages or []: # In case there are pages defined on init, add them.
             self.appendPage(page, startPage)
-
-        # Initialize the assembly to hold macro page composition as Quires for export.
-        # Holds Quire instances that hold composed pages. Key is smallest page number
-        # Assembled pages (left+right --> spread, quires --> folded sheets)
-        self.assembly = {} 
-        
+     
         # Initialize the current view of this document. All conditional checking and building
         # is done through this view. The defaultViewClass is set either to an in stance of PageView.
         self.views = {} # Key is the viewId. Value is a view instance.

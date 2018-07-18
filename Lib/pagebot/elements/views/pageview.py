@@ -31,8 +31,10 @@ from pagebot.toolbox.transformer import *
 class PageView(BaseView):
     u"""The PageView is contains the parameters to export the pages as
     documents.  A View is just another kind of container, kept by document to
-    make a certain presentation of the page tree. Views use the current
-    Context.b builder for export."""
+    make a certain presentation of the page tree. 
+    The PageView holds typically Quire elements, that make one-directional links
+    to document pages and compose them in spreads or folding compositions.
+    """
     viewId = 'Page'
 
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
@@ -41,10 +43,21 @@ class PageView(BaseView):
     def build(self, path=None, pageSelection=None, multiPage=True):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw.
 
-        >>> view = PageView(name='MyPageView')
-        >>> view.w, view.h, view.name # Size is initialze to default.
-        (100pt, 100pt, 'MyPageView')
-        >>> #str(view.context) in ('<DrawBotContext>' or '<FlatContext>')
+        >>> from pagebot.document import Document
+        >>> from pagebot.constants import BusinessCard
+        >>> doc = Document(size=A3) # Make document pages 
+        >>> view = doc.view
+        """
+
+        """
+        >>> view
+
+
+
+        # Initialize the assembly to hold macro page composition as Quires for export.
+        # Holds Quire instances that hold composed pages. Key is smallest page number
+        # Assembled pages (left+right --> spread, quires --> folded sheets)
+        self.assembly = {} 
         """
         if not path:
             path = self.EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
