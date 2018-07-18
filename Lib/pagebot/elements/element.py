@@ -20,7 +20,7 @@ import weakref
 import copy
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import isUnit, units, Fr, Perc, Em, ru, pt, point3D, pointOffset
-from pagebot.toolbox.color import noColor
+from pagebot.toolbox.color import noColor, Color
 
 from pagebot.conditions.score import Score
 from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
@@ -36,6 +36,7 @@ from pagebot.toolbox.timemark import TimeMark
 from pagebot.toolbox.dating import now, seconds, years, Duration
 
 class Element(object):
+    """The base element object."""
 
     # Initialize the default Element behavior flags. These flags can be
     # overwritten by inheriting classes, or dynamically in instances, e.g.
@@ -47,28 +48,27 @@ class Element(object):
     isPage = False # Set to True by Page-like elements.
     isView = False
 
-    def __init__(self, x=0, y=0, z=0, xy=None, xyz=None,
-            w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None,
-            t=None, parent=None, context=None, name=None, cssClass=None, cssId=None,
-            title=None, description=None, keyWords=None,
-            language=None, style=None, conditions=None, framePath=None,
-            elements=None, template=None, nextElement=None, prevElement=None, nextPage=None, prevPage=None,
-            isLeftPage=None, isRightPage=None, bleed=None,
-            padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
-            margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0,
-            borders=None, borderTop=None, borderRight=None, borderBottom=None, borderLeft=None,
-            shadow=None, gradient=None,
-            drawBefore=None, drawAfter=None,
-            **kwargs):
-        """Basic initialize for every Element constructor. Element always have
-        a location, even if not defined here.  If values are added to the
-        contructor parameter, instead of part in **kwargs, this forces them to
-        have values, not inheriting from one of the parent styles.
+    def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
+            h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, t=None, parent=None,
+            context=None, name=None, cssClass=None, cssId=None, title=None,
+            description=None, keyWords=None, language=None, style=None,
+            conditions=None, framePath=None, elements=None, template=None,
+            nextElement=None, prevElement=None, nextPage=None, prevPage=None,
+            isLeftPage=None, isRightPage=None, bleed=None, padding=None, pt=0,
+            pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
+            ml=0, mzf=0, mzb=0, borders=None, borderTop=None, borderRight=None,
+            borderBottom=None, borderLeft=None, shadow=None, gradient=None,
+            drawBefore=None, drawAfter=None, **kwargs):
+        """Base initialize function for all Element constructors. Element
+        always have a location, even if not defined here. Values that are
+        passed to the contructor (except for the keyword arguments), have
+        default values if they aren't assigned by the parent class.
 
         Ignore setting of eId as attribute, guaranteed to be unique.
 
         >>> import sys
-        >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, maxW=822, maxH=933, pl=11, pt=22, margin=(33,44,55,66))
+        >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, maxW=822,
+                maxH=933, pl=11, pt=22, margin=(33,44,55,66))
         >>> e.name
         'TestElement'
         >>> e.description is None
@@ -119,18 +119,21 @@ class Element(object):
         (320pt, 3pt, 100pt)
         """
         # Optionally set the property for elements that need their own context.
-        # Mostly these are only set for views (which are also Elements)
-        # If None the property will query parent --> root document --> view.
+        # Mostly these are only set for views (which are also Elements) If None
+        # the property will query parent --> root document --> view.
         self.context = context
         self._parent = None
 
         # Initilialize self._elements and self._eIds
         self.clearElements()
 
+        self.checkStyleArgs(kwargs)
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0 from args
-        # Initialize style values that are not supposed to inherite from parent styles.
-        # Always store point in style as separate (x, y, z) values. Missing values are 0
-        # Note that x, y, z, w, h, d, padding and margin are not inherited by style.
+
+        # Initialize style values that are not supposed to inherite from parent
+        # styles. Always store point in style as separate (x, y, z) values.
+        # Missing values are 0. Note that x, y, z, w, h, d, padding and margin
+        # are not inherited by style.
         if xyz is not None:
             self.xyz = xyz
         elif xy is not None:
@@ -150,11 +153,12 @@ class Element(object):
             self.bleed = bleed # Property tuple (bt, br, bb, bl) ignores to expand into if None
         # Border info dict have format:
         # dict(line=ONLINE, dash=None, stroke=blackColor, strokeWidth=borderData)
-        # If not borders defined, then drawing will use the stroke and strokeWidth (if defined)
-        # for intuitive compatibility with DrawBot.
+        # If not borders defined, then drawing will use the stroke and
+        # strokeWidth (if defined) for intuitive compatibility with DrawBot.
         self.borders = borders or (borderTop, borderRight, borderBottom, borderLeft)
 
-        # Drawing hooks is same for 3 types of view/builders. Seperation must be done by caller.
+        # Drawing hooks is same for 3 types of view/builders. Seperation must
+        # be done by caller.
         # Optional method to draw before child elements are drawn.
         self.drawBefore = drawBefore # Call as: self.drawBefore(e, view)
         # Optional method to draw right after child elements are drawn.
@@ -256,6 +260,13 @@ class Element(object):
         (0, 1, 2)
         """
         return len(self.elements)
+
+    def checkStyleArgs(self, d):
+        if 'fill' in d:
+            assert isinstance(d['fill'], Color), 'fill should be of type Color'
+        if 'stroke' in d:
+            assert isinstance(d['stroke'], Color), 'stroke should be of type Color'
+        print(d)
 
     #   T E M P L A T E
 
