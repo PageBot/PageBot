@@ -14,6 +14,8 @@
 #     drawSpirals.py
 #
 from __future__ import division # Make integer division result in float.
+from pagebot.toolbox.units import pt
+from pagebot.toolbox.color import noColor, blackColor
 from pagebot.contexts.platform import getContext
 c = getContext()
 #import pagebot # Import to know the path of non-Python resources.
@@ -56,7 +58,8 @@ def drawSpiral():
     my = H/2+Y
     runs = False
     c.newPath()
-    c.moveTo((mx, my))
+    c.moveTo((pt(mx), pt(my)))
+    
     for n in range(0, int(N), 4):
         dx1 = n*Sx*D
         dy1 = n*Sy*D
@@ -69,18 +72,22 @@ def drawSpiral():
         #dx5 = (n+4)*Sx*D
         #dy5 = (n+4)*Sy*D
         if not runs:
-            c.moveTo((mx, my))
+            c.moveTo((pt(mx), pt(my)))
         else:
-            c.curveTo((mx-dx1*Exy, my-dy1), (mx-dx1, my-dy1*Exy), (mx-dx1, my))
-            c.curveTo((mx-dx2, my+dy2*Exy), (mx-dx2*Exy, my+dy2), (mx, my+dy2))
-            c.curveTo((mx+dx3*Exy, my+dy3), (mx+dx3, my+dy3*Exy), (mx+dx3, my))
-            c.curveTo((mx+dx4, my-dy4*Exy), (mx+dx4*Exy, my-dy4), (mx, my-dy4))
+            c.curveTo((pt(mx-dx1*Exy), pt(my-dy1)),
+                (pt(mx-dx1), pt(my-dy1*Exy)), (pt(mx-dx1), pt(my)))
+            c.curveTo((pt(mx-dx2), pt(my+dy2*Exy)),
+            (pt(mx-dx2*Exy), pt(my+dy2)), (pt(mx), pt(my+dy2)))
+            c.curveTo((pt(mx+dx3*Exy), pt(my+dy3)),
+                (pt(mx+dx3), pt(my+dy3*Exy)), (pt(mx+dx3), pt(my)))
+            c.curveTo((pt(mx+dx4), pt(my-dy4*Exy)), (pt(mx+dx4*Exy), pt(my-dy4)),
+                (pt(mx), pt(my-dy4)))
         runs = True
 
-    c.fill(None)
-    c.stroke(0)
+    c.fill(noColor)
+    c.stroke(blackColor)
     c.drawPath()
 
-c.newPage(W, H)
+c.newPage(pt(W), pt(H))
 drawSpiral()
 c.saveImage("_export/Spiral.pdf")
