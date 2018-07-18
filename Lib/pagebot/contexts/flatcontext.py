@@ -128,7 +128,7 @@ class FlatContext(BaseContext):
             w, h = size
         assert isUnits(w, h), ('FlatContext.newDocument: Size values (%s %s) to be of type Unit' % (w, h))
         self.doc = self.b.document(w.pt, h.pt, units=self.UNITS)
-        self.newPage(w, h)
+        #self.newPage(w, h)
 
     def saveDocument(self, path, multiPage=True):
         """Save the current document to file(s)
@@ -212,8 +212,10 @@ class FlatContext(BaseContext):
         if size is not None:
             w, h = size
         assert None not in (w, h)
+
         if self.doc is None:
             self.newDocument(w, h)
+
         self.page = self.doc.addpage()
         self.page.size(w.pt, h.pt, units=self.UNITS) # Default units render to pt-units
         self.pages.append(self.page)
