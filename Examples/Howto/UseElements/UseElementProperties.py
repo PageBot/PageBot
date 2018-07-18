@@ -12,8 +12,8 @@
 #
 #     UseElementProperties.py
 #
-from pagebot.elements import *
 from __future__ import print_function
+from pagebot.elements import *
 
 W = H = 500
 # Create a new container class (or use other specialized ELements.

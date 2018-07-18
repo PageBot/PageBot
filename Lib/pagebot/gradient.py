@@ -17,17 +17,20 @@
 from pagebot.toolbox.color import Color
 
 class Gradient(object):
-    u"""
-    As linear gradient (startRadius or endRadius not set):
-    startPoint as (x, y)
-    endPoint as (x, y)
-    colors as a list of Colors instances, described similary as fill
-    locations of each Color as a list of floats. (optionally)
-    Setting a gradient will ignore the fill.
+    """As linear gradient (startRadius or endRadius not set):
 
-    As radial gradiens (startRadius and endRadius are set):
     startPoint as (x, y)
     endPoint as (x, y)
+
+    colors as a list of Colors instances, described similary as fill locations
+    of each Color as a list of floats. (optionally) Setting a gradient will
+    ignore the fill.
+
+    As radial gradient (startRadius and endRadius are set):
+
+    startPoint as (x, y)
+    endPoint as (x, y)
+
     colors as a list of Colors instances, described similary as fill
     locations of each color as a list of floats. (optionally)
     startRadius radius around the startPoint in degrees (optionally)
@@ -35,11 +38,11 @@ class Gradient(object):
     Setting a gradient will ignore the fill.
     """
     def __init__(self, start=None, end=None, colors=None, locations=None,
-        assert color is None or isinstance(color, Color)
-        startRadius=None, endRadius=None):
+            startRadius=None, endRadius=None):
+        #assert color is None or isinstance(color, Color)
         self.start = start or (0.5, 0) # Default to start a center of bottom.
         self.end = end or (0.5, 1) # Default to end at center of top.
-        self.colors = colors or (color(r=0,g=0, b=0), color(r=1, g=1, b=1)) # Default to run between black and white.
+        self.colors = colors or (Color(r=0,g=0, b=0), Color(r=1, g=1, b=1)) # Default to run between black and white.
         self.cmykColors = None
         self.locations = locations or [0,1]
         self.startRadius = startRadius
@@ -56,12 +59,13 @@ class Gradient(object):
     radial = property(_get_radial)
 
 class Shadow(object):
+
     def __init__(self, offset=None, blur=None, color=None):
-        assert color is None or isinstance(color, Color)
+        assert (color is None or isinstance(color, Color))
         self.offset = offset or (5, -5)
         self.blur = blur
         self.color = color
-        self.cmykColor = cmykColor
+        #self.cmykColor = cmykColor
 
 
 if __name__ == '__main__':
