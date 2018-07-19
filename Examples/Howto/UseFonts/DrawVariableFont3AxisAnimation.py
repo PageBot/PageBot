@@ -120,6 +120,7 @@ class FontIcon(object):
         strokeWidth(self.line)
         translate(x, y)
         drawPath(path)
+
         labelSize = e
         bs = context.newString(self.c,
                                style=dict(font=self.f.path,
@@ -147,6 +148,7 @@ class FontIcon(object):
             tw, th = bs.textSize()
             context.text(bs, (w/2-tw/2, y))
             y -= self.LABEL_RLEADING*labelSize
+            
         if self.label:
             bs = context.newString(self.label,
                                    style=dict(font=self.labelFont.path,
@@ -156,7 +158,7 @@ class FontIcon(object):
             tw, th = bs.textSize()
             context.text(bs, (w/2-tw/2, y))
         restore()
-
+        
 class KeyFrame(object):
     def __init__(self, objects, positions, steps=None, drawBackground=None):
         self.objects = objects
@@ -249,5 +251,3 @@ def drawAnimation():
     saveImage('_export/VarFont2Axes.gif')
 
 drawAnimation()
-
-
