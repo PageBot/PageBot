@@ -177,12 +177,25 @@ Nexus9 = pt(768), pt(1024) # 1536 x 2048
 SamsungGalaxyTab10 = pt(800), pt(1280) # 800 x 1280 
 ChromebookPixel = pt(1280), pt(850) # 2560 x 1700 
 
+# Types of Quire formats, how to compose pages
+# Page numbers < 0 indicate to be connected. For > 9 
+QUIRE_SINGLE = (1,) # Single page
+QUIRE_SPREAD = (-2, 1) # Spread of 2 connected pages, without gutter for crop-marks or bleed
+QUIRE_2x2 = (2, 2) # is a Quire of 4 pages, e.g. to be cut as separate sheets
+QUIRE_8x4 = (8, 4) # is a Quire of 32 separate pages, e.g. to be cut as 32 business cards.
+QUIRE_LEPARELLO3 = (-3, 1) # is a leparello of 3 connected pages.
+QUIRE_LEPARELLO4 = (-4, 1) # is a leparello of 4 connected pages.
+QUIRE_FOLIO = (QUIRE_SPREAD, 2) # 2°, a Quire of 2 spreads
+QUIRE_QUARTO = (QUIRE_FOLIO, 2) # 4°
+QUIRE_OCTAVO = (QUIRE_QUARTO, 2) # 8°, folding into 16 pages
+QUIRE_GUTTER = pt(40) # Default gutter between non-connecting pages.
+
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
 ORIGIN = (pt(0), pt(0), pt(0)) # Default origin if location is omitted.
 
 # Min/max values for element sizes. Makes sure that elements dimensions for (w,h) never get 0
-XXXL = 2**32 # Arbitraty large size that is not system dependent, such as sys.maxsize
+XXXL = 2**32 # Arbitraty large size that is not system dependent, such as sys.maxsize is.
 MIN_WIDTH, MIN_HEIGHT, MIN_DEPTH = pt(1), pt(1), pt(0)
 # For document, using imaginary depth for layers and shadow
 DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, DEFAULT_DOC_DEPTH = pt(1000), pt(1000), pt(100) 

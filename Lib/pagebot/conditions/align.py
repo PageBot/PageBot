@@ -145,6 +145,28 @@ class Fit2Width(Condition):
 		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.left2Left() and e.fit2Right(), e, score)
 
+class Scale2Width(Condition):
+	u"""Grow the element to left and right side, until it fits the parent element.
+	The scale vertical to the original ratio.
+
+	>>> from pagebot.elements import Element
+	>>> conditions = [Scale2Width()]
+	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
+	>>> e2 = Element(w=300, h=400, elements=[e1])
+	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
+	(20pt, 20pt, 50pt, 50pt)
+	>>> e1.solve() # Solve position and size from conditions.
+	Score: 1 Fails: 0
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
+	(0pt, 20pt, 300pt, 300pt)
+	"""
+	def test(self, e):
+		return e.isLeftOnLeft(self.tolerance) and e.isRightOnRight(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.left2Left() and e.scale2Right(), e, score)
+
 class Fit2Height(Condition):
 	u"""Grow the element to top and bottom side, until it fits the parent element.
 
