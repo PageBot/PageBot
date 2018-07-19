@@ -99,7 +99,7 @@ def findFont(fontPath, lazy=True):
     """
     from pagebot.fonttoolbox.fontpaths import getFontPaths
     fontPaths = getFontPaths()
-    print(fontPaths)
+
     if fontPath in fontPaths:
         return getFont(fontPaths[fontPath])
     return None
