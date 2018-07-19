@@ -23,42 +23,43 @@ from math import atan2, radians, degrees, cos, sin
 
 from pagebot.toolbox.color import color, noColor, grayColor
 from pagebot.elements.views.baseview import BaseView
+from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
 from pagebot.constants import ORIGIN
 from pagebot.toolbox.units import pt, pointOffset, point3D
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
-    u"""The PageView is contains the parameters to export the pages as
-    documents.  A View is just another kind of container, kept by document to
+    u"""The PageView is contains the set of Quire instances to export the pages as
+    documents.  A View is just another kind of container, kept by a Document to
     make a certain presentation of the page tree. 
     The PageView holds typically Quire elements, that make one-directional links
-    to document pages and compose them in spreads or folding compositions.
+    to document pages in order to compose them in spreads or folding compositions.
     """
     viewId = 'Page'
 
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
     EXPORT_PATH = '_export/' # Default path for local document export, that does not commit documents to Github.
 
+    def newQuire(self, folds=None, startPage=None):
+        u"""Add a new Quire instance to self.elements."""
+        Quire(folds=folds, startPage=startPage, parent=self)
+
     def build(self, path=None, pageSelection=None, multiPage=True):
         u"""Draw the selected pages. pageSelection is an optional set of y-pageNumbers to draw.
 
         >>> from pagebot.document import Document
-        >>> from pagebot.constants import BusinessCard
-        >>> doc = Document(size=A3) # Make document pages 
+        >>> from pagebot.constants import BusinessCard, A4, QUIRE_QUARTO
+        >>> doc = Document(size=A4, autoPages=4) # Make 4 pages to be composed as a Quire of 2 spreads
         >>> view = doc.view
+        >>> view.newQuire(folds=QUIRE_QUARTO)
+        >>> view.newQuire(folds=QUIRE_QUARTO)
+        >>> len(view.elements)
+        2
+        >>> len(view.elements[0])
+        8
         """
 
-        """
-        >>> view
-
-
-
-        # Initialize the assembly to hold macro page composition as Quires for export.
-        # Holds Quire instances that hold composed pages. Key is smallest page number
-        # Assembled pages (left+right --> spread, quires --> folded sheets)
-        self.assembly = {} 
-        """
         if not path:
             path = self.EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
         # If default _export directory does not exist, then create it.
@@ -164,6 +165,7 @@ class PageView(BaseView):
         #    frameDuration(frameDuration)
 
         context.saveDocument(path, multiPage=multiPage)
+
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 
