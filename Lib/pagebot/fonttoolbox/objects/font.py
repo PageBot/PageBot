@@ -99,6 +99,7 @@ def findFont(fontPath, lazy=True):
     """
     from pagebot.fonttoolbox.fontpaths import getFontPaths
     fontPaths = getFontPaths()
+    print(fontPaths)
     if fontPath in fontPaths:
         return getFont(fontPaths[fontPath])
     return None
@@ -372,7 +373,8 @@ class Font(object):
     GLYPH_CLASS = Glyph
     FONTANALYZER_CLASS = FontAnalyzer
 
-    def __init__(self, path=None, ttFont=None, name=None, opticalSize=None, location=None, styleName=None, lazy=True):
+    def __init__(self, path=None, ttFont=None, name=None, opticalSize=None,
+            location=None, styleName=None, lazy=True):
         """Initialize the TTFont, for which Font is a wrapper.
 
         self.name is supported, in case the caller wants to use a different"""
