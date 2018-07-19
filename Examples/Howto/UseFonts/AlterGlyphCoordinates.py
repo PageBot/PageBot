@@ -25,6 +25,7 @@ from pprint import pprint
 context = getContext()
 EXPORT_PATH = '_export/AlteredGlyphWithPoints.pdf'
 f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
+
 W = H = 1000
 
 # Scale em of 2048 back to page size.
